@@ -78,7 +78,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	}
 
 	@Override
-	public GamaSpatialGraph copy() {
+	public GamaSpatialGraph copy(IScope scope) {
 		GamaSpatialGraph g =
 			new GamaSpatialGraph(GamaList.EMPTY_LIST, true, directed, vertexRelation, edgeSpecies,
 				scope);

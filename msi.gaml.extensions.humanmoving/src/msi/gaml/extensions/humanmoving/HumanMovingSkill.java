@@ -79,14 +79,8 @@ public class HumanMovingSkill extends MovingSkill {
 		int slot = GAMA.getRandom().between(-numberOfSlot, numberOfSlot);
 
 		final Object background = scope.getArg("background", IType.NONE);
-		boolean isInBackgroundAgent;
-		IAgent backgroundAgent = null;
-		if ( background == null ) {
-			isInBackgroundAgent = false;
-		} else {
-			isInBackgroundAgent = true;
-			backgroundAgent = (IAgent) background;
-		}
+		IAgent backgroundAgent = (IAgent) background;
+
 		// OutputManager.debug("no slot " + numberOfSlot);
 		// OutputManager.debug("slot " + slot);
 
@@ -103,7 +97,7 @@ public class HumanMovingSkill extends MovingSkill {
 		GamaList<IAgent> neighbours =
 			(GamaList<IAgent>) scope.getTopology().getNeighboursOf(agent, detectingRange,
 				Different.with());
-		if ( isInBackgroundAgent ) {
+		if ( backgroundAgent != null ) {
 			neighbours.remove(backgroundAgent);
 		}
 		final Object ignore = scope.getArg("ignore_type", IType.AGENT);
@@ -145,7 +139,7 @@ public class HumanMovingSkill extends MovingSkill {
 		Geometry point =
 			((Geometry) GamaGeometryType.createPoint(px.getLocation())).buffer(agentSize);
 		boolean isFoundNextPoint = false;
-		if ( isInBackgroundAgent ) {
+		if ( backgroundAgent != null ) {
 			isFoundNextPoint =
 				isExteriorOfAgents(neighbours, point) &&
 					backgroundAgent.getInnerGeometry().contains(point);
@@ -158,14 +152,13 @@ public class HumanMovingSkill extends MovingSkill {
 			return (GamaPoint) agent.getLocation();
 			// setReturn(getLocation());
 			// return CommandStatus.failure;
-		} else {
-			agent.setLocation(px);
-			scope.setStatus(ExecutionStatus.running);
-			return (GamaPoint) agent.getLocation();
-			// setLocation(px);
-			// setReturn(getLocation());
-			// return CommandStatus.running;
 		}
+		agent.setLocation(px);
+		scope.setStatus(ExecutionStatus.running);
+		return (GamaPoint) agent.getLocation();
+		// setLocation(px);
+		// setReturn(getLocation());
+		// return CommandStatus.running;
 	}
 
 	/**
@@ -292,16 +285,7 @@ public class HumanMovingSkill extends MovingSkill {
 
 		final Object background = scope.getArg("background", IType.AGENT);
 		// final Object background = args.value("background");
-		boolean isInBackgroundAgent;
-		IAgent backgroundAgent = null;
-
-		if ( background == null ) {
-			isInBackgroundAgent = false;
-		} else {
-			isInBackgroundAgent = true;
-			backgroundAgent = (IAgent) background;
-		}
-
+		IAgent backgroundAgent = (IAgent) background;
 		final Double s =
 			scope.hasArg("speed") ? Cast.asFloat(scope, scope.getArg("speed", IType.FLOAT)) : null;
 		// final Double s = args.floatValue("speed");
@@ -323,7 +307,7 @@ public class HumanMovingSkill extends MovingSkill {
 		GamaList<IAgent> neighbours =
 			(GamaList<IAgent>) scope.getTopology().getNeighboursOf(getCurrentAgent(scope),
 				detectingRange, Different.with());
-		if ( isInBackgroundAgent ) {
+		if ( backgroundAgent != null ) {
 			neighbours.remove(backgroundAgent);
 		}
 		// neighbours.remove(body);
@@ -379,7 +363,7 @@ public class HumanMovingSkill extends MovingSkill {
 					.buffer(agentSize);
 			// Geometry point =
 			// ModelFactory.getGeometryFactory().createPoint(candidatePoint[(i+index)%8].toCoordinate()).buffer(agentSize);
-			if ( isInBackgroundAgent ) {
+			if ( backgroundAgent != null ) {
 				if ( isExteriorOfAgents(neighbours, point) &&
 					backgroundAgent.getInnerGeometry().contains(point) ) {
 					{
@@ -736,15 +720,8 @@ public class HumanMovingSkill extends MovingSkill {
 			scope.setStatus(ExecutionStatus.failure);
 			return (GamaPoint) agent.getLocation();
 		}
-		boolean isInBackgroundAgent = false;
 		Object background = scope.getArg("background", IType.NONE);
-		IAgent backgroundAgent = null;
-		if ( background == null ) {
-			isInBackgroundAgent = false;
-		} else {
-			isInBackgroundAgent = true;
-			backgroundAgent = Cast.asAgent(scope, background);
-		}
+		IAgent backgroundAgent = Cast.asAgent(scope, background);
 
 		// *****
 		final Double s =
@@ -796,11 +773,10 @@ public class HumanMovingSkill extends MovingSkill {
 		// ********************************************************************************************
 		boolean freeSpace;
 		PreparedPolygon backgdGeom = null;
-		if ( isInBackgroundAgent ) {
+		if ( backgroundAgent != null ) {
 			backgdGeom =
 				new PreparedPolygon((Polygonal) backgroundAgent.getGeometry().getInnerGeometry());
 		}
-		int count = 0;
 		boolean[] ok = new boolean[8];
 		for ( int i = 0; i < 8; i++ ) {
 			ok[i] = false;
@@ -824,7 +800,6 @@ public class HumanMovingSkill extends MovingSkill {
 			}
 
 			if ( freeSpace ) {
-				count++;
 				ok[i] = true;
 			}
 		}

@@ -22,9 +22,11 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gaml.types.IType;
+import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Written by drogoul
@@ -50,7 +52,7 @@ public interface IGamaFile<K, V> extends IContainer<K, V> {
 	public abstract void setContents(final IContainer<K, V> cont) throws GamaRuntimeException;
 
 	@Override
-	public abstract IGamaFile copy();
+	public abstract IGamaFile copy(IScope scope);
 
 	@getter(value = IKeyword.EXISTS, initializer = true)
 	public abstract Boolean exists();
@@ -65,7 +67,7 @@ public interface IGamaFile<K, V> extends IContainer<K, V> {
 	public abstract String getPath();
 
 	@getter(IKeyword.CONTENTS)
-	public abstract IContainer getContents() throws GamaRuntimeException;
+	public abstract IContainer getContents(IScope scope) throws GamaRuntimeException;
 
 	@getter(value = IKeyword.ISFOLDER, initializer = true)
 	public abstract Boolean isFolder();
@@ -79,5 +81,7 @@ public interface IGamaFile<K, V> extends IContainer<K, V> {
 	public abstract Boolean isWritable();
 
 	public abstract String getKeyword();
+
+	public Envelope computeEnvelope(final IScope scope);
 
 }

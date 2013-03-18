@@ -51,7 +51,7 @@ public abstract class AbstractExperiment extends GamlSpecies implements IExperim
 	protected RandomUtils random;
 	private ItemList parametersEditors;
 	protected final Map<String, IParameter> targetedVars;
-	private final ExperimentScope stack;
+	protected final ExperimentScope stack;
 	public volatile Thread experimentThread;
 	protected volatile ArrayBlockingQueue<Integer> commands;
 	protected final List<IParameter> systemParameters;
@@ -118,10 +118,10 @@ public abstract class AbstractExperiment extends GamlSpecies implements IExperim
 	protected void addOwnParameters() {
 		ISpecies world = model.getWorldSpecies();
 		String cat = getSystemParametersCategory();
-		addSystemParameter(new ExperimentParameter(world.getVar(IKeyword.RNG),
+		addSystemParameter(new ExperimentParameter(stack, world.getVar(IKeyword.RNG),
 			"Random number generator", cat, RandomUtils.GENERATOR_NAMES, false));
-		addSystemParameter(new ExperimentParameter(world.getVar(IKeyword.SEED), "Random seed", cat,
-			null, true));
+		addSystemParameter(new ExperimentParameter(stack, world.getVar(IKeyword.SEED),
+			"Random seed", cat, null, true));
 	}
 
 	protected String getSystemParametersCategory() {
@@ -331,7 +331,7 @@ public abstract class AbstractExperiment extends GamlSpecies implements IExperim
 	}
 
 	protected Double getCurrentSeed() {
-		Object o = getParameter(IKeyword.SEED).getInitialValue();
+		Object o = getParameter(IKeyword.SEED).getInitialValue(stack);
 		if ( o == null ) { return null; }
 		if ( o instanceof Number ) { return ((Number) o).doubleValue(); }
 		return null;
@@ -477,7 +477,7 @@ public abstract class AbstractExperiment extends GamlSpecies implements IExperim
 		if ( registerParameter(p) ) {
 			systemParameters.add(p);
 		} else {
-			p.setValue(targetedVars.get(p.getName()).getInitialValue());
+			p.setValue(targetedVars.get(p.getName()).getInitialValue(stack));
 			targetedVars.put(p.getName(), p);
 		}
 	}

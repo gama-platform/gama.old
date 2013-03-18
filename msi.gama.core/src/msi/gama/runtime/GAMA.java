@@ -174,8 +174,8 @@ public class GAMA {
 	public static void reportError(final GamaRuntimeException g) {
 		if ( currentExperiment == null ) { return; }
 		currentExperiment.reportError(g);
-		if ( GAMA.TREAT_ERRORS_AS_FATAL ) {
-			if ( GAMA.TREAT_WARNINGS_AS_ERRORS || !g.isWarning() ) {
+		if ( TREAT_ERRORS_AS_FATAL ) {
+			if ( TREAT_WARNINGS_AS_ERRORS || !g.isWarning() ) {
 				currentExperiment.pause();
 			}
 		}

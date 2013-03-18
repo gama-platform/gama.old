@@ -80,7 +80,8 @@ public class Facets {
 		int i = 0;
 		for ( ; index < strings.length; index += 2 ) {
 			Facet f =
-				new Facet(strings[index], new StringBasedExpressionDescription(strings[index + 1]));
+				new Facet(strings[index],
+					StringBasedExpressionDescription.create(strings[index + 1]));
 			facets[i++] = f;
 		}
 	}
@@ -106,13 +107,6 @@ public class Facets {
 		if ( facets.length == 0 ) {
 			facets = new Facet[newFacets.facets.length];
 			System.arraycopy(newFacets.facets, 0, facets, 0, newFacets.facets.length);
-			// facets = new Facet[newFacets.facets.length];
-			// for ( int i = 0; i < facets.length; i++ ) {
-			// Facet f = newFacets.facets[i];
-			// if ( f != null ) {
-			// facets[i] = f; // new Facet(f.key, f.value);
-			// }
-			// }
 		} else {
 			for ( Facet f : newFacets.entrySet() ) {
 				if ( f != null ) {
@@ -175,11 +169,11 @@ public class Facets {
 	}
 
 	public IExpressionDescription put(final String key, final String desc) {
-		return put(key, new StringBasedExpressionDescription(desc));
+		return put(key, StringBasedExpressionDescription.create(desc));
 	}
 
 	public IExpressionDescription putAsLabel(final String key, final String desc) {
-		return put(key, new LabelExpressionDescription(desc));
+		return put(key, LabelExpressionDescription.create(desc));
 	}
 
 	public IExpressionDescription put(final String key, final IExpression expr) {
@@ -188,7 +182,7 @@ public class Facets {
 			result.setExpression(expr);
 			return result;
 		}
-		return put(key, new BasicExpressionDescription(expr));
+		return add(key, new BasicExpressionDescription(expr));
 	}
 
 	/**

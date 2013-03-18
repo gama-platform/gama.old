@@ -37,12 +37,13 @@ public class GamlExpressionFactory implements IExpressionFactory {
 
 	public static IExpression TRUE_EXPR;
 	public static IExpression FALSE_EXPR;
-	public static IExpression WORLD_EXPR = null;
+	public static IExpression NIL_EXPR;
 
 	static {
 		IType bool = Types.get(IType.BOOL);
 		TRUE_EXPR = new ConstantExpression(true, bool, bool);
 		FALSE_EXPR = new ConstantExpression(false, bool, bool);
+		NIL_EXPR = new ConstantExpression(null, Types.NO_TYPE, Types.NO_TYPE);
 	}
 
 	IExpressionCompiler parser;
@@ -61,6 +62,8 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	public IExpression createConst(final Object val, final IType type, final IType contentType) {
 		if ( type == Types.get(IType.SPECIES) ) { return new SpeciesConstantExpression(
 			(String) val, type, contentType); }
+		if ( val == null ) { return NIL_EXPR; }
+		if ( val instanceof Boolean ) { return (Boolean) val ? TRUE_EXPR : FALSE_EXPR; }
 		return new ConstantExpression(val, type, contentType);
 	}
 
@@ -74,16 +77,16 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	}
 
 	@Override
-	public IExpression createExpr(final IExpressionDescription s, final IDescription context) {
-		if ( s == null ) { return null; }
-		IExpression p = s.getExpression();
-		return p == null ? parser.compile(s, context) : p;
+	public IExpression createExpr(final IExpressionDescription ied, final IDescription context) {
+		if ( ied == null ) { return null; }
+		IExpression p = ied.getExpression();
+		return p == null ? parser.compile(ied, context) : p;
 	}
 
 	@Override
 	public IExpression createExpr(final String s, final IDescription context) {
 		if ( s == null || s.isEmpty() ) { return null; }
-		return parser.compile(new StringBasedExpressionDescription(s), context);
+		return parser.compile(StringBasedExpressionDescription.create(s), context);
 	}
 
 	@Override
@@ -196,12 +199,12 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		return new PrimitiveOperator(op).init(op, context, expressions[0], expressions[1]);
 	}
 
-	@Override
-	public Set<String> parseLiteralArray(final IExpressionDescription s,
-		final IDescription context, final boolean skills) {
-		if ( s == null ) { return Collections.EMPTY_SET; }
-		return parser.parseLiteralArray(s, context, skills);
-	}
+	// @Override
+	// public Set<String> parseLiteralArray(final IExpressionDescription s,
+	// final IDescription context, final boolean skills) {
+	// if ( s == null ) { return Collections.EMPTY_SET; }
+	// return parser.parseLiteralArray(s, context, skills);
+	// }
 
 	@Override
 	public IExpressionCompiler getParser() {

@@ -111,14 +111,9 @@ public class VariableDescription extends SymbolDescription {
 	public Set<VariableDescription> usedVariablesIn(final Map<String, VariableDescription> vars) {
 		if ( dependencies == null ) {
 			dependencies = new HashSet();
-			final Set<String> names = new HashSet();
 			IExpressionDescription depends = facets.get(DEPENDS_ON);
 			if ( depends != null ) {
-				Set<String> dependsList =
-					GAMA.getExpressionFactory().parseLiteralArray(depends, getSuperDescription(),
-						false);
-				names.addAll(dependsList);
-				for ( final String s : names ) {
+				for ( final String s : depends.getStrings(getSpeciesContext(), false) ) {
 					VariableDescription v = vars.get(s);
 					if ( v != null ) {
 						dependencies.add(v);

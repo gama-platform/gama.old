@@ -20,7 +20,6 @@ package msi.gama.kernel.model;
 
 import java.util.Collection;
 import msi.gama.kernel.experiment.IExperiment;
-import msi.gama.metamodel.topology.IEnvironment;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.species.ISpecies;
 
@@ -49,8 +48,8 @@ public interface IModel extends ISymbol {
 
 	public abstract Collection<IExperiment> getExperiments();
 
-	public abstract IEnvironment getModelEnvironment();
-
 	public abstract String getProjectPath();
+
+	public abstract boolean isTorus();
 
 }

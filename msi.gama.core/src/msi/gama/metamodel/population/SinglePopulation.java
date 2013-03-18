@@ -173,9 +173,10 @@ public class SinglePopulation extends AbstractPopulation {
 	 * @see msi.gama.util.IContainer#addAll(msi.gama.util.IContainer, java.lang.Object)
 	 */
 	@Override
-	public void addAll(final IContainer value, final Object param) throws GamaRuntimeException {
-		super.addAll(value, param);
-		agents.addAll(value, param);
+	public void addAll(IScope scope, final IContainer value, final Object param)
+		throws GamaRuntimeException {
+		super.addAll(scope, value, param);
+		agents.addAll(scope, value, param);
 	}
 
 	/**
@@ -183,64 +184,67 @@ public class SinglePopulation extends AbstractPopulation {
 	 *      java.lang.Object)
 	 */
 	@Override
-	public void addAll(final Integer index, final IContainer value, final Object param)
+	public void addAll(IScope scope, final Integer index, final IContainer value, final Object param)
 		throws GamaRuntimeException {
-		super.addAll(index, value, param);
-		agents.addAll(index, value, param);
+		super.addAll(scope, index, value, param);
+		agents.addAll(scope, index, value, param);
 	}
 
 	/**
 	 * @see msi.gama.util.IContainer#add(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void add(final IAgent value, final Object param) throws GamaRuntimeException {
-		super.add(value, param);
-		agents.add(value, param);
+	public void add(IScope scope, final IAgent value, final Object param)
+		throws GamaRuntimeException {
+		super.add(scope, value, param);
+		agents.add(scope, value, param);
 	}
 
 	/**
 	 * @see msi.gama.util.IContainer#add(java.lang.Object, java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void add(final Integer index, final IAgent value, final Object param)
+	public void add(IScope scope, final Integer index, final IAgent value, final Object param)
 		throws GamaRuntimeException {
-		super.add(index, value, param);
-		agents.add(index, value, param);
+		super.add(scope, index, value, param);
+		agents.add(scope, index, value, param);
 	}
 
 	/**
 	 * @see msi.gama.util.IContainer#removeAll(msi.gama.util.IContainer)
 	 */
 	@Override
-	public boolean removeAll(final IContainer<?, IAgent> value) throws GamaRuntimeException {
-		super.removeAll(value);
-		return agents.removeAll(value);
+	public boolean removeAll(IScope scope, final IContainer<?, IAgent> value)
+		throws GamaRuntimeException {
+		super.removeAll(scope, value);
+		return agents.removeAll(scope, value);
 	}
 
 	/**
 	 * @see msi.gama.util.IContainer#removeAt(java.lang.Object)
 	 */
 	@Override
-	public Object removeAt(final Integer index) throws GamaRuntimeException {
-		super.removeAt(index);
-		return agents.removeAt(index);
+	public Object removeAt(IScope scope, final Integer index) throws GamaRuntimeException {
+		super.removeAt(scope, index);
+		return agents.removeAt(scope, index);
 	}
 
 	/**
 	 * @see msi.gama.util.IContainer#putAll(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void putAll(final IAgent value, final Object param) throws GamaRuntimeException {
-		agents.putAll(value, param);
+	public void putAll(IScope scope, final IAgent value, final Object param)
+		throws GamaRuntimeException {
+		agents.putAll(scope, value, param);
 	}
 
 	/**
 	 * @see msi.gama.util.IContainer#put(java.lang.Object, java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void put(final Integer index, final IAgent value, final Object param)
+	public void put(IScope scope, final Integer index, final IAgent value, final Object param)
 		throws GamaRuntimeException {
-		agents.put(index, value, param);
+		agents.put(scope, index, value, param);
 	}
 
 	/**
@@ -298,7 +302,7 @@ public class SinglePopulation extends AbstractPopulation {
 	 * @see msi.gama.common.interfaces.IValue#stringValue()
 	 */
 	@Override
-	public String stringValue() throws GamaRuntimeException {
+	public String stringValue(IScope scope) throws GamaRuntimeException {
 		return null;
 	}
 
@@ -306,8 +310,8 @@ public class SinglePopulation extends AbstractPopulation {
 	 * @see msi.gama.common.interfaces.IValue#copy()
 	 */
 	@Override
-	public IValue copy() throws GamaRuntimeException {
-		return listValue(null);
+	public IValue copy(IScope scope) throws GamaRuntimeException {
+		return listValue(scope);
 	}
 
 	/**
@@ -332,9 +336,9 @@ public class SinglePopulation extends AbstractPopulation {
 	}
 
 	@Override
-	public boolean removeFirst(final IAgent a) {
+	public boolean removeFirst(IScope scope, final IAgent a) {
 		agents.remove(a);
-		return super.removeFirst(a);
+		return super.removeFirst(scope, a);
 	}
 
 	@Override

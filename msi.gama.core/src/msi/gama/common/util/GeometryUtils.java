@@ -18,41 +18,21 @@
  */
 package msi.gama.common.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
-import msi.gama.metamodel.shape.IShape;
+import java.io.IOException;
+import java.util.*;
+import msi.gama.database.SqlConnection;
+import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.IList;
+import msi.gama.util.*;
+import msi.gama.util.file.IGamaFile;
 import msi.gama.util.graph.IGraph;
-import msi.gaml.operators.Graphs;
+import msi.gaml.operators.*;
 import msi.gaml.types.GamaGeometryType;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.LinearRing;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
-import com.vividsolutions.jts.geom.PrecisionModel;
-import com.vividsolutions.jts.geom.TopologyException;
-import com.vividsolutions.jts.geom.prep.PreparedGeometry;
-import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
+import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.geom.prep.*;
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
-import com.vividsolutions.jts.triangulate.ConformingDelaunayTriangulationBuilder;
-import com.vividsolutions.jts.triangulate.ConstraintVertex;
-import com.vividsolutions.jts.triangulate.ConstraintVertexFactory;
-import com.vividsolutions.jts.triangulate.Segment;
+import com.vividsolutions.jts.triangulate.*;
 import com.vividsolutions.jts.triangulate.quadedge.LocateFailureException;
 
 /**
@@ -117,8 +97,10 @@ public class GeometryUtils {
 				line = line.intersection(geom);
 			} catch (Exception e) {
 				PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
-				line = GeometryPrecisionReducer.reducePointwise(line, pm).intersection(GeometryPrecisionReducer.reducePointwise(geom, pm));
-		
+				line =
+					GeometryPrecisionReducer.reducePointwise(line, pm).intersection(
+						GeometryPrecisionReducer.reducePointwise(geom, pm));
+
 			}
 			return pointInGeom(line, rand);
 		}
@@ -272,7 +254,9 @@ public class GeometryUtils {
 							g = square.intersection(geom);
 						} catch (Exception e) {
 							PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
-							g = GeometryPrecisionReducer.reducePointwise(geom, pm).intersection(GeometryPrecisionReducer.reducePointwise(square, pm));
+							g =
+								GeometryPrecisionReducer.reducePointwise(geom, pm).intersection(
+									GeometryPrecisionReducer.reducePointwise(square, pm));
 						}
 						// geoms.add(g);
 						if ( complex ) {
@@ -332,7 +316,7 @@ public class GeometryUtils {
 			try {
 				dtb.setSites(polygon);
 				dtb.setConstraints(polygon);
-				dtb.setTolerance(sizeTol);    
+				dtb.setTolerance(sizeTol);
 				tri = (GeometryCollection) dtb.getTriangles(getFactory());
 			} catch (LocateFailureException e) {
 				throw new GamaRuntimeException("Impossible to draw Geometry");
@@ -341,10 +325,10 @@ public class GeometryUtils {
 			PreparedGeometry env = pgfactory.create(pg.getGeometry().getEnvelope());
 			int nb = tri.getNumGeometries();
 			for ( int i = 0; i < nb; i++ ) {
-				
+
 				Geometry gg = tri.getGeometryN(i);
-				
-				if (env.covers(gg) && pg.covers(gg) ) {
+
+				if ( env.covers(gg) && pg.covers(gg) ) {
 					geoms.add(new GamaShape(gg));
 				}
 			}
@@ -524,5 +508,93 @@ public class GeometryUtils {
 			}
 		}
 		return locs;
+	}
+
+	// ---------------------------------------------------------------------------------------------
+	// Thai.truongminh@gmail.com
+	// Created date:24-Feb-2013: Process for SQL - MAP type
+	// Modified: 24-Feb-2012
+
+	public static Envelope computeEnvelopeFromSQLData(final IScope scope,
+		final Map<String, Object> bounds) {
+		Map<String, Object> params = bounds;
+
+		String dbtype = (String) params.get("dbtype");
+		String host = (String) params.get("host");
+		String port = (String) params.get("port");
+		String database = (String) params.get("database");
+		String user = (String) params.get("user");
+		String passwd = (String) params.get("passwd");
+		String crs = (String) params.get("crs");
+		String srid = (String) params.get("srid");
+		Boolean longitudeFirst =
+			params.get("longitudeFirst") == null ? true : (Boolean) params.get("longitudeFirst");
+		SqlConnection sqlConn;
+		Envelope env = null;
+		// create connection
+		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
+			String DBRelativeLocation =
+				scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+
+			// sqlConn=new SqlConnection(dbtype,database);
+			sqlConn = new SqlConnection(dbtype, DBRelativeLocation);
+		} else {
+			sqlConn = new SqlConnection(dbtype, host, port, database, user, passwd);
+		}
+
+		GamaList<Object> gamaList = sqlConn.selectDB((String) params.get("select"));
+
+		try {
+			env = SqlConnection.getBounds(scope, gamaList);
+			double latitude = env.centre().x;
+			double longitude = env.centre().y;
+
+			if ( crs != null || srid != null ) {
+				GisUtils gis = scope.getWorldScope().getGisUtils();
+				if ( crs != null ) {
+					gis.setTransformCRS(crs, latitude, longitude);
+				} else {
+					gis.setTransformCRS(srid, longitudeFirst, latitude, longitude);
+				}
+				env = gis.transform(env);
+
+			}
+		} catch (IOException e) {
+			throw new GamaRuntimeException(e);
+		}
+		return env;
+	}
+
+	public static Envelope computeEnvelopeFrom(final IScope scope, final Object obj) {
+		Envelope result = null;
+		if ( obj instanceof Number ) {
+			double size = ((Number) obj).doubleValue();
+			result = new Envelope(0, size, 0, size);
+		} else if ( obj instanceof ILocation ) {
+			ILocation size = (ILocation) obj;
+			result = new Envelope(0, size.getX(), 0, size.getY());
+		} else if ( obj instanceof IShape ) {
+			result = ((IShape) obj).getEnvelope();
+		} else if ( obj instanceof Envelope ) {
+			result = (Envelope) obj;
+		} else if ( obj instanceof String ) {
+			result = computeEnvelopeFrom(scope, Files.from(scope, (String) obj));
+		} else if ( obj instanceof Map ) {
+			result = computeEnvelopeFromSQLData(scope, (Map) obj);
+		} else if ( obj instanceof IGamaFile ) {
+			result = ((IGamaFile) obj).computeEnvelope(scope);
+		} else if ( obj instanceof IList ) {
+			Envelope boundsEnv = null;
+			for ( Object bounds : (IList) obj ) {
+				Envelope env = computeEnvelopeFrom(scope, bounds);
+				if ( boundsEnv == null ) {
+					boundsEnv = env;
+				} else {
+					boundsEnv.expandToInclude(env);
+				}
+			}
+			result = boundsEnv;
+		}
+		return result;
 	}
 }

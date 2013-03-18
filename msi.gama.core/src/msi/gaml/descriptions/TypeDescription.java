@@ -6,6 +6,7 @@ import msi.gama.util.*;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.IChildrenProvider;
+import msi.gaml.skills.WorldSkill;
 import msi.gaml.types.IType;
 
 /**
@@ -93,6 +94,10 @@ public class TypeDescription extends SymbolDescription {
 	@Override
 	public StatementDescription getAction(final String aName) {
 		return actions == null ? null : actions.get(aName);
+	}
+
+	public Collection<String> getActionNames() {
+		return actions == null ? Collections.EMPTY_LIST : actions.keySet();
 	}
 
 	@Override
@@ -233,6 +238,16 @@ public class TypeDescription extends SymbolDescription {
 				updatableVariableNames.add(s);
 			}
 		}
+		// FIXME March 2013: Hack to have the paths always at the beginning
+		// TO BE REMOVED LATER BY SPECIFYING A PRIORITY ON VARIABLES -- OR TO MOVE THESE VARIABLES
+		// TO THE EXPERIMENTATOR
+
+		if ( sortedVariableNames.remove(WorldSkill.PROJECT_PATH) ) {
+			sortedVariableNames.add(0, WorldSkill.PROJECT_PATH);
+		}
+		if ( sortedVariableNames.remove(WorldSkill.MODEL_PATH) ) {
+			sortedVariableNames.add(0, WorldSkill.MODEL_PATH);
+		}
 	}
 
 	public void resortVarName(final VariableDescription var) {
@@ -250,6 +265,16 @@ public class TypeDescription extends SymbolDescription {
 			sortedVariableNames.add(var.getName());
 		} else {
 			sortedVariableNames.add(index + 1, var.getName());
+		}
+		// FIXME March 2013: Hack to have the paths always at the beginning
+		// TO BE REMOVED LATER BY SPECIFYING A PRIORITY ON VARIABLES -- OR TO MOVE THESE VARIABLES
+		// TO THE EXPERIMENTATOR
+
+		if ( sortedVariableNames.remove(WorldSkill.PROJECT_PATH) ) {
+			sortedVariableNames.add(0, WorldSkill.PROJECT_PATH);
+		}
+		if ( sortedVariableNames.remove(WorldSkill.MODEL_PATH) ) {
+			sortedVariableNames.add(0, WorldSkill.MODEL_PATH);
 		}
 	}
 
@@ -270,8 +295,6 @@ public class TypeDescription extends SymbolDescription {
 			inheritActions(parent);
 			inheritVariables(parent);
 		}
-		sortVars();
-
 	}
 
 	protected void inheritVariables(final TypeDescription parent) {

@@ -21,7 +21,7 @@ package msi.gama.util.matrix;
 import java.util.*;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
@@ -29,81 +29,81 @@ import com.vividsolutions.jts.index.quadtree.IntervalSize;
 
 public class GamaFloatMatrix extends GamaMatrix<Double> {
 
-	static public GamaFloatMatrix from(final IMatrix m) {
+	static public GamaFloatMatrix from(IScope scope, final IMatrix m) {
 		if ( m instanceof GamaFloatMatrix ) { return (GamaFloatMatrix) m; }
-		if ( m instanceof GamaObjectMatrix ) { return new GamaFloatMatrix(m.getCols(), m.getRows(),
-			((GamaObjectMatrix) m).matrix); }
-		if ( m instanceof GamaIntMatrix ) { return new GamaFloatMatrix(m.getCols(), m.getRows(),
-			((GamaIntMatrix) m).matrix); }
+		if ( m instanceof GamaObjectMatrix ) { return new GamaFloatMatrix(scope, m.getCols(scope),
+			m.getRows(scope), ((GamaObjectMatrix) m).matrix); }
+		if ( m instanceof GamaIntMatrix ) { return new GamaFloatMatrix(scope, m.getCols(scope),
+			m.getRows(scope), ((GamaIntMatrix) m).matrix); }
 		return null;
 	}
 
-	static public GamaFloatMatrix from(final int c, final int r, final IMatrix m) {
-		if ( m instanceof GamaFloatMatrix ) { return new GamaFloatMatrix(c, r,
+	static public GamaFloatMatrix from(IScope scope, final int c, final int r, final IMatrix m) {
+		if ( m instanceof GamaFloatMatrix ) { return new GamaFloatMatrix(scope, c, r,
 			((GamaFloatMatrix) m).matrix); }
-		if ( m instanceof GamaObjectMatrix ) { return new GamaFloatMatrix(c, r,
+		if ( m instanceof GamaObjectMatrix ) { return new GamaFloatMatrix(scope, c, r,
 			((GamaObjectMatrix) m).matrix); }
-		if ( m instanceof GamaIntMatrix ) { return new GamaFloatMatrix(c, r,
+		if ( m instanceof GamaIntMatrix ) { return new GamaFloatMatrix(scope, c, r,
 			((GamaIntMatrix) m).matrix); }
 		return null;
 	}
 
 	double[] matrix;
 
-	public GamaFloatMatrix(final double[] mat) {
-		super(1, mat.length);
+	public GamaFloatMatrix(IScope scope, final double[] mat) {
+		super(scope, 1, mat.length);
 		matrix = mat;
 	}
 
-	public GamaFloatMatrix(final GamaPoint p) {
-		this((int) p.x, (int) p.y);
+	public GamaFloatMatrix(IScope scope, final GamaPoint p) {
+		this(scope, (int) p.x, (int) p.y);
 	}
 
-	public GamaFloatMatrix(final int cols, final int rows) {
-		super(cols, rows);
+	public GamaFloatMatrix(IScope scope, final int cols, final int rows) {
+		super(scope, cols, rows);
 		matrix = new double[cols * rows];
 	}
 
-	public GamaFloatMatrix(final int cols, final int rows, final double[] objects) {
-		this(cols, rows);
+	public GamaFloatMatrix(IScope scope, final int cols, final int rows, final double[] objects) {
+		this(scope, cols, rows);
 		java.lang.System.arraycopy(objects, 0, matrix, 0, Math.min(objects.length, rows * cols));
 	}
 
-	public GamaFloatMatrix(final int cols, final int rows, final int[] objects) {
-		this(cols, rows);
+	public GamaFloatMatrix(IScope scope, final int cols, final int rows, final int[] objects) {
+		this(scope, cols, rows);
 		java.lang.System.arraycopy(objects, 0, matrix, 0, Math.min(objects.length, rows * cols));
 	}
 
-	public GamaFloatMatrix(final int cols, final int rows, final Object[] objects) {
-		this(cols, rows);
+	public GamaFloatMatrix(IScope scope, final int cols, final int rows, final Object[] objects) {
+		this(scope, cols, rows);
 		for ( int i = 0, n = Math.min(objects.length, rows * cols); i < n; i++ ) {
 			matrix[i] = Cast.asFloat(null, objects[i]);
 		}
 	}
 
-	public GamaFloatMatrix(final List objects, final boolean flat, final GamaPoint preferredSize)
-		throws GamaRuntimeException {
-		super(objects, flat, preferredSize);
+	public GamaFloatMatrix(IScope scope, final List objects, final boolean flat,
+		final GamaPoint preferredSize) throws GamaRuntimeException {
+		super(scope, objects, flat, preferredSize);
 		matrix = new double[numRows * numCols];
 		if ( preferredSize != null ) {
 			for ( int i = 0, stop = Math.min(matrix.length, objects.size()); i < stop; i++ ) {
-				matrix[i] = Cast.asFloat(null, objects.get(i));
+				matrix[i] = Cast.asFloat(scope, objects.get(i));
 			}
 		} else if ( flat || GamaMatrix.isFlat(objects) ) {
 			for ( int i = 0, stop = objects.size(); i < stop; i++ ) {
-				matrix[i] = Cast.asFloat(null, objects.get(i));
+				matrix[i] = Cast.asFloat(scope, objects.get(i));
 			}
 		} else {
 			for ( int i = 0; i < numRows; i++ ) {
 				for ( int j = 0; j < numCols; j++ ) {
-					set(j, i, Cast.asFloat(null, ((List) objects.get(j)).get(i)));
+					set(scope, j, i, Cast.asFloat(scope, ((List) objects.get(j)).get(i)));
 				}
 			}
 		}
 	}
 
-	public GamaFloatMatrix(final Object[] mat) {
-		this(1, mat.length);
+	public GamaFloatMatrix(IScope scope, final Object[] mat) {
+		this(scope, 1, mat.length);
 		for ( int i = 0; i < mat.length; i++ ) {
 			matrix[i] = Cast.asFloat(null, mat[i]);
 		}
@@ -115,7 +115,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	}
 
 	@Override
-	public boolean _contains(final Object o) {
+	public boolean _contains(IScope scope, final Object o) {
 		if ( o instanceof Double ) {
 			Double d = (Double) o;
 			for ( int i = 0; i < matrix.length; i++ ) {
@@ -126,25 +126,25 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	}
 
 	@Override
-	public Double _first() {
+	public Double _first(IScope scope) {
 		if ( matrix.length == 0 ) { return 0d; }
 		return matrix[0];
 	}
 
 	@Override
-	public Double _last() {
+	public Double _last(IScope scope) {
 		if ( matrix.length == 0 ) { return 0d; }
 		return matrix[matrix.length - 1];
 	}
 
 	@Override
-	public Integer _length() {
+	public Integer _length(IScope scope) {
 		return matrix.length;
 	}
 
 	@Override
 	public Double _max(final IScope scope) {
-		Double max = - Double.MAX_VALUE;
+		Double max = -Double.MAX_VALUE;
 		for ( int i = 0; i < matrix.length; i++ ) {
 			if ( matrix[i] > max ) {
 				max = Double.valueOf(matrix[i]);
@@ -183,7 +183,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	}
 
 	@Override
-	public boolean _isEmpty() {
+	public boolean _isEmpty(IScope scope) {
 		for ( int i = 0; i < matrix.length; i++ ) {
 			if ( matrix[i] != 0d ) { return false; }
 		}
@@ -200,23 +200,23 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		if ( preferredSize == null ) { return this; }
 		final int cols = (int) preferredSize.getX();
 		final int rows = (int) preferredSize.getY();
-		return new GamaFloatMatrix(cols, rows, matrix);
+		return new GamaFloatMatrix(scope, cols, rows, matrix);
 	}
 
 	@Override
-	public IMatrix _reverse() throws GamaRuntimeException {
-		IMatrix result = new GamaFloatMatrix(numRows, numCols);
+	public IMatrix _reverse(IScope scope) throws GamaRuntimeException {
+		IMatrix result = new GamaFloatMatrix(scope, numRows, numCols);
 		for ( int i = 0; i < numCols; i++ ) {
 			for ( int j = 0; j < numRows; j++ ) {
-				result.set(j, i, get(i, j));
+				result.set(scope, j, i, get(scope, i, j));
 			}
 		}
 		return result;
 	}
 
 	@Override
-	public GamaFloatMatrix copy() {
-		return new GamaFloatMatrix(numCols, numRows, matrix);
+	public GamaFloatMatrix copy(IScope scope) {
+		return new GamaFloatMatrix(scope, numCols, numRows, matrix);
 	}
 
 	@Override
@@ -233,13 +233,14 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	}
 
 	@Override
-	public void _putAll(final Double o, final Object param) throws GamaRuntimeException {
+	public void _putAll(IScope scope, final Double o, final Object param)
+		throws GamaRuntimeException {
 		// Exception if o == null
 		Arrays.fill(matrix, o.doubleValue());
 	}
 
 	@Override
-	public Double get(final int col, final int row) {
+	public Double get(IScope scope, final int col, final int row) {
 		if ( col >= numCols || col < 0 || row >= numRows || row < 0 ) { return 0d; }
 		return matrix[row * numCols + col];
 	}
@@ -251,9 +252,10 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	// }
 
 	@Override
-	public void set(final int col, final int row, final Object obj) throws GamaRuntimeException {
+	public void set(IScope scope, final int col, final int row, final Object obj)
+		throws GamaRuntimeException {
 		if ( !(col >= numCols || col < 0 || row >= numRows || row < 0) ) {
-			matrix[row * numCols + col] = Cast.asFloat(GAMA.getDefaultScope(), obj);
+			matrix[row * numCols + col] = Cast.asFloat(scope, obj);
 		}
 		// put(col, row, Cast.asFloat(GAMA.getDefaultScope(), obj).doubleValue());
 	}
@@ -269,13 +271,13 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	}
 
 	@Override
-	public boolean _removeFirst(final Double o) throws GamaRuntimeException {
+	public boolean _removeFirst(IScope scope, final Double o) throws GamaRuntimeException {
 		// Exception if o == null
 		return remove(o.doubleValue());
 	}
 
 	@Override
-	public Double remove(final int col, final int row) {
+	public Double remove(IScope scope, final int col, final int row) {
 		if ( col >= numCols || col < 0 || row >= numRows || row < 0 ) { return 0d; }
 		final double o = matrix[row * numCols + col];
 		matrix[row * numCols + col] = 0d;
@@ -294,7 +296,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	}
 
 	@Override
-	public boolean _removeAll(final IContainer<?, Double> list) {
+	public boolean _removeAll(IScope scope, final IContainer<?, Double> list) {
 		// TODO Exception if o == null
 		for ( Double o : list ) {
 			removeAll(o.doubleValue());
@@ -314,7 +316,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		sb.append('[');
 		for ( int row = 0; row < numRows; row++ ) {
 			for ( int col = 0; col < numCols; col++ ) {
-				sb.append(get(col, row));
+				sb.append(get(null, col, row));
 				if ( col < numCols - 1 ) {
 					sb.append(',');
 				}

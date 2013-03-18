@@ -14,7 +14,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gama.util.graph.GamaGraph;
-import msi.gaml.expressions.JavaConstExpression;
+import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.*;
 import msi.gaml.types.IType;
@@ -33,7 +33,7 @@ public class AbstractGraphNode extends GamlAgent {
 		@Override
 		public boolean related(final IScope scope, final AbstractGraphNode p1,
 			final AbstractGraphNode p2) {
-			args.put("other", new JavaConstExpression(p2));
+			args.put("other", ConstantExpressionDescription.create(p2));
 			return Cast.asBool(scope, scope.execute(getAction(p1), p1, args));
 		}
 

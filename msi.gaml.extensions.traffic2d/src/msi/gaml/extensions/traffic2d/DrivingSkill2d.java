@@ -150,7 +150,7 @@ public class DrivingSkill2d extends MovingSkill {
 	@args(names = { "target", IKeyword.SPEED, "on", "target_type" })
 	public Integer primVehicleGoto(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
-		ILocation source = agent.getLocation().copy();
+		ILocation source = agent.getLocation().copy(scope);
 		double maxDist = computeDistance(scope, agent);
 		ILocation goal = computeTarget(scope, agent);
 		final GamaList<ISpecies> obsSpecies = computeObstacleSpecies(scope, agent);
@@ -174,7 +174,7 @@ public class DrivingSkill2d extends MovingSkill {
 		IPath path = (GamaPath) agent.getAttribute("current_path");
 		if ( path == null || !path.getTopology().equals(topo) ||
 			!path.getEndVertex().equals(goal) || !path.getStartVertex().equals(source) ) {
-			path = topo.pathBetween(source, goal);
+			path = topo.pathBetween(scope, source, goal);
 		}
 		if ( path == null ) {
 			scope.setStatus(ExecutionStatus.failure);
@@ -200,7 +200,7 @@ public class DrivingSkill2d extends MovingSkill {
 		 * }
 		 * /
 		 **/
-		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
+		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		// System.out.println("Max distance: " + maxDist);
 		/* obstacle agents */
 		IList<IAgent> neighbours =
@@ -260,8 +260,8 @@ public class DrivingSkill2d extends MovingSkill {
 			// System.out.println("current location: " + currentLocation.toString() + " | " +
 			// " candidate location: " + pointToAdd.toString());
 			GamaShape candidateShape =
-				(GamaShape) msi.gaml.operators.Spatial.Transformations.rotated_by(agentShape,
-					dAngle);
+				(GamaShape) msi.gaml.operators.Spatial.Transformations.rotated_by(scope,
+					agentShape, dAngle);
 			candidateShape.setLocation(pointToAdd);
 			// check for non-overlapping
 			if ( isNonOverlapping(scope, candidateShape, obstacleAgents) ) {
@@ -309,7 +309,7 @@ public class DrivingSkill2d extends MovingSkill {
 			for ( CandidateEntry currenEntry : candidateEntries ) {
 				GamaPoint currentPoint = currenEntry.candidatePoint;
 				double candidateDistance =
-					topo.distanceBetween(currentPoint.getLocation(), falseTarget);
+					topo.distanceBetween(scope, currentPoint.getLocation(), falseTarget);
 				if ( candidateDistance < minDistance && candidateDistance != currentDistance ) {
 					chosenCandidate = currenEntry;
 					minDistance = candidateDistance;
@@ -324,7 +324,7 @@ public class DrivingSkill2d extends MovingSkill {
 			setCurrentDistance(agent, minDistance);
 			int newHeading = chosenCandidate.candidateHeading;
 			int newRotateAngle = chosenCandidate.dAngle;
-			agent.setGeometry(msi.gaml.operators.Spatial.Transformations.rotated_by(agent,
+			agent.setGeometry(msi.gaml.operators.Spatial.Transformations.rotated_by(scope, agent,
 				newRotateAngle));
 			agent.setLocation(chosenCandidate.candidatePoint);
 			agent.setHeading(newHeading);
@@ -336,8 +336,8 @@ public class DrivingSkill2d extends MovingSkill {
 				new GamaPoint(currentLocation.x + maxDist * Maths.cos(candidateHeading),
 					currentLocation.y + maxDist * Maths.sin(candidateHeading));
 			GamaShape candidateShape =
-				(GamaShape) msi.gaml.operators.Spatial.Transformations.at_location(agentShape,
-					chosenCandidate);
+				(GamaShape) msi.gaml.operators.Spatial.Transformations.at_location(scope,
+					agentShape, chosenCandidate);
 			if ( isNonOverlapping(scope, candidateShape, obstacleAgents) ) {
 				agent.setLocation(chosenCandidate);
 			}
@@ -369,7 +369,7 @@ public class DrivingSkill2d extends MovingSkill {
 	@args(names = { "target", IKeyword.SPEED, "on", "target_type" })
 	public Integer primPedestrianGoto(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
-		ILocation source = agent.getLocation().copy();
+		ILocation source = agent.getLocation().copy(scope);
 		double maxDist = computeDistance(scope, agent);
 		ILocation goal = computeTarget(scope, agent);
 		final GamaList<ISpecies> obsSpecies = computeObstacleSpecies(scope, agent);
@@ -393,7 +393,7 @@ public class DrivingSkill2d extends MovingSkill {
 		IPath path = (GamaPath) agent.getAttribute("current_path");
 		if ( path == null || !path.getTopology().equals(topo) ||
 			!path.getEndVertex().equals(goal) || !path.getStartVertex().equals(source) ) {
-			path = topo.pathBetween(source, goal);
+			path = topo.pathBetween(scope, source, goal);
 		}
 		if ( path == null ) {
 			scope.setStatus(ExecutionStatus.failure);
@@ -419,7 +419,7 @@ public class DrivingSkill2d extends MovingSkill {
 		 * }
 		 * /
 		 **/
-		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
+		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		// System.out.println("Max distance: " + maxDist);
 		/* obstacle agents */
 		IList<IAgent> neighbours =
@@ -479,8 +479,8 @@ public class DrivingSkill2d extends MovingSkill {
 			// System.out.println("current location: " + currentLocation.toString() + " | " +
 			// " candidate location: " + pointToAdd.toString());
 			GamaShape candidateShape =
-				(GamaShape) msi.gaml.operators.Spatial.Transformations.rotated_by(agentShape,
-					dAngle);
+				(GamaShape) msi.gaml.operators.Spatial.Transformations.rotated_by(scope,
+					agentShape, dAngle);
 			candidateShape.setLocation(pointToAdd);
 			// check for non-overlapping
 			if ( isNonOverlapping(scope, candidateShape, obstacleAgents) ) {
@@ -528,7 +528,7 @@ public class DrivingSkill2d extends MovingSkill {
 			for ( CandidateEntry currenEntry : candidateEntries ) {
 				GamaPoint currentPoint = currenEntry.candidatePoint;
 				double candidateDistance =
-					topo.distanceBetween(currentPoint.getLocation(), falseTarget);
+					topo.distanceBetween(scope, currentPoint.getLocation(), falseTarget);
 				if ( candidateDistance < minDistance && candidateDistance != currentDistance ) {
 					chosenCandidate = currenEntry;
 					minDistance = candidateDistance;

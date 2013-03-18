@@ -58,24 +58,24 @@ public class AddStatement extends AbstractContainerStatement {
 	}
 
 	@Override
-	protected void apply(final IScope stack, final Object object, final Object position,
+	protected void apply(final IScope scope, final Object object, final Object position,
 		final Boolean whole, final IContainer container) throws GamaRuntimeException {
 		if ( container.isFixedLength() ) { throw new GamaRuntimeException("Cannot add to " +
 			list.toGaml(), true); }
-		Object param = weight == null ? null : weight.value(stack);
+		Object param = weight == null ? null : weight.value(scope);
 		if ( position == null ) {
 			if ( asAll ) {
-				container.addAll((IContainer) object, param);
+				container.addAll(scope, scope, (IContainer) object, param);
 			} else {
-				container.add(object, param);
+				container.add(scope, object, param);
 			}
 		} else {
 			if ( !container.checkBounds(position, true) ) { throw new GamaRuntimeException(
 				"Index " + position + " out of bounds of " + list.toGaml(), true); }
 			if ( !asAll ) {
-				container.add(position, object, param);
+				container.add(scope, position, object, param);
 			} else {
-				container.addAll(position, (IContainer) object, param);
+				container.addAll(scope, position, (IContainer) object, param);
 			}
 		}
 	}

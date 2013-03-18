@@ -116,7 +116,7 @@ public class VariableFactory extends SymbolFactory {
 	protected void privateValidate(final IDescription desc) {
 		super.privateValidate(desc);
 		VariableDescription vd = (VariableDescription) desc;
-		assertNameIsNotTypeOrSpecies(vd);
+		assertNameIsNotType(vd);
 		assertNameIsNotReserved(vd);
 		assertCanBeFunction(vd);
 		assertValueOrFunctionIsNotConst(vd);

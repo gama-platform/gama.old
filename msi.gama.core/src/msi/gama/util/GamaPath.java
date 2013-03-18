@@ -24,7 +24,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.*;
-import msi.gama.runtime.GAMA;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.*;
@@ -243,7 +243,7 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 	}
 
 	@Override
-	public GamaPath copy() {
+	public GamaPath copy(IScope scope) {
 		return new GamaPath(topology, source, target, segments);
 	}
 
@@ -283,7 +283,7 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 	}
 
 	@Override
-	public String stringValue() {
+	public String stringValue(IScope scope) {
 		return toGaml();
 	}
 
@@ -298,7 +298,7 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 	}
 
 	@Override
-	public double getDistance() {
+	public double getDistance(IScope scope) {
 		if ( getEdgeList() == null || getEdgeList().isEmpty() ) { return Double.MAX_VALUE; }
 		Coordinate[] coordsSource = getEdgeList().get(0).getInnerGeometry().getCoordinates();
 		Coordinate[] coordsTarget =
@@ -315,14 +315,15 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 			}
 			return d;
 		}
-		return getDistanceComplex(keepSource, keepTarget);
+		return getDistanceComplex(scope, keepSource, keepTarget);
 	}
 
-	private double getDistanceComplex(final boolean keepSource, final boolean keepTarget) {
+	private double getDistanceComplex(IScope scope, final boolean keepSource,
+		final boolean keepTarget) {
 		double distance = 0;
 		int index = 0;
 		int indexSegment = 1;
-		ILocation currentLocation = source.getLocation().copy();
+		ILocation currentLocation = source.getLocation().copy(scope);
 		IList<IShape> edges = getEdgeList();
 		int nb = edges.size();
 		if ( !keepSource ) {

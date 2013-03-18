@@ -393,7 +393,7 @@ public class Cast {
 		"string(0) 			--: 0", "string({23, 4.0} 	--: {23.0;4.0}", "string(5::34) 		--: 5::34",
 		"string(['a'::345, 'b'::13, 'c'::12])  --:  b,13; c,12; a,345;" })
 	public static String asString(final IScope scope, final Object val) throws GamaRuntimeException {
-		return GamaStringType.staticCast(val, null);
+		return GamaStringType.staticCast(scope, val, null);
 	}
 
 	@operator(value = "to_gaml")

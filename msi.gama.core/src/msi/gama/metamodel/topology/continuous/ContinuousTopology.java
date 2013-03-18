@@ -18,8 +18,6 @@
  */
 package msi.gama.metamodel.topology.continuous;
 
-import com.vividsolutions.jts.geom.Geometry;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.*;
@@ -42,8 +40,8 @@ public class ContinuousTopology extends AbstractTopology {
 	 * @param directMacro
 	 * @param torus
 	 */
-	public ContinuousTopology(final IScope scope, final IShape environment , final boolean torus ) {
-		super(scope, environment , torus );
+	public ContinuousTopology(final IScope scope, final IShape environment, final boolean torus) {
+		super(scope, environment, torus);
 		places = GamaList.with(environment);
 	}
 
@@ -51,7 +49,7 @@ public class ContinuousTopology extends AbstractTopology {
 	 * @see msi.gama.interfaces.IValue#stringValue()
 	 */
 	@Override
-	public String stringValue() throws GamaRuntimeException {
+	public String stringValue(IScope scope) throws GamaRuntimeException {
 		return "Continuous topology in " + environment.toString();
 	}
 
@@ -67,8 +65,8 @@ public class ContinuousTopology extends AbstractTopology {
 	 * @see msi.gama.environment.AbstractTopology#_copy()
 	 */
 	@Override
-	protected ITopology _copy() {
-		return new ContinuousTopology(scope, environment , isTorus);
+	protected ITopology _copy(IScope scope) {
+		return new ContinuousTopology(scope, environment, isTorus);
 	}
 
 	/**
@@ -88,16 +86,16 @@ public class ContinuousTopology extends AbstractTopology {
 	}
 
 	@Override
-	public Integer directionInDegreesTo(final IShape g1, final IShape g2) {
+	public Integer directionInDegreesTo(IScope scope, final IShape g1, final IShape g2) {
 		// TODO Attention : calcul fait uniquement sur les locations. Il conviendrait plutot de
 		// faire une DistanceOp().getNearestPoints()
 		ILocation source = g1.getLocation();
 		ILocation target = g2.getLocation();
-		if (isTorus) {
-			source = normalizeLocation(source,false);
-			target = normalizeLocation(target,false);
+		if ( isTorus ) {
+			source = normalizeLocation(source, false);
+			target = normalizeLocation(target, false);
 		}
-			
+
 		// TODO for the moment, the direction to unreachable places can be determined
 		// if ( !isValidLocation(source) ) {
 		// ; // Necessary ?
@@ -116,24 +114,22 @@ public class ContinuousTopology extends AbstractTopology {
 	}
 
 	@Override
-	public Double distanceBetween(final IShape g1, final IShape g2) {
+	public Double distanceBetween(IScope scope, final IShape g1, final IShape g2) {
 		// if ( !isValidGeometry(g1) ) { return Double.MAX_VALUE; }
 		// TODO is it useful to keep these tests ?
 		// if ( !isValidGeometry(g2) ) { return Double.MAX_VALUE; }
 		if ( g1 == g2 ) { return 0d; }
-		if (isTorus)
-			return returnToroidalGeom(g1).distance(returnToroidalGeom(g2));
+		if ( isTorus ) { return returnToroidalGeom(g1).distance(returnToroidalGeom(g2)); }
 		return g1.euclidianDistanceTo(g2);
 	}
 
 	@Override
-	public Double distanceBetween(final ILocation g1, final ILocation g2) {
+	public Double distanceBetween(IScope scope, final ILocation g1, final ILocation g2) {
 		// if ( !isValidLocation(g1) ) { return Double.MAX_VALUE; }
 		// TODO is it useful to keep these tests ?
 		// if ( !isValidLocation(g2) ) { return Double.MAX_VALUE; }
 		if ( g1 == g2 ) { return 0d; }
-		if (isTorus)
-			return returnToroidalGeom(g1).distance(returnToroidalGeom(g2));
+		if ( isTorus ) { return returnToroidalGeom(g1).distance(returnToroidalGeom(g2)); }
 		return g1.euclidianDistanceTo(g2);
 	}
 
@@ -143,5 +139,4 @@ public class ContinuousTopology extends AbstractTopology {
 		return isTorus;
 	}
 
-	
 }

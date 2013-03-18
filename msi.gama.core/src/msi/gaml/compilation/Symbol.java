@@ -21,7 +21,7 @@ package msi.gaml.compilation;
 import java.util.List;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 
 /**
@@ -79,7 +79,7 @@ public abstract class Symbol implements ISymbol {
 		return exp == null ? defaultValue : exp.literalValue();
 	}
 
-	protected void setFacet(final String key, final IExpression expr) {
+	protected void setFacet(final String key, final IExpressionDescription expr) {
 		if ( description == null ) { return; }
 		description.getFacets().put(key, expr);
 	}

@@ -20,8 +20,9 @@ package msi.gama.util.file;
 
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import msi.gaml.operators.Files;
+import com.vividsolutions.jts.geom.Envelope;
 
 public class GamaFolderFile extends GamaFile<Integer, String> {
 
@@ -39,7 +40,7 @@ public class GamaFolderFile extends GamaFile<Integer, String> {
 	}
 
 	@Override
-	protected IGamaFile _copy() {
+	protected IGamaFile _copy(IScope scope) {
 		// TODO What to do ?
 		return null;
 	}
@@ -60,7 +61,7 @@ public class GamaFolderFile extends GamaFile<Integer, String> {
 	 * @see msi.gama.util.GamaFile#fillBuffer()
 	 */
 	@Override
-	protected void fillBuffer() throws GamaRuntimeException {
+	protected void fillBuffer(IScope scope) throws GamaRuntimeException {
 		if ( buffer != null ) { return; }
 		buffer = new GamaList(getFile().list());
 	}
@@ -84,6 +85,22 @@ public class GamaFolderFile extends GamaFile<Integer, String> {
 	@Override
 	public String getKeyword() {
 		return Files.FOLDER;
+	}
+
+	@Override
+	public Envelope computeEnvelope(final IScope scope) {
+		IContainer<Integer, String> files = getContents(scope);
+		Envelope globalEnv = null;
+		for ( String s : files ) {
+			IGamaFile f = Files.from(scope, s);
+			Envelope env = f.computeEnvelope(scope);
+			if ( globalEnv == null ) {
+				globalEnv = env;
+			} else {
+				globalEnv.expandToInclude(env);
+			}
+		}
+		return globalEnv;
 	}
 
 }

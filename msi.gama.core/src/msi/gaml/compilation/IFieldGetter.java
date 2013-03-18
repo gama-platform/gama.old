@@ -19,6 +19,7 @@
 package msi.gaml.compilation;
 
 import msi.gama.common.interfaces.IValue;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
@@ -29,6 +30,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public interface IFieldGetter {
 
-	Object run(IValue v) throws GamaRuntimeException;
+	Object run(IScope scope, IValue v) throws GamaRuntimeException;
 
 }

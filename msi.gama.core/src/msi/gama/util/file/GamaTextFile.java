@@ -26,6 +26,7 @@ import msi.gama.util.GamaList;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.operators.Files;
 import msi.gaml.types.*;
+import com.vividsolutions.jts.geom.Envelope;
 
 public class GamaTextFile extends GamaFile<Integer, String> {
 
@@ -41,7 +42,7 @@ public class GamaTextFile extends GamaFile<Integer, String> {
 	}
 
 	@Override
-	protected IGamaFile _copy() {
+	protected IGamaFile _copy(IScope scope) {
 		return null;
 	}
 
@@ -53,15 +54,15 @@ public class GamaTextFile extends GamaFile<Integer, String> {
 	@Override
 	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize)
 		throws GamaRuntimeException {
-		final String string = stringValue();
+		final String string = stringValue(scope);
 		if ( string == null ) { return null; }
-		return GamaMatrixType.from(string, preferredSize); // Necessary ?
+		return GamaMatrixType.from(scope, string, preferredSize); // Necessary ?
 
 	}
 
 	@Override
-	public String _stringValue() throws GamaRuntimeException {
-		getContents();
+	public String _stringValue(final IScope scope) throws GamaRuntimeException {
+		getContents(null);
 		StringBuilder sb = new StringBuilder(buffer.length(null) * 200); // VERIFY NULL SCOPE
 		for ( String s : buffer ) {
 			sb.append(s).append("\n"); // TODO Factorize the different calls to "new line" ...
@@ -81,7 +82,7 @@ public class GamaTextFile extends GamaFile<Integer, String> {
 	 * @see msi.gama.util.GamaFile#fillBuffer()
 	 */
 	@Override
-	protected void fillBuffer() throws GamaRuntimeException {
+	protected void fillBuffer(IScope scope) throws GamaRuntimeException {
 		if ( buffer != null ) { return; }
 		try {
 			final BufferedReader in = new BufferedReader(new FileReader(getFile()));
@@ -107,6 +108,38 @@ public class GamaTextFile extends GamaFile<Integer, String> {
 	@Override
 	protected void flushBuffer() throws GamaRuntimeException {
 		// TODO A faire.
+
+	}
+
+	@Override
+	public Envelope computeEnvelope(final IScope scope) {
+		Envelope boundsEnv = null;
+		if ( getExtension().equals("asc") ) {
+			try {
+				File ascFile = getFile();
+				InputStream ips = new FileInputStream(ascFile);
+				InputStreamReader ipsr = new InputStreamReader(ips);
+				BufferedReader in = new BufferedReader(ipsr);
+
+				String[] nbColsStr = in.readLine().split(" ");
+				int nbCols = Integer.valueOf(nbColsStr[nbColsStr.length - 1]);
+				String[] nbRowsStr = in.readLine().split(" ");
+				int nbRows = Integer.valueOf(nbRowsStr[nbRowsStr.length - 1]);
+				String[] xllcornerStr = in.readLine().split(" ");
+				double xllcorner = Double.valueOf(xllcornerStr[xllcornerStr.length - 1]);
+				String[] yllcornerStr = in.readLine().split(" ");
+				double yllcorner = Double.valueOf(yllcornerStr[yllcornerStr.length - 1]);
+				String[] cellSizeStr = in.readLine().split(" ");
+				double cellSize = Double.valueOf(cellSizeStr[cellSizeStr.length - 1]);
+				boundsEnv =
+					new Envelope(xllcorner, xllcorner + cellSize * nbCols, yllcorner, yllcorner +
+						cellSize * nbRows);
+				in.close();
+			} catch (IOException e) {
+				throw new GamaRuntimeException(e);
+			}
+		}
+		return boundsEnv;
 
 	}
 

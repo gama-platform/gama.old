@@ -98,9 +98,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 
 	GamaMap hexAgentToLoc = null;
 
-	public GamaSpatialMatrix(final IShape environment, final Integer cols, final Integer rows,
-		final boolean isTorus, final boolean usesVN) throws GamaRuntimeException {
-		super(cols, rows);
+	public GamaSpatialMatrix(IScope scope, final IShape environment, final Integer cols,
+		final Integer rows, final boolean isTorus, final boolean usesVN)
+		throws GamaRuntimeException {
+		super(scope, cols, rows);
 		environmentFrame = environment.getGeometry();
 		bounds = environmentFrame.getEnvelope();
 		cellWidth = bounds.getWidth() / cols;
@@ -116,13 +117,13 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 		firstCell = -1;
 		lastCell = -1;
 		this.isHexagon = false;
-		createCells(false);
+		createCells(scope, false);
 	}
 
-	public GamaSpatialMatrix(final IShape environment, final Integer cols, final Integer rows,
-		final boolean isTorus, final boolean usesVN, final boolean isHexagon)
+	public GamaSpatialMatrix(IScope scope, final IShape environment, final Integer cols,
+		final Integer rows, final boolean isTorus, final boolean usesVN, final boolean isHexagon)
 		throws GamaRuntimeException {
-		super(cols, rows);
+		super(scope, cols, rows);
 		environmentFrame = environment.getGeometry();
 		bounds = environmentFrame.getEnvelope();
 		cellWidth = bounds.getWidth() / cols;
@@ -194,7 +195,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 		}
 	}
 
-	public void createCells(final boolean partialCells) throws GamaRuntimeException {
+	public void createCells(IScope scope, final boolean partialCells) throws GamaRuntimeException {
 		// Geometry g = environmentFrame.getInnerGeometry();
 		boolean isRectangle = environmentFrame.getInnerGeometry().isRectangle();
 		GamaPoint p = new GamaPoint(0, 0);
@@ -203,7 +204,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 				.getMinY());
 
 		IShape translatedReferenceFrame =
-			Spatial.Transformations.translated_by(environmentFrame, origin);
+			Spatial.Transformations.translated_by(scope, environmentFrame, origin);
 		// GeometryUtils.translation(g, -origin.x, -origin.y);
 
 		double cmx = cellWidth / 2;
@@ -351,32 +352,34 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	}
 
 	@Override
-	public IShape get(final int col, final int row) {
+	public IShape get(IScope scope, final int col, final int row) {
 		int index = getPlaceIndexAt(col, row);
 		if ( index != -1 ) { return matrix[index]; }
 		return null;
 	}
 
 	@Override
-	public void set(final int col, final int row, final Object obj) throws GamaRuntimeException {
+	public void set(IScope scope, final int col, final int row, final Object obj)
+		throws GamaRuntimeException {
 		// TODO not allowed for the moment (fixed grid)
 	}
 
 	@Override
-	public IShape remove(final int col, final int row) {
+	public IShape remove(IScope scope, final int col, final int row) {
 		// TODO not allowed for the moment (fixed grid)
 		return null;
 	}
 
 	@Override
-	public boolean _removeFirst(final IShape o) throws GamaRuntimeException {
+	public boolean _removeFirst(IScope scope, final IShape o) throws GamaRuntimeException {
 		// TODO not allowed for the moment (fixed grid)
 		return false;
 
 	}
 
 	@Override
-	public boolean _removeAll(final IContainer<?, IShape> value) throws GamaRuntimeException {
+	public boolean _removeAll(IScope scope, final IContainer<?, IShape> value)
+		throws GamaRuntimeException {
 		// TODO not allowed for the moment (fixed grid)
 		return false;
 	}
@@ -409,24 +412,24 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	}
 
 	@Override
-	public Integer _length() {
+	public Integer _length(IScope scope) {
 		return actualNumberOfCells;
 	}
 
 	@Override
-	public IShape _first() {
+	public IShape _first(IScope scope) {
 		if ( firstCell == -1 ) { return null; }
 		return matrix[firstCell];
 	}
 
 	@Override
-	public IShape _last() {
+	public IShape _last(IScope scope) {
 		if ( lastCell == -1 ) { return null; }
 		return matrix[lastCell];
 	}
 
 	@Override
-	public IMatrix _reverse() throws GamaRuntimeException {
+	public IMatrix _reverse(IScope scope) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -444,19 +447,20 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	}
 
 	@Override
-	public IMatrix copy() throws GamaRuntimeException {
+	public IMatrix copy(IScope scope) throws GamaRuntimeException {
 		GamaSpatialMatrix result =
-			new GamaSpatialMatrix(environmentFrame, numCols, numRows, isTorus, usesVN);
+			new GamaSpatialMatrix(scope, environmentFrame, numCols, numRows, isTorus, usesVN);
 		return result;
 	}
 
 	@Override
-	public boolean _contains(final Object o) {
-		return listValue(null).contains(o);
+	public boolean _contains(IScope scope, final Object o) {
+		return listValue(scope).contains(o);
 	}
 
 	@Override
-	public void _putAll(final IShape value, final Object param) throws GamaRuntimeException {
+	public void _putAll(IScope scope, final IShape value, final Object param)
+		throws GamaRuntimeException {
 		// TODO Not allowed for the moment
 
 	}
@@ -472,7 +476,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	}
 
 	@Override
-	public boolean _isEmpty() {
+	public boolean _isEmpty(IScope scope) {
 		return actualNumberOfCells == 0;
 	}
 

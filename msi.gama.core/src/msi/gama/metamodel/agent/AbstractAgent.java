@@ -20,7 +20,7 @@ package msi.gama.metamodel.agent;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.RandomUtils;
+import msi.gama.common.util.*;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -43,15 +43,14 @@ public abstract class AbstractAgent implements IAgent {
 
 	/** The population that this agent belongs to. */
 	protected IPopulation population;
-	protected Map<String, Object> attributes;
+	protected final Map<Object, Object> attributes = new LinkedHashMap();
 	protected int index;
 	/** The shape of agent with relative coordinate on the environment of host/environment. */
 	protected IShape geometry;
 	protected String name;
-	// protected ISimulation simulation;
 
 	/**
-	 * If true, this means that the agent will soon be died
+	 * If true, this means that the agent will soon be dead.
 	 * In this case, dead() will return true.
 	 * 
 	 */
@@ -65,8 +64,29 @@ public abstract class AbstractAgent implements IAgent {
 
 	public AbstractAgent(final IPopulation p) {
 		population = p;
-		attributes = new HashMap<String, Object>();
 	}
+
+	@Override
+	public void setExtraAttributes(Map<Object, Object> map) {
+		if ( map == null ) { return; }
+		attributes.putAll(map);
+	}
+
+	@Override
+	public synchronized Object getAttribute(Object index) {
+		return attributes.get(index);
+	}
+
+	@Override
+	public final synchronized void setAttribute(final String name, final Object val) {
+		if ( name.equals("has_food") ) {
+			GuiUtils.debug("has_food in AbstractAgent.setAttribute())");
+		}
+		attributes.put(name, val);
+	}
+
+	@Override
+	public abstract void updateAttributes(final IScope scope) throws GamaRuntimeException;
 
 	@Override
 	public void initializeMicroPopulations(final IScope scope) throws GamaRuntimeException {
@@ -87,6 +107,16 @@ public abstract class AbstractAgent implements IAgent {
 				microPop.initializeFor(scope);
 			}
 		}
+	}
+
+	@Override
+	public void initializeMicroPopulation(final IScope scope, final String name) {
+		ISpecies microSpec = getSpecies().getMicroSpecies(name);
+		if ( microSpec == null ) { return; }
+		if ( AbstractGamlAdditions.isBuiltIn(name) ) { return; }
+		IPopulation microPop = new GamlPopulation(this, microSpec);
+		microPopulations.put(microSpec, microPop);
+		microPop.initializeFor(scope);
 	}
 
 	@Override
@@ -152,7 +182,8 @@ public abstract class AbstractAgent implements IAgent {
 		// microPopulations = null;
 
 		try {
-			population.removeFirst(this);
+			// TODO Check null for scope
+			population.removeFirst(null, this);
 
 		} catch (GamaRuntimeException e) {
 			GAMA.reportError(e);
@@ -170,24 +201,6 @@ public abstract class AbstractAgent implements IAgent {
 
 		releaseLock();
 	}
-
-	@Override
-	public final synchronized Map<String, Object> getAttributes() {
-		return attributes;
-	}
-
-	@Override
-	public final synchronized Object getAttribute(final String name) {
-		return attributes.get(name);
-	}
-
-	@Override
-	public final synchronized void setAttribute(final String name, final Object val) {
-		attributes.put(name, val);
-	}
-
-	@Override
-	public abstract void updateAttributes(final IScope scope) throws GamaRuntimeException;
 
 	@Override
 	public void schedule(final IScope scope) throws GamaRuntimeException {
@@ -282,12 +295,13 @@ public abstract class AbstractAgent implements IAgent {
 		if ( newGeometry == null || newGeometry.getInnerGeometry() == null ) { return; }
 
 		ITopology topology = population.getTopology();
-		ILocation newGeomLocation = newGeometry.getLocation().copy();
+		ILocation newGeomLocation = newGeometry.getLocation().copy(getScope());
 
 		// if the old geometry is "shared" with another agent, we create a new one.
 		// otherwise, we copy it directly.
 		IAgent other = newGeometry.getAgent();
-		GamaShape newLocalGeom = (GamaShape) (other == null ? newGeometry : newGeometry.copy());
+		GamaShape newLocalGeom =
+			(GamaShape) (other == null ? newGeometry : newGeometry.copy(getScope()));
 		topology.normalizeLocation(newGeomLocation, false);
 
 		if ( !newGeomLocation.equals(newLocalGeom.getLocation()) ) {
@@ -311,7 +325,7 @@ public abstract class AbstractAgent implements IAgent {
 	public synchronized void setLocation(final ILocation point) {
 		// Pourquoi "synchronized" ?
 		if ( point == null ) { return; }
-		ILocation newLocation = point.copy();
+		ILocation newLocation = point.copy(getScope());
 		ITopology topology = population.getTopology();
 		if ( topology == null ) { return; }
 		topology.normalizeLocation(newLocation, false);
@@ -326,7 +340,8 @@ public abstract class AbstractAgent implements IAgent {
 					.getEnvelope());
 			// Envelope previousEnvelope = geometry.getEnvelope();
 			geometry.setLocation(newLocation);
-			Integer newHeading = topology.directionInDegreesTo(previousPoint, newLocation);
+			Integer newHeading =
+				topology.directionInDegreesTo(getScope(), previousPoint, newLocation);
 			if ( newHeading != null && !getTopology().isTorus() ) {
 				setHeading(newHeading);
 			}
@@ -441,7 +456,7 @@ public abstract class AbstractAgent implements IAgent {
 	// }
 
 	@Override
-	public String stringValue() {
+	public String stringValue(IScope scope) {
 		return getName();
 	}
 
@@ -621,8 +636,4 @@ public abstract class AbstractAgent implements IAgent {
 		return this;
 	}
 
-	@Override
-	public boolean isTorus() {
-		return false;
-	}
 }

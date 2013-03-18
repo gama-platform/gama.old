@@ -24,6 +24,7 @@ import msi.gama.lang.utils.EGaml;
 import msi.gaml.descriptions.IGamlDescription;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
+import org.eclipse.xtext.naming.*;
 import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider;
 import com.google.inject.Inject;
 
@@ -33,6 +34,9 @@ import com.google.inject.Inject;
  * see http://www.eclipse.org/Xtext/documentation/latest/xtext.html#labelProvider
  */
 public class GamlLabelProvider extends DefaultEObjectLabelProvider {
+
+	@Inject
+	private IQualifiedNameProvider nameProvider;
 
 	@Inject
 	public GamlLabelProvider(final AdapterFactoryLabelProvider delegate) {
@@ -48,7 +52,6 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 
 	public String removeTags(final String string) {
 		if ( string == null || string.length() == 0 ) { return string; }
-
 		Matcher m = REMOVE_TAGS.matcher(string);
 		return m.replaceAll("");
 	}
@@ -60,14 +63,37 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 		if ( index >= 0 ) {
 			display = display.substring(index + 1);
 		}
-		return display;
+		return "import " + display;
 	}
 
 	String text(final EObject ele) {
+		String text;
+		QualifiedName qn = nameProvider.getFullyQualifiedName(ele);
+		String key = EGaml.getKeyOf(ele);
+		if ( key == null ) {
+			key = "";
+		}
+		if ( qn == null ) {
+			text = key;
+			if ( ele instanceof Statement ) {
+				String name = EGaml.getNameOf((Statement) ele);
+				if ( name == null ) {
+					Expression expr = ((Statement) ele).getExpr();
+					if ( expr != null ) {
+						name = EGaml.getKeyOf(expr);
+					}
+				}
+				text += " " + (name == null ? "" : name);
+			}
+		} else {
+			text = key + " " + qn.toString();
+		}
+
 		IGamlDescription ed = EGaml.getGamlDescription(ele);
-		if ( ed != null ) { return removeTags(ed.getTitle()); }
-		String trial = EGaml.getKeyOf(ele);
-		return trial == null ? "" : trial;
+		if ( ed != null ) {
+			text += " [" + removeTags(ed.getTitle()) + "]";
+		}
+		return text;
 	}
 
 	// String text(final Definition obj) {
@@ -81,15 +107,22 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 	// return s + " " + obj.getName();
 	// }
 
-	String text(final Statement obj) {
-		IGamlDescription ed = EGaml.getGamlDescription(obj);
-		if ( ed != null ) { return removeTags(ed.getTitle()); }
-		String s = text((EObject) obj);
-		String n = EGaml.getNameOf(obj);
-		if ( n == null ) {
-			n = "";
-		}
-		return s + " " + n;
+	// String text(final Statement obj) {
+	// if ( !obj.getKey().equals(IKeyword.SPECIES) && !obj.getKey().equals(IKeyword.GRID) ) {
+	// IGamlDescription ed = EGaml.getGamlDescription(obj);
+	// if ( ed != null ) { return removeTags(ed.getTitle()); }
+	// }
+	// String s = EGaml.getKeyOf(obj);
+	// QualifiedName qn = nameProvider.getFullyQualifiedName(obj);
+	// String n = qn == null ? EGaml.getNameOf(obj) : qn.toString();
+	// if ( n == null ) {
+	// n = "";
+	// }
+	// return s + " " + n;
+	// }
+
+	String text(final Model obj) {
+		return obj.getName();
 	}
 
 	String image(final Import ele) {

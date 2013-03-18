@@ -20,9 +20,11 @@ package msi.gama.lang.gaml;
 
 import msi.gama.lang.gaml.linking.GamlLinkingService;
 import msi.gama.lang.gaml.resource.*;
+import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import org.eclipse.xtext.linking.ILinkingService;
-import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.resource.*;
+import org.eclipse.xtext.resource.containers.StateBasedContainerManager;
+import org.eclipse.xtext.service.SingletonBinding;
 import com.google.inject.Binder;
 
 /**
@@ -36,23 +38,27 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		super.configure(binder);
 		binder.bind(IDefaultResourceDescriptionStrategy.class).to(
 			GamlResourceDescriptionStrategy.class);
-		binder.bind(IQualifiedNameConverter.class).to(GamlNameConverter.class);
-		binder.bind(IResourceDescription.Manager.class).to(GamlResourceDescriptionManager.class);
-		binder.bind(DescriptionUtils.class).to(GamlDescriptionUtils.class);
+		// binder.bind(IQualifiedNameConverter.class).to(GamlNameConverter.class);
+		// binder.bind(IResourceDescription.Manager.class).to(GamlResourceDescriptionManager.class);
+		// binder.bind(DescriptionUtils.class).to(GamlDescriptionUtils.class);
 	}
+
+	// @Override
+	// public Class<? extends IQualifiedNameProvider> bindIQualifiedNameProvider() {
+	// return GamlQualifiedNameProvider.class;
+	// }
 
 	@Override
 	// @SingletonBinding(eager = true)
 	public Class<? extends msi.gama.lang.gaml.validation.GamlJavaValidator> bindGamlJavaValidator() {
-		return msi.gama.lang.gaml.validation.GamlJavaValidator.class;
+		return GamlJavaValidator.class;
 	}
 
-	// @Override
-	// @SingletonBinding(eager = true)
-	// public Class<? extends org.eclipse.xtext.scoping.IGlobalScopeProvider>
-	// bindIGlobalScopeProvider() {
-	// return msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider.class;
-	// }
+	@Override
+	@SingletonBinding(eager = true)
+	public Class<? extends org.eclipse.xtext.scoping.IGlobalScopeProvider> bindIGlobalScopeProvider() {
+		return msi.gama.lang.gaml.scoping.BuiltinGlobalScopeProvider.class;
+	}
 
 	@Override
 	public Class<? extends ILinkingService> bindILinkingService() {
@@ -62,6 +68,11 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	@Override
 	public Class<? extends XtextResource> bindXtextResource() {
 		return GamlResource.class;
+	}
+
+	@Override
+	public Class<? extends IContainer.Manager> bindIContainer$Manager() {
+		return StateBasedContainerManager.class;
 	}
 
 }

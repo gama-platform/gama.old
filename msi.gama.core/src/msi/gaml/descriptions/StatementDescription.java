@@ -119,16 +119,12 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	private void explodeArgs() {
-		addArgs(GAMA.getExpressionFactory().createArgumentMap(facets.get(WITH), this));
-		facets.remove(WITH);
-	}
-
-	private void addArgs(final Map<String, IExpressionDescription> arguments) {
-		if ( arguments == null ) { return; }
-		for ( Map.Entry<String, IExpressionDescription> arg : arguments.entrySet() ) {
+		for ( Map.Entry<String, IExpressionDescription> arg : GAMA.getExpressionFactory()
+			.createArgumentMap(facets.get(WITH), this).entrySet() ) {
 			String name = arg.getKey();
 			args.put(name, createArg(name, arg.getValue()));
 		}
+		facets.remove(WITH);
 	}
 
 	public IVarExpression addNewTempIfNecessary(final String facetName, final IType type,
@@ -211,15 +207,14 @@ public class StatementDescription extends SymbolDescription {
 		}
 		for ( Facet arg : names.entrySet() ) {
 			if ( !allArgs.contains(arg.getKey()) ) {
-				caller.flagError("Unknown argument" + arg + " in call to " + getName(),
+				caller.flagError("Unknown argument " + arg.getKey() + " in call to " + getName(),
 					IGamlIssue.UNKNOWN_ARGUMENT, null, new String[] { arg.getKey() });
 			}
 		}
 	}
 
 	public void verifyArgs(final String actionName, final Arguments args) {
-		TypeDescription declPlace =
-			(TypeDescription) getDescriptionDeclaringAction(actionName);
+		TypeDescription declPlace = (TypeDescription) getDescriptionDeclaringAction(actionName);
 		StatementDescription executer = null;
 		if ( declPlace != null ) {
 			executer = declPlace.getAction(actionName);

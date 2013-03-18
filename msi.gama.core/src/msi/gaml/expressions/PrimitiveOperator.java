@@ -41,19 +41,14 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 		setName(op);
 	}
 
-	PrimitiveOperator(final String op, final IDescription species) {
-		setName(op);
-		// sd = species;
-	}
-
 	@Override
 	public PrimitiveOperator init(final String op, final IDescription context,
 		final IExpression ... args) {
 		this.exprs = args;
 		Facets facets = new Facets();
-		facets.putAsLabel(IKeyword.ACTION, name); // TODO A vérifier
+		facets.putAsLabel(IKeyword.ACTION, op); // TODO A vérifier
 		IDescription sd = context.getSpeciesDescription(arg(0).getType().getSpeciesName());
-		IDescription cd = DescriptionFactory.create(IKeyword.DO, sd, IKeyword.ACTION, name);
+		IDescription cd = DescriptionFactory.create(IKeyword.DO, sd, IKeyword.ACTION, op);
 		statement = new DoStatement(cd);
 		type = statement.getReturnType();
 		contentType = statement.getReturnContentType();
@@ -84,7 +79,7 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 
 	@Override
 	public PrimitiveOperator copy() {
-		return new PrimitiveOperator(name/* , sd */);
+		return new PrimitiveOperator(getName()/* , sd */);
 	}
 
 	@Override

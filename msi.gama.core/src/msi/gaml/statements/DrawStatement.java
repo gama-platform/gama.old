@@ -35,14 +35,11 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaMap;
-import msi.gama.util.GamaPair;
 import msi.gama.util.file.GamaImageFile;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.*;
 import msi.gaml.types.*;
-import com.vividsolutions.jts.geom.Geometry;
 
 // A command that is used to draw shapes, figures, text on the display
 
@@ -50,7 +47,7 @@ import com.vividsolutions.jts.geom.Geometry;
 @facets(value = {
 	// Allows to pass any arbitrary geometry to the drawing command
 	@facet(name = IType.GEOM_STR, type = IType.NONE_STR, optional = true),
-	// AD 18/01/13: geometry is now accepting an	y type of data
+	// AD 18/01/13: geometry is now accepting an y type of data
 	// @facet(name = SHAPE, type = IType.ID, optional = true, values = { "geometry",
 	// "square", "circle", "triangle", "rectangle", "disc", "line" }),
 	// @facet(name = TEXT, type = IType.STRING_STR, optional = true),
@@ -78,12 +75,12 @@ combinations = { @combination({ IType.GEOM_STR, EMPTY, BORDER, ROUNDED, COLOR, D
 public class DrawStatement extends AbstractStatementSequence {
 
 	static final GamaPoint LOC = new GamaPoint(1.0, 1.0);
-	private static final Map<String, Integer> STYLES = new HashMap();
+	private static final Map<String, Integer> CONSTANTS = new HashMap();
 	public static final Map<String, Integer> SHAPES = new HashMap();
 	static {
-		STYLES.put("plain", 0);
-		STYLES.put("bold", 1);
-		STYLES.put("italic", 2);
+		CONSTANTS.put("plain", 0);
+		CONSTANTS.put("bold", 1);
+		CONSTANTS.put("italic", 2);
 		SHAPES.put("geometry", 0);
 		SHAPES.put("square", 1);
 		SHAPES.put("circle", 2);
@@ -208,8 +205,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			if ( empty == null ) {
 				constEmpty = false;
 			} else if ( empty.isConst() ) {
-				constEmpty =
-					Cast.asBool(GAMA.getDefaultScope(), empty.value(GAMA.getDefaultScope()));
+				constEmpty = Cast.asBool(scope, empty.value(scope));
 			} else {
 				constEmpty = null;
 			}
@@ -276,9 +272,9 @@ public class DrawStatement extends AbstractStatementSequence {
 			ILocation p =
 				constLoc == null ? loc != null ? Cast.asPoint(scope, loc.value(scope)) : scope
 					.getAgentScope().getLocation() : constLoc;
-			
-			//return new GamaPoint(p.getX() * g.getXScale(), p.getY() * g.getYScale());
-			return new GamaPoint(p.getX() * g.getXScale(), p.getY() * g.getYScale(),p.getZ());
+
+			// return new GamaPoint(p.getX() * g.getXScale(), p.getY() * g.getYScale());
+			return new GamaPoint(p.getX() * g.getXScale(), p.getY() * g.getYScale(), p.getZ());
 		}
 
 		abstract Rectangle2D executeOn(IScope agent, IGraphics g) throws GamaRuntimeException;
@@ -294,10 +290,9 @@ public class DrawStatement extends AbstractStatementSequence {
 		@Override
 		Rectangle2D executeOn(final IScope scope, final IGraphics gr) throws GamaRuntimeException {
 
-
 			GamaShape g1 = (GamaShape) Cast.asGeometry(scope, item.value(scope));
-			if (loc != null){
-				g1.setLocation(getLocation(scope,gr));	
+			if ( loc != null ) {
+				g1.setLocation(getLocation(scope, gr));
 			}
 
 			if ( depth != null ) {
@@ -306,7 +301,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			}
 
 			return gr.drawGamaShape(scope, g1, getColor(scope), !getEmpty(scope), getBorder(scope),
-					getRotation(scope), getRounded(scope)); 
+				getRotation(scope), getRounded(scope));
 
 		}
 	}
@@ -389,7 +384,7 @@ public class DrawStatement extends AbstractStatementSequence {
 					font.value(scope)) : null;
 			style = getFacet(STYLE);
 			constStyle =
-				style == null ? Font.PLAIN : style.isConst() ? STYLES.get(Cast.asString(scope,
+				style == null ? Font.PLAIN : style.isConst() ? CONSTANTS.get(Cast.asString(scope,
 					style.value(scope))) : null;
 
 		}
@@ -405,7 +400,7 @@ public class DrawStatement extends AbstractStatementSequence {
 				return null;
 			}
 			String fName = constFont == null ? Cast.asString(scope, font.value(scope)) : constFont;
-			int fStyle = constStyle == null ? STYLES.get(style.value(scope)) : constStyle;
+			int fStyle = constStyle == null ? CONSTANTS.get(style.value(scope)) : constStyle;
 			Font f = new Font(fName, fStyle, getSize(scope, g));
 			g.setFont(f);
 

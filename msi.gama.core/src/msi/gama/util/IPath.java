@@ -26,6 +26,7 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.types.IType;
@@ -50,19 +51,19 @@ import msi.gaml.types.IType;
 })
 public interface IPath extends IShape {
 
-	@getter( IKeyword.SOURCE)
+	@getter(IKeyword.SOURCE)
 	public abstract ILocation getStartVertex();
 
-	@getter( IKeyword.TARGET)
+	@getter(IKeyword.TARGET)
 	public abstract ILocation getEndVertex();
 
-	@getter( IKeyword.SEGMENTS)
+	@getter(IKeyword.SEGMENTS)
 	public abstract IList<IShape> getEdgeList();
 
-	@getter( IKeyword.AGENTS)
+	@getter(IKeyword.AGENTS)
 	public abstract List<IShape> getAgentList();
 
-	@getter( IKeyword.GRAPH)
+	@getter(IKeyword.GRAPH)
 	public IGraph getGraph();
 
 	public abstract IList<ILocation> getVertexList();
@@ -87,18 +88,18 @@ public interface IPath extends IShape {
 
 	public abstract int getLength();
 
-	public abstract double getDistance();
+	public abstract double getDistance(IScope scope);
 
 	public abstract ITopology getTopology();
 
 	public abstract void setRealObjects(final Map realObjects);
 
 	public abstract IShape getRealObject(final Object obj);
-	
+
 	public void setSource(IShape source);
 
 	public void setTarget(IShape target);
-	
+
 	public int getGraphVersion();
 
 }

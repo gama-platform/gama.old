@@ -106,7 +106,7 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	}
 
 	@Override
-	public Object getInitialValue() {
+	public Object getInitialValue(IScope scope) {
 		return initialValue;
 	}
 
@@ -157,6 +157,6 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	}
 
 	@Override
-	public void tryToInit() {}
+	public void tryToInit(IScope scope) {}
 
 }

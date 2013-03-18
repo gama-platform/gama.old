@@ -28,6 +28,7 @@ import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.types.IType;
@@ -54,46 +55,36 @@ public interface IMatrix<T> extends IContainer<ILocation, T> {
 
 	public static final String COLUMNS = "columns";
 
-	@getter( ROWS)
-	public abstract int getRows();
+	@getter(ROWS)
+	public abstract int getRows(IScope scope);
 
-	@getter( COLUMNS)
-	public abstract int getCols();
+	@getter(COLUMNS)
+	public abstract int getCols(IScope scope);
 
-	@getter( DIMENSION)
+	@getter(DIMENSION)
 	public abstract ILocation getDimensions();
 
 	@operator(value = "rows_list", can_be_const = true, content_type = IType.LIST)
-	@doc(
-		value = "returns a list of the rows of the matrix, with each row as a list of elements",
-		examples = {
-			"rows_list(matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]])   --: ", 
-            " 		[[\"el11\",\"el21\",\"el31\"],[\"el12\",\"el22\",\"el32\"],[\"el13\",\"el23\",\"el33\"]]"},
-        see = "columns_list")
-	public abstract IList<IList<T>> getRowsList();
+	@doc(value = "returns a list of the rows of the matrix, with each row as a list of elements", examples = {
+		"rows_list(matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]])   --: ",
+		" 		[[\"el11\",\"el21\",\"el31\"],[\"el12\",\"el22\",\"el32\"],[\"el13\",\"el23\",\"el33\"]]" }, see = "columns_list")
+	public abstract IList<IList<T>> getRowsList(IScope scope);
 
 	@operator(value = "columns_list", can_be_const = true, content_type = IType.LIST)
-	@doc(
-		value = "returns a list of the columns of the matrix, with each column as a list of elements",
-		examples = {
-			"columns_list(matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]])  --: ",
-            "	  [[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]"},
-		see = "rows_list")
-	public abstract IList<IList<T>> getColumnsList();
+	@doc(value = "returns a list of the columns of the matrix, with each column as a list of elements", examples = {
+		"columns_list(matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]])  --: ",
+		"	  [[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]" }, see = "rows_list")
+	public abstract IList<IList<T>> getColumnsList(IScope scope);
 
 	@operator(value = "row_at", content_type = ITypeProvider.LEFT_CONTENT_TYPE, can_be_const = true)
-	@doc(
-		value = "returns the row at a num_line (rigth-hand operand)",
-		examples = {"matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]) row_at 2  --:  [\"el13\",\"el23\",\"el33\"]"},
-		see =  {"column_at", "columns_list"})
-	public abstract IList<T> getRow(Integer num_line);
+	@doc(value = "returns the row at a num_line (rigth-hand operand)", examples = { "matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]) row_at 2  --:  [\"el13\",\"el23\",\"el33\"]" }, see = {
+		"column_at", "columns_list" })
+	public abstract IList<T> getRow(IScope scope, Integer num_line);
 
 	@operator(value = "column_at", content_type = ITypeProvider.LEFT_CONTENT_TYPE, can_be_const = true)
-	@doc(
-		value = "returns the column at a num_col (rigth-hand operand)",
-		examples = {"matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]) column_at 2  --:  [\"el31\",\"el32\",\"el33\"]"},
-		see =  {"row_at", "rows_list"})	
-	public abstract List<T> getColumn(Integer num_line);
+	@doc(value = "returns the column at a num_col (rigth-hand operand)", examples = { "matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]) column_at 2  --:  [\"el31\",\"el32\",\"el33\"]" }, see = {
+		"row_at", "rows_list" })
+	public abstract List<T> getColumn(IScope scope, Integer num_line);
 
 	@operator(value = IKeyword.PLUS, priority = IPriority.ADDITION, can_be_const = true)
 	@doc(deprecated = "The sum of matrices is not yet implemented")
@@ -107,9 +98,9 @@ public interface IMatrix<T> extends IContainer<ILocation, T> {
 	@doc(deprecated = "The difference of matrices is not yet implemented")
 	public abstract IMatrix minus(IMatrix other) throws GamaRuntimeException;
 
-	public abstract T get(final int col, final int row);
+	public abstract T get(IScope scope, final int col, final int row);
 
-	public abstract void set(final int col, final int row, final Object obj)
+	public abstract void set(IScope scope, final int col, final int row, final Object obj)
 		throws GamaRuntimeException;
 
 	// public abstract void put(final int col, final int row, final double obj)
@@ -118,7 +109,8 @@ public interface IMatrix<T> extends IContainer<ILocation, T> {
 	// public abstract void put(final int col, final int row, final int obj)
 	// throws GamaRuntimeException;
 
-	public abstract Object remove(final int col, final int row) throws GamaRuntimeException;
+	public abstract Object remove(IScope scope, final int col, final int row)
+		throws GamaRuntimeException;
 
 	public abstract void shuffleWith(RandomUtils randomAgent);
 

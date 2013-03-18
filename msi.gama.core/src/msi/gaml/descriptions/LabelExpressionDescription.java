@@ -40,7 +40,7 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 
 		@Override
 		public Object value(final IScope scope) {
-			return name;
+			return getName();
 		}
 
 		@Override
@@ -50,26 +50,26 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 
 		@Override
 		public String toGaml() {
-			return StringUtils.toGamlString(name);
+			return StringUtils.toGamlString(getName());
 		}
 
 		@Override
 		public String getDocumentation() {
-			return "Constant string: " + name;
+			return "Constant string: " + getName();
 		}
 
 		@Override
 		public String getTitle() {
-			return "Constant string: " + name;
+			return "Constant string: " + getName();
 		}
 
 	}
 
 	final String value;
 
-	public LabelExpressionDescription(final String label) {
+	private LabelExpressionDescription(final String label) {
 		super((IExpression) null);
-		value = label;
+		value = StringUtils.unescapeJava(label);
 	}
 
 	@Override
@@ -98,8 +98,35 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 	}
 
 	@Override
-	public boolean isString() {
+	public boolean isConstant() {
 		return true;
+	}
+
+	@Override
+	public Set<String> getStrings(IDescription context, boolean skills) {
+		// Assuming of the form [aaa, bbb]
+		Set<String> result = new HashSet();
+		StringBuilder b = new StringBuilder();
+		for ( char c : value.toCharArray() ) {
+			switch (c) {
+				case '[':
+				case ' ':
+					break;
+				case ']':
+				case ',': {
+					result.add(b.toString());
+					b.setLength(0);
+					break;
+				}
+				default:
+					b.append(c);
+			}
+		}
+		return result;
+	}
+
+	public static IExpressionDescription create(String s) {
+		return new LabelExpressionDescription(s);
 	}
 
 }

@@ -6,7 +6,6 @@
 package msi.gama.lang.gaml.gaml.impl;
 
 import msi.gama.lang.gaml.gaml.ArgumentDefinition;
-import msi.gama.lang.gaml.gaml.Contents;
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 
@@ -17,7 +16,6 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 /**
  * <!-- begin-user-doc -->
@@ -27,65 +25,23 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.ArgumentDefinitionImpl#getType <em>Type</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.ArgumentDefinitionImpl#getOf <em>Of</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.ArgumentDefinitionImpl#getName <em>Name</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.ArgumentDefinitionImpl#getDefault <em>Default</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class ArgumentDefinitionImpl extends MinimalEObjectImpl.Container implements ArgumentDefinition
+public class ArgumentDefinitionImpl extends VarDefinitionImpl implements ArgumentDefinition
 {
   /**
-   * The default value of the '{@link #getType() <em>Type</em>}' attribute.
+   * The cached value of the '{@link #getType() <em>Type</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getType()
    * @generated
    * @ordered
    */
-  protected static final String TYPE_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getType() <em>Type</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getType()
-   * @generated
-   * @ordered
-   */
-  protected String type = TYPE_EDEFAULT;
-
-  /**
-   * The cached value of the '{@link #getOf() <em>Of</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getOf()
-   * @generated
-   * @ordered
-   */
-  protected Contents of;
-
-  /**
-   * The default value of the '{@link #getName() <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getName()
-   * @generated
-   * @ordered
-   */
-  protected static final String NAME_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getName()
-   * @generated
-   * @ordered
-   */
-  protected String name = NAME_EDEFAULT;
+  protected Expression type;
 
   /**
    * The cached value of the '{@link #getDefault() <em>Default</em>}' containment reference.
@@ -123,7 +79,7 @@ public class ArgumentDefinitionImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
-  public String getType()
+  public Expression getType()
   {
     return type;
   }
@@ -133,36 +89,13 @@ public class ArgumentDefinitionImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setType(String newType)
+  public NotificationChain basicSetType(Expression newType, NotificationChain msgs)
   {
-    String oldType = type;
+    Expression oldType = type;
     type = newType;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.ARGUMENT_DEFINITION__TYPE, oldType, type));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Contents getOf()
-  {
-    return of;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetOf(Contents newOf, NotificationChain msgs)
-  {
-    Contents oldOf = of;
-    of = newOf;
-    if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.ARGUMENT_DEFINITION__OF, oldOf, newOf);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.ARGUMENT_DEFINITION__TYPE, oldType, newType);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -173,43 +106,20 @@ public class ArgumentDefinitionImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setOf(Contents newOf)
+  public void setType(Expression newType)
   {
-    if (newOf != of)
+    if (newType != type)
     {
       NotificationChain msgs = null;
-      if (of != null)
-        msgs = ((InternalEObject)of).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.ARGUMENT_DEFINITION__OF, null, msgs);
-      if (newOf != null)
-        msgs = ((InternalEObject)newOf).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.ARGUMENT_DEFINITION__OF, null, msgs);
-      msgs = basicSetOf(newOf, msgs);
+      if (type != null)
+        msgs = ((InternalEObject)type).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.ARGUMENT_DEFINITION__TYPE, null, msgs);
+      if (newType != null)
+        msgs = ((InternalEObject)newType).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.ARGUMENT_DEFINITION__TYPE, null, msgs);
+      msgs = basicSetType(newType, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.ARGUMENT_DEFINITION__OF, newOf, newOf));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public String getName()
-  {
-    return name;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setName(String newName)
-  {
-    String oldName = name;
-    name = newName;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.ARGUMENT_DEFINITION__NAME, oldName, name));
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.ARGUMENT_DEFINITION__TYPE, newType, newType));
   }
 
   /**
@@ -270,8 +180,8 @@ public class ArgumentDefinitionImpl extends MinimalEObjectImpl.Container impleme
   {
     switch (featureID)
     {
-      case GamlPackage.ARGUMENT_DEFINITION__OF:
-        return basicSetOf(null, msgs);
+      case GamlPackage.ARGUMENT_DEFINITION__TYPE:
+        return basicSetType(null, msgs);
       case GamlPackage.ARGUMENT_DEFINITION__DEFAULT:
         return basicSetDefault(null, msgs);
     }
@@ -290,10 +200,6 @@ public class ArgumentDefinitionImpl extends MinimalEObjectImpl.Container impleme
     {
       case GamlPackage.ARGUMENT_DEFINITION__TYPE:
         return getType();
-      case GamlPackage.ARGUMENT_DEFINITION__OF:
-        return getOf();
-      case GamlPackage.ARGUMENT_DEFINITION__NAME:
-        return getName();
       case GamlPackage.ARGUMENT_DEFINITION__DEFAULT:
         return getDefault();
     }
@@ -311,13 +217,7 @@ public class ArgumentDefinitionImpl extends MinimalEObjectImpl.Container impleme
     switch (featureID)
     {
       case GamlPackage.ARGUMENT_DEFINITION__TYPE:
-        setType((String)newValue);
-        return;
-      case GamlPackage.ARGUMENT_DEFINITION__OF:
-        setOf((Contents)newValue);
-        return;
-      case GamlPackage.ARGUMENT_DEFINITION__NAME:
-        setName((String)newValue);
+        setType((Expression)newValue);
         return;
       case GamlPackage.ARGUMENT_DEFINITION__DEFAULT:
         setDefault((Expression)newValue);
@@ -337,13 +237,7 @@ public class ArgumentDefinitionImpl extends MinimalEObjectImpl.Container impleme
     switch (featureID)
     {
       case GamlPackage.ARGUMENT_DEFINITION__TYPE:
-        setType(TYPE_EDEFAULT);
-        return;
-      case GamlPackage.ARGUMENT_DEFINITION__OF:
-        setOf((Contents)null);
-        return;
-      case GamlPackage.ARGUMENT_DEFINITION__NAME:
-        setName(NAME_EDEFAULT);
+        setType((Expression)null);
         return;
       case GamlPackage.ARGUMENT_DEFINITION__DEFAULT:
         setDefault((Expression)null);
@@ -363,34 +257,11 @@ public class ArgumentDefinitionImpl extends MinimalEObjectImpl.Container impleme
     switch (featureID)
     {
       case GamlPackage.ARGUMENT_DEFINITION__TYPE:
-        return TYPE_EDEFAULT == null ? type != null : !TYPE_EDEFAULT.equals(type);
-      case GamlPackage.ARGUMENT_DEFINITION__OF:
-        return of != null;
-      case GamlPackage.ARGUMENT_DEFINITION__NAME:
-        return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+        return type != null;
       case GamlPackage.ARGUMENT_DEFINITION__DEFAULT:
         return default_ != null;
     }
     return super.eIsSet(featureID);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public String toString()
-  {
-    if (eIsProxy()) return super.toString();
-
-    StringBuffer result = new StringBuffer(super.toString());
-    result.append(" (type: ");
-    result.append(type);
-    result.append(", name: ");
-    result.append(name);
-    result.append(')');
-    return result.toString();
   }
 
 } //ArgumentDefinitionImpl

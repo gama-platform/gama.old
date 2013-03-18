@@ -111,10 +111,13 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 		if ( desc.getMeta().isRemoteContext() ) {
 			String actualSpecies = computeSpecies(desc);
 			if ( actualSpecies != null ) {
-				IType t = desc.getSpeciesContext().getType();
-				desc.addTemp(MYSELF, t, t);
-				previousEnclosingDescription = desc.getSuperDescription();
-				desc.setSuperDescription(desc.getSpeciesDescription(actualSpecies));
+				SpeciesDescription s = desc.getSpeciesContext();
+				if ( s != null ) {
+					IType t = s.getType();
+					desc.addTemp(MYSELF, t, t);
+					previousEnclosingDescription = desc.getSuperDescription();
+					desc.setSuperDescription(desc.getSpeciesDescription(actualSpecies));
+				}
 			}
 		}
 		super.privateValidateChildren(desc);

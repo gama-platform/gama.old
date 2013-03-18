@@ -20,11 +20,12 @@ package msi.gama.gui.displays.layers;
 
 import java.awt.Color;
 import msi.gama.common.interfaces.*;
-import msi.gama.gui.parameters.*;
+import msi.gama.gui.parameters.EditorFactory;
+import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.outputs.layers.*;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.swt.widgets.Composite;
-import com.vividsolutions.jts.geom.Geometry;
 
 public class GisLayer extends AbstractLayer {
 
@@ -37,10 +38,12 @@ public class GisLayer extends AbstractLayer {
 	@Override
 	public void privateDrawDisplay(final IGraphics g) {
 		if ( disposed ) { return; }
+		IScope scope = GAMA.obtainNewScope();
 		Color color = ((ImageLayerStatement) definition).getGisLayer().getColor();
-		for ( Geometry geom : ((ImageLayerStatement) definition).getGisLayer().getObjects() ) {
+		for ( GamaShape geom : ((ImageLayerStatement) definition).getGisLayer().getObjects() ) {
 			if ( geom != null ) {
-				//g.drawGeometry(geom, color, true, Color.black, null);
+				g.drawGamaShape(scope, geom, color, true, Color.black, null, false);
+				// g.drawGeometry(geom, color, true, Color.black, null);
 			}
 		}
 	}

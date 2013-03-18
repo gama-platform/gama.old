@@ -54,7 +54,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.PARENT, type = IType.ID, optional = true),
 	@facet(name = IKeyword.EDGE_SPECIES, type = IType.ID, optional = true),
-	@facet(name = IKeyword.SKILLS, type = IType.LABEL, optional = true),
+	@facet(name = IKeyword.SKILLS, type = IType.LIST_STR, optional = true),
 	@facet(name = "mirrors", type = IType.LIST_STR, optional = true),
 	@facet(name = IKeyword.CONTROL, type = IType.ID, /* values = { ISpecies.EMF, IKeyword.FSM }, */optional = true),
 	@facet(name = "compile", type = IType.BOOL_STR, optional = true),
@@ -197,50 +197,54 @@ public class GamlSpecies extends AbstractSpecies {
 	}
 
 	@Override
-	public void addAll(final IContainer value, final Object param) throws GamaRuntimeException {
-		// NOT ALLOWED
-	}
-
-	@Override
-	public void addAll(final Integer index, final IContainer value, final Object param)
+	public void addAll(IScope scope, final IContainer value, final Object param)
 		throws GamaRuntimeException {
 		// NOT ALLOWED
 	}
 
 	@Override
-	public void add(final IAgent value, final Object param) throws GamaRuntimeException {
-		// NOT ALLOWED
-	}
-
-	@Override
-	public void add(final Integer index, final IAgent value, final Object param)
+	public void addAll(IScope scope, final Integer index, final IContainer value, final Object param)
 		throws GamaRuntimeException {
 		// NOT ALLOWED
 	}
 
 	@Override
-	public boolean removeFirst(final IAgent value) throws GamaRuntimeException {
+	public void add(IScope scope, final IAgent value, final Object param)
+		throws GamaRuntimeException {
+		// NOT ALLOWED
+	}
+
+	@Override
+	public void add(IScope scope, final Integer index, final IAgent value, final Object param)
+		throws GamaRuntimeException {
+		// NOT ALLOWED
+	}
+
+	@Override
+	public boolean removeFirst(IScope scope, final IAgent value) throws GamaRuntimeException {
 		return false;
 		// NOT ALLOWED
 	}
 
 	@Override
-	public boolean removeAll(final IContainer<?, IAgent> value) throws GamaRuntimeException {
+	public boolean removeAll(IScope scope, final IContainer<?, IAgent> value)
+		throws GamaRuntimeException {
 		return false;
 		// NOT ALLOWED
 	}
 
 	@Override
-	public Object removeAt(final Integer index) throws GamaRuntimeException {
+	public Object removeAt(IScope scope, final Integer index) throws GamaRuntimeException {
 		return null;
 		// NOT ALLOWED
 	}
 
 	@Override
-	public void putAll(final IAgent value, final Object param) throws GamaRuntimeException {}
+	public void putAll(IScope scope, final IAgent value, final Object param)
+		throws GamaRuntimeException {}
 
 	@Override
-	public void put(final Integer index, final IAgent value, final Object param)
+	public void put(IScope scope, final Integer index, final IAgent value, final Object param)
 		throws GamaRuntimeException {
 		// NOT ALLOWED
 	}

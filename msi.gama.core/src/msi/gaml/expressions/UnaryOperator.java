@@ -71,7 +71,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	public UnaryOperator copy() {
 		UnaryOperator copy =
 			new UnaryOperator(type, helper, canBeConst, typeProvider, contentTypeProvider);
-		copy.name = name;
+		copy.setName(getName());
 		copy.contentType = contentType;
 		return copy;
 	}

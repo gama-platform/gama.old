@@ -120,7 +120,7 @@ public class Random {
 	@doc(examples = { "shuffle ([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]) --: [[\"c12\",\"c21\",\"c11\"],[\"c13\",\"c22\",\"c23\"]]" })
 	public static IMatrix opShuffle(final IScope scope, final IMatrix target)
 		throws GamaRuntimeException {
-		IMatrix matrix2 = (IMatrix) target.copy();
+		IMatrix matrix2 = (IMatrix) target.copy(scope);
 		matrix2.shuffleWith(GAMA.getRandom());
 		return matrix2;
 	}

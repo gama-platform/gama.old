@@ -51,7 +51,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.FileDialog;
 import org.geotools.data.simple.SimpleFeatureCollection;
-
 import collada.Output3D;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -460,8 +459,9 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 			drawDisplaysWithoutRepaintingGL();
 			paintingNeeded.release();
 			canBeUpdated(true);
-			if(output3D == true){
-				(new Output3D()).to3DGLGEModel(((JOGLAWTDisplayGraphics) openGLGraphics).myJTSGeometries);
+			if ( output3D == true ) {
+				new Output3D()
+					.to3DGLGEModel(((JOGLAWTDisplayGraphics) openGLGraphics).myJTSGeometries);
 			}
 			Toolkit.getDefaultToolkit().sync();
 		}
@@ -799,10 +799,11 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		this.autosave = autosave;
 	}
 
+	@Override
 	public void setOutput3D(final boolean output3D) {
 		this.output3D = output3D;
 	}
-	
+
 	@Override
 	public void setSnapshotFileName(final String file) {
 		snapshotFileName = file;

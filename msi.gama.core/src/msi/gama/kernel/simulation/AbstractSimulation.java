@@ -19,7 +19,7 @@
 package msi.gama.kernel.simulation;
 
 import java.util.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.agent.*;
@@ -92,7 +92,7 @@ public abstract class AbstractSimulation implements ISimulation {
 		// GUI.debug("Disposing the agent managers");
 		worldPopulation.dispose();
 		worldPopulation = null;
-		GisUtils.setTransformCRS(null);
+		// GisUtils.setTransformCRS(null);
 		// GUI.debug("Disposing the environment");
 		// if ( environment != null ) {
 		// environment.dispose();
@@ -177,6 +177,7 @@ public abstract class AbstractSimulation implements ISimulation {
 		IAgent world = newAgents.get(0);
 		experiment.getAgent().schedule(getGlobalScope());
 		world.schedule(getGlobalScope());
+		// TODO is it still necessary ?
 		world.initializeMicroPopulations(getGlobalScope());
 	}
 

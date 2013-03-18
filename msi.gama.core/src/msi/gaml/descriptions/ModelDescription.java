@@ -40,13 +40,13 @@ public class ModelDescription extends SymbolDescription {
 	private static int count = 1;
 	private final Map<String, ExperimentDescription> experiments = new HashMap();
 	private IDescription output;
-	private IDescription environment;
 	final TypesManager types;
 	private String modelFilePath;
 	private String modelFolderPath;
 	private String modelProjectPath;
 	private SpeciesDescription worldSpecies;
 	private boolean isDisposed = false;
+	private boolean isTorus = false;
 	// Only used to accelerate the parsing
 	private final Map<String, TypeDescription> allSpeciesDescription = new HashMap();
 	private final ErrorCollector collect = new ErrorCollector();
@@ -56,6 +56,14 @@ public class ModelDescription extends SymbolDescription {
 		types = new TypesManager(this);
 		setModelFilePath(struct.getProjectPath(), struct.getPath());
 		number = count++;
+	}
+
+	public void setTorus(boolean b) {
+		isTorus = b;
+	}
+
+	public boolean isTorus() {
+		return isTorus;
 	}
 
 	@Override
@@ -74,7 +82,6 @@ public class ModelDescription extends SymbolDescription {
 		experiments.clear();
 		allSpeciesDescription.clear();
 		output = null;
-		environment = null;
 		types.dispose();
 		worldSpecies = null;
 		super.dispose();
@@ -159,15 +166,7 @@ public class ModelDescription extends SymbolDescription {
 				output.addChildren(child.getChildren());
 				return child;
 			}
-		} else if ( keyword.equals(ENVIRONMENT) ) {
-			if ( environment == null ) {
-				environment = child;
-			} else {
-				environment.addChildren(child.getChildren());
-				return child;
-			}
 		}
-
 		children.add(child);
 		return child;
 	}
@@ -209,7 +208,7 @@ public class ModelDescription extends SymbolDescription {
 	}
 
 	public boolean hasSpeciesDescription(final String spec) {
-		return spec != null && allSpeciesDescription.containsKey(spec);
+		return allSpeciesDescription.containsKey(spec);
 	}
 
 	@Override

@@ -28,7 +28,6 @@ import msi.gama.util.*;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
-import msi.gaml.skills.Skill;
 import msi.gaml.statements.*;
 import msi.gaml.statements.IStatement.WithArgs;
 import msi.gaml.types.*;
@@ -85,7 +84,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public String stringValue() {
+	public String stringValue(IScope scope) {
 		return name;
 	}
 
@@ -127,7 +126,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public ISpecies copy() {
+	public ISpecies copy(IScope scope) {
 		return this;
 		// Species are immutable
 	}

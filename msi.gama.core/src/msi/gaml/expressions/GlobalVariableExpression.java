@@ -32,19 +32,20 @@ public class GlobalVariableExpression extends VariableExpression {
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
-		return scope.getGlobalVarValue(name);
+		return scope.getGlobalVarValue(getName());
 	}
 
 	@Override
 	public void setVal(final IScope scope, final Object v, final boolean create)
 		throws GamaRuntimeException {
 		if ( isNotModifiable ) { return; }
-		scope.setGlobalVarValue(name, v);
+		scope.setGlobalVarValue(getName(), v);
 	}
 
 	@Override
 	public String getTitle() {
-		return "Global " + (isNotModifiable ? "constant" : "variable") + " <b>" + name + "</b>";
+		return "Global " + (isNotModifiable ? "constant" : "variable") + " <b>" + getName() +
+			"</b>";
 	}
 
 	/**

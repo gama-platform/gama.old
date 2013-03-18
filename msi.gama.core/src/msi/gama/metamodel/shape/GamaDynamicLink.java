@@ -18,6 +18,7 @@
  */
 package msi.gama.metamodel.shape;
 
+import msi.gama.runtime.IScope;
 import msi.gaml.types.GamaGeometryType;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -94,7 +95,7 @@ public class GamaDynamicLink extends GamaShape {
 	}
 
 	@Override
-	public GamaDynamicLink copy() {
+	public GamaDynamicLink copy(IScope scope) {
 		return new GamaDynamicLink(source, target);
 	}
 }

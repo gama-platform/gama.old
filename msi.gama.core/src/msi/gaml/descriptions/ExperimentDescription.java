@@ -42,6 +42,11 @@ public class ExperimentDescription extends SpeciesDescription {
 	}
 
 	@Override
+	public boolean isExperiment() {
+		return true;
+	}
+
+	@Override
 	public Class getDefaultJavaBase() {
 		return AbstractGamlAdditions.EXPERIMENTATOR_AGENT_CLASS;
 	}

@@ -65,7 +65,7 @@ public class GraphTopology extends AbstractTopology {
 	 *      msi.gama.interfaces.IGeometry)
 	 */
 	@Override
-	public IPath pathBetween(final IShape source, final IShape target) {
+	public IPath pathBetween(final IScope scope, final IShape source, final IShape target) {
 
 		IShape edgeS = null, edgeT = null;
 
@@ -102,10 +102,10 @@ public class GraphTopology extends AbstractTopology {
 		}
 
 		Object nodeS = s1;
-		if ( s2 != null &&
-			(s1 == nodeT || s2 != nodeT &&
-				s1.getLocation().euclidianDistanceTo(source.getLocation()) > s2.getLocation()
-					.euclidianDistanceTo(source.getLocation())) ) {
+		if ( s1 == nodeT ||
+			s2 != nodeT &&
+			s1.getLocation().euclidianDistanceTo(source.getLocation()) > s2.getLocation()
+				.euclidianDistanceTo(source.getLocation()) ) {
 			nodeS = s2;
 		}
 		c.start();
@@ -132,7 +132,7 @@ public class GraphTopology extends AbstractTopology {
 	}
 
 	@Override
-	public IPath pathBetween(final ILocation source, final ILocation target) {
+	public IPath pathBetween(IScope scope, final ILocation source, final ILocation target) {
 		IShape edgeS = null, edgeT = null;
 
 		if ( !this.getPlaces().getEdges().isEmpty() ) {
@@ -165,7 +165,7 @@ public class GraphTopology extends AbstractTopology {
 	 * @see msi.gama.interfaces.IValue#stringValue()
 	 */
 	@Override
-	public String stringValue() throws GamaRuntimeException {
+	public String stringValue(IScope scope) throws GamaRuntimeException {
 		return "GraphTopology";
 	}
 
@@ -181,7 +181,7 @@ public class GraphTopology extends AbstractTopology {
 	 * @see msi.gama.environment.AbstractTopology#_copy()
 	 */
 	@Override
-	protected ITopology _copy() {
+	protected ITopology _copy(IScope scope) {
 		return new GraphTopology(scope, environment, (GamaSpatialGraph) places);
 	}
 
@@ -221,17 +221,17 @@ public class GraphTopology extends AbstractTopology {
 	 *      msi.gama.interfaces.IGeometry, java.lang.Double)
 	 */
 	@Override
-	public Double distanceBetween(final IShape source, final IShape target) {
-		IPath path = this.pathBetween(source, target);
+	public Double distanceBetween(IScope scope, final IShape source, final IShape target) {
+		IPath path = this.pathBetween(scope, source, target);
 		if ( path == null ) { return Double.MAX_VALUE; }
-		return path.getDistance();
+		return path.getDistance(scope);
 	}
 
 	@Override
-	public Double distanceBetween(final ILocation source, final ILocation target) {
-		IPath path = this.pathBetween(source, target);
+	public Double distanceBetween(IScope scope, final ILocation source, final ILocation target) {
+		IPath path = this.pathBetween(scope, source, target);
 		if ( path == null ) { return Double.MAX_VALUE; }
-		return path.getDistance();
+		return path.getDistance(scope);
 	}
 
 	/**
@@ -240,8 +240,8 @@ public class GraphTopology extends AbstractTopology {
 	 *      msi.gama.interfaces.IGeometry)
 	 */
 	@Override
-	public Integer directionInDegreesTo(final IShape source, final IShape target) {
-		IPath path = this.pathBetween(source, target);
+	public Integer directionInDegreesTo(IScope scope, final IShape source, final IShape target) {
+		IPath path = this.pathBetween(scope, source, target);
 		if ( path == null ) { return null; }
 		// LineString ls = (LineString) path.getEdgeList().first().getInnerGeometry();
 		// TODO Check this

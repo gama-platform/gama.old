@@ -70,7 +70,20 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.MODEL: return createModel();
       case GamlPackage.IMPORT: return createImport();
       case GamlPackage.STATEMENT: return createStatement();
-      case GamlPackage.CONTENTS: return createContents();
+      case GamlPackage.SDO: return createS_Do();
+      case GamlPackage.SLOOP: return createS_Loop();
+      case GamlPackage.SIF: return createS_If();
+      case GamlPackage.SOTHER: return createS_Other();
+      case GamlPackage.SRETURN: return createS_Return();
+      case GamlPackage.SDECLARATION: return createS_Declaration();
+      case GamlPackage.SSPECIES: return createS_Species();
+      case GamlPackage.SEXPERIMENT: return createS_Experiment();
+      case GamlPackage.SREFLEX: return createS_Reflex();
+      case GamlPackage.SDEFINITION: return createS_Definition();
+      case GamlPackage.SASSIGNMENT: return createS_Assignment();
+      case GamlPackage.SDIRECT_ASSIGNMENT: return createS_DirectAssignment();
+      case GamlPackage.SSET: return createS_Set();
+      case GamlPackage.SEQUATION: return createS_Equation();
       case GamlPackage.PARAMETERS: return createParameters();
       case GamlPackage.ACTION_ARGUMENTS: return createActionArguments();
       case GamlPackage.ARGUMENT_DEFINITION: return createArgumentDefinition();
@@ -80,9 +93,19 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.ARGUMENT_PAIR: return createArgumentPair();
       case GamlPackage.EXPRESSION_LIST: return createExpressionList();
       case GamlPackage.VARIABLE_REF: return createVariableRef();
-      case GamlPackage.GAML_VAR_REF: return createGamlVarRef();
+      case GamlPackage.GAML_DEFINITION: return createGamlDefinition();
+      case GamlPackage.TYPE_DEFINITION: return createTypeDefinition();
+      case GamlPackage.VAR_DEFINITION: return createVarDefinition();
+      case GamlPackage.ACTION_DEFINITION: return createActionDefinition();
+      case GamlPackage.UNIT_FAKE_DEFINITION: return createUnitFakeDefinition();
+      case GamlPackage.TYPE_FAKE_DEFINITION: return createTypeFakeDefinition();
+      case GamlPackage.ACTION_FAKE_DEFINITION: return createActionFakeDefinition();
+      case GamlPackage.SKILL_FAKE_DEFINITION: return createSkillFakeDefinition();
+      case GamlPackage.VAR_FAKE_DEFINITION: return createVarFakeDefinition();
       case GamlPackage.TERMINAL_EXPRESSION: return createTerminalExpression();
       case GamlPackage.STRING_EVALUATOR: return createStringEvaluator();
+      case GamlPackage.SACTION: return createS_Action();
+      case GamlPackage.SVAR: return createS_Var();
       case GamlPackage.PAIR: return createPair();
       case GamlPackage.IF: return createIf();
       case GamlPackage.BINARY: return createBinary();
@@ -95,11 +118,15 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.FUNCTION: return createFunction();
       case GamlPackage.PARAMETER: return createParameter();
       case GamlPackage.UNIT_NAME: return createUnitName();
+      case GamlPackage.TYPE_REF: return createTypeRef();
+      case GamlPackage.SKILL_REF: return createSkillRef();
+      case GamlPackage.ACTION_REF: return createActionRef();
       case GamlPackage.INT_LITERAL: return createIntLiteral();
       case GamlPackage.DOUBLE_LITERAL: return createDoubleLiteral();
       case GamlPackage.COLOR_LITERAL: return createColorLiteral();
       case GamlPackage.STRING_LITERAL: return createStringLiteral();
       case GamlPackage.BOOLEAN_LITERAL: return createBooleanLiteral();
+      case GamlPackage.RESERVED_LITERAL: return createReservedLiteral();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
     }
@@ -143,10 +170,153 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public Contents createContents()
+  public S_Do createS_Do()
   {
-    ContentsImpl contents = new ContentsImpl();
-    return contents;
+    S_DoImpl s_Do = new S_DoImpl();
+    return s_Do;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public S_Loop createS_Loop()
+  {
+    S_LoopImpl s_Loop = new S_LoopImpl();
+    return s_Loop;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public S_If createS_If()
+  {
+    S_IfImpl s_If = new S_IfImpl();
+    return s_If;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public S_Other createS_Other()
+  {
+    S_OtherImpl s_Other = new S_OtherImpl();
+    return s_Other;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public S_Return createS_Return()
+  {
+    S_ReturnImpl s_Return = new S_ReturnImpl();
+    return s_Return;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public S_Declaration createS_Declaration()
+  {
+    S_DeclarationImpl s_Declaration = new S_DeclarationImpl();
+    return s_Declaration;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public S_Species createS_Species()
+  {
+    S_SpeciesImpl s_Species = new S_SpeciesImpl();
+    return s_Species;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public S_Experiment createS_Experiment()
+  {
+    S_ExperimentImpl s_Experiment = new S_ExperimentImpl();
+    return s_Experiment;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public S_Reflex createS_Reflex()
+  {
+    S_ReflexImpl s_Reflex = new S_ReflexImpl();
+    return s_Reflex;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public S_Definition createS_Definition()
+  {
+    S_DefinitionImpl s_Definition = new S_DefinitionImpl();
+    return s_Definition;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public S_Assignment createS_Assignment()
+  {
+    S_AssignmentImpl s_Assignment = new S_AssignmentImpl();
+    return s_Assignment;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public S_DirectAssignment createS_DirectAssignment()
+  {
+    S_DirectAssignmentImpl s_DirectAssignment = new S_DirectAssignmentImpl();
+    return s_DirectAssignment;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public S_Set createS_Set()
+  {
+    S_SetImpl s_Set = new S_SetImpl();
+    return s_Set;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public S_Equation createS_Equation()
+  {
+    S_EquationImpl s_Equation = new S_EquationImpl();
+    return s_Equation;
   }
 
   /**
@@ -253,10 +423,98 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public GamlVarRef createGamlVarRef()
+  public GamlDefinition createGamlDefinition()
   {
-    GamlVarRefImpl gamlVarRef = new GamlVarRefImpl();
-    return gamlVarRef;
+    GamlDefinitionImpl gamlDefinition = new GamlDefinitionImpl();
+    return gamlDefinition;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public TypeDefinition createTypeDefinition()
+  {
+    TypeDefinitionImpl typeDefinition = new TypeDefinitionImpl();
+    return typeDefinition;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public VarDefinition createVarDefinition()
+  {
+    VarDefinitionImpl varDefinition = new VarDefinitionImpl();
+    return varDefinition;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ActionDefinition createActionDefinition()
+  {
+    ActionDefinitionImpl actionDefinition = new ActionDefinitionImpl();
+    return actionDefinition;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public UnitFakeDefinition createUnitFakeDefinition()
+  {
+    UnitFakeDefinitionImpl unitFakeDefinition = new UnitFakeDefinitionImpl();
+    return unitFakeDefinition;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public TypeFakeDefinition createTypeFakeDefinition()
+  {
+    TypeFakeDefinitionImpl typeFakeDefinition = new TypeFakeDefinitionImpl();
+    return typeFakeDefinition;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ActionFakeDefinition createActionFakeDefinition()
+  {
+    ActionFakeDefinitionImpl actionFakeDefinition = new ActionFakeDefinitionImpl();
+    return actionFakeDefinition;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public SkillFakeDefinition createSkillFakeDefinition()
+  {
+    SkillFakeDefinitionImpl skillFakeDefinition = new SkillFakeDefinitionImpl();
+    return skillFakeDefinition;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public VarFakeDefinition createVarFakeDefinition()
+  {
+    VarFakeDefinitionImpl varFakeDefinition = new VarFakeDefinitionImpl();
+    return varFakeDefinition;
   }
 
   /**
@@ -279,6 +537,28 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     StringEvaluatorImpl stringEvaluator = new StringEvaluatorImpl();
     return stringEvaluator;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public S_Action createS_Action()
+  {
+    S_ActionImpl s_Action = new S_ActionImpl();
+    return s_Action;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public S_Var createS_Var()
+  {
+    S_VarImpl s_Var = new S_VarImpl();
+    return s_Var;
   }
 
   /**
@@ -418,6 +698,39 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  public TypeRef createTypeRef()
+  {
+    TypeRefImpl typeRef = new TypeRefImpl();
+    return typeRef;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public SkillRef createSkillRef()
+  {
+    SkillRefImpl skillRef = new SkillRefImpl();
+    return skillRef;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ActionRef createActionRef()
+  {
+    ActionRefImpl actionRef = new ActionRefImpl();
+    return actionRef;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public IntLiteral createIntLiteral()
   {
     IntLiteralImpl intLiteral = new IntLiteralImpl();
@@ -466,6 +779,17 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     BooleanLiteralImpl booleanLiteral = new BooleanLiteralImpl();
     return booleanLiteral;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public ReservedLiteral createReservedLiteral()
+  {
+    ReservedLiteralImpl reservedLiteral = new ReservedLiteralImpl();
+    return reservedLiteral;
   }
 
   /**

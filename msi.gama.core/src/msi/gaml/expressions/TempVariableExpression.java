@@ -32,7 +32,7 @@ public class TempVariableExpression extends VariableExpression {
 
 	@Override
 	public Object value(final IScope scope) {
-		return scope.getVarValue(name);
+		return scope.getVarValue(getName());
 	}
 
 	@Override
@@ -40,9 +40,9 @@ public class TempVariableExpression extends VariableExpression {
 		throws GamaRuntimeException {
 		Object val = Types.coerce(scope, v, type, null);
 		if ( create ) {
-			scope.addVarWithValue(name, val);
+			scope.addVarWithValue(getName(), val);
 		} else {
-			scope.setVarValue(name, val);
+			scope.setVarValue(getName(), val);
 		}
 	}
 
@@ -52,7 +52,7 @@ public class TempVariableExpression extends VariableExpression {
 	@Override
 	public String getDocumentation() {
 		IDescription desc = getDefinitionDescription();
-		return "Temporary variable <b>" + name + "</b> of type " + type.toString() +
+		return "Temporary variable <b>" + getName() + "</b> of type " + type.toString() +
 			(desc == null ? "<br>Built In" : "<br>Defined in " + desc.getTitle());
 	}
 

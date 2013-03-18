@@ -16,20 +16,16 @@
  */
 package msi.gaml.extensions.fipa;
 
-import java.util.List;
-
-import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.interfaces.IValue;
+import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.IList;
-import msi.gaml.types.IType;
-import msi.gaml.types.Types;
+import msi.gaml.types.*;
 
 /**
  * The Class MessageProxy.
@@ -122,7 +118,7 @@ public class Message implements IValue {
 	 * 
 	 * @see msi.gama.extensions.fipa.IMessage#getSender()
 	 */
-	@getter( Message.SENDER)
+	@getter(Message.SENDER)
 	public IAgent getSender() {
 		return data.getSender();
 	}
@@ -142,7 +138,7 @@ public class Message implements IValue {
 	 * 
 	 * @return the receivers a list of the receivers' name.
 	 */
-	@getter( Message.RECEIVERS)
+	@getter(Message.RECEIVERS)
 	public IList<IAgent> getReceivers() {
 		return data.getReceivers();
 	}
@@ -162,7 +158,7 @@ public class Message implements IValue {
 	 * 
 	 * @return the contents
 	 */
-	@getter( Message.CONTENT)
+	@getter(Message.CONTENT)
 	public IList getContent() {
 		// OutputManager.debug("Message " + getName() + " is read.");
 		setUnread(false);
@@ -184,7 +180,7 @@ public class Message implements IValue {
 	 * 
 	 * @return the performative
 	 */
-	@getter( Message.PERFORMATIVE)
+	@getter(Message.PERFORMATIVE)
 	public String getPerformativeName() {
 		return FIPAConstants.performativeNames[data.getPerformative()];
 	}
@@ -222,7 +218,7 @@ public class Message implements IValue {
 	 * 
 	 * @return the conversationID
 	 */
-	@getter( Message.CONVERSATION)
+	@getter(Message.CONVERSATION)
 	public Conversation getConversation() {
 		return data.getConversation();
 	}
@@ -242,7 +238,7 @@ public class Message implements IValue {
 	 * 
 	 * @return true, if is unread
 	 */
-	@getter( Message.UNREAD)
+	@getter(Message.UNREAD)
 	public boolean isUnread() {
 		return unread;
 	}
@@ -262,7 +258,7 @@ public class Message implements IValue {
 	 * 
 	 * @return the protocol name
 	 */
-	@getter( Message.PROTOCOL)
+	@getter(Message.PROTOCOL)
 	public String getProtocolName() {
 		if ( getConversation() == null ) { return null; }
 		return getConversation().getProtocolName();
@@ -273,7 +269,7 @@ public class Message implements IValue {
 	 * 
 	 * @see msi.gama.extensions.fipa.IMessage#getTimestamp()
 	 */
-	@getter( Message.TIMESTAMP)
+	@getter(Message.TIMESTAMP)
 	public String getTimestamp() {
 		return data.getTimestamp();
 	}
@@ -294,13 +290,15 @@ public class Message implements IValue {
 	}
 
 	@Override
-	public String stringValue() throws GamaRuntimeException {
+	public String stringValue(IScope scope) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
-		return "message[sender: " + data.getSender() + "; receivers: " + data.getReceivers() + "; performative: " + (data.getPerformativeName()) + "; content: " + data.getContent() + "; content" + "]" ;
+		return "message[sender: " + data.getSender() + "; receivers: " + data.getReceivers() +
+			"; performative: " + data.getPerformativeName() + "; content: " + data.getContent() +
+			"; content" + "]";
 	}
 
 	@Override
-	public IValue copy() throws GamaRuntimeException {
+	public IValue copy(IScope scope) throws GamaRuntimeException {
 		return this;
 	}
 

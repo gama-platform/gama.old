@@ -140,10 +140,12 @@ public abstract class AbstractPopulation implements IPopulation {
 			a.setGeometry(geom);
 			list.add(a);
 		}
-		this.addAll(list, null);
-		for ( IAgent a : list ) {
-			a.initializeMicroPopulations(scope);
-		}
+		this.addAll(scope, list, null);
+		// March 2013: Populations should now be initialized using the init of the corresponding
+		// variable added to the species description
+		// for ( IAgent a : list ) {
+		// a.initializeMicroPopulations(scope);
+		// }
 		for ( IAgent a : list ) {
 			a.schedule(scope);
 		}
@@ -155,8 +157,7 @@ public abstract class AbstractPopulation implements IPopulation {
 
 	@Override
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
-		final List<Map<String, Object>> initialValues, final boolean isRestored)
-		throws GamaRuntimeException {
+		final List<Map> initialValues, final boolean isRestored) throws GamaRuntimeException {
 		if ( number == 0 ) { return GamaList.EMPTY_LIST; }
 		IList<IAgent> list = new GamaList(number);
 		IAgentConstructor constr = species.getAgentConstructor();
@@ -166,7 +167,7 @@ public abstract class AbstractPopulation implements IPopulation {
 			a.setIndex(ind);
 			// Try to grab the location earlier
 			if ( initialValues != null && !initialValues.isEmpty() ) {
-				Map<String, Object> init = initialValues.get(i);
+				Map<Object, Object> init = initialValues.get(i);
 				if ( init.containsKey(IKeyword.SHAPE) ) {
 					a.setGeometry((GamaShape) init.get(IKeyword.SHAPE));
 					init.remove(IKeyword.SHAPE);
@@ -177,11 +178,13 @@ public abstract class AbstractPopulation implements IPopulation {
 			}
 			list.add(a);
 		}
-		addAll(list, null);
+		addAll(scope, list, null);
 
-		for ( IAgent a : list ) {
-			a.initializeMicroPopulations(scope);
-		}
+		// March 2013: Populations should now be initialized using the init of the corresponding
+		// variable added to the species description
+		// for ( IAgent a : list ) {
+		// a.initializeMicroPopulations(scope);
+		// }
 
 		createVariablesFor(scope, list, initialValues);
 
@@ -198,7 +201,7 @@ public abstract class AbstractPopulation implements IPopulation {
 	}
 
 	public void createVariablesFor(final IScope scope, final List<? extends IAgent> agents,
-		final List<Map<String, Object>> initialValues) throws GamaRuntimeException {
+		final List<Map> initialValues) throws GamaRuntimeException {
 		boolean empty = initialValues.isEmpty();
 		Map<String, Object> inits;
 		for ( int i = 0, n = agents.size(); i < n; i++ ) {
@@ -265,7 +268,7 @@ public abstract class AbstractPopulation implements IPopulation {
 	}
 
 	@Override
-	public boolean removeFirst(final IAgent a) {
+	public boolean removeFirst(IScope scope, final IAgent a) {
 		topology.removeAgent(a);
 		fireAgentRemoved(a);
 		return true;
@@ -308,7 +311,9 @@ public abstract class AbstractPopulation implements IPopulation {
 		} else {
 			// IExpression exp = species.getFacet(IKeyword.TORUS);
 			// boolean isTorus = exp != null && Cast.asBool(scope, exp.value(scope));
-			topology = new ContinuousTopology(scope, this.getHost(), this.getHost().isTorus());
+			topology =
+				new ContinuousTopology(scope, this.getHost(), scope.getSimulationScope().getModel()
+					.isTorus());
 		}
 	}
 
@@ -335,35 +340,38 @@ public abstract class AbstractPopulation implements IPopulation {
 	}
 
 	@Override
-	public void addAll(final IContainer value, final Object param) throws GamaRuntimeException {
-		// fireAgentsAdded(value);
-	}
-
-	@Override
-	public void addAll(final Integer index, final IContainer value, final Object param)
+	public void addAll(IScope scope, final IContainer value, final Object param)
 		throws GamaRuntimeException {
 		// fireAgentsAdded(value);
 	}
 
 	@Override
-	public void add(final IAgent value, final Object param) throws GamaRuntimeException {
-		fireAgentAdded(value);
+	public void addAll(IScope scope, final Integer index, final IContainer value, final Object param)
+		throws GamaRuntimeException {
+		// fireAgentsAdded(value);
 	}
 
 	@Override
-	public void add(final Integer index, final IAgent value, final Object param)
+	public void add(IScope scope, final IAgent value, final Object param)
 		throws GamaRuntimeException {
 		fireAgentAdded(value);
 	}
 
 	@Override
-	public boolean removeAll(final IContainer<?, IAgent> value) throws GamaRuntimeException {
+	public void add(IScope scope, final Integer index, final IAgent value, final Object param)
+		throws GamaRuntimeException {
+		fireAgentAdded(value);
+	}
+
+	@Override
+	public boolean removeAll(IScope scope, final IContainer<?, IAgent> value)
+		throws GamaRuntimeException {
 		fireAgentsRemoved(value);
 		return false;
 	}
 
 	@Override
-	public Object removeAt(final Integer index) throws GamaRuntimeException {
+	public Object removeAt(IScope scope, final Integer index) throws GamaRuntimeException {
 		fireAgentRemoved(get(null, index));
 		return null;
 	}

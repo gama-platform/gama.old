@@ -20,6 +20,7 @@ package msi.gama.metamodel.shape;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
+import msi.gama.runtime.IScope;
 import msi.gaml.operators.Maths;
 import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.*;
@@ -138,7 +139,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	@Override
-	public String stringValue() {
+	public String stringValue(IScope scope) {
 		String zStr = hasZ ? "," + z : "";
 		return "{" + x + "," + y + zStr + "}";
 	}
@@ -166,7 +167,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	@Override
-	public GamaPoint copy() {
+	public GamaPoint copy(IScope scope) {
 		return new GamaPoint(x, y, z);
 	}
 
@@ -241,7 +242,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 		if ( g.isPoint() ) { return g.getLocation().equals(this); }
 		return g.intersects(this);
 	}
-	
+
 	@Override
 	public boolean crosses(final IShape g) {
 		if ( g.isPoint() ) { return false; }

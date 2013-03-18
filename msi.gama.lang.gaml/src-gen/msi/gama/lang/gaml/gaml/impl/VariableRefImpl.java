@@ -6,7 +6,7 @@
 package msi.gama.lang.gaml.gaml.impl;
 
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.GamlVarRef;
+import msi.gama.lang.gaml.gaml.VarDefinition;
 import msi.gama.lang.gaml.gaml.VariableRef;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -39,7 +39,7 @@ public class VariableRefImpl extends ExpressionImpl implements VariableRef
    * @generated
    * @ordered
    */
-  protected GamlVarRef ref;
+  protected VarDefinition ref;
 
   /**
    * <!-- begin-user-doc -->
@@ -67,12 +67,12 @@ public class VariableRefImpl extends ExpressionImpl implements VariableRef
    * <!-- end-user-doc -->
    * @generated
    */
-  public GamlVarRef getRef()
+  public VarDefinition getRef()
   {
     if (ref != null && ref.eIsProxy())
     {
       InternalEObject oldRef = (InternalEObject)ref;
-      ref = (GamlVarRef)eResolveProxy(oldRef);
+      ref = (VarDefinition)eResolveProxy(oldRef);
       if (ref != oldRef)
       {
         if (eNotificationRequired())
@@ -87,7 +87,7 @@ public class VariableRefImpl extends ExpressionImpl implements VariableRef
    * <!-- end-user-doc -->
    * @generated
    */
-  public GamlVarRef basicGetRef()
+  public VarDefinition basicGetRef()
   {
     return ref;
   }
@@ -97,9 +97,9 @@ public class VariableRefImpl extends ExpressionImpl implements VariableRef
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setRef(GamlVarRef newRef)
+  public void setRef(VarDefinition newRef)
   {
-    GamlVarRef oldRef = ref;
+    VarDefinition oldRef = ref;
     ref = newRef;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.VARIABLE_REF__REF, oldRef, ref));
@@ -133,7 +133,7 @@ public class VariableRefImpl extends ExpressionImpl implements VariableRef
     switch (featureID)
     {
       case GamlPackage.VARIABLE_REF__REF:
-        setRef((GamlVarRef)newValue);
+        setRef((VarDefinition)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -150,7 +150,7 @@ public class VariableRefImpl extends ExpressionImpl implements VariableRef
     switch (featureID)
     {
       case GamlPackage.VARIABLE_REF__REF:
-        setRef((GamlVarRef)null);
+        setRef((VarDefinition)null);
         return;
     }
     super.eUnset(featureID);

@@ -39,13 +39,13 @@ public class GamaStringType extends GamaType<String> {
 	@Override
 	public String cast(final IScope scope, final Object obj, final Object param)
 		throws GamaRuntimeException {
-		return staticCast(obj, param);
+		return staticCast(scope, obj, param);
 	}
 
-	public static String staticCast(final Object obj, final Object param)
+	public static String staticCast(IScope scope, final Object obj, final Object param)
 		throws GamaRuntimeException {
 		if ( obj == null ) { return null; }
-		if ( obj instanceof IValue ) { return ((IValue) obj).stringValue(); }
+		if ( obj instanceof IValue ) { return ((IValue) obj).stringValue(scope); }
 		return obj.toString();
 	}
 

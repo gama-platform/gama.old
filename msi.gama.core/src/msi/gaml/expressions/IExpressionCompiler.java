@@ -47,6 +47,6 @@ public interface IExpressionCompiler<T> {
 	Map<String, IExpressionDescription> parseArguments(IExpressionDescription args,
 		IDescription context);
 
-	public abstract Set<String> parseLiteralArray(final IExpressionDescription s,
-		final IDescription context, boolean skills);
+	// public abstract Set<String> parseLiteralArray(final IExpressionDescription s,
+	// final IDescription context, boolean skills);
 }

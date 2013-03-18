@@ -20,6 +20,7 @@ package msi.gama.runtime;
 
 import java.util.Map;
 import msi.gama.common.interfaces.IGraphics;
+import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -155,6 +156,8 @@ public interface IScope {
 	 */
 
 	public abstract ISimulation getSimulationScope();
+
+	public abstract IModel getModel();
 
 	public abstract SimulationClock getClock();
 }

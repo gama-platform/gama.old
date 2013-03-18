@@ -37,7 +37,7 @@ public class GraphAndPopulationsSynchronizer implements IPopulationListener, IGr
 
 	// private boolean ignoreNextEvent = false;
 
-	private final List<Map<String, Object>> initialValues = Collections.EMPTY_LIST;
+	private final List<Map> initialValues = Collections.EMPTY_LIST;
 
 	public GraphAndPopulationsSynchronizer(final IPopulation popVertices,
 		final IPopulation popEdges, final IGraph graph) {

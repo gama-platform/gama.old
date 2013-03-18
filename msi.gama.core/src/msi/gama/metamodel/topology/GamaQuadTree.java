@@ -48,7 +48,7 @@ public class GamaQuadTree implements ISpatialIndex {
 	private double minSize = 10;
 	private int totalAgents = 0;
 	private int totalNodes = 0;
-	private final static double CLONE_THRESHOLD = 0.2;
+	// private final static double CLONE_THRESHOLD = 0.2;
 	// private final Map<IAgentFilter, GamaQuadTree> cache = new HashMap();
 
 	// TODO check why we really need it?
@@ -400,8 +400,7 @@ public class GamaQuadTree implements ISpatialIndex {
 
 			if ( retVal ) { return true; }
 
-			// System.out.println("agent " + o.getName() + " is not added to QuadTree; " +
-			// o.getLocation());
+			System.out.println("agent " + env + " is not added to quadtree node; " + bounds);
 			return false;
 		}
 

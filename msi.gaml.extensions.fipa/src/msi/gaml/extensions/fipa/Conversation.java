@@ -25,6 +25,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.types.IType;
@@ -344,7 +345,7 @@ public class Conversation extends GamaList<Message> {
 	}
 
 	@Override
-	public String stringValue() throws GamaRuntimeException {
+	public String stringValue(IScope scope) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 		return "Conversation between initiator: " + this.getIntitiator() + " and participants: " + this.getParticipants() ;
 	}

@@ -58,14 +58,14 @@ public class GamaPathType extends GamaType<IPath> {
 		for ( IShape n : nodes ) {
 			IShape g = n;
 			if ( !okS ) {
-				double dist = m.distanceBetween(g, source.getGeometry());
+				double dist = m.distanceBetween(scope, g, source.getGeometry());
 				if ( dist < minS ) {
 					s = n;
 					minS = dist;
 				}
 			}
 			if ( !okT ) {
-				double dist = m.distanceBetween(g, target.getGeometry());
+				double dist = m.distanceBetween(scope, g, target.getGeometry());
 				if ( dist < minT ) {
 					t = n;
 					minT = dist;
@@ -102,7 +102,7 @@ public class GamaPathType extends GamaType<IPath> {
 
 		for ( Object o : edges ) {
 			IShape eg = Cast.asGeometry(scope, o);
-			double d1 = m.distanceBetween(eg, source);
+			double d1 = m.distanceBetween(scope, eg, source);
 			// System.out.println(d1 + " -> " + eg);
 
 			if ( d1 < dist1 ) {
@@ -111,7 +111,7 @@ public class GamaPathType extends GamaType<IPath> {
 				// s2 = graph.getEdgeTarget(o);
 				dist1 = d1;
 			}
-			double d2 = m.distanceBetween(eg, target);
+			double d2 = m.distanceBetween(scope, eg, target);
 			if ( d2 < dist2 ) {
 				edgeT = eg;
 				t1 = graph.getEdgeSource(o);

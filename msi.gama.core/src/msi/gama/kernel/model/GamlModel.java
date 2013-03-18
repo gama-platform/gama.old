@@ -21,7 +21,6 @@ package msi.gama.kernel.model;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.IExperiment;
-import msi.gama.metamodel.topology.*;
 import msi.gama.outputs.OutputManager;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -29,7 +28,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.util.GamaList;
 import msi.gaml.compilation.ISymbol;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
@@ -48,6 +47,11 @@ public class GamlModel extends AbstractModel {
 	public GamlModel(final IDescription desc) {
 		super(desc);
 		setName(desc.getName());
+	}
+
+	@Override
+	public boolean isTorus() {
+		return ((ModelDescription) description).isTorus();
 	}
 
 	@Override
@@ -76,8 +80,6 @@ public class GamlModel extends AbstractModel {
 				experiments.add((IExperiment) s);
 			} else if ( s instanceof OutputManager ) {
 				forExperiment.add(s);
-			} else if ( s instanceof IEnvironment ) {
-				setModelEnvironment((ModelEnvironment) s);
 			}
 		}
 		// Add the default outputs, environment, etc. to all experiments

@@ -49,11 +49,16 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 
 	public abstract void schedule(IScope scope) throws GamaRuntimeException;
 
-	public abstract Map<String, Object> getAttributes();
-
-	public abstract Object getAttribute(final String name);
+	public abstract Object getAttribute(final Object index);
 
 	public abstract void setAttribute(final String name, final Object val);
+
+	/**
+	 * Allows to set attributes that will be accessed by the "read" or "get" operators. Used for
+	 * GIS/CSV attributes
+	 * @param map
+	 */
+	public abstract void setExtraAttributes(final Map<Object, Object> map);
 
 	public abstract int getIndex();
 
@@ -64,8 +69,6 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	public abstract ISpecies getSpecies();
 
 	public IPopulation getPopulation();
-
-	public boolean isTorus();
 
 	public abstract boolean isInstanceOf(final ISpecies s, boolean direct);
 
@@ -130,6 +133,9 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	 * Initialize Populations to manage micro-agents.
 	 */
 	public abstract void initializeMicroPopulations(IScope scope) throws GamaRuntimeException;
+
+	public abstract void initializeMicroPopulation(IScope scope, String name)
+		throws GamaRuntimeException;
 
 	/**
 	 * Returns a list of populations of (direct) micro-species.
@@ -307,6 +313,8 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	public IModel getModel();
 
 	public IExperiment getExperiment();
+
+	public IScope getScope();
 
 	public abstract boolean isInstanceOf(String skill, boolean direct);
 

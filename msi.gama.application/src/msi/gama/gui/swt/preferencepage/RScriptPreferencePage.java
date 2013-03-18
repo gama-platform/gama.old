@@ -1,11 +1,9 @@
 package msi.gama.gui.swt.preferencepage;
 
-import java.util.prefs.*;
-import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.FileFieldEditor;
+import java.util.prefs.Preferences;
+import org.eclipse.jface.preference.*;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IWorkbench;
-import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.*;
 
 public class RScriptPreferencePage extends FieldEditorPreferencePage implements
 	IWorkbenchPreferencePage {
@@ -21,7 +19,7 @@ public class RScriptPreferencePage extends FieldEditorPreferencePage implements
 	protected void performApply() {
 		preferences.put("RScript", ffe.getStringValue());
 		super.performApply();
-		
+
 	}
 
 	@Override
@@ -31,7 +29,7 @@ public class RScriptPreferencePage extends FieldEditorPreferencePage implements
 	}
 
 	FileFieldEditorValid ffe;
-	
+
 	class FileFieldEditorValid extends FileFieldEditor {
 
 		public FileFieldEditorValid() {
@@ -56,17 +54,16 @@ public class RScriptPreferencePage extends FieldEditorPreferencePage implements
 		public boolean isValid() {
 			return true;
 		}
-		
+
 	}
-	
+
+	@Override
 	public void createFieldEditors() {
 		ffe = new FileFieldEditorValid("RScript", "&Rscript preference:", getFieldEditorParent());
 		ffe.setStringValue(preferences.get("RScript", null));
 		addField(ffe);
 
 	}
-	
-	
 
 	@Override
 	protected void performDefaults() {
@@ -74,20 +71,16 @@ public class RScriptPreferencePage extends FieldEditorPreferencePage implements
 		ffe.setStringValue(defaultPath);
 		super.performDefaults();
 	}
-	
+
 	public String defaultPath() {
 		String os = System.getProperty("os.name");
 		String osbit = System.getProperty("os.arch");
 		if ( os.startsWith("Mac") ) {
-			if ( osbit.endsWith("64") )
-				return "/Library/Frameworks/R.framework/Versions/2.15/Resources/bin/exec/x86_64/RScript";
+			if ( osbit.endsWith("64") ) { return "/Library/Frameworks/R.framework/Versions/2.15/Resources/bin/exec/x86_64/RScript"; }
 			return "/Library/Frameworks/R.framework/Versions/2.15/Resources/bin/exec/i386/RScript";
-		} else if ( os.startsWith("Linux") ) {
-			return "usr/bin/RScript";
-		}
+		} else if ( os.startsWith("Linux") ) { return "usr/bin/RScript"; }
 		if ( os.startsWith("Windows") ) {
-			if ( osbit.endsWith("64") ) 
-				return "C:\\Program Files\\R\\R-2.15.1\\bin\\x64\\Rscript.exe";
+			if ( osbit.endsWith("64") ) { return "C:\\Program Files\\R\\R-2.15.1\\bin\\x64\\Rscript.exe"; }
 			return "C:\\Program Files\\R\\R-2.15.1\\bin\\Rscript.exe";
 		}
 		return "";

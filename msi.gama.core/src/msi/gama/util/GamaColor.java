@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -22,7 +22,10 @@ import java.awt.Color;
 import java.lang.reflect.Field;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.precompiler.GamlAnnotations.*;
+import msi.gama.precompiler.GamlAnnotations.getter;
+import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.runtime.IScope;
 import msi.gaml.types.*;
 
 /**
@@ -88,7 +91,7 @@ public class GamaColor extends Color implements IValue/* implements IContainer<I
 	}
 
 	@Override
-	public String stringValue() {
+	public String stringValue(IScope scope) {
 		return String.valueOf(getRGB());
 	}
 
@@ -97,34 +100,34 @@ public class GamaColor extends Color implements IValue/* implements IContainer<I
 		return Types.get(IType.COLOR);
 	}
 
-	@getter( IKeyword.COLOR_RED)
+	@getter(IKeyword.COLOR_RED)
 	public Integer red() {
 		return super.getRed();
 	}
 
-	@getter( IKeyword.COLOR_BLUE)
+	@getter(IKeyword.COLOR_BLUE)
 	public Integer blue() {
 		return super.getBlue();
 	}
 
-	@getter( IKeyword.COLOR_GREEN)
+	@getter(IKeyword.COLOR_GREEN)
 	public Integer green() {
 		return super.getGreen();
 	}
 
-	@getter( IKeyword.BRIGHTER)
+	@getter(IKeyword.BRIGHTER)
 	public GamaColor getBrighter() {
 		return new GamaColor(super.brighter());
 	}
 
-	@getter( IKeyword.DARKER)
+	@getter(IKeyword.DARKER)
 	public GamaColor getDarker() {
 		return new GamaColor(super.darker());
 	}
 
 	@Override
-	public GamaColor copy() {
-		return this;
+	public GamaColor copy(IScope scope) {
+		return new GamaColor(this);
 	}
 
 }

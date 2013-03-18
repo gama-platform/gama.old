@@ -21,28 +21,17 @@ package msi.gama.kernel.model;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.IExperiment;
-import msi.gama.metamodel.topology.*;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
-import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.species.ISpecies;
 
 public abstract class AbstractModel extends Symbol implements IModel {
 
 	protected final Map<String, IExperiment> experiments = new HashMap<String, IExperiment>();
-	private ModelEnvironment modelEnvironment;
 	protected ISpecies worldSpecies;
-
-	// private static int instanceCount;
-	// private static int totalCount;
-
-	// private final int count;
 
 	protected AbstractModel(final IDescription description) {
 		super(description);
-		// count = ++totalCount;
-		// instanceCount++;
-		// GuiUtils.debug("Model (" + count + ") " + description.getName() + " created ");
 	}
 
 	@Override
@@ -86,16 +75,10 @@ public abstract class AbstractModel extends Symbol implements IModel {
 	public void dispose() {
 		super.dispose();
 		worldSpecies.dispose();
-		if ( modelEnvironment != null ) {
-			modelEnvironment.dispose();
-			modelEnvironment = null;
-		}
 		for ( IExperiment exp : experiments.values() ) {
 			exp.dispose();
 		}
 		experiments.clear();
-		// instanceCount--;
-		// GuiUtils.debug("Model (" + count + ")" + " disposed. IModels left : " + instanceCount);
 	}
 
 	@Override
@@ -127,18 +110,5 @@ public abstract class AbstractModel extends Symbol implements IModel {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> children) {}
-
-	protected void setModelEnvironment(final ModelEnvironment modelEnvironment) {
-		this.modelEnvironment = modelEnvironment;
-	}
-
-	@Override
-	public IEnvironment getModelEnvironment() {
-		if ( modelEnvironment == null ) {
-			modelEnvironment =
-				new ModelEnvironment(DescriptionFactory.create(IKeyword.ENVIRONMENT));
-		}
-		return modelEnvironment;
-	}
 
 }

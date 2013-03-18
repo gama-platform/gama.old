@@ -166,7 +166,7 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 	}
 
 	@Override
-	public IAgent copy() {
+	public IAgent copy(IScope scope) {
 		return this;
 		// agents are immutable
 	}
@@ -370,7 +370,7 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		 */
 		IAgent restoreTo(final IScope scope, final IPopulation targetPopulation)
 			throws GamaRuntimeException {
-			List<Map<String, Object>> agentAttrs = new GamaList<Map<String, Object>>();
+			List<Map> agentAttrs = new GamaList<Map>();
 			agentAttrs.add(variables);
 			List<? extends IAgent> restoredAgents =
 				targetPopulation.createAgents(scope, 1, agentAttrs, true);
@@ -392,7 +392,7 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 
 				if ( microPop != null ) {
 					List<SavedAgent> savedMicros = innerPopulations.get(microPopName);
-					List<Map<String, Object>> microAttrs = new GamaList<Map<String, Object>>();
+					List<Map> microAttrs = new GamaList<Map>();
 					for ( SavedAgent sa : savedMicros ) {
 						microAttrs.add(sa.variables);
 					}
@@ -522,6 +522,13 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 	@Override
 	public IExperiment getExperiment() {
 		return getHost().getExperiment();
+	}
+
+	@Override
+	public IScope getScope() {
+		ISimulation sim = getSimulation();
+		if ( sim == null ) { return null; }
+		return sim.getExecutionScope();
 	}
 
 	@Override

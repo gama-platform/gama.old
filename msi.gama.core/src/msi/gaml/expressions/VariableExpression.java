@@ -42,12 +42,12 @@ public abstract class VariableExpression extends AbstractExpression implements I
 
 	@Override
 	public String toGaml() {
-		return name;
+		return getName();
 	}
 
 	@Override
 	public String toString() {
-		return name;
+		return getName();
 	}
 
 	@Override
@@ -88,7 +88,7 @@ public abstract class VariableExpression extends AbstractExpression implements I
 
 	@Override
 	public String getTitle() {
-		return isNotModifiable ? "Constant" : "Variable " + name;
+		return isNotModifiable ? "Constant" : "Variable " + getName();
 	}
 
 }

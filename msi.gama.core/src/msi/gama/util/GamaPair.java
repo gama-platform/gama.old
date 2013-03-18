@@ -23,7 +23,7 @@ import msi.gama.common.util.StringUtils;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
@@ -208,9 +208,8 @@ public class GamaPair<K, V> implements IValue /* implements IContainer<K, V> */{
 
 	@Override
 	// @operator(value = "string", can_be_const = true)
-	public String stringValue() throws GamaRuntimeException {
-		return Cast.asString(GAMA.getDefaultScope(), key) + "::" +
-			Cast.asString(GAMA.getDefaultScope(), value);
+	public String stringValue(IScope scope) throws GamaRuntimeException {
+		return Cast.asString(scope, key) + "::" + Cast.asString(scope, value);
 	}
 
 	@Override
@@ -259,7 +258,7 @@ public class GamaPair<K, V> implements IValue /* implements IContainer<K, V> */{
 	// }
 
 	@Override
-	public GamaPair copy() {
+	public GamaPair copy(IScope scope) {
 		return new GamaPair(key, value);
 	}
 

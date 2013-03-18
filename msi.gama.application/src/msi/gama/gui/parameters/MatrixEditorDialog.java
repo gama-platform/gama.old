@@ -59,18 +59,18 @@ public class MatrixEditorDialog extends Dialog {
 
 		int index = 0;
 		/** Creation of table columns */
-		for ( int i = 0; i < data.getCols(); i++ ) {
+		for ( int i = 0; i < data.getCols(GAMA.getDefaultScope()); i++ ) {
 			TableColumn column = new TableColumn(table, SWT.CENTER);
 			column.setWidth(90);
 		}
 		/** Creation of table rows */
-		for ( int i = 0; i < data.getRows(); i++ ) {
+		for ( int i = 0; i < data.getRows(GAMA.getDefaultScope()); i++ ) {
 			TableItem item = new TableItem(table, SWT.NONE);
 			item.setText(0, String.valueOf(index));
 			item.setBackground(0, gray);
 			index++;
-			for ( int j = 0; j < data.getCols(); j++ ) {
-				item.setText(j + 1, "" + data.get(j, i));
+			for ( int j = 0; j < data.getCols(GAMA.getDefaultScope()); j++ ) {
+				item.setText(j + 1, "" + data.get(GAMA.getDefaultScope(), j, i));
 			}
 		}
 		/** Get the table editable */
@@ -227,18 +227,18 @@ public class MatrixEditorDialog extends Dialog {
 		final int cols = table.getColumnCount() - 1;
 		IMatrix m = null;
 		if ( data instanceof GamaIntMatrix ) {
-			m = new GamaIntMatrix(cols, rows);
+			m = new GamaIntMatrix(GAMA.getDefaultScope(), cols, rows);
 		} else if ( data instanceof GamaFloatMatrix ) {
-			m = new GamaFloatMatrix(cols, rows);
+			m = new GamaFloatMatrix(GAMA.getDefaultScope(), cols, rows);
 		} else if ( data instanceof GamaObjectMatrix ) {
-			m = new GamaObjectMatrix(cols, rows);
+			m = new GamaObjectMatrix(GAMA.getDefaultScope(), cols, rows);
 		} else {
 			return null;
 		}
 		for ( int r = 0; r < rows; r++ ) {
 			for ( int c = 1; c < cols + 1; c++ ) {
 				final TableItem item = table.getItem(r);
-				m.set(c - 1, r, item.getText(c));
+				m.set(GAMA.getDefaultScope(), c - 1, r, item.getText(c));
 			}
 		}
 		return m;

@@ -171,7 +171,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		return new GamaPair(v1, v2);
 	}
 
-	protected IAgent generateEdgeAgent(final List<Map<String, Object>> attributes) {
+	protected IAgent generateEdgeAgent(final List<Map> attributes) {
 		IAgent agent =
 			scope.getAgentScope().getPopulationFor(edgeSpecies)
 				.createAgents(scope, 1, attributes, false).first(scope);
@@ -515,7 +515,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	}
 
 	@Override
-	public String stringValue() {
+	public String stringValue(IScope scope) {
 		return toString();
 	}
 
@@ -546,7 +546,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	public GamaMap mapValue(final IScope scope) {
 		GamaMap m = new GamaMap();
 		for ( Object edge : edgeSet() ) {
-			m.add(new GamaPair(getEdgeSource(edge), getEdgeTarget(edge)), edge, null);
+			m.add(scope, new GamaPair(getEdgeSource(edge), getEdgeTarget(edge)), edge, null);
 		}
 		return m;
 	}
@@ -557,15 +557,15 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	}
 
 	@Override
-	public void add(final Object value, final Object param) throws GamaRuntimeException {
-		add(null, value, param);
+	public void add(IScope scope, final Object value, final Object param)
+		throws GamaRuntimeException {
+		add(scope, value, param);
 	}
 
 	@Override
-	public void add(final Object index, final Object value, final Object param)
+	public void add(IScope scope, final Object index, final Object value, final Object param)
 		throws GamaRuntimeException {
-		double weight =
-			param == null ? DEFAULT_EDGE_WEIGHT : Cast.asFloat(GAMA.getDefaultScope(), param);
+		double weight = param == null ? DEFAULT_EDGE_WEIGHT : Cast.asFloat(scope, param);
 		if ( index == null ) {
 			if ( value instanceof GamaPair ) {
 				Object v = addEdge(((GamaPair) value).first(), ((GamaPair) value).last());
@@ -588,7 +588,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	}
 
 	@Override
-	public void putAll(final Object value, final Object param) {
+	public void putAll(IScope scope, final Object value, final Object param) {
 		// Nothing to do ?
 	}
 
@@ -663,21 +663,21 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	}
 
 	@Override
-	public boolean removeAll(final IContainer list) throws GamaRuntimeException {
+	public boolean removeAll(IScope scope, final IContainer list) throws GamaRuntimeException {
 		boolean result = true;
 		for ( Object value : list ) {
-			result = removeFirst(value) & result;
+			result = removeFirst(scope, value) & result;
 		}
 		return result;
 	}
 
 	@Override
-	public boolean removeFirst(final Object value) {
+	public boolean removeFirst(IScope scope, final Object value) {
 		return removeVertex(value) || removeEdge(value);
 	}
 
 	@Override
-	public Object removeAt(final Object index) {
+	public Object removeAt(IScope scope, final Object index) {
 		Object e;
 		if ( index instanceof GamaPair ) {
 			e = getEdge(((GamaPair) index).first(), ((GamaPair) index).last());
@@ -698,9 +698,9 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	}
 
 	@Override
-	public void put(final Object index, final Object value, final Object param)
+	public void put(IScope scope, final Object index, final Object value, final Object param)
 		throws GamaRuntimeException {
-		add(index, value, param);
+		add(scope, index, value, param);
 	}
 
 	@Override
@@ -754,7 +754,7 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	}
 
 	@Override
-	public IGraph copy() {
+	public IGraph copy(IScope scope) {
 		GamaGraph g =
 			new GamaGraph(GamaList.EMPTY_LIST, true, directed, vertexRelation, edgeSpecies, scope);
 		Graphs.addAllEdges(g, this, this.edgeSet());
@@ -808,14 +808,15 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	 * java.lang.Object)
 	 */
 	@Override
-	public void addAll(final IContainer value, final Object param) throws GamaRuntimeException {
+	public void addAll(IScope scope, final IContainer value, final Object param)
+		throws GamaRuntimeException {
 		if ( value instanceof GamaGraph ) {
 			for ( Object o : ((GamaGraph) value).edgeSet() ) {
 				addEdge(o);
 			}
 		} else {
 			for ( Object o : value ) {
-				this.add(o, param);
+				this.add(scope, o, param);
 			}
 		}
 	}
@@ -827,9 +828,9 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	 * msi.gama.interfaces.IGamaContainer, java.lang.Object)
 	 */
 	@Override
-	public void addAll(final Object index, final IContainer value, final Object param)
+	public void addAll(IScope scope, final Object index, final IContainer value, final Object param)
 		throws GamaRuntimeException {
-		addAll(value, null);
+		addAll(scope, value, null);
 
 	}
 

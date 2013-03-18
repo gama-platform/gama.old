@@ -55,7 +55,7 @@ public abstract class AbstractExpression implements IExpression {
 
 	@Override
 	public String literalValue() {
-		return name;
+		return getName();
 	}
 
 	@Override

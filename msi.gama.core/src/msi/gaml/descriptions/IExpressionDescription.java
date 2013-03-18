@@ -4,6 +4,7 @@
  */
 package msi.gaml.descriptions;
 
+import java.util.Set;
 import msi.gaml.expressions.IExpression;
 import org.eclipse.emf.ecore.EObject;
 
@@ -32,6 +33,8 @@ public interface IExpressionDescription {
 
 	public void setTarget(EObject target);
 
-	public boolean isString();
+	public boolean isConstant();
+
+	public Set<String> getStrings(IDescription context, boolean skills);
 
 }

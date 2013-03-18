@@ -57,7 +57,7 @@ public class MultipleTopology extends ContinuousTopology {
 	 * @see msi.gama.interfaces.IValue#stringValue()
 	 */
 	@Override
-	public String stringValue() throws GamaRuntimeException {
+	public String stringValue(IScope scope) throws GamaRuntimeException {
 		return "Multiple topology in " + environment.toString();
 	}
 
@@ -73,7 +73,7 @@ public class MultipleTopology extends ContinuousTopology {
 	 * @see msi.gama.environment.AbstractTopology#_copy()
 	 */
 	@Override
-	protected ITopology _copy() {
+	protected ITopology _copy(IScope scope) {
 		try {
 			return new MultipleTopology(scope, places/* , isTorus */);
 		} catch (GamaRuntimeException e) {

@@ -21,8 +21,9 @@ package msi.gaml.descriptions;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.metamodel.agent.GamlAgent;
-import msi.gama.runtime.GAMA;
+import msi.gama.metamodel.agent.*;
+import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.architecture.reflex.AbstractArchitecture;
@@ -30,6 +31,7 @@ import msi.gaml.compilation.*;
 import msi.gaml.factories.*;
 import msi.gaml.skills.*;
 import msi.gaml.statements.Facets;
+import msi.gaml.types.IType;
 
 public class SpeciesDescription extends TypeDescription {
 
@@ -103,8 +105,9 @@ public class SpeciesDescription extends TypeDescription {
 		/* We add the keyword as a possible skill (used for 'grid' species) */
 		skillNames.add(getKeyword());
 		/* We add the user defined skills (i.e. as in 'species a skills: [s1, s2...]') */
-		skillNames.addAll(GAMA.getExpressionFactory().parseLiteralArray(userDefinedSkills, this,
-			true));
+		if ( userDefinedSkills != null ) {
+			skillNames.addAll(userDefinedSkills.getStrings(this, true));
+		}
 		/*
 		 * We add the skills that are defined in Java, either using @species(value='a', skills=
 		 * {s1,s2}), or @skill(value="s1", attach_to="a")
@@ -238,6 +241,10 @@ public class SpeciesDescription extends TypeDescription {
 
 	public StatementDescription getAspect(final String aName) {
 		return aspects == null ? null : aspects.get(aName);
+	}
+
+	public Collection<String> getAspectNames() {
+		return aspects == null ? Collections.EMPTY_LIST : aspects.keySet();
 	}
 
 	public IArchitecture getControl() {
@@ -580,15 +587,56 @@ public class SpeciesDescription extends TypeDescription {
 	 */
 	public void finalizeDescription() {
 		if ( isMirror() ) {
+			// TODO Try to find automatically the type given the "MIRROR" expression
 			addChild(DescriptionFactory.create(AGENT, this, NAME, TARGET));
 		}
 		inheritFromParent();
 		control = (IArchitecture) AbstractGamlAdditions.getSkillInstanceFor(getControlName());
 		buildSharedSkills();
 		// recursively finalize the sorted micro-species
-		for ( SpeciesDescription microSpec : sortedMicroSpecies() ) {
+		for ( final SpeciesDescription microSpec : sortedMicroSpecies() ) {
+			if ( !microSpec.isExperiment() ) {
+				VariableDescription var =
+					(VariableDescription) DescriptionFactory.create(IType.CONTAINER_STR, this,
+						NAME, microSpec.getName()); // CONST = TRUE ?
+				var.setContentType(microSpec.getType());
+				var.getFacets().put(DEPENDS_ON,
+					new StringListExpressionDescription(SHAPE, LOCATION));
+				IVarGetter get = new VarGetter(null) {
+
+					@Override
+					public Object run(IScope scope, IAgent agent, ISkill skill)
+						throws GamaRuntimeException {
+						return agent.getMicroPopulation(microSpec.getName());
+					}
+				};
+				IVarSetter set = new VarSetter(null) {
+
+					@Override
+					public void run(IScope scope, IAgent agent, ISkill target, Object value)
+						throws GamaRuntimeException {}
+
+				};
+				IVarGetter init = new VarGetter(null) {
+
+					@Override
+					public Object run(IScope scope, IAgent agent, ISkill skill)
+						throws GamaRuntimeException {
+						agent.initializeMicroPopulation(scope, microSpec.getName());
+						return agent.getMicroPopulation(microSpec.getName());
+					}
+
+				};
+				var.addHelpers(get, null, set);
+				addChild(var);
+			}
 			microSpec.finalizeDescription();
 		}
+		sortVars();
+	}
+
+	public boolean isExperiment() {
+		return false;
 	}
 
 	boolean hasMicroSpecies() {

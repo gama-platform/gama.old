@@ -304,7 +304,7 @@ public class BatchExperiment extends AbstractExperiment {
 		ISpecies world = model.getWorldSpecies();
 		for ( IVariable v : world.getVars() ) {
 			if ( v.isParameter() ) {
-				ExperimentParameter p = new ExperimentParameter(v);
+				ExperimentParameter p = new ExperimentParameter(stack, v);
 				if ( p.canBeExplored() ) {
 					p.setEditable(false);
 					p.setCategory(EXPLORABLE_CATEGORY_NAME);

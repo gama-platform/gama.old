@@ -21,7 +21,6 @@ package msi.gaml.statements;
 import java.io.*;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -43,13 +42,12 @@ import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.*;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import com.vividsolutions.jts.geom.Geometry;
 
 @symbol(name = IKeyword.SAVE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, with_args = true, remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
-@facets(value = { @facet(name = IKeyword.SPECIES, type = IType.SPECIES_STR, optional = true),
-	@facet(name = IKeyword.TYPE, type = IType.STRING_STR, optional = true),
-	@facet(name = IKeyword.ITEM, type = IType.NONE_STR, optional = true),
+@facets(value = { @facet(name = IKeyword.TYPE, type = IType.ID, optional = true),
 	@facet(name = IKeyword.DATA, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.REWRITE, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.TO, type = IType.STRING_STR, optional = false),
@@ -62,12 +60,14 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		super(desc);
 	}
 
+	// TODO rewrite this with the GamaFile framework
+
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		IExpression typeExp = getFacet(IKeyword.TYPE);
+		String typeExp = getLiteral(IKeyword.TYPE);
 		IExpression file = getFacet(IKeyword.TO);
 		IExpression rewriteExp = getFacet(IKeyword.REWRITE);
-		
+
 		String path = "";
 		if ( file == null ) {
 			scope.setStatus(ExecutionStatus.failure);
@@ -82,24 +82,16 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		}
 		String type = "text";
 		if ( typeExp != null ) {
-			type = typeExp.value(scope).toString();
+			type = typeExp;
 		}
 		if ( type.equals("shp") ) {
-			IExpression item = getFacet(IKeyword.ITEM, getFacet(IKeyword.DATA));
+			IExpression item = getFacet(IKeyword.DATA);
 			List<? extends IAgent> agents;
 			if ( item == null ) {
-				IExpression speciesExpr = getFacet(IKeyword.SPECIES);
-				if ( speciesExpr == null || Cast.asSpecies(scope, speciesExpr.value(scope)) == null ) {
-					scope.setStatus(ExecutionStatus.failure);
-					return null;
-				}
-				agents =
-					scope.getAgentScope()
-						.getPopulationFor(Cast.asSpecies(scope, speciesExpr.value(scope)))
-						.getAgentsList();
-			} else {
-				agents = Cast.asList(scope, item.value(scope));
+				scope.setStatus(ExecutionStatus.failure);
+				return null;
 			}
+			agents = Cast.asList(scope, item.value(scope));
 			if ( agents == null ) {
 				scope.setStatus(ExecutionStatus.failure);
 				return null;
@@ -108,12 +100,14 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			saveShape(agents, path, scope);
 		} else if ( type.equals("text") || type.equals("csv") ) {
 			File fileTxt = new File(path);
-			if(rewriteExp != null){
+			if ( rewriteExp != null ) {
 				boolean rewrite = Cast.asBool(scope, rewriteExp.value(scope));
-				if(rewrite){
-					if(fileTxt.exists()) fileTxt.delete();
+				if ( rewrite ) {
+					if ( fileTxt.exists() ) {
+						fileTxt.delete();
+					}
 				}
-			}		
+			}
 			try {
 				fileTxt.createNewFile();
 			} catch (GamaRuntimeException e) {
@@ -121,11 +115,8 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			} catch (IOException e) {
 				throw new GamaRuntimeException(e);
 			}
-
-			IExpression item = getFacet(IKeyword.ITEM, getFacet(IKeyword.DATA));
-			// if (fileTxt != null) {
+			IExpression item = getFacet(IKeyword.DATA);
 			saveText(type, item, fileTxt, scope);
-			// }
 		}
 		return Cast.asString(scope, file.value(scope));
 	}
@@ -144,11 +135,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		}
 
 		try {
-			if ( attributes != null ) {
-				for ( String e : attributes.keySet() ) {
-					specs.append(',').append(e).append(':')
-						.append(typeJava(agents.get(0).getAttribute(attributes.get(e))));
-				}
+			for ( String e : attributes.keySet() ) {
+				specs.append(',').append(e).append(':')
+					.append(typeJava(agents.get(0).getAttribute(attributes.get(e))));
 			}
 			String featureTypeName = agents.get(0).getSpeciesName();
 			saveShapeFile(scope, path, agents, featureTypeName, specs.toString(), attributes);
@@ -239,7 +228,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 			// TODO Prévoir un locationConverter pour passer d'un environnement à l'autre
 
-			geom = GisUtils.fromAbsoluteToGis(geom);
+			geom = scope.getWorldScope().getGisUtils().inverseTransform(geom);
 			liste.add(geom);
 			if ( attributes != null ) {
 				for ( Object e : attributes.values() ) {
@@ -256,14 +245,15 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		t.commit();
 		t.close();
 		store.dispose();
-		writePRJ(path);
+		writePRJ(scope, path);
 	}
 
-	private void writePRJ(final String path) {
-		if ( GisUtils.getCrs() != null ) {
+	private void writePRJ(IScope scope, final String path) {
+		CoordinateReferenceSystem crs = scope.getWorldScope().getGisUtils().getCrs();
+		if ( crs != null ) {
 			try {
 				FileWriter fw = new FileWriter(path.replace(".shp", ".prj"));
-				fw.write(GisUtils.getCrs().toString());
+				fw.write(crs.toString());
 				fw.close();
 			} catch (IOException e) {
 				e.printStackTrace();

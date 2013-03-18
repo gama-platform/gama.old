@@ -167,7 +167,7 @@ public class DrivingSkill extends MovingSkill {
 		@arg(name = LANES_ATTRIBUTE, type = IType.STRING_STR, optional = true, doc = @doc("the name of the attribut of the road agent that determine the number of road lanes (replaces the current value of lanes_attribute)")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments while considering the other agents in the network (only for graph topology)", returns = "optional: the path followed by the agent.", examples = { "do gotoTraffic target: one_of (list (species (self))) speed: speed * 2 on: road_network living_space: 2.0;" }))
 	public IPath primGotoTraffic(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
-		ILocation source = agent.getLocation().copy();
+		ILocation source = agent.getLocation().copy(scope);
 		final double maxDist = computeDistance(scope, agent);
 		final double tolerance = computeTolerance(scope, agent);
 		final double livingSpace = computeLivingSpace(scope, agent);
@@ -190,14 +190,13 @@ public class DrivingSkill extends MovingSkill {
 		IPath path = (GamaPath) agent.getAttribute("current_path");
 		if ( path == null || !path.getTopology().equals(topo) ||
 			!path.getEndVertex().equals(goal) || !path.getStartVertex().equals(source) ) {
-			path = topo.pathBetween(source, goal);
+			path = topo.pathBetween(scope, source, goal);
 		} else {
 
-			if ( topo != null && topo instanceof GraphTopology ) {
-
+			if ( topo instanceof GraphTopology ) {
 				if ( ((GraphTopology) topo).getPlaces() != path.getGraph() ||
 					((GraphTopology) topo).getPlaces().getVersion() != path.getGraphVersion() ) {
-					path = topo.pathBetween(source, goal);
+					path = topo.pathBetween(scope, source, goal);
 				}
 			}
 		}
@@ -293,7 +292,7 @@ public class DrivingSkill extends MovingSkill {
 	private void moveToNextLocAlongPathSimplifiedTraffic(final IScope scope, final IAgent agent,
 		final IPath path, final double _distance, final GamaMap weigths, final double livingSpace,
 		final double tolerance, final String laneAttributes, final GamaList<ISpecies> obsSpecies) {
-		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
+		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		GamaList indexVals = initMoveAlongPath(agent, path, currentLocation);
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);
@@ -381,14 +380,14 @@ public class DrivingSkill extends MovingSkill {
 		path.setIndexSegementOf(agent, indexSegment);
 		path.setIndexOf(agent, index);
 		agent.setLocation(currentLocation);
-		path.setSource(currentLocation.copy());
+		path.setSource(currentLocation.copy(scope));
 
 	}
 
 	private IPath moveToNextLocAlongPathTraffic(final IScope scope, final IAgent agent,
 		final IPath path, final double _distance, final GamaMap weigths, final double livingSpace,
 		final double tolerance, final String laneAttributes, final GamaList<ISpecies> obsSpecies) {
-		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
+		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		GamaList indexVals = initMoveAlongPath(agent, path, currentLocation);
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);
@@ -399,7 +398,7 @@ public class DrivingSkill extends MovingSkill {
 		int nb = edges.size();
 		double distance = _distance;
 		GamaList<IShape> segments = new GamaList();
-		GamaPoint startLocation = (GamaPoint) agent.getLocation().copy();
+		GamaPoint startLocation = (GamaPoint) agent.getLocation().copy(scope);
 		GamaMap agents = new GamaMap();
 		for ( int i = index; i < nb; i++ ) {
 			IShape line = edges.get(i);
@@ -423,14 +422,14 @@ public class DrivingSkill extends MovingSkill {
 				} else {
 					pt = new GamaPoint(coords[j]);
 				}
-				double dist = scope.getTopology().distanceBetween(pt, currentLocation);
+				double dist = scope.getTopology().distanceBetween(scope, pt, currentLocation);
 				dist = weight * dist;
 				distance =
 					avoidCollision(scope, agent, distance, livingSpace, tolerance, currentLocation,
 						pt, nbLanes, obsSpecies);
 
 				if ( distance < dist ) {
-					GamaPoint pto = currentLocation.copy();
+					GamaPoint pto = currentLocation.copy(scope);
 					double ratio = distance / dist;
 					double newX = pto.x + ratio * (pt.x - pto.x);
 					double newY = pto.y + ratio * (pt.y - pto.y);
@@ -484,7 +483,7 @@ public class DrivingSkill extends MovingSkill {
 		}
 		path.setIndexSegementOf(agent, indexSegment);
 		path.setIndexOf(agent, index);
-		path.setSource(currentLocation.copy());
+		path.setSource(currentLocation.copy(scope));
 		if ( segments.isEmpty() ) { return null; }
 		IPath followedPath =
 			new GamaPath(scope.getTopology(), startLocation, currentLocation, segments);

@@ -7,9 +7,9 @@ package msi.gama.lang.gaml.resource;
 import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
 import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.utils.EGaml;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.xtext.naming.QualifiedName;
-import org.eclipse.xtext.resource.*;
+import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.resource.impl.DefaultResourceDescriptionStrategy;
 import org.eclipse.xtext.util.IAcceptor;
 
@@ -31,18 +31,16 @@ public class GamlResourceDescriptionStrategy extends DefaultResourceDescriptionS
 		new HashSet(Arrays.asList(GLOBAL, SPECIES, ENTITIES, ENVIRONMENT));
 
 	@Override
-	public boolean createEObjectDescriptions(final EObject eObject,
+	public boolean createEObjectDescriptions(final EObject o,
 		final IAcceptor<IEObjectDescription> acceptor) {
-		if ( eObject instanceof GamlVarRef ) {
-			String s = ((GamlVarRef) eObject).getName();
-			if ( s != null && !s.isEmpty() ) {
-				acceptor.accept(EObjectDescription.create(QualifiedName.create(s), eObject));
+		if ( o instanceof Statement ) {
+			Statement stm = (Statement) o;
+			String n = EGaml.getNameOf(stm);
+			if ( n != null ) {
+				super.createEObjectDescriptions(stm, acceptor);
 			}
-			return eObject instanceof Statement ? composed.contains(((Statement) eObject).getKey())
-				: false;
+			return composed.contains(EGaml.getKey.caseStatement(stm));
 		}
-
-		if ( eObject instanceof Block || eObject instanceof Model ) { return true; }
-		return false;
+		return o instanceof Block || o instanceof Model;
 	}
 }

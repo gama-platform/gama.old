@@ -56,8 +56,9 @@ public class ConstantExpression extends AbstractExpression {
 
 	@Override
 	public String toString() {
-		return value == null ? "nil" : value instanceof String ? "'" + value + "'" : value
-			.toString();
+		return value == null ? "nil" : value.toString();
+		// value instanceof String ? "'" + value + "'" : value
+		// .toString();
 	}
 
 	@Override

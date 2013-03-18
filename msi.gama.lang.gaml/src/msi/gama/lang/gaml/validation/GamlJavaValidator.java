@@ -18,9 +18,10 @@
  */
 package msi.gama.lang.gaml.validation;
 
+import msi.gama.common.util.GuiUtils;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.resource.GamlResource;
-import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.ModelDescription;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -79,6 +80,14 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	}
 
 	public void add(final GamlCompilationError e) {
+		Object source = e.getStatement();
+		if ( !(source instanceof EObject) ) {
+			if ( source instanceof SyntheticStatement ) {
+				GuiUtils.debug("*** Internal compilation problem in synthetic statement: " +
+					e.toString());
+			}
+			return;
+		}
 		EObject object = (EObject) e.getStatement();
 		if ( object == null ) {
 			try {

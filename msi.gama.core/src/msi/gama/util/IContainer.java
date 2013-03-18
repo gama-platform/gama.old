@@ -249,25 +249,25 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	 */
 	public boolean checkBounds(KeyType index, boolean forAdding);
 
-	public void addAll(final IContainer value, final Object param) throws GamaRuntimeException;
+	public void addAll(IScope scope, final IContainer value, final Object param) throws GamaRuntimeException;
 
-	public void addAll(final KeyType index, final IContainer value, final Object param)
+	public void addAll(IScope scope, final KeyType index, final IContainer value, final Object param)
 		throws GamaRuntimeException;
 
-	public void add(final ValueType value, final Object param) throws GamaRuntimeException;
+	public void add(IScope scope, final ValueType value, final Object param) throws GamaRuntimeException;
 
-	public void add(final KeyType index, final ValueType value, Object param)
+	public void add(IScope scope, final KeyType index, final ValueType value, Object param)
 		throws GamaRuntimeException;
 
-	public boolean removeFirst(final ValueType value) throws GamaRuntimeException;
+	public boolean removeFirst(IScope scope, final ValueType value) throws GamaRuntimeException;
 
-	public boolean removeAll(final IContainer<?, ValueType> value) throws GamaRuntimeException;
+	public boolean removeAll(IScope scope, final IContainer<?, ValueType> value) throws GamaRuntimeException;
 
-	public Object removeAt(final KeyType index) throws GamaRuntimeException;
+	public Object removeAt(IScope scope, final KeyType index) throws GamaRuntimeException;
 
-	public void putAll(final ValueType value, Object param) throws GamaRuntimeException;
+	public void putAll(IScope scope, final ValueType value, Object param) throws GamaRuntimeException;
 
-	public void put(final KeyType index, final ValueType value, Object param)
+	public void put(IScope scope, final KeyType index, final ValueType value, Object param)
 		throws GamaRuntimeException;
 
 	public void clear() throws GamaRuntimeException;

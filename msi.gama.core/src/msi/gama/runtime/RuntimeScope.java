@@ -18,6 +18,7 @@
  */
 package msi.gama.runtime;
 
+import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.WorldAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -35,6 +36,11 @@ public class RuntimeScope extends AbstractScope {
 	@Override
 	public final ISimulation getSimulationScope() {
 		return simulation;
+	}
+
+	@Override
+	public IModel getModel() {
+		return simulation.getModel();
 	}
 
 	@Override

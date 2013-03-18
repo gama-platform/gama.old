@@ -53,13 +53,130 @@ public interface GamlFactory extends EFactory
   Statement createStatement();
 
   /**
-   * Returns a new object of class '<em>Contents</em>'.
+   * Returns a new object of class '<em>SDo</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Contents</em>'.
+   * @return a new object of class '<em>SDo</em>'.
    * @generated
    */
-  Contents createContents();
+  S_Do createS_Do();
+
+  /**
+   * Returns a new object of class '<em>SLoop</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>SLoop</em>'.
+   * @generated
+   */
+  S_Loop createS_Loop();
+
+  /**
+   * Returns a new object of class '<em>SIf</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>SIf</em>'.
+   * @generated
+   */
+  S_If createS_If();
+
+  /**
+   * Returns a new object of class '<em>SOther</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>SOther</em>'.
+   * @generated
+   */
+  S_Other createS_Other();
+
+  /**
+   * Returns a new object of class '<em>SReturn</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>SReturn</em>'.
+   * @generated
+   */
+  S_Return createS_Return();
+
+  /**
+   * Returns a new object of class '<em>SDeclaration</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>SDeclaration</em>'.
+   * @generated
+   */
+  S_Declaration createS_Declaration();
+
+  /**
+   * Returns a new object of class '<em>SSpecies</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>SSpecies</em>'.
+   * @generated
+   */
+  S_Species createS_Species();
+
+  /**
+   * Returns a new object of class '<em>SExperiment</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>SExperiment</em>'.
+   * @generated
+   */
+  S_Experiment createS_Experiment();
+
+  /**
+   * Returns a new object of class '<em>SReflex</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>SReflex</em>'.
+   * @generated
+   */
+  S_Reflex createS_Reflex();
+
+  /**
+   * Returns a new object of class '<em>SDefinition</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>SDefinition</em>'.
+   * @generated
+   */
+  S_Definition createS_Definition();
+
+  /**
+   * Returns a new object of class '<em>SAssignment</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>SAssignment</em>'.
+   * @generated
+   */
+  S_Assignment createS_Assignment();
+
+  /**
+   * Returns a new object of class '<em>SDirect Assignment</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>SDirect Assignment</em>'.
+   * @generated
+   */
+  S_DirectAssignment createS_DirectAssignment();
+
+  /**
+   * Returns a new object of class '<em>SSet</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>SSet</em>'.
+   * @generated
+   */
+  S_Set createS_Set();
+
+  /**
+   * Returns a new object of class '<em>SEquation</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>SEquation</em>'.
+   * @generated
+   */
+  S_Equation createS_Equation();
 
   /**
    * Returns a new object of class '<em>Parameters</em>'.
@@ -143,13 +260,85 @@ public interface GamlFactory extends EFactory
   VariableRef createVariableRef();
 
   /**
-   * Returns a new object of class '<em>Var Ref</em>'.
+   * Returns a new object of class '<em>Definition</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>Var Ref</em>'.
+   * @return a new object of class '<em>Definition</em>'.
    * @generated
    */
-  GamlVarRef createGamlVarRef();
+  GamlDefinition createGamlDefinition();
+
+  /**
+   * Returns a new object of class '<em>Type Definition</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Type Definition</em>'.
+   * @generated
+   */
+  TypeDefinition createTypeDefinition();
+
+  /**
+   * Returns a new object of class '<em>Var Definition</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Var Definition</em>'.
+   * @generated
+   */
+  VarDefinition createVarDefinition();
+
+  /**
+   * Returns a new object of class '<em>Action Definition</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Action Definition</em>'.
+   * @generated
+   */
+  ActionDefinition createActionDefinition();
+
+  /**
+   * Returns a new object of class '<em>Unit Fake Definition</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Unit Fake Definition</em>'.
+   * @generated
+   */
+  UnitFakeDefinition createUnitFakeDefinition();
+
+  /**
+   * Returns a new object of class '<em>Type Fake Definition</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Type Fake Definition</em>'.
+   * @generated
+   */
+  TypeFakeDefinition createTypeFakeDefinition();
+
+  /**
+   * Returns a new object of class '<em>Action Fake Definition</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Action Fake Definition</em>'.
+   * @generated
+   */
+  ActionFakeDefinition createActionFakeDefinition();
+
+  /**
+   * Returns a new object of class '<em>Skill Fake Definition</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Skill Fake Definition</em>'.
+   * @generated
+   */
+  SkillFakeDefinition createSkillFakeDefinition();
+
+  /**
+   * Returns a new object of class '<em>Var Fake Definition</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Var Fake Definition</em>'.
+   * @generated
+   */
+  VarFakeDefinition createVarFakeDefinition();
 
   /**
    * Returns a new object of class '<em>Terminal Expression</em>'.
@@ -168,6 +357,24 @@ public interface GamlFactory extends EFactory
    * @generated
    */
   StringEvaluator createStringEvaluator();
+
+  /**
+   * Returns a new object of class '<em>SAction</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>SAction</em>'.
+   * @generated
+   */
+  S_Action createS_Action();
+
+  /**
+   * Returns a new object of class '<em>SVar</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>SVar</em>'.
+   * @generated
+   */
+  S_Var createS_Var();
 
   /**
    * Returns a new object of class '<em>Pair</em>'.
@@ -278,6 +485,33 @@ public interface GamlFactory extends EFactory
   UnitName createUnitName();
 
   /**
+   * Returns a new object of class '<em>Type Ref</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Type Ref</em>'.
+   * @generated
+   */
+  TypeRef createTypeRef();
+
+  /**
+   * Returns a new object of class '<em>Skill Ref</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Skill Ref</em>'.
+   * @generated
+   */
+  SkillRef createSkillRef();
+
+  /**
+   * Returns a new object of class '<em>Action Ref</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Action Ref</em>'.
+   * @generated
+   */
+  ActionRef createActionRef();
+
+  /**
    * Returns a new object of class '<em>Int Literal</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -321,6 +555,15 @@ public interface GamlFactory extends EFactory
    * @generated
    */
   BooleanLiteral createBooleanLiteral();
+
+  /**
+   * Returns a new object of class '<em>Reserved Literal</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Reserved Literal</em>'.
+   * @generated
+   */
+  ReservedLiteral createReservedLiteral();
 
   /**
    * Returns the package supported by this factory.

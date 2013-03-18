@@ -19,19 +19,12 @@
 package msi.gaml.skills;
 
 import java.util.Map;
-
-import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.interfaces.ILocated;
-import msi.gama.common.util.GeometryUtils;
-import msi.gama.common.util.RandomUtils;
+import msi.gama.common.interfaces.*;
+import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
-import msi.gama.metamodel.topology.graph.GraphTopology;
+import msi.gama.metamodel.topology.graph.*;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -40,27 +33,14 @@ import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.runtime.ExecutionStatus;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.GamaMap;
-import msi.gama.util.GamaPath;
-import msi.gama.util.IList;
-import msi.gama.util.IPath;
+import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
-import msi.gaml.operators.Cast;
+import msi.gaml.operators.*;
 import msi.gaml.operators.Spatial.Punctal;
-import msi.gaml.types.GamaGeometryType;
-import msi.gaml.types.IType;
-
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.PrecisionModel;
+import msi.gaml.types.*;
+import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 
 /**
@@ -316,7 +296,7 @@ public class MovingSkill extends GeometricSkill {
 		@arg(name = "weigths", type = IType.MAP_STR, optional = true, doc = @doc("Weigths used for the moving.")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "optional: the path followed by the agent.", examples = { "do goto target: one_of (list (species (self))) speed: speed * 2 on: road_network;" }))
 	public IPath primGoto(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
-		ILocation source = agent.getLocation().copy();
+		ILocation source = agent.getLocation().copy(scope);
 		final double maxDist = computeDistance(scope, agent);
 		final ILocation goal = computeTarget(scope, agent);
 		if ( goal == null ) {
@@ -331,14 +311,13 @@ public class MovingSkill extends GeometricSkill {
 		IPath path = (GamaPath) agent.getAttribute("current_path");
 		if ( path == null || !path.getTopology().equals(topo) ||
 			!path.getEndVertex().equals(goal) || !path.getStartVertex().equals(source) ) {
-			path = topo.pathBetween(source, goal);
+			path = topo.pathBetween(scope, source, goal);
 		} else {
 
-			if ( topo != null && topo instanceof GraphTopology ) {
-
+			if ( topo instanceof GraphTopology ) {
 				if ( ((GraphTopology) topo).getPlaces() != path.getGraph() ||
 					((GraphTopology) topo).getPlaces().getVersion() != path.getGraphVersion() ) {
-					path = topo.pathBetween(source, goal);
+					path = topo.pathBetween(scope, source, goal);
 				}
 			}
 		}
@@ -383,11 +362,12 @@ public class MovingSkill extends GeometricSkill {
 		GamaPoint falseTarget = null;
 		IList<IShape> edges = path.getEdgeList();
 		int nb = edges.size();
-		if (path.getGraph() == null && nb == 1 && edges.get(0).getInnerGeometry().getNumPoints() == 2) {
+		if ( path.getGraph() == null && nb == 1 &&
+			edges.get(0).getInnerGeometry().getNumPoints() == 2 ) {
 			index = 0;
 			indexSegment = 0;
 			endIndexSegment = 0;
-			falseTarget = (GamaPoint)path.getEndVertex();
+			falseTarget = (GamaPoint) path.getEndVertex();
 		} else {
 			if ( path.isVisitor(agent) ) {
 				index = path.indexOf(agent);
@@ -405,7 +385,7 @@ public class MovingSkill extends GeometricSkill {
 					}
 				}
 				line = edges.get(index);
-	
+
 				currentLocation = (GamaPoint) Punctal._closest_point_to(currentLocation, line);
 				Point pointGeom = (Point) currentLocation.getInnerGeometry();
 				if ( line.getInnerGeometry().getNumPoints() >= 3 ) {
@@ -456,7 +436,7 @@ public class MovingSkill extends GeometricSkill {
 
 	private IPath moveToNextLocAlongPathSimplified(final IScope scope, final IAgent agent,
 		final IPath path, final double d, final GamaMap weigths) {
-		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
+		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		GamaList indexVals = initMoveAlongPath(agent, path, currentLocation);
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);
@@ -485,7 +465,7 @@ public class MovingSkill extends GeometricSkill {
 				} else {
 					pt = new GamaPoint(coords[j]);
 				}
-				double dist = scope.getTopology().distanceBetween(pt, currentLocation);
+				double dist = scope.getTopology().distanceBetween(scope, pt, currentLocation);
 
 				dist = weight * dist;
 				if ( distance < dist ) {
@@ -525,7 +505,7 @@ public class MovingSkill extends GeometricSkill {
 		path.setIndexSegementOf(agent, indexSegment);
 		path.setIndexOf(agent, index);
 		agent.setLocation(currentLocation);
-		path.setSource(currentLocation.copy());
+		path.setSource(currentLocation.copy(scope));
 
 		return null;
 	}
@@ -537,7 +517,7 @@ public class MovingSkill extends GeometricSkill {
 
 	private IPath moveToNextLocAlongPath(final IScope scope, final IAgent agent, final IPath path,
 		final double d, final GamaMap weigths) {
-		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy();
+		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		GamaList indexVals = initMoveAlongPath(agent, path, currentLocation);
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);
@@ -548,7 +528,7 @@ public class MovingSkill extends GeometricSkill {
 		int nb = edges.size();
 		double distance = d;
 		GamaList<IShape> segments = new GamaList();
-		GamaPoint startLocation = (GamaPoint) agent.getLocation().copy();
+		GamaPoint startLocation = (GamaPoint) agent.getLocation().copy(scope);
 		GamaMap agents = new GamaMap();
 		for ( int i = index; i < nb; i++ ) {
 			IShape line = edges.get(i);
@@ -573,10 +553,10 @@ public class MovingSkill extends GeometricSkill {
 				} else {
 					pt = new GamaPoint(coords[j]);
 				}
-				double dist = scope.getTopology().distanceBetween(pt, currentLocation);
+				double dist = scope.getTopology().distanceBetween(scope, pt, currentLocation);
 				dist = weight * dist;
 				if ( distance < dist ) {
-					GamaPoint pto = currentLocation.copy();
+					GamaPoint pto = currentLocation.copy(scope);
 					double ratio = distance / dist;
 					double newX = pto.x + ratio * (pt.x - pto.x);
 					double newY = pto.y + ratio * (pt.y - pto.y);
@@ -632,7 +612,7 @@ public class MovingSkill extends GeometricSkill {
 		}
 		path.setIndexSegementOf(agent, indexSegment);
 		path.setIndexOf(agent, index);
-		path.setSource(currentLocation.copy());
+		path.setSource(currentLocation.copy(scope));
 		if ( segments.isEmpty() ) { return null; }
 		IPath followedPath =
 			new GamaPath(agent.getTopology(), startLocation, currentLocation, segments, false);
@@ -654,10 +634,12 @@ public class MovingSkill extends GeometricSkill {
 		try {
 			frontier = buff.intersection(geom);
 		} catch (Exception e) {
-			//frontier = buff.intersection(geom.buffer(0.0));
+			// frontier = buff.intersection(geom.buffer(0.0));
 			PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
-			frontier = GeometryPrecisionReducer.reducePointwise(geom, pm).intersection(GeometryPrecisionReducer.reducePointwise(buff, pm));
-	
+			frontier =
+				GeometryPrecisionReducer.reducePointwise(geom, pm).intersection(
+					GeometryPrecisionReducer.reducePointwise(buff, pm));
+
 		}
 
 		Geometry geomsSimp = null;

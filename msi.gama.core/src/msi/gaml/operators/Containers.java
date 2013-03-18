@@ -238,10 +238,10 @@ public class Containers {
 
 	@operator(value = "index_of", can_be_const = true)
 	@doc(special_cases = { "if the left operand is a matrix, index_of returns the index as a point" }, examples = { "matrix([[1,2,3],[4,5,6]]) index_of 4  	--: 	{1.0;0.0}" })
-	public static ILocation opIndexOf(final IMatrix m, final Object o) {
-		for ( int i = 0; i < m.getCols(); i++ ) {
-			for ( int j = 0; j < m.getRows(); j++ ) {
-				if ( m.get(i, j).equals(o) ) { return new GamaPoint(i, j); }
+	public static ILocation opIndexOf(IScope scope, final IMatrix m, final Object o) {
+		for ( int i = 0; i < m.getCols(scope); i++ ) {
+			for ( int j = 0; j < m.getRows(scope); j++ ) {
+				if ( m.get(scope, i, j).equals(o) ) { return new GamaPoint(i, j); }
 			}
 		}
 		return null;
@@ -264,10 +264,10 @@ public class Containers {
 
 	@operator(value = "last_index_of", can_be_const = true)
 	@doc(special_cases = { "if the left operand is a matrix, last_index_of returns the index as a point" }, examples = { "matrix([[1,2,3],[4,5,4]]) last_index_of 4  	--: 	{1.0;2.0}" })
-	public static ILocation opLastIndexOf(final IMatrix m, final Object o) {
-		for ( int i = m.getCols() - 1; i > -1; i-- ) {
-			for ( int j = m.getRows() - 1; j > -1; j-- ) {
-				if ( m.get(i, j).equals(o) ) { return new GamaPoint(i, j); }
+	public static ILocation opLastIndexOf(IScope scope, final IMatrix m, final Object o) {
+		for ( int i = m.getCols(scope) - 1; i > -1; i-- ) {
+			for ( int j = m.getRows(scope) - 1; j > -1; j-- ) {
+				if ( m.get(scope, i, j).equals(o) ) { return new GamaPoint(i, j); }
 			}
 		}
 		return null;
@@ -510,7 +510,7 @@ public class Containers {
 			}
 			return max;
 		}
-		double max = - Double.MAX_VALUE;
+		double max = -Double.MAX_VALUE;
 		for ( Object each : original.iterable(scope) ) {
 			scope.setEach(each);
 			final double rv = Cast.asFloat(scope, filter.value(scope));
@@ -700,7 +700,7 @@ public class Containers {
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return filter.getType().getDefault(); }
 		// double max = Double.MIN_VALUE;
-		double max = - Double.MAX_VALUE;
+		double max = -Double.MAX_VALUE;
 		Object result = null;
 		for ( Object each : original.iterable(scope) ) {
 			scope.setEach(each);

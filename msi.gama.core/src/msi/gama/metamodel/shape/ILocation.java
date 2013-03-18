@@ -22,6 +22,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.runtime.IScope;
 import msi.gaml.types.IType;
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -59,6 +60,6 @@ public interface ILocation extends IShape, Comparable {
 	public abstract double euclidianDistanceTo(ILocation targ);
 
 	@Override
-	public ILocation copy();
+	public ILocation copy(IScope scope);
 
 }

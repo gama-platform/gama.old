@@ -18,6 +18,7 @@
  */
 package msi.gama.common.interfaces;
 
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 
@@ -32,7 +33,7 @@ public interface IValue extends IGamlable {
 	public abstract IType type();
 
 	// @operator(value = IType.STRING_STR, can_be_const = true)
-	public abstract String stringValue() throws GamaRuntimeException;
+	public abstract String stringValue(IScope scope) throws GamaRuntimeException;
 
 	// @operator(value = "to_java")
 	// TODO To be done later
@@ -40,6 +41,6 @@ public interface IValue extends IGamlable {
 
 	// @operator(value = "copy", can_be_const = true, type = ITypeProvider.CHILD_TYPE, content_type
 	// = ITypeProvider.CHILD_CONTENT_TYPE)
-	public abstract IValue copy() throws GamaRuntimeException;
+	public abstract IValue copy(IScope scope) throws GamaRuntimeException;
 
 }

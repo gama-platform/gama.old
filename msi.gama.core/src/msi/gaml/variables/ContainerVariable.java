@@ -88,22 +88,22 @@ public class ContainerVariable extends Variable {
 
 					case IType.FLOAT:
 						result =
-							v == null ? new GamaFloatMatrix(size) : GamaFloatMatrix.from(
-								(int) size.x, (int) size.y, (IMatrix) v);
+							v == null ? new GamaFloatMatrix(scope, size) : GamaFloatMatrix.from(
+								scope, (int) size.x, (int) size.y, (IMatrix) v);
 						break;
 					case IType.INT:
 						result =
-							v == null ? new GamaIntMatrix(size) : GamaIntMatrix.from((int) size.x,
-								(int) size.y, (IMatrix) v);
+							v == null ? new GamaIntMatrix(scope, size) : GamaIntMatrix.from(scope,
+								(int) size.x, (int) size.y, (IMatrix) v);
 						break;
 					default:
 						result =
-							v == null ? new GamaObjectMatrix(size) : GamaObjectMatrix.from(
-								(int) size.x, (int) size.y, (IMatrix) v);
+							v == null ? new GamaObjectMatrix(scope, size) : GamaObjectMatrix.from(
+								scope, (int) size.x, (int) size.y, (IMatrix) v);
 				}
 				Object o =
 					fillExpr == null ? contentType.getDefault() : scope.evaluate(fillExpr, owner);
-				((IMatrix) result).putAll(o, null);
+				((IMatrix) result).putAll(scope, o, null);
 				break;
 			}
 			case IType.LIST: {

@@ -791,7 +791,7 @@ public class SqlConnection {
 		 * Make Insert a reccord into table
 		 * 
 		 */
-		public int insertDB(Connection conn, String table_name, GamaList<Object> cols,GamaList<Object> values ) 
+		public int insertDB(IScope scope, Connection conn, String table_name, GamaList<Object> cols,GamaList<Object> values ) 
 				throws GamaRuntimeException
 		{
 			int rec_no=-1;
@@ -801,7 +801,7 @@ public class SqlConnection {
 			try{
 				//Get Insert command
 				Statement st=conn.createStatement();
-				rec_no=st.executeUpdate(getInsertString(conn,table_name,cols,values));
+				rec_no=st.executeUpdate(getInsertString(scope, conn,table_name,cols,values));
 				if (DEBUG){
 					GuiUtils.debug("SQLConnection.insertBD.rec_no:" + rec_no);
 				}
@@ -819,13 +819,13 @@ public class SqlConnection {
 		 * Make Insert a reccord into table
 		 * 
 		 */
-		public int insertDB(Connection conn, String table_name, GamaList<Object> cols,GamaList<Object> values, Boolean transformed ) 
+		public int insertDB(IScope scope, Connection conn, String table_name, GamaList<Object> cols,GamaList<Object> values, Boolean transformed ) 
 				throws GamaRuntimeException
 		{
 			this.transformed=transformed;
 			int rec_no=-1;
 			//Get Insert command
-			rec_no=insertDB(conn,table_name,cols,values);
+			rec_no=insertDB(scope, conn,table_name,cols,values);
 			return rec_no;
 		}
 
@@ -833,13 +833,13 @@ public class SqlConnection {
 		 * Make Insert a reccord into table
 		 * 
 		 */
-		public int insertDB(String table_name, GamaList<Object> cols,GamaList<Object> values ) 
+		public int insertDB(IScope scope, String table_name, GamaList<Object> cols,GamaList<Object> values ) 
 				throws GamaRuntimeException {
 			Connection conn;
 			int rec_no=-1;
 			try{
 				conn=connectDB();
-				rec_no=insertDB(conn,table_name,cols,values);
+				rec_no=insertDB(scope, conn,table_name,cols,values);
 				conn.close();
 			}catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -864,11 +864,11 @@ public class SqlConnection {
 		 * Make Insert a reccord into table
 		 * 
 		 */
-		public int insertDB(String table_name, GamaList<Object> cols,GamaList<Object> values, Boolean transformed ) 
+		public int insertDB(IScope scope, String table_name, GamaList<Object> cols,GamaList<Object> values, Boolean transformed ) 
 				throws GamaRuntimeException {
 			this.transformed=transformed;
 			int rec_no=-1;
-			rec_no=insertDB(table_name,cols,values);
+			rec_no=insertDB(scope, table_name,cols,values);
 			return rec_no;
 		}
 	
@@ -921,14 +921,14 @@ public class SqlConnection {
 		 * Make Insert a reccord into table
 		 * 
 		 */
-		public int insertDB(Connection conn, String table_name,GamaList<Object> values ) 
+		public int insertDB(IScope scope, Connection conn, String table_name,GamaList<Object> values ) 
 				throws GamaRuntimeException
 		{
 			int rec_no=-1;
 			try{				
 				//Get Insert command
 				Statement st=conn.createStatement();
-				rec_no=st.executeUpdate(getInsertString(conn,table_name,values));
+				rec_no=st.executeUpdate(getInsertString(scope, conn,table_name,values));
 
 				if (DEBUG){
 					GuiUtils.debug("SQLConnection.insertBD.rec_no:" + rec_no);
@@ -942,24 +942,24 @@ public class SqlConnection {
 			return rec_no;
 		}
 		
-		public int insertDB(Connection conn, String table_name,GamaList<Object> values, Boolean transformed ) 
+		public int insertDB(IScope scope, Connection conn, String table_name,GamaList<Object> values, Boolean transformed ) 
 				throws GamaRuntimeException
 		{
 			this.transformed=transformed;
-			return insertDB(conn,table_name,values);
+			return insertDB(scope, conn,table_name,values);
 		}
 		
 		/*
 		 * Make Insert a reccord into table
 		 * 
 		 */
-		public int insertDB(String table_name, GamaList<Object> values ) 
+		public int insertDB(IScope scope, String table_name, GamaList<Object> values ) 
 				throws GamaRuntimeException {
 			Connection conn;
 			int rec_no=-1;
 			try{
 				conn=connectDB();
-				rec_no=insertDB(conn,table_name,values);
+				rec_no=insertDB(scope, conn,table_name,values);
 				conn.close();
 			}catch (SQLException e) {
 				// TODO Auto-generated catch block
@@ -985,10 +985,10 @@ public class SqlConnection {
 		 * Make Insert a reccord into table
 		 * 
 		 */
-		public int insertDB(String table_name, GamaList<Object> values, Boolean transformed ) 
+		public int insertDB(IScope scope, String table_name, GamaList<Object> values, Boolean transformed ) 
 				throws GamaRuntimeException {
 			this.transformed=transformed;
-			return insertDB(table_name,values);
+			return insertDB(scope, table_name,values);
 		}
 			
 
@@ -1194,7 +1194,7 @@ public class SqlConnection {
 					 * Make insert command string with columns and values
 					 * 
 					 */
-					private String getInsertString(Connection conn, String table_name, GamaList<Object> cols,GamaList<Object> values ) 
+					private String getInsertString(IScope scope, Connection conn, String table_name, GamaList<Object> cols,GamaList<Object> values ) 
 							throws GamaRuntimeException
 					{
 						int col_no=cols.size();
@@ -1246,7 +1246,7 @@ public class SqlConnection {
 									    //Transform GAMA GIS TO NORMAL
 										if (transformed){
 											WKTReader wkt = new WKTReader();
-											Geometry geo2 =GisUtils.fromAbsoluteToGis(wkt.read(values.get(i).toString()));
+											Geometry geo2 =scope.getWorldScope().getGisUtils().inverseTransform(wkt.read(values.get(i).toString()));
 											valueStr=valueStr+tmap.get(vender.toLowerCase())+"('"+geo2.toString()+"')";
 										}else{
 											valueStr=valueStr+tmap.get(vender.toLowerCase())+"('"+values.get(i).toString()+"')";
@@ -1293,7 +1293,7 @@ public class SqlConnection {
 					 * 
 					 */
 
-					private String getInsertString(Connection conn, String table_name,GamaList<Object> values ) 
+					private String getInsertString(IScope scope, Connection conn, String table_name,GamaList<Object> values ) 
 							throws GamaRuntimeException
 					{
 						String insertStr= "INSERT INTO ";
@@ -1339,7 +1339,7 @@ public class SqlConnection {
 									    //Transform GAMA GIS TO NORMAL
 										if (transformed){
 											WKTReader wkt = new WKTReader();
-											Geometry geo2 =GisUtils.fromAbsoluteToGis(wkt.read(values.get(i).toString()));
+											Geometry geo2 =scope.getWorldScope().getGisUtils().inverseTransform(wkt.read(values.get(i).toString()));
 											valueStr=valueStr+tmap.get(vender.toLowerCase())+"('"+geo2.toString()+"')";
 										}else{ 
 											valueStr=valueStr+tmap.get(vender.toLowerCase())+"('"+values.get(i).toString()+"')";
@@ -1389,13 +1389,13 @@ public class SqlConnection {
 						this.transformed=tranformed;
 					}
 
-					public static Geometry fromGisToAbsolute(Geometry geom){
-						return GisUtils.fromGISToAbsolute(geom);
+					public static Geometry fromGisToAbsolute(IScope scope, Geometry geom){
+						return scope.getWorldScope().getGisUtils().transform(geom);
 
 					}
 					
-					public static Geometry fromAbsoluteToGis(Geometry geom){
-						return GisUtils.fromAbsoluteToGis(geom);
+					public static Geometry fromAbsoluteToGis(IScope scope, Geometry geom){
+						return scope.getWorldScope().getGisUtils().inverseTransform(geom);
 
 					}
 
@@ -1403,7 +1403,7 @@ public class SqlConnection {
 					/*
 					 * Gis2Absolute: transform all geometry values to absolute geometry in GAMA
 					 */
-					public GamaList<Object> fromGisToAbsolute(GamaList<Object> dataset) throws GamaRuntimeException{
+					public GamaList<Object> fromGisToAbsolute(IScope scope, GamaList<Object> dataset) throws GamaRuntimeException{
 						try{
 							GamaList<Object> response = new GamaList<Object>();	
 							GamaList<Object> records_new = new GamaList<Object>();	
@@ -1424,7 +1424,7 @@ public class SqlConnection {
 									if (((String)columnTypes.get(j)).equalsIgnoreCase(GEOMETRYTYPE)){
 										//WKTReader wkt = new WKTReader();
 										//Geometry geo2 =fromGisToAbsolute(wkt.read(rec_old.get(j).toString()));
-										Geometry geo2 =fromGisToAbsolute((Geometry)rec_old.get(j));
+										Geometry geo2 =fromGisToAbsolute(scope, (Geometry)rec_old.get(j));
 										rec_new.add(geo2);
 									}else{
 										rec_new.add(rec_old.get(j));
@@ -1446,7 +1446,7 @@ public class SqlConnection {
 					/*
 					 * Gis2Absolute: transform all absolute geometry values in GAMA to geometry 
 					 */
-					public GamaList<Object> fromAbsoluteToGIS(GamaList<Object> dataset) throws GamaRuntimeException{
+					public GamaList<Object> fromAbsoluteToGIS(IScope scope, GamaList<Object> dataset) throws GamaRuntimeException{
 						try{
 							GamaList<Object> response = new GamaList<Object>();	
 							GamaList<Object> records_new = new GamaList<Object>();	
@@ -1467,7 +1467,7 @@ public class SqlConnection {
 									if (((String)columnTypes.get(j)).equalsIgnoreCase(GEOMETRYTYPE)){
 										//WKTReader wkt = new WKTReader();
 										//Geometry geo2 =fromGisToAbsolute(wkt.read(rec_old.get(j).toString()));
-										Geometry geo2 =fromAbsoluteToGis((Geometry)rec_old.get(j));
+										Geometry geo2 =fromAbsoluteToGis(scope, (Geometry)rec_old.get(j));
 										rec_new.add(geo2);
 									}else{
 										rec_new.add(rec_old.get(j));

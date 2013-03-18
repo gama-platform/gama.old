@@ -276,7 +276,9 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 
 	protected void modifyValue(final Object val) throws GamaRuntimeException {
 		currentValue = val;
-		titleLabel.setBackground(isValueModified() ? changed_bg : normal_bg);
+		if ( titleLabel != null ) {
+			titleLabel.setBackground(isValueModified() ? changed_bg : normal_bg);
+		}
 		if ( !internalModification ) {
 			setParameterValue(val);
 		}
@@ -288,7 +290,9 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 			Object newVal = getParameterValue();
 			if ( !isValueDifferent(newVal) ) { return; }
 			internalModification = true;
-			modifyAndDisplayValue(newVal);
+			if ( titleLabel != null ) {
+				modifyAndDisplayValue(newVal);
+			}
 			internalModification = false;
 		} catch (GamaRuntimeException e) {
 			e.addContext("Unable to obtain the value of " + name);

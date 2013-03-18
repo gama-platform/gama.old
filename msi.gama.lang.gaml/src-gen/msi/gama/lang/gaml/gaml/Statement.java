@@ -17,13 +17,10 @@ import org.eclipse.emf.ecore.EObject;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getFunction <em>Function</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getBlock <em>Block</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getElse <em>Else</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getKey <em>Key</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getExpr <em>Expr</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getFacets <em>Facets</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getArgs <em>Args</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getParams <em>Params</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getValue <em>Value</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.Statement#getBlock <em>Block</em>}</li>
  * </ul>
  * </p>
  *
@@ -31,33 +28,75 @@ import org.eclipse.emf.ecore.EObject;
  * @model
  * @generated
  */
-public interface Statement extends GamlVarRef
+public interface Statement extends EObject
 {
   /**
-   * Returns the value of the '<em><b>Function</b></em>' containment reference.
+   * Returns the value of the '<em><b>Key</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <p>
-   * If the meaning of the '<em>Function</em>' containment reference isn't clear,
+   * If the meaning of the '<em>Key</em>' attribute isn't clear,
    * there really should be more of a description here...
    * </p>
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Function</em>' containment reference.
-   * @see #setFunction(Expression)
-   * @see msi.gama.lang.gaml.gaml.GamlPackage#getStatement_Function()
+   * @return the value of the '<em>Key</em>' attribute.
+   * @see #setKey(String)
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getStatement_Key()
+   * @model
+   * @generated
+   */
+  String getKey();
+
+  /**
+   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Statement#getKey <em>Key</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Key</em>' attribute.
+   * @see #getKey()
+   * @generated
+   */
+  void setKey(String value);
+
+  /**
+   * Returns the value of the '<em><b>Expr</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Expr</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Expr</em>' containment reference.
+   * @see #setExpr(Expression)
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getStatement_Expr()
    * @model containment="true"
    * @generated
    */
-  Expression getFunction();
+  Expression getExpr();
 
   /**
-   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Statement#getFunction <em>Function</em>}' containment reference.
+   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Statement#getExpr <em>Expr</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Function</em>' containment reference.
-   * @see #getFunction()
+   * @param value the new value of the '<em>Expr</em>' containment reference.
+   * @see #getExpr()
    * @generated
    */
-  void setFunction(Expression value);
+  void setExpr(Expression value);
+
+  /**
+   * Returns the value of the '<em><b>Facets</b></em>' containment reference list.
+   * The list contents are of type {@link msi.gama.lang.gaml.gaml.Facet}.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Facets</em>' containment reference list isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Facets</em>' containment reference list.
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getStatement_Facets()
+   * @model containment="true"
+   * @generated
+   */
+  EList<Facet> getFacets();
 
   /**
    * Returns the value of the '<em><b>Block</b></em>' containment reference.
@@ -84,125 +123,5 @@ public interface Statement extends GamlVarRef
    * @generated
    */
   void setBlock(Block value);
-
-  /**
-   * Returns the value of the '<em><b>Else</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Else</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Else</em>' containment reference.
-   * @see #setElse(EObject)
-   * @see msi.gama.lang.gaml.gaml.GamlPackage#getStatement_Else()
-   * @model containment="true"
-   * @generated
-   */
-  EObject getElse();
-
-  /**
-   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Statement#getElse <em>Else</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Else</em>' containment reference.
-   * @see #getElse()
-   * @generated
-   */
-  void setElse(EObject value);
-
-  /**
-   * Returns the value of the '<em><b>Facets</b></em>' containment reference list.
-   * The list contents are of type {@link msi.gama.lang.gaml.gaml.Facet}.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Facets</em>' containment reference list isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Facets</em>' containment reference list.
-   * @see msi.gama.lang.gaml.gaml.GamlPackage#getStatement_Facets()
-   * @model containment="true"
-   * @generated
-   */
-  EList<Facet> getFacets();
-
-  /**
-   * Returns the value of the '<em><b>Args</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Args</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Args</em>' containment reference.
-   * @see #setArgs(ActionArguments)
-   * @see msi.gama.lang.gaml.gaml.GamlPackage#getStatement_Args()
-   * @model containment="true"
-   * @generated
-   */
-  ActionArguments getArgs();
-
-  /**
-   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Statement#getArgs <em>Args</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Args</em>' containment reference.
-   * @see #getArgs()
-   * @generated
-   */
-  void setArgs(ActionArguments value);
-
-  /**
-   * Returns the value of the '<em><b>Params</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Params</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Params</em>' containment reference.
-   * @see #setParams(Parameters)
-   * @see msi.gama.lang.gaml.gaml.GamlPackage#getStatement_Params()
-   * @model containment="true"
-   * @generated
-   */
-  Parameters getParams();
-
-  /**
-   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Statement#getParams <em>Params</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Params</em>' containment reference.
-   * @see #getParams()
-   * @generated
-   */
-  void setParams(Parameters value);
-
-  /**
-   * Returns the value of the '<em><b>Value</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Value</em>' containment reference isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Value</em>' containment reference.
-   * @see #setValue(Expression)
-   * @see msi.gama.lang.gaml.gaml.GamlPackage#getStatement_Value()
-   * @model containment="true"
-   * @generated
-   */
-  Expression getValue();
-
-  /**
-   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Statement#getValue <em>Value</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Value</em>' containment reference.
-   * @see #getValue()
-   * @generated
-   */
-  void setValue(Expression value);
 
 } // Statement

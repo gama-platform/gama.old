@@ -21,8 +21,7 @@ public class ExperimentatorPopulation extends GamlPopulation {
 
 	@Override
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
-		final List<Map<String, Object>> initialValues, final boolean isRestored)
-		throws GamaRuntimeException {
+		final List<Map> initialValues, final boolean isRestored) throws GamaRuntimeException {
 		if ( size() == 0 ) {
 			ExperimentatorAgent exp = new ExperimentatorAgent(this);
 			exp.setIndex(0);

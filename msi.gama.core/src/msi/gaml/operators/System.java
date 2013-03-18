@@ -70,7 +70,7 @@ public class System {
 	@operator(value = "copy", type = ITypeProvider.CHILD_TYPE, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
 	@doc(value = "returns a copy of the operand.")
 	public static Object opCopy(final IScope scope, final Object o) throws GamaRuntimeException {
-		if ( o instanceof IValue ) { return ((IValue) o).copy(); }
+		if ( o instanceof IValue ) { return ((IValue) o).copy(scope); }
 		return o;
 	}
 

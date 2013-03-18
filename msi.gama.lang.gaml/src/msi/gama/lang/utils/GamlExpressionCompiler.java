@@ -71,6 +71,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 
 	@Override
 	public IExpression compile(final IExpressionDescription s, final IDescription parsingContext) {
+		if ( s.isConstant() ) { return s.getExpression(); }
 		EObject e = getEObjectOf(s);
 		IDescription previous = setContext(parsingContext);
 		IExpression result = compile(e);
@@ -255,7 +256,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			}
 			String arg = null;
 			if ( e instanceof ArgumentPair ) {
-				arg = EGaml.getKeyOf(e);
+				arg = EGaml.getKey.caseArgumentPair((ArgumentPair) e);
 			} else {
 				arg = EGaml.getKeyOf(e.getLeft());
 			}
@@ -266,7 +267,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 				return null;
 			}
 			// We modify the expression in line to replace the arg by a string terminal
-			list.add(binary("::", EGaml.createTerminal(arg), e.getRight()));
+			list.add(binary("::", factory.createConst(arg, Types.get(IType.STRING)), e.getRight()));
 		}
 		return factory.createMap(list);
 	}
@@ -320,7 +321,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			}
 
 			String arg = null;
-			if ( exp instanceof ArgumentPair ) {
+			if ( exp instanceof ArgumentPair || exp instanceof Parameter ) {
 				arg = EGaml.getKeyOf(exp);
 			} else {
 				arg = EGaml.getKeyOf(exp.getLeft());
@@ -332,90 +333,111 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		return argMap;
 	}
 
-	/**
-	 * @see msi.gaml.expressions.IExpressionParser#parseLiteralArray(msi.gaml.descriptions.ExpressionDescription)
-	 */
-	@Override
-	public Set<String> parseLiteralArray(final IExpressionDescription s,
-		final IDescription context, final boolean skills) {
-		if ( s instanceof StringListExpressionDescription ) { return ((StringListExpressionDescription) s)
-			.getStrings(); }
-		String type = skills ? "skill" : "attribute";
-		EObject o = getEObjectOf(s);
-		if ( o == null ) { return Collections.EMPTY_SET; }
-		if ( !(o instanceof Array) ) {
-			if ( o instanceof VariableRef ) {
-				String skillName = EGaml.getKeyOf(o);
-				context.flagWarning(type +
-					"s should be provided as a list of identifiers, for instance [" + skillName +
-					"]", IGamlIssue.AS_ARRAY, o, skillName);
-				if ( skills && !isSkillName(skillName) ) {
-					context.flagError("Unknown " + type + " " + skillName,
-						IGamlIssue.UNKNOWN_SKILL, o);
-				}
-				return new HashSet(Arrays.asList(skillName));
-			}
-			if ( o instanceof Expression ) {
-				context.flagError(
-					"Impossible to recognize valid " + type + "s in " + EGaml.toString(o), skills
-						? IGamlIssue.UNKNOWN_SKILL : IGamlIssue.UNKNOWN_VAR, o);
-			} else {
-				context.flagError(type + "s should be provided as a list of identifiers.",
-					IGamlIssue.UNKNOWN_SKILL, o);
-			}
-			return Collections.EMPTY_SET;
-		}
-		Set<String> result = new HashSet();
-		Array array = (Array) o;
-		for ( Expression expr : EGaml.getExprsOf(array.getExprs()) ) {
-			String name = EGaml.getKeyOf(expr);
-			if ( skills && !isSkillName(name) ) {
-				context.flagError("Unknown " + type + " " + name, skills ? IGamlIssue.UNKNOWN_SKILL
-					: IGamlIssue.UNKNOWN_VAR, expr);
-			} else {
-				result.add(name);
-			}
-		}
-		return result;
-
-	}
+	// /**
+	// * @see
+	// msi.gaml.expressions.IExpressionParser#parseLiteralArray(msi.gaml.descriptions.ExpressionDescription)
+	// */
+	// @Override
+	// public Set<String> parseLiteralArray(final IExpressionDescription s,
+	// final IDescription context, final boolean skills) {
+	// String type = skills ? "skill" : "attribute";
+	// EObject target = getEObjectOf(s);
+	// if ( target == null ) { return Collections.EMPTY_SET; }
+	// if ( !(target instanceof Array) ) {
+	// if ( target instanceof VariableRef ) {
+	// String skillName = EGaml.getKeyOf(target);
+	// context.flagWarning(type +
+	// "s should be provided as a list of identifiers, for instance [" + skillName +
+	// "]", IGamlIssue.AS_ARRAY, target, skillName);
+	// if ( skills && !isSkillName(skillName) ) {
+	// context.flagError("Unknown " + type + " " + skillName,
+	// IGamlIssue.UNKNOWN_SKILL, target);
+	// }
+	// return new HashSet(Arrays.asList(skillName));
+	// }
+	// if ( target instanceof Expression ) {
+	// context.flagError(
+	// "Impossible to recognize valid " + type + "s in " + EGaml.toString(target), skills
+	// ? IGamlIssue.UNKNOWN_SKILL : IGamlIssue.UNKNOWN_VAR, target);
+	// } else {
+	// context.flagError(type + "s should be provided as a list of identifiers.",
+	// IGamlIssue.UNKNOWN_SKILL, target);
+	// }
+	// return Collections.EMPTY_SET;
+	// }
+	// Set<String> result = new HashSet();
+	// Array array = (Array) target;
+	// for ( Expression expr : EGaml.getExprsOf(array.getExprs()) ) {
+	// String name = EGaml.getKeyOf(expr);
+	// if ( skills && !isSkillName(name) ) {
+	// context.flagError("Unknown " + type + " " + name, skills ? IGamlIssue.UNKNOWN_SKILL
+	// : IGamlIssue.UNKNOWN_VAR, expr);
+	// } else {
+	// result.add(name);
+	// }
+	// }
+	// return result;
+	//
+	// }
 
 	GamlSwitch<IExpression> compiler = new GamlSwitch<IExpression>() {
 
-		// @Override
-		// public IExpression caseStatement(final Statement object) {
-		//
-		// // WHAT IF THE NAME IS NULL ?
-		//
-		// return factory.createConst(StringUtils.unescapeJava(EGaml.getNameOf(object)),
-		// Types.get(IType.STRING));
-		// }
-		//
-		// @Override
-		// public IExpression caseFacet(final Facet object) {
-		// return factory.createConst(StringUtils.unescapeJava(object.getName()),
-		// Types.get(IType.STRING));
-		// }
+		@Override
+		public IExpression caseActionDefinition(ActionDefinition object) {
+			return super.caseActionDefinition(object);
+		}
+
+		@Override
+		public IExpression caseUnitFakeDefinition(UnitFakeDefinition object) {
+			return super.caseUnitFakeDefinition(object);
+		}
+
+		@Override
+		public IExpression caseTypeFakeDefinition(TypeFakeDefinition object) {
+			return super.caseTypeFakeDefinition(object);
+		}
+
+		@Override
+		public IExpression caseVarFakeDefinition(VarFakeDefinition object) {
+			return super.caseVarFakeDefinition(object);
+		}
+
+		@Override
+		public IExpression caseSkillRef(SkillRef object) {
+			return skill(EGaml.getKey.caseSkillRef(object));
+		}
+
+		@Override
+		public IExpression caseActionRef(ActionRef object) {
+			return factory.createConst(EGaml.getKey.caseActionRef(object), Types.get(IType.STRING));
+		}
 
 		@Override
 		public IExpression caseExpression(final Expression object) {
 			// in the general case, we try to return a binary expression
-			return binary(object.getOp(), object.getLeft(), object.getRight());
+			return binary(EGaml.getKeyOf(object), object.getLeft(), object.getRight());
 		}
 
 		@Override
 		public IExpression caseVariableRef(final VariableRef object) {
+			String s = EGaml.getKey.caseVariableRef(object);
+			if ( s == null ) { return caseVarDefinition(object.getRef()); }
+			return caseVar(s, object);
+		}
+
+		@Override
+		public IExpression caseTypeRef(final TypeRef object) {
 			String s = EGaml.getKeyOf(object);
 			if ( s == null ) {
 				// we delegate to the referenced GamlVarRef
-				return caseGamlVarRef(object.getRef());
+				return caseTypeDefinition(object.getRef());
 			}
 			return caseVar(s, object);
 		}
 
 		@Override
 		public IExpression caseUnitName(final UnitName object) {
-			String s = object.getOp();
+			String s = EGaml.getKeyOf(object);
 			if ( IUnits.UNITS.containsKey(s) ) { return factory.createUnitExpr(s, context); }
 			// If it is a unit, we return its float value
 			context.flagError(s + " is not a unit name.", IGamlIssue.NOT_A_UNIT, object,
@@ -455,6 +477,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 				return factory.createVar(SELF, tt, tt, true, IVarExpression.SELF, null);
 			}
 			if ( s.equalsIgnoreCase(WORLD_AGENT_NAME) ) { return getWorldExpr(); }
+			if ( isSkillName(s) ) { return skill(s); }
 
 			// By default, we try to find a variable
 
@@ -485,8 +508,23 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		}
 
 		@Override
-		public IExpression caseGamlVarRef(final GamlVarRef object) {
+		public IExpression caseVarDefinition(final VarDefinition object) {
+			return skill(object.getName());
+		}
+
+		@Override
+		public IExpression caseTypeDefinition(final TypeDefinition object) {
 			return caseVar(object.getName(), object);
+		}
+
+		@Override
+		public IExpression caseSkillFakeDefinition(final SkillFakeDefinition object) {
+			return caseVar(object.getName(), object);
+		}
+
+		@Override
+		public IExpression caseReservedLiteral(final ReservedLiteral object) {
+			return caseVar(EGaml.getKeyOf(object), object);
 		}
 
 		@Override
@@ -505,12 +543,12 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 
 		@Override
 		public IExpression casePair(final Pair object) {
-			return binary(object.getOp(), object.getLeft(), object.getRight());
+			return binary(EGaml.getKeyOf(object), object.getLeft(), object.getRight());
 		}
 
 		@Override
 		public IExpression caseBinary(final Binary object) {
-			return binary(object.getOp(), object.getLeft(), object.getRight());
+			return binary(EGaml.getKeyOf(object), object.getLeft(), object.getRight());
 		}
 
 		@Override
@@ -522,7 +560,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 
 		@Override
 		public IExpression caseUnary(final Unary object) {
-			return unary(object.getOp(), object.getRight());
+			return unary(EGaml.getKeyOf(object), object.getRight());
 		}
 
 		@Override
@@ -571,7 +609,8 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		public IExpression caseParameters(final Parameters object) {
 			IList<IExpression> list = new GamaList();
 			for ( Expression p : EGaml.getExprsOf(object.getParams()) ) {
-				list.add(binary("::", EGaml.createTerminal(EGaml.getKeyOf(p.getLeft())),
+				list.add(binary("::",
+					factory.createConst(EGaml.getKeyOf(p.getLeft()), Types.get(IType.STRING)),
 					p.getRight()));
 			}
 			return factory.createMap(list);
@@ -594,10 +633,10 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		@Override
 		public IExpression caseIntLiteral(final IntLiteral object) {
 			try {
-				Integer val = Integer.parseInt(object.getOp(), 10);
+				Integer val = Integer.parseInt(EGaml.getKeyOf(object), 10);
 				return factory.createConst(val, Types.get(IType.INT));
 			} catch (NumberFormatException e) {
-				context.flagError("Malformed integer: " + object.getOp(),
+				context.flagError("Malformed integer: " + EGaml.getKeyOf(object),
 					IGamlIssue.UNKNOWN_NUMBER, object);
 				return null;
 			}
@@ -606,11 +645,13 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		@Override
 		public IExpression caseDoubleLiteral(final DoubleLiteral object) {
 			try {
-				Number val = nf.parse(object.getOp());
+				String s = EGaml.getKeyOf(object);
+				if ( s == null ) { return null; }
+				Number val = nf.parse(s);
 				return factory.createConst(val.doubleValue(), Types.get(IType.FLOAT));
 			} catch (ParseException e) {
-				context.flagError("Malformed float: " + object.getOp(), IGamlIssue.UNKNOWN_NUMBER,
-					object);
+				context.flagError("Malformed float: " + EGaml.getKeyOf(object),
+					IGamlIssue.UNKNOWN_NUMBER, object);
 				return null;
 			}
 
@@ -619,10 +660,10 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		@Override
 		public IExpression caseColorLiteral(final ColorLiteral object) {
 			try {
-				Integer val = Integer.parseInt(object.getOp().substring(1), 16);
+				Integer val = Integer.parseInt(EGaml.getKeyOf(object).substring(1), 16);
 				return factory.createConst(val, Types.get(IType.INT));
 			} catch (NumberFormatException e) {
-				context.flagError("Malformed integer: " + object.getOp(),
+				context.flagError("Malformed integer: " + EGaml.getKeyOf(object),
 					IGamlIssue.UNKNOWN_NUMBER, object);
 				return null;
 			}
@@ -630,13 +671,15 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 
 		@Override
 		public IExpression caseStringLiteral(final StringLiteral object) {
-			return factory.createConst(StringUtils.unescapeJava(object.getOp()),
+			return factory.createConst(StringUtils.unescapeJava(EGaml.getKeyOf(object)),
 				Types.get(IType.STRING));
 		}
 
 		@Override
 		public IExpression caseBooleanLiteral(final BooleanLiteral object) {
-			return object.getOp().equalsIgnoreCase(TRUE) ? TRUE_EXPR : FALSE_EXPR;
+			String s = EGaml.getKeyOf(object);
+			if ( s == null ) { return null; }
+			return s.equalsIgnoreCase(TRUE) ? TRUE_EXPR : FALSE_EXPR;
 		}
 
 		@Override
@@ -645,15 +688,15 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			// getContext().flagError("Unrecognized expression " + EGaml.toString(object),
 			// IGamlIssue.GENERAL, object);
 			// } else {}
-			getContext().flagError("Not an expression: " + object, IGamlIssue.GENERAL, object);
+			getContext().flagError("Cannot compile: " + object, IGamlIssue.GENERAL, object);
 			return null;
 		}
 
 	};
 
 	private static GamlResource getFreshResource() {
-		XtextResourceSet rs = EGaml.getInstance(XtextResourceSet.class);
 		if ( resource == null ) {
+			XtextResourceSet rs = EGaml.getInstance(XtextResourceSet.class);
 			rs.setClasspathURIContext(EcoreBasedExpressionDescription.class);
 			IResourceFactory resourceFactory = EGaml.getInstance(IResourceFactory.class);
 			URI uri = URI.createURI("dummy.gaml");
@@ -669,7 +712,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 
 	private static EObject getEObjectOf(final IExpressionDescription s) {
 		EObject o = s.getTarget();
-		if ( o == null && s.isString() ) {
+		if ( o == null && s instanceof StringBasedExpressionDescription ) {
 			o = getEObjectOf(s.toString());
 		}
 		return o;

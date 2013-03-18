@@ -58,7 +58,7 @@ public interface IPopulation extends Comparable<IPopulation>, IContainer<Integer
 	 * @throws GamaRuntimeException
 	 */
 	public abstract IList<? extends IAgent> createAgents(IScope scope, int number,
-		List<Map<String, Object>> initialValues, boolean isRestored) throws GamaRuntimeException;
+		List<Map> initialValues, boolean isRestored) throws GamaRuntimeException;
 
 	public abstract IList<? extends IAgent> createAgents(final IScope scope,
 		final IContainer<?, IShape> geometries) throws GamaRuntimeException;

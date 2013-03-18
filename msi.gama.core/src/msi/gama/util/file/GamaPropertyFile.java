@@ -25,6 +25,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
 import msi.gaml.operators.Files;
 import msi.gaml.types.GamaFileType;
+import com.vividsolutions.jts.geom.Envelope;
 
 public class GamaPropertyFile extends GamaFile<String, String> {
 
@@ -40,7 +41,7 @@ public class GamaPropertyFile extends GamaFile<String, String> {
 	}
 
 	@Override
-	protected IGamaFile _copy() {
+	protected IGamaFile _copy(IScope scope) {
 		// TODO A faire
 		return null;
 	}
@@ -61,7 +62,7 @@ public class GamaPropertyFile extends GamaFile<String, String> {
 	 * @see msi.gama.util.GamaFile#fillBuffer()
 	 */
 	@Override
-	protected void fillBuffer() throws GamaRuntimeException {
+	protected void fillBuffer(IScope scope) throws GamaRuntimeException {
 		Properties p = new Properties();
 		GamaMap m = new GamaMap();
 		try {
@@ -84,6 +85,12 @@ public class GamaPropertyFile extends GamaFile<String, String> {
 	protected void flushBuffer() throws GamaRuntimeException {
 		// TODO A faire
 
+	}
+
+	@Override
+	public Envelope computeEnvelope(final IScope scope) {
+		// TODO Probably possible to get some information there
+		return null;
 	}
 
 }

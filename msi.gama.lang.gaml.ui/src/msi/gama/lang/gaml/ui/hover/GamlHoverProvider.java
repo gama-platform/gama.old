@@ -30,7 +30,7 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 
 	public static class GamlDispatchingEObjectTextHover extends DispatchingEObjectTextHover {
 
-		NonXRefEObjectAtOffset eObjectAtOffsetHelper = new NonXRefEObjectAtOffset();
+		NonXRefEObjectAtOffset eObjectAtOffsetHelper = new NonXRefEObjectAtOffset(); // NonXRefEObjectAtOffset
 
 		@Inject
 		private ILocationInFileProvider locationInFileProvider;

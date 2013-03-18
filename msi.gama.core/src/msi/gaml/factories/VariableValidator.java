@@ -27,10 +27,22 @@ public class VariableValidator extends DescriptionValidator {
 		String type =
 			"It cannot be used as a " +
 				(vd instanceof VariableDescription ? "variable" : vd.getKeyword()) + " name.";
-		if ( vd.getTypeNamed(vd.getName()) != Types.NO_TYPE ) {
-			vd.flagError(vd.getName() + " is a type name. " + type, IGamlIssue.IS_A_TYPE, NAME,
-				vd.getName());
+		IType t = vd.getTypeNamed(vd.getName());
+		if ( t != Types.NO_TYPE ) {
+			String species = t.isSpeciesType() ? "species" : "type";
+			vd.flagError(vd.getName() + " is a " + species + " name. " + type,
+				IGamlIssue.IS_A_TYPE, NAME, vd.getName());
 		}
+	}
+
+	public static void assertNameIsNotType(final IDescription vd) {
+		String type =
+			"It cannot be used as a " +
+				(vd instanceof VariableDescription ? "variable" : vd.getKeyword()) + " name.";
+		IType t = vd.getTypeNamed(vd.getName());
+		if ( t == Types.NO_TYPE || t.isSpeciesType() ) { return; }
+		vd.flagError(vd.getName() + " is a type name. " + type, IGamlIssue.IS_A_TYPE, NAME,
+			vd.getName());
 	}
 
 	public static void assertFacetsAreOfType(final IDescription vd, final IType type,

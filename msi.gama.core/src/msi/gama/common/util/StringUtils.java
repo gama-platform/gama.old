@@ -23,6 +23,7 @@ import java.text.*;
 import java.util.*;
 import java.util.regex.*;
 import msi.gama.common.interfaces.IValue;
+import msi.gama.metamodel.population.IPopulation;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
@@ -206,6 +207,8 @@ public class StringUtils {
 
 	public static String toGaml(final Object val) {
 		if ( val == null ) { return "nil"; }
+		if ( val instanceof IPopulation ) { return "Internal population of " +
+			((IPopulation) val).getSpecies().getName(); }
 		if ( val instanceof IValue ) { return ((IValue) val).toGaml(); }
 		if ( val instanceof String ) { return toGamlString((String) val); }
 		if ( val instanceof Double ) { return DEFAULT_DECIMAL_FORMAT.format(val); }

@@ -35,7 +35,7 @@ public class ModelsLibraryFolder extends VirtualFolder {
 		List<IProject> resultList = new ArrayList();
 		// We only add the projects whose path contains the built-in models path
 		// String modelsPath = getBuiltInModelsPath();
-		System.out.println("Location to library : " + getBuiltInModelsPath());
+		// System.out.println("Location to library : " + getBuiltInModelsPath());
 		for ( IProject project : totalList ) {
 			String projectPath = project.getLocation().toString();
 			// System.out.println("Location to project : " + projectPath);

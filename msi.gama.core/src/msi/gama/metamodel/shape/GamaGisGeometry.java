@@ -18,18 +18,17 @@
  */
 package msi.gama.metamodel.shape;
 
-import msi.gama.common.util.GisUtils;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaMap;
-import org.geotools.geometry.jts.JTS;
+import java.util.Map;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.IScope;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * 
- * The class GamaGisGeometry. A subclass of GamaGeometry able to store the value of the
- * attributes.
+ * The class GamaGisGeometry. A subclass of GamaGeometry that maintains a link with the underlying
+ * GIS feature
  * 
  * @author drogoul
  * @since 30 nov. 2011
@@ -37,35 +36,34 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class GamaGisGeometry extends GamaShape {
 
-	public GamaGisGeometry(final SimpleFeature feature) {
-		Geometry geom = (Geometry) feature.getDefaultGeometry();
-		if ( GisUtils.transformCRS != null ) {
-			try {
-				geom = JTS.transform(geom, GisUtils.transformCRS);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		setInnerGeometry(GisUtils.fromGISToAbsolute(geom));
+	public GamaGisGeometry(IScope scope, final Geometry g) {
+		init(scope.getWorldScope().getGisUtils().transform(g), null);
+	}
+
+	public GamaGisGeometry(IScope scope, final SimpleFeature feature) {
+		init(
+			scope.getWorldScope().getGisUtils().transform((Geometry) feature.getDefaultGeometry()),
+			feature);
+	}
+
+	private void init(final Geometry g, SimpleFeature feature) {
+		setInnerGeometry(g);
 		for ( Property p : feature.getProperties() ) {
 			setAttribute(p.getName().getLocalPart(), p.getValue());
 		}
 	}
 
-	GamaMap gisAttributes = new GamaMap(); // FIXME Use Geometry.getUserData(); ?
-
-	public void setAttribute(final String s, final Object o) {
-		gisAttributes.put(s, o);
+	/**
+	 * In case this geometry is loaded and then later attributed to an agent.
+	 * @see msi.gama.metamodel.shape.GamaShape#setAgent(msi.gama.metamodel.agent.IAgent)
+	 */
+	@Override
+	public void setAgent(IAgent a) {
+		a.setExtraAttributes(attributes);
 	}
 
-	public Object getAttribute(final String s) throws GamaRuntimeException {
-		if ( gisAttributes.containsKey(s) ) { return gisAttributes.get(s); }
-		throw new GamaRuntimeException("Attribute " + s + " not found");
+	public Map getAttributes() {
+		return attributes;
 	}
 
-	public Object getAttribute(final Integer index) throws GamaRuntimeException {
-		if ( gisAttributes.size() < index ) { return gisAttributes.get(gisAttributes.getKeys().get(
-			index)); }
-		throw new GamaRuntimeException("Attribute at index " + index + " not found");
-	}
 }

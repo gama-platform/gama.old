@@ -23,7 +23,7 @@ import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
-import msi.gama.runtime.GAMA;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.*;
@@ -53,7 +53,7 @@ public class AmorphousTopology implements ITopology {
 	 * @see msi.gama.interfaces.IValue#stringValue()
 	 */
 	@Override
-	public String stringValue() throws GamaRuntimeException {
+	public String stringValue(IScope scope) throws GamaRuntimeException {
 		return "Expandable topology";
 	}
 
@@ -69,7 +69,7 @@ public class AmorphousTopology implements ITopology {
 	 * @see msi.gama.interfaces.IValue#copy()
 	 */
 	@Override
-	public ITopology copy() throws GamaRuntimeException {
+	public ITopology copy(IScope scope) throws GamaRuntimeException {
 		return new AmorphousTopology();
 	}
 
@@ -138,12 +138,12 @@ public class AmorphousTopology implements ITopology {
 	 *      msi.gama.interfaces.IGeometry)
 	 */
 	@Override
-	public Double distanceBetween(final IShape source, final IShape target) {
+	public Double distanceBetween(IScope scope, final IShape source, final IShape target) {
 		return source.euclidianDistanceTo(target);
 	}
 
 	@Override
-	public Double distanceBetween(final ILocation source, final ILocation target) {
+	public Double distanceBetween(IScope scope, final ILocation source, final ILocation target) {
 		return source.euclidianDistanceTo(target);
 	}
 
@@ -152,7 +152,8 @@ public class AmorphousTopology implements ITopology {
 	 *      msi.gama.interfaces.IGeometry)
 	 */
 	@Override
-	public IPath pathBetween(final IShape source, final IShape target) throws GamaRuntimeException {
+	public IPath pathBetween(IScope scope, final IShape source, final IShape target)
+		throws GamaRuntimeException {
 		return new GamaPath(this, GamaList.with(source, target));
 	}
 
@@ -250,7 +251,7 @@ public class AmorphousTopology implements ITopology {
 	 *      msi.gama.interfaces.IGeometry)
 	 */
 	@Override
-	public Integer directionInDegreesTo(final IShape g1, final IShape g2) {
+	public Integer directionInDegreesTo(IScope scope, final IShape g1, final IShape g2) {
 		ILocation source = g1.getLocation();
 		ILocation target = g2.getLocation();
 		final double x2 = /* translateX(source.x, target.x); */target.getX();
@@ -285,7 +286,7 @@ public class AmorphousTopology implements ITopology {
 	 *      msi.gama.metamodel.shape.ILocation)
 	 */
 	@Override
-	public IPath pathBetween(final ILocation source, final ILocation target)
+	public IPath pathBetween(IScope scope, final ILocation source, final ILocation target)
 		throws GamaRuntimeException {
 		return new GamaPath(this, GamaList.with(source, target));
 	}

@@ -20,6 +20,7 @@ package msi.gama.runtime;
 
 import java.util.Map;
 import msi.gama.common.interfaces.IGraphics;
+import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -125,6 +126,8 @@ public abstract class AbstractScope implements IScope {
 
 	@Override
 	public abstract ISimulation getSimulationScope();
+
+	public abstract IModel getModel();
 
 	@Override
 	public final Object getVarValue(final String varName) {

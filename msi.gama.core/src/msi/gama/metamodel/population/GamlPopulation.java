@@ -66,7 +66,7 @@ public class GamlPopulation extends SinglePopulation implements IGamlPopulation 
 			for ( IAgent agent : toKill ) {
 				agent.die();
 			}
-			List<Map<String, Object>> attributes = new ArrayList();
+			List<Map> attributes = new ArrayList();
 			for ( IAgent target : targets ) {
 				Map<String, Object> att = new HashMap();
 				att.put("target", target);

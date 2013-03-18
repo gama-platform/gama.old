@@ -21,8 +21,8 @@ package msi.gama.kernel.batch;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.*;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
@@ -41,6 +41,10 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	public final static String[] COMBINATIONS = new String[] { "maximum", "minimum", "average" };
 	public static final Class[] CLASSES = { GeneticAlgorithm.class, SimulatedAnnealing.class,
 		HillClimbing.class, TabuSearch.class, TabuSearchReactive.class, ExhaustiveSearch.class };
+
+	static {
+		AbstractGamlAdditions._constants(COMBINATIONS);
+	}
 
 	private NumberGenerator<Double> randUniform;
 	protected Map<ParametersSet, Double> testedSolutions;

@@ -7,6 +7,7 @@ package msi.gama.lang.utils;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.gaml.impl.StatementImpl;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gaml.descriptions.IGamlDescription;
 import org.eclipse.emf.common.notify.Adapter;
@@ -91,7 +92,12 @@ public class EGaml {
 
 		@Override
 		public String caseStatement(final Statement object) {
-			return object.getKey();
+			String s = object.getKey();
+			if ( s == null && object instanceof S_Definition ) {
+				TypeRef type = (TypeRef) ((S_Definition) object).getTkey();
+				if ( type != null ) { return caseTypeRef(type); }
+			}
+			return s;
 		}
 
 		// @Override
@@ -125,7 +131,24 @@ public class EGaml {
 
 		@Override
 		public String caseUnitName(final UnitName object) {
-			return object.getOp();
+			return NodeModelUtils.getTokenText(NodeModelUtils.getNode(object));
+		}
+
+		@Override
+		public String caseTypeRef(final TypeRef object) {
+			String s = NodeModelUtils.getTokenText(NodeModelUtils.getNode(object));
+			return s.split("<")[0];
+		}
+
+		@Override
+		public String caseSkillRef(final SkillRef object) {
+			String s = NodeModelUtils.getTokenText(NodeModelUtils.getNode(object));
+			return s;
+		}
+
+		@Override
+		public String caseActionRef(final ActionRef object) {
+			return NodeModelUtils.getTokenText(NodeModelUtils.getNode(object));
 		}
 
 		@Override
@@ -142,26 +165,27 @@ public class EGaml {
 	};
 
 	public static String getNameOf(final Statement s) {
-		return s.getName();
+		if ( s instanceof GamlDefinition ) { return ((GamlDefinition) s).getName(); }
+		return null;
 	}
 
 	public static Expression getExprOf(final Statement s) {
 		return s.getExpr();
 	}
 
-	public static Parameters getParamsOf(final Statement stm) {
+	public static Parameters getParamsOf(final S_Do stm) {
 		return stm.getParams();
 	}
 
-	public static ActionArguments getArgsOf(final Statement stm) {
+	public static ActionArguments getArgsOf(final S_Definition stm) {
 		return stm.getArgs();
 	}
 
 	public static Expression getFunctionOf(final Statement stm) {
 		// Prendre en compte le cas "type var function: expression".
-		Expression expr = stm.getFunction();
-		if ( expr == null && stm.getBlock() != null ) {
-			expr = stm.getBlock().getFunction();
+		Expression expr = null;
+		if ( getBlockOf(stm) != null ) {
+			expr = getBlockOf(stm).getFunction();
 		}
 		return expr;
 	}
@@ -172,12 +196,17 @@ public class EGaml {
 	}
 
 	public static Expression getValueOf(final Statement s) {
-		// if ( s instanceof AssignmentStatement ) { return ((AssignmentStatement) s).getVar(); }
-		return s.getValue();
+		if ( s instanceof S_Assignment ) { return ((S_Assignment) s).getValue(); }
+		return null;
 	}
 
 	public static EList<Facet> getFacetsOf(final Statement s) {
-		return s.getFacets();
+		if ( ((StatementImpl) s).eIsSet(GamlPackage.STATEMENT__FACETS) ) { return s.getFacets(); }
+		return (EList<Facet>) ECollections.EMPTY_ELIST;
+	}
+
+	public static Block getBlockOf(final Statement s) {
+		return s.getBlock();
 	}
 
 	public static String getKeyOf(final EObject f) {
@@ -188,32 +217,12 @@ public class EGaml {
 		return (GamlFactory) GamlPackage.eINSTANCE.getEFactoryInstance();
 	}
 
-	public static StringLiteral createTerminal(final String id) {
-		if ( id != null ) {
-			StringLiteral expr = getFactory().createStringLiteral();
-			expr.setOp(id);
-			return expr;
-		}
-		return null;
-	}
-
-	public static BooleanLiteral createTerminal(final boolean b) {
-		BooleanLiteral expr = getFactory().createBooleanLiteral();
-		expr.setOp(b ? IKeyword.TRUE : IKeyword.FALSE);
-		return expr;
-	}
-
 	final static StringBuilder serializer = new StringBuilder(100);
 
 	public static String toString(final EObject expr) {
 		if ( expr == null ) { return null; }
 		if ( expr instanceof Statement ) {
 			return getNameOf((Statement) expr);
-			/*
-			 * } else if ( expr instanceof DefinitionFacetExpr ) { return ((DefinitionFacetExpr)
-			 * expr)
-			 * .getName(); }
-			 */
 		} else if ( expr instanceof Facet ) { return ((Facet) expr).getName(); }
 
 		if ( !(expr instanceof Expression) ) { return expr.toString(); }
@@ -250,7 +259,8 @@ public class EGaml {
 			serializer.append("}");
 		} else if ( expr instanceof Array ) {
 			array(((Array) expr).getExprs().getExprs(), false);
-		} else if ( expr instanceof VariableRef ) {
+		} else if ( expr instanceof VariableRef || expr instanceof TypeRef ||
+			expr instanceof SkillRef || expr instanceof ActionRef || expr instanceof UnitName ) {
 			serializer.append(getKeyOf(expr));
 		} else if ( expr instanceof Unary ) {
 			serializer.append(expr.getOp()).append("(");

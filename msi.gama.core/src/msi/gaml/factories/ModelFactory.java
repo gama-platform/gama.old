@@ -26,8 +26,11 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
+import msi.gaml.compilation.SyntheticStatement;
 import msi.gaml.descriptions.*;
+import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.statements.Facets;
+import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 27 oct. 2009
@@ -90,6 +93,21 @@ public class ModelFactory extends SymbolFactory {
 		model.getFacets().putAsLabel(IKeyword.NAME, structure.getName());
 		// Collect and build built-in species
 		SpeciesDescription world = computeBuiltInSpecies(model);
+
+		// TODO Build a sub-species of the world.
+		// SpeciesDescription temp =
+		// DescriptionFactory.createSpeciesDescription(structure.getName() + "_" + WORLD_SPECIES,
+		// WORLD_AGENT_CLASS, model, WORLD_AGENT_CONSTRUCTOR, getSpeciesSkills(WORLD_SPECIES),
+		// new Facets(PARENT, WORLD_SPECIES)/* Get facets from the model */);
+		//
+		// world = temp;
+		//
+		// TODO This part is much more complicated than expected. The whole structure of the naming
+		// of species
+		// has to be redefined. Species names should now be :
+		// model_name.[macro_species_name]*.species_name
+		// The ModelStructure should not be built by putting all the "globals" together.
+
 		// recursively add user-defined species to world and down on to the hierarchy
 		for ( SpeciesStructure speciesStructure : structure.getSpecies() ) {
 			addMicroSpecies(model, world, speciesStructure);
@@ -112,11 +130,57 @@ public class ModelFactory extends SymbolFactory {
 		world.finalizeDescription();
 
 		// Parse the other definitions (output, environment, ...)
+		boolean environmentDefined = false;
 		for ( final ISyntacticElement e : structure.getModelNodes() ) {
-			IDescription dd = create(e, model);
-			if ( dd != null ) {
-				model.addChild(dd);
+			// COMPATIBILITY to remove the environment and put its definition in the world
+			if ( e.getKeyword().equals(ENVIRONMENT) ) {
+				environmentDefined = true;
+				ISyntacticElement shape =
+					new SyntheticStatement(IType.GEOM_STR, new Facets(NAME, SHAPE));
+				IExpressionDescription bounds = e.getFacet(BOUNDS);
+				if ( bounds == null ) {
+					IExpressionDescription width = e.getFacet(WIDTH);
+					IExpressionDescription height = e.getFacet(HEIGHT);
+					if ( width != null && height != null ) {
+						bounds =
+							new OperatorExpressionDescription("envelope",
+								new OperatorExpressionDescription(
+									IExpressionCompiler.INTERNAL_POINT, width, height));
+					}
+				}
+				if ( bounds == null ) {
+					bounds = StringBasedExpressionDescription.create("envelope(100)");
+				} else {
+					bounds = new OperatorExpressionDescription("envelope", bounds);
+				}
+				shape.setFacet(INIT, bounds);
+				IExpressionDescription depends = e.getFacet(DEPENDS_ON);
+				if ( depends != null ) {
+					shape.setFacet(DEPENDS_ON, depends);
+				}
+				VariableDescription vd = (VariableDescription) create(shape, world);
+				world.addChild(vd);
+				world.resortVarName(vd);
+				IExpressionDescription ed = e.getFacet(TORUS);
+				// TODO Is the call to compilation correct at that point ?
+				if ( ed != null ) {
+					world.getFacets().put(TORUS, ed.compile(world));
+				}
+			} else {
+				//
+				IDescription dd = create(e, model);
+				if ( dd != null ) {
+					model.addChild(dd);
+				}
 			}
+		}
+		if ( !environmentDefined ) {
+			ISyntacticElement shape =
+				new SyntheticStatement(IType.GEOM_STR, new Facets(NAME, SHAPE, INIT,
+					"envelope(100)"));
+			VariableDescription vd = (VariableDescription) create(shape, world);
+			world.addChild(vd);
+			world.resortVarName(vd);
 		}
 		// Gather the species created to see if some describe experiments, in which case they are
 		// added to the experiments of the model

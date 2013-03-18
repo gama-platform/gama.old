@@ -108,7 +108,7 @@ public class ModelStructure implements IKeyword {
 			if ( source == null ) {
 				source = e;
 				if ( source.getFacet(NAME) == null ) {
-					source.setFacet(NAME, new LabelExpressionDescription(source.getKeyword()));
+					source.setFacet(NAME, LabelExpressionDescription.create(source.getKeyword()));
 				}
 				setName(source.getLabel(NAME));
 			}

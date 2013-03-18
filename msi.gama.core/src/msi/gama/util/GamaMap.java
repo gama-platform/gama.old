@@ -74,9 +74,9 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 
 	@Override
 	public IMatrix matrixValue(final IScope scope) throws GamaRuntimeException {
-		toMatrixProcedure.init(size());
+		toMatrixProcedure.init(scope, size());
 		for ( Map.Entry entry : entrySet() ) {
-			toMatrixProcedure.execute(entry.getKey(), entry.getValue());
+			toMatrixProcedure.execute(scope, entry.getKey(), entry.getValue());
 		}
 		return toMatrixProcedure.matrix;
 	}
@@ -88,7 +88,7 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	}
 
 	@Override
-	public String stringValue() {
+	public String stringValue(IScope scope) {
 		toStringProcedure.string = "";
 		for ( Map.Entry<Object, Object> entry : entrySet() ) {
 			toStringProcedure.execute(entry.getKey(), entry.getValue());
@@ -129,13 +129,13 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	}
 
 	@Override
-	public void add(final Object value, final Object param) {
+	public void add(IScope scope, final Object value, final Object param) {
 		// TODO Exception if value not GamaPair !
-		add(null, value, param);
+		add(scope, value, param);
 	}
 
 	@Override
-	public void add(final Object index, final Object value, final Object param) {
+	public void add(IScope scope, final Object index, final Object value, final Object param) {
 		if ( index == null && value instanceof GamaPair ) {
 			add((GamaPair) value);
 		} else {
@@ -144,25 +144,25 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	}
 
 	@Override
-	public boolean removeFirst(final Object value) throws GamaRuntimeException {
+	public boolean removeFirst(IScope scope, final Object value) throws GamaRuntimeException {
 		return remove(value) != null;
 	}
 
 	@Override
-	public boolean removeAll(final IContainer list) throws GamaRuntimeException {
+	public boolean removeAll(IScope scope, final IContainer list) throws GamaRuntimeException {
 		for ( Object value : list ) {
-			removeFirst(value);
+			removeFirst(scope, value);
 		}
 		return true;
 	}
 
 	@Override
-	public Object removeAt(final Object index) {
+	public Object removeAt(IScope scope, final Object index) {
 		return remove(index);
 	}
 
 	@Override
-	public void put(final Object index, final Object value, final Object param) {
+	public void put(IScope scope, final Object index, final Object value, final Object param) {
 		put(index, value);
 	}
 
@@ -190,7 +190,7 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	}
 
 	@Override
-	public void putAll(final Object value, final Object param) {
+	public void putAll(IScope scope, final Object value, final Object param) {
 		for ( Map.Entry e : entrySet() ) {
 			e.setValue(value);
 		}
@@ -250,15 +250,16 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 		public IMatrix matrix;
 		private int i;
 
-		public boolean execute(final Object a, final Object b) throws GamaRuntimeException {
-			matrix.set(0, i, a);
-			matrix.set(1, i, b);
+		public boolean execute(IScope scope, final Object a, final Object b)
+			throws GamaRuntimeException {
+			matrix.set(scope, 0, i, a);
+			matrix.set(scope, 1, i, b);
 			i++;
 			return true;
 		}
 
-		public void init(final int size) {
-			matrix = new GamaObjectMatrix(2, size);
+		public void init(IScope scope, final int size) {
+			matrix = new GamaObjectMatrix(scope, 2, size);
 			i = 0;
 		}
 
@@ -312,7 +313,7 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	}
 
 	@Override
-	public GamaMap copy() {
+	public GamaMap copy(IScope scope) {
 		GamaMap result = new GamaMap(this);
 		return result;
 	}
@@ -373,7 +374,8 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	 * java.lang.Object)
 	 */
 	@Override
-	public void addAll(final IContainer value, final Object param) throws GamaRuntimeException {
+	public void addAll(IScope scope, final IContainer value, final Object param)
+		throws GamaRuntimeException {
 		if ( value instanceof GamaMap ) {
 			putAll((GamaMap) value);
 		} else {
@@ -390,9 +392,9 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	 * msi.gama.interfaces.IGamaContainer, java.lang.Object)
 	 */
 	@Override
-	public void addAll(final Object index, final IContainer value, final Object param)
+	public void addAll(IScope scope, final Object index, final IContainer value, final Object param)
 		throws GamaRuntimeException {
-		addAll(value, null);
+		addAll(scope, scope, value, null);
 	}
 
 	@Override

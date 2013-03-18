@@ -31,7 +31,7 @@ public abstract class GamaHelper implements IGamaHelper {
 	final Class skillClass;
 
 	public GamaHelper(final Class clazz) {
-		if ( Skill.class.isAssignableFrom(clazz) ) {
+		if ( clazz != null && Skill.class.isAssignableFrom(clazz) ) {
 			skillClass = clazz;
 		} else {
 			skillClass = null;

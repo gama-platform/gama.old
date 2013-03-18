@@ -329,4 +329,79 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return skills;
 	}
 
+	public static Collection<String> getAllFields() {
+		Set<String> result = new HashSet();
+		for ( List<TypeFieldExpression> list : FIELDS.values() ) {
+			for ( TypeFieldExpression t : list ) {
+				result.add(t.getName());
+			}
+		}
+		return result;
+	}
+
+	public static Collection<String> getAllVars() {
+		Set<String> result = new HashSet();
+		for ( SpeciesDescription s : BUILT_IN_SPECIES.values() ) {
+			result.addAll(s.getVariables().keySet());
+			for ( String a : s.getActionNames() ) {
+				StatementDescription action = s.getAction(a);
+				result.addAll(action.getArgNames());
+			}
+		}
+		for ( Class c : SKILL_CLASSES.values() ) {
+			List<IDescription> descs = ADDITIONS.get(c);
+			if ( descs != null ) {
+				for ( IDescription desc : descs ) {
+					if ( desc instanceof VariableDescription ) {
+						result.add(desc.getName());
+					} else if ( desc instanceof StatementDescription ) {
+						result.addAll(((StatementDescription) desc).getArgNames());
+					}
+				}
+			}
+		}
+		return result;
+	}
+
+	public static Collection<String> getAllAspects() {
+		Set<String> result = new HashSet();
+		for ( SpeciesDescription s : BUILT_IN_SPECIES.values() ) {
+			result.addAll(s.getAspectNames());
+		}
+		return result;
+	}
+
+	public static Collection<String> getAllSkills() {
+		return SKILL_CLASSES.keySet();
+	}
+
+	public static Collection<String> getAllActions() {
+		Set<String> result = new HashSet();
+		for ( SpeciesDescription s : BUILT_IN_SPECIES.values() ) {
+			result.addAll(s.getActionNames());
+		}
+		for ( Class c : SKILL_CLASSES.values() ) {
+			List<IDescription> descs = ADDITIONS.get(c);
+			if ( descs != null ) {
+				for ( IDescription desc : descs ) {
+					if ( !(desc instanceof VariableDescription) ) {
+						result.add(desc.getName());
+					}
+				}
+			}
+		}
+
+		return result;
+	}
+
+	public static final Set<String> CONSTANTS = new HashSet();
+
+	public static void _constants(String[] ... strings) {
+		for ( String[] s : strings ) {
+			for ( String s2 : s ) {
+				CONSTANTS.add(s2);
+			}
+		}
+	}
+
 }

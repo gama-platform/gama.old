@@ -66,28 +66,28 @@ public class MapExpression extends AbstractExpression {
 		return copy;
 	}
 
-	private void determineContentType() {
-		IType previousType = Types.get(IType.NONE);
-		contentType = previousType;
-		for ( IExpression e : vals ) {
-			IType type = e.getType();
-			if ( previousType == Types.get(IType.NONE) || type == previousType ) {
-				contentType = type;
-				previousType = type;
-			} else if ( type != previousType ) {
-				if ( type == Types.get(IType.INT) && contentType == Types.get(IType.FLOAT) ||
-					type == Types.get(IType.FLOAT) && contentType == Types.get(IType.INT) ) {
-					contentType = Types.get(IType.FLOAT);
-					previousType = type;
-				} else {
-					contentType = Types.get(IType.NONE);
-					previousType = type;
-				}
-
-			}
-		}
-
-	}
+	// private void determineContentType() {
+	// IType previousType = Types.get(IType.NONE);
+	// contentType = previousType;
+	// for ( IExpression e : vals ) {
+	// IType type = e.getType();
+	// if ( previousType == Types.get(IType.NONE) || type == previousType ) {
+	// contentType = type;
+	// previousType = type;
+	// } else if ( type != previousType ) {
+	// if ( type == Types.get(IType.INT) && contentType == Types.get(IType.FLOAT) ||
+	// type == Types.get(IType.FLOAT) && contentType == Types.get(IType.INT) ) {
+	// contentType = Types.get(IType.FLOAT);
+	// previousType = type;
+	// } else {
+	// contentType = Types.get(IType.NONE);
+	// previousType = type;
+	// }
+	//
+	// }
+	// }
+	//
+	// }
 
 	@Override
 	public GamaMap value(final IScope scope) throws GamaRuntimeException {

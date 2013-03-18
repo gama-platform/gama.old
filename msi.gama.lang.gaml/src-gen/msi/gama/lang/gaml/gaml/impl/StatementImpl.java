@@ -7,12 +7,10 @@ package msi.gama.lang.gaml.gaml.impl;
 
 import java.util.Collection;
 
-import msi.gama.lang.gaml.gaml.ActionArguments;
 import msi.gama.lang.gaml.gaml.Block;
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.Facet;
 import msi.gama.lang.gaml.gaml.GamlPackage;
-import msi.gama.lang.gaml.gaml.Parameters;
 import msi.gama.lang.gaml.gaml.Statement;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -21,10 +19,10 @@ import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -36,49 +34,46 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getFunction <em>Function</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getBlock <em>Block</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getElse <em>Else</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getKey <em>Key</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getExpr <em>Expr</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getFacets <em>Facets</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getArgs <em>Args</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getParams <em>Params</em>}</li>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getValue <em>Value</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.StatementImpl#getBlock <em>Block</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class StatementImpl extends GamlVarRefImpl implements Statement
+public class StatementImpl extends MinimalEObjectImpl.Container implements Statement
 {
   /**
-   * The cached value of the '{@link #getFunction() <em>Function</em>}' containment reference.
+   * The default value of the '{@link #getKey() <em>Key</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getFunction()
+   * @see #getKey()
    * @generated
    * @ordered
    */
-  protected Expression function;
+  protected static final String KEY_EDEFAULT = null;
 
   /**
-   * The cached value of the '{@link #getBlock() <em>Block</em>}' containment reference.
+   * The cached value of the '{@link #getKey() <em>Key</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getBlock()
+   * @see #getKey()
    * @generated
    * @ordered
    */
-  protected Block block;
+  protected String key = KEY_EDEFAULT;
 
   /**
-   * The cached value of the '{@link #getElse() <em>Else</em>}' containment reference.
+   * The cached value of the '{@link #getExpr() <em>Expr</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getElse()
+   * @see #getExpr()
    * @generated
    * @ordered
    */
-  protected EObject else_;
+  protected Expression expr;
 
   /**
    * The cached value of the '{@link #getFacets() <em>Facets</em>}' containment reference list.
@@ -91,34 +86,14 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
   protected EList<Facet> facets;
 
   /**
-   * The cached value of the '{@link #getArgs() <em>Args</em>}' containment reference.
+   * The cached value of the '{@link #getBlock() <em>Block</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getArgs()
+   * @see #getBlock()
    * @generated
    * @ordered
    */
-  protected ActionArguments args;
-
-  /**
-   * The cached value of the '{@link #getParams() <em>Params</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getParams()
-   * @generated
-   * @ordered
-   */
-  protected Parameters params;
-
-  /**
-   * The cached value of the '{@link #getValue() <em>Value</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getValue()
-   * @generated
-   * @ordered
-   */
-  protected Expression value;
+  protected Block block;
 
   /**
    * <!-- begin-user-doc -->
@@ -146,9 +121,9 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
    * <!-- end-user-doc -->
    * @generated
    */
-  public Expression getFunction()
+  public String getKey()
   {
-    return function;
+    return key;
   }
 
   /**
@@ -156,13 +131,36 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetFunction(Expression newFunction, NotificationChain msgs)
+  public void setKey(String newKey)
   {
-    Expression oldFunction = function;
-    function = newFunction;
+    String oldKey = key;
+    key = newKey;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__KEY, oldKey, key));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Expression getExpr()
+  {
+    return expr;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetExpr(Expression newExpr, NotificationChain msgs)
+  {
+    Expression oldExpr = expr;
+    expr = newExpr;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__FUNCTION, oldFunction, newFunction);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__EXPR, oldExpr, newExpr);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -173,20 +171,34 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
    * <!-- end-user-doc -->
    * @generated
    */
-  public void setFunction(Expression newFunction)
+  public void setExpr(Expression newExpr)
   {
-    if (newFunction != function)
+    if (newExpr != expr)
     {
       NotificationChain msgs = null;
-      if (function != null)
-        msgs = ((InternalEObject)function).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__FUNCTION, null, msgs);
-      if (newFunction != null)
-        msgs = ((InternalEObject)newFunction).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__FUNCTION, null, msgs);
-      msgs = basicSetFunction(newFunction, msgs);
+      if (expr != null)
+        msgs = ((InternalEObject)expr).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__EXPR, null, msgs);
+      if (newExpr != null)
+        msgs = ((InternalEObject)newExpr).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__EXPR, null, msgs);
+      msgs = basicSetExpr(newExpr, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__FUNCTION, newFunction, newFunction));
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__EXPR, newExpr, newExpr));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EList<Facet> getFacets()
+  {
+    if (facets == null)
+    {
+      facets = new EObjectContainmentEList<Facet>(Facet.class, this, GamlPackage.STATEMENT__FACETS);
+    }
+    return facets;
   }
 
   /**
@@ -242,231 +254,17 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
    * <!-- end-user-doc -->
    * @generated
    */
-  public EObject getElse()
-  {
-    return else_;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetElse(EObject newElse, NotificationChain msgs)
-  {
-    EObject oldElse = else_;
-    else_ = newElse;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__ELSE, oldElse, newElse);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setElse(EObject newElse)
-  {
-    if (newElse != else_)
-    {
-      NotificationChain msgs = null;
-      if (else_ != null)
-        msgs = ((InternalEObject)else_).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__ELSE, null, msgs);
-      if (newElse != null)
-        msgs = ((InternalEObject)newElse).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__ELSE, null, msgs);
-      msgs = basicSetElse(newElse, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__ELSE, newElse, newElse));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public EList<Facet> getFacets()
-  {
-    if (facets == null)
-    {
-      facets = new EObjectContainmentEList<Facet>(Facet.class, this, GamlPackage.STATEMENT__FACETS);
-    }
-    return facets;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public ActionArguments getArgs()
-  {
-    return args;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetArgs(ActionArguments newArgs, NotificationChain msgs)
-  {
-    ActionArguments oldArgs = args;
-    args = newArgs;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__ARGS, oldArgs, newArgs);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setArgs(ActionArguments newArgs)
-  {
-    if (newArgs != args)
-    {
-      NotificationChain msgs = null;
-      if (args != null)
-        msgs = ((InternalEObject)args).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__ARGS, null, msgs);
-      if (newArgs != null)
-        msgs = ((InternalEObject)newArgs).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__ARGS, null, msgs);
-      msgs = basicSetArgs(newArgs, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__ARGS, newArgs, newArgs));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Parameters getParams()
-  {
-    return params;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetParams(Parameters newParams, NotificationChain msgs)
-  {
-    Parameters oldParams = params;
-    params = newParams;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__PARAMS, oldParams, newParams);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setParams(Parameters newParams)
-  {
-    if (newParams != params)
-    {
-      NotificationChain msgs = null;
-      if (params != null)
-        msgs = ((InternalEObject)params).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__PARAMS, null, msgs);
-      if (newParams != null)
-        msgs = ((InternalEObject)newParams).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__PARAMS, null, msgs);
-      msgs = basicSetParams(newParams, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__PARAMS, newParams, newParams));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Expression getValue()
-  {
-    return value;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetValue(Expression newValue, NotificationChain msgs)
-  {
-    Expression oldValue = value;
-    value = newValue;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__VALUE, oldValue, newValue);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public void setValue(Expression newValue)
-  {
-    if (newValue != value)
-    {
-      NotificationChain msgs = null;
-      if (value != null)
-        msgs = ((InternalEObject)value).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__VALUE, null, msgs);
-      if (newValue != null)
-        msgs = ((InternalEObject)newValue).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - GamlPackage.STATEMENT__VALUE, null, msgs);
-      msgs = basicSetValue(newValue, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STATEMENT__VALUE, newValue, newValue));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
     {
-      case GamlPackage.STATEMENT__FUNCTION:
-        return basicSetFunction(null, msgs);
-      case GamlPackage.STATEMENT__BLOCK:
-        return basicSetBlock(null, msgs);
-      case GamlPackage.STATEMENT__ELSE:
-        return basicSetElse(null, msgs);
+      case GamlPackage.STATEMENT__EXPR:
+        return basicSetExpr(null, msgs);
       case GamlPackage.STATEMENT__FACETS:
         return ((InternalEList<?>)getFacets()).basicRemove(otherEnd, msgs);
-      case GamlPackage.STATEMENT__ARGS:
-        return basicSetArgs(null, msgs);
-      case GamlPackage.STATEMENT__PARAMS:
-        return basicSetParams(null, msgs);
-      case GamlPackage.STATEMENT__VALUE:
-        return basicSetValue(null, msgs);
+      case GamlPackage.STATEMENT__BLOCK:
+        return basicSetBlock(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -481,20 +279,14 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
   {
     switch (featureID)
     {
-      case GamlPackage.STATEMENT__FUNCTION:
-        return getFunction();
-      case GamlPackage.STATEMENT__BLOCK:
-        return getBlock();
-      case GamlPackage.STATEMENT__ELSE:
-        return getElse();
+      case GamlPackage.STATEMENT__KEY:
+        return getKey();
+      case GamlPackage.STATEMENT__EXPR:
+        return getExpr();
       case GamlPackage.STATEMENT__FACETS:
         return getFacets();
-      case GamlPackage.STATEMENT__ARGS:
-        return getArgs();
-      case GamlPackage.STATEMENT__PARAMS:
-        return getParams();
-      case GamlPackage.STATEMENT__VALUE:
-        return getValue();
+      case GamlPackage.STATEMENT__BLOCK:
+        return getBlock();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -510,27 +302,18 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
   {
     switch (featureID)
     {
-      case GamlPackage.STATEMENT__FUNCTION:
-        setFunction((Expression)newValue);
+      case GamlPackage.STATEMENT__KEY:
+        setKey((String)newValue);
         return;
-      case GamlPackage.STATEMENT__BLOCK:
-        setBlock((Block)newValue);
-        return;
-      case GamlPackage.STATEMENT__ELSE:
-        setElse((EObject)newValue);
+      case GamlPackage.STATEMENT__EXPR:
+        setExpr((Expression)newValue);
         return;
       case GamlPackage.STATEMENT__FACETS:
         getFacets().clear();
         getFacets().addAll((Collection<? extends Facet>)newValue);
         return;
-      case GamlPackage.STATEMENT__ARGS:
-        setArgs((ActionArguments)newValue);
-        return;
-      case GamlPackage.STATEMENT__PARAMS:
-        setParams((Parameters)newValue);
-        return;
-      case GamlPackage.STATEMENT__VALUE:
-        setValue((Expression)newValue);
+      case GamlPackage.STATEMENT__BLOCK:
+        setBlock((Block)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -546,26 +329,17 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
   {
     switch (featureID)
     {
-      case GamlPackage.STATEMENT__FUNCTION:
-        setFunction((Expression)null);
+      case GamlPackage.STATEMENT__KEY:
+        setKey(KEY_EDEFAULT);
         return;
-      case GamlPackage.STATEMENT__BLOCK:
-        setBlock((Block)null);
-        return;
-      case GamlPackage.STATEMENT__ELSE:
-        setElse((EObject)null);
+      case GamlPackage.STATEMENT__EXPR:
+        setExpr((Expression)null);
         return;
       case GamlPackage.STATEMENT__FACETS:
         getFacets().clear();
         return;
-      case GamlPackage.STATEMENT__ARGS:
-        setArgs((ActionArguments)null);
-        return;
-      case GamlPackage.STATEMENT__PARAMS:
-        setParams((Parameters)null);
-        return;
-      case GamlPackage.STATEMENT__VALUE:
-        setValue((Expression)null);
+      case GamlPackage.STATEMENT__BLOCK:
+        setBlock((Block)null);
         return;
     }
     super.eUnset(featureID);
@@ -581,22 +355,33 @@ public class StatementImpl extends GamlVarRefImpl implements Statement
   {
     switch (featureID)
     {
-      case GamlPackage.STATEMENT__FUNCTION:
-        return function != null;
-      case GamlPackage.STATEMENT__BLOCK:
-        return block != null;
-      case GamlPackage.STATEMENT__ELSE:
-        return else_ != null;
+      case GamlPackage.STATEMENT__KEY:
+        return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
+      case GamlPackage.STATEMENT__EXPR:
+        return expr != null;
       case GamlPackage.STATEMENT__FACETS:
         return facets != null && !facets.isEmpty();
-      case GamlPackage.STATEMENT__ARGS:
-        return args != null;
-      case GamlPackage.STATEMENT__PARAMS:
-        return params != null;
-      case GamlPackage.STATEMENT__VALUE:
-        return value != null;
+      case GamlPackage.STATEMENT__BLOCK:
+        return block != null;
     }
     return super.eIsSet(featureID);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String toString()
+  {
+    if (eIsProxy()) return super.toString();
+
+    StringBuffer result = new StringBuffer(super.toString());
+    result.append(" (key: ");
+    result.append(key);
+    result.append(')');
+    return result.toString();
   }
 
 } //StatementImpl

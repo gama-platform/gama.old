@@ -49,7 +49,7 @@ public interface IParameter {
 
 	public String toGaml();
 
-	public abstract Object getInitialValue();
+	public abstract Object getInitialValue(IScope scope);
 
 	public abstract Number getMinValue();
 
@@ -81,5 +81,5 @@ public interface IParameter {
 
 	}
 
-	public abstract void tryToInit();
+	public abstract void tryToInit(IScope scope);
 }

@@ -61,21 +61,21 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 		}
 
 		@Override
-		public Object removeAt(final Integer index) {
+		public Object removeAt(IScope scope, final Integer index) {
 			return null;
 		}
 
 		@Override
-		public void add(final Object value, final Object param) {};
+		public void add(IScope scope, final Object value, final Object param) {};
 
 		@Override
-		public void add(final Integer index, final Object value, final Object param) {}
+		public void add(IScope scope, final Integer index, final Object value, final Object param) {}
 
 		@Override
-		public void put(final Integer index, final Object value, final Object param) {}
+		public void put(IScope scope, final Integer index, final Object value, final Object param) {}
 
 		@Override
-		public void putAll(final Object value, final Object param) {}
+		public void putAll(IScope scope, final Object value, final Object param) {}
 
 		@Override
 		public GamaList clone() {
@@ -83,7 +83,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 		}
 
 		@Override
-		public GamaList copy() {
+		public GamaList copy(IScope scope) {
 			return this;
 		}
 
@@ -173,7 +173,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	 */
 	@Override
 	public IMatrix matrixValue(final IScope scope) {
-		return new GamaObjectMatrix(this, false, null);
+		return new GamaObjectMatrix(scope, this, false, null);
 	}
 
 	/*
@@ -183,19 +183,19 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	 */
 	@Override
 	public IMatrix matrixValue(final IScope scope, final ILocation preferredSize) {
-		return new GamaObjectMatrix(this, false, preferredSize);
+		return new GamaObjectMatrix(scope, this, false, preferredSize);
 	}
 
 	@Override
 	// @operator(value = "string", can_be_const = true)
-	public String stringValue() throws GamaRuntimeException {
+	public String stringValue(IScope scope) throws GamaRuntimeException {
 		final StringBuilder sb = new StringBuilder(size() * 5);
 		sb.append('[');
 		for ( int i = 0, n = size(); i < n; i++ ) {
 			if ( i != 0 ) {
 				sb.append(',');
 			}
-			sb.append(Cast.asString(GAMA.getDefaultScope(), get(i)));
+			sb.append(Cast.asString(scope, get(i)));
 		}
 		sb.append(']');
 		return sb.toString();
@@ -262,23 +262,24 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	@Override
-	public void add(final E value, final Object param) throws GamaRuntimeException {
+	public void add(IScope scope, final E value, final Object param) throws GamaRuntimeException {
 		add(value);
 	}
 
 	@Override
-	public void add(final Integer i, final E value, final Object param) throws GamaRuntimeException {
+	public void add(IScope scope, final Integer i, final E value, final Object param)
+		throws GamaRuntimeException {
 		// all verifications have normally been already done in the add command
 		add(i, value);
 	}
 
 	@Override
-	public boolean removeFirst(final E value) {
+	public boolean removeFirst(IScope scope, final E value) {
 		return remove(value);
 	}
 
 	@Override
-	public boolean removeAll(final IContainer<?, E> list) {
+	public boolean removeAll(IScope scope, final IContainer<?, E> list) {
 		boolean removed = false;
 		boolean result = true;
 		for ( Object value : list ) {
@@ -298,13 +299,13 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	@Override
-	public Object removeAt(final Integer i) {
+	public Object removeAt(IScope scope, final Integer i) {
 		// All verifications have been done in the remove command
 		return remove(i);
 	}
 
 	@Override
-	public void put(final Integer i, final E value, final Object param) {
+	public void put(IScope scope, final Integer i, final E value, final Object param) {
 		// All verifications have been done in the put command
 		set(i, value); // Attention au casting
 	}
@@ -491,7 +492,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 			return (E) max;
 		}
 		if ( allFloat ) {
-			Double max = - Double.MAX_VALUE;
+			Double max = -Double.MAX_VALUE;
 			for ( int i = 0, n = size(); i < n; i++ ) {
 				// Double o = (Double) get(i);
 				Double o = Cast.asFloat(scope, get(i));
@@ -502,7 +503,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 			return (E) max;
 		}
 		if ( allPoint ) {
-			ILocation max = new GamaPoint(- Double.MAX_VALUE, - Double.MAX_VALUE);
+			ILocation max = new GamaPoint(-Double.MAX_VALUE, -Double.MAX_VALUE);
 			for ( int i = 0, n = size(); i < n; i++ ) {
 				ILocation o = Cast.asPoint(scope, get(i));
 				if ( o.compareTo(max) > 0 ) {
@@ -514,7 +515,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 		// In case there is something else in the list other than ints, floats or points
 
-		Double max = - Double.MAX_VALUE;
+		Double max = -Double.MAX_VALUE;
 		for ( int i = 0, n = size(); i < n; i++ ) {
 			Double o = Cast.asFloat(scope, get(i));
 			if ( o > max ) {
@@ -595,7 +596,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	@Override
-	public void putAll(final E value, final Object param) {
+	public void putAll(IScope scope, final E value, final Object param) {
 		for ( int i = 0, n = size(); i < n; i++ ) {
 			set(i, value);
 		}
@@ -612,7 +613,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	@Override
-	public GamaList copy() {
+	public GamaList copy(IScope scope) {
 		return new GamaList(this);
 	}
 
@@ -665,7 +666,8 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	 * java.lang.Object)
 	 */
 	@Override
-	public void addAll(final IContainer list, final Object param) throws GamaRuntimeException {
+	public void addAll(IScope scope, final IContainer list, final Object param)
+		throws GamaRuntimeException {
 		for ( Object o : list ) {
 			add((E) o);
 		}
@@ -678,7 +680,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	 * msi.gama.interfaces.IGamaContainer, java.lang.Object)
 	 */
 	@Override
-	public void addAll(final Integer index, final IContainer list, final Object param)
+	public void addAll(IScope scope, final Integer index, final IContainer list, final Object param)
 		throws GamaRuntimeException {
 		int i = index;
 		for ( Object o : list ) {

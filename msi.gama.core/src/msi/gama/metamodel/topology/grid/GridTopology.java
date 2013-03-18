@@ -66,9 +66,10 @@ public class GridTopology extends AbstractTopology {
 		throws GamaRuntimeException {
 		super(scope, environment, isTorus);
 		if ( isHexagon ) {
-			places = new GamaSpatialMatrix(environment, rows, columns, isTorus, usesVN, isHexagon);
+			places =
+				new GamaSpatialMatrix(scope, environment, rows, columns, isTorus, usesVN, isHexagon);
 		} else {
-			places = new GamaSpatialMatrix(environment, rows, columns, isTorus, usesVN);
+			places = new GamaSpatialMatrix(scope, environment, rows, columns, isTorus, usesVN);
 		}
 	}
 
@@ -96,7 +97,7 @@ public class GridTopology extends AbstractTopology {
 	 * @see msi.gama.interfaces.IValue#stringValue()
 	 */
 	@Override
-	public String stringValue() throws GamaRuntimeException {
+	public String stringValue(IScope scope) throws GamaRuntimeException {
 		return "Grid topology in " + environment.toString() + " as " + places.toString();
 	}
 
@@ -113,9 +114,9 @@ public class GridTopology extends AbstractTopology {
 	 * @see msi.gama.environment.AbstractTopology#_copy()
 	 */
 	@Override
-	protected ITopology _copy() throws GamaRuntimeException {
-		return new GridTopology(scope, environment, ((GamaSpatialMatrix) places).getRows(),
-			((GamaSpatialMatrix) places).getCols(), ((GamaSpatialMatrix) places).isTorus,
+	protected ITopology _copy(IScope scope) throws GamaRuntimeException {
+		return new GridTopology(scope, environment, ((GamaSpatialMatrix) places).getRows(scope),
+			((GamaSpatialMatrix) places).getCols(scope), ((GamaSpatialMatrix) places).isTorus,
 			((GamaSpatialMatrix) places).neighbourhood.isVN(),
 			((GamaSpatialMatrix) places).isHexagon);
 	}
@@ -131,12 +132,13 @@ public class GridTopology extends AbstractTopology {
 	 *      msi.gama.interfaces.IGeometry)
 	 */
 	@Override
-	public IPath pathBetween(final IShape source, final IShape target) throws GamaRuntimeException {
+	public IPath pathBetween(IScope scope, final IShape source, final IShape target)
+		throws GamaRuntimeException {
 		return getPlaces().computeShortestPathBetween(scope, source, target, this);
 	}
 
 	@Override
-	public IPath pathBetween(final ILocation source, final ILocation target)
+	public IPath pathBetween(IScope scope, final ILocation source, final ILocation target)
 		throws GamaRuntimeException {
 		return getPlaces().computeShortestPathBetween(scope, source, target, this);
 	}
@@ -163,14 +165,14 @@ public class GridTopology extends AbstractTopology {
 	 *      msi.gama.interfaces.IGeometry, java.lang.Double)
 	 */
 	@Override
-	public Double distanceBetween(final IShape source, final IShape target) {
+	public Double distanceBetween(IScope scope, final IShape source, final IShape target) {
 		if ( !isValidGeometry(source) || !isValidGeometry(target) ) { return Double.MAX_VALUE; }
 		// TODO null or Double.MAX_VALUE ?
 		return (double) getPlaces().manhattanDistanceBetween(source, target);
 	}
 
 	@Override
-	public Double distanceBetween(final ILocation source, final ILocation target) {
+	public Double distanceBetween(IScope scope, final ILocation source, final ILocation target) {
 		if ( !isValidLocation(source) || !isValidLocation(target) ) { return Double.MAX_VALUE; }
 		// TODO null or Double.MAX_VALUE ?
 		return (double) getPlaces().manhattanDistanceBetween(source, target);
@@ -181,7 +183,7 @@ public class GridTopology extends AbstractTopology {
 	 *      msi.gama.interfaces.IGeometry)
 	 */
 	@Override
-	public Integer directionInDegreesTo(final IShape source, final IShape target) {
+	public Integer directionInDegreesTo(IScope scope, final IShape source, final IShape target) {
 		// TODO compute from the path
 		return null;
 	}

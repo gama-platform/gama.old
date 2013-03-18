@@ -55,4 +55,12 @@ public class GamaBundleLoader {
 		}
 	}
 
+	public static void dynamicLoad(final String s) {
+		preBuild(s);
+		Types.init();
+		// Keep information about the additions made by the plugin
+		//
+
+	}
+
 }

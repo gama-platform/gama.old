@@ -22,7 +22,7 @@ public class JavaWriter {
 	static String ln = "\n";
 	static String tab = "\t";
 	static String in = ln;
-
+	final static String OVERRIDE = " @Override ";
 	final static String IAGENT = "IAgent";
 	final static String IPOPULATION = "IPopulation";
 	final static String ISIMULATION = "ISimulation";
@@ -179,15 +179,15 @@ public class JavaWriter {
 
 			if ( isField ) {
 				getterHelper =
-					concat("new IFieldGetter(){public ", ret, " run(", IVALUE,
-						" v){return v == null?", returnWhenNull(ret), ":((", clazz, ") v).",
-						getterName, "();}}");
+					concat("new IFieldGetter(){", OVERRIDE, "public ", ret, " run(", ISCOPE,
+						" scope, ", IVALUE, " v){return v == null?", returnWhenNull(ret), ":((",
+						clazz, ") v).", getterName, scope ? "(scope);}}" : "();}}");
 			} else {
 				getterHelper =
-					concat("new VarGetter(", toClassObject(clazz), "){public ", ret, " run(",
-						ISCOPE, " scope, ", IAGENT, " a, ", ISKILL, " t) {return t == null?",
-						returnWhenNull(ret), ":((", clazz, ")t).", getterName, "(", scope
-							? "scope," : "", dynamic ? "a);}}" : ");}}");
+					concat("new VarGetter(", toClassObject(clazz), "){", OVERRIDE, "public ", ret,
+						" run(", ISCOPE, " scope, ", IAGENT, " a, ", ISKILL,
+						" t) {return t == null?", returnWhenNull(ret), ":((", clazz, ")t).",
+						getterName, "(", scope ? "scope," : "", dynamic ? "a);}}" : ");}}");
 			}
 
 			// initer
@@ -204,7 +204,7 @@ public class JavaWriter {
 			boolean dyn = segments[i + 2].equals("true");
 			boolean scope = segments[i + 3].equals("true");
 			setterHelper =
-				concat("new VarSetter(", toClassObject(clazz), ")", "{public void ",
+				concat("new VarSetter(", toClassObject(clazz), ")", "{", OVERRIDE, "public void ",
 					"run(IScope scope, IAgent a, ISkill t, Object arg)", " {if (t != null) ((",
 					clazz, ") t).", setterName, "(", scope ? "scope," : "", dyn ? "a, " : "", "(" +
 						param + ") arg); }}");
@@ -242,7 +242,8 @@ public class JavaWriter {
 		}
 		int nbFacets = Integer.decode(segments[10]);
 		int pointer = 11;
-		String facets;		
+		String facets;
+		String constants = "";
 		if ( nbFacets == 0 ) {
 			facets = "null";
 			pointer++;
@@ -258,7 +259,11 @@ public class JavaWriter {
 				// types
 				facets += toArrayOfStrings(segments[pointer++]) + ",";
 				// values
-				facets += toArrayOfStrings(segments[pointer++]) + ",";
+				String values = segments[pointer++];
+				if ( !values.isEmpty() ) {
+					constants += toArrayOfStrings(values) + ",";
+				}
+				facets += toArrayOfStrings(values) + ",";
 				// optional
 				facets += segments[pointer++] + ',';
 				// doc
@@ -267,12 +272,12 @@ public class JavaWriter {
 			}
 			facets += ")";
 		}
-//		pointer++;
-//		pointer++;
+		// pointer++;
+		// pointer++;
 
-		//new String[][]{ {"s","a"},{"s","b"}},
-		int nbCombinations = Integer.parseInt("0"+segments[pointer++]);
-		String combinations="";
+		// new String[][]{ {"s","a"},{"s","b"}},
+		int nbCombinations = Integer.parseInt("0" + segments[pointer++]);
+		String combinations = "";
 		if ( nbCombinations == 0 ) {
 			combinations = "null";
 		} else {
@@ -284,21 +289,20 @@ public class JavaWriter {
 			}
 		}
 		pointer++;
-		
-		
+
 		String omissible = segments[pointer++];
-		
+
 		String sc =
-			concat("new ISymbolConstructor() {public ISymbol create(" + IDESC + " d) {return new ",
-				clazz, "(d);}}");
+			concat("new ISymbolConstructor() {", OVERRIDE, "public ISymbol create(" + IDESC +
+				" d) {return new ", clazz, "(d);}}");
 		sb.append(in).append("_symbol(").append(toClassObject(clazz)).append(",").append(kind)
 			.append(',').append(remote).append(',').append(args).append(',').append(scope)
 			.append(',').append(sequence).append(',').append(unique).append(',')
 			.append(name_unique).append(',').append(parentSymbols).append(",").append(parentKinds)
 			.append(',').append(facets).append(',').append(toJava(omissible)).append(',')
 			.append("new String[][]{").append(combinations).append("},")
-//			.append("new String[][]{}").append(",")
-//			.append("Collections.<String[]> emptyList()").append(",")
+			// .append("new String[][]{}").append(",")
+			// .append("Collections.<String[]> emptyList()").append(",")
 			.append(sc);
 		if ( segments.length > pointer ) {
 			for ( int i = pointer; i < segments.length; i++ ) {
@@ -306,6 +310,10 @@ public class JavaWriter {
 			}
 		}
 		sb.append(");");
+		if ( !constants.isEmpty() ) {
+			constants = constants.substring(0, constants.length() - 1);
+			sb.append("_constants(").append(constants).append(");");
+		}
 	}
 
 	protected void writeType(final StringBuilder sb, final String s, final String doc) {
@@ -359,8 +367,8 @@ public class JavaWriter {
 		}
 		classNames += ")";
 		String helper =
-			concat("new IOpRun(){public ", checkPrim(ret), " run(", ISCOPE, " s,Object... o)",
-				buildNAry(classes, m, ret, stat, scope), "}");
+			concat("new IOpRun(){", OVERRIDE, "public ", checkPrim(ret), " run(", ISCOPE,
+				" s,Object... o)", buildNAry(classes, m, ret, stat, scope), "}");
 
 		sb.append(in).append(iterator ? "_iterator(" : "_operator(").append(kw).append(',')
 			.append(classNames).append(",").append(toClassObject(ret))/* .append(",").append(priority) */
@@ -386,9 +394,10 @@ public class JavaWriter {
 		String name = segments[0];
 		String clazz = segments[1];
 		sb.append(in).append("_species(").append(toJava(name)).append(",")
-			.append(toClassObject(clazz)).append(", new IAgentConstructor(){public ")
-			.append(IAGENT).append(" createOneAgent(").append(IPOPULATION)
-			.append(" p) {return new ").append(clazz).append("(p);}}");
+			.append(toClassObject(clazz))
+			.append(", new IAgentConstructor(){" + OVERRIDE + "public ").append(IAGENT)
+			.append(" createOneAgent(").append(IPOPULATION).append(" p) {return new ")
+			.append(clazz).append("(p);}}");
 		for ( int i = 2; i < segments.length; i++ ) {
 			sb.append(",").append(toJava(segments[i]));
 		}
@@ -425,10 +434,10 @@ public class JavaWriter {
 				toClassObject(ret) + ").toString(), JAVA," + toJava(method) + ", VIRTUAL," +
 				toJava(virtual) + ")";
 		sb.append(concat(in, "_action(", toJava(method), ",", toClassObject(clazz),
-			",new PrimRun(T(", toClassObject(ret), "), ", toClassObject(clazz), "){public ",
-			ret.equals("void") ? "Object" : ret, " run(", ISKILL, " t,", IAGENT, " a,", ISCOPE,
-			" s){ ", !ret.equals("void") ? "return" : "", " ((", clazz, ") t).", method, "(s); ",
-			ret.equals("void") ? "return null;" : "", "} },", desc, ");"));
+			",new PrimRun(T(", toClassObject(ret), "), ", toClassObject(clazz), "){", OVERRIDE,
+			"public ", ret.equals("void") ? "Object" : ret, " run(", ISKILL, " t,", IAGENT, " a,",
+			ISCOPE, " s){ ", !ret.equals("void") ? "return" : "", " ((", clazz, ") t).", method,
+			"(s); ", ret.equals("void") ? "return null;" : "", "} },", desc, ");"));
 	}
 
 	protected void writeSkill(final StringBuilder sb, final String s, final String doc) {
@@ -436,7 +445,8 @@ public class JavaWriter {
 		String name = segments[0];
 		String clazz = segments[1];
 		sb.append(concat(in, "_skill(", toJava(name), ",", toClassObject(clazz),
-			", new ISkillConstructor(){public ISkill newInstance(){return new ", clazz, "();}}"));
+			", new ISkillConstructor(){", OVERRIDE, "public ISkill newInstance(){return new ",
+			clazz, "();}}"));
 		for ( int i = 2; i < segments.length; i++ ) {
 			sb.append(",").append(toJava(segments[i]));
 		}
@@ -448,7 +458,8 @@ public class JavaWriter {
 		String name = segments[0];
 		String clazz = segments[1];
 		sb.append(concat(in, "_display(", toJava(name), ",", toClassObject(clazz),
-			", new IDisplayCreator(){public IDisplaySurface create(){return new ", clazz, "();}}"));
+			", new IDisplayCreator(){", OVERRIDE, "public IDisplaySurface create(){return new ",
+			clazz, "();}}"));
 		sb.append(");");
 	}
 

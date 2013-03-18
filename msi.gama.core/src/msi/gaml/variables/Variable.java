@@ -30,7 +30,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
-import msi.gaml.expressions.*;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.skills.ISkill;
 import msi.gaml.types.*;
@@ -134,8 +134,9 @@ public class Variable extends Symbol implements IVariable {
 
 	@Override
 	public void setValue(final Object initial) {
-		initExpression = new JavaConstExpression(initial);
-		setFacet(IKeyword.INIT, initExpression);
+		IExpressionDescription desc = ConstantExpressionDescription.create(initial);
+		initExpression = desc.getExpression();
+		setFacet(IKeyword.INIT, desc);
 	}
 
 	@Override
@@ -308,10 +309,10 @@ public class Variable extends Symbol implements IVariable {
 	}
 
 	@Override
-	public Object getInitialValue() {
+	public Object getInitialValue(IScope scope) {
 		if ( initExpression != null /* && initExpression.isConst() */) {
 			try {
-				return initExpression.value(GAMA.getDefaultScope());
+				return initExpression.value(scope);
 			} catch (GamaRuntimeException e) {
 				return null;
 			}
@@ -340,6 +341,6 @@ public class Variable extends Symbol implements IVariable {
 	}
 
 	@Override
-	public void tryToInit() {}
+	public void tryToInit(IScope scope) {}
 
 }

@@ -26,6 +26,7 @@ import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.types.IType;
@@ -82,14 +83,15 @@ public interface ITopology extends IValue {
 	 * @return a double representing the distance between the two geometries, or Double.MAX_VALUE if
 	 *         either one of them is not reachable from this topology
 	 */
-	public abstract Double distanceBetween(final IShape source, final IShape target);
+	public abstract Double distanceBetween(IScope scope, final IShape source, final IShape target);
 
-	public abstract Double distanceBetween(final ILocation source, final ILocation target);
+	public abstract Double distanceBetween(IScope scope, final ILocation source,
+		final ILocation target);
 
-	public abstract IPath pathBetween(final IShape source, final IShape target)
+	public abstract IPath pathBetween(IScope scope, final IShape source, final IShape target)
 		throws GamaRuntimeException;
 
-	public abstract IPath pathBetween(final ILocation source, final ILocation target)
+	public abstract IPath pathBetween(IScope scope, final ILocation source, final ILocation target)
 		throws GamaRuntimeException;
 
 	/**
@@ -168,11 +170,12 @@ public interface ITopology extends IValue {
 	public abstract boolean isValidGeometry(IShape g);
 
 	/**
+	 * @param scope TODO
 	 * @throws GamaRuntimeException
 	 * @param source
 	 * @param target
 	 * @return the direction or null if one these two geometries are invalid in this topology
 	 */
-	public abstract Integer directionInDegreesTo(IShape source, IShape target);
+	public abstract Integer directionInDegreesTo(IScope scope, IShape source, IShape target);
 
 }

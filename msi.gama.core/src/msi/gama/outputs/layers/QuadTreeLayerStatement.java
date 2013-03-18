@@ -22,7 +22,6 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.ImageUtils;
-import msi.gama.metamodel.topology.IEnvironment;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -33,6 +32,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
+import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
@@ -47,12 +47,12 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true),
-	@facet(name = IKeyword.REFRESH, type = IType.BOOL_STR, optional = true)}, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.REFRESH, type = IType.BOOL_STR, optional = true) }, omissible = IKeyword.NAME)
 public class QuadTreeLayerStatement extends AbstractLayerStatement {
 
 	BufferedImage supportImage;
 
-	private IEnvironment modelEnv;
+	// private IEnvironment modelEnv;
 
 	public QuadTreeLayerStatement(/* final ISymbol context, */final IDescription desc)
 		throws GamaRuntimeException {
@@ -62,18 +62,17 @@ public class QuadTreeLayerStatement extends AbstractLayerStatement {
 	@Override
 	public void prepare(final IDisplayOutput out, final IScope scope) throws GamaRuntimeException {
 		super.prepare(out, scope);
-		if ( modelEnv == null ) {
-			modelEnv = scope.getSimulationScope().getModel().getModelEnvironment();
-		}
+		Envelope env = scope.getWorldScope().getEnvelope();
 		supportImage =
-			ImageUtils.createCompatibleImage((int) modelEnv.getWidth(), (int) modelEnv.getHeight());
+			ImageUtils.createCompatibleImage((int) env.getWidth(), (int) env.getHeight());
 	}
 
 	@Override
-	public void compute(final IScope sim, final long cycle) throws GamaRuntimeException {
+	public void compute(final IScope scope, final long cycle) throws GamaRuntimeException {
 		Graphics2D g2 = (Graphics2D) supportImage.getGraphics();
-		modelEnv.displaySpatialIndexOn(g2, supportImage.getWidth(), supportImage.getHeight());
-		super.compute(sim, cycle);
+		scope.getWorldScope().displaySpatialIndexOn(g2, supportImage.getWidth(),
+			supportImage.getHeight());
+		super.compute(scope, cycle);
 	}
 
 	@Override

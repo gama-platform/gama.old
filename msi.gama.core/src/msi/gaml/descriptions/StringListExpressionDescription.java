@@ -2,10 +2,9 @@
  * Created by drogoul, 31 mars 2012
  * 
  */
-package msi.gama.lang.utils;
+package msi.gaml.descriptions;
 
-import java.util.Set;
-import msi.gaml.descriptions.BasicExpressionDescription;
+import java.util.*;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -17,11 +16,16 @@ import org.eclipse.emf.ecore.EObject;
  */
 public class StringListExpressionDescription extends BasicExpressionDescription {
 
-	final Set<String> strings;
+	final Collection<String> strings;
 
-	public StringListExpressionDescription(final Set<String> exp) {
+	public StringListExpressionDescription(final Collection<String> exp) {
 		super((EObject) null);
 		strings = exp;
+	}
+
+	public StringListExpressionDescription(final String ... exp) {
+		super((EObject) null);
+		strings = Arrays.asList(exp);
 	}
 
 	@Override
@@ -29,8 +33,9 @@ public class StringListExpressionDescription extends BasicExpressionDescription 
 		return strings.toString();
 	}
 
-	public Set<String> getStrings() {
-		return strings;
+	@Override
+	public Set<String> getStrings(IDescription context, boolean skills) {
+		return new HashSet(strings);
 	}
 
 }

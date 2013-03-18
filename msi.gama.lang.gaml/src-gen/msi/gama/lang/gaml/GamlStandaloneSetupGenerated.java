@@ -46,6 +46,5 @@ public class GamlStandaloneSetupGenerated implements ISetup {
 		
 
 
-
 	}
 }

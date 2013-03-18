@@ -92,17 +92,17 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		allowsTooltip = true; // ??
 	}
 
-	public ExperimentParameter(final IParameter p) {
-		this(p, p.getTitle(), p.getCategory(), p.getAmongValue(), false);
+	public ExperimentParameter(IScope scope, final IParameter p) {
+		this(scope, p, p.getTitle(), p.getCategory(), p.getAmongValue(), false);
 	}
 
-	public ExperimentParameter(final IParameter p, final String title, final String category,
-		final List among, final boolean canBeNull) {
-		this(p, title, category, null, among, canBeNull);
+	public ExperimentParameter(IScope scope, final IParameter p, final String title,
+		final String category, final List among, final boolean canBeNull) {
+		this(scope, p, title, category, null, among, canBeNull);
 	}
 
-	public ExperimentParameter(final IParameter p, final String title, final String category,
-		final String unit, final List among, final boolean canBeNull) {
+	public ExperimentParameter(IScope scope, final IParameter p, final String title,
+		final String category, final String unit, final List among, final boolean canBeNull) {
 		super(null);
 		init = null;
 		this.title = title;
@@ -114,7 +114,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		setName(p.getName());
 		setCategory(category);
 		setType(p.type());
-		setValue(p.getInitialValue());
+		setValue(p.getInitialValue(scope));
 		setEditable(p.isEditable());
 		isLabel = p.isLabel();
 		allowsTooltip = p.allowsTooltip();
@@ -207,10 +207,10 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	@Override
-	public void tryToInit() {
+	public void tryToInit(IScope scope) {
 		if ( value != UNDEFINED ) { return; }
 		if ( init == null ) { return; }
-		setValue(init.value(GAMA.getDefaultScope()));
+		setValue(init.value(scope));
 	}
 
 	private Number drawRandomValue() {
@@ -301,17 +301,17 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public Object value(final IScope scope) {
-		return getValue();
+		return getValue(scope);
 	}
 
 	@Override
 	public Object value() {
-		return getValue();
+		return getValue(GAMA.getDefaultScope());
 	}
 
 	@Override
-	public Object getInitialValue() {
-		return getValue();
+	public Object getInitialValue(IScope scope) {
+		return getValue(scope);
 	}
 
 	@Override
@@ -341,7 +341,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public String toGaml() {
-		return StringUtils.toGaml(getValue());
+		return StringUtils.toGaml(getValue(GAMA.getDefaultScope()));
 	}
 
 	@Override
@@ -366,8 +366,8 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		return unitLabel;
 	}
 
-	Object getValue() {
-		tryToInit();
+	Object getValue(IScope scope) {
+		tryToInit(scope);
 		return value;
 	}
 

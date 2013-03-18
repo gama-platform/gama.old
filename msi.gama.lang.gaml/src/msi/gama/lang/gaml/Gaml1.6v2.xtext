@@ -3,126 +3,177 @@ grammar msi.gama.lang.gaml.Gaml hidden(WS, ML_COMMENT, SL_COMMENT)
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 generate gaml "http://www.gama.msi/lang/gaml/Gaml"
 
-
 Model:
 	'model' name=ID (imports+=Import)* (statements+=Statement)* | {StringEvaluator} name=ID "<-" expr=Expression;
 
 Import:
 	'import' importURI=STRING; // must be named importURI
-	
 
-BuiltInStatementKey:
-	//Statements that accept an expression as their "default" facet
-	// FIXME : this is nonsense ! This list should not exist
-	'add' |
-	'ask' |
-	'capture' |
-	'create' |
-	'draw' |
-	'error'|
-	'match' |
-	'match_between' |
-	'match_one' |
-	'put' |
-	'release' |
-	'remove' |
-	'save' |
-	'set' |
-	'switch'|
-	'warn'|
-	'write' |
-	'display_population' |
-	'display_grid' | 
-	'using';
 
 /**
  * Statements 
  */
 Statement:
-	AssignmentStatement | ( ReturnStatement | IfStatement  | ClassicStatement | DefinitionStatement  | Equation);
+	=> S_Assignment |
+	 (
+		(=>S_Declaration | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_If)
+	);
 
-Equation returns Statement: function=Function key="=" expr=Expression ';';
- 
-IfStatement returns Statement:
-	key='if' ('condition:')? expr=Expression block=Block (=> 'else' else=(IfStatement | Block))?;
 
-ClassicStatement returns Statement:
-	key=BuiltInStatementKey (ID':')? expr=Expression (facets+=Facet)* (block=Block | ';');
 
-DefinitionStatement returns Statement:
-	(key=ID) of=Contents? name=(ID | STRING | BuiltInStatementKey)? ('(' (args=ActionArguments |=> params=Parameters)?')')? (facets+=Facet)* (block=Block | ';');
+S_1Expr_Facets_BlockOrEnd returns Statement:
+	key=_1Expr_Facets_BlockOrEnd_Key (FirstFacetKey)? expr=Expression (facets+=Facet)* (block=Block | ";");
 	
-	
-Contents: ('<' type=ID (',' type2= ID)? '>');
+S_Do:
+	key=_DoKey ("action:")? expr=ActionRef ('(' (params=Parameters) ')')? (facets+=Facet)* (block=Block | ';');
 
-ReturnStatement returns Statement:
+S_Loop:
+	key="loop" (name=ID)? (facets+=Facet)* block=Block;
+
+S_If:
+	key='if' ('condition:')? expr=Expression block=Block (=> 'else' else=(S_If | Block))?;
+
+S_Other:
+	key=ID (facets+=Facet)* (block=Block | ';');
+
+S_Return:
 	key='return' expr=Expression? ';';
+/*
+ * DECLARATIONS
+ */
 
-AssignmentStatement returns Statement:
-	=> (expr= Expression key=("<-"|"<<"|">>"|"+="|"-=" | "++" | "--")) value=Expression (facets+=Facet)*';';
+S_Declaration: S_Species | S_Experiment | S_Reflex | S_Definition | S_Action | S_Var | S_Loop  ;
+
+S_Species:
+	(key=_SpeciesKey ('name:')? name=ID (facets+=Facet)* (block=Block | ';')); // be more restrictive ? Add skill facet
+
+S_Experiment:
+	key="experiment" ("name:")? name=(Valid_ID | STRING) (facets+=Facet)* block=Block;
 	
-Parameters: 
-	 {Parameters} (params=ParameterList)? 
-;
+S_Reflex:
+	key=_ReflexKey ("name:")? name=Valid_ID? ("when:" expr=Expression)? block=Block;
+	
+S_Definition: 
+	=>tkey=TypeRef ("name:")? name=(Valid_ID | STRING) ('(' (args=ActionArguments) ')')? (facets+=Facet)* (block=Block | ';');
+
+S_Action returns S_Definition:
+	{S_Action} key="action" ('name:')? name=Valid_ID ('(' (args=ActionArguments) ')')? (facets+=Facet)* (block=Block | ';');
+		
+S_Var returns S_Definition:
+	{S_Var} key=_VarOrConstKey ("name:")? name=Valid_ID (facets+=Facet)* ';';
+
+ 
+/*
+ * ASSIGNMENTS
+ */
+ 
+S_Assignment: 
+	S_DirectAssignment | S_Set | S_Equation;
+	
+S_DirectAssignment:
+	(expr=Expression key=( "<-" | "<<" | ">>" | "+=" | "-=" | "++" | "--" )) value=Expression (facets+=Facet)* ';';
+	
+S_Set:
+	key="set" ("var:" | "name:")? expr=Expression ("value:" | "<-") value=Expression ";";
+
+S_Equation:
+	=>expr=Function key="=" value=Expression ';';
+
+
+/**
+ * Statement keys
+ */
+
+_SpeciesKey:
+	"species" | "grid";
+
+_1Expr_Facets_BlockOrEnd_Key:
+	"ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | 
+	"draw" | "display_population" | "display_grid" | "add" | "remove" | "put" | "using" | "switch" | 
+	"match" | "match_between" | "match_one";
+
+_DoKey:
+	"do";
+
+_VarOrConstKey:
+	"var" | "const" | "let" | "arg";
+
+_ReflexKey:
+	"init" | "reflex";
+
+
+
+/**
+ * Parameters and arguments
+ */
+
+Parameters:
+	{Parameters} (params=ParameterList)?;
+
 ActionArguments:
 	args+=ArgumentDefinition (',' args+=ArgumentDefinition)*;
 
 ArgumentDefinition:
-		type=ID of=Contents? name=(ID|BuiltInStatementKey) ('<-' default=Expression)?
-	;
-
+	type=TypeRef name=Valid_ID ('<-' default=Expression)?;
 
 /**
  * Facets
  */
-
-
 Facet:
-	FunctionFacet | ClassicFacet;
+	DefinitionFacet | FunctionFacet | ClassicFacet | TypeFacet | ActionFacet ;
 
-DefinitionFacetKey: "name:" | "returns:" | "action:" | "type:";
-	
+FirstFacetKey: DefinitionFacetKey | TypeFacetKey | SpecialFacetKey | ActionFacetKey | (ID ':');
+
+DefinitionFacetKey:
+	"name:" | "returns:" | "var:";
+
+TypeFacetKey:
+	"as:" | "parent:" | "of:" | "species:";
+
+SpecialFacetKey:
+	'data:' | 'when:' | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" |
+	"environment:";
+
+ActionFacetKey:
+	"action:";
 
 ClassicFacet returns Facet:
-	((key=ID ':' | key='<-') expr=Expression) | ((=>key=DefinitionFacetKey) name=(ID | STRING | BuiltInStatementKey)) of=Contents?;
+	(key=ID ':' | key='<-' | key=SpecialFacetKey) expr=Expression;
+
+DefinitionFacet returns Facet:
+	((=> key=DefinitionFacetKey) name=(Valid_ID | STRING));
 
 FunctionFacet returns Facet:
 	(key='function:' | key='->') '{' expr=Expression '}';
 
-/*
- * Definition facets (which are used for cross referencing variables)
- */
-//DefinitionFacetKey: 'name:' | 'returns:';
-//DefinitionFacet returns Facet:
-//	(key=DefinitionFacetKey) name=(ID | STRING | BuiltInStatementKey);
+TypeFacet returns Facet:
+	key=TypeFacetKey expr=TypeRef;
 
-/**
+ActionFacet returns Facet:
+	key=ActionFacetKey expr=ActionRef;
+
+
+	/**
  * Blocks. An ordered list of statements inside curly brackets
  */
 Block:
-	{Block} '{' 
-		( =>((function=Expression) '}')| ((statements+=Statement)* '}')) 
-	;
+	{Block} '{'
+	(=> ((function=Expression) '}') | ((statements+=Statement)* '}'));
 
 	/**
  * Expressions
  */
 Expression:
 	ArgumentPair | Pair;
-	
+
 ArgumentPair:
-	=>(op=(ID|BuiltInStatementKey) '::' | op=DefinitionFacetKey ':')? right=If
-;
+	=> (op=(Valid_ID) '::' | op=(DefinitionFacetKey | TypeFacetKey | SpecialFacetKey | ActionFacetKey) ':')? right=If;
 
 Pair returns Expression:
 	If
-	(
-		(
-		{Pair.left=current}
-		op='::'
-		)
-		right=If
-	)?;
+	(({Pair.left=current}
+	op='::')
+	right=If)?;
 
 If returns Expression:
 	Or
@@ -156,24 +207,23 @@ Addition returns Expression:
 	right=Multiplication)*;
 
 Multiplication returns Expression:
-	Binary 
+	Binary
 	(({Expression.left=current} op=('*' | '/' | '^')) right=Binary)*;
 
 Binary returns Expression:
 	Unit
-	(({Binary.left=current} op=ID) right=Unit)*;
+	(({Binary.left=current} op=(Valid_ID)) right=Unit)*;
 
-// NEW: Units can now be expressed using the "¡" symbol (in addition to "#")
+	// NEW: Units are now expressed using the "¡" symbol
 Unit returns Expression:
 	Unary
-	(({Unit.left=current} op=('¡')) right=UnitName)?;
+	(({Unit.left=current} op=('¡')) right=UnitRef)?;
 
 Unary returns Expression:
 	Access |
-	{Unary} ((op='¡' right=UnitName) | (op=('-' | '!' | 'my' | 'the' | 'not')
+	{Unary} ((op='¡' right=UnitRef) | (op=('-' | '!' | 'my' | 'the' | 'not')
 	right=Unary));
-	
-		
+
 Access returns Expression:
 	Dot (({Access.left=current} '[') args=ExpressionList ']')*;
 
@@ -182,39 +232,88 @@ Dot returns Expression:
 
 Primary returns Expression:
 	TerminalExpression |
-	AbstractRef | 
-	'(' Expression ')' | 
-	'(' {Parameters} (params = ParameterList)? ')'|
-	'[' {Array} exprs=ExpressionList? ']' | 
+	AbstractRef |
+	'(' Expression ')' |
+	'(' {Parameters} (params=ParameterList)? ')' |
+	'[' {Array} exprs=ExpressionList? ']' |
 	'{' {Point} left=Expression op=',' right=Expression (',' z=Expression)? '}';
 
 AbstractRef returns Expression:
-	VariableRef | Function;
+	Function | VariableRef;
 
-Function returns Expression :
-	{Function} op=ID '(' args = ExpressionList ')';
+Function returns Expression:
+	{Function} op=(Valid_ID) '(' args=ExpressionList ')';
 
-Parameter returns Expression: {Parameter} ((builtInFacetKey=DefinitionFacetKey) | (left=VariableRef ':')) right=Expression;
+Parameter returns Expression:
+	{Parameter} ((builtInFacetKey=(DefinitionFacetKey | TypeFacetKey | SpecialFacetKey | ActionFacetKey)) |
+	(left=VariableRef ':')) right=Expression;
 
-ExpressionList: exprs+=Expression (',' exprs+=Expression)*;
-ParameterList returns ExpressionList: exprs+=Parameter (',' exprs+=Parameter)*;
+ExpressionList:
+	exprs+=Expression (',' exprs+=Expression)*;
 
+ParameterList returns ExpressionList:
+	exprs+=Parameter (',' exprs+=Parameter)*;
 
-UnitName returns Expression:
-	{UnitName} op=ID;
+UnitRef returns Expression:
+	{UnitName} ref=[UnitFakeDefinition|ID];
 
 VariableRef:
-	{VariableRef} ref=[GamlVarRef];
-	
-GamlVarRef:
-	ClassicFacet | DefinitionStatement ;
+	{VariableRef} ref=[VarDefinition|Valid_ID];
+
+TypeRef returns Expression:
+	{TypeRef} ref=[TypeDefinition|ID] ('<' of=TypeRef '>')?;
+
+SkillRef returns Expression:
+	{SkillRef} ref=[SkillFakeDefinition|ID];
+
+ActionRef returns Expression:
+	{ActionRef} ref=[ActionDefinition|Valid_ID];
+
+GamlDefinition:
+	TypeDefinition | VarDefinition | UnitFakeDefinition | SkillFakeDefinition | ActionDefinition;
+
+TypeDefinition:
+	S_Species | TypeFakeDefinition;
+
+VarDefinition:
+	=> S_Declaration | (ArgumentDefinition  | DefinitionFacet | VarFakeDefinition );
+
+ActionDefinition:
+	S_Action | ActionFakeDefinition | S_Definition;
+
+	// Fake Definitions produced by the global scope provider
+UnitFakeDefinition:
+	'**unit*' name=ID;
+
+TypeFakeDefinition:
+	'**type*' name=ID;
+
+ActionFakeDefinition:
+	'**action*' name=Valid_ID;
+
+SkillFakeDefinition:
+	'**skill*' name=ID;
+
+VarFakeDefinition:
+	'**var*' name=Valid_ID;
+
+Valid_ID:
+	_SpeciesKey | _DoKey | _ReflexKey | _VarOrConstKey  | _1Expr_Facets_BlockOrEnd_Key | ID;
+
 
 /**
  * Terminals
  */
 TerminalExpression:
-	{IntLiteral} op=INTEGER | {DoubleLiteral} op=DOUBLE | {ColorLiteral} op=COLOR | {StringLiteral} op=STRING
-	| {BooleanLiteral} op=BOOLEAN;
+	{IntLiteral} op=INTEGER |
+	{DoubleLiteral} op=DOUBLE |
+	{ColorLiteral} op=COLOR |
+	{StringLiteral} op=STRING |
+	{BooleanLiteral} op=BOOLEAN |
+	{ReservedLiteral} op=KEYWORD;
+
+terminal KEYWORD:
+	'each' | 'self' | 'myself' | 'nil' | 'world';
 
 terminal INTEGER:
 	'0' | ('1'..'9' ('0'..'9')*);

@@ -55,7 +55,7 @@ public class TypeFieldExpression implements IExpression {
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
 		Object parameter = left.value(scope);
-		if ( parameter instanceof IValue ) { return getter.run((IValue) parameter); }
+		if ( parameter instanceof IValue ) { return getter.run(scope, (IValue) parameter); }
 		return null;
 	}
 

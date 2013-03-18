@@ -22,11 +22,11 @@ public class FacetProto {
 		this.optional = optional;
 		isLabel = SymbolProto.ids.contains(types[0]);
 		this.values = values;
-		this.doc=doc;
+		this.doc = doc;
 	}
 
 	static FacetProto DEPENDS_ON() {
-		return new FacetProto(IKeyword.DEPENDS_ON, new String[] { IType.LABEL }, new String[0],
+		return new FacetProto(IKeyword.DEPENDS_ON, new String[] { IType.LIST_STR }, new String[0],
 			true, "");
 	}
 

@@ -23,6 +23,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gaml.operators.Maths;
 import msi.gaml.types.*;
@@ -54,9 +55,9 @@ public class GamaShape implements IShape {
 	private boolean isPoint;
 	private Operations optimizedOperations;
 	private IAgent agent;
-	// Property map to add 3D information (e.g to specify if the geometry is a sphere, a cube,
-	// etc...)
-	private GamaMap Property3D;
+	// Property map to add all kinds of information (e.g to specify if the geometry is a sphere, a
+	// cube, etc...). Can be reused by subclasses (for example to store GIS information)
+	protected GamaMap attributes;
 
 	public GamaShape(final Geometry geom) {
 		setInnerGeometry(geom);
@@ -104,7 +105,7 @@ public class GamaShape implements IShape {
 	}
 
 	@Override
-	public String stringValue() {
+	public String stringValue(IScope scope) {
 		return getInnerGeometry().getGeometryType();
 	}
 
@@ -161,19 +162,19 @@ public class GamaShape implements IShape {
 	// return geometry.equals(((GamaGeometry) o).geometry);
 	// }
 
-	public GamaShape rotatedBy(final int angle) {
-		return rotatedBy(Maths.toRad * angle);
+	public GamaShape rotatedBy(IScope scope, final int angle) {
+		return rotatedBy(scope, Maths.toRad * angle);
 	}
 
-	public GamaShape rotatedBy(final double angle) {
-		if ( isPoint ) { return copy(); }
+	public GamaShape rotatedBy(IScope scope, final double angle) {
+		if ( isPoint ) { return copy(scope); }
 		Geometry newGeom = (Geometry) geometry.clone();
 		newGeom.apply(rotation.of(angle, (Coordinate) location));
 		return new GamaShape(newGeom);
 	}
 
-	public GamaShape scaledBy(final double coeff) {
-		if ( isPoint ) { return copy(); }
+	public GamaShape scaledBy(IScope scope, final double coeff) {
+		if ( isPoint ) { return copy(scope); }
 		Geometry newGeom = (Geometry) geometry.clone();
 		newGeom.apply(scaling.of(coeff, (Coordinate) location));
 		return new GamaShape(newGeom);
@@ -466,9 +467,12 @@ public class GamaShape implements IShape {
 	}
 
 	@Override
-	public GamaShape copy() {
+	public GamaShape copy(IScope scope) {
 		GamaShape g = new GamaShape((Geometry) geometry.clone());
-		g.setLocation(location.copy());
+		if ( attributes != null ) {
+			g.attributes = new GamaMap(attributes);
+		}
+		g.setLocation(location.copy(scope));
 		return g;
 	}
 
@@ -515,12 +519,27 @@ public class GamaShape implements IShape {
 		return optimizedOperations;
 	}
 
-	public GamaMap getProperty3D() {
-		return Property3D;
+	/**
+	 * Used when the geometry is not affected to an agent and directly accessed by 'read' or 'get'
+	 * operators. Can be used in Java too, of course, to retrieve any value stored in the shape
+	 * @param s
+	 * @return the corresponding value of the attribute named 's' in the feature, or null if it is
+	 *         not present
+	 */
+	public Object getAttribute(Object s) {
+		if ( attributes == null ) { return null; }
+		return attributes.get(s);
 	}
 
-	public void setProperty3D(final GamaMap property3D) {
-		Property3D = property3D;
+	public void setAttribute(Object key, Object value) {
+		if ( attributes == null ) {
+			attributes = new GamaMap();
+		}
+		attributes.put(key, value);
+	}
+
+	public boolean hasAttributes() {
+		return attributes != null;
 	}
 
 }

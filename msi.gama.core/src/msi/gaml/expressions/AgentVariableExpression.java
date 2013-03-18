@@ -32,14 +32,14 @@ public class AgentVariableExpression extends VariableExpression {
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
-		return scope.getAgentVarValue(name);
+		return scope.getAgentVarValue(getName());
 	}
 
 	@Override
 	public void setVal(final IScope scope, final Object v, final boolean create)
 		throws GamaRuntimeException {
 		if ( isNotModifiable ) { return; }
-		scope.setAgentVarValue(name, v);
+		scope.setAgentVarValue(getName(), v);
 	}
 
 	@Override

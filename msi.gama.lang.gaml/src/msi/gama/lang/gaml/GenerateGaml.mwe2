@@ -57,15 +57,16 @@ Workflow {
 
             // The antlr parser generator fragment.
             fragment = parser.antlr.XtextAntlrGeneratorFragment {
+            	antlrParam = "-Xconversiontimeout" antlrParam = "10000"
              options = {
-//                  backtrack = true
+  //            backtrack = true
               }
             }
 
             // java-based API for validation
             fragment = validation.JavaValidatorFragment {
-                composedCheck = "org.eclipse.xtext.validation.ImportUriValidator"
-                // composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
+               // composedCheck = "org.eclipse.xtext.validation.ImportUriValidator"
+               // composedCheck = "org.eclipse.xtext.validation.NamesAreUniqueValidator"
             }
 
             // scoping and exporting API
@@ -73,15 +74,14 @@ Workflow {
             fragment = exporting.SimpleNamesFragment {}
 
             // scoping and exporting API
-            // fragment = scoping.ImportNamespacesScopingFragment {}
-            // fragment = exporting.QualifiedNamesFragment {}
-            fragment = builder.BuilderIntegrationFragment {}
+      		//fragment = scoping.ImportNamespacesScopingFragment {}
+     		//fragment = exporting.QualifiedNamesFragment {}
+      		fragment = builder.BuilderIntegrationFragment {}
 
             // generator API
             fragment = generator.GeneratorFragment {
                 generateMwe = true
-                generateJavaMain = true
-                
+                //generateJavaMain = true
             }
 
             // formatter API
@@ -92,7 +92,7 @@ Workflow {
 
             // outline API
             fragment = outline.OutlineTreeProviderFragment {}
-            fragment = outline.QuickOutlineFragment {}
+            //fragment = outline.QuickOutlineFragment {}
 
             // quickfix API
             fragment = quickfix.QuickfixProviderFragment {}
@@ -101,7 +101,9 @@ Workflow {
             fragment = contentAssist.JavaBasedContentAssistFragment {}
 
             // generates a more lightweight Antlr parser and lexer tailored for content assist
-            fragment = parser.antlr.XtextAntlrUiGeneratorFragment {}
+            fragment = parser.antlr.XtextAntlrUiGeneratorFragment {
+            	antlrParam = "-Xconversiontimeout" antlrParam = "10000"
+            }
 
             // generates junit test support classes into Generator#pathTestProject
             //fragment = junit.Junit4Fragment {}

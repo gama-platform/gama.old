@@ -70,13 +70,13 @@ public class PutStatement extends AbstractContainerStatement {
 			listType == IType.FLOAT ? Cast.asFloat(scope, casted) : listType == IType.INT ? Cast
 				.asInt(scope, casted) : casted;
 		if ( whole ) {
-			container.putAll(casted, null);
+			container.putAll(scope, casted, null);
 		} else {
 			if ( index == null ) { throw new GamaRuntimeWarning("Cannot put " +
 				StringUtils.toGaml(object) + " in " + list.toGaml() + " without a valid index"); }
 			if ( !container.checkBounds(position, false) ) { throw new GamaRuntimeWarning("Index " +
 				position + " out of bounds of " + list.toGaml()); }
-			container.put(position, casted, null);
+			container.put(scope, position, casted, null);
 		}
 
 	}

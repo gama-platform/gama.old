@@ -4,7 +4,11 @@
  */
 package msi.gama.lang.utils;
 
-import msi.gaml.descriptions.BasicExpressionDescription;
+import java.util.*;
+import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.lang.gaml.gaml.*;
+import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.descriptions.*;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -23,6 +27,47 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 	@Override
 	public String toString() {
 		return expression == null ? EGaml.toString(target) : super.toString();
+	}
+
+	@Override
+	public Set<String> getStrings(IDescription context, boolean skills) {
+		String type = skills ? "skill" : "attribute";
+		if ( target == null ) { return Collections.EMPTY_SET; }
+		if ( !(target instanceof Array) ) {
+			if ( target instanceof VariableRef ) {
+				String skillName = EGaml.getKey.caseVariableRef((VariableRef) target);
+				context.flagWarning(type +
+					"s should be provided as a list of identifiers, for instance [" + skillName +
+					"]", IGamlIssue.AS_ARRAY, target, skillName);
+				if ( skills && !AbstractGamlAdditions.getSkillClasses().containsKey(skillName) ) {
+					context.flagError("Unknown " + type + " " + skillName,
+						IGamlIssue.UNKNOWN_SKILL, target);
+				}
+				return new HashSet(Arrays.asList(skillName));
+			}
+			if ( target instanceof Expression ) {
+				context.flagError(
+					"Impossible to recognize valid " + type + "s in " + EGaml.toString(target),
+					skills ? IGamlIssue.UNKNOWN_SKILL : IGamlIssue.UNKNOWN_VAR, target);
+			} else {
+				context.flagError(type + "s should be provided as a list of identifiers.",
+					IGamlIssue.UNKNOWN_SKILL, target);
+			}
+			return Collections.EMPTY_SET;
+		}
+		Set<String> result = new HashSet();
+		Array array = (Array) target;
+		for ( Expression expr : EGaml.getExprsOf(array.getExprs()) ) {
+			String name = EGaml.getKeyOf(expr);
+			if ( skills && !AbstractGamlAdditions.getSkillClasses().containsKey(name) ) {
+				context.flagError("Unknown " + type + " " + name, skills ? IGamlIssue.UNKNOWN_SKILL
+					: IGamlIssue.UNKNOWN_VAR, expr);
+			} else {
+				result.add(name);
+			}
+		}
+		return result;
+
 	}
 
 }

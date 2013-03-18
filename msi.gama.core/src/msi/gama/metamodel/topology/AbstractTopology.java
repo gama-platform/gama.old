@@ -52,8 +52,7 @@ public abstract class AbstractTopology implements ITopology {
 		environment = env;
 		this.scope = scope;
 		setEnvironmentBounds();
-		spatialIndex =
-			scope.getSimulationScope().getModel().getModelEnvironment().getSpatialIndex();
+		spatialIndex = scope.getWorldScope().getSpatialIndex();
 		this.isTorus = isTorus;
 		if ( isTorus() ) {
 			createVirtualEnvironments();
@@ -181,12 +180,13 @@ public abstract class AbstractTopology implements ITopology {
 	 *      msi.gama.interfaces.IGeometry)
 	 */
 	@Override
-	public IPath pathBetween(final IShape source, final IShape target) throws GamaRuntimeException {
+	public IPath pathBetween(IScope scope, final IShape source, final IShape target)
+		throws GamaRuntimeException {
 		return new GamaPath(this, GamaList.with(source.getLocation(), target.getLocation()));
 	}
 
 	@Override
-	public IPath pathBetween(final ILocation source, final ILocation target)
+	public IPath pathBetween(IScope scope, final ILocation source, final ILocation target)
 		throws GamaRuntimeException {
 		return new GamaPath(this, GamaList.with(source, target));
 	}
@@ -296,8 +296,8 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	@Override
-	public ITopology copy() throws GamaRuntimeException {
-		return _copy();
+	public ITopology copy(IScope scope) throws GamaRuntimeException {
+		return _copy(scope);
 	}
 
 	@Override
@@ -314,7 +314,7 @@ public abstract class AbstractTopology implements ITopology {
 	 * @throws GamaRuntimeException
 	 * @return a copy of this topology
 	 */
-	protected abstract ITopology _copy() throws GamaRuntimeException;
+	protected abstract ITopology _copy(IScope scope) throws GamaRuntimeException;
 
 	@Override
 	public GamaPoint getRandomLocation() {

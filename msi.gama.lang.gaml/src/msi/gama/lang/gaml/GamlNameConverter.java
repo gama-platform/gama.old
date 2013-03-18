@@ -29,9 +29,9 @@ public class GamlNameConverter extends DefaultImpl {
 
 	@Override
 	public QualifiedName toQualifiedName(final String qualifiedNameAsString) {
-		return QualifiedName.create(qualifiedNameAsString);
+		// return QualifiedName.create(qualifiedNameAsString);
 		// if ( qualifiedNameAsString == null ) { return QualifiedName.EMPTY; };
-		// return QualifiedName.create(qualifiedNameAsString.split(splitter));
+		return QualifiedName.create(qualifiedNameAsString.split(splitter));
 	}
 
 }

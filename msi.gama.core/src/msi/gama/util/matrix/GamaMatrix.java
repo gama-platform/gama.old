@@ -19,8 +19,9 @@
 package msi.gama.util.matrix;
 
 import java.util.*;
+import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
@@ -37,36 +38,36 @@ import msi.gaml.types.*;
 
 public abstract class GamaMatrix<T> implements IMatrix<T> {
 
-	public static IList getLines(final IMatrix m) {
+	public static IList getLines(IScope scope, final IMatrix m) {
 		final GamaList result = new GamaList();
-		for ( int i = 0; i < m.getRows(); i++ ) {
-			result.add(getLine(m, i));
+		for ( int i = 0; i < m.getRows(scope); i++ ) {
+			result.add(getLine(scope, m, i));
 		}
 		return result;
 	}
 
-	public static IList getColumns(final IMatrix m) {
+	public static IList getColumns(IScope scope, final IMatrix m) {
 		final GamaList result = new GamaList();
-		for ( int i = 0, n = m.getCols(); i < n; i++ ) {
-			result.add(getColumn(m, i));
+		for ( int i = 0, n = m.getCols(scope); i < n; i++ ) {
+			result.add(getColumn(scope, m, i));
 		}
 		return result;
 	}
 
-	public static IList getColumn(final IMatrix m, final Integer num_col) {
+	public static IList getColumn(IScope scope, final IMatrix m, final Integer num_col) {
 		final GamaList result = new GamaList();
-		if ( num_col >= m.getCols() || num_col < 0 ) { return result; }
-		for ( int i = 0; i < m.getRows(); i++ ) {
-			result.add(m.get(num_col, i));
+		if ( num_col >= m.getCols(scope) || num_col < 0 ) { return result; }
+		for ( int i = 0; i < m.getRows(scope); i++ ) {
+			result.add(m.get(scope, num_col, i));
 		}
 		return result;
 	}
 
-	public static IList getLine(final IMatrix m, final Integer num_line) {
+	public static IList getLine(IScope scope, final IMatrix m, final Integer num_line) {
 		final GamaList result = new GamaList();
-		if ( num_line >= m.getRows() || num_line < 0 ) { return result; }
-		for ( int i = 0; i < m.getCols(); i++ ) {
-			result.add(m.get(i, num_line));
+		if ( num_line >= m.getRows(scope) || num_line < 0 ) { return result; }
+		for ( int i = 0; i < m.getCols(scope); i++ ) {
+			result.add(m.get(scope, i, num_line));
 		}
 		return result;
 	}
@@ -98,16 +99,16 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 */
 
 	@Override
-	public int getRows() {
+	public int getRows(IScope scope) {
 		return numRows;
 	}
 
 	@Override
-	public int getCols() {
+	public int getCols(IScope scope) {
 		return numCols;
 	}
 
-	protected GamaMatrix(final int cols, final int rows) {
+	protected GamaMatrix(IScope scope, final int cols, final int rows) {
 		numRows = rows;
 		numCols = cols;
 	}
@@ -119,7 +120,8 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @param flat the flat
 	 * @param preferredSize the preferred size
 	 */
-	protected GamaMatrix(final List objects, final boolean flat, final ILocation preferredSize) {
+	protected GamaMatrix(IScope scope, final List objects, final boolean flat,
+		final ILocation preferredSize) {
 		if ( preferredSize != null ) {
 			numRows = (int) preferredSize.getY();
 			numCols = (int) preferredSize.getX();
@@ -141,7 +143,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		double py = p.getY();
 		if ( px > numCols - 1 || px < 0 ) { return null; }
 		if ( py > numRows - 1 || py < 0 ) { return null; }
-		return get((int) px, (int) py);
+		return get(scope, (int) px, (int) py);
 	}
 
 	@Override
@@ -154,14 +156,14 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		int py = Cast.asInt(scope, indices.get(1));
 		if ( px > numCols - 1 || px < 0 ) { return null; }
 		if ( py > numRows - 1 || py < 0 ) { return null; }
-		return get(px, py);
+		return get(scope, px, py);
 	}
 
 	@Override
-	public abstract T get(final int col, final int row);
+	public abstract T get(IScope scope, final int col, final int row);
 
 	@Override
-	public abstract void set(final int col, final int row, final Object obj)
+	public abstract void set(IScope scope, final int col, final int row, final Object obj)
 		throws GamaRuntimeException;
 
 	// @Override
@@ -175,7 +177,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	// }
 
 	@Override
-	public abstract Object remove(final int col, final int row);
+	public abstract Object remove(IScope scope, final int col, final int row);
 
 	@Override
 	public IMatrix matrixValue(final IScope scope) throws GamaRuntimeException {
@@ -188,11 +190,11 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	}
 
 	@Override
-	public String stringValue() throws GamaRuntimeException {
+	public String stringValue(IScope scope) throws GamaRuntimeException {
 		final StringBuilder sb = new StringBuilder(numRows * numCols * 5);
 		for ( int line = 0; line < numRows; line++ ) {
 			for ( int col = 0; col < numCols; col++ ) {
-				sb.append(Cast.asString(GAMA.getDefaultScope(), get(col, line)));
+				sb.append(Cast.asString(scope, get(scope, col, line)));
 				if ( col != numCols - 1 ) {
 					sb.append(';');
 				}
@@ -212,33 +214,34 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		GamaMap result = new GamaMap();
 		for ( int i = 0; i < numRows; i++ ) {
 			// in case the matrix rows < 2, put null in value
-			result.put(get(0, i), get(1, i));
+			result.put(get(scope, 0, i), get(scope, 1, i));
 		}
 		return result;
 
 	}
 
 	@Override
-	public final void add(final ILocation index, final T value, final Object param)
+	public final void add(IScope scope, final ILocation index, final T value, final Object param)
 		throws GamaRuntimeException {}
 
 	@Override
-	public final void add(final T value, final Object param) throws GamaRuntimeException {}
+	public final void add(IScope scope, final T value, final Object param)
+		throws GamaRuntimeException {}
 
 	@Override
-	public final Object removeAt(final ILocation p) throws GamaRuntimeException {
+	public final Object removeAt(IScope scope, final ILocation p) throws GamaRuntimeException {
 		// Normally never called as matrices are of fixed length
-		return remove((int) p.getX(), (int) p.getY());
+		return remove(scope, (int) p.getX(), (int) p.getY());
 	}
 
 	@Override
-	public final void put(final ILocation p, final T value, final Object param)
+	public final void put(IScope scope, final ILocation p, final T value, final Object param)
 		throws GamaRuntimeException {
-		set((int) p.getX(), (int) p.getY(), value);
+		set(scope, (int) p.getX(), (int) p.getY(), value);
 	}
 
 	@Override
-	public abstract IMatrix copy() throws GamaRuntimeException;
+	public abstract IMatrix copy(IScope scope) throws GamaRuntimeException;
 
 	public static boolean isFlat(final List val) {
 		for ( int i = 0; i < val.size(); i++ ) {
@@ -281,7 +284,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 */
 	@Override
 	public final boolean contains(final IScope scope, final Object o) throws GamaRuntimeException {
-		return _contains(o);
+		return _contains(scope, o);
 	}
 
 	/*
@@ -291,7 +294,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 */
 	@Override
 	public final T first(final IScope scope) throws GamaRuntimeException {
-		return (T) _first();
+		return (T) _first(scope);
 	}
 
 	/*
@@ -301,7 +304,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 */
 	@Override
 	public final T last(final IScope scope) throws GamaRuntimeException {
-		return (T) _last();
+		return (T) _last(scope);
 	}
 
 	/*
@@ -311,7 +314,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 */
 	@Override
 	public final int length(final IScope scope) {
-		return _length();
+		return _length(scope);
 	}
 
 	/*
@@ -361,7 +364,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 */
 	@Override
 	public final boolean isEmpty(final IScope scope) {
-		return _isEmpty();
+		return _isEmpty(scope);
 	}
 
 	/*
@@ -371,7 +374,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 */
 	@Override
 	public final IContainer<ILocation, T> reverse(final IScope scope) throws GamaRuntimeException {
-		return _reverse();
+		return _reverse(scope);
 	}
 
 	/*
@@ -380,8 +383,8 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IGamaContainer#removeFirst(java.lang.Object)
 	 */
 	@Override
-	public final boolean removeFirst(final T value) throws GamaRuntimeException {
-		return _removeFirst(value);
+	public final boolean removeFirst(IScope scope, final T value) throws GamaRuntimeException {
+		return _removeFirst(scope, value);
 	}
 
 	/*
@@ -390,8 +393,9 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IGamaContainer#removeAll(java.lang.Object)
 	 */
 	@Override
-	public final boolean removeAll(final IContainer value) throws GamaRuntimeException {
-		return _removeAll(value);
+	public final boolean removeAll(IScope scope, final IContainer value)
+		throws GamaRuntimeException {
+		return _removeAll(scope, value);
 	}
 
 	/*
@@ -401,7 +405,8 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * java.lang.Object)
 	 */
 	@Override
-	public void addAll(final IContainer value, final Object param) throws GamaRuntimeException {
+	public void addAll(IScope scope, final IContainer value, final Object param)
+		throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 
 	}
@@ -413,8 +418,8 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * msi.gama.interfaces.IGamaContainer, java.lang.Object)
 	 */
 	@Override
-	public void addAll(final ILocation index, final IContainer value, final Object param)
-		throws GamaRuntimeException {
+	public void addAll(IScope scope, final ILocation index, final IContainer value,
+		final Object param) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
 
 	}
@@ -425,8 +430,9 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IGamaContainer#putAll(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public final void putAll(final T value, final Object param) throws GamaRuntimeException {
-		_putAll(value, param);
+	public final void putAll(IScope scope, final T value, final Object param)
+		throws GamaRuntimeException {
+		_putAll(scope, value, param);
 
 	}
 
@@ -480,8 +486,8 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IMatrix#getRowsList()
 	 */
 	@Override
-	public IList<IList<T>> getRowsList() {
-		return getLines(this);
+	public IList<IList<T>> getRowsList(IScope scope) {
+		return getLines(scope, this);
 	}
 
 	/*
@@ -490,8 +496,8 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IMatrix#getColumnsList()
 	 */
 	@Override
-	public IList<IList<T>> getColumnsList() {
-		return getColumns(this);
+	public IList<IList<T>> getColumnsList(IScope scope) {
+		return getColumns(scope, this);
 	}
 
 	/*
@@ -500,8 +506,8 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IMatrix#getRow(java.lang.Integer)
 	 */
 	@Override
-	public IList<T> getRow(final Integer num_line) {
-		return getLine(this, num_line);
+	public IList<T> getRow(IScope scope, final Integer num_line) {
+		return getLine(scope, this, num_line);
 	}
 
 	/*
@@ -510,8 +516,8 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IMatrix#getColumn(java.lang.Integer)
 	 */
 	@Override
-	public IList<T> getColumn(final Integer num_line) {
-		return getColumn(this, num_line);
+	public IList<T> getColumn(IScope scope, final Integer num_line) {
+		return getColumn(scope, this, num_line);
 	}
 
 	/*
@@ -546,9 +552,10 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	@Override
 	public T any(final IScope scope) {
-		int x = GAMA.getRandom().between(0, numCols - 1);
-		int y = GAMA.getRandom().between(0, numRows - 1);
-		return this.get(x, y);
+		RandomUtils r = scope.getSimulationScope().getExperiment().getRandomGenerator();
+		int x = r.between(0, numCols - 1);
+		int y = r.between(0, numRows - 1);
+		return this.get(scope, x, y);
 	}
 
 	// PRIVATE METHODS INTENDED TO ALLOW MATRICES TO IMPLEMENT GAML OPERATORS
@@ -561,17 +568,19 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	protected abstract void _clear();
 
-	protected abstract boolean _removeFirst(T value) throws GamaRuntimeException;
+	protected abstract boolean _removeFirst(IScope scope, T value) throws GamaRuntimeException;
 
-	protected abstract boolean _removeAll(IContainer<?, T> value) throws GamaRuntimeException;
+	protected abstract boolean _removeAll(IScope scope, IContainer<?, T> value)
+		throws GamaRuntimeException;
 
-	protected abstract void _putAll(T value, Object param) throws GamaRuntimeException;
+	protected abstract void _putAll(IScope scope, T value, Object param)
+		throws GamaRuntimeException;
 
-	protected abstract IContainer<ILocation, T> _reverse() throws GamaRuntimeException;
+	protected abstract IContainer<ILocation, T> _reverse(IScope scope) throws GamaRuntimeException;
 
-	protected abstract boolean _isEmpty();
+	protected abstract boolean _isEmpty(IScope scope);
 
-	protected abstract boolean _contains(Object o);
+	protected abstract boolean _contains(IScope scope, Object o);
 
 	protected abstract Object _min(IScope scope);
 
@@ -581,10 +590,10 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	protected abstract Object _product(IScope scope) throws GamaRuntimeException;
 
-	protected abstract Integer _length();
+	protected abstract Integer _length(IScope scope);
 
-	protected abstract Object _last();
+	protected abstract Object _last(IScope scope);
 
-	protected abstract Object _first();
+	protected abstract Object _first(IScope scope);
 
 }

@@ -18,6 +18,7 @@
  */
 package msi.gama.kernel.experiment;
 
+import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.WorldAgent;
 import msi.gama.runtime.AbstractScope;
@@ -65,6 +66,10 @@ public class ExperimentScope extends AbstractScope {
 	@Override
 	public ISimulation getSimulationScope() {
 		return experiment.getCurrentSimulation();
+	}
+
+	public IModel getModel() {
+		return experiment.getModel();
 	}
 
 	private ISimulation checkSimulation() throws GamaRuntimeException {

@@ -18,6 +18,7 @@
  */
 package msi.gaml.descriptions;
 
+import java.util.*;
 import msi.gama.common.util.StringUtils;
 import msi.gama.runtime.GAMA;
 import msi.gaml.expressions.IExpression;
@@ -44,6 +45,7 @@ public class BasicExpressionDescription implements IExpressionDescription {
 	@Override
 	public boolean equals(final Object c) {
 		if ( c == null ) { return false; }
+		if ( c == this ) { return true; }
 		if ( c instanceof IExpressionDescription ) { return ((IExpressionDescription) c)
 			.equalsString(toString()); }
 		return false;
@@ -77,8 +79,8 @@ public class BasicExpressionDescription implements IExpressionDescription {
 	 */
 	@Override
 	public IExpressionDescription compileAsLabel() {
-		LabelExpressionDescription newEd =
-			new LabelExpressionDescription(StringUtils.toJavaString(toString()));
+		IExpressionDescription newEd =
+			LabelExpressionDescription.create(StringUtils.toJavaString(toString()));
 		newEd.setTarget(getTarget());
 		return newEd;
 	}
@@ -115,8 +117,13 @@ public class BasicExpressionDescription implements IExpressionDescription {
 	}
 
 	@Override
-	public boolean isString() {
+	public boolean isConstant() {
 		return false;
+	}
+
+	@Override
+	public Set<String> getStrings(IDescription context, boolean skills) {
+		return Collections.EMPTY_SET;
 	}
 
 }

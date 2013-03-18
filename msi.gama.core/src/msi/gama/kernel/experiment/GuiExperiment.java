@@ -67,7 +67,7 @@ public class GuiExperiment extends AbstractExperiment {
 		ISpecies world = model.getWorldSpecies();
 		for ( IVariable v : world.getVars() ) {
 			if ( v.isParameter() ) {
-				addRegularParameter(new ExperimentParameter(v));
+				addRegularParameter(new ExperimentParameter(stack, v));
 			}
 		}
 		super.addOwnParameters();
