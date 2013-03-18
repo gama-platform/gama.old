@@ -1,13 +1,19 @@
 package msi.gama.metamodel.agent;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.arg;
+import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.species;
+import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.IList;
+import msi.gama.util.graph.GamaGraph;
 import msi.gaml.expressions.JavaConstExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.*;
@@ -15,6 +21,7 @@ import msi.gaml.types.IType;
 
 // FIXME: Add all the necessary variables (degree, neighbours, edges)
 @species(name = "graph_node")
+@vars({ @var(name = IKeyword.MYGRAPH, type = IType.GRAPH_STR)})
 public class AbstractGraphNode extends GamlAgent {
 
 	final static Arguments args = new Arguments();
@@ -57,5 +64,11 @@ public class AbstractGraphNode extends GamlAgent {
 	public Boolean relatedTo(final IScope scope) {
 		GuiUtils.debug("Should never be called !");
 		return false;
+	}
+	
+
+	@getter(IKeyword.MYGRAPH)
+	public GamaGraph getGraph(){
+		return (GamaGraph) getTopology().getPlaces();
 	}
 }

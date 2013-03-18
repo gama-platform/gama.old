@@ -215,6 +215,7 @@ public interface IKeyword {
 	public final static String MULTIPLY = "*";
 	public final static String MULTICORE = "multicore";
 	public static final String MY = "my";
+	public static final String MYGRAPH = "my_graph";
 	public static final String MYSELF = "myself";
 	public static final String NAME = "name";
 	public static final String NEIGHBOURS = "neighbours";
