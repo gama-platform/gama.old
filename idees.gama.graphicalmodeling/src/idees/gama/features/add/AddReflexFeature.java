@@ -2,12 +2,14 @@ package idees.gama.features.add;
 
 
 
+import idees.gama.ui.image.GamaImageProvider;
 import gama.EReflex;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;
 import org.eclipse.graphiti.mm.algorithms.Ellipse;
+import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -22,7 +24,7 @@ import org.eclipse.graphiti.util.IColorConstant;
 
 public class AddReflexFeature extends AbstractAddShapeFeature {
 
-	public static final int INIT_WIDTH = 100;
+	public static final int INIT_WIDTH = 120;
 	public static final int INIT_HEIGHT = 50;
 	
 	private static final IColorConstant CLASS_TEXT_FOREGROUND = new ColorConstant(
@@ -95,6 +97,18 @@ public class AddReflexFeature extends AbstractAddShapeFeature {
 	            // create link and wire it
 	            link(shape, addedClass);
 	        }
+	        {
+	        	
+	            Shape shape3 = peCreateService.createShape(containerShape, false);
+	            
+	            Image icon1= gaService.createImage(shape3, GamaImageProvider.IMG_REFLEXLINK);
+	            gaService.setLocationAndSize(icon1,
+	                    100, 100, 15, 15);
+	            
+	            link(shape3, addedClass);
+	            
+	        }
+	        
 	        // add a chopbox anchor to the shape
 	        peCreateService.createChopboxAnchor(containerShape);
 	  

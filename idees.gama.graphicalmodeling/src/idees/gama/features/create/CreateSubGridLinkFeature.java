@@ -5,6 +5,7 @@ import gama.EGrid;
 import gama.ESpecies;
 import gama.ESubSpeciesLink;
 import idees.gama.features.add.AddGridFeature;
+import idees.gama.ui.image.GamaImageProvider;
 
 import org.eclipse.graphiti.examples.common.ExampleUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -23,7 +24,7 @@ public class CreateSubGridLinkFeature extends AbstractCreateSpeciesComponentLink
 	 
 	public CreateSubGridLinkFeature(IFeatureProvider fp) {
 		// provide name and description for the UI, e.g. the palette
-		super(fp, "is composed of a grid", "Create micro-macro agents link");
+		super(fp, "is composed of a grid", "Create a new grid");
 	}
 
 	private EGrid createEGrid(ICreateConnectionContext context) {
@@ -80,5 +81,11 @@ public class CreateSubGridLinkFeature extends AbstractCreateSpeciesComponentLink
 		ESubSpeciesLink eReference = gama.GamaFactory.eINSTANCE.createESubSpeciesLink();
 		return eReference;
 	}
+	
+	@Override
+	public String getCreateImageId() {
+		return GamaImageProvider.IMG_SUBGRIDLINK;
+	}
+	
 
 }

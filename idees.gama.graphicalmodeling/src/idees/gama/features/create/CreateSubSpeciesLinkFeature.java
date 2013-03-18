@@ -1,6 +1,7 @@
 package idees.gama.features.create;
 
 import idees.gama.features.add.AddSpeciesFeature;
+import idees.gama.ui.image.GamaImageProvider;
 import gama.ESpecies;
 import gama.ESubSpeciesLink;
 
@@ -21,7 +22,7 @@ public class CreateSubSpeciesLinkFeature extends AbstractCreateSpeciesComponentL
 	 
 	public CreateSubSpeciesLinkFeature(IFeatureProvider fp) {
 		// provide name and description for the UI, e.g. the palette
-		super(fp, "is composed of the species", "Create a new species");
+		super(fp, "is composed of a species", "Create a new species");
 	}
 
 	private ESpecies createESpecies(ICreateConnectionContext context) {
@@ -78,5 +79,12 @@ public class CreateSubSpeciesLinkFeature extends AbstractCreateSpeciesComponentL
 		ESubSpeciesLink eReference = gama.GamaFactory.eINSTANCE.createESubSpeciesLink();
 		return eReference;
 	}
+
+	@Override
+	public String getCreateImageId() {
+		return GamaImageProvider.IMG_SUBSPECIESLINK;
+	}
+	
+	
 
 }

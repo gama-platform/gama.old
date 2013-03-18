@@ -2,6 +2,7 @@ package idees.gama.features.create;
 
 
 import idees.gama.features.add.AddReflexFeature;
+import idees.gama.ui.image.GamaImageProvider;
 import gama.EReflex;
 import gama.EReflexLink;
 import gama.ESpecies;
@@ -78,6 +79,11 @@ public class CreateReflexLinkFeature extends AbstractCreateSpeciesComponentLinkF
 		eReference.setSource(source);
 		eReference.setTarget(target);
 		return eReference;
+	}
+	
+	@Override
+	public String getCreateImageId() {
+		return GamaImageProvider.IMG_REFLEXLINK;
 	}
 
 }

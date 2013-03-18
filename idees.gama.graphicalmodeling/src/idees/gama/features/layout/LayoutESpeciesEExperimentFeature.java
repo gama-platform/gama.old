@@ -9,6 +9,7 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.impl.AbstractLayoutFeature;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
+import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -19,9 +20,9 @@ import org.eclipse.graphiti.services.IGaService;
 
 public class LayoutESpeciesEExperimentFeature extends AbstractLayoutFeature {
  
-    private static final int MIN_HEIGHT = 30;
+    private static final int MIN_HEIGHT = 50;
  
-    private static final int MIN_WIDTH = 50;
+    private static final int MIN_WIDTH = 100;
  
     public LayoutESpeciesEExperimentFeature(IFeatureProvider fp) {
         super(fp);
@@ -70,8 +71,13 @@ public class LayoutESpeciesEExperimentFeature extends AbstractLayoutFeature {
                         gaService.createPoint(containerWidth, secondPoint.getY());
                     polyline.getPoints().set(1, newSecondPoint);
                     anythingChanged = true;
+                } else if (graphicsAlgorithm instanceof Image) {
+                	Image im = (Image) graphicsAlgorithm;
+                	gaService.setLocation(im,  5 + im.getWidth() /2 -size.getWidth()/2, 3);
+                	anythingChanged = true;
                 } else {
-                    gaService.setWidth(graphicsAlgorithm,
+                    
+                	gaService.setWidth(graphicsAlgorithm,
                         containerWidth);
                     anythingChanged = true;
                 }

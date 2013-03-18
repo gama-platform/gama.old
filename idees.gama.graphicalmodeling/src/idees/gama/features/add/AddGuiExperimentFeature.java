@@ -1,16 +1,16 @@
 package idees.gama.features.add;
 
+import idees.gama.ui.image.GamaImageProvider;
 import gama.EGUIExperiment;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;
+import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
-import org.eclipse.graphiti.mm.algorithms.Rectangle;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
-import org.eclipse.graphiti.mm.pictograms.BoxRelativeAnchor;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -23,7 +23,10 @@ import org.eclipse.graphiti.util.IColorConstant;
 
 public class AddGuiExperimentFeature extends AbstractAddShapeFeature {
  
-    private static final IColorConstant SPECIES_TEXT_FOREGROUND =
+	public static final int INIT_WIDTH = 300;
+	public static final int INIT_HEIGHT = 50;
+
+	private static final IColorConstant SPECIES_TEXT_FOREGROUND =
         new ColorConstant(0, 0, 0);
  
     private static final IColorConstant SPECIES_FOREGROUND =
@@ -112,6 +115,17 @@ public class AddGuiExperimentFeature extends AbstractAddShapeFeature {
  
             // create link and wire it
             link(shape, addedClass);
+        }
+        {
+        	
+            Shape shape3 = peCreateService.createShape(containerShape, false);
+            
+            Image icon1= gaService.createImage(shape3, GamaImageProvider.IMG_GUIXPLINK);
+            gaService.setLocationAndSize(icon1,
+                    12 -width/2, 3, 15, 15);
+            
+            link(shape3, addedClass);
+            
         }
         // add a chopbox anchor to the shape
         peCreateService.createChopboxAnchor(containerShape);

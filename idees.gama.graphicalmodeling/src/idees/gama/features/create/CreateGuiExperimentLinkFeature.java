@@ -1,10 +1,11 @@
 package idees.gama.features.create;
 
-import idees.gama.features.add.AddDisplayFeature;
+import idees.gama.features.add.AddGuiExperimentFeature;
 import idees.gama.ui.image.GamaImageProvider;
-import gama.EDisplay;
-import gama.EDisplayLink;
+import gama.EExperiment;
+import gama.EExperimentLink;
 import gama.EGUIExperiment;
+import gama.EWorldAgent;
 
 import org.eclipse.graphiti.examples.common.ExampleUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -19,64 +20,48 @@ import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
 import org.eclipse.graphiti.services.Graphiti;
 
-public class CreateDisplayLinkFeature extends AbstractCreateConnectionFeature {
+public class CreateGuiExperimentLinkFeature  extends AbstractCreateConnectionFeature {
 
-	  private static final String TITLE = "Create display";
+	 private static final String TITLE = "Create a GUI experiment";
 	  
-	  private static final String USER_QUESTION = "Enter new display name";
+	 private static final String USER_QUESTION = "Enter new GUI experiment name";
 	 
-	  public CreateDisplayLinkFeature(IFeatureProvider fp) {
+	public CreateGuiExperimentLinkFeature(IFeatureProvider fp) {
 		// provide name and description for the UI, e.g. the palette
-		super(fp, "has the display", "Create display link");
+		super(fp, "is composed of a GUI experiment", "Create a new GUI experiment");
 	}
 
-	public boolean canCreate(ICreateConnectionContext context) {
-		EGUIExperiment source = getEExperiment(context.getSourceAnchor());
-		if (source != null) {
-			return true;
-		}
-		return false;
-	}
-
-	public boolean canStartConnection(ICreateConnectionContext context) {
-		if (getEExperiment(context.getSourceAnchor()) != null) {
-			return true;
-		}
-		return false;
-	}
-
-	private EDisplay createEDisplay(ICreateConnectionContext context) {
-		String newDisplayName = ExampleUtil.askString(TITLE, USER_QUESTION, "");
-	    if (newDisplayName == null || newDisplayName.trim().length() == 0) {
-	    	newDisplayName = "my_display";
+	private EGUIExperiment createEGUIExperiment(ICreateConnectionContext context) {
+		String newGUIName = ExampleUtil.askString(TITLE, USER_QUESTION, "");
+	    if (newGUIName == null || newGUIName.length() == 0) {
+	    	newGUIName = "my_GUI_xp";
 	    }  
-	    EDisplay newDisplay = gama.GamaFactory.eINSTANCE.createEDisplay();
-		this.getDiagram().eResource().getContents().add(newDisplay);
-		newDisplay.setName(newDisplayName);
+	    EGUIExperiment newGUIExp= gama.GamaFactory.eINSTANCE.createEGUIExperiment();
+	    newGUIExp.setName(newGUIName);
+		this.getDiagram().eResource().getContents().add(newGUIExp);
 		CreateContext ac = new CreateContext();
 		ac.setLocation(context.getTargetLocation().getX(), context.getTargetLocation().getY());
 		ac.setSize(0, 0);
 		ac.setTargetContainer(getDiagram());
-		return newDisplay;
+		return newGUIExp;
 	}
 	
-	private PictogramElement addEDisplay(ICreateConnectionContext context, EDisplay Display) {
+	private PictogramElement addEGUIExperiment(ICreateConnectionContext context, EGUIExperiment GUIExp) {
 		CreateContext cc = new CreateContext();
-		cc.setLocation(context.getTargetLocation().getX() - (int)(AddDisplayFeature.INIT_WIDTH/2.0), context.getTargetLocation().getY() - (int)(AddDisplayFeature.INIT_HEIGHT/2.0));
+		cc.setLocation(context.getTargetLocation().getX() - (int)(AddGuiExperimentFeature.INIT_WIDTH/2.0), context.getTargetLocation().getY() - (int)(AddGuiExperimentFeature.INIT_HEIGHT/2.0));
 		cc.setSize(0, 0);
 		cc.setTargetContainer(getDiagram());
-		return getFeatureProvider().addIfPossible(new AddContext(cc, Display));
+		return getFeatureProvider().addIfPossible(new AddContext(cc, GUIExp));
 	}
 	
 	public Connection create(ICreateConnectionContext context) {
 		Connection newConnection = null;
-		EGUIExperiment source = getEExperiment(context.getSourceAnchor());
-		
-		EDisplay target = createEDisplay(context);
-		PictogramElement targetpe = addEDisplay(context, target);
+		EWorldAgent source = getEWorldAgent(context.getSourceAnchor());
+		EGUIExperiment target = createEGUIExperiment(context);
+		PictogramElement targetpe = addEGUIExperiment(context, target);
 		if (source != null && target != null) {
 			// create new business object
-			EDisplayLink eReference = createEReference(source, target);
+			EExperimentLink eReference = createEReference(source, target);
 			//eReference.setModel(source.getModel());
 			getDiagram().eResource().getContents().add(eReference);
 			// add connection for business object
@@ -91,19 +76,32 @@ public class CreateDisplayLinkFeature extends AbstractCreateConnectionFeature {
 
 		return newConnection;
 	}
-
 	
-	private EGUIExperiment getEExperiment(Anchor anchor) {
+	public boolean canCreate(ICreateConnectionContext context) {
+		EWorldAgent source = getEWorldAgent(context.getSourceAnchor());
+		if (source != null) {
+			return true;
+		}
+		return false;
+	}
+
+	public boolean canStartConnection(ICreateConnectionContext context) {
+		if (getEWorldAgent(context.getSourceAnchor()) != null) {
+			return true;
+		}
+		return false;
+	}
+	
+	protected EWorldAgent getEWorldAgent(Anchor anchor) {
 		if (anchor != null) {
 			Object object = getBusinessObjectForPictogramElement(anchor
 					.getParent());
-			if (object instanceof EGUIExperiment) {
-				return (EGUIExperiment) object;
+			if (object instanceof EWorldAgent) {
+				return (EWorldAgent) object;
 			}
 		}
 		return null;
 	}
-	
 	protected Anchor getAnchor(PictogramElement targetpe) {
 		Anchor ret = null;
 		if (targetpe instanceof Anchor) {
@@ -113,17 +111,19 @@ public class CreateDisplayLinkFeature extends AbstractCreateConnectionFeature {
 		}
 		return ret;
 	}
-
 	
-	private EDisplayLink createEReference(EGUIExperiment source, EDisplay target) {
-		EDisplayLink eReference = gama.GamaFactory.eINSTANCE.createEDisplayLink();
-		eReference.setSource(source);
-		eReference.setTarget(target);
+
+
+	/**
+	 * Creates a EReference between two EClasses.
+	 */
+	private EExperimentLink createEReference(EWorldAgent source, EExperiment target) {
+		EExperimentLink eReference = gama.GamaFactory.eINSTANCE.createEExperimentLink();
 		return eReference;
 	}
-
+	
 	@Override
 	public String getCreateImageId() {
-		return GamaImageProvider.IMG_DISPLAYLINK;
+		return GamaImageProvider.IMG_GUIXPLINK;
 	}
 }

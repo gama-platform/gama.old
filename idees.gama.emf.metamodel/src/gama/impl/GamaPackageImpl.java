@@ -14,6 +14,7 @@ import gama.EBatchExperiment;
 import gama.EDisplay;
 import gama.EDisplayLink;
 import gama.EExperiment;
+import gama.EExperimentLink;
 import gama.EGUIExperiment;
 import gama.EGamaLink;
 import gama.EGamaModel;
@@ -190,6 +191,13 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	private EClass eGraphEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass eExperimentLinkEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -734,6 +742,15 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getEExperimentLink() {
+		return eExperimentLinkEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public GamaFactory getGamaFactory() {
 		return (GamaFactory)getEFactoryInstance();
 	}
@@ -830,6 +847,8 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		eGraphEClass = createEClass(EGRAPH);
 		createEReference(eGraphEClass, EGRAPH__NODE);
 		createEReference(eGraphEClass, EGRAPH__EDGE);
+
+		eExperimentLinkEClass = createEClass(EEXPERIMENT_LINK);
 	}
 
 	/**
@@ -876,6 +895,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		eGridEClass.getESuperTypes().add(this.getESpecies());
 		eWorldAgentEClass.getESuperTypes().add(this.getESpecies());
 		eGraphEClass.getESuperTypes().add(this.getEGamaObject());
+		eExperimentLinkEClass.getESuperTypes().add(this.getEGamaLink());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(eGamaModelEClass, EGamaModel.class, "EGamaModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -951,6 +971,8 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEClass(eGraphEClass, EGraph.class, "EGraph", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getEGraph_Node(), this.getESpecies(), null, "node", null, 0, 1, EGraph.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEGraph_Edge(), this.getESpecies(), null, "edge", null, 0, 1, EGraph.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(eExperimentLinkEClass, EExperimentLink.class, "EExperimentLink", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

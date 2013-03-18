@@ -9,6 +9,7 @@ import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ILayoutContext;
 import org.eclipse.graphiti.features.impl.AbstractLayoutFeature;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
+import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.Text;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -18,9 +19,9 @@ import org.eclipse.graphiti.services.IGaService;
 
 public class LayoutCommonFeature extends AbstractLayoutFeature {
  
-    private static final int MIN_HEIGHT = 30;
+    private static final int MIN_HEIGHT = 50;
  
-    private static final int MIN_WIDTH = 50;
+    private static final int MIN_WIDTH = 120;
  
     public LayoutCommonFeature(IFeatureProvider fp) {
         super(fp);
@@ -69,6 +70,10 @@ public class LayoutCommonFeature extends AbstractLayoutFeature {
                             containerWidth);
                     gaService.setLocationAndSize(text, 0, 0, containerWidth, containerHeight);
                     anythingChanged = true;
+                } else if (graphicsAlgorithm instanceof Image) {
+                	Image im = (Image) graphicsAlgorithm;
+                	gaService.setLocation(im,  10, containerGa.getHeight()/2 - 8);
+                	anythingChanged = true;
                 } else {
                     gaService.setWidth(graphicsAlgorithm,
                         containerWidth);

@@ -1,11 +1,13 @@
 package idees.gama.features.add;
 
+import idees.gama.ui.image.GamaImageProvider;
 import gama.EGrid;
 import gama.EVariable;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
 import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;
+import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
@@ -22,8 +24,8 @@ import org.eclipse.graphiti.util.IColorConstant;
 
 public class AddGridFeature extends AbstractAddShapeFeature {
  
-	public static final int INIT_WIDTH = 100;
-	public static final int INIT_HEIGHT = 50;
+	public static final int INIT_WIDTH = 150;
+	public static final int INIT_HEIGHT = 75;
 	
 	private static final IColorConstant SPECIES_TEXT_FOREGROUND =
         new ColorConstant(0, 0, 0);
@@ -32,7 +34,7 @@ public class AddGridFeature extends AbstractAddShapeFeature {
     	new ColorConstant(205,155,29);
 
     private static final IColorConstant SPECIES_BACKGROUND =
-        new ColorConstant(255,255,0);
+        new ColorConstant(230,230,150);
  
     public AddGridFeature(IFeatureProvider fp) {
         super(fp);
@@ -74,7 +76,6 @@ public class AddGridFeature extends AbstractAddShapeFeature {
             roundedRectangle.setLineWidth(2);
             gaService.setLocationAndSize(roundedRectangle,
                 context.getX(), context.getY(), width, height);
- 
             // if added Class has no resource we add it to the resource 
             // of the diagram
             // in a real scenario the business model would have its own resource
@@ -84,6 +85,18 @@ public class AddGridFeature extends AbstractAddShapeFeature {
             // create link and wire it
             link(containerShape, addedClass);
         }
+        {
+        	
+            Shape shape3 = peCreateService.createShape(containerShape, false);
+            
+            Image icon1= gaService.createImage(shape3, GamaImageProvider.IMG_SUBSPECIESGRIDLINK);
+            gaService.setLocationAndSize(icon1,
+                    20 -width/2, 3, 30, 15);
+            
+            link(shape3, addedClass);
+            
+        }
+        
  
         // SHAPE WITH LINE
         {

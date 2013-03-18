@@ -1352,6 +1352,53 @@ public interface GamaPackage extends EPackage {
 
 
 	/**
+	 * The meta object id for the '{@link gama.impl.EExperimentLinkImpl <em>EExperiment Link</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see gama.impl.EExperimentLinkImpl
+	 * @see gama.impl.GamaPackageImpl#getEExperimentLink()
+	 * @generated
+	 */
+	int EEXPERIMENT_LINK = 21;
+
+	/**
+	 * The feature id for the '<em><b>Target</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EEXPERIMENT_LINK__TARGET = EGAMA_LINK__TARGET;
+
+	/**
+	 * The feature id for the '<em><b>Source</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EEXPERIMENT_LINK__SOURCE = EGAMA_LINK__SOURCE;
+
+	/**
+	 * The feature id for the '<em><b>Model</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EEXPERIMENT_LINK__MODEL = EGAMA_LINK__MODEL;
+
+	/**
+	 * The number of structural features of the '<em>EExperiment Link</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EEXPERIMENT_LINK_FEATURE_COUNT = EGAMA_LINK_FEATURE_COUNT + 0;
+
+
+	/**
 	 * Returns the meta object for class '{@link gama.EGamaModel <em>EGama Model</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1914,6 +1961,16 @@ public interface GamaPackage extends EPackage {
 	EReference getEGraph_Edge();
 
 	/**
+	 * Returns the meta object for class '{@link gama.EExperimentLink <em>EExperiment Link</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>EExperiment Link</em>'.
+	 * @see gama.EExperimentLink
+	 * @generated
+	 */
+	EClass getEExperimentLink();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2400,6 +2457,16 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EReference EGRAPH__EDGE = eINSTANCE.getEGraph_Edge();
+
+		/**
+		 * The meta object literal for the '{@link gama.impl.EExperimentLinkImpl <em>EExperiment Link</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see gama.impl.EExperimentLinkImpl
+		 * @see gama.impl.GamaPackageImpl#getEExperimentLink()
+		 * @generated
+		 */
+		EClass EEXPERIMENT_LINK = eINSTANCE.getEExperimentLink();
 
 	}
 

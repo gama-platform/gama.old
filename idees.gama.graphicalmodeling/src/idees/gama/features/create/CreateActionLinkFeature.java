@@ -4,6 +4,7 @@ import gama.EAction;
 import gama.EActionLink;
 import gama.ESpecies;
 import idees.gama.features.add.AddActionFeature;
+import idees.gama.ui.image.GamaImageProvider;
 
 import org.eclipse.graphiti.examples.common.ExampleUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
@@ -80,6 +81,11 @@ public class CreateActionLinkFeature extends AbstractCreateSpeciesComponentLinkF
 		eReference.setSource(source);
 		eReference.setTarget(target);
 		return eReference;
+	}
+	
+	@Override
+	public String getCreateImageId() {
+		return GamaImageProvider.IMG_ACTIONLINK;
 	}
 
 }

@@ -215,6 +215,15 @@ public interface GamaFactory extends EFactory {
 	EGraph createEGraph();
 
 	/**
+	 * Returns a new object of class '<em>EExperiment Link</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>EExperiment Link</em>'.
+	 * @generated
+	 */
+	EExperimentLink createEExperimentLink();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

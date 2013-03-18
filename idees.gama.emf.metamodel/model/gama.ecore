@@ -85,4 +85,5 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="node" eType="#//ESpecies"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="edge" eType="#//ESpecies"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EExperimentLink" eSuperTypes="#//EGamaLink"/>
 </ecore:EPackage>

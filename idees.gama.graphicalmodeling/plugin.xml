@@ -18,6 +18,9 @@
          <diagramType
                id="idees.gama.diagram.MyGamaDiagramType">
          </diagramType>
+         <imageProvider
+               id="idees.gama.ui.image.GamaImageProvider">
+         </imageProvider>
       </diagramTypeProvider>
    </extension>
    <extension
@@ -25,6 +28,13 @@
       <path
             name="gaml">
       </path>
+   </extension>
+   <extension
+         point="org.eclipse.graphiti.ui.imageProviders">
+      <imageProvider
+            class="idees.gama.ui.image.GamaImageProvider"
+            id="idees.gama.ui.image.GamaImageProvider">
+      </imageProvider>
    </extension>
 
 </plugin>

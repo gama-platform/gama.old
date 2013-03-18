@@ -1,6 +1,7 @@
 package idees.gama.features.create;
 
 import gama.ESpecies;
+import gama.EWorldAgent;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
@@ -54,4 +55,7 @@ public abstract class AbstractCreateSpeciesComponentLinkFeature extends Abstract
 		}
 		return null;
 	}
+	
+	
+	
 }

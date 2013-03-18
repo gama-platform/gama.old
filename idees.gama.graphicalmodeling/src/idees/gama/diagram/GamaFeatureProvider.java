@@ -9,6 +9,7 @@ import gama.EBatchExperiment;
 import gama.EDisplay;
 import gama.EDisplayLink;
 import gama.EExperiment;
+import gama.EExperimentLink;
 import gama.EGUIExperiment;
 import gama.EGamaObject;
 import gama.EGrid;
@@ -24,6 +25,7 @@ import idees.gama.features.add.AddAspectLinkFeature;
 import idees.gama.features.add.AddBatchExperimentFeature;
 import idees.gama.features.add.AddDisplayFeature;
 import idees.gama.features.add.AddDisplayLinkFeature;
+import idees.gama.features.add.AddEExperimentLinkFeature;
 import idees.gama.features.add.AddGridFeature;
 import idees.gama.features.add.AddGuiExperimentFeature;
 import idees.gama.features.add.AddReflexFeature;
@@ -33,9 +35,9 @@ import idees.gama.features.add.AddSubSpecieLinkFeature;
 import idees.gama.features.add.AddWorldFeature;
 import idees.gama.features.create.CreateActionLinkFeature;
 import idees.gama.features.create.CreateAspectLinkFeature;
-import idees.gama.features.create.CreateBatchExperimentFeature;
+import idees.gama.features.create.CreateBatchExperimentLinkFeature;
 import idees.gama.features.create.CreateDisplayLinkFeature;
-import idees.gama.features.create.CreateGuiExperimentFeature;
+import idees.gama.features.create.CreateGuiExperimentLinkFeature;
 import idees.gama.features.create.CreateReflexLinkFeature;
 import idees.gama.features.create.CreateSubGridLinkFeature;
 import idees.gama.features.create.CreateSubSpeciesLinkFeature;
@@ -104,6 +106,8 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
             return new AddAspectLinkFeature(this);
         } else if (context.getNewObject() instanceof EDisplayLink) {
             return new AddDisplayLinkFeature(this);
+        } else if (context.getNewObject() instanceof EExperimentLink) {
+            return new AddEExperimentLinkFeature(this);
         }
         return super.getAddFeature(context);
     }
@@ -117,7 +121,7 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
          	     public void doExecute() {
          	    	ESpecies newClass = gama.GamaFactory.eINSTANCE.createEWorldAgent();
          			diagram.eResource().getContents().add(newClass);
-         			 newClass.setName("World");
+         			 newClass.setName("world");
          			 
          			 CreateContext ac = new CreateContext();
          			 ac.setLocation(100, 50);
@@ -128,10 +132,7 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
          	     }
          	  });
     	}
-    	return new ICreateFeature[] { 
-        		new CreateGuiExperimentFeature(this),
-        		new CreateBatchExperimentFeature(this)
-        		};
+    	return new ICreateFeature[] { };
     	 
     }
     
@@ -164,7 +165,9 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
             new CreateActionLinkFeature (this),
             new CreateReflexLinkFeature (this),
             new CreateAspectLinkFeature (this),
-            new CreateDisplayLinkFeature (this)};
+            new CreateDisplayLinkFeature (this),
+            new CreateBatchExperimentLinkFeature(this),
+        	new CreateGuiExperimentLinkFeature(this)};
     }
     
     @Override
