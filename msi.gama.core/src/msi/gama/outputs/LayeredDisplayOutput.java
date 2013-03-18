@@ -58,7 +58,7 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.AMBIANT_LIGHT, type = IType.FLOAT_STR, optional = true),
 	@facet(name = IKeyword.POLYGONMODE, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL_STR, IType.POINT_STR }, optional = true),
-	@facet(name = IKeyword.OUTPUT3D, type = IType.BOOL_STR, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.OUTPUT3D, type = { IType.BOOL_STR, IType.POINT_STR }, optional = true)}, omissible = IKeyword.NAME)
 @inside(symbols = IKeyword.OUTPUT)
 public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
@@ -76,6 +76,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean polygonmode = true;
 	private String displayType = JAVA2D;
 	private ILocation imageDimension = new GamaPoint(-1, -1);
+	private ILocation output3DNbCycles = new GamaPoint(0,0);
 
 	public LayeredDisplayOutput(final IDescription desc) {
 		super(desc);
@@ -136,11 +137,15 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		IExpression out3D = getFacet(IKeyword.OUTPUT3D);
 		if ( out3D != null ) {
-			output3D = Cast.asBool(getOwnScope(), out3D.value(getOwnScope()));
+			if ( out3D.getType().equals(Types.get(IType.POINT)) ) {
+				output3D = true;
+				output3DNbCycles = Cast.asPoint(getOwnScope(), out3D.value(getOwnScope()));
+			} else {
+				output3D = Cast.asBool(getOwnScope(), out3D.value(getOwnScope()));
+			}	
 		}
 
 		createSurface(sim);
-
 	}
 
 	@Override
@@ -206,7 +211,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		// Use only for opengl
 		if ( surface.getMyGraphics() != null ) {
-			surface.setOutput3D(output3D);
+			// surface.setOutput3D(output3D);
+			surface.initOutput3D(output3D,output3DNbCycles);
 			surface.getMyGraphics().useTesselation(tesselation);
 			surface.getMyGraphics().setAmbiantLight((float) ambiantLight);
 			surface.getMyGraphics().setPolygonMode(polygonmode);

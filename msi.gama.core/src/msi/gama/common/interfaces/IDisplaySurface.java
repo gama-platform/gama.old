@@ -21,6 +21,8 @@ package msi.gama.common.interfaces;
 import java.awt.Color;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
 
@@ -96,8 +98,8 @@ public interface IDisplaySurface {
 	void setSynchronized(boolean checked);
 
 	void setAutoSave(boolean autosave, int x, int y);
-	
-	void setOutput3D(boolean output3D);
+		
+	void initOutput3D(final boolean output3D, final ILocation output3DNbCycles);
 
 	void setSnapshotFileName(String string);
 

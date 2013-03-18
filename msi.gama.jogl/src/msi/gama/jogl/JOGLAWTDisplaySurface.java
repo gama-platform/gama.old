@@ -38,6 +38,7 @@ import msi.gama.gui.views.SWTNavigationPanel;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.ILayerStatement;
@@ -51,6 +52,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.FileDialog;
 import org.geotools.data.simple.SimpleFeatureCollection;
+
 import collada.Output3D;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -104,6 +106,9 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	// private (return the renderer of the openGLGraphics)
 	private JOGLAWTGLRenderer openGLGraphicsGLRender;
+	
+	// private: the class of the Output3D manager
+	Output3D output3DManager;
 
 	@Override
 	public void initialize(final double env_width, final double env_height,
@@ -459,9 +464,9 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 			drawDisplaysWithoutRepaintingGL();
 			paintingNeeded.release();
 			canBeUpdated(true);
-			if ( output3D == true ) {
-				new Output3D()
-					.to3DGLGEModel(((JOGLAWTDisplayGraphics) openGLGraphics).myJTSGeometries);
+			if(output3D == true){
+				output3DManager.updateOutput3D(((JOGLAWTDisplayGraphics) openGLGraphics).myJTSGeometries,openGLGraphicsGLRender);
+				// (new Output3D()).to3DGLGEModel(((JOGLAWTDisplayGraphics) openGLGraphics).myJTSGeometries, openGLGraphicsGLRender);
 			}
 			Toolkit.getDefaultToolkit().sync();
 		}
@@ -799,11 +804,15 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		this.autosave = autosave;
 	}
 
-	@Override
-	public void setOutput3D(final boolean output3D) {
+	public void initOutput3D(final boolean output3D, final ILocation output3DNbCycles){
 		this.output3D = output3D;
+		if(this.output3D){
+			output3DManager = new Output3D(output3DNbCycles, 
+										((JOGLAWTDisplayGraphics) openGLGraphics).myJTSGeometries, openGLGraphicsGLRender);
+			// (new Output3D()).to3DGLGEModel(((JOGLAWTDisplayGraphics) openGLGraphics).myJTSGeometries, openGLGraphicsGLRender);
+		}
 	}
-
+	
 	@Override
 	public void setSnapshotFileName(final String file) {
 		snapshotFileName = file;

@@ -27,6 +27,7 @@ import javax.imageio.ImageIO;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.gui.displays.layers.LayerManager;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.ILayerStatement;
@@ -452,7 +453,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public IGraphics getMyGraphics() {
 		return this.displayGraphics;
 	}
-	
-	@Override	
-	public void setOutput3D(boolean output3D){;}
+
+	@Override
+	public void initOutput3D(boolean output3d, ILocation output3dNbCycles) {;}
 }

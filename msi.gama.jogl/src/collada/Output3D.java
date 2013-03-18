@@ -19,11 +19,14 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 
+import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.GraphicDataType.MyJTSGeometry;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -33,12 +36,63 @@ import msi.gaml.operators.Files;
 public class Output3D {
 	public final static String FILE3DFOLDER = "file3D";
 	Document doc;
+	// int lastCycleStored; 
+	int nbCycle;
 	
-	public Output3D() {
-		doc = Output3D.createXML();
-	}
+//	public Output3D() {
+//		doc = Output3D.createXML();
+//	}
 
-	public void to3DGLGEModel(ArrayList<MyJTSGeometry> myJTSGeometries){     
+	public Output3D(ILocation nbCycles,
+							ArrayList<MyJTSGeometry> myJTSGeometries, JOGLAWTGLRenderer openGLGraphicsGLRender) {
+		doc = Output3D.createXML();
+		nbCycle = (int)nbCycles.getY();
+		//initGLGEModel(myJTSGeometries,openGLGraphicsGLRender);
+		//writeXML();
+
+		System.out.println("NbCycles to store: "+ nbCycle);
+	}
+	
+	public void updateOutput3D(ArrayList<MyJTSGeometry> myJTSGeometries, JOGLAWTGLRenderer openGLGraphicsGLRender){
+		// TODO
+		int currentClock = GAMA.getDefaultScope().getClock().getCycle();
+		System.out.println("Nb cycle " + GAMA.getDefaultScope().getClock().getCycle());
+		if(currentClock == 0){
+			initGLGEModel(myJTSGeometries,openGLGraphicsGLRender);
+		}
+		
+		// Update of the animations
+		for(MyJTSGeometry myGeom : myJTSGeometries){
+			String animID = myGeom.agent.getName()+"anim";
+			// Find the Element with id = animID
+			// add a position
+			// Animations
+			Element animVec = doc.getElementById(animID);
+			System.out.println(animID + "  " + animVec);
+			NodeList animCurveList = animVec.getElementsByTagName("animation_curve");
+			for(int i = 0 ; i < animCurveList.getLength();i++){
+				Element animCurveElt = (Element) animCurveList.item(i);
+				System.out.println(animCurveElt);
+				Element linPtElt = doc.createElement("linear_point");
+				linPtElt.setAttribute("x", ""+currentClock);
+		
+				if("LocX".equals(animCurveElt.getAttribute("channel"))){
+					linPtElt.setAttribute("y", "" + myGeom.agent.getLocation().getX()); 
+				} else if("LocY".equals(animCurveElt.getAttribute("channel"))) {
+					linPtElt.setAttribute("y", "" + myGeom.agent.getLocation().getY()); 
+				} else if("LocZ".equals(animCurveElt.getAttribute("channel"))) {
+					linPtElt.setAttribute("y", "" + myGeom.agent.getLocation().getZ()); 
+				}
+				animCurveElt.appendChild(linPtElt);
+			}
+		}	
+		
+		if(currentClock == nbCycle){
+			writeXML();
+		}
+	}
+	
+	public void initGLGEModel(ArrayList<MyJTSGeometry> myJTSGeometries, JOGLAWTGLRenderer openGLGraphicsGLRender){     
 	
 		Element root = doc.createElement("glge");
 		
@@ -54,11 +108,9 @@ public class Output3D {
 			// For each geometry, we write a mesh, a material, animations and an object in the scene
 			String materialID = myGeom.agent.getName()+"material";
 			//String animationID = myGeom.agent.getName()+"animation";
-			// <mesh id="cube">
 			Element meshElt = createMeshElement(myGeom);
 			root.appendChild(meshElt);
 			
-//			<object id="wallobject" mesh="#cube" scale_x="10" scale_y="10" scale_z="10" material="#wallmaterial" />
 			// object element in the scene
 			Element objectElt = doc.createElement("object");
 			objectElt.setAttribute("id", myGeom.agent.getName());
@@ -68,6 +120,7 @@ public class Output3D {
 			objectElt.setAttribute("scale_y", "1");
 			objectElt.setAttribute("scale_z", "1");
 			objectElt.setAttribute("material", "#"+materialID);
+			objectElt.setAttribute("animation", "#"+myGeom.agent.getName() + "anim");
 			groupElt.appendChild(objectElt);
 			
 			// the material
@@ -80,6 +133,26 @@ public class Output3D {
 			materialElt.setAttribute("colorB", ""+(myGeom.color.getBlue()/255));
 			// materialElt.setAttribute("animation", "#"+animationID);
 			root.appendChild(materialElt);
+			
+			// Animations
+			Element animVec = doc.createElement("animation_vector");
+			animVec.setAttribute("id", myGeom.agent.getName() + "anim");
+			animVec.setIdAttribute("id",true);
+			animVec.setAttribute("frames",""+nbCycle);
+
+			String[] tabCoord = {"X","Y","Z"};
+			for(String coord : tabCoord){
+				Element animCurveElt = doc.createElement("animation_curve");
+				animCurveElt.setAttribute("channel", "Loc"+coord);
+//				Element linPtElt = doc.createElement("linear_point");
+//				linPtElt.setAttribute("x", "0");
+//				linPtElt.setAttribute("y", "" + ("X".equals(coord)?myGeom.agent.getLocation().getX():
+//												 "Y".equals(coord)?myGeom.agent.getLocation().getY():
+//													 myGeom.agent.getLocation().getZ()));
+//				animCurveElt.appendChild(linPtElt);
+				animVec.appendChild(animCurveElt);
+			}
+			sceneElt.appendChild(animVec);
 		}
 		sceneElt.appendChild(groupElt);
 		
@@ -88,17 +161,17 @@ public class Output3D {
 		cameraGroupElt.setAttribute("id", "cameraOffset");
 		Element cameraElt = doc.createElement("camera");
 		cameraElt.setAttribute("id", "maincamera");
-		cameraElt.setAttribute("loc_x", "1");		
-		cameraElt.setAttribute("loc_y", "20");	
-		cameraElt.setAttribute("loc_z", "8");	
+		cameraElt.setAttribute("loc_x", ""+openGLGraphicsGLRender.camera.getxPos());		
+		cameraElt.setAttribute("loc_y", ""+openGLGraphicsGLRender.camera.getyPos());	
+		cameraElt.setAttribute("loc_z", ""+openGLGraphicsGLRender.camera.getzPos());
 		cameraElt.setAttribute("rot_order", "ROT_XZY");	
 		cameraElt.setAttribute("xtype", "C_ORTHO");	
-		cameraElt.setAttribute("rot_x", "1.56");		
-		cameraElt.setAttribute("rot_y", "3.141");	
+		cameraElt.setAttribute("rot_x", "0");		
+		cameraElt.setAttribute("rot_y", "0");	
 		cameraElt.setAttribute("rot_z", "0");			
 		cameraGroupElt.appendChild(cameraElt);
 		sceneElt.appendChild(cameraGroupElt);
-		
+
 		// A remettre avec les normals
 //		Element lightElt = doc.createElement("light");
 //		lightElt.setAttribute("id", "mainlight");
@@ -113,7 +186,6 @@ public class Output3D {
 		root.appendChild(sceneElt);
 		
 		doc.appendChild(root);
-		writeXML();
 	}
 	
 	public Element createMeshElement(MyJTSGeometry myGeom) {
@@ -132,20 +204,8 @@ public class Output3D {
 		String positionsText = "";
 		String facesText = "";
 		if(myGeom.height>0){
-//			for(Coordinate vertex : geom.getCoordinates()){
-//				positionsText += ""+ (((Double)Double.NaN).equals(vertex.x)?0.0:vertex.x)+
-//						 		 ","+(((Double)Double.NaN).equals(vertex.y)?0.0:vertex.y)+
-//						 		 ","+(((Double)Double.NaN).equals(vertex.z)?0.0:vertex.z)+ ",\n";
-//			}
-//			for(Coordinate vertex : geom.getCoordinates()){
-//				positionsText += ""+ (((Double)Double.NaN).equals(vertex.x)?0.0:vertex.x)+
-//						 ","+(((Double)Double.NaN).equals(vertex.y)?0.0:vertex.y)+
-//						 ","+myGeom.height+ ",\n";
-//			}
-//			facesText = Output3D.facesFromVertices3D(geom.getCoordinates().length);
-	
 			Coordinate vertex;
-//			// -2 because the last one = he first one
+			// -1 because the last one = he first one
 			for(int i=0;i<geom.getCoordinates().length-1;i++){
 				vertex = geom.getCoordinates()[i];
 				positionsText += ""+ (((Double)Double.NaN).equals(vertex.x)?0.0:vertex.x)+
@@ -158,12 +218,11 @@ public class Output3D {
 						 		 ","+(((Double)Double.NaN).equals(vertex.y)?0.0:vertex.y)+
 						 		 ","+myGeom.height+ ",\n";
 			}
-			facesText = Output3D.facesFromVertices3D(geom.getCoordinates().length - 1);			
+			facesText = Output3D.facesFromVertices3D(geom.getCoordinates().length-1);			
 		}
 		else {
-			//for(Coordinate vertex : geom.getCoordinates()){
 			Coordinate vertex;
-//			// -2 because the last one = he first one
+			// -1 because the last one = he first one
 			for(int i=0;i<geom.getCoordinates().length-1;i++){	
 				vertex = geom.getCoordinates()[i];				
 				positionsText += ""+ (((Double)Double.NaN).equals(vertex.x)?0.0:vertex.x)+
@@ -189,32 +248,25 @@ public class Output3D {
 	// nbVertrices is the number of vertices of both top and bottom faces
 	public static String facesFromVertices3D(int nbVertices){
 		String res = "";
-		res += facesFromVertices(0,nbVertices - 1);
-		res += facesFromVertices(nbVertices, 2*nbVertices - 1);
+		res += facesFromVertices(0,nbVertices-1) + ",";
+		res += facesFromVertices(nbVertices, 2*nbVertices-1) + ",";
 		for(int i = 0; i < nbVertices - 2; i++){
 			res += i + "," + (i+1) + "," + (i+nbVertices) + ",";
-			res += (i+1) + "," + (i+nbVertices) + "," + (i+nbVertices + 1);
+			res += (i+1) + "," + (i+nbVertices) + "," + (i+nbVertices + 1) + ",";
 		}
 		// the last face: hand-made
-		res += ",0," + (nbVertices -1) + "," + (2*nbVertices - 1) + ",";
+		res += ","+(nbVertices -1) + ",0," + (2*nbVertices - 1) + ",";
 		res += "0," + (nbVertices) + "," + (2*nbVertices - 1);		
 		return res;
 	}	
 	
 	public static String facesFromVertices(int nbVertices){
-//		String res = "";
-//		for(int i = 1; i<(nbVertices-1);i++){
-//			res+= "0,"+i+","+(i+1)+",";
-//		}
-//		// To remove the last ","
-//		res = res.substring(0, res.length()-1); 			
-//		return res;
 		return facesFromVertices(0,nbVertices-1);
 	}
 	
 	public static String facesFromVertices(int firstVertex, int lastVertex){
 		String res = "";
-		for(int i = (firstVertex + 1); i<(lastVertex-1);i++){
+		for(int i = (firstVertex + 1); i<lastVertex;i++){
 			res+= firstVertex+","+i+","+(i+1)+",";
 		}
 		// To remove the last ","
