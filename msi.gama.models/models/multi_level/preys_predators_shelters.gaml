@@ -75,7 +75,7 @@ entities {
 		}
 		
 		aspect default {
-			draw shape: geometry color: color;
+			draw shape color: color;
 		}
 	}
 	
@@ -96,7 +96,7 @@ entities {
 		reflex chase_prey when: (target_prey != nil) { do move heading: self towards target_prey speed: predator_speed;}
 		
 		aspect default {
-			draw shape: geometry color: predator_color;
+			draw shape color: predator_color;
 		} 
 	} 
 	
@@ -133,12 +133,12 @@ entities {
 			}
 			
 			aspect default {
-				draw shape: geometry color: predator_in_shelter_color;
+				draw shape color: predator_in_shelter_color;
 			}
 		}
 		
 		aspect default {
-			draw shape: geometry color: shelter_color;
+			draw shape color: shelter_color;
 			draw text: 'Members: ' + (string (length ((members)))) color: rgb ('white') size: 8 at: {(location).x - 20, (location).y};
 		}
 	}

@@ -11,23 +11,23 @@ global {
 	}
 	action initialize_people {  
 		loop i from: 0 to: number_of_people - 1 { 
-			let pp <- all_places at i;
+			let pp <- all_places at i; 
 			remove pp from: free_places;       
 			add pp to: all_people;  
 			set pp.color <- colors at (rnd (number_of_groups - 1)) ;  
 			let i <- self.location;
 		} 
 	} 
-	reflex migrate {
+	reflex migrate {     
 		ask all_people as: space {  
 			do migrate; 
 		}             
-	} 
+	}  
 } 
 environment width: dimensions height: dimensions {
 	grid space parent: base width: dimensions height: dimensions neighbours: 8 torus: true {
 		rgb color <- black;
-		list my_neighbours -> {(self neighbours_at neighbours_distance) select (each.color != black)} of: space;
+		list my_neighbours -> {(self neighbours_at neighbours_distance) select (each.color != black)} of: space; 
 		action migrate {
 			if !is_happy { 
 				let pp <- any(free_places); 

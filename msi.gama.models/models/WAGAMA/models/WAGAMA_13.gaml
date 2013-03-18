@@ -121,10 +121,10 @@ global {
 
 	action save_outputs {
 		save [input_water_quantity_north, input_water_quantity_south, output_water_quantity_real, output_clean_water_quantity_real, output_polluted_water_quantity_real,
-			mean_money,max_money,min_money] type: "csv" to: result_file;
+			mean_money,max_money,min_money] type: csv to: result_file;
 	}
 }
-
+ 
 environment bounds: env_file;
 
 entities {

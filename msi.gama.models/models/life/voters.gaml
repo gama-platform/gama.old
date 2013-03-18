@@ -12,9 +12,9 @@ global {
 
 environment width: width height: height {
 	grid life_grid width: width height: height neighbours: 8 torus: torus {
-		int living <-(self neighbours_at 1) count each.state update:(self neighbours_at 1) count each.state;
+		int living <- (self neighbours_at 1) count (each.state) update: (self neighbours_at 1) count (each.state);
 		bool state <- (rnd(100)) < density update: (living = 4) ? (random_choice ? flip(0.5) : state): ((living > 4) ? true : false) ;
-		rgb color <- state ? livingcolor : deadcolor update: state ? livingcolor : deadcolor ;
+		rgb color <-  state ? livingcolor : deadcolor update: state ? livingcolor : deadcolor ;
 	}
 }
 

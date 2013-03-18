@@ -15,7 +15,7 @@ entities {
 		geometry shape <- geometry (point([1,1]));
 		
 		reflex augmente {
-			set z value : z - speedRain * envRain.width/100 ;
+			set z <- z - speedRain * envRain.width/100 ;
 			set shape <- shape add_z z ;
 			if ( z <= 0 ) {
 				if ( rnd ( 100 ) < rain_Rate ) {

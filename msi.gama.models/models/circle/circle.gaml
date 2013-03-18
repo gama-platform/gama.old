@@ -17,7 +17,7 @@ global {
 	}  
 } 
  
-environment width: width_and_height_of_environment height: width_and_height_of_environment torus: false;  
+environment width: width_and_height_of_environment height: width_and_height_of_environment torus: false {}
  
   
 entities { 
@@ -44,7 +44,7 @@ entities {
 		}
 		
 		aspect default { 
-			draw geometry: shape color: color;
+			draw  shape color: color;
 		}
 	}
 }

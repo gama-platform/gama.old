@@ -1,4 +1,4 @@
-model segregation
+model segregation_base
 
 global {
 	rgb color_1 <- rgb('yellow') parameter: 'Color of group 1:' category: 'User interface' ; 
@@ -18,14 +18,13 @@ global {
 	int neighbours_distance <- 2 max: 10 min: 1 parameter: 'Distance of perception:' category: 'Population' ;
 	int number_of_people <- 0 ; 
 	int sum_happy_people <- 0 value: all_people count (each.is_happy) ; 
-	int sum_similar_neighbours <- 0 value: sum (all_people collect each.similar_nearby) ;  
+	int sum_similar_neighbours <- 0 value: sum (all_people collect each.similar_nearby) ;   
 	int sum_total_neighbours <- 1 value: sum (all_people collect each.total_nearby) min: 1 ;              
 	list all_places <- []  of: agent ; 
 	list all_people <- [] of: base ; 
 	
 	action description {
 		write '\\n\\u25B6 Description. \\n\\u25B6 Thomas Schelling model of residential segregation is a classic study of the effects of local decisions on global dynamics. Agents with mild preferences for same-type neighbors, but without preferences for segregated neighborhoods, can wind up producing complete segregation.\\n\\u25B6 In this model, agents populate a grid with a given *density*. They are in two different states : happy when the percentage of same-color neighbours is above their *desired percentage of similarity*; unhappy otherwise. In the latter case, they change their location randomly until they find a neighbourhood that fits their desire. \\n\\u25B6 In addition to the previous parameter, one can adjust the *distance of perception* (i.e.  the distance at which they consider other agents as neighbours) of the agents to see how it affects the global process. '  ;
-		loop i from: 11 to: 100;
 	} 
 	init {  
 		do description ; 

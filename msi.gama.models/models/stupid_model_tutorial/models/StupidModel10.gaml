@@ -78,7 +78,7 @@ experiment stupidModel type: gui {
 	            data name: "[90;100]" value: (bug as list) count ((each.size > 90) and (each.size < 100));
 	        }
 	    }
-	    file stupid_results type: text data: 'cycle: ' + (time as string) 
+	    file "stupid_results" type: text data: 'cycle: ' + (time as string) 
 	         + '; minSize: ' + (((bug as list) min_of each.size) as string)
 	         + '; maxSize: ' + (((bug as list) max_of each.size) as string)
 	         + '; mean: ' + (((sum ((bug as list) collect ((each as bug).size))) / (length((bug as list)))) as string);

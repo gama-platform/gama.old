@@ -110,11 +110,11 @@ global {
 		ask nodes where (length(each.waters) >= each.nb_inputs){
 			do flow;
 		} 
-	}
+	} 
 
 	action save_outputs {
 		save [input_water_quantity, output_water_quantity_real, output_clean_water_quantity_real, 
-			output_polluted_water_quantity_real,mean_money,max_money,min_money] type: "csv" to: result_file;
+			output_polluted_water_quantity_real,mean_money,max_money,min_money] type: csv to: result_file;
 	}
 }
 

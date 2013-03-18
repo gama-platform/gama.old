@@ -62,7 +62,7 @@ experiment stupidModel type: gui {
 	        grid stupid_cell;
 	        species bug aspect: basic;
 	    }
-	    inspect Species type: species refresh_every: 5;
+	    inspect name:"Species" type: species refresh_every: 5; 
 	    
 	    display histogram_display {
 	        chart 'Size distribution' type: histogram background: rgb('lightGray') {
@@ -78,9 +78,6 @@ experiment stupidModel type: gui {
 	            data name: "[90;100]" value: (bug as list) count ((each.size > 90) and (each.size < 100));
 	        }
 	    }
-	    file stupid_results type: text data: 'cycle: ' + (time as string) 
-	         + '; minSize: ' + (((bug as list) min_of each.size) as string)
-	         + '; maxSize: ' + (((bug as list) max_of each.size) as string)
-	         + '; mean: ' + (((sum ((bug as list) collect ((each as bug).size))) / (length((bug as list)))) as string);
+	    file stupid_results type: text data: 'cycle: ' + time  + ' ; minSize: ' + (bug min_of each.size) + ' ; maxSize: ' + (bug max_of each.size) + ' ; mean: ' + ((sum (bug collect (each.size))) / (length(bug)));
 	}
 }

@@ -23,7 +23,7 @@ global {
 	list images of: file <- [file('../images/bird1.png'),file('../images/bird2.png'),file('../images/bird3.png')]; 
 	int xmin <- bounds depends_on: [bounds];    
 	int ymin <- bounds depends_on: [bounds];  
-	int xmax <- (width_and_height_of_environment - bounds);    
+	int xmax <- (width_and_height_of_environment - bounds);     
 	int ymax <- (width_and_height_of_environment - bounds);   
 
 	init { 
@@ -43,16 +43,16 @@ global {
 		}	
 }
 	
-environment width: width_and_height_of_environment height: width_and_height_of_environment torus: torus_environment;
+environment width: width_and_height_of_environment height: width_and_height_of_environment torus: torus_environment {}
 
 entities {
 	species name: boids_goal skills: [moving] {
-		const range type: float init: 20.0;
-		const size type: float init: 10.0;
+		const range type: float <- 20.0;
+		const size type: float <- 10.0;
 		
 		reflex wander {  
 			do  wander amplitude: 45 speed: 20;  
-			set goal value: location;
+			set goal <- location;
 		}
 		
 		aspect default {

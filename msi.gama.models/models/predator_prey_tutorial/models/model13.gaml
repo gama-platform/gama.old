@@ -33,7 +33,7 @@ global {
 	}
 	
 	reflex save_result when: time = 201 {
-		save [prey_max_transfert, prey_energy_reproduce, predator_energy_transfert, predator_energy_reproduce, nb_preys + nb_predators] type: "csv" to: "results.csv";
+		save [prey_max_transfert, prey_energy_reproduce, predator_energy_transfert, predator_energy_reproduce, nb_preys + nb_predators] type: csv to: "results.csv";
 	}
 }
 entities {

@@ -5,24 +5,24 @@ import "../include/schelling_common.gaml"
 global {
 	list free_places <- [] of: space;   
 	list all_places <- [] of: space; 
-	
 	action initialize_people { 
-		create people number: number_of_people;     
+		create people number: number_of_people;      
 		set all_people <- people as list;  
 	} 
 	action initialize_places { 
 		set all_places <- shuffle (space as list);
-		set free_places <- all_places;
+		set free_places <- all_places;  
 	} 
+	
+	
+ 
 }
 environment width: dimensions height: dimensions {  
 	grid space width: dimensions height: dimensions neighbours: 8 torus: false {
 		const color type: rgb <- black;
 	}
 } 
-entities {
 
-	
 	species people parent: base  {
 		const color type: rgb <- colors at (rnd (number_of_groups - 1));
 		list my_neighbours -> {(self neighbours_at neighbours_distance) of_species people} of: people;
@@ -39,8 +39,14 @@ entities {
 		aspect default{ 
 			draw circle (1.0) color: color; 
 		}
+		
+		species toto{
+			species tata{
+				
+			}
+		}
 	}
-} 
+
 
 experiment schelling type: gui {	
 	output {

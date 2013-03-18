@@ -14,7 +14,7 @@ global {
 		create people number: number_of_people ;  
 		set all_people <- people as list ;  
 	}
-	 
+	    
 	action initialize_places { 
 		set map_colors <- file(bitmap_file_name) as_matrix {dimensions,dimensions} ;
 		ask space as list {
@@ -26,7 +26,7 @@ global {
 }
 environment width: dimensions height: dimensions {
 	grid space width: dimensions height: dimensions neighbours: 8 torus: true ; 
-}
+} 
 entities { 
 	species people parent: base  {
 
@@ -46,7 +46,7 @@ entities {
 			draw geometry: square(1) color: color  ;
 		}
 		aspect default {
-			draw shape: square color: rgb('black') size: 2 ;
+			draw  square(2) color: rgb('black') ;
 		}
 	}
 }

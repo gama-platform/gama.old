@@ -38,7 +38,7 @@ entities {
         aspect basic {
             draw circle(size) color: color;
         }
-    }
+    } 
 }
 
 experiment stupidModel type: gui {

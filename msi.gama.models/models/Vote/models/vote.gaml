@@ -37,7 +37,7 @@ global {
 	action creation_candidats {
 			switch distribution_candidats {
 				match "Polygone" {
-					let liste_points type: list of: point <- nb_candidates points_at 50.0;
+					let liste_points type: list of: point <- list(nb_candidates points_at 50.0);
 					let cpt type: int <- 0;
 					create candidat number: nb_candidates{
 						set couleur <- rgb ([rnd(255), rnd(255), rnd(255)]); 

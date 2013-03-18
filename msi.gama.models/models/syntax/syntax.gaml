@@ -11,26 +11,26 @@ model syntax
  * The example below shows a potentially moving world that can be controlled by a finite state machine.
  */
  
- global skills:[moving] control: fsm {
+ global skills: [moving] control: fsm {
  	 
-/**
+/** 
  * ATTRIBUTES
  */
  
  	 // Attributes can be declared in different ways, ranging from "classic"...
- 	 var a type: list <- [1,2,3] of: int;
- 	 list a <- [1,2,3] of: int;
+ 	 var a1 type: list <- [1,2,3] of: int;
+ 	 list a2 <- [1,2,3] of: int;
  	 // ... to "compact" Java-like syntax.
- 	 list<int> a <- [1,2,3];
+ 	 list<int> a3 <- [1,2,3];
  	 
  	 // The declaration of a default size/value in containers is now working correctly
  	 list<float> f size: 2000 fill_with: 0.0;
  	 
  	 // Functions can be declared using the regular facet "->" / "function:" 
- 	 int b -> {100 + length(a)};
- 	 int b function: {100 + length(a)};
+ 	 int b1 -> {100 + length(a1)}; 
+ 	 int b2 function: {100 + length(a1)};
  	 // ... or using a block (like a statement -- note the absence of semi-column at the end)
- 	 int b {100 + length(a)}
+ 	 int b3 {100 + length(a1)}
  	 
  /**
  * UNITS
@@ -52,19 +52,19 @@ model syntax
   * ACTIONS
   */
  	 // Actions can also be declared in different ways. Classic:
- 	 action dummy type: list of: int {
+ 	 action dummy1 type: list of: int {
  	 	arg a type: int default: 100;
  	 	arg b type: float;
  	 	return [a, int(b)];
  	 }
  	 // Semi-classic (prefixed by the type)
- 	 list dummy of: int {
+ 	 list dummy2 of: int {
  	 	arg a type: int default: 100;
  	 	arg b type: float;
  	 	return [a, int(b)];
  	 }
  	 //Compact
- 	 list<int> dummy (int a <- 100, float b) {
+ 	 list<int> dummy3 (int a <- 100, float b) {
  	 	return [a, int(b)];
  	 }
  	 
@@ -80,9 +80,9 @@ model syntax
  	reflex variables {
  		
  		// Temporary variables can use the same syntax than attributes. The classic form:
- 		let name: t type: int value: length(a);
+ 		let name: t type: int value: length(a1);
  		// is equivalent to the more compact one:
- 		int t <- length(a);
+ 		int t <- length(a1);
  		
  		// Assigning a value to variables is also sporting a new syntax
  		set t value: 100;
@@ -107,7 +107,7 @@ model syntax
  		remove 1 from: l;
  		// ... can now be written
  		l -- 1;
- 		l >> 1;
+ 		//l >> 1;
  		
  		// Setting/putting a value
  		put "a" at: 'key' in: m;
@@ -124,33 +124,33 @@ model syntax
  	 reflex calling_actions {
  	 	
  	 	// The classic way
- 	 	do action: dummy with: [a::10, b::100] ;
+ 	 	do action: dummy1 with: [a::10, b::100] ;
  	 	
  	 	// Another classic way using facets
- 	 	do action: dummy a: 10 b: 100;
+ 	 	do action: dummy1 a: 10 b: 100;
  	 	
  	 	// Another by removing the first facet
- 	 	do dummy a:10 b: 100;
+ 	 	do dummy1 a:10 b: 100;
  	 	
  	 	// The new alternative one 
- 	 	do dummy (a:10, b:100);
+ 	 	do dummy1 (a:10, b:100);
  	 	// ... which has been introduced to unify the functional/imperative use of actions.
  	 	
  	 	// The "classic" functional call
- 	 	list d <- self dummy [a::10, b::100];
+ 	 	list d <- self dummy1 [a::10, b::100];
  	 	// And the new one, closer to the previous imperative syntax
- 	 	list d <- self dummy (a: 10, b:100);
+ 	 	list d <- self dummy1 (a: 10, b:100);
  	 	
  	 	// This new syntax is not only usable in action calls, but also here, for instance
  	 	
  	 }
  	 
  /**
-  * USE OF OPERATORS
+  * USE OF OPERATORS 
   */
   
   	reflex operators {
-  		
+  		 
   		// All the operators can now be written using a function-like form
   		// It is true for unary operators (as before)
   		bool a <- flip(0.4);
@@ -164,10 +164,10 @@ model syntax
   		// @operator(value = "between", can_be_const = true)
 		// public static Boolean between(final Integer a, final Integer inf, final Integer sup) {
 		//    	if ( inf > sup ) { return false; }
-		//		return a >= sup ? false : a > inf;
+		//		return a >= sup ? false : a > inf; 
 		// }
 		bool e <- between(5, 1, 10);
-  	}
+  	} 
  /**
   * DEFINITION OF ASPECTS
   */
@@ -193,7 +193,7 @@ model syntax
  experiment exp1 type: gui {
 
 	output{
-		display Display type:opengl{
+		display Display type: opengl{
 			// Layers include a new keyword, "graphics", that allows to draw arbitrary shapes using the syntax found in the aspects of species
 			// The same capability will be soon added to species/agents layers (in order to define on-the-fly aspects without changing the species
 			graphics G {

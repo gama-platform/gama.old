@@ -394,7 +394,7 @@ entities {
 	} 
 }
 
-experiment with_interface type: gui {
+experiment with_interface  {
 	parameter 'GIS file of the nodes' var: nodes_file category: 'GIS';
 	parameter 'GIS file of the environment' var: env_file category: 'GIS';
 	parameter 'GIS file of the activities' var: activities_file category: 'GIS';

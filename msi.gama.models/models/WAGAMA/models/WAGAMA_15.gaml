@@ -38,7 +38,7 @@ global {
 	int output_water_quantity_wished <- 5;
 	
 	float cleanness_rate_objective <- 0.7;
-	int output_water_quantity_objective <- 5;
+	int output_water_quantity_objective <- 5; 
 	
 	init {
 		create administrator returns: administrator_created;
@@ -129,11 +129,11 @@ global {
 
 	action save_outputs {
 		save [input_water_quantity_north, input_water_quantity_south, output_water_quantity_real, output_clean_water_quantity_real, output_polluted_water_quantity_real,
-			mean_money,max_money,min_money] type: "csv" to: result_file;
+			mean_money,max_money,min_money] type: csv to: result_file;
 	}
 }
 
-environment bounds: env_file;
+environment bounds: env_file {}
 
 entities {
 	species node { 
@@ -151,7 +151,7 @@ entities {
 		}
 		aspect network {
 			if (next_node != nil) {
-				draw geometry: line([location, next_node.location]) color: rgb('blue');
+				draw line([location, next_node.location]) color: rgb('blue');
 			}
 			draw circle(radius) color: color;
 		}
@@ -269,23 +269,23 @@ entities {
 			set water_out.water_units <- water_out.water_units union list(wu_clean) union list(wu_polluted);	
 		}
 		
-		aspect default{
-			draw geometry: line([location, input_node.location]) color: rgb('green');
-			draw geometry: line([location, output_node.location]) color: rgb('red');
-			draw geometry: shape color: color;
+		aspect default {
+			draw line([location, input_node.location]) color: rgb('green');
+			draw line([location, output_node.location]) color: rgb('red');
+			draw shape color: color;
 		}
 		
 		aspect activity_type{
-			draw geometry: line([location, input_node.location]) color: rgb('green');
-			draw geometry: line([location, output_node.location]) color: rgb('red');
-			draw geometry: shape color: type.color;
-			draw text: name + " : " + type.name size: 2 color: rgb('black'); 
+			draw line([location, input_node.location]) color: rgb('green');
+			draw line([location, output_node.location]) color: rgb('red');
+			draw  shape color: type.color;
+			draw  name + " : " + type.name size: 2 color: rgb('black'); 
 		}
 		
 		aspect owners{
-			draw geometry: line([location, input_node.location]) color: rgb('green');
-			draw geometry: line([location, output_node.location]) color: rgb('red');
-			draw geometry: shape color: my_owner.color;
+			draw line([location, input_node.location]) color: rgb('green');
+			draw line([location, output_node.location]) color: rgb('red');
+			draw  shape color: my_owner.color;
 		}
 	}
 	
@@ -351,7 +351,7 @@ entities {
 					set message_to_write <- message_to_write + "\nMesure taken : give a bonus to green activities";
 				}
 			}
-			do write message: message_to_write;
+			write  message_to_write;
 			ask world {
 				do save_outputs;	
 			}

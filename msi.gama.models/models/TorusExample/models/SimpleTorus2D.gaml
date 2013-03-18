@@ -22,7 +22,7 @@ entities {
     	var shape type: geometry init: circle (1);// at_location {1,1}; 
     	
         reflex basic_move {
-        	do wander speed: 3;
+        	do wander speed: 3; 
             /*let place type: stupid_cell <- (location as stupid_cell);
             let destination type: stupid_cell <- one_of ((place neighbours_at 4) where empty(each.agents));
             if (destination != nil) {

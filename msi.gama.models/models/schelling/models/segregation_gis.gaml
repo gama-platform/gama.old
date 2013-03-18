@@ -45,7 +45,7 @@ entities {
 			do move_to_new_place;
 		}
 		aspect simple {
-			draw shape: circle size: 5;
+			draw circle(5);
 		}
 	}
 	species space {	
@@ -66,12 +66,12 @@ entities {
 		}
 		aspect simple {
 			let color <- empty(insiders) ? rgb('white') : rgb ([mean (insiders collect each.red), mean (insiders collect each.green), mean (insiders collect each.blue)]);
-			draw shape: square color: color size: 40;
+			draw  square(40) color: color;
 		}
 		aspect gis {
 			let color <- empty(insiders) ? rgb('white') : rgb( [mean (insiders collect each.red), mean (insiders collect each.green), mean (insiders collect each.blue)]);
 			let pp <- one_of(space as list);
-			draw geometry: shape color: color;
+			draw shape color: color;
 		} 
 	}
 }

@@ -57,7 +57,7 @@ entities {
 		action setPositionAndColor{
 			set color <- color hsb_to_rgb ([class/nbClass,1.0,1.0]);
 			let tmpradius <- rnd(25)+25;
-			set location <- {cos (float((class-1)/nbClass)*360)*tmpradius +50,sin (float((class-1)/nbClass)*360)*tmpradius +50,0};
+			set location <- {cos (float((class-1)/nbClass)*360)* tmpradius +50,sin (float((class-1)/nbClass)*360)* tmpradius +50,0};
 		} 
 						
 		/*reflex shuffleClass{	
