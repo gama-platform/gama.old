@@ -159,7 +159,7 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 				double longitude = env.centre().y;
 				GisUtils gis = scope.getWorldScope().getGisUtils();
 				gis.setTransformCRS(shpf, latitude, longitude);
-				gis.transform(env);
+				env = gis.transform(env);
 			}
 		} catch (IOException e) {
 			throw new GamaRuntimeException(e);
