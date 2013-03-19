@@ -285,7 +285,7 @@ public class Camera {
 		}
 		float aspect = (float) width / height;
 		//FIXME: need to see the influence of the different parameter.
-		glu.gluPerspective(45.0f, aspect, 0.1f, maxDim*10);
+		glu.gluPerspective(45.0f, aspect, 0.1f, maxDim*100);
 		glu.gluLookAt(this.getXPos(), this.getYPos(), this.getZPos(),
 				this.getXLPos(), this.getYLPos(), this.getZLPos(), 0.0, 1.0,
 				0.0);

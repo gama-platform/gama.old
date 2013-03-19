@@ -457,6 +457,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 			((JOGLAWTDisplayGraphics) openGLGraphics).isPolygonTriangulated = false;
 
 			// FIXME: Need to check if it's working with AWTDisplay
+			// FIXME: Snapshot should be done after the repainting?
 			if ( autosave == true ) {
 				snapshot();
 			}

@@ -144,7 +144,6 @@ public class MyListener implements KeyListener, MouseListener,
 	public void mouseDragged(MouseEvent mouseEvent) {
 
 		
-		
 		if ( ((isArcBallOn(mouseEvent)) && myCamera.isModelCentered) || myRenderer.displaySurface.SelectRectangle){
 			if(!myRenderer.displaySurface.Picking){
 				if (SwingUtilities.isLeftMouseButton(mouseEvent)) {

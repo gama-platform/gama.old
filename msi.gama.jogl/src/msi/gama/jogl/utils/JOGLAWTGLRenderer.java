@@ -104,10 +104,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	// picking
 	double angle = 0;
 	
-
+	private boolean drawAxes = true;
+	
 	// Use multiple view port
 	private boolean multipleViewPort = false;
 	
+	//Display model a a 3D Cube
+	private boolean threeDCube = false;
 	//Handle Shape file
 	public ShapeFileReader myShapeFileReader;
 	private boolean updateEnvDim=false;
@@ -320,7 +323,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			this.DrawScene();
 		}
 		
-		boolean drawAxes = true;
+		
 		if (drawAxes) {
 			float envMaxDim = ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).maxEnvDim;
 			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myGLRender.graphicsGLUtils.DrawXYZAxis(envMaxDim / 10);
@@ -437,30 +440,79 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			}
 			// FIXME: Need to simplify , give a boolean to DrawModel to know
 			// if it's in Picking mode.
-			if (!multipleViewPort) {
-
-				gl.glViewport(0, 0, width, height); // Reset The Current
-													// Viewport
+			
+			if(threeDCube){
+				//float envMaxDim = ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).maxEnvDim;
+				float envMaxDim = ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth;
+				
+				
 				this.DrawModel(false);
-			} else {
-
-				// Set The Viewport To The Top Left
-				gl.glViewport(0, height / 2, width / 2, height / 2);
+				gl.glTranslatef(envMaxDim,0,0);
+				gl.glRotatef(90, 0, 1, 0);
 				this.DrawModel(false);
-
-				// Set The Viewport To The Top Right. It Will Take Up Half The
-				// Screen Width And Height
-				gl.glViewport(width / 2, height / 2, width / 2, height / 2);
+				gl.glTranslatef(envMaxDim,0,0);
+				gl.glRotatef(90, 0, 1, 0);
 				this.DrawModel(false);
-
-				// Set The Viewport To The Bottom Right
-				gl.glViewport(width / 2, 0, width / 2, height / 2);
+				gl.glTranslatef(envMaxDim,0,0);
+				gl.glRotatef(90, 0, 1, 0);
+				this.DrawModel(false);	
+				gl.glTranslatef(envMaxDim,0,0);
+				gl.glRotatef(90, 0, 1, 0);
+		
+				
+				gl.glRotatef(-90, 1, 0, 0);
+				gl.glTranslatef(0,envMaxDim,0);
 				this.DrawModel(false);
-
-				// Set The Viewport To The Bottom Left
-				gl.glViewport(0, 0, width / 2, height / 2);
+				gl.glTranslatef(0,-envMaxDim,0);
+				gl.glRotatef(90, 1, 0, 0);
+				
+				
+				gl.glRotatef(90, 1, 0, 0);
+				gl.glTranslatef(0,0,envMaxDim);
 				this.DrawModel(false);
+				
+				gl.glTranslatef(0,0,-envMaxDim);
+				gl.glRotatef(-90, 1, 0, 0);
+				/*
+				gl.glTranslatef(0,((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth,0);
+				this.DrawModel(false);
+		
+				gl.glTranslatef(0,-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth,0);
+				gl.glRotatef(90, 1, 0, 0);
+				
+				gl.glTranslatef(0,-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth,0);
+				gl.glRotatef(90, 1, 0, 0);
+				this.DrawModel(false);*/
+				
+				
+				
+				
 			}
+			else{
+				if (!multipleViewPort) {
+					gl.glViewport(0, 0, width, height); // Reset The Current Viewport
+					this.DrawModel(false);
+				} else {
+					// Set The Viewport To The Top Left
+					gl.glViewport(0, height / 2, width / 2, height / 2);
+					this.DrawModel(false);
+	
+					// Set The Viewport To The Top Right. It Will Take Up Half The
+					// Screen Width And Height
+					gl.glViewport(width / 2, height / 2, width / 2, height / 2);
+					this.DrawModel(false);
+	
+					// Set The Viewport To The Bottom Right
+					gl.glViewport(width / 2, 0, width / 2, height / 2);
+					this.DrawModel(false);
+	
+					// Set The Viewport To The Bottom Left
+					gl.glViewport(0, 0, width / 2, height / 2);
+					this.DrawModel(false);
+				}
+			}
+			
+			
 
 		}
 	}
@@ -468,7 +520,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public void DrawModel(boolean picking) {
 		
 		
-//		 ((JOGLAWTDisplayGraphics)displaySurface.openGLGraphics).DrawEnvironmentBounds(false);
+		//((JOGLAWTDisplayGraphics)displaySurface.openGLGraphics).DrawEnvironmentBounds(false);
 
 		// Draw Geometry
 		if (!((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myJTSGeometries
