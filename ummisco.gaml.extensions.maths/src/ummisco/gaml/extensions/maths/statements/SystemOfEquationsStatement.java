@@ -50,6 +50,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 //	public final GamaMap variables=new GamaMap();
 	public final GamaList<IAgent> equations_ext = new GamaList<IAgent>();
 	public final GamaList<IAgent> equaAgents = new GamaList<IAgent>();
+//	private GamaList integrated_times=new GamaList();
+//	public GamaList integrate_value=new GamaList();
 	public double equa_t=0;
 	public IScope currentScope;
 	IExpression simultan = null;
@@ -220,7 +222,15 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 			equaAgents.clear();
 		}
 	}
-
+//	
+//	public void setIntegratedTimes(GamaList gl){
+//		integrated_times=gl;
+//	}
+//	
+//	public GamaList getIntegratedTimes(){
+//		return integrated_times;
+//	}
+	
 	/**
 	 * This method is bound to be called by the integrator of the equations
 	 * system (instantiated in SolveStatement).
@@ -235,12 +245,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 	
 	
 	public void assignValue(double time, double[] y){
-//		GamaList vcc=(GamaList)currentScope.getAgentVarValue("myv");
-//		vcc.add(y[0]);
-//		GamaList tcc=(GamaList)currentScope.getAgentVarValue("myt");
-//		tcc.add(time);
-//		currentScope.setAgentVarValue("myv", vcc);
-//		currentScope.setAgentVarValue("myt", tcc);
+
 		
 		
 		for (int i = 0, n = getDimension(); i < n; i++) {

@@ -19,6 +19,8 @@
 package msi.gama.outputs.layers;
 
 import java.util.ArrayList;
+import java.util.List;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -28,22 +30,28 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaList;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
+
+import org.jfree.chart.renderer.AbstractRenderer;
+import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
 import org.jfree.chart.renderer.xy.*;
+import org.jfree.data.statistics.BoxAndWhiskerCategoryDataset;
+import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset;
 
 @symbol(name = IKeyword.DATA, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(symbols = IKeyword.CHART, kinds = ISymbolKind.SEQUENCE_STATEMENT)
 @facets(value = {
-	@facet(name = IKeyword.VALUE, type = IType.FLOAT_STR, optional = false),
+	@facet(name = IKeyword.VALUE, type = { IType.FLOAT_STR, IType.LIST_STR }, optional = false),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true),
 	@facet(name = IKeyword.LEGEND, type = IType.STRING_STR, optional = true),
 	@facet(name = IKeyword.COLOR, type = IType.COLOR_STR, optional = true),
-	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.LINE, IKeyword.AREA,
-		IKeyword.BAR, IKeyword.DOT, IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK,
+	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA,
+		IKeyword.BAR, IKeyword.DOT, IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, 
 		IKeyword.THREE_D, IKeyword.RING, IKeyword.EXPLODED }, optional = true) }, omissible = IKeyword.LEGEND)
 public class ChartDataStatement extends AbstractStatement {
 
@@ -52,13 +60,13 @@ public class ChartDataStatement extends AbstractStatement {
 		String name;
 		GamaColor color;
 		IExpression value;
-		AbstractXYItemRenderer renderer;
+		AbstractRenderer renderer;
 
-		public AbstractXYItemRenderer getRenderer() {
+		public AbstractRenderer getRenderer() {
 			return renderer;
 		}
 
-		public void setRenderer(final AbstractXYItemRenderer renderer) {
+		public void setRenderer(final AbstractRenderer renderer) {
 			this.renderer = renderer;
 		}
 
@@ -82,8 +90,12 @@ public class ChartDataStatement extends AbstractStatement {
 			return value;
 		}
 
-		public double getValue(final IScope scope) throws GamaRuntimeException {
-			return Cast.asFloat(scope, value.value(scope));
+		public Object getValue(final IScope scope) throws GamaRuntimeException {
+			Object o=value.value(scope);
+			if(o instanceof GamaList){
+				return Cast.asList(scope, o);
+			}
+			return Cast.asFloat(scope, o);
 		}
 
 		public void setValue(final IExpression value) {
@@ -98,6 +110,7 @@ public class ChartDataStatement extends AbstractStatement {
 	public ChartDataStatement(final IDescription desc) {
 		super(desc);
 	}
+	
 
 	/**
 	 * @throws GamaRuntimeException
@@ -109,11 +122,13 @@ public class ChartDataStatement extends AbstractStatement {
 		if ( style == null ) {
 			style = IKeyword.LINE;
 		}
-		AbstractXYItemRenderer r = null;
+		AbstractRenderer r = null;
 		if ( style.equals(IKeyword.LINE) ) {
 			r = new XYLineAndShapeRenderer();
 		} else if ( style.equals(IKeyword.AREA) ) {
 			r = new XYAreaRenderer();
+		} else if ( style.equals(IKeyword.WHISKER) ) {
+			r = new BoxAndWhiskerRenderer();
 		} else if ( style.equals(IKeyword.BAR) ) {
 			r = new XYBarRenderer();
 		} else if ( style.equals(IKeyword.DOT) ) {

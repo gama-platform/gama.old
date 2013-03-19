@@ -23,6 +23,7 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.ChartDataStatement.ChartData;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -33,6 +34,7 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
+import msi.gama.util.GamaList;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -42,11 +44,16 @@ import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 import org.jfree.chart.*;
 import org.jfree.chart.axis.*;
+import org.jfree.chart.labels.BoxAndWhiskerToolTipGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 import org.jfree.chart.plot.*;
+import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
+import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.*;
+import org.jfree.data.statistics.BoxAndWhiskerCategoryDataset;
+import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset;
 import org.jfree.data.xy.*;
 import org.jfree.ui.RectangleInsets;
 
@@ -63,9 +70,10 @@ import org.jfree.ui.RectangleInsets;
 	@facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.POINT_STR, optional = true),
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR_STR, optional = true),
+	@facet(name = IKeyword.TIMEXSERIES , type = IType.LIST_STR, optional = true),
 	@facet(name = IKeyword.AXES, type = IType.COLOR_STR, optional = true),
 	@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.XY, IKeyword.HISTOGRAM,
-		IKeyword.SERIES, IKeyword.PIE }, optional = true),
+		IKeyword.SERIES, IKeyword.PIE, IKeyword.BOX_WHISKER}, optional = true),
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.EXPLODED, IKeyword.THREE_D,
 		IKeyword.STACK, IKeyword.BAR }, optional = true),
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
@@ -101,6 +109,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	private static final int HISTOGRAM_CHART = 1;
 	private static final int PIE_CHART = 2;
 	private static final int XY_CHART = 3;
+	private static final int BOX_WHISKER_CHART = 4;
 	private static final String nl = java.lang.System.getProperty("line.separator");
 	private int type = SERIES_CHART;
 	private String style = IKeyword.DEFAULT;
@@ -140,12 +149,20 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		final NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
 		if ( isTimeSeries ) {
 			domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-			if ( timeSeriesXData == null ) {
-				timeSeriesXData =
-					(ChartDataStatement) DescriptionFactory.compile(DescriptionFactory.create(
-						IKeyword.DATA, description, IKeyword.LEGEND, IKeyword.TIME, IKeyword.VALUE,
-						IKeyword.TIME));
-			}
+				if( timeSeriesXData == null ) {
+
+					
+					timeSeriesXData =
+						(ChartDataStatement) DescriptionFactory.compile(DescriptionFactory.create(
+							IKeyword.DATA, description, IKeyword.LEGEND, IKeyword.TIME, IKeyword.VALUE,
+							IKeyword.TIME));
+					if(getFacet(IKeyword.TIMEXSERIES)!=null){
+						timeSeriesXData.getDescription().getFacets().get(IKeyword.VALUE).setExpression(getFacet(IKeyword.TIMEXSERIES));
+					}
+
+				}
+
+				
 			if ( !datas.contains(timeSeriesXData) ) {
 				datas.add(0, timeSeriesXData.createData(scope));
 			}
@@ -160,13 +177,14 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 		for ( int i = 0; i < datas.size(); i++ ) {
 			ChartData e = datas.get(i);
+
 			final String legend = e.getName();
 			if ( i != 0 ) { // the first data is the domain
 				dataset = new DefaultTableXYDataset();
 				final XYSeries serie = new XYSeries(legend, false, false);
 				((DefaultTableXYDataset) dataset).addSeries(serie);
 				expressions_index.put(legend, i);
-				plot.setRenderer(i, e.getRenderer(), false);
+				plot.setRenderer(i, (XYItemRenderer) e.getRenderer(), false);
 				final Color c = e.getColor();
 				plot.getRenderer(i).setSeriesPaint(0, c);
 				plot.setDataset(i, (DefaultTableXYDataset) dataset);
@@ -180,6 +198,49 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		history.append(nl);
 
 	}
+	/**
+	 * create dataset for box_whisker chart
+     * @return A sample dataset.
+     */
+    private BoxAndWhiskerCategoryDataset createWhisker(IScope scope) {
+
+        final CategoryPlot plot = (CategoryPlot) chart.getPlot();
+        final int seriesCount = 1;
+        final int categoryCount = 3;
+        final int entityCount = 2;
+        
+        final DefaultBoxAndWhiskerCategoryDataset dataset 
+            = new DefaultBoxAndWhiskerCategoryDataset();
+        for (int i = 0; i < datas.size(); i++) {
+        	ChartData e=datas.get(i);
+            for (int j = 0; j < categoryCount; j++) {
+                final List list = new ArrayList();
+                // add some values...
+                for (int k = 0; k < entityCount; k++) {
+//                	list.add(new Double(k*2));
+//                	list.add(new Double(k*3));
+                    final double value1 = 10.0 + Math.random() * 3;
+                    list.add(new Double(value1));
+                    final double value2 = 11.25 + Math.random(); // concentrate values in the middle
+                    list.add(new Double(value2));
+                }
+                dataset.add(list, "Series " + i, " Type " + j);
+                
+    			history.append("Series " + i);
+    			history.append(',');
+            }
+        }
+		history.deleteCharAt(history.length() - 1);
+		history.append(nl);
+		plot.setDataset(dataset);
+		chart.removeLegend();
+		final CategoryAxis axis = plot.getDomainAxis();
+		// ((BarRenderer3D) plot.getRenderer()).setItemMargin(0.1);
+		axis.setCategoryMargin(0.1);
+		axis.setUpperMargin(0.05);
+		axis.setLowerMargin(0.05);
+        return dataset;
+    }
 
 	private void createData(final IScope scope) throws GamaRuntimeException {
 		// Normally initialize the datas
@@ -191,6 +252,10 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			}
 			case PIE_CHART: {
 				createSlices(scope);
+				break;
+			}
+			case BOX_WHISKER_CHART: {
+				createWhisker(scope);
 				break;
 			}
 			case HISTOGRAM_CHART: {
@@ -293,6 +358,13 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 					ChartFactory.createXYLineChart("", "", "", null, PlotOrientation.VERTICAL,
 						true, false, false);
 				break;
+			case BOX_WHISKER_CHART: {
+				chart = ChartFactory.createBoxAndWhiskerChart(
+						  "Box and Whisker Chart", "Time", "Value", (BoxAndWhiskerCategoryDataset) dataset, true);
+						  chart.setBackgroundPaint(new Color(249, 231, 236));
+
+				break;
+			}
 		}
 		Plot plot = chart.getPlot();
 		if ( backgroundColor == null ) {
@@ -342,7 +414,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			String t = Cast.asString(scope, string1.value(scope));
 			type =
 				IKeyword.SERIES.equals(t) ? SERIES_CHART : IKeyword.HISTOGRAM.equals(t)
-					? HISTOGRAM_CHART : IKeyword.PIE.equals(t) ? PIE_CHART : XY_CHART;
+					? HISTOGRAM_CHART : IKeyword.PIE.equals(t) ? PIE_CHART : IKeyword.BOX_WHISKER.equals(t)? BOX_WHISKER_CHART : XY_CHART;
 
 		}
 		IExpression color = getFacet(IKeyword.AXES);
@@ -375,7 +447,16 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		}
 
 		for ( final ChartData d : datas ) {
-			lastValues.put(d.getName(), d.getValue(scope));
+			GamaList x = new GamaList(); 
+			Object obj=d.getValue(scope);
+			if(obj instanceof GamaList){
+				x=(GamaList)obj;
+			}
+			else
+			{
+				x.add(obj);
+			}
+			lastValues.put(d.getName(), Double.parseDouble(""+ x.get(x.size()-1) ));
 		}
 		for ( final Map.Entry<String, Double> d : lastValues.entrySet() ) {
 			String s = d.getKey();
@@ -404,17 +485,37 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	 */
 	private void computeSeries(final IScope scope, final long cycle) throws GamaRuntimeException {
 		if ( datas.isEmpty() ) { return; }
-		double x = datas.get(0).getValue(scope);
-		history.append(x);
-		history.append(',');
+		GamaList x = new GamaList(); 
+		Object obj=datas.get(0).getValue(scope);
+		if(obj instanceof GamaList){
+			x=(GamaList)obj;
+		}
+		else
+		{
+			x.add(obj);
+		}
+		for(int i=0; i<x.size(); i++){
+			history.append(x.get(i));
+			history.append(',');
+		}
 		for ( int i = 1; i < datas.size(); i++ ) {
 			XYPlot plot = (XYPlot) chart.getPlot();
 			DefaultTableXYDataset data = (DefaultTableXYDataset) plot.getDataset(i);
 			XYSeries serie = data.getSeries(0);
-			double n = datas.get(i).getValue(scope);
-			serie.addOrUpdate(x, n);
-			history.append(n);
-			history.append(',');
+			GamaList n = new GamaList(); 
+			Object o=datas.get(i).getValue(scope);
+			if(o instanceof GamaList){
+				n=(GamaList)o;
+			}
+			else
+			{
+				n.add(o);
+			}
+			for(int j=0; j<n.size(); j++){
+				serie.addOrUpdate((Double.parseDouble(""+x.get(j))) , (Double.parseDouble(""+n.get(j))));
+				history.append(n.get(j));
+				history.append(',');
+			}
 		}
 		history.deleteCharAt(history.length() - 1);
 		history.append(nl);

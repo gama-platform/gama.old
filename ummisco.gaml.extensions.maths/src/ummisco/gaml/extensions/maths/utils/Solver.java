@@ -2,6 +2,7 @@ package ummisco.gaml.extensions.maths.utils;
 
 import ummisco.gaml.extensions.maths.statements.SystemOfEquationsStatement;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaList;
 
 public abstract class Solver {
 
@@ -9,8 +10,9 @@ public abstract class Solver {
 	// Declare a step handler also using facets values
 	// Should the solver implement StepHandler or use a given StepHandler ?
 
-	// Call the integrator, which should call computeDerivatives on the system of equations;
-	public abstract void solve(IScope scope, SystemOfEquationsStatement eq, double time_initial, double time_final, int cycle_length);
-
+	// Call the integrator, which should call computeDerivatives on the system
+	// of equations;
+	public abstract void solve(IScope scope, SystemOfEquationsStatement eq,
+			double time_initial, double time_final, int cycle_length);
 
 }

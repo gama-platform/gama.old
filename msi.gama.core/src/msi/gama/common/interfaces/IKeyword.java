@@ -48,6 +48,7 @@ public interface IKeyword {
 	public static final String AXES = "axes";
 	public static final String BACKGROUND = "background";
 	public static final String BAR = "bar";
+	public static final String BOX_WHISKER = "box_whisker"; //  new type of chart: box and whisker
 	public final static String BATCH = "batch";
 	public static final String BEHAVIOR = "behavior";
 	public static final String BEHAVIORS = "behaviors";
@@ -306,6 +307,7 @@ public interface IKeyword {
 	public static final String THREE_D = "3d";
 	public static final String TIME = "time";
 	public static final String TIMES = "times";
+	public static final String TIMEXSERIES = "timexseries";  //hqnghi facet timeXseries for continuous Chart
 	public static final String TITLE = "title";
 	public static final String TO = "to";
 	public static final String TOPOLOGY = "topology";
@@ -335,6 +337,7 @@ public interface IKeyword {
 	public static final String WARNING = "warn";
 	public static final String WEIGHT = "weight";
 	public static final String WHEN = "when";
+	public static final String WHISKER = "whisker"; // new type of datachart	
 	public static final String WHILE = "while";
 	public static final String WIDTH = "width";
 	public static final String WITH = "with";

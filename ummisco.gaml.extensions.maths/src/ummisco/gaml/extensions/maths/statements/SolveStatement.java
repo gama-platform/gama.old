@@ -11,8 +11,13 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaList;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.expressions.AgentVariableExpression;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.ListExpression;
+import msi.gaml.expressions.VariableExpression;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
@@ -23,7 +28,9 @@ import ummisco.gaml.extensions.maths.utils.*;
 		@facet(name = IKeyword.METHOD, type = IType.ID /* CHANGE */, optional = false, values = {
 				"rk4", "dp853" }, doc = @doc(value = "integrate method")),
 		/** Numerous other facets to plan : step, init, etc.) **/
-		@facet(name = "time_initial", type = IType.FLOAT_STR, optional = true, doc = @doc(value = "initial time")),
+		@facet(name = "integrated_times", type = IType.LIST_STR, optional = true, doc = @doc(value = "time interval inside integration process")),
+		@facet(name = "integrated_values", type = IType.LIST_STR, optional = true, doc = @doc(value = "list of Variables's value inside integration process")),
+		@facet(name = "time_initial", type = IType.FLOAT_STR, optional = true, doc = @doc(value = "initial time")),		
 		@facet(name = "time_final", type = IType.FLOAT_STR, optional = true, doc = @doc(value = "target time for the integration (can be set to a value smaller than t0 for backward integration)")),
 		@facet(name = "cycle_length", type = IType.INT_STR, optional = true, doc = @doc(value = "length of simulation cycle which will be synchronize with step of integrator")),
 		@facet(name = IKeyword.STEP, type = IType.FLOAT_STR, optional = true, doc = @doc(value = "integration step, use with most integrator method")),
@@ -80,10 +87,12 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 		super.privateExecuteIn(scope);
 
 		String method = getFacet("method").literalValue();
-
+		GamaList integrate_time=new GamaList();
+		GamaList integrate_val= new GamaList();
+		
 		if (method.equals("rk4")) {
 			solver = new Rk4Solver(Double.parseDouble(""
-					+ getFacet(IKeyword.STEP).value(scope)));
+					+ getFacet(IKeyword.STEP).value(scope)), integrate_time, integrate_val);
 		} else if (method.equals("dp853") && getFacet("min_step") != null
 				&& getFacet("max_step") != null
 				&& getFacet("scalAbsoluteTolerance") != null
@@ -104,6 +113,9 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 				.getStatement(SystemOfEquationsStatement.class,
 						getFacet(IKeyword.EQUATION).literalValue());
 
+		if(s==null){
+			return null;
+		}
 		s.currentScope = scope;
 		if (getFacet("cycle_length") != null) {
 			cycle_length = Integer.parseInt(""
@@ -117,10 +129,28 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 		if (getFacet("time_final") != null) {
 			time_final = Double.parseDouble("" + getFacet("time_final"));
 		}
+		
 
+		
+		
 		s.addExtern(getFacet(IKeyword.EQUATION).literalValue());
 		solver.solve(scope, s, time_initial, time_final, cycle_length);
 		s.removeExtern(getFacet(IKeyword.EQUATION).literalValue());
+		
+		if(getFacet("integrated_times")!=null){
+//			scope.setAgentVarValue(getFacet("integrated_times").literalValue(), integrate_time);
+
+			((VariableExpression)getFacet("integrated_times")).setVal(scope, integrate_time, false);
+		}
+		
+		if(getFacet("integrated_values")!=null){
+			IExpression fv=getFacet("integrated_values").resolveAgainst(scope);
+			IExpression[] exp=((ListExpression)fv).getElements();
+			for(int i=0; i<exp.length; i++){
+				((VariableExpression)exp[i]).setVal(scope, integrate_val.get(i), false);
+			}
+		}
+//		System.out.println(tcc);
 		return null;
 	}
 
