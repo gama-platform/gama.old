@@ -391,22 +391,24 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 		GamaPoint offSet = new GamaPoint(offsetX, offsetY);
 
-		if ( geometry.hasAttributes() ) {
+        //Add a geometry with a depth and type coming from Attributes		
+		if ( (geometry.getAttribute("depth") != null) && (geometry.getAttribute("type") != null)) {
 			Double depth = (Double) geometry.getAttribute("depth");
 			String type = (String) geometry.getAttribute("type");
-
 			this.AddJTSGeometryInJTSGeometries(geom, scope.getAgentScope().getAgent(),
 				currentZLayer, currentLayerId, color, fill, border, false, angle,
 				depth.floatValue(), offSet, rounded, type.toString());
 		}
 
 		else {
+			//Add a geometry with a depth and type coming from getUSerData (with add_z operator)
 			if ( geometry.getInnerGeometry().getUserData() != null ) {
 				float height = new Float(geom.getUserData().toString());
 				this.AddJTSGeometryInJTSGeometries(geom, scope.getAgentScope().getAgent(),
 					currentZLayer, currentLayerId, color, fill, border, false, angle, height,
 					offSet, rounded, "JTS");
 			} else {
+				//add a 2D geometry without any 3D data.
 				this.AddJTSGeometryInJTSGeometries(geom, scope.getAgentScope().getAgent(),
 					currentZLayer, currentLayerId, color, fill, border, false, angle, 0, offSet,
 					rounded, "none");
