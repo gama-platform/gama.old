@@ -45,7 +45,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.CONST, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.CATEGORY, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.PARAMETER, type = IType.LABEL, optional = true),
-	@facet(name = IKeyword.SIZE, type = IType.INT_STR, optional = true),
+	@facet(name = IKeyword.SIZE, type = { IType.INT_STR, IType.POINT_STR }, optional = true),
 	@facet(name = IKeyword.OF, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.FILL_WITH, type = IType.NONE_STR, optional = true) }, omissible = IKeyword.NAME)
 @symbol(kind = ISymbolKind.Variable.CONTAINER, with_sequence = false)
