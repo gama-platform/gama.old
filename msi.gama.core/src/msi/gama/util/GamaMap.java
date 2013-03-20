@@ -131,7 +131,7 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	@Override
 	public void add(IScope scope, final Object value, final Object param) {
 		// TODO Exception if value not GamaPair !
-		add(scope, value, param);
+		add(scope, null, value, param);
 	}
 
 	@Override
