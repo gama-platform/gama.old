@@ -7,7 +7,7 @@ package msi.gama.lang.utils;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.gaml.*;
-import msi.gama.lang.gaml.gaml.impl.StatementImpl;
+import msi.gama.lang.gaml.gaml.impl.*;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gaml.descriptions.IGamlDescription;
 import org.eclipse.emf.common.notify.Adapter;
@@ -121,7 +121,9 @@ public class EGaml {
 		@Override
 		public String caseFunction(final Function object) {
 			// 6v4:
-			return object.getOp();
+			String s = object.getOp();
+			if ( s == null ) { return caseActionRef((ActionRef) object.getAction()); }
+			return s;
 		}
 
 		@Override
@@ -173,10 +175,6 @@ public class EGaml {
 		return s.getExpr();
 	}
 
-	public static Parameters getParamsOf(final S_Do stm) {
-		return stm.getParams();
-	}
-
 	public static ActionArguments getArgsOf(final S_Definition stm) {
 		return stm.getArgs();
 	}
@@ -192,7 +190,9 @@ public class EGaml {
 
 	public static List<Expression> getExprsOf(final ExpressionList o) {
 		if ( o == null ) { return Collections.EMPTY_LIST; }
-		return o.getExprs();
+		if ( ((ExpressionListImpl) o).eIsSet(GamlPackage.EXPRESSION_LIST__EXPRS) ) { return o
+			.getExprs(); }
+		return Collections.EMPTY_LIST;
 	}
 
 	public static Expression getValueOf(final Statement s) {
@@ -296,17 +296,17 @@ public class EGaml {
 			serialize(args.get(1));
 			serializer.append(")");
 		} else {
+			serializer.append(opName);
 			serializer.append("(");
-			serialize(args.get(0));
-			serializer.append(")").append(opName);
 			array(args, true);
+			serializer.append(")");
 		}
 	}
 
 	private static void array(final List<Expression> args, final boolean arguments) {
 		// if arguments is true, parses the list to transform it into a map of args
 		// (starting at 1); Experimental right now
-		serializer.append("[");
+		// serializer.append("[");
 		int size = args.size();
 		for ( int i = 0; i < size; i++ ) {
 			Expression e = args.get(i);
@@ -318,7 +318,7 @@ public class EGaml {
 				serializer.append(",");
 			}
 		}
-		serializer.append("]");
+		// serializer.append("]");
 	}
 
 	private static IResourceServiceProvider injector;

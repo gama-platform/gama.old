@@ -47,16 +47,17 @@ environment width: gridsize height: gridsize {
 entities {
 	
 	species ant skills: [moving]  control: fsm { 
-		float speed <- float ( 1 );
+		float speed <- 1.0; 
 		bool has_food <- false;
 		signal road value: has_food ? 240: 0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid;
 
  
-		action pick {	
+		action pick (int amount) {	
 			has_food <- true ;
 			ant_grid place <- ant_grid ( location );
-			place . food <- place . food - 1 ;    
+			place . food <- place . food - amount ;    
 		}
+		
 		action drop { 
 			food_gathered <- food_gathered + 1 ;
 			has_food <- false ;   
@@ -73,27 +74,27 @@ entities {
 			}  
 		}
 		reflex drop when: has_food and  ( ant_grid ( location ) ) . is_nest {
-			do drop;
+			do drop();
 		}
 		reflex pick when: ! has_food and ( ant_grid ( location ) ) . food > 0 {
-			do pick;
+			do pick(1);
 		}
 
 		state wandering initial: true {
-			do wander (amplitude: 90) ; 
+			do wander(amplitude: 90) ; 
 			float pr <- ( ant_grid ( location ) ) . road;  
-			transition to: carryingFood when: has_food;
+			transition to: carryingFood when: has_food; 
 			transition to: followingRoad when: ( pr > 0.05 ) and ( pr < 4 );
 		}  
 		 
 		state carryingFood { 
-			do goto (target: center);  
+			do goto(target:center);  
 			transition to: wandering when: ! has_food;
 		}
-
+ 
 		state followingRoad {
-			do choose_best_place returns: next_place;
-			float pr <-  ( ant_grid ( location ) ) . road;   
+			point next_place <- choose_best_place();
+			float pr <-  ( ant_grid ( location ) ) . road;    
 			location <- next_place ;
 			transition to: carryingFood when: has_food ;
 			transition to: wandering when: ( pr < 0.05 ) or ( next_place = nil );
@@ -117,6 +118,8 @@ experiment Complete type: gui {
 	parameter name: 'Number:' var: ants_number init: 100 unit: 'ants' category: 'Environment and Population'; 
 	parameter name: 'Grid dimension:' var: gridsize init: 100 unit: '(number of rows and columns)' category: 'Environment and Population'; 
 	parameter name: 'Number of food depots:' var: number_of_food_places init: 5 min: 1 category: 'Environment and Population';
+	
+	// Experimentator
 	int a <- 1000;
 	
 	init {

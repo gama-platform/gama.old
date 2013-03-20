@@ -66,13 +66,16 @@ public class ActionStatement extends AbstractStatementSequence implements IState
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		actualArgs.complementWith(formalArgs);
 		actualArgs.stack(scope);
 		Object result = super.privateExecuteIn(scope);
 		if ( scope.getStatus() == interrupt ) {
 			scope.setStatus(terminated);
 		}
 		actualArgs.clear();
-		actualArgs.putAll(formalArgs);
+		// actualArgs.putAll(formalArgs);
+		// FIXME Args should be removed instead ?
+		// formalArgs.stack(scope);
 		return result;
 	}
 
@@ -86,6 +89,6 @@ public class ActionStatement extends AbstractStatementSequence implements IState
 	@Override
 	public void setFormalArgs(final Arguments args) {
 		formalArgs.putAll(args);
-		actualArgs.putAll(args);
+		// actualArgs.putAll(args);
 	}
 }

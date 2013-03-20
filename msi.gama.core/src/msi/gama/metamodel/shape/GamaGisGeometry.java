@@ -18,7 +18,6 @@
  */
 package msi.gama.metamodel.shape;
 
-import java.util.Map;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import org.opengis.feature.Property;
@@ -60,10 +59,6 @@ public class GamaGisGeometry extends GamaShape {
 	@Override
 	public void setAgent(IAgent a) {
 		a.setExtraAttributes(attributes);
-	}
-
-	public Map getAttributes() {
-		return attributes;
 	}
 
 }

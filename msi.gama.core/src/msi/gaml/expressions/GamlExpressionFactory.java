@@ -90,10 +90,10 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	}
 
 	@Override
-	public Map<String, IExpressionDescription> createArgumentMap(final IExpressionDescription args,
-		final IDescription context) {
+	public Map<String, IExpressionDescription> createArgumentMap(final StatementDescription action,
+		final IExpressionDescription args, final IDescription context) {
 		if ( args == null ) { return Collections.EMPTY_MAP; }
-		return parser.parseArguments(args, context);
+		return parser.parseArguments(action, args.getTarget(), context);
 	}
 
 	@Override
@@ -156,7 +156,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 				}
 				// No signature has been found, we throw an exception
 				if ( temp_types.size() == 0 ) {
-					context.flagError(
+					context.error(
 						"No operator found for applying '" + op + "' to " + signature +
 							" (operators available for " + Arrays.toString(ops.keySet().toArray()) +
 							")", IGamlIssue.UNMATCHED_OPERANDS);
@@ -187,8 +187,6 @@ public class GamlExpressionFactory implements IExpressionFactory {
 			// We finally make a copy of the operator and init it with the arguments
 			return helper.copy().init(op, context, args);
 		}
-		// If no operator has been found, we throw an exception
-		context.flagError("Operator " + op + " does not exist", IGamlIssue.UNKNOWN_UNARY, null, op);
 		return null;
 
 	}

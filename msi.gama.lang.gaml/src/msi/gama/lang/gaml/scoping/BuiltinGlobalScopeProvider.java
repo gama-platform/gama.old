@@ -7,6 +7,7 @@ import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.utils.EGaml;
 import msi.gama.precompiler.IUnits;
 import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.types.Types;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
@@ -113,10 +114,12 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 			for ( String t : Types.stringToIType.keySet() ) {
 				add(eType, t);
 				add(eVar, t);
+				add(eAction, t);
 			}
 			for ( String t : AbstractGamlAdditions.BUILT_IN_SPECIES.keySet() ) {
 				add(eType, t);
 				add(eVar, t);
+				add(eAction, t);
 			}
 			for ( String t : AbstractGamlAdditions.CONSTANTS ) {
 				add(eType, t);
@@ -136,6 +139,10 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 				add(eVar, t);
 			}
 			for ( String t : AbstractGamlAdditions.getAllActions() ) {
+				add(eAction, t);
+				add(eVar, t);
+			}
+			for ( String t : IExpressionCompiler.OPERATORS.keySet() ) {
 				add(eAction, t);
 			}
 		}

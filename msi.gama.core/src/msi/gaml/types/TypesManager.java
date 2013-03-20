@@ -68,7 +68,7 @@ public class TypesManager {
 		Class base = species.getJavaBase();
 		if ( stringToIType.containsKey(name) ) {
 			if ( name.equals(AGENT_STR) ) { return stringToIType.get(AGENT_STR); }
-			species.flagError("Species " + name + " already declared. Species name must be unique",
+			species.error("Species " + name + " already declared. Species name must be unique",
 				IGamlIssue.DUPLICATE_NAME, null, name);
 		}
 		short newId = ++CURRENT_INDEX;

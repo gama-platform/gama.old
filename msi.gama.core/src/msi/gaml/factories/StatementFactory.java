@@ -90,9 +90,9 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 			SpeciesDescription species = cd.getSpeciesDescription(s);
 			if ( species != null ) {
 				if ( species.isAbstract() ) {
-					cd.flagError("Species " + s + " is abstract and cannot be instantiated");
+					cd.error("Species " + s + " is abstract and cannot be instantiated");
 				} else if ( species.isMirror() ) {
-					cd.flagError("Species " + s + " is a mirror and cannot be instantiated");
+					cd.error("Species " + s + " is a mirror and cannot be instantiated");
 				}
 			}
 		}
@@ -150,7 +150,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 	protected Arguments privateCompileArgs(final StatementDescription cd) {
 		Arguments ca = new Arguments();
 		String keyword = cd.getKeyword();
-		boolean isCreate =
+		boolean isCalling =
 			keyword.equals(CREATE) || keyword.equals(DO) || keyword.equals(PRIMITIVE);
 		Facets argFacets;
 		for ( IDescription sd : cd.getArgs() ) {
@@ -169,24 +169,35 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 					}
 				}
 			} catch (RuntimeException e1) {
-				cd.flagError("Error in compiling argument " + name + ": " + e1.getMessage(), name);
+				cd.error("Error in compiling argument " + name + ": " + e1.getMessage(), name);
 				e1.printStackTrace();
 				return ca;
 			}
 			ca.put(name, e);
 			String typeName = argFacets.getLabel(TYPE);
-			if ( !isCreate &&
+			// FIXME Should not be necessary anymore as it should be eliminated by the parser
+			if ( !isCalling &&
 				!cd.getModelDescription().getTypesManager().getTypeNames().contains(typeName) ) {
-				cd.flagError(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, TYPE);
+				cd.error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, TYPE);
 			}
 			IType type = sd.getTypeNamed(typeName);
 			if ( type == Types.NO_TYPE && e != null ) {
 				type = e.getType();
 			}
-			if ( !isCreate ) {
+			typeName = argFacets.getLabel(OF);
+			// FIXME Should not be necessary anymore as it should be eliminated by the parser
+			if ( typeName != null && !isCalling &&
+				!cd.getModelDescription().getTypesManager().getTypeNames().contains(typeName) ) {
+				cd.error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, TYPE);
+			}
+			IType contents = sd.getTypeNamed(typeName);
+			if ( contents == Types.NO_TYPE && e != null ) {
+				contents = e.getContentType();
+			}
+			if ( !isCalling ) {
 				// Special case for the calls (create, do, primitives) as the "arguments" passed
 				// should not be part of the context
-				cd.addTemp(name, type, e == null ? Types.NO_TYPE : e.getContentType());
+				cd.addTemp(name, type, contents);
 			}
 
 		}

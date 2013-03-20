@@ -113,7 +113,7 @@ public abstract class Symbol implements ISymbol {
 	@Override
 	public void error(final String s, final String facet) /* throws GamlException */{
 		if ( description != null || description.getSourceInformation() != null ) {
-			description.flagError(s, facet);
+			description.error(s, facet);
 		} else {
 			throw new GamaRuntimeException(s);
 			// throw e;
@@ -123,7 +123,7 @@ public abstract class Symbol implements ISymbol {
 	@Override
 	public void warning(final String s, final String facet) /* throws GamlException */{
 		if ( description != null || description.getSourceInformation() != null ) {
-			description.flagWarning(s, facet);
+			description.warning(s, facet);
 		} else {
 			// throw e;
 			throw new GamaRuntimeException(s);

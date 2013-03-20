@@ -87,9 +87,19 @@ public class GamlCompatibilityConverter {
 			}
 		} else if ( stm instanceof S_Do ) {
 			// Translation of "stm ID (ID1: V1, ID2:V2)" to "stm ID with:(ID1: V1, ID2:V2)"
-			Parameters p = ((S_Do) stm).getParams();
-			if ( p != null ) {
-				addFacet(elt, WITH, convExpr(p));
+			Expression e = stm.getExpr();
+			addFacet(elt, ACTION, convExpr(EGaml.getKeyOf(e)));
+			if ( e instanceof Function ) {
+				Function f = (Function) stm.getExpr();
+				Parameters p = f.getParameters();
+				if ( p != null ) {
+					addFacet(elt, WITH, convExpr(p));
+				} else {
+					ExpressionList list = f.getArgs();
+					if ( list != null ) {
+						addFacet(elt, WITH, convExpr(list));
+					}
+				}
 			}
 		} else if ( stm instanceof S_If ) {
 			// If the statement is "if", we convert its potential "else" part and put it as a child
@@ -238,7 +248,7 @@ public class GamlCompatibilityConverter {
 				TypeRef type = (TypeRef) def.getType();
 				addFacet(arg, TYPE, convExpr(EGaml.getKey.caseTypeRef(type)));
 				if ( type.getOf() != null ) {
-					addFacet(elt, OF, convExpr(EGaml.getKey.caseTypeRef((TypeRef) type.getOf())));
+					addFacet(arg, OF, convExpr(EGaml.getKey.caseTypeRef((TypeRef) type.getOf())));
 				}
 				if ( def.getDefault() != null ) {
 					addFacet(arg, DEFAULT, convExpr(def.getDefault()));
@@ -353,7 +363,7 @@ public class GamlCompatibilityConverter {
 		return keyword;
 	}
 
-	private final IExpressionDescription convExpr(final Expression expr) {
+	private final IExpressionDescription convExpr(final EObject expr) {
 		if ( expr != null ) { return new EcoreBasedExpressionDescription(expr); }
 		return null;
 	}

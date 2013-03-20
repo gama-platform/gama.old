@@ -40,14 +40,16 @@ import msi.gaml.types.IType;
  * 
  */
 
-@facets(value = { @facet(name = IKeyword.AT, type = IType.NONE_STR, optional = true),
+@facets(value = {
+	@facet(name = IKeyword.AT, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.KEY, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.ALL, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.ITEM, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.EDGE, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.VERTEX, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.WEIGHT, type = IType.FLOAT_STR, optional = true),
-	@facet(name = IKeyword.IN, type = { IType.CONTAINER_STR }, optional = false) }, combinations = {
+	@facet(name = IKeyword.IN, type = { IType.CONTAINER_STR, IType.SPECIES_STR, IType.AGENT_STR,
+		IType.GEOM_STR }, optional = false) }, combinations = {
 	@combination({ IKeyword.AT, IKeyword.ITEM, IKeyword.IN }),
 	@combination({ IKeyword.ALL, IKeyword.IN }) }, omissible = IKeyword.ITEM)
 @symbol(name = IKeyword.PUT, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)

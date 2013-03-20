@@ -18,8 +18,6 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -36,7 +34,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class ExpressionListImpl extends MinimalEObjectImpl.Container implements ExpressionList
+public class ExpressionListImpl extends ExpressionImpl implements ExpressionList
 {
   /**
    * The cached value of the '{@link #getExprs() <em>Exprs</em>}' containment reference list.

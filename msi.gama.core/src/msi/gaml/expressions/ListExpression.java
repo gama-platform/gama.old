@@ -91,7 +91,7 @@ public class ListExpression extends AbstractExpression {
 
 	@Override
 	public String toString() {
-		return String.valueOf(elements);
+		return Arrays.toString(elements);
 	}
 
 	@Override

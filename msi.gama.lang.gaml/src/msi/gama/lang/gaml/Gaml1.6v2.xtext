@@ -25,7 +25,7 @@ S_1Expr_Facets_BlockOrEnd returns Statement:
 	key=_1Expr_Facets_BlockOrEnd_Key (FirstFacetKey)? expr=Expression (facets+=Facet)* (block=Block | ";");
 	
 S_Do:
-	key=_DoKey ("action:")? expr=ActionRef ('(' (params=Parameters) ')')? (facets+=Facet)* (block=Block | ';');
+	key=_DoKey ("action:")? expr=AbstractRef (facets+=Facet)* (block=Block | ';');
 
 S_Loop:
 	key="loop" (name=ID)? (facets+=Facet)* block=Block;
@@ -228,12 +228,12 @@ Access returns Expression:
 	Dot (({Access.left=current} '[') args=ExpressionList ']')*;
 
 Dot returns Expression:
-	Primary ({Dot.left=current} (op='.' right=Primary))*;
+	Primary ({Dot.left=current} (op='.' right=AbstractRef))*;
 
 Primary returns Expression:
 	TerminalExpression |
 	AbstractRef |
-	'(' Expression ')' |
+	'(' ExpressionList ')' |
 	'(' {Parameters} (params=ParameterList)? ')' |
 	'[' {Array} exprs=ExpressionList? ']' |
 	'{' {Point} left=Expression op=',' right=Expression (',' z=Expression)? '}';
@@ -242,7 +242,8 @@ AbstractRef returns Expression:
 	Function | VariableRef;
 
 Function returns Expression:
-	{Function} op=(Valid_ID) '(' args=ExpressionList ')';
+	{Function} action=ActionRef  '(' (=>parameters=Parameters | args=ExpressionList) ')';
+	//{Function} (op=Valid_ID '(' args=ExpressionList ')') | (action=ActionRef '(' parameters=Parameters ')');
 
 Parameter returns Expression:
 	{Parameter} ((builtInFacetKey=(DefinitionFacetKey | TypeFacetKey | SpecialFacetKey | ActionFacetKey)) |
@@ -279,7 +280,7 @@ VarDefinition:
 	=> S_Declaration | (ArgumentDefinition  | DefinitionFacet | VarFakeDefinition );
 
 ActionDefinition:
-	S_Action | ActionFakeDefinition | S_Definition;
+	S_Action | ActionFakeDefinition | S_Definition | TypeDefinition;
 
 	// Fake Definitions produced by the global scope provider
 UnitFakeDefinition:

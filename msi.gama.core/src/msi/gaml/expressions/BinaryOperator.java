@@ -127,7 +127,7 @@ public class BinaryOperator extends AbstractNAryOperator {
 					type = r;
 					return;
 				}
-				context.flagError(
+				context.error(
 					"Content types of left and right operands do not match (" + l.toString() + "," +
 						r.toString() + "). Impossible to infer the type of the expression",
 					IGamlIssue.UNMATCHED_OPERANDS);
@@ -171,7 +171,7 @@ public class BinaryOperator extends AbstractNAryOperator {
 					contentType = r;
 					return;
 				}
-				context.flagError(
+				context.error(
 					"Content types of left and right operands do not match (" + l.toString() + "," +
 						r.toString() + "). Impossible to infer the content type of the expression",
 					IGamlIssue.UNMATCHED_OPERANDS);

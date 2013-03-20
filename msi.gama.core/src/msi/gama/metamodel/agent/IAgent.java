@@ -38,7 +38,8 @@ import msi.gaml.species.ISpecies;
  * @todo Description
  * 
  */
-public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, IStepable {
+public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, IStepable
+/* IContainer<Object, Object> */{
 
 	// public abstract IScheduler getScheduler();
 

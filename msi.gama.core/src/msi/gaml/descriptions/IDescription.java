@@ -34,15 +34,15 @@ import msi.gaml.types.IType;
  */
 public interface IDescription extends IGamlDescription, IKeyword {
 
-	public void flagError(final String message);
+	public void error(final String message);
 
-	public void flagError(final String message, String code);
+	public void error(final String message, String code);
 
-	public void flagError(final String message, String code, Object element, String ... data);
+	public void error(final String message, String code, Object element, String ... data);
 
-	public void flagWarning(final String message, String code);
+	public void warning(final String message, String code);
 
-	public void flagWarning(final String message, String code, Object element, String ... data);
+	public void warning(final String message, String code, Object element, String ... data);
 
 	public abstract String getKeyword();
 

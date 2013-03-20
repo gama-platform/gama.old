@@ -97,28 +97,28 @@ public class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public void flagError(final String message) {
-		flagError(message, IGamlIssue.GENERAL);
+	public void error(final String message) {
+		error(message, IGamlIssue.GENERAL);
 	}
 
 	@Override
-	public void flagError(final String message, final String code) {
+	public void error(final String message, final String code) {
 		flagError(message, code, false, null, (String[]) null);
 	}
 
 	@Override
-	public void flagError(final String s, final String code, final Object facet,
+	public void error(final String s, final String code, final Object facet,
 		final String ... data) {
 		flagError(s, code, false, facet, data);
 	}
 
 	@Override
-	public void flagWarning(final String message, final String code) {
+	public void warning(final String message, final String code) {
 		flagError(message, code, true, null, (String[]) null);
 	}
 
 	@Override
-	public void flagWarning(final String s, final String code, final Object facet,
+	public void warning(final String s, final String code, final Object facet,
 		final String ... data) {
 		flagError(s, code, true, facet, data);
 	}

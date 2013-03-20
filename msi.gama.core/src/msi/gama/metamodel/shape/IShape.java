@@ -23,6 +23,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.util.GamaMap;
 import msi.gaml.types.IType;
 import com.vividsolutions.jts.geom.*;
 
@@ -53,7 +54,7 @@ public interface IShape extends ILocated, IValue {
 	public abstract Envelope getEnvelope();
 
 	public abstract boolean covers(IShape g);
-	
+
 	public abstract boolean crosses(IShape g);
 
 	public abstract double euclidianDistanceTo(IShape g);
@@ -68,5 +69,7 @@ public interface IShape extends ILocated, IValue {
 	public abstract void setInnerGeometry(Geometry intersection);
 
 	public abstract void dispose();
+
+	public abstract GamaMap getAttributes();
 
 }

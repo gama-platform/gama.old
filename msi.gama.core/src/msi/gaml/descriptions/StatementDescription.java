@@ -21,6 +21,7 @@ package msi.gaml.descriptions;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.runtime.GAMA;
+import msi.gama.util.GamaList;
 import msi.gaml.compilation.IPrimRun;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.*;
@@ -86,7 +87,7 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	private void collectArgs() {
-		args = new HashMap();
+		args = new LinkedHashMap(); // important in order to keep the order of declaration
 		for ( Iterator<IDescription> it = getChildren().iterator(); it.hasNext(); ) {
 			IDescription c = it.next();
 			if ( c.getKeyword().equals(ARG) ) {
@@ -120,11 +121,22 @@ public class StatementDescription extends SymbolDescription {
 
 	private void explodeArgs() {
 		for ( Map.Entry<String, IExpressionDescription> arg : GAMA.getExpressionFactory()
-			.createArgumentMap(facets.get(WITH), this).entrySet() ) {
+			.createArgumentMap(getAction(), facets.get(WITH), this).entrySet() ) {
 			String name = arg.getKey();
 			args.put(name, createArg(name, arg.getValue()));
 		}
 		facets.remove(WITH);
+	}
+
+	private StatementDescription getAction() {
+		String actionName = getFacets().getLabel(IKeyword.ACTION);
+		if ( actionName == null ) { return null; }
+		TypeDescription declPlace = (TypeDescription) getDescriptionDeclaringAction(actionName);
+		StatementDescription executer = null;
+		if ( declPlace != null ) {
+			executer = declPlace.getAction(actionName);
+		}
+		return executer;
 	}
 
 	public IVarExpression addNewTempIfNecessary(final String facetName, final IType type,
@@ -137,7 +149,7 @@ public class StatementDescription extends SymbolDescription {
 
 		IDescription sup = getSuperDescription();
 		if ( !(sup instanceof StatementDescription) ) {
-			flagError("Impossible to return " + facets.getLabel(facetName), IGamlIssue.GENERAL);
+			error("Impossible to return " + facets.getLabel(facetName), IGamlIssue.GENERAL);
 			return null;
 		}
 		return (IVarExpression) ((StatementDescription) sup).addTemp(varName, type, contentType);
@@ -199,7 +211,7 @@ public class StatementDescription extends SymbolDescription {
 		if ( !getKeyword().equals(PRIMITIVE) ) {
 			for ( String arg : mandatoryArgs ) {
 				if ( !names.containsKey(arg) ) {
-					caller.flagError("Missing argument " + arg + " in call to " + getName() +
+					caller.error("Missing argument " + arg + " in call to " + getName() +
 						". Arguments passed are : " + names, IGamlIssue.MISSING_ARGUMENT, null,
 						new String[] { arg });
 				}
@@ -207,20 +219,16 @@ public class StatementDescription extends SymbolDescription {
 		}
 		for ( Facet arg : names.entrySet() ) {
 			if ( !allArgs.contains(arg.getKey()) ) {
-				caller.flagError("Unknown argument " + arg.getKey() + " in call to " + getName(),
+				caller.error("Unknown argument " + arg.getKey() + " in call to " + getName(),
 					IGamlIssue.UNKNOWN_ARGUMENT, null, new String[] { arg.getKey() });
 			}
 		}
 	}
 
 	public void verifyArgs(final String actionName, final Arguments args) {
-		TypeDescription declPlace = (TypeDescription) getDescriptionDeclaringAction(actionName);
-		StatementDescription executer = null;
-		if ( declPlace != null ) {
-			executer = declPlace.getAction(actionName);
-		}
+		StatementDescription executer = getAction();
 		if ( executer == null ) {
-			flagError("Unknown action " + actionName, ACTION);
+			error("Unknown action " + actionName, ACTION);
 			return;
 		}
 		executer.verifyArgs(this, args);
@@ -253,7 +261,7 @@ public class StatementDescription extends SymbolDescription {
 				s = DEFAULT;
 			} else {
 				if ( getKeyword().equals(REFLEX) ) {
-					flagWarning("Reflexes should be named", IGamlIssue.MISSING_NAME, null);
+					warning("Reflexes should be named", IGamlIssue.MISSING_NAME, null);
 				}
 				s = INTERNAL + getKeyword() + String.valueOf(COMMAND_INDEX++);
 			}
@@ -278,8 +286,8 @@ public class StatementDescription extends SymbolDescription {
 	/**
 	 * @return
 	 */
-	public Set<String> getArgNames() {
-		return args == null ? Collections.EMPTY_SET : args.keySet();
+	public List<String> getArgNames() {
+		return args == null ? Collections.EMPTY_LIST : new GamaList(args.keySet());
 	}
 
 	@Override

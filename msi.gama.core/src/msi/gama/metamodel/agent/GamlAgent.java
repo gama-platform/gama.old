@@ -536,4 +536,181 @@ public class GamlAgent extends AbstractAgent implements IGamlAgent {
 		return getSpecies().implementsSkill(skill);
 	}
 
+	/**
+	 * Implementation of IContainer API
+	 * @see msi.gama.util.IContainer
+	 */
+
+	// @Override
+	// public Object get(IScope scope, Object index) throws GamaRuntimeException {
+	// if ( attributes.containsKey(index) ) { return attributes.get(scope, index); }
+	// return ((GamaShape) geometry).getAttribute(index);
+	// }
+	//
+	// @Override
+	// public Object getFromIndicesList(IScope scope, IList indices) throws GamaRuntimeException {
+	// return attributes.getFromIndicesList(scope, indices);
+	// }
+	//
+	// @Override
+	// public boolean contains(IScope scope, Object o) throws GamaRuntimeException {
+	// return attributes.contains(scope, o);
+	// }
+	//
+	// @Override
+	// public Object first(IScope scope) throws GamaRuntimeException {
+	// return attributes.first(scope);
+	// }
+	//
+	// @Override
+	// public Object last(IScope scope) throws GamaRuntimeException {
+	// return attributes.last(scope);
+	// }
+	//
+	// @Override
+	// public int length(IScope scope) {
+	// return attributes.length(scope);
+	// }
+	//
+	// @Override
+	// public Object max(IScope scope) throws GamaRuntimeException {
+	// return attributes.max(scope);
+	// }
+	//
+	// @Override
+	// public Object min(IScope scope) throws GamaRuntimeException {
+	// return attributes.min(scope);
+	// }
+	//
+	// @Override
+	// public Object product(IScope scope) throws GamaRuntimeException {
+	// return attributes.product(scope);
+	// }
+	//
+	// @Override
+	// public Object sum(IScope scope) throws GamaRuntimeException {
+	// return attributes.sum(scope);
+	// }
+	//
+	// @Override
+	// public boolean isEmpty(IScope scope) {
+	// return attributes.isEmpty(scope);
+	// }
+	//
+	// @Override
+	// public IContainer<Object, Object> reverse(IScope scope) throws GamaRuntimeException {
+	// return attributes.reverse(scope);
+	// }
+	//
+	// @Override
+	// public Object any(IScope scope) {
+	// return attributes.any(scope);
+	// }
+	//
+	// @Override
+	// public boolean isFixedLength() {
+	// return false;
+	// }
+	//
+	// @Override
+	// public boolean checkIndex(Object index) {
+	// return attributes.checkIndex(index);
+	// }
+	//
+	// @Override
+	// public boolean checkValue(Object value) {
+	// return attributes.checkValue(value);
+	// }
+	//
+	// @Override
+	// public boolean checkBounds(Object index, boolean forAdding) {
+	// return attributes.checkBounds(index, forAdding);
+	// }
+	//
+	// @Override
+	// public void addAll(IScope scope, IContainer value, Object param) throws GamaRuntimeException
+	// {
+	// attributes.addAll(scope, value, param);
+	// }
+	//
+	// @Override
+	// public void addAll(IScope scope, Object index, IContainer value, Object param)
+	// throws GamaRuntimeException {
+	// attributes.addAll(scope, index, value, param);
+	// }
+	//
+	// @Override
+	// public void add(IScope scope, Object value, Object param) throws GamaRuntimeException {
+	// attributes.add(scope, value, param);
+	// }
+	//
+	// @Override
+	// public void add(IScope scope, Object index, Object value, Object param)
+	// throws GamaRuntimeException {
+	// attributes.add(scope, index, value, param);
+	// }
+	//
+	// @Override
+	// public boolean removeFirst(IScope scope, Object value) throws GamaRuntimeException {
+	// return attributes.removeFirst(scope, value);
+	// }
+	//
+	// @Override
+	// public boolean removeAll(IScope scope, IContainer<?, Object> value) throws
+	// GamaRuntimeException {
+	// return attributes.removeAll(scope, value);
+	// }
+	//
+	// @Override
+	// public Object removeAt(IScope scope, Object index) throws GamaRuntimeException {
+	// return attributes.removeAt(scope, index);
+	// }
+	//
+	// @Override
+	// public void putAll(IScope scope, Object value, Object param) throws GamaRuntimeException {
+	// attributes.putAll(scope, value, param);
+	// }
+	//
+	// @Override
+	// public void put(IScope scope, Object index, Object value, Object param)
+	// throws GamaRuntimeException {
+	// attributes.put(scope, index, value, param);
+	// }
+	//
+	// @Override
+	// public void clear() throws GamaRuntimeException {
+	// attributes.clear();
+	// }
+	//
+	// @Override
+	// public IList listValue(IScope scope) throws GamaRuntimeException {
+	// return attributes.listValue(scope);
+	// }
+	//
+	// @Override
+	// public IMatrix matrixValue(IScope scope) throws GamaRuntimeException {
+	// return attributes.matrixValue(scope);
+	// }
+	//
+	// @Override
+	// public IMatrix matrixValue(IScope scope, ILocation preferredSize) throws GamaRuntimeException
+	// {
+	// return attributes.matrixValue(scope, preferredSize);
+	// }
+	//
+	// @Override
+	// public Map mapValue(IScope scope) throws GamaRuntimeException {
+	// return attributes.mapValue(scope);
+	// }
+	//
+	// @Override
+	// public Iterable iterable(IScope scope) {
+	// return attributes.iterable(scope);
+	// }
+	//
+	// @Override
+	// public Iterator<Object> iterator() {
+	// return attributes.iterator();
+	// }
+	//
 }

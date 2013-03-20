@@ -37,8 +37,10 @@ import msi.gaml.types.IType;
  * 
  */
 
-@facets(value = { @facet(name = IKeyword.ITEM, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.FROM, type = { IType.CONTAINER_STR }, optional = false),
+@facets(value = {
+	@facet(name = IKeyword.ITEM, type = IType.NONE_STR, optional = true),
+	@facet(name = IKeyword.FROM, type = { IType.CONTAINER_STR, IType.SPECIES_STR, IType.AGENT_STR,
+		IType.GEOM_STR }, optional = false),
 	@facet(name = IKeyword.INDEX, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.KEY, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.ALL, type = IType.NONE_STR, optional = true) }, omissible = IKeyword.ITEM)

@@ -59,8 +59,8 @@ public class TypeDescription extends SymbolDescription {
 		String name = one.getFacets().getLabel(NAME);
 		String key = one.getKeyword();
 		String error = key + " " + name + " is declared twice. Only the last will be kept.";
-		one.flagWarning(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, name);
-		two.flagWarning(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, name);
+		one.warning(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, name);
+		two.warning(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, name);
 	}
 
 	protected void addAction(final StatementDescription ce) {
@@ -70,14 +70,14 @@ public class TypeDescription extends SymbolDescription {
 			String previous = existing.getKeyword();
 			if ( previous.equals(PRIMITIVE) && ce.getKeyword().equals(ACTION) &&
 				!existing.isAbstract() ) {
-				ce.flagError("Action " + actionName + " replaces a primitive of the same name.",
+				ce.error("Action " + actionName + " replaces a primitive of the same name.",
 					IGamlIssue.GENERAL);
 			}
 			if ( !ce.getArgNames().containsAll(existing.getArgNames()) ) {
 				String error =
 					"The list of arguments differ in the two implementations of " + actionName;
-				existing.flagError(error, IGamlIssue.DIFFERENT_ARGUMENTS);
-				ce.flagWarning(error, IGamlIssue.DIFFERENT_ARGUMENTS);
+				existing.error(error, IGamlIssue.DIFFERENT_ARGUMENTS);
+				ce.warning(error, IGamlIssue.DIFFERENT_ARGUMENTS);
 			} else {
 				if ( !existing.isAbstract() ) {
 					duplicateError(ce, existing);
@@ -119,7 +119,7 @@ public class TypeDescription extends SymbolDescription {
 			if ( bType != vType ) {
 				String builtInType = bType.toString();
 				String varType = vType.toString();
-				v.flagError("variable " + vName + " is of type " + builtInType +
+				v.error("variable " + vName + " is of type " + builtInType +
 					" and cannot be redefined as a " + varType, IGamlIssue.WRONG_REDEFINITION);
 			}
 			v.copyFrom((VariableDescription) builtIn);
@@ -321,7 +321,7 @@ public class TypeDescription extends SymbolDescription {
 		String name = a.getName();
 		if ( !hasAction(name) ) {
 			if ( a.isAbstract() ) {
-				this.flagError("Abstract action '" + name + "', inherited from " +
+				this.error("Abstract action '" + name + "', inherited from " +
 					parent.getName() + ", should be redefined.", IGamlIssue.MISSING_ACTION);
 				return;
 			}
@@ -333,7 +333,7 @@ public class TypeDescription extends SymbolDescription {
 			String error =
 				"The list of arguments is different from that of action " + name + " defined in " +
 					parent.getName() + " and redefined here.";
-			existing.flagError(error, IGamlIssue.DIFFERENT_ARGUMENTS);
+			existing.error(error, IGamlIssue.DIFFERENT_ARGUMENTS);
 			// a.flagWarning(error, IGamlIssue.DIFFERENT_ARGUMENTS);
 			return;
 		}

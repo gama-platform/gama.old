@@ -92,7 +92,7 @@ public class ModelDescription extends SymbolDescription {
 		try {
 			return FileUtils.constructAbsoluteFilePath(filePath, modelFilePath, mustExist);
 		} catch (GamaRuntimeException e) {
-			flagError(e.getMessage(), IGamlIssue.GENERAL);
+			error(e.getMessage(), IGamlIssue.GENERAL);
 			return filePath;
 		}
 	}

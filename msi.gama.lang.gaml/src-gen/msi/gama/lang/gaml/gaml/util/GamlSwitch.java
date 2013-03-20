@@ -157,6 +157,7 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = caseTypeDefinition(s_Species);
         if (result == null) result = caseStatement(s_Species);
         if (result == null) result = caseVarDefinition(s_Species);
+        if (result == null) result = caseActionDefinition(s_Species);
         if (result == null) result = caseGamlDefinition(s_Species);
         if (result == null) result = defaultCase(theEObject);
         return result;
@@ -289,6 +290,7 @@ public class GamlSwitch<T> extends Switch<T>
       {
         ExpressionList expressionList = (ExpressionList)theEObject;
         T result = caseExpressionList(expressionList);
+        if (result == null) result = caseExpression(expressionList);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -311,6 +313,7 @@ public class GamlSwitch<T> extends Switch<T>
       {
         TypeDefinition typeDefinition = (TypeDefinition)theEObject;
         T result = caseTypeDefinition(typeDefinition);
+        if (result == null) result = caseActionDefinition(typeDefinition);
         if (result == null) result = caseGamlDefinition(typeDefinition);
         if (result == null) result = defaultCase(theEObject);
         return result;
@@ -344,6 +347,7 @@ public class GamlSwitch<T> extends Switch<T>
         TypeFakeDefinition typeFakeDefinition = (TypeFakeDefinition)theEObject;
         T result = caseTypeFakeDefinition(typeFakeDefinition);
         if (result == null) result = caseTypeDefinition(typeFakeDefinition);
+        if (result == null) result = caseActionDefinition(typeFakeDefinition);
         if (result == null) result = caseGamlDefinition(typeFakeDefinition);
         if (result == null) result = defaultCase(theEObject);
         return result;

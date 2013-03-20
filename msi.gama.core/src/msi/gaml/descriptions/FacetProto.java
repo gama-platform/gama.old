@@ -14,6 +14,7 @@ public class FacetProto {
 	public final String doc;
 	static FacetProto KEYWORD = KEYWORD();
 	static FacetProto DEPENDS_ON = DEPENDS_ON();
+	static FacetProto NAME = NAME();
 
 	public FacetProto(final String name, final String[] types, final String[] values,
 		final boolean optional, String doc) {
@@ -32,5 +33,9 @@ public class FacetProto {
 
 	static FacetProto KEYWORD() {
 		return new FacetProto(IKeyword.KEYWORD, new String[] { IType.ID }, new String[0], true, "");
+	}
+
+	static FacetProto NAME() {
+		return new FacetProto(IKeyword.NAME, new String[] { IType.LABEL }, new String[0], true, "");
 	}
 }

@@ -46,8 +46,8 @@ public interface IExpressionFactory {
 
 	public abstract IExpression createUnitExpr(final String unit, IDescription context);
 
-	Map<String, IExpressionDescription> createArgumentMap(IExpressionDescription args,
-		IDescription context);
+	Map<String, IExpressionDescription> createArgumentMap(StatementDescription action,
+		IExpressionDescription args, IDescription context);
 
 	// public Set<String> parseLiteralArray(final IExpressionDescription s,
 	// final IDescription context, boolean skills);

@@ -14,6 +14,8 @@ package msi.gama.lang.gaml.gaml;
  * <p>
  * The following features are supported:
  * <ul>
+ *   <li>{@link msi.gama.lang.gaml.gaml.Function#getAction <em>Action</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.Function#getParameters <em>Parameters</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.Function#getArgs <em>Args</em>}</li>
  * </ul>
  * </p>
@@ -24,6 +26,58 @@ package msi.gama.lang.gaml.gaml;
  */
 public interface Function extends Expression
 {
+  /**
+   * Returns the value of the '<em><b>Action</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Action</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Action</em>' containment reference.
+   * @see #setAction(Expression)
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getFunction_Action()
+   * @model containment="true"
+   * @generated
+   */
+  Expression getAction();
+
+  /**
+   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Function#getAction <em>Action</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Action</em>' containment reference.
+   * @see #getAction()
+   * @generated
+   */
+  void setAction(Expression value);
+
+  /**
+   * Returns the value of the '<em><b>Parameters</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <p>
+   * If the meaning of the '<em>Parameters</em>' containment reference isn't clear,
+   * there really should be more of a description here...
+   * </p>
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Parameters</em>' containment reference.
+   * @see #setParameters(Parameters)
+   * @see msi.gama.lang.gaml.gaml.GamlPackage#getFunction_Parameters()
+   * @model containment="true"
+   * @generated
+   */
+  Parameters getParameters();
+
+  /**
+   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.Function#getParameters <em>Parameters</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Parameters</em>' containment reference.
+   * @see #getParameters()
+   * @generated
+   */
+  void setParameters(Parameters value);
+
   /**
    * Returns the value of the '<em><b>Args</b></em>' containment reference.
    * <!-- begin-user-doc -->

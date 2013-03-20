@@ -78,7 +78,7 @@ public class VariableFactory extends SymbolFactory {
 		String name = facets.getLabel(NAME);
 		String env = facets.getLabel(ENVIRONMENT);
 		if ( env == null ) {
-			superDesc.flagError("No environment defined for signal " + name,
+			superDesc.error("No environment defined for signal " + name,
 				IGamlIssue.NO_ENVIRONMENT);
 			return;
 		}
@@ -92,7 +92,7 @@ public class VariableFactory extends SymbolFactory {
 				name, TYPE, IType.FLOAT_STR, UPDATE, value, MIN, "0.0")), superDesc, null);
 		SpeciesDescription environment = superDesc.getSpeciesDescription(env);
 		if ( environment == null || !environment.isGrid() ) {
-			superDesc.flagError("Environment " + env + " of signal " + name +
+			superDesc.error("Environment " + env + " of signal " + name +
 				" cannot be determined.", IGamlIssue.UNKNOWN_ENVIRONMENT, ENVIRONMENT, env);
 		}
 		if ( environment != null ) {

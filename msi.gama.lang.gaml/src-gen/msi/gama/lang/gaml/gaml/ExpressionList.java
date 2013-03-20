@@ -7,8 +7,6 @@ package msi.gama.lang.gaml.gaml;
 
 import org.eclipse.emf.common.util.EList;
 
-import org.eclipse.emf.ecore.EObject;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Expression List</b></em>'.
@@ -25,7 +23,7 @@ import org.eclipse.emf.ecore.EObject;
  * @model
  * @generated
  */
-public interface ExpressionList extends EObject
+public interface ExpressionList extends Expression
 {
   /**
    * Returns the value of the '<em><b>Exprs</b></em>' containment reference list.

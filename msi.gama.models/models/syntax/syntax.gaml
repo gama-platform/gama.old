@@ -7,7 +7,7 @@
 model syntax
 
 /**
- * GLOBAL: the global section can now sport skills and control, just like other agents. 
+ * The global section can now sport skills and control, just like other agents. 
  * The example below shows a potentially moving world that can be controlled by a finite state machine.
  */
  
@@ -31,6 +31,10 @@ model syntax
  	 int b2 function: {100 + length(a1)};
  	 // ... or using a block (like a statement -- note the absence of semi-column at the end)
  	 int b3 {100 + length(a1)}
+ 	 
+ 	 state first_state initial: true {
+ 	 	//...
+ 	 }
  	 
  /**
  * UNITS
@@ -90,11 +94,51 @@ model syntax
  		set t <- 100;
  		// ... or even by
  		t <- 100;
+
  		
+ 		// Species can now act as direct containers of their agents..
+ 		let spec_with_location <- species0 select (each.location = {0,0});
+ 		let agent0 <- species0[100,100];
+ 		
+ 		// ...  and agents as direct containers of their attributes (mimicking the internal attributes map). This "virtual map" will now contain, in addition to the attributes, 
+ 		// all the variables loaded from CSV, SQL or shape files (some stored in the agent itself, others in the shape).
+ 		agent0["departure"] <- {0,0};
+
+ 		// Keys are not necessarily strings, by the way !
+ 		agent0[0] <- 0;
+ 		
+ 		// Accesses can be combined
+ 		species0[10]["name"] <- "A new name"; // which is equivalent to (spec at 10).name = "A new name";
+ 		
+ 		// Points can be used (with or without curly parentheses) to access agents in species
+ 		species0 agent1 <- species0[10,10]; // returns the agent closest to point {10,10} for a "regular" species
+ 		// The behavior is a bit tweaked for grids, to allow for a "natural" access
+ 		my_grid cell0 <- my_grid[10,10]; // Here, it is the cell at {10, 10} in the matrix of cells
+
+ 		// Shapes also act as containers of CVS/Shapefile attributes (in case they are loaded without being attributed to an agent), as well as 3D properties (for the display).
+ 		agent0.name <- agent0.shape["ID"];
+ 		
+ 		geometry geom <- square(100);
+ 		geom["type"] <- "cube";
+ 		 
+		//This access can be used everywhere, easing the use of shape files (and data files in general)
+		list<geometry> shapes <- file("something.shp") as list;
+		
+		// If we suppose val1, val2, etc. are defined in the shape file
+		float max <- min(shapes collect each["val1"]);
+		
+		//To allow for an easier access in case the modeler only uses agents, agents' attributes can "pass through" towards their shape's attributes 
+		//(in case the same attribute has not been defined in the agent, of course)
+ 		create species0 from: shapes;
+ 		
+ 		max <- min(species0 collect each["val1"]); // equivalent to each.shape["val1"]. 
+ 		//This last sentence only works, however, for *reading* values.
+ 		any(species0)["val1"] <- 100; // will result in the creation of a new attribute in the agent (not in its shape)
+ 		any(species0).shape["val1"] <- 100; // will be correct in that case
+ 		 		
  		// Container variables have seen their usability clearly improved 
- 		// If we define:
  		map m <- map([]);
- 		list<int> l <- [];
+ 		list<int> l <- [1,2,3,4,5];
  		
  		// Adding a value
  		add item: 1 to: l;
@@ -105,9 +149,13 @@ model syntax
  		
  		// Removing a value
  		remove 1 from: l;
+ 		remove "type" from: geom;
+ 		
  		// ... can now be written
  		l -- 1;
- 		//l >> 1;
+ 		l >> 1;
+ 		geom -- "type";
+ 		any(species0) -- "name"; // removes the "name" attribute from a random agent. Can be dangerous in some cases... 
  		
  		// Setting/putting a value
  		put "a" at: 'key' in: m;
@@ -117,12 +165,16 @@ model syntax
  		l[0] <- 1;
  		
  	}
+ 	
+ 	// TODO Species can now be written within the "global" section (to enforce the idea that the top-level species are indeed contained in the world)
+ 	
+
  	 
  /**
   * INVOCATION OF ACTIONS
   */
  	 reflex calling_actions {
- 	 	
+ 	 	// IN IMPERATIVE MODE (i.e. in a statement)
  	 	// The classic way
  	 	do action: dummy1 with: [a::10, b::100] ;
  	 	
@@ -133,17 +185,80 @@ model syntax
  	 	do dummy1 a:10 b: 100;
  	 	
  	 	// The new alternative one 
- 	 	do dummy1 (a:10, b:100);
+ 	 	do dummy1(a:10, b:100);
+ 	 	ask any(species1) {
+ 	 		do goto(target: {10,10}, speed:100);
+ 	 	}
  	 	// ... which has been introduced to unify the functional/imperative use of actions.
  	 	
- 	 	// The "classic" functional call
- 	 	list d <- self dummy1 [a::10, b::100];
- 	 	// And the new one, closer to the previous imperative syntax
- 	 	list d <- self dummy1 (a: 10, b:100);
+ 	 	// And finally the new functional way, probably reserved to simple calls (as all the arguments must be passed).
+ 	 	do dummy1(10,100);
  	 	
- 	 	// This new syntax is not only usable in action calls, but also here, for instance
+ 	 	// IN FUNCTIONAL MODE (i.e. as part of expressions)
+ 	 	// The "classic" way of calling actions. Note that in that case, dummy1 is used like a binary operator (callee on the left, argument map on the right)
+  	 	list d <- self dummy1[a::10, b::100];
+  	 	
+ 	 	// First improvement, argument maps can now be simplified, which results in a functional syntax with named arguments
+ 	 	list d <- self dummy1(b:100); // a is not passed as it has a default value.
  	 	
+ 	 	// To improve the readability of this way of calling actions, the dotted notation is now allowed as well 
+ 	 	list d <- self.dummy1(a: 100, b:100);
+ 	 	float s <- any(species1).compute_speed_using_an_action(max: 100);
+ 	 	
+ 	 	// Finally, the functional syntax is also introduced. In that case, all the arguments need to be passed as they are not named.
+ 	 	// This unifies the way of calling operators and actions furthermore. 
+ 	 	
+ 	 	// The action can be called as a n_ary operator, and in that case, the callee is implicitely the agent that executes the call
+ 	 	list d <- dummy1(10,100);
+ 	 	
+ 	 	// And it can also be called using the "dotted" syntax, in which case the callee needs to be explicit (can be "self" of course)
+ 	 	path s <- world.move(100, 45, shape); // speed, heading, bounds
+ 	 	
+ 	 	 
+ 	 	/**
+ 	 	 *  As a summary, the syntaxes kept for future developments of models will likely be: 
+ 	 	 */
+ 	 	 
+ 	 	// CALLING WITH NAMED ARGUMENTS + OPTIONAL DOTTED SYNTAX IN EXPRESSIONS + IMPLICIT CALLEE IN CASE OF SELF
+ 	 	// This method is convenient as it allows to pass only some arguments (if defaults are defined, which is implicitely the case in primitives), 
+		// but also to pass them in any order
+ 	 	do wander(speed:100, amplitude: 10);
+ 	 	path d <- self.wander(amplitude: 10, speed:100);
+ 	 	path d <- self wander(speed:100, bounds: square(10));
+ 	    path d <- wander(speed:100);
+ 	    path d <- wander();
+ 	 	
+ 	 	// CALLING WITH COMPLETE ARGUMENTS + OPTIONAL DOTTED SYNTAX IN EXPRESSIONS + IMPLICIT CALLEE IN CASE OF SELF
+ 	 	// This method is convenient as it follows the functional syntax of operators and then allows to declare "quasi-operators" in species, even to redefine existing ones.
+ 	 	do wander(100,100,self.shape); // speed, amplitude, bounds as defined in primitive wander
+ 	 	int d <- self.max(10,100); 
+ 	 	int d <- self max(10,100);
+ 	 	int d <- max(10,100);
+ 	 	list others <- filter(species1);
+ 	 	
+ 	 	// As a side note, the new syntax for arguments maps is not only usable in action calls, but also in create, for instance
+ 	 	create species0 with: (a:100,b:20);
  	 }
+ 	 
+ 	 int max(int i, int j){
+ 	 	return i>j ? i : j;
+ 	 }
+ 	 
+ 	 list filter(container<agent> agents) {
+ 	 	return agents where each.location = nil;
+ 	 }
+ 
+// 	 
+// 	 int max (list<int> integers <- [0]) {
+// 	 	int the_max <- integers[0];
+// 	 	loop i from: 1 to: length(integers) - 1 {
+// 	 		int number <- integers[i];
+// 	 		if (number > the_max) {
+// 	 			the_max <- number;
+// 	 		} 
+// 	 	}
+// 	 	return the_max;
+// 	 }
  	 
  /**
   * USE OF OPERATORS 
@@ -180,14 +295,44 @@ model syntax
  		
  		// special units (that take a value in the drawing scope) have been introduced to allow for a better control of the display
  		// This statement will draw a circle of radius 10 pixels, whatever the level of zoom and size of the display
- 		draw circle (10 °px);
+ 		draw circle(10 °px);
  		draw "Display dimensions: " + °display_width + " " + °display_height;
  	}
  	 
  	 
  }
  
- species spec {}
+ // Species can "mirror" a list of agents (or another species). That is, their population is dynamically computed after the list or species mirrored.
+ // Their instances, which are actually "proxy" agents, possess an attribute called "target" that points towards the agent they mirror. Very useful for building graphs, for instance.
+ // The update of the population tries to preserve, as much as possible, the existing mapping (that is, proxy agents do not change targets if they do not die or disappear from the list).
+ 	
+ 	species species0 {
+ 		float speed <- float(rnd(1000));
+ 	}
+
+ 	species species1 mirrors: list(species0) skills:[moving] {
+ 	
+ 		point location update: target.location + {10,10};
+ 		float speed1 update: self compute_speed_using_an_action(); // No parameter as "max" is defaulted
+ 		float speed2 update: compute_speed_using_a_functional_attribute;
+ 		
+ 		float compute_speed_using_a_functional_attribute { float(speed of (target as species0)) }
+ 		
+ 		float compute_speed_using_an_action (int max <- 100) {
+			return min([max, float(speed of (target as species0))]);
+		}
+		
+		
+		init {
+			write "I am " + self.name + " and my target is " + target.name;
+		}
+		
+
+ 	}
+ 
+ 	grid my_grid width: 100 height:100 {
+ 	
+ 	}
  
  
  experiment exp1 type: gui {
@@ -195,7 +340,7 @@ model syntax
 	output{
 		display Display type: opengl{
 			// Layers include a new keyword, "graphics", that allows to draw arbitrary shapes using the syntax found in the aspects of species
-			// The same capability will be soon added to species/agents layers (in order to define on-the-fly aspects without changing the species
+			// The same capability will be soon added to species/agents layers (in order to define on-the-fly aspects without changing the species itself)
 			graphics G {
 				draw sphere(10) at:{50, 50};
 				if (true) {draw "true";} else {draw "false";}

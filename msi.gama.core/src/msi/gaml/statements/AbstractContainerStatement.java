@@ -20,11 +20,13 @@ package msi.gaml.statements;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.*;
 import msi.gama.util.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
+import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
 /**
@@ -93,8 +95,10 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 	 */
 	private IContainer createContainer(final IScope scope) throws GamaRuntimeException {
 		final Object cont = list.value(scope);
-		if ( !(cont instanceof IContainer) ) { throw new GamaContainerTypeWarning(list); }
-		return (IContainer) cont;
+		if ( cont instanceof IContainer ) { return (IContainer) cont; }
+		if ( cont instanceof ISpecies ) { return (ISpecies) cont; }
+		if ( cont instanceof IShape ) { return ((IShape) cont).getAttributes(); }
+		throw new GamaContainerTypeWarning(list);
 	}
 
 	private Object createKey(final IScope scope, final IContainer container)

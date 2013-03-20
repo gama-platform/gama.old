@@ -283,7 +283,7 @@ public class BatchExperiment extends AbstractExperiment {
 			exploAlgo.initializeFor(this);
 		} catch (GamaRuntimeException e) {
 			// TODO Why make an error on the description ?
-			description.flagError(e.getMessage(), IGamlIssue.GENERAL);
+			description.error(e.getMessage(), IGamlIssue.GENERAL);
 		}
 	}
 

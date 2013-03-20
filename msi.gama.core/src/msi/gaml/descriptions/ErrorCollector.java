@@ -34,8 +34,8 @@ public class ErrorCollector implements IErrorCollector {
 	}
 
 	public void clear() {
-		 errors = new ArrayList();
-	 warnings = new ArrayList();
+		errors = new ArrayList();
+		warnings = new ArrayList();
 	}
 
 }

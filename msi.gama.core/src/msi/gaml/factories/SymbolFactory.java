@@ -120,7 +120,7 @@ public class SymbolFactory {
 	final void validate(final IDescription desc) {
 		SymbolProto sp = DescriptionFactory.getProto(desc.getKeyword());
 		if ( sp == null ) {
-			desc.flagError("Impossible to validate " + desc.getKeyword(),
+			desc.error("Impossible to validate " + desc.getKeyword(),
 				IGamlIssue.UNKNOWN_KEYWORD, null, desc.getKeyword());
 			return;
 		}

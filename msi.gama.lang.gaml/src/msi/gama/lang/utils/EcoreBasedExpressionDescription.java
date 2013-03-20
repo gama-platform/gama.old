@@ -36,21 +36,21 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 		if ( !(target instanceof Array) ) {
 			if ( target instanceof VariableRef ) {
 				String skillName = EGaml.getKey.caseVariableRef((VariableRef) target);
-				context.flagWarning(type +
+				context.warning(type +
 					"s should be provided as a list of identifiers, for instance [" + skillName +
 					"]", IGamlIssue.AS_ARRAY, target, skillName);
 				if ( skills && !AbstractGamlAdditions.getSkillClasses().containsKey(skillName) ) {
-					context.flagError("Unknown " + type + " " + skillName,
+					context.error("Unknown " + type + " " + skillName,
 						IGamlIssue.UNKNOWN_SKILL, target);
 				}
 				return new HashSet(Arrays.asList(skillName));
 			}
 			if ( target instanceof Expression ) {
-				context.flagError(
+				context.error(
 					"Impossible to recognize valid " + type + "s in " + EGaml.toString(target),
 					skills ? IGamlIssue.UNKNOWN_SKILL : IGamlIssue.UNKNOWN_VAR, target);
 			} else {
-				context.flagError(type + "s should be provided as a list of identifiers.",
+				context.error(type + "s should be provided as a list of identifiers.",
 					IGamlIssue.UNKNOWN_SKILL, target);
 			}
 			return Collections.EMPTY_SET;
@@ -60,7 +60,7 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 		for ( Expression expr : EGaml.getExprsOf(array.getExprs()) ) {
 			String name = EGaml.getKeyOf(expr);
 			if ( skills && !AbstractGamlAdditions.getSkillClasses().containsKey(name) ) {
-				context.flagError("Unknown " + type + " " + name, skills ? IGamlIssue.UNKNOWN_SKILL
+				context.error("Unknown " + type + " " + name, skills ? IGamlIssue.UNKNOWN_SKILL
 					: IGamlIssue.UNKNOWN_VAR, expr);
 			} else {
 				result.add(name);

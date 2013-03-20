@@ -21,6 +21,7 @@ package msi.gama.metamodel.shape;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaMap;
 import msi.gaml.operators.Maths;
 import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.*;
@@ -285,5 +286,10 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public void dispose() {}
+
+	@Override
+	public GamaMap getAttributes() {
+		return null;
+	}
 
 }

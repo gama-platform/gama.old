@@ -19,7 +19,7 @@
 package msi.gama.util.file;
 
 import java.io.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -131,6 +131,7 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 	@Override
 	protected void flushBuffer() throws GamaRuntimeException {
 		// TODO Regarder ce qu'il y a dans la commande "save" pour sauvegarder les fichiers.
+		// Merger progressivement save et le systéme de fichiers afin de ne plus dépendre de ça.
 
 	}
 
@@ -144,15 +145,6 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 			String name = store.getTypeNames()[0];
 			FeatureSource<SimpleFeatureType, SimpleFeature> source = store.getFeatureSource(name);
 			env = source.getBounds();
-
-			GuiUtils.debug("ModelEnvironment.loadShapeFile: _store :" + store.toString());
-			GuiUtils.debug("ModelEnvironment.loadShapeFile: _name of store:" + name);
-			GuiUtils.debug("ModelEnvironment.loadShapeFile: _FeatureSource :" + source.toString());
-			GuiUtils.debug("ModelEnvironment.loadShapeFile: _Envelop:" + env.toString());
-			GuiUtils
-				.debug("ModelEnvironment.loadShapeFile: _store.getSchema().getCoordinateReferenceSystem():" +
-					store.getSchema().getCoordinateReferenceSystem());
-
 			if ( store.getSchema().getCoordinateReferenceSystem() != null ) {
 				ShpFiles shpf = new ShpFiles(shpFile);
 				double latitude = env.centre().x;

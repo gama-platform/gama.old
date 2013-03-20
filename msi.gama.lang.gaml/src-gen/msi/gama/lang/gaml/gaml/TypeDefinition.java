@@ -16,6 +16,6 @@ package msi.gama.lang.gaml.gaml;
  * @model
  * @generated
  */
-public interface TypeDefinition extends GamlDefinition
+public interface TypeDefinition extends GamlDefinition, ActionDefinition
 {
 } // TypeDefinition

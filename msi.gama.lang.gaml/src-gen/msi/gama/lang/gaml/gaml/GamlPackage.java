@@ -235,22 +235,13 @@ public interface GamlPackage extends EPackage
   int SDO__BLOCK = STATEMENT__BLOCK;
 
   /**
-   * The feature id for the '<em><b>Params</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int SDO__PARAMS = STATEMENT_FEATURE_COUNT + 0;
-
-  /**
    * The number of structural features of the '<em>SDo</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int SDO_FEATURE_COUNT = STATEMENT_FEATURE_COUNT + 1;
+  int SDO_FEATURE_COUNT = STATEMENT_FEATURE_COUNT + 0;
 
   /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.S_DeclarationImpl <em>SDeclaration</em>}' class.
@@ -1455,13 +1446,40 @@ public interface GamlPackage extends EPackage
   int EXPRESSION_LIST = 24;
 
   /**
+   * The feature id for the '<em><b>Left</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int EXPRESSION_LIST__LEFT = EXPRESSION__LEFT;
+
+  /**
+   * The feature id for the '<em><b>Op</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int EXPRESSION_LIST__OP = EXPRESSION__OP;
+
+  /**
+   * The feature id for the '<em><b>Right</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int EXPRESSION_LIST__RIGHT = EXPRESSION__RIGHT;
+
+  /**
    * The feature id for the '<em><b>Exprs</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int EXPRESSION_LIST__EXPRS = 0;
+  int EXPRESSION_LIST__EXPRS = EXPRESSION_FEATURE_COUNT + 0;
 
   /**
    * The number of structural features of the '<em>Expression List</em>' class.
@@ -1470,7 +1488,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int EXPRESSION_LIST_FEATURE_COUNT = 1;
+  int EXPRESSION_LIST_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
 
   /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.VariableRefImpl <em>Variable Ref</em>}' class.
@@ -2476,13 +2494,31 @@ public interface GamlPackage extends EPackage
   int FUNCTION__RIGHT = EXPRESSION__RIGHT;
 
   /**
+   * The feature id for the '<em><b>Action</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int FUNCTION__ACTION = EXPRESSION_FEATURE_COUNT + 0;
+
+  /**
+   * The feature id for the '<em><b>Parameters</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int FUNCTION__PARAMETERS = EXPRESSION_FEATURE_COUNT + 1;
+
+  /**
    * The feature id for the '<em><b>Args</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int FUNCTION__ARGS = EXPRESSION_FEATURE_COUNT + 0;
+  int FUNCTION__ARGS = EXPRESSION_FEATURE_COUNT + 2;
 
   /**
    * The number of structural features of the '<em>Function</em>' class.
@@ -2491,7 +2527,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int FUNCTION_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
+  int FUNCTION_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 3;
 
   /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.ParameterImpl <em>Parameter</em>}' class.
@@ -3181,17 +3217,6 @@ public interface GamlPackage extends EPackage
    * @generated
    */
   EClass getS_Do();
-
-  /**
-   * Returns the meta object for the containment reference '{@link msi.gama.lang.gaml.gaml.S_Do#getParams <em>Params</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Params</em>'.
-   * @see msi.gama.lang.gaml.gaml.S_Do#getParams()
-   * @see #getS_Do()
-   * @generated
-   */
-  EReference getS_Do_Params();
 
   /**
    * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.S_Loop <em>SLoop</em>}'.
@@ -3897,6 +3922,28 @@ public interface GamlPackage extends EPackage
   EClass getFunction();
 
   /**
+   * Returns the meta object for the containment reference '{@link msi.gama.lang.gaml.gaml.Function#getAction <em>Action</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Action</em>'.
+   * @see msi.gama.lang.gaml.gaml.Function#getAction()
+   * @see #getFunction()
+   * @generated
+   */
+  EReference getFunction_Action();
+
+  /**
+   * Returns the meta object for the containment reference '{@link msi.gama.lang.gaml.gaml.Function#getParameters <em>Parameters</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Parameters</em>'.
+   * @see msi.gama.lang.gaml.gaml.Function#getParameters()
+   * @see #getFunction()
+   * @generated
+   */
+  EReference getFunction_Parameters();
+
+  /**
    * Returns the meta object for the containment reference '{@link msi.gama.lang.gaml.gaml.Function#getArgs <em>Args</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4209,14 +4256,6 @@ public interface GamlPackage extends EPackage
      * @generated
      */
     EClass SDO = eINSTANCE.getS_Do();
-
-    /**
-     * The meta object literal for the '<em><b>Params</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference SDO__PARAMS = eINSTANCE.getS_Do_Params();
 
     /**
      * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.S_LoopImpl <em>SLoop</em>}' class.
@@ -4851,6 +4890,22 @@ public interface GamlPackage extends EPackage
      * @generated
      */
     EClass FUNCTION = eINSTANCE.getFunction();
+
+    /**
+     * The meta object literal for the '<em><b>Action</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference FUNCTION__ACTION = eINSTANCE.getFunction_Action();
+
+    /**
+     * The meta object literal for the '<em><b>Parameters</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference FUNCTION__PARAMETERS = eINSTANCE.getFunction_Parameters();
 
     /**
      * The meta object literal for the '<em><b>Args</b></em>' containment reference feature.

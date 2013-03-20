@@ -22,9 +22,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Statement/facets"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Statement/block"/>
     </genClasses>
-    <genClasses ecoreClass="Gaml.ecore#//S_Do">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//S_Do/params"/>
-    </genClasses>
+    <genClasses ecoreClass="Gaml.ecore#//S_Do"/>
     <genClasses ecoreClass="Gaml.ecore#//S_Loop"/>
     <genClasses ecoreClass="Gaml.ecore#//S_If">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//S_If/else"/>
@@ -110,6 +108,8 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Point/z"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//Function">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Function/action"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Function/parameters"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Function/args"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//Parameter">

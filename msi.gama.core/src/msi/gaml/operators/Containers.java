@@ -80,6 +80,17 @@ public class Containers {
 	// return scope.getAgentScope().getPopulationFor(s).size();
 	// }
 	//
+
+	@operator(value = { "internal_at" })
+	@doc("For internal use only. Corresponds to the implementation of the access to containers with [index]")
+	public static Object getFromIndicesList(IScope scope, IShape shape, IList indices)
+		throws GamaRuntimeException {
+		if ( shape == null ) { return null; }
+		GamaMap map = shape.getAttributes();
+		if ( map == null ) { return null; }
+		return map.getFromIndicesList(scope, indices);
+	}
+
 	@operator(value = { IKeyword.AT, "@" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
 	@doc(deprecated = "The use of at on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)")
 	public static IAgent getAgent(final IScope scope, final ISpecies s, final GamaPoint val)

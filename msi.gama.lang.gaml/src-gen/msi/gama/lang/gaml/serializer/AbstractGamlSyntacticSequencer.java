@@ -18,8 +18,6 @@ import org.eclipse.xtext.serializer.sequencer.AbstractSyntacticSequencer;
 public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	protected GamlGrammarAccess grammarAccess;
-	protected AbstractElementAlias match_Primary_LeftParenthesisKeyword_2_0_a;
-	protected AbstractElementAlias match_Primary_LeftParenthesisKeyword_2_0_p;
 	protected AbstractElementAlias match_S_1Expr_Facets_BlockOrEnd_FirstFacetKeyParserRuleCall_1_q;
 	protected AbstractElementAlias match_S_Action_NameKeyword_2_q;
 	protected AbstractElementAlias match_S_Definition_NameKeyword_1_q;
@@ -35,8 +33,6 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 	@Inject
 	protected void init(IGrammarAccess access) {
 		grammarAccess = (GamlGrammarAccess) access;
-		match_Primary_LeftParenthesisKeyword_2_0_a = new TokenAlias(true, true, grammarAccess.getPrimaryAccess().getLeftParenthesisKeyword_2_0());
-		match_Primary_LeftParenthesisKeyword_2_0_p = new TokenAlias(true, false, grammarAccess.getPrimaryAccess().getLeftParenthesisKeyword_2_0());
 		match_S_1Expr_Facets_BlockOrEnd_FirstFacetKeyParserRuleCall_1_q = new TokenAlias(false, true, grammarAccess.getS_1Expr_Facets_BlockOrEndAccess().getFirstFacetKeyParserRuleCall_1());
 		match_S_Action_NameKeyword_2_q = new TokenAlias(false, true, grammarAccess.getS_ActionAccess().getNameKeyword_2());
 		match_S_Definition_NameKeyword_1_q = new TokenAlias(false, true, grammarAccess.getS_DefinitionAccess().getNameKeyword_1());
@@ -69,11 +65,7 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 		List<INode> transitionNodes = collectNodes(fromNode, toNode);
 		for (AbstractElementAlias syntax : transition.getAmbiguousSyntaxes()) {
 			List<INode> syntaxNodes = getNodesFor(transitionNodes, syntax);
-			if(match_Primary_LeftParenthesisKeyword_2_0_a.equals(syntax))
-				emit_Primary_LeftParenthesisKeyword_2_0_a(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if(match_Primary_LeftParenthesisKeyword_2_0_p.equals(syntax))
-				emit_Primary_LeftParenthesisKeyword_2_0_p(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if(match_S_1Expr_Facets_BlockOrEnd_FirstFacetKeyParserRuleCall_1_q.equals(syntax))
+			if(match_S_1Expr_Facets_BlockOrEnd_FirstFacetKeyParserRuleCall_1_q.equals(syntax))
 				emit_S_1Expr_Facets_BlockOrEnd_FirstFacetKeyParserRuleCall_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if(match_S_Action_NameKeyword_2_q.equals(syntax))
 				emit_S_Action_NameKeyword_2_q(semanticObject, getLastNavigableState(), syntaxNodes);
@@ -99,22 +91,6 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 		}
 	}
 
-	/**
-	 * Syntax:
-	 *     '('*
-	 */
-	protected void emit_Primary_LeftParenthesisKeyword_2_0_a(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
-		acceptNodes(transition, nodes);
-	}
-	
-	/**
-	 * Syntax:
-	 *     '('+
-	 */
-	protected void emit_Primary_LeftParenthesisKeyword_2_0_p(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
-		acceptNodes(transition, nodes);
-	}
-	
 	/**
 	 * Syntax:
 	 *     FirstFacetKey?
@@ -173,7 +149,7 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 	
 	/**
 	 * Syntax:
-	 *     'value:' | '<-'
+	 *     '<-' | 'value:'
 	 */
 	protected void emit_S_Set_LessThanSignHyphenMinusKeyword_3_1_or_ValueKeyword_3_0(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
@@ -181,7 +157,7 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 	
 	/**
 	 * Syntax:
-	 *     ('name:' | 'var:')?
+	 *     ('var:' | 'name:')?
 	 */
 	protected void emit_S_Set___NameKeyword_1_1_or_VarKeyword_1_0__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);

@@ -134,7 +134,8 @@ public class DrawStatement extends AbstractStatementSequence {
 	 *            expressions)
 	 * @return the new expression, patched for compatibility
 	 */
-	private IExpression patchForCompatibility(IExpression exp, final IDescription desc) {
+	private IExpression patchForCompatibility(final IExpression exp, final IDescription desc) {
+		IExpression newExpr = null;
 		if ( exp.getType().id() == IType.STRING && exp.isConst() ) {
 			String old = Cast.asString(null, exp.value(null));
 			if ( old.contains("deprecated") ) {
@@ -144,16 +145,16 @@ public class DrawStatement extends AbstractStatementSequence {
 					if ( sizeExp == null ) {
 						sizeExp = GAMA.getExpressionFactory().createConst(1, Types.get(IType.INT));
 					}
-					exp = GAMA.getExpressionFactory().createOperator("circle", desc, sizeExp);
+					newExpr = GAMA.getExpressionFactory().createOperator("circle", desc, sizeExp);
 				} else if ( old.equals("rectangle") || old.equals("square") ) {
 					IExpression sizeExp = getFacet(SIZE);
 					if ( sizeExp == null ) {
 						sizeExp = GAMA.getExpressionFactory().createConst(1, Types.get(IType.INT));
 					}
 
-					exp = GAMA.getExpressionFactory().createOperator("square", desc, sizeExp);
+					newExpr = GAMA.getExpressionFactory().createOperator("square", desc, sizeExp);
 				} else if ( old.equals("geometry") ) {
-					exp = getShapeExpression(desc);
+					newExpr = getShapeExpression(desc);
 				} else if ( old.equals("line") ) {
 					IExpression at = getFacet(AT);
 					IExpression to = getFacet(TO);
@@ -167,15 +168,21 @@ public class DrawStatement extends AbstractStatementSequence {
 					elements.add(at);
 					elements.add(to);
 					IExpression list = GAMA.getExpressionFactory().createList(elements);
-					exp = GAMA.getExpressionFactory().createOperator("line", desc, list);
+					newExpr = GAMA.getExpressionFactory().createOperator("line", desc, list);
 				}
 			} else {
 				if ( GamaFileType.isImageFile(old) ) {
-					exp = GAMA.getExpressionFactory().createOperator("file", desc, exp);
+					newExpr = GAMA.getExpressionFactory().createOperator("file", desc, exp);
 				}
 			}
+			if ( newExpr != null ) {
+				desc.getFacets().put(IType.GEOM_STR, exp);
+			} else {
+				// If no operator has been found, we throw an exception
+				desc.error("Impossible to patch the expression for compatibility",
+					IGamlIssue.UNKNOWN_UNARY, exp.getTarget(), "");
 
-			desc.getFacets().put(IType.GEOM_STR, exp);
+			}
 		}
 		return exp;
 	}

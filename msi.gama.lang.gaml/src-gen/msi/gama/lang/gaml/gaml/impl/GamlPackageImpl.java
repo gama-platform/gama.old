@@ -691,16 +691,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getS_Do_Params()
-  {
-    return (EReference)s_DoEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EClass getS_Loop()
   {
     return s_LoopEClass;
@@ -1381,9 +1371,29 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getFunction_Args()
+  public EReference getFunction_Action()
   {
     return (EReference)functionEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getFunction_Parameters()
+  {
+    return (EReference)functionEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getFunction_Args()
+  {
+    return (EReference)functionEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -1601,7 +1611,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     createEReference(statementEClass, STATEMENT__BLOCK);
 
     s_DoEClass = createEClass(SDO);
-    createEReference(s_DoEClass, SDO__PARAMS);
 
     s_LoopEClass = createEClass(SLOOP);
 
@@ -1715,6 +1724,8 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     createEReference(pointEClass, POINT__Z);
 
     functionEClass = createEClass(FUNCTION);
+    createEReference(functionEClass, FUNCTION__ACTION);
+    createEReference(functionEClass, FUNCTION__PARAMETERS);
     createEReference(functionEClass, FUNCTION__ARGS);
 
     parameterEClass = createEClass(PARAMETER);
@@ -1796,8 +1807,10 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     argumentDefinitionEClass.getESuperTypes().add(this.getVarDefinition());
     facetEClass.getESuperTypes().add(this.getVarDefinition());
     argumentPairEClass.getESuperTypes().add(this.getExpression());
+    expressionListEClass.getESuperTypes().add(this.getExpression());
     variableRefEClass.getESuperTypes().add(this.getExpression());
     typeDefinitionEClass.getESuperTypes().add(this.getGamlDefinition());
+    typeDefinitionEClass.getESuperTypes().add(this.getActionDefinition());
     varDefinitionEClass.getESuperTypes().add(this.getGamlDefinition());
     actionDefinitionEClass.getESuperTypes().add(this.getGamlDefinition());
     unitFakeDefinitionEClass.getESuperTypes().add(this.getGamlDefinition());
@@ -1847,7 +1860,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     initEReference(getStatement_Block(), this.getBlock(), null, "block", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(s_DoEClass, S_Do.class, "S_Do", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getS_Do_Params(), this.getParameters(), null, "params", null, 0, 1, S_Do.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(s_LoopEClass, S_Loop.class, "S_Loop", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -1961,6 +1973,8 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     initEReference(getPoint_Z(), this.getExpression(), null, "z", null, 0, 1, Point.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(functionEClass, Function.class, "Function", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getFunction_Action(), this.getExpression(), null, "action", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getFunction_Parameters(), this.getParameters(), null, "parameters", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getFunction_Args(), this.getExpressionList(), null, "args", null, 0, 1, Function.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(parameterEClass, Parameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

@@ -342,7 +342,7 @@ public class SpeciesDescription extends TypeDescription {
 					javaBase = parent.javaBase;
 					agentConstructor = parent.agentConstructor;
 				} else {
-					flagError(
+					error(
 						"Species " + getName() + " Java base class (" + javaBase.getSimpleName() +
 							") is not a subclass of its parent species " + parent.getName() +
 							" base class (" + parent.getJavaBase().getSimpleName() + ")",
@@ -530,7 +530,7 @@ public class SpeciesDescription extends TypeDescription {
 	private SpeciesDescription verifyParent(final String parentName) {
 
 		if ( this.getName().equals(parentName) ) {
-			flagError(getName() + " species can't be a sub-species of itself", IGamlIssue.GENERAL);
+			error(getName() + " species can't be a sub-species of itself", IGamlIssue.GENERAL);
 			return null;
 		}
 		List<SpeciesDescription> candidates = this.getPotentialParentSpecies();
@@ -550,7 +550,7 @@ public class SpeciesDescription extends TypeDescription {
 			// }
 			// availableSpecies.remove(availableSpecies.size() - 1);
 
-			flagError(parentName + " can't be a parent species of " + this.getName() + " species.",
+			error(parentName + " can't be a parent species of " + this.getName() + " species.",
 				IGamlIssue.WRONG_PARENT, PARENT);
 
 			return null;
@@ -561,8 +561,8 @@ public class SpeciesDescription extends TypeDescription {
 			String error =
 				this.getName() + " species and " + potentialParent.getName() +
 					" species can't be sub-species of each other.";
-			potentialParent.flagError(error);
-			flagError(error);
+			potentialParent.error(error);
+			error(error);
 			return null;
 		}
 

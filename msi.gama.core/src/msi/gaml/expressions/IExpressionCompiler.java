@@ -22,6 +22,7 @@ import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gaml.descriptions.*;
 import msi.gaml.types.Signature;
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * Written by drogoul Modified on 28 d�c. 2010
@@ -44,9 +45,7 @@ public interface IExpressionCompiler<T> {
 	public abstract IExpression compile(final IExpressionDescription s,
 		final IDescription parsingContext);
 
-	Map<String, IExpressionDescription> parseArguments(IExpressionDescription args,
-		IDescription context);
+	Map<String, IExpressionDescription> parseArguments(StatementDescription action,
+		EObject eObject, IDescription context);
 
-	// public abstract Set<String> parseLiteralArray(final IExpressionDescription s,
-	// final IDescription context, boolean skills);
 }

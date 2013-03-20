@@ -43,7 +43,7 @@ public abstract class AbstractAgent implements IAgent {
 
 	/** The population that this agent belongs to. */
 	protected IPopulation population;
-	protected final Map<Object, Object> attributes = new LinkedHashMap();
+	protected final GamaMap attributes = new GamaMap();
 	protected int index;
 	/** The shape of agent with relative coordinate on the environment of host/environment. */
 	protected IShape geometry;
@@ -70,6 +70,11 @@ public abstract class AbstractAgent implements IAgent {
 	public void setExtraAttributes(Map<Object, Object> map) {
 		if ( map == null ) { return; }
 		attributes.putAll(map);
+	}
+
+	@Override
+	public GamaMap getAttributes() {
+		return attributes;
 	}
 
 	@Override
