@@ -227,6 +227,16 @@ public class GamlSwitch<T> extends Switch<T>
         S_Equations s_Equations = (S_Equations)theEObject;
         T result = caseS_Equations(s_Equations);
         if (result == null) result = caseStatement(s_Equations);
+        if (result == null) result = caseEquationDefinition(s_Equations);
+        if (result == null) result = caseGamlDefinition(s_Equations);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GamlPackage.SSOLVE:
+      {
+        S_Solve s_Solve = (S_Solve)theEObject;
+        T result = caseS_Solve(s_Solve);
+        if (result == null) result = caseStatement(s_Solve);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -308,6 +318,14 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case GamlPackage.EQUATION_DEFINITION:
+      {
+        EquationDefinition equationDefinition = (EquationDefinition)theEObject;
+        T result = caseEquationDefinition(equationDefinition);
+        if (result == null) result = caseGamlDefinition(equationDefinition);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case GamlPackage.TYPE_DEFINITION:
       {
         TypeDefinition typeDefinition = (TypeDefinition)theEObject;
@@ -374,6 +392,15 @@ public class GamlSwitch<T> extends Switch<T>
         T result = caseVarFakeDefinition(varFakeDefinition);
         if (result == null) result = caseVarDefinition(varFakeDefinition);
         if (result == null) result = caseGamlDefinition(varFakeDefinition);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GamlPackage.EQUATION_FAKE_DEFINITION:
+      {
+        EquationFakeDefinition equationFakeDefinition = (EquationFakeDefinition)theEObject;
+        T result = caseEquationFakeDefinition(equationFakeDefinition);
+        if (result == null) result = caseEquationDefinition(equationFakeDefinition);
+        if (result == null) result = caseGamlDefinition(equationFakeDefinition);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -536,6 +563,14 @@ public class GamlSwitch<T> extends Switch<T>
         ActionRef actionRef = (ActionRef)theEObject;
         T result = caseActionRef(actionRef);
         if (result == null) result = caseExpression(actionRef);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case GamlPackage.EQUATION_REF:
+      {
+        EquationRef equationRef = (EquationRef)theEObject;
+        T result = caseEquationRef(equationRef);
+        if (result == null) result = caseExpression(equationRef);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -870,6 +905,22 @@ public class GamlSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>SSolve</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>SSolve</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseS_Solve(S_Solve object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>Parameters</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -1030,6 +1081,22 @@ public class GamlSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>Equation Definition</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Equation Definition</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseEquationDefinition(EquationDefinition object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>Type Definition</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -1153,6 +1220,22 @@ public class GamlSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseVarFakeDefinition(VarFakeDefinition object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Equation Fake Definition</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Equation Fake Definition</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseEquationFakeDefinition(EquationFakeDefinition object)
   {
     return null;
   }
@@ -1457,6 +1540,22 @@ public class GamlSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseActionRef(ActionRef object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Equation Ref</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Equation Ref</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseEquationRef(EquationRef object)
   {
     return null;
   }

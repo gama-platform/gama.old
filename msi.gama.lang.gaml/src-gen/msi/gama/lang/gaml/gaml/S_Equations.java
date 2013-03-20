@@ -15,7 +15,6 @@ import org.eclipse.emf.common.util.EList;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link msi.gama.lang.gaml.gaml.S_Equations#getName <em>Name</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.S_Equations#getEquations <em>Equations</em>}</li>
  * </ul>
  * </p>
@@ -24,34 +23,8 @@ import org.eclipse.emf.common.util.EList;
  * @model
  * @generated
  */
-public interface S_Equations extends Statement
+public interface S_Equations extends Statement, EquationDefinition
 {
-  /**
-   * Returns the value of the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <p>
-   * If the meaning of the '<em>Name</em>' attribute isn't clear,
-   * there really should be more of a description here...
-   * </p>
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Name</em>' attribute.
-   * @see #setName(String)
-   * @see msi.gama.lang.gaml.gaml.GamlPackage#getS_Equations_Name()
-   * @model
-   * @generated
-   */
-  String getName();
-
-  /**
-   * Sets the value of the '{@link msi.gama.lang.gaml.gaml.S_Equations#getName <em>Name</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Name</em>' attribute.
-   * @see #getName()
-   * @generated
-   */
-  void setName(String value);
-
   /**
    * Returns the value of the '<em><b>Equations</b></em>' containment reference list.
    * The list contents are of type {@link msi.gama.lang.gaml.gaml.S_Assignment}.

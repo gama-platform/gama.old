@@ -163,6 +163,11 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createS_EquationsAdapter();
       }
       @Override
+      public Adapter caseS_Solve(S_Solve object)
+      {
+        return createS_SolveAdapter();
+      }
+      @Override
       public Adapter caseParameters(Parameters object)
       {
         return createParametersAdapter();
@@ -213,6 +218,11 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createGamlDefinitionAdapter();
       }
       @Override
+      public Adapter caseEquationDefinition(EquationDefinition object)
+      {
+        return createEquationDefinitionAdapter();
+      }
+      @Override
       public Adapter caseTypeDefinition(TypeDefinition object)
       {
         return createTypeDefinitionAdapter();
@@ -251,6 +261,11 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
       public Adapter caseVarFakeDefinition(VarFakeDefinition object)
       {
         return createVarFakeDefinitionAdapter();
+      }
+      @Override
+      public Adapter caseEquationFakeDefinition(EquationFakeDefinition object)
+      {
+        return createEquationFakeDefinitionAdapter();
       }
       @Override
       public Adapter caseTerminalExpression(TerminalExpression object)
@@ -346,6 +361,11 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
       public Adapter caseActionRef(ActionRef object)
       {
         return createActionRefAdapter();
+      }
+      @Override
+      public Adapter caseEquationRef(EquationRef object)
+      {
+        return createEquationRefAdapter();
       }
       @Override
       public Adapter caseIntLiteral(IntLiteral object)
@@ -655,6 +675,21 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.S_Solve <em>SSolve</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.S_Solve
+   * @generated
+   */
+  public Adapter createS_SolveAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Parameters <em>Parameters</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -805,6 +840,21 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.EquationDefinition <em>Equation Definition</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.EquationDefinition
+   * @generated
+   */
+  public Adapter createEquationDefinitionAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.TypeDefinition <em>Type Definition</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -920,6 +970,21 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createVarFakeDefinitionAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.EquationFakeDefinition <em>Equation Fake Definition</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.EquationFakeDefinition
+   * @generated
+   */
+  public Adapter createEquationFakeDefinitionAdapter()
   {
     return null;
   }
@@ -1205,6 +1270,21 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createActionRefAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.EquationRef <em>Equation Ref</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.EquationRef
+   * @generated
+   */
+  public Adapter createEquationRefAdapter()
   {
     return null;
   }

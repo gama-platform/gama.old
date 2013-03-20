@@ -15,6 +15,8 @@ import msi.gama.lang.gaml.gaml.BooleanLiteral;
 import msi.gama.lang.gaml.gaml.ColorLiteral;
 import msi.gama.lang.gaml.gaml.Dot;
 import msi.gama.lang.gaml.gaml.DoubleLiteral;
+import msi.gama.lang.gaml.gaml.EquationFakeDefinition;
+import msi.gama.lang.gaml.gaml.EquationRef;
 import msi.gama.lang.gaml.gaml.Expression;
 import msi.gama.lang.gaml.gaml.ExpressionList;
 import msi.gama.lang.gaml.gaml.Facet;
@@ -42,6 +44,7 @@ import msi.gama.lang.gaml.gaml.S_Other;
 import msi.gama.lang.gaml.gaml.S_Reflex;
 import msi.gama.lang.gaml.gaml.S_Return;
 import msi.gama.lang.gaml.gaml.S_Set;
+import msi.gama.lang.gaml.gaml.S_Solve;
 import msi.gama.lang.gaml.gaml.S_Species;
 import msi.gama.lang.gaml.gaml.S_Var;
 import msi.gama.lang.gaml.gaml.SkillFakeDefinition;
@@ -337,6 +340,20 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getUnitRule() ||
 				   context == grammarAccess.getUnitAccess().getUnitLeftAction_1_0_0()) {
 					sequence_TerminalExpression(context, (DoubleLiteral) semanticObject); 
+					return; 
+				}
+				else break;
+			case GamlPackage.EQUATION_FAKE_DEFINITION:
+				if(context == grammarAccess.getEquationDefinitionRule() ||
+				   context == grammarAccess.getEquationFakeDefinitionRule() ||
+				   context == grammarAccess.getGamlDefinitionRule()) {
+					sequence_EquationFakeDefinition(context, (EquationFakeDefinition) semanticObject); 
+					return; 
+				}
+				else break;
+			case GamlPackage.EQUATION_REF:
+				if(context == grammarAccess.getEquationRefRule()) {
+					sequence_EquationRef(context, (EquationRef) semanticObject); 
 					return; 
 				}
 				else break;
@@ -671,7 +688,9 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				}
 				else break;
 			case GamlPackage.SEQUATIONS:
-				if(context == grammarAccess.getS_EquationsRule() ||
+				if(context == grammarAccess.getEquationDefinitionRule() ||
+				   context == grammarAccess.getGamlDefinitionRule() ||
+				   context == grammarAccess.getS_EquationsRule() ||
 				   context == grammarAccess.getStatementRule()) {
 					sequence_S_Equations(context, (S_Equations) semanticObject); 
 					return; 
@@ -733,6 +752,13 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getS_SetRule() ||
 				   context == grammarAccess.getStatementRule()) {
 					sequence_S_Set(context, (S_Set) semanticObject); 
+					return; 
+				}
+				else break;
+			case GamlPackage.SSOLVE:
+				if(context == grammarAccess.getS_SolveRule() ||
+				   context == grammarAccess.getStatementRule()) {
+					sequence_S_Solve(context, (S_Solve) semanticObject); 
 					return; 
 				}
 				else break;
@@ -1091,6 +1117,31 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
+	 *     name=Valid_ID
+	 */
+	protected void sequence_EquationFakeDefinition(EObject context, EquationFakeDefinition semanticObject) {
+		if(errorAcceptor != null) {
+			if(transientValues.isValueTransient(semanticObject, GamlPackage.Literals.GAML_DEFINITION__NAME) == ValueTransient.YES)
+				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, GamlPackage.Literals.GAML_DEFINITION__NAME));
+		}
+		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
+		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
+		feeder.accept(grammarAccess.getEquationFakeDefinitionAccess().getNameValid_IDParserRuleCall_1_0(), semanticObject.getName());
+		feeder.finish();
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     ref=[EquationDefinition|Valid_ID]
+	 */
+	protected void sequence_EquationRef(EObject context, EquationRef semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
 	 *     (exprs+=Expression exprs+=Expression*)
 	 */
 	protected void sequence_ExpressionList(EObject context, ExpressionList semanticObject) {
@@ -1347,7 +1398,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (key=_EquationsKey name=Valid_ID equations+=S_Equation*)
+	 *     (key=_EquationsKey name=Valid_ID facets+=Facet* equations+=S_Equation*)
 	 */
 	protected void sequence_S_Equations(EObject context, S_Equations semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1413,6 +1464,15 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	 *     (key='set' expr=Expression value=Expression)
 	 */
 	protected void sequence_S_Set(EObject context, S_Set semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (key=_SolveKey expr=EquationRef facets+=Facet* block=Block?)
+	 */
+	protected void sequence_S_Solve(EObject context, S_Solve semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

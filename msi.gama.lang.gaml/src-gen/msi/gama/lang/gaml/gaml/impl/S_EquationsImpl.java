@@ -7,6 +7,8 @@ package msi.gama.lang.gaml.gaml.impl;
 
 import java.util.Collection;
 
+import msi.gama.lang.gaml.gaml.EquationDefinition;
+import msi.gama.lang.gaml.gaml.GamlDefinition;
 import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.gaml.gaml.S_Assignment;
 import msi.gama.lang.gaml.gaml.S_Equations;
@@ -220,6 +222,58 @@ public class S_EquationsImpl extends StatementImpl implements S_Equations
         return equations != null && !equations.isEmpty();
     }
     return super.eIsSet(featureID);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass)
+  {
+    if (baseClass == GamlDefinition.class)
+    {
+      switch (derivedFeatureID)
+      {
+        case GamlPackage.SEQUATIONS__NAME: return GamlPackage.GAML_DEFINITION__NAME;
+        default: return -1;
+      }
+    }
+    if (baseClass == EquationDefinition.class)
+    {
+      switch (derivedFeatureID)
+      {
+        default: return -1;
+      }
+    }
+    return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass)
+  {
+    if (baseClass == GamlDefinition.class)
+    {
+      switch (baseFeatureID)
+      {
+        case GamlPackage.GAML_DEFINITION__NAME: return GamlPackage.SEQUATIONS__NAME;
+        default: return -1;
+      }
+    }
+    if (baseClass == EquationDefinition.class)
+    {
+      switch (baseFeatureID)
+      {
+        default: return -1;
+      }
+    }
+    return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
   }
 
   /**

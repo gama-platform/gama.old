@@ -84,6 +84,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.SDIRECT_ASSIGNMENT: return createS_DirectAssignment();
       case GamlPackage.SSET: return createS_Set();
       case GamlPackage.SEQUATIONS: return createS_Equations();
+      case GamlPackage.SSOLVE: return createS_Solve();
       case GamlPackage.PARAMETERS: return createParameters();
       case GamlPackage.ACTION_ARGUMENTS: return createActionArguments();
       case GamlPackage.ARGUMENT_DEFINITION: return createArgumentDefinition();
@@ -94,6 +95,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.EXPRESSION_LIST: return createExpressionList();
       case GamlPackage.VARIABLE_REF: return createVariableRef();
       case GamlPackage.GAML_DEFINITION: return createGamlDefinition();
+      case GamlPackage.EQUATION_DEFINITION: return createEquationDefinition();
       case GamlPackage.TYPE_DEFINITION: return createTypeDefinition();
       case GamlPackage.VAR_DEFINITION: return createVarDefinition();
       case GamlPackage.ACTION_DEFINITION: return createActionDefinition();
@@ -102,6 +104,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.ACTION_FAKE_DEFINITION: return createActionFakeDefinition();
       case GamlPackage.SKILL_FAKE_DEFINITION: return createSkillFakeDefinition();
       case GamlPackage.VAR_FAKE_DEFINITION: return createVarFakeDefinition();
+      case GamlPackage.EQUATION_FAKE_DEFINITION: return createEquationFakeDefinition();
       case GamlPackage.TERMINAL_EXPRESSION: return createTerminalExpression();
       case GamlPackage.STRING_EVALUATOR: return createStringEvaluator();
       case GamlPackage.SACTION: return createS_Action();
@@ -121,6 +124,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.TYPE_REF: return createTypeRef();
       case GamlPackage.SKILL_REF: return createSkillRef();
       case GamlPackage.ACTION_REF: return createActionRef();
+      case GamlPackage.EQUATION_REF: return createEquationRef();
       case GamlPackage.INT_LITERAL: return createIntLiteral();
       case GamlPackage.DOUBLE_LITERAL: return createDoubleLiteral();
       case GamlPackage.COLOR_LITERAL: return createColorLiteral();
@@ -324,6 +328,17 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  public S_Solve createS_Solve()
+  {
+    S_SolveImpl s_Solve = new S_SolveImpl();
+    return s_Solve;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public Parameters createParameters()
   {
     ParametersImpl parameters = new ParametersImpl();
@@ -434,6 +449,17 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  public EquationDefinition createEquationDefinition()
+  {
+    EquationDefinitionImpl equationDefinition = new EquationDefinitionImpl();
+    return equationDefinition;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public TypeDefinition createTypeDefinition()
   {
     TypeDefinitionImpl typeDefinition = new TypeDefinitionImpl();
@@ -515,6 +541,17 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     VarFakeDefinitionImpl varFakeDefinition = new VarFakeDefinitionImpl();
     return varFakeDefinition;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EquationFakeDefinition createEquationFakeDefinition()
+  {
+    EquationFakeDefinitionImpl equationFakeDefinition = new EquationFakeDefinitionImpl();
+    return equationFakeDefinition;
   }
 
   /**
@@ -724,6 +761,17 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     ActionRefImpl actionRef = new ActionRefImpl();
     return actionRef;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EquationRef createEquationRef()
+  {
+    EquationRefImpl equationRef = new EquationRefImpl();
+    return equationRef;
   }
 
   /**

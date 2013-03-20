@@ -377,6 +377,12 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		}
 
 		@Override
+		public IExpression caseEquationRef(final EquationRef object) {
+			return factory.createConst(EGaml.getKey.caseEquationRef(object),
+				Types.get(IType.STRING));
+		}
+
+		@Override
 		public IExpression caseUnitName(final UnitName object) {
 			String s = EGaml.getKeyOf(object);
 			if ( IUnits.UNITS.containsKey(s) ) { return factory.createUnitExpr(s, context); }

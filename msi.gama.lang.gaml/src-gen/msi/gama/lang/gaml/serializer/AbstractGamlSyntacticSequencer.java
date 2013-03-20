@@ -27,6 +27,7 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 	protected AbstractElementAlias match_S_Reflex_NameKeyword_1_q;
 	protected AbstractElementAlias match_S_Set_LessThanSignHyphenMinusKeyword_3_1_or_ValueKeyword_3_0;
 	protected AbstractElementAlias match_S_Set___NameKeyword_1_1_or_VarKeyword_1_0__q;
+	protected AbstractElementAlias match_S_Solve_EquationKeyword_1_q;
 	protected AbstractElementAlias match_S_Species_NameKeyword_1_q;
 	protected AbstractElementAlias match_S_Var_NameKeyword_2_q;
 	
@@ -42,6 +43,7 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 		match_S_Reflex_NameKeyword_1_q = new TokenAlias(false, true, grammarAccess.getS_ReflexAccess().getNameKeyword_1());
 		match_S_Set_LessThanSignHyphenMinusKeyword_3_1_or_ValueKeyword_3_0 = new AlternativeAlias(false, false, new TokenAlias(false, false, grammarAccess.getS_SetAccess().getLessThanSignHyphenMinusKeyword_3_1()), new TokenAlias(false, false, grammarAccess.getS_SetAccess().getValueKeyword_3_0()));
 		match_S_Set___NameKeyword_1_1_or_VarKeyword_1_0__q = new AlternativeAlias(false, true, new TokenAlias(false, false, grammarAccess.getS_SetAccess().getNameKeyword_1_1()), new TokenAlias(false, false, grammarAccess.getS_SetAccess().getVarKeyword_1_0()));
+		match_S_Solve_EquationKeyword_1_q = new TokenAlias(false, true, grammarAccess.getS_SolveAccess().getEquationKeyword_1());
 		match_S_Species_NameKeyword_1_q = new TokenAlias(false, true, grammarAccess.getS_SpeciesAccess().getNameKeyword_1());
 		match_S_Var_NameKeyword_2_q = new TokenAlias(false, true, grammarAccess.getS_VarAccess().getNameKeyword_2());
 	}
@@ -83,6 +85,8 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 				emit_S_Set_LessThanSignHyphenMinusKeyword_3_1_or_ValueKeyword_3_0(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if(match_S_Set___NameKeyword_1_1_or_VarKeyword_1_0__q.equals(syntax))
 				emit_S_Set___NameKeyword_1_1_or_VarKeyword_1_0__q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if(match_S_Solve_EquationKeyword_1_q.equals(syntax))
+				emit_S_Solve_EquationKeyword_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if(match_S_Species_NameKeyword_1_q.equals(syntax))
 				emit_S_Species_NameKeyword_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if(match_S_Var_NameKeyword_2_q.equals(syntax))
@@ -149,7 +153,7 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 	
 	/**
 	 * Syntax:
-	 *     '<-' | 'value:'
+	 *     'value:' | '<-'
 	 */
 	protected void emit_S_Set_LessThanSignHyphenMinusKeyword_3_1_or_ValueKeyword_3_0(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
@@ -160,6 +164,14 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     ('name:' | 'var:')?
 	 */
 	protected void emit_S_Set___NameKeyword_1_1_or_VarKeyword_1_0__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * Syntax:
+	 *     'equation:'?
+	 */
+	protected void emit_S_Solve_EquationKeyword_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

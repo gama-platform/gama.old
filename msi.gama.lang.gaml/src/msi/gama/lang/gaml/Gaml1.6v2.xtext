@@ -16,7 +16,7 @@ Import:
 Statement:
 	=> S_Assignment |
 	 (
-		(=>S_Declaration | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_If | S_Equations)
+		(=>S_Declaration | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_Solve | S_If | S_Equations)
 	);
 
 
@@ -77,17 +77,24 @@ S_DirectAssignment:
 S_Set:
 	key="set" ("var:" | "name:")? expr=Expression ("value:" | "<-") value=Expression ";";
 
-S_Equations: key=_EquationsKey name=Valid_ID '{' (equations += S_Equation ';')* '}';
+S_Equations: key=_EquationsKey name=Valid_ID (facets+=Facet)* '{' (equations += S_Equation ';')* '}';
 
 S_Equation returns S_Assignment: expr=Function key="=" value=Expression;
+
+S_Solve:
+	key=_SolveKey ("equation:")? expr=EquationRef (facets+=Facet)* (block=Block | ';');
+
 
 /**
  * Statement keys
  */
 
 _EquationsKey:
-	"equation"
-;
+	"equation";
+
+_SolveKey: 
+	"solve";
+	
 _SpeciesKey:
 	"species" | "grid";
 
@@ -273,10 +280,16 @@ SkillRef returns Expression:
 
 ActionRef returns Expression:
 	{ActionRef} ref=[ActionDefinition|Valid_ID];
+	
+EquationRef returns Expression:
+	{EquationRef} ref=[EquationDefinition|Valid_ID];
 
 GamlDefinition:
-	TypeDefinition | VarDefinition | UnitFakeDefinition | SkillFakeDefinition | ActionDefinition;
+	TypeDefinition | VarDefinition | UnitFakeDefinition | SkillFakeDefinition | ActionDefinition | EquationDefinition;
 
+EquationDefinition:
+	S_Equations | EquationFakeDefinition;
+	
 TypeDefinition:
 	S_Species | TypeFakeDefinition;
 
@@ -302,6 +315,9 @@ SkillFakeDefinition:
 VarFakeDefinition:
 	'**var*' name=Valid_ID;
 
+EquationFakeDefinition:
+	'**equation*' name=Valid_ID
+;
 Valid_ID:
 	_SpeciesKey | _DoKey | _ReflexKey | _VarOrConstKey  | _1Expr_Facets_BlockOrEnd_Key | _EquationsKey | ID;
 

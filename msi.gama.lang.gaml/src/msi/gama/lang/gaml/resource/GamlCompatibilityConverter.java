@@ -151,16 +151,8 @@ public class GamlCompatibilityConverter {
 			// We modify the names of experiments so as not to confuse them with species
 			String name = elt.getLabel(NAME);
 			elt.setFacet(NAME, convExpr("Experiment " + name));
-		} else if ( stm instanceof S_Equations ) {
-			elt.setFacet(NAME, convExpr(((S_Equations) stm).getName()));
-			convStatements(elt, ((S_Equations) stm).getEquations());
-
-		}
-
-		// We add the dependencies (only for variable declarations)
-		assignDependencies(stm, keyword, elt);
-
-		// TODO Change this by implementing only one class of methods (that delegates to others)
+		} else // TODO Change this by implementing only one class of methods (that delegates to
+				// others)
 		if ( keyword.equals(METHOD) ) {
 			// We apply some conversion for methods (to get the name instead of the "method"
 			// keyword)
@@ -168,9 +160,20 @@ public class GamlCompatibilityConverter {
 			if ( type != null ) {
 				elt.setKeyword(type);
 			}
+		} else if ( stm instanceof S_Equations ) {
+			convStatements(elt, ((S_Equations) stm).getEquations());
 		}
+
+		// We add the dependencies (only for variable declarations)
+		assignDependencies(stm, keyword, elt);
+		// We convert the block of statements (if any)
+		convertBlock(stm, elt);
+
+		return elt;
+	}
+
+	private void convertBlock(final Statement stm, final ISyntacticElement elt) {
 		if ( EGaml.getBlockOf(stm) != null ) {
-			// We convert the block of the statement, if any
 			Block block = stm.getBlock();
 			if ( block != null ) {
 				Expression function = EGaml.getBlockOf(stm).getFunction();
@@ -182,7 +185,6 @@ public class GamlCompatibilityConverter {
 				}
 			}
 		}
-		return elt;
 	}
 
 	private void addFacet(final ISyntacticElement e, final String key,

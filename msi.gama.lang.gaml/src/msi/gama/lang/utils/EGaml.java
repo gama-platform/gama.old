@@ -154,6 +154,11 @@ public class EGaml {
 		}
 
 		@Override
+		public String caseEquationRef(final EquationRef object) {
+			return NodeModelUtils.getTokenText(NodeModelUtils.getNode(object));
+		}
+
+		@Override
 		public String caseStringLiteral(final StringLiteral object) {
 			return object.getOp();
 		}

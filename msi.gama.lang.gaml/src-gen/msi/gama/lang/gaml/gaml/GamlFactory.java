@@ -179,6 +179,15 @@ public interface GamlFactory extends EFactory
   S_Equations createS_Equations();
 
   /**
+   * Returns a new object of class '<em>SSolve</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>SSolve</em>'.
+   * @generated
+   */
+  S_Solve createS_Solve();
+
+  /**
    * Returns a new object of class '<em>Parameters</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -269,6 +278,15 @@ public interface GamlFactory extends EFactory
   GamlDefinition createGamlDefinition();
 
   /**
+   * Returns a new object of class '<em>Equation Definition</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Equation Definition</em>'.
+   * @generated
+   */
+  EquationDefinition createEquationDefinition();
+
+  /**
    * Returns a new object of class '<em>Type Definition</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -339,6 +357,15 @@ public interface GamlFactory extends EFactory
    * @generated
    */
   VarFakeDefinition createVarFakeDefinition();
+
+  /**
+   * Returns a new object of class '<em>Equation Fake Definition</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Equation Fake Definition</em>'.
+   * @generated
+   */
+  EquationFakeDefinition createEquationFakeDefinition();
 
   /**
    * Returns a new object of class '<em>Terminal Expression</em>'.
@@ -510,6 +537,15 @@ public interface GamlFactory extends EFactory
    * @generated
    */
   ActionRef createActionRef();
+
+  /**
+   * Returns a new object of class '<em>Equation Ref</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Equation Ref</em>'.
+   * @generated
+   */
+  EquationRef createEquationRef();
 
   /**
    * Returns a new object of class '<em>Int Literal</em>'.

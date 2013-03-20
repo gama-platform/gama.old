@@ -43,9 +43,9 @@
     <genClasses ecoreClass="Gaml.ecore#//S_DirectAssignment"/>
     <genClasses ecoreClass="Gaml.ecore#//S_Set"/>
     <genClasses ecoreClass="Gaml.ecore#//S_Equations">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//S_Equations/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//S_Equations/equations"/>
     </genClasses>
+    <genClasses ecoreClass="Gaml.ecore#//S_Solve"/>
     <genClasses ecoreClass="Gaml.ecore#//Parameters">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Parameters/params"/>
     </genClasses>
@@ -79,6 +79,7 @@
     <genClasses ecoreClass="Gaml.ecore#//GamlDefinition">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//GamlDefinition/name"/>
     </genClasses>
+    <genClasses ecoreClass="Gaml.ecore#//EquationDefinition"/>
     <genClasses ecoreClass="Gaml.ecore#//TypeDefinition"/>
     <genClasses ecoreClass="Gaml.ecore#//VarDefinition"/>
     <genClasses ecoreClass="Gaml.ecore#//ActionDefinition"/>
@@ -87,6 +88,7 @@
     <genClasses ecoreClass="Gaml.ecore#//ActionFakeDefinition"/>
     <genClasses ecoreClass="Gaml.ecore#//SkillFakeDefinition"/>
     <genClasses ecoreClass="Gaml.ecore#//VarFakeDefinition"/>
+    <genClasses ecoreClass="Gaml.ecore#//EquationFakeDefinition"/>
     <genClasses ecoreClass="Gaml.ecore#//TerminalExpression"/>
     <genClasses ecoreClass="Gaml.ecore#//StringEvaluator">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//StringEvaluator/expr"/>
@@ -130,6 +132,9 @@
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//ActionRef">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Gaml.ecore#//ActionRef/ref"/>
+    </genClasses>
+    <genClasses ecoreClass="Gaml.ecore#//EquationRef">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Gaml.ecore#//EquationRef/ref"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//IntLiteral"/>
     <genClasses ecoreClass="Gaml.ecore#//DoubleLiteral"/>
