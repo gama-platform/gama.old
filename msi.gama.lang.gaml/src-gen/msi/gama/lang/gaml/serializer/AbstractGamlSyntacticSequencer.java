@@ -149,7 +149,7 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 	
 	/**
 	 * Syntax:
-	 *     '<-' | 'value:'
+	 *     'value:' | '<-'
 	 */
 	protected void emit_S_Set_LessThanSignHyphenMinusKeyword_3_1_or_ValueKeyword_3_0(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
@@ -157,7 +157,7 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 	
 	/**
 	 * Syntax:
-	 *     ('var:' | 'name:')?
+	 *     ('name:' | 'var:')?
 	 */
 	protected void emit_S_Set___NameKeyword_1_1_or_VarKeyword_1_0__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);

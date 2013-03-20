@@ -124,20 +124,21 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cS_DoParserRuleCall_1_3 = (RuleCall)cAlternatives_1.eContents().get(3);
 		private final RuleCall cS_ReturnParserRuleCall_1_4 = (RuleCall)cAlternatives_1.eContents().get(4);
 		private final RuleCall cS_IfParserRuleCall_1_5 = (RuleCall)cAlternatives_1.eContents().get(5);
+		private final RuleCall cS_EquationsParserRuleCall_1_6 = (RuleCall)cAlternatives_1.eContents().get(6);
 		
 		/// **
 		// * Statements 
 		// * / Statement:
-		//	S_Assignment | (S_Declaration | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_If);
+		//	S_Assignment | (S_Declaration | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_If | S_Equations);
 		public ParserRule getRule() { return rule; }
 
-		//=> S_Assignment | (S_Declaration | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_If)
+		//=> S_Assignment | (S_Declaration | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_If | S_Equations)
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//=> S_Assignment
 		public RuleCall getS_AssignmentParserRuleCall_0() { return cS_AssignmentParserRuleCall_0; }
 
-		//=> S_Declaration | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_If
+		//=> S_Declaration | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_If | S_Equations
 		public Alternatives getAlternatives_1() { return cAlternatives_1; }
 
 		//=> S_Declaration
@@ -157,6 +158,9 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//S_If
 		public RuleCall getS_IfParserRuleCall_1_5() { return cS_IfParserRuleCall_1_5; }
+
+		//S_Equations
+		public RuleCall getS_EquationsParserRuleCall_1_6() { return cS_EquationsParserRuleCall_1_6; }
 	}
 
 	public class S_1Expr_Facets_BlockOrEndElements extends AbstractParserRuleElementFinder {
@@ -883,15 +887,14 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final RuleCall cS_DirectAssignmentParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
 		private final RuleCall cS_SetParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
-		private final RuleCall cS_EquationParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
 		
 		/// *
 		// * ASSIGNMENTS
 		// * / S_Assignment:
-		//	S_DirectAssignment | S_Set | S_Equation;
+		//	S_DirectAssignment | S_Set;
 		public ParserRule getRule() { return rule; }
 
-		//S_DirectAssignment | S_Set | S_Equation
+		//S_DirectAssignment | S_Set
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//S_DirectAssignment
@@ -899,9 +902,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//S_Set
 		public RuleCall getS_SetParserRuleCall_1() { return cS_SetParserRuleCall_1; }
-
-		//S_Equation
-		public RuleCall getS_EquationParserRuleCall_2() { return cS_EquationParserRuleCall_2; }
 	}
 
 	public class S_DirectAssignmentElements extends AbstractParserRuleElementFinder {
@@ -919,20 +919,20 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cKeyHyphenMinusEqualsSignKeyword_0_1_0_4 = (Keyword)cKeyAlternatives_0_1_0.eContents().get(4);
 		private final Keyword cKeyPlusSignPlusSignKeyword_0_1_0_5 = (Keyword)cKeyAlternatives_0_1_0.eContents().get(5);
 		private final Keyword cKeyHyphenMinusHyphenMinusKeyword_0_1_0_6 = (Keyword)cKeyAlternatives_0_1_0.eContents().get(6);
-		private final Assignment cValueAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cValueExpressionParserRuleCall_1_0 = (RuleCall)cValueAssignment_1.eContents().get(0);
-		private final Assignment cFacetsAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cFacetsFacetParserRuleCall_2_0 = (RuleCall)cFacetsAssignment_2.eContents().get(0);
-		private final Keyword cSemicolonKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final Assignment cValueAssignment_0_2 = (Assignment)cGroup_0.eContents().get(2);
+		private final RuleCall cValueExpressionParserRuleCall_0_2_0 = (RuleCall)cValueAssignment_0_2.eContents().get(0);
+		private final Assignment cFacetsAssignment_0_3 = (Assignment)cGroup_0.eContents().get(3);
+		private final RuleCall cFacetsFacetParserRuleCall_0_3_0 = (RuleCall)cFacetsAssignment_0_3.eContents().get(0);
+		private final Keyword cSemicolonKeyword_1 = (Keyword)cGroup.eContents().get(1);
 		
 		//S_DirectAssignment:
-		//	(expr=Expression key=("<-" | "<<" | ">>" | "+=" | "-=" | "++" | "--")) value=Expression facets+=Facet* ";";
+		//	(expr=Expression key=("<-" | "<<" | ">>" | "+=" | "-=" | "++" | "--") value=Expression facets+=Facet*) ";";
 		public ParserRule getRule() { return rule; }
 
-		//(expr=Expression key=("<-" | "<<" | ">>" | "+=" | "-=" | "++" | "--")) value=Expression facets+=Facet* ";"
+		//(expr=Expression key=("<-" | "<<" | ">>" | "+=" | "-=" | "++" | "--") value=Expression facets+=Facet*) ";"
 		public Group getGroup() { return cGroup; }
 
-		//expr=Expression key=("<-" | "<<" | ">>" | "+=" | "-=" | "++" | "--")
+		//expr=Expression key=("<-" | "<<" | ">>" | "+=" | "-=" | "++" | "--") value=Expression facets+=Facet*
 		public Group getGroup_0() { return cGroup_0; }
 
 		//expr=Expression
@@ -969,19 +969,19 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		public Keyword getKeyHyphenMinusHyphenMinusKeyword_0_1_0_6() { return cKeyHyphenMinusHyphenMinusKeyword_0_1_0_6; }
 
 		//value=Expression
-		public Assignment getValueAssignment_1() { return cValueAssignment_1; }
+		public Assignment getValueAssignment_0_2() { return cValueAssignment_0_2; }
 
 		//Expression
-		public RuleCall getValueExpressionParserRuleCall_1_0() { return cValueExpressionParserRuleCall_1_0; }
+		public RuleCall getValueExpressionParserRuleCall_0_2_0() { return cValueExpressionParserRuleCall_0_2_0; }
 
 		//facets+=Facet*
-		public Assignment getFacetsAssignment_2() { return cFacetsAssignment_2; }
+		public Assignment getFacetsAssignment_0_3() { return cFacetsAssignment_0_3; }
 
 		//Facet
-		public RuleCall getFacetsFacetParserRuleCall_2_0() { return cFacetsFacetParserRuleCall_2_0; }
+		public RuleCall getFacetsFacetParserRuleCall_0_3_0() { return cFacetsFacetParserRuleCall_0_3_0; }
 
 		//";"
-		public Keyword getSemicolonKeyword_3() { return cSemicolonKeyword_3; }
+		public Keyword getSemicolonKeyword_1() { return cSemicolonKeyword_1; }
 	}
 
 	public class S_SetElements extends AbstractParserRuleElementFinder {
@@ -1048,6 +1048,58 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		public Keyword getSemicolonKeyword_5() { return cSemicolonKeyword_5; }
 	}
 
+	public class S_EquationsElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "S_Equations");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final Assignment cKeyAssignment_0 = (Assignment)cGroup.eContents().get(0);
+		private final Keyword cKeyEquationKeyword_0_0 = (Keyword)cKeyAssignment_0.eContents().get(0);
+		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cNameValid_IDParserRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
+		private final Keyword cLeftCurlyBracketKeyword_2 = (Keyword)cGroup.eContents().get(2);
+		private final Group cGroup_3 = (Group)cGroup.eContents().get(3);
+		private final Assignment cEquationsAssignment_3_0 = (Assignment)cGroup_3.eContents().get(0);
+		private final RuleCall cEquationsS_EquationParserRuleCall_3_0_0 = (RuleCall)cEquationsAssignment_3_0.eContents().get(0);
+		private final Keyword cSemicolonKeyword_3_1 = (Keyword)cGroup_3.eContents().get(1);
+		private final Keyword cRightCurlyBracketKeyword_4 = (Keyword)cGroup.eContents().get(4);
+		
+		//S_Equations:
+		//	key="equation" name=Valid_ID "{" (equations+=S_Equation ";")* "}";
+		public ParserRule getRule() { return rule; }
+
+		//key="equation" name=Valid_ID "{" (equations+=S_Equation ";")* "}"
+		public Group getGroup() { return cGroup; }
+
+		//key="equation"
+		public Assignment getKeyAssignment_0() { return cKeyAssignment_0; }
+
+		//"equation"
+		public Keyword getKeyEquationKeyword_0_0() { return cKeyEquationKeyword_0_0; }
+
+		//name=Valid_ID
+		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
+
+		//Valid_ID
+		public RuleCall getNameValid_IDParserRuleCall_1_0() { return cNameValid_IDParserRuleCall_1_0; }
+
+		//"{"
+		public Keyword getLeftCurlyBracketKeyword_2() { return cLeftCurlyBracketKeyword_2; }
+
+		//(equations+=S_Equation ";")*
+		public Group getGroup_3() { return cGroup_3; }
+
+		//equations+=S_Equation
+		public Assignment getEquationsAssignment_3_0() { return cEquationsAssignment_3_0; }
+
+		//S_Equation
+		public RuleCall getEquationsS_EquationParserRuleCall_3_0_0() { return cEquationsS_EquationParserRuleCall_3_0_0; }
+
+		//";"
+		public Keyword getSemicolonKeyword_3_1() { return cSemicolonKeyword_3_1; }
+
+		//"}"
+		public Keyword getRightCurlyBracketKeyword_4() { return cRightCurlyBracketKeyword_4; }
+	}
+
 	public class S_EquationElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "S_Equation");
 		private final Group cGroup = (Group)rule.eContents().get(1);
@@ -1057,16 +1109,15 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cKeyEqualsSignKeyword_1_0 = (Keyword)cKeyAssignment_1.eContents().get(0);
 		private final Assignment cValueAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cValueExpressionParserRuleCall_2_0 = (RuleCall)cValueAssignment_2.eContents().get(0);
-		private final Keyword cSemicolonKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		
-		//S_Equation:
-		//	=> expr=Function key="=" value=Expression ";";
+		//S_Equation returns S_Assignment:
+		//	expr=Function key="=" value=Expression;
 		public ParserRule getRule() { return rule; }
 
-		//=> expr=Function key="=" value=Expression ";"
+		//expr=Function key="=" value=Expression
 		public Group getGroup() { return cGroup; }
 
-		//=> expr=Function
+		//expr=Function
 		public Assignment getExprAssignment_0() { return cExprAssignment_0; }
 
 		//Function
@@ -1083,9 +1134,6 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//Expression
 		public RuleCall getValueExpressionParserRuleCall_2_0() { return cValueExpressionParserRuleCall_2_0; }
-
-		//";"
-		public Keyword getSemicolonKeyword_3() { return cSemicolonKeyword_3; }
 	}
 
 	public class _SpeciesKeyElements extends AbstractParserRuleElementFinder {
@@ -3453,6 +3501,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	private S_AssignmentElements pS_Assignment;
 	private S_DirectAssignmentElements pS_DirectAssignment;
 	private S_SetElements pS_Set;
+	private S_EquationsElements pS_Equations;
 	private S_EquationElements pS_Equation;
 	private _SpeciesKeyElements p_SpeciesKey;
 	private _1Expr_Facets_BlockOrEnd_KeyElements p_1Expr_Facets_BlockOrEnd_Key;
@@ -3559,7 +3608,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	/// **
 	// * Statements 
 	// * / Statement:
-	//	S_Assignment | (S_Declaration | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_If);
+	//	S_Assignment | (S_Declaration | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_If | S_Equations);
 	public StatementElements getStatementAccess() {
 		return (pStatement != null) ? pStatement : (pStatement = new StatementElements());
 	}
@@ -3704,7 +3753,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	/// *
 	// * ASSIGNMENTS
 	// * / S_Assignment:
-	//	S_DirectAssignment | S_Set | S_Equation;
+	//	S_DirectAssignment | S_Set;
 	public S_AssignmentElements getS_AssignmentAccess() {
 		return (pS_Assignment != null) ? pS_Assignment : (pS_Assignment = new S_AssignmentElements());
 	}
@@ -3714,7 +3763,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//S_DirectAssignment:
-	//	(expr=Expression key=("<-" | "<<" | ">>" | "+=" | "-=" | "++" | "--")) value=Expression facets+=Facet* ";";
+	//	(expr=Expression key=("<-" | "<<" | ">>" | "+=" | "-=" | "++" | "--") value=Expression facets+=Facet*) ";";
 	public S_DirectAssignmentElements getS_DirectAssignmentAccess() {
 		return (pS_DirectAssignment != null) ? pS_DirectAssignment : (pS_DirectAssignment = new S_DirectAssignmentElements());
 	}
@@ -3733,8 +3782,18 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		return getS_SetAccess().getRule();
 	}
 
-	//S_Equation:
-	//	=> expr=Function key="=" value=Expression ";";
+	//S_Equations:
+	//	key="equation" name=Valid_ID "{" (equations+=S_Equation ";")* "}";
+	public S_EquationsElements getS_EquationsAccess() {
+		return (pS_Equations != null) ? pS_Equations : (pS_Equations = new S_EquationsElements());
+	}
+	
+	public ParserRule getS_EquationsRule() {
+		return getS_EquationsAccess().getRule();
+	}
+
+	//S_Equation returns S_Assignment:
+	//	expr=Function key="=" value=Expression;
 	public S_EquationElements getS_EquationAccess() {
 		return (pS_Equation != null) ? pS_Equation : (pS_Equation = new S_EquationElements());
 	}

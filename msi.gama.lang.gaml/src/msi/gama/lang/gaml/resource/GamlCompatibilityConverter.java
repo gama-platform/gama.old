@@ -151,6 +151,10 @@ public class GamlCompatibilityConverter {
 			// We modify the names of experiments so as not to confuse them with species
 			String name = elt.getLabel(NAME);
 			elt.setFacet(NAME, convExpr("Experiment " + name));
+		} else if ( stm instanceof S_Equations ) {
+			elt.setFacet(NAME, convExpr(((S_Equations) stm).getName()));
+			convStatements(elt, ((S_Equations) stm).getEquations());
+
 		}
 
 		// We add the dependencies (only for variable declarations)
@@ -383,7 +387,7 @@ public class GamlCompatibilityConverter {
 		// return convExpr(EGaml.createTerminal(string));
 	}
 
-	final void convStatements(final ISyntacticElement elt, final EList<Statement> ss) {
+	final void convStatements(final ISyntacticElement elt, final EList<? extends Statement> ss) {
 		for ( final Statement stm : ss ) {
 			elt.addChild(convStatement(elt.getKeyword(), stm));
 		}

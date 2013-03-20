@@ -41,7 +41,7 @@ import msi.gama.lang.gaml.gaml.S_Declaration;
 import msi.gama.lang.gaml.gaml.S_Definition;
 import msi.gama.lang.gaml.gaml.S_DirectAssignment;
 import msi.gama.lang.gaml.gaml.S_Do;
-import msi.gama.lang.gaml.gaml.S_Equation;
+import msi.gama.lang.gaml.gaml.S_Equations;
 import msi.gama.lang.gaml.gaml.S_Experiment;
 import msi.gama.lang.gaml.gaml.S_If;
 import msi.gama.lang.gaml.gaml.S_Loop;
@@ -200,7 +200,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  private EClass s_EquationEClass = null;
+  private EClass s_EquationsEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -851,9 +851,29 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EClass getS_Equation()
+  public EClass getS_Equations()
   {
-    return s_EquationEClass;
+    return s_EquationsEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EAttribute getS_Equations_Name()
+  {
+    return (EAttribute)s_EquationsEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getS_Equations_Equations()
+  {
+    return (EReference)s_EquationsEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -1640,7 +1660,9 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     s_SetEClass = createEClass(SSET);
 
-    s_EquationEClass = createEClass(SEQUATION);
+    s_EquationsEClass = createEClass(SEQUATIONS);
+    createEAttribute(s_EquationsEClass, SEQUATIONS__NAME);
+    createEReference(s_EquationsEClass, SEQUATIONS__EQUATIONS);
 
     parametersEClass = createEClass(PARAMETERS);
     createEReference(parametersEClass, PARAMETERS__PARAMS);
@@ -1802,7 +1824,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     s_AssignmentEClass.getESuperTypes().add(this.getStatement());
     s_DirectAssignmentEClass.getESuperTypes().add(this.getS_Assignment());
     s_SetEClass.getESuperTypes().add(this.getS_Assignment());
-    s_EquationEClass.getESuperTypes().add(this.getS_Assignment());
+    s_EquationsEClass.getESuperTypes().add(this.getStatement());
     parametersEClass.getESuperTypes().add(this.getExpression());
     argumentDefinitionEClass.getESuperTypes().add(this.getVarDefinition());
     facetEClass.getESuperTypes().add(this.getVarDefinition());
@@ -1889,7 +1911,9 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     initEClass(s_SetEClass, S_Set.class, "S_Set", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
-    initEClass(s_EquationEClass, S_Equation.class, "S_Equation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEClass(s_EquationsEClass, S_Equations.class, "S_Equations", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getS_Equations_Name(), ecorePackage.getEString(), "name", null, 0, 1, S_Equations.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getS_Equations_Equations(), this.getS_Assignment(), null, "equations", null, 0, -1, S_Equations.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(parametersEClass, Parameters.class, "Parameters", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getParameters_Params(), this.getExpressionList(), null, "params", null, 0, 1, Parameters.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

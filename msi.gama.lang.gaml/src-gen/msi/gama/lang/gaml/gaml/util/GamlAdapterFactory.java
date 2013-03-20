@@ -158,9 +158,9 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createS_SetAdapter();
       }
       @Override
-      public Adapter caseS_Equation(S_Equation object)
+      public Adapter caseS_Equations(S_Equations object)
       {
-        return createS_EquationAdapter();
+        return createS_EquationsAdapter();
       }
       @Override
       public Adapter caseParameters(Parameters object)
@@ -640,16 +640,16 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
-   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.S_Equation <em>SEquation</em>}'.
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.S_Equations <em>SEquations</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
    * it's useful to ignore a case when inheritance will catch all the cases anyway.
    * <!-- end-user-doc -->
    * @return the new adapter.
-   * @see msi.gama.lang.gaml.gaml.S_Equation
+   * @see msi.gama.lang.gaml.gaml.S_Equations
    * @generated
    */
-  public Adapter createS_EquationAdapter()
+  public Adapter createS_EquationsAdapter()
   {
     return null;
   }

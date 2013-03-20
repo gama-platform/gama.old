@@ -83,7 +83,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.SASSIGNMENT: return createS_Assignment();
       case GamlPackage.SDIRECT_ASSIGNMENT: return createS_DirectAssignment();
       case GamlPackage.SSET: return createS_Set();
-      case GamlPackage.SEQUATION: return createS_Equation();
+      case GamlPackage.SEQUATIONS: return createS_Equations();
       case GamlPackage.PARAMETERS: return createParameters();
       case GamlPackage.ACTION_ARGUMENTS: return createActionArguments();
       case GamlPackage.ARGUMENT_DEFINITION: return createArgumentDefinition();
@@ -313,10 +313,10 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
-  public S_Equation createS_Equation()
+  public S_Equations createS_Equations()
   {
-    S_EquationImpl s_Equation = new S_EquationImpl();
-    return s_Equation;
+    S_EquationsImpl s_Equations = new S_EquationsImpl();
+    return s_Equations;
   }
 
   /**

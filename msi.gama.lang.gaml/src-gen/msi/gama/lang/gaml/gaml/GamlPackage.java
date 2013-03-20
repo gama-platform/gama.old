@@ -1012,14 +1012,14 @@ public interface GamlPackage extends EPackage
   int SSET_FEATURE_COUNT = SASSIGNMENT_FEATURE_COUNT + 0;
 
   /**
-   * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.S_EquationImpl <em>SEquation</em>}' class.
+   * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.S_EquationsImpl <em>SEquations</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see msi.gama.lang.gaml.gaml.impl.S_EquationImpl
-   * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Equation()
+   * @see msi.gama.lang.gaml.gaml.impl.S_EquationsImpl
+   * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Equations()
    * @generated
    */
-  int SEQUATION = 16;
+  int SEQUATIONS = 16;
 
   /**
    * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -1028,7 +1028,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SEQUATION__KEY = SASSIGNMENT__KEY;
+  int SEQUATIONS__KEY = STATEMENT__KEY;
 
   /**
    * The feature id for the '<em><b>Expr</b></em>' containment reference.
@@ -1037,7 +1037,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SEQUATION__EXPR = SASSIGNMENT__EXPR;
+  int SEQUATIONS__EXPR = STATEMENT__EXPR;
 
   /**
    * The feature id for the '<em><b>Facets</b></em>' containment reference list.
@@ -1046,7 +1046,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SEQUATION__FACETS = SASSIGNMENT__FACETS;
+  int SEQUATIONS__FACETS = STATEMENT__FACETS;
 
   /**
    * The feature id for the '<em><b>Block</b></em>' containment reference.
@@ -1055,25 +1055,34 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int SEQUATION__BLOCK = SASSIGNMENT__BLOCK;
+  int SEQUATIONS__BLOCK = STATEMENT__BLOCK;
 
   /**
-   * The feature id for the '<em><b>Value</b></em>' containment reference.
+   * The feature id for the '<em><b>Name</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int SEQUATION__VALUE = SASSIGNMENT__VALUE;
+  int SEQUATIONS__NAME = STATEMENT_FEATURE_COUNT + 0;
 
   /**
-   * The number of structural features of the '<em>SEquation</em>' class.
+   * The feature id for the '<em><b>Equations</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int SEQUATION_FEATURE_COUNT = SASSIGNMENT_FEATURE_COUNT + 0;
+  int SEQUATIONS__EQUATIONS = STATEMENT_FEATURE_COUNT + 1;
+
+  /**
+   * The number of structural features of the '<em>SEquations</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int SEQUATIONS_FEATURE_COUNT = STATEMENT_FEATURE_COUNT + 2;
 
   /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.ExpressionImpl <em>Expression</em>}' class.
@@ -3383,14 +3392,36 @@ public interface GamlPackage extends EPackage
   EClass getS_Set();
 
   /**
-   * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.S_Equation <em>SEquation</em>}'.
+   * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.S_Equations <em>SEquations</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for class '<em>SEquation</em>'.
-   * @see msi.gama.lang.gaml.gaml.S_Equation
+   * @return the meta object for class '<em>SEquations</em>'.
+   * @see msi.gama.lang.gaml.gaml.S_Equations
    * @generated
    */
-  EClass getS_Equation();
+  EClass getS_Equations();
+
+  /**
+   * Returns the meta object for the attribute '{@link msi.gama.lang.gaml.gaml.S_Equations#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see msi.gama.lang.gaml.gaml.S_Equations#getName()
+   * @see #getS_Equations()
+   * @generated
+   */
+  EAttribute getS_Equations_Name();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link msi.gama.lang.gaml.gaml.S_Equations#getEquations <em>Equations</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Equations</em>'.
+   * @see msi.gama.lang.gaml.gaml.S_Equations#getEquations()
+   * @see #getS_Equations()
+   * @generated
+   */
+  EReference getS_Equations_Equations();
 
   /**
    * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.Parameters <em>Parameters</em>}'.
@@ -4410,14 +4441,30 @@ public interface GamlPackage extends EPackage
     EClass SSET = eINSTANCE.getS_Set();
 
     /**
-     * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.S_EquationImpl <em>SEquation</em>}' class.
+     * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.S_EquationsImpl <em>SEquations</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * @see msi.gama.lang.gaml.gaml.impl.S_EquationImpl
-     * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Equation()
+     * @see msi.gama.lang.gaml.gaml.impl.S_EquationsImpl
+     * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getS_Equations()
      * @generated
      */
-    EClass SEQUATION = eINSTANCE.getS_Equation();
+    EClass SEQUATIONS = eINSTANCE.getS_Equations();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute SEQUATIONS__NAME = eINSTANCE.getS_Equations_Name();
+
+    /**
+     * The meta object literal for the '<em><b>Equations</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference SEQUATIONS__EQUATIONS = eINSTANCE.getS_Equations_Equations();
 
     /**
      * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.ParametersImpl <em>Parameters</em>}' class.

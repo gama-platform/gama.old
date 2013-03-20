@@ -78,6 +78,10 @@ public class SingleEquationStatement extends AbstractStatement {
 	}
 
 	// Placeholders operators that are (normally) never called.
+	// FIXME Can probably be replaced by actions, so that they do not pollute the whole scope of
+	// GAMA operators.
+	// TODO And maybe they can do something useful, like gathering the order, or the var or var_t,
+	// whenever they are called.
 
 	@operator("diff")
 	public static Double diff(final IScope scope, final Double var, final Double time) {

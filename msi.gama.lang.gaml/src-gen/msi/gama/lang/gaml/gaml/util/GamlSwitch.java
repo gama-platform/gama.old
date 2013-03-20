@@ -222,12 +222,11 @@ public class GamlSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
-      case GamlPackage.SEQUATION:
+      case GamlPackage.SEQUATIONS:
       {
-        S_Equation s_Equation = (S_Equation)theEObject;
-        T result = caseS_Equation(s_Equation);
-        if (result == null) result = caseS_Assignment(s_Equation);
-        if (result == null) result = caseStatement(s_Equation);
+        S_Equations s_Equations = (S_Equations)theEObject;
+        T result = caseS_Equations(s_Equations);
+        if (result == null) result = caseStatement(s_Equations);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -855,17 +854,17 @@ public class GamlSwitch<T> extends Switch<T>
   }
 
   /**
-   * Returns the result of interpreting the object as an instance of '<em>SEquation</em>'.
+   * Returns the result of interpreting the object as an instance of '<em>SEquations</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
    * returning a non-null result will terminate the switch.
    * <!-- end-user-doc -->
    * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>SEquation</em>'.
+   * @return the result of interpreting the object as an instance of '<em>SEquations</em>'.
    * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
    * @generated
    */
-  public T caseS_Equation(S_Equation object)
+  public T caseS_Equations(S_Equations object)
   {
     return null;
   }

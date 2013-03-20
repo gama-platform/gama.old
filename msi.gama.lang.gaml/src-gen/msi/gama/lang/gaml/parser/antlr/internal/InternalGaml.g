@@ -315,6 +315,16 @@ ruleStatement returns [EObject current=null]
         $current = $this_S_If_6.current; 
         afterParserOrEnumRuleCall();
     }
+
+    |
+    { 
+        newCompositeNode(grammarAccess.getStatementAccess().getS_EquationsParserRuleCall_1_6()); 
+    }
+    this_S_Equations_7=ruleS_Equations
+    { 
+        $current = $this_S_Equations_7.current; 
+        afterParserOrEnumRuleCall();
+    }
 ))
 ;
 
@@ -1687,21 +1697,7 @@ ruleS_Assignment returns [EObject current=null]
         $current = $this_S_Set_1.current; 
         afterParserOrEnumRuleCall();
     }
-
-    |((
-(
-ruleFunction
 )
-)=>
-    { 
-        newCompositeNode(grammarAccess.getS_AssignmentAccess().getS_EquationParserRuleCall_2()); 
-    }
-    this_S_Equation_2=ruleS_Equation
-    { 
-        $current = $this_S_Equation_2.current; 
-        afterParserOrEnumRuleCall();
-    }
-))
 ;
 
 
@@ -1830,10 +1826,10 @@ ruleS_DirectAssignment returns [EObject current=null]
 )
 
 )
-))(
+)(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getS_DirectAssignmentAccess().getValueExpressionParserRuleCall_1_0()); 
+	        newCompositeNode(grammarAccess.getS_DirectAssignmentAccess().getValueExpressionParserRuleCall_0_2_0()); 
 	    }
 		lv_value_2_0=ruleExpression		{
 	        if ($current==null) {
@@ -1851,7 +1847,7 @@ ruleS_DirectAssignment returns [EObject current=null]
 )(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getS_DirectAssignmentAccess().getFacetsFacetParserRuleCall_2_0()); 
+	        newCompositeNode(grammarAccess.getS_DirectAssignmentAccess().getFacetsFacetParserRuleCall_0_3_0()); 
 	    }
 		lv_facets_3_0=ruleFacet		{
 	        if ($current==null) {
@@ -1866,9 +1862,9 @@ ruleS_DirectAssignment returns [EObject current=null]
 	    }
 
 )
-)*	otherlv_4=';' 
+)*)	otherlv_4=';' 
     {
-    	newLeafNode(otherlv_4, grammarAccess.getS_DirectAssignmentAccess().getSemicolonKeyword_3());
+    	newLeafNode(otherlv_4, grammarAccess.getS_DirectAssignmentAccess().getSemicolonKeyword_1());
     }
 )
 ;
@@ -1971,6 +1967,90 @@ ruleS_Set returns [EObject current=null]
 
 
 
+// Entry rule entryRuleS_Equations
+entryRuleS_Equations returns [EObject current=null] 
+	:
+	{ newCompositeNode(grammarAccess.getS_EquationsRule()); }
+	 iv_ruleS_Equations=ruleS_Equations 
+	 { $current=$iv_ruleS_Equations.current; } 
+	 EOF 
+;
+
+// Rule S_Equations
+ruleS_Equations returns [EObject current=null] 
+    @init { enterRule(); 
+    }
+    @after { leaveRule(); }:
+((
+(
+		lv_key_0_0=	'equation' 
+    {
+        newLeafNode(lv_key_0_0, grammarAccess.getS_EquationsAccess().getKeyEquationKeyword_0_0());
+    }
+ 
+	    {
+	        if ($current==null) {
+	            $current = createModelElement(grammarAccess.getS_EquationsRule());
+	        }
+       		setWithLastConsumed($current, "key", lv_key_0_0, "equation");
+	    }
+
+)
+)(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getS_EquationsAccess().getNameValid_IDParserRuleCall_1_0()); 
+	    }
+		lv_name_1_0=ruleValid_ID		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getS_EquationsRule());
+	        }
+       		set(
+       			$current, 
+       			"name",
+        		lv_name_1_0, 
+        		"Valid_ID");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)	otherlv_2='{' 
+    {
+    	newLeafNode(otherlv_2, grammarAccess.getS_EquationsAccess().getLeftCurlyBracketKeyword_2());
+    }
+((
+(
+		{ 
+	        newCompositeNode(grammarAccess.getS_EquationsAccess().getEquationsS_EquationParserRuleCall_3_0_0()); 
+	    }
+		lv_equations_3_0=ruleS_Equation		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getS_EquationsRule());
+	        }
+       		add(
+       			$current, 
+       			"equations",
+        		lv_equations_3_0, 
+        		"S_Equation");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+)	otherlv_4=';' 
+    {
+    	newLeafNode(otherlv_4, grammarAccess.getS_EquationsAccess().getSemicolonKeyword_3_1());
+    }
+)*	otherlv_5='}' 
+    {
+    	newLeafNode(otherlv_5, grammarAccess.getS_EquationsAccess().getRightCurlyBracketKeyword_4());
+    }
+)
+;
+
+
+
+
+
 // Entry rule entryRuleS_Equation
 entryRuleS_Equation returns [EObject current=null] 
 	:
@@ -1985,11 +2065,7 @@ ruleS_Equation returns [EObject current=null]
     @init { enterRule(); 
     }
     @after { leaveRule(); }:
-(((
-(
-ruleFunction
-)
-)=>
+((
 (
 		{ 
 	        newCompositeNode(grammarAccess.getS_EquationAccess().getExprFunctionParserRuleCall_0_0()); 
@@ -2040,11 +2116,7 @@ ruleFunction
 	    }
 
 )
-)	otherlv_3=';' 
-    {
-    	newLeafNode(otherlv_3, grammarAccess.getS_EquationAccess().getSemicolonKeyword_3());
-    }
-)
+))
 ;
 
 

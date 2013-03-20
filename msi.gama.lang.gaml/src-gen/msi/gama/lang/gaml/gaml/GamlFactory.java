@@ -170,13 +170,13 @@ public interface GamlFactory extends EFactory
   S_Set createS_Set();
 
   /**
-   * Returns a new object of class '<em>SEquation</em>'.
+   * Returns a new object of class '<em>SEquations</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return a new object of class '<em>SEquation</em>'.
+   * @return a new object of class '<em>SEquations</em>'.
    * @generated
    */
-  S_Equation createS_Equation();
+  S_Equations createS_Equations();
 
   /**
    * Returns a new object of class '<em>Parameters</em>'.

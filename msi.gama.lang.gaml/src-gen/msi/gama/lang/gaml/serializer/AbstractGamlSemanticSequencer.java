@@ -30,10 +30,11 @@ import msi.gama.lang.gaml.gaml.Parameters;
 import msi.gama.lang.gaml.gaml.Point;
 import msi.gama.lang.gaml.gaml.ReservedLiteral;
 import msi.gama.lang.gaml.gaml.S_Action;
+import msi.gama.lang.gaml.gaml.S_Assignment;
 import msi.gama.lang.gaml.gaml.S_Definition;
 import msi.gama.lang.gaml.gaml.S_DirectAssignment;
 import msi.gama.lang.gaml.gaml.S_Do;
-import msi.gama.lang.gaml.gaml.S_Equation;
+import msi.gama.lang.gaml.gaml.S_Equations;
 import msi.gama.lang.gaml.gaml.S_Experiment;
 import msi.gama.lang.gaml.gaml.S_If;
 import msi.gama.lang.gaml.gaml.S_Loop;
@@ -637,6 +638,12 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 					return; 
 				}
 				else break;
+			case GamlPackage.SASSIGNMENT:
+				if(context == grammarAccess.getS_EquationRule()) {
+					sequence_S_Equation(context, (S_Assignment) semanticObject); 
+					return; 
+				}
+				else break;
 			case GamlPackage.SDEFINITION:
 				if(context == grammarAccess.getActionDefinitionRule() ||
 				   context == grammarAccess.getGamlDefinitionRule() ||
@@ -663,11 +670,10 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 					return; 
 				}
 				else break;
-			case GamlPackage.SEQUATION:
-				if(context == grammarAccess.getS_AssignmentRule() ||
-				   context == grammarAccess.getS_EquationRule() ||
+			case GamlPackage.SEQUATIONS:
+				if(context == grammarAccess.getS_EquationsRule() ||
 				   context == grammarAccess.getStatementRule()) {
-					sequence_S_Equation(context, (S_Equation) semanticObject); 
+					sequence_S_Equations(context, (S_Equations) semanticObject); 
 					return; 
 				}
 				else break;
@@ -1334,7 +1340,16 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	 * Constraint:
 	 *     (expr=Function key='=' value=Expression)
 	 */
-	protected void sequence_S_Equation(EObject context, S_Equation semanticObject) {
+	protected void sequence_S_Equation(EObject context, S_Assignment semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (key='equation' name=Valid_ID equations+=S_Equation*)
+	 */
+	protected void sequence_S_Equations(EObject context, S_Equations semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	

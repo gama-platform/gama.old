@@ -16,7 +16,7 @@ Import:
 Statement:
 	=> S_Assignment |
 	 (
-		(=>S_Declaration | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_If)
+		(=>S_Declaration | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_If | S_Equations)
 	);
 
 
@@ -68,17 +68,18 @@ S_Var returns S_Definition:
  */
  
 S_Assignment: 
-	S_DirectAssignment | S_Set | S_Equation;
+	S_DirectAssignment | S_Set;
 	
 S_DirectAssignment:
-	(expr=Expression key=( "<-" | "<<" | ">>" | "+=" | "-=" | "++" | "--" )) value=Expression (facets+=Facet)* ';';
+	(expr=Expression key=( "<-" | "<<" | ">>" | "+=" | "-=" | "++" | "--" ) value=Expression (facets+=Facet)*)
+	';';
 	
 S_Set:
 	key="set" ("var:" | "name:")? expr=Expression ("value:" | "<-") value=Expression ";";
 
-S_Equation:
-	=>expr=Function key="=" value=Expression ';';
+S_Equations: key="equation" name=Valid_ID '{' (equations += S_Equation ';')* '}';
 
+S_Equation returns S_Assignment: expr=Function key="=" value=Expression;
 
 /**
  * Statement keys
