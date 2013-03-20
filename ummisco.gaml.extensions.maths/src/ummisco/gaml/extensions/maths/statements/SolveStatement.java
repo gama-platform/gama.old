@@ -106,7 +106,7 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 			double scalRelativeTolerance = Double.parseDouble(""
 					+ getFacet("scalRelativeTolerance").value(scope));
 			solver = new DormandPrince853Solver(minStep, maxStep,
-					scalAbsoluteTolerance, scalRelativeTolerance);
+					scalAbsoluteTolerance, scalRelativeTolerance, integrate_time, integrate_val);
 		}
 		ISpecies context = scope.getAgentScope().getSpecies();
 		SystemOfEquationsStatement s = (SystemOfEquationsStatement) context
