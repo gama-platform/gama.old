@@ -1983,16 +1983,19 @@ ruleS_Equations returns [EObject current=null]
     @after { leaveRule(); }:
 ((
 (
-		lv_key_0_0=	'equation' 
-    {
-        newLeafNode(lv_key_0_0, grammarAccess.getS_EquationsAccess().getKeyEquationKeyword_0_0());
-    }
- 
-	    {
+		{ 
+	        newCompositeNode(grammarAccess.getS_EquationsAccess().getKey_EquationsKeyParserRuleCall_0_0()); 
+	    }
+		lv_key_0_0=rule_EquationsKey		{
 	        if ($current==null) {
-	            $current = createModelElement(grammarAccess.getS_EquationsRule());
+	            $current = createModelElementForParent(grammarAccess.getS_EquationsRule());
 	        }
-       		setWithLastConsumed($current, "key", lv_key_0_0, "equation");
+       		set(
+       			$current, 
+       			"key",
+        		lv_key_0_0, 
+        		"_EquationsKey");
+	        afterParserOrEnumRuleCall();
 	    }
 
 )
@@ -2118,6 +2121,33 @@ ruleS_Equation returns [EObject current=null]
 )
 ))
 ;
+
+
+
+
+
+// Entry rule entryRule_EquationsKey
+entryRule_EquationsKey returns [String current=null] 
+	:
+	{ newCompositeNode(grammarAccess.get_EquationsKeyRule()); } 
+	 iv_rule_EquationsKey=rule_EquationsKey 
+	 { $current=$iv_rule_EquationsKey.current.getText(); }  
+	 EOF 
+;
+
+// Rule _EquationsKey
+rule_EquationsKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] 
+    @init { enterRule(); 
+    }
+    @after { leaveRule(); }:
+
+	kw='equation' 
+    {
+        $current.merge(kw);
+        newLeafNode(kw, grammarAccess.get_EquationsKeyAccess().getEquationKeyword()); 
+    }
+
+    ;
 
 
 
@@ -5917,12 +5947,24 @@ ruleValid_ID returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken(
         afterParserOrEnumRuleCall();
     }
 
-    |    this_ID_5=RULE_ID    {
-		$current.merge(this_ID_5);
+    |
+    { 
+        newCompositeNode(grammarAccess.getValid_IDAccess().get_EquationsKeyParserRuleCall_5()); 
+    }
+    this__EquationsKey_5=rule_EquationsKey    {
+		$current.merge(this__EquationsKey_5);
     }
 
     { 
-    newLeafNode(this_ID_5, grammarAccess.getValid_IDAccess().getIDTerminalRuleCall_5()); 
+        afterParserOrEnumRuleCall();
+    }
+
+    |    this_ID_6=RULE_ID    {
+		$current.merge(this_ID_6);
+    }
+
+    { 
+    newLeafNode(this_ID_6, grammarAccess.getValid_IDAccess().getIDTerminalRuleCall_6()); 
     }
 )
     ;

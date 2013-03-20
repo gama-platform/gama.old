@@ -1347,7 +1347,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (key='equation' name=Valid_ID equations+=S_Equation*)
+	 *     (key=_EquationsKey name=Valid_ID equations+=S_Equation*)
 	 */
 	protected void sequence_S_Equations(EObject context, S_Equations semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

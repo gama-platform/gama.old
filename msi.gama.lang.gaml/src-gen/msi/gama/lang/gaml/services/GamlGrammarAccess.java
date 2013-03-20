@@ -1052,7 +1052,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "S_Equations");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cKeyAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final Keyword cKeyEquationKeyword_0_0 = (Keyword)cKeyAssignment_0.eContents().get(0);
+		private final RuleCall cKey_EquationsKeyParserRuleCall_0_0 = (RuleCall)cKeyAssignment_0.eContents().get(0);
 		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cNameValid_IDParserRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
 		private final Keyword cLeftCurlyBracketKeyword_2 = (Keyword)cGroup.eContents().get(2);
@@ -1063,17 +1063,17 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cRightCurlyBracketKeyword_4 = (Keyword)cGroup.eContents().get(4);
 		
 		//S_Equations:
-		//	key="equation" name=Valid_ID "{" (equations+=S_Equation ";")* "}";
+		//	key=_EquationsKey name=Valid_ID "{" (equations+=S_Equation ";")* "}";
 		public ParserRule getRule() { return rule; }
 
-		//key="equation" name=Valid_ID "{" (equations+=S_Equation ";")* "}"
+		//key=_EquationsKey name=Valid_ID "{" (equations+=S_Equation ";")* "}"
 		public Group getGroup() { return cGroup; }
 
-		//key="equation"
+		//key=_EquationsKey
 		public Assignment getKeyAssignment_0() { return cKeyAssignment_0; }
 
-		//"equation"
-		public Keyword getKeyEquationKeyword_0_0() { return cKeyEquationKeyword_0_0; }
+		//_EquationsKey
+		public RuleCall getKey_EquationsKeyParserRuleCall_0_0() { return cKey_EquationsKeyParserRuleCall_0_0; }
 
 		//name=Valid_ID
 		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
@@ -1136,15 +1136,27 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		public RuleCall getValueExpressionParserRuleCall_2_0() { return cValueExpressionParserRuleCall_2_0; }
 	}
 
+	public class _EquationsKeyElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "_EquationsKey");
+		private final Keyword cEquationKeyword = (Keyword)rule.eContents().get(1);
+		
+		/// **
+		// * Statement keys
+		// * / _EquationsKey:
+		//	"equation";
+		public ParserRule getRule() { return rule; }
+
+		//"equation"
+		public Keyword getEquationKeyword() { return cEquationKeyword; }
+	}
+
 	public class _SpeciesKeyElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "_SpeciesKey");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Keyword cSpeciesKeyword_0 = (Keyword)cAlternatives.eContents().get(0);
 		private final Keyword cGridKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
 		
-		/// **
-		// * Statement keys
-		// * / _SpeciesKey:
+		//_SpeciesKey:
 		//	"species" | "grid";
 		public ParserRule getRule() { return rule; }
 
@@ -3341,13 +3353,14 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall c_ReflexKeyParserRuleCall_2 = (RuleCall)cAlternatives.eContents().get(2);
 		private final RuleCall c_VarOrConstKeyParserRuleCall_3 = (RuleCall)cAlternatives.eContents().get(3);
 		private final RuleCall c_1Expr_Facets_BlockOrEnd_KeyParserRuleCall_4 = (RuleCall)cAlternatives.eContents().get(4);
-		private final RuleCall cIDTerminalRuleCall_5 = (RuleCall)cAlternatives.eContents().get(5);
+		private final RuleCall c_EquationsKeyParserRuleCall_5 = (RuleCall)cAlternatives.eContents().get(5);
+		private final RuleCall cIDTerminalRuleCall_6 = (RuleCall)cAlternatives.eContents().get(6);
 		
 		//Valid_ID:
-		//	_SpeciesKey | _DoKey | _ReflexKey | _VarOrConstKey | _1Expr_Facets_BlockOrEnd_Key | ID;
+		//	_SpeciesKey | _DoKey | _ReflexKey | _VarOrConstKey | _1Expr_Facets_BlockOrEnd_Key | _EquationsKey | ID;
 		public ParserRule getRule() { return rule; }
 
-		//_SpeciesKey | _DoKey | _ReflexKey | _VarOrConstKey | _1Expr_Facets_BlockOrEnd_Key | ID
+		//_SpeciesKey | _DoKey | _ReflexKey | _VarOrConstKey | _1Expr_Facets_BlockOrEnd_Key | _EquationsKey | ID
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//_SpeciesKey
@@ -3365,8 +3378,11 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//_1Expr_Facets_BlockOrEnd_Key
 		public RuleCall get_1Expr_Facets_BlockOrEnd_KeyParserRuleCall_4() { return c_1Expr_Facets_BlockOrEnd_KeyParserRuleCall_4; }
 
+		//_EquationsKey
+		public RuleCall get_EquationsKeyParserRuleCall_5() { return c_EquationsKeyParserRuleCall_5; }
+
 		//ID
-		public RuleCall getIDTerminalRuleCall_5() { return cIDTerminalRuleCall_5; }
+		public RuleCall getIDTerminalRuleCall_6() { return cIDTerminalRuleCall_6; }
 	}
 
 	public class TerminalExpressionElements extends AbstractParserRuleElementFinder {
@@ -3503,6 +3519,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	private S_SetElements pS_Set;
 	private S_EquationsElements pS_Equations;
 	private S_EquationElements pS_Equation;
+	private _EquationsKeyElements p_EquationsKey;
 	private _SpeciesKeyElements p_SpeciesKey;
 	private _1Expr_Facets_BlockOrEnd_KeyElements p_1Expr_Facets_BlockOrEnd_Key;
 	private _DoKeyElements p_DoKey;
@@ -3783,7 +3800,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//S_Equations:
-	//	key="equation" name=Valid_ID "{" (equations+=S_Equation ";")* "}";
+	//	key=_EquationsKey name=Valid_ID "{" (equations+=S_Equation ";")* "}";
 	public S_EquationsElements getS_EquationsAccess() {
 		return (pS_Equations != null) ? pS_Equations : (pS_Equations = new S_EquationsElements());
 	}
@@ -3804,7 +3821,17 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 	/// **
 	// * Statement keys
-	// * / _SpeciesKey:
+	// * / _EquationsKey:
+	//	"equation";
+	public _EquationsKeyElements get_EquationsKeyAccess() {
+		return (p_EquationsKey != null) ? p_EquationsKey : (p_EquationsKey = new _EquationsKeyElements());
+	}
+	
+	public ParserRule get_EquationsKeyRule() {
+		return get_EquationsKeyAccess().getRule();
+	}
+
+	//_SpeciesKey:
 	//	"species" | "grid";
 	public _SpeciesKeyElements get_SpeciesKeyAccess() {
 		return (p_SpeciesKey != null) ? p_SpeciesKey : (p_SpeciesKey = new _SpeciesKeyElements());
@@ -4360,7 +4387,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//Valid_ID:
-	//	_SpeciesKey | _DoKey | _ReflexKey | _VarOrConstKey | _1Expr_Facets_BlockOrEnd_Key | ID;
+	//	_SpeciesKey | _DoKey | _ReflexKey | _VarOrConstKey | _1Expr_Facets_BlockOrEnd_Key | _EquationsKey | ID;
 	public Valid_IDElements getValid_IDAccess() {
 		return (pValid_ID != null) ? pValid_ID : (pValid_ID = new Valid_IDElements());
 	}

@@ -77,7 +77,7 @@ S_DirectAssignment:
 S_Set:
 	key="set" ("var:" | "name:")? expr=Expression ("value:" | "<-") value=Expression ";";
 
-S_Equations: key="equation" name=Valid_ID '{' (equations += S_Equation ';')* '}';
+S_Equations: key=_EquationsKey name=Valid_ID '{' (equations += S_Equation ';')* '}';
 
 S_Equation returns S_Assignment: expr=Function key="=" value=Expression;
 
@@ -85,6 +85,9 @@ S_Equation returns S_Assignment: expr=Function key="=" value=Expression;
  * Statement keys
  */
 
+_EquationsKey:
+	"equation"
+;
 _SpeciesKey:
 	"species" | "grid";
 
@@ -300,7 +303,7 @@ VarFakeDefinition:
 	'**var*' name=Valid_ID;
 
 Valid_ID:
-	_SpeciesKey | _DoKey | _ReflexKey | _VarOrConstKey  | _1Expr_Facets_BlockOrEnd_Key | ID;
+	_SpeciesKey | _DoKey | _ReflexKey | _VarOrConstKey  | _1Expr_Facets_BlockOrEnd_Key | _EquationsKey | ID;
 
 
 /**
