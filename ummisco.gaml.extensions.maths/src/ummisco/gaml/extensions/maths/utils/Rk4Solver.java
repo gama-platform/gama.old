@@ -24,10 +24,11 @@ public class Rk4Solver extends Solver {
 	public GamaList integrated_time;
 	public GamaList integrated_val;
 	
-	public Rk4Solver(double S, GamaList integratedTime, GamaList integratedVal){
+	public Rk4Solver(double S, GamaList iT, GamaList iV){
 		step = S;
-		integrated_time=integratedTime;
-		integrated_val=integratedVal;
+		integrated_time=iT;
+		integrated_val=iV;
+
 		integrator = new ClassicalRungeKuttaIntegrator(step);
 		stepHandler = new StepHandler() {
 			public void init(double t0, double[] y0, double t) {
@@ -37,12 +38,14 @@ public class Rk4Solver extends Solver {
 			public void handleStep(StepInterpolator interpolator, boolean isLast) {
 				double time = interpolator.getCurrentTime();
 				double[] y = interpolator.getInterpolatedState();
+				
 				integrated_time.add(time);
 
 				for(int i=0; i<integrated_val.size(); i++){
 					((GamaList)integrated_val.get(i)).add(y[i]);
 				}
-//				 GuiUtils.informConsole("time="+time);
+				
+				//				 GuiUtils.informConsole("time="+time);
 			}
 		};
 		integrator.addStepHandler(stepHandler);

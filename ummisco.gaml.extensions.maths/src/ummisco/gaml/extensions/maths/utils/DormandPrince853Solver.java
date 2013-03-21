@@ -29,10 +29,10 @@ public class DormandPrince853Solver extends Solver {
 
 	public DormandPrince853Solver(double minStep, double maxStep,
 			double scalAbsoluteTolerance, double scalRelativeTolerance,
-			GamaList integratedTime, GamaList integratedVal) {
+			GamaList iT, GamaList iV) {
 
-		integrated_time = integratedTime;
-		integrated_val = integratedVal;
+		integrated_time = iT;
+		integrated_val = iV;
 		this.minStep = minStep;
 		this.maxStep = maxStep;
 		this.scalAbsoluteTolerance = scalAbsoluteTolerance;
