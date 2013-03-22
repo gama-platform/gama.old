@@ -7,11 +7,15 @@
 package gama.impl;
 
 import gama.EAspect;
+import gama.EAspectLink;
 import gama.GamaPackage;
 
+import java.util.Collection;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -21,6 +25,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link gama.impl.EAspectImpl#getGamlCode <em>Gaml Code</em>}</li>
+ *   <li>{@link gama.impl.EAspectImpl#getAspectLinks <em>Aspect Links</em>}</li>
  * </ul>
  * </p>
  *
@@ -45,6 +50,16 @@ public class EAspectImpl extends EGamaObjectImpl implements EAspect {
 	 * @ordered
 	 */
 	protected String gamlCode = GAML_CODE_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getAspectLinks() <em>Aspect Links</em>}' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAspectLinks()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<EAspectLink> aspectLinks;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -91,11 +106,25 @@ public class EAspectImpl extends EGamaObjectImpl implements EAspect {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<EAspectLink> getAspectLinks() {
+		if (aspectLinks == null) {
+			aspectLinks = new EObjectResolvingEList<EAspectLink>(EAspectLink.class, this, GamaPackage.EASPECT__ASPECT_LINKS);
+		}
+		return aspectLinks;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case GamaPackage.EASPECT__GAML_CODE:
 				return getGamlCode();
+			case GamaPackage.EASPECT__ASPECT_LINKS:
+				return getAspectLinks();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -105,11 +134,16 @@ public class EAspectImpl extends EGamaObjectImpl implements EAspect {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
 			case GamaPackage.EASPECT__GAML_CODE:
 				setGamlCode((String)newValue);
+				return;
+			case GamaPackage.EASPECT__ASPECT_LINKS:
+				getAspectLinks().clear();
+				getAspectLinks().addAll((Collection<? extends EAspectLink>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -126,6 +160,9 @@ public class EAspectImpl extends EGamaObjectImpl implements EAspect {
 			case GamaPackage.EASPECT__GAML_CODE:
 				setGamlCode(GAML_CODE_EDEFAULT);
 				return;
+			case GamaPackage.EASPECT__ASPECT_LINKS:
+				getAspectLinks().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -140,6 +177,8 @@ public class EAspectImpl extends EGamaObjectImpl implements EAspect {
 		switch (featureID) {
 			case GamaPackage.EASPECT__GAML_CODE:
 				return GAML_CODE_EDEFAULT == null ? gamlCode != null : !GAML_CODE_EDEFAULT.equals(gamlCode);
+			case GamaPackage.EASPECT__ASPECT_LINKS:
+				return aspectLinks != null && !aspectLinks.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

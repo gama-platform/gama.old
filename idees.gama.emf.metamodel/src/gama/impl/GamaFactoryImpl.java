@@ -82,6 +82,7 @@ public class GamaFactoryImpl extends EFactoryImpl implements GamaFactory {
 			case GamaPackage.ELAYER: return createELayer();
 			case GamaPackage.EGRAPH: return createEGraph();
 			case GamaPackage.EEXPERIMENT_LINK: return createEExperimentLink();
+			case GamaPackage.ELAYER_ASPECT: return createELayerAspect();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -305,6 +306,16 @@ public class GamaFactoryImpl extends EFactoryImpl implements GamaFactory {
 	public EExperimentLink createEExperimentLink() {
 		EExperimentLinkImpl eExperimentLink = new EExperimentLinkImpl();
 		return eExperimentLink;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ELayerAspect createELayerAspect() {
+		ELayerAspectImpl eLayerAspect = new ELayerAspectImpl();
+		return eLayerAspect;
 	}
 
 	/**

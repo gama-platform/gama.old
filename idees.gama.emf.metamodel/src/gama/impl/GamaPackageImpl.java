@@ -22,6 +22,7 @@ import gama.EGamaObject;
 import gama.EGraph;
 import gama.EGrid;
 import gama.ELayer;
+import gama.ELayerAspect;
 import gama.EReflex;
 import gama.EReflexLink;
 import gama.ESpecies;
@@ -200,6 +201,13 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	private EClass eExperimentLinkEClass = null;
 
 	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass eLayerAspectEClass = null;
+
+	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
 	 * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package
 	 * package URI value.
@@ -328,24 +336,6 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getEGamaObject_IncomingLinks() {
-		return (EReference)eGamaObjectEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getEGamaObject_OutcomingLinks() {
-		return (EReference)eGamaObjectEClass.getEStructuralFeatures().get(3);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getESpecies() {
 		return eSpeciesEClass;
 	}
@@ -391,6 +381,114 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getESpecies_ExperimentLinks() {
+		return (EReference)eSpeciesEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getESpecies_AspectLinks() {
+		return (EReference)eSpeciesEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getESpecies_ActionLinks() {
+		return (EReference)eSpeciesEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getESpecies_ReflexLinks() {
+		return (EReference)eSpeciesEClass.getEStructuralFeatures().get(7);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getESpecies_Shape() {
+		return (EAttribute)eSpeciesEClass.getEStructuralFeatures().get(8);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getESpecies_Location() {
+		return (EAttribute)eSpeciesEClass.getEStructuralFeatures().get(9);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getESpecies_Size() {
+		return (EAttribute)eSpeciesEClass.getEStructuralFeatures().get(10);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getESpecies_Width() {
+		return (EAttribute)eSpeciesEClass.getEStructuralFeatures().get(11);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getESpecies_Heigth() {
+		return (EAttribute)eSpeciesEClass.getEStructuralFeatures().get(12);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getESpecies_Radius() {
+		return (EAttribute)eSpeciesEClass.getEStructuralFeatures().get(13);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getESpecies_MicroSpeciesLinks() {
+		return (EReference)eSpeciesEClass.getEStructuralFeatures().get(14);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getESpecies_MacroSpeciesLinks() {
+		return (EReference)eSpeciesEClass.getEStructuralFeatures().get(15);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getEAction() {
 		return eActionEClass;
 	}
@@ -409,6 +507,15 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getEAction_ActionLinks() {
+		return (EReference)eActionEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getEAspect() {
 		return eAspectEClass;
 	}
@@ -420,6 +527,15 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 */
 	public EAttribute getEAspect_GamlCode() {
 		return (EAttribute)eAspectEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getEAspect_AspectLinks() {
+		return (EReference)eAspectEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -454,8 +570,35 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getEReflex_ReflexLinks() {
+		return (EReference)eReflexEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getEExperiment() {
 		return eExperimentEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getEExperiment_ExperimentLinks() {
+		return (EReference)eExperimentEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getEExperiment_DisplayLinks() {
+		return (EReference)eExperimentEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -526,8 +669,44 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getESubSpeciesLink_Macro() {
+		return (EReference)eSubSpeciesLinkEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getESubSpeciesLink_Micro() {
+		return (EReference)eSubSpeciesLinkEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getEActionLink() {
 		return eActionLinkEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getEActionLink_Action() {
+		return (EReference)eActionLinkEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getEActionLink_Species() {
+		return (EReference)eActionLinkEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -544,6 +723,24 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getEAspectLink_Aspect() {
+		return (EReference)eAspectLinkEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getEAspectLink_Species() {
+		return (EReference)eAspectLinkEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getEReflexLink() {
 		return eReflexLinkEClass;
 	}
@@ -553,8 +750,44 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getEReflexLink_Reflex() {
+		return (EReference)eReflexLinkEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getEReflexLink_Species() {
+		return (EReference)eReflexLinkEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getEDisplayLink() {
 		return eDisplayLinkEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getEDisplayLink_Experiment() {
+		return (EReference)eDisplayLinkEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getEDisplayLink_Display() {
+		return (EReference)eDisplayLinkEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -573,6 +806,15 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 */
 	public EReference getEDisplay_Layers() {
 		return (EReference)eDisplayEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getEDisplay_DisplayLink() {
+		return (EReference)eDisplayEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -715,6 +957,33 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getELayer_Name() {
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getELayer_Model() {
+		return (EReference)eLayerEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getELayer_Display() {
+		return (EReference)eLayerEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getEGraph() {
 		return eGraphEClass;
 	}
@@ -744,6 +1013,150 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 */
 	public EClass getEExperimentLink() {
 		return eExperimentLinkEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getEExperimentLink_Species() {
+		return (EReference)eExperimentLinkEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getEExperimentLink_Experiment() {
+		return (EReference)eExperimentLinkEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getELayerAspect() {
+		return eLayerAspectEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayerAspect_GamlCode() {
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayerAspect_Name() {
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getELayerAspect_Model() {
+		return (EReference)eLayerAspectEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayerAspect_Shape() {
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayerAspect_Color() {
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayerAspect_Empty() {
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayerAspect_Rotate() {
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayerAspect_Size() {
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(7);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayerAspect_Width() {
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(8);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayerAspect_Heigth() {
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(9);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayerAspect_Radius() {
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(10);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayerAspect_Path() {
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(11);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayerAspect_Text() {
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(12);
 	}
 
 	/**
@@ -782,26 +1195,41 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		eGamaObjectEClass = createEClass(EGAMA_OBJECT);
 		createEAttribute(eGamaObjectEClass, EGAMA_OBJECT__NAME);
 		createEReference(eGamaObjectEClass, EGAMA_OBJECT__MODEL);
-		createEReference(eGamaObjectEClass, EGAMA_OBJECT__INCOMING_LINKS);
-		createEReference(eGamaObjectEClass, EGAMA_OBJECT__OUTCOMING_LINKS);
 
 		eSpeciesEClass = createEClass(ESPECIES);
 		createEReference(eSpeciesEClass, ESPECIES__VARIABLES);
 		createEAttribute(eSpeciesEClass, ESPECIES__TOPOLOGY);
 		createEAttribute(eSpeciesEClass, ESPECIES__REFLEX_LIST);
 		createEAttribute(eSpeciesEClass, ESPECIES__TORUS);
+		createEReference(eSpeciesEClass, ESPECIES__EXPERIMENT_LINKS);
+		createEReference(eSpeciesEClass, ESPECIES__ASPECT_LINKS);
+		createEReference(eSpeciesEClass, ESPECIES__ACTION_LINKS);
+		createEReference(eSpeciesEClass, ESPECIES__REFLEX_LINKS);
+		createEAttribute(eSpeciesEClass, ESPECIES__SHAPE);
+		createEAttribute(eSpeciesEClass, ESPECIES__LOCATION);
+		createEAttribute(eSpeciesEClass, ESPECIES__SIZE);
+		createEAttribute(eSpeciesEClass, ESPECIES__WIDTH);
+		createEAttribute(eSpeciesEClass, ESPECIES__HEIGTH);
+		createEAttribute(eSpeciesEClass, ESPECIES__RADIUS);
+		createEReference(eSpeciesEClass, ESPECIES__MICRO_SPECIES_LINKS);
+		createEReference(eSpeciesEClass, ESPECIES__MACRO_SPECIES_LINKS);
 
 		eActionEClass = createEClass(EACTION);
 		createEAttribute(eActionEClass, EACTION__GAML_CODE);
+		createEReference(eActionEClass, EACTION__ACTION_LINKS);
 
 		eAspectEClass = createEClass(EASPECT);
 		createEAttribute(eAspectEClass, EASPECT__GAML_CODE);
+		createEReference(eAspectEClass, EASPECT__ASPECT_LINKS);
 
 		eReflexEClass = createEClass(EREFLEX);
 		createEAttribute(eReflexEClass, EREFLEX__GAML_CODE);
 		createEAttribute(eReflexEClass, EREFLEX__CONDITION);
+		createEReference(eReflexEClass, EREFLEX__REFLEX_LINKS);
 
 		eExperimentEClass = createEClass(EEXPERIMENT);
+		createEReference(eExperimentEClass, EEXPERIMENT__EXPERIMENT_LINKS);
+		createEReference(eExperimentEClass, EEXPERIMENT__DISPLAY_LINKS);
 
 		eguiExperimentEClass = createEClass(EGUI_EXPERIMENT);
 
@@ -813,17 +1241,28 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		createEReference(eGamaLinkEClass, EGAMA_LINK__MODEL);
 
 		eSubSpeciesLinkEClass = createEClass(ESUB_SPECIES_LINK);
+		createEReference(eSubSpeciesLinkEClass, ESUB_SPECIES_LINK__MACRO);
+		createEReference(eSubSpeciesLinkEClass, ESUB_SPECIES_LINK__MICRO);
 
 		eActionLinkEClass = createEClass(EACTION_LINK);
+		createEReference(eActionLinkEClass, EACTION_LINK__ACTION);
+		createEReference(eActionLinkEClass, EACTION_LINK__SPECIES);
 
 		eAspectLinkEClass = createEClass(EASPECT_LINK);
+		createEReference(eAspectLinkEClass, EASPECT_LINK__ASPECT);
+		createEReference(eAspectLinkEClass, EASPECT_LINK__SPECIES);
 
 		eReflexLinkEClass = createEClass(EREFLEX_LINK);
+		createEReference(eReflexLinkEClass, EREFLEX_LINK__REFLEX);
+		createEReference(eReflexLinkEClass, EREFLEX_LINK__SPECIES);
 
 		eDisplayLinkEClass = createEClass(EDISPLAY_LINK);
+		createEReference(eDisplayLinkEClass, EDISPLAY_LINK__EXPERIMENT);
+		createEReference(eDisplayLinkEClass, EDISPLAY_LINK__DISPLAY);
 
 		eDisplayEClass = createEClass(EDISPLAY);
 		createEReference(eDisplayEClass, EDISPLAY__LAYERS);
+		createEReference(eDisplayEClass, EDISPLAY__DISPLAY_LINK);
 
 		eGridEClass = createEClass(EGRID);
 		createEAttribute(eGridEClass, EGRID__NB_COLUMNS);
@@ -843,12 +1282,32 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 
 		eLayerEClass = createEClass(ELAYER);
 		createEAttribute(eLayerEClass, ELAYER__GAML_CODE);
+		createEAttribute(eLayerEClass, ELAYER__NAME);
+		createEReference(eLayerEClass, ELAYER__MODEL);
+		createEReference(eLayerEClass, ELAYER__DISPLAY);
 
 		eGraphEClass = createEClass(EGRAPH);
 		createEReference(eGraphEClass, EGRAPH__NODE);
 		createEReference(eGraphEClass, EGRAPH__EDGE);
 
 		eExperimentLinkEClass = createEClass(EEXPERIMENT_LINK);
+		createEReference(eExperimentLinkEClass, EEXPERIMENT_LINK__SPECIES);
+		createEReference(eExperimentLinkEClass, EEXPERIMENT_LINK__EXPERIMENT);
+
+		eLayerAspectEClass = createEClass(ELAYER_ASPECT);
+		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__GAML_CODE);
+		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__NAME);
+		createEReference(eLayerAspectEClass, ELAYER_ASPECT__MODEL);
+		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__SHAPE);
+		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__COLOR);
+		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__EMPTY);
+		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__ROTATE);
+		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__SIZE);
+		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__WIDTH);
+		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__HEIGTH);
+		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__RADIUS);
+		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__PATH);
+		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__TEXT);
 	}
 
 	/**
@@ -906,48 +1365,74 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEClass(eGamaObjectEClass, EGamaObject.class, "EGamaObject", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEGamaObject_Name(), ecorePackage.getEString(), "name", null, 0, 1, EGamaObject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEGamaObject_Model(), this.getEGamaModel(), this.getEGamaModel_Objects(), "model", null, 1, 1, EGamaObject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getEGamaObject_IncomingLinks(), this.getEGamaLink(), this.getEGamaLink_Target(), "incomingLinks", null, 0, -1, EGamaObject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getEGamaObject_OutcomingLinks(), this.getEGamaLink(), this.getEGamaLink_Source(), "outcomingLinks", null, 0, -1, EGamaObject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eSpeciesEClass, ESpecies.class, "ESpecies", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getESpecies_Variables(), this.getEVariable(), null, "variables", null, 0, -1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getESpecies_Topology(), ecorePackage.getEString(), "topology", null, 0, 1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getESpecies_ReflexList(), ecorePackage.getEString(), "reflexList", null, 0, -1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getESpecies_Torus(), ecorePackage.getEString(), "torus", null, 0, 1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getESpecies_ExperimentLinks(), this.getEExperimentLink(), null, "experimentLinks", null, 0, -1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getESpecies_AspectLinks(), this.getEAspectLink(), null, "aspectLinks", null, 0, -1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getESpecies_ActionLinks(), this.getEActionLink(), null, "actionLinks", null, 0, -1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getESpecies_ReflexLinks(), this.getEReflexLink(), null, "reflexLinks", null, 0, -1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getESpecies_Shape(), ecorePackage.getEString(), "shape", null, 0, 1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getESpecies_Location(), ecorePackage.getEString(), "location", null, 0, 1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getESpecies_Size(), ecorePackage.getEString(), "size", null, 0, 1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getESpecies_Width(), ecorePackage.getEString(), "width", null, 0, 1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getESpecies_Heigth(), ecorePackage.getEString(), "heigth", null, 0, 1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getESpecies_Radius(), ecorePackage.getEString(), "radius", null, 0, 1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getESpecies_MicroSpeciesLinks(), this.getESubSpeciesLink(), null, "microSpeciesLinks", null, 0, -1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getESpecies_MacroSpeciesLinks(), this.getESubSpeciesLink(), null, "macroSpeciesLinks", null, 0, -1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eActionEClass, EAction.class, "EAction", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEAction_GamlCode(), ecorePackage.getEString(), "gamlCode", null, 0, 1, EAction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEReference(getEAction_ActionLinks(), this.getEActionLink(), null, "actionLinks", null, 0, -1, EAction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eAspectEClass, EAspect.class, "EAspect", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEAspect_GamlCode(), ecorePackage.getEString(), "gamlCode", null, 0, 1, EAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEReference(getEAspect_AspectLinks(), this.getEAspectLink(), null, "aspectLinks", null, 0, -1, EAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eReflexEClass, EReflex.class, "EReflex", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEReflex_GamlCode(), ecorePackage.getEString(), "gamlCode", null, 0, 1, EReflex.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEReflex_Condition(), ecorePackage.getEString(), "condition", null, 0, 1, EReflex.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEReference(getEReflex_ReflexLinks(), this.getEReflexLink(), null, "reflexLinks", null, 0, -1, EReflex.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eExperimentEClass, EExperiment.class, "EExperiment", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getEExperiment_ExperimentLinks(), this.getEExperimentLink(), null, "experimentLinks", null, 0, -1, EExperiment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEExperiment_DisplayLinks(), this.getEDisplayLink(), null, "displayLinks", null, 0, -1, EExperiment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eguiExperimentEClass, EGUIExperiment.class, "EGUIExperiment", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(eBatchExperimentEClass, EBatchExperiment.class, "EBatchExperiment", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(eGamaLinkEClass, EGamaLink.class, "EGamaLink", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getEGamaLink_Target(), this.getEGamaObject(), this.getEGamaObject_IncomingLinks(), "target", null, 1, 1, EGamaLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getEGamaLink_Source(), this.getEGamaObject(), this.getEGamaObject_OutcomingLinks(), "source", null, 1, 1, EGamaLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEGamaLink_Target(), this.getEGamaObject(), null, "target", null, 1, 1, EGamaLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEGamaLink_Source(), this.getEGamaObject(), null, "source", null, 1, 1, EGamaLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEGamaLink_Model(), this.getEGamaModel(), this.getEGamaModel_Links(), "model", null, 1, 1, EGamaLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eSubSpeciesLinkEClass, ESubSpeciesLink.class, "ESubSpeciesLink", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getESubSpeciesLink_Macro(), this.getESpecies(), null, "macro", null, 0, 1, ESubSpeciesLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getESubSpeciesLink_Micro(), this.getESpecies(), null, "micro", null, 0, 1, ESubSpeciesLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eActionLinkEClass, EActionLink.class, "EActionLink", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getEActionLink_Action(), this.getEAction(), null, "action", null, 0, 1, EActionLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEActionLink_Species(), this.getESpecies(), null, "species", null, 0, 1, EActionLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eAspectLinkEClass, EAspectLink.class, "EAspectLink", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getEAspectLink_Aspect(), this.getEAspect(), null, "aspect", null, 0, 1, EAspectLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEAspectLink_Species(), this.getESpecies(), null, "species", null, 0, 1, EAspectLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eReflexLinkEClass, EReflexLink.class, "EReflexLink", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getEReflexLink_Reflex(), this.getEReflex(), null, "reflex", null, 0, 1, EReflexLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEReflexLink_Species(), this.getESpecies(), null, "species", null, 0, 1, EReflexLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eDisplayLinkEClass, EDisplayLink.class, "EDisplayLink", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getEDisplayLink_Experiment(), this.getEGUIExperiment(), null, "experiment", null, 0, 1, EDisplayLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEDisplayLink_Display(), this.getEDisplay(), null, "display", null, 0, 1, EDisplayLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eDisplayEClass, EDisplay.class, "EDisplay", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getEDisplay_Layers(), this.getELayer(), null, "layers", null, 0, -1, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEDisplay_DisplayLink(), this.getEDisplayLink(), null, "displayLink", null, 0, 1, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eGridEClass, EGrid.class, "EGrid", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEGrid_Nb_columns(), ecorePackage.getEString(), "nb_columns", null, 0, 1, EGrid.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -967,12 +1452,32 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 
 		initEClass(eLayerEClass, ELayer.class, "ELayer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getELayer_GamlCode(), ecorePackage.getEString(), "gamlCode", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayer_Name(), ecorePackage.getEString(), "name", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getELayer_Model(), this.getEGamaModel(), null, "model", null, 1, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getELayer_Display(), this.getEDisplay(), null, "display", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eGraphEClass, EGraph.class, "EGraph", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getEGraph_Node(), this.getESpecies(), null, "node", null, 0, 1, EGraph.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEGraph_Edge(), this.getESpecies(), null, "edge", null, 0, 1, EGraph.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eExperimentLinkEClass, EExperimentLink.class, "EExperimentLink", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getEExperimentLink_Species(), this.getESpecies(), null, "species", null, 0, 1, EExperimentLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEExperimentLink_Experiment(), this.getEExperiment(), null, "experiment", null, 0, 1, EExperimentLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(eLayerAspectEClass, ELayerAspect.class, "ELayerAspect", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getELayerAspect_GamlCode(), ecorePackage.getEString(), "gamlCode", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayerAspect_Name(), ecorePackage.getEString(), "name", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getELayerAspect_Model(), this.getEGamaModel(), null, "model", null, 1, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayerAspect_Shape(), ecorePackage.getEString(), "shape", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayerAspect_Color(), ecorePackage.getEString(), "color", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayerAspect_Empty(), ecorePackage.getEString(), "empty", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayerAspect_Rotate(), ecorePackage.getEString(), "rotate", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayerAspect_Size(), ecorePackage.getEString(), "size", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayerAspect_Width(), ecorePackage.getEString(), "width", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayerAspect_Heigth(), ecorePackage.getEString(), "heigth", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayerAspect_Radius(), ecorePackage.getEString(), "radius", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayerAspect_Path(), ecorePackage.getEString(), "path", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayerAspect_Text(), ecorePackage.getEString(), "text", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);

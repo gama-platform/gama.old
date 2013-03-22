@@ -6,6 +6,7 @@ import gama.EAspectLink;
 import gama.EBatchExperiment;
 import gama.EDisplayLink;
 import gama.EExperiment;
+import gama.EExperimentLink;
 import gama.EGamaLink;
 import gama.EGrid;
 import gama.EReflex;
@@ -13,6 +14,7 @@ import gama.EReflexLink;
 import gama.ESpecies;
 import gama.ESubSpeciesLink;
 import gama.EVariable;
+import gama.EWorldAgent;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -116,20 +118,22 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     	}
     	
     	Map<String, EReflexLink> reflexMap = new Hashtable<String, EReflexLink>();
-    	 for (EGamaLink link : species.getOutcomingLinks()) {
-         	if (link instanceof EActionLink) {
-         		model += defineAction((EActionLink)link, level+1);
-         	} else if (link instanceof EReflexLink) {
-         		reflexMap.put(link.getTarget().getName(), (EReflexLink) link);
-         	} else if (link instanceof EAspectLink) {
-         		model += defineAspect((EAspectLink)link,level+1);
-         	} else if (link instanceof ESubSpeciesLink) {
-         		model += defineSpecies((ESpecies) link.getTarget(),level+1); 
-         	}
-         }
+    	 for (EActionLink link : species.getActionLinks()) {
+         	model += defineAction(link, level+1);
+    	 }
+    	 for (EReflexLink link : species.getReflexLinks()) {
+    		reflexMap.put(link.getTarget().getName(), (EReflexLink) link);
+     	 }
     	 for (String reflex : species.getReflexList()) {
     		 model += defineReflex(reflexMap.get(reflex),level+1);
-     	}
+     	 }
+    	 for (EAspectLink link : species.getAspectLinks()) {
+    		 model += defineAspect(link,level+1);
+     	 }
+    	 for (ESubSpeciesLink link : species.getMicroSpeciesLinks()) {
+    		 model += defineSpecies(link.getMicro(),level+1); 
+     	 }
+    	 
     	 model += sp+ "}\n";
     	 
     	 return model;
@@ -165,7 +169,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     		sp += "\t";
     	}
     	result += sp + "action " + link.getTarget().getName() + " {\n";
-    	String code = ((EAction)link.getTarget()).getGamlCode();
+    	String code = link.getAction().getGamlCode();
     	if (code != null && ! code.isEmpty()) {
 	    	for (String line : code.split("\n")) {
 	    		result += sp+ "\t" + line+"\n";
@@ -181,12 +185,12 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     	for (int i =0; i < level;i++) {
     		sp += "\t";
     	}
-    	if (((EReflex)link.getTarget()).getCondition() != null && ((EReflex)link.getTarget()).getCondition().isEmpty()) {
-    		result += sp + "reflex " + link.getTarget().getName() + " when: "+ ((EReflex)link.getTarget()).getCondition() + " {\n";
+    	if (link.getReflex().getCondition() != null && link.getReflex().getCondition().isEmpty()) {
+    		result += sp + "reflex " + link.getReflex().getName() + " when: "+ link.getReflex().getCondition() + " {\n";
     	} else {
-    		result += sp + "reflex " + link.getTarget().getName() + " {\n";
+    		result += sp + "reflex " + link.getReflex().getName() + " {\n";
     	}
-    	String code = ((EReflex)link.getTarget()).getGamlCode();
+    	String code = link.getReflex().getGamlCode();
     	if (code != null && ! code.isEmpty()) {
 	    	for (String line : code.split("\n")) {
 	    		result += sp+ "\t" + line+"\n";
@@ -202,7 +206,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     	for (int i =0; i < level;i++) {
     		sp += "\t";
     	}
-    	result += sp + "aspect " + link.getTarget().getName() + " {\n";
+    	result += sp + "aspect " + link.getAspect() + " {\n";
     	result +=sp + "}\n";
     	return result;
     }
@@ -213,10 +217,8 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     		model += "\n\nexperiment " + exp.getName() + " type:batch {}";
     	} else {
     		model += "\n\nexperiment " + exp.getName() + " type:gui {\n\toutput{";
-    		for (EGamaLink link : exp.getOutcomingLinks()) {
-    			if (link instanceof EDisplayLink) {
-    				model += defineDisplay((EDisplayLink)link);
-    			}
+    		for (EDisplayLink link : exp.getDisplayLinks()) {
+    			model += defineDisplay(link);
     		}
     		model += "\n\t}\n}\n";
     	}
@@ -225,7 +227,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     }
     
     static String defineDisplay(EDisplayLink link) {
-    	return "\n\t\tdisplay " + link.getTarget().getName() + " {\n" + "\t\t}";
+    	return "\n\t\tdisplay " + link.getDisplay().getName() + " {\n" + "\t\t}";
     }
  
     @Override
@@ -235,53 +237,51 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     
     
     public static String generateModel(IFeatureProvider fp, Diagram diagram) {
-    	String gamlModel = "";
+    	String model = "";
     	List<Shape> contents = diagram.getChildren();
         if (contents != null) {
-        	ESpecies worldAgent = null;
+        	EWorldAgent worldAgent = null;
             for (Shape obj : contents) {
             	Object bo = fp.getBusinessObjectForPictogramElement(obj);
-            	if (bo instanceof ESpecies) {
-            		ESpecies eSpecies = (ESpecies) bo;
-	                if (eSpecies.getIncomingLinks() == null || eSpecies.getIncomingLinks().isEmpty()) {
-	                	worldAgent = eSpecies;
-	                	break;
-	                }
+            	if (bo instanceof EWorldAgent) {
+	               	worldAgent = (EWorldAgent) bo;
+	               	break;
+	                
 	            }
             }
-            gamlModel = "model " + diagram.getName() + "\n\nglobal {\n";
+            model = "model " + diagram.getName() + "\n\nglobal {\n";
             int level = 1;
             for (EVariable var: worldAgent.getVariables()) {
-            	gamlModel += defineVariable(var,level);
+            	model += defineVariable(var,level);
         	}
-            for (EGamaLink link : worldAgent.getOutcomingLinks()) {
-            	
-            	if (link instanceof EActionLink) {
-            		 gamlModel += defineAction((EActionLink)link,level);
-            	} else if (link instanceof EReflexLink) {
-            		 gamlModel += defineReflex((EReflexLink)link,level);
-            	} else if (link instanceof EAspectLink) {
-            		 gamlModel += defineAspect((EAspectLink)link,level);
-            	}
-            }
-            gamlModel += "}";
-            gamlModel += "\nentities {";
-            for (EGamaLink link : worldAgent.getOutcomingLinks()) {
-            	if (link instanceof ESubSpeciesLink) {
-            		 gamlModel += defineSpecies((ESpecies) link.getTarget(),1);
-            	}
+            Map<String, EReflexLink> reflexMap = new Hashtable<String, EReflexLink>();
+	       	 for (EActionLink link : worldAgent.getActionLinks()) {
+	            	model += defineAction(link, level+1);
+	       	 }
+	       	 for (EReflexLink link : worldAgent.getReflexLinks()) {
+	       		reflexMap.put(link.getTarget().getName(), (EReflexLink) link);
+	        	 }
+	       	 for (String reflex : worldAgent.getReflexList()) {
+	       		 model += defineReflex(reflexMap.get(reflex),level+1);
+	        	 }
+	       	 for (EAspectLink link : worldAgent.getAspectLinks()) {
+	       		 model += defineAspect(link,level+1);
+	        	 }
+	      
+	       	model += "}";
+	       	model += "\nentities {";
+            for (ESubSpeciesLink link : worldAgent.getMicroSpeciesLinks()) {
+            	model += defineSpecies((ESpecies) link.getTarget(),1);
             }
             
-            gamlModel += "\n}";
-            for (Shape obj : contents) {
-            	Object bo = fp.getBusinessObjectForPictogramElement(obj);
-            	if (bo instanceof EExperiment) {
-            		EExperiment eExp = (EExperiment) bo;
-            		 gamlModel += defineExperiment(eExp);
-	            }
-            }
+            model += "\n}";
+            
+            for (EExperimentLink link : worldAgent.getExperimentLinks()) {
+	       		 model += defineExperiment(link.getExperiment());
+	        }
+	 
         }
-        return gamlModel;
+        return model;
     }
     
     public static String loadModel(final String fileName) {

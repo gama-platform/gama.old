@@ -14,10 +14,6 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="model" lowerBound="1" eType="#//EGamaModel"
         eOpposite="#//EGamaModel/objects"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="incomingLinks" upperBound="-1"
-        eType="#//EGamaLink" eOpposite="#//EGamaLink/target"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="outcomingLinks" upperBound="-1"
-        eType="#//EGamaLink" eOpposite="#//EGamaLink/source"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ESpecies" eSuperTypes="#//EGamaObject">
     <eStructuralFeatures xsi:type="ecore:EReference" name="variables" upperBound="-1"
@@ -26,40 +22,85 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="reflexList" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="torus" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="experimentLinks" upperBound="-1"
+        eType="#//EExperimentLink"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="aspectLinks" upperBound="-1"
+        eType="#//EAspectLink"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="actionLinks" upperBound="-1"
+        eType="#//EActionLink"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="reflexLinks" upperBound="-1"
+        eType="#//EReflexLink"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="shape" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="location" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="size" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="heigth" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="radius" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="microSpeciesLinks" upperBound="-1"
+        eType="#//ESubSpeciesLink"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="macroSpeciesLinks" upperBound="-1"
+        eType="#//ESubSpeciesLink"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EAction" eSuperTypes="#//EGamaObject">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="gamlCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         derived="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="actionLinks" upperBound="-1"
+        eType="#//EActionLink"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EAspect" eSuperTypes="#//EGamaObject">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="gamlCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         derived="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="aspectLinks" upperBound="-1"
+        eType="#//EAspectLink"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EReflex" eSuperTypes="#//EGamaObject">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="gamlCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         derived="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="condition" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         derived="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="reflexLinks" upperBound="-1"
+        eType="#//EReflexLink"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="EExperiment" eSuperTypes="#//EGamaObject"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EExperiment" eSuperTypes="#//EGamaObject">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="experimentLinks" upperBound="-1"
+        eType="#//EExperimentLink"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="displayLinks" upperBound="-1"
+        eType="#//EDisplayLink"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EGUIExperiment" eSuperTypes="#//EExperiment"/>
   <eClassifiers xsi:type="ecore:EClass" name="EBatchExperiment" eSuperTypes="#//EExperiment"/>
   <eClassifiers xsi:type="ecore:EClass" name="EGamaLink">
     <eStructuralFeatures xsi:type="ecore:EReference" name="target" lowerBound="1"
-        eType="#//EGamaObject" eOpposite="#//EGamaObject/incomingLinks"/>
+        eType="#//EGamaObject"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="source" lowerBound="1"
-        eType="#//EGamaObject" eOpposite="#//EGamaObject/outcomingLinks"/>
+        eType="#//EGamaObject"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="model" lowerBound="1" eType="#//EGamaModel"
         eOpposite="#//EGamaModel/links"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ESubSpeciesLink" eSuperTypes="#//EGamaLink"/>
-  <eClassifiers xsi:type="ecore:EClass" name="EActionLink" eSuperTypes="#//EGamaLink"/>
-  <eClassifiers xsi:type="ecore:EClass" name="EAspectLink" eSuperTypes="#//EGamaLink"/>
-  <eClassifiers xsi:type="ecore:EClass" name="EReflexLink" eSuperTypes="#//EGamaLink"/>
-  <eClassifiers xsi:type="ecore:EClass" name="EDisplayLink" eSuperTypes="#//EGamaLink"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ESubSpeciesLink" eSuperTypes="#//EGamaLink">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="macro" eType="#//ESpecies"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="micro" eType="#//ESpecies"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EActionLink" eSuperTypes="#//EGamaLink">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="action" eType="#//EAction"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="species" eType="#//ESpecies"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EAspectLink" eSuperTypes="#//EGamaLink">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="aspect" eType="#//EAspect"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="species" eType="#//ESpecies"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EReflexLink" eSuperTypes="#//EGamaLink">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="reflex" eType="#//EReflex"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="species" eType="#//ESpecies"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EDisplayLink" eSuperTypes="#//EGamaLink">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="experiment" eType="#//EGUIExperiment"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="display" eType="#//EDisplay"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EDisplay" eSuperTypes="#//EGamaObject">
     <eStructuralFeatures xsi:type="ecore:EReference" name="layers" upperBound="-1"
         eType="#//ELayer"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="displayLink" eType="#//EDisplayLink"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EGrid" eSuperTypes="#//ESpecies">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="nb_columns" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -80,10 +121,32 @@
   <eClassifiers xsi:type="ecore:EClass" name="ELayer">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="gamlCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         derived="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="model" lowerBound="1" eType="#//EGamaModel"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="display" eType="#//EDisplay"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EGraph" eSuperTypes="#//EGamaObject">
     <eStructuralFeatures xsi:type="ecore:EReference" name="node" eType="#//ESpecies"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="edge" eType="#//ESpecies"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="EExperimentLink" eSuperTypes="#//EGamaLink"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EExperimentLink" eSuperTypes="#//EGamaLink">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="species" eType="#//ESpecies"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="experiment" eType="#//EExperiment"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ELayerAspect">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="gamlCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        derived="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="model" lowerBound="1" eType="#//EGamaModel"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="shape" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="color" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="empty" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="rotate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="size" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="heigth" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="radius" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="path" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="text" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
 </ecore:EPackage>

@@ -20,8 +20,6 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link gama.EGamaObject#getName <em>Name</em>}</li>
  *   <li>{@link gama.EGamaObject#getModel <em>Model</em>}</li>
- *   <li>{@link gama.EGamaObject#getIncomingLinks <em>Incoming Links</em>}</li>
- *   <li>{@link gama.EGamaObject#getOutcomingLinks <em>Outcoming Links</em>}</li>
  * </ul>
  * </p>
  *
@@ -83,41 +81,5 @@ public interface EGamaObject extends EObject {
 	 * @generated
 	 */
 	void setModel(EGamaModel value);
-
-	/**
-	 * Returns the value of the '<em><b>Incoming Links</b></em>' reference list.
-	 * The list contents are of type {@link gama.EGamaLink}.
-	 * It is bidirectional and its opposite is '{@link gama.EGamaLink#getTarget <em>Target</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Incoming Links</em>' reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Incoming Links</em>' reference list.
-	 * @see gama.GamaPackage#getEGamaObject_IncomingLinks()
-	 * @see gama.EGamaLink#getTarget
-	 * @model opposite="target"
-	 * @generated
-	 */
-	EList<EGamaLink> getIncomingLinks();
-
-	/**
-	 * Returns the value of the '<em><b>Outcoming Links</b></em>' reference list.
-	 * The list contents are of type {@link gama.EGamaLink}.
-	 * It is bidirectional and its opposite is '{@link gama.EGamaLink#getSource <em>Source</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Outcoming Links</em>' reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Outcoming Links</em>' reference list.
-	 * @see gama.GamaPackage#getEGamaObject_OutcomingLinks()
-	 * @see gama.EGamaLink#getSource
-	 * @model opposite="source"
-	 * @generated
-	 */
-	EList<EGamaLink> getOutcomingLinks();
 
 } // EGamaObject

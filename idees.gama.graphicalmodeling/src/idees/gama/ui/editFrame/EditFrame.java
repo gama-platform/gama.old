@@ -180,6 +180,7 @@ public abstract class EditFrame  extends ApplicationWindow {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
+		
 		newShell.setText(name);
 	}
 

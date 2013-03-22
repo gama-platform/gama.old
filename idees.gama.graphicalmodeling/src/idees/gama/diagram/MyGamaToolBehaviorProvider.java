@@ -11,9 +11,11 @@ import idees.gama.features.create.CreateReflexLinkFeature;
 import idees.gama.features.create.CreateSubGridLinkFeature;
 import idees.gama.features.create.CreateSubSpeciesLinkFeature;
 import idees.gama.features.edit.EditActionFeature;
+import idees.gama.features.edit.EditAspectFeature;
 import idees.gama.features.edit.EditReflexFeature;
 import idees.gama.features.edit.EditSpeciesFeature;
 import idees.gama.features.others.RenameEGamaObjectFeature;
+import idees.gama.ui.editFrame.EditAspectFrame;
 import idees.gama.ui.image.GamaImageProvider;
 
 import java.util.ArrayList;
@@ -54,6 +56,8 @@ public class MyGamaToolBehaviorProvider extends DefaultToolBehaviorProvider{
 		        	customFeature = new EditActionFeature(getFeatureProvider());
 		        } else if (bo instanceof EReflex ) {
 				    customFeature = new EditReflexFeature(getFeatureProvider());
+		        } else if (bo instanceof EAspect ) {
+				    customFeature = new EditAspectFeature(getFeatureProvider());
 				} else {
 		        	customFeature = new RenameEGamaObjectFeature(getFeatureProvider());
 		        }

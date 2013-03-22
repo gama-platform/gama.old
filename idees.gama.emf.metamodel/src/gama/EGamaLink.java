@@ -29,7 +29,6 @@ import org.eclipse.emf.ecore.EObject;
 public interface EGamaLink extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Target</b></em>' reference.
-	 * It is bidirectional and its opposite is '{@link gama.EGamaObject#getIncomingLinks <em>Incoming Links</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Target</em>' reference isn't clear,
@@ -39,8 +38,7 @@ public interface EGamaLink extends EObject {
 	 * @return the value of the '<em>Target</em>' reference.
 	 * @see #setTarget(EGamaObject)
 	 * @see gama.GamaPackage#getEGamaLink_Target()
-	 * @see gama.EGamaObject#getIncomingLinks
-	 * @model opposite="incomingLinks" required="true"
+	 * @model required="true"
 	 * @generated
 	 */
 	EGamaObject getTarget();
@@ -57,7 +55,6 @@ public interface EGamaLink extends EObject {
 
 	/**
 	 * Returns the value of the '<em><b>Source</b></em>' reference.
-	 * It is bidirectional and its opposite is '{@link gama.EGamaObject#getOutcomingLinks <em>Outcoming Links</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Source</em>' reference isn't clear,
@@ -67,8 +64,7 @@ public interface EGamaLink extends EObject {
 	 * @return the value of the '<em>Source</em>' reference.
 	 * @see #setSource(EGamaObject)
 	 * @see gama.GamaPackage#getEGamaLink_Source()
-	 * @see gama.EGamaObject#getOutcomingLinks
-	 * @model opposite="outcomingLinks" required="true"
+	 * @model required="true"
 	 * @generated
 	 */
 	EGamaObject getSource();

@@ -108,33 +108,11 @@ public class EGamaLinkImpl extends EObjectImpl implements EGamaLink {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public NotificationChain basicSetTarget(EGamaObject newTarget, NotificationChain msgs) {
+	public void setTarget(EGamaObject newTarget) {
 		EGamaObject oldTarget = target;
 		target = newTarget;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamaPackage.EGAMA_LINK__TARGET, oldTarget, newTarget);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
-		}
-		return msgs;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setTarget(EGamaObject newTarget) {
-		if (newTarget != target) {
-			NotificationChain msgs = null;
-			if (target != null)
-				msgs = ((InternalEObject)target).eInverseRemove(this, GamaPackage.EGAMA_OBJECT__INCOMING_LINKS, EGamaObject.class, msgs);
-			if (newTarget != null)
-				msgs = ((InternalEObject)newTarget).eInverseAdd(this, GamaPackage.EGAMA_OBJECT__INCOMING_LINKS, EGamaObject.class, msgs);
-			msgs = basicSetTarget(newTarget, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EGAMA_LINK__TARGET, newTarget, newTarget));
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EGAMA_LINK__TARGET, oldTarget, target));
 	}
 
 	/**
@@ -168,33 +146,11 @@ public class EGamaLinkImpl extends EObjectImpl implements EGamaLink {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public NotificationChain basicSetSource(EGamaObject newSource, NotificationChain msgs) {
+	public void setSource(EGamaObject newSource) {
 		EGamaObject oldSource = source;
 		source = newSource;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, GamaPackage.EGAMA_LINK__SOURCE, oldSource, newSource);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
-		}
-		return msgs;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setSource(EGamaObject newSource) {
-		if (newSource != source) {
-			NotificationChain msgs = null;
-			if (source != null)
-				msgs = ((InternalEObject)source).eInverseRemove(this, GamaPackage.EGAMA_OBJECT__OUTCOMING_LINKS, EGamaObject.class, msgs);
-			if (newSource != null)
-				msgs = ((InternalEObject)newSource).eInverseAdd(this, GamaPackage.EGAMA_OBJECT__OUTCOMING_LINKS, EGamaObject.class, msgs);
-			msgs = basicSetSource(newSource, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EGAMA_LINK__SOURCE, newSource, newSource));
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EGAMA_LINK__SOURCE, oldSource, source));
 	}
 
 	/**
@@ -246,14 +202,6 @@ public class EGamaLinkImpl extends EObjectImpl implements EGamaLink {
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case GamaPackage.EGAMA_LINK__TARGET:
-				if (target != null)
-					msgs = ((InternalEObject)target).eInverseRemove(this, GamaPackage.EGAMA_OBJECT__INCOMING_LINKS, EGamaObject.class, msgs);
-				return basicSetTarget((EGamaObject)otherEnd, msgs);
-			case GamaPackage.EGAMA_LINK__SOURCE:
-				if (source != null)
-					msgs = ((InternalEObject)source).eInverseRemove(this, GamaPackage.EGAMA_OBJECT__OUTCOMING_LINKS, EGamaObject.class, msgs);
-				return basicSetSource((EGamaObject)otherEnd, msgs);
 			case GamaPackage.EGAMA_LINK__MODEL:
 				if (eInternalContainer() != null)
 					msgs = eBasicRemoveFromContainer(msgs);
@@ -270,10 +218,6 @@ public class EGamaLinkImpl extends EObjectImpl implements EGamaLink {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case GamaPackage.EGAMA_LINK__TARGET:
-				return basicSetTarget(null, msgs);
-			case GamaPackage.EGAMA_LINK__SOURCE:
-				return basicSetSource(null, msgs);
 			case GamaPackage.EGAMA_LINK__MODEL:
 				return basicSetModel(null, msgs);
 		}

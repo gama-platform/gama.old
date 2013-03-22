@@ -77,10 +77,8 @@ public class EditSpeciesFrame extends EditFrame {
 	public EditSpeciesFrame(Diagram diagram, IFeatureProvider fp, EditSpeciesFeature esf, ESpecies species, List<ESpecies> speciesList) {
 		super(diagram, fp, esf,  species, "Species definition" );
 		reflexStrs = new ArrayList<String>();
-		for (EGamaLink link: eobject.getOutcomingLinks()) {
-			if (link instanceof EReflexLink) {
+		for (EReflexLink link: species.getReflexLinks()) {
 				reflexStrs.add(link.getTarget().getName());
-			}
 		}
 		for (ESpecies sp : speciesList) 
 			types.add(sp.getName());
@@ -731,7 +729,7 @@ public class EditSpeciesFrame extends EditFrame {
 			lblReflexOrder.setBounds(5, 5, 100, 20);
 			lblReflexOrder.setText("Reflex order");
 			
-			Button btnUp = new Button(canvasReflexOrder, SWT.BUTTON1);
+			Button btnUp = new Button(canvasReflexOrder,SWT.ARROW | SWT.UP);
 			btnUp.setBounds(80, 85, 105, 20);
 			btnUp.setText("Up");
 			btnUp.setSelection(true);
@@ -753,7 +751,7 @@ public class EditSpeciesFrame extends EditFrame {
 					}
 				}
 			});
-			Button btnDown = new Button(canvasReflexOrder, SWT.BUTTON1);
+			Button btnDown = new Button(canvasReflexOrder, SWT.ARROW | SWT.DOWN);
 			btnDown.setBounds(200, 85, 105, 20);
 			btnDown.setText("Down");
 			btnDown.setSelection(true);

@@ -18,6 +18,7 @@ import org.eclipse.emf.common.util.EList;
  * The following features are supported:
  * <ul>
  *   <li>{@link gama.EDisplay#getLayers <em>Layers</em>}</li>
+ *   <li>{@link gama.EDisplay#getDisplayLink <em>Display Link</em>}</li>
  * </ul>
  * </p>
  *
@@ -42,4 +43,30 @@ public interface EDisplay extends EGamaObject {
 	 * @generated
 	 */
 	EList<ELayer> getLayers();
+
+	/**
+	 * Returns the value of the '<em><b>Display Link</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Display Link</em>' reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Display Link</em>' reference.
+	 * @see #setDisplayLink(EDisplayLink)
+	 * @see gama.GamaPackage#getEDisplay_DisplayLink()
+	 * @model
+	 * @generated
+	 */
+	EDisplayLink getDisplayLink();
+
+	/**
+	 * Sets the value of the '{@link gama.EDisplay#getDisplayLink <em>Display Link</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Display Link</em>' reference.
+	 * @see #getDisplayLink()
+	 * @generated
+	 */
+	void setDisplayLink(EDisplayLink value);
 } // EDisplay

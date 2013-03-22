@@ -37,8 +37,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link gama.impl.EGamaObjectImpl#getName <em>Name</em>}</li>
  *   <li>{@link gama.impl.EGamaObjectImpl#getModel <em>Model</em>}</li>
- *   <li>{@link gama.impl.EGamaObjectImpl#getIncomingLinks <em>Incoming Links</em>}</li>
- *   <li>{@link gama.impl.EGamaObjectImpl#getOutcomingLinks <em>Outcoming Links</em>}</li>
  * </ul>
  * </p>
  *
@@ -64,26 +62,6 @@ public class EGamaObjectImpl extends EObjectImpl implements EGamaObject {
 	 * @ordered
 	 */
 	protected String name = NAME_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getIncomingLinks() <em>Incoming Links</em>}' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getIncomingLinks()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<EGamaLink> incomingLinks;
-
-	/**
-	 * The cached value of the '{@link #getOutcomingLinks() <em>Outcoming Links</em>}' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getOutcomingLinks()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<EGamaLink> outcomingLinks;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -171,30 +149,6 @@ public class EGamaObjectImpl extends EObjectImpl implements EGamaObject {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<EGamaLink> getIncomingLinks() {
-		if (incomingLinks == null) {
-			incomingLinks = new EObjectWithInverseResolvingEList<EGamaLink>(EGamaLink.class, this, GamaPackage.EGAMA_OBJECT__INCOMING_LINKS, GamaPackage.EGAMA_LINK__TARGET);
-		}
-		return incomingLinks;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EList<EGamaLink> getOutcomingLinks() {
-		if (outcomingLinks == null) {
-			outcomingLinks = new EObjectWithInverseResolvingEList<EGamaLink>(EGamaLink.class, this, GamaPackage.EGAMA_OBJECT__OUTCOMING_LINKS, GamaPackage.EGAMA_LINK__SOURCE);
-		}
-		return outcomingLinks;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -203,10 +157,6 @@ public class EGamaObjectImpl extends EObjectImpl implements EGamaObject {
 				if (eInternalContainer() != null)
 					msgs = eBasicRemoveFromContainer(msgs);
 				return basicSetModel((EGamaModel)otherEnd, msgs);
-			case GamaPackage.EGAMA_OBJECT__INCOMING_LINKS:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getIncomingLinks()).basicAdd(otherEnd, msgs);
-			case GamaPackage.EGAMA_OBJECT__OUTCOMING_LINKS:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getOutcomingLinks()).basicAdd(otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -221,10 +171,6 @@ public class EGamaObjectImpl extends EObjectImpl implements EGamaObject {
 		switch (featureID) {
 			case GamaPackage.EGAMA_OBJECT__MODEL:
 				return basicSetModel(null, msgs);
-			case GamaPackage.EGAMA_OBJECT__INCOMING_LINKS:
-				return ((InternalEList<?>)getIncomingLinks()).basicRemove(otherEnd, msgs);
-			case GamaPackage.EGAMA_OBJECT__OUTCOMING_LINKS:
-				return ((InternalEList<?>)getOutcomingLinks()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -255,10 +201,6 @@ public class EGamaObjectImpl extends EObjectImpl implements EGamaObject {
 				return getName();
 			case GamaPackage.EGAMA_OBJECT__MODEL:
 				return getModel();
-			case GamaPackage.EGAMA_OBJECT__INCOMING_LINKS:
-				return getIncomingLinks();
-			case GamaPackage.EGAMA_OBJECT__OUTCOMING_LINKS:
-				return getOutcomingLinks();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -278,14 +220,6 @@ public class EGamaObjectImpl extends EObjectImpl implements EGamaObject {
 			case GamaPackage.EGAMA_OBJECT__MODEL:
 				setModel((EGamaModel)newValue);
 				return;
-			case GamaPackage.EGAMA_OBJECT__INCOMING_LINKS:
-				getIncomingLinks().clear();
-				getIncomingLinks().addAll((Collection<? extends EGamaLink>)newValue);
-				return;
-			case GamaPackage.EGAMA_OBJECT__OUTCOMING_LINKS:
-				getOutcomingLinks().clear();
-				getOutcomingLinks().addAll((Collection<? extends EGamaLink>)newValue);
-				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -304,12 +238,6 @@ public class EGamaObjectImpl extends EObjectImpl implements EGamaObject {
 			case GamaPackage.EGAMA_OBJECT__MODEL:
 				setModel((EGamaModel)null);
 				return;
-			case GamaPackage.EGAMA_OBJECT__INCOMING_LINKS:
-				getIncomingLinks().clear();
-				return;
-			case GamaPackage.EGAMA_OBJECT__OUTCOMING_LINKS:
-				getOutcomingLinks().clear();
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -326,10 +254,6 @@ public class EGamaObjectImpl extends EObjectImpl implements EGamaObject {
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 			case GamaPackage.EGAMA_OBJECT__MODEL:
 				return getModel() != null;
-			case GamaPackage.EGAMA_OBJECT__INCOMING_LINKS:
-				return incomingLinks != null && !incomingLinks.isEmpty();
-			case GamaPackage.EGAMA_OBJECT__OUTCOMING_LINKS:
-				return outcomingLinks != null && !outcomingLinks.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

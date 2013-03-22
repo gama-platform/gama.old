@@ -134,31 +134,13 @@ public interface GamaPackage extends EPackage {
 	int EGAMA_OBJECT__MODEL = 1;
 
 	/**
-	 * The feature id for the '<em><b>Incoming Links</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EGAMA_OBJECT__INCOMING_LINKS = 2;
-
-	/**
-	 * The feature id for the '<em><b>Outcoming Links</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EGAMA_OBJECT__OUTCOMING_LINKS = 3;
-
-	/**
 	 * The number of structural features of the '<em>EGama Object</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EGAMA_OBJECT_FEATURE_COUNT = 4;
+	int EGAMA_OBJECT_FEATURE_COUNT = 2;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.ESpeciesImpl <em>ESpecies</em>}' class.
@@ -187,24 +169,6 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int ESPECIES__MODEL = EGAMA_OBJECT__MODEL;
-
-	/**
-	 * The feature id for the '<em><b>Incoming Links</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ESPECIES__INCOMING_LINKS = EGAMA_OBJECT__INCOMING_LINKS;
-
-	/**
-	 * The feature id for the '<em><b>Outcoming Links</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ESPECIES__OUTCOMING_LINKS = EGAMA_OBJECT__OUTCOMING_LINKS;
 
 	/**
 	 * The feature id for the '<em><b>Variables</b></em>' containment reference list.
@@ -243,13 +207,121 @@ public interface GamaPackage extends EPackage {
 	int ESPECIES__TORUS = EGAMA_OBJECT_FEATURE_COUNT + 3;
 
 	/**
+	 * The feature id for the '<em><b>Experiment Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESPECIES__EXPERIMENT_LINKS = EGAMA_OBJECT_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Aspect Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESPECIES__ASPECT_LINKS = EGAMA_OBJECT_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Action Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESPECIES__ACTION_LINKS = EGAMA_OBJECT_FEATURE_COUNT + 6;
+
+	/**
+	 * The feature id for the '<em><b>Reflex Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESPECIES__REFLEX_LINKS = EGAMA_OBJECT_FEATURE_COUNT + 7;
+
+	/**
+	 * The feature id for the '<em><b>Shape</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESPECIES__SHAPE = EGAMA_OBJECT_FEATURE_COUNT + 8;
+
+	/**
+	 * The feature id for the '<em><b>Location</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESPECIES__LOCATION = EGAMA_OBJECT_FEATURE_COUNT + 9;
+
+	/**
+	 * The feature id for the '<em><b>Size</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESPECIES__SIZE = EGAMA_OBJECT_FEATURE_COUNT + 10;
+
+	/**
+	 * The feature id for the '<em><b>Width</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESPECIES__WIDTH = EGAMA_OBJECT_FEATURE_COUNT + 11;
+
+	/**
+	 * The feature id for the '<em><b>Heigth</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESPECIES__HEIGTH = EGAMA_OBJECT_FEATURE_COUNT + 12;
+
+	/**
+	 * The feature id for the '<em><b>Radius</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESPECIES__RADIUS = EGAMA_OBJECT_FEATURE_COUNT + 13;
+
+	/**
+	 * The feature id for the '<em><b>Micro Species Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESPECIES__MICRO_SPECIES_LINKS = EGAMA_OBJECT_FEATURE_COUNT + 14;
+
+	/**
+	 * The feature id for the '<em><b>Macro Species Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESPECIES__MACRO_SPECIES_LINKS = EGAMA_OBJECT_FEATURE_COUNT + 15;
+
+	/**
 	 * The number of structural features of the '<em>ESpecies</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ESPECIES_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 4;
+	int ESPECIES_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 16;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EActionImpl <em>EAction</em>}' class.
@@ -280,24 +352,6 @@ public interface GamaPackage extends EPackage {
 	int EACTION__MODEL = EGAMA_OBJECT__MODEL;
 
 	/**
-	 * The feature id for the '<em><b>Incoming Links</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EACTION__INCOMING_LINKS = EGAMA_OBJECT__INCOMING_LINKS;
-
-	/**
-	 * The feature id for the '<em><b>Outcoming Links</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EACTION__OUTCOMING_LINKS = EGAMA_OBJECT__OUTCOMING_LINKS;
-
-	/**
 	 * The feature id for the '<em><b>Gaml Code</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -307,13 +361,22 @@ public interface GamaPackage extends EPackage {
 	int EACTION__GAML_CODE = EGAMA_OBJECT_FEATURE_COUNT + 0;
 
 	/**
+	 * The feature id for the '<em><b>Action Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EACTION__ACTION_LINKS = EGAMA_OBJECT_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>EAction</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EACTION_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 1;
+	int EACTION_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EAspectImpl <em>EAspect</em>}' class.
@@ -344,24 +407,6 @@ public interface GamaPackage extends EPackage {
 	int EASPECT__MODEL = EGAMA_OBJECT__MODEL;
 
 	/**
-	 * The feature id for the '<em><b>Incoming Links</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EASPECT__INCOMING_LINKS = EGAMA_OBJECT__INCOMING_LINKS;
-
-	/**
-	 * The feature id for the '<em><b>Outcoming Links</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EASPECT__OUTCOMING_LINKS = EGAMA_OBJECT__OUTCOMING_LINKS;
-
-	/**
 	 * The feature id for the '<em><b>Gaml Code</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -371,13 +416,22 @@ public interface GamaPackage extends EPackage {
 	int EASPECT__GAML_CODE = EGAMA_OBJECT_FEATURE_COUNT + 0;
 
 	/**
+	 * The feature id for the '<em><b>Aspect Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EASPECT__ASPECT_LINKS = EGAMA_OBJECT_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>EAspect</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EASPECT_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 1;
+	int EASPECT_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EReflexImpl <em>EReflex</em>}' class.
@@ -408,24 +462,6 @@ public interface GamaPackage extends EPackage {
 	int EREFLEX__MODEL = EGAMA_OBJECT__MODEL;
 
 	/**
-	 * The feature id for the '<em><b>Incoming Links</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EREFLEX__INCOMING_LINKS = EGAMA_OBJECT__INCOMING_LINKS;
-
-	/**
-	 * The feature id for the '<em><b>Outcoming Links</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EREFLEX__OUTCOMING_LINKS = EGAMA_OBJECT__OUTCOMING_LINKS;
-
-	/**
 	 * The feature id for the '<em><b>Gaml Code</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -444,13 +480,22 @@ public interface GamaPackage extends EPackage {
 	int EREFLEX__CONDITION = EGAMA_OBJECT_FEATURE_COUNT + 1;
 
 	/**
+	 * The feature id for the '<em><b>Reflex Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EREFLEX__REFLEX_LINKS = EGAMA_OBJECT_FEATURE_COUNT + 2;
+
+	/**
 	 * The number of structural features of the '<em>EReflex</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EREFLEX_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 2;
+	int EREFLEX_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 3;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EExperimentImpl <em>EExperiment</em>}' class.
@@ -481,22 +526,22 @@ public interface GamaPackage extends EPackage {
 	int EEXPERIMENT__MODEL = EGAMA_OBJECT__MODEL;
 
 	/**
-	 * The feature id for the '<em><b>Incoming Links</b></em>' reference list.
+	 * The feature id for the '<em><b>Experiment Links</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EEXPERIMENT__INCOMING_LINKS = EGAMA_OBJECT__INCOMING_LINKS;
+	int EEXPERIMENT__EXPERIMENT_LINKS = EGAMA_OBJECT_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Outcoming Links</b></em>' reference list.
+	 * The feature id for the '<em><b>Display Links</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EEXPERIMENT__OUTCOMING_LINKS = EGAMA_OBJECT__OUTCOMING_LINKS;
+	int EEXPERIMENT__DISPLAY_LINKS = EGAMA_OBJECT_FEATURE_COUNT + 1;
 
 	/**
 	 * The number of structural features of the '<em>EExperiment</em>' class.
@@ -505,7 +550,7 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int EEXPERIMENT_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 0;
+	int EEXPERIMENT_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EGUIExperimentImpl <em>EGUI Experiment</em>}' class.
@@ -536,22 +581,22 @@ public interface GamaPackage extends EPackage {
 	int EGUI_EXPERIMENT__MODEL = EEXPERIMENT__MODEL;
 
 	/**
-	 * The feature id for the '<em><b>Incoming Links</b></em>' reference list.
+	 * The feature id for the '<em><b>Experiment Links</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EGUI_EXPERIMENT__INCOMING_LINKS = EEXPERIMENT__INCOMING_LINKS;
+	int EGUI_EXPERIMENT__EXPERIMENT_LINKS = EEXPERIMENT__EXPERIMENT_LINKS;
 
 	/**
-	 * The feature id for the '<em><b>Outcoming Links</b></em>' reference list.
+	 * The feature id for the '<em><b>Display Links</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EGUI_EXPERIMENT__OUTCOMING_LINKS = EEXPERIMENT__OUTCOMING_LINKS;
+	int EGUI_EXPERIMENT__DISPLAY_LINKS = EEXPERIMENT__DISPLAY_LINKS;
 
 	/**
 	 * The number of structural features of the '<em>EGUI Experiment</em>' class.
@@ -591,22 +636,22 @@ public interface GamaPackage extends EPackage {
 	int EBATCH_EXPERIMENT__MODEL = EEXPERIMENT__MODEL;
 
 	/**
-	 * The feature id for the '<em><b>Incoming Links</b></em>' reference list.
+	 * The feature id for the '<em><b>Experiment Links</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EBATCH_EXPERIMENT__INCOMING_LINKS = EEXPERIMENT__INCOMING_LINKS;
+	int EBATCH_EXPERIMENT__EXPERIMENT_LINKS = EEXPERIMENT__EXPERIMENT_LINKS;
 
 	/**
-	 * The feature id for the '<em><b>Outcoming Links</b></em>' reference list.
+	 * The feature id for the '<em><b>Display Links</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EBATCH_EXPERIMENT__OUTCOMING_LINKS = EEXPERIMENT__OUTCOMING_LINKS;
+	int EBATCH_EXPERIMENT__DISPLAY_LINKS = EEXPERIMENT__DISPLAY_LINKS;
 
 	/**
 	 * The number of structural features of the '<em>EBatch Experiment</em>' class.
@@ -701,13 +746,31 @@ public interface GamaPackage extends EPackage {
 	int ESUB_SPECIES_LINK__MODEL = EGAMA_LINK__MODEL;
 
 	/**
+	 * The feature id for the '<em><b>Macro</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESUB_SPECIES_LINK__MACRO = EGAMA_LINK_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Micro</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESUB_SPECIES_LINK__MICRO = EGAMA_LINK_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>ESub Species Link</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ESUB_SPECIES_LINK_FEATURE_COUNT = EGAMA_LINK_FEATURE_COUNT + 0;
+	int ESUB_SPECIES_LINK_FEATURE_COUNT = EGAMA_LINK_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EActionLinkImpl <em>EAction Link</em>}' class.
@@ -747,13 +810,31 @@ public interface GamaPackage extends EPackage {
 	int EACTION_LINK__MODEL = EGAMA_LINK__MODEL;
 
 	/**
+	 * The feature id for the '<em><b>Action</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EACTION_LINK__ACTION = EGAMA_LINK_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Species</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EACTION_LINK__SPECIES = EGAMA_LINK_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>EAction Link</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EACTION_LINK_FEATURE_COUNT = EGAMA_LINK_FEATURE_COUNT + 0;
+	int EACTION_LINK_FEATURE_COUNT = EGAMA_LINK_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EAspectLinkImpl <em>EAspect Link</em>}' class.
@@ -793,13 +874,31 @@ public interface GamaPackage extends EPackage {
 	int EASPECT_LINK__MODEL = EGAMA_LINK__MODEL;
 
 	/**
+	 * The feature id for the '<em><b>Aspect</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EASPECT_LINK__ASPECT = EGAMA_LINK_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Species</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EASPECT_LINK__SPECIES = EGAMA_LINK_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>EAspect Link</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EASPECT_LINK_FEATURE_COUNT = EGAMA_LINK_FEATURE_COUNT + 0;
+	int EASPECT_LINK_FEATURE_COUNT = EGAMA_LINK_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EReflexLinkImpl <em>EReflex Link</em>}' class.
@@ -839,13 +938,31 @@ public interface GamaPackage extends EPackage {
 	int EREFLEX_LINK__MODEL = EGAMA_LINK__MODEL;
 
 	/**
+	 * The feature id for the '<em><b>Reflex</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EREFLEX_LINK__REFLEX = EGAMA_LINK_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Species</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EREFLEX_LINK__SPECIES = EGAMA_LINK_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>EReflex Link</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EREFLEX_LINK_FEATURE_COUNT = EGAMA_LINK_FEATURE_COUNT + 0;
+	int EREFLEX_LINK_FEATURE_COUNT = EGAMA_LINK_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EDisplayLinkImpl <em>EDisplay Link</em>}' class.
@@ -885,13 +1002,31 @@ public interface GamaPackage extends EPackage {
 	int EDISPLAY_LINK__MODEL = EGAMA_LINK__MODEL;
 
 	/**
+	 * The feature id for the '<em><b>Experiment</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDISPLAY_LINK__EXPERIMENT = EGAMA_LINK_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Display</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDISPLAY_LINK__DISPLAY = EGAMA_LINK_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>EDisplay Link</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EDISPLAY_LINK_FEATURE_COUNT = EGAMA_LINK_FEATURE_COUNT + 0;
+	int EDISPLAY_LINK_FEATURE_COUNT = EGAMA_LINK_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EDisplayImpl <em>EDisplay</em>}' class.
@@ -922,24 +1057,6 @@ public interface GamaPackage extends EPackage {
 	int EDISPLAY__MODEL = EGAMA_OBJECT__MODEL;
 
 	/**
-	 * The feature id for the '<em><b>Incoming Links</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDISPLAY__INCOMING_LINKS = EGAMA_OBJECT__INCOMING_LINKS;
-
-	/**
-	 * The feature id for the '<em><b>Outcoming Links</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDISPLAY__OUTCOMING_LINKS = EGAMA_OBJECT__OUTCOMING_LINKS;
-
-	/**
 	 * The feature id for the '<em><b>Layers</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -949,13 +1066,22 @@ public interface GamaPackage extends EPackage {
 	int EDISPLAY__LAYERS = EGAMA_OBJECT_FEATURE_COUNT + 0;
 
 	/**
+	 * The feature id for the '<em><b>Display Link</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDISPLAY__DISPLAY_LINK = EGAMA_OBJECT_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>EDisplay</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EDISPLAY_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 1;
+	int EDISPLAY_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EGridImpl <em>EGrid</em>}' class.
@@ -984,24 +1110,6 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int EGRID__MODEL = ESPECIES__MODEL;
-
-	/**
-	 * The feature id for the '<em><b>Incoming Links</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EGRID__INCOMING_LINKS = ESPECIES__INCOMING_LINKS;
-
-	/**
-	 * The feature id for the '<em><b>Outcoming Links</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EGRID__OUTCOMING_LINKS = ESPECIES__OUTCOMING_LINKS;
 
 	/**
 	 * The feature id for the '<em><b>Variables</b></em>' containment reference list.
@@ -1038,6 +1146,114 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int EGRID__TORUS = ESPECIES__TORUS;
+
+	/**
+	 * The feature id for the '<em><b>Experiment Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRID__EXPERIMENT_LINKS = ESPECIES__EXPERIMENT_LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Aspect Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRID__ASPECT_LINKS = ESPECIES__ASPECT_LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Action Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRID__ACTION_LINKS = ESPECIES__ACTION_LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Reflex Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRID__REFLEX_LINKS = ESPECIES__REFLEX_LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Shape</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRID__SHAPE = ESPECIES__SHAPE;
+
+	/**
+	 * The feature id for the '<em><b>Location</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRID__LOCATION = ESPECIES__LOCATION;
+
+	/**
+	 * The feature id for the '<em><b>Size</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRID__SIZE = ESPECIES__SIZE;
+
+	/**
+	 * The feature id for the '<em><b>Width</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRID__WIDTH = ESPECIES__WIDTH;
+
+	/**
+	 * The feature id for the '<em><b>Heigth</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRID__HEIGTH = ESPECIES__HEIGTH;
+
+	/**
+	 * The feature id for the '<em><b>Radius</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRID__RADIUS = ESPECIES__RADIUS;
+
+	/**
+	 * The feature id for the '<em><b>Micro Species Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRID__MICRO_SPECIES_LINKS = ESPECIES__MICRO_SPECIES_LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Macro Species Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRID__MACRO_SPECIES_LINKS = ESPECIES__MACRO_SPECIES_LINKS;
 
 	/**
 	 * The feature id for the '<em><b>Nb columns</b></em>' attribute.
@@ -1187,24 +1403,6 @@ public interface GamaPackage extends EPackage {
 	int EWORLD_AGENT__MODEL = ESPECIES__MODEL;
 
 	/**
-	 * The feature id for the '<em><b>Incoming Links</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EWORLD_AGENT__INCOMING_LINKS = ESPECIES__INCOMING_LINKS;
-
-	/**
-	 * The feature id for the '<em><b>Outcoming Links</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EWORLD_AGENT__OUTCOMING_LINKS = ESPECIES__OUTCOMING_LINKS;
-
-	/**
 	 * The feature id for the '<em><b>Variables</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1241,6 +1439,114 @@ public interface GamaPackage extends EPackage {
 	int EWORLD_AGENT__TORUS = ESPECIES__TORUS;
 
 	/**
+	 * The feature id for the '<em><b>Experiment Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__EXPERIMENT_LINKS = ESPECIES__EXPERIMENT_LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Aspect Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__ASPECT_LINKS = ESPECIES__ASPECT_LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Action Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__ACTION_LINKS = ESPECIES__ACTION_LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Reflex Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__REFLEX_LINKS = ESPECIES__REFLEX_LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Shape</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__SHAPE = ESPECIES__SHAPE;
+
+	/**
+	 * The feature id for the '<em><b>Location</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__LOCATION = ESPECIES__LOCATION;
+
+	/**
+	 * The feature id for the '<em><b>Size</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__SIZE = ESPECIES__SIZE;
+
+	/**
+	 * The feature id for the '<em><b>Width</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__WIDTH = ESPECIES__WIDTH;
+
+	/**
+	 * The feature id for the '<em><b>Heigth</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__HEIGTH = ESPECIES__HEIGTH;
+
+	/**
+	 * The feature id for the '<em><b>Radius</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__RADIUS = ESPECIES__RADIUS;
+
+	/**
+	 * The feature id for the '<em><b>Micro Species Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__MICRO_SPECIES_LINKS = ESPECIES__MICRO_SPECIES_LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Macro Species Links</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__MACRO_SPECIES_LINKS = ESPECIES__MACRO_SPECIES_LINKS;
+
+	/**
 	 * The number of structural features of the '<em>EWorld Agent</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1269,13 +1575,40 @@ public interface GamaPackage extends EPackage {
 	int ELAYER__GAML_CODE = 0;
 
 	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER__NAME = 1;
+
+	/**
+	 * The feature id for the '<em><b>Model</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER__MODEL = 2;
+
+	/**
+	 * The feature id for the '<em><b>Display</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER__DISPLAY = 3;
+
+	/**
 	 * The number of structural features of the '<em>ELayer</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ELAYER_FEATURE_COUNT = 1;
+	int ELAYER_FEATURE_COUNT = 4;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EGraphImpl <em>EGraph</em>}' class.
@@ -1304,24 +1637,6 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int EGRAPH__MODEL = EGAMA_OBJECT__MODEL;
-
-	/**
-	 * The feature id for the '<em><b>Incoming Links</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EGRAPH__INCOMING_LINKS = EGAMA_OBJECT__INCOMING_LINKS;
-
-	/**
-	 * The feature id for the '<em><b>Outcoming Links</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EGRAPH__OUTCOMING_LINKS = EGAMA_OBJECT__OUTCOMING_LINKS;
 
 	/**
 	 * The feature id for the '<em><b>Node</b></em>' reference.
@@ -1389,13 +1704,168 @@ public interface GamaPackage extends EPackage {
 	int EEXPERIMENT_LINK__MODEL = EGAMA_LINK__MODEL;
 
 	/**
+	 * The feature id for the '<em><b>Species</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EEXPERIMENT_LINK__SPECIES = EGAMA_LINK_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Experiment</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EEXPERIMENT_LINK__EXPERIMENT = EGAMA_LINK_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>EExperiment Link</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EEXPERIMENT_LINK_FEATURE_COUNT = EGAMA_LINK_FEATURE_COUNT + 0;
+	int EEXPERIMENT_LINK_FEATURE_COUNT = EGAMA_LINK_FEATURE_COUNT + 2;
+
+
+	/**
+	 * The meta object id for the '{@link gama.impl.ELayerAspectImpl <em>ELayer Aspect</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see gama.impl.ELayerAspectImpl
+	 * @see gama.impl.GamaPackageImpl#getELayerAspect()
+	 * @generated
+	 */
+	int ELAYER_ASPECT = 22;
+
+	/**
+	 * The feature id for the '<em><b>Gaml Code</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER_ASPECT__GAML_CODE = 0;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER_ASPECT__NAME = 1;
+
+	/**
+	 * The feature id for the '<em><b>Model</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER_ASPECT__MODEL = 2;
+
+	/**
+	 * The feature id for the '<em><b>Shape</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER_ASPECT__SHAPE = 3;
+
+	/**
+	 * The feature id for the '<em><b>Color</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER_ASPECT__COLOR = 4;
+
+	/**
+	 * The feature id for the '<em><b>Empty</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER_ASPECT__EMPTY = 5;
+
+	/**
+	 * The feature id for the '<em><b>Rotate</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER_ASPECT__ROTATE = 6;
+
+	/**
+	 * The feature id for the '<em><b>Size</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER_ASPECT__SIZE = 7;
+
+	/**
+	 * The feature id for the '<em><b>Width</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER_ASPECT__WIDTH = 8;
+
+	/**
+	 * The feature id for the '<em><b>Heigth</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER_ASPECT__HEIGTH = 9;
+
+	/**
+	 * The feature id for the '<em><b>Radius</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER_ASPECT__RADIUS = 10;
+
+	/**
+	 * The feature id for the '<em><b>Path</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER_ASPECT__PATH = 11;
+
+	/**
+	 * The feature id for the '<em><b>Text</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER_ASPECT__TEXT = 12;
+
+	/**
+	 * The number of structural features of the '<em>ELayer Aspect</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER_ASPECT_FEATURE_COUNT = 13;
 
 
 	/**
@@ -1474,28 +1944,6 @@ public interface GamaPackage extends EPackage {
 	EReference getEGamaObject_Model();
 
 	/**
-	 * Returns the meta object for the reference list '{@link gama.EGamaObject#getIncomingLinks <em>Incoming Links</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Incoming Links</em>'.
-	 * @see gama.EGamaObject#getIncomingLinks()
-	 * @see #getEGamaObject()
-	 * @generated
-	 */
-	EReference getEGamaObject_IncomingLinks();
-
-	/**
-	 * Returns the meta object for the reference list '{@link gama.EGamaObject#getOutcomingLinks <em>Outcoming Links</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Outcoming Links</em>'.
-	 * @see gama.EGamaObject#getOutcomingLinks()
-	 * @see #getEGamaObject()
-	 * @generated
-	 */
-	EReference getEGamaObject_OutcomingLinks();
-
-	/**
 	 * Returns the meta object for class '{@link gama.ESpecies <em>ESpecies</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1550,6 +1998,138 @@ public interface GamaPackage extends EPackage {
 	EAttribute getESpecies_Torus();
 
 	/**
+	 * Returns the meta object for the reference list '{@link gama.ESpecies#getExperimentLinks <em>Experiment Links</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Experiment Links</em>'.
+	 * @see gama.ESpecies#getExperimentLinks()
+	 * @see #getESpecies()
+	 * @generated
+	 */
+	EReference getESpecies_ExperimentLinks();
+
+	/**
+	 * Returns the meta object for the reference list '{@link gama.ESpecies#getAspectLinks <em>Aspect Links</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Aspect Links</em>'.
+	 * @see gama.ESpecies#getAspectLinks()
+	 * @see #getESpecies()
+	 * @generated
+	 */
+	EReference getESpecies_AspectLinks();
+
+	/**
+	 * Returns the meta object for the reference list '{@link gama.ESpecies#getActionLinks <em>Action Links</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Action Links</em>'.
+	 * @see gama.ESpecies#getActionLinks()
+	 * @see #getESpecies()
+	 * @generated
+	 */
+	EReference getESpecies_ActionLinks();
+
+	/**
+	 * Returns the meta object for the reference list '{@link gama.ESpecies#getReflexLinks <em>Reflex Links</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Reflex Links</em>'.
+	 * @see gama.ESpecies#getReflexLinks()
+	 * @see #getESpecies()
+	 * @generated
+	 */
+	EReference getESpecies_ReflexLinks();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ESpecies#getShape <em>Shape</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Shape</em>'.
+	 * @see gama.ESpecies#getShape()
+	 * @see #getESpecies()
+	 * @generated
+	 */
+	EAttribute getESpecies_Shape();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ESpecies#getLocation <em>Location</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Location</em>'.
+	 * @see gama.ESpecies#getLocation()
+	 * @see #getESpecies()
+	 * @generated
+	 */
+	EAttribute getESpecies_Location();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ESpecies#getSize <em>Size</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Size</em>'.
+	 * @see gama.ESpecies#getSize()
+	 * @see #getESpecies()
+	 * @generated
+	 */
+	EAttribute getESpecies_Size();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ESpecies#getWidth <em>Width</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Width</em>'.
+	 * @see gama.ESpecies#getWidth()
+	 * @see #getESpecies()
+	 * @generated
+	 */
+	EAttribute getESpecies_Width();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ESpecies#getHeigth <em>Heigth</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Heigth</em>'.
+	 * @see gama.ESpecies#getHeigth()
+	 * @see #getESpecies()
+	 * @generated
+	 */
+	EAttribute getESpecies_Heigth();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ESpecies#getRadius <em>Radius</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Radius</em>'.
+	 * @see gama.ESpecies#getRadius()
+	 * @see #getESpecies()
+	 * @generated
+	 */
+	EAttribute getESpecies_Radius();
+
+	/**
+	 * Returns the meta object for the reference list '{@link gama.ESpecies#getMicroSpeciesLinks <em>Micro Species Links</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Micro Species Links</em>'.
+	 * @see gama.ESpecies#getMicroSpeciesLinks()
+	 * @see #getESpecies()
+	 * @generated
+	 */
+	EReference getESpecies_MicroSpeciesLinks();
+
+	/**
+	 * Returns the meta object for the reference list '{@link gama.ESpecies#getMacroSpeciesLinks <em>Macro Species Links</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Macro Species Links</em>'.
+	 * @see gama.ESpecies#getMacroSpeciesLinks()
+	 * @see #getESpecies()
+	 * @generated
+	 */
+	EReference getESpecies_MacroSpeciesLinks();
+
+	/**
 	 * Returns the meta object for class '{@link gama.EAction <em>EAction</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1571,6 +2151,17 @@ public interface GamaPackage extends EPackage {
 	EAttribute getEAction_GamlCode();
 
 	/**
+	 * Returns the meta object for the reference list '{@link gama.EAction#getActionLinks <em>Action Links</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Action Links</em>'.
+	 * @see gama.EAction#getActionLinks()
+	 * @see #getEAction()
+	 * @generated
+	 */
+	EReference getEAction_ActionLinks();
+
+	/**
 	 * Returns the meta object for class '{@link gama.EAspect <em>EAspect</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1590,6 +2181,17 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getEAspect_GamlCode();
+
+	/**
+	 * Returns the meta object for the reference list '{@link gama.EAspect#getAspectLinks <em>Aspect Links</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Aspect Links</em>'.
+	 * @see gama.EAspect#getAspectLinks()
+	 * @see #getEAspect()
+	 * @generated
+	 */
+	EReference getEAspect_AspectLinks();
 
 	/**
 	 * Returns the meta object for class '{@link gama.EReflex <em>EReflex</em>}'.
@@ -1624,6 +2226,17 @@ public interface GamaPackage extends EPackage {
 	EAttribute getEReflex_Condition();
 
 	/**
+	 * Returns the meta object for the reference list '{@link gama.EReflex#getReflexLinks <em>Reflex Links</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Reflex Links</em>'.
+	 * @see gama.EReflex#getReflexLinks()
+	 * @see #getEReflex()
+	 * @generated
+	 */
+	EReference getEReflex_ReflexLinks();
+
+	/**
 	 * Returns the meta object for class '{@link gama.EExperiment <em>EExperiment</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1632,6 +2245,28 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getEExperiment();
+
+	/**
+	 * Returns the meta object for the reference list '{@link gama.EExperiment#getExperimentLinks <em>Experiment Links</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Experiment Links</em>'.
+	 * @see gama.EExperiment#getExperimentLinks()
+	 * @see #getEExperiment()
+	 * @generated
+	 */
+	EReference getEExperiment_ExperimentLinks();
+
+	/**
+	 * Returns the meta object for the reference list '{@link gama.EExperiment#getDisplayLinks <em>Display Links</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Display Links</em>'.
+	 * @see gama.EExperiment#getDisplayLinks()
+	 * @see #getEExperiment()
+	 * @generated
+	 */
+	EReference getEExperiment_DisplayLinks();
 
 	/**
 	 * Returns the meta object for class '{@link gama.EGUIExperiment <em>EGUI Experiment</em>}'.
@@ -1707,6 +2342,28 @@ public interface GamaPackage extends EPackage {
 	EClass getESubSpeciesLink();
 
 	/**
+	 * Returns the meta object for the reference '{@link gama.ESubSpeciesLink#getMacro <em>Macro</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Macro</em>'.
+	 * @see gama.ESubSpeciesLink#getMacro()
+	 * @see #getESubSpeciesLink()
+	 * @generated
+	 */
+	EReference getESubSpeciesLink_Macro();
+
+	/**
+	 * Returns the meta object for the reference '{@link gama.ESubSpeciesLink#getMicro <em>Micro</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Micro</em>'.
+	 * @see gama.ESubSpeciesLink#getMicro()
+	 * @see #getESubSpeciesLink()
+	 * @generated
+	 */
+	EReference getESubSpeciesLink_Micro();
+
+	/**
 	 * Returns the meta object for class '{@link gama.EActionLink <em>EAction Link</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1715,6 +2372,28 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getEActionLink();
+
+	/**
+	 * Returns the meta object for the reference '{@link gama.EActionLink#getAction <em>Action</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Action</em>'.
+	 * @see gama.EActionLink#getAction()
+	 * @see #getEActionLink()
+	 * @generated
+	 */
+	EReference getEActionLink_Action();
+
+	/**
+	 * Returns the meta object for the reference '{@link gama.EActionLink#getSpecies <em>Species</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Species</em>'.
+	 * @see gama.EActionLink#getSpecies()
+	 * @see #getEActionLink()
+	 * @generated
+	 */
+	EReference getEActionLink_Species();
 
 	/**
 	 * Returns the meta object for class '{@link gama.EAspectLink <em>EAspect Link</em>}'.
@@ -1727,6 +2406,28 @@ public interface GamaPackage extends EPackage {
 	EClass getEAspectLink();
 
 	/**
+	 * Returns the meta object for the reference '{@link gama.EAspectLink#getAspect <em>Aspect</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Aspect</em>'.
+	 * @see gama.EAspectLink#getAspect()
+	 * @see #getEAspectLink()
+	 * @generated
+	 */
+	EReference getEAspectLink_Aspect();
+
+	/**
+	 * Returns the meta object for the reference '{@link gama.EAspectLink#getSpecies <em>Species</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Species</em>'.
+	 * @see gama.EAspectLink#getSpecies()
+	 * @see #getEAspectLink()
+	 * @generated
+	 */
+	EReference getEAspectLink_Species();
+
+	/**
 	 * Returns the meta object for class '{@link gama.EReflexLink <em>EReflex Link</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1737,6 +2438,28 @@ public interface GamaPackage extends EPackage {
 	EClass getEReflexLink();
 
 	/**
+	 * Returns the meta object for the reference '{@link gama.EReflexLink#getReflex <em>Reflex</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Reflex</em>'.
+	 * @see gama.EReflexLink#getReflex()
+	 * @see #getEReflexLink()
+	 * @generated
+	 */
+	EReference getEReflexLink_Reflex();
+
+	/**
+	 * Returns the meta object for the reference '{@link gama.EReflexLink#getSpecies <em>Species</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Species</em>'.
+	 * @see gama.EReflexLink#getSpecies()
+	 * @see #getEReflexLink()
+	 * @generated
+	 */
+	EReference getEReflexLink_Species();
+
+	/**
 	 * Returns the meta object for class '{@link gama.EDisplayLink <em>EDisplay Link</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1745,6 +2468,28 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getEDisplayLink();
+
+	/**
+	 * Returns the meta object for the reference '{@link gama.EDisplayLink#getExperiment <em>Experiment</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Experiment</em>'.
+	 * @see gama.EDisplayLink#getExperiment()
+	 * @see #getEDisplayLink()
+	 * @generated
+	 */
+	EReference getEDisplayLink_Experiment();
+
+	/**
+	 * Returns the meta object for the reference '{@link gama.EDisplayLink#getDisplay <em>Display</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Display</em>'.
+	 * @see gama.EDisplayLink#getDisplay()
+	 * @see #getEDisplayLink()
+	 * @generated
+	 */
+	EReference getEDisplayLink_Display();
 
 	/**
 	 * Returns the meta object for class '{@link gama.EDisplay <em>EDisplay</em>}'.
@@ -1766,6 +2511,17 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getEDisplay_Layers();
+
+	/**
+	 * Returns the meta object for the reference '{@link gama.EDisplay#getDisplayLink <em>Display Link</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Display Link</em>'.
+	 * @see gama.EDisplay#getDisplayLink()
+	 * @see #getEDisplay()
+	 * @generated
+	 */
+	EReference getEDisplay_DisplayLink();
 
 	/**
 	 * Returns the meta object for class '{@link gama.EGrid <em>EGrid</em>}'.
@@ -1929,6 +2685,39 @@ public interface GamaPackage extends EPackage {
 	EAttribute getELayer_GamlCode();
 
 	/**
+	 * Returns the meta object for the attribute '{@link gama.ELayer#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see gama.ELayer#getName()
+	 * @see #getELayer()
+	 * @generated
+	 */
+	EAttribute getELayer_Name();
+
+	/**
+	 * Returns the meta object for the reference '{@link gama.ELayer#getModel <em>Model</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Model</em>'.
+	 * @see gama.ELayer#getModel()
+	 * @see #getELayer()
+	 * @generated
+	 */
+	EReference getELayer_Model();
+
+	/**
+	 * Returns the meta object for the reference '{@link gama.ELayer#getDisplay <em>Display</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Display</em>'.
+	 * @see gama.ELayer#getDisplay()
+	 * @see #getELayer()
+	 * @generated
+	 */
+	EReference getELayer_Display();
+
+	/**
 	 * Returns the meta object for class '{@link gama.EGraph <em>EGraph</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1969,6 +2758,181 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getEExperimentLink();
+
+	/**
+	 * Returns the meta object for the reference '{@link gama.EExperimentLink#getSpecies <em>Species</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Species</em>'.
+	 * @see gama.EExperimentLink#getSpecies()
+	 * @see #getEExperimentLink()
+	 * @generated
+	 */
+	EReference getEExperimentLink_Species();
+
+	/**
+	 * Returns the meta object for the reference '{@link gama.EExperimentLink#getExperiment <em>Experiment</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Experiment</em>'.
+	 * @see gama.EExperimentLink#getExperiment()
+	 * @see #getEExperimentLink()
+	 * @generated
+	 */
+	EReference getEExperimentLink_Experiment();
+
+	/**
+	 * Returns the meta object for class '{@link gama.ELayerAspect <em>ELayer Aspect</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>ELayer Aspect</em>'.
+	 * @see gama.ELayerAspect
+	 * @generated
+	 */
+	EClass getELayerAspect();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ELayerAspect#getGamlCode <em>Gaml Code</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Gaml Code</em>'.
+	 * @see gama.ELayerAspect#getGamlCode()
+	 * @see #getELayerAspect()
+	 * @generated
+	 */
+	EAttribute getELayerAspect_GamlCode();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ELayerAspect#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see gama.ELayerAspect#getName()
+	 * @see #getELayerAspect()
+	 * @generated
+	 */
+	EAttribute getELayerAspect_Name();
+
+	/**
+	 * Returns the meta object for the reference '{@link gama.ELayerAspect#getModel <em>Model</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Model</em>'.
+	 * @see gama.ELayerAspect#getModel()
+	 * @see #getELayerAspect()
+	 * @generated
+	 */
+	EReference getELayerAspect_Model();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ELayerAspect#getShape <em>Shape</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Shape</em>'.
+	 * @see gama.ELayerAspect#getShape()
+	 * @see #getELayerAspect()
+	 * @generated
+	 */
+	EAttribute getELayerAspect_Shape();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ELayerAspect#getColor <em>Color</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Color</em>'.
+	 * @see gama.ELayerAspect#getColor()
+	 * @see #getELayerAspect()
+	 * @generated
+	 */
+	EAttribute getELayerAspect_Color();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ELayerAspect#getEmpty <em>Empty</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Empty</em>'.
+	 * @see gama.ELayerAspect#getEmpty()
+	 * @see #getELayerAspect()
+	 * @generated
+	 */
+	EAttribute getELayerAspect_Empty();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ELayerAspect#getRotate <em>Rotate</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Rotate</em>'.
+	 * @see gama.ELayerAspect#getRotate()
+	 * @see #getELayerAspect()
+	 * @generated
+	 */
+	EAttribute getELayerAspect_Rotate();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ELayerAspect#getSize <em>Size</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Size</em>'.
+	 * @see gama.ELayerAspect#getSize()
+	 * @see #getELayerAspect()
+	 * @generated
+	 */
+	EAttribute getELayerAspect_Size();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ELayerAspect#getWidth <em>Width</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Width</em>'.
+	 * @see gama.ELayerAspect#getWidth()
+	 * @see #getELayerAspect()
+	 * @generated
+	 */
+	EAttribute getELayerAspect_Width();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ELayerAspect#getHeigth <em>Heigth</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Heigth</em>'.
+	 * @see gama.ELayerAspect#getHeigth()
+	 * @see #getELayerAspect()
+	 * @generated
+	 */
+	EAttribute getELayerAspect_Heigth();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ELayerAspect#getRadius <em>Radius</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Radius</em>'.
+	 * @see gama.ELayerAspect#getRadius()
+	 * @see #getELayerAspect()
+	 * @generated
+	 */
+	EAttribute getELayerAspect_Radius();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ELayerAspect#getPath <em>Path</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Path</em>'.
+	 * @see gama.ELayerAspect#getPath()
+	 * @see #getELayerAspect()
+	 * @generated
+	 */
+	EAttribute getELayerAspect_Path();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ELayerAspect#getText <em>Text</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Text</em>'.
+	 * @see gama.ELayerAspect#getText()
+	 * @see #getELayerAspect()
+	 * @generated
+	 */
+	EAttribute getELayerAspect_Text();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -2053,22 +3017,6 @@ public interface GamaPackage extends EPackage {
 		EReference EGAMA_OBJECT__MODEL = eINSTANCE.getEGamaObject_Model();
 
 		/**
-		 * The meta object literal for the '<em><b>Incoming Links</b></em>' reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference EGAMA_OBJECT__INCOMING_LINKS = eINSTANCE.getEGamaObject_IncomingLinks();
-
-		/**
-		 * The meta object literal for the '<em><b>Outcoming Links</b></em>' reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference EGAMA_OBJECT__OUTCOMING_LINKS = eINSTANCE.getEGamaObject_OutcomingLinks();
-
-		/**
 		 * The meta object literal for the '{@link gama.impl.ESpeciesImpl <em>ESpecies</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2111,6 +3059,102 @@ public interface GamaPackage extends EPackage {
 		EAttribute ESPECIES__TORUS = eINSTANCE.getESpecies_Torus();
 
 		/**
+		 * The meta object literal for the '<em><b>Experiment Links</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ESPECIES__EXPERIMENT_LINKS = eINSTANCE.getESpecies_ExperimentLinks();
+
+		/**
+		 * The meta object literal for the '<em><b>Aspect Links</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ESPECIES__ASPECT_LINKS = eINSTANCE.getESpecies_AspectLinks();
+
+		/**
+		 * The meta object literal for the '<em><b>Action Links</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ESPECIES__ACTION_LINKS = eINSTANCE.getESpecies_ActionLinks();
+
+		/**
+		 * The meta object literal for the '<em><b>Reflex Links</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ESPECIES__REFLEX_LINKS = eINSTANCE.getESpecies_ReflexLinks();
+
+		/**
+		 * The meta object literal for the '<em><b>Shape</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ESPECIES__SHAPE = eINSTANCE.getESpecies_Shape();
+
+		/**
+		 * The meta object literal for the '<em><b>Location</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ESPECIES__LOCATION = eINSTANCE.getESpecies_Location();
+
+		/**
+		 * The meta object literal for the '<em><b>Size</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ESPECIES__SIZE = eINSTANCE.getESpecies_Size();
+
+		/**
+		 * The meta object literal for the '<em><b>Width</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ESPECIES__WIDTH = eINSTANCE.getESpecies_Width();
+
+		/**
+		 * The meta object literal for the '<em><b>Heigth</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ESPECIES__HEIGTH = eINSTANCE.getESpecies_Heigth();
+
+		/**
+		 * The meta object literal for the '<em><b>Radius</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ESPECIES__RADIUS = eINSTANCE.getESpecies_Radius();
+
+		/**
+		 * The meta object literal for the '<em><b>Micro Species Links</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ESPECIES__MICRO_SPECIES_LINKS = eINSTANCE.getESpecies_MicroSpeciesLinks();
+
+		/**
+		 * The meta object literal for the '<em><b>Macro Species Links</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ESPECIES__MACRO_SPECIES_LINKS = eINSTANCE.getESpecies_MacroSpeciesLinks();
+
+		/**
 		 * The meta object literal for the '{@link gama.impl.EActionImpl <em>EAction</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2129,6 +3173,14 @@ public interface GamaPackage extends EPackage {
 		EAttribute EACTION__GAML_CODE = eINSTANCE.getEAction_GamlCode();
 
 		/**
+		 * The meta object literal for the '<em><b>Action Links</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EACTION__ACTION_LINKS = eINSTANCE.getEAction_ActionLinks();
+
+		/**
 		 * The meta object literal for the '{@link gama.impl.EAspectImpl <em>EAspect</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2145,6 +3197,14 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute EASPECT__GAML_CODE = eINSTANCE.getEAspect_GamlCode();
+
+		/**
+		 * The meta object literal for the '<em><b>Aspect Links</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EASPECT__ASPECT_LINKS = eINSTANCE.getEAspect_AspectLinks();
 
 		/**
 		 * The meta object literal for the '{@link gama.impl.EReflexImpl <em>EReflex</em>}' class.
@@ -2173,6 +3233,14 @@ public interface GamaPackage extends EPackage {
 		EAttribute EREFLEX__CONDITION = eINSTANCE.getEReflex_Condition();
 
 		/**
+		 * The meta object literal for the '<em><b>Reflex Links</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EREFLEX__REFLEX_LINKS = eINSTANCE.getEReflex_ReflexLinks();
+
+		/**
 		 * The meta object literal for the '{@link gama.impl.EExperimentImpl <em>EExperiment</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2181,6 +3249,22 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EClass EEXPERIMENT = eINSTANCE.getEExperiment();
+
+		/**
+		 * The meta object literal for the '<em><b>Experiment Links</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EEXPERIMENT__EXPERIMENT_LINKS = eINSTANCE.getEExperiment_ExperimentLinks();
+
+		/**
+		 * The meta object literal for the '<em><b>Display Links</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EEXPERIMENT__DISPLAY_LINKS = eINSTANCE.getEExperiment_DisplayLinks();
 
 		/**
 		 * The meta object literal for the '{@link gama.impl.EGUIExperimentImpl <em>EGUI Experiment</em>}' class.
@@ -2247,6 +3331,22 @@ public interface GamaPackage extends EPackage {
 		EClass ESUB_SPECIES_LINK = eINSTANCE.getESubSpeciesLink();
 
 		/**
+		 * The meta object literal for the '<em><b>Macro</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ESUB_SPECIES_LINK__MACRO = eINSTANCE.getESubSpeciesLink_Macro();
+
+		/**
+		 * The meta object literal for the '<em><b>Micro</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ESUB_SPECIES_LINK__MICRO = eINSTANCE.getESubSpeciesLink_Micro();
+
+		/**
 		 * The meta object literal for the '{@link gama.impl.EActionLinkImpl <em>EAction Link</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2255,6 +3355,22 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EClass EACTION_LINK = eINSTANCE.getEActionLink();
+
+		/**
+		 * The meta object literal for the '<em><b>Action</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EACTION_LINK__ACTION = eINSTANCE.getEActionLink_Action();
+
+		/**
+		 * The meta object literal for the '<em><b>Species</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EACTION_LINK__SPECIES = eINSTANCE.getEActionLink_Species();
 
 		/**
 		 * The meta object literal for the '{@link gama.impl.EAspectLinkImpl <em>EAspect Link</em>}' class.
@@ -2267,6 +3383,22 @@ public interface GamaPackage extends EPackage {
 		EClass EASPECT_LINK = eINSTANCE.getEAspectLink();
 
 		/**
+		 * The meta object literal for the '<em><b>Aspect</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EASPECT_LINK__ASPECT = eINSTANCE.getEAspectLink_Aspect();
+
+		/**
+		 * The meta object literal for the '<em><b>Species</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EASPECT_LINK__SPECIES = eINSTANCE.getEAspectLink_Species();
+
+		/**
 		 * The meta object literal for the '{@link gama.impl.EReflexLinkImpl <em>EReflex Link</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2277,6 +3409,22 @@ public interface GamaPackage extends EPackage {
 		EClass EREFLEX_LINK = eINSTANCE.getEReflexLink();
 
 		/**
+		 * The meta object literal for the '<em><b>Reflex</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EREFLEX_LINK__REFLEX = eINSTANCE.getEReflexLink_Reflex();
+
+		/**
+		 * The meta object literal for the '<em><b>Species</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EREFLEX_LINK__SPECIES = eINSTANCE.getEReflexLink_Species();
+
+		/**
 		 * The meta object literal for the '{@link gama.impl.EDisplayLinkImpl <em>EDisplay Link</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2285,6 +3433,22 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EClass EDISPLAY_LINK = eINSTANCE.getEDisplayLink();
+
+		/**
+		 * The meta object literal for the '<em><b>Experiment</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EDISPLAY_LINK__EXPERIMENT = eINSTANCE.getEDisplayLink_Experiment();
+
+		/**
+		 * The meta object literal for the '<em><b>Display</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EDISPLAY_LINK__DISPLAY = eINSTANCE.getEDisplayLink_Display();
 
 		/**
 		 * The meta object literal for the '{@link gama.impl.EDisplayImpl <em>EDisplay</em>}' class.
@@ -2303,6 +3467,14 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EReference EDISPLAY__LAYERS = eINSTANCE.getEDisplay_Layers();
+
+		/**
+		 * The meta object literal for the '<em><b>Display Link</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EDISPLAY__DISPLAY_LINK = eINSTANCE.getEDisplay_DisplayLink();
 
 		/**
 		 * The meta object literal for the '{@link gama.impl.EGridImpl <em>EGrid</em>}' class.
@@ -2433,6 +3605,30 @@ public interface GamaPackage extends EPackage {
 		EAttribute ELAYER__GAML_CODE = eINSTANCE.getELayer_GamlCode();
 
 		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ELAYER__NAME = eINSTANCE.getELayer_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Model</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ELAYER__MODEL = eINSTANCE.getELayer_Model();
+
+		/**
+		 * The meta object literal for the '<em><b>Display</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ELAYER__DISPLAY = eINSTANCE.getELayer_Display();
+
+		/**
 		 * The meta object literal for the '{@link gama.impl.EGraphImpl <em>EGraph</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2467,6 +3663,136 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EClass EEXPERIMENT_LINK = eINSTANCE.getEExperimentLink();
+
+		/**
+		 * The meta object literal for the '<em><b>Species</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EEXPERIMENT_LINK__SPECIES = eINSTANCE.getEExperimentLink_Species();
+
+		/**
+		 * The meta object literal for the '<em><b>Experiment</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EEXPERIMENT_LINK__EXPERIMENT = eINSTANCE.getEExperimentLink_Experiment();
+
+		/**
+		 * The meta object literal for the '{@link gama.impl.ELayerAspectImpl <em>ELayer Aspect</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see gama.impl.ELayerAspectImpl
+		 * @see gama.impl.GamaPackageImpl#getELayerAspect()
+		 * @generated
+		 */
+		EClass ELAYER_ASPECT = eINSTANCE.getELayerAspect();
+
+		/**
+		 * The meta object literal for the '<em><b>Gaml Code</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ELAYER_ASPECT__GAML_CODE = eINSTANCE.getELayerAspect_GamlCode();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ELAYER_ASPECT__NAME = eINSTANCE.getELayerAspect_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Model</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ELAYER_ASPECT__MODEL = eINSTANCE.getELayerAspect_Model();
+
+		/**
+		 * The meta object literal for the '<em><b>Shape</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ELAYER_ASPECT__SHAPE = eINSTANCE.getELayerAspect_Shape();
+
+		/**
+		 * The meta object literal for the '<em><b>Color</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ELAYER_ASPECT__COLOR = eINSTANCE.getELayerAspect_Color();
+
+		/**
+		 * The meta object literal for the '<em><b>Empty</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ELAYER_ASPECT__EMPTY = eINSTANCE.getELayerAspect_Empty();
+
+		/**
+		 * The meta object literal for the '<em><b>Rotate</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ELAYER_ASPECT__ROTATE = eINSTANCE.getELayerAspect_Rotate();
+
+		/**
+		 * The meta object literal for the '<em><b>Size</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ELAYER_ASPECT__SIZE = eINSTANCE.getELayerAspect_Size();
+
+		/**
+		 * The meta object literal for the '<em><b>Width</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ELAYER_ASPECT__WIDTH = eINSTANCE.getELayerAspect_Width();
+
+		/**
+		 * The meta object literal for the '<em><b>Heigth</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ELAYER_ASPECT__HEIGTH = eINSTANCE.getELayerAspect_Heigth();
+
+		/**
+		 * The meta object literal for the '<em><b>Radius</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ELAYER_ASPECT__RADIUS = eINSTANCE.getELayerAspect_Radius();
+
+		/**
+		 * The meta object literal for the '<em><b>Path</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ELAYER_ASPECT__PATH = eINSTANCE.getELayerAspect_Path();
+
+		/**
+		 * The meta object literal for the '<em><b>Text</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ELAYER_ASPECT__TEXT = eINSTANCE.getELayerAspect_Text();
 
 	}
 

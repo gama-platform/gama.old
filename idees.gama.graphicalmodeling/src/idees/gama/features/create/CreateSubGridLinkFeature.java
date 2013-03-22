@@ -66,8 +66,8 @@ public class CreateSubGridLinkFeature extends AbstractCreateSpeciesComponentLink
 			addContext.setNewObject(eReference);
 			newConnection = (Connection) getFeatureProvider().addIfPossible(
 					addContext);
-			source.getOutcomingLinks().add(eReference);
-			target.getIncomingLinks().add(eReference);
+			source.getMicroSpeciesLinks().add(eReference);
+			target.getMacroSpeciesLinks().add(eReference);
 		}
 
 		return newConnection;

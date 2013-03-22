@@ -6,6 +6,8 @@
  */
 package gama;
 
+import org.eclipse.emf.common.util.EList;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -16,6 +18,7 @@ package gama;
  * The following features are supported:
  * <ul>
  *   <li>{@link gama.EAspect#getGamlCode <em>Gaml Code</em>}</li>
+ *   <li>{@link gama.EAspect#getAspectLinks <em>Aspect Links</em>}</li>
  * </ul>
  * </p>
  *
@@ -50,4 +53,20 @@ public interface EAspect extends EGamaObject {
 	 * @generated
 	 */
 	void setGamlCode(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Aspect Links</b></em>' reference list.
+	 * The list contents are of type {@link gama.EAspectLink}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Aspect Links</em>' reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Aspect Links</em>' reference list.
+	 * @see gama.GamaPackage#getEAspect_AspectLinks()
+	 * @model
+	 * @generated
+	 */
+	EList<EAspectLink> getAspectLinks();
 } // EAspect

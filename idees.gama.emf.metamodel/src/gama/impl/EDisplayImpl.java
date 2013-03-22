@@ -7,12 +7,16 @@
 package gama.impl;
 
 import gama.EDisplay;
+import gama.EDisplayLink;
 import gama.ELayer;
 import gama.GamaPackage;
 
 import java.util.Collection;
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.InternalEObject;
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
 /**
@@ -23,6 +27,7 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link gama.impl.EDisplayImpl#getLayers <em>Layers</em>}</li>
+ *   <li>{@link gama.impl.EDisplayImpl#getDisplayLink <em>Display Link</em>}</li>
  * </ul>
  * </p>
  *
@@ -38,6 +43,16 @@ public class EDisplayImpl extends EGamaObjectImpl implements EDisplay {
 	 * @ordered
 	 */
 	protected EList<ELayer> layers;
+
+	/**
+	 * The cached value of the '{@link #getDisplayLink() <em>Display Link</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDisplayLink()
+	 * @generated
+	 * @ordered
+	 */
+	protected EDisplayLink displayLink;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -75,11 +90,52 @@ public class EDisplayImpl extends EGamaObjectImpl implements EDisplay {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EDisplayLink getDisplayLink() {
+		if (displayLink != null && displayLink.eIsProxy()) {
+			InternalEObject oldDisplayLink = (InternalEObject)displayLink;
+			displayLink = (EDisplayLink)eResolveProxy(oldDisplayLink);
+			if (displayLink != oldDisplayLink) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, GamaPackage.EDISPLAY__DISPLAY_LINK, oldDisplayLink, displayLink));
+			}
+		}
+		return displayLink;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDisplayLink basicGetDisplayLink() {
+		return displayLink;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setDisplayLink(EDisplayLink newDisplayLink) {
+		EDisplayLink oldDisplayLink = displayLink;
+		displayLink = newDisplayLink;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EDISPLAY__DISPLAY_LINK, oldDisplayLink, displayLink));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case GamaPackage.EDISPLAY__LAYERS:
 				return getLayers();
+			case GamaPackage.EDISPLAY__DISPLAY_LINK:
+				if (resolve) return getDisplayLink();
+				return basicGetDisplayLink();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -97,6 +153,9 @@ public class EDisplayImpl extends EGamaObjectImpl implements EDisplay {
 				getLayers().clear();
 				getLayers().addAll((Collection<? extends ELayer>)newValue);
 				return;
+			case GamaPackage.EDISPLAY__DISPLAY_LINK:
+				setDisplayLink((EDisplayLink)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -112,6 +171,9 @@ public class EDisplayImpl extends EGamaObjectImpl implements EDisplay {
 			case GamaPackage.EDISPLAY__LAYERS:
 				getLayers().clear();
 				return;
+			case GamaPackage.EDISPLAY__DISPLAY_LINK:
+				setDisplayLink((EDisplayLink)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -126,6 +188,8 @@ public class EDisplayImpl extends EGamaObjectImpl implements EDisplay {
 		switch (featureID) {
 			case GamaPackage.EDISPLAY__LAYERS:
 				return layers != null && !layers.isEmpty();
+			case GamaPackage.EDISPLAY__DISPLAY_LINK:
+				return displayLink != null;
 		}
 		return super.eIsSet(featureID);
 	}

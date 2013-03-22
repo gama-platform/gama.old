@@ -7,11 +7,15 @@
 package gama.impl;
 
 import gama.EReflex;
+import gama.EReflexLink;
 import gama.GamaPackage;
 
+import java.util.Collection;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -22,6 +26,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <ul>
  *   <li>{@link gama.impl.EReflexImpl#getGamlCode <em>Gaml Code</em>}</li>
  *   <li>{@link gama.impl.EReflexImpl#getCondition <em>Condition</em>}</li>
+ *   <li>{@link gama.impl.EReflexImpl#getReflexLinks <em>Reflex Links</em>}</li>
  * </ul>
  * </p>
  *
@@ -65,6 +70,16 @@ public class EReflexImpl extends EGamaObjectImpl implements EReflex {
 	 * @ordered
 	 */
 	protected String condition = CONDITION_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getReflexLinks() <em>Reflex Links</em>}' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getReflexLinks()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<EReflexLink> reflexLinks;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -132,6 +147,18 @@ public class EReflexImpl extends EGamaObjectImpl implements EReflex {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<EReflexLink> getReflexLinks() {
+		if (reflexLinks == null) {
+			reflexLinks = new EObjectResolvingEList<EReflexLink>(EReflexLink.class, this, GamaPackage.EREFLEX__REFLEX_LINKS);
+		}
+		return reflexLinks;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -139,6 +166,8 @@ public class EReflexImpl extends EGamaObjectImpl implements EReflex {
 				return getGamlCode();
 			case GamaPackage.EREFLEX__CONDITION:
 				return getCondition();
+			case GamaPackage.EREFLEX__REFLEX_LINKS:
+				return getReflexLinks();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -148,6 +177,7 @@ public class EReflexImpl extends EGamaObjectImpl implements EReflex {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
@@ -156,6 +186,10 @@ public class EReflexImpl extends EGamaObjectImpl implements EReflex {
 				return;
 			case GamaPackage.EREFLEX__CONDITION:
 				setCondition((String)newValue);
+				return;
+			case GamaPackage.EREFLEX__REFLEX_LINKS:
+				getReflexLinks().clear();
+				getReflexLinks().addAll((Collection<? extends EReflexLink>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -175,6 +209,9 @@ public class EReflexImpl extends EGamaObjectImpl implements EReflex {
 			case GamaPackage.EREFLEX__CONDITION:
 				setCondition(CONDITION_EDEFAULT);
 				return;
+			case GamaPackage.EREFLEX__REFLEX_LINKS:
+				getReflexLinks().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -191,6 +228,8 @@ public class EReflexImpl extends EGamaObjectImpl implements EReflex {
 				return GAML_CODE_EDEFAULT == null ? gamlCode != null : !GAML_CODE_EDEFAULT.equals(gamlCode);
 			case GamaPackage.EREFLEX__CONDITION:
 				return CONDITION_EDEFAULT == null ? condition != null : !CONDITION_EDEFAULT.equals(condition);
+			case GamaPackage.EREFLEX__REFLEX_LINKS:
+				return reflexLinks != null && !reflexLinks.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
