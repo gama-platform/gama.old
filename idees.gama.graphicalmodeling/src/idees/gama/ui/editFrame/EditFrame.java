@@ -84,11 +84,11 @@ public abstract class EditFrame  extends ApplicationWindow {
 	
 	protected Canvas canvasValidation(Composite container) {
 		//****** CANVAS VALIDATION *********
-		Canvas canvasValidation = new Canvas(container, SWT.NONE);
-		canvasValidation.setBounds(10, 515, 720, 105);
+		Canvas canvasValidation = new Canvas(container, SWT.BORDER);
+		canvasValidation.setBounds(10, 580, 720, 95);
 				
 		validationResult = new StyledText(canvasValidation, SWT.BORDER);
-		validationResult.setBounds(5, 30, 700, 70);
+		validationResult.setBounds(5, 30, 700, 55);
 		validationResult.setEditable(false);
 				
 		Button btnValidate = new Button(canvasValidation, SWT.NONE);
@@ -110,7 +110,7 @@ public abstract class EditFrame  extends ApplicationWindow {
 	
 	protected Canvas canvasName(Composite container) {
 		//****** CANVAS NAME *********
-		Canvas canvasName = new Canvas(container, SWT.NONE);
+		Canvas canvasName = new Canvas(container, SWT.BORDER);
 		canvasName.setBounds(10, 10, 720, 30);
 				
 		textName = new Text(canvasName, SWT.BORDER);
@@ -120,11 +120,13 @@ public abstract class EditFrame  extends ApplicationWindow {
 			textName.addModifyListener(new ModifyListener() {
 				public void modifyText(ModifyEvent event) {
 					TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(eobject);
-			    	domain.getCommandStack().execute(new RecordingCommand(domain) {
-			    	     public void doExecute() {
-			    	    	 eobject.setName(textName.getText());
-			    	     }
-			    	  });
+					if (domain != null) {
+						domain.getCommandStack().execute(new RecordingCommand(domain) {
+				    	     public void doExecute() {
+				    	    	 eobject.setName(textName.getText());
+				    	     }
+				    	  });
+					}
 			       	 ef.hasDoneChanges = true;
 			    }
 			});
@@ -186,7 +188,7 @@ public abstract class EditFrame  extends ApplicationWindow {
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(743, 707);
+		return new Point(743, 727);
 	}
 	
 	

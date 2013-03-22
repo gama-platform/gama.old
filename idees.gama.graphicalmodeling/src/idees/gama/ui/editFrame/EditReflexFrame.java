@@ -41,22 +41,22 @@ public class EditReflexFrame extends EditActionFrame {
 		
 		//****** CANVAS GAMLCODE *********
 		Canvas canvasCondition = canvasCondition(container);
-		canvasCondition.setBounds(10, 45, 720, 30);
+		canvasCondition.setBounds(10, 50, 720, 30);
 				
 		//****** CANVAS GAMLCODE *********
 		Canvas canvasGamlCode = canvasGamlCode(container);
-		canvasGamlCode.setBounds(10, 75, 720, 305);
+		canvasGamlCode.setBounds(10, 90, 720, 305);
 
 		//****** CANVAS VALIDATION *********
 		Canvas canvasValidation = canvasValidation(container);
-		canvasValidation.setBounds(10, 390, 720, 105);
+		canvasValidation.setBounds(10, 405, 720, 95);
 		return container;
 	}
 	
 	protected Canvas canvasCondition(Composite container) {
 		
 		//****** CANVAS GAMLCODE *********
-		Canvas canvasCondition = new Canvas(container, SWT.NONE);
+		Canvas canvasCondition = new Canvas(container, SWT.BORDER);
 		canvasCondition.setBounds(10, 45, 720, 30);
 				
 		conditionCode = new Text(canvasCondition, SWT.BORDER);
@@ -80,11 +80,11 @@ public class EditReflexFrame extends EditActionFrame {
 	protected Canvas canvasGamlCode(Composite container) {
 		
 		//****** CANVAS GAMLCODE *********
-		Canvas canvasGamlCode = new Canvas(container, SWT.NONE);
+		Canvas canvasGamlCode = new Canvas(container, SWT.BORDER);
 		canvasGamlCode.setBounds(10, 515, 720, 305);
 				
 		gamlCode = new StyledText(canvasGamlCode, SWT.BORDER);
-		gamlCode.setBounds(5, 30, 700, 270);
+		gamlCode.setBounds(5, 30, 700, 265);
 		if (((EReflex) eobject).getGamlCode() != null)	
 			gamlCode.setText(((EReflex) eobject).getGamlCode());
 		gamlCode.setEditable(true);
@@ -107,7 +107,7 @@ public class EditReflexFrame extends EditActionFrame {
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(743, 525);
+		return new Point(743, 550);
 	}
 	
 	

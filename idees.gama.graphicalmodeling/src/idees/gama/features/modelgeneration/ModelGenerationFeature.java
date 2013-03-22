@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -113,17 +114,22 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     	for (EVariable var: species.getVariables()) {
     		model += defineVariable(var,level+1);
     	}
+    	
+    	Map<String, EReflexLink> reflexMap = new Hashtable<String, EReflexLink>();
     	 for (EGamaLink link : species.getOutcomingLinks()) {
          	if (link instanceof EActionLink) {
          		model += defineAction((EActionLink)link, level+1);
          	} else if (link instanceof EReflexLink) {
-         		model += defineReflex((EReflexLink)link,level+1);
+         		reflexMap.put(link.getTarget().getName(), (EReflexLink) link);
          	} else if (link instanceof EAspectLink) {
          		model += defineAspect((EAspectLink)link,level+1);
          	} else if (link instanceof ESubSpeciesLink) {
          		model += defineSpecies((ESpecies) link.getTarget(),level+1); 
          	}
          }
+    	 for (String reflex : species.getReflexList()) {
+    		 model += defineReflex(reflexMap.get(reflex),level+1);
+     	}
     	 model += sp+ "}\n";
     	 
     	 return model;
@@ -159,8 +165,11 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     		sp += "\t";
     	}
     	result += sp + "action " + link.getTarget().getName() + " {\n";
-    	for (String line : ((EAction)link.getTarget()).getGamlCode().split("\n")) {
-    		result += sp + "\t"+ line+"\n";
+    	String code = ((EAction)link.getTarget()).getGamlCode();
+    	if (code != null && ! code.isEmpty()) {
+	    	for (String line : code.split("\n")) {
+	    		result += sp+ "\t" + line+"\n";
+	    	}
     	}
     	result +=sp + "}\n";
     	return result;
@@ -177,9 +186,11 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     	} else {
     		result += sp + "reflex " + link.getTarget().getName() + " {\n";
     	}
-    	
-    	for (String line : ((EReflex)link.getTarget()).getGamlCode().split("\n")) {
-    		result += sp+ "\t" + line+"\n";
+    	String code = ((EReflex)link.getTarget()).getGamlCode();
+    	if (code != null && ! code.isEmpty()) {
+	    	for (String line : code.split("\n")) {
+	    		result += sp+ "\t" + line+"\n";
+	    	}
     	}
     	result +=sp + "}\n";
     	return result;

@@ -1,10 +1,13 @@
 package idees.gama.ui.editFrame;
 
 
+import gama.EGamaLink;
+import gama.EReflexLink;
 import gama.ESpecies;
 import gama.EVariable;
 import idees.gama.features.edit.EditSpeciesFeature;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import msi.gama.util.GamaList;
@@ -57,6 +60,8 @@ public class EditSpeciesFrame extends EditFrame {
 	Composite wHComp;
 	Composite pointsComp;
 	Composite expShapeComp;
+	org.eclipse.swt.widgets.List reflexViewer;
+	List<String> reflexStrs;
 	
 	//Torus
 	private Text textTorus;
@@ -71,7 +76,12 @@ public class EditSpeciesFrame extends EditFrame {
 	 */
 	public EditSpeciesFrame(Diagram diagram, IFeatureProvider fp, EditSpeciesFeature esf, ESpecies species, List<ESpecies> speciesList) {
 		super(diagram, fp, esf,  species, "Species definition" );
-			
+		reflexStrs = new ArrayList<String>();
+		for (EGamaLink link: eobject.getOutcomingLinks()) {
+			if (link instanceof EReflexLink) {
+				reflexStrs.add(link.getTarget().getName());
+			}
+		}
 		for (ESpecies sp : speciesList) 
 			types.add(sp.getName());
 	}
@@ -88,11 +98,11 @@ public class EditSpeciesFrame extends EditFrame {
 		canvasName.setBounds(10, 10, 720, 30);
 		
 		//****** CANVAS VARIABLES *********
-		Canvas canvasVariable = new Canvas(container, SWT.NONE);
-		canvasVariable.setBounds(10, 250, 720, 250);
+		Canvas canvasVariable = new Canvas(container, SWT.BORDER);
+		canvasVariable.setBounds(10, 250, 720, 200);
 		
 		table_vars = createTableEditor(canvasVariable);
-		table_vars.setBounds(10, 30, 700, 170);
+		table_vars.setBounds(10, 30, 700, 120);
 		table_vars.setHeaderVisible(true);
 		table_vars.setLinesVisible(true);
 		table_vars.setLinesVisible(true);
@@ -113,17 +123,18 @@ public class EditSpeciesFrame extends EditFrame {
 				final EVariable var = gama.GamaFactory.eINSTANCE.createEVariable();
 				 var.setName(name);
 				 TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(eobject);
-            	domain.getCommandStack().execute(new RecordingCommand(domain) {
-            	     public void doExecute() {
-            	    	((ESpecies) eobject).getVariables().add(var);
-            	     }
-            	  });
-				
+				if (domain != null) {
+					 domain.getCommandStack().execute(new RecordingCommand(domain) {
+	            	     public void doExecute() {
+	            	    	((ESpecies) eobject).getVariables().add(var);
+	            	     }
+	            	  });
+				}
 				cpt++;
 				ef.hasDoneChanges = true;
 			}
 		});
-		btnAddVariable.setBounds(62, 212, 94, 28);
+		btnAddVariable.setBounds(62, 162, 94, 28);
 		btnAddVariable.setText("Add variable");
 		
 		Button btnDeleteVariable = new Button(canvasVariable, SWT.NONE);
@@ -137,11 +148,13 @@ public class EditSpeciesFrame extends EditFrame {
 					final EVariable varSup = getEVariable(item.getText(0));
 					if (varSup != null) {
 						TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(eobject);
-		            	domain.getCommandStack().execute(new RecordingCommand(domain) {
-		            	     public void doExecute() {
-		            	    	 ((ESpecies) eobject).getVariables().remove(varSup);
-		            	     }
-		            	  });
+						if (domain != null) {
+							domain.getCommandStack().execute(new RecordingCommand(domain) {
+			            	     public void doExecute() {
+			            	    	 ((ESpecies) eobject).getVariables().remove(varSup);
+			            	     }
+			            	  });
+						}
 					}
 				}
 				ef.hasDoneChanges = true;
@@ -149,16 +162,16 @@ public class EditSpeciesFrame extends EditFrame {
 				table_vars.redraw();
 			}
 		});
-		btnDeleteVariable.setBounds(163, 212, 112, 28);
+		btnDeleteVariable.setBounds(163, 162, 112, 28);
 		btnDeleteVariable.setText("Delete variable");
 		
 		
 		//****** CANVAS VALIDATION *********
 		Canvas canvasValidation = canvasValidation(container);
-		canvasValidation.setBounds(10, 515, 720, 105);
+		canvasValidation.setBounds(10, 580, 720, 95);
 		
 		//****** CANVAS TOPOLOGY *********
-		Canvas canvasTopo = new Canvas(container, SWT.NONE);
+		Canvas canvasTopo = new Canvas(container, SWT.BORDER);
 		canvasTopo.setBounds(10, 50, 720, 190);
 		
 		// Shape
@@ -447,45 +460,65 @@ public class EditSpeciesFrame extends EditFrame {
          });
 		
 	
+		//****** CANVAS REFLEX ORDER *********
+		Canvas canvasReflexOrder = new Canvas(container, SWT.BORDER);
+		canvasReflexOrder.setBounds(10, 460, 720, 110);
+				
+		reflexViewer = new org.eclipse.swt.widgets.List(canvasReflexOrder, SWT.BORDER | SWT.V_SCROLL);
 		
-		/*ListViewer listViewer = new ListViewer(container, SWT.BORDER | SWT.V_SCROLL);
-		org.eclipse.swt.widgets.List list = listViewer.getList();
-		FormData fd_list = new FormData();
-		fd_list.right = new FormAttachment(table_1, 0, SWT.RIGHT);
-		fd_list.top = new FormAttachment(100, -129);
-		fd_list.bottom = new FormAttachment(100, -44);
-		fd_list.left = new FormAttachment(0, 22);
-		list.add("test1");
-		list.add("test2");
-		list.add("test3");
+		for (String ref : reflexStrs) {
+			reflexViewer.add(ref);
+		}
 		
-		list.addMouseListener(new MouseListener() {
-			
+		reflexViewer.setBounds(5, 30, 700, 40);
+		CLabel lblReflexOrder = new CLabel(canvasReflexOrder, SWT.NONE);
+		lblReflexOrder.setBounds(5, 5, 100, 20);
+		lblReflexOrder.setText("Reflex order");
+		
+		Button btnUp = new Button(canvasReflexOrder, SWT.BUTTON1);
+		btnUp.setBounds(80, 85, 105, 20);
+		btnUp.setText("Up");
+		btnUp.setSelection(true);
+		btnUp.addSelectionListener(new SelectionAdapter() {
 			@Override
-			public void mouseUp(MouseEvent e) {
-				System.out.println("mouseUp e.getSource() : " + e.getSource());
-				
-			}
-			
-			@Override
-			public void mouseDown(MouseEvent e) {
-				
-			}
-			
-			@Override
-			public void mouseDoubleClick(MouseEvent e) {
-				
+			public void widgetSelected(SelectionEvent e) {
+				if (reflexViewer.getSelectionCount() == 1) {
+					String el = reflexViewer.getSelection()[0];
+					int index = reflexViewer.getSelectionIndex();
+					if (index > 0) {
+						reflexStrs.remove(el);
+						reflexStrs.add( index - 1, el);
+						reflexViewer.removeAll();
+						for (String ref : reflexStrs) {
+							reflexViewer.add(ref);
+						}
+						modifyReflexOrder();
+					}	
+				}
 			}
 		});
-		list.setLayoutData(fd_list);
-		
-		CLabel lblReflexOrder = new CLabel(container, SWT.NONE);
-		FormData fd_lblReflexOrder = new FormData();
-		fd_lblReflexOrder.bottom = new FormAttachment(list, -6);
-		fd_lblReflexOrder.left = new FormAttachment(0, 28);
-		lblReflexOrder.setLayoutData(fd_lblReflexOrder);
-		lblReflexOrder.setText("Reflex order");*/
-		
+		Button btnDown = new Button(canvasReflexOrder, SWT.BUTTON1);
+		btnDown.setBounds(200, 85, 105, 20);
+		btnDown.setText("Down");
+		btnDown.setSelection(true);
+		btnDown.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (reflexViewer.getSelectionCount() == 1) {
+					String el = reflexViewer.getSelection()[0];
+					int index = reflexViewer.getSelectionIndex();
+					if (index < reflexViewer.getItemCount() - 1) {
+						reflexStrs.remove(el);
+						reflexStrs.add( index + 1, el);
+						reflexViewer.removeAll();
+						for (String ref : reflexStrs) {
+							reflexViewer.add(ref);
+						}
+						modifyReflexOrder();
+					}	
+				}
+			}
+		});
 		
 		return container;
 	}
@@ -505,16 +538,21 @@ public class EditSpeciesFrame extends EditFrame {
 		var.setType("geometry");
     	
 	    TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(var);
-	    	domain.getCommandStack().execute(new RecordingCommand(domain) {
-	    	     public void doExecute() {
-	    	    	 if (! ((ESpecies) eobject).getVariables().contains(var))
-	    	    		 ((ESpecies) eobject).getVariables().add(var);
-	    	    	 var.setInit(newShape);
-	    	     }
-	    	  });
+	    	if (domain != null) {
+	    		domain.getCommandStack().execute(new RecordingCommand(domain) {
+		    	     public void doExecute() {
+		    	    	 if (! ((ESpecies) eobject).getVariables().contains(var))
+		    	    		 ((ESpecies) eobject).getVariables().add(var);
+		    	    	 var.setInit(newShape);
+		    	     }
+		    	  });
+	    	}
+	    	
 	    ef.hasDoneChanges = true;
   	     
 	}
+	
+	
 	
 	private void modifyLocation(final String newLoc) {
 		final EVariable var = getEVariable("location") == null ? gama.GamaFactory.eINSTANCE.createEVariable() : getEVariable("location");
@@ -522,18 +560,26 @@ public class EditSpeciesFrame extends EditFrame {
 		var.setType("point");
     	
 	    TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(var);
-	    	domain.getCommandStack().execute(new RecordingCommand(domain) {
-	    	     public void doExecute() {
-	    	    	 if (! ((ESpecies) eobject).getVariables().contains(var))
-	    	    		 ((ESpecies) eobject).getVariables().add(var);
-	    	    	 var.setInit(newLoc);
-	    	     }
-	    	  });
+		if (domain != null) {
+		    domain.getCommandStack().execute(new RecordingCommand(domain) {
+		    	     public void doExecute() {
+		    	    	 if (! ((ESpecies) eobject).getVariables().contains(var))
+		    	    		 ((ESpecies) eobject).getVariables().add(var);
+		    	    	 var.setInit(newLoc);
+		    	     }
+		    	  });
+		}
 	    ef.hasDoneChanges = true;
 	}
 	
 	private void modifyIsTorus(final String newisTorus) {
 		((ESpecies) eobject).setTorus(newisTorus);
+	    ef.hasDoneChanges = true;  
+	}
+	
+	private void modifyReflexOrder() {
+		((ESpecies) eobject).getReflexList().clear();
+		((ESpecies) eobject).getReflexList().addAll(reflexStrs);
 	    ef.hasDoneChanges = true;  
 	}
 	
@@ -636,11 +682,13 @@ public class EditSpeciesFrame extends EditFrame {
 	                item.setText(col, combo.getText());
 	                final EVariable var = getEVariable(item.getText(0));
 	                TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(var);
-	            	domain.getCommandStack().execute(new RecordingCommand(domain) {
-	            	     public void doExecute() {
-	            	    	 var.setType(combo.getText());
-	            	     }
-	            	  });
+	            	if (domain != null) {
+		                domain.getCommandStack().execute(new RecordingCommand(domain) {
+		            	     public void doExecute() {
+		            	    	 var.setType(combo.getText());
+		            	     }
+		            	  });
+	            	}
 	            	ef.hasDoneChanges = true;
 	                // They selected an item; end the editing session
 	                combo.dispose();
@@ -674,6 +722,7 @@ public class EditSpeciesFrame extends EditFrame {
 	            	   final EVariable var = getEVariable(item.getText(0));
 	            	  
 	            	  TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(var);
+	            	if (domain != null) {
 	            	  domain.getCommandStack().execute(new RecordingCommand(domain) {
 	            	     public void doExecute() {
 	            	    	 switch (col) 
@@ -688,6 +737,7 @@ public class EditSpeciesFrame extends EditFrame {
 		   	            	 }
 	            	     }
 	            	  });
+	            	}
 	           
 	            	 item.setText(col, text.getText());
 	            	 ef.hasDoneChanges = true;

@@ -40,22 +40,22 @@ public class EditActionFrame extends EditFrame {
 		
 		//****** CANVAS GAMLCODE *********
 		Canvas canvasGamlCode = canvasGamlCode(container);
-		canvasGamlCode.setBounds(10, 40, 720, 305);
+		canvasGamlCode.setBounds(10, 50, 720, 305);
 
 		//****** CANVAS VALIDATION *********
 		Canvas canvasValidation = canvasValidation(container);
-		canvasValidation.setBounds(10, 360, 720, 105);
+		canvasValidation.setBounds(10, 365, 720, 95);
 		return container;
 	}
 	
 	protected Canvas canvasGamlCode(Composite container) {
 		
 		//****** CANVAS GAMLCODE *********
-		Canvas canvasGamlCode = new Canvas(container, SWT.NONE);
+		Canvas canvasGamlCode = new Canvas(container, SWT.BORDER);
 		canvasGamlCode.setBounds(10, 515, 720, 305);
 				
 		gamlCode = new StyledText(canvasGamlCode, SWT.BORDER);
-		gamlCode.setBounds(5, 30, 700, 270);
+		gamlCode.setBounds(5, 30, 700, 265);
 		if (((EAction) eobject).getGamlCode() != null)
 			gamlCode.setText(((EAction) eobject).getGamlCode());
 		gamlCode.setEditable(true);
@@ -78,7 +78,7 @@ public class EditActionFrame extends EditFrame {
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(743, 495);
+		return new Point(743, 510);
 	}
 	
 	
