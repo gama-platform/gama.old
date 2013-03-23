@@ -1,7 +1,6 @@
 package idees.gama.features.create;
 
 import gama.ESpecies;
-import gama.EWorldAgent;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;

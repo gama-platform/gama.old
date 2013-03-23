@@ -3,10 +3,10 @@ package idees.gama.features.create;
 import gama.EAction;
 import gama.EActionLink;
 import gama.ESpecies;
+import idees.gama.features.ExampleUtil;
 import idees.gama.features.add.AddActionFeature;
 import idees.gama.ui.image.GamaImageProvider;
 
-import org.eclipse.graphiti.examples.common.ExampleUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;

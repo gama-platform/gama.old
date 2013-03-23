@@ -1,15 +1,12 @@
 package idees.gama.features.modelgeneration;
 
-import gama.EAction;
 import gama.EActionLink;
 import gama.EAspectLink;
 import gama.EBatchExperiment;
 import gama.EDisplayLink;
 import gama.EExperiment;
 import gama.EExperimentLink;
-import gama.EGamaLink;
 import gama.EGrid;
-import gama.EReflex;
 import gama.EReflexLink;
 import gama.ESpecies;
 import gama.ESubSpeciesLink;

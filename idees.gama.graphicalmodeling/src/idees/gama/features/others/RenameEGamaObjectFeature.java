@@ -2,7 +2,6 @@ package idees.gama.features.others;
 
 import gama.EGamaObject;
 
-import org.eclipse.graphiti.examples.common.ExampleUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
@@ -50,7 +49,7 @@ public class RenameEGamaObjectFeature extends AbstractCustomFeature {
             	EGamaObject eClass = (EGamaObject) bo;
                 String currentName = eClass.getName();
                 // ask user for a new class name
-                String newName =ExampleUtil.askString(getName(), getDescription(),
+                String newName =idees.gama.features.ExampleUtil.askString(getName(), getDescription(),
                         currentName);
                 if (newName != null && !newName.equals(currentName)) {
                     this.hasDoneChanges = true;

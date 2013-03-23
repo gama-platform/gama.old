@@ -2,7 +2,6 @@ package idees.gama.diagram;
 
 import gama.EAction;
 import gama.EAspect;
-import gama.EGrid;
 import gama.EReflex;
 import gama.ESpecies;
 import idees.gama.features.create.CreateActionLinkFeature;
@@ -15,8 +14,6 @@ import idees.gama.features.edit.EditAspectFeature;
 import idees.gama.features.edit.EditReflexFeature;
 import idees.gama.features.edit.EditSpeciesFeature;
 import idees.gama.features.others.RenameEGamaObjectFeature;
-import idees.gama.ui.editFrame.EditAspectFrame;
-import idees.gama.ui.image.GamaImageProvider;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +30,6 @@ import org.eclipse.graphiti.palette.impl.ConnectionCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.ObjectCreationToolEntry;
 import org.eclipse.graphiti.palette.impl.PaletteCompartmentEntry;
 import org.eclipse.graphiti.tb.DefaultToolBehaviorProvider;
-import org.eclipse.graphiti.tb.IDecorator;
-import org.eclipse.graphiti.tb.ImageDecorator;
 
 public class MyGamaToolBehaviorProvider extends DefaultToolBehaviorProvider{
 

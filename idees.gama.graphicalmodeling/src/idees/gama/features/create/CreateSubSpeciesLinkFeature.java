@@ -5,7 +5,7 @@ import idees.gama.ui.image.GamaImageProvider;
 import gama.ESpecies;
 import gama.ESubSpeciesLink;
 
-import org.eclipse.graphiti.examples.common.ExampleUtil;
+import idees.gama.features.ExampleUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;

@@ -1,7 +1,6 @@
 package idees.gama.ui.editFrame;
 
 
-import gama.EGamaLink;
 import gama.EReflexLink;
 import gama.ESpecies;
 import gama.EVariable;

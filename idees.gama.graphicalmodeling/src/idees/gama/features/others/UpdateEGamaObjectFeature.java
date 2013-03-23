@@ -4,8 +4,6 @@ import gama.EGamaObject;
 import gama.ESpecies;
 import gama.EVariable;
 
-import msi.gama.precompiler.GamlAnnotations.getter;
-
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.IReason;
 import org.eclipse.graphiti.features.context.IUpdateContext;

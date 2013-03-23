@@ -36,5 +36,15 @@
             id="idees.gama.ui.image.GamaImageProvider">
       </imageProvider>
    </extension>
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <wizard
+            category="msi.gama.gui.wizards.GAMA"
+            class="idees.gama.ui.wizards.NewFileWizard"
+            icon="icons/wizards/diagram.png"
+            id="idees.gama.graphicalmodeling.Newwizard"
+            name="Model diagram">
+      </wizard>
+   </extension>
 
 </plugin>

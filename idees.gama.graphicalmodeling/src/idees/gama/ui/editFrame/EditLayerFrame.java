@@ -1,6 +1,6 @@
 package idees.gama.ui.editFrame;
 
-import gama.ELayer;
+import gama.ELayerAspect;
 import gama.EWorldAgent;
 
 import java.util.List;
@@ -56,11 +56,11 @@ public class EditLayerFrame {
 	org.eclipse.swt.widgets.List reflexViewer;
 	List<String> reflexStrs;
 	Text textName;
-	ELayer elayer;
+	ELayerAspect elayer;
 	EditAspectFrame frame;
 	Color color;
 
-	public EditLayerFrame(ELayer elayer, EditAspectFrame asp) {
+	public EditLayerFrame(ELayerAspect elayer, EditAspectFrame asp) {
 		frame = asp;
 		
 		final Shell dialog = new Shell(asp.getShell(), SWT.APPLICATION_MODAL
@@ -87,7 +87,7 @@ public class EditLayerFrame {
 			public void widgetSelected(SelectionEvent e) {
 				frame.getLayers().add(elayer);
 				dialog.close();
-			}
+			} 
 		});
 
 		Button buttonCancel = new Button(quitTopo, SWT.PUSH);
@@ -139,6 +139,7 @@ public class EditLayerFrame {
 					imageComp.setEnabled(false);
 					textComp.setEnabled(false);
 					textComp.setVisible(false);
+					
 					// modifyShape(comboShape.getText()+ "("+textPoints+")");
 				} else if (val.equals("circle") || val.equals("sphere")) {
 					sizeComp.setVisible(false);

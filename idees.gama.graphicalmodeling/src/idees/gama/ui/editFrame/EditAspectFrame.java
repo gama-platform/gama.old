@@ -1,7 +1,7 @@
 package idees.gama.ui.editFrame;
 
 import gama.EGamaObject;
-import gama.ELayer;
+import gama.ELayerAspect;
 import idees.gama.features.edit.EditFeature;
 
 import java.util.List;
@@ -27,14 +27,14 @@ public class EditAspectFrame extends EditFrame {
 	org.eclipse.swt.widgets.List layerViewer;
 	List<String> layerStrs;
 	EditAspectFrame frame;
-	List<ELayer> layers;
+	List<ELayerAspect> layers;
 	/**
 	 * Create the application window.
 	 */
 	public EditAspectFrame(Diagram diagram, IFeatureProvider fp, EditFeature eaf, EGamaObject aspect, String name) {	
 		super(diagram, fp, eaf,  aspect, name == null ? "Aspect definition" : name );
 		frame = this;
-		layers = new GamaList<ELayer>();
+		layers = new GamaList<ELayerAspect>();
 	}
 
 	/**
@@ -84,9 +84,9 @@ public class EditAspectFrame extends EditFrame {
 		addLayerBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-					ELayer elayer = gama.GamaFactory.eINSTANCE.createELayer();
+					ELayerAspect elayer = gama.GamaFactory.eINSTANCE.createELayerAspect();
 					elayer.setName("Layer");
-					new EditLayerFrame(elayer, frame);
+					new EditLayerFrame(elayer, frame); 
 				} 
 		});
 		Button removeLayerBtn = new Button(canvasLayers, SWT.BUTTON1);
@@ -160,12 +160,16 @@ public class EditAspectFrame extends EditFrame {
 		return new Point(743, 475);
 	}
 
-	public List<ELayer> getLayers() {
+	public List<ELayerAspect> getLayers() {
 		return layers;
 	}
 
-	public void setLayers(List<ELayer> layers) {
+	public void setLayers(List<ELayerAspect> layers) {
 		this.layers = layers;
+	}
+
+	public org.eclipse.swt.widgets.List getLayerViewer() {
+		return layerViewer;
 	}
 	
 	
