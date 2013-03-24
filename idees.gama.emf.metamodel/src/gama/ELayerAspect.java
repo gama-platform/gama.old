@@ -17,8 +17,6 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * <ul>
  *   <li>{@link gama.ELayerAspect#getGamlCode <em>Gaml Code</em>}</li>
- *   <li>{@link gama.ELayerAspect#getName <em>Name</em>}</li>
- *   <li>{@link gama.ELayerAspect#getModel <em>Model</em>}</li>
  *   <li>{@link gama.ELayerAspect#getShape <em>Shape</em>}</li>
  *   <li>{@link gama.ELayerAspect#getColor <em>Color</em>}</li>
  *   <li>{@link gama.ELayerAspect#getEmpty <em>Empty</em>}</li>
@@ -29,6 +27,10 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link gama.ELayerAspect#getRadius <em>Radius</em>}</li>
  *   <li>{@link gama.ELayerAspect#getPath <em>Path</em>}</li>
  *   <li>{@link gama.ELayerAspect#getText <em>Text</em>}</li>
+ *   <li>{@link gama.ELayerAspect#getType <em>Type</em>}</li>
+ *   <li>{@link gama.ELayerAspect#getExpression <em>Expression</em>}</li>
+ *   <li>{@link gama.ELayerAspect#getPoints <em>Points</em>}</li>
+ *   <li>{@link gama.ELayerAspect#getAt <em>At</em>}</li>
  * </ul>
  * </p>
  *
@@ -36,7 +38,7 @@ import org.eclipse.emf.ecore.EObject;
  * @model
  * @generated
  */
-public interface ELayerAspect extends EObject {
+public interface ELayerAspect extends EGamaObject {
 	/**
 	 * Returns the value of the '<em><b>Gaml Code</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -62,58 +64,6 @@ public interface ELayerAspect extends EObject {
 	 * @generated
 	 */
 	void setGamlCode(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Name</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Name</em>' attribute.
-	 * @see #setName(String)
-	 * @see gama.GamaPackage#getELayerAspect_Name()
-	 * @model
-	 * @generated
-	 */
-	String getName();
-
-	/**
-	 * Sets the value of the '{@link gama.ELayerAspect#getName <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Name</em>' attribute.
-	 * @see #getName()
-	 * @generated
-	 */
-	void setName(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Model</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Model</em>' reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Model</em>' reference.
-	 * @see #setModel(EGamaModel)
-	 * @see gama.GamaPackage#getELayerAspect_Model()
-	 * @model required="true"
-	 * @generated
-	 */
-	EGamaModel getModel();
-
-	/**
-	 * Sets the value of the '{@link gama.ELayerAspect#getModel <em>Model</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Model</em>' reference.
-	 * @see #getModel()
-	 * @generated
-	 */
-	void setModel(EGamaModel value);
 
 	/**
 	 * Returns the value of the '<em><b>Shape</b></em>' attribute.
@@ -374,5 +324,109 @@ public interface ELayerAspect extends EObject {
 	 * @generated
 	 */
 	void setText(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Type</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Type</em>' attribute.
+	 * @see #setType(String)
+	 * @see gama.GamaPackage#getELayerAspect_Type()
+	 * @model
+	 * @generated
+	 */
+	String getType();
+
+	/**
+	 * Sets the value of the '{@link gama.ELayerAspect#getType <em>Type</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Type</em>' attribute.
+	 * @see #getType()
+	 * @generated
+	 */
+	void setType(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Expression</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Expression</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Expression</em>' attribute.
+	 * @see #setExpression(String)
+	 * @see gama.GamaPackage#getELayerAspect_Expression()
+	 * @model
+	 * @generated
+	 */
+	String getExpression();
+
+	/**
+	 * Sets the value of the '{@link gama.ELayerAspect#getExpression <em>Expression</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Expression</em>' attribute.
+	 * @see #getExpression()
+	 * @generated
+	 */
+	void setExpression(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Points</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Points</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Points</em>' attribute.
+	 * @see #setPoints(String)
+	 * @see gama.GamaPackage#getELayerAspect_Points()
+	 * @model
+	 * @generated
+	 */
+	String getPoints();
+
+	/**
+	 * Sets the value of the '{@link gama.ELayerAspect#getPoints <em>Points</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Points</em>' attribute.
+	 * @see #getPoints()
+	 * @generated
+	 */
+	void setPoints(String value);
+
+	/**
+	 * Returns the value of the '<em><b>At</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>At</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>At</em>' attribute.
+	 * @see #setAt(String)
+	 * @see gama.GamaPackage#getELayerAspect_At()
+	 * @model
+	 * @generated
+	 */
+	String getAt();
+
+	/**
+	 * Sets the value of the '{@link gama.ELayerAspect#getAt <em>At</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>At</em>' attribute.
+	 * @see #getAt()
+	 * @generated
+	 */
+	void setAt(String value);
 
 } // ELayerAspect

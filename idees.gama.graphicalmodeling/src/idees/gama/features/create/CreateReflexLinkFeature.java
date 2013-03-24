@@ -67,6 +67,8 @@ public class CreateReflexLinkFeature extends AbstractCreateSpeciesComponentLinkF
 			addContext.setNewObject(eReference);
 			newConnection = (Connection) getFeatureProvider().addIfPossible(
 					addContext);
+			eReference.setSpecies(source);
+			eReference.setReflex(target);
 			source.getReflexLinks().add(eReference);
 			target.getReflexLinks().add(eReference);
 		}

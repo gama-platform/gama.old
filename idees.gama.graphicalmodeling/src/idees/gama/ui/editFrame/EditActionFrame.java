@@ -4,6 +4,9 @@ import gama.EAction;
 import gama.EGamaObject;
 import idees.gama.features.edit.EditFeature;
 
+import org.eclipse.emf.transaction.RecordingCommand;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swt.SWT;
@@ -53,7 +56,7 @@ public class EditActionFrame extends EditFrame {
 		//****** CANVAS GAMLCODE *********
 		Canvas canvasGamlCode = new Canvas(container, SWT.BORDER);
 		canvasGamlCode.setBounds(10, 515, 720, 305);
-				
+		
 		gamlCode = new StyledText(canvasGamlCode, SWT.BORDER);
 		gamlCode.setBounds(5, 30, 700, 265);
 		if (((EAction) eobject).getGamlCode() != null)
@@ -61,7 +64,15 @@ public class EditActionFrame extends EditFrame {
 		gamlCode.setEditable(true);
 		gamlCode.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent event) {
-		       	 ((EAction) eobject).setGamlCode(gamlCode.getText());
+				TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(eobject);
+				if (domain != null) {
+					domain.getCommandStack().execute(new RecordingCommand(domain) {
+			    	     public void doExecute() {
+			    	    	 ((EAction) eobject).setGamlCode(gamlCode.getText());
+			    	     }
+			    	  });
+				} 
+				
 		       	 ef.hasDoneChanges = true;
 		    }
 		});

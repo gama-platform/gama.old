@@ -26,8 +26,6 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link gama.impl.ELayerAspectImpl#getGamlCode <em>Gaml Code</em>}</li>
- *   <li>{@link gama.impl.ELayerAspectImpl#getName <em>Name</em>}</li>
- *   <li>{@link gama.impl.ELayerAspectImpl#getModel <em>Model</em>}</li>
  *   <li>{@link gama.impl.ELayerAspectImpl#getShape <em>Shape</em>}</li>
  *   <li>{@link gama.impl.ELayerAspectImpl#getColor <em>Color</em>}</li>
  *   <li>{@link gama.impl.ELayerAspectImpl#getEmpty <em>Empty</em>}</li>
@@ -38,12 +36,16 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  *   <li>{@link gama.impl.ELayerAspectImpl#getRadius <em>Radius</em>}</li>
  *   <li>{@link gama.impl.ELayerAspectImpl#getPath <em>Path</em>}</li>
  *   <li>{@link gama.impl.ELayerAspectImpl#getText <em>Text</em>}</li>
+ *   <li>{@link gama.impl.ELayerAspectImpl#getType <em>Type</em>}</li>
+ *   <li>{@link gama.impl.ELayerAspectImpl#getExpression <em>Expression</em>}</li>
+ *   <li>{@link gama.impl.ELayerAspectImpl#getPoints <em>Points</em>}</li>
+ *   <li>{@link gama.impl.ELayerAspectImpl#getAt <em>At</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class ELayerAspectImpl extends EObjectImpl implements ELayerAspect {
+public class ELayerAspectImpl extends EGamaObjectImpl implements ELayerAspect {
 	/**
 	 * The default value of the '{@link #getGamlCode() <em>Gaml Code</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -63,36 +65,6 @@ public class ELayerAspectImpl extends EObjectImpl implements ELayerAspect {
 	 * @ordered
 	 */
 	protected String gamlCode = GAML_CODE_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getName()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String NAME_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getName()
-	 * @generated
-	 * @ordered
-	 */
-	protected String name = NAME_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getModel() <em>Model</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getModel()
-	 * @generated
-	 * @ordered
-	 */
-	protected EGamaModel model;
 
 	/**
 	 * The default value of the '{@link #getShape() <em>Shape</em>}' attribute.
@@ -295,6 +267,86 @@ public class ELayerAspectImpl extends EObjectImpl implements ELayerAspect {
 	protected String text = TEXT_EDEFAULT;
 
 	/**
+	 * The default value of the '{@link #getType() <em>Type</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getType()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String TYPE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getType() <em>Type</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getType()
+	 * @generated
+	 * @ordered
+	 */
+	protected String type = TYPE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getExpression() <em>Expression</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getExpression()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String EXPRESSION_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getExpression() <em>Expression</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getExpression()
+	 * @generated
+	 * @ordered
+	 */
+	protected String expression = EXPRESSION_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getPoints() <em>Points</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getPoints()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String POINTS_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getPoints() <em>Points</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getPoints()
+	 * @generated
+	 * @ordered
+	 */
+	protected String points = POINTS_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getAt() <em>At</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAt()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String AT_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getAt() <em>At</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAt()
+	 * @generated
+	 * @ordered
+	 */
+	protected String at = AT_EDEFAULT;
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -332,65 +384,6 @@ public class ELayerAspectImpl extends EObjectImpl implements ELayerAspect {
 		gamlCode = newGamlCode;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER_ASPECT__GAML_CODE, oldGamlCode, gamlCode));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setName(String newName) {
-		String oldName = name;
-		name = newName;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER_ASPECT__NAME, oldName, name));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EGamaModel getModel() {
-		if (model != null && model.eIsProxy()) {
-			InternalEObject oldModel = (InternalEObject)model;
-			model = (EGamaModel)eResolveProxy(oldModel);
-			if (model != oldModel) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, GamaPackage.ELAYER_ASPECT__MODEL, oldModel, model));
-			}
-		}
-		return model;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EGamaModel basicGetModel() {
-		return model;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setModel(EGamaModel newModel) {
-		EGamaModel oldModel = model;
-		model = newModel;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER_ASPECT__MODEL, oldModel, model));
 	}
 
 	/**
@@ -608,16 +601,95 @@ public class ELayerAspectImpl extends EObjectImpl implements ELayerAspect {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getType() {
+		return type;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setType(String newType) {
+		String oldType = type;
+		type = newType;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER_ASPECT__TYPE, oldType, type));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getExpression() {
+		return expression;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setExpression(String newExpression) {
+		String oldExpression = expression;
+		expression = newExpression;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER_ASPECT__EXPRESSION, oldExpression, expression));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getPoints() {
+		return points;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setPoints(String newPoints) {
+		String oldPoints = points;
+		points = newPoints;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER_ASPECT__POINTS, oldPoints, points));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getAt() {
+		return at;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setAt(String newAt) {
+		String oldAt = at;
+		at = newAt;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER_ASPECT__AT, oldAt, at));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case GamaPackage.ELAYER_ASPECT__GAML_CODE:
 				return getGamlCode();
-			case GamaPackage.ELAYER_ASPECT__NAME:
-				return getName();
-			case GamaPackage.ELAYER_ASPECT__MODEL:
-				if (resolve) return getModel();
-				return basicGetModel();
 			case GamaPackage.ELAYER_ASPECT__SHAPE:
 				return getShape();
 			case GamaPackage.ELAYER_ASPECT__COLOR:
@@ -638,6 +710,14 @@ public class ELayerAspectImpl extends EObjectImpl implements ELayerAspect {
 				return getPath();
 			case GamaPackage.ELAYER_ASPECT__TEXT:
 				return getText();
+			case GamaPackage.ELAYER_ASPECT__TYPE:
+				return getType();
+			case GamaPackage.ELAYER_ASPECT__EXPRESSION:
+				return getExpression();
+			case GamaPackage.ELAYER_ASPECT__POINTS:
+				return getPoints();
+			case GamaPackage.ELAYER_ASPECT__AT:
+				return getAt();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -652,12 +732,6 @@ public class ELayerAspectImpl extends EObjectImpl implements ELayerAspect {
 		switch (featureID) {
 			case GamaPackage.ELAYER_ASPECT__GAML_CODE:
 				setGamlCode((String)newValue);
-				return;
-			case GamaPackage.ELAYER_ASPECT__NAME:
-				setName((String)newValue);
-				return;
-			case GamaPackage.ELAYER_ASPECT__MODEL:
-				setModel((EGamaModel)newValue);
 				return;
 			case GamaPackage.ELAYER_ASPECT__SHAPE:
 				setShape((String)newValue);
@@ -689,6 +763,18 @@ public class ELayerAspectImpl extends EObjectImpl implements ELayerAspect {
 			case GamaPackage.ELAYER_ASPECT__TEXT:
 				setText((String)newValue);
 				return;
+			case GamaPackage.ELAYER_ASPECT__TYPE:
+				setType((String)newValue);
+				return;
+			case GamaPackage.ELAYER_ASPECT__EXPRESSION:
+				setExpression((String)newValue);
+				return;
+			case GamaPackage.ELAYER_ASPECT__POINTS:
+				setPoints((String)newValue);
+				return;
+			case GamaPackage.ELAYER_ASPECT__AT:
+				setAt((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -703,12 +789,6 @@ public class ELayerAspectImpl extends EObjectImpl implements ELayerAspect {
 		switch (featureID) {
 			case GamaPackage.ELAYER_ASPECT__GAML_CODE:
 				setGamlCode(GAML_CODE_EDEFAULT);
-				return;
-			case GamaPackage.ELAYER_ASPECT__NAME:
-				setName(NAME_EDEFAULT);
-				return;
-			case GamaPackage.ELAYER_ASPECT__MODEL:
-				setModel((EGamaModel)null);
 				return;
 			case GamaPackage.ELAYER_ASPECT__SHAPE:
 				setShape(SHAPE_EDEFAULT);
@@ -740,6 +820,18 @@ public class ELayerAspectImpl extends EObjectImpl implements ELayerAspect {
 			case GamaPackage.ELAYER_ASPECT__TEXT:
 				setText(TEXT_EDEFAULT);
 				return;
+			case GamaPackage.ELAYER_ASPECT__TYPE:
+				setType(TYPE_EDEFAULT);
+				return;
+			case GamaPackage.ELAYER_ASPECT__EXPRESSION:
+				setExpression(EXPRESSION_EDEFAULT);
+				return;
+			case GamaPackage.ELAYER_ASPECT__POINTS:
+				setPoints(POINTS_EDEFAULT);
+				return;
+			case GamaPackage.ELAYER_ASPECT__AT:
+				setAt(AT_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -754,10 +846,6 @@ public class ELayerAspectImpl extends EObjectImpl implements ELayerAspect {
 		switch (featureID) {
 			case GamaPackage.ELAYER_ASPECT__GAML_CODE:
 				return GAML_CODE_EDEFAULT == null ? gamlCode != null : !GAML_CODE_EDEFAULT.equals(gamlCode);
-			case GamaPackage.ELAYER_ASPECT__NAME:
-				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-			case GamaPackage.ELAYER_ASPECT__MODEL:
-				return model != null;
 			case GamaPackage.ELAYER_ASPECT__SHAPE:
 				return SHAPE_EDEFAULT == null ? shape != null : !SHAPE_EDEFAULT.equals(shape);
 			case GamaPackage.ELAYER_ASPECT__COLOR:
@@ -778,6 +866,14 @@ public class ELayerAspectImpl extends EObjectImpl implements ELayerAspect {
 				return PATH_EDEFAULT == null ? path != null : !PATH_EDEFAULT.equals(path);
 			case GamaPackage.ELAYER_ASPECT__TEXT:
 				return TEXT_EDEFAULT == null ? text != null : !TEXT_EDEFAULT.equals(text);
+			case GamaPackage.ELAYER_ASPECT__TYPE:
+				return TYPE_EDEFAULT == null ? type != null : !TYPE_EDEFAULT.equals(type);
+			case GamaPackage.ELAYER_ASPECT__EXPRESSION:
+				return EXPRESSION_EDEFAULT == null ? expression != null : !EXPRESSION_EDEFAULT.equals(expression);
+			case GamaPackage.ELAYER_ASPECT__POINTS:
+				return POINTS_EDEFAULT == null ? points != null : !POINTS_EDEFAULT.equals(points);
+			case GamaPackage.ELAYER_ASPECT__AT:
+				return AT_EDEFAULT == null ? at != null : !AT_EDEFAULT.equals(at);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -794,8 +890,6 @@ public class ELayerAspectImpl extends EObjectImpl implements ELayerAspect {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (gamlCode: ");
 		result.append(gamlCode);
-		result.append(", name: ");
-		result.append(name);
 		result.append(", shape: ");
 		result.append(shape);
 		result.append(", color: ");
@@ -816,6 +910,14 @@ public class ELayerAspectImpl extends EObjectImpl implements ELayerAspect {
 		result.append(path);
 		result.append(", text: ");
 		result.append(text);
+		result.append(", type: ");
+		result.append(type);
+		result.append(", expression: ");
+		result.append(expression);
+		result.append(", points: ");
+		result.append(points);
+		result.append(", at: ");
+		result.append(at);
 		result.append(')');
 		return result.toString();
 	}

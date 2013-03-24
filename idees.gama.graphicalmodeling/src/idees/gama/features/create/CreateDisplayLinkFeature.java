@@ -85,6 +85,8 @@ public class CreateDisplayLinkFeature extends AbstractCreateConnectionFeature {
 			addContext.setNewObject(eReference);
 			newConnection = (Connection) getFeatureProvider().addIfPossible(
 					addContext);
+			eReference.setExperiment(source);
+			eReference.setDisplay(target);
 			source.getDisplayLinks().add(eReference);
 			target.setDisplayLink(eReference);
 		}

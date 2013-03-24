@@ -206,6 +206,7 @@ public class GamaSwitch<T> extends Switch<T> {
 			case GamaPackage.ELAYER: {
 				ELayer eLayer = (ELayer)theEObject;
 				T result = caseELayer(eLayer);
+				if (result == null) result = caseEGamaObject(eLayer);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -226,6 +227,7 @@ public class GamaSwitch<T> extends Switch<T> {
 			case GamaPackage.ELAYER_ASPECT: {
 				ELayerAspect eLayerAspect = (ELayerAspect)theEObject;
 				T result = caseELayerAspect(eLayerAspect);
+				if (result == null) result = caseEGamaObject(eLayerAspect);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}

@@ -8,6 +8,7 @@ package gama.impl;
 
 import gama.EAspect;
 import gama.EAspectLink;
+import gama.ELayerAspect;
 import gama.GamaPackage;
 
 import java.util.Collection;
@@ -15,6 +16,7 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
 /**
@@ -26,6 +28,8 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  * <ul>
  *   <li>{@link gama.impl.EAspectImpl#getGamlCode <em>Gaml Code</em>}</li>
  *   <li>{@link gama.impl.EAspectImpl#getAspectLinks <em>Aspect Links</em>}</li>
+ *   <li>{@link gama.impl.EAspectImpl#getLayers <em>Layers</em>}</li>
+ *   <li>{@link gama.impl.EAspectImpl#getLayerList <em>Layer List</em>}</li>
  * </ul>
  * </p>
  *
@@ -60,6 +64,26 @@ public class EAspectImpl extends EGamaObjectImpl implements EAspect {
 	 * @ordered
 	 */
 	protected EList<EAspectLink> aspectLinks;
+
+	/**
+	 * The cached value of the '{@link #getLayers() <em>Layers</em>}' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLayers()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<ELayerAspect> layers;
+
+	/**
+	 * The cached value of the '{@link #getLayerList() <em>Layer List</em>}' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getLayerList()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<String> layerList;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -118,6 +142,30 @@ public class EAspectImpl extends EGamaObjectImpl implements EAspect {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<ELayerAspect> getLayers() {
+		if (layers == null) {
+			layers = new EObjectResolvingEList<ELayerAspect>(ELayerAspect.class, this, GamaPackage.EASPECT__LAYERS);
+		}
+		return layers;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EList<String> getLayerList() {
+		if (layerList == null) {
+			layerList = new EDataTypeUniqueEList<String>(String.class, this, GamaPackage.EASPECT__LAYER_LIST);
+		}
+		return layerList;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -125,6 +173,10 @@ public class EAspectImpl extends EGamaObjectImpl implements EAspect {
 				return getGamlCode();
 			case GamaPackage.EASPECT__ASPECT_LINKS:
 				return getAspectLinks();
+			case GamaPackage.EASPECT__LAYERS:
+				return getLayers();
+			case GamaPackage.EASPECT__LAYER_LIST:
+				return getLayerList();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -145,6 +197,14 @@ public class EAspectImpl extends EGamaObjectImpl implements EAspect {
 				getAspectLinks().clear();
 				getAspectLinks().addAll((Collection<? extends EAspectLink>)newValue);
 				return;
+			case GamaPackage.EASPECT__LAYERS:
+				getLayers().clear();
+				getLayers().addAll((Collection<? extends ELayerAspect>)newValue);
+				return;
+			case GamaPackage.EASPECT__LAYER_LIST:
+				getLayerList().clear();
+				getLayerList().addAll((Collection<? extends String>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -163,6 +223,12 @@ public class EAspectImpl extends EGamaObjectImpl implements EAspect {
 			case GamaPackage.EASPECT__ASPECT_LINKS:
 				getAspectLinks().clear();
 				return;
+			case GamaPackage.EASPECT__LAYERS:
+				getLayers().clear();
+				return;
+			case GamaPackage.EASPECT__LAYER_LIST:
+				getLayerList().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -179,6 +245,10 @@ public class EAspectImpl extends EGamaObjectImpl implements EAspect {
 				return GAML_CODE_EDEFAULT == null ? gamlCode != null : !GAML_CODE_EDEFAULT.equals(gamlCode);
 			case GamaPackage.EASPECT__ASPECT_LINKS:
 				return aspectLinks != null && !aspectLinks.isEmpty();
+			case GamaPackage.EASPECT__LAYERS:
+				return layers != null && !layers.isEmpty();
+			case GamaPackage.EASPECT__LAYER_LIST:
+				return layerList != null && !layerList.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -195,6 +265,8 @@ public class EAspectImpl extends EGamaObjectImpl implements EAspect {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (gamlCode: ");
 		result.append(gamlCode);
+		result.append(", layerList: ");
+		result.append(layerList);
 		result.append(')');
 		return result.toString();
 	}

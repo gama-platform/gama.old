@@ -2,6 +2,7 @@ package idees.gama.diagram;
 
 import gama.EAction;
 import gama.EAspect;
+import gama.EDisplay;
 import gama.EReflex;
 import gama.ESpecies;
 import idees.gama.features.create.CreateActionLinkFeature;
@@ -11,6 +12,7 @@ import idees.gama.features.create.CreateSubGridLinkFeature;
 import idees.gama.features.create.CreateSubSpeciesLinkFeature;
 import idees.gama.features.edit.EditActionFeature;
 import idees.gama.features.edit.EditAspectFeature;
+import idees.gama.features.edit.EditDisplayFeature;
 import idees.gama.features.edit.EditReflexFeature;
 import idees.gama.features.edit.EditSpeciesFeature;
 import idees.gama.features.others.RenameEGamaObjectFeature;
@@ -53,6 +55,8 @@ public class MyGamaToolBehaviorProvider extends DefaultToolBehaviorProvider{
 				    customFeature = new EditReflexFeature(getFeatureProvider());
 		        } else if (bo instanceof EAspect ) {
 				    customFeature = new EditAspectFeature(getFeatureProvider());
+		        } else if (bo instanceof EDisplay ) {
+				    customFeature = new EditDisplayFeature(getFeatureProvider());
 				} else {
 		        	customFeature = new RenameEGamaObjectFeature(getFeatureProvider());
 		        }

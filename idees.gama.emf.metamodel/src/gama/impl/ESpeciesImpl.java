@@ -53,6 +53,7 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  *   <li>{@link gama.impl.ESpeciesImpl#getRadius <em>Radius</em>}</li>
  *   <li>{@link gama.impl.ESpeciesImpl#getMicroSpeciesLinks <em>Micro Species Links</em>}</li>
  *   <li>{@link gama.impl.ESpeciesImpl#getMacroSpeciesLinks <em>Macro Species Links</em>}</li>
+ *   <li>{@link gama.impl.ESpeciesImpl#getSkills <em>Skills</em>}</li>
  * </ul>
  * </p>
  *
@@ -296,6 +297,16 @@ public class ESpeciesImpl extends EGamaObjectImpl implements ESpecies {
 	 * @ordered
 	 */
 	protected EList<ESubSpeciesLink> macroSpeciesLinks;
+
+	/**
+	 * The cached value of the '{@link #getSkills() <em>Skills</em>}' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSkills()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<String> skills;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -585,6 +596,18 @@ public class ESpeciesImpl extends EGamaObjectImpl implements ESpecies {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<String> getSkills() {
+		if (skills == null) {
+			skills = new EDataTypeUniqueEList<String>(String.class, this, GamaPackage.ESPECIES__SKILLS);
+		}
+		return skills;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -634,6 +657,8 @@ public class ESpeciesImpl extends EGamaObjectImpl implements ESpecies {
 				return getMicroSpeciesLinks();
 			case GamaPackage.ESPECIES__MACRO_SPECIES_LINKS:
 				return getMacroSpeciesLinks();
+			case GamaPackage.ESPECIES__SKILLS:
+				return getSkills();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -703,6 +728,10 @@ public class ESpeciesImpl extends EGamaObjectImpl implements ESpecies {
 				getMacroSpeciesLinks().clear();
 				getMacroSpeciesLinks().addAll((Collection<? extends ESubSpeciesLink>)newValue);
 				return;
+			case GamaPackage.ESPECIES__SKILLS:
+				getSkills().clear();
+				getSkills().addAll((Collection<? extends String>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -763,6 +792,9 @@ public class ESpeciesImpl extends EGamaObjectImpl implements ESpecies {
 			case GamaPackage.ESPECIES__MACRO_SPECIES_LINKS:
 				getMacroSpeciesLinks().clear();
 				return;
+			case GamaPackage.ESPECIES__SKILLS:
+				getSkills().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -807,6 +839,8 @@ public class ESpeciesImpl extends EGamaObjectImpl implements ESpecies {
 				return microSpeciesLinks != null && !microSpeciesLinks.isEmpty();
 			case GamaPackage.ESPECIES__MACRO_SPECIES_LINKS:
 				return macroSpeciesLinks != null && !macroSpeciesLinks.isEmpty();
+			case GamaPackage.ESPECIES__SKILLS:
+				return skills != null && !skills.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -839,6 +873,8 @@ public class ESpeciesImpl extends EGamaObjectImpl implements ESpecies {
 		result.append(heigth);
 		result.append(", radius: ");
 		result.append(radius);
+		result.append(", skills: ");
+		result.append(skills);
 		result.append(')');
 		return result.toString();
 	}

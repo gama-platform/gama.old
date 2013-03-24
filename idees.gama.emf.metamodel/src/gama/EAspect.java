@@ -19,6 +19,8 @@ import org.eclipse.emf.common.util.EList;
  * <ul>
  *   <li>{@link gama.EAspect#getGamlCode <em>Gaml Code</em>}</li>
  *   <li>{@link gama.EAspect#getAspectLinks <em>Aspect Links</em>}</li>
+ *   <li>{@link gama.EAspect#getLayers <em>Layers</em>}</li>
+ *   <li>{@link gama.EAspect#getLayerList <em>Layer List</em>}</li>
  * </ul>
  * </p>
  *
@@ -69,4 +71,36 @@ public interface EAspect extends EGamaObject {
 	 * @generated
 	 */
 	EList<EAspectLink> getAspectLinks();
+
+	/**
+	 * Returns the value of the '<em><b>Layers</b></em>' reference list.
+	 * The list contents are of type {@link gama.ELayerAspect}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Layers</em>' reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Layers</em>' reference list.
+	 * @see gama.GamaPackage#getEAspect_Layers()
+	 * @model
+	 * @generated
+	 */
+	EList<ELayerAspect> getLayers();
+
+	/**
+	 * Returns the value of the '<em><b>Layer List</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.String}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Layer List</em>' attribute list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Layer List</em>' attribute list.
+	 * @see gama.GamaPackage#getEAspect_LayerList()
+	 * @model
+	 * @generated
+	 */
+	EList<String> getLayerList();
 } // EAspect

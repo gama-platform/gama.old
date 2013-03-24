@@ -32,6 +32,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link gama.ESpecies#getRadius <em>Radius</em>}</li>
  *   <li>{@link gama.ESpecies#getMicroSpeciesLinks <em>Micro Species Links</em>}</li>
  *   <li>{@link gama.ESpecies#getMacroSpeciesLinks <em>Macro Species Links</em>}</li>
+ *   <li>{@link gama.ESpecies#getSkills <em>Skills</em>}</li>
  * </ul>
  * </p>
  *
@@ -375,5 +376,21 @@ public interface ESpecies extends EGamaObject {
 	 * @generated
 	 */
 	EList<ESubSpeciesLink> getMacroSpeciesLinks();
+
+	/**
+	 * Returns the value of the '<em><b>Skills</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.String}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Skills</em>' attribute list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Skills</em>' attribute list.
+	 * @see gama.GamaPackage#getESpecies_Skills()
+	 * @model
+	 * @generated
+	 */
+	EList<String> getSkills();
 
 } // ESpecies

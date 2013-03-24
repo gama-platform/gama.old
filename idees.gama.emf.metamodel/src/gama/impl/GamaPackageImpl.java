@@ -489,6 +489,15 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getESpecies_Skills() {
+		return (EAttribute)eSpeciesEClass.getEStructuralFeatures().get(16);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getEAction() {
 		return eActionEClass;
 	}
@@ -536,6 +545,24 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 */
 	public EReference getEAspect_AspectLinks() {
 		return (EReference)eAspectEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getEAspect_Layers() {
+		return (EReference)eAspectEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEAspect_LayerList() {
+		return (EAttribute)eAspectEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -822,6 +849,42 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getEDisplay_Opengl() {
+		return (EAttribute)eDisplayEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEDisplay_Refresh() {
+		return (EAttribute)eDisplayEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEDisplay_Background() {
+		return (EAttribute)eDisplayEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEDisplay_LayerList() {
+		return (EAttribute)eDisplayEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getEGrid() {
 		return eGridEClass;
 	}
@@ -957,26 +1020,125 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getELayer_Name() {
-		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getELayer_Model() {
-		return (EReference)eLayerEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EReference getELayer_Display() {
-		return (EReference)eLayerEClass.getEStructuralFeatures().get(3);
+		return (EReference)eLayerEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayer_Color() {
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayer_Type() {
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayer_File() {
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayer_Text() {
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayer_Size() {
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayer_Species() {
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(7);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayer_Transparency() {
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(8);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayer_Agents() {
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(9);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayer_Position_x() {
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(10);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayer_Position_y() {
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(11);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayer_Size_x() {
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(12);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayer_Size_y() {
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(13);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayer_Aspect() {
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(14);
 	}
 
 	/**
@@ -1056,7 +1218,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getELayerAspect_Name() {
+	public EAttribute getELayerAspect_Shape() {
 		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -1065,26 +1227,8 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getELayerAspect_Model() {
-		return (EReference)eLayerAspectEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getELayerAspect_Shape() {
-		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(3);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EAttribute getELayerAspect_Color() {
-		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(4);
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -1093,7 +1237,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	public EAttribute getELayerAspect_Empty() {
-		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(5);
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -1102,7 +1246,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	public EAttribute getELayerAspect_Rotate() {
-		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(6);
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -1111,7 +1255,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	public EAttribute getELayerAspect_Size() {
-		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(7);
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -1120,7 +1264,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	public EAttribute getELayerAspect_Width() {
-		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(8);
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(6);
 	}
 
 	/**
@@ -1129,7 +1273,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	public EAttribute getELayerAspect_Heigth() {
-		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(9);
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(7);
 	}
 
 	/**
@@ -1138,7 +1282,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	public EAttribute getELayerAspect_Radius() {
-		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(10);
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(8);
 	}
 
 	/**
@@ -1147,7 +1291,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	public EAttribute getELayerAspect_Path() {
-		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(11);
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(9);
 	}
 
 	/**
@@ -1156,7 +1300,43 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	public EAttribute getELayerAspect_Text() {
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(10);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayerAspect_Type() {
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(11);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayerAspect_Expression() {
 		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(12);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayerAspect_Points() {
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(13);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayerAspect_At() {
+		return (EAttribute)eLayerAspectEClass.getEStructuralFeatures().get(14);
 	}
 
 	/**
@@ -1213,6 +1393,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		createEAttribute(eSpeciesEClass, ESPECIES__RADIUS);
 		createEReference(eSpeciesEClass, ESPECIES__MICRO_SPECIES_LINKS);
 		createEReference(eSpeciesEClass, ESPECIES__MACRO_SPECIES_LINKS);
+		createEAttribute(eSpeciesEClass, ESPECIES__SKILLS);
 
 		eActionEClass = createEClass(EACTION);
 		createEAttribute(eActionEClass, EACTION__GAML_CODE);
@@ -1221,6 +1402,8 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		eAspectEClass = createEClass(EASPECT);
 		createEAttribute(eAspectEClass, EASPECT__GAML_CODE);
 		createEReference(eAspectEClass, EASPECT__ASPECT_LINKS);
+		createEReference(eAspectEClass, EASPECT__LAYERS);
+		createEAttribute(eAspectEClass, EASPECT__LAYER_LIST);
 
 		eReflexEClass = createEClass(EREFLEX);
 		createEAttribute(eReflexEClass, EREFLEX__GAML_CODE);
@@ -1263,6 +1446,10 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		eDisplayEClass = createEClass(EDISPLAY);
 		createEReference(eDisplayEClass, EDISPLAY__LAYERS);
 		createEReference(eDisplayEClass, EDISPLAY__DISPLAY_LINK);
+		createEAttribute(eDisplayEClass, EDISPLAY__OPENGL);
+		createEAttribute(eDisplayEClass, EDISPLAY__REFRESH);
+		createEAttribute(eDisplayEClass, EDISPLAY__BACKGROUND);
+		createEAttribute(eDisplayEClass, EDISPLAY__LAYER_LIST);
 
 		eGridEClass = createEClass(EGRID);
 		createEAttribute(eGridEClass, EGRID__NB_COLUMNS);
@@ -1282,9 +1469,20 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 
 		eLayerEClass = createEClass(ELAYER);
 		createEAttribute(eLayerEClass, ELAYER__GAML_CODE);
-		createEAttribute(eLayerEClass, ELAYER__NAME);
-		createEReference(eLayerEClass, ELAYER__MODEL);
 		createEReference(eLayerEClass, ELAYER__DISPLAY);
+		createEAttribute(eLayerEClass, ELAYER__COLOR);
+		createEAttribute(eLayerEClass, ELAYER__TYPE);
+		createEAttribute(eLayerEClass, ELAYER__FILE);
+		createEAttribute(eLayerEClass, ELAYER__TEXT);
+		createEAttribute(eLayerEClass, ELAYER__SIZE);
+		createEAttribute(eLayerEClass, ELAYER__SPECIES);
+		createEAttribute(eLayerEClass, ELAYER__TRANSPARENCY);
+		createEAttribute(eLayerEClass, ELAYER__AGENTS);
+		createEAttribute(eLayerEClass, ELAYER__POSITION_X);
+		createEAttribute(eLayerEClass, ELAYER__POSITION_Y);
+		createEAttribute(eLayerEClass, ELAYER__SIZE_X);
+		createEAttribute(eLayerEClass, ELAYER__SIZE_Y);
+		createEAttribute(eLayerEClass, ELAYER__ASPECT);
 
 		eGraphEClass = createEClass(EGRAPH);
 		createEReference(eGraphEClass, EGRAPH__NODE);
@@ -1296,8 +1494,6 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 
 		eLayerAspectEClass = createEClass(ELAYER_ASPECT);
 		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__GAML_CODE);
-		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__NAME);
-		createEReference(eLayerAspectEClass, ELAYER_ASPECT__MODEL);
 		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__SHAPE);
 		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__COLOR);
 		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__EMPTY);
@@ -1308,6 +1504,10 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__RADIUS);
 		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__PATH);
 		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__TEXT);
+		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__TYPE);
+		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__EXPRESSION);
+		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__POINTS);
+		createEAttribute(eLayerAspectEClass, ELAYER_ASPECT__AT);
 	}
 
 	/**
@@ -1353,8 +1553,10 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		eDisplayEClass.getESuperTypes().add(this.getEGamaObject());
 		eGridEClass.getESuperTypes().add(this.getESpecies());
 		eWorldAgentEClass.getESuperTypes().add(this.getESpecies());
+		eLayerEClass.getESuperTypes().add(this.getEGamaObject());
 		eGraphEClass.getESuperTypes().add(this.getEGamaObject());
 		eExperimentLinkEClass.getESuperTypes().add(this.getEGamaLink());
+		eLayerAspectEClass.getESuperTypes().add(this.getEGamaObject());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(eGamaModelEClass, EGamaModel.class, "EGamaModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1383,6 +1585,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEAttribute(getESpecies_Radius(), ecorePackage.getEString(), "radius", null, 0, 1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getESpecies_MicroSpeciesLinks(), this.getESubSpeciesLink(), null, "microSpeciesLinks", null, 0, -1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getESpecies_MacroSpeciesLinks(), this.getESubSpeciesLink(), null, "macroSpeciesLinks", null, 0, -1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getESpecies_Skills(), ecorePackage.getEString(), "skills", null, 0, -1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eActionEClass, EAction.class, "EAction", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEAction_GamlCode(), ecorePackage.getEString(), "gamlCode", null, 0, 1, EAction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
@@ -1391,6 +1594,8 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEClass(eAspectEClass, EAspect.class, "EAspect", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEAspect_GamlCode(), ecorePackage.getEString(), "gamlCode", null, 0, 1, EAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEReference(getEAspect_AspectLinks(), this.getEAspectLink(), null, "aspectLinks", null, 0, -1, EAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEAspect_Layers(), this.getELayerAspect(), null, "layers", null, 0, -1, EAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEAspect_LayerList(), ecorePackage.getEString(), "layerList", null, 0, -1, EAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eReflexEClass, EReflex.class, "EReflex", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEReflex_GamlCode(), ecorePackage.getEString(), "gamlCode", null, 0, 1, EReflex.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
@@ -1433,6 +1638,10 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEClass(eDisplayEClass, EDisplay.class, "EDisplay", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getEDisplay_Layers(), this.getELayer(), null, "layers", null, 0, -1, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEDisplay_DisplayLink(), this.getEDisplayLink(), null, "displayLink", null, 0, 1, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEDisplay_Opengl(), ecorePackage.getEBooleanObject(), "opengl", null, 0, 1, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEDisplay_Refresh(), ecorePackage.getEString(), "refresh", null, 0, 1, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEDisplay_Background(), ecorePackage.getEString(), "background", null, 0, 1, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEDisplay_LayerList(), ecorePackage.getEString(), "layerList", null, 0, -1, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eGridEClass, EGrid.class, "EGrid", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEGrid_Nb_columns(), ecorePackage.getEString(), "nb_columns", null, 0, 1, EGrid.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1452,9 +1661,20 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 
 		initEClass(eLayerEClass, ELayer.class, "ELayer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getELayer_GamlCode(), ecorePackage.getEString(), "gamlCode", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEAttribute(getELayer_Name(), ecorePackage.getEString(), "name", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getELayer_Model(), this.getEGamaModel(), null, "model", null, 1, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getELayer_Display(), this.getEDisplay(), null, "display", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayer_Color(), ecorePackage.getEString(), "color", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayer_Type(), ecorePackage.getEString(), "type", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayer_File(), ecorePackage.getEString(), "file", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayer_Text(), ecorePackage.getEString(), "text", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayer_Size(), ecorePackage.getEString(), "size", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayer_Species(), ecorePackage.getEString(), "species", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayer_Transparency(), ecorePackage.getEString(), "transparency", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayer_Agents(), ecorePackage.getEString(), "agents", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayer_Position_x(), ecorePackage.getEString(), "position_x", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayer_Position_y(), ecorePackage.getEString(), "position_y", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayer_Size_x(), ecorePackage.getEString(), "size_x", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayer_Size_y(), ecorePackage.getEString(), "size_y", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayer_Aspect(), ecorePackage.getEString(), "aspect", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eGraphEClass, EGraph.class, "EGraph", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getEGraph_Node(), this.getESpecies(), null, "node", null, 0, 1, EGraph.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1466,8 +1686,6 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 
 		initEClass(eLayerAspectEClass, ELayerAspect.class, "ELayerAspect", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getELayerAspect_GamlCode(), ecorePackage.getEString(), "gamlCode", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEAttribute(getELayerAspect_Name(), ecorePackage.getEString(), "name", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getELayerAspect_Model(), this.getEGamaModel(), null, "model", null, 1, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getELayerAspect_Shape(), ecorePackage.getEString(), "shape", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getELayerAspect_Color(), ecorePackage.getEString(), "color", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getELayerAspect_Empty(), ecorePackage.getEString(), "empty", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1478,6 +1696,10 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEAttribute(getELayerAspect_Radius(), ecorePackage.getEString(), "radius", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getELayerAspect_Path(), ecorePackage.getEString(), "path", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getELayerAspect_Text(), ecorePackage.getEString(), "text", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayerAspect_Type(), ecorePackage.getEString(), "type", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayerAspect_Expression(), ecorePackage.getEString(), "expression", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayerAspect_Points(), ecorePackage.getEString(), "points", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayerAspect_At(), ecorePackage.getEString(), "at", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);

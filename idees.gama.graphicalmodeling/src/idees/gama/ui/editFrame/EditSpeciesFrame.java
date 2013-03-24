@@ -157,13 +157,28 @@ public class EditSpeciesFrame extends EditFrame {
 	}
 	
 	private void modifyIsTorus(final String newisTorus) {
-		((ESpecies) eobject).setTorus(newisTorus);
+		 TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(eobject);
+			if (domain != null) {
+			    domain.getCommandStack().execute(new RecordingCommand(domain) {
+			    	     public void doExecute() {
+			    	    	 ((ESpecies) eobject).setTorus(newisTorus);
+			    	     }
+			    	  });
+			}
+		
 	    ef.hasDoneChanges = true;  
 	}
 	
 	private void modifyReflexOrder() {
-		((ESpecies) eobject).getReflexList().clear();
-		((ESpecies) eobject).getReflexList().addAll(reflexStrs);
+		 TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(eobject);
+			if (domain != null) {
+			    domain.getCommandStack().execute(new RecordingCommand(domain) {
+			    	     public void doExecute() {
+			    	 		((ESpecies) eobject).getReflexList().clear();
+			    	 		((ESpecies) eobject).getReflexList().addAll(reflexStrs);
+			    	     }
+			    	  });
+			}
 	    ef.hasDoneChanges = true;  
 	}
 	

@@ -64,6 +64,8 @@ public class CreateSubSpeciesLinkFeature extends AbstractCreateSpeciesComponentL
 			addContext.setNewObject(eReference);
 			newConnection = (Connection) getFeatureProvider().addIfPossible(
 					addContext);
+			eReference.setMacro(source);
+			eReference.setMicro(target);
 			source.getMicroSpeciesLinks().add(eReference);
 			target.getMacroSpeciesLinks().add(eReference);
 		}

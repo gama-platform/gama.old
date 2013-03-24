@@ -22,7 +22,7 @@ public class LayoutESpeciesEExperimentFeature extends AbstractLayoutFeature {
  
     private static final int MIN_HEIGHT = 50;
  
-    private static final int MIN_WIDTH = 100;
+    private static final int MIN_WIDTH = 150;
  
     public LayoutESpeciesEExperimentFeature(IFeatureProvider fp) {
         super(fp);

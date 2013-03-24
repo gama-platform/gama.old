@@ -1,13 +1,18 @@
 package idees.gama.ui.editFrame;
 
+import gama.EAspect;
 import gama.EGamaObject;
 import gama.ELayerAspect;
 import idees.gama.features.edit.EditFeature;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import msi.gama.util.GamaList;
 
+import org.eclipse.emf.transaction.RecordingCommand;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swt.SWT;
@@ -86,7 +91,7 @@ public class EditAspectFrame extends EditFrame {
 			public void widgetSelected(SelectionEvent e) {
 					ELayerAspect elayer = gama.GamaFactory.eINSTANCE.createELayerAspect();
 					elayer.setName("Layer");
-					new EditLayerFrame(elayer, frame); 
+					new EditLayerAspectFrame(elayer, frame); 
 				} 
 		});
 		Button removeLayerBtn = new Button(canvasLayers, SWT.BUTTON1);
@@ -98,9 +103,26 @@ public class EditAspectFrame extends EditFrame {
 			public void widgetSelected(SelectionEvent e) {
 				if (layerViewer.getSelectionCount() == 1) {
 					String el = layerViewer.getSelection()[0];
-					int index = layerViewer.getSelectionIndex();
+					final int index = layerViewer.getSelectionIndex();
 					layerStrs.remove(el);
 					layerViewer.remove(index);
+					TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(eobject);
+					if (domain != null) {
+						 domain.getCommandStack().execute(new RecordingCommand(domain) {
+		            	     public void doExecute() {
+		            	    	((EAspect) eobject).getLayerList().remove(index);
+		            	    	List<ELayerAspect> layers= new ArrayList<ELayerAspect>();
+		            	    	for (ELayerAspect lay : layers) {
+		            	    		if (((EAspect) eobject).getLayerList().contains(lay.getName())) {
+		            	    			 layers.add(lay);
+		            	    		}
+		            	    	}
+		            	    	((EAspect) eobject).getLayers().clear();
+		            	    	((EAspect) eobject).getLayers().addAll(layers);
+		            	     }
+		            	  });
+					}
+					ef.hasDoneChanges = true;
 				}
 			}
 		});
@@ -121,7 +143,7 @@ public class EditAspectFrame extends EditFrame {
 						for (String ref : layerStrs) {
 							layerViewer.add(ref);
 						}
-						//modifyReflexOrder();
+						modifyLayerOrder();
 					}	
 				}
 			}
@@ -143,7 +165,7 @@ public class EditAspectFrame extends EditFrame {
 						for (String ref : layerStrs) {
 							layerViewer.add(ref);
 						}
-						//modifyReflexOrder();
+						modifyLayerOrder();
 					}	
 				}
 			}
@@ -170,6 +192,19 @@ public class EditAspectFrame extends EditFrame {
 
 	public org.eclipse.swt.widgets.List getLayerViewer() {
 		return layerViewer;
+	}
+	
+	private void modifyLayerOrder() {
+		 TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(eobject);
+			if (domain != null) {
+			    domain.getCommandStack().execute(new RecordingCommand(domain) {
+			    	     public void doExecute() {
+			    	 		((EAspect) eobject).getLayerList().clear();
+			    	 		((EAspect) eobject).getLayerList().addAll(layerStrs);
+			    	     }
+			    	  });
+			}
+	    ef.hasDoneChanges = true;  
 	}
 	
 	

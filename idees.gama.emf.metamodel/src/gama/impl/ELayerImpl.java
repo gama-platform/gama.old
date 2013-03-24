@@ -27,15 +27,26 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link gama.impl.ELayerImpl#getGamlCode <em>Gaml Code</em>}</li>
- *   <li>{@link gama.impl.ELayerImpl#getName <em>Name</em>}</li>
- *   <li>{@link gama.impl.ELayerImpl#getModel <em>Model</em>}</li>
  *   <li>{@link gama.impl.ELayerImpl#getDisplay <em>Display</em>}</li>
+ *   <li>{@link gama.impl.ELayerImpl#getColor <em>Color</em>}</li>
+ *   <li>{@link gama.impl.ELayerImpl#getType <em>Type</em>}</li>
+ *   <li>{@link gama.impl.ELayerImpl#getFile <em>File</em>}</li>
+ *   <li>{@link gama.impl.ELayerImpl#getText <em>Text</em>}</li>
+ *   <li>{@link gama.impl.ELayerImpl#getSize <em>Size</em>}</li>
+ *   <li>{@link gama.impl.ELayerImpl#getSpecies <em>Species</em>}</li>
+ *   <li>{@link gama.impl.ELayerImpl#getTransparency <em>Transparency</em>}</li>
+ *   <li>{@link gama.impl.ELayerImpl#getAgents <em>Agents</em>}</li>
+ *   <li>{@link gama.impl.ELayerImpl#getPosition_x <em>Position x</em>}</li>
+ *   <li>{@link gama.impl.ELayerImpl#getPosition_y <em>Position y</em>}</li>
+ *   <li>{@link gama.impl.ELayerImpl#getSize_x <em>Size x</em>}</li>
+ *   <li>{@link gama.impl.ELayerImpl#getSize_y <em>Size y</em>}</li>
+ *   <li>{@link gama.impl.ELayerImpl#getAspect <em>Aspect</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class ELayerImpl extends EObjectImpl implements ELayer {
+public class ELayerImpl extends EGamaObjectImpl implements ELayer {
 	/**
 	 * The default value of the '{@link #getGamlCode() <em>Gaml Code</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -57,36 +68,6 @@ public class ELayerImpl extends EObjectImpl implements ELayer {
 	protected String gamlCode = GAML_CODE_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getName()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String NAME_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getName()
-	 * @generated
-	 * @ordered
-	 */
-	protected String name = NAME_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getModel() <em>Model</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getModel()
-	 * @generated
-	 * @ordered
-	 */
-	protected EGamaModel model;
-
-	/**
 	 * The cached value of the '{@link #getDisplay() <em>Display</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -95,6 +76,266 @@ public class ELayerImpl extends EObjectImpl implements ELayer {
 	 * @ordered
 	 */
 	protected EDisplay display;
+
+	/**
+	 * The default value of the '{@link #getColor() <em>Color</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getColor()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String COLOR_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getColor() <em>Color</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getColor()
+	 * @generated
+	 * @ordered
+	 */
+	protected String color = COLOR_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getType() <em>Type</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getType()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String TYPE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getType() <em>Type</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getType()
+	 * @generated
+	 * @ordered
+	 */
+	protected String type = TYPE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getFile() <em>File</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getFile()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String FILE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getFile() <em>File</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getFile()
+	 * @generated
+	 * @ordered
+	 */
+	protected String file = FILE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getText() <em>Text</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getText()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String TEXT_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getText() <em>Text</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getText()
+	 * @generated
+	 * @ordered
+	 */
+	protected String text = TEXT_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getSize() <em>Size</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSize()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String SIZE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getSize() <em>Size</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSize()
+	 * @generated
+	 * @ordered
+	 */
+	protected String size = SIZE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getSpecies() <em>Species</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSpecies()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String SPECIES_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getSpecies() <em>Species</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSpecies()
+	 * @generated
+	 * @ordered
+	 */
+	protected String species = SPECIES_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getTransparency() <em>Transparency</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTransparency()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String TRANSPARENCY_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getTransparency() <em>Transparency</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTransparency()
+	 * @generated
+	 * @ordered
+	 */
+	protected String transparency = TRANSPARENCY_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getAgents() <em>Agents</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAgents()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String AGENTS_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getAgents() <em>Agents</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAgents()
+	 * @generated
+	 * @ordered
+	 */
+	protected String agents = AGENTS_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getPosition_x() <em>Position x</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getPosition_x()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String POSITION_X_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getPosition_x() <em>Position x</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getPosition_x()
+	 * @generated
+	 * @ordered
+	 */
+	protected String position_x = POSITION_X_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getPosition_y() <em>Position y</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getPosition_y()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String POSITION_Y_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getPosition_y() <em>Position y</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getPosition_y()
+	 * @generated
+	 * @ordered
+	 */
+	protected String position_y = POSITION_Y_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getSize_x() <em>Size x</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSize_x()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String SIZE_X_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getSize_x() <em>Size x</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSize_x()
+	 * @generated
+	 * @ordered
+	 */
+	protected String size_x = SIZE_X_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getSize_y() <em>Size y</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSize_y()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String SIZE_Y_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getSize_y() <em>Size y</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSize_y()
+	 * @generated
+	 * @ordered
+	 */
+	protected String size_y = SIZE_Y_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getAspect() <em>Aspect</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAspect()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String ASPECT_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getAspect() <em>Aspect</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAspect()
+	 * @generated
+	 * @ordered
+	 */
+	protected String aspect = ASPECT_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -141,65 +382,6 @@ public class ELayerImpl extends EObjectImpl implements ELayer {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getName() {
-		return name;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setName(String newName) {
-		String oldName = name;
-		name = newName;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER__NAME, oldName, name));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EGamaModel getModel() {
-		if (model != null && model.eIsProxy()) {
-			InternalEObject oldModel = (InternalEObject)model;
-			model = (EGamaModel)eResolveProxy(oldModel);
-			if (model != oldModel) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, GamaPackage.ELAYER__MODEL, oldModel, model));
-			}
-		}
-		return model;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EGamaModel basicGetModel() {
-		return model;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setModel(EGamaModel newModel) {
-		EGamaModel oldModel = model;
-		model = newModel;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER__MODEL, oldModel, model));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EDisplay getDisplay() {
 		if (display != null && display.eIsProxy()) {
 			InternalEObject oldDisplay = (InternalEObject)display;
@@ -238,19 +420,313 @@ public class ELayerImpl extends EObjectImpl implements ELayer {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getColor() {
+		return color;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setColor(String newColor) {
+		String oldColor = color;
+		color = newColor;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER__COLOR, oldColor, color));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getType() {
+		return type;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setType(String newType) {
+		String oldType = type;
+		type = newType;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER__TYPE, oldType, type));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getFile() {
+		return file;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setFile(String newFile) {
+		String oldFile = file;
+		file = newFile;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER__FILE, oldFile, file));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getText() {
+		return text;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setText(String newText) {
+		String oldText = text;
+		text = newText;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER__TEXT, oldText, text));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getSize() {
+		return size;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setSize(String newSize) {
+		String oldSize = size;
+		size = newSize;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER__SIZE, oldSize, size));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getSpecies() {
+		return species;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setSpecies(String newSpecies) {
+		String oldSpecies = species;
+		species = newSpecies;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER__SPECIES, oldSpecies, species));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getTransparency() {
+		return transparency;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setTransparency(String newTransparency) {
+		String oldTransparency = transparency;
+		transparency = newTransparency;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER__TRANSPARENCY, oldTransparency, transparency));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getAgents() {
+		return agents;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setAgents(String newAgents) {
+		String oldAgents = agents;
+		agents = newAgents;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER__AGENTS, oldAgents, agents));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getPosition_x() {
+		return position_x;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setPosition_x(String newPosition_x) {
+		String oldPosition_x = position_x;
+		position_x = newPosition_x;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER__POSITION_X, oldPosition_x, position_x));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getPosition_y() {
+		return position_y;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setPosition_y(String newPosition_y) {
+		String oldPosition_y = position_y;
+		position_y = newPosition_y;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER__POSITION_Y, oldPosition_y, position_y));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getSize_x() {
+		return size_x;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setSize_x(String newSize_x) {
+		String oldSize_x = size_x;
+		size_x = newSize_x;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER__SIZE_X, oldSize_x, size_x));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getSize_y() {
+		return size_y;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setSize_y(String newSize_y) {
+		String oldSize_y = size_y;
+		size_y = newSize_y;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER__SIZE_Y, oldSize_y, size_y));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getAspect() {
+		return aspect;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setAspect(String newAspect) {
+		String oldAspect = aspect;
+		aspect = newAspect;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ELAYER__ASPECT, oldAspect, aspect));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case GamaPackage.ELAYER__GAML_CODE:
 				return getGamlCode();
-			case GamaPackage.ELAYER__NAME:
-				return getName();
-			case GamaPackage.ELAYER__MODEL:
-				if (resolve) return getModel();
-				return basicGetModel();
 			case GamaPackage.ELAYER__DISPLAY:
 				if (resolve) return getDisplay();
 				return basicGetDisplay();
+			case GamaPackage.ELAYER__COLOR:
+				return getColor();
+			case GamaPackage.ELAYER__TYPE:
+				return getType();
+			case GamaPackage.ELAYER__FILE:
+				return getFile();
+			case GamaPackage.ELAYER__TEXT:
+				return getText();
+			case GamaPackage.ELAYER__SIZE:
+				return getSize();
+			case GamaPackage.ELAYER__SPECIES:
+				return getSpecies();
+			case GamaPackage.ELAYER__TRANSPARENCY:
+				return getTransparency();
+			case GamaPackage.ELAYER__AGENTS:
+				return getAgents();
+			case GamaPackage.ELAYER__POSITION_X:
+				return getPosition_x();
+			case GamaPackage.ELAYER__POSITION_Y:
+				return getPosition_y();
+			case GamaPackage.ELAYER__SIZE_X:
+				return getSize_x();
+			case GamaPackage.ELAYER__SIZE_Y:
+				return getSize_y();
+			case GamaPackage.ELAYER__ASPECT:
+				return getAspect();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -266,14 +742,47 @@ public class ELayerImpl extends EObjectImpl implements ELayer {
 			case GamaPackage.ELAYER__GAML_CODE:
 				setGamlCode((String)newValue);
 				return;
-			case GamaPackage.ELAYER__NAME:
-				setName((String)newValue);
-				return;
-			case GamaPackage.ELAYER__MODEL:
-				setModel((EGamaModel)newValue);
-				return;
 			case GamaPackage.ELAYER__DISPLAY:
 				setDisplay((EDisplay)newValue);
+				return;
+			case GamaPackage.ELAYER__COLOR:
+				setColor((String)newValue);
+				return;
+			case GamaPackage.ELAYER__TYPE:
+				setType((String)newValue);
+				return;
+			case GamaPackage.ELAYER__FILE:
+				setFile((String)newValue);
+				return;
+			case GamaPackage.ELAYER__TEXT:
+				setText((String)newValue);
+				return;
+			case GamaPackage.ELAYER__SIZE:
+				setSize((String)newValue);
+				return;
+			case GamaPackage.ELAYER__SPECIES:
+				setSpecies((String)newValue);
+				return;
+			case GamaPackage.ELAYER__TRANSPARENCY:
+				setTransparency((String)newValue);
+				return;
+			case GamaPackage.ELAYER__AGENTS:
+				setAgents((String)newValue);
+				return;
+			case GamaPackage.ELAYER__POSITION_X:
+				setPosition_x((String)newValue);
+				return;
+			case GamaPackage.ELAYER__POSITION_Y:
+				setPosition_y((String)newValue);
+				return;
+			case GamaPackage.ELAYER__SIZE_X:
+				setSize_x((String)newValue);
+				return;
+			case GamaPackage.ELAYER__SIZE_Y:
+				setSize_y((String)newValue);
+				return;
+			case GamaPackage.ELAYER__ASPECT:
+				setAspect((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -290,14 +799,47 @@ public class ELayerImpl extends EObjectImpl implements ELayer {
 			case GamaPackage.ELAYER__GAML_CODE:
 				setGamlCode(GAML_CODE_EDEFAULT);
 				return;
-			case GamaPackage.ELAYER__NAME:
-				setName(NAME_EDEFAULT);
-				return;
-			case GamaPackage.ELAYER__MODEL:
-				setModel((EGamaModel)null);
-				return;
 			case GamaPackage.ELAYER__DISPLAY:
 				setDisplay((EDisplay)null);
+				return;
+			case GamaPackage.ELAYER__COLOR:
+				setColor(COLOR_EDEFAULT);
+				return;
+			case GamaPackage.ELAYER__TYPE:
+				setType(TYPE_EDEFAULT);
+				return;
+			case GamaPackage.ELAYER__FILE:
+				setFile(FILE_EDEFAULT);
+				return;
+			case GamaPackage.ELAYER__TEXT:
+				setText(TEXT_EDEFAULT);
+				return;
+			case GamaPackage.ELAYER__SIZE:
+				setSize(SIZE_EDEFAULT);
+				return;
+			case GamaPackage.ELAYER__SPECIES:
+				setSpecies(SPECIES_EDEFAULT);
+				return;
+			case GamaPackage.ELAYER__TRANSPARENCY:
+				setTransparency(TRANSPARENCY_EDEFAULT);
+				return;
+			case GamaPackage.ELAYER__AGENTS:
+				setAgents(AGENTS_EDEFAULT);
+				return;
+			case GamaPackage.ELAYER__POSITION_X:
+				setPosition_x(POSITION_X_EDEFAULT);
+				return;
+			case GamaPackage.ELAYER__POSITION_Y:
+				setPosition_y(POSITION_Y_EDEFAULT);
+				return;
+			case GamaPackage.ELAYER__SIZE_X:
+				setSize_x(SIZE_X_EDEFAULT);
+				return;
+			case GamaPackage.ELAYER__SIZE_Y:
+				setSize_y(SIZE_Y_EDEFAULT);
+				return;
+			case GamaPackage.ELAYER__ASPECT:
+				setAspect(ASPECT_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -313,12 +855,34 @@ public class ELayerImpl extends EObjectImpl implements ELayer {
 		switch (featureID) {
 			case GamaPackage.ELAYER__GAML_CODE:
 				return GAML_CODE_EDEFAULT == null ? gamlCode != null : !GAML_CODE_EDEFAULT.equals(gamlCode);
-			case GamaPackage.ELAYER__NAME:
-				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-			case GamaPackage.ELAYER__MODEL:
-				return model != null;
 			case GamaPackage.ELAYER__DISPLAY:
 				return display != null;
+			case GamaPackage.ELAYER__COLOR:
+				return COLOR_EDEFAULT == null ? color != null : !COLOR_EDEFAULT.equals(color);
+			case GamaPackage.ELAYER__TYPE:
+				return TYPE_EDEFAULT == null ? type != null : !TYPE_EDEFAULT.equals(type);
+			case GamaPackage.ELAYER__FILE:
+				return FILE_EDEFAULT == null ? file != null : !FILE_EDEFAULT.equals(file);
+			case GamaPackage.ELAYER__TEXT:
+				return TEXT_EDEFAULT == null ? text != null : !TEXT_EDEFAULT.equals(text);
+			case GamaPackage.ELAYER__SIZE:
+				return SIZE_EDEFAULT == null ? size != null : !SIZE_EDEFAULT.equals(size);
+			case GamaPackage.ELAYER__SPECIES:
+				return SPECIES_EDEFAULT == null ? species != null : !SPECIES_EDEFAULT.equals(species);
+			case GamaPackage.ELAYER__TRANSPARENCY:
+				return TRANSPARENCY_EDEFAULT == null ? transparency != null : !TRANSPARENCY_EDEFAULT.equals(transparency);
+			case GamaPackage.ELAYER__AGENTS:
+				return AGENTS_EDEFAULT == null ? agents != null : !AGENTS_EDEFAULT.equals(agents);
+			case GamaPackage.ELAYER__POSITION_X:
+				return POSITION_X_EDEFAULT == null ? position_x != null : !POSITION_X_EDEFAULT.equals(position_x);
+			case GamaPackage.ELAYER__POSITION_Y:
+				return POSITION_Y_EDEFAULT == null ? position_y != null : !POSITION_Y_EDEFAULT.equals(position_y);
+			case GamaPackage.ELAYER__SIZE_X:
+				return SIZE_X_EDEFAULT == null ? size_x != null : !SIZE_X_EDEFAULT.equals(size_x);
+			case GamaPackage.ELAYER__SIZE_Y:
+				return SIZE_Y_EDEFAULT == null ? size_y != null : !SIZE_Y_EDEFAULT.equals(size_y);
+			case GamaPackage.ELAYER__ASPECT:
+				return ASPECT_EDEFAULT == null ? aspect != null : !ASPECT_EDEFAULT.equals(aspect);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -335,8 +899,32 @@ public class ELayerImpl extends EObjectImpl implements ELayer {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (gamlCode: ");
 		result.append(gamlCode);
-		result.append(", name: ");
-		result.append(name);
+		result.append(", color: ");
+		result.append(color);
+		result.append(", type: ");
+		result.append(type);
+		result.append(", file: ");
+		result.append(file);
+		result.append(", text: ");
+		result.append(text);
+		result.append(", size: ");
+		result.append(size);
+		result.append(", species: ");
+		result.append(species);
+		result.append(", transparency: ");
+		result.append(transparency);
+		result.append(", agents: ");
+		result.append(agents);
+		result.append(", position_x: ");
+		result.append(position_x);
+		result.append(", position_y: ");
+		result.append(position_y);
+		result.append(", size_x: ");
+		result.append(size_x);
+		result.append(", size_y: ");
+		result.append(size_y);
+		result.append(", aspect: ");
+		result.append(aspect);
 		result.append(')');
 		return result.toString();
 	}

@@ -1,12 +1,16 @@
 package idees.gama.features.modelgeneration;
 
 import gama.EActionLink;
+import gama.EAspect;
 import gama.EAspectLink;
 import gama.EBatchExperiment;
+import gama.EDisplay;
 import gama.EDisplayLink;
 import gama.EExperiment;
 import gama.EExperimentLink;
 import gama.EGrid;
+import gama.ELayer;
+import gama.ELayerAspect;
 import gama.EReflexLink;
 import gama.ESpecies;
 import gama.ESubSpeciesLink;
@@ -44,6 +48,7 @@ import org.eclipse.graphiti.mm.pictograms.Shape;
 public class ModelGenerationFeature extends AbstractCustomFeature {
  
     private boolean hasDoneChanges = false;
+    private static String EL = System.getProperty("line.separator" ); 
      
     public ModelGenerationFeature(IFeatureProvider fp) {
         super(fp);
@@ -99,17 +104,20 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     
        
     static String defineSpecies(ESpecies species, int level) {
-    	String model = "\n";
+    	String model = EL;
     	String sp = "";
     	for (int i =0; i < level;i++) {
     		sp += "\t";
     	}
     	model += sp;
     	if(species instanceof EGrid) 
-    		model += "grid " + species.getName() + " {\n";
+    		model += "grid " + species.getName() ;
     	else 
-    		model += "species " + species.getName() + " {\n";
-    	
+    		model += "species " + species.getName() ;
+    	if (species.getSkills() != null && !species.getSkills().isEmpty()) {
+    		model += " skills:" + species.getSkills();
+    	}
+    	model += " {"+EL;
     	for (EVariable var: species.getVariables()) {
     		model += defineVariable(var,level+1);
     	}
@@ -131,7 +139,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     		 model += defineSpecies(link.getMicro(),level+1); 
      	 }
     	 
-    	 model += sp+ "}\n";
+    	 model += sp+ "}" +EL;
     	 
     	 return model;
     }
@@ -155,7 +163,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
 			varStr += " min: " + var.getMin();
 		if (var.getMax() != null  && !var.getMax().equals(""))
 			varStr += " max: " + var.getMax();
-		varStr += ";\n";
+		varStr += ";" + EL;
 		return varStr;
     }
     
@@ -165,14 +173,14 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     	for (int i =0; i < level;i++) {
     		sp += "\t";
     	}
-    	result += sp + "action " + link.getTarget().getName() + " {\n";
+    	result += sp + "action " + link.getTarget().getName() + " {" + EL;
     	String code = link.getAction().getGamlCode();
     	if (code != null && ! code.isEmpty()) {
-	    	for (String line : code.split("\n")) {
-	    		result += sp+ "\t" + line+"\n";
+	    	for (String line : code.split(EL)) {
+	    		result += sp+ "\t" + line+ EL;
 	    	}
     	}
-    	result +=sp + "}\n";
+    	result +=sp + "}" + EL;
     	return result;
     }
     
@@ -183,48 +191,113 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     		sp += "\t";
     	}
     	if (link.getReflex().getCondition() != null && link.getReflex().getCondition().isEmpty()) {
-    		result += sp + "reflex " + link.getReflex().getName() + " when: "+ link.getReflex().getCondition() + " {\n";
+    		result += sp + "reflex " + link.getReflex().getName() + " when: "+ link.getReflex().getCondition() + " {" + EL;
     	} else {
-    		result += sp + "reflex " + link.getReflex().getName() + " {\n";
+    		result += sp + "reflex " + link.getReflex().getName() + " {" + EL;
     	}
     	String code = link.getReflex().getGamlCode();
     	if (code != null && ! code.isEmpty()) {
-	    	for (String line : code.split("\n")) {
-	    		result += sp+ "\t" + line+"\n";
+	    	for (String line : code.split(EL)) {
+	    		result += sp+ "\t" + line+ EL;
 	    	}
     	}
-    	result +=sp + "}\n";
+    	result +=sp + "}" + EL;
     	return result;
     }
     
     static String defineAspect(EAspectLink link, int level) {
     	String result = "";
+    	EAspect asp = link.getAspect();
     	String sp = "";
     	for (int i =0; i < level;i++) {
     		sp += "\t";
     	}
-    	result += sp + "aspect " + link.getAspect() + " {\n";
-    	result +=sp + "}\n";
+    	result += sp + "aspect " + asp.getName() + " {" + EL;
+    	 Map<String, ELayerAspect> layerMap = new Hashtable<String, ELayerAspect>();
+       	 for (ELayerAspect lay : asp.getLayers()) {
+       		layerMap.put(lay.getName(), lay);
+       	 }
+    	for (String layStr : asp.getLayerList()) {
+    		ELayerAspect lay = layerMap.get(layStr);
+    	
+    		result += sp + "\tdraw "; 
+    		if (lay.getType().equals("expression")) {
+    			result += lay.getExpression();
+    		} else if (lay.getType().equals("polyline") || lay.getType().equals("polygon")) {
+    				result += lay.getType() +"(" + lay.getPoints() + ")";
+    		} else if (lay.getType().equals("circle") || lay.getType().equals("sphere")) {
+    			result += lay.getType() +"(" + lay.getRadius() + ")";
+    		} else if (lay.getType().equals("square") ) {
+    			result += lay.getType() +"(" + lay.getSize() + ")";
+    		} else if (lay.getType().equals("rectangle") || lay.getType().equals("hexagon")) {
+    			result += lay.getType() +"({" + lay.getWidth() + "," + lay.getHeigth()+ "})";
+    		} else if (lay.getType().equals("image")) {
+    			result +=  lay.getPath() + " size: " + lay.getSize();
+    		} else if (lay.getType().equals("text")) {
+    			String at = ((lay.getAt() == null) || lay.getAt().isEmpty()) ? "" : " at: " + lay.getAt();
+    			result += lay.getText() + " size: " + lay.getSize() + at;
+    		}
+    		String rotate = ((lay.getRotate() == null)|| (lay.getRotate().isEmpty())|| lay.getRotate().equals("0.0") || lay.getRotate().equals("0")) ? "" : " rotate: " + lay.getRotate();
+			
+    		result += rotate + " color: rgb(" + lay.getColor() + ");" + EL;
+    	}
+    	result +=EL + sp + "}" + EL;
     	return result;
     }
       
     static String defineExperiment(EExperiment exp) {
     	String model = "";
     	if (exp instanceof EBatchExperiment) {
-    		model += "\n\nexperiment " + exp.getName() + " type:batch {}";
+    		model += EL + EL + "experiment " + exp.getName() + " type:batch {}";
     	} else {
-    		model += "\n\nexperiment " + exp.getName() + " type:gui {\n\toutput{";
+    		model += EL + EL + "experiment " + exp.getName() + " type:gui {"+ EL+"\toutput{";
     		for (EDisplayLink link : exp.getDisplayLinks()) {
     			model += defineDisplay(link);
     		}
-    		model += "\n\t}\n}\n";
+    		model += EL +"\t}"+ EL +"}" + EL;
     	}
     	return model;
     	
     }
     
     static String defineDisplay(EDisplayLink link) {
-    	return "\n\t\tdisplay " + link.getDisplay().getName() + " {\n" + "\t\t}";
+    	EDisplay disp = link.getDisplay();
+    	String model = EL + "\t\tdisplay " + disp.getName() ;
+    	String refresh = ((disp.getRefresh() == null)|| (disp.getRefresh().isEmpty())|| disp.getRefresh().equals("1")) ? "" : " refresh_every: " + disp.getRefresh();
+    	String type = disp.getOpengl() ? " type: opengl" : "";
+    	model +=  " background: rgb(" + disp.getBackground() + refresh + type+" {"+ EL;
+    	 Map<String, ELayer> layerMap = new Hashtable<String, ELayer>();
+       	 for (ELayer lay : disp.getLayers()) {
+       		layerMap.put(lay.getName(), lay);
+       	 }
+    	for (String layStr : disp.getLayerList()) {
+    		ELayer lay = layerMap.get(layStr);
+    		model += "\t\t\t" + "\tdraw "; 
+    	//	"species", "grid", "agents","image", "text"
+    		if (lay.getType().equals("species") ) {
+    			model += lay.getType() + " " + lay.getSpecies() + " aspect: " + lay.getAspect();
+    		} else if (lay.getType().equals("grid")) {
+    			model += lay.getType() + " " + lay.getSpecies();
+    		} else if (lay.getType().equals("agents")) {
+    			model += lay.getType() + " " + lay.getAgents() + " aspect: " + lay.getAspect();
+    		} else if (lay.getType().equals("image")) {
+    			model +=  lay.getType() + lay.getFile() + " size: " + lay.getSize();
+    		} else if (lay.getType().equals("text")) {
+    			model += lay.getType() + lay.getText() + " size: " + lay.getSize() ;
+    		}
+    		String size = "";
+    		if (lay.getSize_x() != null && lay.getSize_y() != null && lay.getSize_x().equals("1.0") && lay.getSize_y().equals("1.0") ) {
+    			size= " size:{" + lay.getSize_x() + "," + lay.getSize_y()+ "}";
+    		}
+    		String position = "";
+    		if (lay.getPosition_x() != null && lay.getPosition_y() != null && lay.getPosition_x().equals("1.0") && lay.getPosition_y().equals("1.0") ) {
+    			position= " position:{" + lay.getPosition_x() + "," + lay.getPosition_y()+ "}";
+    		}
+    		model += size + position + ";" + EL;
+    	}
+    	
+    	model+= "\t\t}";
+    	return model;
     }
  
     @Override
@@ -246,7 +319,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
 	                
 	            }
             }
-            model = "model " + diagram.getName() + "\n\nglobal {\n";
+            model = "model " + diagram.getName() + EL + EL + "global {" + EL;
             int level = 1;
             for (EVariable var: worldAgent.getVariables()) {
             	model += defineVariable(var,level);
@@ -266,14 +339,15 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
 	        	 }
 	      
 	       	model += "}";
-	       	model += "\nentities {";
+	       	model += EL + "entities {";
             for (ESubSpeciesLink link : worldAgent.getMicroSpeciesLinks()) {
             	model += defineSpecies((ESpecies) link.getTarget(),1);
             }
             
-            model += "\n}";
+            model += EL + "}";
             
             for (EExperimentLink link : worldAgent.getExperimentLinks()) {
+            	System.out.println("link :  " + link);
 	       		 model += defineExperiment(link.getExperiment());
 	        }
 	 
@@ -294,7 +368,12 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
 				ModelStructure ms =
 					new ModelStructure("", fileName, new ArrayList(elements.values()));
 				lastModel = DescriptionFactory.getModelFactory().compile(ms);
-				result = "Validation ok";
+				if (lastModel != null) {
+					result = "Validation ok";
+				} else {
+					result = "Exception during compilation";
+				}
+				
 			} else {
 				result = r.getErrors().toString();
 			}

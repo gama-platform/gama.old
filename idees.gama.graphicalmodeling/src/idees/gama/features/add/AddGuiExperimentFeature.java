@@ -23,7 +23,7 @@ import org.eclipse.graphiti.util.IColorConstant;
 
 public class AddGuiExperimentFeature extends AbstractAddShapeFeature {
  
-	public static final int INIT_WIDTH = 300;
+	public static final int INIT_WIDTH = 400;
 	public static final int INIT_HEIGHT = 50;
 
 	private static final IColorConstant SPECIES_TEXT_FOREGROUND =

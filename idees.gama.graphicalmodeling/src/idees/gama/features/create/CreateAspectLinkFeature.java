@@ -67,6 +67,9 @@ public class CreateAspectLinkFeature extends AbstractCreateSpeciesComponentLinkF
 			addContext.setNewObject(eReference);
 			newConnection = (Connection) getFeatureProvider().addIfPossible(
 					addContext);
+			eReference.setSpecies(source);
+			eReference.setAspect(target);
+			
 			source.getAspectLinks().add(eReference);
 			target.getAspectLinks().add(eReference);
 		}
