@@ -28,7 +28,7 @@ global {
 			let satisfying_boids_groups type: list of: list value: (free_boids simple_clustering_by_envelope_distance flock_creation_distance) where ( (length (each)) > min_group_member ) ;
 			
 			loop one_group over: satisfying_boids_groups {
-				let potential_flock_polygon type: geometry value: convex_hull ( solid( polygon(one_group collect (boids(each)).location) ) + (base_perception_range + 5) );
+				let potential_flock_polygon type: geometry value: convex_hull(solid(polygon(one_group collect boids(each).location)) + (base_perception_range + 5) );
 				
 				if (empty ( obstacle overlapping potential_flock_polygon))  {
 					create flock returns: new_flocks;
