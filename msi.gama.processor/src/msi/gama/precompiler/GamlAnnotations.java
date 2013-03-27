@@ -460,9 +460,18 @@ public final class GamlAnnotations {
 		/**
 		 * Of.
 		 * 
-		 * @return The textual representation of the content type of the variable (see IType)
+		 * @return The textual representation of the content type of the variable (see
+		 *         IType#defaultContentType())
 		 */
 		String of() default "";
+
+		/**
+		 * Index.
+		 * 
+		 * @return The textual representation of the index type of the variable (see
+		 *         IType#defaultKeyType())
+		 */
+		String index() default "";
 
 		/**
 		 * Constant

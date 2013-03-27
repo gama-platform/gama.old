@@ -69,4 +69,21 @@ public interface ITypeProvider {
 	 * e.g. : matrix ([[4, 5, 6],[1, 2, 4]]) should get int as a content type.
 	 */
 	static final short FIRST_ELEMENT_CONTENT_TYPE = -22;
+
+	// Use of TypeProvider in facet "of"
+
+	/**
+	 * The type is provided by the contents type of the container
+	 */
+	static final String CONTENT_TYPE = "contents";
+
+	/**
+	 * The type is provided by the index type of the container
+	 */
+	static final String INDEX_TYPE = "index";
+
+	/**
+	 * The type is provided by the type of the element itself
+	 */
+	static final String SELF_TYPE = "self";
 }

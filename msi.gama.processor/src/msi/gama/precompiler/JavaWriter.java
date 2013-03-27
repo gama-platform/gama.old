@@ -162,20 +162,21 @@ public class JavaWriter {
 		String[] segments = var.split("\\$");
 		String type = toJava(segments[0]);
 		String contentType = toJava(segments[1]);
-		String name = toJava(segments[2]);
-		String clazz = segments[3];
-		String facets = segments[4];
+		String keyType = toJava(segments[2]);
+		String name = toJava(segments[3]);
+		String clazz = segments[4];
+		String facets = segments[5];
 		String getterHelper = null;
 		String initerHelper = null;
 		String setterHelper = null;
 		// getter
-		String getterName = segments[5];
+		String getterName = segments[6];
 		boolean isField = false;
 		if ( !getterName.equals("null") ) {
-			String ret = checkPrim(segments[6]);
-			boolean dynamic = segments[7].equals("true");
-			isField = segments[8].equals("true");
-			boolean scope = segments[9].equals("true");
+			String ret = checkPrim(segments[7]);
+			boolean dynamic = segments[8].equals("true");
+			isField = segments[9].equals("true");
+			boolean scope = segments[10].equals("true");
 
 			if ( isField ) {
 				getterHelper =
@@ -191,12 +192,12 @@ public class JavaWriter {
 			}
 
 			// initer
-			boolean init = segments[10].equals("true");
+			boolean init = segments[11].equals("true");
 			if ( init ) {
 				initerHelper = getterHelper;
 			}
 		}
-		int i = getterHelper == null ? 6 : 11;
+		int i = getterHelper == null ? 7 : 12;
 		// setter
 		String setterName = segments[i];
 		if ( !"null".equals(setterName) ) {
@@ -214,7 +215,8 @@ public class JavaWriter {
 			.append(",");
 		if ( isField ) {
 			sb.append("new TypeFieldExpression(").append(name).append(",T(").append(type)
-				.append("), T(").append(contentType).append("),").append(getterHelper).append(")");
+				.append("),").append(contentType).append(", T(").append(keyType).append("),")
+				.append(getterHelper).append(")");
 		} else {
 			sb.append("desc(").append(type).append(",");
 			sb.append(toArrayOfStrings(facets)).append("),").append(getterHelper);

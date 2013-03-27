@@ -20,7 +20,8 @@ public class ConversationType extends GamaType<Conversation> {
 	public Conversation cast(final IScope scope, final Object obj, final Object param)
 		throws GamaRuntimeException {
 		if ( obj instanceof Conversation ) { return (Conversation) obj; }
-//		if ( obj instanceof Message ) { return new Conversation(FIPAConstants.Protocols.NO_PROTOCOL, (Message) obj); }
+		// if ( obj instanceof Message ) { return new
+		// Conversation(FIPAConstants.Protocols.NO_PROTOCOL, (Message) obj); }
 		return null;
 	}
 
@@ -35,19 +36,29 @@ public class ConversationType extends GamaType<Conversation> {
 	}
 
 	@Override
+	public IType defaultKeyType() {
+		return Types.get(IType.INT);
+	}
+
+	@Override
+	public boolean hasContents() {
+		return true;
+	}
+
+	@Override
 	protected boolean acceptNullInstances() {
 		return true;
 	}
 
 	@operator(value = ConversationType.CONVERSATION_STR, can_be_const = true)
 	@doc(value = "to be added", comment = "", special_cases = { "" }, examples = { "" })
-	public static Conversation asMessage(final IScope scope, final Object val) throws GamaRuntimeException {
+	public static Conversation asMessage(final IScope scope, final Object val)
+		throws GamaRuntimeException {
 		return ConversationType.staticCast(scope, val, null);
 	}
 
-
 	private static Conversation staticCast(IScope scope, Object val, Object object) {
-		if ( val instanceof Conversation ) { return ((Conversation) val); }
+		if ( val instanceof Conversation ) { return (Conversation) val; }
 		if ( val instanceof Message ) { return ((Message) val).getConversation(); }
 		// ???
 		return null;

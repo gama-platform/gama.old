@@ -208,12 +208,14 @@ public class GamaProcessor extends AbstractProcessor {
 				sb.append(VAR_PREFIX).append(type).append(SEP);
 				// 1.contentType
 				sb.append(contentType).append(SEP);
+				// 2. keyType
+				sb.append(s.index()).append(SEP);
 				String varName = s.name();
-				// 2.var name
+				// 3.var name
 				sb.append(varName).append(SEP);
-				// 3. class of declaration
+				// 4. class of declaration
 				sb.append(rawNameOf(e)).append(SEP);
-				// 4. facets
+				// 5. facets
 				sb.append("type").append(',').append(type).append(',');
 				sb.append("name").append(',').append(varName).append(',');
 				sb.append("const").append(',').append(s.constant() ? "true" : "false");
@@ -375,12 +377,12 @@ public class GamaProcessor extends AbstractProcessor {
 				sb.append(facets.omissible()).append(SEP);
 			}
 			// combinations missing
-//			if(facets.combinations() == null){sb.append('0').append(SEP).append(SEP);}
-//			else
-//			{
-//				sb.append(facets.combinations().length).append(SEP);
-//				sb.append(combinationsFacetsToString(facets)).append(SEP);
-//			}
+			// if(facets.combinations() == null){sb.append('0').append(SEP).append(SEP);}
+			// else
+			// {
+			// sb.append(facets.combinations().length).append(SEP);
+			// sb.append(combinationsFacetsToString(facets)).append(SEP);
+			// }
 			// names
 			for ( String s : symbol.name() ) {
 				sb.append(s).append(SEP);
@@ -448,21 +450,19 @@ public class GamaProcessor extends AbstractProcessor {
 		sb.append(docToString(facet.doc()));
 		return sb.toString();
 	}
-	
+
 	private String combinationsFacetsToString(final facets facets) {
 		StringBuilder sb = new StringBuilder();
 		if ( facets.combinations() != null ) {
 			for ( combination cf : facets.combinations() ) {
 				sb.append(arrayToString(cf.value())).append(SEP);
 			}
-//			if ( facets.combinations().length > 0 ) {
-//				sb.setLength(sb.length() - 1);
-//			}
+			// if ( facets.combinations().length > 0 ) {
+			// sb.setLength(sb.length() - 1);
+			// }
 		}
 		return sb.toString();
 	}
-
-
 
 	private String arrayToString(final String[] array) {
 		if ( array.length == 0 ) { return ""; }
