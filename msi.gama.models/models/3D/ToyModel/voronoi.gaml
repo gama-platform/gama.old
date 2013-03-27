@@ -21,13 +21,13 @@ environment width: environment_width height: environment_height {
 	}
 }
 
-entities {	
+entities {	 
 	species center skills: [moving] {
 		rgb color <- rgb([rnd (255),rnd (255),rnd (255)]);
 		reflex wander {
 			do wander amplitude: 90;
 		}  
-		aspect default {
+		aspect default {  
 			draw circle(3) color: color;
 		}
 	}

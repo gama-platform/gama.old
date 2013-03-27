@@ -88,7 +88,7 @@ model syntax
  		// is equivalent to the more compact one:
  		int t <- length(a1);
  		
- 		// Assigning a value to variables is also sporting a new syntax
+ 		// Assigning a value to variables is also sporting a new syntax 
  		set t value: 100;
  		// ... can be replaced by 
  		set t <- 100;
@@ -102,9 +102,9 @@ model syntax
  		
  		// ...  and agents as direct containers of their attributes (mimicking the internal attributes map). This "virtual map" will now contain, in addition to the attributes, 
  		// all the variables loaded from CSV, SQL or shape files (some stored in the agent itself, others in the shape).
- 		agent0["departure"] <- {0,0};
-
- 		// Keys are not necessarily strings, by the way !
+ 		agent0["departure"] <- {0,0}; 
+  
+ 		// Keys are not necessarily strings, by the way ! A warning is emitted in such cases, but it is just a warning.
  		agent0[0] <- 0;
  		
  		// Accesses can be combined
@@ -161,7 +161,7 @@ model syntax
  		put "a" at: 'key' in: m;
  		put 1 at: 0 in: l;
  		// ... can now be written
- 		m['key'] <- "a";
+ 		m['key'] <- "a"; 
  		l[0] <- 1;
  		
  	}
@@ -237,18 +237,18 @@ model syntax
  	 	list others <- filter(species1);
  	 	
  	 	// As a side note, the new syntax for arguments maps is not only usable in action calls, but also in create, for instance
- 	 	create species0 with: (a:100,b:20);
+ 	 	create species0 with: (location:{100,100},name:"");
  	 }
- 	 
+ 	  
  	 int max(int i, int j){
  	 	return i>j ? i : j;
  	 }
  	 
- 	 list filter(container<agent> agents) {
- 	 	return agents where each.location = nil;
+ 	 list<agent> filter(container<agent> agents) {  
+ 	 	return agents where each.location = nil; 
  	 }
  
-// 	 
+// 	  
 // 	 int max (list<int> integers <- [0]) {
 // 	 	int the_max <- integers[0];
 // 	 	loop i from: 1 to: length(integers) - 1 {

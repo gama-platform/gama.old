@@ -18,8 +18,8 @@ global {
 			let ind_j type: int <- init_data at {1,i};
 			ask stupid_cell grid_at {ind_i,ind_j} {
 				set foodProd <- init_data at {2,i};  
-			}
-		}
+			}  
+		} 
     }
     reflex shouldHalt when: (time > 1000) or (empty (bug as list)) { 
         do halt;
@@ -32,7 +32,10 @@ environment width: 100 height: 100 {
         float maxFoodProdRate <- 0.01;
         float foodProd <- (rnd(1000) / 1000) * 0.01;
         float food <- 0.0 update: food + foodProd;
-        const neighbours <- (self neighbours_at 1) - self type: list of: stupid_cell;
+        
+        list<stupid_cell> neighbours(int distance <- 1) {
+        	return shuffle(self neighbours_at distance) - self;
+        }
     }
 }
  
@@ -47,7 +50,7 @@ entities {
         	if size<0 { set size <- 0; }
         }
         reflex basic_move {
-            let destination type: stupid_cell <- last ((shuffle ((myPlace neighbours_at 4) where empty(each.agents))) sort_by (each.food));
+            let destination type: stupid_cell <- last (((myPlace.neighbours(4) where empty(each.agents))) sort_by (each.food));
             if (destination != nil) {
                  set myPlace <- destination;
                  set location <- myPlace.location;                                                
@@ -82,7 +85,7 @@ entities {
 	    rgb color <- rgb('blue');
 		 
 		reflex hunt {
-			let the_neighbours type: list <- (location as stupid_cell).neighbours;
+			let the_neighbours type: list <- (location as stupid_cell).neighbours();
 			let the_neighbours_bug type:list value: the_neighbours accumulate (each.agents of_species bug);
      		let chosenPrey type: bug <- one_of( the_neighbours_bug);
 		    if (chosenPrey != nil) {

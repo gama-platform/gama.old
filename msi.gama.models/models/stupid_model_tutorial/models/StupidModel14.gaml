@@ -21,6 +21,10 @@ environment width: 100 height: 100 {
         float maxFoodProdRate <- 0.01;
         float foodProd <- (rnd(1000) / 1000) * 0.01;
         float food <- 0.0 update: food + foodProd;
+        
+         list<stupid_cell> neighbours(int distance <- 1) {
+        	return shuffle(self neighbours_at distance) - self;
+        }
     }
 }
  
@@ -35,7 +39,7 @@ entities {
         	if size<0 { set size <- 0; }
         }
       	reflex basic_move {
-            let destination type: stupid_cell <- last (((myPlace neighbours_at 4) where empty(each.agents)) sort_by (each.food));
+            let destination type: stupid_cell <- last (((myPlace.neighbours(4)) where empty(each.agents)) sort_by (each.food));
             if (destination != nil) {
                  set myPlace <- destination;
                  set location <- myPlace.location;                                                
