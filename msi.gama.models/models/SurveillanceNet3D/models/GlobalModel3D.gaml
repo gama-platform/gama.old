@@ -44,7 +44,7 @@ global {
 	var genaral_weather_data type: matrix value: matrix (file ('../includes/datasources/general_weather_data.csv'));
 	
 	// Wind data:
-	var station_weather_data type: matrix value: matrix (file ('../includes/datasources/station_weather_data03.csv'));
+	matrix<int> station_weather_data value: matrix (file ('../includes/datasources/station_weather_data03.csv'));
 	
 	var no_of_nodes type: int init: 50;
 	var count_loop_of_inference type: float init: 0.0 ;

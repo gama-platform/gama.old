@@ -1,4 +1,4 @@
-model ants 
+ model ants 
 global    {
 	float evaporation_rate <- 0.10 min: 0.0 max: 1.0 parameter: 'Rate of evaporation of the signal (%/cycle):' category: 'Signals';
 	float diffusion_rate <- 0.5 min: 0.0 max: 1.0 parameter: 'Rate of diffusion of the signal (%/cycle):' category: 'Signals';
@@ -8,22 +8,22 @@ global    {
 	int number_of_food_places <- 5 min: 1 parameter: 'Number of food depots:' category: 'Environment and Population';  
 	float grid_transparency <- 1.0;   
 	const ant_shape_empty type: string <- '../icons/ant.png';   
-	const ant_shape_full type: string <- '../icons/full_ant.png';
-	const center type: point <- { round ( gridsize / 2 ) , round ( gridsize / 2 ) };     
-	var food_gathered type: int <- 0;  
+	const ant_shape_full type: string <- '../icons/full_ant.png'; 
+	const center type: point <- { round ( gridsize / 2 ) , round ( gridsize / 2 ) };      
+	var food_gathered type: int <- 0;   
 	var food_placed type: int <- 0;
 	const background type: rgb <- rgb( #999999 );  
-	const food_color type: rgb <- rgb ( #312200 );  
+	const food_color type: rgb <- rgb ( #312200 );        
 	const nest_color type: rgb <- rgb ( #000000 );
-	init {   
+	init {         
 		loop times: number_of_food_places { 
-			point loc <- { rnd ( gridsize - 10 ) + 5 , rnd ( gridsize - 10 ) + 5 }; 
+			point loc <- { rnd ( gridsize - 10 ) + 5 , rnd ( gridsize - 10 ) + 5 };  
 			list<ant_grid> food_places <- ( ant_grid where ( ( each distance_to loc ) < 5 ) );
-			ask food_places {  
-				if food = 0 {       
+			ask food_places {
+				if food = 0 {         
 					food <- 5 ;                
 					food_placed <- food_placed + 5 ; 
- 					color <- food_color ;
+ 					color <- food_color ; 
 				}       
 			}
 		}
@@ -146,7 +146,7 @@ experiment Complete type: gui {
 			: { 1 , 0.02 };  
 		}  
 	} 
-} 
+}   
 
 experiment Batch type: batch repeat: 2 keep_seed: true until: (food_gathered = food_placed ) or ( time > 400 ) {
 	parameter name: 'Size of the grid:' var: gridsize init: 75 unit:'width and height';

@@ -15,7 +15,7 @@ global {
 			do evolve;
 		}
 		ask list (life_cell) {
-			do update;
+			do update;    
 		}
 	} 
 }
@@ -27,11 +27,11 @@ environment width: environment_width height: environment_height {
 		rgb color <- state ? black : white update: state ? black : white ;
 		
 		action evolve {
-			let living type: int <- (self neighbours_at 1)count each.state ;
+			let living type: int <- (self neighbours_at 1) of_species life_cell count each.state ;
 			set new_state <- state ? living in living_conditions : living in birth_conditions ;
 		}
 		action update {
-			set state <- new_state;
+			set state <- new_state; 
 		}	
 	}
 }
