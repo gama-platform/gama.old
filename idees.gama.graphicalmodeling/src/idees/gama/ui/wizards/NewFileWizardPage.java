@@ -46,7 +46,7 @@ public class NewFileWizardPage extends WizardPage {
 	private Button exampleModelButton;
 	private Button emptyModelButton;
 	private Button skeletonModelButton;
-	private String typeOfModel = "empty";;
+	private String typeOfModel = "empty";
 	private final ISelection selection;
 
 	public NewFileWizardPage(final ISelection selection) {

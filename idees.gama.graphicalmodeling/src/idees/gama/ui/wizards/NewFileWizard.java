@@ -18,6 +18,8 @@
  */
 package idees.gama.ui.wizards;
 
+import idees.gama.diagram.GamaFeatureProvider;
+
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IContainer;
@@ -35,6 +37,8 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.graphiti.dt.IDiagramTypeProvider;
+import org.eclipse.graphiti.internal.services.GraphitiInternal;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.services.Graphiti;
 import org.eclipse.graphiti.ui.editor.DiagramEditorFactory;
@@ -138,22 +142,26 @@ public class NewFileWizard  extends Wizard implements INewWizard {
 	
 	private void createDiagramEditor (IFile file, String diagramName, final IProgressMonitor monitor) {
 		// Create the diagram
-		Diagram diagram = Graphiti.getPeCreateService().createDiagram("gamaDiagram", diagramName, true);
+		final Diagram diagram = Graphiti.getPeCreateService().createDiagram("gamaDiagram", diagramName, true);
 		URI uri = URI.createPlatformResourceURI(file.getFullPath().toString(), true);
 		TransactionalEditingDomain domain = createEmfFileForDiagram(uri, diagram);
 
 		final DiagramEditorInput editorInput = new DiagramEditorInput(EcoreUtil.getURI(diagram), domain, "idees.gama.diagram.MyGamaDiagramTypeProvider");
-		
-		monitor.worked(1);
+		monitor.worked(1); 
 		monitor.setTaskName("Opening file for editing...");
 		getShell().getDisplay().asyncExec(new Runnable() {
 
 			@Override
 			public void run() {
-				IWorkbenchPage page =
+				IWorkbenchPage pag =
 					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 				try {
-					IEditorPart ep = page.openEditor(editorInput, "org.eclipse.graphiti.ui.editor.DiagramEditor");
+					IEditorPart ep = pag.openEditor(editorInput, "org.eclipse.graphiti.ui.editor.DiagramEditor");
+					IDiagramTypeProvider dtp = GraphitiInternal.getEmfService().getDTPForDiagram(diagram);
+					GamaFeatureProvider gfp = ((GamaFeatureProvider) dtp.getFeatureProvider());
+					gfp.setTypeOfModel(page.getTypeOfModel());
+					gfp.init();
+					
 					ep.doSave(monitor);
 				} catch (PartInitException e) {
 					e.printStackTrace();
@@ -162,6 +170,7 @@ public class NewFileWizard  extends Wizard implements INewWizard {
 		});
 		monitor.worked(1);
 	} 
+	
 	
 	public static TransactionalEditingDomain createEmfFileForDiagram(URI uri, final Diagram diagram) {
 		 // Create a resource set and EditingDomain

@@ -1,10 +1,10 @@
 package idees.gama.features.create;
 
 
-import gama.EGrid;
+import gama.EGridTopology;
 import gama.ESpecies;
 import gama.ESubSpeciesLink;
-import idees.gama.features.add.AddGridFeature;
+import idees.gama.features.add.AddSpeciesFeature;
 import idees.gama.ui.image.GamaImageProvider;
 
 import idees.gama.features.ExampleUtil;
@@ -27,14 +27,17 @@ public class CreateSubGridLinkFeature extends AbstractCreateSpeciesComponentLink
 		super(fp, "is composed of a grid", "Create a new grid");
 	}
 
-	private EGrid createEGrid(ICreateConnectionContext context) {
+	private ESpecies createEGrid(ICreateConnectionContext context) {
 		String newSpeciesName = ExampleUtil.askString(TITLE, USER_QUESTION, "");
 	    if (newSpeciesName == null || newSpeciesName.trim().length() == 0) {
 	    	newSpeciesName = "my_cell";
 	    }  
-	    EGrid newSpecies = gama.GamaFactory.eINSTANCE.createEGrid();
+	    ESpecies newSpecies = gama.GamaFactory.eINSTANCE.createESpecies();
 		this.getDiagram().eResource().getContents().add(newSpecies);
 		newSpecies.setName(newSpeciesName);
+	    EGridTopology newTopo = gama.GamaFactory.eINSTANCE.createEGridTopology();
+		this.getDiagram().eResource().getContents().add(newTopo);
+		newSpecies.setTopology(newTopo);
 		CreateContext ac = new CreateContext();
 		ac.setLocation(context.getTargetLocation().getX(), context.getTargetLocation().getY());
 		ac.setSize(0, 0);
@@ -42,18 +45,19 @@ public class CreateSubGridLinkFeature extends AbstractCreateSpeciesComponentLink
 		return newSpecies;
 	}
 	
-	private PictogramElement addEGrid(ICreateConnectionContext context, EGrid species) {
+	private PictogramElement addEGrid(ICreateConnectionContext context, ESpecies species) {
 		CreateContext cc = new CreateContext();
-		cc.setLocation(context.getTargetLocation().getX() - (int)(AddGridFeature.INIT_WIDTH/2.0), context.getTargetLocation().getY() - (int)(AddGridFeature.INIT_HEIGHT/2.0));
+		cc.setLocation(context.getTargetLocation().getX() - (int)(AddSpeciesFeature.INIT_WIDTH/2.0), context.getTargetLocation().getY() - (int)(AddSpeciesFeature.INIT_HEIGHT/2.0));
 		cc.setSize(0, 0);
 		cc.setTargetContainer(getDiagram());
+		getFeatureProvider().addIfPossible(new AddContext(cc, species.getTopology()));
 		return getFeatureProvider().addIfPossible(new AddContext(cc, species));
 	}
 	
 	public Connection create(ICreateConnectionContext context) {
 		Connection newConnection = null;
 		ESpecies source = getESpecies(context.getSourceAnchor());
-		EGrid target = createEGrid(context);
+		ESpecies target = createEGrid(context);
 		PictogramElement targetpe = addEGrid(context, target);
 		if (source != null && target != null) {
 			// create new business object

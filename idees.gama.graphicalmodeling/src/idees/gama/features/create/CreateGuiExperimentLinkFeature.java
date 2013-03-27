@@ -31,11 +31,14 @@ public class CreateGuiExperimentLinkFeature  extends AbstractCreateConnectionFea
 		super(fp, "is composed of a GUI experiment", "Create a new GUI experiment");
 	}
 
-	private EGUIExperiment createEGUIExperiment(ICreateConnectionContext context) {
-		String newGUIName = ExampleUtil.askString(TITLE, USER_QUESTION, "");
-	    if (newGUIName == null || newGUIName.length() == 0) {
-	    	newGUIName = "my_GUI_xp";
-	    }  
+	private EGUIExperiment createEGUIExperiment(ICreateConnectionContext context, boolean askName) {
+		String newGUIName = "my_GUI_xp";
+		if (askName) {
+			newGUIName = ExampleUtil.askString(TITLE, USER_QUESTION, "");
+		    if (newGUIName == null || newGUIName.length() == 0) {
+		    	newGUIName = "my_GUI_xp";
+		    }  
+		}  
 	    EGUIExperiment newGUIExp= gama.GamaFactory.eINSTANCE.createEGUIExperiment();
 	    newGUIExp.setName(newGUIName);
 		this.getDiagram().eResource().getContents().add(newGUIExp);
@@ -43,7 +46,7 @@ public class CreateGuiExperimentLinkFeature  extends AbstractCreateConnectionFea
 		ac.setLocation(context.getTargetLocation().getX(), context.getTargetLocation().getY());
 		ac.setSize(0, 0);
 		ac.setTargetContainer(getDiagram());
-		return newGUIExp;
+		return newGUIExp; 
 	}
 	
 	private PictogramElement addEGUIExperiment(ICreateConnectionContext context, EGUIExperiment GUIExp) {
@@ -55,9 +58,13 @@ public class CreateGuiExperimentLinkFeature  extends AbstractCreateConnectionFea
 	}
 	
 	public Connection create(ICreateConnectionContext context) {
+		return create(context, true);
+	}
+	
+	public Connection create(ICreateConnectionContext context, boolean askName) {
 		Connection newConnection = null;
 		EWorldAgent source = getEWorldAgent(context.getSourceAnchor());
-		EGUIExperiment target = createEGUIExperiment(context);
+		EGUIExperiment target = createEGUIExperiment(context, askName);
 		PictogramElement targetpe = addEGUIExperiment(context, target);
 		if (source != null && target != null) {
 			// create new business object

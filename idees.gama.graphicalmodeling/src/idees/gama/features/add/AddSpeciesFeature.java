@@ -1,6 +1,10 @@
 package idees.gama.features.add;
 
 import idees.gama.ui.image.GamaImageProvider;
+import gama.EContinuousTopology;
+import gama.EGraphTopologyEdge;
+import gama.EGraphTopologyNode;
+import gama.EGridTopology;
 import gama.ESpecies;
 import gama.EVariable;
 
@@ -33,9 +37,16 @@ public class AddSpeciesFeature extends AbstractAddShapeFeature {
     private static final IColorConstant SPECIES_FOREGROUND =
         new ColorConstant(205,155,29);
 
-    private static final IColorConstant SPECIES_BACKGROUND =
-        new ColorConstant(255,236,139);
- 
+    private static final IColorConstant CONTINUOUS_BACKGROUND =
+            new ColorConstant(255,255,150);
+        private static final IColorConstant GRID_BACKGROUND =
+            	new ColorConstant(255,204,150);
+        private static final IColorConstant GRAPH_NODE_BACKGROUND =
+            	new ColorConstant(150,255,150);
+        private static final IColorConstant GRAPH_EDGE_BACKGROUND =
+            	new ColorConstant(100,255,150);
+
+     
     public AddSpeciesFeature(IFeatureProvider fp) {
         super(fp);
     }
@@ -67,11 +78,22 @@ public class AddSpeciesFeature extends AbstractAddShapeFeature {
          IGaService gaService = Graphiti.getGaService();
  
         {
-            // create and set graphics algorithm
+        	 // create and set graphics algorithm
             RoundedRectangle roundedRectangle =
                 gaService.createRoundedRectangle(containerShape, 5, 5);
             roundedRectangle.setForeground(manageColor(SPECIES_FOREGROUND));
-            roundedRectangle.setBackground(manageColor(SPECIES_BACKGROUND));
+            if (addedClass.getTopology() instanceof EContinuousTopology)
+            	roundedRectangle.setBackground(manageColor(CONTINUOUS_BACKGROUND));
+            else if (addedClass.getTopology() instanceof EGridTopology)
+            	roundedRectangle.setBackground(manageColor(GRID_BACKGROUND));
+            else if (addedClass.getTopology() instanceof EGraphTopologyNode) {
+            	roundedRectangle.setBackground(manageColor(GRAPH_NODE_BACKGROUND));
+            	System.out.println("ICI : "+ addedClass.getName());
+            }
+            else if (addedClass.getTopology() instanceof EGraphTopologyEdge)
+            	roundedRectangle.setBackground(manageColor(GRAPH_EDGE_BACKGROUND));
+            System.out.println(addedClass.getName() + " : " + addedClass.getTopology() + ": " + roundedRectangle.getBackground());
+            
             roundedRectangle.setLineWidth(2);
             gaService.setLocationAndSize(roundedRectangle,
                 context.getX(), context.getY(), width, height);
@@ -139,13 +161,20 @@ public class AddSpeciesFeature extends AbstractAddShapeFeature {
         {
         	
             Shape shape3 = peCreateService.createShape(containerShape, false);
-            
-            Image icon1= gaService.createImage(shape3, GamaImageProvider.IMG_SUBSPECIESLINK);
+            Image icon1= null;
+            if (addedClass.getTopology() instanceof EContinuousTopology)
+            	icon1= gaService.createImage(shape3, GamaImageProvider.IMG_SPECIESCONTINUOUSTOPO);
+            else if (addedClass.getTopology() instanceof EGridTopology)
+            	icon1= gaService.createImage(shape3, GamaImageProvider.IMG_SPECIESGRIDTOPO);
+            else if (addedClass.getTopology() instanceof EGraphTopologyNode)
+            	icon1= gaService.createImage(shape3, GamaImageProvider.IMG_SPECIESGRAPHNODETOPO);
+            else if (addedClass.getTopology() instanceof EGraphTopologyEdge)
+            	icon1= gaService.createImage(shape3, GamaImageProvider.IMG_SPECIESGRAPHEDGETOPO);
+          
             gaService.setLocationAndSize(icon1,
-                    12 -width/2, 3, 15, 15);
+                    20 -width/2, 3, 30, 15);
             
             link(shape3, addedClass);
-            
         }
         
         

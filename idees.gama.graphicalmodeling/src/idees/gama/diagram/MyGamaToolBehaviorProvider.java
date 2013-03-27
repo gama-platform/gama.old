@@ -7,7 +7,9 @@ import gama.EReflex;
 import gama.ESpecies;
 import idees.gama.features.create.CreateActionLinkFeature;
 import idees.gama.features.create.CreateAspectLinkFeature;
+import idees.gama.features.create.CreateInheritingLinkFeature;
 import idees.gama.features.create.CreateReflexLinkFeature;
+import idees.gama.features.create.CreateSubGraphSpeciesFeature;
 import idees.gama.features.create.CreateSubGridLinkFeature;
 import idees.gama.features.create.CreateSubSpeciesLinkFeature;
 import idees.gama.features.edit.EditActionFeature;
@@ -95,7 +97,7 @@ public class MyGamaToolBehaviorProvider extends DefaultToolBehaviorProvider{
 			                  .getCreateDescription(), cf.getCreateImageId(),
 			                    cf.getCreateLargeImageId());
 			                        connectionCreationToolEntry.addCreateConnectionFeature(cf);
-		            if (cf instanceof CreateSubSpeciesLinkFeature || cf instanceof CreateSubGridLinkFeature) {
+		            if (cf instanceof CreateSubSpeciesLinkFeature || cf instanceof CreateSubGridLinkFeature || cf instanceof CreateSubGraphSpeciesFeature ||cf instanceof CreateInheritingLinkFeature) {
 			            compartmentAgentEntry.addToolEntry(connectionCreationToolEntry);
 		            } else if (cf instanceof CreateActionLinkFeature || cf instanceof CreateAspectLinkFeature || cf instanceof CreateReflexLinkFeature) {
 		            	compartmentAgentFeatureEntry.addToolEntry(connectionCreationToolEntry);

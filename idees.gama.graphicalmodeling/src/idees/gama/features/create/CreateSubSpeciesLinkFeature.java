@@ -1,11 +1,12 @@
 package idees.gama.features.create;
 
-import idees.gama.features.add.AddSpeciesFeature;
-import idees.gama.ui.image.GamaImageProvider;
+import gama.EContinuousTopology;
 import gama.ESpecies;
 import gama.ESubSpeciesLink;
-
 import idees.gama.features.ExampleUtil;
+import idees.gama.features.add.AddSpeciesFeature;
+import idees.gama.ui.image.GamaImageProvider;
+
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.AddConnectionContext;
@@ -34,6 +35,9 @@ public class CreateSubSpeciesLinkFeature extends AbstractCreateSpeciesComponentL
 		this.getDiagram().eResource().getContents().add(newSpecies);
 		newSpecies.setName(newSpeciesName);
 		CreateContext ac = new CreateContext();
+		EContinuousTopology newTopo = gama.GamaFactory.eINSTANCE.createEContinuousTopology();
+		this.getDiagram().eResource().getContents().add(newTopo);
+		newSpecies.setTopology(newTopo);
 		ac.setLocation(context.getTargetLocation().getX(), context.getTargetLocation().getY());
 		ac.setSize(0, 0);
 		ac.setTargetContainer(getDiagram());

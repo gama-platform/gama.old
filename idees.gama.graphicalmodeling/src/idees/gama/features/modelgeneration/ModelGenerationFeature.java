@@ -8,7 +8,7 @@ import gama.EDisplay;
 import gama.EDisplayLink;
 import gama.EExperiment;
 import gama.EExperimentLink;
-import gama.EGrid;
+import gama.EGridTopology;
 import gama.ELayer;
 import gama.ELayerAspect;
 import gama.EReflexLink;
@@ -110,10 +110,13 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     		sp += "\t";
     	}
     	model += sp;
-    	if(species instanceof EGrid) 
+    	if(species.getTopology() instanceof EGridTopology) 
     		model += "grid " + species.getName() ;
     	else 
     		model += "species " + species.getName() ;
+    	if (species.getInheritsFrom() != null) {
+    		model += " parent:" + species.getInheritsFrom().getName();
+    	}
     	if (species.getSkills() != null && !species.getSkills().isEmpty()) {
     		model += " skills:" + species.getSkills();
     	}

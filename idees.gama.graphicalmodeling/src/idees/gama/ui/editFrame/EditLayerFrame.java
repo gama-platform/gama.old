@@ -1,16 +1,10 @@
 package idees.gama.ui.editFrame;
 
-import gama.EGrid;
 import gama.ELayer;
-import gama.ELayerAspect;
 import gama.ESpecies;
-import gama.EWorldAgent;
 
 import java.util.List;
 
-import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
@@ -18,13 +12,9 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
-import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -60,7 +50,7 @@ public class EditLayerFrame {
 	ELayer elayer;
 	EditDisplayFrame frame;
 
-	public EditLayerFrame(ELayer elayer, EditDisplayFrame asp, List<ESpecies> species, List<EGrid> grids) {
+	public EditLayerFrame(ELayer elayer, EditDisplayFrame asp, List<ESpecies> species, List<ESpecies> grids) {
 		frame = asp;
 		species_list = new String[species.size()];
 		for (int i = 0; i < species_list.length; i++) {

@@ -50,7 +50,7 @@ public class UtilEditFrame {
 				e.printStackTrace();
 		  }
 			String result = ModelGenerationFeature.loadModel(path);
-		file.delete();
+		file.delete(); 
         return result;   
 	}
 	
@@ -70,10 +70,9 @@ public class UtilEditFrame {
 			}
 		});
 		btnValidate.setBounds(75, 5, 80, 20);;
-		btnValidate.setText("Validate");
-				
+		btnValidate.setText("Validate"); 		
 		CLabel lblCompilation = new CLabel(canvasValidation, SWT.NONE);
-		lblCompilation.setText("Validation");
+		lblCompilation.setText("Validation"); 
 		lblCompilation.setBounds(5, 5, 70, 20);
 	}
 	

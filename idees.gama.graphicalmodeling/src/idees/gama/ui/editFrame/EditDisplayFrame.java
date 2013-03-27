@@ -3,7 +3,7 @@ package idees.gama.ui.editFrame;
 import gama.EAspect;
 import gama.EDisplay;
 import gama.EGamaObject;
-import gama.EGrid;
+import gama.EGridTopology; 
 import gama.ELayer;
 import gama.ELayerAspect;
 import gama.ESpecies;
@@ -14,7 +14,6 @@ import java.util.List;
 
 import msi.gama.util.GamaList;
 
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
@@ -50,7 +49,7 @@ public class EditDisplayFrame extends EditFrame {
 	Text textRefresh;
 
 	List<ESpecies> species;
-	List<EGrid> grids;
+	List<ESpecies> grids;
 
 	Color color;
 
@@ -62,14 +61,17 @@ public class EditDisplayFrame extends EditFrame {
 		super(diagram, fp, eaf, display, name == null ? "Aspect definition"
 				: name);
 		species = new GamaList<ESpecies>();
-		grids = new GamaList<EGrid>();
+		grids = new GamaList<ESpecies>();
 		List<Shape> contents = diagram.getChildren();
 		for (Shape sh : contents) {
 			Object obj = fp.getBusinessObjectForPictogramElement(sh);
-			if (obj instanceof EGrid) {
-				grids.add((EGrid) obj);
-			} else if (obj instanceof ESpecies) {
-				species.add((ESpecies) obj);
+			if (obj instanceof ESpecies)  {
+				ESpecies spe = (ESpecies) obj;
+				if (spe.getTopology() != null && spe.getTopology() instanceof EGridTopology) {
+					grids.add((ESpecies) obj);
+				} else  { 
+					species.add((ESpecies) obj);
+				}
 			}
 		}
 		frame = this;
