@@ -18,7 +18,6 @@
   <eClassifiers xsi:type="ecore:EClass" name="ESpecies" eSuperTypes="#//EGamaObject">
     <eStructuralFeatures xsi:type="ecore:EReference" name="variables" upperBound="-1"
         eType="#//EVariable" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="topology" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="reflexList" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="torus" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -42,6 +41,8 @@
         eType="#//ESubSpeciesLink"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="skills" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="topology" eType="#//ETopology"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="inheritsFrom" eType="#//ESpecies"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EAction" eSuperTypes="#//EGamaObject">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="gamlCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
@@ -113,20 +114,14 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="layerList" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="EGrid" eSuperTypes="#//ESpecies">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="nb_columns" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="nb_rows" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="neighbourhood" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EVariable">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
-        defaultValueLiteral=""/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="init" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="min" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="max" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="update" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="function" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EWorldAgent" eSuperTypes="#//ESpecies"/>
   <eClassifiers xsi:type="ecore:EClass" name="ELayer" eSuperTypes="#//EGamaObject">
@@ -147,10 +142,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="size_y" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="aspect" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="EGraph" eSuperTypes="#//EGamaObject">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="node" eType="#//ESpecies"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="edge" eType="#//ESpecies"/>
-  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EGraphTopologyNode" eSuperTypes="#//ETopology"/>
   <eClassifiers xsi:type="ecore:EClass" name="EExperimentLink" eSuperTypes="#//EGamaLink">
     <eStructuralFeatures xsi:type="ecore:EReference" name="species" eType="#//ESpecies"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="experiment" eType="#//EExperiment"/>
@@ -172,5 +164,23 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="expression" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="points" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="at" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EGridTopology" eSuperTypes="#//ETopology">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="nb_columns" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="nb_rows" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="neighbourhood" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EContinuousTopology" eSuperTypes="#//ETopology"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ETopology" eSuperTypes="#//EGamaObject">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="species" eType="#//ESpecies"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EInheritLink" eSuperTypes="#//EGamaLink">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//ESpecies"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="child" eType="#//ESpecies"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EGraphTopologyEdge" eSuperTypes="#//ETopology"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EGraphLink" eSuperTypes="#//EGamaLink">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="node" eType="#//ESpecies"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="edge" eType="#//ESpecies"/>
   </eClassifiers>
 </ecore:EPackage>
