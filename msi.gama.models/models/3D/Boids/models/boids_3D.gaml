@@ -213,7 +213,6 @@ entities {
 		}
 		
 		reflex alignment when: apply_alignment {
-			let toto <- others collect each;
 			let acc <- (mean (others collect (each.velocity)) as point) - velocity;
 			set velocity <- velocity + (acc / alignment_factor);
 		}
