@@ -81,17 +81,18 @@ public class Containers {
 	// }
 	//
 
-	@operator(value = { "internal_at" })
+	@operator(value = { "internal_at" }, content_type = IType.NONE)
 	@doc("For internal use only. Corresponds to the implementation of the access to containers with [index]")
 	public static Object getFromIndicesList(IScope scope, IShape shape, IList indices)
 		throws GamaRuntimeException {
+		// TODO How to test if the index is correct ?
 		if ( shape == null ) { return null; }
 		GamaMap map = shape.getAttributes();
 		if ( map == null ) { return null; }
 		return map.getFromIndicesList(scope, indices);
 	}
 
-	@operator(value = { IKeyword.AT, "@" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@operator(value = { IKeyword.AT, "@" }, type = ITypeProvider.LEFT_CONTENT_TYPE)
 	@doc(deprecated = "The use of at on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)")
 	public static IAgent getAgent(final IScope scope, final ISpecies s, final GamaPoint val)
 		throws GamaRuntimeException {
@@ -104,7 +105,7 @@ public class Containers {
 
 	// return null;}
 
-	@operator(value = { "grid_at" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@operator(value = { "grid_at" }, type = ITypeProvider.LEFT_CONTENT_TYPE)
 	@doc(value = "returns the cell of the grid (right-hand operand) at the position given by the right-hand operand", comment = "If the left-hand operand is a point of floats, it is used as a point of ints.", special_cases = { "if the left-hand operand is not a grid cell species, returns nil" }, examples = { "grid_cell grid_at {1,2} 	--: 	returns the agent grid_cell with grid_x=1 and grid_y = 2" })
 	public static IAgent getGridAgent(final IScope scope, final ISpecies s, final GamaPoint val)
 		throws GamaRuntimeException {
@@ -451,7 +452,7 @@ public class Containers {
 		return result;
 	}
 
-	@operator(value = { "group_by" }, priority = IPriority.ITERATOR, iterator = true)
+	@operator(value = { "group_by" }, priority = IPriority.ITERATOR, iterator = true, content_type = IType.MAP)
 	public static GamaMap groupBy(final IScope scope, final GamaMap original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return new GamaMap(); }

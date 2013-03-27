@@ -140,11 +140,11 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	public IVarExpression addNewTempIfNecessary(final String facetName, final IType type,
-		final IType contentType) {
+		final IType contentType, final IType keyType) {
 		String varName = facets.getLabel(facetName);
 		if ( facetName.equals(VAR) ) {
 			// Case of loops
-			return (IVarExpression) addTemp(varName, type, contentType);
+			return (IVarExpression) addTemp(varName, type, contentType, keyType);
 		}
 
 		IDescription sup = getSuperDescription();
@@ -152,7 +152,8 @@ public class StatementDescription extends SymbolDescription {
 			error("Impossible to return " + facets.getLabel(facetName), IGamlIssue.GENERAL);
 			return null;
 		}
-		return (IVarExpression) ((StatementDescription) sup).addTemp(varName, type, contentType);
+		return (IVarExpression) ((StatementDescription) sup).addTemp(varName, type, contentType,
+			keyType);
 	}
 
 	@Override
@@ -179,14 +180,16 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	@Override
-	public IExpression addTemp(final String name, final IType type, final IType contentType) {
+	public IExpression addTemp(final String name, final IType type, final IType contentType,
+		final IType keyType) {
 		if ( temps == null ) {
 			if ( getSuperDescription() == null ) { return null; }
 			if ( !(getSuperDescription() instanceof StatementDescription) ) { return null; }
-			return ((StatementDescription) getSuperDescription()).addTemp(name, type, contentType);
+			return ((StatementDescription) getSuperDescription()).addTemp(name, type, contentType,
+				keyType);
 		}
 		IVarExpression result =
-			GAMA.getExpressionFactory().createVar(name, type, contentType, false,
+			GAMA.getExpressionFactory().createVar(name, type, contentType, keyType, false,
 				IVarExpression.TEMP, this);
 		temps.put(name, result);
 		return result;
@@ -276,6 +279,11 @@ public class StatementDescription extends SymbolDescription {
 
 	public IType getReturnContentType() {
 		return getTypeNamed(facets.getLabel(OF));
+	}
+
+	@Override
+	public IType getKeyType() {
+		return getTypeNamed(facets.getLabel(INDEX));
 	}
 
 	@Override

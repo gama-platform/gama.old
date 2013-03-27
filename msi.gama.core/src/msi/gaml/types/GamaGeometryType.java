@@ -81,6 +81,16 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return null; // Retourner un point; ?
 	}
 
+	@Override
+	public IType defaultKeyType() {
+		return Types.get(IType.STRING);
+	}
+
+	@Override
+	public boolean hasContents() {
+		return true;
+	}
+
 	/**
 	 * Builds a (cleansed) polygon from a list of points. The input points must be valid to create a
 	 * linear ring (first point and last point are duplicated). It is the responsible of the caller

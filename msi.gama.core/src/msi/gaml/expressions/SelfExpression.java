@@ -23,8 +23,9 @@ import msi.gaml.types.IType;
 
 public class SelfExpression extends VariableExpression {
 
-	protected SelfExpression(final String n, final IType type, final IType contentType) {
-		super(n, type, contentType, true, null);
+	protected SelfExpression(final String n, final IType type, final IType contentType,
+		IType keyType) {
+		super(n, type, contentType, keyType, true, null);
 	}
 
 	@Override

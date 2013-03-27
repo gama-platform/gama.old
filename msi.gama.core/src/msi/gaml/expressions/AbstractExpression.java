@@ -32,6 +32,7 @@ public abstract class AbstractExpression implements IExpression {
 
 	protected IType type = null;
 	protected IType contentType = null;
+	protected IType keyType = null;
 	protected String name = null;
 
 	@Override
@@ -50,7 +51,14 @@ public abstract class AbstractExpression implements IExpression {
 
 	@Override
 	public IType getContentType() {
-		return contentType == null ? Types.NO_TYPE : contentType;
+		if ( !getType().hasContents() ) { return Types.NO_TYPE; }
+		return contentType == null ? getType().defaultContentType() : contentType;
+	}
+
+	@Override
+	public IType getKeyType() {
+		if ( !getType().hasContents() ) { return Types.NO_TYPE; }
+		return keyType == null ? getType().defaultKeyType() : keyType;
 	}
 
 	@Override

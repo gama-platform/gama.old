@@ -98,23 +98,25 @@ public class GamlExpressionFactory implements IExpressionFactory {
 
 	@Override
 	public IVarExpression createVar(final String name, final IType type, final IType contentType,
-		final boolean isConst, final int scope, final IDescription definitionDescription) {
+		final IType keyType, final boolean isConst, final int scope,
+		final IDescription definitionDescription) {
 		switch (scope) {
 			case IVarExpression.GLOBAL:
-				return new GlobalVariableExpression(name, type, contentType, isConst,
+				return new GlobalVariableExpression(name, type, contentType, keyType, isConst,
 					definitionDescription.getModelDescription().getWorldSpecies());
 			case IVarExpression.AGENT:
-				return new AgentVariableExpression(name, type, contentType, isConst,
+				return new AgentVariableExpression(name, type, contentType, keyType, isConst,
 					definitionDescription);
 			case IVarExpression.TEMP:
-				return new TempVariableExpression(name, type, contentType, definitionDescription);
+				return new TempVariableExpression(name, type, contentType, keyType,
+					definitionDescription);
 			case IVarExpression.EACH:
-				return new EachExpression(name, type, contentType);
+				return new EachExpression(name, type, contentType, keyType);
 			case IVarExpression.WORLD:
-				return new WorldExpression(name, type, contentType,
+				return new WorldExpression(name, type, contentType, keyType,
 					definitionDescription.getModelDescription());
 			case IVarExpression.SELF:
-				return new SelfExpression(name, type, contentType);
+				return new SelfExpression(name, type, contentType, keyType);
 			default:
 				return null;
 		}
@@ -156,10 +158,9 @@ public class GamlExpressionFactory implements IExpressionFactory {
 				}
 				// No signature has been found, we throw an exception
 				if ( temp_types.size() == 0 ) {
-					context.error(
-						"No operator found for applying '" + op + "' to " + signature +
-							" (operators available for " + Arrays.toString(ops.keySet().toArray()) +
-							")", IGamlIssue.UNMATCHED_OPERANDS);
+					context.error("No operator found for applying '" + op + "' to " + signature +
+						" (operators available for " + Arrays.toString(ops.keySet().toArray()) +
+						")", IGamlIssue.UNMATCHED_OPERANDS);
 					return null;
 				}
 				signature = temp_types.get(0);

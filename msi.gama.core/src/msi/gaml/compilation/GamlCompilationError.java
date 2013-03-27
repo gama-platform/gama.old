@@ -73,7 +73,6 @@ public class GamlCompilationError {
 		final ISyntacticElement sourceInformation, final boolean warning, final Object facet,
 		final String ... data) {
 		this(string);
-		// this.desc = desc;
 		isWarning = warning;
 		this.facet = facet;
 		this.code = code;

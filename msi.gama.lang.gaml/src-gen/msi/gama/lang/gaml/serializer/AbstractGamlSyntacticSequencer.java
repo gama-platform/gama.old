@@ -14,8 +14,8 @@ import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISyn
 import org.eclipse.xtext.serializer.analysis.ISyntacticSequencerPDAProvider.ISynTransition;
 import org.eclipse.xtext.serializer.sequencer.AbstractSyntacticSequencer;
 
-@SuppressWarnings("restriction")
-public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
+@SuppressWarnings("all")
+public abstract class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 
 	protected GamlGrammarAccess grammarAccess;
 	protected AbstractElementAlias match_S_1Expr_Facets_BlockOrEnd_FirstFacetKeyParserRuleCall_1_q;
@@ -25,6 +25,7 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 	protected AbstractElementAlias match_S_Experiment_NameKeyword_1_q;
 	protected AbstractElementAlias match_S_If_ConditionKeyword_1_q;
 	protected AbstractElementAlias match_S_Reflex_NameKeyword_1_q;
+	protected AbstractElementAlias match_S_Return_ValueKeyword_1_q;
 	protected AbstractElementAlias match_S_Set_LessThanSignHyphenMinusKeyword_3_1_or_ValueKeyword_3_0;
 	protected AbstractElementAlias match_S_Set___NameKeyword_1_1_or_VarKeyword_1_0__q;
 	protected AbstractElementAlias match_S_Solve_EquationKeyword_1_q;
@@ -41,6 +42,7 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 		match_S_Experiment_NameKeyword_1_q = new TokenAlias(false, true, grammarAccess.getS_ExperimentAccess().getNameKeyword_1());
 		match_S_If_ConditionKeyword_1_q = new TokenAlias(false, true, grammarAccess.getS_IfAccess().getConditionKeyword_1());
 		match_S_Reflex_NameKeyword_1_q = new TokenAlias(false, true, grammarAccess.getS_ReflexAccess().getNameKeyword_1());
+		match_S_Return_ValueKeyword_1_q = new TokenAlias(false, true, grammarAccess.getS_ReturnAccess().getValueKeyword_1());
 		match_S_Set_LessThanSignHyphenMinusKeyword_3_1_or_ValueKeyword_3_0 = new AlternativeAlias(false, false, new TokenAlias(false, false, grammarAccess.getS_SetAccess().getLessThanSignHyphenMinusKeyword_3_1()), new TokenAlias(false, false, grammarAccess.getS_SetAccess().getValueKeyword_3_0()));
 		match_S_Set___NameKeyword_1_1_or_VarKeyword_1_0__q = new AlternativeAlias(false, true, new TokenAlias(false, false, grammarAccess.getS_SetAccess().getNameKeyword_1_1()), new TokenAlias(false, false, grammarAccess.getS_SetAccess().getVarKeyword_1_0()));
 		match_S_Solve_EquationKeyword_1_q = new TokenAlias(false, true, grammarAccess.getS_SolveAccess().getEquationKeyword_1());
@@ -55,6 +57,9 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 		return "";
 	}
 	
+	/**
+	 * FirstFacetKey: DefinitionFacetKey | TypeFacetKey | SpecialFacetKey | ActionFacetKey | (ID ':');
+	 */
 	protected String getFirstFacetKeyToken(EObject semanticObject, RuleCall ruleCall, INode node) {
 		if (node != null)
 			return getTokenText(node);
@@ -81,6 +86,8 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 				emit_S_If_ConditionKeyword_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if(match_S_Reflex_NameKeyword_1_q.equals(syntax))
 				emit_S_Reflex_NameKeyword_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if(match_S_Return_ValueKeyword_1_q.equals(syntax))
+				emit_S_Return_ValueKeyword_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if(match_S_Set_LessThanSignHyphenMinusKeyword_3_1_or_ValueKeyword_3_0.equals(syntax))
 				emit_S_Set_LessThanSignHyphenMinusKeyword_3_1_or_ValueKeyword_3_0(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if(match_S_Set___NameKeyword_1_1_or_VarKeyword_1_0__q.equals(syntax))
@@ -153,6 +160,14 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 	
 	/**
 	 * Syntax:
+	 *     'value:'?
+	 */
+	protected void emit_S_Return_ValueKeyword_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * Syntax:
 	 *     'value:' | '<-'
 	 */
 	protected void emit_S_Set_LessThanSignHyphenMinusKeyword_3_1_or_ValueKeyword_3_0(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
@@ -161,7 +176,7 @@ public class AbstractGamlSyntacticSequencer extends AbstractSyntacticSequencer {
 	
 	/**
 	 * Syntax:
-	 *     ('name:' | 'var:')?
+	 *     ('var:' | 'name:')?
 	 */
 	protected void emit_S_Set___NameKeyword_1_1_or_VarKeyword_1_0__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);

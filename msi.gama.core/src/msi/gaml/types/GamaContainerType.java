@@ -18,8 +18,8 @@
  */
 package msi.gaml.types;
 
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
@@ -54,7 +54,12 @@ public class GamaContainerType extends GamaType<IContainer> {
 
 	@Override
 	public IType defaultContentType() {
-		return Types.get(NONE);
+		return Types.NO_TYPE;
+	}
+
+	@Override
+	public boolean hasContents() {
+		return true;
 	}
 
 }

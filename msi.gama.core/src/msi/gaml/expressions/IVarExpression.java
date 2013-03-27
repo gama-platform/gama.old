@@ -40,6 +40,8 @@ public interface IVarExpression extends IExpression {
 
 	public abstract void setContentType(IType speciesType);
 
+	public abstract void setKeyType(IType index);
+
 	void setVal(IScope scope, Object v, boolean create) throws GamaRuntimeException;
 
 	boolean isNotModifiable();

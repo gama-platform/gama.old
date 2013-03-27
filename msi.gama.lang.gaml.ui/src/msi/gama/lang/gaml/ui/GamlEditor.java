@@ -9,18 +9,18 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.resource.GamlResource;
-import msi.gama.lang.gaml.validation.IGamlBuilderListener;
+import msi.gama.lang.gaml.validation.*;
 import msi.gama.runtime.GAMA;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.XtextEditor;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
+import com.google.inject.Inject;
 
 /**
  * The class GamlEditor.
@@ -47,6 +47,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 	Label status;
 	Set<String> currentExperiments = new LinkedHashSet();
 	boolean wasOK = true;
+
+	@Inject
+	private GamlJavaValidator validator;
 
 	static {
 		FontData fd = Display.getDefault().getSystemFont().getFontData()[0];
@@ -144,7 +147,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		parent2.setLayoutData(data);
 		parent2.setLayout(new FillLayout());
 		super.createPartControl(parent2);
-
 		getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
 
 			@Override
@@ -157,17 +159,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 	}
 
-	@Override
-	public void init(final IEditorSite site, final IEditorInput input) throws PartInitException {
-		super.init(site, input);
-		// try {
-		// GamlEditor.this.updateToolbar(getResource().findMaxProblemSeverity(null, true,
-		// IResource.DEPTH_INFINITE) >= IMarker.SEVERITY_ERROR);
-		// } catch (CoreException e) {
-		// e.printStackTrace();
-		// }
-	}
-
 	private final SelectionListener listener = new SelectionAdapter() {
 
 		@Override
@@ -178,7 +169,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 				@Override
 				public IModel exec(final XtextResource state) throws Exception {
-					return ((GamlResource) state).doBuild();
+					return validator.build((GamlResource) state);
 				}
 
 			});

@@ -41,6 +41,7 @@ import msi.gaml.types.IType;
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.OF, type = IType.TYPE_ID, optional = true),
+	@facet(name = IKeyword.INDEX, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.VIRTUAL, type = IType.BOOL_STR, optional = true),
 	@facet(name = IKeyword.PERTINENCE, type = IType.FLOAT_STR, optional = true) }, omissible = IKeyword.NAME)
 public class ActionStatement extends AbstractStatementSequence implements IStatement.WithArgs {

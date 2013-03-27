@@ -866,27 +866,31 @@ ruleS_Return returns [EObject current=null]
 	    }
 
 )
-)(
+)(	otherlv_1='value:' 
+    {
+    	newLeafNode(otherlv_1, grammarAccess.getS_ReturnAccess().getValueKeyword_1());
+    }
+)?(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getS_ReturnAccess().getExprExpressionParserRuleCall_1_0()); 
+	        newCompositeNode(grammarAccess.getS_ReturnAccess().getExprExpressionParserRuleCall_2_0()); 
 	    }
-		lv_expr_1_0=ruleExpression		{
+		lv_expr_2_0=ruleExpression		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getS_ReturnRule());
 	        }
        		set(
        			$current, 
        			"expr",
-        		lv_expr_1_0, 
+        		lv_expr_2_0, 
         		"Expression");
 	        afterParserOrEnumRuleCall();
 	    }
 
 )
-)?	otherlv_2=';' 
+)?	otherlv_3=';' 
     {
-    	newLeafNode(otherlv_2, grammarAccess.getS_ReturnAccess().getSemicolonKeyword_2());
+    	newLeafNode(otherlv_3, grammarAccess.getS_ReturnAccess().getSemicolonKeyword_3());
     }
 )
 ;
@@ -5575,24 +5579,46 @@ ruleTypeRef returns [EObject current=null]
 (
 (
 		{ 
-	        newCompositeNode(grammarAccess.getTypeRefAccess().getOfTypeRefParserRuleCall_2_1_0()); 
+	        newCompositeNode(grammarAccess.getTypeRefAccess().getFirstTypeRefParserRuleCall_2_1_0()); 
 	    }
-		lv_of_3_0=ruleTypeRef		{
+		lv_first_3_0=ruleTypeRef		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getTypeRefRule());
 	        }
        		set(
        			$current, 
-       			"of",
-        		lv_of_3_0, 
+       			"first",
+        		lv_first_3_0, 
         		"TypeRef");
 	        afterParserOrEnumRuleCall();
 	    }
 
 )
-)	otherlv_4='>' 
+)(	otherlv_4=',' 
     {
-    	newLeafNode(otherlv_4, grammarAccess.getTypeRefAccess().getGreaterThanSignKeyword_2_2());
+    	newLeafNode(otherlv_4, grammarAccess.getTypeRefAccess().getCommaKeyword_2_2_0());
+    }
+(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getTypeRefAccess().getSecondTypeRefParserRuleCall_2_2_1_0()); 
+	    }
+		lv_second_5_0=ruleTypeRef		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getTypeRefRule());
+	        }
+       		set(
+       			$current, 
+       			"second",
+        		lv_second_5_0, 
+        		"TypeRef");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+))?	otherlv_6='>' 
+    {
+    	newLeafNode(otherlv_6, grammarAccess.getTypeRefAccess().getGreaterThanSignKeyword_2_3());
     }
 )?)
 ;

@@ -81,7 +81,6 @@ public class Variable extends Symbol implements IVariable {
 		amongExpression = getFacet(IKeyword.AMONG);
 		isNotModifiable = desc.isNotModifiable();
 		type = desc.getType();
-		contentType = desc.getContentType();
 		definitionOrder = desc.getDefinitionOrder();
 		buildHelpers(desc);
 	}

@@ -26,8 +26,8 @@ import msi.gaml.types.IType;
 public class AgentVariableExpression extends VariableExpression {
 
 	protected AgentVariableExpression(final String n, final IType type, final IType contentType,
-		final boolean notModifiable, final IDescription def) {
-		super(n, type, contentType, notModifiable, def);
+		IType keyType, final boolean notModifiable, final IDescription def) {
+		super(n, type, contentType, keyType, notModifiable, def);
 	}
 
 	@Override

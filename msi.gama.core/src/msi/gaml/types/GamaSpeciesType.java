@@ -19,8 +19,8 @@
 package msi.gaml.types;
 
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.species.ISpecies;
@@ -55,6 +55,16 @@ public class GamaSpeciesType extends GamaType<ISpecies> {
 	@Override
 	public IType defaultContentType() {
 		return Types.get(AGENT);
+	}
+
+	@Override
+	public IType defaultKeyType() {
+		return Types.get(IType.INT);
+	}
+
+	@Override
+	public boolean hasContents() {
+		return true;
 	}
 
 }

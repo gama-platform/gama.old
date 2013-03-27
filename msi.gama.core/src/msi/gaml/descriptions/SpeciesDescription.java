@@ -342,10 +342,9 @@ public class SpeciesDescription extends TypeDescription {
 					javaBase = parent.javaBase;
 					agentConstructor = parent.agentConstructor;
 				} else {
-					error(
-						"Species " + getName() + " Java base class (" + javaBase.getSimpleName() +
-							") is not a subclass of its parent species " + parent.getName() +
-							" base class (" + parent.getJavaBase().getSimpleName() + ")",
+					error("Species " + getName() + " Java base class (" + javaBase.getSimpleName() +
+						") is not a subclass of its parent species " + parent.getName() +
+						" base class (" + parent.getJavaBase().getSimpleName() + ")",
 						IGamlIssue.GENERAL);
 				}
 			}

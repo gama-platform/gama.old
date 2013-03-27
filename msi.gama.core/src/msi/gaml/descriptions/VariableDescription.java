@@ -20,6 +20,7 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gama.common.interfaces.ISyntacticElement;
+import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.*;
 import msi.gaml.expressions.IVarExpression;
@@ -39,7 +40,7 @@ public class VariableDescription extends SymbolDescription {
 
 	private int definitionOrder = -1;
 	private IVarExpression varExpr = null;
-	private IType type = null, contentType = null;
+	private IType type = null, contentType = null, keyType = null;
 	private final boolean _isGlobal, _isFunction, _isNotModifiable, _isParameter, _isUpdatable;
 	private IVarGetter get;
 	private IVarGetter init;
@@ -159,10 +160,11 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public IType getContentType() {
+		if ( !getType().hasContents() ) { return Types.NO_TYPE; }
 		if ( contentType != null && contentType != Types.NO_TYPE ) { return contentType; }
 		String of = facets.getLabel(OF);
 		if ( of != null ) {
-			if ( "self".equals(of) ) {
+			if ( ITypeProvider.SELF_TYPE.equals(of) ) {
 				contentType = getTypeNamed(getSuperDescription().getName());
 			} else if ( "instance".equals(of) ) {
 				contentType = Types.NO_TYPE;
@@ -173,12 +175,26 @@ public class VariableDescription extends SymbolDescription {
 		return contentType == null ? getType().defaultContentType() : contentType;
 	}
 
+	@Override
+	public IType getKeyType() {
+		if ( !getType().hasContents() ) { return Types.NO_TYPE; }
+		if ( keyType != null && keyType != Types.NO_TYPE ) { return keyType; }
+		String index = facets.getLabel(INDEX);
+		if ( index != null ) {
+			keyType = getTypeNamed(index);
+		} else {
+			keyType = getType().defaultKeyType();
+		}
+		return keyType;
+	}
+
 	public IVarExpression getVarExpr() {
 		if ( varExpr != null ) { return varExpr; }
 		//
 		varExpr =
 			GAMA.getExpressionFactory().createVar(getName(), getType(), getContentType(),
-				isNotModifiable(), _isGlobal ? IVarExpression.GLOBAL : IVarExpression.AGENT,
+				getKeyType(), isNotModifiable(),
+				_isGlobal ? IVarExpression.GLOBAL : IVarExpression.AGENT,
 				this.getSuperDescription());
 		return varExpr;
 	}

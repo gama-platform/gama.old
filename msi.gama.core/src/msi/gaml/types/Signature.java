@@ -18,6 +18,7 @@
  */
 package msi.gaml.types;
 
+import java.util.Arrays;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 
@@ -85,7 +86,7 @@ public class Signature {
 
 	@Override
 	public int hashCode() {
-		return list.hashCode();
+		return Arrays.hashCode(list);
 	}
 
 	@Override

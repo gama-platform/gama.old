@@ -207,6 +207,7 @@ public class AgentsMenu extends ContributionItem {
 
 	public static void fill(final Menu parent, final SelectionListener listener) {
 		ISimulation sim = GAMA.getFrontmostSimulation();
+		if ( sim == null ) { return; }
 		IPopulation worldPopulation = sim.getWorldPopulation();
 		populateSpecies(parent, worldPopulation, true, listener);
 	}

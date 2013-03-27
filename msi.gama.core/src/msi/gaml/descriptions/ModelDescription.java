@@ -20,11 +20,11 @@ package msi.gaml.descriptions;
 
 import java.io.File;
 import java.util.*;
-import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.factories.*;
+import msi.gaml.factories.IChildrenProvider;
 import msi.gaml.types.*;
 import org.eclipse.emf.common.notify.*;
 
@@ -51,10 +51,10 @@ public class ModelDescription extends SymbolDescription {
 	private final Map<String, TypeDescription> allSpeciesDescription = new HashMap();
 	private final ErrorCollector collect = new ErrorCollector();
 
-	public ModelDescription(final ModelStructure struct) {
-		super(MODEL, null, IChildrenProvider.NONE, struct.getSource());
+	public ModelDescription(String projectPath, String modelPath, ISyntacticElement source) {
+		super(MODEL, null, IChildrenProvider.NONE, source);
 		types = new TypesManager(this);
-		setModelFilePath(struct.getProjectPath(), struct.getPath());
+		setModelFilePath(projectPath, modelPath);
 		number = count++;
 	}
 
@@ -131,7 +131,7 @@ public class ModelDescription extends SymbolDescription {
 
 	public void setModelFilePath(final String projectPath, final String filePath) {
 		modelFilePath = filePath;
-		modelFolderPath = new File(filePath).getAbsoluteFile().getParent();
+		modelFolderPath = new File("").getAbsoluteFile().getParent();
 		modelProjectPath = projectPath;
 	}
 

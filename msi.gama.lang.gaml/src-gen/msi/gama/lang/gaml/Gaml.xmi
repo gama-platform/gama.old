@@ -186,6 +186,7 @@
       <elements xsi:type="xtext:Assignment" feature="key" operator="=">
         <terminal xsi:type="xtext:Keyword" value="return"/>
       </elements>
+      <elements xsi:type="xtext:Keyword" cardinality="?" value="value:"/>
       <elements xsi:type="xtext:Assignment" cardinality="?" feature="expr" operator="=">
         <terminal xsi:type="xtext:RuleCall" rule="//@rules.44"/>
       </elements>
@@ -1365,8 +1366,14 @@
       </elements>
       <elements xsi:type="xtext:Group" cardinality="?">
         <elements xsi:type="xtext:Keyword" value="&lt;"/>
-        <elements xsi:type="xtext:Assignment" feature="of" operator="=">
+        <elements xsi:type="xtext:Assignment" feature="first" operator="=">
           <terminal xsi:type="xtext:RuleCall" rule="//@rules.66"/>
+        </elements>
+        <elements xsi:type="xtext:Group" cardinality="?">
+          <elements xsi:type="xtext:Keyword" value=","/>
+          <elements xsi:type="xtext:Assignment" feature="second" operator="=">
+            <terminal xsi:type="xtext:RuleCall" rule="//@rules.66"/>
+          </elements>
         </elements>
         <elements xsi:type="xtext:Keyword" value=">"/>
       </elements>

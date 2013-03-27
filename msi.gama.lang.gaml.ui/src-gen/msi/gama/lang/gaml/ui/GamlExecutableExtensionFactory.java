@@ -8,6 +8,8 @@ import org.osgi.framework.Bundle;
 
 import com.google.inject.Injector;
 
+import msi.gama.lang.gaml.ui.internal.GamlActivator;
+
 /**
  * This class was generated. Customizations should only happen in a newly
  * introduced subclass. 
@@ -16,12 +18,12 @@ public class GamlExecutableExtensionFactory extends AbstractGuiceAwareExecutable
 
 	@Override
 	protected Bundle getBundle() {
-		return msi.gama.lang.gaml.ui.internal.GamlActivator.getInstance().getBundle();
+		return GamlActivator.getInstance().getBundle();
 	}
 	
 	@Override
 	protected Injector getInjector() {
-		return msi.gama.lang.gaml.ui.internal.GamlActivator.getInstance().getInjector("msi.gama.lang.gaml.Gaml");
+		return GamlActivator.getInstance().getInjector(GamlActivator.MSI_GAMA_LANG_GAML_GAML);
 	}
 	
 }

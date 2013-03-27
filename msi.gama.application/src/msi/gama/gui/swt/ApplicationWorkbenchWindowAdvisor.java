@@ -18,29 +18,37 @@
  */
 package msi.gama.gui.swt;
 
+import java.util.*;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.runtime.GAMA;
+import msi.gama.util.GamaList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.application.*;
+import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
+import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.ide.EditorAreaDropAdapter;
+import org.eclipse.ui.internal.ide.application.IDEWorkbenchWindowAdvisor;
+import org.eclipse.ui.internal.wizards.AbstractExtensionWizardRegistry;
+import org.eclipse.ui.wizards.*;
 import org.osgi.service.prefs.BackingStoreException;
 
 @SuppressWarnings("restriction")
-public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
+public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor {
 
 	public static final String PROMPT_ON_EXIT = "PROMPT_ON_EXIT";
 
-	public ApplicationWorkbenchWindowAdvisor(final IWorkbenchWindowConfigurer configurer) {
-		super(configurer);
+	public ApplicationWorkbenchWindowAdvisor(final ApplicationWorkbenchAdvisor adv,
+		final IWorkbenchWindowConfigurer configurer) {
+		super(adv, configurer);
 	}
 
 	@Override
 	public void preWindowOpen() {
+		super.preWindowOpen();
 		IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
 		configurer.setInitialSize(new Point(700, 550));
 		configurer.setShowFastViewBars(false);
@@ -83,6 +91,37 @@ public class ApplicationWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 			}
 		}
 		return super.preWindowShellClose();
+	}
+
+	static List<String> CATEGORIES_TO_REMOVE = new GamaList(new String[] {
+		"org.eclipse.jdt.debug.ui.java", "org.eclipse.jdt.junit", "org.eclipse.pde.PDE",
+		"org.eclipse.ui.Basic", "org.eclipse.emf.codegen.ecore.ui.wizardCategory",
+		"org.eclipse.jdt.ui.java" });
+
+	@Override
+	public void postWindowOpen() {
+		AbstractExtensionWizardRegistry wizardRegistry =
+			(AbstractExtensionWizardRegistry) PlatformUI.getWorkbench().getNewWizardRegistry();
+		IWizardCategory[] categories =
+			PlatformUI.getWorkbench().getNewWizardRegistry().getRootCategory().getCategories();
+		for ( IWizardDescriptor wizard : getAllWizards(categories) ) {
+			String id = wizard.getCategory().getId();
+			if ( CATEGORIES_TO_REMOVE.contains(id) ) {
+				WorkbenchWizardElement wizardElement = (WorkbenchWizardElement) wizard;
+				wizardRegistry.removeExtension(wizardElement.getConfigurationElement()
+					.getDeclaringExtension(), new Object[] { wizardElement });
+			}
+		}
+	}
+
+	private IWizardDescriptor[] getAllWizards(IWizardCategory[] categories) {
+		List<IWizardDescriptor> results = new ArrayList<IWizardDescriptor>();
+		for ( IWizardCategory wizardCategory : categories ) {
+			System.out.println("Category:" + wizardCategory.getId());
+			results.addAll(Arrays.asList(wizardCategory.getWizards()));
+			results.addAll(Arrays.asList(getAllWizards(wizardCategory.getCategories())));
+		}
+		return results.toArray(new IWizardDescriptor[0]);
 	}
 
 }

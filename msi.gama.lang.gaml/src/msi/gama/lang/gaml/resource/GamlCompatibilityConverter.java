@@ -5,6 +5,7 @@ import java.util.*;
 import msi.gama.common.interfaces.ISyntacticElement;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.utils.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.descriptions.*;
 import msi.gaml.factories.DescriptionFactory;
 import org.eclipse.emf.common.util.*;
@@ -23,51 +24,71 @@ public class GamlCompatibilityConverter {
 
 	final GamlResource resource;
 
+	static final List<Integer> STATEMENTS_WITH_ATTRIBUTES = Arrays.asList(ISymbolKind.SPECIES,
+		ISymbolKind.EXPERIMENT, ISymbolKind.OUTPUT);
+
 	public GamlCompatibilityConverter(GamlResource resource) {
 		this.resource = resource;
+	}
+
+	public ISyntacticElement buildSyntacticContents() {
+		Model m = (Model) resource.getContents().get(0);
+		if ( m == null ) { throw new NullPointerException("The model of " + resource +
+			" appears to be null. Please debug to understand the cause."); }
+		ISyntacticElement syntacticContents = new SyntacticStatement(MODEL, m);
+		syntacticContents.setFacet(NAME, convExpr(m.getName()));
+		// for ( final Import i : m.getImports() ) {
+		// final ISyntacticElement include = new SyntacticStatement(INCLUDE, i);
+		// include.setFacet(FILE, convExpr(i.getImportURI()));
+		// syntacticContents.addChild(include);
+		// }
+		convStatements(syntacticContents, m.getStatements());
+		return syntacticContents;
 	}
 
 	private boolean doesNotDefineAttributes(String keyword) {
 		SymbolProto p = DescriptionFactory.getProto(keyword);
 		if ( p == null ) { return true; }
 		int kind = p.getKind();
-		return !GamlResource.STATEMENTS_WITH_ATTRIBUTES.contains(kind);
+		return !STATEMENTS_WITH_ATTRIBUTES.contains(kind);
 	}
 
-	private final ISyntacticElement convStatement(final String upper, final Statement stm) {
+	private final ISyntacticElement convStatement(final ISyntacticElement upper, final Statement stm) {
 		// We catch its keyword
 		String keyword = EGaml.getKey.caseStatement(stm);
 		if ( keyword == null ) {
 			throw new NullPointerException(
 				"Trying to convert a statement with a null keyword. Please debug to understand the cause.");
+		} else if ( keyword.equals(ENTITIES) ) {
+			convertBlock(stm, upper);
+			return null;
 		} else {
-			keyword = convertKeyword(keyword, upper);
+			keyword = convertKeyword(keyword, upper.getKeyword());
 		}
-		final ISyntacticElement elt = new SyntacticStatement(keyword, stm);
+		final SyntacticStatement elt = new SyntacticStatement(keyword, stm);
 		/**
 		 * Some syntactic rewritings to remove ambiguities inherent to the grammar of GAML and
 		 * translate the new compact syntax into the legacy facet-based one
 		 */
-
-		if ( stm instanceof S_Assignment ) {
+		if ( keyword.equals(ENVIRONMENT) ) {
+			convertBlock(stm, upper);
+		} else if ( stm instanceof S_Experiment ) {
+			elt.setExperiment(true);
+		} else if ( keyword.equals(GLOBAL) ) {
+			elt.setGlobal(true);
+		} else if ( stm instanceof S_Species ) {
+			elt.setSpecies(true);
+		} else if ( stm instanceof S_Assignment ) {
 			keyword = convertAssignment((S_Assignment) stm, keyword, elt, EGaml.getExprOf(stm));
-		} else if ( stm instanceof S_Definition && !keyword.equals(ENVIRONMENT) &&
-			!SymbolProto.nonTypeStatements.contains(keyword) ) {
+		} else if ( stm instanceof S_Definition && !SymbolProto.nonTypeStatements.contains(keyword) ) {
 			S_Definition def = (S_Definition) stm;
 			// If we define a variable with this statement
 			// COMPATIBILITY with environment not being declared anymore
-			// Translation of "type<contents> ..." to "type of: contents..."
+
 			TypeRef t = (TypeRef) def.getTkey();
-			if ( t != null ) {
-				TypeRef of = (TypeRef) t.getOf();
-				if ( of != null ) {
-					String type = EGaml.getKey.caseTypeRef(of);
-					if ( type != null ) {
-						addFacet(elt, OF, convExpr(type));
-					}
-				}
-			}
-			if ( doesNotDefineAttributes(upper) ) {
+			convertType(elt, t);
+
+			if ( doesNotDefineAttributes(upper.getKeyword()) ) {
 				// Translation of "type var ..." to "let var type: type ..." if we are not in a
 				// top-level statement (i.e. not in the declaration of a species or an experiment)
 				elt.setKeyword(LET);
@@ -172,6 +193,29 @@ public class GamlCompatibilityConverter {
 		return elt;
 	}
 
+	private void convertType(final ISyntacticElement elt, TypeRef t) {
+		if ( t != null ) {
+			TypeRef first = (TypeRef) t.getFirst();
+			TypeRef second = (TypeRef) t.getSecond();
+			// Translation of "type<contents> ..." to "type of: contents..."
+			TypeRef of = second == null ? first : second;
+			if ( of != null ) {
+				String type = EGaml.getKey.caseTypeRef(of);
+				if ( type != null ) {
+					addFacet(elt, OF, convExpr(type));
+				}
+			}
+			// Translation of "type<index, contents> ..." to "type of: contents index: index..."
+			TypeRef index = of == second ? first : null;
+			if ( index != null ) {
+				String type = EGaml.getKey.caseTypeRef(index);
+				if ( type != null ) {
+					addFacet(elt, INDEX, convExpr(type));
+				}
+			}
+		}
+	}
+
 	private void convertBlock(final Statement stm, final ISyntacticElement elt) {
 		if ( EGaml.getBlockOf(stm) != null ) {
 			Block block = stm.getBlock();
@@ -218,27 +262,12 @@ public class GamlCompatibilityConverter {
 		}
 	}
 
-	public ISyntacticElement buildSyntacticContents() {
-		Model m = (Model) resource.getContents().get(0);
-		if ( m == null ) { throw new NullPointerException("The model of " + resource +
-			" appears to be null. Please debug to understand the cause."); }
-		ISyntacticElement syntacticContents = new SyntacticStatement(MODEL, m);
-		syntacticContents.setFacet(NAME, convExpr(m.getName()));
-		for ( final Import i : m.getImports() ) {
-			final ISyntacticElement include = new SyntacticStatement(INCLUDE, i);
-			include.setFacet(FILE, convExpr(i.getImportURI()));
-			syntacticContents.addChild(include);
-		}
-		convStatements(syntacticContents, m.getStatements());
-		return syntacticContents;
-	}
-
 	private final void convElse(final S_If stm, final ISyntacticElement elt) {
 		EObject elseBlock = stm.getElse();
 		if ( elseBlock != null ) {
 			ISyntacticElement elseElt = new SyntacticStatement(ELSE, elseBlock);
 			if ( elseBlock instanceof Statement ) {
-				elseElt.addChild(convStatement(IF, (Statement) elseBlock));
+				elseElt.addChild(convStatement(elt, (Statement) elseBlock));
 			} else {
 				convStatements(elseElt, ((Block) elseBlock).getStatements());
 			}
@@ -253,9 +282,7 @@ public class GamlCompatibilityConverter {
 				addFacet(arg, NAME, convExpr(def.getName()));
 				TypeRef type = (TypeRef) def.getType();
 				addFacet(arg, TYPE, convExpr(EGaml.getKey.caseTypeRef(type)));
-				if ( type.getOf() != null ) {
-					addFacet(arg, OF, convExpr(EGaml.getKey.caseTypeRef((TypeRef) type.getOf())));
-				}
+				convertType(arg, type);
 				if ( def.getDefault() != null ) {
 					addFacet(arg, DEFAULT, convExpr(def.getDefault()));
 				}
@@ -330,10 +357,7 @@ public class GamlCompatibilityConverter {
 			} else if ( fname.equals(TYPE) ) {
 				// We convert type: ss<tt> to type: ss of: tt
 				if ( f.getExpr() instanceof TypeRef ) {
-					TypeRef of = (TypeRef) ((TypeRef) f.getExpr()).getOf();
-					if ( of != null ) {
-						addFacet(elt, OF, convExpr(EGaml.getKey.caseTypeRef(of)));
-					}
+					convertType(elt, (TypeRef) f.getExpr());
 				}
 			}
 			// We compute (and convert) the expression attached to the facet
@@ -391,7 +415,10 @@ public class GamlCompatibilityConverter {
 
 	final void convStatements(final ISyntacticElement elt, final EList<? extends Statement> ss) {
 		for ( final Statement stm : ss ) {
-			elt.addChild(convStatement(elt.getKeyword(), stm));
+			ISyntacticElement child = convStatement(elt, stm);
+			if ( child != null ) {
+				elt.addChild(child);
+			}
 		}
 	}
 

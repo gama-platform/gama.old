@@ -54,8 +54,8 @@ public interface IExpressionFactory {
 
 	public IExpressionCompiler getParser();
 
-	IVarExpression createVar(String name, IType type, IType contentType, boolean isConst,
-		int scope, IDescription definitionDescription);
+	IVarExpression createVar(String name, IType type, IType contentType, IType keyType,
+		boolean isConst, int scope, IDescription definitionDescription);
 
 	public IExpression createList(final List<? extends IExpression> elements);
 

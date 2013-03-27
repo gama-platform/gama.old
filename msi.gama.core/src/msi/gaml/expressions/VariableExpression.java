@@ -29,10 +29,11 @@ public abstract class VariableExpression extends AbstractExpression implements I
 	private final IDescription definitionDescription;
 
 	protected VariableExpression(final String n, final IType type, final IType contentType,
-		final boolean notModifiable, final IDescription definitionDescription) {
+		IType keyType, final boolean notModifiable, final IDescription definitionDescription) {
 		setName(n);
 		setType(type);
 		setContentType(contentType);
+		setKeyType(keyType);
 		isNotModifiable = notModifiable;
 		this.definitionDescription = definitionDescription;
 	}
@@ -73,16 +74,17 @@ public abstract class VariableExpression extends AbstractExpression implements I
 	@Override
 	public void setType(final IType type) {
 		this.type = type;
-		if ( type.isSpeciesType() ) {
-			setContentType(type);
-		}
 	}
 
 	@Override
 	public void setContentType(final IType t) {
-		contentType =
-			t == null || t == Types.NO_TYPE ? type.isSpeciesType() ? type : type
-				.defaultContentType() : t;
+		contentType = t == null || t == Types.NO_TYPE ? type.defaultContentType() : t;
+
+	}
+
+	@Override
+	public void setKeyType(final IType t) {
+		keyType = t == null || t == Types.NO_TYPE ? type.defaultKeyType() : t;
 
 	}
 

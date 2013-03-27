@@ -21,7 +21,6 @@ package msi.gaml.types;
 import java.util.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.Symbol;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 
@@ -38,8 +37,7 @@ import msi.gaml.expressions.*;
  * 
  */
 
-public abstract class GamaType<Support>  implements IType<Support> {
-
+public abstract class GamaType<Support> implements IType<Support> {
 
 	protected short id;
 	protected String name;
@@ -121,6 +119,11 @@ public abstract class GamaType<Support>  implements IType<Support> {
 	}
 
 	@Override
+	public int hashCode() {
+		return id;
+	}
+
+	@Override
 	public String toString() {
 		return name;
 	}
@@ -145,7 +148,12 @@ public abstract class GamaType<Support>  implements IType<Support> {
 
 	@Override
 	public IType defaultContentType() {
-		return this;
+		return Types.NO_TYPE;
+	}
+
+	@Override
+	public IType defaultKeyType() {
+		return Types.NO_TYPE;
 	}
 
 	@Override
@@ -206,5 +214,10 @@ public abstract class GamaType<Support>  implements IType<Support> {
 		if ( isTranslatableInto(type) ) { return 1; }
 		if ( isAssignableFrom(type) ) { return 1; }
 		return Integer.MAX_VALUE;
+	}
+
+	@Override
+	public boolean hasContents() {
+		return false;
 	}
 }

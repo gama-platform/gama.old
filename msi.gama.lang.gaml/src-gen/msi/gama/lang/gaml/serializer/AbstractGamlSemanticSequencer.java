@@ -66,38 +66,18 @@ import org.eclipse.xtext.serializer.acceptor.ISemanticSequenceAcceptor;
 import org.eclipse.xtext.serializer.acceptor.SequenceFeeder;
 import org.eclipse.xtext.serializer.diagnostic.ISemanticSequencerDiagnosticProvider;
 import org.eclipse.xtext.serializer.diagnostic.ISerializationDiagnostic.Acceptor;
-import org.eclipse.xtext.serializer.sequencer.AbstractSemanticSequencer;
+import org.eclipse.xtext.serializer.sequencer.AbstractDelegatingSemanticSequencer;
 import org.eclipse.xtext.serializer.sequencer.GenericSequencer;
 import org.eclipse.xtext.serializer.sequencer.ISemanticNodeProvider.INodesForEObjectProvider;
 import org.eclipse.xtext.serializer.sequencer.ISemanticSequencer;
 import org.eclipse.xtext.serializer.sequencer.ITransientValueService;
 import org.eclipse.xtext.serializer.sequencer.ITransientValueService.ValueTransient;
 
-@SuppressWarnings("restriction")
-public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
+@SuppressWarnings("all")
+public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSemanticSequencer {
 
 	@Inject
-	protected GamlGrammarAccess grammarAccess;
-	
-	@Inject
-	protected ISemanticSequencerDiagnosticProvider diagnosticProvider;
-	
-	@Inject
-	protected ITransientValueService transientValues;
-	
-	@Inject
-	@GenericSequencer
-	protected Provider<ISemanticSequencer> genericSequencerProvider;
-	
-	protected ISemanticSequencer genericSequencer;
-	
-	
-	@Override
-	public void init(ISemanticSequencer sequencer, ISemanticSequenceAcceptor sequenceAcceptor, Acceptor errorAcceptor) {
-		super.init(sequencer, sequenceAcceptor, errorAcceptor);
-		this.genericSequencer = genericSequencerProvider.get();
-		this.genericSequencer.init(sequencer, sequenceAcceptor, errorAcceptor);
-	}
+	private GamlGrammarAccess grammarAccess;
 	
 	public void createSequence(EObject context, EObject semanticObject) {
 		if(semanticObject.eClass().getEPackage() == GamlPackage.eINSTANCE) switch(semanticObject.eClass().getClassifierID()) {
@@ -358,19 +338,9 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				}
 				else break;
 			case GamlPackage.EXPRESSION:
-				if(context == grammarAccess.getAdditionRule() ||
-				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
-				   context == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0()) {
-					sequence_Addition(context, (Expression) semanticObject); 
-					return; 
-				}
-				else if(context == grammarAccess.getComparisonRule()) {
-					sequence_Addition(context, (Expression) semanticObject); 
-					return; 
-				}
-				else if(context == grammarAccess.getAndRule() ||
+				if(context == grammarAccess.getAndRule() ||
 				   context == grammarAccess.getAndAccess().getExpressionLeftAction_1_0()) {
-					sequence_Addition(context, (Expression) semanticObject); 
+					sequence_Addition_And_Comparison_Multiplication(context, (Expression) semanticObject); 
 					return; 
 				}
 				else if(context == grammarAccess.getExpressionRule() ||
@@ -380,7 +350,17 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getOrAccess().getExpressionLeftAction_1_0() ||
 				   context == grammarAccess.getPairRule() ||
 				   context == grammarAccess.getPairAccess().getPairLeftAction_1_0_0()) {
-					sequence_Addition(context, (Expression) semanticObject); 
+					sequence_Addition_And_Comparison_Multiplication_Or(context, (Expression) semanticObject); 
+					return; 
+				}
+				else if(context == grammarAccess.getComparisonRule()) {
+					sequence_Addition_Comparison_Multiplication(context, (Expression) semanticObject); 
+					return; 
+				}
+				else if(context == grammarAccess.getAdditionRule() ||
+				   context == grammarAccess.getAdditionAccess().getExpressionLeftAction_1_0_0() ||
+				   context == grammarAccess.getComparisonAccess().getExpressionLeftAction_1_0_0()) {
+					sequence_Addition_Multiplication(context, (Expression) semanticObject); 
 					return; 
 				}
 				else if(context == grammarAccess.getMultiplicationRule() ||
@@ -425,7 +405,11 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				}
 				else break;
 			case GamlPackage.FACET:
-				if(context == grammarAccess.getActionFacetRule()) {
+				if(context == grammarAccess.getFacetRule()) {
+					sequence_ActionFacet_ClassicFacet_DefinitionFacet_Facet_FunctionFacet_TypeFacet(context, (Facet) semanticObject); 
+					return; 
+				}
+				else if(context == grammarAccess.getActionFacetRule()) {
 					sequence_ActionFacet(context, (Facet) semanticObject); 
 					return; 
 				}
@@ -437,10 +421,6 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 				   context == grammarAccess.getGamlDefinitionRule() ||
 				   context == grammarAccess.getVarDefinitionRule()) {
 					sequence_DefinitionFacet(context, (Facet) semanticObject); 
-					return; 
-				}
-				else if(context == grammarAccess.getFacetRule()) {
-					sequence_Facet(context, (Facet) semanticObject); 
 					return; 
 				}
 				else if(context == grammarAccess.getFunctionFacetRule()) {
@@ -981,6 +961,21 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
+	 *     (
+	 *         (key=DefinitionFacetKey (name=Valid_ID | name=STRING)) | 
+	 *         ((key='function:' | key='->') expr=Expression) | 
+	 *         ((key=ID | key='<-' | key=SpecialFacetKey) expr=Expression) | 
+	 *         (key=TypeFacetKey expr=TypeRef) | 
+	 *         (key=ActionFacetKey expr=ActionRef)
+	 *     )
+	 */
+	protected void sequence_ActionFacet_ClassicFacet_DefinitionFacet_Facet_FunctionFacet_TypeFacet(EObject context, Facet semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
 	 *     (key=ActionFacetKey expr=ActionRef)
 	 */
 	protected void sequence_ActionFacet(EObject context, Facet semanticObject) {
@@ -1030,11 +1025,72 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	 *             ) 
 	 *             right=Addition
 	 *         ) | 
+	 *         (left=And_Expression_1_0 op='and' right=Comparison)
+	 *     )
+	 */
+	protected void sequence_Addition_And_Comparison_Multiplication(EObject context, Expression semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (
+	 *         (left=Addition_Expression_1_0_0 (op='+' | op='-') right=Multiplication) | 
+	 *         (left=Multiplication_Expression_1_0_0 (op='*' | op='/' | op='^') right=Binary) | 
+	 *         (
+	 *             left=Comparison_Expression_1_0_0 
+	 *             (
+	 *                 op='!=' | 
+	 *                 op='=' | 
+	 *                 op='>=' | 
+	 *                 op='<=' | 
+	 *                 op='<' | 
+	 *                 op='>'
+	 *             ) 
+	 *             right=Addition
+	 *         ) | 
 	 *         (left=And_Expression_1_0 op='and' right=Comparison) | 
 	 *         (left=Or_Expression_1_0 op='or' right=And)
 	 *     )
 	 */
-	protected void sequence_Addition(EObject context, Expression semanticObject) {
+	protected void sequence_Addition_And_Comparison_Multiplication_Or(EObject context, Expression semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (
+	 *         (left=Addition_Expression_1_0_0 (op='+' | op='-') right=Multiplication) | 
+	 *         (left=Multiplication_Expression_1_0_0 (op='*' | op='/' | op='^') right=Binary) | 
+	 *         (
+	 *             left=Comparison_Expression_1_0_0 
+	 *             (
+	 *                 op='!=' | 
+	 *                 op='=' | 
+	 *                 op='>=' | 
+	 *                 op='<=' | 
+	 *                 op='<' | 
+	 *                 op='>'
+	 *             ) 
+	 *             right=Addition
+	 *         )
+	 *     )
+	 */
+	protected void sequence_Addition_Comparison_Multiplication(EObject context, Expression semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Constraint:
+	 *     (
+	 *         (left=Addition_Expression_1_0_0 (op='+' | op='-') right=Multiplication) | 
+	 *         (left=Multiplication_Expression_1_0_0 (op='*' | op='/' | op='^') right=Binary)
+	 *     )
+	 */
+	protected void sequence_Addition_Multiplication(EObject context, Expression semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -1145,21 +1201,6 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	 *     (exprs+=Expression exprs+=Expression*)
 	 */
 	protected void sequence_ExpressionList(EObject context, ExpressionList semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Constraint:
-	 *     (
-	 *         (key=DefinitionFacetKey (name=Valid_ID | name=STRING)) | 
-	 *         ((key='function:' | key='->') expr=Expression) | 
-	 *         ((key=ID | key='<-' | key=SpecialFacetKey) expr=Expression) | 
-	 *         (key=TypeFacetKey expr=TypeRef) | 
-	 *         (key=ActionFacetKey expr=ActionRef)
-	 *     )
-	 */
-	protected void sequence_Facet(EObject context, Facet semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -1601,7 +1642,7 @@ public class AbstractGamlSemanticSequencer extends AbstractSemanticSequencer {
 	
 	/**
 	 * Constraint:
-	 *     (ref=[TypeDefinition|ID] of=TypeRef?)
+	 *     (ref=[TypeDefinition|ID] (first=TypeRef second=TypeRef?)?)
 	 */
 	protected void sequence_TypeRef(EObject context, TypeRef semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

@@ -40,7 +40,6 @@ public class ListExpression extends AbstractExpression {
 		int n = this.elements.length;
 		values = new Object[n];
 		setName(elements.toString());
-		type = Types.get(IType.LIST);
 		boolean allTheSame = true;
 		if ( n != 0 ) {
 			IExpression e = elements.get(0);
@@ -120,6 +119,16 @@ public class ListExpression extends AbstractExpression {
 	@Override
 	public String getTitle() {
 		return "Literal list expression";
+	}
+
+	@Override
+	public IType getType() {
+		return Types.get(IType.LIST);
+	}
+
+	@Override
+	public IType getKeyType() {
+		return Types.get(IType.INT);
 	}
 
 	@Override

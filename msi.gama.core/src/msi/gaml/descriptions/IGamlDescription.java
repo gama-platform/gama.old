@@ -24,7 +24,9 @@ public interface IGamlDescription extends Adapter.Internal {
 
 	public abstract IType getContentType();
 
-	public IType getType();
+	public abstract IType getKeyType();
+
+	public abstract IType getType();
 
 	public abstract String getName();
 

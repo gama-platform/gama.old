@@ -107,8 +107,7 @@ public class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public void error(final String s, final String code, final Object facet,
-		final String ... data) {
+	public void error(final String s, final String code, final Object facet, final String ... data) {
 		flagError(s, code, false, facet, data);
 	}
 
@@ -233,7 +232,8 @@ public class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public IExpression addTemp(final String name, final IType type, final IType contentType) {
+	public IExpression addTemp(final String name, final IType type, final IType contentType,
+		IType keyType) {
 		return null;
 	}
 
@@ -256,6 +256,11 @@ public class SymbolDescription implements IDescription {
 
 	@Override
 	public IType getContentType() {
+		return Types.get(IType.NONE);
+	}
+
+	@Override
+	public IType getKeyType() {
 		return Types.get(IType.NONE);
 	}
 

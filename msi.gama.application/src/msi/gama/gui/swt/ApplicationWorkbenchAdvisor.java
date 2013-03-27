@@ -36,8 +36,9 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.application.*;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
 
-public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
+public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
 	private static final String PERSPECTIVE_MODELING_ID =
 		"msi.gama.application.perspectives.ModelingPerspective";
@@ -45,7 +46,7 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	@Override
 	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(
 		final IWorkbenchWindowConfigurer configurer) {
-		return new ApplicationWorkbenchWindowAdvisor(configurer);
+		return new ApplicationWorkbenchWindowAdvisor(this, configurer);
 	}
 
 	@Override

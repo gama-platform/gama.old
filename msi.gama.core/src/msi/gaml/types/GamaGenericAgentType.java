@@ -54,4 +54,9 @@ public class GamaGenericAgentType extends GamaAgentType {
 		return type != this && type instanceof GamaAgentType;
 	}
 
+	@Override
+	public boolean hasContents() {
+		return true;
+	}
+
 }

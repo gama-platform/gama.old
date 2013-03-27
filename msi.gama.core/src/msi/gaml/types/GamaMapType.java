@@ -49,7 +49,12 @@ public class GamaMapType extends GamaType<Map> {
 
 	@Override
 	public IType defaultContentType() {
-		return Types.get(PAIR);
+		return Types.NO_TYPE;
+	}
+
+	@Override
+	public boolean hasContents() {
+		return true;
 	}
 
 }

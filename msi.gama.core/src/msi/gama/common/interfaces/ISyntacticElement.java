@@ -80,6 +80,18 @@ public interface ISyntacticElement {
 
 	void dispose();
 
+	public abstract boolean isGlobal();
+
+	public abstract boolean isSpecies();
+
+	public abstract boolean isExperiment();
+
+	public abstract boolean isGrid();
+
+	public abstract List<ISyntacticElement> getSpeciesChildren();
+
+	public abstract String getName();
+
 	/**
 	 * @param name
 	 * @param name2

@@ -33,6 +33,7 @@ import msi.gaml.types.*;
  */
 public class BinaryOperator extends AbstractNAryOperator {
 
+	// FIXME keyTypeProvider ??
 	protected final boolean lazy;
 	protected final boolean canBeConst;
 	protected final IOpRun helper;
@@ -182,8 +183,8 @@ public class BinaryOperator extends AbstractNAryOperator {
 			t == LEFT_TYPE ? left().getType() : t == RIGHT_TYPE ? right().getType()
 				: t == LEFT_CONTENT_TYPE ? left().getContentType() : t == RIGHT_CONTENT_TYPE
 					? right().getContentType() : t >= 0 ? Types.get(t) : type.id() == IType.LIST ||
-						type.id() == IType.MATRIX ? left().getContentType() : type.isSpeciesType()
-						? type : type.defaultContentType();
+						type.id() == IType.MATRIX || type.id() == IType.MAP ? left()
+						.getContentType() : type.defaultContentType();
 	}
 
 	@Override
@@ -249,6 +250,10 @@ public class BinaryOperator extends AbstractNAryOperator {
 		@Override
 		public void setContentType(final IType type) {}
 
+		@Override
+		public void setKeyType(final IType type) {}
+
+		// FIXME keyTypeProvider ??
 		@Override
 		public BinaryVarOperator copy() {
 			return new BinaryVarOperator(type, helper, canBeConst, typeProvider,

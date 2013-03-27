@@ -23,7 +23,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.IFacetType;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 
@@ -33,7 +32,7 @@ import msi.gaml.expressions.*;
  * @todo Description
  * 
  */
-public interface IType<Support>  {
+public interface IType<Support> {
 
 	/** Constant fields to indicate the types of facets */
 	public static final String LABEL = IFacetType.LABEL;
@@ -122,6 +121,8 @@ public interface IType<Support>  {
 
 	public abstract IType defaultContentType();
 
+	public abstract IType defaultKeyType();
+
 	public String getSpeciesName();
 
 	public boolean isAssignableFrom(IType l);
@@ -160,5 +161,7 @@ public interface IType<Support>  {
 	boolean canBeTypeOf(IScope s, Object c);
 
 	public void init(int varKind, final short id, final String name, final Class ... supports);
+
+	public abstract boolean hasContents();
 
 }

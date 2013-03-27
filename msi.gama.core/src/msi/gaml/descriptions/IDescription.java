@@ -66,7 +66,8 @@ public interface IDescription extends IGamlDescription, IKeyword {
 
 	public abstract SpeciesDescription getSpeciesContext();
 
-	public abstract IExpression addTemp(final String name, final IType type, final IType contentType);
+	public abstract IExpression addTemp(final String name, final IType type,
+		final IType contentType, final IType keyType);
 
 	public abstract List<IDescription> getChildren();
 

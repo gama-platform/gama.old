@@ -9,6 +9,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
 
 /**
@@ -148,7 +149,7 @@ public class DescriptionValidator {
 		IExpression expr =
 			cd.getFacets().getExpr(IKeyword.VAR, cd.getFacets().getExpr(IKeyword.NAME));
 		if ( !(expr instanceof IVarExpression) ) {
-			cd.error("This expression is not a reference to a variable ", IKeyword.NAME);
+			cd.error("This expression is not a reference to a variable ", IKeyword.VAR);
 		} else {
 			IExpression value = cd.getFacets().getExpr(VALUE);
 			if ( value != null && value.getType() != Types.NO_TYPE &&
@@ -164,7 +165,32 @@ public class DescriptionValidator {
 					" is a constant or a function and cannot be assigned a value.", IKeyword.NAME);
 			}
 		}
+	}
 
+	public static void assertContainerAssignmentIsOk(final IDescription cd) {
+		Facets f = cd.getFacets();
+		IExpression item = f.getExpr(ITEM, f.getExpr(EDGE, f.getExpr(VERTEX)));
+		IExpression list = f.getExpr(TO, f.getExpr(FROM, f.getExpr(IN)));
+		IExpression index = f.getExpr(AT);
+		if ( item == null || list == null ) {
+			cd.error("The assignment appears uncomplete", IGamlIssue.GENERAL, IKeyword.ITEM,
+				(String[]) null);
+			return;
+		}
+		IType contentType = list.getContentType();
+		IType valueType = item.getType();
+		IType keyType = list.getKeyType();
+		if ( contentType != Types.NO_TYPE && !valueType.isTranslatableInto(contentType) ) {
+			cd.warning("The type of the contents of " + list.toGaml() + " (" + contentType +
+				") does not match with the type of " + item.toGaml() + " (" + valueType + ")",
+				IGamlIssue.SHOULD_CAST, IKeyword.ITEM, contentType.toString());
+		}
+		if ( index != null && keyType != Types.NO_TYPE &&
+			!keyType.isTranslatableInto(index.getType()) ) {
+			cd.warning("The type of the index of " + list.toGaml() + " (" + keyType +
+				") does not match with the type of " + index.toGaml() + " (" + index.getType() +
+				")", IGamlIssue.SHOULD_CAST, IKeyword.AT, keyType.toString());
+		}
 	}
 
 	public static void assertMicroSpeciesIsVisible(final IDescription cd,
@@ -174,9 +200,9 @@ public class DescriptionValidator {
 			SpeciesDescription macroSpecies = cd.getSpeciesContext();
 			TypeDescription microSpecies = macroSpecies.getMicroSpecies(microSpeciesName);
 			if ( microSpecies == null ) {
-				cd.error(macroSpecies.getName() + " species doesn't contain " +
-					microSpeciesName + " as micro-species", IGamlIssue.UNKNOWN_SUBSPECIES,
-					facetContainingSpecies, microSpeciesName);
+				cd.error(macroSpecies.getName() + " species doesn't contain " + microSpeciesName +
+					" as micro-species", IGamlIssue.UNKNOWN_SUBSPECIES, facetContainingSpecies,
+					microSpeciesName);
 			}
 		}
 	}
@@ -201,8 +227,7 @@ public class DescriptionValidator {
 							"A " + desc.getKeyword() + " with '" + facet + "= " + stringValue +
 								"' is defined twice. Only one definition is allowed.";
 						child.error(error, IGamlIssue.DUPLICATE_DEFINITION, facet, stringValue);
-						previous.error(error, IGamlIssue.DUPLICATE_DEFINITION, facet,
-							stringValue);
+						previous.error(error, IGamlIssue.DUPLICATE_DEFINITION, facet, stringValue);
 					}
 				}
 			}
@@ -227,8 +252,7 @@ public class DescriptionValidator {
 		String error =
 			"No " + desc.getKeyword() + " with '" + facet + "= " + stringValue +
 				"' has been defined. ";
-		sd.error(error, IGamlIssue.MISSING_DEFINITION, null, desc.getKeyword(), facet,
-			stringValue);
+		sd.error(error, IGamlIssue.MISSING_DEFINITION, null, desc.getKeyword(), facet, stringValue);
 	}
 
 	public static void assertBehaviorIsExisting(final IDescription desc, final String facet) {

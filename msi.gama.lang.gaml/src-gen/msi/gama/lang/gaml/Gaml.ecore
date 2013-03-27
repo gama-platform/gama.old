@@ -148,7 +148,9 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="TypeRef" eSuperTypes="#//Expression">
     <eStructuralFeatures xsi:type="ecore:EReference" name="ref" eType="#//TypeDefinition"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="of" eType="#//Expression"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="first" eType="#//Expression"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="second" eType="#//Expression"
         containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SkillRef" eSuperTypes="#//Expression">

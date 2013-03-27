@@ -112,4 +112,9 @@ public class GamaGraphType extends GamaType<IGraph> {
 	// return destination;
 	// }
 
+	@Override
+	public boolean hasContents() {
+		return true;
+	}
+
 }

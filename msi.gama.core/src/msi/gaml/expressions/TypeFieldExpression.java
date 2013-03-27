@@ -19,9 +19,11 @@
 package msi.gaml.expressions;
 
 import msi.gama.common.interfaces.IValue;
-import msi.gama.runtime.IScope;
+import msi.gama.precompiler.ITypeProvider;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IFieldGetter;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.*;
 import org.eclipse.emf.common.notify.*;
 
@@ -29,20 +31,22 @@ public class TypeFieldExpression implements IExpression {
 
 	IFieldGetter getter;
 	protected IType type = null;
-	protected IType contentType = null;
+	protected String contentType = null;
+	protected IType keyType = null;
 	IExpression left;
 	String name;
 
-	public TypeFieldExpression(final String n, final IType type, final IType contentType,
-		final IFieldGetter g) {
+	public TypeFieldExpression(final String n, final IType type, final String contentType,
+		final IType keyType, final IFieldGetter g) {
 		setName(n);
 		setType(type);
 		setContentType(contentType);
+		setKeyType(keyType);
 		getter = g;
 	}
 
 	public TypeFieldExpression copyWith(final IExpression leftExpression) {
-		TypeFieldExpression f = new TypeFieldExpression(name, type, contentType, getter);
+		TypeFieldExpression f = new TypeFieldExpression(name, type, contentType, keyType, getter);
 		f.left = leftExpression;
 		return f;
 	}
@@ -80,16 +84,15 @@ public class TypeFieldExpression implements IExpression {
 
 	private void setType(final IType type) {
 		this.type = type;
-		if ( type.isSpeciesType() ) {
-			setContentType(type);
-		}
 	}
 
-	private void setContentType(final IType t) {
-		contentType =
-			t == null || t == Types.NO_TYPE ? type.isSpeciesType() ? type : type
-				.defaultContentType() : t;
+	private void setContentType(final String t) {
+		contentType = t;
 
+	}
+
+	private void setKeyType(final IType t) {
+		keyType = t == null ? type.defaultKeyType() : t;
 	}
 
 	@Override
@@ -104,7 +107,24 @@ public class TypeFieldExpression implements IExpression {
 
 	@Override
 	public IType getContentType() {
-		return contentType == null ? Types.NO_TYPE : contentType;
+		if ( !getType().hasContents() ) { return Types.NO_TYPE; }
+		if ( contentType == null ) { return getType().defaultContentType(); }
+		if ( ITypeProvider.SELF_TYPE.equals(contentType) ) {
+			return left == null ? Types.NO_TYPE : left.getType();
+		} else if ( ITypeProvider.CONTENT_TYPE.equals(contentType) ) {
+			return left == null ? Types.NO_TYPE : left.getContentType();
+		} else if ( ITypeProvider.INDEX_TYPE.equals(contentType) ) { return left == null
+			? Types.NO_TYPE : left.getKeyType(); }
+		// FIXME The model (or the types) should be known here
+		IDescription d = GAMA.getModelContext();
+		if ( d == null ) { return Types.get(contentType); }
+		return d.getTypeNamed(contentType);
+	}
+
+	@Override
+	public IType getKeyType() {
+		if ( !getType().hasContents() ) { return Types.NO_TYPE; }
+		return keyType == null ? getType().defaultKeyType() : keyType;
 	}
 
 	/**

@@ -137,4 +137,15 @@ public class GamaMatrixType extends GamaType<IMatrix> {
 		((GamaFloatMatrix) matrix)._putAll(scope, val, null);
 		return matrix;
 	}
+
+	@Override
+	public IType defaultKeyType() {
+		return Types.get(IType.POINT);
+	}
+
+	@Override
+	public boolean hasContents() {
+		return true;
+	}
+
 }

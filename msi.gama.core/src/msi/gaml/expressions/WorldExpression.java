@@ -25,8 +25,8 @@ import msi.gaml.types.IType;
 public class WorldExpression extends VariableExpression {
 
 	protected WorldExpression(final String n, final IType type, final IType contentType,
-		final IDescription global) {
-		super(n, type, contentType, true, global);
+		IType keyType, final IDescription global) {
+		super(n, type, contentType, keyType, true, global);
 	}
 
 	@Override

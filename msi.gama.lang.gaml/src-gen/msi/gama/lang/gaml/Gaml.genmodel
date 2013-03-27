@@ -5,7 +5,8 @@
     editDirectory="/msi.gama.lang.gaml.edit/src" editorDirectory="/msi.gama.lang.gaml.editor/src"
     modelPluginID="msi.gama.lang.gaml" forceOverwrite="true" modelName="Gaml" updateClasspath="false"
     rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container" complianceLevel="5.0"
-    copyrightFields="false" editPluginID="msi.gama.lang.gaml.edit" editorPluginID="msi.gama.lang.gaml.editor">
+    copyrightFields="false" editPluginID="msi.gama.lang.gaml.edit" editorPluginID="msi.gama.lang.gaml.editor"
+    runtimeVersion="2.7">
   <genPackages prefix="Gaml" basePackage="msi.gama.lang.gaml" disposableProviderFactory="true"
       ecorePackage="Gaml.ecore#/">
     <genClasses ecoreClass="Gaml.ecore#//Model">
@@ -125,7 +126,8 @@
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//TypeRef">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Gaml.ecore#//TypeRef/ref"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//TypeRef/of"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//TypeRef/first"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//TypeRef/second"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//SkillRef">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference Gaml.ecore#//SkillRef/ref"/>

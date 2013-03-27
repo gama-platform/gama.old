@@ -24,11 +24,13 @@ import org.eclipse.ui.*;
 public class ActionWiper implements IStartup, IPerspectiveListener, IPartListener {
 
 	private static final String[] ACTIONS_2_WIPE = new String[] {
-		"org.eclipse.ui.edit.text.actionSet.presentation",
-		"org.eclipse.jdt.ui.edit.text.java.toggleMarkOccurrences",
+		// "org.eclipse.ui.edit.text.actionSet.presentation",
+		// "org.eclipse.jdt.ui.edit.text.java.toggleMarkOccurrences",
 		"org.eclipse.cdt.ui.text.c.actionSet.presentation",
 		"org.eclipse.jdt.ui.text.java.actionSet.presentation",
-		"org.eclipse.ui.externaltools.ExternalToolsSet", "org.eclipse.update.ui.softwareUpdates" };
+		"org.eclipse.ui.externaltools.ExternalToolsSet",
+	// "org.eclipse.update.ui.softwareUpdates"
+		};
 
 	@Override
 	public void partActivated(final IWorkbenchPart part) {

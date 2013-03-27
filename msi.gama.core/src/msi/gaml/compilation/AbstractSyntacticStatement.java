@@ -5,7 +5,7 @@
 package msi.gaml.compilation;
 
 import java.util.*;
-import msi.gama.common.interfaces.ISyntacticElement;
+import msi.gama.common.interfaces.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.*;
 import msi.gaml.statements.Facets.Facet;
@@ -23,6 +23,9 @@ public abstract class AbstractSyntacticStatement implements ISyntacticElement {
 	String keyword;
 	protected final Facets facets;
 	List<ISyntacticElement> children;
+	private boolean isGlobal;
+	private boolean isSpecies;
+	private boolean isExperiment;
 
 	public AbstractSyntacticStatement(final String keyword) {
 		this.keyword = keyword;
@@ -128,6 +131,29 @@ public abstract class AbstractSyntacticStatement implements ISyntacticElement {
 		return result;
 	}
 
+	@Override
+	public List<ISyntacticElement> getSpeciesChildren() {
+		if ( !isSpecies() && !isGlobal() ) { return Collections.EMPTY_LIST; }
+		if ( children == null ) { return Collections.EMPTY_LIST; }
+		List<ISyntacticElement> result = new ArrayList();
+		for ( ISyntacticElement e : getChildren() ) {
+			if ( e.isSpecies() || e.isExperiment() ) {
+				result.add(e);
+			}
+		}
+		return result;
+	}
+
+	@Override
+	public boolean isGrid() {
+		return isSpecies() && getKeyword().equals(IKeyword.GRID);
+	}
+
+	@Override
+	public String getName() {
+		return getLabel(IKeyword.NAME);
+	}
+
 	/**
 	 * @see msi.gama.common.interfaces.ISyntacticElement#getChild(java.lang.String)
 	 */
@@ -184,6 +210,33 @@ public abstract class AbstractSyntacticStatement implements ISyntacticElement {
 		IExpressionDescription s = getFacet(name);
 		if ( s == null ) { return null; }
 		return s.toString();
+	}
+
+	@Override
+	public boolean isExperiment() {
+		return isExperiment;
+	}
+
+	public void setExperiment(boolean isExperiment) {
+		this.isExperiment = isExperiment;
+	}
+
+	@Override
+	public boolean isSpecies() {
+		return isSpecies;
+	}
+
+	public void setSpecies(boolean isSpecies) {
+		this.isSpecies = isSpecies;
+	}
+
+	@Override
+	public boolean isGlobal() {
+		return isGlobal;
+	}
+
+	public void setGlobal(boolean isGlobal) {
+		this.isGlobal = isGlobal;
 	}
 
 }

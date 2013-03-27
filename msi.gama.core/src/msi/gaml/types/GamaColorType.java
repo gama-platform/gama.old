@@ -90,4 +90,9 @@ public class GamaColorType extends GamaType<GamaColor> {
 		return Types.get(INT);
 	}
 
+	@Override
+	public boolean hasContents() {
+		return true;
+	}
+
 }

@@ -99,4 +99,14 @@ public class GamaAgentType extends GamaType<IAgent> {
 		return false;
 	}
 
+	@Override
+	public IType defaultKeyType() {
+		return Types.get(IType.STRING);
+	}
+
+	@Override
+	public boolean hasContents() {
+		return true;
+	}
+
 }

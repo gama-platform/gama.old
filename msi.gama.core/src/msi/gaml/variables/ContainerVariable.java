@@ -47,6 +47,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.PARAMETER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.SIZE, type = { IType.INT_STR, IType.POINT_STR }, optional = true),
 	@facet(name = IKeyword.OF, type = IType.TYPE_ID, optional = true),
+	@facet(name = IKeyword.INDEX, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.FILL_WITH, type = IType.NONE_STR, optional = true) }, omissible = IKeyword.NAME)
 @symbol(kind = ISymbolKind.Variable.CONTAINER, with_sequence = false)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT })
@@ -84,7 +85,7 @@ public class ContainerVariable extends Variable {
 				if ( !(v instanceof IMatrix) ) {
 					v = null;
 				}
-				switch (contentType.id()) {
+				switch (description.getContentType().id()) {
 
 					case IType.FLOAT:
 						result =
@@ -102,14 +103,16 @@ public class ContainerVariable extends Variable {
 								scope, (int) size.x, (int) size.y, (IMatrix) v);
 				}
 				Object o =
-					fillExpr == null ? contentType.getDefault() : scope.evaluate(fillExpr, owner);
+					fillExpr == null ? description.getContentType().getDefault() : scope.evaluate(
+						fillExpr, owner);
 				((IMatrix) result).putAll(scope, o, null);
 				break;
 			}
 			case IType.LIST: {
 				Object[] contents = new Object[Cast.asInt(scope, value)];
 				Object o =
-					fillExpr == null ? contentType.getDefault() : scope.evaluate(fillExpr, owner);
+					fillExpr == null ? description.getContentType().getDefault() : scope.evaluate(
+						fillExpr, owner);
 				Arrays.fill(contents, o);
 				result = new GamaList(contents);
 			}

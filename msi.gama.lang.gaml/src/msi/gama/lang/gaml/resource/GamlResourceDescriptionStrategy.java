@@ -27,8 +27,8 @@ public class GamlResourceDescriptionStrategy extends DefaultResourceDescriptionS
 	 *      org.eclipse.xtext.util.IAcceptor)
 	 */
 
-	static Set<String> composed =
-		new HashSet(Arrays.asList(GLOBAL, SPECIES, ENTITIES, ENVIRONMENT));
+	static Set<String> composed = new HashSet(Arrays.asList(GLOBAL, SPECIES, ENTITIES, ENVIRONMENT,
+		ACTION));
 
 	@Override
 	public boolean createEObjectDescriptions(final EObject o,

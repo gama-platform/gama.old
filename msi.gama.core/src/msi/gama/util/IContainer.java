@@ -52,6 +52,8 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 		"[1, 2, 3] at 2					--:    3 ", "[{1,2}, {3,4}, {5,6}] at 0 	--: {1.0;2.0}" }, see = { "contains_all, contains_any" })
 	public ValueType get(IScope scope, KeyType index) throws GamaRuntimeException;
 
+	// FIXME No way to test if the index is correct or not
+
 	/**
 	 * Method sent from GAML with a list containing the index or indices. It is the responsibility
 	 * of the container to extract the index and return the value associated (if any)
@@ -63,6 +65,8 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	@operator(value = { "internal_at" }, type = ITypeProvider.LEFT_CONTENT_TYPE)
 	@doc("For internal use only. Corresponds to the implementation of the access to containers with [index]")
 	public Object getFromIndicesList(IScope scope, IList indices) throws GamaRuntimeException;
+
+	// FIXME No way to test if the index is correct or not
 
 	@operator(value = "contains", can_be_const = true)
 	@doc(value = "true, if the container contains the right operand, false otherwise", comment = "the contains operator behavior depends on the nature of the operand", special_cases = {
@@ -249,23 +253,27 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	 */
 	public boolean checkBounds(KeyType index, boolean forAdding);
 
-	public void addAll(IScope scope, final IContainer value, final Object param) throws GamaRuntimeException;
+	public void addAll(IScope scope, final IContainer value, final Object param)
+		throws GamaRuntimeException;
 
 	public void addAll(IScope scope, final KeyType index, final IContainer value, final Object param)
 		throws GamaRuntimeException;
 
-	public void add(IScope scope, final ValueType value, final Object param) throws GamaRuntimeException;
+	public void add(IScope scope, final ValueType value, final Object param)
+		throws GamaRuntimeException;
 
 	public void add(IScope scope, final KeyType index, final ValueType value, Object param)
 		throws GamaRuntimeException;
 
 	public boolean removeFirst(IScope scope, final ValueType value) throws GamaRuntimeException;
 
-	public boolean removeAll(IScope scope, final IContainer<?, ValueType> value) throws GamaRuntimeException;
+	public boolean removeAll(IScope scope, final IContainer<?, ValueType> value)
+		throws GamaRuntimeException;
 
 	public Object removeAt(IScope scope, final KeyType index) throws GamaRuntimeException;
 
-	public void putAll(IScope scope, final ValueType value, Object param) throws GamaRuntimeException;
+	public void putAll(IScope scope, final ValueType value, Object param)
+		throws GamaRuntimeException;
 
 	public void put(IScope scope, final KeyType index, final ValueType value, Object param)
 		throws GamaRuntimeException;

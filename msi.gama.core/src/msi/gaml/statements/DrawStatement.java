@@ -96,7 +96,7 @@ public class DrawStatement extends AbstractStatementSequence {
 
 	private final IExpression getShapeExpression(final IDescription desc) {
 		return GAMA.getExpressionFactory().createVar(SHAPE, Types.get(IType.GEOMETRY),
-			Types.get(IType.GEOMETRY), false, IVarExpression.AGENT, desc);
+			Types.get(IType.NONE), Types.get(IType.STRING), false, IVarExpression.AGENT, desc);
 	}
 
 	public DrawStatement(final IDescription desc) throws GamaRuntimeException {
@@ -161,8 +161,8 @@ public class DrawStatement extends AbstractStatementSequence {
 					if ( at == null ) {
 						at =
 							GAMA.getExpressionFactory().createVar("location",
-								Types.get(IType.POINT), Types.get(IType.INT), false,
-								IVarExpression.AGENT, desc);
+								Types.get(IType.POINT), Types.get(IType.FLOAT),
+								Types.get(IType.INT), false, IVarExpression.AGENT, desc);
 					}
 					List<IExpression> elements = new ArrayList();
 					elements.add(at);

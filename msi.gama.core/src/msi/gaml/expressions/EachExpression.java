@@ -23,8 +23,9 @@ import msi.gaml.types.IType;
 
 public class EachExpression extends VariableExpression {
 
-	public EachExpression(final String n, final IType type, final IType contentType) {
-		super(n, type, contentType, true, null);
+	public EachExpression(final String n, final IType type, final IType contentType,
+		final IType keyType) {
+		super(n, type, contentType, keyType, true, null);
 	}
 
 	@Override

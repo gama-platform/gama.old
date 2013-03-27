@@ -18,31 +18,48 @@
  */
 package msi.gama.lang.gaml.validation;
 
+import static msi.gaml.factories.DescriptionFactory.getModelFactory;
+import java.util.*;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.resource.GamlResource;
+import msi.gama.lang.utils.*;
+import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.ModelDescription;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.*;
+import org.eclipse.xtext.resource.*;
 import org.eclipse.xtext.util.Arrays;
-import org.eclipse.xtext.validation.*;
+import org.eclipse.xtext.validation.Check;
 
 public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
+	static {
+		GAMA.getExpressionFactory().registerParser(new GamlExpressionCompiler());
+	}
+
+	private final static XtextResourceSet buildResourceSet = new SynchronizedXtextResourceSet();
+
 	// AD 22/1/13 : set to false to avoid lags in compilation.
 	static boolean FORCE_VALIDATION = false;
+	GamlResource currentResource;
 
-	@Check(CheckType.FAST)
-	public void validate(final Model model) {
+	@Check()
+	public synchronized void validate(final Model model) {
 		try {
-			// GuiUtils.debug("Validating " + model.eResource().getURI().lastSegment() + "...");
+			GuiUtils.debug("GamlJavaValidator processing " +
+				model.eResource().getURI().lastSegment() + "...");
 			GamlResource r = (GamlResource) model.eResource();
+			currentResource = r;
 			ModelDescription result = null;
 			if ( FORCE_VALIDATION || r.getErrors().isEmpty() ) {
-				result = r.doValidate();
-			} else {
-				// GuiUtils.debug("Syntactic errors detected. No validation");
+				result = validate(r);
 			}
 			boolean hasError = result == null || !result.getErrors().isEmpty();
 			if ( result != null ) {
@@ -53,9 +70,6 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 					for ( GamlCompilationError error : result.getErrors() ) {
 						add(error);
 					}
-					// Commenting the disposal to see if it plays any role in
-					// garbage collecting -- and to enable content assist
-					// result.dispose();
 					r.setModelDescription(true, result);
 				} else {
 					r.setModelDescription(false, result);
@@ -68,15 +82,119 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		}
 	}
 
-	public GamlResource getCurrentRessource() {
-		EObject e;
-		try {
-			e = getCurrentObject();
-		} catch (NullPointerException ex) {
-			return null;
+	private ModelDescription validate(GamlResource r) {
+		// this.listVisibleResourcesFromMe();
+		long begin = System.nanoTime();
+		XtextResourceSet resourceSet = (XtextResourceSet) r.getResourceSet();
+		ModelDescription description = parse(r, resourceSet);
+		if ( r.getErrors().isEmpty() ) {
+			cleanResourceSet(resourceSet, false);
+			description = getModelFactory().validate(description);
 		}
-		if ( e == null ) { return null; }
-		return (GamlResource) e.eResource();
+		long end = System.nanoTime();
+		GuiUtils.debug("Validation of " + description + " took " + (end - begin) / 1000000d +
+			" milliseconds");
+		return description;
+	}
+
+	public IModel build(final GamlResource resource) {
+		ModelDescription description = parse(resource, buildResourceSet);
+		if ( resource.getErrors().isEmpty() ) {
+			IModel model = getModelFactory().compile(description);
+			cleanResourceSet(buildResourceSet, true);
+			return model;
+		}
+		return null;
+	}
+
+	public Map<URI, ISyntacticElement> buildCompleteSyntacticTree(final GamlResource resource,
+		final ResourceSet resourceSet) {
+		final Map<URI, ISyntacticElement> models = new LinkedHashMap();
+		LinkedHashSet<GamlResource> totalResources = new LinkedHashSet<GamlResource>();
+		LinkedHashSet<GamlResource> newResources = new LinkedHashSet<GamlResource>();
+		// Forcing the resource set to reload the primary resource, even though it has been
+		// passed, in order to be sure that all resources will belong to the same resource set.
+		GamlResource first = (GamlResource) resourceSet.getResource(resource.getURI(), true);
+
+		newResources.add(first);
+		while (!newResources.isEmpty()) {
+			List<GamlResource> resourcesToConsider = new ArrayList<GamlResource>(newResources);
+			newResources.clear();
+			for ( GamlResource gr : resourcesToConsider ) {
+				if ( totalResources.add(gr) ) {
+					LinkedHashSet<GamlResource> imports = listImports(gr, resourceSet);
+					newResources.addAll(imports);
+				}
+			}
+		}
+		for ( GamlResource r : totalResources ) {
+			// GuiUtils.debug("Building " + r + " as part of the validation of " + resource);
+			models.put(r.getURI(), r.getSyntacticContents());
+		}
+		return models;
+	}
+
+	public LinkedHashSet<GamlResource> listImports(final GamlResource resource,
+		final ResourceSet resourceSet) {
+		LinkedHashSet<GamlResource> imports = new LinkedHashSet();
+		Model model = (Model) resource.getContents().get(0);
+		for ( Import imp : model.getImports() ) {
+			String importUri = imp.getImportURI();
+			// we ignore "platform:" extensions
+			if ( importUri.startsWith("platform:") ) {
+				continue;
+			}
+			URI iu = URI.createURI(importUri).resolve(resource.getURI());
+			GamlResource ir = (GamlResource) resourceSet.getResource(iu, true);
+			if ( !ir.getErrors().isEmpty() ) {
+				resource.error("Imported file " + ir.getURI().lastSegment() +
+					" has errors. Fix them first.", new SyntacticStatement(IKeyword.INCLUDE, imp),
+					true);
+			}
+			imports.add(ir);
+		}
+		return imports;
+	}
+
+	@SuppressWarnings("restriction")
+	private ModelDescription parse(final GamlResource resource, final XtextResourceSet resourceSet) {
+		final Map<URI, ISyntacticElement> models =
+			buildCompleteSyntacticTree(resource, resourceSet);
+
+		IPath path = new Path(resource.getURI().toPlatformString(false));
+		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+		// NullPointerException when accessing a file / project with a space in it !
+		// FIX: see http://trac.rtsys.informatik.uni-kiel.de/trac/kieler/ticket/1065
+		// This is a workaround, not very elegant, but it works.
+		IPath fullPath = file.getLocation();
+		if ( fullPath == null && file instanceof org.eclipse.core.internal.resources.Resource ) {
+			org.eclipse.core.internal.resources.Resource r =
+				(org.eclipse.core.internal.resources.Resource) file;
+			fullPath = r.getLocalManager().locationFor(r);
+		}
+		String modelPath = fullPath == null ? "" : fullPath.toOSString();
+		fullPath = file.getProject().getLocation();
+		if ( fullPath == null &&
+			file.getProject() instanceof org.eclipse.core.internal.resources.Resource ) {
+			org.eclipse.core.internal.resources.Resource r =
+				(org.eclipse.core.internal.resources.Resource) file.getProject();
+			fullPath = r.getLocalManager().locationFor(r);
+		}
+		String projectPath = fullPath == null ? "" : fullPath.toOSString();
+		return getModelFactory().assemble(projectPath, modelPath, new ArrayList(models.values()));
+	}
+
+	private void cleanResourceSet(final XtextResourceSet resourceSet, final boolean clear) {
+		for ( Resource r : resourceSet.getResources() ) {
+			((GamlResource) r).eraseSyntacticContents();
+		}
+		if ( clear ) {
+			resourceSet.getResources().clear();
+		}
+	}
+
+	public GamlResource getCurrentRessource() {
+		return currentResource;
 	}
 
 	public void add(final GamlCompilationError e) {

@@ -23,6 +23,7 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.*;
@@ -31,8 +32,8 @@ import msi.gaml.types.*;
 /**
  * The Class GamaMap.
  */
-@vars({ @var(name = GamaMap.KEYS, type = IType.LIST_STR),
-	@var(name = GamaMap.VALUES, type = IType.LIST_STR),
+@vars({ @var(name = GamaMap.KEYS, type = IType.LIST_STR, of = ITypeProvider.INDEX_TYPE),
+	@var(name = GamaMap.VALUES, type = IType.LIST_STR, of = ITypeProvider.CONTENT_TYPE),
 	@var(name = GamaMap.PAIRS, type = IType.LIST_STR, of = IType.PAIR_STR) })
 public class GamaMap extends LinkedHashMap implements IContainer {
 

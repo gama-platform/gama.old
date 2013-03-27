@@ -33,7 +33,7 @@ import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 7 févr. 2010
@@ -110,6 +110,12 @@ public class UserCommandStatement extends AbstractStatementSequence implements I
 		if ( actionName == null ) { return super.getReturnContentType(); }
 		StatementDescription executer = description.getSpeciesContext().getAction(name);
 		return executer.getReturnContentType();
+	}
+
+	public IType getKeyType() {
+		if ( actionName == null ) { return Types.NO_TYPE; }
+		StatementDescription executer = description.getSpeciesContext().getAction(name);
+		return executer.getKeyType();
 	}
 
 	public boolean isEnabled(final IScope scope) {

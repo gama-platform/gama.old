@@ -29,6 +29,7 @@ import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.statements.*;
+import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.*;
 
 /**
@@ -73,6 +74,8 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 			assertActionIsExisting(cd, ACTION);
 		} else if ( kw.equals(FsmTransitionStatement.TRANSITION) ) {
 			assertBehaviorIsExisting(cd, TO);
+		} else if ( kw.equals(PUT) || kw.equals(ADD) || kw.equals(REMOVE) ) {
+			assertContainerAssignmentIsOk(cd);
 		}
 		if ( kw.equals(SET) || kw.equals(LET) ) {
 			assertAssignmentIsOk(cd);
@@ -114,7 +117,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 				SpeciesDescription s = desc.getSpeciesContext();
 				if ( s != null ) {
 					IType t = s.getType();
-					desc.addTemp(MYSELF, t, t);
+					desc.addTemp(MYSELF, t, Types.NO_TYPE, Types.NO_TYPE);
 					previousEnclosingDescription = desc.getSuperDescription();
 					desc.setSuperDescription(desc.getSpeciesDescription(actualSpecies));
 				}
@@ -132,7 +135,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 			String actualSpecies = computeSpecies(desc);
 			if ( actualSpecies != null ) {
 				IType t = desc.getSpeciesContext().getType();
-				desc.addTemp(MYSELF, t, t);
+				desc.addTemp(MYSELF, t, Types.NO_TYPE, Types.NO_TYPE);
 				desc.setSuperDescription(desc.getSpeciesDescription(actualSpecies));
 			}
 		}
@@ -188,23 +191,63 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 			// FIXME Should not be necessary anymore as it should be eliminated by the parser
 			if ( typeName != null && !isCalling &&
 				!cd.getModelDescription().getTypesManager().getTypeNames().contains(typeName) ) {
-				cd.error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, TYPE);
+				cd.error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, OF);
 			}
 			IType contents = sd.getTypeNamed(typeName);
 			if ( contents == Types.NO_TYPE && e != null ) {
 				contents = e.getContentType();
 			}
+			typeName = argFacets.getLabel(INDEX);
+			if ( typeName != null && !isCalling &&
+				!cd.getModelDescription().getTypesManager().getTypeNames().contains(typeName) ) {
+				cd.error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, INDEX);
+			}
+
+			IType index = sd.getTypeNamed(typeName);
+			if ( index == Types.NO_TYPE && e != null ) {
+				index = e.getKeyType();
+			}
 			if ( !isCalling ) {
 				// Special case for the calls (create, do, primitives) as the "arguments" passed
 				// should not be part of the context
-				cd.addTemp(name, type, contents);
+				cd.addTemp(name, type, contents, index);
 			}
 
 		}
 		if ( cd.getKeyword().equals(IKeyword.DO) ) {
 			cd.verifyArgs(cd.getFacets().getLabel(IKeyword.ACTION), ca);
+		} else if ( cd.getKeyword().equals(IKeyword.CREATE) ) {
+			verifyInits(cd, ca);
 		}
 		return ca;
+	}
+
+	// Only for create ?
+	private void verifyInits(StatementDescription cd, Arguments ca) {
+		SpeciesDescription sd = cd.getSpeciesDescription(computeSpecies(cd));
+		for ( Facet ff : ca.entrySet() ) {
+			if ( ff != null ) {
+				String name = ff.getKey();
+				if ( !sd.hasVar(name) ) {
+					cd.error("Attribute " + name + " does not exist in species " + sd.getName(),
+						IGamlIssue.UNKNOWN_ARGUMENT, WITH, (String[]) null);
+				} else {
+					IType varType = sd.getVariable(name).getType();
+					IType initType = ff.getValue().getExpression().getType();
+					if ( varType != Types.NO_TYPE && !initType.isTranslatableInto(varType) ) {
+						cd.warning("The type of attribute " + name + " should be " + varType,
+							IGamlIssue.WRONG_TYPE);
+					} else {
+						varType = sd.getVariable(name).getContentType();
+						initType = ff.getValue().getExpression().getContentType();
+						if ( varType != Types.NO_TYPE && !initType.isTranslatableInto(varType) ) {
+							cd.warning("The content type of attribute " + name + " should be " +
+								varType, IGamlIssue.WRONG_TYPE);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -213,6 +256,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 		if ( sd.getMeta().isFacetDeclaringANewTemp(tag) ) {
 			Facets ff = sd.getFacets();
 			IType type = sd.getTypeNamed(ff.getLabel(TYPE));
+			IType keyType = sd.getTypeNamed(ff.getLabel(INDEX));
 			IType contentType = sd.getTypeNamed(ff.getLabel(AS));
 			if ( contentType == Types.NO_TYPE ) {
 				contentType = sd.getTypeNamed(ff.getLabel(SPECIES));
@@ -242,16 +286,30 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 					}
 				}
 			}
-			if ( contentType == Types.NO_TYPE ) {
-				if ( ff.containsKey(VALUE) ) {
-					compileFacet(VALUE, sd);
-					IExpression expr = ff.getExpr(VALUE);
-					if ( expr != null ) {
-						contentType = expr.getContentType();
+			if ( type.hasContents() ) {
+				if ( contentType == Types.NO_TYPE ) {
+					if ( ff.containsKey(VALUE) ) {
+						compileFacet(VALUE, sd);
+						IExpression expr = ff.getExpr(VALUE);
+						if ( expr != null ) {
+							contentType = expr.getContentType();
+						}
+					}
+					if ( contentType == Types.NO_TYPE ) {
+						contentType = type.defaultContentType();
 					}
 				}
-				if ( contentType == Types.NO_TYPE ) {
-					contentType = type.defaultContentType();
+				if ( keyType == Types.NO_TYPE ) {
+					if ( ff.containsKey(VALUE) ) {
+						compileFacet(VALUE, sd);
+						IExpression expr = ff.getExpr(VALUE);
+						if ( expr != null ) {
+							keyType = expr.getKeyType();
+						}
+					}
+					if ( keyType == Types.NO_TYPE ) {
+						keyType = type.defaultKeyType();
+					}
 				}
 			}
 
@@ -259,7 +317,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 				type = Types.get(IType.CONTAINER);
 			}
 			IVarExpression exp =
-				((StatementDescription) sd).addNewTempIfNecessary(tag, type, contentType);
+				((StatementDescription) sd).addNewTempIfNecessary(tag, type, contentType, keyType);
 			ff.put(tag, exp);
 		} else {
 			super.compileFacet(tag, sd);
@@ -273,9 +331,14 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 		Facets ff = ce.getFacets();
 		IExpression speciesFacet = ff.getExpr(SPECIES, ff.getExpr(AS, ff.getExpr(TARGET)));
 		if ( speciesFacet != null ) {
-			IType t = speciesFacet.getContentType();
+			IType t = speciesFacet.getType();
 			if ( t.isSpeciesType() ) {
 				type = t;
+			} else {
+				t = speciesFacet.getContentType();
+				if ( t.isSpeciesType() ) {
+					type = t;
+				}
 			}
 		}
 		return type == null ? null : type.getSpeciesName();

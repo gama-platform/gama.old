@@ -59,4 +59,14 @@ public class GamaListType extends GamaType<IList> {
 		return Types.NO_TYPE;
 	}
 
+	@Override
+	public IType defaultKeyType() {
+		return Types.get(IType.INT);
+	}
+
+	@Override
+	public boolean hasContents() {
+		return true;
+	}
+
 }

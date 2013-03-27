@@ -96,6 +96,11 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 		return executer.getReturnContentType();
 	}
 
+	public IType getKeyType() {
+		StatementDescription executer = description.getSpeciesContext().getAction(name);
+		return executer.getReturnContentType();
+	}
+
 	@Override
 	public Double computePertinence(final IScope scope) throws GamaRuntimeException {
 		ISpecies context = scope.getAgentScope().getSpecies();

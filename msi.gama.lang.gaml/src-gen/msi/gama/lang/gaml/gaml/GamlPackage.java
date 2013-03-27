@@ -2806,13 +2806,22 @@ public interface GamlPackage extends EPackage
   int TYPE_REF__REF = EXPRESSION_FEATURE_COUNT + 0;
 
   /**
-   * The feature id for the '<em><b>Of</b></em>' containment reference.
+   * The feature id for the '<em><b>First</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TYPE_REF__OF = EXPRESSION_FEATURE_COUNT + 1;
+  int TYPE_REF__FIRST = EXPRESSION_FEATURE_COUNT + 1;
+
+  /**
+   * The feature id for the '<em><b>Second</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TYPE_REF__SECOND = EXPRESSION_FEATURE_COUNT + 2;
 
   /**
    * The number of structural features of the '<em>Type Ref</em>' class.
@@ -2821,7 +2830,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int TYPE_REF_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 2;
+  int TYPE_REF_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 3;
 
   /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.SkillRefImpl <em>Skill Ref</em>}' class.
@@ -4234,15 +4243,26 @@ public interface GamlPackage extends EPackage
   EReference getTypeRef_Ref();
 
   /**
-   * Returns the meta object for the containment reference '{@link msi.gama.lang.gaml.gaml.TypeRef#getOf <em>Of</em>}'.
+   * Returns the meta object for the containment reference '{@link msi.gama.lang.gaml.gaml.TypeRef#getFirst <em>First</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Of</em>'.
-   * @see msi.gama.lang.gaml.gaml.TypeRef#getOf()
+   * @return the meta object for the containment reference '<em>First</em>'.
+   * @see msi.gama.lang.gaml.gaml.TypeRef#getFirst()
    * @see #getTypeRef()
    * @generated
    */
-  EReference getTypeRef_Of();
+  EReference getTypeRef_First();
+
+  /**
+   * Returns the meta object for the containment reference '{@link msi.gama.lang.gaml.gaml.TypeRef#getSecond <em>Second</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Second</em>'.
+   * @see msi.gama.lang.gaml.gaml.TypeRef#getSecond()
+   * @see #getTypeRef()
+   * @generated
+   */
+  EReference getTypeRef_Second();
 
   /**
    * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.SkillRef <em>Skill Ref</em>}'.
@@ -5245,12 +5265,20 @@ public interface GamlPackage extends EPackage
     EReference TYPE_REF__REF = eINSTANCE.getTypeRef_Ref();
 
     /**
-     * The meta object literal for the '<em><b>Of</b></em>' containment reference feature.
+     * The meta object literal for the '<em><b>First</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference TYPE_REF__OF = eINSTANCE.getTypeRef_Of();
+    EReference TYPE_REF__FIRST = eINSTANCE.getTypeRef_First();
+
+    /**
+     * The meta object literal for the '<em><b>Second</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference TYPE_REF__SECOND = eINSTANCE.getTypeRef_Second();
 
     /**
      * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.SkillRefImpl <em>Skill Ref</em>}' class.

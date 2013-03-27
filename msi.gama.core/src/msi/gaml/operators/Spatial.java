@@ -1254,14 +1254,8 @@ public abstract class Spatial {
 			return t.getNeighboursOf((IShape) a, Cast.asFloat(scope, d), Different.with());
 		}
 
-		// / CHANGES AS OF 02/02/12
-		// / Topologies are computed dynamically w.r.t. to the last agent mentioned
-		// / For instance :
-		// / cell neighbours_at 4 will "correctly" use the topology of cell (and not the topology of
-		// the agent that calls this expression)
-
-		@operator(value = "neighbours_at")
-		@doc(value = "a list, containing all the agents located at a distance inferior or equal to the right-hand operand to the left-hand operand (geometry, agent, point).", comment = "The topology used to compute the neighbourhood  is the one of the left-operand if this one is an agent; otherwise the one of the agent applying the operator.", examples = { "(self neighbours_at (10)) --: returns all the agents located at a distance lower or equal to 10 to the agent applying the operator." }, see = {
+		@operator(value = "neighbours_at", content_type = ITypeProvider.LEFT_TYPE)
+		@doc(value = "a list, containing all the agents of the same species than the left argument (if it is an agent) located at a distance inferior or equal to the right-hand operand to the left-hand operand (geometry, agent, point).", comment = "The topology used to compute the neighbourhood  is the one of the left-operand if this one is an agent; otherwise the one of the agent applying the operator.", examples = { "(self neighbours_at (10)) --: returns all the agents located at a distance lower or equal to 10 to the agent applying the operator." }, see = {
 			"neighbours_of", "closest_to", "overlapping", "agents_overlapping", "agents_inside",
 			"agent_closest_to", "at_distance" })
 		public static IList neighbours_at(final IScope scope, final IShape agent,
@@ -1269,10 +1263,13 @@ public abstract class Spatial {
 			if ( agent == null ) { return GamaList.EMPTY_LIST; }
 			// CHANGE
 			ITopology t = scope.getTopology();
-			return t.getNeighboursOf(agent, distance, Different.with());
+			IAgentFilter filter =
+				agent instanceof IAgent ? In.population(((IAgent) agent).getPopulation())
+					: Different.with();
+			return t.getNeighboursOf(agent, distance, filter);
 		}
 
-		@operator(value = "neighbours_at")
+		@operator(value = "neighbours_at", content_type = IType.AGENT)
 		@doc()
 		// no doc, because same same as before but optimized for "point".
 		public static IList neighbours_at(final IScope scope, final GamaPoint agent,

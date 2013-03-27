@@ -6,9 +6,8 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.headless.runtime.HeadlessListener;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.*;
+import msi.gama.lang.gaml.GamlStandaloneSetup;
 import msi.gama.lang.gaml.resource.GamlResource;
-import msi.gama.lang.gaml.validation.GamlBuilder;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamaBundleLoader;
@@ -94,8 +93,8 @@ public class HeadlessSimulationLoader {
 				GamlBuilder.INSTANCE.buildCompleteSyntacticTree(r, rs);
 			if ( r.getErrors().isEmpty() ) {
 				System.out.println("No errors in syntactic tree");
-		
-				String modelPath =	new Path(r.getURI().toFileString()).toFile().getAbsolutePath();
+
+				String modelPath = new Path(r.getURI().toFileString()).toFile().getAbsolutePath();
 				ModelStructure ms =
 					new ModelStructure("", modelPath, new ArrayList(elements.values()));
 				lastModel = DescriptionFactory.getModelFactory().compile(ms);

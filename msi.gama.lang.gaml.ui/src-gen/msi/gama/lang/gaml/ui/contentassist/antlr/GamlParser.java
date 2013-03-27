@@ -185,6 +185,7 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getVariableRefAccess().getGroup(), "rule__VariableRef__Group__0");
 					put(grammarAccess.getTypeRefAccess().getGroup(), "rule__TypeRef__Group__0");
 					put(grammarAccess.getTypeRefAccess().getGroup_2(), "rule__TypeRef__Group_2__0");
+					put(grammarAccess.getTypeRefAccess().getGroup_2_2(), "rule__TypeRef__Group_2_2__0");
 					put(grammarAccess.getSkillRefAccess().getGroup(), "rule__SkillRef__Group__0");
 					put(grammarAccess.getActionRefAccess().getGroup(), "rule__ActionRef__Group__0");
 					put(grammarAccess.getEquationRefAccess().getGroup(), "rule__EquationRef__Group__0");
@@ -226,7 +227,7 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getS_OtherAccess().getFacetsAssignment_1(), "rule__S_Other__FacetsAssignment_1");
 					put(grammarAccess.getS_OtherAccess().getBlockAssignment_2_0(), "rule__S_Other__BlockAssignment_2_0");
 					put(grammarAccess.getS_ReturnAccess().getKeyAssignment_0(), "rule__S_Return__KeyAssignment_0");
-					put(grammarAccess.getS_ReturnAccess().getExprAssignment_1(), "rule__S_Return__ExprAssignment_1");
+					put(grammarAccess.getS_ReturnAccess().getExprAssignment_2(), "rule__S_Return__ExprAssignment_2");
 					put(grammarAccess.getS_SpeciesAccess().getKeyAssignment_0(), "rule__S_Species__KeyAssignment_0");
 					put(grammarAccess.getS_SpeciesAccess().getNameAssignment_2(), "rule__S_Species__NameAssignment_2");
 					put(grammarAccess.getS_SpeciesAccess().getFacetsAssignment_3(), "rule__S_Species__FacetsAssignment_3");
@@ -339,7 +340,8 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getUnitRefAccess().getRefAssignment_1(), "rule__UnitRef__RefAssignment_1");
 					put(grammarAccess.getVariableRefAccess().getRefAssignment_1(), "rule__VariableRef__RefAssignment_1");
 					put(grammarAccess.getTypeRefAccess().getRefAssignment_1(), "rule__TypeRef__RefAssignment_1");
-					put(grammarAccess.getTypeRefAccess().getOfAssignment_2_1(), "rule__TypeRef__OfAssignment_2_1");
+					put(grammarAccess.getTypeRefAccess().getFirstAssignment_2_1(), "rule__TypeRef__FirstAssignment_2_1");
+					put(grammarAccess.getTypeRefAccess().getSecondAssignment_2_2_1(), "rule__TypeRef__SecondAssignment_2_2_1");
 					put(grammarAccess.getSkillRefAccess().getRefAssignment_1(), "rule__SkillRef__RefAssignment_1");
 					put(grammarAccess.getActionRefAccess().getRefAssignment_1(), "rule__ActionRef__RefAssignment_1");
 					put(grammarAccess.getEquationRefAccess().getRefAssignment_1(), "rule__EquationRef__RefAssignment_1");

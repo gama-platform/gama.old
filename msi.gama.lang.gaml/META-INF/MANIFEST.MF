@@ -34,6 +34,7 @@ Export-Package: msi.gama.lang.gaml,
  msi.gama.lang.gaml.serializer,
  msi.gama.lang.gaml.services,
  msi.gama.lang.gaml.validation,
+ msi.gama.lang.gaml.xtext_grammarV3,
  msi.gama.lang.utils
 Import-Package: msi.gama.common.interfaces,
  msi.gama.common.util,
@@ -41,5 +42,4 @@ Import-Package: msi.gama.common.interfaces,
  org.apache.log4j,
  org.eclipse.core.resources,
  org.eclipse.xtext.xbase.lib,
- org.eclipse.xtext.xtend2.lib,
  org.eclipse.xtend2.lib

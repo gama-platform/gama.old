@@ -50,7 +50,12 @@ public abstract class JavaExpression implements IExpression {
 
 	@Override
 	public IType getContentType() {
-		return Types.get(IType.NONE);
+		return getType().defaultContentType();
+	}
+
+	@Override
+	public IType getKeyType() {
+		return getType().defaultKeyType();
 	}
 
 	@Override

@@ -20,8 +20,8 @@ package msi.gaml.types;
 
 import java.util.*;
 import msi.gama.metamodel.shape.*;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaPair;
@@ -73,6 +73,11 @@ public class GamaPointType extends GamaType<ILocation> {
 	@Override
 	public IType defaultContentType() {
 		return Types.get(FLOAT);
+	}
+
+	@Override
+	public IType defaultKeyType() {
+		return Types.get(INT);
 	}
 
 }

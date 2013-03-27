@@ -26,8 +26,8 @@ import msi.gaml.types.*;
 public class TempVariableExpression extends VariableExpression {
 
 	protected TempVariableExpression(final String n, final IType type, final IType contentType,
-		final IDescription definitionDescription) {
-		super(n, type, contentType, false, definitionDescription);
+		IType keyType, final IDescription definitionDescription) {
+		super(n, type, contentType, keyType, false, definitionDescription);
 	}
 
 	@Override

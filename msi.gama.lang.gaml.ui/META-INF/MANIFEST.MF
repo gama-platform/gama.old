@@ -8,7 +8,6 @@ Bundle-ActivationPolicy: lazy
 Require-Bundle: msi.gama.lang.gaml;visibility:=reexport,
  org.eclipse.xtext.ui,
  org.eclipse.ui.editors;bundle-version="3.5.0",
- org.eclipse.ui.ide;bundle-version="3.5.0",
  org.eclipse.xtext.ui.shared,
  org.eclipse.xtext.builder,
  org.antlr.runtime,
@@ -21,7 +20,8 @@ Require-Bundle: msi.gama.lang.gaml;visibility:=reexport,
  msi.gama.application;bundle-version="1.4.0",
  org.eclipse.core.resources,
  org.eclipse.ui.navigator,
- org.eclipse.ui.navigator.resources
+ org.eclipse.ui.navigator.resources,
+ org.eclipse.ui.ide;bundle-version="3.7.0"
 Import-Package: msi.gama.precompiler,
  org.apache.log4j
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

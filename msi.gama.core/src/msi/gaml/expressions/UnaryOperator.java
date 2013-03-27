@@ -117,15 +117,24 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 				if ( array.length == 0 ) {
 					contentType = Types.NO_TYPE;
 				} else {
-					contentType = ((ListExpression) child).elements[0].getContentType();
+					contentType = array[0].getContentType();
 				}
+			} else if ( child instanceof MapExpression ) {
+				IExpression[] array = ((MapExpression) child).valuesArray();
+				if ( array.length == 0 ) {
+					contentType = Types.NO_TYPE;
+				} else {
+					contentType = array[0].getContentType();
+				}
+
 			}
 		} else {
 			contentType =
 				t == CHILD_TYPE ? child.getType() : t == CHILD_CONTENT_TYPE ? child
 					.getContentType() : t >= 0 ? Types.get(t) : type.id() == IType.LIST ||
-					type.id() == IType.MATRIX || type.id() == IType.CONTAINER ? child
-					.getContentType() : type.isSpeciesType() ? type : type.defaultContentType();
+					type.id() == IType.MATRIX || type.id() == IType.MAP ||
+					type.id() == IType.CONTAINER ? child.getContentType() : type
+					.defaultContentType();
 		}
 	}
 

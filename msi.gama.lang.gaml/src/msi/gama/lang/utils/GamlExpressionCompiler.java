@@ -163,7 +163,8 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		// if the operator is an iterator, we must initialize the context sensitive "each" variable
 		if ( ITERATORS.contains(op) ) {
 			IType t = left.getContentType();
-			each_expr = new EachExpression(EACH, t, t);
+			// TODO Verify the key type
+			each_expr = new EachExpression(EACH, t, t.defaultContentType(), t.defaultKeyType());
 		}
 		// we can now safely compile the right-hand expression
 		IExpression right = compile(e2);
@@ -253,8 +254,8 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		if ( world == null ) {
 			IType tt = getContext().getModelDescription().getWorldSpecies().getType();
 			world =
-				factory.createVar(WORLD_AGENT_NAME, tt, tt, true, IVarExpression.WORLD,
-					context.getModelDescription());
+				factory.createVar(WORLD_AGENT_NAME, tt, Types.NO_TYPE, Types.get(IType.STRING),
+					true, IVarExpression.WORLD, context.getModelDescription());
 		}
 		return world;
 	}
@@ -618,7 +619,8 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 
 		// HACK
 		if ( s.equals(USER_LOCATION) ) { return factory.createVar(USER_LOCATION,
-			Types.get(IType.POINT), Types.NO_TYPE, true, IVarExpression.TEMP, context); }
+			Types.get(IType.POINT), Types.get(IType.FLOAT), Types.get(IType.INT), true,
+			IVarExpression.TEMP, context); }
 
 		// HACK
 		if ( s.equals(EACH) ) { return each_expr; }
@@ -638,7 +640,8 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 				return null;
 			}
 			IType tt = temp_sd.getType();
-			return factory.createVar(SELF, tt, tt, true, IVarExpression.SELF, null);
+			return factory.createVar(SELF, tt, Types.NO_TYPE, Types.get(IType.STRING), true,
+				IVarExpression.SELF, null);
 		}
 		if ( s.equalsIgnoreCase(WORLD_AGENT_NAME) ) { return getWorldExpr(); }
 		if ( isSkillName(s) ) { return skill(s); }

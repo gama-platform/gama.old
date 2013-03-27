@@ -199,8 +199,12 @@
    </extension>
    <extension
          point="org.eclipse.ui.perspectiveExtensions">
+
+         
       <perspectiveExtension
             targetID="msi.gama.application.perspectives.ModelingPerspective">
+            <newWizardShortcut id="msi.gama.gui.wizards.newProjectWizard">
+</newWizardShortcut>
          <view
                closeable="false"
                id="msi.gama.gui.view.GamaNavigator"
@@ -265,151 +269,6 @@
          point="org.eclipse.ui.menus">
       <menuContribution
             locationURI="menu:org.eclipse.ui.main.menu">
-         <menu
-               id="fileMenu"
-               label="File">
-            <command
-                  commandId="org.eclipse.ui.newWizard"
-                  label="New"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.ui.edit.text.openLocalFile"
-                  label="Open File"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.ui.project.openProject"
-                  label="Open Project"
-                  style="push">
-            </command>
-            <separator
-                  name="GAMA.separator5"
-                  visible="true">
-            </separator>
-            <command
-                  commandId="org.eclipse.ui.file.close"
-                  label="Close"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.ui.file.closeAll"
-                  label="Close All"
-                  style="push">
-            </command>
-            <separator
-                  name="GAMA.separator1"
-                  visible="true">
-            </separator>
-            <command
-                  commandId="org.eclipse.ui.file.save"
-                  label="Save"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.ui.file.saveAll"
-                  label="Save All"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.ui.file.saveAs"
-                  label="Save As"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.ui.file.import"
-                  label="Import"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.ui.file.export"
-                  label="Export"
-                  style="push">
-            </command>
-            <separator
-                  name="GAMA.separator3"
-                  visible="true">
-            </separator>
-            <command
-                  commandId="msi.gama.application.commands.SwitchWorkspace"
-                  label="Switch Workspace"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.ui.file.restartWorkbench"
-                  style="push">
-            </command>
-            <separator
-                  name="GAMA.separator4"
-                  visible="true">
-            </separator>
-            <command
-                  commandId="org.eclipse.ui.file.exit"
-                  label="Quit"
-                  style="push"
-                  tooltip="Exit GAMA">
-            </command>
-         </menu>
-         <menu
-               id="editMenu"
-               label="Edit">
-            <command
-                  commandId="org.eclipse.ui.edit.undo"
-                  label="Undo"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.ui.edit.redo"
-                  label="Redo"
-                  style="push">
-            </command>
-            <separator
-                  name="GAMA.separator1"
-                  visible="true">
-            </separator>
-            <command
-                  commandId="org.eclipse.ui.edit.cut"
-                  label="Cut"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.ui.edit.copy"
-                  label="Copy"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.ui.edit.paste"
-                  label="Paste"
-                  style="push">
-            </command>
-            <separator
-                  name="GAMA.separator2"
-                  visible="true">
-            </separator>
-            <command
-                  commandId="org.eclipse.ui.edit.delete"
-                  label="Delete"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.ui.edit.selectAll"
-                  label="Select All"
-                  style="push">
-            </command>
-            <separator
-                  name="GAMA.separator3">
-            </separator>
-            <command
-                  commandId="org.eclipse.ui.edit.findReplace"
-                  label="Find and Replace"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.ui.window.preferences"
-                  label="Preferences"
-                  style="push">
-            </command>
-         </menu>
          <menu
                id="simulationMenu"
                label="Experiment">
@@ -593,44 +452,6 @@
                         definitionId="isSimulationReady">
                   </reference>
                </visibleWhen>
-            </command>
-         </menu>
-         <menu
-               id="helpMenu"
-               label="Help">
-            <command
-                  commandId="org.eclipse.ui.help.quickStartAction"
-                  label="Welcome"
-                  mnemonic="W"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.ui.help.displayHelp"
-                  icon="icons/menu_help.gif"
-                  label="Help Contents"
-                  style="push"
-                  tooltip="Help wizard">
-            </command>
-            <command
-                  commandId="org.eclipse.ui.help.helpSearch"
-                  label="Help Search"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.ui.help.dynamicHelp"
-                  label="Dynamic Help"
-                  style="push">
-            </command>
-            <command
-                  commandId="msi.gama.application.commands.AskSvnGamaAccess"
-                  icon="icons/menu_access_svn.png"
-                  label="Ask an access to Gama Svn"
-                  style="push">
-            </command>
-            <command
-                  commandId="org.eclipse.ui.help.aboutAction"
-                  label="About"
-                  style="push">
             </command>
          </menu>
       </menuContribution>
@@ -919,30 +740,30 @@
             </with>
          </enabledWhen>
       </activity>
-      <activityPatternBinding
+      <!--<activityPatternBinding
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.search/.*">
-      </activityPatternBinding>
+      </activityPatternBinding>-->
       <activityPatternBinding
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.wst\.xml\.ui/.*">
       </activityPatternBinding>
-      <activityPatternBinding
+      <!--<activityPatternBinding
             activityId="msi.gama.application.activities"
             pattern="org.eclipse.ui.editors/org.eclipse.ui.edit.text.*nnotation">
-      </activityPatternBinding>
-      <activityPatternBinding
+      </activityPatternBinding>-->
+      <!--<activityPatternBinding
             activityId="msi.gama.application.activities"
             pattern="org.eclipse.ui.editors/org.eclipse.ui.edit.text.gotoLastEditPosition">
-      </activityPatternBinding>
+      </activityPatternBinding>-->
      <!-- <activityPatternBinding
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.team\.ui/.*">
       </activityPatternBinding>-->
-      <activityPatternBinding
+      <!--<activityPatternBinding
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.debug\.ui/.*">
-      </activityPatternBinding>
+      </activityPatternBinding>-->
       <activityPatternBinding
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.ui\.ide/org\.eclipse\.ui\.wizards\.new\.project">
@@ -963,19 +784,19 @@
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.wst\.dtd\.ui/org\.eclipse\.wst\.dtd\.ui\.internal\.wizard\.NewDTDWizard">
       </activityPatternBinding>
-      <activityPatternBinding
+      <!--<activityPatternBinding
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.ui\.ide/org\.eclipse\.ui\.wizards\.import\.ZipFile">
-      </activityPatternBinding>
+      </activityPatternBinding>-->
 
-      <activityPatternBinding
+      <!--<activityPatternBinding
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.ui\.ide/org\.eclipse\.ui\.wizards\.import\.FileSystem">
-      </activityPatternBinding>
-      <activityPatternBinding
+      </activityPatternBinding>-->
+      <!--<activityPatternBinding
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.ui\.ide/org\.eclipse\.ui\.wizards\.import\.Preferences">
-      </activityPatternBinding>
+      </activityPatternBinding>-->
       <activityPatternBinding
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.debug\.ui/org\.eclipse\.debug\.internal\.ui\.importexport\.breakpoints\.WizardImportBreakpoints">
@@ -984,26 +805,26 @@
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.debug\.ui/org\.eclipse\.debug\.ui\.import\.launchconfigurations">
       </activityPatternBinding>
-      <activityPatternBinding
+      <!--<activityPatternBinding
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.team\.ui/org\.eclipse\.team\.ui\.ProjectSetImportWizard">
-      </activityPatternBinding>
+      </activityPatternBinding>-->
       <activityPatternBinding
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.wst\.xml\.ui/org\.eclipse\.wst\.xml\.ui\.internal\.wizards\.ImportXMLCatalogWizard">
       </activityPatternBinding>
-      <activityPatternBinding
+      <!--<activityPatternBinding
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.ui\.ide/org\.eclipse\.ui\.wizards\.export\.ZipFile">
-      </activityPatternBinding>
-      <activityPatternBinding
+      </activityPatternBinding>-->
+      <!--<activityPatternBinding
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.ui\.ide/org\.eclipse\.ui\.wizards\.export\.FileSystem">
-      </activityPatternBinding>
-      <activityPatternBinding
+      </activityPatternBinding>-->
+      <!--<activityPatternBinding
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.ui\.ide/org\.eclipse\.ui\.wizards\.export\.Preferences">
-      </activityPatternBinding>
+      </activityPatternBinding>-->
       <activityPatternBinding
             activityId="msi.gama.application.activities"
             pattern="org\.eclipse\.debug\.ui/org\.eclipse\.debug\.internal\.ui\.importexport\.breakpoints\.WizardExportBreakpoints">
@@ -1493,7 +1314,7 @@
       <wizard
             category="msi.gama.gui.wizards.GAMA"
             class="msi.gama.gui.wizards.files.NewFileWizard"
-            icon="platform:/plugin/msi.gama.application/icons/wizards/newFile.png"
+            icon="icons/wizards/file.png"
             id="msi.gama.gui.wizards.wizards.SampleNewWizard"
             name="Model file"
             project="false">
@@ -1501,7 +1322,7 @@
       <wizard
             category="msi.gama.gui.wizards.GAMA"
             class="msi.gama.gui.wizards.projects.NewProjectWizard"
-            icon="platform:/plugin/msi.gama.application/icons/wizards/icon.png"
+            icon="icons/folder-horizontal-open.png"
             id="msi.gama.gui.wizards.newProjectWizard"
             name="Gama Project"
             project="true">
