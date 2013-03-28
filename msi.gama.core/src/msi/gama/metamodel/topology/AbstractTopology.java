@@ -193,22 +193,15 @@ public abstract class AbstractTopology implements ITopology {
 
 	private void setEnvironmentBounds() {
 		Envelope environmentEnvelope = environment.getEnvelope();
-
-		// shape host has not yet been initialized
-		// if ( environmentEnvelope == null ) {
-		// // FIXME Move steps to the spatial index
-		// steps = new double[] {};
-		// return;
-		// }
-
+		// The host has not yet initialized its shape and/or its shape is dependent on the
+		// population that uses this topology
+		if ( environmentEnvelope == null ) { return; }
 		environmentWidth = environmentEnvelope.getWidth();
 		environmentHeight = environmentEnvelope.getHeight();
 		environmentMinX = environmentEnvelope.getMinX();
 		environmentMinY = environmentEnvelope.getMinY();
 		environmentMaxX = environmentEnvelope.getMaxX();
 		environmentMaxY = environmentEnvelope.getMaxY();
-		// double biggest = Math.max(environmentWidth, environmentHeight);
-		// steps = new double[] { biggest / 20, biggest / 10, biggest / 2, biggest };
 	}
 
 	@Override
@@ -218,24 +211,6 @@ public abstract class AbstractTopology implements ITopology {
 		}
 		spatialIndex.insert(agent);
 	}
-
-	// @Override
-	// public void updateAgent(final IAgent agent, final boolean previousShapeIsPoint,
-	// final ILocation previousLoc, final Envelope previousEnv) {
-	// if ( previousShapeIsPoint && previousLoc != null ) {
-	// spatialIndex.remove(previousLoc, agent);
-	// } else if ( !previousShapeIsPoint && previousEnv != null ) {
-	// spatialIndex.remove(previousEnv, agent);
-	// }
-	//
-	// spatialIndex.insert(agent);
-	// // IShape currentShape = agent.getGeometry();
-	// // if ( currentShape == null || currentShape.isPoint() ) {
-	// // spatialIndex.insert((GamaPoint) agent.getLocation(), agent);
-	// // } else {
-	// // spatialIndex.insert(currentShape.getEnvelope(), agent);
-	// // }
-	// }
 
 	@Override
 	public IShape getEnvironment() {
