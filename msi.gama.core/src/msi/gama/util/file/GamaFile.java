@@ -83,7 +83,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	protected abstract boolean _isFixedLength();
 
 	protected String _stringValue(IScope scope) throws GamaRuntimeException {
-		getContents(null);
+		getContents(scope);
 		return buffer.stringValue(scope);
 	}
 
@@ -96,7 +96,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	@Override
 	public void add(IScope scope, final K index, final V value, final Object param)
 		throws GamaRuntimeException {
-		getContents(null);
+		getContents(scope);
 		buffer.add(scope, index, value, param);
 		flushBuffer();
 	}
@@ -108,7 +108,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	 */
 	@Override
 	public void add(IScope scope, final V value, final Object param) throws GamaRuntimeException {
-		getContents(null);
+		getContents(scope);
 		buffer.add(scope, value, param);
 		flushBuffer();
 
@@ -137,7 +137,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	@Override
 	public void addAll(IScope scope, final K index, final IContainer value, final Object param)
 		throws GamaRuntimeException {
-		getContents(null);
+		getContents(scope);
 		buffer.addAll(scope, index, value, param);
 		flushBuffer();
 
@@ -424,7 +424,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	@Override
 	public void put(IScope scope, final K index, final V value, final Object param)
 		throws GamaRuntimeException {
-		getContents(null);
+		getContents(scope);
 		buffer.put(scope, index, value, param);
 		flushBuffer();
 
@@ -437,7 +437,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	 */
 	@Override
 	public void putAll(IScope scope, final V value, final Object param) throws GamaRuntimeException {
-		getContents(null);
+		getContents(scope);
 		buffer.putAll(scope, value, param);
 		flushBuffer();
 
@@ -451,7 +451,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	@Override
 	public boolean removeAll(IScope scope, final IContainer<?, V> value)
 		throws GamaRuntimeException {
-		getContents(null);
+		getContents(scope);
 		boolean result = buffer.removeAll(scope, value);
 		flushBuffer();
 		return result;
@@ -464,7 +464,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	 */
 	@Override
 	public Object removeAt(IScope scope, final K index) throws GamaRuntimeException {
-		getContents(null);
+		getContents(scope);
 		Object result = buffer.removeAt(scope, index);
 		flushBuffer();
 		return result;
@@ -477,7 +477,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	 */
 	@Override
 	public boolean removeFirst(IScope scope, final V value) throws GamaRuntimeException {
-		getContents(null);
+		getContents(scope);
 		boolean result = buffer.removeFirst(scope, value);
 		flushBuffer();
 		return result;
