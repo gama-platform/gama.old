@@ -1,23 +1,25 @@
 package msi.gama.headless.core;
 
-import java.util.*;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.headless.runtime.HeadlessListener;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.GamlStandaloneSetup;
 import msi.gama.lang.gaml.resource.GamlResource;
+import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamaBundleLoader;
-import msi.gaml.factories.*;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import com.google.inject.Injector;
 
 public class HeadlessSimulationLoader {
+
+	static Injector injector;
 
 	/**
 	 * load in headless mode a specified model and create an experiment
@@ -78,7 +80,7 @@ public class HeadlessSimulationLoader {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		new GamlStandaloneSetup().createInjectorAndDoEMFRegistration();
+		injector = new GamlStandaloneSetup().createInjectorAndDoEMFRegistration();
 		System.out.println("GAMA loading complete");
 	}
 
@@ -89,20 +91,14 @@ public class HeadlessSimulationLoader {
 		ResourceSet rs = new ResourceSetImpl();
 		GamlResource r = (GamlResource) rs.getResource(URI.createURI("file:///" + fileName), true);
 		try {
-			Map<URI, ISyntacticElement> elements =
-				GamlBuilder.INSTANCE.buildCompleteSyntacticTree(r, rs);
-			if ( r.getErrors().isEmpty() ) {
-				System.out.println("No errors in syntactic tree");
-
-				String modelPath = new Path(r.getURI().toFileString()).toFile().getAbsolutePath();
-				ModelStructure ms =
-					new ModelStructure("", modelPath, new ArrayList(elements.values()));
-				lastModel = DescriptionFactory.getModelFactory().compile(ms);
-				if ( !r.getErrors().isEmpty() ) {
-					lastModel = null;
-					// System.out.println("End compilation of " + m.getName());
-				}
+			GamlJavaValidator validator =
+				(GamlJavaValidator) injector.getInstance(EValidator.class);
+			lastModel = validator.build(r);
+			if ( !r.getErrors().isEmpty() ) {
+				lastModel = null;
+				// System.out.println("End compilation of " + m.getName());
 			}
+
 		} catch (GamaRuntimeException e1) {
 			System.out.println("Exception during compilation:" + e1.getMessage());
 		} catch (Exception e) {
