@@ -3,20 +3,25 @@ model Network
 
 global {
 	file shape_file_in <- file('../includes/gis/roads.shp') ;
+	//file shape_file_in <- file('../includes/gis/Reseau_Rouen_limit.shp') ;
+	//file shape_file_in <- file('../includes/gis/Reseau_TC.shp') ;
 	graph the_graph; 
 	init {    
 		create road from: shape_file_in ;
 		set the_graph <- as_edge_graph(list(road));
-		
+		 
 		create goal number: 1 {
 			let my_road type: road <- one_of (list(road));
 			set location <- any_location_in (my_road.shape);
 		}
-		create people number: 100 {
+		create people number: 1000 {
 			set target <- one_of (goal as list) ;
 			let my_road type: road <- one_of (list(road));
 			set location <- any_location_in (my_road.shape);
 		} 
+		write "nb edges : " + length(road);
+		write "nb nodes : " + length(the_graph.vertices);
+		
 	}
 }
 environment bounds:  shape_file_in ; 
