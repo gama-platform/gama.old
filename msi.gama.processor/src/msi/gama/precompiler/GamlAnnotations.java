@@ -644,7 +644,7 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		short[] expected_content_type() default ITypeProvider.NONE;
+		short[] expected_content_type() default {};
 
 		/**
 		 * @return the respective priority of the operator w.r.t. to the others. Priorities are

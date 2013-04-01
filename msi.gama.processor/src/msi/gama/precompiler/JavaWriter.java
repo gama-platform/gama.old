@@ -347,7 +347,11 @@ public class JavaWriter {
 		String type = segments[index++];
 		String contentType = segments[index++];
 		boolean iterator = segments[index++].equals("true");
-		// String priority = segments[index++];
+		int expected = Integer.decode(segments[index++]);
+		String[] expected_ct = new String[expected];
+		for ( int i = 0; i < expected; i++ ) {
+			expected_ct[i] = segments[index++];
+		}
 		String ret = segments[index++];
 		String m = segments[index++];
 		boolean stat = segments[index++].equals("true");
@@ -368,12 +372,21 @@ public class JavaWriter {
 			}
 		}
 		classNames += ")";
+		String content_type_expected = "I(";
+		for ( int i = 0; i < expected; i++ ) {
+			content_type_expected += expected_ct[i];
+			if ( i < expected - 1 ) {
+				content_type_expected += ",";
+			}
+		}
+		content_type_expected += ")";
 		String helper =
 			concat("new IOpRun(){", OVERRIDE, "public ", checkPrim(ret), " run(", ISCOPE,
 				" s,Object... o)", buildNAry(classes, m, ret, stat, scope), "}");
 
 		sb.append(in).append(iterator ? "_iterator(" : "_operator(").append(kw).append(',')
-			.append(classNames).append(",").append(toClassObject(ret))/* .append(",").append(priority) */
+			.append(classNames).append(",").append(content_type_expected).append(",")
+			.append(toClassObject(ret))/* .append(",").append(priority) */
 			.append(',').append(canBeConst).append(',').append(type).append(',')
 			.append(contentType).append(',').append(helper).append(");");
 	}

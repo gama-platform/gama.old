@@ -25,7 +25,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 
 /**
  * The Class MessageProxy.
@@ -284,10 +284,11 @@ public class Message implements IValue {
 		return "message GAML to be implemented";
 	}
 
-	@Override
-	public IType type() {
-		return Types.get(MessageType.MESSAGE_ID);
-	}
+	//
+	// @Override
+	// public IType type() {
+	// return Types.get(MessageType.MESSAGE_ID);
+	// }
 
 	@Override
 	public String stringValue(IScope scope) throws GamaRuntimeException {

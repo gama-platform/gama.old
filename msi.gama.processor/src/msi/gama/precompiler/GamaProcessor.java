@@ -666,8 +666,12 @@ public class GamaProcessor extends AbstractProcessor {
 			sb.append(op.content_type()).append(SEP);
 			// 5.iterator
 			sb.append(op.iterator()).append(SEP);
-			// 6.priority
-			// sb.append(op.priority()).append(SEP);
+			// 6.expected types number
+			sb.append(op.expected_content_type().length).append(SEP);
+			// 6+ expected types
+			for ( int i = 0; i < op.expected_content_type().length; i++ ) {
+				sb.append(op.expected_content_type()[i]).append(SEP);
+			}
 			// 7.return class
 			sb.append(ret).append(SEP);
 			// 8.methodName

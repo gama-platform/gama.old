@@ -16,11 +16,7 @@
  */
 package msi.gaml.extensions.fipa;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
@@ -29,7 +25,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.types.IType;
-import msi.gaml.types.Types;
 
 /**
  * This class represents the notion of a Conversation which is comprised of several Messages, the
@@ -119,13 +114,13 @@ public class Conversation extends GamaList<Message> {
 		final List<IAgent> members = new GamaList<IAgent>();
 		members.addAll(message.getReceivers());
 		members.add(initiator);
-		
+
 		// add the (newly created) conversation to agent
-		for (IAgent m : members) {
+		for ( IAgent m : members ) {
 			List<Conversation> conversations = (List<Conversation>) m.getAttribute("conversations");
 			conversations.add(this);
 		}
-		
+
 		MessageBroker.getInstance().addConversation(this);
 	}
 
@@ -175,11 +170,12 @@ public class Conversation extends GamaList<Message> {
 				for ( final IAgent receiver : msgReceivers ) {
 					if ( protocolNodeParticipantMap.containsKey(receiver) ) {
 						currentNode = protocolNodeParticipantMap.remove(receiver);
-						protocolNodeParticipantMap.put(receiver, protocol.getNode(message, currentNode,
-							message.getPerformative(), senderIsInitiator));
+						protocolNodeParticipantMap.put(receiver, protocol.getNode(message,
+							currentNode, message.getPerformative(), senderIsInitiator));
 					} else {
 						currentNode =
-							protocol.getNode(message, null, message.getPerformative(), senderIsInitiator);
+							protocol.getNode(message, null, message.getPerformative(),
+								senderIsInitiator);
 
 						if ( currentNode != null ) {
 							protocolNodeParticipantMap.put(receiver, currentNode);
@@ -189,12 +185,12 @@ public class Conversation extends GamaList<Message> {
 			} else if ( participants.contains(message.getSender()) ) {
 				if ( protocolNodeParticipantMap.containsKey(message.getSender()) ) {
 					currentNode = protocolNodeParticipantMap.remove(message.getSender());
-					protocolNodeParticipantMap
-						.put(message.getSender(), protocol.getNode(message, currentNode,
-							message.getPerformative(), senderIsInitiator));
+					protocolNodeParticipantMap.put(message.getSender(), protocol.getNode(message,
+						currentNode, message.getPerformative(), senderIsInitiator));
 				} else {
 					currentNode =
-						protocol.getNode(message, null, message.getPerformative(), senderIsInitiator);
+						protocol.getNode(message, null, message.getPerformative(),
+							senderIsInitiator);
 
 					if ( currentNode != null ) {
 						protocolNodeParticipantMap.put(message.getSender(), currentNode);
@@ -243,7 +239,7 @@ public class Conversation extends GamaList<Message> {
 	 * 
 	 * @return the messages
 	 */
-	@getter( MESSAGES)
+	@getter(MESSAGES)
 	public GamaList getMessages() {
 		return messages;
 	}
@@ -253,7 +249,7 @@ public class Conversation extends GamaList<Message> {
 	 * 
 	 * @return the intitiator
 	 */
-	@getter( INITIATOR)
+	@getter(INITIATOR)
 	public IAgent getIntitiator() {
 		return initiator;
 	}
@@ -263,7 +259,7 @@ public class Conversation extends GamaList<Message> {
 	 * 
 	 * @return the participants
 	 */
-	@getter( PARTICIPANTS)
+	@getter(PARTICIPANTS)
 	public GamaList getParticipants() {
 		return participants;
 	}
@@ -273,7 +269,7 @@ public class Conversation extends GamaList<Message> {
 	 * 
 	 * @return the protocol name
 	 */
-	@getter( PROTOCOL)
+	@getter(PROTOCOL)
 	public String getProtocolName() {
 		if ( protocol == null ) { return null; }
 		return FIPAConstants.protocolNames[protocol.getIndex()];
@@ -284,16 +280,16 @@ public class Conversation extends GamaList<Message> {
 	 * 
 	 * @return true, if is ended
 	 */
-	@getter( ENDED)
+	@getter(ENDED)
 	public boolean isEnded() {
 		return ended || areAllNodeEnded();
 	}
-	
+
 	public boolean areMessagesRead() {
-		for (Message m : messages) {
-			if (m.isUnread()) return false;
+		for ( Message m : messages ) {
+			if ( m.isUnread() ) { return false; }
 		}
-		
+
 		return true;
 	}
 
@@ -339,14 +335,16 @@ public class Conversation extends GamaList<Message> {
 		return "message GAML to be implemented";
 	}
 
-	@Override
-	public IType type() {
-		return Types.get(ConversationType.CONV_ID);
-	}
+	//
+	// @Override
+	// public IType type() {
+	// return Types.get(ConversationType.CONV_ID);
+	// }
 
 	@Override
 	public String stringValue(IScope scope) throws GamaRuntimeException {
 		// TODO Auto-generated method stub
-		return "Conversation between initiator: " + this.getIntitiator() + " and participants: " + this.getParticipants() ;
+		return "Conversation between initiator: " + this.getIntitiator() + " and participants: " +
+			this.getParticipants();
 	}
 }

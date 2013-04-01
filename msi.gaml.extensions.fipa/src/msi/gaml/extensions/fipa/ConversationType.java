@@ -9,7 +9,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.*;
 
 @type(name = ConversationType.CONVERSATION_STR, id = ConversationType.CONV_ID, wraps = { Conversation.class }, kind = ISymbolKind.Variable.CONTAINER)
-public class ConversationType extends GamaType<Conversation> {
+public class ConversationType extends GamaContainerType<Conversation> {
 
 	public final static String CONVERSATION_STR = "conversation";
 	public final static short CONV_ID = 98;
@@ -26,11 +26,6 @@ public class ConversationType extends GamaType<Conversation> {
 	}
 
 	@Override
-	public Conversation getDefault() {
-		return null;
-	}
-
-	@Override
 	public IType defaultContentType() {
 		return Types.get(Message.class);
 	}
@@ -40,16 +35,6 @@ public class ConversationType extends GamaType<Conversation> {
 		return Types.get(IType.INT);
 	}
 
-	@Override
-	public boolean hasContents() {
-		return true;
-	}
-
-	@Override
-	protected boolean acceptNullInstances() {
-		return true;
-	}
-
 	@operator(value = ConversationType.CONVERSATION_STR, can_be_const = true)
 	@doc(value = "to be added", comment = "", special_cases = { "" }, examples = { "" })
 	public static Conversation asMessage(final IScope scope, final Object val)
@@ -57,7 +42,7 @@ public class ConversationType extends GamaType<Conversation> {
 		return ConversationType.staticCast(scope, val, null);
 	}
 
-	private static Conversation staticCast(IScope scope, Object val, Object object) {
+	public static Conversation staticCast(IScope scope, Object val, Object object) {
 		if ( val instanceof Conversation ) { return (Conversation) val; }
 		if ( val instanceof Message ) { return ((Message) val).getConversation(); }
 		// ???
