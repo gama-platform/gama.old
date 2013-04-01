@@ -32,7 +32,6 @@ entities {
 		//geometry shape <- geometry (point(self.location)) ;
 		int z <- size_of_agents;
 		
-		
 		reflex go_to_center {
 			set heading <- (((self distance_to center) > radius_of_circle) ? self towards center : (self towards center) - 180);
 			do move speed: speed; 

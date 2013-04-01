@@ -43,7 +43,7 @@ global {
 	init {
 		create administrator returns: administrator_created;
 		set the_administrator <- first(administrator_created);
-		create node from: nodes_file with: [id::read("ID"), id_next::read("ID_NEXT"), source::read("SOURCE")];
+		create node from: nodes_file with: [id::string(read("ID")), id_next::string(read("ID_NEXT")), source::string(read("SOURCE"))];
 		ask nodes {
 			set next_node <- nodes first_with (each.id = id_next);
 		}
@@ -55,7 +55,7 @@ global {
 			}
 		}
 		do load_activity_type_data;
-		create activity from: activities_file with: [id::read("ID"), input_id::read("INPUT"), output_id::read("OUTPUT"), type_name::read("TYPE")];
+		create activity from: activities_file with: [id::string(read("ID")), input_id::string(read("INPUT")), output_id::string(read("OUTPUT")), type_name::string(read("TYPE"))];
 		ask activities {
 			set input_node <- nodes first_with (each.id = input_id);
 			set output_node <- nodes first_with (each.id = output_id);

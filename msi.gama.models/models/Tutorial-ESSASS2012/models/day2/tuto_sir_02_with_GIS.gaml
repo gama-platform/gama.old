@@ -12,7 +12,7 @@ global {
 	file shape_file_dept <- file('../../includes/depts.shp');
 		
 	init {
-		create city from: shape_file_cities with: [population_init::read('population')];
+		create city from: shape_file_cities with: [population_init::int(read('population'))];
 		create road from: shape_file_roads;
 		create dept from: shape_file_dept;
 			

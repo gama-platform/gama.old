@@ -33,7 +33,7 @@ global {
   	
 		write("click");
 	}
-	action click2
+	action click2 
 	{
 		arg location type: point;
   		arg selected_agents type: list;

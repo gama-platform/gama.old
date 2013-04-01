@@ -11,7 +11,7 @@ global {
 	int square_meters_per_people <- 200 parameter: 'Occupancy of people (in m2):' category: 'GIS specific';
 	int dimensions;
 	action initialize_people { 
-		create space from: shape_file_name with: [surface :: read('AREA')];
+		create space from: shape_file_name with: [surface :: float(read('AREA'))];
 		set all_places  <- shuffle(space as list);
 		set number_of_people <- density_of_people * sum (all_places collect ((each as space).capacity)); 
 		create people number: number_of_people;  
@@ -23,13 +23,15 @@ global {
 } 
 entities {      
 	species people parent: base {   
+		
+		
 		const size type: float <- 2.0;  
 		const color type: rgb <- colors at (rnd (number_of_groups - 1)); 
 		const red type: int <- color as list at 0; 
 		const green type: int <- color as list at 1;  
 		const blue type: int <- color as list at 2; 
 		space current_building <- nil;
-		list my_neighbours -> {people at_distance neighbours_distance}; 
+		list<people> my_neighbours -> {people at_distance neighbours_distance}; 
 		action move_to_new_place {  
 			set current_building <- (shuffle(all_places) first_with (((each).capacity) > 0));
 			ask current_building {

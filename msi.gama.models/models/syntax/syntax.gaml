@@ -143,8 +143,6 @@ model syntax
  		// Adding a value
  		add item: 1 to: l;
  		// ... can now be written
- 		l ++ 1;
- 		// ... or (the definitive syntax will be chosen later)
  		l << 1;
  		
  		// Removing a value
@@ -152,10 +150,9 @@ model syntax
  		remove "type" from: geom;
  		
  		// ... can now be written
- 		l -- 1;
  		l >> 1;
- 		geom -- "type";
- 		any(species0) -- "name"; // removes the "name" attribute from a random agent. Can be dangerous in some cases... 
+ 		geom >> "type";
+ 		any(species0)  >> "name"; // removes the "name" attribute from a random agent. Can be dangerous in some cases... 
  		
  		// Setting/putting a value
  		put "a" at: 'key' in: m;
@@ -164,11 +161,15 @@ model syntax
  		m['key'] <- "a"; 
  		l[0] <- 1;
  		
+ 		list<list> ll <- [];
+ 		ll << []; // [[]]
+ 		ll[0] << 10; // [[10]]
+ 		
  	}
  	
  	// TODO Species can now be written within the "global" section (to enforce the idea that the top-level species are indeed contained in the world)
  	
-
+	species inside_global{}
  	 
  /**
   * INVOCATION OF ACTIONS

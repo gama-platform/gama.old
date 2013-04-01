@@ -16,7 +16,7 @@ global {
 	int input_water_quantity <- 20;
 	
 	init {
-		create node from: nodes_file with: [id::read("ID"), id_next::read("ID_NEXT"), source::read("SOURCE")];
+		create node from: nodes_file with: [id::string(read("ID")), id_next::string(read("ID_NEXT")), source::string(read("SOURCE"))];
 		ask nodes {
 			set next_node <- nodes first_with (each.id = id_next);
 		}
@@ -28,7 +28,7 @@ global {
 			}
 		}
 		create activity_type returns: activity_type_created;
-		create activity from: activities_file with: [id::read("ID"), input_id::read("INPUT"), output_id::read("OUTPUT")];
+		create activity from: activities_file with: [id::string(read("ID")), input_id::string(read("INPUT")), output_id::string(read("OUTPUT"))];
 		ask activities {
 			set input_node <- nodes first_with (each.id = input_id);
 			set output_node <- nodes first_with (each.id = output_id);

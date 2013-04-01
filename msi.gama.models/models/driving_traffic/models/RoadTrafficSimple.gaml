@@ -15,7 +15,7 @@ global {
 		
 	
 	init {  
-		create road from: shape_file_roads with: [nbLanes::read('LANE_NB')] ;
+		create road from: shape_file_roads with: [nbLanes::int(read('LANE_NB'))] ;
 		loop rd over: road as list {
 			create road_display {
 				set shape <- rd.shape buffer rd.nbLanes;

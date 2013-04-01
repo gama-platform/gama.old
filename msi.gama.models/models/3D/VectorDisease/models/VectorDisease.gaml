@@ -55,7 +55,7 @@ global {
 
 			}
 
-			create vegetation from: shape_file_vegetation with: [type::read ('CLASS_NAME')] {
+			create vegetation from: shape_file_vegetation with: [type::string(read ('CLASS_NAME'))] {
 	    
 			if type='Steppes' {
 				set colorQualitative <-  rgb([255, 255, 204]);

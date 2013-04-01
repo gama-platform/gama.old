@@ -28,7 +28,7 @@ global {
 	
 	 
 	init {  
-		create road from: shape_file_roads with:[nbLanes::read('LANE_NB')];
+		create road from: shape_file_roads with:[nbLanes::int(read('LANE_NB'))];
 		create building from: shape_file_buildings;
 		set roadsList <- road as list;
 		set buildings <- building as list;

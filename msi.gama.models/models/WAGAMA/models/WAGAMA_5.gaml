@@ -15,7 +15,7 @@ global {
 
 
 	init {
-		create node from: nodes_file with: [id::read("ID"), id_next::read("ID_NEXT"), source::read("SOURCE")];
+		create node from: nodes_file with: [id::string(read("ID")), id_next::string(read("ID_NEXT")), source::string(read("SOURCE"))];
 		ask nodes {
 			set next_node <- nodes first_with (each.id = id_next);
 		}
