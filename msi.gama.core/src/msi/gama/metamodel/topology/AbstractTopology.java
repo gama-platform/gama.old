@@ -28,7 +28,6 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Maths;
-import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.prep.*;
 import com.vividsolutions.jts.geom.util.AffineTransformation;
@@ -335,7 +334,7 @@ public abstract class AbstractTopology implements ITopology {
 	public Map<Geometry, IAgent> getAgents(final IAgentFilter filter) {
 		Collection shps;
 		if ( filter != null ) {
-			shps = filter.getShapes();
+			shps = filter.getShapes(scope);
 		} else {
 			shps = scope.getWorldScope().getAgents();
 		}
@@ -463,10 +462,10 @@ public abstract class AbstractTopology implements ITopology {
 	/**
 	 * @see msi.gama.interfaces.IValue#type()
 	 */
-	@Override
-	public IType type() {
-		return Types.get(IType.TOPOLOGY);
-	}
+	// @Override
+	// public IType type() {
+	// return Types.get(IType.TOPOLOGY);
+	// }
 
 	private static PreparedGeometryFactory pgFact = new PreparedGeometryFactory();
 

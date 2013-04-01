@@ -43,8 +43,8 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 
 	private Set<ISpatialIndex> findSpatialIndexes(final IAgentFilter f) {
 		ISpecies s = f.speciesFiltered();
-		Set<ISpatialIndex> result = new HashSet();
 		if ( s != null ) {
+			Set<ISpatialIndex> result = new HashSet();
 			ISpatialIndex si = indexes.get(s);
 			if ( si != null ) {
 				result.add(si);
