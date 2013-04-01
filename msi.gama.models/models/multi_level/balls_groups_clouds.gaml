@@ -69,7 +69,7 @@ global {
 				ask gd as group_delegation {
 					migrate ball_in_group target: ball_in_cloud;
 				}
-			}
+			} 
 			
 			set newCloud.color value: ((group_delegation(one_of(newCloud.members))).color).darker;
 		}
@@ -416,7 +416,7 @@ entities {
 				ask rg as: group { do disaggregate; }
 			}
 			
-			do die;
+			do die; 
 		}
 	 	 
 		aspect default {

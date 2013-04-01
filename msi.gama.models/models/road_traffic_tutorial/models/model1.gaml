@@ -5,7 +5,7 @@ global {
 	file shape_file_roads <- file('../includes/road.shp');
 	file shape_file_bounds <- file('../includes/bounds.shp');
 	init {
-		create building from: shape_file_buildings with: [type::read ('NATURE')] {
+		create building from: shape_file_buildings with: [type::string(read ('NATURE'))] {
 			if type='Industrial' {
 				set color <- rgb('blue') ;
 			}

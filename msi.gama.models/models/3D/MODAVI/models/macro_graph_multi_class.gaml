@@ -157,10 +157,10 @@ entities {
 				set src <- my_graph source_of(self);
 				set dest <- my_graph target_of(self);
 				int tmp <- int(interactionMatrix[i]  at {(src.classVector[i]-1),(dest.classVector[i]-1)});
-				(interactionMatrix[i]) [(src.classVector[i]-1),(dest.classVector[i]-1)] <- (tmp+1);
+				interactionMatrix[i][src.classVector[i]-1,dest.classVector[i]-1] <- (tmp+1);
 			}
 		} 
-		
+		 
 		aspect base {
 			draw shape color: color ;
 		}	
@@ -237,11 +237,11 @@ entities {
 	 	loop h from:0 to: nbTypeOfClass-1{
 		 	loop i from: 0 to: nbValuePerClass-1{
 		      loop j from: 0 to: nbValuePerClass-1{
-		        let tmp <- interactionMatrix[h]  at {i,j}; 
+		        int tmp <- interactionMatrix[h]  at {i,j}; 
 
 		        if(i!=j){
 		            create macroEdge{
-		              nbAggregatedLinkList[h] <- interactionMatrix[h]  at {i,j};
+		              nbAggregatedLinkList[h] <- tmp;
 		              set src <- macroNodes at (i);
 				      set dest <- macroNodes at (j);	
 		            }	  

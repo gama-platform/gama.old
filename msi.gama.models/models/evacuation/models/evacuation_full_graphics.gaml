@@ -69,7 +69,7 @@ global {
 	
 	init {
 		loop road_geom over: (shape_file_road.contents) {
-			create road with: [ shape :: geometry(road_geom), width :: (geometry(road_geom) get ('WIDTH')) ];
+			create road with: [ shape :: geometry(road_geom), width :: (float(geometry(road_geom) get ('WIDTH'))) ];
 		}
 		
 		create road_width from: shape_file_roadlines; 
@@ -83,7 +83,7 @@ global {
 		
 		set nearest_roads_to_shelters <- (remove_duplicates(nearest_roads_to_shelters));
 		
-		create ward from: shape_file_ward with: [ id :: get('ID'), wardname :: get('Name'), population :: get('Population')] {
+		create ward from: shape_file_ward with: [ id :: int(get('ID')), wardname :: string(get('Name')), population :: int(get('Population'))] {
 			do init_overlapping_roads;
 		}
 		

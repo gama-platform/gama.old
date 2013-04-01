@@ -82,7 +82,7 @@ global {
 		 		let micro_agents type: list of: boids value: list(potentialBoidsNeighboursMap at one_key);
 		 			
 		 		if ( (length (micro_agents)) > 1 ) {
-		 			create flock number: 1 with: [ color::[rnd (255), rnd (255), rnd (255)] ] { 
+		 			create flock number: 1 with: [ color::rgb([rnd (255), rnd (255), rnd (255)]) ] { 
 		 				capture micro_agents as: boids_delegation;
 		 			}
 		 		}
@@ -176,7 +176,7 @@ entities {
 			 		release one_flock.members returns: released_boids; 
 			 		
 			 		loop rb over: list(released_boids) {
-			 			add rb to: added_components;
+			 			add boids(rb) to: added_components;
 			 		}
 			 	}
 			 	

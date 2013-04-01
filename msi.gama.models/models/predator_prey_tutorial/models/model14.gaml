@@ -26,7 +26,7 @@ global {
 	int nb_predators function: {length (predator as list)};
 	
 	init {
-		create vegetation from: map_init with: [food::read ('FOOD'), foodProd::read ('FOOD_PROD')] ;
+		create vegetation from: map_init with: [food::float(read ('FOOD')), foodProd::float(read ('FOOD_PROD'))] ;
 		create prey number: nb_preys_init {
 			set myPatch <- one_of(vegetation as list);
 			set location <- any_location_in(myPatch);

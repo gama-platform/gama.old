@@ -16,7 +16,7 @@ global {
 	graph the_graph;
 	
 	init {
-		create building from: shape_file_buildings with: [type::read ('NATURE')] {
+		create building from: shape_file_buildings with: [type::string(read ('NATURE'))] {
 			if type='Industrial' {
 				set color <- rgb('blue') ;
 			}

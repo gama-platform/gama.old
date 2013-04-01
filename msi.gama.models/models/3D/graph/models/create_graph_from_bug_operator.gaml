@@ -20,7 +20,7 @@ entities{
 		point location <- target.location value: target.location;
 		aspect base{
 		  draw sphere(1) color: rgb('green');
-		}
+		} 
 		
 		aspect dynamic{
 		  int degree <-myGraph degree_of(self);

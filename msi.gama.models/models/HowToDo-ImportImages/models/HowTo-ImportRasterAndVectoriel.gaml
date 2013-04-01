@@ -36,7 +36,7 @@ global {
 	// Creation of managmentUnit and rivers agents from the corresponding shapefile
 	init {
 		create managementUnit from: ManagementUnitShape.path 
-				with: [MUcode::read('Code_UG'), MULabel::read('Libelle_UG'), pgeSAGE::read('PGE_SAGE')] ;
+				with: [MUcode::int(read('Code_UG')), MULabel::string(read('Libelle_UG')), pgeSAGE::string(read('PGE_SAGE'))] ;
 				
 		create river from: waterShape.path;
 				
