@@ -33,46 +33,56 @@ import org.eclipse.xtext.ui.editor.utils.TextStyle;
 
 public class GamlHighlightingConfiguration extends DefaultHighlightingConfiguration {
 
-	public static final String BINARY_ID = "binary";
-	public static final String UNARY_ID = "unary";
+	public static final String OPERATOR_ID = "binary";
 	public static final String RESERVED_ID = "reserved";
 	public static final String FACET_ID = "facet";
 	public static final String FIELD_ID = "field";
 	public static final String GLOBAL_ID = "global";
 	public static final String VARIABLE_ID = "variable";
 	public static final String VARDEF_ID = "varDef";
+	public static final String TYPE_ID = "typeDef";
+	public static final String ASSIGN_ID = "assignment";
+	public static final String UNIT_ID = "unit";
 
 	@Override
 	public void configure(final IHighlightingConfigurationAcceptor acceptor) {
-		acceptor.acceptDefaultHighlighting(KEYWORD_ID, "Keyword", keywordTextStyle());
-		acceptor.acceptDefaultHighlighting(PUNCTUATION_ID, "Punctuation character",
+		acceptor.acceptDefaultHighlighting(KEYWORD_ID, "Statement keywords", keywordTextStyle());
+		acceptor.acceptDefaultHighlighting(PUNCTUATION_ID, "Punctuation characters",
 			punctuationTextStyle());
-		acceptor.acceptDefaultHighlighting(BINARY_ID, "Binary operators", binaryTextStyle());
-		acceptor.acceptDefaultHighlighting(UNARY_ID, "Unary operators", unaryTextStyle());
-		acceptor.acceptDefaultHighlighting(RESERVED_ID, "Reserved keywords", reservedTextStyle());
-		acceptor.acceptDefaultHighlighting(COMMENT_ID, "Comment", commentTextStyle());
-		acceptor.acceptDefaultHighlighting(STRING_ID, "String", stringTextStyle());
-		acceptor.acceptDefaultHighlighting(NUMBER_ID, "Number", numberTextStyle());
+		acceptor.acceptDefaultHighlighting(OPERATOR_ID, "Operators & action calls",
+			operatorTextStyle());
+		acceptor.acceptDefaultHighlighting(RESERVED_ID, "Reserved symbols", reservedTextStyle());
+		acceptor.acceptDefaultHighlighting(COMMENT_ID, "Comments", commentTextStyle());
+		acceptor.acceptDefaultHighlighting(STRING_ID, "Strings", stringTextStyle());
+		acceptor.acceptDefaultHighlighting(NUMBER_ID, "Literal constants", numberTextStyle());
 		acceptor.acceptDefaultHighlighting(DEFAULT_ID, "Default", defaultTextStyle());
-		acceptor.acceptDefaultHighlighting(INVALID_TOKEN_ID, "Invalid Symbol", errorTextStyle());
-		acceptor.acceptDefaultHighlighting(FACET_ID, "Facets", facetTextStyle());
-		acceptor.acceptDefaultHighlighting(FIELD_ID, "Fields", fieldTextStyle());
-		acceptor.acceptDefaultHighlighting(GLOBAL_ID, "Global Variables", globalTextStyle());
-		acceptor.acceptDefaultHighlighting(VARIABLE_ID, "Variables", variableTextStyle());
-		acceptor.acceptDefaultHighlighting(VARDEF_ID, "Variable definition", varDefTextStyle());
+		acceptor.acceptDefaultHighlighting(FACET_ID, "Facet keys", facetTextStyle());
+		acceptor.acceptDefaultHighlighting(VARIABLE_ID, "Variables used in expressions",
+			variableTextStyle());
+		acceptor.acceptDefaultHighlighting(VARDEF_ID, "Variables definitions", varDefTextStyle());
+		acceptor.acceptDefaultHighlighting(TYPE_ID, "Type", typeTextStyle());
+		acceptor.acceptDefaultHighlighting(ASSIGN_ID, "Assignment signs", assignTextStyle());
+		acceptor.acceptDefaultHighlighting(UNIT_ID, "Unit names", unitTextStyle());
 	}
 
 	public TextStyle facetTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setStyle(SWT.BOLD);
-		textStyle.setColor(new RGB(0, 125, 60));
+		textStyle.setColor(new RGB(150, 0, 60));
 		return textStyle;
 	}
 
-	public TextStyle globalTextStyle() {
+	public TextStyle typeTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setStyle(SWT.BOLD);
-		textStyle.setColor(new RGB(0, 0, 0));
+		textStyle.setColor(new RGB(0, 79, 116));
+		return textStyle;
+	}
+
+	public TextStyle assignTextStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setStyle(SWT.BOLD);
+		textStyle.setColor(new RGB(50, 50, 50));
 		return textStyle;
 	}
 
@@ -89,22 +99,16 @@ public class GamlHighlightingConfiguration extends DefaultHighlightingConfigurat
 		return textStyle;
 	}
 
-	public TextStyle binaryTextStyle() {
+	public TextStyle operatorTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setStyle(SWT.BOLD);
 		textStyle.setColor(new RGB(46, 93, 78));
 		return textStyle;
 	}
 
-	public TextStyle unaryTextStyle() {
-		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(0, 79, 116));
-		textStyle.setStyle(SWT.BOLD);
-		return textStyle;
-	}
-
 	public TextStyle reservedTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setStyle(SWT.BOLD);
 		textStyle.setColor(new RGB(0, 0, 0));
 		return textStyle;
 	}
@@ -112,6 +116,12 @@ public class GamlHighlightingConfiguration extends DefaultHighlightingConfigurat
 	@Override
 	public TextStyle errorTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
+		return textStyle;
+	}
+
+	public TextStyle unitTextStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setStyle(SWT.ITALIC);
 		return textStyle;
 	}
 
