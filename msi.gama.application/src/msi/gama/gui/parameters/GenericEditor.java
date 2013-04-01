@@ -32,7 +32,7 @@ public class GenericEditor extends AbstractEditor {
 
 	GenericEditor(final IParameter param) {
 		super(param);
-		expectedType = param.type();
+		expectedType = param.getType();
 	}
 
 	GenericEditor(final IAgent agent, final IParameter param) {
@@ -41,7 +41,7 @@ public class GenericEditor extends AbstractEditor {
 
 	GenericEditor(final IAgent agent, final IParameter param, final EditorListener l) {
 		super(agent, param, l);
-		expectedType = param.type();
+		expectedType = param.getType();
 	}
 
 	GenericEditor(final Composite parent, final String title, final Object value,

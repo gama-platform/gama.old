@@ -119,9 +119,9 @@ public class EditorFactory implements IEditorFactory {
 	public AbstractEditor create(final IAgent agent, final IParameter var, final EditorListener l) {
 		final boolean canBeNull =
 			var instanceof ExperimentParameter ? ((ExperimentParameter) var).canBeNull() : false;
-		final short type = var.type().id();
+		final short type = var.getType().id();
 		AbstractEditor gp =
-			var.type().isSpeciesType() | type == IType.AGENT ? new AgentEditor(agent, var, l)
+			var.getType().isSpeciesType() | type == IType.AGENT ? new AgentEditor(agent, var, l)
 				: type == IType.BOOL ? new BooleanEditor(agent, var, l) : type == IType.COLOR
 					? new ColorEditor(agent, var, l) : type == IType.FLOAT ? new FloatEditor(agent,
 						var, canBeNull, l) : type == IType.INT ? new IntEditor(agent, var,

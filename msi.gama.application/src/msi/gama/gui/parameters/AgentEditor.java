@@ -47,7 +47,7 @@ public class AgentEditor extends AbstractEditor {
 
 	AgentEditor(final IAgent agent, final IParameter param, final EditorListener l) {
 		super(agent, param, l);
-		species = param.type().toString();
+		species = param.getType().toString();
 	}
 
 	AgentEditor(final Composite parent, final String title, final Object value,

@@ -113,13 +113,15 @@ public class SpeciesLayer extends AgentLayer {
 
 			// draw the population
 			for ( IAgent a : _agents ) {
-				if ( a != null && !a.dead() ) {
-					Rectangle2D r = aspect.draw(scope, a);
-					if ( a == GuiUtils.getHighlightedAgent() ) {
-						g.highlight(r);
-					}
-					shapes.put(a, r);
+				if ( a == null || a.dead() ) {
+					continue;
 				}
+				// TODO Create a "catch GamaRuntimeException" ?
+				Rectangle2D r = aspect.draw(scope, a);
+				if ( a == GuiUtils.getHighlightedAgent() ) {
+					g.highlight(r);
+				}
+				shapes.put(a, r);
 			}
 
 			IPopulation microPop;
