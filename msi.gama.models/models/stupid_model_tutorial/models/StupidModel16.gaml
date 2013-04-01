@@ -7,7 +7,7 @@ global {
     float survivalProbability <- 0.95;
     float initialBugSizeMean <- 0.1;
     float initialBugSizeSD <- 0.03;    
-    const init_data type: matrix <- matrix(file('../data/Stupid_Cell.Data'));
+    matrix<int> init_data <- matrix(file('../data/Stupid_Cell.Data'));
     const width type: int init: int(max ((init_data column_at 0) copy_between {3, ((init_data.rows)) - 1}));
     const height type: int init: int(max((init_data column_at 1) copy_between {3,init_data.rows - 1}));
     init { 

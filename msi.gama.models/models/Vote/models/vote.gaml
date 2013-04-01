@@ -180,8 +180,8 @@ entities {
 		
 		init {
 			if (distribution_electeurs = "Normale") {
-				let x_cord type: float <- max([0, min([200, gauss ({100, 35})])]);
-				let y_cord type: float <- max([0, min([200, gauss ({100, 35})])]);
+				let x_cord type: float <- max([0.0, min([200.0, gauss ({100, 35})])]);
+				let y_cord type: float <- max([0.0, min([200.0, gauss ({100, 35})])]);
 				set location <- {x_cord, y_cord};
 			}
 		}

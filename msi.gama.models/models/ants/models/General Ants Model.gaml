@@ -1,4 +1,4 @@
- model ants 
+model ants 
 global    {
 	float evaporation_rate <- 0.10 min: 0.0 max: 1.0 parameter: 'Rate of evaporation of the signal (%/cycle):' category: 'Signals';
 	float diffusion_rate <- 0.5 min: 0.0 max: 1.0 parameter: 'Rate of diffusion of the signal (%/cycle):' category: 'Signals';
@@ -14,21 +14,19 @@ global    {
 	var food_placed type: int <- 0;
 	const background type: rgb <- rgb( #999999 );  
 	const food_color type: rgb <- rgb ( #312200 );        
-	const nest_color type: rgb <- rgb ( #000000 );
+	const nest_color type: rgb <- rgb ( #000000 ); 
 	init {         
 		loop times: number_of_food_places { 
 			point loc <- { rnd ( gridsize - 10 ) + 5 , rnd ( gridsize - 10 ) + 5 };  
 			list<ant_grid> food_places <- ( ant_grid where ( ( each distance_to loc ) < 5 ) );
 			ask food_places {
-				if food = 0 {         
-					food <- 5 ;                
+				if food = 0 {          
+					food <- 5 ;
 					food_placed <- food_placed + 5 ; 
  					color <- food_color ; 
 				}       
 			}
 		}
-		 
-
 		create ant number: ants_number with: (location: center);  
 	}
 
@@ -109,7 +107,7 @@ entities {
 		aspect icon {
 			draw file(ant_shape_empty) size: 5 rotate: my heading + 1;
 		}
-		aspect default {
+		aspect default { 
 			draw square(1) empty: ! has_food color: rgb('white') rotate: my heading;
 		}  
 	}    
@@ -126,9 +124,9 @@ experiment Complete type: gui {
 		write "Experimentator agent running " + self;  
 	}
 	
-	reflex to {
-		write "Experimentator at cycle " + cycle; 
-	}
+	//reflex to {
+	//	write "Experimentator at cycle " + cycle;   
+	//}
 	
 	
 	

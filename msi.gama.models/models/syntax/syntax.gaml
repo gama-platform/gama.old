@@ -125,13 +125,13 @@ model syntax
 		list<geometry> shapes <- file("something.shp") as list;
 		
 		// If we suppose val1, val2, etc. are defined in the shape file
-		float max <- min(shapes collect each["val1"]);
+		float max <- min(shapes collect int(each["val1"]));
 		
 		//To allow for an easier access in case the modeler only uses agents, agents' attributes can "pass through" towards their shape's attributes 
 		//(in case the same attribute has not been defined in the agent, of course)
  		create species0 from: shapes;
  		
- 		max <- min(species0 collect each["val1"]); // equivalent to each.shape["val1"]. 
+ 		max <- min(species0 collect float(each["val1"]) ); // equivalent to each.shape["val1"]. 
  		//This last sentence only works, however, for *reading* values.
  		any(species0)["val1"] <- 100; // will result in the creation of a new attribute in the agent (not in its shape)
  		any(species0).shape["val1"] <- 100; // will be correct in that case
@@ -319,7 +319,7 @@ model syntax
  		float compute_speed_using_a_functional_attribute { float(speed of (target as species0)) }
  		
  		float compute_speed_using_an_action (int max <- 100) {
-			return min([max, float(speed of (target as species0))]);
+			return min([max, int(speed of (target as species0))]);
 		}
 		
 		

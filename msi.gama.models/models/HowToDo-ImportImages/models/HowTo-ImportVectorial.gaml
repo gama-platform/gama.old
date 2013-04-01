@@ -27,7 +27,7 @@ entities {
 		string pgeSAGE;
 		
 		aspect basic{
-    		draw geometry: shape;
+    		draw shape;
     	}
 	}	
 }

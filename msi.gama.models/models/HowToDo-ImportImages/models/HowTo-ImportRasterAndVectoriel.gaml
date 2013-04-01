@@ -80,7 +80,7 @@ entities {
     		draw square(5000) color: rgb('orange');
     	}
     	aspect image{
-    		draw image: izardShape.path size: 5000;
+    		draw image: izardShape size: 5000;
     	}
 	}	
 }

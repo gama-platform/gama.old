@@ -42,7 +42,7 @@ global {
 	}
 }
 
-entities {
+entities { 
 	species flock skills: [moving] {
 		rgb color <- rgb ([ rnd(255), rnd(255), rnd(255) ]) ;
 		geometry shape <- polygon ( (list (boids_in_flock)) ) buffer  10 ;

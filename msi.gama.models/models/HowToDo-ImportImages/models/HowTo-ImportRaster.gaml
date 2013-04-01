@@ -24,7 +24,7 @@ global {
 	// - we then set the color built-in attribute of the cell with the value of the corresponding matrix cell     
 	init {
 		// set mapColor value: mntImageRaster as_matrix {widthImg/factorDiscret,heightImg/factorDiscret} ;
-		ask cell as list {		
+		ask cell {		
 			set color <- mntImageRaster at {grid_x,grid_y} ;
 		}
 		create izard number: nbIzard; 
@@ -36,9 +36,8 @@ global {
 // - in the creation of a matrix: ([...] as_matrix {widthImg/factorDiscret,heightImg/factorDiscret} ;)
 // - in the creation of the grid: grid cellule width: widthImg/factorDiscret height: heightImg/factorDiscret;
 
-environment {
+
 	grid cell  width: widthImg/factorDiscret height: heightImg/factorDiscret;
-}
 
 // We create izard agents and locate them on one'cell' among the list of cellules that verifies the following conditions : is empty ('empty(each.agents)') 
 // and with a color that is not white 'each.color != rgb('white')'
@@ -53,7 +52,7 @@ entities {
     		draw square(1) color: rgb('orange');
     	}
     	aspect image{
-    		draw image: izardShape.path size: 1;
+    		draw izardShape size: 1;
     	}
 	}
 }

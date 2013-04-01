@@ -113,8 +113,7 @@ entities {
 			set location value: location + {repulsive_dx, repulsive_dy} ;
 		}
 		
-		action in_bounds type: bool {
-			arg a_point type: point ;
+		bool in_bounds (point a_point) {
 			
 			return ( !(a_point.x < xmin) and !(a_point.x > xmax) and !(a_point.y < ymin) and !(a_point.y > ymax) ) ;
 		}
@@ -130,9 +129,9 @@ entities {
 				set heading value: self towards (nearest_free_ball) ;
 				let step_distance type: float value: speed * step ;
 				let step_x type: float value: step_distance * (cos (heading)) ;
-				let step_y type: float value: step_distance * (sin (heading)) ;
-				let tmp_location var: tmp_location type: point value: location + {step_x, step_y} ;
-				if condition: (self in_bounds [ a_point :: tmp_location ] ) {
+				let step_y type: float value: step_distance * (sin (heading)) ; 
+				point tmp_location value: location + {step_x, step_y} ;
+				if condition: (self in_bounds (tmp_location) ) {
 					set location value: tmp_location ;
 					do action: separation {
 						arg nearby_balls value: ((ball overlapping (shape + ball_separation)) - self) ;
@@ -154,7 +153,7 @@ entities {
 			let step_x var: step_x type: float value: step_distance * (cos (heading)) ;
 			let step_y var: step_y type: float value: step_distance * (sin (heading)) ;
 			let tmp_location type: point value: location + {step_x, step_y} ;
-			if condition: (self in_bounds [ a_point :: tmp_location]) {
+			if condition: (self in_bounds (tmp_location)) {
 				set location value: tmp_location ;
 				do action: separation {
 					arg nearby_balls value: ((ball overlapping (shape + ball_separation)) - self) ;
@@ -169,10 +168,10 @@ entities {
 		}
 	}
 	
-	species group parent: base {
+	species group parent: base { 
 		rgb color <- rgb ([ rnd(255), rnd(255), rnd(255) ]) ;
 		
-		geometry shape <- polygon ( (list (ball_in_group)) ) buffer  10 ;
+		geometry shape <- polygon (ball_in_group) buffer  10 ;
 		
 		float speed value: float(group_base_speed) ;
 		float perception_range value: float(base_perception_range + (rnd(5))) ;
