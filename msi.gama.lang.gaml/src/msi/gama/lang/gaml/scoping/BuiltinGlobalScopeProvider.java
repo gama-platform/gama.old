@@ -77,11 +77,11 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		eAction = GamlPackage.eINSTANCE.getActionDefinition();
 		eUnit = GamlPackage.eINSTANCE.getUnitFakeDefinition();
 		resources = new LinkedHashMap();
-		resources.put(eType, rs.createResource(URI.createURI("g:/types.xmi")));
-		resources.put(eVar, rs.createResource(URI.createURI("g:/vars.xmi")));
-		resources.put(eSkill, rs.createResource(URI.createURI("g:/skills.xmi")));
-		resources.put(eUnit, rs.createResource(URI.createURI("g:/units.xmi")));
-		resources.put(eAction, rs.createResource(URI.createURI("g:/actions.xmi")));
+		resources.put(eType, rs.createResource(URI.createURI("gama:/types.xmi")));
+		resources.put(eVar, rs.createResource(URI.createURI("gama:/vars.xmi")));
+		resources.put(eSkill, rs.createResource(URI.createURI("gama:/skills.xmi")));
+		resources.put(eUnit, rs.createResource(URI.createURI("gama:/units.xmi")));
+		resources.put(eAction, rs.createResource(URI.createURI("gama:/actions.xmi")));
 		descriptions = new HashMap();
 		descriptions.put(eVar, new LinkedHashMap());
 		descriptions.put(eType, new LinkedHashMap());

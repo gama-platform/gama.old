@@ -184,9 +184,10 @@ public class BinaryOperator extends AbstractNAryOperator {
 		contentType =
 			t == LEFT_TYPE ? left().getType() : t == RIGHT_TYPE ? right().getType()
 				: t == LEFT_CONTENT_TYPE ? left().getContentType() : t == RIGHT_CONTENT_TYPE
-					? right().getContentType() : t >= 0 ? Types.get(t) : type.id() == IType.LIST ||
-						type.id() == IType.MATRIX || type.id() == IType.MAP ? left()
-						.getContentType() : type.defaultContentType();
+					? right().getContentType() : t >= 0 ? Types.get(t) :
+					// type.id() == IType.LIST || type.id() == IType.MATRIX || type.id() ==
+					// IType.MAP ? left().getContentType() :
+						type.defaultContentType();
 	}
 
 	@Override

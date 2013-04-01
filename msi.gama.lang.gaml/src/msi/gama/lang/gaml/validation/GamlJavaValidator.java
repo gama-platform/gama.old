@@ -66,6 +66,9 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 				for ( GamlCompilationError warning : result.getWarnings() ) {
 					add(warning);
 				}
+				for ( GamlCompilationError info : result.getInfos() ) {
+					add(info);
+				}
 				if ( hasError ) {
 					for ( GamlCompilationError error : result.getErrors() ) {
 						add(error);
@@ -201,7 +204,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		}
 		if ( object.eResource() == null ) { return; }
 		if ( object.eResource() != getCurrentRessource() ) {
-			if ( !e.isWarning() ) {
+			if ( !e.isWarning() && !e.isInfo() ) {
 				EObject imp = findImport(object.eResource().getURI());
 				if ( imp != null ) {
 					error("Error detected in imported file: " + e.toString(), imp,
@@ -220,7 +223,9 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			feature = GamlPackage.Literals.STATEMENT__KEY;
 		}
 		if ( !Arrays.contains(e.getData(), null) ) {
-			if ( e.isWarning() ) {
+			if ( e.isInfo() ) {
+				info(e.toString(), object, feature, 0, e.getCode(), e.getData());
+			} else if ( e.isWarning() ) {
 				warning(e.toString(), object, feature, 0, e.getCode(), e.getData());
 			} else {
 				error(e.toString(), object, feature, 0, e.getCode(), e.getData());

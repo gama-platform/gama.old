@@ -44,7 +44,7 @@ public class TypeDescription extends SymbolDescription {
 		final List<IDescription> children =
 			AbstractGamlAdditions.getAllChildrenOf(javaBase, getSkillClasses());
 		for ( IDescription v : children ) {
-			addChild(((SymbolDescription) v).copy(this));
+			addChild(v.copy(this));
 		}
 
 	}
@@ -60,9 +60,9 @@ public class TypeDescription extends SymbolDescription {
 	protected void duplicateError(final IDescription one, final IDescription two) {
 		String name = one.getFacets().getLabel(NAME);
 		String key = one.getKeyword();
-		String error = key + " " + name + " is declared twice. Only the last will be kept.";
-		one.warning(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, name);
-		two.warning(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, name);
+		String error = key + " " + name + " is declared twice. Only this one will be kept.";
+		one.info(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, name);
+		// two.info(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, name);
 	}
 
 	protected void addPrimitive(final StatementDescription primitive) {
@@ -70,10 +70,11 @@ public class TypeDescription extends SymbolDescription {
 		StatementDescription existing = getAction(actionName);
 		if ( existing != null ) {
 			if ( existing.getKeyword().equals(ACTION) && !primitive.isAbstract() ) {
-				existing.error("Action " + actionName +
-					" replaces a primitive of the same name. Consider renaming it.",
-					IGamlIssue.GENERAL);
+				existing.error(
+					"Action " + actionName + " replaces a primitive of the same name defined in " +
+						primitive.getOriginName() + ". Consider renaming it.", IGamlIssue.GENERAL);
 			}
+			children.remove(existing);
 		}
 		if ( actions == null ) {
 			actions = new LinkedHashMap<String, StatementDescription>();
@@ -85,6 +86,14 @@ public class TypeDescription extends SymbolDescription {
 		String actionName = redeclaredAction.getName();
 		StatementDescription existingAction = getAction(actionName);
 		if ( existingAction != null ) {
+			// Skills primitives are added first
+			if ( existingAction.getKeyword().equals(PRIMITIVE) && !existingAction.isAbstract() ) {
+				redeclaredAction.error(
+					"Action " + actionName + " replaces a primitive of the same name defined in " +
+						existingAction.getOriginName() + ". Consider renaming it.",
+					IGamlIssue.GENERAL);
+				return;
+			}
 			if ( !existingAction.isAbstract() ) {
 				duplicateError(redeclaredAction, existingAction);
 			}
@@ -108,32 +117,6 @@ public class TypeDescription extends SymbolDescription {
 	@Override
 	public boolean hasAction(final String a) {
 		return actions != null && actions.containsKey(a);
-	}
-
-	protected void addVariable(final VariableDescription v) {
-		String vName = v.getName();
-
-		if ( hasVar(vName) ) {
-			IDescription builtIn = getVariables().get(vName);
-			if ( !builtIn.isBuiltIn() ) {
-				duplicateError(v, builtIn);
-				getChildren().remove(builtIn);
-			}
-			IType bType = builtIn.getTypeNamed(builtIn.getFacets().getLabel(TYPE));
-			IType vType = v.getTypeNamed(v.getFacets().getLabel(TYPE));
-			if ( bType != vType ) {
-				String builtInType = bType.toString();
-				String varType = vType.toString();
-				v.error("variable " + vName + " is of type " + builtInType +
-					" and cannot be redefined as a " + varType, IGamlIssue.WRONG_REDEFINITION);
-			}
-			v.copyFrom((VariableDescription) builtIn);
-		}
-		v.setDefinitionOrder(varCount++);
-		if ( variables == null ) {
-			variables = new LinkedHashMap<String, VariableDescription>();
-		}
-		variables.put(vName, v);
 	}
 
 	public VariableDescription getVariable(final String name) {
@@ -306,9 +289,7 @@ public class TypeDescription extends SymbolDescription {
 		if ( parent.variables != null ) {
 			// We only copy the variables that are not redefined in this species
 			for ( final VariableDescription v : parent.getVariables().values() ) {
-				if ( !hasVar(v.getName()) ) {
-					addChild(v.copy(this));
-				}
+				inheritVariable(parent, v);
 			}
 		}
 	}
@@ -320,6 +301,81 @@ public class TypeDescription extends SymbolDescription {
 				inheritAction(parent, action);
 			}
 		}
+	}
+
+	protected void inheritVariable(TypeDescription parent, final VariableDescription parentVariable) {
+		String varName = parentVariable.getName();
+		if ( !hasVar(varName) ) {
+			addChild(parentVariable);
+			return;
+		}
+		VariableDescription myVar = getVariable(varName);
+		// If the variable already in place is builtin, we replace it
+		if ( myVar.isBuiltIn() ) {
+			// We inherit another builtin variable. No need to do anything
+			if ( parentVariable.isBuiltIn() ) { return; }
+		}
+
+		// The variable has already been defined in the current species. Just need to check
+		// if it coherent with the inherited variable
+		IType myType = myVar.getType();
+		IType parentType = parentVariable.getType();
+		if ( !myType.isTranslatableInto(parentType) ) {
+			myVar.error("Type (" + myType + ") differs from that (" + parentType +
+				") of the implementation of  " + varName + " in " + parent.getName());
+		} else if ( myType.hasContents() ) {
+			myType = myVar.getContentType();
+			parentType = parentVariable.getContentType();
+			if ( !myType.isTranslatableInto(parentType) ) {
+				myVar.error("Content type (" + myType + ") differs from that (" + parentType +
+					") of the implementation of  " + varName + " in " + parent.getName());
+			}
+		}
+		if ( !myVar.isBuiltIn() ) {
+			myVar.info("Redefinition, in " + myVar.getOriginName() + ", of the variable " +
+				varName + " defined in species " + parent.getName(), IGamlIssue.REDEFINES);
+		}
+
+	}
+
+	protected void addVariable(final VariableDescription v) {
+		String vName = v.getName();
+
+		if ( hasVar(vName) ) {
+			IDescription builtIn = getVariables().get(vName);
+			if ( !builtIn.isBuiltIn() ) {
+				duplicateError(v, builtIn);
+				getChildren().remove(builtIn);
+			} else {
+				IExpressionDescription expr = v.getFacets().get(INIT);
+				if ( expr == null ) {
+					expr = v.getFacets().get(VALUE);
+					if ( expr == null ) {
+						expr = v.getFacets().get(NAME);
+					}
+				}
+				EObject target = expr.getTarget();
+				if ( target != null ) {
+					v.info("Redefinition, in " + v.originName + ", of the built-in variable " +
+						vName + " defined in " + builtIn.getOriginName(), IGamlIssue.REDEFINES,
+						target, (String[]) null);
+				}
+			}
+			IType bType = builtIn.getTypeNamed(builtIn.getFacets().getLabel(TYPE));
+			IType vType = v.getTypeNamed(v.getFacets().getLabel(TYPE));
+			if ( bType != vType ) {
+				String builtInType = bType.toString();
+				String varType = vType.toString();
+				v.error("variable " + vName + " is of type " + builtInType +
+					" and cannot be redefined as a " + varType, IGamlIssue.WRONG_REDEFINITION);
+			}
+			v.copyFrom((VariableDescription) builtIn);
+		}
+		v.setDefinitionOrder(varCount++);
+		if ( variables == null ) {
+			variables = new LinkedHashMap<String, VariableDescription>();
+		}
+		variables.put(vName, v);
 	}
 
 	protected void inheritAction(final TypeDescription parent,

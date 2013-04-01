@@ -172,6 +172,7 @@ public class StatementDescription extends SymbolDescription {
 		StatementDescription desc =
 			new StatementDescription(getKeyword(), into, new ChildrenProvider(children),
 				temps != null, args != null, element, facets);
+		desc.originName = originName;
 		desc.setHelper(helper);
 		return desc;
 	}

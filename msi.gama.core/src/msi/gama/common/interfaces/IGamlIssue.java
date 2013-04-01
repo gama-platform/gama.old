@@ -33,6 +33,7 @@ public interface IGamlIssue {
 	public static String NOT_AN_AGENT = "gaml.not.an.agent.issue";
 	public static String NOT_AMONG = "gaml.not.among.issue";
 	public static String NOT_CONST = "gaml.not.const.issue";
+	public static String REDEFINES = "gaml.redefinition.info";
 	public static String REMOVE_CONST = "gaml.remove.const.issue";
 	public static String REMOVE_VALUE = "gaml.remove.value.issue";
 	public static String REMOVE_FUNCTION = "gaml.remove.function.issue";

@@ -203,10 +203,6 @@ public class DescriptionValidator {
 		}
 	}
 
-	public static void assertContainerIsNotFixedLength(final IDescription cd) {
-
-	}
-
 	public static void assertMicroSpeciesIsVisible(final IDescription cd,
 		final String facetContainingSpecies) {
 		String microSpeciesName = cd.getFacets().getLabel(facetContainingSpecies);

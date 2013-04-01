@@ -92,6 +92,19 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		BUILT_IN_SPECIES
 			.put(name, DescriptionFactory.createSpeciesDescription(name, clazz, null, helper,
 				allSkills, null));
+		List<IDescription> additions = getAdditions(clazz);
+		if ( additions == null ) {
+			additions = new GamaList();
+		}
+		for ( Class c : clazz.getInterfaces() ) {
+			List<IDescription> add = getAdditions(c);
+			if ( add != null ) {
+				additions.addAll(add);
+			}
+		}
+		for ( IDescription desc : additions ) {
+			desc.setOriginName("built-in species " + name);
+		}
 	}
 
 	protected void _type(final String keyword, final IType typeInstance, final int id,
@@ -106,6 +119,12 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			SPECIES_SKILLS.put(spec, name);
 		}
 		SKILL_CLASSES.put(name, clazz);
+		List<IDescription> additions = getAdditions(clazz);
+		if ( additions != null ) {
+			for ( IDescription desc : additions ) {
+				desc.setOriginName("skill " + name);
+			}
+		}
 	}
 
 	protected void _factories(final SymbolFactory ... factories) {

@@ -91,13 +91,17 @@ public class VariableDescription extends SymbolDescription {
 		if ( init == null ) {
 			init = v2.init;
 		}
+		// originName = v2.originName;
+		// if ( originName == null ) {
+		// originName = v2.originName;
+		// }
 	}
 
 	@Override
 	public VariableDescription copy(final IDescription into) {
-		VariableDescription vd =
-			new VariableDescription(getKeyword(), into, null, getUnderlyingElement(null), facets);
+		VariableDescription vd = new VariableDescription(getKeyword(), into, null, element, facets);
 		vd.addHelpers(get, init, set);
+		vd.originName = originName;
 		return vd;
 	}
 

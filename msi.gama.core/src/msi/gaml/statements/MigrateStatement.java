@@ -31,8 +31,8 @@ import msi.gaml.types.IType;
 @symbol(name = { IKeyword.MIGRATE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = {
-	@facet(name = IKeyword.SOURCE, type = IType.SPECIES_STR, optional = false), // workaround
-	@facet(name = IKeyword.TARGET, type = IType.SPECIES_STR, optional = false),
+	@facet(name = IKeyword.SOURCE, type = IType.ID, optional = false), // workaround
+	@facet(name = IKeyword.TARGET, type = IType.ID, optional = false),
 	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true) }, omissible = IKeyword.SOURCE)
 public class MigrateStatement extends AbstractStatementSequence {
 

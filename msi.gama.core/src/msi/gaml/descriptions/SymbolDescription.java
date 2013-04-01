@@ -41,6 +41,7 @@ public class SymbolDescription implements IDescription {
 	protected Facets facets;
 	protected final EObject element;
 	protected IDescription enclosing;
+	protected String originName;
 	protected final List<IDescription> children;
 	protected SymbolProto meta;
 	protected String keyword;
@@ -51,6 +52,9 @@ public class SymbolDescription implements IDescription {
 		facets.putAsLabel(KEYWORD, keyword);
 		this.keyword = keyword;
 		element = source;
+		if ( superDesc != null ) {
+			originName = superDesc.getName();
+		}
 		meta = DescriptionFactory.getProto(keyword);
 		setSuperDescription(superDesc);
 		if ( meta.hasSequence() ) {
@@ -72,7 +76,8 @@ public class SymbolDescription implements IDescription {
 	}
 
 	private void flagError(final String s, final String code, final boolean warning,
-		final EObject source, final String ... data) throws GamaRuntimeException {
+		final boolean info, final EObject source, final String ... data)
+		throws GamaRuntimeException {
 
 		IDescription desc = this;
 		EObject e = source;
@@ -82,7 +87,7 @@ public class SymbolDescription implements IDescription {
 				e = desc.getUnderlyingElement(null);
 			}
 		}
-		if ( !warning ) {
+		if ( !warning && !info ) {
 			String resource = e == null ? "(no file)" : e.eResource().getURI().lastSegment();
 			GuiUtils.debug("COMPILATION ERROR in " + this.toString() + ": " + s + "; source: " +
 				resource);
@@ -95,7 +100,7 @@ public class SymbolDescription implements IDescription {
 			System.out.println((warning ? "Warning" : "Error") + ": " + s);
 			return;
 		}
-		c.add(new GamlCompilationError(s, code, e, warning, data));
+		c.add(new GamlCompilationError(s, code, e, warning, info, data));
 	}
 
 	@Override
@@ -105,34 +110,49 @@ public class SymbolDescription implements IDescription {
 
 	@Override
 	public void error(final String message, final String code) {
-		flagError(message, code, false, getUnderlyingElement(null), (String[]) null);
+		flagError(message, code, false, false, getUnderlyingElement(null), (String[]) null);
 	}
 
 	@Override
 	public void error(final String s, final String code, final EObject facet, final String ... data) {
-		flagError(s, code, false, facet, data);
+		flagError(s, code, false, false, facet, data);
 	}
 
 	@Override
 	public void error(final String s, final String code, final String facet, final String ... data) {
-		flagError(s, code, false, this.getUnderlyingElement(facet), data);
+		flagError(s, code, false, false, this.getUnderlyingElement(facet), data);
+	}
+
+	@Override
+	public void info(final String message, final String code) {
+		flagError(message, code, true, true, getUnderlyingElement(null), (String[]) null);
+	}
+
+	@Override
+	public void info(final String s, final String code, final EObject facet, final String ... data) {
+		flagError(s, code, true, true, facet, data);
+	}
+
+	@Override
+	public void info(final String s, final String code, final String facet, final String ... data) {
+		flagError(s, code, true, true, this.getUnderlyingElement(facet), data);
 	}
 
 	@Override
 	public void warning(final String message, final String code) {
-		flagError(message, code, true, null, (String[]) null);
+		flagError(message, code, true, false, null, (String[]) null);
 	}
 
 	@Override
 	public void warning(final String s, final String code, final EObject object,
 		final String ... data) {
-		flagError(s, code, true, object, data);
+		flagError(s, code, true, false, object, data);
 	}
 
 	@Override
 	public void warning(final String s, final String code, final String facet,
 		final String ... data) {
-		flagError(s, code, true, this.getUnderlyingElement(facet), data);
+		flagError(s, code, true, false, this.getUnderlyingElement(facet), data);
 	}
 
 	@Override
@@ -377,6 +397,12 @@ public class SymbolDescription implements IDescription {
 		return c.getWarnings();
 	}
 
+	public List<GamlCompilationError> getInfos() {
+		IErrorCollector c = getErrorCollector();
+		if ( c == null ) { return Collections.EMPTY_LIST; }
+		return c.getInfos();
+	}
+
 	@Override
 	public IErrorCollector getErrorCollector() {
 		if ( enclosing == null ) { return null; }
@@ -386,6 +412,18 @@ public class SymbolDescription implements IDescription {
 	@Override
 	public boolean isBuiltIn() {
 		return element == null;
+	}
+
+	@Override
+	public String getOriginName() {
+		return originName;
+	}
+
+	@Override
+	public void setOriginName(String name) {
+		if ( originName == null ) {
+			originName = name;
+		}
 	}
 
 }

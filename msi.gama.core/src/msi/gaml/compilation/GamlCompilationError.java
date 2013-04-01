@@ -27,45 +27,27 @@ import org.eclipse.emf.ecore.EObject;
 public class GamlCompilationError {
 
 	protected boolean isWarning = false;
+	protected boolean isInfo = false;
 	protected final String message;
 	protected String code;
 	protected String[] data;
 	protected EObject source;
 
-	public GamlCompilationError(final String s) {
-		message = s;
-		code = GENERAL;
-	}
-
 	public EObject getStatement() {
 		return source;
 	}
 
-	public GamlCompilationError(final String string, final EObject sourceInformation) {
-		this(string);
-		addSource(sourceInformation);
-	}
-
 	public GamlCompilationError(final String string, final EObject sourceInformation,
 		final boolean isWarning) {
-		this(string);
-		addSource(sourceInformation);
-		setWarning(isWarning);
+		this(string, GENERAL, sourceInformation, isWarning, false, (String[]) null);
 	}
 
-	/**
-	 * 
-	 * @param string
-	 * @param code, see IGamlIssue
-	 * @param sourceInformation
-	 * @param warning
-	 * @param facet
-	 * @param data
-	 */
 	public GamlCompilationError(final String string, final String code,
-		final EObject sourceInformation, final boolean warning, final String ... data) {
-		this(string);
+		final EObject sourceInformation, final boolean warning, final boolean info,
+		final String ... data) {
+		message = string;
 		isWarning = warning;
+		isInfo = info;
 		this.code = code;
 		this.data = data;
 		addSource(sourceInformation);
@@ -94,9 +76,10 @@ public class GamlCompilationError {
 		return isWarning;
 	}
 
-	/**
-	 * @param b
-	 */
+	public boolean isInfo() {
+		return isInfo;
+	}
+
 	public void setWarning(final boolean b) {
 		isWarning = b;
 	}

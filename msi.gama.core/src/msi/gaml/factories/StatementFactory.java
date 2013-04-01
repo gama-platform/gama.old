@@ -20,7 +20,7 @@ package msi.gaml.factories;
 
 import static msi.gaml.factories.DescriptionValidator.*;
 import static msi.gaml.factories.VariableValidator.*;
-import java.util.List;
+import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
@@ -29,7 +29,6 @@ import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.statements.*;
-import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.*;
 
 /**
@@ -77,7 +76,6 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 			assertContainerAssignmentIsOk(cd);
 		} else if ( kw.equals(PUT) || kw.equals(ADD) || kw.equals(REMOVE) ) {
 			assertContainerAssignmentIsOk(cd);
-			assertContainerIsNotFixedLength(cd);
 		}
 		if ( kw.equals(SET) || kw.equals(LET) ) {
 			assertAssignmentIsOk(cd);
@@ -220,29 +218,56 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 	// Only for create ?
 	private void verifyInits(StatementDescription cd, Arguments ca) {
 		SpeciesDescription sd = cd.getSpeciesDescription(computeSpecies(cd));
-		for ( Facet ff : ca.entrySet() ) {
-			if ( ff != null ) {
-				String name = ff.getKey();
-				if ( !sd.hasVar(name) ) {
-					cd.error("Attribute " + name + " does not exist in species " + sd.getName(),
-						IGamlIssue.UNKNOWN_ARGUMENT, WITH, (String[]) null);
+		Collection<IDescription> args = cd.getArgs();
+		for ( IDescription arg : args ) {
+			String name = arg.getName();
+			if ( !sd.hasVar(name) ) {
+				cd.error("Attribute " + name + " does not exist in species " + sd.getName(),
+					IGamlIssue.UNKNOWN_ARGUMENT, arg.getFacets().get(VALUE).getTarget(),
+					(String[]) null);
+			} else {
+				IType varType = sd.getVariable(name).getType();
+				IType initType = ca.get(name).getExpression().getType();
+				if ( varType != Types.NO_TYPE && !initType.isTranslatableInto(varType) ) {
+					cd.warning("The type of attribute " + name + " should be " + varType,
+						IGamlIssue.SHOULD_CAST, arg.getFacets().get(VALUE).getTarget(),
+						varType.toString());
 				} else {
-					IType varType = sd.getVariable(name).getType();
-					IType initType = ff.getValue().getExpression().getType();
+					varType = sd.getVariable(name).getContentType();
+					initType = ca.get(name).getExpression().getContentType();
 					if ( varType != Types.NO_TYPE && !initType.isTranslatableInto(varType) ) {
-						cd.warning("The type of attribute " + name + " should be " + varType,
-							IGamlIssue.WRONG_TYPE);
-					} else {
-						varType = sd.getVariable(name).getContentType();
-						initType = ff.getValue().getExpression().getContentType();
-						if ( varType != Types.NO_TYPE && !initType.isTranslatableInto(varType) ) {
-							cd.warning("The content type of attribute " + name + " should be " +
-								varType, IGamlIssue.WRONG_TYPE);
-						}
+						cd.warning("The content type of attribute " + name + " should be " +
+							varType, IGamlIssue.WRONG_TYPE, arg.getFacets().get(VALUE).getTarget(),
+							(String[]) null);
 					}
 				}
 			}
+
 		}
+		// for ( Facet ff : ca.entrySet() ) {
+		// if ( ff != null ) {
+		// String name = ff.getKey();
+		// if ( !sd.hasVar(name) ) {
+		// cd.error("Attribute " + name + " does not exist in species " + sd.getName(),
+		// IGamlIssue.UNKNOWN_ARGUMENT, ff.getValue().getTarget(), (String[]) null);
+		// } else {
+		// IType varType = sd.getVariable(name).getType();
+		// IType initType = ff.getValue().getExpression().getType();
+		// if ( varType != Types.NO_TYPE && !initType.isTranslatableInto(varType) ) {
+		// cd.warning("The type of attribute " + name + " should be " + varType,
+		// IGamlIssue.WRONG_TYPE, ff.getValue().getTarget(), (String[]) null);
+		// } else {
+		// varType = sd.getVariable(name).getContentType();
+		// initType = ff.getValue().getExpression().getContentType();
+		// if ( varType != Types.NO_TYPE && !initType.isTranslatableInto(varType) ) {
+		// cd.warning("The content type of attribute " + name + " should be " +
+		// varType, IGamlIssue.WRONG_TYPE, ff.getValue().getTarget(),
+		// (String[]) null);
+		// }
+		// }
+		// }
+		// }
+		// }
 	}
 
 	@Override

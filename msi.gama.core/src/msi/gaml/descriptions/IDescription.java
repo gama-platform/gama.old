@@ -102,4 +102,16 @@ public interface IDescription extends IGamlDescription, IKeyword {
 
 	public boolean isBuiltIn();
 
+	public abstract String getOriginName();
+
+	public abstract void setOriginName(String name);
+
+	public abstract void info(final String s, final String code, final String facet,
+		final String ... data);
+
+	public abstract void info(final String s, final String code, final EObject facet,
+		final String ... data);
+
+	public abstract void info(final String message, final String code);
+
 }

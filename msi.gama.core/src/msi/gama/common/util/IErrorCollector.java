@@ -22,4 +22,6 @@ public interface IErrorCollector {
 
 	public abstract List<GamlCompilationError> getWarnings();
 
+	public abstract List<GamlCompilationError> getInfos();
+
 }
