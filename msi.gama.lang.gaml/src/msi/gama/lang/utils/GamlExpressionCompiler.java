@@ -35,6 +35,7 @@ import msi.gama.util.*;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
+import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.statements.DrawStatement;
 import msi.gaml.types.*;
 import org.eclipse.emf.common.util.URI;
@@ -86,7 +87,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			return null;
 		}
 		IExpression expr = compiler.doSwitch(s);
-		EGaml.setGamlDescription(s, expr);
+		DescriptionFactory.setGamlDescription(s, expr);
 		return expr;
 	}
 
@@ -176,7 +177,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 	private IExpression action(String name, IExpression callee, EObject args,
 		StatementDescription action) {
 		IExpression right = compileArguments(action, args);
-		return factory.createAction(name, context, callee, right);
+		return factory.createAction(name, context, action, callee, right);
 	}
 
 	// KEEP
@@ -219,7 +220,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 				return null;
 			}
 			expr = expr.copyWith(target);
-			EGaml.setGamlDescription(fieldExpr, expr);
+			DescriptionFactory.setGamlDescription(fieldExpr, expr);
 			return expr;
 		}
 		// We are now dealing with an agent. In that case, it can be either an attribute or an
@@ -231,7 +232,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 				context.error("Unknown variable :" + var + " in " + species.getName(),
 					IGamlIssue.UNKNOWN_VAR, leftExpr, var, species.getName());
 			}
-			EGaml.setGamlDescription(fieldExpr, expr);
+			DescriptionFactory.setGamlDescription(fieldExpr, expr);
 			return factory.createOperator(_DOT, context, target, expr);
 		} else if ( fieldExpr instanceof Function ) {
 			String name = EGaml.getKeyOf(fieldExpr);
@@ -241,7 +242,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 				IExpression call =
 					action(name, target, list == null ? ((Function) fieldExpr).getParameters()
 						: list, action);
-				EGaml.setGamlDescription(fieldExpr, call); // ??
+				DescriptionFactory.setGamlDescription(fieldExpr, call); // ??
 				return call;
 			}
 		}
@@ -271,6 +272,8 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		return context;
 	}
 
+	// FIXME Possibility to simplify here as we recreate a map that will be later decompiled...
+	// Create Arguments directly ?
 	private IExpression compileArguments(final StatementDescription action, EObject args) {
 		Map<String, IExpressionDescription> descriptions = parseArguments(action, args, context);
 		if ( descriptions == null ) { return null; }
@@ -307,11 +310,6 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		Map<String, IExpressionDescription> argMap = new HashMap();
 		List<String> args = action == null ? null : action.getArgNames();
 
-		if ( completeArgs && args != null && parameters.size() != args.size() && action != null ) {
-			command.error("Wrong number of arguments in call to " + action.getName(),
-				IGamlIssue.DIFFERENT_ARGUMENTS, o, "");
-			return null;
-		}
 		int index = 0;
 		for ( Expression exp : parameters ) {
 			String arg = null;
@@ -323,20 +321,10 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 				arg = EGaml.getKeyOf(exp.getLeft());
 				ed = new EcoreBasedExpressionDescription(exp.getRight());
 			} else if ( completeArgs ) {
-				if ( args == null ) {
-					command.error("No attribute names provided", IGamlIssue.UNKNOWN_ARGUMENT, exp);
-					return argMap;
-				} else {
-					arg = args.get(index++);
-					ed = new EcoreBasedExpressionDescription(exp);
-				}
+				arg = args == null ? String.valueOf(index++) : args.get(index++);
+				ed = new EcoreBasedExpressionDescription(exp);
 			}
 			// EGaml.setGamlDescription(exp.getRight(), ed);
-			if ( !completeArgs && args != null && !args.contains(arg) && action != null ) {
-				context.error("Argument " + arg + " not allowed for action " + action.getName(),
-					IGamlIssue.UNKNOWN_ARGUMENT, exp, args.toArray(new String[] {}));
-				return argMap;
-			}
 			argMap.put(arg, ed);
 		}
 		return argMap;
@@ -505,18 +493,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		public IExpression caseExpressionList(final ExpressionList object) {
 			List<Expression> list = EGaml.getExprsOf(object);
 			if ( list.isEmpty() ) { return null; }
-			// List<IExpression> list1 = new ArrayList();
-			// for ( int i = 0, n = list.size(); i < n; i++ ) {
-			// Expression eExpr = list.get(i);
-			// IExpression e = compile(eExpr);
-			// list1.add(e);
-			// }
-			// IExpression forDebug = factory.createList(list1);
-			// GuiUtils.debug("Original expression list " +
-			// Arrays.toString(((ListExpression) forDebug).getElements()));
 			IExpression expr = compile(list.get(0));
-
-			// GuiUtils.debug("Result : " + expr);
 			return expr;
 		}
 

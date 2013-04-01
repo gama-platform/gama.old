@@ -253,7 +253,7 @@ AbstractRef returns Expression:
 	Function | VariableRef;
 
 Function returns Expression:
-	{Function} action=ActionRef  '(' (=>parameters=Parameters | args=ExpressionList) ')';
+	{Function} action=ActionRef  '(' (parameters=Parameters | args=ExpressionList) ')';
 	//{Function} (op=Valid_ID '(' args=ExpressionList ')') | (action=ActionRef '(' parameters=Parameters ')');
 
 Parameter returns Expression:

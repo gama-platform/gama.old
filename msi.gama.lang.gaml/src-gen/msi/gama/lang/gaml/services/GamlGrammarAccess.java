@@ -2857,10 +2857,10 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cRightParenthesisKeyword_4 = (Keyword)cGroup.eContents().get(4);
 		
 		//Function returns Expression:
-		//	{Function} action=ActionRef "(" (=> parameters=Parameters | args=ExpressionList) ")";
+		//	{Function} action=ActionRef "(" (parameters=Parameters | args=ExpressionList) ")";
 		public ParserRule getRule() { return rule; }
 
-		//{Function} action=ActionRef "(" (=> parameters=Parameters | args=ExpressionList) ")"
+		//{Function} action=ActionRef "(" (parameters=Parameters | args=ExpressionList) ")"
 		public Group getGroup() { return cGroup; }
 
 		//{Function}
@@ -2875,10 +2875,10 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//"("
 		public Keyword getLeftParenthesisKeyword_2() { return cLeftParenthesisKeyword_2; }
 
-		//=> parameters=Parameters | args=ExpressionList
+		//parameters=Parameters | args=ExpressionList
 		public Alternatives getAlternatives_3() { return cAlternatives_3; }
 
-		//=> parameters=Parameters
+		//parameters=Parameters
 		public Assignment getParametersAssignment_3_0() { return cParametersAssignment_3_0; }
 
 		//Parameters
@@ -4423,7 +4423,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//Function returns Expression:
-	//	{Function} action=ActionRef "(" (=> parameters=Parameters | args=ExpressionList) ")";
+	//	{Function} action=ActionRef "(" (parameters=Parameters | args=ExpressionList) ")";
 	public FunctionElements getFunctionAccess() {
 		return (pFunction != null) ? pFunction : (pFunction = new FunctionElements());
 	}

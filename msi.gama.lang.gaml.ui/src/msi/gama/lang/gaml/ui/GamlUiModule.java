@@ -58,7 +58,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 			.annotatedWith(
 				com.google.inject.name.Names
 					.named(XtextContentAssistProcessor.COMPLETION_AUTO_ACTIVATION_CHARS))
-			.toInstance(".:");
+			.toInstance(".");
 	}
 
 	@Override

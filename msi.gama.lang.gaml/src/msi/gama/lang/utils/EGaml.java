@@ -9,8 +9,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.impl.*;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
-import msi.gaml.descriptions.IGamlDescription;
-import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.util.*;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
@@ -24,38 +22,6 @@ import org.eclipse.xtext.resource.IResourceServiceProvider;
  * 
  */
 public class EGaml {
-
-	public static IGamlDescription getGamlDescription(final EObject object) {
-		if ( object == null ) { return null; }
-		for ( Adapter o : object.eAdapters() ) {
-			if ( o instanceof IGamlDescription ) { return (IGamlDescription) o; }
-		}
-		return null;
-	}
-
-	public static <T> T getGamlDescription(final EObject object, final Class<T> preciseClass) {
-		if ( object == null ) { return null; }
-		for ( int i = 0, n = object.eAdapters().size(); i < n; i++ ) {
-			Adapter a = object.eAdapters().get(i);
-			if ( preciseClass.isAssignableFrom(a.getClass()) ) { return (T) a; }
-
-		}
-		return null;
-	}
-
-	public static void setGamlDescription(final EObject object, final IGamlDescription description) {
-		if ( description == null ) { return; }
-		IGamlDescription existing = getGamlDescription(object, description.getClass());
-		if ( existing != null ) {
-			object.eAdapters().remove(existing);
-		}
-		object.eAdapters().add(description);
-	}
-
-	public static void unsetGamlDescription(final EObject object, final IGamlDescription description) {
-		if ( object == null ) { return; }
-		object.eAdapters().remove(description);
-	}
 
 	public static final GamlSwitch<String> getKey = new GamlSwitch<String>() {
 
@@ -100,22 +66,13 @@ public class EGaml {
 			return s;
 		}
 
-		// @Override
-		// public String caseFacetRef(final FacetRef object) {
-		// return object.getRef();
-		// }
-
 		@Override
-		// public String caseFacetExpr(final FacetExpr object) {
 		public String caseFacet(final Facet object) {
 			String s = object.getKey();
 			if ( s.endsWith(":") ) {
 				s = s.replace(':', ' ');
 			}
 			return s.trim();
-			// String ref = object.getKey();
-			// return ref == null ? null : caseFacetRef(ref);
-
 		}
 
 		@Override
@@ -176,23 +133,6 @@ public class EGaml {
 		return null;
 	}
 
-	public static Expression getExprOf(final Statement s) {
-		return s.getExpr();
-	}
-
-	public static ActionArguments getArgsOf(final S_Definition stm) {
-		return stm.getArgs();
-	}
-
-	public static Expression getFunctionOf(final Statement stm) {
-		// Prendre en compte le cas "type var function: expression".
-		Expression expr = null;
-		if ( getBlockOf(stm) != null ) {
-			expr = getBlockOf(stm).getFunction();
-		}
-		return expr;
-	}
-
 	public static List<Expression> getExprsOf(final ExpressionList o) {
 		if ( o == null ) { return Collections.EMPTY_LIST; }
 		if ( ((ExpressionListImpl) o).eIsSet(GamlPackage.EXPRESSION_LIST__EXPRS) ) { return o
@@ -200,18 +140,9 @@ public class EGaml {
 		return Collections.EMPTY_LIST;
 	}
 
-	public static Expression getValueOf(final Statement s) {
-		if ( s instanceof S_Assignment ) { return ((S_Assignment) s).getValue(); }
-		return null;
-	}
-
 	public static EList<Facet> getFacetsOf(final Statement s) {
 		if ( ((StatementImpl) s).eIsSet(GamlPackage.STATEMENT__FACETS) ) { return s.getFacets(); }
 		return (EList<Facet>) ECollections.EMPTY_ELIST;
-	}
-
-	public static Block getBlockOf(final Statement s) {
-		return s.getBlock();
 	}
 
 	public static String getKeyOf(final EObject f) {

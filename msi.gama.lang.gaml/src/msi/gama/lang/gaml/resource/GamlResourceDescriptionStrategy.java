@@ -33,13 +33,17 @@ public class GamlResourceDescriptionStrategy extends DefaultResourceDescriptionS
 	@Override
 	public boolean createEObjectDescriptions(final EObject o,
 		final IAcceptor<IEObjectDescription> acceptor) {
-		if ( o instanceof Statement ) {
+		if ( o instanceof ActionArguments ) {
+			return true;
+		} else if ( o instanceof ArgumentDefinition ) {
+			super.createEObjectDescriptions(o, acceptor);
+		} else if ( o instanceof Statement ) {
 			Statement stm = (Statement) o;
 			String n = EGaml.getNameOf(stm);
 			if ( n != null ) {
 				super.createEObjectDescriptions(stm, acceptor);
 			}
-			return composed.contains(EGaml.getKey.caseStatement(stm));
+			return ((Statement) o).getBlock() != null; // composed.contains(EGaml.getKey.caseStatement(stm));
 		}
 		return o instanceof Block || o instanceof Model;
 	}

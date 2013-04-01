@@ -5149,11 +5149,7 @@ ruleFunction returns [EObject current=null]
     {
     	newLeafNode(otherlv_2, grammarAccess.getFunctionAccess().getLeftParenthesisKeyword_2());
     }
-(((
-(
-ruleParameters
-)
-)=>
+((
 (
 		{ 
 	        newCompositeNode(grammarAccess.getFunctionAccess().getParametersParametersParserRuleCall_3_0_0()); 

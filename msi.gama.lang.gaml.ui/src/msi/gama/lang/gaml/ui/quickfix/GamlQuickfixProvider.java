@@ -20,11 +20,14 @@
 package msi.gama.lang.gaml.ui.quickfix;
 
 import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.lang.gaml.ui.FileOpener;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.xtext.ui.editor.model.IXtextDocument;
 import org.eclipse.xtext.ui.editor.model.edit.*;
 import org.eclipse.xtext.ui.editor.quickfix.*;
 import org.eclipse.xtext.validation.Issue;
+import com.google.inject.Inject;
 
 public class GamlQuickfixProvider extends DefaultQuickfixProvider {
 
@@ -47,6 +50,9 @@ public class GamlQuickfixProvider extends DefaultQuickfixProvider {
 	// }
 	// });
 	// }
+
+	@Inject
+	private FileOpener fileOpener;
 
 	private static class Replace implements IModification {
 
@@ -136,6 +142,24 @@ public class GamlQuickfixProvider extends DefaultQuickfixProvider {
 	public void asArray(final Issue issue, final IssueResolutionAcceptor acceptor) {
 		acceptor.accept(issue, "Enclose the skill in a list...", "", "",
 			new Surround(issue.getOffset(), issue.getLength(), "[", "]"));
+	}
+
+	@Fix(IGamlIssue.IMPORT_ERROR)
+	public void gotoImport(final Issue issue, final IssueResolutionAcceptor acceptor) {
+		String[] data = issue.getData();
+		if ( data == null || data.length == 0 ) { return; }
+		final String path = data[0];
+		final URI uri = URI.createURI(path);
+		acceptor.accept(issue, "Open " + uri.lastSegment() + "...",
+			"Open file " + uri.lastSegment() + " to fix it", "", new IModification() {
+
+				@Override
+				public void apply(IModificationContext context) throws Exception {
+					fileOpener.openProtoFileInWorkspace(uri);
+				}
+
+			});
+
 	}
 
 	// @Fix(QF_NOTKEYOFMODEL)

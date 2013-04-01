@@ -25,14 +25,14 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.resource.GamlResource;
-import msi.gama.lang.utils.*;
+import msi.gama.lang.utils.GamlExpressionCompiler;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.ModelDescription;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.resource.*;
 import org.eclipse.xtext.resource.*;
 import org.eclipse.xtext.util.Arrays;
@@ -140,15 +140,11 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		Model model = (Model) resource.getContents().get(0);
 		for ( Import imp : model.getImports() ) {
 			String importUri = imp.getImportURI();
-			// we ignore "platform:" extensions
-			if ( importUri.startsWith("platform:") ) {
-				continue;
-			}
 			URI iu = URI.createURI(importUri).resolve(resource.getURI());
 			GamlResource ir = (GamlResource) resourceSet.getResource(iu, true);
 			if ( !ir.getErrors().isEmpty() ) {
 				resource.error("Imported file " + ir.getURI().lastSegment() +
-					" has errors. Fix them first.", new SyntacticStatement(IKeyword.INCLUDE, imp),
+					" has errors. Fix them first.", new SyntacticElement(IKeyword.INCLUDE, imp),
 					true);
 			}
 			imports.add(ir);
@@ -198,38 +194,36 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	}
 
 	public void add(final GamlCompilationError e) {
-		Object source = e.getStatement();
-		if ( !(source instanceof EObject) ) {
-			if ( source instanceof SyntheticStatement ) {
-				GuiUtils.debug("*** Internal compilation problem in synthetic statement: " +
-					e.toString());
-			}
-			return;
-		}
-		EObject object = (EObject) e.getStatement();
+		EObject object = e.getStatement();
 		if ( object == null ) {
-			try {
-				object = getCurrentObject();
-			} catch (NullPointerException ex) {
-				return;
-			}
+			GuiUtils.debug("*** Internal compilation problem : " + e.toString());
+			return;
 		}
 		if ( object.eResource() == null ) { return; }
 		if ( object.eResource() != getCurrentRessource() ) {
 			if ( !e.isWarning() ) {
 				EObject imp = findImport(object.eResource().getURI());
 				if ( imp != null ) {
-					warning("Fix import error first: " + e.toString(), imp, null, "ERROR",
-						(String[]) null);
+					error("Error detected in imported file: " + e.toString(), imp,
+						GamlPackage.Literals.IMPORT__IMPORT_URI, IGamlIssue.IMPORT_ERROR, object
+							.eResource().getURI().toString());
+				} else {
+					error("Errors detected in imported file " + object.eResource().getURI() + ": " +
+						e.toString(), getCurrentObject(), GamlPackage.Literals.MODEL__NAME,
+						IGamlIssue.IMPORT_ERROR, object.eResource().getURI().toString());
 				}
 			}
 			return;
 		}
+		EStructuralFeature feature = null;
+		if ( e instanceof Statement ) {
+			feature = GamlPackage.Literals.STATEMENT__KEY;
+		}
 		if ( !Arrays.contains(e.getData(), null) ) {
 			if ( e.isWarning() ) {
-				warning(e.toString(), object, null, 0, e.getCode(), e.getData());
+				warning(e.toString(), object, feature, 0, e.getCode(), e.getData());
 			} else {
-				error(e.toString(), object, null, 0, e.getCode(), e.getData());
+				error(e.toString(), object, feature, 0, e.getCode(), e.getData());
 			}
 		}
 	}

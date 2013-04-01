@@ -27,6 +27,7 @@ public class GamlResource extends LazyLinkingResource {
 	static int counter = 0;
 	private ISyntacticElement syntacticContents;
 	private IGamlBuilderListener listener;
+	private GamlCompatibilityConverter converter;
 
 	@Inject
 	GamlJavaValidator validator;
@@ -34,6 +35,13 @@ public class GamlResource extends LazyLinkingResource {
 	@Override
 	public String toString() {
 		return "resource" + "[" + getURI() + "]";
+	}
+
+	public GamlCompatibilityConverter getConverter() {
+		if ( converter == null ) {
+			converter = new GamlCompatibilityConverter(this);
+		}
+		return converter;
 	}
 
 	public void setModelDescription(final boolean withErrors, final ModelDescription model) {
@@ -56,7 +64,7 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	public void error(final String message, final ISyntacticElement elt, final boolean warning) {
-		validator.add(new GamlCompilationError(message, elt, warning));
+		validator.add(new GamlCompilationError(message, elt.getElement(), warning));
 	}
 
 	@Override
@@ -74,15 +82,12 @@ public class GamlResource extends LazyLinkingResource {
 
 	public ISyntacticElement getSyntacticContents() {
 		if ( syntacticContents == null ) {
-			syntacticContents = new GamlCompatibilityConverter(this).buildSyntacticContents();
+			syntacticContents = getConverter().buildSyntacticContents();
 		}
 		return syntacticContents;
 	}
 
 	public void eraseSyntacticContents() {
-		if ( syntacticContents != null ) {
-			syntacticContents.dispose();
-		}
 		syntacticContents = null;
 	}
 
