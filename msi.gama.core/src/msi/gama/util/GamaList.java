@@ -25,7 +25,6 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.*;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 21 nov. 2008
@@ -50,10 +49,10 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 		 * 
 		 * @see msi.gama.interfaces.IGamaContainer#isFixedLength()
 		 */
-		@Override
-		public boolean isFixedLength() {
-			return true;
-		}
+		// @Override
+		// public boolean isFixedLength() {
+		// return true;
+		// }
 
 		@Override
 		public boolean remove(final Object value) {
@@ -201,10 +200,10 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 		return sb.toString();
 	}
 
-	@Override
-	public IType type() {
-		return Types.get(IType.LIST);
-	}
+	// @Override
+	// public IType type() {
+	// return Types.get(IType.LIST);
+	// }
 
 	@Override
 	public String toGaml() {
@@ -622,20 +621,20 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#checkIndex(java.lang.Object)
 	 */
-	@Override
-	public boolean checkIndex(final Object index) {
-		return index instanceof Integer;
-	}
+	// @Override
+	// public boolean checkIndex(final Object index) {
+	// return index instanceof Integer;
+	// }
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#checkValue(java.lang.Object)
 	 */
-	@Override
-	public boolean checkValue(final Object value) {
-		return true;// Maybe a check on the type would be possible ?
-	}
+	// @Override
+	// public boolean checkValue(final Object value) {
+	// return true;// Maybe a check on the type would be possible ?
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -654,10 +653,10 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#isFixedLength()
 	 */
-	@Override
-	public boolean isFixedLength() {
-		return false;
-	}
+	// @Override
+	// public boolean isFixedLength() {
+	// return false;
+	// }
 
 	/*
 	 * (non-Javadoc)

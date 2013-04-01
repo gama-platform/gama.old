@@ -220,4 +220,9 @@ public abstract class GamaType<Support> implements IType<Support> {
 	public boolean hasContents() {
 		return false;
 	}
+
+	@Override
+	public boolean isFixedLength() {
+		return true;
+	}
 }

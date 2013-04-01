@@ -31,7 +31,6 @@ import msi.gama.util.graph.GraphEvent.GraphEventType;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.*;
 import org.jgrapht.*;
 import org.jgrapht.alg.*;
 import org.jgrapht.graph.*;
@@ -502,10 +501,11 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		return new GamaList(edges);
 	}
 
-	@Override
-	public IType type() {
-		return Types.get(IType.GRAPH);
-	}
+	//
+	// @Override
+	// public IType type() {
+	// return Types.get(IType.GRAPH);
+	// }
 
 	@Override
 	public IList<V> listValue(final IScope scope) {
@@ -580,11 +580,6 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 				setEdgeWeight(value, weight);
 			}
 		}
-	}
-
-	@Override
-	public void clear() {
-		removeAllVertices(vertexSet());
 	}
 
 	@Override
@@ -766,20 +761,20 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#checkIndex(java.lang.Object)
 	 */
-	@Override
-	public boolean checkIndex(final Object index) {
-		return index != null;
-	}
+	// @Override
+	// public boolean checkIndex(final Object index) {
+	// return index != null;
+	// }
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#checkValue(java.lang.Object)
 	 */
-	@Override
-	public boolean checkValue(final Object value) {
-		return value != null;
-	}
+	// @Override
+	// public boolean checkValue(final Object value) {
+	// return value != null;
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -796,10 +791,10 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#isFixedLength()
 	 */
-	@Override
-	public boolean isFixedLength() {
-		return false;
-	}
+	// @Override
+	// public boolean isFixedLength() {
+	// return false;
+	// }
 
 	/*
 	 * (non-Javadoc)

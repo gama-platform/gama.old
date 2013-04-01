@@ -27,7 +27,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
-import msi.gama.runtime.exceptions.*;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
@@ -60,10 +60,10 @@ public class System {
 	@doc(value = "returns an evaluation of the expresion (right-hand operand) in the scope the given agent.", special_cases = "if the agent is nil or dead, throws an exception", examples = "agent.location 		--: 	returns the location of the agent")
 	public static Object opGetValue(final IScope scope, final IAgent a, final IExpression s)
 		throws GamaRuntimeException {
-		if ( a == null ) { throw new GamaRuntimeWarning("Cannot evaluate " + s.toGaml() +
-			" as the target agent is null"); }
-		if ( a.dead() ) { throw new GamaRuntimeWarning("Cannot evaluate " + s.toGaml() +
-			" as the target agent is dead"); }
+		if ( a == null ) { throw new GamaRuntimeException("Cannot evaluate " + s.toGaml() +
+			" as the target agent is null", true); }
+		if ( a.dead() ) { throw new GamaRuntimeException("Cannot evaluate " + s.toGaml() +
+			" as the target agent is dead", true); }
 		return scope.evaluate(s, a);
 	}
 

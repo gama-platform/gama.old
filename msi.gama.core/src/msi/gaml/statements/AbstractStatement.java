@@ -68,12 +68,21 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 	public void setChildren(final List<? extends ISymbol> commands) {}
 
 	@Override
-	public IType getReturnType() {
+	public IType getType() {
 		return null;
 	}
 
 	@Override
-	public IType getReturnContentType() {
+	public IType getContentType() {
+		IType t = getType();
+		if ( t != null ) { return t.defaultContentType(); }
+		return null;
+	}
+
+	@Override
+	public IType getKeyType() {
+		IType t = getType();
+		if ( t != null ) { return t.defaultKeyType(); }
 		return null;
 	}
 

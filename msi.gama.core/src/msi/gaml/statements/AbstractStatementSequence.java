@@ -85,11 +85,11 @@ public class AbstractStatementSequence extends AbstractStatement {
 	}
 
 	@Override
-	public IType getReturnType() {
+	public IType getType() {
 		IType result = null;
 		for ( int i = 0; i < commands.length; i++ ) {
 			IStatement c = commands[i];
-			IType rt = c.getReturnType();
+			IType rt = c.getType();
 			if ( rt == null ) {
 				continue;
 			}

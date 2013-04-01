@@ -69,7 +69,7 @@ public class TypesManager {
 		if ( stringToIType.containsKey(name) ) {
 			if ( name.equals(AGENT_STR) ) { return stringToIType.get(AGENT_STR); }
 			species.error("Species " + name + " already declared. Species name must be unique",
-				IGamlIssue.DUPLICATE_NAME, null, name);
+				IGamlIssue.DUPLICATE_NAME, species.getUnderlyingElement(null), name);
 		}
 		short newId = ++CURRENT_INDEX;
 		IType newType = new GamaAgentType(name, newId, base);

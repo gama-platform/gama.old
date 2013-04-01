@@ -120,10 +120,10 @@ public class DescriptionValidator {
 					String error =
 						"The " + desc.getKeyword() + " '" + desc.getName() +
 							"' is defined twice. Only one definition is allowed.";
-					child.error(error, IGamlIssue.DUPLICATE_NAME, null, desc.getKeyword(),
-						desc.getName());
-					desc.error(error, IGamlIssue.DUPLICATE_NAME, null, desc.getKeyword(),
-						desc.getName());
+					child.error(error, IGamlIssue.DUPLICATE_NAME, child.getUnderlyingElement(null),
+						desc.getKeyword(), desc.getName());
+					desc.error(error, IGamlIssue.DUPLICATE_NAME, desc.getUnderlyingElement(null),
+						desc.getKeyword(), desc.getName());
 				}
 			}
 		}
@@ -138,8 +138,10 @@ public class DescriptionValidator {
 				String error =
 					keyword + " is defined twice. Only one definition is allowed directly in " +
 						sd.getKeyword();
-				child.error(error, IGamlIssue.DUPLICATE_KEYWORD, null, keyword);
-				desc.error(error, IGamlIssue.DUPLICATE_KEYWORD, null, keyword);
+				child.error(error, IGamlIssue.DUPLICATE_KEYWORD, child.getUnderlyingElement(null),
+					keyword);
+				desc.error(error, IGamlIssue.DUPLICATE_KEYWORD, desc.getUnderlyingElement(null),
+					keyword);
 
 			}
 		}
@@ -177,6 +179,14 @@ public class DescriptionValidator {
 				(String[]) null);
 			return;
 		}
+		String keyword = cd.getKeyword();
+		if ( keyword.equals(ADD) || keyword.equals(REMOVE) ) {
+			IType containerType = list.getType();
+			if ( containerType.isFixedLength() ) {
+				cd.error("Impossible to add/remove to/from " + list.toGaml(), IGamlIssue.WRONG_TYPE);
+				return;
+			}
+		}
 		IType contentType = list.getContentType();
 		IType valueType = item.getType();
 		IType keyType = list.getKeyType();
@@ -191,6 +201,10 @@ public class DescriptionValidator {
 				") does not match with the type of " + index.toGaml() + " (" + index.getType() +
 				")", IGamlIssue.SHOULD_CAST, IKeyword.AT, keyType.toString());
 		}
+	}
+
+	public static void assertContainerIsNotFixedLength(final IDescription cd) {
+
 	}
 
 	public static void assertMicroSpeciesIsVisible(final IDescription cd,
@@ -252,7 +266,8 @@ public class DescriptionValidator {
 		String error =
 			"No " + desc.getKeyword() + " with '" + facet + "= " + stringValue +
 				"' has been defined. ";
-		sd.error(error, IGamlIssue.MISSING_DEFINITION, null, desc.getKeyword(), facet, stringValue);
+		sd.error(error, IGamlIssue.MISSING_DEFINITION, sd.getUnderlyingElement(null),
+			desc.getKeyword(), facet, stringValue);
 	}
 
 	public static void assertBehaviorIsExisting(final IDescription desc, final String facet) {

@@ -23,7 +23,7 @@ import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaMap;
 import msi.gaml.operators.Maths;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaGeometryType;
 import com.vividsolutions.jts.geom.*;
 
 /**
@@ -145,10 +145,10 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return "{" + x + "," + y + zStr + "}";
 	}
 
-	@Override
-	public IType type() {
-		return Types.get(IType.POINT);
-	}
+	// @Override
+	// public IType type() {
+	// return Types.get(IType.POINT);
+	// }
 
 	@Override
 	public void add(final ILocation loc) {

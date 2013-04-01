@@ -60,7 +60,7 @@ import msi.gaml.types.*;
 public class Variable extends Symbol implements IVariable {
 
 	protected IExpression updateExpression, initExpression, amongExpression, functionExpression;
-	protected IType type, contentType;
+	protected IType type;
 	protected boolean isNotModifiable, doUpdate;
 	private final int definitionOrder;
 	public IVarGetter getter, initer;
@@ -150,7 +150,6 @@ public class Variable extends Symbol implements IVariable {
 		getter = null;
 		setter = null;
 		sSkill = null;
-		// iSkill = null;
 		gSkill = null;
 	}
 
@@ -170,7 +169,7 @@ public class Variable extends Symbol implements IVariable {
 	}
 
 	@Override
-	public IType type() {
+	public IType getType() {
 		return type;
 	}
 
@@ -187,7 +186,7 @@ public class Variable extends Symbol implements IVariable {
 				_setVal(a, scope, initer.run(scope, a, gSkill == null ? (ISkill) a : gSkill));
 			} else {
 				doUpdate = true;
-				_setVal(a, scope, type().getDefault());
+				_setVal(a, scope, getType().getDefault());
 			}
 		} catch (GamaRuntimeException e) {
 			e.addContext("in initializing attribute " + getName());

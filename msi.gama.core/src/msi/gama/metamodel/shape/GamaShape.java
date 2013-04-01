@@ -26,7 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gaml.operators.Maths;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 import com.vividsolutions.jts.algorithm.PointLocator;
 import com.vividsolutions.jts.algorithm.distance.*;
 import com.vividsolutions.jts.geom.*;
@@ -76,10 +76,11 @@ public class GamaShape implements IShape /* , IContainer */{
 
 	}
 
-	@Override
-	public IType type() {
-		return Types.get(IType.GEOMETRY);
-	}
+	//
+	// @Override
+	// public IType type() {
+	// return Types.get(IType.GEOMETRY);
+	// }
 
 	@getter("multiple")
 	public boolean isMultiple() {

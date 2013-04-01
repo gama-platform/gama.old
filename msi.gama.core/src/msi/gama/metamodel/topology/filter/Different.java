@@ -20,7 +20,7 @@ package msi.gama.metamodel.topology.filter;
 
 import java.util.*;
 import msi.gama.metamodel.shape.*;
-import msi.gama.util.GamaList;
+import msi.gama.runtime.IScope;
 import msi.gaml.species.ISpecies;
 
 public class Different implements IAgentFilter {
@@ -36,72 +36,22 @@ public class Different implements IAgentFilter {
 		return a.getGeometry() != source.getGeometry();
 	}
 
-	/**
-	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#filter(msi.gama.metamodel.shape.IShape,
-	 *      java.util.List)
-	 */
-	@Override
-	public List<? extends IShape> filter(final IShape source, final List<? extends IShape> ags) {
-		List<IShape> result = new GamaList(ags.size());
-		for ( IShape s : ags ) {
-			if ( accept(source, s) ) {
-				result.add(s);
-			}
-		}
-		return result;
-	}
-
 	@Override
 	public boolean filterSpecies(final ISpecies s) {
 		return false;
 	}
 
-	/**
-	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#accept(msi.gama.metamodel.shape.ILocation,
-	 *      msi.gama.metamodel.shape.IShape)
-	 */
 	@Override
 	public boolean accept(final ILocation source, final IShape a) {
 		return !a.getLocation().equals(source);
 	}
 
 	/**
-	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#filter(msi.gama.metamodel.shape.ILocation,
-	 *      java.util.List)
-	 */
-	@Override
-	public List<? extends IShape> filter(final ILocation source, final List<? extends IShape> ags) {
-		List<IShape> result = new GamaList(ags.size());
-		for ( IShape s : ags ) {
-			if ( accept(source, s) ) {
-				result.add(s);
-			}
-		}
-		return result;
-	}
-
-	/**
 	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getShapes()
 	 */
 	@Override
-	public Collection<? extends IShape> getShapes() {
+	public Collection<? extends IShape> getShapes(IScope scope) {
 		return Collections.EMPTY_LIST;
-	}
-
-	/**
-	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#identicalTo(msi.gama.metamodel.topology.filter.IAgentFilter)
-	 */
-	@Override
-	public boolean identicalTo(final IAgentFilter f) {
-		return f instanceof Different;
-	}
-
-	/**
-	 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getSize()
-	 */
-	@Override
-	public int getSize() {
-		return 0;
 	}
 
 	@Override

@@ -79,7 +79,7 @@ public class ContainerVariable extends Variable {
 		size =
 			value instanceof ILocation ? (GamaPoint) value : new GamaPoint(
 				Cast.asInt(scope, value), 1);
-		switch (this.type().id()) {
+		switch (this.getType().id()) {
 			case IType.MATRIX: {
 				Object v = value(scope, owner);
 				if ( !(v instanceof IMatrix) ) {

@@ -78,7 +78,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 
 	@Override
 	public GamaShape getDefault() {
-		return null; // Retourner un point; ?
+		return null;
 	}
 
 	@Override
@@ -91,6 +91,11 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return true;
 	}
 
+	@Override
+	public boolean isFixedLength() {
+		return false;
+	}
+
 	/**
 	 * Builds a (cleansed) polygon from a list of points. The input points must be valid to create a
 	 * linear ring (first point and last point are duplicated). It is the responsible of the caller
@@ -101,12 +106,12 @@ public class GamaGeometryType extends GamaType<IShape> {
 	 * @param points
 	 * @return
 	 */
-	public static IShape buildPolygon(final List<GamaPoint> points) {
+	public static IShape buildPolygon(final List<IShape> points) {
 		CoordinateSequenceFactory fact = GeometryUtils.getFactory().getCoordinateSequenceFactory();
 		int size = points.size();
 		CoordinateSequence cs = fact.create(size, 2);
 		for ( int i = 0; i < size; i++ ) {
-			Coordinate p = points.get(i);
+			Coordinate p = (GamaPoint) points.get(i).getLocation();
 			cs.setOrdinate(i, 0, p.x);
 			cs.setOrdinate(i, 1, p.y);
 			cs.setOrdinate(i, 2, p.z);
@@ -131,21 +136,21 @@ public class GamaGeometryType extends GamaType<IShape> {
 	 * @param points
 	 * @return
 	 */
-	public static IShape buildPolyhedron(final List<GamaPoint> points, final Double depth) {
+	public static IShape buildPolyhedron(final List<IShape> points, final Double depth) {
 		GamaShape g = new GamaShape(buildPolygon(points));
 		g.setAttribute("depth", depth);
 		g.setAttribute("type", "polyhedron");
 		return g;
 	}
 
-	public static IShape buildLine(final ILocation location1, final ILocation location2) {
+	public static IShape buildLine(final IShape location1, final IShape location2) {
 		Coordinate coordinates[] =
-			{ location1 == null ? new GamaPoint(0, 0) : (GamaPoint) location1,
-				location2 == null ? new GamaPoint(0, 0) : (GamaPoint) location2 };
+			{ location1 == null ? new GamaPoint(0, 0) : (GamaPoint) location1.getLocation(),
+				location2 == null ? new GamaPoint(0, 0) : (GamaPoint) location2.getLocation() };
 		return new GamaShape(GeometryUtils.getFactory().createLineString(coordinates));
 	}
 
-	public static IShape buildPlan(final ILocation location1, final ILocation location2,
+	public static IShape buildPlan(final IShape location1, final IShape location2,
 		final Double depth) {
 		GamaShape g = new GamaShape(buildLine(location1, location2));
 		g.setAttribute("depth", depth);
@@ -153,26 +158,25 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return g;
 	}
 
-	public static IShape buildPolyline(final List<GamaPoint> points) {
+	public static IShape buildPolyline(final List<IShape> points) {
 		List<Coordinate> coordinates = new ArrayList<Coordinate>();
-
-		for ( ILocation p : points ) {
-			coordinates.add((Coordinate) p);
+		for ( IShape p : points ) {
+			coordinates.add((GamaPoint) p.getLocation());
 		}
 		return new GamaShape(GeometryUtils.getFactory().createLineString(
 			coordinates.toArray(new Coordinate[0])));
 	}
 
-	public static IShape buildPolyplan(final List<GamaPoint> points, final Double depth) {
+	public static IShape buildPolyplan(final List<IShape> points, final Double depth) {
 		GamaShape g = new GamaShape(buildPolyline(points));
 		g.setAttribute("depth", depth);
 		g.setAttribute("type", "polyplan");
 		return g;
 	}
 
-	public static IShape createPoint(final ILocation location) {
+	public static IShape createPoint(final IShape location) {
 		return new GamaShape(GeometryUtils.getFactory().createPoint(
-			location == null ? new GamaPoint(0, 0) : (Coordinate) location));
+			location == null ? new GamaPoint(0, 0) : (GamaPoint) location.getLocation()));
 	}
 
 	public static IShape buildTriangle(final double side_size, final ILocation location) {

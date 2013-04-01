@@ -23,7 +23,6 @@ import java.util.List;
 import msi.gama.common.interfaces.ISyntacticElement;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
-import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
 
 /**
@@ -41,7 +40,7 @@ public class ExperimentFactory extends SpeciesFactory {
 	@Override
 	protected ExperimentDescription buildDescription(final ISyntacticElement se,
 		final IChildrenProvider cp, final IDescription sd, final SymbolProto md) {
-		return new ExperimentDescription(se.getKeyword(), sd, cp, se);
+		return new ExperimentDescription(se.getKeyword(), sd, cp, se.getElement(), se.getFacets());
 	}
 
 	@Override
@@ -52,12 +51,6 @@ public class ExperimentFactory extends SpeciesFactory {
 			}
 		}
 		super.privateValidateChildren(sd);
-	}
-
-	@Override
-	ISymbol privateCompile(final IDescription desc) {
-		// GuiUtils.debug("Compiling " + desc.getTitle() + "as experiment");
-		return super.privateCompile(desc);
 	}
 
 }

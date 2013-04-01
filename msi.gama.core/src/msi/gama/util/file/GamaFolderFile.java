@@ -45,10 +45,11 @@ public class GamaFolderFile extends GamaFile<Integer, String> {
 		return null;
 	}
 
-	@Override
-	protected boolean _isFixedLength() {
-		return true;
-	}
+	//
+	// @Override
+	// protected boolean _isFixedLength() {
+	// return true;
+	// }
 
 	@Override
 	public String toGaml() {

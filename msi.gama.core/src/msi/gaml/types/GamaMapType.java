@@ -28,10 +28,10 @@ import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
 
 @type(name = IType.MAP_STR, id = IType.MAP, wraps = { GamaMap.class, Map.class, HashMap.class }, kind = ISymbolKind.Variable.CONTAINER)
-public class GamaMapType extends GamaType<Map> {
+public class GamaMapType extends GamaContainerType<GamaMap> {
 
 	@Override
-	public Map cast(final IScope scope, final Object obj, final Object param)
+	public GamaMap cast(final IScope scope, final Object obj, final Object param)
 		throws GamaRuntimeException {
 		if ( obj == null ) { return new GamaMap(); }
 		if ( obj instanceof ISpecies ) { return ((ISpecies) obj).mapValue(scope); }
@@ -43,7 +43,7 @@ public class GamaMapType extends GamaType<Map> {
 	}
 
 	@Override
-	public Map getDefault() {
+	public GamaMap getDefault() {
 		return null;
 	}
 

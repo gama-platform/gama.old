@@ -73,10 +73,10 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 	 * 
 	 * @see msi.gama.util.GamaFile#_isFixedLength()
 	 */
-	@Override
-	protected boolean _isFixedLength() {
-		return false;
-	}
+	// @Override
+	// protected boolean _isFixedLength() {
+	// return false;
+	// }
 
 	/**
 	 * @see msi.gama.util.GamaFile#_toGaml()

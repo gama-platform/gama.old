@@ -19,6 +19,7 @@
 package msi.gaml.expressions;
 
 import static msi.gama.precompiler.ITypeProvider.*;
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IOpRun;
@@ -35,6 +36,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	private final boolean canBeConst;
 	private final short typeProvider;
 	private final short contentTypeProvider;
+	private final int[] expectedContentType;
 
 	@Override
 	public boolean isConst() {
@@ -42,12 +44,13 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	}
 
 	public UnaryOperator(final IType rt, final IOpRun exec, final boolean canBeConst,
-		final short tProv, final short ctProv) {
+		final short tProv, final short ctProv, int[] expectedContentType) {
 		type = rt;
 		helper = exec;
 		this.canBeConst = canBeConst;
 		typeProvider = tProv;
 		contentTypeProvider = ctProv;
+		this.expectedContentType = expectedContentType;
 	}
 
 	@Override
@@ -70,7 +73,8 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	@Override
 	public UnaryOperator copy() {
 		UnaryOperator copy =
-			new UnaryOperator(type, helper, canBeConst, typeProvider, contentTypeProvider);
+			new UnaryOperator(type, helper, canBeConst, typeProvider, contentTypeProvider,
+				expectedContentType);
 		copy.setName(getName());
 		copy.contentType = contentType;
 		return copy;
@@ -142,14 +146,22 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	public UnaryOperator init(final String name, final IDescription context,
 		final IExpression ... args) {
 		setName(name);
-		setChild(args[0]);
+		setChild(context, args[0]);
 		computeType();
 		computeContentType();
 		return this;
 	}
 
-	private void setChild(final IExpression c) {
+	private void setChild(final IDescription context, final IExpression c) {
 		child = c;
+		IType ct = c.getContentType();
+		if ( expectedContentType.length == 0 ) { return; }
+		for ( int i = 0; i < expectedContentType.length; i++ ) {
+			if ( ct.isTranslatableInto(Types.get((short) expectedContentType[i])) ) { return; }
+		}
+		context.error(
+			"The " + getName() + " operator cannot operate on elements of type " + ct.toString(),
+			IGamlIssue.WRONG_TYPE);
 	}
 
 	public boolean hasChildren() {

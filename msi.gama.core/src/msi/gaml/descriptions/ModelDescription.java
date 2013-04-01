@@ -20,13 +20,15 @@ package msi.gaml.descriptions;
 
 import java.io.File;
 import java.util.*;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.util.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.IChildrenProvider;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
 import org.eclipse.emf.common.notify.*;
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * Written by drogoul Modified on 16 mai 2010
@@ -51,8 +53,8 @@ public class ModelDescription extends SymbolDescription {
 	private final Map<String, TypeDescription> allSpeciesDescription = new HashMap();
 	private final ErrorCollector collect = new ErrorCollector();
 
-	public ModelDescription(String projectPath, String modelPath, ISyntacticElement source) {
-		super(MODEL, null, IChildrenProvider.NONE, source);
+	public ModelDescription(String projectPath, String modelPath, EObject source, Facets facets) {
+		super(MODEL, null, IChildrenProvider.NONE, source, facets);
 		types = new TypesManager(this);
 		setModelFilePath(projectPath, modelPath);
 		number = count++;
@@ -155,7 +157,7 @@ public class ModelDescription extends SymbolDescription {
 			experiments.put(s, (ExperimentDescription) child);
 			// If the experiment is not the "default" one, we return the child directly without
 			// adding it to the children
-			if ( !DEFAULT_EXP.equals(s) ) { return child; }
+			// if ( !DEFAULT_EXP.equals(s) ) { return child; }
 		} else if ( child instanceof SpeciesDescription ) { // world_species
 			worldSpecies = (SpeciesDescription) child;
 			addSpeciesDescription(worldSpecies);

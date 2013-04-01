@@ -8,8 +8,8 @@ import msi.gaml.types.IType;
 public class NAryOperator extends BinaryOperator {
 
 	public NAryOperator(final IType ret, final IOpRun exec, final boolean canBeConst,
-		final short tProv, final short ctProv, final boolean lazy) {
-		super(ret, exec, canBeConst, tProv, ctProv, lazy);
+		final short tProv, final short ctProv, final boolean lazy, int[] expectedContentType) {
+		super(ret, exec, canBeConst, tProv, ctProv, lazy, expectedContentType);
 	}
 
 	@Override
@@ -42,7 +42,8 @@ public class NAryOperator extends BinaryOperator {
 
 	@Override
 	public NAryOperator copy() {
-		return new NAryOperator(type, helper, canBeConst, typeProvider, contentTypeProvider, lazy);
+		return new NAryOperator(type, helper, canBeConst, typeProvider, contentTypeProvider, lazy,
+			expectedContentType);
 	}
 
 }

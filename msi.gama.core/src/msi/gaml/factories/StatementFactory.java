@@ -50,7 +50,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 	protected StatementDescription buildDescription(final ISyntacticElement source,
 		final IChildrenProvider cp, final IDescription superDesc, final SymbolProto md) {
 		return new StatementDescription(source.getKeyword(), superDesc, cp, md.hasScope(),
-			md.hasArgs(), source);
+			md.hasArgs(), source.getElement(), source.getFacets());
 	}
 
 	@Override
@@ -62,7 +62,6 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 		if ( kw.equals(ARG) || kw.equals(LET) || kw.equals(ACTION) || kw.equals(REFLEX) ) {
 			assertNameIsNotReserved(cd); // Actions, reflexes, states, etc.
 			assertNameIsNotTypeOrSpecies(cd);
-			// assertNameIsUniqueInSuperDescription(desc);
 		} else if ( kw.equals(STATE) ) {
 			assertFacetValueIsUniqueInSuperDescription(cd, FsmStateStatement.INITIAL,
 				GamlExpressionFactory.TRUE_EXPR);
@@ -74,15 +73,15 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 			assertActionIsExisting(cd, ACTION);
 		} else if ( kw.equals(FsmTransitionStatement.TRANSITION) ) {
 			assertBehaviorIsExisting(cd, TO);
+		} else if ( kw.equals(PUT) ) {
+			assertContainerAssignmentIsOk(cd);
 		} else if ( kw.equals(PUT) || kw.equals(ADD) || kw.equals(REMOVE) ) {
 			assertContainerAssignmentIsOk(cd);
+			assertContainerIsNotFixedLength(cd);
 		}
 		if ( kw.equals(SET) || kw.equals(LET) ) {
 			assertAssignmentIsOk(cd);
-		} // else if ( desc.getMeta().nameIsUnique() ) {
-			// assertNameIsUniqueInSuperDescription(cd);
-		// }
-		else if ( desc.getMeta().isUnique() ) {
+		} else if ( desc.getMeta().isUnique() ) {
 			assertKeywordIsUniqueInSuperDescription(cd);
 		} else if ( kw.equals(CAPTURE) ) {
 			assertMicroSpeciesIsVisible(cd, AS);
@@ -91,6 +90,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 		} else if ( kw.equals(CREATE) ) {
 			String s = cd.getFacets().getLabel(SPECIES);
 			SpeciesDescription species = cd.getSpeciesDescription(s);
+			// FIXME Not the right place to do it.
 			if ( species != null ) {
 				if ( species.isAbstract() ) {
 					cd.error("Species " + s + " is abstract and cannot be instantiated");
@@ -161,55 +161,50 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 			String name = sd.getName();
 			IExpression e = null;
 			IDescription superDesc = cd.getSuperDescription();
-			try {
-				IExpressionDescription ed = argFacets.get(VALUE);
+			IExpressionDescription ed = argFacets.get(VALUE);
+			if ( ed != null ) {
+				e = ed.compile(superDesc);
+			} else {
+				ed = argFacets.get(DEFAULT);
 				if ( ed != null ) {
 					e = ed.compile(superDesc);
-				} else {
-					ed = argFacets.get(DEFAULT);
-					if ( ed != null ) {
-						e = ed.compile(superDesc);
-					}
 				}
-			} catch (RuntimeException e1) {
-				cd.error("Error in compiling argument " + name + ": " + e1.getMessage(), name);
-				e1.printStackTrace();
-				return ca;
 			}
 			ca.put(name, e);
-			String typeName = argFacets.getLabel(TYPE);
-			// FIXME Should not be necessary anymore as it should be eliminated by the parser
-			if ( !isCalling &&
-				!cd.getModelDescription().getTypesManager().getTypeNames().contains(typeName) ) {
-				cd.error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, TYPE);
-			}
-			IType type = sd.getTypeNamed(typeName);
-			if ( type == Types.NO_TYPE && e != null ) {
-				type = e.getType();
-			}
-			typeName = argFacets.getLabel(OF);
-			// FIXME Should not be necessary anymore as it should be eliminated by the parser
-			if ( typeName != null && !isCalling &&
-				!cd.getModelDescription().getTypesManager().getTypeNames().contains(typeName) ) {
-				cd.error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, OF);
-			}
-			IType contents = sd.getTypeNamed(typeName);
-			if ( contents == Types.NO_TYPE && e != null ) {
-				contents = e.getContentType();
-			}
-			typeName = argFacets.getLabel(INDEX);
-			if ( typeName != null && !isCalling &&
-				!cd.getModelDescription().getTypesManager().getTypeNames().contains(typeName) ) {
-				cd.error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, INDEX);
-			}
-
-			IType index = sd.getTypeNamed(typeName);
-			if ( index == Types.NO_TYPE && e != null ) {
-				index = e.getKeyType();
-			}
 			if ( !isCalling ) {
-				// Special case for the calls (create, do, primitives) as the "arguments" passed
-				// should not be part of the context
+				// Special case for the calls (create, do, but also primitives) as the "arguments"
+				// passed should not be part of the context
+				String typeName = argFacets.getLabel(TYPE);
+				// FIXME Should not be necessary anymore as it should be eliminated by the parser
+				if ( !isCalling &&
+					!cd.getModelDescription().getTypesManager().getTypeNames().contains(typeName) ) {
+					cd.error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, TYPE);
+				}
+				IType type = sd.getTypeNamed(typeName);
+				if ( type == Types.NO_TYPE && e != null ) {
+					type = e.getType();
+				}
+				typeName = argFacets.getLabel(OF);
+				// FIXME Should not be necessary anymore as it should be eliminated by the parser
+				if ( typeName != null && !isCalling &&
+					!cd.getModelDescription().getTypesManager().getTypeNames().contains(typeName) ) {
+					cd.error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, OF);
+				}
+				IType contents = sd.getTypeNamed(typeName);
+				if ( contents == Types.NO_TYPE && e != null ) {
+					contents = e.getContentType();
+				}
+				typeName = argFacets.getLabel(INDEX);
+				if ( typeName != null && !isCalling &&
+					!cd.getModelDescription().getTypesManager().getTypeNames().contains(typeName) ) {
+					cd.error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, INDEX);
+				}
+
+				IType index = sd.getTypeNamed(typeName);
+				if ( index == Types.NO_TYPE && e != null ) {
+					index = e.getKeyType();
+				}
+
 				cd.addTemp(name, type, contents, index);
 			}
 
@@ -266,7 +261,10 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 			}
 
 			if ( type == Types.NO_TYPE ) {
-				if ( ff.containsKey(VALUE) ) {
+				if ( sd.getKeyword().equals(CREATE) || sd.getKeyword().equals(CAPTURE) ||
+					sd.getKeyword().equals(RELEASE) ) {
+					type = Types.get(IType.LIST);
+				} else if ( ff.containsKey(VALUE) ) {
 					compileFacet(VALUE, sd);
 					IExpression expr = ff.getExpr(VALUE);
 					if ( expr != null ) {
@@ -312,7 +310,6 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 					}
 				}
 			}
-
 			if ( type == Types.NO_TYPE && contentType != Types.NO_TYPE ) {
 				type = Types.get(IType.CONTAINER);
 			}

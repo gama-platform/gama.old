@@ -109,10 +109,10 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		}
 	}
 
-	@Override
-	protected void _clear() {
-		Arrays.fill(matrix, 0d);
-	}
+	// @Override
+	// protected void _clear() {
+	// Arrays.fill(matrix, 0d);
+	// }
 
 	@Override
 	public boolean _contains(IScope scope, final Object o) {
@@ -345,8 +345,8 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#checkValue(java.lang.Object)
 	 */
-	@Override
-	public boolean checkValue(final Object value) {
-		return value instanceof Double;
-	}
+	// @Override
+	// public boolean checkValue(final Object value) {
+	// return value instanceof Double;
+	// }
 }

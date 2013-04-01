@@ -30,7 +30,7 @@ import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.*;
 import msi.gaml.statements.IStatement.WithArgs;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
 
 /**
@@ -63,10 +63,10 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		return getPopulation(scope);
 	}
 
-	@Override
-	public IType type() {
-		return Types.get(IType.SPECIES);
-	}
+	// @Override
+	// public IType type() {
+	// return Types.get(IType.SPECIES);
+	// }
 
 	protected IPopulation getPopulation(final IScope scope) {
 		IAgent a = scope.getAgentScope();
@@ -381,10 +381,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	protected void createControl() {
 		IArchitecture control = getArchitecture();
 		List<IStatement> behaviors = getBehaviors();
-		if ( control == null ) {
-			this.error("The control of this species cannot be computed", IKeyword.CONTROL);
-			return;
-		}
+		if ( control == null ) { throw new GamaRuntimeException(
+			"The control of this species cannot be computed"); }
 		control.setChildren(behaviors);
 		control.verifyBehaviors(this);
 	}

@@ -63,6 +63,7 @@ public interface IExpressionFactory {
 
 	IExpression createOperator(String op, IDescription context, IExpression ... exprs);
 
-	IExpression createAction(String op, IDescription context, IExpression ... exprs);
+	IExpression createAction(String op, IDescription callerContext, StatementDescription action,
+		IExpression ... exprs);
 
 }

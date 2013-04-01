@@ -18,7 +18,6 @@
  */
 package msi.gama.util;
 
-import java.util.Map;
 import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -222,7 +221,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	 * 
 	 * @return true, if the length of the container is fixed.
 	 */
-	public boolean isFixedLength();
+	// public boolean isFixedLength();
 
 	/**
 	 * Purpose of this method is to return whether or not the given index is valid.
@@ -230,7 +229,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	 * @param index the index (can be null)
 	 * @return true, if the index is valid
 	 */
-	public boolean checkIndex(Object index);
+	// public boolean checkIndex(Object index);
 
 	/**
 	 * Purpose of this method is to return whether or not the given value is valid to be stored in
@@ -239,7 +238,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	 * @param value the value (can be null)
 	 * @return true, if the value is valid
 	 */
-	public boolean checkValue(Object value);
+	// public boolean checkValue(Object value);
 
 	/**
 	 * 
@@ -278,7 +277,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	public void put(IScope scope, final KeyType index, final ValueType value, Object param)
 		throws GamaRuntimeException;
 
-	public void clear() throws GamaRuntimeException;
+	// public void clear() throws GamaRuntimeException;
 
 	// Casting operations to/from common types of containers
 
@@ -293,12 +292,12 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 		throws GamaRuntimeException;
 
 	@operator(value = IType.MAP_STR, can_be_const = true)
-	public abstract Map mapValue(IScope scope) throws GamaRuntimeException;
+	public abstract GamaMap mapValue(IScope scope) throws GamaRuntimeException;
 
 	/**
 	 * 
 	 * @param scope
-	 * @return an Iterable that can be dependent on the scope (usually this, but species return
+	 * @return an Iterable that can be dependent on the scope (usually "this", but species return
 	 *         their population)
 	 */
 	public Iterable<ValueType> iterable(final IScope scope);

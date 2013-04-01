@@ -20,7 +20,6 @@ package msi.gama.common.interfaces;
 
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 19 nov. 2008
@@ -30,7 +29,7 @@ import msi.gaml.types.IType;
  */
 public interface IValue extends IGamlable {
 
-	public abstract IType type();
+	// public abstract IType type();
 
 	// @operator(value = IType.STRING_STR, can_be_const = true)
 	public abstract String stringValue(IScope scope) throws GamaRuntimeException;

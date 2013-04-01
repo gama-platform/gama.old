@@ -178,7 +178,7 @@ public abstract class AbstractSimulation implements ISimulation {
 		experiment.getAgent().schedule(getGlobalScope());
 		world.schedule(getGlobalScope());
 		// TODO is it still necessary ?
-		world.initializeMicroPopulations(getGlobalScope());
+		// world.initializeMicroPopulations(getGlobalScope());
 	}
 
 	@Override

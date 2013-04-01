@@ -245,7 +245,7 @@ public class Graphs {
 	@operator(value = "degree_of")
 	@doc(value = "returns the degree (in+out) of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = { "graphEpidemio degree_of (node(3))" }, see = {
 		"in_degree_of", "out_degree_of" })
-	public static int dregreeOf(final IGraph graph, final Object vertex) {
+	public static int degreeOf(final IGraph graph, final Object vertex) {
 		if ( graph == null ) { throw new GamaRuntimeException(
 			"In the in_degree_of operator, the graph should not be null!"); }
 		if ( graph.containsVertex(vertex) ) { return graph.degreeOf(vertex); }

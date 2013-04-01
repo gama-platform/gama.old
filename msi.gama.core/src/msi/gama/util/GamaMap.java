@@ -27,7 +27,7 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.*;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 
 /**
  * The Class GamaMap.
@@ -102,10 +102,11 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 		return "(" + listValue(null).toGaml() + " as map )";
 	}
 
-	@Override
-	public IType type() {
-		return Types.get(IType.MAP);
-	}
+	//
+	// @Override
+	// public IType type() {
+	// return Types.get(IType.MAP);
+	// }
 
 	@Override
 	public GamaMap mapValue(final IScope scope) {
@@ -324,20 +325,20 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#checkIndex(java.lang.Object)
 	 */
-	@Override
-	public boolean checkIndex(final Object index) {
-		return index != null;
-	}
+	// @Override
+	// public boolean checkIndex(final Object index) {
+	// return index != null;
+	// }
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#checkValue(java.lang.Object)
 	 */
-	@Override
-	public boolean checkValue(final Object value) {
-		return true;
-	}
+	// @Override
+	// public boolean checkValue(final Object value) {
+	// return true;
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -354,10 +355,10 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#isFixedLength()
 	 */
-	@Override
-	public boolean isFixedLength() {
-		return false;
-	}
+	// @Override
+	// public boolean isFixedLength() {
+	// return false;
+	// }
 
 	/**
 	 * Returns an iterator that iterates on the list of GamaPair

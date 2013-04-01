@@ -56,8 +56,9 @@ public class RemoveStatement extends AbstractContainerStatement {
 	@Override
 	protected void apply(final IScope scope, final Object object, final Object position,
 		final Boolean whole, final IContainer container) throws GamaRuntimeException {
-		if ( container.isFixedLength() ) { throw new GamaRuntimeException("Cannot remove from " +
-			list.toGaml(), true); }
+		// AD 29/02/13 : Normally taken in charge by the parser, now.
+		// if ( container.isFixedLength() ) { throw new GamaRuntimeException("Cannot remove from " +
+		// list.toGaml(), true); }
 		if ( whole ) {
 			container.removeAll(scope, (IContainer) object);
 		} else if ( position != null ) {

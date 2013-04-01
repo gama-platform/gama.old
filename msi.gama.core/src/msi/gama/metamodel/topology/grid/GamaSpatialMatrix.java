@@ -384,10 +384,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 		return false;
 	}
 
-	@Override
-	public void _clear() {
-		Arrays.fill(matrix, null);
-	}
+	//
+	// @Override
+	// public void _clear() {
+	// Arrays.fill(matrix, null);
+	// }
 
 	@Override
 	protected GamaList _listValue(final IScope scope) {
@@ -494,10 +495,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	// return "GamaMatrixType.from(" + Cast.toJava(new GamaList(this.matrix)) + ", false)";
 	// }
 
-	@Override
-	public boolean checkValue(final Object value) {
-		return value == null || value instanceof IShape;
-	}
+	// @Override
+	// public boolean checkValue(final Object value) {
+	// return value == null || value instanceof IShape;
+	// }
 
 	protected int distanceBetween(final Coordinate p1, final Coordinate p2) {
 		// TODO ATTENTION ne tient pas compte de l'inclusion des points dans la matrice
@@ -801,6 +802,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	@Override
 	public IList<IShape> allInEnvelope(final IShape source, final Envelope env,
 		final IAgentFilter f, final boolean covered) {
+		if ( !f.filterSpecies(cellSpecies) ) { return GamaList.EMPTY_LIST; }
 		// if ( !f.filterSpecies(cellSpecies) ) { return GamaList.EMPTY_LIST; }
 		int minX = getX(env.getMinX());
 		int minY = getY(env.getMinY());
@@ -815,8 +817,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 				if ( index != -1 ) {
 					IAgent a = matrix[index].getAgent();
 					if ( a != null ) {
-						if ( covered && env.covers(a.getEnvelope()) || !covered &&
-							env.intersects(a.getEnvelope()) ) {
+						// BUGFIX AD 29/03/13 The filter was absent
+						if ( f.accept(source, a) &&
+							(covered && env.covers(a.getEnvelope()) || !covered &&
+								env.intersects(a.getEnvelope())) ) {
 							ags.add(a);
 						}
 					}

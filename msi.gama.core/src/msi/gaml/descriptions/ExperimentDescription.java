@@ -18,15 +18,16 @@
  */
 package msi.gaml.descriptions;
 
-import msi.gama.common.interfaces.ISyntacticElement;
 import msi.gaml.compilation.*;
 import msi.gaml.factories.IChildrenProvider;
+import msi.gaml.statements.Facets;
+import org.eclipse.emf.ecore.EObject;
 
 public class ExperimentDescription extends SpeciesDescription {
 
 	public ExperimentDescription(final String keyword, final IDescription superDesc,
-		final IChildrenProvider cp, final ISyntacticElement source) {
-		super(keyword, superDesc, source.getFacets(), cp, source);
+		final IChildrenProvider cp, final EObject source, final Facets facets) {
+		super(keyword, superDesc, cp, source, facets);
 	}
 
 	@Override

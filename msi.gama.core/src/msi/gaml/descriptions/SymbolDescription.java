@@ -19,8 +19,8 @@
 package msi.gaml.descriptions;
 
 import java.util.*;
-import msi.gama.common.interfaces.*;
-import msi.gama.common.util.IErrorCollector;
+import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.util.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.expressions.IExpression;
@@ -28,6 +28,7 @@ import msi.gaml.factories.*;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
 import org.eclipse.emf.common.notify.*;
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * Written by drogoul Modified on 16 mars 2010
@@ -38,22 +39,18 @@ import org.eclipse.emf.common.notify.*;
 public class SymbolDescription implements IDescription {
 
 	protected Facets facets;
-	private ISyntacticElement source;
+	protected final EObject element;
 	protected IDescription enclosing;
 	protected final List<IDescription> children;
 	protected SymbolProto meta;
-
-	// protected String name;
 	protected String keyword;
 
-	// boolean builtIn = false;
-
 	public SymbolDescription(final String keyword, final IDescription superDesc,
-		final IChildrenProvider cp, final ISyntacticElement source) {
-		this.facets = source.getFacets();
+		final IChildrenProvider cp, final EObject source, final Facets facets) {
+		this.facets = facets;
 		facets.putAsLabel(KEYWORD, keyword);
 		this.keyword = keyword;
-		setSource(source);
+		element = source;
 		meta = DescriptionFactory.getProto(keyword);
 		setSuperDescription(superDesc);
 		if ( meta.hasSequence() ) {
@@ -75,15 +72,20 @@ public class SymbolDescription implements IDescription {
 	}
 
 	private void flagError(final String s, final String code, final boolean warning,
-		final Object facet, final String ... data) throws GamaRuntimeException {
-		ISyntacticElement e =
-			facet instanceof ISyntacticElement ? (ISyntacticElement) facet : getSourceInformation();
+		final EObject source, final String ... data) throws GamaRuntimeException {
+
 		IDescription desc = this;
+		EObject e = source;
 		while (e == null && desc != null) {
 			desc = desc.getSuperDescription();
 			if ( desc != null ) {
-				e = desc.getSourceInformation();
+				e = desc.getUnderlyingElement(null);
 			}
+		}
+		if ( !warning ) {
+			String resource = e == null ? "(no file)" : e.eResource().getURI().lastSegment();
+			GuiUtils.debug("COMPILATION ERROR in " + this.toString() + ": " + s + "; source: " +
+				resource);
 		}
 		// throws a runtime exception if there is no way to signal the error in the source
 		// (i.e. we are probably in a runtime scenario)
@@ -93,7 +95,7 @@ public class SymbolDescription implements IDescription {
 			System.out.println((warning ? "Warning" : "Error") + ": " + s);
 			return;
 		}
-		c.add(new GamlCompilationError(s, code, e, warning, facet, data));
+		c.add(new GamlCompilationError(s, code, e, warning, data));
 	}
 
 	@Override
@@ -103,12 +105,17 @@ public class SymbolDescription implements IDescription {
 
 	@Override
 	public void error(final String message, final String code) {
-		flagError(message, code, false, null, (String[]) null);
+		flagError(message, code, false, getUnderlyingElement(null), (String[]) null);
 	}
 
 	@Override
-	public void error(final String s, final String code, final Object facet, final String ... data) {
+	public void error(final String s, final String code, final EObject facet, final String ... data) {
 		flagError(s, code, false, facet, data);
+	}
+
+	@Override
+	public void error(final String s, final String code, final String facet, final String ... data) {
+		flagError(s, code, false, this.getUnderlyingElement(facet), data);
 	}
 
 	@Override
@@ -117,9 +124,15 @@ public class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public void warning(final String s, final String code, final Object facet,
+	public void warning(final String s, final String code, final EObject object,
 		final String ... data) {
-		flagError(s, code, true, facet, data);
+		flagError(s, code, true, object, data);
+	}
+
+	@Override
+	public void warning(final String s, final String code, final String facet,
+		final String ... data) {
+		flagError(s, code, true, this.getUnderlyingElement(facet), data);
 	}
 
 	@Override
@@ -144,9 +157,8 @@ public class SymbolDescription implements IDescription {
 			children.clear();
 		}
 		enclosing = null;
-		if ( source != null ) {
-			source.removeDescription(this);
-			source.dispose();
+		if ( element != null ) {
+			DescriptionFactory.unsetGamlDescription(element, this);
 		}
 	}
 
@@ -178,8 +190,16 @@ public class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public ISyntacticElement getSourceInformation() {
-		return source;
+	public EObject getUnderlyingElement(Object facet) {
+		if ( facet == null ) { return element; }
+		if ( facet instanceof EObject ) { return (EObject) facet; }
+		IExpressionDescription f =
+			facet instanceof IExpressionDescription ? (IExpressionDescription) facet : facets
+				.get(facet);
+		if ( f != null && f.getTarget() != null && f.getTarget().eContainer() != null ) { return f
+			.getTarget(); }
+		return element;
+
 	}
 
 	@Override
@@ -298,11 +318,6 @@ public class SymbolDescription implements IDescription {
 		return model.getWorldSpecies();
 	}
 
-	protected void setSource(final ISyntacticElement source) {
-		this.source = source;
-
-	}
-
 	/**
 	 * @see org.eclipse.emf.common.notify.Adapter#notifyChanged(org.eclipse.emf.common.notify.Notification)
 	 */
@@ -316,7 +331,7 @@ public class SymbolDescription implements IDescription {
 	 */
 	@Override
 	public Notifier getTarget() {
-		return (Notifier) getSourceInformation().getUnderlyingElement(null);
+		return element;
 	}
 
 	/**
@@ -370,7 +385,7 @@ public class SymbolDescription implements IDescription {
 
 	@Override
 	public boolean isBuiltIn() {
-		return source.isSynthetic();
+		return element == null;
 	}
 
 }

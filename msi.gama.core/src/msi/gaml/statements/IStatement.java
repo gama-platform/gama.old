@@ -18,12 +18,11 @@
  */
 package msi.gaml.statements;
 
-import msi.gama.common.interfaces.IGamlable;
+import msi.gama.common.interfaces.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Feb. 2009
@@ -31,16 +30,12 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-public interface IStatement extends ISymbol, IGamlable {
+public interface IStatement extends ISymbol, IGamlable, ITyped {
 
 	public abstract Object executeOn(final IScope scope) throws GamaRuntimeException;
 
-	public abstract IType getReturnType();
-
-	public abstract IType getReturnContentType();
-	
 	public abstract Double computePertinence(final IScope scope) throws GamaRuntimeException;
-	
+
 	public abstract IExpression getPertinence();
 
 	public interface WithArgs extends IStatement {

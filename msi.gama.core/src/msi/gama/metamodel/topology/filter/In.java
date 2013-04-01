@@ -57,31 +57,6 @@ public abstract class In implements IAgentFilter {
 	@Override
 	public abstract boolean accept(ILocation source, IShape a);
 
-	@Override
-	public abstract boolean identicalTo(IAgentFilter f);
-
-	@Override
-	public List<? extends IShape> filter(final IShape source, final List<? extends IShape> ags) {
-		List<IShape> result = new GamaList(ags.size());
-		for ( IShape s : ags ) {
-			if ( accept(source, s) ) {
-				result.add(s);
-			}
-		}
-		return result;
-	}
-
-	@Override
-	public List<? extends IShape> filter(final ILocation source, final List<? extends IShape> ags) {
-		List<IShape> result = new GamaList(ags.size());
-		for ( IShape s : ags ) {
-			if ( accept(source, s) ) {
-				result.add(s);
-			}
-		}
-		return result;
-	}
-
 	private static class InList extends In {
 
 		final Set<IShape> agents;
@@ -109,21 +84,8 @@ public abstract class In implements IAgentFilter {
 		 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getShapes()
 		 */
 		@Override
-		public Collection<? extends IShape> getShapes() {
+		public Collection<? extends IShape> getShapes(IScope scope) {
 			return agents;
-		}
-
-		@Override
-		public boolean identicalTo(final IAgentFilter f) {
-			return f instanceof InList && ((InList) f).agents.equals(agents);
-		}
-
-		/**
-		 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getSize()
-		 */
-		@Override
-		public int getSize() {
-			return agents.size();
 		}
 
 		@Override
@@ -164,22 +126,8 @@ public abstract class In implements IAgentFilter {
 		 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getShapes()
 		 */
 		@Override
-		public Collection<? extends IShape> getShapes() {
+		public Collection<? extends IShape> getShapes(IScope scope) {
 			return byEdges ? graph.edgeSet() : graph.getVertices();
-		}
-
-		@Override
-		public boolean identicalTo(final IAgentFilter f) {
-			return f instanceof InGraph && ((InGraph) f).graph == graph &&
-				((InGraph) f).byEdges == byEdges;
-		}
-
-		/**
-		 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getSize()
-		 */
-		@Override
-		public int getSize() {
-			return graph.length(null); // VERIFY NULL SCOPE
 		}
 
 		@Override
@@ -201,7 +149,10 @@ public abstract class In implements IAgentFilter {
 			IAgent agent = a.getAgent();
 			if ( agent == null ) { return false; }
 			if ( agent.getPopulation() != pop ) { return false; }
-			if ( agent == source.getAgent() ) { return false; }
+			IAgent as = source.getAgent();
+			if ( as != null && as.getPopulation() != pop ) {
+				if ( agent == as ) { return false; }
+			}
 			return true;
 		}
 
@@ -223,21 +174,8 @@ public abstract class In implements IAgentFilter {
 		 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getShapes()
 		 */
 		@Override
-		public Collection<? extends IShape> getShapes() {
+		public Collection<? extends IShape> getShapes(IScope scope) {
 			return pop.getAgentsList();
-		}
-
-		@Override
-		public boolean identicalTo(final IAgentFilter f) {
-			return f instanceof InSpecies && ((InSpecies) f).pop == pop;
-		}
-
-		/**
-		 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getSize()
-		 */
-		@Override
-		public int getSize() {
-			return pop.size();
 		}
 
 		@Override

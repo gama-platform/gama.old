@@ -19,79 +19,49 @@
 package msi.gama.metamodel.topology.filter;
 
 import java.util.*;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
+import msi.gama.runtime.IScope;
 import msi.gaml.species.ISpecies;
 
 public interface IAgentFilter {
 
-	// public static class Or implements IAgentFilter {
-	//
-	// IAgentFilter a, b;
-	//
-	// public Or(final IAgentFilter a, final IAgentFilter b) {
-	// this.a = a;
-	// this.b = b;
-	// }
-	//
-	// @Override
-	// public boolean accept(final IShape source, final IShape agent) {
-	// return a.accept(source, agent) || b.accept(source, agent);
-	// }
-	//
-	// @Override
-	// public boolean accept(final ILocation source, final IShape agent) {
-	// return a.accept(source, agent) || b.accept(source, agent);
-	// }
-	//
-	// @Override
-	// public List<? extends IShape> filter(final IShape source, final List<? extends IShape> ags) {
-	// List<IShape> list = (List<IShape>) a.filter(source, ags);
-	// list.addAll(b.filter(source, ags));
-	// return new GamaList(new HashSet(list));
-	// }
-	//
-	// @Override
-	// public List<? extends IShape> filter(final ILocation source,
-	// final List<? extends IShape> ags) {
-	// List<IShape> list = (List<IShape>) a.filter(source, ags);
-	// list.addAll(b.filter(source, ags));
-	// return new GamaList(new HashSet(list));
-	// }
-	//
-	// @Override
-	// public boolean filterSpecies(final ISpecies s) {
-	// return a.filterSpecies(s) || b.filterSpecies(s);
-	// }
-	//
-	// /**
-	// * @see msi.gama.metamodel.topology.filter.IAgentFilter#getShapes()
-	// */
-	// @Override
-	// public Collection<? extends IShape> getShapes() {
-	// Collection<IShape> result = new HashSet();
-	// result.addAll(a.getShapes());
-	// result.addAll(b.getShapes());
-	// return result;
-	// }
-	//
-	// /**
-	// * @see
-	// msi.gama.metamodel.topology.filter.IAgentFilter#identicalTo(msi.gama.metamodel.topology.filter.IAgentFilter)
-	// */
-	// @Override
-	// public boolean identicalTo(final IAgentFilter f) {
-	// return f instanceof Or && ((Or) f).a.identicalTo(a) && ((Or) f).b.identicalTo(b);
-	// }
-	//
-	// /**
-	// * @see msi.gama.metamodel.topology.filter.IAgentFilter#getSize()
-	// */
-	// @Override
-	// public int getSize() {
-	// return a.getSize() + b.getSize();
-	// // False, but approximate
-	// }
-	// }
+	public static class Not implements IAgentFilter {
+
+		IAgentFilter filter;
+
+		public Not(IAgentFilter other) {
+			filter = other;
+		}
+
+		@Override
+		public boolean accept(IShape source, IShape a) {
+			return !filter.accept(source, a);
+		}
+
+		@Override
+		public boolean accept(ILocation source, IShape a) {
+			return !filter.accept(source, a);
+		}
+
+		@Override
+		public ISpecies speciesFiltered() {
+			return null;
+		}
+
+		@Override
+		public boolean filterSpecies(ISpecies species) {
+			return !filter.filterSpecies(species);
+		}
+
+		@Override
+		public Collection<? extends IShape> getShapes(IScope scope) {
+			List<IAgent> agents = scope.getWorldScope().getAgents();
+			agents.removeAll(filter.getShapes(scope));
+			return agents;
+		}
+
+	}
 
 	public static class And implements IAgentFilter {
 
@@ -113,17 +83,6 @@ public interface IAgentFilter {
 		}
 
 		@Override
-		public List<? extends IShape> filter(final IShape source, final List<? extends IShape> ags) {
-			return b.filter(source, a.filter(source, ags));
-		}
-
-		@Override
-		public List<? extends IShape> filter(final ILocation source,
-			final List<? extends IShape> ags) {
-			return b.filter(source, a.filter(source, ags));
-		}
-
-		@Override
 		public boolean filterSpecies(final ISpecies s) {
 			return a.filterSpecies(s) && b.filterSpecies(s);
 		}
@@ -132,28 +91,11 @@ public interface IAgentFilter {
 		 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getShapes()
 		 */
 		@Override
-		public Collection<? extends IShape> getShapes() {
+		public Collection<? extends IShape> getShapes(IScope scope) {
 			Collection<IShape> result = new HashSet();
-			result.addAll(a.getShapes());
-			result.retainAll(b.getShapes());
+			result.addAll(a.getShapes(scope));
+			result.retainAll(b.getShapes(scope));
 			return result;
-		}
-
-		/**
-		 * @see msi.gama.metamodel.topology.filter.IAgentFilter#identicalTo(msi.gama.metamodel.topology.filter.IAgentFilter)
-		 */
-		@Override
-		public boolean identicalTo(final IAgentFilter f) {
-			return f instanceof And && ((And) f).a == a;
-		}
-
-		/**
-		 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getSize()
-		 */
-		@Override
-		public int getSize() {
-			return a.getSize() + b.getSize();
-			// False, but approximate
 		}
 
 		@Override
@@ -169,29 +111,10 @@ public interface IAgentFilter {
 
 	public boolean accept(ILocation source, IShape a);
 
-	public abstract boolean identicalTo(IAgentFilter f);
-
-	public List<? extends IShape> filter(final IShape source, final List<? extends IShape> ags);
-
-	public List<? extends IShape> filter(final ILocation source, final List<? extends IShape> ags);
-
-	/**
-	 * @param cellSpecies
-	 * @return
-	 */
-
 	public ISpecies speciesFiltered();
 
 	public boolean filterSpecies(ISpecies species);
 
-	/**
-	 * @return
-	 */
-	public Collection<? extends IShape> getShapes();
-
-	/**
-	 * @return
-	 */
-	public int getSize();
+	public Collection<? extends IShape> getShapes(IScope scope);
 
 }

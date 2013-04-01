@@ -74,9 +74,9 @@ public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 		} else {
 			double varValue = var.getMinValue().doubleValue();
 			while (varValue <= var.getMaxValue().doubleValue()) {
-				if ( var.type().id() == IType.INT ) {
+				if ( var.getType().id() == IType.INT ) {
 					solution.put(var.getName(), (int) varValue);
-				} else if ( var.type().id() == IType.FLOAT ) {
+				} else if ( var.getType().id() == IType.FLOAT ) {
 					solution.put(var.getName(), varValue);
 				} else {
 					continue;

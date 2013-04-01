@@ -164,7 +164,7 @@ public class GraphAndPopulationsSynchronizer implements IPopulationListener, IGr
 	public void notifyPopulationCleared(final IPopulation pop) {
 
 		try {
-			graph.clear();
+			graph.removeAllVertices(graph.vertexSet());
 		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}

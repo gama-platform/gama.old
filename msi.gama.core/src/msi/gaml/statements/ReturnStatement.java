@@ -56,9 +56,19 @@ public class ReturnStatement extends AbstractStatement {
 	}
 
 	@Override
-	public IType getReturnType() {
+	public IType getType() {
 		// FIXME Verify the return type against the action return type
 		return value.getType();
+	}
+
+	@Override
+	public IType getContentType() {
+		return value.getContentType();
+	}
+
+	@Override
+	public IType getKeyType() {
+		return value.getKeyType();
 	}
 
 }

@@ -162,6 +162,17 @@ public interface IType<Support> {
 
 	public void init(int varKind, final short id, final String name, final Class ... supports);
 
+	/**
+	 * Whether or not this type can be considered as having a contents. True for all containers and
+	 * special types (like rgb, species, etc.)
+	 * @return
+	 */
 	public abstract boolean hasContents();
+
+	/**
+	 * Whether or not this type can be used in add or remove statements
+	 * @return
+	 */
+	public abstract boolean isFixedLength();
 
 }

@@ -21,7 +21,8 @@ package msi.gaml.skills;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.topology.filter.Different;
+import msi.gama.metamodel.topology.filter.IAgentFilter.Not;
+import msi.gama.metamodel.topology.filter.*;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -52,25 +53,26 @@ public class GridSkill extends GeometricSkill {
 		return (GamaSpatialMatrix) agent.getPopulation().getTopology().getPlaces();
 	}
 
-	@getter("agents") 
+	@getter("agents")
 	@Deprecated
 	public final List<IAgent> getAgents(final IAgent agent) {
-		return agent.getTopology().getAgentsIn(agent.getGeometry(), Different.with(), false);
+		List<IAgent> agents =
+			agent.getTopology().getAgentsIn(agent, new Not(In.population(agent.getPopulation())),
+				false);
+		return agents;
 
 		// TODO Remove this (to consider instead "agents_in" or "agents_intersecting")
 	}
 
 	@getter("grid_x")
 	public final int getX(final IAgent agent) {
-		if (getGrid(agent).getIsHexagon())
-			return getGrid(agent).getX(agent.getGeometry());
+		if ( getGrid(agent).getIsHexagon() ) { return getGrid(agent).getX(agent.getGeometry()); }
 		return getGrid(agent).getX(agent.getLocation().getX());
 	}
 
 	@getter("grid_y")
 	public final int getY(final IAgent agent) {
-		if (getGrid(agent).getIsHexagon())
-			return getGrid(agent).getY(agent.getGeometry());
+		if ( getGrid(agent).getIsHexagon() ) { return getGrid(agent).getY(agent.getGeometry()); }
 		return getGrid(agent).getY(agent.getLocation().getY());
 	}
 
@@ -78,7 +80,7 @@ public class GridSkill extends GeometricSkill {
 	public final void setX(final IAgent agent, final Integer i) {
 
 	}
- 
+
 	@setter("grid_y")
 	public final void setY(final IAgent agent, final Integer i) {
 
@@ -91,15 +93,16 @@ public class GridSkill extends GeometricSkill {
 
 	@getter("color")
 	public GamaColor getColor(final IAgent agent) {
-		if (getGrid(agent).getIsHexagon())
-			return (GamaColor) agent.getAttribute(IKeyword.COLOR);
+		if ( getGrid(agent).getIsHexagon() ) { return (GamaColor) agent
+			.getAttribute(IKeyword.COLOR); }
 		return getGrid(agent).getColor(agent.getLocation());
 	}
 
 	@setter("color")
 	public void setColor(final IAgent agent, final GamaColor color) {
-		if (getGrid(agent).getIsHexagon())
+		if ( getGrid(agent).getIsHexagon() ) {
 			agent.setAttribute(IKeyword.COLOR, color);
+		}
 		getGrid(agent).setColor(agent.getLocation(), color);
 	}
 

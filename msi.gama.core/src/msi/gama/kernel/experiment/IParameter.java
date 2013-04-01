@@ -45,7 +45,7 @@ public interface IParameter {
 
 	public abstract Object value(IScope scope) throws GamaRuntimeException;
 
-	public abstract IType type();
+	public abstract IType getType();
 
 	public String toGaml();
 

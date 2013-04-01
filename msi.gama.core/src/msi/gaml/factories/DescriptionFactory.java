@@ -25,6 +25,8 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.Facets;
+import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * Written by drogoul Modified on 7 janv. 2011
@@ -93,12 +95,47 @@ public class DescriptionFactory {
 		}
 	}
 
+	public static void setGamlDescription(final EObject object, final IGamlDescription description) {
+		if ( description == null || object == null ) { return; }
+		IGamlDescription existing = getGamlDescription(object, description.getClass());
+		if ( existing != null ) {
+			object.eAdapters().remove(existing);
+		}
+		object.eAdapters().add(description);
+	}
+
+	public static <T> T getGamlDescription(final EObject object, final Class<T> preciseClass) {
+		if ( object == null ) { return null; }
+		for ( int i = 0, n = object.eAdapters().size(); i < n; i++ ) {
+			Adapter a = object.eAdapters().get(i);
+			if ( preciseClass.isAssignableFrom(a.getClass()) ) { return (T) a; }
+
+		}
+		return null;
+	}
+
+	public static IGamlDescription getGamlDescription(final EObject object) {
+		if ( object == null ) { return null; }
+		for ( Adapter o : object.eAdapters() ) {
+			if ( o instanceof IGamlDescription ) { return (IGamlDescription) o; }
+		}
+		return null;
+	}
+
+	public static void unsetGamlDescription(final EObject object, final IGamlDescription description) {
+		if ( object == null ) { return; }
+		object.eAdapters().remove(description);
+	}
+
 	// -----
 
 	public synchronized static IDescription create(final SymbolFactory factory,
 		final String keyword, final IDescription superDesc, final IChildrenProvider children,
 		final Facets facets) {
-		return factory.create(new SyntheticStatement(keyword, facets), superDesc, children);
+		IDescription result =
+			factory.create(new SyntacticElement(keyword, facets), superDesc, children);
+		// factory.validate(result);
+		return result;
 	}
 
 	public synchronized static IDescription create(final String keyword,
@@ -122,6 +159,10 @@ public class DescriptionFactory {
 
 	public synchronized static ISymbol compile(final IDescription desc) {
 		return getFactory(desc.getKeyword()).compile(desc);
+	}
+
+	public synchronized static void validate(final IDescription desc) {
+		getFactory(desc.getKeyword()).validate(desc);
 	}
 
 	public static ModelFactory getModelFactory() {

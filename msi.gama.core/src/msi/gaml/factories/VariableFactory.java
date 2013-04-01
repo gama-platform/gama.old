@@ -25,7 +25,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
-import msi.gaml.compilation.SyntheticStatement;
+import msi.gaml.compilation.SyntacticElement;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.*;
@@ -69,7 +69,7 @@ public class VariableFactory extends SymbolFactory {
 				}
 			}
 		}
-		return new VariableDescription(keyword, superDesc, facets, cp, source);
+		return new VariableDescription(keyword, superDesc, cp, source.getElement(), facets);
 	}
 
 	private void buildSignalDescription(final ISyntacticElement source, final String keyword,
@@ -78,8 +78,7 @@ public class VariableFactory extends SymbolFactory {
 		String name = facets.getLabel(NAME);
 		String env = facets.getLabel(ENVIRONMENT);
 		if ( env == null ) {
-			superDesc.error("No environment defined for signal " + name,
-				IGamlIssue.NO_ENVIRONMENT);
+			superDesc.error("No environment defined for signal " + name, IGamlIssue.NO_ENVIRONMENT);
 			return;
 		}
 		String decay = facets.getLabel(DECAY);
@@ -88,12 +87,12 @@ public class VariableFactory extends SymbolFactory {
 		}
 		final String value = name + " < 0.1 ? 0.0 :" + name + " * ( 1 - " + decay + ")";
 		VariableDescription vd =
-			(VariableDescription) create(new SyntheticStatement(IType.FLOAT_STR, new Facets(NAME,
+			(VariableDescription) create(new SyntacticElement(IType.FLOAT_STR, new Facets(NAME,
 				name, TYPE, IType.FLOAT_STR, UPDATE, value, MIN, "0.0")), superDesc, null);
 		SpeciesDescription environment = superDesc.getSpeciesDescription(env);
 		if ( environment == null || !environment.isGrid() ) {
-			superDesc.error("Environment " + env + " of signal " + name +
-				" cannot be determined.", IGamlIssue.UNKNOWN_ENVIRONMENT, ENVIRONMENT, env);
+			superDesc.error("Environment " + env + " of signal " + name + " cannot be determined.",
+				IGamlIssue.UNKNOWN_ENVIRONMENT, ENVIRONMENT, env);
 		}
 		if ( environment != null ) {
 			environment.addChild(vd);

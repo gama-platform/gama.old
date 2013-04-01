@@ -68,6 +68,7 @@ public class ExperimentScope extends AbstractScope {
 		return experiment.getCurrentSimulation();
 	}
 
+	@Override
 	public IModel getModel() {
 		return experiment.getModel();
 	}

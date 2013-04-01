@@ -20,10 +20,8 @@
  */
 package msi.gaml.operators;
 
-import java.awt.print.Printable;
 import java.io.*;
 import java.util.prefs.Preferences;
-
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -45,8 +43,9 @@ import rcaller.exception.*;
  * 
  */
 public class Stats {
+
 	private static final boolean DEBUG = false; // Change DEBUG = false for release version
-	
+
 	private static DataSet from(final IScope scope, final IContainer values) {
 		DataSet d = new DataSet(values.length(scope));
 		for ( Object o : values.iterable(scope) ) {
@@ -78,14 +77,6 @@ public class Stats {
 		DataSet d = from(scope, values);
 		return d.getMedian();
 	}
-
-	//
-	// public static Object opRCompute(final IScope scope, final String operator, final Map
-	// arguments) {
-	// String s = generateRProgram(operator, arguments);
-	// Object o = executeRFunction(s);
-	// return o;
-	// }
 
 	@operator(value = "standard_deviation", expected_content_type = { IType.INT, IType.FLOAT })
 	@doc(value = "the standard deviation on the elements of the operand. See <A href=\"http://en.wikipedia.org/wiki/Standard_deviation\">Standard_deviation</A> for more details.", comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.", special_cases = { "" }, examples = { "standard_deviation ([4.5, 3.5, 5.5, 7.0]) --: 1.2930100540985752" }, see = {
@@ -144,84 +135,70 @@ public class Stats {
 		}
 		return result;
 	}
-	
-	
+
 	@operator(value = "corR", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE)
-	public static Object getCorrelationR(final IScope scope, final IContainer l1, final IContainer l2)
-		throws GamaRuntimeException, RCallerParseException, RCallerExecutionException {
-		if ( l1.length(scope) == 0 || l2.length(scope) == 0 ) { 
-			return Double.valueOf(0d); 
-		}
-		
-		if ( l1.length(scope) != l2.length(scope)) { 
-			return Double.valueOf(0d);
-		}
-		
-		
+	public static Object getCorrelationR(final IScope scope, final IContainer l1,
+		final IContainer l2) throws GamaRuntimeException, RCallerParseException,
+		RCallerExecutionException {
+		if ( l1.length(scope) == 0 || l2.length(scope) == 0 ) { return Double.valueOf(0d); }
+
+		if ( l1.length(scope) != l2.length(scope) ) { return Double.valueOf(0d); }
+
 		RCaller caller = new RCaller();
-		
-		String RPath = Preferences.userRoot().node("gama")
-				.get("RScript", null);
+
+		String RPath = Preferences.userRoot().node("gama").get("RScript", null);
 		caller.setRscriptExecutable("\"" + RPath + "\"");
-		if(java.lang.System.getProperty("os.name").startsWith("Mac"))
-		{
+		if ( java.lang.System.getProperty("os.name").startsWith("Mac") ) {
 			caller.setRscriptExecutable(RPath);
 		}
-		
+
 		double[] vectorX = new double[l1.length(scope)];
 		double[] vectorY = new double[l2.length(scope)];
-		
-        int i = 0; 
-		for (Object o : l1){
+
+		int i = 0;
+		for ( Object o : l1 ) {
 			vectorX[i++] = Double.parseDouble(o.toString());
-        }
-		
+		}
+
 		i = 0;
-		for (Object o : l2){
+		for ( Object o : l2 ) {
 			vectorY[i++] = Double.parseDouble(o.toString());
-        }
-        
+		}
+
 		caller.addDoubleArray("vectorX", vectorX);
 		caller.addDoubleArray("vectorY", vectorY);
-		
+
 		caller.addRCode("corCoef<-cor(vectorX, vectorY, method='pearson')");
-		
-        caller.runAndReturnResult("corCoef");
-        
-        double[] results;
-        try
-        {
-        	results = caller.getParser().getAsDoubleArray("corCoef");
-        }
-        catch(Exception ex)
-        {
-        	return 0.0;
-        }
-        
-        return results[0];
+
+		caller.runAndReturnResult("corCoef");
+
+		double[] results;
+		try {
+			results = caller.getParser().getAsDoubleArray("corCoef");
+		} catch (Exception ex) {
+			return 0.0;
+		}
+
+		return results[0];
 	}
 
 	@operator(value = "meanR", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE)
 	public static Object getMeanR(final IScope scope, final IContainer l)
-			throws GamaRuntimeException, RCallerParseException, RCallerExecutionException {
-		if (l.length(scope) == 0) {
-			return Double.valueOf(0d);
-		}
+		throws GamaRuntimeException, RCallerParseException, RCallerExecutionException {
+		if ( l.length(scope) == 0 ) { return Double.valueOf(0d); }
 
 		double[] results;
 		RCaller caller = new RCaller();
 
-		String RPath = Preferences.userRoot().node("gama")
-					.get("RScript", null);
+		String RPath = Preferences.userRoot().node("gama").get("RScript", null);
 		caller.setRscriptExecutable("\"" + RPath + "\"");
-		if(java.lang.System.getProperty("os.name").startsWith("Mac"))
-		{
+		if ( java.lang.System.getProperty("os.name").startsWith("Mac") ) {
 			caller.setRscriptExecutable(RPath);
 		}
-			
+
 		double[] data = new double[l.length(scope)];
 		int i = 0;
-		for (Object o : l) {
+		for ( Object o : l ) {
 			data[i++] = Double.parseDouble(o.toString());
 		}
 
@@ -235,183 +212,177 @@ public class Stats {
 
 	@operator(value = "R_compute", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE)
 	public static GamaMap opRFileEvaluate(final IScope scope, final String RFile)
-			throws GamaRuntimeException, RCallerParseException, RCallerExecutionException  {
-		try {
-			// Call R
-			RCaller caller = new RCaller();
-
-			String RPath = Preferences.userRoot().node("gama")
-					.get("RScript", null);
-			caller.setRscriptExecutable("\"" + RPath + "\"");
-			//if(java.lang.System.getProperty("os.name").startsWith("Mac"))
-			//{
-			//	caller.setRscriptExecutable(RPath);
-			//}
-			
-			
-			RCode c = new RCode();
-			GamaList R_statements = new GamaList<String>();
-			
-			//tmthai.begin----------------------------------------------------------------------------
-			String fullPath =
-					scope.getSimulationScope().getModel().getRelativeFilePath(RFile, true);
-			if(DEBUG)
-			{
-				GuiUtils.debug("Stats.R_compute.RScript:"+RPath);
-				GuiUtils.debug("Stats.R_compute.RFile:"+RFile);
-				GuiUtils.debug("Stats.R_compute.fullPath:"+fullPath);
-			}
-			
-			//FileReader fr = new FileReader(RFile);			
-			FileReader fr = new FileReader(fullPath);
-			//tmthai.end----------------------------------------------------------------------------
-			
-			
-			BufferedReader br = new BufferedReader(fr);
-			String statement;
-			while ((statement = br.readLine()) != null) {
-				c.addRCode(statement);
-				R_statements.add(statement);
-				//java.lang.System.out.println(statement);
-				if(DEBUG)
-				{
-					GuiUtils.debug("Stats.R_compute_param.statement:"+statement);
-				}
-
-			}
-			
-			fr.close();
-
-			caller.setRCode(c);
-		
-			GamaMap result = new GamaMap();
-
-			String var = computeVariable(R_statements.get(
-					R_statements.length(scope) - 1).toString());
-			caller.runAndReturnResult(var);
-			for (String name : caller.getParser().getNames()) {
-				Object[] results = null;
-				results = caller.getParser().getAsStringArray(name);
-//				for (int i = 0; i < results.length; i++) {
-//					java.lang.System.out.println(results[i]);
-//				}
-				if (DEBUG){
-					GuiUtils.debug("Stats.R_compute_param.caller.Name: '" + name + "' length: "+results.length + " - Value: "+ results.toString());
-				}
-				result.put(name, new GamaList(results));
-			}
-			if(DEBUG)
-			{
-				GuiUtils.debug("Stats.R_compute.return:"+result.toGaml());
-			}
-			return result;
-
-		} catch (Exception ex) {
-
-			throw new GamaRuntimeException("RCallerExecutionException "+ex.getMessage());
-		}
-	}
-	
-	@operator(value = "R_compute_param", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE)
-	public static GamaMap operateRFileEvaluate(final IScope scope, final String RFile, final IContainer param)
-			throws GamaRuntimeException, RCallerParseException, RCallerExecutionException  {
-		if (param.length(scope) == 0) {
-			throw new GamaRuntimeException("Missing Parameter Exception");
-		}
+		throws GamaRuntimeException, RCallerParseException, RCallerExecutionException {
 		try {
 			// Call R
 			RCaller caller = new RCaller();
 
 			String RPath = Preferences.userRoot().node("gama").get("RScript", null);
 			caller.setRscriptExecutable("\"" + RPath + "\"");
-			//if(java.lang.System.getProperty("os.name").startsWith("Mac"))
-			//{
-			//	caller.setRscriptExecutable(RPath);
-			//}
-			
-			double[] vectorParam = new double[param.length(scope)];
-			
-	        int k = 0; 
-			for (Object o : param){
-				vectorParam[k++] = Double.parseDouble(o.toString());
-	        }
-			
-			RCode c = new RCode();
-			// Adding the parameters
-			c.addDoubleArray("vectorParam", vectorParam);
-			
-			// Adding the codes in file
-			GamaList R_statements = new GamaList<String>();
-			
-			//tmthai.begin----------------------------------------------------------------------------
-			String fullPath =
-					scope.getSimulationScope().getModel().getRelativeFilePath(RFile, true);
-			if(DEBUG)
-			{
-				GuiUtils.debug("Stats.R_compute_param.RScript:"+RPath);
-				GuiUtils.debug("Stats.R_compute_param.Param:"+vectorParam.toString());
-				GuiUtils.debug("Stats.R_compute_param.RFile:"+RFile);
-				GuiUtils.debug("Stats.R_compute_param.fullPath:"+fullPath);
-			}
-			
-			//FileReader fr = new FileReader(RFile);			
-			FileReader fr = new FileReader(fullPath);
-			//tmthai.end----------------------------------------------------------------------------
-			
-			
+			// if(java.lang.System.getProperty("os.name").startsWith("Mac"))
+			// {
+			// caller.setRscriptExecutable(RPath);
+			// }
 
-			
+			RCode c = new RCode();
+			GamaList R_statements = new GamaList<String>();
+
+			// tmthai.begin----------------------------------------------------------------------------
+			String fullPath =
+				scope.getSimulationScope().getModel().getRelativeFilePath(RFile, true);
+			if ( DEBUG ) {
+				GuiUtils.debug("Stats.R_compute.RScript:" + RPath);
+				GuiUtils.debug("Stats.R_compute.RFile:" + RFile);
+				GuiUtils.debug("Stats.R_compute.fullPath:" + fullPath);
+			}
+
+			// FileReader fr = new FileReader(RFile);
+			FileReader fr = new FileReader(fullPath);
+			// tmthai.end----------------------------------------------------------------------------
+
 			BufferedReader br = new BufferedReader(fr);
 			String statement;
-			
 			while ((statement = br.readLine()) != null) {
 				c.addRCode(statement);
 				R_statements.add(statement);
-				//java.lang.System.out.println(statement);
+				// java.lang.System.out.println(statement);
+				if ( DEBUG ) {
+					GuiUtils.debug("Stats.R_compute_param.statement:" + statement);
+				}
+
 			}
-			
+
 			fr.close();
+
 			caller.setRCode(c);
-		
+
 			GamaMap result = new GamaMap();
 
-			String var = computeVariable(R_statements.get(R_statements.length(scope) - 1).toString());
+			String var =
+				computeVariable(R_statements.get(R_statements.length(scope) - 1).toString());
 			caller.runAndReturnResult(var);
-			
-			// DEBUG:
-			//java.lang.System.out.println("Name: '" + R_statements.length(scope) + "'");
-			if (DEBUG) GuiUtils.debug("Stats.R_compute_param.R_statements.length: '" + R_statements.length(scope) + "'");
-			
-			
-			for (String name : caller.getParser().getNames()) {
+			for ( String name : caller.getParser().getNames() ) {
 				Object[] results = null;
 				results = caller.getParser().getAsStringArray(name);
-				//java.lang.System.out.println("Name: '" + name + "'");
-				if (DEBUG){
-					GuiUtils.debug("Stats.R_compute_param.caller.Name: '" + name + "' length: "+results.length + " - Value: "+ results.toString());
+				// for (int i = 0; i < results.length; i++) {
+				// java.lang.System.out.println(results[i]);
+				// }
+				if ( DEBUG ) {
+					GuiUtils.debug("Stats.R_compute_param.caller.Name: '" + name + "' length: " +
+						results.length + " - Value: " + results.toString());
 				}
-				
-//				for (int i = 0; i < results.length; i++) {
-//					//java.lang.System.out.println(results[i]);
-//					if (DEBUG) GuiUtils.debug(results[i].toString());
-//					//java.lang.System.out.println("Name: '" + name + "'");
-//				}							
 				result.put(name, new GamaList(results));
 			}
-			
-			if(DEBUG)
-			{
-				GuiUtils.debug("Stats.R_compute_param.return:"+result.toGaml());
+			if ( DEBUG ) {
+				GuiUtils.debug("Stats.R_compute.return:" + result.toGaml());
+			}
+			return result;
+
+		} catch (Exception ex) {
+
+			throw new GamaRuntimeException("RCallerExecutionException " + ex.getMessage());
+		}
+	}
+
+	@operator(value = "R_compute_param", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE)
+	public static GamaMap operateRFileEvaluate(final IScope scope, final String RFile,
+		final IContainer param) throws GamaRuntimeException, RCallerParseException,
+		RCallerExecutionException {
+		if ( param.length(scope) == 0 ) { throw new GamaRuntimeException(
+			"Missing Parameter Exception"); }
+		try {
+			// Call R
+			RCaller caller = new RCaller();
+
+			String RPath = Preferences.userRoot().node("gama").get("RScript", null);
+			caller.setRscriptExecutable("\"" + RPath + "\"");
+			// if(java.lang.System.getProperty("os.name").startsWith("Mac"))
+			// {
+			// caller.setRscriptExecutable(RPath);
+			// }
+
+			double[] vectorParam = new double[param.length(scope)];
+
+			int k = 0;
+			for ( Object o : param ) {
+				vectorParam[k++] = Double.parseDouble(o.toString());
+			}
+
+			RCode c = new RCode();
+			// Adding the parameters
+			c.addDoubleArray("vectorParam", vectorParam);
+
+			// Adding the codes in file
+			GamaList R_statements = new GamaList<String>();
+
+			// tmthai.begin----------------------------------------------------------------------------
+			String fullPath =
+				scope.getSimulationScope().getModel().getRelativeFilePath(RFile, true);
+			if ( DEBUG ) {
+				GuiUtils.debug("Stats.R_compute_param.RScript:" + RPath);
+				GuiUtils.debug("Stats.R_compute_param.Param:" + vectorParam.toString());
+				GuiUtils.debug("Stats.R_compute_param.RFile:" + RFile);
+				GuiUtils.debug("Stats.R_compute_param.fullPath:" + fullPath);
+			}
+
+			// FileReader fr = new FileReader(RFile);
+			FileReader fr = new FileReader(fullPath);
+			// tmthai.end----------------------------------------------------------------------------
+
+			BufferedReader br = new BufferedReader(fr);
+			String statement;
+
+			while ((statement = br.readLine()) != null) {
+				c.addRCode(statement);
+				R_statements.add(statement);
+				// java.lang.System.out.println(statement);
+			}
+
+			fr.close();
+			caller.setRCode(c);
+
+			GamaMap result = new GamaMap();
+
+			String var =
+				computeVariable(R_statements.get(R_statements.length(scope) - 1).toString());
+			caller.runAndReturnResult(var);
+
+			// DEBUG:
+			// java.lang.System.out.println("Name: '" + R_statements.length(scope) + "'");
+			if ( DEBUG ) {
+				GuiUtils.debug("Stats.R_compute_param.R_statements.length: '" +
+					R_statements.length(scope) + "'");
+			}
+
+			for ( String name : caller.getParser().getNames() ) {
+				Object[] results = null;
+				results = caller.getParser().getAsStringArray(name);
+				// java.lang.System.out.println("Name: '" + name + "'");
+				if ( DEBUG ) {
+					GuiUtils.debug("Stats.R_compute_param.caller.Name: '" + name + "' length: " +
+						results.length + " - Value: " + results.toString());
+				}
+
+				// for (int i = 0; i < results.length; i++) {
+				// //java.lang.System.out.println(results[i]);
+				// if (DEBUG) GuiUtils.debug(results[i].toString());
+				// //java.lang.System.out.println("Name: '" + name + "'");
+				// }
+				result.put(name, new GamaList(results));
+			}
+
+			if ( DEBUG ) {
+				GuiUtils.debug("Stats.R_compute_param.return:" + result.toGaml());
 			}
 
 			return result;
 
 		} catch (Exception ex) {
 
-			throw new GamaRuntimeException("RCallerExecutionException "+ex.getMessage());
+			throw new GamaRuntimeException("RCallerExecutionException " + ex.getMessage());
 		}
 	}
-	
+
 	private static String computeVariable(final String string) {
 		String[] tokens = string.split("<-");
 		return tokens[0];

@@ -39,6 +39,7 @@ public class BinaryOperator extends AbstractNAryOperator {
 	protected final IOpRun helper;
 	protected final short typeProvider;
 	protected final short contentTypeProvider;
+	protected final int[] expectedContentType;
 
 	@Override
 	public boolean isConst() {
@@ -56,13 +57,14 @@ public class BinaryOperator extends AbstractNAryOperator {
 	}
 
 	public BinaryOperator(final IType ret, final IOpRun exec, final boolean canBeConst,
-		final short tProv, final short ctProv, final boolean lazy) {
+		final short tProv, final short ctProv, final boolean lazy, int[] expectedContentType) {
 		this.lazy = lazy;
 		this.canBeConst = canBeConst;
 		type = ret;
 		helper = exec;
 		typeProvider = tProv;
 		contentTypeProvider = ctProv;
+		this.expectedContentType = expectedContentType;
 	}
 
 	@Override
@@ -189,7 +191,8 @@ public class BinaryOperator extends AbstractNAryOperator {
 
 	@Override
 	public BinaryOperator copy() {
-		return new BinaryOperator(type, helper, canBeConst, typeProvider, contentTypeProvider, lazy);
+		return new BinaryOperator(type, helper, canBeConst, typeProvider, contentTypeProvider,
+			lazy, expectedContentType);
 	}
 
 	@Override
@@ -221,8 +224,8 @@ public class BinaryOperator extends AbstractNAryOperator {
 	public static class BinaryVarOperator extends BinaryOperator implements IVarExpression {
 
 		public BinaryVarOperator(final IType ret, final IOpRun exec, final boolean canBeConst,
-			final short type, final short contentType, final boolean lazy) {
-			super(ret, exec, canBeConst, type, contentType, lazy);
+			final short type, final short contentType, final boolean lazy, int[] expectedContentType) {
+			super(ret, exec, canBeConst, type, contentType, lazy, expectedContentType);
 		}
 
 		@Override
@@ -253,11 +256,16 @@ public class BinaryOperator extends AbstractNAryOperator {
 		@Override
 		public void setKeyType(final IType type) {}
 
+		@Override
+		public IType getKeyType() {
+			return right().getKeyType();
+		}
+
 		// FIXME keyTypeProvider ??
 		@Override
 		public BinaryVarOperator copy() {
 			return new BinaryVarOperator(type, helper, canBeConst, typeProvider,
-				contentTypeProvider, lazy);
+				contentTypeProvider, lazy, expectedContentType);
 		}
 	}
 

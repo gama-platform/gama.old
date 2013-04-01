@@ -80,8 +80,19 @@ public class PrimitiveStatement extends ActionStatement {
 	}
 
 	@Override
-	public IType getReturnType() {
+	public IType getType() {
 		return getDescription().getHelper().getReturnType();
+	}
+
+	// FIXME for the moment, only scarce information about primitives
+	@Override
+	public IType getContentType() {
+		return getType().defaultContentType();
+	}
+
+	@Override
+	public IType getKeyType() {
+		return getType().defaultKeyType();
 	}
 
 }

@@ -30,7 +30,7 @@ import msi.gaml.expressions.VariableExpression;
 import msi.gaml.operators.Cast;
 
 @type(name = IType.GRAPH_STR, id = IType.GRAPH, wraps = { IGraph.class }, kind = ISymbolKind.Variable.CONTAINER)
-public class GamaGraphType extends GamaType<IGraph> {
+public class GamaGraphType extends GamaContainerType<IGraph> {
 
 	@Override
 	public IGraph cast(final IScope scope, final Object obj, final Object param)
@@ -56,7 +56,6 @@ public class GamaGraphType extends GamaType<IGraph> {
 		if ( obj instanceof Map ) { return from(scope, (Map) obj, spatial); }
 		// TODO Matrix, Pair ?
 
-		// throw new GamaRuntimeException("Unable to cast "+obj+" as a graph");
 		return null;
 	}
 
@@ -78,16 +77,6 @@ public class GamaGraphType extends GamaType<IGraph> {
 			: new GamaGraph(obj, false, false, null, null, scope);
 	}
 
-	@Override
-	public IGraph getDefault() {
-		return null;
-	}
-
-	@Override
-	public IType defaultContentType() {
-		return Types.get(NONE);
-	}
-
 	public static IGraph asDirectedGraph(final IGraph source) {
 		source.setDirected(true);
 		return source; // TODO Clone ?
@@ -96,25 +85,6 @@ public class GamaGraphType extends GamaType<IGraph> {
 	public static IGraph asUndirectedGraph(final IGraph source) {
 		source.setDirected(false);
 		return source; // TODO Clone ?
-	}
-
-	// public static IGraph asSpatialGraph(final IGraph source) {
-	// if ( source.isSpatial() ) { return source; }
-	// IGraph destination = new GamaSpatialGraph(GamaList.EMPTY_LIST, true, false, null);
-	// Graphs.addGraph(destination, source);
-	// return destination;
-	// }
-	//
-	// public static IGraph asRegularGraph(final IGraph source) {
-	// if ( !source.isSpatial() ) { return source; }
-	// IGraph destination = new GamaGraph(GamaList.EMPTY_LIST, true, false);
-	// Graphs.addGraph(destination, source);
-	// return destination;
-	// }
-
-	@Override
-	public boolean hasContents() {
-		return true;
 	}
 
 }

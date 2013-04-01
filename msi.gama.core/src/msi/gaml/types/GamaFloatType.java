@@ -66,7 +66,6 @@ public class GamaFloatType extends GamaType<Double> {
 	@Override
 	public IType coerce(final IType type, final IDescription context) {
 		if ( type == this ) { return null; }
-		// GUI.debug("Float type coercing =" + expr);
 		return this;
 	}
 }

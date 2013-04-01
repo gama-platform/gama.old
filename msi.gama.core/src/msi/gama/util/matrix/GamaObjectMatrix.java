@@ -91,10 +91,10 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		matrix = mat;
 	}
 
-	@Override
-	public void _clear() {
-		Arrays.fill(matrix, null);
-	}
+	// @Override
+	// public void _clear() {
+	// Arrays.fill(matrix, null);
+	// }
 
 	@Override
 	public boolean _contains(IScope scope, final Object o) {
@@ -308,9 +308,9 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#checkValue(java.lang.Object)
 	 */
-	@Override
-	public boolean checkValue(final Object value) {
-		return true; // everything accepted including null
-	}
+	// @Override
+	// public boolean checkValue(final Object value) {
+	// return true; // everything accepted including null
+	// }
 
 }

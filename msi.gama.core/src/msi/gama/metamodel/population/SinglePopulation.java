@@ -1,6 +1,6 @@
 package msi.gama.metamodel.population;
 
-import java.util.*;
+import java.util.Iterator;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
@@ -9,7 +9,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.IType;
 
 public class SinglePopulation extends AbstractPopulation {
 
@@ -140,26 +139,26 @@ public class SinglePopulation extends AbstractPopulation {
 	/**
 	 * @see msi.gama.util.IContainer#isFixedLength()
 	 */
-	@Override
-	public boolean isFixedLength() {
-		return false;
-	}
+	// @Override
+	// public boolean isFixedLength() {
+	// return false;
+	// }
 
 	/**
 	 * @see msi.gama.util.IContainer#checkIndex(java.lang.Object)
 	 */
-	@Override
-	public boolean checkIndex(final Object index) {
-		return agents.checkIndex(index);
-	}
+	// @Override
+	// public boolean checkIndex(final Object index) {
+	// return agents.checkIndex(index);
+	// }
 
 	/**
 	 * @see msi.gama.util.IContainer#checkValue(java.lang.Object)
 	 */
-	@Override
-	public boolean checkValue(final Object value) {
-		return agents.checkValue(value);
-	}
+	// @Override
+	// public boolean checkValue(final Object value) {
+	// return agents.checkValue(value);
+	// }
 
 	/**
 	 * @see msi.gama.util.IContainer#checkBounds(java.lang.Object, boolean)
@@ -250,11 +249,11 @@ public class SinglePopulation extends AbstractPopulation {
 	/**
 	 * @see msi.gama.util.IContainer#clear()
 	 */
-	@Override
-	public void clear() throws GamaRuntimeException {
-		super.clear();
-		agents.clear();
-	}
+	// @Override
+	// public void clear() throws GamaRuntimeException {
+	// super.clear();
+	// agents.clear();
+	// }
 
 	/**
 	 * @see msi.gama.util.IContainer#listValue(msi.gama.runtime.IScope)
@@ -286,24 +285,24 @@ public class SinglePopulation extends AbstractPopulation {
 	 * @see msi.gama.util.IContainer#mapValue(msi.gama.runtime.IScope)
 	 */
 	@Override
-	public Map mapValue(final IScope scope) throws GamaRuntimeException {
-		return null;
+	public GamaMap mapValue(final IScope scope) throws GamaRuntimeException {
+		return agents.mapValue(scope);
 	}
 
 	/**
 	 * @see msi.gama.common.interfaces.IValue#type()
 	 */
-	@Override
-	public IType type() {
-		return null;
-	}
+	// @Override
+	// public IType type() {
+	// return null;
+	// }
 
 	/**
 	 * @see msi.gama.common.interfaces.IValue#stringValue()
 	 */
 	@Override
 	public String stringValue(IScope scope) throws GamaRuntimeException {
-		return null;
+		return agents.stringValue(scope);
 	}
 
 	/**
@@ -319,7 +318,7 @@ public class SinglePopulation extends AbstractPopulation {
 	 */
 	@Override
 	public String toGaml() {
-		return null;
+		return "list(" + species.getName() + ")";
 	}
 
 	/**

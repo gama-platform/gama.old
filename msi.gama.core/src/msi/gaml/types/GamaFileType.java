@@ -36,17 +36,12 @@ import msi.gaml.operators.Files;
  * 
  */
 @type(name = IType.FILE_STR, id = IType.FILE, wraps = { IGamaFile.class, File.class }, kind = ISymbolKind.Variable.CONTAINER /* ? */)
-public class GamaFileType extends GamaType<IGamaFile> {
+public class GamaFileType extends GamaContainerType<IGamaFile> {
 
-	/** Constant field textSuffixes. */
 	private static final List<String> textSuffixes = Arrays.asList(".txt", ".data", ".csv",
 		".text", ".tsv", ".asc");
-
-	// private static final String csvSuffix = ".csv";
 	private static final String shpSuffix = ".shp";
-	// To be used later, to load geometries ?
 	private static final String propertiesSuffix = ".properties";
-	/** Constant field imageSuffixes. */
 	private static final List<String> imageSuffixes = Arrays.asList(".pgm", ".tif", ".tiff",
 		".jpg", ".jpeg", ".png", ".gif", ".pict", ".bmp");
 
@@ -60,16 +55,6 @@ public class GamaFileType extends GamaType<IGamaFile> {
 		if ( obj instanceof IGamaFile ) { return (IGamaFile) obj; }
 		if ( obj instanceof String ) { return Files.from(scope, (String) obj); }
 		return getDefault();
-	}
-
-	@Override
-	public IGamaFile getDefault() {
-		return null;
-	}
-
-	@Override
-	public IType defaultContentType() {
-		return Types.get(NONE);
 	}
 
 	@operator(value = "is_text")
@@ -138,11 +123,6 @@ public class GamaFileType extends GamaType<IGamaFile> {
 			if ( fn.contains(s) ) { return true; }
 		}
 		return false;
-	}
-
-	@Override
-	public boolean hasContents() {
-		return true;
 	}
 
 }

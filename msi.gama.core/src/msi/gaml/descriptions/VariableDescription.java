@@ -19,7 +19,6 @@
 package msi.gaml.descriptions;
 
 import java.util.*;
-import msi.gama.common.interfaces.ISyntacticElement;
 import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.*;
@@ -27,6 +26,7 @@ import msi.gaml.expressions.IVarExpression;
 import msi.gaml.factories.IChildrenProvider;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * Written by drogoul Modified on 16 mai 2010
@@ -47,8 +47,8 @@ public class VariableDescription extends SymbolDescription {
 	private IVarSetter set;
 
 	public VariableDescription(final String keyword, final IDescription superDesc,
-		final Facets facets, final IChildrenProvider cp, final ISyntacticElement source) {
-		super(keyword, superDesc, cp, source);
+		final IChildrenProvider cp, final EObject source, Facets facets) {
+		super(keyword, superDesc, cp, source, facets);
 		boolean isExperimentParameter = facets.equals(KEYWORD, PARAMETER);
 		if ( !facets.containsKey(TYPE) && !isExperimentParameter ) {
 			facets.putAsLabel(TYPE, keyword);
@@ -96,7 +96,7 @@ public class VariableDescription extends SymbolDescription {
 	@Override
 	public VariableDescription copy(final IDescription into) {
 		VariableDescription vd =
-			new VariableDescription(getKeyword(), into, facets, null, getSourceInformation());
+			new VariableDescription(getKeyword(), into, null, getUnderlyingElement(null), facets);
 		vd.addHelpers(get, init, set);
 		return vd;
 	}

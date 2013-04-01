@@ -154,7 +154,7 @@ public class SymbolProto {
 		final IDescription context) {
 		for ( String s : mandatoryFacets ) {
 			if ( !facets.containsKey(s) ) {
-				context.error("Missing facet " + s, IGamlIssue.MISSING_FACET, e, s);
+				context.error("Missing facet " + s, IGamlIssue.MISSING_FACET, e.getElement(), s);
 			}
 		}
 	}
@@ -166,8 +166,8 @@ public class SymbolProto {
 		for ( Facet s : facets.entrySet() ) {
 
 			if ( s != null && !possibleFacets.containsKey(s.getKey()) ) {
-				context.error("Unknown facet " + s.getKey(), IGamlIssue.UNKNOWN_FACET, e,
-					s.getKey());
+				context.error("Unknown facet " + s.getKey(), IGamlIssue.UNKNOWN_FACET,
+					e.getElement(), s.getKey());
 			}
 		}
 	}
@@ -249,7 +249,7 @@ public class SymbolProto {
 						if ( !found ) {
 							context.error("The value of facet " + facet.getKey() +
 								" must be one of " + Arrays.toString(f.values),
-								IGamlIssue.NOT_AMONG, e);
+								IGamlIssue.NOT_AMONG, e.getElement());
 
 						}
 					}
@@ -258,7 +258,7 @@ public class SymbolProto {
 					if ( IExpressionCompiler.RESERVED.contains(facetValue) ) {
 						context.error(facetValue +
 							" is a reserved keyword. It cannot be used as an identifier",
-							IGamlIssue.IS_RESERVED, e, facetValue);
+							IGamlIssue.IS_RESERVED, e.getElement(), facetValue);
 					}
 
 				}

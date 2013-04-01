@@ -15,6 +15,8 @@ public class OperatorExpressionDescription extends BasicExpressionDescription {
 		for ( int i = 0; i < exprs.length; i++ ) {
 			if ( exprs[i].getTarget() != null ) {
 				setTarget(exprs[i].getTarget());
+			} else {
+				break;
 			}
 		}
 		args = exprs;
@@ -44,8 +46,9 @@ public class OperatorExpressionDescription extends BasicExpressionDescription {
 			expression = GAMA.getExpressionFactory().createOperator(operator, context, exprs);
 			if ( expression == null ) {
 				// If no operator has been found, we throw an exception
-				context.error("Operator " + operator + " does not exist",
-					IGamlIssue.UNKNOWN_UNARY, null, operator);
+				context.error("Operator " + operator + " does not exist", IGamlIssue.UNKNOWN_UNARY,
+					getTarget() == null ? context.getUnderlyingElement(null) : getTarget(),
+					operator);
 
 			}
 		}

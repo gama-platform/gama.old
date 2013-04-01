@@ -61,5 +61,6 @@ public interface IGamlIssue {
 	public static String NOT_A_UNIT = "gaml.not.a.unit.issue";
 	public static String MISSING_FACET = "gaml.missing.facet.issue";
 	public static String UNKNOWN_FACET = "gaml.unknown.facet.issue";
+	public static String IMPORT_ERROR = "gaml.import.has.error";
 
 }

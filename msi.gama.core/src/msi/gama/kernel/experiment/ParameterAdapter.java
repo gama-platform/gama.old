@@ -115,7 +115,7 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	}
 
 	@Override
-	public IType type() {
+	public IType getType() {
 		return type;
 	}
 

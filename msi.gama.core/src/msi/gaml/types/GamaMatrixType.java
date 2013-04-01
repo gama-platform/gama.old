@@ -30,7 +30,7 @@ import msi.gama.util.matrix.*;
 
 @type(name = IType.MATRIX_STR, id = IType.MATRIX, wraps = { IMatrix.class, GamaIntMatrix.class,
 	GamaFloatMatrix.class, GamaObjectMatrix.class }, kind = ISymbolKind.Variable.CONTAINER)
-public class GamaMatrixType extends GamaType<IMatrix> {
+public class GamaMatrixType extends GamaContainerType<IMatrix> {
 
 	@Override
 	public IMatrix cast(final IScope scope, final Object obj, final Object param)
@@ -53,16 +53,6 @@ public class GamaMatrixType extends GamaType<IMatrix> {
 		if ( obj instanceof Integer ) { return with(scope, ((Integer) obj).intValue(),
 			(GamaPoint) param); }
 		return with(scope, obj);
-	}
-
-	@Override
-	public IMatrix getDefault() {
-		return null;
-	}
-
-	@Override
-	public IType defaultContentType() {
-		return Types.get(NONE);
 	}
 
 	// Simplified pattern : only ';', ',', tab and white space are accepted
@@ -144,7 +134,7 @@ public class GamaMatrixType extends GamaType<IMatrix> {
 	}
 
 	@Override
-	public boolean hasContents() {
+	public boolean isFixedLength() {
 		return true;
 	}
 

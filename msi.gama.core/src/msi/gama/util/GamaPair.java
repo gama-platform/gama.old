@@ -26,7 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 
 /**
  * The Class GamaPair.
@@ -229,10 +229,11 @@ public class GamaPair<K, V> implements IValue /* implements IContainer<K, V> */{
 			(value == null ? "nil" : value.toString());
 	}
 
-	@Override
-	public IType type() {
-		return Types.get(IType.PAIR);
-	}
+	//
+	// @Override
+	// public IType type() {
+	// return Types.get(IType.PAIR);
+	// }
 
 	@Override
 	public int hashCode() {

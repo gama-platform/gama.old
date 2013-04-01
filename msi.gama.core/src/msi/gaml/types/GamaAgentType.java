@@ -109,4 +109,9 @@ public class GamaAgentType extends GamaType<IAgent> {
 		return true;
 	}
 
+	@Override
+	public boolean isFixedLength() {
+		return false;
+	}
+
 }

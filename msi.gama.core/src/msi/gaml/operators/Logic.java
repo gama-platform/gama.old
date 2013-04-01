@@ -33,7 +33,7 @@ import msi.gaml.expressions.*;
  */
 public class Logic {
 
-	@operator(value = "or", priority = IPriority.BOOLEAN)
+	@operator(value = "or")
 	@doc(value = "a bool value, equal to the logical or between the left-hand operand and the rigth-hand operand.", comment = "both operands are always casted to bool before applying the operator. Thus, an expression like 1 or 0 is accepted and returns true.", see = {
 		"bool", "and" })
 	public static Boolean or(final IScope scope, final Boolean left, final IExpression right)
@@ -41,7 +41,7 @@ public class Logic {
 		return left != null && left || right != null && Cast.asBool(scope, right.value(scope));
 	}
 
-	@operator(value = "and", priority = IPriority.BOOLEAN)
+	@operator(value = "and")
 	@doc(value = "a bool value, equal to the logical and between the left-hand operand and the rigth-hand operand.", comment = "both operands are always casted to bool before applying the operator. Thus, an expression like (1 and 0) is accepted and returns false.", see = {
 		"bool", "or" })
 	public static Boolean and(final IScope scope, final Boolean left, final IExpression right)
@@ -61,11 +61,8 @@ public class Logic {
 		"set color value:(food > 5) ? 'red' : ((food >= 2)? 'blue' : 'green');" }, see = ":")
 	public static Object iff(final IScope scope, final Boolean left, final IExpression right)
 		throws GamaRuntimeException {
-		// if ( right instanceof IOperator && ((IOperator) right).right() != null ) {
 		IOperator expr = (IOperator) right;
-		return /* left != null && */left ? expr.arg(0).value(scope) : expr.arg(1).value(scope);
-		// }
-		// return left ? right.value(scope) : null;
+		return left ? expr.arg(0).value(scope) : expr.arg(1).value(scope);
 	}
 
 	@operator(value = ":", type = ITypeProvider.BOTH, content_type = ITypeProvider.BOTH, priority = IPriority.TERNARY)

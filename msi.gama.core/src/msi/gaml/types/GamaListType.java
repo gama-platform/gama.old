@@ -28,7 +28,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 
 @type(name = IType.LIST_STR, id = IType.LIST, wraps = { IList.class, List.class }, kind = ISymbolKind.Variable.CONTAINER)
-public class GamaListType extends GamaType<IList> {
+public class GamaListType extends GamaContainerType<IList> {
 
 	@Override
 	public IList cast(final IScope scope, final Object obj, final Object param)
@@ -50,23 +50,8 @@ public class GamaListType extends GamaType<IList> {
 	}
 
 	@Override
-	public GamaList getDefault() {
-		return null;
-	}
-
-	@Override
-	public IType defaultContentType() {
-		return Types.NO_TYPE;
-	}
-
-	@Override
 	public IType defaultKeyType() {
 		return Types.get(IType.INT);
-	}
-
-	@Override
-	public boolean hasContents() {
-		return true;
 	}
 
 }

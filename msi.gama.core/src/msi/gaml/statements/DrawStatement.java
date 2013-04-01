@@ -180,7 +180,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			} else {
 				// If no operator has been found, we throw an exception
 				desc.error("Impossible to patch the expression for compatibility",
-					IGamlIssue.UNKNOWN_UNARY, exp.getTarget(), "");
+					IGamlIssue.UNKNOWN_UNARY, desc.getUnderlyingElement(null), "");
 
 			}
 		}

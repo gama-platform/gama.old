@@ -156,14 +156,16 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		DescriptionFactory.addProto(md, keywords);
 	}
 
-	public void _iterator(final String[] keywords, final Class[] classes, final Class ret,
-		final boolean c, final int t, final int content, final IOpRun helper) {
+	public void _iterator(final String[] keywords, final Class[] classes,
+		final int[] expectedContentTypes, final Class ret, final boolean c, final int t,
+		final int content, final IOpRun helper) {
 		IExpressionCompiler.ITERATORS.addAll(Arrays.asList(keywords));
-		_operator(keywords, classes, ret, c, t, content, helper);
+		_operator(keywords, classes, expectedContentTypes, ret, c, t, content, helper);
 	}
 
-	public void _operator(final String[] keywords, final Class[] classes, final Class ret,
-		final boolean c, final int t, final int content, final IOpRun helper) {
+	public void _operator(final String[] keywords, final Class[] classes,
+		final int[] expectedContentTypes, final Class ret, final boolean c, final int t,
+		final int content, final IOpRun helper) {
 		Signature signature = new Signature(classes);
 		for ( int i = 0; i < keywords.length; i++ ) {
 			String kw = keywords[i];
@@ -176,21 +178,23 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 				IOperator exp;
 				IType rt = Types.get(ret);
 				if ( classes.length == 1 ) { // unary
-					exp = new UnaryOperator(rt, helper, c, (short) t, (short) content);
+					exp =
+						new UnaryOperator(rt, helper, c, (short) t, (short) content,
+							expectedContentTypes);
 				} else if ( classes.length == 2 ) { // binary
 					if ( kw.equals(OF) || kw.equals(_DOT) ) {
 						exp =
 							new BinaryVarOperator(rt, helper, c, (short) t, (short) content,
-								IExpression.class.equals(classes[1]));
+								IExpression.class.equals(classes[1]), expectedContentTypes);
 					} else {
 						exp =
 							new BinaryOperator(rt, helper, c, (short) t, (short) content,
-								IExpression.class.equals(classes[1]));
+								IExpression.class.equals(classes[1]), expectedContentTypes);
 					}
 				} else {
 					exp =
 						new NAryOperator(rt, helper, c, (short) t, (short) content,
-							IExpression.class.equals(classes[1]));
+							IExpression.class.equals(classes[1]), expectedContentTypes);
 					// FIXME The lazy attribute is completely wrong here
 				}
 				exp.setName(kw);

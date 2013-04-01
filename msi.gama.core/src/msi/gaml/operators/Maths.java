@@ -50,7 +50,7 @@ public class Maths {
 	 * The Class Units.
 	 */
 
-	@operator(value = { "^", "**" }, priority = IPriority.PRODUCT, can_be_const = true)
+	@operator(value = { "^", "**" }, can_be_const = true)
 	@doc(value = "the left-hand operand raised to the power of the right-hand operand.", special_cases = {
 		"if the right-hand operand is equal to 0, returns 1",
 		"if it is equal to 1, returns the left-hand operand." }, examples = "", see = { "*", "sqrt" })
@@ -58,105 +58,22 @@ public class Maths {
 		return pow(a.doubleValue(), b.doubleValue()).intValue();
 	}
 
-	@operator(value = { "^", "**" }, priority = IPriority.PRODUCT, can_be_const = true)
+	@operator(value = { "^", "**" }, can_be_const = true)
 	@doc()
 	public static Double pow(final Double a, final Integer b) {
-
 		return pow(a, b.doubleValue());
 	}
 
-	@operator(value = { "^", "**" }, priority = IPriority.PRODUCT, can_be_const = true)
+	@operator(value = { "^", "**" }, can_be_const = true)
 	@doc(special_cases = "", examples = "")
 	public static Double pow(final Integer a, final Double b) {
 		return pow(a.doubleValue(), b);
 	}
 
-	@operator(value = { "^", "**" }, priority = IPriority.PRODUCT, can_be_const = true)
+	@operator(value = { "^", "**" }, can_be_const = true)
 	@doc()
 	public static Double pow(final Double a, final Double b) {
 		return Math.pow(a, b);
-		// Based on the Taylor series approximation.
-		// double a1 = a.doubleValue();
-		// double b1 = b.doubleValue();
-		// int oc = -1; // used to alternate math symbol (+,-)
-		// int iter = 20; // number of iterations
-		// double p, x, x2, sumX, sumY; // is exponent a whole number?
-		// if ( b1 - floor(b1) == 0 ) { // return base^exponent
-		// double x1 = a1;
-		// int y = (int) b1;
-		// switch (y) {
-		// case -3:
-		// return 1 / (x1 * x1 * x1);
-		// case -2:
-		// return 1 / (x1 * x1);
-		// case -1:
-		// return 1 / x1;
-		// case 0:
-		// return 1d;
-		// case 1:
-		// return x1;
-		// case 2:
-		// return x1 * x1;
-		// case 3:
-		// return x1 * x1 * x1;
-		// case 4:
-		// return x1 * x1 * x1 * x1;
-		// default:
-		// if ( y > 0 ) {
-		// double z = 1;
-		// do {
-		// if ( (y & 1) != 0 ) {
-		// z *= x1;
-		// }
-		// x1 *= x1;
-		// y >>= 1;
-		// } while (y != 0);
-		// return z;
-		// }
-		// y = -y;
-		// double z = 1;
-		// do {
-		// if ( (y & 1) != 0 ) {
-		// z /= x1;
-		// }
-		// x1 *= x1;
-		// y >>= 1;
-		// } while (y != 0);
-		// return z;
-		// }
-		// }
-		// // true if base is greater
-		// // than 1
-		// boolean gt1 = Math.sqrt((a1 - 1) * (a1 - 1)) <= 1 ? false : true;
-		// x = gt1 ? a1 / (a1 - 1) : // base is greater than 1
-		// a1 - 1; // base is 1 or less
-		// sumX = gt1 ? 1 / x : // base is greater than 1
-		// x; // base is 1 or less
-		// for ( int i = 2; i < iter; i++ ) { // find x^iteration
-		// p = x;
-		// for ( int j = 1; j < i; j++ ) {
-		// p *= x;
-		// }
-		// double xTemp = gt1 ? 1 / (i * p) : // base is greater than 1
-		// p / i; // base is 1 or less
-		// sumX = gt1 ? sumX + xTemp : // base is greater than 1
-		// sumX + xTemp * oc; // base is 1 or less
-		// oc *= -1; // change math symbol (+,-)
-		// }
-		// x2 = b1 * sumX;
-		// sumY = 1 + x2; // our estimate
-		// for ( int i = 2; i <= iter; i++ ) { // find x2^iteration
-		// p = x2;
-		// for ( int j = 1; j < i; j++ ) {
-		// p *= x2; // multiply iterations (ex: 3 iterations = 3*2*1)
-		// }
-		// int yTemp = 2;
-		// for ( int j = i; j > 2; j-- ) {
-		// yTemp *= j; // add to estimate (ex: 3rd iteration => (x2^3)/(3*2*1) )
-		// }
-		// sumY += p / yTemp;
-		// }
-		// return sumY; // return our estimate
 	}
 
 	// ==== Operators
@@ -299,10 +216,9 @@ public class Maths {
 	@operator(value = "ln", can_be_const = true)
 	@doc()
 	public static Double ln(final Integer x) {
-		if ( x <= 0 ) {
-			GAMA.reportError(new GamaRuntimeException(
-				"The ln operator cannot accept negative or null inputs", true));
-			return Double.MAX_VALUE; // A compromise...
+		if ( x <= 0 ) { throw new GamaRuntimeException(
+			"The ln operator cannot accept negative or null inputs", true);
+		// return Double.MAX_VALUE; // A compromise...
 		}
 		return Math.log(x);
 	}
@@ -318,12 +234,6 @@ public class Maths {
 	public static Integer negate(final Integer x) {
 		return -x;
 	}
-
-	// @operator(value = "¡", can_be_const = true)
-	// @doc("Indicates that the expression following should be considered as the name of an unit and returns its value (computed with respect to the base values of number without units)")
-	// public static Double unit(final Double unit) {
-	// return unit;
-	// }
 
 	@operator(value = "round", can_be_const = true)
 	@doc(value = "the rounded value of the operand.", examples = { "round (0.51) 	--:	 1",
@@ -502,13 +412,6 @@ public class Maths {
 		"round" })
 	public static final double floor(final double d) {
 		return Math.floor(d);
-		// int i;
-		// if ( d >= 0 ) {
-		// i = (int) d;
-		// } else {
-		// i = -((int) -d) - 1;
-		// }
-		// return i;
 	}
 
 	@operator(value = "ceil", can_be_const = true)
@@ -517,45 +420,37 @@ public class Maths {
 		"round" })
 	public static final double ceil(final double d) {
 		return Math.ceil(d);
-		/*
-		 * int i;
-		 * if ( d >= 0 ) {
-		 * i = -((int) -d) + 1;
-		 * } else {
-		 * i = (int) d;
-		 * }
-		 * return i;
-		 */}
+	}
 
-	@operator(value = "mod", priority = IPriority.PRODUCT, can_be_const = true)
+	@operator(value = "mod", can_be_const = true)
 	@doc(value = "an int, equal to the remainder of the integer division of the left-hand operand by the rigth-hand operand.", special_cases = "if the right-hand operand is equal to zero, raises an exception.", examples = {
 		"40 mod 3 		--:  1", "40 mod 4		--:  0" }, see = "div")
 	public static Integer opMod(final IScope scope, final Integer a, final Integer b) {
 		return a % b;
 	}
 
-	@operator(value = "div", priority = IPriority.PRODUCT, can_be_const = true)
+	@operator(value = "div", can_be_const = true)
 	@doc(value = "an int, equal to the truncation of the division of the left-hand operand by the rigth-hand operand.", special_cases = "if the right-hand operand is equal to zero, raises an exception.", examples = "40 div 3 	--:  13", see = "mod")
 	public static Integer div(final Integer a, final Integer b) throws GamaRuntimeException {
 		if ( b == 0 ) { throw new GamaRuntimeException("Division by zero"); }
 		return a / b;
 	}
 
-	@operator(value = "div", priority = IPriority.PRODUCT, can_be_const = true)
+	@operator(value = "div", can_be_const = true)
 	@doc()
 	public static Integer div(final Double a, final Integer b) throws GamaRuntimeException {
 		if ( b == 0 ) { throw new GamaRuntimeException("Division by zero"); }
 		return (int) (a / b);
 	}
 
-	@operator(value = "div", priority = IPriority.PRODUCT, can_be_const = true)
+	@operator(value = "div", can_be_const = true)
 	@doc(examples = "40 div 4.1		--:  9")
 	public static Integer div(final Integer a, final Double b) throws GamaRuntimeException {
 		if ( b.equals(0.0) ) { throw new GamaRuntimeException("Division by zero"); }
 		return (int) (a / b);
 	}
 
-	@operator(value = "div", priority = IPriority.PRODUCT, can_be_const = true)
+	@operator(value = "div", can_be_const = true)
 	@doc()
 	public static Integer div(final Double a, final Double b) throws GamaRuntimeException {
 		if ( b.equals(0.0) ) { throw new GamaRuntimeException("Division by zero"); }
@@ -568,8 +463,6 @@ public class Maths {
 	public final static double PI_4 = PI / 4d;
 	/** Constant field PRECISION. */
 	public final static int PRECISION = 360;
-	/** Constant field cosTable. */
-	public final static double[] cosTable = new double[PRECISION];
 	/** Constant field PI_2. */
 	public static final double PI_2 = PI * 2;
 	/** Constant field PI_2_OVER1. */
@@ -581,27 +474,11 @@ public class Maths {
 	/** Constant field PREC_MIN_1. */
 	public final static int PREC_MIN_1 = PRECISION - 1;
 
-	/** Constant field RAD_SLICE. */
-	public final static double RAD_SLICE = PI_2 / PRECISION;
-	/** Constant field sinTable. */
-	public final static double[] sinTable = new double[PRECISION];
 	public static final double SQRT2 = Math.sqrt(2);
-	/** Constant field tanTable. */
-	public final static double[] tanTable = new double[PRECISION];
 	/** Constant field toDeg. */
 	public static final double toDeg = 180 / Math.PI;
 	/** Constant field toRad. */
 	public static final double toRad = Math.PI / 180;
-
-	static {
-		double rad = 0;
-		for ( int i = 0; i < PRECISION; i++ ) {
-			rad = i * RAD_SLICE;
-			sinTable[i] = java.lang.Math.sin(rad);
-			cosTable[i] = java.lang.Math.cos(rad);
-			tanTable[i] = java.lang.Math.tan(rad);
-		}
-	}
 
 	@operator(value = "atan2", can_be_const = true)
 	public static double atan2(final double y, final double x) {
@@ -636,16 +513,9 @@ public class Maths {
 		return result % PRECISION;
 	}
 
+	@operator(value = "hypot", can_be_const = true)
 	public static double hypot(final double x1, final double x2, final double y1, final double y2) {
-		final double dx = x2 - x1;
-		final double dy = y2 - y1;
-		double a = dx * dx + dy * dy;
-		final long x = Double.doubleToLongBits(a) >> 32;
-		double y = Double.longBitsToDouble(x + 1072632448 << 31);
-		// repeat the following line for more precision
-		y = (y + a / y) * 0.5;
-		y = (y + a / y) * 0.5;
-		return y;
+		return Math.hypot(x2 - x1, y2 - y1);
 	}
 
 	public static double hypot(final double x1, final double x2, final double y1, final double y2,
@@ -653,17 +523,7 @@ public class Maths {
 		final double dx = x2 - x1;
 		final double dy = y2 - y1;
 		final double dz = z2 - z1;
-		double a = dx * dx + dy * dy + dz * dz;
-		final long x = Double.doubleToLongBits(a) >> 32;
-		double y = Double.longBitsToDouble(x + 1072632448 << 31);
-		// repeat the following line for more precision
-		y = (y + a / y) * 0.5;
-		y = (y + a / y) * 0.5;
-		return y;
-	}
-
-	public static final int radToIndex(final double radians) {
-		return (int) (radians * PI_2_OVER1_P) & PREC_MIN_1;
+		return sqrt(dx * dx + dy * dy + dz * dz);
 	}
 
 }

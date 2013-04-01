@@ -18,7 +18,6 @@
  */
 package msi.gama.metamodel.topology.grid;
 
-import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -192,20 +191,20 @@ public class GridTopology extends AbstractTopology {
 	 * @see msi.gama.environment.ITopology#getAgentsInEnvelope(msi.gama.interfaces.IGeometry,
 	 *      com.vividsolutions.jts.geom.Envelope, msi.gama.environment.IAgentFilter, boolean)
 	 */
-	@Override
-	public IList<IAgent> getAgentsIn(final IShape source, final IAgentFilter f,
-		final boolean covered) {
-		List<IAgent> agents = super.getAgentsIn(source, f, covered);
-		GamaList<IAgent> result = new GamaList();
-		for ( IAgent ag : agents ) {
-			if ( !ag.dead() && isValidGeometry(ag) ) {
-				result.add(ag);
-			}
-		}
-		// We then add the corresponding cells (if they are accepted by the filter).
-		result.addAll(getPlaces().getAgentsCoveredBy(source, f, covered));
-		return result;
-	}
+	// @Override
+	// public IList<IAgent> getAgentsIn(final IShape source, final IAgentFilter f,
+	// final boolean covered) {
+	// List<IAgent> agents = super.getAgentsIn(source, f, covered);
+	// GamaList<IAgent> result = new GamaList();
+	// for ( IAgent ag : agents ) {
+	// if ( !ag.dead() && isValidGeometry(ag) ) {
+	// result.add(ag);
+	// }
+	// }
+	// // We then add the corresponding cells (if they are accepted by the filter).
+	// result.addAll(getPlaces().getAgentsCoveredBy(source, f, covered));
+	// return result;
+	// }
 
 	@Override
 	public GamaList<IAgent> getNeighboursOf(final IShape source, final Double distance,

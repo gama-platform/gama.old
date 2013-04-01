@@ -46,10 +46,11 @@ public class GamaTextFile extends GamaFile<Integer, String> {
 		return null;
 	}
 
-	@Override
-	protected boolean _isFixedLength() {
-		return false;
-	}
+	//
+	// @Override
+	// protected boolean _isFixedLength() {
+	// return false;
+	// }
 
 	@Override
 	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize)

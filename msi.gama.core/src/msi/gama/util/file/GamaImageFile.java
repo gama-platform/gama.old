@@ -68,10 +68,10 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 		return null;
 	}
 
-	@Override
-	protected boolean _isFixedLength() {
-		return true;
-	}
+	// @Override
+	// protected boolean _isFixedLength() {
+	// return true;
+	// }
 
 	@Override
 	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize)

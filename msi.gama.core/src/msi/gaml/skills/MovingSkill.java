@@ -562,19 +562,24 @@ public class MovingSkill extends GeometricSkill {
 					double newY = pto.y + ratio * (pt.y - pto.y);
 					currentLocation.setLocation(newX, newY);
 					IShape gl = GamaGeometryType.buildLine(pto, currentLocation);
-					IAgent a = path.getRealObject(line).getAgent();
-					if ( a != null ) {
-						agents.put(gl, a);
+					IShape sh = path.getRealObject(line);
+					if ( sh != null ) {
+						IAgent a = sh.getAgent();
+						if ( a != null ) {
+							agents.put(gl, a);
+						}
 					}
 					segments.add(gl);
 					distance = 0;
 					break;
 				} else if ( distance > dist ) {
 					IShape gl = GamaGeometryType.buildLine(currentLocation, pt);
-					IAgent a = path.getRealObject(line).getAgent();
-
-					if ( a != null ) {
-						agents.put(gl, a);
+					IShape sh = path.getRealObject(line);
+					if ( sh != null ) {
+						IAgent a = sh.getAgent();
+						if ( a != null ) {
+							agents.put(gl, a);
+						}
 					}
 					segments.add(gl);
 					currentLocation = pt;

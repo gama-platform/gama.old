@@ -255,7 +255,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	}
 
 	@Override
-	public IType getReturnType() {
+	public IType getType() {
 		return Types.get(IType.LIST);
 	}
 

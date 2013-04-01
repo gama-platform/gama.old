@@ -141,7 +141,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 
 	public static class GisLayer {
 
-		private IContainer<Integer, GamaShape> objects;
+		private final IContainer<Integer, GamaShape> objects;
 		private String type;
 		private Color color = Color.black;
 
@@ -160,8 +160,6 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 		}
 
 		public void dipose() {
-			objects.clear();
-			objects = null;
 			type = null;
 		}
 

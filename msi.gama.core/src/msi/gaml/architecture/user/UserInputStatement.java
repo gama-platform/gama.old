@@ -98,7 +98,7 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	}
 
 	@Override
-	public IType type() {
+	public IType getType() {
 		IType type = description.getModelDescription().getTypeNamed(getLiteral(IKeyword.TYPE));
 		if ( type != Types.NO_TYPE ) { return type; }
 		if ( value == null ) { return Types.NO_TYPE; }

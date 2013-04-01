@@ -20,7 +20,7 @@ package msi.gaml.descriptions;
 
 import java.lang.reflect.Modifier;
 import java.util.*;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.metamodel.agent.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -32,6 +32,7 @@ import msi.gaml.factories.*;
 import msi.gaml.skills.*;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
+import org.eclipse.emf.ecore.EObject;
 
 public class SpeciesDescription extends TypeDescription {
 
@@ -44,8 +45,8 @@ public class SpeciesDescription extends TypeDescription {
 	protected IAgentConstructor agentConstructor;
 
 	public SpeciesDescription(final String keyword, final IDescription superDesc,
-		final Facets facets, final IChildrenProvider cp, final ISyntacticElement source) {
-		super(keyword, null, superDesc, cp, source);
+		final IChildrenProvider cp, final EObject source, final Facets facets) {
+		super(keyword, null, superDesc, cp, source, facets);
 		setSkills(facets.get(SKILLS), new HashSet());
 		copyJavaAdditions();
 		agentConstructor = getDefaultAgentConstructor();
@@ -53,8 +54,8 @@ public class SpeciesDescription extends TypeDescription {
 
 	public SpeciesDescription(final String name, final Class clazz, final IDescription superDesc,
 		final IAgentConstructor helper, final Set<String> skills2, final Facets ff) {
-		super(SPECIES, clazz, superDesc, IChildrenProvider.NONE, new SyntheticStatement(SPECIES,
-			new Facets(NAME, name)));
+		super(SPECIES, clazz, superDesc, IChildrenProvider.NONE, null, new Facets(KEYWORD, SPECIES,
+			NAME, name));
 		if ( ff.containsKey(CONTROL) ) {
 			facets.putAsLabel(CONTROL, ff.get(CONTROL).toString());
 		}
@@ -178,7 +179,9 @@ public class SpeciesDescription extends TypeDescription {
 		if ( desc instanceof StatementDescription ) {
 			StatementDescription statement = (StatementDescription) desc;
 			String kw = desc.getKeyword();
-			if ( ACTION.equals(kw) || PRIMITIVE.equals(kw) ) {
+			if ( PRIMITIVE.equals(kw) ) {
+				addPrimitive(statement);
+			} else if ( ACTION.equals(kw) ) {
 				addAction(statement);
 			} else if ( ASPECT.equals(kw) ) {
 				addAspect(statement);
@@ -626,7 +629,7 @@ public class SpeciesDescription extends TypeDescription {
 					}
 
 				};
-				var.addHelpers(get, null, set);
+				var.addHelpers(get, init, set);
 				addChild(var);
 			}
 			microSpec.finalizeDescription();

@@ -41,11 +41,6 @@ public class GamaBoolType extends GamaType<Boolean> {
 		return staticCast(scope, obj, param);
 	}
 
-	@Override
-	protected boolean acceptNullInstances() {
-		return false;
-	}
-
 	public static Boolean staticCast(final IScope scope, final Object obj, final Object param) {
 		if ( obj == null ) { return false; }
 		if ( obj instanceof Boolean ) { return (Boolean) obj; }

@@ -80,4 +80,9 @@ public class GamaPointType extends GamaType<ILocation> {
 		return Types.get(INT);
 	}
 
+	@Override
+	public boolean hasContents() {
+		return true;
+	}
+
 }

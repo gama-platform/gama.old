@@ -4,7 +4,7 @@
  */
 package msi.gaml.descriptions;
 
-import msi.gaml.types.IType;
+import msi.gama.common.interfaces.ITyped;
 import org.eclipse.emf.common.notify.Adapter;
 
 /**
@@ -14,19 +14,13 @@ import org.eclipse.emf.common.notify.Adapter;
  * @since 27 avr. 2012
  * 
  */
-public interface IGamlDescription extends Adapter.Internal {
+public interface IGamlDescription extends Adapter.Internal, ITyped {
 
 	public void dispose();
 
 	public String getTitle();
 
 	public String getDocumentation();
-
-	public abstract IType getContentType();
-
-	public abstract IType getKeyType();
-
-	public abstract IType getType();
 
 	public abstract String getName();
 

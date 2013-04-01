@@ -27,7 +27,8 @@ import msi.gaml.expressions.*;
 import msi.gaml.factories.*;
 import msi.gaml.statements.*;
 import msi.gaml.statements.Facets.Facet;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * Written by drogoul Modified on 10 févr. 2010
@@ -40,7 +41,7 @@ public class StatementDescription extends SymbolDescription {
 
 	private IPrimRun helper; // TODO Only used by primitives. Should be in a subclass.
 	private final Map<String, IVarExpression> temps;
-	private Map<String, IDescription> args = null;
+	private final Map<String, IDescription> args;
 	private final static String INTERNAL = "internal_";
 	private static int COMMAND_INDEX = 0;
 	static final Set<String> doFacets = DescriptionFactory.getAllowedFacetsFor(DO);
@@ -55,9 +56,10 @@ public class StatementDescription extends SymbolDescription {
 
 	public StatementDescription(final String keyword, final IDescription superDesc,
 		final IChildrenProvider cp, final boolean hasScope, final boolean hasArgs,
-		final ISyntacticElement source /* , final SymbolProto m */) {
-		super(keyword, superDesc, cp, source/* , md */);
-		temps = hasScope ? new HashMap() : null;
+		final EObject source, Facets facets) {
+		super(keyword, superDesc, cp, source, facets);
+		temps = hasScope ? new LinkedHashMap() : null;
+		args = hasArgs ? new LinkedHashMap() : null;
 		if ( hasArgs ) {
 			collectArgs();
 		}
@@ -87,7 +89,6 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	private void collectArgs() {
-		args = new LinkedHashMap(); // important in order to keep the order of declaration
 		for ( Iterator<IDescription> it = getChildren().iterator(); it.hasNext(); ) {
 			IDescription c = it.next();
 			if ( c.getKeyword().equals(ARG) ) {
@@ -120,6 +121,7 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	private void explodeArgs() {
+		if ( getKeyword().equals(ACTION) || getKeyword().equals(PRIMITIVE) ) { return; }
 		for ( Map.Entry<String, IExpressionDescription> arg : GAMA.getExpressionFactory()
 			.createArgumentMap(getAction(), facets.get(WITH), this).entrySet() ) {
 			String name = arg.getKey();
@@ -169,7 +171,7 @@ public class StatementDescription extends SymbolDescription {
 		}
 		StatementDescription desc =
 			new StatementDescription(getKeyword(), into, new ChildrenProvider(children),
-				temps != null, args != null, getSourceInformation());
+				temps != null, args != null, element, facets);
 		desc.setHelper(helper);
 		return desc;
 	}
@@ -202,28 +204,67 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	public void verifyArgs(final IDescription caller, final Arguments names) {
-		if ( args == null ) { return; }
+		// if ( args == null ) { return; }
+		Set<String> allArgs = args == null ? Collections.EMPTY_SET : args.keySet();
+		if ( caller.getKeyword().equals(DO) ) {
+			// If the names were not known at the time of the creation of the caller, only the order
+			if ( names.containsKey("0") ) {
+				int index = 0;
+				for ( String name : allArgs ) {
+					String key = String.valueOf(index++);
+					IExpressionDescription old = names.get(key);
+					if ( old != null ) {
+						names.put(name, old);
+						names.remove(key);
+					}
+				}
+			}
+		}
+
+		// We compute the list of mandatory args
 		List<String> mandatoryArgs = new ArrayList();
-		Set<String> allArgs = args.keySet();
+
 		for ( IDescription c : args.values() ) {
 			String n = c.getName();
 			if ( !c.getFacets().containsKey(DEFAULT) ) {
+				// GuiUtils.debug("Mandatory arg: " + n);
 				mandatoryArgs.add(n);
 			}
 		}
+		// If one is missing in the arguments passed, we raise an error
+		// (except for primitives for the moment)
 		if ( !getKeyword().equals(PRIMITIVE) ) {
 			for ( String arg : mandatoryArgs ) {
 				if ( !names.containsKey(arg) ) {
 					caller.error("Missing argument " + arg + " in call to " + getName() +
-						". Arguments passed are : " + names, IGamlIssue.MISSING_ARGUMENT, null,
-						new String[] { arg });
+						". Arguments passed are : " + names, IGamlIssue.MISSING_ARGUMENT,
+						caller.getUnderlyingElement(null), new String[] { arg });
 				}
 			}
 		}
 		for ( Facet arg : names.entrySet() ) {
-			if ( !allArgs.contains(arg.getKey()) ) {
-				caller.error("Unknown argument " + arg.getKey() + " in call to " + getName(),
-					IGamlIssue.UNKNOWN_ARGUMENT, null, new String[] { arg.getKey() });
+			if ( arg != null ) {
+				String name = arg.getKey();
+				if ( !allArgs.contains(name) ) {
+					caller.error("Unknown argument " + name + " in call to " + getName(),
+						IGamlIssue.UNKNOWN_ARGUMENT, arg.getValue().getTarget(),
+						new String[] { arg.getKey() });
+				} else {
+					IType formalType = args.get(name).getType();
+					IType callerType = arg.getValue().getExpression().getType();
+					if ( formalType != Types.NO_TYPE && !callerType.isTranslatableInto(formalType) ) {
+						caller.error("The type of argument " + name + " should be " + formalType,
+							IGamlIssue.WRONG_TYPE);
+					} else if ( formalType.hasContents() ) {
+						formalType = args.get(name).getContentType();
+						callerType = arg.getValue().getExpression().getContentType();
+						if ( formalType != Types.NO_TYPE &&
+							!callerType.isTranslatableInto(formalType) ) {
+							caller.error("The content type of argument " + name + " should be " +
+								formalType, IGamlIssue.WRONG_TYPE);
+						}
+					}
+				}
 			}
 		}
 	}
@@ -234,6 +275,7 @@ public class StatementDescription extends SymbolDescription {
 			error("Unknown action " + actionName, ACTION);
 			return;
 		}
+
 		executer.verifyArgs(this, args);
 	}
 
@@ -264,7 +306,8 @@ public class StatementDescription extends SymbolDescription {
 				s = DEFAULT;
 			} else {
 				if ( getKeyword().equals(REFLEX) ) {
-					warning("Reflexes should be named", IGamlIssue.MISSING_NAME, null);
+					warning("Reflexes should be named", IGamlIssue.MISSING_NAME,
+						getUnderlyingElement(null));
 				}
 				s = INTERNAL + getKeyword() + String.valueOf(COMMAND_INDEX++);
 			}
@@ -273,17 +316,21 @@ public class StatementDescription extends SymbolDescription {
 		return s;
 	}
 
-	public IType getReturnType() {
+	@Override
+	public IType getType() {
 		return getTypeNamed(facets.getLabel(TYPE));
 	}
 
-	public IType getReturnContentType() {
-		return getTypeNamed(facets.getLabel(OF));
+	@Override
+	public IType getContentType() {
+		if ( facets.containsKey(OF) ) { return getTypeNamed(facets.getLabel(OF)); }
+		return getType().defaultContentType();
 	}
 
 	@Override
 	public IType getKeyType() {
-		return getTypeNamed(facets.getLabel(INDEX));
+		if ( facets.containsKey(INDEX) ) { return getTypeNamed(facets.getLabel(INDEX)); }
+		return getType().defaultKeyType();
 	}
 
 	@Override

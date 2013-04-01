@@ -25,7 +25,6 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 18 nov. 2008
@@ -204,10 +203,11 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		return sb.toString();
 	}
 
-	@Override
-	public IType type() {
-		return Types.get(IType.MATRIX);
-	}
+	//
+	// @Override
+	// public IType type() {
+	// return Types.get(IType.MATRIX);
+	// }
 
 	@Override
 	public GamaMap mapValue(final IScope scope) {
@@ -255,10 +255,10 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#checkIndex(java.lang.Object)
 	 */
-	@Override
-	public final boolean checkIndex(final Object index) {
-		return index instanceof ILocation;
-	}
+	// @Override
+	// public final boolean checkIndex(final Object index) {
+	// return index instanceof ILocation;
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -272,10 +272,10 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		return x >= 0 && x < numCols && y >= 0 && y < numRows;
 	}
 
-	@Override
-	public final boolean isFixedLength() {
-		return true;
-	}
+	// @Override
+	// public final boolean isFixedLength() {
+	// return true;
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -441,11 +441,11 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#clear()
 	 */
-	@Override
-	public final void clear() throws GamaRuntimeException {
-		_clear();
-
-	}
+	// @Override
+	// public final void clear() throws GamaRuntimeException {
+	// _clear();
+	//
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -566,7 +566,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	protected abstract IMatrix _matrixValue(IScope scope, ILocation size);
 
-	protected abstract void _clear();
+	// protected abstract void _clear();
 
 	protected abstract boolean _removeFirst(IScope scope, T value) throws GamaRuntimeException;
 

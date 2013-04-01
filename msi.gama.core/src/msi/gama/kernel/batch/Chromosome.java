@@ -69,9 +69,9 @@ public class Chromosome implements Comparable<Chromosome> {
 				var.reinitRandomly();
 			}
 			phenotype[cpt] = var.getName();
-			if ( var.type().id() == IType.FLOAT ) {
+			if ( var.getType().id() == IType.FLOAT ) {
 				genes[cpt] = ((Double) var.value()).doubleValue();
-			} else if ( var.type().id() == IType.INT ) {
+			} else if ( var.getType().id() == IType.INT ) {
 				genes[cpt] = ((Integer) var.value()).doubleValue();
 			} else {
 				genes[cpt] = 0;
@@ -81,9 +81,9 @@ public class Chromosome implements Comparable<Chromosome> {
 	}
 
 	public void setGene(final IParameter.Batch var, final int index) {
-		if ( var.type().id() == IType.FLOAT ) {
+		if ( var.getType().id() == IType.FLOAT ) {
 			genes[index] = ((Double) var.value()).doubleValue();
-		} else if ( var.type().id() == IType.INT ) {
+		} else if ( var.getType().id() == IType.INT ) {
 			genes[index] = ((Integer) var.value()).doubleValue();
 		} else {
 			genes[index] = 0;

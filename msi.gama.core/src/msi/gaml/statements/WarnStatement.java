@@ -63,7 +63,7 @@ public class WarnStatement extends AbstractStatement {
 	}
 
 	@Override
-	public IType getReturnType() {
+	public IType getType() {
 		return Types.get(IType.STRING);
 	}
 

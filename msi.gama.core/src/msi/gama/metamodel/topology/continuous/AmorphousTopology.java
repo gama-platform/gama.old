@@ -27,7 +27,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.*;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaGeometryType;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -44,10 +44,10 @@ public class AmorphousTopology implements ITopology {
 	/**
 	 * @see msi.gama.interfaces.IValue#type()
 	 */
-	@Override
-	public IType type() {
-		return Types.get(IType.TOPOLOGY);
-	}
+	// @Override
+	// public IType type() {
+	// return Types.get(IType.TOPOLOGY);
+	// }
 
 	/**
 	 * @see msi.gama.interfaces.IValue#stringValue()
@@ -258,7 +258,7 @@ public class AmorphousTopology implements ITopology {
 		final double y2 = /* translateY(source.y, target.y); */target.getY();
 		final double dx = x2 - source.getX();
 		final double dy = y2 - source.getY();
-		final double result = Maths.aTan2(dy, dx) * Maths.toDeg;
+		final double result = Maths.atan2(dy, dx);
 		return Maths.checkHeading((int) result);
 	}
 

@@ -30,8 +30,8 @@ public class VariableValidator extends DescriptionValidator {
 		IType t = vd.getTypeNamed(vd.getName());
 		if ( t != Types.NO_TYPE ) {
 			String species = t.isSpeciesType() ? "species" : "type";
-			vd.error(vd.getName() + " is a " + species + " name. " + type,
-				IGamlIssue.IS_A_TYPE, NAME, vd.getName());
+			vd.error(vd.getName() + " is a " + species + " name. " + type, IGamlIssue.IS_A_TYPE,
+				NAME, vd.getName());
 		}
 	}
 
@@ -110,8 +110,7 @@ public class VariableValidator extends DescriptionValidator {
 						"A constant variable cannot have an update value (use init or <- instead)",
 						IGamlIssue.REMOVE_CONST, UPDATE);
 				} else if ( ff.containsKey(FUNCTION) ) {
-					vd.error(
-						"A constant variable cannot be a function (use init or <- instead)",
+					vd.error("A constant variable cannot be a function (use init or <- instead)",
 						IGamlIssue.REMOVE_CONST, FUNCTION);
 				}
 			}
@@ -122,8 +121,8 @@ public class VariableValidator extends DescriptionValidator {
 		Facets ff = vd.getFacets();
 		if ( ff.containsKey(FUNCTION) &&
 			(ff.containsKey(INIT) || ff.containsKey(UPDATE) || ff.containsKey(VALUE)) ) {
-			vd.error("A function cannot have an 'init' or 'update' facet",
-				IGamlIssue.REMOVE_VALUE, FUNCTION);
+			vd.error("A function cannot have an 'init' or 'update' facet", IGamlIssue.REMOVE_VALUE,
+				FUNCTION);
 		}
 	}
 
@@ -153,8 +152,7 @@ public class VariableValidator extends DescriptionValidator {
 		IExpression min = facets.getExpr(MIN);
 		IExpression max = facets.getExpr(MAX);
 		if ( facets.getExpr(FUNCTION) != null ) {
-			vd.error("Functions cannot be used as parameters", IGamlIssue.REMOVE_FUNCTION,
-				FUNCTION);
+			vd.error("Functions cannot be used as parameters", IGamlIssue.REMOVE_FUNCTION, FUNCTION);
 		}
 		if ( min != null && !min.isConst() ) {
 			vd.error(p + " min value must be constant", IGamlIssue.NOT_CONST, MIN);
@@ -163,8 +161,8 @@ public class VariableValidator extends DescriptionValidator {
 			vd.error(p + " max value must be constant", IGamlIssue.NOT_CONST, MAX);
 		}
 		if ( facets.getExpr(INIT) == null ) {
-			vd.error(p + " must have an initial value", IGamlIssue.NO_INIT, null, vd.getType()
-				.toString());
+			vd.error(p + " must have an initial value", IGamlIssue.NO_INIT,
+				vd.getUnderlyingElement(null), vd.getType().toString());
 		} else if ( !facets.getExpr(INIT).isConst() ) {
 			vd.error(p + "initial value must be constant", IGamlIssue.NOT_CONST, INIT);
 		}

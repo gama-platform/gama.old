@@ -376,10 +376,10 @@ public abstract class AbstractPopulation implements IPopulation {
 		return null;
 	}
 
-	@Override
-	public void clear() throws GamaRuntimeException {
-		firePopulationCleared();
-	}
+	// @Override
+	// public void clear() throws GamaRuntimeException {
+	// firePopulationCleared();
+	// }
 
 	private boolean hasListeners() {
 		return listeners != null && !listeners.isEmpty();

@@ -41,17 +41,4 @@ public interface ISymbol extends INamed {
 
 	public abstract void setChildren(List<? extends ISymbol> children);
 
-	public abstract void error(String s);
-
-	/**
-	 * @param s
-	 * @param facet
-	 */
-	void warning(String s, String facet);
-
-	/**
-	 * @param s
-	 * @param facet
-	 */
-	void error(String s, String facet);
 }

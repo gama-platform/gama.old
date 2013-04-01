@@ -99,19 +99,20 @@ public class UserCommandStatement extends AbstractStatementSequence implements I
 	public void setRuntimeArgs(final Arguments args) {}
 
 	@Override
-	public IType getReturnType() {
-		if ( actionName == null ) { return super.getReturnType(); }
+	public IType getType() {
+		if ( actionName == null ) { return super.getType(); }
 		StatementDescription executer = description.getSpeciesContext().getAction(actionName);
-		return executer.getReturnType();
+		return executer.getType();
 	}
 
 	@Override
-	public IType getReturnContentType() {
-		if ( actionName == null ) { return super.getReturnContentType(); }
+	public IType getContentType() {
+		if ( actionName == null ) { return super.getContentType(); }
 		StatementDescription executer = description.getSpeciesContext().getAction(name);
-		return executer.getReturnContentType();
+		return executer.getContentType();
 	}
 
+	@Override
 	public IType getKeyType() {
 		if ( actionName == null ) { return Types.NO_TYPE; }
 		StatementDescription executer = description.getSpeciesContext().getAction(name);

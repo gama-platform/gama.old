@@ -83,7 +83,7 @@ public class Containers {
 
 	@operator(value = { "internal_at" }, content_type = IType.NONE)
 	@doc("For internal use only. Corresponds to the implementation of the access to containers with [index]")
-	public static Object getFromIndicesList(IScope scope, IShape shape, IList indices)
+	public static Object internal_at(IScope scope, IShape shape, IList indices)
 		throws GamaRuntimeException {
 		// TODO How to test if the index is correct ?
 		if ( shape == null ) { return null; }
@@ -94,20 +94,14 @@ public class Containers {
 
 	@operator(value = { IKeyword.AT, "@" }, type = ITypeProvider.LEFT_CONTENT_TYPE)
 	@doc(deprecated = "The use of at on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)")
-	public static IAgent getAgent(final IScope scope, final ISpecies s, final GamaPoint val)
+	public static IAgent at(final IScope scope, final ISpecies s, final GamaPoint val)
 		throws GamaRuntimeException {
 		return scope.getAgentScope().getPopulationFor(s).getAgent(val);
 	}
 
-	// public IAgent grid_at(ISpecies s, GamaPoint val) {
-	// IScope scope = getScope();
-	// return Containers.getGridAgent(scope, s, val);
-
-	// return null;}
-
 	@operator(value = { "grid_at" }, type = ITypeProvider.LEFT_CONTENT_TYPE)
 	@doc(value = "returns the cell of the grid (right-hand operand) at the position given by the right-hand operand", comment = "If the left-hand operand is a point of floats, it is used as a point of ints.", special_cases = { "if the left-hand operand is not a grid cell species, returns nil" }, examples = { "grid_cell grid_at {1,2} 	--: 	returns the agent grid_cell with grid_x=1 and grid_y = 2" })
-	public static IAgent getGridAgent(final IScope scope, final ISpecies s, final GamaPoint val)
+	public static IAgent grid_at(final IScope scope, final ISpecies s, final GamaPoint val)
 		throws GamaRuntimeException {
 		ITopology t = scope.getAgentScope().getPopulationFor(s).getTopology();
 		IContainer<?, IShape> m = t.getPlaces();
@@ -159,7 +153,7 @@ public class Containers {
 		"remove_duplicates([3,2,5,1,2,3,5,5,5]) --: [3,2,5,1]",
 		"remove_duplicates([1::3,2::4,3::3,5::7]) --: [3,4,7]" })
 	// TODO finish doc for other kinds of Container
-	public static IList asSet(final IScope scope, final IContainer l) {
+	public static IList remove_duplicates(final IScope scope, final IContainer l) {
 		// ATTENTION NE GARDE PAS L'ORDRE DU CONTAINER SI ON UTILISE UN HASHSET. LinkedHashSet
 		// utilis� � la place � v�rifier
 
@@ -177,7 +171,7 @@ public class Containers {
 		"[1,2,3,4,5,6] contains_all [2,8] 		--: 	false",
 		"[1::2, 3::4, 5::6] contains_all [1,3] 	--: 	true ",
 		"[1::2, 3::4, 5::6] contains_all [2,4] 	--: 	false" }, see = { "contains", "contains_any" })
-	public static Boolean opContainsAll(final IScope scope, final IContainer m, final IContainer l)
+	public static Boolean contains_all(final IScope scope, final IContainer m, final IContainer l)
 		throws GamaRuntimeException {
 		if ( l == null || l.isEmpty(scope) ) { return true; }
 		for ( Object o : l.iterable(scope) ) {
@@ -192,7 +186,7 @@ public class Containers {
 		"[1,2,3,4,5,6] contains_any [2,8] 		--: 	true",
 		"[1::2, 3::4, 5::6] contains_any [1,3] 	--: 	true ",
 		"[1::2, 3::4, 5::6] contains_any [2,4] 	--: 	false" }, see = { "contains", "contains_all" })
-	public static Boolean opContainsAny(final IScope scope, final IContainer c, final IContainer l)
+	public static Boolean contains_any(final IScope scope, final IContainer c, final IContainer l)
 		throws GamaRuntimeException {
 		if ( l == null || l.isEmpty(scope) ) { return false; }
 		for ( Object o : l.iterable(scope) ) {
@@ -205,7 +199,7 @@ public class Containers {
 	@doc(value = "returns a copy of a sublist of the left operand between a begin index (x of the right operand point) and a end index (y of the right operand point", special_cases = {
 		"if the right operand is nil or empty, copy_between returns a copy of the left operand",
 		"if the begin index is higher than the end index, copy_between returns a new empty list" }, examples = { "[1,2,3,4,5,6,7] copy_between {0,3} 	--:		 [1,2,3]" })
-	public static IList opCopy(final IList l1, final GamaPoint p) {
+	public static IList copy_between(final IList l1, final GamaPoint p) {
 		if ( p == null ) { return new GamaList(l1); }
 		final int beginIndex = p.x < 0 ? 0 : (int) p.x;
 		final int endIndex = p.y > l1.size() ? l1.size() : (int) p.y;
@@ -217,7 +211,7 @@ public class Containers {
 	@doc(value = "true if the right operand contains the left operand, false otherwise", comment = "the definition of in depends on the container", special_cases = { "if the right operand is nil or empty, in returns false" }, examples = {
 		"2 in [1,2,3,4,5,6] : true", "7 in [1,2,3,4,5,6] : false",
 		"3 in [1::2, 3::4, 5::6] : true", "6 in [1::2, 3::4, 5::6] : false" }, see = { "contains" })
-	public static Boolean opIn(final IScope scope, final Object o, final IContainer source)
+	public static Boolean in(final IScope scope, final Object o, final IContainer source)
 		throws GamaRuntimeException {
 		if ( source == null ) { return false; }
 		return source.contains(scope, o);
@@ -225,7 +219,7 @@ public class Containers {
 
 	@operator(value = "index_of", can_be_const = true)
 	@doc(value = "the index of an agent in a species. If the argument is not an agent of this species, returns -1", comment = "Use int(agent) instead")
-	public static Integer opIndexOf(final ISpecies s, final Object o) {
+	public static Integer index_of(final ISpecies s, final Object o) {
 		if ( !(o instanceof IAgent) ) { return -1; }
 		if ( !((IAgent) o).isInstanceOf(s, true) ) { return -1; }
 		return ((IAgent) o).getIndex();
@@ -235,13 +229,13 @@ public class Containers {
 	@doc(value = "the index of the first occurence of the right operand in the left operand container", comment = "The definition of index_of and the type of the index depend on the container", special_cases = { "if the left operand is a list, index_of returns the index as an integer" }, examples = {
 		"[1,2,3,4,5,6] index_of 4 	--: 	3", "[4,2,3,4,5,4] index_of 4  	--: 	0" }, see = { "at",
 		"last_index_of" })
-	public static Integer opIndexOf(final IList l1, final Object o) {
+	public static Integer index_of(final IList l1, final Object o) {
 		return l1.indexOf(o);
 	}
 
 	@operator(value = "index_of", can_be_const = true)
 	@doc(special_cases = { "if the left operand is a map, index_of returns the index as a pair" }, examples = { "[1::2, 3::4, 5::6] index_of 4 		--: 	3::4" })
-	public static Object opIndexOf(final GamaMap m, final Object o) {
+	public static Object index_of(final GamaMap m, final Object o) {
 		for ( Map.Entry<Object, Object> k : m.entrySet() ) {
 			if ( k.getValue().equals(o) ) { return k; }
 		}
@@ -250,7 +244,7 @@ public class Containers {
 
 	@operator(value = "index_of", can_be_const = true)
 	@doc(special_cases = { "if the left operand is a matrix, index_of returns the index as a point" }, examples = { "matrix([[1,2,3],[4,5,6]]) index_of 4  	--: 	{1.0;0.0}" })
-	public static ILocation opIndexOf(IScope scope, final IMatrix m, final Object o) {
+	public static ILocation index_of(IScope scope, final IMatrix m, final Object o) {
 		for ( int i = 0; i < m.getCols(scope); i++ ) {
 			for ( int j = 0; j < m.getRows(scope); j++ ) {
 				if ( m.get(scope, i, j).equals(o) ) { return new GamaPoint(i, j); }
@@ -262,21 +256,21 @@ public class Containers {
 	@operator(value = "last_index_of", can_be_const = true)
 	@doc(value = "for species, the last index of an agent is the same as its index", comment = "", see = {
 		"at", "index_of" })
-	public static Integer opLastIndexOf(final ISpecies l1, final Object o) {
-		return opIndexOf(l1, o);
+	public static Integer last_index_of(final ISpecies l1, final Object o) {
+		return index_of(l1, o);
 	}
 
 	@operator(value = "last_index_of", can_be_const = true)
 	@doc(value = "the index of the last occurence of the right operand in the left operand container", comment = "The definition of last_index_of and the type of the index depend on the container", special_cases = { "if the left operand is a list, last_index_of returns the index as an integer" }, examples = {
 		"[1,2,3,4,5,6] last_index_of 4  	--: 	3", "[4,2,3,4,5,4] last_index_of 4  	--: 	5" }, see = {
 		"at", "last_index_of" })
-	public static Integer opLastIndexOf(final List l1, final Object o) {
+	public static Integer last_index_of(final List l1, final Object o) {
 		return l1.lastIndexOf(o);
 	}
 
 	@operator(value = "last_index_of", can_be_const = true)
 	@doc(special_cases = { "if the left operand is a matrix, last_index_of returns the index as a point" }, examples = { "matrix([[1,2,3],[4,5,4]]) last_index_of 4  	--: 	{1.0;2.0}" })
-	public static ILocation opLastIndexOf(IScope scope, final IMatrix m, final Object o) {
+	public static ILocation last_index_of(IScope scope, final IMatrix m, final Object o) {
 		for ( int i = m.getCols(scope) - 1; i > -1; i-- ) {
 			for ( int j = m.getRows(scope) - 1; j > -1; j-- ) {
 				if ( m.get(scope, i, j).equals(o) ) { return new GamaPoint(i, j); }
@@ -287,11 +281,11 @@ public class Containers {
 
 	@operator(value = "last_index_of", can_be_const = true)
 	@doc(special_cases = { "if the left operand is a map, last_index_of returns the index as a pair" }, examples = { "[1::2, 3::4, 5::4] last_index_of 4  	--:  	5::4" })
-	public static Object opLastIndexOf(final GamaMap m, final Object o) {
-		return opIndexOf(m, o);
+	public static Object last_index_of(final GamaMap m, final Object o) {
+		return index_of(m, o);
 	}
 
-	@operator(value = "inter", priority = IPriority.ADDITION, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@operator(value = "inter", can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
 	@doc(value = "the intersection of the two operands", comment = "both containers are transformed into sets (so without duplicated element, cf. remove_deplicates operator) before the set intersection is computed.", special_cases = {
 		"if an operand is a graph, it will be transformed into the set of its nodes",
 		"if an operand is a map, it will be transformed into the set of its values",
@@ -299,19 +293,19 @@ public class Containers {
 		"[1,2,3,4,5,6] inter [2,4] 				--: 	[2,4]", "[1,2,3,4,5,6] inter [0,8] 				--: 	[]",
 		"[1::2, 3::4, 5::6] inter [2,4] 		--: 	[2,4]", "[1::2, 3::4, 5::6] inter [1,3] 		--: 	[]",
 		"matrix([[1,2,3],[4,5,4]]) inter [3,4] 	--: 	[4,3]" }, see = { "remove_duplicates" })
-	public static IList opInter(final IScope scope, final IContainer l1, final IContainer l) {
-		IList list = asSet(scope, l1);
+	public static IList inter(final IScope scope, final IContainer l1, final IContainer l) {
+		IList list = remove_duplicates(scope, l1);
 		if ( l == null ) { return list; }
-		list.retainAll(asSet(scope, l));
+		list.retainAll(remove_duplicates(scope, l));
 		return list;
 	}
 
-	@operator(value = IKeyword.MINUS, priority = IPriority.ADDITION, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
 	@doc(value = "returns a new list in which all the elements of the right operand have been removed from the left one", comment = "The behavior of the operator depends on the type of the operands.", special_cases = { "if the right operand is empty or nil, " +
 		IKeyword.MINUS + " returns the left operand" }, examples = {
 		"[1,2,3,4,5,6] - [2,4,9] 	--: 	[1,3,5,6]", "[1,2,3,4,5,6] - [0,8] 		--:	 	[1,2,3,4,5,6]" }, see = { "" +
 		IKeyword.PLUS })
-	public static IList opMinus(final IScope scope, final IContainer source, final IContainer l) {
+	public static IList minus(final IScope scope, final IContainer source, final IContainer l) {
 		if ( source == null || source.isEmpty(scope) ) { return new GamaList(); }
 		if ( l == null || l.isEmpty(scope) ) { return source.listValue(scope); }
 		IList l1 = source.listValue(scope);
@@ -320,11 +314,11 @@ public class Containers {
 		return l1;
 	}
 
-	@operator(value = IKeyword.MINUS, priority = IPriority.ADDITION, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
 	@doc(special_cases = { "if the right operand is an object of any type (except list), " +
 		IKeyword.MINUS + " returns a copie of the left operand without this object" }, examples = {
 		"[1,2,3,4,5,6] - 2 		--: 	[1,3,4,5,6]", "[1,2,3,4,5,6] - 0 		--:	 	[1,2,3,4,5,6]" })
-	public static IList opMinus(final IList l1, final Object l) {
+	public static IList minus(final IList l1, final Object l) {
 		if ( l == null ) { return new GamaList(l1); }
 		GamaList result = new GamaList(l1);
 		result.remove(l);
@@ -340,9 +334,9 @@ public class Containers {
 		"[sous_test(0),sous_test(1),test(2),test(3)] of_generic_species sous_test 	--: [sous_test0,sous_test1]",
 		"[sous_test(0),sous_test(1),test(2),test(3)] of_species test 				--: [test2,test3]",
 		"[sous_test(0),sous_test(1),test(2),test(3)] of_species sous_test 			--: [sous_test0,sous_test1]" }, see = { "of_species" })
-	public static IList opOfGenericSpecies(final IScope scope, final IContainer agents,
+	public static IList of_generic_species(final IScope scope, final IContainer agents,
 		final ISpecies s) {
-		return opOfSpecies(scope, agents, s, true);
+		return of_species(scope, agents, s, true);
 	}
 
 	@operator(value = "of_species", content_type = ITypeProvider.RIGHT_CONTENT_TYPE, priority = IPriority.CAST)
@@ -354,11 +348,11 @@ public class Containers {
 		"(self neighbours_at 10) of_species (species (self)) 	--:  all the neighbouring agents of the same species.",
 		"[test(0),test(1),node(1),node(2)] of_species test 		--:  [test0,test1]",
 		"[1,2,3,4,5,6] of_species test							--:	 []" }, see = { "of_generic_species" })
-	public static IList opOfSpecies(final IScope scope, final IContainer agents, final ISpecies s) {
-		return opOfSpecies(scope, agents, s, false);
+	public static IList of_species(final IScope scope, final IContainer agents, final ISpecies s) {
+		return of_species(scope, agents, s, false);
 	}
 
-	private static IList opOfSpecies(final IScope scope, final IContainer agents, final ISpecies s,
+	private static IList of_species(final IScope scope, final IContainer agents, final ISpecies s,
 		final boolean generic) {
 		if ( s == null ) { return GamaList.EMPTY_LIST; }
 		// int n = agents.size();
@@ -371,18 +365,18 @@ public class Containers {
 		return result;
 	}
 
-	@operator(value = { "::" }, priority = IPriority.TERNARY, can_be_const = true, type = IType.PAIR, content_type = ITypeProvider.RIGHT_TYPE)
+	@operator(value = { "::" }, can_be_const = true, type = IType.PAIR, content_type = ITypeProvider.RIGHT_TYPE)
 	@doc(value = "produces a new pair combining the left and the right operands")
-	public static GamaPair opPair(final Object a, final Object b) {
+	public static GamaPair pair(final Object a, final Object b) {
 		return new GamaPair(a, b);
 	}
 
-	@operator(value = IKeyword.PLUS, priority = IPriority.ADDITION, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
 	@doc(value = "returns a new list containing all the elements of both operands", special_cases = { "if one of the operands is nil, " +
 		IKeyword.PLUS + " returns the casting of the other one into a list" }, examples = {
 		"[1,2,3,4,5,6] + [2,4,9] 	--: 	[1,2,3,4,5,6,2,4,9]",
 		"[1,2,3,4,5,6] + [0,8] 		--: 	[1,2,3,4,5,6,0,8]" }, see = { "" + IKeyword.MINUS })
-	public static IList opPlus(final IScope scope, final IContainer source, final IContainer l) {
+	public static IList plus(final IScope scope, final IContainer source, final IContainer l) {
 		// GuiUtils.debug("Adding: " + source + " and " + l);
 		if ( source == null || source.isEmpty(scope) ) {
 			if ( l == null ) { return new GamaList(); }
@@ -396,11 +390,11 @@ public class Containers {
 		return result;
 	}
 
-	@operator(value = IKeyword.PLUS, priority = IPriority.ADDITION, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
 	@doc(special_cases = { "if the right operand is an object of any type (except a container), " +
 		IKeyword.PLUS + " returns a copie of the left operand with this object" }, examples = {
 		"[1,2,3,4,5,6] + 2 		--: 	[1,2,3,4,5,6,2]", "[1,2,3,4,5,6] + 0 		--:	 	[1,2,3,4,5,6,0]" })
-	public static IList opPlus(final IScope scope, final IContainer l1, final Object l) {
+	public static IList plus(final IScope scope, final IContainer l1, final Object l) {
 		// GuiUtils.debug("Adding [IContainer, Object]: " + l1 + " and " + l);
 		IList result = l1.listValue(scope);
 		if ( l == null ) { return result; }
@@ -414,7 +408,7 @@ public class Containers {
 		"[1,2,3,4,5,6] union [2,4,9] 		--: 	[1,2,3,4,5,6,9]",
 		"[1,2,3,4,5,6] union [0,8] 			--: 	[0,1,2,3,4,5,6,8]",
 		"[1,3,2,4,5,6,8,5,6] union [0,8] 	--: 	[0,1,2,3,4,5,6,8]" }, see = { "inter", IKeyword.PLUS })
-	public static IList opUnion(final IScope scope, final IContainer source, final IContainer l) {
+	public static IList union(final IScope scope, final IContainer source, final IContainer l) {
 		if ( source == null || source.isEmpty(scope) ) {
 			if ( l == null ) { return new GamaList(); }
 			return l.listValue(scope);
@@ -437,7 +431,7 @@ public class Containers {
 		"(list(node) group_by (round(node(each).location.x))    --:  [32::[node5], 21::[node1], 4::[node0], 66::[node2], 96::[node3]]",
 		"[1::2, 3::4, 5::6] group_by (each > 4) 	--: 	[false::[2, 4], true::[6]]" }, see = {
 		"first_with", "last_with", "where" })
-	public static GamaMap groupBy(final IScope scope, final IContainer original,
+	public static GamaMap group_by(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return new GamaMap(); }
 		final GamaMap result = new GamaMap();
@@ -453,7 +447,7 @@ public class Containers {
 	}
 
 	@operator(value = { "group_by" }, priority = IPriority.ITERATOR, iterator = true, content_type = IType.MAP)
-	public static GamaMap groupBy(final IScope scope, final GamaMap original,
+	public static GamaMap group_by(final IScope scope, final GamaMap original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return new GamaMap(); }
 		final GamaMap result = new GamaMap();
@@ -508,7 +502,7 @@ public class Containers {
 		"g2 max_of (length(g2 out_edges_of each) ) 			--: 	3",
 		"(list(node) max_of (round(node(each).location.x))  --: 	96",
 		"[1::2, 3::4, 5::6] max_of (each.value + 3) 		--: 	9" }, see = { "min_of" })
-	public static Object maxOf(final IScope scope, final IContainer original,
+	public static Object max_of(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return filter.getType().getDefault(); }
 		if ( filter.getType().id() == IType.INT ) {
@@ -539,7 +533,7 @@ public class Containers {
 		"g2 min_of (length(g2 out_edges_of each) ) 			--: 	0",
 		"(list(node) min_of (round(node(each).location.x))  --: 	4",
 		"[1::2, 3::4, 5::6] min_of (each.value + 3) 				--: 	5" }, see = { "max_of" })
-	public static Object minOf(final IScope scope, final IContainer original,
+	public static Object min_of(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return filter.getType().getDefault(); }
 		if ( filter.getType().id() == IType.INT ) {
@@ -567,14 +561,14 @@ public class Containers {
 
 	@operator(value = "among", content_type = ITypeProvider.RIGHT_CONTENT_TYPE)
 	@doc(special_cases = { "if the right-hand operand is a map, among returns a map of right-hand operand element instead of a list" }, examples = { "2 among [1::2, 3::4, 5::6] 	--: 	[1::2, 3::4]" })
-	public static GamaMap opAmong(final IScope scope, final Integer number, final GamaMap l)
+	public static GamaMap among(final IScope scope, final Integer number, final GamaMap l)
 		throws GamaRuntimeException {
 		final GamaMap result = new GamaMap();
 		if ( l == null ) { return result; }
 		int size = l.size();
 		if ( number == 0 ) { return result; }
 		if ( number >= size ) { return l; }
-		final IList indexes = opAmong(scope, number, new GamaList(l.keySet()));
+		final IList indexes = among(scope, number, new GamaList(l.keySet()));
 		for ( int i = 0; i < number; i++ ) {
 			Object o = indexes.get(i);
 			result.put(o, l.get(o));
@@ -588,7 +582,7 @@ public class Containers {
 		"if the left-hand operand is greater than the length of the right-hand operand, among returns the right-hand operand." }, examples = {
 		"3 among [1,2,4,3,5,7,6,8] 		--: 	[1,2,8]", "3 among g2 					--: 	[node6,node11,node7]",
 		"3 among list(node)    			--:  	[node1,node11,node4]" })
-	public static IList opAmong(final IScope scope, final Integer number, final IContainer c)
+	public static IList among(final IScope scope, final Integer number, final IContainer c)
 		throws GamaRuntimeException {
 		if ( c == null ) { return new GamaList(); }
 		final GamaList result = new GamaList();
@@ -708,7 +702,7 @@ public class Containers {
 		"g2 with_max_of (length(g2 out_edges_of each)  ) 			--: 	node4",
 		"(list(node) with_max_of (round(node(each).location.x))    	--:  	node3",
 		"[1::2, 3::4, 5::6] with_max_of (each) 						--: 	6" }, see = { "where", "with_min_of" })
-	public static Object withMaxOf(final IScope scope, final IContainer original,
+	public static Object with_max_of(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return filter.getType().getDefault(); }
 		// double max = Double.MIN_VALUE;
@@ -731,7 +725,7 @@ public class Containers {
 		"g2 with_min_of (length(g2 out_edges_of each)  ) 			--: 	node11",
 		"(list(node) with_min_of (round(node(each).location.x))    	--:  	node0",
 		"[1::2, 3::4, 5::6] with_min_of (each) 						--: 	2" }, see = { "where", "with_max_of" })
-	public static Object withMinOf(final IScope scope, final IContainer original,
+	public static Object with_min_of(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return null; }
 		double min = Double.MAX_VALUE;
@@ -775,7 +769,7 @@ public class Containers {
 	@doc(value = "a new list containing interleaved elements of the operand", comment = "the operand should be a list of lists of elements. The result is a list of elements. ", special_cases = { "if the operand is nil or a list of (non-list) elements, accumulate returns an empty list" }, examples = {
 		"collate([1,2,4,3,5,7,6,8]) 	--: 	[]",
 		"collate([['e11','e12','e13'],['e21','e22','e23'],['e31','e32','e33']])  --:  [e11,e21,e31,e12,e22,e32,e13,e23,e33]" })
-	public static IList interleave(final IScope scope, final IContainer cc) {
+	public static IList collate(final IScope scope, final IContainer cc) {
 
 		final GamaList result = new GamaList();
 		if ( cc == null ) { return result; }
@@ -835,7 +829,7 @@ public class Containers {
 	@doc(value = "produces a new map from the evaluation of the right-hand operand for each element of the left-hand operand", comment = "the right-hand operand should be pair or a map.", special_cases = { "if the left-hand operand is nil or empty, as_map returns a new empty map." }, examples = {
 		"[1,2,3,4,5,6,7,8] as_map (each::(each * 2) 	--: 	[1::2, 2::4, 3::6, 4::8, 5::10, 6::12, 7::14, 8::16]",
 		"[1::2,3::4,5::6] as_map (each::(each * 2))		--: 	[2::4, 4::8, 6::12] " }, see = {})
-	public static GamaMap asMap(final IScope scope, final IContainer original,
+	public static GamaMap as_map(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
 		final GamaMap result = new GamaMap();
 		if ( original == null || original.isEmpty(scope) ) { return result; }
@@ -849,7 +843,7 @@ public class Containers {
 			p[0] = ((BinaryOperator) filter).left();
 			p[1] = ((BinaryOperator) filter).right();
 		} else if ( filter instanceof ListExpression ) {
-			return asMap(scope, original, ((ListExpression) filter).getElements()[0]);
+			return as_map(scope, original, ((ListExpression) filter).getElements()[0]);
 		} else {
 			throw new GamaRuntimeException(
 				"The as_map operator expects either a pair or a map for its second argument");

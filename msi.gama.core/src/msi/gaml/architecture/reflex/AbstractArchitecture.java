@@ -32,12 +32,17 @@ public abstract class AbstractArchitecture extends Skill implements IArchitectur
 	}
 
 	@Override
-	public IType getReturnType() {
+	public IType getType() {
 		return null;
 	}
 
 	@Override
-	public IType getReturnContentType() {
+	public IType getContentType() {
+		return null;
+	}
+
+	@Override
+	public IType getKeyType() {
 		return null;
 	}
 
@@ -68,21 +73,6 @@ public abstract class AbstractArchitecture extends Skill implements IArchitectur
 
 	@Override
 	public void setName(final String newName) {}
-
-	/**
-	 * @see msi.gaml.compilation.ISymbol#error(java.lang.String)
-	 */
-	@Override
-	public void error(final String s) {}
-
-	@Override
-	public void warning(final String s, final String facet) {}
-
-	/**
-	 * @see msi.gaml.compilation.ISymbol#error(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void error(final String s, final String facet) {}
 
 	@Override
 	public Double computePertinence(final IScope scope) throws GamaRuntimeException {

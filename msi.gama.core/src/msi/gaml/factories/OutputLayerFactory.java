@@ -53,10 +53,10 @@ public class OutputLayerFactory extends StatementFactory {
 			String s = ed.compileAsLabel().getExpression().literalValue();
 			SpeciesDescription target = sd.getSpeciesDescription(s);
 			if ( target == null ) {
-				sd.error(s + " is not the name of a species", IGamlIssue.WRONG_TYPE, ed);
+				sd.error(s + " is not the name of a species", IGamlIssue.WRONG_TYPE, ed.getTarget());
 			} else {
 				if ( sd.getKeyword().equals(GRID_POPULATION) && !target.isGrid() ) {
-					sd.error(s + " is not a grid", IGamlIssue.WRONG_TYPE, ed);
+					sd.error(s + " is not a grid", IGamlIssue.WRONG_TYPE, ed.getTarget());
 				} else {
 					IExpression expr =
 						GAMA.getExpressionFactory().createConst(s, Types.get(IType.SPECIES));
@@ -72,8 +72,8 @@ public class OutputLayerFactory extends StatementFactory {
 				if ( species.getAspect(a) != null ) {
 					ed.compileAsLabel();
 				} else {
-					sd.error(a + " is not the name of an aspect of " + s, IGamlIssue.GENERAL,
-						ed);
+					sd.error(a + " is not the name of an aspect of " + s, IGamlIssue.GENERAL, sd
+						.getFacets().get(ASPECT).getTarget());
 				}
 			}
 		} else {

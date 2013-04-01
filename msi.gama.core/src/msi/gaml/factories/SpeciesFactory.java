@@ -22,7 +22,7 @@ import static msi.gama.precompiler.ISymbolKind.SPECIES;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.factory;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.Facets;
 
@@ -46,7 +46,8 @@ public class SpeciesFactory extends SymbolFactory {
 		String name = facets.getLabel(IKeyword.NAME);
 		if ( name == null ) { return null; }
 		DescriptionFactory.addSpeciesNameAsType(name);
-		return new SpeciesDescription(source.getKeyword(), sd, facets, cp, source);
+		return new SpeciesDescription(source.getKeyword(), sd, cp,
+			source.getElement(), facets);
 	}
 
 	public SpeciesDescription createSpeciesDescription(final String name, final Class clazz,
@@ -71,6 +72,5 @@ public class SpeciesFactory extends SymbolFactory {
 			}
 		}
 	}
-
 
 }

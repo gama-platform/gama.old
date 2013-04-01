@@ -46,10 +46,11 @@ public class GamaPropertyFile extends GamaFile<String, String> {
 		return null;
 	}
 
-	@Override
-	protected boolean _isFixedLength() {
-		return false;
-	}
+	//
+	// @Override
+	// protected boolean _isFixedLength() {
+	// return false;
+	// }
 
 	@Override
 	public String getKeyword() {

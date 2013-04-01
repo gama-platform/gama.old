@@ -113,7 +113,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		this.maxValue = p.getMaxValue();
 		setName(p.getName());
 		setCategory(category);
-		setType(p.type());
+		setType(p.getType());
 		setValue(p.getInitialValue(scope));
 		setEditable(p.isEditable());
 		isLabel = p.isLabel();
@@ -335,7 +335,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	@Override
-	public IType type() {
+	public IType getType() {
 		return type;
 	}
 

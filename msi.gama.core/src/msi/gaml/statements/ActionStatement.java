@@ -83,7 +83,9 @@ public class ActionStatement extends AbstractStatementSequence implements IState
 	@Override
 	public void setRuntimeArgs(final Arguments args) {
 		for ( Map.Entry<String, IExpressionDescription> entry : args.entrySet() ) {
-			actualArgs.put(entry.getKey(), entry.getValue());
+			if ( entry != null ) {
+				actualArgs.put(entry.getKey(), entry.getValue());
+			}
 		}
 	}
 

@@ -88,7 +88,6 @@ public class TypeFieldExpression implements IExpression {
 
 	private void setContentType(final String t) {
 		contentType = t;
-
 	}
 
 	private void setKeyType(final IType t) {

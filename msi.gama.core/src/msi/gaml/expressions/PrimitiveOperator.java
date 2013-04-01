@@ -22,13 +22,13 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.*;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.*;
 
 /**
- * PrimitiveOperator. An operator that wraps a primitive and defines its own scope for running it.
+ * PrimitiveOperator. An operator that wraps a primitive or an action.
  * 
  * @author drogoul 4 sept. 07
  */
@@ -44,15 +44,24 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 	@Override
 	public PrimitiveOperator init(final String op, final IDescription context,
 		final IExpression ... args) {
+		StatementDescription action = context.getAction(op);
+		return init(op, context, action, args);
+	}
+
+	public PrimitiveOperator init(final String op, final IDescription callerContext,
+		StatementDescription action, final IExpression ... args) {
 		this.exprs = args;
-		Facets facets = new Facets();
-		facets.putAsLabel(IKeyword.ACTION, op); // TODO A vérifier
-		IDescription sd = context.getSpeciesDescription(arg(0).getType().getSpeciesName());
-		IDescription cd = DescriptionFactory.create(IKeyword.DO, sd, IKeyword.ACTION, op);
+		type = action.getType();
+		contentType = action.getContentType();
+		keyType = action.getKeyType();
+		Arguments param = createArgs();
+		IDescription cd =
+			DescriptionFactory.create(IKeyword.DO, action.getSpeciesContext(), IKeyword.ACTION, op);
+		action.verifyArgs(callerContext, param);
 		statement = new DoStatement(cd);
-		type = statement.getReturnType();
-		contentType = statement.getReturnContentType();
-		statement.setFormalArgs(createArgs());
+		if ( statement != null ) {
+			statement.setFormalArgs(param);
+		}
 		return this;
 	}
 

@@ -62,8 +62,9 @@ public class AddStatement extends AbstractContainerStatement {
 	@Override
 	protected void apply(final IScope scope, final Object object, final Object position,
 		final Boolean whole, final IContainer container) throws GamaRuntimeException {
-		if ( container.isFixedLength() ) { throw new GamaRuntimeException("Cannot add to " +
-			list.toGaml(), true); }
+		// AD 29/02/13 : Normally taken in charge by the parser, now.
+		// if ( container.isFixedLength() ) { throw new GamaRuntimeException("Cannot add to " +
+		// list.toGaml(), true); }
 		Object param = weight == null ? null : weight.value(scope);
 		if ( position == null ) {
 			if ( asAll ) {

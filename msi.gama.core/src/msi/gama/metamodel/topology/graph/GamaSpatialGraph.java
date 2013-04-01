@@ -133,7 +133,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 					continue;
 				}
 				if ( vertexRelation.related(scope, o1, o2) ) {
-					addEdge(o1, o2, scope);
+					addEdge(o1, o2);
 				}
 			}
 		}
@@ -216,7 +216,6 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 				if ( vertexRelation.equivalent(scope, s1, s2) ) {
 					continue;
 				}
-				// related = vertexRelation.related(scope, s1, s2);
 				already = this.containsEdge(s1, s2);
 				if ( (related = vertexRelation.related(scope, s1, s2)) && !already ) {
 					addEdge(s1, s2);
@@ -238,13 +237,11 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	@Override
 	public void notifyAgentRemoved(final IPopulation pop, final IAgent agent) {
 		this.removeVertex(agent);
-		// refreshEdges();
 	}
 
 	@Override
 	public void notifyAgentAdded(final IPopulation pop, final IAgent agent) {
 		this.addVertex(agent);
-		// refreshEdges();
 	}
 
 	@Override
@@ -252,7 +249,6 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		for ( Object o : agents ) {
 			addVertex((IAgent) o);
 		}
-		// refreshEdges();
 	}
 
 	@Override
@@ -260,12 +256,11 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		for ( Object o : agents ) {
 			removeVertex(o);
 		}
-		// refreshEdges();
 	}
 
 	@Override
 	public void notifyPopulationCleared(final IPopulation pop) {
-		this.clear();
+		removeAllVertices(vertexSet());
 	}
 
 	public void postRefreshManagementAction(final IScope scope) {

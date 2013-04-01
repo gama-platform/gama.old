@@ -111,10 +111,11 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		}
 	}
 
-	@Override
-	public void _clear() {
-		Arrays.fill(matrix, 0);
-	}
+	//
+	// @Override
+	// public void _clear() {
+	// Arrays.fill(matrix, 0);
+	// }
 
 	@Override
 	protected void _putAll(IScope scope, final Integer o, final Object param)
@@ -351,8 +352,8 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#checkValue(java.lang.Object)
 	 */
-	@Override
-	public boolean checkValue(final Object value) {
-		return value instanceof Integer;
-	}
+	// @Override
+	// public boolean checkValue(final Object value) {
+	// return value instanceof Integer;
+	// }
 }

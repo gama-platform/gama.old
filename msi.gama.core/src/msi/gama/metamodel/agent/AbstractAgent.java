@@ -20,7 +20,7 @@ package msi.gama.metamodel.agent;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.*;
+import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -84,9 +84,6 @@ public abstract class AbstractAgent implements IAgent {
 
 	@Override
 	public final synchronized void setAttribute(final String name, final Object val) {
-		if ( name.equals("has_food") ) {
-			GuiUtils.debug("has_food in AbstractAgent.setAttribute())");
-		}
 		attributes.put(name, val);
 	}
 
@@ -436,10 +433,10 @@ public abstract class AbstractAgent implements IAgent {
 		return result;
 	}
 
-	@Override
-	public IType type() {
-		return getSpecies().getAgentType();
-	}
+	// @Override
+	// public IType type() {
+	// return getSpecies().getAgentType();
+	// }
 
 	@Override
 	public String toGaml() {

@@ -32,7 +32,7 @@ import msi.gama.util.IContainer;
  * 
  */
 @type(name = IType.CONTAINER_STR, id = IType.CONTAINER, wraps = { IContainer.class }, kind = ISymbolKind.Variable.CONTAINER)
-public class GamaContainerType extends GamaType<IContainer> {
+public class GamaContainerType<T extends IContainer> extends GamaType<T> {
 
 	public static IContainer staticCast(final IScope scope, final Object obj, final Object param)
 		throws GamaRuntimeException {
@@ -42,13 +42,13 @@ public class GamaContainerType extends GamaType<IContainer> {
 	}
 
 	@Override
-	public IContainer cast(final IScope scope, final Object obj, final Object param)
+	public T cast(final IScope scope, final Object obj, final Object param)
 		throws GamaRuntimeException {
-		return staticCast(scope, obj, param);
+		return (T) staticCast(scope, obj, param);
 	}
 
 	@Override
-	public IContainer getDefault() {
+	public T getDefault() {
 		return null;
 	}
 
@@ -60,6 +60,11 @@ public class GamaContainerType extends GamaType<IContainer> {
 	@Override
 	public boolean hasContents() {
 		return true;
+	}
+
+	@Override
+	public boolean isFixedLength() {
+		return false;
 	}
 
 }

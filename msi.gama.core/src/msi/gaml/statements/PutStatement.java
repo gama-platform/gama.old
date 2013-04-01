@@ -27,7 +27,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.*;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
@@ -74,10 +74,10 @@ public class PutStatement extends AbstractContainerStatement {
 		if ( whole ) {
 			container.putAll(scope, casted, null);
 		} else {
-			if ( index == null ) { throw new GamaRuntimeWarning("Cannot put " +
+			if ( index == null ) { throw new GamaRuntimeException("Cannot put " +
 				StringUtils.toGaml(object) + " in " + list.toGaml() + " without a valid index"); }
-			if ( !container.checkBounds(position, false) ) { throw new GamaRuntimeWarning("Index " +
-				position + " out of bounds of " + list.toGaml()); }
+			if ( !container.checkBounds(position, false) ) { throw new GamaRuntimeException(
+				"Index " + position + " out of bounds of " + list.toGaml()); }
 			container.put(scope, position, casted, null);
 		}
 

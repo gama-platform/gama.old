@@ -176,20 +176,21 @@ public class GamlSpecies extends AbstractSpecies {
 		return getPopulation(scope).any(scope);
 	}
 
-	@Override
-	public boolean isFixedLength() {
-		return true;
-	}
+	//
+	// @Override
+	// public boolean isFixedLength() {
+	// return true;
+	// }
 
-	@Override
-	public boolean checkIndex(final Object index) {
-		return false;
-	}
-
-	@Override
-	public boolean checkValue(final Object value) {
-		return value instanceof IAgent;
-	}
+	// @Override
+	// public boolean checkIndex(final Object index) {
+	// return false;
+	// }
+	//
+	// @Override
+	// public boolean checkValue(final Object value) {
+	// return value instanceof IAgent;
+	// }
 
 	@Override
 	public boolean checkBounds(final Integer index, final boolean forAdding) {
@@ -249,10 +250,10 @@ public class GamlSpecies extends AbstractSpecies {
 		// NOT ALLOWED
 	}
 
-	@Override
-	public void clear() throws GamaRuntimeException {
-		// NOT ALLOWED
-	}
+	// @Override
+	// public void clear() throws GamaRuntimeException {
+	// // NOT ALLOWED
+	// }
 
 	@Override
 	public IMatrix matrixValue(final IScope scope) throws GamaRuntimeException {

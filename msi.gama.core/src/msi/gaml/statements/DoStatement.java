@@ -29,7 +29,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 7 févr. 2010
@@ -72,9 +72,8 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 		IStatement.WithArgs executer = context.getAction(name);
 		executer.setRuntimeArgs(args);
 		Object result = executer.executeOn(scope);
-		String s = returnString;
-		if ( s != null ) {
-			scope.setVarValue(s, result);
+		if ( returnString != null ) {
+			scope.setVarValue(returnString, result);
 		}
 
 		return result;
@@ -84,21 +83,21 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 	public void setRuntimeArgs(final Arguments args) {}
 
 	@Override
-	public IType getReturnType() {
+	public IType getType() {
 		StatementDescription executer = description.getSpeciesContext().getAction(name);
-		if ( executer == null ) { return Types.NO_TYPE; }
-		return executer.getReturnType();
+		return executer.getType();
 	}
 
 	@Override
-	public IType getReturnContentType() {
+	public IType getContentType() {
 		StatementDescription executer = description.getSpeciesContext().getAction(name);
-		return executer.getReturnContentType();
+		return executer.getContentType();
 	}
 
+	@Override
 	public IType getKeyType() {
 		StatementDescription executer = description.getSpeciesContext().getAction(name);
-		return executer.getReturnContentType();
+		return executer.getKeyType();
 	}
 
 	@Override

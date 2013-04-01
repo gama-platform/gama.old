@@ -19,8 +19,9 @@
 package msi.gama.common.interfaces;
 
 import java.util.List;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.statements.Facets;
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * Written by drogoul
@@ -30,6 +31,10 @@ import msi.gaml.statements.Facets;
  * 
  */
 public interface ISyntacticElement {
+
+	public static final int IS_GLOBAL = 0;
+	public static final int IS_SPECIES = 1;
+	public static final int IS_EXPERIMENT = 2;
 
 	String getKeyword();
 
@@ -43,62 +48,26 @@ public interface ISyntacticElement {
 
 	List<ISyntacticElement> getChildren();
 
-	List<ISyntacticElement> getChildren(String name);
-
 	ISyntacticElement getChild(String name);
 
-	boolean hasParent(String name);
+	EObject getElement();
 
-	/*
-	 * Returns a Statement
-	 */
-	Object getUnderlyingElement(Object facet);
-
-	/**
-	 * @param string
-	 */
 	void setKeyword(String string);
 
-	/**
-	 * @param elseElt
-	 */
-	void addChild(ISyntacticElement elseElt);
-
-	/**
-	 * @param basicSyntacticElement
-	 */
-	void setParent(ISyntacticElement basicSyntacticElement);
+	void addChild(ISyntacticElement element);
 
 	boolean isSynthetic();
-
-	/**
-	 * @param symbolDescription
-	 */
-	void setDescription(IDescription symbolDescription);
-
-	void removeDescription(IDescription symbolDescription);
-
-	void dispose();
-
-	public abstract boolean isGlobal();
-
-	public abstract boolean isSpecies();
-
-	public abstract boolean isExperiment();
-
-	public abstract boolean isGrid();
 
 	public abstract List<ISyntacticElement> getSpeciesChildren();
 
 	public abstract String getName();
 
-	/**
-	 * @param name
-	 * @param name2
-	 */
+	public abstract void setCategory(final int cat);
 
-	// int getLineNumber();
+	public abstract boolean isExperiment();
 
-	// String getFilename();
+	public abstract boolean isGlobal();
+
+	public abstract boolean isSpecies();
 
 }

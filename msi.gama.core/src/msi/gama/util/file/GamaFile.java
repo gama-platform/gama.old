@@ -19,14 +19,14 @@
 package msi.gama.util.file;
 
 import java.io.File;
-import java.util.*;
+import java.util.Iterator;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.IMatrix;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaFileType;
 
 /**
  * Written by drogoul Modified on 7 aožt 2010
@@ -80,7 +80,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 
 	protected abstract IGamaFile _copy(IScope scope);
 
-	protected abstract boolean _isFixedLength();
+	// protected abstract boolean _isFixedLength();
 
 	protected String _stringValue(IScope scope) throws GamaRuntimeException {
 		getContents(scope);
@@ -165,44 +165,44 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#checkIndex(java.lang.Object)
 	 */
-	@Override
-	public boolean checkIndex(final Object index) {
-		try {
-			getContents(null);
-		} catch (GamaRuntimeException e) {
-			GAMA.reportError(e);
-			return false;
-		}
-		return buffer.checkIndex(index);
-	}
+	// @Override
+	// public boolean checkIndex(final Object index) {
+	// try {
+	// getContents(null);
+	// } catch (GamaRuntimeException e) {
+	// GAMA.reportError(e);
+	// return false;
+	// }
+	// return buffer.checkIndex(index);
+	// }
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#checkValue(java.lang.Object)
 	 */
-	@Override
-	public boolean checkValue(final Object value) {
-		try {
-			getContents(null);
-		} catch (GamaRuntimeException e) {
-			GAMA.reportError(e);
-			return false;
-		}
-		return buffer.checkValue(value);
-	}
+	// @Override
+	// public boolean checkValue(final Object value) {
+	// try {
+	// getContents(null);
+	// } catch (GamaRuntimeException e) {
+	// GAMA.reportError(e);
+	// return false;
+	// }
+	// return buffer.checkValue(value);
+	// }
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#clear()
 	 */
-	@Override
-	public void clear() throws GamaRuntimeException {
-		getContents(null); // ?
-		buffer.clear();
-		flushBuffer();
-	}
+	// @Override
+	// public void clear() throws GamaRuntimeException {
+	// getContents(null); // ?
+	// buffer.clear();
+	// flushBuffer();
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -294,10 +294,10 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 		return buffer.isEmpty(scope);
 	}
 
-	@Override
-	public boolean isFixedLength() {
-		return _isFixedLength();
-	}
+	// @Override
+	// public boolean isFixedLength() {
+	// return _isFixedLength();
+	// }
 
 	@Override
 	// @getter( IKeyword.ISFOLDER)
@@ -360,7 +360,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	}
 
 	@Override
-	public Map mapValue(final IScope scope) throws GamaRuntimeException {
+	public GamaMap mapValue(final IScope scope) throws GamaRuntimeException {
 		getContents(scope);
 		return buffer.mapValue(scope);
 	}
@@ -525,11 +525,11 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	// public String toJava() {
 	// return "new File(" + getName() + ")";
 	// }
-
-	@Override
-	public IType type() {
-		return Types.get(IType.FILE);
-	}
+	//
+	// @Override
+	// public IType type() {
+	// return Types.get(IType.FILE);
+	// }
 
 	@Override
 	public V any(final IScope scope) {

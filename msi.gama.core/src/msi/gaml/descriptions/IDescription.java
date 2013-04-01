@@ -19,12 +19,13 @@
 package msi.gaml.descriptions;
 
 import java.util.List;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.IErrorCollector;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * Written by drogoul Modified on 31 aožt 2010
@@ -38,11 +39,15 @@ public interface IDescription extends IGamlDescription, IKeyword {
 
 	public void error(final String message, String code);
 
-	public void error(final String message, String code, Object element, String ... data);
+	public void error(final String message, String code, String element, String ... data);
+
+	public void error(final String message, String code, EObject element, String ... data);
 
 	public void warning(final String message, String code);
 
-	public void warning(final String message, String code, Object element, String ... data);
+	public void warning(final String message, String code, String element, String ... data);
+
+	public void warning(final String message, String code, EObject element, String ... data);
 
 	public abstract String getKeyword();
 
@@ -50,7 +55,7 @@ public interface IDescription extends IGamlDescription, IKeyword {
 
 	public abstract void setSuperDescription(final IDescription desc);
 
-	public abstract ISyntacticElement getSourceInformation();
+	public abstract EObject getUnderlyingElement(Object facet);
 
 	public abstract SymbolProto getMeta();
 

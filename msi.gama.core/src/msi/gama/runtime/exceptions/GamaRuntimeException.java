@@ -22,6 +22,7 @@ import java.util.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.GAMA;
 import msi.gaml.statements.IStatement;
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * Written by drogoul Modified on 7 janv. 2011
@@ -66,8 +67,8 @@ public class GamaRuntimeException extends RuntimeException {
 
 	public void addContext(final IStatement s) {
 		addContext("in " + s.toGaml());
-		final Object e = s.getDescription().getSourceInformation().getUnderlyingElement(null);
-		if ( !sent ) {
+		final EObject e = s.getDescription().getUnderlyingElement(null);
+		if ( e != null && !sent ) {
 			sent = true;
 			GuiUtils.asyncRun(new Runnable() {
 

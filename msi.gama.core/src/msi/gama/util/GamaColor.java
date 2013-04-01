@@ -26,7 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 
 /**
  * The Class GamaColor. A simple wrapper on an AWT Color.
@@ -95,10 +95,11 @@ public class GamaColor extends Color implements IValue/* implements IContainer<I
 		return String.valueOf(getRGB());
 	}
 
-	@Override
-	public IType type() {
-		return Types.get(IType.COLOR);
-	}
+	//
+	// @Override
+	// public IType type() {
+	// return Types.get(IType.COLOR);
+	// }
 
 	@getter(IKeyword.COLOR_RED)
 	public Integer red() {

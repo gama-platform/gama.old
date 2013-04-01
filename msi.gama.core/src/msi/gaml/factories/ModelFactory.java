@@ -26,7 +26,7 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
-import msi.gaml.compilation.SyntheticStatement;
+import msi.gaml.compilation.SyntacticElement;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.statements.Facets;
@@ -71,7 +71,7 @@ public class ModelFactory extends SymbolFactory {
 		if ( mDesc == null ) { return; }
 		// GuiUtils.debug("Complementing " + mDesc.getName());
 		for ( ISyntacticElement child : micro.getChildren() ) {
-			if ( !child.isSpecies() && !child.isExperiment() ) {
+			if ( !child.isExperiment() && !child.isSpecies() ) {
 				IDescription childDesc = create(child, mDesc);
 				if ( childDesc != null ) {
 					mDesc.addChild(childDesc);
@@ -95,19 +95,20 @@ public class ModelFactory extends SymbolFactory {
 			for ( ISyntacticElement se : e.getChildren() ) {
 				if ( se.isGlobal() ) {
 					globalNodes.addAll(se.getChildren());
-				} else if ( se.isExperiment() || se.isSpecies() ) {
+				} else if ( se.isSpecies() || se.isExperiment() ) {
 					speciesNodes.add(se);
 				} else {
 					otherNodes.add(se);
 				}
 			}
 		}
-		ModelDescription model = new ModelDescription(projectPath, modelPath, source);
-		source.setDescription(model);
+		ModelDescription model =
+			new ModelDescription(projectPath, modelPath, source.getElement(), source.getFacets());
+		DescriptionFactory.setGamlDescription(source.getElement(), model);
 		model.getFacets().putAsLabel(IKeyword.NAME, source.getLabel(NAME));
 
 		// Collect and build built-in species
-		SpeciesDescription world = computeBuiltInSpecies(model);
+		SpeciesDescription world = computeBuiltInSpecies(model, source);
 
 		// recursively add user-defined species to world and down on to the hierarchy
 		for ( ISyntacticElement speciesNode : speciesNodes ) {
@@ -132,7 +133,7 @@ public class ModelFactory extends SymbolFactory {
 		boolean environmentDefined = false;
 		for ( final ISyntacticElement e : otherNodes ) {
 			// COMPATIBILITY to remove the environment and put its definition in the world
-			if ( e.getKeyword().equals(ENVIRONMENT) ) {
+			if ( ENVIRONMENT.equals(e.getKeyword()) ) {
 				environmentDefined = translateEnvironment(world, e);
 			} else {
 				//
@@ -144,8 +145,7 @@ public class ModelFactory extends SymbolFactory {
 		}
 		if ( !environmentDefined ) {
 			ISyntacticElement shape =
-				new SyntheticStatement(IType.GEOM_STR, new Facets(NAME, SHAPE, INIT,
-					"envelope(100)"));
+				new SyntacticElement(IType.GEOM_STR, new Facets(NAME, SHAPE, INIT, "envelope(100)"));
 			VariableDescription vd = (VariableDescription) create(shape, world);
 			world.addChild(vd);
 			world.resortVarName(vd);
@@ -170,7 +170,7 @@ public class ModelFactory extends SymbolFactory {
 	private boolean translateEnvironment(SpeciesDescription world, final ISyntacticElement e) {
 		boolean environmentDefined;
 		environmentDefined = true;
-		ISyntacticElement shape = new SyntheticStatement(IType.GEOM_STR, new Facets(NAME, SHAPE));
+		ISyntacticElement shape = new SyntacticElement(IType.GEOM_STR, new Facets(NAME, SHAPE));
 		IExpressionDescription bounds = e.getFacet(BOUNDS);
 		if ( bounds == null ) {
 			IExpressionDescription width = e.getFacet(WIDTH);
@@ -203,9 +203,10 @@ public class ModelFactory extends SymbolFactory {
 		return environmentDefined;
 	}
 
-	public SpeciesDescription computeBuiltInSpecies(final ModelDescription model) {
+	public SpeciesDescription computeBuiltInSpecies(final ModelDescription model,
+		ISyntacticElement source) {
 		// We create a new world
-		ISyntacticElement ww = model.getSourceInformation().getChild(GLOBAL);
+		ISyntacticElement ww = source.getChild(GLOBAL);
 		SpeciesDescription world =
 			DescriptionFactory.createSpeciesDescription(WORLD_SPECIES, WORLD_AGENT_CLASS, model,
 				WORLD_AGENT_CONSTRUCTOR, getSpeciesSkills(WORLD_SPECIES), ww == null ? new Facets()

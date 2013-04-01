@@ -62,7 +62,7 @@ public abstract class EditorsList<T> implements ItemList<T> {
 		IScope scope = GAMA.obtainNewScope();
 		for ( final IParameter vp : getChangedParameters().values() ) {
 			String s =
-				"<" + vp.type().toString() + " name=\"" + vp.getName() + "\" init=\"" +
+				"<" + vp.getType().toString() + " name=\"" + vp.getName() + "\" init=\"" +
 					StringUtils.toGaml(vp.value(scope)) + "\" ";
 			s = s + "parameter = \"" + vp.getTitle() + "\" ";
 			s = s + (vp.getCategory() != null ? " category=\"" + vp.getCategory() + "\"" : "");

@@ -19,7 +19,7 @@
 package msi.gaml.compilation;
 
 import static msi.gama.common.interfaces.IGamlIssue.GENERAL;
-import msi.gama.common.interfaces.ISyntacticElement;
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * The Class GamlException.
@@ -30,30 +30,23 @@ public class GamlCompilationError {
 	protected final String message;
 	protected String code;
 	protected String[] data;
-	// protected IDescription desc;
-	/**
-	 * This element normally contains a reference to the initial statement in GAML
-	 */
-	private ISyntacticElement source = null;
+	protected EObject source;
 
 	public GamlCompilationError(final String s) {
 		message = s;
 		code = GENERAL;
 	}
 
-	public Object getStatement() {
-		if ( source == null ) { return null; }
-		Object o = source.getUnderlyingElement(facet);
-		if ( o == null ) { return source; }
-		return o;
+	public EObject getStatement() {
+		return source;
 	}
 
-	public GamlCompilationError(final String string, final ISyntacticElement sourceInformation) {
+	public GamlCompilationError(final String string, final EObject sourceInformation) {
 		this(string);
 		addSource(sourceInformation);
 	}
 
-	public GamlCompilationError(final String string, final ISyntacticElement sourceInformation,
+	public GamlCompilationError(final String string, final EObject sourceInformation,
 		final boolean isWarning) {
 		this(string);
 		addSource(sourceInformation);
@@ -70,11 +63,9 @@ public class GamlCompilationError {
 	 * @param data
 	 */
 	public GamlCompilationError(final String string, final String code,
-		final ISyntacticElement sourceInformation, final boolean warning, final Object facet,
-		final String ... data) {
+		final EObject sourceInformation, final boolean warning, final String ... data) {
 		this(string);
 		isWarning = warning;
-		this.facet = facet;
 		this.code = code;
 		this.data = data;
 		addSource(sourceInformation);
@@ -93,7 +84,7 @@ public class GamlCompilationError {
 		return message;
 	}
 
-	public void addSource(final ISyntacticElement cur) {
+	public void addSource(final EObject cur) {
 		if ( source == null ) {
 			source = cur;
 		}
@@ -101,15 +92,6 @@ public class GamlCompilationError {
 
 	public boolean isWarning() {
 		return isWarning;
-	}
-
-	private Object facet;
-
-	/**
-	 * @param key
-	 */
-	public void setObjectOfInterest(final Object key) {
-		facet = key;
 	}
 
 	/**

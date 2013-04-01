@@ -193,9 +193,10 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	}
 
 	@Override
-	public IExpression createAction(final String op, final IDescription context,
-		final IExpression ... expressions) {
-		return new PrimitiveOperator(op).init(op, context, expressions[0], expressions[1]);
+	public IExpression createAction(final String op, final IDescription callerContext,
+		final StatementDescription action, final IExpression ... expressions) {
+		return new PrimitiveOperator(op).init(op, callerContext, action, expressions[0],
+			expressions[1]);
 	}
 
 	// @Override
