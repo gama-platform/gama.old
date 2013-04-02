@@ -18,6 +18,9 @@
  */
 package msi.gama.lang.gaml.formatting;
 
+import java.util.*;
+import msi.gama.lang.gaml.services.GamlGrammarAccess;
+import org.eclipse.xtext.Keyword;
 import org.eclipse.xtext.formatting.impl.*;
 
 /**
@@ -30,30 +33,104 @@ import org.eclipse.xtext.formatting.impl.*;
  */
 public class GamlFormatter extends AbstractDeclarativeFormatter {
 
-	@Override
-	protected void configureFormatting(final FormattingConfig c) {
-		msi.gama.lang.gaml.services.GamlGrammarAccess f =
-			(msi.gama.lang.gaml.services.GamlGrammarAccess) getGrammarAccess();
+	/**
+	 * @see org.eclipse.xtext.formatting.impl.AbstractDeclarativeFormatter#configureFormatting(org.eclipse.xtext.formatting.impl.FormattingConfig)
+	 */
 
+	@Override
+	protected void configureFormatting(FormattingConfig c) {
+		GamlGrammarAccess g = getGrammarAccess();
+
+		// c.setLinewrap(0, 1, 2).before(g.getSL_COMMENTRule());
+		c.setLinewrap(1).around(g.getStatementRule());
+		c.setLinewrap(2).after(g.getModelAccess().getNameAssignment_0_1());
+		c.setLinewrap(1).after(g.getImportRule());
+
+		Set<Keyword> handled = new HashSet();
+		handled.add(g.getTypeRefAccess().getLessThanSignKeyword_2_0());
+		handled.add(g.getTypeRefAccess().getGreaterThanSignKeyword_2_3());
+		handled.add(g.getUnaryAccess().getOpHyphenMinusKeyword_1_1_1_0_0_0());
+
+		// Operators are surrounded by a space
+		for ( Keyword k : g.findKeywords(">", "<", "=", "<<", ">>", "<-", "->", ">=", "<=", "+",
+			"-", "/", "*") ) {
+			if ( handled.contains(k) ) {
+				continue;
+			}
+			c.setSpace(" ").around(k);
+		}
+
+		// No space after these elements
+		for ( Keyword k : g.findKeywords(".", "[", "(", "::", "°", "!") ) {
+			c.setNoSpace().after(k);
+		}
+		// No space before these ones
+		for ( Keyword k : g.findKeywords("]", ".", ")", ",", ":", "::") ) {
+			c.setNoSpace().before(k);
+		}
+		// One space after these ones
+		for ( Keyword k : g.findKeywords(",", ":") ) {
+			c.setSpace(" ").after(k);
+		}
+
+		// Parameters of operators/actions and access should be handled with no space before
+		c.setNoSpace().before(g.getFunctionAccess().getLeftParenthesisKeyword_2());
+		c.setNoSpace().before(g.getAccessAccess().getLeftSquareBracketKeyword_1_0_1());
+
+		// The unary minus should be treated differently (no space after)
+		c.setNoSpace().after(g.getUnaryAccess().getOpHyphenMinusKeyword_1_1_1_0_0_0());
+
+		// The "<" and ">" part of the type references must alse be handled differently (no space)
+		c.setNoSpace().after(g.getTypeRefAccess().getLessThanSignKeyword_2_0());
+		c.setNoSpace().before(g.getTypeRefAccess().getLessThanSignKeyword_2_0());
+		c.setNoSpace().before(g.getTypeRefAccess().getGreaterThanSignKeyword_2_3());
+
+		// And the ":" in ternary if should be surrounded by spaces
+		c.setSpace(" ").before(g.getIfAccess().getColonKeyword_1_3());
+
+		// Semicolons induce line separations
+		for ( Keyword k : g.findKeywords(";") ) {
+			c.setNoSpace().before(k);
+			c.setLinewrap().after(k);
+		}
+
+		// A same opening curly bracket is shared by blocks and functions, after which a ln is done
+		c.setLinewrap().after(g.getBlockAccess().getLeftCurlyBracketKeyword_1());
+		c.setIndentationIncrement().after(g.getBlockAccess().getLeftCurlyBracketKeyword_1());
+		// Regular blocks
+		c.setLinewrap(2).after(g.getBlockAccess().getRightCurlyBracketKeyword_2_1_1());
+		c.setLinewrap(1).before(g.getBlockAccess().getRightCurlyBracketKeyword_2_1_1());
+		c.setIndentationDecrement().before(g.getBlockAccess().getRightCurlyBracketKeyword_2_1_1());
+		// Functions
+		c.setLinewrap(1).after(g.getBlockAccess().getRightCurlyBracketKeyword_2_0_0_1());
+		c.setLinewrap(1).before(g.getBlockAccess().getRightCurlyBracketKeyword_2_0_0_1());
+		c.setIndentationDecrement()
+			.before(g.getBlockAccess().getRightCurlyBracketKeyword_2_0_0_1());
+		// Equation blocks are defined differently (of course ! It would be too simple...)
+		c.setLinewrap().after(g.getS_EquationsAccess().getLeftCurlyBracketKeyword_3());
+		c.setIndentationIncrement().after(g.getS_EquationsAccess().getLeftCurlyBracketKeyword_3());
+		c.setLinewrap(2).after(g.getS_EquationsAccess().getRightCurlyBracketKeyword_5());
+		c.setLinewrap(1).before(g.getS_EquationsAccess().getRightCurlyBracketKeyword_5());
+		c.setIndentationDecrement()
+			.before(g.getS_EquationsAccess().getRightCurlyBracketKeyword_5());
+		// Else blocks should not be separated from their if
+		c.setNoLinewrap().before(g.getS_IfAccess().getElseKeyword_4_0());
+
+		c.setAutoLinewrap(180);
+
+		handleComments(c, g);
+
+	}
+
+	@Override
+	public GamlGrammarAccess getGrammarAccess() {
+		return (GamlGrammarAccess) super.getGrammarAccess();
+	}
+
+	private void handleComments(FormattingConfig c, GamlGrammarAccess f) {
 		c.setLinewrap(0, 1, 2).before(f.getSL_COMMENTRule());
 		c.setLinewrap(0, 1, 2).before(f.getML_COMMENTRule());
 		c.setLinewrap(0, 1, 1).after(f.getML_COMMENTRule());
-
-		//
-		c.setLinewrap(0, 1, 1).after(f.getModelAccess().getNameAssignment_0_1());
-		c.setLinewrap(0, 1, 1).after(f.getImportRule());
-		c.setLinewrap(0, 1, 1).after(f.getStatementRule());
-		// c.setIndentation(f.getBlockAccess().getLeftCurlyBracketKeyword_1(), f.getBlockAccess()
-		// .getRightCurlyBracketKeyword_3());
-		// c.setLinewrap(0, 1, 1).after(f.getBlockAccess().getLeftCurlyBracketKeyword_1());
-		// c.setLinewrap(0, 1, 1).before(f.getBlockAccess().getRightCurlyBracketKeyword_3());
-		// c.setLinewrap(0, 1, 1).after(f.getBlockAccess().getRightCurlyBracketKeyword_3());
-		// c.setNoSpace().before(f.getDefinitionAccess().getSemicolonKeyword_3_1());
-		// c.setNoSpace().before(f.getEvaluationAccess().getSemicolonKeyword_2_1());
-		// c.setNoSpace().before(f.getGamlFacetRefAccess().getColonKeyword_1());
-		// c.setLinewrap(0, 1, 1).after(f.getDefinitionAccess().getSemicolonKeyword_3_1());
-		// c.setLinewrap(0, 1, 1).after(f.getEvaluationAccess().getSemicolonKeyword_2_1());
-		// FIXME Ajouter dans EGaml des éléments d'accès aux repères partagés (semiColon, etc.)
-
 	}
+
 }

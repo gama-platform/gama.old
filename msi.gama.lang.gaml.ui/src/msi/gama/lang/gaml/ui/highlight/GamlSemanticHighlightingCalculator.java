@@ -22,6 +22,7 @@ import static msi.gama.lang.gaml.ui.highlight.GamlHighlightingConfiguration.*;
 import static org.eclipse.xtext.ui.editor.syntaxcoloring.DefaultHighlightingConfiguration.*;
 import java.util.*;
 import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.lang.utils.EGaml;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
@@ -40,86 +41,117 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 
 	private static Set<String> ASSIGNMENTS = new HashSet(Arrays.asList("<-", "<<", ">>", "->"));
 
-	private IHighlightedPositionAcceptor acceptor;
-	Set<INode> done = new HashSet();
+	private static IHighlightedPositionAcceptor acceptor;
+	static Set<INode> done = new HashSet();
 
 	@Override
-	// Mettre un ID sur les descriptions pour les répèrer plus facilement.
 	public void provideHighlightingFor(final XtextResource resource,
 		final IHighlightedPositionAcceptor a) {
 		acceptor = a;
 		TreeIterator<EObject> root = resource.getAllContents();
-
 		while (root.hasNext()) {
-			EObject obj = root.next();
-			if ( obj != null ) {
-				if ( obj instanceof S_DirectAssignment ) {
-					String key = ((S_DirectAssignment) obj).getKey();
-					if ( key != null ) {
-						setStyle(obj, ASSIGN_ID, key);
-					}
-				} else if ( obj instanceof Statement ) {
-					String name = EGaml.getNameOf((Statement) obj);
-					if ( name != null ) {
-						setStyle(obj, VARDEF_ID, name);
-					}
-					String key = ((Statement) obj).getKey();
-					if ( key != null ) {
-						setStyle(obj, KEYWORD_ID, key);
-					}
-				} else if ( obj instanceof Binary || obj instanceof Function ) {
-					setStyle(obj, OPERATOR_ID, EGaml.getKeyOf(obj));
-				} else if ( obj instanceof Facet ) {
-					String key = ((Facet) obj).getKey();
-					if ( ASSIGNMENTS.contains(key) ) {
-						setStyle(obj, ASSIGN_ID, 0);
-					} else {
-						setStyle(obj, FACET_ID, 0);
-					}
-					if ( key.startsWith("type") ) {
-						setStyle(TYPE_ID, NodeModelUtils.getNode(((Facet) obj).getExpr()));
-					} else if ( ((Facet) obj).getName() != null ) {
-						setStyle(obj, VARDEF_ID, 1);
-					}
-				} else if ( obj instanceof TerminalExpression ) {
-					if ( obj instanceof ReservedLiteral ) {
-						setStyle(obj, RESERVED_ID, 0);
-					} else if ( !(obj instanceof StringLiteral) ) {
-						setStyle(obj, NUMBER_ID, 0);
-					}
-				} else if ( obj instanceof VariableRef ) {
-					setStyle(VARIABLE_ID, NodeModelUtils.getNode(obj));
-				} else if ( obj instanceof TypeRef ) {
-					setStyle(TYPE_ID, NodeModelUtils.getNode(obj));
-				} else if ( obj instanceof ArgumentDefinition ) {
-					String s = ((ArgumentDefinition) obj).getName();
-					if ( s != null ) {
-						setStyle(obj, VARDEF_ID, s);
-					}
-				} else if ( obj instanceof ArgumentPair ) {
-					String s = ((ArgumentPair) obj).getOp();
-					if ( s != null ) {
-						setStyle(obj, VARIABLE_ID, s);
-					}
-				} else if ( obj instanceof Parameter ) {
-					String s = ((Parameter) obj).getBuiltInFacetKey();
-					if ( s != null ) {
-						setStyle(obj, VARIABLE_ID, s);
-					}
-				} else if ( obj instanceof UnitName ) {
-					setStyle(obj, UNIT_ID, 0);
-				}
-			}
-
+			highlight.doSwitch(root.next());
 		}
 		done.clear();
+		acceptor = null;
 	}
 
-	private void setStyle(final EObject obj, final String s, final int position) {
+	private static final GamlSwitch highlight = new GamlSwitch() {
+
+		@Override
+		public Object caseStatement(Statement object) {
+			setStyle(object, VARDEF_ID, EGaml.getNameOf(object));
+			return setStyle(object, KEYWORD_ID, object.getKey());
+		}
+
+		@Override
+		public Object caseS_DirectAssignment(S_DirectAssignment obj) {
+			return setStyle(obj, ASSIGN_ID, obj.getKey());
+		}
+
+		@Override
+		public Object caseS_Assignment(S_Assignment obj) {
+			String s = obj.getKey();
+			if ( "=".equals(s) ) { return setStyle(obj, ASSIGN_ID, s); }
+			return false;
+		}
+
+		@Override
+		public Object caseFacet(Facet object) {
+			String key = object.getKey();
+			if ( ASSIGNMENTS.contains(key) ) {
+				setStyle(object, ASSIGN_ID, 0);
+			} else {
+				setStyle(object, FACET_ID, 0);
+				if ( key.startsWith("type") ) {
+					setStyle(TYPE_ID, NodeModelUtils.getNode(object.getExpr()));
+				} else if ( object.getName() != null ) {
+					setStyle(object, VARDEF_ID, 1);
+				}
+			}
+			return true;
+		}
+
+		@Override
+		public Object caseTerminalExpression(TerminalExpression object) {
+			if ( !(object instanceof StringLiteral) ) {
+				setStyle(object, NUMBER_ID, 0);
+			}
+			return true;
+		}
+
+		@Override
+		public Object caseReservedLiteral(ReservedLiteral object) {
+			return setStyle(object, RESERVED_ID, 0);
+		}
+
+		@Override
+		public Object caseBinary(Binary object) {
+			return setStyle(object, OPERATOR_ID, EGaml.getKeyOf(object));
+		}
+
+		@Override
+		public Object caseFunction(Function object) {
+			return setStyle(object, OPERATOR_ID, EGaml.getKeyOf(object));
+		}
+
+		@Override
+		public Object caseArgumentPair(ArgumentPair object) {
+			return setStyle(object, VARIABLE_ID, object.getOp());
+		}
+
+		@Override
+		public Object caseVariableRef(VariableRef object) {
+			return setStyle(VARIABLE_ID, NodeModelUtils.getNode(object));
+		}
+
+		@Override
+		public Object caseUnitName(UnitName object) {
+			return setStyle(object, UNIT_ID, 0);
+		}
+
+		@Override
+		public Object caseTypeRef(TypeRef object) {
+			return setStyle(TYPE_ID, NodeModelUtils.getNode(object));
+		}
+
+		@Override
+		public Object caseParameter(Parameter object) {
+			return setStyle(object, VARIABLE_ID, object.getBuiltInFacetKey());
+		}
+
+		@Override
+		public Object caseArgumentDefinition(ArgumentDefinition object) {
+			return setStyle(object, VARDEF_ID, object.getName());
+		}
+
+	};
+
+	private static boolean setStyle(final EObject obj, final String s, final int position) {
 		// position = -1 for all the node; 0 for the first leaf node, 1 for the second one, etc.
 		if ( obj != null && s != null ) {
 			INode n = NodeModelUtils.getNode(obj);
-			if ( n == null ) { return; }
+			if ( n == null ) { return false; }
 			if ( position > -1 ) {
 				int i = 0;
 				for ( ILeafNode node : n.getLeafNodes() ) {
@@ -132,23 +164,25 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 					}
 				}
 			}
-			setStyle(s, n);
+			return setStyle(s, n);
 		}
+		return false;
 	}
 
-	private void setStyle(final String s, final INode n) {
-		// acceptor.addPosition(n.getOffset(), n.getLength(), s);
+	private static boolean setStyle(final String s, final INode n) {
 		if ( !done.contains(n) ) {
 			done.add(n);
 			acceptor.addPosition(n.getOffset(), n.getLength(), s);
+			return true;
 		}
+		return false;
 	}
 
-	private void setStyle(final EObject obj, final String s, final String text) {
-		if ( text == null ) { return; }
+	private static boolean setStyle(final EObject obj, final String s, final String text) {
+		if ( text == null ) { return false; }
 		if ( obj != null && s != null ) {
 			INode n = NodeModelUtils.getNode(obj);
-			if ( n == null ) { return; }
+			if ( n == null ) { return false; }
 			for ( ILeafNode node : n.getLeafNodes() ) {
 				if ( !node.isHidden() ) {
 					if ( NodeModelUtils.getTokenText(node).equals(text) ) {
@@ -157,7 +191,8 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 					}
 				}
 			}
-			setStyle(s, n);
+			return setStyle(s, n);
 		}
+		return false;
 	}
 }
