@@ -2,12 +2,13 @@ package idees.gama.ui.editFrame;
 
 import gama.ELayerAspect;
 
-import java.util.List;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.transaction.RecordingCommand;
+import org.eclipse.emf.transaction.TransactionalEditingDomain;
+import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
@@ -41,6 +42,8 @@ public class EditLayerAspectFrame {
 	private Text textPath;
 	private Text textText;
 	
+	Button btnCstCol;
+	
 	Composite sizeComp;
 	Composite radiusComp;
 	Composite wHComp;
@@ -48,15 +51,71 @@ public class EditLayerAspectFrame {
 	Composite expShapeComp;
 	Composite textComp;
 	Composite imageComp;
-	org.eclipse.swt.widgets.List reflexViewer;
-	List<String> reflexStrs;
+	Composite shapeComp;
 	Text textName;
 	ELayerAspect elayer;
 	EditAspectFrame frame;
+	EditLayerAspectFrame layerFrame;
 	Color color;
+	RGB rgb;
+	Label colorLabel;
+	boolean edit;
 
-	public EditLayerAspectFrame(ELayerAspect elayer, EditAspectFrame asp) {
+	
+	public EditLayerAspectFrame(ELayerAspect elayer, EditAspectFrame asp, boolean edit) {
+		init(elayer, asp);
+		this.edit = edit;
+		if (edit)
+			loadData();
+		setVisibility();
+	}
+	
+	private void loadData() {
+		if (elayer.getShapeType() != null && ! elayer.getShapeType().isEmpty())
+			comboShape.setText(elayer.getShapeType());
+		if (elayer.getRadius() != null)
+			textRadius.setText(elayer.getRadius());
+		if (elayer.getHeigth() != null)
+			textHeight.setText(elayer.getHeigth());
+		if (elayer.getWidth() != null)
+			textWidth.setText(elayer.getWidth());
+		if (elayer.getSize() != null)
+			textSize.setText(elayer.getSize());
+		if (elayer.getPoints() != null)
+			textPoints.setText(elayer.getPoints());
+		if (elayer.getShape() != null)
+			textShape.setText(elayer.getShape());
+		if (elayer.getShape() != null)
+			textColor.setText(elayer.getColor());
+		if (elayer.getEmpty() != null)
+			textEmpty.setText(elayer.getEmpty());
+		if (elayer.getRotate() != null)
+			textRotate.setText(elayer.getRotate());
+		if (elayer.getTextSize() != null)
+			textSizeText.setText(elayer.getTextSize());
+		if (elayer.getImageSize() != null)
+			textSizeImage.setText(elayer.getImageSize());
+		if (elayer.getPath() != null)
+			textPath.setText(elayer.getPath());
+		if (elayer.getText()!= null)
+			textText.setText(elayer.getText());
+		if (elayer.getIsColorCst()!= null)
+			btnCstCol.setSelection(elayer.getIsColorCst());
+		if (elayer.getName()!= null)
+			textName.setText(elayer.getName());
+		if (! elayer.getColorRBG().isEmpty()) {
+			rgb = new RGB(elayer.getColorRBG().get(0), elayer.getColorRBG().get(1), elayer.getColorRBG().get(2));
+			 color.dispose();
+	         color = new Color(frame.getShell().getDisplay(), rgb);
+	         colorLabel.setBackground(color);
+		}
+			
+		
+	}
+
+	public void init(ELayerAspect elayer, EditAspectFrame asp) {
 		frame = asp;
+		layerFrame = this;
 		
 		final Shell dialog = new Shell(asp.getShell(), SWT.APPLICATION_MODAL
 				| SWT.DIALOG_TRIM );
@@ -70,6 +129,7 @@ public class EditLayerAspectFrame {
 		dialog.setSize(740, 390);
 	}
 	
+	
 	public void builtQuitButtons(final Shell  dialog) {
 
 		Canvas quitTopo = new Canvas(dialog, SWT.BORDER);
@@ -80,7 +140,20 @@ public class EditLayerAspectFrame {
 		buttonOK.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				frame.getLayers().add(elayer);
+				int index = 0;
+				if (!layerFrame.edit) {
+					frame.getLayers().add(elayer);
+				} else {
+					index = frame.getLayers().indexOf(elayer);
+					frame.layerViewer.remove(index);
+				}
+				
+				layerFrame.saveLayer();
+				if (!layerFrame.edit) {
+					frame.layerViewer.add(elayer.getName());
+				} else {
+					frame.layerViewer.add(elayer.getName(), index);
+				}
 				dialog.close();
 			} 
 		});
@@ -91,11 +164,188 @@ public class EditLayerAspectFrame {
 		buttonCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				
+				if (! layerFrame.edit)
+					EcoreUtil.delete(elayer);
 				dialog.close();
 			}
 		});
 	}
+
+	protected void saveLayer() {
+		TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(frame.eobject);
+			if (domain != null) {
+			    domain.getCommandStack().execute(new RecordingCommand(domain) {
+			    	     public void doExecute() {
+			    	    	 modifyLayer();
+			    	    	
+			    	     }
+			    	  });
+			} 
+	}
+	
+	private void modifyLayer() {
+		elayer.setName(textName.getText());
+		elayer.setExpression(textShape.getText());
+		elayer.setPoints(textPoints.getText());
+		elayer.setEmpty(textEmpty.getText());
+		elayer.setRadius(textRadius.getText());
+		elayer.setHeigth(textHeight.getText());
+		elayer.setWidth(textWidth.getText());
+		elayer.setSize(textSize.getText());
+		elayer.setRotate(textRotate.getText());
+		elayer.setText(textSizeText.getText());
+		elayer.setPath(textPath.getText());
+		elayer.setShapeType(comboShape.getText());
+		elayer.setIsColorCst(btnCstCol.getSelection());
+		elayer.setColor(textColor.getText());
+		elayer.setTextSize(textSizeText.getText());
+		elayer.setImageSize(textSizeImage.getText());
+		elayer.getColorRBG().add(rgb.red > 0 ? rgb.red : 0);
+		elayer.getColorRBG().add(rgb.green > 0 ? rgb.green : 0);
+		elayer.getColorRBG().add(rgb.blue > 0 ? rgb.blue : 0);
+		String code = "draw ";
+		String val = comboShape.getText();
+		if (val.equals("polyline") || val.equals("polygon")) {
+			code += val + "("+textPoints.getText()+")";
+		} else if (val.equals("circle") || val.equals("sphere")) {
+			code += val + "("+textRadius.getText()+")";
+		} else if (val.equals("square")) {
+			code += val + "("+textSize.getText()+")";
+		} else if (val.equals("rectangle") || val.equals("hexagon")) {
+			code += val + "({"+textWidth.getText()+ ","+ textHeight.getText()+"})";
+		} else if (val.equals("expression")) {
+			code += textShape.getText();
+		} else if (val.equals("image")) {
+			code += "file(" + textPath.getText() + ")" + " size:" + textSizeImage.getText();
+		} else if (val.equals("text")) {
+			code +=  textText.getText() + " size:" + textSizeText.getText();
+		}
+		if (elayer.getIsColorCst()) {
+			code += " color: rgb(" + elayer.getColorRBG() + ")" ;
+		} else {
+			code += " color: " + elayer.getColor();
+		}
+		if (elayer.getEmpty() != null && ! elayer.getEmpty().isEmpty())
+			code += " empty: " + elayer.getEmpty();
+		if (elayer.getRotate() != null && ! elayer.getRotate().isEmpty())
+			code += " rotate: " + elayer.getRotate();
+		elayer.setGamlCode(code);
+	}
+	
+	public void setVisibility(){
+		String val = comboShape.getText();
+		if (val.equals("polyline") || val.equals("polygon")) {
+			sizeComp.setVisible(false);
+			sizeComp.setEnabled(false);
+			radiusComp.setVisible(false);
+			radiusComp.setEnabled(false);
+			wHComp.setVisible(false);
+			wHComp.setEnabled(false);
+			pointsComp.setVisible(true);
+			pointsComp.setEnabled(true);
+			expShapeComp.setVisible(false);
+			expShapeComp.setEnabled(false);
+			imageComp.setVisible(false);
+			imageComp.setEnabled(false);
+			textComp.setEnabled(false);
+			textComp.setVisible(false);
+			
+			// modifyShape(comboShape.getText()+ "("+textPoints+")");
+		} else if (val.equals("circle") || val.equals("sphere")) {
+			sizeComp.setVisible(false);
+			sizeComp.setEnabled(false);
+			radiusComp.setVisible(true);
+			radiusComp.setEnabled(true);
+			pointsComp.setVisible(false);
+			pointsComp.setEnabled(false);
+			wHComp.setVisible(false);
+			wHComp.setEnabled(false);
+			expShapeComp.setVisible(false);
+			expShapeComp.setEnabled(false);
+			expShapeComp.setEnabled(false);
+			imageComp.setVisible(false);
+			imageComp.setEnabled(false);
+			textComp.setEnabled(false);
+			textComp.setVisible(false);
+		} else if (val.equals("square")) {
+			sizeComp.setVisible(true);
+			sizeComp.setEnabled(true);
+			radiusComp.setVisible(false);
+			radiusComp.setEnabled(false);
+			pointsComp.setVisible(false);
+			pointsComp.setEnabled(false);
+			wHComp.setVisible(false);
+			wHComp.setEnabled(false);
+			expShapeComp.setVisible(false);
+			expShapeComp.setEnabled(false);
+			imageComp.setVisible(false);
+			imageComp.setEnabled(false);
+			textComp.setEnabled(false);
+			textComp.setVisible(false);
+		} else if (val.equals("rectangle") || val.equals("hexagon")) {
+			sizeComp.setVisible(false);
+			sizeComp.setEnabled(false);
+			radiusComp.setVisible(false);
+			radiusComp.setEnabled(false);
+			pointsComp.setVisible(false);
+			pointsComp.setEnabled(false);
+			wHComp.setVisible(true);
+			wHComp.setEnabled(true);
+			expShapeComp.setVisible(false);
+			expShapeComp.setEnabled(false);
+			imageComp.setVisible(false);
+			imageComp.setEnabled(false);
+			textComp.setEnabled(false);
+			textComp.setVisible(false);
+		} else if (val.equals("expression")) {
+			sizeComp.setVisible(false);
+			sizeComp.setEnabled(false);
+			radiusComp.setVisible(false);
+			radiusComp.setEnabled(false);
+			pointsComp.setVisible(false);
+			pointsComp.setEnabled(false);
+			wHComp.setVisible(false);
+			wHComp.setEnabled(false);
+			expShapeComp.setVisible(true);
+			expShapeComp.setEnabled(true);
+			imageComp.setVisible(false);
+			imageComp.setEnabled(false);
+			textComp.setEnabled(false);
+			textComp.setVisible(false);
+		} else if (val.equals("image")) {
+			sizeComp.setVisible(false);
+			sizeComp.setEnabled(false);
+			radiusComp.setVisible(false);
+			radiusComp.setEnabled(false);
+			pointsComp.setVisible(false);
+			pointsComp.setEnabled(false);
+			wHComp.setVisible(false);
+			wHComp.setEnabled(false);
+			expShapeComp.setVisible(false);
+			expShapeComp.setEnabled(false);
+			imageComp.setVisible(true);
+			imageComp.setEnabled(true);
+			textComp.setEnabled(false);
+			textComp.setVisible(false);
+		} else if (val.equals("text")) {
+			sizeComp.setVisible(false);
+			sizeComp.setEnabled(false);
+			radiusComp.setVisible(false);
+			radiusComp.setEnabled(false);
+			pointsComp.setVisible(false);
+			pointsComp.setEnabled(false);
+			wHComp.setVisible(false);
+			wHComp.setEnabled(false);
+			expShapeComp.setVisible(false);
+			expShapeComp.setEnabled(false);
+			imageComp.setVisible(false);
+			imageComp.setEnabled(false);
+			textComp.setEnabled(true);
+			textComp.setVisible(true);
+		}
+		shapeComp.pack();
+	}
+	
 
 	public void buildCanvasTopo(Composite container) {
 		// ****** CANVAS TOPOLOGY *********
@@ -104,7 +354,7 @@ public class EditLayerAspectFrame {
 		canvasTopo.setBounds(10, 50, 720, 240);
 
 		// Shape
-		final Composite shapeComp = new Composite(canvasTopo, SWT.BORDER);
+		shapeComp = new Composite(canvasTopo, SWT.BORDER);
 		shapeComp.setBounds(10, 5, 700, 110);
 		CLabel lblShape = new CLabel(shapeComp, SWT.NONE);
 		lblShape.setBounds(5, 5, 50, 20);
@@ -118,126 +368,7 @@ public class EditLayerAspectFrame {
 		// "hexagon", "sphere", "expression"
 		comboShape.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
-				String val = comboShape.getText();
-				if (val.equals("polyline") || val.equals("polygon")) {
-					sizeComp.setVisible(false);
-					sizeComp.setEnabled(false);
-					radiusComp.setVisible(false);
-					radiusComp.setEnabled(false);
-					wHComp.setVisible(false);
-					wHComp.setEnabled(false);
-					pointsComp.setVisible(true);
-					pointsComp.setEnabled(true);
-					expShapeComp.setVisible(false);
-					expShapeComp.setEnabled(false);
-					imageComp.setVisible(false);
-					imageComp.setEnabled(false);
-					textComp.setEnabled(false);
-					textComp.setVisible(false);
-					
-					// modifyShape(comboShape.getText()+ "("+textPoints+")");
-				} else if (val.equals("circle") || val.equals("sphere")) {
-					sizeComp.setVisible(false);
-					sizeComp.setEnabled(false);
-					radiusComp.setVisible(true);
-					radiusComp.setEnabled(true);
-					pointsComp.setVisible(false);
-					pointsComp.setEnabled(false);
-					wHComp.setVisible(false);
-					wHComp.setEnabled(false);
-					expShapeComp.setVisible(false);
-					expShapeComp.setEnabled(false);
-					expShapeComp.setEnabled(false);
-					imageComp.setVisible(false);
-					imageComp.setEnabled(false);
-					textComp.setEnabled(false);
-					textComp.setVisible(false);
-					// modifyShape(comboShape.getText()+ "(" +
-					// textRadius.getText()+")");
-				} else if (val.equals("square")) {
-					sizeComp.setVisible(true);
-					sizeComp.setEnabled(true);
-					radiusComp.setVisible(false);
-					radiusComp.setEnabled(false);
-					pointsComp.setVisible(false);
-					pointsComp.setEnabled(false);
-					wHComp.setVisible(false);
-					wHComp.setEnabled(false);
-					expShapeComp.setVisible(false);
-					expShapeComp.setEnabled(false);
-					imageComp.setVisible(false);
-					imageComp.setEnabled(false);
-					textComp.setEnabled(false);
-					textComp.setVisible(false);
-					// modifyShape(comboShape.getText()+ "(" +
-					// textSize.getText()+")");
-				} else if (val.equals("rectangle") || val.equals("hexagon")) {
-					sizeComp.setVisible(false);
-					sizeComp.setEnabled(false);
-					radiusComp.setVisible(false);
-					radiusComp.setEnabled(false);
-					pointsComp.setVisible(false);
-					pointsComp.setEnabled(false);
-					wHComp.setVisible(true);
-					wHComp.setEnabled(true);
-					expShapeComp.setVisible(false);
-					expShapeComp.setEnabled(false);
-					imageComp.setVisible(false);
-					imageComp.setEnabled(false);
-					textComp.setEnabled(false);
-					textComp.setVisible(false);
-					// modifyShape(comboShape.getText()+ "({" +
-					// textWidth.getText() + ","+ textHeight.getText()+"})");
-				} else if (val.equals("expression")) {
-					sizeComp.setVisible(false);
-					sizeComp.setEnabled(false);
-					radiusComp.setVisible(false);
-					radiusComp.setEnabled(false);
-					pointsComp.setVisible(false);
-					pointsComp.setEnabled(false);
-					wHComp.setVisible(false);
-					wHComp.setEnabled(false);
-					expShapeComp.setVisible(true);
-					expShapeComp.setEnabled(true);
-					imageComp.setVisible(false);
-					imageComp.setEnabled(false);
-					textComp.setEnabled(false);
-					textComp.setVisible(false);
-					// modifyShape(textShape.getText());
-				} else if (val.equals("image")) {
-					sizeComp.setVisible(false);
-					sizeComp.setEnabled(false);
-					radiusComp.setVisible(false);
-					radiusComp.setEnabled(false);
-					pointsComp.setVisible(false);
-					pointsComp.setEnabled(false);
-					wHComp.setVisible(false);
-					wHComp.setEnabled(false);
-					expShapeComp.setVisible(false);
-					expShapeComp.setEnabled(false);
-					imageComp.setVisible(true);
-					imageComp.setEnabled(true);
-					textComp.setEnabled(false);
-					textComp.setVisible(false);
-					// modifyShape(textShape.getText());
-				} else if (val.equals("text")) {
-					sizeComp.setVisible(false);
-					sizeComp.setEnabled(false);
-					radiusComp.setVisible(false);
-					radiusComp.setEnabled(false);
-					pointsComp.setVisible(false);
-					pointsComp.setEnabled(false);
-					wHComp.setVisible(false);
-					wHComp.setEnabled(false);
-					expShapeComp.setVisible(false);
-					expShapeComp.setEnabled(false);
-					imageComp.setVisible(false);
-					imageComp.setEnabled(false);
-					textComp.setEnabled(true);
-					textComp.setVisible(true);
-					// modifyShape(textShape.getText());
-				}
-				shapeComp.pack();
+				setVisibility();
 			}
 
 		});
@@ -254,12 +385,6 @@ public class EditLayerAspectFrame {
 		textSize = new Text(sizeComp, SWT.BORDER);
 		textSize.setBounds(70, 0, 300, 20);
 		textSize.setText("1.0");
-		textSize.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				// modifyShape(comboShape.getText()+ "(" +
-				// textSize.getText()+")");
-			}
-		});
 		
 		// Image
 		imageComp = new Composite(shapeComp, SWT.NONE);
@@ -273,13 +398,7 @@ public class EditLayerAspectFrame {
 		textPath = new Text(imageComp, SWT.BORDER);
 		textPath.setBounds(70, 30, 300, 20);
 		textPath.setText("../images/icon.png");
-		textPath.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				// modifyShape(comboShape.getText()+ "({" + textWidth.getText()
-				// + ","+ textHeight.getText()+"})");
-			}
-		});
-
+		
 		CLabel lblSizeIm = new CLabel(imageComp, SWT.NONE);
 		lblSizeIm.setBounds(0, 0, 60, 20);
 		lblSizeIm.setText("Size");
@@ -287,12 +406,6 @@ public class EditLayerAspectFrame {
 		textSizeImage = new Text(imageComp, SWT.BORDER);
 		textSizeImage.setBounds(70, 0, 300, 20);
 		textSizeImage.setText("1.0");
-		textSizeImage.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				// modifyShape(comboShape.getText()+ "({" + textWidth.getText()
-				// + ","+ textHeight.getText()+"})");
-			}
-		});
 		
 		// Text		
 		textComp = new Composite(shapeComp, SWT.NONE);
@@ -306,13 +419,7 @@ public class EditLayerAspectFrame {
 		textText = new Text(textComp, SWT.BORDER);
 		textText.setBounds(70, 30, 300, 20);
 		textText.setText("");
-		textText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				// modifyShape(comboShape.getText()+ "({" + textWidth.getText()
-				// + ","+ textHeight.getText()+"})");
-			}
-		});
-
+	
 		CLabel lblSizeTxt = new CLabel(textComp, SWT.NONE);
 		lblSizeTxt.setBounds(0, 0, 60, 20);
 		lblSizeTxt.setText("Size");
@@ -320,13 +427,7 @@ public class EditLayerAspectFrame {
 		textSizeText = new Text(textComp, SWT.BORDER);
 		textSizeText.setBounds(70, 0, 300, 20);
 		textSizeText.setText("1.0");
-		textSizeText.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				// modifyShape(comboShape.getText()+ "({" + textWidth.getText()
-						// + ","+ textHeight.getText()+"})");
-			}
-		});
-
+		
 		// Circle - Sphere
 		radiusComp = new Composite(shapeComp, SWT.NONE);
 		radiusComp.setVisible(false);
@@ -339,13 +440,7 @@ public class EditLayerAspectFrame {
 		textRadius = new Text(radiusComp, SWT.BORDER);
 		textRadius.setBounds(70, 0, 300, 20);
 		textRadius.setText("1.0");
-		textRadius.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				// modifyShape(comboShape.getText()+ "(" +
-				// textRadius.getText()+")");
-			}
-		});
-
+		
 		// Hexagon - Rectangle
 		wHComp = new Composite(shapeComp, SWT.NONE);
 		wHComp.setBounds(20, 40, 600, 60);
@@ -358,13 +453,7 @@ public class EditLayerAspectFrame {
 		textHeight = new Text(wHComp, SWT.BORDER);
 		textHeight.setBounds(70, 30, 300, 20);
 		textHeight.setText("1.0");
-		textHeight.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				// modifyShape(comboShape.getText()+ "({" + textWidth.getText()
-				// + ","+ textHeight.getText()+"})");
-			}
-		});
-
+		
 		CLabel lblWidth = new CLabel(wHComp, SWT.NONE);
 		lblWidth.setBounds(0, 0, 60, 20);
 		lblWidth.setText("Width");
@@ -372,12 +461,7 @@ public class EditLayerAspectFrame {
 		textWidth = new Text(wHComp, SWT.BORDER);
 		textWidth.setBounds(70, 0, 300, 20);
 		textWidth.setText("1.0");
-		textWidth.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				// modifyShape(comboShape.getText()+ "({" + textWidth.getText()
-				// + ","+ textHeight.getText()+"})");
-			}
-		});
+		
 
 		// Polygon, Polyline
 		pointsComp = new Composite(shapeComp, SWT.NONE);
@@ -391,12 +475,7 @@ public class EditLayerAspectFrame {
 		textPoints = new Text(pointsComp, SWT.BORDER);
 		textPoints.setBounds(70, 0, 300, 20);
 		textPoints.setText("[{0.0,0.0},{0.0,1.0},{1.0,1.0},{1.0,0.0}]");
-		textPoints.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				// modifyShape(comboShape.getText()+ "("+textPoints+")");
-			}
-		});
-
+		
 		// Expression shape
 		expShapeComp = new Composite(shapeComp, SWT.NONE);
 		expShapeComp.setVisible(false);
@@ -408,11 +487,7 @@ public class EditLayerAspectFrame {
 
 		textShape = new Text(expShapeComp, SWT.BORDER);
 		textShape.setBounds(70, 0, 300, 20);
-		textShape.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				// modifyShape(textShape.getText());
-			}
-		});
+		
 		
 		// COLOR
 		CLabel lblColor = new CLabel(canvasTopo, SWT.NONE);
@@ -421,25 +496,19 @@ public class EditLayerAspectFrame {
 					 
 		textColor = new Text(canvasTopo, SWT.BORDER);
 		textColor.setBounds(425, 130, 250, 18);
-		textColor.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-			  //modifyLocation(textColor.getText());
-			}
-		});
-					
-		// Start with Celtics green
-		color = frame.getShell().getDisplay().getSystemColor(SWT.COLOR_BLUE);;
-
-	    // Use a label full of spaces to show the color
-	    final Label colorLabel = new Label(canvasTopo, SWT.NONE);
+		rgb = new RGB(0, 0, 255);	
+		color = new Color(frame.getShell().getDisplay(), rgb);
+		
+	  // Use a label full of spaces to show the color
+	    colorLabel = new Label(canvasTopo, SWT.NONE);
 	    colorLabel.setText("    ");
 	    colorLabel.setBackground(color);
 	    colorLabel.setBounds(160, 130, 50, 18);
 
-	    Button button = new Button(canvasTopo, SWT.PUSH);
-	    button.setText("Color...");
-	    button.setBounds(220, 130, 80, 20);
-	    button.addSelectionListener(new SelectionAdapter() {
+	    Button buttonColor = new Button(canvasTopo, SWT.PUSH);
+	    buttonColor.setText("Color...");
+	    buttonColor.setBounds(220, 130, 80, 20);
+	    buttonColor.addSelectionListener(new SelectionAdapter() {
 	      public void widgetSelected(SelectionEvent event) {
 	        // Create the color-change dialog
 	        ColorDialog dlg = new ColorDialog(frame.getShell());
@@ -452,8 +521,9 @@ public class EditLayerAspectFrame {
 	        dlg.setText("Choose a Color");
 
 	        // Open the dialog and retrieve the selected color
-	        RGB rgb = dlg.open();
-	        if (rgb != null) {
+	        RGB rgbN = dlg.open();
+	        if (rgbN != null) {
+	        	rgb = rgbN;
 	          // Dispose the old color, create the
 	          // new one, and set into the label
 	          color.dispose();
@@ -462,18 +532,17 @@ public class EditLayerAspectFrame {
 	        }
 	      }
 	    });
+	    
 		Composite cColor = new Composite (canvasTopo, SWT.NONE);
 		cColor.setBounds(80, 128, 400, 22);
 					
-		Button btnCstCol = new Button(cColor, SWT.RADIO);
+		btnCstCol = new Button(cColor, SWT.RADIO);
 		btnCstCol.setBounds(0, 2, 80, 18);
 		btnCstCol.setText("Constant");
 		btnCstCol.setSelection(true);
 		btnCstCol.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				textColor.setEnabled(false);	
-				//locStr = "random";
-				//	modifyLocation("any_location_in(world.shape)");
 			}
 		});
 		
@@ -485,7 +554,6 @@ public class EditLayerAspectFrame {
 						@Override
 			public void widgetSelected(SelectionEvent e) {
 					textColor.setEnabled(true);	
-					//modifyLocation(textColor.getText());
 			}
 		});
 		
@@ -497,11 +565,6 @@ public class EditLayerAspectFrame {
 		textEmpty = new Text(canvasTopo, SWT.BORDER);
 		textEmpty.setText("false");
 		textEmpty.setBounds(80, 170, 250, 18);
-		textEmpty.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-					  //modifyLocation(textColor.getText());
-			}
-		});
 			
 		// Rotate
 		CLabel lblRotate = new CLabel(canvasTopo, SWT.NONE);
@@ -510,12 +573,7 @@ public class EditLayerAspectFrame {
 									 
 		textRotate = new Text(canvasTopo, SWT.BORDER);
 		textRotate.setText("0.0");
-		textRotate.setBounds(80, 210, 250, 18);
-		textRotate.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-			  //modifyLocation(textColor.getText());
-			}
-		});		
+		textRotate.setBounds(80, 210, 250, 18);	
 	}
 	protected Canvas canvasName(Composite container) {
 		Canvas canvasName = new Canvas(container, SWT.BORDER);

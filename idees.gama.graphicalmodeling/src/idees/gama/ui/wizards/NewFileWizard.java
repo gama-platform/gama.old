@@ -179,7 +179,7 @@ public class NewFileWizard  extends Wizard implements INewWizard {
 
 		 // Create a resource for this file.
 		 final Resource resource = resourceSet.createResource(uri);
-		  
+		     
 		 editingDomain.getCommandStack().execute(new RecordingCommand(editingDomain) {
 		  @Override
 		  protected void doExecute() {

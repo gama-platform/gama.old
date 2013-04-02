@@ -12,16 +12,11 @@ import java.io.IOException;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emf.transaction.RecordingCommand;
-import org.eclipse.emf.transaction.TransactionalEditingDomain;
-import org.eclipse.emf.transaction.util.TransactionUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
@@ -83,23 +78,7 @@ public class UtilEditFrame {
 		//textName = new Text(canvasName, SWT.BORDER);
 		textName.setBounds(70, 5, 300, 20);
 		textName.setText(eobject.getName());
-		if (!(eobject instanceof EWorldAgent)) {
-			textName.addModifyListener(new ModifyListener() {
-				public void modifyText(ModifyEvent event) {
-					TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(eobject);
-					if (domain != null) {
-						domain.getCommandStack().execute(new RecordingCommand(domain) {
-				    	     public void doExecute() {
-				    	    	 eobject.setName(textName.getText());
-				    	     }
-				    	  });
-					} 
-					if (ef != null)
-						ef.hasDoneChanges = true;
-			    }
-			});
-		}
-		else {
+		if (eobject instanceof EWorldAgent) {
 			textName.setEditable(false);
 		}
 			
@@ -107,7 +86,4 @@ public class UtilEditFrame {
 		lblName.setBounds(10, 5, 60, 20);
 		lblName.setText("Name");
 	}
-	
-
-
 }

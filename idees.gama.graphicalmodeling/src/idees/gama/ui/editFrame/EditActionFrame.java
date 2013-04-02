@@ -12,8 +12,6 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
@@ -45,9 +43,9 @@ public class EditActionFrame extends EditFrame {
 		Canvas canvasGamlCode = canvasGamlCode(container);
 		canvasGamlCode.setBounds(10, 50, 720, 305);
 
-		//****** CANVAS VALIDATION *********
-		Canvas canvasValidation = canvasValidation(container);
-		canvasValidation.setBounds(10, 365, 720, 95);
+		//****** CANVAS OK/CANCEL *********
+		Canvas canvasOkCancel = canvasOkCancel(container);
+		canvasOkCancel.setBounds(10, 365, 720, 30);
 		return container;
 	}
 	
@@ -62,20 +60,6 @@ public class EditActionFrame extends EditFrame {
 		if (((EAction) eobject).getGamlCode() != null)
 			gamlCode.setText(((EAction) eobject).getGamlCode());
 		gamlCode.setEditable(true);
-		gamlCode.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(eobject);
-				if (domain != null) {
-					domain.getCommandStack().execute(new RecordingCommand(domain) {
-			    	     public void doExecute() {
-			    	    	 ((EAction) eobject).setGamlCode(gamlCode.getText());
-			    	     }
-			    	  });
-				} 
-				
-		       	 ef.hasDoneChanges = true;
-		    }
-		});
 				
 		CLabel lblCompilation = new CLabel(canvasGamlCode, SWT.NONE);
 		lblCompilation.setText("gaml code");
@@ -89,7 +73,23 @@ public class EditActionFrame extends EditFrame {
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(743, 510);
+		return new Point(743, 450);
+	}
+
+	@Override
+	protected void save() {
+		TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(eobject);
+		if (domain != null) {
+			domain.getCommandStack().execute(new RecordingCommand(domain) {
+	    	     public void doExecute() {
+	    	    	 eobject.setName(textName.getText());
+		    	    ((EAction) eobject).setGamlCode(gamlCode.getText());
+	    	     }
+	    	  });
+		} 
+		
+       	 ef.hasDoneChanges = true;
+		
 	}
 	
 	

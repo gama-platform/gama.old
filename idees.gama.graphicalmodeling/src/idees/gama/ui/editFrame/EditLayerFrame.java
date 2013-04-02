@@ -5,6 +5,7 @@ import gama.ESpecies;
 
 import java.util.List;
 
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
@@ -46,11 +47,24 @@ public class EditLayerFrame {
 	private CCombo comboSpecies;
 	private CCombo comboGrid;
 	boolean ok = false;
+	boolean edit;
 	
 	ELayer elayer;
 	EditDisplayFrame frame;
+	
+	public EditLayerFrame(ELayer elayer, EditDisplayFrame asp, List<ESpecies> species, List<ESpecies> grids, boolean edit) {
+		init(elayer, asp, species, grids);
+		this.edit = edit;
+		if (edit)
+			loadData();
+	}
 
-	public EditLayerFrame(ELayer elayer, EditDisplayFrame asp, List<ESpecies> species, List<ESpecies> grids) {
+	private void loadData() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void init(ELayer elayer, EditDisplayFrame asp, List<ESpecies> species, List<ESpecies> grids) {
 		frame = asp;
 		species_list = new String[species.size()];
 		for (int i = 0; i < species_list.length; i++) {
@@ -77,7 +91,7 @@ public class EditLayerFrame {
 		Canvas quitTopo = new Canvas(dialog, SWT.BORDER);
 		quitTopo.setBounds(10, 300, 720, 40);
 		final Button buttonOK = new Button(quitTopo, SWT.PUSH);
-		buttonOK.setText("OK");
+		buttonOK.setText("Ok");
 		buttonOK.setBounds(20, 10, 80, 20);
 		buttonOK.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -93,7 +107,7 @@ public class EditLayerFrame {
 		buttonCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				
+				EcoreUtil.delete(elayer);
 				dialog.close();
 			}
 		});

@@ -1,15 +1,15 @@
 package idees.gama.ui.editFrame;
 
 import gama.EAspect;
-import gama.EGamaObject;
 import gama.ELayerAspect;
 import idees.gama.features.edit.EditFeature;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import msi.gama.util.GamaList;
 
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
@@ -30,16 +30,16 @@ public class EditAspectFrame extends EditFrame {
 	
 	StyledText gamlCode;
 	org.eclipse.swt.widgets.List layerViewer;
-	List<String> layerStrs;
 	EditAspectFrame frame;
 	List<ELayerAspect> layers;
 	/**
 	 * Create the application window.
 	 */
-	public EditAspectFrame(Diagram diagram, IFeatureProvider fp, EditFeature eaf, EGamaObject aspect, String name) {	
+	public EditAspectFrame(Diagram diagram, IFeatureProvider fp, EditFeature eaf, EAspect aspect, String name) {	
 		super(diagram, fp, eaf,  aspect, name == null ? "Aspect definition" : name );
 		frame = this;
 		layers = new GamaList<ELayerAspect>();
+		layers.addAll(aspect.getLayers());
 	}
 
 	/**
@@ -49,7 +49,6 @@ public class EditAspectFrame extends EditFrame {
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
-		layerStrs = new GamaList<String>();
 		//****** CANVAS NAME *********
 		Canvas canvasName = canvasName(container);
 		canvasName.setBounds(10, 10, 720, 30);
@@ -58,10 +57,11 @@ public class EditAspectFrame extends EditFrame {
 		Canvas canvasLayers = canvasLayers(container);
 		canvasLayers.setBounds(10, 50, 720, 275);
 				
-				
-		//****** CANVAS VALIDATION *********
-		Canvas canvasValidation = canvasValidation(container);
-		canvasValidation.setBounds(10, 335, 720, 95);
+
+		//****** CANVAS OK/CANCEL *********
+		Canvas canvasOkCancel = canvasOkCancel(container);
+		canvasOkCancel.setBounds(10, 335, 720, 30);
+		
 		return container;
 	}
 	
@@ -73,8 +73,8 @@ public class EditAspectFrame extends EditFrame {
 				
 		layerViewer = new org.eclipse.swt.widgets.List(canvasLayers, SWT.BORDER | SWT.V_SCROLL);
 		
-		for (String lay : layerStrs) {
-			layerViewer.add(lay);
+		for (ELayerAspect lay : layers) {
+			layerViewer.add(lay.getName());
 		}
 		
 		layerViewer.setBounds(5, 30, 700, 200);
@@ -91,81 +91,78 @@ public class EditAspectFrame extends EditFrame {
 			public void widgetSelected(SelectionEvent e) {
 					ELayerAspect elayer = gama.GamaFactory.eINSTANCE.createELayerAspect();
 					elayer.setName("Layer");
-					new EditLayerAspectFrame(elayer, frame); 
+					
+					new EditLayerAspectFrame(elayer, frame, false); 
 				} 
 		});
+		
+		Button editLayerBtn = new Button(canvasLayers, SWT.BUTTON1);
+		editLayerBtn.setBounds(200, 245, 105, 20);
+		editLayerBtn.setText("Edit");
+		editLayerBtn.setSelection(true);
+		editLayerBtn.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				if (layerViewer.getSelectionCount() == 1) {
+					final int index = layerViewer.getSelectionIndex();
+					new EditLayerAspectFrame(layers.get(index), frame, true);
+				}
+			}
+		});
+		
 		Button removeLayerBtn = new Button(canvasLayers, SWT.BUTTON1);
-		removeLayerBtn.setBounds(200, 245, 105, 20);
+		removeLayerBtn.setBounds(320, 245, 105, 20);
 		removeLayerBtn.setText("Remove");
 		removeLayerBtn.setSelection(true);
 		removeLayerBtn.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (layerViewer.getSelectionCount() == 1) {
-					String el = layerViewer.getSelection()[0];
 					final int index = layerViewer.getSelectionIndex();
-					layerStrs.remove(el);
 					layerViewer.remove(index);
-					TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(eobject);
-					if (domain != null) {
-						 domain.getCommandStack().execute(new RecordingCommand(domain) {
-		            	     public void doExecute() {
-		            	    	((EAspect) eobject).getLayerList().remove(index);
-		            	    	List<ELayerAspect> layers= new ArrayList<ELayerAspect>();
-		            	    	for (ELayerAspect lay : layers) {
-		            	    		if (((EAspect) eobject).getLayerList().contains(lay.getName())) {
-		            	    			 layers.add(lay);
-		            	    		}
-		            	    	}
-		            	    	((EAspect) eobject).getLayers().clear();
-		            	    	((EAspect) eobject).getLayers().addAll(layers);
-		            	     }
-		            	  });
-					}
-					ef.hasDoneChanges = true;
+					ELayerAspect lay =layers.remove(index);
+					EcoreUtil.delete(lay);
 				}
 			}
 		});
 		Button btnUp = new Button(canvasLayers, SWT.ARROW | SWT.UP);
-		btnUp.setBounds(320, 245, 105, 20);
+		btnUp.setBounds(440, 245, 105, 20);
 		//btnUp.setText("Up");
 		btnUp.setSelection(true);
 		btnUp.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (layerViewer.getSelectionCount() == 1) {
-					String el = layerViewer.getSelection()[0];
 					int index = layerViewer.getSelectionIndex();
 					if (index > 0) {
-						layerStrs.remove(el);
-						layerStrs.add( index - 1, el);
+						ELayerAspect lay = layers.remove(index);
+						layers.add(index - 1, lay);
 						layerViewer.removeAll();
-						for (String ref : layerStrs) {
-							layerViewer.add(ref);
+						for (ELayerAspect la : layers) {
+							layerViewer.add(la.getName());
 						}
-						modifyLayerOrder();
+						
 					}	
 				}
 			}
 		});
 		Button btnDown = new Button(canvasLayers, SWT.ARROW | SWT.DOWN);
-		btnDown.setBounds(440, 245, 105, 20);
+		btnDown.setBounds(560, 245, 105, 20);
 		//btnDown.setText("Down");
 		btnDown.setSelection(true);
 		btnDown.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (layerViewer.getSelectionCount() == 1) {
-					String el = layerViewer.getSelection()[0];
 					int index = layerViewer.getSelectionIndex();
 					if (index < layerViewer.getItemCount() - 1) {
-						layerStrs.remove(el);
-						layerStrs.add( index + 1, el);
+						
+						ELayerAspect lay = layers.remove(index);
+						layers.add(index + 1, lay);
 						layerViewer.removeAll();
-						for (String ref : layerStrs) {
-							layerViewer.add(ref);
+						for (ELayerAspect la : layers) {
+							layerViewer.add(la.getName());
 						}
-						modifyLayerOrder();
 					}	
 				}
 			}
@@ -179,7 +176,7 @@ public class EditAspectFrame extends EditFrame {
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(743, 475);
+		return new Point(743, 430);
 	}
 
 	public List<ELayerAspect> getLayers() {
@@ -194,17 +191,41 @@ public class EditAspectFrame extends EditFrame {
 		return layerViewer;
 	}
 	
+	protected void clean() {
+		EAspect aspect = ((EAspect) eobject);
+		for (ELayerAspect lay: layers) {
+			if (! aspect.getLayers().contains(lay)) {
+				EcoreUtil.delete((EObject) lay, true);
+			}
+		}	
+		layers.clear();
+	}
+
+	
 	private void modifyLayerOrder() {
+		EAspect aspect = ((EAspect) eobject);
+		for (ELayerAspect lay: aspect.getLayers()) {
+			if (! layers.contains(lay)) {
+				EcoreUtil.delete((EObject) lay, true);
+			}
+		}	
+		aspect.getLayers().clear();
+		aspect.getLayers().addAll(layers);
+	}
+
+	@Override
+	protected void save() {
 		 TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(eobject);
 			if (domain != null) {
 			    domain.getCommandStack().execute(new RecordingCommand(domain) {
 			    	     public void doExecute() {
-			    	 		((EAspect) eobject).getLayerList().clear();
-			    	 		((EAspect) eobject).getLayerList().addAll(layerStrs);
+			    	    	 eobject.setName(textName.getText());
+			    	    	 modifyLayerOrder();
 			    	     }
 			    	  });
 			}
 	    ef.hasDoneChanges = true;  
+		
 	}
 	
 	

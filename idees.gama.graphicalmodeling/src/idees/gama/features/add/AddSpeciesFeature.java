@@ -28,8 +28,8 @@ import org.eclipse.graphiti.util.IColorConstant;
 
 public class AddSpeciesFeature extends AbstractAddShapeFeature {
  
-	public static final int INIT_WIDTH = 150;
-	public static final int INIT_HEIGHT = 75;
+	public static final int INIT_WIDTH = 170;
+	public static final int INIT_HEIGHT = 100;
 	
 	private static final IColorConstant SPECIES_TEXT_FOREGROUND =
         new ColorConstant(0, 0, 0);
@@ -88,11 +88,9 @@ public class AddSpeciesFeature extends AbstractAddShapeFeature {
             	roundedRectangle.setBackground(manageColor(GRID_BACKGROUND));
             else if (addedClass.getTopology() instanceof EGraphTopologyNode) {
             	roundedRectangle.setBackground(manageColor(GRAPH_NODE_BACKGROUND));
-            	System.out.println("ICI : "+ addedClass.getName());
             }
             else if (addedClass.getTopology() instanceof EGraphTopologyEdge)
             	roundedRectangle.setBackground(manageColor(GRAPH_EDGE_BACKGROUND));
-            System.out.println(addedClass.getName() + " : " + addedClass.getTopology() + ": " + roundedRectangle.getBackground());
             
             roundedRectangle.setLineWidth(2);
             gaService.setLocationAndSize(roundedRectangle,
@@ -144,6 +142,9 @@ public class AddSpeciesFeature extends AbstractAddShapeFeature {
            // create and set text graphics algorithm
             String variables = "";
             for (EVariable var:addedClass.getVariables() ) {
+            	if (var.getName().equals("shape") || var.getName().equals("location"))
+    				continue;
+    			
             	variables += (var.getType().isEmpty() ? "var" : var.getType()) + " " + var.getName()+ "\n";
             }
             Text text2 = gaService.createDefaultText(getDiagram(), shape2,

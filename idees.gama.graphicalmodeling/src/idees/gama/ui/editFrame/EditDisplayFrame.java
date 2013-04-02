@@ -1,19 +1,18 @@
 package idees.gama.ui.editFrame;
 
-import gama.EAspect;
 import gama.EDisplay;
 import gama.EGamaObject;
 import gama.EGridTopology; 
 import gama.ELayer;
-import gama.ELayerAspect;
 import gama.ESpecies;
 import idees.gama.features.edit.EditFeature;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import msi.gama.util.GamaList;
 
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
@@ -51,7 +50,11 @@ public class EditDisplayFrame extends EditFrame {
 	List<ESpecies> species;
 	List<ESpecies> grids;
 
+	Button btnCstCol;
 	Color color;
+	RGB rgb;
+	Label colorLabel;
+	Button btnOpenGL;
 
 	/**
 	 * Create the application window.
@@ -62,6 +65,8 @@ public class EditDisplayFrame extends EditFrame {
 				: name);
 		species = new GamaList<ESpecies>();
 		grids = new GamaList<ESpecies>();
+		layers = new GamaList<ELayer>();
+		
 		List<Shape> contents = diagram.getChildren();
 		for (Shape sh : contents) {
 			Object obj = fp.getBusinessObjectForPictogramElement(sh);
@@ -75,8 +80,29 @@ public class EditDisplayFrame extends EditFrame {
 			}
 		}
 		frame = this;
-		layers = new GamaList<ELayer>();
 	}
+	
+	private void loadData() {
+		EDisplay display = (EDisplay) eobject;
+		layers.addAll(display.getLayers());
+		if (display.getIsColorCst()!= null)
+			btnCstCol.setSelection(display.getIsColorCst());
+		if (display.getName()!= null)
+			textName.setText(display.getName());
+		if (display.getColor()!= null)
+			textColor.setText(display.getColor());
+		if (! display.getColorRBG().isEmpty()) {
+			rgb = new RGB(display.getColorRBG().get(0), display.getColorRBG().get(1), display.getColorRBG().get(2));
+			 color.dispose();
+	         color = new Color(frame.getShell().getDisplay(), rgb);
+	         colorLabel.setBackground(color);
+		}
+		if (display.getOpengl()!= null)
+			btnOpenGL.setSelection(display.getOpengl());
+		if (display.getRefresh()!= null)
+			textRefresh.setText(display.getRefresh());
+	}
+
 
 	/**
 	 * Create contents of the application window.
@@ -99,126 +125,118 @@ public class EditDisplayFrame extends EditFrame {
 		Canvas canvasParam = buildCanvasParam(container);
 		canvasParam.setBounds(10, 335, 720, 100);
 
-		// ****** CANVAS VALIDATION *********
-		Canvas canvasValidation = canvasValidation(container);
-		canvasValidation.setBounds(10, 445, 720, 95);
+		//****** CANVAS OK/CANCEL *********
+		Canvas canvasOkCancel = canvasOkCancel(container);
+		canvasOkCancel.setBounds(10, 445, 720, 30);
+
+		loadData();
 		return container;
 	}
 
 	protected Canvas canvasLayers(Composite container) {
 
-		// ****** CANVAS LAYERS *********
-		Canvas canvasLayers = new Canvas(container, SWT.BORDER);
-		canvasLayers.setBounds(10, 515, 720, 275);
-
-		layerViewer = new org.eclipse.swt.widgets.List(canvasLayers, SWT.BORDER
-				| SWT.V_SCROLL);
-
-		for (String lay : layerStrs) {
-			layerViewer.add(lay);
-		}
-
-		layerViewer.setBounds(5, 30, 700, 200);
-		CLabel lblReflexOrder = new CLabel(canvasLayers, SWT.NONE);
-		lblReflexOrder.setBounds(5, 5, 100, 20);
-		lblReflexOrder.setText("Layers");
-
-		Button addLayerBtn = new Button(canvasLayers, SWT.BUTTON1);
-		addLayerBtn.setBounds(80, 245, 105, 20);
-		addLayerBtn.setText("Add");
-		addLayerBtn.setSelection(true);
-		addLayerBtn.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				ELayer elayer = gama.GamaFactory.eINSTANCE.createELayer();
-				elayer.setName("Layer");
-				new EditLayerFrame(elayer, frame, species, grids);
-			}
-		});
-		Button removeLayerBtn = new Button(canvasLayers, SWT.BUTTON1);
-		removeLayerBtn.setBounds(200, 245, 105, 20);
-		removeLayerBtn.setText("Remove");
-		removeLayerBtn.setSelection(true);
-		removeLayerBtn.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (layerViewer.getSelectionCount() == 1) {
-					String el = layerViewer.getSelection()[0];
-					final int index = layerViewer.getSelectionIndex();
-					layerStrs.remove(el);
-					layerViewer.remove(index);
-					TransactionalEditingDomain domain = TransactionUtil
-							.getEditingDomain(eobject);
-					if (domain != null) {
-						domain.getCommandStack().execute(
-								new RecordingCommand(domain) {
-									public void doExecute() {
-										((EAspect) eobject).getLayerList()
-												.remove(index);
-										List<ELayerAspect> layers = new ArrayList<ELayerAspect>();
-										for (ELayerAspect lay : layers) {
-											if (((EAspect) eobject)
-													.getLayerList().contains(
-															lay.getName())) {
-												layers.add(lay);
-											}
-										}
-										((EAspect) eobject).getLayers().clear();
-										((EAspect) eobject).getLayers().addAll(
-												layers);
-									}
-								});
-					}
-					ef.hasDoneChanges = true;
+		//****** CANVAS LAYERS *********
+				Canvas canvasLayers = new Canvas(container, SWT.BORDER);
+				canvasLayers.setBounds(10, 515, 720, 275);
+						
+				layerViewer = new org.eclipse.swt.widgets.List(canvasLayers, SWT.BORDER | SWT.V_SCROLL);
+				
+				for (ELayer lay : layers) {
+					layerViewer.add(lay.getName());
 				}
-			}
-		});
-		Button btnUp = new Button(canvasLayers, SWT.ARROW | SWT.UP);
-		btnUp.setBounds(320, 245, 105, 20);
-		// btnUp.setText("Up");
-		btnUp.setSelection(true);
-		btnUp.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (layerViewer.getSelectionCount() == 1) {
-					String el = layerViewer.getSelection()[0];
-					int index = layerViewer.getSelectionIndex();
-					if (index > 0) {
-						layerStrs.remove(el);
-						layerStrs.add(index - 1, el);
-						layerViewer.removeAll();
-						for (String ref : layerStrs) {
-							layerViewer.add(ref);
+				
+				layerViewer.setBounds(5, 30, 700, 200);
+				CLabel lblReflexOrder = new CLabel(canvasLayers, SWT.NONE);
+				lblReflexOrder.setBounds(5, 5, 100, 20);
+				lblReflexOrder.setText("Layers");
+				
+				Button addLayerBtn = new Button(canvasLayers, SWT.BUTTON1);
+				addLayerBtn.setBounds(80, 245, 105, 20);
+				addLayerBtn.setText("Add");
+				addLayerBtn.setSelection(true);
+				addLayerBtn.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+							ELayer elayer = gama.GamaFactory.eINSTANCE.createELayer();
+							elayer.setName("Layer");
+							
+							new EditLayerFrame(elayer, frame, species, grids, false); 
+						} 
+				});
+				
+				Button editLayerBtn = new Button(canvasLayers, SWT.BUTTON1);
+				editLayerBtn.setBounds(200, 245, 105, 20);
+				editLayerBtn.setText("Edit");
+				editLayerBtn.setSelection(true);
+				editLayerBtn.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						if (layerViewer.getSelectionCount() == 1) {
+							final int index = layerViewer.getSelectionIndex();
+							new EditLayerFrame(layers.get(index), frame, species, grids, true); 
 						}
-						modifyLayerOrder();
 					}
-				}
-			}
-		});
-		Button btnDown = new Button(canvasLayers, SWT.ARROW | SWT.DOWN);
-		btnDown.setBounds(440, 245, 105, 20);
-		// btnDown.setText("Down");
-		btnDown.setSelection(true);
-		btnDown.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				if (layerViewer.getSelectionCount() == 1) {
-					String el = layerViewer.getSelection()[0];
-					int index = layerViewer.getSelectionIndex();
-					if (index < layerViewer.getItemCount() - 1) {
-						layerStrs.remove(el);
-						layerStrs.add(index + 1, el);
-						layerViewer.removeAll();
-						for (String ref : layerStrs) {
-							layerViewer.add(ref);
+				});
+				
+				Button removeLayerBtn = new Button(canvasLayers, SWT.BUTTON1);
+				removeLayerBtn.setBounds(320, 245, 105, 20);
+				removeLayerBtn.setText("Remove");
+				removeLayerBtn.setSelection(true);
+				removeLayerBtn.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						if (layerViewer.getSelectionCount() == 1) {
+							final int index = layerViewer.getSelectionIndex();
+							layerViewer.remove(index);
+							ELayer lay =layers.remove(index);
+							EcoreUtil.delete(lay);
 						}
-						modifyLayerOrder();
 					}
-				}
+				});
+				Button btnUp = new Button(canvasLayers, SWT.ARROW | SWT.UP);
+				btnUp.setBounds(440, 245, 105, 20);
+				//btnUp.setText("Up");
+				btnUp.setSelection(true);
+				btnUp.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						if (layerViewer.getSelectionCount() == 1) {
+							int index = layerViewer.getSelectionIndex();
+							if (index > 0) {
+								ELayer lay = layers.remove(index);
+								layers.add(index - 1, lay);
+								layerViewer.removeAll();
+								for (ELayer la : layers) {
+									layerViewer.add(la.getName());
+								}
+								
+							}	
+						}
+					}
+				});
+				Button btnDown = new Button(canvasLayers, SWT.ARROW | SWT.DOWN);
+				btnDown.setBounds(560, 245, 105, 20);
+				//btnDown.setText("Down");
+				btnDown.setSelection(true);
+				btnDown.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						if (layerViewer.getSelectionCount() == 1) {
+							int index = layerViewer.getSelectionIndex();
+							if (index < layerViewer.getItemCount() - 1) {
+								
+								ELayer lay = layers.remove(index);
+								layers.add(index + 1, lay);
+								layerViewer.removeAll();
+								for (ELayer la : layers) {
+									layerViewer.add(la.getName());
+								}
+							}	
+						}
+					}
+				});
+				return canvasLayers;
 			}
-		});
-		return canvasLayers;
-	}
 
 	public Canvas buildCanvasParam(Composite container) {
 		// ****** CANVAS PARAMETERS *********
@@ -228,29 +246,26 @@ public class EditDisplayFrame extends EditFrame {
 
 		// COLOR
 		CLabel lblColor = new CLabel(canvasParam, SWT.NONE);
-		lblColor.setBounds(10, 10, 60, 20);
-		lblColor.setText("Color");
+		lblColor.setBounds(10, 10, 100, 20);
+		lblColor.setText("Background color");
 
 		textColor = new Text(canvasParam, SWT.BORDER);
-		textColor.setBounds(425, 10, 250, 18);
-		textColor.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent event) {
-				// modifyLocation(textColor.getText());
-			}
-		});
+		textColor.setBounds(465, 10, 200, 18);
 
-		// Start with Celtics green
-		color = frame.getShell().getDisplay().getSystemColor(SWT.COLOR_BLUE);
+		// Start with white
+
+		rgb = new RGB(255, 255, 255);		
+		color = new Color(frame.getShell().getDisplay(), rgb);
 
 		// Use a label full of spaces to show the color
-		final Label colorLabel = new Label(canvasParam, SWT.NONE);
+		colorLabel = new Label(canvasParam, SWT.NONE);
 		colorLabel.setText("    ");
 		colorLabel.setBackground(color);
-		colorLabel.setBounds(160, 10, 50, 18);
+		colorLabel.setBounds(190, 10, 50, 18);
 
 		Button button = new Button(canvasParam, SWT.PUSH);
 		button.setText("Color...");
-		button.setBounds(220, 10, 80, 20);
+		button.setBounds(250, 10, 80, 20);
 		button.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent event) {
 				// Create the color-change dialog
@@ -275,17 +290,15 @@ public class EditDisplayFrame extends EditFrame {
 			}
 		});
 		Composite cColor = new Composite(canvasParam, SWT.NONE);
-		cColor.setBounds(80, 10, 400, 18);
+		cColor.setBounds(110, 10, 400, 18);
 
-		Button btnCstCol = new Button(cColor, SWT.RADIO);
-		btnCstCol.setBounds(0, 0, 80, 18);
+		btnCstCol = new Button(cColor, SWT.RADIO);
+		btnCstCol.setBounds(0, 0, 85, 18);
 		btnCstCol.setText("Constant");
 		btnCstCol.setSelection(true);
 		btnCstCol.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				textColor.setEnabled(false);
-				// locStr = "random";
-				// modifyLocation("any_location_in(world.shape)");
 			}
 		});
 
@@ -296,7 +309,6 @@ public class EditDisplayFrame extends EditFrame {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				textColor.setEnabled(true);
-				// modifyLocation(textColor.getText());
 			}
 		});
 
@@ -353,7 +365,7 @@ public class EditDisplayFrame extends EditFrame {
 			}
 		});
 
-		Button btnOpenGL = new Button(cOpenGl, SWT.RADIO);
+		btnOpenGL = new Button(cOpenGl, SWT.RADIO);
 		btnOpenGL.setBounds(120, 0, 85, 18);
 		btnOpenGL.setText("Open GL");
 		btnOpenGL.addSelectionListener(new SelectionAdapter() {
@@ -381,7 +393,7 @@ public class EditDisplayFrame extends EditFrame {
 	 */
 	@Override
 	protected Point getInitialSize() {
-		return new Point(743, 595);
+		return new Point(743, 545);
 	}
 
 	public List<ELayer> getLayers() {
@@ -395,19 +407,69 @@ public class EditDisplayFrame extends EditFrame {
 	public org.eclipse.swt.widgets.List getLayerViewer() {
 		return layerViewer;
 	}
+	
+	private void modifyOtherProperties() {
+		EDisplay display = (EDisplay) eobject;
+		display.setName(textName.getText());
+		display.setIsColorCst(btnCstCol.getSelection());
+		display.setColor(textColor.getText());
+		
+		display.getColorRBG().add(rgb.red);
+		display.getColorRBG().add(rgb.green);
+		display.getColorRBG().add(rgb.blue);
+		
+		display.setOpengl(btnOpenGL.getSelection());
+		display.setRefresh(textRefresh.getText());
+		
+		String model = "display " + display.getName() ;
+    	String refresh = ((display.getRefresh() == null)|| (display.getRefresh().isEmpty())|| display.getRefresh().equals("1")) ? "" : " refresh_every: " + display.getRefresh();
+    	String type = (display.getOpengl() != null && display.getOpengl()) ? " type: opengl" : "";
+    	String background = "";
+    	if (display.getIsColorCst()) {
+    		background += " background: rgb(" + display.getColorRBG() + ")" ;
+		} else {
+			background += " background: " + display.getColor();
+		}
+    	model +=  background + refresh + type+" {";
+    	display.setGamlCode(model);
+    	
+	}
 
 	private void modifyLayerOrder() {
+		EDisplay display = ((EDisplay) eobject);
+		for (ELayer lay: display.getLayers()) {
+			if (! layers.contains(lay)) {
+				EcoreUtil.delete((EObject) lay, true);
+			}
+		}	
+		display.getLayers().clear();
+		display.getLayers().addAll(layers);
+	}
+
+	@Override
+	protected void save() {
 		TransactionalEditingDomain domain = TransactionUtil
 				.getEditingDomain(eobject);
 		if (domain != null) {
 			domain.getCommandStack().execute(new RecordingCommand(domain) {
 				public void doExecute() {
-					((EAspect) eobject).getLayerList().clear();
-					((EAspect) eobject).getLayerList().addAll(layerStrs);
+					modifyLayerOrder();
+					modifyOtherProperties();
 				}
 			});
 		}
 		ef.hasDoneChanges = true;
+		
+	}
+	
+	protected void clean() {
+		EDisplay display = ((EDisplay) eobject);
+		for (ELayer lay: layers) {
+			if (! display.getLayers().contains(lay)) {
+				EcoreUtil.delete((EObject) lay, true);
+			}
+		}	
+		layers.clear();
 	}
 
 }

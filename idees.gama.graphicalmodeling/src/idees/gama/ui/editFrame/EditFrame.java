@@ -11,7 +11,10 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.window.ApplicationWindow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
@@ -25,12 +28,15 @@ public abstract class EditFrame extends ApplicationWindow {
 	EGamaObject eobject;
 	StyledText validationResult;
 	Text textName;
+	EditFrame frame;
+	
 	/**
 	 * Create the application window.
 	 */
 	public EditFrame(Diagram diagram, IFeatureProvider fp, EditFeature ef,EGamaObject eobject, String name) {
 		super(null);
 		this.diagram = diagram;
+		frame = this;
 		this.fp = fp;
 		this.ef = ef; 
 		this.name = name;		
@@ -109,5 +115,45 @@ public abstract class EditFrame extends ApplicationWindow {
 		return new Point(743, 727);
 	}
 	
+	protected Canvas canvasOkCancel(Composite container) {
+		//****** CANVAS OK CANCEL BUTTONS *********
+		Canvas canvasOKCancel = new Canvas(container, SWT.BORDER);
+		canvasOKCancel.setBounds(10, 460, 720, 30);	
+
+		final Button buttonOK = new Button(canvasOKCancel, SWT.PUSH);
+		buttonOK.setText("Ok");
+		buttonOK.setBounds(150, 5, 80, 20);
+		buttonOK.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+
+				frame.save();
+				frame.close();
+			} 
+		});
+
+		Button buttonCancel = new Button(canvasOKCancel, SWT.PUSH);
+		buttonCancel.setText("Cancel");
+		buttonCancel.setBounds(350, 5, 80, 20);
+		buttonCancel.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				frame.clean();
+				frame.close();
+			}
+		});
+		return canvasOKCancel;
+	}
+	
+	protected abstract void save();
+	 
+	@Override
+	public void create() {
+	    setShellStyle(SWT.DIALOG_TRIM);
+	    super.create();
+	}
+	
+	protected void clean() {
+	}
 	
 }

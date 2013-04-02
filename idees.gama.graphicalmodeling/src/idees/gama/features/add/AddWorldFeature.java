@@ -24,8 +24,8 @@ import org.eclipse.graphiti.util.IColorConstant;
 
 public class AddWorldFeature extends AbstractAddShapeFeature {
  
-	public static final int INIT_WIDTH = 150;
-	public static final int INIT_HEIGHT = 75;
+	public static final int INIT_WIDTH = 170;
+	public static final int INIT_HEIGHT = 100;
 	
 	private static final IColorConstant SPECIES_TEXT_FOREGROUND =
         new ColorConstant(0, 0, 0);
@@ -125,7 +125,9 @@ public class AddWorldFeature extends AbstractAddShapeFeature {
             // create and set text graphics algorithm
             String variables = "";
             for (EVariable var:addedClass.getVariables() ) {
-            	variables += (var.getType().isEmpty() ? "var" : var.getType()) + " " + var.getName()+ "\n";
+            	if (var.getName().equals("shape") || var.getName().equals("location"))
+    				continue;
+    			variables += (var.getType().isEmpty() ? "var" : var.getType()) + " " + var.getName()+ "\n";
             }
             Text text2 = gaService.createDefaultText(getDiagram(), shape2,
             		variables);

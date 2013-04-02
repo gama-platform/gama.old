@@ -20,38 +20,39 @@ import gama.EWorldAgent;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import msi.gama.common.interfaces.ISyntacticElement;
-import msi.gama.kernel.model.IModel;
-import msi.gama.lang.gaml.resource.GamlResource;
-import msi.gama.lang.gaml.validation.GamlBuilder;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.factories.DescriptionFactory;
-import msi.gaml.factories.ModelStructure;
-
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.ICustomContext;
 import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.Shape;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.IDE;
 
 public class ModelGenerationFeature extends AbstractCustomFeature {
  
     private boolean hasDoneChanges = false;
+    private Display display;
     private static String EL = System.getProperty("line.separator" ); 
      
     public ModelGenerationFeature(IFeatureProvider fp) {
         super(fp);
+        this.display = Display.getDefault();
        
  
     }
@@ -81,26 +82,53 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     		} else {
     			return;
     		}
-    		
-            uri = uri.trimFragment();
+    		 uri = uri.trimFragment();
             if (uri.isPlatform()) {
                 uri = URI.createURI( uri.toPlatformString( true ) );
             }
+            String containerStr = "/"+ uri.segment(0);
             String path = ResourcesPlugin.getWorkspace().getRoot().getLocation() + uri.path();
             path = path.replace(".diagram", ".gaml");
            
             File file = new File(path);
-     
+            if (file.exists()) file.delete();
             FileWriter fw;
 			try {
 				fw = new FileWriter(file, false);
 				fw.write(gamlModel);
 		        fw.close();
+		       
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			 IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		        IResource resource = root.findMember(new Path(containerStr));
+		        
+		        IContainer container = resource.getProject();				
+				
+				final IFile fileP = container.getFile(new Path("diagrams/" + uri.lastSegment().replace(".diagram", ".gaml")));
+				
+		        doFinish(fileP);
+			
         
     }
+    
+    private void doFinish(final IFile file) {
+    	display.asyncExec(new Runnable() {
+
+    			@Override
+    			public void run() {
+    				IWorkbenchPage page =
+    					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+    				try {
+    					IDE.openEditor(page, file, true);
+    				} catch (PartInitException e) {
+    					e.printStackTrace();
+    				}
+    			}
+    		});
+    	}
+
     
        
     static String defineSpecies(ESpecies species, int level) {
@@ -110,9 +138,20 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     		sp += "\t";
     	}
     	model += sp;
-    	if(species.getTopology() instanceof EGridTopology) 
-    		model += "grid " + species.getName() ;
-    	else 
+    	if(species.getTopology() != null && species.getTopology() instanceof EGridTopology)  {
+    		EGridTopology gt = (EGridTopology) species.getTopology();
+    		model += "grid " + species.getName() + " width:" + gt.getNb_columns()+ " height:" + gt.getNb_rows();
+    		model +=" neighbours:"; 
+    		if (gt.getNeighbourhoodType() == null) {
+    			model += "4";
+    		} else {
+	    		if (gt.getNeighbourhoodType().equals("expression"))
+	    			model += gt.getNeighbourhood();
+	    		else 
+	    			model += gt.getNeighbourhoodType().toCharArray()[0];
+    		}
+    		model += " torus:" + (species.getTorus() == null ? "false" : species.getTorus()) ;
+    	} else 
     		model += "species " + species.getName() ;
     	if (species.getInheritsFrom() != null) {
     		model += " parent:" + species.getInheritsFrom().getName();
@@ -216,33 +255,8 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     		sp += "\t";
     	}
     	result += sp + "aspect " + asp.getName() + " {" + EL;
-    	 Map<String, ELayerAspect> layerMap = new Hashtable<String, ELayerAspect>();
-       	 for (ELayerAspect lay : asp.getLayers()) {
-       		layerMap.put(lay.getName(), lay);
-       	 }
-    	for (String layStr : asp.getLayerList()) {
-    		ELayerAspect lay = layerMap.get(layStr);
-    	
-    		result += sp + "\tdraw "; 
-    		if (lay.getType().equals("expression")) {
-    			result += lay.getExpression();
-    		} else if (lay.getType().equals("polyline") || lay.getType().equals("polygon")) {
-    				result += lay.getType() +"(" + lay.getPoints() + ")";
-    		} else if (lay.getType().equals("circle") || lay.getType().equals("sphere")) {
-    			result += lay.getType() +"(" + lay.getRadius() + ")";
-    		} else if (lay.getType().equals("square") ) {
-    			result += lay.getType() +"(" + lay.getSize() + ")";
-    		} else if (lay.getType().equals("rectangle") || lay.getType().equals("hexagon")) {
-    			result += lay.getType() +"({" + lay.getWidth() + "," + lay.getHeigth()+ "})";
-    		} else if (lay.getType().equals("image")) {
-    			result +=  lay.getPath() + " size: " + lay.getSize();
-    		} else if (lay.getType().equals("text")) {
-    			String at = ((lay.getAt() == null) || lay.getAt().isEmpty()) ? "" : " at: " + lay.getAt();
-    			result += lay.getText() + " size: " + lay.getSize() + at;
-    		}
-    		String rotate = ((lay.getRotate() == null)|| (lay.getRotate().isEmpty())|| lay.getRotate().equals("0.0") || lay.getRotate().equals("0")) ? "" : " rotate: " + lay.getRotate();
-			
-    		result += rotate + " color: rgb(" + lay.getColor() + ");" + EL;
+    	for (ELayerAspect lay : asp.getLayers()) {
+    		result += sp + "\t" + lay.getGamlCode() + ";" + EL;
     	}
     	result +=EL + sp + "}" + EL;
     	return result;
@@ -265,10 +279,13 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     
     static String defineDisplay(EDisplayLink link) {
     	EDisplay disp = link.getDisplay();
-    	String model = EL + "\t\tdisplay " + disp.getName() ;
-    	String refresh = ((disp.getRefresh() == null)|| (disp.getRefresh().isEmpty())|| disp.getRefresh().equals("1")) ? "" : " refresh_every: " + disp.getRefresh();
-    	String type = disp.getOpengl() ? " type: opengl" : "";
-    	model +=  " background: rgb(" + disp.getBackground() + refresh + type+" {"+ EL;
+    	String model = EL + "\t\t";
+    	if (disp.getGamlCode() == null || disp.getGamlCode().isEmpty()) {
+    		model += "display " + disp.getName() + "{}";
+    		return model;
+    	} else {
+    		model +=  disp.getGamlCode()+ EL;
+    	}
     	 Map<String, ELayer> layerMap = new Hashtable<String, ELayer>();
        	 for (ELayer lay : disp.getLayers()) {
        		layerMap.put(lay.getName(), lay);
@@ -344,14 +361,13 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
 	       	model += "}";
 	       	model += EL + "entities {";
             for (ESubSpeciesLink link : worldAgent.getMicroSpeciesLinks()) {
-            	model += defineSpecies((ESpecies) link.getTarget(),1);
+            	model += defineSpecies((ESpecies) link.getMicro(),1);
             }
             
             model += EL + "}";
             
             for (EExperimentLink link : worldAgent.getExperimentLinks()) {
-            	System.out.println("link :  " + link);
-	       		 model += defineExperiment(link.getExperiment());
+            	 model += defineExperiment(link.getExperiment());
 	        }
 	 
         }
@@ -360,7 +376,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     
     public static String loadModel(final String fileName) {
 		String result="";
-    	IModel lastModel = null;
+		/*IModel lastModel = null;
 		ResourceSet rs = new ResourceSetImpl();
 		GamlResource r = (GamlResource) rs.getResource(URI.createURI("file:///" + fileName), true);
 		try {
@@ -385,7 +401,7 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		}
+		}*/
 		return result;
 	}
 }

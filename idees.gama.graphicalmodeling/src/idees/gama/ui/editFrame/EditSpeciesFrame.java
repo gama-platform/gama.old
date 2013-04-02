@@ -1,16 +1,21 @@
 package idees.gama.ui.editFrame;
 
 
+import gama.EGraphTopologyEdge;
+import gama.EGraphTopologyNode;
+import gama.EGridTopology;
 import gama.EReflexLink;
 import gama.ESpecies;
 import gama.EVariable;
+import gama.EWorldAgent;
 import idees.gama.features.edit.EditSpeciesFeature;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import msi.gama.util.GamaList;
 
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
@@ -19,6 +24,7 @@ import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -26,6 +32,7 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Button;
@@ -54,30 +61,94 @@ public class EditSpeciesFrame extends EditFrame {
 	private Text textSize;
 	private Text textPoints;
 	private Text textShape;
+	private Text textShapeUpdate;
+	private Text textShapeFunction;
 	Composite sizeComp;
 	Composite radiusComp;
 	Composite wHComp;
 	Composite pointsComp;
 	Composite expShapeComp;
 	org.eclipse.swt.widgets.List reflexViewer;
+	org.eclipse.swt.widgets.List skillsViewer;
 	List<String> reflexStrs;
-	
+	List<String> skillsStrs;
+	Button btnRndLoc; 
+	Button btnExpressionLoc; 
+	Button btnYesTorus;
+	Button btnExpressionTorus;
+	Button btnNoTorus;
+	Button btnShapeNormal;
+	Button btnShapeFct;
 	//Torus
 	private Text textTorus;
 	//private String torusStr;
 	
 	//Location
 	private Text textLoc;
-	//private String locStr;
+	private Text textLocUpdate;
+	private Text textLocFunction;
+	
+	//grid
+	private CCombo comboNeighborhood;
+	private Text textNeighborhood;
+	private Text textNbCols;
+	private Text textNbRows;
+	private String[] type_neighborhood = {"4 (square - von Neumann)", "8 (square - Moore)", "6 (hexagon)", "expression"};
+
+	Button btnLocNormal;
+	Button btnLocFct;
+	
+	//bounds
+	private String[] type_bounds = {"width-height", "file", "expression"};
+	private CCombo comboBounds;
+	private Text textBoundsWidth;
+	private Text textBoundsHeight;
+	private Text textBoundsExpression;
+	private Text textBoundsFile;
+	Font titleFont;
+	
+	//topology
+//	private String[] type_topo = {"continuous", "grid", "graph_node", "graph_edge"};
+//	private CCombo comboTopo;
+	
 	
 	/**
 	 * Create the application window.
 	 */
 	public EditSpeciesFrame(Diagram diagram, IFeatureProvider fp, EditSpeciesFeature esf, ESpecies species, List<ESpecies> speciesList) {
 		super(diagram, fp, esf,  species, "Species definition" );
-		reflexStrs = new ArrayList<String>();
+		skillsStrs = new GamaList<String>();
+		skillsStrs.add("moving");
+		skillsStrs.add("communicating");
+		skillsStrs.add("EDP");
+		skillsStrs.add("driving");
+		skillsStrs.add("optimizing");
+		skillsStrs.add("physical3D");
+		skillsStrs.add("SQLSKILL");
+		if (species.getSkills() != null) {
+			for (String sk: species.getSkills()) {
+				skillsStrs.remove(sk);
+				skillsViewer.add(sk);
+			}
+		}	
+		reflexStrs = new GamaList<String>();
+		List<String> newReflex = new GamaList<String>();
 		for (EReflexLink link: species.getReflexLinks()) {
-				reflexStrs.add(link.getTarget().getName());
+			newReflex.add(link.getTarget().getName());
+		}
+		if (species.getReflexList() == null ||species.getReflexList().isEmpty() ) {
+			reflexStrs.addAll(newReflex);
+		} else {
+			for (String ref : species.getReflexList()) {
+				if (newReflex.contains(ref)) {
+					reflexStrs.add(ref);
+				}
+			}
+			for (String ref : newReflex) {
+				if (!reflexStrs.contains(ref)) {
+					reflexStrs.add(ref);
+				}
+			}
 		}
 		for (ESpecies sp : speciesList) 
 			types.add(sp.getName());
@@ -89,97 +160,261 @@ public class EditSpeciesFrame extends EditFrame {
 	 */
 	@Override
 	protected Control createContents(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
+		final ScrolledComposite sc = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.BORDER);
+	    final Composite container= new Composite(sc, SWT.BORDER);
+	    //Composite container = new Composite(parent, SWT.SCROLL_PAGE);
+		titleFont = new Font(getShell().getDisplay(),"Arial",14,SWT.BOLD); 
 		
-		Canvas canvasName = canvasName(container);
-		canvasName.setBounds(10, 10, 720, 30);
-		
-		buildVariableCanvas(container);
-		
-		
-		//****** CANVAS VALIDATION *********
-		Canvas canvasValidation = canvasValidation(container);
-		canvasValidation.setBounds(10, 580, 720, 95);
-		
-		buildCanvasTopo(container);
-		buildCanvasReflex(container);
-		
+		ESpecies species = (ESpecies) eobject;
+		commonCompositeHeader(container);
+
+		sc.setContent(container);
+		sc.setExpandHorizontal(true);
+		sc.setExpandVertical(true);
+			//CANVAS SIZE : NAME:30, VAR:200, TORUS:30, LOC:130, REFLEX:110, SHAPE:220, SKILLS: 110 BOUNDS: 80 GRID: 80
+		if (eobject instanceof EWorldAgent) {	
+			Canvas canvasTor = canvasTorus(container);
+			canvasTor.setLocation(10, 160);
+			Canvas canvasBounds = canvasBounds(container);
+			canvasBounds.setLocation(10, 200);	
+			Composite comp = commonCompositeEnd(container);
+			comp.setLocation(0, 290);
+			container.setSize(730, 680);
+			sc.setMinSize(container.computeSize(730, 680));
+		} else if (species.getTopology() instanceof EGridTopology){
+			gridTopo(container);
+			container.setSize(730, 670);
+			sc.setMinSize(container.computeSize(730, 670));
+		} else if (species.getTopology() instanceof EGraphTopologyNode){
+			graphNodeTopo(container);
+			container.setSize(730, 920);
+			sc.setMinSize(container.computeSize(730, 920));
+		} else if (species.getTopology() instanceof EGraphTopologyEdge){
+			graphEdgeTopo(container);
+			container.setSize(730, 920);
+			sc.setMinSize(container.computeSize(730, 920));
+		} else {
+			graphNodeContinuous(container);
+			container.setSize(730, 920);
+			sc.setMinSize(container.computeSize(730, 920));
+		}	
 		return container;
 	}
 	
+	private Composite commonCompositeHeader(Composite container) {
+		//CANVAS SIZE : NAME:30, SKILLS: 110
+		Composite comp = new Composite(container, SWT.NONE);
+		comp.setBounds(0, 0, 720, 160);
+		Canvas canvasName = canvasName(comp);
+		canvasName.setLocation(10, 10);
+		Canvas canvasSkills = canvasSkills(comp);
+		canvasSkills.setLocation(10, 50);
+		return comp;
+	}
+	
+	private Composite commonCompositeEnd(Composite container) {
+		// VAR:200, REFLEX:110, OKCANCEL: 30
+		Composite comp = new Composite(container, SWT.NONE);
+		comp.setBounds(0, 0, 730, 370);
+		Canvas canvasVar = canvasVariables(comp);
+		Canvas canvasRef = canvasReflex(comp);
+		Canvas canvasOkCancel = canvasOkCancel(comp);
+		canvasVar.setLocation(10, 0);
+		canvasRef.setLocation(10, 210);
+		canvasOkCancel.setLocation(10, 330);
+		return comp;
+	}
+	
+	private Composite gridTopo(Composite container) {
+		// VAR:200, REFLEX:110, OKCANCEL: 30 //END: 370
+		Composite comp = new Composite(container, SWT.NONE);
+		comp.setBounds(0, 0, 730, 670);
+		Canvas canvasTor = canvasTorus(comp);
+		canvasTor.setLocation(10, 160);
+		Canvas canvasGrid = canvasGrid(comp);
+		canvasGrid.setLocation(10, 200);
+		Composite compEnd = commonCompositeEnd(comp);
+		compEnd.setLocation(0, 290);
+		return comp;
+	}
+	private Composite graphNodeTopo(Composite container) {
+		// VAR:200, REFLEX:110, OKCANCEL: 30 //END: 370
+		Composite comp = new Composite(container, SWT.NONE);
+		comp.setBounds(0, 0, 730, 910);
+		Canvas canvasLoc = canvasLocation(comp);
+		canvasLoc.setLocation(10, 160);
+		Canvas canvasShape = canvasShape(comp);
+		canvasShape.setLocation(10, 300);	
+		Composite compEnd = commonCompositeEnd(comp);
+		compEnd.setLocation(0, 530);
+		return comp;
+	}
+	private Composite graphEdgeTopo(Composite container) {
+		// VAR:200, REFLEX:110, OKCANCEL: 30 //END: 370
+		Composite comp = new Composite(container, SWT.NONE);
+		comp.setBounds(0, 0, 730, 910);
+		Canvas canvasLoc = canvasLocation(comp);
+		canvasLoc.setLocation(10, 160);
+		Canvas canvasShape = canvasShape(comp);
+		canvasShape.setLocation(10, 300);	
+		Composite compEnd = commonCompositeEnd(comp);
+		compEnd.setLocation(0, 530);
+		return comp;
+	}
+	private Composite graphNodeContinuous(Composite container) {
+		// VAR:200, REFLEX:110, OKCANCEL: 30 //END: 370
+		Composite comp = new Composite(container, SWT.NONE);
+		comp.setBounds(0, 0, 730, 910);
+		Canvas canvasLoc = canvasLocation(comp);
+		canvasLoc.setLocation(10, 160);
+		Canvas canvasShape = canvasShape(comp);
+		canvasShape.setLocation(10, 300);	
+		Composite compEnd = commonCompositeEnd(comp);
+		compEnd.setLocation(0, 530);
+		return comp;
+	}
+	
 	private EVariable getEVariable(String name) {
+		if ((((ESpecies) eobject).getVariables() == null) || ((ESpecies) eobject).getVariables().isEmpty())
+			return null;
 		for (EVariable var : ((ESpecies) eobject).getVariables()) {
-			if (var.getName().equals(name)) {
+			if (var == null)
+				continue;
+			if (name.equals(var.getName())) {
 				return var;
 			}
 		}
 		return null;
 	}
 	
-	private void modifyShape(final String newShape) {
+	private void modifyVariables() {
+		ESpecies species = (ESpecies) eobject;
+		List<EVariable>vars = new GamaList<EVariable>();
+		vars.addAll(species.getVariables());
+		species.getVariables().clear();
+		for (EVariable var : vars) {
+			EcoreUtil.delete((EObject) var, true);
+		}
+		for (final TableItem item : table_vars.getItems()) {
+			final EVariable var = gama.GamaFactory.eINSTANCE.createEVariable();
+			var.setName(item.getText(0));
+			var.setType(item.getText(1));
+			var.setInit(item.getText(2));
+			    				var.setUpdate(item.getText(3));
+			    				var.setFunction(item.getText(4));
+			    				var.setMin(item.getText(5));
+			    				var.setMax(item.getText(6));
+			species.getVariables().add(var);  	  
+		}
+	}
+	
+	private void modifyShape() {
+		ESpecies species = (ESpecies) eobject;
 		final EVariable var = getEVariable("shape") == null ? gama.GamaFactory.eINSTANCE.createEVariable() : getEVariable("shape");
 		var.setName("shape");
 		var.setType("geometry");
+		String initVal = "";
+		String val = comboShape.getText();
+
+		species.setShapeFunction(textShapeFunction.getText());
+		species.setShapeUpdate(textShapeUpdate.getText());
+		species.setShapeIsFunction(btnShapeFct.getSelection());
+        species.setShapeType(val);
+        species.setPoints(textPoints.getText());
+        species.setRadius(textRadius.getText());
+        species.setSize(textSize.getText());
+        species.setHeigth(textHeight.getText());
+        species.setWidth(textWidth.getText());
+        species.setExpressionShape(textShape.getText());
+        if (val.equals("point")) {
+        	species.getVariables().remove(var);
+			EcoreUtil.delete((EObject) var, true);
+			return;
+        } else if (val.equals("polyline") || val.equals("polygon") ) {
+        	initVal = val+ "("+textPoints.getText()+")";
+        } else if (val.equals("circle") || val.equals("sphere") ) {
+        	initVal = val + "(" + textRadius.getText()+")";
+        } else if (val.equals("square")) {
+    	  	initVal = val + "(" + textSize.getText()+")";
+        } else if (val.equals("rectangle") || val.equals("hexagon") ) {
+	       	initVal = val + "({" + textWidth.getText() + ","+ textHeight.getText()+"})";
+        } else if (val.equals("expression")) {
+    	  	initVal = textShape.getText();
+        } 
     	
-	    TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(var);
-	    	if (domain != null) {
-	    		domain.getCommandStack().execute(new RecordingCommand(domain) {
-		    	     public void doExecute() {
-		    	    	 if (! ((ESpecies) eobject).getVariables().contains(var))
-		    	    		 ((ESpecies) eobject).getVariables().add(var);
-		    	    	 var.setInit(newShape);
-		    	     }
-		    	  });
-	    	}
-	    	
-	    ef.hasDoneChanges = true;
-  	     
+		var.setInit(initVal);
+		var.setFunction(textShapeFunction.getText());
+		var.setUpdate(textShapeUpdate.getText());
+	    if (! species.getVariables().contains(var))
+		    species.getVariables().add(var);
 	}
 	
 	
 	
-	private void modifyLocation(final String newLoc) {
-		final EVariable var = getEVariable("location") == null ? gama.GamaFactory.eINSTANCE.createEVariable() : getEVariable("location");
-		var.setName("location");
-		var.setType("point");
-    	
-	    TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(var);
-		if (domain != null) {
-		    domain.getCommandStack().execute(new RecordingCommand(domain) {
-		    	     public void doExecute() {
-		    	    	 if (! ((ESpecies) eobject).getVariables().contains(var))
-		    	    		 ((ESpecies) eobject).getVariables().add(var);
-		    	    	 var.setInit(newLoc);
-		    	     }
-		    	  });
-		}
-	    ef.hasDoneChanges = true;
-	}
-	
-	private void modifyIsTorus(final String newisTorus) {
-		 TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(eobject);
-			if (domain != null) {
-			    domain.getCommandStack().execute(new RecordingCommand(domain) {
-			    	     public void doExecute() {
-			    	    	 ((ESpecies) eobject).setTorus(newisTorus);
-			    	     }
-			    	  });
+	private void modifyLocation() {
+		ESpecies species = (ESpecies) eobject;
+		if (btnRndLoc.getSelection()) {
+			species.setLocationType("random");
+			final EVariable var = getEVariable("location");
+			if (var != null) {
+				species.getVariables().remove(var);
+				EcoreUtil.delete((EObject) var, true);
 			}
-		
-	    ef.hasDoneChanges = true;  
+		} else {
+			species.setLocationType("expression");
+			final EVariable var = getEVariable("location") == null ? gama.GamaFactory.eINSTANCE.createEVariable() : getEVariable("location");
+			var.setName("location");
+			var.setType("point");
+			String initVal = this.textLoc.getText();
+			var.setInit(initVal);
+	    
+		    if (! species.getVariables().contains(var))
+			    	  species.getVariables().add(var);
+		}
+
+        species.setExpressionLoc(textLoc.getText());
+        species.setLocationFunction(textLocFunction.getText());
+		species.setLocationUpdate(textLocUpdate.getText());
+		species.setLocationIsFunction(btnLocFct.getSelection());
+      
+	}
+	
+	private void modifyIsTorus() {
+		ESpecies species = (ESpecies) eobject;
+		if (btnYesTorus.getSelection()) {
+			species.setTorus("true");
+			species.setTorusType("yes");
+		}else if (btnNoTorus.getSelection()) {
+			species.setTorus("false");
+			species.setTorusType("no");
+		} else {
+			species.setTorus(textTorus.getText());
+			species.setTorusType("expression");
+		}
+
+        species.setExpressionTorus(textTorus.getText());
 	}
 	
 	private void modifyReflexOrder() {
-		 TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(eobject);
-			if (domain != null) {
-			    domain.getCommandStack().execute(new RecordingCommand(domain) {
-			    	     public void doExecute() {
-			    	 		((ESpecies) eobject).getReflexList().clear();
-			    	 		((ESpecies) eobject).getReflexList().addAll(reflexStrs);
-			    	     }
-			    	  });
-			}
-	    ef.hasDoneChanges = true;  
+ 		((ESpecies) eobject).getReflexList().clear();
+ 		((ESpecies) eobject).getReflexList().addAll(reflexStrs);
+	}
+	
+	private void modifyGridProperties() {
+		ESpecies species = (ESpecies) eobject;
+	 	EGridTopology gridTopo = (EGridTopology) species.getTopology();
+		gridTopo.setNb_columns(textNbCols.getText());
+		gridTopo.setNb_rows(textNbRows.getText());
+		gridTopo.setNeighbourhoodType(comboNeighborhood.getText());
+		gridTopo.setNeighbourhood(textNeighborhood.getText());
+	}
+	
+	private void modifyBounds() {
+		EWorldAgent world = (EWorldAgent) eobject;
+		world.setBoundsExpression(textBoundsExpression.getText());
+		world.setBoundsHeigth(textBoundsHeight.getText());
+		world.setBoundsWidth(textBoundsWidth.getText());
+		world.setBoundsPath(textBoundsFile.getText());
 	}
 	
 	 /**
@@ -279,16 +514,6 @@ public class EditSpeciesFrame extends EditFrame {
 	            combo.addSelectionListener(new SelectionAdapter() {
 	              public void widgetSelected(SelectionEvent event) {
 	                item.setText(col, combo.getText());
-	                final EVariable var = getEVariable(item.getText(0));
-	                TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(var);
-	            	if (domain != null) {
-		                domain.getCommandStack().execute(new RecordingCommand(domain) {
-		            	     public void doExecute() {
-		            	    	 var.setType(combo.getText());
-		            	     }
-		            	  });
-	            	}
-	            	ef.hasDoneChanges = true;
 	                // They selected an item; end the editing session
 	                combo.dispose();
 	              }
@@ -318,28 +543,8 @@ public class EditSpeciesFrame extends EditFrame {
 	            text.addModifyListener(new ModifyListener() {
 	              public void modifyText(ModifyEvent event) {
 	                // Set the text of the editor's control back into the cell
-	            	   final EVariable var = getEVariable(item.getText(0));
-	            	  
-	            	  TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(var);
-	            	if (domain != null) {
-	            	  domain.getCommandStack().execute(new RecordingCommand(domain) {
-	            	     public void doExecute() {
-	            	    	 switch (col) 
-		   	            	  { 
-		   	            	 	case 0: var.setName(text.getText()); break; 
-		   	            	 	case 2: var.setInit(text.getText()); break; 
-		   	            	 	case 3: var.setUpdate(text.getText()); break; 
-		   	            	 	case 4: var.setFunction(text.getText()); break; 
-		   	            	 	case 5: var.setMin(text.getText()); break; 
-		   	            	 	case 6: var.setMax(text.getText()); break; 
-		   	            		
-		   	            	 }
-	            	     }
-	            	  });
-	            	}
-	           
+	          
 	            	 item.setText(col, text.getText());
-	            	 ef.hasDoneChanges = true;
 	              }
 	            });
 	          }
@@ -351,13 +556,15 @@ public class EditSpeciesFrame extends EditFrame {
 	  
 	 void initTable() {
 		 for (EVariable var: ((ESpecies) eobject).getVariables()) {
+			if (var.getName().equals("shape") || var.getName().equals("location"))
+				continue;
 			TableItem ti =  new TableItem(table_vars, SWT.NONE);
 			ti.setText(new String[] {var.getName(),var.getType(),var.getInit(),var.getUpdate(),var.getFunction(),var.getMin(),var.getMax()});
 			cpt++; 
 		 }
 	  }
 	 
-	 public void buildVariableCanvas(Composite container) {
+	 public Canvas canvasVariables(Composite container) {
 		//****** CANVAS VARIABLES *********
 			Canvas canvasVariable = new Canvas(container, SWT.BORDER);
 			canvasVariable.setBounds(10, 250, 720, 200);
@@ -372,7 +579,7 @@ public class EditSpeciesFrame extends EditFrame {
 			CLabel lblVariables = new CLabel(canvasVariable, SWT.NONE);
 			lblVariables.setBounds(10, 5, 100, 20);
 			lblVariables.setText("Variables");
-			
+			lblVariables.setFont(titleFont);
 			Button btnAddVariable = new Button(canvasVariable, SWT.NONE);
 			btnAddVariable.addSelectionListener(new SelectionAdapter() {
 				 
@@ -381,18 +588,7 @@ public class EditSpeciesFrame extends EditFrame {
 					TableItem ti =  new TableItem(table_vars, SWT.NONE);
 					final String name = "var_name" + cpt;
 					ti.setText(new String[] {name, "","","","","",""});
-					final EVariable var = gama.GamaFactory.eINSTANCE.createEVariable();
-					 var.setName(name);
-					 TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(eobject);
-					if (domain != null) {
-						 domain.getCommandStack().execute(new RecordingCommand(domain) {
-		            	     public void doExecute() {
-		            	    	((ESpecies) eobject).getVariables().add(var);
-		            	     }
-		            	  });
-					}
 					cpt++;
-					ef.hasDoneChanges = true;
 				}
 			});
 			btnAddVariable.setBounds(62, 162, 94, 28);
@@ -404,46 +600,29 @@ public class EditSpeciesFrame extends EditFrame {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					int[] indices = table_vars.getSelectionIndices();
-					for (int i : indices) {
-						TableItem item = table_vars.getItem(i);
-						final EVariable varSup = getEVariable(item.getText(0));
-						if (varSup != null) {
-							TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(eobject);
-							if (domain != null) {
-								domain.getCommandStack().execute(new RecordingCommand(domain) {
-				            	     public void doExecute() {
-				            	    	 ((ESpecies) eobject).getVariables().remove(varSup);
-				            	     }
-				            	  });
-							}
-						}
-					}
-					ef.hasDoneChanges = true;
 					table_vars.remove( indices);
 					table_vars.redraw();
 				}
 			});
 			btnDeleteVariable.setBounds(163, 162, 112, 28);
 			btnDeleteVariable.setText("Delete variable");
+			return canvasVariable;
 	 }
 	 
-	 public void buildCanvasTopo(Composite container) {
-		//****** CANVAS TOPOLOGY *********
-			Canvas canvasTopo = new Canvas(container, SWT.BORDER);
-			canvasTopo.setBounds(10, 50, 720, 190);
-			
+	 public Composite shapeInitValue(Composite container) {
+
 			// Shape
-			final Composite shapeComp = new Composite(canvasTopo, SWT.BORDER);
+			final Composite shapeComp = new Composite(container, SWT.BORDER);
 			shapeComp.setForeground(this.getShell().getDisplay().getSystemColor(SWT.COLOR_BLACK));
-			shapeComp.setBounds(10, 5, 700, 110);
-			CLabel lblShape = new CLabel(shapeComp, SWT.NONE);
-			lblShape.setBounds(5, 5, 50, 20);
-			lblShape.setText("Shape");
+			shapeComp.setBounds(10, 60, 700, 110);
+			CLabel lblInitShape = new CLabel(shapeComp, SWT.NONE);
+			lblInitShape.setBounds(5, 5, 80, 20);
+			lblInitShape.setText("Init value");
 			
 			comboShape = new CCombo(shapeComp, SWT.BORDER);
-			comboShape.setBounds(60, 5, 300, 20);
+			comboShape.setBounds(90, 5, 300, 20);
 			comboShape.setItems(type_shape);
-			comboShape.setText("point");
+			//comboShape.setText("point");
 		//	"point", "polyline", "polygon", "circle", "square", "rectangle", "hexagon", "sphere", "expression"
 			comboShape.addSelectionListener(new SelectionAdapter() {
 	             public void widgetSelected(SelectionEvent event) {
@@ -459,7 +638,6 @@ public class EditSpeciesFrame extends EditFrame {
 	           		  pointsComp.setEnabled(false);
 	           		  expShapeComp.setVisible(false);
 	           		  expShapeComp.setEnabled(false); 
-	           		  modifyShape(comboShape.getText()+ "(location)");
 	               } else if (val.equals("polyline") || val.equals("polygon") ) {
 	            	   sizeComp.setVisible(false);
 	            	   sizeComp.setEnabled(false);
@@ -471,7 +649,6 @@ public class EditSpeciesFrame extends EditFrame {
 	            	   pointsComp.setEnabled(true);
 	            	   expShapeComp.setVisible(false);
 	            	   expShapeComp.setEnabled(false);
-	            	   modifyShape(comboShape.getText()+ "("+textPoints+")");
 	             } else if (val.equals("circle") || val.equals("sphere") ) {
 		          	   sizeComp.setVisible(false);
 		          	   sizeComp.setEnabled(false);
@@ -484,7 +661,6 @@ public class EditSpeciesFrame extends EditFrame {
 		          	   expShapeComp.setVisible(false);
 		          	   expShapeComp.setEnabled(false); 
 		        	   expShapeComp.setEnabled(false); 
-		        	   modifyShape(comboShape.getText()+ "(" + textRadius.getText()+")");
 	             } else if (val.equals("square")) {
 		          	   sizeComp.setVisible(true);
 		          	   sizeComp.setEnabled(true);
@@ -496,7 +672,6 @@ public class EditSpeciesFrame extends EditFrame {
 		          	   wHComp.setEnabled(false);
 		          	   expShapeComp.setVisible(false);
 		          	   expShapeComp.setEnabled(false); 
-		          	 modifyShape(comboShape.getText()+ "(" + textSize.getText()+")");
 	             } else if (val.equals("rectangle") || val.equals("hexagon") ) {
 		          	   sizeComp.setVisible(false);
 		          	   sizeComp.setEnabled(false);
@@ -508,7 +683,6 @@ public class EditSpeciesFrame extends EditFrame {
 		          	   wHComp.setEnabled(true);
 		          	   expShapeComp.setVisible(false);
 		          	   expShapeComp.setEnabled(false); 
-		          	 modifyShape(comboShape.getText()+ "({" + textWidth.getText() + ","+ textHeight.getText()+"})");
 	             } else if (val.equals("expression")) {
 		          	   sizeComp.setVisible(false);
 		          	   sizeComp.setEnabled(false);
@@ -520,8 +694,7 @@ public class EditSpeciesFrame extends EditFrame {
 		          	   wHComp.setEnabled(false);
 		          	   expShapeComp.setVisible(true);
 		          	   expShapeComp.setEnabled(true); 
-		          	   modifyShape(textShape.getText());
-	           } 
+	             } 
 	               shapeComp.pack();
 	             }
 	             
@@ -539,11 +712,6 @@ public class EditSpeciesFrame extends EditFrame {
 			textSize = new Text(sizeComp, SWT.BORDER);
 			textSize.setBounds(70, 0, 300, 20);
 			textSize.setText("1.0");
-			textSize.addModifyListener(new ModifyListener() {
-	            public void modifyText(ModifyEvent event) {
-	            	modifyShape(comboShape.getText()+ "(" + textSize.getText()+")");
-	            }
-	         });
 			
 			//Circle - Sphere
 			radiusComp = new Composite(shapeComp, SWT.NONE);
@@ -558,11 +726,6 @@ public class EditSpeciesFrame extends EditFrame {
 			textRadius = new Text(radiusComp, SWT.BORDER);
 			textRadius.setBounds(70, 0, 300, 20);
 			textRadius.setText("1.0");
-			textRadius.addModifyListener(new ModifyListener() {
-	            public void modifyText(ModifyEvent event) {
-	            	modifyShape(comboShape.getText()+ "(" + textRadius.getText()+")");
-	            }
-	         });
 			
 			//Hexagon - Rectangle
 			wHComp = new Composite(shapeComp, SWT.NONE);
@@ -576,11 +739,6 @@ public class EditSpeciesFrame extends EditFrame {
 			textHeight = new Text(wHComp, SWT.BORDER);
 			textHeight.setBounds(70, 30, 300, 20);
 			textHeight.setText("1.0");
-			textHeight.addModifyListener(new ModifyListener() {
-	            public void modifyText(ModifyEvent event) {
-	            	modifyShape(comboShape.getText()+ "({" + textWidth.getText() + ","+ textHeight.getText()+"})");
-	            }
-	         });
 			
 			CLabel lblWidth = new CLabel(wHComp, SWT.NONE);
 			lblWidth.setBounds(0, 0, 60, 20);
@@ -589,11 +747,6 @@ public class EditSpeciesFrame extends EditFrame {
 			textWidth = new Text(wHComp, SWT.BORDER);
 			textWidth.setBounds(70, 0, 300, 20);
 			textWidth.setText("1.0");
-			textWidth.addModifyListener(new ModifyListener() {
-	            public void modifyText(ModifyEvent event) {
-	            	modifyShape(comboShape.getText()+ "({" + textWidth.getText() + ","+ textHeight.getText()+"})");
-	            }
-	         });
 			
 			//Polygon, Polyline
 			pointsComp = new Composite(shapeComp, SWT.NONE);
@@ -607,11 +760,6 @@ public class EditSpeciesFrame extends EditFrame {
 			textPoints = new Text(pointsComp, SWT.BORDER);
 			textPoints.setBounds(70, 0, 300, 20);
 			textPoints.setText("[{0.0,0.0},{0.0,1.0},{1.0,1.0},{1.0,0.0}]");
-			textPoints.addModifyListener(new ModifyListener() {
-	            public void modifyText(ModifyEvent event) {
-	            	modifyShape(comboShape.getText()+ "("+textPoints+")");
-	            }
-	         });
 			
 			//Expression shape
 			expShapeComp = new Composite(shapeComp, SWT.NONE);
@@ -624,110 +772,561 @@ public class EditSpeciesFrame extends EditFrame {
 									
 			textShape = new Text(expShapeComp, SWT.BORDER);
 			textShape.setBounds(70, 0, 300, 20);
-			textShape.addModifyListener(new ModifyListener() {
-	            public void modifyText(ModifyEvent event) {
-	            	modifyShape(textShape.getText());
-	            }
-	         });
+			return shapeComp;
+	 }
+	 
+	 public Canvas canvasShape(Composite container) {
+		//****** CANVAS SHAPE *********
+		ESpecies species = (ESpecies) eobject;
+		
+		Canvas canvasShape = new Canvas(container, SWT.BORDER);
+		canvasShape.setBounds(10, 50, 720, 220);
+	
+		CLabel lblShape = new CLabel(canvasShape, SWT.NONE);
+		lblShape.setBounds(5, 5, 50, 20);
+		lblShape.setText("Shape");
+		lblShape.setFont(titleFont);
+		final Composite intVal = shapeInitValue(canvasShape);
+		
+		CLabel lblUpdate = new CLabel(canvasShape, SWT.NONE);
+		lblUpdate.setBounds(5, 190, 60, 20);
+		lblUpdate.setText("Update");
+				
+		textShapeUpdate = new Text(canvasShape, SWT.BORDER);
+		textShapeUpdate.setBounds(70, 190, 300, 20);
+		
+		btnShapeNormal = new Button(canvasShape, SWT.RADIO);
+		btnShapeNormal.setBounds(5, 30, 100, 20);
+		btnShapeNormal.setText("Normal");
+		btnShapeNormal.setSelection(false);
+		
+		btnShapeNormal.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				intVal.setEnabled(true);
+				intVal.setVisible(true);
+				textShapeUpdate.setEnabled(true);
+				textShapeFunction.setEnabled(false);
+			}
+		});
+		
+		btnShapeFct = new Button(canvasShape, SWT.RADIO);
+		btnShapeFct.setBounds(150, 30, 100, 20);
+		btnShapeFct.setText("Function");
+		btnShapeFct.setSelection(false);
+		btnShapeFct.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				intVal.setEnabled(false);
+				intVal.setVisible(false);
+				textShapeUpdate.setEnabled(false);
+				textShapeFunction.setEnabled(true);
+			}
+		});
+		textShapeFunction = new Text(canvasShape, SWT.BORDER);
+		textShapeFunction.setBounds(240,30, 300, 18);
+		textShapeFunction.setEnabled(false);
+		
+			String st = "point";
+			if (species.getShapeType() != null && ! species.getShapeType().isEmpty()) {
+				st = species.getShapeType();
+				 if (st.equals("polyline") || st.equals("polygon") ) {
+	            	 pointsComp.setVisible(true);
+	            	 pointsComp.setEnabled(true);
+	             } else if (st.equals("circle") || st.equals("sphere") ) {
+		          	   radiusComp.setVisible(true);
+		      		   radiusComp.setEnabled(true);
+	             } else if (st.equals("square")) {
+		          	   sizeComp.setVisible(true);
+		          	   sizeComp.setEnabled(true);
+	             } else if (st.equals("rectangle") || st.equals("hexagon") ) {
+		          	   wHComp.setVisible(true);
+		          	   wHComp.setEnabled(true); 
+	             } else if (st.equals("expression")) {
+		          	   expShapeComp.setVisible(true);
+		          	   expShapeComp.setEnabled(true); 
+	             } 
+			}
+			comboShape.setText(st);
+			if (species.getPoints() != null && ! species.getPoints().isEmpty())
+				textPoints.setText(species.getPoints());
+			if (species.getRadius() != null && ! species.getRadius().isEmpty())
+				textRadius.setText(species.getRadius());
+			if (species.getSize() != null && ! species.getSize().isEmpty())
+				textSize.setText(species.getSize());
+			if (species.getHeigth() != null && ! species.getHeigth().isEmpty())
+				textHeight.setText(species.getHeigth());
+			if (species.getWidth() != null && ! species.getWidth().isEmpty())
+				textWidth.setText(species.getWidth());
+			if (species.getExpressionShape() != null && ! species.getExpressionShape().isEmpty())
+				textShape.setText(species.getExpressionShape());
+			if (species.getShapeFunction() != null && ! species.getShapeFunction().isEmpty())
+				textShapeFunction.setText(species.getShapeFunction());
+			if (species.getShapeUpdate() != null && ! species.getShapeUpdate().isEmpty())
+				textShapeUpdate.setText(species.getShapeUpdate());
+			if (species.getShapeIsFunction() != null && species.getShapeIsFunction())
+			{
+				btnShapeFct.setSelection(true);
+				intVal.setEnabled(false);
+				intVal.setVisible(false);
+				textShapeUpdate.setEnabled(false);
+				textShapeFunction.setEnabled(true);
+			} else {
+				btnShapeNormal.setSelection(true);
+				intVal.setEnabled(true);
+				intVal.setVisible(true);
+				textShapeUpdate.setEnabled(true);
+				textShapeFunction.setEnabled(false);
+			}
+				
 			
+			return canvasShape;
 			
+		
 			
-			// Location
-			CLabel lblLocation = new CLabel(canvasTopo, SWT.NONE);
-			lblLocation.setBounds(10, 130, 60, 20);
-			lblLocation.setText("Location");
-			 
-			textLoc = new Text(canvasTopo, SWT.BORDER);
-			textLoc.setBounds(270, 130, 300, 18);
-			textLoc.addModifyListener(new ModifyListener() {
-	            public void modifyText(ModifyEvent event) {
-	            	modifyLocation(textLoc.getText());
-	            }
-	         });
+	 }
+	 
+	 public Canvas canvasTorus(Composite container) {
+			//****** CANVAS TORUS  *********
+		 		ESpecies species = (ESpecies) eobject;
+				Canvas canvasTorus = new Canvas(container, SWT.BORDER);
+				canvasTorus.setBounds(10, 160, 720, 30);
+				//is Torus
+				
+				CLabel lblIsTorus = new CLabel(canvasTorus, SWT.NONE);
+				lblIsTorus.setBounds(10, 5, 75, 20);
+				lblIsTorus.setText("is Torus?");
+				lblIsTorus.setFont(titleFont);
+				
+				Composite cTor = new Composite (canvasTorus, SWT.NONE);
+				cTor.setBounds(90, 5, 185, 18);
+				
+				btnYesTorus = new Button(cTor, SWT.RADIO);
+				btnYesTorus.setBounds(0, 0, 50, 18);
+				btnYesTorus.setText("Yes");
+				btnYesTorus.setSelection(false);
+				
+				btnYesTorus.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						textTorus.setEnabled(false);	
+					}
+				});
+				
+				btnNoTorus = new Button(cTor, SWT.RADIO);
+				btnNoTorus.setBounds(50, 0, 50, 18);
+				btnNoTorus.setText("No");
+				btnNoTorus.setSelection(false);
+				btnNoTorus.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						textTorus.setEnabled(false);	
+					}
+				});
+				
+				btnExpressionTorus = new Button(cTor, SWT.RADIO);
+				btnExpressionTorus.setBounds(100, 0, 85, 18);
+				btnExpressionTorus.setText("Expression:");
+				btnExpressionTorus.setSelection(false);
+				btnExpressionTorus.addSelectionListener(new SelectionAdapter() {
+					@Override
+					public void widgetSelected(SelectionEvent e) {
+						textTorus.setEnabled(true);	
+					}
+				});
+				
+				textTorus = new Text(canvasTorus, SWT.BORDER);
+				textTorus.setBounds(290, 5, 300, 18);
+				textTorus.setEnabled(false);
+				
+				if (species.getTorusType() == null || species.getTorusType().isEmpty()) {
+					btnNoTorus.setSelection(true);
+				} else {
+					textTorus.setText(species.getExpressionTorus());
+					if (species.getTorusType().equals("yes")) {
+						btnYesTorus.setSelection(true);
+					} else if (species.getTorusType().equals("no")) {
+						btnNoTorus.setSelection(true);
+					}else  {
+						btnExpressionTorus.setSelection(true);
+						textTorus.setEnabled(true);	
+					}
+				}
+				return canvasTorus;
+				
+		 }
+	 
+	 public Composite initValueLocComp(Composite container) {
+		 Composite cLoc = new Composite (container, SWT.BORDER);
+		 cLoc.setBounds(5, 60, 500, 30);
+		 CLabel lblLocation = new CLabel(cLoc, SWT.NONE);
+			lblLocation.setBounds(5, 5, 80, 20);
+			lblLocation.setText("Init value");
+				
+			btnRndLoc = new Button(cLoc, SWT.RADIO);
+			btnRndLoc.setBounds(90, 5, 100, 20);
+			btnRndLoc.setText("Random");
+			btnRndLoc.setSelection(false);
 			
-
-			Composite cLoc = new Composite (canvasTopo, SWT.NONE);
-			cLoc.setBounds(80, 130, 185, 18);
-			
-			Button btnRnd = new Button(cLoc, SWT.RADIO);
-			btnRnd.setBounds(0, 0, 100, 18);
-			btnRnd.setText("Random");
-			btnRnd.setSelection(true);
-			btnRnd.addSelectionListener(new SelectionAdapter() {
+			btnRndLoc.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					textLoc.setEnabled(false);	
-					//locStr = "random";
-					modifyLocation("any_location_in(world.shape)");
 				}
 			});
 			
-			Button btnExpressionLoc = new Button(cLoc, SWT.RADIO);
-			btnExpressionLoc.setBounds(100,0, 85, 18);
+			btnExpressionLoc = new Button(cLoc, SWT.RADIO);
+			btnExpressionLoc.setBounds(200,5, 85, 20);
 			btnExpressionLoc.setText("Expression:");
 			btnExpressionLoc.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					textLoc.setEnabled(true);	
-					modifyLocation(textLoc.getText());
 				}
 			});
+			 
+			textLoc = new Text(cLoc, SWT.BORDER);
+			textLoc.setBounds(300, 5, 300, 20);
+			textLoc.setEnabled(false);
 			
-			//is Torus
-			
-			CLabel lblIsTorus = new CLabel(canvasTopo, SWT.NONE);
-			lblIsTorus.setBounds(10, 160, 60, 20);
-			lblIsTorus.setText("is Torus?");
-			
-			Composite cTor = new Composite (canvasTopo, SWT.NONE);
-			cTor.setBounds(80, 160, 185, 18);
-			
-			Button btnYes = new Button(cTor, SWT.RADIO);
-			btnYes.setBounds(0, 0, 50, 18);
-			btnYes.setText("Yes");
-			btnYes.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					textTorus.setEnabled(false);	
-					modifyIsTorus("true");
-				}
-			});
-			
-			Button btnNo = new Button(cTor, SWT.RADIO);
-			btnNo.setBounds(50, 0, 50, 18);
-			btnNo.setText("No");
-			btnNo.setSelection(true);
-			btnNo.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					modifyIsTorus("false");
-					textTorus.setEnabled(false);	
-				}
-			});
-			
-			Button btnExpressionTorus = new Button(cTor, SWT.RADIO);
-			btnExpressionTorus.setBounds(100, 0, 85, 18);
-			btnExpressionTorus.setText("Expression:");
-			btnExpressionTorus.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					textTorus.setEnabled(true);	
-					modifyIsTorus(textTorus.getText());
-				}
-			});
-			
-			textTorus = new Text(canvasTopo, SWT.BORDER);
-			textTorus.setBounds(270, 160, 300, 18);
-			textTorus.setEnabled(false);
-			textTorus.addModifyListener(new ModifyListener() {
-	            public void modifyText(ModifyEvent event) {
-	            	modifyIsTorus(textTorus.getText());
-	            }
-	         });
-			
+		 
+		 return cLoc;
 	 }
 	 
-	 public void buildCanvasReflex(Composite container) {
+	 public Canvas canvasGrid(Composite container) {
+			//****** CANVAS GRID  *********
+		 	ESpecies species = (ESpecies) eobject;
+		 	EGridTopology gridTopo = (EGridTopology) species.getTopology();
+			Canvas canvasGrid = new Canvas(container, SWT.BORDER);
+			canvasGrid.setBounds(10, 130, 720, 80);
+			// Location
+			CLabel lblgrid = new CLabel(canvasGrid, SWT.NONE);
+			lblgrid.setBounds(10, 5, 150, 20);
+			lblgrid.setText("Grid properties");
+			lblgrid.setFont(titleFont);
+			
+			CLabel lblneigh = new CLabel(canvasGrid, SWT.NONE);
+			lblneigh.setBounds(10, 25, 100, 20);
+			lblneigh.setText("Neighborhood");
+			
+			comboNeighborhood = new CCombo(canvasGrid, SWT.BORDER);
+			comboNeighborhood.setBounds(110, 25, 200, 20);
+			comboNeighborhood.setItems(type_neighborhood);
+			comboNeighborhood.setText(type_neighborhood[0]);
+			comboNeighborhood.addSelectionListener(new SelectionAdapter() {
+	             public void widgetSelected(SelectionEvent event) {
+	               if (comboNeighborhood.getText().equals("expression")) {
+	            	   textNeighborhood.setEnabled(true);
+	               } else {
+	            	   textNeighborhood.setEnabled(false);
+	               }
+	             }
+			});
+			textNeighborhood = new Text(canvasGrid, SWT.BORDER);
+			textNeighborhood.setBounds(330, 25, 220, 20);
+			textNeighborhood.setEnabled(false);
+			
+			CLabel lblrow = new CLabel(canvasGrid, SWT.NONE);
+			lblrow.setBounds(10, 50, 100, 20);
+			lblrow.setText("Number of rows");
+			textNbCols = new Text(canvasGrid, SWT.BORDER);
+			textNbCols.setBounds(110, 50, 150, 20);
+			textNbCols.setText("100");
+			
+			CLabel lblcol = new CLabel(canvasGrid, SWT.NONE);
+			lblcol.setBounds(300, 50, 120, 20);
+			lblcol.setText("Number of columns");
+			textNbRows = new Text(canvasGrid, SWT.BORDER);
+			textNbRows.setBounds(430, 50, 180, 20);
+			textNbRows.setText("100");
+			
+			if (gridTopo.getNb_columns() != null) {
+				textNbCols.setText(gridTopo.getNb_columns());
+			}
+			if (gridTopo.getNb_rows() != null) {
+				textNbRows.setText(gridTopo.getNb_rows());
+			}
+			if (gridTopo.getNeighbourhood() != null) {
+				textNeighborhood.setText(gridTopo.getNeighbourhood());
+			}
+			if (gridTopo.getNeighbourhoodType() != null && !gridTopo.getNeighbourhoodType().isEmpty()) {
+				comboNeighborhood.setText(gridTopo.getNeighbourhoodType());
+			}
+			
+			return canvasGrid;
+	 }
+	
+	 public Canvas canvasBounds(Composite container) {
+			//****** CANVAS BOUNDS  *********
+		 	EWorldAgent world = (EWorldAgent) eobject;
+		 	Canvas canvasBounds = new Canvas(container, SWT.BORDER);
+		 	canvasBounds.setBounds(10, 130, 720, 80);
+			
+		 	CLabel lblbounds = new CLabel(canvasBounds, SWT.NONE);
+		 	lblbounds.setBounds(10, 5, 100, 20);
+		 	lblbounds.setText("Bounds");
+		 	lblbounds.setFont(titleFont);
+			
+			CLabel lblval = new CLabel(canvasBounds, SWT.NONE);
+			lblval.setBounds(10, 25, 80, 20);
+			lblval.setText("Value type");
+			
+			final Composite widthHeightComp = new Composite(canvasBounds, SWT.NONE);
+			widthHeightComp.setBounds(60, 50, 720, 20);
+			widthHeightComp.setEnabled(true);
+			widthHeightComp.setVisible(true);
+			CLabel lblwidth = new CLabel(widthHeightComp, SWT.NONE);
+			lblwidth.setBounds(10, 0, 60, 20);
+			lblwidth.setText("Width");
+			textBoundsWidth = new Text(widthHeightComp, SWT.BORDER);
+			textBoundsWidth.setBounds(80, 0, 150, 20);
+			textBoundsWidth.setText("100.0");
+			CLabel lblHeight = new CLabel(widthHeightComp, SWT.NONE);
+			lblHeight.setBounds(260, 0, 60, 20);
+			lblHeight.setText("Height");
+			textBoundsHeight = new Text(widthHeightComp, SWT.BORDER);
+			textBoundsHeight.setBounds(330, 0, 150, 20);
+			textBoundsHeight.setText("100.0");
+			final Composite fileComp = new Composite(canvasBounds, SWT.NONE);
+			fileComp.setBounds(60, 50, 720, 20);
+			fileComp.setEnabled(false);
+			fileComp.setVisible(false);
+			CLabel lblPath = new CLabel(fileComp, SWT.NONE);
+			lblPath.setBounds(10, 0, 100, 20);
+			lblPath.setText("Path");
+			textBoundsFile = new Text(fileComp, SWT.BORDER);
+			textBoundsFile.setBounds(110, 0, 150, 20);
+			textBoundsFile.setText("../includes/shapefile.shp");
+			final Composite expComp = new Composite(canvasBounds, SWT.NONE);
+			expComp.setBounds(60, 50, 720, 20);
+			expComp.setEnabled(false);
+			expComp.setVisible(false);
+			CLabel lblExp = new CLabel(expComp, SWT.NONE);
+			lblExp.setBounds(10, 0, 100, 20);
+			lblExp.setText("Expression");
+			textBoundsExpression = new Text(expComp, SWT.BORDER);
+			textBoundsExpression.setBounds(110, 0, 150, 20);
+			
+			comboBounds = new CCombo(canvasBounds, SWT.BORDER);
+			comboBounds.setBounds(90, 25, 200, 20);
+			comboBounds.setItems(type_bounds);
+			comboBounds.setText(type_bounds[0]);
+			comboBounds.addSelectionListener(new SelectionAdapter() {
+	             public void widgetSelected(SelectionEvent event) {
+	               if (comboBounds.getText().equals("expression")) {
+	            	   	expComp.setEnabled(true);
+	       				expComp.setVisible(true);
+	       				fileComp.setEnabled(false);
+	       				fileComp.setVisible(false);
+	       				widthHeightComp.setEnabled(false);
+	       				widthHeightComp.setVisible(false);
+	               } else if (comboBounds.getText().equals("width-height")) {
+	            	   	expComp.setEnabled(false);
+	       				expComp.setVisible(false);
+	       				fileComp.setEnabled(false);
+	       				fileComp.setVisible(false);
+	       				widthHeightComp.setEnabled(true);
+	       				widthHeightComp.setVisible(true);
+	               } else {
+	            		expComp.setEnabled(false);
+	       				expComp.setVisible(false);
+	       				fileComp.setEnabled(true);
+	       				fileComp.setVisible(true);
+	       				widthHeightComp.setEnabled(false);
+	       				widthHeightComp.setVisible(false);
+	               }
+	             }
+			});
+			
+			if (world.getBoundsType() != null && ! world.getBoundsType().isEmpty()) {
+				comboBounds.setText(world.getBoundsType()); 
+				  if (comboBounds.getText().equals("expression")) {
+	            	   	expComp.setEnabled(true);
+	       				expComp.setVisible(true);
+	       				fileComp.setEnabled(false);
+	       				fileComp.setVisible(false);
+	       				widthHeightComp.setEnabled(false);
+	       				widthHeightComp.setVisible(false);
+	               } else if (comboBounds.getText().equals("width-height")) {
+	            	   	expComp.setEnabled(false);
+	       				expComp.setVisible(false);
+	       				fileComp.setEnabled(false);
+	       				fileComp.setVisible(false);
+	       				widthHeightComp.setEnabled(true);
+	       				widthHeightComp.setVisible(true);
+	               } else {
+	            		expComp.setEnabled(false);
+	       				expComp.setVisible(false);
+	       				fileComp.setEnabled(true);
+	       				fileComp.setVisible(true);
+	       				widthHeightComp.setEnabled(false);
+	       				widthHeightComp.setVisible(false);
+	               }
+			}
+			if (world.getBoundsExpression() != null) {
+				textBoundsExpression.setText(world.getBoundsExpression()); 
+			}
+			if (world.getBoundsHeigth() != null) {
+				textBoundsHeight.setText(world.getBoundsHeigth()); 
+			}
+			if (world.getBoundsWidth() != null) {
+				textBoundsWidth.setText(world.getBoundsWidth()); 
+			}
+			if (world.getBoundsPath() != null) {
+				textBoundsFile.setText(world.getBoundsPath()); 
+			}
+			return canvasBounds;
+	 }
+	 
+	 public Canvas canvasLocation(Composite container) {
+			//****** CANVAS LOCATION  *********
+		 	ESpecies species = (ESpecies) eobject;
+			Canvas canvasLocation = new Canvas(container, SWT.BORDER);
+			canvasLocation.setBounds(10, 130, 720, 130);
+			// Location
+			CLabel lblLocation = new CLabel(canvasLocation, SWT.NONE);
+			lblLocation.setBounds(10, 5, 80, 20);
+			lblLocation.setText("Location");
+			lblLocation.setFont(titleFont);
+			final Composite cLoc = initValueLocComp(canvasLocation);
+
+			CLabel lblUpdate = new CLabel(canvasLocation, SWT.NONE);
+			lblUpdate.setBounds(5, 100, 60, 20);
+			lblUpdate.setText("Update");
+					
+			textLocUpdate = new Text(canvasLocation, SWT.BORDER);
+			textLocUpdate.setBounds(70, 100, 300, 20);
+			
+			btnLocNormal = new Button(canvasLocation, SWT.RADIO);
+			btnLocNormal.setBounds(5, 30, 100, 20);
+			btnLocNormal.setText("Normal");
+			btnLocNormal.setSelection(false);
+			
+			btnLocNormal.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					cLoc.setEnabled(true);
+					cLoc.setVisible(true);
+					textLocUpdate.setEnabled(true);
+					textLocFunction.setEnabled(false);
+				}
+			});
+			
+			btnLocFct = new Button(canvasLocation, SWT.RADIO);
+			btnLocFct.setBounds(150, 30, 100, 20);
+			btnLocFct.setText("Function");
+			btnLocFct.setSelection(false);
+			btnLocFct.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					cLoc.setEnabled(false);
+					cLoc.setVisible(false);
+					textLocUpdate.setEnabled(false);
+					textLocFunction.setEnabled(true);
+				}
+			});
+			textLocFunction = new Text(canvasLocation, SWT.BORDER);
+			textLocFunction.setBounds(240,30, 300, 18);
+			textLocFunction.setEnabled(false);
+			
+			
+			if (species.getLocationType() == null || species.getLocationType().isEmpty()) {
+				btnRndLoc.setSelection(true);
+			} else {
+				textLoc.setText(species.getExpressionLoc());
+				if (species.getLocationType().equals("random")) {
+					btnRndLoc.setSelection(true);
+				}else  {
+					btnExpressionLoc.setSelection(true);
+					textLoc.setEnabled(true);	
+				}
+			}
+			if (species.getLocationFunction() != null && ! species.getLocationFunction().isEmpty())
+				textLocFunction.setText(species.getLocationFunction());
+			if (species.getLocationUpdate() != null && ! species.getLocationUpdate().isEmpty())
+				textLocUpdate.setText(species.getLocationUpdate());
+			if (species.getLocationIsFunction() != null && species.getLocationIsFunction())
+			{
+				btnLocFct.setSelection(true);
+				cLoc.setEnabled(false);
+				cLoc.setVisible(false);
+				textLocUpdate.setEnabled(false);
+				textLocFunction.setEnabled(true);
+			} else {
+				btnLocNormal.setSelection(true);
+				cLoc.setEnabled(true);
+				cLoc.setVisible(true);
+				textLocUpdate.setEnabled(true);
+				textLocFunction.setEnabled(false);
+			}
+			
+			return canvasLocation;
+		 }
+	 
+	 public Canvas canvasSkills(Composite container) {
+		//****** CANVAS SKILLS *********
+			Canvas canvasSkills = new Canvas(container, SWT.BORDER);
+			canvasSkills.setBounds(10, 460, 720, 100);
+			
+			CLabel lblSkills = new CLabel(canvasSkills, SWT.NONE);
+			lblSkills.setBounds(5, 5, 100, 20);
+			lblSkills.setText("Skills");
+			lblSkills.setFont(titleFont);
+			
+			CLabel lblAvSkills = new CLabel(canvasSkills, SWT.NONE);
+			lblAvSkills.setBounds(5, 23, 100, 20);
+			lblAvSkills.setText("Available Skills");
+			
+			CLabel lblSelectSkills = new CLabel(canvasSkills, SWT.NONE);
+			lblSelectSkills.setBounds(325, 23, 100, 20);
+			lblSelectSkills.setText("Selected Skills");
+			
+			final org.eclipse.swt.widgets.List listAvSkills = new org.eclipse.swt.widgets.List(canvasSkills, SWT.BORDER | SWT.V_SCROLL);
+			listAvSkills.setBounds(5, 45, 250, 45);
+			for (String ski : skillsStrs) {
+				listAvSkills.add(ski);
+			}
+			skillsViewer = new org.eclipse.swt.widgets.List(canvasSkills, SWT.BORDER | SWT.V_SCROLL);
+			skillsViewer.setBounds(325, 45, 250, 45);
+			
+			Button btnRigth = new Button(canvasSkills,SWT.ARROW | SWT.RIGHT);
+			btnRigth.setBounds(265, 50, 50, 15);
+			btnRigth.setSelection(true);
+			btnRigth.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (listAvSkills.getSelectionCount() > 0) {
+						String[] els = listAvSkills.getSelection();
+						for (String el : els) {
+							skillsViewer.add(el);
+						}
+						listAvSkills.remove(listAvSkills.getSelectionIndices());
+						listAvSkills.redraw();
+						skillsViewer.redraw();
+					}
+				}
+			});
+			Button btnLeft = new Button(canvasSkills, SWT.ARROW | SWT.LEFT);
+			btnLeft.setBounds(265, 70, 50, 15);
+			btnLeft.setSelection(true);
+			btnLeft.addSelectionListener(new SelectionAdapter() {
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					if (skillsViewer.getSelectionCount() > 0) {
+						String[] els = skillsViewer.getSelection();
+						for (String el : els) {
+							listAvSkills.add(el);
+						}
+						skillsViewer.remove(skillsViewer.getSelectionIndices());
+						listAvSkills.redraw();
+						skillsViewer.redraw();
+					}
+				}
+			});
+			return canvasSkills;
+	 }
+	 
+	 public Canvas canvasReflex(Composite container) {
 		//****** CANVAS REFLEX ORDER *********
 			Canvas canvasReflexOrder = new Canvas(container, SWT.BORDER);
 			canvasReflexOrder.setBounds(10, 460, 720, 110);
@@ -738,10 +1337,11 @@ public class EditSpeciesFrame extends EditFrame {
 				reflexViewer.add(ref);
 			}
 			
-			reflexViewer.setBounds(5, 30, 700, 40);
+			reflexViewer.setBounds(5, 30, 700, 45);
 			CLabel lblReflexOrder = new CLabel(canvasReflexOrder, SWT.NONE);
 			lblReflexOrder.setBounds(5, 5, 100, 20);
 			lblReflexOrder.setText("Reflex order");
+			lblReflexOrder.setFont(titleFont);
 			
 			Button btnUp = new Button(canvasReflexOrder,SWT.ARROW | SWT.UP);
 			btnUp.setBounds(80, 85, 105, 20);
@@ -760,7 +1360,6 @@ public class EditSpeciesFrame extends EditFrame {
 							for (String ref : reflexStrs) {
 								reflexViewer.add(ref);
 							}
-							modifyReflexOrder();
 						}	
 					}
 				}
@@ -782,10 +1381,54 @@ public class EditSpeciesFrame extends EditFrame {
 							for (String ref : reflexStrs) {
 								reflexViewer.add(ref);
 							}
-							modifyReflexOrder();
+							
 						}	
 					}
 				}
 			});
+			return canvasReflexOrder;
 	 }
+
+	@Override
+	protected void save() {
+		final ESpecies species = (ESpecies) eobject;
+		 TransactionalEditingDomain domain = TransactionUtil.getEditingDomain(eobject);
+			if (domain != null) {
+			    domain.getCommandStack().execute(new RecordingCommand(domain) {
+			    	     public void doExecute() {
+			    	    	 eobject.setName(textName.getText());
+			    	    	 modifyReflexOrder();
+			    	    	 modifyVariables();
+			    	    	 species.getSkills().clear();
+			    	    	 species.getSkills().addAll(new GamaList<String>(skillsViewer.getItems()));
+			    	    	 
+			    	 		if (eobject instanceof EWorldAgent) {	
+			    	 			modifyIsTorus();
+			    	 			modifyBounds();
+			    	 		} else if (species.getTopology() instanceof EGridTopology){
+			    	 			modifyIsTorus();
+			    	 			modifyGridProperties();
+			    	 		} else if (species.getTopology() instanceof EGraphTopologyNode){
+			    	 			modifyLocation();
+			    	 			modifyShape();
+			    	 		} else if (species.getTopology() instanceof EGraphTopologyEdge){
+			    	 			modifyLocation();
+			    	 			modifyShape();
+			    	 		}else {
+			    	 			modifyLocation();
+			    	 			modifyShape();
+			    	 		}
+			    	     }
+			    	  });
+			}
+		
+	    ef.hasDoneChanges = true;  
+	}
+
+	@Override
+	protected Point getInitialSize() {
+		return new Point(743, 600);
+	}
+	 
+	 
 }
