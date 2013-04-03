@@ -11,6 +11,7 @@ import gama.EActionLink;
 import gama.EAspect;
 import gama.EAspectLink;
 import gama.EBatchExperiment;
+import gama.EChartLayer;
 import gama.EContinuousTopology;
 import gama.EDisplay;
 import gama.EDisplayLink;
@@ -27,6 +28,7 @@ import gama.EGridTopology;
 import gama.EInheritLink;
 import gama.ELayer;
 import gama.ELayerAspect;
+import gama.EParameter;
 import gama.EReflex;
 import gama.EReflexLink;
 import gama.ESpecies;
@@ -246,6 +248,20 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	private EClass eGraphLinkEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass eChartLayerEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass eParameterEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -1232,7 +1248,52 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	public EAttribute getELayer_Color() {
-		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(2);
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(14);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayer_IsColorCst() {
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(15);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayer_ColorRBG() {
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(16);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayer_Grid() {
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(17);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getELayer_Refresh() {
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(18);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getELayer_Chartlayers() {
+		return (EReference)eLayerEClass.getEStructuralFeatures().get(19);
 	}
 
 	/**
@@ -1241,7 +1302,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	public EAttribute getELayer_Type() {
-		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(3);
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -1250,7 +1311,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	public EAttribute getELayer_File() {
-		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(4);
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -1259,7 +1320,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	public EAttribute getELayer_Text() {
-		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(5);
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -1268,7 +1329,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	public EAttribute getELayer_Size() {
-		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(6);
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -1277,7 +1338,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	public EAttribute getELayer_Species() {
-		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(7);
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(6);
 	}
 
 	/**
@@ -1286,7 +1347,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	public EAttribute getELayer_Transparency() {
-		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(8);
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(7);
 	}
 
 	/**
@@ -1295,7 +1356,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	public EAttribute getELayer_Agents() {
-		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(9);
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(8);
 	}
 
 	/**
@@ -1304,7 +1365,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	public EAttribute getELayer_Position_x() {
-		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(10);
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(9);
 	}
 
 	/**
@@ -1313,7 +1374,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	public EAttribute getELayer_Position_y() {
-		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(11);
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(10);
 	}
 
 	/**
@@ -1322,7 +1383,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	public EAttribute getELayer_Size_x() {
-		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(12);
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(11);
 	}
 
 	/**
@@ -1331,7 +1392,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	public EAttribute getELayer_Size_y() {
-		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(13);
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(12);
 	}
 
 	/**
@@ -1340,7 +1401,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * @generated
 	 */
 	public EAttribute getELayer_Aspect() {
-		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(14);
+		return (EAttribute)eLayerEClass.getEStructuralFeatures().get(13);
 	}
 
 	/**
@@ -1708,6 +1769,96 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getEChartLayer() {
+		return eChartLayerEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEChartLayer_Style() {
+		return (EAttribute)eChartLayerEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEChartLayer_Color() {
+		return (EAttribute)eChartLayerEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEChartLayer_Value() {
+		return (EAttribute)eChartLayerEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getEParameter() {
+		return eParameterEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEParameter_Variable() {
+		return (EAttribute)eParameterEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEParameter_Min() {
+		return (EAttribute)eParameterEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEParameter_Value() {
+		return (EAttribute)eParameterEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEParameter_Step() {
+		return (EAttribute)eParameterEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEParameter_Max() {
+		return (EAttribute)eParameterEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public GamaFactory getGamaFactory() {
 		return (GamaFactory)getEFactoryInstance();
 	}
@@ -1851,7 +2002,6 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		eLayerEClass = createEClass(ELAYER);
 		createEAttribute(eLayerEClass, ELAYER__GAML_CODE);
 		createEReference(eLayerEClass, ELAYER__DISPLAY);
-		createEAttribute(eLayerEClass, ELAYER__COLOR);
 		createEAttribute(eLayerEClass, ELAYER__TYPE);
 		createEAttribute(eLayerEClass, ELAYER__FILE);
 		createEAttribute(eLayerEClass, ELAYER__TEXT);
@@ -1864,6 +2014,12 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		createEAttribute(eLayerEClass, ELAYER__SIZE_X);
 		createEAttribute(eLayerEClass, ELAYER__SIZE_Y);
 		createEAttribute(eLayerEClass, ELAYER__ASPECT);
+		createEAttribute(eLayerEClass, ELAYER__COLOR);
+		createEAttribute(eLayerEClass, ELAYER__IS_COLOR_CST);
+		createEAttribute(eLayerEClass, ELAYER__COLOR_RBG);
+		createEAttribute(eLayerEClass, ELAYER__GRID);
+		createEAttribute(eLayerEClass, ELAYER__REFRESH);
+		createEReference(eLayerEClass, ELAYER__CHARTLAYERS);
 
 		eGraphTopologyNodeEClass = createEClass(EGRAPH_TOPOLOGY_NODE);
 
@@ -1913,6 +2069,18 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		eGraphLinkEClass = createEClass(EGRAPH_LINK);
 		createEReference(eGraphLinkEClass, EGRAPH_LINK__NODE);
 		createEReference(eGraphLinkEClass, EGRAPH_LINK__EDGE);
+
+		eChartLayerEClass = createEClass(ECHART_LAYER);
+		createEAttribute(eChartLayerEClass, ECHART_LAYER__STYLE);
+		createEAttribute(eChartLayerEClass, ECHART_LAYER__COLOR);
+		createEAttribute(eChartLayerEClass, ECHART_LAYER__VALUE);
+
+		eParameterEClass = createEClass(EPARAMETER);
+		createEAttribute(eParameterEClass, EPARAMETER__VARIABLE);
+		createEAttribute(eParameterEClass, EPARAMETER__MIN);
+		createEAttribute(eParameterEClass, EPARAMETER__VALUE);
+		createEAttribute(eParameterEClass, EPARAMETER__STEP);
+		createEAttribute(eParameterEClass, EPARAMETER__MAX);
 	}
 
 	/**
@@ -1967,6 +2135,8 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		eInheritLinkEClass.getESuperTypes().add(this.getEGamaLink());
 		eGraphTopologyEdgeEClass.getESuperTypes().add(this.getETopology());
 		eGraphLinkEClass.getESuperTypes().add(this.getEGamaLink());
+		eChartLayerEClass.getESuperTypes().add(this.getEGamaObject());
+		eParameterEClass.getESuperTypes().add(this.getEGamaObject());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(eGamaModelEClass, EGamaModel.class, "EGamaModel", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -2089,7 +2259,6 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEClass(eLayerEClass, ELayer.class, "ELayer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getELayer_GamlCode(), ecorePackage.getEString(), "gamlCode", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEReference(getELayer_Display(), this.getEDisplay(), null, "display", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getELayer_Color(), ecorePackage.getEString(), "color", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getELayer_Type(), ecorePackage.getEString(), "type", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getELayer_File(), ecorePackage.getEString(), "file", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getELayer_Text(), ecorePackage.getEString(), "text", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2102,6 +2271,12 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEAttribute(getELayer_Size_x(), ecorePackage.getEString(), "size_x", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getELayer_Size_y(), ecorePackage.getEString(), "size_y", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getELayer_Aspect(), ecorePackage.getEString(), "aspect", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayer_Color(), ecorePackage.getEString(), "color", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayer_IsColorCst(), ecorePackage.getEBooleanObject(), "isColorCst", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayer_ColorRBG(), ecorePackage.getEIntegerObject(), "colorRBG", null, 0, 3, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayer_Grid(), ecorePackage.getEString(), "grid", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayer_Refresh(), ecorePackage.getEString(), "refresh", null, 0, 1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getELayer_Chartlayers(), this.getEChartLayer(), null, "chartlayers", null, 0, -1, ELayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eGraphTopologyNodeEClass, EGraphTopologyNode.class, "EGraphTopologyNode", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -2151,6 +2326,18 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEClass(eGraphLinkEClass, EGraphLink.class, "EGraphLink", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getEGraphLink_Node(), this.getESpecies(), null, "node", null, 0, 1, EGraphLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEGraphLink_Edge(), this.getESpecies(), null, "edge", null, 0, 1, EGraphLink.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(eChartLayerEClass, EChartLayer.class, "EChartLayer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getEChartLayer_Style(), ecorePackage.getEString(), "style", null, 0, 1, EChartLayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEChartLayer_Color(), ecorePackage.getEString(), "color", null, 0, 1, EChartLayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEChartLayer_Value(), ecorePackage.getEString(), "value", null, 0, 1, EChartLayer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(eParameterEClass, EParameter.class, "EParameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getEParameter_Variable(), ecorePackage.getEString(), "variable", null, 0, 1, EParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEParameter_Min(), ecorePackage.getEString(), "min", null, 0, 1, EParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEParameter_Value(), ecorePackage.getEString(), "value", null, 0, 1, EParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEParameter_Step(), ecorePackage.getEString(), "step", null, 0, 1, EParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEParameter_Max(), ecorePackage.getEString(), "max", null, 0, 1, EParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);

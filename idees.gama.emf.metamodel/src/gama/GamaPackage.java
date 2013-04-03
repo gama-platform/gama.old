@@ -1789,22 +1789,13 @@ public interface GamaPackage extends EPackage {
 	int ELAYER__DISPLAY = EGAMA_OBJECT_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Color</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ELAYER__COLOR = EGAMA_OBJECT_FEATURE_COUNT + 2;
-
-	/**
 	 * The feature id for the '<em><b>Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ELAYER__TYPE = EGAMA_OBJECT_FEATURE_COUNT + 3;
+	int ELAYER__TYPE = EGAMA_OBJECT_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>File</b></em>' attribute.
@@ -1813,7 +1804,7 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ELAYER__FILE = EGAMA_OBJECT_FEATURE_COUNT + 4;
+	int ELAYER__FILE = EGAMA_OBJECT_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Text</b></em>' attribute.
@@ -1822,7 +1813,7 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ELAYER__TEXT = EGAMA_OBJECT_FEATURE_COUNT + 5;
+	int ELAYER__TEXT = EGAMA_OBJECT_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Size</b></em>' attribute.
@@ -1831,7 +1822,7 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ELAYER__SIZE = EGAMA_OBJECT_FEATURE_COUNT + 6;
+	int ELAYER__SIZE = EGAMA_OBJECT_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Species</b></em>' attribute.
@@ -1840,7 +1831,7 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ELAYER__SPECIES = EGAMA_OBJECT_FEATURE_COUNT + 7;
+	int ELAYER__SPECIES = EGAMA_OBJECT_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Transparency</b></em>' attribute.
@@ -1849,7 +1840,7 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ELAYER__TRANSPARENCY = EGAMA_OBJECT_FEATURE_COUNT + 8;
+	int ELAYER__TRANSPARENCY = EGAMA_OBJECT_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Agents</b></em>' attribute.
@@ -1858,7 +1849,7 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ELAYER__AGENTS = EGAMA_OBJECT_FEATURE_COUNT + 9;
+	int ELAYER__AGENTS = EGAMA_OBJECT_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Position x</b></em>' attribute.
@@ -1867,7 +1858,7 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ELAYER__POSITION_X = EGAMA_OBJECT_FEATURE_COUNT + 10;
+	int ELAYER__POSITION_X = EGAMA_OBJECT_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Position y</b></em>' attribute.
@@ -1876,7 +1867,7 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ELAYER__POSITION_Y = EGAMA_OBJECT_FEATURE_COUNT + 11;
+	int ELAYER__POSITION_Y = EGAMA_OBJECT_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>Size x</b></em>' attribute.
@@ -1885,7 +1876,7 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ELAYER__SIZE_X = EGAMA_OBJECT_FEATURE_COUNT + 12;
+	int ELAYER__SIZE_X = EGAMA_OBJECT_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>Size y</b></em>' attribute.
@@ -1894,7 +1885,7 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ELAYER__SIZE_Y = EGAMA_OBJECT_FEATURE_COUNT + 13;
+	int ELAYER__SIZE_Y = EGAMA_OBJECT_FEATURE_COUNT + 12;
 
 	/**
 	 * The feature id for the '<em><b>Aspect</b></em>' attribute.
@@ -1903,7 +1894,61 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ELAYER__ASPECT = EGAMA_OBJECT_FEATURE_COUNT + 14;
+	int ELAYER__ASPECT = EGAMA_OBJECT_FEATURE_COUNT + 13;
+
+	/**
+	 * The feature id for the '<em><b>Color</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER__COLOR = EGAMA_OBJECT_FEATURE_COUNT + 14;
+
+	/**
+	 * The feature id for the '<em><b>Is Color Cst</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER__IS_COLOR_CST = EGAMA_OBJECT_FEATURE_COUNT + 15;
+
+	/**
+	 * The feature id for the '<em><b>Color RBG</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER__COLOR_RBG = EGAMA_OBJECT_FEATURE_COUNT + 16;
+
+	/**
+	 * The feature id for the '<em><b>Grid</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER__GRID = EGAMA_OBJECT_FEATURE_COUNT + 17;
+
+	/**
+	 * The feature id for the '<em><b>Refresh</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER__REFRESH = EGAMA_OBJECT_FEATURE_COUNT + 18;
+
+	/**
+	 * The feature id for the '<em><b>Chartlayers</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER__CHARTLAYERS = EGAMA_OBJECT_FEATURE_COUNT + 19;
 
 	/**
 	 * The number of structural features of the '<em>ELayer</em>' class.
@@ -1912,7 +1957,7 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ELAYER_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 15;
+	int ELAYER_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 20;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.ETopologyImpl <em>ETopology</em>}' class.
@@ -2588,6 +2633,154 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int EGRAPH_LINK_FEATURE_COUNT = EGAMA_LINK_FEATURE_COUNT + 2;
+
+
+	/**
+	 * The meta object id for the '{@link gama.impl.EChartLayerImpl <em>EChart Layer</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see gama.impl.EChartLayerImpl
+	 * @see gama.impl.GamaPackageImpl#getEChartLayer()
+	 * @generated
+	 */
+	int ECHART_LAYER = 28;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ECHART_LAYER__NAME = EGAMA_OBJECT__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Model</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ECHART_LAYER__MODEL = EGAMA_OBJECT__MODEL;
+
+	/**
+	 * The feature id for the '<em><b>Style</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ECHART_LAYER__STYLE = EGAMA_OBJECT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Color</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ECHART_LAYER__COLOR = EGAMA_OBJECT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ECHART_LAYER__VALUE = EGAMA_OBJECT_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of structural features of the '<em>EChart Layer</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ECHART_LAYER_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 3;
+
+
+	/**
+	 * The meta object id for the '{@link gama.impl.EParameterImpl <em>EParameter</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see gama.impl.EParameterImpl
+	 * @see gama.impl.GamaPackageImpl#getEParameter()
+	 * @generated
+	 */
+	int EPARAMETER = 29;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EPARAMETER__NAME = EGAMA_OBJECT__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Model</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EPARAMETER__MODEL = EGAMA_OBJECT__MODEL;
+
+	/**
+	 * The feature id for the '<em><b>Variable</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EPARAMETER__VARIABLE = EGAMA_OBJECT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Min</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EPARAMETER__MIN = EGAMA_OBJECT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EPARAMETER__VALUE = EGAMA_OBJECT_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Step</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EPARAMETER__STEP = EGAMA_OBJECT_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Max</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EPARAMETER__MAX = EGAMA_OBJECT_FEATURE_COUNT + 4;
+
+	/**
+	 * The number of structural features of the '<em>EParameter</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EPARAMETER_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 5;
 
 
 	/**
@@ -3705,6 +3898,61 @@ public interface GamaPackage extends EPackage {
 	EAttribute getELayer_Color();
 
 	/**
+	 * Returns the meta object for the attribute '{@link gama.ELayer#getIsColorCst <em>Is Color Cst</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Is Color Cst</em>'.
+	 * @see gama.ELayer#getIsColorCst()
+	 * @see #getELayer()
+	 * @generated
+	 */
+	EAttribute getELayer_IsColorCst();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link gama.ELayer#getColorRBG <em>Color RBG</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Color RBG</em>'.
+	 * @see gama.ELayer#getColorRBG()
+	 * @see #getELayer()
+	 * @generated
+	 */
+	EAttribute getELayer_ColorRBG();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ELayer#getGrid <em>Grid</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Grid</em>'.
+	 * @see gama.ELayer#getGrid()
+	 * @see #getELayer()
+	 * @generated
+	 */
+	EAttribute getELayer_Grid();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ELayer#getRefresh <em>Refresh</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Refresh</em>'.
+	 * @see gama.ELayer#getRefresh()
+	 * @see #getELayer()
+	 * @generated
+	 */
+	EAttribute getELayer_Refresh();
+
+	/**
+	 * Returns the meta object for the reference list '{@link gama.ELayer#getChartlayers <em>Chartlayers</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Chartlayers</em>'.
+	 * @see gama.ELayer#getChartlayers()
+	 * @see #getELayer()
+	 * @generated
+	 */
+	EReference getELayer_Chartlayers();
+
+	/**
 	 * Returns the meta object for the attribute '{@link gama.ELayer#getType <em>Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -4266,6 +4514,114 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getEGraphLink_Edge();
+
+	/**
+	 * Returns the meta object for class '{@link gama.EChartLayer <em>EChart Layer</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>EChart Layer</em>'.
+	 * @see gama.EChartLayer
+	 * @generated
+	 */
+	EClass getEChartLayer();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EChartLayer#getStyle <em>Style</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Style</em>'.
+	 * @see gama.EChartLayer#getStyle()
+	 * @see #getEChartLayer()
+	 * @generated
+	 */
+	EAttribute getEChartLayer_Style();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EChartLayer#getColor <em>Color</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Color</em>'.
+	 * @see gama.EChartLayer#getColor()
+	 * @see #getEChartLayer()
+	 * @generated
+	 */
+	EAttribute getEChartLayer_Color();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EChartLayer#getValue <em>Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Value</em>'.
+	 * @see gama.EChartLayer#getValue()
+	 * @see #getEChartLayer()
+	 * @generated
+	 */
+	EAttribute getEChartLayer_Value();
+
+	/**
+	 * Returns the meta object for class '{@link gama.EParameter <em>EParameter</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>EParameter</em>'.
+	 * @see gama.EParameter
+	 * @generated
+	 */
+	EClass getEParameter();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EParameter#getVariable <em>Variable</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Variable</em>'.
+	 * @see gama.EParameter#getVariable()
+	 * @see #getEParameter()
+	 * @generated
+	 */
+	EAttribute getEParameter_Variable();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EParameter#getMin <em>Min</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Min</em>'.
+	 * @see gama.EParameter#getMin()
+	 * @see #getEParameter()
+	 * @generated
+	 */
+	EAttribute getEParameter_Min();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EParameter#getValue <em>Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Value</em>'.
+	 * @see gama.EParameter#getValue()
+	 * @see #getEParameter()
+	 * @generated
+	 */
+	EAttribute getEParameter_Value();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EParameter#getStep <em>Step</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Step</em>'.
+	 * @see gama.EParameter#getStep()
+	 * @see #getEParameter()
+	 * @generated
+	 */
+	EAttribute getEParameter_Step();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EParameter#getMax <em>Max</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Max</em>'.
+	 * @see gama.EParameter#getMax()
+	 * @see #getEParameter()
+	 * @generated
+	 */
+	EAttribute getEParameter_Max();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -5152,6 +5508,46 @@ public interface GamaPackage extends EPackage {
 		EAttribute ELAYER__COLOR = eINSTANCE.getELayer_Color();
 
 		/**
+		 * The meta object literal for the '<em><b>Is Color Cst</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ELAYER__IS_COLOR_CST = eINSTANCE.getELayer_IsColorCst();
+
+		/**
+		 * The meta object literal for the '<em><b>Color RBG</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ELAYER__COLOR_RBG = eINSTANCE.getELayer_ColorRBG();
+
+		/**
+		 * The meta object literal for the '<em><b>Grid</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ELAYER__GRID = eINSTANCE.getELayer_Grid();
+
+		/**
+		 * The meta object literal for the '<em><b>Refresh</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ELAYER__REFRESH = eINSTANCE.getELayer_Refresh();
+
+		/**
+		 * The meta object literal for the '<em><b>Chartlayers</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ELAYER__CHARTLAYERS = eINSTANCE.getELayer_Chartlayers();
+
+		/**
 		 * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -5584,6 +5980,90 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EReference EGRAPH_LINK__EDGE = eINSTANCE.getEGraphLink_Edge();
+
+		/**
+		 * The meta object literal for the '{@link gama.impl.EChartLayerImpl <em>EChart Layer</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see gama.impl.EChartLayerImpl
+		 * @see gama.impl.GamaPackageImpl#getEChartLayer()
+		 * @generated
+		 */
+		EClass ECHART_LAYER = eINSTANCE.getEChartLayer();
+
+		/**
+		 * The meta object literal for the '<em><b>Style</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ECHART_LAYER__STYLE = eINSTANCE.getEChartLayer_Style();
+
+		/**
+		 * The meta object literal for the '<em><b>Color</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ECHART_LAYER__COLOR = eINSTANCE.getEChartLayer_Color();
+
+		/**
+		 * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ECHART_LAYER__VALUE = eINSTANCE.getEChartLayer_Value();
+
+		/**
+		 * The meta object literal for the '{@link gama.impl.EParameterImpl <em>EParameter</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see gama.impl.EParameterImpl
+		 * @see gama.impl.GamaPackageImpl#getEParameter()
+		 * @generated
+		 */
+		EClass EPARAMETER = eINSTANCE.getEParameter();
+
+		/**
+		 * The meta object literal for the '<em><b>Variable</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EPARAMETER__VARIABLE = eINSTANCE.getEParameter_Variable();
+
+		/**
+		 * The meta object literal for the '<em><b>Min</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EPARAMETER__MIN = eINSTANCE.getEParameter_Min();
+
+		/**
+		 * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EPARAMETER__VALUE = eINSTANCE.getEParameter_Value();
+
+		/**
+		 * The meta object literal for the '<em><b>Step</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EPARAMETER__STEP = eINSTANCE.getEParameter_Step();
+
+		/**
+		 * The meta object literal for the '<em><b>Max</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EPARAMETER__MAX = eINSTANCE.getEParameter_Max();
 
 	}
 

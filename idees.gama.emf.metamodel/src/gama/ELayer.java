@@ -6,6 +6,8 @@
  */
 package gama;
 
+import org.eclipse.emf.common.util.EList;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -17,7 +19,6 @@ package gama;
  * <ul>
  *   <li>{@link gama.ELayer#getGamlCode <em>Gaml Code</em>}</li>
  *   <li>{@link gama.ELayer#getDisplay <em>Display</em>}</li>
- *   <li>{@link gama.ELayer#getColor <em>Color</em>}</li>
  *   <li>{@link gama.ELayer#getType <em>Type</em>}</li>
  *   <li>{@link gama.ELayer#getFile <em>File</em>}</li>
  *   <li>{@link gama.ELayer#getText <em>Text</em>}</li>
@@ -30,6 +31,12 @@ package gama;
  *   <li>{@link gama.ELayer#getSize_x <em>Size x</em>}</li>
  *   <li>{@link gama.ELayer#getSize_y <em>Size y</em>}</li>
  *   <li>{@link gama.ELayer#getAspect <em>Aspect</em>}</li>
+ *   <li>{@link gama.ELayer#getColor <em>Color</em>}</li>
+ *   <li>{@link gama.ELayer#getIsColorCst <em>Is Color Cst</em>}</li>
+ *   <li>{@link gama.ELayer#getColorRBG <em>Color RBG</em>}</li>
+ *   <li>{@link gama.ELayer#getGrid <em>Grid</em>}</li>
+ *   <li>{@link gama.ELayer#getRefresh <em>Refresh</em>}</li>
+ *   <li>{@link gama.ELayer#getChartlayers <em>Chartlayers</em>}</li>
  * </ul>
  * </p>
  *
@@ -115,6 +122,116 @@ public interface ELayer extends EGamaObject {
 	 * @generated
 	 */
 	void setColor(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Is Color Cst</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Is Color Cst</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Is Color Cst</em>' attribute.
+	 * @see #setIsColorCst(Boolean)
+	 * @see gama.GamaPackage#getELayer_IsColorCst()
+	 * @model derived="true"
+	 * @generated
+	 */
+	Boolean getIsColorCst();
+
+	/**
+	 * Sets the value of the '{@link gama.ELayer#getIsColorCst <em>Is Color Cst</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Is Color Cst</em>' attribute.
+	 * @see #getIsColorCst()
+	 * @generated
+	 */
+	void setIsColorCst(Boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Color RBG</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.Integer}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Color RBG</em>' attribute list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Color RBG</em>' attribute list.
+	 * @see gama.GamaPackage#getELayer_ColorRBG()
+	 * @model upper="3"
+	 * @generated
+	 */
+	EList<Integer> getColorRBG();
+
+	/**
+	 * Returns the value of the '<em><b>Grid</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Grid</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Grid</em>' attribute.
+	 * @see #setGrid(String)
+	 * @see gama.GamaPackage#getELayer_Grid()
+	 * @model
+	 * @generated
+	 */
+	String getGrid();
+
+	/**
+	 * Sets the value of the '{@link gama.ELayer#getGrid <em>Grid</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Grid</em>' attribute.
+	 * @see #getGrid()
+	 * @generated
+	 */
+	void setGrid(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Refresh</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Refresh</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Refresh</em>' attribute.
+	 * @see #setRefresh(String)
+	 * @see gama.GamaPackage#getELayer_Refresh()
+	 * @model
+	 * @generated
+	 */
+	String getRefresh();
+
+	/**
+	 * Sets the value of the '{@link gama.ELayer#getRefresh <em>Refresh</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Refresh</em>' attribute.
+	 * @see #getRefresh()
+	 * @generated
+	 */
+	void setRefresh(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Chartlayers</b></em>' reference list.
+	 * The list contents are of type {@link gama.EChartLayer}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Chartlayers</em>' reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Chartlayers</em>' reference list.
+	 * @see gama.GamaPackage#getELayer_Chartlayers()
+	 * @model
+	 * @generated
+	 */
+	EList<EChartLayer> getChartlayers();
 
 	/**
 	 * Returns the value of the '<em><b>Type</b></em>' attribute.

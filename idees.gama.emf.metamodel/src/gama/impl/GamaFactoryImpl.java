@@ -88,6 +88,8 @@ public class GamaFactoryImpl extends EFactoryImpl implements GamaFactory {
 			case GamaPackage.EINHERIT_LINK: return createEInheritLink();
 			case GamaPackage.EGRAPH_TOPOLOGY_EDGE: return createEGraphTopologyEdge();
 			case GamaPackage.EGRAPH_LINK: return createEGraphLink();
+			case GamaPackage.ECHART_LAYER: return createEChartLayer();
+			case GamaPackage.EPARAMETER: return createEParameter();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -371,6 +373,26 @@ public class GamaFactoryImpl extends EFactoryImpl implements GamaFactory {
 	public EGraphLink createEGraphLink() {
 		EGraphLinkImpl eGraphLink = new EGraphLinkImpl();
 		return eGraphLink;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EChartLayer createEChartLayer() {
+		EChartLayerImpl eChartLayer = new EChartLayerImpl();
+		return eChartLayer;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EParameter createEParameter() {
+		EParameterImpl eParameter = new EParameterImpl();
+		return eParameter;
 	}
 
 	/**

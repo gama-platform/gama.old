@@ -278,6 +278,24 @@ public interface GamaFactory extends EFactory {
 	EGraphLink createEGraphLink();
 
 	/**
+	 * Returns a new object of class '<em>EChart Layer</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>EChart Layer</em>'.
+	 * @generated
+	 */
+	EChartLayer createEChartLayer();
+
+	/**
+	 * Returns a new object of class '<em>EParameter</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>EParameter</em>'.
+	 * @generated
+	 */
+	EParameter createEParameter();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
