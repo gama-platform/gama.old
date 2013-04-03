@@ -15,7 +15,8 @@ Require-Bundle: org.eclipse.graphiti;bundle-version="0.8.2",
  org.eclipse.emf.transaction;bundle-version="1.4.0",
  msi.gama.lang.gaml;bundle-version="1.4.2",
  org.eclipse.ui.console;bundle-version="3.5.100",
- org.eclipse.ui.ide;bundle-version="3.7.0"
+ org.eclipse.ui.ide;bundle-version="3.7.0",
+ org.eclipse.draw2d;bundle-version="3.8.1"
 Export-Package: gaml.additions,
  idees.gama.diagram,
  idees.gama.features.add,

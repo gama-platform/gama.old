@@ -169,6 +169,8 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
          	model += defineAction(link, level+1);
     	 }
     	 for (EReflexLink link : species.getReflexLinks()) {
+    		 if (link.getTarget() == null)
+ 				continue;
     		reflexMap.put(link.getTarget().getName(), (EReflexLink) link);
      	 }
     	 for (String reflex : species.getReflexList()) {

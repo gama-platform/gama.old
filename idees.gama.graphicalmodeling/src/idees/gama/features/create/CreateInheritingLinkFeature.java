@@ -45,7 +45,7 @@ public class CreateInheritingLinkFeature extends AbstractCreateSpeciesComponentL
 	public boolean canCreate(ICreateConnectionContext context) {
 		ESpecies source = getESpecies(context.getSourceAnchor());
 		ESpecies target = getESpecies(context.getTargetAnchor());
-		if (source != null && target != null && !(source instanceof EWorldAgent) && !(target instanceof EWorldAgent) && target.getInheritsFrom() == null) {
+		if (source != null && target != null && source != target && !(source instanceof EWorldAgent) && !(target instanceof EWorldAgent) && target.getInheritsFrom() == null) {
 			return true;
 		}
 		return false;

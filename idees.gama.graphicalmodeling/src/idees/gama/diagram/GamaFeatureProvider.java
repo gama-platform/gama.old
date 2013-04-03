@@ -47,6 +47,7 @@ import idees.gama.features.create.CreateSubGraphSpeciesFeature;
 import idees.gama.features.create.CreateSubGridLinkFeature;
 import idees.gama.features.create.CreateSubSpeciesLinkFeature;
 import idees.gama.features.layout.LayoutCommonFeature;
+import idees.gama.features.layout.LayoutDiagramFeature;
 import idees.gama.features.layout.LayoutEExperimentFeature;
 import idees.gama.features.layout.LayoutESpeciesEExperimentFeature;
 import idees.gama.features.modelgeneration.ModelGenerationFeature;
@@ -244,7 +245,7 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
     
     @Override
     public ICustomFeature[] getCustomFeatures(ICustomContext context) {
-    	return new ICustomFeature[] { new RenameEGamaObjectFeature(this),new ModelGenerationFeature(this)};
+    	return new ICustomFeature[] { new RenameEGamaObjectFeature(this),new ModelGenerationFeature(this), new LayoutDiagramFeature(this)};
     }
     
     @Override

@@ -41,7 +41,6 @@ public class EditDisplayFrame extends EditFrame {
 
 	StyledText gamlCode;
 	org.eclipse.swt.widgets.List layerViewer;
-	List<String> layerStrs;
 	EditDisplayFrame frame;
 	List<ELayer> layers;
 	Text textColor;
@@ -52,7 +51,7 @@ public class EditDisplayFrame extends EditFrame {
 
 	Button btnCstCol;
 	Color color;
-	RGB rgb;
+	int[] rgb;
 	Label colorLabel;
 	Button btnOpenGL;
 
@@ -66,7 +65,7 @@ public class EditDisplayFrame extends EditFrame {
 		species = new GamaList<ESpecies>();
 		grids = new GamaList<ESpecies>();
 		layers = new GamaList<ELayer>();
-		
+		rgb = new int[3];
 		List<Shape> contents = diagram.getChildren();
 		for (Shape sh : contents) {
 			Object obj = fp.getBusinessObjectForPictogramElement(sh);
@@ -84,17 +83,26 @@ public class EditDisplayFrame extends EditFrame {
 	
 	private void loadData() {
 		EDisplay display = (EDisplay) eobject;
+		System.out.println("display.getLayers() : " + display.getLayers());
 		layers.addAll(display.getLayers());
+		for (ELayer la : layers) {
+			layerViewer.add(la.getName());
+		}
 		if (display.getIsColorCst()!= null)
 			btnCstCol.setSelection(display.getIsColorCst());
 		if (display.getName()!= null)
 			textName.setText(display.getName());
 		if (display.getColor()!= null)
 			textColor.setText(display.getColor());
-		if (! display.getColorRBG().isEmpty()) {
-			rgb = new RGB(display.getColorRBG().get(0), display.getColorRBG().get(1), display.getColorRBG().get(2));
-			 color.dispose();
-	         color = new Color(frame.getShell().getDisplay(), rgb);
+		System.out.println(" display.getColorRBG() : " +  display.getColorRBG());
+		
+		if (display.getColorRBG().size() == 3) {
+			rgb[0] = display.getColorRBG().get(0);
+			rgb[1] = display.getColorRBG().get(1);
+			rgb[2] = display.getColorRBG().get(2);
+			
+			color.dispose();
+	         color = new Color(frame.getShell().getDisplay(), new RGB(rgb[0], rgb[1],rgb[2]));
 	         colorLabel.setBackground(color);
 		}
 		if (display.getOpengl()!= null)
@@ -112,7 +120,6 @@ public class EditDisplayFrame extends EditFrame {
 	@Override
 	protected Control createContents(Composite parent) {
 		Composite container = new Composite(parent, SWT.NONE);
-		layerStrs = new GamaList<String>();
 		// ****** CANVAS NAME *********
 		Canvas canvasName = canvasName(container);
 		canvasName.setBounds(10, 10, 720, 30);
@@ -254,8 +261,11 @@ public class EditDisplayFrame extends EditFrame {
 
 		// Start with white
 
-		rgb = new RGB(255, 255, 255);		
-		color = new Color(frame.getShell().getDisplay(), rgb);
+		rgb[0] = 255;
+		rgb[1] = 255;
+		rgb[2] = 255;
+		
+		color = new Color(frame.getShell().getDisplay(), new RGB(rgb[0], rgb[1], rgb[2]));
 
 		// Use a label full of spaces to show the color
 		colorLabel = new Label(canvasParam, SWT.NONE);
@@ -279,12 +289,16 @@ public class EditDisplayFrame extends EditFrame {
 				dlg.setText("Choose a Color");
 
 				// Open the dialog and retrieve the selected color
-				RGB rgb = dlg.open();
-				if (rgb != null) {
+				RGB rgbL = dlg.open();
+				if (rgbL != null) {
+					rgb[0] = rgbL.red;
+					rgb[1] = rgbL.green;
+					rgb[2] = rgbL.blue;
+					
 					// Dispose the old color, create the
 					// new one, and set into the label
 					color.dispose();
-					color = new Color(frame.getShell().getDisplay(), rgb);
+					color = new Color(frame.getShell().getDisplay(), rgbL);
 					colorLabel.setBackground(color);
 				}
 			}
@@ -413,10 +427,10 @@ public class EditDisplayFrame extends EditFrame {
 		display.setName(textName.getText());
 		display.setIsColorCst(btnCstCol.getSelection());
 		display.setColor(textColor.getText());
-		
-		display.getColorRBG().add(rgb.red);
-		display.getColorRBG().add(rgb.green);
-		display.getColorRBG().add(rgb.blue);
+		display.getColorRBG().clear();
+		display.getColorRBG().add(rgb[0]);
+		display.getColorRBG().add(rgb[1]);
+		display.getColorRBG().add(rgb[2]);
 		
 		display.setOpengl(btnOpenGL.getSelection());
 		display.setRefresh(textRefresh.getText());
@@ -437,12 +451,14 @@ public class EditDisplayFrame extends EditFrame {
 
 	private void modifyLayerOrder() {
 		EDisplay display = ((EDisplay) eobject);
+		System.out.println("layers : " + layers);
 		for (ELayer lay: display.getLayers()) {
 			if (! layers.contains(lay)) {
 				EcoreUtil.delete((EObject) lay, true);
 			}
 		}	
 		display.getLayers().clear();
+		System.out.println("layers 2 : " + layers);
 		display.getLayers().addAll(layers);
 	}
 

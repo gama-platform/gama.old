@@ -134,6 +134,8 @@ public class EditSpeciesFrame extends EditFrame {
 		reflexStrs = new GamaList<String>();
 		List<String> newReflex = new GamaList<String>();
 		for (EReflexLink link: species.getReflexLinks()) {
+			if (link.getTarget() == null)
+				continue;
 			newReflex.add(link.getTarget().getName());
 		}
 		if (species.getReflexList() == null ||species.getReflexList().isEmpty() ) {
@@ -587,7 +589,7 @@ public class EditSpeciesFrame extends EditFrame {
 				public void widgetSelected(SelectionEvent e) {
 					TableItem ti =  new TableItem(table_vars, SWT.NONE);
 					final String name = "var_name" + cpt;
-					ti.setText(new String[] {name, "","","","","",""});
+					ti.setText(new String[] {name, "int","","","","",""});
 					cpt++;
 				}
 			});
