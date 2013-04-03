@@ -262,4 +262,10 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		updateExperiments(newExperiments, withErrors);
 	}
 
+	public GamlJavaValidator getValidator() {
+		return validator;
+	}
+	
+	
+
 }
