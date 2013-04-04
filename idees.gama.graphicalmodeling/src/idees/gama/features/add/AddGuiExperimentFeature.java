@@ -1,7 +1,11 @@
 package idees.gama.features.add;
 
+import java.util.List;
+
 import idees.gama.ui.image.GamaImageProvider;
 import gama.EGUIExperiment;
+
+import msi.gama.util.GamaList;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
@@ -10,6 +14,7 @@ import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
 import org.eclipse.graphiti.mm.algorithms.RoundedRectangle;
 import org.eclipse.graphiti.mm.algorithms.Text;
+import org.eclipse.graphiti.mm.algorithms.styles.Color;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
@@ -30,10 +35,9 @@ public class AddGuiExperimentFeature extends AbstractAddShapeFeature {
         new ColorConstant(0, 0, 0);
  
     private static final IColorConstant SPECIES_FOREGROUND =
-        new ColorConstant(0,128,128);
+    		 new ColorConstant(0,0,0);
 
-    private static final IColorConstant SPECIES_BACKGROUND =
-        new ColorConstant(151,255,255);
+    private static final List<Integer> CLASS_BACKGROUND =GamaList.with(151,255,255);
  
     public AddGuiExperimentFeature(IFeatureProvider fp) {
         super(fp);
@@ -71,7 +75,12 @@ public class AddGuiExperimentFeature extends AbstractAddShapeFeature {
             RoundedRectangle roundedRectangle =
                 gaService.createRoundedRectangle(containerShape, 5, 5);
             roundedRectangle.setForeground(manageColor(SPECIES_FOREGROUND));
-            roundedRectangle.setBackground(manageColor(SPECIES_BACKGROUND));
+            if (addedClass.getColorPicto().isEmpty()) {
+              	 addedClass.getColorPicto().addAll(CLASS_BACKGROUND);
+             }
+              List<Integer> currentColor = addedClass.getColorPicto();
+              Color color = gaService.manageColor(getDiagram(), currentColor.get(0), currentColor.get(1), currentColor.get(2));
+              roundedRectangle.setBackground(color);
             roundedRectangle.setLineWidth(2);
             gaService.setLocationAndSize(roundedRectangle,
                 context.getX(), context.getY(), width, height);

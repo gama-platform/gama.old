@@ -1,6 +1,9 @@
 package idees.gama.features.layout;
 
+import java.util.List;
+
 import gama.EGamaObject;
+import gama.ESpecies;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -11,6 +14,7 @@ import org.eclipse.graphiti.features.impl.AbstractLayoutFeature;
 import org.eclipse.graphiti.mm.algorithms.GraphicsAlgorithm;
 import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.Polyline;
+import org.eclipse.graphiti.mm.algorithms.styles.Color;
 import org.eclipse.graphiti.mm.algorithms.styles.Point;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.PictogramElement;
@@ -40,10 +44,19 @@ public class LayoutESpeciesEExperimentFeature extends AbstractLayoutFeature {
  
     public boolean layout(ILayoutContext context) {
         boolean anythingChanged = false;
+       IGaService gaService = Graphiti.getGaService();
         ContainerShape containerShape =
             (ContainerShape) context.getPictogramElement();
         GraphicsAlgorithm containerGa = containerShape.getGraphicsAlgorithm();
- 
+        PictogramElement pe = context.getPictogramElement();
+        EList<EObject> businessObjects = pe.getLink().getBusinessObjects();
+        if (businessObjects != null) {
+	        EGamaObject obj =  (EGamaObject) businessObjects.get(0);
+	        List<Integer> currentColor = obj.getColorPicto();
+	        Color color = gaService.manageColor(getDiagram(), currentColor.get(0), currentColor.get(1), currentColor.get(2));
+	        containerGa.setBackground(color);
+        }
+       
         // height
         if (containerGa.getHeight() < MIN_HEIGHT) {
             containerGa.setHeight(MIN_HEIGHT);
@@ -55,16 +68,15 @@ public class LayoutESpeciesEExperimentFeature extends AbstractLayoutFeature {
             containerGa.setWidth(MIN_WIDTH);
             anythingChanged = true;
         }
- 
         int containerWidth = containerGa.getWidth();
        
         for (Shape shape : containerShape.getChildren()){
             GraphicsAlgorithm graphicsAlgorithm = shape.getGraphicsAlgorithm();
-            IGaService gaService = Graphiti.getGaService();
+           
             IDimension size = 
                  gaService.calculateSize(graphicsAlgorithm);
             if (containerWidth != size.getWidth()) {
-                if (graphicsAlgorithm instanceof Polyline) {
+            	 if (graphicsAlgorithm instanceof Polyline) {
                     Polyline polyline = (Polyline) graphicsAlgorithm;
                     Point secondPoint = polyline.getPoints().get(1);
                     Point newSecondPoint =
@@ -85,4 +97,5 @@ public class LayoutESpeciesEExperimentFeature extends AbstractLayoutFeature {
         }
         return anythingChanged;
     }
+
 }

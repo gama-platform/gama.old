@@ -1,8 +1,12 @@
 package idees.gama.features.add;
 
 
+import java.util.List;
+
 import idees.gama.ui.image.GamaImageProvider;
 import gama.EDisplay;
+
+import msi.gama.util.GamaList;
 
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.context.IAddContext;
@@ -10,6 +14,7 @@ import org.eclipse.graphiti.features.impl.AbstractAddShapeFeature;
 import org.eclipse.graphiti.mm.algorithms.Ellipse;
 import org.eclipse.graphiti.mm.algorithms.Image;
 import org.eclipse.graphiti.mm.algorithms.Text;
+import org.eclipse.graphiti.mm.algorithms.styles.Color;
 import org.eclipse.graphiti.mm.algorithms.styles.Orientation;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
@@ -30,10 +35,10 @@ public class AddDisplayFeature extends AbstractAddShapeFeature {
         new ColorConstant(0, 0, 0);
  
     private static final IColorConstant CLASS_FOREGROUND =
-        new ColorConstant(0,128,0);
+    		 new ColorConstant(0,0,0);
 
-    private static final IColorConstant CLASS_BACKGROUND =
-        new ColorConstant(127,255,0);
+    private static final List<Integer> CLASS_BACKGROUND =GamaList.with(127,255,0);
+    
  
     public AddDisplayFeature(IFeatureProvider fp) {
         super(fp);
@@ -67,7 +72,12 @@ public class AddDisplayFeature extends AbstractAddShapeFeature {
            Ellipse ellipse =
                 gaService.createEllipse(containerShape);
 	           ellipse.setForeground(manageColor(CLASS_FOREGROUND));
-	           ellipse.setBackground(manageColor(CLASS_BACKGROUND));
+	           if (addedClass.getColorPicto().isEmpty()) {
+	            	 addedClass.getColorPicto().addAll(CLASS_BACKGROUND);
+	           }
+	            List<Integer> currentColor = addedClass.getColorPicto();
+	            Color color = gaService.manageColor(getDiagram(), currentColor.get(0), currentColor.get(1), currentColor.get(2));
+	            ellipse.setBackground(color);
 	           ellipse.setLineWidth(2);
 	           gaService.setLocationAndSize(ellipse,
                 context.getX(), context.getY(), width, height);

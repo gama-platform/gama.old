@@ -53,6 +53,7 @@ import idees.gama.features.layout.LayoutDiagramFeature;
 import idees.gama.features.layout.LayoutEExperimentFeature;
 import idees.gama.features.layout.LayoutESpeciesEExperimentFeature;
 import idees.gama.features.modelgeneration.ModelGenerationFeature;
+import idees.gama.features.others.ChangeColorEGamaObjectFeature;
 import idees.gama.features.others.RenameEGamaObjectFeature;
 import idees.gama.features.others.UpdateEGamaObjectFeature;
 
@@ -529,7 +530,7 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
     
     @Override
     public ICustomFeature[] getCustomFeatures(ICustomContext context) {
-    	return new ICustomFeature[] { new RenameEGamaObjectFeature(this),new ModelGenerationFeature(this), new LayoutDiagramFeature(this)};
+    	return new ICustomFeature[] { new RenameEGamaObjectFeature(this),new ModelGenerationFeature(this), new LayoutDiagramFeature(this), new ChangeColorEGamaObjectFeature(this)};
     }
     
     @Override
