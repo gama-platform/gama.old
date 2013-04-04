@@ -62,6 +62,10 @@ import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.kernel.model.IModel;
+import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.IOutput;
+import msi.gama.outputs.LayeredDisplayOutput;
+import msi.gama.outputs.OutputManager;
 import msi.gama.util.GamaList;
 import msi.gaml.architecture.reflex.ReflexStatement;
 import msi.gaml.species.ISpecies;
@@ -316,13 +320,19 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 		 diagram.eResource().getContents().add(target);
 		 target.setName(xp.getName().substring("Experiment ".length(), xp.getName().length()));
 		 CreateContext ac = new CreateContext();
+		
 			
 		 ac.setLocation(0, 0);
 			
 			 ac.setSize(0, 0);
 			 ac.setTargetContainer(diagram);
-			 
-		  PictogramElement targetE = addIfPossible(new AddContext(ac, target));
+			 PictogramElement targetE = addIfPossible(new AddContext(ac, target));
+			if (xp.isGui() && ((OutputManager) xp.getOutputManager()).getOutputs() != null) {
+				  for (IOutput output : ((OutputManager) xp.getOutputManager()).getOutputs().values()) {
+					  if (output instanceof LayeredDisplayOutput)
+						  createDisplay((EGUIExperiment) target, targetE, output, diagram);
+				}
+			}
 	
 		 EExperimentLink eReference = gama.GamaFactory.eINSTANCE.createEExperimentLink();
 		 diagram.eResource().getContents().add(eReference);
@@ -373,6 +383,37 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 			eReference.setAction(target);
 			source.getActionLinks().add(eReference);
 			target.getActionLinks().add(eReference);
+		 return target;
+	}
+   
+   public  EDisplay createDisplay(EGUIExperiment source, PictogramElement sourceE, IOutput display, Diagram diagram) {
+		if (display == null)
+			return null;
+	   EDisplay target = gama.GamaFactory.eINSTANCE.createEDisplay();
+   	 diagram.eResource().getContents().add(target);
+		 target.setName(display.getName());
+		 
+		 CreateContext ac = new CreateContext();
+			
+		 ac.setLocation(0, 0);
+			
+			 ac.setSize(0, 0);
+			 ac.setTargetContainer(diagram);
+			 
+		  PictogramElement targetE = addIfPossible(new AddContext(ac, target));
+	
+		 EDisplayLink eReference = gama.GamaFactory.eINSTANCE.createEDisplayLink();
+		 diagram.eResource().getContents().add(eReference);
+		 
+		 // add connection for business object
+			AddConnectionContext addContext = new AddConnectionContext(
+					getAnchor(sourceE), getAnchor(targetE));
+			addContext.setNewObject(eReference);
+			addIfPossible(addContext);
+			eReference.setExperiment(source);
+			eReference.setDisplay(target);
+			source.getDisplayLinks().add(eReference);
+			target.setDisplayLink(eReference);
 		 return target;
 	}
    

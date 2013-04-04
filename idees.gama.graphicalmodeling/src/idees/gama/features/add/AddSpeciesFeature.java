@@ -179,7 +179,6 @@ public class AddSpeciesFeature extends AbstractAddShapeFeature {
             	icon1= gaService.createImage(shape3, GamaImageProvider.IMG_SPECIESGRAPHNODETOPO);
             else if (addedClass.getTopology() instanceof EGraphTopologyEdge)
             	icon1= gaService.createImage(shape3, GamaImageProvider.IMG_SPECIESGRAPHEDGETOPO);
-          System.out.println("addedClass.getTopology() : " + addedClass.getTopology() + " icon1 : " + icon1);
             gaService.setLocationAndSize(icon1,
                     20 -width/2, 3, 30, 15);
             
