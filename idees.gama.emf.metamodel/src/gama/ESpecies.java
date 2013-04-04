@@ -47,6 +47,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link gama.ESpecies#getLocationIsFunction <em>Location Is Function</em>}</li>
  *   <li>{@link gama.ESpecies#getLocationFunction <em>Location Function</em>}</li>
  *   <li>{@link gama.ESpecies#getLocationUpdate <em>Location Update</em>}</li>
+ *   <li>{@link gama.ESpecies#getInit <em>Init</em>}</li>
  * </ul>
  * </p>
  *
@@ -770,5 +771,31 @@ public interface ESpecies extends EGamaObject {
 	 * @generated
 	 */
 	void setLocationUpdate(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Init</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Init</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Init</em>' attribute.
+	 * @see #setInit(String)
+	 * @see gama.GamaPackage#getESpecies_Init()
+	 * @model
+	 * @generated
+	 */
+	String getInit();
+
+	/**
+	 * Sets the value of the '{@link gama.ESpecies#getInit <em>Init</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Init</em>' attribute.
+	 * @see #getInit()
+	 * @generated
+	 */
+	void setInit(String value);
 
 } // ESpecies

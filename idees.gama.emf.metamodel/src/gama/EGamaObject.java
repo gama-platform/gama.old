@@ -6,6 +6,7 @@
  */
 package gama;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -18,6 +19,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link gama.EGamaObject#getName <em>Name</em>}</li>
  *   <li>{@link gama.EGamaObject#getModel <em>Model</em>}</li>
+ *   <li>{@link gama.EGamaObject#getColorPicto <em>Color Picto</em>}</li>
  * </ul>
  * </p>
  *
@@ -79,5 +81,21 @@ public interface EGamaObject extends EObject {
 	 * @generated
 	 */
 	void setModel(EGamaModel value);
+
+	/**
+	 * Returns the value of the '<em><b>Color Picto</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.Integer}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Color Picto</em>' attribute list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Color Picto</em>' attribute list.
+	 * @see gama.GamaPackage#getEGamaObject_ColorPicto()
+	 * @model unique="false" upper="3"
+	 * @generated
+	 */
+	EList<Integer> getColorPicto();
 
 } // EGamaObject

@@ -71,6 +71,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link gama.impl.ESpeciesImpl#getLocationIsFunction <em>Location Is Function</em>}</li>
  *   <li>{@link gama.impl.ESpeciesImpl#getLocationFunction <em>Location Function</em>}</li>
  *   <li>{@link gama.impl.ESpeciesImpl#getLocationUpdate <em>Location Update</em>}</li>
+ *   <li>{@link gama.impl.ESpeciesImpl#getInit <em>Init</em>}</li>
  * </ul>
  * </p>
  *
@@ -586,6 +587,26 @@ public class ESpeciesImpl extends EGamaObjectImpl implements ESpecies {
 	 * @ordered
 	 */
 	protected String locationUpdate = LOCATION_UPDATE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getInit() <em>Init</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getInit()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String INIT_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getInit() <em>Init</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getInit()
+	 * @generated
+	 * @ordered
+	 */
+	protected String init = INIT_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -1215,6 +1236,27 @@ public class ESpeciesImpl extends EGamaObjectImpl implements ESpecies {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getInit() {
+		return init;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setInit(String newInit) {
+		String oldInit = init;
+		init = newInit;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.ESPECIES__INIT, oldInit, init));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -1296,6 +1338,8 @@ public class ESpeciesImpl extends EGamaObjectImpl implements ESpecies {
 				return getLocationFunction();
 			case GamaPackage.ESPECIES__LOCATION_UPDATE:
 				return getLocationUpdate();
+			case GamaPackage.ESPECIES__INIT:
+				return getInit();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -1411,6 +1455,9 @@ public class ESpeciesImpl extends EGamaObjectImpl implements ESpecies {
 			case GamaPackage.ESPECIES__LOCATION_UPDATE:
 				setLocationUpdate((String)newValue);
 				return;
+			case GamaPackage.ESPECIES__INIT:
+				setInit((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -1516,6 +1563,9 @@ public class ESpeciesImpl extends EGamaObjectImpl implements ESpecies {
 			case GamaPackage.ESPECIES__LOCATION_UPDATE:
 				setLocationUpdate(LOCATION_UPDATE_EDEFAULT);
 				return;
+			case GamaPackage.ESPECIES__INIT:
+				setInit(INIT_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -1590,6 +1640,8 @@ public class ESpeciesImpl extends EGamaObjectImpl implements ESpecies {
 				return LOCATION_FUNCTION_EDEFAULT == null ? locationFunction != null : !LOCATION_FUNCTION_EDEFAULT.equals(locationFunction);
 			case GamaPackage.ESPECIES__LOCATION_UPDATE:
 				return LOCATION_UPDATE_EDEFAULT == null ? locationUpdate != null : !LOCATION_UPDATE_EDEFAULT.equals(locationUpdate);
+			case GamaPackage.ESPECIES__INIT:
+				return INIT_EDEFAULT == null ? init != null : !INIT_EDEFAULT.equals(init);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -1648,6 +1700,8 @@ public class ESpeciesImpl extends EGamaObjectImpl implements ESpecies {
 		result.append(locationFunction);
 		result.append(", locationUpdate: ");
 		result.append(locationUpdate);
+		result.append(", init: ");
+		result.append(init);
 		result.append(')');
 		return result.toString();
 	}

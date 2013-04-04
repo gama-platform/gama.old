@@ -10,15 +10,19 @@ import gama.EGamaModel;
 import gama.EGamaObject;
 import gama.GamaPackage;
 
+import java.util.Collection;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
 
+import org.eclipse.emf.ecore.util.EDataTypeEList;
+import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
 /**
@@ -30,6 +34,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * <ul>
  *   <li>{@link gama.impl.EGamaObjectImpl#getName <em>Name</em>}</li>
  *   <li>{@link gama.impl.EGamaObjectImpl#getModel <em>Model</em>}</li>
+ *   <li>{@link gama.impl.EGamaObjectImpl#getColorPicto <em>Color Picto</em>}</li>
  * </ul>
  * </p>
  *
@@ -55,6 +60,16 @@ public class EGamaObjectImpl extends EObjectImpl implements EGamaObject {
 	 * @ordered
 	 */
 	protected String name = NAME_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getColorPicto() <em>Color Picto</em>}' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getColorPicto()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<Integer> colorPicto;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -142,6 +157,18 @@ public class EGamaObjectImpl extends EObjectImpl implements EGamaObject {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<Integer> getColorPicto() {
+		if (colorPicto == null) {
+			colorPicto = new EDataTypeEList<Integer>(Integer.class, this, GamaPackage.EGAMA_OBJECT__COLOR_PICTO);
+		}
+		return colorPicto;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -193,6 +220,8 @@ public class EGamaObjectImpl extends EObjectImpl implements EGamaObject {
 				return getName();
 			case GamaPackage.EGAMA_OBJECT__MODEL:
 				return getModel();
+			case GamaPackage.EGAMA_OBJECT__COLOR_PICTO:
+				return getColorPicto();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -202,6 +231,7 @@ public class EGamaObjectImpl extends EObjectImpl implements EGamaObject {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
@@ -210,6 +240,10 @@ public class EGamaObjectImpl extends EObjectImpl implements EGamaObject {
 				return;
 			case GamaPackage.EGAMA_OBJECT__MODEL:
 				setModel((EGamaModel)newValue);
+				return;
+			case GamaPackage.EGAMA_OBJECT__COLOR_PICTO:
+				getColorPicto().clear();
+				getColorPicto().addAll((Collection<? extends Integer>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -229,6 +263,9 @@ public class EGamaObjectImpl extends EObjectImpl implements EGamaObject {
 			case GamaPackage.EGAMA_OBJECT__MODEL:
 				setModel((EGamaModel)null);
 				return;
+			case GamaPackage.EGAMA_OBJECT__COLOR_PICTO:
+				getColorPicto().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -245,6 +282,8 @@ public class EGamaObjectImpl extends EObjectImpl implements EGamaObject {
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 			case GamaPackage.EGAMA_OBJECT__MODEL:
 				return getModel() != null;
+			case GamaPackage.EGAMA_OBJECT__COLOR_PICTO:
+				return colorPicto != null && !colorPicto.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -261,6 +300,8 @@ public class EGamaObjectImpl extends EObjectImpl implements EGamaObject {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (name: ");
 		result.append(name);
+		result.append(", colorPicto: ");
+		result.append(colorPicto);
 		result.append(')');
 		return result.toString();
 	}

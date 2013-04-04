@@ -392,6 +392,15 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getEGamaObject_ColorPicto() {
+		return (EAttribute)eGamaObjectEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getESpecies() {
 		return eSpeciesEClass;
 	}
@@ -673,6 +682,15 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 */
 	public EAttribute getESpecies_LocationUpdate() {
 		return (EAttribute)eSpeciesEClass.getEStructuralFeatures().get(30);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getESpecies_Init() {
+		return (EAttribute)eSpeciesEClass.getEStructuralFeatures().get(31);
 	}
 
 	/**
@@ -1890,6 +1908,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		eGamaObjectEClass = createEClass(EGAMA_OBJECT);
 		createEAttribute(eGamaObjectEClass, EGAMA_OBJECT__NAME);
 		createEReference(eGamaObjectEClass, EGAMA_OBJECT__MODEL);
+		createEAttribute(eGamaObjectEClass, EGAMA_OBJECT__COLOR_PICTO);
 
 		eSpeciesEClass = createEClass(ESPECIES);
 		createEReference(eSpeciesEClass, ESPECIES__VARIABLES);
@@ -1923,6 +1942,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		createEAttribute(eSpeciesEClass, ESPECIES__LOCATION_IS_FUNCTION);
 		createEAttribute(eSpeciesEClass, ESPECIES__LOCATION_FUNCTION);
 		createEAttribute(eSpeciesEClass, ESPECIES__LOCATION_UPDATE);
+		createEAttribute(eSpeciesEClass, ESPECIES__INIT);
 
 		eActionEClass = createEClass(EACTION);
 		createEAttribute(eActionEClass, EACTION__GAML_CODE);
@@ -2147,6 +2167,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEClass(eGamaObjectEClass, EGamaObject.class, "EGamaObject", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEGamaObject_Name(), ecorePackage.getEString(), "name", null, 0, 1, EGamaObject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEGamaObject_Model(), this.getEGamaModel(), this.getEGamaModel_Objects(), "model", null, 1, 1, EGamaObject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEGamaObject_ColorPicto(), ecorePackage.getEIntegerObject(), "colorPicto", null, 0, 3, EGamaObject.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eSpeciesEClass, ESpecies.class, "ESpecies", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getESpecies_Variables(), this.getEVariable(), null, "variables", null, 0, -1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -2180,6 +2201,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEAttribute(getESpecies_LocationIsFunction(), ecorePackage.getEBooleanObject(), "locationIsFunction", null, 0, 1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getESpecies_LocationFunction(), ecorePackage.getEString(), "locationFunction", null, 0, 1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getESpecies_LocationUpdate(), ecorePackage.getEString(), "locationUpdate", null, 0, 1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getESpecies_Init(), ecorePackage.getEString(), "init", null, 0, 1, ESpecies.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eActionEClass, EAction.class, "EAction", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEAction_GamlCode(), ecorePackage.getEString(), "gamlCode", null, 0, 1, EAction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);

@@ -134,13 +134,22 @@ public interface GamaPackage extends EPackage {
 	int EGAMA_OBJECT__MODEL = 1;
 
 	/**
+	 * The feature id for the '<em><b>Color Picto</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGAMA_OBJECT__COLOR_PICTO = 2;
+
+	/**
 	 * The number of structural features of the '<em>EGama Object</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EGAMA_OBJECT_FEATURE_COUNT = 2;
+	int EGAMA_OBJECT_FEATURE_COUNT = 3;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.ESpeciesImpl <em>ESpecies</em>}' class.
@@ -169,6 +178,15 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int ESPECIES__MODEL = EGAMA_OBJECT__MODEL;
+
+	/**
+	 * The feature id for the '<em><b>Color Picto</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESPECIES__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
 
 	/**
 	 * The feature id for the '<em><b>Variables</b></em>' containment reference list.
@@ -450,13 +468,22 @@ public interface GamaPackage extends EPackage {
 	int ESPECIES__LOCATION_UPDATE = EGAMA_OBJECT_FEATURE_COUNT + 30;
 
 	/**
+	 * The feature id for the '<em><b>Init</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESPECIES__INIT = EGAMA_OBJECT_FEATURE_COUNT + 31;
+
+	/**
 	 * The number of structural features of the '<em>ESpecies</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ESPECIES_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 31;
+	int ESPECIES_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 32;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EActionImpl <em>EAction</em>}' class.
@@ -485,6 +512,15 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int EACTION__MODEL = EGAMA_OBJECT__MODEL;
+
+	/**
+	 * The feature id for the '<em><b>Color Picto</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EACTION__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
 
 	/**
 	 * The feature id for the '<em><b>Gaml Code</b></em>' attribute.
@@ -540,6 +576,15 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int EASPECT__MODEL = EGAMA_OBJECT__MODEL;
+
+	/**
+	 * The feature id for the '<em><b>Color Picto</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EASPECT__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
 
 	/**
 	 * The feature id for the '<em><b>Gaml Code</b></em>' attribute.
@@ -606,6 +651,15 @@ public interface GamaPackage extends EPackage {
 	int EREFLEX__MODEL = EGAMA_OBJECT__MODEL;
 
 	/**
+	 * The feature id for the '<em><b>Color Picto</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EREFLEX__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
+
+	/**
 	 * The feature id for the '<em><b>Gaml Code</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -670,6 +724,15 @@ public interface GamaPackage extends EPackage {
 	int EEXPERIMENT__MODEL = EGAMA_OBJECT__MODEL;
 
 	/**
+	 * The feature id for the '<em><b>Color Picto</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EEXPERIMENT__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
+
+	/**
 	 * The feature id for the '<em><b>Experiment Links</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -725,6 +788,15 @@ public interface GamaPackage extends EPackage {
 	int EGUI_EXPERIMENT__MODEL = EEXPERIMENT__MODEL;
 
 	/**
+	 * The feature id for the '<em><b>Color Picto</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGUI_EXPERIMENT__COLOR_PICTO = EEXPERIMENT__COLOR_PICTO;
+
+	/**
 	 * The feature id for the '<em><b>Experiment Links</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -778,6 +850,15 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int EBATCH_EXPERIMENT__MODEL = EEXPERIMENT__MODEL;
+
+	/**
+	 * The feature id for the '<em><b>Color Picto</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EBATCH_EXPERIMENT__COLOR_PICTO = EEXPERIMENT__COLOR_PICTO;
 
 	/**
 	 * The feature id for the '<em><b>Experiment Links</b></em>' reference list.
@@ -1201,6 +1282,15 @@ public interface GamaPackage extends EPackage {
 	int EDISPLAY__MODEL = EGAMA_OBJECT__MODEL;
 
 	/**
+	 * The feature id for the '<em><b>Color Picto</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDISPLAY__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
+
+	/**
 	 * The feature id for the '<em><b>Layers</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1408,6 +1498,15 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int EWORLD_AGENT__MODEL = ESPECIES__MODEL;
+
+	/**
+	 * The feature id for the '<em><b>Color Picto</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__COLOR_PICTO = ESPECIES__COLOR_PICTO;
 
 	/**
 	 * The feature id for the '<em><b>Variables</b></em>' containment reference list.
@@ -1689,6 +1788,15 @@ public interface GamaPackage extends EPackage {
 	int EWORLD_AGENT__LOCATION_UPDATE = ESPECIES__LOCATION_UPDATE;
 
 	/**
+	 * The feature id for the '<em><b>Init</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EWORLD_AGENT__INIT = ESPECIES__INIT;
+
+	/**
 	 * The feature id for the '<em><b>Bounds Width</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1769,6 +1877,15 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int ELAYER__MODEL = EGAMA_OBJECT__MODEL;
+
+	/**
+	 * The feature id for the '<em><b>Color Picto</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
 
 	/**
 	 * The feature id for the '<em><b>Gaml Code</b></em>' attribute.
@@ -1988,6 +2105,15 @@ public interface GamaPackage extends EPackage {
 	int ETOPOLOGY__MODEL = EGAMA_OBJECT__MODEL;
 
 	/**
+	 * The feature id for the '<em><b>Color Picto</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ETOPOLOGY__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
+
+	/**
 	 * The feature id for the '<em><b>Species</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2032,6 +2158,15 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int EGRAPH_TOPOLOGY_NODE__MODEL = ETOPOLOGY__MODEL;
+
+	/**
+	 * The feature id for the '<em><b>Color Picto</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRAPH_TOPOLOGY_NODE__COLOR_PICTO = ETOPOLOGY__COLOR_PICTO;
 
 	/**
 	 * The feature id for the '<em><b>Species</b></em>' reference.
@@ -2142,6 +2277,15 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int ELAYER_ASPECT__MODEL = EGAMA_OBJECT__MODEL;
+
+	/**
+	 * The feature id for the '<em><b>Color Picto</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELAYER_ASPECT__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
 
 	/**
 	 * The feature id for the '<em><b>Gaml Code</b></em>' attribute.
@@ -2361,6 +2505,15 @@ public interface GamaPackage extends EPackage {
 	int EGRID_TOPOLOGY__MODEL = ETOPOLOGY__MODEL;
 
 	/**
+	 * The feature id for the '<em><b>Color Picto</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRID_TOPOLOGY__COLOR_PICTO = ETOPOLOGY__COLOR_PICTO;
+
+	/**
 	 * The feature id for the '<em><b>Species</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2441,6 +2594,15 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int ECONTINUOUS_TOPOLOGY__MODEL = ETOPOLOGY__MODEL;
+
+	/**
+	 * The feature id for the '<em><b>Color Picto</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ECONTINUOUS_TOPOLOGY__COLOR_PICTO = ETOPOLOGY__COLOR_PICTO;
 
 	/**
 	 * The feature id for the '<em><b>Species</b></em>' reference.
@@ -2551,6 +2713,15 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int EGRAPH_TOPOLOGY_EDGE__MODEL = ETOPOLOGY__MODEL;
+
+	/**
+	 * The feature id for the '<em><b>Color Picto</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGRAPH_TOPOLOGY_EDGE__COLOR_PICTO = ETOPOLOGY__COLOR_PICTO;
 
 	/**
 	 * The feature id for the '<em><b>Species</b></em>' reference.
@@ -2664,6 +2835,15 @@ public interface GamaPackage extends EPackage {
 	int ECHART_LAYER__MODEL = EGAMA_OBJECT__MODEL;
 
 	/**
+	 * The feature id for the '<em><b>Color Picto</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ECHART_LAYER__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
+
+	/**
 	 * The feature id for the '<em><b>Style</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2727,6 +2907,15 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int EPARAMETER__MODEL = EGAMA_OBJECT__MODEL;
+
+	/**
+	 * The feature id for the '<em><b>Color Picto</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EPARAMETER__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
 
 	/**
 	 * The feature id for the '<em><b>Variable</b></em>' attribute.
@@ -2857,6 +3046,17 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getEGamaObject_Model();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link gama.EGamaObject#getColorPicto <em>Color Picto</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Color Picto</em>'.
+	 * @see gama.EGamaObject#getColorPicto()
+	 * @see #getEGamaObject()
+	 * @generated
+	 */
+	EAttribute getEGamaObject_ColorPicto();
 
 	/**
 	 * Returns the meta object for class '{@link gama.ESpecies <em>ESpecies</em>}'.
@@ -3208,6 +3408,17 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getESpecies_LocationUpdate();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.ESpecies#getInit <em>Init</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Init</em>'.
+	 * @see gama.ESpecies#getInit()
+	 * @see #getESpecies()
+	 * @generated
+	 */
+	EAttribute getESpecies_Init();
 
 	/**
 	 * Returns the meta object for class '{@link gama.EAction <em>EAction</em>}'.
@@ -4706,6 +4917,14 @@ public interface GamaPackage extends EPackage {
 		EReference EGAMA_OBJECT__MODEL = eINSTANCE.getEGamaObject_Model();
 
 		/**
+		 * The meta object literal for the '<em><b>Color Picto</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EGAMA_OBJECT__COLOR_PICTO = eINSTANCE.getEGamaObject_ColorPicto();
+
+		/**
 		 * The meta object literal for the '{@link gama.impl.ESpeciesImpl <em>ESpecies</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -4962,6 +5181,14 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ESPECIES__LOCATION_UPDATE = eINSTANCE.getESpecies_LocationUpdate();
+
+		/**
+		 * The meta object literal for the '<em><b>Init</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ESPECIES__INIT = eINSTANCE.getESpecies_Init();
 
 		/**
 		 * The meta object literal for the '{@link gama.impl.EActionImpl <em>EAction</em>}' class.
