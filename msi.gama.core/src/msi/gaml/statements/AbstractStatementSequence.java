@@ -112,4 +112,10 @@ public class AbstractStatementSequence extends AbstractStatement {
 		return result;
 	}
 
+	public IStatement[] getCommands() {
+		return commands;
+	}
+	
+	
+
 }

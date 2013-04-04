@@ -322,6 +322,10 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	public WithArgs getAction(final String name) {
 		return actions.get(name);
 	}
+	
+	public IList<ActionStatement> getActions() {
+		return new GamaList<ActionStatement>(actions.values());
+	}
 
 	@Override
 	public void addAspect(final IStatement ce) {
@@ -337,6 +341,11 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	public IAspect getAspect(final String n) {
 		return aspects.get(n);
 	}
+	
+	public IList<IAspect> getAspects() {
+		return new GamaList<IAspect>(aspects.values());
+	}
+
 
 	@Override
 	public IList<String> getAspectNames() {

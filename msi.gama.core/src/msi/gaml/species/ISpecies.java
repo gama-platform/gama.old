@@ -138,12 +138,16 @@ public interface ISpecies extends ISymbol, IContainer<Integer, IAgent> {
 	public abstract <T> IStatement getStatement(Class<T> clazz, String name);
 
 	public abstract IStatement.WithArgs getAction(final String name);
+	
+	public IList<ActionStatement> getActions();
 
 	public abstract IAgentConstructor getAgentConstructor();
 
 	public abstract IType getAgentType();
 
 	public abstract IAspect getAspect(final String n);
+	
+	public IList<IAspect> getAspects();
 
 	public abstract IList<String> getAspectNames();
 
