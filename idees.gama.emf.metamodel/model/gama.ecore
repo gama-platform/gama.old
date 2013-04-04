@@ -130,8 +130,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="color" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="isColorCst" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBooleanObject"
         derived="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="colorRBG" upperBound="3"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="colorRBG" unique="false"
+        upperBound="3" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="gamlCode" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EVariable">
@@ -206,8 +206,8 @@
         derived="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="imageSize" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         derived="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="colorRBG" upperBound="3"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="colorRBG" unique="false"
+        upperBound="3" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="EGridTopology" eSuperTypes="#//ETopology">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="nb_columns" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"

@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
+import org.eclipse.emf.ecore.util.EDataTypeEList;
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 
 /**
@@ -869,7 +870,7 @@ public class ELayerAspectImpl extends EGamaObjectImpl implements ELayerAspect {
 	 */
 	public EList<Integer> getColorRBG() {
 		if (colorRBG == null) {
-			colorRBG = new EDataTypeUniqueEList<Integer>(Integer.class, this, GamaPackage.ELAYER_ASPECT__COLOR_RBG);
+			colorRBG = new EDataTypeEList<Integer>(Integer.class, this, GamaPackage.ELAYER_ASPECT__COLOR_RBG);
 		}
 		return colorRBG;
 	}

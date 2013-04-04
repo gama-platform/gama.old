@@ -2259,7 +2259,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEAttribute(getEDisplay_LayerList(), ecorePackage.getEString(), "layerList", null, 0, -1, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEDisplay_Color(), ecorePackage.getEString(), "color", null, 0, 1, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEDisplay_IsColorCst(), ecorePackage.getEBooleanObject(), "isColorCst", null, 0, 1, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEAttribute(getEDisplay_ColorRBG(), ecorePackage.getEIntegerObject(), "colorRBG", null, 0, 3, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEDisplay_ColorRBG(), ecorePackage.getEIntegerObject(), "colorRBG", null, 0, 3, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEDisplay_GamlCode(), ecorePackage.getEString(), "gamlCode", null, 0, 1, EDisplay.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eVariableEClass, EVariable.class, "EVariable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -2326,7 +2326,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEAttribute(getELayerAspect_IsColorCst(), ecorePackage.getEBooleanObject(), "isColorCst", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEAttribute(getELayerAspect_TextSize(), ecorePackage.getEString(), "textSize", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 		initEAttribute(getELayerAspect_ImageSize(), ecorePackage.getEString(), "imageSize", null, 0, 1, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-		initEAttribute(getELayerAspect_ColorRBG(), ecorePackage.getEIntegerObject(), "colorRBG", null, 0, 3, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getELayerAspect_ColorRBG(), ecorePackage.getEIntegerObject(), "colorRBG", null, 0, 3, ELayerAspect.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eGridTopologyEClass, EGridTopology.class, "EGridTopology", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEGridTopology_Nb_columns(), ecorePackage.getEString(), "nb_columns", "100", 0, 1, EGridTopology.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

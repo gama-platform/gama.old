@@ -233,7 +233,7 @@ public interface EDisplay extends EGamaObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Color RBG</em>' attribute list.
 	 * @see gama.GamaPackage#getEDisplay_ColorRBG()
-	 * @model upper="3"
+	 * @model unique="false" upper="3"
 	 * @generated
 	 */
 	EList<Integer> getColorRBG();

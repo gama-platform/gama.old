@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
+import org.eclipse.emf.ecore.util.EDataTypeEList;
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
@@ -401,7 +402,7 @@ public class EDisplayImpl extends EGamaObjectImpl implements EDisplay {
 	 */
 	public EList<Integer> getColorRBG() {
 		if (colorRBG == null) {
-			colorRBG = new EDataTypeUniqueEList<Integer>(Integer.class, this, GamaPackage.EDISPLAY__COLOR_RBG);
+			colorRBG = new EDataTypeEList<Integer>(Integer.class, this, GamaPackage.EDISPLAY__COLOR_RBG);
 		}
 		return colorRBG;
 	}
