@@ -228,4 +228,14 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 			o.update();
 		}
 	}
+
+	public Map<String, IDisplayOutput> getDisplayOutputs() {
+		return displayOutputs;
+	}
+
+	public Map<String, MonitorOutput> getMonitorOutputs() {
+		return monitorOutputs;
+	}
+	
+	
 }

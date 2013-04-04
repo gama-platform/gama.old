@@ -659,4 +659,10 @@ public class SpeciesDescription extends TypeDescription {
 	public Boolean implementsSkill(final String skill) {
 		return skills.containsKey(AbstractGamlAdditions.getSkillClassFor(skill));
 	}
+
+	public Map<Class, ISkill> getSkills() {
+		return skills;
+	}
+	
+	
 }

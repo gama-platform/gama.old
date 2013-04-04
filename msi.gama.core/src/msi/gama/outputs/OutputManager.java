@@ -377,4 +377,10 @@ public class OutputManager extends Symbol implements IOutputManager {
 	public void forceUpdateOutputs() {
 		displays.forceUpdateOutputs();
 	}
+
+	public Map<String, IOutput> getOutputs() {
+		return outputs;
+	}
+	
+	
 }
