@@ -83,7 +83,6 @@ public class EditDisplayFrame extends EditFrame {
 	
 	private void loadData() {
 		EDisplay display = (EDisplay) eobject;
-		System.out.println("display.getLayers() : " + display.getLayers());
 		layers.addAll(display.getLayers());
 		for (ELayer la : layers) {
 			layerViewer.add(la.getName());
@@ -94,7 +93,6 @@ public class EditDisplayFrame extends EditFrame {
 			textName.setText(display.getName());
 		if (display.getColor()!= null)
 			textColor.setText(display.getColor());
-		System.out.println(" display.getColorRBG() : " +  display.getColorRBG());
 		
 		if (display.getColorRBG().size() == 3) {
 			rgb[0] = display.getColorRBG().get(0);
@@ -451,14 +449,12 @@ public class EditDisplayFrame extends EditFrame {
 
 	private void modifyLayerOrder() {
 		EDisplay display = ((EDisplay) eobject);
-		System.out.println("layers : " + layers);
 		for (ELayer lay: display.getLayers()) {
 			if (! layers.contains(lay)) {
 				EcoreUtil.delete((EObject) lay, true);
 			}
 		}	
 		display.getLayers().clear();
-		System.out.println("layers 2 : " + layers);
 		display.getLayers().addAll(layers);
 	}
 

@@ -17,6 +17,7 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -29,6 +30,7 @@ public abstract class EditFrame extends ApplicationWindow {
 	StyledText validationResult;
 	Text textName;
 	EditFrame frame;
+	Shell shell;
 	
 	/**
 	 * Create the application window.
@@ -146,11 +148,30 @@ public abstract class EditFrame extends ApplicationWindow {
 	}
 	
 	protected abstract void save();
-	 
+	
+	protected void handleShellCloseEvent() {
+		// create dialog with ok and cancel button and info icon
+		MessageBox dialog = 
+		  new MessageBox(shell, SWT.ICON_WARNING | SWT.OK| SWT.CANCEL);
+		dialog.setText("Warning");
+		dialog.setMessage("You have unsaved data. Close the '"+ name +"' windows anyway?");
+
+		int result = dialog.open();
+		if (result == SWT.OK) {
+			frame.clean();
+			frame.close();
+		}
+	}
+	
+	
+
 	@Override
 	public void create() {
 	    setShellStyle(SWT.DIALOG_TRIM);
 	    super.create();
+	    shell = getShell();
+	    
+	   
 	}
 	
 	protected void clean() {

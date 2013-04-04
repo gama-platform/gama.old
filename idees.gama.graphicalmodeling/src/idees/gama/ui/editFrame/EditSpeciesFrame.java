@@ -25,6 +25,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
@@ -63,6 +64,7 @@ public class EditSpeciesFrame extends EditFrame {
 	private Text textShape;
 	private Text textShapeUpdate;
 	private Text textShapeFunction;
+	private StyledText textInit;
 	Composite sizeComp;
 	Composite radiusComp;
 	Composite wHComp;
@@ -173,51 +175,55 @@ public class EditSpeciesFrame extends EditFrame {
 		sc.setContent(container);
 		sc.setExpandHorizontal(true);
 		sc.setExpandVertical(true);
+		int siezHeader = 160;
 			//CANVAS SIZE : NAME:30, VAR:200, TORUS:30, LOC:130, REFLEX:110, SHAPE:220, SKILLS: 110 BOUNDS: 80 GRID: 80
 		if (eobject instanceof EWorldAgent) {	
 			Canvas canvasTor = canvasTorus(container);
-			canvasTor.setLocation(10, 160);
+			canvasTor.setLocation(10, 160+siezHeader);
 			Canvas canvasBounds = canvasBounds(container);
-			canvasBounds.setLocation(10, 200);	
+			canvasBounds.setLocation(10, 200+siezHeader);	
 			Composite comp = commonCompositeEnd(container);
-			comp.setLocation(0, 290);
-			container.setSize(730, 680);
-			sc.setMinSize(container.computeSize(730, 680));
+			comp.setLocation(0, 290+siezHeader);
+			container.setSize(730, 680+siezHeader);
+			sc.setMinSize(container.computeSize(730, 680+siezHeader));
 		} else if (species.getTopology() instanceof EGridTopology){
 			gridTopo(container);
-			container.setSize(730, 670);
-			sc.setMinSize(container.computeSize(730, 670));
+			container.setSize(730, 670+siezHeader);
+			sc.setMinSize(container.computeSize(730, 670+siezHeader));
 		} else if (species.getTopology() instanceof EGraphTopologyNode){
 			graphNodeTopo(container);
-			container.setSize(730, 920);
-			sc.setMinSize(container.computeSize(730, 920));
+			container.setSize(730, 920+siezHeader);
+			sc.setMinSize(container.computeSize(730, 920+siezHeader));
 		} else if (species.getTopology() instanceof EGraphTopologyEdge){
 			graphEdgeTopo(container);
-			container.setSize(730, 920);
-			sc.setMinSize(container.computeSize(730, 920));
+			container.setSize(730, 920+siezHeader);
+			sc.setMinSize(container.computeSize(730, 920+siezHeader));
 		} else {
 			graphNodeContinuous(container);
-			container.setSize(730, 920);
-			sc.setMinSize(container.computeSize(730, 920));
+			container.setSize(730, 920+siezHeader);
+			sc.setMinSize(container.computeSize(730, 920+siezHeader));
 		}	
 		return container;
 	}
 	
 	private Composite commonCompositeHeader(Composite container) {
-		//CANVAS SIZE : NAME:30, SKILLS: 110
+		//CANVAS SIZE : NAME:30, SKILLS: 110 //INIT : 150
 		Composite comp = new Composite(container, SWT.NONE);
-		comp.setBounds(0, 0, 720, 160);
+		comp.setBounds(0, 0, 730, 310);
 		Canvas canvasName = canvasName(comp);
 		canvasName.setLocation(10, 10);
 		Canvas canvasSkills = canvasSkills(comp);
 		canvasSkills.setLocation(10, 50);
+		Canvas canvasInit = canvasInit(comp);
+		canvasInit.setLocation(10, 160);
+		
 		return comp;
 	}
 	
 	private Composite commonCompositeEnd(Composite container) {
 		// VAR:200, REFLEX:110, OKCANCEL: 30
 		Composite comp = new Composite(container, SWT.NONE);
-		comp.setBounds(0, 0, 730, 370);
+		comp.setBounds(0, 160, 730, 370);
 		Canvas canvasVar = canvasVariables(comp);
 		Canvas canvasRef = canvasReflex(comp);
 		Canvas canvasOkCancel = canvasOkCancel(comp);
@@ -230,7 +236,7 @@ public class EditSpeciesFrame extends EditFrame {
 	private Composite gridTopo(Composite container) {
 		// VAR:200, REFLEX:110, OKCANCEL: 30 //END: 370
 		Composite comp = new Composite(container, SWT.NONE);
-		comp.setBounds(0, 0, 730, 670);
+		comp.setBounds(0, 160, 730, 670);
 		Canvas canvasTor = canvasTorus(comp);
 		canvasTor.setLocation(10, 160);
 		Canvas canvasGrid = canvasGrid(comp);
@@ -242,7 +248,7 @@ public class EditSpeciesFrame extends EditFrame {
 	private Composite graphNodeTopo(Composite container) {
 		// VAR:200, REFLEX:110, OKCANCEL: 30 //END: 370
 		Composite comp = new Composite(container, SWT.NONE);
-		comp.setBounds(0, 0, 730, 910);
+		comp.setBounds(0, 160, 730, 910);
 		Canvas canvasLoc = canvasLocation(comp);
 		canvasLoc.setLocation(10, 160);
 		Canvas canvasShape = canvasShape(comp);
@@ -254,7 +260,7 @@ public class EditSpeciesFrame extends EditFrame {
 	private Composite graphEdgeTopo(Composite container) {
 		// VAR:200, REFLEX:110, OKCANCEL: 30 //END: 370
 		Composite comp = new Composite(container, SWT.NONE);
-		comp.setBounds(0, 0, 730, 910);
+		comp.setBounds(0, 160, 730, 910);
 		Canvas canvasLoc = canvasLocation(comp);
 		canvasLoc.setLocation(10, 160);
 		Canvas canvasShape = canvasShape(comp);
@@ -266,7 +272,7 @@ public class EditSpeciesFrame extends EditFrame {
 	private Composite graphNodeContinuous(Composite container) {
 		// VAR:200, REFLEX:110, OKCANCEL: 30 //END: 370
 		Composite comp = new Composite(container, SWT.NONE);
-		comp.setBounds(0, 0, 730, 910);
+		comp.setBounds(0, 160, 730, 910);
 		Canvas canvasLoc = canvasLocation(comp);
 		canvasLoc.setLocation(10, 160);
 		Canvas canvasShape = canvasShape(comp);
@@ -1327,6 +1333,24 @@ public class EditSpeciesFrame extends EditFrame {
 			});
 			return canvasSkills;
 	 }
+	 protected Canvas canvasInit(Composite container) {
+			
+			//****** CANVAS INIT *********
+			Canvas canvasInit = new Canvas(container, SWT.BORDER);
+			canvasInit.setBounds(10, 515, 720, 150);
+			
+			textInit = new StyledText(canvasInit, SWT.BORDER);
+			textInit.setBounds(5, 30, 700, 110);
+			if (((ESpecies) eobject).getInit() != null)
+				textInit.setText(((ESpecies) eobject).getInit());
+			textInit.setEditable(true);
+					
+			CLabel lblCompilation = new CLabel(canvasInit, SWT.NONE);
+			lblCompilation.setText("Init block");
+			lblCompilation.setBounds(5, 5, 70, 20);
+			lblCompilation.setFont(titleFont);
+			return canvasInit;
+		}
 	 
 	 public Canvas canvasReflex(Composite container) {
 		//****** CANVAS REFLEX ORDER *********
@@ -1399,6 +1423,7 @@ public class EditSpeciesFrame extends EditFrame {
 			    domain.getCommandStack().execute(new RecordingCommand(domain) {
 			    	     public void doExecute() {
 			    	    	 eobject.setName(textName.getText());
+			    	    	 ((ESpecies) eobject).setInit(textInit.getText());
 			    	    	 modifyReflexOrder();
 			    	    	 modifyVariables();
 			    	    	 species.getSkills().clear();

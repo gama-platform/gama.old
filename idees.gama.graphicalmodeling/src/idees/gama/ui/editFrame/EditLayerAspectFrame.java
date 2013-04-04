@@ -11,6 +11,8 @@ import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Button;
@@ -18,6 +20,7 @@ import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -113,7 +116,7 @@ public class EditLayerAspectFrame {
 		
 	}
 
-	public void init(ELayerAspect elayer, EditAspectFrame asp) {
+	public void init(final ELayerAspect elayer, EditAspectFrame asp) {
 		frame = asp;
 		layerFrame = this;
 		
@@ -121,6 +124,33 @@ public class EditLayerAspectFrame {
 				| SWT.DIALOG_TRIM );
 		this.elayer = elayer;
 		dialog.setText("Edit Aspect Layer");
+		dialog.addShellListener(new ShellListener() {
+
+		      public void shellActivated(ShellEvent event) {
+		      }
+
+		      public void shellClosed(ShellEvent event) {
+		        MessageBox messageBox = new MessageBox(dialog, SWT.ICON_WARNING | SWT.APPLICATION_MODAL | SWT.OK | SWT.CANCEL);
+		        messageBox.setText("Warning");
+		        messageBox.setMessage("You have unsaved data. Close the 'Edit Aspect Layer' window anyway?");
+		        if (messageBox.open() == SWT.OK) {
+		        	if (! layerFrame.edit)
+						EcoreUtil.delete(elayer);
+		        	event.doit = true;
+		        }   else
+		          event.doit = false;
+		      }
+
+		      public void shellDeactivated(ShellEvent arg0) {
+		      }
+
+		      public void shellDeiconified(ShellEvent arg0) {
+		      }
+
+		      public void shellIconified(ShellEvent arg0) {
+		      }
+		    });
+
 		canvasName(dialog);
 		buildCanvasTopo(dialog);
 		builtQuitButtons(dialog);

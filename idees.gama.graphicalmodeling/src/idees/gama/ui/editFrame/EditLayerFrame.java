@@ -23,6 +23,8 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.ShellEvent;
+import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
@@ -33,6 +35,7 @@ import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -230,7 +233,7 @@ public class EditLayerFrame {
 
 	}
 
-	public void init(ELayer elayer, EditDisplayFrame asp, List<ESpecies> species, List<ESpecies> grids) {
+	public void init(final ELayer elayer, EditDisplayFrame asp, List<ESpecies> species, List<ESpecies> grids) {
 		frame = asp;
 		layerFrame = this;
 		aspectsSpecies = new Hashtable<String, String[]>();
@@ -261,6 +264,32 @@ public class EditLayerFrame {
 				| SWT.DIALOG_TRIM );
 		this.elayer = elayer;
 		dialog.setText("Edit Layer");
+		dialog.addShellListener(new ShellListener() {
+
+		      public void shellActivated(ShellEvent event) {
+		      }
+
+		      public void shellClosed(ShellEvent event) {
+		        MessageBox messageBox = new MessageBox(dialog, SWT.ICON_WARNING | SWT.APPLICATION_MODAL | SWT.OK | SWT.CANCEL);
+		        messageBox.setText("Warning");
+		        messageBox.setMessage("You have unsaved data. Close the 'Edit Display Layer' window anyway?");
+		        if (messageBox.open() == SWT.OK) {
+		        	if (! layerFrame.edit)
+						EcoreUtil.delete(elayer);
+		        	event.doit = true;
+		        }   else
+		          event.doit = false;
+		      }
+
+		      public void shellDeactivated(ShellEvent arg0) {
+		      }
+
+		      public void shellDeiconified(ShellEvent arg0) {
+		      }
+
+		      public void shellIconified(ShellEvent arg0) {
+		      }
+		    });
 		canvasName(dialog);
 		buildCanvasTopo(dialog);
 
