@@ -46,5 +46,34 @@
             name="Model diagram">
       </wizard>
    </extension>
+   <extension
+         point="org.eclipse.ui.menus">
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.main.menu">
+         <menu
+               id="graphicalModelingMenu"
+               label="Graphical Modeling">
+            <command
+                  commandId="idees.gama.application.commands.GenerateDiagram"
+                  label="Generate diagram"
+                  style="push">
+               <visibleWhen
+                     checkEnabled="false">
+                  <reference
+                        definitionId="isGamlEditorOpened">
+                  </reference>
+               </visibleWhen>
+            </command>
+         </menu>
+      </menuContribution>
+   </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+            defaultHandler="idees.gama.ui.commands.GenerateDiagramHandler"
+            id="idees.gama.application.commands.GenerateDiagram"
+            name="Generate Diagram">
+      </command>
+   </extension>
 
 </plugin>

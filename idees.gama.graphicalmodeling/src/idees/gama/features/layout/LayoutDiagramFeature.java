@@ -50,14 +50,18 @@ public class LayoutDiagramFeature  extends AbstractCustomFeature {
 
 	@Override
 	public void execute(ICustomContext context) {
-		final CompoundDirectedGraph graph = mapDiagramToGraph();
+		execute(getDiagram());
+	}
+	
+	public static void execute( Diagram d) {
+		final CompoundDirectedGraph graph = mapDiagramToGraph(d);
 		graph.setDefaultPadding(new Insets(PADDING));
 		new CompoundDirectedGraphLayout().visit(graph);
 		mapGraphCoordinatesToDiagram(graph);
 	}
 
 
-	private Diagram mapGraphCoordinatesToDiagram(CompoundDirectedGraph graph) {
+	private  static Diagram mapGraphCoordinatesToDiagram(CompoundDirectedGraph graph) {
 		NodeList myNodes = new NodeList();
 		myNodes.addAll(graph.nodes);
 		myNodes.addAll(graph.subgraphs);
@@ -73,9 +77,8 @@ public class LayoutDiagramFeature  extends AbstractCustomFeature {
 	}
 
 
-	private CompoundDirectedGraph mapDiagramToGraph() {
+	private static CompoundDirectedGraph mapDiagramToGraph(Diagram d) {
 		Map<AnchorContainer, Node> shapeToNode = new HashMap<AnchorContainer, Node>();
-		Diagram d = getDiagram();
 		CompoundDirectedGraph dg = new CompoundDirectedGraph();
 		EdgeList edgeList = new EdgeList();
 		NodeList nodeList = new NodeList();

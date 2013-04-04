@@ -19,6 +19,8 @@ import gama.EReflex;
 import gama.EReflexLink;
 import gama.ESpecies;
 import gama.ESubSpeciesLink;
+import gama.ETopology;
+import gama.EVariable;
 import gama.EWorldAgent;
 import idees.gama.features.add.AddActionFeature;
 import idees.gama.features.add.AddActionLinkFeature;
@@ -56,6 +58,18 @@ import idees.gama.features.others.UpdateEGamaObjectFeature;
 
 import java.util.List;
 
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.experiment.IExperiment;
+import msi.gama.kernel.model.IModel;
+import msi.gama.util.GamaList;
+import msi.gaml.architecture.reflex.ReflexStatement;
+import msi.gaml.species.ISpecies;
+import msi.gaml.statements.ActionStatement;
+import msi.gaml.statements.AspectStatement;
+import msi.gaml.statements.IAspect;
+import msi.gaml.statements.IStatement;
+import msi.gaml.variables.IVariable;
+
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
 import org.eclipse.emf.transaction.util.TransactionUtil;
@@ -77,6 +91,7 @@ import org.eclipse.graphiti.features.context.impl.CreateConnectionContext;
 import org.eclipse.graphiti.features.context.impl.CreateContext;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
 import org.eclipse.graphiti.internal.datatypes.impl.LocationImpl;
+import org.eclipse.graphiti.mm.pictograms.Anchor;
 import org.eclipse.graphiti.mm.pictograms.AnchorContainer;
 import org.eclipse.graphiti.mm.pictograms.Connection;
 import org.eclipse.graphiti.mm.pictograms.ContainerShape;
@@ -89,6 +104,11 @@ import org.eclipse.graphiti.ui.features.DefaultFeatureProvider;
 public class GamaFeatureProvider extends DefaultFeatureProvider {
  
 	private String typeOfModel;
+	private IModel gamaModel;
+	private List<String> built_in_species =  GamaList.with("graph_edge", "graph_node", "AgentDB", "Physical3DWorld", "cluster_builder","experimentator", "agent", "multicriteria_analyzer", "base_node", "base_edge");
+	private List<String> built_in_variables =  GamaList.with("fatal", "duration", "machine_time", "step", "model_path", "total_duration", "seed", "average_duration", "warnings", "cycle", "time", "rng", "project_path", "workspace_path", "graph_edge", "graph_node", "AgentDB", "Physical3DWorld", "cluster_builder","experimentator", "agent", "multicriteria_analyzer", "base_node", "base_edge", "shape", "location", "agents", "peers", "members","name", "population", "host");
+	private List<String> built_in_actions =  GamaList.with("error", "pause", "die", "write", "tell", "debug", "percieved_area", "halt", "neighbourhood_exclusive");
+	
 	
 	public GamaFeatureProvider(IDiagramTypeProvider dtp) {
         super(dtp);
@@ -158,11 +178,13 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
          			 ac.setSize(0, 0);
          			 ac.setTargetContainer(diagram);
          			 
-         			 addIfPossible(new AddContext(ac, newClass));
+         			 PictogramElement worldPE = addIfPossible(new AddContext(ac, newClass));
          			 if ("skeleton".equals(typeOfModel)) {
          				initSkeleton(newClass, diagram);
          			 } else if ("example".equals(typeOfModel)) {
          				initSkeleton(newClass, diagram);
+         			 } else  if ("custom".equals(typeOfModel)) {
+          				initCustom(newClass, worldPE, diagram);
          			 }
          	     }
          	  });
@@ -206,6 +228,268 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 			addIfPossible(contDisp);
     }
     
+    public void addVariable(IVariable var, ESpecies target) {
+    	if (built_in_variables.contains(var.getName()))
+			 return;
+		 EVariable eVar =  gama.GamaFactory.eINSTANCE.createEVariable();
+		 eVar.setType(var.getType().toString());
+		 eVar.setName(var.getName());
+		 if (var.hasFacet(IKeyword.INIT))
+			 eVar.setInit(var.getFacet(IKeyword.INIT).toGaml());
+		 if (var.hasFacet(IKeyword.UPDATE))
+			 eVar.setUpdate(var.getFacet(IKeyword.UPDATE).toGaml());
+		 if (var.hasFacet(IKeyword.MIN))
+			 eVar.setMin(var.getFacet(IKeyword.MIN).toGaml());
+		 if (var.hasFacet(IKeyword.MAX))
+			 eVar.setMax(var.getFacet(IKeyword.MAX).toGaml());
+		 if (var.hasFacet(IKeyword.FUNCTION))
+			 eVar.setFunction(var.getFacet(IKeyword.FUNCTION).toGaml());
+		 if (var.hasFacet(IKeyword.VALUE))
+			 eVar.setFunction(var.getFacet(IKeyword.VALUE).toGaml());
+		 target.getVariables().add(eVar);
+    }
+    
+    public  ESpecies createMicroSpecies(ESpecies source, PictogramElement sourceE, ISpecies species, Diagram diagram) {
+		 ESpecies target = gama.GamaFactory.eINSTANCE.createESpecies();
+		 diagram.eResource().getContents().add(target);
+		
+		 target.setName(species.getName());
+		 
+		 ETopology newTopo = null;
+		 if (species.isGrid()) {
+			 newTopo = gama.GamaFactory.eINSTANCE.createEGridTopology();
+		 } else if (species.isGraph()) {
+			 newTopo = gama.GamaFactory.eINSTANCE.createEGraphTopologyNode();
+		 } else {
+			 newTopo = gama.GamaFactory.eINSTANCE.createEContinuousTopology();
+		 }
+		 
+		  diagram.eResource().getContents().add(newTopo);
+		 target.setTopology(newTopo);
+		
+		 for (IVariable var : species.getVars()) {
+			 addVariable(var, target);
+		 }
+		
+		 CreateContext ac = new CreateContext();
+			
+		 ac.setLocation(0, 0);	
+		 ac.setSize(0, 0);
+		 ac.setTargetContainer(diagram);
+			 
+		 PictogramElement targetE = addIfPossible(new AddContext(ac, target));
+		 for (ActionStatement action : species.getActions()) {
+			 if (! built_in_actions.contains(action.getName()))
+				 createAction( target,  targetE,  action,  diagram);
+		 }
+		 for (IStatement stat : species.getBehaviors()) {
+			 if (stat instanceof ReflexStatement)
+				 createReflex( target,  targetE,  (ReflexStatement) stat,  diagram);
+		 }
+		 for (IAspect asp : species.getAspects()) {
+			 if (asp instanceof AspectStatement)
+				 createAspect( target,  targetE,  (AspectStatement) asp,  diagram);
+		 }
+		 ESubSpeciesLink eReference = gama.GamaFactory.eINSTANCE.createESubSpeciesLink();
+		 diagram.eResource().getContents().add(eReference);
+		 
+		 // add connection for business object
+			AddConnectionContext addContext = new AddConnectionContext(
+					getAnchor(sourceE), getAnchor(targetE));
+			addContext.setNewObject(eReference);
+			addIfPossible(addContext);
+			eReference.setMacro(source);
+			eReference.setMicro(target);
+			source.getMicroSpeciesLinks().add(eReference);
+			target.getMacroSpeciesLinks().add(eReference);
+		 return target;
+	}
+    
+    public  EExperiment createXP(ESpecies source, PictogramElement sourceE, IExperiment xp, Diagram diagram) {
+		EExperiment target = null; 
+    	if (xp.isGui()) {
+    		target = gama.GamaFactory.eINSTANCE.createEGUIExperiment();
+    	} else {
+    		target = gama.GamaFactory.eINSTANCE.createEBatchExperiment();
+    	}
+		 diagram.eResource().getContents().add(target);
+		 target.setName(xp.getName().substring("Experiment ".length(), xp.getName().length()));
+		 CreateContext ac = new CreateContext();
+			
+		 ac.setLocation(0, 0);
+			
+			 ac.setSize(0, 0);
+			 ac.setTargetContainer(diagram);
+			 
+		  PictogramElement targetE = addIfPossible(new AddContext(ac, target));
+	
+		 EExperimentLink eReference = gama.GamaFactory.eINSTANCE.createEExperimentLink();
+		 diagram.eResource().getContents().add(eReference);
+		 
+		 // add connection for business object
+			AddConnectionContext addContext = new AddConnectionContext(
+					getAnchor(sourceE), getAnchor(targetE));
+			addContext.setNewObject(eReference);
+			addIfPossible(addContext);
+			eReference.setSpecies(source);
+			eReference.setExperiment(target);
+			source.getExperimentLinks().add(eReference);
+			target.getExperimentLinks().add(eReference);
+		 return target;
+	}
+    
+   public  EAction createAction(ESpecies source, PictogramElement sourceE, ActionStatement action, Diagram diagram) {
+		if (action == null)
+			return null;
+	   EAction target = gama.GamaFactory.eINSTANCE.createEAction();
+    	 diagram.eResource().getContents().add(target);
+		 target.setName(action.getName());
+		 String gmlCode = "";	
+		 if (action.getCommands() != null) {
+			 for (IStatement st : action.getCommands()) {
+				 gmlCode += st.toGaml() + System.getProperty("line.separator" );
+			 }
+		 }
+		 target.setGamlCode(gmlCode);
+		 CreateContext ac = new CreateContext();
+			
+		 ac.setLocation(0, 0);
+			
+			 ac.setSize(0, 0);
+			 ac.setTargetContainer(diagram);
+			 
+		  PictogramElement targetE = addIfPossible(new AddContext(ac, target));
+	
+		 EActionLink eReference = gama.GamaFactory.eINSTANCE.createEActionLink();
+		 diagram.eResource().getContents().add(eReference);
+		 
+		 // add connection for business object
+			AddConnectionContext addContext = new AddConnectionContext(
+					getAnchor(sourceE), getAnchor(targetE));
+			addContext.setNewObject(eReference);
+			addIfPossible(addContext);
+			eReference.setSpecies(source);
+			eReference.setAction(target);
+			source.getActionLinks().add(eReference);
+			target.getActionLinks().add(eReference);
+		 return target;
+	}
+   
+   public  EAspect createAspect(ESpecies source, PictogramElement sourceE, AspectStatement aspect, Diagram diagram) {
+		if (aspect == null)
+			return null;
+		EAspect target = gama.GamaFactory.eINSTANCE.createEAspect();
+    	 diagram.eResource().getContents().add(target);
+		 target.setName(aspect.getName());
+		 
+		 CreateContext ac = new CreateContext();
+			
+		 ac.setLocation(0, 0);
+			
+			 ac.setSize(0, 0);
+			 ac.setTargetContainer(diagram);
+			 
+		  PictogramElement targetE = addIfPossible(new AddContext(ac, target));
+	
+		 EAspectLink eReference = gama.GamaFactory.eINSTANCE.createEAspectLink();
+		 diagram.eResource().getContents().add(eReference);
+		 
+		 // add connection for business object
+			AddConnectionContext addContext = new AddConnectionContext(
+					getAnchor(sourceE), getAnchor(targetE));
+			addContext.setNewObject(eReference);
+			addIfPossible(addContext);
+			eReference.setSpecies(source);
+			eReference.setAspect(target);
+			source.getAspectLinks().add(eReference);
+			target.getAspectLinks().add(eReference);
+		 return target;
+	}
+   
+   public  EReflex createReflex(ESpecies source, PictogramElement sourceE, ReflexStatement reflex, Diagram diagram) {
+	   if (reflex == null)
+			return null;
+	   EReflex target = gama.GamaFactory.eINSTANCE.createEReflex();
+   	 diagram.eResource().getContents().add(target);
+		 target.setName(reflex.getName());
+		 String gmlCode = "";	
+
+		 if (reflex.getCommands() != null) {
+			 for (IStatement st : reflex.getCommands()) {
+				 gmlCode += st.toGaml() + System.getProperty("line.separator" );
+			 }
+		 }
+		 if (reflex.hasFacet(IKeyword.WHEN))
+			 target.setCondition(reflex.getFacet(IKeyword.WHEN).toGaml());
+		 
+		 target.setGamlCode(gmlCode);
+		 CreateContext ac = new CreateContext();
+			
+		 ac.setLocation(0, 0);
+			
+			 ac.setSize(0, 0);
+			 ac.setTargetContainer(diagram);
+			 
+		  PictogramElement targetE = addIfPossible(new AddContext(ac, target));
+	
+		 EReflexLink eReference = gama.GamaFactory.eINSTANCE.createEReflexLink();
+		 diagram.eResource().getContents().add(eReference);
+		 
+		 // add connection for business object
+			AddConnectionContext addContext = new AddConnectionContext(
+					getAnchor(sourceE), getAnchor(targetE));
+			addContext.setNewObject(eReference);
+			addIfPossible(addContext);
+			eReference.setSpecies(source);
+			eReference.setReflex(target);
+			source.getReflexLinks().add(eReference);
+			target.getReflexLinks().add(eReference);
+		 return target;
+	}
+  
+    
+    protected Anchor getAnchor(PictogramElement targetpe) {
+		Anchor ret = null;
+		if (targetpe instanceof Anchor) {
+			ret = (Anchor) targetpe;
+		} else if (targetpe instanceof AnchorContainer) {
+			ret = Graphiti.getPeService().getChopboxAnchor((AnchorContainer) targetpe);
+		}
+		return ret;
+	}
+	
+    
+   	public void initCustom(EWorldAgent eWorld,  PictogramElement worldPE, Diagram diagram) {
+   		ISpecies world = gamaModel.getWorldSpecies();
+   		for (IVariable var : world.getVars()) {
+   			addVariable(var, eWorld);
+   		} 
+	   	 for (ActionStatement action : world.getActions()) {
+			 if (! built_in_actions.contains(action.getName()))
+				 createAction( eWorld,  worldPE,  action,  diagram);
+		 }
+	   	for (IStatement stat : world.getBehaviors()) {
+			 if (stat instanceof ReflexStatement && stat.getName() != null && !stat.getName().isEmpty())
+				 createReflex( eWorld,  worldPE,  (ReflexStatement) stat,  diagram);
+		 }
+   		buildAgent(world, eWorld, worldPE, diagram);
+       	
+   		   
+   		LayoutDiagramFeature.execute(diagram);
+    }
+   	
+   	public void buildAgent(ISpecies gamaSpecies, ESpecies species, PictogramElement speciesE, Diagram diagram) {
+   		for (ISpecies sp : gamaSpecies.getMicroSpecies()) {
+   			if (built_in_species.contains(sp.getName()))
+   				continue;
+   			if (sp instanceof IExperiment) {
+   				createXP(species, speciesE, (IExperiment) sp, diagram);
+   			} else {
+   				createMicroSpecies(species, speciesE, sp, diagram);
+   			}
+   			
+   		}
+   	}
     
  
     @Override
@@ -268,6 +552,13 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 		this.typeOfModel = typeOfModel;
 	}
 
+	public IModel getGamaModel() {
+		return gamaModel;
+	}
+
+	public void setGamaModel(IModel gamaModel) {
+		this.gamaModel = gamaModel;
+	}
 
    
 }

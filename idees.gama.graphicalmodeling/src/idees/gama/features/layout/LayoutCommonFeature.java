@@ -27,7 +27,7 @@ public class LayoutCommonFeature extends AbstractLayoutFeature {
         super(fp);
     }
  
-    public boolean canLayout(ILayoutContext context) {
+    public boolean canLayout(ILayoutContext context) { 
        // return true, if pictogram element is linked to an EClass
        PictogramElement pe = context.getPictogramElement();
        if (!(pe instanceof ContainerShape))
