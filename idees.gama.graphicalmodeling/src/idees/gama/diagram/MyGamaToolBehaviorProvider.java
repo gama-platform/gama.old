@@ -3,6 +3,7 @@ package idees.gama.diagram;
 import gama.EAction;
 import gama.EAspect;
 import gama.EDisplay;
+import gama.EExperiment;
 import gama.EReflex;
 import gama.ESpecies;
 import idees.gama.features.create.CreateActionLinkFeature;
@@ -15,6 +16,7 @@ import idees.gama.features.create.CreateSubSpeciesLinkFeature;
 import idees.gama.features.edit.EditActionFeature;
 import idees.gama.features.edit.EditAspectFeature;
 import idees.gama.features.edit.EditDisplayFeature;
+import idees.gama.features.edit.EditExperimentFeature;
 import idees.gama.features.edit.EditReflexFeature;
 import idees.gama.features.edit.EditSpeciesFeature;
 import idees.gama.features.others.RenameEGamaObjectFeature;
@@ -47,11 +49,11 @@ public class MyGamaToolBehaviorProvider extends DefaultToolBehaviorProvider{
 	        PictogramElement[] pes = context.getPictogramElements();
 	        if (pes != null && pes.length == 1) {
 	            Object bo = getDiagramTypeProvider().getFeatureProvider().getBusinessObjectForPictogramElement(pes[0]);
-	       
-		        if (bo instanceof ESpecies ) {
+	            if (bo instanceof EExperiment) {
+	            	customFeature = new EditExperimentFeature(getFeatureProvider());
+	            } else if (bo instanceof ESpecies ) {
 		        	customFeature = new EditSpeciesFeature(getFeatureProvider());
-		        } 
-		        else if (bo instanceof EAction ) {
+		        }  else if (bo instanceof EAction ) {
 		        	customFeature = new EditActionFeature(getFeatureProvider());
 		        } else if (bo instanceof EReflex ) {
 				    customFeature = new EditReflexFeature(getFeatureProvider());

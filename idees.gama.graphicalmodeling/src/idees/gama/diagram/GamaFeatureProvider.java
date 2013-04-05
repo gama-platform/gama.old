@@ -57,23 +57,27 @@ import idees.gama.features.others.ChangeColorEGamaObjectFeature;
 import idees.gama.features.others.RenameEGamaObjectFeature;
 import idees.gama.features.others.UpdateEGamaObjectFeature;
 
+import java.util.Collection;
 import java.util.List;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.kernel.model.IModel;
-import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.IOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.OutputManager;
 import msi.gama.util.GamaList;
 import msi.gaml.architecture.reflex.ReflexStatement;
+import msi.gaml.descriptions.SpeciesDescription;
+import msi.gaml.skills.ISkill;
+import msi.gaml.skills.Skill;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.ActionStatement;
 import msi.gaml.statements.AspectStatement;
 import msi.gaml.statements.IAspect;
 import msi.gaml.statements.IStatement;
 import msi.gaml.variables.IVariable;
+import msi.gaml.variables.Variable;
 
 import org.eclipse.emf.transaction.RecordingCommand;
 import org.eclipse.emf.transaction.TransactionalEditingDomain;
@@ -257,6 +261,8 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
     public  ESpecies createMicroSpecies(ESpecies source, PictogramElement sourceE, ISpecies species, Diagram diagram) {
 		 ESpecies target = gama.GamaFactory.eINSTANCE.createESpecies();
 		 diagram.eResource().getContents().add(target);
+		 Collection<ISkill> skills =  ((SpeciesDescription) species.getDescription()).getSkills().values();
+		 
 		
 		 target.setName(species.getName());
 		 
@@ -273,7 +279,8 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 		 target.setTopology(newTopo);
 		
 		 for (IVariable var : species.getVars()) {
-			 addVariable(var, target);
+			 if (((Variable) var).getgSkill() == null)
+				 addVariable(var, target);
 		 }
 		
 		 CreateContext ac = new CreateContext();
@@ -345,7 +352,7 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 			eReference.setSpecies(source);
 			eReference.setExperiment(target);
 			source.getExperimentLinks().add(eReference);
-			target.getExperimentLinks().add(eReference);
+			target.setExperimentLink(eReference);
 		 return target;
 	}
     

@@ -37,7 +37,7 @@ public class AddGuiExperimentFeature extends AbstractAddShapeFeature {
     private static final IColorConstant SPECIES_FOREGROUND =
     		 new ColorConstant(0,0,0);
 
-    private static final List<Integer> CLASS_BACKGROUND =GamaList.with(151,255,255);
+    private static final List<Integer> CLASS_BACKGROUND =GamaList.with(135,206,250);
  
     public AddGuiExperimentFeature(IFeatureProvider fp) {
         super(fp);

@@ -80,7 +80,7 @@ public class CreateGuiExperimentLinkFeature  extends AbstractCreateConnectionFea
 			eReference.setExperiment(target);
 			eReference.setSpecies(source);
 			source.getExperimentLinks().add(eReference);
-			target.getExperimentLinks().add(eReference);
+			target.setExperimentLink(eReference);
 		}
 
 		return newConnection;
