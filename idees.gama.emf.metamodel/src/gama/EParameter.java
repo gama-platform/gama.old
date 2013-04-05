@@ -17,9 +17,11 @@ package gama;
  * <ul>
  *   <li>{@link gama.EParameter#getVariable <em>Variable</em>}</li>
  *   <li>{@link gama.EParameter#getMin <em>Min</em>}</li>
- *   <li>{@link gama.EParameter#getValue <em>Value</em>}</li>
+ *   <li>{@link gama.EParameter#getInit <em>Init</em>}</li>
  *   <li>{@link gama.EParameter#getStep <em>Step</em>}</li>
  *   <li>{@link gama.EParameter#getMax <em>Max</em>}</li>
+ *   <li>{@link gama.EParameter#getAmong <em>Among</em>}</li>
+ *   <li>{@link gama.EParameter#getCategory <em>Category</em>}</li>
  * </ul>
  * </p>
  *
@@ -81,30 +83,30 @@ public interface EParameter extends EGamaObject {
 	void setMin(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Value</b></em>' attribute.
+	 * Returns the value of the '<em><b>Init</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Value</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Init</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Value</em>' attribute.
-	 * @see #setValue(String)
-	 * @see gama.GamaPackage#getEParameter_Value()
+	 * @return the value of the '<em>Init</em>' attribute.
+	 * @see #setInit(String)
+	 * @see gama.GamaPackage#getEParameter_Init()
 	 * @model
 	 * @generated
 	 */
-	String getValue();
+	String getInit();
 
 	/**
-	 * Sets the value of the '{@link gama.EParameter#getValue <em>Value</em>}' attribute.
+	 * Sets the value of the '{@link gama.EParameter#getInit <em>Init</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Value</em>' attribute.
-	 * @see #getValue()
+	 * @param value the new value of the '<em>Init</em>' attribute.
+	 * @see #getInit()
 	 * @generated
 	 */
-	void setValue(String value);
+	void setInit(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Step</b></em>' attribute.
@@ -157,5 +159,57 @@ public interface EParameter extends EGamaObject {
 	 * @generated
 	 */
 	void setMax(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Among</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Among</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Among</em>' attribute.
+	 * @see #setAmong(String)
+	 * @see gama.GamaPackage#getEParameter_Among()
+	 * @model
+	 * @generated
+	 */
+	String getAmong();
+
+	/**
+	 * Sets the value of the '{@link gama.EParameter#getAmong <em>Among</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Among</em>' attribute.
+	 * @see #getAmong()
+	 * @generated
+	 */
+	void setAmong(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Category</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Category</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Category</em>' attribute.
+	 * @see #setCategory(String)
+	 * @see gama.GamaPackage#getEParameter_Category()
+	 * @model
+	 * @generated
+	 */
+	String getCategory();
+
+	/**
+	 * Sets the value of the '{@link gama.EParameter#getCategory <em>Category</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Category</em>' attribute.
+	 * @see #getCategory()
+	 * @generated
+	 */
+	void setCategory(String value);
 
 } // EParameter

@@ -9,14 +9,18 @@ package gama.impl;
 import gama.EDisplayLink;
 import gama.EExperiment;
 import gama.EExperimentLink;
+import gama.EParameter;
 import gama.GamaPackage;
 
 import java.util.Collection;
 
+import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 
+import org.eclipse.emf.ecore.InternalEObject;
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
 /**
@@ -26,8 +30,9 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link gama.impl.EExperimentImpl#getExperimentLinks <em>Experiment Links</em>}</li>
+ *   <li>{@link gama.impl.EExperimentImpl#getExperimentLink <em>Experiment Link</em>}</li>
  *   <li>{@link gama.impl.EExperimentImpl#getDisplayLinks <em>Display Links</em>}</li>
+ *   <li>{@link gama.impl.EExperimentImpl#getParameters <em>Parameters</em>}</li>
  * </ul>
  * </p>
  *
@@ -35,14 +40,14 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  */
 public class EExperimentImpl extends EGamaObjectImpl implements EExperiment {
 	/**
-	 * The cached value of the '{@link #getExperimentLinks() <em>Experiment Links</em>}' reference list.
+	 * The cached value of the '{@link #getExperimentLink() <em>Experiment Link</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getExperimentLinks()
+	 * @see #getExperimentLink()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<EExperimentLink> experimentLinks;
+	protected EExperimentLink experimentLink;
 
 	/**
 	 * The cached value of the '{@link #getDisplayLinks() <em>Display Links</em>}' reference list.
@@ -53,6 +58,16 @@ public class EExperimentImpl extends EGamaObjectImpl implements EExperiment {
 	 * @ordered
 	 */
 	protected EList<EDisplayLink> displayLinks;
+
+	/**
+	 * The cached value of the '{@link #getParameters() <em>Parameters</em>}' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getParameters()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<EParameter> parameters;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -78,11 +93,37 @@ public class EExperimentImpl extends EGamaObjectImpl implements EExperiment {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<EExperimentLink> getExperimentLinks() {
-		if (experimentLinks == null) {
-			experimentLinks = new EObjectResolvingEList<EExperimentLink>(EExperimentLink.class, this, GamaPackage.EEXPERIMENT__EXPERIMENT_LINKS);
+	public EExperimentLink getExperimentLink() {
+		if (experimentLink != null && experimentLink.eIsProxy()) {
+			InternalEObject oldExperimentLink = (InternalEObject)experimentLink;
+			experimentLink = (EExperimentLink)eResolveProxy(oldExperimentLink);
+			if (experimentLink != oldExperimentLink) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, GamaPackage.EEXPERIMENT__EXPERIMENT_LINK, oldExperimentLink, experimentLink));
+			}
 		}
-		return experimentLinks;
+		return experimentLink;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EExperimentLink basicGetExperimentLink() {
+		return experimentLink;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setExperimentLink(EExperimentLink newExperimentLink) {
+		EExperimentLink oldExperimentLink = experimentLink;
+		experimentLink = newExperimentLink;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EEXPERIMENT__EXPERIMENT_LINK, oldExperimentLink, experimentLink));
 	}
 
 	/**
@@ -102,13 +143,28 @@ public class EExperimentImpl extends EGamaObjectImpl implements EExperiment {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<EParameter> getParameters() {
+		if (parameters == null) {
+			parameters = new EObjectResolvingEList<EParameter>(EParameter.class, this, GamaPackage.EEXPERIMENT__PARAMETERS);
+		}
+		return parameters;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case GamaPackage.EEXPERIMENT__EXPERIMENT_LINKS:
-				return getExperimentLinks();
+			case GamaPackage.EEXPERIMENT__EXPERIMENT_LINK:
+				if (resolve) return getExperimentLink();
+				return basicGetExperimentLink();
 			case GamaPackage.EEXPERIMENT__DISPLAY_LINKS:
 				return getDisplayLinks();
+			case GamaPackage.EEXPERIMENT__PARAMETERS:
+				return getParameters();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -122,13 +178,16 @@ public class EExperimentImpl extends EGamaObjectImpl implements EExperiment {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case GamaPackage.EEXPERIMENT__EXPERIMENT_LINKS:
-				getExperimentLinks().clear();
-				getExperimentLinks().addAll((Collection<? extends EExperimentLink>)newValue);
+			case GamaPackage.EEXPERIMENT__EXPERIMENT_LINK:
+				setExperimentLink((EExperimentLink)newValue);
 				return;
 			case GamaPackage.EEXPERIMENT__DISPLAY_LINKS:
 				getDisplayLinks().clear();
 				getDisplayLinks().addAll((Collection<? extends EDisplayLink>)newValue);
+				return;
+			case GamaPackage.EEXPERIMENT__PARAMETERS:
+				getParameters().clear();
+				getParameters().addAll((Collection<? extends EParameter>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -142,11 +201,14 @@ public class EExperimentImpl extends EGamaObjectImpl implements EExperiment {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case GamaPackage.EEXPERIMENT__EXPERIMENT_LINKS:
-				getExperimentLinks().clear();
+			case GamaPackage.EEXPERIMENT__EXPERIMENT_LINK:
+				setExperimentLink((EExperimentLink)null);
 				return;
 			case GamaPackage.EEXPERIMENT__DISPLAY_LINKS:
 				getDisplayLinks().clear();
+				return;
+			case GamaPackage.EEXPERIMENT__PARAMETERS:
+				getParameters().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -160,10 +222,12 @@ public class EExperimentImpl extends EGamaObjectImpl implements EExperiment {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case GamaPackage.EEXPERIMENT__EXPERIMENT_LINKS:
-				return experimentLinks != null && !experimentLinks.isEmpty();
+			case GamaPackage.EEXPERIMENT__EXPERIMENT_LINK:
+				return experimentLink != null;
 			case GamaPackage.EEXPERIMENT__DISPLAY_LINKS:
 				return displayLinks != null && !displayLinks.isEmpty();
+			case GamaPackage.EEXPERIMENT__PARAMETERS:
+				return parameters != null && !parameters.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

@@ -16,8 +16,9 @@ import org.eclipse.emf.common.util.EList;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link gama.EExperiment#getExperimentLinks <em>Experiment Links</em>}</li>
+ *   <li>{@link gama.EExperiment#getExperimentLink <em>Experiment Link</em>}</li>
  *   <li>{@link gama.EExperiment#getDisplayLinks <em>Display Links</em>}</li>
+ *   <li>{@link gama.EExperiment#getParameters <em>Parameters</em>}</li>
  * </ul>
  * </p>
  *
@@ -27,20 +28,30 @@ import org.eclipse.emf.common.util.EList;
  */
 public interface EExperiment extends EGamaObject {
 	/**
-	 * Returns the value of the '<em><b>Experiment Links</b></em>' reference list.
-	 * The list contents are of type {@link gama.EExperimentLink}.
+	 * Returns the value of the '<em><b>Experiment Link</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Experiment Links</em>' reference list isn't clear,
+	 * If the meaning of the '<em>Experiment Link</em>' reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Experiment Links</em>' reference list.
-	 * @see gama.GamaPackage#getEExperiment_ExperimentLinks()
+	 * @return the value of the '<em>Experiment Link</em>' reference.
+	 * @see #setExperimentLink(EExperimentLink)
+	 * @see gama.GamaPackage#getEExperiment_ExperimentLink()
 	 * @model
 	 * @generated
 	 */
-	EList<EExperimentLink> getExperimentLinks();
+	EExperimentLink getExperimentLink();
+
+	/**
+	 * Sets the value of the '{@link gama.EExperiment#getExperimentLink <em>Experiment Link</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Experiment Link</em>' reference.
+	 * @see #getExperimentLink()
+	 * @generated
+	 */
+	void setExperimentLink(EExperimentLink value);
 
 	/**
 	 * Returns the value of the '<em><b>Display Links</b></em>' reference list.
@@ -57,5 +68,21 @@ public interface EExperiment extends EGamaObject {
 	 * @generated
 	 */
 	EList<EDisplayLink> getDisplayLinks();
+
+	/**
+	 * Returns the value of the '<em><b>Parameters</b></em>' reference list.
+	 * The list contents are of type {@link gama.EParameter}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Parameters</em>' reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Parameters</em>' reference list.
+	 * @see gama.GamaPackage#getEExperiment_Parameters()
+	 * @model
+	 * @generated
+	 */
+	EList<EParameter> getParameters();
 
 } // EExperiment

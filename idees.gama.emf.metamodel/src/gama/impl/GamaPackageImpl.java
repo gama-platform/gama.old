@@ -806,7 +806,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getEExperiment_ExperimentLinks() {
+	public EReference getEExperiment_ExperimentLink() {
 		return (EReference)eExperimentEClass.getEStructuralFeatures().get(0);
 	}
 
@@ -817,6 +817,15 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 */
 	public EReference getEExperiment_DisplayLinks() {
 		return (EReference)eExperimentEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getEExperiment_Parameters() {
+		return (EReference)eExperimentEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -1850,7 +1859,7 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getEParameter_Value() {
+	public EAttribute getEParameter_Init() {
 		return (EAttribute)eParameterEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -1870,6 +1879,24 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 	 */
 	public EAttribute getEParameter_Max() {
 		return (EAttribute)eParameterEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEParameter_Among() {
+		return (EAttribute)eParameterEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getEParameter_Category() {
+		return (EAttribute)eParameterEClass.getEStructuralFeatures().get(6);
 	}
 
 	/**
@@ -1959,8 +1986,9 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		createEReference(eReflexEClass, EREFLEX__REFLEX_LINKS);
 
 		eExperimentEClass = createEClass(EEXPERIMENT);
-		createEReference(eExperimentEClass, EEXPERIMENT__EXPERIMENT_LINKS);
+		createEReference(eExperimentEClass, EEXPERIMENT__EXPERIMENT_LINK);
 		createEReference(eExperimentEClass, EEXPERIMENT__DISPLAY_LINKS);
+		createEReference(eExperimentEClass, EEXPERIMENT__PARAMETERS);
 
 		eguiExperimentEClass = createEClass(EGUI_EXPERIMENT);
 
@@ -2098,9 +2126,11 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		eParameterEClass = createEClass(EPARAMETER);
 		createEAttribute(eParameterEClass, EPARAMETER__VARIABLE);
 		createEAttribute(eParameterEClass, EPARAMETER__MIN);
-		createEAttribute(eParameterEClass, EPARAMETER__VALUE);
+		createEAttribute(eParameterEClass, EPARAMETER__INIT);
 		createEAttribute(eParameterEClass, EPARAMETER__STEP);
 		createEAttribute(eParameterEClass, EPARAMETER__MAX);
+		createEAttribute(eParameterEClass, EPARAMETER__AMONG);
+		createEAttribute(eParameterEClass, EPARAMETER__CATEGORY);
 	}
 
 	/**
@@ -2218,8 +2248,9 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEReference(getEReflex_ReflexLinks(), this.getEReflexLink(), null, "reflexLinks", null, 0, -1, EReflex.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eExperimentEClass, EExperiment.class, "EExperiment", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getEExperiment_ExperimentLinks(), this.getEExperimentLink(), null, "experimentLinks", null, 0, -1, EExperiment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEExperiment_ExperimentLink(), this.getEExperimentLink(), null, "experimentLink", null, 0, 1, EExperiment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getEExperiment_DisplayLinks(), this.getEDisplayLink(), null, "displayLinks", null, 0, -1, EExperiment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getEExperiment_Parameters(), this.getEParameter(), null, "parameters", null, 0, -1, EExperiment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(eguiExperimentEClass, EGUIExperiment.class, "EGUIExperiment", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -2357,9 +2388,11 @@ public class GamaPackageImpl extends EPackageImpl implements GamaPackage {
 		initEClass(eParameterEClass, EParameter.class, "EParameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getEParameter_Variable(), ecorePackage.getEString(), "variable", null, 0, 1, EParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEParameter_Min(), ecorePackage.getEString(), "min", null, 0, 1, EParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getEParameter_Value(), ecorePackage.getEString(), "value", null, 0, 1, EParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEParameter_Init(), ecorePackage.getEString(), "init", null, 0, 1, EParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEParameter_Step(), ecorePackage.getEString(), "step", null, 0, 1, EParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getEParameter_Max(), ecorePackage.getEString(), "max", null, 0, 1, EParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEParameter_Among(), ecorePackage.getEString(), "among", null, 0, 1, EParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getEParameter_Category(), ecorePackage.getEString(), "category", null, 0, 1, EParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);

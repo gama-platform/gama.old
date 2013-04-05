@@ -733,13 +733,13 @@ public interface GamaPackage extends EPackage {
 	int EEXPERIMENT__COLOR_PICTO = EGAMA_OBJECT__COLOR_PICTO;
 
 	/**
-	 * The feature id for the '<em><b>Experiment Links</b></em>' reference list.
+	 * The feature id for the '<em><b>Experiment Link</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EEXPERIMENT__EXPERIMENT_LINKS = EGAMA_OBJECT_FEATURE_COUNT + 0;
+	int EEXPERIMENT__EXPERIMENT_LINK = EGAMA_OBJECT_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Display Links</b></em>' reference list.
@@ -751,13 +751,22 @@ public interface GamaPackage extends EPackage {
 	int EEXPERIMENT__DISPLAY_LINKS = EGAMA_OBJECT_FEATURE_COUNT + 1;
 
 	/**
+	 * The feature id for the '<em><b>Parameters</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EEXPERIMENT__PARAMETERS = EGAMA_OBJECT_FEATURE_COUNT + 2;
+
+	/**
 	 * The number of structural features of the '<em>EExperiment</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EEXPERIMENT_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 2;
+	int EEXPERIMENT_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 3;
 
 	/**
 	 * The meta object id for the '{@link gama.impl.EGUIExperimentImpl <em>EGUI Experiment</em>}' class.
@@ -797,13 +806,13 @@ public interface GamaPackage extends EPackage {
 	int EGUI_EXPERIMENT__COLOR_PICTO = EEXPERIMENT__COLOR_PICTO;
 
 	/**
-	 * The feature id for the '<em><b>Experiment Links</b></em>' reference list.
+	 * The feature id for the '<em><b>Experiment Link</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EGUI_EXPERIMENT__EXPERIMENT_LINKS = EEXPERIMENT__EXPERIMENT_LINKS;
+	int EGUI_EXPERIMENT__EXPERIMENT_LINK = EEXPERIMENT__EXPERIMENT_LINK;
 
 	/**
 	 * The feature id for the '<em><b>Display Links</b></em>' reference list.
@@ -813,6 +822,15 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int EGUI_EXPERIMENT__DISPLAY_LINKS = EEXPERIMENT__DISPLAY_LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Parameters</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EGUI_EXPERIMENT__PARAMETERS = EEXPERIMENT__PARAMETERS;
 
 	/**
 	 * The number of structural features of the '<em>EGUI Experiment</em>' class.
@@ -861,13 +879,13 @@ public interface GamaPackage extends EPackage {
 	int EBATCH_EXPERIMENT__COLOR_PICTO = EEXPERIMENT__COLOR_PICTO;
 
 	/**
-	 * The feature id for the '<em><b>Experiment Links</b></em>' reference list.
+	 * The feature id for the '<em><b>Experiment Link</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EBATCH_EXPERIMENT__EXPERIMENT_LINKS = EEXPERIMENT__EXPERIMENT_LINKS;
+	int EBATCH_EXPERIMENT__EXPERIMENT_LINK = EEXPERIMENT__EXPERIMENT_LINK;
 
 	/**
 	 * The feature id for the '<em><b>Display Links</b></em>' reference list.
@@ -877,6 +895,15 @@ public interface GamaPackage extends EPackage {
 	 * @ordered
 	 */
 	int EBATCH_EXPERIMENT__DISPLAY_LINKS = EEXPERIMENT__DISPLAY_LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Parameters</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EBATCH_EXPERIMENT__PARAMETERS = EEXPERIMENT__PARAMETERS;
 
 	/**
 	 * The number of structural features of the '<em>EBatch Experiment</em>' class.
@@ -2936,13 +2963,13 @@ public interface GamaPackage extends EPackage {
 	int EPARAMETER__MIN = EGAMA_OBJECT_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Value</b></em>' attribute.
+	 * The feature id for the '<em><b>Init</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EPARAMETER__VALUE = EGAMA_OBJECT_FEATURE_COUNT + 2;
+	int EPARAMETER__INIT = EGAMA_OBJECT_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Step</b></em>' attribute.
@@ -2963,13 +2990,31 @@ public interface GamaPackage extends EPackage {
 	int EPARAMETER__MAX = EGAMA_OBJECT_FEATURE_COUNT + 4;
 
 	/**
+	 * The feature id for the '<em><b>Among</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EPARAMETER__AMONG = EGAMA_OBJECT_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Category</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EPARAMETER__CATEGORY = EGAMA_OBJECT_FEATURE_COUNT + 6;
+
+	/**
 	 * The number of structural features of the '<em>EParameter</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EPARAMETER_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 5;
+	int EPARAMETER_FEATURE_COUNT = EGAMA_OBJECT_FEATURE_COUNT + 7;
 
 
 	/**
@@ -3549,15 +3594,15 @@ public interface GamaPackage extends EPackage {
 	EClass getEExperiment();
 
 	/**
-	 * Returns the meta object for the reference list '{@link gama.EExperiment#getExperimentLinks <em>Experiment Links</em>}'.
+	 * Returns the meta object for the reference '{@link gama.EExperiment#getExperimentLink <em>Experiment Link</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Experiment Links</em>'.
-	 * @see gama.EExperiment#getExperimentLinks()
+	 * @return the meta object for the reference '<em>Experiment Link</em>'.
+	 * @see gama.EExperiment#getExperimentLink()
 	 * @see #getEExperiment()
 	 * @generated
 	 */
-	EReference getEExperiment_ExperimentLinks();
+	EReference getEExperiment_ExperimentLink();
 
 	/**
 	 * Returns the meta object for the reference list '{@link gama.EExperiment#getDisplayLinks <em>Display Links</em>}'.
@@ -3569,6 +3614,17 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getEExperiment_DisplayLinks();
+
+	/**
+	 * Returns the meta object for the reference list '{@link gama.EExperiment#getParameters <em>Parameters</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Parameters</em>'.
+	 * @see gama.EExperiment#getParameters()
+	 * @see #getEExperiment()
+	 * @generated
+	 */
+	EReference getEExperiment_Parameters();
 
 	/**
 	 * Returns the meta object for class '{@link gama.EGUIExperiment <em>EGUI Experiment</em>}'.
@@ -4802,15 +4858,15 @@ public interface GamaPackage extends EPackage {
 	EAttribute getEParameter_Min();
 
 	/**
-	 * Returns the meta object for the attribute '{@link gama.EParameter#getValue <em>Value</em>}'.
+	 * Returns the meta object for the attribute '{@link gama.EParameter#getInit <em>Init</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Value</em>'.
-	 * @see gama.EParameter#getValue()
+	 * @return the meta object for the attribute '<em>Init</em>'.
+	 * @see gama.EParameter#getInit()
 	 * @see #getEParameter()
 	 * @generated
 	 */
-	EAttribute getEParameter_Value();
+	EAttribute getEParameter_Init();
 
 	/**
 	 * Returns the meta object for the attribute '{@link gama.EParameter#getStep <em>Step</em>}'.
@@ -4833,6 +4889,28 @@ public interface GamaPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getEParameter_Max();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EParameter#getAmong <em>Among</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Among</em>'.
+	 * @see gama.EParameter#getAmong()
+	 * @see #getEParameter()
+	 * @generated
+	 */
+	EAttribute getEParameter_Among();
+
+	/**
+	 * Returns the meta object for the attribute '{@link gama.EParameter#getCategory <em>Category</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Category</em>'.
+	 * @see gama.EParameter#getCategory()
+	 * @see #getEParameter()
+	 * @generated
+	 */
+	EAttribute getEParameter_Category();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -5295,12 +5373,12 @@ public interface GamaPackage extends EPackage {
 		EClass EEXPERIMENT = eINSTANCE.getEExperiment();
 
 		/**
-		 * The meta object literal for the '<em><b>Experiment Links</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>Experiment Link</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference EEXPERIMENT__EXPERIMENT_LINKS = eINSTANCE.getEExperiment_ExperimentLinks();
+		EReference EEXPERIMENT__EXPERIMENT_LINK = eINSTANCE.getEExperiment_ExperimentLink();
 
 		/**
 		 * The meta object literal for the '<em><b>Display Links</b></em>' reference list feature.
@@ -5309,6 +5387,14 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EReference EEXPERIMENT__DISPLAY_LINKS = eINSTANCE.getEExperiment_DisplayLinks();
+
+		/**
+		 * The meta object literal for the '<em><b>Parameters</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference EEXPERIMENT__PARAMETERS = eINSTANCE.getEExperiment_Parameters();
 
 		/**
 		 * The meta object literal for the '{@link gama.impl.EGUIExperimentImpl <em>EGUI Experiment</em>}' class.
@@ -6269,12 +6355,12 @@ public interface GamaPackage extends EPackage {
 		EAttribute EPARAMETER__MIN = eINSTANCE.getEParameter_Min();
 
 		/**
-		 * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Init</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute EPARAMETER__VALUE = eINSTANCE.getEParameter_Value();
+		EAttribute EPARAMETER__INIT = eINSTANCE.getEParameter_Init();
 
 		/**
 		 * The meta object literal for the '<em><b>Step</b></em>' attribute feature.
@@ -6291,6 +6377,22 @@ public interface GamaPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute EPARAMETER__MAX = eINSTANCE.getEParameter_Max();
+
+		/**
+		 * The meta object literal for the '<em><b>Among</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EPARAMETER__AMONG = eINSTANCE.getEParameter_Among();
+
+		/**
+		 * The meta object literal for the '<em><b>Category</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute EPARAMETER__CATEGORY = eINSTANCE.getEParameter_Category();
 
 	}
 

@@ -24,9 +24,11 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <ul>
  *   <li>{@link gama.impl.EParameterImpl#getVariable <em>Variable</em>}</li>
  *   <li>{@link gama.impl.EParameterImpl#getMin <em>Min</em>}</li>
- *   <li>{@link gama.impl.EParameterImpl#getValue <em>Value</em>}</li>
+ *   <li>{@link gama.impl.EParameterImpl#getInit <em>Init</em>}</li>
  *   <li>{@link gama.impl.EParameterImpl#getStep <em>Step</em>}</li>
  *   <li>{@link gama.impl.EParameterImpl#getMax <em>Max</em>}</li>
+ *   <li>{@link gama.impl.EParameterImpl#getAmong <em>Among</em>}</li>
+ *   <li>{@link gama.impl.EParameterImpl#getCategory <em>Category</em>}</li>
  * </ul>
  * </p>
  *
@@ -74,24 +76,24 @@ public class EParameterImpl extends EGamaObjectImpl implements EParameter {
 	protected String min = MIN_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getValue() <em>Value</em>}' attribute.
+	 * The default value of the '{@link #getInit() <em>Init</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getValue()
+	 * @see #getInit()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String VALUE_EDEFAULT = null;
+	protected static final String INIT_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getValue() <em>Value</em>}' attribute.
+	 * The cached value of the '{@link #getInit() <em>Init</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getValue()
+	 * @see #getInit()
 	 * @generated
 	 * @ordered
 	 */
-	protected String value = VALUE_EDEFAULT;
+	protected String init = INIT_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getStep() <em>Step</em>}' attribute.
@@ -132,6 +134,46 @@ public class EParameterImpl extends EGamaObjectImpl implements EParameter {
 	 * @ordered
 	 */
 	protected String max = MAX_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getAmong() <em>Among</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAmong()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String AMONG_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getAmong() <em>Among</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getAmong()
+	 * @generated
+	 * @ordered
+	 */
+	protected String among = AMONG_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getCategory() <em>Category</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCategory()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String CATEGORY_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getCategory() <em>Category</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCategory()
+	 * @generated
+	 * @ordered
+	 */
+	protected String category = CATEGORY_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -199,8 +241,8 @@ public class EParameterImpl extends EGamaObjectImpl implements EParameter {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getValue() {
-		return value;
+	public String getInit() {
+		return init;
 	}
 
 	/**
@@ -208,11 +250,11 @@ public class EParameterImpl extends EGamaObjectImpl implements EParameter {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setValue(String newValue) {
-		String oldValue = value;
-		value = newValue;
+	public void setInit(String newInit) {
+		String oldInit = init;
+		init = newInit;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EPARAMETER__VALUE, oldValue, value));
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EPARAMETER__INIT, oldInit, init));
 	}
 
 	/**
@@ -262,6 +304,48 @@ public class EParameterImpl extends EGamaObjectImpl implements EParameter {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getAmong() {
+		return among;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setAmong(String newAmong) {
+		String oldAmong = among;
+		among = newAmong;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EPARAMETER__AMONG, oldAmong, among));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getCategory() {
+		return category;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setCategory(String newCategory) {
+		String oldCategory = category;
+		category = newCategory;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, GamaPackage.EPARAMETER__CATEGORY, oldCategory, category));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -269,12 +353,16 @@ public class EParameterImpl extends EGamaObjectImpl implements EParameter {
 				return getVariable();
 			case GamaPackage.EPARAMETER__MIN:
 				return getMin();
-			case GamaPackage.EPARAMETER__VALUE:
-				return getValue();
+			case GamaPackage.EPARAMETER__INIT:
+				return getInit();
 			case GamaPackage.EPARAMETER__STEP:
 				return getStep();
 			case GamaPackage.EPARAMETER__MAX:
 				return getMax();
+			case GamaPackage.EPARAMETER__AMONG:
+				return getAmong();
+			case GamaPackage.EPARAMETER__CATEGORY:
+				return getCategory();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -293,14 +381,20 @@ public class EParameterImpl extends EGamaObjectImpl implements EParameter {
 			case GamaPackage.EPARAMETER__MIN:
 				setMin((String)newValue);
 				return;
-			case GamaPackage.EPARAMETER__VALUE:
-				setValue((String)newValue);
+			case GamaPackage.EPARAMETER__INIT:
+				setInit((String)newValue);
 				return;
 			case GamaPackage.EPARAMETER__STEP:
 				setStep((String)newValue);
 				return;
 			case GamaPackage.EPARAMETER__MAX:
 				setMax((String)newValue);
+				return;
+			case GamaPackage.EPARAMETER__AMONG:
+				setAmong((String)newValue);
+				return;
+			case GamaPackage.EPARAMETER__CATEGORY:
+				setCategory((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -320,14 +414,20 @@ public class EParameterImpl extends EGamaObjectImpl implements EParameter {
 			case GamaPackage.EPARAMETER__MIN:
 				setMin(MIN_EDEFAULT);
 				return;
-			case GamaPackage.EPARAMETER__VALUE:
-				setValue(VALUE_EDEFAULT);
+			case GamaPackage.EPARAMETER__INIT:
+				setInit(INIT_EDEFAULT);
 				return;
 			case GamaPackage.EPARAMETER__STEP:
 				setStep(STEP_EDEFAULT);
 				return;
 			case GamaPackage.EPARAMETER__MAX:
 				setMax(MAX_EDEFAULT);
+				return;
+			case GamaPackage.EPARAMETER__AMONG:
+				setAmong(AMONG_EDEFAULT);
+				return;
+			case GamaPackage.EPARAMETER__CATEGORY:
+				setCategory(CATEGORY_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -345,12 +445,16 @@ public class EParameterImpl extends EGamaObjectImpl implements EParameter {
 				return VARIABLE_EDEFAULT == null ? variable != null : !VARIABLE_EDEFAULT.equals(variable);
 			case GamaPackage.EPARAMETER__MIN:
 				return MIN_EDEFAULT == null ? min != null : !MIN_EDEFAULT.equals(min);
-			case GamaPackage.EPARAMETER__VALUE:
-				return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
+			case GamaPackage.EPARAMETER__INIT:
+				return INIT_EDEFAULT == null ? init != null : !INIT_EDEFAULT.equals(init);
 			case GamaPackage.EPARAMETER__STEP:
 				return STEP_EDEFAULT == null ? step != null : !STEP_EDEFAULT.equals(step);
 			case GamaPackage.EPARAMETER__MAX:
 				return MAX_EDEFAULT == null ? max != null : !MAX_EDEFAULT.equals(max);
+			case GamaPackage.EPARAMETER__AMONG:
+				return AMONG_EDEFAULT == null ? among != null : !AMONG_EDEFAULT.equals(among);
+			case GamaPackage.EPARAMETER__CATEGORY:
+				return CATEGORY_EDEFAULT == null ? category != null : !CATEGORY_EDEFAULT.equals(category);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -369,12 +473,16 @@ public class EParameterImpl extends EGamaObjectImpl implements EParameter {
 		result.append(variable);
 		result.append(", min: ");
 		result.append(min);
-		result.append(", value: ");
-		result.append(value);
+		result.append(", init: ");
+		result.append(init);
 		result.append(", step: ");
 		result.append(step);
 		result.append(", max: ");
 		result.append(max);
+		result.append(", among: ");
+		result.append(among);
+		result.append(", category: ");
+		result.append(category);
 		result.append(')');
 		return result.toString();
 	}
