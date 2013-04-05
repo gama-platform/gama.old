@@ -39,6 +39,7 @@ import org.eclipse.graphiti.features.custom.AbstractCustomFeature;
 import org.eclipse.graphiti.mm.pictograms.Diagram;
 import org.eclipse.graphiti.mm.pictograms.Shape;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -121,7 +122,8 @@ public class ModelGenerationFeature extends AbstractCustomFeature {
     				IWorkbenchPage page =
     					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
     				try {
-    					IDE.openEditor(page, file, true);
+    					IEditorPart ed = IDE.openEditor(page, file, true);
+    					ed.doSave(null);
     				} catch (PartInitException e) {
     					e.printStackTrace();
     				}
