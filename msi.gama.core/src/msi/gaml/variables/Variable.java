@@ -341,4 +341,10 @@ public class Variable extends Symbol implements IVariable {
 	@Override
 	public void tryToInit(IScope scope) {}
 
+	public ISkill getgSkill() {
+		return gSkill;
+	}
+	
+	
+
 }
