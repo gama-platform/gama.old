@@ -100,7 +100,7 @@ public class AddActionFeature extends AbstractAddShapeFeature {
                         addedClass.getName());
             text.setForeground(manageColor(CLASS_TEXT_FOREGROUND));
             text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
-            text.getFont().setSize(14);
+            text.setFont(gaService.manageFont(getDiagram(), "Arial", 14, false, false));
            // text.getFont().setBold(true);
             gaService.setLocationAndSize(text, 0, 0, width, height);
  

@@ -119,8 +119,7 @@ public class AddWorldFeature extends AbstractAddShapeFeature {
             text.setForeground(manageColor(SPECIES_TEXT_FOREGROUND));
             text.setHorizontalAlignment(Orientation.ALIGNMENT_CENTER);
             text.setVerticalAlignment(Orientation.ALIGNMENT_CENTER);
-            text.getFont().setBold(true);
-            text.getFont().setSize(14);
+            text.setFont(gaService.manageFont(getDiagram(), "Arial", 14, false, true));
            
             gaService.setLocationAndSize(text, 0, 0, width, 20);
  
@@ -143,7 +142,7 @@ public class AddWorldFeature extends AbstractAddShapeFeature {
             text2.setForeground(manageColor(SPECIES_TEXT_FOREGROUND));
             text2.setHorizontalAlignment(Orientation.ALIGNMENT_LEFT);
            // text2.setVerticalAlignment(Orientation.);
-            text2.getFont().setSize(14);
+            text2.setFont(gaService.manageFont(getDiagram(), "Arial", 14, false, false));
             gaService.setLocationAndSize(text2, 5, 25, width, 1 + addedClass.getVariables().size() * 20);
  
             // create link and wire it
