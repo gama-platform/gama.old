@@ -428,7 +428,7 @@ public class EditLayerFrame {
 
 		transparency = new Text(canvasProp, SWT.BORDER);
 		transparency.setBounds(100, 70, 200, 20);
-		transparency.setText("1.0");
+		transparency.setText("0.0");
 		
 		CLabel lblRefresh = new CLabel(canvasProp, SWT.NONE);
 		lblRefresh.setBounds(10, 100, 90, 20);

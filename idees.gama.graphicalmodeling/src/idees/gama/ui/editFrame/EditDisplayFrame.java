@@ -60,7 +60,7 @@ public class EditDisplayFrame extends EditFrame {
 	 */
 	public EditDisplayFrame(Diagram diagram, IFeatureProvider fp,
 			EditFeature eaf, EGamaObject display, String name) {
-		super(diagram, fp, eaf, display, name == null ? "Aspect definition"
+		super(diagram, fp, eaf, display, name == null ? "Display definition"
 				: name);
 		species = new GamaList<ESpecies>();
 		grids = new GamaList<ESpecies>();
