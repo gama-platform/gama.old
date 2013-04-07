@@ -23,12 +23,12 @@ public class ChangeColorEGamaObjectFeature extends AbstractCustomFeature {
   
     @Override
     public String getName() {
-        return "Change foreground color";
+        return "Change the color";
     }
 
     @Override
     public String getDescription() {
-        return "Change the foreground color";
+        return "Change the color";
     }
 
     @Override

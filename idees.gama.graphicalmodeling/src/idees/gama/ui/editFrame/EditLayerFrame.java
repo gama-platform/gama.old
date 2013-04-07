@@ -73,6 +73,8 @@ public class EditLayerFrame {
 	private Text transparency;
 	private Text refresh;
 	
+	private boolean quitWithoutSaving;
+	
 	
 	Composite speciesComp;
 	Composite chartComp;
@@ -117,6 +119,7 @@ public class EditLayerFrame {
 	public EditLayerFrame(ELayer elayer, EditDisplayFrame asp, List<ESpecies> species, List<ESpecies> grids, boolean edit) {
 		init(elayer, asp, species, grids);
 		this.edit = edit;
+		quitWithoutSaving = true;
 		if (edit) {
 			loadData();
 			updateVisible();
@@ -270,16 +273,20 @@ public class EditLayerFrame {
 		      }
 
 		      public void shellClosed(ShellEvent event) {
-		        MessageBox messageBox = new MessageBox(dialog, SWT.ICON_WARNING | SWT.APPLICATION_MODAL | SWT.OK | SWT.CANCEL);
-		        messageBox.setText("Warning");
-		        messageBox.setMessage("You have unsaved data. Close the 'Edit Display Layer' window anyway?");
-		        if (messageBox.open() == SWT.OK) {
-		        	if (! layerFrame.edit)
-						EcoreUtil.delete(elayer);
+		        if (quitWithoutSaving) {
+			    	MessageBox messageBox = new MessageBox(dialog, SWT.ICON_WARNING | SWT.APPLICATION_MODAL | SWT.OK | SWT.CANCEL);
+			        messageBox.setText("Warning");
+			        messageBox.setMessage("You have unsaved data. Close the 'Edit Display Layer' window anyway?");
+			        if (messageBox.open() == SWT.OK) {
+			        	if (! layerFrame.edit)
+							EcoreUtil.delete(elayer);
+			        	event.doit = true;
+			        }   else
+			          event.doit = false;
+		        } else {
 		        	event.doit = true;
-		        }   else
-		          event.doit = false;
-		      }
+		        }
+			  }
 
 		      public void shellDeactivated(ShellEvent arg0) {
 		      }
@@ -311,8 +318,9 @@ public class EditLayerFrame {
 		buttonOK.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				save();
 				
+				save();
+				quitWithoutSaving = false;
 				dialog.close();
 			}
 
@@ -345,6 +353,8 @@ public class EditLayerFrame {
 						EcoreUtil.delete(cl);
 					}
 				}
+
+				quitWithoutSaving = false;
 				EcoreUtil.delete(elayer);
 				dialog.close();
 			}

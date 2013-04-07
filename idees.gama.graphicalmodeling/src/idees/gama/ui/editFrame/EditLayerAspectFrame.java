@@ -64,10 +64,12 @@ public class EditLayerAspectFrame {
 	Label colorLabel;
 	boolean edit;
 
+	private boolean quitWithoutSaving;
 	
 	public EditLayerAspectFrame(ELayerAspect elayer, EditAspectFrame asp, boolean edit) {
 		init(elayer, asp);
 		this.edit = edit;
+		quitWithoutSaving = true;
 		if (edit)
 			loadData();
 		setVisibility();
@@ -130,7 +132,8 @@ public class EditLayerAspectFrame {
 		      }
 
 		      public void shellClosed(ShellEvent event) {
-		        MessageBox messageBox = new MessageBox(dialog, SWT.ICON_WARNING | SWT.APPLICATION_MODAL | SWT.OK | SWT.CANCEL);
+		       if (quitWithoutSaving) {
+		    	  MessageBox messageBox = new MessageBox(dialog, SWT.ICON_WARNING | SWT.APPLICATION_MODAL | SWT.OK | SWT.CANCEL);
 		        messageBox.setText("Warning");
 		        messageBox.setMessage("You have unsaved data. Close the 'Edit Aspect Layer' window anyway?");
 		        if (messageBox.open() == SWT.OK) {
@@ -139,6 +142,9 @@ public class EditLayerAspectFrame {
 		        	event.doit = true;
 		        }   else
 		          event.doit = false;
+		       } else {
+		    	   event.doit = true;
+		       }
 		      }
 
 		      public void shellDeactivated(ShellEvent arg0) {
@@ -171,6 +177,7 @@ public class EditLayerAspectFrame {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				int index = 0;
+				quitWithoutSaving = false;
 				if (!layerFrame.edit) {
 					frame.getLayers().add(elayer);
 				} else {
@@ -194,6 +201,8 @@ public class EditLayerAspectFrame {
 		buttonCancel.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
+
+				quitWithoutSaving = false;
 				if (! layerFrame.edit)
 					EcoreUtil.delete(elayer);
 				dialog.close();
