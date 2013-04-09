@@ -37,7 +37,8 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.*;
  *         cf. http://www.eclipse.org/Xtext/documentation/latest/xtext.html#highlighting
  * 
  */
-public class GamlSemanticHighlightingCalculator implements ISemanticHighlightingCalculator {
+public class GamlSemanticHighlightingCalculator extends GamlSwitch implements
+	ISemanticHighlightingCalculator {
 
 	private static Set<String> ASSIGNMENTS = new HashSet(Arrays.asList("<-", "<<", ">>", "->"));
 
@@ -50,104 +51,101 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 		acceptor = a;
 		TreeIterator<EObject> root = resource.getAllContents();
 		while (root.hasNext()) {
-			highlight.doSwitch(root.next());
+			doSwitch(root.next());
 		}
 		done.clear();
 		acceptor = null;
 	}
 
-	private static final GamlSwitch highlight = new GamlSwitch() {
+	@Override
+	public Object caseStatement(Statement object) {
+		setStyle(object, VARDEF_ID, EGaml.getNameOf(object));
+		setStyle(object, FACET_ID, object.getFirstFacet());
+		return setStyle(object, KEYWORD_ID, object.getKey());
+	}
 
-		@Override
-		public Object caseStatement(Statement object) {
-			setStyle(object, VARDEF_ID, EGaml.getNameOf(object));
-			return setStyle(object, KEYWORD_ID, object.getKey());
-		}
+	@Override
+	public Object caseS_DirectAssignment(S_DirectAssignment obj) {
+		return setStyle(obj, ASSIGN_ID, obj.getKey());
+	}
 
-		@Override
-		public Object caseS_DirectAssignment(S_DirectAssignment obj) {
-			return setStyle(obj, ASSIGN_ID, obj.getKey());
-		}
+	@Override
+	public Object caseS_Assignment(S_Assignment obj) {
+		String s = obj.getKey();
+		if ( "=".equals(s) ) { return setStyle(obj, ASSIGN_ID, s); }
+		return false;
+	}
 
-		@Override
-		public Object caseS_Assignment(S_Assignment obj) {
-			String s = obj.getKey();
-			if ( "=".equals(s) ) { return setStyle(obj, ASSIGN_ID, s); }
-			return false;
-		}
-
-		@Override
-		public Object caseFacet(Facet object) {
-			String key = object.getKey();
-			if ( ASSIGNMENTS.contains(key) ) {
-				setStyle(object, ASSIGN_ID, 0);
-			} else {
-				setStyle(object, FACET_ID, 0);
-				if ( key.startsWith("type") ) {
-					setStyle(TYPE_ID, NodeModelUtils.getNode(object.getExpr()));
-				} else if ( object.getName() != null ) {
-					setStyle(object, VARDEF_ID, 1);
-				}
+	@Override
+	public Object caseFacet(Facet object) {
+		String key = object.getKey();
+		if ( ASSIGNMENTS.contains(key) ) {
+			setStyle(object, ASSIGN_ID, 0);
+		} else {
+			setStyle(object, FACET_ID, 0);
+			if ( key.startsWith("type") ) {
+				setStyle(TYPE_ID, NodeModelUtils.getNode(object.getExpr()));
+			} else if ( object.getName() != null ) {
+				setStyle(object, VARDEF_ID, 1);
 			}
-			return true;
 		}
+		return true;
+	}
 
-		@Override
-		public Object caseTerminalExpression(TerminalExpression object) {
-			if ( !(object instanceof StringLiteral) ) {
-				setStyle(object, NUMBER_ID, 0);
-			}
-			return true;
+	@Override
+	public Object caseTerminalExpression(TerminalExpression object) {
+		if ( !(object instanceof StringLiteral) ) {
+			setStyle(object, NUMBER_ID, 0);
 		}
+		return true;
+	}
 
-		@Override
-		public Object caseReservedLiteral(ReservedLiteral object) {
-			return setStyle(object, RESERVED_ID, 0);
-		}
+	@Override
+	public Object caseReservedLiteral(ReservedLiteral object) {
+		return setStyle(object, RESERVED_ID, 0);
+	}
 
-		@Override
-		public Object caseBinary(Binary object) {
-			return setStyle(object, OPERATOR_ID, EGaml.getKeyOf(object));
-		}
+	@Override
+	public Object caseBinary(Binary object) {
+		return setStyle(object, OPERATOR_ID, EGaml.getKeyOf(object));
+	}
 
-		@Override
-		public Object caseFunction(Function object) {
-			return setStyle(object, OPERATOR_ID, EGaml.getKeyOf(object));
-		}
+	@Override
+	public Object caseFunction(Function object) {
+		return setStyle(object, OPERATOR_ID, EGaml.getKeyOf(object));
+	}
 
-		@Override
-		public Object caseArgumentPair(ArgumentPair object) {
-			return setStyle(object, VARIABLE_ID, object.getOp());
-		}
+	@Override
+	public Object caseArgumentPair(ArgumentPair object) {
+		return setStyle(object, VARIABLE_ID, object.getOp());
+	}
 
-		@Override
-		public Object caseVariableRef(VariableRef object) {
-			return setStyle(VARIABLE_ID, NodeModelUtils.getNode(object));
-		}
+	@Override
+	public Object caseVariableRef(VariableRef object) {
+		return setStyle(VARIABLE_ID, NodeModelUtils.getNode(object));
+	}
 
-		@Override
-		public Object caseUnitName(UnitName object) {
-			return setStyle(object, UNIT_ID, 0);
-		}
+	@Override
+	public Object caseUnitName(UnitName object) {
+		return setStyle(object, UNIT_ID, 0);
+	}
 
-		@Override
-		public Object caseTypeRef(TypeRef object) {
-			return setStyle(TYPE_ID, NodeModelUtils.getNode(object));
-		}
+	@Override
+	public Object caseTypeRef(TypeRef object) {
+		return setStyle(TYPE_ID, NodeModelUtils.getNode(object));
+	}
 
-		@Override
-		public Object caseParameter(Parameter object) {
-			return setStyle(object, VARIABLE_ID, object.getBuiltInFacetKey());
-		}
+	@Override
+	public Object caseParameter(Parameter object) {
+		return setStyle(object, VARIABLE_ID, object.getBuiltInFacetKey());
+	}
 
-		@Override
-		public Object caseArgumentDefinition(ArgumentDefinition object) {
-			return setStyle(object, VARDEF_ID, object.getName());
-		}
+	@Override
+	public Object caseArgumentDefinition(ArgumentDefinition object) {
+		return setStyle(object, VARDEF_ID, object.getName());
+	}
 
-	};
-
-	private static boolean setStyle(final EObject obj, final String s, final int position) {
+	private final boolean setStyle(final EObject obj, final String s, final int position) {
 		// position = -1 for all the node; 0 for the first leaf node, 1 for the second one, etc.
 		if ( obj != null && s != null ) {
 			INode n = NodeModelUtils.getNode(obj);
@@ -169,7 +167,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 		return false;
 	}
 
-	private static boolean setStyle(final String s, final INode n) {
+	private final boolean setStyle(final String s, final INode n) {
 		if ( !done.contains(n) ) {
 			done.add(n);
 			acceptor.addPosition(n.getOffset(), n.getLength(), s);
@@ -178,7 +176,7 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 		return false;
 	}
 
-	private static boolean setStyle(final EObject obj, final String s, final String text) {
+	private final boolean setStyle(final EObject obj, final String s, final String text) {
 		if ( text == null ) { return false; }
 		if ( obj != null && s != null ) {
 			INode n = NodeModelUtils.getNode(obj);
@@ -195,4 +193,5 @@ public class GamlSemanticHighlightingCalculator implements ISemanticHighlighting
 		}
 		return false;
 	}
+
 }

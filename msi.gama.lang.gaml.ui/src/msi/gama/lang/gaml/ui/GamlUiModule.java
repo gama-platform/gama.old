@@ -19,21 +19,22 @@
 package msi.gama.lang.gaml.ui;
 
 import msi.gama.common.util.GuiUtils;
-import msi.gama.lang.gaml.ui.contentassist.GamlContentAssistProcessor;
+import msi.gama.lang.gaml.ui.GamlEditor.GamaSourceViewerConfiguration;
+import msi.gama.lang.gaml.ui.contentassist.ContentAssistContextFactory;
 import msi.gama.lang.gaml.ui.highlight.*;
 import msi.gama.lang.gaml.ui.hover.*;
 import msi.gama.lang.gaml.ui.hover.GamlHoverProvider.GamlDispatchingEObjectTextHover;
-import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
 import org.eclipse.xtext.resource.ILocationInFileProvider;
 import org.eclipse.xtext.resource.containers.IAllContainersState;
-import org.eclipse.xtext.ui.editor.XtextEditor;
+import org.eclipse.xtext.ui.editor.*;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.*;
 import org.eclipse.xtext.ui.editor.validation.ValidatingEditorCallback;
+import org.eclipse.xtext.ui.resource.*;
 import com.google.inject.*;
 
 /**
@@ -61,9 +62,13 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 			.toInstance(".");
 	}
 
-	@Override
-	public Class<? extends IContentAssistProcessor> bindIContentAssistProcessor() {
-		return GamlContentAssistProcessor.class;
+	// @Override
+	// public Class<? extends IContentAssistProcessor> bindIContentAssistProcessor() {
+	// return GamlContentAssistProcessor.class;
+	// }
+
+	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.StatefulFactory> bindStatefulFactory() {
+		return ContentAssistContextFactory.class;
 	}
 
 	@Override
@@ -72,9 +77,13 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	}
 
 	// For performance issues on opening files : see http://alexruiz.developerblogs.com/?p=2359
-	// @Override
-	// public Class<? extends IResourceSetProvider> bindIResourceSetProvider() {
-	// return SimpleResourceSetProvider.class;
+	@Override
+	public Class<? extends IResourceSetProvider> bindIResourceSetProvider() {
+		return SimpleResourceSetProvider.class;
+	}
+
+	// public Class<? extends EObjectAtOffsetHelper> bindEObjectAtOffsetHelper() {
+	// return NonXRefEObjectAtOffset.class;
 	// }
 
 	/**
@@ -109,6 +118,10 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 
 	public Class<? extends XtextEditor> bindXtextEditor() {
 		return GamlEditor.class;
+	}
+
+	public Class<? extends XtextSourceViewerConfiguration> bindXtextSourceViewerConfiguration() {
+		return GamaSourceViewerConfiguration.class;
 	}
 
 	@Override

@@ -11,6 +11,8 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.validation.*;
 import msi.gama.runtime.GAMA;
+import org.eclipse.jface.text.ITextHover;
+import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -18,7 +20,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.resource.XtextResource;
-import org.eclipse.xtext.ui.editor.XtextEditor;
+import org.eclipse.xtext.ui.editor.*;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import com.google.inject.Inject;
 
@@ -262,10 +264,17 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		updateExperiments(newExperiments, withErrors);
 	}
 
+	public static class GamaSourceViewerConfiguration extends XtextSourceViewerConfiguration {
+
+		@Override
+		public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
+			return super.getTextHover(sourceViewer, contentType);
+		}
+
+	}
+	
 	public GamlJavaValidator getValidator() {
 		return validator;
 	}
-	
-	
 
 }
