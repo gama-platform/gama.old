@@ -19,8 +19,7 @@ Require-Bundle: org.eclipse.graphiti;bundle-version="0.8.2",
  org.eclipse.draw2d;bundle-version="3.8.1",
  msi.gama.lang.gaml.ui;bundle-version="1.4.2",
  org.eclipse.xtext.ui;bundle-version="2.4.0"
-Export-Package: gaml.additions,
- idees.gama.diagram,
+Export-Package: idees.gama.diagram,
  idees.gama.features.add,
  idees.gama.features.create,
  idees.gama.features.edit,
@@ -28,5 +27,4 @@ Export-Package: gaml.additions,
  idees.gama.features.modelgeneration,
  idees.gama.features.others,
  idees.gama.ui.editFrame,
- idees.gama.ui.image,
- simtools.gaml.extensions.traffic
+ idees.gama.ui.image

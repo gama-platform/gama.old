@@ -24,12 +24,6 @@
       </diagramTypeProvider>
    </extension>
    <extension
-         point="gaml.grammar.addition">
-      <path
-            name="gaml">
-      </path>
-   </extension>
-   <extension
          point="org.eclipse.graphiti.ui.imageProviders">
       <imageProvider
             class="idees.gama.ui.image.GamaImageProvider"
