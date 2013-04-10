@@ -334,7 +334,7 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 			 ac.setSize(0, 0);
 			 ac.setTargetContainer(diagram);
 			 PictogramElement targetE = addIfPossible(new AddContext(ac, target));
-			if (xp.isGui() && ((OutputManager) xp.getOutputManager()).getOutputs() != null) {
+			if (xp != null && xp.isGui() && ((OutputManager) xp.getOutputManager()) != null && ((OutputManager) xp.getOutputManager()).getOutputs() != null) {
 				  for (IOutput output : ((OutputManager) xp.getOutputManager()).getOutputs().values()) {
 					  if (output instanceof LayeredDisplayOutput)
 						  createDisplay((EGUIExperiment) target, targetE, output, diagram);
