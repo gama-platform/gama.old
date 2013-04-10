@@ -83,6 +83,15 @@ public class Random {
 		final double sd = point.y;
 		return GAMA.getRandom().createGaussian(mean, sd).nextValue();
 	}
+	@operator(value = "gauss")
+	@doc(value = "A value from a normally distributed random variable with expected value (mean) and variance (standardDeviation). The probability density function of such a variable is a Gaussian.", special_cases = {
+		"when the operand is a point, it is read as {mean, standardDeviation}",
+		"when standardDeviation value is 0.0, it always returns the mean value" }, examples = {
+		"gauss(0,0.3)  --:  0.22354", "gauss(0,0.3)  --:  -0.1357" }, see = {
+		"truncated_gauss", "poisson" })
+	public static Double opGauss(final IScope scope, final double mean, final double sd) {
+		return GAMA.getRandom().createGaussian(mean, sd).nextValue();
+	}
 
 	@operator(value = "poisson")
 	@doc(value = "A value from a random variable following a Poisson distribution (with the positive expected number of occurence lambda as operand).", comment = "The Poisson distribution is a discrete probability distribution that expresses the probability of a given number of events occurring in a fixed interval of time and/or space if these events occur with a known average rate and independently of the time since the last event, cf. Poisson distribution on Wikipedia.", examples = { "poisson(3.5) --: a random positive integer" }, see = {
