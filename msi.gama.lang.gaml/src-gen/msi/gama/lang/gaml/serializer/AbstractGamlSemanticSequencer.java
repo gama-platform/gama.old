@@ -964,8 +964,8 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	 *     (
 	 *         (key=DefinitionFacetKey (name=Valid_ID | name=STRING)) | 
 	 *         ((key='function:' | key='->') expr=Expression) | 
-	 *         ((key=ID | key='<-' | key=SpecialFacetKey) expr=Expression) | 
-	 *         (key=TypeFacetKey expr=TypeRef) | 
+	 *         ((key=ClassicFacetKey | key='<-' | key=SpecialFacetKey) expr=Expression) | 
+	 *         (key=TypeFacetKey (expr=TypeRef | expr=Expression)) | 
 	 *         (key=ActionFacetKey expr=ActionRef)
 	 *     )
 	 */
@@ -1146,7 +1146,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     ((key=ID | key='<-' | key=SpecialFacetKey) expr=Expression)
+	 *     ((key=ClassicFacetKey | key='<-' | key=SpecialFacetKey) expr=Expression)
 	 */
 	protected void sequence_ClassicFacet(EObject context, Facet semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1243,7 +1243,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 		feeder.accept(grammarAccess.getIfAccess().getIfLeftAction_1_0(), semanticObject.getLeft());
 		feeder.accept(grammarAccess.getIfAccess().getOpQuestionMarkKeyword_1_1_0(), semanticObject.getOp());
 		feeder.accept(grammarAccess.getIfAccess().getRightOrParserRuleCall_1_2_0(), semanticObject.getRight());
-		feeder.accept(grammarAccess.getIfAccess().getIfFalseOrParserRuleCall_1_4_0(), semanticObject.getIfFalse());
+		feeder.accept(grammarAccess.getIfAccess().getIfFalseOrParserRuleCall_1_3_1_0(), semanticObject.getIfFalse());
 		feeder.finish();
 	}
 	
@@ -1372,7 +1372,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     (key=_1Expr_Facets_BlockOrEnd_Key expr=Expression facets+=Facet* block=Block?)
+	 *     (key=_1Expr_Facets_BlockOrEnd_Key firstFacet=FirstFacetKey? expr=Expression facets+=Facet* block=Block?)
 	 */
 	protected void sequence_S_1Expr_Facets_BlockOrEnd(EObject context, Statement semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1381,7 +1381,14 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     (key='action' name=Valid_ID args=ActionArguments? facets+=Facet* block=Block?)
+	 *     (
+	 *         key='action' 
+	 *         firstFacet='name:'? 
+	 *         name=Valid_ID 
+	 *         args=ActionArguments? 
+	 *         facets+=Facet* 
+	 *         block=Block?
+	 *     )
 	 */
 	protected void sequence_S_Action(EObject context, S_Action semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1390,7 +1397,14 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     (tkey=TypeRef (name=Valid_ID | name=STRING) args=ActionArguments? facets+=Facet* block=Block?)
+	 *     (
+	 *         tkey=TypeRef 
+	 *         firstFacet='name:'? 
+	 *         (name=Valid_ID | name=STRING) 
+	 *         args=ActionArguments? 
+	 *         facets+=Facet* 
+	 *         block=Block?
+	 *     )
 	 */
 	protected void sequence_S_Definition(EObject context, S_Definition semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1399,20 +1413,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     (
-	 *         expr=Expression 
-	 *         (
-	 *             key='<-' | 
-	 *             key='<<' | 
-	 *             key='>>' | 
-	 *             key='+=' | 
-	 *             key='-=' | 
-	 *             key='++' | 
-	 *             key='--'
-	 *         ) 
-	 *         value=Expression 
-	 *         facets+=Facet*
-	 *     )
+	 *     (expr=Expression key=_AssignmentKey value=Expression facets+=Facet*)
 	 */
 	protected void sequence_S_DirectAssignment(EObject context, S_DirectAssignment semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1421,7 +1422,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     (key=_DoKey expr=AbstractRef facets+=Facet* block=Block?)
+	 *     (key=_DoKey firstFacet='action:'? expr=AbstractRef facets+=Facet* block=Block?)
 	 */
 	protected void sequence_S_Do(EObject context, S_Do semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1448,7 +1449,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     (key='experiment' (name=Valid_ID | name=STRING) facets+=Facet* block=Block)
+	 *     (key='experiment' firstFacet='name:'? (name=Valid_ID | name=STRING) facets+=Facet* block=Block)
 	 */
 	protected void sequence_S_Experiment(EObject context, S_Experiment semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1457,7 +1458,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     (key='if' expr=Expression block=Block (else=S_If | else=Block)?)
+	 *     (key='if' firstFacet='condition:'? expr=Expression block=Block (else=S_If | else=Block)?)
 	 */
 	protected void sequence_S_If(EObject context, S_If semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1484,7 +1485,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     (key=_ReflexKey name=Valid_ID? expr=Expression? block=Block)
+	 *     (key=_ReflexKey firstFacet='name:'? name=Valid_ID? expr=Expression? block=Block)
 	 */
 	protected void sequence_S_Reflex(EObject context, S_Reflex semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1493,7 +1494,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     (key='return' expr=Expression?)
+	 *     (key='return' firstFacet='value:'? expr=Expression?)
 	 */
 	protected void sequence_S_Return(EObject context, S_Return semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1502,7 +1503,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     (key='set' expr=Expression value=Expression)
+	 *     (key='set' firstFacet='var:'? expr=Expression value=Expression)
 	 */
 	protected void sequence_S_Set(EObject context, S_Set semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1511,7 +1512,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     (key=_SolveKey expr=EquationRef facets+=Facet* block=Block?)
+	 *     (key=_SolveKey firstFacet='equation:'? expr=EquationRef facets+=Facet* block=Block?)
 	 */
 	protected void sequence_S_Solve(EObject context, S_Solve semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1520,7 +1521,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     (key=_SpeciesKey name=ID facets+=Facet* block=Block?)
+	 *     (key=_SpeciesKey firstFacet='name:'? name=ID facets+=Facet* block=Block?)
 	 */
 	protected void sequence_S_Species(EObject context, S_Species semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1529,7 +1530,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     (key=_VarOrConstKey name=Valid_ID facets+=Facet*)
+	 *     (key=_VarOrConstKey firstFacet='name:'? name=Valid_ID facets+=Facet*)
 	 */
 	protected void sequence_S_Var(EObject context, S_Var semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1617,7 +1618,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     (key=TypeFacetKey expr=TypeRef)
+	 *     (key=TypeFacetKey (expr=TypeRef | expr=Expression))
 	 */
 	protected void sequence_TypeFacet(EObject context, Facet semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

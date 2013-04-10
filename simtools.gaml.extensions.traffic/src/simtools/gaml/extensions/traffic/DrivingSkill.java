@@ -24,11 +24,11 @@ import msi.gaml.types.*;
 import com.vividsolutions.jts.geom.*;
 
 @vars({
-	@var(name = "living_space", type = IType.FLOAT_STR, init = "1.0", doc = @doc("the min distance between the agent and an obstacle (in meter)")),
-	@var(name = "lanes_attribute", type = IType.STRING_STR, doc = @doc("the name of the attribut of the road agent that determine the number of road lanes")),
-	@var(name = "tolerance", type = IType.FLOAT_STR, init = "0.1", doc = @doc("the tolerance distance used for the computation (in meter)")),
-	@var(name = "obstacle_species", type = IType.LIST_STR, init = "[]", doc = @doc("the list of species that are considered as obstacles")),
-	@var(name = IKeyword.SPEED, type = IType.FLOAT_STR, init = "1.0", doc = @doc("the speed of the agent (in meter/second)")) })
+	@var(name = "living_space", type = IType.FLOAT, init = "1.0", doc = @doc("the min distance between the agent and an obstacle (in meter)")),
+	@var(name = "lanes_attribute", type = IType.STRING, doc = @doc("the name of the attribut of the road agent that determine the number of road lanes")),
+	@var(name = "tolerance", type = IType.FLOAT, init = "0.1", doc = @doc("the tolerance distance used for the computation (in meter)")),
+	@var(name = "obstacle_species", type = IType.LIST, init = "[]", doc = @doc("the list of species that are considered as obstacles")),
+	@var(name = IKeyword.SPEED, type = IType.FLOAT, init = "1.0", doc = @doc("the speed of the agent (in meter/second)")) })
 @skill(name = "driving")
 public class DrivingSkill extends MovingSkill {
 
@@ -104,13 +104,13 @@ public class DrivingSkill extends MovingSkill {
 
 	@Override
 	@action(name = "follow_driving", args = {
-		@arg(name = IKeyword.SPEED, type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "path", type = IType.PATH_STR, optional = true, doc = @doc("a path to be followed.")),
-		@arg(name = "return_path", type = IType.BOOL_STR, optional = true, doc = @doc("if true, return the path followed (by default: false)")),
-		@arg(name = "weigths", type = IType.MAP_STR, optional = true, doc = @doc("Weigths used for the moving.")),
-		@arg(name = LIVING_SPACE, type = IType.FLOAT_STR, optional = true, doc = @doc("min distance between the agent and an obstacle (replaces the current value of living_space)")),
-		@arg(name = TOLERANCE, type = IType.FLOAT_STR, optional = true, doc = @doc("tolerance distance used for the computation (replaces the current value of tolerance)")),
-		@arg(name = LANES_ATTRIBUTE, type = IType.STRING_STR, optional = true, doc = @doc("the name of the attribut of the road agent that determine the number of road lanes (replaces the current value of lanes_attribute)")) }, doc = @doc(value = "moves the agent along a given path passed in the arguments while considering the other agents in the network.", returns = "optional: the path followed by the agent.", examples = { "do follow speed: speed * 2 path: road_path;" }))
+		@arg(name = IKeyword.SPEED, type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+		@arg(name = "path", type = IType.PATH, optional = true, doc = @doc("a path to be followed.")),
+		@arg(name = "return_path", type = IType.BOOL, optional = true, doc = @doc("if true, return the path followed (by default: false)")),
+		@arg(name = "weigths", type = IType.MAP, optional = true, doc = @doc("Weigths used for the moving.")),
+		@arg(name = LIVING_SPACE, type = IType.FLOAT, optional = true, doc = @doc("min distance between the agent and an obstacle (replaces the current value of living_space)")),
+		@arg(name = TOLERANCE, type = IType.FLOAT, optional = true, doc = @doc("tolerance distance used for the computation (replaces the current value of tolerance)")),
+		@arg(name = LANES_ATTRIBUTE, type = IType.STRING, optional = true, doc = @doc("the name of the attribut of the road agent that determine the number of road lanes (replaces the current value of lanes_attribute)")) }, doc = @doc(value = "moves the agent along a given path passed in the arguments while considering the other agents in the network.", returns = "optional: the path followed by the agent.", examples = { "do follow speed: speed * 2 path: road_path;" }))
 	public IPath primFollow(final IScope scope) throws GamaRuntimeException {
 		IAgent agent = getCurrentAgent(scope);
 		final double maxDist = computeDistance(scope, agent);
@@ -157,14 +157,14 @@ public class DrivingSkill extends MovingSkill {
 	}
 
 	@action(name = "goto_driving", args = {
-		@arg(name = "target", type = "point or agent", optional = false, doc = @doc("the location or entity towards which to move.")),
-		@arg(name = IKeyword.SPEED, type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "on", type = { IType.LIST_STR, IType.AGENT_STR, IType.GRAPH_STR, IType.GEOM_STR }, optional = true, doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")),
-		@arg(name = "return_path", type = IType.BOOL_STR, optional = true, doc = @doc("if true, return the path followed (by default: false)")),
-		@arg(name = "weigths", type = IType.MAP_STR, optional = true, doc = @doc("Weigths used for the moving.")),
-		@arg(name = LIVING_SPACE, type = IType.FLOAT_STR, optional = true, doc = @doc("min distance between the agent and an obstacle (replaces the current value of living_space)")),
-		@arg(name = TOLERANCE, type = IType.FLOAT_STR, optional = true, doc = @doc("tolerance distance used for the computation (replaces the current value of tolerance)")),
-		@arg(name = LANES_ATTRIBUTE, type = IType.STRING_STR, optional = true, doc = @doc("the name of the attribut of the road agent that determine the number of road lanes (replaces the current value of lanes_attribute)")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments while considering the other agents in the network (only for graph topology)", returns = "optional: the path followed by the agent.", examples = { "do gotoTraffic target: one_of (list (species (self))) speed: speed * 2 on: road_network living_space: 2.0;" }))
+		@arg(name = "target", type = { IType.POINT, IType.GEOMETRY, IType.AGENT }, optional = false, doc = @doc("the location or entity towards which to move.")),
+		@arg(name = IKeyword.SPEED, type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+		@arg(name = "on", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = true, doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")),
+		@arg(name = "return_path", type = IType.BOOL, optional = true, doc = @doc("if true, return the path followed (by default: false)")),
+		@arg(name = "weigths", type = IType.MAP, optional = true, doc = @doc("Weigths used for the moving.")),
+		@arg(name = LIVING_SPACE, type = IType.FLOAT, optional = true, doc = @doc("min distance between the agent and an obstacle (replaces the current value of living_space)")),
+		@arg(name = TOLERANCE, type = IType.FLOAT, optional = true, doc = @doc("tolerance distance used for the computation (replaces the current value of tolerance)")),
+		@arg(name = LANES_ATTRIBUTE, type = IType.STRING, optional = true, doc = @doc("the name of the attribut of the road agent that determine the number of road lanes (replaces the current value of lanes_attribute)")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments while considering the other agents in the network (only for graph topology)", returns = "optional: the path followed by the agent.", examples = { "do gotoTraffic target: one_of (list (species (self))) speed: speed * 2 on: road_network living_space: 2.0;" }))
 	public IPath primGotoTraffic(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		ILocation source = agent.getLocation().copy(scope);

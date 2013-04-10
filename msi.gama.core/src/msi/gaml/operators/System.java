@@ -56,7 +56,7 @@ public class System {
 		return period > 0 && time >= period && time % period == 0;
 	}
 
-	@operator(value = { IKeyword._DOT, IKeyword.OF }, type = ITypeProvider.RIGHT_TYPE, content_type = ITypeProvider.RIGHT_CONTENT_TYPE, priority = IPriority.ADDRESSING)
+	@operator(value = { IKeyword._DOT, IKeyword.OF }, type = ITypeProvider.SECOND_TYPE, content_type = ITypeProvider.SECOND_CONTENT_TYPE, index_type = ITypeProvider.SECOND_KEY_TYPE)
 	@doc(value = "returns an evaluation of the expresion (right-hand operand) in the scope the given agent.", special_cases = "if the agent is nil or dead, throws an exception", examples = "agent.location 		--: 	returns the location of the agent")
 	public static Object opGetValue(final IScope scope, final IAgent a, final IExpression s)
 		throws GamaRuntimeException {
@@ -67,7 +67,7 @@ public class System {
 		return scope.evaluate(s, a);
 	}
 
-	@operator(value = "copy", type = ITypeProvider.CHILD_TYPE, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
+	@operator(value = "copy", type = ITypeProvider.FIRST_TYPE, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "returns a copy of the operand.")
 	public static Object opCopy(final IScope scope, final Object o) throws GamaRuntimeException {
 		if ( o instanceof IValue ) { return ((IValue) o).copy(scope); }

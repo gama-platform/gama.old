@@ -2,7 +2,7 @@ package msi.gama.util.graph;
 
 import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.population.*;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -22,7 +22,7 @@ import msi.gama.util.IList;
  * 
  * @author Samuel Thiriot
  */
-public class GraphAndPopulationsSynchronizer implements IPopulationListener, IGraphEventListener {
+public class GraphAndPopulationsSynchronizer implements IPopulation.Listener, IGraphEventListener {
 
 	private final IPopulation popVertices;
 	private final IPopulation popEdges;

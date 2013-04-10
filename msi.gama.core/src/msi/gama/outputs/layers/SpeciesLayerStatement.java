@@ -45,13 +45,13 @@ import msi.gaml.types.IType;
 @symbol(name = IKeyword.POPULATION, kind = ISymbolKind.LAYER, with_sequence = true)
 @inside(symbols = { IKeyword.DISPLAY, IKeyword.POPULATION })
 @facets(value = { 
-	@facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
-	@facet(name = IKeyword.SIZE, type = IType.POINT_STR, optional = true),
-	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
-	@facet(name = IKeyword.SPECIES, type = IType.SPECIES_STR, optional = false),
+	@facet(name = IKeyword.POSITION, type = IType.POINT, optional = true),
+	@facet(name = IKeyword.SIZE, type = IType.POINT, optional = true),
+	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true),
+	@facet(name = IKeyword.SPECIES, type = IType.SPECIES, optional = false),
 	@facet(name = IKeyword.ASPECT, type = IType.ID, optional = true),
-	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true),
-	@facet(name = IKeyword.REFRESH, type = IType.BOOL_STR, optional = true) }, omissible = IKeyword.SPECIES)
+	@facet(name = IKeyword.Z, type = IType.FLOAT, optional = true),
+	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true) }, omissible = IKeyword.SPECIES)
 public class SpeciesLayerStatement extends AgentLayerStatement {
 
 	private IAspect aspect;

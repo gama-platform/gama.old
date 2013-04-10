@@ -38,15 +38,15 @@ import msi.gaml.types.IType;
  * @since 14 déc. 2011
  * 
  */
-@vars({ @var(name = IKeyword.TARGET, type = IType.POINT_STR),
-	@var(name = IKeyword.SOURCE, type = IType.POINT_STR),
-	@var(name = IKeyword.GRAPH, type = IType.GRAPH_STR),
-	@var(name = IKeyword.SEGMENTS, type = IType.LIST_STR, of = IType.GEOM_STR),
-	@var(name = IKeyword.AGENTS, type = IType.LIST_STR, of = IType.AGENT_STR)
+@vars({ @var(name = IKeyword.TARGET, type = IType.POINT),
+	@var(name = IKeyword.SOURCE, type = IType.POINT),
+	@var(name = IKeyword.GRAPH, type = IType.GRAPH),
+	@var(name = IKeyword.SEGMENTS, type = IType.LIST, of = IType.GEOMETRY),
+	@var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT)
 // Could be replaced by "geometries"
 /*
  * Normally not necessary as it is inherited from GamaGeometry @var(name = GamaPath.POINTS, type =
- * IType.LIST_STR, of = IType.POINT_STR)
+ * IType.LIST, of = IType.POINT)
  */
 })
 public interface IPath extends IShape {

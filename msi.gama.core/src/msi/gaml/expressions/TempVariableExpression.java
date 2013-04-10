@@ -46,13 +46,18 @@ public class TempVariableExpression extends VariableExpression {
 		}
 	}
 
+	@Override
+	public String getTitle() {
+		return "temporary variable " + getName() + " of type " + typeToString();
+	}
+
 	/**
 	 * @see msi.gaml.expressions.IExpression#getDocumentation()
 	 */
 	@Override
 	public String getDocumentation() {
 		IDescription desc = getDefinitionDescription();
-		return "Temporary variable <b>" + getName() + "</b> of type " + type.toString() +
+		return "temporary variable " + getName() + " of type " + typeToString() +
 			(desc == null ? "<br>Built In" : "<br>Defined in " + desc.getTitle());
 	}
 

@@ -127,6 +127,7 @@ public abstract class AbstractScope implements IScope {
 	@Override
 	public abstract ISimulation getSimulationScope();
 
+	@Override
 	public abstract IModel getModel();
 
 	@Override
@@ -167,7 +168,7 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	@Override
-	public final Object getArg(final String varName, final short type) throws GamaRuntimeException {
+	public final Object getArg(final String varName, final int type) throws GamaRuntimeException {
 		int i = getVarIndex(varName); // Only in the local scope
 		Object result =
 			i > -1 && i >= statementsPointers[statementsPointer - 1] ? vars[i].value : null;

@@ -2,7 +2,7 @@ package msi.gama.kernel.experiment;
 
 import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.population.GamlPopulation;
+import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.topology.continuous.AmorphousTopology;
 import msi.gama.runtime.IScope;
@@ -10,7 +10,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.species.ISpecies;
 
-public class ExperimentatorPopulation extends GamlPopulation {
+public class ExperimentatorPopulation extends GamaPopulation {
 
 	/**
 	 * @param expr

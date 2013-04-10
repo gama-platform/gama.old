@@ -19,6 +19,7 @@
 package msi.gaml.types;
 
 import java.util.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -36,7 +37,7 @@ import com.vividsolutions.jts.geom.*;
  * @todo Description
  * 
  */
-@type(name = IType.GEOM_STR, id = IType.GEOMETRY, wraps = { GamaShape.class, IShape.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IKeyword.GEOMETRY, id = IType.GEOMETRY, wraps = { GamaShape.class, IShape.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaGeometryType extends GamaType<IShape> {
 
 	@Override

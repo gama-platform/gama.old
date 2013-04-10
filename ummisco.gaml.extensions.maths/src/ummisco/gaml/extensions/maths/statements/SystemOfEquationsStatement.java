@@ -31,7 +31,7 @@ import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 @symbol(name = IKeyword.EQUATION, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @facets(value = {
 		@facet(name = IKeyword.NAME, type = IType.ID /* CHANGE */, optional = false),
-		@facet(name = IKeyword.SIMULTANEOUSLY, type = IType.LIST_STR, optional = true) }, omissible = IKeyword.NAME)
+		@facet(name = IKeyword.SIMULTANEOUSLY, type = IType.LIST, optional = true) }, omissible = IKeyword.NAME)
 @inside(kinds = ISymbolKind.SPECIES)
 /**
  * The class SystemOfEquationsStatement. 

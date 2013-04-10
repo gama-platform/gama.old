@@ -40,14 +40,14 @@ import com.vividsolutions.jts.operation.distance.IndexedFacetDistance;
  * 
  * 
  */
-@vars({ @var(name = "area", type = IType.FLOAT_STR), @var(name = "width", type = IType.FLOAT_STR),
-	@var(name = "height", type = IType.FLOAT_STR),
-	@var(name = "points", type = IType.LIST_STR, of = IType.POINT_STR),
-	@var(name = "envelope", type = IType.GEOM_STR),
-	@var(name = "geometries", type = IType.LIST_STR, of = IType.GEOM_STR),
-	@var(name = "multiple", type = IType.BOOL_STR),
-	@var(name = "holes", type = IType.LIST_STR, of = IType.GEOM_STR),
-	@var(name = "contour", type = IType.GEOM_STR) })
+@vars({ @var(name = "area", type = IType.FLOAT), @var(name = "width", type = IType.FLOAT),
+	@var(name = "height", type = IType.FLOAT),
+	@var(name = "points", type = IType.LIST, of = IType.POINT),
+	@var(name = "envelope", type = IType.GEOMETRY),
+	@var(name = "geometries", type = IType.LIST, of = IType.GEOMETRY),
+	@var(name = "multiple", type = IType.BOOL),
+	@var(name = "holes", type = IType.LIST, of = IType.GEOMETRY),
+	@var(name = "contour", type = IType.GEOMETRY) })
 public class GamaShape implements IShape /* , IContainer */{
 
 	protected Geometry geometry;

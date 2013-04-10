@@ -30,8 +30,8 @@ import com.vividsolutions.jts.geom.Coordinate;
  */
 @species(name = "Physical3DWorld")
 @vars({
-	@var(name = "gravity", type = IType.BOOL_STR, init = "true", doc = @doc("Define if the physical world has a gravity or not")),
-	@var(name = "registeredAgents", type = IType.LIST_STR, init = "[]") })
+	@var(name = "gravity", type = IType.BOOL, init = "true", doc = @doc("Define if the physical world has a gravity or not")),
+	@var(name = "registeredAgents", type = IType.LIST, init = "[]") })
 public class Physical3DWorldAgent extends GamlAgent {
 
 	public final static String REGISTERED_AGENTS = "registeredAgents";

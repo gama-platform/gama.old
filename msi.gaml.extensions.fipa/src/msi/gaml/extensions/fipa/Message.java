@@ -33,14 +33,14 @@ import msi.gaml.types.IType;
  * @author drogoul
  */
 
-@vars({ @var(name = Message.SENDER, type = IType.AGENT_STR),
-	@var(name = Message.RECEIVERS, type = IType.LIST_STR),
-	@var(name = Message.PERFORMATIVE, type = IType.STRING_STR),
-	@var(name = Message.CONTENT, type = IType.LIST_STR),
-	@var(name = Message.UNREAD, type = IType.BOOL_STR, init = IKeyword.TRUE),
-	@var(name = Message.CONVERSATION, type = ConversationType.CONVERSATION_STR),
-	@var(name = Message.PROTOCOL, type = IType.STRING_STR, depends_on = Message.CONVERSATION),
-	@var(name = Message.TIMESTAMP, type = IType.STRING_STR) })
+@vars({ @var(name = Message.SENDER, type = IType.AGENT),
+	@var(name = Message.RECEIVERS, type = IType.LIST),
+	@var(name = Message.PERFORMATIVE, type = IType.STRING),
+	@var(name = Message.CONTENT, type = IType.LIST),
+	@var(name = Message.UNREAD, type = IType.BOOL, init = IKeyword.TRUE),
+	@var(name = Message.CONVERSATION, type = ConversationType.CONV_ID),
+	@var(name = Message.PROTOCOL, type = IType.STRING, depends_on = Message.CONVERSATION),
+	@var(name = Message.TIMESTAMP, type = IType.STRING) })
 public class Message implements IValue {
 
 	public final static String CONVERSATION = "current_conversation";

@@ -165,16 +165,6 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	public abstract void set(IScope scope, final int col, final int row, final Object obj)
 		throws GamaRuntimeException;
 
-	// @Override
-	// public void put(final int col, final int row, final double obj) throws GamaRuntimeException {
-	// put(col, row, new Double(obj));
-	// }
-
-	// @Override
-	// public void put(final int col, final int row, final int obj) throws GamaRuntimeException {
-	// put(col, row, new Integer(obj));
-	// }
-
 	@Override
 	public abstract Object remove(IScope scope, final int col, final int row);
 
@@ -189,7 +179,7 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	}
 
 	@Override
-	public String stringValue(IScope scope) throws GamaRuntimeException {
+	public final String stringValue(IScope scope) throws GamaRuntimeException {
 		final StringBuilder sb = new StringBuilder(numRows * numCols * 5);
 		for ( int line = 0; line < numRows; line++ ) {
 			for ( int col = 0; col < numCols; col++ ) {
@@ -220,26 +210,19 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	}
 
-	@Override
-	public final void add(IScope scope, final ILocation index, final T value, final Object param)
-		throws GamaRuntimeException {}
+	//
+	// @Override
+	// public final Object removeAt(IScope scope, final ILocation p) throws GamaRuntimeException {
+	// // Normally never called as matrices are of fixed length
+	// return remove(scope, (int) p.getX(), (int) p.getY());
+	// }
 
-	@Override
-	public final void add(IScope scope, final T value, final Object param)
-		throws GamaRuntimeException {}
-
-	@Override
-	public final Object removeAt(IScope scope, final ILocation p) throws GamaRuntimeException {
-		// Normally never called as matrices are of fixed length
-		return remove(scope, (int) p.getX(), (int) p.getY());
-	}
-
-	@Override
-	public final void put(IScope scope, final ILocation p, final T value, final Object param)
-		throws GamaRuntimeException {
-		set(scope, (int) p.getX(), (int) p.getY(), value);
-	}
-
+	// @Override
+	// public final void put(IScope scope, final ILocation p, final T value, final Object param)
+	// throws GamaRuntimeException {
+	// set(scope, (int) p.getX(), (int) p.getY(), value);
+	// }
+	//
 	@Override
 	public abstract IMatrix copy(IScope scope) throws GamaRuntimeException;
 
@@ -253,16 +236,6 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#checkIndex(java.lang.Object)
-	 */
-	// @Override
-	// public final boolean checkIndex(final Object index) {
-	// return index instanceof ILocation;
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#checkBounds(java.lang.Object)
 	 */
 	@Override
@@ -271,11 +244,6 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		int y = (int) index.getY();
 		return x >= 0 && x < numCols && y >= 0 && y < numRows;
 	}
-
-	// @Override
-	// public final boolean isFixedLength() {
-	// return true;
-	// }
 
 	/*
 	 * (non-Javadoc)
@@ -322,40 +290,40 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#max()
 	 */
-	@Override
-	public final T max(final IScope scope) throws GamaRuntimeException {
-		return (T) _max(scope);
-	}
+	// @Override
+	// public final T max(final IScope scope) throws GamaRuntimeException {
+	// return (T) _max(scope);
+	// }
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#min()
 	 */
-	@Override
-	public final T min(final IScope scope) throws GamaRuntimeException {
-		return (T) _min(scope);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#product()
-	 */
-	@Override
-	public final Object product(final IScope scope) throws GamaRuntimeException {
-		return _product(scope);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#sum()
-	 */
-	@Override
-	public final Object sum(final IScope scope) throws GamaRuntimeException {
-		return _sum(scope);
-	}
+	// @Override
+	// public final T min(final IScope scope) throws GamaRuntimeException {
+	// return (T) _min(scope);
+	// }
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see msi.gama.interfaces.IGamaContainer#product()
+	// */
+	// @Override
+	// public final Object product(final IScope scope) throws GamaRuntimeException {
+	// return _product(scope);
+	// }
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see msi.gama.interfaces.IGamaContainer#sum()
+	// */
+	// @Override
+	// public final Object sum(final IScope scope) throws GamaRuntimeException {
+	// return _sum(scope);
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -377,39 +345,47 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		return _reverse(scope);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#removeFirst(java.lang.Object)
-	 */
 	@Override
-	public final boolean removeFirst(IScope scope, final T value) throws GamaRuntimeException {
-		return _removeFirst(scope, value);
+	public final void remove(IScope scope, Object index, Object value, boolean all) {
+		if ( index == null ) {
+			if ( all ) {
+				if ( value instanceof IContainer ) {
+					_removeAll(scope, (IContainer) value);
+				} else if ( value != null ) {
+					_removeAll(scope, GamaList.with(value));
+				} else {
+					_clear();
+				}
+			} else {
+				_removeFirst(scope, (T) value);
+			}
+		} else {
+			ILocation p = Cast.asPoint(scope, index);
+			remove(scope, (int) p.getX(), (int) p.getY());
+		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#removeAll(java.lang.Object)
-	 */
-	@Override
-	public final boolean removeAll(IScope scope, final IContainer value)
-		throws GamaRuntimeException {
-		return _removeAll(scope, value);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#addAll(msi.gama.interfaces.IGamaContainer,
-	 * java.lang.Object)
-	 */
-	@Override
-	public void addAll(IScope scope, final IContainer value, final Object param)
-		throws GamaRuntimeException {
-		// TODO Auto-generated method stub
-
-	}
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see msi.gama.interfaces.IGamaContainer#removeFirst(java.lang.Object)
+	// */
+	// @Override
+	// public final boolean removeFirst(IScope scope, final T value) throws GamaRuntimeException {
+	// return _removeFirst(scope, value);
+	// }
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see msi.gama.interfaces.IGamaContainer#removeAll(java.lang.Object)
+	// */
+	// @Override
+	// public final boolean removeAll(IScope scope, final IContainer value)
+	// throws GamaRuntimeException {
+	// return _removeAll(scope, value);
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -418,9 +394,14 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * msi.gama.interfaces.IGamaContainer, java.lang.Object)
 	 */
 	@Override
-	public void addAll(IScope scope, final ILocation index, final IContainer value,
-		final Object param) throws GamaRuntimeException {
-		// TODO Auto-generated method stub
+	public void add(IScope scope, final ILocation index, final Object value, final Object param,
+		boolean all, boolean add) {
+		if ( add ) { return; }
+		if ( all ) {
+			_putAll(scope, value, param);
+		} else {
+			set(scope, (int) index.getX(), (int) index.getY(), value);
+		}
 
 	}
 
@@ -429,12 +410,12 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#putAll(java.lang.Object, java.lang.Object)
 	 */
-	@Override
-	public final void putAll(IScope scope, final T value, final Object param)
-		throws GamaRuntimeException {
-		_putAll(scope, value, param);
-
-	}
+	// @Override
+	// public final void putAll(IScope scope, final T value, final Object param)
+	// throws GamaRuntimeException {
+	// _putAll(scope, value, param);
+	//
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -566,14 +547,14 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	protected abstract IMatrix _matrixValue(IScope scope, ILocation size);
 
-	// protected abstract void _clear();
+	protected abstract void _clear();
 
 	protected abstract boolean _removeFirst(IScope scope, T value) throws GamaRuntimeException;
 
 	protected abstract boolean _removeAll(IScope scope, IContainer<?, T> value)
 		throws GamaRuntimeException;
 
-	protected abstract void _putAll(IScope scope, T value, Object param)
+	protected abstract void _putAll(IScope scope, Object value, Object param)
 		throws GamaRuntimeException;
 
 	protected abstract IContainer<ILocation, T> _reverse(IScope scope) throws GamaRuntimeException;
@@ -582,13 +563,14 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 
 	protected abstract boolean _contains(IScope scope, Object o);
 
-	protected abstract Object _min(IScope scope);
-
-	protected abstract Object _max(IScope scope);
-
-	protected abstract Object _sum(IScope scope) throws GamaRuntimeException;
-
-	protected abstract Object _product(IScope scope) throws GamaRuntimeException;
+	//
+	// protected abstract Object _min(IScope scope);
+	//
+	// protected abstract Object _max(IScope scope);
+	//
+	// protected abstract Object _sum(IScope scope) throws GamaRuntimeException;
+	//
+	// protected abstract Object _product(IScope scope) throws GamaRuntimeException;
 
 	protected abstract Integer _length(IScope scope);
 

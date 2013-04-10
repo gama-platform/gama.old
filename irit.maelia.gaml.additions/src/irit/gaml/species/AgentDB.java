@@ -222,9 +222,9 @@ public class AgentDB extends GamlAgent {
 	 * @return GamaList<GamaList<Object>>
 	 */
 	@action(name = "select", args = {
-		@arg(name = "select", type = IType.STRING_STR, optional = false, doc = @doc("select string")),
-		@arg(name = "values", type = IType.LIST_STR, optional = true, doc = @doc("List of values that are used to replace question marks")),
-		@arg(name = "transform", type = IType.BOOL_STR, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false ")) })
+		@arg(name = "select", type = IType.STRING, optional = false, doc = @doc("select string")),
+		@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question marks")),
+		@arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false ")) })
 	public GamaList<Object> select(final IScope scope) throws GamaRuntimeException {
 		String selectComm = (String) scope.getArg("select", IType.STRING);
 		GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
@@ -259,9 +259,9 @@ public class AgentDB extends GamlAgent {
 	 * }
 	 */
 	@action(name = "executeUpdate", args = {
-		@arg(name = "updateComm", type = IType.STRING_STR, optional = false, doc = @doc("SQL commands such as Create, Update, Delete, Drop with question mark")),
-		@arg(name = "values", type = IType.LIST_STR, optional = true, doc = @doc("List of values that are used to replace question mark")),
-		@arg(name = "transform", type = IType.BOOL_STR, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false ")) })
+		@arg(name = "updateComm", type = IType.STRING, optional = false, doc = @doc("SQL commands such as Create, Update, Delete, Drop with question mark")),
+		@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question mark")),
+		@arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false ")) })
 	public int executeUpdate(final IScope scope) throws GamaRuntimeException {
 		String updateComm = (String) scope.getArg("updateComm", IType.STRING);
 		GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
@@ -310,10 +310,10 @@ public class AgentDB extends GamlAgent {
 	 * @return an integer
 	 */
 	@action(name = "insert", args = {
-		@arg(name = "into", type = IType.STRING_STR, optional = false, doc = @doc("Table name")),
-		@arg(name = "columns", type = IType.LIST_STR, optional = true, doc = @doc("List of column name of table")),
-		@arg(name = "values", type = IType.LIST_STR, optional = false, doc = @doc("List of values that are used to insert into table. Columns and values must have same size")),
-		@arg(name = "transform", type = IType.BOOL_STR, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false ")) })
+		@arg(name = "into", type = IType.STRING, optional = false, doc = @doc("Table name")),
+		@arg(name = "columns", type = IType.LIST, optional = true, doc = @doc("List of column name of table")),
+		@arg(name = "values", type = IType.LIST, optional = false, doc = @doc("List of values that are used to insert into table. Columns and values must have same size")),
+		@arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false ")) })
 	public int insert(final IScope scope) throws GamaRuntimeException {
 		String table_name = (String) scope.getArg("into", IType.STRING);
 		GamaList<Object> cols = (GamaList<Object>) scope.getArg("columns", IType.LIST);

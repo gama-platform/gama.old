@@ -41,7 +41,7 @@ entities {
 		float t ;
 		equation evol simultaneously : [ I , R ] {
 			diff ( self . Ssize , t ) = 
-			( - sum(I accumulate (each.beta * each. Isize)) * self . Ssize / N ) ;
+			( - sum(I accumulate [each.beta * each. Isize]) * self . Ssize / N ) ;
 		}
 		solve evol method : "rk4" step : hKR4 {		}
 	}
@@ -59,7 +59,7 @@ entities {
 		float Rsize ;
 		float t ;
 		equation evol simultaneously : [ I ] {
-			diff ( self . Rsize , t ) = ( sum(I accumulate (each.delta * each.Isize)) ) ;
+			diff ( self . Rsize , t ) = ( sum(I collect (each.delta * each.Isize)) ) ;
 		}
 	}
 	species my_SIR_maths {

@@ -18,7 +18,7 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.USER_PANEL, kind = ISymbolKind.BEHAVIOR, with_sequence = true)
 @inside(symbols = IKeyword.FSM, kinds = { ISymbolKind.SPECIES })
-@facets(value = { @facet(name = FsmStateStatement.INITIAL, type = IType.BOOL_STR, optional = true),
+@facets(value = { @facet(name = FsmStateStatement.INITIAL, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false) }, omissible = IKeyword.NAME)
 public class UserPanelStatement extends FsmStateStatement {
 

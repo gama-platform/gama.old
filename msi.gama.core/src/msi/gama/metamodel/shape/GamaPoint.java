@@ -39,7 +39,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public GamaPoint(final double xx, final double yy) {
 		x = xx;
 		y = yy;
-		z = 0.0f;
+		z = 0.0d;
 		hasZ = false;
 	}
 
@@ -49,6 +49,9 @@ public class GamaPoint extends Coordinate implements ILocation {
 		hasZ = !Double.isNaN(zz);
 		if ( hasZ ) {
 			z = zz;
+		} else {
+			// 11/04/13 Added to make sure the z ordinate is set to 0
+			z = 0.0d;
 		}
 	}
 
@@ -59,7 +62,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 		if ( hasZ ) {
 			z = coord.z;
 		} else {
-			z = 0.0f;
+			z = 0.0d;
 		}
 	}
 
@@ -72,7 +75,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 		if ( hasZ ) {
 			z = zz;
 		} else {
-			z = 0.0f;
+			z = 0.0d;
 		}
 
 	}
@@ -119,6 +122,9 @@ public class GamaPoint extends Coordinate implements ILocation {
 		hasZ = !Double.isNaN(zz);
 		if ( hasZ ) {
 			z = zz;
+		} else {
+			// 11/04/13 Added to make sure the z ordinate is set to 0
+			z = 0.0d;
 		}
 	}
 

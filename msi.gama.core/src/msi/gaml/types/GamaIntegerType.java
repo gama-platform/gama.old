@@ -19,6 +19,7 @@
 package msi.gaml.types;
 
 import java.awt.Color;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
@@ -32,7 +33,7 @@ import msi.gaml.descriptions.IDescription;
  * @todo Description
  * 
  */
-@type(name = IType.INT_STR, id = IType.INT, wraps = { Integer.class, int.class, Long.class }, kind = ISymbolKind.Variable.NUMBER)
+@type(name = IKeyword.INT, id = IType.INT, wraps = { Integer.class, int.class, Long.class }, kind = ISymbolKind.Variable.NUMBER)
 public class GamaIntegerType extends GamaType<Integer> {
 
 	@Override
@@ -86,6 +87,11 @@ public class GamaIntegerType extends GamaType<Integer> {
 		if ( type == this ) { return null; }
 		// GUI.debug("Float type coercing =" + expr);
 		return this;
+	}
+
+	@Override
+	public IType findCommonSupertypeWith(IType type) {
+		return type == this ? this : type.id() == IType.FLOAT ? type : Types.NO_TYPE;
 	}
 
 }

@@ -42,10 +42,10 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.VALUE, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.UPDATE, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.FUNCTION, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.CONST, type = IType.BOOL_STR, optional = true),
+	@facet(name = IKeyword.CONST, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.CATEGORY, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.PARAMETER, type = IType.LABEL, optional = true),
-	@facet(name = IKeyword.SIZE, type = { IType.INT_STR, IType.POINT_STR }, optional = true),
+	@facet(name = IKeyword.SIZE, type = { IType.INT, IType.POINT }, optional = true),
 	@facet(name = IKeyword.OF, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.INDEX, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.FILL_WITH, type = IType.NONE_STR, optional = true) }, omissible = IKeyword.NAME)
@@ -105,7 +105,7 @@ public class ContainerVariable extends Variable {
 				Object o =
 					fillExpr == null ? description.getContentType().getDefault() : scope.evaluate(
 						fillExpr, owner);
-				((IMatrix) result).putAll(scope, o, null);
+				((IMatrix) result).add(scope, null, o, null, true, false);
 				break;
 			}
 			case IType.LIST: {

@@ -28,7 +28,7 @@ import msi.gaml.types.IType;
  * @author drogoul 23 oct. 07
  * 
  */
-@vars({ @var(name = IKeyword.LOCATION, type = IType.POINT_STR) })
+@vars({ @var(name = IKeyword.LOCATION, type = IType.POINT) })
 public interface ILocated {
 
 	/**

@@ -20,15 +20,15 @@ package msi.gaml.types;
 
 import static msi.gaml.types.IType.*;
 import java.util.*;
-import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gaml.descriptions.*;
 
 public class TypesManager {
 
-	private short CURRENT_INDEX;
+	private int CURRENT_INDEX;
 
-	private final HashMap<Short, IType> typeToIType;
+	private final HashMap<Integer, IType> typeToIType;
 	private final HashMap<String, IType> stringToIType;
 	private final HashMap<Class, IType> classToIType;
 	private final ModelDescription model;
@@ -40,12 +40,12 @@ public class TypesManager {
 		CURRENT_INDEX = SPECIES_TYPES;
 		model = md;
 
-		typeToIType = new HashMap<Short, IType>();
-		for ( short typeId = 0; typeId < Types.typeToIType.length; typeId++ ) {
+		typeToIType = new HashMap<Integer, IType>();
+		for ( int typeId = 0; typeId < Types.typeToIType.length; typeId++ ) {
 			IType toAdd = Types.typeToIType[typeId];
 			if ( toAdd != null ) {
 				typeToIType.put(typeId, toAdd);
-				if ( toAdd.toString().equals(AGENT_STR) ) {
+				if ( toAdd.toString().equals(IKeyword.AGENT) ) {
 					toAdd.clearSubTypes();
 				}
 			}
@@ -67,11 +67,11 @@ public class TypesManager {
 		String name = species.getName();
 		Class base = species.getJavaBase();
 		if ( stringToIType.containsKey(name) ) {
-			if ( name.equals(AGENT_STR) ) { return stringToIType.get(AGENT_STR); }
+			if ( name.equals(IKeyword.AGENT) ) { return stringToIType.get(IKeyword.AGENT); }
 			species.error("Species " + name + " already declared. Species name must be unique",
 				IGamlIssue.DUPLICATE_NAME, species.getUnderlyingElement(null), name);
 		}
-		short newId = ++CURRENT_INDEX;
+		int newId = ++CURRENT_INDEX;
 		IType newType = new GamaAgentType(name, newId, base);
 		typeToIType.put(newId, newType);
 		stringToIType.put(name, newType);
@@ -84,13 +84,13 @@ public class TypesManager {
 		for ( Map.Entry<String, TypeDescription> entry : species.entrySet() ) {
 			map.put(entry.getKey(), addType(entry.getValue()));
 		}
-		map.remove(IType.AGENT_STR);
+		map.remove(IKeyword.AGENT);
 		for ( Map.Entry<String, IType> entry : map.entrySet() ) {
 			TypeDescription s = species.get(entry.getKey());
 			// String parentName = s.getParentName();
 			TypeDescription parentSpecies = s.getParent();
 			IType parentType =
-				parentSpecies == null ? get(IType.AGENT_STR) : map.get(parentSpecies.getName());
+				parentSpecies == null ? get(IKeyword.AGENT) : map.get(parentSpecies.getName());
 			entry.getValue().setParent(parentType);
 		}
 	}
@@ -103,7 +103,7 @@ public class TypesManager {
 		return new ArrayList(stringToIType.keySet());
 	}
 
-	public IType get(final short type) {
+	public IType get(final int type) {
 		IType t = typeToIType.get(type);
 
 		return t == null ? Types.NO_TYPE : t;
@@ -122,7 +122,7 @@ public class TypesManager {
 	}
 
 	public void dispose() {
-		for ( short i = SPECIES_TYPES + 1; i <= CURRENT_INDEX; i++ ) {
+		for ( int i = SPECIES_TYPES + 1; i <= CURRENT_INDEX; i++ ) {
 			IType t = typeToIType.get(i);
 			if ( t != null ) {
 				t.clearSubTypes();

@@ -43,12 +43,12 @@ import org.eclipse.core.runtime.Platform;
  */
 
 @vars({
-	@var(name = GAMA._FATAL, type = IType.BOOL_STR),
-	@var(name = GAMA._WARNINGS, type = IType.BOOL_STR, init = "false"),
-	@var(name = IKeyword.TIME, type = IType.FLOAT_STR, doc = @doc(value = "Represents the total time passed, in model time, since the beginning of the simulation", comment = "Equal to cycle * step if the user does not arbitrarily initialize it.")),
-	@var(name = IKeyword.SEED, type = IType.FLOAT_STR, doc = @doc(value = "The seed of the random number generator", comment = "Each time it is set, the random number generator is reinitialized")),
-	@var(name = WorldSkill.CYCLE, type = IType.INT_STR, doc = @doc("Returns the current cycle of the simulation")),
-	@var(name = IKeyword.RNG, type = IType.STRING_STR, init = "'" + IKeyword.MERSENNE + "'", doc = @doc("The random number generator to use for this simulation. Four different ones are at the disposal of the modeler: " +
+	@var(name = GAMA._FATAL, type = IType.BOOL),
+	@var(name = GAMA._WARNINGS, type = IType.BOOL, init = "false"),
+	@var(name = IKeyword.TIME, type = IType.FLOAT, doc = @doc(value = "Represents the total time passed, in model time, since the beginning of the simulation", comment = "Equal to cycle * step if the user does not arbitrarily initialize it.")),
+	@var(name = IKeyword.SEED, type = IType.FLOAT, doc = @doc(value = "The seed of the random number generator", comment = "Each time it is set, the random number generator is reinitialized")),
+	@var(name = WorldSkill.CYCLE, type = IType.INT, doc = @doc("Returns the current cycle of the simulation")),
+	@var(name = IKeyword.RNG, type = IType.STRING, init = "'" + IKeyword.MERSENNE + "'", doc = @doc("The random number generator to use for this simulation. Four different ones are at the disposal of the modeler: " +
 		IKeyword.MERSENNE +
 		" represents the default generator, based on the Mersenne-Twister algorithm. Very reliable; " +
 		IKeyword.CELLULAR +
@@ -56,15 +56,15 @@ import org.eclipse.core.runtime.Platform;
 		IKeyword.XOR +
 		" is another choice. Much faster than the previous ones, but with short sequences; and " +
 		IKeyword.JAVA + " invokes the standard Java generator")),
-	@var(name = IKeyword.STEP, type = IType.FLOAT_STR, doc = @doc(value = "Represents the value of the interval, in model time, between two simulation cycles", comment = "If not set, its value is equal to 1.0 and, since the default time unit is the second, to 1 second")),
-	@var(name = WorldSkill.MACHINE_TIME, type = IType.FLOAT_STR, doc = @doc(value = "Returns the current system time in milliseconds", comment = "The return value is a float number")),
+	@var(name = IKeyword.STEP, type = IType.FLOAT, doc = @doc(value = "Represents the value of the interval, in model time, between two simulation cycles", comment = "If not set, its value is equal to 1.0 and, since the default time unit is the second, to 1 second")),
+	@var(name = WorldSkill.MACHINE_TIME, type = IType.FLOAT, doc = @doc(value = "Returns the current system time in milliseconds", comment = "The return value is a float number")),
 
-	@var(name = WorldSkill.DURATION, type = IType.STRING_STR, doc = @doc("Returns a string containing the duration, in milliseconds, of the previous simulation cycle")),
-	@var(name = WorldSkill.TOTAL_DURATION, type = IType.STRING_STR, doc = @doc("Returns a string containing the total duration, in milliseconds, of the simulation since it has been launched ")),
-	@var(name = WorldSkill.AVERAGE_DURATION, type = IType.STRING_STR, doc = @doc("Returns a string containing the average duration, in milliseconds, of a simulation cycle.")),
-	@var(name = WorldSkill.MODEL_PATH, type = IType.STRING_STR, constant = true, doc = @doc(value = "Contains the absolute path to the folder in which the current model is located", comment = "Always terminated with a trailing separator")),
-	@var(name = WorldSkill.WORKSPACE_PATH, type = IType.STRING_STR, constant = true, doc = @doc(value = "Contains the absolute path to the workspace of GAMA", comment = "Always terminated with a trailing separator")),
-	@var(name = WorldSkill.PROJECT_PATH, type = IType.STRING_STR, constant = true, doc = @doc(value = "Contains the absolute path to the project in which the current model is located", comment = "Always terminated with a trailing separator")) })
+	@var(name = WorldSkill.DURATION, type = IType.STRING, doc = @doc("Returns a string containing the duration, in milliseconds, of the previous simulation cycle")),
+	@var(name = WorldSkill.TOTAL_DURATION, type = IType.STRING, doc = @doc("Returns a string containing the total duration, in milliseconds, of the simulation since it has been launched ")),
+	@var(name = WorldSkill.AVERAGE_DURATION, type = IType.STRING, doc = @doc("Returns a string containing the average duration, in milliseconds, of a simulation cycle.")),
+	@var(name = WorldSkill.MODEL_PATH, type = IType.STRING, constant = true, doc = @doc(value = "Contains the absolute path to the folder in which the current model is located", comment = "Always terminated with a trailing separator")),
+	@var(name = WorldSkill.WORKSPACE_PATH, type = IType.STRING, constant = true, doc = @doc(value = "Contains the absolute path to the workspace of GAMA", comment = "Always terminated with a trailing separator")),
+	@var(name = WorldSkill.PROJECT_PATH, type = IType.STRING, constant = true, doc = @doc(value = "Contains the absolute path to the project in which the current model is located", comment = "Always terminated with a trailing separator")) })
 @skill(name = IKeyword.GLOBAL, attach_to = IKeyword.WORLD_SPECIES)
 public class WorldSkill extends GeometricSkill {
 

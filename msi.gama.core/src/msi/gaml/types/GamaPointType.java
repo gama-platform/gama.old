@@ -19,6 +19,7 @@
 package msi.gaml.types;
 
 import java.util.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
@@ -33,7 +34,7 @@ import msi.gaml.operators.Cast;
  * @todo Description
  * 
  */
-@type(name = IType.POINT_STR, id = IType.POINT, wraps = { ILocation.class, GamaPoint.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IKeyword.POINT, id = IType.POINT, wraps = { ILocation.class, GamaPoint.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaPointType extends GamaType<ILocation> {
 
 	@Override

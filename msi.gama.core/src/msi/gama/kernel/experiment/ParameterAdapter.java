@@ -34,18 +34,18 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	protected String category;
 	protected String unitLabel;
 
-	public ParameterAdapter(final String title, final short type) {
+	public ParameterAdapter(final String title, final int type) {
 		this.title = title;
 		this.type = Types.get(type);
 	}
 
-	public ParameterAdapter(final String title, final String category, final short type) {
+	public ParameterAdapter(final String title, final String category, final int type) {
 		this(title, type);
 		this.category = category;
 	}
 
 	public ParameterAdapter(final String title, final String category, final String unit,
-		final short type) {
+		final int type) {
 		this(title, category, type);
 		this.unitLabel = unit;
 	}

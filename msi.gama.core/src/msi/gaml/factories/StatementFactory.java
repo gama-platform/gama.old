@@ -271,9 +271,9 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 	}
 
 	@Override
-	protected void compileFacet(final String tag, final IDescription sd) {
+	protected void compileFacet(final String tag, final IDescription sd, SymbolProto md) {
 		// GuiUtils.debug("Compiling facet " + tag);
-		if ( sd.getMeta().isFacetDeclaringANewTemp(tag) ) {
+		if ( md.isFacetDeclaringANewTemp(tag) ) {
 			Facets ff = sd.getFacets();
 			IType type = sd.getTypeNamed(ff.getLabel(TYPE));
 			IType keyType = sd.getTypeNamed(ff.getLabel(INDEX));
@@ -290,19 +290,19 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 					sd.getKeyword().equals(RELEASE) ) {
 					type = Types.get(IType.LIST);
 				} else if ( ff.containsKey(VALUE) ) {
-					compileFacet(VALUE, sd);
+					compileFacet(VALUE, sd, md);
 					IExpression expr = ff.getExpr(VALUE);
 					if ( expr != null ) {
 						type = expr.getType();
 					}
 				} else if ( ff.containsKey(OVER) ) {
-					compileFacet(OVER, sd);
+					compileFacet(OVER, sd, md);
 					IExpression expr = ff.getExpr(OVER);
 					if ( expr != null ) {
 						type = expr.getContentType();
 					}
 				} else if ( ff.containsKey(FROM) && ff.containsKey(TO) ) {
-					compileFacet(FROM, sd);
+					compileFacet(FROM, sd, md);
 					IExpression expr = ff.getExpr(FROM);
 					if ( expr != null ) {
 						type = expr.getType();
@@ -312,7 +312,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 			if ( type.hasContents() ) {
 				if ( contentType == Types.NO_TYPE ) {
 					if ( ff.containsKey(VALUE) ) {
-						compileFacet(VALUE, sd);
+						compileFacet(VALUE, sd, md);
 						IExpression expr = ff.getExpr(VALUE);
 						if ( expr != null ) {
 							contentType = expr.getContentType();
@@ -324,7 +324,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 				}
 				if ( keyType == Types.NO_TYPE ) {
 					if ( ff.containsKey(VALUE) ) {
-						compileFacet(VALUE, sd);
+						compileFacet(VALUE, sd, md);
 						IExpression expr = ff.getExpr(VALUE);
 						if ( expr != null ) {
 							keyType = expr.getKeyType();
@@ -342,7 +342,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 				((StatementDescription) sd).addNewTempIfNecessary(tag, type, contentType, keyType);
 			ff.put(tag, exp);
 		} else {
-			super.compileFacet(tag, sd);
+			super.compileFacet(tag, sd, md);
 		}
 	}
 

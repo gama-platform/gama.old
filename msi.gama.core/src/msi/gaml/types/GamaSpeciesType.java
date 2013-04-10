@@ -18,6 +18,7 @@
  */
 package msi.gaml.types;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
@@ -33,7 +34,7 @@ import msi.gaml.species.ISpecies;
  * @todo Description
  * 
  */
-@type(name = IType.SPECIES_STR, id = IType.SPECIES, wraps = { ISpecies.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IKeyword.SPECIES, id = IType.SPECIES, wraps = { ISpecies.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaSpeciesType extends GamaType<ISpecies> {
 
 	@Override

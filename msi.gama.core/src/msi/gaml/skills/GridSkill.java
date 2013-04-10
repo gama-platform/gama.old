@@ -40,10 +40,10 @@ import msi.gaml.types.IType;
  * 
  */
 @vars({
-	@var(name = IKeyword.COLOR, type = IType.COLOR_STR),
-	@var(name = IKeyword.AGENTS, type = IType.LIST_STR, of = IType.AGENT_STR, doc = @doc(deprecated = "This variable is deprecated for grid agents. Use agents_inside(cell) or agents_overlapping(cell) instead")),
-	@var(name = IKeyword.GRID_X, type = IType.INT_STR, constant = true),
-	@var(name = IKeyword.GRID_Y, type = IType.INT_STR, constant = true) })
+	@var(name = IKeyword.COLOR, type = IType.COLOR),
+	@var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT, doc = @doc(deprecated = "This variable is deprecated for grid agents. Use agents_inside(cell) or agents_overlapping(cell) instead")),
+	@var(name = IKeyword.GRID_X, type = IType.INT, constant = true),
+	@var(name = IKeyword.GRID_Y, type = IType.INT, constant = true) })
 @skill(name = GridSkill.SKILL_NAME)
 public class GridSkill extends GeometricSkill {
 

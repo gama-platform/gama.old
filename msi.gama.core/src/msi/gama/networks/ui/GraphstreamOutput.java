@@ -19,9 +19,9 @@ import msi.gaml.types.IType;
 
 @SuppressWarnings("unchecked")
 @symbol(name = IKeyword.DISPLAY_GRAPH, kind = ISymbolKind.OUTPUT, with_sequence = true)
-@facets(value = { @facet(name = IKeyword.NAME, type = IType.STRING_STR, optional = true),
-	@facet(name = "graph", type = IType.GRAPH_STR, optional = false),
-	@facet(name = "lowquality", type = IType.BOOL_STR, optional = true), }, omissible = IKeyword.NAME)
+@facets(value = { @facet(name = IKeyword.NAME, type = IType.STRING, optional = true),
+	@facet(name = "graph", type = IType.GRAPH, optional = false),
+	@facet(name = "lowquality", type = IType.BOOL, optional = true), }, omissible = IKeyword.NAME)
 @inside(symbols = IKeyword.OUTPUT)
 public class GraphstreamOutput extends AbstractDisplayOutput {
 

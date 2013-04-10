@@ -44,8 +44,12 @@ public class GlobalVariableExpression extends VariableExpression {
 
 	@Override
 	public String getTitle() {
-		return "Global " + (isNotModifiable ? "constant" : "variable") + " <b>" + getName() +
-			"</b>";
+		IDescription desc = getDefinitionDescription();
+		boolean isParameter =
+			desc == null ? false : desc.getSpeciesContext().getVariable(getName()).isParameter();
+		return "global " +
+			(isParameter ? "parameter" : isNotModifiable ? "constant" : "attribute") + " " +
+			getName() + " of type " + typeToString();
 	}
 
 	/**

@@ -18,7 +18,8 @@
  */
 package msi.gaml.types;
 
-import msi.gama.metamodel.agent.*;
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
@@ -33,12 +34,11 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  * @modified 08 juin 2012
  * 
  */
-@type(name = IType.AGENT_STR, id = IType.AGENT, wraps = { IGamlAgent.class, IAgent.class,
-	GamlAgent.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IKeyword.AGENT, id = IType.AGENT, wraps = { IAgent.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaGenericAgentType extends GamaAgentType {
 
 	public GamaGenericAgentType() {
-		super(IType.AGENT_STR, IType.AGENT, IGamlAgent.class);
+		super(IKeyword.AGENT, IType.AGENT, IAgent.class);
 	}
 
 	@Override

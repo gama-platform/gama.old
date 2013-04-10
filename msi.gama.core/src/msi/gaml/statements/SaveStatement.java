@@ -49,9 +49,9 @@ import com.vividsolutions.jts.geom.Geometry;
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
 @facets(value = { @facet(name = IKeyword.TYPE, type = IType.ID, optional = true),
 	@facet(name = IKeyword.DATA, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.REWRITE, type = IType.BOOL_STR, optional = true),
-	@facet(name = IKeyword.TO, type = IType.STRING_STR, optional = false),
-	@facet(name = IKeyword.WITH, type = { IType.MAP_STR }, optional = true) }, omissible = IKeyword.DATA)
+	@facet(name = IKeyword.REWRITE, type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.TO, type = IType.STRING, optional = false),
+	@facet(name = IKeyword.WITH, type = { IType.MAP }, optional = true) }, omissible = IKeyword.DATA)
 public class SaveStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
 	private Arguments init;

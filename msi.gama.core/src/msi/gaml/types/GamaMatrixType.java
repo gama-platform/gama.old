@@ -20,6 +20,7 @@ package msi.gaml.types;
 
 import java.io.*;
 import java.util.regex.Pattern;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
@@ -28,7 +29,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.*;
 
-@type(name = IType.MATRIX_STR, id = IType.MATRIX, wraps = { IMatrix.class, GamaIntMatrix.class,
+@type(name = IKeyword.MATRIX, id = IType.MATRIX, wraps = { IMatrix.class, GamaIntMatrix.class,
 	GamaFloatMatrix.class, GamaObjectMatrix.class }, kind = ISymbolKind.Variable.CONTAINER)
 public class GamaMatrixType extends GamaContainerType<IMatrix> {
 

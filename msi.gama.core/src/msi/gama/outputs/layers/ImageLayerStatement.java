@@ -45,15 +45,15 @@ import msi.gaml.types.IType;
  */
 @symbol(name = IKeyword.IMAGE, kind = ISymbolKind.LAYER, with_sequence = false)
 @inside(symbols = IKeyword.DISPLAY)
-@facets(value = { @facet(name = IKeyword.FILE, type = IType.STRING_STR, optional = true),
-	@facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
-	@facet(name = IKeyword.SIZE, type = IType.POINT_STR, optional = true),
-	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
-	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = true),
-	@facet(name = IKeyword.GIS, type = IType.STRING_STR, optional = true),
-	@facet(name = IKeyword.COLOR, type = IType.COLOR_STR, optional = true),
-	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true),
-	@facet(name = IKeyword.REFRESH, type = IType.BOOL_STR, optional = true) }, omissible = IKeyword.NAME)
+@facets(value = { @facet(name = IKeyword.FILE, type = IType.STRING, optional = true),
+	@facet(name = IKeyword.POSITION, type = IType.POINT, optional = true),
+	@facet(name = IKeyword.SIZE, type = IType.POINT, optional = true),
+	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true),
+	@facet(name = IKeyword.NAME, type = IType.STRING, optional = true),
+	@facet(name = IKeyword.GIS, type = IType.STRING, optional = true),
+	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),
+	@facet(name = IKeyword.Z, type = IType.FLOAT, optional = true),
+	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true) }, omissible = IKeyword.NAME)
 public class ImageLayerStatement extends AbstractLayerStatement {
 
 	public ImageLayerStatement(final IDescription desc) throws GamaRuntimeException {

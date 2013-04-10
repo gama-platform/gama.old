@@ -42,12 +42,12 @@ import com.vividsolutions.jts.geom.Envelope;
  */
 @symbol(name = IKeyword.QUADTREE, kind = ISymbolKind.LAYER, with_sequence = false)
 @inside(symbols = IKeyword.DISPLAY)
-@facets(value = { @facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
-	@facet(name = IKeyword.SIZE, type = IType.POINT_STR, optional = true),
-	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
+@facets(value = { @facet(name = IKeyword.POSITION, type = IType.POINT, optional = true),
+	@facet(name = IKeyword.SIZE, type = IType.POINT, optional = true),
+	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
-	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true),
-	@facet(name = IKeyword.REFRESH, type = IType.BOOL_STR, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.Z, type = IType.FLOAT, optional = true),
+	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true) }, omissible = IKeyword.NAME)
 public class QuadTreeLayerStatement extends AbstractLayerStatement {
 
 	BufferedImage supportImage;

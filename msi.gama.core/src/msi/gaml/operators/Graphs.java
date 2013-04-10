@@ -30,7 +30,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.*;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.GamaGraphType;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 13 avr. 2011
@@ -162,7 +162,7 @@ public class Graphs {
 		return graph.containsEdge(edge.first(), edge.last());
 	}
 
-	@operator(value = "source_of", type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@operator(value = "source_of", type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "returns the source of the edge (right-hand operand) contained in the graph given in left-hand operand.", special_cases = "if the lef-hand operand (the graph) is nil, throws an Exception", examples = {
 		"let graphEpidemio type: graph <- generate_barabasi_albert( [\"edges_specy\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5] );",
 		"graphEpidemio source_of(edge(3)) 				--:  node1",
@@ -175,7 +175,7 @@ public class Graphs {
 		return null;
 	}
 
-	@operator(value = "target_of", type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@operator(value = "target_of", type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "returns the target of the edge (right-hand operand) contained in the graph given in left-hand operand.", special_cases = "if the lef-hand operand (the graph) is nil, returns nil", examples = {
 		"let graphEpidemio type: graph <- generate_barabasi_albert( [\"edges_specy\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5] );",
 		"graphEpidemio source_of(edge(3)) 				--:  node1",
@@ -204,7 +204,7 @@ public class Graphs {
 		return 1d;
 	}
 
-	@operator(value = "in_edges_of")
+	@operator(value = "in_edges_of", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "returns the list of the in-edges of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = { "graphFromMap in_edges_of node({12,45})  --:  [LineString]" }, see = "out_edges_of")
 	public static IList inEdgesOf(final IGraph graph, final Object vertex) {
 		if ( graph == null ) { throw new GamaRuntimeException(
@@ -223,7 +223,7 @@ public class Graphs {
 		return 0;
 	}
 
-	@operator(value = "out_edges_of")
+	@operator(value = "out_edges_of", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "returns the list of the out-edges of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = { "graphEpidemio out_edges_of (node(3))" }, see = "in_edges_of")
 	public static IList outEdgesOf(final IGraph graph, final Object vertex) {
 		if ( graph == null ) { throw new GamaRuntimeException(
@@ -252,7 +252,7 @@ public class Graphs {
 		return 0;
 	}
 
-	@operator(value = "neighbours_of")
+	@operator(value = "neighbours_of", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "returns the list of neighbours of the given vertex (right-hand operand) in the given graph (left-hand operand)", examples = {
 		"graphEpidemio neighbours_of (node(3)) 		--:	[node0,node2]",
 		"graphFromMap neighbours_of node({12,45}) 	--: [{1.0;5.0},{34.0;56.0}]" }, see = {
@@ -265,7 +265,7 @@ public class Graphs {
 		return new GamaList();
 	}
 
-	@operator(value = "predecessors_of")
+	@operator(value = "predecessors_of", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "returns the list of predecessors (i.e. sources of in edges) of the given vertex (right-hand operand) in the given graph (left-hand operand)", examples = {
 		"graphEpidemio predecessors_of (node(3)) 		--: [node0,node2]",
 		"graphFromMap predecessors_of node({12,45}) 	--:	[{1.0;5.0}]" }, see = { "neighbours_of",
@@ -276,7 +276,7 @@ public class Graphs {
 		return new GamaList();
 	}
 
-	@operator(value = "successors_of")
+	@operator(value = "successors_of", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "returns the list of successors (i.e. targets of out edges) of the given vertex (right-hand operand) in the given graph (left-hand operand)", examples = {
 		"graphEpidemio successors_of (node(3)) 		--: []",
 		"graphFromMap successors_of node({12,45}) 	--: [{34.0;56.0}]" }, see = { "predecessors_of",
@@ -292,7 +292,7 @@ public class Graphs {
 	// return new GamaGraph(edges, true, false);
 	// }
 
-	@operator(value = "as_edge_graph")
+	@operator(value = "as_edge_graph", content_type = IType.GEOMETRY, index_type = IType.GEOMETRY)
 	@doc(value = "creates a graph from the list/map of edges given as operand", special_cases = "if the operand is a list, the graph will be built with elements of the list as vertices", examples = { "as_edge_graph([{1,5},{12,45},{34,56}])  --:  build a graph with these three vertices and reflexive links on each vertices" }, see = {
 		"as_intersection_graph", "as_distance_graph" })
 	public static IGraph spatialFromEdges(final IScope scope, final IContainer edges) {
@@ -317,7 +317,7 @@ public class Graphs {
 	// return new GamaGraph(vertices, false, false);
 	// }
 
-	@operator(value = "as_intersection_graph")
+	@operator(value = "as_intersection_graph", content_type = IType.GEOMETRY, index_type = IType.GEOMETRY)
 	@doc(value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices with an intersection (with a given tolerance).", comment = "as_intersection_graph is more efficient for a list of geometries (but less accurate) than as_distance_graph.", examples = "list(ant) as_intersection_graph 0.5;", see = {
 		"as_distance_graph", "as_edge_graph" })
 	public static IGraph spatialFromVertices(final IScope scope, final IContainer vertices,
@@ -331,7 +331,7 @@ public class Graphs {
 			scope);
 	}
 
-	@operator(value = "as_distance_graph")
+	@operator(value = "as_distance_graph", content_type = IType.GEOMETRY, index_type = IType.GEOMETRY)
 	@doc(value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices close enough (less than a distance, right-hand operand).", comment = "as_distance_graph is more efficient for a list of points than as_intersection_graph.", examples = "list(ant) as_distance_graph 3.0;", see = {
 		"as_intersection_graph", "as_edge_graph" })
 	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices,
@@ -340,7 +340,7 @@ public class Graphs {
 			scope);
 	}
 
-	@operator(value = "as_distance_graph")
+	@operator(value = "as_distance_graph", content_type = IType.GEOMETRY, index_type = IType.GEOMETRY)
 	@doc(value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices close enough (less than a distance, right-hand operand).", comment = "as_distance_graph is more efficient for a list of points than as_intersection_graph.", examples = "list(ant) as_distance_graph 3.0;", see = {
 		"as_intersection_graph", "as_edge_graph" })
 	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices,

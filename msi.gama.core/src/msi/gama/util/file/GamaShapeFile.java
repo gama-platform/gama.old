@@ -23,7 +23,7 @@ import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import msi.gaml.operators.Files;
 import msi.gaml.types.GamaFileType;
 import org.geotools.data.FeatureSource;
@@ -98,7 +98,7 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 		while (features.hasNext()) {
 			SimpleFeature feature = features.next();
 			if ( feature.getDefaultGeometry() != null ) {
-				buffer.add(scope, new GamaGisGeometry(scope, feature), null);
+				((IList) buffer).add(new GamaGisGeometry(scope, feature));
 			}
 		}
 		features.close();

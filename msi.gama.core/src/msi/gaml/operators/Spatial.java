@@ -228,7 +228,7 @@ public abstract class Spatial {
 			if ( size == 1 ) { return GamaGeometryType.createPoint(first); }
 			if ( size == 2 ) { return GamaGeometryType.buildLine(first, shapes.last(scope)); }
 			if ( !first.equals(shapes.last(scope)) ) {
-				shapes.add(scope, first, null);
+				shapes.add(first);
 			}
 			return GamaGeometryType.buildPolygon(shapes);
 		}
@@ -252,7 +252,7 @@ public abstract class Spatial {
 			IShape last = shapes.last(scope);
 			if ( size == 2 ) { return GamaGeometryType.buildLine(first, last); }
 			if ( !first.equals(last) ) {
-				shapes.add(scope, first, null);
+				shapes.add(first);
 			}
 			return GamaGeometryType.buildPolyhedron(shapes, depth);
 		}
@@ -918,7 +918,7 @@ public abstract class Spatial {
 			return t.directionInDegreesTo(scope, g1, g2);
 		}
 
-		@operator(value = "path_between", content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+		@operator(value = "path_between", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 		@doc(value = "A path between a list of two geometries (geometries, agents or points) considering a topology.", examples = { "my_topology path_between [ag1, ag2] --: A path between ag1 and ag2" }, see = {
 			"towards", "direction_to", "distance_between", "direction_between", "path_to",
 			"distance_to" })
@@ -985,7 +985,7 @@ public abstract class Spatial {
 
 	public static abstract class Properties {
 
-		@operator(value = { "disjoint_from" }, priority = IPriority.COMPARATOR)
+		@operator(value = { "disjoint_from" })
 		@doc(value = "A boolean, equal to true if the left-geometry (or agent/point) is disjoints from the right-geometry (or agent/point).", special_cases = {
 			"if one of the operand is null, returns true.",
 			"if one operand is a point, returns false if the point is included in the geometry." }, examples = {
@@ -1261,7 +1261,7 @@ public abstract class Spatial {
 			return t.getNeighboursOf((IShape) a, Cast.asFloat(scope, d), Different.with());
 		}
 
-		@operator(value = "neighbours_at", content_type = ITypeProvider.LEFT_TYPE)
+		@operator(value = "neighbours_at", content_type = ITypeProvider.FIRST_TYPE)
 		@doc(value = "a list, containing all the agents of the same species than the left argument (if it is an agent) located at a distance inferior or equal to the right-hand operand to the left-hand operand (geometry, agent, point).", comment = "The topology used to compute the neighbourhood  is the one of the left-operand if this one is an agent; otherwise the one of the agent applying the operator.", examples = { "(self neighbours_at (10)) --: returns all the agents located at a distance lower or equal to 10 to the agent applying the operator." }, see = {
 			"neighbours_of", "closest_to", "overlapping", "agents_overlapping", "agents_inside",
 			"agent_closest_to", "at_distance" })
@@ -1285,7 +1285,7 @@ public abstract class Spatial {
 			return scope.getTopology().getNeighboursOf(agent, distance, Different.with());
 		}
 
-		@operator(value = "at_distance", content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+		@operator(value = "at_distance", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 		@doc(value = "A list of agents among the left-operand list that are located at a distance <= the right operand from the caller agent (in its topology)", examples = { "[ag1, ag2, ag3] at_distance 20 --: return the agents of the list located at a distance <= 20 from the caller agent (in the same order)." }, see = {
 			"neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to",
 			"inside", "overlapping" })
@@ -1300,7 +1300,7 @@ public abstract class Spatial {
 				In.list(scope, list), false);
 		}
 
-		@operator(value = "at_distance", content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+		@operator(value = "at_distance", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 		@doc(special_cases = "If the left operand is a species, return agents of the specified species (slightly more efficient than using list(species1), for instance)", examples = { "species1 at_distance 20 --: return the agents of species1 located at a distance <= 20 from the caller agent." }, see = {
 			"neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to",
 			"inside", "overlapping" })
@@ -1317,7 +1317,7 @@ public abstract class Spatial {
 				false);
 		}
 
-		@operator(value = { "inside" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+		@operator(value = { "inside" }, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 		@doc(value = "A list of agents among the left-operand list, covered by the operand (casted as a geometry).", examples = { "[ag1, ag2, ag3] inside(self) --: return the agents among ag1, ag2 and ag3 that are covered by the shape of the agent applying the operator." }, see = {
 			"neighbours_at", "neighbours_of", "closest_to", "overlapping", "agents_overlapping",
 			"agents_inside", "agent_closest_to" })
@@ -1328,7 +1328,7 @@ public abstract class Spatial {
 				In.list(scope, targets), true);
 		}
 
-		@operator(value = { "inside" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+		@operator(value = { "inside" }, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 		@doc(special_cases = { "if the left-operand is a species, return agents of the specified species (slightly more efficient than using list(species1), for instance)." }, examples = { "species1 inside(self) --: return the agents of species species1 that are covered by the shape of the agent applying the operator." })
 		public static IList<IAgent> inside(final IScope scope, final ISpecies targets,
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
@@ -1339,7 +1339,7 @@ public abstract class Spatial {
 				In.population(pop), true);
 		}
 
-		@operator(value = { "overlapping" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+		@operator(value = { "overlapping" }, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 		@doc(value = "A list of agents among the left-operand list, overlapping the operand (casted as a geometry).", examples = { "[ag1, ag2, ag3] overlapping(self) --: return the agents among ag1, ag2 and ag3 that overlap the shape of the agent applying the operator." }, see = {
 			"neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to",
 			"inside", "agents_overlapping" })
@@ -1351,7 +1351,7 @@ public abstract class Spatial {
 				In.list(scope, targets), false);
 		}
 
-		@operator(value = { "overlapping" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+		@operator(value = { "overlapping" }, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 		@doc(special_cases = { "if the left-operand is a species, return agents of the specified species." }, examples = { "species1 overlapping(self) --: return the agents of species species1 that overlap the shape of the agent applying the operator." })
 		public static IList<IAgent> overlapping(final IScope scope, final ISpecies targets,
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
@@ -1362,7 +1362,7 @@ public abstract class Spatial {
 				In.population(pop), false);
 		}
 
-		@operator(value = { "closest_to" }, type = ITypeProvider.LEFT_CONTENT_TYPE)
+		@operator(value = { "closest_to" }, type = ITypeProvider.FIRST_CONTENT_TYPE)
 		@doc(value = "An agent among the left-operand list, the closest to the operand (casted as a geometry).", comment = "the distance is computed in the topology of the calling agent (the agent in which this operator is used), with the distance algorithm specific to the topology.", examples = { "[ag1, ag2, ag3] closest_to(self) --: return the closest agent among ag1, ag2 and ag3 to the agent applying the operator." }, see = {
 			"neighbours_at", "neighbours_of", "neighbours_at", "neighbours_of", "inside",
 			"overlapping", "agents_overlapping", "agents_inside", "agent_closest_to" })
@@ -1377,7 +1377,7 @@ public abstract class Spatial {
 				" is not a geometrical object");
 		}
 
-		@operator(value = { "closest_to" }, type = ITypeProvider.LEFT_CONTENT_TYPE)
+		@operator(value = { "closest_to" }, type = ITypeProvider.FIRST_CONTENT_TYPE)
 		@doc(special_cases = { "if the left-operand is a species, return an agent of the specified species." }, examples = {
 			"neighbours_at",
 			"neighbours_of",
@@ -1432,7 +1432,7 @@ public abstract class Spatial {
 				false);
 		}
 
-		@operator(value = "agents_at_distance", content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+		@operator(value = "agents_at_distance", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 		@doc(value = "A list of agents situated at a distance <= the right argument.", comment = "Equivalent to neighbours_at with a left-hand argument equal to 'self'", examples = { "agents_at_distance(20) --: all the agents (excluding the caller) which distance to the caller is <= 20" }, see = {
 			"neighbours_at", "neighbours_of", "agent_closest_to", "agents_inside", "closest_to",
 			"inside", "overlapping", "at_distance" })

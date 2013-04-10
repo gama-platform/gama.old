@@ -21,7 +21,6 @@ public interface IGamlAdditions {
 	public final static Class IT = ITopology.class;
 	public final static Class SP = ISpecies.class;
 	public final static Class GA = GamlAgent.class;
-	public final static Class IG = IGamlAgent.class;
 	public final static Class GC = GamaColor.class;
 	public final static Class GP = GamaPair.class;
 	public final static Class GS = GamaShape.class;

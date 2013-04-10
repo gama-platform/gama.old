@@ -23,6 +23,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
  * Written by drogoul Modified on 17 nov. 2009
+ * Apr. 2013: Also serves as the getter for object fields
  * 
  * @todo Description
  */

@@ -19,7 +19,7 @@ import msi.gaml.types.IType;
  * 
  */
 @symbol(name = IKeyword.DISPLAY_GL, kind = ISymbolKind.OUTPUT, with_sequence = true)
-@facets(value = { @facet(name = IKeyword.NAME, type = IType.STRING_STR, optional = true) }, omissible = IKeyword.NAME)
+@facets(value = { @facet(name = IKeyword.NAME, type = IType.STRING, optional = true) }, omissible = IKeyword.NAME)
 @inside(symbols = IKeyword.OUTPUT)
 public class GLOutput extends AbstractDisplayOutput {
 

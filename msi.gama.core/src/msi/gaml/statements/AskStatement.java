@@ -38,8 +38,8 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.ASK, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, remote_context = true)
 @facets(value = {
-	@facet(name = IKeyword.TARGET, type = { IType.CONTAINER_STR, IType.AGENT_STR }, optional = false),
-	@facet(name = IKeyword.AS, type = { IType.SPECIES_STR }, optional = true) }, omissible = IKeyword.TARGET)
+	@facet(name = IKeyword.TARGET, type = { IType.CONTAINER, IType.AGENT }, optional = false),
+	@facet(name = IKeyword.AS, type = { IType.SPECIES }, optional = true) }, omissible = IKeyword.TARGET)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 public class AskStatement extends AbstractStatementSequence {
 

@@ -18,165 +18,41 @@
  */
 package msi.gaml.expressions;
 
-import msi.gama.common.interfaces.IValue;
-import msi.gama.precompiler.ITypeProvider;
-import msi.gama.runtime.*;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.IFieldGetter;
-import msi.gaml.descriptions.IDescription;
-import msi.gaml.types.*;
-import org.eclipse.emf.common.notify.*;
+import msi.gaml.compilation.IOpRun;
+import msi.gaml.types.Types;
 
-public class TypeFieldExpression implements IExpression {
+public class TypeFieldExpression extends UnaryOperator {
 
-	IFieldGetter getter;
-	protected IType type = null;
-	protected String contentType = null;
-	protected IType keyType = null;
-	IExpression left;
-	String name;
+	final static int[] nullInts = new int[0];
 
-	public TypeFieldExpression(final String n, final IType type, final String contentType,
-		final IType keyType, final IFieldGetter g) {
+	public TypeFieldExpression(final String n, final int tProv, int ctProv, final int ktProv,
+		final IOpRun g) {
+		super(Types.NO_TYPE, g, true, tProv, ctProv, ktProv, nullInts);
 		setName(n);
-		setType(type);
-		setContentType(contentType);
-		setKeyType(keyType);
-		getter = g;
-	}
-
-	public TypeFieldExpression copyWith(final IExpression leftExpression) {
-		TypeFieldExpression f = new TypeFieldExpression(name, type, contentType, keyType, getter);
-		f.left = leftExpression;
-		return f;
 	}
 
 	@Override
-	public TypeFieldExpression resolveAgainst(final IScope scope) {
-		return copyWith(left.resolveAgainst(scope));
-	}
-
-	@Override
-	public Object value(final IScope scope) throws GamaRuntimeException {
-		Object parameter = left.value(scope);
-		if ( parameter instanceof IValue ) { return getter.run(scope, (IValue) parameter); }
-		return null;
-	}
-
-	public void setName(final String s) {
-		name = s;
-	}
-
-	@Override
-	public String getName() {
-		return name;
+	public TypeFieldExpression copy() {
+		TypeFieldExpression copy =
+			new TypeFieldExpression(name, typeProvider, contentTypeProvider, keyTypeProvider,
+				helper);
+		copy.doc = doc;
+		return copy;
 	}
 
 	@Override
 	public String toGaml() {
-		return left.toGaml() + "." + name;
+		return child.toGaml() + "." + name;
 	}
 
-	@Override
-	public boolean isConst() {
-		return false;
-	}
-
-	private void setType(final IType type) {
-		this.type = type;
-	}
-
-	private void setContentType(final String t) {
-		contentType = t;
-	}
-
-	private void setKeyType(final IType t) {
-		keyType = t == null ? type.defaultKeyType() : t;
-	}
-
-	@Override
-	public String literalValue() {
-		return name;
-	}
-
-	@Override
-	public IType getType() {
-		return type == null ? Types.NO_TYPE : type;
-	}
-
-	@Override
-	public IType getContentType() {
-		if ( !getType().hasContents() ) { return Types.NO_TYPE; }
-		if ( contentType == null ) { return getType().defaultContentType(); }
-		if ( ITypeProvider.SELF_TYPE.equals(contentType) ) {
-			return left == null ? Types.NO_TYPE : left.getType();
-		} else if ( ITypeProvider.CONTENT_TYPE.equals(contentType) ) {
-			return left == null ? Types.NO_TYPE : left.getContentType();
-		} else if ( ITypeProvider.INDEX_TYPE.equals(contentType) ) { return left == null
-			? Types.NO_TYPE : left.getKeyType(); }
-		// FIXME The model (or the types) should be known here
-		IDescription d = GAMA.getModelContext();
-		if ( d == null ) { return Types.get(contentType); }
-		return d.getTypeNamed(contentType);
-	}
-
-	@Override
-	public IType getKeyType() {
-		if ( !getType().hasContents() ) { return Types.NO_TYPE; }
-		return keyType == null ? getType().defaultKeyType() : keyType;
-	}
-
-	/**
-	 * @see msi.gaml.expressions.IExpression#getDocumentation()
-	 */
 	@Override
 	public String getDocumentation() {
-		return "Type " + getType() + " from object of type " + left.getType();
+		return "Type " + getType() + " from object of type " + child.getType();
 	}
 
-	/**
-	 * @see msi.gaml.descriptions.IGamlDescription#dispose()
-	 */
-	@Override
-	public void dispose() {}
-
-	/**
-	 * @see msi.gaml.descriptions.IGamlDescription#getTitle()
-	 */
 	@Override
 	public String getTitle() {
-		return "Field <b>" + name + "</b>";
+		return "field " + getName() + " of type " + typeToString();
 	}
-
-	/**
-	 * @see org.eclipse.emf.common.notify.Adapter#notifyChanged(org.eclipse.emf.common.notify.Notification)
-	 */
-	@Override
-	public void notifyChanged(final Notification notification) {}
-
-	/**
-	 * @see org.eclipse.emf.common.notify.Adapter#getTarget()
-	 */
-	@Override
-	public Notifier getTarget() {
-		return null;
-	}
-
-	/**
-	 * @see org.eclipse.emf.common.notify.Adapter#setTarget(org.eclipse.emf.common.notify.Notifier)
-	 */
-	@Override
-	public void setTarget(final Notifier newTarget) {}
-
-	/**
-	 * @see org.eclipse.emf.common.notify.Adapter#isAdapterForType(java.lang.Object)
-	 */
-	@Override
-	public boolean isAdapterForType(final Object type) {
-		return false;
-	}
-
-	@Override
-	public void unsetTarget(final Notifier oldTarget) {}
 
 }

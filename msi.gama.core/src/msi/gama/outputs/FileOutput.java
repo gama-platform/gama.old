@@ -47,11 +47,11 @@ import msi.gaml.types.IType;
 @inside(symbols = IKeyword.OUTPUT)
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
-	@facet(name = IKeyword.DATA, type = IType.STRING_STR, optional = false),
-	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT_STR, optional = true),
-	@facet(name = IKeyword.HEADER, type = IType.STRING_STR, optional = true),
-	@facet(name = IKeyword.FOOTER, type = IType.STRING_STR, optional = true),
-	@facet(name = IKeyword.REWRITE, type = IType.BOOL_STR, optional = true),
+	@facet(name = IKeyword.DATA, type = IType.STRING, optional = false),
+	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
+	@facet(name = IKeyword.HEADER, type = IType.STRING, optional = true),
+	@facet(name = IKeyword.FOOTER, type = IType.STRING, optional = true),
+	@facet(name = IKeyword.REWRITE, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.CSV, IKeyword.TEXT,
 		IKeyword.XML }, optional = true) }, omissible = IKeyword.NAME)
 public class FileOutput extends AbstractOutput {

@@ -106,9 +106,9 @@ public class SQLSkill extends Skill {
 	 */
 	// @action(name="executeUpdate",
 	// args = {
-	// @arg(name = "params", type = IType.MAP_STR, optional = false, doc =
+	// @arg(name = "params", type = IType.MAP, optional = false, doc =
 	// @doc("Connection parameters")),
-	// @arg(name = "updateComm", type = IType.STRING_STR, optional = false, doc =
+	// @arg(name = "updateComm", type = IType.STRING, optional = false, doc =
 	// @doc("SQL commands such as Create, Update, Delete, Drop"))
 	// })
 	//
@@ -169,9 +169,9 @@ public class SQLSkill extends Skill {
 	 * }
 	 */
 	@action(name = "executeUpdate", args = {
-		@arg(name = "params", type = IType.MAP_STR, optional = false, doc = @doc("Connection parameters")),
-		@arg(name = "updateComm", type = IType.STRING_STR, optional = false, doc = @doc("SQL commands such as Create, Update, Delete, Drop with question mark")),
-		@arg(name = "values", type = IType.LIST_STR, optional = true, doc = @doc("List of values that are used to replace question mark")) })
+		@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")),
+		@arg(name = "updateComm", type = IType.STRING, optional = false, doc = @doc("SQL commands such as Create, Update, Delete, Drop with question mark")),
+		@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question mark")) })
 	public int executeUpdate_QM(final IScope scope) throws GamaRuntimeException {
 		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 		String updateComm = (String) scope.getArg("updateComm", IType.STRING);
@@ -222,11 +222,11 @@ public class SQLSkill extends Skill {
 	 * @return an integer
 	 */
 	@action(name = "insert", args = {
-		@arg(name = "params", type = IType.MAP_STR, optional = false, doc = @doc("Connection parameters")),
-		@arg(name = "into", type = IType.STRING_STR, optional = false, doc = @doc("Table name")),
-		@arg(name = "columns", type = IType.LIST_STR, optional = true, doc = @doc("List of column name of table")),
-		@arg(name = "values", type = IType.LIST_STR, optional = false, doc = @doc("List of values that are used to insert into table. Columns and values must have same size")),
-		@arg(name = "transform", type = IType.BOOL_STR, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false ")) })
+		@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")),
+		@arg(name = "into", type = IType.STRING, optional = false, doc = @doc("Table name")),
+		@arg(name = "columns", type = IType.LIST, optional = true, doc = @doc("List of column name of table")),
+		@arg(name = "values", type = IType.LIST, optional = false, doc = @doc("List of values that are used to insert into table. Columns and values must have same size")),
+		@arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false ")) })
 	public int insert(final IScope scope) throws GamaRuntimeException {
 		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 		String table_name = (String) scope.getArg("into", IType.STRING);
@@ -285,10 +285,10 @@ public class SQLSkill extends Skill {
 	 */
 	// @action(name="insert_All",
 	// args = {
-	// @arg(name = "params", type = IType.MAP_STR, optional = false, doc =
+	// @arg(name = "params", type = IType.MAP, optional = false, doc =
 	// @doc("Connection parameters")),
-	// @arg(name = "into", type = IType.STRING_STR, optional = false, doc = @doc("Table name")),
-	// @arg(name = "values", type = IType.LIST_STR, optional = false, doc =
+	// @arg(name = "into", type = IType.STRING, optional = false, doc = @doc("Table name")),
+	// @arg(name = "values", type = IType.LIST, optional = false, doc =
 	// @doc("List of values that are used to insert into table. Columns and values must have same size"))
 	// })
 	// public int insert_All(final IScope scope) throws GamaRuntimeException
@@ -352,9 +352,9 @@ public class SQLSkill extends Skill {
 	 */
 	// @action(name="select",
 	// args = {
-	// @arg(name = "params", type = IType.MAP_STR, optional = false, doc =
+	// @arg(name = "params", type = IType.MAP, optional = false, doc =
 	// @doc("Connection parameters")),
-	// @arg(name = "select", type = IType.STRING_STR, optional = false, doc =
+	// @arg(name = "select", type = IType.STRING, optional = false, doc =
 	// @doc("select command"))
 	// })
 	// public GamaList<Object> select(final IScope scope) throws GamaRuntimeException
@@ -417,10 +417,10 @@ public class SQLSkill extends Skill {
 	 * @return GamaList<GamaList<Object>>
 	 */
 	@action(name = "select", args = {
-		@arg(name = "params", type = IType.MAP_STR, optional = false, doc = @doc("Connection parameters")),
-		@arg(name = "select", type = IType.STRING_STR, optional = false, doc = @doc("select string with question marks")),
-		@arg(name = "values", type = IType.LIST_STR, optional = true, doc = @doc("List of values that are used to replace question marks")),
-		@arg(name = "transform", type = IType.BOOL_STR, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
+		@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")),
+		@arg(name = "select", type = IType.STRING, optional = false, doc = @doc("select string with question marks")),
+		@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question marks")),
+		@arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
 
 	})
 	public GamaList<Object> select_QM(final IScope scope) throws GamaRuntimeException {
@@ -468,9 +468,9 @@ public class SQLSkill extends Skill {
 	}
 
 	@action(name = "list2Matrix", args = {
-		@arg(name = "param", type = IType.LIST_STR, optional = false, doc = @doc(value = "Param: a list of records and metadata")),
-		@arg(name = "getName", type = IType.BOOL_STR, optional = true, doc = @doc(value = "getType: a boolean value, optional parameter", comment = "if it is true then the action will return columnNames and data. default is true")),
-		@arg(name = "getType", type = IType.BOOL_STR, optional = true, doc = @doc(value = "getType: a boolean value, optional parameter", comment = "if it is true then the action will return columnTypes and data. default is false"))
+		@arg(name = "param", type = IType.LIST, optional = false, doc = @doc(value = "Param: a list of records and metadata")),
+		@arg(name = "getName", type = IType.BOOL, optional = true, doc = @doc(value = "getType: a boolean value, optional parameter", comment = "if it is true then the action will return columnNames and data. default is true")),
+		@arg(name = "getType", type = IType.BOOL, optional = true, doc = @doc(value = "getType: a boolean value, optional parameter", comment = "if it is true then the action will return columnTypes and data. default is false"))
 
 	})
 	public IMatrix List2matrix(final IScope scope) throws GamaRuntimeException {

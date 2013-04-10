@@ -683,9 +683,9 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getStatement_Expr()
+  public EAttribute getStatement_FirstFacet()
   {
-    return (EReference)statementEClass.getEStructuralFeatures().get(1);
+    return (EAttribute)statementEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -693,7 +693,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getStatement_Facets()
+  public EReference getStatement_Expr()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(2);
   }
@@ -703,9 +703,19 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EReference getStatement_Block()
+  public EReference getStatement_Facets()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EReference getStatement_Block()
+  {
+    return (EReference)statementEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -1708,6 +1718,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     statementEClass = createEClass(STATEMENT);
     createEAttribute(statementEClass, STATEMENT__KEY);
+    createEAttribute(statementEClass, STATEMENT__FIRST_FACET);
     createEReference(statementEClass, STATEMENT__EXPR);
     createEReference(statementEClass, STATEMENT__FACETS);
     createEReference(statementEClass, STATEMENT__BLOCK);
@@ -1973,6 +1984,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     initEClass(statementEClass, Statement.class, "Statement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getStatement_Key(), ecorePackage.getEString(), "key", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getStatement_FirstFacet(), ecorePackage.getEString(), "firstFacet", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_Expr(), this.getExpression(), null, "expr", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_Facets(), this.getFacet(), null, "facets", null, 0, -1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_Block(), this.getBlock(), null, "block", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

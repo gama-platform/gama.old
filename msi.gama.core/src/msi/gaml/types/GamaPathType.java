@@ -19,6 +19,7 @@
 package msi.gaml.types;
 
 import java.util.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
@@ -30,7 +31,7 @@ import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Cast;
 
-@type(name = IType.PATH_STR, id = IType.PATH, wraps = { IPath.class, GamaPath.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IKeyword.PATH, id = IType.PATH, wraps = { IPath.class, GamaPath.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaPathType extends GamaType<IPath> {
 
 	@Override

@@ -14,94 +14,86 @@ Import:
  * Statements 
  */
 Statement:
-	=> S_Assignment |
-	 (
-		(=>S_Declaration | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_Solve | S_If | S_Equations)
-	);
-
-
+	=> S_Declaration |
+	((=> S_Assignment | S_1Expr_Facets_BlockOrEnd | S_Other | S_Do | S_Return | S_Solve | S_If | S_Equations));
 
 S_1Expr_Facets_BlockOrEnd returns Statement:
-	key=_1Expr_Facets_BlockOrEnd_Key (FirstFacetKey)? expr=Expression (facets+=Facet)* (block=Block | ";");
-	
+	key=_1Expr_Facets_BlockOrEnd_Key (firstFacet=FirstFacetKey)? expr=Expression (facets+=Facet)* (block=Block | ";");
+
 S_Do:
-	key=_DoKey ("action:")? expr=AbstractRef (facets+=Facet)* (block=Block | ';');
+	key=_DoKey (firstFacet="action:")? expr=AbstractRef (facets+=Facet)* (block=Block | ';');
 
 S_Loop:
 	key="loop" (name=ID)? (facets+=Facet)* block=Block;
 
 S_If:
-	key='if' ('condition:')? expr=Expression block=Block (=> 'else' else=(S_If | Block))?;
+	key='if' (firstFacet="condition:")? expr=Expression block=Block (=> 'else' else=(S_If | Block))?;
 
 S_Other:
 	key=ID (facets+=Facet)* (block=Block | ';');
 
 S_Return:
-	key='return' ("value:")? expr=Expression? ';';
-/*
+	key='return' (firstFacet="value:")? expr=Expression? ';';
+	/*
  * DECLARATIONS
  */
-
-S_Declaration: S_Species | S_Experiment | S_Reflex | S_Definition | S_Action | S_Var | S_Loop  ;
+S_Declaration:
+	S_Species | S_Experiment | S_Reflex | S_Definition | S_Action | S_Var | S_Loop;
 
 S_Species:
-	(key=_SpeciesKey ('name:')? name=ID (facets+=Facet)* (block=Block | ';')); // be more restrictive ? Add skill facet
-
+	(key=_SpeciesKey (firstFacet='name:')? name=ID (facets+=Facet)* (block=Block | ';')); 
 S_Experiment:
-	key="experiment" ("name:")? name=(Valid_ID | STRING) (facets+=Facet)* block=Block;
-	
+	key="experiment" (firstFacet="name:")? name=(Valid_ID | STRING) (facets+=Facet)* block=Block;
+
 S_Reflex:
-	key=_ReflexKey ("name:")? name=Valid_ID? ("when:" expr=Expression)? block=Block;
-	
-S_Definition: 
-	=>tkey=TypeRef ("name:")? name=(Valid_ID | STRING) ('(' (args=ActionArguments) ')')? (facets+=Facet)* (block=Block | ';');
+	key=_ReflexKey (firstFacet="name:")? name=Valid_ID? ("when:" expr=Expression)? block=Block;
+
+S_Definition:
+	tkey=TypeRef (firstFacet="name:")? name=(Valid_ID | STRING) ('(' (args=ActionArguments) ')')? (facets+=Facet)* (block=Block | ';');
 
 S_Action returns S_Definition:
-	{S_Action} key="action" ('name:')? name=Valid_ID ('(' (args=ActionArguments) ')')? (facets+=Facet)* (block=Block | ';');
-		
-S_Var returns S_Definition:
-	{S_Var} key=_VarOrConstKey ("name:")? name=Valid_ID (facets+=Facet)* ';';
+	{S_Action} key="action" (firstFacet='name:')? name=Valid_ID ('(' (args=ActionArguments) ')')? (facets+=Facet)* (block=Block | ';');
 
- 
-/*
+S_Var returns S_Definition:
+	{S_Var} key=_VarOrConstKey (firstFacet="name:")? name=Valid_ID (facets+=Facet)* ';';
+
+	/*
  * ASSIGNMENTS
  */
- 
-S_Assignment: 
+S_Assignment:
 	S_DirectAssignment | S_Set;
-	
+
 S_DirectAssignment:
-	(expr=Expression key=( "<-" | "<<" | ">>" | "+=" | "-=" | "++" | "--" ) value=Expression (facets+=Facet)*)
-	';';
-	
+	(expr=Expression key=(_AssignmentKey) value=Expression (facets+=Facet)*) ';';
+
 S_Set:
-	key="set" ("var:" | "name:")? expr=Expression ("value:" | "<-") value=Expression ";";
+	key="set" (firstFacet="var:" | "name:")? expr=Expression ("value:" | "<-") value=Expression ";";
 
-S_Equations: key=_EquationsKey name=Valid_ID (facets+=Facet)* '{' (equations += S_Equation ';')* '}';
+S_Equations:
+	key=_EquationsKey name=Valid_ID (facets+=Facet)* '{' (equations+=S_Equation ';')* '}';
 
-S_Equation returns S_Assignment: expr=Function key="=" value=Expression;
+S_Equation returns S_Assignment:
+	expr=Function key="=" value=Expression;
 
 S_Solve:
-	key=_SolveKey ("equation:")? expr=EquationRef (facets+=Facet)* (block=Block | ';');
+	key=_SolveKey (firstFacet="equation:")? expr=EquationRef (facets+=Facet)* (block=Block | ';');
 
-
-/**
+	/**
  * Statement keys
  */
-
 _EquationsKey:
 	"equation";
 
-_SolveKey: 
+_SolveKey:
 	"solve";
-	
+
 _SpeciesKey:
 	"species" | "grid";
 
 _1Expr_Facets_BlockOrEnd_Key:
-	"ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | 
-	"draw" | "display_population" | "display_grid" | "add" | "remove" | "put" | "using" | "switch" | 
-	"match" | "match_between" | "match_one";
+	"ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" |
+	"draw" | "display_population" | "display_grid" | "using" | "switch" | "put" | "add" | "remove" |
+	"match" | "match_between" | "match_one" | "text" | "image";
 
 _DoKey:
 	"do";
@@ -111,13 +103,13 @@ _VarOrConstKey:
 
 _ReflexKey:
 	"init" | "reflex";
+	
+_AssignmentKey:
+	"<-" | "<<" | '>' '>';
 
-
-
-/**
+	/**
  * Parameters and arguments
  */
-
 Parameters:
 	{Parameters} (params=ParameterList)?;
 
@@ -127,29 +119,32 @@ ActionArguments:
 ArgumentDefinition:
 	type=TypeRef name=Valid_ID ('<-' default=Expression)?;
 
-/**
+	/**
  * Facets
  */
 Facet:
-	DefinitionFacet | FunctionFacet | ClassicFacet | TypeFacet | ActionFacet ;
+	DefinitionFacet | FunctionFacet | ClassicFacet | TypeFacet | ActionFacet;
 
-FirstFacetKey: DefinitionFacetKey | TypeFacetKey | SpecialFacetKey | ActionFacetKey | (ID ':');
+FirstFacetKey:
+	DefinitionFacetKey | TypeFacetKey | SpecialFacetKey | ActionFacetKey | ClassicFacetKey;
+	
+ClassicFacetKey: (ID ':');
 
 DefinitionFacetKey:
 	"name:" | "returns:" | "var:";
 
 TypeFacetKey:
-	"as:" | "parent:" | "of:" | "species:";
+	"as:" | "parent:" | "of:" | "species:" | "type:";
 
 SpecialFacetKey:
 	'data:' | 'when:' | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" |
-	"environment:";
+	"environment:" | 'text:' | 'image:';
 
 ActionFacetKey:
 	"action:";
 
 ClassicFacet returns Facet:
-	(key=ID ':' | key='<-' | key=SpecialFacetKey) expr=Expression;
+	(key=ClassicFacetKey | key='<-' | key=SpecialFacetKey) expr=Expression;
 
 DefinitionFacet returns Facet:
 	((=> key=DefinitionFacetKey) name=(Valid_ID | STRING));
@@ -158,11 +153,10 @@ FunctionFacet returns Facet:
 	(key='function:' | key='->') '{' expr=Expression '}';
 
 TypeFacet returns Facet:
-	key=TypeFacetKey expr=TypeRef;
+	key=TypeFacetKey (=>(expr=TypeRef) | expr= Expression);
 
 ActionFacet returns Facet:
 	key=ActionFacetKey expr=ActionRef;
-
 
 	/**
  * Blocks. An ordered list of statements inside curly brackets
@@ -191,8 +185,8 @@ If returns Expression:
 	({If.left=current}
 	op='?'
 	right=Or
-	':'
-	ifFalse=Or)?;
+	(':'
+	ifFalse=Or))?;
 
 Or returns Expression:
 	And
@@ -253,9 +247,7 @@ AbstractRef returns Expression:
 	Function | VariableRef;
 
 Function returns Expression:
-	{Function} action=ActionRef  '(' (parameters=Parameters | args=ExpressionList) ')';
-	//{Function} (op=Valid_ID '(' args=ExpressionList ')') | (action=ActionRef '(' parameters=Parameters ')');
-
+	{Function} action=ActionRef '(' (parameters=Parameters | args=ExpressionList) ')';
 Parameter returns Expression:
 	{Parameter} ((builtInFacetKey=(DefinitionFacetKey | TypeFacetKey | SpecialFacetKey | ActionFacetKey)) |
 	(left=VariableRef ':')) right=Expression;
@@ -273,14 +265,14 @@ VariableRef:
 	{VariableRef} ref=[VarDefinition|Valid_ID];
 
 TypeRef returns Expression:
-	{TypeRef} ref=[TypeDefinition|ID] ('<' first=TypeRef ("," second=TypeRef)? '>')?;
+	{TypeRef} ref=[TypeDefinition|ID] ('<' first=TypeRef ("," second=TypeRef)? =>'>')?;
 
 SkillRef returns Expression:
 	{SkillRef} ref=[SkillFakeDefinition|ID];
 
 ActionRef returns Expression:
 	{ActionRef} ref=[ActionDefinition|Valid_ID];
-	
+
 EquationRef returns Expression:
 	{EquationRef} ref=[EquationDefinition|Valid_ID];
 
@@ -289,12 +281,12 @@ GamlDefinition:
 
 EquationDefinition:
 	S_Equations | EquationFakeDefinition;
-	
+
 TypeDefinition:
 	S_Species | TypeFakeDefinition;
 
 VarDefinition:
-	=> S_Declaration | (ArgumentDefinition  | DefinitionFacet | VarFakeDefinition );
+	=>S_Declaration | (ArgumentDefinition | DefinitionFacet | VarFakeDefinition);
 
 ActionDefinition:
 	S_Action | ActionFakeDefinition | S_Definition | TypeDefinition;
@@ -316,13 +308,12 @@ VarFakeDefinition:
 	'**var*' name=Valid_ID;
 
 EquationFakeDefinition:
-	'**equation*' name=Valid_ID
-;
+	'**equation*' name=Valid_ID;
+
 Valid_ID:
-	_SpeciesKey | _DoKey | _ReflexKey | _VarOrConstKey  | _1Expr_Facets_BlockOrEnd_Key | _EquationsKey | ID;
+	_SpeciesKey | _DoKey | _ReflexKey | _VarOrConstKey | _1Expr_Facets_BlockOrEnd_Key | _EquationsKey | ID;
 
-
-/**
+	/**
  * Terminals
  */
 TerminalExpression:

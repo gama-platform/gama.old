@@ -24,24 +24,111 @@ import msi.gama.kernel.experiment.IExperiment;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
+import msi.gama.precompiler.GamlAnnotations.getter;
+import msi.gama.precompiler.GamlAnnotations.setter;
+import msi.gama.precompiler.GamlAnnotations.var;
+import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.skills.ISkill;
 import msi.gaml.species.ISpecies;
+import msi.gaml.types.IType;
 
 /**
- * Written by drogoul Modified on 24 oct. 2010
+ * Written by drogoul on Apr. 07, Modified on 24 oct. 2010, 05 Apr. 2013
  * 
  * @todo Description
  * 
  */
-public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, IStepable
-/* IContainer<Object, Object> */{
+@vars({ @var(name = IKeyword.NAME, type = IType.STRING),
+	@var(name = IKeyword.MEMBERS, type = IType.LIST),
+	@var(name = IKeyword.PEERS, type = IType.LIST),
+	@var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT),
+	@var(name = IKeyword.HOST, type = IType.AGENT),
+	@var(name = IKeyword.LOCATION, type = IType.POINT, depends_on = IKeyword.SHAPE),
+	@var(name = IKeyword.SHAPE, type = IType.GEOMETRY) })
+public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, IStepable {
 
-	// public abstract IScheduler getScheduler();
+	/**
+	 * Returns all the agents which consider this agent as direct host.
+	 * 
+	 * @return
+	 */
+	@getter(IKeyword.MEMBERS)
+	public abstract IList<IAgent> getMembers();
+
+	/**
+	 * Returns the topology which manages this agent.
+	 * 
+	 * @return
+	 */
+	// @getter(IKeyword.TOPOLOGY)
+	public abstract ITopology getTopology();
+
+	@setter(IKeyword.MEMBERS)
+	public abstract void setMembers(IList<IAgent> members);
+
+	@setter(IKeyword.AGENTS)
+	public abstract void setAgents(IList<IAgent> agents);
+
+	/**
+	 * Returns all the agents which consider this agent as direct or in-direct host.
+	 * 
+	 * @return
+	 */
+	@getter(IKeyword.AGENTS)
+	public abstract IList<IAgent> getAgents();
+
+	@setter(IKeyword.PEERS)
+	public abstract void setPeers(IList<IAgent> peers);
+
+	/**
+	 * Returns agents having the same species and sharing the same direct host with this agent.
+	 * 
+	 * @return
+	 */
+	@getter(IKeyword.PEERS)
+	public abstract IList<IAgent> getPeers() throws GamaRuntimeException;
+
+	@Override
+	@getter(IKeyword.NAME)
+	public abstract String getName();
+
+	@Override
+	@setter(IKeyword.NAME)
+	public abstract void setName(String name);
+
+	@Override
+	@getter(value = IKeyword.LOCATION, initializer = true)
+	public ILocation getLocation();
+
+	@Override
+	@setter(IKeyword.LOCATION)
+	public void setLocation(final ILocation l);
+
+	@Override
+	@getter(IKeyword.SHAPE)
+	public IShape getGeometry();
+
+	@Override
+	@setter(IKeyword.SHAPE)
+	public void setGeometry(final IShape newGeometry);
+
+	public abstract boolean dead();
+
+	/**
+	 * Returns the agent which hosts the population of this agent.
+	 * 
+	 * @return
+	 */
+	@getter(IKeyword.HOST)
+	public abstract IAgent getHost();
+
+	@setter(IKeyword.HOST)
+	public abstract void setHost(final IAgent macroAgent);
 
 	@Override
 	public abstract void dispose();
@@ -73,8 +160,6 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 
 	public abstract boolean isInstanceOf(final ISpecies s, boolean direct);
 
-	public abstract boolean dead();
-
 	public void setHeading(Integer heading);
 
 	public Integer getHeading();
@@ -87,16 +172,7 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 
 	public void setDirectVarValue(IScope scope, String s, Object v) throws GamaRuntimeException;
 
-	// public abstract ISimulation getSimulation();
-
 	public abstract boolean contains(IAgent component);
-
-	/**
-	 * Returns the topology which manages this agent.
-	 * 
-	 * @return
-	 */
-	public abstract ITopology getTopology();
 
 	/**
 	 * @throws GamaRuntimeException
@@ -111,8 +187,7 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	 * @param microSpecies
 	 * @return
 	 */
-	public abstract IPopulation getPopulationFor(final ISpecies microSpecies)
-		throws GamaRuntimeException;
+	public abstract IPopulation getPopulationFor(final ISpecies microSpecies);
 
 	/**
 	 * @throws GamaRuntimeException
@@ -127,16 +202,14 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	 * @param speciesName the name of the species
 	 * @return
 	 */
-	public abstract IPopulation getPopulationFor(final String speciesName)
-		throws GamaRuntimeException;
+	public abstract IPopulation getPopulationFor(final String speciesName);
 
 	/**
 	 * Initialize Populations to manage micro-agents.
 	 */
-	public abstract void initializeMicroPopulations(IScope scope) throws GamaRuntimeException;
+	public abstract void initializeMicroPopulations(IScope scope);
 
-	public abstract void initializeMicroPopulation(IScope scope, String name)
-		throws GamaRuntimeException;
+	public abstract void initializeMicroPopulation(IScope scope, String name);
 
 	/**
 	 * Returns a list of populations of (direct) micro-species.
@@ -161,36 +234,6 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	 */
 	public abstract IPopulation getMicroPopulation(ISpecies microSpecies);
 
-	public abstract void setMembers(IList<IAgent> members);
-
-	/**
-	 * Returns all the agents which consider this agent as direct host.
-	 * 
-	 * @return
-	 */
-	public abstract IList<IAgent> getMembers();
-
-	public abstract void setAgents(IList<IAgent> agents);
-
-	/**
-	 * Returns all the agents which consider this agent as direct or in-direct host.
-	 * 
-	 * @return
-	 */
-	public abstract IList<IAgent> getAgents();
-
-	public abstract void setPeers(IList<IAgent> peers);
-
-	/**
-	 * @throws GamaRuntimeException
-	 *             Returns agents having the same species and sharing the same direct macro-agent
-	 *             with this
-	 *             agent.
-	 * 
-	 * @return
-	 */
-	public abstract IList<IAgent> getPeers() throws GamaRuntimeException;
-
 	/**
 	 * Verifies if this agent contains micro-agents or not.
 	 * 
@@ -198,15 +241,6 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	 *         false otherwise
 	 */
 	public abstract boolean hasMembers();
-
-	/**
-	 * Returns the agent which hosts the population of this agent.
-	 * 
-	 * @return
-	 */
-	public abstract IAgent getHost();
-
-	public abstract void setHost(final IAgent hostAgent);
 
 	public abstract List<IAgent> getMacroAgents();
 
@@ -300,12 +334,11 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 
 	/**
 	 * Tells this agent that the host has changed its shape.
-	 * This agent will then ask the topology to add its to the new ISpatialIndex.
+	 * This agent will then ask the topology to add its shape to the new ISpatialIndex.
 	 */
 	public abstract void hostChangesShape();
 
-	public abstract void computeAgentsToSchedule(final IScope scope, final IList<IAgent> list)
-		throws GamaRuntimeException;
+	public abstract void computeAgentsToSchedule(final IScope scope, final IList<IAgent> list);
 
 	public ISimulation getSimulation();
 

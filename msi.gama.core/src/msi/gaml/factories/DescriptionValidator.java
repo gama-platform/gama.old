@@ -41,42 +41,48 @@ public class DescriptionValidator {
 			return;
 		}
 		// The facet is supposed to be a type (IType.TYPE_ID)
-		List<String> types = fmd.types;
-		if ( types.contains(IType.TYPE_ID) ) {
-			verifyFacetIsAType(desc, facet, expr, tm);
-			return;
+		for ( int s : fmd.types ) {
+			if ( s == IType.TYPE_ID ) {
+				verifyFacetIsAType(desc, facet, expr, tm);
+				return;
+			}
 		}
 
 		if ( !fmd.isLabel ) {
-			verifyFacetTypeIsCompatible(desc, facet, expr, types, tm);
+			verifyFacetTypeIsCompatible(desc, facet, expr, fmd.types, tm);
 		}
 	}
 
 	public static void verifyFacetTypeIsCompatible(final IDescription desc, final String facet,
-		final IExpression expr, final List<String> types, final TypesManager tm) {
+		final IExpression expr, final int[] types, final TypesManager tm) {
 		boolean compatible = false;
 		IType actualType = expr.getType();
-
-		for ( String type : types ) {
+		for ( int type : types ) {
 			compatible = compatible || actualType.isTranslatableInto(tm.get(type));
 			if ( compatible ) {
 				break;
 			}
 		}
 		if ( !compatible ) {
-			desc.warning("Facet '" + facet + "' is expecting " + types + " instead of " +
-				actualType, IGamlIssue.SHOULD_CAST, facet, types.get(0));
+			String[] strings = new String[types.length];
+			for ( int i = 0; i < types.length; i++ ) {
+				strings[i] = tm.get(types[i]).toString();
+			}
+			desc.warning("Facet '" + facet + "' is expecting " + Arrays.toString(strings) +
+				" instead of " + actualType, IGamlIssue.SHOULD_CAST, facet, tm.get(types[0])
+				.toString());
 		}
 
 	}
 
 	public static void verifyFacetIsAType(final IDescription desc, final String facet,
 		final IExpression expr, final TypesManager tm) {
-		String type = expr.literalValue();
-		if ( tm.get(type) == Types.NO_TYPE && !IType.NONE_STR.equals(type) &&
-			!IKeyword.SIGNAL.equals(type) ) {
+		String tt = expr.literalValue();
+		IType type = tm.get(tt);
+		if ( type == Types.NO_TYPE && !UNKNOWN.equals(type.toString()) &&
+			!IKeyword.SIGNAL.equals(type.toString()) ) {
 			desc.error("Facet '" + facet + "' is expecting a type name. " + type +
-				" is not a type name", IGamlIssue.NOT_A_TYPE, facet, type);
+				" is not a type name", IGamlIssue.NOT_A_TYPE, facet, tt);
 		}
 	}
 
@@ -174,12 +180,13 @@ public class DescriptionValidator {
 		IExpression item = f.getExpr(ITEM, f.getExpr(EDGE, f.getExpr(VERTEX)));
 		IExpression list = f.getExpr(TO, f.getExpr(FROM, f.getExpr(IN)));
 		IExpression index = f.getExpr(AT);
-		if ( item == null || list == null ) {
-			cd.error("The assignment appears uncomplete", IGamlIssue.GENERAL, IKeyword.ITEM,
-				(String[]) null);
+		IExpression whole = f.getExpr(ALL);
+		String keyword = cd.getKeyword();
+		boolean all = whole == null ? false : !whole.literalValue().equals(FALSE);
+		if ( item == null && !all && !keyword.equals(REMOVE) || list == null ) {
+			cd.error("The assignment appears uncomplete", IGamlIssue.GENERAL);
 			return;
 		}
-		String keyword = cd.getKeyword();
 		if ( keyword.equals(ADD) || keyword.equals(REMOVE) ) {
 			IType containerType = list.getType();
 			if ( containerType.isFixedLength() ) {
@@ -188,13 +195,27 @@ public class DescriptionValidator {
 			}
 		}
 		IType contentType = list.getContentType();
-		IType valueType = item.getType();
-		IType keyType = list.getKeyType();
+		IType valueType = Types.NO_TYPE;
+		if ( item == null ) {
+			if ( whole != null && !whole.literalValue().equals(TRUE) ) {
+				valueType = whole.getContentType();
+			} else {
+				valueType = contentType;
+			}
+		} else {
+			if ( all && item.getType().isTranslatableInto(Types.get(IType.CONTAINER)) ) {
+				valueType = item.getContentType();
+			} else {
+				valueType = item.getType();
+			}
+		}
+
 		if ( contentType != Types.NO_TYPE && !valueType.isTranslatableInto(contentType) ) {
 			cd.warning("The type of the contents of " + list.toGaml() + " (" + contentType +
-				") does not match with the type of " + item.toGaml() + " (" + valueType + ")",
-				IGamlIssue.SHOULD_CAST, IKeyword.ITEM, contentType.toString());
+				") does not match with " + valueType, IGamlIssue.SHOULD_CAST, item == null
+				? IKeyword.ALL : IKeyword.ITEM, contentType.toString());
 		}
+		IType keyType = list.getKeyType();
 		if ( index != null && keyType != Types.NO_TYPE &&
 			!keyType.isTranslatableInto(index.getType()) ) {
 			cd.warning("The type of the index of " + list.toGaml() + " (" + keyType +

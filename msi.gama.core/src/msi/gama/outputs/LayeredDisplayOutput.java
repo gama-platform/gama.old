@@ -49,16 +49,16 @@ import com.vividsolutions.jts.geom.Envelope;
 // FIXME: Why this is not define in gaml/statement
 @symbol(name = { IKeyword.DISPLAY }, kind = ISymbolKind.OUTPUT, with_sequence = true)
 @facets(value = {
-	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR_STR, optional = true),
+	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { LayeredDisplayOutput.JAVA2D,
 		LayeredDisplayOutput.OPENGL }, optional = true),
-	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT_STR, optional = true),
-	@facet(name = IKeyword.TESSELATION, type = IType.BOOL_STR, optional = true),
-	@facet(name = IKeyword.AMBIANT_LIGHT, type = IType.FLOAT_STR, optional = true),
-	@facet(name = IKeyword.POLYGONMODE, type = IType.BOOL_STR, optional = true),
-	@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL_STR, IType.POINT_STR }, optional = true),
-	@facet(name = IKeyword.OUTPUT3D, type = { IType.BOOL_STR, IType.POINT_STR }, optional = true)}, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
+	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.AMBIANT_LIGHT, type = IType.FLOAT, optional = true),
+	@facet(name = IKeyword.POLYGONMODE, type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL, IType.POINT }, optional = true),
+	@facet(name = IKeyword.OUTPUT3D, type = { IType.BOOL, IType.POINT }, optional = true)}, omissible = IKeyword.NAME)
 @inside(symbols = IKeyword.OUTPUT)
 public class LayeredDisplayOutput extends AbstractDisplayOutput {
 

@@ -87,17 +87,17 @@ import msi.gaml.types.*;
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.NEW_VAR_ID, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
-	@facet(name = IKeyword.VALUE, type = IType.FLOAT_STR, optional = false),
+	@facet(name = IKeyword.VALUE, type = IType.FLOAT, optional = false),
 	@facet(name = IKeyword.UPDATE, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.FUNCTION, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.ENVIRONMENT, type = IType.SPECIES_STR, optional = false),
-	@facet(name = IKeyword.DECAY, type = IType.FLOAT_STR, optional = false),
+	@facet(name = IKeyword.ENVIRONMENT, type = IType.SPECIES, optional = false),
+	@facet(name = IKeyword.DECAY, type = IType.FLOAT, optional = false),
 	@facet(name = IKeyword.PROPAGATION, type = IType.LABEL, values = { IKeyword.DIFFUSION,
 		IKeyword.GRADIENT }, optional = true),
-	@facet(name = IKeyword.PROPORTION, type = IType.FLOAT_STR, optional = true),
-	@facet(name = IKeyword.VARIATION, type = IType.FLOAT_STR, optional = true),
-	@facet(name = IKeyword.RANGE, type = IType.FLOAT_STR, optional = true),
-	@facet(name = IKeyword.AMONG, type = IType.LIST_STR, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.PROPORTION, type = IType.FLOAT, optional = true),
+	@facet(name = IKeyword.VARIATION, type = IType.FLOAT, optional = true),
+	@facet(name = IKeyword.RANGE, type = IType.FLOAT, optional = true),
+	@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true) }, omissible = IKeyword.NAME)
 @symbol(name = IKeyword.SIGNAL, kind = ISymbolKind.Variable.SIGNAL, with_sequence = false)
 @inside(kinds = { ISymbolKind.SPECIES })
 public class SignalVariable extends NumberVariable {

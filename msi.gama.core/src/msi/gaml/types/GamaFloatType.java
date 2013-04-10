@@ -18,6 +18,8 @@
  */
 package msi.gaml.types;
 
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
@@ -30,7 +32,7 @@ import msi.gaml.descriptions.IDescription;
  * @todo Description
  * 
  */
-@type(name = IType.FLOAT_STR, id = IType.FLOAT, wraps = { Double.class, double.class }, kind = ISymbolKind.Variable.NUMBER)
+@type(name = IKeyword.FLOAT, id = IType.FLOAT, wraps = { Double.class, double.class }, kind = ISymbolKind.Variable.NUMBER)
 public class GamaFloatType extends GamaType<Double> {
 
 	@Override
@@ -50,6 +52,7 @@ public class GamaFloatType extends GamaType<Double> {
 			}
 		}
 		if ( obj instanceof Boolean ) { return (Boolean) obj ? 1d : 0d; }
+		if ( obj instanceof GamaShape ) { return ((GamaShape) obj).getArea(); }
 		return 0d;
 	}
 
@@ -67,5 +70,10 @@ public class GamaFloatType extends GamaType<Double> {
 	public IType coerce(final IType type, final IDescription context) {
 		if ( type == this ) { return null; }
 		return this;
+	}
+
+	@Override
+	public IType findCommonSupertypeWith(IType type) {
+		return type == this ? this : type.id() == IType.INT ? this : Types.NO_TYPE;
 	}
 }

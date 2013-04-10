@@ -19,6 +19,7 @@
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//Statement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Statement/key"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Statement/firstFacet"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Statement/expr"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Statement/facets"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Statement/block"/>

@@ -1,6 +1,7 @@
-package msi.gama.metamodel.agent;
+package msi.gama.util.graph;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.var;
@@ -12,11 +13,11 @@ import msi.gaml.types.*;
 // FIXME: Add all the necessary variables and actions ?
 // FIXME:
 @species(name = "graph_edge")
-@vars({ @var(name = IKeyword.SOURCE, type = IType.AGENT_STR),
-	@var(name = IKeyword.TARGET, type = IType.AGENT_STR) })
-public class AbstractGraphEdge extends GamlAgent {
+@vars({ @var(name = IKeyword.SOURCE, type = IType.AGENT),
+	@var(name = IKeyword.TARGET, type = IType.AGENT) })
+public class AbstractGraphEdgeAgent extends GamlAgent {
 
-	public AbstractGraphEdge(final IPopulation s) throws GamaRuntimeException {
+	public AbstractGraphEdgeAgent(final IPopulation s) throws GamaRuntimeException {
 		super(s);
 	}
 

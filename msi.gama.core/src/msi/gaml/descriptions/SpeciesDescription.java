@@ -20,7 +20,8 @@ package msi.gaml.descriptions;
 
 import java.lang.reflect.Modifier;
 import java.util.*;
-import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -31,7 +32,6 @@ import msi.gaml.compilation.*;
 import msi.gaml.factories.*;
 import msi.gaml.skills.*;
 import msi.gaml.statements.Facets;
-import msi.gaml.types.IType;
 import org.eclipse.emf.ecore.EObject;
 
 public class SpeciesDescription extends TypeDescription {
@@ -400,7 +400,13 @@ public class SpeciesDescription extends TypeDescription {
 
 	public void verifyAndSetParent() {
 		String parentName = getParentName();
-		if ( parentName == null ) { return; }
+		if ( parentName == null ) {
+			if ( !getName().equals(IKeyword.AGENT) ) {
+				parentName = IKeyword.AGENT;
+			} else {
+				return;
+			}
+		}
 		parent = verifyParent(parentName);
 	}
 
@@ -424,7 +430,32 @@ public class SpeciesDescription extends TypeDescription {
 
 	@Override
 	public String getTitle() {
-		return "Species <b>" + getName() + "</a></link></b>";
+		return "species " + getName();
+	}
+
+	@Override
+	public String getDocumentation() {
+		String parentName = getParent() == null ? "nil" : getParent().getName();
+		String hostName = getMacroSpecies() == null ? null : getMacroSpecies().getName();
+		String result = "<b>Subspecies of: </b>" + parentName + "<br>";
+		if ( hostName != null ) {
+			result += "<b>Microspecies of:</b>" + hostName + "<br>";
+		}
+		result += "<b>Skills:</b> " + getSkillsNames() + "<br>";
+		result += "<b>Attributes:</b> " + getVarNames() + "<br>";
+		result += "<b>Actions: </b>" + getActionNames() + "<br>";
+		return result;
+	}
+
+	public Set<String> getSkillsNames() {
+		Set<String> names = new LinkedHashSet();
+		for ( ISkill skill : skills.values() ) {
+			names.add(AbstractGamlAdditions.getSkillNameFor(skill.getClass()));
+		}
+		if ( getParent() != null ) {
+			names.addAll(getParent().getSkillsNames());
+		}
+		return names;
 	}
 
 	/**
@@ -584,6 +615,7 @@ public class SpeciesDescription extends TypeDescription {
 	 * Finalizes the species description
 	 * + Copy the behaviors, attributes from parent;
 	 * + Creates the control if necessary.
+	 * Add a variable representing the population of each micro-species
 	 * 
 	 * @throws GamlException
 	 */
@@ -597,13 +629,25 @@ public class SpeciesDescription extends TypeDescription {
 		buildSharedSkills();
 		// recursively finalize the sorted micro-species
 		for ( final SpeciesDescription microSpec : sortedMicroSpecies() ) {
+			microSpec.finalizeDescription();
 			if ( !microSpec.isExperiment() ) {
 				VariableDescription var =
-					(VariableDescription) DescriptionFactory.create(IType.CONTAINER_STR, this,
-						NAME, microSpec.getName()); // CONST = TRUE ?
+					(VariableDescription) DescriptionFactory.create(IKeyword.CONTAINER, this, NAME,
+						microSpec.getName()); // CONST = TRUE ?
 				var.setContentType(microSpec.getType());
-				var.getFacets().put(DEPENDS_ON,
-					new StringListExpressionDescription(SHAPE, LOCATION));
+				// We compute the dependencies of micro species with respect to the variables
+				// defined in the macro species.
+				IExpressionDescription exp = microSpec.getFacets().get(DEPENDS_ON);
+				Set<String> dependencies =
+					exp == null ? new LinkedHashSet() : exp.getStrings(this, false);
+				for ( VariableDescription v : microSpec.getVariables().values() ) {
+					dependencies.addAll(v.getExtraDependencies());
+				}
+				dependencies.add(SHAPE);
+				dependencies.add(LOCATION);
+				var.getFacets().put(DEPENDS_ON, new StringListExpressionDescription(dependencies));
+				GuiUtils.debug("The population of " + microSpec.getName() + " depends on: " +
+					dependencies + " in " + getName());
 				IVarGetter get = new VarGetter(null) {
 
 					@Override
@@ -632,7 +676,6 @@ public class SpeciesDescription extends TypeDescription {
 				var.addHelpers(get, init, set);
 				addChild(var);
 			}
-			microSpec.finalizeDescription();
 		}
 		sortVars();
 	}

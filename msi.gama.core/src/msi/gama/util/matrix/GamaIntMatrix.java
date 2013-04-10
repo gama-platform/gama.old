@@ -111,16 +111,16 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		}
 	}
 
-	//
-	// @Override
-	// public void _clear() {
-	// Arrays.fill(matrix, 0);
-	// }
+	@Override
+	public void _clear() {
+		Arrays.fill(matrix, 0);
+	}
 
 	@Override
-	protected void _putAll(IScope scope, final Integer o, final Object param)
+	protected void _putAll(IScope scope, final Object o, final Object param)
 		throws GamaRuntimeException {
-		fillWith(o);
+		// TODO Verify type
+		fillWith((Integer) o);
 	}
 
 	@Override
@@ -148,45 +148,45 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		return matrix.length;
 	}
 
-	@Override
-	public Integer _max(final IScope scope) {
-		Integer max = Integer.MIN_VALUE;
-		for ( int i = 0; i < matrix.length; i++ ) {
-			if ( matrix[i] > max ) {
-				max = Integer.valueOf(matrix[i]);
-			}
-		}
-		return max;
-	}
-
-	@Override
-	public Integer _min(final IScope scope) {
-		Integer min = Integer.MAX_VALUE;
-		for ( int i = 0; i < matrix.length; i++ ) {
-			if ( matrix[i] < min ) {
-				min = Integer.valueOf(matrix[i]);
-			}
-		}
-		return min;
-	}
-
-	@Override
-	public Double _product(final IScope scope) {
-		double result = 1.0;
-		for ( int i = 0, n = matrix.length; i < n; i++ ) {
-			result *= matrix[i];
-		}
-		return result;
-	}
-
-	@Override
-	public Integer _sum(final IScope scope) {
-		int result = 0;
-		for ( int i = 0, n = matrix.length; i < n; i++ ) {
-			result += matrix[i];
-		}
-		return result;
-	}
+	// @Override
+	// public Integer _max(final IScope scope) {
+	// Integer max = Integer.MIN_VALUE;
+	// for ( int i = 0; i < matrix.length; i++ ) {
+	// if ( matrix[i] > max ) {
+	// max = Integer.valueOf(matrix[i]);
+	// }
+	// }
+	// return max;
+	// }
+	//
+	// @Override
+	// public Integer _min(final IScope scope) {
+	// Integer min = Integer.MAX_VALUE;
+	// for ( int i = 0; i < matrix.length; i++ ) {
+	// if ( matrix[i] < min ) {
+	// min = Integer.valueOf(matrix[i]);
+	// }
+	// }
+	// return min;
+	// }
+	//
+	// @Override
+	// public Double _product(final IScope scope) {
+	// double result = 1.0;
+	// for ( int i = 0, n = matrix.length; i < n; i++ ) {
+	// result *= matrix[i];
+	// }
+	// return result;
+	// }
+	//
+	// @Override
+	// public Integer _sum(final IScope scope) {
+	// int result = 0;
+	// for ( int i = 0, n = matrix.length; i < n; i++ ) {
+	// result += matrix[i];
+	// }
+	// return result;
+	// }
 
 	@Override
 	public boolean _isEmpty(IScope scope) {

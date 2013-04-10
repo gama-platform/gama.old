@@ -43,11 +43,11 @@ import msi.gaml.types.*;
 @inside(symbols = IKeyword.USER_COMMAND)
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
-	@facet(name = IKeyword.INIT, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.MIN, type = IType.FLOAT_STR, optional = true),
-	@facet(name = IKeyword.MAX, type = IType.FLOAT_STR, optional = true),
+	@facet(name = IKeyword.INIT, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.MIN, type = IType.FLOAT, optional = true),
+	@facet(name = IKeyword.MAX, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = false),
-	@facet(name = IKeyword.AMONG, type = IType.LIST_STR, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true) }, omissible = IKeyword.NAME)
 public class UserInputStatement extends AbstractPlaceHolderStatement implements IParameter {
 
 	int order;

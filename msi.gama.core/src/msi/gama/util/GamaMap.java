@@ -27,15 +27,21 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.*;
+import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
 /**
  * The Class GamaMap.
  */
-@vars({ @var(name = GamaMap.KEYS, type = IType.LIST_STR, of = ITypeProvider.INDEX_TYPE),
-	@var(name = GamaMap.VALUES, type = IType.LIST_STR, of = ITypeProvider.CONTENT_TYPE),
-	@var(name = GamaMap.PAIRS, type = IType.LIST_STR, of = IType.PAIR_STR) })
-public class GamaMap extends LinkedHashMap implements IContainer {
+@vars({ @var(name = GamaMap.KEYS, type = IType.LIST, of = ITypeProvider.FIRST_KEY_TYPE),
+	@var(name = GamaMap.VALUES, type = IType.LIST, of = ITypeProvider.FIRST_CONTENT_TYPE),
+	@var(name = GamaMap.PAIRS, type = IType.LIST, of = IType.PAIR) })
+public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, V> {
+
+	@Override
+	public Set<Map.Entry<K, V>> entrySet() {
+		return super.entrySet();
+	}
 
 	public static final String KEYS = "keys";
 	public static final String VALUES = "values";
@@ -65,11 +71,8 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	}
 
 	@Override
-	public GamaList<GamaPair> listValue(final IScope scope) {
-		GamaList list = new GamaList();
-		for ( Object key : keySet() ) {
-			list.add(new GamaPair(key, this.get(key)));
-		}
+	public GamaList<V> listValue(final IScope scope) {
+		GamaList<V> list = new GamaList(values());
 		return list;
 	}
 
@@ -91,7 +94,7 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	@Override
 	public String stringValue(IScope scope) {
 		toStringProcedure.string = "";
-		for ( Map.Entry<Object, Object> entry : entrySet() ) {
+		for ( Map.Entry<K, V> entry : entrySet() ) {
 			toStringProcedure.execute(entry.getKey(), entry.getValue());
 		}
 		return toStringProcedure.string;
@@ -118,61 +121,78 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	// @doc(special_cases =
 	// "if it is a map, at returns the value corresponding the right operand as key. If the right operand is not a key of the map, at returns nil")
 
-	public void add(final GamaPair v) {
-		put(v.first(), v.last());
+	public void add(final GamaPair<K, V> v) {
+		put(v.getKey(), v.getValue());
 	}
 
 	@Override
-	public Object any(final IScope scope) {
+	public V any(final IScope scope) {
 		if ( isEmpty() ) { return null; }
-		Object[] array = values().toArray();
+		V[] array = (V[]) values().toArray();
 		int i = GAMA.getRandom().between(0, array.length - 1);
 		return array[i];
 	}
 
 	@Override
-	public void add(IScope scope, final Object value, final Object param) {
-		// TODO Exception if value not GamaPair !
-		add(scope, null, value, param);
-	}
-
-	@Override
-	public void add(IScope scope, final Object index, final Object value, final Object param) {
-		if ( index == null && value instanceof GamaPair ) {
-			add((GamaPair) value);
+	public void add(IScope scope, final K index, final Object value, final Object param,
+		boolean all, boolean add) {
+		if ( index == null ) {
+			if ( all ) {
+				if ( value instanceof GamaMap ) {
+					putAll((GamaMap) value);
+				} else if ( value instanceof IContainer ) {
+					for ( Object o : (IContainer) value ) {
+						add(scope, null, o, null, false, false);
+					}
+				} else {
+					for ( Map.Entry e : entrySet() ) {
+						e.setValue(value);
+					}
+				}
+			} else {
+				if ( value instanceof GamaPair ) {
+					GamaPair<K, V> p = (GamaPair) value;
+					// TODO Check type with class cast exception ?
+					put(p.getKey(), p.getValue());
+				} else if ( value instanceof GamaMap ) {
+					putAll((GamaMap) value);
+				} else {
+					GamaPair<K, V> p = Cast.asPair(scope, value);
+					put(p.getKey(), p.getValue());
+				}
+			}
 		} else {
-			put(index, value);
+			// TODO Check type with class cast exception ?
+			put(index, (V) value);
 		}
 	}
 
 	@Override
-	public boolean removeFirst(IScope scope, final Object value) throws GamaRuntimeException {
-		return remove(value) != null;
-	}
-
-	@Override
-	public boolean removeAll(IScope scope, final IContainer list) throws GamaRuntimeException {
-		for ( Object value : list ) {
-			removeFirst(scope, value);
+	public void remove(IScope scope, Object index, Object value, boolean all) {
+		if ( index == null ) {
+			if ( all ) {
+				if ( value instanceof IContainer ) {
+					for ( Object obj : (IContainer) value ) {
+						remove(scope, null, obj, true);
+					}
+				} else if ( value != null ) {
+					remove(value);
+				} else {
+					clear();
+				}
+			} else {
+				remove(value);
+			}
+		} else {
+			remove(index);
 		}
-		return true;
 	}
 
 	@Override
-	public Object removeAt(IScope scope, final Object index) {
-		return remove(index);
-	}
-
-	@Override
-	public void put(IScope scope, final Object index, final Object value, final Object param) {
-		put(index, value);
-	}
-
-	@Override
-	public Object first(final IScope scope) {
-		Iterator<Map.Entry<Object, Object>> it = entrySet().iterator();
-		Map.Entry entry = it.hasNext() ? it.next() : null;
-		return entry == null ? null : new GamaPair(entry.getKey(), entry.getValue());
+	public V first(final IScope scope) {
+		Iterator<Map.Entry<K, V>> it = entrySet().iterator();
+		Map.Entry<K, V> entry = it.hasNext() ? it.next() : null;
+		return entry == null ? null : entry.getValue();
 	}
 
 	public GamaPair getAtIndex(Integer index) {
@@ -184,52 +204,47 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	}
 
 	@Override
-	public Object last(final IScope scope) {
+	public V last(final IScope scope) {
 		if ( size() == 0 ) { return null; }
-		List<Map.Entry<Object, Object>> list = new GamaList(entrySet());
-		Map.Entry entry = list.get(list.size() - 1);
-		return entry == null ? null : new GamaPair(entry.getKey(), entry.getValue());
+		List<Map.Entry<K, V>> list = new GamaList(entrySet());
+		Map.Entry<K, V> entry = list.get(list.size() - 1);
+		return entry == null ? null : entry.getValue();
 	}
 
-	@Override
-	public void putAll(IScope scope, final Object value, final Object param) {
-		for ( Map.Entry e : entrySet() ) {
-			e.setValue(value);
-		}
-	}
-
-	@Override
-	public Object sum(final IScope scope) throws GamaRuntimeException {
-		GamaList l = new GamaList(values());
-		return l.sum(scope);
-	}
-
-	@Override
-	public Object product(final IScope scope) throws GamaRuntimeException {
-		GamaList l = new GamaList(values());
-		return l.product(scope);
-	}
+	//
+	// @Override
+	// public Object sum(final IScope scope) throws GamaRuntimeException {
+	// GamaList l = new GamaList(values());
+	// return l.sum(scope);
+	// }
+	//
+	// @Override
+	// public Object product(final IScope scope) throws GamaRuntimeException {
+	// GamaList l = new GamaList(values());
+	// return l.product(scope);
+	// }
 
 	@Override
 	public int length(final IScope scope) {
 		return size();
 	}
 
-	@Override
-	public Object max(final IScope scope) throws GamaRuntimeException {
-		GamaList l = new GamaList(values());
-		return l.max(scope);
-	}
-
-	@Override
-	public Object min(final IScope scope) throws GamaRuntimeException {
-		GamaList l = new GamaList(values());
-		return l.min(scope);
-	}
+	//
+	// @Override
+	// public V max(final IScope scope) throws GamaRuntimeException {
+	// GamaList<V> l = new GamaList(values());
+	// return l.max(scope);
+	// }
+	//
+	// @Override
+	// public V min(final IScope scope) throws GamaRuntimeException {
+	// GamaList<V> l = new GamaList(values());
+	// return l.min(scope);
+	// }
 
 	@Override
 	public boolean contains(final IScope scope, final Object o) {
-		return containsKey(o);
+		return containsKey(o) || containsValue(o);
 	}
 
 	private static class ToReverseProcedure {
@@ -288,30 +303,31 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	@Override
 	public IContainer reverse(final IScope scope) {
 		toReverseProcedure.init(size());
-		for ( Map.Entry<Object, Object> entry : entrySet() ) {
+		for ( Map.Entry<K, V> entry : entrySet() ) {
 			toReverseProcedure.execute(entry.getKey(), entry.getValue());
 		}
 		return toReverseProcedure.map;
 	}
 
-	@Override
-	public Set<Map.Entry<Object, Object>> entrySet() {
-		return super.entrySet();
-	}
-
 	@getter("keys")
-	public GamaList getKeys() {
+	public GamaList<K> getKeys() {
 		return new GamaList(keySet());
 	}
 
 	@getter("values")
-	public GamaList getValues() {
+	public GamaList<V> getValues() {
 		return new GamaList(values());
 	}
 
 	@getter("pairs")
-	public GamaList<GamaPair> getPairs() {
-		return listValue(null);
+	public IList getPairs() {
+		// FIXME: in the future, this method will be directly operating upon the entry set (so as to
+		// avoir duplications). See GamaPair
+		GamaPairList pairs = new GamaPairList();
+		for ( Map.Entry<K, V> entry : entrySet() ) {
+			pairs.add(new GamaPair(entry));
+		}
+		return pairs;
 	}
 
 	@Override
@@ -323,26 +339,6 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#checkIndex(java.lang.Object)
-	 */
-	// @Override
-	// public boolean checkIndex(final Object index) {
-	// return index != null;
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#checkValue(java.lang.Object)
-	 */
-	// @Override
-	// public boolean checkValue(final Object value) {
-	// return true;
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#checkBounds(java.lang.Object)
 	 */
 	@Override
@@ -350,23 +346,13 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#isFixedLength()
-	 */
-	// @Override
-	// public boolean isFixedLength() {
-	// return false;
-	// }
-
 	/**
-	 * Returns an iterator that iterates on the list of GamaPair
+	 * Returns an iterator that iterates on the list of VALUES (not GamaPairs anymore)
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
-	public Iterator iterator() {
-		return listValue(null).iterator();
+	public Iterator<V> iterator() {
+		return values().iterator();
 	}
 
 	/*
@@ -375,17 +361,6 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	 * @see msi.gama.interfaces.IGamaContainer#addAll(msi.gama.interfaces.IGamaContainer,
 	 * java.lang.Object)
 	 */
-	@Override
-	public void addAll(IScope scope, final IContainer value, final Object param)
-		throws GamaRuntimeException {
-		if ( value instanceof GamaMap ) {
-			putAll((GamaMap) value);
-		} else {
-			for ( Object o : value ) {
-				put(o, o);
-			}
-		}
-	}
 
 	/*
 	 * (non-Javadoc)
@@ -393,11 +368,6 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	 * @see msi.gama.interfaces.IGamaContainer#addAll(java.lang.Object,
 	 * msi.gama.interfaces.IGamaContainer, java.lang.Object)
 	 */
-	@Override
-	public void addAll(IScope scope, final Object index, final IContainer value, final Object param)
-		throws GamaRuntimeException {
-		addAll(scope, scope, value, null);
-	}
 
 	@Override
 	public Object get(final IScope scope, final Object index) throws GamaRuntimeException {
@@ -410,7 +380,7 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 	}
 
 	@Override
-	public Iterable<GamaPair> iterable(final IScope scope) {
+	public Iterable<V> iterable(final IScope scope) {
 		return listValue(scope);
 	}
 
@@ -421,6 +391,10 @@ public class GamaMap extends LinkedHashMap implements IContainer {
 		return get(scope, indices.get(0));
 		// We do not consider the case where multiple indices are used. Maybe could be used in the
 		// future to return a list of values ?
+	}
+
+	class GamaPairList extends GamaList<Map.Entry<K, V>> implements Set<Map.Entry<K, V>> {
+
 	}
 
 }

@@ -41,7 +41,7 @@ import msi.gaml.types.IType;
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT }, symbols = IKeyword.CHART)
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.JAVA, type = IType.ID, optional = false),
-	@facet(name = IKeyword.VIRTUAL, type = IType.BOOL_STR, optional = true),
+	@facet(name = IKeyword.VIRTUAL, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true) }, omissible = IKeyword.NAME)
 public class PrimitiveStatement extends ActionStatement {
 

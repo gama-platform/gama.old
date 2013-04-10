@@ -41,7 +41,7 @@ import msi.gaml.types.*;
 
 @symbol(name = IKeyword.ERROR, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
-@facets(value = { @facet(name = IKeyword.MESSAGE, type = IType.STRING_STR, optional = false) }, omissible = IKeyword.MESSAGE)
+@facets(value = { @facet(name = IKeyword.MESSAGE, type = IType.STRING, optional = false) }, omissible = IKeyword.MESSAGE)
 public class ErrorStatement extends AbstractStatement {
 
 	final IExpression message;

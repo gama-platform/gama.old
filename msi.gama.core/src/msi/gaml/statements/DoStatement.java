@@ -40,7 +40,7 @@ import msi.gaml.types.IType;
 @symbol(name = { IKeyword.DO, IKeyword.REPEAT }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = true, with_scope = false, with_args = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 @facets(value = { @facet(name = IKeyword.ACTION, type = IType.ID, optional = false),
-	@facet(name = IKeyword.WITH, type = IType.MAP_STR, optional = true),
+	@facet(name = IKeyword.WITH, type = IType.MAP, optional = true),
 	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true) }, omissible = IKeyword.ACTION)
 public class DoStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 

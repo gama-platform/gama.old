@@ -41,7 +41,7 @@ import msi.gaml.types.IType;
  */
 @symbol(name = IKeyword.MONITOR, kind = ISymbolKind.OUTPUT, with_sequence = false)
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
-	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT_STR, optional = true),
+	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.VALUE, type = IType.NONE_STR, optional = false) }, omissible = IKeyword.NAME)
 @inside(symbols = IKeyword.OUTPUT)
 public class MonitorOutput extends AbstractDisplayOutput {

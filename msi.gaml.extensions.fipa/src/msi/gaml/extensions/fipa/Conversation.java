@@ -35,11 +35,11 @@ import msi.gaml.types.IType;
  * protocol models are defined in the corresponding sub-classes.
  */
 
-@vars({ @var(name = Conversation.MESSAGES, type = IType.LIST_STR, of = MessageType.MESSAGE_STR),
-	@var(name = Conversation.PROTOCOL, type = IType.STRING_STR),
-	@var(name = Conversation.INITIATOR, type = IType.AGENT_STR),
-	@var(name = Conversation.PARTICIPANTS, type = IType.LIST_STR, of = IType.AGENT_STR),
-	@var(name = Conversation.ENDED, type = IType.BOOL_STR, init = "false") })
+@vars({ @var(name = Conversation.MESSAGES, type = IType.LIST, of = MessageType.MESSAGE_ID),
+	@var(name = Conversation.PROTOCOL, type = IType.STRING),
+	@var(name = Conversation.INITIATOR, type = IType.AGENT),
+	@var(name = Conversation.PARTICIPANTS, type = IType.LIST, of = IType.AGENT),
+	@var(name = Conversation.ENDED, type = IType.BOOL, init = "false") })
 public class Conversation extends GamaList<Message> {
 
 	/** The protocol. */

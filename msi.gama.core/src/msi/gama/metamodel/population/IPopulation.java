@@ -39,6 +39,30 @@ import msi.gaml.variables.IVariable;
  */
 public interface IPopulation extends Comparable<IPopulation>, IContainer<Integer, IAgent> {
 
+	public interface Listener {
+
+		public void notifyAgentRemoved(IPopulation pop, IAgent agent);
+
+		public void notifyAgentAdded(IPopulation pop, IAgent agent);
+
+		public void notifyAgentsAdded(IPopulation pop, Collection agents);
+
+		public void notifyAgentsRemoved(IPopulation pop, Collection agents);
+
+		public void notifyPopulationCleared(IPopulation pop);
+
+	}
+
+	public abstract void createVariablesFor(IScope scope, IAgent agent) throws GamaRuntimeException;
+
+	public abstract void updateVariablesFor(IScope scope, IAgent agent) throws GamaRuntimeException;
+
+	public abstract boolean hasVar(final String n);
+
+	public abstract void init(IScope scope) throws GamaRuntimeException;
+
+	public abstract void step(IScope scope) throws GamaRuntimeException;
+
 	public abstract void dispose();
 
 	public abstract IAgent getAgent(final ILocation value);
@@ -130,8 +154,8 @@ public interface IPopulation extends Comparable<IPopulation>, IContainer<Integer
 	 */
 	public abstract IAgent getAgent(Integer obj);
 
-	public void addListener(IPopulationListener listener);
+	public void addListener(IPopulation.Listener listener);
 
-	public void removeListener(IPopulationListener listener);
+	public void removeListener(IPopulation.Listener listener);
 
 }

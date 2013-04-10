@@ -18,8 +18,8 @@
  */
 package msi.gaml.types;
 
-import java.util.*;
-import msi.gama.metamodel.agent.AbstractAgent;
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
@@ -27,7 +27,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
 
-@type(name = IType.MAP_STR, id = IType.MAP, wraps = { GamaMap.class, Map.class, HashMap.class }, kind = ISymbolKind.Variable.CONTAINER)
+@type(name = IKeyword.MAP, id = IType.MAP, wraps = { GamaMap.class }, kind = ISymbolKind.Variable.CONTAINER)
 public class GamaMapType extends GamaContainerType<GamaMap> {
 
 	@Override
@@ -35,7 +35,7 @@ public class GamaMapType extends GamaContainerType<GamaMap> {
 		throws GamaRuntimeException {
 		if ( obj == null ) { return new GamaMap(); }
 		if ( obj instanceof ISpecies ) { return ((ISpecies) obj).mapValue(scope); }
-		if ( obj instanceof AbstractAgent ) { return ((AbstractAgent) obj).toMap(); }
+		if ( obj instanceof IAgent ) { return ((IAgent) obj).getAttributes(); }
 		if ( obj instanceof IContainer ) { return ((IContainer) obj).mapValue(scope); }
 		final GamaMap result = new GamaMap();
 		result.put(obj, obj);

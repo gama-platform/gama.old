@@ -546,7 +546,8 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	public GamaMap mapValue(final IScope scope) {
 		GamaMap m = new GamaMap();
 		for ( Object edge : edgeSet() ) {
-			m.add(scope, new GamaPair(getEdgeSource(edge), getEdgeTarget(edge)), edge, null);
+			m.add(scope, new GamaPair(getEdgeSource(edge), getEdgeTarget(edge)), edge, null, false,
+				false);
 		}
 		return m;
 	}
@@ -557,18 +558,24 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	}
 
 	@Override
-	public void add(IScope scope, final Object value, final Object param)
-		throws GamaRuntimeException {
-		add(scope, value, param);
-	}
-
-	@Override
-	public void add(IScope scope, final Object index, final Object value, final Object param)
-		throws GamaRuntimeException {
+	public void add(IScope scope, final Object index, final Object value, final Object param,
+		boolean all, boolean add) throws GamaRuntimeException {
 		double weight = param == null ? DEFAULT_EDGE_WEIGHT : Cast.asFloat(scope, param);
 		if ( index == null ) {
-			if ( value instanceof GamaPair ) {
-				Object v = addEdge(((GamaPair) value).first(), ((GamaPair) value).last());
+			if ( all ) {
+				if ( value instanceof GamaGraph ) {
+					for ( Object o : ((GamaGraph) value).edgeSet() ) {
+						addEdge(o);
+					}
+				} else if ( value instanceof IContainer ) {
+					for ( Object o : (IContainer) value ) {
+						this.add(scope, null, o, param, false, true);
+					}
+				} else { // value != container
+					// TODO Runtime exception
+				}
+			} else if ( value instanceof GamaPair ) {
+				Object v = addEdge(((GamaPair) value).getKey(), ((GamaPair) value).getValue());
 				setEdgeWeight(v, weight);
 			} else {
 				addVertex(value);
@@ -576,15 +583,10 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 			}
 		} else { // index != null
 			if ( index instanceof GamaPair ) {
-				addEdge(((GamaPair) index).first(), ((GamaPair) index).last(), value);
+				addEdge(((GamaPair) index).getKey(), ((GamaPair) index).getValue(), value);
 				setEdgeWeight(value, weight);
 			}
 		}
-	}
-
-	@Override
-	public void putAll(IScope scope, final Object value, final Object param) {
-		// Nothing to do ?
 	}
 
 	@Override
@@ -629,59 +631,31 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	}
 
 	@Override
-	public V max(final IScope scope) throws GamaRuntimeException {
-		return listValue(scope).max(scope);
-		// Poids maximum ?
-	}
-
-	@Override
-	public V min(final IScope scope) throws GamaRuntimeException {
-		return listValue(scope).min(scope);
-		// Poids minimum ?
-	}
-
-	@Override
-	public Object product(final IScope scope) throws GamaRuntimeException {
-		return listValue(scope).product(scope);
-		// Faire le produit de tous les poids ?
-	}
-
-	@Override
-	public Object sum(final IScope scope) throws GamaRuntimeException {
-		return listValue(scope).sum(scope);
-		// Somme de tous les poids ?
-	}
-
-	@Override
 	public boolean isEmpty(final IScope scope) {
 		return edgeSet().isEmpty() && vertexSet().isEmpty();
 	}
 
 	@Override
-	public boolean removeAll(IScope scope, final IContainer list) throws GamaRuntimeException {
-		boolean result = true;
-		for ( Object value : list ) {
-			result = removeFirst(scope, value) & result;
-		}
-		return result;
-	}
-
-	@Override
-	public boolean removeFirst(IScope scope, final Object value) {
-		return removeVertex(value) || removeEdge(value);
-	}
-
-	@Override
-	public Object removeAt(IScope scope, final Object index) {
-		Object e;
-		if ( index instanceof GamaPair ) {
-			e = getEdge(((GamaPair) index).first(), ((GamaPair) index).last());
+	public void remove(IScope scope, final Object index, final Object value, final boolean all) {
+		if ( index == null ) {
+			if ( all ) {
+				if ( value instanceof IContainer ) {
+					for ( Object obj : (IContainer) value ) {
+						remove(scope, null, obj, true);
+					}
+				} else if ( value != null ) {
+					remove(scope, null, value, false);
+				} else {
+					vertexSet().clear();
+				}
+			} else if ( !removeVertex(value) ) {
+				removeEdge(value);
+			}
 		} else {
-			e = getEdge(index);
+			// TODO if value != null ?
+			// EX: remove edge1 at: v1::v2 in case of several edges between vertices
+			removeEdge(index);
 		}
-		if ( e == null ) { return null; }
-		removeEdge(index);
-		return e;
 	}
 
 	@Override
@@ -690,12 +664,6 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 			new GamaGraph(new GamaList(), false, directed, vertexRelation, edgeSpecies, scope);
 		Graphs.addGraphReversed(g, this);
 		return g;
-	}
-
-	@Override
-	public void put(IScope scope, final Object index, final Object value, final Object param)
-		throws GamaRuntimeException {
-		add(scope, index, value, param);
 	}
 
 	@Override
@@ -756,84 +724,11 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 		return g;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#checkIndex(java.lang.Object)
-	 */
-	// @Override
-	// public boolean checkIndex(final Object index) {
-	// return index != null;
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#checkValue(java.lang.Object)
-	 */
-	// @Override
-	// public boolean checkValue(final Object value) {
-	// return value != null;
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#checkBounds(java.lang.Object)
-	 */
 	@Override
 	public boolean checkBounds(final Object index, final boolean forAdding) {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#isFixedLength()
-	 */
-	// @Override
-	// public boolean isFixedLength() {
-	// return false;
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#addAll(msi.gama.interfaces.IGamaContainer,
-	 * java.lang.Object)
-	 */
-	@Override
-	public void addAll(IScope scope, final IContainer value, final Object param)
-		throws GamaRuntimeException {
-		if ( value instanceof GamaGraph ) {
-			for ( Object o : ((GamaGraph) value).edgeSet() ) {
-				addEdge(o);
-			}
-		} else {
-			for ( Object o : value ) {
-				this.add(scope, o, param);
-			}
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#addAll(java.lang.Object,
-	 * msi.gama.interfaces.IGamaContainer, java.lang.Object)
-	 */
-	@Override
-	public void addAll(IScope scope, final Object index, final IContainer value, final Object param)
-		throws GamaRuntimeException {
-		addAll(scope, value, null);
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.util.IGraph#setWeights(java.util.Map)
-	 */
 	@Override
 	public void setWeights(final Map w) {
 		Map<Object, Double> weights = w;

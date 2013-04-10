@@ -66,21 +66,21 @@ import org.jfree.ui.RectangleInsets;
 @symbol(name = IKeyword.CHART, kind = ISymbolKind.LAYER, with_sequence = true)
 @inside(symbols = IKeyword.DISPLAY)
 @facets(value = {
-	/* @facet(name = ISymbol.VALUE, type = TypeManager.STRING_STR, optional = true), */
-	@facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
-	@facet(name = IKeyword.SIZE, type = IType.POINT_STR, optional = true),
-	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR_STR, optional = true),
-	@facet(name = IKeyword.TIMEXSERIES , type = IType.LIST_STR, optional = true),
-	@facet(name = IKeyword.AXES, type = IType.COLOR_STR, optional = true),
+	/* @facet(name = ISymbol.VALUE, type = TypeManager.STRING, optional = true), */
+	@facet(name = IKeyword.POSITION, type = IType.POINT, optional = true),
+	@facet(name = IKeyword.SIZE, type = IType.POINT, optional = true),
+	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true),
+	@facet(name = IKeyword.TIMEXSERIES , type = IType.LIST, optional = true),
+	@facet(name = IKeyword.AXES, type = IType.COLOR, optional = true),
 	@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.XY, IKeyword.HISTOGRAM,
 		IKeyword.SERIES, IKeyword.PIE, IKeyword.BOX_WHISKER}, optional = true),
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.EXPLODED, IKeyword.THREE_D,
 		IKeyword.STACK, IKeyword.BAR }, optional = true),
-	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
+	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.FONT, type = IType.ID, optional = true),
-	@facet(name = IKeyword.COLOR, type = IType.COLOR_STR, optional = true),
-	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),
+	@facet(name = IKeyword.Z, type = IType.FLOAT, optional = true) }, omissible = IKeyword.NAME)
 public class ChartLayerStatement extends AbstractLayerStatement {
 
 	public class DataDeclarationSequence extends AbstractStatementSequence {

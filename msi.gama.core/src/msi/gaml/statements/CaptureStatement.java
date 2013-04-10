@@ -20,7 +20,7 @@ package msi.gaml.statements;
 
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.agent.*;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -41,8 +41,8 @@ import msi.gaml.types.IType;
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = {
 	@facet(doc = @doc("The agent or agents that are bound to be captured"), name = IKeyword.TARGET, type = {
-		IType.AGENT_STR, IType.CONTAINER_STR }, optional = false),
-	@facet(name = IKeyword.AS, type = IType.SPECIES_STR, optional = true),
+		IType.AGENT, IType.CONTAINER }, optional = false),
+	@facet(name = IKeyword.AS, type = IType.SPECIES, optional = true),
 	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true) }, omissible = IKeyword.TARGET)
 public class CaptureStatement extends AbstractStatementSequence {
 
@@ -91,13 +91,13 @@ public class CaptureStatement extends AbstractStatementSequence {
 
 		if ( t instanceof IContainer ) {
 			for ( Object o : ((IContainer) t).iterable(scope) ) {
-				if ( o instanceof IGamlAgent ) {
-					microAgents.add((IGamlAgent) o);
+				if ( o instanceof IAgent ) {
+					microAgents.add((IAgent) o);
 				}
 			}
 		} else {
-			if ( t instanceof IGamlAgent ) {
-				microAgents.add((IGamlAgent) t);
+			if ( t instanceof IAgent ) {
+				microAgents.add((IAgent) t);
 			}
 		}
 

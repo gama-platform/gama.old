@@ -1,6 +1,5 @@
 package msi.gaml.architecture.reflex;
 
-import msi.gama.metamodel.agent.IGamlAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.IArchitecture;
@@ -24,11 +23,6 @@ public abstract class AbstractArchitecture extends Skill implements IArchitectur
 		} catch (IllegalAccessException e) {
 			return new ReflexArchitecture();
 		}
-	}
-
-	@Override
-	public IGamlAgent getCurrentAgent(final IScope scope) {
-		return (IGamlAgent) super.getCurrentAgent(scope);
 	}
 
 	@Override

@@ -44,7 +44,7 @@ import msi.gaml.types.IType;
 @inside(symbols = IKeyword.OUTPUT)
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
-	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT_STR, optional = true),
+	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.VALUE, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.AGENT, IKeyword.SPECIES,
 		IKeyword.DYNAMIC }, optional = false) }, omissible = IKeyword.NAME)

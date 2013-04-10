@@ -27,63 +27,41 @@ package msi.gama.precompiler;
 public interface ITypeProvider {
 
 	/*
-	 * The content type is provided by the content type of the left child of the binary expression
+	 * The content type is provided by the content type of the first child of the expression
 	 */
-	static final short LEFT_CONTENT_TYPE = -20;
+	static final int FIRST_CONTENT_TYPE = -20;
+	static final int FIRST_KEY_TYPE = -23;
 	/*
-	 * The content type is provided by the content type of the right child of the binary expression
+	 * The content type is provided by the content type of the second child of the expression
 	 */
-	static final short RIGHT_CONTENT_TYPE = -19;
+	static final int SECOND_CONTENT_TYPE = -19;
+	static final int SECOND_KEY_TYPE = -24;
 	/*
-	 * The content type is provided by the type of the left child of the binary expression
+	 * The content type is provided by the type of the first child of the expression
 	 */
-	static final short LEFT_TYPE = -18;
+	static final int FIRST_TYPE = -18;
 	/*
-	 * The content type is provided by the type of the right child of the expression
+	 * The content type is provided by the type of the second child of the expression
 	 */
-	static final short RIGHT_TYPE = -17;
-	/*
-	 * The content type is provided by the content type of the child of the unary expression
-	 */
-	static final short CHILD_CONTENT_TYPE = -16;
-	/*
-	 * The content type is provided by the type of the child of the unary expression
-	 */
-	static final short CHILD_TYPE = -15;
+	static final int SECOND_TYPE = -17;
 	/*
 	 * The content type is provided by the type of of the expression itself (i.e. species)
 	 */
-	static final short TYPE = -14;
+	static final int TYPE = -14;
 	/*
 	 * The content type cannot be computed
 	 */
-	static final short NONE = -13;
+	static final int NONE = -13;
 	/*
 	 * The type or content type are provided by both operands (which must match).
 	 */
-	static final short BOTH = -21;
+	static final int BOTH = -21;
 	/*
 	 * The content type is provided by the content type of the first element of the child (if the
 	 * child is a container) -- EXPERIMENTAL RIGHT NOW (and probably limited to the matrix and
 	 * as_matrix operators)
 	 * e.g. : matrix ([[4, 5, 6],[1, 2, 4]]) should get int as a content type.
 	 */
-	static final short FIRST_ELEMENT_CONTENT_TYPE = -22;
+	static final int FIRST_ELEMENT_CONTENT_TYPE = -22;
 
-	// Use of TypeProvider in facet "of"
-
-	/**
-	 * The type is provided by the contents type of the container
-	 */
-	static final String CONTENT_TYPE = "contents";
-
-	/**
-	 * The type is provided by the index type of the container
-	 */
-	static final String INDEX_TYPE = "index";
-
-	/**
-	 * The type is provided by the type of the element itself
-	 */
-	static final String SELF_TYPE = "self";
 }

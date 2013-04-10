@@ -21,7 +21,6 @@ package msi.gaml.operators;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
@@ -285,109 +284,112 @@ public class Maths {
 		return Math.tan(rad);
 	}
 
-	@operator(value = IKeyword.DIVIDE, priority = IPriority.PRODUCT, can_be_const = true)
+	@operator(value = IKeyword.DIVIDE, can_be_const = true)
 	@doc(value = "a float, equal to the division of the left-hand operand by the rigth-hand operand.", special_cases = "if the right-hand operand is equal to zero, raises a \"Division by zero\" exception", examples = "", see = "*")
 	public static Double opDivide(final Integer a, final Integer b) throws GamaRuntimeException {
 		if ( b == 0 ) { throw new GamaRuntimeException("Division by zero"); }
 		return Double.valueOf(a.doubleValue() / b.doubleValue());
 	}
 
-	@operator(value = IKeyword.DIVIDE, priority = IPriority.PRODUCT, can_be_const = true)
+	@operator(value = IKeyword.DIVIDE, can_be_const = true)
 	@doc(examples = "")
 	public static Double opDivide(final Double a, final Integer b) throws GamaRuntimeException {
 		if ( b == 0 ) { throw new GamaRuntimeException("Division by zero"); }
 		return a / b.doubleValue();
 	}
 
-	@operator(value = IKeyword.DIVIDE, priority = IPriority.PRODUCT, can_be_const = true)
+	@operator(value = IKeyword.DIVIDE, can_be_const = true)
 	@doc()
 	public static Double opDivide(final Double a, final Double b) throws GamaRuntimeException {
 		if ( b.equals(0.0) ) { throw new GamaRuntimeException("Division by zero"); }
 		return a / b;
 	}
 
-	@operator(value = IKeyword.DIVIDE, priority = IPriority.PRODUCT, can_be_const = true)
+	@operator(value = IKeyword.DIVIDE, can_be_const = true)
 	@doc()
 	public static Double opDivide(final Integer a, final Double b) throws GamaRuntimeException {
 		if ( b.equals(0.0) ) { throw new GamaRuntimeException("Division by zero"); }
 		return a.doubleValue() / b.doubleValue();
 	}
 
-	@operator(value = IKeyword.MULTIPLY, priority = IPriority.PRODUCT, can_be_const = true)
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
 	@doc(value = "the product of the two operands", special_cases = "if both operands are int, returns the product as an int", examples = "", see = "/")
 	public static Integer opTimes(final Integer a, final Integer b) {
 		return a * b;
 	}
 
-	@operator(value = IKeyword.MULTIPLY, priority = IPriority.PRODUCT, can_be_const = true)
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
 	@doc(examples = "")
 	public static Double opTimes(final Double a, final Integer b) {
 		return Double.valueOf(a * b);
 	}
 
-	@operator(value = IKeyword.MULTIPLY, priority = IPriority.PRODUCT, can_be_const = true)
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
 	@doc()
 	public static Double opTimes(final Double a, final Double b) {
 		return a * b;
 	}
 
-	@operator(value = IKeyword.MULTIPLY, priority = IPriority.PRODUCT, can_be_const = true)
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
 	@doc()
 	public static Double opTimes(final Integer a, final Double b) {
 		return Double.valueOf(a * b);
 	}
 
-	@operator(value = IKeyword.PLUS, priority = IPriority.ADDITION, can_be_const = true)
+	@operator(value = IKeyword.PLUS, can_be_const = true)
 	@doc(value = "the sum, union or concatenation of the two operands.", special_cases = "if both operands are numbers (float or int), performs a normal arithmetic sum and returns a float if one of them is a float.", examples = "1 + 1 	--:	 2", see = "-")
 	public static Integer opPlus(final Integer a, final Integer b) {
 		return a + b;
 	}
 
-	@operator(value = IKeyword.PLUS, priority = IPriority.ADDITION, can_be_const = true)
+	@operator(value = IKeyword.PLUS, can_be_const = true)
 	@doc(examples = "1.0 + 1 --: 2.0")
 	public static Double opPlus(final Double a, final Integer b) {
 		return a + b;
 	}
 
-	@operator(value = IKeyword.PLUS, priority = IPriority.ADDITION, can_be_const = true)
+	@operator(value = IKeyword.PLUS, can_be_const = true)
 	@doc()
 	public static Double opPlus(final Double a, final Double b) {
 		return a + b;
 	}
 
-	@operator(value = IKeyword.PLUS, priority = IPriority.ADDITION, can_be_const = true)
+	@operator(value = IKeyword.PLUS, can_be_const = true)
 	@doc()
 	public static Double opPlus(final Integer a, final Double b) {
 		return a + b;
 	}
 
-	@operator(value = IKeyword.MINUS, priority = IPriority.ADDITION, can_be_const = true)
+	@operator(value = IKeyword.MINUS, can_be_const = true)
 	@doc(value = "the difference of the two operands", special_cases = "if both operands are numbers, performs a normal arithmetic difference and returns a float if one of them is a float.", examples = "1 - 1 	--:	 0")
 	public static Integer opMinus(final Integer a, final Integer b) {
 		return a - b;
 	}
 
-	@operator(value = IKeyword.MINUS, priority = IPriority.ADDITION, can_be_const = true)
+	@operator(value = IKeyword.MINUS, can_be_const = true)
 	@doc(examples = "1.0 - 1 --: 0.0")
 	public static Double opMinus(final Double a, final Integer b) {
 		return a - b;
 	}
 
-	@operator(value = IKeyword.MINUS, priority = IPriority.ADDITION, can_be_const = true)
+	@operator(value = IKeyword.MINUS, can_be_const = true)
 	@doc()
 	public static Double opMinus(final Double a, final Double b) {
 		return a - b;
 	}
 
-	@operator(value = IKeyword.MINUS, priority = IPriority.ADDITION, can_be_const = true)
+	@operator(value = IKeyword.MINUS, can_be_const = true)
 	@doc()
 	public static Double opMinus(final Integer a, final Double b) {
 		return a - b;
 	}
 
-	@operator(value = "with_precision", can_be_const = true)
-	@doc(value = "round off the value of left-hand operand to the precision given by the value of right-hand operand", examples = {
-		"12345.78943 with_precision 2 	--:	 12345.79", "123 with_precision 2 	--:	 123.00" }, see = "round")
+	// @operator(value = "with_precision", can_be_const = true)
+	// @doc(value =
+	// "round off the value of left-hand operand to the precision given by the value of right-hand operand",
+	// examples = {
+	// "12345.78943 with_precision 2 	--:	 12345.79", "123 with_precision 2 	--:	 123.00" }, see =
+	// "round")
 	public static Double opTruncate(final Double x, final Integer precision) {
 		double x1 = x.doubleValue();
 		int precision1 = precision.intValue();
@@ -404,6 +406,14 @@ public class Maths {
 			fract = ceil((x1 - whole) * mult) / mult;
 		}
 		return whole + fract;
+	}
+
+	@operator(value = "with_precision", can_be_const = true)
+	@doc(value = "round off the value of left-hand operand to the precision given by the value of right-hand operand", examples = {
+		"12345.78943 with_precision 2 	--:	 12345.79", "123 with_precision 2 	--:	 123.00" }, see = "round")
+	public static double round(Double v, Integer precision) {
+		long t = TENS[precision]; // contains powers of ten.
+		return (double) (long) (v > 0 ? v * t + 0.5 : v * t - 0.5) / t;
 	}
 
 	@operator(value = "floor", can_be_const = true)
@@ -479,6 +489,13 @@ public class Maths {
 	public static final double toDeg = 180 / Math.PI;
 	/** Constant field toRad. */
 	public static final double toRad = Math.PI / 180;
+	public static final long[] TENS = new long[100];
+
+	static {
+		for ( int i = 0; i < TENS.length; i++ ) {
+			TENS[i] = (long) Math.pow(10, i);
+		}
+	}
 
 	@operator(value = "atan2", can_be_const = true)
 	public static double atan2(final double y, final double x) {

@@ -349,7 +349,7 @@ public class StatementDescription extends SymbolDescription {
 	@Override
 	public String getTitle() {
 		String kw = getKeyword();
-		kw = Character.toUpperCase(kw.charAt(0)) + kw.substring(1);
+		// kw = Character.toUpperCase(kw.charAt(0)) + kw.substring(1);
 		String name = getName();
 		if ( name.contains(INTERNAL) ) {
 			name = facets.getLabel(ACTION);
@@ -361,7 +361,7 @@ public class StatementDescription extends SymbolDescription {
 		if ( meta.isTopLevel() ) {
 			in = " of " + getSuperDescription().getTitle();
 		}
-		return kw + " <b>" + getName() + "</b> " + in;
+		return kw + " " + getName() + " " + in;
 	}
 
 	/**

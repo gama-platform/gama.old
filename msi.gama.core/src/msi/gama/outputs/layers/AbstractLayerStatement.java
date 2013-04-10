@@ -41,23 +41,16 @@ import msi.gaml.expressions.IExpression;
 public abstract class AbstractLayerStatement extends Symbol implements ILayerStatement {
 
 	private IDisplayLayerBox box;
-	IExpression title;
-	String constantTitle;
 	IDisplayOutput output;
-
-	// protected IDisplay physicalLayer;
 
 	public AbstractLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		setBox(new LayerBox(getFacet(IKeyword.TRANSPARENCY), getFacet(IKeyword.POSITION),
 			getFacet(IKeyword.SIZE), getFacet(IKeyword.Z), getFacet(IKeyword.REFRESH)));
-		title = getFacet(IKeyword.NAME);
+		IExpression title = getFacet(IKeyword.NAME);
 		if ( title != null && title.isConst() ) {
 			setName(title.literalValue());
-			constantTitle = title.literalValue();
-			// currentTitle = constantTitle;
 		}
-
 	}
 
 	@Override
@@ -128,11 +121,4 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 		getBox().setRefresh(refresh);
 	}
 
-	/**
-	 * @param abstractDisplay
-	 */
-	// @Override
-	// public void setPhysicalLayer(final IDisplay abstractDisplay) {
-	// physicalLayer = abstractDisplay;
-	// }
 }

@@ -44,8 +44,8 @@ public class HumanMovingSkill extends MovingSkill {
 	 */
 
 	@action(name = "wanderAndAvoid", args = {
-		@arg(name = "speed", type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "agent_size", type = IType.INT_STR, optional = true, doc = @doc("specifiaction of size of the agent")),
+		@arg(name = "speed", type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+		@arg(name = "agent_size", type = IType.INT, optional = true, doc = @doc("specifiaction of size of the agent")),
 		@arg(name = "background"), @arg(name = "ignore_type") })
 	public GamaPoint primMoveRandomlyAndAvidOthers(final IScope scope) throws GamaRuntimeException {
 
@@ -175,8 +175,8 @@ public class HumanMovingSkill extends MovingSkill {
 	 * @return the prim CommandStatus
 	 */
 	@action(name = "wanderAbove", args = {
-		@arg(name = "speed", type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "agent_size", type = IType.INT_STR, optional = true, doc = @doc("specifiaction of size of the agent")) })
+		@arg(name = "speed", type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+		@arg(name = "agent_size", type = IType.INT, optional = true, doc = @doc("specifiaction of size of the agent")) })
 	// @action("wanderAbove")
 	// @args( { "speed", "agent_size"})
 	public GamaPoint primMoveRandomlyAbove(final IScope scope) throws GamaRuntimeException {
@@ -258,10 +258,10 @@ public class HumanMovingSkill extends MovingSkill {
 	 * @return the prim CommandStatus
 	 */
 	@action(name = "blindWander", args = {
-		@arg(name = "speed", type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "agent_size", type = IType.INT_STR, optional = true, doc = @doc("specifiaction of size of the agent")),
-		@arg(name = "background", type = IType.AGENT_STR, optional = true),
-		@arg(name = "target", type = IType.AGENT_STR, optional = true) })
+		@arg(name = "speed", type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+		@arg(name = "agent_size", type = IType.INT, optional = true, doc = @doc("specifiaction of size of the agent")),
+		@arg(name = "background", type = IType.AGENT, optional = true),
+		@arg(name = "target", type = IType.AGENT, optional = true) })
 	// @action("blindWander")
 	// @args( { "speed", "agent_size", "background", "target"})
 	public GamaPoint primMoveRandomlyBlind(final IScope scope) throws GamaRuntimeException {
@@ -413,10 +413,10 @@ public class HumanMovingSkill extends MovingSkill {
 	 * @return the prim CommandStatus
 	 */
 	@action(name = "blindWander2", args = {
-		@arg(name = "speed", type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "agent_size", type = IType.INT_STR, optional = true, doc = @doc("specifiaction of size of the agent")),
-		@arg(name = "background", type = IType.AGENT_STR, optional = true),
-		@arg(name = "target", type = IType.AGENT_STR, optional = true) })
+		@arg(name = "speed", type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+		@arg(name = "agent_size", type = IType.INT, optional = true, doc = @doc("specifiaction of size of the agent")),
+		@arg(name = "background", type = IType.AGENT, optional = true),
+		@arg(name = "target", type = IType.AGENT, optional = true) })
 	public GamaPoint primMoveRandomlyBlindSimple(final IScope scope) throws GamaRuntimeException {
 
 		IAgent agent = getCurrentAgent(scope);
@@ -547,11 +547,11 @@ public class HumanMovingSkill extends MovingSkill {
 	 */
 
 	@action(name = "blindStraightWander", args = {
-		@arg(name = "speed", type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "agent_size", type = IType.INT_STR, optional = true, doc = @doc("specifiaction of size of the agent")),
-		@arg(name = "background", type = IType.AGENT_STR, optional = true),
-		@arg(name = "direction", type = IType.INT_STR, optional = true),
-		@arg(name = "target", type = IType.AGENT_STR, optional = true) })
+		@arg(name = "speed", type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+		@arg(name = "agent_size", type = IType.INT, optional = true, doc = @doc("specifiaction of size of the agent")),
+		@arg(name = "background", type = IType.AGENT, optional = true),
+		@arg(name = "direction", type = IType.INT, optional = true),
+		@arg(name = "target", type = IType.AGENT, optional = true) })
 	// @action("blindStraightWander")
 	// @args( { "speed", "agent_size", "background", "direction", "target"})
 	public GamaPoint primMoveStraightBlind(final IScope scope) throws GamaRuntimeException {
@@ -708,11 +708,11 @@ public class HumanMovingSkill extends MovingSkill {
 	}
 
 	@action(name = "blindStraightWander2", args = {
-		@arg(name = "speed", type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "agent_size", type = IType.INT_STR, optional = true, doc = @doc("specifiaction of size of the agent")),
-		@arg(name = "background", type = IType.AGENT_STR, optional = true),
-		@arg(name = "direction", type = IType.INT_STR, optional = true),
-		@arg(name = "target", type = IType.AGENT_STR, optional = true) })
+		@arg(name = "speed", type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+		@arg(name = "agent_size", type = IType.INT, optional = true, doc = @doc("specifiaction of size of the agent")),
+		@arg(name = "background", type = IType.AGENT, optional = true),
+		@arg(name = "direction", type = IType.INT, optional = true),
+		@arg(name = "target", type = IType.AGENT, optional = true) })
 	public GamaPoint primMoveStraightBlindSimple(final IScope scope) throws GamaRuntimeException {
 		// *****************************************************
 		IAgent agent = getCurrentAgent(scope);
@@ -867,11 +867,11 @@ public class HumanMovingSkill extends MovingSkill {
 	 * @return the prim CommandStatus
 	 */
 	@action(name = "blindWallTracking", args = {
-		@arg(name = "speed", type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "agent_size", type = IType.INT_STR, optional = true, doc = @doc("specifiaction of size of the agent")),
-		@arg(name = "background", type = IType.AGENT_STR, optional = true),
-		@arg(name = "passedList", type = IType.LIST_STR, optional = true),
-		@arg(name = "target", type = IType.AGENT_STR, optional = true) })
+		@arg(name = "speed", type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+		@arg(name = "agent_size", type = IType.INT, optional = true, doc = @doc("specifiaction of size of the agent")),
+		@arg(name = "background", type = IType.AGENT, optional = true),
+		@arg(name = "passedList", type = IType.LIST, optional = true),
+		@arg(name = "target", type = IType.AGENT, optional = true) })
 	// @action("blindWallTracking")
 	// @args( { "target", "speed", "agent_size", "background", "passedList"})
 	// @setter("passedList")
@@ -1173,11 +1173,11 @@ public class HumanMovingSkill extends MovingSkill {
 
 	// ************
 	@action(name = "blindWallTracking2", args = {
-		@arg(name = "speed", type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "agent_size", type = IType.INT_STR, optional = true, doc = @doc("specifiaction of size of the agent")),
-		@arg(name = "background", type = IType.AGENT_STR, optional = true),
-		@arg(name = "passedList", type = IType.LIST_STR, optional = true),
-		@arg(name = "target", type = IType.AGENT_STR, optional = true) })
+		@arg(name = "speed", type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+		@arg(name = "agent_size", type = IType.INT, optional = true, doc = @doc("specifiaction of size of the agent")),
+		@arg(name = "background", type = IType.AGENT, optional = true),
+		@arg(name = "passedList", type = IType.LIST, optional = true),
+		@arg(name = "target", type = IType.AGENT, optional = true) })
 	public GamaPoint primMoveWallTrackingBlindSimple(final IScope scope)
 		throws GamaRuntimeException {
 
@@ -1507,10 +1507,10 @@ public class HumanMovingSkill extends MovingSkill {
 	 * @return the success, failure, running state of the action
 	 */
 	@action(name = "approach", args = {
-		@arg(name = "speed", type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "agent_size", type = IType.INT_STR, optional = true, doc = @doc("specifiaction of size of the agent")),
-		@arg(name = "background", type = IType.AGENT_STR, optional = true),
-		@arg(name = "target", type = IType.AGENT_STR, optional = true) })
+		@arg(name = "speed", type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+		@arg(name = "agent_size", type = IType.INT, optional = true, doc = @doc("specifiaction of size of the agent")),
+		@arg(name = "background", type = IType.AGENT, optional = true),
+		@arg(name = "target", type = IType.AGENT, optional = true) })
 	// @action("approach")
 	// @args( { "target", "speed", "agent_size", "background" })
 	public GamaPoint primMoveToTargetAndAvoidOthers(final IScope scope) throws GamaRuntimeException {
@@ -1683,11 +1683,11 @@ public class HumanMovingSkill extends MovingSkill {
 	 * @return the success, failure, running state of the action
 	 */
 	@action(name = "approachAvoidPassedPosition", args = {
-		@arg(name = "speed", type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "agent_size", type = IType.INT_STR, optional = true, doc = @doc("specifiaction of size of the agent")),
-		@arg(name = "background", type = IType.AGENT_STR, optional = true),
-		@arg(name = "target", type = IType.AGENT_STR, optional = true),
-		@arg(name = "passedList", type = IType.LIST_STR, optional = true), })
+		@arg(name = "speed", type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+		@arg(name = "agent_size", type = IType.INT, optional = true, doc = @doc("specifiaction of size of the agent")),
+		@arg(name = "background", type = IType.AGENT, optional = true),
+		@arg(name = "target", type = IType.AGENT, optional = true),
+		@arg(name = "passedList", type = IType.LIST, optional = true), })
 	public GamaPoint primMoveToTargetAndAvoidPassedPosition(final IScope scope)
 		throws GamaRuntimeException {
 
@@ -2145,11 +2145,11 @@ public class HumanMovingSkill extends MovingSkill {
 	 * @return the success, failure, running state of the action
 	 */
 	@action(name = "approachAvoidPassedPosition2", args = {
-		@arg(name = "speed", type = IType.FLOAT_STR, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "agent_size", type = IType.INT_STR, optional = true, doc = @doc("specifiaction of size of the agent")),
-		@arg(name = "background", type = IType.AGENT_STR, optional = true),
-		@arg(name = "target", type = IType.AGENT_STR, optional = true),
-		@arg(name = "passedList", type = IType.LIST_STR, optional = true), })
+		@arg(name = "speed", type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
+		@arg(name = "agent_size", type = IType.INT, optional = true, doc = @doc("specifiaction of size of the agent")),
+		@arg(name = "background", type = IType.AGENT, optional = true),
+		@arg(name = "target", type = IType.AGENT, optional = true),
+		@arg(name = "passedList", type = IType.LIST, optional = true), })
 	public GamaPoint primMoveToTargetAndAvoidPassedPositionSimple(final IScope scope)
 		throws GamaRuntimeException {
 

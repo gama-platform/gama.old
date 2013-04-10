@@ -40,24 +40,7 @@ public class ListExpression extends AbstractExpression {
 		int n = this.elements.length;
 		values = new Object[n];
 		setName(elements.toString());
-		boolean allTheSame = true;
-		if ( n != 0 ) {
-			IExpression e = elements.get(0);
-			if ( e != null ) {
-				contentType = e.getType();
-			}
-			for ( int i = 1; i < n; i++ ) {
-				e = elements.get(i);
-				if ( e != null ) {
-					allTheSame = e.getType() == contentType;
-				}
-				if ( !allTheSame ) {
-					break;
-				}
-			}
-		}
-		// TODO Try to find a common super type if possible
-		contentType = allTheSame ? contentType : Types.NO_TYPE;
+		contentType = findCommonType(elements, _type);
 		isConst();
 	}
 
@@ -118,7 +101,7 @@ public class ListExpression extends AbstractExpression {
 
 	@Override
 	public String getTitle() {
-		return "Literal list expression";
+		return "literal list of type " + typeToString();
 	}
 
 	@Override

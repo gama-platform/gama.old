@@ -55,7 +55,7 @@ public class Logic {
 		return !b;
 	}
 
-	@operator(value = "?", type = ITypeProvider.RIGHT_TYPE, content_type = ITypeProvider.RIGHT_CONTENT_TYPE, priority = IPriority.TERNARY)
+	@operator(value = "?", type = ITypeProvider.SECOND_TYPE, content_type = ITypeProvider.SECOND_CONTENT_TYPE)
 	@doc(value = "if the left-hand operand evaluates to true, returns the value of the left-hand operand of the :, otherwise that of the right-hand operand of the :", comment = "These functional tests can be combined together.", examples = {
 		"[10, 19, 43, 12, 7, 22] collect ((each > 20) ? 'above' : 'below')    --:  ['below', 'below', 'above', 'below', 'below', 'above']",
 		"set color value:(food > 5) ? 'red' : ((food >= 2)? 'blue' : 'green');" }, see = ":")
@@ -65,7 +65,7 @@ public class Logic {
 		return left ? expr.arg(0).value(scope) : expr.arg(1).value(scope);
 	}
 
-	@operator(value = ":", type = ITypeProvider.BOTH, content_type = ITypeProvider.BOTH, priority = IPriority.TERNARY)
+	@operator(value = ":", type = ITypeProvider.BOTH, content_type = ITypeProvider.BOTH, index_type = ITypeProvider.BOTH)
 	@doc(see = "?")
 	public static Object then(final IScope scope, final Object a, final Object b) {
 		return null;

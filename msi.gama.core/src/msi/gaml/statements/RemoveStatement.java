@@ -39,8 +39,8 @@ import msi.gaml.types.IType;
 
 @facets(value = {
 	@facet(name = IKeyword.ITEM, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.FROM, type = { IType.CONTAINER_STR, IType.SPECIES_STR, IType.AGENT_STR,
-		IType.GEOM_STR }, optional = false),
+	@facet(name = IKeyword.FROM, type = { IType.CONTAINER, IType.SPECIES, IType.AGENT,
+		IType.GEOMETRY }, optional = false),
 	@facet(name = IKeyword.INDEX, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.KEY, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.ALL, type = IType.NONE_STR, optional = true) }, omissible = IKeyword.ITEM)
@@ -59,14 +59,10 @@ public class RemoveStatement extends AbstractContainerStatement {
 		// AD 29/02/13 : Normally taken in charge by the parser, now.
 		// if ( container.isFixedLength() ) { throw new GamaRuntimeException("Cannot remove from " +
 		// list.toGaml(), true); }
-		if ( whole ) {
-			container.removeAll(scope, (IContainer) object);
-		} else if ( position != null ) {
+		if ( position != null ) {
 			if ( !container.checkBounds(position, false) ) { throw new GamaRuntimeException(
 				"Index " + position + " out of bounds of " + item.toGaml(), true); }
-			container.removeAt(scope, position);
-		} else {
-			container.removeFirst(scope, object);
 		}
+		container.remove(scope, position, object, whole);
 	}
 }

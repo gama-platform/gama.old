@@ -37,15 +37,15 @@ import msi.gaml.types.IType;
 @inside(kinds = { ISymbolKind.EXPERIMENT })
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
-	@facet(name = TabuSearchReactive.ITER_MAX, type = IType.INT_STR, optional = true),
-	@facet(name = TabuSearchReactive.LIST_SIZE_INIT, type = IType.INT_STR, optional = true),
-	@facet(name = TabuSearchReactive.LIST_SIZE_MAX, type = IType.INT_STR, optional = true),
-	@facet(name = TabuSearchReactive.LIST_SIZE_MIN, type = IType.INT_STR, optional = true),
-	@facet(name = TabuSearchReactive.NB_TESTS_MAX, type = IType.INT_STR, optional = true),
-	@facet(name = TabuSearchReactive.CYCLE_SIZE_MAX, type = IType.INT_STR, optional = true),
-	@facet(name = TabuSearchReactive.CYCLE_SIZE_MIN, type = IType.INT_STR, optional = true),
-	@facet(name = IKeyword.MAXIMIZE, type = IType.FLOAT_STR, optional = true),
-	@facet(name = IKeyword.MINIMIZE, type = IType.FLOAT_STR, optional = true),
+	@facet(name = TabuSearchReactive.ITER_MAX, type = IType.INT, optional = true),
+	@facet(name = TabuSearchReactive.LIST_SIZE_INIT, type = IType.INT, optional = true),
+	@facet(name = TabuSearchReactive.LIST_SIZE_MAX, type = IType.INT, optional = true),
+	@facet(name = TabuSearchReactive.LIST_SIZE_MIN, type = IType.INT, optional = true),
+	@facet(name = TabuSearchReactive.NB_TESTS_MAX, type = IType.INT, optional = true),
+	@facet(name = TabuSearchReactive.CYCLE_SIZE_MAX, type = IType.INT, optional = true),
+	@facet(name = TabuSearchReactive.CYCLE_SIZE_MIN, type = IType.INT, optional = true),
+	@facet(name = IKeyword.MAXIMIZE, type = IType.FLOAT, optional = true),
+	@facet(name = IKeyword.MINIMIZE, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = {
 		IKeyword.MIN, IKeyword.MAX }) }, omissible = IKeyword.NAME)
 public class TabuSearchReactive extends LocalSearchAlgorithm {

@@ -20,7 +20,7 @@ package msi.gama.util;
 
 import java.util.*;
 import msi.gama.common.util.StringUtils;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.*;
@@ -44,37 +44,17 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 			return null;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see msi.gama.interfaces.IGamaContainer#isFixedLength()
-		 */
-		// @Override
-		// public boolean isFixedLength() {
-		// return true;
-		// }
-
 		@Override
 		public boolean remove(final Object value) {
 			return false;
 		}
 
 		@Override
-		public Object removeAt(IScope scope, final Integer index) {
-			return null;
-		}
+		public void remove(IScope scope, final Object index, final Object value, final boolean all) {}
 
 		@Override
-		public void add(IScope scope, final Object value, final Object param) {};
-
-		@Override
-		public void add(IScope scope, final Integer index, final Object value, final Object param) {}
-
-		@Override
-		public void put(IScope scope, final Integer index, final Object value, final Object param) {}
-
-		@Override
-		public void putAll(IScope scope, final Object value, final Object param) {}
+		public void add(IScope scope, final Integer index, final Object value, final Object param,
+			boolean all, boolean add) {}
 
 		@Override
 		public GamaList clone() {
@@ -261,53 +241,64 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	@Override
-	public void add(IScope scope, final E value, final Object param) throws GamaRuntimeException {
-		add(value);
-	}
-
-	@Override
-	public void add(IScope scope, final Integer i, final E value, final Object param)
-		throws GamaRuntimeException {
-		// all verifications have normally been already done in the add command
-		add(i, value);
-	}
-
-	@Override
-	public boolean removeFirst(IScope scope, final E value) {
-		return remove(value);
-	}
-
-	@Override
-	public boolean removeAll(IScope scope, final IContainer<?, E> list) {
-		boolean removed = false;
-		boolean result = true;
-		for ( Object value : list ) {
-			removed = false;
-			for ( Iterator iterator = iterator(); iterator.hasNext(); ) {
-				Object obj = iterator.next();
-				if ( obj.equals(value) ) {
-					iterator.remove();
-					removed = true;
+	public void add(IScope scope, final Integer i, final Object value, final Object param,
+		boolean all, boolean add) throws GamaRuntimeException {
+		if ( i == null ) {
+			if ( all && !add ) {
+				for ( int index = 0, n = size(); index < n; index++ ) {
+					set(index, (E) value);
 				}
+			} else if ( !all && add ) {
+				add((E) value);
+			} else if ( all && add && value instanceof IContainer ) {
+				addAll(((IContainer) value).listValue(scope));
 			}
-			if ( removed == false ) {
-				result = false;
+		} else {
+			if ( add ) {
+				if ( all && value instanceof IContainer ) {
+					addAll(i, ((IContainer) value).listValue(scope));
+				} else {
+					add(i, (E) value);
+				}
+			} else {
+				set(i, (E) value);
 			}
 		}
-		return result;
 	}
 
 	@Override
-	public Object removeAt(IScope scope, final Integer i) {
-		// All verifications have been done in the remove command
-		return remove(i);
+	public void remove(IScope scope, final Object index, final Object value, boolean all) {
+		if ( index == null ) {
+			if ( all ) {
+				if ( value instanceof IContainer ) {
+					for ( Object o : (IContainer) value ) {
+						remove(scope, null, o, true);
+					}
+				} else if ( value != null ) {
+					for ( Iterator iterator = iterator(); iterator.hasNext(); ) {
+						Object obj = iterator.next();
+						if ( obj.equals(value) ) {
+							iterator.remove();
+						}
+					}
+				} else {
+					clear();
+				}
+			} else {
+				remove(value);
+			}
+		} else {
+			int i = Cast.asInt(scope, index);
+			remove(i);
+		}
 	}
 
-	@Override
-	public void put(IScope scope, final Integer i, final E value, final Object param) {
-		// All verifications have been done in the put command
-		set(i, value); // Attention au casting
-	}
+	//
+	// @Override
+	// public void put(IScope scope, final Integer i, final E value, final Object param) {
+	// // All verifications have been done in the put command
+	// set(i, value); // Attention au casting
+	// }
 
 	@Override
 	public E first(final IScope scope) {
@@ -331,261 +322,261 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 		return get(index.intValue());
 	}
 
-	@Override
-	public Object sum(final IScope scope) throws GamaRuntimeException {
-		// OPTIMISER EN FONCTION DU TYPE -- DONC PASSER LE TYPE EN PARAMETRE D'UNE FACON OU D'UNE
-		// AUTRE.
-		boolean allInt = true;
-		boolean allFloat = true;
-		boolean allPoint = true;
-		for ( int i = 0, n = size(); i < n; i++ ) {
-			Object o = get(i);
-			if ( o instanceof Integer ) {
-				allPoint = false;
-			} else if ( o instanceof Double ) {
-				allInt = false;
-				allPoint = false;
-			} else if ( o instanceof ILocation ) {
-				allInt = false;
-				allFloat = false;
-			}
-		}
-		if ( allInt ) {
-			Integer sum = 0;
-			for ( int i = 0, n = size(); i < n; i++ ) {
-				Integer ii = Cast.asInt(scope, get(i));
-				if ( ii != null ) {
-					sum += ii;
-				}
-			}
-			return sum;
-		}
-		if ( allFloat ) {
-			Double sum = 0d;
-			for ( int i = 0, n = size(); i < n; i++ ) {
-				// Double dd = (Double) get(i);
-				Double dd = Cast.asFloat(scope, get(i));
-				if ( dd != null ) {
-					sum += dd;
-				}
-			}
-			return sum;
-		}
-		if ( allPoint ) {
-			ILocation sum = new GamaPoint(0, 0, 0);
-			for ( int i = 0, n = size(); i < n; i++ ) {
-				ILocation o = Cast.asPoint(scope, get(i));
-				if ( o != null ) {
-					sum.add(o);
-				}
-			}
-			return sum;
-		}
-
-		// In case there is something else in the list than ints, floats or points
-
-		// Throw an exception ?
-
-		Double sum = 0d;
-		for ( int i = 0, n = size(); i < n; i++ ) {
-			sum += Cast.asFloat(null, get(i));
-		}
-		return sum;
-	}
+	// @Override
+	// public Object sum(final IScope scope) throws GamaRuntimeException {
+	// // OPTIMISER EN FONCTION DU TYPE -- DONC PASSER LE TYPE EN PARAMETRE D'UNE FACON OU D'UNE
+	// // AUTRE.
+	// boolean allInt = true;
+	// boolean allFloat = true;
+	// boolean allPoint = true;
+	// for ( int i = 0, n = size(); i < n; i++ ) {
+	// Object o = get(i);
+	// if ( o instanceof Integer ) {
+	// allPoint = false;
+	// } else if ( o instanceof Double ) {
+	// allInt = false;
+	// allPoint = false;
+	// } else if ( o instanceof ILocation ) {
+	// allInt = false;
+	// allFloat = false;
+	// }
+	// }
+	// if ( allInt ) {
+	// Integer sum = 0;
+	// for ( int i = 0, n = size(); i < n; i++ ) {
+	// Integer ii = Cast.asInt(scope, get(i));
+	// if ( ii != null ) {
+	// sum += ii;
+	// }
+	// }
+	// return sum;
+	// }
+	// if ( allFloat ) {
+	// Double sum = 0d;
+	// for ( int i = 0, n = size(); i < n; i++ ) {
+	// // Double dd = (Double) get(i);
+	// Double dd = Cast.asFloat(scope, get(i));
+	// if ( dd != null ) {
+	// sum += dd;
+	// }
+	// }
+	// return sum;
+	// }
+	// if ( allPoint ) {
+	// ILocation sum = new GamaPoint(0, 0, 0);
+	// for ( int i = 0, n = size(); i < n; i++ ) {
+	// ILocation o = Cast.asPoint(scope, get(i));
+	// if ( o != null ) {
+	// sum.add(o);
+	// }
+	// }
+	// return sum;
+	// }
+	//
+	// // In case there is something else in the list than ints, floats or points
+	//
+	// // Throw an exception ?
+	//
+	// Double sum = 0d;
+	// for ( int i = 0, n = size(); i < n; i++ ) {
+	// sum += Cast.asFloat(null, get(i));
+	// }
+	// return sum;
+	// }
 
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see msi.gaml.types.IGamaContainer#getProduct()
 	 */
-	@Override
-	public Object product(final IScope scope) throws GamaRuntimeException {
-		boolean allInt = true;
-		boolean allFloat = true;
-		boolean allPoint = true;
-		for ( int i = 0, n = size(); i < n; i++ ) {
-			Object o = get(i);
-			if ( o instanceof Integer ) {
-				allPoint = false;
-			} else if ( o instanceof Double ) {
-				allInt = false;
-				allPoint = false;
-			} else if ( o instanceof ILocation ) {
-				allInt = false;
-				allFloat = false;
-			}
-		}
-		if ( allInt ) {
-			Integer mul = 1;
-			for ( int i = 0, n = size(); i < n; i++ ) {
-				Integer ii = Cast.asInt(scope, get(i));
-				if ( ii != null ) {
-					mul *= ii;
-				}
-			}
-			return mul;
-		}
-		if ( allFloat ) {
-			Double mul = 1d;
-			for ( int i = 0, n = size(); i < n; i++ ) {
-				// Double dd = (Double) get(i);
-				Double dd = Cast.asFloat(scope, get(i));
-				if ( dd != null ) {
-					mul *= dd;
-				}
-			}
-			return mul;
-		}
-		if ( allPoint ) {
-			GamaPoint mul = new GamaPoint(1, 1);
-			for ( int i = 0, n = size(); i < n; i++ ) {
-				ILocation o = Cast.asPoint(scope, get(i));
-				if ( o != null ) {
-					mul.setLocation(o.getX() * mul.x, o.getY() * mul.y);
-				}
-			}
-			return mul;
-		}
-
-		// In case there is something else in the list than ints, floats or points
-
-		// Throw an exception ?
-
-		Double mul = 0d;
-		for ( int i = 0, n = size(); i < n; i++ ) {
-			mul *= Cast.asFloat(null, get(i));
-		}
-		return mul;
-	}
+	// @Override
+	// public Object product(final IScope scope) throws GamaRuntimeException {
+	// boolean allInt = true;
+	// boolean allFloat = true;
+	// boolean allPoint = true;
+	// for ( int i = 0, n = size(); i < n; i++ ) {
+	// Object o = get(i);
+	// if ( o instanceof Integer ) {
+	// allPoint = false;
+	// } else if ( o instanceof Double ) {
+	// allInt = false;
+	// allPoint = false;
+	// } else if ( o instanceof ILocation ) {
+	// allInt = false;
+	// allFloat = false;
+	// }
+	// }
+	// if ( allInt ) {
+	// Integer mul = 1;
+	// for ( int i = 0, n = size(); i < n; i++ ) {
+	// Integer ii = Cast.asInt(scope, get(i));
+	// if ( ii != null ) {
+	// mul *= ii;
+	// }
+	// }
+	// return mul;
+	// }
+	// if ( allFloat ) {
+	// Double mul = 1d;
+	// for ( int i = 0, n = size(); i < n; i++ ) {
+	// // Double dd = (Double) get(i);
+	// Double dd = Cast.asFloat(scope, get(i));
+	// if ( dd != null ) {
+	// mul *= dd;
+	// }
+	// }
+	// return mul;
+	// }
+	// if ( allPoint ) {
+	// GamaPoint mul = new GamaPoint(1, 1);
+	// for ( int i = 0, n = size(); i < n; i++ ) {
+	// ILocation o = Cast.asPoint(scope, get(i));
+	// if ( o != null ) {
+	// mul.setLocation(o.getX() * mul.x, o.getY() * mul.y);
+	// }
+	// }
+	// return mul;
+	// }
+	//
+	// // In case there is something else in the list than ints, floats or points
+	//
+	// // Throw an exception ?
+	//
+	// Double mul = 0d;
+	// for ( int i = 0, n = size(); i < n; i++ ) {
+	// mul *= Cast.asFloat(null, get(i));
+	// }
+	// return mul;
+	// }
 
 	@Override
 	public int length(final IScope scope) {
 		return size();
 	}
 
-	@Override
-	public E max(final IScope scope) throws GamaRuntimeException {
-		boolean allInt = true;
-		boolean allFloat = true;
-		boolean allPoint = true;
-		for ( int i = 0, n = size(); i < n; i++ ) {
-			Object o = get(i);
-			if ( o instanceof Integer ) {
-				allPoint = false;
-			} else if ( o instanceof Double ) {
-				allInt = false;
-				allPoint = false;
-			} else if ( o instanceof ILocation ) {
-				allInt = false;
-				allFloat = false;
-			}
-		}
-		if ( allInt ) {
-			Integer max = Integer.MIN_VALUE;
-			for ( int i = 0, n = size(); i < n; i++ ) {
-				Integer o = Cast.asInt(scope, get(i));
-				if ( o > max ) {
-					max = o;
-				}
-			}
-			return (E) max;
-		}
-		if ( allFloat ) {
-			Double max = -Double.MAX_VALUE;
-			for ( int i = 0, n = size(); i < n; i++ ) {
-				// Double o = (Double) get(i);
-				Double o = Cast.asFloat(scope, get(i));
-				if ( o > max ) {
-					max = o;
-				}
-			}
-			return (E) max;
-		}
-		if ( allPoint ) {
-			ILocation max = new GamaPoint(-Double.MAX_VALUE, -Double.MAX_VALUE);
-			for ( int i = 0, n = size(); i < n; i++ ) {
-				ILocation o = Cast.asPoint(scope, get(i));
-				if ( o.compareTo(max) > 0 ) {
-					max = o;
-				}
-			}
-			return (E) max;
-		}
+	// @Override
+	// public E max(final IScope scope) throws GamaRuntimeException {
+	// boolean allInt = true;
+	// boolean allFloat = true;
+	// boolean allPoint = true;
+	// for ( int i = 0, n = size(); i < n; i++ ) {
+	// Object o = get(i);
+	// if ( o instanceof Integer ) {
+	// allPoint = false;
+	// } else if ( o instanceof Double ) {
+	// allInt = false;
+	// allPoint = false;
+	// } else if ( o instanceof ILocation ) {
+	// allInt = false;
+	// allFloat = false;
+	// }
+	// }
+	// if ( allInt ) {
+	// Integer max = Integer.MIN_VALUE;
+	// for ( int i = 0, n = size(); i < n; i++ ) {
+	// Integer o = Cast.asInt(scope, get(i));
+	// if ( o > max ) {
+	// max = o;
+	// }
+	// }
+	// return (E) max;
+	// }
+	// if ( allFloat ) {
+	// Double max = -Double.MAX_VALUE;
+	// for ( int i = 0, n = size(); i < n; i++ ) {
+	// // Double o = (Double) get(i);
+	// Double o = Cast.asFloat(scope, get(i));
+	// if ( o > max ) {
+	// max = o;
+	// }
+	// }
+	// return (E) max;
+	// }
+	// if ( allPoint ) {
+	// ILocation max = new GamaPoint(-Double.MAX_VALUE, -Double.MAX_VALUE);
+	// for ( int i = 0, n = size(); i < n; i++ ) {
+	// ILocation o = Cast.asPoint(scope, get(i));
+	// if ( o.compareTo(max) > 0 ) {
+	// max = o;
+	// }
+	// }
+	// return (E) max;
+	// }
+	//
+	// // In case there is something else in the list other than ints, floats or points
+	//
+	// Double max = -Double.MAX_VALUE;
+	// for ( int i = 0, n = size(); i < n; i++ ) {
+	// Double o = Cast.asFloat(scope, get(i));
+	// if ( o > max ) {
+	// max = o;
+	// }
+	// }
+	// return (E) max;
+	//
+	// }
 
-		// In case there is something else in the list other than ints, floats or points
-
-		Double max = -Double.MAX_VALUE;
-		for ( int i = 0, n = size(); i < n; i++ ) {
-			Double o = Cast.asFloat(scope, get(i));
-			if ( o > max ) {
-				max = o;
-			}
-		}
-		return (E) max;
-
-	}
-
-	@Override
-	public E min(final IScope scope) throws GamaRuntimeException {
-		boolean allInt = true;
-		boolean allFloat = true;
-		boolean allPoint = true;
-		for ( int i = 0, n = size(); i < n; i++ ) {
-			Object o = get(i);
-			if ( o instanceof Integer ) {
-				allPoint = false;
-			} else if ( o instanceof Double ) {
-				allInt = false;
-				allPoint = false;
-			} else if ( o instanceof ILocation ) {
-				allInt = false;
-				allFloat = false;
-			}
-		}
-		if ( allInt ) {
-			Integer min = Integer.MAX_VALUE;
-			for ( int i = 0, n = size(); i < n; i++ ) {
-				Integer o = Cast.asInt(scope, get(i));
-				if ( o < min ) {
-					min = o;
-				}
-			}
-			return (E) min;
-		}
-		if ( allFloat ) {
-			Double min = Double.MAX_VALUE;
-			for ( int i = 0, n = size(); i < n; i++ ) {
-				// Double o = (Double) get(i);
-				Double o = Cast.asFloat(scope, get(i));
-				if ( o < min ) {
-					min = o;
-				}
-			}
-			return (E) min;
-		}
-		if ( allPoint ) {
-			ILocation min = new GamaPoint(Double.MAX_VALUE, Double.MAX_VALUE);
-			for ( int i = 0, n = size(); i < n; i++ ) {
-				ILocation o = Cast.asPoint(scope, get(i));
-				if ( o.compareTo(min) < 0 ) {
-					min = o;
-				}
-			}
-			return (E) min;
-		}
-
-		// In case there is something else in the list other than ints, floats or points
-
-		Double min = Double.MAX_VALUE;
-		for ( int i = 0, n = size(); i < n; i++ ) {
-			Double o = Cast.asFloat(scope, get(i));
-			if ( o < min ) {
-				min = o;
-			}
-		}
-		return (E) min;
-
-	}
+	// @Override
+	// public E min(final IScope scope) throws GamaRuntimeException {
+	// boolean allInt = true;
+	// boolean allFloat = true;
+	// boolean allPoint = true;
+	// for ( int i = 0, n = size(); i < n; i++ ) {
+	// Object o = get(i);
+	// if ( o instanceof Integer ) {
+	// allPoint = false;
+	// } else if ( o instanceof Double ) {
+	// allInt = false;
+	// allPoint = false;
+	// } else if ( o instanceof ILocation ) {
+	// allInt = false;
+	// allFloat = false;
+	// }
+	// }
+	// if ( allInt ) {
+	// Integer min = Integer.MAX_VALUE;
+	// for ( int i = 0, n = size(); i < n; i++ ) {
+	// Integer o = Cast.asInt(scope, get(i));
+	// if ( o < min ) {
+	// min = o;
+	// }
+	// }
+	// return (E) min;
+	// }
+	// if ( allFloat ) {
+	// Double min = Double.MAX_VALUE;
+	// for ( int i = 0, n = size(); i < n; i++ ) {
+	// // Double o = (Double) get(i);
+	// Double o = Cast.asFloat(scope, get(i));
+	// if ( o < min ) {
+	// min = o;
+	// }
+	// }
+	// return (E) min;
+	// }
+	// if ( allPoint ) {
+	// ILocation min = new GamaPoint(Double.MAX_VALUE, Double.MAX_VALUE);
+	// for ( int i = 0, n = size(); i < n; i++ ) {
+	// ILocation o = Cast.asPoint(scope, get(i));
+	// if ( o.compareTo(min) < 0 ) {
+	// min = o;
+	// }
+	// }
+	// return (E) min;
+	// }
+	//
+	// // In case there is something else in the list other than ints, floats or points
+	//
+	// Double min = Double.MAX_VALUE;
+	// for ( int i = 0, n = size(); i < n; i++ ) {
+	// Double o = Cast.asFloat(scope, get(i));
+	// if ( o < min ) {
+	// min = o;
+	// }
+	// }
+	// return (E) min;
+	//
+	// }
 
 	@Override
 	public IContainer<Integer, E> reverse(final IScope scope) {
@@ -594,13 +585,14 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 		return list;
 	}
 
-	@Override
-	public void putAll(IScope scope, final E value, final Object param) {
-		for ( int i = 0, n = size(); i < n; i++ ) {
-			set(i, value);
-		}
-
-	}
+	//
+	// @Override
+	// public void putAll(IScope scope, final E value, final Object param) {
+	// for ( int i = 0, n = size(); i < n; i++ ) {
+	// set(i, value);
+	// }
+	//
+	// }
 
 	public static GamaList with(final Object ... a) {
 		return new GamaList(a);
@@ -664,13 +656,13 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	 * @see msi.gama.interfaces.IGamaContainer#addAll(msi.gama.interfaces.IGamaContainer,
 	 * java.lang.Object)
 	 */
-	@Override
-	public void addAll(IScope scope, final IContainer list, final Object param)
-		throws GamaRuntimeException {
-		for ( Object o : list ) {
-			add((E) o);
-		}
-	}
+	// @Override
+	// public void addAll(IScope scope, final IContainer list, final Object param)
+	// throws GamaRuntimeException {
+	// for ( Object o : list ) {
+	// add((E) o);
+	// }
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -678,15 +670,16 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	 * @see msi.gama.interfaces.IGamaContainer#addAll(java.lang.Object,
 	 * msi.gama.interfaces.IGamaContainer, java.lang.Object)
 	 */
-	@Override
-	public void addAll(IScope scope, final Integer index, final IContainer list, final Object param)
-		throws GamaRuntimeException {
-		int i = index;
-		for ( Object o : list ) {
-			add(i, (E) o);
-			i++;
-		}
-	}
+	// @Override
+	// public void addAll(IScope scope, final Integer index, final IContainer list, final Object
+	// param)
+	// throws GamaRuntimeException {
+	// int i = index;
+	// for ( Object o : list ) {
+	// add(i, (E) o);
+	// i++;
+	// }
+	// }
 
 	@Override
 	public E any(final IScope scope) {

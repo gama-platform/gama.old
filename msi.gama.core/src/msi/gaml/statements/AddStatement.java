@@ -39,14 +39,14 @@ import msi.gaml.types.IType;
  */
 
 @facets(value = {
-	@facet(name = IKeyword.TO, type = { IType.CONTAINER_STR, IType.SPECIES_STR, IType.AGENT_STR,
-		IType.GEOM_STR }, optional = false),
+	@facet(name = IKeyword.TO, type = { IType.CONTAINER, IType.SPECIES, IType.AGENT,
+		IType.GEOMETRY }, optional = false),
 	@facet(name = IKeyword.ITEM, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.EDGE, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.VERTEX, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.AT, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.ALL, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.WEIGHT, type = IType.FLOAT_STR, optional = true) }, omissible = IKeyword.ITEM)
+	@facet(name = IKeyword.WEIGHT, type = IType.FLOAT, optional = true) }, omissible = IKeyword.ITEM)
 @symbol(name = IKeyword.ADD, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 public class AddStatement extends AbstractContainerStatement {
@@ -60,27 +60,16 @@ public class AddStatement extends AbstractContainerStatement {
 	}
 
 	@Override
-	protected void apply(final IScope scope, final Object object, final Object position,
+	protected void apply(final IScope scope, final Object toAdd, final Object position,
 		final Boolean whole, final IContainer container) throws GamaRuntimeException {
 		// AD 29/02/13 : Normally taken in charge by the parser, now.
 		// if ( container.isFixedLength() ) { throw new GamaRuntimeException("Cannot add to " +
 		// list.toGaml(), true); }
 		Object param = weight == null ? null : weight.value(scope);
-		if ( position == null ) {
-			if ( asAll ) {
-				container.addAll(scope, scope, (IContainer) object, param);
-			} else {
-				container.add(scope, object, param);
-			}
-		} else {
-			if ( !container.checkBounds(position, true) ) { throw new GamaRuntimeException(
-				"Index " + position + " out of bounds of " + list.toGaml(), true); }
-			if ( !asAll ) {
-				container.add(scope, position, object, param);
-			} else {
-				container.addAll(scope, position, (IContainer) object, param);
-			}
-		}
+		if ( position != null && !container.checkBounds(position, true) ) { throw new GamaRuntimeException(
+			"Index " + position + " out of bounds of " + list.toGaml(), true); }
+		container.add(scope, position, toAdd, param, whole, true);
+
 	}
 
 }

@@ -48,7 +48,7 @@ public interface IKeyword {
 	public static final String AXES = "axes";
 	public static final String BACKGROUND = "background";
 	public static final String BAR = "bar";
-	public static final String BOX_WHISKER = "box_whisker"; //  new type of chart: box and whisker
+	public static final String BOX_WHISKER = "box_whisker"; // new type of chart: box and whisker
 	public final static String BATCH = "batch";
 	public static final String BEHAVIOR = "behavior";
 	public static final String BEHAVIORS = "behaviors";
@@ -307,7 +307,8 @@ public interface IKeyword {
 	public static final String THREE_D = "3d";
 	public static final String TIME = "time";
 	public static final String TIMES = "times";
-	public static final String TIMEXSERIES = "timexseries";  //hqnghi facet timeXseries for continuous Chart
+	public static final String TIMEXSERIES = "timexseries"; // hqnghi facet timeXseries for
+															// continuous Chart
 	public static final String TITLE = "title";
 	public static final String TO = "to";
 	public static final String TOPOLOGY = "topology";
@@ -337,7 +338,7 @@ public interface IKeyword {
 	public static final String WARNING = "warn";
 	public static final String WEIGHT = "weight";
 	public static final String WHEN = "when";
-	public static final String WHISKER = "whisker"; // new type of datachart	
+	public static final String WHISKER = "whisker"; // new type of datachart
 	public static final String WHILE = "while";
 	public static final String WIDTH = "width";
 	public static final String WITH = "with";
@@ -357,4 +358,21 @@ public interface IKeyword {
 	public static final String USER_INIT = "user_init";
 	public static final String AS_SKILL = "as_skill";
 	public static final String IS_SKILL = "is_skill";
+
+	/**
+	 * TYPES
+	 */
+	public static final String LIST = "list";
+	public static final String MAP = "map";
+	public static final String BOOL = "bool";
+	public static final String FLOAT = "float";
+	public static final String INT = "int";
+	public static final String STRING = "string";
+	public static final String POINT = "point";
+	public static final String PAIR = "pair";
+	public static final String UNKNOWN = "unknown";
+	public static final String MATRIX = "matrix";
+	public static final String RGB = "rgb";
+	public static final String CONTAINER = "container";
+	public static final String GEOMETRY = "geometry";
 }

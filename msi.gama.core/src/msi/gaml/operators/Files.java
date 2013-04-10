@@ -26,10 +26,11 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.file.*;
-import msi.gaml.types.GamaFileType;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 20 dec. 2010
@@ -64,7 +65,7 @@ public class Files {
 		throw new GamaRuntimeException("Unknown file type: " + s);
 	}
 
-	@operator(value = IMAGE, can_be_const = true)
+	@operator(value = IMAGE, can_be_const = true, index_type = IType.POINT)
 	@doc(value = "opens a file that is a kind of image.", comment = "The file should have an image extension, cf. file type deifnition for supported file extensions.", special_cases = "If the specified string does not refer to an existing image file, an exception is risen.", examples = { "let fileT type: file value: image(\"../includes/testImage.png\");  // fileT represents the file \"../includes/testShape.png\"" }, see = {
 		"file", "shapefile", "properties", "text" })
 	public static IGamaFile imageFile(final IScope scope, final String s)
@@ -72,7 +73,7 @@ public class Files {
 		return new GamaImageFile(scope, s);
 	}
 
-	@operator(value = TEXT, can_be_const = true)
+	@operator(value = TEXT, can_be_const = true, index_type = IType.INT)
 	@doc(value = "opens a file that a is a kind of text.", comment = "The file should have a text extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing text file, an exception is risen.", examples = {
 		"let fileT type: file value: text(\"../includes/Stupid_Cell.Data\");",
 		"				// fileT represents the text file \"../includes/Stupid_Cell.Data\"" }, see = { "file",
@@ -82,7 +83,7 @@ public class Files {
 		return new GamaTextFile(scope, s);
 	}
 
-	@operator(value = PROPERTIES, can_be_const = true)
+	@operator(value = PROPERTIES, can_be_const = true, index_type = IType.STRING)
 	@doc(value = "opens a file that is a kind of properties.", comment = "The file should have a properties extension, cf. type file definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing propserites file, an exception is risen.", examples = { "let fileT type: file value: properties(\"../includes/testProperties.properties\");  // fileT represents the properties file \"../includes/testProperties.properties\"" }, see = {
 		"file", "shapefile", "image", "text" })
 	public static IGamaFile propertyFile(final IScope scope, final String s)
@@ -90,7 +91,7 @@ public class Files {
 		return new GamaPropertyFile(scope, s);
 	}
 
-	@operator(value = SHAPE, can_be_const = true)
+	@operator(value = SHAPE, can_be_const = true, index_type = IType.INT)
 	@doc(value = "opens a file that a is a kind of shapefile.", comment = "The file should have a shapefile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing shapefile file, an exception is risen.", examples = {
 		"let fileT type: file value: shapefile(\"../includes/testProperties.shp\");",
 		"            // fileT represents the shapefile file \"../includes/testProperties.shp\"" }, see = {
@@ -100,7 +101,7 @@ public class Files {
 		return new GamaShapeFile(scope, s);
 	}
 
-	@operator(value = FOLDER, can_be_const = true)
+	@operator(value = FOLDER, can_be_const = true, index_type = IType.INT)
 	@doc(value = "opens an existing repository", special_cases = " If the specified string does not refer to an existing repository, an exception is risen.", examples = {
 		"let dirT type: file value: folder(\"../includes/\");",
 		"				// dirT represents the repository \"../includes/\"",
@@ -111,18 +112,18 @@ public class Files {
 		return new GamaFolderFile(scope, s);
 	}
 
-	@operator(value = READ)
+	@operator(value = READ, type = ITypeProvider.FIRST_TYPE, content_type = ITypeProvider.FIRST_CONTENT_TYPE, index_type = ITypeProvider.FIRST_KEY_TYPE)
 	@doc(value = "marks the file so that only read operations are allowed.", comment = "A file is created by default in read-only mode. The operator write can change the mode.", examples = { "read(shapefile(\"../images/point_eau.shp\"))  --:  returns a file in read-only mode representing \"../images/point_eau.shp\"" }, see = {
 		"file", "write" })
-	public static Object opRead(final IScope scope, final IGamaFile s) {
+	public static IGamaFile opRead(final IScope scope, final IGamaFile s) {
 		s.setWritable(false);
 		return s;
 	}
 
-	@operator(value = WRITE)
+	@operator(value = WRITE, type = ITypeProvider.FIRST_TYPE, content_type = ITypeProvider.FIRST_CONTENT_TYPE, index_type = ITypeProvider.FIRST_KEY_TYPE)
 	@doc(value = "marks the file so that read and write operations are allowed.", comment = "A file is created by default in read-only mode.", examples = { "write(shapefile(\"../images/point_eau.shp\"))   --: returns a file in read-write mode representing \"../images/point_eau.shp\"" }, see = {
 		"file", "read" })
-	public static Object opWrite(final IScope scope, final IGamaFile s) {
+	public static IGamaFile opWrite(final IScope scope, final IGamaFile s) {
 		s.setWritable(true);
 		return s;
 	}
@@ -185,7 +186,7 @@ public class Files {
 		return null;
 	}
 
-	@operator(value = { "new_folder" })
+	@operator(value = { "new_folder" }, index_type = IType.INT, content_type = IType.STRING)
 	@doc(value = "opens an existing repository or create a new folder if it does not exist.", comment = "", special_cases = " If the specified string does not refer to an existing repository, the repository is created. If the string refers to an existing file, an exception is risen.", examples = {
 		"let dirNewT type: file value: new_folder(\"../incl/\");   	// dirNewT represents the repository \"../incl/\"",
 		"															// eventually creates the directory ../incl" }, see = { "folder", "file" })

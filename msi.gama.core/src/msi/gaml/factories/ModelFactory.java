@@ -26,11 +26,11 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
+import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.SyntacticElement;
 import msi.gaml.descriptions.*;
-import msi.gaml.expressions.IExpressionCompiler;
+import msi.gaml.expressions.*;
 import msi.gaml.statements.Facets;
-import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 27 oct. 2009
@@ -144,8 +144,12 @@ public class ModelFactory extends SymbolFactory {
 			}
 		}
 		if ( !environmentDefined ) {
-			ISyntacticElement shape =
-				new SyntacticElement(IType.GEOM_STR, new Facets(NAME, SHAPE, INIT, "envelope(100)"));
+			Facets f = new Facets(NAME, SHAPE);
+			f.put(
+				INIT,
+				GAMA.getExpressionFactory().createOperator("envelope", world,
+					new ConstantExpression(100)));
+			ISyntacticElement shape = new SyntacticElement(IKeyword.GEOMETRY, f);
 			VariableDescription vd = (VariableDescription) create(shape, world);
 			world.addChild(vd);
 			world.resortVarName(vd);
@@ -170,7 +174,7 @@ public class ModelFactory extends SymbolFactory {
 	private boolean translateEnvironment(SpeciesDescription world, final ISyntacticElement e) {
 		boolean environmentDefined;
 		environmentDefined = true;
-		ISyntacticElement shape = new SyntacticElement(IType.GEOM_STR, new Facets(NAME, SHAPE));
+		ISyntacticElement shape = new SyntacticElement(IKeyword.GEOMETRY, new Facets(NAME, SHAPE));
 		IExpressionDescription bounds = e.getFacet(BOUNDS);
 		if ( bounds == null ) {
 			IExpressionDescription width = e.getFacet(WIDTH);
@@ -183,10 +187,12 @@ public class ModelFactory extends SymbolFactory {
 			}
 		}
 		if ( bounds == null ) {
-			bounds = StringBasedExpressionDescription.create("envelope(100)");
-		} else {
-			bounds = new OperatorExpressionDescription("envelope", bounds);
-		}
+			bounds =
+				new OperatorExpressionDescription("envelope",
+					new ConstantExpressionDescription(100));
+		} // else {
+			// bounds = new OperatorExpressionDescription("envelope", bounds);
+			// }
 		shape.setFacet(INIT, bounds);
 		IExpressionDescription depends = e.getFacet(DEPENDS_ON);
 		if ( depends != null ) {

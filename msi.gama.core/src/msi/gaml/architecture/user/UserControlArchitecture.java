@@ -2,7 +2,7 @@ package msi.gaml.architecture.user;
 
 import java.util.ArrayList;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.agent.*;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.var;
@@ -13,7 +13,7 @@ import msi.gaml.architecture.finite_state_machine.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
-@vars(@var(name = IKeyword.USER_CONTROLLED, init = IKeyword.TRUE, type = IType.BOOL_STR))
+@vars(@var(name = IKeyword.USER_CONTROLLED, init = IKeyword.TRUE, type = IType.BOOL))
 public abstract class UserControlArchitecture extends FsmArchitecture {
 
 	UserInitPanelStatement initPanel;
@@ -32,7 +32,7 @@ public abstract class UserControlArchitecture extends FsmArchitecture {
 		}
 	}
 
-	@getter( IKeyword.USER_CONTROLLED)
+	@getter(IKeyword.USER_CONTROLLED)
 	public Boolean isUserControlled(final IAgent agent) {
 		return (Boolean) agent.getAttribute(IKeyword.USER_CONTROLLED);
 	}
@@ -44,7 +44,7 @@ public abstract class UserControlArchitecture extends FsmArchitecture {
 
 	@Override
 	protected Object executeCurrentState(final IScope scope) throws GamaRuntimeException {
-		IGamlAgent agent = getCurrentAgent(scope);
+		IAgent agent = getCurrentAgent(scope);
 		if ( agent.dead() || !isUserControlled(agent) ) { return null; }
 		return super.executeCurrentState(scope);
 	}

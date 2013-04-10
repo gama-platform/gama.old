@@ -20,7 +20,7 @@ package msi.gaml.architecture.reflex;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.agent.IGamlAgent;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -76,7 +76,7 @@ public class ReflexArchitecture extends AbstractArchitecture {
 	protected final Object executeReflexes(final IScope scope) {
 		if ( _reflexesNumber == 0 ) { return null; }
 		Object result = null;
-		IGamlAgent a = getCurrentAgent(scope);
+		IAgent a = getCurrentAgent(scope);
 		for ( int i = 0; i < _reflexesNumber; i++ ) {
 			IStatement r = _reflexes.get(i);
 			if ( !a.dead() ) {

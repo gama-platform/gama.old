@@ -45,8 +45,8 @@ import msi.gaml.types.*;
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT }, symbols = IKeyword.USER_PANEL)
 @facets(value = { @facet(name = IKeyword.ACTION, type = IType.ID, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
-	@facet(name = IKeyword.WHEN, type = IType.BOOL_STR, optional = true),
-	@facet(name = IKeyword.WITH, type = IType.MAP_STR, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.WITH, type = IType.MAP, optional = true) }, omissible = IKeyword.NAME)
 public class UserCommandStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
 	Arguments args;

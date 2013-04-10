@@ -19,6 +19,7 @@
 package msi.gaml.types;
 
 import java.util.Map;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
@@ -29,7 +30,7 @@ import msi.gama.util.graph.*;
 import msi.gaml.expressions.VariableExpression;
 import msi.gaml.operators.Cast;
 
-@type(name = IType.GRAPH_STR, id = IType.GRAPH, wraps = { IGraph.class }, kind = ISymbolKind.Variable.CONTAINER)
+@type(name = IKeyword.GRAPH, id = IType.GRAPH, wraps = { IGraph.class }, kind = ISymbolKind.Variable.CONTAINER)
 public class GamaGraphType extends GamaContainerType<IGraph> {
 
 	@Override

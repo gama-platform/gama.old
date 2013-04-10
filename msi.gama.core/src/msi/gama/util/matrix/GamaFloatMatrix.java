@@ -109,10 +109,10 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		}
 	}
 
-	// @Override
-	// protected void _clear() {
-	// Arrays.fill(matrix, 0d);
-	// }
+	@Override
+	protected void _clear() {
+		Arrays.fill(matrix, 0d);
+	}
 
 	@Override
 	public boolean _contains(IScope scope, final Object o) {
@@ -142,46 +142,46 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		return matrix.length;
 	}
 
-	@Override
-	public Double _max(final IScope scope) {
-		Double max = -Double.MAX_VALUE;
-		for ( int i = 0; i < matrix.length; i++ ) {
-			if ( matrix[i] > max ) {
-				max = Double.valueOf(matrix[i]);
-			}
-		}
-		return max;
-	}
-
-	@Override
-	public Double _min(final IScope scope) {
-		Double min = Double.MAX_VALUE;
-		for ( int i = 0; i < matrix.length; i++ ) {
-			if ( matrix[i] < min ) {
-				min = Double.valueOf(matrix[i]);
-			}
-		}
-		return min;
-	}
-
-	@Override
-	public Double _product(final IScope scope) {
-		double result = 1.0;
-		for ( int i = 0, n = matrix.length; i < n; i++ ) {
-			result *= matrix[i];
-		}
-		return result;
-	}
-
-	@Override
-	public Double _sum(final IScope scope) {
-		double result = 0.0;
-		for ( int i = 0, n = matrix.length; i < n; i++ ) {
-			result += matrix[i];
-		}
-		return result;
-	}
-
+	// @Override
+	// public Double _max(final IScope scope) {
+	// Double max = -Double.MAX_VALUE;
+	// for ( int i = 0; i < matrix.length; i++ ) {
+	// if ( matrix[i] > max ) {
+	// max = Double.valueOf(matrix[i]);
+	// }
+	// }
+	// return max;
+	// }
+	//
+	// @Override
+	// public Double _min(final IScope scope) {
+	// Double min = Double.MAX_VALUE;
+	// for ( int i = 0; i < matrix.length; i++ ) {
+	// if ( matrix[i] < min ) {
+	// min = Double.valueOf(matrix[i]);
+	// }
+	// }
+	// return min;
+	// }
+	//
+	// @Override
+	// public Double _product(final IScope scope) {
+	// double result = 1.0;
+	// for ( int i = 0, n = matrix.length; i < n; i++ ) {
+	// result *= matrix[i];
+	// }
+	// return result;
+	// }
+	//
+	// @Override
+	// public Double _sum(final IScope scope) {
+	// double result = 0.0;
+	// for ( int i = 0, n = matrix.length; i < n; i++ ) {
+	// result += matrix[i];
+	// }
+	// return result;
+	// }
+	//
 	@Override
 	public boolean _isEmpty(IScope scope) {
 		for ( int i = 0; i < matrix.length; i++ ) {
@@ -233,10 +233,11 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	}
 
 	@Override
-	public void _putAll(IScope scope, final Double o, final Object param)
+	public void _putAll(IScope scope, final Object o, final Object param)
 		throws GamaRuntimeException {
-		// Exception if o == null
-		Arrays.fill(matrix, o.doubleValue());
+		// TODO Exception if o == null
+		// TODO Verify the type
+		Arrays.fill(matrix, ((Double) o).doubleValue());
 	}
 
 	@Override

@@ -20,7 +20,7 @@ package msi.gama.metamodel.topology.graph;
 
 import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.population.*;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
@@ -33,7 +33,7 @@ import org.jgrapht.Graphs;
 import org.jgrapht.alg.*;
 
 public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpatialGraph,
-	IPopulationListener {
+	IPopulation.Listener {
 
 	private FloydWarshallStaticOptimizer pathFinder;
 	/*

@@ -31,33 +31,28 @@ public class SpeciesConstantExpression extends ConstantExpression {
 	public SpeciesConstantExpression(final String val, final IType t, final IType ct) {
 		super(val, t, ct);
 	}
-	
-//	@Override
-//	public Object value(final IScope scope) {
-//
-//		ISpecies s = scope.getSimulationScope().getModel().getSpecies((String) value);
-//		return s;
-//		// IPopulation pop = scope.getAgentScope().getPopulationFor((String) value);
-//		// if ( pop != null ) { return pop.getSpecies(); }
-//
-//		// return null;
-//	}
-	
-    @Override
-    public Object value(final IScope scope) {
 
-            IAgent a = scope.getAgentScope();
-            if (a != null){
-                     IPopulation pop = scope.getAgentScope().getPopulationFor((String) value);
-                     if ( pop != null ) { return pop.getSpecies(); }
-            }
-            ISpecies s = scope.getSimulationScope().getModel().getSpecies((String) value);
-            return s;
-    }
+	// @Override
+	// public Object value(final IScope scope) {
+	//
+	// ISpecies s = scope.getSimulationScope().getModel().getSpecies((String) value);
+	// return s;
+	// // IPopulation pop = scope.getAgentScope().getPopulationFor((String) value);
+	// // if ( pop != null ) { return pop.getSpecies(); }
+	//
+	// // return null;
+	// }
 
 	@Override
-	public IType getContentType() {
-		return super.getContentType();
+	public Object value(final IScope scope) {
+
+		IAgent a = scope.getAgentScope();
+		if ( a != null ) {
+			IPopulation pop = scope.getAgentScope().getPopulationFor((String) value);
+			if ( pop != null ) { return pop.getSpecies(); }
+		}
+		ISpecies s = scope.getSimulationScope().getModel().getSpecies((String) value);
+		return s;
 	}
 
 	@Override

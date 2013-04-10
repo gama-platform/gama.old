@@ -46,31 +46,35 @@ import msi.gaml.types.*;
 @symbol(name = DRAW, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @facets(value = {
 	// Allows to pass any arbitrary geometry to the drawing command
-	@facet(name = IType.GEOM_STR, type = IType.NONE_STR, optional = true),
+	@facet(name = IKeyword.GEOMETRY, type = IType.NONE_STR, optional = true),
 	// AD 18/01/13: geometry is now accepting an y type of data
-	// @facet(name = SHAPE, type = IType.ID, optional = true, values = { "geometry",
-	// "square", "circle", "triangle", "rectangle", "disc", "line" }),
-	// @facet(name = TEXT, type = IType.STRING_STR, optional = true),
-	// @facet(name = IMAGE, type = IType.STRING_STR, optional = true),
-	@facet(name = EMPTY, type = IType.BOOL_STR, optional = true),
-	@facet(name = BORDER, type = IType.COLOR_STR, optional = true),
-	@facet(name = ROUNDED, type = IType.BOOL_STR, optional = true),
-	@facet(name = AT, type = IType.POINT_STR, optional = true),
-	@facet(name = SIZE, type = IType.FLOAT_STR, optional = true),
-	@facet(name = TO, type = IType.POINT_STR, optional = true),
-	@facet(name = COLOR, type = IType.COLOR_STR, optional = true),
-	@facet(name = SCALE, type = IType.FLOAT_STR, optional = true),
-	@facet(name = ROTATE, type = IType.INT_STR, optional = true),
-	@facet(name = FONT, type = IType.STRING_STR, optional = true),
-	@facet(name = DEPTH, type = IType.FLOAT_STR, optional = true),
+	@facet(name = SHAPE, type = IType.NONE_STR, optional = true/*
+																 * , values = { "geometry",
+																 * "square",
+																 * "circle", "triangle",
+																 * "rectangle", "disc", "line" }
+																 */),
+	@facet(name = TEXT, type = IType.STRING, optional = true),
+	@facet(name = IMAGE, type = IType.STRING, optional = true),
+	@facet(name = EMPTY, type = IType.BOOL, optional = true),
+	@facet(name = BORDER, type = IType.COLOR, optional = true),
+	@facet(name = ROUNDED, type = IType.BOOL, optional = true),
+	@facet(name = AT, type = IType.POINT, optional = true),
+	@facet(name = SIZE, type = IType.FLOAT, optional = true),
+	@facet(name = TO, type = IType.POINT, optional = true),
+	@facet(name = COLOR, type = IType.COLOR, optional = true),
+	@facet(name = SCALE, type = IType.FLOAT, optional = true),
+	@facet(name = ROTATE, type = IType.INT, optional = true),
+	@facet(name = FONT, type = IType.STRING, optional = true),
+	@facet(name = DEPTH, type = IType.FLOAT, optional = true),
 	@facet(name = STYLE, type = IType.ID, values = { "plain", "bold", "italic" }, optional = true) },
 
-combinations = { @combination({ IType.GEOM_STR, EMPTY, BORDER, ROUNDED, COLOR, DEPTH }),
+combinations = { @combination({ IKeyword.GEOMETRY, EMPTY, BORDER, ROUNDED, COLOR, DEPTH }),
 	@combination({ SHAPE, COLOR, SIZE, AT, EMPTY, BORDER, ROUNDED, ROTATE, DEPTH }),
 	@combination({ TO, SHAPE, COLOR, SIZE, EMPTY, BORDER, ROUNDED }),
 	@combination({ SHAPE, COLOR, SIZE, EMPTY, BORDER, ROUNDED, ROTATE }),
 	@combination({ TEXT, SIZE, COLOR, AT, ROTATE }),
-	@combination({ IMAGE, SIZE, AT, SCALE, ROTATE, COLOR }) }, omissible = IType.GEOM_STR)
+	@combination({ IMAGE, SIZE, AT, SCALE, ROTATE, COLOR }) }, omissible = IKeyword.GEOMETRY)
 @inside(symbols = { ASPECT, "graphics" }, kinds = { ISymbolKind.SEQUENCE_STATEMENT })
 public class DrawStatement extends AbstractStatementSequence {
 
@@ -101,7 +105,7 @@ public class DrawStatement extends AbstractStatementSequence {
 
 	public DrawStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
-		item = getFacet(IType.GEOM_STR);
+		item = getFacet(IKeyword.GEOMETRY, getFacet(SHAPE, getFacet(IMAGE, getFacet(TEXT))));
 		color = getFacet(IKeyword.COLOR);
 		if ( item == null ) {
 			executer = null;
@@ -121,7 +125,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			item = getShapeExpression(desc);
 			executer = new ShapeExecuter(desc);
 		} else {
-			// toDraw is supposed to be castable into a geometry
+			// item is supposed to be castable into a geometry
 			executer = new ShapeExecuter(desc);
 		}
 	}
@@ -176,7 +180,7 @@ public class DrawStatement extends AbstractStatementSequence {
 				}
 			}
 			if ( newExpr != null ) {
-				desc.getFacets().put(IType.GEOM_STR, exp);
+				desc.getFacets().put(IKeyword.GEOMETRY, exp);
 			} else {
 				// If no operator has been found, we throw an exception
 				desc.error("Impossible to patch the expression for compatibility",

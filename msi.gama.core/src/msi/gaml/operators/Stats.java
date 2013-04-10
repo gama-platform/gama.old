@@ -56,20 +56,153 @@ public class Stats {
 		return d;
 	}
 
-	@operator(value = "mean", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE, expected_content_type = {
+	@operator(value = "max", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, expected_content_type = {
+		IType.INT, IType.FLOAT, IType.POINT })
+	@doc(value = "the maximum element found in the operand", comment = "the max operator behavior depends on the nature of the operand", special_cases = {
+		"if it is a list of int of float, max returns the maximum of all the elements",
+		"if it is a list of points: max returns the maximum of all points as a point (i.e. the point with the greatest coordinate on the x-axis, in case of equality the point with the greatest coordinate on the y-axis is chosen. If all the points are equal, the first one is returned. )",
+		"if it is a population of a list of other type: max transforms all elements into integer and returns the maximum of them",
+		"if it is a map, max returns the maximum among the list of all elements value",
+		"if it is a file, max returns the maximum of the content of the file (that is also a container)",
+		"if it is a graph, max returns the maximum of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)",
+		"if it is a matrix of int, float or object, max returns the maximum of all the numerical elements (thus all elements for integer and float matrices)",
+		"if it is a matrix of geometry, max returns the maximum of the list of the geometries",
+		"if it is a matrix of another type, max returns the maximum of the elements transformed into float" }, see = { "min" }, examples = {
+		"max ([100, 23.2, 34.5]) 			--: 	100.0",
+		"max([{1.0;3.0},{3.0;5.0},{9.0;1.0},{7.0;8.0}]) 	--:  {9.0;1.0}" })
+	public static Object max(IScope scope, final IContainer l) {
+		Number maxNum = null;
+		ILocation maxPoint = null;
+		for ( Object o : l ) {
+			if ( o instanceof ILocation && maxNum == null &&
+				(maxPoint == null || ((ILocation) o).compareTo(maxPoint) > 0) ) {
+				maxPoint = (ILocation) o;
+			} else if ( o instanceof Number && maxPoint == null &&
+				(maxNum == null || ((Number) o).doubleValue() > maxNum.doubleValue()) ) {
+				maxNum = (Number) o;
+			} else {
+				Double d = Cast.asFloat(scope, o);
+				if ( maxNum == null || d > maxNum.doubleValue() ) {
+					maxNum = d;
+				}
+			}
+		}
+		return maxNum == null ? maxPoint : maxNum;
+	}
+
+	@operator(value = "min", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, expected_content_type = {
+		IType.INT, IType.FLOAT, IType.POINT })
+	@doc(value = "the minimum element found in the operand.", comment = "the min operator behavior depends on the nature of the operand", special_cases = {
+		"if it is a list of int or float: min returns the minimum of all the elements",
+		"if it is a list of points: min returns the minimum of all points as a point (i.e. the point with the smallest coordinate on the x-axis, in case of equality the point with the smallest coordinate on the y-axis is chosen. If all the points are equal, the first one is returned. )",
+		"if it is a population of a list of other types: min transforms all elements into integer and returns the minimum of them",
+		"if it is a map, min returns the minimum among the list of all elements value",
+		"if it is a file, min returns the minimum of the content of the file (that is also a container)",
+		"if it is a graph, min returns the minimum of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)",
+		"if it is a matrix of int, float or object, min returns the minimum of all the numerical elements (thus all elements for integer and float matrices)",
+		"if it is a matrix of geometry, min returns the minimum of the list of the geometries",
+		"if it is a matrix of another type, min returns the minimum of the elements transformed into float" }, see = { "max" }, examples = { "min ([100, 23.2, 34.5]) 	--: 	23.2" })
+	public static Object min(IScope scope, final IContainer l) {
+		Number minNum = null;
+		ILocation minPoint = null;
+		for ( Object o : l ) {
+			if ( o instanceof ILocation && minNum == null &&
+				(minPoint == null || ((ILocation) o).compareTo(minPoint) < 0) ) {
+				minPoint = (ILocation) o;
+			} else if ( o instanceof Number && minPoint == null &&
+				(minNum == null || ((Number) o).doubleValue() < minNum.doubleValue()) ) {
+				minNum = (Number) o;
+			} else {
+				Double d = Cast.asFloat(scope, o);
+				if ( minNum == null || d < minNum.doubleValue() ) {
+					minNum = d;
+				}
+			}
+		}
+		return minNum == null ? minPoint : minNum;
+	}
+
+	@operator(value = { "mul", "product" }, can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, expected_content_type = {
+		IType.INT, IType.FLOAT, IType.POINT })
+	@doc(value = "the product of all the elements of the operand", comment = "the mul operator behavior depends on the nature of the operand", special_cases = {
+		"if it is a list of int or float: mul returns the product of all the elements",
+		"if it is a list of points: mul returns the product of all points as a point (each coordinate is the product of the corresponding coordinate of each element)",
+		"if it is a list of other types: mul transforms all elements into integer and multiplies them",
+		"if it is a map, mul returns the product of the value of all elements",
+		"if it is a file, mul returns the product of the content of the file (that is also a container)",
+		"if it is a graph, mul returns the product of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)",
+		"if it is a matrix of int, float or object, mul returns the product of all the numerical elements (thus all elements for integer and float matrices)",
+		"if it is a matrix of geometry, mul returns the product of the list of the geometries",
+		"if it is a matrix of other types: mul transforms all elements into float and multiplies them", }, see = { "sum" }, examples = { "mul ([100, 23.2, 34.5]) 	--:		80040.0" })
+	public static Object product(IScope scope, final IContainer l) {
+		DataSet x = new DataSet();
+		DataSet y = null, z = null;
+		for ( Object o : l ) {
+			if ( o instanceof ILocation ) {
+				if ( y == null ) {
+					y = new DataSet();
+					z = new DataSet();
+				}
+				ILocation p = (ILocation) o;
+				x.addValue(p.getX());
+				y.addValue(p.getY());
+				z.addValue(p.getZ());
+			} else {
+				x.addValue(Cast.asFloat(scope, o));
+			}
+		}
+		if ( y == null ) { return x.getProduct(); }
+		return new GamaPoint(x.getProduct(), y.getProduct(), z.getProduct());
+	}
+
+	@operator(value = "sum", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, expected_content_type = {
+		IType.INT, IType.FLOAT, IType.POINT })
+	@doc(value = "the sum of all the elements of the operand", comment = "the sum operator behavior depends on the nature of the operand", special_cases = {
+		"if it is a list of int or float: sum returns the sum of all the elements",
+		"if it is a list of points: sum returns the sum of all points as a point (each coordinate is the sum of the corresponding coordinate of each element)",
+		"if it is a population or a list of other types: sum transforms all elements into integer and sums them",
+		"if it is a map, sum returns the sum of the value of all elements",
+		"if it is a file, sum returns the sum of the content of the file (that is also a container)",
+		"if it is a graph, sum returns the sum of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)",
+		"if it is a matrix of int, float or object, sum returns the sum of all the numerical elements (i.e. all elements for integer and float matrices)",
+		"if it is a matrix of geometry, sum returns the sum of the list of the geometries",
+		"if it is a matrix of other types: sum transforms all elements into float and sums them", }, see = { "mul" }, examples = {
+		"sum ([12,10, 3]) 	--: 	25.0",
+		"sum([{1.0;3.0},{3.0;5.0},{9.0;1.0},{7.0;8.0}])		--: {20.0;17.0} " })
+	public static Object sum(IScope scope, final IContainer l) {
+		DataSet x = new DataSet();
+		DataSet y = null, z = null;
+		for ( Object o : l ) {
+			if ( o instanceof ILocation ) {
+				if ( y == null ) {
+					y = new DataSet();
+					z = new DataSet();
+				}
+				ILocation p = (ILocation) o;
+				x.addValue(p.getX());
+				y.addValue(p.getY());
+				z.addValue(p.getZ());
+			} else {
+				x.addValue(Cast.asFloat(scope, o));
+			}
+		}
+		if ( y == null ) { return x.getAggregate(); }
+		return new GamaPoint(x.getAggregate(), y.getAggregate(), z.getAggregate());
+	}
+
+	@operator(value = "mean", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, expected_content_type = {
 		IType.INT, IType.FLOAT, IType.POINT })
 	@doc(value = "the mean of all the elements of the operand", comment = "the elements of the operand are summed (see sum for more details about the sum of container elements ) and then the sum value is divided by the number of elements.", special_cases = { "if the container contains points, the result will be a point" }, examples = { "mean ([4.5, 3.5, 5.5, 7.0]) --: 5.125 " }, see = { "sum" })
 	public static Object getMean(final IScope scope, final IContainer l)
 		throws GamaRuntimeException {
 		if ( l.length(scope) == 0 ) { return Double.valueOf(0d); }
-		Object s = l.sum(scope);
+		Object s = sum(scope, l);
 		if ( s instanceof Number ) { return ((Number) s).doubleValue() / l.length(scope); }
-
 		if ( s instanceof ILocation ) { return Points.divide((GamaPoint) s, l.length(scope)); }
 		return Cast.asFloat(scope, s) / l.length(scope);
 	}
 
-	// Penser a faire ces calculs sur les points, egalement (et les entiers ?)
+	// TODO Penser a faire ces calculs sur les points, egalement (et les entiers ?)
 
 	@operator(value = "median", expected_content_type = { IType.INT, IType.FLOAT })
 	@doc(value = "the median of all the elements of the operand.", comment = "The operator casts all the numerical element of the list into float. The elements that are not numerical are discarded.", special_cases = { "" }, examples = { "median ([4.5, 3.5, 5.5, 7.0]) --: 5.0" }, see = { "mean" })
@@ -118,7 +251,7 @@ public class Stats {
 		return d.getMeanDeviation();
 	}
 
-	@operator(value = { "frequency_of" }, priority = IPriority.ITERATOR, iterator = true)
+	@operator(value = { "frequency_of" }, content_type = IType.INT, iterator = true)
 	@doc(value = "Returns a map with keys equal to the application of the right-hand argument (like collect) and values equal to the frequency of this key (i.e. how many times it has been obtained)", comment = "", examples = { "[ag1, ag2, ag3, ag4] frequency_of each.size 	--:   will return the different sizes as keys and the number of agents of this size as values" }, see = "as_map")
 	public static GamaMap frequencyOf(final IScope scope, final IContainer original,
 		final IExpression filter) throws GamaRuntimeException {
@@ -136,7 +269,7 @@ public class Stats {
 		return result;
 	}
 
-	@operator(value = "corR", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE)
+	@operator(value = "corR", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE)
 	public static Object getCorrelationR(final IScope scope, final IContainer l1,
 		final IContainer l2) throws GamaRuntimeException, RCallerParseException,
 		RCallerExecutionException {
@@ -182,7 +315,7 @@ public class Stats {
 		return results[0];
 	}
 
-	@operator(value = "meanR", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE)
+	@operator(value = "meanR", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE)
 	public static Object getMeanR(final IScope scope, final IContainer l)
 		throws GamaRuntimeException, RCallerParseException, RCallerExecutionException {
 		if ( l.length(scope) == 0 ) { return Double.valueOf(0d); }
@@ -210,7 +343,7 @@ public class Stats {
 		return results[0];
 	}
 
-	@operator(value = "R_compute", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE)
+	@operator(value = "R_compute", can_be_const = true, content_type = IType.LIST, index_type = IType.STRING)
 	public static GamaMap opRFileEvaluate(final IScope scope, final String RFile)
 		throws GamaRuntimeException, RCallerParseException, RCallerExecutionException {
 		try {
@@ -256,7 +389,7 @@ public class Stats {
 
 			caller.setRCode(c);
 
-			GamaMap result = new GamaMap();
+			GamaMap<String, IList> result = new GamaMap();
 
 			String var =
 				computeVariable(R_statements.get(R_statements.length(scope) - 1).toString());
@@ -284,7 +417,7 @@ public class Stats {
 		}
 	}
 
-	@operator(value = "R_compute_param", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE)
+	@operator(value = "R_compute_param", can_be_const = true, content_type = IType.LIST, index_type = IType.STRING)
 	public static GamaMap operateRFileEvaluate(final IScope scope, final String RFile,
 		final IContainer param) throws GamaRuntimeException, RCallerParseException,
 		RCallerExecutionException {
@@ -341,7 +474,7 @@ public class Stats {
 			fr.close();
 			caller.setRCode(c);
 
-			GamaMap result = new GamaMap();
+			GamaMap<String, IList> result = new GamaMap();
 
 			String var =
 				computeVariable(R_statements.get(R_statements.length(scope) - 1).toString());

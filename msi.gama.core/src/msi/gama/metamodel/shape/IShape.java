@@ -36,7 +36,7 @@ import com.vividsolutions.jts.geom.*;
  * @modified November 2011 to include isPoint(), getInnerGeometry() and getEnvelope()
  * 
  */
-@vars({ @var(name = "perimeter", type = IType.FLOAT_STR) })
+@vars({ @var(name = "perimeter", type = IType.FLOAT) })
 public interface IShape extends ILocated, IValue {
 
 	public abstract IAgent getAgent();

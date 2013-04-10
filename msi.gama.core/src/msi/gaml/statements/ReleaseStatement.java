@@ -38,9 +38,9 @@ import msi.gaml.types.IType;
 @symbol(name = { IKeyword.RELEASE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = {
-	@facet(name = IKeyword.TARGET, type = { IType.AGENT_STR, IType.LIST_STR }, optional = false),
-	@facet(name = IKeyword.AS, type = { IType.SPECIES_STR }, optional = true),
-	@facet(name = IKeyword.IN, type = { IType.AGENT_STR }, optional = true),
+	@facet(name = IKeyword.TARGET, type = { IType.AGENT, IType.LIST }, optional = false),
+	@facet(name = IKeyword.AS, type = { IType.SPECIES }, optional = true),
+	@facet(name = IKeyword.IN, type = { IType.AGENT }, optional = true),
 	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true) }, omissible = IKeyword.TARGET)
 public class ReleaseStatement extends AbstractStatementSequence {
 

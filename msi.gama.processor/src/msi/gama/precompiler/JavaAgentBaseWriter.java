@@ -4,7 +4,6 @@ import java.util.Map;
 
 public class JavaAgentBaseWriter extends JavaWriter {
 
-	@Override
 	public String write(final String packageName, final GamlProperties props) {
 		StringBuilder sb = new StringBuilder();
 		writeHeader(sb, packageName);
@@ -20,7 +19,6 @@ public class JavaAgentBaseWriter extends JavaWriter {
 		return sb.toString();
 	}
 
-	@Override
 	protected void writeOperatorAddition(final StringBuilder sb, final String s, final String helper) {
 		boolean isUnary = true;
 		String[] segments = s.split("\\$");

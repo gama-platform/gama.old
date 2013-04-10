@@ -68,7 +68,7 @@ public interface IScope {
 
 	public abstract Object getEach();
 
-	public abstract Object getArg(String string, short type) throws GamaRuntimeException;
+	public abstract Object getArg(String string, int type) throws GamaRuntimeException;
 
 	public abstract Integer getIntArg(String string) throws GamaRuntimeException;
 

@@ -29,22 +29,22 @@ import msi.gaml.types.IType;
 import ummisco.gaml.extensions.maths.utils.*;
 
 @facets(value = {
-		@facet(name = IKeyword.EQUATION, type = IType.STRING_STR, optional = false),
+		@facet(name = IKeyword.EQUATION, type = IType.STRING, optional = false),
 		@facet(name = IKeyword.METHOD, type = IType.ID /* CHANGE */, optional = false, values = {
 				"rk4", "dp853" }, doc = @doc(value = "integrate method")),
 		/** Numerous other facets to plan : step, init, etc.) **/
-		@facet(name = "integrated_times", type = IType.LIST_STR, optional = true, doc = @doc(value = "time interval inside integration process")),
-		@facet(name = "integrated_values", type = IType.LIST_STR, optional = true, doc = @doc(value = "list of Variables's value inside integration process")),
-		@facet(name = "discretizing_step", type = IType.INT_STR, optional = true, doc = @doc(value = "number of discret beside 2 step of simulation")),
+		@facet(name = "integrated_times", type = IType.LIST, optional = true, doc = @doc(value = "time interval inside integration process")),
+		@facet(name = "integrated_values", type = IType.LIST, optional = true, doc = @doc(value = "list of Variables's value inside integration process")),
+		@facet(name = "discretizing_step", type = IType.INT, optional = true, doc = @doc(value = "number of discret beside 2 step of simulation")),
 
-		@facet(name = "time_initial", type = IType.FLOAT_STR, optional = true, doc = @doc(value = "initial time")),
-		@facet(name = "time_final", type = IType.FLOAT_STR, optional = true, doc = @doc(value = "target time for the integration (can be set to a value smaller than t0 for backward integration)")),
-		@facet(name = "cycle_length", type = IType.INT_STR, optional = true, doc = @doc(value = "length of simulation cycle which will be synchronize with step of integrator")),
-		@facet(name = IKeyword.STEP, type = IType.FLOAT_STR, optional = true, doc = @doc(value = "integration step, use with most integrator method")),
-		@facet(name = "min_step", type = IType.FLOAT_STR, optional = true, doc = @doc(value = "minimal step, use with dp853 method, (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this")),
-		@facet(name = "max_step", type = IType.FLOAT_STR, optional = true, doc = @doc(value = "maximal step, use with dp853 method, (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this")),
-		@facet(name = "scalAbsoluteTolerance", type = IType.FLOAT_STR, optional = true, doc = @doc(value = "allowed absolute error, use with dp853 method,")),
-		@facet(name = "scalRelativeTolerance", type = IType.FLOAT_STR, optional = true, doc = @doc(value = "allowed relative error, use with dp853 method,")) },
+		@facet(name = "time_initial", type = IType.FLOAT, optional = true, doc = @doc(value = "initial time")),
+		@facet(name = "time_final", type = IType.FLOAT, optional = true, doc = @doc(value = "target time for the integration (can be set to a value smaller than t0 for backward integration)")),
+		@facet(name = "cycle_length", type = IType.INT, optional = true, doc = @doc(value = "length of simulation cycle which will be synchronize with step of integrator")),
+		@facet(name = IKeyword.STEP, type = IType.FLOAT, optional = true, doc = @doc(value = "integration step, use with most integrator method")),
+		@facet(name = "min_step", type = IType.FLOAT, optional = true, doc = @doc(value = "minimal step, use with dp853 method, (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this")),
+		@facet(name = "max_step", type = IType.FLOAT, optional = true, doc = @doc(value = "maximal step, use with dp853 method, (sign is irrelevant, regardless of integration direction, forward or backward), the last step can be smaller than this")),
+		@facet(name = "scalAbsoluteTolerance", type = IType.FLOAT, optional = true, doc = @doc(value = "allowed absolute error, use with dp853 method,")),
+		@facet(name = "scalRelativeTolerance", type = IType.FLOAT, optional = true, doc = @doc(value = "allowed relative error, use with dp853 method,")) },
 
 combinations = {
 		@combination({ IKeyword.STEP }),

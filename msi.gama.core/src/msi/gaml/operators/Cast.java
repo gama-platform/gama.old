@@ -44,7 +44,7 @@ import msi.gaml.types.*;
  */
 public class Cast {
 
-	@operator(value = { IKeyword.IS }, priority = IPriority.COMPARATOR)
+	@operator(value = { IKeyword.IS })
 	@doc(value = "returns true is the left operand is of the right operand type, false otherwise", examples = {
 		"0 is int 		--: 	true", "an_agent is node 	--: 	true", "1 is float 		--: 	false" })
 	public static Boolean isA(final IScope scope, final Object a, final IExpression b)
@@ -81,7 +81,7 @@ public class Cast {
 		}
 	}
 
-	@operator(value = IType.CONTAINER_STR, content_type = ITypeProvider.CHILD_CONTENT_TYPE, priority = IPriority.CAST)
+	@operator(value = IKeyword.CONTAINER, content_type = ITypeProvider.FIRST_CONTENT_TYPE, index_type = ITypeProvider.FIRST_KEY_TYPE)
 	@doc(value = "casting of the operand to a container", special_cases = {
 		"if the operand is a container, returns itself",
 		"otherwise, returns the operand casted to a list" }, see = "list")
@@ -90,7 +90,7 @@ public class Cast {
 		return GamaContainerType.staticCast(scope, val, null);
 	}
 
-	@operator(value = IType.PATH_STR)
+	@operator(value = IKeyword.PATH)
 	@doc(value = "casting of the operand to a path", special_cases = {
 		"if the operand is a path, returns itself",
 		"if the operand is a list, casts the list into a list of point and returns the path (in the current topology) through these points.",
@@ -99,7 +99,7 @@ public class Cast {
 		return GamaPathType.staticCast(scope, object, null);
 	}
 
-	@operator(value = IType.GRAPH_STR, content_type = ITypeProvider.CHILD_CONTENT_TYPE, priority = IPriority.CAST)
+	@operator(value = IKeyword.GRAPH, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "casting of the operand to a graph.", special_cases = {
 		"if the operand is a graph, returns the graph itself",
 		"if the operand is a list, returns a new graph with the elements of the left-hand operand as vertices and no edge. "
@@ -112,7 +112,8 @@ public class Cast {
 		return GamaGraphType.staticCast(scope, val, null);
 	}
 
-	@operator(value = IType.TOPOLOGY_STR, content_type = IType.GEOMETRY, priority = IPriority.CAST)
+	@operator(value = IKeyword.TOPOLOGY, content_type = IType.GEOMETRY)
+	// FIXME index_type ?
 	@doc(value = "casting of the operand to a topology.", special_cases = {
 		"if the operand is a topology, returns the topology itself;",
 		"if the operand is a spatial graph, returns the graph topology associated;",
@@ -129,7 +130,7 @@ public class Cast {
 		return GamaTopologyType.staticCast(scope, val, null);
 	}
 
-	@operator(value = IType.AGENT_STR)
+	@operator(value = IKeyword.AGENT)
 	@doc(value = "casting of the operand to an agent (if a species name is used, casting to an instance of species name).", special_cases = {
 		"if the operand is a point, returns the closest agent (resp. closest instance of species name) to that point (computed in the topology of the calling agent);",
 		"if the operand is an agent, returns the agent (resp. tries to cast this agent to species name and returns nil if the agent is instance of another species);",
@@ -142,7 +143,7 @@ public class Cast {
 		return (IAgent) Types.get(IType.AGENT).cast(scope, val, null);
 	}
 
-	@operator(value = IKeyword.AS, type = ITypeProvider.RIGHT_CONTENT_TYPE, content_type = ITypeProvider.RIGHT_CONTENT_TYPE, priority = IPriority.CAST)
+	@operator(value = IKeyword.AS, type = ITypeProvider.SECOND_CONTENT_TYPE, content_type = ITypeProvider.SECOND_CONTENT_TYPE)
 	@doc(value = "casting of the left-hand operand to a species.", special_cases = {
 		"if the right-hand operand is nil, transforms the left-hand operand into an agent",
 		"if the left-hand operand is nil, returns nil",
@@ -169,14 +170,14 @@ public class Cast {
 		return null;
 	}
 
-	@operator(value = IKeyword.AS_SKILL, type = ITypeProvider.LEFT_TYPE)
+	@operator(value = IKeyword.AS_SKILL, type = ITypeProvider.FIRST_TYPE)
 	public static IAgent asSkill(final IScope scope, final Object val, final String skill) {
 		if ( isSkill(scope, val, skill) ) { return (IAgent) val; }
 		throw new GamaRuntimeException("Cast exception: " + val + " can not be viewed as a " +
 			skill);
 	}
 
-	@operator(value = IType.BOOL_STR, can_be_const = true)
+	@operator(value = IKeyword.BOOL, can_be_const = true)
 	@doc(value = "casting of the operand to a boolean value.", special_cases = {
 		"if the operand is null, returns false;",
 		"if the operand is an agent, returns true if the agent is not dead;",
@@ -192,7 +193,7 @@ public class Cast {
 		return GamaBoolType.staticCast(scope, val, null);
 	}
 
-	@operator(value = IType.COLOR_STR, can_be_const = true)
+	@operator(value = IKeyword.RGB, can_be_const = true)
 	@doc(value = "casting of the operand to a rgb color.", special_cases = {
 		"if the operand is nil, returns white;",
 		"if the operand is a string, the allowed color names are the constants defined in the java.awt.Color class, "
@@ -215,7 +216,7 @@ public class Cast {
 		return GamaColorType.staticCast(scope, val, null);
 	}
 
-	@operator(value = IType.FLOAT_STR, can_be_const = true)
+	@operator(value = IKeyword.FLOAT, can_be_const = true)
 	@doc(value = "casting of the operand to a floating point value.", special_cases = {
 		"if the operand is numerical value, returns its value as a floating point value;",
 		"if the operand is a string, tries to convert its content to a floating point value;",
@@ -228,7 +229,7 @@ public class Cast {
 		return GamaFloatType.staticCast(scope, val, null);
 	}
 
-	@operator(IType.GEOM_STR)
+	@operator(IKeyword.GEOMETRY)
 	@doc(value = "casts the operand into a geometry", special_cases = {
 		"if the operand is a point, returns a corresponding geometry point",
 		"if the operand is a agent, returns its geometry",
@@ -244,7 +245,7 @@ public class Cast {
 		return GamaGeometryType.staticCast(scope, s, null);
 	}
 
-	@operator(value = IType.INT_STR, can_be_const = true)
+	@operator(value = IKeyword.INT, can_be_const = true)
 	@doc(value = "casting of the operand to an integer value.", special_cases = {
 		"if the operand is a float, returns its value truncated (but not rounded);",
 		"if the operand is an agent, returns its unique index;",
@@ -270,7 +271,7 @@ public class Cast {
 		return GamaIntegerType.staticCast(scope, string, radix);
 	}
 
-	@operator(value = IType.LIST_STR, can_be_const = true, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
+	@operator(value = IKeyword.LIST, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "transforms the operand into a list", comment = "list always tries to cast the operand except if it is an int, a bool or a float; "
 		+ "to create a list, instead, containing the operand (including another list), use the + operator on an empty list (like [] + 'abc').", special_cases = {
 		"if the operand is a point or a pair, returns a list containing its components (two coordinates or the key and the value);",
@@ -285,13 +286,17 @@ public class Cast {
 		return GamaListType.staticCast(scope, val, null);
 	}
 
-	@operator(value = IType.MAP_STR, can_be_const = true)
+	@operator(value = IKeyword.MAP, can_be_const = true/*
+														 * , content_type =
+														 * ITypeProvider.FIRST_CONTENT_TYPE,
+														 * index_type = ITypeProvider.FIRST_KEY_TYPE
+														 */)
 	@doc(value = "casting of the operand to a map.", special_cases = {
 		"if the operand is a color RRGGBB, returns a map with the three elements: \"r\"::RR, \"g\"::GG, \"b\"::BB;",
 		"if the operand is a point, returns a map with two elements: \"x\":: x-ccordinate and \"y\":: y-coordinate;",
 		"if the operand is pair, returns a map with this only element;",
 		"if the operand is a species name, returns the map containing all the agents of the species as a pair nom_agent::agent;",
-		"if the operand is a agent, returns a map containing all the attributes as a pair attribute_name::attribute_value;",
+		"if the operand is a agent or a shape, returns a map containing all the attributes as a pair attribute_name::attribute_value;",
 		"if the operand is a list, returns a map containing either elements of the list if it is a list of pairs, or pairs list.get(i)::list.get(i+1);",
 		"if the operand is a file, returns the content casted to map;",
 		"if the operand is a graph, returns the a map with pairs edge_source::edge_target;",
@@ -300,7 +305,7 @@ public class Cast {
 		return (GamaMap) Types.get(IType.MAP).cast(scope, val, null);
 	}
 
-	@operator(value = IType.MATRIX_STR, can_be_const = true, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
+	@operator(value = IKeyword.MATRIX, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "casts the operand into a matrix", special_cases = {
 		"if the operand is a file, returns its content casted as a matrix",
 		"if the operand is a map, returns a 2-columns matrix with keyx in the first one and value in the second one;",
@@ -312,13 +317,13 @@ public class Cast {
 		return asMatrix(scope, val, null);
 	}
 
-	@operator(value = IType.MATRIX_STR, can_be_const = true, content_type = ITypeProvider.FIRST_ELEMENT_CONTENT_TYPE)
+	@operator(value = IKeyword.MATRIX, can_be_const = true, content_type = ITypeProvider.FIRST_ELEMENT_CONTENT_TYPE)
 	@doc()
 	public static IMatrix asMatrix(final IScope scope, final IList val) throws GamaRuntimeException {
 		return asMatrix(scope, val, null);
 	}
 
-	@operator(value = "as_matrix", content_type = ITypeProvider.LEFT_CONTENT_TYPE, can_be_const = true)
+	@operator(value = "as_matrix", content_type = ITypeProvider.FIRST_CONTENT_TYPE, can_be_const = true)
 	@doc(value = "casts the left operand into a matrix with right operand as preferrenced size", comment = "This operator is very useful to cast a file containing raster data into a matrix."
 		+ "Note that both components of the right operand point should be positive, otherwise an exception is raised."
 		+ "The operator as_matrix creates a matrix of preferred size. It fills in it with elements of the left operand until the matrix is full "
@@ -328,13 +333,13 @@ public class Cast {
 		return (IMatrix) Types.get(IType.MATRIX).cast(scope, val, size);
 	}
 
-	@operator(value = IType.NONE_STR, can_be_const = true)
+	@operator(value = IKeyword.UNKNOWN, can_be_const = true)
 	@doc(value = "returns the operand itself")
 	public static Object asObject(final Object obj) {
 		return obj;
 	}
 
-	@operator(value = IType.PAIR_STR, can_be_const = true)
+	@operator(value = IKeyword.PAIR, can_be_const = true)
 	@doc(value = "casting of the operand to a pair value.", special_cases = {
 		"if the operand is null, returns null;",
 		"if the operand is a point, returns the pair x-coordinate::y-coordinate;",
@@ -350,7 +355,7 @@ public class Cast {
 		return (GamaPair) Types.get(IType.PAIR).cast(scope, val, null);
 	}
 
-	@operator(value = IType.POINT_STR, can_be_const = true)
+	@operator(value = IKeyword.POINT, can_be_const = true)
 	@doc(value = "casting of the operand to a point value.", special_cases = {
 		"if the operand is null, returns null;",
 		"if the operand is an agent, returns its location",
@@ -368,7 +373,7 @@ public class Cast {
 		return GamaPointType.staticCast(scope, val, null);
 	}
 
-	@operator(value = { IType.SPECIES_STR, "species_of" }, content_type = ITypeProvider.CHILD_TYPE)
+	@operator(value = { IKeyword.SPECIES, "species_of" }, content_type = ITypeProvider.FIRST_TYPE)
 	@doc(value = "casting of the operand to a species.", special_cases = {
 		"if the operand is nil, returns nil;", "if the operand is an agent, returns its species;",
 		"if the operand is a string, returns the species with this name (nil if not found);",
@@ -380,7 +385,7 @@ public class Cast {
 		return (ISpecies) Types.get(IType.SPECIES).cast(scope, val, null);
 	}
 
-	@operator(value = IType.STRING_STR, can_be_const = true)
+	@operator(value = IKeyword.STRING, can_be_const = true)
 	@doc(value = "casting of the operand to a string.", special_cases = {
 		"if the operand is nil, returns 'nil';",
 		"if the operand is an agent, returns its name;",

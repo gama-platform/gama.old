@@ -21,6 +21,7 @@ package msi.gaml.expressions;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IGamlDescription;
+import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 25 déc. 2010
@@ -43,5 +44,20 @@ public interface IExpression extends IGamlDescription {
 	 * are replaced by constants representing their value
 	 */
 	public abstract IExpression resolveAgainst(IScope scope);
+
+	/*
+	 * FIXME Highly exploratory !
+	 * Tries to gather the key and content types of the elements contained in this expression, if
+	 * any. The type of the elements is provided by getContentType(), but these methods try to
+	 * return the key and content types of the elements themselves when they are available.
+	 */
+
+	public abstract IType getElementsContentType();
+
+	public abstract IType getElementsKeyType();
+
+	public abstract void setElementsContentType(IType t);
+
+	public abstract void setElementsKeyType(IType t);
 
 }

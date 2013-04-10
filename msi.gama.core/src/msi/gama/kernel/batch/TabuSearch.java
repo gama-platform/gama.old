@@ -37,10 +37,10 @@ import msi.gaml.types.IType;
 @inside(kinds = { ISymbolKind.EXPERIMENT })
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
-	@facet(name = TabuSearch.ITER_MAX, type = IType.INT_STR, optional = true),
-	@facet(name = TabuSearch.LIST_SIZE, type = IType.INT_STR, optional = true),
-	@facet(name = IKeyword.MAXIMIZE, type = IType.FLOAT_STR, optional = true),
-	@facet(name = IKeyword.MINIMIZE, type = IType.FLOAT_STR, optional = true),
+	@facet(name = TabuSearch.ITER_MAX, type = IType.INT, optional = true),
+	@facet(name = TabuSearch.LIST_SIZE, type = IType.INT, optional = true),
+	@facet(name = IKeyword.MAXIMIZE, type = IType.FLOAT, optional = true),
+	@facet(name = IKeyword.MINIMIZE, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = {
 		IKeyword.MIN, IKeyword.MAX }) }, omissible = IKeyword.NAME)
 public class TabuSearch extends LocalSearchAlgorithm {

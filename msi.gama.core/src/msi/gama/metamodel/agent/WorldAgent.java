@@ -98,7 +98,7 @@ public class WorldAgent extends GamlAgent {
 
 		if ( AbstractGamlAdditions.isBuiltIn(speciesName) ) {
 			ISpecies microSpec = this.getSpecies().getMicroSpecies(speciesName);
-			pop = new GamlPopulation(this, microSpec);
+			pop = new GamaPopulation(this, microSpec);
 			microPopulations.put(microSpec, pop);
 			pop.initializeFor(getScope());
 			return pop;

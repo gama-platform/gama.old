@@ -38,12 +38,12 @@ import com.vividsolutions.jts.geom.Geometry;
  * @todo Description
  * 
  */
-@vars({ @var(name = IKeyword.ENVIRONMENT, type = IType.GEOM_STR),
-	@var(name = IKeyword.PLACES, type = IType.CONTAINER_STR, of = IType.GEOM_STR),
+@vars({ @var(name = IKeyword.ENVIRONMENT, type = IType.GEOMETRY),
+	@var(name = IKeyword.PLACES, type = IType.CONTAINER, of = IType.GEOMETRY),
 // Could be replaced by "geometries"
 /*
  * Normally not necessary as it is inherited from GamaGeometry @var(name = GamaPath.POINTS, type =
- * IType.LIST_STR, of = IType.POINT_STR)
+ * IType.LIST, of = IType.POINT)
  */
 })
 public interface ITopology extends IValue {

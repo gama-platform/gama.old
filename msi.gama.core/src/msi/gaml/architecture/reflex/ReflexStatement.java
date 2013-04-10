@@ -34,7 +34,7 @@ import msi.gaml.types.IType;
 
 @symbol(name = { IKeyword.REFLEX, IKeyword.INIT }, kind = ISymbolKind.BEHAVIOR, with_sequence = true, unique_name = true)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT })
-@facets(value = { @facet(name = IKeyword.WHEN, type = IType.BOOL_STR, optional = true),
+@facets(value = { @facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true) }, omissible = IKeyword.NAME)
 public class ReflexStatement extends AbstractStatementSequence {
 

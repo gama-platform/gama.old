@@ -18,6 +18,9 @@
  */
 package msi.gaml.expressions;
 
+import msi.gaml.compilation.GamlElementDocumentation;
+import msi.gaml.types.IType;
+
 /**
  * AbstractBinaryOperator
  * @author drogoul 23 august 07
@@ -25,6 +28,7 @@ package msi.gaml.expressions;
 public abstract class AbstractNAryOperator extends AbstractExpression implements IOperator {
 
 	protected IExpression[] exprs;
+	protected GamlElementDocumentation doc;
 
 	@Override
 	public String toString() {
@@ -58,5 +62,41 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	public IExpression arg(final int i) {
 		if ( exprs == null ) { return null; }
 		return exprs[i];
+	}
+
+	@Override
+	public String getTitle() {
+		StringBuilder sb = new StringBuilder(50);
+		sb.append("operator ").append(getName()).append(" (");
+		if ( exprs != null ) {
+			for ( int i = 0; i < exprs.length; i++ ) {
+				sb.append(exprs[i] == null ? "nil" : exprs[i].getType());
+				sb.append(',');
+			}
+			sb.setLength(sb.length() - 1);
+		}
+		sb.append(") returns ");
+		IType type = getType();
+		sb.append(type.toString());
+		if ( type.hasContents() ) {
+			sb.append("&lt;").append(getKeyType().toString()).append(",")
+				.append(getContentType().toString()).append("&gt;");
+		}
+		return sb.toString();
+	}
+
+	@Override
+	public String getDocumentation() {
+		StringBuilder sb = new StringBuilder(200);
+		// TODO insert here a @documentation if possible
+		if ( doc != null ) {
+			sb.append(doc.getMain());
+		}
+		return sb.toString();
+	}
+
+	@Override
+	public void setDoc(GamlElementDocumentation doc) {
+		this.doc = doc;
 	}
 }

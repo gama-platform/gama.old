@@ -50,10 +50,10 @@ import org.jfree.data.statistics.Statistics;
 @symbol(name = { IKeyword.BATCH }, kind = ISymbolKind.EXPERIMENT, with_sequence = true)
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
-	@facet(name = IKeyword.KEEP_SEED, type = IType.BOOL_STR, optional = true),
-	@facet(name = IKeyword.REPEAT, type = IType.INT_STR, optional = true),
-	@facet(name = IKeyword.UNTIL, type = IType.BOOL_STR, optional = true),
-	@facet(name = IKeyword.MULTICORE, type = IType.BOOL_STR, optional = true),
+	@facet(name = IKeyword.KEEP_SEED, type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.REPEAT, type = IType.INT, optional = true),
+	@facet(name = IKeyword.UNTIL, type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.MULTICORE, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { IKeyword.BATCH, IKeyword.REMOTE,
 		IKeyword.GUI_ }, optional = false) }, omissible = IKeyword.NAME)
 @inside(symbols = IKeyword.MODEL, kinds = ISymbolKind.SPECIES)

@@ -6,8 +6,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 @skill(name = IKeyword.USER_LAST)
-// @vars({ @var(name = IKeyword.STATE, type = IType.STRING_STR),
-// @var(name = IKeyword.STATES, type = IType.LIST_STR, constant = true) })
+// @vars({ @var(name = IKeyword.STATE, type = IType.STRING),
+// @var(name = IKeyword.STATES, type = IType.LIST, constant = true) })
 public class UserLastControlArchitecture extends UserControlArchitecture {
 
 	@Override

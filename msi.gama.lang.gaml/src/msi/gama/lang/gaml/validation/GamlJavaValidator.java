@@ -53,8 +53,8 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	@Check()
 	public synchronized void validate(final Model model) {
 		try {
-			GuiUtils.debug("GamlJavaValidator processing " +
-				model.eResource().getURI().lastSegment() + "...");
+			// GuiUtils.debug("GamlJavaValidator processing " +
+			// model.eResource().getURI().lastSegment() + "...");
 			GamlResource r = (GamlResource) model.eResource();
 			currentResource = r;
 			ModelDescription result = null;
@@ -85,6 +85,8 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		}
 	}
 
+	private static long timeInValidation = 0;
+
 	private ModelDescription validate(GamlResource r) {
 		// this.listVisibleResourcesFromMe();
 		long begin = System.nanoTime();
@@ -95,8 +97,10 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			description = getModelFactory().validate(description);
 		}
 		long end = System.nanoTime();
-		GuiUtils.debug("Validation of " + description + " took " + (end - begin) / 1000000d +
-			" milliseconds");
+		timeInValidation += end - begin;
+		double ms = (end - begin) / 1000000d;
+		GuiUtils.debug("=> " + description + " in " + ms + " ms (total: " + timeInValidation /
+			1000000d + ")");
 		return description;
 	}
 

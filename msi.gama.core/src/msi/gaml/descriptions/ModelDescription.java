@@ -38,8 +38,8 @@ import org.eclipse.emf.ecore.EObject;
  */
 public class ModelDescription extends SymbolDescription {
 
-	private final int number;
-	private static int count = 1;
+	// private final int number;
+	// private static int count = 1;
 	private final Map<String, ExperimentDescription> experiments = new HashMap();
 	private IDescription output;
 	final TypesManager types;
@@ -57,7 +57,7 @@ public class ModelDescription extends SymbolDescription {
 		super(MODEL, null, IChildrenProvider.NONE, source, facets);
 		types = new TypesManager(this);
 		setModelFilePath(projectPath, modelPath);
-		number = count++;
+		// number = count++;
 	}
 
 	public void setTorus(boolean b) {
@@ -70,8 +70,8 @@ public class ModelDescription extends SymbolDescription {
 
 	@Override
 	public String toString() {
-		return "description #" + number + " of model <" +
-			modelFilePath.substring(modelFilePath.lastIndexOf(File.separator)) + ">";
+		return "description of " +
+			modelFilePath.substring(modelFilePath.lastIndexOf(File.separator));
 	}
 
 	@Override
@@ -145,7 +145,11 @@ public class ModelDescription extends SymbolDescription {
 	}
 
 	public void addSpeciesDescription(final TypeDescription species) {
-		allSpeciesDescription.put(species.getName(), species);
+		if ( allSpeciesDescription.containsKey(species.getName()) ) {
+			species.error("Species " + species.getName() + " is already defined in model");
+		} else {
+			allSpeciesDescription.put(species.getName(), species);
+		}
 	}
 
 	@Override

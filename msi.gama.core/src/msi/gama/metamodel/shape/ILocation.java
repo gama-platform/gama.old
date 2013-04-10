@@ -33,9 +33,9 @@ import com.vividsolutions.jts.geom.Coordinate;
  * @since 15 déc. 2011
  * 
  */
-@vars({ @var(name = IKeyword.X, type = IType.FLOAT_STR),
-	@var(name = IKeyword.Y, type = IType.FLOAT_STR),
-	@var(name = IKeyword.Z, type = IType.FLOAT_STR) })
+@vars({ @var(name = IKeyword.X, type = IType.FLOAT),
+	@var(name = IKeyword.Y, type = IType.FLOAT),
+	@var(name = IKeyword.Z, type = IType.FLOAT) })
 public interface ILocation extends IShape, Comparable {
 
 	@getter(IKeyword.X)

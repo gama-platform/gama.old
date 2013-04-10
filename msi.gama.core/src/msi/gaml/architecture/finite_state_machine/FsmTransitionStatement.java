@@ -34,7 +34,7 @@ import msi.gaml.types.IType;
 
 @symbol(name = FsmTransitionStatement.TRANSITION, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @inside(symbols = { FsmStateStatement.STATE })
-@facets(value = { @facet(name = IKeyword.WHEN, type = IType.BOOL_STR, optional = true),
+@facets(value = { @facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true),
 	@facet(name = FsmTransitionStatement.TO, type = IType.ID, optional = false) }, omissible = IKeyword.WHEN)
 public class FsmTransitionStatement extends AbstractStatementSequence {
 

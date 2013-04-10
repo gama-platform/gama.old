@@ -40,7 +40,7 @@ import msi.gaml.types.IType;
  */
 @symbol(name = IKeyword.IF, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
-@facets(value = { @facet(name = IKeyword.CONDITION, type = IType.BOOL_STR, optional = false) }, omissible = IKeyword.CONDITION)
+@facets(value = { @facet(name = IKeyword.CONDITION, type = IType.BOOL, optional = false) }, omissible = IKeyword.CONDITION)
 public class IfStatement extends AbstractStatementSequence {
 
 	public IStatement alt;

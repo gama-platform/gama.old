@@ -37,7 +37,7 @@ import msi.gaml.species.ISpecies;
  */
 public class GamaAgentType extends GamaType<IAgent> {
 
-	public GamaAgentType(final String speciesName, final short speciesId, final Class base) {
+	public GamaAgentType(final String speciesName, final int speciesId, final Class base) {
 		name = speciesName;
 		id = speciesId;
 		supports = new Class[] { base };

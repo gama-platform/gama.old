@@ -146,7 +146,7 @@ public class SymbolFactory {
 			if ( ed == null ) {
 				continue;
 			}
-			compileFacet(facetName, desc);
+			compileFacet(facetName, desc, smd);
 			IExpression expr = ed.getExpression();
 			if ( expr == null ) {
 				continue;
@@ -168,10 +168,12 @@ public class SymbolFactory {
 		}
 	}
 
-	protected void compileFacet(final String tag, final IDescription sd) {
+	protected void compileFacet(final String tag, final IDescription sd, SymbolProto sp) {
 		IExpressionDescription ed = sd.getFacets().get(tag);
 		if ( ed == null ) { return; }
-		ed.compile(sd);
+		if ( !sp.isLabel(tag) ) {
+			ed.compile(sd);
+		}
 	}
 
 	final ISymbol privateCompile(final IDescription desc) {
@@ -180,7 +182,7 @@ public class SymbolFactory {
 		Facets rawFacets = desc.getFacets();
 		for ( Facet f : rawFacets.entrySet() ) {
 			if ( f != null ) {
-				compileFacet(f.getKey(), desc);
+				compileFacet(f.getKey(), desc, md);
 			}
 		}
 		ISymbol cs = md.getConstructor().create(desc);

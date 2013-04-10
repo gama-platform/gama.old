@@ -20,7 +20,7 @@ package msi.gaml.architecture.finite_state_machine;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.agent.IGamlAgent;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -43,8 +43,8 @@ import msi.gaml.types.IType;
 
 @symbol(name = FsmStateStatement.STATE, kind = ISymbolKind.BEHAVIOR, with_sequence = true, unique_name = true)
 @inside(symbols = IKeyword.FSM, kinds = { ISymbolKind.SPECIES })
-@facets(value = { @facet(name = FsmStateStatement.INITIAL, type = IType.BOOL_STR, optional = true),
-	@facet(name = FsmStateStatement.FINAL, type = IType.BOOL_STR, optional = true),
+@facets(value = { @facet(name = FsmStateStatement.INITIAL, type = IType.BOOL, optional = true),
+	@facet(name = FsmStateStatement.FINAL, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false) }, combinations = {
 	@combination({ IKeyword.NAME, FsmStateStatement.FINAL }), @combination({ IKeyword.NAME }),
 	@combination({ IKeyword.NAME, FsmStateStatement.INITIAL }) }, omissible = IKeyword.NAME)
@@ -90,7 +90,7 @@ public class FsmStateStatement extends AbstractStatementSequence {
 	}
 
 	protected boolean beginExecution(final IScope scope) throws GamaRuntimeException {
-		IGamlAgent agent = (IGamlAgent) scope.getAgentScope();
+		IAgent agent = scope.getAgentScope();
 		if ( agent.dead() ) { return false; }
 		Map<String, Object> memory = (Map) agent.getAttribute(STATE_MEMORY);
 		if ( memory == null ) {
@@ -125,7 +125,7 @@ public class FsmStateStatement extends AbstractStatementSequence {
 	}
 
 	protected String evaluateTransitions(final IScope scope) throws GamaRuntimeException {
-		IGamlAgent agent = (IGamlAgent) scope.getAgentScope();
+		IAgent agent = scope.getAgentScope();
 		for ( int i = 0; i < transitionsSize; i++ ) {
 			final FsmTransitionStatement transition = transitions.get(i);
 

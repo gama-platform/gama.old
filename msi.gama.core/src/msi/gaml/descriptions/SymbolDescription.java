@@ -65,6 +65,14 @@ public class SymbolDescription implements IDescription {
 		}
 	}
 
+	protected String typeToString() {
+		String t = getType().toString();
+		if ( getType().hasContents() ) {
+			t += "&lt;" + getKeyType().toString() + ", " + getContentType().toString() + "&gt;";
+		}
+		return t;
+	}
+
 	@Override
 	public int getKind() {
 		return meta.getKind();
@@ -375,7 +383,7 @@ public class SymbolDescription implements IDescription {
 
 	@Override
 	public String getTitle() {
-		return "Statement <b>" + getKeyword() + "</b> ";
+		return "statement " + getKeyword();
 	}
 
 	@Override

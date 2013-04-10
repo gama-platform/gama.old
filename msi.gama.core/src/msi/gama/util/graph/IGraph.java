@@ -36,10 +36,10 @@ import org.jgrapht.*;
  * An interface for the different kinds of graphs encountered in GAML
  * 
  */
-@vars({ @var(name = "spanning_tree", type = IType.LIST_STR),
-	@var(name = "circuit", type = IType.PATH_STR), @var(name = "connected", type = IType.BOOL_STR),
-	@var(name = "edges", type = IType.LIST_STR), @var(name = "vertices", type = IType.LIST_STR), 
-	@var(name = "verbose", type = IType.BOOL_STR) })
+@vars({ @var(name = "spanning_tree", type = IType.LIST),
+	@var(name = "circuit", type = IType.PATH), @var(name = "connected", type = IType.BOOL),
+	@var(name = "edges", type = IType.LIST), @var(name = "vertices", type = IType.LIST), 
+	@var(name = "verbose", type = IType.BOOL) })
 public interface IGraph<K, V> extends IContainer<K, V>, WeightedGraph, DirectedGraph,
 	UndirectedGraph, IGraphEventProvider {
 

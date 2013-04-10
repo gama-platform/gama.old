@@ -37,9 +37,9 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
 
-@facets(value = { @facet(name = IKeyword.NAME, type = IType.STRING_STR, optional = true),
+@facets(value = { @facet(name = IKeyword.NAME, type = IType.STRING, optional = true),
 	@facet(name = IKeyword.VAR, type = IType.ID, optional = false),
-	@facet(name = IKeyword.FRAMERATE, type = IType.INT_STR, optional = true)}, omissible = IKeyword.VAR)
+	@facet(name = IKeyword.FRAMERATE, type = IType.INT, optional = true)}, omissible = IKeyword.VAR)
 @symbol(name = { IKeyword.EXPORT }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = true)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
  

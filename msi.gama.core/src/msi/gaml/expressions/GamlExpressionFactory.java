@@ -111,12 +111,12 @@ public class GamlExpressionFactory implements IExpressionFactory {
 				return new TempVariableExpression(name, type, contentType, keyType,
 					definitionDescription);
 			case IVarExpression.EACH:
-				return new EachExpression(name, type, contentType, keyType);
+				return new EachExpression(type, contentType, keyType);
 			case IVarExpression.WORLD:
 				return new WorldExpression(name, type, contentType, keyType,
 					definitionDescription.getModelDescription());
 			case IVarExpression.SELF:
-				return new SelfExpression(name, type, contentType, keyType);
+				return new SelfExpression(type, contentType, keyType);
 			default:
 				return null;
 		}

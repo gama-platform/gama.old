@@ -18,14 +18,15 @@
  */
 package msi.gaml.types;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.continuous.*;
 import msi.gama.metamodel.topology.graph.*;
 import msi.gama.metamodel.topology.grid.*;
-import msi.gama.precompiler.ISymbolKind;
 import msi.gama.precompiler.GamlAnnotations.type;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
@@ -39,7 +40,7 @@ import msi.gaml.species.ISpecies;
  * @since 26 nov. 2011
  * 
  */
-@type(name = IType.TOPOLOGY_STR, id = IType.TOPOLOGY, wraps = { ITopology.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IKeyword.TOPOLOGY, id = IType.TOPOLOGY, wraps = { ITopology.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaTopologyType extends GamaType<ITopology> {
 
 	public static ITopology staticCast(final IScope scope, final Object obj, final Object param)

@@ -24,7 +24,7 @@ import java.io.*;
 import java.text.*;
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
-import msi.gama.common.util.StringUtils;
+import msi.gama.common.util.*;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.lang.gaml.resource.GamlResource;
@@ -158,14 +158,21 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 				IExpression result = action(op, left, e2, action);
 				if ( result != null ) { return result; }
 			}
-
+		}
+		// It is not an action so it must be an operator. We emit an error and stop compiling if it
+		// is not
+		if ( !OPERATORS.containsKey(op) ) {
+			getContext().error("Unknown action or operator: " + op, IGamlIssue.UNKNOWN_ACTION, op);
+			return null;
 		}
 
 		// if the operator is an iterator, we must initialize the context sensitive "each" variable
 		if ( ITERATORS.contains(op) ) {
+
 			IType t = left.getContentType();
-			// TODO Verify the key type
-			each_expr = new EachExpression(EACH, t, t.defaultContentType(), t.defaultKeyType());
+			IType ct = left.getElementsContentType();
+			IType kt = left.getElementsKeyType();
+			each_expr = new EachExpression(t, ct, kt);
 		}
 		// we can now safely compile the right-hand expression
 		IExpression right = compile(e2);
@@ -206,9 +213,9 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 	}
 
 	private IExpression compileFieldExpr(final Expression leftExpr, final Expression fieldExpr) {
-		IExpression target = compile(leftExpr);
-		if ( target == null ) { return null; }
-		IType type = target.getType();
+		IExpression owner = compile(leftExpr);
+		if ( owner == null ) { return null; }
+		IType type = owner.getType();
 		TypeDescription species = getSpeciesContext(type.getSpeciesName());
 		if ( species == null ) {
 			// It can only be a variable as 'actions' are not defined on simple objects
@@ -219,7 +226,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 					IGamlIssue.UNKNOWN_FIELD, leftExpr, var, type.toString());
 				return null;
 			}
-			expr = expr.copyWith(target);
+			expr = (TypeFieldExpression) expr.copy().init(var, context, owner);
 			DescriptionFactory.setGamlDescription(fieldExpr, expr);
 			return expr;
 		}
@@ -233,14 +240,14 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 					IGamlIssue.UNKNOWN_VAR, leftExpr, var, species.getName());
 			}
 			DescriptionFactory.setGamlDescription(fieldExpr, expr);
-			return factory.createOperator(_DOT, context, target, expr);
+			return factory.createOperator(_DOT, context, owner, expr);
 		} else if ( fieldExpr instanceof Function ) {
 			String name = EGaml.getKeyOf(fieldExpr);
 			StatementDescription action = species.getAction(name);
 			if ( action != null ) {
 				ExpressionList list = ((Function) fieldExpr).getArgs();
 				IExpression call =
-					action(name, target, list == null ? ((Function) fieldExpr).getParameters()
+					action(name, owner, list == null ? ((Function) fieldExpr).getParameters()
 						: list, action);
 				DescriptionFactory.setGamlDescription(fieldExpr, call); // ??
 				return call;
@@ -345,7 +352,9 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		@Override
 		public IExpression caseExpression(final Expression object) {
 			// in the general case, we try to return a binary expression
-			return binary(EGaml.getKeyOf(object), object.getLeft(), object.getRight());
+			IExpression result =
+				binary(EGaml.getKeyOf(object), object.getLeft(), object.getRight());
+			return result;
 		}
 
 		@Override
@@ -411,29 +420,37 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 
 		@Override
 		public IExpression caseArgumentPair(final ArgumentPair object) {
-			return binary("::", caseVar(EGaml.getKeyOf(object), object), object.getRight());
+			IExpression result =
+				binary("::", caseVar(EGaml.getKeyOf(object), object), object.getRight());
+			return result;
 		}
 
 		@Override
 		public IExpression casePair(final Pair object) {
-			return binary(EGaml.getKeyOf(object), object.getLeft(), object.getRight());
+			IExpression result =
+				binary(EGaml.getKeyOf(object), object.getLeft(), object.getRight());
+			return result;
 		}
 
 		@Override
 		public IExpression caseBinary(final Binary object) {
-			return binary(EGaml.getKeyOf(object), object.getLeft(), object.getRight());
+			IExpression result =
+				binary(EGaml.getKeyOf(object), object.getLeft(), object.getRight());
+			return result;
 		}
 
 		@Override
 		public IExpression caseUnit(final Unit object) {
 			// We simply return a multiplication, since the right member (the "unit") will be
 			// translated into its float value
-			return binary("*", object.getLeft(), object.getRight());
+			IExpression result = binary("*", object.getLeft(), object.getRight());
+			return result;
 		}
 
 		@Override
 		public IExpression caseUnary(final Unary object) {
-			return unary(EGaml.getKeyOf(object), object.getRight());
+			IExpression result = unary(EGaml.getKeyOf(object), object.getRight());
+			return result;
 		}
 
 		@Override
@@ -516,13 +533,20 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 
 			List<Expression> args = EGaml.getExprsOf(object.getArgs());
 			int size = args.size();
-			if ( size == 1 ) { return unary(op, args.get(0)); }
-			if ( size == 2 ) { return binary(op, args.get(0), args.get(1)); }
+			if ( size == 1 ) {
+				IExpression result = unary(op, args.get(0));
+				return result;
+			}
+			if ( size == 2 ) {
+				IExpression result = binary(op, args.get(0), args.get(1));
+				return result;
+			}
 			IExpression[] compiledArgs = new IExpression[size];
 			for ( int i = 0; i < size; i++ ) {
 				compiledArgs[i] = compile(args.get(i));
 			}
-			return factory.createOperator(op, context, compiledArgs);
+			IExpression result = factory.createOperator(op, context, compiledArgs);
+			return result;
 		}
 
 		@Override
@@ -675,7 +699,14 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		return o;
 	}
 
+	private static long count = 0;
+
+	private static Map<String, EObject> cache = new LinkedHashMap();
+
 	private static EObject getEObjectOf(final String string) throws GamaRuntimeException {
+		EObject result = cache.get(string);
+		if ( result != null ) { return result; }
+		long begin = System.nanoTime();
 		String s = "dummy <- " + string;
 		GamlResource resource = getFreshResource();
 		InputStream is = new ByteArrayInputStream(s.getBytes());
@@ -688,13 +719,21 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 
 		if ( resource.getErrors().isEmpty() ) {
 			EObject e = resource.getContents().get(0);
-			if ( e instanceof StringEvaluator ) { return ((StringEvaluator) e).getExpr(); }
+			if ( e instanceof StringEvaluator ) {
+				result = ((StringEvaluator) e).getExpr();
+			}
 		} else {
 			Diagnostic d = resource.getErrors().get(0);
 			throw new GamaRuntimeException(d.getMessage());
 		}
-		return null;
-
+		long end = System.nanoTime();
+		double ms = (end - begin) / 1000000d;
+		count += end - begin;
+		GuiUtils.debug("   -> compilation of " + string + " in " + ms + " ms (Total: " + count /
+			1000000d + ")");
+		if ( result instanceof TerminalExpression ) {
+			cache.put(string, result);
+		}
+		return result;
 	}
-
 }

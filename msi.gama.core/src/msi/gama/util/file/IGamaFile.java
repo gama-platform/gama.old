@@ -37,14 +37,14 @@ import com.vividsolutions.jts.geom.Envelope;
  * @param <K>
  * @param <V>
  */
-@vars({ @var(name = IKeyword.NAME, type = IType.STRING_STR),
-	@var(name = IKeyword.EXTENSION, type = IType.STRING_STR),
-	@var(name = IKeyword.PATH, type = IType.STRING_STR),
-	@var(name = IKeyword.EXISTS, type = IType.BOOL_STR),
-	@var(name = IKeyword.ISFOLDER, type = IType.BOOL_STR),
-	@var(name = IKeyword.READABLE, type = IType.BOOL_STR),
-	@var(name = IKeyword.WRITABLE, type = IType.BOOL_STR),
-	@var(name = IKeyword.CONTENTS, type = IType.CONTAINER_STR) })
+@vars({ @var(name = IKeyword.NAME, type = IType.STRING),
+	@var(name = IKeyword.EXTENSION, type = IType.STRING),
+	@var(name = IKeyword.PATH, type = IType.STRING),
+	@var(name = IKeyword.EXISTS, type = IType.BOOL),
+	@var(name = IKeyword.ISFOLDER, type = IType.BOOL),
+	@var(name = IKeyword.READABLE, type = IType.BOOL),
+	@var(name = IKeyword.WRITABLE, type = IType.BOOL),
+	@var(name = IKeyword.CONTENTS, type = IType.CONTAINER) })
 public interface IGamaFile<K, V> extends IContainer<K, V> {
 
 	public abstract void setWritable(final boolean w);

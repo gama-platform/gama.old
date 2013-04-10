@@ -47,21 +47,21 @@ import msi.gaml.types.IType;
 @symbol(name = { IKeyword.SPECIES, IKeyword.GLOBAL, IKeyword.GRID }, kind = ISymbolKind.SPECIES, with_sequence = true)
 @inside(kinds = { ISymbolKind.MODEL, ISymbolKind.ENVIRONMENT, ISymbolKind.SPECIES }, symbols = { IKeyword.ENTITIES })
 @facets(value = {
-	@facet(name = IKeyword.WIDTH, type = IType.INT_STR, optional = true),
-	@facet(name = IKeyword.HEIGHT, type = IType.INT_STR, optional = true),
-	@facet(name = IKeyword.NEIGHBOURS, type = IType.INT_STR, optional = true),
-	@facet(name = IKeyword.TORUS, type = IType.BOOL_STR, optional = true),
+	@facet(name = IKeyword.WIDTH, type = IType.INT, optional = true),
+	@facet(name = IKeyword.HEIGHT, type = IType.INT, optional = true),
+	@facet(name = IKeyword.NEIGHBOURS, type = IType.INT, optional = true),
+	@facet(name = IKeyword.TORUS, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.PARENT, type = IType.ID, optional = true),
 	@facet(name = IKeyword.EDGE_SPECIES, type = IType.ID, optional = true),
-	@facet(name = IKeyword.SKILLS, type = IType.LIST_STR, optional = true),
-	@facet(name = "mirrors", type = IType.LIST_STR, optional = true),
+	@facet(name = IKeyword.SKILLS, type = IType.LIST, optional = true),
+	@facet(name = "mirrors", type = IType.LIST, optional = true),
 	@facet(name = IKeyword.CONTROL, type = IType.ID, /* values = { ISpecies.EMF, IKeyword.FSM }, */optional = true),
-	@facet(name = "compile", type = IType.BOOL_STR, optional = true),
-	@facet(name = IKeyword.FREQUENCY, type = IType.INT_STR, optional = true),
-	@facet(name = IKeyword.SCHEDULES, type = IType.CONTAINER_STR, optional = true),
-	@facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY_STR, optional = true) }, omissible = IKeyword.NAME)
-@vars({ @var(name = IKeyword.NAME, type = IType.STRING_STR) })
+	@facet(name = "compile", type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.FREQUENCY, type = IType.INT, optional = true),
+	@facet(name = IKeyword.SCHEDULES, type = IType.CONTAINER, optional = true),
+	@facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY, optional = true) }, omissible = IKeyword.NAME)
+@vars({ @var(name = IKeyword.NAME, type = IType.STRING) })
 // FIXME Build a list of control architectures dynamically at startup and populate the values
 // attribute
 public class GamlSpecies extends AbstractSpecies {
@@ -142,26 +142,6 @@ public class GamlSpecies extends AbstractSpecies {
 	}
 
 	@Override
-	public IAgent max(final IScope scope) throws GamaRuntimeException {
-		return getPopulation(scope).max(scope);
-	}
-
-	@Override
-	public IAgent min(final IScope scope) throws GamaRuntimeException {
-		return getPopulation(scope).min(scope);
-	}
-
-	@Override
-	public Object product(final IScope scope) throws GamaRuntimeException {
-		return getPopulation(scope).product(scope);
-	}
-
-	@Override
-	public Object sum(final IScope scope) throws GamaRuntimeException {
-		return getPopulation(scope).sum(scope);
-	}
-
-	@Override
 	public boolean isEmpty(final IScope scope) {
 		return getPopulation(scope).isEmpty(scope);
 	}
@@ -198,62 +178,16 @@ public class GamlSpecies extends AbstractSpecies {
 	}
 
 	@Override
-	public void addAll(IScope scope, final IContainer value, final Object param)
+	public void add(IScope scope, final Integer index, final Object value, final Object param,
+		boolean all, boolean add) throws GamaRuntimeException {
+		// NOT ALLOWED
+	}
+
+	@Override
+	public void remove(IScope scope, Object index, final Object value, boolean all)
 		throws GamaRuntimeException {
 		// NOT ALLOWED
 	}
-
-	@Override
-	public void addAll(IScope scope, final Integer index, final IContainer value, final Object param)
-		throws GamaRuntimeException {
-		// NOT ALLOWED
-	}
-
-	@Override
-	public void add(IScope scope, final IAgent value, final Object param)
-		throws GamaRuntimeException {
-		// NOT ALLOWED
-	}
-
-	@Override
-	public void add(IScope scope, final Integer index, final IAgent value, final Object param)
-		throws GamaRuntimeException {
-		// NOT ALLOWED
-	}
-
-	@Override
-	public boolean removeFirst(IScope scope, final IAgent value) throws GamaRuntimeException {
-		return false;
-		// NOT ALLOWED
-	}
-
-	@Override
-	public boolean removeAll(IScope scope, final IContainer<?, IAgent> value)
-		throws GamaRuntimeException {
-		return false;
-		// NOT ALLOWED
-	}
-
-	@Override
-	public Object removeAt(IScope scope, final Integer index) throws GamaRuntimeException {
-		return null;
-		// NOT ALLOWED
-	}
-
-	@Override
-	public void putAll(IScope scope, final IAgent value, final Object param)
-		throws GamaRuntimeException {}
-
-	@Override
-	public void put(IScope scope, final Integer index, final IAgent value, final Object param)
-		throws GamaRuntimeException {
-		// NOT ALLOWED
-	}
-
-	// @Override
-	// public void clear() throws GamaRuntimeException {
-	// // NOT ALLOWED
-	// }
 
 	@Override
 	public IMatrix matrixValue(final IScope scope) throws GamaRuntimeException {

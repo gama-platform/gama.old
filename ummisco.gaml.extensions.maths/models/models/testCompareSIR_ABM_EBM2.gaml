@@ -140,7 +140,7 @@ entities {
         			if (Host(hst).is_infected) {set nb_hosts_infected <- nb_hosts_infected + 1;}
         		}
         	} else {
-        		set nb_hosts_infected <- number_I/number_Hosts;
+        		//set nb_hosts_infected <- number_I/number_Hosts;
         	}
         	if (flip(1 - (1 - beta)  ^ (((myPlace.neighbours + myPlace) accumulate (each.agents)) of_species Host as list) count (each.is_infected))) {
 	        	set is_susceptible <-  false;

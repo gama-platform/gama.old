@@ -87,8 +87,8 @@ public class VariableFactory extends SymbolFactory {
 		}
 		final String value = name + " < 0.1 ? 0.0 :" + name + " * ( 1 - " + decay + ")";
 		VariableDescription vd =
-			(VariableDescription) create(new SyntacticElement(IType.FLOAT_STR, new Facets(NAME,
-				name, TYPE, IType.FLOAT_STR, UPDATE, value, MIN, "0.0")), superDesc, null);
+			(VariableDescription) create(new SyntacticElement(IKeyword.FLOAT, new Facets(NAME,
+				name, TYPE, IKeyword.FLOAT, UPDATE, value, MIN, "0.0")), superDesc, null);
 		SpeciesDescription environment = superDesc.getSpeciesDescription(env);
 		if ( environment == null || !environment.isGrid() ) {
 			superDesc.error("Environment " + env + " of signal " + name + " cannot be determined.",
@@ -100,8 +100,8 @@ public class VariableFactory extends SymbolFactory {
 	}
 
 	@Override
-	protected void compileFacet(final String tag, final IDescription sd) {
-		super.compileFacet(tag, sd);
+	protected void compileFacet(final String tag, final IDescription sd, SymbolProto md) {
+		super.compileFacet(tag, sd, md);
 		if ( valueFacetsList.contains(tag) ) {
 			IExpression expr = sd.getFacets().getExpr(tag);
 			IType t = sd.getContentType();

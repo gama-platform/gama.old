@@ -20,7 +20,7 @@ package msi.gaml.architecture.finite_state_machine;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.agent.*;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
@@ -40,8 +40,8 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-@vars({ @var(name = IKeyword.STATE, type = IType.STRING_STR),
-	@var(name = IKeyword.STATES, type = IType.LIST_STR, constant = true) })
+@vars({ @var(name = IKeyword.STATE, type = IType.STRING),
+	@var(name = IKeyword.STATES, type = IType.LIST, constant = true) })
 @skill(name = IKeyword.FSM)
 public class FsmArchitecture extends ReflexArchitecture {
 
@@ -117,7 +117,7 @@ public class FsmArchitecture extends ReflexArchitecture {
 	}
 
 	protected Object executeCurrentState(final IScope scope) throws GamaRuntimeException {
-		IGamlAgent agent = getCurrentAgent(scope);
+		IAgent agent = getCurrentAgent(scope);
 		if ( agent.dead() ) { return null; }
 		FsmStateStatement currentState =
 			(FsmStateStatement) agent.getAttribute(IKeyword.CURRENT_STATE);

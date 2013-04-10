@@ -21,17 +21,13 @@ package msi.gama.gui.swt;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import msi.gama.common.interfaces.IGui;
 import msi.gama.gui.navigator.FileBean;
 import msi.gama.gui.swt.perspectives.*;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamaBundleLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.application.*;
@@ -89,31 +85,32 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	@Override
 	public boolean preShutdown() {
 
-		/* Save workspace before closing the application */
-		final MultiStatus status = new MultiStatus(IGui.PLUGIN_ID, 0, "Saving Workspace....", null);
-		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-
-			@Override
-			public void run(final IProgressMonitor monitor) {
-				try {
-					IWorkspace ws = ResourcesPlugin.getWorkspace();
-					status.merge(ws.save(true, monitor));
-				} catch (CoreException e) {
-					status.merge(e.getStatus());
-				}
-			}
-		};
-		try {
-			new ProgressMonitorDialog(null).run(false, false, runnable);
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-		if ( !status.isOK() ) {
-			ErrorDialog.openError(Display.getDefault().getActiveShell(), "Error...",
-				"Error while saving workspace", status);
-		}
+		// /* Save workspace before closing the application */
+		// final MultiStatus status = new MultiStatus(IGui.PLUGIN_ID, 0, "Saving Workspace....",
+		// null);
+		// IRunnableWithProgress runnable = new IRunnableWithProgress() {
+		//
+		// @Override
+		// public void run(final IProgressMonitor monitor) {
+		// try {
+		// IWorkspace ws = ResourcesPlugin.getWorkspace();
+		// status.merge(ws.save(true, monitor));
+		// } catch (CoreException e) {
+		// status.merge(e.getStatus());
+		// }
+		// }
+		// };
+		// try {
+		// new ProgressMonitorDialog(null).run(false, false, runnable);
+		// } catch (InvocationTargetException e) {
+		// e.printStackTrace();
+		// } catch (InterruptedException e) {
+		// e.printStackTrace();
+		// }
+		// if ( !status.isOK() ) {
+		// ErrorDialog.openError(Display.getDefault().getActiveShell(), "Error...",
+		// "Error while saving workspace", status);
+		// }
 		/* Close the current experiment */
 		try {
 			GAMA.closeCurrentExperiment();

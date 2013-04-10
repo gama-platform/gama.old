@@ -94,54 +94,55 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	 * java.lang.Object)
 	 */
 	@Override
-	public void add(IScope scope, final K index, final V value, final Object param)
-		throws GamaRuntimeException {
+	public void add(IScope scope, final K index, final Object value, final Object param,
+		final boolean all, final boolean add) throws GamaRuntimeException {
 		getContents(scope);
-		buffer.add(scope, index, value, param);
+		buffer.add(scope, index, value, param, all, add);
 		flushBuffer();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#add(java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public void add(IScope scope, final V value, final Object param) throws GamaRuntimeException {
-		getContents(scope);
-		buffer.add(scope, value, param);
-		flushBuffer();
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see msi.gama.interfaces.IGamaContainer#add(java.lang.Object, java.lang.Object)
+	// */
+	// @Override
+	// public void add(IScope scope, final V value, final Object param) throws GamaRuntimeException
+	// {
+	// getContents(scope);
+	// buffer.add(scope, value, param);
+	// flushBuffer();
+	//
+	// }
 
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#addAll(msi.gama.interfaces.IGamaContainer,
-	 * java.lang.Object)
-	 */
-	@Override
-	public void addAll(IScope scope, final IContainer value, final Object param)
-		throws GamaRuntimeException {
-		getContents(null);
-		buffer.addAll(scope, value, param);
-		flushBuffer();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#addAll(java.lang.Object,
-	 * msi.gama.interfaces.IGamaContainer, java.lang.Object)
-	 */
-	@Override
-	public void addAll(IScope scope, final K index, final IContainer value, final Object param)
-		throws GamaRuntimeException {
-		getContents(scope);
-		buffer.addAll(scope, index, value, param);
-		flushBuffer();
-
-	}
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see msi.gama.interfaces.IGamaContainer#addAll(msi.gama.interfaces.IGamaContainer,
+	// * java.lang.Object)
+	// */
+	// @Override
+	// public void addAll(IScope scope, final IContainer value, final Object param)
+	// throws GamaRuntimeException {
+	// getContents(null);
+	// buffer.addAll(scope, value, param);
+	// flushBuffer();
+	// }
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see msi.gama.interfaces.IGamaContainer#addAll(java.lang.Object,
+	// * msi.gama.interfaces.IGamaContainer, java.lang.Object)
+	// */
+	// @Override
+	// public void addAll(IScope scope, final K index, final IContainer value, final Object param)
+	// throws GamaRuntimeException {
+	// getContents(scope);
+	// buffer.addAll(scope, index, value, param);
+	// flushBuffer();
+	//
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -307,7 +308,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 
 	@Override
 	public boolean isPgmFile() {
-		return getExtension().contains(GamaFileType.pgmSuffix);
+		return path.endsWith(GamaFileType.pgmSuffix);
 	}
 
 	@Override
@@ -382,66 +383,67 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 		return buffer.matrixValue(scope, preferredSize);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#max()
-	 */
-	@Override
-	public V max(final IScope scope) throws GamaRuntimeException {
-		getContents(scope);
-		return buffer.max(scope);
-	}
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see msi.gama.interfaces.IGamaContainer#max()
+	// */
+	// @Override
+	// public V max(final IScope scope) throws GamaRuntimeException {
+	// getContents(scope);
+	// return buffer.max(scope);
+	// }
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see msi.gama.interfaces.IGamaContainer#min()
+	// */
+	// @Override
+	// public V min(final IScope scope) throws GamaRuntimeException {
+	// getContents(scope);
+	// return buffer.min(scope);
+	// }
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see msi.gama.interfaces.IGamaContainer#product()
+	// */
+	// @Override
+	// public Object product(final IScope scope) throws GamaRuntimeException {
+	// getContents(scope);
+	// return buffer.product(scope);
+	// }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#min()
-	 */
-	@Override
-	public V min(final IScope scope) throws GamaRuntimeException {
-		getContents(scope);
-		return buffer.min(scope);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#product()
-	 */
-	@Override
-	public Object product(final IScope scope) throws GamaRuntimeException {
-		getContents(scope);
-		return buffer.product(scope);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#put(java.lang.Object, java.lang.Object,
-	 * java.lang.Object)
-	 */
-	@Override
-	public void put(IScope scope, final K index, final V value, final Object param)
-		throws GamaRuntimeException {
-		getContents(scope);
-		buffer.put(scope, index, value, param);
-		flushBuffer();
-
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#putAll(java.lang.Object, java.lang.Object)
-	 */
-	@Override
-	public void putAll(IScope scope, final V value, final Object param) throws GamaRuntimeException {
-		getContents(scope);
-		buffer.putAll(scope, value, param);
-		flushBuffer();
-
-	}
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see msi.gama.interfaces.IGamaContainer#put(java.lang.Object, java.lang.Object,
+	// * java.lang.Object)
+	// */
+	// @Override
+	// public void put(IScope scope, final K index, final V value, final Object param)
+	// throws GamaRuntimeException {
+	// getContents(scope);
+	// buffer.put(scope, index, value, param);
+	// flushBuffer();
+	//
+	// }
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see msi.gama.interfaces.IGamaContainer#putAll(java.lang.Object, java.lang.Object)
+	// */
+	// @Override
+	// public void putAll(IScope scope, final V value, final Object param) throws
+	// GamaRuntimeException {
+	// getContents(scope);
+	// buffer.putAll(scope, value, param);
+	// flushBuffer();
+	//
+	// }
 
 	/*
 	 * (non-Javadoc)
@@ -449,12 +451,10 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	 * @see msi.gama.interfaces.IGamaContainer#removeAll(java.lang.Object)
 	 */
 	@Override
-	public boolean removeAll(IScope scope, final IContainer<?, V> value)
-		throws GamaRuntimeException {
+	public void remove(IScope scope, Object index, Object value, boolean all) {
 		getContents(scope);
-		boolean result = buffer.removeAll(scope, value);
+		buffer.remove(scope, index, value, all);
 		flushBuffer();
-		return result;
 	}
 
 	/*
@@ -462,27 +462,27 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#removeAt(java.lang.Object)
 	 */
-	@Override
-	public Object removeAt(IScope scope, final K index) throws GamaRuntimeException {
-		getContents(scope);
-		Object result = buffer.removeAt(scope, index);
-		flushBuffer();
-		return result;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#removeFirst(java.lang.Object)
-	 */
-	@Override
-	public boolean removeFirst(IScope scope, final V value) throws GamaRuntimeException {
-		getContents(scope);
-		boolean result = buffer.removeFirst(scope, value);
-		flushBuffer();
-		return result;
-	}
-
+	// @Override
+	// public Object removeAt(IScope scope, final K index) throws GamaRuntimeException {
+	// getContents(scope);
+	// Object result = buffer.removeAt(scope, index);
+	// flushBuffer();
+	// return result;
+	// }
+	//
+	// /*
+	// * (non-Javadoc)
+	// *
+	// * @see msi.gama.interfaces.IGamaContainer#removeFirst(java.lang.Object)
+	// */
+	// @Override
+	// public boolean removeFirst(IScope scope, final V value) throws GamaRuntimeException {
+	// getContents(scope);
+	// boolean result = buffer.removeFirst(scope, value);
+	// flushBuffer();
+	// return result;
+	// }
+	//
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -505,11 +505,11 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#sum()
 	 */
-	@Override
-	public Object sum(final IScope scope) throws GamaRuntimeException {
-		getContents(scope);
-		return buffer.sum(scope);
-	}
+	// @Override
+	// public Object sum(final IScope scope) throws GamaRuntimeException {
+	// getContents(scope);
+	// return buffer.sum(scope);
+	// }
 
 	@Override
 	public String toGaml() {

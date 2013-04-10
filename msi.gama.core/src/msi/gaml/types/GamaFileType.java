@@ -18,8 +18,8 @@
  */
 package msi.gaml.types;
 
-import java.io.File;
 import java.util.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.type;
@@ -35,7 +35,7 @@ import msi.gaml.operators.Files;
  * @todo Description
  * 
  */
-@type(name = IType.FILE_STR, id = IType.FILE, wraps = { IGamaFile.class, File.class }, kind = ISymbolKind.Variable.CONTAINER /* ? */)
+@type(name = IKeyword.FILE, id = IType.FILE, wraps = { IGamaFile.class }, kind = ISymbolKind.Variable.CONTAINER /* ? */)
 public class GamaFileType extends GamaContainerType<IGamaFile> {
 
 	private static final List<String> textSuffixes = Arrays.asList(".txt", ".data", ".csv",
@@ -67,7 +67,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 	public static Boolean isTextFile(final String f) {
 		final String fn = f.toLowerCase();
 		for ( final String s : textSuffixes ) {
-			if ( fn.contains(s) ) { return true; }
+			if ( fn.endsWith(s) ) { return true; }
 		}
 		return false;
 	}
@@ -96,7 +96,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		"is_properties(\"../includes/test.shp\")            --:  false;" }, see = { "properties",
 		"is_text", "is_shape", "is_image" })
 	public static Boolean isProperties(final String f) {
-		return f.toLowerCase().contains(propertiesSuffix);
+		return f.toLowerCase().endsWith(propertiesSuffix);
 	}
 
 	@operator(value = "is_shape")
@@ -107,7 +107,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		"is_shape(\"../includes/test.shp\")            --:  true;" }, see = { "image", "is_text",
 		"is_properties", "is_image" })
 	public static Boolean isShape(final String f) {
-		return f.toLowerCase().contains(shpSuffix);
+		return f.toLowerCase().endsWith(shpSuffix);
 	}
 
 	@operator(value = "is_image")
@@ -120,7 +120,7 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 	public static Boolean isImageFile(final String f) {
 		final String fn = f.toLowerCase();
 		for ( final String s : imageSuffixes ) {
-			if ( fn.contains(s) ) { return true; }
+			if ( fn.endsWith(s) ) { return true; }
 		}
 		return false;
 	}

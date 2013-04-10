@@ -26,7 +26,6 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.IMatrix;
-import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 3 juin 2010
@@ -38,7 +37,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 
 	// Operators available in GAML
 
-	@operator(value = { IKeyword.AT, "@" }, can_be_const = true, type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@operator(value = { IKeyword.AT, "@" }, can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "the element at the right operand index of the container", comment = "The first element of the container is located at the index 0. "
 		+ "In addition, if the user tries to get the element at an index higher or equals than the length of the container, he will get an IndexOutOfBoundException."
 		+ "The at operator behavior depends on the nature of the operand", special_cases = {
@@ -61,7 +60,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
-	@operator(value = { "internal_at" }, type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@operator(value = { "internal_at" }, type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc("For internal use only. Corresponds to the implementation of the access to containers with [index]")
 	public Object getFromIndicesList(IScope scope, IList indices) throws GamaRuntimeException;
 
@@ -77,7 +76,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 		"[1, 2, 3] contains 2			--:   true", "[{1,2}, {3,4}, {5,6}] contains {3,4}     --:   true" }, see = { "contains_all, contains_any" })
 	public boolean contains(IScope scope, Object o) throws GamaRuntimeException;
 
-	@operator(value = "first", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE)
+	@operator(value = "first", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "the first element of the operand", comment = "the first operator behavior depends on the nature of the operand", special_cases = {
 		"if it is a list, first returns the first element of the list, or nil if the list is empty",
 		"if it is a map, first returns nil (the map do not keep track of the order of elements)",
@@ -90,7 +89,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 		"first ([1, 2, 3]) 		--:   1", "first ({10,12})     	--:   10." }, see = { "last" })
 	public ValueType first(IScope scope) throws GamaRuntimeException;
 
-	@operator(value = "last", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE)
+	@operator(value = "last", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "the last element of the operand", comment = "the last operator behavior depends on the nature of the operand", special_cases = {
 		"if it is a list, last returns the last element of the list, or nil if the list is empty",
 		"if it is a map, last returns nil (the map do not keep track of the order of elements)",
@@ -111,66 +110,6 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 		"if it is a matrix, length returns the number of cells" }, examples = { "length ([12,13])	--: 	2" })
 	public int length(IScope scope);
 
-	@operator(value = "max", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE, expected_content_type = {
-		IType.INT, IType.FLOAT, IType.POINT })
-	@doc(value = "the maximum element found in the operand", comment = "the max operator behavior depends on the nature of the operand", special_cases = {
-		"if it is a list of int of float, max returns the maximum of all the elements",
-		"if it is a list of points: max returns the maximum of all points as a point (i.e. the point with the greatest coordinate on the x-axis, in case of equality the point with the greatest coordinate on the y-axis is chosen. If all the points are equal, the first one is returned. )",
-		"if it is a population of a list of other type: max transforms all elements into integer and returns the maximum of them",
-		"if it is a map, max returns the maximum among the list of all elements value",
-		"if it is a file, max returns the maximum of the content of the file (that is also a container)",
-		"if it is a graph, max returns the maximum of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)",
-		"if it is a matrix of int, float or object, max returns the maximum of all the numerical elements (thus all elements for integer and float matrices)",
-		"if it is a matrix of geometry, max returns the maximum of the list of the geometries",
-		"if it is a matrix of another type, max returns the maximum of the elements transformed into float" }, see = { "min" }, examples = {
-		"max ([100, 23.2, 34.5]) 			--: 	100.0",
-		"max([{1.0;3.0},{3.0;5.0},{9.0;1.0},{7.0;8.0}]) 	--:  {9.0;1.0}" })
-	public ValueType max(IScope scope) throws GamaRuntimeException;
-
-	@operator(value = "min", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE, expected_content_type = {
-		IType.INT, IType.FLOAT, IType.POINT })
-	@doc(value = "the minimum element found in the operand.", comment = "the min operator behavior depends on the nature of the operand", special_cases = {
-		"if it is a list of int or float: min returns the minimum of all the elements",
-		"if it is a list of points: min returns the minimum of all points as a point (i.e. the point with the smallest coordinate on the x-axis, in case of equality the point with the smallest coordinate on the y-axis is chosen. If all the points are equal, the first one is returned. )",
-		"if it is a population of a list of other types: min transforms all elements into integer and returns the minimum of them",
-		"if it is a map, min returns the minimum among the list of all elements value",
-		"if it is a file, min returns the minimum of the content of the file (that is also a container)",
-		"if it is a graph, min returns the minimum of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)",
-		"if it is a matrix of int, float or object, min returns the minimum of all the numerical elements (thus all elements for integer and float matrices)",
-		"if it is a matrix of geometry, min returns the minimum of the list of the geometries",
-		"if it is a matrix of another type, min returns the minimum of the elements transformed into float" }, see = { "max" }, examples = { "min ([100, 23.2, 34.5]) 	--: 	23.2" })
-	public ValueType min(IScope scope) throws GamaRuntimeException;
-
-	@operator(value = { "mul", "product" }, can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE, expected_content_type = {
-		IType.INT, IType.FLOAT, IType.POINT })
-	@doc(value = "the product of all the elements of the operand", comment = "the mul operator behavior depends on the nature of the operand", special_cases = {
-		"if it is a list of int or float: mul returns the product of all the elements",
-		"if it is a list of points: mul returns the product of all points as a point (each coordinate is the product of the corresponding coordinate of each element)",
-		"if it is a list of other types: mul transforms all elements into integer and multiplies them",
-		"if it is a map, mul returns the product of the value of all elements",
-		"if it is a file, mul returns the product of the content of the file (that is also a container)",
-		"if it is a graph, mul returns the product of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)",
-		"if it is a matrix of int, float or object, mul returns the product of all the numerical elements (thus all elements for integer and float matrices)",
-		"if it is a matrix of geometry, mul returns the product of the list of the geometries",
-		"if it is a matrix of other types: mul transforms all elements into float and multiplies them", }, see = { "sum" }, examples = { "mul ([100, 23.2, 34.5]) 	--:		80040.0" })
-	public Object product(IScope scope) throws GamaRuntimeException;
-
-	@operator(value = "sum", can_be_const = true, type = ITypeProvider.CHILD_CONTENT_TYPE, expected_content_type = {
-		IType.INT, IType.FLOAT, IType.POINT })
-	@doc(value = "the sum of all the elements of the operand", comment = "the sum operator behavior depends on the nature of the operand", special_cases = {
-		"if it is a list of int or float: sum returns the sum of all the elements",
-		"if it is a list of points: sum returns the sum of all points as a point (each coordinate is the sum of the corresponding coordinate of each element)",
-		"if it is a population or a list of other types: sum transforms all elements into integer and sums them",
-		"if it is a map, sum returns the sum of the value of all elements",
-		"if it is a file, sum returns the sum of the content of the file (that is also a container)",
-		"if it is a graph, sum returns the sum of the list of the elements of the graph (that can be the list of edges or vertexes depending on the graph)",
-		"if it is a matrix of int, float or object, sum returns the sum of all the numerical elements (i.e. all elements for integer and float matrices)",
-		"if it is a matrix of geometry, sum returns the sum of the list of the geometries",
-		"if it is a matrix of other types: sum transforms all elements into float and sums them", }, see = { "mul" }, examples = {
-		"sum ([12,10, 3]) 	--: 	25.0",
-		"sum([{1.0;3.0},{3.0;5.0},{9.0;1.0},{7.0;8.0}])		--: {20.0;17.0} " })
-	public Object sum(IScope scope) throws GamaRuntimeException;
-
 	@operator(value = "empty", can_be_const = true)
 	@doc(value = "true if the operand is empty, false otherwise.", comment = "the empty operator behavior depends on the nature of the operand", special_cases = {
 		"if it is a list, empty returns true if there is no element in the list, and false otherwise",
@@ -182,7 +121,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 		"if it is a matrix of geometry, it will return true if the matrix contains no cell, and false otherwise" }, examples = { "empty ([]) 	--: 	true;" })
 	public boolean isEmpty(IScope scope);
 
-	@operator(value = "reverse", can_be_const = true, type = ITypeProvider.TYPE, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
+	@operator(value = "reverse", can_be_const = true, type = ITypeProvider.TYPE, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "the operand elements in the reversed order in a copy of the operand.", comment = "the reverse operator behavior depends on the nature of the operand", special_cases = {
 		"if it is a list, reverse returns a copy of the operand list with elements in the reversed order",
 		"if it is a map, reverse returns a copy of the operand map with each pair in the reversed order (i.e. all keys become values and values become keys)",
@@ -197,7 +136,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	/**
 	 * @return one of the values stored in this container using GAMA.getRandom()
 	 */
-	@operator(value = { "one_of", "any" }, can_be_const = false, type = ITypeProvider.CHILD_CONTENT_TYPE)
+	@operator(value = { "one_of", "any" }, can_be_const = false, type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "one of the values stored in this container using GAMA.getRandom()", comment = "the one_of operator behavior depends on the nature of the operand", special_cases = {
 		"if the operand is empty, one_of returns nil",
 		"if it is a list or a matrix, one_of returns one of the elements of the list or of the matrix",
@@ -216,82 +155,53 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 
 	// Interfaces used by GAML commands add, remove, put
 
-	/**
-	 * Checks if the container length is fixed (i.e. if add or remove operations are accepted)
-	 * 
-	 * @return true, if the length of the container is fixed.
-	 */
-	// public boolean isFixedLength();
-
-	/**
-	 * Purpose of this method is to return whether or not the given index is valid.
-	 * 
-	 * @param index the index (can be null)
-	 * @return true, if the index is valid
-	 */
-	// public boolean checkIndex(Object index);
-
-	/**
-	 * Purpose of this method is to return whether or not the given value is valid to be stored in
-	 * this container.
-	 * 
-	 * @param value the value (can be null)
-	 * @return true, if the value is valid
-	 */
-	// public boolean checkValue(Object value);
-
-	/**
-	 * 
-	 * Purpose of this method is to return whether or not the given index is within the
-	 * bounds allowed by the container.
-	 * 
-	 * 
-	 * @param index the index (can be null)
-	 * @param forAdding indicates if the test is made before adding or putting/removing a value
-	 * @return true, if the index is within the bounds
-	 */
 	public boolean checkBounds(KeyType index, boolean forAdding);
 
-	public void addAll(IScope scope, final IContainer value, final Object param)
-		throws GamaRuntimeException;
+	/**
+	 * The general method for adding / putting values in/to containers. Called by the
+	 * implementations of AddStatement/PutStatement
+	 * 
+	 * @author A. Drogoul, Apr 2013
+	 * @param scope The current scope
+	 * @param index The index at which the item(s) are to be added or put. Can be null.
+	 * @param value The value of the item to add/put. Can be null. <code>value</code> is of type
+	 *            Object, as it can actually be either an individual object or a container.
+	 * @param parameter An optional parameter usable by implementors (like the weight for graphs)
+	 * @param all Whether to add/put the item, if add is false, everywhere in the receiver or, if
+	 *            add is true and the item is a container, to put all its values in the receiver
+	 * @param add Whether the item(s) should be added to the receiver (if it accepts such operation)
+	 *            or should replace existing values (at index, or everywhere if <code>all</code> is
+	 *            true)
+	 */
+	public void add(IScope scope, final KeyType index, final Object value, Object parameter,
+		boolean all, boolean add);
 
-	public void addAll(IScope scope, final KeyType index, final IContainer value, final Object param)
-		throws GamaRuntimeException;
+	/**
+	 * The general method for removing values from containers. Called by the
+	 * implementation of RemoveStatement
+	 * 
+	 * @author A. Drogoul, Apr 2013
+	 * @param scope The current scope
+	 * @param position
+	 * @param object
+	 * @param all
+	 */
+	public void remove(IScope scope, Object index, Object value, boolean all);
 
-	public void add(IScope scope, final ValueType value, final Object param)
-		throws GamaRuntimeException;
-
-	public void add(IScope scope, final KeyType index, final ValueType value, Object param)
-		throws GamaRuntimeException;
-
-	public boolean removeFirst(IScope scope, final ValueType value) throws GamaRuntimeException;
-
-	public boolean removeAll(IScope scope, final IContainer<?, ValueType> value)
-		throws GamaRuntimeException;
-
-	public Object removeAt(IScope scope, final KeyType index) throws GamaRuntimeException;
-
-	public void putAll(IScope scope, final ValueType value, Object param)
-		throws GamaRuntimeException;
-
-	public void put(IScope scope, final KeyType index, final ValueType value, Object param)
-		throws GamaRuntimeException;
-
-	// public void clear() throws GamaRuntimeException;
-
+	//
 	// Casting operations to/from common types of containers
 
-	@operator(value = IType.LIST_STR, can_be_const = true, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
+	@operator(value = IKeyword.LIST, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	public abstract IList listValue(IScope scope) throws GamaRuntimeException;
 
-	@operator(value = IType.MATRIX_STR, can_be_const = true, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
+	@operator(value = IKeyword.MATRIX, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	public abstract IMatrix matrixValue(IScope scope) throws GamaRuntimeException;
 
-	@operator(value = "as_matrix", content_type = ITypeProvider.LEFT_CONTENT_TYPE, can_be_const = true)
+	@operator(value = "as_matrix", content_type = ITypeProvider.FIRST_CONTENT_TYPE, can_be_const = true)
 	public abstract IMatrix matrixValue(IScope scope, ILocation preferredSize)
 		throws GamaRuntimeException;
 
-	@operator(value = IType.MAP_STR, can_be_const = true)
+	@operator(value = IKeyword.MAP, can_be_const = true)
 	public abstract GamaMap mapValue(IScope scope) throws GamaRuntimeException;
 
 	/**

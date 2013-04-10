@@ -37,13 +37,13 @@ import msi.gaml.types.IType;
 // A group of commands that can be executed repeatedly.
 
 @symbol(name = IKeyword.LOOP, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
-@facets(value = { @facet(name = IKeyword.FROM, type = IType.INT_STR, optional = true),
-	@facet(name = IKeyword.TO, type = IType.INT_STR, optional = true),
-	@facet(name = IKeyword.STEP, type = IType.INT_STR, optional = true),
+@facets(value = { @facet(name = IKeyword.FROM, type = IType.INT, optional = true),
+	@facet(name = IKeyword.TO, type = IType.INT, optional = true),
+	@facet(name = IKeyword.STEP, type = IType.INT, optional = true),
 	@facet(name = IKeyword.VAR, type = IType.NEW_TEMP_ID, optional = true),
-	@facet(name = IKeyword.OVER, type = { IType.CONTAINER_STR, IType.POINT_STR }, optional = true),
-	@facet(name = IKeyword.WHILE, type = IType.BOOL_STR, optional = true),
-	@facet(name = IKeyword.TIMES, type = IType.INT_STR, optional = true) },
+	@facet(name = IKeyword.OVER, type = { IType.CONTAINER, IType.POINT }, optional = true),
+	@facet(name = IKeyword.WHILE, type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.TIMES, type = IType.INT, optional = true) },
 
 combinations = {
 

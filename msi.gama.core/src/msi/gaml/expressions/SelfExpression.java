@@ -18,14 +18,14 @@
  */
 package msi.gaml.expressions;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.IType;
 
 public class SelfExpression extends VariableExpression {
 
-	protected SelfExpression(final String n, final IType type, final IType contentType,
-		IType keyType) {
-		super(n, type, contentType, keyType, true, null);
+	protected SelfExpression(final IType type, final IType contentType, IType keyType) {
+		super(IKeyword.SELF, type, contentType, keyType, true, null);
 	}
 
 	@Override
@@ -35,12 +35,15 @@ public class SelfExpression extends VariableExpression {
 
 	@Override
 	public String getTitle() {
-		return "Pseudo-variable <b>self</b>";
+		return "pseudo-variable self of type " + typeToString();
 	}
 
 	@Override
 	public String getDocumentation() {
 		return "Represents the current agent, instance of species " + type.getSpeciesName();
 	}
+
+	@Override
+	public void setVal(IScope scope, Object v, boolean create) {}
 
 }

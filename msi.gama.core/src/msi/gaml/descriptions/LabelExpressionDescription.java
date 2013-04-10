@@ -60,7 +60,7 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 
 		@Override
 		public String getTitle() {
-			return "Constant string: " + getName();
+			return "constant string '" + getName() + "'";
 		}
 
 	}

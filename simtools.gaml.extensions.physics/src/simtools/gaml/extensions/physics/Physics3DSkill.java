@@ -8,12 +8,12 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 
-@vars({ @var(name = "physical_3D_world", type = IType.AGENT_STR),
-	@var(name = "density", type = IType.FLOAT_STR, init = "1.0"),
-	@var(name = "mass", type = IType.FLOAT_STR, init = "1.0"),
-	@var(name = "velocity", type = IType.LIST_STR, init = "[0.0, 0.0, 0.0]"),
-	@var(name = "collisionBound", type = IType.MAP_STR),
-	@var(name = "motor", type = IType.POINT_STR, init = "{0.0, 0.0}") })
+@vars({ @var(name = "physical_3D_world", type = IType.AGENT),
+	@var(name = "density", type = IType.FLOAT, init = "1.0"),
+	@var(name = "mass", type = IType.FLOAT, init = "1.0"),
+	@var(name = "velocity", type = IType.LIST, init = "[0.0, 0.0, 0.0]"),
+	@var(name = "collisionBound", type = IType.MAP),
+	@var(name = "motor", type = IType.POINT, init = "{0.0, 0.0}") })
 @skill(name = "physical3D")
 public class Physics3DSkill extends Skill {
 

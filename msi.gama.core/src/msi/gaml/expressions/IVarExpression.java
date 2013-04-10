@@ -19,8 +19,6 @@
 package msi.gaml.expressions;
 
 import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.types.IType;
 
 /**
  * VariableExpression.
@@ -36,14 +34,8 @@ public interface IVarExpression extends IExpression {
 	public static final int SELF = 4;
 	public static final int WORLD = 5;
 
-	public abstract void setType(IType type);
+	public abstract void setVal(IScope scope, Object v, boolean create);
 
-	public abstract void setContentType(IType speciesType);
-
-	public abstract void setKeyType(IType index);
-
-	void setVal(IScope scope, Object v, boolean create) throws GamaRuntimeException;
-
-	boolean isNotModifiable();
+	public abstract boolean isNotModifiable();
 
 }

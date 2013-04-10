@@ -99,7 +99,9 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 	@Override
 	public String getTitle() {
 		StringBuilder sb = new StringBuilder(50);
-		sb.append("Action <b>").append(getName()).append("</b><br>");
+		sb.append("action ").append(getName()).append(" of ")
+			.append(statement.getDescription().getSpeciesContext().getTitle()).append(" returns ")
+			.append(typeToString());
 		return sb.toString();
 
 	}

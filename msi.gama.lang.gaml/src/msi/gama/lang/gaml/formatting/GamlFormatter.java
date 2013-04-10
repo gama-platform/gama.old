@@ -86,7 +86,7 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 		c.setNoSpace().before(g.getTypeRefAccess().getGreaterThanSignKeyword_2_3());
 
 		// And the ":" in ternary if should be surrounded by spaces
-		c.setSpace(" ").before(g.getIfAccess().getColonKeyword_1_3());
+		c.setSpace(" ").before(g.getIfAccess().getColonKeyword_1_3_0());
 
 		// Semicolons induce line separations
 		for ( Keyword k : g.findKeywords(";") ) {

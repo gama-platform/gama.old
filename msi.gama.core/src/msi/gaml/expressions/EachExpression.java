@@ -18,14 +18,14 @@
  */
 package msi.gaml.expressions;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.IType;
 
 public class EachExpression extends VariableExpression {
 
-	public EachExpression(final String n, final IType type, final IType contentType,
-		final IType keyType) {
-		super(n, type, contentType, keyType, true, null);
+	public EachExpression(final IType type, final IType contentType, final IType keyType) {
+		super(IKeyword.EACH, type, contentType, keyType, true, null);
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class EachExpression extends VariableExpression {
 
 	@Override
 	public String getTitle() {
-		return "Pseudo-variable <b>each</b>";
+		return "pseudo-variable each of type " + typeToString();
 	}
 
 	/**
@@ -45,5 +45,8 @@ public class EachExpression extends VariableExpression {
 	public String getDocumentation() {
 		return "Represents the current object, of type " + type + ", in the iteration";
 	}
+
+	@Override
+	public void setVal(IScope scope, Object v, boolean create) {}
 
 }

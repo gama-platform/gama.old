@@ -5,8 +5,8 @@ import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
-// @vars({ @var(name = IKeyword.STATE, type = IType.STRING_STR),
-// @var(name = IKeyword.STATES, type = IType.LIST_STR, constant = true) })
+// @vars({ @var(name = IKeyword.STATE, type = IType.STRING),
+// @var(name = IKeyword.STATES, type = IType.LIST, constant = true) })
 @skill(name = IKeyword.USER_FIRST)
 public class UserFirstControlArchitecture extends UserControlArchitecture {
 

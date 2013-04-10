@@ -40,21 +40,20 @@ public class MapExpression extends AbstractExpression {
 		this(fromBinaryPairs((List<BinaryOperator>) pairs));
 	}
 
-	MapExpression(final GamaMap pairs) {
+	MapExpression(final GamaMap<IExpression, IExpression> pairs) {
 		keys = new IExpression[pairs.size()];
 		vals = new IExpression[pairs.size()];
 		int i = 0;
-		for ( Map.Entry entry : pairs.entrySet() ) {
-			keys[i] = (IExpression) entry.getKey();
-			vals[i] = (IExpression) entry.getValue();
+		for ( Map.Entry<IExpression, IExpression> entry : pairs.entrySet() ) {
+			keys[i] = entry.getKey();
+			vals[i] = entry.getValue();
 			i++;
 		}
 		values = new GamaMap(keys.length);
 		setName(pairs.toString());
 		type = Types.get(IType.MAP);
-		// contentType = Types.get(IType.PAIR);
-		// determineContentType();
-		// FIXME Write determination of content type + key type
+		keyType = findCommonType(Arrays.asList(keys), _type);
+		contentType = findCommonType(Arrays.asList(vals), _type);
 	}
 
 	@Override
@@ -66,29 +65,6 @@ public class MapExpression extends AbstractExpression {
 		MapExpression copy = new MapExpression(getElements());
 		return copy;
 	}
-
-	// private void determineContentType() {
-	// IType previousType = Types.get(IType.NONE);
-	// contentType = previousType;
-	// for ( IExpression e : vals ) {
-	// IType type = e.getType();
-	// if ( previousType == Types.get(IType.NONE) || type == previousType ) {
-	// contentType = type;
-	// previousType = type;
-	// } else if ( type != previousType ) {
-	// if ( type == Types.get(IType.INT) && contentType == Types.get(IType.FLOAT) ||
-	// type == Types.get(IType.FLOAT) && contentType == Types.get(IType.INT) ) {
-	// contentType = Types.get(IType.FLOAT);
-	// previousType = type;
-	// } else {
-	// contentType = Types.get(IType.NONE);
-	// previousType = type;
-	// }
-	//
-	// }
-	// }
-	//
-	// }
 
 	@Override
 	public GamaMap value(final IScope scope) throws GamaRuntimeException {
@@ -149,7 +125,7 @@ public class MapExpression extends AbstractExpression {
 
 	@Override
 	public String getTitle() {
-		return "Literal map expression";
+		return "literal map of type " + typeToString();
 	}
 
 	/**

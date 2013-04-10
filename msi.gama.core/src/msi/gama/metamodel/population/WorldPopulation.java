@@ -12,7 +12,7 @@ import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 
-public class WorldPopulation extends GamlPopulation {
+public class WorldPopulation extends GamaPopulation {
 
 	public WorldPopulation(final ISpecies species) {
 		super(null, species);

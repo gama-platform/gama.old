@@ -22,7 +22,7 @@ import static msi.gama.precompiler.ITypeProvider.*;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.IOpRun;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.*;
 
@@ -32,11 +32,11 @@ import msi.gaml.types.*;
 public class UnaryOperator extends AbstractExpression implements IOperator {
 
 	protected IExpression child;
-	private final IOpRun helper;
+	protected final IOpRun helper;
 	private final boolean canBeConst;
-	private final short typeProvider;
-	private final short contentTypeProvider;
+	protected final int typeProvider, contentTypeProvider, keyTypeProvider;
 	private final int[] expectedContentType;
+	protected GamlElementDocumentation doc;
 
 	@Override
 	public boolean isConst() {
@@ -44,12 +44,13 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	}
 
 	public UnaryOperator(final IType rt, final IOpRun exec, final boolean canBeConst,
-		final short tProv, final short ctProv, int[] expectedContentType) {
+		final int tProv, final int ctProv, final int iProv, int[] expectedContentType) {
 		type = rt;
 		helper = exec;
 		this.canBeConst = canBeConst;
 		typeProvider = tProv;
 		contentTypeProvider = ctProv;
+		keyTypeProvider = iProv;
 		this.expectedContentType = expectedContentType;
 	}
 
@@ -58,7 +59,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 
 		Object childValue = child.value(scope);
 		try {
-			return helper.run(scope, childValue, null);
+			return helper.run(scope, childValue);
 		} catch (GamaRuntimeException e1) {
 			e1.addContext("when applying the " + literalValue() + " operator on " + childValue);
 			throw e1;
@@ -74,9 +75,11 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	public UnaryOperator copy() {
 		UnaryOperator copy =
 			new UnaryOperator(type, helper, canBeConst, typeProvider, contentTypeProvider,
-				expectedContentType);
+				keyTypeProvider, expectedContentType);
 		copy.setName(getName());
-		copy.contentType = contentType;
+		// FIXME: Why contentType is initialized ?
+		// copy.contentType = contentType;
+		copy.doc = doc;
 		return copy;
 	}
 
@@ -93,53 +96,48 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	@Override
 	public String getTitle() {
 		StringBuilder sb = new StringBuilder(50);
-		sb.append("Unary operator <b>").append(getName()).append("</b><br>");
+		sb.append("operator <b>").append(getName()).append("</b> (");
+		sb.append(child == null ? "nil" : child.getType());
+		sb.append(") returns ");
+		sb.append(typeToString());
 		return sb.toString();
 	}
 
 	@Override
 	public String getDocumentation() {
 		StringBuilder sb = new StringBuilder(200);
-		// TODO insert here a @documentation if possible
-		sb.append("Returns a value of type ").append(type.toString()).append("<br>");
-		sb.append("Operand of type ").append(child.getType().toString()).append("<br>");
+		sb.append(doc.getMain());
 		return sb.toString();
 	}
 
-	public void computeType() {
-		short t = typeProvider;
-		type =
-			t == CHILD_TYPE ? child.getType() : t == CHILD_CONTENT_TYPE ? child.getContentType()
-				: t >= 0 ? Types.get(t) : type;
-	}
-
-	public void computeContentType() {
-		short t = contentTypeProvider;
+	private IType computeType(int t, IType def) {
+		if ( t == NONE ) { return def; }
 		if ( t == FIRST_ELEMENT_CONTENT_TYPE ) {
 			if ( child instanceof ListExpression ) {
 				IExpression[] array = ((ListExpression) child).elements;
-				if ( array.length == 0 ) {
-					contentType = Types.NO_TYPE;
-				} else {
-					contentType = array[0].getContentType();
-				}
+				if ( array.length == 0 ) { return Types.NO_TYPE; }
+				return array[0].getContentType();
 			} else if ( child instanceof MapExpression ) {
 				IExpression[] array = ((MapExpression) child).valuesArray();
-				if ( array.length == 0 ) {
-					contentType = Types.NO_TYPE;
-				} else {
-					contentType = array[0].getContentType();
-				}
-
+				if ( array.length == 0 ) { return Types.NO_TYPE; }
+				return array[0].getContentType();
 			}
-		} else {
-			contentType =
-				t == CHILD_TYPE ? child.getType() : t == CHILD_CONTENT_TYPE ? child
-					.getContentType() : t >= 0 ? Types.get(t) : type.id() == IType.LIST ||
-					type.id() == IType.MATRIX || type.id() == IType.MAP ||
-					type.id() == IType.CONTAINER ? child.getContentType() : type
-					.defaultContentType();
+			return def;
 		}
+		return t == FIRST_TYPE ? child.getType() : t == FIRST_CONTENT_TYPE ? child.getContentType()
+			: t == FIRST_KEY_TYPE ? child.getKeyType() : t >= 0 ? Types.get(t) : def;
+	}
+
+	public void computeType() {
+		type = computeType(typeProvider, type);
+	}
+
+	public void computeContentType() {
+		contentType = computeType(contentTypeProvider, type.defaultContentType());
+	}
+
+	public void computeKeyType() {
+		keyType = computeType(keyTypeProvider, type.defaultKeyType());
 	}
 
 	@Override
@@ -149,15 +147,16 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		setChild(context, args[0]);
 		computeType();
 		computeContentType();
+		computeKeyType();
 		return this;
 	}
 
 	private void setChild(final IDescription context, final IExpression c) {
 		child = c;
-		IType ct = c.getContentType();
 		if ( expectedContentType.length == 0 ) { return; }
+		IType ct = c.getContentType();
 		for ( int i = 0; i < expectedContentType.length; i++ ) {
-			if ( ct.isTranslatableInto(Types.get((short) expectedContentType[i])) ) { return; }
+			if ( ct.isTranslatableInto(Types.get(expectedContentType[i])) ) { return; }
 		}
 		context.error(
 			"The " + getName() + " operator cannot operate on elements of type " + ct.toString(),
@@ -178,6 +177,25 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	@Override
 	public IExpression arg(final int i) {
 		return i == 0 ? child : null;
+	}
+
+	// FIXME: need to create sometime an operator prototype from which to derive operators instead
+	// of copying them
+	@Override
+	public void setDoc(GamlElementDocumentation doc) {
+		this.doc = doc;
+	}
+
+	@Override
+	public IType getElementsContentType() {
+		if ( contentType.hasContents() ) { return child.getContentType(); }
+		return contentType.defaultContentType();
+	}
+
+	@Override
+	public IType getElementsKeyType() {
+		if ( contentType.hasContents() ) { return child.getKeyType(); }
+		return contentType.defaultKeyType();
 	}
 
 }

@@ -42,4 +42,7 @@ public class WorldExpression extends VariableExpression {
 		return "Global constant <b>world</>, represents the global agent";
 	}
 
+	@Override
+	public void setVal(IScope scope, Object v, boolean create) {}
+
 }

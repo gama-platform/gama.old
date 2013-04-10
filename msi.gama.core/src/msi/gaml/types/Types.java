@@ -19,6 +19,7 @@
 package msi.gaml.types;
 
 import java.util.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.AbstractGamlAdditions;
@@ -41,14 +42,16 @@ public class Types {
 
 	public final static IType NO_TYPE = new GamaNoType();
 
-	public static void initType(final String keyword, IType typeInstance, final short id,
+	public static void initType(final String keyword, IType typeInstance, final int id,
 		final int varKind, final Class ... wraps) {
-		if ( keyword.equals(IType.NONE_STR) ) {
+		if ( keyword.equals(IKeyword.UNKNOWN) ) {
 			typeInstance = NO_TYPE;
 		}
 		typeInstance.init(varKind, id, keyword, wraps);
 		typeToIType[id] = typeInstance;
 		stringToIType.put(keyword, typeInstance);
+		// Hack to allow types to be declared with their id as string
+		stringToIType.put(String.valueOf(id), typeInstance);
 		for ( Class cc : wraps ) {
 			classToIType.put(cc, typeInstance);
 		}
@@ -63,7 +66,7 @@ public class Types {
 		return type.cast(scope, value, param);
 	}
 
-	public static IType get(final short type) {
+	public static IType get(final int type) {
 		IType t = typeToIType[type];
 		return t == null ? Types.NO_TYPE : t;
 	}

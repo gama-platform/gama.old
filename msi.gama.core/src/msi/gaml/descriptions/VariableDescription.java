@@ -19,7 +19,6 @@
 package msi.gaml.descriptions;
 
 import java.util.*;
-import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.*;
 import msi.gaml.expressions.IVarExpression;
@@ -37,6 +36,9 @@ import org.eclipse.emf.ecore.EObject;
 public class VariableDescription extends SymbolDescription {
 
 	private Set<VariableDescription> dependencies;
+	// Represents the variable that are not declared in the species but that the variable depends
+	// on.
+	private Set<String> extraDependencies;
 
 	private int definitionOrder = -1;
 	private IVarExpression varExpr = null;
@@ -115,16 +117,20 @@ public class VariableDescription extends SymbolDescription {
 
 	public Set<VariableDescription> usedVariablesIn(final Map<String, VariableDescription> vars) {
 		if ( dependencies == null ) {
-			dependencies = new HashSet();
+			dependencies = new LinkedHashSet();
+			extraDependencies = new LinkedHashSet();
 			IExpressionDescription depends = facets.get(DEPENDS_ON);
 			if ( depends != null ) {
 				for ( final String s : depends.getStrings(getSpeciesContext(), false) ) {
 					VariableDescription v = vars.get(s);
 					if ( v != null ) {
 						dependencies.add(v);
+					} else {
+						extraDependencies.add(s);
 					}
 				}
 				dependencies.remove(this);
+				extraDependencies.remove(getName());
 			}
 		}
 		return dependencies;
@@ -146,6 +152,10 @@ public class VariableDescription extends SymbolDescription {
 		return dependencies;
 	}
 
+	public Set<String> getExtraDependencies() {
+		return extraDependencies;
+	}
+
 	public boolean isUpdatable() {
 		return _isUpdatable;
 	}
@@ -165,29 +175,29 @@ public class VariableDescription extends SymbolDescription {
 	@Override
 	public IType getContentType() {
 		if ( !getType().hasContents() ) { return Types.NO_TYPE; }
-		if ( contentType != null && contentType != Types.NO_TYPE ) { return contentType; }
-		String of = facets.getLabel(OF);
-		if ( of != null ) {
-			if ( ITypeProvider.SELF_TYPE.equals(of) ) {
-				contentType = getTypeNamed(getSuperDescription().getName());
-			} else if ( "instance".equals(of) ) {
-				contentType = Types.NO_TYPE;
-			} else {
+		if ( contentType == null ) {
+			String of = facets.getLabel(OF);
+			if ( of != null ) {
 				contentType = getTypeNamed(of);
 			}
+			if ( contentType == null || contentType == Types.NO_TYPE ) {
+				contentType = getType().defaultContentType();
+			}
 		}
-		return contentType == null ? getType().defaultContentType() : contentType;
+		return contentType;
 	}
 
 	@Override
 	public IType getKeyType() {
 		if ( !getType().hasContents() ) { return Types.NO_TYPE; }
-		if ( keyType != null && keyType != Types.NO_TYPE ) { return keyType; }
-		String index = facets.getLabel(INDEX);
-		if ( index != null ) {
-			keyType = getTypeNamed(index);
-		} else {
-			keyType = getType().defaultKeyType();
+		if ( keyType == null ) {
+			String index = facets.getLabel(INDEX);
+			if ( index != null ) {
+				keyType = getTypeNamed(index);
+			}
+			if ( keyType == null || keyType == Types.NO_TYPE ) {
+				keyType = getType().defaultKeyType();
+			}
 		}
 		return keyType;
 	}
@@ -230,9 +240,9 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public String getTitle() {
-		String title = isParameter() ? "Parameter " : isNotModifiable() ? "Constant " : "Variable ";
-		return title + "<b>" + getName() + "</b>";
-		// TODO add type, etc...
+		String title =
+			isParameter() ? "parameter " : isNotModifiable() ? "constant " : "attribute ";
+		return title + " " + getName() + " of type " + typeToString();
 	}
 
 	public void addHelpers(final IVarGetter get, final IVarGetter init, final IVarSetter set) {

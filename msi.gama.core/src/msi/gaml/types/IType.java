@@ -19,8 +19,6 @@
 package msi.gaml.types;
 
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
-import msi.gama.precompiler.IFacetType;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
@@ -35,75 +33,52 @@ import msi.gaml.expressions.*;
 public interface IType<Support> {
 
 	/** Constant fields to indicate the types of facets */
-	public static final String LABEL = IFacetType.LABEL;
-	public static final String ID = IFacetType.ID;
-	public static final String TYPE_ID = IFacetType.TYPE_ID;
-	public static final String NEW_VAR_ID = IFacetType.NEW_VAR_ID;
-	public static final String NEW_TEMP_ID = IFacetType.NEW_TEMP_ID;
+	public static final int LABEL = -200;
+	public static final int ID = -201;
+	public static final int TYPE_ID = -202;
+	public static final int NEW_VAR_ID = -203;
+	public static final int NEW_TEMP_ID = -204;
 	/** Constant field NO_TYPE. */
-	public static final short NONE = 0;
-	public static final String NONE_STR = "unknown";
+	public static final int NONE = 0;
+	public static final int NONE_STR = NONE;
 	/** Constant field INT. */
-	public final static short INT = 1;
-	public final static String INT_STR = "int";
+	public final static int INT = 1;
 	/** Constant field FLOAT. */
-	public final static short FLOAT = 2;
-	public final static String FLOAT_STR = "float";
+	public final static int FLOAT = 2;
 	/** Constant field BOOL. */
-	public final static short BOOL = 3;
-	public final static String BOOL_STR = "bool";
+	public final static int BOOL = 3;
 	/** Constant field STRING. */
-	public final static short STRING = 4;
-	public final static String STRING_STR = "string";
+	public final static int STRING = 4;
 	/** Constant field LIST. */
-	public final static short LIST = 5;
-	public final static String LIST_STR = "list";
+	public final static int LIST = 5;
 	/** Constant field COLOR. */
-	public final static short COLOR = 6;
-	public final static String COLOR_STR = "rgb";
+	public final static int COLOR = 6;
 	/** Constant field POINT. */
-	public final static short POINT = 7;
-	public final static String POINT_STR = "point";
+	public final static int POINT = 7;
 	/** Constant field MATRIX. */
-	public final static short MATRIX = 8;
-	public final static String MATRIX_STR = "matrix";
+	public final static int MATRIX = 8;
 	/** Constant field PAIR. */
-	public final static short PAIR = 9;
-	public final static String PAIR_STR = "pair";
+	public final static int PAIR = 9;
 	/** Constant field MAP. */
-	public final static short MAP = 10;
-	public final static String MAP_STR = "map";
+	public final static int MAP = 10;
 	/** Constant field AGENT. */
-	public final static short AGENT = 11;
-	public final static String AGENT_STR = IKeyword.AGENT;
+	public final static int AGENT = 11;
 	/** Constant field SPECIES. */
-	public final static short SPECIES = 14;
-	public final static String SPECIES_STR = IKeyword.SPECIES;
+	public final static int SPECIES = 14;
 	/** Constant field FILE. */
-	public final static short FILE = 12;
-	public final static String FILE_STR = IKeyword.FILE;
+	public final static int FILE = 12;
 	/** Constant field GEOMETRY. */
-	public static final short GEOMETRY = 13;
-	public final static String GEOM_STR = "geometry";
-
-	public static final short GRAPH = 15;
-	public static final String GRAPH_STR = IKeyword.GRAPH;
-
-	public static final short PATH = 17;
-	public static final String PATH_STR = IKeyword.PATH;
-
-	public static final short TOPOLOGY = 18;
-	public static final String TOPOLOGY_STR = IKeyword.TOPOLOGY;
-
-	public static final short CONTAINER = 16;
-	public static final String CONTAINER_STR = "container";
-
-	public final static short AVAILABLE_TYPES = 50;
-	public final static short SPECIES_TYPES = 100;
+	public static final int GEOMETRY = 13;
+	public static final int GRAPH = 15;
+	public static final int PATH = 17;
+	public static final int TOPOLOGY = 18;
+	public static final int CONTAINER = 16;
+	public final static int AVAILABLE_TYPES = 50;
+	public final static int SPECIES_TYPES = 100;
 
 	public Support cast(IScope scope, Object obj, Object param) throws GamaRuntimeException;
 
-	public short id();
+	public int id();
 
 	public Class<Support> toClass();
 
@@ -160,7 +135,7 @@ public interface IType<Support> {
 	 */
 	boolean canBeTypeOf(IScope s, Object c);
 
-	public void init(int varKind, final short id, final String name, final Class ... supports);
+	public void init(int varKind, final int id, final String name, final Class ... supports);
 
 	/**
 	 * Whether or not this type can be considered as having a contents. True for all containers and
@@ -174,5 +149,12 @@ public interface IType<Support> {
 	 * @return
 	 */
 	public abstract boolean isFixedLength();
+
+	/**
+	 * Tries to find a common supertype shared between this and the argument.
+	 * @param iType
+	 * @return
+	 */
+	public IType findCommonSupertypeWith(IType iType);
 
 }

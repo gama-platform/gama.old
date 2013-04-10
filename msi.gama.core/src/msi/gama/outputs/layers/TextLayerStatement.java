@@ -36,15 +36,16 @@ import msi.gaml.types.IType;
 @symbol(name = IKeyword.TEXT, kind = ISymbolKind.LAYER, with_sequence = false)
 @inside(symbols = IKeyword.DISPLAY)
 @facets(value = {
-	@facet(name = IKeyword.VALUE, type = IType.STRING_STR, optional = false),
-	@facet(name = IKeyword.POSITION, type = IType.POINT_STR, optional = true),
-	@facet(name = IKeyword.SIZE, type = { IType.INT_STR, IType.FLOAT_STR, IType.POINT_STR }, optional = true),
-	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT_STR, optional = true),
-	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
+	@facet(name = IKeyword.VALUE, type = IType.STRING, optional = true),
+	@facet(name = IKeyword.POSITION, type = IType.POINT, optional = true),
+	@facet(name = IKeyword.SIZE, type = { IType.INT, IType.FLOAT, IType.POINT }, optional = true),
+	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true),
+	// 10/04/13 Name is not a constant ID anymore but can represent the text to display.
+	@facet(name = IKeyword.NAME, type = IType.STRING, optional = false),
 	@facet(name = IKeyword.FONT, type = IType.ID, optional = true),
-	@facet(name = IKeyword.COLOR, type = IType.COLOR_STR, optional = true),
-	@facet(name = IKeyword.Z, type = IType.FLOAT_STR, optional = true),
-	@facet(name = IKeyword.REFRESH, type = IType.BOOL_STR, optional = true)}, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),
+	@facet(name = IKeyword.Z, type = IType.FLOAT, optional = true),
+	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true) }, omissible = IKeyword.NAME)
 public class TextLayerStatement extends AbstractLayerStatement {
 
 	private final IExpression color;
@@ -60,10 +61,11 @@ public class TextLayerStatement extends AbstractLayerStatement {
 	public TextLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		IExpression c = getFacet(IKeyword.COLOR);
-		color = c == null ? new JavaConstExpression(Cast.asColor(null, "white")) : c;
+		color = c == null ? new ConstantExpression(Cast.asColor(null, "white")) : c;
 		c = getFacet(IKeyword.FONT);
-		font = c == null ? new JavaConstExpression("Helvetica") : c;
-		text = getFacet(IKeyword.VALUE);
+		font = c == null ? new ConstantExpression("Helvetica") : c;
+		// If 'value:' is not defined, we take the name as the text to display.
+		text = getFacet(IKeyword.VALUE, getFacet(IKeyword.NAME));
 	}
 
 	public String getText() {

@@ -91,10 +91,10 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		matrix = mat;
 	}
 
-	// @Override
-	// public void _clear() {
-	// Arrays.fill(matrix, null);
-	// }
+	@Override
+	public void _clear() {
+		Arrays.fill(matrix, null);
+	}
 
 	@Override
 	public boolean _contains(IScope scope, final Object o) {
@@ -121,54 +121,54 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		return matrix.length;
 	}
 
-	@Override
-	public Double _max(final IScope scope) {
-		Double max = -Double.MAX_VALUE;
-		for ( int i = 0; i < matrix.length; i++ ) {
-			Object o = matrix[i];
-			if ( o instanceof Number && ((Number) o).doubleValue() > max ) {
-				max = Double.valueOf(((Number) o).doubleValue());
-			}
-		}
-		return max;
-	}
-
-	@Override
-	public Double _min(final IScope scope) {
-		Double min = Double.MAX_VALUE;
-		for ( int i = 0; i < matrix.length; i++ ) {
-			Object o = matrix[i];
-			if ( o instanceof Number && ((Number) o).doubleValue() < min ) {
-				min = Double.valueOf(((Number) o).doubleValue());
-			}
-		}
-		return min;
-	}
-
-	@Override
-	public Double _product(final IScope scope) {
-		Double result = 1.0;
-		for ( int i = 0, n = matrix.length; i < n; i++ ) {
-			Object d = matrix[i];
-			if ( d instanceof Number ) {
-				result *= ((Number) d).doubleValue();
-			}
-		}
-		return result;
-	}
-
-	@Override
-	public Double _sum(final IScope scope) {
-		Double result = 0.0;
-		for ( int i = 0, n = matrix.length; i < n; i++ ) {
-			Object d = matrix[i];
-			if ( d instanceof Number ) {
-				result += ((Number) d).doubleValue();
-			}
-		}
-		return result;
-	}
-
+	// @Override
+	// public Double _max(final IScope scope) {
+	// Double max = -Double.MAX_VALUE;
+	// for ( int i = 0; i < matrix.length; i++ ) {
+	// Object o = matrix[i];
+	// if ( o instanceof Number && ((Number) o).doubleValue() > max ) {
+	// max = Double.valueOf(((Number) o).doubleValue());
+	// }
+	// }
+	// return max;
+	// }
+	//
+	// @Override
+	// public Double _min(final IScope scope) {
+	// Double min = Double.MAX_VALUE;
+	// for ( int i = 0; i < matrix.length; i++ ) {
+	// Object o = matrix[i];
+	// if ( o instanceof Number && ((Number) o).doubleValue() < min ) {
+	// min = Double.valueOf(((Number) o).doubleValue());
+	// }
+	// }
+	// return min;
+	// }
+	//
+	// @Override
+	// public Double _product(final IScope scope) {
+	// Double result = 1.0;
+	// for ( int i = 0, n = matrix.length; i < n; i++ ) {
+	// Object d = matrix[i];
+	// if ( d instanceof Number ) {
+	// result *= ((Number) d).doubleValue();
+	// }
+	// }
+	// return result;
+	// }
+	//
+	// @Override
+	// public Double _sum(final IScope scope) {
+	// Double result = 0.0;
+	// for ( int i = 0, n = matrix.length; i < n; i++ ) {
+	// Object d = matrix[i];
+	// if ( d instanceof Number ) {
+	// result += ((Number) d).doubleValue();
+	// }
+	// }
+	// return result;
+	// }
+	//
 	@Override
 	public boolean _isEmpty(IScope scope) {
 		for ( int i = 0; i < matrix.length; i++ ) {
@@ -260,7 +260,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		throws GamaRuntimeException {
 		boolean removed = false;
 		for ( int i = 0; i < matrix.length; i++ ) {
-			if ( list.contains(null, matrix[i]) ) { // VERIFY NULL SCOPE
+			if ( list.contains(scope, matrix[i]) ) { // VERIFY NULL SCOPE
 				matrix[i] = null;
 				removed = true;
 			}

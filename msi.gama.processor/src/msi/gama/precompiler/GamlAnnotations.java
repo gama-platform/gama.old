@@ -111,7 +111,7 @@ public final class GamlAnnotations {
 		 * @see msi.gaml.types.IType
 		 */
 
-		String[] type();
+		int[] type();
 
 		/**
 		 * Values.
@@ -171,10 +171,10 @@ public final class GamlAnnotations {
 		String name();
 
 		/**
-		 * @return the unique (short) identifier for this type. User-added types can be chosen
+		 * @return the unique identifier for this type. User-added types can be chosen
 		 *         between IType.AVAILABLE_TYPE and IType.SPECIES_TYPE (exclusive)
 		 */
-		short id();
+		int id();
 
 		/**
 		 * @return the list of Java Classes this type is "wrapping" (i.e. representing). The first
@@ -393,7 +393,7 @@ public final class GamlAnnotations {
 		 * @return An array containing the textual representation of the types that can be taken by
 		 *         the argument (see IType)
 		 */
-		String[] type() default {};
+		int[] type() default {};
 
 		/**
 		 * Optional.
@@ -455,7 +455,7 @@ public final class GamlAnnotations {
 		 * 
 		 * @return The textual representation of the type of the variable (see IType)
 		 */
-		String type();
+		int type();
 
 		/**
 		 * Of.
@@ -463,7 +463,7 @@ public final class GamlAnnotations {
 		 * @return The textual representation of the content type of the variable (see
 		 *         IType#defaultContentType())
 		 */
-		String of() default "";
+		int of() default 0;
 
 		/**
 		 * Index.
@@ -471,7 +471,7 @@ public final class GamlAnnotations {
 		 * @return The textual representation of the index type of the variable (see
 		 *         IType#defaultKeyType())
 		 */
-		String index() default "";
+		int index() default 0;
 
 		/**
 		 * Constant
@@ -498,7 +498,7 @@ public final class GamlAnnotations {
 		/**
 		 * Species.
 		 * 
-		 * @return the species of the variable value in case its type is IType.AGENT_STR.
+		 * @return the species of the variable value in case its type is IType.AGENT.
 		 * @deprecated use type instead with the name of the species
 		 */
 		@Deprecated
@@ -636,7 +636,16 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		short content_type() default ITypeProvider.NONE;
+		int content_type() default ITypeProvider.NONE;
+
+		/**
+		 * @return the type of the index if the returned value is a container. Can be directly a
+		 *         type in IType or one of the constants declared in ITypeProvider (in which case,
+		 *         the index type is searched using this provider).
+		 * @see IType
+		 * @see ITypeProvider
+		 */
+		int index_type() default ITypeProvider.NONE;
 
 		/**
 		 * @return if the argument is a container, return the types expected for its contents.
@@ -644,7 +653,7 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		short[] expected_content_type() default {};
+		int[] expected_content_type() default {};
 
 		/**
 		 * @return the respective priority of the operator w.r.t. to the others. Priorities are
@@ -654,8 +663,8 @@ public final class GamlAnnotations {
 		 *             can be safely removed.
 		 * @see IPriority
 		 */
-		@Deprecated
-		short priority() default IPriority.DEFAULT;
+		// @Deprecated
+		// short priority() default IPriority.DEFAULT;
 
 		/**
 		 * 
@@ -666,7 +675,7 @@ public final class GamlAnnotations {
 		 * @see IType
 		 * @see ITypeProvider
 		 */
-		short type() default ITypeProvider.NONE;
+		int type() default ITypeProvider.NONE;
 
 		/**
 		 * Doc.

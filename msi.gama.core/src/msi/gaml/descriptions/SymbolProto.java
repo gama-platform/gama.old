@@ -27,7 +27,7 @@ import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.factories.*;
 import msi.gaml.statements.*;
 import msi.gaml.statements.Facets.Facet;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 8 févr. 2010
@@ -56,9 +56,9 @@ public class SymbolProto {
 	private final String omissibleFacet;
 	private final SymbolFactory factory;
 
-	static final List<String> ids = Arrays.asList(IType.LABEL, IType.ID, IType.NEW_TEMP_ID,
+	static final List<Integer> ids = Arrays.asList(IType.LABEL, IType.ID, IType.NEW_TEMP_ID,
 		IType.NEW_VAR_ID, IType.TYPE_ID);
-	static final List<String> definitions = Arrays.asList(IType.ID, IType.NEW_TEMP_ID,
+	static final List<Integer> definitions = Arrays.asList(IType.ID, IType.NEW_TEMP_ID,
 		IType.NEW_VAR_ID);
 
 	static {
@@ -109,7 +109,7 @@ public class SymbolProto {
 	public boolean isFacetDeclaringANewTemp(final String s) {
 		FacetProto f = getPossibleFacets().get(s);
 		if ( f == null ) { return false; }
-		return f.types.get(0).equals(IType.NEW_TEMP_ID);
+		return f.types[0] == IType.NEW_TEMP_ID;
 	}
 
 	public boolean isLabel(final String s) {
@@ -161,6 +161,7 @@ public class SymbolProto {
 
 	public void verifyFacetsValidity(final ISyntacticElement e, final Facets facets,
 		final IDescription context) {
+		if ( context == null ) { return; }
 		// Special case for "do", which can accept (at parsing time) any facet
 		if ( e.getKeyword().equals(DO) ) { return; }
 		for ( Facet s : facets.entrySet() ) {
@@ -235,9 +236,9 @@ public class SymbolProto {
 			if ( f == null ) {
 				continue;
 			}
-			if ( f.isLabel && facets.get(facetName) != null ) {
-				facets.put(facetName, facets.get(facetName).compileAsLabel());
-				if ( f.types.get(0).equals(IType.LABEL) ) {
+			if ( f.isLabel && facet.getValue() != null ) {
+				facets.put(facetName, facet.getValue().compileAsLabel());
+				if ( f.types[0] == IType.LABEL ) {
 					if ( f.values != null && f.values.length != 0 ) {
 						boolean found = false;
 						for ( String possibleValue : f.values ) {
@@ -302,7 +303,7 @@ public class SymbolProto {
 		StringBuilder sb = new StringBuilder(200);
 		sb.append("<b>Facets allowed:</b><br><ul>");
 		for ( FacetProto f : this.getPossibleFacets().values() ) {
-			sb.append("<li><b>").append(f.name).append("</b> type: ").append(f.types.get(0))
+			sb.append("<li><b>").append(f.name).append("</b> type: ").append(Types.get(f.types[0]))
 				.append(" <i>[").append(f.optional ? "optional" : "required").append("]</i>");
 			if ( f.values != null && f.values.length != 0 ) {
 				sb.append(" among: ").append(Arrays.toString(f.values));

@@ -39,7 +39,7 @@ import msi.gaml.types.IType;
  */
 @symbol(name = IKeyword.USING, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
-@facets(value = { @facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY_STR, optional = false) }, omissible = IKeyword.TOPOLOGY)
+@facets(value = { @facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY, optional = false) }, omissible = IKeyword.TOPOLOGY)
 public class UsingStatement extends AbstractStatementSequence {
 
 	final IExpression topology;

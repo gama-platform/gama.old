@@ -63,15 +63,15 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 @symbol(name = IKeyword.CREATE, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, with_args = true, remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
-@facets(value = { @facet(name = IKeyword.SPECIES, type = IType.SPECIES_STR, optional = true),
+@facets(value = { @facet(name = IKeyword.SPECIES, type = IType.SPECIES, optional = true),
 	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true),
 	@facet(name = IKeyword.FROM, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.NUMBER, type = IType.INT_STR, optional = true),
-	@facet(name = IKeyword.AS, type = { IType.SPECIES_STR }, optional = true),
-	@facet(name = IKeyword.WITH, type = { IType.MAP_STR }, optional = true),
-	@facet(name = IKeyword.SIZE, type = { IType.FLOAT_STR }, optional = true),
-	@facet(name = IKeyword.HEADER, type = { IType.BOOL_STR }, optional = true),
-	@facet(name = IKeyword.TYPE, type = { IType.STRING_STR }, optional = true) }, omissible = IKeyword.SPECIES)
+	@facet(name = IKeyword.NUMBER, type = IType.INT, optional = true),
+	@facet(name = IKeyword.AS, type = { IType.SPECIES }, optional = true),
+	@facet(name = IKeyword.WITH, type = { IType.MAP }, optional = true),
+	@facet(name = IKeyword.SIZE, type = { IType.FLOAT }, optional = true),
+	@facet(name = IKeyword.HEADER, type = { IType.BOOL }, optional = true),
+	@facet(name = IKeyword.TYPE, type = { IType.STRING }, optional = true) }, omissible = IKeyword.SPECIES)
 public class CreateStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
 	private Arguments init;

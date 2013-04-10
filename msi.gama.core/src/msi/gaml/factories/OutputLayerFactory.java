@@ -44,7 +44,7 @@ public class OutputLayerFactory extends StatementFactory {
 	}
 
 	@Override
-	protected void compileFacet(final String tag, final IDescription sd) {
+	protected void compileFacet(final String tag, final IDescription sd, SymbolProto md) {
 		// Special case for the compilation of the "species species: ..." layer, which expects an
 		// expression, contrary to the "species" statement, which expects an ID. The same for
 		// "grid".
@@ -77,7 +77,7 @@ public class OutputLayerFactory extends StatementFactory {
 				}
 			}
 		} else {
-			super.compileFacet(tag, sd);
+			super.compileFacet(tag, sd, md);
 		}
 	}
 

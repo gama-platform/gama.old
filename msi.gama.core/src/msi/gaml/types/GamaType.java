@@ -39,7 +39,7 @@ import msi.gaml.expressions.*;
 
 public abstract class GamaType<Support> implements IType<Support> {
 
-	protected short id;
+	protected int id;
 	protected String name;
 	protected Class[] supports;
 	Map<String, TypeFieldExpression> getters = new HashMap();
@@ -49,7 +49,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	protected int varKind;
 
 	@Override
-	public void init(final int varKind, final short id, final String name, final Class ... supports) {
+	public void init(final int varKind, final int id, final String name, final Class ... supports) {
 		this.varKind = varKind;
 		this.id = id;
 		this.name = name;
@@ -114,7 +114,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 		throws GamaRuntimeException;
 
 	@Override
-	public short id() {
+	public int id() {
 		return id;
 	}
 
@@ -214,6 +214,15 @@ public abstract class GamaType<Support> implements IType<Support> {
 		if ( isTranslatableInto(type) ) { return 1; }
 		if ( isAssignableFrom(type) ) { return 1; }
 		return Integer.MAX_VALUE;
+	}
+
+	@Override
+	public IType findCommonSupertypeWith(IType type) {
+		if ( type == this ) { return this; }
+		if ( type == Types.NO_TYPE ) { return type; }
+		if ( type.isTranslatableInto(this) ) { return this; }
+		if ( this.isTranslatableInto(type) ) { return type; }
+		return getParent().findCommonSupertypeWith(type.getParent());
 	}
 
 	@Override

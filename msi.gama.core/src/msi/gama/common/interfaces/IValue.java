@@ -31,15 +31,15 @@ public interface IValue extends IGamlable {
 
 	// public abstract IType type();
 
-	// @operator(value = IType.STRING_STR, can_be_const = true)
+	// @operator(value = IType.STRING, can_be_const = true)
 	public abstract String stringValue(IScope scope) throws GamaRuntimeException;
 
 	// @operator(value = "to_java")
 	// TODO To be done later
 	// public abstract String toJava();
 
-	// @operator(value = "copy", can_be_const = true, type = ITypeProvider.CHILD_TYPE, content_type
-	// = ITypeProvider.CHILD_CONTENT_TYPE)
+	// @operator(value = "copy", can_be_const = true, type = ITypeProvider.FIRST_TYPE, content_type
+	// = ITypeProvider.FIRST_CONTENT_TYPE)
 	public abstract IValue copy(IScope scope) throws GamaRuntimeException;
 
 }

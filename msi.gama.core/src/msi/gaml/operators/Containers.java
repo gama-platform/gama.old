@@ -51,8 +51,8 @@ public class Containers {
 	// ADDRESS GROUPS OF AGENTS WITH THE SAME SPECIES. POPULATIONS WILL BE RETURNED NOW WHEN WE USE
 	// THE NAME OF THE SPECIES. AND POPULATIONS WILL BE CONTAINERS.
 
-	// @operator(value = "first", type = ITypeProvider.CHILD_CONTENT_TYPE, content_type =
-	// ITypeProvider.CHILD_CONTENT_TYPE)
+	// @operator(value = "first", type = ITypeProvider.FIRST_CONTENT_TYPE, content_type =
+	// ITypeProvider.FIRST_CONTENT_TYPE)
 	// @doc(deprecated =
 	// "The use of first on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)")
 	// public static IAgent getFirst(final IScope scope, final ISpecies s) throws
@@ -61,8 +61,8 @@ public class Containers {
 	// return s.first(scope);
 	// }
 	//
-	// @operator(value = "last", type = ITypeProvider.CHILD_CONTENT_TYPE, content_type =
-	// ITypeProvider.CHILD_CONTENT_TYPE)
+	// @operator(value = "last", type = ITypeProvider.FIRST_CONTENT_TYPE, content_type =
+	// ITypeProvider.FIRST_CONTENT_TYPE)
 	// @doc(deprecated =
 	// "The use of last on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)")
 	// public static IAgent getLast(final IScope scope, final ISpecies s) throws
@@ -92,14 +92,14 @@ public class Containers {
 		return map.getFromIndicesList(scope, indices);
 	}
 
-	@operator(value = { IKeyword.AT, "@" }, type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@operator(value = { IKeyword.AT, "@" }, type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(deprecated = "The use of at on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)")
 	public static IAgent at(final IScope scope, final ISpecies s, final GamaPoint val)
 		throws GamaRuntimeException {
 		return scope.getAgentScope().getPopulationFor(s).getAgent(val);
 	}
 
-	@operator(value = { "grid_at" }, type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@operator(value = { "grid_at" }, type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "returns the cell of the grid (right-hand operand) at the position given by the right-hand operand", comment = "If the left-hand operand is a point of floats, it is used as a point of ints.", special_cases = { "if the left-hand operand is not a grid cell species, returns nil" }, examples = { "grid_cell grid_at {1,2} 	--: 	returns the agent grid_cell with grid_x=1 and grid_y = 2" })
 	public static IAgent grid_at(final IScope scope, final ISpecies s, final GamaPoint val)
 		throws GamaRuntimeException {
@@ -144,7 +144,7 @@ public class Containers {
 		}
 	};
 
-	@operator(value = "remove_duplicates", can_be_const = true, content_type = ITypeProvider.CHILD_CONTENT_TYPE)
+	@operator(value = "remove_duplicates", can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE, index_type = ITypeProvider.FIRST_KEY_TYPE)
 	@doc(value = "produces a set from the elements of the operand (i.e. a list without duplicated elements)", special_cases = {
 		"if the operand is nil, remove_duplicates returns nil",
 		"if the operand is a graph, remove_duplicates returns the set of nodes",
@@ -195,7 +195,7 @@ public class Containers {
 		return false;
 	}
 
-	@operator(value = { "copy_between" /* , "copy" */}, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@operator(value = { "copy_between" /* , "copy" */}, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "returns a copy of a sublist of the left operand between a begin index (x of the right operand point) and a end index (y of the right operand point", special_cases = {
 		"if the right operand is nil or empty, copy_between returns a copy of the left operand",
 		"if the begin index is higher than the end index, copy_between returns a new empty list" }, examples = { "[1,2,3,4,5,6,7] copy_between {0,3} 	--:		 [1,2,3]" })
@@ -234,10 +234,10 @@ public class Containers {
 	}
 
 	@operator(value = "index_of", can_be_const = true)
-	@doc(special_cases = { "if the left operand is a map, index_of returns the index as a pair" }, examples = { "[1::2, 3::4, 5::6] index_of 4 		--: 	3::4" })
-	public static Object index_of(final GamaMap m, final Object o) {
-		for ( Map.Entry<Object, Object> k : m.entrySet() ) {
-			if ( k.getValue().equals(o) ) { return k; }
+	@doc(special_cases = { "if the left operand is a map, index_of returns the index of a value or nil if the value is not mapped" }, examples = { "[1::2, 3::4, 5::6] index_of 4 		--: 	3" })
+	public static Object index_of(final GamaMap<?, ?> m, final Object o) {
+		for ( Map.Entry<?, ?> k : m.entrySet() ) {
+			if ( k.getValue().equals(o) ) { return k.getKey(); }
 		}
 		return null;
 	}
@@ -279,13 +279,13 @@ public class Containers {
 		return null;
 	}
 
-	@operator(value = "last_index_of", can_be_const = true)
+	@operator(value = "last_index_of", can_be_const = true, type = ITypeProvider.FIRST_KEY_TYPE)
 	@doc(special_cases = { "if the left operand is a map, last_index_of returns the index as a pair" }, examples = { "[1::2, 3::4, 5::4] last_index_of 4  	--:  	5::4" })
 	public static Object last_index_of(final GamaMap m, final Object o) {
 		return index_of(m, o);
 	}
 
-	@operator(value = "inter", can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@operator(value = "inter", can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "the intersection of the two operands", comment = "both containers are transformed into sets (so without duplicated element, cf. remove_deplicates operator) before the set intersection is computed.", special_cases = {
 		"if an operand is a graph, it will be transformed into the set of its nodes",
 		"if an operand is a map, it will be transformed into the set of its values",
@@ -300,7 +300,7 @@ public class Containers {
 		return list;
 	}
 
-	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "returns a new list in which all the elements of the right operand have been removed from the left one", comment = "The behavior of the operator depends on the type of the operands.", special_cases = { "if the right operand is empty or nil, " +
 		IKeyword.MINUS + " returns the left operand" }, examples = {
 		"[1,2,3,4,5,6] - [2,4,9] 	--: 	[1,3,5,6]", "[1,2,3,4,5,6] - [0,8] 		--:	 	[1,2,3,4,5,6]" }, see = { "" +
@@ -314,7 +314,7 @@ public class Containers {
 		return l1;
 	}
 
-	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(special_cases = { "if the right operand is an object of any type (except list), " +
 		IKeyword.MINUS + " returns a copie of the left operand without this object" }, examples = {
 		"[1,2,3,4,5,6] - 2 		--: 	[1,3,4,5,6]", "[1,2,3,4,5,6] - 0 		--:	 	[1,2,3,4,5,6]" })
@@ -325,7 +325,12 @@ public class Containers {
 		return result;
 	}
 
-	@operator(value = "of_generic_species", content_type = ITypeProvider.RIGHT_CONTENT_TYPE, priority = IPriority.CAST)
+	// PRENDRE EN COMPTE:
+	//
+	// - index_type
+	// - nouvelles valeurs de ITypeProvider
+
+	@operator(value = "of_generic_species", content_type = ITypeProvider.SECOND_CONTENT_TYPE)
 	@doc(value = "a list, containing the agents of the left-hand operand whose species is that denoted by the right-hand operand "
 		+ "and whose species extends the right-hand operand species ", examples = {
 		"// species test {}",
@@ -339,7 +344,7 @@ public class Containers {
 		return of_species(scope, agents, s, true);
 	}
 
-	@operator(value = "of_species", content_type = ITypeProvider.RIGHT_CONTENT_TYPE, priority = IPriority.CAST)
+	@operator(value = "of_species", content_type = ITypeProvider.SECOND_CONTENT_TYPE)
 	@doc(value = "a list, containing the agents of the left-hand operand whose species is that denoted by the right-hand operand."
 		+ "The expression agents of_species (species self) is equivalent to agents where (species each = species self); "
 		+ "however, the advantage of using the first syntax is that the resulting list is correctly typed with the right species, "
@@ -365,13 +370,13 @@ public class Containers {
 		return result;
 	}
 
-	@operator(value = { "::" }, can_be_const = true, type = IType.PAIR, content_type = ITypeProvider.RIGHT_TYPE)
+	@operator(value = { "::" }, can_be_const = true, type = IType.PAIR, index_type = ITypeProvider.FIRST_TYPE, content_type = ITypeProvider.SECOND_TYPE)
 	@doc(value = "produces a new pair combining the left and the right operands")
 	public static GamaPair pair(final Object a, final Object b) {
 		return new GamaPair(a, b);
 	}
 
-	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "returns a new list containing all the elements of both operands", special_cases = { "if one of the operands is nil, " +
 		IKeyword.PLUS + " returns the casting of the other one into a list" }, examples = {
 		"[1,2,3,4,5,6] + [2,4,9] 	--: 	[1,2,3,4,5,6,2,4,9]",
@@ -390,7 +395,7 @@ public class Containers {
 		return result;
 	}
 
-	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(special_cases = { "if the right operand is an object of any type (except a container), " +
 		IKeyword.PLUS + " returns a copie of the left operand with this object" }, examples = {
 		"[1,2,3,4,5,6] + 2 		--: 	[1,2,3,4,5,6,2]", "[1,2,3,4,5,6] + 0 		--:	 	[1,2,3,4,5,6,0]" })
@@ -403,7 +408,7 @@ public class Containers {
 		return result;
 	}
 
-	@operator(value = "union", priority = IPriority.ADDITION, can_be_const = true, content_type = ITypeProvider.LEFT_CONTENT_TYPE)
+	@operator(value = "union", can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "returns a new list containing all the elements of both operands without duplicated elements. Elements of this new list are sorted.", comment = "union is only defined with a list as left operand", special_cases = { "if the right operand is nil, union returns a copy of the left operand" }, examples = {
 		"[1,2,3,4,5,6] union [2,4,9] 		--: 	[1,2,3,4,5,6,9]",
 		"[1,2,3,4,5,6] union [0,8] 			--: 	[0,1,2,3,4,5,6,8]",
@@ -423,7 +428,7 @@ public class Containers {
 
 	// ITERATORS
 
-	@operator(value = { "group_by" }, priority = IPriority.ITERATOR, iterator = true)
+	@operator(value = { "group_by" }, iterator = true, index_type = ITypeProvider.SECOND_CONTENT_TYPE, content_type = IType.LIST)
 	@doc(value = "a map, where the keys take the possible values of the right-hand operand and the map values are the list of elements "
 		+ "of the left-hand operand associated to the key value", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", special_cases = { "if the left-hand operand is nil, group_by returns a new empty map" }, examples = {
 		"[1,2,3,4,5,6,7,8] group_by (each > 3) 	--: 	[false::[1, 2, 3], true::[4, 5, 6, 7, 8]] ",
@@ -446,7 +451,7 @@ public class Containers {
 		return result;
 	}
 
-	@operator(value = { "group_by" }, priority = IPriority.ITERATOR, iterator = true, content_type = IType.MAP)
+	@operator(value = { "group_by" }, iterator = true, content_type = IType.MAP)
 	public static GamaMap group_by(final IScope scope, final GamaMap original,
 		final IExpression filter) throws GamaRuntimeException {
 		if ( original == null ) { return new GamaMap(); }
@@ -462,7 +467,7 @@ public class Containers {
 		return result;
 	}
 
-	@operator(value = { "last_with" }, type = ITypeProvider.LEFT_CONTENT_TYPE, priority = IPriority.ITERATOR, iterator = true)
+	@operator(value = { "last_with" }, type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true)
 	@doc(value = "the last element of the left-hand operand that makes the right-hand operand evaluate to true.", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", special_cases = { "if the left-hand operand is nil, last_with returns nil" }, examples = {
 		"[1,2,3,4,5,6,7,8] last_with (each > 3) 					--: 	8",
 		"g2 last_with (length(g2 out_edges_of each) = 0 ) 			--: 	node11",
@@ -479,7 +484,7 @@ public class Containers {
 		return null;
 	}
 
-	@operator(value = { "first_with" }, type = ITypeProvider.LEFT_CONTENT_TYPE, priority = IPriority.ITERATOR, iterator = true)
+	@operator(value = { "first_with" }, type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true)
 	@doc(value = "the first element of the left-hand operand that makes the right-hand operand evaluate to true.", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", special_cases = { "if the left-hand operand is nil, first_with returns nil" }, examples = {
 		"[1,2,3,4,5,6,7,8] first_with (each > 3) 						--: 	4",
 		"g2 first_with (length(g2 out_edges_of each) = 0) 				--: 	node9",
@@ -496,7 +501,7 @@ public class Containers {
 		return null;
 	}
 
-	@operator(value = { "max_of" }, priority = IPriority.ITERATOR, type = ITypeProvider.RIGHT_TYPE, iterator = true)
+	@operator(value = { "max_of" }, type = ITypeProvider.SECOND_TYPE, iterator = true)
 	@doc(value = "the maximum value of the right-hand expression evaluated on each of the elements of the left-hand operand", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", special_cases = { "if the left-hand operand is nil, max_of returns the right-hand operand default value" }, examples = {
 		"[1,2,4,3,5,7,6,8] max_of (each * 100 ) 			--: 	800",
 		"g2 max_of (length(g2 out_edges_of each) ) 			--: 	3",
@@ -527,7 +532,7 @@ public class Containers {
 		return max;
 	}
 
-	@operator(value = { "min_of" }, priority = IPriority.ITERATOR, type = ITypeProvider.RIGHT_TYPE, iterator = true)
+	@operator(value = { "min_of" }, type = ITypeProvider.SECOND_TYPE, iterator = true)
 	@doc(value = "the minimum value of the right-hand expression evaluated on each of the elements of the left-hand operand", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", special_cases = { "if the left-hand operand is nil, first_with returns nil" }, examples = {
 		"[1,2,4,3,5,7,6,8] min_of (each * 100 ) 			--: 	100",
 		"g2 min_of (length(g2 out_edges_of each) ) 			--: 	0",
@@ -559,24 +564,26 @@ public class Containers {
 		return min;
 	}
 
-	@operator(value = "among", content_type = ITypeProvider.RIGHT_CONTENT_TYPE)
-	@doc(special_cases = { "if the right-hand operand is a map, among returns a map of right-hand operand element instead of a list" }, examples = { "2 among [1::2, 3::4, 5::6] 	--: 	[1::2, 3::4]" })
-	public static GamaMap among(final IScope scope, final Integer number, final GamaMap l)
-		throws GamaRuntimeException {
-		final GamaMap result = new GamaMap();
-		if ( l == null ) { return result; }
-		int size = l.size();
-		if ( number == 0 ) { return result; }
-		if ( number >= size ) { return l; }
-		final IList indexes = among(scope, number, new GamaList(l.keySet()));
-		for ( int i = 0; i < number; i++ ) {
-			Object o = indexes.get(i);
-			result.put(o, l.get(o));
-		}
-		return result;
-	}
+	// @operator(value = "among", content_type = ITypeProvider.RIGHT_CONTENT_TYPE)
+	// @doc(special_cases = {
+	// "if the right-hand operand is a map, among returns a map of right-hand operand element instead of a list"
+	// }, examples = { "2 among [1::2, 3::4, 5::6] 	--: 	[1::2, 3::4]" })
+	// public static GamaMap among(final IScope scope, final Integer number, final GamaMap l)
+	// throws GamaRuntimeException {
+	// final GamaMap result = new GamaMap();
+	// if ( l == null ) { return result; }
+	// int size = l.size();
+	// if ( number == 0 ) { return result; }
+	// if ( number >= size ) { return l; }
+	// final IList indexes = among(scope, number, new GamaList(l.keySet()));
+	// for ( int i = 0; i < number; i++ ) {
+	// Object o = indexes.get(i);
+	// result.put(o, l.get(o));
+	// }
+	// return result;
+	// }
 
-	@operator(value = "among", content_type = ITypeProvider.RIGHT_CONTENT_TYPE)
+	@operator(value = "among", content_type = ITypeProvider.SECOND_CONTENT_TYPE)
 	@doc(value = "a list of length the value of the left-hand operand, containing random elements from the right-hand operand", special_cases = {
 		"if the right-hand operand is empty or nil, among returns a new empty list",
 		"if the left-hand operand is greater than the length of the right-hand operand, among returns the right-hand operand." }, examples = {
@@ -604,7 +611,7 @@ public class Containers {
 		return result;
 	}
 
-	@operator(value = { "sort_by", "sort" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE, priority = IPriority.ITERATOR, iterator = true)
+	@operator(value = { "sort_by", "sort" }, content_type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true)
 	@doc(value = "a list, containing the elements of the left-hand operand sorted in ascending order by the value of the right-hand operand when it is evaluated on them. ", comment = "the left-hand operand is casted to a list before applying the operator. In the right-hand operand, the keyword each can be used to represent, in turn, each of the elements.", special_cases = { "if the left-hand operand is nil, sort_by returns  nil" }, examples = {
 		"[1,2,4,3,5,7,6,8] sort_by (each) 					--: 	[1,2,3,4,5,6,7,8]",
 		"g2 sort_by (length(g2 out_edges_of each) ) 		--: 	[node9, node7, node10, node8, node11, node6, node5, node4]",
@@ -616,7 +623,7 @@ public class Containers {
 		final GamaList lv = new GamaList(original.listValue(scope));
 		// copy in order to prevent any side effect on the left member
 		if ( lv.isEmpty() ) { return lv; }
-		short fType = filter.getType().id();
+		int fType = filter.getType().id();
 		boolean isComparable = fType == IType.STRING || fType == IType.INT || fType == IType.FLOAT;
 		for ( int i = 0, n = lv.size(); i < n; i++ ) {
 			Object each = lv.get(i);
@@ -647,7 +654,8 @@ public class Containers {
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
-	@operator(value = { "sort_by", "sort" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE, priority = IPriority.ITERATOR, iterator = true)
+	// FIXME Completely false
+	@operator(value = { "sort_by", "sort" }, content_type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true)
 	public static GamaMap sort(final IScope scope, final GamaMap original, final IExpression filter)
 		throws GamaRuntimeException {
 		if ( original == null ) { return null; }
@@ -661,21 +669,22 @@ public class Containers {
 		return resultMap;
 	}
 
-	@operator(value = { "where", "select" }, priority = IPriority.ITERATOR, iterator = true)
-	public static GamaMap where(final IScope scope, final GamaMap original, final IExpression filter)
-		throws GamaRuntimeException {
-		if ( original == null ) { return new GamaMap(); }
-		final GamaMap result = new GamaMap();
-		for ( GamaPair p : original.iterable(scope) ) {
-			scope.setEach(p);
-			if ( Cast.asBool(scope, filter.value(scope)) ) {
-				result.add(p);
-			}
-		}
-		return result;
-	}
+	// @operator(value = { "where", "select" }, priority = IPriority.ITERATOR, iterator = true)
+	// public static GamaMap where(final IScope scope, final GamaMap original, final IExpression
+	// filter)
+	// throws GamaRuntimeException {
+	// if ( original == null ) { return new GamaMap(); }
+	// final GamaMap result = new GamaMap();
+	// for ( GamaPair p : original.iterable(scope) ) {
+	// scope.setEach(p);
+	// if ( Cast.asBool(scope, filter.value(scope)) ) {
+	// result.add(p);
+	// }
+	// }
+	// return result;
+	// }
 
-	@operator(value = { "where", "select" }, content_type = ITypeProvider.LEFT_CONTENT_TYPE, priority = IPriority.ITERATOR, iterator = true)
+	@operator(value = { "where", "select" }, content_type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true)
 	@doc(value = "a list containing all the elements of the left-hand operand that make the right-hand operand evaluate to true. ", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", special_cases = { "if the left-hand operand is a list nil, where returns a new empty list" }, examples = {
 		"[1,2,3,4,5,6,7,8] where (each > 3) 						--: 	[4, 5, 6, 7, 8] ",
 		"g2 where (length(g2 out_edges_of each) = 0 ) 				--: 	[node9, node7, node10, node8, node11]",
@@ -696,7 +705,7 @@ public class Containers {
 		return result;
 	}
 
-	@operator(value = { "with_max_of" }, type = ITypeProvider.LEFT_CONTENT_TYPE, priority = IPriority.ITERATOR, iterator = true)
+	@operator(value = { "with_max_of" }, type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true)
 	@doc(value = "one of elements of the left-hand operand that maximizes the value of the right-hand operand", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", special_cases = { "if the left-hand operand is nil, with_max_of returns the default value of the right-hand operand" }, examples = {
 		"[1,2,3,4,5,6,7,8] with_max_of (each ) 						--: 	8",
 		"g2 with_max_of (length(g2 out_edges_of each)  ) 			--: 	node4",
@@ -719,7 +728,7 @@ public class Containers {
 		return result;
 	}
 
-	@operator(value = { "with_min_of" }, type = ITypeProvider.LEFT_CONTENT_TYPE, priority = IPriority.ITERATOR, iterator = true)
+	@operator(value = { "with_min_of" }, type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true)
 	@doc(value = "one of elements of the left-hand operand that minimizes the value of the right-hand operand", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", special_cases = { "if the left-hand operand is nil, with_max_of returns the default value of the right-hand operand" }, examples = {
 		"[1,2,3,4,5,6,7,8] with_min_of (each ) 						--: 	1",
 		"g2 with_min_of (length(g2 out_edges_of each)  ) 			--: 	node11",
@@ -742,7 +751,7 @@ public class Containers {
 	}
 
 	// TODO check the doc (since it is difficult to distinguish it from collect)
-	@operator(value = { "accumulate" }, content_type = ITypeProvider.RIGHT_CONTENT_TYPE, priority = IPriority.ITERATOR, iterator = true)
+	@operator(value = { "accumulate" }, content_type = ITypeProvider.SECOND_CONTENT_TYPE, iterator = true)
 	@doc(value = "returns a new flat list, in which each element is the evaluation of the right-hand operand. If this evaluation returns a list, the elements of this result are added directly to the list returned", comment = "accumulate is dedicated to the application of a same computation on each element of a container (and returns a list) "
 		+ "In the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", special_cases = { "if the left-hand operand is nil, accumulate returns an empty list" }, examples = {
 		"[a1,a2,a3] accumulate (each neighbours_at 10)  		--: 	a flat list of all the neighbours of these three agents",
@@ -754,8 +763,8 @@ public class Containers {
 		for ( Object each : original.iterable(scope) ) {
 			scope.setEach(each);
 			final Object values = filter.value(scope);
-			if ( values instanceof GamaList ) {
-				result.addAll((GamaList) values);
+			if ( values instanceof IContainer ) {
+				result.addAll(((IContainer) values).listValue(scope));
 			} else {
 				result.add(values);
 			}
@@ -765,7 +774,7 @@ public class Containers {
 
 	// TODO Check why collate([...]) does not return [...]
 
-	@operator(value = "collate", content_type = ITypeProvider.CHILD_CONTENT_TYPE)
+	@operator(value = "collate", content_type = ITypeProvider.FIRST_ELEMENT_CONTENT_TYPE)
 	@doc(value = "a new list containing interleaved elements of the operand", comment = "the operand should be a list of lists of elements. The result is a list of elements. ", special_cases = { "if the operand is nil or a list of (non-list) elements, accumulate returns an empty list" }, examples = {
 		"collate([1,2,4,3,5,7,6,8]) 	--: 	[]",
 		"collate([['e11','e12','e13'],['e21','e22','e23'],['e31','e32','e33']])  --:  [e11,e21,e31,e12,e22,e32,e13,e23,e33]" })
@@ -806,7 +815,7 @@ public class Containers {
 		return result;
 	}
 
-	@operator(value = { "count" }, priority = IPriority.ITERATOR, iterator = true)
+	@operator(value = { "count" }, iterator = true)
 	@doc(value = "returns an int, equal to the number of elements of the left-hand operand that make the right-hand operand evaluate to true.", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the elements.", special_cases = { "if the left-hand operand is nil, count returns 0" }, examples = {
 		"[1,2,3,4,5,6,7,8] count (each > 3) 					--: 	5",
 		"g2 count (length(g2 out_edges_of each) = 0  ) 			--: 	5	// Number of nodes of graph g2 without any out edge",
@@ -825,7 +834,7 @@ public class Containers {
 		return result;
 	}
 
-	@operator(value = { "as_map" }, priority = IPriority.ITERATOR, iterator = true)
+	@operator(value = { "as_map" }, iterator = true, content_type = ITypeProvider.SECOND_CONTENT_TYPE, index_type = ITypeProvider.SECOND_KEY_TYPE)
 	@doc(value = "produces a new map from the evaluation of the right-hand operand for each element of the left-hand operand", comment = "the right-hand operand should be pair or a map.", special_cases = { "if the left-hand operand is nil or empty, as_map returns a new empty map." }, examples = {
 		"[1,2,3,4,5,6,7,8] as_map (each::(each * 2) 	--: 	[1::2, 2::4, 3::6, 4::8, 5::10, 6::12, 7::14, 8::16]",
 		"[1::2,3::4,5::6] as_map (each::(each * 2))		--: 	[2::4, 4::8, 6::12] " }, see = {})
@@ -855,7 +864,7 @@ public class Containers {
 		return result;
 	}
 
-	@operator(value = { "collect" }, content_type = ITypeProvider.RIGHT_TYPE, priority = IPriority.ITERATOR, iterator = true)
+	@operator(value = { "collect" }, content_type = ITypeProvider.SECOND_TYPE, iterator = true)
 	@doc(value = "returns a new list, in which each element is the evaluation of the right-hand operand.", comment = "collect is very similar to accumulate except. Nevertheless if the evaluation of the right-hand operand produces a list,"
 		+ "the returned list is a list of list of elements. In contrarily, the list produces by accumulate is only a list of elements "
 		+ "(all the lists) produced are concaneted. In addition, collect can be applied to any container.", special_cases = { "if the left-hand operand is nil, accumulate returns an empty list" }, examples = {

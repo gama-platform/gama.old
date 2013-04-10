@@ -113,17 +113,23 @@ public class GamaProcessor extends AbstractProcessor {
 			processDisplays(env);
 
 			gp.store(createWriter(GAML));
-			Writer w = createSourceWriter();
-			if ( w != null ) {
+			Writer source = createSourceWriter();
+			Writer doc = createDocSourceWriter();
+			if ( source != null && doc != null ) {
 				// try {
 				try {
-					w.append(new JavaWriter().write("gaml.additions", gp));
+					StringBuilder sourceBuilder = new StringBuilder();
+					StringBuilder docBuilder = new StringBuilder();
+					new JavaWriter().write("gaml.additions", gp, sourceBuilder, docBuilder);
+					source.append(sourceBuilder);
+					doc.append(docBuilder);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 				// w.flush();
 				try {
-					w.close();
+					source.close();
+					doc.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -202,8 +208,8 @@ public class GamaProcessor extends AbstractProcessor {
 			vars vars = e.getAnnotation(vars.class);
 			for ( final var s : vars.value() ) {
 				StringBuilder sb = new StringBuilder();
-				String type = s.type();
-				String contentType = s.of();
+				int type = s.type();
+				int contentType = s.of();
 				// 0.type
 				sb.append(VAR_PREFIX).append(type).append(SEP);
 				// 1.contentType
@@ -402,7 +408,11 @@ public class GamaProcessor extends AbstractProcessor {
 	 */
 	private String docToString(final doc[] docs) {
 		if ( docs == null || docs.length == 0 ) { return ""; }
-		doc doc = docs[0];
+		return docToString(docs[0]);
+	}
+
+	private String docToString(final doc doc) {
+		if ( doc == null ) { return ""; }
 		StringBuilder sb = new StringBuilder();
 		sb.append(doc.value()).append(DOC_SEP);
 		sb.append(doc.deprecated()).append(DOC_SEP);
@@ -423,7 +433,7 @@ public class GamaProcessor extends AbstractProcessor {
 		for ( int i = 0; i < see.length; i++ ) {
 			sb.append(see[i]).append(DOC_SEP);
 		}
-		sb.setLength(sb.length() - 1);
+		// sb.setLength(sb.length() - 1);
 		return sb.toString();
 	}
 
@@ -461,6 +471,16 @@ public class GamaProcessor extends AbstractProcessor {
 			// sb.setLength(sb.length() - 1);
 			// }
 		}
+		return sb.toString();
+	}
+
+	private String arrayToString(final int[] array) {
+		if ( array.length == 0 ) { return ""; }
+		StringBuilder sb = new StringBuilder();
+		for ( int i : array ) {
+			sb.append(i).append(",");
+		}
+		sb.setLength(sb.length() - 1);
 		return sb.toString();
 	}
 
@@ -616,6 +636,7 @@ public class GamaProcessor extends AbstractProcessor {
 		for ( Element e : env.getElementsAnnotatedWith(operator.class) ) {
 			ExecutableElement ex = (ExecutableElement) e;
 			operator op = ex.getAnnotation(operator.class);
+			doc documentation = ex.getAnnotation(doc.class);
 			boolean stat = ex.getModifiers().contains(Modifier.STATIC);
 			String declClass = rawNameOf(ex.getEnclosingElement());
 			List<? extends VariableElement> argParams = ex.getParameters();
@@ -664,6 +685,8 @@ public class GamaProcessor extends AbstractProcessor {
 			sb.append(op.type()).append(SEP);
 			// 4.contentType
 			sb.append(op.content_type()).append(SEP);
+			// 4+. index_type
+			sb.append(op.index_type()).append(SEP);
 			// 5.iterator
 			sb.append(op.iterator()).append(SEP);
 			// 6.expected types number
@@ -685,7 +708,7 @@ public class GamaProcessor extends AbstractProcessor {
 			for ( int i = 0; i < names.length; i++ ) {
 				sb.append(SEP).append(names[i]);
 			}
-			gp.put(sb.toString(), docToString(op.doc()));
+			gp.put(sb.toString(), docToString(documentation));
 		}
 	}
 
@@ -779,6 +802,17 @@ public class GamaProcessor extends AbstractProcessor {
 		try {
 			return processingEnv.getFiler()
 				.createSourceFile("gaml.additions.GamlAdditions", (Element[]) null).openWriter();
+		} catch (Exception e) {
+			processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
+		}
+		return null;
+	}
+
+	private Writer createDocSourceWriter() {
+		try {
+			return processingEnv.getFiler()
+				.createSourceFile("gaml.additions.GamlDocumentation", (Element[]) null)
+				.openWriter();
 		} catch (Exception e) {
 			processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
 		}

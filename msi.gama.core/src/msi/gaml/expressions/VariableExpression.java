@@ -61,36 +61,28 @@ public abstract class VariableExpression extends AbstractExpression implements I
 		return false;
 	}
 
-	@Override
-	public void setVal(final IScope scope, final Object v, final boolean create)
-		throws GamaRuntimeException {
-
-	}
-
 	public IDescription getDefinitionDescription() {
 		return definitionDescription;
 	}
 
-	@Override
-	public void setType(final IType type) {
+	protected void setType(final IType type) {
 		this.type = type;
 	}
 
-	@Override
-	public void setContentType(final IType t) {
+	protected void setContentType(final IType t) {
 		contentType = t == null || t == Types.NO_TYPE ? type.defaultContentType() : t;
 
 	}
 
-	@Override
-	public void setKeyType(final IType t) {
+	protected void setKeyType(final IType t) {
 		keyType = t == null || t == Types.NO_TYPE ? type.defaultKeyType() : t;
 
 	}
 
 	@Override
 	public String getTitle() {
-		return isNotModifiable ? "Constant" : "Variable " + getName();
+		return isNotModifiable ? "constant" : "variable " + getName() + " of type " +
+			typeToString() + " defined in " + getDefinitionDescription().getTitle();
 	}
 
 }

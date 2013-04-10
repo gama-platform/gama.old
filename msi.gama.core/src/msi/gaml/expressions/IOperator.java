@@ -18,6 +18,7 @@
  */
 package msi.gaml.expressions;
 
+import msi.gaml.compilation.GamlElementDocumentation;
 import msi.gaml.descriptions.IDescription;
 
 /**
@@ -31,6 +32,8 @@ public interface IOperator extends IExpression {
 	public abstract IOperator copy();
 
 	public void setName(String name);
+
+	public void setDoc(GamlElementDocumentation gamlElementDocumentation);
 
 	IOperator init(String operator, IDescription context, IExpression ... args);
 

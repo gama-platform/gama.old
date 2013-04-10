@@ -33,11 +33,11 @@ import msi.gaml.types.IType;
  * 
  * @author drogoul
  */
-@vars({ @var(name = IKeyword.COLOR_RED, type = IType.INT_STR),
-	@var(name = IKeyword.COLOR_GREEN, type = IType.INT_STR),
-	@var(name = IKeyword.COLOR_BLUE, type = IType.INT_STR),
-	@var(name = IKeyword.BRIGHTER, type = IType.COLOR_STR),
-	@var(name = IKeyword.DARKER, type = IType.COLOR_STR) })
+@vars({ @var(name = IKeyword.COLOR_RED, type = IType.INT),
+	@var(name = IKeyword.COLOR_GREEN, type = IType.INT),
+	@var(name = IKeyword.COLOR_BLUE, type = IType.INT),
+	@var(name = IKeyword.BRIGHTER, type = IType.COLOR),
+	@var(name = IKeyword.DARKER, type = IType.COLOR) })
 public class GamaColor extends Color implements IValue/* implements IContainer<Integer, Integer> */{
 
 	public final static Map<String, GamaColor> colors = new HashMap();

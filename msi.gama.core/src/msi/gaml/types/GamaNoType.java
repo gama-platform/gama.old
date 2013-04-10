@@ -18,6 +18,7 @@
  */
 package msi.gaml.types;
 
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
@@ -30,7 +31,7 @@ import msi.gama.runtime.IScope;
  * @todo Description
  * 
  */
-@type(name = IType.NONE_STR, id = IType.NONE, wraps = { Object.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IKeyword.UNKNOWN, id = IType.NONE, wraps = { Object.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaNoType extends GamaType {
 
 	@Override
@@ -46,6 +47,12 @@ public class GamaNoType extends GamaType {
 	@Override
 	public boolean isSuperTypeOf(final IType type) {
 		return true;
+	}
+
+	@Override
+	public IType findCommonSupertypeWith(IType iType) {
+		// By default, this is the supertype common to all subtypes
+		return this;
 	}
 
 }

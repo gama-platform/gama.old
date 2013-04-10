@@ -360,7 +360,14 @@ public class GamlCompatibilityConverter {
 		}
 
 		// We add the "default" (or omissible) facet to the syntactic element
-		String def = DescriptionFactory.getOmissibleFacetForSymbol(keyword);
+		String def = stm.getFirstFacet();
+		if ( def != null ) {
+			if ( def.endsWith(":") ) {
+				def = def.substring(0, def.length() - 1);
+			}
+		} else {
+			def = DescriptionFactory.getOmissibleFacetForSymbol(keyword);
+		}
 		if ( def != null && !def.isEmpty() && elt.getFacet(def) == null ) {
 			IExpressionDescription ed = findExpr(stm);
 			if ( ed != null ) {

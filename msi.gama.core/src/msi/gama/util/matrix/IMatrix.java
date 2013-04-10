@@ -18,7 +18,6 @@
  */
 package msi.gama.util.matrix;
 
-import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.ILocation;
@@ -40,9 +39,8 @@ import msi.gaml.types.IType;
  * 
  * @param <T>
  */
-@vars({ @var(name = IMatrix.DIMENSION, type = IType.POINT_STR),
-	@var(name = IMatrix.ROWS, type = IType.INT_STR),
-	@var(name = IMatrix.COLUMNS, type = IType.INT_STR) })
+@vars({ @var(name = IMatrix.DIMENSION, type = IType.POINT),
+	@var(name = IMatrix.ROWS, type = IType.INT), @var(name = IMatrix.COLUMNS, type = IType.INT) })
 public interface IMatrix<T> extends IContainer<ILocation, T> {
 
 	/**
@@ -76,25 +74,25 @@ public interface IMatrix<T> extends IContainer<ILocation, T> {
 		"	  [[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]" }, see = "rows_list")
 	public abstract IList<IList<T>> getColumnsList(IScope scope);
 
-	@operator(value = "row_at", content_type = ITypeProvider.LEFT_CONTENT_TYPE, can_be_const = true)
+	@operator(value = "row_at", content_type = ITypeProvider.FIRST_CONTENT_TYPE, can_be_const = true)
 	@doc(value = "returns the row at a num_line (rigth-hand operand)", examples = { "matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]) row_at 2  --:  [\"el13\",\"el23\",\"el33\"]" }, see = {
 		"column_at", "columns_list" })
 	public abstract IList<T> getRow(IScope scope, Integer num_line);
 
-	@operator(value = "column_at", content_type = ITypeProvider.LEFT_CONTENT_TYPE, can_be_const = true)
+	@operator(value = "column_at", content_type = ITypeProvider.FIRST_CONTENT_TYPE, can_be_const = true)
 	@doc(value = "returns the column at a num_col (rigth-hand operand)", examples = { "matrix([[\"el11\",\"el12\",\"el13\"],[\"el21\",\"el22\",\"el23\"],[\"el31\",\"el32\",\"el33\"]]) column_at 2  --:  [\"el31\",\"el32\",\"el33\"]" }, see = {
 		"row_at", "rows_list" })
-	public abstract List<T> getColumn(IScope scope, Integer num_line);
+	public abstract IList<T> getColumn(IScope scope, Integer num_line);
 
-	@operator(value = IKeyword.PLUS, priority = IPriority.ADDITION, can_be_const = true)
+	@operator(value = IKeyword.PLUS, can_be_const = true)
 	@doc(deprecated = "The sum of matrices is not yet implemented")
 	public abstract IMatrix plus(IMatrix other) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.TIMES, priority = IPriority.PRODUCT, can_be_const = true)
+	@operator(value = IKeyword.TIMES, can_be_const = true)
 	@doc(deprecated = "The product of matrices is not yet implemented")
 	public abstract IMatrix times(IMatrix other) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.MINUS, priority = IPriority.ADDITION, can_be_const = true)
+	@operator(value = IKeyword.MINUS, can_be_const = true)
 	@doc(deprecated = "The difference of matrices is not yet implemented")
 	public abstract IMatrix minus(IMatrix other) throws GamaRuntimeException;
 

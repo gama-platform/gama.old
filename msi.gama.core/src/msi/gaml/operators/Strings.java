@@ -84,13 +84,13 @@ public class Strings {
 		return chronology;
 	}
 
-	@operator(value = IKeyword.PLUS, priority = IPriority.ADDITION, can_be_const = true)
+	@operator(value = IKeyword.PLUS, can_be_const = true)
 	@doc(special_cases = "if the left-hand operand is a string, returns the concatenation of the two operands (the left-hand one beind casted into a string")
 	public static String opPlus(final String a, final String b) {
 		return a + b;
 	}
 
-	@operator(value = IKeyword.PLUS, priority = IPriority.ADDITION, can_be_const = true)
+	@operator(value = IKeyword.PLUS, can_be_const = true)
 	@doc(examples = "\"hello \" + 12 	--: 	\"hello 12\"")
 	public static String opPlus(final IScope scope, final String a, final Object b)
 		throws GamaRuntimeException {

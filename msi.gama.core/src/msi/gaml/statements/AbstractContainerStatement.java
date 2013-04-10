@@ -23,10 +23,11 @@ import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.IContainer;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.species.ISpecies;
+import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 24 aožt 2010
@@ -77,46 +78,81 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	private Object createKey(final IScope scope, final IContainer container)
 		throws GamaRuntimeException {
-		final Object position = index == null ? null : index.value(scope);
+		Object position = index == null ? null : index.value(scope);
 		// AD 29/02/13 : Normally taken in charge by the parser, now.
 		// if ( index != null && !container.checkIndex(position) ) { throw new GamaIndexTypeWarning(
 		// position, index.getType(), list); }
+		if ( index != null ) {
+			IType t = list.getKeyType();
+			IType i = index.getType();
+			if ( !i.isTranslatableInto(t) ) {
+				position = t.cast(scope, position, null);
+			}
+		}
 		return position;
 	}
 
 	private Object createItem(final IScope scope, final IContainer container)
 		throws GamaRuntimeException {
+		Object result = null;
 		if ( all == null ) {
-			if ( item == null ) { return null; }
-			final Object object = item.value(scope);
-			// AD 29/02/13 : Normally taken in charge by the parser, now.
-			// if ( !container.checkValue(object) ) { throw new GamaValueTypeWarning(object,
-			// item.getType(), list); }
-			return object;
-		}
-		Object whole = all.value(scope);
-		if ( item != null ) {
-			if ( whole instanceof Boolean ) {
-				asAll = (Boolean) whole;
-				final Object object = item.value(scope);
-				// AD 29/02/13 : Normally taken in charge by the parser, now.
-				// if ( !container.checkValue(object) ) { throw new GamaValueTypeWarning(object,
-				// item.getType(), list); }
-				return asAll ? GamaList.with(object) : object;
+			// Case add item: ITEM to: LIST
+			if ( item != null ) {
+				result = item.value(scope);
 			}
-			throw new GamaRuntimeException("'all: " + StringUtils.toGaml(whole) +
-				"' cannot be used in " + getName(), true);
+		} else {
+			Object whole = all.value(scope);
+			if ( item != null ) {
+				if ( whole instanceof Boolean ) {
+					// Case add item: ITEM all: true to: LIST
+					asAll = (Boolean) whole;
+					result = item.value(scope);
+				} else {
+					// Case add item: ITEM all: ITEMS to: LIST
+					// Impossible
+					throw new GamaRuntimeException("'all: " + StringUtils.toGaml(whole) +
+						"' cannot be used in " + getName(), true);
+				}
+			} else {
+				// Case add all: [...] to: LIST
+				asAll = true;
+				result = whole;
+			}
 		}
-		asAll = true;
-		if ( !(whole instanceof IContainer) ) {
-			whole = GamaList.with(whole);
-		}
-		// AD 29/02/13 : Normally taken in charge by the parser, now.
-		// for ( Object o : (IContainer) whole ) {
-		// if ( !container.checkValue(o) ) { throw new GamaValueTypeWarning(o, all.getType(), list);
+		return result;
+
+		// if ( all == null ) {
+		// if ( item == null ) { return null; }
+		// final Object object = item.value(scope);
+		// // AD 29/02/13 : Normally taken in charge by the parser, now.
+		// // if ( !container.checkValue(object) ) { throw new GamaValueTypeWarning(object,
+		// // item.getType(), list); }
+		// return object;
 		// }
+		// Object whole = all.value(scope);
+		// if ( item != null ) {
+		// if ( whole instanceof Boolean ) {
+		// asAll = (Boolean) whole;
+		// final Object object = item.value(scope);
+		// // AD 29/02/13 : Normally taken in charge by the parser, now.
+		// // if ( !container.checkValue(object) ) { throw new GamaValueTypeWarning(object,
+		// // item.getType(), list); }
+		// return asAll ? GamaList.with(object) : object;
 		// }
-		return whole;
+		// throw new GamaRuntimeException("'all: " + StringUtils.toGaml(whole) +
+		// "' cannot be used in " + getName(), true);
+		// }
+		// asAll = true;
+		// if ( !(whole instanceof IContainer) ) {
+		// whole = GamaList.with(whole);
+		// }
+		// // AD 29/02/13 : Normally taken in charge by the parser, now.
+		// // for ( Object o : (IContainer) whole ) {
+		// // if ( !container.checkValue(o) ) { throw new GamaValueTypeWarning(o, all.getType(),
+		// list);
+		// // }
+		// // }
+		// return whole;
 	}
 
 	protected abstract void apply(IScope stack, Object object, Object position, Boolean whole,

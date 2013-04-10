@@ -46,10 +46,6 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return integers;
 	}
 
-	protected static short[] s(final short ... shorts) {
-		return shorts;
-	}
-
 	protected static FacetProto[] P(final FacetProto ... protos) {
 		return protos;
 	}
@@ -63,6 +59,10 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	protected static IType T(final String c) {
+		return Types.get(c);
+	}
+
+	protected static IType T(final int c) {
 		return Types.get(c);
 	}
 
@@ -109,7 +109,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	protected void _type(final String keyword, final IType typeInstance, final int id,
 		final int varKind, final Class ... wraps) {
-		Types.initType(keyword, typeInstance, (short) id, varKind, wraps);
+		Types.initType(keyword, typeInstance, id, varKind, wraps);
 	}
 
 	protected void _skill(final String name, final Class clazz, final ISkillConstructor helper,
@@ -177,14 +177,14 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public void _iterator(final String[] keywords, final Class[] classes,
 		final int[] expectedContentTypes, final Class ret, final boolean c, final int t,
-		final int content, final IOpRun helper) {
+		final int content, final int index, final IOpRun helper, GamlElementDocumentation doc) {
 		IExpressionCompiler.ITERATORS.addAll(Arrays.asList(keywords));
-		_operator(keywords, classes, expectedContentTypes, ret, c, t, content, helper);
+		_operator(keywords, classes, expectedContentTypes, ret, c, t, content, index, helper, doc);
 	}
 
 	public void _operator(final String[] keywords, final Class[] classes,
 		final int[] expectedContentTypes, final Class ret, final boolean c, final int t,
-		final int content, final IOpRun helper) {
+		final int content, final int index, final IOpRun helper, GamlElementDocumentation doc) {
 		Signature signature = new Signature(classes);
 		for ( int i = 0; i < keywords.length; i++ ) {
 			String kw = keywords[i];
@@ -197,26 +197,26 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 				IOperator exp;
 				IType rt = Types.get(ret);
 				if ( classes.length == 1 ) { // unary
-					exp =
-						new UnaryOperator(rt, helper, c, (short) t, (short) content,
-							expectedContentTypes);
+					exp = new UnaryOperator(rt, helper, c, t, content, index, expectedContentTypes);
 				} else if ( classes.length == 2 ) { // binary
 					if ( kw.equals(OF) || kw.equals(_DOT) ) {
 						exp =
-							new BinaryVarOperator(rt, helper, c, (short) t, (short) content,
+							new BinaryVarOperator(rt, helper, c, t, content, index,
 								IExpression.class.equals(classes[1]), expectedContentTypes);
 					} else {
 						exp =
-							new BinaryOperator(rt, helper, c, (short) t, (short) content,
+							new BinaryOperator(rt, helper, c, t, content, index,
 								IExpression.class.equals(classes[1]), expectedContentTypes);
 					}
 				} else {
 					exp =
-						new NAryOperator(rt, helper, c, (short) t, (short) content,
+						new NAryOperator(rt, helper, c, t, content, index,
 							IExpression.class.equals(classes[1]), expectedContentTypes);
 					// FIXME The lazy attribute is completely wrong here
 				}
+				// FIXME Need to create an operator description or prototype rather than copying
 				exp.setName(kw);
+				exp.setDoc(doc);
 				map.put(signature, exp);
 			}
 		}
@@ -275,6 +275,10 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return DescriptionFactory.create(keyword, facets);
 	}
 
+	protected IDescription desc(final int keyword, final String ... facets) {
+		return desc(Types.get(keyword).toString(), facets);
+	}
+
 	protected void _action(final String methodName, final Class clazz, final PrimRun e,
 		final IDescription desc) {
 		((StatementDescription) desc).setHelper(e);
@@ -311,6 +315,13 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public static Class getSkillClassFor(final String skillName) {
 		return SKILL_CLASSES.get(skillName);
+	}
+
+	public static String getSkillNameFor(final Class skillClass) {
+		for ( Map.Entry<String, Class> entry : SKILL_CLASSES.entrySet() ) {
+			if ( skillClass == entry.getValue() ) { return entry.getKey(); }
+		}
+		return null;
 	}
 
 	public static ISkill getSkillInstanceFor(final Class skillClass) {

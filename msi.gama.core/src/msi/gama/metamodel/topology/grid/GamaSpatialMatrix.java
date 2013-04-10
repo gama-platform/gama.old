@@ -384,11 +384,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 		return false;
 	}
 
-	//
-	// @Override
-	// public void _clear() {
-	// Arrays.fill(matrix, null);
-	// }
+	@Override
+	public void _clear() {
+		Arrays.fill(matrix, null);
+	}
 
 	@Override
 	protected GamaList _listValue(final IScope scope) {
@@ -435,17 +434,18 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 		return null;
 	}
 
-	@Override
-	public IAgent _max(final IScope scope) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public IAgent _min(final IScope scope) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	//
+	// @Override
+	// public IAgent _max(final IScope scope) {
+	// // TODO Auto-generated method stub
+	// return null;
+	// }
+	//
+	// @Override
+	// public IAgent _min(final IScope scope) {
+	// // TODO Auto-generated method stub
+	// return null;
+	// }
 
 	@Override
 	public IMatrix copy(IScope scope) throws GamaRuntimeException {
@@ -460,21 +460,22 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	}
 
 	@Override
-	public void _putAll(IScope scope, final IShape value, final Object param)
+	public void _putAll(IScope scope, final Object value, final Object param)
 		throws GamaRuntimeException {
 		// TODO Not allowed for the moment
 
 	}
 
-	@Override
-	public Object _product(final IScope scope) throws GamaRuntimeException {
-		return listValue(scope).product(scope);
-	}
-
-	@Override
-	public Object _sum(final IScope scope) throws GamaRuntimeException {
-		return listValue(scope).sum(scope);
-	}
+	//
+	// @Override
+	// public Object _product(final IScope scope) throws GamaRuntimeException {
+	// return listValue(scope).product(scope);
+	// }
+	//
+	// @Override
+	// public Object _sum(final IScope scope) throws GamaRuntimeException {
+	// return listValue(scope).sum(scope);
+	// }
 
 	@Override
 	public boolean _isEmpty(IScope scope) {

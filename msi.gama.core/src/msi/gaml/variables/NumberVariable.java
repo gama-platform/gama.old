@@ -37,20 +37,20 @@ import msi.gaml.types.IType;
  */
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.NEW_VAR_ID, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
-	@facet(name = IKeyword.INIT, type = IType.INT_STR, optional = true),
-	@facet(name = IKeyword.VALUE, type = IType.INT_STR, optional = true),
+	@facet(name = IKeyword.INIT, type = IType.INT, optional = true),
+	@facet(name = IKeyword.VALUE, type = IType.INT, optional = true),
 	@facet(name = IKeyword.UPDATE, type = IType.NONE_STR, optional = true),
 	@facet(name = IKeyword.FUNCTION, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.CONST, type = IType.BOOL_STR, optional = true),
+	@facet(name = IKeyword.CONST, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.CATEGORY, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.PARAMETER, type = IType.LABEL, optional = true),
-	@facet(name = IKeyword.MIN, type = IType.INT_STR, optional = true),
-	@facet(name = IKeyword.MAX, type = IType.INT_STR, optional = true),
-	@facet(name = IKeyword.STEP, type = IType.INT_STR, optional = true),
+	@facet(name = IKeyword.MIN, type = IType.INT, optional = true),
+	@facet(name = IKeyword.MAX, type = IType.INT, optional = true),
+	@facet(name = IKeyword.STEP, type = IType.INT, optional = true),
 	// @facet(name = IKeyword.INITER, type = IType.LABEL, optional = true),
 	// @facet(name = IKeyword.GETTER, type = IType.LABEL, optional = true),
 	// @facet(name = IKeyword.SETTER, type = IType.LABEL, optional = true),
-	@facet(name = IKeyword.AMONG, type = IType.LIST_STR, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true) }, omissible = IKeyword.NAME)
 @symbol(kind = ISymbolKind.Variable.NUMBER, with_sequence = false)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT })
 public class NumberVariable extends Variable {

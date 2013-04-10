@@ -20,6 +20,7 @@ package msi.gaml.types;
 
 import java.awt.Color;
 import java.util.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
@@ -34,7 +35,7 @@ import msi.gaml.operators.Cast;
  * @todo Description
  * 
  */
-@type(name = IType.COLOR_STR, id = IType.COLOR, wraps = { GamaColor.class, Color.class }, kind = ISymbolKind.Variable.REGULAR)
+@type(name = IKeyword.RGB, id = IType.COLOR, wraps = { GamaColor.class }, kind = ISymbolKind.Variable.REGULAR)
 public class GamaColorType extends GamaType<GamaColor> {
 
 	@Override
@@ -87,6 +88,11 @@ public class GamaColorType extends GamaType<GamaColor> {
 
 	@Override
 	public IType defaultContentType() {
+		return Types.get(INT);
+	}
+
+	@Override
+	public IType defaultKeyType() {
 		return Types.get(INT);
 	}
 

@@ -33,11 +33,11 @@ import msi.gaml.operators.Cast;
  */
 public class LayerBox implements IDisplayLayerBox {
 
-	IExpression transparency = new JavaConstExpression(0d);
-	IExpression position = new JavaConstExpression(new GamaPoint(0, 0));
-	IExpression extent = new JavaConstExpression(new GamaPoint(1, 1));
-	IExpression elevation = new JavaConstExpression(0d);
-	IExpression refresh = new JavaConstExpression(true);
+	IExpression transparency = new ConstantExpression(0d);
+	IExpression position = new ConstantExpression(new GamaPoint(0, 0));
+	IExpression extent = new ConstantExpression(new GamaPoint(1, 1));
+	IExpression elevation = new ConstantExpression(0d);
+	IExpression refresh = new ConstantExpression(true);
 
 	Double currentTransparency;
 	ILocation currentPosition;
@@ -54,8 +54,8 @@ public class LayerBox implements IDisplayLayerBox {
 	Rectangle2D.Double currentBoundingBox = new Rectangle2D.Double();
 	boolean constantBoundingBox = false;
 
-	public LayerBox(final IExpression transp, final IExpression pos, final IExpression ext, final IExpression elev, final IExpression refr)
-		throws GamaRuntimeException {
+	public LayerBox(final IExpression transp, final IExpression pos, final IExpression ext,
+		final IExpression elev, final IExpression refr) throws GamaRuntimeException {
 		if ( transp != null ) {
 			transparency = transp;
 		}
@@ -68,7 +68,7 @@ public class LayerBox implements IDisplayLayerBox {
 		if ( elev != null ) {
 			elevation = elev;
 		}
-		
+
 		if ( refr != null ) {
 			refresh = refr;
 		}
@@ -79,7 +79,8 @@ public class LayerBox implements IDisplayLayerBox {
 		setRefresh(refr);
 	}
 
-	public LayerBox(final Double transp, final GamaPoint pos, final GamaPoint ext,final Double elev, final Boolean refr) {
+	public LayerBox(final Double transp, final GamaPoint pos, final GamaPoint ext,
+		final Double elev, final Boolean refr) {
 		setTransparency(transp);
 		setPosition(pos);
 		setExtent(ext);
@@ -88,7 +89,7 @@ public class LayerBox implements IDisplayLayerBox {
 	}
 
 	public LayerBox(final Double transp, final Double posx, final Double posy, final Double extx,
-		final Double exty,final Double elev,final Boolean refr) {
+		final Double exty, final Double elev, final Boolean refr) {
 		setTransparency(transp);
 		setPosition(posx, posy);
 		setExtent(extx, exty);
@@ -112,13 +113,13 @@ public class LayerBox implements IDisplayLayerBox {
 				if ( currentPosition != null && currentExtent != null ) {
 					computeBoundingBox();
 				}
-			currentElevation =
-				constantElevation== null ? Cast.asFloat(sim, elevation.value(sim))
-					: constantElevation;
-			
-			currentRefresh =
-				constantRefresh== null ? Cast.asBool(sim, refresh.value(sim))
-					: constantRefresh;
+				currentElevation =
+					constantElevation == null ? Cast.asFloat(sim, elevation.value(sim))
+						: constantElevation;
+
+				currentRefresh =
+					constantRefresh == null ? Cast.asBool(sim, refresh.value(sim))
+						: constantRefresh;
 			}
 		} catch (Exception e) {
 			throw new GamaRuntimeException(e);
@@ -158,28 +159,26 @@ public class LayerBox implements IDisplayLayerBox {
 			}
 		}
 	}
-	
+
 	@Override
 	public void setElevation(final IExpression e) throws GamaRuntimeException {
 		if ( e != null ) {
 			elevation = e;
 			if ( e.isConst() ) {
-				setElevation(Cast.asFloat(GAMA.getDefaultScope(),
-					e.value(GAMA.getDefaultScope())));
+				setElevation(Cast.asFloat(GAMA.getDefaultScope(), e.value(GAMA.getDefaultScope())));
 			}
 		}
 	}
-	
+
 	@Override
 	public void setRefresh(IExpression r) throws GamaRuntimeException {
 		if ( r != null ) {
 			refresh = r;
 			if ( r.isConst() ) {
-				setRefresh(Cast.asBool(GAMA.getDefaultScope(),
-					r.value(GAMA.getDefaultScope())));
+				setRefresh(Cast.asBool(GAMA.getDefaultScope(), r.value(GAMA.getDefaultScope())));
 			}
 		}
-		
+
 	}
 
 	@Override
@@ -214,23 +213,22 @@ public class LayerBox implements IDisplayLayerBox {
 			computeBoundingBox();
 		}
 	}
-	
+
 	@Override
 	public void setElevation(final double e) {
 		currentElevation = constantElevation = e;
 	}
-	
+
 	@Override
 	public void setRefresh(Boolean r) {
 		currentRefresh = constantRefresh = r;
-		
+
 	}
 
 	@Override
 	public final Double getTransparency() {
 		return currentTransparency;
 	}
-
 
 	@Override
 	public Rectangle2D.Double getBoundingBox() {
@@ -246,12 +244,12 @@ public class LayerBox implements IDisplayLayerBox {
 	public ILocation getExtent() {
 		return currentExtent;
 	}
-	
+
 	@Override
 	public final Double getElevation() {
 		return currentElevation;
 	}
-	
+
 	@Override
 	public Boolean getRefresh() {
 		return currentRefresh;
@@ -262,11 +260,5 @@ public class LayerBox implements IDisplayLayerBox {
 			Math.abs(currentExtent.getX()), Math.abs(currentExtent.getY()));
 		return currentBoundingBox;
 	}
-
-	
-
-	
-
-
 
 }

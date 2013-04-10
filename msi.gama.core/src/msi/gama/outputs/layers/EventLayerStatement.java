@@ -49,7 +49,7 @@ import msi.gaml.types.IType;
 @symbol(name = IKeyword.EVENT, kind = ISymbolKind.LAYER, with_sequence = true)
 @inside(symbols = { IKeyword.DISPLAY })
 @facets(value = {@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
-	@facet(name = IKeyword.ACTION, type = IType.STRING_STR, optional = false)}, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.ACTION, type = IType.STRING, optional = false)}, omissible = IKeyword.NAME)
 public class EventLayerStatement extends AgentLayerStatement {
 	public static int MOUSE_PRESSED = 0;
 	public static int MOUSE_RELEASED = 1;

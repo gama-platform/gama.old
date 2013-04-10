@@ -19,7 +19,8 @@
 package msi.gaml.types;
 
 import java.awt.Color;
-import java.util.*;
+import java.util.Collection;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
@@ -27,7 +28,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 
-@type(name = IType.LIST_STR, id = IType.LIST, wraps = { IList.class, List.class }, kind = ISymbolKind.Variable.CONTAINER)
+@type(name = IKeyword.LIST, id = IType.LIST, wraps = { IList.class }, kind = ISymbolKind.Variable.CONTAINER)
 public class GamaListType extends GamaContainerType<IList> {
 
 	@Override
