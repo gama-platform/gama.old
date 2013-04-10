@@ -157,7 +157,7 @@ entities {
 		float speed <- 2.0;
 		geometry shape <- triangle(15);
 		
-		reflex toto when: moving_obstacles {
+		reflex move_obstacles when: moving_obstacles {
 			if flip(0.5)  
 			{ 
 				do goto target: one_of(boids);

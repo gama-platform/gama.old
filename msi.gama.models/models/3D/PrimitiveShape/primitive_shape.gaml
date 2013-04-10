@@ -170,9 +170,9 @@ entities {
 	species my3DObject{
 		
 		aspect file{
-    		draw file: imageRaster size: 2.25;
+    		draw (imageRaster) size: 2.25;
     	}
-	}
+	} 
 
 }
 experiment display  type: gui {

@@ -182,10 +182,10 @@ environment width: 50 height: 50 {
 
 entities {
 	
-	species node mirrors: list(Host) parent: graph_node edge_species:edge {
+	species node2 mirrors: list(Host) parent: graph_node edge_species:edge {
 		point location <- target.location update: target.location;
 		
-		bool related_to(node other){
+		bool related_to(node2 other){
 			//return flip(0.1);
 			//write "related to called between " + target + " and " + other.target;
 			//write " self location " + location;
@@ -202,7 +202,7 @@ entities {
 		
 	} 
 	
-	species graphedge parent:base_edge{	
+	species graphedge parent: base_edge{	
 
    	aspect base{
    		draw shape color: rgb("blue");
@@ -288,7 +288,7 @@ experiment simulation type: gui {
  		
  		 display modavi_display type:opengl ambiant_light: 0.2	{
  		 	species Host aspect: basic;	
- 		 	species node aspect: sphere z:0.2;
+ 		 	species node2 aspect: sphere z:0.2;
 	        species edge aspect: base z:0.2;
  		 	
 			species macroNode aspect:sphere z:0.4;

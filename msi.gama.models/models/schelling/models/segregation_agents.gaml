@@ -39,12 +39,6 @@ environment width: dimensions height: dimensions {
 		aspect default{ 
 			draw circle (1.0) color: color; 
 		}
-		
-		species toto{
-			species tata{
-				
-			}
-		}
 	}
 
 

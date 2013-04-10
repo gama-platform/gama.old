@@ -8,7 +8,7 @@ global {
 	const ants_number type: int <- 50 min: 1 max: 200 parameter: 'Number of Ants:';
 	int food_remaining update: list ( ant_grid ) count ( each . food > 0) <- 10;
 	const center type: point <- { round ( gridsize / 2 ) , round ( gridsize / 2 ) };
-	const types type: file of: int <- file ( '../images/environment75x75_scarce.pgm' ); 
+	const types type: matrix of: int <- matrix (image ( '../images/environment75x75_scarce.pgm' )); 
 	init {
 		create ant number: ants_number with: [ location :: center ];
 	} 
@@ -44,10 +44,9 @@ global {
 } 
 environment width: gridsize height: gridsize {
 	grid ant_grid width: gridsize height: gridsize neighbours: 8 {
-		const type type: int <- (types at { grid_x , grid_y });
-		const isNestLocation type: bool <- ( self distance_to center ) < 4;
-		const isFoodLocation type: bool <- type = 2;       
-		list neighbours <- ( self neighbours_at 1 ) of_species ant_grid of: ant_grid;  
+		bool isNestLocation  <- ( self distance_to center ) < 4;
+		bool isFoodLocation <-  types[grid_x , grid_y] = 2;       
+		list<ant_grid> neighbours <- self neighbours_at 1;  
 		rgb color <- rgb([ road > 15 ? 255 : ( isNestLocation ? 125 : 0 ) ,road * 30 , road > 15 ? 255 : food * 50 ]) update: rgb([ road > 15 ? 255 : ( isNestLocation ? 125 : 0 ) ,road * 30 , road > 15 ? 255 : food * 50 ]); 
 		int food <- isFoodLocation ? 5 : 0; 
 		const nest type: int <- int(300 - ( self distance_to center ));
@@ -99,13 +98,13 @@ experiment Simple type:gui {
 		display Ants refresh_every: 2 { 
 			grid ant_grid;
 			species ant aspect: default;
-			text tt value: string ( food_remaining ) size: 24.0 position: { 20 , 20 } color: rgb ( 'white' );
+			text string ( food_remaining ) size: 24.0 position: { 20 , 20 } color: rgb ( 'white' );
 			event mouse_down action:press;
 			event mouse_up action:release;
 		}  
 	display Ants22 refresh_every: 2 { 
 			grid ant_grid;
-			text tt value: string ( food_remaining ) size: 24.0 position: { 20 , 20 } color: rgb ( 'white' );
+			text string ( food_remaining ) size: 24.0 position: { 20 , 20 } color: rgb ( 'white' );
 			event mouse_down action:press;
 			event mouse_up action:click2;
 		}   

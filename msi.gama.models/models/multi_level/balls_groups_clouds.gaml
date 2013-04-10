@@ -133,9 +133,7 @@ entities {
 				point tmp_location value: location + {step_x, step_y} ;
 				if condition: (self in_bounds (tmp_location) ) {
 					set location value: tmp_location ;
-					do action: separation {
-						arg nearby_balls value: ((ball overlapping (shape + ball_separation)) - self) ;
-					}
+					do separation (((ball overlapping (shape + ball_separation)) - self));
 				}
 			}
 		}
@@ -340,17 +338,14 @@ entities {
 				
 				loop m over: members {
 					ask m as ball_in_cloud {
-						do move2 with: [ with_heading :: with_heading, with_speed :: with_speed ];
+						do move2 (with_heading,with_speed);
 					}
 				}
 			}
 			 
 			species ball_in_cloud parent: ball_in_group topology: (world.shape) as topology control: fsm {
 				
-				action move2 {
-					arg with_heading type: float;
-					arg with_speed type: float;
-
+				action move2 (float with_heading, float with_speed) {
 					let dx type: float value: cos(with_heading) * with_speed;
 					let dy type: float value: sin(with_heading) * with_speed;
 					set location value: { ( (location.x) + dx ), ( (location.y) + dy )};

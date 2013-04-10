@@ -120,8 +120,13 @@ entities {
 		}
 	}
 }
-environment width: 100 height: 100 {
-	grid vegetation_cell width: 50 height: 50 neighbours: 4 {
+environment 
+	width: 100 
+	height: 100 {
+	grid vegetation_cell 
+		width: 50 
+		height: 50 
+		neighbours: 4 {
 		float maxFood <- 1.0 ;
 		float foodProd <- (rnd(1000) / 1000) * 0.01 ;
 		float food <- (rnd(1000) / 1000) update: min([maxFood, food + foodProd]) ;
@@ -131,8 +136,12 @@ environment width: 100 height: 100 {
 }
 
 experiment prey_predator type: gui {
-	parameter 'Initial number of preys: ' var: nb_preys_init category: 'Prey' ;
-	parameter 'Prey max energy: ' var: prey_max_energy category: 'Prey' ;
+	parameter 'Initial number of preys: ' 
+		var: nb_preys_init 
+		category: 'Prey' ;
+	parameter 'Prey max energy: ' 
+		var: prey_max_energy 
+		category: 'Prey' ;
 	parameter 'Prey max transfert: ' var: prey_max_transfert  category: 'Prey' ;
 	parameter 'Prey energy consumption: ' var: prey_energy_consum  category: 'Prey' ;
 	parameter 'Initial number of predators: ' var: nb_predators_init category: 'Predator' ;

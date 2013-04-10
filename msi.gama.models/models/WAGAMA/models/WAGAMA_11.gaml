@@ -237,16 +237,16 @@ entities {
 		}
 		
 		aspect activity_type{
-			draw geometry: line([location, input_node.location]) color: rgb('green');
-			draw geometry: line([location, output_node.location]) color: rgb('red');
-			draw geometry: shape color: type.color;
-			draw text: name + " : " + type.name size: 2 color: rgb('black'); 
+			draw line([location, input_node.location]) color: rgb('green');
+			draw line([location, output_node.location]) color: rgb('red');
+			draw shape color: type.color;
+			draw name + " : " + type.name size: 2 color: rgb('black'); 
 		}
 		
 		aspect owners{
-			draw geometry: line([location, input_node.location]) color: rgb('green');
-			draw geometry: line([location, output_node.location]) color: rgb('red');
-			draw geometry: shape color: my_owner.color;
+			draw line([location, input_node.location]) color: rgb('green');
+			draw line([location, output_node.location]) color: rgb('red');
+			draw shape color: my_owner.color;
 		}
 	}
 	

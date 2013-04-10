@@ -112,7 +112,7 @@ entities {
 		aspect sphere{
 			draw geometry (point([location.x,location.y])) color:color   depth:(nbAggregatedNodes/10);//(nbAggregatedNodes/nbAgent)*10;
 			//draw geometry: geometry (point([location.x,location.y])) color: color depth:(nbAggregatedNodes/10)*macroNodeSize;
-			draw text : 'class' + class +": " + nbAggregatedNodes depth:10 ;
+			draw text: 'class' + class +": " + nbAggregatedNodes depth:10 ;
 		}
 	}
 	
@@ -150,7 +150,7 @@ entities {
 			          set dest <- macroNodes at (j);	
 			          set my_macroGraph <- my_macroGraph add_edge (src::dest);
 	            }	
-	          }
+	          } 
 	        }      
 	      }
 	    }

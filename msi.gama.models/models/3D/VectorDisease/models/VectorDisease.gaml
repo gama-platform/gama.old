@@ -97,9 +97,9 @@ entities {
 		}
 		
 		aspect image{
-			draw text: "Infected: " + string (nbInfected) at: {shape.location.x+size/2, shape.location.y-size/2} color: rgb('black') size:400;
-			draw geometry: shape  color: color ;
-    		draw image: imageVillage size:size;
+			draw "Infected: " + string (nbInfected) at: {shape.location.x+size/2, shape.location.y-size/2} color: rgb('black') size:400;
+			draw shape  color: color ;
+    		draw imageVillage size:size;
     	}
 	}
 	

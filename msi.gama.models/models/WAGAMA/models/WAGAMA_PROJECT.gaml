@@ -33,7 +33,7 @@ global {
 	int max_money function: {max(owners collect (each.money))};
 	int min_money function: {min(owners collect (each.money))};
 	
-	int input_water_quantity_north <- 20;
+	int input_water_quantity_north <- 20; 
 	int input_water_quantity_south <- 20;
 	int output_water_quantity_real;
 	int output_clean_water_quantity_real;
@@ -42,6 +42,9 @@ global {
 	
 	float cleanness_rate_objective <- 0.7;
 	int output_water_quantity_objective <- 5;
+	
+
+
 	
 	init {
 		create administrator returns: administrator_created;
