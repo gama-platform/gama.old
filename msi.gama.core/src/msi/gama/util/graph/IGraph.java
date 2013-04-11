@@ -20,9 +20,8 @@ package msi.gama.util.graph;
 
 import java.util.Collection;
 import java.util.Map;
-import msi.gama.common.interfaces.IValue;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.getter;
-import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.util.*;
@@ -40,16 +39,14 @@ import org.jgrapht.*;
 	@var(name = "circuit", type = IType.PATH), @var(name = "connected", type = IType.BOOL),
 	@var(name = "edges", type = IType.LIST), @var(name = "vertices", type = IType.LIST)
 	})
-public interface IGraph<K, V> extends IContainer<K, V>, WeightedGraph, DirectedGraph,
-	UndirectedGraph, IGraphEventProvider {
-
+public interface IGraph<V, E> extends IContainer<V, E>, WeightedGraph<V, E>, DirectedGraph<V,E >,
+	UndirectedGraph<V, E>, IGraphEventProvider {
+ 
 	public abstract double getVertexWeight(final Object v);
 
 	public abstract Double getWeightOf(final Object v);
 
 	public abstract void setVertexWeight(final Object v, final double weight);
-
-	public abstract IValue computeShortestPathBetween(final Object source, final Object target);
 
 	void setWeights(Map<?, Double> weights);
 
@@ -63,13 +60,13 @@ public interface IGraph<K, V> extends IContainer<K, V>, WeightedGraph, DirectedG
 	public abstract IList getVertices();
 
 	@getter( "spanning_tree")
-	public abstract IList getSpanningTree();
+	public abstract IList<E> getSpanningTree();
 
 	@getter( "circuit")
-	public abstract IValue getCircuit();
+	public abstract IPath getCircuit();
 
 	@getter( "connected")
-	public abstract Boolean getConnected();
+	public abstract Boolean getConnected(); 
 
 	public abstract boolean isDirected();
 
@@ -84,6 +81,12 @@ public interface IGraph<K, V> extends IContainer<K, V>, WeightedGraph, DirectedG
 	public void setVersion(int version);
 	
 	public void incVersion();
-
+	
+	public abstract IPath computeShortestPathBetween(final Object source, final Object target);
+	
+	public abstract IList<IShape> computeBestRouteBetween(final Object source, final Object target);	
+	
+	public double computeWeight(final IPath gamaPath);
+	
 	
 }
