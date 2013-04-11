@@ -270,6 +270,9 @@ public class GraphsGraphstream {
 			final String format, final String filename, final ISpecies vertex_specy, final ISpecies edge_specy) throws GamaRuntimeException {		
 		
 		Class<? extends FileSource> parserClass = typestr2filesourceParser.get(format.toLowerCase());
+		if (parserClass == null)
+			throw new GamaRuntimeException("This format is not recognized ("+format+")");
+		
 		FileSource parser = null;
 		try {
 			parser = parserClass.newInstance();
@@ -320,6 +323,9 @@ public class GraphsGraphstream {
 			final String format, final GamaFile<?,?> gamaFile, final ISpecies vertex_specy, final ISpecies edge_specy) throws GamaRuntimeException {		
 		
 		Class<? extends FileSource> parserClass = typestr2filesourceParser.get(format.toLowerCase());
+		if (parserClass == null)
+			throw new GamaRuntimeException("This format is not recognized ("+format+")");
+		
 		FileSource parser = null;
 		try {
 			parser = parserClass.newInstance();
