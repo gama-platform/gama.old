@@ -32,6 +32,8 @@ import msi.gaml.compilation.ScheduledAction;
 import msi.gaml.species.ISpecies;
 import org.jgrapht.Graphs;
 
+import com.vividsolutions.jts.geom.Coordinate;
+
 public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpatialGraph,
 	IPopulation.Listener {
 
@@ -40,6 +42,9 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	 * graph.
 	 */
 	private ITopology topology;
+	private final GamaMap<Integer, IShape> verticesBuilt; // only used for optimization purpose of spatial graph
+	// building.
+
 
 	/**
 	 * Determines the relationship among two polygons.
@@ -58,12 +63,13 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 		// Double distance(T p1, T p2);
 
-	}
+	} 
 
 	public GamaSpatialGraph(final IContainer edgesOrVertices, final boolean byEdge,
 		final boolean directed, final VertexRelationship rel, final ISpecies edgesSpecies,
 		final IScope scope) {
 		super(edgesOrVertices, byEdge, directed, rel, edgesSpecies, scope);
+		verticesBuilt = new GamaMap<Integer, IShape>();
 
 	}
 
@@ -80,7 +86,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	@Override
 	protected IPath pathFromEdges(final Object source, final Object target, final IList edges) {
 		return new GamaPath(getTopology(), (IShape) source, (IShape) target, edges);
-	}
+	} 
 
 	@Override
 	protected void buildByVertices(final IContainer<?, IShape> list) {
@@ -221,5 +227,15 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	public Set<IShape> vertexSet() {
 		return vertexMap.keySet();
 	}
+	
+	public void addBuiltVertex(final IShape vertex) {
+		verticesBuilt.put(vertex.getLocation().hashCode(), vertex);
+	}
+
+	
+	public IShape getBuiltVertex(final Coordinate vertex) {
+		return verticesBuilt.get(vertex.hashCode());
+	}
+
 
 }

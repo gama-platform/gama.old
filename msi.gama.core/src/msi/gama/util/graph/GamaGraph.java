@@ -36,7 +36,6 @@ import msi.gaml.species.ISpecies;
 import org.jgrapht.*;
 import org.jgrapht.alg.*;
 import org.jgrapht.graph.*;
-import com.vividsolutions.jts.geom.Coordinate;
 
 public class GamaGraph<V, E> implements IGraph<V, E> {
 
@@ -60,9 +59,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	private final LinkedList<IGraphEventListener> listeners = new LinkedList<IGraphEventListener>();
 
-	private final GamaMap verticesBuilt; // only used for optimization purpose of spatial graph
-											// building.
-
+	
 	private final Set<IAgent> generatedEdges = new HashSet();
 	private int version;
 
@@ -72,7 +69,6 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		edgeMap = new GamaMap();
 		edgeBased = false; 
 		vertexRelation = null;
-		verticesBuilt = new GamaMap();
 		version = 1;
 		agentEdge = false;
 	}
@@ -85,7 +81,6 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		edgeBased = byEdge;
 		vertexRelation = rel;
 		edgeSpecies = edgesSpecies;
-		verticesBuilt = new GamaMap();
 		this.scope = scope;
 		agentEdge = edgesSpecies != null || byEdge && edgesOrVertices != null && edgesOrVertices.first(scope) instanceof IAgent;
 		if ( byEdge ) {
@@ -777,18 +772,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		}
 	}
 
-	public void addBuiltVertex(final IShape vertex) {
-		verticesBuilt.put(vertex.getLocation().hashCode(), vertex);
-	}
-
-	public boolean containsBuiltVertex(final IShape vertex) {
-		return verticesBuilt.contains(scope, vertex.getLocation().hashCode());
-	}
-
-	public IShape getBuiltVertex(final Coordinate vertex) {
-		return (IShape) verticesBuilt.get(vertex.hashCode());
-	}
-
+	
 	@Override
 	public int getVersion() {
 		return version;

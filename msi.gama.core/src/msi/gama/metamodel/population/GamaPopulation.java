@@ -415,7 +415,7 @@ public class GamaPopulation implements IPopulation {
 			GamaSpatialGraph g =
 				new GamaSpatialGraph(GamaList.EMPTY_LIST, false, false,
 					new AbstractGraphNodeAgent.NodeRelation(), edgeSpecies, scope);
-			this.addListener(g);
+			this.addListener(g);  
 			g.postRefreshManagementAction(scope);
 			topology = new GraphTopology(scope, this.getHost(), g);
 		} else {
