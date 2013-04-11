@@ -29,7 +29,6 @@ global {
 		
 		ask edgeSpecy as list{
 			set color <- [rnd(100),rnd(100) ,rnd(100)] as rgb;
-			//write  (my_graph degree_of(mySelf.source));
 		}	  
 	 }
 	  
