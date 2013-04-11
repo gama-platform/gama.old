@@ -76,7 +76,7 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 	@Override
 	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize)
 		throws GamaRuntimeException {
-		fillBuffer(scope);
+		getContents(scope);
 		if ( preferredSize != null ) { return matrixValueFromImage(scope, preferredSize); }
 		return (IMatrix) buffer;
 	}

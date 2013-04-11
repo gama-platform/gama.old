@@ -57,7 +57,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		}
 		if ( obj instanceof GamaPair ) { return pairToGeometry(scope, (GamaPair) obj); }
 		if ( obj instanceof IContainer ) {
-			if ( isPoints((IContainer) obj) ) { return pointsToGeometry(scope,
+			if ( isPoints(scope, (IContainer) obj) ) { return pointsToGeometry(scope,
 				(IContainer<?, ILocation>) obj); }
 			return geometriesToGeometry(scope, (IContainer) obj);
 		}
@@ -70,8 +70,8 @@ public class GamaGeometryType extends GamaType<IShape> {
 	 * @param obj
 	 * @return
 	 */
-	private static boolean isPoints(final IContainer obj) {
-		for ( Object o : obj ) {
+	private static boolean isPoints(IScope scope, final IContainer obj) {
+		for ( Object o : obj.iterable(scope) ) {
 			if ( !(o instanceof ILocation) ) { return false; }
 		}
 		return true;

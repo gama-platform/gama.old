@@ -101,49 +101,6 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 		flushBuffer();
 	}
 
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see msi.gama.interfaces.IGamaContainer#add(java.lang.Object, java.lang.Object)
-	// */
-	// @Override
-	// public void add(IScope scope, final V value, final Object param) throws GamaRuntimeException
-	// {
-	// getContents(scope);
-	// buffer.add(scope, value, param);
-	// flushBuffer();
-	//
-	// }
-
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see msi.gama.interfaces.IGamaContainer#addAll(msi.gama.interfaces.IGamaContainer,
-	// * java.lang.Object)
-	// */
-	// @Override
-	// public void addAll(IScope scope, final IContainer value, final Object param)
-	// throws GamaRuntimeException {
-	// getContents(null);
-	// buffer.addAll(scope, value, param);
-	// flushBuffer();
-	// }
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see msi.gama.interfaces.IGamaContainer#addAll(java.lang.Object,
-	// * msi.gama.interfaces.IGamaContainer, java.lang.Object)
-	// */
-	// @Override
-	// public void addAll(IScope scope, final K index, final IContainer value, final Object param)
-	// throws GamaRuntimeException {
-	// getContents(scope);
-	// buffer.addAll(scope, index, value, param);
-	// flushBuffer();
-	//
-	// }
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -164,50 +121,6 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#checkIndex(java.lang.Object)
-	 */
-	// @Override
-	// public boolean checkIndex(final Object index) {
-	// try {
-	// getContents(null);
-	// } catch (GamaRuntimeException e) {
-	// GAMA.reportError(e);
-	// return false;
-	// }
-	// return buffer.checkIndex(index);
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#checkValue(java.lang.Object)
-	 */
-	// @Override
-	// public boolean checkValue(final Object value) {
-	// try {
-	// getContents(null);
-	// } catch (GamaRuntimeException e) {
-	// GAMA.reportError(e);
-	// return false;
-	// }
-	// return buffer.checkValue(value);
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#clear()
-	 */
-	// @Override
-	// public void clear() throws GamaRuntimeException {
-	// getContents(null); // ?
-	// buffer.clear();
-	// flushBuffer();
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see msi.gama.interfaces.IGamaContainer#contains(java.lang.Object)
 	 */
 	@Override
@@ -223,7 +136,6 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	}
 
 	@Override
-	// @getter( IKeyword.EXISTS)
 	public Boolean exists() {
 		return getFile().exists();
 	}
@@ -263,7 +175,6 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	}
 
 	@Override
-	// @getter( IKeyword.NAME)
 	public String getName() {
 		return getFile().getName();
 	}
@@ -275,7 +186,6 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	}
 
 	@Override
-	// @getter( IKeyword.CONTENTS)
 	public IContainer getContents(IScope scope) throws GamaRuntimeException {
 		if ( getFile() == null ) { return null; }
 		if ( !getFile().exists() ) { throw new GamaRuntimeException("File " +
@@ -295,13 +205,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 		return buffer.isEmpty(scope);
 	}
 
-	// @Override
-	// public boolean isFixedLength() {
-	// return _isFixedLength();
-	// }
-
 	@Override
-	// @getter( IKeyword.ISFOLDER)
 	public Boolean isFolder() {
 		return getFile().isDirectory();
 	}
@@ -334,7 +238,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 
 	@Override
 	public Iterable<V> iterable(final IScope scope) {
-		return this;
+		return getContents(scope).iterable(scope);
 	}
 
 	@Override
@@ -383,73 +287,6 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 		return buffer.matrixValue(scope, preferredSize);
 	}
 
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see msi.gama.interfaces.IGamaContainer#max()
-	// */
-	// @Override
-	// public V max(final IScope scope) throws GamaRuntimeException {
-	// getContents(scope);
-	// return buffer.max(scope);
-	// }
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see msi.gama.interfaces.IGamaContainer#min()
-	// */
-	// @Override
-	// public V min(final IScope scope) throws GamaRuntimeException {
-	// getContents(scope);
-	// return buffer.min(scope);
-	// }
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see msi.gama.interfaces.IGamaContainer#product()
-	// */
-	// @Override
-	// public Object product(final IScope scope) throws GamaRuntimeException {
-	// getContents(scope);
-	// return buffer.product(scope);
-	// }
-
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see msi.gama.interfaces.IGamaContainer#put(java.lang.Object, java.lang.Object,
-	// * java.lang.Object)
-	// */
-	// @Override
-	// public void put(IScope scope, final K index, final V value, final Object param)
-	// throws GamaRuntimeException {
-	// getContents(scope);
-	// buffer.put(scope, index, value, param);
-	// flushBuffer();
-	//
-	// }
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see msi.gama.interfaces.IGamaContainer#putAll(java.lang.Object, java.lang.Object)
-	// */
-	// @Override
-	// public void putAll(IScope scope, final V value, final Object param) throws
-	// GamaRuntimeException {
-	// getContents(scope);
-	// buffer.putAll(scope, value, param);
-	// flushBuffer();
-	//
-	// }
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#removeAll(java.lang.Object)
-	 */
 	@Override
 	public void remove(IScope scope, Object index, Object value, boolean all) {
 		getContents(scope);
@@ -457,37 +294,6 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 		flushBuffer();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#removeAt(java.lang.Object)
-	 */
-	// @Override
-	// public Object removeAt(IScope scope, final K index) throws GamaRuntimeException {
-	// getContents(scope);
-	// Object result = buffer.removeAt(scope, index);
-	// flushBuffer();
-	// return result;
-	// }
-	//
-	// /*
-	// * (non-Javadoc)
-	// *
-	// * @see msi.gama.interfaces.IGamaContainer#removeFirst(java.lang.Object)
-	// */
-	// @Override
-	// public boolean removeFirst(IScope scope, final V value) throws GamaRuntimeException {
-	// getContents(scope);
-	// boolean result = buffer.removeFirst(scope, value);
-	// flushBuffer();
-	// return result;
-	// }
-	//
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#reverse()
-	 */
 	@Override
 	public IContainer reverse(final IScope scope) throws GamaRuntimeException {
 		getContents(scope);
@@ -500,17 +306,6 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 		return _stringValue(scope);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IGamaContainer#sum()
-	 */
-	// @Override
-	// public Object sum(final IScope scope) throws GamaRuntimeException {
-	// getContents(scope);
-	// return buffer.sum(scope);
-	// }
-
 	@Override
 	public String toGaml() {
 		return (writable ? "write(" : "read(") + getKeyword() + "(" +
@@ -519,17 +314,6 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 
 	@Override
 	public abstract String getKeyword();
-
-	//
-	// @Override
-	// public String toJava() {
-	// return "new File(" + getName() + ")";
-	// }
-	//
-	// @Override
-	// public IType type() {
-	// return Types.get(IType.FILE);
-	// }
 
 	@Override
 	public V any(final IScope scope) {
