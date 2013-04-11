@@ -322,6 +322,12 @@
                   name="msi.gama.application.separator2"
                   visible="true">
             </separator>
+            <command
+                  commandId="msi.gama.application.commands.PauseAndEdit"
+                  icon="icons/menu_experiment_error.png"
+                  label="Pause at first error"
+                  style="toggle">
+            </command>
          </menu>
          <menu
                label="Agents">
@@ -1276,6 +1282,10 @@
       <command
             id="msi.gama.hpc.gui.ShowHideHeadlessChartView"
             name="Show Headless Chart View">
+      </command>
+      <command
+            id="msi.gama.application.commands.PauseAndEdit"
+            name="Pause at first error">
       </command>
    </extension>
  <extension

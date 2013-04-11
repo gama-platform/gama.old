@@ -34,9 +34,9 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 	public static String ID = GuiUtils.ERROR_VIEW_ID;
 
 	ArrayList<GamaRuntimeException> exceptions = new ArrayList();
-	int numberOfDisplayedErrors = 10;
-	boolean mostRecentFirst = true;
-	boolean showErrors = true;
+	static public int numberOfDisplayedErrors = 10;
+	static public boolean mostRecentFirst = true;
+	static public boolean showErrors = true;
 
 	// ParameterExpandItem parametersItem;
 
@@ -109,16 +109,16 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 
 			});
 
-		EditorFactory.create(parameters, "Pause and reveal in editor",
-			GAMA.TREAT_ERRORS_AS_FATAL, new EditorListener<Boolean>() {
-
-				@Override
-				public void valueModified(final Boolean newValue) {
-
-					GAMA.TREAT_ERRORS_AS_FATAL = newValue;
-				}
-
-			});
+//		EditorFactory.create(parameters, "Pause and reveal in editor", GAMA.TREAT_ERRORS_AS_FATAL,
+//			new EditorListener<Boolean>() {
+//
+//				@Override
+//				public void valueModified(final Boolean newValue) {
+//
+//					GAMA.TREAT_ERRORS_AS_FATAL = newValue;
+//				}
+//
+//			});
 		EditorFactory.create(parameters, "Treat warnings as errors ",
 			GAMA.TREAT_WARNINGS_AS_ERRORS, new EditorListener<Boolean>() {
 
