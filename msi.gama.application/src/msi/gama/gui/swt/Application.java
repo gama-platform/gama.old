@@ -132,8 +132,8 @@ public class Application implements IApplication {
 					.setEnabled("org.eclipse.jdt.ui.buildpath.decorator", false);
 				PlatformUI.getWorkbench().getDecoratorManager()
 					.setEnabled("org.eclipse.jdt.ui.override.decorator", false);
-				PlatformUI.getWorkbench().getDecoratorManager()
-					.setEnabled("org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator", false);
+//				PlatformUI.getWorkbench().getDecoratorManager()
+//					.setEnabled("org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator", false);
 				PlatformUI.getWorkbench().getDecoratorManager()
 					.setEnabled("org.eclipse.ui.LinkedResourceDecorator", false);
 				PlatformUI.getWorkbench().getDecoratorManager()
