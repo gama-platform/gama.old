@@ -393,7 +393,6 @@ public class Graphs {
 		// ant as_map each::each.food)
 		graph.setWeights(weights);
 		graph.incVersion();
-		java.lang.System.out.println("version : " + graph.getVersion());
 		if ( graph instanceof GamaSpatialGraph ) {
 			((GamaSpatialGraph) graph).reInitPathFinder();
 		}

@@ -107,10 +107,6 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 				DijkstraShortestPath<GamaShape, GamaShape> p2 =
 					new DijkstraShortestPath(getProxyGraph(), source, target);
 				return new GamaList<IShape>(p2.getPathEdgeList());
-			case 4:
-				AStarShortestPath p3 =
-					new AStarShortestPath(this, (IShape) source, (IShape) target);
-				return new GamaList<IShape>(p3.getPathEdgeList());
 		}
 		return new GamaList<IShape>();
 

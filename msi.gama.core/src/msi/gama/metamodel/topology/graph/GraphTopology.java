@@ -26,7 +26,6 @@ import msi.gama.metamodel.topology.filter.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gama.util.graph.Chrono;
 import msi.gaml.operators.Maths;
 
 /**
@@ -84,7 +83,6 @@ public class GraphTopology extends AbstractTopology {
 
 	public IPath pathBetweenCommon(final IShape edgeS, final IShape edgeT, final IShape source,
 		final IShape target) {
-		Chrono c = new Chrono();
 		if ( edgeS == edgeT ) { return new GamaPath(this, source, target, GamaList.with(edgeS)); }
 		IShape s1 = null;
 		IShape t1 = null;
@@ -108,11 +106,8 @@ public class GraphTopology extends AbstractTopology {
 				.euclidianDistanceTo(source.getLocation()) ) {
 			nodeS = s2;
 		}
-		c.start();
 		IList<IShape> edges = getPlaces().computeBestRouteBetween(nodeS, nodeT);
 
-		c.stop();
-		// System.out.println("Temps calcule: " + c.getMilliSec())
 		if ( edges.isEmpty() || edges.get(0) == null ) { return null; }
 		HashSet edgesSetInit =
 			new HashSet(Arrays.asList(edges.get(0).getInnerGeometry().getCoordinates()));
