@@ -50,7 +50,6 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	public static int FloydWarshall = 1;
 	public static int BellmannFord = 2;
 	public static int Djikstra = 3;
-	public static int ASTar = 4;
 
 	protected ISpecies edgeSpecies;
 	protected int optimizerType = 3;
