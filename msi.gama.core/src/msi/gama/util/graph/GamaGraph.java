@@ -55,9 +55,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	public static int Djikstra = 3;
 
 	protected ISpecies edgeSpecies;
-	protected int optimizerType = 3;
+	protected int optimizerType = Djikstra;
 	private FloydWarshallShortestPaths<V, E> optimizer;
-	protected boolean verbose;
 
 	private final LinkedList<IGraphEventListener> listeners = new LinkedList<IGraphEventListener>();
 
