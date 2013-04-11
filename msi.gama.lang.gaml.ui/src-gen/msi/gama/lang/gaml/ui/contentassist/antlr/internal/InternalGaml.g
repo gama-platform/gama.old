@@ -3061,6 +3061,22 @@ rule___1Expr_Facets_BlockOrEnd_Key__Alternatives
 { after(grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getImageKeyword_21()); }
 )
 
+    |(
+{ before(grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getDataKeyword_22()); }
+
+	'data' 
+
+{ after(grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getDataKeyword_22()); }
+)
+
+    |(
+{ before(grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getChartKeyword_23()); }
+
+	'chart' 
+
+{ after(grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getChartKeyword_23()); }
+)
+
 ;
 finally {
 	restoreStackSize(stackSize);

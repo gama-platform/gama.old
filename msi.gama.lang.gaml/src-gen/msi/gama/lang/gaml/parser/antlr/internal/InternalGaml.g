@@ -2566,6 +2566,20 @@ rule_1Expr_Facets_BlockOrEnd_Key returns [AntlrDatatypeRuleToken current=new Ant
         $current.merge(kw);
         newLeafNode(kw, grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getImageKeyword_21()); 
     }
+
+    |
+	kw='data' 
+    {
+        $current.merge(kw);
+        newLeafNode(kw, grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getDataKeyword_22()); 
+    }
+
+    |
+	kw='chart' 
+    {
+        $current.merge(kw);
+        newLeafNode(kw, grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getChartKeyword_23()); 
+    }
 )
     ;
 

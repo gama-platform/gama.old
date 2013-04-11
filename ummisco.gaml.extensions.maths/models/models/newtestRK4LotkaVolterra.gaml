@@ -67,14 +67,14 @@ experiment maths type: gui {
 	output { 
 		display LV refresh_every: 1 {
 			chart "SIR" type: series background: rgb('white') {
-				data x value: first(list(my_maths)).x color: rgb('green') ;				
-				data y value: first(list(my_maths)).y color: rgb('red') ;
+				data 'x' value: first(list(my_maths)).x color: rgb('green') ;				
+				data 'y' value: first(list(my_maths)).y color: rgb('red') ;
 			}
 		}
 		display LVphase refresh_every: 1 {			
 			chart "SIR" type: xy background: rgb('white') {
-				data x value: first(list(my_maths)).x color: rgb('green') ;				
-				data y value: first(list(my_maths)).y color: rgb('red') ;
+				data 'x' value: first(list(my_maths)).x color: rgb('green') ;				
+				data 'y' value: first(list(my_maths)).y color: rgb('red') ;
 			}
 		}			
 	}

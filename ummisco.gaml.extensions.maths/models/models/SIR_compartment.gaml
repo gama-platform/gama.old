@@ -89,8 +89,8 @@ experiment simulation type : gui {
 	output {
 		display chart1 refresh_every : 1 {
 			chart 'Susceptible' type : series background : rgb ( 'lightGray' ) {
-				data susceptible value : first ( S ) . Ssize color : rgb ( 'green' ) ;
-				data infected value : first ( I ) . Isize color : rgb ( 'red' ) ;
+				data 'susceptible' value : first ( S ) . Ssize color : rgb ( 'green' ) ;
+				data 'infected' value : first ( I ) . Isize color : rgb ( 'red' ) ;
 //				data susceptible_maths value : first ( my_SIR_maths ) . Sm color : rgb ('blue' ) ;
 //				data infected_maths value : first ( my_SIR_maths ) . Im color : rgb ( 'orange' ) ;
 			}
@@ -99,8 +99,8 @@ experiment simulation type : gui {
 			chart 'Susceptible' type : series background : rgb ( 'lightGray' ) {
 //				data susceptible value : first ( S ) . Ssize color : rgb ( 'green' ) ;
 //				data infected value : first ( I ) . Isize color : rgb ( 'red' ) ;
-				data susceptible_maths value : first ( my_SIR_maths ) . Sm color : rgb ('blue' ) ;
-				data infected_maths value : first ( my_SIR_maths ) . Im color : rgb ( 'orange' ) ;
+				data 'susceptible_maths' value : first ( my_SIR_maths ) . Sm color : rgb ('blue' ) ;
+				data 'infected_maths' value : first ( my_SIR_maths ) . Im color : rgb ( 'orange' ) ;
 			}
 		}
 	}

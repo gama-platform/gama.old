@@ -206,9 +206,9 @@ experiment simulation type: gui {
 	        
 	    display chart refresh_every: 1 {
 			chart 'Susceptible' type: series background: rgb('lightGray') style: exploded {
-				data susceptible value: (Host as list) count (each.is_susceptible) color: rgb('green');
-				data infected value: (Host as list) count (each.is_infected) color: rgb('red');
-				data immune value: (Host as list) count (each.is_immune) color: rgb('yellow');
+				data 'susceptible' value: (Host as list) count (each.is_susceptible) color: rgb('green');
+				data 'infected' value: (Host as list) count (each.is_infected) color: rgb('red');
+				data 'immune' value: (Host as list) count (each.is_immune) color: rgb('yellow');
 			}
 //			chart 'Susceptible' type: xy background: rgb('lightGray') style: 3d {
 //				data susceptible value: (Host as list) count (each.is_susceptible) color: rgb('green');
@@ -217,14 +217,14 @@ experiment simulation type: gui {
 		}
 		display SI refresh_every: 1 {
 			chart "SI" type: series background: rgb('white') {
-				data S value: first((my_SIR_maths)).S color: rgb('green') ;				
-				data I value: first((my_SIR_maths)).I color: rgb('red') ;
-				data R value: first((my_SIR_maths)).R color: rgb('yellow') ;				
+				data 'S' value: first((my_SIR_maths)).S color: rgb('green') ;				
+				data 'I' value: first((my_SIR_maths)).I color: rgb('red') ;
+				data 'R' value: first((my_SIR_maths)).R color: rgb('yellow') ;				
 			}
 		}
 		display Neighbours refresh_every: 1 {
 			chart "Average neighbours number" type: series background: rgb('white'){
-				data nb value: average_ngb_number color: rgb('blue');
+				data 'nb' value: average_ngb_number color: rgb('blue');
 			}
 			
 		}

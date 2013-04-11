@@ -1303,16 +1303,18 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cMatch_oneKeyword_19 = (Keyword)cAlternatives.eContents().get(19);
 		private final Keyword cTextKeyword_20 = (Keyword)cAlternatives.eContents().get(20);
 		private final Keyword cImageKeyword_21 = (Keyword)cAlternatives.eContents().get(21);
+		private final Keyword cDataKeyword_22 = (Keyword)cAlternatives.eContents().get(22);
+		private final Keyword cChartKeyword_23 = (Keyword)cAlternatives.eContents().get(23);
 		
 		//_1Expr_Facets_BlockOrEnd_Key:
 		//	"ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "draw" |
 		//	"display_population" | "display_grid" | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" |
-		//	"match_one" | "text" | "image";
+		//	"match_one" | "text" | "image" | "data" | "chart";
 		public ParserRule getRule() { return rule; }
 
 		//"ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "draw" |
 		//"display_population" | "display_grid" | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" |
-		//"match_one" | "text" | "image"
+		//"match_one" | "text" | "image" | "data" | "chart"
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//"ask"
@@ -1380,6 +1382,12 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//"image"
 		public Keyword getImageKeyword_21() { return cImageKeyword_21; }
+
+		//"data"
+		public Keyword getDataKeyword_22() { return cDataKeyword_22; }
+
+		//"chart"
+		public Keyword getChartKeyword_23() { return cChartKeyword_23; }
 	}
 
 	public class _DoKeyElements extends AbstractParserRuleElementFinder {
@@ -4166,7 +4174,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	//_1Expr_Facets_BlockOrEnd_Key:
 	//	"ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "draw" |
 	//	"display_population" | "display_grid" | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" |
-	//	"match_one" | "text" | "image";
+	//	"match_one" | "text" | "image" | "data" | "chart";
 	public _1Expr_Facets_BlockOrEnd_KeyElements get_1Expr_Facets_BlockOrEnd_KeyAccess() {
 		return (p_1Expr_Facets_BlockOrEnd_Key != null) ? p_1Expr_Facets_BlockOrEnd_Key : (p_1Expr_Facets_BlockOrEnd_Key = new _1Expr_Facets_BlockOrEnd_KeyElements());
 	}

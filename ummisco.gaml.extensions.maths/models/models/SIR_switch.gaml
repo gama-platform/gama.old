@@ -344,16 +344,16 @@ experiment simulation type: gui {
 //		}
 	    display chart refresh_every: 1 {
 			chart 'Susceptible' type: series background: rgb('lightGray') style: exploded {
-				data susceptible value: current_model.S color: rgb('green');
-				data infected value: current_model.I color: rgb('red');
-				data immune value: current_model.R color: rgb('yellow');
+				data 'susceptible' value: current_model.S color: rgb('green');
+				data 'infected' value: current_model.I color: rgb('red');
+				data 'immune' value: current_model.R color: rgb('yellow');
 			}			
 		}
 		display SI refresh_every: 1 {
 			chart "SI" type: series background: rgb('white') {
-				data S value: first((my_SIR_maths)).S color: rgb('green');				
-				data I value: first((my_SIR_maths)).I color: rgb('red') ;
-				data R value: first((my_SIR_maths)).R color: rgb('yellow') ;				
+				data 'S' value: first((my_SIR_maths)).S color: rgb('green');				
+				data 'I' value: first((my_SIR_maths)).I color: rgb('red') ;
+				data 'R' value: first((my_SIR_maths)).R color: rgb('yellow') ;				
 			}
 		}
 

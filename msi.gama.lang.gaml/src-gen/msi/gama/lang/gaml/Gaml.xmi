@@ -558,6 +558,8 @@
       <elements xsi:type="xtext:Keyword" value="match_one"/>
       <elements xsi:type="xtext:Keyword" value="text"/>
       <elements xsi:type="xtext:Keyword" value="image"/>
+      <elements xsi:type="xtext:Keyword" value="data"/>
+      <elements xsi:type="xtext:Keyword" value="chart"/>
     </alternatives>
   </rules>
   <rules xsi:type="xtext:ParserRule" name="_DoKey">

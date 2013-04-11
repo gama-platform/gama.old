@@ -104,9 +104,9 @@ experiment simulation type : gui {
 //		}
 		display chart2 refresh_every : 1 {
 			chart 'Susceptible' type : series background : rgb ( 'lightGray' ) {
-				data susceptible_maths value : first ( my_SIR_maths ) . Sm color : rgb ('green' ) ;
-				data infected_maths value : first ( my_SIR_maths ) . Im color : rgb ( 'red' ) ;
-				data recovered_maths value : first ( my_SIR_maths ) . Rm color : rgb ( 'blue' ) ;				
+				data 'susceptible_maths' value : first ( my_SIR_maths ) . Sm color : rgb ('green' ) ;
+				data 'infected_maths' value : first ( my_SIR_maths ) . Im color : rgb ( 'red' ) ;
+				data 'recovered_maths' value : first ( my_SIR_maths ) . Rm color : rgb ( 'blue' ) ;				
 			}
 		}
 	}

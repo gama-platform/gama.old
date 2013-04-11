@@ -69,7 +69,13 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 
 	String text(final EObject ele) {
 		String text;
-		QualifiedName qn = nameProvider.getFullyQualifiedName(ele);
+		QualifiedName qn;
+		try {
+			qn = nameProvider.getFullyQualifiedName(ele);
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			return "";
+		}
 		String key = EGaml.getKeyOf(ele);
 		if ( key == null ) {
 			key = "";

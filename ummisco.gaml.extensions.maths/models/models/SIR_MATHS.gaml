@@ -47,9 +47,9 @@ experiment maths type: gui {
 	output { 
 		display SIR_MATHS refresh_every: 1 {
 			chart "SIR_MATHS" type: series background: rgb('white') {
-				data S value: first(list(my_SIR_maths)).S color: rgb('green') ;				
-				data I value: first(list(my_SIR_maths)).I color: rgb('red') ;
-				data R value: first(list(my_SIR_maths)).R color: rgb('blue') ;
+				data 'S' value: first(list(my_SIR_maths)).S color: rgb('green') ;				
+				data 'I' value: first(list(my_SIR_maths)).I color: rgb('red') ;
+				data 'R' value: first(list(my_SIR_maths)).R color: rgb('blue') ;
 			}
 		}
 	}

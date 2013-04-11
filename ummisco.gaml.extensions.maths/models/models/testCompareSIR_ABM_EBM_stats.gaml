@@ -255,11 +255,11 @@ experiment simulation type : gui {
 	//	    }
 		display chart refresh_every : 1 {
 			chart 'Susceptible' type : series background : rgb('lightGray') style : exploded {
-				data susceptible value : (Host as list) count (each.is_susceptible) / SimNumber color : rgb('green');
-				data infected value : (Host as list) count (each.is_infected) / SimNumber color : rgb('red');
-				data immune value : (Host as list) count (each.is_immune) / SimNumber color : rgb('yellow');
-				data min_S value : first(statistic).min_S color : rgb('pink');
-				data max_S value : first(statistic).max_S color : rgb('orange');
+				data 'susceptible' value : (Host as list) count (each.is_susceptible) / SimNumber color : rgb('green');
+				data 'infected' value : (Host as list) count (each.is_infected) / SimNumber color : rgb('red');
+				data 'immune' value : (Host as list) count (each.is_immune) / SimNumber color : rgb('yellow');
+				data 'min_S ' value : first(statistic).min_S color : rgb('pink');
+				data 'max_S ' value : first(statistic).max_S color : rgb('orange');
 				//				data min_I value: min_I color: rgb('red');
 				//				data max_I value: max_I color: rgb('red');	
 				//				data distance value: distance color: rgb('blue');			
