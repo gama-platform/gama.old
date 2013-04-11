@@ -38,8 +38,8 @@ import org.jgrapht.*;
  */
 @vars({ @var(name = "spanning_tree", type = IType.LIST),
 	@var(name = "circuit", type = IType.PATH), @var(name = "connected", type = IType.BOOL),
-	@var(name = "edges", type = IType.LIST), @var(name = "vertices", type = IType.LIST), 
-	@var(name = "verbose", type = IType.BOOL) })
+	@var(name = "edges", type = IType.LIST), @var(name = "vertices", type = IType.LIST)
+	})
 public interface IGraph<K, V> extends IContainer<K, V>, WeightedGraph, DirectedGraph,
 	UndirectedGraph, IGraphEventProvider {
 
@@ -78,11 +78,6 @@ public interface IGraph<K, V> extends IContainer<K, V>, WeightedGraph, DirectedG
 	public abstract Object addEdge(Object p);
 
 	public abstract void setOptimizerType(String optiType);
-	
-	@getter( "verbose")
-	public abstract Boolean isVerbose();
-
-	public abstract void setVerbose(final Boolean isVerbose);
 	
 	public int getVersion() ;
 

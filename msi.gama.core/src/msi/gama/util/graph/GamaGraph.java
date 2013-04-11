@@ -750,16 +750,6 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 	}
 
 	@Override
-	public Boolean isVerbose() {
-		return verbose;
-	}
-
-	@Override
-	public void setVerbose(final Boolean verbose) {
-		this.verbose = verbose;
-	}
-
-	@Override
 	public void addListener(final IGraphEventListener listener) {
 		synchronized (listeners) {
 			if ( !listeners.contains(listener) ) {

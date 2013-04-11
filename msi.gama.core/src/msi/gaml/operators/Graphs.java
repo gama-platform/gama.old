@@ -418,14 +418,6 @@ public class Graphs {
 		return graph;
 	}
 
-	@operator(value = "set_verbose")
-	@doc(value = "sets the verbose attributes of the graph (left-hand operand) to the given boolean value (right-hand operand).", comment = "When verbose of a graph is true, it will display the shortest path computation level with static optimizer. "
-		+ "This operator is useful to monitor the computation of ", examples = "set graphEpidemio <- graphEpidemio set_verbose false;", see = "with_optimizer_type")
-	public static IGraph setVerbose(final IScope scope, final IGraph graph, final Boolean verbose) {
-		graph.setVerbose(verbose);
-		return graph;
-	}
-
 	@operator(value = "with_optimizer_type")
 	@doc(value = "changes the shortest path computation method of the griven graph", comment = "the right-hand operand can be \"Djikstra\", \"Bellmann\", \"Astar\" to use the associated algorithm. "
 		+ "Note that these methods are dynamic: the path is computed when needed. In contrarily, if the operand is another string, "
@@ -476,32 +468,32 @@ public class Graphs {
 	 * }
 	 */
 
-	// TODO "complete" (pour crŽer un graphe complet)
+	// TODO "complete" (pour crï¿½er un graphe complet)
 
 	// vertices_to_graph [vertices] with_weights (vertices collect: each.val) -> renvoie un graphe
-	// construit Ž partir des vertex (edges gŽnŽrŽs soit sous la forme d'une paire vertex::vertex,
-	// soit sous la forme d'un lien gŽomŽtrique)
-	// vertices_to_graph [a1, a2, a3] with_weights ([1, 4, 8]) -> mŽme chose
+	// construit ï¿½ partir des vertex (edges gï¿½nï¿½rï¿½s soit sous la forme d'une paire vertex::vertex,
+	// soit sous la forme d'un lien gï¿½omï¿½trique)
+	// vertices_to_graph [a1, a2, a3] with_weights ([1, 4, 8]) -> mï¿½me chose
 	// edges_to_graph [edges] with_weights (edges collect: each.length) -> renvoie un graphe
-	// construit Ž partir des edges (vertex gŽnŽrŽs soit sous la forme d'une paire edge::edge, soit
-	// sous la forme d'un point pour les gŽomŽtries)
-	// edges_to_graph [a1::a2, a2::a3] with_weights ([3.0, 1.3]) -> mŽme chose
+	// construit ï¿½ partir des edges (vertex gï¿½nï¿½rï¿½s soit sous la forme d'une paire edge::edge, soit
+	// sous la forme d'un point pour les gï¿½omï¿½tries)
+	// edges_to_graph [a1::a2, a2::a3] with_weights ([3.0, 1.3]) -> mï¿½me chose
 	// add item: v1 to:g weight: 1 -> ajout d'un vertex
-	// add item: v1::v2 to:g weight:1 -> ajout d'un edge gŽnŽrŽ (et des vertex correspondants si
-	// nŽcessaire)
+	// add item: v1::v2 to:g weight:1 -> ajout d'un edge gï¿½nï¿½rï¿½ (et des vertex correspondants si
+	// nï¿½cessaire)
 	// add item: (v1::v2)::e to: g weight: 1 -> edge (ajout d'un edge explicite et des vertex
-	// correspondants si nŽcessaire)
+	// correspondants si nï¿½cessaire)
 	// remove item: v1::v2 from: g -> remove edge
 	// remove item: o from: g -> remove edge / vertex
-	// put item: e2 at: v1::v2 in: g -> replace/add an edge (on peut aussi faire la mŽme chose pour
+	// put item: e2 at: v1::v2 in: g -> replace/add an edge (on peut aussi faire la mï¿½me chose pour
 	// remplacer un vertex)
 
-	// TODO Transformer peu ˆ peu toutes les primitives (GeometricFunctions, GeometricSkill, etc.)
-	// en opŽrateurs (as_graph, as_network, as_triangle_graph, as_complete_graph -- En crŽant les
+	// TODO Transformer peu ï¿½ peu toutes les primitives (GeometricFunctions, GeometricSkill, etc.)
+	// en opï¿½rateurs (as_graph, as_network, as_triangle_graph, as_complete_graph -- En crï¿½ant les
 	// liens dynamiques correspondants --, as_weighted_graph ...).
 
-	// TODO Ajouter les opŽrateurs d'union, d'intersection, d'ŽgalitŽ, de diffŽrence
+	// TODO Ajouter les opï¿½rateurs d'union, d'intersection, d'ï¿½galitï¿½, de diffï¿½rence
 
-	// TODO Ajouter des gŽnŽrateurs spŽcifiques a partir de GraphGenerator (pb: quelles classes pour
+	// TODO Ajouter des gï¿½nï¿½rateurs spï¿½cifiques a partir de GraphGenerator (pb: quelles classes pour
 	// les vertices/edges ??
 }
