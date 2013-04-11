@@ -237,6 +237,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 					int i = 0;
 					if ( abbreviatedNamesOfExperiments.size() > 1 ) {
 						abbreviatedNamesOfExperiments.remove(IKeyword.DEFAULT);
+						completeNamesOfExperiments.remove(IKeyword.DEFAULT);
 					}
 					for ( String e : abbreviatedNamesOfExperiments ) {
 						enableButton(i++, e);
@@ -255,7 +256,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 	private void updateExperiments(final Set<String> newExperiments, final boolean withErrors) {
 		if ( withErrors == true && wasOK == false ) { return; }
 		GuiUtils.debug("New set of experiments:" + newExperiments);
-		if ( wasOK && !withErrors && newExperiments.equals(completeNamesOfExperiments) ) { return; }
+		Set<String> oldNames = new LinkedHashSet(completeNamesOfExperiments);
+		if ( wasOK && !withErrors && oldNames.equals(newExperiments) ) { return; }
 		wasOK = !withErrors;
 		completeNamesOfExperiments = new ArrayList(newExperiments);
 		buildAbbreviations();
@@ -280,7 +282,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 				abbreviatedNamesOfExperiments.add(s.replaceFirst("Experiment ", "Exp."));
 			}
 		} else {
-			// We copy the name as it is
+			// We copy the names as it is
 			abbreviatedNamesOfExperiments.addAll(completeNamesOfExperiments);
 		}
 	}
