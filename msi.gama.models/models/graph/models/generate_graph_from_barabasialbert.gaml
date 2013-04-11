@@ -20,16 +20,17 @@ global {
 		  * The actual generation of the network. 
 		  * Note that for technical reasons, parameters are provided as a gama map.  
 		  */
-		 set my_graph <- generate_barabasi_albert( [
-				"edges_specy"::edgeSpecy,
-				"vertices_specy"::nodeSpecy,
-				"size"::100,
-				"m"::4
-			] );
+		 my_graph <- generate_barabasi_albert(edgeSpecy,nodeSpecy,100,4);
 			  
 	 }
-	  
-}
+
+	reflex truc {
+		
+		write my_graph;
+		
+	}
+
+}	 
 
 environment;
 
@@ -46,6 +47,7 @@ entities {
 			draw circle(3) color: color ;
 		} 
 		 		
+		
 	}
 	
 	/*
@@ -74,11 +76,13 @@ experiment generate_graph type: gui {
 			species edgeSpecy aspect: base ;
 		}
 		
+			
 		/*
 		 * This display provides another look on the network,
 		 * without spatiality.
 		 */
 		graphdisplay monNom2 graph: my_graph lowquality:true ;
+		
 		
 	}		
 }

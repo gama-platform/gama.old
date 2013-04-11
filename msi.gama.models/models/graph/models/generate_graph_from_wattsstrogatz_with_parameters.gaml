@@ -24,13 +24,16 @@ global {
 		  * The actual generation of the network. 
 		  * Note that for technical reasons, parameters are provided as a gama map.  
 		  */
-		set my_graph <- generate_watts_strogatz( [
-				"edges_specy"::edgeSpecy,
-				"vertices_specy"::nodeSpecy,
-				"size"::net_size,
-				"p"::net_prewire,
-				"k"::net_neighboors
-			] );	  
+		my_graph <- generate_watts_strogatz(
+				nodeSpecy,
+				edgeSpecy,
+				net_size,
+				net_prewire,
+				net_neighboors
+		);	  
+		
+		write my_graph;
+		
 	 }
 }
 

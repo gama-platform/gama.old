@@ -19,12 +19,15 @@ global {
 		  * The actual loading of the network. 
 		  * Note that for technical reasons, parameters are provided as a gama map.  
 		  */
-		 set my_graph <- load_graph_from_dgs_old( [
-				"filename"::"../includes/BarabasiGenerated.dgs",  
-				"edges_specy"::edgeSpecy,
-				"vertices_specy"::nodeSpecy
-			] );
+		 my_graph <- load_graph_from_file(
+		 		"dgs_old",
+				"../includes/BarabasiGenerated.dgs",  
+				nodeSpecy,
+				edgeSpecy
+		 );
 			  
+		write my_graph;
+		
 	 }
 	  
 }
