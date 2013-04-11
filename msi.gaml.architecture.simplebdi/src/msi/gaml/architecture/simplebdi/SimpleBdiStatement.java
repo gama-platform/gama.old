@@ -17,8 +17,8 @@ import msi.gaml.types.IType;
 
 @symbol(name = {SimpleBdiArchitecture.PLAN, SimpleBdiArchitecture.PERCEIVE}, kind = ISymbolKind.BEHAVIOR, with_sequence = true)
 @inside(kinds = { ISymbolKind.SPECIES })
-@facets(value = { @facet(name = IKeyword.WHEN, type = IType.BOOL_STR, optional = true),
-		@facet(name = SimpleBdiArchitecture.PRIORITY, type = IType.FLOAT_STR, optional = true),
+@facets(value = { @facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true),
+		@facet(name = SimpleBdiArchitecture.PRIORITY, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true) }, omissible = IKeyword.NAME)
 public class SimpleBdiStatement extends AbstractStatementSequence{
 	

@@ -3,10 +3,8 @@ package msi.gaml.architecture.simplebdi;
 import java.util.ArrayList;
 import java.util.List;
 
-import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.agent.IGamlAgent;
+// import msi.gama.metamodel.agent.IGamlAgent;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -27,9 +25,9 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 
-@vars({ @var(name = SimpleBdiArchitecture.PERSISTENCE_COEFFICIENT, type = IType.FLOAT_STR, init = "1.0"), 
-		@var(name = SimpleBdiArchitecture.BELIEF_BASE, type = IType.LIST_STR, init = "[]"),
-		@var(name = SimpleBdiArchitecture.DESIRE_BASE, type = IType.LIST_STR, init = "[]")})
+@vars({ @var(name = SimpleBdiArchitecture.PERSISTENCE_COEFFICIENT, type = IType.FLOAT, init = "1.0"), 
+		@var(name = SimpleBdiArchitecture.BELIEF_BASE, type = IType.LIST, init = "[]"),
+		@var(name = SimpleBdiArchitecture.DESIRE_BASE, type = IType.LIST, init = "[]")})
 
 @skill(name = SimpleBdiArchitecture.SIMPLE_BDI)
 public class SimpleBdiArchitecture extends AbstractArchitecture{
@@ -96,8 +94,10 @@ public class SimpleBdiArchitecture extends AbstractArchitecture{
 			}
 		}
 		if (_plansNumber > 0){
-			IGamlAgent a = getCurrentAgent(scope);
-			/**/
+			// FIXME
+			IAgent a  = getCurrentAgent(scope);
+			// IGamlAgent a = getCurrentAgent(scope);
+			
 			Double persistenceCoefficient = scope.hasArg(PERSISTENCE_COEFFICIENT) ? scope.getFloatArg(PERSISTENCE_COEFFICIENT) : (Double)a.getAttribute(PERSISTENCE_COEFFICIENT);
 			//Double persistenceCoefficient = (Double)a.getAttribute(PERSISTENCE_COEFFICIENT);
 			if ((persistenceCoefficient != null) && (persistenceCoefficient > 0)){
