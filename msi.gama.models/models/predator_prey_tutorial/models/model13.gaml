@@ -163,8 +163,8 @@ experiment prey_predator type: gui {
 		}
 		display Population_information refresh_every: 5 {
 			chart "Species evolution" type: series background: rgb('white') size: {1,0.4} position: {0, 0.05} {
-				data number_of_preys value: nb_preys color: rgb('blue') ;
-				data number_of_predator value: nb_predators color: rgb('red') ;
+				data 'number_of_preys' value: nb_preys color: rgb('blue') ;
+				data 'number_of_predator' value: nb_predators color: rgb('red') ;
 			}
 			chart "Prey Energy Distribution" type: histogram background: rgb('lightGray') size: {0.5,0.4} position: {0, 0.5} {
 				data "]0;0.25]" value: (prey as list) count (each.energy <= 0.25) ;

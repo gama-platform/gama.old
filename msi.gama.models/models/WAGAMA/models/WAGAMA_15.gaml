@@ -391,14 +391,14 @@ experiment with_interface type: gui {
 		}
 		display charts { 
 			chart name: 'Water quantity' type: series background: rgb('white') size: {1,0.5} position: {0, 0} {
-				data total_water_quantity value: total_water_quantity color: rgb('blue') ;
-				data clean_water_quantity value: clean_water_quantity color: rgb('green') ;
-				data polluted_water_quantity value: polluted_water_quantity color: rgb('red') ;
+				data 'total_water_quantity' value: total_water_quantity color: rgb('blue') ;
+				data 'clean_water_quantity' value: clean_water_quantity color: rgb('green') ;
+				data 'polluted_water_quantity' value: polluted_water_quantity color: rgb('red') ;
 			}
 			chart name: 'money of the owners' type: series background: rgb('white') size: {1,0.5} position: {0, 0.5} {
-				data mean_money value: mean_money color: rgb('black') ;
-				data min_money value: min_money  color: rgb('red') ;
-				data max_money value: max_money  color: rgb('green') ;
+				data 'mean_money' value: mean_money color: rgb('black') ;
+				data 'min_money' value: min_money  color: rgb('red') ;
+				data 'max_money' value: max_money  color: rgb('green') ;
 			}	
 		}
 	}

@@ -212,14 +212,14 @@ experiment default_expr type: gui{
 
 		display Execution_Time refresh_every: 25 {
 			chart name: 'Simulation step length' type: series background: rgb('black') {
-				data simulation_step_length_in_mili_second value: machine_time - start_time color: (rgb ('green'));
+				data 'simulation_step_length_in_mili_second' value: machine_time - start_time color: (rgb ('green'));
 			}
 		}
 	 	
 		display Captured_Pedestrians refresh_every: 25 {
 			chart name: 'Captured Pedestrian' type: series background: rgb ('black') {
-				data captured_pedestrians value: length ( ((list (corridor)) at 0).members ) color: rgb ('blue');
-				data pedestrians value: length (list (pedestrian)) color: rgb ('white');  
+				data 'captured_pedestrians' value: length ( ((list (corridor)) at 0).members ) color: rgb ('blue');
+				data 'pedestrians' value: length (list (pedestrian)) color: rgb ('white');  
 			}
 		}
  

@@ -349,14 +349,14 @@ experiment 'ABM (10% population)' type: gui {
 		monitor all_pedestrians value: length(world.members of_generic_species pedestrian);
 
 		display pedestrians_average_speed {
-			chart pa_speed_diagram type: series {
-				data pedestrians_average_speed value: pedestrians_average_speed color: rgb('green');
+			chart 'pa_speed_diagram' type: series {
+				data 'pedestrians_average_speed' value: pedestrians_average_speed color: rgb('green');
 			}
 		}
 		
 		display pedestrians_reach_target {
-			chart pr_target_diagram type: series {
-				data pedestrians_reach_target value: pedestrians_reach_target color: rgb('blue');
+			chart 'pr_target_diagram' type: series {
+				data 'pedestrians_reach_target' value: pedestrians_reach_target color: rgb('blue');
 			}
 		}
 
@@ -394,21 +394,21 @@ experiment 'Hybrid (10% population)' type: gui {
 		monitor all_pedestrians value: length(world.agents of_generic_species pedestrian);
 		
 		display pedestrians_average_speed refresh_every: 3 {
-			chart pa_speed_diagram type: series {
-				data pedestrians_average_speed value: pedestrians_average_speed color: rgb('green');
+			chart 'pa_speed_diagram' type: series {
+				data 'pedestrians_average_speed' value: pedestrians_average_speed color: rgb('green');
 			}
 		}
 		
 		display pedestrians_reach_target {
-			chart pr_target_diagram type: series {
-				data pedestrians_reach_target value: pedestrians_reach_target color: rgb('blue');
+			chart 'pr_target_diagram' type: series {
+				data 'pedestrians_reach_target' value: pedestrians_reach_target color: rgb('blue');
 			}
 		}
 
 		display captured_vs_not_captured_pedestrians {
-			chart pr_target_diagram type: series {
-				data captured value: captured_pedestrians color: rgb('blue');
-				data not_captured value: not_captured_pedestrians color: rgb('green');
+			chart 'pr_target_diagram' type: series {
+				data 'captured' value: captured_pedestrians color: rgb('blue');
+				data 'not_captured' value: not_captured_pedestrians color: rgb('green');
 			}
 		}
 	}

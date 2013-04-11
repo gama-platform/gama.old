@@ -144,7 +144,7 @@ experiment stupidModel type: gui {
 	         + '; mean: ' + (((sum ((bug as list) collect ((each as bug).size))) / (length((bug as list)))) as string);
 	    display series_display {
 	        chart name: 'Population history' type: series background: rgb('lightGray') {
-            	data Bugs value: length((bug as list)) color: rgb( 'blue');  	        }
+            	data 'Bugs' value: length((bug as list)) color: rgb( 'blue');  	        }
 	    }
 	}
 }

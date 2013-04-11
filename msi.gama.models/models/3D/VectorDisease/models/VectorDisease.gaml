@@ -248,7 +248,7 @@ experiment display_shapefile type: gui {
 				
 		display charts { 
 			chart name: 'Rain Value' type: series background: rgb('white') size: {1,0.5} position: {0, 0} {
-				data total_rain_quantity value: rainValue color: rgb('blue') ;
+				data 'total_rain_quantity' value: rainValue color: rgb('blue') ;
 				//data number_of_beat value: totalSting color: rgb('red') ;
 			}	
 		}

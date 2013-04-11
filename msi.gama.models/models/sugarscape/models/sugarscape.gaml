@@ -87,14 +87,14 @@ experiment sugarscape type: gui{
 		}
 		display chart refresh_every: 5 {
 			chart name: 'Energy' type: pie background: rgb('lightGray') style: exploded {
-				data strong value: (animal as list) count (each.sugar > 8);
-				data weak value: (animal as list) count (each.sugar < 9);
+				data "strong" value: (animal as list) count (each.sugar > 8);
+				data "weak" value: (animal as list) count (each.sugar < 9);
 			}
 		}
 		display chart2 refresh_every: 5 {
 			chart name: 'Energy' type: histogram background: rgb('lightGray') {
-				data strong value: (animal as list) count (each.sugar > 8);
-				data weak value: (animal as list) count (each.sugar < 9);
+				data "strong" value: (animal as list) count (each.sugar > 8);
+				data "weak" value: (animal as list) count (each.sugar < 9);
 			}
 		}
 	}

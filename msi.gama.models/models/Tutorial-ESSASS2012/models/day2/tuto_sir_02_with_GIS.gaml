@@ -82,9 +82,9 @@ experiment tuto_sir_01 type: gui {
 	output {
 		display Charts {
 			chart name: 'Global happiness and similarity' type: series background: rgb('lightGray') {
-				data s_serie color: rgb('green') value: length(list(people) where (each.state = "S"));
-				data i_serie color: rgb('red') value: length(list(people) where (each.state = "I"));
-				data r_serie color: rgb('blue') value: length(list(people) where (each.state = "R"));
+				data 's_serie' color: rgb('green') value: length(list(people) where (each.state = "S"));
+				data 'i_serie' color: rgb('red') value: length(list(people) where (each.state = "I"));
+				data 'r_serie' color: rgb('blue') value: length(list(people) where (each.state = "R"));
 			}			
 		}
 		

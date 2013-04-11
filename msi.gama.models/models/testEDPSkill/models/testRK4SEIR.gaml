@@ -56,10 +56,10 @@ experiment testRK4SEIR type: gui {
 	output {
 		display SIR refresh_every: 1 {
 			chart "SIR" type: series background: rgb('white') {
-				data S value: first(list(node)).S color: rgb('green') ;		
-				data E value: first(list(node)).E color: rgb('black') ;								
-				data I value: first(list(node)).I color: rgb('red') ;
-				data R value: first(list(node)).R color: rgb('blue') ;
+				data 'S' value: first(list(node)).S color: rgb('green') ;		
+				data 'E' value: first(list(node)).E color: rgb('black') ;								
+				data 'I' value: first(list(node)).I color: rgb('red') ;
+				data 'R' value: first(list(node)).R color: rgb('blue') ;
 			}
 		}
 	}

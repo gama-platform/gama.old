@@ -139,9 +139,9 @@ experiment simulation type: gui {
 	        
 	    display chart refresh_every: 10 {
 			chart 'Susceptible' type: series background: rgb('lightGray') style: exploded {
-				data susceptible value: (Host as list) count (each.is_susceptible) color: rgb('green');
-				data infected value: (Host as list) count (each.is_infected) color: rgb('red');
-				data immune value: (Host as list) count (each.is_immune) color: rgb('yellow');
+				data 'susceptible' value: (Host as list) count (each.is_susceptible) color: rgb('green');
+				data 'infected' value: (Host as list) count (each.is_infected) color: rgb('red');
+				data 'immune' value: (Host as list) count (each.is_immune) color: rgb('yellow');
 			}
 //			chart 'Susceptible' type: xy background: rgb('lightGray') style: 3d {
 //				data susceptible value: (Host as list) count (each.is_susceptible) color: rgb('green');
@@ -150,9 +150,9 @@ experiment simulation type: gui {
 		}
 		display SI refresh_every: 1 {
 			chart "SI" type: series background: rgb('white') {
-				data S value: first(list(node)).S color: rgb('green') ;				
-				data I value: first(list(node)).I color: rgb('red') ;
-				data R value: first(list(node)).R color: rgb('yellow') ;				
+				data 'S' value: first(list(node)).S color: rgb('green') ;				
+				data 'I' value: first(list(node)).I color: rgb('red') ;
+				data 'R' value: first(list(node)).R color: rgb('yellow') ;				
 			}
 		}
 			

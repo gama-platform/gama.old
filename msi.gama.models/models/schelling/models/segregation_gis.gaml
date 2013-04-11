@@ -87,12 +87,12 @@ experiment schelling type: gui {
 		}
 		display Charts {
 			chart name: 'Proportion of happiness' type: pie background: rgb('lightGray') style: exploded position: {0,0} size: {1.0,0.5}{
-				data Unhappy value: number_of_people - sum_happy_people ;
-				data Happy value: sum_happy_people ;
+				data 'Unhappy' value: number_of_people - sum_happy_people ;
+				data 'Happy' value: sum_happy_people ;
 			}
 			chart name: 'Global happiness and similarity' type: series background: rgb('lightGray') axes: rgb('white') position: {0,0.5} size: {1.0,0.5} {
-				data happy color: rgb('blue') value:  (sum_happy_people / number_of_people) * 100 style: spline ;
-				data similarity color: rgb('red') value: float (sum_similar_neighbours / sum_total_neighbours) * 100 style: step ;
+				data 'happy' color: rgb('blue') value:  (sum_happy_people / number_of_people) * 100 style: spline ;
+				data 'similarity' color: rgb('red') value: float (sum_similar_neighbours / sum_total_neighbours) * 100 style: step ;
 			}
 		}
 	}

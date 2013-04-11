@@ -106,8 +106,8 @@ experiment simulation type: gui {
 	        
 	    display chart refresh_every: 10 {
 			chart 'Susceptible' type: series background: rgb('lightGray') style: exploded {
-				data susceptible value: (Host as list) count (each.is_susceptible) color: rgb('green');
-				data infected value: (Host as list) count (each.is_infected) color: rgb('red');
+				data 'susceptible' value: (Host as list) count (each.is_susceptible) color: rgb('green');
+				data 'infected' value: (Host as list) count (each.is_infected) color: rgb('red');
 			}
 		}
 			

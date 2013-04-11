@@ -63,8 +63,8 @@ experiment testRK4 type: gui {
 	output {
 		display SI refresh_every: 1 {
 			chart "SI" type: series background: rgb('white') {
-				data S value: first(list(node)).S color: rgb('green') ;				
-				data I value: first(list(node)).I color: rgb('red') ;
+				data 'S' value: first(list(node)).S color: rgb('green') ;				
+				data 'I' value: first(list(node)).I color: rgb('red') ;
 			}
 		}
 	}}
