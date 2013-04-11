@@ -5,6 +5,7 @@
 package msi.gama.lang.gaml.ui;
 
 import java.util.*;
+import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
@@ -42,12 +43,13 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 	public static final Color COLOR_OK = new Color(Display.getDefault(), 0x55, 0x8E, 0x1B);
 	public static final Color COLOR_WARNING = new Color(Display.getDefault(), 0xFD, 0xA6, 0x00);
 	public static final Color COLOR_TEXT = Display.getDefault().getSystemColor(SWT.COLOR_WHITE);
-	private static final int INITIAL_BUTTONS = 10;
+	private static final int INITIAL_BUTTONS = 20;
 	private static Font labelFont;
 	Composite toolbar, top, parent;
 	Button[] buttons = new Button[INITIAL_BUTTONS];
 	Label status;
-	Set<String> currentExperiments = new LinkedHashSet();
+	List<String> completeNamesOfExperiments = new ArrayList();
+	List<String> abbreviatedNamesOfExperiments = new ArrayList();
 	boolean wasOK = true;
 
 	@Inject
@@ -167,6 +169,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		public void widgetSelected(final SelectionEvent evt) {
 			GamlEditor.this.performSave(true, null);
 			String name = convert(((Button) evt.widget).getText());
+			int i = abbreviatedNamesOfExperiments.indexOf(name);
+			if ( i == -1 ) { return; }
+			name = completeNamesOfExperiments.get(i);
 			IModel model = getDocument().readOnly(new IUnitOfWork<IModel, XtextResource>() {
 
 				@Override
@@ -221,8 +226,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 					}
 				}
 				if ( ok ) {
-					int size = currentExperiments.size();
-					if ( size == 1 && currentExperiments.contains(IKeyword.DEFAULT) ) {
+					int size = abbreviatedNamesOfExperiments.size();
+					if ( size == 1 && abbreviatedNamesOfExperiments.contains(IKeyword.DEFAULT) ) {
 						setStatus(
 							COLOR_WARNING,
 							"No experiments have been defined. Run a default experiment with the parameters and outputs directly defined in the model.");
@@ -230,10 +235,10 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 						setStatus(COLOR_OK, size == 1 ? "Run experiment:" : "Choose an experiment:");
 					}
 					int i = 0;
-					if ( currentExperiments.size() > 1 ) {
-						currentExperiments.remove(IKeyword.DEFAULT);
+					if ( abbreviatedNamesOfExperiments.size() > 1 ) {
+						abbreviatedNamesOfExperiments.remove(IKeyword.DEFAULT);
 					}
-					for ( String e : currentExperiments ) {
+					for ( String e : abbreviatedNamesOfExperiments ) {
 						enableButton(i++, e);
 					}
 				} else {
@@ -249,11 +254,35 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 	private void updateExperiments(final Set<String> newExperiments, final boolean withErrors) {
 		if ( withErrors == true && wasOK == false ) { return; }
-
-		if ( wasOK && !withErrors && newExperiments.equals(currentExperiments) ) { return; }
+		GuiUtils.debug("New set of experiments:" + newExperiments);
+		if ( wasOK && !withErrors && newExperiments.equals(completeNamesOfExperiments) ) { return; }
 		wasOK = !withErrors;
-		currentExperiments = newExperiments;
+		completeNamesOfExperiments = new ArrayList(newExperiments);
+		buildAbbreviations();
 		updateToolbar(wasOK);
+	}
+
+	private void buildAbbreviations() {
+		// Very simple method used here
+		int size = completeNamesOfExperiments.size();
+		abbreviatedNamesOfExperiments.clear();
+		if ( size > 10 ) {
+			// We remove "Experiment".
+			for ( String s : completeNamesOfExperiments ) {
+				int i = s.indexOf(' ');
+				if ( i != -1 ) {
+					abbreviatedNamesOfExperiments.add(s.substring(i));
+				}
+			}
+		} else if ( size > 6 ) {
+			// We replace "Experiment" by "Exp."
+			for ( String s : completeNamesOfExperiments ) {
+				abbreviatedNamesOfExperiments.add(s.replaceFirst("Experiment ", "Exp."));
+			}
+		} else {
+			// We copy the name as it is
+			abbreviatedNamesOfExperiments.addAll(completeNamesOfExperiments);
+		}
 	}
 
 	/**
@@ -272,7 +301,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		}
 
 	}
-	
+
 	public GamlJavaValidator getValidator() {
 		return validator;
 	}
