@@ -19,6 +19,8 @@
 package msi.gama.util.graph;
 
 import java.util.*;
+import java.util.Map.Entry;
+
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -94,6 +96,24 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 
 	@Override
 	public String toString() {
+		
+		StringBuffer sb = new StringBuffer();
+		
+		// display the list of verticies
+		sb.append("graph { \nvertices (").append(vertexSet().size()).append("): ").append("[");
+		for ( Object v : vertexSet() ) {
+			sb.append(v.toString()).append(",");
+		}
+		sb.append("]\n");
+		sb.append("edges (").append(edgeSet().size()).append("): [\n");
+		// display each edge
+		for(Entry<K,_Edge<K>> entry : edgeMap.entrySet()) {
+		    K e = entry.getKey();
+		    _Edge<K> v = entry.getValue();
+		    sb.append(e.toString()).append("\t(").append(v.toString()).append("),\n");
+		}
+		sb.append("]\n}");
+		/* old aspect, kept if someone prefers this one.
 		List<String> renderedVertices = new ArrayList<String>();
 		List<String> renderedEdges = new ArrayList<String>();
 		StringBuffer sb = new StringBuffer();
@@ -108,8 +128,9 @@ public class GamaGraph<K, V> implements IGraph<K, V> {
 				.append(outgoingEdgesOf(v));
 			renderedVertices.add(sb.toString());
 			sb.setLength(0);
-		}
-		return "(" + renderedVertices + ", " + renderedEdges + ")";
+		}*/
+		return sb.toString();
+		//return "(" + renderedVertices + ", " + renderedEdges + ")";
 	}
 
 	protected void buildByVertices(final IContainer<?, V> vertices) {
