@@ -44,14 +44,9 @@ global {
 	
 	init {
 
-		 set my_graph <- generate_barabasi_albert( [
-				"edges_specy"::edge,
-				"vertices_specy"::node,
-				"size"::nbAgent,
-				"m"::m_barabasi
-			] );
-		
-		
+
+        my_graph <- generate_barabasi_albert(node,edge,nbAgent,m_barabasi);
+
 		ask node as list{
 			loop i from:0 to:nbTypeOfClass-1{
 				classVector[i] <- rnd(nbValuePerClass-1)+1;
