@@ -56,9 +56,9 @@ entities {
 				set listRes value: t;			
 				do action: write with: [message:: listRes];
 				
-			}else
-				do action: write with: [message::"Connection was closed"];
-			
+			}else{
+				write "Connection was closed";
+			}
 		}
 		reflex close{
 			do action: close;
