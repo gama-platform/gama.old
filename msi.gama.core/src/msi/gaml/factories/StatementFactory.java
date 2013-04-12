@@ -18,6 +18,7 @@
  */
 package msi.gaml.factories;
 
+import static msi.gaml.expressions.GamlExpressionFactory.TRUE_EXPR;
 import static msi.gaml.factories.DescriptionValidator.*;
 import static msi.gaml.factories.VariableValidator.*;
 import java.util.*;
@@ -62,12 +63,10 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 			assertNameIsNotReserved(cd); // Actions, reflexes, states, etc.
 			assertNameIsNotTypeOrSpecies(cd);
 		} else if ( kw.equals(STATE) ) {
-			assertFacetValueIsUniqueInSuperDescription(cd, FsmStateStatement.INITIAL,
-				GamlExpressionFactory.TRUE_EXPR);
-			assertFacetValueIsUniqueInSuperDescription(cd, FsmStateStatement.FINAL,
-				GamlExpressionFactory.TRUE_EXPR);
+			assertFacetValueIsUniqueInSuperDescription(cd, FsmStateStatement.INITIAL, TRUE_EXPR);
+			assertFacetValueIsUniqueInSuperDescription(cd, FsmStateStatement.FINAL, TRUE_EXPR);
 			assertAtLeastOneChildWithFacetValueInSuperDescription(cd, FsmStateStatement.INITIAL,
-				GamlExpressionFactory.TRUE_EXPR);
+				TRUE_EXPR);
 		} else if ( kw.equals(DO) ) {
 			assertActionIsExisting(cd, ACTION);
 		} else if ( kw.equals(FsmTransitionStatement.TRANSITION) ) {
@@ -77,7 +76,9 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 		} else if ( kw.equals(PUT) || kw.equals(ADD) || kw.equals(REMOVE) ) {
 			assertContainerAssignmentIsOk(cd);
 		}
-		if ( kw.equals(SET) || kw.equals(LET) ) {
+		if ( kw.equals(ACTION) ) {
+			assertReturnedValueIsOk(cd);
+		} else if ( kw.equals(SET) || kw.equals(LET) ) {
 			assertAssignmentIsOk(cd);
 		} else if ( desc.getMeta().isUnique() ) {
 			assertKeywordIsUniqueInSuperDescription(cd);

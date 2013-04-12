@@ -153,11 +153,40 @@ public class DescriptionValidator {
 		}
 	}
 
+	public static void assertReturnedValueIsOk(final StatementDescription cd) {
+		Set<StatementDescription> returns = new LinkedHashSet();
+		cd.collectChildren(RETURN, returns);
+		IType at = cd.getType();
+		if ( at == Types.NO_TYPE ) { return; }
+		if ( returns.isEmpty() ) {
+			cd.error("Action " + cd.getName() + " must return a result of type " + at,
+				IGamlIssue.MISSING_RETURN);
+			return;
+		}
+		for ( StatementDescription ret : returns ) {
+			IExpression ie = ret.getFacets().getExpr(VALUE);
+			if ( ie.equals(IExpressionFactory.NIL_EXPR) ) {
+				if ( at.getDefault() != null ) {
+					ret.error("'nil' is not an acceptable " + at);
+				} else {
+					continue;
+				}
+			} else {
+				IType rt = ie.getType();
+				if ( !rt.isTranslatableInto(at) ) {
+					ret.error("Cannot convert from " + rt + " to " + at, IGamlIssue.SHOULD_CAST,
+						VALUE, at.toString());
+				}
+			}
+		}
+		// FIXME This assertion is still simple (i.e. the tree is not verified to ensure that every
+		// branch returns something)
+	}
+
 	public static void assertAssignmentIsOk(final IDescription cd) {
-		IExpression expr =
-			cd.getFacets().getExpr(IKeyword.VAR, cd.getFacets().getExpr(IKeyword.NAME));
+		IExpression expr = cd.getFacets().getExpr(VAR, cd.getFacets().getExpr(NAME));
 		if ( !(expr instanceof IVarExpression) ) {
-			cd.error("This expression is not a reference to a variable ", IKeyword.VAR);
+			cd.error("This expression is not a reference to a variable ", VAR);
 		} else {
 			IExpression value = cd.getFacets().getExpr(VALUE);
 			if ( value != null && value.getType() != Types.NO_TYPE &&
