@@ -45,19 +45,19 @@ public class GamaSpatialPath extends GamaPath<IShape,IShape> {
 	GamaSpatialGraph graph;
 	
 	public GamaSpatialPath(final GamaSpatialGraph g, final IShape start, final IShape target,
-			final IList<IShape> edges) {
-		super(g,start,target,edges);
-		this.init(g, start, target, edges, true);
+			final IList<IShape> _edges) {
+		super(g,start,target,_edges);
+		this.init(g, start, target, _edges, true);
 	}
 
 	public GamaSpatialPath(final GamaSpatialGraph g, final IShape start, final IShape target,
-			final IList<IShape> edges, final boolean modify_edges) {
-		super(g,start,target,edges,modify_edges);
-		this.init(g, start, target, edges, modify_edges);
+			final IList<IShape> _edges, final boolean modify_edges) {
+		super(g,start,target,_edges,modify_edges);
+		this.init(g, start, target, _edges, modify_edges);
 	}
 
 	public void init(final GamaSpatialGraph g, final IShape start, final IShape target,
-			final IList<IShape> edges, final boolean modify_edges) {
+			final IList<IShape> _edges, final boolean modify_edges) {
 		source = start;
 		this.target = target;
 		this.graph = g;
@@ -67,15 +67,15 @@ public class GamaSpatialPath extends GamaPath<IShape,IShape> {
 		graphVersion = 0;
 
 		Geometry firstLine =
-			edges == null || edges.isEmpty() ? null : edges.get(0).getInnerGeometry();
+			_edges == null || _edges.isEmpty() ? null : _edges.get(0).getInnerGeometry();
 		Coordinate pt = null;
 		GamaPoint pt0 = firstLine == null ? null : new GamaPoint(firstLine.getCoordinates()[0]);
 		GamaPoint pt1 =
 			firstLine == null ? null : new GamaPoint(
 				firstLine.getCoordinates()[firstLine.getNumPoints() - 1]);
 		if ( firstLine != null ) {
-			if ( edges.size() > 1 ) {
-				IShape secondLine = edges.get(1).getGeometry();
+			if ( _edges.size() > 1 ) {
+				IShape secondLine = _edges.get(1).getGeometry();
 				pt =
 					pt0.euclidianDistanceTo(secondLine) > pt1.euclidianDistanceTo(secondLine) ? pt0
 						: pt1;
@@ -86,7 +86,7 @@ public class GamaSpatialPath extends GamaPath<IShape,IShape> {
 			if ( graph != null ) {
 				graphVersion = graph.getVersion();
 			}
-			for ( IShape edge : edges ) {
+			for ( IShape edge : _edges ) {
 				if ( modify_edges ) {
 					IAgent ag = edge.getAgent();
 					Geometry geom = edge.getInnerGeometry();
@@ -253,20 +253,20 @@ public class GamaSpatialPath extends GamaPath<IShape,IShape> {
 		int index = 0;
 		int indexSegment = 1;
 		ILocation currentLocation = source.getLocation().copy(scope);
-		IList<IShape> edges = getEdgeList();
-		int nb = edges.size();
+		IList<IShape> _edges = getEdgeList();
+		int nb = _edges.size();
 		if ( !keepSource ) {
 			double distanceS = Double.MAX_VALUE;
 			IShape line = null;
 			for ( int i = 0; i < nb; i++ ) {
-				line = edges.get(i);
+				line = _edges.get(i);
 				double distS = line.euclidianDistanceTo(currentLocation);
 				if ( distS < distanceS ) {
 					distanceS = distS;
 					index = i;
 				}
 			}
-			line = edges.get(index);
+			line = _edges.get(index);
 			currentLocation = Punctal._closest_point_to(currentLocation, line);
 			Point pointGeom = (Point) currentLocation.getInnerGeometry();
 			if ( line.getInnerGeometry().getNumPoints() >= 3 ) {
@@ -286,7 +286,7 @@ public class GamaSpatialPath extends GamaPath<IShape,IShape> {
 				}
 			}
 		}
-		IShape lineEnd = edges.get(nb - 1);
+		IShape lineEnd = _edges.get(nb - 1);
 		int endIndexSegment = lineEnd.getInnerGeometry().getNumPoints();
 		GamaPoint falseTarget = new GamaPoint(target.getLocation());
 		if ( !keepTarget ) {
@@ -311,7 +311,7 @@ public class GamaSpatialPath extends GamaPath<IShape,IShape> {
 			}
 		}
 		for ( int i = index; i < nb; i++ ) {
-			IShape line = edges.get(i);
+			IShape line = _edges.get(i);
 			Coordinate coords[] = line.getInnerGeometry().getCoordinates();
 
 			for ( int j = indexSegment; j < coords.length; j++ ) {

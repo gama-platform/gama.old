@@ -20,6 +20,7 @@ package msi.gama.util.path;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -52,7 +53,7 @@ import msi.gaml.types.IType;
  * IType.LIST, of = IType.POINT)
  */
 })
-public interface IPath<V,E> {// extends IShape {
+public interface IPath<V,E> extends IValue {// extends IShape {
 
 	@getter(IKeyword.SOURCE)
 	public abstract V getStartVertex();

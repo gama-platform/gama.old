@@ -38,7 +38,7 @@ import org.jgrapht.Graphs;
 // Si construit à partir d'un graphe spatial, crée la géométrie à partir des edges passés.
 // Si
 
-public class GamaPath<V,E> implements GraphPath<V,E>, IPath<V,E>, IValue {
+public class GamaPath<V,E> implements GraphPath<V,E>, IPath<V,E> {
 
 	V source, target;
 	GamaList<E> edges;
