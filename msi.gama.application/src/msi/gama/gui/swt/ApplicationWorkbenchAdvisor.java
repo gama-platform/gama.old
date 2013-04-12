@@ -27,7 +27,6 @@ import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamaBundleLoader;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.application.*;
@@ -50,19 +49,6 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		super.initialize(configurer);
 		IDE.registerAdapters();
 		configurer.setSaveAndRestore(true);
-		/* Setting various preferences */
-		IPreferenceStore ps = PlatformUI.getPreferenceStore();
-		/* Show heap memory status in status bar */
-		ps.setValue(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR, true);
-		/* Linking navigator and editors */
-		ps.setValue(IWorkbenchPreferenceConstants.LINK_NAVIGATOR_TO_EDITOR, true);
-		/* Showing new style tabs */
-		ps.setValue(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS, false);
-		/* Setting the default perspective to modeling */
-		ps.setValue(IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID, PERSPECTIVE_MODELING_ID);
-		/* Show progress on startup */
-		ps.setValue(IWorkbenchPreferenceConstants.SHOW_PROGRESS_ON_STARTUP, true);
-		/* Register specific contents in the navigator */
 
 		/* Linking the stock models with the workspace if they are not already */
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
