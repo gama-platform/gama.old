@@ -4,6 +4,8 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
+import msi.gama.metamodel.topology.graph.GraphTopology;
+import msi.gama.metamodel.topology.graph.ISpatialGraph;
 import msi.gama.util.IList;
 import msi.gama.util.graph.IGraph;
 
@@ -41,8 +43,8 @@ public class PathFactory {
 	 
 	 // With Topology 
 	 public static GamaSpatialPath newInstance(final ITopology g, final IList<IShape> nodes){
-		 if(g instanceof GamaSpatialGraph){
-			 return new GamaSpatialPath((GamaSpatialGraph)g,(IList<IShape>) nodes);
+		 if(g instanceof GraphTopology){
+			 return (GamaSpatialPath) newInstance(((GraphTopology) g).getPlaces(),(IList<IShape>) nodes);
 		 }
 		 else {
 			 throw new ClassCastException("Topologies that are not Graph are not yet taken into account");
@@ -50,8 +52,8 @@ public class PathFactory {
 	 }
 	 
 	 public static GamaSpatialPath newInstance(final ITopology g, final IShape start, final IShape target, final IList<IShape> edges){
-		 if(g instanceof GamaSpatialGraph){
-			 return newInstance(g, start, target, edges);
+		 if(g instanceof GraphTopology){
+			 return (GamaSpatialPath) newInstance(((GraphTopology) g).getPlaces(), start, target, edges);
 		 }
 		 else {
 			 throw new ClassCastException("Topologies that are not Graph are not yet taken into account");
@@ -60,8 +62,8 @@ public class PathFactory {
 
 	 public static GamaSpatialPath newInstance(final ITopology g, final IShape start, final IShape target, final IList<IShape> edges, 
 			 final boolean modify_edges){
-		 if(g instanceof GamaSpatialGraph){
-			 return newInstance(g, start, target, edges, modify_edges);
+		 if(g instanceof GraphTopology){
+			 return (GamaSpatialPath) newInstance(((GraphTopology) g).getPlaces(), start, target, edges, modify_edges);
 		 }
 		 else {
 			 throw new ClassCastException("Topologies that are not Graph are not yet taken into account");
