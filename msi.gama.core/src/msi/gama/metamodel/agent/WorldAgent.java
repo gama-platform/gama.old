@@ -56,10 +56,10 @@ public class WorldAgent extends GamlAgent {
 
 	@Override
 	public synchronized void setGeometry(final IShape newGlobalGeometry) {
-		// FIXME Compute the envelope here ?
 		Envelope env = newGlobalGeometry.getEnvelope();
 		gis.init(env);
 		GamaPoint p = new GamaPoint(-1 * env.getMinX(), -1 * env.getMinY());
+		// FIXME Compute the geometry as an envelope here ?
 		geometry = Transformations.translated_by(getScope(), newGlobalGeometry, p);
 		Envelope bounds = geometry.getEnvelope();
 		// bounds.translate(GisUtils.XMinComp, GisUtils.YMinComp);
