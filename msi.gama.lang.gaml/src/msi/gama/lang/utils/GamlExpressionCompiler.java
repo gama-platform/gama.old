@@ -19,7 +19,7 @@
 package msi.gama.lang.utils;
 
 import static msi.gama.common.interfaces.IKeyword.*;
-import static msi.gaml.expressions.GamlExpressionFactory.*;
+import static msi.gaml.expressions.IExpressionFactory.*;
 import java.io.*;
 import java.text.*;
 import java.util.*;
@@ -625,7 +625,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 
 		// HACK
 		if ( s.equals(EACH) ) { return each_expr; }
-		if ( s.equals(NULL) ) { return new ConstantExpression(null, Types.NO_TYPE, Types.NO_TYPE); }
+		if ( s.equals(NULL) ) { return IExpressionFactory.NIL_EXPR; }
 		// We try to find a species name from the name
 		IDescription temp_sd = null;
 		if ( context != null ) {
