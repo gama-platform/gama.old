@@ -23,7 +23,6 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.ChartDataStatement.ChartData;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -33,8 +32,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaColor;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -44,16 +42,13 @@ import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 import org.jfree.chart.*;
 import org.jfree.chart.axis.*;
-import org.jfree.chart.labels.BoxAndWhiskerToolTipGenerator;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 import org.jfree.chart.plot.*;
-import org.jfree.chart.renderer.category.BoxAndWhiskerRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.data.general.*;
-import org.jfree.data.statistics.BoxAndWhiskerCategoryDataset;
-import org.jfree.data.statistics.DefaultBoxAndWhiskerCategoryDataset;
+import org.jfree.data.statistics.*;
 import org.jfree.data.xy.*;
 import org.jfree.ui.RectangleInsets;
 
@@ -70,10 +65,10 @@ import org.jfree.ui.RectangleInsets;
 	@facet(name = IKeyword.POSITION, type = IType.POINT, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.POINT, optional = true),
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true),
-	@facet(name = IKeyword.TIMEXSERIES , type = IType.LIST, optional = true),
+	@facet(name = IKeyword.TIMEXSERIES, type = IType.LIST, optional = true),
 	@facet(name = IKeyword.AXES, type = IType.COLOR, optional = true),
 	@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.XY, IKeyword.HISTOGRAM,
-		IKeyword.SERIES, IKeyword.PIE, IKeyword.BOX_WHISKER}, optional = true),
+		IKeyword.SERIES, IKeyword.PIE, IKeyword.BOX_WHISKER }, optional = true),
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.EXPLODED, IKeyword.THREE_D,
 		IKeyword.STACK, IKeyword.BAR }, optional = true),
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true),
@@ -149,20 +144,19 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		final NumberAxis domainAxis = (NumberAxis) plot.getDomainAxis();
 		if ( isTimeSeries ) {
 			domainAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-				if( timeSeriesXData == null ) {
+			if ( timeSeriesXData == null ) {
 
-					
-					timeSeriesXData =
-						(ChartDataStatement) DescriptionFactory.compile(DescriptionFactory.create(
-							IKeyword.DATA, description, IKeyword.LEGEND, IKeyword.TIME, IKeyword.VALUE,
-							IKeyword.TIME));
-					if(getFacet(IKeyword.TIMEXSERIES)!=null){
-						timeSeriesXData.getDescription().getFacets().get(IKeyword.VALUE).setExpression(getFacet(IKeyword.TIMEXSERIES));
-					}
-
+				timeSeriesXData =
+					(ChartDataStatement) DescriptionFactory.compile(DescriptionFactory.create(
+						IKeyword.DATA, description, IKeyword.LEGEND, IKeyword.TIME, IKeyword.VALUE,
+						IKeyword.TIME));
+				if ( getFacet(IKeyword.TIMEXSERIES) != null ) {
+					timeSeriesXData.getDescription().getFacets().get(IKeyword.VALUE)
+						.setExpression(getFacet(IKeyword.TIMEXSERIES));
 				}
 
-				
+			}
+
 			if ( !datas.contains(timeSeriesXData) ) {
 				datas.add(0, timeSeriesXData.createData(scope));
 			}
@@ -198,38 +192,39 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		history.append(nl);
 
 	}
+
 	/**
 	 * create dataset for box_whisker chart
-     * @return A sample dataset.
-     */
-    private BoxAndWhiskerCategoryDataset createWhisker(IScope scope) {
+	 * @return A sample dataset.
+	 */
+	private BoxAndWhiskerCategoryDataset createWhisker(IScope scope) {
 
-        final CategoryPlot plot = (CategoryPlot) chart.getPlot();
-        final int seriesCount = 1;
-        final int categoryCount = 3;
-        final int entityCount = 2;
-        
-        final DefaultBoxAndWhiskerCategoryDataset dataset 
-            = new DefaultBoxAndWhiskerCategoryDataset();
-        for (int i = 0; i < datas.size(); i++) {
-        	ChartData e=datas.get(i);
-            for (int j = 0; j < categoryCount; j++) {
-                final List list = new ArrayList();
-                // add some values...
-                for (int k = 0; k < entityCount; k++) {
-//                	list.add(new Double(k*2));
-//                	list.add(new Double(k*3));
-                    final double value1 = 10.0 + Math.random() * 3;
-                    list.add(new Double(value1));
-                    final double value2 = 11.25 + Math.random(); // concentrate values in the middle
-                    list.add(new Double(value2));
-                }
-                dataset.add(list, "Series " + i, " Type " + j);
-                
-    			history.append("Series " + i);
-    			history.append(',');
-            }
-        }
+		final CategoryPlot plot = (CategoryPlot) chart.getPlot();
+		final int seriesCount = 1;
+		final int categoryCount = 3;
+		final int entityCount = 2;
+
+		final DefaultBoxAndWhiskerCategoryDataset dataset =
+			new DefaultBoxAndWhiskerCategoryDataset();
+		for ( int i = 0; i < datas.size(); i++ ) {
+			ChartData e = datas.get(i);
+			for ( int j = 0; j < categoryCount; j++ ) {
+				final List list = new ArrayList();
+				// add some values...
+				for ( int k = 0; k < entityCount; k++ ) {
+					// list.add(new Double(k*2));
+					// list.add(new Double(k*3));
+					final double value1 = 10.0 + Math.random() * 3;
+					list.add(new Double(value1));
+					final double value2 = 11.25 + Math.random(); // concentrate values in the middle
+					list.add(new Double(value2));
+				}
+				dataset.add(list, "Series " + i, " Type " + j);
+
+				history.append("Series " + i);
+				history.append(',');
+			}
+		}
 		history.deleteCharAt(history.length() - 1);
 		history.append(nl);
 		plot.setDataset(dataset);
@@ -239,8 +234,8 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		axis.setCategoryMargin(0.1);
 		axis.setUpperMargin(0.05);
 		axis.setLowerMargin(0.05);
-        return dataset;
-    }
+		return dataset;
+	}
 
 	private void createData(final IScope scope) throws GamaRuntimeException {
 		// Normally initialize the datas
@@ -274,14 +269,17 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		final PiePlot plot = (PiePlot) chart.getPlot();
 		for ( final ChartData e : datas ) {
 			final String legend = e.getName();
-			((DefaultPieDataset) dataset).insertValue(i, legend, null);
+			((DefaultPieDataset) dataset).insertValue(i++, legend, null);
 			history.append(legend);
 			history.append(',');
-			i++;
 		}
 		history.deleteCharAt(history.length() - 1);
 		history.append(nl);
 		plot.setDataset((DefaultPieDataset) dataset);
+		i = 0;
+		for ( final ChartData e : datas ) {
+			plot.setSectionPaint(i++, e.getColor());
+		}
 		plot.setLabelGenerator(new StandardPieSectionLabelGenerator("{0} = {1} ({2})"));
 		if ( exploded ) {
 			for ( final Object c : ((DefaultPieDataset) dataset).getKeys() ) {
@@ -359,9 +357,10 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 						true, false, false);
 				break;
 			case BOX_WHISKER_CHART: {
-				chart = ChartFactory.createBoxAndWhiskerChart(
-						  "Box and Whisker Chart", "Time", "Value", (BoxAndWhiskerCategoryDataset) dataset, true);
-						  chart.setBackgroundPaint(new Color(249, 231, 236));
+				chart =
+					ChartFactory.createBoxAndWhiskerChart("Box and Whisker Chart", "Time", "Value",
+						(BoxAndWhiskerCategoryDataset) dataset, true);
+				chart.setBackgroundPaint(new Color(249, 231, 236));
 
 				break;
 			}
@@ -414,7 +413,8 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			String t = Cast.asString(scope, string1.value(scope));
 			type =
 				IKeyword.SERIES.equals(t) ? SERIES_CHART : IKeyword.HISTOGRAM.equals(t)
-					? HISTOGRAM_CHART : IKeyword.PIE.equals(t) ? PIE_CHART : IKeyword.BOX_WHISKER.equals(t)? BOX_WHISKER_CHART : XY_CHART;
+					? HISTOGRAM_CHART : IKeyword.PIE.equals(t) ? PIE_CHART : IKeyword.BOX_WHISKER
+						.equals(t) ? BOX_WHISKER_CHART : XY_CHART;
 
 		}
 		IExpression color = getFacet(IKeyword.AXES);
@@ -447,16 +447,14 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		}
 
 		for ( final ChartData d : datas ) {
-			GamaList x = new GamaList(); 
-			Object obj=d.getValue(scope);
-			if(obj instanceof GamaList){
-				x=(GamaList)obj;
-			}
-			else
-			{
+			GamaList x = new GamaList();
+			Object obj = d.getValue(scope);
+			if ( obj instanceof GamaList ) {
+				x = (GamaList) obj;
+			} else {
 				x.add(obj);
 			}
-			lastValues.put(d.getName(), Double.parseDouble(""+ x.get(x.size()-1) ));
+			lastValues.put(d.getName(), Double.parseDouble("" + x.get(x.size() - 1)));
 		}
 		for ( final Map.Entry<String, Double> d : lastValues.entrySet() ) {
 			String s = d.getKey();
@@ -485,16 +483,14 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	 */
 	private void computeSeries(final IScope scope, final long cycle) throws GamaRuntimeException {
 		if ( datas.isEmpty() ) { return; }
-		GamaList x = new GamaList(); 
-		Object obj=datas.get(0).getValue(scope);
-		if(obj instanceof GamaList){
-			x=(GamaList)obj;
-		}
-		else
-		{
+		GamaList x = new GamaList();
+		Object obj = datas.get(0).getValue(scope);
+		if ( obj instanceof GamaList ) {
+			x = (GamaList) obj;
+		} else {
 			x.add(obj);
 		}
-		for(int i=0; i<x.size(); i++){
+		for ( int i = 0; i < x.size(); i++ ) {
 			history.append(x.get(i));
 			history.append(',');
 		}
@@ -502,17 +498,16 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			XYPlot plot = (XYPlot) chart.getPlot();
 			DefaultTableXYDataset data = (DefaultTableXYDataset) plot.getDataset(i);
 			XYSeries serie = data.getSeries(0);
-			GamaList n = new GamaList(); 
-			Object o=datas.get(i).getValue(scope);
-			if(o instanceof GamaList){
-				n=(GamaList)o;
-			}
-			else
-			{
+			GamaList n = new GamaList();
+			Object o = datas.get(i).getValue(scope);
+			if ( o instanceof GamaList ) {
+				n = (GamaList) o;
+			} else {
 				n.add(o);
 			}
-			for(int j=0; j<n.size(); j++){
-				serie.addOrUpdate((Double.parseDouble(""+x.get(j))) , (Double.parseDouble(""+n.get(j))));
+			for ( int j = 0; j < n.size(); j++ ) {
+				serie.addOrUpdate(Double.parseDouble("" + x.get(j)),
+					Double.parseDouble("" + n.get(j)));
 				history.append(n.get(j));
 				history.append(',');
 			}
