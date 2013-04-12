@@ -33,20 +33,9 @@ import msi.gaml.types.*;
 
 public class GamlExpressionFactory implements IExpressionFactory {
 
-	public GamlExpressionFactory() {}
-
-	public static IExpression TRUE_EXPR;
-	public static IExpression FALSE_EXPR;
-	public static IExpression NIL_EXPR;
-
-	static {
-		IType bool = Types.get(IType.BOOL);
-		TRUE_EXPR = new ConstantExpression(true, bool, bool);
-		FALSE_EXPR = new ConstantExpression(false, bool, bool);
-		NIL_EXPR = new ConstantExpression(null, Types.NO_TYPE, Types.NO_TYPE);
-	}
-
 	IExpressionCompiler parser;
+
+	public GamlExpressionFactory() {}
 
 	@Override
 	public void registerParser(final IExpressionCompiler f) {

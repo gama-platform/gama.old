@@ -21,7 +21,7 @@ package msi.gaml.expressions;
 import java.util.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 27 déc. 2010
@@ -30,6 +30,13 @@ import msi.gaml.types.IType;
  * 
  */
 public interface IExpressionFactory {
+
+	public static final IExpression TRUE_EXPR = new ConstantExpression(true, Types.get(IType.BOOL),
+		Types.get(IType.BOOL));
+	public static final IExpression FALSE_EXPR = new ConstantExpression(false,
+		Types.get(IType.BOOL), Types.get(IType.BOOL));
+	public static final IExpression NIL_EXPR = new ConstantExpression(null, Types.NO_TYPE,
+		Types.NO_TYPE);
 
 	public void registerParser(IExpressionCompiler parser);
 
