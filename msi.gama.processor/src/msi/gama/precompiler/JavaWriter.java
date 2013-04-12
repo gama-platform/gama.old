@@ -47,8 +47,8 @@ public class JavaWriter {
 		" msi.gama.metamodel.shape", "msi.gama.common.interfaces", "msi.gama.runtime", "java.lang",
 		"msi.gama.metamodel.agent", "msi.gaml.types", "msi.gaml.compilation", "msi.gaml.factories",
 		"msi.gaml.descriptions", "msi.gama.util", "msi.gama.util.file", "msi.gama.util.matrix",
-		"msi.gama.util.graph", "msi.gama.runtime.exceptions", "msi.gaml.factories",
-		"msi.gaml.statements", "msi.gaml.skills", "msi.gaml.variables",
+		"msi.gama.util.graph", "msi.gama.util.path", "msi.gama.runtime.exceptions",
+		"msi.gaml.factories", "msi.gaml.statements", "msi.gaml.skills", "msi.gaml.variables",
 		"msi.gama.kernel.experiment", "msi.gaml.operators" };
 	final static String[] EXPLICIT_IMPORTS = new String[] { "msi.gaml.operators.Random",
 		"msi.gaml.operators.Maths", "msi.gaml.operators.Points",
