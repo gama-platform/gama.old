@@ -315,14 +315,19 @@ public class GamaGeometryType extends GamaType<IShape> {
 	public static GamaShape geometriesToGeometry(final IScope scope,
 		final IContainer<?, ? extends IShape> ags) throws GamaRuntimeException {
 		if ( ags == null || ags.isEmpty(scope) ) { return null; }
-		Geometry geom = ((IShape) ags.first(scope)).getInnerGeometry();
 		Geometry geoms[] = new Geometry[ags.length(scope)];
 		int cpt = 0;
-		for ( IShape ent : ags ) {
-			geoms[cpt] = ent.getInnerGeometry();
+		for ( Object ent : ags.iterable(scope) ) {
+			if ( ent == null ) {
+				continue;
+			}
+			if ( !(ent instanceof IShape) ) { throw new GamaRuntimeException(
+				"Cannot cast to geometry a container of " +
+					scope.getModel().getDescription().getTypesManager().get(ent.getClass())); }
+			geoms[cpt] = ((IShape) ent).getInnerGeometry();
 			cpt++;
 		}
-		geom = GeometryUtils.factory.createGeometryCollection(geoms);
+		Geometry geom = GeometryUtils.factory.createGeometryCollection(geoms);
 		geom.union();
 		if ( geom.isValid() && !geom.isEmpty() ) { return new GamaShape(geom); }
 		return null;
