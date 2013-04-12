@@ -51,26 +51,26 @@ public class GamaPath<V,E> implements GraphPath<V,E>, IPath<V,E>, IValue {
 	public GamaPath(){}
 
 	public GamaPath(final IGraph<V,E> g, final V start, final V target,
-		final IList<E> edges) {
-		init(g, start, target, edges, true);
+		final IList<E> _edges) {
+		init(g, start, target, _edges, true);
 		this.graph = g;
 	}
 
 	public GamaPath(final IGraph<V,E> g, final V start, final V target,
-		final IList<E> edges, final boolean modify_edges) {
-		init(g, start, target, edges, modify_edges);
+		final IList<E> _edges, final boolean modify_edges) {
+		init(g, start, target, _edges, modify_edges);
 		this.graph = g;
 	}
 
 	public void init(final IGraph<V,E> g, final V start, final V target,
-		final IList<E> edges, final boolean modify_edges) {
+		final IList<E> _edges, final boolean modify_edges) {
 		this.source = start;
 		this.target = target;
 		this.edges = new GamaList<E>();
 		graphVersion = 0;
 		
-		if(edges != null && edges.size() > 0){
-			for(E edge : edges){
+		if(_edges != null && _edges.size() > 0){
+			for(E edge : _edges){
 				edges.add(edge);
 			}
 		}			
