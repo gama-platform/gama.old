@@ -191,7 +191,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	 * @return Path
 	 */
 	public String getSelectedWorkspaceLocation() {
-		return selectedWorkspaceRootLocation;
+		return getSelectedWorkspaceRootLocation();
 	}
 
 	/* Suggests a default path based on the user.home/GAMA directory location */
@@ -440,7 +440,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		}
 
 		/* Here we set the location so that we can later fetch it again */
-		selectedWorkspaceRootLocation = str;
+		setSelectedWorkspaceRootLocation(str);
 
 		/* And on our preferences as well */
 		GuiUtils.debug("Writing " + str + " in the preferences");
@@ -567,6 +567,14 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			err.printStackTrace();
 			return false;
 		}
+	}
+
+	private String getSelectedWorkspaceRootLocation() {
+		return selectedWorkspaceRootLocation;
+	}
+
+	private void setSelectedWorkspaceRootLocation(String selectedWorkspaceRootLocation) {
+		this.selectedWorkspaceRootLocation = selectedWorkspaceRootLocation;
 	}
 
 }

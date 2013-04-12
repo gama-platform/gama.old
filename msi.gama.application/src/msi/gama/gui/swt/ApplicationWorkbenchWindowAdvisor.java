@@ -24,11 +24,13 @@ import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
+import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.ide.EditorAreaDropAdapter;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchWindowAdvisor;
@@ -112,6 +114,28 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 					.getDeclaringExtension(), new Object[] { wizardElement });
 			}
 		}
+
+		// Menu manager
+
+		IWorkbenchWindow window = Workbench.getInstance().getActiveWorkbenchWindow();
+
+		if ( window instanceof WorkbenchWindow ) {
+			MenuManager menuManager = ((WorkbenchWindow) window).getMenuManager();
+
+			// Finding the original "Switch Workspace ... " item
+			MenuManager item = (MenuManager) menuManager.find("file");
+			ActionContributionItem ws = (ActionContributionItem) item.find("openWorkspace");
+
+			if ( ws != null ) {
+				ws.setVisible(false);
+				// clean old one
+				menuManager.remove(ws);
+				// refresh menu gui
+				menuManager.update();
+			}
+
+		}
+
 	}
 
 	private IWizardDescriptor[] getAllWizards(IWizardCategory[] categories) {
