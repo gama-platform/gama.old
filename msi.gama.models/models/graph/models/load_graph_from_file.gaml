@@ -29,7 +29,7 @@ global {
 		// ... exports the graph in the DGS file format
 		save my_graph type: "dgs" to: "/tmp/test.dgs" rewrite: true;
 		// ... exports the graph in the SVG file format
-		save my_graph type: "svg" to: "/tmp/test.svg" rewrite: true;
+		//save my_graph type: "svg" to: "/tmp/test.svg" rewrite: true;
 		// ... exports the graph in the  gml format
 		save my_graph type: "gml" to: "/tmp/test.gml" rewrite: true;
 		// ... exports the graph in the  gml format
