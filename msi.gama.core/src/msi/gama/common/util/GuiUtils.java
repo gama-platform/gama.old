@@ -82,6 +82,8 @@ public class GuiUtils {
 	public static void errorStatus(final String error) {
 		if ( gui != null ) {
 			gui.setStatus(error, IGui.ERROR);
+		} else {
+			System.out.println("Status:" + error);
 		}
 	}
 
@@ -107,6 +109,8 @@ public class GuiUtils {
 	public static void raise(final Throwable ex) {
 		if ( gui != null ) {
 			gui.raise(ex);
+		} else {
+			ex.printStackTrace();
 		}
 	}
 
@@ -125,24 +129,32 @@ public class GuiUtils {
 	public static void error(final String error) {
 		if ( gui != null ) {
 			gui.error(error);
+		} else {
+			System.out.println(error);
 		}
 	}
 
 	public static void tell(final String message) {
 		if ( gui != null ) {
 			gui.tell(message);
+		} else {
+			System.out.println(message);
 		}
 	}
 
 	public static void informStatus(final String string) {
 		if ( gui != null ) {
 			gui.setStatus(string, IGui.INFORM);
+		} else {
+			System.out.println(string);
 		}
 	}
 
 	public static void asyncRun(final Runnable block) {
 		if ( gui != null ) {
 			gui.asyncRun(block);
+		} else {
+			block.run();
 		}
 	}
 
@@ -155,6 +167,8 @@ public class GuiUtils {
 	public static void informConsole(final String s) {
 		if ( gui != null ) {
 			gui.informConsole(s);
+		} else {
+			System.out.println(s);
 		}
 	}
 
@@ -165,6 +179,8 @@ public class GuiUtils {
 	public static void debugConsole(final int cycle, final String s) {
 		if ( gui != null ) {
 			gui.debugConsole(cycle, s);
+		} else {
+			System.out.println(s);
 		}
 	}
 
@@ -185,18 +201,29 @@ public class GuiUtils {
 	public static void warn(final String string) {
 		if ( gui != null ) {
 			gui.warn(string);
+		} else {
+			System.out.println(string);
 		}
+	}
+
+	public static void debug() {
+		debug("Breakpoint to remove");
+		Thread.dumpStack();
 	}
 
 	public static void debug(final String string) {
 		if ( gui != null ) {
 			gui.debug(string);
+		} else {
+			System.out.println(string);
 		}
 	}
 
 	public static void runtimeError(final GamaRuntimeException g) {
 		if ( gui != null ) {
 			gui.runtimeError(g);
+		} else {
+			System.out.println(g.getMessage());
 		}
 	}
 
@@ -210,9 +237,6 @@ public class GuiUtils {
 		return true;
 	}
 
-	/**
-	 * @param b
-	 */
 	public static void prepareFor(final boolean isGui) {
 		if ( gui != null ) {
 			gui.prepareFor(isGui);
@@ -251,49 +275,26 @@ public class GuiUtils {
 		}
 	}
 
-	//
-	// public static IDisplay createDisplay(final IDisplayLayer layer, final double w, final double
-	// h,
-	// final IGraphics g) {
-	// if ( gui != null ) { return gui.createDisplay(layer, w, h, g); }
-	// return null;
-	// }
-
-	/**
-	 * @return
-	 */
 	public static boolean isModelingPerspective() {
 		return gui == null ? false : gui.isModelingPerspective();
 	}
 
-	/**
-	 * 
-	 */
 	public static void openModelingPerspective() {
 		if ( gui != null ) {
 			gui.openModelingPerspective();
 		}
 	}
 
-	/**
-	 * @return
-	 */
 	public static boolean isSimulationPerspective() {
 		return gui == null ? false : gui.isSimulationPerspective();
 	}
 
-	/**
-	 * 
-	 */
 	public static void togglePerspective() {
 		if ( gui != null ) {
 			gui.togglePerspective();
 		}
 	}
 
-	/**
-	 * 
-	 */
 	public static void openSimulationPerspective() {
 		if ( gui != null ) {
 			gui.openSimulationPerspective();
@@ -320,9 +321,6 @@ public class GuiUtils {
 		return gui != null ? gui.getDisplaySurfaceFor(keyword, layerDisplayOutput, w, h) : null;
 	}
 
-	/**
-	 * 
-	 */
 	public static void clearErrors() {
 		if ( gui != null ) {
 			gui.clearErrors();
