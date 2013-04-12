@@ -169,7 +169,7 @@ entities {
 		point start;
 		point end; 
 		//Polyline in x,y
-		geometry 2DRiver;
+		geometry TwoDRiver;
 		
 		string section_name;
 		list zPoints of:point;
@@ -184,7 +184,7 @@ entities {
 		float A ;	
 		
 		aspect default{
-			draw geometry: 2DRiver color: rgb('blue');
+			draw TwoDRiver color: rgb('blue');
 			draw geometry: lit color: rgb('blue') empty:false;
 		}
 		

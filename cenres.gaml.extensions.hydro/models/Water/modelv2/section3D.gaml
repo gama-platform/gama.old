@@ -17,7 +17,7 @@ global {
 entities {
 	species section3D parent: section {
 		list ptsOfSection3D of:point;
-		list WaterptsOfSection3D of:list;
+		list WaterptsOfSection3D of: list;
 		
 
 		geometry river_channel;
@@ -59,8 +59,10 @@ entities {
 //				set river_channel <- polyline(waterHeightPolyline);
 				loop part over:WaterptsOfSection3D
 				{
-				add polyline(part) to:river_water;
-				add polyline([list(part) at 0,list(part) at (length(list(part))-1)]) to:water_top;
+				//HACK before complete casting (type + contentType) is available
+				list<geometry> part2 <- part;
+				add polyline(part2) to:river_water;
+				add polyline([part2 at 0,part2 at (length(part2)-1)]) to:water_top;
 				}
 			}
 			else {
@@ -68,8 +70,11 @@ entities {
 				{
 				loop partnext over:section3D(next_section).WaterptsOfSection3D
 				{
-				add polygon(part + list(reverse(partnext))) to:river_water;
-				add polygon([list(part) at 0,list(part) at (length(list(part))-2),list(partnext) at (length(list(partnext))-2),list(partnext) at 0]) to:water_top;
+				//HACK before complete casting (type + contentType) is available
+				list<geometry> part2 <- part;
+				list<geometry> partNext2 <- partnext;
+				add polygon(part2 + list(reverse(partnext))) to:river_water;
+				add polygon([(part2) at 0,(part2) at (length((part))-2),(partNext2) at (length(list(partnext))-2),(partNext2) at 0]) to:water_top;
 				}
 				
 				}

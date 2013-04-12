@@ -28,7 +28,7 @@ global {
 	float evolevel<-1.0;	
 	db dba;
 	init {
-		create species : db {
+		create species: db {
 			do action: connect with : [ params :: SQLITE ] ;
 		}
 		set dba <- one_of ( list ( db ) ) ; ask dba {
@@ -247,7 +247,7 @@ entities {
 		float posy;
 		
 		//Polyline in x,y
-		geometry 2DRiver;
+		geometry TwoDRiver;
 		
 		string section_name;
 		list zPoints of:point;
@@ -256,7 +256,7 @@ entities {
 		geometry zSection2;
 		geometry lit;
 		
-		geometry 2DRiver;
+		geometry TwoDRiver;
 		
 
 		geometry waterzSection;
@@ -278,7 +278,7 @@ entities {
 		//Polyline in x,z
 		list zPoints2 of: point;
 		
-		float H<-1;
+		float H<-1.0;
 		float Q;
 		float A ;	
 		

@@ -48,8 +48,9 @@ entities {
 			if(next_section = nil){
 				loop part over:WaterptsOfSection3D
 				{
-					add polyline(part) to: river_water;
-					add polyline([part at 0,part at (length(part)-1)]) to:water_top;
+					list<geometry> part2 <- part;
+					add polyline(part2) to: river_water;
+					add polyline([part2 at 0,part2 at (length(part)-1)]) to:water_top;
 				}
 			}
 			else {
@@ -57,8 +58,10 @@ entities {
 				{
 					loop partnext over:section3D(next_section).WaterptsOfSection3D
 					{
-						add polygon(part + reverse(partnext)) to:river_water;
-						add polygon([part at 0, part at (length(part)-2),partnext at (length(partnext)-2),partnext at 0]) to:water_top;
+						list<geometry> part2 <- part;
+						list<geometry> partnext2 <- partnext;
+						add polygon(part2 + reverse(partnext)) to:river_water;
+						add polygon([part2 at 0, part2 at (length(part)-2),partnext2 at (length(partnext2)-2),partnext2 at 0]) to:water_top;
 					}	
 				}
 			}

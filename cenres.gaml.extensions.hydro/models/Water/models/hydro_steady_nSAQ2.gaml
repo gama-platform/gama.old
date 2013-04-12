@@ -400,7 +400,7 @@ entities {
 		point start;
 		point end; 
 		//Polyline in x,y
-		geometry 2DRiver;
+		geometry TwoDRiver;
 		
 		string section_name;
 		
@@ -485,9 +485,9 @@ experiment hydro_steadymodel01 type: gui {
 			species river;
 		}
 		display displayMaree {
-			chart chartMaree type: histogram {
+			chart 'chartMaree' type: histogram {
 				ask list(section){
-						data d value: self.H;			
+						data 'd' value: self.H;			
 				}
 			}
 		}
