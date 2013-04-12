@@ -8,10 +8,8 @@ global {
 		ask edge as list {
 			do die;
 		}
-
 		set myGraph <- as_distance_graph(list(node), map(["distance"::distance, "species"::edge]));
 	}
-
 }
 
 entities {

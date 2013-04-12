@@ -4,27 +4,29 @@ import 'bug.gaml'
 
 
 global{
-	int distance parameter: 'Distance' min: 1 <- 50 category: 'Model';	
+	int distance parameter: 'Distance' min: 1 <- 20 category: 'Model';	
 }
 
 entities{
 	
-	
+	/*
+	 * The species node mirrors the bug species.
+	 */
 	species node mirrors: list(bug) parent: graph_node edge_species:edge {
 		point location <- target.location update: target.location;
 		
+		//Update the interaction between node
+		//two node are connected if their euclidian distance is smaller than a given value.
 		bool related_to(node other){
 			using topology(target){
 				return (target distance_to other.target) < distance;
 			}
 		}
-		
 		aspect base{
 		  draw sphere(1) color: rgb('green');
 		}
 		aspect dynamic{
 		int degree <-(my_graph) degree_of(self);
-		write "" + degree;
 		  draw sphere(1+ (degree / 5.0)) color: rgb('blue');
 		}
 
@@ -58,5 +60,13 @@ experiment basicGraph type: gui {
 	        species node aspect: dynamic z:0 position: {250,0,0};
 	        species edge aspect: dynamic z:0 position: {250,0,0};
 	    }
+	    
+	    display graph_plus_bug_layered type: opengl ambiant_light: 0.2 {
+			species bug aspect: base;
+			species node aspect: base z: 0.2;
+			species edge aspect: base z: 0.2;
+			species node aspect: dynamic z: 0.4;
+			species edge aspect: dynamic z: 0.4; 
+		}
 	} 
 }
