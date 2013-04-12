@@ -144,15 +144,18 @@ public class ModelFactory extends SymbolFactory {
 			}
 		}
 		if ( !environmentDefined ) {
-			Facets f = new Facets(NAME, SHAPE);
-			f.put(
-				INIT,
-				GAMA.getExpressionFactory().createOperator("envelope", world,
-					new ConstantExpression(100)));
-			ISyntacticElement shape = new SyntacticElement(IKeyword.GEOMETRY, f);
-			VariableDescription vd = (VariableDescription) create(shape, world);
-			world.addChild(vd);
-			world.resortVarName(vd);
+			VariableDescription vd = world.getVariable(SHAPE);
+			if ( !vd.getFacets().containsKey(INIT) ) {
+				Facets f = new Facets(NAME, SHAPE);
+				f.put(
+					INIT,
+					GAMA.getExpressionFactory().createOperator("envelope", world,
+						new ConstantExpression(100)));
+				ISyntacticElement shape = new SyntacticElement(IKeyword.GEOMETRY, f);
+				vd = (VariableDescription) create(shape, world);
+				world.addChild(vd);
+				world.resortVarName(vd);
+			}
 		}
 		// Gather the species created to see if some describe experiments, in which case they are
 		// added to the experiments of the model
@@ -172,27 +175,21 @@ public class ModelFactory extends SymbolFactory {
 	}
 
 	private boolean translateEnvironment(SpeciesDescription world, final ISyntacticElement e) {
-		boolean environmentDefined;
-		environmentDefined = true;
-		ISyntacticElement shape = new SyntacticElement(IKeyword.GEOMETRY, new Facets(NAME, SHAPE));
+		boolean environmentDefined = true;
+		ISyntacticElement shape = new SyntacticElement(GEOMETRY, new Facets(NAME, SHAPE));
 		IExpressionDescription bounds = e.getFacet(BOUNDS);
 		if ( bounds == null ) {
 			IExpressionDescription width = e.getFacet(WIDTH);
 			IExpressionDescription height = e.getFacet(HEIGHT);
 			if ( width != null && height != null ) {
 				bounds =
-					new OperatorExpressionDescription("envelope",
-						new OperatorExpressionDescription(IExpressionCompiler.INTERNAL_POINT,
-							width, height));
+					new OperatorExpressionDescription(IExpressionCompiler.INTERNAL_POINT, width,
+						height);
+			} else {
+				bounds = new ConstantExpressionDescription(100);
 			}
 		}
-		if ( bounds == null ) {
-			bounds =
-				new OperatorExpressionDescription("envelope",
-					new ConstantExpressionDescription(100));
-		} // else {
-			// bounds = new OperatorExpressionDescription("envelope", bounds);
-			// }
+		bounds = new OperatorExpressionDescription("envelope", bounds);
 		shape.setFacet(INIT, bounds);
 		IExpressionDescription depends = e.getFacet(DEPENDS_ON);
 		if ( depends != null ) {
