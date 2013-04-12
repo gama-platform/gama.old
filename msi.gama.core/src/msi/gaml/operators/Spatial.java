@@ -34,8 +34,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.IMatrix;
-import msi.gama.util.path.IPath;
-import msi.gama.util.path.PathFactory;
+import msi.gama.util.path.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
 import com.vividsolutions.jts.algorithm.PointLocator;
@@ -323,6 +322,7 @@ public abstract class Spatial {
 		@operator("envelope")
 		@doc(value = "A rectangular 2D geometry that represents the rectangle that surrounds the geometries or the surface described by the arguments. More general than geometry(arguments).envelope, as it allows to pass int, double, point, image files, shape files, asc files, or any list combining these arguments, in which case the envelope will be correctly expanded. If an envelope cannot be determined from the arguments, a default one of dimensions (0,0,100,100) is returned")
 		public static IShape envelope(final IScope scope, final Object obj) {
+
 			Envelope env = GeometryUtils.computeEnvelopeFrom(scope, obj);
 			if ( env == null ) {
 				env = new Envelope(0, 100, 0, 100);
@@ -932,9 +932,9 @@ public abstract class Spatial {
 			if ( nodes.isEmpty(scope) ) { return null; }
 			int n = nodes.length(scope);
 			IShape source = nodes.first(scope);
-			if ( n == 1 ) { 
-				return PathFactory.newInstance(scope.getTopology(), source, source, new GamaList<IShape>());
-				// return new GamaPath(scope.getTopology(), source, source, new GamaList()); 
+			if ( n == 1 ) { return PathFactory.newInstance(scope.getTopology(), source, source,
+				new GamaList<IShape>());
+			// return new GamaPath(scope.getTopology(), source, source, new GamaList());
 			}
 			IShape target = nodes.last(scope);
 			if ( n == 2 ) { return graph.pathBetween(scope, source, target); }
@@ -947,7 +947,8 @@ public abstract class Spatial {
 				}
 				previous = gg;
 			}
-			return PathFactory.newInstance(graph, source, target, edges); // new GamaPath(graph, source, target, edges);
+			return PathFactory.newInstance(graph, source, target, edges); 
+			// new GamaPath(graph, source, target, edges);
 		}
 
 		@operator(value = "distance_to")

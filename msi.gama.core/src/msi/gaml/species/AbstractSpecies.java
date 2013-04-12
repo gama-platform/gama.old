@@ -20,7 +20,7 @@ package msi.gaml.species;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.agent.*;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -56,7 +56,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		setName(description.getName());
 		isGrid = description.getFacets().equals(IKeyword.KEYWORD, IKeyword.GRID);
 		isGraph =
-			AbstractGraphNodeAgent.class.isAssignableFrom(((TypeDescription) description).getJavaBase());
+			AbstractGraphNodeAgent.class.isAssignableFrom(((TypeDescription) description)
+				.getJavaBase());
 	}
 
 	@Override
@@ -323,7 +324,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	public WithArgs getAction(final String name) {
 		return actions.get(name);
 	}
-	
+
+	@Override
 	public IList<ActionStatement> getActions() {
 		return new GamaList<ActionStatement>(actions.values());
 	}
@@ -342,11 +344,11 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	public IAspect getAspect(final String n) {
 		return aspects.get(n);
 	}
-	
+
+	@Override
 	public IList<IAspect> getAspects() {
 		return new GamaList<IAspect>(aspects.values());
 	}
-
 
 	@Override
 	public IList<String> getAspectNames() {

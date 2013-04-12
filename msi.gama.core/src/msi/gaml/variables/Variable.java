@@ -343,7 +343,5 @@ public class Variable extends Symbol implements IVariable {
 	public ISkill getgSkill() {
 		return gSkill;
 	}
-	
-	
 
 }
