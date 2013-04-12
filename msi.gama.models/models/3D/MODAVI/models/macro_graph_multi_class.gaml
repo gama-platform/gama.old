@@ -38,9 +38,7 @@ global {
 	int macroNodeSize parameter: 'Macro Node size' min: 1 <- 2 category: 'Aspect';
 	
 	int zoomFactor <- nbTypeOfClass;
-	
-	
-		
+			
     list<matrix> interactionMatrix size:nbTypeOfClass;	
 	list<macroNode> macroNodes;
 	
@@ -63,6 +61,7 @@ global {
 		ask edge as list{
 			set self.color <- [125,125,125] as rgb;
 		}	
+		
 		
 		
 		let i<-1;
@@ -113,11 +112,7 @@ entities {
 				classVector[i] <- rnd(nbValuePerClass-1)+1;
 			}	
 		}
-		
-		aspect base {
-			draw shape color: color depth:nodeSize ; 
-		}  
-		
+ 		
 		aspect real {			
 			draw shape color: rgb('white') depth:nodeSize ; 
 			//draw sphere(nodeSize) color: rgb('white');
@@ -272,33 +267,6 @@ experiment generate_graph type: gui {
 		display RealModel  type:opengl ambiant_light: 0.4{
 		  species node aspect: real ; 	
 		}
-				
-		/*display ProxyGraph type:opengl ambiant_light: 0.4{
-			species node aspect: proxy ; 
-			species edge aspect: base ;
-			text name:"original graph" value: ("Generated graph nbAgents: " + nbAgent) position:{110,50,0}; 
-		    text name:"original graph parameters" value: ("NbClass:" + nbTypeOfClass) position:{110,55,0};
-		    text name:"original graph parameters2" value: ("Nb Value per Class:" + nbValuePerClass) position:{110,60,0};
-		}	
-		
-		display Augmented_Graph type:opengl ambiant_light: 0.4{
-			species node aspect: classGenericColored ; 
-			species edge aspect: edgeGenericSpatialized ;
-			//text name:"class1" value:"class1" position:{40,110,0};
-			//text name:"class2" value:"class2" position:{150,110,0};
-			//text name:"class3" value:"class3" position:{250,110,0};
-		}
-				
-		display Augmented_Graph_Spatialized type:opengl ambiant_light: 0.4{
-					
-			species node aspect: classGenericSpatialized ; 
-			species edge aspect: edgeGenericSpatialized ;
-		}
-		
-		display Augmented_Graph_Macro_Spatialized  type:opengl ambiant_light: 0.4{			
-			species macroNode aspect:Generic;
-			species macroEdge aspect:base;
-		}	*/
 		
 		display MODAVI type:opengl ambiant_light: 0.4{
 			species node aspect: real z:0;
@@ -317,17 +285,5 @@ experiment generate_graph type: gui {
 			}		
 		}
 		
-		display Augmented_Graph type:opengl ambiant_light: 0.4	background: rgb('black'){
-					
-			species node aspect: base ; 
-			species edge aspect: base ;		
-			species macroNode aspect:sphere  position: {0,0} z:0.4;
-			species macroEdge aspect:base  position: {0,0} z:0.4;	
-			//text  text1 value:"Original graph" position: {50,110};
-			//text  text2 value:"Interaction graph" position: {170,110};
-			
-		}		
-		
-
 	}		
 }
