@@ -21,6 +21,7 @@ package msi.gama.kernel.model;
 import java.util.Collection;
 import msi.gama.kernel.experiment.IExperiment;
 import msi.gaml.compilation.ISymbol;
+import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.species.ISpecies;
 
 /**
@@ -33,6 +34,9 @@ public interface IModel extends ISymbol {
 
 	@Override
 	public abstract void dispose();
+
+	@Override
+	public ModelDescription getDescription();
 
 	public abstract ISpecies getWorldSpecies();
 

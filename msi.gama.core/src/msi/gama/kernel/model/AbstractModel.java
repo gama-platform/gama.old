@@ -35,23 +35,28 @@ public abstract class AbstractModel extends Symbol implements IModel {
 	}
 
 	@Override
+	public ModelDescription getDescription() {
+		return (ModelDescription) description;
+	}
+
+	@Override
 	public String getRelativeFilePath(final String filePath, final boolean shouldExist) {
-		return ((ModelDescription) description).constructModelRelativePath(filePath, shouldExist);
+		return getDescription().constructModelRelativePath(filePath, shouldExist);
 	}
 
 	@Override
 	public String getFolderPath() {
-		return ((ModelDescription) description).getModelFolderPath();
+		return getDescription().getModelFolderPath();
 	}
 
 	@Override
 	public String getFilePath() {
-		return ((ModelDescription) description).getModelFilePath();
+		return getDescription().getModelFilePath();
 	}
 
 	@Override
 	public String getProjectPath() {
-		return ((ModelDescription) description).getModelProjectPath();
+		return getDescription().getModelProjectPath();
 	}
 
 	protected void addExperiment(final IExperiment exp) {
