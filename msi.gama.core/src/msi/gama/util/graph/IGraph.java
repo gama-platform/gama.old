@@ -53,6 +53,9 @@ public interface IGraph<V, E> extends IContainer<V, E>, WeightedGraph<V, E>, Dir
 	public Collection _internalEdgeSet();
 	public Collection _internalNodesSet();
 	
+	public Map<E, _Edge<V>> _internalEdgeMap();
+	public Map<V, _Vertex<E>> _internalVertexMap();
+	
 	@getter( "edges")
 	public abstract IList getEdges();
 

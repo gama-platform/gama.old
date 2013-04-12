@@ -30,9 +30,12 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.util.graph.GraphExportersFromGraphStream;
+import msi.gama.util.graph.IGraph;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.GraphsGraphstream;
 import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.IType;
 import org.geotools.data.*;
@@ -117,7 +120,24 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			}
 			IExpression item = getFacet(IKeyword.DATA);
 			saveText(type, item, fileTxt, scope);
+			
+		} else if (GraphExportersFromGraphStream.getAvailableExportationFormats().contains(type.toLowerCase())) {
+			
+			IExpression item = getFacet(IKeyword.DATA);
+			IGraph g;
+			if ( item == null ) {
+				scope.setStatus(ExecutionStatus.failure);
+				return null;
+			}
+			g = Cast.asGraph(scope, item);
+			if (g == null ) {
+				scope.setStatus(ExecutionStatus.failure);
+				return null;
+			}
+			GraphExportersFromGraphStream.saveGraphWithGraphstreamToFile(scope, g, null, path, type);
+			
 		} else {
+		
 			throw new GamaRuntimeException("Unable to save, because this format is not recognized ('"+type+"')");
 		}
 		return Cast.asString(scope, file.value(scope));

@@ -11,22 +11,30 @@ global {
 	/*
 	 * The variable that will store the graph
 	 */  
-	graph my_graph; 
-	
-	init {
-		
-		 /*
-		  * The actual loading of the network. 
-		  * Note that for technical reasons, parameters are provided as a gama map.  
-		  */
-		 my_graph <- load_graph_from_file(
+	graph my_graph <- load_graph_from_file(
 		 		"dgs_old",
 				"../includes/BarabasiGenerated.dgs",  
 				nodeSpecy,
 				edgeSpecy
 		 );
+	
+	init {
 			  
+		// export the graph in the console
 		write my_graph;
+		
+		// examples for saving graphs 
+		// ... exports the graph as text (same if type is omitted): same export as the one in the console.
+		save my_graph type: "text" to: "/tmp/test.txt" rewrite: true;
+		// ... exports the graph in the DGS file format
+		save my_graph type: "dgs" to: "/tmp/test.dgs" rewrite: true;
+		// ... exports the graph in the SVG file format
+		save my_graph type: "svg" to: "/tmp/test.svg" rewrite: true;
+		// ... exports the graph in the  gml format
+		save my_graph type: "gml" to: "/tmp/test.gml" rewrite: true;
+		// ... exports the graph in the  gml format
+		save my_graph type: "tikz" to: "/tmp/test.tikz" rewrite: true;
+		
 		
 	 }
 	  
@@ -56,7 +64,7 @@ entities {
 		rgb color <- rgb('blue') ; 
 		
 		aspect base {
-			draw color ;
+			draw shape color:color;
 			
 		}
 		
