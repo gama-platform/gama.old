@@ -39,8 +39,8 @@ import org.jgrapht.graph.*;
 
 public class GamaGraph<V, E> implements IGraph<V, E> {
 
-	protected final Map<E, _Vertex<E>> vertexMap;
-	protected final Map<V, _Edge<V>> edgeMap;
+	protected final Map<V, _Vertex<E>> vertexMap;
+	protected final Map<E, _Edge<V>> edgeMap;
 	protected boolean directed;
 	protected boolean edgeBased;
 	protected boolean agentEdge;
@@ -104,8 +104,8 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		sb.append("]\n");
 		sb.append("edges (").append(edgeSet().size()).append("): [\n");
 		// display each edge
-		for(Entry<V,_Edge<V>> entry : edgeMap.entrySet()) {
-		    V e = entry.getKey();
+		for(Entry<E,_Edge<V>> entry : edgeMap.entrySet()) {
+		    E e = entry.getKey();
 		    _Edge<V> v = entry.getValue();
 		    sb.append(e.toString()).append("\t(").append(v.toString()).append("),\n");
 		}
@@ -162,6 +162,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public Object addEdge(final Object v1, final Object v2) {
+		System.out.println("v1 : " + v1 + " v2 : " + v2);
 		if ( v1 instanceof GamaPair ) {
 			GamaPair p = (GamaPair) v1;
 			if ( addEdge(p.first(), p.last(), v2) ) { return v2; }
@@ -174,7 +175,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 
 	protected Object createNewEdgeObjectFromVertices(final Object v1, final Object v2) {
-		if ( edgeSpecies == null ) { return generateEdgeObject(v1, v2); }
+		if ( edgeSpecies == null) { return generateEdgeObject(v1, v2); }
 		Map<String, Object> map = new GamaMap();
 		IList initVal = new GamaList();
 		map.put(IKeyword.SOURCE, v1);
@@ -212,7 +213,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			return false;
 		}
 		if ( edge == null ) { return false; }
-		edgeMap.put((V) e, edge);
+		edgeMap.put((E) e, edge);
 		dispatchEvent(new GraphEvent(this, this, e, null, GraphEventType.EDGE_ADDED));
 		return true;
 
@@ -240,7 +241,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			return false;
 		}
 		if ( vertex == null ) { return false; }
-		vertexMap.put((E) v, vertex);
+		vertexMap.put((V) v, vertex);
 		dispatchEvent(new GraphEvent(this, this, null, v, GraphEventType.VERTEX_ADDED));
 		return true;
 
