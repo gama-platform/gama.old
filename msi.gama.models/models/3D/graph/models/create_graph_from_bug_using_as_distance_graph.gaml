@@ -44,21 +44,22 @@ entities {
 
 experiment basicGraph type: gui {
 	output {
-		display graph_plus_bug_layered type: opengl ambiant_light: 0.2 {
+	  display graph_plus_bug type:opengl ambiant_light:0.2 {
+	    	species bug aspect:base;
+	        species node aspect: base z:0 position: {125,0,0};
+	        species edge aspect: base z:0 position: {125,0,0};
+	        
+	        species node aspect: dynamic z:0 position: {250,0,0};
+	        species edge aspect: dynamic z:0 position: {250,0,0};
+	    }
+	    
+	    display graph_plus_bug_layered type: opengl ambiant_light: 0.2 {
 			species bug aspect: base;
 			species node aspect: base z: 0.2;
 			species edge aspect: base z: 0.2;
 			species node aspect: dynamic z: 0.4;
 			species edge aspect: dynamic z: 0.4; 
 		}
-
-		/*  display graph_plus_bug_flat type:opengl ambiant_light:0.2{
-	    	species bug aspect:base position: {0,0,0};
-	        species node aspect: base position: {100,0,0};
-	        species edge aspect:base position: {100,0,0};
-	        species node aspect: dynamic position: {200,0,0};
-	        species edge aspect:dynamic position: {200,0,0};
-	    }*/
 	}
 
 }
