@@ -13,7 +13,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.ui.layout.springbox.SpringBox;
+import org.graphstream.ui.layout.springbox.implementations.SpringBox;
 import org.graphstream.ui.swingViewer.*;
 import org.graphstream.ui.swingViewer.Viewer.CloseFramePolicy;
 import org.graphstream.ui.swingViewer.util.FpsCounter;
