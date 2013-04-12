@@ -15,6 +15,7 @@
  * - Francois Sempe, UMI 209 UMMISCO, IRD/UPMC (EMF model, Batch), 2007-2009
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
+ * - Samuel Thiriot, 2012-2013
  */
 package msi.gama.util.graph;
 
@@ -284,6 +285,16 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	@Override
 	public Collection _internalNodesSet() {
 		return edgeMap.values();
+	}
+	
+	@Override
+	public Map<E, _Edge<V>> _internalEdgeMap() {
+		return edgeMap;
+	}
+	
+	@Override
+	public Map<V, _Vertex<E>> _internalVertexMap() {
+		return vertexMap;
 	}
 
 	@Override

@@ -5,10 +5,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -27,8 +29,14 @@ import msi.gaml.species.ISpecies;
 import org.graphstream.algorithm.generator.BarabasiAlbertGenerator;
 import org.graphstream.algorithm.generator.BaseGenerator;
 import org.graphstream.algorithm.generator.WattsStrogatzGenerator;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.implementations.DefaultGraph;
 import org.graphstream.stream.Sink;
 import org.graphstream.stream.SinkAdapter;
+import org.graphstream.stream.file.FileSink;
+import org.graphstream.stream.file.FileSinkDGS;
+import org.graphstream.stream.file.FileSinkDOT;
+import org.graphstream.stream.file.FileSinkGML;
 import org.graphstream.stream.file.FileSource;
 import org.graphstream.stream.file.FileSourceDGS1And2;
 import org.graphstream.stream.file.FileSourceDOT;
@@ -51,7 +59,7 @@ public class GraphsGraphstream {
 
 	/*
 	 * ====== Loading functions
-	 */ 
+	 */
 
 	
 
@@ -171,8 +179,8 @@ public class GraphsGraphstream {
 
 		// init population of edges
 		final IAgent executor = scope.getAgentScope();
-		IPopulation populationNodes = executor.getPopulationFor(nodeSpecies);
-		IPopulation populationEdges = executor.getPopulationFor(edgeSpecies);
+		IPopulation populationNodes = (nodeSpecies == null?null:executor.getPopulationFor(nodeSpecies));
+		IPopulation populationEdges = (edgeSpecies == null?null:executor.getPopulationFor(edgeSpecies));
 
 		// creates the graph to be filled
 		IGraph createdGraph = new GamaGraph(false);
@@ -239,21 +247,28 @@ public class GraphsGraphstream {
 		put("ncol", 	FileSourceNCol.class);
 		
 	}};
+	/**
+	 * the comment for all the operators
+	 */
+	static private final String comment =  "Available formats: " +
+			"\"pajek\": Pajek (Slovene word for Spider) is a program, for Windows, for analysis and visualization of large networks. See: http://pajek.imfm.si/doku.php?id=pajek for more details."+
+			"\"dgs_old\", \"dgs\": DGS is a file format allowing to store graphs and dynamic graphs in a textual human readable way, yet with a small size allowing to store large graphs. Graph dynamics is defined using events like adding, deleting or changing a node or edge. With DGS, graphs will therefore be seen as stream of such events. [From GraphStream related page: http://graphstream-project.org/]"+
+			"\"lgl\": LGL is a compendium of applications for making the visualization of large networks and trees tractable. See: http://lgl.sourceforge.net/ for more details."+
+			"\"dot\": DOT is a plain text graph description language. It is a simple way of describing graphs that both humans and computer programs can use. See: http://en.wikipedia.org/wiki/DOT_language for more details."+
+			"\"edge\": This format is a simple text file with numeric vertex ids defining the edges."+
+			"\"gexf\": GEXF (Graph Exchange XML Format) is a language for describing complex networks structures, their associated data and dynamics. Started in 2007 at Gephi project by different actors, deeply involved in graph exchange issues, the gexf specifications are mature enough to claim being both extensible and open, and suitable for real specific applications. See: http://gexf.net/format/ for more details."+
+			"\"graphml\": GraphML is a comprehensive and easy-to-use file format for graphs based on XML. See: http://graphml.graphdrawing.org/ for more details."+
+			"\"tlp\" or \"tulip\": TLP is the Tulip software graph format. See: http://tulip.labri.fr/TulipDrupal/?q=tlp-file-format for more details. "+
+			"\"ncol\": This format is used by the Large Graph Layout progra. It is simply a symbolic weighted edge list. It is a simple text file with one edge per line. An edge is defined by two symbolic vertex names separated by whitespace. (The symbolic vertex names themselves cannot contain whitespace.) They might followed by an optional number, this will be the weight of the edge. See: http://bioinformatics.icmb.utexas.edu/lgl for more details."+
+			"The map operand should includes following elements:";
+	
+	
+	// version depuis un filename avec edge et specy
 	
 	@operator(value = "load_graph_from_file")
 	@doc(
 		value = "returns a graph loaded from a given file encoded into a given format.",
-		comment = "Available formats: " +
-				"\"pajek\": Pajek (Slovene word for Spider) is a program, for Windows, for analysis and visualization of large networks. See: http://pajek.imfm.si/doku.php?id=pajek for more details."+
-				"\"dgs_old\", \"dgs\": DGS is a file format allowing to store graphs and dynamic graphs in a textual human readable way, yet with a small size allowing to store large graphs. Graph dynamics is defined using events like adding, deleting or changing a node or edge. With DGS, graphs will therefore be seen as stream of such events. [From GraphStream related page: http://graphstream-project.org/]"+
-				"\"lgl\": LGL is a compendium of applications for making the visualization of large networks and trees tractable. See: http://lgl.sourceforge.net/ for more details."+
-				"\"dot\": DOT is a plain text graph description language. It is a simple way of describing graphs that both humans and computer programs can use. See: http://en.wikipedia.org/wiki/DOT_language for more details."+
-				"\"edge\": This format is a simple text file with numeric vertex ids defining the edges."+
-				"\"gexf\": GEXF (Graph Exchange XML Format) is a language for describing complex networks structures, their associated data and dynamics. Started in 2007 at Gephi project by different actors, deeply involved in graph exchange issues, the gexf specifications are mature enough to claim being both extensible and open, and suitable for real specific applications. See: http://gexf.net/format/ for more details."+
-				"\"graphml\": GraphML is a comprehensive and easy-to-use file format for graphs based on XML. See: http://graphml.graphdrawing.org/ for more details."+
-				"\"tlp\" or \"tulip\": TLP is the Tulip software graph format. See: http://tulip.labri.fr/TulipDrupal/?q=tlp-file-format for more details. "+
-				"\"ncol\": This format is used by the Large Graph Layout progra. It is simply a symbolic weighted edge list. It is a simple text file with one edge per line. An edge is defined by two symbolic vertex names separated by whitespace. (The symbolic vertex names themselves cannot contain whitespace.) They might followed by an optional number, this will be the weight of the edge. See: http://bioinformatics.icmb.utexas.edu/lgl for more details."+
-				"The map operand should includes following elements:",
+		comment = GraphsGraphstream.comment,
 		special_cases = {
 			"\format\": the format of the file",
 			"\"filename\": the filename of the file containing the network",
@@ -262,9 +277,9 @@ public class GraphsGraphstream {
 		examples = {
 				"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
 				"			\"pajek\",",
-				"			\"example_of_Pajek_file\",",  
+				"			\"./example_of_Pajek_file\",",  
 				"			myVertexSpecy,",
-				"			myEdgeSpecy] );"},			
+				"			myEdgeSpecy );"},			
 		see = "TODO")
 	public static IGraph primLoadGraphFromFile(final IScope scope,
 			final String format, final String filename, final ISpecies vertex_specy, final ISpecies edge_specy) throws GamaRuntimeException {		
@@ -293,23 +308,15 @@ public class GraphsGraphstream {
 		
 	}
 	
+	// version depuis un file avec edge et specy
+	
 	@operator(value = "load_graph_from_file")
 	@doc(
 		value = "returns a graph loaded from a given file encoded into a given format.",
-		comment = "Available formats: " +
-				"\"pajek\": Pajek (Slovene word for Spider) is a program, for Windows, for analysis and visualization of large networks. See: http://pajek.imfm.si/doku.php?id=pajek for more details."+
-				"\"dgs_old\", \"dgs\": DGS is a file format allowing to store graphs and dynamic graphs in a textual human readable way, yet with a small size allowing to store large graphs. Graph dynamics is defined using events like adding, deleting or changing a node or edge. With DGS, graphs will therefore be seen as stream of such events. [From GraphStream related page: http://graphstream-project.org/]"+
-				"\"lgl\": LGL is a compendium of applications for making the visualization of large networks and trees tractable. See: http://lgl.sourceforge.net/ for more details."+
-				"\"dot\": DOT is a plain text graph description language. It is a simple way of describing graphs that both humans and computer programs can use. See: http://en.wikipedia.org/wiki/DOT_language for more details."+
-				"\"edge\": This format is a simple text file with numeric vertex ids defining the edges."+
-				"\"gexf\": GEXF (Graph Exchange XML Format) is a language for describing complex networks structures, their associated data and dynamics. Started in 2007 at Gephi project by different actors, deeply involved in graph exchange issues, the gexf specifications are mature enough to claim being both extensible and open, and suitable for real specific applications. See: http://gexf.net/format/ for more details."+
-				"\"graphml\": GraphML is a comprehensive and easy-to-use file format for graphs based on XML. See: http://graphml.graphdrawing.org/ for more details."+
-				"\"tlp\" or \"tulip\": TLP is the Tulip software graph format. See: http://tulip.labri.fr/TulipDrupal/?q=tlp-file-format for more details. "+
-				"\"ncol\": This format is used by the Large Graph Layout progra. It is simply a symbolic weighted edge list. It is a simple text file with one edge per line. An edge is defined by two symbolic vertex names separated by whitespace. (The symbolic vertex names themselves cannot contain whitespace.) They might followed by an optional number, this will be the weight of the edge. See: http://bioinformatics.icmb.utexas.edu/lgl for more details."+
-				"The map operand should includes following elements:",
+		comment = GraphsGraphstream.comment,
 		special_cases = {
 			"\format\": the format of the file",
-			"\"filename\": the filename of the file containing the network",
+			"\"file\": the file containing the network",
 			"\"edges_specy\": the species of edges",
 				"\"vertices_specy\": the species of vertices"},	
 		examples = {
@@ -317,7 +324,7 @@ public class GraphsGraphstream {
 				"			\"pajek\",",
 				"			\"example_of_Pajek_file\",",  
 				"			myVertexSpecy,",
-				"			myEdgeSpecy] );"},			
+				"			myEdgeSpecy );"},			
 		see = "TODO")
 	public static IGraph primLoadGraphFromFile(final IScope scope,
 			final String format, final GamaFile<?,?> gamaFile, final ISpecies vertex_specy, final ISpecies edge_specy) throws GamaRuntimeException {		
@@ -346,13 +353,104 @@ public class GraphsGraphstream {
 		
 	}
 	
+
+	// version depuis un filename sans edge et sans specy
+	
+	@operator(value = "load_graph_from_file")
+	@doc(
+		value = "returns a graph loaded from a given file encoded into a given format.",
+		comment = GraphsGraphstream.comment,
+		special_cases = {
+			"\format\": the format of the file",
+			"\"filename\": the filename of the file containing the network"
+			},	
+		examples = {
+				"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
+				"			\"pajek\",",
+				"			\"example_of_Pajek_file\");"},			
+		see = "TODO")
+	public static IGraph primLoadGraphFromFile(final IScope scope,
+			final String format, final String filename) throws GamaRuntimeException {		
+		
+		Class<? extends FileSource> parserClass = typestr2filesourceParser.get(format.toLowerCase());
+		if (parserClass == null)
+			throw new GamaRuntimeException("This format is not recognized ("+format+")");
+		
+		FileSource parser = null;
+		try {
+			parser = parserClass.newInstance();
+		} catch (InstantiationException e) {
+			throw new GamaRuntimeException(e);
+		} catch (IllegalAccessException e) {
+			throw new GamaRuntimeException(e);
+		}
+		
+		return loadGraphWithGraphstreamFromFileSourceBase(
+				scope,
+				null, 
+				null, 
+				null,
+				filename, 
+				parser
+				);		
+		
+	}
+	
+	// version depuis un file avec edge et specy
+	
+	@operator(value = "load_graph_from_file")
+	@doc(
+		value = "returns a graph loaded from a given file encoded into a given format.",
+		comment = GraphsGraphstream.comment,
+		special_cases = {
+			"\format\": the format of the file",
+			"\"file\": the file containing the network",
+			},	
+		examples = {
+				"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
+				"			\"pajek\",",
+				"			\"example_of_Pajek_file\");"},			
+		see = "TODO")
+	public static IGraph primLoadGraphFromFile(final IScope scope,
+			final String format, final GamaFile<?,?> gamaFile) throws GamaRuntimeException {		
+		
+		Class<? extends FileSource> parserClass = typestr2filesourceParser.get(format.toLowerCase());
+		if (parserClass == null)
+			throw new GamaRuntimeException("This format is not recognized ("+format+")");
+		
+		FileSource parser = null;
+		try {
+			parser = parserClass.newInstance();
+		} catch (InstantiationException e) {
+			throw new GamaRuntimeException(e);
+		} catch (IllegalAccessException e) {
+			throw new GamaRuntimeException(e);
+		}
+		
+		return loadGraphWithGraphstreamFromFileSourceBase(
+				scope,
+				null, 
+				null, 
+				gamaFile,
+				null, 
+				parser
+				);		
+		
+	}
+	
+	
+
+	/*
+	 * ============ Saving to files
+	 */
+	
+	
+	
 	
 	/*
 	 * ============ Generation functions
 	 */
 	
-	
-
 	/**
 	 * Loads the graph from the graphstream generator passed
 	 * as parameter and according to the parameters passed from GAMA.
@@ -437,7 +535,7 @@ public class GraphsGraphstream {
 				vertices_specy,
 				edges_specy,
 				new BarabasiAlbertGenerator(m),
-				(size-1)	// nota: corrects a bug into the underlying library - should be removed later once the library is corrected !
+				(size-2)	// nota: in graphstream, two nodes are already created by default.
 				);
 		
 	}
@@ -460,7 +558,7 @@ public class GraphsGraphstream {
 			"			myEdgeSpecy,",
 			"			2,",
 			"			0.3,",
-			"			0);"},
+			"			2);"},
 		see = {"generate_barabasi_albert"})		
 	public static IGraph generateGraphstreamWattsStrogatz(final IScope scope, 
 			final ISpecies vertices_specy, final ISpecies edges_specy, final Integer size, final Double p, final Integer k) {
@@ -474,6 +572,7 @@ public class GraphsGraphstream {
 				);
 		
 	}
+	
 	
 	
 }
