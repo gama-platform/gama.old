@@ -20,7 +20,7 @@ global {
 		  * The actual generation of the network. 
 		  * Note that for technical reasons, parameters are provided as a gama map.  
 		  */
-		 my_graph <- generate_barabasi_albert(edgeSpecy,nodeSpecy,100,4);
+		 my_graph <- generate_barabasi_albert(nodeSpecy,edgeSpecy,100,4);
 			  
 	 }
 
@@ -57,7 +57,7 @@ entities {
 		rgb color <- rgb('blue') ; 
 		
 		aspect base {
-			draw color: color ;
+			draw  color: color ;
 			
 		}
 		

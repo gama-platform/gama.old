@@ -60,7 +60,7 @@ entities {
 		rgb color <- rgb('blue') ; 
 		
 		aspect base {
-			draw color: color ;
+			draw shape color: color ;
 			
 		}
 		
@@ -75,9 +75,9 @@ experiment generate_graph type: gui {
 		 * and location. This provides a spatialized view of the network.
 		 * 
 		 */
-		display test_display refresh_every: 1 {
+		display test_display  {
 			species nodeSpecy aspect: base ; 
-			species edgeSpecy aspect: base ;
+		    species edgeSpecy aspect: base ;
 		}
 		
 		/*
