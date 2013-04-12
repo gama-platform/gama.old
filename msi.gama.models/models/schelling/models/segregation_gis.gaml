@@ -4,6 +4,7 @@ model segregation
 
 import "../include/schelling_common.gaml" 
 global {
+	geometry shape <- envelope(shape_file_name);
 	list free_places <- [] of: space;  
 	list all_places <- [] of: space;
 	int neighbours_distance <- 50 min: 1 parameter: 'Distance of perception:' category: 'Population' max: 1000;
@@ -32,6 +33,7 @@ entities {
 		const blue type: int <- color as list at 2; 
 		space current_building <- nil;
 		list<people> my_neighbours -> {people at_distance neighbours_distance}; 
+
 		action move_to_new_place {  
 			set current_building <- (shuffle(all_places) first_with (((each).capacity) > 0));
 			ask current_building {
@@ -77,7 +79,7 @@ entities {
 		} 
 	}
 }
-environment bounds: shape_file_name; 
+//environment bounds: shape_file_name; 
 
 experiment schelling type: gui {	
 	output {

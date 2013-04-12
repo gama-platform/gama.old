@@ -241,7 +241,7 @@ global skills: [moving] control: fsm {
 		do wander(100, 100, self.shape); // speed, amplitude, bounds as defined in primitive wander
 		int d <- self.max(10, 100);
 		int d <- self max (10, 100);
-		int d <- max(10, 100);  
+		int d <- max(10, 100);
 		list others <- filter(species1);
 
 		// As a side note, the new syntax for arguments maps is not only usable in action calls, but also in create, for instance
@@ -253,8 +253,9 @@ global skills: [moving] control: fsm {
 	}
 
 	list<agent> filter (container<agent> agents) {
-		return agents where each.location = nil;
+		return agents where (each.location = nil);
 	}
+
 
 	// 	  
 	// 	 int max (list<int> integers <- [0]) {

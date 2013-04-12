@@ -187,7 +187,7 @@ entities {
 			if (distance_to_ball < distance_to_group) {
 				return nearest_free_ball ;
 			}
-			
+			 
 			return nearest_smaller_group ;
 		}
 		

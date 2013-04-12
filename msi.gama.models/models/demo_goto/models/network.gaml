@@ -2,10 +2,11 @@ model Network
 // Proposed by Patrick Taillandier
 
 global {
-	file shape_file_in <- file('../includes/gis/roads.shp') ;
-	//file shape_file_in <- file('../includes/gis/Reseau_Rouen_limit.shp') ;
+	//file shape_file_in <- file('../includes/gis/roads.shp') ;
+	file shape_file_in <- file('../includes/gis/Reseau_Rouen_limit.shp') ;
 	//file shape_file_in <- file('../includes/gis/Reseau_TC.shp') ;
 	graph the_graph; 
+	geometry shape <- envelope(shape_file_in);
 	init {    
 		create road from: shape_file_in ;
 		set the_graph <- as_edge_graph(list(road));
@@ -24,7 +25,7 @@ global {
 		
 	}
 }
-environment bounds:  shape_file_in ; 
+//environment bounds:  shape_file_in ; 
 entities {
 	species road  {
 		float speed_coef ;
