@@ -372,4 +372,15 @@ public class StatementDescription extends SymbolDescription {
 		// return !getKeyword().equals(PRIMITIVE) && getChildren().isEmpty();
 	}
 
+	public void collectChildren(String keyword, Set<StatementDescription> returns) {
+		if ( getKeyword().equals(keyword) ) {
+			returns.add(this);
+		} else if ( children != null ) {
+			for ( IDescription child : children ) {
+				if ( child instanceof StatementDescription ) {
+					((StatementDescription) child).collectChildren(keyword, returns);
+				}
+			}
+		}
+	}
 }
