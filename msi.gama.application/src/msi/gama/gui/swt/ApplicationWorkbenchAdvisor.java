@@ -69,6 +69,21 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		if ( workspace.getRoot().getProjects().length == 0 ) {
 			linkSampleModelsToWorkspace(workspace);
 		}
+
+		try {
+			IDecoratorManager dm = configurer.getWorkbench().getDecoratorManager();
+			dm.setEnabled("org.eclipse.pde.ui.binaryProjectDecorator", false);
+			dm.setEnabled("org.eclipse.jdt.ui.decorator", false);
+			dm.setEnabled("org.eclipse.jdt.ui.interface.decorator", false);
+			dm.setEnabled("org.eclipse.jdt.ui.buildpath.decorator", false);
+			dm.setEnabled("org.eclipse.jdt.ui.override.decorator", false);
+			dm.setEnabled("org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator", true);
+			dm.setEnabled("org.eclipse.ui.LinkedResourceDecorator", false);
+			dm.setEnabled("org.eclipse.ui.VirtualResourceDecorator", false);
+			dm.setEnabled("org.eclipse.xtext.builder.nature.overlay", false);
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 		/* Early build of the contributions made by plugins to GAMA */
 		GamaBundleLoader.preBuildContributions();
 	}
