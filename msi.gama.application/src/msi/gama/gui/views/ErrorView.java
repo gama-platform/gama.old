@@ -23,7 +23,6 @@ import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
@@ -52,7 +51,9 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 	}
 
 	public void addNewError(final GamaRuntimeException e) {
-		exceptions.add(e);
+		if ( e != null ) {
+			exceptions.add(e);
+		}
 		if ( showErrors ) {
 			reset();
 			displayItems();
@@ -109,26 +110,27 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 
 			});
 
-//		EditorFactory.create(parameters, "Pause and reveal in editor", GAMA.TREAT_ERRORS_AS_FATAL,
-//			new EditorListener<Boolean>() {
-//
-//				@Override
-//				public void valueModified(final Boolean newValue) {
-//
-//					GAMA.TREAT_ERRORS_AS_FATAL = newValue;
-//				}
-//
-//			});
-		EditorFactory.create(parameters, "Treat warnings as errors ",
-			GAMA.TREAT_WARNINGS_AS_ERRORS, new EditorListener<Boolean>() {
-
-				@Override
-				public void valueModified(final Boolean newValue) {
-
-					GAMA.TREAT_WARNINGS_AS_ERRORS = newValue;
-				}
-
-			});
+		// EditorFactory.create(parameters, "Pause and reveal in editor",
+		// GAMA.TREAT_ERRORS_AS_FATAL,
+		// new EditorListener<Boolean>() {
+		//
+		// @Override
+		// public void valueModified(final Boolean newValue) {
+		//
+		// GAMA.TREAT_ERRORS_AS_FATAL = newValue;
+		// }
+		//
+		// });
+		// EditorFactory.create(parameters, "Treat warnings as errors ",
+		// GAMA.TREAT_WARNINGS_AS_ERRORS, new EditorListener<Boolean>() {
+		//
+		// @Override
+		// public void valueModified(final Boolean newValue) {
+		//
+		// GAMA.TREAT_WARNINGS_AS_ERRORS = newValue;
+		// }
+		//
+		// });
 
 		EditorFactory.create(parameters, "Most recent first", mostRecentFirst,
 			new EditorListener<Boolean>() {
@@ -142,21 +144,21 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 				}
 
 			});
-		EditorFactory.create(parameters, "Show errors/warnings", showErrors,
-			new EditorListener<Boolean>() {
-
-				@Override
-				public void valueModified(final Boolean newValue) {
-
-					showErrors = newValue;
-					if ( showErrors ) {
-						reset();
-						displayItems();
-					}
-
-				}
-
-			});
+		// EditorFactory.create(parameters, "Show errors/warnings", showErrors,
+		// new EditorListener<Boolean>() {
+		//
+		// @Override
+		// public void valueModified(final Boolean newValue) {
+		//
+		// showErrors = newValue;
+		// if ( showErrors ) {
+		// reset();
+		// displayItems();
+		// }
+		//
+		// }
+		//
+		// });
 		parameters.pack();
 		parent = intermediate;
 	}
