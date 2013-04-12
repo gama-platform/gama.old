@@ -309,6 +309,7 @@ public class Graphs {
 	@doc(special_cases = "if the operand is a map, the graph will be built by creating edges from pairs of the map", examples = "as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}])  --:  build a graph with these three vertices and two edges")
 	public static IGraph spatialFromEdges(final IScope scope, final GamaMap edges) {
 		// Edges are represented by pairs of vertex::vertex
+		
 		return GamaGraphType.from(scope, edges, true);
 	}
 
@@ -345,7 +346,6 @@ public class Graphs {
 		"as_intersection_graph", "as_edge_graph" })
 	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices,
 		final Double distance, final ISpecies edgeSpecies) {
-		java.lang.System.out.println("distance : " + distance + " edgeSpecies : " + edgeSpecies);
 		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance),
 			edgeSpecies, scope);
 	}

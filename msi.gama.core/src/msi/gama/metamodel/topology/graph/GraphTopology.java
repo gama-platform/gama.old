@@ -19,6 +19,8 @@
 package msi.gama.metamodel.topology.graph;
 
 import java.util.*;
+
+import weka.core.mathematicalexpression.sym;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.*;
@@ -83,6 +85,7 @@ public class GraphTopology extends AbstractTopology {
 
 	public IPath pathBetweenCommon(final IShape edgeS, final IShape edgeT, final IShape source,
 		final IShape target) {
+			
 		if ( edgeS == edgeT ) { return new GamaPath(this, source, target, GamaList.with(edgeS)); }
 		IShape s1 = null;
 		IShape t1 = null;
@@ -129,7 +132,6 @@ public class GraphTopology extends AbstractTopology {
 	@Override
 	public IPath pathBetween(IScope scope, final ILocation source, final ILocation target) {
 		IShape edgeS = null, edgeT = null;
-
 		if ( !this.getPlaces().getEdges().isEmpty() ) {
 			if ( this.getPlaces() instanceof GamaSpatialGraph &&
 				!((GamaSpatialGraph) this.getPlaces()).isAgentEdge() ) {

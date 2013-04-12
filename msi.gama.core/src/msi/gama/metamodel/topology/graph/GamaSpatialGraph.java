@@ -42,7 +42,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	 * graph.
 	 */
 	private ITopology topology;
-	private final GamaMap<Integer, IShape> verticesBuilt; // only used for optimization purpose of spatial graph
+	private  GamaMap<Integer, IShape> verticesBuilt ; // only used for optimization purpose of spatial graph
 	// building.
 
 
@@ -68,10 +68,11 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	public GamaSpatialGraph(final IContainer edgesOrVertices, final boolean byEdge,
 		final boolean directed, final VertexRelationship rel, final ISpecies edgesSpecies,
 		final IScope scope) {
-		super(edgesOrVertices, byEdge, directed, rel, edgesSpecies, scope);
-		verticesBuilt = new GamaMap<Integer, IShape>();
-
-	}
+		super();
+		verticesBuilt  = new GamaMap<Integer, IShape>();
+		init(edgesOrVertices, byEdge, directed,rel, edgesSpecies, scope);
+		
+	} 
 
 	@Override
 	public GamaSpatialGraph copy(IScope scope) {

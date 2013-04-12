@@ -75,9 +75,19 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	public GamaGraph(final IContainer edgesOrVertices, final boolean byEdge, final boolean directed,
 		final VertexRelationship rel, final ISpecies edgesSpecies, final IScope scope) {
-		this.directed = directed;
 		vertexMap = new GamaMap();
 		edgeMap = new GamaMap();
+		init(edgesOrVertices, byEdge, directed,rel, edgesSpecies, scope);
+	}
+	
+	public GamaGraph() {
+		vertexMap = new GamaMap();
+		edgeMap = new GamaMap();
+	}
+	
+	protected void init (final IContainer edgesOrVertices, final boolean byEdge, final boolean directed,
+	final VertexRelationship rel, final ISpecies edgesSpecies, final IScope scope) {
+		this.directed = directed;
 		edgeBased = byEdge;
 		vertexRelation = rel;
 		edgeSpecies = edgesSpecies;
@@ -162,7 +172,6 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public Object addEdge(final Object v1, final Object v2) {
-		System.out.println("v1 : " + v1 + " v2 : " + v2);
 		if ( v1 instanceof GamaPair ) {
 			GamaPair p = (GamaPair) v1;
 			if ( addEdge(p.first(), p.last(), v2) ) { return v2; }
@@ -478,6 +487,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public IList<IShape> computeBestRouteBetween(final Object source, final Object target) {
+		
 		switch (optimizerType) {
 			case 1:
 				if ( optimizer == null ) {
@@ -490,6 +500,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			case 3:
 				DijkstraShortestPath<GamaShape, GamaShape> p2 =
 					new DijkstraShortestPath(getProxyGraph(), source, target);
+				
 				return new GamaList<IShape>(p2.getPathEdgeList());
 		}
 		return new GamaList<IShape>();
