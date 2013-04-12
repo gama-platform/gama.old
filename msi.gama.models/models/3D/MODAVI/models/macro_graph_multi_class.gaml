@@ -114,6 +114,10 @@ entities {
 			}	
 		}
 		
+		aspect base {
+			draw shape color: color depth:nodeSize ; 
+		}  
+		
 		aspect real {			
 			draw shape color: rgb('white') depth:nodeSize ; 
 			//draw sphere(nodeSize) color: rgb('white');
@@ -311,7 +315,18 @@ experiment generate_graph type: gui {
 			graphics arrow{
 				
 			}		
-		}	
+		}
+		
+		display Augmented_Graph type:opengl ambiant_light: 0.4	background: rgb('black'){
+					
+			species node aspect: base ; 
+			species edge aspect: base ;		
+			species macroNode aspect:sphere  position: {0,0} z:0.4;
+			species macroEdge aspect:base  position: {0,0} z:0.4;	
+			//text  text1 value:"Original graph" position: {50,110};
+			//text  text2 value:"Interaction graph" position: {170,110};
+			
+		}		
 		
 
 	}		
