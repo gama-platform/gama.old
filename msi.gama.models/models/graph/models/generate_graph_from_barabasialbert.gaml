@@ -12,17 +12,12 @@ global {
 	/*
 	 * The variable that will store the graph
 	 */  
-	graph my_graph ;
+	graph my_graph <- generate_barabasi_albert(nodeSpecy,edgeSpecy,100,4);
 	
 	init {
 		
-		 /*
-		  * The actual generation of the network. 
-		  * Note that for technical reasons, parameters are provided as a gama map.  
-		  */
-		 my_graph <- generate_barabasi_albert(nodeSpecy,edgeSpecy,100,4);
-			  
-	 }
+		 write my_graph;
+	}
 
 	reflex truc {
 		
@@ -57,7 +52,7 @@ entities {
 		rgb color <- rgb('blue') ; 
 		
 		aspect base {
-			draw  color: color ;
+			draw color: color ;
 			
 		}
 		

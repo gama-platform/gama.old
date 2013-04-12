@@ -16,22 +16,16 @@ global {
 	/*
 	 * The variable that will store the graph
 	 */  
-	graph my_graph;
-	
-	init {
-		
-		 /*
-		  * The actual generation of the network. 
-		  * Note that for technical reasons, parameters are provided as a gama map.  
-		  */
-		my_graph <- generate_watts_strogatz(
+	graph my_graph <- generate_watts_strogatz(
 				nodeSpecy,
 				edgeSpecy,
 				net_size,
 				net_prewire,
 				net_neighboors
 		);	  
-		
+	
+	init {
+			
 		write my_graph;
 		
 	 }
@@ -77,7 +71,7 @@ experiment generate_graph type: gui {
 		 */
 		display test_display  {
 			species nodeSpecy aspect: base ; 
-		    species edgeSpecy aspect: base ;
+			species edgeSpecy aspect: base ;
 		}
 		
 		/*

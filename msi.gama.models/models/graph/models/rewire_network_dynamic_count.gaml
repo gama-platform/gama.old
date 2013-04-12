@@ -16,16 +16,12 @@ global {
 	/*
 	 * The variable that will store the graph
 	 */  
-	graph<nodeSpecy,edgeSpecy> my_graph;
-	
+	graph<nodeSpecy,edgeSpecy> my_graph <- generate_watts_strogatz(nodeSpecy, edgeSpecy, net_size, net_prewire,net_neighboors);
+			
 	init {
 		
-		 /*
-		  * The actual generation of the network. 
-		  * Note that for technical reasons, parameters are provided as a gama map.  
-		  */
-		my_graph <- generate_watts_strogatz(nodeSpecy, edgeSpecy, net_size, net_prewire,net_neighboors);
-			  
+		 write my_graph;
+		  
 	 }
 	 
 	

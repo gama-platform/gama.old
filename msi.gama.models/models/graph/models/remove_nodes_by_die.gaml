@@ -13,20 +13,15 @@ global {
 	/* 
 	 * The variable that will store the graph
 	 */  
-	graph my_graph;
-	
-	init {
-		
-		 /*
-		  * The actual loading of the network. 
-		  * Note that for technical reasons, parameters are provided as a gama map.  
-		  */
-		 my_graph <- load_graph_from_file(
+	graph my_graph  <- load_graph_from_file(
 		 		"dgs_old",
 				"../includes/BarabasiGenerated.dgs", 
 				nodeSpecy,
 				edgeSpecy	
 		);
+		
+	
+	init {
 		
 		write my_graph;
 			  
