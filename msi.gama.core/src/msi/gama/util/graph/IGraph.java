@@ -25,6 +25,7 @@ import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.util.*;
+import msi.gama.util.path.IPath;
 import msi.gaml.types.IType;
 import org.jgrapht.*;
 
@@ -57,16 +58,16 @@ public interface IGraph<V, E> extends IContainer<V, E>, WeightedGraph<V, E>, Dir
 	public Map<V, _Vertex<E>> _internalVertexMap();
 	
 	@getter( "edges")
-	public abstract IList getEdges();
+	public abstract IList<E> getEdges();
 
 	@getter( "vertices")
-	public abstract IList getVertices();
+	public abstract IList<V> getVertices();
 
 	@getter( "spanning_tree")
 	public abstract IList<E> getSpanningTree();
 
 	@getter( "circuit")
-	public abstract IPath getCircuit();
+	public abstract IPath<V,E> getCircuit();
 
 	@getter( "connected")
 	public abstract Boolean getConnected(); 
@@ -85,11 +86,16 @@ public interface IGraph<V, E> extends IContainer<V, E>, WeightedGraph<V, E>, Dir
 	
 	public void incVersion();
 	
-	public abstract IPath computeShortestPathBetween(final Object source, final Object target);
+	// FIXME Patrick: To check
+	// public abstract IPath<V,E> computeShortestPathBetween(final Object source, final Object target);	
+	// public abstract IList<IShape> computeBestRouteBetween(final Object source, final Object target);	
+
+	public abstract IPath<V,E> computeShortestPathBetween(final V source, final V target);
 	
-	public abstract IList<IShape> computeBestRouteBetween(final Object source, final Object target);	
+	public abstract IList<E> computeBestRouteBetween(final V source, final V target);	
 	
-	public double computeWeight(final IPath gamaPath);
+	
+	public double computeWeight(final IPath<V,E> gamaPath);
 	
 	
 }

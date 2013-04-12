@@ -31,6 +31,9 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.*;
+import msi.gama.util.path.GamaSpatialPath;
+import msi.gama.util.path.IPath;
+import msi.gama.util.path.PathFactory;
 import msi.gaml.compilation.ScheduledAction;
 import msi.gaml.operators.*;
 import msi.gaml.species.ISpecies;
@@ -535,13 +538,13 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 			shape.getLocation(), distance); }
 		final Collection<? extends IAgent> coveredPlaces =
 			getAgentsCoveredBy(shape, cellFilter, true);
-		Set<IAgent> result = new HashSet();
+		Set<IAgent> result = new HashSet<IAgent>();
 		for ( IAgent a : coveredPlaces ) {
 			result.addAll(getNeighbourhood().getNeighboursIn(getPlaceIndexAt(a.getLocation()),
 				distance.intValue()));
 		}
 		result.removeAll(coveredPlaces);
-		return new GamaList(result);
+		return new GamaList<IAgent>(result);
 	}
 
 	public GamaList<IAgent> getNeighboursOf(final IScope scope, final ITopology t,
@@ -549,9 +552,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 		return getNeighbourhood().getNeighboursIn(getPlaceIndexAt(shape), distance.intValue());
 	}
 
-	public IPath computeShortestPathBetween(final IScope scope, final IShape source,
+	public GamaSpatialPath computeShortestPathBetween(final IScope scope, final IShape source,
 		final IShape target, final ITopology topo) throws GamaRuntimeException {
-		GamaMap dists = new GamaMap();
+		GamaMap<IAgent,Integer> dists = new GamaMap<IAgent,Integer>();
 		int currentplace = getPlaceIndexAt(source.getLocation());
 		int targetplace = getPlaceIndexAt(target.getLocation());
 		IAgent startAg = matrix[currentplace].getAgent();
@@ -560,14 +563,14 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 		int cpt = 0;
 		dists.put(startAg, Integer.valueOf(cpt));
 		int max = this.numCols * this.numRows;
-		List<IAgent> neighb = getNeighs(scope, startAg, dists, topo, new GamaList());
+		List<IAgent> neighb = getNeighs(scope, startAg, dists, topo, new GamaList<IAgent>());
 		while (true) {
 			cpt++;
 			HashSet<IAgent> neighb2 = new HashSet<IAgent>();
 			for ( IAgent ag : neighb ) {
 				dists.put(ag, Integer.valueOf(cpt));
 				if ( ag == endAg ) {
-					List<ILocation> pts = new GamaList();
+					List<ILocation> pts = new GamaList<ILocation>();
 					pts.add(ag.getLocation());
 					IAgent agDes = ag;
 					while (cpt > 0) {
@@ -575,11 +578,12 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 						agDes = getNeighDesc(scope, agDes, dists, topo, cpt);
 						pts.add(agDes.getLocation());
 					}
-					List<ILocation> nodes = new GamaList();
+					IList<IShape> nodes = new GamaList<IShape>();
 					for ( int i = pts.size() - 1; i >= 0; i-- ) {
 						nodes.add(pts.get(i));
 					}
-					return new GamaPath(topo, nodes);
+					// return new GamaPath(topo, nodes);
+					return PathFactory.newInstance(topo, nodes);
 				}
 				neighb2.addAll(getNeighs(scope, ag, dists, topo, neighb));
 			}

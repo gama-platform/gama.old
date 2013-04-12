@@ -16,7 +16,7 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gama.util;
+package msi.gama.util.path;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
@@ -28,6 +28,7 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.IList;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.types.IType;
 
@@ -38,36 +39,42 @@ import msi.gaml.types.IType;
  * @since 14 déc. 2011
  * 
  */
-@vars({ @var(name = IKeyword.TARGET, type = IType.POINT),
-	@var(name = IKeyword.SOURCE, type = IType.POINT),
+@vars({ @var(name = IKeyword.TARGET, type = IType.NONE),
+	@var(name = IKeyword.SOURCE, type = IType.NONE),
 	@var(name = IKeyword.GRAPH, type = IType.GRAPH),
 	@var(name = IKeyword.SEGMENTS, type = IType.LIST, of = IType.GEOMETRY),
-	@var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT)
+	@var(name = "edges", type = IType.LIST), 
+	@var(name = "vertices", type = IType.LIST)
+	//@var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT),
 // Could be replaced by "geometries"
 /*
  * Normally not necessary as it is inherited from GamaGeometry @var(name = GamaPath.POINTS, type =
  * IType.LIST, of = IType.POINT)
  */
 })
-public interface IPath extends IShape {
+public interface IPath<V,E> {// extends IShape {
 
 	@getter(IKeyword.SOURCE)
-	public abstract ILocation getStartVertex();
+	public abstract V getStartVertex();
 
 	@getter(IKeyword.TARGET)
-	public abstract ILocation getEndVertex();
-
-	@getter(IKeyword.SEGMENTS)
-	public abstract IList<IShape> getEdgeList();
-
-	@getter(IKeyword.AGENTS)
-	public abstract List<IShape> getAgentList();
+	public abstract V getEndVertex();
 
 	@getter(IKeyword.GRAPH)
-	public IGraph getGraph();
+	public abstract IGraph<V,E> getGraph();
+	
+	@getter(IKeyword.SEGMENTS)
+	public abstract IList<IShape> getEdgeGeometry();
 
-	public abstract IList<ILocation> getVertexList();
-
+	@getter("vertices")
+	public abstract IList<V> getVertexList();	
+	
+	@getter("edges")
+	public abstract IList<E> getEdgeList();
+	
+//	@getter(IKeyword.AGENTS)
+//	public abstract List<IShape> getAgentList();
+	
 	public abstract double getWeight();
 
 	public abstract double getWeight(final IShape line) throws GamaRuntimeException;
@@ -92,13 +99,13 @@ public interface IPath extends IShape {
 
 	public abstract ITopology getTopology();
 
-	public abstract void setRealObjects(final Map realObjects);
+	public abstract void setRealObjects(final Map<IShape,IShape> realObjects);
 
 	public abstract IShape getRealObject(final Object obj);
 
-	public void setSource(IShape source);
+	public void setSource(V source);
 
-	public void setTarget(IShape target);
+	public void setTarget(V target);
 
 	public int getGraphVersion();
 

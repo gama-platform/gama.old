@@ -27,6 +27,7 @@ import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.util.path.GamaSpatialPath;
 
 public class GridTopology extends AbstractTopology {
 
@@ -131,13 +132,13 @@ public class GridTopology extends AbstractTopology {
 	 *      msi.gama.interfaces.IGeometry)
 	 */
 	@Override
-	public IPath pathBetween(IScope scope, final IShape source, final IShape target)
+	public GamaSpatialPath pathBetween(IScope scope, final IShape source, final IShape target)
 		throws GamaRuntimeException {
 		return getPlaces().computeShortestPathBetween(scope, source, target, this);
 	}
 
 	@Override
-	public IPath pathBetween(IScope scope, final ILocation source, final ILocation target)
+	public GamaSpatialPath pathBetween(IScope scope, final ILocation source, final ILocation target)
 		throws GamaRuntimeException {
 		return getPlaces().computeShortestPathBetween(scope, source, target, this);
 	}

@@ -16,56 +16,54 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gama.util;
+package msi.gama.util.path;
 
 import java.util.*;
+
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.*;
 import msi.gama.runtime.*;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.graph.IGraph;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaMap;
+import msi.gama.util.IList;
 import msi.gaml.operators.*;
 import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.types.GamaGeometryType;
-import org.jgrapht.*;
-import org.jgrapht.Graphs;
 import com.vividsolutions.jts.geom.*;
 
 // Si construit à partir d'une liste de points, crée la géométrie correspondante
 // Si construit à partir d'un graphe spatial, crée la géométrie à partir des edges passés.
 // Si
 
-public class GamaPath extends GamaShape implements GraphPath, IPath {
+public class GamaSpatialPath extends GamaPath<IShape,IShape> {
 
 	GamaList<IShape> segments;
-	Map<IShape, IShape> realObjects;
-	IShape source, target;
-	ITopology topology;
-	int graphVersion;
-
-	// GamaMap segmentsInGraph;
-
-	public GamaPath(final ITopology t, final IShape start, final IShape target,
-		final IList<IShape> edges) {
-		init(t, start, target, edges, true);
+	Map<IShape, IShape> realObjects; // cle = bout de geometrie 
+	GamaSpatialGraph graph;
+	
+	public GamaSpatialPath(final GamaSpatialGraph g, final IShape start, final IShape target,
+			final IList<IShape> edges) {
+		super(g,start,target,edges);
+		this.init(g, start, target, edges, true);
 	}
 
-	public GamaPath(final ITopology t, final IShape start, final IShape target,
-		final IList<IShape> edges, final boolean modify_edges) {
-		init(t, start, target, edges, modify_edges);
+	public GamaSpatialPath(final GamaSpatialGraph g, final IShape start, final IShape target,
+			final IList<IShape> edges, final boolean modify_edges) {
+		super(g,start,target,edges,modify_edges);
+		this.init(g, start, target, edges, modify_edges);
 	}
 
-	public void init(final ITopology t, final IShape start, final IShape target,
-		final IList<IShape> edges, final boolean modify_edges) {
+	public void init(final GamaSpatialGraph g, final IShape start, final IShape target,
+			final IList<IShape> edges, final boolean modify_edges) {
 		source = start;
 		this.target = target;
-		topology = t;
-		segments = new GamaList<IShape>();
-		// segmentsInGraph = new HashMap();
-		realObjects = new HashMap();
+		this.graph = g;
+		this.segments = new GamaList<IShape>();
+
+		realObjects = new HashMap<IShape,IShape>();
 		graphVersion = 0;
 
 		Geometry firstLine =
@@ -84,7 +82,7 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 			} else {
 				pt = start.euclidianDistanceTo(pt0) < target.euclidianDistanceTo(pt0) ? pt0 : pt1;
 			}
-			GamaSpatialGraph graph = getGraph();
+			GamaSpatialGraph graph = (GamaSpatialGraph) this.getGraph();
 			if ( graph != null ) {
 				graphVersion = graph.getVersion();
 			}
@@ -117,18 +115,19 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 		}
 	}
 
-	public GamaPath(final ITopology t, final List<ILocation> nodes) {
+	public GamaSpatialPath(final GamaSpatialGraph g, final List<IShape> nodes) {
+		// FIXME call super super(param...);
 		if ( nodes.isEmpty() ) {
-			source = new GamaPoint(0, 0);
+			source = new GamaPoint(0,0);
 			target = source;
 		} else {
 			source = nodes.get(0);
 			target = nodes.get(nodes.size() - 1);
 		}
-		segments = new GamaList();
-		// segmentsInGraph = new GamaMap();
-		realObjects = new GamaMap();
-
+		segments = new GamaList<IShape>();
+		realObjects = new GamaMap<IShape,IShape>();
+		graph = g;
+		
 		for ( int i = 0, n = nodes.size(); i < n - 1; i++ ) {
 			segments.add(GamaGeometryType.buildLine(nodes.get(i).getLocation(), nodes.get(i + 1)
 				.getLocation()));
@@ -143,109 +142,54 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 			// MODIF: put?
 			realObjects.put(nodes.get(nodes.size() - 1).getGeometry(), ag);
 		}
-		topology = t;
-
 	}
 
+	///////////////////////////////////////////////////
+	// Implements methods from IValue
+	
 	@Override
-	public GamaSpatialGraph getGraph() {
-		return topology instanceof GraphTopology ? (GamaSpatialGraph) topology.getPlaces() : null;
+	public GamaSpatialPath copy(IScope scope) {
+		return new GamaSpatialPath(graph, source, target, segments);
 	}
-
+	
+	///////////////////////////////////////////////////
+	// Implements methods from IPath
+//	
+//	@Override
+//	public IList<IShape> getAgentList() {
+//		GamaList<IShape> ags = new GamaList<IShape>();
+//		ags.addAll(new HashSet<IShape>(realObjects.values()));
+//		return ags;
+//	}
+	
 	@Override
-	public ILocation getStartVertex() {
-		// return GamaPoint ? GamaGeometry ?
-		return source.getLocation();
-		// if ( graph != null ) { return ((_SpatialVertex)
-		// segments.get(0).getSource()).getLocation(); }
-		// return new GamaPoint(segments.get(0).geometry.getPoints().first());
-		// Double-check this. I'm not sure it has a sense.
-	}
-
-	@Override
-	public ILocation getEndVertex() {
-		// return GamaPoint ? GamaGeometry ?
-		return target.getLocation();
-		// if ( graph != null ) { return ((_SpatialVertex) segments.get(segments.size() - 1)
-		// .getTarget()).getLocation(); }
-		// return new GamaPoint(segments.get(segments.size() - 1).geometry.getPoints().last());
-		// Double-check this. I'm not sure it has a sense.
-	}
-
-	@Override
-	public IList<IShape> getEdgeList() {
+	public IList<IShape> getEdgeGeometry() {	
+//		GamaList<IShape> ags = new GamaList<IShape>();
+//		ags.addAll(new HashSet<IShape>(realObjects.values()));
+//		return ags;
 		return segments;
 	}
+	
+//
+//	/**
+//	 * Private method intended to compute the geometry of the path (a polyline) from the list of
+//	 * segments.
+//	 * While the path is not invalidated, this list of segments should not be changed and the
+//	 * geometry can be cached.
+//	 */
+//	private void computeGeometry() {
+//		if ( super.getInnerGeometry() == null ) {
+//			try {
+//				setGeometry(GamaGeometryType.geometriesToGeometry(null, segments)); // Verify null
+//																					// parameter
+//			} catch (GamaRuntimeException e) {
+//				GAMA.reportError(e);
+//				e.printStackTrace();
+//			}
+//			// Faire une methode geometriesToPolyline ? linesToPolyline ?
+//		}
+//	}
 
-	@Override
-	public IList<IShape> getAgentList() {
-		GamaList<IShape> ags = new GamaList<IShape>();
-		ags.addAll(new HashSet<IShape>(realObjects.values()));
-		return ags;
-	}
-
-	@Override
-	public IList<ILocation> getVertexList() {
-		return new GamaList(Graphs.getPathVertexList(this));
-		// return getPoints();
-	}
-
-	@Override
-	public double getWeight() {
-		IGraph graph = getGraph();
-		if ( graph == null ) { return getPerimeter(); }
-		return ((GamaSpatialGraph) graph).computeWeight(this);
-	}
-
-	@Override
-	public double getWeight(final IShape line) throws GamaRuntimeException {
-		return line.getGeometry().getPerimeter(); // workaround for the moment
-		// if ( getGraph() == null || !getGraph().containsEdge(segmentsInGraph.get(line)) ) { return
-		// line
-		// .getGeometry().getPerimeter(); }
-		// return getGraph().getEdgeWeight(segmentsInGraph.get(line));
-	}
-
-	@Override
-	public Geometry getInnerGeometry() {
-		computeGeometry();
-		return super.getInnerGeometry();
-	}
-
-	@Override
-	public ILocation getLocation() {
-		computeGeometry();
-		return super.getLocation();
-	}
-
-	/**
-	 * Private method intended to compute the geometry of the path (a polyline) from the list of
-	 * segments.
-	 * While the path is not invalidated, this list of segments should not be changed and the
-	 * geometry can be cached.
-	 */
-	private void computeGeometry() {
-		if ( super.getInnerGeometry() == null ) {
-			try {
-				setGeometry(GamaGeometryType.geometriesToGeometry(null, segments)); // Verify null
-																					// parameter
-			} catch (GamaRuntimeException e) {
-				GAMA.reportError(e);
-				e.printStackTrace();
-			}
-			// Faire une methode geometriesToPolyline ? linesToPolyline ?
-		}
-	}
-
-	@Override
-	public String toString() {
-		return "path between " + getStartVertex().toString() + " and " + getEndVertex().toString();
-	}
-
-	@Override
-	public GamaPath copy(IScope scope) {
-		return new GamaPath(topology, source, target, segments);
-	}
 
 	@Override
 	public void acceptVisitor(final IAgent agent) {
@@ -280,21 +224,6 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 	@Override
 	public void setIndexSegementOf(final IAgent a, final int indexSegement) {
 		a.setAttribute("index_on_path_segment", indexSegement);
-	}
-
-	@Override
-	public String stringValue(IScope scope) {
-		return toGaml();
-	}
-
-	@Override
-	public String toGaml() {
-		return "(" + segments.toGaml() + ") as path";
-	}
-
-	@Override
-	public int getLength() {
-		return segments.size();
 	}
 
 	@Override
@@ -408,11 +337,11 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 
 	@Override
 	public ITopology getTopology() {
-		return topology;
+		return ((GamaSpatialGraph) graph).getTopology();
 	}
 
 	@Override
-	public void setRealObjects(final Map realObjects) {
+	public void setRealObjects(final Map<IShape,IShape> realObjects) {
 		this.realObjects = realObjects;
 	}
 
@@ -420,20 +349,4 @@ public class GamaPath extends GamaShape implements GraphPath, IPath {
 	public IShape getRealObject(final Object obj) {
 		return realObjects.get(obj);
 	}
-
-	@Override
-	public void setSource(final IShape source) {
-		this.source = source;
-	}
-
-	@Override
-	public void setTarget(final IShape target) {
-		this.target = target;
-	}
-
-	@Override
-	public int getGraphVersion() {
-		return graphVersion;
-	}
-
 }

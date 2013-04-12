@@ -29,6 +29,9 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
+import msi.gama.util.path.GamaPath;
+import msi.gama.util.path.IPath;
+import msi.gama.util.path.PathFactory;
 import msi.gaml.operators.Cast;
 
 @type(name = IKeyword.PATH, id = IType.PATH, wraps = { IPath.class, GamaPath.class }, kind = ISymbolKind.Variable.REGULAR)
@@ -123,10 +126,11 @@ public class GamaPathType extends GamaType<IPath> {
 		if ( s1 == null || t1 == null ) { return null; }
 		IPath path = null;
 		if ( edgeS == edgeT ) {
-			path = new GamaPath(m, source, target, GamaList.with(edgeS));
+			// path = new GamaPath(m, source, target, GamaList.with(edgeS));
+			path = PathFactory.newInstance(m, source, target, GamaList.with(edgeS));
 			return path;
 		}
-		path = graph.computeShortestPathBetween(s1, t1);
+		path = graph.computeShortestPathBetween((IShape)s1, (IShape)t1);
 		if ( path == null ) { return null; }
 
 		return path;
@@ -135,11 +139,13 @@ public class GamaPathType extends GamaType<IPath> {
 	public static IPath staticCast(final IScope scope, final Object obj, final Object param) {
 		if ( obj instanceof IPath ) { return (IPath) obj; }
 		if ( obj instanceof List ) {
-			List<ILocation> list = new GamaList();
+			// List<ILocation> list = new GamaList();
+			List<IShape> list = new GamaList<IShape>();
 			for ( Object p : (List) obj ) {
 				list.add(Cast.asPoint(scope, p));
 			}
-			return new GamaPath(scope.getTopology(), list);
+			// return new GamaPath(scope.getTopology(), list);
+			return PathFactory.newInstance(scope.getTopology(), (IList<IShape>)list);
 		}
 		return null;
 	}

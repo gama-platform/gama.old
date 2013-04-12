@@ -32,6 +32,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.GraphEvent.GraphEventType;
 import msi.gama.util.matrix.IMatrix;
+import msi.gama.util.path.IPath;
+import msi.gama.util.path.PathFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import org.jgrapht.*;
@@ -61,13 +63,13 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	private final LinkedList<IGraphEventListener> listeners = new LinkedList<IGraphEventListener>();
 
 	
-	private final Set<IAgent> generatedEdges = new HashSet();
+	private final Set<IAgent> generatedEdges = new HashSet<IAgent>();
 	private int version;
 
 	public GamaGraph(final boolean directed) {
 		this.directed = directed;
-		vertexMap = new GamaMap();
-		edgeMap = new GamaMap();
+		vertexMap = new GamaMap<V, _Vertex<E>>();
+		edgeMap = new GamaMap<E, _Edge<V>>();
 		edgeBased = false; 
 		vertexRelation = null;
 		version = 1;
@@ -487,38 +489,41 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	}
 	
 	
-	protected IPath pathFromEdges(final Object source, final Object target, final IList edges) {
-		return null;//new GamaPath(this, source, target, edges);
+	// protected IPath<V,E> pathFromEdges(final Object source, final Object target, final IList<E> edges) {
+	protected IPath<V,E> pathFromEdges(final V source, final V target, final IList<E> edges) {
+		// return new GamaPath(this, source, target, edges);
+		return PathFactory.newInstance(this, source, target, edges);
 	}
 	
 	@Override
-	public IPath computeShortestPathBetween(final Object source, final Object target) {
+	// public IPath<V,E> computeShortestPathBetween(final Object source, final Object target) {
+	public IPath<V,E> computeShortestPathBetween(final V source, final V target) {
 		return pathFromEdges(source, target, computeBestRouteBetween(source, target));
 	}
 
 	@Override
-	public IList<IShape> computeBestRouteBetween(final Object source, final Object target) {
+	public IList<E> computeBestRouteBetween(final V source, final V target) {
 		
 		switch (optimizerType) {
 			case 1:
 				if ( optimizer == null ) {
-					optimizer = new FloydWarshallShortestPaths(this);
+					optimizer = new FloydWarshallShortestPaths<V,E>(this);
 				}
-				return new GamaList<IShape>(optimizer.getShortestPath((V)source, (V)target).getEdgeList());
+				return new GamaList<E>(optimizer.getShortestPath((V)source, (V)target).getEdgeList());
 			case 2:
-				BellmanFordShortestPath p1 = new BellmanFordShortestPath(getProxyGraph(), source);
-				return new GamaList<IShape>(p1.getPathEdgeList(target));
+				BellmanFordShortestPath<V,E> p1 = new BellmanFordShortestPath<V,E>(getProxyGraph(), source);
+				return new GamaList<E>(p1.getPathEdgeList(target));
 			case 3:
+				// FIXME : ToCheck.....
 				DijkstraShortestPath<GamaShape, GamaShape> p2 =
 					new DijkstraShortestPath(getProxyGraph(), source, target);
-				
-				return new GamaList<IShape>(p2.getPathEdgeList());
+				return new GamaList<E>(p2.getPathEdgeList());
 		}
-		return new GamaList<IShape>();
+		return new GamaList<E>();
 
 	}
-	protected Graph getProxyGraph() {
-		return directed ? this : new AsUndirectedGraph(this);
+	protected Graph<V,E> getProxyGraph() {
+		return directed ? this : new AsUndirectedGraph<V,E>(this);
 	}
 
 	

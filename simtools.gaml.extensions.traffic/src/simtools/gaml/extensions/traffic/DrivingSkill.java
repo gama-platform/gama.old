@@ -18,6 +18,9 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.util.path.GamaPath;
+import msi.gama.util.path.IPath;
+import msi.gama.util.path.PathFactory;
 import msi.gaml.skills.MovingSkill;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
@@ -485,8 +488,8 @@ public class DrivingSkill extends MovingSkill {
 		path.setIndexOf(agent, index);
 		path.setSource(currentLocation.copy(scope));
 		if ( segments.isEmpty() ) { return null; }
-		IPath followedPath =
-			new GamaPath(scope.getTopology(), startLocation, currentLocation, segments);
+		IPath followedPath = PathFactory.newInstance(scope.getTopology(), startLocation, currentLocation, segments);
+			// new GamaPath(scope.getTopology(), startLocation, currentLocation, segments);
 		followedPath.setRealObjects(agents);
 		agent.setLocation(currentLocation);
 		return followedPath;

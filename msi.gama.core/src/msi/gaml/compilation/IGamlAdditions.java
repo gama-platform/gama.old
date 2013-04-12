@@ -7,6 +7,7 @@ import msi.gama.util.*;
 import msi.gama.util.file.IGamaFile;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.matrix.IMatrix;
+import msi.gama.util.path.IPath;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.skills.*;
 import msi.gaml.species.ISpecies;

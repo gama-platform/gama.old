@@ -2,8 +2,6 @@ package ummisco.gaml.extensions.maths.statements;
 
 import java.util.List;
 
-import org.graphstream.ui.a.i;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.combination;

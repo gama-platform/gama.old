@@ -249,6 +249,7 @@ Export-Package: msi.gama.common.interfaces;
    msi.gama.metamodel.shape,
    msi.gama.util,
    msi.gaml.types",
+ msi.gama.util.path,
  msi.gaml.architecture;
   uses:="msi.gaml.species,
    msi.gaml.commands,

@@ -19,6 +19,8 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.util.path.IPath;
+import msi.gama.util.path.GamaPath;
 import msi.gaml.operators.*;
 import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.skills.MovingSkill;
@@ -185,7 +187,7 @@ public class DrivingSkill2d extends MovingSkill {
 
 		IList<IShape> edges = path.getEdgeList();
 		IShape lineEnd = edges.last(scope);
-		GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to(path.getEndVertex(), lineEnd);
+		GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to((IShape)path.getEndVertex(), lineEnd);
 
 		Boolean targetType = (Boolean) scope.getArg("target_type", IType.NONE);
 		if ( targetType != null && !targetType ) {
@@ -404,7 +406,7 @@ public class DrivingSkill2d extends MovingSkill {
 
 		IList<IShape> edges = path.getEdgeList();
 		IShape lineEnd = edges.last(scope);
-		GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to(path.getEndVertex(), lineEnd);
+		GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to((IShape)path.getEndVertex(), lineEnd);
 
 		Boolean targetType = (Boolean) scope.getArg("target_type", IType.NONE);
 		if ( targetType != null && !targetType ) {

@@ -37,6 +37,9 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
+import msi.gama.util.path.GamaPath;
+import msi.gama.util.path.IPath;
+import msi.gama.util.path.PathFactory;
 import msi.gaml.operators.*;
 import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.types.*;
@@ -406,7 +409,7 @@ public class MovingSkill extends GeometricSkill {
 				}
 			}
 			IShape lineEnd = edges.get(nb - 1);
-			falseTarget = (GamaPoint) Punctal._closest_point_to(path.getEndVertex(), lineEnd);
+			falseTarget = (GamaPoint) Punctal._closest_point_to(((IShape)path.getEndVertex()).getLocation(), lineEnd);
 			endIndexSegment = 1;
 			Point pointGeom = (Point) falseTarget.getInnerGeometry();
 			if ( lineEnd.getInnerGeometry().getNumPoints() >= 3 ) {
@@ -619,8 +622,8 @@ public class MovingSkill extends GeometricSkill {
 		path.setIndexOf(agent, index);
 		path.setSource(currentLocation.copy(scope));
 		if ( segments.isEmpty() ) { return null; }
-		IPath followedPath =
-			new GamaPath(agent.getTopology(), startLocation, currentLocation, segments, false);
+		IPath followedPath = PathFactory.newInstance(agent.getTopology(), startLocation, currentLocation, segments, false);
+			// new GamaPath(agent.getTopology(), startLocation, currentLocation, segments, false);
 		followedPath.setRealObjects(agents);
 
 		agent.setLocation(currentLocation);

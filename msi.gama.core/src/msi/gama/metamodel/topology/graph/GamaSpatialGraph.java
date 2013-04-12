@@ -28,6 +28,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.*;
+import msi.gama.util.path.GamaSpatialPath;
+import msi.gama.util.path.PathFactory;
 import msi.gaml.compilation.ScheduledAction;
 import msi.gaml.species.ISpecies;
 import org.jgrapht.Graphs;
@@ -85,8 +87,9 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 	
 	@Override
-	protected IPath pathFromEdges(final Object source, final Object target, final IList edges) {
-		return new GamaPath(getTopology(), (IShape) source, (IShape) target, edges);
+	protected GamaSpatialPath pathFromEdges(final IShape source, final IShape target, final IList<IShape> edges) {
+		return (GamaSpatialPath)PathFactory.newInstance(getTopology(), source, target, edges);
+		// return new GamaPath(getTopology(), (IShape) source, (IShape) target, edges);
 	} 
 
 	@Override

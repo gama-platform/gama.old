@@ -27,6 +27,8 @@ import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.util.path.GamaSpatialPath;
+import msi.gama.util.path.PathFactory;
 import msi.gaml.operators.Maths;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.prep.*;
@@ -179,15 +181,17 @@ public abstract class AbstractTopology implements ITopology {
 	 *      msi.gama.interfaces.IGeometry)
 	 */
 	@Override
-	public IPath pathBetween(IScope scope, final IShape source, final IShape target)
-		throws GamaRuntimeException {
-		return new GamaPath(this, GamaList.with(source.getLocation(), target.getLocation()));
+	public GamaSpatialPath pathBetween(IScope scope, final IShape source, final IShape target)
+			throws GamaRuntimeException {
+		// return new GamaPath(this, GamaList.with(source.getLocation(), target.getLocation()));
+		return (GamaSpatialPath)PathFactory.newInstance(this, GamaList.with(source.getLocation(), target.getLocation()));
 	}
 
 	@Override
-	public IPath pathBetween(IScope scope, final ILocation source, final ILocation target)
+	public GamaSpatialPath pathBetween(IScope scope, final ILocation source, final ILocation target)
 		throws GamaRuntimeException {
-		return new GamaPath(this, GamaList.with(source, target));
+		// return new GamaPath(this, GamaList.with(source, target));
+		return (GamaSpatialPath)PathFactory.newInstance(this, GamaList.with(source, target));
 	}
 
 	private void setEnvironmentBounds() {

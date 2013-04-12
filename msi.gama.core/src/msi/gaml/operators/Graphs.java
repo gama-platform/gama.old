@@ -29,6 +29,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.*;
+import msi.gama.util.path.IPath;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
 

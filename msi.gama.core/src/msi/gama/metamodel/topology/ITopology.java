@@ -29,6 +29,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.util.path.GamaSpatialPath;
 import msi.gaml.types.IType;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -88,10 +89,10 @@ public interface ITopology extends IValue {
 	public abstract Double distanceBetween(IScope scope, final ILocation source,
 		final ILocation target);
 
-	public abstract IPath pathBetween(IScope scope, final IShape source, final IShape target)
+	public abstract GamaSpatialPath pathBetween(IScope scope, final IShape source, final IShape target)
 		throws GamaRuntimeException;
 
-	public abstract IPath pathBetween(IScope scope, final ILocation source, final ILocation target)
+	public abstract GamaSpatialPath pathBetween(IScope scope, final ILocation source, final ILocation target)
 		throws GamaRuntimeException;
 
 	/**

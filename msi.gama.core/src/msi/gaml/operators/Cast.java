@@ -32,6 +32,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
 import msi.gama.util.matrix.IMatrix;
+import msi.gama.util.path.IPath;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;

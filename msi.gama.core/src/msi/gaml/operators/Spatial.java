@@ -34,6 +34,8 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.IMatrix;
+import msi.gama.util.path.IPath;
+import msi.gama.util.path.PathFactory;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
 import com.vividsolutions.jts.algorithm.PointLocator;
@@ -930,10 +932,13 @@ public abstract class Spatial {
 			if ( nodes.isEmpty(scope) ) { return null; }
 			int n = nodes.length(scope);
 			IShape source = nodes.first(scope);
-			if ( n == 1 ) { return new GamaPath(scope.getTopology(), source, source, new GamaList()); }
+			if ( n == 1 ) { 
+				return PathFactory.newInstance(scope.getTopology(), source, source, new GamaList<IShape>());
+				// return new GamaPath(scope.getTopology(), source, source, new GamaList()); 
+			}
 			IShape target = nodes.last(scope);
 			if ( n == 2 ) { return graph.pathBetween(scope, source, target); }
-			GamaList<IShape> edges = new GamaList();
+			GamaList<IShape> edges = new GamaList<IShape>();
 			IShape previous = null;
 			for ( IShape gg : nodes ) {
 				if ( previous != null ) {
@@ -942,7 +947,7 @@ public abstract class Spatial {
 				}
 				previous = gg;
 			}
-			return new GamaPath(graph, source, target, edges);
+			return PathFactory.newInstance(graph, source, target, edges); // new GamaPath(graph, source, target, edges);
 		}
 
 		@operator(value = "distance_to")

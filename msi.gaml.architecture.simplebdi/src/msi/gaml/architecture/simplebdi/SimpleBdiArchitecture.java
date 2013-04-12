@@ -15,7 +15,6 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gama.util.IPath;
 import msi.gaml.architecture.reflex.AbstractArchitecture;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.operators.Cast;
