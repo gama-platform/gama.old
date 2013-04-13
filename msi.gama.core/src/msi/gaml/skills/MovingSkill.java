@@ -363,7 +363,7 @@ public class MovingSkill extends GeometricSkill {
 		Integer indexSegment = 1;
 		Integer endIndexSegment = 0;
 		GamaPoint falseTarget = null;
-		IList<IShape> edges = path.getEdgeList();
+		IList<IShape> edges = path.getEdgeGeometry();
 		int nb = edges.size();
 		if ( path.getGraph() == null && nb == 1 &&
 			edges.get(0).getInnerGeometry().getNumPoints() == 2 ) {
@@ -446,7 +446,7 @@ public class MovingSkill extends GeometricSkill {
 		int endIndexSegment = (Integer) indexVals.get(2);
 		currentLocation = (GamaPoint) indexVals.get(3);
 		GamaPoint falseTarget = (GamaPoint) indexVals.get(4);
-		IList<IShape> edges = path.getEdgeList();
+		IList<IShape> edges = path.getEdgeGeometry();
 		int nb = edges.size();
 		double distance = d;
 		GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
@@ -527,7 +527,7 @@ public class MovingSkill extends GeometricSkill {
 		int endIndexSegment = (Integer) indexVals.get(2);
 		currentLocation = (GamaPoint) indexVals.get(3);
 		GamaPoint falseTarget = (GamaPoint) indexVals.get(4);
-		IList<IShape> edges = path.getEdgeList();
+		IList<IShape> edges = path.getEdgeGeometry();
 		int nb = edges.size();
 		double distance = d;
 		GamaList<IShape> segments = new GamaList();

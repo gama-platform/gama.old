@@ -185,7 +185,7 @@ public class DrivingSkill2d extends MovingSkill {
 			return -1;
 		}
 
-		IList<IShape> edges = path.getEdgeList();
+		IList<IShape> edges = path.getEdgeGeometry();
 		IShape lineEnd = edges.last(scope);
 		GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to((IShape)path.getEndVertex(), lineEnd);
 
@@ -404,7 +404,7 @@ public class DrivingSkill2d extends MovingSkill {
 			return -1;
 		}
 
-		IList<IShape> edges = path.getEdgeList();
+		IList<IShape> edges = path.getEdgeGeometry();
 		IShape lineEnd = edges.last(scope);
 		GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to((IShape)path.getEndVertex(), lineEnd);
 

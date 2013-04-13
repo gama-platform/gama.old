@@ -302,7 +302,7 @@ public class DrivingSkill extends MovingSkill {
 		int endIndexSegment = (Integer) indexVals.get(2);
 		currentLocation = (GamaPoint) indexVals.get(3);
 		GamaPoint falseTarget = (GamaPoint) indexVals.get(4);
-		IList<IShape> edges = path.getEdgeList();
+		IList<IShape> edges = path.getEdgeGeometry();
 		int nb = edges.size();
 		double distance = _distance;
 		GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
@@ -397,7 +397,7 @@ public class DrivingSkill extends MovingSkill {
 		int endIndexSegment = (Integer) indexVals.get(2);
 		currentLocation = (GamaPoint) indexVals.get(3);
 		GamaPoint falseTarget = (GamaPoint) indexVals.get(4);
-		IList<IShape> edges = path.getEdgeList();
+		IList<IShape> edges = path.getEdgeGeometry();
 		int nb = edges.size();
 		double distance = _distance;
 		GamaList<IShape> segments = new GamaList();
