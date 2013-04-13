@@ -468,8 +468,7 @@ public class MovingSkill extends GeometricSkill {
 				} else {
 					pt = new GamaPoint(coords[j]);
 				}
-				double dist = scope.getTopology().distanceBetween(scope, pt, currentLocation);
-
+				double dist = pt.distance(currentLocation);
 				dist = weight * dist;
 				if ( distance < dist ) {
 					double ratio = distance / dist;

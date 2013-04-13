@@ -238,7 +238,8 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public double euclidianDistanceTo(final ILocation p) {
 		if ( hasZ && ((GamaPoint) p).hasZ ) { return Maths.hypot(x, p.getX(), y, p.getY(), z,
 			p.getZ()); }
-		return Maths.hypot(x, p.getX(), y, p.getY());
+		//return Maths.hypot(x, p.getX(), y, p.getY()); VERY SLOW !
+		return this.distance(p.toCoordinate());
 	}
 
 	/**

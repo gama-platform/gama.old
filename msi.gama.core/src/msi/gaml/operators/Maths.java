@@ -18,6 +18,12 @@
  */
 package msi.gaml.operators;
 
+import java.util.Random;
+
+import org.apache.commons.math3.util.FastMath;
+
+import com.vividsolutions.jts.geom.Coordinate;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
@@ -37,6 +43,57 @@ public class Maths {
 		java.lang.System.out.println("floor and ceil -2.7 " + floor(-2.7) + " and " + ceil(-2.7));
 		java.lang.System.out.println("floor and ceil -2 " + floor(-2) + " and " + ceil(-2));
 		java.lang.System.out.println("floor and ceil 3 " + floor(3) + " and " + ceil(3));
+		double atan2diff = 0;
+		double atan2diff2= 0;
+		Random rand = new Random();
+		long s1 = 0;
+		long t1 = 0;
+		long t2 = 0;
+		long t3 = 0;
+		for (int i = 0; i < 10000000; i++) {
+			double x = rand.nextDouble();
+			double y = rand.nextDouble();
+			s1 =  java.lang.System.currentTimeMillis();
+			double a1 = Math.atan2(x, y);
+			t1 += java.lang.System.currentTimeMillis() - s1;
+			s1 =  java.lang.System.currentTimeMillis();
+			double a2 = FastMath.atan2(x, y);
+			t2 += java.lang.System.currentTimeMillis() - s1;
+			s1 =  java.lang.System.currentTimeMillis();
+			double a3 = Maths.atan2Opt(x, y);
+			t3 += java.lang.System.currentTimeMillis() - s1;
+			
+			atan2diff +=  Math.abs(a1 -a2 );
+			atan2diff2 +=  Math.abs(a1 -a3 );
+		}
+		java.lang.System.out.println("atan2diff : "  + atan2diff + "  atan2diff2 : "  + atan2diff2 + " t1 : "+ t1 + " t2 : " + t2 + " t3 : "+ t3);
+		
+		long t4 = 0;
+		long t5 = 0;
+		long t6 = 0;
+		double distDiff1 = 0;
+		double distDiff2 = 0;
+		for (int i = 0; i < 1000000; i++) {
+			double x1 = rand.nextDouble();
+			double y1 = rand.nextDouble();
+			double x2 = rand.nextDouble();
+			double y2 = rand.nextDouble();
+			Coordinate c1= new Coordinate(x1, y1);
+			Coordinate c2= new Coordinate(x2, y2);
+			
+			s1 =  java.lang.System.currentTimeMillis();
+			double a1 = Math.hypot(x2 - x1, y2 - y1);
+			t4 += java.lang.System.currentTimeMillis() - s1;
+			s1 =  java.lang.System.currentTimeMillis();
+			double a2 = FastMath.hypot(x2 - x1, y2 - y1);
+			t5 += java.lang.System.currentTimeMillis() - s1;
+			s1 =  java.lang.System.currentTimeMillis();
+			double a3 = c1.distance(c2);
+			t6 += java.lang.System.currentTimeMillis() - s1;
+			distDiff1 +=  Math.abs(a1 -a2 );
+			distDiff2 +=  Math.abs(a1 -a3 );
+		}
+		java.lang.System.out.println("distDiff1 : "  + distDiff1 + "  distDiff2 : "  + distDiff2 + " t4 : "+ t4 + " t5 : " + t5 + " t6 : "+ t6);
 		// java.lang.System.out.println("Infinity to int:" + (int) Double.POSITIVE_INFINITY);
 		// java.lang.System.out.println("NaN to int:" + (int) Double.NaN);
 		// GuiUtils.debug("(int) (1.0/0.0):" + (int) (1.0 / 0.0));
@@ -499,7 +556,8 @@ public class Maths {
 
 	@operator(value = "atan2", can_be_const = true)
 	public static double atan2(final double y, final double x) {
-		return Math.atan2(y, x) * toDeg;
+		//return Maths.atan2(y, x) * toDeg;
+		return Maths.atan2Opt(y, x);
 	}
 
 	public static double aTan2(final double y, final double x) {
@@ -532,7 +590,10 @@ public class Maths {
 
 	@operator(value = "hypot", can_be_const = true)
 	public static double hypot(final double x1, final double x2, final double y1, final double y2) {
-		return Math.hypot(x2 - x1, y2 - y1);
+		//return Math.hypot(x2 - x1, y2 - y1); VERY SLOW !
+		final double dx = x2 - x1;
+		final double dy = y2 - y1;
+		return sqrt(dx * dx + dy * dy);
 	}
 
 	public static double hypot(final double x1, final double x2, final double y1, final double y2,
@@ -542,5 +603,82 @@ public class Maths {
 		final double dz = z2 - z1;
 		return sqrt(dx * dx + dy * dy + dz * dz);
 	}
+	
+	  private static final int ATAN2_BITS = 7;
+
+	   private static final int ATAN2_BITS2 = ATAN2_BITS << 1;
+	   private static final int ATAN2_MASK = ~(-1 << ATAN2_BITS2);
+	   private static final int ATAN2_COUNT = ATAN2_MASK + 1;
+	   private static final int ATAN2_DIM = (int) Math.sqrt(ATAN2_COUNT);
+
+	   private static final float INV_ATAN2_DIM_MINUS_1 = 1.0f / (ATAN2_DIM - 1);
+	
+	   private static final float[] atan2 = new float[ATAN2_COUNT];
+
+
+
+	   static
+	   {
+	      for (int i = 0; i < ATAN2_DIM; i++)
+	      {
+	         for (int j = 0; j < ATAN2_DIM; j++)
+	         {
+	            float x0 = (float) i / ATAN2_DIM;
+	            float y0 = (float) j / ATAN2_DIM;
+
+	            atan2[j * ATAN2_DIM + i] = (float) Math.atan2(y0, x0);
+	         }
+	      }
+	   }
+
+
+	   /**
+	    * ATAN2
+	    */
+
+	 
+	   public static final float atan2Opt(double y, double x)
+	   {
+	      float add, mul;
+
+	      if (x < 0.0f)
+	      {
+	         if (y < 0.0f)
+	         {
+	            x = -x;
+	            y = -y;
+
+	            mul = 1.0f;
+	         }
+	         else
+	         {
+	            x = -x;
+	            mul = -1.0f;
+	         }
+
+	         add = -3.141592653f;
+	      }
+	      else
+	      {
+	         if (y < 0.0f)
+	         {
+	            y = -y;
+	            mul = -1.0f;
+	         }
+	         else
+	         {
+	            mul = 1.0f;
+	         }
+
+	         add = 0.0f;
+	      }
+
+	      double invDiv = 1.0f / (((x < y) ? y : x) * INV_ATAN2_DIM_MINUS_1);
+
+	      int xi = (int) (x * invDiv);
+	      int yi = (int) (y * invDiv);
+
+	      return (atan2[yi * ATAN2_DIM + xi] + add) * mul;
+	   }
 
 }
