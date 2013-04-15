@@ -2,7 +2,7 @@ model circle3D
 
 global {
 	int number_of_agents parameter: 'Number of Agents' min: 1 <- 1000 ;
-	int radius parameter: 'Radius' min: 10 <- 20 ;
+	int radius parameter: 'Radius' min: 10 <- 10 ;
 	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 1000 ;  
 	bool wander3D parameter: 'wander 3D' value:false;
 	bool wander3D <- true parameter: 'Wander 3D';
@@ -38,7 +38,7 @@ entities {
 }
 experiment display  type: gui {
 	output {
-		display Circle refresh_every: 1  type:opengl ambiant_light:0.2{
+		display WanderingSphere refresh_every: 1  type:opengl ambiant_light:0.2 background: rgb('black'){
 			species cells;
 		}
 	}
