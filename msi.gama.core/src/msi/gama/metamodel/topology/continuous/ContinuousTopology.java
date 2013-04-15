@@ -109,7 +109,7 @@ public class ContinuousTopology extends AbstractTopology {
 		final double y2 = /* translateY(source.y, target.y); */target.getY();
 		final double dx = x2 - source.getX();
 		final double dy = y2 - source.getY();
-		final double result = Maths.atan2(dy, dx);
+		final double result = Maths.atan2Opt(dy, dx);
 		return Maths.checkHeading((int) result);
 	}
 

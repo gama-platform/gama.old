@@ -27,6 +27,7 @@ import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.util.file.GamaGridFile;
 import msi.gama.util.path.GamaSpatialPath;
 
 public class GridTopology extends AbstractTopology {
@@ -54,6 +55,12 @@ public class GridTopology extends AbstractTopology {
 		getPlaces().setCellSpecies(pop);
 		spatialIndex.add(getPlaces(), pop.getSpecies());
 		super.initialize(pop);
+		if (getPlaces().getGridValue() != null && ! getPlaces().getGridValue().isEmpty()) {
+			for (IAgent ag : pop) {
+				ag.setAttribute("grid_value", getPlaces().getGridValue(ag));
+			}
+			getPlaces().clearGridValue();
+		}
 	}
 
 	@Override
@@ -73,6 +80,14 @@ public class GridTopology extends AbstractTopology {
 		}
 	}
 
+	public GridTopology(final IScope scope, final IShape environment,final GamaGridFile file, final boolean isTorus, final boolean usesVN)
+			throws GamaRuntimeException {
+			super(scope, environment, isTorus);
+			places =
+					new GamaSpatialMatrix(scope, file, isTorus, usesVN);
+			
+		}
+	
 	@Override
 	public IAgent getAgentClosestTo(final IShape source, final IAgentFilter filter) {
 		// We first grab the cell at the location closest to the centroid of the source

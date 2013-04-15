@@ -50,6 +50,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.WIDTH, type = IType.INT, optional = true),
 	@facet(name = IKeyword.HEIGHT, type = IType.INT, optional = true),
 	@facet(name = IKeyword.NEIGHBOURS, type = IType.INT, optional = true),
+	@facet(name = IKeyword.FILE, type = IType.FILE, optional = true),
 	@facet(name = IKeyword.TORUS, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.PARENT, type = IType.ID, optional = true),

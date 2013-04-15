@@ -20,6 +20,7 @@ package msi.gama.metamodel.topology.grid;
 
 import java.awt.Graphics2D;
 import java.util.*;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -30,9 +31,9 @@ import msi.gama.metamodel.topology.filter.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.util.file.GamaGridFile;
 import msi.gama.util.matrix.*;
 import msi.gama.util.path.GamaSpatialPath;
-import msi.gama.util.path.IPath;
 import msi.gama.util.path.PathFactory;
 import msi.gaml.compilation.ScheduledAction;
 import msi.gaml.operators.*;
@@ -100,6 +101,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	private IAgentFilter cellFilter;
 
 	GamaMap hexAgentToLoc = null;
+	GamaMap<GamaShape, Double> gridValue;
+
 
 	public GamaSpatialMatrix(IScope scope, final IShape environment, final Integer cols,
 		final Integer rows, final boolean isTorus, final boolean usesVN)
@@ -122,6 +125,38 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 		this.isHexagon = false;
 		createCells(scope, false);
 	}
+
+	public GamaSpatialMatrix(IScope scope, final GamaGridFile gfile,final boolean isTorus, final boolean usesVN)
+			throws GamaRuntimeException {
+			super(scope, 100, 100);
+			gridValue = new GamaMap<GamaShape, Double>();
+			numRows = gfile.getNbRows();
+			numCols = gfile.getNbCols();
+			environmentFrame = gfile.getGeometry();
+			bounds = environmentFrame.getEnvelope();
+			cellWidth = bounds.getWidth() / numCols;
+			cellHeight = bounds.getHeight() / numRows;
+			precision = bounds.getWidth() / 1000;
+			int size = gfile.length(scope);
+			
+			createMatrix(size);
+			supportImagePixels = new int[size];
+			this.isTorus = isTorus;
+			this.usesVN = usesVN;
+			GRID_NUMBER++;
+			actualNumberOfCells = 0;
+			this.isHexagon = false;
+			firstCell = 0;
+			
+			for ( int i = 0; i < size; i++ ) {
+				GamaShape g = gfile.get(scope, i);
+				gridValue.put(g, (Double) g.getAttribute("grid_value"));
+				matrix[i] = g;
+			}
+			actualNumberOfCells = size;
+			lastCell = size - 1;
+			//createCells(scope, false);
+		}
 
 	public GamaSpatialMatrix(IScope scope, final IShape environment, final Integer cols,
 		final Integer rows, final boolean isTorus, final boolean usesVN, final boolean isHexagon)
@@ -838,10 +873,26 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	@Override
 	public void drawOn(final Graphics2D g2, final int width, final int height) {}
 
+	public Double getGridValue(IAgent ag) {
+		return gridValue.get(ag.getGeometry());
+	}
+
+	public void clearGridValue() {
+		this.gridValue.clear();
+	}
+
+	public GamaMap<GamaShape, Double> getGridValue() {
+		return gridValue;
+	}
+	
+	
+
 	// @Override
 	// public void update() {}
 
 	// @Override
 	// public void cleanCache() {}
+	
+	
 
 }

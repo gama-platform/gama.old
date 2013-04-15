@@ -21,6 +21,7 @@ package msi.gaml.skills;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter.Not;
 import msi.gama.metamodel.topology.filter.*;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
@@ -42,6 +43,7 @@ import msi.gaml.types.IType;
 @vars({
 	@var(name = IKeyword.COLOR, type = IType.COLOR),
 	@var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT, doc = @doc(deprecated = "This variable is deprecated for grid agents. Use agents_inside(cell) or agents_overlapping(cell) instead")),
+	@var(name = IKeyword.GRID_VALUE, type = IType.FLOAT),
 	@var(name = IKeyword.GRID_X, type = IType.INT, constant = true),
 	@var(name = IKeyword.GRID_Y, type = IType.INT, constant = true) })
 @skill(name = GridSkill.SKILL_NAME)
@@ -70,6 +72,7 @@ public class GridSkill extends GeometricSkill {
 		return getGrid(agent).getX(agent.getLocation().getX());
 	}
 
+	
 	@getter("grid_y")
 	public final int getY(final IAgent agent) {
 		if ( getGrid(agent).getIsHexagon() ) { return getGrid(agent).getY(agent.getGeometry()); }

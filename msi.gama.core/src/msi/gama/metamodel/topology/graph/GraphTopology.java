@@ -251,7 +251,7 @@ public class GraphTopology extends AbstractTopology {
 		// TODO Check this
 		final double dx = target.getLocation().getX() - source.getLocation().getX();
 		final double dy = target.getLocation().getY() - source.getLocation().getY();
-		final double result = Maths.atan2(dy, dx);
+		final double result = Maths.atan2Opt(dy, dx);
 		return Maths.checkHeading((int) result);
 	}
 

@@ -39,8 +39,10 @@ import msi.gaml.operators.Files;
 public class GamaFileType extends GamaContainerType<IGamaFile> {
 
 	private static final List<String> textSuffixes = Arrays.asList(".txt", ".data", ".csv",
-		".text", ".tsv", ".asc");
+		".text", ".tsv");
 	private static final String shpSuffix = ".shp";
+	private static final List<String> gridSuffixes = Arrays.asList(".asc");
+
 	private static final String propertiesSuffix = ".properties";
 	private static final List<String> imageSuffixes = Arrays.asList(".pgm", ".tif", ".tiff",
 		".jpg", ".jpeg", ".png", ".gif", ".pict", ".bmp");
@@ -108,6 +110,21 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		"is_properties", "is_image" })
 	public static Boolean isShape(final String f) {
 		return f.toLowerCase().endsWith(shpSuffix);
+	}
+	
+	@operator(value = "is_grid")
+	@doc(value = "the operator tests whether the operand represents the name of a supported gridfile", comment = "cf. file type definition for supported (espacially image) file extensions.", examples = {
+		"is_grid(\"../includes/Stupid_Cell.Data\")    --:  false;",
+		"is_grid(\"../includes/test.png\")            --:  false;",
+		"is_grid(\"../includes/test.properties\")     --:  false;",
+		"is_grid(\"../includes/test.asc\")            --:  true;" }, see = { "image", "is_text",
+		"is_properties", "is_image", "is_shape" })
+	public static Boolean isGrid(final String f) {
+		final String fn = f.toLowerCase();
+		for ( final String s : gridSuffixes ) {
+			if ( fn.endsWith(s) ) { return true; }
+		}
+		return false;
 	}
 
 	@operator(value = "is_image")

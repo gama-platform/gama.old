@@ -156,6 +156,32 @@ public class GisUtils {
 		prjreader.close();
 		setTransformCRS(transfCRS);
 	}
+	
+	public void setTransformCRS(final CoordinateReferenceSystem crsI, final double latitude, final double longitude)
+			throws IOException {
+			if ( transforms() ) { return; }
+			MathTransform transfCRS = null;
+			crsInit = crsI;
+			ProjectedCRS projectd = CRS.getProjectedCRS(crsInit);
+			if ( projectd == null ) {
+				System.out.println("NOT PROJECTED");
+				try {
+					int index = (int) (0.5 + (latitude + 180.0) / 360 * 60);
+					boolean north = longitude > 0;
+					int wgs84utm = 32600 + index + (north ? 0 : 100);
+					CoordinateReferenceSystem crs = CRS.decode("EPSG:" + wgs84utm);
+					transfCRS = CRS.findMathTransform(crsInit, crs);
+					System.out.println("decodedcrs : " + crs);
+				} catch (NoSuchAuthorityCodeException e) {
+					System.out.println("WARNING : STILL NOT PROJECTED");
+				} catch (FactoryException e) {
+					System.out.println("WARNING : STILL NOT PROJECTED");
+				}
+			} else {
+				System.out.println(" IT IS ALREADY PROJECTED" + projectd.toWKT());
+			}
+			setTransformCRS(transfCRS);
+		}
 
 	// Begin
 	// -----------------------------------------------------------------------------------

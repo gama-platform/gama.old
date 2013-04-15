@@ -27,6 +27,7 @@
 	<classpathentry exported="true" kind="lib" path="gt-property-2.7.3.jar" sourcepath="sources/geotools-2.7.3.zip"/>
 	<classpathentry exported="true" kind="lib" path="gt-referencing-2.7.3.jar" sourcepath="sources/geotools-2.7.3.zip"/>
 	<classpathentry exported="true" kind="lib" path="gt-shapefile-2.7.3.jar" sourcepath="sources/geotools-2.7.3.zip"/>
+	<classpathentry exported="true" kind="lib" path="gt-arcgrid-2.7.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="hsqldb-1.8.0.7.jar"/>
 	<classpathentry exported="true" kind="lib" path="jai_core-1.1.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="jcommon-1.0.15.jar"/>
@@ -48,5 +49,12 @@
 	<classpathentry exported="true" kind="lib" path="gs-algo-1.1.2.jar" sourcepath="sources/gs-algo-1.1.2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="gs-core-1.1.2.jar" sourcepath="sources/gs-core-1.1.2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="gs-ui-1.1.2.jar" sourcepath="sources/gs-ui-1.1.2-sources.jar"/>
+	<classpathentry exported="true" kind="lib" path="gt-process-2.7.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="gt-coverage-2.7.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="gt-grid-2.7.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="imageio-ext-arcgrid-1.0.8.jar"/>
+	<classpathentry exported="true" kind="lib" path="imageio-ext-utilities-1.0.8.jar"/>
+	<classpathentry exported="true" kind="lib" path="jai_codec-1.1.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="jai_imageio-1.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

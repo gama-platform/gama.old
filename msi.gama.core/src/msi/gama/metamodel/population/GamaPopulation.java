@@ -30,6 +30,7 @@ import msi.gama.metamodel.topology.grid.GridTopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.util.file.GamaGridFile;
 import msi.gama.util.graph.AbstractGraphNodeAgent;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.architecture.IArchitecture;
@@ -405,8 +406,13 @@ public class GamaPopulation implements IPopulation {
 			exp = species.getFacet(IKeyword.NEIGHBOURS);
 			boolean usesVN = exp == null || Cast.asInt(scope, exp.value(scope)) == 4;
 			boolean isHexagon = exp != null && Cast.asInt(scope, exp.value(scope)) == 6;
-			topology =
+			exp = species.getFacet(IKeyword.FILE);
+			
+			GamaGridFile file = (GamaGridFile) (exp != null ? exp.value(scope) : null);
+			if (file == null) topology =
 				new GridTopology(scope, this.getHost(), rows, columns, isTorus, usesVN, isHexagon);
+			else  topology =
+					new GridTopology(scope, this.getHost(), file, isTorus, usesVN);
 		} else if ( species.isGraph() ) {
 			IExpression spec = species.getFacet(IKeyword.EDGE_SPECIES);
 			String edgeName = spec == null ? "base_edge" : spec.literalValue();
