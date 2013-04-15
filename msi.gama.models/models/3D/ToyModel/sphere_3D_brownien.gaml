@@ -4,8 +4,8 @@ global {
 	int number_of_agents parameter: 'Number of Agents' min: 1 <- 1000 ;
 	int radius parameter: 'Radius' min: 10 <- 10 ;
 	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 1000 ;  
-	bool wander3D parameter: 'wander 3D' value:false;
 	bool wander3D <- true parameter: 'Wander 3D';
+	bool sphere <- true parameter: 'sphere';
 	
 	list blueCombination <- [([0,113,188]),([68,199,244]),([157,220,249]),([212,239,252])];
 
@@ -32,13 +32,17 @@ entities {
 			
 		}		
 		aspect default {
-			draw sphere(radius) ;
-		}
+			if(sphere){
+			  draw sphere(radius) ;	
+			}else{
+			  draw circle(radius) ;	
+	      }
+	    }
 	}
 }
 experiment display  type: gui {
 	output {
-		display WanderingSphere refresh_every: 1  type:opengl ambiant_light:0.2 background: rgb('black'){
+		display WanderingSphere type:opengl ambiant_light:0.4 background: rgb('black'){
 			species cells;
 		}
 	}
