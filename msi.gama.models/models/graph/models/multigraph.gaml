@@ -9,72 +9,60 @@ model multigraph
 global {
 	file shape_file_in <- file('../includes/road.shp') ;
 	file shape_file_bounds <- file('../includes/bounds.shp') ;
-	
+	geometry shape <- envelope(shape_file_bounds);
 	graph road_graph; 
+	graph friendship_graph <- graph([]);
 	
-	//SOL 1
-	/*graph<people, friendship_link> friendship_graph <- empty_graph(friendship_link, people);
 	init {
 		create road from: shape_file_in;
+		road_graph <- as_edge_graph(road);
 		create people number: 100 {
 			add vertex: self to: friendship_graph;
 		}
-		loop times: 200 {
-			people p1 <- one_of(people);
-			people p2 <- one_of(list(people) - p1);
-			
-			add edge: p1::p2 to: friendship_graph;
-		}
-		
-	}*/
-	
-	//SOL 2 
-	graph friendship_graph <- graph([]);
-	init {
-		create road from: shape_file_in;
-		create people number: 10 {
-			add vertex: self to: friendship_graph;
-		}
-		loop times: 10 {
+		loop times: 100 {
 			people p1 <- one_of(people);
 			people p2 <- one_of(list(people) - p1);
 			if flip(0.5) {
-				create friendship_link returns: fls;
-				add edge: (p1::p2)::first(fls) to: friendship_graph;
+				create friendship_link  {
+					add edge: (p1::p2)::self to: friendship_graph;
+					shape <- new_shape();
+				}
+				
 			
 			}
 			else {add edge: p1::p2 to: friendship_graph;}
+		}
+		ask people {
+			 do updateSize;
 		}
 		
 	}
 }
 
-environment bounds: shape_file_bounds;
-
 entities {
 	species people skills: [moving]{
 		point location <- any_location_in(one_of(road));
-		point target<- any_location_in(one_of(road));
-		path my_path; 
-	
+		people target<- one_of(people);
+		float size ;
+		action updateSize {
+			path friendship_path <- friendship_graph path_between(self:: target); 
+			size <-max([2,length( friendship_path.edges)]);
+		}
 		reflex movement {
-			write "in_edges_of : " + friendship_graph in_edges_of self;
-			if (location = target) {
-				target <- any_location_in(one_of(road));
+			if (location distance_to target < 5.0) {
+				target <- one_of(people);
+				do updateSize;
 			}
-			do goto on:road_graph target:target speed:1;
+			do goto on:road_graph target:target speed:1 + rnd(2);
 		}
 		aspect base {
-			/*loop fd over: friendship_graph neighbours_of self {
-				draw line([location, people(fd).location]) color: rgb("black");
-			}*/
-			draw circle(5) color: rgb("red");
+			draw circle(size) color: rgb("red");
 		}
 		
 	}
 	
 	species friendship_link {
-		geometry shape  update: new_shape();
+		geometry shape update: new_shape();
 		action new_shape {
 			return line([people(friendship_graph source_of(self)).location, people(friendship_graph target_of(self)).location]);
 		}
