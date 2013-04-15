@@ -280,6 +280,7 @@ public class Camera {
 
 	public void UpdateCamera(GL gl, GLU glu, int width, int height) {
 
+		
 		if (height == 0) {
 			height = 1; // prevent divide by zero
 		}
@@ -293,6 +294,8 @@ public class Camera {
 	}
 
 	public void InitializeCamera(float envWidth, float envHeight) {
+		
+		System.out.println("Init envWidth" + envWidth + "envHeight" + envHeight);
 
 		this.yaw = 0.0f;
 		this.pitch = 0.0f;
@@ -310,7 +313,7 @@ public class Camera {
 			this.setxLPos(0);
 			this.setyPos(0);
 			this.setyLPos(0);
-			this.setzPos(maxDim*1.5);
+			this.setzPos(maxDim*2);
 			this.setzLPos(0.0f);
 		}
 		else{
@@ -318,7 +321,7 @@ public class Camera {
 		this.setxLPos(envWidth / 2);
 		this.setyPos(-envHeight / 2);
 		this.setyLPos(-envHeight / 2);
-		this.setzPos(maxDim*1.5);
+		this.setzPos(maxDim*2);
 		this.setzLPos(0.0f);
 		}
 		//this.PrintParam();

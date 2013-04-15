@@ -644,16 +644,10 @@ public class JTSDrawer {
 
 	}
 
-	public void DrawSphere(final Point point, final float z_layer, final float radius,
+	public void DrawSphere(final ILocation location, final float z_layer, final float radius,
 		final Color c, final float alpha) {
 
-		if ( Double.isNaN(point.getCoordinate().z) == true ) {
-			myGl.glTranslated(point.getCoordinate().x, yFlag * point.getCoordinate().y, z_layer);
-		} else {
-			myGl.glTranslated(point.getCoordinate().x, yFlag * point.getCoordinate().y, z_layer +
-				point.getCoordinate().z);
-		}
-
+		myGl.glTranslated(location.getX(), yFlag * location.getY(), z_layer + location.getZ());
 		myGl.glColor4f((float) c.getRed() / 255, (float) c.getGreen() / 255,
 			(float) c.getBlue() / 255, alpha);
 
@@ -665,12 +659,7 @@ public class JTSDrawer {
 		final int stacks = 16;
 		myGlu.gluSphere(quad, radius, slices, stacks);
 		myGlu.gluDeleteQuadric(quad);
-		if ( Double.isNaN(point.getCoordinate().z) == true ) {
-			myGl.glTranslated(-point.getCoordinate().x, -yFlag * point.getCoordinate().y, -z_layer);
-		} else {
-			myGl.glTranslated(-point.getCoordinate().x, -yFlag * point.getCoordinate().y,
-				-(z_layer + point.getCoordinate().z));
-		}
+		myGl.glTranslated(-location.getX(), -yFlag * location.getY(), -(z_layer + location.getZ()));
 
 	}
 

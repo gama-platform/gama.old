@@ -63,7 +63,7 @@ public class BasicOpenGlDrawer {
 			else if (geometry.geometry.getGeometryType() == "Polygon") {
 				//The JTS geometry of a sphere is a circle (a polygon)
 				if((geometry.type).equals("sphere")){
-					myJTSDrawer.DrawSphere((Point) geometry.geometry.getCentroid(),
+					myJTSDrawer.DrawSphere(geometry.agent.getLocation(),
 							geometry.z_layer, geometry.height, geometry.color,
 							geometry.alpha);
 				}
@@ -100,7 +100,7 @@ public class BasicOpenGlDrawer {
 
 			else if (geometry.geometry.getGeometryType() == "Point") {
 				if (geometry.height > 0) {
-					myJTSDrawer.DrawSphere((Point) geometry.geometry,
+					myJTSDrawer.DrawSphere(geometry.agent.getLocation(),
 							geometry.z_layer, geometry.height, geometry.color,
 							geometry.alpha);
 				} else {
@@ -139,7 +139,7 @@ public class BasicOpenGlDrawer {
 			else if (geometry.geometry.getGeometryType() == "Polygon") {
 				//The JTS geometry of a sphere is a circle (a polygon)
 				if((geometry.type).equals("sphere")){
-					myJTSDrawer.DrawSphere((Point) geometry.geometry.getCentroid(),
+					myJTSDrawer.DrawSphere(geometry.agent.getLocation(),
 							geometry.z_layer, geometry.height, c,
 							geometry.alpha);
 				}
@@ -173,7 +173,7 @@ public class BasicOpenGlDrawer {
 
 			else if (geometry.geometry.getGeometryType() == "Point") {
 				if (geometry.height > 0) {
-					myJTSDrawer.DrawSphere((Point) geometry.geometry,
+					myJTSDrawer.DrawSphere(geometry.agent.getLocation(),
 							geometry.z_layer, geometry.height, c, geometry.alpha);
 				} else {
 					myJTSDrawer.DrawPoint((Point) geometry.geometry,
