@@ -20,6 +20,7 @@ package msi.gaml.operators;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.*;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -30,6 +31,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.*;
 import msi.gama.util.path.IPath;
+import msi.gama.util.path.PathFactory;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
 
@@ -460,6 +462,14 @@ public class Graphs {
 		g.addEdge(nodes.first(), nodes.last());
 		g.incVersion();
 		return g;
+	}
+	
+	@operator(value = "path_between", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@doc(value = "A path between a list of two objects in a graph", examples = { "my_graph path_between [ag1:: ag2] --: A path between ag1 and ag2" })
+	public static IPath path_between(final IScope scope, final GamaGraph graph,
+		final GamaPair sourTarg) throws GamaRuntimeException {
+		return graph.computeShortestPathBetween(sourTarg.key, sourTarg.value);
+		
 	}
 
 	/*
