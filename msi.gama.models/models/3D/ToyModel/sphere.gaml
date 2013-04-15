@@ -9,11 +9,13 @@ global {
 	float speed_of_agents parameter: 'Speed of Agents' min: 1.0  <- 10.0 ; 
 	int size_of_agents <- 10;
 	const center type: point <- {width_and_height_of_environment/2,width_and_height_of_environment/2};
+	
+	list blueNeutral <- [([0,107,145]),([211,198,173]),([241,223,183])];
 
 	init { 
 		create cells number: number_of_agents { 
-			set location <- {rnd(width_and_height_of_environment), rnd(width_and_height_of_environment)};
-			set shape <- shape add_z rnd(500);
+			set location <- {rnd(width_and_height_of_environment), rnd(width_and_height_of_environment),rnd(500)};
+			//set shape <- shape add_z rnd(500);
 		}
 
 	}  
@@ -47,7 +49,9 @@ entities {
 		}
 		
 		aspect sphere {
-			draw geometry: geometry (point(self.location)) depth:z;
+			
+			draw sphere(z);
+			//draw geometry: geometry (point(self.location)) depth:z;
 		}
 		
 	}
