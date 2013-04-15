@@ -295,8 +295,6 @@ public class Camera {
 
 	public void InitializeCamera(float envWidth, float envHeight) {
 		
-		System.out.println("Init envWidth" + envWidth + "envHeight" + envHeight);
-
 		this.yaw = 0.0f;
 		this.pitch = 0.0f;
 		this.envWidth= envWidth;
