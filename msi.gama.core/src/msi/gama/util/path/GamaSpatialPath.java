@@ -55,7 +55,12 @@ public class GamaSpatialPath extends GamaPath<IShape,IShape> {
 		super(g,start,target,_edges,modify_edges);
 		this.init(g, start, target, _edges, modify_edges);
 	}
-
+	
+	public GamaSpatialPath(IShape start, IShape target, IList<IShape> edges) {
+		super(null,start,target,edges,false);
+		this.init(null, start, target, edges, false);
+	}
+	
 	public void init(final GamaSpatialGraph g, final IShape start, final IShape target,
 			final IList<IShape> _edges, final boolean modify_edges) {
 		source = start;
@@ -147,6 +152,8 @@ public class GamaSpatialPath extends GamaPath<IShape,IShape> {
 	///////////////////////////////////////////////////
 	// Implements methods from IValue
 	
+
+
 	@Override
 	public GamaSpatialPath copy(IScope scope) {
 		return new GamaSpatialPath(graph, source, target, segments);
