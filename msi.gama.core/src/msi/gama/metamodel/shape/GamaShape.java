@@ -149,7 +149,8 @@ public class GamaShape implements IShape /* , IContainer */{
 				// if ( isPoint ) {
 				double dx = location.getX() - previous.getX();
 				double dy = location.getY() - previous.getY();
-				geometry.apply(translation.by(dx, dy));
+				double dz = location.getZ() - previous.getZ();
+				geometry.apply(translation.by(dx, dy, dz));
 			}
 			geometry.geometryChanged();
 		}
@@ -188,7 +189,7 @@ public class GamaShape implements IShape /* , IContainer */{
 
 	private static class Translation implements CoordinateFilter {
 
-		double dx, dy;
+		double dx, dy, dz;
 
 		/**
 		 * @see com.vividsolutions.jts.geom.CoordinateFilter#filter(com.vividsolutions.jts.geom.Coordinate)
@@ -197,16 +198,19 @@ public class GamaShape implements IShape /* , IContainer */{
 		public void filter(final Coordinate coord) {
 			coord.x += dx;
 			coord.y += dy;
+			coord.z += dz;
 		}
 
 		/**
 		 * @param dx
 		 * @param dy
+		 * @param dz
 		 * @return
 		 */
-		public Translation by(final double dx, final double dy) {
+		public Translation by(final double dx, final double dy, final double dz) {
 			this.dx = dx;
 			this.dy = dy;
+			this.dz = dz;
 			return this;
 		}
 
