@@ -60,7 +60,7 @@ public class Maths {
 			double a2 = FastMath.atan2(x, y);
 			t2 += java.lang.System.currentTimeMillis() - s1;
 			s1 =  java.lang.System.currentTimeMillis();
-			double a3 = Maths.atan2Opt(x, y);
+			double a3 = Maths.atan2Opt2(x, y);
 			t3 += java.lang.System.currentTimeMillis() - s1;
 			
 			atan2diff +=  Math.abs(a1 -a2 );
@@ -556,8 +556,7 @@ public class Maths {
 
 	@operator(value = "atan2", can_be_const = true)
 	public static double atan2(final double y, final double x) {
-		//return Maths.atan2(y, x) * toDeg;
-		return Maths.atan2Opt(y, x);
+		return Math.atan2(y, x) * toDeg;
 	}
 
 	public static double aTan2(final double y, final double x) {
@@ -611,9 +610,9 @@ public class Maths {
 	   private static final int ATAN2_COUNT = ATAN2_MASK + 1;
 	   private static final int ATAN2_DIM = (int) Math.sqrt(ATAN2_COUNT);
 
-	   private static final float INV_ATAN2_DIM_MINUS_1 = 1.0f / (ATAN2_DIM - 1);
+	   private static final double INV_ATAN2_DIM_MINUS_1 = 1.0f / (ATAN2_DIM - 1);
 	
-	   private static final float[] atan2 = new float[ATAN2_COUNT];
+	   private static final double[] atan2 = new double[ATAN2_COUNT];
 
 
 
@@ -623,23 +622,21 @@ public class Maths {
 	      {
 	         for (int j = 0; j < ATAN2_DIM; j++)
 	         {
-	            float x0 = (float) i / ATAN2_DIM;
-	            float y0 = (float) j / ATAN2_DIM;
+	        	 double x0 = (double) i / ATAN2_DIM;
+	        	 double y0 = (double) j / ATAN2_DIM;
 
-	            atan2[j * ATAN2_DIM + i] = (float) Math.atan2(y0, x0);
+	            atan2[j * ATAN2_DIM + i] = (double) Math.atan2(y0, x0);
 	         }
 	      }
 	   }
-
-
-	   /**
-	    * ATAN2
-	    */
-
-	 
-	   public static final float atan2Opt(double y, double x)
+	   public static final double atan2Opt(double y, double x)
 	   {
-	      float add, mul;
+		  return  atan2Opt2(y,x) * toDeg;
+	   }
+	 
+	   public static final double atan2Opt2(double y, double x)
+	   {
+	      double add, mul;
 
 	      if (x < 0.0f)
 	      {
