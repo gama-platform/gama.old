@@ -12,7 +12,7 @@ global {
 	init { 
 		create cells number: number_of_agents { 
 			set location <- {rnd(width_and_height_of_environment), rnd(width_and_height_of_environment), rnd(width_and_height_of_environment)};
-			set color <- rgb((blueCombination)[rnd(2)]);
+			set color <- rgb((blueCombination)[rnd(3)]);
 		} 
 	}  
 } 
