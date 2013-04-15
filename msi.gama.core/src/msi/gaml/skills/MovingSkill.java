@@ -175,6 +175,7 @@ public class MovingSkill extends GeometricSkill {
 		@arg(name = "amplitude", type = IType.INT, optional = true, doc = @doc("a restriction placed on the random heading choice. The new heading is chosen in the range (heading - amplitude/2, heading+amplitude/2)")),
 		@arg(name = "bounds", type = { IType.AGENT, IType.GEOMETRY }, optional = true, doc = @doc("the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry")) }, doc = @doc(examples = { "do wander speed: speed - 10 amplitude: 120 bounds: agentA;" }, value = "Moves the agent towards a random location at the maximum distance (with respect to its speed). The heading of the agent is chosen randomly if no amplitude is specified. This action changes the value of heading."))
 	public void primMoveRandomly(final IScope scope) throws GamaRuntimeException {
+		
 		IAgent agent = getCurrentAgent(scope);
 		ILocation location = agent.getLocation();
 		int heading = computeHeadingFromAmplitude(scope, agent);
@@ -194,6 +195,9 @@ public class MovingSkill extends GeometricSkill {
 				}
 			}
 			// pathFollowed = new GamaPath(this.getTopology(agent), GamaList.with(location, loc));
+			
+			//Enable to use wander in 3D space. An agent will wander in the plan define by its z value.
+			((GamaPoint) loc).z = agent.getLocation().getZ();
 			agent.setLocation(loc);
 		}
 		scope.setStatus(loc == null ? ExecutionStatus.failure : ExecutionStatus.success);
@@ -205,12 +209,13 @@ public class MovingSkill extends GeometricSkill {
 		@arg(name = "amplitude", type = IType.INT, optional = true, doc = @doc("a restriction placed on the random heading choice. The new heading is chosen in the range (heading - amplitude/2, heading+amplitude/2)")),
 		@arg(name = "bounds", type = { IType.AGENT, IType.GEOMETRY }, optional = true, doc = @doc("the geometry (the localized entity geometry) that restrains this move (the agent moves inside this geometry")) }, doc = @doc(examples = { "do wander_3D speed: speed - 10 amplitude: 120 bounds: agentA;" }, value = "Moves the agent towards a random location (3D point) at the maximum distance (with respect to its speed). The heading of the agent is chosen randomly if no amplitude is specified. This action changes the value of heading."))
 	public IPath primMoveRandomly3D(final IScope scope) throws GamaRuntimeException {
+		
 		IAgent agent = getCurrentAgent(scope);
 		ILocation location = agent.getLocation();
 		int heading = computeHeadingFromAmplitude(scope, agent);
 		double dist = computeDistance(scope, agent);
-		ITopology topo = scope.getTopology();
-		ILocation loc = topo.getDestination(location, heading, dist, true);
+		
+		ILocation loc = scope.getTopology().getDestination(location, heading, dist, true);
 
 		if ( loc == null ) {
 			agent.setHeading(heading - 180);
