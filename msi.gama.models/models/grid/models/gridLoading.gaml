@@ -1,17 +1,15 @@
 /**
- *  multigraph
+ *  gridLoading
  *  Author: patricktaillandier
  *  Description: 
  */
 
-model multigraph
+model gridloading
 
 global {
 	file shape_file <- file('../includes/test.shp') ;
 	file grid_file <- file('../includes/hab10.asc') ;
-	graph road_graph;  
-	geometry shape <- envelope(grid_file);
-		
+	geometry shape <- envelope(grid_file);	
 	
 	init {
 		create object from: shape_file;    
@@ -33,12 +31,11 @@ entities {
 	} 
 }
 
-experiment multigraph type: gui {
+experiment gridloading type: gui {
 	output {
 		display test {
 			grid cell lines: rgb("black");
 			species object aspect: base;
-			
 		}
 	} 
 }
