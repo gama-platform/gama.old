@@ -402,7 +402,10 @@ public abstract class Spatial {
 		@doc(special_cases = { "if the right-operand is a point, a geometry or an agent, returns the geometry resulting from the difference between both geometries" }, examples = { "geom1 - geom2 --: a geometry corresponding to difference between geom1 and geom2" })
 		public static IShape minus(final IShape g1, final IShape g2) {
 			if ( g2 == null || g2.getInnerGeometry() == null ) { return g1; }
-			return new GamaShape(g1.getInnerGeometry().difference(g2.getInnerGeometry()));
+			Geometry gdiff = g1.getInnerGeometry().difference(g2.getInnerGeometry());
+			if (gdiff != null && !gdiff.isEmpty())
+				return new GamaShape(gdiff);
+			return null;
 		}
 
 		@operator(IKeyword.MINUS)
@@ -414,6 +417,8 @@ public abstract class Spatial {
 			for ( IShape ag : agents ) {
 				if ( ag != null && ag.getInnerGeometry() != null ) {
 					geom1 = geom1.difference(ag.getInnerGeometry());
+					if (geom1 == null || geom1.isEmpty())
+						return null;
 				}
 			}
 			return new GamaShape(geom1);
