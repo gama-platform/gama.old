@@ -13,10 +13,10 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.IList;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.operators.Cast;
-import msi.gaml.statements.*;
+import msi.gaml.statements.Arguments;
+import msi.gaml.statements.IStatement;
 import msi.gaml.types.IType;
 
 // FIXME: Add all the necessary variables (degree, neighbours, edges)

@@ -17,25 +17,31 @@ global {
 				nodeSpecy,
 				edgeSpecy
 		 );
-	
+		 
 	init {
 			  
-		// export the graph in the console
+		my_graph  <- generate_watts_strogatz(
+				nodeSpecy,
+				edgeSpecy,
+				200,
+				0.05,
+				2
+		);	  
+		
+		// print the graph in the console
 		write my_graph;
-		
-		// examples for saving graphs 
-		// ... exports the graph as text (same if type is omitted): same export as the one in the console.
-		save my_graph type: "text" to: "/tmp/test.txt" rewrite: true;
-		// ... exports the graph in the DGS file format
-		save my_graph type: "dgs" to: "/tmp/test.dgs" rewrite: true;
-		// ... exports the graph in the SVG file format
-		//save my_graph type: "svg" to: "/tmp/test.svg" rewrite: true;
-		// ... exports the graph in the  gml format
-		save my_graph type: "gml" to: "/tmp/test.gml" rewrite: true;
-		// ... exports the graph in the  gml format
-		save my_graph type: "tikz" to: "/tmp/test.tikz" rewrite: true;
-		
-		
+
+	 }
+	 
+	 reflex dolayout {
+	 	
+	 	write "layout !";
+	 	//my_graph <- layout_offline(my_graph, "fruchtermanreingold", 1000);
+	 	
+	 	//my_graph <- layout_offline(my_graph, "fruchtermanreingold", 1000);
+	 	// forcedirected fruchtermanreingold circle radialtree
+	 	my_graph <- layout(my_graph, "fruchtermanreingold", 100);
+	 	
 	 }
 	  
 }
@@ -52,7 +58,7 @@ entities {
 	species nodeSpecy  {
 		rgb color <- rgb('black') ;  
 		aspect base { 
-			draw circle(3) color: color ;
+			draw circle(1) color: color ;
 		} 
 		 		
 	}
@@ -80,7 +86,7 @@ experiment load_graph type: gui {
 		 * and location. This provides a spatialized view of the network.
 		 * 
 		 */
-		display test_display refresh_every: 1 {
+		display test_display refresh_every: 1 type:opengl {
 			species nodeSpecy aspect: base ; 
 			species edgeSpecy aspect: base ;
 		}
@@ -89,6 +95,6 @@ experiment load_graph type: gui {
 		 * This display provides another look on the network,
 		 * without spatiality.
 		 */
-		graphdisplay monNom2 graph: my_graph lowquality:true;
+		//graphdisplay monNom2 graph: my_graph lowquality:true;
 	}
 }

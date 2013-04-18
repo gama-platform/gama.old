@@ -18,34 +18,48 @@
  */
 package msi.gaml.statements;
 
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.precompiler.ISymbolKind;
+import msi.gama.runtime.ExecutionStatus;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
-import msi.gama.util.graph.GraphExportersFromGraphStream;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaMap;
+import msi.gama.util.IList;
 import msi.gama.util.graph.IGraph;
+import msi.gama.util.graph.writer.AvailableGraphWriters;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.operators.GraphsGraphstream;
 import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.IType;
-import org.geotools.data.*;
+
+import org.geotools.data.DataUtilities;
+import org.geotools.data.DefaultTransaction;
+import org.geotools.data.FeatureStore;
+import org.geotools.data.Transaction;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.feature.*;
+import org.geotools.feature.FeatureCollection;
+import org.geotools.feature.FeatureCollections;
+import org.geotools.feature.SchemaException;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.opengis.feature.Feature;
-import org.opengis.feature.simple.*;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import com.vividsolutions.jts.geom.Geometry;
 
 @symbol(name = IKeyword.SAVE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, with_args = true, remote_context = true)
@@ -121,7 +135,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			IExpression item = getFacet(IKeyword.DATA);
 			saveText(type, item, fileTxt, scope);
 			
-		} else if (GraphExportersFromGraphStream.getAvailableExportationFormats().contains(type.toLowerCase())) {
+		} else if (AvailableGraphWriters.getAvailableWriters().contains(type.trim().toLowerCase())) {
 			
 			IExpression item = getFacet(IKeyword.DATA);
 			IGraph g;
@@ -134,7 +148,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				scope.setStatus(ExecutionStatus.failure);
 				return null;
 			}
-			GraphExportersFromGraphStream.saveGraphWithGraphstreamToFile(scope, g, null, path, type);
+			AvailableGraphWriters
+				.getGraphWriter(type.trim().toLowerCase())
+				.writeGraph(scope, g, null, path);
 			
 		} else {
 		

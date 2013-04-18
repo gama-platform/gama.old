@@ -17,10 +17,15 @@
  */
 package msi.gama.util.graph;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.Comparator;
+
 import msi.gama.common.util.GuiUtils;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.GAMA;
+
 import com.vividsolutions.jts.geom.Envelope;
 
 /**

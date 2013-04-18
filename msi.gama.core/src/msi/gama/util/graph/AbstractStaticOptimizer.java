@@ -17,10 +17,16 @@
  */
 package msi.gama.util.graph;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import msi.gama.common.util.GuiUtils;
-import msi.gama.metamodel.shape.*;
-import msi.gama.util.*;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.util.GamaList;
+import msi.gama.util.IList;
 
 /**
  * AbstractStaticOptimizer

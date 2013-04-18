@@ -19,26 +19,51 @@
  */
 package msi.gama.util.graph;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaList;
+import msi.gama.util.GamaMap;
+import msi.gama.util.GamaPair;
+import msi.gama.util.IContainer;
+import msi.gama.util.IList;
 import msi.gama.util.graph.GraphEvent.GraphEventType;
 import msi.gama.util.matrix.IMatrix;
 import msi.gama.util.path.IPath;
 import msi.gama.util.path.PathFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
-import org.jgrapht.*;
-import org.jgrapht.alg.*;
-import org.jgrapht.graph.*;
+
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.EdgeFactory;
+import org.jgrapht.Graph;
+import org.jgrapht.Graphs;
+import org.jgrapht.UndirectedGraph;
+import org.jgrapht.WeightedGraph;
+import org.jgrapht.alg.BellmanFordShortestPath;
+import org.jgrapht.alg.ConnectivityInspector;
+import org.jgrapht.alg.DijkstraShortestPath;
+import org.jgrapht.alg.FloydWarshallShortestPaths;
+import org.jgrapht.alg.HamiltonianCycle;
+import org.jgrapht.alg.KruskalMinimumSpanningTree;
+import org.jgrapht.graph.AsUndirectedGraph;
+import org.jgrapht.graph.SimpleWeightedGraph;
 
 public class GamaGraph<V, E> implements IGraph<V, E> {
 

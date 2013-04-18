@@ -1,7 +1,5 @@
 package msi.gama.util.graph;
 
-import msi.gama.metamodel.shape.IShape;
-
 import org.graphstream.algorithm.AStar.Costs;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.Node;

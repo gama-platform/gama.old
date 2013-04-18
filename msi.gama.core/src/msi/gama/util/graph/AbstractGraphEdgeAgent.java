@@ -1,14 +1,16 @@
 package msi.gama.util.graph;
 
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.agent.*;
+import msi.gama.metamodel.agent.GamlAgent;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.IType;
 
 // FIXME: Add all the necessary variables and actions ?
 // FIXME:

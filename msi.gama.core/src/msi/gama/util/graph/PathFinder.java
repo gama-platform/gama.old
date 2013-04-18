@@ -18,6 +18,7 @@
 package msi.gama.util.graph;
 
 import java.util.List;
+
 import msi.gama.util.IList;
 
 /**

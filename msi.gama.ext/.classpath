@@ -56,5 +56,7 @@
 	<classpathentry exported="true" kind="lib" path="imageio-ext-utilities-1.0.8.jar"/>
 	<classpathentry exported="true" kind="lib" path="jai_codec-1.1.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="jai_imageio-1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="prefuse.jar" sourcepath="/local00/home/B12772/Téléchargements/prefuse-beta/dist/prefuse-beta-20130417.zip"/>
+	<classpathentry exported="true" kind="lib" path="gephi-toolkit.jar" sourcepath="/local00/home/B12772/Téléchargements/gephi-toolkit-0.8.7-all/gephi-toolkit.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

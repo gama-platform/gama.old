@@ -18,6 +18,12 @@
  */
 package msi.gaml.operators;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.graphstream.algorithm.generator.WattsStrogatzGenerator;
+
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
@@ -30,6 +36,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.*;
+import msi.gama.util.graph.layout.AvailableGraphLayouts;
+import msi.gama.util.graph.layout.PrefuseStaticLayoutAbstract;
 import msi.gama.util.path.IPath;
 import msi.gama.util.path.PathFactory;
 import msi.gaml.species.ISpecies;
@@ -478,6 +486,68 @@ public class Graphs {
 	 * return g;
 	 * }
 	 */
+	
+	@operator(value = "layout")
+	@doc(
+		value = "layouts a GAMA graph.",
+		comment = "TODO",
+		special_cases = {
+				"TODO."},
+		examples = {
+			"TODO;"},
+		see = {"TODO"})	
+	// TODO desc
+
+	public static IGraph layoutOneshot(final IScope scope, final GamaGraph graph, final String layoutEngine, final int timeout, final GamaMap<String, Object> options) {
+		
+		// translate Gama options to 
+		Map<String,Object> jOptions = null;
+		if (options.isEmpty()) {
+			jOptions = Collections.EMPTY_MAP;
+		} else {
+			jOptions = new HashMap<String, Object>(options.size());
+			for (String key : options.keySet()) {
+				jOptions.put(
+						key, 
+						options.get(scope, key)
+						);
+			}
+		}
+		AvailableGraphLayouts
+					// retrieve layout for he layout that was selected by the user (may raise an exception)
+					.getStaticLayout(layoutEngine.trim().toLowerCase())
+					// apply this layout with the options
+					.doLayoutOneShot(scope, graph, timeout, jOptions);
+		
+		return graph;
+	}
+	
+	@operator(value = "layout")
+	@doc(
+		value = "layouts a GAMA graph.",
+		comment = "TODO",
+		special_cases = {
+				"TODO."},
+		examples = {
+			"TODO;"},
+		see = {"TODO"})	
+	public static IGraph layoutOneshot(final IScope scope, final GamaGraph graph, final String layoutEngine, final int timeout) {
+		return layoutOneshot(scope, graph, layoutEngine, timeout, new GamaMap<String, Object>());
+	}
+
+	
+	@operator(value = "layout")
+	@doc(
+		value = "layouts a GAMA graph.",
+		comment = "TODO",
+		special_cases = {
+				"TODO."},
+		examples = {
+			"TODO;"},
+		see = {"TODO"})	
+	public static IGraph layoutOneshot(final IScope scope, final GamaGraph graph, final String layoutEngine) {
+		return layoutOneshot(scope, graph, layoutEngine, -1);
+	}
 
 	// TODO "complete" (pour cr�er un graphe complet)
 
@@ -507,4 +577,6 @@ public class Graphs {
 
 	// TODO Ajouter des g�n�rateurs sp�cifiques a partir de GraphGenerator (pb: quelles classes pour
 	// les vertices/edges ??
+	
+	
 }

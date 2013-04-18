@@ -1,9 +1,14 @@
 package msi.gama.util.graph;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaDynamicLink;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;

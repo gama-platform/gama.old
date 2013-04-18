@@ -20,14 +20,18 @@ package msi.gama.util.graph;
 
 import java.util.Collection;
 import java.util.Map;
-import msi.gama.metamodel.shape.IShape;
+
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.util.*;
+import msi.gama.util.IContainer;
+import msi.gama.util.IList;
 import msi.gama.util.path.IPath;
 import msi.gaml.types.IType;
-import org.jgrapht.*;
+
+import org.jgrapht.DirectedGraph;
+import org.jgrapht.UndirectedGraph;
+import org.jgrapht.WeightedGraph;
 
 /**
  * Written by drogoul

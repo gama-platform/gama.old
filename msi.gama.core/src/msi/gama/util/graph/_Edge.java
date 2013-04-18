@@ -20,7 +20,6 @@ package msi.gama.util.graph;
 
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
-import org.codehaus.janino.Java.SuperclassFieldAccessExpression;
 import org.jgrapht.WeightedGraph;
 
 public class _Edge<V> {
