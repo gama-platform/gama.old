@@ -376,4 +376,10 @@ public interface IKeyword {
 	public static final String RGB = "rgb";
 	public static final String CONTAINER = "container";
 	public static final String GEOMETRY = "geometry";
+	
+	/*
+	 * files
+	 */
+	public static final String OPEN = "open";	// TODO "launch", or "open", or "sysopen" ? This opens a file with an external progam
+	
 }

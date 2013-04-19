@@ -9,6 +9,8 @@ model savingmodels
 
 global {
 	
+	bool openfiles <- true parameter: 'Open generated files' category: 'graphs' ;
+	
 	graph my_graph ;
 	
 	init {
@@ -60,6 +62,15 @@ global {
 		save my_graph type: "gdf" to: "../doc/test.gdf" rewrite: true;
 		save my_graph type: "pajek" to: "../doc/test.net" rewrite: true;
 		// (soon) save my_graph type: "dl_list" to: "../doc/test.dl" rewrite: true;
+		
+		// we could even open these files from GAMA :-)
+		// this will open the program configured by default for this filetype
+		// this could be nodepad, gephi, etc...
+		if (openfiles) {
+			
+			open file:"../doc/test.net"; 
+			
+		}
 		
 		// to check the result, just run this model (init is enough, as network 
 		// are saved during the init; then look into the navigator on the left,
