@@ -36,8 +36,6 @@ public abstract class GephiWriterAbstract implements IGraphWriter {
         exporter.setExportVisible(false);  //Only exports the visible (filtered) graph
         exporter.setWorkspace(gephiWorkspace);
 
-        System.err.println(gephiWorkspace);
-        System.err.println(exporter);
         try {
         	controller.exportFile(
         			new File(filename), 
