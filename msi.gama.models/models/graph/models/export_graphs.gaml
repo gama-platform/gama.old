@@ -55,16 +55,21 @@ global {
 		save my_graph type: "dgs" to: "../doc/test.dgs" rewrite: true;
 		save my_graph type: "gml" to: "../doc/test.gml" rewrite: true;
 		save my_graph type: "tikz" to: "../doc/test.tikz" rewrite: true;
-		save my_graph type: "prefuse.gml" to: "../doc/test.bis.gml" rewrite: true;
+		save my_graph type: "gephi.graphml" to: "../doc/test.bis.gml" rewrite: true;
 		save my_graph type: "gephi.gexf" to: "../doc/test.gexf" rewrite: true;
 		save my_graph type: "gdf" to: "../doc/test.gdf" rewrite: true;
-		save my_graph type: "pajek" to: "../doc/test.pajek" rewrite: true;
+		save my_graph type: "pajek" to: "../doc/test.net" rewrite: true;
 		// (soon) save my_graph type: "dl_list" to: "../doc/test.dl" rewrite: true;
 		
 		// to check the result, just run this model (init is enough, as network 
 		// are saved during the init; then look into the navigator on the left,
 		// in the doc/ directory, to view examples of outputs (first do a 
 		// right-click / refresh to update the content of the folder).
+		
+		// you'll observe that exporters have different capabilities, 
+		// depending on both the format and the implementation of the exporter:
+		// some will export the color and node position and/or the attributes of nodes
+		// and/or the attributes of edges. Other will only export the list of nodes and edges.
 	 }
 	
 	  
@@ -80,7 +85,9 @@ entities {
 	 * initialized with default x,y random locations.
 	 */
 	species nodeSpecy  {
-		rgb color <- rgb('black') ;  
+		rgb color <- rgb([rnd(255),rnd(255),rnd(255)]) ;
+		int age <- rnd(100);
+		  
 		aspect base { 
 			draw circle(1) color: color ;
 		} 
@@ -92,6 +99,7 @@ entities {
 	 */
 	species edgeSpecy  { 
 		rgb color <- rgb('blue') ; 
+		int strengh <- rnd(10);
 		
 		aspect base {
 			draw shape color:color;
