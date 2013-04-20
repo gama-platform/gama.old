@@ -10,6 +10,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import msi.gama.metamodel.shape.GamaPoint;
@@ -40,6 +41,8 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 	
 	protected Random random = new Random();
 	
+	private Logger logger = Logger.getLogger(getClass().getName());
+	
 	private void resetThermometer(int nbtuples) {
 		lastNode2measures = null;
 		count_measures = 
@@ -67,12 +70,9 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 			while (lastNode2measures.size() < count_measures) {
 				VisualItem i = tuples.getItem(random.nextInt(nbtuples));
 				lastNode2measures.put(i, i.getX()+i.getY());
-				System.err.println("select randomly "+i);
 			}
 			
 			// no previous reference, the difference (and temperature) is infinite !
-			System.err.println("temperature = infinite !");
-
 			return Double.POSITIVE_INFINITY;
 						
 		} else {
@@ -89,7 +89,8 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 			}
 			
 			lastNode2measures = newMeasures;
-			System.err.println("temperature = "+temperature);
+			
+			logger.fine("temperature = "+temperature);
 			return temperature;
 		}
 	
@@ -176,8 +177,7 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
         // stop and end layout
         //viz.cancel("layout");
         viz.cancel("layout");
-    	System.err.println();
-    	System.err.println("finished in: "+(System.currentTimeMillis() - timeBegin ));
+    	logger.fine("layout finished in: "+(System.currentTimeMillis() - timeBegin ));
         
         
         // retrieve the resulting coordinates
