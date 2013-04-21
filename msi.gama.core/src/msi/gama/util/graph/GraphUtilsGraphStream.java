@@ -12,6 +12,7 @@ import msi.gama.util.GamaColor;
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeRejectedException;
 import org.graphstream.graph.Graph;
+import org.graphstream.graph.IdAlreadyInUseException;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.DefaultGraph;
 
@@ -82,19 +83,21 @@ public class GraphUtilsGraphStream {
 			_Edge edge = (_Edge)gamaGraph._internalEdgeMap().get(edgeObj);
 			
 			try {
-			Edge e = g.addEdge(
-					edgeObj.toString(), 
-					gamaNode2graphStreamNode.get(edge.getSource()),
-					gamaNode2graphStreamNode.get(edge.getTarget())
-					);
-			if (edgeObj instanceof IAgent) {
-				IAgent a = (IAgent)edgeObj;
-				for (Object key : a.getAttributes().keySet()) {
-					Object value = preprocessGamaValue(a.getAttributes().get(key));
-					e.setAttribute(key.toString(), value.toString());
+				Edge e = g.addEdge(
+						edgeObj.toString(), 
+						gamaNode2graphStreamNode.get(edge.getSource()),
+						gamaNode2graphStreamNode.get(edge.getTarget())
+						);
+				if (edgeObj instanceof IAgent) {
+					IAgent a = (IAgent)edgeObj;
+					for (Object key : a.getAttributes().keySet()) {
+						Object value = preprocessGamaValue(a.getAttributes().get(key));
+						e.setAttribute(key.toString(), value.toString());
+					}
 				}
-			}
 			} catch (EdgeRejectedException e) {
+				GAMA.reportError(new GamaRuntimeException("an edge was rejected during the transformation, probably because it was a double one", true));
+			} catch (IdAlreadyInUseException e) {
 				GAMA.reportError(new GamaRuntimeException("an edge was rejected during the transformation, probably because it was a double one", true));
 			}
 			

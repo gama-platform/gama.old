@@ -1,15 +1,12 @@
 package msi.gama.util.graph.loader;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.LinkedList;
 
 import msi.gama.TestUtils;
-import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.graph.writer.AvailableGraphWriters;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -67,8 +64,6 @@ public class TestLoading {
 		} catch (Throwable e) {
 			fail("Gama runtime exception expected.");
 		}
-		
-		
 		
 	}
 	

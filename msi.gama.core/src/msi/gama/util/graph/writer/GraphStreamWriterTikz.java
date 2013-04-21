@@ -3,6 +3,10 @@ package msi.gama.util.graph.writer;
 import org.graphstream.stream.file.FileSink;
 import org.graphstream.stream.file.FileSinkTikZ;
 
+/**
+ * 
+ * @author Samuel Thiriot
+ */
 public class GraphStreamWriterTikz extends GraphStreamWriterAbstract {
 
 	public static final String NAME = "tikz";

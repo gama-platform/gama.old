@@ -10,6 +10,10 @@ import msi.gama.util.graph.IGraph;
 
 import org.graphstream.stream.file.FileSink;
 
+/**
+ * 
+ * @author Samuel Thiriot
+ */
 public abstract class GraphStreamWriterAbstract implements IGraphWriter {
 
 	/**

@@ -3,7 +3,10 @@ package msi.gama.util.graph.writer;
 import org.gephi.io.exporter.plugin.ExporterDL;
 import org.gephi.io.exporter.spi.GraphExporter;
 
-
+/**
+ * 
+ * @author Samuel Thiriot
+ */
 public class GephiWriterCSV extends GephiWriterAbstract {
 
 	@Override

@@ -9,6 +9,10 @@ import prefuse.data.Graph;
 import prefuse.data.io.DataIOException;
 import prefuse.data.io.GraphWriter;
 
+/**
+ * @deprecated : other writers provide better support for many formats. Still kept in case of a failure found for other exporters.
+ * @author Samuel Thiriot
+ */
 public abstract class PrefuseWriterAbstract implements IGraphWriter {
 
 	

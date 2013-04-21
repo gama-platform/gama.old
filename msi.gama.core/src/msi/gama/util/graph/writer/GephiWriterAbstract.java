@@ -29,7 +29,7 @@ public abstract class GephiWriterAbstract implements IGraphWriter {
 			
 		}
 		if (exporter == null) {
-			throw new GamaRuntimeException("unable to find this exporter for format "+getFormat());
+			throw new GamaRuntimeException("unable to find an exporter for format "+getFormat());
 		}
 		
 		// configure the exporter
@@ -55,6 +55,8 @@ public abstract class GephiWriterAbstract implements IGraphWriter {
 	@Override
 	public void writeGraph(IScope scope, IGraph<?, ?> gamaGraph,
 			GamaFile<?, ?> gamaFile, String filename) {
+		
+			// translate the gama graph as a gephi graph (that is, stored into a gephi workspace)
 			Workspace gephiWorkspace = GraphUtilsGephi.loadIntoAGephiWorkspace(gamaGraph);
 
 			writeGraph(

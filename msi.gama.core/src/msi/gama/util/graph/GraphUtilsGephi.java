@@ -5,6 +5,8 @@ import java.util.Map;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 
 import org.gephi.data.attributes.api.AttributeColumn;
@@ -12,6 +14,7 @@ import org.gephi.data.attributes.api.AttributeController;
 import org.gephi.data.attributes.api.AttributeModel;
 import org.gephi.data.attributes.api.AttributeType;
 import org.gephi.graph.api.Edge;
+import org.gephi.graph.api.Graph;
 import org.gephi.graph.api.GraphController;
 import org.gephi.graph.api.GraphModel;
 import org.gephi.graph.api.MixedGraph;
@@ -29,6 +32,7 @@ public class GraphUtilsGephi {
 	
 	public static final String FIELD_AGENT_TYPE = "_agentType";
 	public static final String FIELD_VALUE = "_value";
+	public static final String FIELD_EDGE_ID = "id" ;
 	
 
 	public static ProjectController getGephiProjectController () {
@@ -111,8 +115,15 @@ public class GraphUtilsGephi {
 		}
          
 		// configure the resulting graph
-		MixedGraph gephiGraph = graphModel.getMixedGraph();
-       
+		Graph gephiGraph = null;
+		if (gamaGraph.isDirected()) {
+			gephiGraph = graphModel.getDirectedGraph();
+		} else {
+			gephiGraph = graphModel.getUndirectedGraph();
+		}
+		// graphModel.getMixedGraph();
+		// TODO !!!
+		
 		// ... always export agent type
         attributeModel.getNodeTable().addColumn(FIELD_AGENT_TYPE, AttributeType.STRING);
 
@@ -143,9 +154,13 @@ public class GraphUtilsGephi {
 
 		}
 		
-		// add edges
+		// ...configure edges columns
 		// ... always export agent type
         attributeModel.getEdgeTable().addColumn(FIELD_AGENT_TYPE, AttributeType.STRING);
+		// ... always add an edge id (that would raise errors during reading in some formats
+        // not required: does already exists implicitely : 
+        // attributeModel.getEdgeTable().addColumn(FIELD_EDGE_ID, AttributeType.STRING);
+
 
         // ... and the attributes of agents in edges
 		Map<Object,AttributeColumn> edgeGamaId2gephiColumn = new java.util.HashMap<Object, AttributeColumn>();
@@ -170,7 +185,6 @@ public class GraphUtilsGephi {
 				}
 				
 			}
-
 			
 		}
 		
@@ -232,9 +246,10 @@ public class GraphUtilsGephi {
 					gephiGraph.getNode(edge.getTarget().toString())
 					);
 			
-			// actually add the edge to the network
-			gephiGraph.addEdge(createdEdge);
+			// always add an id for the edge (required for some formats)
+	        createdEdge.getAttributes().setValue(FIELD_EDGE_ID, edge.getSource().toString()+"_to_"+edge.getTarget().toString());
 			
+	        // add all other attributes
 			if (edgeObj instanceof IAgent) {
 				IAgent a = (IAgent)edgeObj;
 				
@@ -255,8 +270,13 @@ public class GraphUtilsGephi {
 				createdEdge.getAttributes().setValue(FIELD_VALUE, edgeObj.toString());
 
 			}
-
 			
+			// actually add the edge to the network
+			if (!gephiGraph.addEdge(createdEdge)) {
+				GAMA.reportError(new GamaRuntimeException("an edge was ignored, probably because some edges are redondant"));
+				continue;
+			}
+
 		}
        
         

@@ -20,7 +20,7 @@ public class AvailableGraphWriters {
 		// defaults 
 		put("dgs",					GraphStreamWriterDGS.class);
 		put("gml",					GraphStreamWriterGML.class);
-		put("tikz",					GraphStreamWriterGML.class);
+		put("tikz",					GraphStreamWriterTikz.class);
 		put("gexf",					GephiWriterGEXF.class);
 		put("pajek",				GephiWriterPajek.class);
 		//put("dl_list",				GephiWriterDLList.class);
@@ -29,9 +29,9 @@ public class AvailableGraphWriters {
 		//put("ucinet_matrix",		GephiWriterDLMatrix.class);
 		put("csv",					GephiWriterCSV.class);
 
-		put("graphml",				GephiWriterGraphML.class);
-		put("tlp",					GephiWriterGraphML.class);
-		put("tulip",				GephiWriterGraphML.class);
+		put("graphml",				GraphStreamWriterGML.class);
+		//put("tlp",					GephiWriterTLP.class);
+		//put("tulip",				GephiWriterTLP.class);
 		put("gdf",					GephiWriterGDF.class);
 		put("guess",				GephiWriterGDF.class);
 		
@@ -44,8 +44,9 @@ public class AvailableGraphWriters {
 		put("graphstream.tikz",		GraphStreamWriterTikz.class);
 		
 		// prefuse
-		put("prefuse.gml",			PrefuseWriterGraphML.class);
-		put("prefuse.graphml",		PrefuseWriterGraphML.class);
+		// Nota: prefuse writers are not active now; they will probably no more be active later, because prefuse is not more maintained.
+		// put("prefuse.gml",			PrefuseWriterGraphML.class);
+		// put("prefuse.graphml",		PrefuseWriterGraphML.class);
 		
 		// gephi
 		put("gephi.gexf",			GephiWriterGEXF.class);

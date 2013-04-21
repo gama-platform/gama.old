@@ -1,6 +1,9 @@
 package msi.gama.util.graph.writer;
 
-
+/**
+ * 
+ * @author Samuel Thiriot
+ */
 public class GephiWriterGEXF extends GephiWriterAbstract {
 
 	@Override

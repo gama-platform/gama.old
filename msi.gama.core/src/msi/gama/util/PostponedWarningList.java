@@ -23,6 +23,7 @@ public class PostponedWarningList {
 
 	private Map<String,Integer> warning2count = new HashMap<String, Integer>();
 
+	public static boolean writeSystemOut = false;
 	
 	public void clear() {
 		warning2count.clear();
@@ -35,7 +36,10 @@ public class PostponedWarningList {
 		else
 			count = count + 1;
 		warning2count.put(msg, count);
+		
+		
 	}
+	
 	
 	/**
 	 * Raise GAma exceptions and transmists them with GAMA.reportError.
@@ -60,6 +64,9 @@ public class PostponedWarningList {
 				sb.append(" time)");
 			else
 				sb.append(" times)");
+			
+			if (writeSystemOut)
+				System.err.println(sb.toString());
 			
 			GAMA.reportError(new GamaRuntimeException(sb.toString()));
 		}

@@ -17,7 +17,12 @@ import msi.gaml.species.ISpecies;
 
 /**
  * Listens for graph parsing events, 
- * and constructs the corresponding GamaGraph and populations of edge and nodes
+ * and constructs the corresponding GamaGraph and populations of edge and nodes.
+ * Principles:
+ * <ul>
+ * <li>as a general philosophy, warnings are emitted when data was available in the graph, but not used for agents</li>
+ * <li>x,y,z attributes are processed as special attributes related to the location</li>
+ * </ul>
  * 
  * @author Samuel Thiriot
  *
@@ -114,30 +119,50 @@ public class GamaGraphParserListener implements IGraphParserListener {
 				(gamaGraph.isDirected() ? "" : "un") + "directed graph"); }
 */
 		
-		// retrieve the agents for this edge
-		IAgent agentFrom = nodeId2agent.get(fromNodeId);
-		if ( agentFrom == null ) { throw new GamaRuntimeException(
-			"Error while parsing graph: the node " + fromNodeId + " was not declared"); }
-		IAgent agentTo = nodeId2agent.get(toNodeId);
-		if ( agentTo == null ) { throw new GamaRuntimeException(
-			"Error while parsing graph: the node " + toNodeId + " was not declared");
-		// TODO : add support for nodes that were not declared ? (may be supported in some file
-		// formats)
-		}
-
-		// create the agent of the target specy
-		IList<? extends IAgent> createdAgents =
-			populationEdges.createAgents(scope, 1, Collections.EMPTY_LIST, false);
-		IAgent createdAgent = createdAgents.get(0);
-
-		edgeId2agent.put(edgeId, createdAgent);
+		Object nodeFrom = null;
+		Object nodeTo = null;
 		
-		// create the shape for this agent
-		GamaDynamicLink dl = new GamaDynamicLink(agentFrom, agentTo);
-		createdAgent.setGeometry(dl);
+		if (populationNodes != null) {
+			// retrieve the agents for this edge
+			nodeFrom = nodeId2agent.get(fromNodeId);
+			if ( nodeFrom == null ) { throw new GamaRuntimeException(
+				"Error while parsing graph: the node " + fromNodeId + " was not declared"); }
+			nodeTo = nodeId2agent.get(toNodeId);
+			if ( nodeTo == null ) { throw new GamaRuntimeException(
+				"Error while parsing graph: the node " + toNodeId + " was not declared");
+			// TODO : add support for nodes that were not declared ? (may be supported in some file
+			// formats)
+			}
 
-		// actually add the edge
-		gamaGraph.addEdge(agentFrom, agentTo, createdAgent);
+		} else {
+			nodeFrom = fromNodeId;
+			nodeTo = toNodeId;
+		}
+		
+		if (populationEdges != null) {
+			// create the agent of the target specy
+			IList<? extends IAgent> createdAgents =
+						populationEdges.createAgents(scope, 1, Collections.EMPTY_LIST, false);
+			
+			IAgent createdAgent = createdAgents.get(0);
+			
+			edgeId2agent.put(edgeId, createdAgent);
+			
+			// create the shape for this agent
+			if (populationNodes != null) {
+				GamaDynamicLink dl = new GamaDynamicLink((IShape)nodeFrom, (IShape)nodeTo);
+				createdAgent.setGeometry(dl);
+			}
+			
+			// actually add the edge
+			gamaGraph.addEdge(nodeFrom, nodeTo, createdAgent);
+
+		} else {
+			// actually add the edge
+			gamaGraph.addEdge(nodeFrom, nodeTo, edgeId);
+	
+		}
+		
 	}
 	
 	protected double parseValueAsDouble(Object o) {
@@ -158,6 +183,12 @@ public class GamaGraphParserListener implements IGraphParserListener {
 	public void detectedNodeAttribute(String nodeId, String attributeName,
 			Object value) {
 		
+		if (populationNodes == null) {
+			// can't set an attribute for a graph without agents
+			warnings.addWarning("a node attribute was ignored, because no specy of agent is associated with nodes: attribute '"+attributeName+"'");
+			return;
+		}
+		
 		IAgent agent = nodeId2agent.get(nodeId);
 		if ( agent == null ) { throw new GamaRuntimeException(
 				"Error while parsing graph: the node " + nodeId + " was not declared"); }
@@ -175,6 +206,13 @@ public class GamaGraphParserListener implements IGraphParserListener {
 			agent.getLocation().setZ(parseValueAsDouble(value));
 			return;
 		}
+		if ((attributeName.equalsIgnoreCase("xyz"))) {
+			//if (Object instanceof array)
+			//agent.getLocation().setZ(parseValueAsDouble(value));
+			//return;
+			// TODO !!! process xyz values
+		}
+		
 		
 		// special case of colors
 		// TODO !
@@ -200,6 +238,12 @@ public class GamaGraphParserListener implements IGraphParserListener {
 	@Override
 	public void detectedEdgeAttribute(String edgeId, String attributeName,
 			Object value) {
+		
+		if (populationEdges == null) {
+			// can't set an attribute for a graph without agents
+			warnings.addWarning("an edge attribute was ignored, because no specy of agent is associated with edges: attribute '"+attributeName+"'");
+			return;
+		}
 		
 		IAgent agent = edgeId2agent.get(edgeId);
 		if ( agent == null ) { throw new GamaRuntimeException(

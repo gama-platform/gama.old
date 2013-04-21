@@ -28,15 +28,20 @@ public class TestUtils {
 
 	}
 	
-	public static File getTmpFile(String name) {
+	public static File getTmpFile(String name, String extension) {
 		
 		try {
-			File temp = File.createTempFile(name, ".tmp");
+			File temp = File.createTempFile(name, "."+extension);
 			temp.deleteOnExit();
+			System.out.println("tmp file: "+temp.getAbsolutePath());
 			return temp;
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		} 
 
+	}
+	
+	public static File getTmpFile(String name) {
+		return getTmpFile(name, "tmp");
 	}
 }
