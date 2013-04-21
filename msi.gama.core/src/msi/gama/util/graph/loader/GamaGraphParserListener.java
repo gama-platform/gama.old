@@ -51,10 +51,11 @@ public class GamaGraphParserListener implements IGraphParserListener {
 		this.edgeGraphAttribute2AgentAttribute = edgeGraphAttribute2AgentAttribute;
 		
 		// retrieve IPopulations from species
-		final IAgent executor = scope.getAgentScope();
-		this.populationNodes = (nodeSpecies == null?null:executor.getPopulationFor(nodeSpecies));
-		this.populationEdges = (edgeSpecies == null?null:executor.getPopulationFor(edgeSpecies));		
-		
+		if (scope != null) {
+			final IAgent executor = scope.getAgentScope();
+			this.populationNodes = (nodeSpecies == null?null:executor.getPopulationFor(nodeSpecies));
+			this.populationEdges = (edgeSpecies == null?null:executor.getPopulationFor(edgeSpecies));		
+		}
 	}
 
 
@@ -75,16 +76,20 @@ public class GamaGraphParserListener implements IGraphParserListener {
 
 	@Override
 	public void detectedNode(String nodeId) {
-		// create an agent of the target specy
-		IList<? extends IAgent> createdAgents = populationNodes.createAgents(scope, 1, Collections.EMPTY_LIST, false);
-		IAgent createdAgent = createdAgents.get(0);
-
-		// update internal mapping
-		nodeId2agent.put(nodeId, createdAgent);
-
-		// actually add the agent to the graph
-		gamaGraph.addVertex(createdAgent);
-
+		
+		if (populationNodes != null) {
+			// create an agent of the target specy
+			IList<? extends IAgent> createdAgents = populationNodes.createAgents(scope, 1, Collections.EMPTY_LIST, false);
+			IAgent createdAgent = createdAgents.get(0);
+	
+			// update internal mapping
+			nodeId2agent.put(nodeId, createdAgent);
+	
+			// actually add the agent to the graph
+			gamaGraph.addVertex(createdAgent);
+		} else {
+			gamaGraph.addVertex(nodeId);
+		}
 	}
 	
 	

@@ -29,7 +29,7 @@ public class AvailableGraphParsers {
 		put("dot", 					GraphstreamGraphParserDOT.class);
 		put("gexf", 				GraphstreamGraphParserGEXF.class);
 		put("graphml", 				GraphstreamGraphParserGraphML.class);
-		put("gml", 				GraphstreamGraphParserGraphML.class);
+		put("gml", 					GraphstreamGraphParserGraphML.class);
 
 		put("tlp", 					GraphstreamGraphParserTLP.class);
 		put("tulip", 				GraphstreamGraphParserTLP.class);
@@ -106,7 +106,7 @@ public class AvailableGraphParsers {
 			// no singleton created
 			Class<? extends IGraphParser> classLayout= name2parser.get(name);
 			if (classLayout == null)
-				throw new GamaRuntimeException("unknown layout name: "+name+"; please choose one of "+getAvailableLoaders().toString());
+				throw new GamaRuntimeException("unknown parser name: "+name+"; please choose one of "+getAvailableLoaders().toString());
 			try {
 				res = classLayout.newInstance();
 			} catch (InstantiationException e) {

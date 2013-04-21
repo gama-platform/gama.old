@@ -10,7 +10,6 @@ import msi.gama.util.PostponedWarningList;
 
 import org.graphstream.stream.SinkAdapter;
 import org.graphstream.stream.file.FileSource;
-import org.graphstream.util.parser.TokenMgrError;
 
 /**
  * Basis for the graph parser based on graphstream.
@@ -187,7 +186,7 @@ public abstract class GraphStreamGraphParserAbstract implements IGraphParser {
 		} catch (Exception e) {
 			throw new GamaRuntimeException("Error while parsing a graph from " +
 					filename+ " (" + e.getLocalizedMessage() + ")");
-		} catch(TokenMgrError e) {
+		} catch(Throwable e) {
 			throw new GamaRuntimeException("Error while parsing a graph from " +
 					filename+ " (" + e.getLocalizedMessage() + ")");
 		} finally {

@@ -30,7 +30,12 @@ public class GraphLoader {
 			) {
 		
 		// locate the file
-		File f = new File(scope.getSimulationScope().getModel().getRelativeFilePath(filename, true));
+		File f = null;
+		if (scope != null)
+			f = new File(scope.getSimulationScope().getModel().getRelativeFilePath(filename, true));
+		else 
+			f = new File(filename);
+		
 		if (!f.exists())
 			throw new GamaRuntimeException("unable to open this file, which does not exists: "+filename);
 		if (!f.canRead())
@@ -47,10 +52,14 @@ public class GraphLoader {
 				);
 		
 		// make the parser parse, so it raises events
-		parser.parseFile(
-				list, 
-				f.getAbsolutePath()
-				);
+		try {
+			parser.parseFile(
+					list, 
+					f.getAbsolutePath()
+					);
+		} catch (Throwable t) {
+			throw new GamaRuntimeException(t);
+		}
 		
 		// and return the corresponding result !
 		return list.getGraph();
