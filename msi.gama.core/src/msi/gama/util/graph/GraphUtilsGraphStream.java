@@ -7,6 +7,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 
 import org.graphstream.graph.Edge;
 import org.graphstream.graph.EdgeRejectedException;
@@ -14,8 +15,24 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.DefaultGraph;
 
+/**
+ * Graph utilities for the use of the graphstream library.
+ * 
+ * @author Samuel Thiriot
+ *
+ */
 public class GraphUtilsGraphStream {
 
+	public static Object preprocessGamaValue(Object gamaValue) {
+		
+		if (gamaValue instanceof GamaColor) {
+			// colors can't remain as GAMA colors; let's encode them as RGB java
+			GamaColor gamaColor = (GamaColor)gamaValue;
+			return gamaColor.getRGB();
+		} 
+		
+		return gamaValue;
+	}
 	
 	public static Graph getGraphstreamGraphFromGamaGraph(IGraph gamaGraph) {
 		
@@ -28,6 +45,7 @@ public class GraphUtilsGraphStream {
 			_Vertex vertex = (_Vertex)gamaGraph._internalVertexMap().get(v);
 				
 			Node n = g.addNode(v.toString());
+			
 			gamaNode2graphStreamNode.put(
 					v,
 					n
@@ -36,8 +54,15 @@ public class GraphUtilsGraphStream {
 			if (v instanceof IAgent) {
 				IAgent a = (IAgent)v;
 				for (Object key : a.getAttributes().keySet()) {
-					Object value = a.getAttributes().get(key);
+					
+					Object value = preprocessGamaValue(
+							a.getAttributes().get(key)
+					);
+					
+					// standard attribute
 					n.setAttribute(key.toString(), value.toString());
+					
+				
 				}
 			}
 
@@ -65,7 +90,7 @@ public class GraphUtilsGraphStream {
 			if (edgeObj instanceof IAgent) {
 				IAgent a = (IAgent)edgeObj;
 				for (Object key : a.getAttributes().keySet()) {
-					Object value = a.getAttributes().get(key);
+					Object value = preprocessGamaValue(a.getAttributes().get(key));
 					e.setAttribute(key.toString(), value.toString());
 				}
 			}
