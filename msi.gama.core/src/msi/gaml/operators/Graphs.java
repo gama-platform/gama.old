@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.graphstream.algorithm.generator.WattsStrogatzGenerator;
+import org.graphstream.stream.file.FileSource;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
@@ -35,11 +36,11 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.util.file.GamaFile;
 import msi.gama.util.graph.*;
 import msi.gama.util.graph.layout.AvailableGraphLayouts;
-import msi.gama.util.graph.layout.PrefuseStaticLayoutAbstract;
+import msi.gama.util.graph.loader.GraphLoader;
 import msi.gama.util.path.IPath;
-import msi.gama.util.path.PathFactory;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
 
@@ -478,6 +479,159 @@ public class Graphs {
 		final GamaPair sourTarg) throws GamaRuntimeException {
 		return graph.computeShortestPathBetween(sourTarg.key, sourTarg.value);
 		
+	}
+	
+
+	/**
+	 * the comment for all the operators
+	 */
+	static private final String comment =  "Available formats: " +
+			"\"pajek\": Pajek (Slovene word for Spider) is a program, for Windows, for analysis and visualization of large networks. See: http://pajek.imfm.si/doku.php?id=pajek for more details."+
+			//"\"dgs_old\", \"dgs\": DGS is a file format allowing to store graphs and dynamic graphs in a textual human readable way, yet with a small size allowing to store large graphs. Graph dynamics is defined using events like adding, deleting or changing a node or edge. With DGS, graphs will therefore be seen as stream of such events. [From GraphStream related page: http://graphstream-project.org/]"+
+			"\"lgl\": LGL is a compendium of applications for making the visualization of large networks and trees tractable. See: http://lgl.sourceforge.net/ for more details."+
+			"\"dot\": DOT is a plain text graph description language. It is a simple way of describing graphs that both humans and computer programs can use. See: http://en.wikipedia.org/wiki/DOT_language for more details."+
+			"\"edge\": This format is a simple text file with numeric vertex ids defining the edges."+
+			"\"gexf\": GEXF (Graph Exchange XML Format) is a language for describing complex networks structures, their associated data and dynamics. Started in 2007 at Gephi project by different actors, deeply involved in graph exchange issues, the gexf specifications are mature enough to claim being both extensible and open, and suitable for real specific applications. See: http://gexf.net/format/ for more details."+
+			"\"graphml\": GraphML is a comprehensive and easy-to-use file format for graphs based on XML. See: http://graphml.graphdrawing.org/ for more details."+
+			"\"tlp\" or \"tulip\": TLP is the Tulip software graph format. See: http://tulip.labri.fr/TulipDrupal/?q=tlp-file-format for more details. "+
+			"\"ncol\": This format is used by the Large Graph Layout progra. It is simply a symbolic weighted edge list. It is a simple text file with one edge per line. An edge is defined by two symbolic vertex names separated by whitespace. (The symbolic vertex names themselves cannot contain whitespace.) They might followed by an optional number, this will be the weight of the edge. See: http://bioinformatics.icmb.utexas.edu/lgl for more details."+
+			"The map operand should includes following elements:";
+	
+	
+	// version depuis un filename avec edge et specy
+	
+	@operator(value = "load_graph_from_file")
+	@doc(
+		value = "returns a graph loaded from a given file encoded into a given format.",
+		comment = comment,
+		special_cases = {
+			"\format\": the format of the file",
+			"\"filename\": the filename of the file containing the network",
+			"\"edges_specy\": the species of edges",
+			"\"vertices_specy\": the species of vertices"},	
+		examples = {
+				"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
+				"			\"pajek\",",
+				"			\"./example_of_Pajek_file\",",  
+				"			myVertexSpecy,",
+				"			myEdgeSpecy );"},			
+		see = "TODO")
+	public static IGraph primLoadGraphFromFile(final IScope scope,
+			final String format, final String filename, final ISpecies vertex_specy, final ISpecies edge_specy) throws GamaRuntimeException {		
+		
+		return GraphLoader.loadGraph(scope, filename, vertex_specy, edge_specy, null, null, format);
+		
+	}
+	
+	@operator(value = "load_graph_from_file")
+	@doc(
+		value = "returns a graph loaded from a given file encoded into a given format.",
+		comment = comment,
+		special_cases = {
+			"\"filename\": the filename of the file containing the network",
+			"\"edges_specy\": the species of edges",
+			"\"vertices_specy\": the species of vertices"},	
+		examples = {
+				"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
+				"			\"pajek\",",
+				"			\"./example_of_Pajek_file\",",  
+				"			myVertexSpecy,",
+				"			myEdgeSpecy );"},			
+		see = "TODO")
+	public static IGraph primLoadGraphFromFile(final IScope scope,
+			final String filename, final ISpecies vertex_specy, final ISpecies edge_specy) throws GamaRuntimeException {		
+		
+		return GraphLoader.loadGraph(scope, filename, vertex_specy, edge_specy, null, null, null);
+		
+	}
+	
+	// version depuis un file avec edge et specy
+	
+	@operator(value = "load_graph_from_file")
+	@doc(
+		value = "returns a graph loaded from a given file encoded into a given format.",
+		comment = comment,
+		special_cases = {
+			"\format\": the format of the file",
+			"\"file\": the file containing the network",
+			"\"edges_specy\": the species of edges",
+				"\"vertices_specy\": the species of vertices"},	
+		examples = {
+				"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
+				"			\"pajek\",",
+				"			\"example_of_Pajek_file\",",  
+				"			myVertexSpecy,",
+				"			myEdgeSpecy );"},			
+		see = "TODO")
+	public static IGraph primLoadGraphFromFile(final IScope scope,
+			final String format, final GamaFile<?,?> gamaFile, final ISpecies vertex_specy, final ISpecies edge_specy) throws GamaRuntimeException {		
+		
+		// TODO !
+		throw new GamaRuntimeException("not implemented: loading from gama file");
+		
+	}
+	
+
+	// version depuis un filename sans edge et sans specy
+	
+	@operator(value = "load_graph_from_file")
+	@doc(
+		value = "returns a graph loaded from a given file encoded into a given format.",
+		comment = comment,
+		special_cases = {
+			"\format\": the format of the file",
+			"\"filename\": the filename of the file containing the network"
+			},	
+		examples = {
+				"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
+				"			\"pajek\",",
+				"			\"example_of_Pajek_file\");"},			
+		see = "TODO")
+	public static IGraph primLoadGraphFromFile(final IScope scope,
+			final String format, final String filename) throws GamaRuntimeException {		
+		
+		return primLoadGraphFromFile(scope, null, filename);
+	}
+	
+	// version depuis un file avec edge et specy
+	
+	@operator(value = "load_graph_from_file")
+	@doc(
+		value = "returns a graph loaded from a given file encoded into a given format.",
+		comment = comment,
+		special_cases = {
+			"\format\": the format of the file",
+			"\"file\": the file containing the network",
+			},	
+		examples = {
+				"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
+				"			\"pajek\",",
+				"			\"example_of_Pajek_file\");"},			
+		see = "TODO")
+	public static IGraph primLoadGraphFromFile(final IScope scope,
+			final String format, final GamaFile<?,?> gamaFile) throws GamaRuntimeException {		
+		
+		throw new GamaRuntimeException("not implemented: loading from gama file");
+
+	}
+	
+
+	@operator(value = "load_graph_from_file")
+	@doc(
+		value = "returns a graph loaded from a given file encoded into a given format.",
+		comment = comment,
+		special_cases = {
+			"\"file\": the file containing the network"
+			},	
+		examples = {
+				"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
+				"			\"pajek\",",
+				"			\"example_of_Pajek_file\");"},			
+		see = "TODO")
+	public static IGraph primLoadGraphFromFile(final IScope scope,
+			final String filename) throws GamaRuntimeException {		
+		
+		return GraphLoader.loadGraph(scope, filename, null, null, null, null, null);
 	}
 
 	/*

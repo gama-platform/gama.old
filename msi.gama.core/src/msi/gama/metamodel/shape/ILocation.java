@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -30,7 +30,7 @@ import com.vividsolutions.jts.geom.Coordinate;
  * The class ILocation.
  * 
  * @author drogoul
- * @since 15 dŽc. 2011
+ * @since 15 dï¿½c. 2011
  * 
  */
 @vars({ @var(name = IKeyword.X, type = IType.FLOAT),
@@ -40,13 +40,21 @@ public interface ILocation extends IShape, Comparable {
 
 	@getter(IKeyword.X)
 	public abstract double getX();
+	
+	public abstract void setX(double x);
 
 	@getter(IKeyword.Y)
 	public abstract double getY();
+	
+	public abstract void setY(double y);
+
 
 	// public abstract boolean equals(final Coordinate o);
 	@getter(IKeyword.Z)
 	public abstract double getZ();
+	
+	public abstract void setZ(double z);
+
 
 	public abstract void setLocation(final double xx, final double yy);
 

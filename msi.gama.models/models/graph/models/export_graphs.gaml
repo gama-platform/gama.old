@@ -22,7 +22,7 @@ global {
 				200,
 				0.05,
 				2
-		);	  
+		);
 		
 		// a simple "write" just writes the content of the graph in the console
 		write my_graph;

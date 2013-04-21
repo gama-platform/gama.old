@@ -11,22 +11,28 @@ global {
 	/*
 	 * The variable that will store the graph
 	 */  
-	graph my_graph <- load_graph_from_file(
-		 		"dgs_old",
-				"../includes/BarabasiGenerated.dgs",  
+	/* 
+	graph my_graph <- load_graph_from_file("../includes/ProteinSimple.anUnknownExtention", 
+				nodeSpecy,
+				edgeSpecy
+		 );
+		*/ 
+	graph my_graph <- load_graph_from_file("gml","../doc/test.gml", 
 				nodeSpecy,
 				edgeSpecy
 		 );
 		 
 	init {
-			  
+		/*	  
 		my_graph  <- generate_watts_strogatz(
 				nodeSpecy,
 				edgeSpecy,
 				200,
 				0.05,
 				2
-		);	  
+		);
+		* 
+		*/	  
 		
 		// print the graph in the console
 		write my_graph;
@@ -40,7 +46,7 @@ global {
 	 	
 	 	//my_graph <- layout_offline(my_graph, "fruchtermanreingold", 1000);
 	 	// forcedirected fruchtermanreingold circle radialtree
-	 	my_graph <- layout(my_graph, "fruchtermanreingold", 100);
+	 	my_graph <- layout(my_graph, "radialtree", 500);
 	 	
 	 }
 	  
@@ -57,6 +63,7 @@ entities {
 	 */
 	species nodeSpecy  {
 		rgb color <- rgb('black') ;  
+		int age;
 		aspect base { 
 			draw circle(1) color: color ;
 		} 
@@ -68,7 +75,7 @@ entities {
 	 */
 	species edgeSpecy  { 
 		rgb color <- rgb('blue') ; 
-		
+		float strengh;
 		aspect base {
 			draw shape color:color;
 			
