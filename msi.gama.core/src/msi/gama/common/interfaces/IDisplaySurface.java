@@ -63,7 +63,7 @@ public interface IDisplaySurface {
 	void toggleView();
 
 	/**
-	 * Activate the picking mode
+	 * Activate the picking mode (Only with Opengl view)
 	 */
 	void togglePicking();
 
@@ -76,6 +76,11 @@ public interface IDisplaySurface {
 	 * Activate select rectangle tool (Only with Opengl view)
 	 */
 	void toggleSelectRectangle();
+	
+	/**
+	 * Show the triangulation (Only with Opengl view)
+	 */
+	void toggleTriangulation();
 
 	ILayerManager getManager();
 
