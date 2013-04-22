@@ -33,5 +33,6 @@ public interface IGamaViewActions {
 	public final static int SHAPEFILE = 17;
 	public final static int ARCBALL = 18;
 	public final static int SELECT_RECTANGLE = 19;
+	public final static int TRIANGULATION = 20;
 
 }

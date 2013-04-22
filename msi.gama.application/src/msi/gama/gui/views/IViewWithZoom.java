@@ -34,6 +34,11 @@ public interface IViewWithZoom {
 	 */
 	public void toggleSelectRectangle();
 	
+	/**
+	 * Activate the triangulation View
+	 */
+	public void toggleTriangulation();
+	
 	public void snapshot();
 	
 	/**
