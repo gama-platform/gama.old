@@ -723,6 +723,7 @@
       <elements xsi:type="xtext:Keyword" value="environment:"/>
       <elements xsi:type="xtext:Keyword" value="text:"/>
       <elements xsi:type="xtext:Keyword" value="image:"/>
+      <elements xsi:type="xtext:Keyword" value="using:"/>
     </alternatives>
   </rules>
   <rules xsi:type="xtext:ParserRule" name="ActionFacetKey">

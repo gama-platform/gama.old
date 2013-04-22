@@ -1745,14 +1745,15 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cEnvironmentKeyword_9 = (Keyword)cAlternatives.eContents().get(9);
 		private final Keyword cTextKeyword_10 = (Keyword)cAlternatives.eContents().get(10);
 		private final Keyword cImageKeyword_11 = (Keyword)cAlternatives.eContents().get(11);
+		private final Keyword cUsingKeyword_12 = (Keyword)cAlternatives.eContents().get(12);
 		
 		//SpecialFacetKey:
 		//	"data:" | "when:" | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" | "environment:" |
-		//	"text:" | "image:";
+		//	"text:" | "image:" | "using:";
 		public ParserRule getRule() { return rule; }
 
 		//"data:" | "when:" | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" | "environment:" |
-		//"text:" | "image:"
+		//"text:" | "image:" | "using:"
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//"data:"
@@ -1790,6 +1791,9 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 		//"image:"
 		public Keyword getImageKeyword_11() { return cImageKeyword_11; }
+
+		//"using:"
+		public Keyword getUsingKeyword_12() { return cUsingKeyword_12; }
 	}
 
 	public class ActionFacetKeyElements extends AbstractParserRuleElementFinder {
@@ -4309,7 +4313,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 
 	//SpecialFacetKey:
 	//	"data:" | "when:" | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" | "environment:" |
-	//	"text:" | "image:";
+	//	"text:" | "image:" | "using:";
 	public SpecialFacetKeyElements getSpecialFacetKeyAccess() {
 		return (pSpecialFacetKey != null) ? pSpecialFacetKey : (pSpecialFacetKey = new SpecialFacetKeyElements());
 	}

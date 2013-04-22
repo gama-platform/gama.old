@@ -3309,6 +3309,13 @@ ruleSpecialFacetKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRul
         $current.merge(kw);
         newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getImageKeyword_11()); 
     }
+
+    |
+	kw='using:' 
+    {
+        $current.merge(kw);
+        newLeafNode(kw, grammarAccess.getSpecialFacetKeyAccess().getUsingKeyword_12()); 
+    }
 )
     ;
 

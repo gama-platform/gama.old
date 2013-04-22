@@ -138,7 +138,7 @@ TypeFacetKey:
 
 SpecialFacetKey:
 	'data:' | 'when:' | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" |
-	"environment:" | 'text:' | 'image:';
+	"environment:" | 'text:' | 'image:' | 'using:';
 
 ActionFacetKey:
 	"action:";

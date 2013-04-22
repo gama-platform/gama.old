@@ -3447,6 +3447,14 @@ rule__SpecialFacetKey__Alternatives
 { after(grammarAccess.getSpecialFacetKeyAccess().getImageKeyword_11()); }
 )
 
+    |(
+{ before(grammarAccess.getSpecialFacetKeyAccess().getUsingKeyword_12()); }
+
+	'using:' 
+
+{ after(grammarAccess.getSpecialFacetKeyAccess().getUsingKeyword_12()); }
+)
+
 ;
 finally {
 	restoreStackSize(stackSize);
