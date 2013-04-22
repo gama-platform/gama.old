@@ -53,8 +53,7 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 		public void run() {
 			if ( !displayOutputs.containsKey(GuiUtils.AGENT_VIEW_ID) && entity != null ) {
 				try {
-					new InspectDisplayOutput("Agent inspector", InspectDisplayOutput.INSPECT_AGENT)
-						.launch();
+					new InspectDisplayOutput("Agent inspector", InspectDisplayOutput.INSPECT_AGENT).launch();
 				} catch (GamaRuntimeException g) {
 					g.addContext("In opening the agent inspector");
 					GAMA.reportError(g);
@@ -68,7 +67,7 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 	}
 
 	public void buildOutputs(final IExperimentSpecies exp) {
-		GuiUtils.run(new Runnable() {
+		/* GuiUtils.run */new Runnable() {
 
 			@Override
 			public void run() {
@@ -78,8 +77,7 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 				// GUI.debug("Hiding the monitors (if any)");
 				GuiUtils.hideMonitorView();
 				// GUI.debug("Setting the title of the workbench");
-				GuiUtils.setWorkbenchWindowTitle(exp.getName() + " - " +
-					exp.getModel().getFilePath());
+				GuiUtils.setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
 				if ( !monitorOutputs.isEmpty() ) {
 					// GUI.debug("Redisplaying the monitors");
 					GuiUtils.showView(GuiUtils.MONITOR_VIEW_ID, null);
@@ -91,7 +89,7 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 				GuiUtils.informStatus(" Simulation of experiment " + exp.getName() + " of model " +
 					exp.getModel().getName() + " ready.");
 			}
-		});
+		}.run();
 	}
 
 	public void addDisplayOutput(final IOutput output) {
@@ -201,8 +199,7 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 	// }
 	// }
 
-	public void setShowDisplayOutputs(final IScope sim, final boolean selection)
-		throws GamaRuntimeException {
+	public void setShowDisplayOutputs(final IScope sim, final boolean selection) throws GamaRuntimeException {
 		if ( !selection ) {
 			pauseDisplayOutputs();
 		} else {
@@ -236,6 +233,5 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 	public Map<String, MonitorOutput> getMonitorOutputs() {
 		return monitorOutputs;
 	}
-	
-	
+
 }

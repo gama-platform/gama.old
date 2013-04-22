@@ -83,7 +83,11 @@ public class Scheduler extends AbstractScheduler implements Runnable {
 		if ( executionThread != null ) {
 			executionThread.interrupt();
 			try {
-				executionThread.join();
+				while (executionThread.isAlive()) {
+					Thread.sleep(10);
+				}
+
+				// executionThread.join();
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

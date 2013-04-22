@@ -55,8 +55,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	private static final IShape SHAPE = GamaGeometryType.createPoint(new GamaPoint(-1, -1));
 
-	private final IScope executionStack;
-	private final List<IScope> stackPool;
+	private IScope executionStack;
+	private List<IScope> stackPool;
 	protected ISimulationAgent currentSimulation;
 	protected AbstractScheduler scheduler;
 	final Map<String, Object> extraParametersMap = new LinkedHashMap();
@@ -68,20 +68,24 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		super(s);
 		super.setGeometry(SHAPE);
 		index = 0;
-		stackPool = new GamaList();
-		executionStack = obtainNewScope("Execution stack of " + getName());
+		buildScheduler();
 		reset();
 	}
 
-	public void reset() {
-		extraParametersMap.clear();
-		executionStack.clear();
-		stackPool.clear();
-		initializeWorldPopulation();
+	public void buildScheduler() {
 		if ( scheduler != null ) {
 			scheduler.dispose();
 		}
 		scheduler = new Scheduler(this);
+	}
+
+	public void reset() {
+		extraParametersMap.clear();
+		// executionStack.clear();
+		stackPool = new GamaList();
+		executionStack = obtainNewScope("Execution stack of " + getName());
+
+		initializeWorldPopulation();
 		if ( currentSimulation != null ) {
 			currentSimulation.dispose();
 		}
@@ -291,6 +295,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public void userReloadExperiment() {
 		GuiUtils.debug("ExperimentAgent.userReloadExperiment");
 		boolean wasRunning = isRunning() && !isPaused();
+		buildScheduler();
 		getSpecies().desynchronizeOutputs();
 		closeSimulation();
 		reset();

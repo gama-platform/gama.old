@@ -60,7 +60,7 @@ public abstract class AbstractScheduler implements IScheduler {
 		GamaList<IAgent> listOfAgentsToSchedule = GamaList.with(owner);
 		owner.computeAgentsToSchedule(scope, listOfAgentsToSchedule);
 		for ( IAgent a : listOfAgentsToSchedule ) {
-			if ( a != null ) {
+			if ( a != null && alive ) {
 				a.step(scope);
 			}
 		}

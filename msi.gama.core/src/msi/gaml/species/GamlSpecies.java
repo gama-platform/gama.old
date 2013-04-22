@@ -194,7 +194,6 @@ public class GamlSpecies extends AbstractSpecies {
 
 	@Override
 	public Iterator<IAgent> iterator() {
-		// FIX ME: should not have to get the current scope like this
 		// IExperimentSpecies exp = GAMA.getExperiment();
 		// if ( exp == null ) { return GamaList.EMPTY_LIST.iterator(); }
 		IScope scope = GAMA.getDefaultScope();

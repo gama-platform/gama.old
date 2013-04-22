@@ -48,6 +48,11 @@ import msi.gaml.variables.IVariable;
 @symbol(name = { IKeyword.GUI_ }, kind = ISymbolKind.EXPERIMENT, with_sequence = true)
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
+	@facet(name = IKeyword.PARENT, type = IType.ID, optional = true),
+	@facet(name = IKeyword.SKILLS, type = IType.LIST, optional = true),
+	@facet(name = IKeyword.CONTROL, type = IType.ID, optional = true),
+	@facet(name = IKeyword.FREQUENCY, type = IType.INT, optional = true),
+	@facet(name = IKeyword.SCHEDULES, type = IType.CONTAINER, optional = true),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { IKeyword.BATCH, IKeyword.REMOTE, IKeyword.GUI_ }, optional = false) }, omissible = IKeyword.NAME)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
 public class GuiExperimentSpecies extends GamlSpecies implements IExperimentSpecies {
