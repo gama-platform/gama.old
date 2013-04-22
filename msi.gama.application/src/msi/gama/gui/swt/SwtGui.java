@@ -312,7 +312,14 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void setWorkbenchWindowTitle(final String title) {
-		getWindow().getShell().setText(title);
+		run(new Runnable() {
+
+			@Override
+			public void run() {
+				getWindow().getShell().setText(title);
+			}
+		});
+
 	}
 
 	@Override
