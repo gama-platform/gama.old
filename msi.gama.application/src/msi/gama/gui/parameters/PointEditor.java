@@ -33,7 +33,7 @@ import org.eclipse.swt.widgets.*;
 public class PointEditor extends AbstractEditor implements VerifyListener {
 
 	private Text xText, yText;
-	Composite pointEditor;
+	private Composite pointEditor;
 
 	PointEditor(final IParameter param) {
 		super(param);
@@ -57,8 +57,7 @@ public class PointEditor extends AbstractEditor implements VerifyListener {
 	@Override
 	public Control createCustomParameterControl(final Composite comp) {
 		pointEditor = new Composite(comp, SWT.NONE);
-		final GridData pointEditorGridData =
-			new GridData(GridData.FILL, GridData.CENTER, true, false);
+		final GridData pointEditorGridData = new GridData(GridData.FILL, GridData.CENTER, true, false);
 		pointEditorGridData.widthHint = 100;
 		pointEditor.setLayoutData(pointEditorGridData);
 		final GridLayout pointEditorLayout = new GridLayout(2, true);
@@ -73,8 +72,7 @@ public class PointEditor extends AbstractEditor implements VerifyListener {
 		subCompositeLayout.marginHeight = 0;
 		subCompositeLayout.marginWidth = 0;
 		xComposite.setLayout(subCompositeLayout);
-		final GridData subCompositeGridData =
-			new GridData(GridData.FILL, GridData.CENTER, true, false);
+		final GridData subCompositeGridData = new GridData(GridData.FILL, GridData.CENTER, true, false);
 		xComposite.setLayoutData(subCompositeGridData);
 		final Label xLabel = new Label(xComposite, SWT.NONE);
 		xLabel.setText("x");
@@ -119,8 +117,7 @@ public class PointEditor extends AbstractEditor implements VerifyListener {
 	@Override
 	public void modifyText(final ModifyEvent me) {
 		if ( internalModification ) { return; }
-		modifyValue(new GamaPoint(Cast.asFloat(getScope(), xText.getText()), Cast.asFloat(
-			getScope(), yText.getText())));
+		modifyValue(new GamaPoint(Cast.asFloat(getScope(), xText.getText()), Cast.asFloat(getScope(), yText.getText())));
 	}
 
 	@Override

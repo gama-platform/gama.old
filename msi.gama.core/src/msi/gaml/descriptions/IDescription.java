@@ -71,8 +71,8 @@ public interface IDescription extends IGamlDescription, IKeyword {
 
 	public abstract SpeciesDescription getSpeciesContext();
 
-	public abstract IExpression addTemp(final String name, final IType type,
-		final IType contentType, final IType keyType);
+	public abstract IExpression addTemp(final String name, final IType type, final IType contentType,
+		final IType keyType);
 
 	public abstract List<IDescription> getChildren();
 
@@ -88,7 +88,7 @@ public interface IDescription extends IGamlDescription, IKeyword {
 
 	public abstract StatementDescription getAction(String name);
 
-	public abstract TypeDescription getWorldSpecies();
+	/* public abstract TypeDescription getWorldSpecies(); */
 
 	public abstract IErrorCollector getErrorCollector();
 
@@ -106,11 +106,9 @@ public interface IDescription extends IGamlDescription, IKeyword {
 
 	public abstract void setOriginName(String name);
 
-	public abstract void info(final String s, final String code, final String facet,
-		final String ... data);
+	public abstract void info(final String s, final String code, final String facet, final String ... data);
 
-	public abstract void info(final String s, final String code, final EObject facet,
-		final String ... data);
+	public abstract void info(final String s, final String code, final EObject facet, final String ... data);
 
 	public abstract void info(final String message, final String code);
 

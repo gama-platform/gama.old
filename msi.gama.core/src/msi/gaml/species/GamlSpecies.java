@@ -20,7 +20,6 @@ package msi.gaml.species;
 
 import java.util.Iterator;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -45,9 +44,8 @@ import msi.gaml.types.IType;
  * @author drogoul
  */
 @symbol(name = { IKeyword.SPECIES, IKeyword.GLOBAL, IKeyword.GRID }, kind = ISymbolKind.SPECIES, with_sequence = true)
-@inside(kinds = { ISymbolKind.MODEL, ISymbolKind.ENVIRONMENT, ISymbolKind.SPECIES }, symbols = { IKeyword.ENTITIES })
-@facets(value = {
-	@facet(name = IKeyword.WIDTH, type = IType.INT, optional = true),
+@inside(kinds = { ISymbolKind.MODEL, ISymbolKind.ENVIRONMENT, ISymbolKind.SPECIES })
+@facets(value = { @facet(name = IKeyword.WIDTH, type = IType.INT, optional = true),
 	@facet(name = IKeyword.HEIGHT, type = IType.INT, optional = true),
 	@facet(name = IKeyword.NEIGHBOURS, type = IType.INT, optional = true),
 	@facet(name = IKeyword.FILE, type = IType.FILE, optional = true),
@@ -69,11 +67,6 @@ public class GamlSpecies extends AbstractSpecies {
 
 	public GamlSpecies(final IDescription desc) {
 		super(desc);
-	}
-
-	@Override
-	public boolean isGlobal() {
-		return getName().equals(IKeyword.WORLD_SPECIES);
 	}
 
 	@Override
@@ -179,14 +172,13 @@ public class GamlSpecies extends AbstractSpecies {
 	}
 
 	@Override
-	public void add(IScope scope, final Integer index, final Object value, final Object param,
-		boolean all, boolean add) throws GamaRuntimeException {
+	public void add(IScope scope, final Integer index, final Object value, final Object param, boolean all, boolean add)
+		throws GamaRuntimeException {
 		// NOT ALLOWED
 	}
 
 	@Override
-	public void remove(IScope scope, Object index, final Object value, boolean all)
-		throws GamaRuntimeException {
+	public void remove(IScope scope, Object index, final Object value, boolean all) throws GamaRuntimeException {
 		// NOT ALLOWED
 	}
 
@@ -196,24 +188,22 @@ public class GamlSpecies extends AbstractSpecies {
 	}
 
 	@Override
-	public IMatrix matrixValue(final IScope scope, final ILocation preferredSize)
-		throws GamaRuntimeException {
+	public IMatrix matrixValue(final IScope scope, final ILocation preferredSize) throws GamaRuntimeException {
 		return getPopulation(scope).matrixValue(scope, preferredSize);
 	}
 
 	@Override
 	public Iterator<IAgent> iterator() {
 		// FIX ME: should not have to get the current scope like this
-		ISimulation sim = GAMA.getFrontmostSimulation();
-		if ( sim == null ) { return GamaList.EMPTY_LIST.iterator(); }
-		IScope scope = sim.getExecutionScope();
+		// IExperimentSpecies exp = GAMA.getExperiment();
+		// if ( exp == null ) { return GamaList.EMPTY_LIST.iterator(); }
+		IScope scope = GAMA.getDefaultScope();
 		if ( scope == null ) { return GamaList.EMPTY_LIST.iterator(); }
-		return scope.getWorldScope().getPopulationFor(this).iterator();
+		return scope.getSimulationScope().getPopulationFor(this).iterator();
 	}
 
 	@Override
-	public IAgent getFromIndicesList(final IScope scope, final IList indices)
-		throws GamaRuntimeException {
+	public IAgent getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
 		return (IAgent) getPopulation(scope).getFromIndicesList(scope, indices);
 	}
 

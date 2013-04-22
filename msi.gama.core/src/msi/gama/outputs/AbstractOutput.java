@@ -20,7 +20,6 @@ package msi.gama.outputs;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -63,9 +62,9 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	}
 
 	@Override
-	public void prepare(final ISimulation sim) throws GamaRuntimeException {
+	public void init(final IScope scope) {
 		setOwnScope(GAMA.obtainNewScope());
-		outputManager = sim.getExperiment().getOutputManager();
+		outputManager = GAMA.getExperiment().getOutputManager();
 		IExpression refresh = getFacet(IKeyword.REFRESH_EVERY);
 		if ( refresh != null ) {
 			setRefreshRate(Cast.asInt(getOwnScope(), refresh.value(getOwnScope())));
@@ -121,7 +120,7 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	}
 
 	@Override
-	public abstract void compute(IScope scope, int cycle) throws GamaRuntimeException;
+	public abstract void step(IScope scope);
 
 	@Override
 	public abstract void update() throws GamaRuntimeException;

@@ -35,7 +35,7 @@ import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
 @symbol(name = { IKeyword.ASPECT }, kind = ISymbolKind.BEHAVIOR, with_sequence = true, unique_name = true)
-@inside(kinds = { ISymbolKind.SPECIES })
+@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = true) }, omissible = IKeyword.NAME)
 public class AspectStatement extends AbstractStatementSequence implements IAspect {
 

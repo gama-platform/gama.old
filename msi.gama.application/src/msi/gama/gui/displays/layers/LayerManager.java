@@ -34,11 +34,11 @@ public class LayerManager implements ILayerManager {
 
 	// public final ILayer[] layers = new ILayer[20];
 	// public final boolean[] enabled = new boolean[20];
-	public final IList<ILayer> enabledLayers = new GamaList();
-	final IList<ILayer> disabledLayers = new GamaList();
-	final IDisplaySurface surface;
-	final PauseLayer pd = new PauseLayer(0d, 0d, null, null);
-	int count = 0;
+	private final IList<ILayer> enabledLayers = new GamaList();
+	private final IList<ILayer> disabledLayers = new GamaList();
+	private final IDisplaySurface surface;
+	private final PauseLayer pd = new PauseLayer(0d, 0d, null, null);
+	private int count = 0;
 
 	public LayerManager(final IDisplaySurface surface) {
 		this.surface = surface;
@@ -183,8 +183,8 @@ public class LayerManager implements ILayerManager {
 	@Override
 	public void updateItemValues() {}
 
-	public static ILayer createLayer(final ILayerStatement layer, final double env_width,
-		final double env_height, final IGraphics dg) {
+	public static ILayer createLayer(final ILayerStatement layer, final double env_width, final double env_height,
+		final IGraphics dg) {
 		switch (layer.getType()) {
 
 			case ILayerStatement.GRID: {

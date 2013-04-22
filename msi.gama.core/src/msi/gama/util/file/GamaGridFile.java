@@ -1,32 +1,21 @@
 package msi.gama.util.file;
 
-import java.io.File;
-import java.io.IOException;
-
+import java.io.*;
 import msi.gama.common.util.GisUtils;
-import msi.gama.metamodel.shape.GamaGisGeometry;
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.IList;
+import msi.gama.util.*;
 import msi.gaml.operators.Files;
-import msi.gaml.types.GamaFileType;
-import msi.gaml.types.GamaGeometryType;
-
+import msi.gaml.types.*;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.gce.arcgrid.ArcGridReader;
-import org.geotools.geometry.DirectPosition2D;
-import org.geotools.geometry.GeneralEnvelope;
-
+import org.geotools.geometry.*;
 import com.vividsolutions.jts.geom.Envelope;
 
-public class GamaGridFile  extends GamaFile<Integer, GamaGisGeometry> {
+public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 
-	public GamaGridFile(IScope scope, String pathName)
-			throws GamaRuntimeException {
+	public GamaGridFile(IScope scope, String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}
 
@@ -42,7 +31,7 @@ public class GamaGridFile  extends GamaFile<Integer, GamaGisGeometry> {
 			if ( store.getCrs() != null ) {
 				double latitude = env.centre().x;
 				double longitude = env.centre().y;
-				GisUtils gis = scope.getWorldScope().getGisUtils();
+				GisUtils gis = scope.getSimulationScope().getGisUtils();
 				gis.setTransformCRS(store.getCrs(), latitude, longitude);
 				env = gis.transform(env);
 			}
@@ -58,7 +47,7 @@ public class GamaGridFile  extends GamaFile<Integer, GamaGisGeometry> {
 		if ( buffer != null ) { return; }
 		buffer = new GamaList();
 		File gridFile = getFile();
-				ArcGridReader store;
+		ArcGridReader store;
 		try {
 			store = new ArcGridReader(gridFile.toURI().toURL());
 			GeneralEnvelope genv = store.getOriginalEnvelope();
@@ -73,11 +62,11 @@ public class GamaGridFile  extends GamaFile<Integer, GamaGisGeometry> {
 			shapes.add(new GamaPoint(genv.getMinimum(0), genv.getMaximum(1)));
 			shapes.add(shapes.get(0));
 			IShape environmentFrame = GamaGeometryType.buildPolygon(shapes);
-			
+
 			GamaPoint p = new GamaPoint(0, 0);
-			GamaPoint origin =
-				new GamaPoint(environmentFrame.getEnvelope().getMinX(), environmentFrame.getEnvelope()
-					.getMinY());
+			// GamaPoint origin =
+			// new GamaPoint(environmentFrame.getEnvelope().getMinX(), environmentFrame.getEnvelope()
+			// .getMinY());
 			double originX = genv.getMinimum(0);
 			double originY = genv.getMinimum(1);
 			// GeometryUtils.translation(g, -origin.x, -origin.y);
@@ -90,42 +79,44 @@ public class GamaGridFile  extends GamaFile<Integer, GamaGisGeometry> {
 				p.x = originX + xx * cellWidth + cmx;
 				p.y = originY + yy * cellHeight + cmy;
 				GamaShape rect = (GamaShape) GamaGeometryType.buildRectangle(cellWidth, cellHeight, p);
-				double[] vals = (double[]) coverage.evaluate(new DirectPosition2D(rect.getLocation().getX(), rect.getLocation().getY()));
-				
-				rect = new GamaShape(scope.getWorldScope().getGisUtils().transform(rect.getInnerGeometry()));
-				
+				double[] vals =
+					(double[]) coverage.evaluate(new DirectPosition2D(rect.getLocation().getX(), rect.getLocation()
+						.getY()));
+
+				rect = new GamaShape(scope.getSimulationScope().getGisUtils().transform(rect.getInnerGeometry()));
+
 				rect.createAttributes();
 				rect.getAttributes().put("grid_value", vals[0]);
 				((IList) buffer).add(rect);
 			}
 			/*
-			GridCoverage2D coverage = store.read(null);
-			GridSampleDimension[] gdims = coverage.getSampleDimensions();
-			//SimpleFeatureCollection fc = RasterToVectorProcess.process(coverage, 0, env, null, true, null);
-			
-			//FeatureIterator<SimpleFeature> features = fc.features();
-			//System.out.println("features : " + fc.size());
-			if ( features == null ) { return; }
-			while (features.hasNext()) {
-				SimpleFeature feature = features.next();
-				if ( feature.getDefaultGeometry() != null ) {
-					((IList) buffer).add(new GamaGisGeometry(scope, feature));
-				}
-			}
-			features.close();*/
-			
+			 * GridCoverage2D coverage = store.read(null);
+			 * GridSampleDimension[] gdims = coverage.getSampleDimensions();
+			 * //SimpleFeatureCollection fc = RasterToVectorProcess.process(coverage, 0, env, null, true, null);
+			 * 
+			 * //FeatureIterator<SimpleFeature> features = fc.features();
+			 * //System.out.println("features : " + fc.size());
+			 * if ( features == null ) { return; }
+			 * while (features.hasNext()) {
+			 * SimpleFeature feature = features.next();
+			 * if ( feature.getDefaultGeometry() != null ) {
+			 * ((IList) buffer).add(new GamaGisGeometry(scope, feature));
+			 * }
+			 * }
+			 * features.close();
+			 */
+
 			store.dispose();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-	
+
 	}
 
 	@Override
 	protected void flushBuffer() throws GamaRuntimeException {
-		// TODO at least, save as ASCII grid (plain text)	
-		
+		// TODO at least, save as ASCII grid (plain text)
+
 	}
 
 	@Override
@@ -139,14 +130,14 @@ public class GamaGridFile  extends GamaFile<Integer, GamaGisGeometry> {
 	public String getKeyword() {
 		return Files.GRID;
 	}
-	
+
 	@Override
 	protected void checkValidity() throws GamaRuntimeException {
 		super.checkValidity();
-		if ( !GamaFileType.isGrid(getFile().getName()) ) { throw new GamaRuntimeException(
-			"The extension " + this.getExtension() + " is not recognized for ArcGrid files"); }
+		if ( !GamaFileType.isGrid(getFile().getName()) ) { throw new GamaRuntimeException("The extension " +
+			this.getExtension() + " is not recognized for ArcGrid files"); }
 	}
-	
+
 	public int getNbRows() {
 		File gridFile = getFile();
 		ArcGridReader store = null;

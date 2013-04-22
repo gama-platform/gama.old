@@ -5,7 +5,6 @@
 package msi.gama.lang.gaml.resource;
 
 import java.util.List;
-import msi.gama.common.util.GuiUtils;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.resource.*;
 import org.eclipse.xtext.resource.impl.DefaultResourceDescription;
@@ -29,17 +28,17 @@ public class GamlResourceDescription extends DefaultResourceDescription {
 	 * @param cache
 	 */
 	@Inject
-	public GamlResourceDescription(final Resource resource,
-		final IDefaultResourceDescriptionStrategy strategy, final IResourceScopeCache cache) {
+	public GamlResourceDescription(final Resource resource, final IDefaultResourceDescriptionStrategy strategy,
+		final IResourceScopeCache cache) {
 		super(resource, strategy, cache);
 	}
 
 	@Override
 	protected List<IEObjectDescription> computeExportedObjects() {
 		List<IEObjectDescription> result = computeExportedObjects();
-		GuiUtils.debug("Exported objects from " + this.getURI().lastSegment());
+		// GuiUtils.debug("Exported objects from " + this.getURI().lastSegment());
 		for ( IEObjectDescription o : result ) {
-			GuiUtils.debug("     " + o.toString());
+			// GuiUtils.debug("     " + o.toString());
 		}
 		return result;
 	}

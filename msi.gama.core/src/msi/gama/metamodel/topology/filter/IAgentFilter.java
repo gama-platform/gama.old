@@ -56,7 +56,7 @@ public interface IAgentFilter {
 
 		@Override
 		public Collection<? extends IShape> getShapes(IScope scope) {
-			List<IAgent> agents = scope.getWorldScope().getAgents();
+			List<IAgent> agents = scope.getSimulationScope().getAgents();
 			agents.removeAll(filter.getShapes(scope));
 			return agents;
 		}

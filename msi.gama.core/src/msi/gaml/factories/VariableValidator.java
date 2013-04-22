@@ -25,37 +25,32 @@ public class VariableValidator extends DescriptionValidator {
 	 */
 	public static void assertNameIsNotTypeOrSpecies(final IDescription vd) {
 		String type =
-			"It cannot be used as a " +
-				(vd instanceof VariableDescription ? "variable" : vd.getKeyword()) + " name.";
+			"It cannot be used as a " + (vd instanceof VariableDescription ? "variable" : vd.getKeyword()) + " name.";
 		IType t = vd.getTypeNamed(vd.getName());
 		if ( t != Types.NO_TYPE ) {
 			String species = t.isSpeciesType() ? "species" : "type";
-			vd.error(vd.getName() + " is a " + species + " name. " + type, IGamlIssue.IS_A_TYPE,
-				NAME, vd.getName());
+			vd.error(vd.getName() + " is a " + species + " name. " + type, IGamlIssue.IS_A_TYPE, NAME, vd.getName());
 		}
 	}
 
 	public static void assertNameIsNotType(final IDescription vd) {
 		String type =
-			"It cannot be used as a " +
-				(vd instanceof VariableDescription ? "variable" : vd.getKeyword()) + " name.";
+			"It cannot be used as a " + (vd instanceof VariableDescription ? "variable" : vd.getKeyword()) + " name.";
 		IType t = vd.getTypeNamed(vd.getName());
 		if ( t == Types.NO_TYPE || t.isSpeciesType() ) { return; }
-		vd.error(vd.getName() + " is a type name. " + type, IGamlIssue.IS_A_TYPE, NAME,
-			vd.getName());
+		vd.error(vd.getName() + " is a type name. " + type, IGamlIssue.IS_A_TYPE, NAME, vd.getName());
 	}
 
-	public static void assertFacetsAreOfType(final IDescription vd, final IType type,
-		final String ... facets) {
+	public static void assertFacetsAreOfType(final IDescription vd, final IType type, final String ... facets) {
 		for ( String s : facets ) {
 			IExpression expr = vd.getFacets().getExpr(s);
 			if ( expr == null ) {
 				continue;
 			}
 			if ( expr.getType() != type && expr.getType() != Types.NO_TYPE && type != Types.NO_TYPE ) {
-				vd.warning("Facet " + s + " of type " + expr.getType().toString() +
-					" should be of type " + type.toString(), IGamlIssue.SHOULD_CAST, s,
-					type.toString());
+				vd.warning(
+					"Facet " + s + " of type " + expr.getType().toString() + " should be of type " + type.toString(),
+					IGamlIssue.SHOULD_CAST, s, type.toString());
 			}
 		}
 	}
@@ -63,8 +58,7 @@ public class VariableValidator extends DescriptionValidator {
 	public static void assertNameIsNotReserved(final IDescription vd) {
 		String name = vd.getName();
 		String type =
-			"It cannot be used as a " +
-				(vd instanceof VariableDescription ? "variable" : vd.getKeyword()) + " name.";
+			"It cannot be used as a " + (vd instanceof VariableDescription ? "variable" : vd.getKeyword()) + " name.";
 		if ( name == null ) {
 			vd.error("The attribute 'name' is missing", IGamlIssue.MISSING_NAME);
 		} else if ( IExpressionCompiler.RESERVED.contains(name) ) {
@@ -76,13 +70,12 @@ public class VariableValidator extends DescriptionValidator {
 	public static void assertCanBeAmong(final IDescription vd, final IType type, final Facets facets) {
 		IExpression amongExpression = facets.getExpr(AMONG);
 		if ( amongExpression != null && type != amongExpression.getContentType() ) {
-			vd.error("Variable " + vd.getName() + " of type " + type.toString() +
-				" cannot be chosen among " + amongExpression.toGaml(), IGamlIssue.NOT_AMONG, AMONG);
+			vd.error("Variable " + vd.getName() + " of type " + type.toString() + " cannot be chosen among " +
+				amongExpression.toGaml(), IGamlIssue.NOT_AMONG, AMONG);
 		}
 	}
 
-	public static void assertValueFacetsAreTheSameType(final VariableDescription vd,
-		final Facets facets) {
+	public static void assertValueFacetsAreTheSameType(final VariableDescription vd, final Facets facets) {
 		IType type = null;
 		String firstValueFacet = null;
 		for ( String s : valueFacetsArray ) {
@@ -93,8 +86,8 @@ public class VariableValidator extends DescriptionValidator {
 					firstValueFacet = s;
 				} else {
 					if ( type != expr.getType() ) {
-						vd.warning("The types of  facets '" + s + "' and '" + firstValueFacet +
-							"' are not the same", IGamlIssue.SHOULD_CAST, s, type.toString());
+						vd.warning("The types of  facets '" + s + "' and '" + firstValueFacet + "' are not the same",
+							IGamlIssue.SHOULD_CAST, s, type.toString());
 					}
 				}
 			}
@@ -106,8 +99,7 @@ public class VariableValidator extends DescriptionValidator {
 		if ( vd.isNotModifiable() ) {
 			if ( ff.containsKey(CONST) && ff.getLabel(CONST).equals(TRUE) ) {
 				if ( ff.containsKey(VALUE) | ff.containsKey(UPDATE) ) {
-					vd.warning(
-						"A constant variable cannot have an update value (use init or <- instead)",
+					vd.warning("A constant variable cannot have an update value (use init or <- instead)",
 						IGamlIssue.REMOVE_CONST, UPDATE);
 				} else if ( ff.containsKey(FUNCTION) ) {
 					vd.error("A constant variable cannot be a function (use init or <- instead)",
@@ -119,10 +111,8 @@ public class VariableValidator extends DescriptionValidator {
 
 	public static void assertCanBeFunction(final VariableDescription vd) {
 		Facets ff = vd.getFacets();
-		if ( ff.containsKey(FUNCTION) &&
-			(ff.containsKey(INIT) || ff.containsKey(UPDATE) || ff.containsKey(VALUE)) ) {
-			vd.error("A function cannot have an 'init' or 'update' facet", IGamlIssue.REMOVE_VALUE,
-				FUNCTION);
+		if ( ff.containsKey(FUNCTION) && (ff.containsKey(INIT) || ff.containsKey(UPDATE) || ff.containsKey(VALUE)) ) {
+			vd.error("A function cannot have an 'init' or 'update' facet", IGamlIssue.REMOVE_VALUE, FUNCTION);
 		}
 	}
 
@@ -133,16 +123,13 @@ public class VariableValidator extends DescriptionValidator {
 		if ( facets.equals(KEYWORD, PARAMETER) ) {
 
 			String varName = facets.getLabel(VAR);
-			VariableDescription targetedVar = vd.getWorldSpecies().getVariable(varName);
+			VariableDescription targetedVar = vd.getModelDescription().getVariable(varName);
 			if ( targetedVar == null ) {
-				vd.error(p + "cannot refer to the non-global variable " + varName,
-					IGamlIssue.UNKNOWN_VAR, IKeyword.VAR);
+				vd.error(p + "cannot refer to the non-global variable " + varName, IGamlIssue.UNKNOWN_VAR, IKeyword.VAR);
 				return;
 			}
-			if ( !vd.getType().equals(Types.NO_TYPE) &&
-				vd.getType().id() != targetedVar.getType().id() ) {
-				vd.error(p + "type must be the same as that of " + varName,
-					IGamlIssue.UNMATCHED_TYPES, IKeyword.TYPE);
+			if ( !vd.getType().equals(Types.NO_TYPE) && vd.getType().id() != targetedVar.getType().id() ) {
+				vd.error(p + "type must be the same as that of " + varName, IGamlIssue.UNMATCHED_TYPES, IKeyword.TYPE);
 			}
 			assertCanBeAmong(vd, targetedVar.getType(), facets);
 			assertFacetsAreOfType(vd, targetedVar.getType(), valueFacetsArray);
@@ -161,8 +148,8 @@ public class VariableValidator extends DescriptionValidator {
 			vd.error(p + " max value must be constant", IGamlIssue.NOT_CONST, MAX);
 		}
 		if ( facets.getExpr(INIT) == null ) {
-			vd.error(p + " must have an initial value", IGamlIssue.NO_INIT,
-				vd.getUnderlyingElement(null), vd.getType().toString());
+			vd.error(p + " must have an initial value", IGamlIssue.NO_INIT, vd.getUnderlyingElement(null), vd.getType()
+				.toString());
 		} else if ( !facets.getExpr(INIT).isConst() ) {
 			vd.error(p + "initial value must be constant", IGamlIssue.NOT_CONST, INIT);
 		}

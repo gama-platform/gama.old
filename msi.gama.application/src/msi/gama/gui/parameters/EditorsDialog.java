@@ -6,6 +6,7 @@ package msi.gama.gui.parameters;
 
 import java.util.*;
 import msi.gama.gui.swt.SwtGui;
+import msi.gaml.types.IType;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
@@ -21,15 +22,17 @@ import org.eclipse.swt.widgets.*;
  */
 public class EditorsDialog extends Dialog {
 
-	final Map<String, Object> values;
-	final String title;
+	private final Map<String, Object> values;
+	private final Map<String, IType> types;
+	private final String title;
 
-	public EditorsDialog(final Shell parentShell, final Map<String, Object> values,
+	public EditorsDialog(final Shell parentShell, final Map<String, Object> values, final Map<String, IType> types,
 		final String title) {
 		super(parentShell);
 		this.title = title;
 		setShellStyle(SWT.RESIZE | SWT.BORDER);
 		this.values = new LinkedHashMap(values);
+		this.types = types;
 	}
 
 	@Override
@@ -54,15 +57,16 @@ public class EditorsDialog extends Dialog {
 		data.heightHint = 20;
 		sep.setLayoutData(data);
 		for ( Map.Entry<String, Object> entry : values.entrySet() ) {
-			EditorFactory.create(composite, new InputParameter(entry.getKey(), entry.getValue()) {
+			EditorFactory.create(composite,
+				new InputParameter(entry.getKey(), entry.getValue(), types.get(entry.getKey())) {
 
-				@Override
-				public void setValue(final Object value) {
-					super.setValue(value);
-					values.put(getTitle(), value);
-				}
+					@Override
+					public void setValue(final Object value) {
+						super.setValue(value);
+						values.put(getTitle(), value);
+					}
 
-			});
+				});
 		}
 		composite.layout();
 		composite.pack();

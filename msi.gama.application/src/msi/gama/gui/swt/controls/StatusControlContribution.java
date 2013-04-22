@@ -32,12 +32,11 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 import org.jfree.util.StringUtils;
 
-public class StatusControlContribution extends WorkbenchWindowControlContribution implements
-	IPopupProvider {
+public class StatusControlContribution extends WorkbenchWindowControlContribution implements IPopupProvider {
 
-	Composite compo;
+	private Composite compo;
 	Label label;
-	Popup popup;
+	private Popup popup;
 	int status;
 
 	public StatusControlContribution() {}
@@ -105,14 +104,10 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		String nl = StringUtils.getLineSeparator();
 		SimulationClock clock = GAMA.getFrontmostSimulation().getScheduler().getClock();
 		sb.append("Cycles elapsed: ").append("\t").append(clock.getCycle()).append(nl);
-		sb.append("Simulated time: ").append("\t").append(Strings.asDate(clock.getTime(), null))
-			.append(nl);
-		sb.append("Cycle duration: ").append("\t").append("\t").append(clock.getDuration())
-			.append("ms").append(nl);
-		sb.append("Average duration: ").append("\t").append((int) clock.getAverageDuration())
-			.append("ms").append(nl);
-		sb.append("Total duration: ").append("\t").append("\t").append(clock.getTotalDuration())
-			.append("ms");
+		sb.append("Simulated time: ").append("\t").append(Strings.asDate(clock.getTime(), null)).append(nl);
+		sb.append("Cycle duration: ").append("\t").append("\t").append(clock.getDuration()).append("ms").append(nl);
+		sb.append("Average duration: ").append("\t").append((int) clock.getAverageDuration()).append("ms").append(nl);
+		sb.append("Total duration: ").append("\t").append("\t").append(clock.getTotalDuration()).append("ms");
 		return sb.toString();
 	}
 
@@ -129,8 +124,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	 */
 	@Override
 	public Color getPopupBackground() {
-		return status == IGui.ERROR ? SwtGui.COLOR_ERROR : status == IGui.WAIT
-			? SwtGui.COLOR_WARNING : SwtGui.COLOR_OK;
+		return status == IGui.ERROR ? SwtGui.COLOR_ERROR : status == IGui.WAIT ? SwtGui.COLOR_WARNING : SwtGui.COLOR_OK;
 	}
 
 }

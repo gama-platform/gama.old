@@ -30,15 +30,14 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
-public class ExpressionControl implements IPopupProvider, SelectionListener, ModifyListener,
-	FocusListener {
+public class ExpressionControl implements IPopupProvider, SelectionListener, ModifyListener, FocusListener {
 
-	Text text;
-	Popup popup;
-	AbstractEditor editor;
-	Color background;
+	private final Text text;
+	private final Popup popup;
+	private final AbstractEditor editor;
+	private Color background;
 	Object currentValue;
-	Exception currentException;
+	private Exception currentException;
 
 	// IType expectedType;
 
@@ -85,8 +84,8 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 		try {
 			currentException = null;
 			currentValue =
-				editor.evaluateExpression() ? GAMA.evaluateExpression(text.getText(),
-					editor.getAgent()) : GAMA.compileExpression(text.getText(), editor.getAgent());
+				editor.evaluateExpression() ? GAMA.evaluateExpression(text.getText(), editor.getAgent()) : GAMA
+					.compileExpression(text.getText(), editor.getAgent());
 		} catch (Exception e) {
 			currentException = e;
 		}

@@ -2,7 +2,6 @@ package msi.gama.networks.ui;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.outputs.AbstractDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -46,9 +45,9 @@ public class GraphstreamOutput extends AbstractDisplayOutput {
 	}
 
 	@Override
-	public void compute(final IScope scope, final int cycle) throws GamaRuntimeException {
+	public void step(final IScope scope) throws GamaRuntimeException {
 		// retrieve the graph to be displayed
-		Object tmp = Cast.asGraph(scope, graphExpr);
+		Object tmp = Cast.asGraph(getOwnScope(), graphExpr);
 		if ( tmp != null ) {
 			this.graph = (IGraph) tmp;
 		}
@@ -56,16 +55,16 @@ public class GraphstreamOutput extends AbstractDisplayOutput {
 	}
 
 	@Override
-	public void prepare(final ISimulation sim) throws GamaRuntimeException {
-		super.prepare(sim);
+	public void init(final IScope scope) throws GamaRuntimeException {
+		super.init(scope);
 
 		// retrieve the graph to be displayed
-		Object tmp = Cast.asGraph(sim.getExecutionScope(), graphExpr);
+		Object tmp = Cast.asGraph(getOwnScope(), graphExpr);
 		if ( tmp != null ) {
 			this.graph = (IGraph) tmp;
 		}
 
-		lowquality = Cast.asBool(sim.getExecutionScope(), getFacet("lowquality"));
+		lowquality = Cast.asBool(getOwnScope(), getFacet("lowquality"));
 
 	}
 

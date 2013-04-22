@@ -34,18 +34,22 @@ public interface IExpressionCompiler<T> {
 
 	public static final String INTERNAL_POINT = "<->";
 	public static final String INTERNAL_Z = "add_z";
-	public static final List<String> RESERVED = Arrays.asList(IKeyword.THE, IKeyword.FALSE,
-		IKeyword.TRUE, IKeyword.NULL, IKeyword.MYSELF, IKeyword.MY, IKeyword.HIS, IKeyword.HER,
-		IKeyword.THEIR, IKeyword.ITS, IKeyword.USER_LOCATION);
-	public static final List<String> IGNORED = Arrays.asList(IKeyword.THE, IKeyword.THEIR,
-		IKeyword.HIS, IKeyword.ITS, IKeyword.HER);
+	public static final List<String> RESERVED = Arrays.asList(IKeyword.THE, IKeyword.FALSE, IKeyword.TRUE,
+		IKeyword.NULL, IKeyword.MYSELF, IKeyword.MY, IKeyword.HIS, IKeyword.HER, IKeyword.THEIR, IKeyword.ITS,
+		IKeyword.USER_LOCATION);
+	public static final List<String> IGNORED = Arrays.asList(IKeyword.THE, IKeyword.THEIR, IKeyword.HIS, IKeyword.ITS,
+		IKeyword.HER);
 	public static final Map<String, Map<Signature, IOperator>> OPERATORS = new HashMap();
 	public static final Set<String> ITERATORS = new HashSet();
 
-	public abstract IExpression compile(final IExpressionDescription s,
-		final IDescription parsingContext);
+	public abstract IExpression compile(final IExpressionDescription s, final IDescription parsingContext);
 
-	Map<String, IExpressionDescription> parseArguments(StatementDescription action,
-		EObject eObject, IDescription context);
+	Map<String, IExpressionDescription> parseArguments(StatementDescription action, EObject eObject,
+		IDescription context);
+
+	/*
+	 * Remove context-dependant information from the parser
+	 */
+	public abstract void reset();
 
 }

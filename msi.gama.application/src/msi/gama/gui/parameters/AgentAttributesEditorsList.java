@@ -26,10 +26,10 @@ import msi.gama.runtime.GAMA;
 
 public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 
-	public static final String DEAD_MARKER = " dead at step ";
-	public static final String AGENT_MARKER = "Agent" + ItemList.SEPARATION_CODE;
-	public static final Set<String> HIDDEN = new HashSet(Arrays.asList(IKeyword.PEERS,
-		IKeyword.MEMBERS, IKeyword.AGENTS));
+	private static final String DEAD_MARKER = " dead at step ";
+	private static final String AGENT_MARKER = "Agent" + ItemList.SEPARATION_CODE;
+	private static final Set<String> HIDDEN = new HashSet(Arrays.asList(IKeyword.PEERS, IKeyword.MEMBERS,
+		IKeyword.AGENTS));
 
 	@Override
 	public String getItemDisplayName(final IAgent ag, final String name) {
@@ -37,9 +37,8 @@ public class AgentAttributesEditorsList extends EditorsList<IAgent> {
 		if ( ag.dead() && !name.contains(DEAD_MARKER) ) {
 			long cycle = GAMA.getDefaultScope().getClock().getCycle();
 			String result =
-				AGENT_MARKER + ItemList.ERROR_CODE +
-					name.substring(name.indexOf(ItemList.SEPARATION_CODE) + 1) + DEAD_MARKER +
-					cycle;
+				AGENT_MARKER + ItemList.ERROR_CODE + name.substring(name.indexOf(ItemList.SEPARATION_CODE) + 1) +
+					DEAD_MARKER + cycle;
 			return result;
 		}
 		return name;

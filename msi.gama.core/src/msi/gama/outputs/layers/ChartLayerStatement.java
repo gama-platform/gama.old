@@ -23,7 +23,6 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.ChartDataStatement.ChartData;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -67,11 +66,10 @@ import org.jfree.ui.RectangleInsets;
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true),
 	@facet(name = IKeyword.TIMEXSERIES, type = IType.LIST, optional = true),
 	@facet(name = IKeyword.AXES, type = IType.COLOR, optional = true),
-	@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.XY, IKeyword.HISTOGRAM,
-		IKeyword.SERIES, IKeyword.PIE, IKeyword.BOX_WHISKER }, optional = true),
-	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.EXPLODED, IKeyword.THREE_D,
-		IKeyword.STACK, IKeyword.BAR }, optional = true),
-	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true),
+	@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.XY, IKeyword.HISTOGRAM, IKeyword.SERIES,
+		IKeyword.PIE, IKeyword.BOX_WHISKER }, optional = true),
+	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.EXPLODED, IKeyword.THREE_D, IKeyword.STACK,
+		IKeyword.BAR }, optional = true), @facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.FONT, type = IType.ID, optional = true),
 	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),
@@ -126,8 +124,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		return chart;
 	}
 
-	public ChartLayerStatement(/* final ISymbol context, */final IDescription desc)
-		throws GamaRuntimeException {
+	public ChartLayerStatement(/* final ISymbol context, */final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		axesColor = Cast.asColor(null, "black");
 		lastValues = new HashMap();
@@ -147,9 +144,8 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			if ( timeSeriesXData == null ) {
 
 				timeSeriesXData =
-					(ChartDataStatement) DescriptionFactory.compile(DescriptionFactory.create(
-						IKeyword.DATA, description, IKeyword.LEGEND, IKeyword.TIME, IKeyword.VALUE,
-						IKeyword.TIME));
+					(ChartDataStatement) DescriptionFactory.compile(DescriptionFactory.create(IKeyword.DATA,
+						description, IKeyword.LEGEND, IKeyword.TIME, IKeyword.VALUE, IKeyword.TIME));
 				if ( getFacet(IKeyword.TIMEXSERIES) != null ) {
 					timeSeriesXData.getDescription().getFacets().get(IKeyword.VALUE)
 						.setExpression(getFacet(IKeyword.TIMEXSERIES));
@@ -200,14 +196,13 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	private BoxAndWhiskerCategoryDataset createWhisker(IScope scope) {
 
 		final CategoryPlot plot = (CategoryPlot) chart.getPlot();
-		final int seriesCount = 1;
+		// final int seriesCount = 1;
 		final int categoryCount = 3;
 		final int entityCount = 2;
 
-		final DefaultBoxAndWhiskerCategoryDataset dataset =
-			new DefaultBoxAndWhiskerCategoryDataset();
+		final DefaultBoxAndWhiskerCategoryDataset dataset = new DefaultBoxAndWhiskerCategoryDataset();
 		for ( int i = 0; i < datas.size(); i++ ) {
-			ChartData e = datas.get(i);
+			// ChartData e = datas.get(i);
 			for ( int j = 0; j < categoryCount; j++ ) {
 				final List list = new ArrayList();
 				// add some values...
@@ -318,8 +313,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		switch (type) {
 			case SERIES_CHART: {
 				chart =
-					ChartFactory.createXYLineChart("", "time", "", null, PlotOrientation.VERTICAL,
-						true, false, false);
+					ChartFactory.createXYLineChart("", "time", "", null, PlotOrientation.VERTICAL, true, false, false);
 				break;
 			}
 			case PIE_CHART: {
@@ -338,23 +332,20 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			case HISTOGRAM_CHART: {
 				if ( style.equals(IKeyword.THREE_D) ) {
 					chart =
-						ChartFactory.createBarChart3D("", null, null, null,
-							PlotOrientation.VERTICAL, true, true, false);
+						ChartFactory
+							.createBarChart3D("", null, null, null, PlotOrientation.VERTICAL, true, true, false);
 				} else if ( style.equals(IKeyword.STACK) ) {
 					chart =
-						ChartFactory.createStackedBarChart("", null, null, null,
-							PlotOrientation.VERTICAL, true, true, false);
+						ChartFactory.createStackedBarChart("", null, null, null, PlotOrientation.VERTICAL, true, true,
+							false);
 				} else {
 					chart =
-						ChartFactory.createBarChart("", null, null, null, PlotOrientation.VERTICAL,
-							true, true, false);
+						ChartFactory.createBarChart("", null, null, null, PlotOrientation.VERTICAL, true, true, false);
 				}
 				break;
 			}
 			case XY_CHART:
-				chart =
-					ChartFactory.createXYLineChart("", "", "", null, PlotOrientation.VERTICAL,
-						true, false, false);
+				chart = ChartFactory.createXYLineChart("", "", "", null, PlotOrientation.VERTICAL, true, false, false);
 				break;
 			case BOX_WHISKER_CHART: {
 				chart =
@@ -405,16 +396,16 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void prepare(final IDisplayOutput out, final IScope scope) throws GamaRuntimeException {
-		super.prepare(out, scope);
+	public void init(final IScope scope) throws GamaRuntimeException {
+		super.init(scope);
 		history = new StringBuilder(500);
 		IExpression string1 = getFacet(IKeyword.TYPE);
 		if ( string1 != null ) {
 			String t = Cast.asString(scope, string1.value(scope));
 			type =
-				IKeyword.SERIES.equals(t) ? SERIES_CHART : IKeyword.HISTOGRAM.equals(t)
-					? HISTOGRAM_CHART : IKeyword.PIE.equals(t) ? PIE_CHART : IKeyword.BOX_WHISKER
-						.equals(t) ? BOX_WHISKER_CHART : XY_CHART;
+				IKeyword.SERIES.equals(t) ? SERIES_CHART : IKeyword.HISTOGRAM.equals(t) ? HISTOGRAM_CHART
+					: IKeyword.PIE.equals(t) ? PIE_CHART : IKeyword.BOX_WHISKER.equals(t) ? BOX_WHISKER_CHART
+						: XY_CHART;
 
 		}
 		IExpression color = getFacet(IKeyword.AXES);
@@ -436,13 +427,13 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void compute(final IScope scope, final long cycle) throws GamaRuntimeException {
-		super.compute(scope, cycle);
-		lastComputeCycle = cycle;
+	public void step(final IScope scope) throws GamaRuntimeException {
+		super.step(scope);
+		lastComputeCycle = (long) scope.getClock().getCycle();
 		switch (type) {
 			case XY_CHART:
 			case SERIES_CHART:
-				computeSeries(scope, cycle);
+				computeSeries(scope, lastComputeCycle);
 				return;
 		}
 
@@ -506,8 +497,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				n.add(o);
 			}
 			for ( int j = 0; j < n.size(); j++ ) {
-				serie.addOrUpdate(Double.parseDouble("" + x.get(j)),
-					Double.parseDouble("" + n.get(j)));
+				serie.addOrUpdate(Double.parseDouble("" + x.get(j)), Double.parseDouble("" + n.get(j)));
 				history.append(n.get(j));
 				history.append(',');
 			}

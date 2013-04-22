@@ -14,14 +14,14 @@ import msi.gaml.statements.*;
 
 public class CustomisedEventListener implements MouseListener {
 
-	public final static int MOUSE_PRESS = 0;
-	public final static int MOUSE_RELEASED = 1;
-	public final static int MOUSE_CLICKED = 2;
+	private final static int MOUSE_PRESS = 0;
+	private final static int MOUSE_RELEASED = 1;
+	private final static int MOUSE_CLICKED = 2;
 
 	private final IScope currentScope;
 	private final int listenedEvent;
 	private final EventLayer parent;
-	IStatement.WithArgs executer;
+	private final IStatement.WithArgs executer;
 
 	public CustomisedEventListener(EventLayer prt, String event, String action) {
 		this.parent = prt;
@@ -36,8 +36,8 @@ public class CustomisedEventListener implements MouseListener {
 
 		double x = initialLoc.x - parent.getDisplay().getOriginX();
 		double y = initialLoc.y - parent.getDisplay().getOriginY();
-		return new Point((int) (x / parent.getDisplayWidth() * parent.getEnvironmentSize().getX()),
-			(int) (y / parent.getDisplayHeight() * parent.getEnvironmentSize().getY()));
+		return new Point((int) (x / parent.getDisplayWidth() * parent.getEnvironmentSize().getX()), (int) (y /
+			parent.getDisplayHeight() * parent.getEnvironmentSize().getY()));
 	}
 
 	public static int getListeningEvent(String eventTypeName) {

@@ -26,7 +26,7 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.hpc.gui.perspective.chart.HeadlessChart;
 import msi.gama.hpc.gui.perspective.explorer.HeadlessParam;
 import msi.gama.hpc.simulation.*;
-import msi.gama.kernel.experiment.IExperiment;
+import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
 import msi.gama.runtime.*;

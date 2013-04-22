@@ -44,7 +44,6 @@ public interface IGamlAdditions {
 	public final static Class GF = IGamaFile.class;
 	public final static Class MSK = MovingSkill.class;
 	public final static Class GSK = GridSkill.class;
-	public final static Class WSK = WorldSkill.class;
 
 	public void initialize();
 

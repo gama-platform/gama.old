@@ -1,9 +1,9 @@
 package msi.gama.headless.core;
 
-import msi.gama.kernel.experiment.IExperiment;
+import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
-public interface IHeadLessExperiment extends IExperiment {
+public interface IHeadLessExperiment extends IExperimentSpecies {
 
 	public void start(int nbStep);
 

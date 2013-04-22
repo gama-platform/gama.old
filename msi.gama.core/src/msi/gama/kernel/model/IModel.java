@@ -19,9 +19,7 @@
 package msi.gama.kernel.model;
 
 import java.util.Collection;
-import msi.gama.kernel.experiment.IExperiment;
-import msi.gaml.compilation.ISymbol;
-import msi.gaml.descriptions.ModelDescription;
+import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gaml.species.ISpecies;
 
 /**
@@ -30,19 +28,11 @@ import msi.gaml.species.ISpecies;
  * @todo Description
  * 
  */
-public interface IModel extends ISymbol {
-
-	@Override
-	public abstract void dispose();
-
-	@Override
-	public ModelDescription getDescription();
-
-	public abstract ISpecies getWorldSpecies();
+public interface IModel extends ISpecies {
 
 	public abstract ISpecies getSpecies(String speciesName);
 
-	public abstract IExperiment getExperiment(final String s);
+	public abstract IExperimentSpecies getExperiment(final String s);
 
 	String getRelativeFilePath(String filePath, boolean shouldExist);
 
@@ -50,7 +40,7 @@ public interface IModel extends ISymbol {
 
 	public abstract String getFilePath();
 
-	public abstract Collection<IExperiment> getExperiments();
+	public abstract Collection<IExperimentSpecies> getExperiments();
 
 	public abstract String getProjectPath();
 

@@ -8,16 +8,14 @@ import java.util.jar.JarFile;
 // import java.lang.* //Systematically loaded by java.
 /**
  * <p>
- * Class to load dynamic plug-ins using introspection and reflexion. Plug-ins are java class files
- * (compiled files) and they must be stored in the same directory. After loading, classes are
- * associated to an unique name and stored onto an array. You can either store the class definition
- * or objects created from a loaded class. If you use instance option (that build object from the
- * class), your class must have a default constructor (with no parameters).
+ * Class to load dynamic plug-ins using introspection and reflexion. Plug-ins are java class files (compiled files) and
+ * they must be stored in the same directory. After loading, classes are associated to an unique name and stored onto an
+ * array. You can either store the class definition or objects created from a loaded class. If you use instance option
+ * (that build object from the class), your class must have a default constructor (with no parameters).
  * </p>
  * 
  * <p>
- * Initially created for the software Patty, where it's used to add aircraft or entity
- * specifications to the program.
+ * Initially created for the software Patty, where it's used to add aircraft or entity specifications to the program.
  * </p>
  * 
  * @author VALENTIN Joachim
@@ -76,8 +74,8 @@ public class DynamicClassLoader {
 		File directory;
 		FilenameFilter classFilter;
 		String[] classFiles;
-		Class tmp_class;
-		PlugInStorage stored;
+		// Class tmp_class;
+		// PlugInStorage stored;
 
 		// Create the file system object for the plug in directory.
 		directory = new File(PlugInDirectory);
@@ -100,7 +98,7 @@ public class DynamicClassLoader {
 
 		// Get all classes associated with *.class files and put them into the array.
 		for ( int index = 0; index < classFiles.length; ++index ) {
-			stored = new PlugInStorage();
+			// stored = new PlugInStorage();
 			try {
 				// Remove the extension of filename.
 				// classFiles[index] = classFiles[index].substring(0,
@@ -126,8 +124,7 @@ public class DynamicClassLoader {
 
 					// On vŽrifie que le fichier courant est un .class (et pas un fichier
 					// d'informations du jar )
-					if ( tmp.length() > 6 &&
-						tmp.substring(tmp.length() - 6).compareTo(".class") == 0 ) {
+					if ( tmp.length() > 6 && tmp.substring(tmp.length() - 6).compareTo(".class") == 0 ) {
 
 						tmp = tmp.substring(0, tmp.length() - 6);
 						tmp = tmp.replaceAll("/", ".");
@@ -141,8 +138,7 @@ public class DynamicClassLoader {
 				}
 
 			} catch (Exception e) {
-				System.err.println("Unable to create instance of the class \"" + classFiles[index] +
-					"\"");
+				System.err.println("Unable to create instance of the class \"" + classFiles[index] + "\"");
 				System.err.println("Unable to create instance of the class \"" + e);
 				return -1;
 			}
@@ -155,8 +151,8 @@ public class DynamicClassLoader {
 		File directory;
 		FilenameFilter classFilter;
 		String[] classFiles;
-		Class tmp_class;
-		PlugInStorage stored;
+		// Class tmp_class;
+		// PlugInStorage stored;
 
 		// Create the file system object for the plug in directory.
 		directory = new File(PlugInDirectory);
@@ -179,7 +175,7 @@ public class DynamicClassLoader {
 
 		// Get all classes associated with *.class files and put them into the array.
 		for ( int index = 0; index < classFiles.length; ++index ) {
-			stored = new PlugInStorage();
+			// stored = new PlugInStorage();
 			try {
 				// Remove the extension of filename.
 				// classFiles[index] = classFiles[index].substring(0,
@@ -195,8 +191,7 @@ public class DynamicClassLoader {
 				System.out.println("loading : " + classFiles[index]);
 
 			} catch (Exception e) {
-				System.err.println("Unable to create instance of the class \"" + classFiles[index] +
-					"\"");
+				System.err.println("Unable to create instance of the class \"" + classFiles[index] + "\"");
 				System.err.println("Unable to create instance of the class \"" + e);
 				return -1;
 			}

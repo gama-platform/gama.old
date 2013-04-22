@@ -24,7 +24,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
-import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -52,8 +51,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.HEADER, type = IType.STRING, optional = true),
 	@facet(name = IKeyword.FOOTER, type = IType.STRING, optional = true),
 	@facet(name = IKeyword.REWRITE, type = IType.BOOL, optional = true),
-	@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.CSV, IKeyword.TEXT,
-		IKeyword.XML }, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.CSV, IKeyword.TEXT, IKeyword.XML }, optional = true) }, omissible = IKeyword.NAME)
 public class FileOutput extends AbstractOutput {
 
 	/**
@@ -78,8 +76,7 @@ public class FileOutput extends AbstractOutput {
 	private String expressionText = null;
 	private IExpression data;
 	private static final String LOG_FOLDER = "log";
-	private static final String XMLHeader =
-		"<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>";
+	private static final String XMLHeader = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>";
 	private static final int XML = 1;
 	private static final int CSV = 2;
 	private static final int TEXT = 0;
@@ -179,20 +176,21 @@ public class FileOutput extends AbstractOutput {
 	}
 
 	@Override
-	public void prepare(final ISimulation sim) throws GamaRuntimeException {
-		super.prepare(sim);
+	public void init(final IScope scope) throws GamaRuntimeException {
+		super.init(scope);
 		createType();
-		createFileName(sim.getModel());
+		createFileName(scope.getSimulationScope().getModel());
 		createRewrite();
 		createHeader();
 		createFooter();
 		createExpression();
 	}
 
-	public FileOutput(final String name, final String expr, final List<String> columns,
-		final IExperiment exp) throws GamaRuntimeException {
-		super(DescriptionFactory.create(IKeyword.FILE, IKeyword.DATA, expr, IKeyword.TYPE,
-			IKeyword.CSV, IKeyword.NAME, name == null ? expr : name));
+	public FileOutput(final String name, final String expr, final List<String> columns, final IExperimentSpecies exp)
+		throws GamaRuntimeException {
+		// FIXME Created by the batch. Is it still necessary to keep this ?
+		super(DescriptionFactory.create(IKeyword.FILE, IKeyword.DATA, expr, IKeyword.TYPE, IKeyword.CSV, IKeyword.NAME,
+			name == null ? expr : name));
 		prepare(exp);
 		expressionText = expr;
 		refreshExpression();
@@ -202,7 +200,8 @@ public class FileOutput extends AbstractOutput {
 		this.writeHeaderAndClose();
 	}
 
-	public void prepare(final IExperiment exp) throws GamaRuntimeException {
+	public void prepare(final IExperimentSpecies exp) throws GamaRuntimeException {
+		// FIXME Verify this scope
 		setOwnScope(exp.getExperimentScope());
 		outputManager = exp.getOutputManager();
 		createType();
@@ -249,7 +248,7 @@ public class FileOutput extends AbstractOutput {
 	}
 
 	@Override
-	public void compute(final IScope scope, final int cycle) throws GamaRuntimeException {
+	public void step(final IScope scope) {
 		setLastValue(data.value(scope));
 	}
 
@@ -258,11 +257,10 @@ public class FileOutput extends AbstractOutput {
 		writeToFile(getOwnScope().getClock().getCycle());
 	}
 
-	public void doRefreshWriteAndClose(final ParametersSet sol, final Object fitness)
-		throws GamaRuntimeException {
+	public void doRefreshWriteAndClose(final ParametersSet sol, final Object fitness) throws GamaRuntimeException {
 		setSolution(sol);
 		if ( fitness == null ) {
-			compute(getOwnScope(), 0);
+			step(getOwnScope());
 		} else {
 			setLastValue(fitness);
 		}
@@ -316,8 +314,7 @@ public class FileOutput extends AbstractOutput {
 				getWriter().flush();
 				break;
 			case XML:
-				getWriter().println(
-					"<data step=\"" + cycle + "\" value=\"" + getLastValue() + "\" />");
+				getWriter().println("<data step=\"" + cycle + "\" value=\"" + getLastValue() + "\" />");
 				getWriter().flush();
 				break;
 

@@ -9,8 +9,8 @@ public class HeadlessScheduler extends AbstractScheduler {
 
 	private final int nbStepToIterate;
 
-	public HeadlessScheduler(final ISimulation sim, final IAgent owner) {
-		super(sim, owner);
+	public HeadlessScheduler(final ISimulationAgent sim, final IAgent owner) {
+		super(owner);
 		this.nbStepToIterate = 1;
 		// TODO Auto-generated constructor stub
 	}
@@ -25,7 +25,7 @@ public class HeadlessScheduler extends AbstractScheduler {
 			paused = false;
 			alive = true;
 
-			step(simulation.getExecutionScope());
+			step(owner.getScope());
 			// m.step(simulation.getExecutionScope());
 			// m.updateOutputs();
 

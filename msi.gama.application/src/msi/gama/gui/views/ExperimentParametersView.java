@@ -35,8 +35,8 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 
 	public static final String ID = GuiUtils.PARAMETER_VIEW_ID;
 
-	IExperiment experiment;
-	Composite commands;
+	private IExperimentSpecies experiment;
+	private Composite commands;
 
 	@Override
 	public void ownCreatePartControl(final Composite view) {
@@ -48,10 +48,8 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 		parentLayout.verticalSpacing = 0;
 		intermediate.setLayout(parentLayout);
 		commands = new Composite(intermediate, SWT.BORDER_SOLID);
-		commands.setBackground(SwtGui.getDisplay().getSystemColor(
-			SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
-		commands.setForeground(SwtGui.getDisplay().getSystemColor(
-			SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
+		commands.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
+		commands.setForeground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
 		commands.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		GridLayout layout = new GridLayout(3, false);
 		layout.verticalSpacing = 0;
@@ -62,7 +60,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 		parent = intermediate;
 	}
 
-	public void addItem(final IExperiment exp) {
+	public void addItem(final IExperimentSpecies exp) {
 		if ( exp != null && exp != experiment ) {
 			experiment = exp;
 			reset();
@@ -88,15 +86,14 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
-					GAMA.getFrontmostSimulation().getScheduler()
-						.executeOneAction(new ScheduledAction() {
+					GAMA.getFrontmostSimulation().getScheduler().executeOneAction(new ScheduledAction() {
 
-							@Override
-							public void execute(final IScope scope) throws GamaRuntimeException {
-								command.executeOn(scope);
-							}
+						@Override
+						public void execute(final IScope scope) throws GamaRuntimeException {
+							command.executeOn(scope);
+						}
 
-						});
+					});
 				}
 
 			});

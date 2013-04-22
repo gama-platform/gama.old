@@ -154,7 +154,7 @@ public class TabuSearch extends LocalSearchAlgorithm {
 	public void addParametersTo(final BatchExperiment exp) {
 		super.addParametersTo(exp);
 		exp.addMethodParameter(new ParameterAdapter("Tabu list size",
-			IExperiment.BATCH_CATEGORY_NAME, IType.INT) {
+			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
 
 			@Override
 			public Object value() {
@@ -163,7 +163,7 @@ public class TabuSearch extends LocalSearchAlgorithm {
 
 		});
 		exp.addMethodParameter(new ParameterAdapter("Maximum number of iterations",
-			IExperiment.BATCH_CATEGORY_NAME, IType.FLOAT) {
+			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.FLOAT) {
 
 			@Override
 			public Object value() {

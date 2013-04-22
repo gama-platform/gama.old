@@ -17,14 +17,11 @@
 package msi.gaml.extensions.fipa;
 
 import java.util.*;
-
-import msi.gama.kernel.simulation.ISchedulerListener;
+import msi.gama.kernel.simulation.IScheduler;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.IList;
+import msi.gama.util.*;
 import msi.gaml.compilation.ScheduledAction;
 
 /**
@@ -32,13 +29,14 @@ import msi.gaml.compilation.ScheduledAction;
  * 
  * @author drogoul
  */
-public class MessageBroker implements ISchedulerListener {
+public class MessageBroker {
 
 	/** The messages to deliver. */
 	private final Map<IAgent, List<Message>> messagesToDeliver = new HashMap<IAgent, List<Message>>();
-	
+
 	/** Centralized storage of Conversations and Messages to facilitate Garbage Collection */
-	private Map<IAgent, ConversationsMessages> conversationsMessages = new HashMap<IAgent, ConversationsMessages>();
+	private final Map<IAgent, ConversationsMessages> conversationsMessages =
+		new HashMap<IAgent, ConversationsMessages>();
 
 	/** The instance. */
 	private static MessageBroker instance;
@@ -52,12 +50,12 @@ public class MessageBroker implements ISchedulerListener {
 	 */
 	public IList<Message> deliverMessagesFor(final IAgent a) throws GamaRuntimeException {
 		final List<Message> messagesForA = messagesToDeliver.get(a);
-		if (messagesForA == null) { return GamaList.EMPTY_LIST; }
-		
+		if ( messagesForA == null ) { return GamaList.EMPTY_LIST; }
+
 		IList<Message> successfulDeliveries = new GamaList<Message>();
 		IList<Message> failedDeliveries = new GamaList<Message>();
-		
-		for (Message m : messagesForA) {
+
+		for ( Message m : messagesForA ) {
 			Conversation conv = m.getConversation();
 			try {
 				conv.addMessage(m);
@@ -67,12 +65,12 @@ public class MessageBroker implements ISchedulerListener {
 				conv.end();
 				throw e;
 			} finally {
-				if (!failedDeliveries.contains(m)) {
+				if ( !failedDeliveries.contains(m) ) {
 					successfulDeliveries.add(m);
 				}
 			}
 		}
- 		
+
 		messagesToDeliver.remove(a);
 		return successfulDeliveries;
 	}
@@ -134,7 +132,6 @@ public class MessageBroker implements ISchedulerListener {
 		m.setConversation(conv);
 		scheduleForDelivery(m);
 	}
-	
 
 	/**
 	 * Gets the single instance of MessageBroker.
@@ -146,15 +143,22 @@ public class MessageBroker implements ISchedulerListener {
 	public static MessageBroker getInstance() {
 		if ( instance == null ) {
 			instance = new MessageBroker();
+			IScheduler s = GAMA.getFrontmostSimulation().getScheduler();
 
-			GAMA.getFrontmostSimulation().getScheduler().insertEndAction(new ScheduledAction() {
+			s.insertEndAction(new ScheduledAction() {
 
 				@Override
 				public void execute(IScope scope) throws GamaRuntimeException {
 					instance.manageConversationsAndMessages();
 				}
 			});
-			GAMA.getFrontmostSimulation().getScheduler().addListener(instance);
+			s.insertDisposeAction(new ScheduledAction() {
+
+				@Override
+				public void execute(IScope scope) throws GamaRuntimeException {
+					instance.schedulerDisposed();
+				}
+			});
 		}
 		return instance;
 		// TODO Il faudrait pouvoir en gérer plusieurs (par simulation)
@@ -163,56 +167,56 @@ public class MessageBroker implements ISchedulerListener {
 	public void dispose() {
 		messagesToDeliver.clear();
 	}
-	
+
 	public IList<Message> getMessagesFor(IAgent agent) {
-		if (!conversationsMessages.containsKey(agent)) {
+		if ( !conversationsMessages.containsKey(agent) ) {
 			ConversationsMessages cm = new ConversationsMessages();
-			conversationsMessages.put(agent,  cm);
+			conversationsMessages.put(agent, cm);
 			return cm.messages;
 		}
-		
+
 		return conversationsMessages.get(agent).messages;
 	}
-	
+
 	public List<Conversation> getConversationsFor(IAgent agent) {
-		if (!conversationsMessages.containsKey(agent)) {
+		if ( !conversationsMessages.containsKey(agent) ) {
 			ConversationsMessages cm = new ConversationsMessages();
-			conversationsMessages.put(agent,  cm);
+			conversationsMessages.put(agent, cm);
 			return cm.conversations;
 		}
-		
+
 		return conversationsMessages.get(agent).conversations;
 	}
-	
+
 	public void addConversation(Conversation c) {
 		List<IAgent> members = new GamaList<IAgent>();
 		members.add(c.getIntitiator());
-		for (IAgent m : (GamaList<IAgent>) c.getParticipants()) {
+		for ( IAgent m : (GamaList<IAgent>) c.getParticipants() ) {
 			members.add(m);
 		}
-		
-		for (IAgent m : members) {
+
+		for ( IAgent m : members ) {
 			addConversation(m, c);
 		}
 	}
-	
+
 	private void addConversation(IAgent a, Conversation c) {
 		ConversationsMessages cm = new ConversationsMessages();
 		cm.conversations.add(c);
 		conversationsMessages.put(a, cm);
 	}
-	
+
 	/**
 	 * @throws GamaRuntimeException Removes the already ended conversations.
 	 */
 	public void manageConversationsAndMessages() throws GamaRuntimeException {
-		
+
 		// remove ended conversations
 		List<Conversation> conversations;
 		List<Conversation> endedConversations = new GamaList<Conversation>();
-		for (IAgent a : conversationsMessages.keySet()) {
-			
-			if (a.dead()) {
+		for ( IAgent a : conversationsMessages.keySet() ) {
+
+			if ( a.dead() ) {
 				ConversationsMessages cm = conversationsMessages.get(a);
 				cm.conversations.clear();
 				cm.messages.clear();
@@ -220,12 +224,12 @@ public class MessageBroker implements ISchedulerListener {
 				cm.messages = null;
 				conversationsMessages.remove(a);
 			}
-			
+
 			conversations = conversationsMessages.get(a).conversations;
 			endedConversations.clear();
-			
-			for (Conversation c : conversations) {
-				if (c.isEnded() && c.areMessagesRead()) {
+
+			for ( Conversation c : conversations ) {
+				if ( c.isEnded() && c.areMessagesRead() ) {
 					endedConversations.add(c);
 				}
 			}
@@ -238,21 +242,21 @@ public class MessageBroker implements ISchedulerListener {
 	}
 
 	class ConversationsMessages {
+
 		IList<Conversation> conversations;
 		IList<Message> messages;
-		
+
 		ConversationsMessages() {
 			this.conversations = new GamaList<Conversation>();
 			this.messages = new GamaList<Message>();
 		}
 	}
 
-	@Override
 	public void schedulerDisposed() {
 		messagesToDeliver.clear();
-		
+
 		ConversationsMessages cm;
-		for (IAgent a : conversationsMessages.keySet()) {
+		for ( IAgent a : conversationsMessages.keySet() ) {
 			cm = conversationsMessages.get(a);
 			cm.conversations.clear();
 			cm.conversations = null;

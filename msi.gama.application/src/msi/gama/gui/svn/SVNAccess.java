@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -45,7 +45,7 @@ public class SVNAccess {
 	private final String name = "anonymous";
 	private final String password = "anonymous";
 
-	static List<SVNDirEntry> fileEntries = new ArrayList<SVNDirEntry>();
+	private static List<SVNDirEntry> fileEntries = new ArrayList<SVNDirEntry>();
 
 	public SVNURL createAccessToRepositoryLocation(final String url) {
 
@@ -105,16 +105,14 @@ public class SVNAccess {
 	 * @param monitor
 	 * @return a list of all html and snapshots entries from the given repository url
 	 */
-	public List<SVNDirEntry> getDocsAndSnapshotsEntries(final String repoUrl,
-		final IProgressMonitor monitor) {
+	public List<SVNDirEntry> getDocsAndSnapshotsEntries(final String repoUrl, final IProgressMonitor monitor) {
 		SVNRepository repository = null;
 		List<SVNDirEntry> entries = new ArrayList<SVNDirEntry>();
 		boolean snapshots = false;
 
 		try {
 			repository = SVNRepositoryFactory.create(SVNURL.parseURIDecoded(repoUrl));
-			ISVNAuthenticationManager authManager =
-				SVNWCUtil.createDefaultAuthenticationManager(name, password);
+			ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager(name, password);
 			repository.setAuthenticationManager(authManager);
 			System.out.println("Repository Root: " + repository.getRepositoryRoot(true));
 			SVNNodeKind nodeKind = repository.checkPath("", -1);
@@ -122,8 +120,7 @@ public class SVNAccess {
 				System.err.println("There is no entry at '" + repoUrl + "'.");
 				System.exit(1);
 			} else if ( nodeKind == SVNNodeKind.FILE ) {
-				System.err.println("The entry at '" + repoUrl +
-					"' is a file while a directory was expected.");
+				System.err.println("The entry at '" + repoUrl + "' is a file while a directory was expected.");
 				System.exit(1);
 			}
 
@@ -145,8 +142,8 @@ public class SVNAccess {
 	 * @throws SVNException
 	 */
 	@SuppressWarnings("rawtypes")
-	public static List<SVNDirEntry> getEntries(final SVNRepository repository, final String path,
-		boolean snapshots, final IProgressMonitor monitor) throws SVNException {
+	public static List<SVNDirEntry> getEntries(final SVNRepository repository, final String path, boolean snapshots,
+		final IProgressMonitor monitor) throws SVNException {
 		Collection entries = repository.getDir(path, -1, null, (Collection) null);
 		Iterator iterator = entries.iterator();
 		while (iterator.hasNext()) {
@@ -165,8 +162,7 @@ public class SVNAccess {
 
 			if ( entry.getKind() == SVNNodeKind.DIR ) {
 				snapshots = entry.getName().equals("snapshots");
-				getEntries(repository,
-					path.equals("") ? entry.getName() : path + "/" + entry.getName(), snapshots,
+				getEntries(repository, path.equals("") ? entry.getName() : path + "/" + entry.getName(), snapshots,
 					monitor);
 			}
 		}
@@ -268,8 +264,7 @@ public class SVNAccess {
 	 * @param isRecursive true if you want a recursive checkout of all the children also
 	 * @return true if success, false if not
 	 */
-	public boolean checkoutProjectFromSVN(final SVNURL url, final File projectDir,
-		final boolean isRecursive) {
+	public boolean checkoutProjectFromSVN(final SVNURL url, final File projectDir, final boolean isRecursive) {
 		System.out.println("Checking out a working copy from '" + url + "'...");
 		try {
 			/*
@@ -286,8 +281,8 @@ public class SVNAccess {
 
 					@Override
 					public void run() {
-						MessageDialog.openError(getShell(), "Error while checking out",
-							"Check your internet connexion");
+						MessageDialog
+							.openError(getShell(), "Error while checking out", "Check your internet connexion");
 					}
 				});
 			}
@@ -297,8 +292,7 @@ public class SVNAccess {
 		return true;
 	}
 
-	private static long checkout(final SVNURL url, final SVNRevision revision, final File destPath)
-		throws SVNException {
+	private static long checkout(final SVNURL url, final SVNRevision revision, final File destPath) throws SVNException {
 
 		SVNUpdateClient updateClient = ourClientManager.getUpdateClient();
 		/* Sets externals not to be ignored during the checkout */

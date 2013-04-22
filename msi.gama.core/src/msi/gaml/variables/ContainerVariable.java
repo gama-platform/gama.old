@@ -50,7 +50,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.INDEX, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.FILL_WITH, type = IType.NONE_STR, optional = true) }, omissible = IKeyword.NAME)
 @symbol(kind = ISymbolKind.Variable.CONTAINER, with_sequence = false)
-@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT })
+@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
 public class ContainerVariable extends Variable {
 
 	private GamaPoint size;
@@ -64,8 +64,7 @@ public class ContainerVariable extends Variable {
 	}
 
 	@Override
-	public void initializeWith(final IScope scope, final IAgent owner, final Object v)
-		throws GamaRuntimeException {
+	public void initializeWith(final IScope scope, final IAgent owner, final Object v) throws GamaRuntimeException {
 		super.initializeWith(scope, owner, v);
 		if ( sizeExpr != null ) {
 			setSize(scope, owner, scope.evaluate(sizeExpr, owner));
@@ -73,12 +72,9 @@ public class ContainerVariable extends Variable {
 
 	}
 
-	private void setSize(final IScope scope, final IAgent owner, final Object value)
-		throws GamaRuntimeException {
+	private void setSize(final IScope scope, final IAgent owner, final Object value) throws GamaRuntimeException {
 		IContainer result = null;
-		size =
-			value instanceof ILocation ? (GamaPoint) value : new GamaPoint(
-				Cast.asInt(scope, value), 1);
+		size = value instanceof ILocation ? (GamaPoint) value : new GamaPoint(Cast.asInt(scope, value), 1);
 		switch (this.getType().id()) {
 			case IType.MATRIX: {
 				Object v = value(scope, owner);
@@ -89,30 +85,28 @@ public class ContainerVariable extends Variable {
 
 					case IType.FLOAT:
 						result =
-							v == null ? new GamaFloatMatrix(scope, size) : GamaFloatMatrix.from(
-								scope, (int) size.x, (int) size.y, (IMatrix) v);
+							v == null ? new GamaFloatMatrix(scope, size) : GamaFloatMatrix.from(scope, (int) size.x,
+								(int) size.y, (IMatrix) v);
 						break;
 					case IType.INT:
 						result =
-							v == null ? new GamaIntMatrix(scope, size) : GamaIntMatrix.from(scope,
-								(int) size.x, (int) size.y, (IMatrix) v);
+							v == null ? new GamaIntMatrix(scope, size) : GamaIntMatrix.from(scope, (int) size.x,
+								(int) size.y, (IMatrix) v);
 						break;
 					default:
 						result =
-							v == null ? new GamaObjectMatrix(scope, size) : GamaObjectMatrix.from(
-								scope, (int) size.x, (int) size.y, (IMatrix) v);
+							v == null ? new GamaObjectMatrix(scope, size) : GamaObjectMatrix.from(scope, (int) size.x,
+								(int) size.y, (IMatrix) v);
 				}
 				Object o =
-					fillExpr == null ? description.getContentType().getDefault() : scope.evaluate(
-						fillExpr, owner);
+					fillExpr == null ? description.getContentType().getDefault() : scope.evaluate(fillExpr, owner);
 				((IMatrix) result).add(scope, null, o, null, true, false);
 				break;
 			}
 			case IType.LIST: {
 				Object[] contents = new Object[Cast.asInt(scope, value)];
 				Object o =
-					fillExpr == null ? description.getContentType().getDefault() : scope.evaluate(
-						fillExpr, owner);
+					fillExpr == null ? description.getContentType().getDefault() : scope.evaluate(fillExpr, owner);
 				Arrays.fill(contents, o);
 				result = new GamaList(contents);
 			}
@@ -122,8 +116,7 @@ public class ContainerVariable extends Variable {
 	}
 
 	@Override
-	protected Object coerce(final IAgent agent, final IScope scope, final Object v)
-		throws GamaRuntimeException {
+	protected Object coerce(final IAgent agent, final IScope scope, final Object v) throws GamaRuntimeException {
 		Object result = type.cast(scope, v, size);
 		return result;
 	}

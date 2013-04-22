@@ -23,7 +23,7 @@ public class ExperimentatorPopulation extends GamaPopulation {
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
 		final List<Map> initialValues, final boolean isRestored) throws GamaRuntimeException {
 		if ( size() == 0 ) {
-			ExperimentatorAgent exp = new ExperimentatorAgent(this);
+			ExperimentAgent exp = new ExperimentAgent(this);
 			exp.setIndex(0);
 			agents.add(exp);
 			createVariablesFor(scope, agents, initialValues);

@@ -2,8 +2,9 @@ package msi.gama.metamodel.population;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.experiment.ExperimentatorAgent;
-import msi.gama.metamodel.agent.*;
+import msi.gama.kernel.experiment.ExperimentAgent;
+import msi.gama.kernel.simulation.*;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.continuous.*;
 import msi.gama.runtime.IScope;
@@ -19,19 +20,24 @@ public class WorldPopulation extends GamaPopulation {
 	}
 
 	@Override
-	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
-		final List<Map> initialValues, final boolean isRestored) throws GamaRuntimeException {
+	public IList<? extends IAgent> createAgents(final IScope scope, final int number, final List<Map> initialValues,
+		final boolean isRestored) throws GamaRuntimeException {
 		if ( size() == 0 ) {
-			WorldAgent world = new WorldAgent(this);
-			world.setTorus(Cast.asBool(scope, species.getFacet(IKeyword.TORUS)));
-			world.setIndex(0);
-			agents.add(world);
-			createVariablesFor(scope, agents, initialValues);
-			// March 2013: topology should be initialized by the world agent itself (see
+			GamlSimulation world = new GamlSimulation(this);
+			finishInitializeWorld(scope, world, initialValues);
+			// March 2013: topology should be initialized by the
+			// simulation agent itself (see
 			// setTopology(IScope, IShape, boolean))
 			// topology = new ContinuousTopology(scope, world.getGeometry(), false);
 		}
 		return agents;
+	}
+
+	public void finishInitializeWorld(IScope scope, ISimulationAgent world, List<Map> initialValues) {
+		world.setTorus(Cast.asBool(scope, species.getFacet(IKeyword.TORUS)));
+		world.setIndex(0);
+		agents.add(world);
+		createVariablesFor(scope, agents, initialValues);
 	}
 
 	@Override
@@ -39,7 +45,7 @@ public class WorldPopulation extends GamaPopulation {
 		return get(null, 0);
 	}
 
-	public void setHost(final ExperimentatorAgent agent) {
+	public void setHost(final ExperimentAgent agent) {
 		host = agent;
 	}
 

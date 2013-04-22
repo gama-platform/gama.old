@@ -22,7 +22,7 @@ public class Popup {
 
 	private static final Shell popup = new Shell(SwtGui.getDisplay(), SWT.ON_TOP);
 	private static final Label popupText = new Label(popup, SWT.NONE);
-	static final Listener hide = new Listener() {
+	private static final Listener hide = new Listener() {
 
 		@Override
 		public void handleEvent(final Event event) {
@@ -35,7 +35,7 @@ public class Popup {
 		popupText.setForeground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 	}
 
-	MouseTrackListener mtl = new MouseTrackListener() {
+	private final MouseTrackListener mtl = new MouseTrackListener() {
 
 		@Override
 		public void mouseEnter(final MouseEvent e) {

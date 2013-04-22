@@ -44,8 +44,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	protected Class[] supports;
 	Map<String, TypeFieldExpression> getters = new HashMap();
 	protected IType parent;
-	protected Map<String, IType> children = new HashMap();
-	protected boolean inited;
+	protected boolean parented;
 	protected int varKind;
 
 	@Override
@@ -57,36 +56,20 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	@Override
+	public void setSupport(Class clazz) {
+		supports = new Class[] { clazz };
+	}
+
+	@Override
 	public int getVarKind() {
 		return varKind;
 	}
 
 	@Override
 	public void setParent(final IType p) {
-		inited = true;
+		// GuiUtils.debug("Type " + String.valueOf(p) + " added as supertype to " + this);
+		parented = true;
 		parent = p;
-		if ( p != null ) {
-			p.addSubType(this);
-		}
-	}
-
-	@Override
-	public void addSubType(final IType p) {
-		children.put(p.toString(), p);
-	}
-
-	@Override
-	public Collection<IType> getSubTypes() {
-		return children.values();
-	}
-
-	@Override
-	public void clearSubTypes() {
-		// parent = null;
-		for ( IType t : children.values() ) {
-			t.clearSubTypes();
-		}
-		children.clear();
 	}
 
 	@Override
@@ -110,8 +93,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	}
 
 	@Override
-	public abstract Support cast(IScope scope, final Object obj, final Object param)
-		throws GamaRuntimeException;
+	public abstract Support cast(IScope scope, final Object obj, final Object param) throws GamaRuntimeException;
 
 	@Override
 	public int id() {
@@ -161,9 +143,14 @@ public abstract class GamaType<Support> implements IType<Support> {
 		return null;
 	}
 
+	@Override
+	public boolean isParented() {
+		return parented;
+	}
+
 	protected boolean isSuperTypeOf(final IType type) {
 		if ( type == null ) { return false; }
-		if ( inited ) { return type == this || isSuperTypeOf(type.getParent()); }
+		if ( parented && type.isParented() ) { return type == this || isSuperTypeOf(type.getParent()); }
 		Class remote = type.toClass();
 		for ( int i = 0; i < supports.length; i++ ) {
 			if ( supports[i].isAssignableFrom(remote) ) { return true; }
@@ -207,7 +194,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	public int distanceTo(final IType type) {
 		if ( type == this ) { return 0; }
 		if ( type == null ) { return Integer.MAX_VALUE; }
-		if ( inited ) {
+		if ( parented ) {
 			if ( isSuperTypeOf(type) ) { return 1 + distanceTo(type.getParent()); }
 			return 1 + getParent().distanceTo(type);
 		}

@@ -28,7 +28,7 @@ import org.eclipse.swt.widgets.*;
 
 public class BooleanEditor extends AbstractEditor {
 
-	Button button;
+	private Button button;
 
 	BooleanEditor(final IParameter param) {
 		super(param);

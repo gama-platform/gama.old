@@ -16,7 +16,7 @@ import msi.gaml.statements.*;
 
 public class AWTDisplaySurfaceMenu {
 
-	final IDisplaySurface surface;
+	private final IDisplaySurface surface;
 	private final PopupMenu agentsMenu;
 
 	AWTDisplaySurfaceMenu(final IDisplaySurface s) {
@@ -30,7 +30,7 @@ public class AWTDisplaySurfaceMenu {
 		agentsMenu.removeAll();
 		if ( displays.isEmpty() ) { return; }
 		GamaPoint p = displays.get(0).getModelCoordinatesFrom(x, y);
-		SelectedAgent world = new SelectedAgent(GAMA.getFrontmostSimulation().getWorld(), p);
+		SelectedAgent world = new SelectedAgent(GAMA.getFrontmostSimulation(), p);
 		world.buildMenuItems(agentsMenu, displays.get(0), "World agent");
 		agentsMenu.addSeparator();
 		for ( ILayer display : displays ) {
@@ -56,12 +56,11 @@ public class AWTDisplaySurfaceMenu {
 		agentsMenu.show((Component) surface, x, y);
 	}
 
-	ActionListener menuListener = new ActionListener() {
+	private final ActionListener menuListener = new ActionListener() {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			AWTDisplaySurfaceMenu.AgentMenuItem source =
-				(AWTDisplaySurfaceMenu.AgentMenuItem) e.getSource();
+			AWTDisplaySurfaceMenu.AgentMenuItem source = (AWTDisplaySurfaceMenu.AgentMenuItem) e.getSource();
 			IAgent a = source.getAgent();
 			if ( a != null ) {
 				surface.fireSelectionChanged(a);
@@ -70,12 +69,11 @@ public class AWTDisplaySurfaceMenu {
 
 	};
 
-	ActionListener focusListener = new ActionListener() {
+	private final ActionListener focusListener = new ActionListener() {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			AWTDisplaySurfaceMenu.AgentMenuItem source =
-				(AWTDisplaySurfaceMenu.AgentMenuItem) e.getSource();
+			AWTDisplaySurfaceMenu.AgentMenuItem source = (AWTDisplaySurfaceMenu.AgentMenuItem) e.getSource();
 			IAgent a = source.getAgent();
 			if ( a != null ) {
 				surface.focusOn(a.getGeometry(), source.getDisplay());
@@ -84,12 +82,11 @@ public class AWTDisplaySurfaceMenu {
 
 	};
 
-	ActionListener highlightListener = new ActionListener() {
+	private final ActionListener highlightListener = new ActionListener() {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			AWTDisplaySurfaceMenu.AgentMenuItem source =
-				(AWTDisplaySurfaceMenu.AgentMenuItem) e.getSource();
+			AWTDisplaySurfaceMenu.AgentMenuItem source = (AWTDisplaySurfaceMenu.AgentMenuItem) e.getSource();
 			IAgent a = source.getAgent();
 			if ( a != null ) {
 				if ( a == GuiUtils.getHighlightedAgent() ) {
@@ -102,7 +99,7 @@ public class AWTDisplaySurfaceMenu {
 
 	};
 
-	static ActionListener commandListener = new ActionListener() {
+	private static ActionListener commandListener = new ActionListener() {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
@@ -132,9 +129,9 @@ public class AWTDisplaySurfaceMenu {
 
 	public class SelectedAgent {
 
-		final IAgent macro;
-		final GamaPoint userLocation;
-		Map<ISpecies, java.util.List<SelectedAgent>> micros;
+		private final IAgent macro;
+		private final GamaPoint userLocation;
+		private Map<ISpecies, java.util.List<SelectedAgent>> micros;
 
 		SelectedAgent(final IAgent agent, final GamaPoint point) {
 			macro = agent;
@@ -159,8 +156,8 @@ public class AWTDisplaySurfaceMenu {
 			macroMenu.add(focusItem);
 
 			MenuItem highlightItem =
-				new AgentMenuItem(macro == GuiUtils.getHighlightedAgent() ? "Remove highlight"
-					: "Highlight", macro, display);
+				new AgentMenuItem(macro == GuiUtils.getHighlightedAgent() ? "Remove highlight" : "Highlight", macro,
+					display);
 			highlightItem.addActionListener(highlightListener);
 			macroMenu.add(highlightItem);
 

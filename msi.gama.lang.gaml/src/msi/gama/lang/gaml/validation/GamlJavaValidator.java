@@ -53,6 +53,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	@Check()
 	public synchronized void validate(final Model model) {
 		try {
+
 			// GuiUtils.debug("GamlJavaValidator processing " +
 			// model.eResource().getURI().lastSegment() + "...");
 			GamlResource r = (GamlResource) model.eResource();
@@ -99,8 +100,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		long end = System.nanoTime();
 		timeInValidation += end - begin;
 		double ms = (end - begin) / 1000000d;
-		GuiUtils.debug("=> " + description + " in " + ms + " ms (total: " + timeInValidation /
-			1000000d + ")");
+		GuiUtils.debug("=> " + description + " in " + ms + " ms (total: " + timeInValidation / 1000000d + ")");
 		return description;
 	}
 
@@ -141,8 +141,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		return models;
 	}
 
-	public LinkedHashSet<GamlResource> listImports(final GamlResource resource,
-		final ResourceSet resourceSet) {
+	public LinkedHashSet<GamlResource> listImports(final GamlResource resource, final ResourceSet resourceSet) {
 		LinkedHashSet<GamlResource> imports = new LinkedHashSet();
 		Model model = (Model) resource.getContents().get(0);
 		for ( Import imp : model.getImports() ) {
@@ -150,9 +149,8 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			URI iu = URI.createURI(importUri).resolve(resource.getURI());
 			GamlResource ir = (GamlResource) resourceSet.getResource(iu, true);
 			if ( !ir.getErrors().isEmpty() ) {
-				resource.error("Imported file " + ir.getURI().lastSegment() +
-					" has errors. Fix them first.", new SyntacticElement(IKeyword.INCLUDE, imp),
-					true);
+				resource.error("Imported file " + ir.getURI().lastSegment() + " has errors. Fix them first.",
+					new SyntacticElement(IKeyword.INCLUDE, imp), true);
 			}
 			imports.add(ir);
 		}
@@ -161,9 +159,8 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
 	@SuppressWarnings("restriction")
 	private ModelDescription parse(final GamlResource resource, final XtextResourceSet resourceSet) {
-		final Map<URI, ISyntacticElement> models =
-			buildCompleteSyntacticTree(resource, resourceSet);
-
+		final Map<URI, ISyntacticElement> models = buildCompleteSyntacticTree(resource, resourceSet);
+		GAMA.getExpressionFactory().getParser().reset();
 		IPath path = new Path(resource.getURI().toPlatformString(false));
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		// NullPointerException when accessing a file / project with a space in it !
@@ -171,14 +168,12 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		// This is a workaround, not very elegant, but it works.
 		IPath fullPath = file.getLocation();
 		if ( fullPath == null && file instanceof org.eclipse.core.internal.resources.Resource ) {
-			org.eclipse.core.internal.resources.Resource r =
-				(org.eclipse.core.internal.resources.Resource) file;
+			org.eclipse.core.internal.resources.Resource r = (org.eclipse.core.internal.resources.Resource) file;
 			fullPath = r.getLocalManager().locationFor(r);
 		}
 		String modelPath = fullPath == null ? "" : fullPath.toOSString();
 		fullPath = file.getProject().getLocation();
-		if ( fullPath == null &&
-			file.getProject() instanceof org.eclipse.core.internal.resources.Resource ) {
+		if ( fullPath == null && file.getProject() instanceof org.eclipse.core.internal.resources.Resource ) {
 			org.eclipse.core.internal.resources.Resource r =
 				(org.eclipse.core.internal.resources.Resource) file.getProject();
 			fullPath = r.getLocalManager().locationFor(r);
@@ -212,12 +207,12 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 				EObject imp = findImport(object.eResource().getURI());
 				if ( imp != null ) {
 					error("Error detected in imported file: " + e.toString(), imp,
-						GamlPackage.Literals.IMPORT__IMPORT_URI, IGamlIssue.IMPORT_ERROR, object
-							.eResource().getURI().toString());
+						GamlPackage.Literals.IMPORT__IMPORT_URI, IGamlIssue.IMPORT_ERROR, object.eResource().getURI()
+							.toString());
 				} else {
-					error("Errors detected in imported file " + object.eResource().getURI() + ": " +
-						e.toString(), getCurrentObject(), GamlPackage.Literals.MODEL__NAME,
-						IGamlIssue.IMPORT_ERROR, object.eResource().getURI().toString());
+					error("Errors detected in imported file " + object.eResource().getURI() + ": " + e.toString(),
+						getCurrentObject(), GamlPackage.Literals.MODEL__NAME, IGamlIssue.IMPORT_ERROR, object
+							.eResource().getURI().toString());
 				}
 			}
 			return;

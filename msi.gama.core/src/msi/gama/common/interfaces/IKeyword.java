@@ -81,7 +81,7 @@ public interface IKeyword {
 	public static final String DATA = "data";
 	public static final String DECAY = "decay";
 	public static final String DEFAULT = "default";
-	public static final String DEFAULT_EXP = "default";
+	// public static final String DEFAULT_EXP = "default";
 	public static final String DEPENDS_ON = "depends_on";
 	public static final String DEPTH = "depth";
 	public static final String DESTINATION = "destination";
@@ -127,6 +127,7 @@ public interface IKeyword {
 	public static final String EXHAUSTIVE = "exhaustive";
 	public static final String EXISTS = "exists";
 	public static final String EXPERIMENT = "experiment";
+	// public static final String EXPERIMENTATOR = "experimentator";
 	public static final String EXPLODED = "exploded";
 	public static final String EXPORT = "export";
 	public static final String EXTENSION = "extension";
@@ -344,7 +345,6 @@ public interface IKeyword {
 	public static final String WIDTH = "width";
 	public static final String WITH = "with";
 	public static final String WORLD_AGENT_NAME = "world";
-	public static final String WORLD_SPECIES = "world_species";
 	public static final String WRITABLE = "writable";
 	public static final String WRITE = "write";
 	public static final String X = "x";
@@ -353,8 +353,7 @@ public interface IKeyword {
 	public static final String XY = "xy";
 	public static final String Y = "y";
 	public static final String Z = "z";
-	public static final String[] METHODS = { GENETIC, ANNEALING, HILL_CLIMBING, TABU,
-		REACTIVE_TABU, EXHAUSTIVE };
+	public static final String[] METHODS = { GENETIC, ANNEALING, HILL_CLIMBING, TABU, REACTIVE_TABU, EXHAUSTIVE };
 	public static final String[] EVENT_TYPE = { OTHER_EVENTS, MOUSE_DOWN };
 	public static final String USER_INIT = "user_init";
 	public static final String AS_SKILL = "as_skill";

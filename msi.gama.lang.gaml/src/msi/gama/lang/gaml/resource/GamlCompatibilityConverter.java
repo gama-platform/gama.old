@@ -25,8 +25,8 @@ public class GamlCompatibilityConverter {
 
 	final GamlResource resource;
 
-	static final List<Integer> STATEMENTS_WITH_ATTRIBUTES = Arrays.asList(ISymbolKind.SPECIES,
-		ISymbolKind.EXPERIMENT, ISymbolKind.OUTPUT);
+	static final List<Integer> STATEMENTS_WITH_ATTRIBUTES = Arrays.asList(ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT,
+		ISymbolKind.OUTPUT, ISymbolKind.MODEL);
 
 	public GamlCompatibilityConverter(GamlResource resource) {
 		this.resource = resource;
@@ -223,17 +223,14 @@ public class GamlCompatibilityConverter {
 		}
 	}
 
-	private void addFacet(final ISyntacticElement e, final String key,
-		final IExpressionDescription expr) {
+	private void addFacet(final ISyntacticElement e, final String key, final IExpressionDescription expr) {
 		if ( e.getFacet(key) != null ) {
-			resource.error("Double definition of facet " + key +
-				". Only the last one will be considered", e, true);
+			resource.error("Double definition of facet " + key + ". Only the last one will be considered", e, true);
 		}
 		e.setFacet(key, expr);
 	}
 
-	private void assignDependencies(final Statement stm, final String keyword,
-		final ISyntacticElement elt) {
+	private void assignDependencies(final Statement stm, final String keyword, final ISyntacticElement elt) {
 		// COMPATIBILITY with the definition of environment
 		if ( !SymbolProto.nonTypeStatements.contains(keyword) ) {
 			Set<String> s = varDependenciesOf(stm);
@@ -246,8 +243,8 @@ public class GamlCompatibilityConverter {
 					if ( type.equals(keyword) ) {
 						resource.error("Duplicate declaration of type", elt, true);
 					} else {
-						resource.error("Conflicting declaration of type (" + type + " and " +
-							keyword + "), only the last one will be considered", elt, true);
+						resource.error("Conflicting declaration of type (" + type + " and " + keyword +
+							"), only the last one will be considered", elt, true);
 					}
 				}
 			}
@@ -284,8 +281,8 @@ public class GamlCompatibilityConverter {
 		}
 	}
 
-	private String convertAssignment(final S_Assignment stm, String keyword,
-		final ISyntacticElement elt, Expression expr) {
+	private String convertAssignment(final S_Assignment stm, String keyword, final ISyntacticElement elt,
+		Expression expr) {
 		IExpressionDescription value = convExpr(stm.getValue());
 		if ( keyword.equals("<-") || keyword.equals(SET) ) {
 			// Translation of "container[index] <- value" to
@@ -300,8 +297,7 @@ public class GamlCompatibilityConverter {
 					addFacet(elt, AT, convExpr(args.get(0)));
 				} else if ( size > 1 ) { // Point index
 					IExpressionDescription p =
-						new OperatorExpressionDescription("<->", convExpr(args.get(0)),
-							convExpr(args.get(1)));
+						new OperatorExpressionDescription("<->", convExpr(args.get(0)), convExpr(args.get(1)));
 					addFacet(elt, AT, p);
 				} else {// size = 0 ? maybe "all: true" by default
 					addFacet(elt, ALL, ConstantExpressionDescription.create(true));
@@ -336,8 +332,7 @@ public class GamlCompatibilityConverter {
 		return keyword;
 	}
 
-	private void convertFacets(final Statement stm, final String keyword,
-		final ISyntacticElement elt) {
+	private void convertFacets(final Statement stm, final String keyword, final ISyntacticElement elt) {
 		SymbolProto p = DescriptionFactory.getProto(keyword);
 		for ( Facet f : EGaml.getFacetsOf(stm) ) {
 			String fname = EGaml.getKey.caseFacet(f);

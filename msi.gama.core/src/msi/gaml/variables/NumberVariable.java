@@ -52,7 +52,7 @@ import msi.gaml.types.IType;
 	// @facet(name = IKeyword.SETTER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true) }, omissible = IKeyword.NAME)
 @symbol(kind = ISymbolKind.Variable.NUMBER, with_sequence = false)
-@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT })
+@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
 public class NumberVariable extends Variable {
 
 	/** The max. */
@@ -95,8 +95,7 @@ public class NumberVariable extends Variable {
 	}
 
 	@Override
-	public Object coerce(final IAgent agent, final IScope scope, final Object v)
-		throws GamaRuntimeException {
+	public Object coerce(final IAgent agent, final IScope scope, final Object v) throws GamaRuntimeException {
 		Object val = super.coerce(agent, scope, v);
 		if ( type.id() == IType.INT ) {
 			Integer result = checkMinMax(agent, scope, (Integer) val);
@@ -106,31 +105,25 @@ public class NumberVariable extends Variable {
 		return result;
 	}
 
-	protected Integer checkMinMax(final IAgent agent, final IScope scope, final Integer f)
-		throws GamaRuntimeException {
+	protected Integer checkMinMax(final IAgent agent, final IScope scope, final Integer f) throws GamaRuntimeException {
 		if ( min != null ) {
-			final Integer m =
-				minVal == null ? Cast.asInt(scope, scope.evaluate(min, agent)) : (Integer) minVal;
+			final Integer m = minVal == null ? Cast.asInt(scope, scope.evaluate(min, agent)) : (Integer) minVal;
 			if ( f < m ) { return m; }
 		}
 		if ( max != null ) {
-			final Integer m =
-				maxVal == null ? Cast.asInt(scope, scope.evaluate(max, agent)) : (Integer) maxVal;
+			final Integer m = maxVal == null ? Cast.asInt(scope, scope.evaluate(max, agent)) : (Integer) maxVal;
 			if ( f > m ) { return m; }
 		}
 		return f;
 	}
 
-	protected Double checkMinMax(final IAgent agent, final IScope scope, final Double f)
-		throws GamaRuntimeException {
+	protected Double checkMinMax(final IAgent agent, final IScope scope, final Double f) throws GamaRuntimeException {
 		if ( min != null ) {
-			final Double fmin =
-				minVal == null ? Cast.asFloat(scope, scope.evaluate(min, agent)) : (Double) minVal;
+			final Double fmin = minVal == null ? Cast.asFloat(scope, scope.evaluate(min, agent)) : (Double) minVal;
 			if ( f < fmin ) { return fmin; }
 		}
 		if ( max != null ) {
-			final Double fmax =
-				maxVal == null ? Cast.asFloat(scope, scope.evaluate(max, agent)) : (Double) maxVal;
+			final Double fmax = maxVal == null ? Cast.asFloat(scope, scope.evaluate(max, agent)) : (Double) maxVal;
 			if ( f > fmax ) { return fmax; }
 		}
 		return f;

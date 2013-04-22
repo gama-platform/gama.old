@@ -28,13 +28,14 @@ import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
 import msi.gama.gui.views.*;
-import msi.gama.kernel.experiment.IExperiment;
+import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.compilation.GamaClassLoader;
+import msi.gaml.types.IType;
 import org.apache.log4j.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
@@ -84,22 +85,18 @@ public class SwtGui implements IGui {
 	private static ConsoleView console = null;
 	private static final StringBuilder consoleBuffer = new StringBuilder(2000);
 	private static int dialogReturnCode;
-	public static Image speciesImage = getImageDescriptor("/icons/display_species.png")
-		.createImage();
+	public static Image speciesImage = getImageDescriptor("/icons/display_species.png").createImage();
 	public static Image agentImage = getImageDescriptor("/icons/display_agents.png").createImage();
 	public static Image editImage = getImageDescriptor("/icons/button_edit.png").createImage();
 	public static Image experimentMenuImage = AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID,
 		"/icons/menu_run.png").createImage();
-	public static Image noExperimentImage = getImageDescriptor("/icons/menu_experiment_error.png")
-		.createImage();
+	public static Image noExperimentImage = getImageDescriptor("/icons/menu_experiment_error.png").createImage();
 	public static Image expand = getImageDescriptor("/icons/small_button_plus.png").createImage();
-	public static Image collapse = getImageDescriptor("/icons/small_button_minus.png")
-		.createImage();
+	public static Image collapse = getImageDescriptor("/icons/small_button_minus.png").createImage();
 	public static Image thumb = getImageDescriptor("/icons/knobNormal.png").createImage();
 	public static Image thumb_over = getImageDescriptor("/icons/knobHover.png").createImage();
 	public static Image thumb_blue = getImageDescriptor("/icons/knobNormal_blue.png").createImage();
-	public static Image thumb_over_blue = getImageDescriptor("/icons/knobHover_blue.png")
-		.createImage();
+	public static Image thumb_over_blue = getImageDescriptor("/icons/knobHover_blue.png").createImage();
 	public static Image line = getImageDescriptor("/icons/trackFill.png").createImage();
 	public static Image line_left = getImageDescriptor("/icons/trackCapLeft.png").createImage();
 	public static Image line_right = getImageDescriptor("/icons/trackCapRight.png").createImage();
@@ -110,13 +107,10 @@ public class SwtGui implements IGui {
 	public static Image unlock = getImageDescriptor("/icons/small_button_unlock.png").createImage();
 	public static Image panel_action = getImageDescriptor("/icons/panel_action.png").createImage();
 	public static Image panel_locate = getImageDescriptor("/icons/panel_locate.png").createImage();
-	public static Image panel_continue = getImageDescriptor("/icons/panel_continue.png")
-		.createImage();
+	public static Image panel_continue = getImageDescriptor("/icons/panel_continue.png").createImage();
 	public static Image panel_goto = getImageDescriptor("/icons/panel_goto.png").createImage();
-	public static Image panel_inspect = getImageDescriptor("/icons/display_agents.png")
-		.createImage();
-	public static Image highlight = getImageDescriptor("/icons/highlighter-small.png")
-		.createImage();
+	public static Image panel_inspect = getImageDescriptor("/icons/display_agents.png").createImage();
+	public static Image highlight = getImageDescriptor("/icons/highlighter-small.png").createImage();
 
 	public static Label createLeftLabel(final Composite parent, final String title) {
 		final Label label = new Label(parent, SWT.NONE);
@@ -147,8 +141,7 @@ public class SwtGui implements IGui {
 				IWorkbenchPage page = getPage();
 				if ( page == null ) { return; } // Closing the workbench
 				final IViewReference ref =
-					page.findViewReference(output.getViewId(),
-						output.isUnique() ? null : output.getName());
+					page.findViewReference(output.getViewId(), output.isUnique() ? null : output.getName());
 				if ( ref == null ) { return; }
 				IViewPart part = ref.getView(true);
 				if ( !(part instanceof IGamaView) ) { return; }
@@ -303,10 +296,9 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public boolean confirmClose(final IExperiment exp) {
+	public boolean confirmClose(final IExperimentSpecies exp) {
 		return MessageDialog.openQuestion(getShell(), "Close simulation confirmation",
-			"Do you want to close experiment '" + exp.getName() + "' of model '" +
-				exp.getModel().getName() + "' ?");
+			"Do you want to close experiment '" + exp.getName() + "' of model '" + exp.getModel().getName() + "' ?");
 	}
 
 	@Override
@@ -473,7 +465,7 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void showParameterView(final IExperiment exp) {
+	public void showParameterView(final IExperimentSpecies exp) {
 
 		run(new Runnable() {
 
@@ -481,8 +473,8 @@ public class SwtGui implements IGui {
 			public void run() {
 				try {
 					ExperimentParametersView view =
-						(ExperimentParametersView) getPage().showView(ExperimentParametersView.ID,
-							null, IWorkbenchPage.VIEW_VISIBLE);
+						(ExperimentParametersView) getPage().showView(ExperimentParametersView.ID, null,
+							IWorkbenchPage.VIEW_VISIBLE);
 					view.addItem(exp);
 				} catch (PartInitException e) {
 					e.printStackTrace();
@@ -499,8 +491,7 @@ public class SwtGui implements IGui {
 			@Override
 			public void run() {
 				try {
-					result[0] =
-						getPage().showView(viewId, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
+					result[0] = getPage().showView(viewId, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
 				} catch (PartInitException e) {
 					result[0] = e;
 				}
@@ -517,8 +508,7 @@ public class SwtGui implements IGui {
 			((IPartService) ((IWorkbenchPart) o).getSite().getService(IPartService.class))
 				.addPartListener(new SwtGui.GamaPartListener());
 			if ( o instanceof GamaSelectionListener ) {
-				GAMA.getExperiment().getOutputManager()
-					.addGamaSelectionListener((GamaSelectionListener) o);
+				GAMA.getExperiment().getOutputManager().addGamaSelectionListener((GamaSelectionListener) o);
 
 			}
 			if ( o instanceof IGamaView ) { return (IGamaView) o; }
@@ -576,7 +566,7 @@ public class SwtGui implements IGui {
 			// Passe 4 fois dedans !!!
 
 			if ( partRef instanceof IGamaView ) {
-				IExperiment s = GAMA.getExperiment();
+				IExperimentSpecies s = GAMA.getExperiment();
 				if ( s == null ) { return; }
 				IOutputManager m = s.getOutputManager();
 				if ( m != null && partRef instanceof GamaSelectionListener ) {
@@ -637,12 +627,10 @@ public class SwtGui implements IGui {
 
 	public static final Font labelFont;
 
-	public static final String PERSPECTIVE_MODELING_ID =
-		"msi.gama.application.perspectives.ModelingPerspective";
+	public static final String PERSPECTIVE_MODELING_ID = "msi.gama.application.perspectives.ModelingPerspective";
 
 	/** The Constants perspective ids */
-	public static final String PERSPECTIVE_SIMULATION_ID =
-		"msi.gama.application.perspectives.SimulationPerspective";
+	public static final String PERSPECTIVE_SIMULATION_ID = "msi.gama.application.perspectives.SimulationPerspective";
 
 	public static final Font unitFont;
 
@@ -784,16 +772,14 @@ public class SwtGui implements IGui {
 		if ( !perspectiveClasses.isEmpty() ) { return true; }
 
 		IConfigurationElement[] config =
-			Platform.getExtensionRegistry().getConfigurationElementsFor(
-				"org.eclipse.ui.perspectives");
+			Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.perspectives");
 		for ( IConfigurationElement e : config ) {
 			final String pluginID = e.getAttribute("id");
 			final String pluginClass = e.getAttribute("class");
 			final String pluginName = e.getContributor().getName();
 			// Check if is a gama perspective...
 			if ( pluginID.contains("msi.gama") ) {
-				ClassLoader cl =
-					GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
+				ClassLoader cl = GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
 				try {
 					perspectiveClasses.put(pluginID, cl.loadClass(pluginClass));
 				} catch (ClassNotFoundException e1) {
@@ -857,8 +843,8 @@ public class SwtGui implements IGui {
 	}
 
 	/**
-	 * @see msi.gama.common.interfaces.IGui#createDisplay(msi.gama.outputs.layers.IDisplayLayer,
-	 *      double, double, msi.gama.common.interfaces.IGraphics)
+	 * @see msi.gama.common.interfaces.IGui#createDisplay(msi.gama.outputs.layers.IDisplayLayer, double, double,
+	 *      msi.gama.common.interfaces.IGraphics)
 	 */
 	// @Override
 	// public IDisplay createDisplay(final IDisplayLayer layer, final double w, final double h,
@@ -878,8 +864,8 @@ public class SwtGui implements IGui {
 	static final Map<String, Class> displayClasses = new HashMap();
 
 	@Override
-	public IDisplaySurface getDisplaySurfaceFor(final String keyword,
-		final IDisplayOutput layerDisplayOutput, final double w, final double h) {
+	public IDisplaySurface getDisplaySurfaceFor(final String keyword, final IDisplayOutput layerDisplayOutput,
+		final double w, final double h) {
 
 		IDisplaySurface surface = null;
 		IDisplayCreator creator = displays.get(keyword);
@@ -893,14 +879,14 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public Map<String, Object> openUserInputDialog(final String title,
-		final Map<String, Object> initialValues) {
+	public Map<String, Object> openUserInputDialog(final String title, final Map<String, Object> initialValues,
+		final Map<String, IType> types) {
 		final Map<String, Object> result = new HashMap();
 		run(new Runnable() {
 
 			@Override
 			public void run() {
-				EditorsDialog dialog = new EditorsDialog(getShell(), initialValues, title);
+				EditorsDialog dialog = new EditorsDialog(getShell(), initialValues, types, title);
 				result.putAll(dialog.open() == Window.OK ? dialog.getValues() : initialValues);
 			}
 		});
@@ -913,8 +899,8 @@ public class SwtGui implements IGui {
 			@Override
 			public void run() {
 				UserControlDialog dialog =
-					new UserControlDialog(getShell(), panel.getUserCommands(), "[" +
-						scope.getAgentScope().getName() + "] " + panel.getName(), scope);
+					new UserControlDialog(getShell(), panel.getUserCommands(), "[" + scope.getAgentScope().getName() +
+						"] " + panel.getName(), scope);
 				dialog.open();
 			}
 		});
@@ -929,15 +915,13 @@ public class SwtGui implements IGui {
 			public void run() {
 				UserControlView part = null;
 				try {
-					part =
-						(UserControlView) getPage().showView(UserControlView.ID, null,
-							IWorkbenchPage.VIEW_CREATE);
+					part = (UserControlView) getPage().showView(UserControlView.ID, null, IWorkbenchPage.VIEW_CREATE);
 				} catch (PartInitException e) {
 					e.printStackTrace();
 				}
 				if ( part != null ) {
-					part.initFor(scope, panel.getUserCommands(), "[" +
-						scope.getAgentScope().getName() + "] " + panel.getName());
+					part.initFor(scope, panel.getUserCommands(),
+						"[" + scope.getAgentScope().getName() + "] " + panel.getName());
 				}
 				GAMA.getFrontmostSimulation().getScheduler().setUserHold(true);
 				try {
@@ -990,8 +974,8 @@ public class SwtGui implements IGui {
 			public void run() {
 				try {
 					ExperimentParametersView view =
-						(ExperimentParametersView) getPage().showView(ExperimentParametersView.ID,
-							null, IWorkbenchPage.VIEW_VISIBLE);
+						(ExperimentParametersView) getPage().showView(ExperimentParametersView.ID, null,
+							IWorkbenchPage.VIEW_VISIBLE);
 					view.updateItemValues();
 				} catch (PartInitException e) {
 					e.printStackTrace();

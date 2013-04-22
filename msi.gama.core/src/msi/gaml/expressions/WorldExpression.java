@@ -24,14 +24,14 @@ import msi.gaml.types.IType;
 
 public class WorldExpression extends VariableExpression {
 
-	protected WorldExpression(final String n, final IType type, final IType contentType,
-		IType keyType, final IDescription global) {
+	protected WorldExpression(final String n, final IType type, final IType contentType, IType keyType,
+		final IDescription global) {
 		super(n, type, contentType, keyType, true, global);
 	}
 
 	@Override
 	public Object value(final IScope scope) {
-		return scope.getWorldScope();
+		return scope.getSimulationScope();
 	}
 
 	/**
@@ -39,7 +39,7 @@ public class WorldExpression extends VariableExpression {
 	 */
 	@Override
 	public String getDocumentation() {
-		return "Global constant <b>world</>, represents the global agent";
+		return "Global constant <b>world</>, represents the current simulation";
 	}
 
 	@Override

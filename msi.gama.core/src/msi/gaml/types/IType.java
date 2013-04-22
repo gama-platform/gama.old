@@ -18,7 +18,7 @@
  */
 package msi.gaml.types;
 
-import java.util.*;
+import java.util.Map;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
@@ -108,11 +108,11 @@ public interface IType<Support> {
 
 	public IType getParent();
 
-	public void addSubType(IType p);
+	// public void addSubType(IType p);
 
-	public Collection<IType> getSubTypes();
+	// public Collection<IType> getSubTypes();
 
-	public void clearSubTypes();
+	// public void clearSubTypes();
 
 	IType coerce(IType expr, IDescription context);
 
@@ -156,5 +156,9 @@ public interface IType<Support> {
 	 * @return
 	 */
 	public IType findCommonSupertypeWith(IType iType);
+
+	public boolean isParented();
+
+	public void setSupport(Class clazz);
 
 }

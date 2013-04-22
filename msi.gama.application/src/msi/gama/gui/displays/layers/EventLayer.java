@@ -35,11 +35,10 @@ import org.eclipse.swt.widgets.Composite;
 
 public class EventLayer extends AgentLayer {
 
-	EventLayerStatement myStatement;
+	private EventLayerStatement myStatement;
 	private IDisplaySurface display;
 
-	public EventLayer(final double env_width, final double env_height, final ILayerStatement layer,
-		final IGraphics dg) {
+	public EventLayer(final double env_width, final double env_height, final ILayerStatement layer, final IGraphics dg) {
 		super(env_width, env_height, layer, dg);
 		buildEventLayer();
 	}
@@ -61,8 +60,7 @@ public class EventLayer extends AgentLayer {
 		String currentMouseEvent = Cast.asString(scope, eventType.value(scope));
 		String currentAction = Cast.asString(scope, actionName.value(scope));
 		this.display = container;
-		container.addMouseEventListener(new CustomisedEventListener(this, currentMouseEvent,
-			currentAction));
+		container.addMouseEventListener(new CustomisedEventListener(this, currentMouseEvent, currentAction));
 
 	}
 
@@ -83,8 +81,7 @@ public class EventLayer extends AgentLayer {
 		int xc = x - this.getDisplay().getOriginX();
 		int yc = y - this.getDisplay().getOriginY();
 		IList<IAgent> result = new GamaList<IAgent>();
-		final List<ILayer> layers =
-			this.getDisplay().getLayerManager().getLayersIntersecting(xc, yc);
+		final List<ILayer> layers = this.getDisplay().getLayerManager().getLayersIntersecting(xc, yc);
 
 		for ( ILayer display : layers ) {
 			Set<IAgent> agents = display.collectAgentsAt(xc, yc);

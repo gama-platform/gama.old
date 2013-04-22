@@ -48,19 +48,18 @@ public class VariableDescription extends SymbolDescription {
 	private IVarGetter init;
 	private IVarSetter set;
 
-	public VariableDescription(final String keyword, final IDescription superDesc,
-		final IChildrenProvider cp, final EObject source, Facets facets) {
+	public VariableDescription(final String keyword, final IDescription superDesc, final IChildrenProvider cp,
+		final EObject source, Facets facets) {
 		super(keyword, superDesc, cp, source, facets);
 		boolean isExperimentParameter = facets.equals(KEYWORD, PARAMETER);
 		if ( !facets.containsKey(TYPE) && !isExperimentParameter ) {
 			facets.putAsLabel(TYPE, keyword);
 		}
-		_isGlobal = superDesc != null && WORLD_SPECIES.equals(superDesc.getName());
+		_isGlobal = superDesc != null && ((SpeciesDescription) superDesc).isGlobal();
 		_isFunction = facets.containsKey(FUNCTION);
 		_isParameter = isExperimentParameter || facets.containsKey(PARAMETER);
 		_isNotModifiable = _isFunction || facets.equals(CONST, TRUE) && !_isParameter;
-		_isUpdatable =
-			!_isNotModifiable && (facets.containsKey(VALUE) || facets.containsKey(UPDATE));
+		_isUpdatable = !_isNotModifiable && (facets.containsKey(VALUE) || facets.containsKey(UPDATE));
 
 	}
 
@@ -206,10 +205,9 @@ public class VariableDescription extends SymbolDescription {
 		if ( varExpr != null ) { return varExpr; }
 		//
 		varExpr =
-			GAMA.getExpressionFactory().createVar(getName(), getType(), getContentType(),
-				getKeyType(), isNotModifiable(),
-				_isGlobal ? IVarExpression.GLOBAL : IVarExpression.AGENT,
-				this.getSuperDescription());
+			GAMA.getExpressionFactory()
+				.createVar(getName(), getType(), getContentType(), getKeyType(), isNotModifiable(),
+					_isGlobal ? IVarExpression.GLOBAL : IVarExpression.AGENT, this.getSuperDescription());
 		return varExpr;
 	}
 
@@ -240,8 +238,7 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public String getTitle() {
-		String title =
-			isParameter() ? "parameter " : isNotModifiable() ? "constant " : "attribute ";
+		String title = isParameter() ? "parameter " : isNotModifiable() ? "constant " : "attribute ";
 		return title + " " + getName() + " of type " + typeToString();
 	}
 

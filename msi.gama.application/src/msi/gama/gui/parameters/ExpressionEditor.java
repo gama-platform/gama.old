@@ -25,7 +25,7 @@ import org.eclipse.swt.widgets.*;
 
 public class ExpressionEditor extends GenericEditor {
 
-	String expressionText;
+	private String expressionText;
 
 	ExpressionEditor(final Composite parent, final String title, final Object value,
 		final EditorListener<IExpression> whenModified, final IType expectedType) {

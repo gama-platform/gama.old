@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.*;
 
 public class MatrixEditor extends AbstractEditor {
 
-	Button button;
+	private Button button;
 
 	MatrixEditor(final IParameter param) {
 		super(param);
@@ -65,8 +65,7 @@ public class MatrixEditor extends AbstractEditor {
 
 	@Override
 	public void widgetSelected(final SelectionEvent event) {
-		MatrixEditorDialog d =
-			new MatrixEditorDialog(Display.getCurrent().getActiveShell(), (IMatrix) currentValue);
+		MatrixEditorDialog d = new MatrixEditorDialog(Display.getCurrent().getActiveShell(), (IMatrix) currentValue);
 		if ( d.open() == IDialogConstants.OK_ID ) {
 			modifyValue(d.getMatrix());
 		}

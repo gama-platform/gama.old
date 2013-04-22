@@ -22,7 +22,6 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.ImageUtils;
-import msi.gama.outputs.IDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -54,25 +53,22 @@ public class QuadTreeLayerStatement extends AbstractLayerStatement {
 
 	// private IEnvironment modelEnv;
 
-	public QuadTreeLayerStatement(/* final ISymbol context, */final IDescription desc)
-		throws GamaRuntimeException {
+	public QuadTreeLayerStatement(/* final ISymbol context, */final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 	}
 
 	@Override
-	public void prepare(final IDisplayOutput out, final IScope scope) throws GamaRuntimeException {
-		super.prepare(out, scope);
-		Envelope env = scope.getWorldScope().getEnvelope();
-		supportImage =
-			ImageUtils.createCompatibleImage((int) env.getWidth(), (int) env.getHeight());
+	public void init(final IScope scope) throws GamaRuntimeException {
+		super.init(scope);
+		Envelope env = scope.getSimulationScope().getEnvelope();
+		supportImage = ImageUtils.createCompatibleImage((int) env.getWidth(), (int) env.getHeight());
 	}
 
 	@Override
-	public void compute(final IScope scope, final long cycle) throws GamaRuntimeException {
+	public void step(final IScope scope) throws GamaRuntimeException {
 		Graphics2D g2 = (Graphics2D) supportImage.getGraphics();
-		scope.getWorldScope().displaySpatialIndexOn(g2, supportImage.getWidth(),
-			supportImage.getHeight());
-		super.compute(scope, cycle);
+		scope.getSimulationScope().displaySpatialIndexOn(g2, supportImage.getWidth(), supportImage.getHeight());
+		super.step(scope);
 	}
 
 	@Override

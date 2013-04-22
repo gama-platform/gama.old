@@ -19,8 +19,7 @@
 package msi.gama.kernel.experiment;
 
 import msi.gama.kernel.model.IModel;
-import msi.gama.kernel.simulation.ISimulation;
-import msi.gama.metamodel.agent.WorldAgent;
+import msi.gama.kernel.simulation.ISimulationAgent;
 import msi.gama.runtime.AbstractScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
@@ -35,9 +34,9 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public class ExperimentScope extends AbstractScope {
 
-	private final IExperiment experiment;
+	private final IExperimentSpecies experiment;
 
-	public ExperimentScope(final IExperiment exp, final String name) {
+	public ExperimentScope(final IExperimentSpecies exp, final String name) {
 		super(name);
 		experiment = exp;
 	}
@@ -48,35 +47,23 @@ public class ExperimentScope extends AbstractScope {
 			experiment.setParameterValue(name, v);
 			return;
 		}
-		checkSimulation().getGlobalScope().setGlobalVarValue(name, v);
+		experiment.getCurrentSimulation().setDirectVarValue(this, name, v);
 	}
 
 	@Override
 	public Object getGlobalVarValue(final String name) throws GamaRuntimeException {
 		if ( experiment.hasParameter(name) ) { return experiment.getParameterValue(name); }
-		return checkSimulation().getGlobalScope().getGlobalVarValue(name);
+		return experiment.getCurrentSimulation().getDirectVarValue(this, name);
 	}
 
 	@Override
-	public WorldAgent getWorldScope() {
-		ISimulation sim = getSimulationScope();
-		return sim == null ? null : sim.getWorld();
-	}
-
-	@Override
-	public ISimulation getSimulationScope() {
-		return experiment.getCurrentSimulation();
+	public ISimulationAgent getSimulationScope() {
+		return experiment.getAgent().getSimulation();
 	}
 
 	@Override
 	public IModel getModel() {
 		return experiment.getModel();
-	}
-
-	private ISimulation checkSimulation() throws GamaRuntimeException {
-		ISimulation sim = getSimulationScope();
-		if ( sim == null ) { throw new GamaRuntimeException("No simulation running"); }
-		return sim;
 	}
 
 }

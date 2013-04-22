@@ -1,15 +1,16 @@
 package msi.gama.kernel.simulation;
 
 import java.util.List;
+import msi.gama.common.interfaces.IStepable;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.compilation.*;
 
 public abstract class AbstractScheduler implements IScheduler {
 
-	protected final ISimulation simulation;
+	// protected final ISimulationAgent simulation;
 
 	protected final SimulationClock clock;
 
@@ -30,29 +31,30 @@ public abstract class AbstractScheduler implements IScheduler {
 	/** Actions that should be run by the scheduler at the end of a cycle. */
 	private final List<IScheduledAction> endActions;
 	private int endActionsNumber;
-	private final List<IAgent> agentsToInit;
-
+	private final List<IStepable> agentsToInit;
 	private boolean inInitSequence = true;
 	/**
 	 * The agent that owns this scheduler
 	 */
-	private final IAgent owner;
+	protected final IAgent owner;
 
-	private final List<ISchedulerListener> listeners;
+	private int disposeActionsNumber;
 
-	protected AbstractScheduler(final ISimulation sim, final IAgent owner) {
-		simulation = sim;
+	private final List<IScheduledAction> disposeActions;
+
+	protected AbstractScheduler(final IAgent owner) {
 		this.owner = owner;
 		paused = true;
 		beginActions = new GamaList();
 		endActions = new GamaList();
+		disposeActions = new GamaList();
 		agentsToInit = new GamaList();
-		listeners = new GamaList<ISchedulerListener>();
 		clock = new SimulationClock();
 	}
 
 	@Override
 	public void dispose() {
+		executeDisposeActions(GAMA.getDefaultScope());
 		alive = false;
 		on_user_hold = false;
 		beginActions.clear();
@@ -60,16 +62,8 @@ public abstract class AbstractScheduler implements IScheduler {
 		endActions.clear();
 		endActionsNumber = 0;
 		agentsToInit.clear();
-
-		for ( ISchedulerListener l : listeners ) {
-			l.schedulerDisposed();
-		}
-		listeners.clear();
-	}
-
-	@Override
-	public void addListener(final ISchedulerListener l) {
-		listeners.add(l);
+		disposeActions.clear();
+		disposeActionsNumber = 0;
 	}
 
 	@Override
@@ -89,7 +83,7 @@ public abstract class AbstractScheduler implements IScheduler {
 		clock.step();
 	}
 
-	public void init(final IAgent agent, final IScope scope) throws GamaRuntimeException {
+	private void init(final IAgent agent, final IScope scope) throws GamaRuntimeException {
 		scope.push(agent);
 		try {
 			agent.init(scope);
@@ -99,12 +93,8 @@ public abstract class AbstractScheduler implements IScheduler {
 	}
 
 	@Override
-	public boolean inInitSequence() {
-		return inInitSequence;
-	}
-
-	protected void enterInitSequence(final IScope scope) throws GamaRuntimeException,
-		InterruptedException {
+	public void init(final IScope scope) throws GamaRuntimeException {
+		inInitSequence = true;
 		executeAgentsToInit(scope);
 		inInitSequence = false;
 	}
@@ -123,8 +113,7 @@ public abstract class AbstractScheduler implements IScheduler {
 
 	private void executeBeginActions(final IScope scope) throws GamaRuntimeException {
 		if ( beginActionsNumber > 0 ) {
-			ScheduledAction[] actions =
-				beginActions.toArray(new ScheduledAction[beginActionsNumber]);
+			ScheduledAction[] actions = beginActions.toArray(new ScheduledAction[beginActionsNumber]);
 			for ( int i = 0, n = beginActionsNumber; i < n; i++ ) {
 				actions[i].execute(scope);
 				if ( actions[i].isOneShot() ) {
@@ -134,8 +123,19 @@ public abstract class AbstractScheduler implements IScheduler {
 		}
 	}
 
-	private void executeAgentsToInit(final IScope scope) throws GamaRuntimeException,
-		InterruptedException {
+	private void executeDisposeActions(final IScope scope) throws GamaRuntimeException {
+		if ( disposeActionsNumber > 0 ) {
+			ScheduledAction[] actions = disposeActions.toArray(new ScheduledAction[disposeActionsNumber]);
+			for ( int i = 0, n = disposeActionsNumber; i < n; i++ ) {
+				actions[i].execute(scope);
+				if ( actions[i].isOneShot() ) {
+					removeAction(actions[i]);
+				}
+			}
+		}
+	}
+
+	private void executeAgentsToInit(final IScope scope) throws GamaRuntimeException {
 		int total = agentsToInit.size();
 		IAgent[] toInit = new IAgent[total];
 		agentsToInit.toArray(toInit);
@@ -160,7 +160,17 @@ public abstract class AbstractScheduler implements IScheduler {
 			beginActionsNumber--;
 		} else if ( endActionsNumber > 0 && endActions.remove(haltAction) ) {
 			endActionsNumber--;
+		} else if ( disposeActionsNumber > 0 && disposeActions.remove(haltAction) ) {
+			disposeActionsNumber--;
 		}
+
+	}
+
+	@Override
+	public void insertDisposeAction(final IScheduledAction action) {
+		if ( action == null ) { return; }
+		disposeActionsNumber++;
+		disposeActions.add(action);
 	}
 
 	@Override
@@ -173,10 +183,10 @@ public abstract class AbstractScheduler implements IScheduler {
 	@Override
 	public synchronized void executeOneAction(final IScheduledAction action) {
 		if ( paused || on_user_hold ) {
-			IScope scope = simulation.obtainNewScope();
+			IScope scope = GAMA.obtainNewScope();
 			action.execute(scope);
 			// TODO outputs update ?
-			simulation.releaseScope(scope);
+			GAMA.releaseScope(scope);
 		} else {
 			action.setOneShot(true);
 			insertEndAction(action);
@@ -184,8 +194,7 @@ public abstract class AbstractScheduler implements IScheduler {
 	}
 
 	@Override
-	public void insertAgentToInit(final IAgent entity, final IScope scope)
-		throws GamaRuntimeException {
+	public void insertAgentToInit(final IAgent entity, final IScope scope) throws GamaRuntimeException {
 		if ( inInitSequence ) {
 			agentsToInit.add(entity);
 		} else {

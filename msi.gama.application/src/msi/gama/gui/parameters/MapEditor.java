@@ -46,15 +46,14 @@ public class MapEditor extends AbstractEditor {
 		super(agent, param, l);
 	}
 
-	MapEditor(final Composite parent, final String title, final Object value,
-		final EditorListener<Map> whenModified) {
+	MapEditor(final Composite parent, final String title, final Object value, final EditorListener<Map> whenModified) {
 		// Convenience method
 		super(new InputParameter(title, value), whenModified);
 		this.createComposite(parent);
 	}
 
 	private Button mapAdd = null;
-	ExpressionControl expression;
+	private ExpressionControl expression;
 
 	@Override
 	public Control createCustomParameterControl(final Composite compo) {
@@ -79,8 +78,7 @@ public class MapEditor extends AbstractEditor {
 	@Override
 	public void widgetSelected(final SelectionEvent event) {
 		MapEditorDialog mapParameterDialog =
-			new MapEditorDialog(getScope(), Display.getCurrent().getActiveShell(),
-				(GamaMap) currentValue);
+			new MapEditorDialog(getScope(), Display.getCurrent().getActiveShell(), (GamaMap) currentValue);
 		if ( mapParameterDialog.open() == IDialogConstants.OK_ID ) {
 			modifyValue(mapParameterDialog.getMap());
 		}

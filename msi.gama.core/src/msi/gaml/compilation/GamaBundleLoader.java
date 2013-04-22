@@ -25,8 +25,7 @@ public class GamaBundleLoader {
 	public static void preBuildContributions() {
 		final long start = System.currentTimeMillis();
 		Set<String> plugins = new LinkedHashSet();
-		for ( IConfigurationElement e : Platform.getExtensionRegistry()
-			.getConfigurationElementsFor(EXTENSION) ) {
+		for ( IConfigurationElement e : Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSION) ) {
 			String plugin = e.getContributor().getName();
 			if ( !CORE_PLUGIN.equals(plugin) ) {
 				plugins.add(plugin);
@@ -36,6 +35,9 @@ public class GamaBundleLoader {
 		for ( String addition : plugins ) {
 			preBuild(addition);
 		}
+
+		// CRUCIAL INITIALIZATIONS
+		AbstractGamlAdditions.buildAllSpecies();
 		Types.init();
 
 		long end = System.currentTimeMillis();
@@ -45,22 +47,13 @@ public class GamaBundleLoader {
 	public static void preBuild(final String s) {
 		final long start = System.currentTimeMillis();
 		try {
-			IGamlAdditions add =
-				(IGamlAdditions) Platform.getBundle(s).loadClass(ADDITIONS).newInstance();
+			IGamlAdditions add = (IGamlAdditions) Platform.getBundle(s).loadClass(ADDITIONS).newInstance();
 			add.initialize();
 			long end = System.currentTimeMillis();
 			GuiUtils.debug("GAML plugin " + s + " scanned in " + (end - start) + " ms.");
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-	}
-
-	public static void dynamicLoad(final String s) {
-		preBuild(s);
-		Types.init();
-		// Keep information about the additions made by the plugin
-		//
-
 	}
 
 }

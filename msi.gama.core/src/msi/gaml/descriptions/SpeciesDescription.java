@@ -21,8 +21,7 @@ package msi.gaml.descriptions;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
-import msi.gama.metamodel.agent.*;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
@@ -32,6 +31,7 @@ import msi.gaml.compilation.*;
 import msi.gaml.factories.*;
 import msi.gaml.skills.*;
 import msi.gaml.statements.Facets;
+import msi.gaml.types.Types;
 import org.eclipse.emf.ecore.EObject;
 
 public class SpeciesDescription extends TypeDescription {
@@ -42,31 +42,42 @@ public class SpeciesDescription extends TypeDescription {
 	protected IArchitecture control;
 	private Map<String, SpeciesDescription> microSpecies;
 	protected SpeciesDescription macroSpecies;
-	protected IAgentConstructor agentConstructor;
+	private IAgentConstructor agentConstructor;
+	private boolean isGlobal = false;
 
-	public SpeciesDescription(final String keyword, final IDescription superDesc,
-		final IChildrenProvider cp, final EObject source, final Facets facets) {
-		super(keyword, null, superDesc, cp, source, facets);
-		setSkills(facets.get(SKILLS), new HashSet());
-		copyJavaAdditions();
-		agentConstructor = getDefaultAgentConstructor();
+	public SpeciesDescription(final String keyword, final IDescription macroDesc, final IChildrenProvider cp,
+		final EObject source, final Facets facets) {
+		this(keyword, macroDesc, null, cp, source, facets);
 	}
 
+	public SpeciesDescription(final String keyword, final IDescription macroDesc, IDescription parent,
+		final IChildrenProvider cp, final EObject source, final Facets facets) {
+		super(keyword, null, macroDesc, parent, cp, source, facets);
+		setSkills(facets.get(SKILLS), new HashSet());
+		// copyJavaAdditions();
+		// GuiUtils.debug("Creation of SpeciesDescription " + getName() + " sub-species of " + String.valueOf(parent));
+		// agentConstructor = parent.getAgentConstructor();
+	}
+
+	/**
+	 * This constructor is only called to build built-in species. The parent is passed directly as there is no
+	 * ModelFactory to provide it
+	 */
 	public SpeciesDescription(final String name, final Class clazz, final IDescription superDesc,
-		final IAgentConstructor helper, final Set<String> skills2, final Facets ff) {
-		super(SPECIES, clazz, superDesc, IChildrenProvider.NONE, null, new Facets(KEYWORD, SPECIES,
-			NAME, name));
+		final SpeciesDescription parent, final IAgentConstructor helper, final Set<String> skills2, final Facets ff) {
+		super(SPECIES, clazz, superDesc, null, IChildrenProvider.NONE, null, new Facets(KEYWORD, SPECIES, NAME, name));
 		if ( ff.containsKey(CONTROL) ) {
 			facets.putAsLabel(CONTROL, ff.get(CONTROL).toString());
 		}
 		setSkills(ff.get(SKILLS), skills2);
-		copyJavaAdditions();
-		agentConstructor = helper;
+		// copyJavaAdditions();
+		setParent(parent);
+		setAgentConstructor(helper);
 	}
 
 	@Override
 	public void dispose() {
-		if ( AbstractGamlAdditions.isBuiltIn(getName()) ) { return; }
+		if ( Types.isBuiltIn(getName()) ) { return; }
 		if ( behaviors != null ) {
 			behaviors.clear();
 		}
@@ -96,8 +107,7 @@ public class SpeciesDescription extends TypeDescription {
 		}
 	}
 
-	protected void setSkills(final IExpressionDescription userDefinedSkills,
-		final Set<String> builtInSkills) {
+	protected void setSkills(final IExpressionDescription userDefinedSkills, final Set<String> builtInSkills) {
 		Set<String> skillNames = new LinkedHashSet();
 		/* We try to add the control architecture if any is defined */
 		if ( facets.containsKey(CONTROL) ) {
@@ -193,7 +203,10 @@ public class SpeciesDescription extends TypeDescription {
 		} else if ( desc instanceof VariableDescription ) {
 			addVariable((VariableDescription) desc);
 		} else if ( desc instanceof SpeciesDescription ) {
-			getModelDescription().addSpeciesDescription((TypeDescription) desc);
+			ModelDescription md = getModelDescription();
+			if ( md != null ) {
+				md.addSpeciesType((TypeDescription) desc);
+			}
 			getMicroSpecies().put(desc.getName(), (SpeciesDescription) desc);
 		}
 		return desc;
@@ -307,12 +320,15 @@ public class SpeciesDescription extends TypeDescription {
 		return "Description of " + getName();
 	}
 
-	public IAgentConstructor getDefaultAgentConstructor() {
-		return AbstractGamlAdditions.DEFAULT_AGENT_CONSTRUCTOR;
+	public IAgentConstructor getAgentConstructor() {
+		if ( agentConstructor == null && parent != null ) {
+			agentConstructor = ((SpeciesDescription) parent).getAgentConstructor();
+		}
+		return agentConstructor;
 	}
 
-	public IAgentConstructor getAgentConstructor() {
-		return agentConstructor;
+	protected void setAgentConstructor(IAgentConstructor agentConstructor) {
+		this.agentConstructor = agentConstructor;
 	}
 
 	public void addSkill(final Class c) {
@@ -337,26 +353,26 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	@Override
-	protected void inheritFromParent() {
+	public void inheritFromParent() {
 		SpeciesDescription parent = getParent();
 		if ( parent != null ) {
-			if ( !parent.javaBase.isAssignableFrom(javaBase) ) {
-				if ( javaBase == GamlAgent.class ) { // default base class
-					javaBase = parent.javaBase;
-					agentConstructor = parent.agentConstructor;
-				} else {
-					error("Species " + getName() + " Java base class (" + javaBase.getSimpleName() +
-						") is not a subclass of its parent species " + parent.getName() +
-						" base class (" + parent.getJavaBase().getSimpleName() + ")",
-						IGamlIssue.GENERAL);
-				}
+			if ( !parent.getJavaBase().isAssignableFrom(getJavaBase()) ) {
+				// if ( javaBase == GamlAgent.class ) { // default base class
+				// javaBase = parent.javaBase;
+				// agentConstructor = parent.agentConstructor;
+				// } else {
+				error("Species " + getName() + " Java base class (" + getJavaBase().getSimpleName() +
+					") is not a subclass of its parent species " + parent.getName() + " base class (" +
+					parent.getJavaBase().getSimpleName() + ")", IGamlIssue.GENERAL);
+				// }
 			}
+			// GuiUtils.debug(" **** " + getName() + " inherits from " + parent.getName());
 			inheritSkills(parent);
 			inheritBehaviors(parent);
 			inheritInits(parent);
 			inheritAspects(parent);
+			super.inheritFromParent();
 		}
-		super.inheritFromParent();
 
 	}
 
@@ -396,18 +412,6 @@ public class SpeciesDescription extends TypeDescription {
 				skills.put(entry.getKey(), entry.getValue());
 			}
 		}
-	}
-
-	public void verifyAndSetParent() {
-		String parentName = getParentName();
-		if ( parentName == null ) {
-			if ( !getName().equals(IKeyword.AGENT) ) {
-				parentName = IKeyword.AGENT;
-			} else {
-				return;
-			}
-		}
-		parent = verifyParent(parentName);
 	}
 
 	/**
@@ -484,7 +488,7 @@ public class SpeciesDescription extends TypeDescription {
 		Collection<SpeciesDescription> allMicroSpecies = getMicroSpecies().values();
 		// validate and set the parent parent of each micro-species
 		for ( SpeciesDescription microSpec : allMicroSpecies ) {
-			microSpec.verifyAndSetParent();
+			microSpec.verifyParent();
 		}
 
 		List<SpeciesDescription> sortedMicroSpecs = new GamaList<SpeciesDescription>();
@@ -560,21 +564,17 @@ public class SpeciesDescription extends TypeDescription {
 	 * @throws GamlException if the species with the specified name can not be a parent of this
 	 *             species.
 	 */
-	private SpeciesDescription verifyParent(final String parentName) {
-
-		if ( this.getName().equals(parentName) ) {
+	protected void verifyParent() {
+		if ( parent == null ) { return; }
+		if ( this == parent ) {
 			error(getName() + " species can't be a sub-species of itself", IGamlIssue.GENERAL);
-			return null;
+			return;
 		}
 		List<SpeciesDescription> candidates = this.getPotentialParentSpecies();
-		SpeciesDescription potentialParent = null;
-		for ( SpeciesDescription c2 : candidates ) {
-			if ( c2.getName().equals(parentName) ) {
-				potentialParent = c2;
-				break;
-			}
+		TypeDescription potentialParent = null;
+		if ( candidates.contains(parent) ) {
+			potentialParent = parent;
 		}
-
 		if ( potentialParent == null ) {
 
 			// List<String> availableSpecies = new GamaList<String>();
@@ -583,20 +583,20 @@ public class SpeciesDescription extends TypeDescription {
 			// }
 			// availableSpecies.remove(availableSpecies.size() - 1);
 
-			error(parentName + " can't be a parent species of " + this.getName() + " species.",
+			error(parent.getName() + " can't be a parent species of " + this.getName() + " species.",
 				IGamlIssue.WRONG_PARENT, PARENT);
 
-			return null;
+			return;
 		}
 
-		List<SpeciesDescription> parentsOfParent = potentialParent.getSelfWithParents();
+		List<SpeciesDescription> parentsOfParent = ((SpeciesDescription) potentialParent).getSelfWithParents();
 		if ( parentsOfParent.contains(this) ) {
 			String error =
 				this.getName() + " species and " + potentialParent.getName() +
 					" species can't be sub-species of each other.";
 			potentialParent.error(error);
 			error(error);
-			return null;
+			return;
 		}
 
 		// TODO Commented because the test does not make sense
@@ -608,7 +608,6 @@ public class SpeciesDescription extends TypeDescription {
 		// return null;
 		// }
 
-		return potentialParent;
 	}
 
 	/**
@@ -624,7 +623,7 @@ public class SpeciesDescription extends TypeDescription {
 			// TODO Try to find automatically the type given the "MIRROR" expression
 			addChild(DescriptionFactory.create(AGENT, this, NAME, TARGET));
 		}
-		inheritFromParent();
+		// GuiUtils.debug("Finalizing the description of :" + getName());
 		control = (IArchitecture) AbstractGamlAdditions.getSkillInstanceFor(getControlName());
 		buildSharedSkills();
 		// recursively finalize the sorted micro-species
@@ -632,27 +631,25 @@ public class SpeciesDescription extends TypeDescription {
 			microSpec.finalizeDescription();
 			if ( !microSpec.isExperiment() ) {
 				VariableDescription var =
-					(VariableDescription) DescriptionFactory.create(IKeyword.CONTAINER, this, NAME,
-						microSpec.getName()); // CONST = TRUE ?
+					(VariableDescription) DescriptionFactory
+						.create(IKeyword.CONTAINER, this, NAME, microSpec.getName()); // CONST = TRUE ?
 				var.setContentType(microSpec.getType());
 				// We compute the dependencies of micro species with respect to the variables
 				// defined in the macro species.
 				IExpressionDescription exp = microSpec.getFacets().get(DEPENDS_ON);
-				Set<String> dependencies =
-					exp == null ? new LinkedHashSet() : exp.getStrings(this, false);
+				Set<String> dependencies = exp == null ? new LinkedHashSet() : exp.getStrings(this, false);
 				for ( VariableDescription v : microSpec.getVariables().values() ) {
 					dependencies.addAll(v.getExtraDependencies());
 				}
 				dependencies.add(SHAPE);
 				dependencies.add(LOCATION);
 				var.getFacets().put(DEPENDS_ON, new StringListExpressionDescription(dependencies));
-				GuiUtils.debug("The population of " + microSpec.getName() + " depends on: " +
-					dependencies + " in " + getName());
+				// GuiUtils.debug("The population of " + microSpec.getName() + " depends on: " + dependencies + " in " +
+				// getName());
 				IVarGetter get = new VarGetter(null) {
 
 					@Override
-					public Object run(IScope scope, IAgent agent, ISkill skill)
-						throws GamaRuntimeException {
+					public Object run(IScope scope, IAgent agent, ISkill skill) throws GamaRuntimeException {
 						return agent.getMicroPopulation(microSpec.getName());
 					}
 				};
@@ -666,8 +663,7 @@ public class SpeciesDescription extends TypeDescription {
 				IVarGetter init = new VarGetter(null) {
 
 					@Override
-					public Object run(IScope scope, IAgent agent, ISkill skill)
-						throws GamaRuntimeException {
+					public Object run(IScope scope, IAgent agent, ISkill skill) throws GamaRuntimeException {
 						agent.initializeMicroPopulation(scope, microSpec.getName());
 						return agent.getMicroPopulation(microSpec.getName());
 					}
@@ -688,7 +684,7 @@ public class SpeciesDescription extends TypeDescription {
 		return microSpecies != null;
 	}
 
-	private Map<String, SpeciesDescription> getMicroSpecies() {
+	public Map<String, SpeciesDescription> getMicroSpecies() {
 		if ( microSpecies == null ) {
 			microSpecies = new LinkedHashMap<String, SpeciesDescription>();
 		}
@@ -706,6 +702,13 @@ public class SpeciesDescription extends TypeDescription {
 	public Map<Class, ISkill> getSkills() {
 		return skills;
 	}
-	
-	
+
+	public void setGlobal(boolean global) {
+		isGlobal = global;
+	}
+
+	public boolean isGlobal() {
+		return isGlobal;
+	}
+
 }

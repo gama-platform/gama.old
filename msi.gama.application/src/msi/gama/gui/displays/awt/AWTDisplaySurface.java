@@ -32,8 +32,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.gui.views.SWTNavigationPanel;
-import msi.gama.metamodel.shape.ILocation;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.precompiler.GamlAnnotations.display;
@@ -49,24 +48,24 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	private boolean autosave = false;
 	private String snapshotFileName;
 	private Point snapshotDimension;
-	public static String snapshotFolder = "snapshots";
-	protected ILayerManager manager;
-	boolean paused;
+	private static String snapshotFolder = "snapshots";
+	private ILayerManager manager;
+	private boolean paused;
 	private volatile boolean canBeUpdated = true;
-	double widthHeightConstraint = 1.0;
+	private double widthHeightConstraint = 1.0;
 
 	private IGraphics displayGraphics;
 	private Color bgColor = Color.black;
-	protected double zoomIncrement = 0.1;
-	protected double zoomFactor = 1.0 + zoomIncrement;
-	protected BufferedImage buffImage;
-	protected int bWidth, bHeight;
-	protected Point origin = new Point(0, 0);
+	private final double zoomIncrement = 0.1;
+	private double zoomFactor = 1.0 + zoomIncrement;
+	private BufferedImage buffImage;
+	private int bWidth, bHeight;
+	private Point origin = new Point(0, 0);
 
-	protected Point mousePosition;
-	Dimension previousPanelSize;
-	protected boolean navigationImageEnabled = true;
-	protected SWTNavigationPanel navigator;
+	private Point mousePosition;
+	private Dimension previousPanelSize;
+	private boolean navigationImageEnabled = true;
+	private SWTNavigationPanel navigator;
 	private final AffineTransform translation = new AffineTransform();
 	private final Semaphore paintingNeeded = new Semaphore(1, true);
 	private boolean synchronous = false;
@@ -101,8 +100,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 			return;
 		}
 		String snapshotFile =
-			scope.getSimulationScope().getModel()
-				.getRelativeFilePath(snapshotFolder + "/" + snapshotFileName, false);
+			scope.getSimulationScope().getModel().getRelativeFilePath(snapshotFolder + "/" + snapshotFileName, false);
 
 		String file = snapshotFile + scope.getClock().getCycle() + ".png";
 		DataOutputStream os = null;
@@ -143,9 +141,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	protected Cursor createCursor() {
-		Image im =
-			new BufferedImage((int) SELECTION_SIZE + 4, (int) SELECTION_SIZE + 4,
-				BufferedImage.TYPE_INT_ARGB);
+		Image im = new BufferedImage((int) SELECTION_SIZE + 4, (int) SELECTION_SIZE + 4, BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = (Graphics2D) im.getGraphics();
 		g.setColor(Color.black);
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -153,8 +149,8 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 		g.draw(new Rectangle2D.Double(2, 2, SELECTION_SIZE, SELECTION_SIZE));
 		g.dispose();
 		Cursor c =
-			getToolkit().createCustomCursor(im,
-				new Point((int) (SELECTION_SIZE / 2), (int) SELECTION_SIZE / 2), "CIRCLE");
+			getToolkit().createCustomCursor(im, new Point((int) (SELECTION_SIZE / 2), (int) SELECTION_SIZE / 2),
+				"CIRCLE");
 		return c;
 	}
 
@@ -213,8 +209,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public void initialize(final double env_width, final double env_height,
-		final IDisplayOutput layerDisplayOutput) {
+	public void initialize(final double env_width, final double env_height, final IDisplayOutput layerDisplayOutput) {
 		outputChanged(env_width, env_height, layerDisplayOutput);
 		setOpaque(true);
 		setDoubleBuffered(false);
@@ -257,13 +252,11 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 
 	// Tests whether the image is displayed in its entirety in the panel.
 	boolean isFullImageInPanel() {
-		return origin.x >= 0 && origin.x + bWidth < getWidth() && origin.y >= 0 &&
-			origin.y + bHeight < getHeight();
+		return origin.x >= 0 && origin.x + bWidth < getWidth() && origin.y >= 0 && origin.y + bHeight < getHeight();
 	}
 
 	@Override
-	public void outputChanged(final double env_width, final double env_height,
-		final IDisplayOutput output) {
+	public void outputChanged(final double env_width, final double env_height, final IDisplayOutput output) {
 		bgColor = output.getBackgroundColor();
 		this.setBackground(bgColor);
 		widthHeightConstraint = env_height / env_width;
@@ -271,8 +264,8 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 			manager = new LayerManager(this);
 			final List<? extends ISymbol> layers = output.getChildren();
 			for ( final ISymbol layer : layers ) {
-				manager.addLayer(LayerManager.createLayer((ILayerStatement) layer, env_width,
-					env_height, displayGraphics));
+				manager.addLayer(LayerManager.createLayer((ILayerStatement) layer, env_width, env_height,
+					displayGraphics));
 			}
 
 		} else {
@@ -319,8 +312,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 
 	@Override
 	public void updateDisplay() {
-		if ( synchronous && !EventQueue.isDispatchThread() &&
-			!GAMA.getFrontmostSimulation().isPaused() ) {
+		if ( synchronous && !EventQueue.isDispatchThread() && !GAMA.getExperiment().isPaused() ) {
 			try {
 				EventQueue.invokeAndWait(displayBlock);
 			} catch (InterruptedException e) {
@@ -477,20 +469,16 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	public void setZoom(final double factor, final Point c) {
 		if ( resizeImage(Math.max(1, (int) Math.round(bWidth * factor)),
 			Math.max(1, (int) Math.round(bHeight * factor))) ) {
-			int imagePX =
-				c.x < origin.x ? 0 : c.x >= bWidth + origin.x ? bWidth - 1 : c.x - origin.x;
-			int imagePY =
-				c.y < origin.y ? 0 : c.y >= bHeight + origin.y ? bHeight - 1 : c.y - origin.y;
+			int imagePX = c.x < origin.x ? 0 : c.x >= bWidth + origin.x ? bWidth - 1 : c.x - origin.x;
+			int imagePY = c.y < origin.y ? 0 : c.y >= bHeight + origin.y ? bHeight - 1 : c.y - origin.y;
 			zoomFactor = factor;
-			setOrigin(c.x - (int) Math.round(imagePX * zoomFactor),
-				c.y - (int) Math.round(imagePY * zoomFactor));
+			setOrigin(c.x - (int) Math.round(imagePX * zoomFactor), c.y - (int) Math.round(imagePY * zoomFactor));
 			updateDisplay();
 		}
 	}
 
 	void scaleOrigin() {
-		setOrigin(origin.x * getWidth() / previousPanelSize.width, origin.y * getHeight() /
-			previousPanelSize.height);
+		setOrigin(origin.x * getWidth() / previousPanelSize.width, origin.y * getHeight() / previousPanelSize.height);
 		paintingNeeded.release();
 	}
 
@@ -519,8 +507,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 		int leftY = display.getPosition().y + (int) (display.getYScale() * minY + 0.5);
 		int rightX = display.getPosition().x + (int) (display.getXScale() * maxX + 0.5);
 		int rightY = display.getPosition().y + (int) (display.getYScale() * maxY + 0.5);
-		Rectangle envelop =
-			new Rectangle(leftX + origin.x, leftY + origin.y, rightX - leftX, rightY - leftY);
+		Rectangle envelop = new Rectangle(leftX + origin.x, leftY + origin.y, rightX - leftX, rightY - leftY);
 		double xScale = (double) getWidth() / (rightX - leftX);
 		double yScale = (double) getHeight() / (rightY - leftY);
 		double zoomFactor = Math.min(xScale, yScale);
@@ -592,8 +579,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 			save(GAMA.getDefaultScope(), buffImage);
 			return;
 		}
-		BufferedImage newImage =
-			ImageUtils.createCompatibleImage(snapshotDimension.x, snapshotDimension.y);
+		BufferedImage newImage = ImageUtils.createCompatibleImage(snapshotDimension.x, snapshotDimension.y);
 		IGraphics tempGraphics = new AWTDisplayGraphics(newImage);
 		tempGraphics.fill(bgColor, 1);
 		manager.drawLayersOn(tempGraphics);
@@ -710,5 +696,7 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	}
 
 	@Override
-	public void initOutput3D(boolean output3d, ILocation output3dNbCycles) {;}
+	public void initOutput3D(boolean output3d, ILocation output3dNbCycles) {
+		;
+	}
 }

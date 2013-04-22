@@ -23,45 +23,30 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IScheduledAction;
 
-// TODO change to SimulationScheduler or SimulationControler or GlobalScheduler
 public class Scheduler extends AbstractScheduler implements Runnable {
 
 	public final Thread executionThread;
 
 	private static int threadCount = 0;
 
-	protected Scheduler(final ISimulation sim, final IAgent owner) throws GamaRuntimeException {
-		super(sim, owner);
+	public Scheduler(final IAgent agent) throws GamaRuntimeException {
+		super(agent);
 		executionThread = new Thread(null, this, "Scheduler execution thread #" + threadCount++);
 	}
 
 	@Override
 	public void run() {
-		// IOutputManager m = GAMA.getExperiment().getOutputManager();
 		while (alive) {
 			try {
 				IScheduler.SCHEDULER_AUTHORIZATION.acquire();
-
 				if ( !paused && alive ) {
-					step(simulation.getExecutionScope());
+					step(owner.getScope());
 				}
-				// if ( alive ) {
-				// m.step(simulation.getExecutionScope());
-				// }
-				// if ( alive ) {
-				// m.updateOutputs();
-				// }
-
-				// HACK TO TEST
-
-				// simulation.getModel().getModelEnvironment().getSpatialIndex().cleanCache();
-
 				paused = stepped ? true : paused;
 				stepped = false;
 
 				if ( !paused && alive ) {
 					IScheduler.SCHEDULER_AUTHORIZATION.release();
-
 				}
 			} catch (GamaRuntimeException e) {
 				GAMA.reportError(e);

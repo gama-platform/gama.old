@@ -6,7 +6,6 @@ package msi.gama.gui.views.actions;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.gui.displays.*;
 import msi.gama.gui.displays.layers.*;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.commands.AgentsMenu;
@@ -31,21 +30,15 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 	private static Map<Class, Image> images = new HashMap();
 
 	static {
-		images.put(GridLayer.class, SwtGui.getImageDescriptor("/icons/display_grid.png")
-			.createImage());
-		images.put(AgentLayer.class, SwtGui.getImageDescriptor("/icons/display_agents.png")
-			.createImage());
-		images.put(ImageLayer.class, SwtGui.getImageDescriptor("/icons/display_image.png")
-			.createImage());
-		images.put(TextLayer.class, SwtGui.getImageDescriptor("/icons/display_text.png")
-			.createImage());
-		images.put(SpeciesLayer.class, SwtGui.getImageDescriptor("/icons/display_species.png")
-			.createImage());
-		images.put(ChartLayer.class, SwtGui.getImageDescriptor("/icons/display_chart.png")
-			.createImage());
+		images.put(GridLayer.class, SwtGui.getImageDescriptor("/icons/display_grid.png").createImage());
+		images.put(AgentLayer.class, SwtGui.getImageDescriptor("/icons/display_agents.png").createImage());
+		images.put(ImageLayer.class, SwtGui.getImageDescriptor("/icons/display_image.png").createImage());
+		images.put(TextLayer.class, SwtGui.getImageDescriptor("/icons/display_text.png").createImage());
+		images.put(SpeciesLayer.class, SwtGui.getImageDescriptor("/icons/display_species.png").createImage());
+		images.put(ChartLayer.class, SwtGui.getImageDescriptor("/icons/display_chart.png").createImage());
 	}
 
-	Menu menu;
+	private Menu menu;
 
 	FocusItem(final GamaViewPart view) {
 		super(view);
@@ -58,8 +51,7 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 	@Override
 	protected IContributionItem createItem() {
 		IAction action =
-			new GamaAction("Focus on...", IAction.AS_DROP_DOWN_MENU,
-				getImageDescriptor("icons/button_focus.png")) {
+			new GamaAction("Focus on...", IAction.AS_DROP_DOWN_MENU, getImageDescriptor("icons/button_focus.png")) {
 
 				@Override
 				public void run() {}
@@ -179,8 +171,8 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 				MenuItem displayMenu = new MenuItem(menu, SWT.CASCADE);
 				displayMenu.setText(display.getType() + ": " + display.getName());
 				displayMenu.setImage(images.get(display.getClass()));
-				AgentsMenu.createSpeciesSubMenu(displayMenu, GAMA.getFrontmostSimulation()
-					.getWorld().getMicroPopulation(display.getName()), adapter);
+				AgentsMenu.createSpeciesSubMenu(displayMenu,
+					GAMA.getFrontmostSimulation().getMicroPopulation(display.getName()), adapter);
 			} else if ( item instanceof AgentLayer ) {
 				AgentLayer display = (AgentLayer) item;
 				MenuItem displayMenu = new MenuItem(menu, SWT.CASCADE);
@@ -200,8 +192,8 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 				MenuItem displayMenu = new MenuItem(menu, SWT.CASCADE);
 				displayMenu.setText("Grid layer: " + display.getName());
 				displayMenu.setImage(images.get(display.getClass()));
-				AgentsMenu.createSpeciesSubMenu(displayMenu, GAMA.getFrontmostSimulation()
-					.getWorld().getMicroPopulation(display.getName()), adapter);
+				AgentsMenu.createSpeciesSubMenu(displayMenu,
+					GAMA.getFrontmostSimulation().getMicroPopulation(display.getName()), adapter);
 			}
 		}
 	}

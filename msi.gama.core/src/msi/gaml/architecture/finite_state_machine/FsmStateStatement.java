@@ -42,7 +42,7 @@ import msi.gaml.types.IType;
  */
 
 @symbol(name = FsmStateStatement.STATE, kind = ISymbolKind.BEHAVIOR, with_sequence = true, unique_name = true)
-@inside(symbols = IKeyword.FSM, kinds = { ISymbolKind.SPECIES })
+@inside(symbols = IKeyword.FSM, kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
 @facets(value = { @facet(name = FsmStateStatement.INITIAL, type = IType.BOOL, optional = true),
 	@facet(name = FsmStateStatement.FINAL, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false) }, combinations = {
@@ -102,8 +102,7 @@ public class FsmStateStatement extends AbstractStatementSequence {
 		}
 		Boolean enter = (Boolean) agent.getAttribute(ENTER);
 		if ( enter ) {
-			FsmStateStatement stateToExit =
-				(FsmStateStatement) agent.getAttribute(IKeyword.STATE_TO_EXIT);
+			FsmStateStatement stateToExit = (FsmStateStatement) agent.getAttribute(IKeyword.STATE_TO_EXIT);
 			if ( stateToExit != null ) {
 				stateToExit.haltOn(scope);
 			}

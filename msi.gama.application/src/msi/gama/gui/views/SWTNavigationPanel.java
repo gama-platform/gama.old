@@ -27,17 +27,17 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
 
-public class SWTNavigationPanel extends Canvas implements PaintListener, MouseListener,
-	MouseTrackListener, MouseMoveListener {
+public class SWTNavigationPanel extends Canvas implements PaintListener, MouseListener, MouseTrackListener,
+	MouseMoveListener {
 
-	boolean mouseDown;
-	int squareX, squareY, squareW, squareH;
-	int imgWidth, imgHeight;
-	Image image;
+	private boolean mouseDown;
+	private int squareX, squareY, squareW, squareH;
+	private int imgWidth, imgHeight;
+	private Image image;
 
 	private final IDisplaySurface surface;
 
-	public SWTNavigationPanel(final Composite parent, final int style, final IDisplaySurface surface) {
+	SWTNavigationPanel(final Composite parent, final int style, final IDisplaySurface surface) {
 		super(parent, style);
 		this.surface = surface;
 		surface.setNavigator(this);
@@ -87,8 +87,7 @@ public class SWTNavigationPanel extends Canvas implements PaintListener, MouseLi
 		g.drawRectangle(squareX, squareY, squareW, squareH);
 		g.fillRectangle(0, 0, imgWidth, squareY);
 		g.fillRectangle(0, squareY, squareX, imgHeight - squareY);
-		g.fillRectangle(squareX + squareW, squareY, imgWidth - squareX - squareW, imgHeight -
-			squareY);
+		g.fillRectangle(squareX + squareW, squareY, imgWidth - squareX - squareW, imgHeight - squareY);
 		g.fillRectangle(squareX, squareY + squareH, squareW, imgHeight - squareY - squareH);
 	}
 

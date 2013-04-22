@@ -21,7 +21,6 @@ package msi.gama.outputs.layers;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.outputs.IDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -44,8 +43,7 @@ import msi.gaml.types.IType;
  */
 @symbol(name = IKeyword.POPULATION, kind = ISymbolKind.LAYER, with_sequence = true)
 @inside(symbols = { IKeyword.DISPLAY, IKeyword.POPULATION })
-@facets(value = { 
-	@facet(name = IKeyword.POSITION, type = IType.POINT, optional = true),
+@facets(value = { @facet(name = IKeyword.POSITION, type = IType.POINT, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.POINT, optional = true),
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.SPECIES, type = IType.SPECIES, optional = false),
@@ -70,32 +68,31 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 	}
 
 	@Override
-	public void prepare(final IDisplayOutput out, final IScope sim) throws GamaRuntimeException {
+	public void init(final IScope scope) throws GamaRuntimeException {
 		// TODO search for hostSpecies; may have several hostSpecies incase of micro-species are
 		// inherited
 
 		// top level species layer is a direct micro-species of "world_species" for sure
 		if ( hostSpecies == null ) {
-			hostSpecies = sim.getWorldScope().getSpecies();
+			hostSpecies = scope.getSimulationScope().getSpecies();
 		}
 
 		species = hostSpecies.getMicroSpecies(getName());
-		if ( species == null ) { throw new GamaRuntimeException(
-			"not a suitable species to display: " + getName()); }
-		super.prepare(out, sim);
+		if ( species == null ) { throw new GamaRuntimeException("not a suitable species to display: " + getName()); }
+		super.init(scope);
 
 		for ( SpeciesLayerStatement microLayer : microSpeciesLayers ) {
 			microLayer.setHostSpecies(species);
-			microLayer.prepare(out, sim);
+			microLayer.init(scope);
 		}
 	}
 
 	@Override
-	public void compute(final IScope scope, final long cycle) throws GamaRuntimeException {
-		super.compute(scope, cycle);
+	public void step(final IScope scope) throws GamaRuntimeException {
+		super.step(scope);
 
 		for ( SpeciesLayerStatement microLayer : microSpeciesLayers ) {
-			microLayer.compute(scope, cycle);
+			microLayer.step(scope);
 		}
 	}
 

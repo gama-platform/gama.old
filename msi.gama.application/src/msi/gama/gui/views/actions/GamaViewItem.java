@@ -21,7 +21,7 @@ import org.eclipse.ui.IViewSite;
 public abstract class GamaViewItem implements IContributionItem {
 
 	GamaViewPart view;
-	final IContributionItem item;
+	private final IContributionItem item;
 
 	GamaViewItem(final GamaViewPart view) {
 		this.view = view;

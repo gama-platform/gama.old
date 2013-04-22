@@ -22,7 +22,7 @@ import java.util.Map;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
-import msi.gama.metamodel.agent.*;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
@@ -90,8 +90,7 @@ public interface IScope {
 
 	public abstract void setAgentVarValue(String name, Object v) throws GamaRuntimeException;
 
-	public abstract void setAgentVarValue(IAgent agent, String name, Object v)
-		throws GamaRuntimeException;
+	public abstract void setAgentVarValue(IAgent agent, String name, Object v) throws GamaRuntimeException;
 
 	public abstract void setStatus(ExecutionStatus status);
 
@@ -147,7 +146,7 @@ public interface IScope {
 	 * Return the current world of the simulation in which this scope is defined
 	 * @return
 	 */
-	public abstract WorldAgent getWorldScope();
+	// public abstract WorldAgent getWorldScope();
 
 	/**
 	 * Returns the current simulation in which this scope is defined.
@@ -155,7 +154,7 @@ public interface IScope {
 	 *         by a simulation)
 	 */
 
-	public abstract ISimulation getSimulationScope();
+	public abstract ISimulationAgent getSimulationScope();
 
 	public abstract IModel getModel();
 

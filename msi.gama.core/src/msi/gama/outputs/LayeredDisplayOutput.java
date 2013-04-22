@@ -23,7 +23,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.kernel.simulation.ISimulation;
+import msi.gama.kernel.simulation.ISimulationAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.layers.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -58,7 +58,7 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.AMBIANT_LIGHT, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.POLYGONMODE, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL, IType.POINT }, optional = true),
-	@facet(name = IKeyword.OUTPUT3D, type = { IType.BOOL, IType.POINT }, optional = true)}, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.OUTPUT3D, type = { IType.BOOL, IType.POINT }, optional = true) }, omissible = IKeyword.NAME)
 @inside(symbols = IKeyword.OUTPUT)
 public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
@@ -76,7 +76,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean polygonmode = true;
 	private String displayType = JAVA2D;
 	private ILocation imageDimension = new GamaPoint(-1, -1);
-	private ILocation output3DNbCycles = new GamaPoint(0,0);
+	private ILocation output3DNbCycles = new GamaPoint(0, 0);
 
 	public LayeredDisplayOutput(final IDescription desc) {
 		super(desc);
@@ -89,8 +89,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	}
 
 	@Override
-	public void prepare(final ISimulation sim) throws GamaRuntimeException {
-		super.prepare(sim);
+	public void init(final IScope scope) throws GamaRuntimeException {
+		super.init(scope);
 
 		IExpression color = getFacet(IKeyword.BACKGROUND);
 		if ( color != null ) {
@@ -113,7 +113,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		for ( final ILayerStatement layer : getLayers() ) {
 			try {
-				layer.prepare(this, getOwnScope());
+				layer.setDisplayOutput(this);
+				layer.init(getOwnScope());
 			} catch (GamaRuntimeException e) {
 				GAMA.reportError(e);
 			}
@@ -142,17 +143,17 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				output3DNbCycles = Cast.asPoint(getOwnScope(), out3D.value(getOwnScope()));
 			} else {
 				output3D = Cast.asBool(getOwnScope(), out3D.value(getOwnScope()));
-			}	
+			}
 		}
 
-		createSurface(sim);
+		createSurface(scope.getSimulationScope());
 	}
 
 	@Override
-	public void compute(final IScope scope, final int cycle) throws GamaRuntimeException {
+	public void step(final IScope scope) throws GamaRuntimeException {
 		// GUI.debug("Computing the expressions of output " + getName() + " at cycle " + cycle);
 		for ( ILayerStatement layer : getLayers() ) {
-			layer.compute(scope, cycle);
+			layer.step(scope);
 		}
 	}
 
@@ -178,7 +179,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public void schedule() throws GamaRuntimeException {
-		compute(getOwnScope(), 0);
+		step(getOwnScope());
 		super.schedule();
 	}
 
@@ -197,8 +198,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		getLayers().clear();
 	}
 
-	protected void createSurface(final ISimulation sim) {
-		Envelope env = sim.getWorld().getEnvelope();
+	protected void createSurface(final ISimulationAgent sim) {
+		Envelope env = sim.getEnvelope();
 		double w = env.getWidth();
 		double h = env.getHeight();
 		if ( surface != null ) {
@@ -212,7 +213,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		// Use only for opengl
 		if ( surface.getMyGraphics() != null ) {
 			// surface.setOutput3D(output3D);
-			surface.initOutput3D(output3D,output3DNbCycles);
+			surface.initOutput3D(output3D, output3DNbCycles);
 			surface.getMyGraphics().useTesselation(tesselation);
 			surface.getMyGraphics().setAmbiantLight((float) ambiantLight);
 			surface.getMyGraphics().setPolygonMode(polygonmode);

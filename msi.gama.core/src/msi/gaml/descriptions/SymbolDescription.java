@@ -46,8 +46,8 @@ public class SymbolDescription implements IDescription {
 	protected SymbolProto meta;
 	protected String keyword;
 
-	public SymbolDescription(final String keyword, final IDescription superDesc,
-		final IChildrenProvider cp, final EObject source, final Facets facets) {
+	public SymbolDescription(final String keyword, final IDescription superDesc, final IChildrenProvider cp,
+		final EObject source, final Facets facets) {
 		this.facets = facets;
 		facets.putAsLabel(KEYWORD, keyword);
 		this.keyword = keyword;
@@ -83,9 +83,8 @@ public class SymbolDescription implements IDescription {
 		return meta;
 	}
 
-	private void flagError(final String s, final String code, final boolean warning,
-		final boolean info, final EObject source, final String ... data)
-		throws GamaRuntimeException {
+	private void flagError(final String s, final String code, final boolean warning, final boolean info,
+		final EObject source, final String ... data) throws GamaRuntimeException {
 
 		IDescription desc = this;
 		EObject e = source;
@@ -97,8 +96,7 @@ public class SymbolDescription implements IDescription {
 		}
 		if ( !warning && !info ) {
 			String resource = e == null ? "(no file)" : e.eResource().getURI().lastSegment();
-			GuiUtils.debug("COMPILATION ERROR in " + this.toString() + ": " + s + "; source: " +
-				resource);
+			GuiUtils.debug("COMPILATION ERROR in " + this.toString() + ": " + s + "; source: " + resource);
 		}
 		// throws a runtime exception if there is no way to signal the error in the source
 		// (i.e. we are probably in a runtime scenario)
@@ -152,14 +150,12 @@ public class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public void warning(final String s, final String code, final EObject object,
-		final String ... data) {
+	public void warning(final String s, final String code, final EObject object, final String ... data) {
 		flagError(s, code, true, false, object, data);
 	}
 
 	@Override
-	public void warning(final String s, final String code, final String facet,
-		final String ... data) {
+	public void warning(final String s, final String code, final String facet, final String ... data) {
 		flagError(s, code, true, false, this.getUnderlyingElement(facet), data);
 	}
 
@@ -222,10 +218,8 @@ public class SymbolDescription implements IDescription {
 		if ( facet == null ) { return element; }
 		if ( facet instanceof EObject ) { return (EObject) facet; }
 		IExpressionDescription f =
-			facet instanceof IExpressionDescription ? (IExpressionDescription) facet : facets
-				.get(facet);
-		if ( f != null && f.getTarget() != null && f.getTarget().eContainer() != null ) { return f
-			.getTarget(); }
+			facet instanceof IExpressionDescription ? (IExpressionDescription) facet : facets.get(facet);
+		if ( f != null && f.getTarget() != null && f.getTarget().eContainer() != null ) { return f.getTarget(); }
 		return element;
 
 	}
@@ -264,14 +258,12 @@ public class SymbolDescription implements IDescription {
 
 	@Override
 	public IDescription getDescriptionDeclaringVar(final String name) {
-		return hasVar(name) ? this : enclosing == null ? null : enclosing
-			.getDescriptionDeclaringVar(name);
+		return hasVar(name) ? this : enclosing == null ? null : enclosing.getDescriptionDeclaringVar(name);
 	}
 
 	@Override
 	public IDescription getDescriptionDeclaringAction(final String name) {
-		return hasAction(name) ? this : enclosing == null ? null : enclosing
-			.getDescriptionDeclaringAction(name);
+		return hasAction(name) ? this : enclosing == null ? null : enclosing.getDescriptionDeclaringAction(name);
 	}
 
 	@Override
@@ -280,8 +272,7 @@ public class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public IExpression addTemp(final String name, final IType type, final IType contentType,
-		IType keyType) {
+	public IExpression addTemp(final String name, final IType type, final IType contentType, IType keyType) {
 		return null;
 	}
 
@@ -339,12 +330,12 @@ public class SymbolDescription implements IDescription {
 	/**
 	 * @see msi.gama.common.interfaces.IDescription#getWorldSpecies()
 	 */
-	@Override
-	public TypeDescription getWorldSpecies() {
-		IDescription model = getModelDescription();
-		if ( model == null ) { return null; }
-		return model.getWorldSpecies();
-	}
+	// @Override
+	// public TypeDescription getWorldSpecies() {
+	// ModelDescription model = getModelDescription();
+	// if ( model == null ) { return null; }
+	// return model; // .getWorldSpecies();
+	// }
 
 	/**
 	 * @see org.eclipse.emf.common.notify.Adapter#notifyChanged(org.eclipse.emf.common.notify.Notification)

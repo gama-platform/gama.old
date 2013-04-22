@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -19,7 +19,6 @@
 package msi.gama.metamodel.topology.graph;
 
 import java.util.*;
-
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
@@ -27,26 +26,23 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gama.util.graph.*;
-import msi.gama.util.path.GamaSpatialPath;
-import msi.gama.util.path.PathFactory;
+import msi.gama.util.graph.GamaGraph;
+import msi.gama.util.path.*;
 import msi.gaml.compilation.ScheduledAction;
 import msi.gaml.species.ISpecies;
 import org.jgrapht.Graphs;
-
 import com.vividsolutions.jts.geom.Coordinate;
 
-public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpatialGraph,
-	IPopulation.Listener {
+public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpatialGraph, IPopulation.Listener {
 
 	/*
 	 * Own topology of the graph. Lazily instantiated, and invalidated at each modification of the
 	 * graph.
 	 */
 	private ITopology topology;
-	private  GamaMap<Integer, IShape> verticesBuilt ; // only used for optimization purpose of spatial graph
-	// building.
+	private final GamaMap<Integer, IShape> verticesBuilt; // only used for optimization purpose of spatial graph
 
+	// building.
 
 	/**
 	 * Determines the relationship among two polygons.
@@ -65,32 +61,29 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 		// Double distance(T p1, T p2);
 
-	} 
+	}
 
-	public GamaSpatialGraph(final IContainer edgesOrVertices, final boolean byEdge,
-		final boolean directed, final VertexRelationship rel, final ISpecies edgesSpecies,
-		final IScope scope) {
-		super();
-		verticesBuilt  = new GamaMap<Integer, IShape>();
-		init(edgesOrVertices, byEdge, directed,rel, edgesSpecies, scope);
-		
-	} 
+	public GamaSpatialGraph(final IContainer edgesOrVertices, final boolean byEdge, final boolean directed,
+		final VertexRelationship rel, final ISpecies edgesSpecies, final IScope scope) {
+		super(scope);
+		verticesBuilt = new GamaMap<Integer, IShape>();
+		init(edgesOrVertices, byEdge, directed, rel, edgesSpecies);
+
+	}
 
 	@Override
 	public GamaSpatialGraph copy(IScope scope) {
 		GamaSpatialGraph g =
-			new GamaSpatialGraph(GamaList.EMPTY_LIST, true, directed, vertexRelation, edgeSpecies,
-				scope);
+			new GamaSpatialGraph(GamaList.EMPTY_LIST, true, directed, vertexRelation, edgeSpecies, scope);
 		Graphs.addAllEdges(g, this, this.edgeSet());
 		return g;
 	}
 
-	
 	@Override
 	protected GamaSpatialPath pathFromEdges(final IShape source, final IShape target, final IList<IShape> edges) {
-		return (GamaSpatialPath)PathFactory.newInstance(getTopology(), source, target, edges);
+		return PathFactory.newInstance(getTopology(), source, target, edges);
 		// return new GamaPath(getTopology(), (IShape) source, (IShape) target, edges);
-	} 
+	}
 
 	@Override
 	protected void buildByVertices(final IContainer<?, IShape> list) {
@@ -121,8 +114,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	}
 
 	@Override
-	protected _SpatialEdge newEdge(final Object e, final Object v1, final Object v2)
-		throws GamaRuntimeException {
+	protected _SpatialEdge newEdge(final Object e, final Object v1, final Object v2) throws GamaRuntimeException {
 		return new _SpatialEdge(this, e, v1, v2);
 	}
 
@@ -131,6 +123,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		return new _SpatialVertex(this, v);
 	}
 
+	@Override
 	public boolean addVertex(final IShape v) {
 		boolean added = super.addVertex(v);
 		if ( added && vertexRelation != null ) {
@@ -142,7 +135,6 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		}
 		return added;
 	}
-
 
 	@Override
 	public ITopology getTopology() {
@@ -183,8 +175,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 	@Override
 	protected Object generateEdgeObject(final Object v1, final Object v2) {
-		if ( v1 instanceof IShape && v2 instanceof IShape ) { return new GamaDynamicLink(
-			(IShape) v1, (IShape) v2); }
+		if ( v1 instanceof IShape && v2 instanceof IShape ) { return new GamaDynamicLink((IShape) v1, (IShape) v2); }
 		return super.generateEdgeObject(v1, v2);
 	}
 
@@ -218,7 +209,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	}
 
 	public void postRefreshManagementAction(final IScope scope) {
-		scope.getWorldScope().getScheduler().insertEndAction(new ScheduledAction() {
+		scope.getSimulationScope().getScheduler().insertEndAction(new ScheduledAction() {
 
 			@Override
 			public void execute(final IScope scope) throws GamaRuntimeException {
@@ -226,20 +217,18 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 			}
 		});
 	}
-	
+
 	@Override
 	public Set<IShape> vertexSet() {
 		return vertexMap.keySet();
 	}
-	
+
 	public void addBuiltVertex(final IShape vertex) {
 		verticesBuilt.put(vertex.getLocation().hashCode(), vertex);
 	}
 
-	
 	public IShape getBuiltVertex(final Coordinate vertex) {
 		return verticesBuilt.get(vertex.hashCode());
 	}
-
 
 }

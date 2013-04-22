@@ -60,7 +60,7 @@ global {
 		let satisfying_groups type: list of: list value: (candidate_groups simple_clustering_by_envelope_distance cloud_creation_distance) where (length(each) >= min_cloud_member);
 		loop one_cloud over: satisfying_groups {
 			create cloud returns: rets;			
-			let newCloud type: cloud value: rets at 0;
+			let newCloud type: cloud value: rets at 0; 
 			ask newCloud as: cloud {
 				capture one_cloud as: group_delegation;
 			}

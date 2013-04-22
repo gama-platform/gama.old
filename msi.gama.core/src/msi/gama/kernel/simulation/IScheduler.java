@@ -36,16 +36,15 @@ public interface IScheduler extends IStepable {
 
 	public final static Semaphore SCHEDULER_AUTHORIZATION = new Semaphore(1);
 
-	public abstract void insertAgentToInit(final IAgent entity, IScope scope)
-		throws GamaRuntimeException;
+	public abstract void insertAgentToInit(final IAgent entity, IScope scope) throws GamaRuntimeException;
 
 	public abstract void removeAction(final IScheduledAction haltAction);
 
 	public void executeOneAction(final IScheduledAction action);
 
-	public abstract boolean inInitSequence();
-
 	public abstract void insertEndAction(IScheduledAction action);
+
+	public abstract void insertDisposeAction(IScheduledAction action);
 
 	public abstract void start();
 
@@ -56,8 +55,6 @@ public interface IScheduler extends IStepable {
 	public abstract void dispose();
 
 	public abstract boolean isUserHold();
-
-	public abstract void addListener(ISchedulerListener l);
 
 	public abstract SimulationClock getClock();
 

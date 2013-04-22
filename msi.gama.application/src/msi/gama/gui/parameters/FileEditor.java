@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.*;
 
 public class FileEditor extends AbstractEditor {
 
-	Button textBox;
+	private Button textBox;
 
 	FileEditor(final IParameter param) {
 		super(param);
@@ -45,8 +45,7 @@ public class FileEditor extends AbstractEditor {
 		super(agent, param, l);
 	}
 
-	FileEditor(final Composite parent, final String title, final Object value,
-		final EditorListener<String> whenModified) {
+	FileEditor(final Composite parent, final String title, final Object value, final EditorListener<String> whenModified) {
 		// Convenience method
 		super(new InputParameter(title, value), whenModified);
 		this.createComposite(parent);

@@ -38,7 +38,7 @@ import msi.gaml.types.IType;
  * @author drogoul
  */
 @symbol(name = IKeyword.PRIMITIVE, kind = ISymbolKind.BEHAVIOR, with_sequence = true, with_args = true)
-@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT }, symbols = IKeyword.CHART)
+@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL }, symbols = IKeyword.CHART)
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = IKeyword.JAVA, type = IType.ID, optional = false),
 	@facet(name = IKeyword.VIRTUAL, type = IType.BOOL, optional = true),
@@ -55,9 +55,8 @@ public class PrimitiveStatement extends ActionStatement {
 	 */
 	public PrimitiveStatement(final IDescription desc) {
 		super(desc);
-		skill =
-			AbstractGamlAdditions.getSkillInstanceFor(((StatementDescription) desc).getHelper()
-				.getSkillClass());
+		// skill = desc.getSpeciesContext().getSkillFor(((StatementDescription) desc).getHelper().getSkillClass());
+		skill = AbstractGamlAdditions.getSkillInstanceFor(((StatementDescription) desc).getHelper().getSkillClass());
 	}
 
 	@Override

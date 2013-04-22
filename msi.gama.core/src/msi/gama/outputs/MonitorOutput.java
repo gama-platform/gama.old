@@ -21,7 +21,6 @@ package msi.gama.outputs;
 import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -52,13 +51,12 @@ public class MonitorOutput extends AbstractDisplayOutput {
 		expressionText = value == null ? "" : value.toGaml();
 	}
 
-	public MonitorOutput(final String name, final String expr, final ISimulation sim,
-		final boolean openRightNow) {
-		super(DescriptionFactory.create(IKeyword.MONITOR, IKeyword.VALUE, expr, IKeyword.NAME,
-			name == null ? expr : name));
+	public MonitorOutput(final String name, final String expr, final IScope scope, final boolean openRightNow) {
+		super(DescriptionFactory.create(IKeyword.MONITOR, IKeyword.VALUE, expr, IKeyword.NAME, name == null ? expr
+			: name));
 		setUserCreated(true);
-		setNewExpressionText(expr, sim);
-		prepare(sim);
+		setNewExpressionText(expr, scope);
+		init(scope);
 		outputManager.addOutput(this);
 		if ( openRightNow ) {
 			schedule();
@@ -95,7 +93,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	}
 
 	@Override
-	public void compute(final IScope scope, final int cycle) throws GamaRuntimeException {
+	public void step(final IScope scope) {
 		if ( value != null ) {
 			try {
 				lastValue = value.value(scope);
@@ -116,16 +114,16 @@ public class MonitorOutput extends AbstractDisplayOutput {
 		return true;
 	}
 
-	public boolean setNewExpressionText(final String string, final ISimulation sim) {
+	public boolean setNewExpressionText(final String string, final IScope scope) {
 		expressionText = string;
-		value = GAMA.compileExpression(string, sim.getWorld());
+		value = GAMA.compileExpression(string, scope.getSimulationScope());
 		return true;
 	}
 
 	public void setNewExpression(final IExpression expr) throws GamaRuntimeException {
 		expressionText = expr == null ? "" : expr.toGaml();
 		value = expr;
-		compute(getOwnScope(), 0);
+		step(getOwnScope());
 	}
 
 	@Override
@@ -143,6 +141,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 
 	@Override
 	public String toGaml() {
+		// FIXME Rewrite this for GAML
 		final List<MonitorOutput> outputs = (List<MonitorOutput>) outputManager.getMonitors();
 		StringBuilder s = new StringBuilder(200);
 		for ( final MonitorOutput output : outputs ) {

@@ -41,7 +41,7 @@ import org.osgi.service.prefs.BackingStoreException;
 @SuppressWarnings("restriction")
 public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor {
 
-	public static final String PROMPT_ON_EXIT = "PROMPT_ON_EXIT";
+	private static final String PROMPT_ON_EXIT = "PROMPT_ON_EXIT";
 
 	public ApplicationWorkbenchWindowAdvisor(final ApplicationWorkbenchAdvisor adv,
 		final IWorkbenchWindowConfigurer configurer) {
@@ -60,8 +60,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 		configurer.setShowProgressIndicator(true);
 		configurer.setShowPerspectiveBar(false);
 		configurer.setTitle(GAMA.VERSION);
-		configurer
-			.configureEditorAreaDropListener(new EditorAreaDropAdapter(configurer.getWindow()));
+		configurer.configureEditorAreaDropListener(new EditorAreaDropAdapter(configurer.getWindow()));
 
 	}
 
@@ -77,14 +76,12 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 
 		if ( !promptOnExit ) {
 			MessageDialogWithToggle dlg =
-				MessageDialogWithToggle.openOkCancelConfirm(Display.getDefault().getActiveShell(),
-					"Confirm Exit", "Exit " + Platform.getProduct().getName() + " ?",
-					"Always exit without prompt", false, null, null);
+				MessageDialogWithToggle.openOkCancelConfirm(Display.getDefault().getActiveShell(), "Confirm Exit",
+					"Exit " + Platform.getProduct().getName() + " ?", "Always exit without prompt", false, null, null);
 
 			if ( dlg.getReturnCode() != IDialogConstants.OK_ID ) { return false; }
 
-			InstanceScope.INSTANCE.getNode(IGui.PLUGIN_ID).putBoolean(PROMPT_ON_EXIT,
-				dlg.getToggleState());
+			InstanceScope.INSTANCE.getNode(IGui.PLUGIN_ID).putBoolean(PROMPT_ON_EXIT, dlg.getToggleState());
 			try {
 				InstanceScope.INSTANCE.getNode(IGui.PLUGIN_ID).flush();
 			} catch (BackingStoreException e) {
@@ -95,10 +92,9 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 		return super.preWindowShellClose();
 	}
 
-	static List<String> CATEGORIES_TO_REMOVE = new GamaList(new String[] {
-		"org.eclipse.jdt.debug.ui.java", "org.eclipse.jdt.junit", "org.eclipse.pde.PDE",
-		"org.eclipse.ui.Basic", "org.eclipse.emf.codegen.ecore.ui.wizardCategory",
-		"org.eclipse.jdt.ui.java" });
+	private static List<String> CATEGORIES_TO_REMOVE = new GamaList(new String[] { "org.eclipse.jdt.debug.ui.java",
+		"org.eclipse.jdt.junit", "org.eclipse.pde.PDE", "org.eclipse.ui.Basic",
+		"org.eclipse.emf.codegen.ecore.ui.wizardCategory", "org.eclipse.jdt.ui.java" });
 
 	@Override
 	public void postWindowOpen() {
@@ -110,8 +106,8 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 			String id = wizard.getCategory().getId();
 			if ( CATEGORIES_TO_REMOVE.contains(id) ) {
 				WorkbenchWizardElement wizardElement = (WorkbenchWizardElement) wizard;
-				wizardRegistry.removeExtension(wizardElement.getConfigurationElement()
-					.getDeclaringExtension(), new Object[] { wizardElement });
+				wizardRegistry.removeExtension(wizardElement.getConfigurationElement().getDeclaringExtension(),
+					new Object[] { wizardElement });
 			}
 		}
 

@@ -22,9 +22,9 @@ import org.eclipse.swt.widgets.ColorDialog;
  */
 public class HighlightColorItem extends GamaViewItem {
 
-	Image image;
-	RGB rgb;
-	IAction action;
+	private Image image;
+	private RGB rgb;
+	private IAction action;
 
 	/**
 	 * @param view
@@ -82,8 +82,7 @@ public class HighlightColorItem extends GamaViewItem {
 						components[0] = newRgb.red;
 						components[1] = newRgb.green;
 						components[2] = newRgb.blue;
-						((LayeredDisplayView) view).getDisplaySurface().setHighlightColor(
-							components);
+						((LayeredDisplayView) view).getDisplaySurface().setHighlightColor(components);
 					}
 					action.setImageDescriptor(ImageDescriptor.createFromImage(getImage()));
 				}

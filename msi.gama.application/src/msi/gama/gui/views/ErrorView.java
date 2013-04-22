@@ -32,9 +32,9 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 
 	public static String ID = GuiUtils.ERROR_VIEW_ID;
 
-	ArrayList<GamaRuntimeException> exceptions = new ArrayList();
-	static public int numberOfDisplayedErrors = 10;
-	static public boolean mostRecentFirst = true;
+	private final ArrayList<GamaRuntimeException> exceptions = new ArrayList();
+	static private int numberOfDisplayedErrors = 10;
+	static private boolean mostRecentFirst = true;
 	static public boolean showErrors = true;
 
 	// ParameterExpandItem parametersItem;
@@ -97,8 +97,8 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 		parameters.setLayout(layout);
 
 		// final IntEditor ed =
-		EditorFactory.create(parameters, "Display last ", null, numberOfDisplayedErrors, 0, 100, 1,
-			false, new EditorListener<Integer>() {
+		EditorFactory.create(parameters, "Display last ", null, numberOfDisplayedErrors, 0, 100, 1, false,
+			new EditorListener<Integer>() {
 
 				@Override
 				public void valueModified(final Integer newValue) {
@@ -132,18 +132,17 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 		//
 		// });
 
-		EditorFactory.create(parameters, "Most recent first", mostRecentFirst,
-			new EditorListener<Boolean>() {
+		EditorFactory.create(parameters, "Most recent first", mostRecentFirst, new EditorListener<Boolean>() {
 
-				@Override
-				public void valueModified(final Boolean newValue) {
+			@Override
+			public void valueModified(final Boolean newValue) {
 
-					mostRecentFirst = newValue;
-					reset();
-					displayItems();
-				}
+				mostRecentFirst = newValue;
+				reset();
+				displayItems();
+			}
 
-			});
+		});
 		// EditorFactory.create(parameters, "Show errors/warnings", showErrors,
 		// new EditorListener<Boolean>() {
 		//
@@ -208,8 +207,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 			}
 		}
 		sb.append("cycle ").append(obj.getCycle()).append(ItemList.SEPARATION_CODE)
-			.append(obj.isWarning() ? ItemList.WARNING_CODE : ItemList.ERROR_CODE)
-			.append(obj.getMessage());
+			.append(obj.isWarning() ? ItemList.WARNING_CODE : ItemList.ERROR_CODE).append(obj.getMessage());
 		return sb.toString();
 	}
 

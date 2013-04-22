@@ -68,8 +68,7 @@ public class SQLSkill extends Skill {
 
 		// create connection
 		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
-			String DBRelativeLocation =
-				scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+			String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
 			if ( DEBUG ) {
 				GuiUtils.debug("testConnection.Database:" + database);
 				GuiUtils.debug("testConnection.DBRelativeLocation:" + DBRelativeLocation);
@@ -186,8 +185,7 @@ public class SQLSkill extends Skill {
 		int row_count = -1;
 		// create connection
 		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
-			String DBRelativeLocation =
-				scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+			String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
 			sqlConn = new SqlConnection(dbtype, DBRelativeLocation);
 		} else {
 			sqlConn = new SqlConnection(dbtype, host, port, database, user, passwd);
@@ -234,8 +232,7 @@ public class SQLSkill extends Skill {
 		GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
 		// String tranformStr = (String) scope.getArg("transform", IType.BOOL);
 		// Boolean transform = ( (tranformStr != null) ? Boolean.parseBoolean(tranformStr) : false);
-		Boolean transform =
-			scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
+		Boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
 		String dbtype = (String) params.get("dbtype");
 		String host = (String) params.get("host");
 		String port = (String) params.get("port");
@@ -245,8 +242,7 @@ public class SQLSkill extends Skill {
 		SqlConnection sqlConn;
 		// create connection
 		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
-			String DBRelativeLocation =
-				scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+			String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
 			if ( DEBUG ) {
 				GuiUtils.debug("database sqlite:" + DBRelativeLocation);
 			}
@@ -427,8 +423,7 @@ public class SQLSkill extends Skill {
 		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 		String selectComm = (String) scope.getArg("select", IType.STRING);
 		GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
-		Boolean transform =
-			scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
+		Boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
 		String dbtype = (String) params.get("dbtype");
 		String host = (String) params.get("host");
 		String port = (String) params.get("port");
@@ -439,8 +434,7 @@ public class SQLSkill extends Skill {
 		GamaList<Object> repRequest = new GamaList<Object>();
 		// create connection
 		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
-			String DBRelativeLocation =
-				scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+			String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
 			sqlConn = new SqlConnection(dbtype, DBRelativeLocation);
 		} else {
 			sqlConn = new SqlConnection(dbtype, host, port, database, user, passwd);
@@ -475,10 +469,8 @@ public class SQLSkill extends Skill {
 	})
 	public IMatrix List2matrix(final IScope scope) throws GamaRuntimeException {
 		try {
-			boolean getName =
-				scope.hasArg("getName") ? (Boolean) scope.getArg("getName", IType.BOOL) : true;
-			boolean getType =
-				scope.hasArg("getType") ? (Boolean) scope.getArg("getType", IType.BOOL) : false;
+			boolean getName = scope.hasArg("getName") ? (Boolean) scope.getArg("getName", IType.BOOL) : true;
+			boolean getType = scope.hasArg("getType") ? (Boolean) scope.getArg("getType", IType.BOOL) : false;
 			GamaList<Object> value = (GamaList<Object>) scope.getArg("param", IType.LIST);
 			GamaList<Object> columnNames = (GamaList<Object>) value.get(0);
 			GamaList<Object> columnTypes = (GamaList<Object>) value.get(1);
@@ -487,8 +479,7 @@ public class SQLSkill extends Skill {
 			int lineSize = records.size();
 
 			final IMatrix matrix =
-				new GamaObjectMatrix(scope, columnSize, lineSize + (getType ? 1 : 0) +
-					(getName ? 1 : 0));
+				new GamaObjectMatrix(scope, columnSize, lineSize + (getType ? 1 : 0) + (getName ? 1 : 0));
 			// Add ColumnNames to Matrix
 			if ( getName == true ) {
 				for ( int j = 0; j < columnSize; j++ ) {

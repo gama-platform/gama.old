@@ -132,8 +132,7 @@ public class GeometryUtils {
 		return coords;
 	}
 
-	public static Coordinate[] extractPoints(final IShape triangle, final Geometry geom,
-		final int degree) {
+	public static Coordinate[] extractPoints(final IShape triangle, final Geometry geom, final int degree) {
 		Coordinate[] coords = triangle.getInnerGeometry().getCoordinates();
 		Coordinate[] c1 = { coords[0], coords[1] };
 		Coordinate[] c2 = { coords[1], coords[2] };
@@ -175,8 +174,7 @@ public class GeometryUtils {
 		return pts;
 	}
 
-	public static GamaList<IShape> hexagonalGridFromGeom(final IShape geom, final int nbRows,
-		final int nbColumns) {
+	public static GamaList<IShape> hexagonalGridFromGeom(final IShape geom, final int nbRows, final int nbColumns) {
 		double widthEnv = geom.getEnvelope().getWidth();
 		double heightEnv = geom.getEnvelope().getHeight();
 		double xmin = geom.getEnvelope().getMinX();
@@ -189,8 +187,8 @@ public class GeometryUtils {
 		for ( int l = 0; l < nbRows; l++ ) {
 			for ( int c = 0; c < nbColumns; c = c + 2 ) {
 				GamaShape poly =
-					(GamaShape) GamaGeometryType.buildHexagon(widthHex, heightHex, new GamaPoint(
-						xmin + c * widthHex * 0.75, ymin + l * heightHex));
+					(GamaShape) GamaGeometryType.buildHexagon(widthHex, heightHex, new GamaPoint(xmin + c * widthHex *
+						0.75, ymin + l * heightHex));
 				// GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size, xmin + (c * 1.5)
 				// * size, ymin + 2* size*val * l);
 				if ( geom.covers(poly) ) {
@@ -201,8 +199,8 @@ public class GeometryUtils {
 		for ( int l = 0; l < nbRows; l++ ) {
 			for ( int c = 1; c < nbColumns; c = c + 2 ) {
 				GamaShape poly =
-					(GamaShape) GamaGeometryType.buildHexagon(widthHex, heightHex, new GamaPoint(
-						xmin + c * widthHex * 0.75, ymin + (l + 0.5) * heightHex));
+					(GamaShape) GamaGeometryType.buildHexagon(widthHex, heightHex, new GamaPoint(xmin + c * widthHex *
+						0.75, ymin + (l + 0.5) * heightHex));
 				// GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size, xmin + (c * 1.5)
 				// * size, ymin + 2* size*val * l);
 				if ( geom.covers(poly) ) {
@@ -223,8 +221,7 @@ public class GeometryUtils {
 		return geoms;
 	}
 
-	public static List<Geometry> discretisation(final Geometry geom, final double size,
-		final boolean complex) {
+	public static List<Geometry> discretisation(final Geometry geom, final double size, final boolean complex) {
 		List<Geometry> geoms = new ArrayList<Geometry>();
 		if ( geom instanceof GeometryCollection ) {
 			GeometryCollection gc = (GeometryCollection) geom;
@@ -310,8 +307,7 @@ public class GeometryUtils {
 		} else if ( geom instanceof Polygon ) {
 			Polygon polygon = (Polygon) geom;
 			double sizeTol = Math.sqrt(polygon.getArea()) / 100.0;
-			ConformingDelaunayTriangulationBuilder dtb =
-				new ConformingDelaunayTriangulationBuilder();
+			ConformingDelaunayTriangulationBuilder dtb = new ConformingDelaunayTriangulationBuilder();
 			GeometryCollection tri = null;
 			try {
 				dtb.setSites(polygon);
@@ -355,8 +351,7 @@ public class GeometryUtils {
 		Collection<GamaShape> nodes = graph.vertexSet();
 		GeometryFactory geomFact = GeometryUtils.getFactory();
 		for ( GamaShape node : nodes ) {
-			Coordinate[] coordsArr =
-				GeometryUtils.extractPoints(node, geom, graph.degreeOf(node) / 2);
+			Coordinate[] coordsArr = GeometryUtils.extractPoints(node, geom, graph.degreeOf(node) / 2);
 			if ( coordsArr != null ) {
 				network.add(geomFact.createLineString(coordsArr));
 			}
@@ -436,8 +431,7 @@ public class GeometryUtils {
 				holes[i] = getFactory().createLinearRing(coordinatesH);
 			}
 		}
-		Polygon poly =
-			getFactory().createPolygon(getFactory().createLinearRing(coordinates), holes);
+		Polygon poly = getFactory().createPolygon(getFactory().createLinearRing(coordinates), holes);
 		return poly;
 	}
 
@@ -515,8 +509,7 @@ public class GeometryUtils {
 	// Created date:24-Feb-2013: Process for SQL - MAP type
 	// Modified: 24-Feb-2012
 
-	public static Envelope computeEnvelopeFromSQLData(final IScope scope,
-		final Map<String, Object> bounds) {
+	public static Envelope computeEnvelopeFromSQLData(final IScope scope, final Map<String, Object> bounds) {
 		Map<String, Object> params = bounds;
 
 		String dbtype = (String) params.get("dbtype");
@@ -527,14 +520,12 @@ public class GeometryUtils {
 		String passwd = (String) params.get("passwd");
 		String crs = (String) params.get("crs");
 		String srid = (String) params.get("srid");
-		Boolean longitudeFirst =
-			params.get("longitudeFirst") == null ? true : (Boolean) params.get("longitudeFirst");
+		Boolean longitudeFirst = params.get("longitudeFirst") == null ? true : (Boolean) params.get("longitudeFirst");
 		SqlConnection sqlConn;
 		Envelope env = null;
 		// create connection
 		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
-			String DBRelativeLocation =
-				scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+			String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
 
 			// sqlConn=new SqlConnection(dbtype,database);
 			sqlConn = new SqlConnection(dbtype, DBRelativeLocation);
@@ -550,7 +541,7 @@ public class GeometryUtils {
 			double longitude = env.centre().y;
 
 			if ( crs != null || srid != null ) {
-				GisUtils gis = scope.getWorldScope().getGisUtils();
+				GisUtils gis = scope.getSimulationScope().getGisUtils();
 				if ( crs != null ) {
 					gis.setTransformCRS(crs, latitude, longitude);
 				} else {

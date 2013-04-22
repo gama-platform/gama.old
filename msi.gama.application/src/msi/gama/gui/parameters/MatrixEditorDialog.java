@@ -36,7 +36,7 @@ public class MatrixEditorDialog extends Dialog {
 	private Composite container = null;
 	private Table table = null;
 
-	Color gray = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
+	private final Color gray = Display.getCurrent().getSystemColor(SWT.COLOR_GRAY);
 
 	protected MatrixEditorDialog(final Shell parentShell, final IMatrix paramValue) {
 		super(parentShell);
@@ -46,9 +46,7 @@ public class MatrixEditorDialog extends Dialog {
 	@Override
 	protected Control createDialogArea(final Composite parent) {
 		container = (Composite) super.createDialogArea(parent);
-		table =
-			new Table(container, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL |
-				SWT.FULL_SELECTION);
+		table = new Table(container, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.FULL_SELECTION);
 		container.setLayout(new FillLayout());
 		table.setLinesVisible(true);
 		table.setHeaderVisible(false);

@@ -18,28 +18,24 @@ import org.eclipse.swt.widgets.*;
  * </dl>
  * <p>
  * 
- * The <code>CoolSlider</code> is a slider class created to provide a dynamic way to have a really
- * (cool) looking slider. The look, graphical behaviour and shape is totally up to the developer
- * that makes use of this class. <br>
+ * The <code>CoolSlider</code> is a slider class created to provide a dynamic way to have a really (cool) looking
+ * slider. The look, graphical behaviour and shape is totally up to the developer that makes use of this class. <br>
  * <br>
  * 
- * The <code>CoolSlider</code> makes use of a minimum of 5
- * <code>org.eclipse.swt.graphics.Image</code> classes to give it a custom appearance. 2 of the
- * images are needed to be used as tiles. 2 more images are needed as leftmost and rightmost (or
- * topmost and bottom most, depending on the style used) these 2 images are not used as tiles. <br>
- * To create the thumb of the slider at least one image will need to be specified for this. The
- * thumb is really a <code>CoolButton</code> (with style SWT.PUSH) so one can specify 3 images for
- * each state of the button. To indicate focus on the slider one can provide 3 images for the focus
- * images of the <code>CoolButton</code>.<br>
+ * The <code>CoolSlider</code> makes use of a minimum of 5 <code>org.eclipse.swt.graphics.Image</code> classes to give
+ * it a custom appearance. 2 of the images are needed to be used as tiles. 2 more images are needed as leftmost and
+ * rightmost (or topmost and bottom most, depending on the style used) these 2 images are not used as tiles. <br>
+ * To create the thumb of the slider at least one image will need to be specified for this. The thumb is really a
+ * <code>CoolButton</code> (with style SWT.PUSH) so one can specify 3 images for each state of the button. To indicate
+ * focus on the slider one can provide 3 images for the focus images of the <code>CoolButton</code>.<br>
  * <br>
  * 
- * The <code>CoolSlider</code> can behave like a horizontal slider (using:
- * <code>SWT.HORIZONTAL</code> or a vertical slider (using: <code>SWT.VERTICAL</code>). <br>
+ * The <code>CoolSlider</code> can behave like a horizontal slider (using: <code>SWT.HORIZONTAL</code> or a vertical
+ * slider (using: <code>SWT.VERTICAL</code>). <br>
  * <br>
  * 
- * The <code>CoolSlider</code> can move its thumb smoothly (SMOOTH STYLE) or in fixed increments
- * (SNAP STYLE). When using SNAP_STYLE make sure that one calls the
- * <code>setSnapValues<code> method. 
+ * The <code>CoolSlider</code> can move its thumb smoothly (SMOOTH STYLE) or in fixed increments (SNAP STYLE). When
+ * using SNAP_STYLE make sure that one calls the <code>setSnapValues<code> method. 
  * 
  * 
  * 
@@ -54,7 +50,7 @@ import org.eclipse.swt.widgets.*;
  */
 public class CoolSlider extends Composite implements IPopupProvider {
 
-	IPositionChangeListener popupListener = new IPositionChangeListener() {
+	private final IPositionChangeListener popupListener = new IPositionChangeListener() {
 
 		@Override
 		public void positionChanged(final double position) {
@@ -63,7 +59,7 @@ public class CoolSlider extends Composite implements IPopupProvider {
 	};
 
 	public static final int SMOOTH_STYLE = 0;
-	public static final int SNAP_STYLE = 1;
+	private static final int SNAP_STYLE = 1;
 	/**
 	 * Right most region, or bottom most region (SWT.VERTICAL). Image used in this region is not
 	 * tiled
@@ -89,8 +85,8 @@ public class CoolSlider extends Composite implements IPopupProvider {
 	/** A lock object for the <code>CoolSliderToolTipInterperter</code> */
 	private final Object tooltipIntLock = new Object();
 	/**
-	 * The class implementing this interface will be asked to give a user understandable
-	 * <code>String</code> to the slider's current position
+	 * The class implementing this interface will be asked to give a user understandable <code>String</code> to the
+	 * slider's current position
 	 */
 	private IToolTipProvider toolTipInterperter;
 	/** the minimum width of the slider */
@@ -98,8 +94,7 @@ public class CoolSlider extends Composite implements IPopupProvider {
 	/** the minimum height of the slider */
 	private final int minHeight;
 	/** A list of position changed listeners */
-	private final List<IPositionChangeListener> positionChangedListeners =
-		new ArrayList<IPositionChangeListener>();
+	private final List<IPositionChangeListener> positionChangedListeners = new ArrayList<IPositionChangeListener>();
 	/** stores the previous position that was sent out to the position changed listeners */
 	private double previousPosition = -1;
 
@@ -127,11 +122,11 @@ public class CoolSlider extends Composite implements IPopupProvider {
 	 * @param right
 	 * @param rightmost
 	 */
-	public CoolSlider(final Composite parent, final int style, final Image leftmost,
-		final Image left, final Image thumbImageNormal, final Image thumbImageHover,
-		final Image thumbImagePressed, final Image right, final Image rightmost) {
-		this(parent, style, leftmost, left, thumbImageNormal, thumbImageHover, thumbImagePressed,
-			thumbImageNormal, thumbImageHover, thumbImagePressed, right, rightmost);
+	public CoolSlider(final Composite parent, final int style, final Image leftmost, final Image left,
+		final Image thumbImageNormal, final Image thumbImageHover, final Image thumbImagePressed, final Image right,
+		final Image rightmost) {
+		this(parent, style, leftmost, left, thumbImageNormal, thumbImageHover, thumbImagePressed, thumbImageNormal,
+			thumbImageHover, thumbImagePressed, right, rightmost);
 	}
 
 	/**
@@ -153,10 +148,9 @@ public class CoolSlider extends Composite implements IPopupProvider {
 	 * @param right
 	 * @param rightmost
 	 */
-	public CoolSlider(final Composite parent, final int style, final Image leftmost,
-		final Image left, final Image thumbImageNormal, final Image thumbImageHover,
-		final Image thumbImagePressed, final Image thumbImageFocusedNormal,
-		final Image thumbImageFocusedHover, final Image thumbImageFocusedPressed,
+	public CoolSlider(final Composite parent, final int style, final Image leftmost, final Image left,
+		final Image thumbImageNormal, final Image thumbImageHover, final Image thumbImagePressed,
+		final Image thumbImageFocusedNormal, final Image thumbImageFocusedHover, final Image thumbImageFocusedPressed,
 		final Image right, final Image rightmost) {
 		super(parent, SWT.DOUBLE_BUFFERED);
 		horizontal = SWT.VERTICAL != (style & SWT.VERTICAL);
@@ -167,12 +161,8 @@ public class CoolSlider extends Composite implements IPopupProvider {
 		gl.marginHeight = 0;
 		gl.marginWidth = 0;
 		setLayout(gl);
-		minWidth =
-			leftmost.getBounds().width + rightmost.getBounds().width +
-				thumbImageNormal.getBounds().width;
-		minHeight =
-			leftmost.getBounds().height + rightmost.getBounds().height +
-				thumbImageNormal.getBounds().height;
+		minWidth = leftmost.getBounds().width + rightmost.getBounds().width + thumbImageNormal.getBounds().width;
+		minHeight = leftmost.getBounds().height + rightmost.getBounds().height + thumbImageNormal.getBounds().height;
 		leftmostRegion = new CoolSliderPanel(this, leftmost, horizontal, false, true);
 		leftmostRegion.addMouseListener(new MouseAdapter() {
 
@@ -238,9 +228,8 @@ public class CoolSlider extends Composite implements IPopupProvider {
 		});
 
 		thumb =
-			new CoolButton(this, thumbImageNormal, thumbImageHover, thumbImagePressed,
-				thumbImageNormal, thumbImageFocusedNormal, thumbImageFocusedHover,
-				thumbImageFocusedPressed);
+			new CoolButton(this, thumbImageNormal, thumbImageHover, thumbImagePressed, thumbImageNormal,
+				thumbImageFocusedNormal, thumbImageFocusedHover, thumbImageFocusedPressed);
 
 		thumb.addMouseListener(new MouseAdapter() {
 
@@ -248,11 +237,9 @@ public class CoolSlider extends Composite implements IPopupProvider {
 			public void mouseDown(final MouseEvent e) {
 				mouseDown = true;
 				if ( CoolSlider.this.horizontal ) {
-					moveThumbHorizontally(leftmostRegion.getBounds().width +
-						leftRegion.getBounds().width + e.x);
+					moveThumbHorizontally(leftmostRegion.getBounds().width + leftRegion.getBounds().width + e.x);
 				} else {
-					moveThumbVertically(leftmostRegion.getBounds().height +
-						leftRegion.getBounds().height + e.y);
+					moveThumbVertically(leftmostRegion.getBounds().height + leftRegion.getBounds().height + e.y);
 				}
 			}
 
@@ -267,11 +254,9 @@ public class CoolSlider extends Composite implements IPopupProvider {
 			public void mouseMove(final MouseEvent e) {
 				if ( mouseDown ) {
 					if ( CoolSlider.this.horizontal ) {
-						moveThumbHorizontally(leftmostRegion.getBounds().width +
-							leftRegion.getBounds().width + e.x);
+						moveThumbHorizontally(leftmostRegion.getBounds().width + leftRegion.getBounds().width + e.x);
 					} else {
-						moveThumbVertically(leftmostRegion.getBounds().height +
-							leftRegion.getBounds().height + e.y);
+						moveThumbVertically(leftmostRegion.getBounds().height + leftRegion.getBounds().height + e.y);
 					}
 				}
 			}
@@ -309,11 +294,11 @@ public class CoolSlider extends Composite implements IPopupProvider {
 			public void mouseDown(final MouseEvent e) {
 				mouseDown = true;
 				if ( CoolSlider.this.horizontal ) {
-					moveThumbHorizontally(leftmostRegion.getBounds().width +
-						leftRegion.getBounds().width + thumb.getBounds().width + e.x);
+					moveThumbHorizontally(leftmostRegion.getBounds().width + leftRegion.getBounds().width +
+						thumb.getBounds().width + e.x);
 				} else {
-					moveThumbVertically(leftmostRegion.getBounds().height +
-						leftRegion.getBounds().height + thumb.getBounds().height + e.y);
+					moveThumbVertically(leftmostRegion.getBounds().height + leftRegion.getBounds().height +
+						thumb.getBounds().height + e.y);
 				}
 			}
 
@@ -328,11 +313,11 @@ public class CoolSlider extends Composite implements IPopupProvider {
 			public void mouseMove(final MouseEvent e) {
 				if ( mouseDown ) {
 					if ( CoolSlider.this.horizontal ) {
-						moveThumbHorizontally(leftmostRegion.getBounds().width +
-							leftRegion.getBounds().width + thumb.getBounds().width + e.x);
+						moveThumbHorizontally(leftmostRegion.getBounds().width + leftRegion.getBounds().width +
+							thumb.getBounds().width + e.x);
 					} else {
-						moveThumbVertically(leftmostRegion.getBounds().height +
-							leftRegion.getBounds().height + thumb.getBounds().height + e.y);
+						moveThumbVertically(leftmostRegion.getBounds().height + leftRegion.getBounds().height +
+							thumb.getBounds().height + e.y);
 					}
 				}
 			}
@@ -345,13 +330,11 @@ public class CoolSlider extends Composite implements IPopupProvider {
 			public void mouseDown(final MouseEvent e) {
 				mouseDown = true;
 				if ( CoolSlider.this.horizontal ) {
-					moveThumbHorizontally(leftmostRegion.getBounds().width +
-						leftRegion.getBounds().width + thumb.getBounds().width +
-						rightRegion.getBounds().width + e.x);
+					moveThumbHorizontally(leftmostRegion.getBounds().width + leftRegion.getBounds().width +
+						thumb.getBounds().width + rightRegion.getBounds().width + e.x);
 				} else {
-					moveThumbVertically(leftmostRegion.getBounds().height +
-						leftRegion.getBounds().height + thumb.getBounds().height +
-						rightRegion.getBounds().height + e.y);
+					moveThumbVertically(leftmostRegion.getBounds().height + leftRegion.getBounds().height +
+						thumb.getBounds().height + rightRegion.getBounds().height + e.y);
 				}
 			}
 
@@ -366,13 +349,11 @@ public class CoolSlider extends Composite implements IPopupProvider {
 			public void mouseMove(final MouseEvent e) {
 				if ( mouseDown ) {
 					if ( CoolSlider.this.horizontal ) {
-						moveThumbHorizontally(leftmostRegion.getBounds().width +
-							leftRegion.getBounds().width + thumb.getBounds().width +
-							rightRegion.getBounds().width + e.x);
+						moveThumbHorizontally(leftmostRegion.getBounds().width + leftRegion.getBounds().width +
+							thumb.getBounds().width + rightRegion.getBounds().width + e.x);
 					} else {
-						moveThumbVertically(leftmostRegion.getBounds().height +
-							leftRegion.getBounds().height + thumb.getBounds().height +
-							rightRegion.getBounds().height + e.y);
+						moveThumbVertically(leftmostRegion.getBounds().height + leftRegion.getBounds().height +
+							thumb.getBounds().height + rightRegion.getBounds().height + e.y);
 					}
 				}
 			}
@@ -543,10 +524,8 @@ public class CoolSlider extends Composite implements IPopupProvider {
 	private void moveThumbHorizontally(final int x, final boolean update) {
 		thumb.setFocus();
 		int width = x - thumb.getBounds().width / 2 - leftmostRegion.getBounds().width;
-		if ( width > getClientArea().width - thumb.getBounds().width -
-			rightmostRegion.getBounds().width ) {
-			width =
-				getClientArea().width - thumb.getBounds().width - rightmostRegion.getBounds().width;
+		if ( width > getClientArea().width - thumb.getBounds().width - rightmostRegion.getBounds().width ) {
+			width = getClientArea().width - thumb.getBounds().width - rightmostRegion.getBounds().width;
 		}
 		if ( width < 0 ) {
 			int mW = leftmostRegion.getBounds().width + width;
@@ -609,11 +588,8 @@ public class CoolSlider extends Composite implements IPopupProvider {
 	private void moveThumbVertically(final int y, final boolean update) {
 		thumb.setFocus();
 		int height = y - thumb.getBounds().height / 2 - leftmostRegion.getBounds().height;
-		if ( height > getClientArea().height - thumb.getBounds().height -
-			rightmostRegion.getBounds().height ) {
-			height =
-				getClientArea().height - thumb.getBounds().height -
-					rightmostRegion.getBounds().height;
+		if ( height > getClientArea().height - thumb.getBounds().height - rightmostRegion.getBounds().height ) {
+			height = getClientArea().height - thumb.getBounds().height - rightmostRegion.getBounds().height;
 		}
 		if ( height < 0 ) {
 			int mH = leftmostRegion.getBounds().height + height;
@@ -657,15 +633,13 @@ public class CoolSlider extends Composite implements IPopupProvider {
 			final boolean lastFillerRegion, final boolean lastmostRegion) {
 			super(parent, SWT.NONE);
 			gd =
-				new GridData(lastFillerRegion && horizontal && !lastmostRegion ? SWT.FILL
-					: SWT.BEGINNING, lastFillerRegion && !horizontal && !lastmostRegion ? SWT.FILL
-					: SWT.BEGINNING, lastFillerRegion && horizontal && !lastmostRegion,
-					lastFillerRegion && !horizontal && !lastmostRegion);
+				new GridData(lastFillerRegion && horizontal && !lastmostRegion ? SWT.FILL : SWT.BEGINNING,
+					lastFillerRegion && !horizontal && !lastmostRegion ? SWT.FILL : SWT.BEGINNING, lastFillerRegion &&
+						horizontal && !lastmostRegion, lastFillerRegion && !horizontal && !lastmostRegion);
 			gdDefault =
-				new GridData(lastFillerRegion && horizontal && !lastmostRegion ? SWT.FILL
-					: SWT.BEGINNING, lastFillerRegion && !horizontal && !lastmostRegion ? SWT.FILL
-					: SWT.BEGINNING, lastFillerRegion && horizontal && !lastmostRegion,
-					lastFillerRegion && !horizontal && !lastmostRegion);
+				new GridData(lastFillerRegion && horizontal && !lastmostRegion ? SWT.FILL : SWT.BEGINNING,
+					lastFillerRegion && !horizontal && !lastmostRegion ? SWT.FILL : SWT.BEGINNING, lastFillerRegion &&
+						horizontal && !lastmostRegion, lastFillerRegion && !horizontal && !lastmostRegion);
 			if ( horizontal ) {
 				gd.minimumHeight = image.getBounds().height;
 				gd.heightHint = image.getBounds().height;
@@ -723,18 +697,14 @@ public class CoolSlider extends Composite implements IPopupProvider {
 	public void setSnapValues(final int max, final int min, final int incrementValue) {
 		checkWidget();
 		if ( !snapStyle ) { return; }
-		if ( min > max ) { throw new IllegalArgumentException(
-			"The maximum must be greater than the minimum"); }
+		if ( min > max ) { throw new IllegalArgumentException("The maximum must be greater than the minimum"); }
 		if ( max < incrementValue ) { throw new IllegalArgumentException(
 			"The maximum must be greater than the increment value"); }
 		if ( max - min < incrementValue ) { throw new IllegalArgumentException(
 			"The difference of the maximum and minimum must be greater than the increment value"); }
-		if ( max < 0 ) { throw new IllegalArgumentException(
-			"The maximum must be a positive integer"); }
-		if ( min < 0 ) { throw new IllegalArgumentException(
-			"The minimum must be a positive integer"); }
-		if ( incrementValue < 0 ) { throw new IllegalArgumentException(
-			"The increment value must be a positive integer"); }
+		if ( max < 0 ) { throw new IllegalArgumentException("The maximum must be a positive integer"); }
+		if ( min < 0 ) { throw new IllegalArgumentException("The minimum must be a positive integer"); }
+		if ( incrementValue < 0 ) { throw new IllegalArgumentException("The increment value must be a positive integer"); }
 		maximum = max;
 		minimum = min;
 		this.incrementValue = incrementValue;
@@ -834,8 +804,7 @@ public class CoolSlider extends Composite implements IPopupProvider {
 	@Override
 	public String getPopupText() {
 		double value = getCurrentPosition();
-		return toolTipInterperter == null ? String.valueOf(value) : toolTipInterperter
-			.getToolTipText(value);
+		return toolTipInterperter == null ? String.valueOf(value) : toolTipInterperter.getToolTipText(value);
 	}
 
 	/**

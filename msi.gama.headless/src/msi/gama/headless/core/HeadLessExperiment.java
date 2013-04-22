@@ -1,9 +1,9 @@
 package msi.gama.headless.core;
 
-import java.util.*;
+import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.*;
-import msi.gama.kernel.simulation.ISimulation;
+import msi.gama.kernel.simulation.ISimulationAgent;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -16,17 +16,14 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
 
 @symbol(name = { IKeyword.HEADLESS_UI }, kind = ISymbolKind.EXPERIMENT, with_sequence = true)
-@facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
+@facets(value = { @facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { IKeyword.HEADLESS_UI }, optional = false) }, omissible = IKeyword.NAME)
 @inside(symbols = IKeyword.MODEL)
-public class HeadLessExperiment extends AbstractExperiment implements IHeadLessExperiment {
-
-	protected final List<IParameter> regularParameters;
+public class HeadLessExperiment extends GuiExperimentSpecies implements IHeadLessExperiment {
 
 	public HeadLessExperiment(final IDescription description) {
 		super(description);
-		regularParameters = new ArrayList();
+		regularParameters.clear();
 	}
 
 	@Override
@@ -37,7 +34,7 @@ public class HeadLessExperiment extends AbstractExperiment implements IHeadLessE
 	@Override
 	public void start(final int nbStep) {
 		for ( int i = 0; i < nbStep; i++ ) {
-			this.stepExperiment();
+			this.userStep();
 		}
 
 	}
@@ -54,24 +51,13 @@ public class HeadLessExperiment extends AbstractExperiment implements IHeadLessE
 	public void stop() {}
 
 	@Override
-	public void pause() {}
-
-	@Override
-	public void step() {
-		stepExperiment();
-	}
-
-	@Override
-	public void stopExperiment() {}
-
-	@Override
-	public void startExperiment() throws GamaRuntimeException {}
+	public void userPause() {}
 
 	@Override
 	public void reloadExperiment() throws GamaRuntimeException, InterruptedException {
 		boolean wasRunning = isRunning() && !isPaused();
 		closeCurrentSimulation(false);
-		initializeExperiment();
+		initializeSimulation();
 		if ( wasRunning ) {
 			startExperiment();
 		}
@@ -92,6 +78,7 @@ public class HeadLessExperiment extends AbstractExperiment implements IHeadLessE
 		}
 	}
 
+	@Override
 	public void addRegularParameter(final IParameter p) {
 		if ( registerParameter(p) ) {
 			regularParameters.add(p);
@@ -108,27 +95,27 @@ public class HeadLessExperiment extends AbstractExperiment implements IHeadLessE
 	}
 
 	@Override
-	public ISimulation createSimulation() {
+	public ISimulationAgent createSimulation() {
 		return new HeadlessSimulation(this);
 	}
 
 	@Override
-	public void stepExperiment() {
-		this.currentSimulation.step();
+	public void userStep() {
+		// FIXME Verify this
+		this.getCurrentSimulation().step(agent.getExecutionScope());
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void setParameterWithName(final String name, final Object value)
-		throws GamaRuntimeException, InterruptedException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public Object getParameterWithName(final String name) throws GamaRuntimeException,
+	public void setParameterWithName(final String name, final Object value) throws GamaRuntimeException,
 		InterruptedException {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Object getParameterWithName(final String name) throws GamaRuntimeException, InterruptedException {
 		// TODO Auto-generated method stub
 		return null;
 	}

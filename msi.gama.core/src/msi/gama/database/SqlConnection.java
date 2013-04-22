@@ -1246,7 +1246,7 @@ public class SqlConnection {
 									    //Transform GAMA GIS TO NORMAL
 										if (transformed){
 											WKTReader wkt = new WKTReader();
-											Geometry geo2 =scope.getWorldScope().getGisUtils().inverseTransform(wkt.read(values.get(i).toString()));
+											Geometry geo2 =scope.getSimulationScope().getGisUtils().inverseTransform(wkt.read(values.get(i).toString()));
 											valueStr=valueStr+tmap.get(vender.toLowerCase())+"('"+geo2.toString()+"')";
 										}else{
 											valueStr=valueStr+tmap.get(vender.toLowerCase())+"('"+values.get(i).toString()+"')";
@@ -1339,7 +1339,7 @@ public class SqlConnection {
 									    //Transform GAMA GIS TO NORMAL
 										if (transformed){
 											WKTReader wkt = new WKTReader();
-											Geometry geo2 =scope.getWorldScope().getGisUtils().inverseTransform(wkt.read(values.get(i).toString()));
+											Geometry geo2 =scope.getSimulationScope().getGisUtils().inverseTransform(wkt.read(values.get(i).toString()));
 											valueStr=valueStr+tmap.get(vender.toLowerCase())+"('"+geo2.toString()+"')";
 										}else{ 
 											valueStr=valueStr+tmap.get(vender.toLowerCase())+"('"+values.get(i).toString()+"')";
@@ -1390,12 +1390,12 @@ public class SqlConnection {
 					}
 
 					public static Geometry fromGisToAbsolute(IScope scope, Geometry geom){
-						return scope.getWorldScope().getGisUtils().transform(geom);
+						return scope.getSimulationScope().getGisUtils().transform(geom);
 
 					}
 					
 					public static Geometry fromAbsoluteToGis(IScope scope, Geometry geom){
-						return scope.getWorldScope().getGisUtils().inverseTransform(geom);
+						return scope.getSimulationScope().getGisUtils().inverseTransform(geom);
 
 					}
 

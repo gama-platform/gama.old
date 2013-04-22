@@ -23,7 +23,6 @@ import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
-import msi.gama.kernel.simulation.ISimulation;
 import msi.gama.outputs.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -44,7 +43,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> {
 
 	public static final String ID = GuiUtils.MONITOR_VIEW_ID;
 
-	ArrayList<MonitorOutput> outputs = new ArrayList();
+	private final ArrayList<MonitorOutput> outputs = new ArrayList();
 
 	@Override
 	public void ownCreatePartControl(final Composite parent) {
@@ -95,27 +94,23 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> {
 		layout.verticalSpacing = 5;
 		compo.setLayout(layout);
 		final Text titleEditor =
-			(Text) EditorFactory.create(compo, "Title:", output.getViewName(), true,
-				new EditorListener<String>() {
+			(Text) EditorFactory.create(compo, "Title:", output.getViewName(), true, new EditorListener<String>() {
 
-					@Override
-					public void valueModified(final String newValue) throws GamaRuntimeException {
-						output.setName(newValue);
-						update(output);
-					}
+				@Override
+				public void valueModified(final String newValue) throws GamaRuntimeException {
+					output.setName(newValue);
+					update(output);
+				}
 
-				}).getEditor();
+			}).getEditor();
 
 		Text c =
-			(Text) EditorFactory.createExpression(
-				compo,
-				"Expression:",
-				output.getValue() == null ? "Enter a new GAML expression..." : output
-					.getExpressionText(), new EditorListener<IExpression>() {
+			(Text) EditorFactory.createExpression(compo, "Expression:",
+				output.getValue() == null ? "Enter a new GAML expression..." : output.getExpressionText(),
+				new EditorListener<IExpression>() {
 
 					@Override
-					public void valueModified(final IExpression newValue)
-						throws GamaRuntimeException {
+					public void valueModified(final IExpression newValue) throws GamaRuntimeException {
 						output.setNewExpression(newValue);
 						update(output);
 						// getViewer().collapseItemWithData(output);
@@ -170,7 +165,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> {
 		update(o);
 	}
 
-	StringBuilder sb = new StringBuilder(100);
+	private final StringBuilder sb = new StringBuilder(100);
 
 	@Override
 	public String getItemDisplayName(final MonitorOutput o, final String previousName) {
@@ -186,8 +181,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> {
 	}
 
 	public static void createNewMonitor() {
-		ISimulation simulation = GAMA.getFrontmostSimulation();
-		new MonitorOutput("monitor" + count++, null, simulation, true);
+		new MonitorOutput("monitor" + count++, null, GAMA.getDefaultScope(), true);
 	}
 
 	@Override

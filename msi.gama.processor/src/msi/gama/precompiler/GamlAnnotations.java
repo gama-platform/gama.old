@@ -441,6 +441,7 @@ public final class GamlAnnotations {
 	 * 
 	 */
 	@Retention(RetentionPolicy.SOURCE)
+	@Target({})
 	public static @interface var {
 
 		/**
@@ -778,7 +779,7 @@ public final class GamlAnnotations {
 	 */
 
 	@Retention(RetentionPolicy.SOURCE)
-	@Target({ ElementType.TYPE, ElementType.METHOD })
+	// @Target({ ElementType.TYPE, ElementType.METHOD })
 	@Inherited
 	public static @interface doc {
 

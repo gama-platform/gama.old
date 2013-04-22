@@ -21,7 +21,7 @@ package msi.gama.outputs;
 import java.util.*;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.kernel.experiment.IExperiment;
+import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
@@ -67,7 +67,7 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 		}
 	}
 
-	public void buildOutputs(final IExperiment exp) {
+	public void buildOutputs(final IExperimentSpecies exp) {
 		GuiUtils.run(new Runnable() {
 
 			@Override

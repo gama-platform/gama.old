@@ -27,11 +27,10 @@ import msi.gaml.types.IType;
 /**
  * @author drogoul
  */
-public interface IPrimRun {
+public interface IPrimRun extends IGamaHelper {
 
 	public Object run(ISkill skill, IAgent agent, IScope scope) throws GamaRuntimeException;
 
 	public IType getReturnType();
 
-	public Class getSkillClass();
 }

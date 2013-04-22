@@ -92,7 +92,7 @@ public class MapExpression extends AbstractExpression {
 
 	@Override
 	public String toGaml() {
-		final GamaList<GamaPair> list = getElements().listValue(null);
+		final IList list = getElements().getPairs();
 		return list.toGaml();
 	}
 
@@ -104,7 +104,7 @@ public class MapExpression extends AbstractExpression {
 		return vals;
 	}
 
-	public GamaMap getElements() {
+	public GamaMap<IExpression, IExpression> getElements() {
 		GamaMap result = new GamaMap(keys.length);
 		for ( int i = 0; i < keys.length; i++ ) {
 			result.put(keys[i], vals[i]);

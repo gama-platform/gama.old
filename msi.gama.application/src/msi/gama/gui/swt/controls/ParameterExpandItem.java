@@ -47,26 +47,25 @@ import org.eclipse.swt.widgets.*;
  */
 public class ParameterExpandItem extends Item {
 
-	ParameterExpandBar parent;
+	private ParameterExpandBar parent;
 	Control control;
 	boolean expanded;
 	int x, y, width, height;
-	static int imageHeight = 10, imageWidth = 10;
+	private static int imageHeight = 10, imageWidth = 10;
 	boolean isPaused;
-	static final int TEXT_INSET = 4;
-	static final int SEPARATION = 4;
-	static final int BORDER = 1;
+	private static final int TEXT_INSET = 4;
+	private static final int SEPARATION = 4;
+	private static final int BORDER = 1;
 	static final int CHEVRON_SIZE = 20;
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style value describing its
 	 * behavior and appearance.
 	 * <p>
-	 * The style value is either one of the style constants defined in class <code>SWT</code> which
-	 * is applicable to instances of this class, or must be built by <em>bitwise OR</em>'ing
-	 * together (that is, using the <code>int</code> "|" operator) two or more of those
-	 * <code>SWT</code> style constants. The class description lists the style constants that are
-	 * applicable to the class. Style bits are also inherited from superclasses.
+	 * The style value is either one of the style constants defined in class <code>SWT</code> which is applicable to
+	 * instances of this class, or must be built by <em>bitwise OR</em>'ing together (that is, using the
+	 * <code>int</code> "|" operator) two or more of those <code>SWT</code> style constants. The class description lists
+	 * the style constants that are applicable to the class. Style bits are also inherited from superclasses.
 	 * </p>
 	 * 
 	 * @param parent a composite control which will be the parent of the new instance (cannot be
@@ -77,8 +76,7 @@ public class ParameterExpandItem extends Item {
 	 *                <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
 	 *                </ul>
 	 * @exception SWTException <ul>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created
-	 *                the parent</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li>
 	 *                <li>ERROR_INVALID_SUBCLASS - if this class is not an allowed subclass</li>
 	 *                </ul>
 	 * 
@@ -94,11 +92,10 @@ public class ParameterExpandItem extends Item {
 	 * behavior and appearance, and the index at which to place it in the items maintained by its
 	 * parent.
 	 * <p>
-	 * The style value is either one of the style constants defined in class <code>SWT</code> which
-	 * is applicable to instances of this class, or must be built by <em>bitwise OR</em>'ing
-	 * together (that is, using the <code>int</code> "|" operator) two or more of those
-	 * <code>SWT</code> style constants. The class description lists the style constants that are
-	 * applicable to the class. Style bits are also inherited from superclasses.
+	 * The style value is either one of the style constants defined in class <code>SWT</code> which is applicable to
+	 * instances of this class, or must be built by <em>bitwise OR</em>'ing together (that is, using the
+	 * <code>int</code> "|" operator) two or more of those <code>SWT</code> style constants. The class description lists
+	 * the style constants that are applicable to the class. Style bits are also inherited from superclasses.
 	 * </p>
 	 * 
 	 * @param parent a composite control which will be the parent of the new instance (cannot be
@@ -108,20 +105,18 @@ public class ParameterExpandItem extends Item {
 	 * 
 	 * @exception IllegalArgumentException <ul>
 	 *                <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
-	 *                <li>ERROR_INVALID_RANGE - if the index is not between 0 and the number of
-	 *                elements in the parent (inclusive)</li>
+	 *                <li>ERROR_INVALID_RANGE - if the index is not between 0 and the number of elements in the parent
+	 *                (inclusive)</li>
 	 *                </ul>
 	 * @exception SWTException <ul>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created
-	 *                the parent</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li>
 	 *                <li>ERROR_INVALID_SUBCLASS - if this class is not an allowed subclass</li>
 	 *                </ul>
 	 * 
 	 * @see Widget#checkSubclass
 	 * @see Widget#getStyle
 	 */
-	public ParameterExpandItem(final ParameterExpandBar parent, final int style, final Object data,
-		final int index) {
+	public ParameterExpandItem(final ParameterExpandBar parent, final int style, final Object data, final int index) {
 		super(parent, style);
 		this.parent = parent;
 		setData(data);
@@ -219,8 +214,7 @@ public class ParameterExpandItem extends Item {
 	 * 
 	 * @exception SWTException <ul>
 	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created
-	 *                the receiver</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public int getHeaderHeight() {
@@ -245,14 +239,13 @@ public class ParameterExpandItem extends Item {
 		if ( parent == null ) { return; }
 		int headerHeight = parent.bandHeight;
 		if ( imageHeight > headerHeight ) {
-			parent.redraw(x + ParameterExpandItem.TEXT_INSET, y + headerHeight - imageHeight,
-				imageWidth, imageHeight, false);
+			parent.redraw(x + ParameterExpandItem.TEXT_INSET, y + headerHeight - imageHeight, imageWidth, imageHeight,
+				false);
 		}
 		parent.redraw(x, y, width, headerHeight + height, false);
 	}
 
-	void setBounds(final int x, final int y, final int width, final int height, final boolean move,
-		final boolean size) {
+	void setBounds(final int x, final int y, final int width, final int height, final boolean move, final boolean size) {
 		redraw();
 		if ( parent == null ) { return; }
 		int headerHeight = parent.bandHeight;
@@ -291,8 +284,7 @@ public class ParameterExpandItem extends Item {
 	 *                </ul>
 	 * @exception SWTException <ul>
 	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created
-	 *                the receiver</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public void setControl(final Control control) {
@@ -321,8 +313,7 @@ public class ParameterExpandItem extends Item {
 	 * 
 	 * @exception SWTException <ul>
 	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created
-	 *                the receiver</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public void setExpanded(final boolean expanded) {
@@ -358,8 +349,7 @@ public class ParameterExpandItem extends Item {
 	 * 
 	 * @exception SWTException <ul>
 	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created
-	 *                the receiver</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public void setHeight(final int height) {

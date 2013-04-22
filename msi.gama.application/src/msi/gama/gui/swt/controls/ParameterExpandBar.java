@@ -27,8 +27,7 @@ import org.eclipse.swt.widgets.*;
 /**
  * Instances of this class support the layout of selectable expand bar items.
  * <p>
- * The item children that may be added to instances of this class must be of type
- * <code>ExpandItem</code>.
+ * The item children that may be added to instances of this class must be of type <code>ExpandItem</code>.
  * </p>
  * <p>
  * <dl>
@@ -55,26 +54,27 @@ import org.eclipse.swt.widgets.*;
  */
 public class ParameterExpandBar extends Composite {
 
-	ParameterExpandItem[] items;
+	private ParameterExpandItem[] items;
 	private ParameterExpandItem focusItem;
-	int spacing, yCurrentScroll, itemCount;
+	private int spacing, yCurrentScroll, itemCount;
 	// Font font;
-	Color foreground;
-	Listener listener;
-	boolean inDispose, isClosable, isPausable;
-	ItemList underlyingObjects;
+	private Color foreground;
+	private final Listener listener;
+	private boolean inDispose;
+	final boolean isClosable;
+	final boolean isPausable;
+	private final ItemList underlyingObjects;
 	int bandHeight = ParameterExpandItem.CHEVRON_SIZE;
 
 	/**
 	 * @param underlyingObjects Constructs a new instance of this class given its parent and a style
 	 *            value describing its behavior and appearance.
 	 *            <p>
-	 *            The style value is either one of the style constants defined in class
-	 *            <code>SWT</code> which is applicable to instances of this class, or must be built
-	 *            by <em>bitwise OR</em>'ing together (that is, using the <code>int</code> "|"
-	 *            operator) two or more of those <code>SWT</code> style constants. The class
-	 *            description lists the style constants that are applicable to the class. Style bits
-	 *            are also inherited from superclasses.
+	 *            The style value is either one of the style constants defined in class <code>SWT</code> which is
+	 *            applicable to instances of this class, or must be built by <em>bitwise OR</em>'ing together (that is,
+	 *            using the <code>int</code> "|" operator) two or more of those <code>SWT</code> style constants. The
+	 *            class description lists the style constants that are applicable to the class. Style bits are also
+	 *            inherited from superclasses.
 	 *            </p>
 	 * 
 	 * @param parent a composite control which will be the parent of the new instance (cannot be
@@ -85,8 +85,7 @@ public class ParameterExpandBar extends Composite {
 	 *                <li>ERROR_NULL_ARGUMENT - if the parent is null</li>
 	 *                </ul>
 	 * @exception SWTException <ul>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created
-	 *                the parent</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the parent</li>
 	 *                <li>ERROR_INVALID_SUBCLASS - if this class is not an allowed subclass</li>
 	 *                </ul>
 	 * 
@@ -280,8 +279,8 @@ public class ParameterExpandBar extends Composite {
 	 * @return the item at the given index
 	 * 
 	 * @exception IllegalArgumentException <ul>
-	 *                <li>ERROR_INVALID_RANGE - if the index is not between 0 and the number of
-	 *                elements in the list minus 1 (inclusive)</li>
+	 *                <li>ERROR_INVALID_RANGE - if the index is not between 0 and the number of elements in the list
+	 *                minus 1 (inclusive)</li>
 	 *                </ul>
 	 */
 	public ParameterExpandItem getItem(final int index) {
@@ -295,8 +294,7 @@ public class ParameterExpandBar extends Composite {
 	 * 
 	 * @exception SWTException <ul>
 	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created
-	 *                the receiver</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public int getItemCount() {
@@ -306,16 +304,15 @@ public class ParameterExpandBar extends Composite {
 	/**
 	 * Returns an array of <code>ExpandItem</code>s which are the items in the receiver.
 	 * <p>
-	 * Note: This is not the actual structure used by the receiver to maintain its list of items, so
-	 * modifying the array will not affect the receiver.
+	 * Note: This is not the actual structure used by the receiver to maintain its list of items, so modifying the array
+	 * will not affect the receiver.
 	 * </p>
 	 * 
 	 * @return the items in the receiver
 	 * 
 	 * @exception SWTException <ul>
 	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created
-	 *                the receiver</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public ParameterExpandItem[] getItems() {
@@ -331,8 +328,7 @@ public class ParameterExpandBar extends Composite {
 	 * 
 	 * @exception SWTException <ul>
 	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created
-	 *                the receiver</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public int getSpacing() {
@@ -353,8 +349,7 @@ public class ParameterExpandBar extends Composite {
 	 *                </ul>
 	 * @exception SWTException <ul>
 	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li>
-	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created
-	 *                the receiver</li>
+	 *                <li>ERROR_THREAD_INVALID_ACCESS - if not called from the thread that created the receiver</li>
 	 *                </ul>
 	 */
 	public int indexOf(final ParameterExpandItem item) {
@@ -393,8 +388,7 @@ public class ParameterExpandBar extends Composite {
 
 	public void updateItemNames() {
 		for ( int i = 0; i < itemCount; i++ ) {
-			items[i].setText(underlyingObjects.getItemDisplayName(items[i].getData(),
-				items[i].getText()));
+			items[i].setText(underlyingObjects.getItemDisplayName(items[i].getData(), items[i].getText()));
 		}
 	}
 
@@ -533,8 +527,7 @@ public class ParameterExpandBar extends Composite {
 		int y = event.y;
 		for ( int i = 0; i < itemCount; i++ ) {
 			ParameterExpandItem item = items[i];
-			boolean hover =
-				item.x <= x && x < item.x + item.width && item.y <= y && y < item.y + bandHeight;
+			boolean hover = item.x <= x && x < item.x + item.width && item.y <= y && y < item.y + bandHeight;
 			if ( !hover ) {
 				continue;
 			}
@@ -571,8 +564,8 @@ public class ParameterExpandBar extends Composite {
 		int x = event.x;
 		int y = event.y;
 		boolean hover =
-			getFocusItem().x <= x && x < getFocusItem().x + getFocusItem().width &&
-				getFocusItem().y <= y && y < getFocusItem().y + bandHeight;
+			getFocusItem().x <= x && x < getFocusItem().x + getFocusItem().width && getFocusItem().y <= y &&
+				y < getFocusItem().y + bandHeight;
 		if ( hover ) {
 			if ( isPausable && getFocusItem().pauseRequested(x, y) ) { return; }
 

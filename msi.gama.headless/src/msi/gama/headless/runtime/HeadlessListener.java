@@ -4,20 +4,21 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.displays.awt.AWTDisplayGraphics;
-import msi.gama.kernel.experiment.IExperiment;
+import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.compilation.GamaClassLoader;
+import msi.gaml.types.IType;
 import org.eclipse.core.runtime.*;
 
 public class HeadlessListener implements IGui {
 
 	@Override
-	public Map<String, Object> openUserInputDialog(final String title,
-		final Map<String, Object> initialValues) {
+	public Map<String, Object> openUserInputDialog(final String title, final Map<String, Object> initialValues,
+		final Map<String, IType> types) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -91,7 +92,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void showParameterView(final IExperiment exp) {
+	public void showParameterView(final IExperimentSpecies exp) {
 		// System.out.println(exp.get)
 	}
 
@@ -133,7 +134,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public boolean confirmClose(final IExperiment experiment) {
+	public boolean confirmClose(final IExperimentSpecies experiment) {
 		// TODO Auto-generated method stub
 		return true;
 	}
@@ -216,21 +217,19 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public IDisplaySurface getDisplaySurfaceFor(final String keyword,
-		final IDisplayOutput layerDisplayOutput, final double w, final double h) {
+	public IDisplaySurface getDisplaySurfaceFor(final String keyword, final IDisplayOutput layerDisplayOutput,
+		final double w, final double h) {
 		// FIXME Raw dynamic version -- the map needs to be created and cached somewhere
 
 		Map<String, Class> displayClasses = new HashMap();
 
-		IConfigurationElement[] config =
-			Platform.getExtensionRegistry().getConfigurationElementsFor("gama.display");
+		IConfigurationElement[] config = Platform.getExtensionRegistry().getConfigurationElementsFor("gama.display");
 		for ( IConfigurationElement e : config ) {
 			final String pluginKeyword = e.getAttribute("keyword");
 			final String pluginClass = e.getAttribute("class");
 			// final Class<IDisplaySurface> displayClass = .
 			final String pluginName = e.getContributor().getName();
-			ClassLoader cl =
-				GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
+			ClassLoader cl = GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
 			try {
 				displayClasses.put(pluginKeyword, cl.loadClass(pluginClass));
 			} catch (ClassNotFoundException e1) {
@@ -239,14 +238,11 @@ public class HeadlessListener implements IGui {
 		}
 		// keyword = "image";
 		Class<IDisplaySurface> clazz = displayClasses.get("image");
-		if ( clazz == null ) { throw new GamaRuntimeException("Display " + keyword +
-			" is not defined anywhere."); }
+		if ( clazz == null ) { throw new GamaRuntimeException("Display " + keyword + " is not defined anywhere."); }
 		try {
 			IDisplaySurface surface = clazz.newInstance();
-			System.out.println("Instantiating " + clazz.getSimpleName() + " to produce a " +
-				keyword + " display");
-			debug("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword +
-				" display");
+			System.out.println("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword + " display");
+			debug("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword + " display");
 			surface.initialize(w, h, layerDisplayOutput);
 			return surface;
 		} catch (InstantiationException e1) {

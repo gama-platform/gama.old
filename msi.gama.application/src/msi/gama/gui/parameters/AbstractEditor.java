@@ -37,22 +37,21 @@ import org.eclipse.swt.widgets.*;
 public abstract class AbstractEditor implements SelectionListener, ModifyListener, EditorListener,
 /* MouseTrackListener, */Comparable<AbstractEditor>, IParameterEditor {
 
-	public static final Color normal_bg = Display.getDefault().getSystemColor(
-		SWT.COLOR_WIDGET_BACKGROUND);
-	public static final Color changed_bg = Display.getDefault().getSystemColor(
-		SWT.COLOR_INFO_BACKGROUND);
+	public static final Color normal_bg = Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+	public static final Color changed_bg = Display.getDefault().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 	private static int ORDER;
 	private final int order;
 	private final IAgent agent;
 	protected String[] stringTab = null;
-	protected final String name;
-	protected Label titleLabel = null, unitLabel = null;
+	private final String name;
+	protected Label titleLabel = null;
+	private Label unitLabel = null;
 	protected final IParameter param;
 	boolean acceptNull = true;
 	private Object originalValue = null;
 	protected Object currentValue = null;
-	protected GamaList possibleValues = null;
-	protected final Boolean isCombo, isEditable, hasUnit;
+	private GamaList possibleValues = null;
+	private final Boolean isCombo, isEditable, hasUnit;
 	protected Number minValue;
 	protected Number maxValue;
 	private Combo combo;
@@ -70,7 +69,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 	public void valueModified(final Object newValue) throws GamaRuntimeException {
 		IAgent a = agent;
 		if ( a == null ) {
-			a = GAMA.getDefaultScope().getWorldScope();
+			a = GAMA.getDefaultScope().getSimulationScope();
 			param.setValue(newValue);
 		}
 		if ( a != null && a.getSpecies().hasVar(param.getName()) ) {
@@ -146,8 +145,8 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 		Control paramControl;
 		try {
 			paramControl =
-				!isEditable ? createLabelParameterControl(comp) : isCombo
-					? createComboParameterControl(comp) : createCustomParameterControl(comp);
+				!isEditable ? createLabelParameterControl(comp) : isCombo ? createComboParameterControl(comp)
+					: createCustomParameterControl(comp);
 		} catch (GamaRuntimeException e1) {
 			e1.addContext("The editor for " + name + " could not be created");
 			GAMA.reportError(e1);
@@ -200,13 +199,12 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 		return d;
 	}
 
-	protected abstract Control createCustomParameterControl(Composite composite)
-		throws GamaRuntimeException;
+	protected abstract Control createCustomParameterControl(Composite composite) throws GamaRuntimeException;
 
 	protected Control createLabelParameterControl(final Composite composite) {
 		fixedValue = new CLabel(composite, SWT.READ_ONLY | SWT.BORDER_SOLID);
-		fixedValue.setText(getOriginalValue() instanceof String ? (String) getOriginalValue()
-			: StringUtils.toGaml(getOriginalValue()));
+		fixedValue.setText(getOriginalValue() instanceof String ? (String) getOriginalValue() : StringUtils
+			.toGaml(getOriginalValue()));
 		return fixedValue;
 	}
 
@@ -317,7 +315,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 	}
 
 	protected IAgent getAgent() {
-		return agent == null ? getScope().getWorldScope() : agent;
+		return agent == null ? getScope().getSimulationScope() : agent;
 	}
 
 	protected boolean acceptTooltip() {

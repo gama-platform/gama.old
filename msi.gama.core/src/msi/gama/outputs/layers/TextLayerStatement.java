@@ -20,7 +20,6 @@ package msi.gama.outputs.layers;
 
 import java.awt.Color;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.outputs.IDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -86,17 +85,16 @@ public class TextLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void compute(final IScope scope, final long cycle) throws GamaRuntimeException {
-		super.compute(scope, cycle);
+	public void step(final IScope scope) {
+		super.step(scope);
 		currentText = constantText == null ? Cast.asString(scope, text.value(scope)) : constantText;
-		currentColor =
-			constantColor == null ? Cast.asColor(scope, color.value(scope)) : constantColor;
+		currentColor = constantColor == null ? Cast.asColor(scope, color.value(scope)) : constantColor;
 		currentFont = constantFont == null ? Cast.asString(scope, font.value(scope)) : constantFont;
 	}
 
 	@Override
-	public void prepare(final IDisplayOutput out, final IScope scope) throws GamaRuntimeException {
-		super.prepare(out, scope);
+	public void init(final IScope scope) {
+		super.init(scope);
 		if ( text.isConst() && constantText == null ) {
 			constantText = Cast.asString(scope, text.value(scope));
 		}

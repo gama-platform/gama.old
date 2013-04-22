@@ -40,21 +40,26 @@ public class SpeciesFactory extends SymbolFactory {
 	}
 
 	@Override
-	protected TypeDescription buildDescription(final ISyntacticElement source,
-		final IChildrenProvider cp, final IDescription sd, final SymbolProto md) {
+	protected TypeDescription buildDescription(final ISyntacticElement source, final IChildrenProvider cp,
+		final IDescription sd, final SymbolProto md) {
 		Facets facets = source.getFacets();
 		String name = facets.getLabel(IKeyword.NAME);
 		if ( name == null ) { return null; }
 		DescriptionFactory.addSpeciesNameAsType(name);
-		return new SpeciesDescription(source.getKeyword(), sd, cp,
-			source.getElement(), facets);
+		// String p = facets.getLabel(IKeyword.PARENT);
+		// // If no parent is defined, we assume it is "agent"
+		// if ( p == null && name != IKeyword.AGENT ) {
+		// p = IKeyword.AGENT;
+		// }
+		// SpeciesDescription parent = sd.getSpeciesDescription(p);
+		return new SpeciesDescription(source.getKeyword(), sd, cp, source.getElement(), facets);
 	}
 
-	public SpeciesDescription createSpeciesDescription(final String name, final Class clazz,
-		final IDescription superDesc, final IAgentConstructor helper, final Set<String> skills,
-		final Facets userSkills) {
+	public SpeciesDescription createBuiltInSpeciesDescription(final String name, final Class clazz,
+		final IDescription superDesc, final SpeciesDescription parent, final IAgentConstructor helper,
+		final Set<String> skills, final Facets userSkills) {
 		DescriptionFactory.addSpeciesNameAsType(name);
-		return new SpeciesDescription(name, clazz, superDesc, helper, skills, userSkills);
+		return new SpeciesDescription(name, clazz, superDesc, parent, helper, skills, userSkills);
 	}
 
 	@Override

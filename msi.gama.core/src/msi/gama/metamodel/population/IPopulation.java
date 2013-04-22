@@ -81,11 +81,11 @@ public interface IPopulation extends Comparable<IPopulation>, IContainer<Integer
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
-	public abstract IList<? extends IAgent> createAgents(IScope scope, int number,
-		List<Map> initialValues, boolean isRestored) throws GamaRuntimeException;
+	public abstract IList<? extends IAgent> createAgents(IScope scope, int number, List<Map> initialValues,
+		boolean isRestored) throws GamaRuntimeException;
 
-	public abstract IList<? extends IAgent> createAgents(final IScope scope,
-		final IContainer<?, IShape> geometries) throws GamaRuntimeException;
+	public abstract IList<? extends IAgent> createAgents(final IScope scope, final IContainer<?, IShape> geometries)
+		throws GamaRuntimeException;
 
 	public abstract IList<IAgent> getAgentsList();
 
@@ -94,8 +94,6 @@ public interface IPopulation extends Comparable<IPopulation>, IContainer<Integer
 	public abstract int size();
 
 	public abstract boolean isGrid();
-
-	public abstract boolean isGlobal();
 
 	public abstract boolean hasAspect(String default1);
 
@@ -145,8 +143,7 @@ public interface IPopulation extends Comparable<IPopulation>, IContainer<Integer
 	 * @param scope
 	 * @param list
 	 */
-	public abstract void computeAgentsToSchedule(IScope scope, IList list)
-		throws GamaRuntimeException;
+	public abstract void computeAgentsToSchedule(IScope scope, IList list) throws GamaRuntimeException;
 
 	/**
 	 * @param obj

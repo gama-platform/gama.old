@@ -55,7 +55,7 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.PARAMETER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.AMONG, type = IType.LIST, optional = true) }, omissible = IKeyword.NAME)
 @symbol(kind = ISymbolKind.Variable.REGULAR, with_sequence = false)
-@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT })
+@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
 public class Variable extends Symbol implements IVariable {
 
 	protected IExpression updateExpression, initExpression, amongExpression, functionExpression;
@@ -97,8 +97,7 @@ public class Variable extends Symbol implements IVariable {
 		}
 	}
 
-	protected Object coerce(final IAgent agent, final IScope scope, final Object v)
-		throws GamaRuntimeException {
+	protected Object coerce(final IAgent agent, final IScope scope, final Object v) throws GamaRuntimeException {
 		return Types.coerce(scope, v, type, null);
 	}
 
@@ -173,8 +172,7 @@ public class Variable extends Symbol implements IVariable {
 	}
 
 	@Override
-	public void initializeWith(final IScope scope, final IAgent a, final Object v)
-		throws GamaRuntimeException {
+	public void initializeWith(final IScope scope, final IAgent a, final Object v) throws GamaRuntimeException {
 		try {
 			doUpdate = false;
 			if ( v != null ) {
@@ -222,14 +220,12 @@ public class Variable extends Symbol implements IVariable {
 	}
 
 	@Override
-	public final void setVal(final IScope scope, final IAgent agent, final Object v)
-		throws GamaRuntimeException {
+	public final void setVal(final IScope scope, final IAgent agent, final Object v) throws GamaRuntimeException {
 		if ( isNotModifiable ) { return; }
 		_setVal(agent, scope, v);
 	}
 
-	protected void _setVal(final IAgent agent, final IScope scope, final Object v)
-		throws GamaRuntimeException {
+	protected void _setVal(final IAgent agent, final IScope scope, final Object v) throws GamaRuntimeException {
 		Object val;
 		val = coerce(agent, scope, v);
 		val = checkAmong(agent, scope, val);
@@ -240,15 +236,13 @@ public class Variable extends Symbol implements IVariable {
 		}
 	}
 
-	protected Object checkAmong(final IAgent agent, final IScope scope, final Object val)
-		throws GamaRuntimeException {
+	protected Object checkAmong(final IAgent agent, final IScope scope, final Object val) throws GamaRuntimeException {
 		if ( amongExpression == null ) { return val; }
 		List among = Cast.asList(scope, scope.evaluate(amongExpression, agent));
 		if ( among == null ) { return val; }
 		if ( among.contains(val) ) { return val; }
 		if ( among.isEmpty() ) { return null; }
-		throw new GamaRuntimeException("Value " + val +
-			" is not included in the possible values of variable " + name);
+		throw new GamaRuntimeException("Value " + val + " is not included in the possible values of variable " + name);
 	}
 
 	@Override
@@ -298,8 +292,7 @@ public class Variable extends Symbol implements IVariable {
 		if ( amongExpression == null ) { return null; }
 		if ( !amongExpression.isConst() ) { return null; }
 		try {
-			return Cast.asList(GAMA.getDefaultScope(),
-				amongExpression.value(GAMA.getDefaultScope()));
+			return Cast.asList(GAMA.getDefaultScope(), amongExpression.value(GAMA.getDefaultScope()));
 		} catch (GamaRuntimeException e) {
 			return null;
 		}

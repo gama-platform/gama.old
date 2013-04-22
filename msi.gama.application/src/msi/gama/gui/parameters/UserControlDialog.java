@@ -34,10 +34,10 @@ public class UserControlDialog extends AbstractDetailsDialog {
 
 	public static class PreviousDialog {
 
-		final Point location;
-		final Point extent;
-		final boolean toggled;
-		final String name;
+		private final Point location;
+		private final Point extent;
+		private final boolean toggled;
+		private final String name;
 
 		PreviousDialog(final UserControlDialog d) {
 			location = d.getShell().getLocation();
@@ -49,14 +49,14 @@ public class UserControlDialog extends AbstractDetailsDialog {
 	}
 
 	public static UserControlDialog current = null;
-	public static PreviousDialog previous = null;
+	private static PreviousDialog previous = null;
 
-	final List<IStatement> userCommands;
-	final IScope scope;
+	private final List<IStatement> userCommands;
+	private final IScope scope;
 	boolean inspecting;
 
-	public UserControlDialog(final Shell parentShell, final List<IStatement> values,
-		final String title, final IScope executionScope) {
+	public UserControlDialog(final Shell parentShell, final List<IStatement> values, final String title,
+		final IScope executionScope) {
 		super((Shell) null, title, null, null);
 		setShellStyle(SWT.CLOSE | SWT.BORDER | SWT.TOOL | SWT.MODELESS | SWT.RESIZE);
 		userCommands = values;
@@ -100,8 +100,8 @@ public class UserControlDialog extends AbstractDetailsDialog {
 	protected void createButtonsForButtonBar(final Composite parent) {
 		createButton(parent, IDialogConstants.OK_ID, "Continue", true);
 		detailsButton =
-			createButton(parent, IDialogConstants.DETAILS_ID, "Inspect " +
-				scope.getAgentScope().getName() + "...", false);
+			createButton(parent, IDialogConstants.DETAILS_ID, "Inspect " + scope.getAgentScope().getName() + "...",
+				false);
 		detailsButton.setImage(SwtGui.agentImage);
 
 	}
@@ -146,8 +146,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 					EditorFactory.create(composite, i, new EditorListener() {
 
 						@Override
-						public void valueModified(final Object newValue)
-							throws GamaRuntimeException {
+						public void valueModified(final Object newValue) throws GamaRuntimeException {
 							i.setValue(newValue);
 							c.executeOn(scope);
 						}
@@ -197,9 +196,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 		final Point oldSize = getContents().getSize();
 		final Point newSize = getContents().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		if ( newWindowSize == null ) {
-			newWindowSize =
-				new Point(oldWindowSize.x + newSize.x - oldSize.x, oldWindowSize.y + newSize.y -
-					oldSize.y);
+			newWindowSize = new Point(oldWindowSize.x + newSize.x - oldSize.x, oldWindowSize.y + newSize.y - oldSize.y);
 		}
 
 		// Crop new window size to screen.

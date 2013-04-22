@@ -33,8 +33,8 @@ import org.eclipse.swt.widgets.*;
 
 public class ListEditor extends AbstractEditor {
 
-	Button listAdd;
-	ExpressionControl expression;
+	private Button listAdd;
+	private ExpressionControl expression;
 
 	ListEditor(final IParameter param) {
 		super(param);
@@ -82,8 +82,7 @@ public class ListEditor extends AbstractEditor {
 	public void widgetSelected(final SelectionEvent event) {
 		if ( currentValue instanceof GamaList ) {
 			ListEditorDialog d =
-				new ListEditorDialog(Display.getCurrent().getActiveShell(),
-					(GamaList) currentValue, param.getName());
+				new ListEditorDialog(Display.getCurrent().getActiveShell(), (GamaList) currentValue, param.getName());
 			if ( d.open() == IDialogConstants.OK_ID ) {
 				modifyAndDisplayValue(d.getList(ListEditor.this));
 			}

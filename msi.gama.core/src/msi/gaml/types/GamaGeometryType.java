@@ -28,6 +28,7 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gaml.descriptions.ModelDescription;
 import msi.gaml.species.ISpecies;
 import com.vividsolutions.jts.geom.*;
 
@@ -41,8 +42,7 @@ import com.vividsolutions.jts.geom.*;
 public class GamaGeometryType extends GamaType<IShape> {
 
 	@Override
-	public IShape cast(final IScope scope, final Object obj, final Object param)
-		throws GamaRuntimeException {
+	public IShape cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
 		return staticCast(scope, obj, param);
 	}
 
@@ -51,14 +51,12 @@ public class GamaGeometryType extends GamaType<IShape> {
 		if ( obj instanceof IShape ) { return ((IShape) obj).getGeometry(); }
 		if ( obj instanceof ILocation ) { return GamaGeometryType.createPoint((GamaPoint) obj); }
 		if ( obj instanceof ISpecies ) {
-			IList<IAgent> agents =
-				scope.getAgentScope().getPopulationFor((ISpecies) obj).getAgentsList();
+			IList<IAgent> agents = scope.getAgentScope().getPopulationFor((ISpecies) obj).getAgentsList();
 			return geometriesToGeometry(scope, agents);
 		}
 		if ( obj instanceof GamaPair ) { return pairToGeometry(scope, (GamaPair) obj); }
 		if ( obj instanceof IContainer ) {
-			if ( isPoints(scope, (IContainer) obj) ) { return pointsToGeometry(scope,
-				(IContainer<?, ILocation>) obj); }
+			if ( isPoints(scope, (IContainer) obj) ) { return pointsToGeometry(scope, (IContainer<?, ILocation>) obj); }
 			return geometriesToGeometry(scope, (IContainer) obj);
 		}
 
@@ -151,8 +149,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return new GamaShape(GeometryUtils.getFactory().createLineString(coordinates));
 	}
 
-	public static IShape buildPlan(final IShape location1, final IShape location2,
-		final Double depth) {
+	public static IShape buildPlan(final IShape location1, final IShape location2, final Double depth) {
 		GamaShape g = new GamaShape(buildLine(location1, location2));
 		g.setAttribute("depth", depth);
 		g.setAttribute("type", "plan");
@@ -164,8 +161,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		for ( IShape p : points ) {
 			coordinates.add((GamaPoint) p.getLocation());
 		}
-		return new GamaShape(GeometryUtils.getFactory().createLineString(
-			coordinates.toArray(new Coordinate[0])));
+		return new GamaShape(GeometryUtils.getFactory().createLineString(coordinates.toArray(new Coordinate[0])));
 	}
 
 	public static IShape buildPolyplan(final List<IShape> points, final Double depth) {
@@ -201,8 +197,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 	}
 
 	public static IShape buildSquare(final double side_size, final ILocation location) {
-		return buildRectangle(side_size, side_size, location == null ? new GamaPoint(0, 0)
-			: location);
+		return buildRectangle(side_size, side_size, location == null ? new GamaPoint(0, 0) : location);
 	}
 
 	public static IShape buildCube(final double side_size, final ILocation location) {
@@ -214,8 +209,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 
 	}
 
-	public static IShape buildRectangle(final double width, final double height,
-		final ILocation location) {
+	public static IShape buildRectangle(final double width, final double height, final ILocation location) {
 		Coordinate[] coordinates = new Coordinate[5];
 		double x = location == null ? 0 : location.getX();
 		double y = location == null ? 0 : location.getY();
@@ -235,8 +229,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return new GamaShape(g);
 	}
 
-	public static IShape buildBox(final double width, final double height, final double depth,
-		final ILocation location) {
+	public static IShape buildBox(final double width, final double height, final double depth, final ILocation location) {
 		GamaShape g = new GamaShape(buildRectangle(width, height, location));
 		g.setAttribute("depth", depth);
 		g.setAttribute("type", "box");
@@ -260,13 +253,11 @@ public class GamaGeometryType extends GamaType<IShape> {
 		coords[4] = new GamaPoint(x + 1.5 * size, y + 2 * width);
 		coords[5] = new GamaPoint(x + h, y + 2 * width);
 		coords[6] = new GamaPoint(coords[0]);
-		return new GamaShape(GeometryUtils.factory.createPolygon(
-			GeometryUtils.factory.createLinearRing(coords), null));
+		return new GamaShape(GeometryUtils.factory.createPolygon(GeometryUtils.factory.createLinearRing(coords), null));
 
 	}
 
-	public static IShape buildHexagon(final double sizeX, final double sizeY,
-		final ILocation location) {
+	public static IShape buildHexagon(final double sizeX, final double sizeY, final ILocation location) {
 		double x = location.getX();
 		double y = location.getY();
 		Coordinate[] coords = new Coordinate[7];
@@ -277,15 +268,13 @@ public class GamaGeometryType extends GamaType<IShape> {
 		coords[4] = new GamaPoint(x + sizeX / 4, y - sizeY / 2);
 		coords[5] = new GamaPoint(x - sizeX / 4, y - sizeY / 2);
 		coords[6] = new GamaPoint(coords[0]);
-		return new GamaShape(GeometryUtils.factory.createPolygon(
-			GeometryUtils.factory.createLinearRing(coords), null));
+		return new GamaShape(GeometryUtils.factory.createPolygon(GeometryUtils.factory.createLinearRing(coords), null));
 
 	}
 
 	public static IShape buildCircle(final double radius, final ILocation location) {
 		Geometry geom =
-			GeometryUtils.getFactory().createPoint(
-				location == null ? new GamaPoint(0, 0) : (GamaPoint) location);
+			GeometryUtils.getFactory().createPoint(location == null ? new GamaPoint(0, 0) : (GamaPoint) location);
 		Geometry g = geom.buffer(radius);
 		if ( location != null ) {
 			Coordinate[] coordinates = g.getCoordinates();
@@ -296,8 +285,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return new GamaShape(g);
 	}
 
-	public static IShape buildCylinder(final double radius, final double depth,
-		final ILocation location) {
+	public static IShape buildCylinder(final double radius, final double depth, final ILocation location) {
 		GamaShape g = new GamaShape(buildCircle(radius, location));
 		g.setAttribute("depth", depth);
 		g.setAttribute("type", "cylinder");
@@ -312,8 +300,8 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return g;
 	}
 
-	public static GamaShape geometriesToGeometry(final IScope scope,
-		final IContainer<?, ? extends IShape> ags) throws GamaRuntimeException {
+	public static GamaShape geometriesToGeometry(final IScope scope, final IContainer<?, ? extends IShape> ags)
+		throws GamaRuntimeException {
 		if ( ags == null || ags.isEmpty(scope) ) { return null; }
 		Geometry geoms[] = new Geometry[ags.length(scope)];
 		int cpt = 0;
@@ -321,9 +309,8 @@ public class GamaGeometryType extends GamaType<IShape> {
 			if ( ent == null ) {
 				continue;
 			}
-			if ( !(ent instanceof IShape) ) { throw new GamaRuntimeException(
-				"Cannot cast to geometry a container of " +
-					scope.getModel().getDescription().getTypesManager().get(ent.getClass())); }
+			if ( !(ent instanceof IShape) ) { throw new GamaRuntimeException("Cannot cast to geometry a container of " +
+				((ModelDescription) scope.getModel().getDescription()).getTypesManager().get(ent.getClass())); }
 			geoms[cpt] = ((IShape) ent).getInnerGeometry();
 			cpt++;
 		}
@@ -333,8 +320,8 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return null;
 	}
 
-	public static GamaShape pointsToGeometry(final IScope scope,
-		final IContainer<?, ILocation> coordinates) throws GamaRuntimeException {
+	public static GamaShape pointsToGeometry(final IScope scope, final IContainer<?, ILocation> coordinates)
+		throws GamaRuntimeException {
 		if ( coordinates != null && !coordinates.isEmpty(scope) ) {
 			List<List<ILocation>> geoSimp = new GamaList();
 			geoSimp.add(coordinates.listValue(scope));
@@ -346,8 +333,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return null;
 	}
 
-	public static IShape pairToGeometry(final IScope scope, final GamaPair p)
-		throws GamaRuntimeException {
+	public static IShape pairToGeometry(final IScope scope, final GamaPair p) throws GamaRuntimeException {
 		IShape first = staticCast(scope, p.first(), null);
 		if ( first == null ) { return null; }
 		IShape second = staticCast(scope, p.last(), null);

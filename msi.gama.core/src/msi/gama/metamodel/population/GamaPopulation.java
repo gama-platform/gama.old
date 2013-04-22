@@ -117,8 +117,7 @@ public class GamaPopulation implements IPopulation {
 			updatableVars[i] = species.getVar(s);
 		}
 		if ( species.isMirror() ) {
-			host.getScheduler().insertEndAction(
-				new PopulationManagement(species.getFacet(IKeyword.MIRRORS)));
+			host.getScheduler().insertEndAction(new PopulationManagement(species.getFacet(IKeyword.MIRRORS)));
 		}
 
 		// Add an attribute to the agents (dans SpeciesDescription)
@@ -141,8 +140,7 @@ public class GamaPopulation implements IPopulation {
 	}
 
 	@Override
-	public void createVariablesFor(final IScope scope, final IAgent agent)
-		throws GamaRuntimeException {
+	public void createVariablesFor(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		for ( final String s : orderedVarNames ) {
 			final IVariable var = species.getVar(s);
 			var.initializeWith(scope, agent, null);
@@ -150,8 +148,7 @@ public class GamaPopulation implements IPopulation {
 	}
 
 	@Override
-	public void updateVariablesFor(final IScope scope, final IAgent agent)
-		throws GamaRuntimeException {
+	public void updateVariablesFor(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		for ( int i = 0; i < updatableVars.length; i++ ) {
 			updatableVars[i].updateFor(scope, agent);
 		}
@@ -159,12 +156,10 @@ public class GamaPopulation implements IPopulation {
 
 	/**
 	 * 
-	 * @see msi.gama.interfaces.IPopulation#computeAgentsToSchedule(msi.gama.interfaces.IScope,
-	 *      msi.gama.util.GamaList)
+	 * @see msi.gama.interfaces.IPopulation#computeAgentsToSchedule(msi.gama.interfaces.IScope, msi.gama.util.GamaList)
 	 */
 	@Override
-	public void computeAgentsToSchedule(final IScope scope, final IList list)
-		throws GamaRuntimeException {
+	public void computeAgentsToSchedule(final IScope scope, final IList list) throws GamaRuntimeException {
 		int frequency = Cast.asInt(scope, scheduleFrequency.value(scope));
 		int step = scope.getClock().getCycle();
 		IExpression ags = getSpecies().getSchedule();
@@ -237,8 +232,7 @@ public class GamaPopulation implements IPopulation {
 	 * @return
 	 */
 	@Override
-	public IList<? extends IAgent> createAgents(final IScope scope,
-		final IContainer<?, IShape> geometries) {
+	public IList<? extends IAgent> createAgents(final IScope scope, final IContainer<?, IShape> geometries) {
 		int number = geometries.length(scope);
 		if ( number == 0 ) { return GamaList.EMPTY_LIST; }
 		IList<IAgent> list = new GamaList(number);
@@ -266,8 +260,8 @@ public class GamaPopulation implements IPopulation {
 	}
 
 	@Override
-	public IList<? extends IAgent> createAgents(final IScope scope, final int number,
-		final List<Map> initialValues, final boolean isRestored) throws GamaRuntimeException {
+	public IList<? extends IAgent> createAgents(final IScope scope, final int number, final List<Map> initialValues,
+		final boolean isRestored) throws GamaRuntimeException {
 		if ( number == 0 ) { return GamaList.EMPTY_LIST; }
 		IList<IAgent> list = new GamaList(number);
 		IAgentConstructor constr = species.getAgentConstructor();
@@ -369,11 +363,6 @@ public class GamaPopulation implements IPopulation {
 	}
 
 	@Override
-	public boolean isGlobal() {
-		return species.isGlobal();
-	}
-
-	@Override
 	public IAgent getAgent(final ILocation coord) {
 		return topology.getAgentClosestTo(coord, In.population(this));
 	}
@@ -393,8 +382,8 @@ public class GamaPopulation implements IPopulation {
 				topology = GamaTopologyType.staticCast(scope, scope.evaluate(expr, host), null);
 				return;
 			}
-			throw new GamaRuntimeException("Impossible to assign a topology to " +
-				species.getName() + " as it already defines one.", true);
+			throw new GamaRuntimeException("Impossible to assign a topology to " + species.getName() +
+				" as it already defines one.", true);
 		}
 		if ( species.isGrid() ) {
 			IExpression exp = species.getFacet(IKeyword.WIDTH);
@@ -419,15 +408,13 @@ public class GamaPopulation implements IPopulation {
 			ISpecies edgeSpecies = scope.getSimulationScope().getModel().getSpecies(edgeName);
 			// TODO Specifier directed quelque part dans l'espèce
 			GamaSpatialGraph g =
-				new GamaSpatialGraph(GamaList.EMPTY_LIST, false, false,
-					new AbstractGraphNodeAgent.NodeRelation(), edgeSpecies, scope);
-			this.addListener(g);  
+				new GamaSpatialGraph(GamaList.EMPTY_LIST, false, false, new AbstractGraphNodeAgent.NodeRelation(),
+					edgeSpecies, scope);
+			this.addListener(g);
 			g.postRefreshManagementAction(scope);
 			topology = new GraphTopology(scope, this.getHost(), g);
 		} else {
-			topology =
-				new ContinuousTopology(scope, this.getHost(), scope.getSimulationScope().getModel()
-					.isTorus());
+			topology = new ContinuousTopology(scope, this.getHost(), scope.getSimulationScope().getModel().isTorus());
 		}
 
 	}
@@ -468,8 +455,7 @@ public class GamaPopulation implements IPopulation {
 	}
 
 	@Override
-	public IAgent getFromIndicesList(final IScope scope, final IList indices)
-		throws GamaRuntimeException {
+	public IAgent getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
 		return (IAgent) agents.getFromIndicesList(scope, indices);
 	}
 
@@ -649,12 +635,10 @@ public class GamaPopulation implements IPopulation {
 	}
 
 	/**
-	 * @see msi.gama.util.IContainer#matrixValue(msi.gama.runtime.IScope,
-	 *      msi.gama.metamodel.shape.ILocation)
+	 * @see msi.gama.util.IContainer#matrixValue(msi.gama.runtime.IScope, msi.gama.metamodel.shape.ILocation)
 	 */
 	@Override
-	public IMatrix matrixValue(final IScope scope, final ILocation preferredSize)
-		throws GamaRuntimeException {
+	public IMatrix matrixValue(final IScope scope, final ILocation preferredSize) throws GamaRuntimeException {
 		return agents.matrixValue(scope, preferredSize);
 	}
 
@@ -670,8 +654,7 @@ public class GamaPopulation implements IPopulation {
 	 * @see msi.gama.util.IContainer#add(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public void add(IScope scope, final Integer index, final Object value, final Object param,
-		boolean all, boolean add) {
+	public void add(IScope scope, final Integer index, final Object value, final Object param, boolean all, boolean add) {
 		if ( all && add && value instanceof IContainer ) {
 			for ( Object o : (IContainer) value ) {
 				add(scope, null, o, null, false, true);

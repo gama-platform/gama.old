@@ -124,7 +124,7 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	protected Object privateExecuteIn(final IScope scope) {
 		scope.setStatus(ExecutionStatus.skipped);
 		scope.setVarValue(tempVar, value);
-		return null;
+		return value;
 	}
 
 	public String getTempVarName() {

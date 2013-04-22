@@ -29,6 +29,7 @@ import msi.gaml.skills.ISkill;
  */
 public interface IVarSetter extends IGamaHelper {
 
+	// FIXME Harmonize with IOpRun, IVarGetter, IPrimRun
 	public void run(IScope scope, IAgent agent, ISkill target, Object value)
 		throws GamaRuntimeException;
 

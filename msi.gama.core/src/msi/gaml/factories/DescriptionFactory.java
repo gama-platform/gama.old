@@ -129,27 +129,25 @@ public class DescriptionFactory {
 
 	// -----
 
-	public synchronized static IDescription create(final SymbolFactory factory,
-		final String keyword, final IDescription superDesc, final IChildrenProvider children,
-		final Facets facets) {
-		IDescription result =
-			factory.create(new SyntacticElement(keyword, facets), superDesc, children);
+	public synchronized static IDescription create(final SymbolFactory factory, final String keyword,
+		final IDescription superDesc, final IChildrenProvider children, final Facets facets) {
+		IDescription result = factory.create(new SyntacticElement(keyword, facets), superDesc, children);
 		// factory.validate(result);
 		return result;
 	}
 
-	public synchronized static IDescription create(final String keyword,
-		final IDescription superDesc, final IChildrenProvider children, final Facets facets) {
+	public synchronized static IDescription create(final String keyword, final IDescription superDesc,
+		final IChildrenProvider children, final Facets facets) {
 		return create(getFactory(keyword), keyword, superDesc, children, facets);
 	}
 
-	public synchronized static IDescription create(final String keyword,
-		final IDescription superDesc, final IChildrenProvider children, final String ... facets) {
+	public synchronized static IDescription create(final String keyword, final IDescription superDesc,
+		final IChildrenProvider children, final String ... facets) {
 		return create(getFactory(keyword), keyword, superDesc, children, new Facets(facets));
 	}
 
-	public synchronized static IDescription create(final String keyword,
-		final IDescription superDescription, final String ... facets) {
+	public synchronized static IDescription create(final String keyword, final IDescription superDescription,
+		final String ... facets) {
 		return create(keyword, superDescription, IChildrenProvider.NONE, facets);
 	}
 
@@ -175,11 +173,11 @@ public class DescriptionFactory {
 		return md == null ? Collections.EMPTY_SET : md.getPossibleFacets().keySet();
 	}
 
-	public static SpeciesDescription createSpeciesDescription(final String name, final Class clazz,
-		final IDescription superDesc, final IAgentConstructor helper, final Set<String> skills,
-		final Facets facets) {
-		return ((SpeciesFactory) getFactory(ISymbolKind.SPECIES)).createSpeciesDescription(name,
-			clazz, superDesc, helper, skills, facets == null ? new Facets() : facets);
+	public static SpeciesDescription createBuiltInSpeciesDescription(final String name, final Class clazz,
+		final IDescription superDesc, SpeciesDescription parent, final IAgentConstructor helper,
+		final Set<String> skills, final Facets facets) {
+		return ((SpeciesFactory) getFactory(ISymbolKind.SPECIES)).createBuiltInSpeciesDescription(name, clazz, superDesc,
+			parent, helper, skills, facets == null ? new Facets() : facets);
 	}
 
 }

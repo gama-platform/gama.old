@@ -18,9 +18,7 @@
  */
 package msi.gama.util.graph;
 
-import java.util.Collection;
-import java.util.Map;
-
+import java.util.*;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
@@ -40,13 +38,12 @@ import org.jgrapht.WeightedGraph;
  * An interface for the different kinds of graphs encountered in GAML
  * 
  */
-@vars({ @var(name = "spanning_tree", type = IType.LIST),
-	@var(name = "circuit", type = IType.PATH), @var(name = "connected", type = IType.BOOL),
-	@var(name = "edges", type = IType.LIST), @var(name = "vertices", type = IType.LIST)
-	})
-public interface IGraph<V, E> extends IContainer<V, E>, WeightedGraph<V, E>, DirectedGraph<V,E >,
+@vars({ @var(name = "spanning_tree", type = IType.LIST), @var(name = "circuit", type = IType.PATH),
+	@var(name = "connected", type = IType.BOOL), @var(name = "edges", type = IType.LIST),
+	@var(name = "vertices", type = IType.LIST) })
+public interface IGraph<V, E> extends IContainer<V, E>, WeightedGraph<V, E>, DirectedGraph<V, E>,
 	UndirectedGraph<V, E>, IGraphEventProvider {
- 
+
 	public abstract double getVertexWeight(final Object v);
 
 	public abstract Double getWeightOf(final Object v);
@@ -56,25 +53,27 @@ public interface IGraph<V, E> extends IContainer<V, E>, WeightedGraph<V, E>, Dir
 	void setWeights(Map<?, Double> weights);
 
 	public Collection _internalEdgeSet();
+
 	public Collection _internalNodesSet();
-	
+
 	public Map<E, _Edge<V>> _internalEdgeMap();
+
 	public Map<V, _Vertex<E>> _internalVertexMap();
-	
-	@getter( "edges")
+
+	@getter("edges")
 	public abstract IList<E> getEdges();
 
-	@getter( "vertices")
+	@getter("vertices")
 	public abstract IList<V> getVertices();
 
-	@getter( "spanning_tree")
+	@getter("spanning_tree")
 	public abstract IList<E> getSpanningTree();
 
-	@getter( "circuit")
-	public abstract IPath<V,E> getCircuit();
+	@getter("circuit")
+	public abstract IPath<V, E> getCircuit();
 
-	@getter( "connected")
-	public abstract Boolean getConnected(); 
+	@getter("connected")
+	public abstract Boolean getConnected();
 
 	public abstract boolean isDirected();
 
@@ -83,23 +82,21 @@ public interface IGraph<V, E> extends IContainer<V, E>, WeightedGraph<V, E>, Dir
 	public abstract Object addEdge(Object p);
 
 	public abstract void setOptimizerType(String optiType);
-	
-	public int getVersion() ;
+
+	public int getVersion();
 
 	public void setVersion(int version);
-	
-	public void incVersion();
-	
-	// FIXME Patrick: To check
-	// public abstract IPath<V,E> computeShortestPathBetween(final Object source, final Object target);	
-	// public abstract IList<IShape> computeBestRouteBetween(final Object source, final Object target);	
 
-	public abstract IPath<V,E> computeShortestPathBetween(final V source, final V target);
-	
-	public abstract IList<E> computeBestRouteBetween(final V source, final V target);	
-	
-	
-	public double computeWeight(final IPath<V,E> gamaPath);
-	
-	
+	public void incVersion();
+
+	// FIXME Patrick: To check
+	// public abstract IPath<V,E> computeShortestPathBetween(final Object source, final Object target);
+	// public abstract IList<IShape> computeBestRouteBetween(final Object source, final Object target);
+
+	public abstract IPath<V, E> computeShortestPathBetween(final V source, final V target);
+
+	public abstract IList<E> computeBestRouteBetween(final V source, final V target);
+
+	public double computeWeight(final IPath<V, E> gamaPath);
+
 }

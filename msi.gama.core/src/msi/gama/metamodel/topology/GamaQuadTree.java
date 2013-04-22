@@ -32,9 +32,9 @@ import com.vividsolutions.jts.geom.*;
 /**
  * A QuadTree allows to quickly find an object on a two-dimensional space.
  * <p>
- * QuadTree recursively subdivides a space into four rectangles. Each node of a QuadTree subdivides
- * the space covered by the rectangle of its parent node into four smaller rectangles covering the
- * upper left, upper right, lower left and lower right quadrant of the parent rectangle.
+ * QuadTree recursively subdivides a space into four rectangles. Each node of a QuadTree subdivides the space covered by
+ * the rectangle of its parent node into four smaller rectangles covering the upper left, upper right, lower left and
+ * lower right quadrant of the parent rectangle.
  * 
  * @author Werner Randelshofer, adapted by Alexis Drogoul for GAMA
  * @version $Id: QuadTree.java 717 2010-11-21 12:30:57Z rawcoder $
@@ -129,8 +129,7 @@ public class GamaQuadTree implements ISpatialIndex {
 	// }
 	// }
 
-	protected Collection<IShape> findIntersects(final IShape source, final Envelope r,
-		final IAgentFilter filter) {
+	protected Collection<IShape> findIntersects(final IShape source, final Envelope r, final IAgentFilter filter) {
 		// GamaQuadTree clone = cloneIfNecessary(filter);
 		// if ( clone != null ) { return clone.findIntersects(source, r, null); }
 		HashSet<IShape> internal_results = new HashSet();
@@ -175,8 +174,7 @@ public class GamaQuadTree implements ISpatialIndex {
 	// }
 
 	@Override
-	public GamaList<IShape> allAtDistance(final IShape source, final double dist,
-		final IAgentFilter f) {
+	public GamaList<IShape> allAtDistance(final IShape source, final double dist, final IAgentFilter f) {
 
 		// TODO filter result by topology's bounds
 
@@ -251,8 +249,8 @@ public class GamaQuadTree implements ISpatialIndex {
 	// }
 
 	@Override
-	public GamaList<IShape> allInEnvelope(final IShape source, final Envelope envelope,
-		final IAgentFilter f, final boolean contained) {
+	public GamaList<IShape> allInEnvelope(final IShape source, final Envelope envelope, final IAgentFilter f,
+		final boolean contained) {
 		return new GamaList(findIntersects(source, envelope, f));
 	}
 
@@ -289,8 +287,7 @@ public class GamaQuadTree implements ISpatialIndex {
 			} else if ( !isLeaf ) {
 				boolean north = p.y >= miny && p.y < miny + hh / 2;
 				boolean west = p.x >= minx && p.x < minx + hw / 2;
-				return north ? west ? nw.remove(p, a) : ne.remove(p, a) : west ? sw.remove(p, a)
-					: se.remove(p, a);
+				return north ? west ? nw.remove(p, a) : ne.remove(p, a) : west ? sw.remove(p, a) : se.remove(p, a);
 			}
 			return null;
 		}
@@ -315,8 +312,8 @@ public class GamaQuadTree implements ISpatialIndex {
 		}
 
 		private boolean removeIfPresent(final Envelope bounds, final IShape a) {
-			return !(isLeaf && size == 0) &&
-				(objects.contains(a) || this.bounds.intersects(bounds)) && remove(bounds, a);
+			return !(isLeaf && size == 0) && (objects.contains(a) || this.bounds.intersects(bounds)) &&
+				remove(bounds, a);
 		}
 
 		public boolean remove(final Envelope bounds, final IShape a) {
@@ -328,50 +325,50 @@ public class GamaQuadTree implements ISpatialIndex {
 				se.removeIfPresent(bounds, a) | sw.removeIfPresent(bounds, a);
 		}
 
-		private final Set<IShape> temp_agents = new HashSet<IShape>();
+		// private final Set<IShape> temp_agents = new HashSet<IShape>();
 
-		private void join() {
-			if ( isLeaf ) { return; }
-			ne.join();
-			se.join();
-			nw.join();
-			sw.join();
-			if ( !sw.isLeaf ) { return; }
-			if ( !ne.isLeaf ) { return; }
-			if ( !se.isLeaf ) { return; }
-			if ( !nw.isLeaf ) { return; }
-			temp_agents.clear();
-			if ( size != 0 ) {
-				temp_agents.addAll(objects);
-			}
-			if ( ne.size != 0 ) {
-				temp_agents.addAll(ne.objects);
-			}
-			if ( se.size != 0 ) {
-				temp_agents.addAll(se.objects);
-			}
-
-			if ( sw.size != 0 ) {
-				temp_agents.addAll(sw.objects);
-			}
-
-			if ( nw.size != 0 ) {
-				temp_agents.addAll(nw.objects);
-			}
-
-			int total = temp_agents.size();
-			if ( total < maxCapacity ) {
-				objects.clear();
-				objects.addAll(temp_agents);
-				size = total;
-				ne = null;
-				se = null;
-				nw = null;
-				sw = null;
-				isLeaf = true;
-				totalNodes -= 4;
-			}
-		}
+		// private void join() {
+		// if ( isLeaf ) { return; }
+		// ne.join();
+		// se.join();
+		// nw.join();
+		// sw.join();
+		// if ( !sw.isLeaf ) { return; }
+		// if ( !ne.isLeaf ) { return; }
+		// if ( !se.isLeaf ) { return; }
+		// if ( !nw.isLeaf ) { return; }
+		// temp_agents.clear();
+		// if ( size != 0 ) {
+		// temp_agents.addAll(objects);
+		// }
+		// if ( ne.size != 0 ) {
+		// temp_agents.addAll(ne.objects);
+		// }
+		// if ( se.size != 0 ) {
+		// temp_agents.addAll(se.objects);
+		// }
+		//
+		// if ( sw.size != 0 ) {
+		// temp_agents.addAll(sw.objects);
+		// }
+		//
+		// if ( nw.size != 0 ) {
+		// temp_agents.addAll(nw.objects);
+		// }
+		//
+		// int total = temp_agents.size();
+		// if ( total < maxCapacity ) {
+		// objects.clear();
+		// objects.addAll(temp_agents);
+		// size = total;
+		// ne = null;
+		// se = null;
+		// nw = null;
+		// sw = null;
+		// isLeaf = true;
+		// totalNodes -= 4;
+		// }
+		// }
 
 		public boolean add(final Envelope env, final IShape o) {
 			if ( canSplit && isLeaf && size >= maxCapacity ) {
@@ -436,27 +433,23 @@ public class GamaQuadTree implements ISpatialIndex {
 							if ( add(p, entry) ) {
 								addedNumber++;
 							} else {
-								System.out.println(entry.getName() +
-									" is not re-added to sub-node on splitting");
+								System.out.println(entry.getName() + " is not re-added to sub-node on splitting");
 							}
 						} else {
 							if ( add(g.getEnvelope(), entry) ) {
 								addedNumber++;
 							} else {
-								System.out.println(entry.getName() +
-									" is not re-added to sub-node on splitting");
+								System.out.println(entry.getName() + " is not re-added to sub-node on splitting");
 							}
 						}
 					} else {
-						System.out.println("QuadTree :: split :: Death agent : " +
-							System.currentTimeMillis());
+						System.out.println("QuadTree :: split :: Death agent : " + System.currentTimeMillis());
 						continue;
 					}
 				}
 
 				if ( addedNumber < tempNumber ) {
-					System.out.println("tempNumber = " + tempNumber + "; addedNumber = " +
-						addedNumber);
+					System.out.println("tempNumber = " + tempNumber + "; addedNumber = " + addedNumber);
 				}
 			}
 		}
@@ -493,8 +486,7 @@ public class GamaQuadTree implements ISpatialIndex {
 			if ( bounds.intersects(r) ) {
 				for ( int i = 0, n = size; i < n; i++ ) {
 					IShape entry = objects.get(i);
-					if ( (f == null || f.accept(source, entry)) &&
-						entry.getEnvelope().intersects(r) ) {
+					if ( (f == null || f.accept(source, entry)) && entry.getEnvelope().intersects(r) ) {
 						result.add(entry);
 					}
 				}
@@ -578,10 +570,8 @@ public class GamaQuadTree implements ISpatialIndex {
 				g2.drawRect(Maths.round(bounds.getMinX() * xr), Maths.round(bounds.getMinY() * yr),
 					Maths.round(bounds.getWidth() * xr), Maths.round(bounds.getHeight() * yr));
 				g2.setColor(colors[Math.min(31, (int) ((double) size / (double) maxCapacity * 32))]);
-				g2.fillRect(Maths.round(bounds.getMinX() * xr) + 1,
-					Maths.round(bounds.getMinY() * yr) + 1,
-					Maths.round(bounds.getWidth() * xr) - 1,
-					Maths.round(bounds.getHeight() * yr) - 1);
+				g2.fillRect(Maths.round(bounds.getMinX() * xr) + 1, Maths.round(bounds.getMinY() * yr) + 1,
+					Maths.round(bounds.getWidth() * xr) - 1, Maths.round(bounds.getHeight() * yr) - 1);
 				// g2.setColor(Color.red);
 				// g2.drawString(String.valueOf(objects_number), (int) (bounds.centre().x * xr),
 				// (int) (bounds.centre().y * yr));

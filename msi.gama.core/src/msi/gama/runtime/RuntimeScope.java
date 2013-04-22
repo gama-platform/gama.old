@@ -18,47 +18,41 @@
  */
 package msi.gama.runtime;
 
+import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.model.IModel;
-import msi.gama.kernel.simulation.ISimulation;
-import msi.gama.metamodel.agent.WorldAgent;
+import msi.gama.kernel.simulation.ISimulationAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class RuntimeScope extends AbstractScope {
 
-	final ISimulation simulation;
-	WorldAgent world;
+	// FIXME IAgent ? ExperimentAgent ?
+	final IExperimentAgent experiment;
 
-	public RuntimeScope(final ISimulation sim, final String name) {
+	// WorldAgent world;
+
+	public RuntimeScope(final IExperimentAgent sim, final String name) {
 		super(name);
-		simulation = sim;
+		experiment = sim;
 	}
 
 	@Override
-	public final ISimulation getSimulationScope() {
-		return simulation;
+	public final ISimulationAgent getSimulationScope() {
+		return experiment.getSimulation();
 	}
 
 	@Override
 	public IModel getModel() {
-		return simulation.getModel();
-	}
-
-	@Override
-	public final WorldAgent getWorldScope() {
-		if ( world == null ) {
-			world = simulation.getWorld();
-		}
-		return world;
+		return experiment.getModel();
 	}
 
 	@Override
 	public Object getGlobalVarValue(final String name) throws GamaRuntimeException {
-		return getWorldScope().getDirectVarValue(this, name);
+		return getSimulationScope().getDirectVarValue(this, name);
 	}
 
 	@Override
 	public void setGlobalVarValue(final String name, final Object v) throws GamaRuntimeException {
-		getWorldScope().setDirectVarValue(this, name, v);
+		getSimulationScope().setDirectVarValue(this, name, v);
 	}
 
 }

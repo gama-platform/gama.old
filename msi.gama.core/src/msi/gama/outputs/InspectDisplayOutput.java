@@ -46,8 +46,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.VALUE, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.AGENT, IKeyword.SPECIES,
-		IKeyword.DYNAMIC }, optional = false) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.AGENT, IKeyword.SPECIES, IKeyword.DYNAMIC }, optional = false) }, omissible = IKeyword.NAME)
 public class InspectDisplayOutput extends MonitorOutput {
 
 	public static final short INSPECT_AGENT = 0;
@@ -61,8 +60,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 	// The agents inspected should also be known at runtime (instead of being kept by the view).
 	// This in order to compute the new values of their attributes.
 
-	static final List<String> types = Arrays.asList(IKeyword.AGENT, IKeyword.SPECIES,
-		IKeyword.DYNAMIC);
+	static final List<String> types = Arrays.asList(IKeyword.AGENT, IKeyword.SPECIES, IKeyword.DYNAMIC);
 
 	int target;
 
@@ -84,7 +82,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 	}
 
 	public void launch() throws GamaRuntimeException {
-		prepare(GAMA.getFrontmostSimulation());
+		init(GAMA.getDefaultScope());
 		outputManager.addOutput(this);
 		schedule();
 		open();

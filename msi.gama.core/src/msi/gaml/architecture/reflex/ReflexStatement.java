@@ -33,7 +33,7 @@ import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 
 @symbol(name = { IKeyword.REFLEX, IKeyword.INIT }, kind = ISymbolKind.BEHAVIOR, with_sequence = true, unique_name = true)
-@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT })
+@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
 @facets(value = { @facet(name = IKeyword.WHEN, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true) }, omissible = IKeyword.NAME)
 public class ReflexStatement extends AbstractStatementSequence {
@@ -50,8 +50,7 @@ public class ReflexStatement extends AbstractStatementSequence {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		if ( when == null || Cast.asBool(scope, when.value(scope)) ) { return super
-			.privateExecuteIn(scope); }
+		if ( when == null || Cast.asBool(scope, when.value(scope)) ) { return super.privateExecuteIn(scope); }
 		scope.setStatus(ExecutionStatus.skipped);
 		return null;
 	}

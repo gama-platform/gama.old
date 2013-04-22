@@ -42,9 +42,9 @@ import msi.gaml.types.IType;
  */
 
 @symbol(name = WeightedTaskStatement.TASK, kind = ISymbolKind.BEHAVIOR, with_sequence = true)
-@inside(symbols = WeightedTasksArchitecture.WT, kinds = { ISymbolKind.SPECIES })
-@facets(value = {
-	@facet(name = WeightedTaskStatement.WEIGHT, type = IType.FLOAT, optional = false),
+@inside(symbols = WeightedTasksArchitecture.WT, kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT,
+	ISymbolKind.MODEL })
+@facets(value = { @facet(name = WeightedTaskStatement.WEIGHT, type = IType.FLOAT, optional = false),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false) }, omissible = IKeyword.NAME)
 public class WeightedTaskStatement extends AbstractStatementSequence {
 

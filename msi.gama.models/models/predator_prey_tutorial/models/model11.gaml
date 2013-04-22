@@ -25,9 +25,7 @@ global {
 		create predator number: nb_predators_init ;
 	}
 	
-	reflex stop_simulation when: (nb_preys = 0) or (nb_predators = 0) {
-		do halt ;
-	} 
+	
 }
 entities {
 	species generic_species {
@@ -146,6 +144,12 @@ experiment prey_predator type: gui {
 	parameter 'Predator probability reproduce: ' var: predator_proba_reproduce category: 'Predator' ;
 	parameter 'Predator nb max offsprings: ' var: predator_nb_max_offsprings category: 'Predator' ;
 	parameter 'Predator energy reproduce: ' var: predator_energy_reproduce category: 'Predator' ;
+	
+	reflex stop_simulation when: (nb_preys = 0) or (nb_predators = 0) {
+		ask world {
+			do halt;
+		}
+	} 
 	
 	output {
 		display main_display {

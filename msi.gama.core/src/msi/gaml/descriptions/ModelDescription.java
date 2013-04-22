@@ -23,7 +23,6 @@ import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.util.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.IChildrenProvider;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
@@ -36,26 +35,23 @@ import org.eclipse.emf.ecore.EObject;
  * @todo Description
  * 
  */
-public class ModelDescription extends SymbolDescription {
+public class ModelDescription extends SpeciesDescription {
 
-	// private final int number;
-	// private static int count = 1;
 	private final Map<String, ExperimentDescription> experiments = new HashMap();
 	private IDescription output;
 	final TypesManager types;
 	private String modelFilePath;
 	private String modelFolderPath;
 	private String modelProjectPath;
-	private SpeciesDescription worldSpecies;
+	// private SpeciesDescription worldSpecies;
 	private boolean isDisposed = false;
 	private boolean isTorus = false;
-	// Only used to accelerate the parsing
-	private final Map<String, TypeDescription> allSpeciesDescription = new HashMap();
 	private final ErrorCollector collect = new ErrorCollector();
 
-	public ModelDescription(String projectPath, String modelPath, EObject source, Facets facets) {
-		super(MODEL, null, IChildrenProvider.NONE, source, facets);
-		types = new TypesManager(this);
+	public ModelDescription(String name, String projectPath, String modelPath, EObject source,
+		SpeciesDescription parent, Facets facets) {
+		super(MODEL, null, parent, IChildrenProvider.NONE, source, facets);
+		types = new TypesManager();
 		setModelFilePath(projectPath, modelPath);
 		// number = count++;
 	}
@@ -70,22 +66,17 @@ public class ModelDescription extends SymbolDescription {
 
 	@Override
 	public String toString() {
-		return "description of " +
-			modelFilePath.substring(modelFilePath.lastIndexOf(File.separator));
+		return "description of " + modelFilePath.substring(modelFilePath.lastIndexOf(File.separator));
 	}
 
 	@Override
 	public void dispose() {
-		if ( isDisposed ) {
-			// GuiUtils.debug("" + this + " already disposed");
-			return;
-		}
+		if ( isDisposed ) { return; }
 		isDisposed = true;
 		experiments.clear();
-		allSpeciesDescription.clear();
 		output = null;
 		types.dispose();
-		worldSpecies = null;
+		// worldSpecies = null;
 		super.dispose();
 
 	}
@@ -141,67 +132,72 @@ public class ModelDescription extends SymbolDescription {
 	 * Create types from the species descriptions
 	 */
 	public void buildTypes() {
-		types.addAll(allSpeciesDescription);
+		types.init();
 	}
 
-	public void addSpeciesDescription(final TypeDescription species) {
-		if ( allSpeciesDescription.containsKey(species.getName()) ) {
-			species.error("Species " + species.getName() + " is already defined in model");
-		} else {
-			allSpeciesDescription.put(species.getName(), species);
-		}
+	public void addSpeciesType(final TypeDescription species) {
+		types.addSpeciesType(species);
 	}
 
 	@Override
 	public IDescription addChild(final IDescription child) {
-		child.setSuperDescription(this);
-		String keyword = child.getKeyword();
+		// GuiUtils.debug("Adding " + child + " to " + this + "...");
 		if ( child instanceof ExperimentDescription ) {
 			String s = child.getName();
 			experiments.put(s, (ExperimentDescription) child);
+			// return child;
+			// FIXME: Experiments are not disposed ?
 			// If the experiment is not the "default" one, we return the child directly without
 			// adding it to the children
 			// if ( !DEFAULT_EXP.equals(s) ) { return child; }
-		} else if ( child instanceof SpeciesDescription ) { // world_species
-			worldSpecies = (SpeciesDescription) child;
-			addSpeciesDescription(worldSpecies);
-		} else if ( keyword.equals(OUTPUT) ) {
+			// FIXME Verify this
+			children.add(child);
+		} else if ( child.getKeyword().equals(OUTPUT) ) {
 			if ( output == null ) {
 				output = child;
 			} else {
 				output.addChildren(child.getChildren());
 				return child;
 			}
+		} else {
+
+			// GuiUtils.debug(" ..." + child + " added.");
+			super.addChild(child);
+			// else if ( child instanceof SpeciesDescription ) { // world_species
+			// worldSpecies = (SpeciesDescription) child;
+			// addSpeciesType(worldSpecies);
+			// }
 		}
-		children.add(child);
+
 		return child;
 	}
 
-	@Override
-	public SpeciesDescription getWorldSpecies() {
-		return worldSpecies;
-	}
+	// @Override
+	// public SpeciesDescription getWorldSpecies() {
+	// return this;
+	// // return worldSpecies;
+	// }
 
-	@Override
-	protected boolean hasVar(final String name) {
-		return getWorldSpecies().hasVar(name);
-	}
+	// @Override
+	// protected boolean hasVar(final String name) {
+	// return getWorldSpecies().hasVar(name);
+	// }
 
 	public boolean hasExperiment(final String name) {
 		return experiments.containsKey(name);
 	}
 
-	@Override
-	public IDescription getDescriptionDeclaringVar(final String name) {
-		if ( hasVar(name) ) { return getWorldSpecies(); }
-		return null;
-	}
+	// @Override
+	// public IDescription getDescriptionDeclaringVar(final String name) {
+	// if ( hasVar(name) ) { return getWorldSpecies(); }
+	// return null;
+	// }
 
-	@Override
-	public IExpression getVarExpr(final String name) {
-		return getWorldSpecies().getVarExpr(name);
-	}
-
+	// @Override
+	// public IExpression getVarExpr(final String name) {
+	// return getWorldSpecies().getVarExpr(name);
+	// }
+	//
 	@Override
 	public ModelDescription getModelDescription() {
 		return this;
@@ -209,12 +205,11 @@ public class ModelDescription extends SymbolDescription {
 
 	@Override
 	public SpeciesDescription getSpeciesDescription(final String spec) {
-		SpeciesDescription result = (SpeciesDescription) allSpeciesDescription.get(spec);
-		return result;
+		return (SpeciesDescription) types.getSpecies(spec);
 	}
 
 	public boolean hasSpeciesDescription(final String spec) {
-		return allSpeciesDescription.containsKey(spec);
+		return types.containsSpecies(spec);
 	}
 
 	@Override
@@ -228,7 +223,8 @@ public class ModelDescription extends SymbolDescription {
 
 	@Override
 	public SpeciesDescription getSpeciesContext() {
-		return null; // return getWorldSpecies() ?
+		// TODO : Soon, ModelDescription will be a SpeciesDescription as well.
+		return this; // return getWorldSpecies() ?
 	}
 
 	public Set<String> getExperimentNames() {
@@ -240,8 +236,14 @@ public class ModelDescription extends SymbolDescription {
 		return collect;
 	}
 
-	public boolean isAbstract() {
-		return this.getWorldSpecies().isAbstract();
+	//
+	// @Override
+	// public boolean isAbstract() {
+	// return this.getWorldSpecies().isAbstract();
+	// }
+
+	public ExperimentDescription getExperiment(String name) {
+		return experiments.get(name);
 	}
 
 }

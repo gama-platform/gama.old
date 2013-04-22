@@ -18,48 +18,33 @@
  */
 package msi.gaml.statements;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
+import java.io.*;
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.ISymbolKind;
-import msi.gama.runtime.ExecutionStatus;
-import msi.gama.runtime.IScope;
+import msi.gama.precompiler.*;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.GamaMap;
-import msi.gama.util.IList;
-import msi.gama.util.graph.IGraph;
+import msi.gama.util.*;
+import msi.gama.util.graph.*;
 import msi.gama.util.graph.writer.AvailableGraphWriters;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.IType;
-
-import org.geotools.data.DataUtilities;
-import org.geotools.data.DefaultTransaction;
-import org.geotools.data.FeatureStore;
-import org.geotools.data.Transaction;
+import org.geotools.data.*;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.feature.FeatureCollection;
-import org.geotools.feature.FeatureCollections;
-import org.geotools.feature.SchemaException;
+import org.geotools.feature.*;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.opengis.feature.Feature;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.simple.*;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
 import com.vividsolutions.jts.geom.Geometry;
 
 @symbol(name = IKeyword.SAVE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, with_args = true, remote_context = true)
@@ -91,8 +76,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			return null;
 		}
 		path =
-			scope.getSimulationScope().getModel()
-				.getRelativeFilePath(Cast.asString(scope, file.value(scope)), false);
+			scope.getSimulationScope().getModel().getRelativeFilePath(Cast.asString(scope, file.value(scope)), false);
 		if ( path.equals("") ) {
 			scope.setStatus(ExecutionStatus.failure);
 			return null;
@@ -131,12 +115,12 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				throw e;
 			} catch (IOException e) {
 				throw new GamaRuntimeException(e);
-			}
+			} 
 			IExpression item = getFacet(IKeyword.DATA);
 			saveText(type, item, fileTxt, scope);
-			
+
 		} else if (AvailableGraphWriters.getAvailableWriters().contains(type.trim().toLowerCase())) {
-			
+
 			IExpression item = getFacet(IKeyword.DATA);
 			IGraph g;
 			if ( item == null ) {
@@ -144,17 +128,17 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				return null;
 			}
 			g = Cast.asGraph(scope, item);
-			if (g == null ) {
+			if ( g == null ) {
 				scope.setStatus(ExecutionStatus.failure);
 				return null;
 			}
 			AvailableGraphWriters
 				.getGraphWriter(type.trim().toLowerCase())
 				.writeGraph(scope, g, null, path);
-			
+
 		} else {
-		
-			throw new GamaRuntimeException("Unable to save, because this format is not recognized ('"+type+"')");
+
+			throw new GamaRuntimeException("Unable to save, because this format is not recognized ('" + type + "')");
 		}
 		return Cast.asString(scope, file.value(scope));
 	}
@@ -174,8 +158,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 		try {
 			for ( String e : attributes.keySet() ) {
-				specs.append(',').append(e).append(':')
-					.append(typeJava(agents.get(0).getAttribute(attributes.get(e))));
+				specs.append(',').append(e).append(':').append(typeJava(agents.get(0).getAttribute(attributes.get(e))));
 			}
 			String featureTypeName = agents.get(0).getSpeciesName();
 			saveShapeFile(scope, path, agents, featureTypeName, specs.toString(), attributes);
@@ -187,15 +170,14 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	}
 
-	public void saveText(final String type, final IExpression item, final File fileTxt,
-		final IScope scope) throws GamaRuntimeException {
+	public void saveText(final String type, final IExpression item, final File fileTxt, final IScope scope)
+		throws GamaRuntimeException {
 		try {
 			FileWriter fw = new FileWriter(fileTxt, true);
 
 			if ( item != null ) {
 				if ( type.equals("text") ) {
-					fw.write(Cast.asString(scope, item.value(scope)) +
-						System.getProperty("line.separator"));
+					fw.write(Cast.asString(scope, item.value(scope)) + System.getProperty("line.separator"));
 				} else if ( type.equals("csv") ) {
 					item.getContentType();
 					if ( item.getType().id() == IType.LIST ) {
@@ -203,11 +185,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 						for ( int i = 0; i < values.size() - 1; i++ ) {
 							fw.write(Cast.asString(scope, values.get(i)) + ",");
 						}
-						fw.write(Cast.asString(scope, values.last(scope)) +
-							System.getProperty("line.separator"));
+						fw.write(Cast.asString(scope, values.last(scope)) + System.getProperty("line.separator"));
 					} else {
-						fw.write(Cast.asString(scope, item.value(scope)) +
-							System.getProperty("line.separator"));
+						fw.write(Cast.asString(scope, item.value(scope)) + System.getProperty("line.separator"));
 					}
 				}
 			}
@@ -234,8 +214,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		return "String";
 	}
 
-	private void computeInits(final IScope scope, final Map<String, String> values)
-		throws GamaRuntimeException {
+	private void computeInits(final IScope scope, final Map<String, String> values) throws GamaRuntimeException {
 		if ( init == null ) { return; }
 		for ( Facet f : init.entrySet() ) {
 			if ( f != null ) {
@@ -244,17 +223,15 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		}
 	}
 
-	public void saveShapeFile(final IScope scope, final String path,
-		final List<? extends IAgent> agents, final String featureTypeName, final String specs,
-		final Map<String, String> attributes) throws IOException, SchemaException,
-		GamaRuntimeException {
+	public void saveShapeFile(final IScope scope, final String path, final List<? extends IAgent> agents,
+		final String featureTypeName, final String specs, final Map<String, String> attributes) throws IOException,
+		SchemaException, GamaRuntimeException {
 
 		ShapefileDataStore store = new ShapefileDataStore(new File(path).toURI().toURL());
 		SimpleFeatureType type = DataUtilities.createType(featureTypeName, specs);
 
 		store.createSchema(type);
-		FeatureStore<FeatureType, Feature> featureStore =
-			(FeatureStore) store.getFeatureSource(featureTypeName);
+		FeatureStore<FeatureType, Feature> featureStore = (FeatureStore) store.getFeatureSource(featureTypeName);
 		Transaction t = new DefaultTransaction();
 		FeatureCollection collection = FeatureCollections.newCollection();
 
@@ -266,7 +243,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 			// TODO Pr�voir un locationConverter pour passer d'un environnement � l'autre
 
-			geom = scope.getWorldScope().getGisUtils().inverseTransform(geom);
+			geom = scope.getSimulationScope().getGisUtils().inverseTransform(geom);
 			liste.add(geom);
 			if ( attributes != null ) {
 				for ( Object e : attributes.values() ) {
@@ -274,8 +251,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				}
 			}
 
-			SimpleFeature simpleFeature =
-				SimpleFeatureBuilder.build(type, liste.toArray(), String.valueOf(i++));
+			SimpleFeature simpleFeature = SimpleFeatureBuilder.build(type, liste.toArray(), String.valueOf(i++));
 			collection.add(simpleFeature);
 		}
 
@@ -287,7 +263,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	}
 
 	private void writePRJ(IScope scope, final String path) {
-		CoordinateReferenceSystem crs = scope.getWorldScope().getGisUtils().getCrs();
+		CoordinateReferenceSystem crs = scope.getSimulationScope().getGisUtils().getCrs();
 		if ( crs != null ) {
 			try {
 				FileWriter fw = new FileWriter(path.replace(".shp", ".prj"));

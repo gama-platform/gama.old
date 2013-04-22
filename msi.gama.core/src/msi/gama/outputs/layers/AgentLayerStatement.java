@@ -21,7 +21,6 @@ package msi.gama.outputs.layers;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.outputs.IDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -50,7 +49,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.FOCUS, type = IType.AGENT, optional = true),
 	@facet(name = IKeyword.ASPECT, type = IType.ID, optional = true),
 	@facet(name = IKeyword.Z, type = IType.FLOAT, optional = true),
-	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true)}, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true) }, omissible = IKeyword.NAME)
 public class AgentLayerStatement extends AbstractLayerStatement {
 
 	private IExpression setOfAgents;
@@ -82,13 +81,13 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void compute(final IScope sim, final long cycle) throws GamaRuntimeException {
-		super.compute(sim, cycle);
+	public void step(final IScope scope) throws GamaRuntimeException {
+		super.step(scope);
 		// GUI.debug("Computing AgentDisplayLayer " + getName());
 		synchronized (agents) {
-			if ( cycle == 0l || agentsHaveChanged() ) {
+			if ( scope.getClock().getCycle() == 0 || agentsHaveChanged() ) {
 				agents.clear();
-				agents.addAll(computeAgents(sim));
+				agents.addAll(computeAgents(scope));
 			}
 			agentsForLayer = (HashSet<IAgent>) agents.clone();
 		}
@@ -99,9 +98,9 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void prepare(final IDisplayOutput out, final IScope sim) throws GamaRuntimeException {
-		super.prepare(out, sim);
-		computeAspectName(sim);
+	public void init(final IScope scope) throws GamaRuntimeException {
+		super.init(scope);
+		computeAspectName(scope);
 		// compute(sim, 0);
 	}
 
@@ -112,8 +111,8 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 
 	public void computeAspectName(final IScope scope) throws GamaRuntimeException {
 		String aspectName =
-			constantAspectName == null ? aspectExpr == null ? IKeyword.DEFAULT : Cast.asString(
-				scope, aspectExpr.value(scope)) : constantAspectName;
+			constantAspectName == null ? aspectExpr == null ? IKeyword.DEFAULT : Cast.asString(scope,
+				aspectExpr.value(scope)) : constantAspectName;
 		setAspect(aspectName);
 	}
 

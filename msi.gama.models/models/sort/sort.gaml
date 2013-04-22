@@ -61,6 +61,11 @@ experiment sort type: gui{
 	parameter 'Width and height of the grid:' var: width_and_height_of_grid category: 'Environment' ;
 	parameter 'Number of agents:' var: ants category: 'Agents' ;
 	
+	init {
+		map inits <- user_input("Sort: Enter initial parameters", ["Colors"::3]);
+		number_of_different_colors <- int(inits["Colors"]);
+	}
+	
 	output {
 		display grille refresh_every: 100 {
 			grid ant_grid size: {0.8,0.8} position: {0.1,0.1} ;

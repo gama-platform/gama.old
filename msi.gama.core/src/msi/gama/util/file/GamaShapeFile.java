@@ -53,8 +53,8 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 	@Override
 	protected void checkValidity() throws GamaRuntimeException {
 		super.checkValidity();
-		if ( !GamaFileType.isShape(getFile().getName()) ) { throw new GamaRuntimeException(
-			"The extension " + this.getExtension() + " is not recognized for ESRI shapefiles"); }
+		if ( !GamaFileType.isShape(getFile().getName()) ) { throw new GamaRuntimeException("The extension " +
+			this.getExtension() + " is not recognized for ESRI shapefiles"); }
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 				ShpFiles shpf = new ShpFiles(file);
 				double latitude = featureShp.getBounds().centre().x;
 				double longitude = featureShp.getBounds().centre().y;
-				scope.getWorldScope().getGisUtils().setTransformCRS(shpf, latitude, longitude);
+				scope.getSimulationScope().getGisUtils().setTransformCRS(shpf, latitude, longitude);
 			}
 			return featureShp.features();
 		} catch (IOException e) {
@@ -149,7 +149,7 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 				ShpFiles shpf = new ShpFiles(shpFile);
 				double latitude = env.centre().x;
 				double longitude = env.centre().y;
-				GisUtils gis = scope.getWorldScope().getGisUtils();
+				GisUtils gis = scope.getSimulationScope().getGisUtils();
 				gis.setTransformCRS(shpf, latitude, longitude);
 				env = gis.transform(env);
 			}

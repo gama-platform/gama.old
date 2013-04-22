@@ -62,7 +62,7 @@ public class GeometricSkill extends Skill {
 		} else if ( !coords.isEmpty() ) {
 			geom = GeometryUtils.buildGeometryJTS(coords);
 		} else {
-			geom = scope.getWorldScope().getInnerGeometry();
+			geom = scope.getSimulationScope().getInnerGeometry();
 		}
 		Double percep_dist = scope.hasArg("range") ? scope.getFloatArg("range") : null;
 		Integer precision = scope.hasArg("precision") ? scope.getIntArg("precision") : null;
@@ -81,8 +81,8 @@ public class GeometricSkill extends Skill {
 			Coordinate next = null;
 			if ( k < precision ) {
 				next =
-					new Coordinate(coord_loc.x + Math.cos(angle) * percep_dist, coord_loc.y +
-						Math.sin(angle) * percep_dist);
+					new Coordinate(coord_loc.x + Math.cos(angle) * percep_dist, coord_loc.y + Math.sin(angle) *
+						percep_dist);
 			} else {
 				next = new Coordinate(coord_loc.x + percep_dist, coord_loc.y);
 			}
@@ -103,8 +103,7 @@ public class GeometricSkill extends Skill {
 			 * backgd.intersection(percept.buffer(0.001)); }
 			 */
 			PreparedGeometry ref =
-				PreparedGeometryFactory.prepare(getCurrentAgent(scope).getGeometry()
-					.getInnerGeometry().buffer(0.01));
+				PreparedGeometryFactory.prepare(getCurrentAgent(scope).getGeometry().getInnerGeometry().buffer(0.01));
 			if ( frontier instanceof GeometryCollection ) {
 				GeometryCollection gc = (GeometryCollection) frontier;
 				int nb = gc.getNumGeometries();
@@ -144,11 +143,11 @@ public class GeometricSkill extends Skill {
 	}
 
 	/**
-	 * @throws GamaRuntimeException Return a geometry resulting from the difference between a
-	 *             geometry representing the exterior ring of the agent geometry (ring :
-	 *             geometry.buffer(distance) - geometry.buffer(buffer_in)) and the geometries of the
-	 *             localized entities of the specified species (application of a buffer on these
-	 *             geometries of size buffer_others)
+	 * Return a geometry resulting from the difference between a
+	 * geometry representing the exterior ring of the agent geometry (ring :
+	 * geometry.buffer(distance) - geometry.buffer(buffer_in)) and the geometries of the
+	 * localized entities of the specified species (application of a buffer on these
+	 * geometries of size buffer_others)
 	 * 
 	 * @param args : distance -> float, distance considered for the neighborhood species ->
 	 *            optional, a list of species; buffers_others -> optional, a float, size of the
@@ -183,9 +182,7 @@ public class GeometricSkill extends Skill {
 					try {
 						if ( be != null && be.getGeometry() != null ) {
 							if ( buffer != null ) {
-								geom =
-									geom.difference(be.getInnerGeometry().buffer(
-										buffer.doubleValue()));
+								geom = geom.difference(be.getInnerGeometry().buffer(buffer.doubleValue()));
 							} else {
 								geom = geom.difference(be.getInnerGeometry());
 							}

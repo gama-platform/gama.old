@@ -49,8 +49,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 
 	@Override
 	public IExpression createConst(final Object val, final IType type, final IType contentType) {
-		if ( type == Types.get(IType.SPECIES) ) { return new SpeciesConstantExpression(
-			(String) val, type, contentType); }
+		if ( type == Types.get(IType.SPECIES) ) { return new SpeciesConstantExpression((String) val, type, contentType); }
 		if ( val == null ) { return NIL_EXPR; }
 		if ( val instanceof Boolean ) { return (Boolean) val ? TRUE_EXPR : FALSE_EXPR; }
 		return new ConstantExpression(val, type, contentType);
@@ -86,19 +85,16 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	}
 
 	@Override
-	public IVarExpression createVar(final String name, final IType type, final IType contentType,
-		final IType keyType, final boolean isConst, final int scope,
-		final IDescription definitionDescription) {
+	public IVarExpression createVar(final String name, final IType type, final IType contentType, final IType keyType,
+		final boolean isConst, final int scope, final IDescription definitionDescription) {
 		switch (scope) {
 			case IVarExpression.GLOBAL:
 				return new GlobalVariableExpression(name, type, contentType, keyType, isConst,
-					definitionDescription.getModelDescription().getWorldSpecies());
+					definitionDescription.getModelDescription()/* .getWorldSpecies() */);
 			case IVarExpression.AGENT:
-				return new AgentVariableExpression(name, type, contentType, keyType, isConst,
-					definitionDescription);
+				return new AgentVariableExpression(name, type, contentType, keyType, isConst, definitionDescription);
 			case IVarExpression.TEMP:
-				return new TempVariableExpression(name, type, contentType, keyType,
-					definitionDescription);
+				return new TempVariableExpression(name, type, contentType, keyType, definitionDescription);
 			case IVarExpression.EACH:
 				return new EachExpression(type, contentType, keyType);
 			case IVarExpression.WORLD:
@@ -124,8 +120,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	private final List<Signature> temp_types = new ArrayList(10);
 
 	@Override
-	public IExpression createOperator(final String op, final IDescription context,
-		final IExpression ... args) {
+	public IExpression createOperator(final String op, final IDescription context, final IExpression ... args) {
 		if ( args == null ) { return null; }
 		for ( IExpression exp : args ) {
 			if ( exp == null ) { return null; }
@@ -148,8 +143,8 @@ public class GamlExpressionFactory implements IExpressionFactory {
 				// No signature has been found, we throw an exception
 				if ( temp_types.size() == 0 ) {
 					context.error("No operator found for applying '" + op + "' to " + signature +
-						" (operators available for " + Arrays.toString(ops.keySet().toArray()) +
-						")", IGamlIssue.UNMATCHED_OPERANDS);
+						" (operators available for " + Arrays.toString(ops.keySet().toArray()) + ")",
+						IGamlIssue.UNMATCHED_OPERANDS);
 					return null;
 				}
 				signature = temp_types.get(0);
@@ -184,8 +179,7 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	@Override
 	public IExpression createAction(final String op, final IDescription callerContext,
 		final StatementDescription action, final IExpression ... expressions) {
-		return new PrimitiveOperator(op).init(op, callerContext, action, expressions[0],
-			expressions[1]);
+		return new PrimitiveOperator(op).init(op, callerContext, action, expressions[0], expressions[1]);
 	}
 
 	// @Override

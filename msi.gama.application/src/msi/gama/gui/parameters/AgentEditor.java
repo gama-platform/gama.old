@@ -32,7 +32,7 @@ import org.eclipse.swt.widgets.*;
 
 public class AgentEditor extends AbstractEditor {
 
-	Button agentChooser;
+	private Button agentChooser;
 	Label agentDisplayer;
 	Button agentInspector;
 	String species;
@@ -106,19 +106,19 @@ public class AgentEditor extends AbstractEditor {
 		}
 		// FIXME Not adapted to multiple scales !
 		Menu dropMenu =
-			AgentsMenu.createSpeciesSubMenu(agentChooser, GAMA.getFrontmostSimulation().getWorld()
-				.getMicroPopulation(species), new SelectionAdapter() {
+			AgentsMenu.createSpeciesSubMenu(agentChooser, GAMA.getFrontmostSimulation().getMicroPopulation(species),
+				new SelectionAdapter() {
 
-				@Override
-				public void widgetSelected(final SelectionEvent e) {
-					MenuItem mi = (MenuItem) e.widget;
-					IAgent a = (IAgent) mi.getData("agent");
-					if ( a != null && !a.dead() ) {
-						modifyAndDisplayValue(a);
+					@Override
+					public void widgetSelected(final SelectionEvent e) {
+						MenuItem mi = (MenuItem) e.widget;
+						IAgent a = (IAgent) mi.getData("agent");
+						if ( a != null && !a.dead() ) {
+							modifyAndDisplayValue(a);
+						}
 					}
-				}
 
-			});
+				});
 		agentChooser.setMenu(dropMenu);
 		dropMenu.setVisible(true);
 
@@ -127,8 +127,7 @@ public class AgentEditor extends AbstractEditor {
 	@Override
 	protected void displayParameterValue() {
 		internalModification = true;
-		agentDisplayer.setText(currentValue instanceof IAgent ? ((IAgent) currentValue).getName()
-			: "No agent");
+		agentDisplayer.setText(currentValue instanceof IAgent ? ((IAgent) currentValue).getName() : "No agent");
 		internalModification = false;
 	}
 

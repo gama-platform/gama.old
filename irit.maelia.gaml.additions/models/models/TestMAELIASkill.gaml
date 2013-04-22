@@ -20,11 +20,11 @@ entities {
 		var listRes type: list init:[];
 		
 		reflex {
-			do action: maeliaWrite;			 
+			//do action: maeliaWrite;			 
 
-			let t value: self.maeliaInterrogateDB[request::'SELECT * FROM points;', DBName::DB];
-			set listRes value: t;	
-			do action: write with: [message::t];
+			//let t value: self.maeliaInterrogateDB[request::'SELECT * FROM points;', DBName::DB];
+			//set listRes value: t;	
+			//do action: write with: [message::t];
 		} 
 	}
 }

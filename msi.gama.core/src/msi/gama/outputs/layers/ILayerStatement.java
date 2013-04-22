@@ -19,19 +19,17 @@
 package msi.gama.outputs.layers;
 
 import java.awt.geom.Rectangle2D;
-import msi.gama.common.interfaces.INamed;
+import msi.gama.common.interfaces.*;
 import msi.gama.outputs.IDisplayOutput;
-import msi.gama.runtime.IScope;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
- * The class IDisplayLayer.
+ * The class ILayerStatement. Supports the GAML definition of layers in a display
  * 
  * @author drogoul
  * @since 14 déc. 2011
  * 
  */
-public interface ILayerStatement extends INamed {
+public interface ILayerStatement extends INamed, IStepable {
 
 	public final static short GRID = 1;
 	public final static short AGENTS = 2;
@@ -44,12 +42,7 @@ public interface ILayerStatement extends INamed {
 	public final static short EVENT = 9;
 	public final static short GRAPHICS = 10;
 
-	public abstract void prepare(final IDisplayOutput out, final IScope sim)
-		throws GamaRuntimeException;
-
 	public abstract short getType();
-
-	public abstract void compute(final IScope scope, final long cycle) throws GamaRuntimeException;
 
 	public abstract Double getTransparency();
 
@@ -61,12 +54,12 @@ public interface ILayerStatement extends INamed {
 
 	public abstract IDisplayLayerBox getBox();
 
-	// public abstract void setPhysicalLayer(IDisplay abstractDisplay);
-
 	public abstract void setElevation(Double elevation);
 
 	public abstract void setRefresh(Boolean refresh);
 
 	public abstract void setOpacity(Double opacity);
+
+	public abstract void setDisplayOutput(IDisplayOutput output);
 
 }

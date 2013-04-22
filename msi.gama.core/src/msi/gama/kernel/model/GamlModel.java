@@ -18,35 +18,45 @@
  */
 package msi.gama.kernel.model;
 
-import java.util.List;
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.kernel.experiment.IExperiment;
+import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.outputs.OutputManager;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
+import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.util.GamaList;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
-import msi.gaml.species.ISpecies;
+import msi.gaml.species.*;
 import msi.gaml.types.IType;
 
-/**
- * Written by drogoul Modified on 19 mai 2010
- * 
- * @todo Description
- * 
- */
 @symbol(name = { IKeyword.MODEL }, kind = ISymbolKind.MODEL, with_sequence = true)
+@inside(kinds = ISymbolKind.SPECIES)
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = true),
 	@facet(name = IKeyword.VERSION, type = IType.ID, optional = true),
 	@facet(name = IKeyword.AUTHOR, type = IType.ID, optional = true) }, omissible = IKeyword.NAME)
-public class GamlModel extends AbstractModel {
+public class GamlModel extends GamlSpecies implements IModel {
 
-	public GamlModel(final IDescription desc) {
-		super(desc);
-		setName(desc.getName());
+	protected final Map<String, IExperimentSpecies> experiments = new HashMap<String, IExperimentSpecies>();
+
+	// protected ISpecies worldSpecies;
+
+	public GamlModel(final IDescription description) {
+		super(description);
+		setName(description.getName());
+	}
+
+	@Override
+	public ModelDescription getDescription() {
+		return (ModelDescription) description;
+	}
+
+	@Override
+	public String getRelativeFilePath(final String filePath, final boolean shouldExist) {
+		return getDescription().constructModelRelativePath(filePath, shouldExist);
 	}
 
 	@Override
@@ -55,37 +65,107 @@ public class GamlModel extends AbstractModel {
 	}
 
 	@Override
+	public String getFolderPath() {
+		return getDescription().getModelFolderPath();
+	}
+
+	@Override
+	public String getFilePath() {
+		return getDescription().getModelFilePath();
+	}
+
+	@Override
+	public String getProjectPath() {
+		return getDescription().getModelProjectPath();
+	}
+
+	protected void addExperiment(final IExperimentSpecies exp) {
+		if ( exp == null ) { return; }
+		experiments.put(exp.getName(), exp);
+		exp.setModel(this);
+	}
+
+	@Override
+	public IExperimentSpecies getExperiment(final String s) {
+		// if ( s == null ) { return getExperiment(IKeyword.DEFAULT_EXP); }
+		return experiments.get(s);
+	}
+
+	@Override
+	public Collection<IExperimentSpecies> getExperiments() {
+		return experiments.values();
+	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		// worldSpecies.dispose();
+		for ( IExperimentSpecies exp : experiments.values() ) {
+			exp.dispose();
+		}
+		experiments.clear();
+	}
+
+	// @Override
+	// public ISpecies getWorldSpecies() {
+	// return worldSpecies;
+	// }
+
+	@Override
+	public ISpecies getSpecies(final String speciesName) {
+		if ( speciesName == null ) { return null; }
+
+		Deque<ISpecies> speciesStack = new ArrayDeque<ISpecies>();
+		speciesStack.push(this);
+		ISpecies currentSpecies;
+		while (!speciesStack.isEmpty()) {
+			currentSpecies = speciesStack.pop();
+			if ( currentSpecies.getName().equals(speciesName) ) { return currentSpecies; }
+
+			List<ISpecies> microSpecies = currentSpecies.getMicroSpecies();
+			for ( ISpecies microSpec : microSpecies ) {
+				if ( microSpec.getMacroSpecies().equals(currentSpecies) ) {
+					speciesStack.push(microSpec);
+				}
+			}
+		}
+
+		return null;
+	}
+
+	@Override
 	public void setChildren(final List<? extends ISymbol> children) {
 		GamaList forExperiment = new GamaList();
-		GamaList<IExperiment> experiments = new GamaList();
 
-		// add the world_species first
-		for ( ISymbol s : children ) {
-			if ( s instanceof ISpecies ) {
-				this.worldSpecies = (ISpecies) s;
-				break;
-			}
-		}
-		// gather the experiments from its micro-species
-		for ( ISymbol s : worldSpecies.getMicroSpecies() ) {
-			if ( s instanceof IExperiment ) {
-				addExperiment((IExperiment) s);
-				experiments.add((IExperiment) s);
-			}
-		}
+		// // add the world_species first
+		// for ( ISymbol s : children ) {
+		// if ( s instanceof ISpecies ) {
+		// this.worldSpecies = (ISpecies) s;
+		// break;
+		// }
+		// }
+		// // gather the experiments from its micro-species
+		// for ( ISymbol s : worldSpecies.getMicroSpecies() ) {
+		// if ( s instanceof IExperiment ) {
+		// addExperiment((IExperiment) s);
+		// experiments.add((IExperiment) s);
+		// }
+		// }
 
 		for ( ISymbol s : children ) {
-			if ( s instanceof IExperiment ) {
-				addExperiment((IExperiment) s);
-				experiments.add((IExperiment) s);
+			if ( s instanceof IExperimentSpecies ) {
+				addExperiment((IExperimentSpecies) s);
 			} else if ( s instanceof OutputManager ) {
 				forExperiment.add(s);
+				children.remove(s);
 			}
 		}
 		// Add the default outputs, environment, etc. to all experiments
-		for ( IExperiment e : experiments ) {
+		for ( IExperimentSpecies e : getExperiments() ) {
+			// They are withdrawn from the children
+			children.remove(e);
 			e.setChildren(forExperiment);
 		}
-
+		super.setChildren(children);
 	}
 }

@@ -1,6 +1,6 @@
 model ants
 
-global {       
+global {
 	float evaporation_rate <- 0.10 min: 0.0 max: 1.0 parameter: 'Rate of evaporation of the signal (%/cycle):' category: 'Signals';
 	float diffusion_rate <- 0.5 min: 0.0 max: 1.0 parameter: 'Rate of diffusion of the signal (%/cycle):' category: 'Signals';
 	int gridsize <- 100 min: 30 parameter: 'Width and Height of the grid:' category: 'Environment and Population';
@@ -26,9 +26,7 @@ global {
 					food_placed <- food_placed + 5;
 					color <- food_color;
 				}
-
 			}
-
 		}
 
 		create ant number: ants_number with: (location: center);
@@ -49,78 +47,75 @@ environment width: gridsize height: gridsize {
 
 }
 
-entities {
-	species ant skills: [moving] control: fsm {
-		float speed <- 1.0;
-		bool has_food <- false;
-		signal road value: has_food ? 240 : 0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid;
-		action pick (int amount) {
-			has_food <- true;
-			ant_grid place <- ant_grid(location);
-			place.food <- place.food - amount;
+species ant skills: [moving] control: fsm {
+	float speed <- 1.0;
+	bool has_food <- false;
+	signal road value: has_food ? 240 : 0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid;
+	action pick (int amount) {
+		has_food <- true;
+		ant_grid place <- ant_grid(location);
+		place.food <- place.food - amount;
+	}
+
+	action drop {
+		food_gathered <- food_gathered + 1;
+		has_food <- false;
+		heading <- heading - 180;
+	}
+
+	point choose_best_place {
+		container list_places <- (ant_grid(location)).neighbours;
+		if (list_places count (each.food > 0)) > 0 {
+			return point(list_places first_with (each.food > 0));
+		} else {
+			list_places <- (list_places where ((each.road > 0) and ((each distance_to center) > (self distance_to center)))) sort_by (each.road);
+			return point(last(list_places));
 		}
 
-		action drop {
-			food_gathered <- food_gathered + 1;
-			has_food <- false;
-			heading <- heading - 180;
-		}
+	}
 
-		point choose_best_place {
-			container list_places <- (ant_grid(location)).neighbours;
-			if (list_places count (each.food > 0)) > 0 {
-				return point(list_places first_with (each.food > 0));
-			} else {
-				list_places <- (list_places where ((each.road > 0) and ((each distance_to center) > (self distance_to center)))) sort_by (each.road);
-				return point(last(list_places));
-			}
+	reflex drop when: has_food and (ant_grid(location)).is_nest {
+		do drop();
+	}
 
-		}
+	reflex pick when: !has_food and (ant_grid(location)).food > 0 {
+		do pick(1);
+	}
 
-		reflex drop when: has_food and (ant_grid(location)).is_nest {
-			do drop();
-		}
+	state wandering initial: true {
+		do wander(amplitude: 90);
+		float pr <- (ant_grid(location)).road;
+		transition to: carryingFood when: has_food;
+		transition to: followingRoad when: (pr > 0.05) and (pr < 4);
+	}
 
-		reflex pick when: !has_food and (ant_grid(location)).food > 0 {
-			do pick(1);
-		}
+	state carryingFood {
+		do goto(target: center);
+		transition to: wandering when: !has_food;
+	}
 
-		state wandering initial: true {
-			do wander(amplitude: 90);
-			float pr <- (ant_grid(location)).road;
-			transition to: carryingFood when: has_food;
-			transition to: followingRoad when: (pr > 0.05) and (pr < 4);
-		}
+	state followingRoad {
+		point next_place <- choose_best_place();
+		float pr <- (ant_grid(location)).road;
+		location <- next_place;
+		transition to: carryingFood when: has_food;
+		transition to: wandering when: (pr < 0.05) or (next_place = nil);
+	}
 
-		state carryingFood {
-			do goto(target: center);
-			transition to: wandering when: !has_food;
-		}
+	aspect info {
+		draw circle(1) empty: !has_food color: rgb('red');
+		draw line([location, destination]) color: rgb('white');
+		draw circle(4) empty: true color: rgb('white');
+		draw string(self as int) color: rgb('white') size: 1;
+		draw state color: rgb('white') size: 1 at: my location + { 1, 1 };
+	}
 
-		state followingRoad {
-			point next_place <- choose_best_place();
-			float pr <- (ant_grid(location)).road;
-			location <- next_place;
-			transition to: carryingFood when: has_food;
-			transition to: wandering when: (pr < 0.05) or (next_place = nil);
-		}
+	aspect icon {
+		draw file(ant_shape_empty) size: 5 rotate: my heading + 1;
+	}
 
-		aspect info {
-			draw circle(1) empty: !has_food color: rgb('red');
-			draw line([location, destination]) color: rgb('white');
-			draw circle(4) empty: true color: rgb('white');
-			draw string(self as int) color: rgb('white') size: 1;
-			draw state color: rgb('white') size: 1 at: my location + { 1, 1 };
-		}
-
-		aspect icon {
-			draw file(ant_shape_empty) size: 5 rotate: my heading + 1;
-		}
-
-		aspect default {
-			draw square(1) empty: !has_food color: rgb('white') rotate: my heading;
-		}
-
+	aspect default {
+		draw square(1) empty: !has_food color: rgb('white') rotate: my heading;
 	}
 
 }
@@ -134,6 +129,7 @@ experiment Complete type: gui {
 	int a <- 1000;
 	init {
 		write "Experimentator agent running " + self;
+		ants_number <- 200;
 	}
 
 	//reflex to {
@@ -145,7 +141,8 @@ experiment Complete type: gui {
 			agents agents transparency: 0.5 position: { 0.05, 0.05 } size: { 0.9, 0.9 } value: (ant_grid as list) where ((each.food > 0) or (each.road > 0) or (each.is_nest));
 			species ant position: { 0.05, 0.05 } size: { 0.9, 0.9 } aspect: icon;
 			text ('Food foraged: ' + (((food_placed = 0 ? 0 : food_gathered / food_placed) * 100) with_precision 2) + '%') position: { 0.05, 0.03 } color: rgb('black') size: { 1, 0.02 };
-			text 'Carrying ants: ' + (((100 * ant count (each.has_food or each.state = "followingRoad"))/length(ant)) with_precision 2) + '%' position: { 0.5, 0.03 } color: rgb('black') size: { 1, 0.02 };
+			text 'Carrying ants: ' + (((100 * ant count (each.has_food or each.state = "followingRoad")) / length(ant)) with_precision 2) + '%' position: { 0.5, 0.03 } color: rgb('black')
+			size: { 1, 0.02 };
 		}
 
 	}

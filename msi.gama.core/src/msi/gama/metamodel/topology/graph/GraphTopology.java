@@ -19,8 +19,6 @@
 package msi.gama.metamodel.topology.graph;
 
 import java.util.*;
-
-import weka.core.mathematicalexpression.sym;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.*;
@@ -28,8 +26,7 @@ import msi.gama.metamodel.topology.filter.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gama.util.path.GamaSpatialPath;
-import msi.gama.util.path.PathFactory;
+import msi.gama.util.path.*;
 import msi.gaml.operators.Maths;
 
 /**
@@ -53,7 +50,7 @@ public class GraphTopology extends AbstractTopology {
 
 	// The default topologies for graphs.
 	public GraphTopology(final GamaSpatialGraph graph) {
-		this(GAMA.getDefaultScope(), GAMA.getDefaultScope().getWorldScope().getGeometry(), graph);
+		this(GAMA.getDefaultScope(), GAMA.getDefaultScope().getSimulationScope().getGeometry(), graph);
 	}
 
 	@Override
@@ -64,8 +61,7 @@ public class GraphTopology extends AbstractTopology {
 	/**
 	 * @throws GamaRuntimeException
 	 * @throws GamaRuntimeException
-	 * @see msi.gama.environment.ITopology#pathBetween(msi.gama.interfaces.IGeometry,
-	 *      msi.gama.interfaces.IGeometry)
+	 * @see msi.gama.environment.ITopology#pathBetween(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry)
 	 */
 	@Override
 	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target) {
@@ -75,11 +71,11 @@ public class GraphTopology extends AbstractTopology {
 		IAgentFilter filter = In.edgesOf(getPlaces());
 
 		edgeS =
-			source instanceof ILocation ? getAgentClosestTo((ILocation) source, filter)
-				: getAgentClosestTo(source, filter);
+			source instanceof ILocation ? getAgentClosestTo((ILocation) source, filter) : getAgentClosestTo(source,
+				filter);
 		edgeT =
-			target instanceof ILocation ? getAgentClosestTo((ILocation) target, filter)
-				: getAgentClosestTo(target, filter);
+			target instanceof ILocation ? getAgentClosestTo((ILocation) target, filter) : getAgentClosestTo(target,
+				filter);
 		if ( edgeS == null || edgeT == null ) { return null; }
 		return pathBetweenCommon(edgeS, edgeT, source, target);
 
@@ -88,60 +84,56 @@ public class GraphTopology extends AbstractTopology {
 	public GamaSpatialPath pathBetweenCommon(final IShape edgeS, final IShape edgeT, final IShape source,
 		final IShape target) {
 
-		if ( edgeS == edgeT ) { 
-			return (GamaSpatialPath)PathFactory.newInstance(this, source, target, GamaList.with(edgeS));
-			// return new GamaPath(this, source, target, GamaList.with(edgeS)); 
+		if ( edgeS == edgeT ) { return PathFactory.newInstance(this, source, target, GamaList.with(edgeS));
+		// return new GamaPath(this, source, target, GamaList.with(edgeS));
 		}
 
 		IShape s1 = null;
 		IShape t1 = null;
 		IShape s2 = null;
 		IShape t2 = null;
-		t1 = (IShape) getPlaces().getEdgeSource(edgeT);
-		t2 = (IShape) getPlaces().getEdgeTarget(edgeT);
-		s1 = (IShape) getPlaces().getEdgeSource(edgeS);
-		s2 = (IShape) getPlaces().getEdgeTarget(edgeS);
+		t1 = getPlaces().getEdgeSource(edgeT);
+		t2 = getPlaces().getEdgeTarget(edgeT);
+		s1 = getPlaces().getEdgeSource(edgeS);
+		s2 = getPlaces().getEdgeTarget(edgeS);
 		if ( t1 == null || t2 == null || s1 == null || s2 == null ) { return null; }
 		IShape nodeT = t1;
-		if ( t1.getLocation().euclidianDistanceTo(target.getLocation()) > t2.getLocation()
-			.euclidianDistanceTo(target.getLocation()) ) {
+		if ( t1.getLocation().euclidianDistanceTo(target.getLocation()) > t2.getLocation().euclidianDistanceTo(
+			target.getLocation()) ) {
 			nodeT = t2;
 		}
 
 		IShape nodeS = s1;
 		if ( s1 == nodeT ||
 			s2 != nodeT &&
-			s1.getLocation().euclidianDistanceTo(source.getLocation()) > s2.getLocation()
-				.euclidianDistanceTo(source.getLocation()) ) {
+			s1.getLocation().euclidianDistanceTo(source.getLocation()) > s2.getLocation().euclidianDistanceTo(
+				source.getLocation()) ) {
 			nodeS = s2;
 		}
 		IList<IShape> edges = getPlaces().computeBestRouteBetween(nodeS, nodeT);
 
 		if ( edges.isEmpty() || edges.get(0) == null ) { return null; }
-		HashSet edgesSetInit =
-			new HashSet(Arrays.asList(edges.get(0).getInnerGeometry().getCoordinates()));
+		HashSet edgesSetInit = new HashSet(Arrays.asList(edges.get(0).getInnerGeometry().getCoordinates()));
 		HashSet edgesSetS = new HashSet(Arrays.asList(edgeS.getInnerGeometry().getCoordinates()));
 		if ( !edgesSetS.equals(edgesSetInit) ) {
 			edges.add(0, edgeS);
 		}
 		HashSet edgesSetEnd =
-			new HashSet(Arrays.asList(edges.get(edges.size() - 1).getInnerGeometry()
-				.getCoordinates()));
+			new HashSet(Arrays.asList(edges.get(edges.size() - 1).getInnerGeometry().getCoordinates()));
 		HashSet edgesSetT = new HashSet(Arrays.asList(edgeT.getInnerGeometry().getCoordinates()));
 
 		if ( !edgesSetT.equals(edgesSetEnd) ) {
 			edges.add(edgeT);
 		}
 		// return new GamaPath(this, source, target, edges);
-		return (GamaSpatialPath) PathFactory.newInstance(this, source, target, edges);
+		return PathFactory.newInstance(this, source, target, edges);
 	}
 
 	@Override
 	public GamaSpatialPath pathBetween(IScope scope, final ILocation source, final ILocation target) {
 		IShape edgeS = null, edgeT = null;
 		if ( !this.getPlaces().getEdges().isEmpty() ) {
-			if ( this.getPlaces() instanceof GamaSpatialGraph &&
-				!((GamaSpatialGraph) this.getPlaces()).isAgentEdge() ) {
+			if ( this.getPlaces() instanceof GamaSpatialGraph && !((GamaSpatialGraph) this.getPlaces()).isAgentEdge() ) {
 				double distMinT = Double.MAX_VALUE;
 				double distMinS = Double.MAX_VALUE;
 				for ( IShape shp : this.getPlaces().getEdges() ) {
@@ -221,8 +213,8 @@ public class GraphTopology extends AbstractTopology {
 
 	/**
 	 * @throws GamaRuntimeException
-	 * @see msi.gama.environment.ITopology#distanceBetween(msi.gama.interfaces.IGeometry,
-	 *      msi.gama.interfaces.IGeometry, java.lang.Double)
+	 * @see msi.gama.environment.ITopology#distanceBetween(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry,
+	 *      java.lang.Double)
 	 */
 	@Override
 	public Double distanceBetween(IScope scope, final IShape source, final IShape target) {
@@ -256,12 +248,11 @@ public class GraphTopology extends AbstractTopology {
 	}
 
 	/**
-	 * @see msi.gama.environment.ITopology#getAgentsIn(msi.gama.interfaces.IGeometry,
-	 *      msi.gama.environment.IAgentFilter, boolean)
+	 * @see msi.gama.environment.ITopology#getAgentsIn(msi.gama.interfaces.IGeometry, msi.gama.environment.IAgentFilter,
+	 *      boolean)
 	 */
 	@Override
-	public IList<IAgent> getAgentsIn(final IShape source, final IAgentFilter f,
-		final boolean covered) {
+	public IList<IAgent> getAgentsIn(final IShape source, final IAgentFilter f, final boolean covered) {
 		List<IAgent> agents = super.getAgentsIn(source, f, covered);
 		GamaList<IAgent> result = new GamaList<IAgent>();
 		for ( IAgent ag : agents ) {

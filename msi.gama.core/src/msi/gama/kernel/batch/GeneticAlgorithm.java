@@ -160,7 +160,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 	public void addParametersTo(final BatchExperiment exp) {
 		super.addParametersTo(exp);
 		exp.addMethodParameter(new ParameterAdapter("Mutation probability",
-			IExperiment.BATCH_CATEGORY_NAME, IType.FLOAT) {
+			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.FLOAT) {
 
 			@Override
 			public Object value() {
@@ -169,7 +169,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 
 		});
 		exp.addMethodParameter(new ParameterAdapter("Crossover probability",
-			IExperiment.BATCH_CATEGORY_NAME, IType.FLOAT) {
+			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.FLOAT) {
 
 			@Override
 			public Object value() {
@@ -178,7 +178,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 
 		});
 		exp.addMethodParameter(new ParameterAdapter("Population dimension",
-			IExperiment.BATCH_CATEGORY_NAME, IType.INT) {
+			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
 
 			@Override
 			public Object value() {
@@ -187,7 +187,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 
 		});
 		exp.addMethodParameter(new ParameterAdapter("Preliminary number of generations",
-			IExperiment.BATCH_CATEGORY_NAME, IType.FLOAT) {
+			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.FLOAT) {
 
 			@Override
 			public Object value() {
@@ -196,7 +196,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 
 		});
 		exp.addMethodParameter(new ParameterAdapter("Max. number of generations",
-			IExperiment.BATCH_CATEGORY_NAME, IType.FLOAT) {
+			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.FLOAT) {
 
 			@Override
 			public Object value() {

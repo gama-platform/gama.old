@@ -36,7 +36,6 @@ import msi.gaml.compilation.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
 import org.jfree.data.statistics.Statistics;
@@ -54,10 +53,9 @@ import org.jfree.data.statistics.Statistics;
 	@facet(name = IKeyword.REPEAT, type = IType.INT, optional = true),
 	@facet(name = IKeyword.UNTIL, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.MULTICORE, type = IType.BOOL, optional = true),
-	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { IKeyword.BATCH, IKeyword.REMOTE,
-		IKeyword.GUI_ }, optional = false) }, omissible = IKeyword.NAME)
-@inside(symbols = IKeyword.MODEL, kinds = ISymbolKind.SPECIES)
-public class BatchExperiment extends AbstractExperiment {
+	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { IKeyword.BATCH, IKeyword.REMOTE, IKeyword.GUI_ }, optional = false) }, omissible = IKeyword.NAME)
+@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
+public class BatchExperiment extends GuiExperimentSpecies {
 
 	private IExploration exploAlgo;
 	private FileOutput log;
@@ -109,44 +107,39 @@ public class BatchExperiment extends AbstractExperiment {
 	}
 
 	@Override
-	public void open() {
+	public void userOpen() {
 		if ( isOpen ) { return; }
-		super.open();
+		super.userOpen();
 		GuiUtils.showParameterView(this);
 		GuiUtils.informStatus(" Batch ready ");
 	}
 
 	@Override
-	protected void processCommand(final int command) throws InterruptedException {
+	protected void processUserCommand(final int command) throws InterruptedException {
 		if ( command == _NEXT ) {
 			closeCurrentSimulation(false);
 		} else {
-			super.processCommand(command);
+			super.processUserCommand(command);
 		}
 	}
 
 	@Override
-	protected ParametersSet getCurrentSolution() throws GamaRuntimeException {
+	public ParametersSet getCurrentSolution() throws GamaRuntimeException {
 		return currentSolution;
 	}
 
 	@Override
-	public void initializeExperiment() {
-		// DOES NOTHING UNTIL THE SOLUTION/SEED ARE NOT GIVEN
-	}
-
-	@Override
-	public void initialize(final ParametersSet sol, final Double seed) throws GamaRuntimeException,
+	public void initializeNewSimulation(final ParametersSet sol, final Double seed) throws GamaRuntimeException,
 		InterruptedException {
-		super.initialize(sol, seed);
-		currentSimulation.getScheduler().insertEndAction(haltAction);
+		super.initializeNewSimulation(sol, seed);
+		getCurrentSimulation().getScheduler().insertEndAction(haltAction);
 	}
 
 	public void conditionalHalt(final IScope scope) {
 		try {
 			if ( Cast.asBool(scope, stopCondition.value(scope)) ) {
 				commands.offer(_NEXT);
-				currentSimulation.getScheduler().removeAction(haltAction);
+				getCurrentSimulation().getScheduler().removeAction(haltAction);
 			}
 		} catch (GamaRuntimeException e) {
 			e.addContext("in the halt condition of batch experiment " + getName());
@@ -161,15 +154,13 @@ public class BatchExperiment extends AbstractExperiment {
 
 	@Override
 	public void closeCurrentSimulation(final boolean closingExperiment) {
-		if ( currentSimulation == null ) { return; }
+		if ( getCurrentSimulation() == null ) { return; }
 		// currentSimulation.stop();
 		if ( !closingExperiment ) {
 			try { // while the simulation is still "alive"
 				IExpression fitness = exploAlgo.getFitnessExpression();
 				if ( fitness != null ) {
-					lastFitnessValue =
-						Cast.asFloat(currentSimulation.getGlobalScope(),
-							fitness.value(currentSimulation.getGlobalScope()));
+					lastFitnessValue = Cast.asFloat(getGlobalScope(), fitness.value(getGlobalScope()));
 					fitnessValues.add(lastFitnessValue);
 				}
 				if ( log != null ) {
@@ -181,8 +172,8 @@ public class BatchExperiment extends AbstractExperiment {
 			}
 		}
 		// if ( currentSimulation != null ) {
-		currentSimulation.close();
-		currentSimulation = null;
+		getCurrentSimulation().close();
+		// currentSimulation = null;
 		// }
 		if ( !closingExperiment ) {
 			innerLoopSemaphore.release(2);
@@ -208,15 +199,14 @@ public class BatchExperiment extends AbstractExperiment {
 	}
 
 	@Override
-	public void startExperiment() throws GamaRuntimeException {
+	public void startExperiment() {
 		if ( !isRunning() ) {
 			initRandom();
 			exploAlgo.start();
 		}
 	}
 
-	public Double launchSimulationsWithSolution(final ParametersSet sol)
-		throws GamaRuntimeException {
+	public Double launchSimulationsWithSolution(final ParametersSet sol) throws GamaRuntimeException {
 		currentSolution = sol;
 		fitnessValues.clear();
 		runNumber = runNumber + 1;
@@ -230,22 +220,22 @@ public class BatchExperiment extends AbstractExperiment {
 		}
 		short fitnessCombination = exploAlgo.getCombination();
 		return fitnessCombination == IExploration.C_MAX ? Collections.max(fitnessValues)
-			: fitnessCombination == IExploration.C_MIN ? Collections.min(fitnessValues)
-				: Statistics.calculateMean(fitnessValues);
+			: fitnessCombination == IExploration.C_MIN ? Collections.min(fitnessValues) : Statistics
+				.calculateMean(fitnessValues);
 
 	}
 
 	@Override
 	public void stepExperiment() {
 		// Avancer a la prochaine simulation ??
-		if ( currentSimulation != null && !isLoading() ) {
-			currentSimulation.step();
+		if ( getCurrentSimulation() != null && !isLoading() ) {
+			getCurrentSimulation().step();
 		}
 	}
 
 	@Override
-	public void closeExperiment() {
-		super.closeExperiment();
+	public void userClose() {
+		super.userClose();
 		exploAlgo = null;
 	}
 
@@ -253,7 +243,7 @@ public class BatchExperiment extends AbstractExperiment {
 	public void reloadExperiment() throws GamaRuntimeException, InterruptedException {
 		boolean wasRunning = isRunning() && !isPaused();
 		stopExperiment();
-		initializeExperiment();
+		initializeSimulation();
 		if ( wasRunning ) {
 			startExperiment();
 		}
@@ -265,8 +255,7 @@ public class BatchExperiment extends AbstractExperiment {
 		for ( ISymbol s : children ) {
 			if ( s instanceof BatchOutput ) {
 				fileOutputDescription = (BatchOutput) s;
-			} else if ( s instanceof IExploration &&
-				(s.hasFacet(IKeyword.MAXIMIZE) || s.hasFacet(IKeyword.MINIMIZE)) ) {
+			} else if ( s instanceof IExploration && (s.hasFacet(IKeyword.MAXIMIZE) || s.hasFacet(IKeyword.MINIMIZE)) ) {
 				exploAlgo = (IExploration) s;
 				// initRandom();
 			} else if ( s instanceof IParameter.Batch ) {
@@ -295,14 +284,13 @@ public class BatchExperiment extends AbstractExperiment {
 			data = exploAlgo.getFitnessExpression();
 		}
 		String dataString = data == null ? "time" : data.toGaml();
-		log =
-			new FileOutput(output.getLiteral(IKeyword.TO), dataString, getParametersNames(), this);
+		log = new FileOutput(output.getLiteral(IKeyword.TO), dataString, getParametersNames(), this);
 	}
 
 	@Override
 	protected void addOwnParameters() {
-		ISpecies world = model.getWorldSpecies();
-		for ( IVariable v : world.getVars() ) {
+		// ISpecies world = model.getWorldSpecies();
+		for ( IVariable v : model.getVars() ) {
 			if ( v.isParameter() ) {
 				ExperimentParameter p = new ExperimentParameter(stack, v);
 				if ( p.canBeExplored() ) {
@@ -342,21 +330,19 @@ public class BatchExperiment extends AbstractExperiment {
 			}
 
 		});
-		String s =
-			"(" + exploAlgo.getCombinationName() + " of " + innerLoopRepeat + " simulations)";
-		addMethodParameter(new ParameterAdapter("Best fitness", BATCH_CATEGORY_NAME, s,
-			IType.STRING) {
+		String s = "(" + exploAlgo.getCombinationName() + " of " + innerLoopRepeat + " simulations)";
+		addMethodParameter(new ParameterAdapter("Best fitness", BATCH_CATEGORY_NAME, s, IType.STRING) {
 
 			@Override
 			public Object value() {
-				return exploAlgo != null && exploAlgo.getBestFitness() != null ? exploAlgo
-					.getBestFitness().toString() : "-";
+				return exploAlgo != null && exploAlgo.getBestFitness() != null ? exploAlgo.getBestFitness().toString()
+					: "-";
 			}
 
 		});
 
-		addMethodParameter(new ParameterAdapter("Last fitness", BATCH_CATEGORY_NAME,
-			"(of the last single simulation)", IType.STRING) {
+		addMethodParameter(new ParameterAdapter("Last fitness", BATCH_CATEGORY_NAME, "(of the last single simulation)",
+			IType.STRING) {
 
 			@Override
 			public Object value() {
@@ -368,8 +354,8 @@ public class BatchExperiment extends AbstractExperiment {
 
 			@Override
 			public Object value() {
-				return exploAlgo != null && exploAlgo.getBestSolution() != null ? exploAlgo
-					.getBestSolution().toString() : "-";
+				return exploAlgo != null && exploAlgo.getBestSolution() != null ? exploAlgo.getBestSolution()
+					.toString() : "-";
 			}
 
 		});

@@ -27,8 +27,7 @@ import javax.imageio.ImageIO;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.gui.displays.layers.LayerManager;
-import msi.gama.metamodel.shape.ILocation;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.precompiler.GamlAnnotations.display;
@@ -52,8 +51,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public static String snapshotFolder = "/tmp/";
 
 	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#initialize(double, double,
-	 *      msi.gama.outputs.IDisplayOutput)
+	 * @see msi.gama.common.interfaces.IDisplaySurface#initialize(double, double, msi.gama.outputs.IDisplayOutput)
 	 */
 	@Override
 	public void initialize(final double w, final double h, final IDisplayOutput output) {
@@ -80,8 +78,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 			return;
 		}
 
-		String file =
-			snapshotFolder + "/" + snapshotFileName + scope.getClock().getCycle() + ".png";
+		String file = snapshotFolder + "/" + snapshotFileName + scope.getClock().getCycle() + ".png";
 		DataOutputStream os = null;
 		try {
 			os = new DataOutputStream(new FileOutputStream(file));
@@ -109,8 +106,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 
 	@Override
-	public void outputChanged(final double env_width, final double env_height,
-		final IDisplayOutput output) {
+	public void outputChanged(final double env_width, final double env_height, final IDisplayOutput output) {
 		widthHeightConstraint = env_height / env_width;
 		if ( output == null ) { return; }
 		bgColor = output.getBackgroundColor();
@@ -118,8 +114,8 @@ public class ImageDisplaySurface implements IDisplaySurface {
 			manager = new LayerManager(this);
 			final List<? extends ISymbol> layers = output.getChildren();
 			for ( final ISymbol layer : layers ) {
-				manager.addLayer(LayerManager.createLayer((ILayerStatement) layer, env_width,
-					env_height, displayGraphics));
+				manager.addLayer(LayerManager.createLayer((ILayerStatement) layer, env_width, env_height,
+					displayGraphics));
 			}
 		} else {
 			manager.updateEnvDimensions(env_width, env_height);
@@ -147,7 +143,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 			displayGraphics.setDisplayDimensions(newWidth, newHeight);
 		}
 		createBuffImage();
-		if ( GAMA.getFrontmostSimulation().isPaused() ) {
+		if ( GAMA.getExperiment().isPaused() ) {
 			updateDisplay();
 		} else {
 			g2.drawImage(copy, 0, 0, newWidth, newHeight, null);
@@ -455,5 +451,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 
 	@Override
-	public void initOutput3D(boolean output3d, ILocation output3dNbCycles) {;}
+	public void initOutput3D(boolean output3d, ILocation output3dNbCycles) {
+		;
+	}
 }

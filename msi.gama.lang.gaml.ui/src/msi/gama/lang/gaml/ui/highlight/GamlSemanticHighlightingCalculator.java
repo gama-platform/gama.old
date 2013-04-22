@@ -37,24 +37,21 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.*;
  *         cf. http://www.eclipse.org/Xtext/documentation/latest/xtext.html#highlighting
  * 
  */
-public class GamlSemanticHighlightingCalculator extends GamlSwitch implements
-	ISemanticHighlightingCalculator {
+public class GamlSemanticHighlightingCalculator extends GamlSwitch implements ISemanticHighlightingCalculator {
 
 	private static Set<String> ASSIGNMENTS = new HashSet(Arrays.asList("<-", "<<", ">>", "->"));
 
-	private static IHighlightedPositionAcceptor acceptor;
-	static Set<INode> done = new HashSet();
+	private IHighlightedPositionAcceptor acceptor;
+	Set<INode> done = new HashSet();
 
 	@Override
-	public void provideHighlightingFor(final XtextResource resource,
-		final IHighlightedPositionAcceptor a) {
+	public void provideHighlightingFor(final XtextResource resource, final IHighlightedPositionAcceptor a) {
 		acceptor = a;
 		TreeIterator<EObject> root = resource.getAllContents();
 		while (root.hasNext()) {
 			doSwitch(root.next());
 		}
 		done.clear();
-		acceptor = null;
 	}
 
 	@Override

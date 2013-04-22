@@ -21,7 +21,7 @@ package msi.gama.gui.swt.commands;
 import java.util.*;
 import java.util.List;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.kernel.simulation.ISimulation;
+import msi.gama.kernel.simulation.ISimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.GAMA;
@@ -38,7 +38,7 @@ public class AgentsMenu extends ContributionItem {
 		super(id);
 	}
 
-	public static SelectionAdapter adapter = new SelectionAdapter() {
+	private static SelectionAdapter adapter = new SelectionAdapter() {
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
@@ -60,8 +60,7 @@ public class AgentsMenu extends ContributionItem {
 		return true;
 	}
 
-	private static void fillAgentsMenu(final Menu menu, final IPopulation species,
-		final SelectionListener select) {
+	private static void fillAgentsMenu(final Menu menu, final IPopulation species, final SelectionListener select) {
 		if ( species == null ) {
 			fill(menu, select);
 			return;
@@ -115,8 +114,7 @@ public class AgentsMenu extends ContributionItem {
 		return agentsMenu;
 	}
 
-	private static void populateComponents(final Menu parent, final IAgent macro,
-		final SelectionListener listener) {
+	private static void populateComponents(final Menu parent, final IAgent macro, final SelectionListener listener) {
 		MenuItem microAgentsItem = new MenuItem(parent, SWT.CASCADE);
 		microAgentsItem.setText("Micro agents");
 
@@ -134,8 +132,7 @@ public class AgentsMenu extends ContributionItem {
 		}
 	}
 
-	private static void populateAgentContent(final Menu parent, final IAgent agent,
-		final SelectionListener listener) {
+	private static void populateAgentContent(final Menu parent, final IAgent agent, final SelectionListener listener) {
 		MenuItem agentItem = new MenuItem(parent, SWT.PUSH);
 		agentItem.setData("agent", agent);
 		agentItem.setText(agent.getName());
@@ -145,8 +142,7 @@ public class AgentsMenu extends ContributionItem {
 		populateComponents(parent, agent, listener);
 	}
 
-	private static void populateAgent(final Menu parent, final IAgent agent,
-		final SelectionListener listener) {
+	private static void populateAgent(final Menu parent, final IAgent agent, final SelectionListener listener) {
 		if ( !agent.hasMembers() ) { // TODO review IAgent.isGridAgent
 			MenuItem agentItem = new MenuItem(parent, SWT.PUSH);
 			agentItem.setData("agent", agent);
@@ -166,8 +162,8 @@ public class AgentsMenu extends ContributionItem {
 		}
 	}
 
-	private static void populateSpecies(final Menu parent, final IPopulation population,
-		final boolean isGlobal, final SelectionListener listener) {
+	private static void populateSpecies(final Menu parent, final IPopulation population, final boolean isGlobal,
+		final SelectionListener listener) {
 		MenuItem speciesItem = null;
 		if ( isGlobal ) {
 			speciesItem = new MenuItem(parent, SWT.CASCADE, 0);
@@ -206,9 +202,9 @@ public class AgentsMenu extends ContributionItem {
 	}
 
 	public static void fill(final Menu parent, final SelectionListener listener) {
-		ISimulation sim = GAMA.getFrontmostSimulation();
+		ISimulationAgent sim = GAMA.getFrontmostSimulation();
 		if ( sim == null ) { return; }
-		IPopulation worldPopulation = sim.getWorldPopulation();
+		IPopulation worldPopulation = sim.getPopulation();
 		populateSpecies(parent, worldPopulation, true, listener);
 	}
 

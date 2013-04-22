@@ -19,10 +19,8 @@
 package msi.gaml.factories;
 
 import static msi.gama.common.interfaces.IKeyword.*;
-import static msi.gaml.compilation.AbstractGamlAdditions.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
@@ -31,6 +29,8 @@ import msi.gaml.compilation.SyntacticElement;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.statements.Facets;
+import msi.gaml.types.*;
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * Written by drogoul Modified on 27 oct. 2009
@@ -44,18 +44,21 @@ public class ModelFactory extends SymbolFactory {
 		super(handles);
 	}
 
-	private void addMicroSpecies(final ModelDescription model, final IDescription macro,
-		final ISyntacticElement micro) {
+	private void addMicroSpecies(final SpeciesDescription macro, final ISyntacticElement micro) {
 		// Create the species description without any children
-		TypeDescription mDesc = (TypeDescription) create(micro, macro, IChildrenProvider.NONE);
+		SpeciesDescription mDesc = (SpeciesDescription) create(micro, macro, IChildrenProvider.NONE);
 		// Add it to its macro-species
 		macro.addChild(mDesc);
-		// Add it to the model
-		// model.addSpeciesDescription(mDesc);
 		// Recursively create each micro-species of the newly added micro-species
 		for ( ISyntacticElement speciesNode : micro.getSpeciesChildren() ) {
-			addMicroSpecies(model, mDesc, speciesNode);
+			addMicroSpecies(mDesc, speciesNode);
 		}
+	}
+
+	private void addExperiment(ModelDescription model, final ISyntacticElement experiment) {
+		// Create the experiment description
+		ExperimentDescription eDesc = (ExperimentDescription) create(experiment, model, IChildrenProvider.NONE);
+		model.addChild(eDesc);
 	}
 
 	/**
@@ -65,76 +68,153 @@ public class ModelFactory extends SymbolFactory {
 	 * @param macro the macro-species
 	 * @param micro the structure of micro-species
 	 */
-	private void complementSpecies(final SpeciesDescription macro, final ISyntacticElement micro) {
-		// Gather the previously created species
-		SpeciesDescription mDesc = macro.getMicroSpecies(micro.getName());
-		if ( mDesc == null ) { return; }
-		// GuiUtils.debug("Complementing " + mDesc.getName());
-		for ( ISyntacticElement child : micro.getChildren() ) {
+	private void complementSpecies(final SpeciesDescription species, final ISyntacticElement node) {
+		if ( species == null ) { return; }
+		species.copyJavaAdditions();
+		// GuiUtils.debug("++++++ Building variables & behaviors of " + species.getName());
+		List<ISyntacticElement> subspecies = new ArrayList();
+		for ( ISyntacticElement child : node.getChildren() ) {
 			if ( !child.isExperiment() && !child.isSpecies() ) {
-				IDescription childDesc = create(child, mDesc);
+				IDescription childDesc = create(child, species);
 				if ( childDesc != null ) {
-					mDesc.addChild(childDesc);
+					species.addChild(childDesc);
 				}
+			} else {
+				subspecies.add(child);
 			}
 		}
 		// recursively complement micro-species
+		for ( ISyntacticElement e : subspecies ) {
+			SpeciesDescription sd = species.getMicroSpecies(e.getName());
+			if ( sd != null ) {
+				complementSpecies(sd, e);
+			}
+		}
+
+	}
+
+	private void parentSpecies(final SpeciesDescription macro, final ISyntacticElement micro, ModelDescription model) {
+		// Gather the previously created species
+		SpeciesDescription mDesc = macro.getMicroSpecies(micro.getName());
+		if ( mDesc == null || mDesc.isExperiment() ) { return; }
+		String p = mDesc.getFacets().getLabel(IKeyword.PARENT);
+		// If no parent is defined, we assume it is "agent"
+		if ( p == null ) {
+			p = IKeyword.AGENT;
+		}
+		SpeciesDescription parent = model.getSpeciesDescription(p);
+		mDesc.setParent(parent);
+		// GuiUtils.debug("Parenting species " + mDesc.getName() + " with " + p);
 		for ( ISyntacticElement speciesNode : micro.getSpeciesChildren() ) {
-			complementSpecies(mDesc, speciesNode);
+			parentSpecies(mDesc, speciesNode, model);
 		}
 	}
 
 	public ModelDescription assemble(final String projectPath, final String modelPath,
 		final List<ISyntacticElement> models) {
 		final List<ISyntacticElement> speciesNodes = new ArrayList();
-		final List<ISyntacticElement> globalNodes = new ArrayList();
+		final List<ISyntacticElement> experimentNodes = new ArrayList();
+		final ISyntacticElement globalNodes = new SyntacticElement(GLOBAL, (EObject) null);
+		final Facets globalFacets = new Facets();
 		final List<ISyntacticElement> otherNodes = new ArrayList();
+		// TODO Verify that it is the right model
 		ISyntacticElement source = models.get(models.size() - 1);
 		for ( int n = models.size(), i = n - 1; i >= 0; i-- ) {
 			ISyntacticElement e = models.get(i);
 			for ( ISyntacticElement se : e.getChildren() ) {
 				if ( se.isGlobal() ) {
-					globalNodes.addAll(se.getChildren());
-				} else if ( se.isSpecies() || se.isExperiment() ) {
+					// We build the facets resulting from the different arguments
+					globalFacets.putAll(se.getFacets());
+					for ( ISyntacticElement ge : se.getChildren() ) {
+						if ( ge.isSpecies() ) {
+							speciesNodes.add(ge);
+						} else if ( ge.isExperiment() ) {
+							experimentNodes.add(ge);
+						} else {
+							globalNodes.addChild(ge);
+						}
+					}
+
+				} else if ( se.isSpecies() ) {
 					speciesNodes.add(se);
+				} else if ( se.isExperiment() ) {
+					experimentNodes.add(se);
 				} else {
 					otherNodes.add(se);
 				}
 			}
 		}
+		String modelName = source.getLabel(NAME).replace(' ', '_') + "_model";
+		globalFacets.put(NAME, modelName);
+
 		ModelDescription model =
-			new ModelDescription(projectPath, modelPath, source.getElement(), source.getFacets());
+			new ModelDescription(modelName, projectPath, modelPath, source.getElement(), Types.getSpecies(SIMULATION),
+				globalFacets);
 		DescriptionFactory.setGamlDescription(source.getElement(), model);
-		model.getFacets().putAsLabel(IKeyword.NAME, source.getLabel(NAME));
+		model.setGlobal(true);
+		model.addSpeciesType(model);
 
 		// Collect and build built-in species
-		SpeciesDescription world = computeBuiltInSpecies(model, source);
+		// SpeciesDescription world = model;
 
 		// recursively add user-defined species to world and down on to the hierarchy
 		for ( ISyntacticElement speciesNode : speciesNodes ) {
-			addMicroSpecies(model, world, speciesNode);
+			addMicroSpecies(model, speciesNode);
 		}
-		// Add all the new species descriptions as types
+		for ( ISyntacticElement experimentNode : experimentNodes ) {
+			addExperiment(model, experimentNode);
+		}
+
+		// Parent the species of the model (all species are now known). Experiments are already parented
+		for ( ISyntacticElement speciesNode : speciesNodes ) {
+			parentSpecies(model, speciesNode, model);
+		}
+		// Initialize the hierarchy of types
 		model.buildTypes();
 
-		// Complement the world with its elements
-		for ( final ISyntacticElement child : globalNodes ) {
-			world.addChild(create(child, world));
-		}
-		// Complement recursively the different species
+		// Make species and experiments recursively create their attributes, actions....
+		complementSpecies(model, globalNodes);
 		for ( ISyntacticElement speciesNode : speciesNodes ) {
-			complementSpecies(world, speciesNode);
+			complementSpecies(model.getMicroSpecies(speciesNode.getName()), speciesNode);
 		}
-		// Make species recursively inherit (of attributes, actions, control, ... ) from their
-		// parent, create their control, skills
-		world.finalizeDescription();
+		for ( ISyntacticElement experimentNode : experimentNodes ) {
+			complementSpecies(model.getExperiment(experimentNode.getName()), experimentNode);
+		}
+
+		// Complement recursively the different species (incl. the world). The recursion is hierarchical
+		TypeTree<SpeciesDescription> hierarchy = model.getTypesManager().getSpeciesHierarchy();
+		// GuiUtils.debug("Hierarchy: " + hierarchy.toStringWithDepth());
+		List<TypeNode<SpeciesDescription>> list = hierarchy.build(TypeTree.Order.PRE_ORDER);
+
+		// GuiUtils.debug("Copying Java additions and parent additions to " + world.getName());
+		// world.copyJavaAdditions();
+		model.inheritFromParent();
+		for ( TypeNode<SpeciesDescription> node : list ) {
+			SpeciesDescription sd = node.getData();
+			if ( !sd.isBuiltIn() ) {
+				// GuiUtils.debug("Copying Java additions and parent additions to " + sd.getName());
+				sd.inheritFromParent();
+			}
+		}
+
+		// The same for experiments
+		for ( String s : model.getExperimentNames() ) {
+			ExperimentDescription ed = model.getExperiment(s);
+			ed.inheritFromParent();
+			ed.finalizeDescription();
+
+		}
+		model.finalizeDescription();
+
+		// We now can safely put the model inside "experiment"
+		model.setSuperDescription(Types.getSpecies(EXPERIMENT));
 
 		// Parse the other definitions (output, environment, ...)
 		boolean environmentDefined = false;
 		for ( final ISyntacticElement e : otherNodes ) {
 			// COMPATIBILITY to remove the environment and put its definition in the world
 			if ( ENVIRONMENT.equals(e.getKeyword()) ) {
-				environmentDefined = translateEnvironment(world, e);
+				environmentDefined = translateEnvironment(model, e);
 			} else {
 				//
 				IDescription dd = create(e, model);
@@ -144,32 +224,25 @@ public class ModelFactory extends SymbolFactory {
 			}
 		}
 		if ( !environmentDefined ) {
-			VariableDescription vd = world.getVariable(SHAPE);
+			VariableDescription vd = model.getVariable(SHAPE);
 			if ( !vd.getFacets().containsKey(INIT) ) {
 				Facets f = new Facets(NAME, SHAPE);
-				f.put(
-					INIT,
-					GAMA.getExpressionFactory().createOperator("envelope", world,
-						new ConstantExpression(100)));
+				f.put(INIT, GAMA.getExpressionFactory().createOperator("envelope", model, new ConstantExpression(100)));
 				ISyntacticElement shape = new SyntacticElement(IKeyword.GEOMETRY, f);
-				vd = (VariableDescription) create(shape, world);
-				world.addChild(vd);
-				world.resortVarName(vd);
+				vd = (VariableDescription) create(shape, model);
+				model.addChild(vd);
+				model.resortVarName(vd);
 			}
 		}
 		// Gather the species created to see if some describe experiments, in which case they are
 		// added to the experiments of the model
-		for ( IDescription desc : world.getAllMicroSpecies() ) {
-			if ( desc instanceof ExperimentDescription ) {
-				// TODO addExperiment() without breaking the link
-				model.addChild(desc);
-			}
-		}
+		// TODO Verify this selfAndParentMicroSpecies() !
+		// for ( IDescription desc : world.getSelfAndParentMicroSpecies() ) {
+		// if ( desc instanceof ExperimentDescription ) {
+		// model.addChild(desc);
+		// }
+		// }
 
-		// Adding the default experiment if it is not already defined
-		if ( !model.hasExperiment(DEFAULT_EXP) ) {
-			model.addChild(createDefaultExperiment());
-		}
 		return model;
 
 	}
@@ -182,9 +255,7 @@ public class ModelFactory extends SymbolFactory {
 			IExpressionDescription width = e.getFacet(WIDTH);
 			IExpressionDescription height = e.getFacet(HEIGHT);
 			if ( width != null && height != null ) {
-				bounds =
-					new OperatorExpressionDescription(IExpressionCompiler.INTERNAL_POINT, width,
-						height);
+				bounds = new OperatorExpressionDescription(IExpressionCompiler.INTERNAL_POINT, width, height);
 			} else {
 				bounds = new ConstantExpressionDescription(100);
 			}
@@ -204,32 +275,6 @@ public class ModelFactory extends SymbolFactory {
 			world.getFacets().put(TORUS, ed.compile(world));
 		}
 		return environmentDefined;
-	}
-
-	public SpeciesDescription computeBuiltInSpecies(final ModelDescription model,
-		ISyntacticElement source) {
-		// We create a new world
-		ISyntacticElement ww = source.getChild(GLOBAL);
-		SpeciesDescription world =
-			DescriptionFactory.createSpeciesDescription(WORLD_SPECIES, WORLD_AGENT_CLASS, model,
-				WORLD_AGENT_CONSTRUCTOR, getSpeciesSkills(WORLD_SPECIES), ww == null ? new Facets()
-					: ww.getFacets());
-		model.addChild(world);
-		// We then reattach the previous built-in species to the new world
-		for ( TypeDescription sd : BUILT_IN_SPECIES.values() ) {
-			sd.setSuperDescription(world);
-			// model.addSpeciesDescription(sd);
-			world.addChild(sd);
-		}
-		return world;
-	}
-
-	private IDescription createDefaultExperiment() {
-		String type = GuiUtils.isInHeadLessMode() ? HEADLESS_UI : GUI_;
-		ExperimentDescription desc =
-			(ExperimentDescription) DescriptionFactory.create(type, NAME, DEFAULT_EXP, TYPE, type);
-		desc.finalizeDescription();
-		return desc;
 	}
 
 	public IModel compile(final ModelDescription description) {

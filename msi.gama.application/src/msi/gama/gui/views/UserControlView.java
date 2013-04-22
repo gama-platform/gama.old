@@ -18,10 +18,10 @@ public class UserControlView extends GamaViewPart {
 
 	public static String ID = "msi.gama.views.userControlView";
 
-	IScope scope;
-	List<IStatement> userCommands;
-	String title;
-	Composite body, buttons;
+	private IScope scope;
+	private List<IStatement> userCommands;
+	private String title;
+	private Composite body, buttons;
 
 	public void initFor(final IScope scope, final List<IStatement> userCommands, final String title) {
 		this.scope = scope;
@@ -149,8 +149,7 @@ public class UserControlView extends GamaViewPart {
 					EditorFactory.create(commandComposite, i, new EditorListener() {
 
 						@Override
-						public void valueModified(final Object newValue)
-							throws GamaRuntimeException {
+						public void valueModified(final Object newValue) throws GamaRuntimeException {
 							i.setValue(newValue);
 							c.executeOn(scope);
 						}

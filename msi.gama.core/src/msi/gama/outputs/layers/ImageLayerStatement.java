@@ -22,7 +22,6 @@ import java.awt.Color;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.outputs.IDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -81,8 +80,8 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void prepare(final IDisplayOutput out, final IScope scope) throws GamaRuntimeException {
-		super.prepare(out, scope);
+	public void init(final IScope scope) throws GamaRuntimeException {
+		super.init(scope);
 		if ( getFacet(IKeyword.GIS) != null ) {
 			buildGisLayer(scope);
 		} else {
@@ -92,8 +91,8 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 				if ( tag == null ) {
 					tag = getFacet(IKeyword.FILE);
 				}
-				if ( tag == null ) { throw new GamaRuntimeException("Missing properties " +
-					IKeyword.NAME + " and " + IKeyword.FILE); }
+				if ( tag == null ) { throw new GamaRuntimeException("Missing properties " + IKeyword.NAME + " and " +
+					IKeyword.FILE); }
 				if ( tag.isConst() ) {
 					setName(Cast.asString(scope, tag.value(scope)));
 				} else {
@@ -103,8 +102,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 				if ( imageFileExpression == null ) {
 					imageFileExpression = getFacet(IKeyword.NAME);
 				}
-				if ( imageFileExpression == null ) { throw new GamaRuntimeException(
-					"Image file not defined"); }
+				if ( imageFileExpression == null ) { throw new GamaRuntimeException("Image file not defined"); }
 				// setFacet(IKeyword.FILE, imageFileExpression);
 				if ( imageFileExpression.isConst() ) {
 					constantImage = Cast.asString(scope, imageFileExpression.value(scope));
@@ -122,8 +120,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 
 	public void buildGisLayer(final IScope scope) throws GamaRuntimeException {
 		String fileName =
-			getFacet(IKeyword.GIS) != null ? Cast.asString(scope,
-				getFacet(IKeyword.GIS).value(scope)) : name;
+			getFacet(IKeyword.GIS) != null ? Cast.asString(scope, getFacet(IKeyword.GIS).value(scope)) : name;
 		GamaShapeFile file = new GamaShapeFile(scope, fileName);
 		GamaColor c = null;
 		IExpression colorExpr = getFacet(IKeyword.COLOR);
@@ -145,8 +142,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 		private String type;
 		private Color color = Color.black;
 
-		public GisLayer(final IContainer<Integer, GamaShape> objects, final Color color,
-			final String type) {
+		public GisLayer(final IContainer<Integer, GamaShape> objects, final Color color, final String type) {
 			super();
 			this.objects = objects;
 			if ( color != null ) {
@@ -177,12 +173,11 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void compute(final IScope scope, final long cycle) throws GamaRuntimeException {
-		super.compute(scope, cycle);
+	public void step(final IScope scope) throws GamaRuntimeException {
+		super.step(scope);
 		if ( gisLayer == null ) {
 			currentImage =
-				constantImage != null ? constantImage : Cast.asString(scope,
-					imageFileExpression.value(scope));
+				constantImage != null ? constantImage : Cast.asString(scope, imageFileExpression.value(scope));
 		}
 	}
 

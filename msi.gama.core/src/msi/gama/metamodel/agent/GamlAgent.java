@@ -21,7 +21,7 @@ package msi.gama.metamodel.agent;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
-import msi.gama.kernel.experiment.IExperiment;
+import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.population.*;
@@ -34,7 +34,6 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.GamaGraph;
-import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.operators.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
@@ -95,8 +94,7 @@ public class GamlAgent implements IAgent {
 	}
 
 	@Override
-	public void setDirectVarValue(final IScope scope, final String s, final Object v)
-		throws GamaRuntimeException {
+	public void setDirectVarValue(final IScope scope, final String s, final Object v) throws GamaRuntimeException {
 		population.getVar(this, s).setVal(scope, this, v);
 	}
 
@@ -128,8 +126,7 @@ public class GamlAgent implements IAgent {
 	}
 
 	@Override
-	public void computeAgentsToSchedule(final IScope scope, final IList list)
-		throws GamaRuntimeException {
+	public void computeAgentsToSchedule(final IScope scope, final IList list) throws GamaRuntimeException {
 		List<IPopulation> pops = this.getMicroPopulations();
 
 		try {
@@ -147,8 +144,7 @@ public class GamlAgent implements IAgent {
 	@args(names = { "message" })
 	public final Object primDebug(final IScope scope) throws GamaRuntimeException {
 		final String m = (String) scope.getArg("message", IType.STRING);
-		GuiUtils.debugConsole(scope.getClock().getCycle(),
-			m + "\nsender: " + Cast.asMap(scope, this));
+		GuiUtils.debugConsole(scope.getClock().getCycle(), m + "\nsender: " + Cast.asMap(scope, this));
 		return m;
 	}
 
@@ -235,8 +231,8 @@ public class GamlAgent implements IAgent {
 	}
 
 	@Override
-	public IAgent captureMicroAgent(final IScope scope, final ISpecies microSpecies,
-		final IAgent microAgent) throws GamaRuntimeException {
+	public IAgent captureMicroAgent(final IScope scope, final ISpecies microSpecies, final IAgent microAgent)
+		throws GamaRuntimeException {
 		if ( this.canCapture(microAgent, microSpecies) ) {
 			IPopulation microSpeciesPopulation = this.getMicroPopulation(microSpecies);
 			SavedAgent savedMicro = new SavedAgent(scope, microAgent);
@@ -255,8 +251,7 @@ public class GamlAgent implements IAgent {
 
 		for ( IAgent micro : microAgents ) {
 			SavedAgent savedMicro = new SavedAgent(scope, micro);
-			originalSpeciesPopulation =
-				micro.getPopulationFor(micro.getSpecies().getParentSpecies());
+			originalSpeciesPopulation = micro.getPopulationFor(micro.getSpecies().getParentSpecies());
 			micro.die();
 			releasedAgents.add(savedMicro.restoreTo(scope, originalSpeciesPopulation));
 		}
@@ -321,8 +316,8 @@ public class GamlAgent implements IAgent {
 	}
 
 	/** Variables which are not saved during the capture and release process. */
-	private static final List<String> UNSAVABLE_VARIABLES = Arrays.asList(IKeyword.PEERS,
-		IKeyword.AGENTS, IKeyword.HOST, IKeyword.TOPOLOGY);
+	private static final List<String> UNSAVABLE_VARIABLES = Arrays.asList(IKeyword.PEERS, IKeyword.AGENTS,
+		IKeyword.HOST, IKeyword.TOPOLOGY);
 
 	/**
 	 * A helper class to save agent and restore/recreate agent as a member of a population.
@@ -343,8 +338,7 @@ public class GamlAgent implements IAgent {
 		 * @param agent
 		 * @throws GamaRuntimeException
 		 */
-		private void saveAttributes(final IScope scope, final IAgent agent)
-			throws GamaRuntimeException {
+		private void saveAttributes(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 			variables = new HashMap<String, Object>();
 			ISpecies species = agent.getSpecies();
 			for ( String specVar : species.getVarNames() ) {
@@ -354,8 +348,8 @@ public class GamlAgent implements IAgent {
 				if ( specVar.equals(IKeyword.SHAPE) ) {
 					// variables.put(specVar, geometry.copy());
 					// Changed 3/2/12: is it necessary to make the things below ?
-					variables.put(specVar, new GamaShape(((GamaShape) species.getVar(specVar)
-						.value(scope, agent)).getInnerGeometry()));
+					variables.put(specVar,
+						new GamaShape(((GamaShape) species.getVar(specVar).value(scope, agent)).getInnerGeometry()));
 					continue;
 				}
 				// variables.put(specVar, agent.getAttribute(specVar));
@@ -369,8 +363,7 @@ public class GamlAgent implements IAgent {
 		 * @param agent The agent having micro-agents to be saved.
 		 * @throws GamaRuntimeException
 		 */
-		private void saveMicroAgents(final IScope scope, final IAgent agent)
-			throws GamaRuntimeException {
+		private void saveMicroAgents(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 			innerPopulations = new HashMap<String, List<SavedAgent>>();
 
 			for ( IPopulation microPop : agent.getMicroPopulations() ) {
@@ -392,12 +385,10 @@ public class GamlAgent implements IAgent {
 		 * @return
 		 * @throws GamaRuntimeException
 		 */
-		IAgent restoreTo(final IScope scope, final IPopulation targetPopulation)
-			throws GamaRuntimeException {
+		IAgent restoreTo(final IScope scope, final IPopulation targetPopulation) throws GamaRuntimeException {
 			List<Map> agentAttrs = new GamaList<Map>();
 			agentAttrs.add(variables);
-			List<? extends IAgent> restoredAgents =
-				targetPopulation.createAgents(scope, 1, agentAttrs, true);
+			List<? extends IAgent> restoredAgents = targetPopulation.createAgents(scope, 1, agentAttrs, true);
 			restoreMicroAgents(scope, restoredAgents.get(0));
 
 			return restoredAgents.get(0);
@@ -520,7 +511,7 @@ public class GamlAgent implements IAgent {
 	}
 
 	@Override
-	public ISimulation getSimulation() {
+	public ISimulationAgent getSimulation() {
 		return getHost().getSimulation();
 	}
 
@@ -535,15 +526,13 @@ public class GamlAgent implements IAgent {
 	}
 
 	@Override
-	public IExperiment getExperiment() {
+	public IExperimentAgent getExperiment() {
 		return getHost().getExperiment();
 	}
 
 	@Override
 	public IScope getScope() {
-		ISimulation sim = getSimulation();
-		if ( sim == null ) { return null; }
-		return sim.getExecutionScope();
+		return getExperiment().getExecutionScope();
 	}
 
 	@Override
@@ -582,7 +571,7 @@ public class GamlAgent implements IAgent {
 			for ( ISpecies microSpec : allMicroSpecies ) {
 
 				// TODO what to do with built-in species?
-				if ( AbstractGamlAdditions.isBuiltIn(microSpec.getName()) ) {
+				if ( Types.isBuiltIn(microSpec.getName()) ) {
 					continue;
 				}
 
@@ -597,7 +586,7 @@ public class GamlAgent implements IAgent {
 	public void initializeMicroPopulation(final IScope scope, final String name) {
 		ISpecies microSpec = getSpecies().getMicroSpecies(name);
 		if ( microSpec == null ) { return; }
-		if ( AbstractGamlAdditions.isBuiltIn(name) ) { return; }
+		if ( Types.isBuiltIn(name) ) { return; }
 		IPopulation microPop = new GamaPopulation(this, microSpec);
 		microPopulations.put(microSpec, microPop);
 		microPop.initializeFor(scope);
@@ -768,8 +757,7 @@ public class GamlAgent implements IAgent {
 		// if the old geometry is "shared" with another agent, we create a new one.
 		// otherwise, we copy it directly.
 		IAgent other = newGeometry.getAgent();
-		GamaShape newLocalGeom =
-			(GamaShape) (other == null ? newGeometry : newGeometry.copy(getScope()));
+		GamaShape newLocalGeom = (GamaShape) (other == null ? newGeometry : newGeometry.copy(getScope()));
 		topology.normalizeLocation(newGeomLocation, false);
 
 		if ( !newGeomLocation.equals(newLocalGeom.getLocation()) ) {
@@ -804,12 +792,10 @@ public class GamlAgent implements IAgent {
 			ILocation previousPoint = geometry.getLocation();
 			if ( newLocation.equals(previousPoint) ) { return; }
 			IShape previous =
-				geometry.isPoint() ? previousPoint : new GamaShape(geometry.getInnerGeometry()
-					.getEnvelope());
+				geometry.isPoint() ? previousPoint : new GamaShape(geometry.getInnerGeometry().getEnvelope());
 			// Envelope previousEnvelope = geometry.getEnvelope();
 			geometry.setLocation(newLocation);
-			Integer newHeading =
-				topology.directionInDegreesTo(getScope(), previousPoint, newLocation);
+			Integer newHeading = topology.directionInDegreesTo(getScope(), previousPoint, newLocation);
 			if ( newHeading != null && !getTopology().isTorus() ) {
 				setHeading(newHeading);
 			}
@@ -828,8 +814,7 @@ public class GamlAgent implements IAgent {
 				if ( obj instanceof IAgent ) {
 					IShape ext1 = (IShape) graph.getEdgeSource(obj);
 					IShape ext2 = (IShape) graph.getEdgeTarget(obj);
-					((IAgent) obj).setGeometry(GamaGeometryType.buildLine(ext1.getLocation(),
-						ext2.getLocation()));
+					((IAgent) obj).setGeometry(GamaGeometryType.buildLine(ext1.getLocation(), ext2.getLocation()));
 				}
 			}
 
@@ -1026,8 +1011,7 @@ public class GamlAgent implements IAgent {
 	 */
 	@Override
 	public boolean canCapture(final IAgent other, final ISpecies newSpecies) {
-		if ( other == null || other.dead() || newSpecies == null ||
-			!this.getSpecies().containMicroSpecies(newSpecies) ) { return false; }
+		if ( other == null || other.dead() || newSpecies == null || !this.getSpecies().containMicroSpecies(newSpecies) ) { return false; }
 		if ( this.getMacroAgents().contains(other) ) { return false; }
 		if ( other.getHost().equals(this) ) { return false; }
 		return true;

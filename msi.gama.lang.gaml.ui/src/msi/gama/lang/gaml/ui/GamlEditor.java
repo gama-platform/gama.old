@@ -6,7 +6,7 @@ package msi.gama.lang.gaml.ui;
 
 import java.util.*;
 import java.util.List;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IGui;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.resource.GamlResource;
@@ -35,10 +35,10 @@ import com.google.inject.Inject;
 public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 	// Copied from SwtGui. See how to factorize this.
-	public static Image run = AbstractUIPlugin.imageDescriptorFromPlugin(IGui.PLUGIN_ID,
-		"/icons/menu_play.png").createImage();
-	public static Image reload = AbstractUIPlugin.imageDescriptorFromPlugin(IGui.PLUGIN_ID,
-		"/icons/menu_reload.png").createImage();
+	public static Image run = AbstractUIPlugin.imageDescriptorFromPlugin(IGui.PLUGIN_ID, "/icons/menu_play.png")
+		.createImage();
+	public static Image reload = AbstractUIPlugin.imageDescriptorFromPlugin(IGui.PLUGIN_ID, "/icons/menu_reload.png")
+		.createImage();
 	public static final Color COLOR_ERROR = new Color(Display.getDefault(), 0xF4, 0x00, 0x15);
 	public static final Color COLOR_OK = new Color(Display.getDefault(), 0x55, 0x8E, 0x1B);
 	public static final Color COLOR_WARNING = new Color(Display.getDefault(), 0xFD, 0xA6, 0x00);
@@ -50,7 +50,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 	Label status;
 	List<String> completeNamesOfExperiments = new ArrayList();
 	List<String> abbreviatedNamesOfExperiments = new ArrayList();
-	boolean wasOK = true;
+	boolean wasOK = true, inited = false;
 
 	@Inject
 	private GamlJavaValidator validator;
@@ -168,7 +168,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		@Override
 		public void widgetSelected(final SelectionEvent evt) {
 			GamlEditor.this.performSave(true, null);
-			String name = convert(((Button) evt.widget).getText());
+			String name = ((Button) evt.widget).getText();
 			int i = abbreviatedNamesOfExperiments.indexOf(name);
 			if ( i == -1 ) { return; }
 			name = completeNamesOfExperiments.get(i);
@@ -187,17 +187,17 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 	};
 
-	private String convert(final String s) {
-		if ( s.equals(IKeyword.DEFAULT) ) { return "Run model"; }
-		if ( s.equals("Run model") ) { return IKeyword.DEFAULT; }
-		return s;
-	}
+	// private String convert(final String s) {
+	// if ( s.equals(IKeyword.DEFAULT) ) { return "Run model"; }
+	// if ( s.equals("Run model") ) { return IKeyword.DEFAULT; }
+	// return s;
+	// }
 
 	private void enableButton(final int index, final String text) {
 		if ( text == null ) { return; }
 		((GridData) buttons[index].getLayoutData()).exclude = false;
 		buttons[index].setVisible(true);
-		buttons[index].setText(convert(text));
+		buttons[index].setText(text);
 		buttons[index].pack();
 	}
 
@@ -226,19 +226,18 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 					}
 				}
 				if ( ok ) {
+					// TODO Have a button before the title to allow inserting a "default" experiment
 					int size = abbreviatedNamesOfExperiments.size();
-					if ( size == 1 && abbreviatedNamesOfExperiments.contains(IKeyword.DEFAULT) ) {
-						setStatus(
-							COLOR_WARNING,
-							"No experiments have been defined. Run a default experiment with the parameters and outputs directly defined in the model.");
+					if ( size == 0 ) { // 1 && abbreviatedNamesOfExperiments.contains(IKeyword.DEFAULT) ) {
+						setStatus(COLOR_WARNING, "Model is functional, but no experiments have been defined.");
 					} else {
 						setStatus(COLOR_OK, size == 1 ? "Run experiment:" : "Choose an experiment:");
 					}
 					int i = 0;
-					if ( abbreviatedNamesOfExperiments.size() > 1 ) {
-						abbreviatedNamesOfExperiments.remove(IKeyword.DEFAULT);
-						completeNamesOfExperiments.remove(IKeyword.DEFAULT);
-					}
+					// if ( abbreviatedNamesOfExperiments.size() > 1 ) {
+					// abbreviatedNamesOfExperiments.remove(IKeyword.DEFAULT);
+					// completeNamesOfExperiments.remove(IKeyword.DEFAULT);
+					// }
 					for ( String e : abbreviatedNamesOfExperiments ) {
 						enableButton(i++, e);
 					}
@@ -255,9 +254,10 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 	private void updateExperiments(final Set<String> newExperiments, final boolean withErrors) {
 		if ( withErrors == true && wasOK == false ) { return; }
-		GuiUtils.debug("New set of experiments:" + newExperiments);
+		// GuiUtils.debug("New set of experiments:" + newExperiments);
 		Set<String> oldNames = new LinkedHashSet(completeNamesOfExperiments);
-		if ( wasOK && !withErrors && oldNames.equals(newExperiments) ) { return; }
+		if ( inited && wasOK && !withErrors && oldNames.equals(newExperiments) ) { return; }
+		inited = true;
 		wasOK = !withErrors;
 		completeNamesOfExperiments = new ArrayList(newExperiments);
 		buildAbbreviations();

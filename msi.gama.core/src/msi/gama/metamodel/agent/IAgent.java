@@ -20,7 +20,7 @@ package msi.gama.metamodel.agent;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.kernel.experiment.IExperiment;
+import msi.gama.kernel.experiment.IExperimentAgent;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.population.IPopulation;
@@ -43,10 +43,8 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-@vars({ @var(name = IKeyword.NAME, type = IType.STRING),
-	@var(name = IKeyword.MEMBERS, type = IType.LIST),
-	@var(name = IKeyword.PEERS, type = IType.LIST),
-	@var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT),
+@vars({ @var(name = IKeyword.NAME, type = IType.STRING), @var(name = IKeyword.MEMBERS, type = IType.LIST),
+	@var(name = IKeyword.PEERS, type = IType.LIST), @var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT),
 	@var(name = IKeyword.HOST, type = IType.AGENT),
 	@var(name = IKeyword.LOCATION, type = IType.POINT, depends_on = IKeyword.SHAPE),
 	@var(name = IKeyword.SHAPE, type = IType.GEOMETRY) })
@@ -132,8 +130,6 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 
 	@Override
 	public abstract void dispose();
-
-	public abstract void init(IScope scope) throws GamaRuntimeException;
 
 	public abstract void schedule(IScope scope) throws GamaRuntimeException;
 
@@ -297,8 +293,8 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	public abstract IList<IAgent> captureMicroAgents(IScope scope, final ISpecies microSpecies,
 		final IList<IAgent> microAgents) throws GamaRuntimeException;
 
-	public abstract IAgent captureMicroAgent(IScope scope, final ISpecies microSpecies,
-		final IAgent microAgent) throws GamaRuntimeException;
+	public abstract IAgent captureMicroAgent(IScope scope, final ISpecies microSpecies, final IAgent microAgent)
+		throws GamaRuntimeException;
 
 	/**
 	 * Releases some micro-agents of this agent.
@@ -340,13 +336,13 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 
 	public abstract void computeAgentsToSchedule(final IScope scope, final IList<IAgent> list);
 
-	public ISimulation getSimulation();
+	public ISimulationAgent getSimulation();
 
 	public IScheduler getScheduler();
 
 	public IModel getModel();
 
-	public IExperiment getExperiment();
+	public IExperimentAgent getExperiment();
 
 	public IScope getScope();
 

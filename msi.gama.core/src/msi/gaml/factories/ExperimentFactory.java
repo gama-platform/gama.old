@@ -38,8 +38,10 @@ public class ExperimentFactory extends SpeciesFactory {
 	}
 
 	@Override
-	protected ExperimentDescription buildDescription(final ISyntacticElement se,
-		final IChildrenProvider cp, final IDescription sd, final SymbolProto md) {
+	protected ExperimentDescription buildDescription(final ISyntacticElement se, final IChildrenProvider cp,
+		final IDescription sd, final SymbolProto md) {
+		// We assume that all experiments are subclasses of "experimentator"
+		// FIXME This is a hack because there is no "default" ModelDescription
 		return new ExperimentDescription(se.getKeyword(), sd, cp, se.getElement(), se.getFacets());
 	}
 

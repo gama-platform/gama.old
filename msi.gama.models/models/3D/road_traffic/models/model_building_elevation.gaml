@@ -60,7 +60,7 @@ entities {
 		int colorValue <- int(255*(destruction_coeff - 1)) update: int(255*(destruction_coeff - 1));
 		rgb color <- rgb([min([255, colorValue]),max ([0, 255 - colorValue]),0])  update: rgb([min([255, colorValue]),max ([0, 255 - colorValue]),0]) ;
 		aspect base {
-			draw geometry: shape color: color ;
+			draw  shape color: color empty:true ;
 		}
 	}
 	species people skills: [moving]{
@@ -95,7 +95,7 @@ entities {
 			}
 		}
 		aspect base {
-			draw circle(10) color: color;
+			draw sphere(10) empty: true;
 		}
 	}
 }
@@ -115,7 +115,7 @@ experiment road_traffic type: gui {
 	parameter 'Value of destruction when a people agent takes a road' var: destroy category: 'Road' ;
 	
 	output {
-		display city_display refresh_every: 1 type: opengl ambiant_light:0.2{
+		display city_display refresh_every: 1 type: opengl ambiant_light:0.2 background: rgb('black'){
 			species road aspect: base refresh:true ;
 			species people aspect: base ;
 			species building aspect:base ;

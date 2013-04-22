@@ -19,7 +19,7 @@
 package msi.gama.runtime;
 
 import msi.gama.common.util.*;
-import msi.gama.kernel.experiment.IExperiment;
+import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.IAgent;
@@ -43,21 +43,23 @@ public class GAMA {
 	public static final String _FATAL = "fatal";
 	public static final String _WARNINGS = "warnings";
 
-	private static volatile IExperiment currentExperiment = null;
+	public static boolean TREAT_ERRORS_AS_FATAL = true;
+	public static boolean TREAT_WARNINGS_AS_ERRORS = false;
+
+	private static volatile IExperimentSpecies currentExperiment = null;
 	private static IExpressionFactory expressionFactory = null;
 	public static ISimulationStateProvider state = null;
 
 	public static void interruptLoading() {
 		if ( currentExperiment != null ) {
-			currentExperiment.interrupt();
+			currentExperiment.userInterrupt();
 		}
 	}
 
 	public static void newExperiment(final String id, final IModel model) {
-
-		final IExperiment newExperiment = model.getExperiment(id);
+		final IExperimentSpecies newExperiment = model.getExperiment(id);
 		if ( newExperiment == currentExperiment && currentExperiment != null ) {
-			currentExperiment.reload();
+			currentExperiment.userReload();
 			return;
 		}
 		// TODO if newExperiment.isGui() ...
@@ -76,16 +78,22 @@ public class GAMA {
 			}
 		}
 		currentExperiment = newExperiment;
-		currentExperiment.open();
-		currentExperiment.initialize();
+		currentExperiment.userOpen();
+		currentExperiment.userInit();
 
 	}
 
 	public static void closeCurrentExperiment() {
 		if ( currentExperiment != null ) {
-			currentExperiment.close();
+			currentExperiment.userClose();
 			currentExperiment = null;
 		}
+	}
+
+	public static void closeCurrentExperimentOnException(GamaRuntimeException e) {
+		GuiUtils.errorStatus(e.getMessage());
+		GuiUtils.runtimeError(e);
+		closeCurrentExperiment();
 	}
 
 	public static void updateSimulationState() {
@@ -106,7 +114,7 @@ public class GAMA {
 
 	public static void stepExperiment() {
 		if ( currentExperiment != null ) {
-			currentExperiment.step();
+			currentExperiment.userStep();
 		}
 	}
 
@@ -114,24 +122,24 @@ public class GAMA {
 		if ( currentExperiment == null ) {
 			return;
 		} else if ( !currentExperiment.isRunning() || currentExperiment.isPaused() ) {
-			currentExperiment.start();
+			currentExperiment.userStart();
 		} else {
-			currentExperiment.pause();
+			currentExperiment.userPause();
 		}
 	}
 
 	private static boolean verifyClose() {
 		if ( currentExperiment == null ) { return true; }
-		currentExperiment.pause();
+		currentExperiment.userPause();
 		return GuiUtils.confirmClose(currentExperiment);
 	}
 
-	public static ISimulation getFrontmostSimulation() {
+	public static ISimulationAgent getFrontmostSimulation() {
 		if ( currentExperiment == null ) { return null; }
 		return currentExperiment.getCurrentSimulation();
 	}
 
-	public static IExperiment getExperiment() {
+	public static IExperimentSpecies getExperiment() {
 		return currentExperiment;
 	}
 
@@ -141,14 +149,13 @@ public class GAMA {
 	}
 
 	public static SimulationClock getClock() {
-		SimulationClock clock =
-			currentExperiment == null ? null : currentExperiment.getExperimentScope().getClock();
+		SimulationClock clock = currentExperiment == null ? null : currentExperiment.getExperimentScope().getClock();
 		return clock == null ? new SimulationClock() : clock;
 	}
 
 	public static RandomUtils getRandom() {
-		if ( currentExperiment == null ) { return RandomUtils.getDefault(); }
-		return currentExperiment.getRandomGenerator();
+		if ( currentExperiment == null || currentExperiment.getAgent() == null ) { return RandomUtils.getDefault(); }
+		return currentExperiment.getAgent().getRandomGenerator();
 	}
 
 	public static IModel getModel() {
@@ -157,8 +164,8 @@ public class GAMA {
 	}
 
 	public static String getFrontmostSimulationState() {
-		return currentExperiment == null ? NONE : currentExperiment.isLoading() ? NOTREADY
-			: currentExperiment.isPaused() ? PAUSED : RUNNING;
+		return currentExperiment == null ? NONE : currentExperiment.isLoading() ? NOTREADY : currentExperiment
+			.isPaused() ? PAUSED : RUNNING;
 	}
 
 	public static IExpressionFactory getExpressionFactory() {
@@ -168,21 +175,17 @@ public class GAMA {
 		return expressionFactory;
 	}
 
-	/**
-	 * @param g
-	 */
 	public static void reportError(final GamaRuntimeException g) {
+		GuiUtils.runtimeError(g);
 		if ( currentExperiment == null ) { return; }
-		currentExperiment.reportError(g);
 		if ( TREAT_ERRORS_AS_FATAL ) {
 			if ( TREAT_WARNINGS_AS_ERRORS || !g.isWarning() ) {
-				currentExperiment.pause();
+				currentExperiment.userPause();
 			}
 		}
 	}
 
-	public static Object evaluateExpression(final String expression, final IAgent a)
-		throws GamaRuntimeException {
+	public static Object evaluateExpression(final String expression, final IAgent a) throws GamaRuntimeException {
 		if ( a == null ) { return null; }
 		final IExpression expr = compileExpression(expression, a);
 		if ( expr == null ) { return null; }
@@ -195,52 +198,18 @@ public class GAMA {
 
 	}
 
-	// private static IDisplayOutput getOutput(final String outputName) {
-	// IOutputManager man = getExperiment().getOutputManager();
-	// if ( man == null ) { return null; }
-	// IOutput out = man.getOutput(outputName);
-	// if ( out == null || !(out instanceof IDisplayOutput) ) { return null; }
-	// return (IDisplayOutput) out;
-	// }
-	//
-	// public static BufferedImage getImage(final String outputName) {
-	// IDisplayOutput out = getOutput(outputName);
-	// return out == null ? null : out.getImage();
-	// }
-	//
-	// public static BufferedImage getImage(final String outputName, final int width, final int
-	// height) {
-	// IDisplayOutput out = getOutput(outputName);
-	// IDisplaySurface surface = out.getSurface();
-	// surface.resizeImage(width, height);
-	// surface.updateDisplay();
-	// return surface.getImage();
-	// }
-	//
-	// public static void getImage(final String outputName, final Image im) {
-	// if ( im == null ) { return; }
-	// IDisplayOutput out = getOutput(outputName);
-	// IDisplaySurface surface = out.getSurface();
-	// surface.resizeImage(im.getWidth(null), im.getHeight(null));
-	// surface.updateDisplay();
-	// Graphics2D g2d = (Graphics2D) im.getGraphics();
-	// g2d.drawImage(surface.getImage(), 0, 0, null);
-	// g2d.dispose();
-	// }
-
 	public static void releaseScope(final IScope scope) {
 		if ( currentExperiment == null || currentExperiment.getCurrentSimulation() == null ) { return; }
-		currentExperiment.getCurrentSimulation().releaseScope(scope);
+		currentExperiment.getAgent().releaseScope(scope);
 
 	}
 
 	public static IScope obtainNewScope() {
 		if ( currentExperiment == null || currentExperiment.getCurrentSimulation() == null ) { return null; }
-		return currentExperiment.getCurrentSimulation().obtainNewScope();
+		return currentExperiment.getAgent().obtainNewScope();
 	}
 
-	public final static String SIMULATION_RUNNING_STATE =
-		"msi.gama.application.commands.SimulationRunningState";
+	public final static String SIMULATION_RUNNING_STATE = "msi.gama.application.commands.SimulationRunningState";
 
 	/**
 	 * @return
@@ -249,9 +218,5 @@ public class GAMA {
 		if ( currentExperiment == null ) { return null; }
 		return currentExperiment.getModel().getDescription();
 	}
-
-	public static boolean TREAT_ERRORS_AS_FATAL = true;
-
-	public static boolean TREAT_WARNINGS_AS_ERRORS = false;
 
 }

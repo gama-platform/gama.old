@@ -7,8 +7,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class GraphicLayer extends AbstractLayer {
 
-	protected GraphicLayer(final double env_width, final double env_height,
-		final ILayerStatement layer, final IGraphics dg) {
+	protected GraphicLayer(final double env_width, final double env_height, final ILayerStatement layer,
+		final IGraphics dg) {
 		super(env_width, env_height, layer, dg);
 	}
 
@@ -18,7 +18,7 @@ public class GraphicLayer extends AbstractLayer {
 		try {
 			if ( scope != null ) {
 				scope.setGraphics(g);
-				((GraphicLayerStatement) definition).getAspect().draw(scope, scope.getWorldScope());
+				((GraphicLayerStatement) definition).getAspect().draw(scope, scope.getSimulationScope());
 			}
 		} finally {
 			GAMA.releaseScope(scope);

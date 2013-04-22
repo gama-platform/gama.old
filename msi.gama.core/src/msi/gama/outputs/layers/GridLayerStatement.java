@@ -24,7 +24,6 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
-import msi.gama.outputs.IDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -55,8 +54,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true) }, omissible = IKeyword.SPECIES)
 public class GridLayerStatement extends AbstractLayerStatement {
 
-	public GridLayerStatement(/* final ISymbol context, */final IDescription desc)
-		throws GamaRuntimeException {
+	public GridLayerStatement(/* final ISymbol context, */final IDescription desc) throws GamaRuntimeException {
 		super(desc);
 		setName(getFacet(IKeyword.SPECIES).literalValue());
 	}
@@ -72,8 +70,8 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	// BufferedImage supportImage;
 
 	@Override
-	public void prepare(final IDisplayOutput out, final IScope sim) throws GamaRuntimeException {
-		super.prepare(out, sim);
+	public void init(final IScope sim) throws GamaRuntimeException {
+		super.init(sim);
 		lineColor = getFacet(IKeyword.LINES);
 		if ( lineColor != null ) {
 			constantColor = Cast.asColor(sim, lineColor.value(sim));
@@ -82,8 +80,7 @@ public class GridLayerStatement extends AbstractLayerStatement {
 		final IPopulation gridPop = sim.getAgentScope().getPopulationFor(getName());
 		if ( gridPop == null ) {
 			throw new GamaRuntimeException("missing environment for output " + getName());
-		} else if ( !gridPop.isGrid() ) { throw new GamaRuntimeException(
-			"not a grid environment for: " + getName()); }
+		} else if ( !gridPop.isGrid() ) { throw new GamaRuntimeException("not a grid environment for: " + getName()); }
 
 		grid = (GamaSpatialMatrix) gridPop.getTopology().getPlaces();
 		agents = new HashSet<IAgent>();
@@ -117,11 +114,11 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void compute(final IScope sim, final long cycle) throws GamaRuntimeException {
-		super.compute(sim, cycle);
+	public void step(final IScope sim) throws GamaRuntimeException {
+		super.step(sim);
 		if ( grid.getIsHexagon() ) {
 			synchronized (agents) {
-				if ( cycle == 0l || agentsHaveChanged() ) {
+				if ( sim.getClock().getCycle() == 0 || agentsHaveChanged() ) {
 					agents.clear();
 					agents.addAll(computeAgents());
 				}

@@ -1,12 +1,12 @@
 package msi.gama.headless.core;
 
-import msi.gama.kernel.experiment.IExperiment;
-import msi.gama.kernel.simulation.AbstractSimulation;
+import msi.gama.kernel.simulation.GamlSimulation;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
-public class HeadlessSimulation extends AbstractSimulation {
+public class HeadlessSimulation extends GamlSimulation {
 
-	public HeadlessSimulation(final IExperiment exp) throws GamaRuntimeException {
+	public HeadlessSimulation(final IPopulation exp) throws GamaRuntimeException {
 		super(exp);
 	}
 

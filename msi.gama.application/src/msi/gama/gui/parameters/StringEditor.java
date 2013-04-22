@@ -30,8 +30,8 @@ import org.eclipse.swt.widgets.*;
 
 public class StringEditor extends AbstractEditor {
 
-	Text textBox;
-	boolean asLabel;
+	private Text textBox;
+	private boolean asLabel;
 
 	StringEditor(final IParameter param) {
 		super(param);
@@ -55,8 +55,8 @@ public class StringEditor extends AbstractEditor {
 
 	}
 
-	StringEditor(final Composite parent, final String title, final String value,
-		final List<String> among, final EditorListener<String> whenModified, final boolean asLabel) {
+	StringEditor(final Composite parent, final String title, final String value, final List<String> among,
+		final EditorListener<String> whenModified, final boolean asLabel) {
 		super(new InputParameter(title, value, among), whenModified);
 		this.createComposite(parent);
 		this.asLabel = asLabel;

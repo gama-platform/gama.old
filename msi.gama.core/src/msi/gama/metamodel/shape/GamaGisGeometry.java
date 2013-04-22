@@ -36,13 +36,11 @@ import com.vividsolutions.jts.geom.Geometry;
 public class GamaGisGeometry extends GamaShape {
 
 	public GamaGisGeometry(IScope scope, final Geometry g) {
-		init(scope.getWorldScope().getGisUtils().transform(g), null);
+		init(scope.getSimulationScope().getGisUtils().transform(g), null);
 	}
 
 	public GamaGisGeometry(IScope scope, final SimpleFeature feature) {
-		init(
-			scope.getWorldScope().getGisUtils().transform((Geometry) feature.getDefaultGeometry()),
-			feature);
+		init(scope.getSimulationScope().getGisUtils().transform((Geometry) feature.getDefaultGeometry()), feature);
 	}
 
 	private void init(final Geometry g, SimpleFeature feature) {

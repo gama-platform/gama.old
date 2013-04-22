@@ -30,7 +30,7 @@ public class ContributionItem extends CompoundContributionItem {
 
 	public static final String ID_PARAMETER = "msi.gama.application.commands.showGrids.parameter";
 
-	static Map<String, IDisplayOutput> listView = new HashMap<String, IDisplayOutput>();
+	private static Map<String, IDisplayOutput> listView = new HashMap<String, IDisplayOutput>();
 
 	// public ContributionItem(IDisplayOutput output, String idView) {
 	// super();
@@ -57,9 +57,8 @@ public class ContributionItem extends CompoundContributionItem {
 			params.put(ID_PARAMETER, idView);
 
 			CommandContributionItemParameter para =
-				new CommandContributionItemParameter(PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow(), ID_PARAMETER,
-					"msi.gama.application.commands.ShowGrids", params,
+				new CommandContributionItemParameter(PlatformUI.getWorkbench().getActiveWorkbenchWindow(),
+					ID_PARAMETER, "msi.gama.application.commands.ShowGrids", params,
 					SwtGui.getImageDescriptor("icons/view_layers.png"), null, // disabled icon
 					null, // hover icon
 					entry.getValue().getName(), // label

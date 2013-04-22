@@ -23,7 +23,6 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.util.prefs.*;
-import msi.gama.common.util.GuiUtils;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -41,7 +40,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	/*
 	 * The name of the file that tells us that the workspace directory belongs to our application
 	 */
-	public static final String WS_IDENTIFIER = ".gama_application_workspace";
+	private static final String WS_IDENTIFIER = ".gama_application_workspace";
 
 	private static final String keyWorkspaceRootDir = "wsRootDir";
 	private static final String keyRememberWorkspace = "wsRemember";
@@ -56,8 +55,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	/* Various dialog messages */
 	private static final String strMsg =
 		"Your workspace is where settings and files of your Gama models will be stored.";
-	private static final String strInfo =
-		"Please select a directory that will be the workspace root";
+	private static final String strInfo = "Please select a directory that will be the workspace root";
 	private static final String strError = "You must set a directory";
 
 	/* Our controls */
@@ -221,9 +219,8 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 					String txt = workspacePathCombo.getText();
 					File workspaceDirectory = new File(txt);
 					if ( !workspaceDirectory.exists() ) {
-						MessageDialog
-							.openError(Display.getDefault().getActiveShell(), "Error",
-								"The currently entered workspace path does not exist. Please enter a valid path.");
+						MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
+							"The currently entered workspace path does not exist. Please enter a valid path.");
 						return;
 					}
 
@@ -238,9 +235,8 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 					// workspace)
 					File wsFile = new File(txt + File.separator + WS_IDENTIFIER);
 					if ( !wsFile.exists() ) {
-						MessageDialog
-							.openError(Display.getDefault().getActiveShell(), "Error",
-								"The currently entered workspace path does not contain a valid workspace.");
+						MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
+							"The currently entered workspace path does not contain a valid workspace.");
 						return;
 					}
 
@@ -250,8 +246,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 					if ( directory == null ) { return; }
 
 					File targetDirectory = new File(directory);
-					if ( targetDirectory.getAbsolutePath().equals(
-						workspaceDirectory.getAbsolutePath()) ) {
+					if ( targetDirectory.getAbsolutePath().equals(workspaceDirectory.getAbsolutePath()) ) {
 						MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
 							"Source and target workspaces are the same");
 						return;
@@ -275,9 +270,8 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 					}
 
 					boolean setActive =
-						MessageDialog
-							.openConfirm(Display.getDefault().getActiveShell(), "Workspace Cloned",
-								"Would you like to set the newly cloned workspace to be the active one?");
+						MessageDialog.openConfirm(Display.getDefault().getActiveShell(), "Workspace Cloned",
+							"Would you like to set the newly cloned workspace to be the active one?");
 					if ( setActive ) {
 						workspacePathCombo.setText(directory);
 					}
@@ -328,16 +322,14 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			throw new IOException("Can not find source: " + src.getAbsolutePath());
 		} else if ( !src.canRead() ) { // check to ensure we have rights to the
 										// source...
-			throw new IOException("Cannot read: " + src.getAbsolutePath() +
-				". Check file permissions.");
+			throw new IOException("Cannot read: " + src.getAbsolutePath() + ". Check file permissions.");
 		}
 		/* Is this a directory copy? */
 		if ( src.isDirectory() ) {
 			/* Does the destination already exist? */
 			if ( !dest.exists() ) {
 				/* If not we need to make it exist if possible */
-				if ( !dest.mkdirs() ) { throw new IOException("Could not create direcotry: " +
-					dest.getAbsolutePath()); }
+				if ( !dest.mkdirs() ) { throw new IOException("Could not create direcotry: " + dest.getAbsolutePath()); }
 			}
 			/* Get a listing of files... */
 			String list[] = src.list();
@@ -363,8 +355,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 				}
 			} catch (IOException e) {
 				IOException wrapper =
-					new IOException("Unable to copy file: " + src.getAbsolutePath() + "to" +
-						dest.getAbsolutePath());
+					new IOException("Unable to copy file: " + src.getAbsolutePath() + "to" + dest.getAbsolutePath());
 				wrapper.initCause(e);
 				wrapper.setStackTrace(e.getStackTrace());
 				throw wrapper;
@@ -383,7 +374,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	@Override
 	protected void okPressed() {
 		String str = workspacePathCombo.getText();
-		GuiUtils.debug("Directory to create " + str);
+		// GuiUtils.debug("Directory to create " + str);
 		if ( str.length() == 0 ) {
 			setMessage(strError, IMessageProvider.ERROR);
 			return;
@@ -394,7 +385,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			setMessage(ret, IMessageProvider.ERROR);
 			return;
 		}
-		GuiUtils.debug("Directory to create (after check " + str);
+		// GuiUtils.debug("Directory to create (after check " + str);
 		/* Save it so we can show it in combo later */
 		lastUsedWorkspaces.remove(str);
 
@@ -422,8 +413,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		}
 
 		/* Save them onto our preferences */
-		Preferences.userRoot().node("gama")
-			.putBoolean(keyRememberWorkspace, rememberWorkspaceButton.getSelection());
+		Preferences.userRoot().node("gama").putBoolean(keyRememberWorkspace, rememberWorkspaceButton.getSelection());
 		Preferences.userRoot().node("gama").put(keyLastUsedWorkspaces, buf.toString());
 		try {
 			Preferences.userRoot().node("gama").flush();
@@ -434,7 +424,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		/* Now create it */
 		boolean ok = checkAndCreateWorkspaceRoot(str);
 		if ( !ok ) {
-			GuiUtils.debug("Problem creating " + str);
+			// GuiUtils.debug("Problem creating " + str);
 			setMessage("The workspace could not be created, please check the error log");
 			return;
 		}
@@ -443,7 +433,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		setSelectedWorkspaceRootLocation(str);
 
 		/* And on our preferences as well */
-		GuiUtils.debug("Writing " + str + " in the preferences");
+		// GuiUtils.debug("Writing " + str + " in the preferences");
 		Preferences.userRoot().node("gama").put(keyWorkspaceRootDir, str);
 		try {
 			Preferences.userRoot().node("gama").flush();
@@ -466,23 +456,22 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	 *            to check a location
 	 * @return null if everything is ok, or an error message if not
 	 */
-	public static String checkWorkspaceDirectory(final Shell parentShell,
-		final String workspaceLocation, final boolean askCreate, final boolean fromDialog) {
+	public static String checkWorkspaceDirectory(final Shell parentShell, final String workspaceLocation,
+		final boolean askCreate, final boolean fromDialog) {
 		File f = new File(workspaceLocation);
 		if ( !f.exists() ) {
 			if ( askCreate ) {
 				boolean create =
-					MessageDialog
-						.openConfirm(parentShell, "New Directory",
-							"The directory does not exist. Would you like to create it and restart the application?");
+					MessageDialog.openConfirm(parentShell, "New Directory",
+						"The directory does not exist. Would you like to create it and restart the application?");
 				if ( create ) {
 					try {
 						f.mkdirs();
 						File wsDot = new File(workspaceLocation + File.separator + WS_IDENTIFIER);
 						wsDot.createNewFile();
 					} catch (Exception err) {
-						GuiUtils
-							.debug("Error creating directories, please check folder permissions");
+						// GuiUtils
+						// .debug("Error creating directories, please check folder permissions");
 						return "Error creating directories, please check folder permissions";
 					}
 				}
@@ -492,12 +481,12 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		}
 
 		if ( !f.canRead() ) {
-			GuiUtils.debug("The selected directory is not readable");
+			// GuiUtils.debug("The selected directory is not readable");
 			return "The selected directory is not readable";
 		}
 
 		if ( !f.isDirectory() ) {
-			GuiUtils.debug("The selected path is not a directory");
+			// GuiUtils.debug("The selected path is not a directory");
 			return "The selected path is not a directory";
 		}
 
@@ -518,17 +507,17 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 						File wsDot = new File(workspaceLocation + File.separator + WS_IDENTIFIER);
 						wsDot.createNewFile();
 					} catch (Exception err) {
-						GuiUtils
-							.debug("Error creating directories, please check folder permissions");
+						// GuiUtils
+						// .debug("Error creating directories, please check folder permissions");
 						return "Error creating directories, please check folder permissions";
 					}
 				} else {
-					GuiUtils.debug("Please select a directory for your workspace");
+					// GuiUtils.debug("Please select a directory for your workspace");
 					return "Please select a directory for your workspace";
 				}
 
 				if ( !wsTest.exists() ) {
-					GuiUtils.debug("The selected directory does not exist");
+					// GuiUtils.debug("The selected directory does not exist");
 					return "The selected directory does not exist";
 				}
 
@@ -552,13 +541,13 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		try {
 			File fRoot = new File(wsRoot);
 			if ( !fRoot.exists() ) {
-				GuiUtils.debug("Folder " + wsRoot + " does not exist");
+				// GuiUtils.debug("Folder " + wsRoot + " does not exist");
 				return false;
 			}
 
 			File dotFile = new File(wsRoot + File.separator + PickWorkspaceDialog.WS_IDENTIFIER);
 			if ( !dotFile.exists() && !dotFile.createNewFile() ) {
-				GuiUtils.debug("File " + dotFile.getAbsolutePath() + " does not exist");
+				// GuiUtils.debug("File " + dotFile.getAbsolutePath() + " does not exist");
 				return false;
 			}
 

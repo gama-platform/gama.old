@@ -27,8 +27,7 @@ import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gama.util.path.GamaSpatialPath;
-import msi.gama.util.path.PathFactory;
+import msi.gama.util.path.*;
 import msi.gaml.operators.Maths;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.geom.prep.*;
@@ -53,7 +52,7 @@ public abstract class AbstractTopology implements ITopology {
 		environment = env;
 		this.scope = scope;
 		setEnvironmentBounds();
-		spatialIndex = scope.getWorldScope().getSpatialIndex();
+		spatialIndex = scope.getSimulationScope().getSpatialIndex();
 		this.isTorus = isTorus;
 		if ( isTorus() ) {
 			createVirtualEnvironments();
@@ -91,7 +90,7 @@ public abstract class AbstractTopology implements ITopology {
 
 	public Map<Geometry, IAgent> toroidalGeoms(final Collection shps) {
 		Map<Geometry, IAgent> geoms = new GamaMap();
-		for ( IAgent ag : scope.getWorldScope().getAgents() ) {
+		for ( IAgent ag : scope.getSimulationScope().getAgents() ) {
 			geoms.put(returnToroidalGeom(ag.getGeometry().getInnerGeometry()), ag);
 		}
 		return geoms;
@@ -177,21 +176,20 @@ public abstract class AbstractTopology implements ITopology {
 
 	/**
 	 * @throws GamaRuntimeException
-	 * @see msi.gama.environment.ITopology#pathBetween(msi.gama.interfaces.IGeometry,
-	 *      msi.gama.interfaces.IGeometry)
+	 * @see msi.gama.environment.ITopology#pathBetween(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry)
 	 */
 	@Override
 	public GamaSpatialPath pathBetween(IScope scope, final IShape source, final IShape target)
-			throws GamaRuntimeException {
+		throws GamaRuntimeException {
 		// return new GamaPath(this, GamaList.with(source.getLocation(), target.getLocation()));
-		return (GamaSpatialPath)PathFactory.newInstance(this, GamaList.with(source.getLocation(), target.getLocation()));
+		return PathFactory.newInstance(this, GamaList.with(source.getLocation(), target.getLocation()));
 	}
 
 	@Override
 	public GamaSpatialPath pathBetween(IScope scope, final ILocation source, final ILocation target)
 		throws GamaRuntimeException {
 		// return new GamaPath(this, GamaList.with(source, target));
-		return (GamaSpatialPath)PathFactory.newInstance(this, GamaList.with(source, target));
+		return PathFactory.newInstance(this, GamaList.with(source, target));
 	}
 
 	private void setEnvironmentBounds() {
@@ -265,12 +263,11 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	@Override
-	public ILocation getDestination(final ILocation source, final int direction,
-		final double distance, final boolean nullIfOutside) {
+	public ILocation getDestination(final ILocation source, final int direction, final double distance,
+		final boolean nullIfOutside) {
 		double cos = distance * Maths.cos(direction);
 		double sin = distance * Maths.sin(direction);
-		return normalizeLocation(new GamaPoint(source.getX() + cos, source.getY() + sin),
-			nullIfOutside);
+		return normalizeLocation(new GamaPoint(source.getX() + cos, source.getY() + sin), nullIfOutside);
 	}
 
 	@Override
@@ -340,7 +337,7 @@ public abstract class AbstractTopology implements ITopology {
 		if ( filter != null ) {
 			shps = filter.getShapes(scope);
 		} else {
-			shps = scope.getWorldScope().getAgents();
+			shps = scope.getSimulationScope().getAgents();
 		}
 		return toroidalGeoms(shps);
 	}
@@ -376,8 +373,8 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	@Override
-	public IList<IAgent> getNeighboursOf(final IShape source, final Double distance,
-		final IAgentFilter filter) throws GamaRuntimeException {
+	public IList<IAgent> getNeighboursOf(final IShape source, final Double distance, final IAgentFilter filter)
+		throws GamaRuntimeException {
 		IList<IAgent> agents;
 		if ( !isTorus() ) {
 			IList<IShape> shapes = spatialIndex.allAtDistance(source, distance, filter);
@@ -407,8 +404,8 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	@Override
-	public IList<IAgent> getNeighboursOf(final ILocation source, final Double distance,
-		final IAgentFilter filter) throws GamaRuntimeException {
+	public IList<IAgent> getNeighboursOf(final ILocation source, final Double distance, final IAgentFilter filter)
+		throws GamaRuntimeException {
 		IList<IAgent> agents;
 		if ( !isTorus() ) {
 			IList<IShape> shapes = spatialIndex.allAtDistance(source, distance, filter);
@@ -474,13 +471,12 @@ public abstract class AbstractTopology implements ITopology {
 	private static PreparedGeometryFactory pgFact = new PreparedGeometryFactory();
 
 	/**
-	 * @see msi.gama.environment.ITopology#getAgentsIn(msi.gama.interfaces.IGeometry,
-	 *      msi.gama.environment.IAgentFilter, boolean)
+	 * @see msi.gama.environment.ITopology#getAgentsIn(msi.gama.interfaces.IGeometry, msi.gama.environment.IAgentFilter,
+	 *      boolean)
 	 */
 	// @Override
 	// @Override
-	public IList<IAgent> getAgentsInOld(final IShape source, final IAgentFilter f,
-		final boolean covered) {
+	public IList<IAgent> getAgentsInOld(final IShape source, final IAgentFilter f, final boolean covered) {
 		GamaList<IAgent> result = new GamaList();
 		if ( !isValidGeometry(source) ) { return result; }
 		Envelope envelope = source.getEnvelope().intersection(environment.getEnvelope());
@@ -492,8 +488,7 @@ public abstract class AbstractTopology implements ITopology {
 			// Geometry g = ag.getInnerGeometry();
 			if ( ag != null && !ag.dead() ) {
 				Geometry geom = ag.getInnerGeometry();
-				if ( covered ? pg.covers(geom) && penv.covers(geom) : pg.intersects(geom) &&
-					penv.intersects(geom) ) {
+				if ( covered ? pg.covers(geom) && penv.covers(geom) : pg.intersects(geom) && penv.intersects(geom) ) {
 					result.add(ag);
 				}
 			}
@@ -503,8 +498,7 @@ public abstract class AbstractTopology implements ITopology {
 
 	// @Override
 	@Override
-	public IList<IAgent> getAgentsIn(final IShape source, final IAgentFilter f,
-		final boolean covered) {
+	public IList<IAgent> getAgentsIn(final IShape source, final IAgentFilter f, final boolean covered) {
 		// if ( !isValidGeometry(source) ) { return GamaList.EMPTY_LIST; }
 		if ( source == null ) { return GamaList.EMPTY_LIST; }
 		if ( !isTorus() ) {

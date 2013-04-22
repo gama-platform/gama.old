@@ -1,7 +1,7 @@
 package msi.gama.outputs;
 
 import msi.gama.common.util.GuiUtils;
-import msi.gama.kernel.experiment.IExperiment;
+import msi.gama.kernel.experiment.IExperimentSpecies;
 
 public class HeadlessOutputManager extends GuiOutputManager {
 
@@ -10,7 +10,7 @@ public class HeadlessOutputManager extends GuiOutputManager {
 	}
 
 	@Override
-	public void buildOutputs(final IExperiment exp) {
+	public void buildOutputs(final IExperimentSpecies exp) {
 		System.out.println("build output headless");
 		GuiUtils.hideMonitorView();
 		GuiUtils.setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());

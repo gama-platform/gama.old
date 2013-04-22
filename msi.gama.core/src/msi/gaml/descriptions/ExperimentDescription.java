@@ -18,16 +18,22 @@
  */
 package msi.gaml.descriptions;
 
-import msi.gaml.compilation.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gaml.factories.IChildrenProvider;
 import msi.gaml.statements.Facets;
+import msi.gaml.types.Types;
 import org.eclipse.emf.ecore.EObject;
 
 public class ExperimentDescription extends SpeciesDescription {
 
-	public ExperimentDescription(final String keyword, final IDescription superDesc,
-		final IChildrenProvider cp, final EObject source, final Facets facets) {
+	// final ModelDescription model;
+
+	// We assume experiments are firstly created *within* a model, in which case we can gather the superDesc argument
+	// and keep it for when the relationship will be reversed (i.e. when the model will be *inside* the experiment)
+	public ExperimentDescription(final String keyword, final IDescription superDesc, final IChildrenProvider cp,
+		final EObject source, final Facets facets) {
 		super(keyword, superDesc, cp, source, facets);
+		setParent(Types.getSpecies(IKeyword.EXPERIMENT));
 	}
 
 	@Override
@@ -45,23 +51,6 @@ public class ExperimentDescription extends SpeciesDescription {
 	@Override
 	public boolean isExperiment() {
 		return true;
-	}
-
-	@Override
-	public Class getDefaultJavaBase() {
-		return AbstractGamlAdditions.EXPERIMENTATOR_AGENT_CLASS;
-	}
-
-	@Override
-	public IAgentConstructor getDefaultAgentConstructor() {
-		return AbstractGamlAdditions.EXPERIMENTATOR_AGENT_CONSTRUCTOR;
-	}
-
-	@Override
-	public String getParentName() {
-		String p = super.getParentName();
-		if ( p == null ) { return "experimentator"; }
-		return p;
 	}
 
 }

@@ -1,5 +1,7 @@
 package msi.gama.util.graph;
 
+import msi.gama.runtime.IScope;
+
 public final class GraphEvent {
 
 	/**
@@ -11,7 +13,7 @@ public final class GraphEvent {
 	 * the timestep at which the event was sent
 	 */
 	public final Object sender;
-
+	public final IScope scope;
 	public final Object edge;
 	public final Object vertex;
 
@@ -63,7 +65,7 @@ public final class GraphEvent {
 
 	}
 
-	public GraphEvent(final IGraph graph, final Object sender, final Object edge,
+	public GraphEvent(final IScope scope, final IGraph graph, final Object sender, final Object edge,
 		final Object vertex, final GraphEventType eventType) {
 		super();
 		this.graph = graph;
@@ -71,13 +73,13 @@ public final class GraphEvent {
 		this.edge = edge;
 		this.vertex = vertex;
 		this.eventType = eventType;
+		this.scope = scope;
 	}
 
 	@Override
 	public String toString() {
-		return new StringBuffer().append("graph event ").append(eventType).append(", edge=")
-			.append(edge).append(", vertex=").append(vertex).append(", sender=").append(sender)
-			.toString();
+		return new StringBuffer().append("graph event ").append(eventType).append(", edge=").append(edge)
+			.append(", vertex=").append(vertex).append(", sender=").append(sender).toString();
 	}
 
 }

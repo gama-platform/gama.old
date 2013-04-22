@@ -247,7 +247,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 	public void addParametersTo(final BatchExperiment exp) {
 		super.addParametersTo(exp);
 		exp.addMethodParameter(new ParameterAdapter("Tabu list initial size",
-			IExperiment.BATCH_CATEGORY_NAME, IType.INT) {
+			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
 
 			@Override
 			public Object value() {
@@ -256,7 +256,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 
 		});
 		exp.addMethodParameter(new ParameterAdapter("Tabu list maximum size",
-			IExperiment.BATCH_CATEGORY_NAME, IType.INT) {
+			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
 
 			@Override
 			public Object value() {
@@ -265,7 +265,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 
 		});
 		exp.addMethodParameter(new ParameterAdapter("Tabu list minimum size",
-			IExperiment.BATCH_CATEGORY_NAME, IType.INT) {
+			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
 
 			@Override
 			public Object value() {
@@ -274,7 +274,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 
 		});
 		exp.addMethodParameter(new ParameterAdapter("Maximum number of tests without collision",
-			IExperiment.BATCH_CATEGORY_NAME, IType.INT) {
+			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
 
 			@Override
 			public Object value() {
@@ -283,7 +283,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 
 		});
 		exp.addMethodParameter(new ParameterAdapter("Maximum cycle size",
-			IExperiment.BATCH_CATEGORY_NAME, IType.INT) {
+			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
 
 			@Override
 			public Object value() {
@@ -292,7 +292,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 
 		});
 		exp.addMethodParameter(new ParameterAdapter("Minimum cycle size",
-			IExperiment.BATCH_CATEGORY_NAME, IType.INT) {
+			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
 
 			@Override
 			public Object value() {
@@ -301,7 +301,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 
 		});
 		exp.addMethodParameter(new ParameterAdapter("Maximum number of iterations",
-			IExperiment.BATCH_CATEGORY_NAME, IType.FLOAT) {
+			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.FLOAT) {
 
 			@Override
 			public Object value() {

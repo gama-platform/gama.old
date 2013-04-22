@@ -67,8 +67,8 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		type = desc.getType();
 		title = getLiteral(IKeyword.NAME);
 		unitLabel = getLiteral(IKeyword.UNIT);
-		ModelDescription md = desc.getModelDescription();
-		TypeDescription wd = md.getWorldSpecies();
+		ModelDescription wd = desc.getModelDescription();
+		// TypeDescription wd = md.getWorldSpecies();
 		IDescription targetedGlobalVar = wd.getVariable(varName);
 		if ( type.equals(Types.NO_TYPE) ) {
 			type = targetedGlobalVar.getType();
@@ -79,8 +79,8 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		IExpression step = getFacet(IKeyword.STEP);
 		IExpression among = getFacet(IKeyword.AMONG);
 		init =
-			this.hasFacet(IKeyword.INIT) ? getFacet(IKeyword.INIT) : targetedGlobalVar.getFacets()
-				.getExpr(IKeyword.INIT);
+			this.hasFacet(IKeyword.INIT) ? getFacet(IKeyword.INIT) : targetedGlobalVar.getFacets().getExpr(
+				IKeyword.INIT);
 		order = desc.getDefinitionOrder();
 		minValue = min == null ? null : (Number) min.value(GAMA.getDefaultScope());
 		maxValue = max == null ? null : (Number) max.value(GAMA.getDefaultScope());
@@ -96,13 +96,13 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		this(scope, p, p.getTitle(), p.getCategory(), p.getAmongValue(), false);
 	}
 
-	public ExperimentParameter(IScope scope, final IParameter p, final String title,
-		final String category, final List among, final boolean canBeNull) {
+	public ExperimentParameter(IScope scope, final IParameter p, final String title, final String category,
+		final List among, final boolean canBeNull) {
 		this(scope, p, title, category, null, among, canBeNull);
 	}
 
-	public ExperimentParameter(IScope scope, final IParameter p, final String title,
-		final String category, final String unit, final List among, final boolean canBeNull) {
+	public ExperimentParameter(IScope scope, final IParameter p, final String title, final String category,
+		final String unit, final List among, final boolean canBeNull) {
 		super(null);
 		init = null;
 		this.title = title;
@@ -228,8 +228,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		double max = maxValue == null ? Double.MAX_VALUE : maxValue.doubleValue();
 		final double val = GAMA.getRandom().between(0., max - min) + 0.5;
 		final int nbStep = (int) (val / step);
-		final double high =
-			(int) (Math.min(max, min + (nbStep + 1.0) * step) * 1000000 + 0.5) / 1000000.0;
+		final double high = (int) (Math.min(max, min + (nbStep + 1.0) * step) * 1000000 + 0.5) / 1000000.0;
 		final double low = (int) ((min + nbStep * step) * 1000000 + 0.5) / 1000000.0;
 		return val - low < high - val ? low : high;
 	}

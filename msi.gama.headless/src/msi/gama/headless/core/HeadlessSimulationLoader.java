@@ -45,8 +45,8 @@ public class HeadlessSimulationLoader {
 	 * @throws GamaRuntimeException
 	 * @throws InterruptedException
 	 */
-	public static IHeadLessExperiment newHeadlessSimulation(final String fileName,
-		final ParametersSet params) throws GamaRuntimeException, InterruptedException {
+	public static IHeadLessExperiment newHeadlessSimulation(final String fileName, final ParametersSet params)
+		throws GamaRuntimeException, InterruptedException {
 		IHeadLessExperiment exp = newHeadlessSimulation(fileName);
 		GAMA.getExperiment().initialize(params, Math.random());
 		waitLoading(exp);
@@ -63,7 +63,7 @@ public class HeadlessSimulationLoader {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		} while (exp.getCurrentSimulation() != null && exp.getCurrentSimulation().isLoading());
+		} while (exp.getCurrentSimulation() != null && exp.isLoading());
 	}
 
 	private static void configureHeadLessSimulation() {
@@ -91,8 +91,7 @@ public class HeadlessSimulationLoader {
 		ResourceSet rs = new ResourceSetImpl();
 		GamlResource r = (GamlResource) rs.getResource(URI.createURI("file:///" + fileName), true);
 		try {
-			GamlJavaValidator validator =
-				(GamlJavaValidator) injector.getInstance(EValidator.class);
+			GamlJavaValidator validator = (GamlJavaValidator) injector.getInstance(EValidator.class);
 			lastModel = validator.build(r);
 			if ( !r.getErrors().isEmpty() ) {
 				lastModel = null;
@@ -107,7 +106,7 @@ public class HeadlessSimulationLoader {
 			// collectErrors(collect);
 			// fireBuildEnded(m, lastModel);
 		}
-
+		// FIXME Experiment default no longer exists. Needs to specify one name
 		GAMA.newExperiment(IKeyword.DEFAULT, lastModel);
 		System.out.println("Experiment created ");
 	}

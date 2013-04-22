@@ -36,7 +36,7 @@ public class GLOutput extends AbstractDisplayOutput {
 	}
 
 	@Override
-	public void compute(final IScope scope, final int cycle) throws GamaRuntimeException {
+	public void step(final IScope scope) throws GamaRuntimeException {
 		// System.err.println("compute");
 	}
 

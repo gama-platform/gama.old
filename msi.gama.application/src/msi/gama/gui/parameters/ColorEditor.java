@@ -32,8 +32,8 @@ import org.eclipse.swt.widgets.*;
 
 public class ColorEditor extends AbstractEditor implements DisposeListener {
 
-	Button edit;
-	ExpressionControl expression;
+	private Button edit;
+	private ExpressionControl expression;
 
 	ColorEditor(final IParameter param) {
 		super(param);

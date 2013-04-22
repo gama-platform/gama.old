@@ -9,7 +9,6 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaDynamicLink;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 
@@ -21,8 +20,7 @@ import msi.gama.util.IList;
  * <li>When an edge is removed, the corresponding edge agent dies.</li>
  * <li>When a node is removed, the corresponding node agent dies.</li>
  * <li>When a novel node agent is created, a novel node is created into the graph</li>
- * <li>When a novel edge agent is created, an exception is thrown (creating an edge without its
- * targets is meaningless)</li>
+ * <li>When a novel edge agent is created, an exception is thrown (creating an edge without its targets is meaningless)</li>
  * </ul>
  * 
  * @author Samuel Thiriot
@@ -44,8 +42,7 @@ public class GraphAndPopulationsSynchronizer implements IPopulation.Listener, IG
 
 	private final List<Map> initialValues = Collections.EMPTY_LIST;
 
-	public GraphAndPopulationsSynchronizer(final IPopulation popVertices,
-		final IPopulation popEdges, final IGraph graph) {
+	public GraphAndPopulationsSynchronizer(final IPopulation popVertices, final IPopulation popEdges, final IGraph graph) {
 		this.popVertices = popVertices;
 		this.popEdges = popEdges;
 		this.graph = graph;
@@ -206,9 +203,7 @@ public class GraphAndPopulationsSynchronizer implements IPopulation.Listener, IG
 				if ( currentEventEdge != event.edge ) {
 					currentEventEdge = event.edge;
 					// create the agent of the target specy
-					IList<? extends IAgent> createdAgents =
-						popEdges.createAgents(GAMA.getFrontmostSimulation().getExecutionScope(), 1,
-							initialValues, false);
+					IList<? extends IAgent> createdAgents = popEdges.createAgents(event.scope, 1, initialValues, false);
 					IAgent createdAgent = createdAgents.get(0);
 
 					// create the shape for this agent
@@ -225,8 +220,7 @@ public class GraphAndPopulationsSynchronizer implements IPopulation.Listener, IG
 					currentEventVertex = event.vertex;
 					// create an agent of the target specy
 					/* IList<? extends IAgent> createdAgents = */
-					popVertices.createAgents(GAMA.getFrontmostSimulation().getExecutionScope(), 1,
-						initialValues, false);
+					popVertices.createAgents(event.scope, 1, initialValues, false);
 					// IAgent createdAgent = createdAgents.get(0);
 				}
 				currentEventVertex = null;
@@ -248,8 +242,7 @@ public class GraphAndPopulationsSynchronizer implements IPopulation.Listener, IG
 	public static GraphAndPopulationsSynchronizer synchronize(final IPopulation popVertices,
 		final IPopulation popEdges, final IGraph graph) {
 
-		GraphAndPopulationsSynchronizer res =
-			new GraphAndPopulationsSynchronizer(popVertices, popEdges, graph);
+		GraphAndPopulationsSynchronizer res = new GraphAndPopulationsSynchronizer(popVertices, popEdges, graph);
 		popVertices.addListener(res);
 		popEdges.addListener(res);
 		graph.addListener(res);

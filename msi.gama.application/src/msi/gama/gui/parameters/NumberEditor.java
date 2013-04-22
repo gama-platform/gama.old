@@ -31,11 +31,11 @@ import org.eclipse.swt.widgets.*;
 
 public abstract class NumberEditor extends AbstractEditor {
 
-	ExpressionControl expression;
+	private ExpressionControl expression;
 	ToolItem plus, minus;
 	Number stepValue;
-	Button defineButton;
-	Composite internalComposite;
+	private Button defineButton;
+	private Composite internalComposite;
 
 	public NumberEditor(final IParameter param, final boolean canBeNull) {
 		super(param);
@@ -50,16 +50,14 @@ public abstract class NumberEditor extends AbstractEditor {
 		acceptNull = canBeNull;
 	}
 
-	public NumberEditor(final IAgent a, final IParameter p, final EditorListener l,
-		final boolean canBeNull) {
+	public NumberEditor(final IAgent a, final IParameter p, final EditorListener l, final boolean canBeNull) {
 		super(a, p, l);
 		computeStepValue();
 		acceptNull = canBeNull;
 	}
 
 	@Override
-	protected Control createCustomParameterControl(final Composite composite)
-		throws GamaRuntimeException {
+	protected Control createCustomParameterControl(final Composite composite) throws GamaRuntimeException {
 		normalizeValues();
 		Composite compo = new Composite(composite, SWT.None);
 		compo.setLayoutData(getParameterGridData());

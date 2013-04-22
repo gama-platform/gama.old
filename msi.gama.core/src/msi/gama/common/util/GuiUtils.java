@@ -20,12 +20,13 @@ package msi.gama.common.util;
 
 import java.util.Map;
 import msi.gama.common.interfaces.*;
-import msi.gama.kernel.experiment.IExperiment;
+import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserPanelStatement;
+import msi.gaml.types.IType;
 
 /**
  * The class GuiUtils. A static bridge to the SWT environment. The actual dependency on SWT is
@@ -42,8 +43,7 @@ public class GuiUtils {
 	public static final String MONITOR_VIEW_ID = "msi.gama.application.view.MonitorView";
 	public static final String SPECIES_VIEW_ID = "msi.gama.application.view.SpeciesInspectView";
 	public static final String AGENT_VIEW_ID = "msi.gama.application.view.AgentInspectView";
-	public static final String DYNAMIC_VIEW_ID =
-		"msi.gama.application.view.DynamicAgentInspectView";
+	public static final String DYNAMIC_VIEW_ID = "msi.gama.application.view.DynamicAgentInspectView";
 	public static final String LAYER_VIEW_ID = "msi.gama.application.view.LayeredDisplayView";
 	public static final String ERROR_VIEW_ID = "msi.gama.application.view.ErrorView";
 	public static final String PARAMETER_VIEW_ID = "msi.gama.application.view.ParameterView";
@@ -158,7 +158,7 @@ public class GuiUtils {
 		}
 	}
 
-	public static void showParameterView(final IExperiment exp) {
+	public static void showParameterView(final IExperimentSpecies exp) {
 		if ( gui != null ) {
 			gui.showParameterView(exp);
 		}
@@ -232,7 +232,7 @@ public class GuiUtils {
 		return null;
 	}
 
-	public static boolean confirmClose(final IExperiment experiment) {
+	public static boolean confirmClose(final IExperimentSpecies experiment) {
 		if ( gui != null ) { return gui.confirmClose(experiment); }
 		return true;
 	}
@@ -316,8 +316,8 @@ public class GuiUtils {
 	 * @param h
 	 * @return
 	 */
-	public static IDisplaySurface getDisplaySurfaceFor(final String keyword,
-		final IDisplayOutput layerDisplayOutput, final double w, final double h) {
+	public static IDisplaySurface getDisplaySurfaceFor(final String keyword, final IDisplayOutput layerDisplayOutput,
+		final double w, final double h) {
 		return gui != null ? gui.getDisplaySurfaceFor(keyword, layerDisplayOutput, w, h) : null;
 	}
 
@@ -327,10 +327,10 @@ public class GuiUtils {
 		}
 	}
 
-	public static Map<String, Object> openUserInputDialog(final String title,
-		final Map<String, Object> initialValues) {
+	public static Map<String, Object> openUserInputDialog(final String title, final Map<String, Object> initialValues,
+		Map<String, IType> types) {
 		if ( gui == null ) { return initialValues; }
-		return gui.openUserInputDialog(title, initialValues);
+		return gui.openUserInputDialog(title, initialValues, types);
 	}
 
 	public static void openUserControlPanel(final IScope scope, final UserPanelStatement panel) {

@@ -2,11 +2,11 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.util.*;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.IChildrenProvider;
-import msi.gaml.skills.WorldSkill;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 import org.eclipse.emf.ecore.EObject;
@@ -23,34 +23,35 @@ public class TypeDescription extends SymbolDescription {
 
 	private Map<String, StatementDescription> actions;
 	private Map<String, VariableDescription> variables;
-	protected Class javaBase;
+	private Class javaBase;
 	protected TypeDescription parent;
 	private int varCount = 0;
 	private IList<String> sortedVariableNames;
 	private IList<String> updatableVariableNames;
 
-	public TypeDescription(final String keyword, final Class clazz, final IDescription superDesc,
-		final IChildrenProvider cp, final EObject source, final Facets facets) {
-		super(keyword, superDesc, cp, source, facets);
-		initJavaBase(clazz);
-	}
-
-	public void initJavaBase(final Class clazz) {
-		if ( javaBase != null ) { return; }
-		javaBase = clazz == null ? getDefaultJavaBase() : clazz;
+	public TypeDescription(final String keyword, final Class clazz, final IDescription macroDesc,
+		final IDescription parent, final IChildrenProvider cp, final EObject source, final Facets facets) {
+		super(keyword, macroDesc, cp, source, facets);
+		// parent can be null
+		setJavaBase(clazz);
+		setParent((TypeDescription) parent);
+		// javaBase = clazz == null ? getDefaultJavaBase() : clazz;
 	}
 
 	public void copyJavaAdditions() {
-		final List<IDescription> children =
-			AbstractGamlAdditions.getAllChildrenOf(javaBase, getSkillClasses());
+		Class clazz = getJavaBase();
+		if ( clazz == null ) {
+			error("This species cannot be compiled as its parent is unknown. ", IGamlIssue.UNKNOWN_SUBSPECIES);
+			return;
+		}
+		final Set<IDescription> children = AbstractGamlAdditions.getAllChildrenOf(getJavaBase(), getSkillClasses());
 		for ( IDescription v : children ) {
 			addChild(v.copy(this));
 		}
-
 	}
 
-	public Class getDefaultJavaBase() {
-		return AbstractGamlAdditions.DEFAULT_AGENT_CLASS;
+	public void setParent(TypeDescription parent) {
+		this.parent = parent;
 	}
 
 	public Set<Class> getSkillClasses() {
@@ -70,9 +71,8 @@ public class TypeDescription extends SymbolDescription {
 		StatementDescription existing = getAction(actionName);
 		if ( existing != null ) {
 			if ( existing.getKeyword().equals(ACTION) && !primitive.isAbstract() ) {
-				existing.error(
-					"Action " + actionName + " replaces a primitive of the same name defined in " +
-						primitive.getOriginName() + ". Consider renaming it.", IGamlIssue.GENERAL);
+				existing.error("Action " + actionName + " replaces a primitive of the same name defined in " +
+					primitive.getOriginName() + ". Consider renaming it.", IGamlIssue.GENERAL);
 			}
 			children.remove(existing);
 		}
@@ -88,10 +88,8 @@ public class TypeDescription extends SymbolDescription {
 		if ( existingAction != null ) {
 			// Skills primitives are added first
 			if ( existingAction.getKeyword().equals(PRIMITIVE) && !existingAction.isAbstract() ) {
-				redeclaredAction.error(
-					"Action " + actionName + " replaces a primitive of the same name defined in " +
-						existingAction.getOriginName() + ". Consider renaming it.",
-					IGamlIssue.GENERAL);
+				redeclaredAction.error("Action " + actionName + " replaces a primitive of the same name defined in " +
+					existingAction.getOriginName() + ". Consider renaming it.", IGamlIssue.GENERAL);
 				return;
 			}
 			if ( !existingAction.isAbstract() ) {
@@ -136,7 +134,14 @@ public class TypeDescription extends SymbolDescription {
 	}
 
 	public Class getJavaBase() {
+		if ( javaBase == null && parent != null ) {
+			javaBase = parent.getJavaBase();
+		}
 		return javaBase;
+	}
+
+	protected void setJavaBase(Class javaBase) {
+		this.javaBase = javaBase;
 	}
 
 	@Override
@@ -230,11 +235,11 @@ public class TypeDescription extends SymbolDescription {
 		// TO BE REMOVED LATER BY SPECIFYING A PRIORITY ON VARIABLES -- OR TO MOVE THESE VARIABLES
 		// TO THE EXPERIMENTATOR
 
-		if ( sortedVariableNames.remove(WorldSkill.PROJECT_PATH) ) {
-			sortedVariableNames.add(0, WorldSkill.PROJECT_PATH);
+		if ( sortedVariableNames.remove(ExperimentAgent.PROJECT_PATH) ) {
+			sortedVariableNames.add(0, ExperimentAgent.PROJECT_PATH);
 		}
-		if ( sortedVariableNames.remove(WorldSkill.MODEL_PATH) ) {
-			sortedVariableNames.add(0, WorldSkill.MODEL_PATH);
+		if ( sortedVariableNames.remove(ExperimentAgent.MODEL_PATH) ) {
+			sortedVariableNames.add(0, ExperimentAgent.MODEL_PATH);
 		}
 	}
 
@@ -258,11 +263,11 @@ public class TypeDescription extends SymbolDescription {
 		// TO BE REMOVED LATER BY SPECIFYING A PRIORITY ON VARIABLES -- OR TO MOVE THESE VARIABLES
 		// TO THE EXPERIMENTATOR
 
-		if ( sortedVariableNames.remove(WorldSkill.PROJECT_PATH) ) {
-			sortedVariableNames.add(0, WorldSkill.PROJECT_PATH);
+		if ( sortedVariableNames.remove(ExperimentAgent.PROJECT_PATH) ) {
+			sortedVariableNames.add(0, ExperimentAgent.PROJECT_PATH);
 		}
-		if ( sortedVariableNames.remove(WorldSkill.MODEL_PATH) ) {
-			sortedVariableNames.add(0, WorldSkill.MODEL_PATH);
+		if ( sortedVariableNames.remove(ExperimentAgent.MODEL_PATH) ) {
+			sortedVariableNames.add(0, ExperimentAgent.MODEL_PATH);
 		}
 	}
 
@@ -274,27 +279,26 @@ public class TypeDescription extends SymbolDescription {
 		if ( variables != null ) {
 			variables.clear();
 		}
-		parent = null;
 		super.dispose();
 	}
 
 	protected void inheritFromParent() {
 		if ( parent != null ) {
-			inheritActions(parent);
-			inheritVariables(parent);
+			inheritActions();
+			inheritVariables();
 		}
 	}
 
-	protected void inheritVariables(final TypeDescription parent) {
+	protected void inheritVariables() {
 		if ( parent.variables != null ) {
 			// We only copy the variables that are not redefined in this species
 			for ( final VariableDescription v : parent.getVariables().values() ) {
-				inheritVariable(parent, v);
+				inheritVariable(v);
 			}
 		}
 	}
 
-	protected void inheritActions(final TypeDescription parent) {
+	protected void inheritActions() {
 		// We only copy the actions that are not redefined in this species
 		if ( parent.actions != null ) {
 			for ( final StatementDescription action : parent.actions.values() ) {
@@ -303,8 +307,10 @@ public class TypeDescription extends SymbolDescription {
 		}
 	}
 
-	protected void inheritVariable(TypeDescription parent, final VariableDescription parentVariable) {
+	protected void inheritVariable(final VariableDescription parentVariable) {
 		String varName = parentVariable.getName();
+		// GuiUtils.debug("       **** " + getName() + " receives " + " var " + varName + " from " + parent.getName());
+
 		if ( !hasVar(varName) ) {
 			addChild(parentVariable);
 			return;
@@ -321,8 +327,8 @@ public class TypeDescription extends SymbolDescription {
 		IType myType = myVar.getType();
 		IType parentType = parentVariable.getType();
 		if ( !myType.isTranslatableInto(parentType) ) {
-			myVar.error("Type (" + myType + ") differs from that (" + parentType +
-				") of the implementation of  " + varName + " in " + parent.getName());
+			myVar.error("Type (" + myType + ") differs from that (" + parentType + ") of the implementation of  " +
+				varName + " in " + parent.getName());
 		} else if ( myType.hasContents() ) {
 			myType = myVar.getContentType();
 			parentType = parentVariable.getContentType();
@@ -332,8 +338,8 @@ public class TypeDescription extends SymbolDescription {
 			}
 		}
 		if ( !myVar.isBuiltIn() ) {
-			myVar.info("Redefinition, in " + myVar.getOriginName() + ", of the variable " +
-				varName + " defined in species " + parent.getName(), IGamlIssue.REDEFINES);
+			myVar.info("Redefinition of the variable " + varName + " defined in  " + parentVariable.getOriginName(),
+				IGamlIssue.REDEFINES);
 		}
 
 	}
@@ -346,28 +352,29 @@ public class TypeDescription extends SymbolDescription {
 			if ( !builtIn.isBuiltIn() ) {
 				duplicateError(v, builtIn);
 				getChildren().remove(builtIn);
-			} else {
-				IExpressionDescription expr = v.getFacets().get(INIT);
-				if ( expr == null ) {
-					expr = v.getFacets().get(VALUE);
-					if ( expr == null ) {
-						expr = v.getFacets().get(NAME);
-					}
-				}
-				EObject target = expr.getTarget();
-				if ( target != null ) {
-					v.info("Redefinition, in " + v.originName + ", of the built-in variable " +
-						vName + " defined in " + builtIn.getOriginName(), IGamlIssue.REDEFINES,
-						target, (String[]) null);
-				}
 			}
+			// else {
+			// IExpressionDescription expr = v.getFacets().get(INIT);
+			// if ( expr == null ) {
+			// expr = v.getFacets().get(VALUE);
+			// if ( expr == null ) {
+			// expr = v.getFacets().get(NAME);
+			// }
+			// }
+			// EObject target = expr.getTarget();
+			// if ( target != null ) {
+			// v.info("Redefinition, in " + v.originName + ", of the built-in variable " + vName + " defined in " +
+			// builtIn.getOriginName(), IGamlIssue.REDEFINES, target, (String[]) null);
+			// }
+			// }
 			IType bType = builtIn.getTypeNamed(builtIn.getFacets().getLabel(TYPE));
 			IType vType = v.getTypeNamed(v.getFacets().getLabel(TYPE));
 			if ( bType != vType ) {
 				String builtInType = bType.toString();
 				String varType = vType.toString();
-				v.error("variable " + vName + " is of type " + builtInType +
-					" and cannot be redefined as a " + varType, IGamlIssue.WRONG_REDEFINITION);
+				v.error(
+					"variable " + vName + " is of type " + builtInType + " and cannot be redefined as a " + varType,
+					IGamlIssue.WRONG_REDEFINITION);
 			}
 			v.copyFrom((VariableDescription) builtIn);
 		}
@@ -378,16 +385,14 @@ public class TypeDescription extends SymbolDescription {
 		variables.put(vName, v);
 	}
 
-	protected void inheritAction(final TypeDescription parent,
-		final StatementDescription parentAction) {
+	protected void inheritAction(final TypeDescription parent, final StatementDescription parentAction) {
 		String actionName = parentAction.getName();
 		if ( !hasAction(actionName) ) {
 			// The current species does not define such an action. If it is abstract in
 			// the super species, we issue an error
 			if ( parentAction.isAbstract() ) {
-				this.error(
-					"Abstract action '" + actionName + "', inherited from " + parent.getName() +
-						", should be redefined.", IGamlIssue.MISSING_ACTION);
+				this.error("Abstract action '" + actionName + "', inherited from " + parent.getName() +
+					", should be redefined.", IGamlIssue.MISSING_ACTION);
 			} else {
 				// Otherwise we add it.
 				addChild(parentAction);
@@ -414,9 +419,8 @@ public class TypeDescription extends SymbolDescription {
 		}
 		if ( !parentAction.getArgNames().containsAll(myAction.getArgNames()) ) {
 			String error =
-				"The list of arguments (" + myAction.getArgNames() +
-					") differs from that of the implementation of " + actionName + " in " +
-					parent.getName() + " (" + parentAction.getArgNames() + ")";
+				"The list of arguments (" + myAction.getArgNames() + ") differs from that of the implementation of " +
+					actionName + " in " + parent.getName() + " (" + parentAction.getArgNames() + ")";
 			myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS);
 		}
 

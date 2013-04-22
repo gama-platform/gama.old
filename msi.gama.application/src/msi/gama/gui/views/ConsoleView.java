@@ -27,8 +27,8 @@ import org.eclipse.ui.console.*;
 public class ConsoleView extends GamaViewPart {
 
 	public static final String ID = "msi.gama.application.view.ConsoleView";
-	BufferedWriter bw;
-	MessageConsole msgConsole;
+	private BufferedWriter bw;
+	private MessageConsole msgConsole;
 	// private final boolean wrap = true;
 	private final boolean follow = true;
 

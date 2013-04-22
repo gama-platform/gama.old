@@ -8,27 +8,27 @@ package msi.gaml.types;
 import java.util.*;
 import java.util.regex.*;
 
-public class Node<T> {
+public class TypeNode<T> {
 
 	private T data;
-	private List<Node<T>> children;
-	private Node<T> parent;
+	private List<TypeNode<T>> children;
+	private TypeNode<T> parent;
 
-	public Node() {
+	public TypeNode() {
 		super();
-		children = new ArrayList<Node<T>>();
+		children = new ArrayList<TypeNode<T>>();
 	}
 
-	public Node(final T data) {
+	public TypeNode(final T data) {
 		this();
 		setData(data);
 	}
 
-	public Node<T> getParent() {
+	public TypeNode<T> getParent() {
 		return this.parent;
 	}
 
-	public List<Node<T>> getChildren() {
+	public List<TypeNode<T>> getChildren() {
 		return this.children;
 	}
 
@@ -40,34 +40,45 @@ public class Node<T> {
 		return getNumberOfChildren() > 0;
 	}
 
-	public void setChildren(final List<Node<T>> children) {
-		for ( Node<T> child : children ) {
+	public void setChildren(final List<TypeNode<T>> children) {
+		for ( TypeNode<T> child : children ) {
 			child.parent = this;
 		}
 
 		this.children = children;
 	}
 
-	public void addChild(final Node<T> child) {
+	public void addChildren(final Collection<T> children) {
+		for ( T child : children ) {
+			addChild(child);
+		}
+	}
+
+	public void addChild(final TypeNode<T> child) {
 		child.parent = this;
 		children.add(child);
 	}
 
-	public void addChildAt(final int index, final Node<T> child)
-		throws IndexOutOfBoundsException {
+	public TypeNode<T> addChild(final T child) {
+		TypeNode<T> result = new TypeNode(child);
+		addChild(result);
+		return result;
+	}
+
+	public void addChildAt(final int index, final TypeNode<T> child) throws IndexOutOfBoundsException {
 		child.parent = this;
 		children.add(index, child);
 	}
 
 	public void removeChildren() {
-		this.children = new ArrayList<Node<T>>();
+		this.children = new ArrayList<TypeNode<T>>();
 	}
 
 	public void removeChildAt(final int index) throws IndexOutOfBoundsException {
 		children.remove(index);
 	}
 
-	public Node<T> getChildAt(final int index) throws IndexOutOfBoundsException {
+	public TypeNode<T> getChildAt(final int index) throws IndexOutOfBoundsException {
 		return children.get(index);
 	}
 
@@ -89,7 +100,7 @@ public class Node<T> {
 		if ( this == obj ) { return true; }
 		if ( obj == null ) { return false; }
 		if ( getClass() != obj.getClass() ) { return false; }
-		Node<?> other = (Node<?>) obj;
+		TypeNode<?> other = (TypeNode<?>) obj;
 		if ( data == null ) {
 			if ( other.data != null ) { return false; }
 		} else if ( !data.equals(other.data) ) { return false; }
@@ -112,7 +123,7 @@ public class Node<T> {
 	public String toStringVerbose() {
 		String stringRepresentation = getData().toString() + ":[";
 
-		for ( Node<T> node : getChildren() ) {
+		for ( TypeNode<T> node : getChildren() ) {
 			stringRepresentation += node.getData().toString() + ", ";
 		}
 

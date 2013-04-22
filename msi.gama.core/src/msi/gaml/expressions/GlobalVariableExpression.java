@@ -25,8 +25,8 @@ import msi.gaml.types.IType;
 
 public class GlobalVariableExpression extends VariableExpression {
 
-	protected GlobalVariableExpression(final String n, final IType type, final IType contentType,
-		IType keyType, final boolean notModifiable, final IDescription world) {
+	protected GlobalVariableExpression(final String n, final IType type, final IType contentType, IType keyType,
+		final boolean notModifiable, final IDescription world) {
 		super(n, type, contentType, keyType, notModifiable, world);
 	}
 
@@ -36,8 +36,7 @@ public class GlobalVariableExpression extends VariableExpression {
 	}
 
 	@Override
-	public void setVal(final IScope scope, final Object v, final boolean create)
-		throws GamaRuntimeException {
+	public void setVal(final IScope scope, final Object v, final boolean create) throws GamaRuntimeException {
 		if ( isNotModifiable ) { return; }
 		scope.setGlobalVarValue(getName(), v);
 	}
@@ -45,11 +44,9 @@ public class GlobalVariableExpression extends VariableExpression {
 	@Override
 	public String getTitle() {
 		IDescription desc = getDefinitionDescription();
-		boolean isParameter =
-			desc == null ? false : desc.getSpeciesContext().getVariable(getName()).isParameter();
-		return "global " +
-			(isParameter ? "parameter" : isNotModifiable ? "constant" : "attribute") + " " +
-			getName() + " of type " + typeToString();
+		boolean isParameter = desc == null ? false : desc.getSpeciesContext().getVariable(getName()).isParameter();
+		return "global " + (isParameter ? "parameter" : isNotModifiable ? "constant" : "attribute") + " " + getName() +
+			" of type " + typeToString();
 	}
 
 	/**
@@ -58,8 +55,7 @@ public class GlobalVariableExpression extends VariableExpression {
 	@Override
 	public String getDocumentation() {
 		IDescription desc = getDefinitionDescription();
-		return "Of type: " + type.toString() +
-			(desc == null ? "<br>Built In" : "<br>Defined in " + desc.getTitle());
+		return "Of type: " + type.toString() + (desc == null ? "<br>Built In" : "<br>Defined in " + desc.getTitle());
 	}
 
 }

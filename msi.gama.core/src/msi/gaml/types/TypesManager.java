@@ -18,44 +18,18 @@
  */
 package msi.gaml.types;
 
-import static msi.gaml.types.IType.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gaml.descriptions.*;
 
 public class TypesManager {
 
-	private int CURRENT_INDEX;
-
-	private final HashMap<Integer, IType> typeToIType;
-	private final HashMap<String, IType> stringToIType;
-	private final HashMap<Class, IType> classToIType;
-	private final ModelDescription model;
-
-	/**
-	 * To initialize TypesManager of ModelDescription.
-	 */
-	public TypesManager(final ModelDescription md) {
-		CURRENT_INDEX = SPECIES_TYPES;
-		model = md;
-
-		typeToIType = new HashMap<Integer, IType>();
-		for ( int typeId = 0; typeId < Types.typeToIType.length; typeId++ ) {
-			IType toAdd = Types.typeToIType[typeId];
-			if ( toAdd != null ) {
-				typeToIType.put(typeId, toAdd);
-				if ( toAdd.toString().equals(IKeyword.AGENT) ) {
-					toAdd.clearSubTypes();
-				}
-			}
-		}
-
-		classToIType = new HashMap<Class, IType>();
-		classToIType.putAll(Types.classToIType);
-		stringToIType = new HashMap<String, IType>();
-		stringToIType.putAll(Types.stringToIType);
-	}
+	private int current_index = Types.CURRENT_INDEX;
+	private final Map<String, TypeDescription> modelSpecies = new LinkedHashMap(Types.BUILT_IN_SPECIES);
+	private final Map<Integer, IType> idToIType = new LinkedHashMap(Types.ID2ITYPE);
+	private final Map<String, IType> stringToIType = new LinkedHashMap(Types.STRING2ITYPE);
+	private final Map<Class, IType> classToIType = new LinkedHashMap(Types.CLASS2ITYPE);
+	private final TypeTree<IType> hierarchy = new TypeTree();
 
 	/**
 	 * 
@@ -63,40 +37,50 @@ public class TypesManager {
 	 * @param base
 	 * @return
 	 */
-	public IType addType(final TypeDescription species) {
+	public IType addSpeciesType(final TypeDescription species) {
 		String name = species.getName();
 		Class base = species.getJavaBase();
 		if ( stringToIType.containsKey(name) ) {
-			if ( name.equals(IKeyword.AGENT) ) { return stringToIType.get(IKeyword.AGENT); }
+			// if ( name.equals(IKeyword.AGENT) ) { return stringToIType.get(IKeyword.AGENT); }
 			species.error("Species " + name + " already declared. Species name must be unique",
 				IGamlIssue.DUPLICATE_NAME, species.getUnderlyingElement(null), name);
 		}
-		int newId = ++CURRENT_INDEX;
-		IType newType = new GamaAgentType(name, newId, base);
-		typeToIType.put(newId, newType);
-		stringToIType.put(name, newType);
-		classToIType.put(base == null ? Types.get(AGENT).toClass() : base, newType);
-		return newType;
+		modelSpecies.put(name, species);
+		int newId = ++current_index;
+		return addType(new GamaAgentType(name, newId, base));
+		// idToIType.put(newId, newType);
+		// stringToIType.put(name, newType);
+		// classToIType.put(base == null ? Types.get(AGENT).toClass() : base, newType);
+		// return newType;
 	}
 
-	public void addAll(final Map<String, TypeDescription> species) {
-		Map<String, IType> map = new HashMap();
-		for ( Map.Entry<String, TypeDescription> entry : species.entrySet() ) {
-			map.put(entry.getKey(), addType(entry.getValue()));
-		}
-		map.remove(IKeyword.AGENT);
-		for ( Map.Entry<String, IType> entry : map.entrySet() ) {
-			TypeDescription s = species.get(entry.getKey());
-			// String parentName = s.getParentName();
-			TypeDescription parentSpecies = s.getParent();
-			IType parentType =
-				parentSpecies == null ? get(IKeyword.AGENT) : map.get(parentSpecies.getName());
-			entry.getValue().setParent(parentType);
-		}
+	public IType addType(IType t) {
+		idToIType.put(t.id(), t);
+		stringToIType.put(t.toString(), t);
+		classToIType.put(t.toClass(), t);
+		return t;
 	}
 
-	public ModelDescription getModel() {
-		return model;
+	public void init() {
+		for ( Map.Entry<String, TypeDescription> entry : modelSpecies.entrySet() ) {
+			IType type = get(entry.getKey());
+			if ( type.isParented() ) {
+				continue;
+			}
+			Class clazz = entry.getValue().getJavaBase();
+			type.setSupport(clazz);
+			TypeDescription parent = entry.getValue().getParent();
+			type.setParent(parent == null ? get(IKeyword.AGENT) : get(parent.getName()));
+		}
+		buildHierarchy();
+	}
+
+	public TypeDescription getSpecies(String name) {
+		return modelSpecies.get(name);
+	}
+
+	public boolean containsSpecies(String name) {
+		return modelSpecies.containsKey(name);
 	}
 
 	public List<String> getTypeNames() {
@@ -104,7 +88,7 @@ public class TypesManager {
 	}
 
 	public IType get(final int type) {
-		IType t = typeToIType.get(type);
+		IType t = idToIType.get(type);
 
 		return t == null ? Types.NO_TYPE : t;
 	}
@@ -122,38 +106,55 @@ public class TypesManager {
 	}
 
 	public void dispose() {
-		for ( int i = SPECIES_TYPES + 1; i <= CURRENT_INDEX; i++ ) {
-			IType t = typeToIType.get(i);
-			if ( t != null ) {
-				t.clearSubTypes();
-			}
-		}
-		typeToIType.get(AGENT).clearSubTypes();
-		// stringToIType.get("experimentator").clearChildren();
-		// FIXME : do the same for all built in species ?
-		typeToIType.clear();
+		idToIType.clear();
 		stringToIType.clear();
 		classToIType.clear();
 	}
 
-	public void printTypeHierarchy() {
-		Set<IType> roots = new HashSet();
-		roots.add(Types.NO_TYPE);
-		GuiUtils.debug("Type Hierarchy");
-
-		while (!roots.isEmpty()) {
-			String s = "";
-			Set<IType> current = new HashSet();
-			for ( IType t : roots ) {
-				s +=
-					t.toString() + "(" + t.id() + ", " +
-						(t.getParent() == null ? "" : t.getParent().toString()) + ") ";
-
-				current.addAll(t.getSubTypes());
+	public Set<IType> getDirectSubTypes(IType t) {
+		if ( t == null ) { return Collections.EMPTY_SET; }
+		Set<IType> types = new LinkedHashSet();
+		for ( IType st : idToIType.values() ) {
+			if ( t.equals(st.getParent()) ) {
+				types.add(st);
 			}
-			GuiUtils.debug(s);
-			roots = current;
 		}
-
+		return types;
 	}
+
+	private void buildHierarchy() {
+		buildHierarchy(hierarchy.setRoot(Types.NO_TYPE));
+	}
+
+	private void buildHierarchy(TypeNode<IType> currentNode) {
+		Set<IType> subs = getDirectSubTypes(currentNode.getData());
+		// GuiUtils.debug("Sub types of " + currentNode.getData() + " = " + subs);
+		if ( !subs.isEmpty() ) {
+			currentNode.addChildren(subs);
+			for ( TypeNode<IType> node : currentNode.getChildren() ) {
+				buildHierarchy(node);
+			}
+		}
+	}
+
+	public TypeTree<IType> getTypeHierarchy() {
+		return hierarchy;
+	}
+
+	public TypeTree<IType> getTypeHierarchyFrom(IType t) {
+		return new TypeTree(hierarchy.find(t));
+	}
+
+	public TypeTree<SpeciesDescription> getSpeciesHierarchy() {
+		return new TypeTree(createSpeciesNodesFrom(hierarchy.find(get(IType.AGENT))));
+	}
+
+	private TypeNode<SpeciesDescription> createSpeciesNodesFrom(TypeNode<IType> type) {
+		TypeNode<SpeciesDescription> node = new TypeNode(getSpecies(type.getData().getSpeciesName()));
+		for ( TypeNode<IType> t : type.getChildren() ) {
+			node.addChild(createSpeciesNodesFrom(t));
+		}
+		return node;
+	}
+
 }

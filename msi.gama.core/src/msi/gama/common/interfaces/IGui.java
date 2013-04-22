@@ -19,12 +19,13 @@
 package msi.gama.common.interfaces;
 
 import java.util.*;
-import msi.gama.kernel.experiment.IExperiment;
+import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserPanelStatement;
+import msi.gaml.types.IType;
 
 /**
  * The class IGui.
@@ -57,7 +58,7 @@ public interface IGui {
 
 	void error(String error);
 
-	void showParameterView(IExperiment exp);
+	void showParameterView(IExperimentSpecies exp);
 
 	void debugConsole(int cycle, String s);
 
@@ -73,7 +74,7 @@ public interface IGui {
 
 	IEditorFactory getEditorFactory();
 
-	boolean confirmClose(IExperiment experiment);
+	boolean confirmClose(IExperimentSpecies experiment);
 
 	void prepareFor(boolean isGui);
 
@@ -103,17 +104,9 @@ public interface IGui {
 
 	void clearErrors();
 
-	/**
-	 * @param keyword
-	 * @param layerDisplayOutput
-	 * @param w
-	 * @param h
-	 * @return
-	 */
-	IDisplaySurface getDisplaySurfaceFor(String keyword, IDisplayOutput layerDisplayOutput,
-		double w, double h);
+	IDisplaySurface getDisplaySurfaceFor(String keyword, IDisplayOutput layerDisplayOutput, double w, double h);
 
-	Map<String, Object> openUserInputDialog(String title, Map<String, Object> initialValues);
+	Map<String, Object> openUserInputDialog(String title, Map<String, Object> initialValues, Map<String, IType> types);
 
 	void openUserControlPanel(IScope scope, UserPanelStatement panel);
 

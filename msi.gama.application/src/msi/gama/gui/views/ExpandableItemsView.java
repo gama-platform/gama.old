@@ -32,9 +32,9 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 
 	private ParameterExpandBar viewer;
 
-	boolean isOpen = true;
+	private boolean isOpen = true;
 	Thread runThread;
-	Semaphore semaphore = new Semaphore(1);
+	private final Semaphore semaphore = new Semaphore(1);
 
 	protected ParameterExpandBar getViewer() {
 		return viewer;
@@ -48,9 +48,7 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 	protected void createViewer() {
 		if ( parent == null ) { return; }
 		if ( viewer == null ) {
-			viewer =
-				new ParameterExpandBar(parent, SWT.V_SCROLL, areItemsClosable(),
-					areItemsPausable(), this);
+			viewer = new ParameterExpandBar(parent, SWT.V_SCROLL, areItemsClosable(), areItemsPausable(), this);
 			viewer.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 			viewer.computeSize(parent.getSize().x, SWT.DEFAULT);
 			viewer.setSpacing(2);
@@ -65,13 +63,12 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 		return false;
 	}
 
-	protected ParameterExpandItem createItem(final T data, final Composite control,
-		final boolean expanded) {
+	protected ParameterExpandItem createItem(final T data, final Composite control, final boolean expanded) {
 		return createItem(getItemDisplayName(data, null), data, control, expanded);
 	}
 
-	protected ParameterExpandItem createItem(final String name, final T data,
-		final Composite control, final ParameterExpandBar bar, final boolean expanded) {
+	protected ParameterExpandItem createItem(final String name, final T data, final Composite control,
+		final ParameterExpandBar bar, final boolean expanded) {
 		ParameterExpandItem i = new ParameterExpandItem(bar, data, SWT.None);
 		if ( name != null ) {
 			i.setText(name);
@@ -85,8 +82,8 @@ public abstract class ExpandableItemsView<T> extends GamaViewPart implements Ite
 		return i;
 	}
 
-	protected ParameterExpandItem createItem(final String name, final T data,
-		final Composite control, final boolean expanded) {
+	protected ParameterExpandItem createItem(final String name, final T data, final Composite control,
+		final boolean expanded) {
 		createViewer();
 		if ( viewer == null ) { return null; }
 		return createItem(name, data, control, viewer, expanded);

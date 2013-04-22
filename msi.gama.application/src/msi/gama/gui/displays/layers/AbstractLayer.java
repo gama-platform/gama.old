@@ -37,16 +37,16 @@ import org.eclipse.swt.widgets.Composite;
  */
 public abstract class AbstractLayer implements ILayer {
 
-	protected Integer order = 0;
+	private Integer order = 0;
 	protected boolean disposed = false;
 	protected ILayerStatement definition;
 	private String name;
 	private final java.awt.Point position; // The position in pixels
 	protected java.awt.Point size; // The extension (from the position) in pixels
-	protected double env_width, env_height;
+	private double env_width, env_height;
 
-	protected AbstractLayer(final double env_width, final double env_height,
-		final ILayerStatement layer, final IGraphics dg) {
+	protected AbstractLayer(final double env_width, final double env_height, final ILayerStatement layer,
+		final IGraphics dg) {
 
 		definition = layer;
 		if ( definition != null ) {
@@ -85,18 +85,17 @@ public abstract class AbstractLayer implements ILayer {
 
 	public void fillComposite(final Composite compo, final IDisplaySurface container) {
 
-		EditorFactory.create(compo, "Visible:", container.getManager().isEnabled(this),
-			new EditorListener<Boolean>() {
+		EditorFactory.create(compo, "Visible:", container.getManager().isEnabled(this), new EditorListener<Boolean>() {
 
-				@Override
-				public void valueModified(final Boolean newValue) {
+			@Override
+			public void valueModified(final Boolean newValue) {
 
-					container.getManager().enableLayer(AbstractLayer.this, newValue);
-					if ( container.isPaused() ) {
-						container.forceUpdateDisplay();
-					}
+				container.getManager().enableLayer(AbstractLayer.this, newValue);
+				if ( container.isPaused() ) {
+					container.forceUpdateDisplay();
 				}
-			});
+			}
+		});
 		EditorFactory.create(compo, "Opacity:", definition.getTransparency(), 0.0, 1.0, 0.1, false,
 			new EditorListener<Double>() {
 
@@ -109,30 +108,28 @@ public abstract class AbstractLayer implements ILayer {
 				}
 
 			});
-		EditorFactory.create(compo, "Position:", definition.getBox().getPosition(),
-			new EditorListener<GamaPoint>() {
+		EditorFactory.create(compo, "Position:", definition.getBox().getPosition(), new EditorListener<GamaPoint>() {
 
-				@Override
-				public void valueModified(final GamaPoint newValue) {
-					setPosition(newValue);
-					if ( container.isPaused() ) {
-						container.forceUpdateDisplay();
-					}
+			@Override
+			public void valueModified(final GamaPoint newValue) {
+				setPosition(newValue);
+				if ( container.isPaused() ) {
+					container.forceUpdateDisplay();
 				}
+			}
 
-			});
-		EditorFactory.create(compo, "Extent:", definition.getBox().getExtent(),
-			new EditorListener<GamaPoint>() {
+		});
+		EditorFactory.create(compo, "Extent:", definition.getBox().getExtent(), new EditorListener<GamaPoint>() {
 
-				@Override
-				public void valueModified(final GamaPoint newValue) {
-					setExtent(newValue);
-					if ( container.isPaused() ) {
-						container.forceUpdateDisplay();
-					}
+			@Override
+			public void valueModified(final GamaPoint newValue) {
+				setExtent(newValue);
+				if ( container.isPaused() ) {
+					container.forceUpdateDisplay();
 				}
+			}
 
-			});
+		});
 		EditorFactory.create(compo, "Elevation:", definition.getElevation(), 0.0, 1.0, 0.1, false,
 			new EditorListener<Double>() {
 
@@ -156,7 +153,7 @@ public abstract class AbstractLayer implements ILayer {
 	public final void drawDisplay(final IGraphics g) throws GamaRuntimeException {
 		if ( disposed ) { return; }
 		if ( definition != null ) {
-			g.newLayer(definition.getElevation(),definition.getRefresh());
+			g.newLayer(definition.getElevation(), definition.getRefresh());
 			g.setOpacity(definition.getTransparency());
 			setPositionAndSize(definition.getBoundingBox(), g);
 		}
@@ -192,7 +189,7 @@ public abstract class AbstractLayer implements ILayer {
 		double y = (Math.signum(b.y) < 0 ? h : 0) + (Math.abs(b.y) <= 1 ? h * b.y : b.y);
 		double width = b.width <= 1 ? w * b.width : b.width;
 		double height = b.height <= 1 ? h * b.height : b.height;
-		selectionWidthInModel = IDisplaySurface.SELECTION_SIZE / 2d / size.x * env_width;
+		// selectionWidthInModel = IDisplaySurface.SELECTION_SIZE / 2d / size.x * env_width;
 		size.setLocation(width, height);
 		position.setLocation(x, y);
 		g.setXScale(size.x / env_width);
@@ -235,8 +232,7 @@ public abstract class AbstractLayer implements ILayer {
 
 	@Override
 	public boolean containsScreenPoint(final int x, final int y) {
-		return x >= position.x && y >= position.y && x <= position.x + size.x &&
-			y <= position.y + size.y;
+		return x >= position.x && y >= position.y && x <= position.x + size.x && y <= position.y + size.y;
 	}
 
 	@Override
@@ -250,7 +246,7 @@ public abstract class AbstractLayer implements ILayer {
 		return new GamaPoint(xInModel, yInModel);
 	}
 
-	double selectionWidthInModel = 0;
+	// private double selectionWidthInModel = 0;
 
 	protected abstract void privateDrawDisplay(final IGraphics g) throws GamaRuntimeException;
 

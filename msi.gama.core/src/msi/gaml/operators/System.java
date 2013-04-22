@@ -31,6 +31,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaMap;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
+import msi.gaml.types.*;
 import org.codehaus.janino.ScriptEvaluator;
 
 /**
@@ -77,16 +78,33 @@ public class System {
 	@operator(value = "user_input")
 	@doc(value = "asks the user for some values (not defined as parameters)", comment = "This operator takes a map [string::value] as argument, displays a dialog asking the user for these values, and returns the same map with the modified values (if any). "
 		+ "The dialog is modal and will interrupt the execution of the simulation until the user has either dismissed or accepted it. It can be used, for instance, in an init section to force the user to input new values instead of relying on the initial values of parameters :", examples = {
-		"init {",
-		"	let values <- user_input([\"Number\" :: 100, \"Location\" :: {10, 10}]);",
-		"	create node number : int(values at \"Number\") with: [location:: (point(values at \"Location\"))];",
-		"}" })
-	public static Map<String, Object> userInput(final IScope scope,
-		final Map<String, Object> initialValues) {
-		if ( initialValues.isEmpty() ) { return initialValues; }
+		"init {", "	let values <- user_input([\"Number\" :: 100, \"Location\" :: {10, 10}]);",
+		"	create node number : int(values at \"Number\") with: [location:: (point(values at \"Location\"))];", "}" })
+	public static Map<String, Object> userInput(final IScope scope, final IExpression map) {
 		IAgent agent = scope.getAgentScope();
-		return new GamaMap(GuiUtils.openUserInputDialog(
-			agent.getSpeciesName() + " #" + agent.getIndex() + " request", initialValues));
+		return userInput(scope, agent.getSpeciesName() + " #" + agent.getIndex() + " request", map);
+	}
+
+	@operator(value = "user_input")
+	public static Map<String, Object> userInput(final IScope scope, final String title, IExpression expr) {
+		Map<String, Object> initialValues = new GamaMap();
+		Map<String, IType> initialTypes = new GamaMap();
+		if ( expr instanceof MapExpression ) {
+			MapExpression map = (MapExpression) expr;
+			for ( Map.Entry<IExpression, IExpression> entry : map.getElements().entrySet() ) {
+				String key = Cast.asString(scope, entry.getKey().value(scope));
+				IExpression val = entry.getValue();
+				initialValues.put(key, val.value(scope));
+				initialTypes.put(key, val.getType());
+			}
+		} else {
+			initialValues = Cast.asMap(scope, expr.value(scope));
+			for ( Map.Entry<String, Object> entry : initialValues.entrySet() ) {
+				initialTypes.put(entry.getKey(), Types.get(entry.getValue().getClass()));
+			}
+		}
+		if ( initialValues.isEmpty() ) { return initialValues; }
+		return new GamaMap(GuiUtils.openUserInputDialog(title, initialValues, initialTypes));
 	}
 
 	@operator(value = "eval_gaml", can_be_const = false)
@@ -98,9 +116,8 @@ public class System {
 			IExpression e = GAMA.getExpressionFactory().createExpr(gaml, d);
 			return scope.evaluate(e, agent);
 		} catch (GamaRuntimeException e) {
-			GuiUtils.informConsole("Error in evaluating Gaml code : '" + gaml + "' in " +
-				scope.getAgentScope() + java.lang.System.getProperty("line.separator") +
-				"Reason: " + e.getMessage());
+			GuiUtils.informConsole("Error in evaluating Gaml code : '" + gaml + "' in " + scope.getAgentScope() +
+				java.lang.System.getProperty("line.separator") + "Reason: " + e.getMessage());
 
 			return null;
 		}
@@ -108,8 +125,8 @@ public class System {
 	}
 
 	@operator(value = "eval_java", can_be_const = false)
-	@doc(value = "evaluates the given java code string.", deprecated = "Does not work", see = {
-		"eval_gaml", "evaluate_with" })
+	@doc(value = "evaluates the given java code string.", deprecated = "Does not work", see = { "eval_gaml",
+		"evaluate_with" })
 	public static Object opEvalJava(final IScope scope, final String code) {
 		try {
 			ScriptEvaluator se = new ScriptEvaluator();
@@ -120,9 +137,8 @@ public class System {
 
 			// Version sans arguments pour l'instant.
 		} catch (Exception e) {
-			GuiUtils.informConsole("Error in evaluating Java code : '" + code + "' in " +
-				scope.getAgentScope() + java.lang.System.getProperty("line.separator") +
-				"Reason: " + e.getMessage());
+			GuiUtils.informConsole("Error in evaluating Java code : '" + code + "' in " + scope.getAgentScope() +
+				java.lang.System.getProperty("line.separator") + "Reason: " + e.getMessage());
 			return null;
 		}
 	}
@@ -132,8 +148,7 @@ public class System {
 	@operator(value = "evaluate_with", can_be_const = false)
 	@doc(value = "evaluates the left-hand java expressions with the map of parameters (right-hand operand)", see = {
 		"eval_gaml", "eval_java" })
-	public static Object opEvalJava(final IScope scope, final String code,
-		final IExpression parameters) {
+	public static Object opEvalJava(final IScope scope, final String code, final IExpression parameters) {
 		try {
 			GamaMap param;
 			if ( parameters instanceof MapExpression ) {
@@ -165,11 +180,9 @@ public class System {
 
 		} catch (Exception e) {
 			Throwable ee =
-				e instanceof InvocationTargetException ? ((InvocationTargetException) e)
-					.getTargetException() : e;
-			GuiUtils.informConsole("Error in evaluating Java code : '" + code + "' in " +
-				scope.getAgentScope() + java.lang.System.getProperty("line.separator") +
-				"Reason: " + ee.getMessage());
+				e instanceof InvocationTargetException ? ((InvocationTargetException) e).getTargetException() : e;
+			GuiUtils.informConsole("Error in evaluating Java code : '" + code + "' in " + scope.getAgentScope() +
+				java.lang.System.getProperty("line.separator") + "Reason: " + ee.getMessage());
 			return null;
 		}
 	}

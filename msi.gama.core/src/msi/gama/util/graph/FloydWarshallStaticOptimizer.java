@@ -129,8 +129,7 @@ public final class FloydWarshallStaticOptimizer extends AbstractStaticOptimizer<
 
 			if ( verbose && one_step != 0 && k % one_step == 0 ) {
 				GuiUtils.debug("(optimization process) Completed :" + k / one_percent + "%; ");
-				GuiUtils.informConsole("(optimization process) Completed :" + k / one_percent +
-					"%; \n");
+				GuiUtils.informConsole("(optimization process) Completed :" + k / one_percent + "%; \n");
 			}
 		}
 		if ( verbose ) {
@@ -265,8 +264,7 @@ public final class FloydWarshallStaticOptimizer extends AbstractStaticOptimizer<
 
 			if ( verbose && k % one_step == 0 ) {
 				GuiUtils.debug("(optimization process) Completed :" + k / one_percent + "%; ");
-				GuiUtils.informConsole("(optimization process) Completed :" + k / one_percent +
-					"%; ");
+				GuiUtils.informConsole("(optimization process) Completed :" + k / one_percent + "%; ");
 			}
 		}
 		if ( verbose ) {
@@ -283,7 +281,7 @@ public final class FloydWarshallStaticOptimizer extends AbstractStaticOptimizer<
 
 	@Override
 	GamaPoint computeCenterOfIntersections() {
-		Envelope env = GAMA.getFrontmostSimulation().getWorld().getEnvelope();
+		Envelope env = GAMA.getFrontmostSimulation().getEnvelope();
 		center = new GamaPoint(env.getWidth() / 2, env.getHeight() / 2);
 		return center;
 	}
@@ -326,8 +324,7 @@ public final class FloydWarshallStaticOptimizer extends AbstractStaticOptimizer<
 			}
 
 			private int compareRoads(final ILocation arg0, final ILocation arg1) {
-				int result =
-					graph.getVertex(arg0).getEdgesCount() - graph.getVertex(arg0).getEdgesCount();
+				int result = graph.getVertex(arg0).getEdgesCount() - graph.getVertex(arg0).getEdgesCount();
 				return result;
 			}
 

@@ -23,7 +23,7 @@ import java.util.*;
 import java.util.concurrent.Semaphore;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.kernel.experiment.IExperiment;
+import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
@@ -110,83 +110,63 @@ public class OutputManager extends Symbol implements IOutputManager {
 		}
 	}
 
-	public void buildOutputs(final IExperiment exp) {
+	public void buildOutputs(final IExperimentSpecies exp) {
+		if ( displays != null ) {
+			displays.fireSelectionChanged(null);
+		}
 		if ( exp.isGui() ) {
-			// GuiUtils.debug("Building the GUI output manager");
-			if ( displays != null ) {
-				// GuiUtils.debug("Cancelling any previous selection");
-				displays.fireSelectionChanged(null);
-			}
 			displays = new GuiOutputManager(this);
 
-			for ( IOutput output : outputs.values() ) {
-				if ( output instanceof IDisplayOutput ) {
-					displays.addDisplayOutput(output);
-				}
-			}
-			displays.buildOutputs(exp);
-
-		} else {
-			if ( GuiUtils.isInHeadLessMode() ) {
-				if ( displays != null ) {
-					// GuiUtils.debug("Cancelling any previous selection");
-					displays.fireSelectionChanged(null);
-				}
-				displays = new HeadlessOutputManager(this);
-
-				for ( IOutput output : outputs.values() ) {
-					if ( output instanceof IDisplayOutput ) {
-
-						displays.addDisplayOutput(output);
-					}
-				}
-				displays.buildOutputs(exp);
-			}
+		} else if ( GuiUtils.isInHeadLessMode() ) {
+			displays = new HeadlessOutputManager(this);
 		}
 
-		if ( !GuiUtils.isInHeadLessMode() ) {
-			GuiUtils.run(new Runnable() {
-
-				@Override
-				public void run() {
-					loadOutputs(exp);
-				}
-			});
-		} else {
-			loadOutputs(exp);
+		for ( IOutput output : outputs.values() ) {
+			if ( output instanceof IDisplayOutput ) {
+				displays.addDisplayOutput(output);
+			}
 		}
+		displays.buildOutputs(exp);
+
 	}
 
-	private void loadOutputs(final IExperiment exp) {
-		for ( final IOutput output : outputs.values() ) {
-			if ( !output.isPermanent() ) {
-				try {
-					// GuiUtils.debug("Preparing output " + output.getName());
-					output.prepare(exp.getCurrentSimulation());
-				} catch (GamaRuntimeException e) {
-					e.addContext("in preparing output " + output.getName());
-					e.addContext("output " + output.getName() + " has not been opened");
-					GAMA.reportError(e);
-					continue;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-				try {
-					// GuiUtils.debug("Scheduling and opening output " + output.getName());
-					output.schedule();
-					output.open();
-					output.update();
-				} catch (GamaRuntimeException e) {
-					e.addContext("in opening output " + output.getName());
-					e.addContext("output " + output.getName() + " has not been opened");
-					GAMA.reportError(e);
-					continue;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+	@Override
+	public void init(final IScope scope) {
+		GuiUtils.asyncRun(new Runnable() {
 
+			@Override
+			public void run() {
+				for ( final IOutput output : outputs.values() ) {
+					if ( !output.isPermanent() ) {
+						try {
+							// GuiUtils.debug("Preparing output " + output.getName());
+							output.init(scope);
+						} catch (GamaRuntimeException e) {
+							e.addContext("in preparing output " + output.getName());
+							e.addContext("output " + output.getName() + " has not been opened");
+							GAMA.reportError(e);
+							continue;
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+						try {
+							// GuiUtils.debug("Scheduling and opening output " + output.getName());
+							output.schedule();
+							output.open();
+							output.update();
+						} catch (GamaRuntimeException e) {
+							e.addContext("in opening output " + output.getName());
+							e.addContext("output " + output.getName() + " has not been opened");
+							GAMA.reportError(e);
+							continue;
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
+					}
+				}
 			}
-		}
+		});
 	}
 
 	public synchronized void dispose(final boolean includingBatch) {
@@ -274,7 +254,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 					try {
 						try {
 							// ? o.hasBeenComputed(false);
-							o.compute(scope, cycle);
+							o.step(scope);
 							outputsToUpdateNow.add(o);
 							// ? o.hasBeenComputed(true);
 						} catch (GamaRuntimeException e) {
@@ -284,8 +264,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 						}
 					} catch (GamaRuntimeException e) {
 						e.addContext("in computing output " + o.getName());
-						e.addContext("output " + o.getName() + " has not been computed at cycle " +
-							cycle);
+						e.addContext("output " + o.getName() + " has not been computed at cycle " + cycle);
 						GAMA.reportError(e);
 						continue;
 					}
@@ -340,10 +319,9 @@ public class OutputManager extends Symbol implements IOutputManager {
 	}
 
 	@Override
-	public IDisplaySurface getDisplaySurfaceFor(final String keyword,
-		final IDisplayOutput layerDisplayOutput, final double w, final double h) {
-		if ( displays != null ) { return GuiUtils.getDisplaySurfaceFor(keyword, layerDisplayOutput,
-			w, h); }
+	public IDisplaySurface getDisplaySurfaceFor(final String keyword, final IDisplayOutput layerDisplayOutput,
+		final double w, final double h) {
+		if ( displays != null ) { return GuiUtils.getDisplaySurfaceFor(keyword, layerDisplayOutput, w, h); }
 		return null;
 		// return new ImageDisplaySurface(w, h);
 	}
@@ -381,6 +359,5 @@ public class OutputManager extends Symbol implements IOutputManager {
 	public Map<String, IOutput> getOutputs() {
 		return outputs;
 	}
-	
-	
+
 }

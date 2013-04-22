@@ -151,7 +151,7 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 	public void addParametersTo(final BatchExperiment exp) {
 		super.addParametersTo(exp);
 		exp.addMethodParameter(new ParameterAdapter("Final temperature",
-			IExperiment.BATCH_CATEGORY_NAME, IType.FLOAT) {
+			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.FLOAT) {
 
 			@Override
 			public Object value() {
@@ -160,7 +160,7 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 
 		});
 		exp.addMethodParameter(new ParameterAdapter("Initial temperature",
-			IExperiment.BATCH_CATEGORY_NAME, IType.FLOAT) {
+			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.FLOAT) {
 
 			@Override
 			public Object value() {
@@ -169,7 +169,7 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 
 		});
 		exp.addMethodParameter(new ParameterAdapter("Coefficient of diminution",
-			IExperiment.BATCH_CATEGORY_NAME, IType.FLOAT) {
+			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.FLOAT) {
 
 			@Override
 			public Object value() {
@@ -178,7 +178,7 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 
 		});
 		exp.addMethodParameter(new ParameterAdapter("Number of iterations at constant temperature",
-			IExperiment.BATCH_CATEGORY_NAME, IType.INT) {
+			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
 
 			@Override
 			public Object value() {

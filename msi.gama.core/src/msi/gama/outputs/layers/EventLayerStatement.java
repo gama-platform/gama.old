@@ -19,12 +19,8 @@
 package msi.gama.outputs.layers;
 
 import java.util.List;
-
-import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.ImageUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.outputs.IDisplayOutput;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -33,12 +29,8 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.Cast;
-import msi.gaml.species.ISpecies;
-import msi.gaml.statements.IAspect;
 import msi.gaml.types.IType;
 
 /**
@@ -48,35 +40,26 @@ import msi.gaml.types.IType;
  */
 @symbol(name = IKeyword.EVENT, kind = ISymbolKind.LAYER, with_sequence = true)
 @inside(symbols = { IKeyword.DISPLAY })
-@facets(value = {@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
-	@facet(name = IKeyword.ACTION, type = IType.STRING, optional = false)}, omissible = IKeyword.NAME)
+@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false),
+	@facet(name = IKeyword.ACTION, type = IType.STRING, optional = false) }, omissible = IKeyword.NAME)
 public class EventLayerStatement extends AgentLayerStatement {
+
 	public static int MOUSE_PRESSED = 0;
 	public static int MOUSE_RELEASED = 1;
-	
-	private int actionType = -1;
-	
-	public EventLayerStatement(/* final ISymbol context, */final IDescription desc)
-		throws GamaRuntimeException {
+
+	private final int actionType = -1;
+
+	public EventLayerStatement(/* final ISymbol context, */final IDescription desc) throws GamaRuntimeException {
 		super(/* context, */desc);
 	}
 
 	@Override
-	public void prepare(final IDisplayOutput out, final IScope scope) throws GamaRuntimeException {
-		super.prepare(out, scope);
+	public void init(final IScope scope) throws GamaRuntimeException {
+		super.init(scope);
 		IExpression eventType = getFacet(IKeyword.NAME);
 		IExpression actionName = getFacet(IKeyword.ACTION);
-		if ( eventType == null || actionName == null ) 
-		{ 
-			throw new GamaRuntimeException("Missing properties " + IKeyword.NAME + " and " + IKeyword.ACTION);
-		}
-	}
-
-	
-	@Override
-	public void compute(final IScope scope, final long cycle) throws GamaRuntimeException {
-		super.compute(scope, cycle);
-
+		if ( eventType == null || actionName == null ) { throw new GamaRuntimeException("Missing properties " +
+			IKeyword.NAME + " and " + IKeyword.ACTION); }
 	}
 
 	@Override
@@ -94,7 +77,7 @@ public class EventLayerStatement extends AgentLayerStatement {
 	public short getType() {
 		return EVENT;
 	}
-	
+
 	@Override
 	public String toString() {
 		// StringBuffer sb = new StringBuffer();

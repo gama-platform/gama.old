@@ -7,6 +7,7 @@ import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.utils.EGaml;
 import msi.gama.precompiler.IUnits;
 import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.types.Types;
 import org.eclipse.emf.common.util.URI;
@@ -25,8 +26,7 @@ import com.google.inject.Inject;
  * This global provider generates a global scope which consists in:
  * </p>
  * <ul>
- * <li>Built-in definitions which are defined in the diffents plug-in bundles providing
- * contributions to GAML,</li>
+ * <li>Built-in definitions which are defined in the diffents plug-in bundles providing contributions to GAML,</li>
  * <li>A global scope, which is computed by a ImportURI global scope provider.</li>
  * </ul>
  * 
@@ -111,12 +111,13 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	public Map<QualifiedName, IEObjectDescription> getEObjectDescriptions(EClass eClass) {
 		if ( descriptions == null ) {
 			initResources();
-			for ( String t : Types.stringToIType.keySet() ) {
+			for ( String t : Types.STRING2ITYPE.keySet() ) {
 				add(eType, t);
 				add(eVar, t);
 				add(eAction, t);
 			}
-			for ( String t : AbstractGamlAdditions.BUILT_IN_SPECIES.keySet() ) {
+			for ( SpeciesDescription s : Types.getBuiltInSpecies() ) {
+				String t = s.getName();
 				add(eType, t);
 				add(eVar, t);
 				add(eAction, t);

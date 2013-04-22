@@ -22,7 +22,7 @@ import java.util.Map;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
-import msi.gama.metamodel.agent.*;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
@@ -79,8 +79,6 @@ public abstract class AbstractScope implements IScope {
 		}
 	}
 
-	// private final HashMap<String, Integer> varIndex = new HashMap();
-
 	public AbstractScope(final String name) {
 		this.name = name;
 	}
@@ -91,8 +89,7 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	@Override
-	public abstract void setGlobalVarValue(final String name, final Object v)
-		throws GamaRuntimeException;
+	public abstract void setGlobalVarValue(final String name, final Object v) throws GamaRuntimeException;
 
 	@Override
 	public abstract Object getGlobalVarValue(final String name) throws GamaRuntimeException;
@@ -122,10 +119,7 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	@Override
-	public abstract WorldAgent getWorldScope();
-
-	@Override
-	public abstract ISimulation getSimulationScope();
+	public abstract ISimulationAgent getSimulationScope();
 
 	@Override
 	public abstract IModel getModel();
@@ -170,8 +164,7 @@ public abstract class AbstractScope implements IScope {
 	@Override
 	public final Object getArg(final String varName, final int type) throws GamaRuntimeException {
 		int i = getVarIndex(varName); // Only in the local scope
-		Object result =
-			i > -1 && i >= statementsPointers[statementsPointer - 1] ? vars[i].value : null;
+		Object result = i > -1 && i >= statementsPointers[statementsPointer - 1] ? vars[i].value : null;
 		return type == IType.NONE ? result : Types.get(type).cast(this, result, null);
 	}
 
@@ -188,7 +181,7 @@ public abstract class AbstractScope implements IScope {
 
 	@Override
 	public final IAgent getAgentScope() {
-		return agentsPointer == 0 ? getWorldScope() : agentsStack[agentsPointer - 1];
+		return agentsPointer == 0 ? getSimulationScope() : agentsStack[agentsPointer - 1];
 	}
 
 	@Override
@@ -255,8 +248,7 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	@Override
-	public final Object execute(final IStatement statement, final IAgent agent)
-		throws GamaRuntimeException {
+	public final Object execute(final IStatement statement, final IAgent agent) throws GamaRuntimeException {
 		Object result;
 		push(agent);
 		try {
@@ -268,8 +260,8 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	@Override
-	public final Object execute(final IStatement.WithArgs statement, final IAgent agent,
-		final Arguments args) throws GamaRuntimeException {
+	public final Object execute(final IStatement.WithArgs statement, final IAgent agent, final Arguments args)
+		throws GamaRuntimeException {
 		Object result;
 		push(agent);
 		try {
@@ -282,8 +274,7 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	@Override
-	public final Object evaluate(final IExpression expr, final IAgent agent)
-		throws GamaRuntimeException {
+	public final Object evaluate(final IExpression expr, final IAgent agent) throws GamaRuntimeException {
 		Object result;
 		push(agent);
 		try {
@@ -295,8 +286,7 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	@Override
-	public Object getAgentVarValue(final IAgent agent, final String name)
-		throws GamaRuntimeException {
+	public Object getAgentVarValue(final IAgent agent, final String name) throws GamaRuntimeException {
 		Object result = null;
 		try {
 			push(agent);
@@ -308,8 +298,7 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	@Override
-	public void setAgentVarValue(final IAgent agent, final String name, final Object v)
-		throws GamaRuntimeException {
+	public void setAgentVarValue(final IAgent agent, final String name, final Object v) throws GamaRuntimeException {
 		try {
 			push(agent);
 			setAgentVarValue(name, v);
@@ -360,7 +349,7 @@ public abstract class AbstractScope implements IScope {
 
 	@Override
 	public final SimulationClock getClock() {
-		ISimulation sim = getSimulationScope();
+		ISimulationAgent sim = getSimulationScope();
 		return sim == null ? null : sim.getScheduler().getClock();
 	}
 

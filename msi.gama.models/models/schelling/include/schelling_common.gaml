@@ -27,7 +27,7 @@ global {
 		'\\n\\u25B6 Description. \\n\\u25B6 Thomas Schelling model of residential segregation is a classic study of the effects of local decisions on global dynamics. Agents with mild preferences for same-type neighbors, but without preferences for segregated neighborhoods, can wind up producing complete segregation.\\n\\u25B6 In this model, agents populate a grid with a given *density*. They are in two different states : happy when the percentage of same-color neighbours is above their *desired percentage of similarity*; unhappy otherwise. In the latter case, they change their location randomly until they find a neighbourhood that fits their desire. \\n\\u25B6 In addition to the previous parameter, one can adjust the *distance of perception* (i.e.  the distance at which they consider other agents as neighbours) of the agents to see how it affects the global process. ';
 	}
 
-	init {
+	init { 
 		do description;
 		do initialize_places;
 		set number_of_people value: length (all_places) * density_of_people;
@@ -41,7 +41,6 @@ global {
 entities {
 	species base {
 		rgb color;
-		point location;
 		list my_neighbours <- [] of: base;
 		int similar_nearby -> {
 			(my_neighbours count (each.color = color))

@@ -17,17 +17,19 @@ global {
 							  ];
 	var PARAMS type:map init: ['dbtype'::'sqlite','database'::'../includes/bph.sqlite'];
 	var LOCATIONS type:string init: "select ID_4, Name_4, geometry from bph where id_2=38253 or id_2=38254;";
-
+	geometry shape <- envelope( BOUNDS);
 	init {
 		create species: toto number: 1  
 		{ 
-			create species:locations from: list(self select [params:: PARAMS, select:: LOCATIONS]) with:[ id:: "id_4", custom_name:: "name_4", geo::"geometry"]{ set shape value: geo; }
+			create species:locations from: list(self select [params:: PARAMS, select:: LOCATIONS]) with:[ id:: "id_4", custom_name:: "name_4", geo::"geometry"]{ 
+				set shape value: geo;
+			}
 		}
 		 
 	}
    
 }   
-environment bounds: BOUNDS ;
+//environment bounds: BOUNDS ;
 entities {   
 	species toto skills: [SQLSKILL]
 	 {  

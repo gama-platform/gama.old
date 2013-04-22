@@ -37,8 +37,8 @@ import msi.gaml.types.*;
  * 
  * @todo Description
  */
-@factory(handles = { ISymbolKind.Variable.CONTAINER, ISymbolKind.Variable.NUMBER,
-	ISymbolKind.Variable.REGULAR, ISymbolKind.Variable.SIGNAL, ISymbolKind.PARAMETER })
+@factory(handles = { ISymbolKind.Variable.CONTAINER, ISymbolKind.Variable.NUMBER, ISymbolKind.Variable.REGULAR,
+	ISymbolKind.Variable.SIGNAL, ISymbolKind.PARAMETER })
 public class VariableFactory extends SymbolFactory {
 
 	public VariableFactory(final List<Integer> handles) {
@@ -46,8 +46,8 @@ public class VariableFactory extends SymbolFactory {
 	}
 
 	@Override
-	protected IDescription buildDescription(final ISyntacticElement source,
-		final IChildrenProvider cp, final IDescription superDesc, final SymbolProto md) {
+	protected IDescription buildDescription(final ISyntacticElement source, final IChildrenProvider cp,
+		final IDescription superDesc, final SymbolProto md) {
 		Facets facets = source.getFacets();
 		String keyword = source.getKeyword();
 		if ( keyword.equals(SIGNAL) ) {
@@ -55,7 +55,7 @@ public class VariableFactory extends SymbolFactory {
 		} else if ( keyword.equals(PARAMETER) ) {
 			// We copy the relevant facets from the targeted var of the parameter
 			String varName = facets.getLabel(VAR);
-			VariableDescription targetedVar = superDesc.getWorldSpecies().getVariable(varName);
+			VariableDescription targetedVar = superDesc.getModelDescription().getVariable(varName);
 			if ( targetedVar != null ) {
 				facets.complementWith(targetedVar.getFacets());
 			}
@@ -87,8 +87,8 @@ public class VariableFactory extends SymbolFactory {
 		}
 		final String value = name + " < 0.1 ? 0.0 :" + name + " * ( 1 - " + decay + ")";
 		VariableDescription vd =
-			(VariableDescription) create(new SyntacticElement(IKeyword.FLOAT, new Facets(NAME,
-				name, TYPE, IKeyword.FLOAT, UPDATE, value, MIN, "0.0")), superDesc, null);
+			(VariableDescription) create(new SyntacticElement(IKeyword.FLOAT, new Facets(NAME, name, TYPE,
+				IKeyword.FLOAT, UPDATE, value, MIN, "0.0")), superDesc, null);
 		SpeciesDescription environment = superDesc.getSpeciesDescription(env);
 		if ( environment == null || !environment.isGrid() ) {
 			superDesc.error("Environment " + env + " of signal " + name + " cannot be determined.",

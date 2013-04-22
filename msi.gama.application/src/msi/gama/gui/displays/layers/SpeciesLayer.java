@@ -42,16 +42,14 @@ import com.vividsolutions.jts.geom.Envelope;
 
 public class SpeciesLayer extends AgentLayer {
 
-	public SpeciesLayer(final double env_width, final double env_height,
-		final ILayerStatement layer, final IGraphics dg) {
+	public SpeciesLayer(final double env_width, final double env_height, final ILayerStatement layer, final IGraphics dg) {
 		super(env_width, env_height, layer, dg);
 	}
 
 	@Override
 	public void fillComposite(final Composite compo, final IDisplaySurface container) {
 		super.fillComposite(compo, container);
-		EditorFactory.choose(compo, "Aspect:",
-			((SpeciesLayerStatement) definition).getAspectName(), true,
+		EditorFactory.choose(compo, "Aspect:", ((SpeciesLayerStatement) definition).getAspectName(), true,
 			((SpeciesLayerStatement) definition).getAspects(), new EditorListener<String>() {
 
 				@Override
@@ -64,7 +62,7 @@ public class SpeciesLayer extends AgentLayer {
 
 	@Override
 	public Set<IAgent> getAgentsForMenu() {
-		return new HashSet(GAMA.getDefaultScope().getWorldScope()
+		return new HashSet(GAMA.getDefaultScope().getSimulationScope()
 			.getMicroPopulation(((SpeciesLayerStatement) definition).getSpecies()).getAgentsList());
 	}
 
@@ -84,7 +82,7 @@ public class SpeciesLayer extends AgentLayer {
 		IScope scope = GAMA.obtainNewScope();
 		try {
 			ISpecies species = ((SpeciesLayerStatement) definition).getSpecies();
-			IAgent world = scope.getWorldScope();
+			IAgent world = scope.getSimulationScope();
 			if ( !world.dead() ) {
 				IPopulation microPop = world.getMicroPopulation(species);
 				if ( microPop != null ) {
@@ -99,9 +97,8 @@ public class SpeciesLayer extends AgentLayer {
 
 	}
 
-	private void drawPopulation(final IAgent host, final SpeciesLayerStatement layer,
-		final IPopulation population, final IScope scope, final IGraphics g)
-		throws GamaRuntimeException {
+	private void drawPopulation(final IAgent host, final SpeciesLayerStatement layer, final IPopulation population,
+		final IScope scope, final IGraphics g) throws GamaRuntimeException {
 		IAspect aspect = population.getAspect(layer.getAspectName());
 		if ( aspect == null ) {
 			aspect = AspectStatement.DEFAULT_ASPECT;
@@ -164,11 +161,9 @@ public class SpeciesLayer extends AgentLayer {
 		}
 	}
 
-	private void drawGridPopulation(final IAgent host, final GridLayerStatement layer,
-		final IPopulation population, final IScope scope, final IGraphics g)
-		throws GamaRuntimeException {
-		GamaSpatialMatrix gridAgentStorage =
-			(GamaSpatialMatrix) population.getTopology().getPlaces();
+	private void drawGridPopulation(final IAgent host, final GridLayerStatement layer, final IPopulation population,
+		final IScope scope, final IGraphics g) throws GamaRuntimeException {
+		GamaSpatialMatrix gridAgentStorage = (GamaSpatialMatrix) population.getTopology().getPlaces();
 		gridAgentStorage.refreshDisplayData(scope);
 
 		// MUST cache this image as GridDisplayLayer does to increase performance
@@ -179,8 +174,7 @@ public class SpeciesLayer extends AgentLayer {
 
 		IShape hostShape = host.getGeometry();
 		Envelope hostEnv = hostShape.getEnvelope();
-		g.setDrawingCoordinates(hostEnv.getMinX() * g.getXScale(),
-			hostEnv.getMinY() * g.getYScale());
+		g.setDrawingCoordinates(hostEnv.getMinX() * g.getXScale(), hostEnv.getMinY() * g.getYScale());
 		g.setDrawingDimensions((int) (gridAgentStorage.numCols * g.getXScale() * 2),
 			(int) (gridAgentStorage.numCols * g.getYScale()));
 		g.setOpacity(layer.getTransparency());

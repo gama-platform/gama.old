@@ -109,7 +109,7 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	@Override
 	public void addParametersTo(final BatchExperiment exp) {
 		exp.addMethodParameter(new ParameterAdapter("Exploration method",
-			IExperiment.BATCH_CATEGORY_NAME, IType.STRING) {
+			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.STRING) {
 
 			@Override
 			public Object value() {

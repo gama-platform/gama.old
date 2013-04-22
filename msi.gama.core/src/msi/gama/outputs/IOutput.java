@@ -18,7 +18,7 @@
  */
 package msi.gama.outputs;
 
-import msi.gama.kernel.simulation.ISimulation;
+import msi.gama.common.interfaces.IStepable;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
@@ -26,7 +26,7 @@ import msi.gaml.compilation.ISymbol;
 /**
  * @author drogoul
  */
-public interface IOutput extends ISymbol {
+public interface IOutput extends ISymbol, IStepable {
 
 	public String getId();
 
@@ -65,14 +65,14 @@ public interface IOutput extends ISymbol {
 	/*
 	 * Called by the scheduler to perform the internal computations
 	 */
-	public void compute(IScope scope, int cycle) throws GamaRuntimeException;
+	// public void step(IScope scope) throws GamaRuntimeException;
 
 	/*
 	 * Called by the output thread to perform the actual "update" (of views, files, etc.)
 	 */
 	public void update() throws GamaRuntimeException;
 
-	void prepare(ISimulation sim) throws GamaRuntimeException;
+	// void prepare(ISimulationAgent sim) throws GamaRuntimeException;
 
 	public IScope getStack();
 
