@@ -18,8 +18,9 @@
  */
 package msi.gama.kernel.simulation;
 
+import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.GAMA;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.IScheduledAction;
 
@@ -31,31 +32,40 @@ public class Scheduler extends AbstractScheduler implements Runnable {
 
 	public Scheduler(final IAgent agent) throws GamaRuntimeException {
 		super(agent);
-		executionThread = new Thread(null, this, "Scheduler execution thread #" + threadCount++);
+		if ( !GuiUtils.isInHeadLessMode() ) {
+			executionThread = new Thread(null, this, "Scheduler execution thread #" + threadCount++);
+		} else {
+			executionThread = null;
+		}
+	}
+
+	@Override
+	public void step(IScope scope) {
+		try {
+			IScheduler.SCHEDULER_AUTHORIZATION.acquire();
+			if ( !paused && alive ) {
+				super.step(scope);
+			}
+			if ( stepped ) {
+				paused = true;
+			}
+			stepped = false;
+
+			if ( !paused && alive ) {
+				IScheduler.SCHEDULER_AUTHORIZATION.release();
+			}
+		} catch (GamaRuntimeException e) {
+			GAMA.reportError(e);
+			alive = false;
+		} catch (InterruptedException e) {
+			alive = false;
+		}
 	}
 
 	@Override
 	public void run() {
 		while (alive) {
-			try {
-				IScheduler.SCHEDULER_AUTHORIZATION.acquire();
-				if ( !paused && alive ) {
-					step(owner.getScope());
-				}
-				paused = stepped ? true : paused;
-				stepped = false;
-
-				if ( !paused && alive ) {
-					IScheduler.SCHEDULER_AUTHORIZATION.release();
-				}
-			} catch (GamaRuntimeException e) {
-				GAMA.reportError(e);
-				alive = false;
-				continue;
-			} catch (InterruptedException e) {
-				alive = false;
-				continue;
-			}
+			step(owner.getScope());
 		}
 	}
 
@@ -70,11 +80,13 @@ public class Scheduler extends AbstractScheduler implements Runnable {
 	@Override
 	public void dispose() {
 		super.dispose();
-		executionThread.interrupt();
-		try {
-			executionThread.join();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
+		if ( executionThread != null ) {
+			executionThread.interrupt();
+			try {
+				executionThread.join();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -97,7 +109,9 @@ public class Scheduler extends AbstractScheduler implements Runnable {
 	}
 
 	private void startThread() {
-		if ( !executionThread.isAlive() ) {
+		if ( executionThread == null ) {
+			step(owner.getScope());
+		} else if ( !executionThread.isAlive() ) {
 			executionThread.start();
 		}
 	}

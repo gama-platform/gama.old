@@ -3,7 +3,6 @@ package msi.gama.headless.core;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.*;
-import msi.gama.kernel.simulation.ISimulationAgent;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -18,12 +17,11 @@ import msi.gaml.types.IType;
 @symbol(name = { IKeyword.HEADLESS_UI }, kind = ISymbolKind.EXPERIMENT, with_sequence = true)
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { IKeyword.HEADLESS_UI }, optional = false) }, omissible = IKeyword.NAME)
-@inside(symbols = IKeyword.MODEL)
+@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
 public class HeadLessExperiment extends GuiExperimentSpecies implements IHeadLessExperiment {
 
 	public HeadLessExperiment(final IDescription description) {
 		super(description);
-		regularParameters.clear();
 	}
 
 	@Override
@@ -52,16 +50,6 @@ public class HeadLessExperiment extends GuiExperimentSpecies implements IHeadLes
 
 	@Override
 	public void userPause() {}
-
-	@Override
-	public void reloadExperiment() throws GamaRuntimeException, InterruptedException {
-		boolean wasRunning = isRunning() && !isPaused();
-		closeCurrentSimulation(false);
-		initializeSimulation();
-		if ( wasRunning ) {
-			startExperiment();
-		}
-	}
 
 	@Override
 	public boolean isGui() {
@@ -95,14 +83,9 @@ public class HeadLessExperiment extends GuiExperimentSpecies implements IHeadLes
 	}
 
 	@Override
-	public ISimulationAgent createSimulation() {
-		return new HeadlessSimulation(this);
-	}
-
-	@Override
 	public void userStep() {
 		// FIXME Verify this
-		this.getCurrentSimulation().step(agent.getExecutionScope());
+		agent.userStepExperiment();
 		// TODO Auto-generated method stub
 
 	}

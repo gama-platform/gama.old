@@ -108,7 +108,6 @@ public class BatchExperiment extends GuiExperimentSpecies {
 
 	@Override
 	public void userOpen() {
-		if ( isOpen ) { return; }
 		super.userOpen();
 		GuiUtils.showParameterView(this);
 		GuiUtils.informStatus(" Batch ready ");
@@ -160,7 +159,7 @@ public class BatchExperiment extends GuiExperimentSpecies {
 			try { // while the simulation is still "alive"
 				IExpression fitness = exploAlgo.getFitnessExpression();
 				if ( fitness != null ) {
-					lastFitnessValue = Cast.asFloat(getGlobalScope(), fitness.value(getGlobalScope()));
+					lastFitnessValue = Cast.asFloat(this.getExperimentScope(), fitness.value(getExperimentScope()));
 					fitnessValues.add(lastFitnessValue);
 				}
 				if ( log != null ) {
@@ -181,7 +180,7 @@ public class BatchExperiment extends GuiExperimentSpecies {
 	}
 
 	@Override
-	public void stopExperiment() {
+	public void userStopExperiment() {
 		closeCurrentSimulation(true);
 	}
 
@@ -189,7 +188,7 @@ public class BatchExperiment extends GuiExperimentSpecies {
 
 		seeds = new Double[innerLoopRepeat];
 
-		// A REVOIR. JE NE COMPRENDS PAS CE QUE CA FAIT.
+		// FIXME A REVOIR. JE NE COMPRENDS PAS CE QUE CA FAIT.
 		if ( keep_seed ) {
 			for ( int i = 0; i < innerLoopRepeat; i++ ) {
 				seeds[i] = GAMA.getRandom().between(0d, Long.MAX_VALUE);
@@ -223,14 +222,6 @@ public class BatchExperiment extends GuiExperimentSpecies {
 			: fitnessCombination == IExploration.C_MIN ? Collections.min(fitnessValues) : Statistics
 				.calculateMean(fitnessValues);
 
-	}
-
-	@Override
-	public void stepExperiment() {
-		// Avancer a la prochaine simulation ??
-		if ( getCurrentSimulation() != null && !isLoading() ) {
-			getCurrentSimulation().step();
-		}
 	}
 
 	@Override
@@ -406,7 +397,7 @@ public class BatchExperiment extends GuiExperimentSpecies {
 	}
 
 	@Override
-	protected void buildOutputs() {
+	public void buildOutputs() {
 		super.buildOutputs();
 		if ( fileOutputDescription != null && log == null ) {
 			try {

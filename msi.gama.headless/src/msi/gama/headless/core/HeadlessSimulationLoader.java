@@ -1,5 +1,6 @@
 package msi.gama.headless.core;
 
+import java.util.Map;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.headless.runtime.HeadlessListener;
@@ -46,9 +47,13 @@ public class HeadlessSimulationLoader {
 	 * @throws InterruptedException
 	 */
 	public static IHeadLessExperiment newHeadlessSimulation(final String fileName, final ParametersSet params)
-		throws GamaRuntimeException, InterruptedException {
+		throws GamaRuntimeException {
+		// FIXME Verify all this.
 		IHeadLessExperiment exp = newHeadlessSimulation(fileName);
-		GAMA.getExperiment().initialize(params, Math.random());
+		for ( Map.Entry<String, Object> entry : params.entrySet() ) {
+			GAMA.getExperiment().setParameterValue(entry.getKey(), entry.getValue());
+		}
+		GAMA.getExperiment().getAgent().userInitExperiment();
 		waitLoading(exp);
 		return exp;
 
@@ -60,7 +65,6 @@ public class HeadlessSimulationLoader {
 			try {
 				Thread.sleep(10);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		} while (exp.getCurrentSimulation() != null && exp.isLoading());
@@ -109,15 +113,6 @@ public class HeadlessSimulationLoader {
 		// FIXME Experiment default no longer exists. Needs to specify one name
 		GAMA.newExperiment(IKeyword.DEFAULT, lastModel);
 		System.out.println("Experiment created ");
-	}
-
-	private static void loadExperiment(final ParametersSet param) {
-		/*
-		 * if(para == null)
-		 * {
-		 * 
-		 * }
-		 */
 	}
 
 }
