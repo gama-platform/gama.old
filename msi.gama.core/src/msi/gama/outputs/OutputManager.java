@@ -132,7 +132,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 
 	@Override
 	public void init(final IScope scope) {
-		GuiUtils.asyncRun(new Runnable() {
+		GuiUtils.run(new Runnable() {
 
 			@Override
 			public void run() {
@@ -165,6 +165,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 
 					}
 				}
+				GuiUtils.informStatus("Experiment ready");
 			}
 		});
 	}

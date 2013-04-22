@@ -71,6 +71,7 @@ public abstract class AbstractScheduler implements IScheduler {
 	@Override
 	public void insertAgentToInit(final IAgent entity, final IScope scope) throws GamaRuntimeException {
 		if ( inInitSequence ) {
+			// GuiUtils.debug("AbstractScheduler.insertAgentToInit: " + entity);
 			agentsToInit.add(entity);
 		} else {
 			if ( !entity.dead() ) {
@@ -92,21 +93,19 @@ public abstract class AbstractScheduler implements IScheduler {
 	public void init(final IScope scope) throws GamaRuntimeException {
 		inInitSequence = true;
 		try {
-			int total = agentsToInit.size();
-			IAgent[] toInit = new IAgent[total];
-			agentsToInit.toArray(toInit);
-			agentsToInit.clear();
-			for ( int i = 0, n = toInit.length; i < n; i++ ) {
-				// GuiUtils.stopIfCancelled();
-				// GUI.debug("Executing the init section of " + toInit[i]);
-				IAgent a = toInit[i];
-				if ( !a.dead() ) {
-					init(a, scope);
+			while (!agentsToInit.isEmpty()) {
+				int total = agentsToInit.size();
+				IAgent[] toInit = new IAgent[total];
+				agentsToInit.toArray(toInit);
+				agentsToInit.clear();
+				for ( int i = 0, n = toInit.length; i < n; i++ ) {
+					// GuiUtils.stopIfCancelled();
+					IAgent a = toInit[i];
+					if ( !a.dead() ) {
+						// GuiUtils.debug("AbstractScheduler.init: " + a);
+						init(a, scope);
+					}
 				}
-			}
-			// Recursive call
-			if ( !agentsToInit.isEmpty() ) {
-				init(scope);
 			}
 		} finally {
 			inInitSequence = false;

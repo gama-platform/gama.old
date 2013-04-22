@@ -86,8 +86,6 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 				// GUI.debug("Showing the parameters view");
 				GuiUtils.showParameterView(exp);
 				// }
-				GuiUtils.informStatus(" Simulation of experiment " + exp.getName() + " of model " +
-					exp.getModel().getName() + " ready.");
 			}
 		}.run();
 	}

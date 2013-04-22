@@ -164,8 +164,15 @@ public class GAMA {
 	}
 
 	public static String getFrontmostSimulationState() {
-		return currentExperiment == null ? NONE : currentExperiment.isLoading() ? NOTREADY : currentExperiment
-			.isPaused() ? PAUSED : RUNNING;
+		if ( currentExperiment == null ) {
+			return NONE;
+		} else if ( currentExperiment.isLoading() ) {
+			return NOTREADY;
+		} else if ( currentExperiment.isPaused() ) {
+			return PAUSED;
+		} else if ( currentExperiment.isRunning() ) { return RUNNING; }
+		return NONE;
+
 	}
 
 	public static IExpressionFactory getExpressionFactory() {

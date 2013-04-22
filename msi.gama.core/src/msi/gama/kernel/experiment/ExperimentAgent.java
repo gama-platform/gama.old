@@ -184,7 +184,113 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		ParametersSet parameters = new ParametersSet(getSpecies().getCurrentSolution());
 		parameters.putAll(extraParametersMap);
 		initializeNewSimulation(parameters, getSpecies().getCurrentSeed());
-		getSpecies().getOutputManager().init(scope);
+
+	}
+
+	@Override
+	public IScope getExecutionScope() {
+		return executionStack;
+	}
+
+	@Override
+	public IScope obtainNewScope() {
+		if ( stackPool.isEmpty() ) { return new RuntimeScope(this, "Pool runtime scope for " + getName()); }
+		return stackPool.remove(stackPool.size() - 1);
+	}
+
+	public IScope obtainNewScope(final String name) {
+		for ( IScope scope : stackPool ) {
+			if ( scope.getName().equals(name) ) { return scope; }
+		}
+		return new RuntimeScope(this, name);
+	}
+
+	@Override
+	public void releaseScope(final IScope scope) {
+		scope.clear();
+		stackPool.add(scope);
+	}
+
+	@Override
+	public RandomUtils getRandomGenerator() {
+		return random == null ? RandomUtils.getDefault() : random;
+	}
+
+	public void userReloadExperiment() {
+		GuiUtils.debug("ExperimentAgent.userReloadExperiment");
+		boolean wasRunning = isRunning() && !isPaused();
+		buildScheduler();
+		getSpecies().desynchronizeOutputs();
+		closeSimulation();
+		reset();
+		getSpecies().buildOutputs();
+		userInitExperiment();
+
+		// getSpecies().getOutputManager().init(executionStack);
+		if ( wasRunning ) {
+			startSimulation();
+		}
+	}
+
+	public void userInitExperiment() {
+		GuiUtils.debug("ExperimentAgent.userInitExperiment");
+		try {
+			scheduler.init(executionStack);
+		} catch (GamaRuntimeException e) {
+			// TODO
+			e.printStackTrace();
+		}
+		getSpecies().getOutputManager().init(executionStack);
+	}
+
+	public void initializeNewSimulation(final ParametersSet sol, final Double seed) {
+		GuiUtils.debug("ExperimentAgent.initializeNewSimulation");
+		GuiUtils.waitStatus("Initializing simulation");
+		isLoading = true;
+		WorldPopulation pop = (WorldPopulation) getMicroPopulation(getModel());
+		// Necessary to create it first, and then to finalize the creation (since this creation can trigger the creation
+		// of other agents, which may rely on the value of getSimulation()
+		currentSimulation = new GamlSimulation(pop);
+		pop.finishInitializeWorld(executionStack, currentSimulation, GamaList.with(sol));
+		GuiUtils.waitStatus(" Instantiating agents ");
+		currentSimulation.schedule(executionStack);
+		isLoading = false;
+	}
+
+	@Override
+	public IExperimentSpecies getSpecies() {
+		return (IExperimentSpecies) super.getSpecies();
+	}
+
+	@Override
+	public void userStepExperiment() {
+		GuiUtils.debug("ExperimentAgent.userStepExperiment");
+		if ( !isLoading() ) {
+			scheduler.stepByStep();
+		}
+	}
+
+	@Override
+	public void userStopExperiment() {
+		GuiUtils.debug("ExperimentAgent.userStopExperiment");
+		scheduler.alive = false;
+	}
+
+	@Override
+	public void userPauseExperiment() {
+		GuiUtils.debug("ExperimentAgent.userPauseExperiment");
+		if ( !isLoading() ) {
+			scheduler.pause();
+		}
+	}
+
+	protected void closeSimulation() {
+		GuiUtils.debug("ExperimentAgent.closeSimulation");
+		userStopExperiment();
+		// Hack. Should be put somewhere else but the dialogs may
+		// block the execution thread.
+		GuiUtils.closeDialogs();
+		currentSimulation.dispose();
 	}
 
 	@getter(ExperimentAgent.MODEL_PATH)
@@ -261,109 +367,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@setter(IKeyword.RNG)
 	public void setRng(final IAgent agent, final String newRng) {
 		GAMA.getRandom().setGenerator(newRng);
-	}
-
-	@Override
-	public IScope getExecutionScope() {
-		return executionStack;
-	}
-
-	@Override
-	public IScope obtainNewScope() {
-		if ( stackPool.isEmpty() ) { return new RuntimeScope(this, "Pool runtime scope for " + getName()); }
-		return stackPool.remove(stackPool.size() - 1);
-	}
-
-	public IScope obtainNewScope(final String name) {
-		for ( IScope scope : stackPool ) {
-			if ( scope.getName().equals(name) ) { return scope; }
-		}
-		return new RuntimeScope(this, name);
-	}
-
-	@Override
-	public void releaseScope(final IScope scope) {
-		scope.clear();
-		stackPool.add(scope);
-	}
-
-	@Override
-	public RandomUtils getRandomGenerator() {
-		return random == null ? RandomUtils.getDefault() : random;
-	}
-
-	public void userReloadExperiment() {
-		GuiUtils.debug("ExperimentAgent.userReloadExperiment");
-		boolean wasRunning = isRunning() && !isPaused();
-		buildScheduler();
-		getSpecies().desynchronizeOutputs();
-		closeSimulation();
-		reset();
-		userInitExperiment();
-		getSpecies().buildOutputs();
-		if ( wasRunning ) {
-			startSimulation();
-		}
-	}
-
-	public void userInitExperiment() {
-		GuiUtils.debug("ExperimentAgent.userInitExperiment");
-		try {
-			scheduler.init(executionStack);
-		} catch (GamaRuntimeException e) {
-			// TODO
-			e.printStackTrace();
-		}
-	}
-
-	public void initializeNewSimulation(final ParametersSet sol, final Double seed) {
-		GuiUtils.debug("ExperimentAgent.initializeNewSimulation");
-		GuiUtils.waitStatus("Initializing simulation");
-		isLoading = true;
-		WorldPopulation pop = (WorldPopulation) getMicroPopulation(getModel());
-		// Necessary to create it first, and then to finalize the creation (since this creation can trigger the creation
-		// of other agents, which may rely on the value of getSimulation()
-		currentSimulation = new GamlSimulation(pop);
-		pop.finishInitializeWorld(executionStack, currentSimulation, GamaList.with(sol));
-		currentSimulation.schedule(executionStack);
-		GuiUtils.waitStatus(" Instantiating agents ");
-		isLoading = false;
-	}
-
-	@Override
-	public IExperimentSpecies getSpecies() {
-		return (IExperimentSpecies) super.getSpecies();
-	}
-
-	@Override
-	public void userStepExperiment() {
-		GuiUtils.debug("ExperimentAgent.userStepExperiment");
-		if ( !isLoading() ) {
-			scheduler.stepByStep();
-		}
-	}
-
-	@Override
-	public void userStopExperiment() {
-		GuiUtils.debug("ExperimentAgent.userStopExperiment");
-		scheduler.alive = false;
-	}
-
-	@Override
-	public void userPauseExperiment() {
-		GuiUtils.debug("ExperimentAgent.userPauseExperiment");
-		if ( !isLoading() ) {
-			scheduler.pause();
-		}
-	}
-
-	protected void closeSimulation() {
-		GuiUtils.debug("ExperimentAgent.closeSimulation");
-		userStopExperiment();
-		// Hack. Should be put somewhere else but the dialogs may
-		// block the execution thread.
-		GuiUtils.closeDialogs();
-		currentSimulation.dispose();
 	}
 
 	/**

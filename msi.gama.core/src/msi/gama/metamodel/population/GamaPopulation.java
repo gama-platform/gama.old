@@ -396,12 +396,13 @@ public class GamaPopulation implements IPopulation {
 			boolean usesVN = exp == null || Cast.asInt(scope, exp.value(scope)) == 4;
 			boolean isHexagon = exp != null && Cast.asInt(scope, exp.value(scope)) == 6;
 			exp = species.getFacet(IKeyword.FILE);
-			
+
 			GamaGridFile file = (GamaGridFile) (exp != null ? exp.value(scope) : null);
-			if (file == null) topology =
-				new GridTopology(scope, this.getHost(), rows, columns, isTorus, usesVN, isHexagon);
-			else  topology =
-					new GridTopology(scope, this.getHost(), file, isTorus, usesVN);
+			if ( file == null ) {
+				topology = new GridTopology(scope, this.getHost(), rows, columns, isTorus, usesVN, isHexagon);
+			} else {
+				topology = new GridTopology(scope, this.getHost(), file, isTorus, usesVN);
+			}
 		} else if ( species.isGraph() ) {
 			IExpression spec = species.getFacet(IKeyword.EDGE_SPECIES);
 			String edgeName = spec == null ? "base_edge" : spec.literalValue();
