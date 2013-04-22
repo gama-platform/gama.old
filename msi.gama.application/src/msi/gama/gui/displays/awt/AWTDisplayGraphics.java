@@ -57,8 +57,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	private final Ellipse2D oval = new Ellipse2D.Double(0, 0, 1, 1);
 	private final Line2D line = new Line2D.Double();
 	private double currentAlpha = 1;
-	private int displayWidth, displayHeight, curX = 0, curY = 0, curWidth = 5, curHeight = 5,
-		offsetX = 0, offsetY = 0;
+	private int displayWidth, displayHeight, curX = 0, curY = 0, curWidth = 5, curHeight = 5, offsetX = 0, offsetY = 0;
 	private double currentXScale = 1, currentYScale = 1;
 	// private static RenderingHints rendering;
 	private static final Font defaultFont = new Font("Helvetica", Font.PLAIN, 12);
@@ -297,8 +296,8 @@ public class AWTDisplayGraphics implements IGraphics {
 	}
 
 	@Override
-	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final Integer angle,
-		final String name, final float z) {
+	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final Integer angle, final String name,
+		final float z) {
 		return drawImage(scope, img, angle, true, name, z);
 	}
 
@@ -324,8 +323,8 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param height height of the rectangle but only used in opengl display
 	 */
 	@Override
-	public Rectangle2D drawCircle(final IScope scope, final Color c, final boolean fill,
-		final Color border, final Integer angle, final float height) {
+	public Rectangle2D drawCircle(final IScope scope, final Color c, final boolean fill, final Color border,
+		final Integer angle, final float height) {
 		oval.setFrame(curX, curY, curWidth, curWidth);
 		return drawShape(c, oval, fill, border, angle);
 	}
@@ -338,8 +337,8 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param height height of the rectangle but only used in opengl display
 	 */
 	@Override
-	public Rectangle2D drawTriangle(final IScope scope, final Color c, final boolean fill,
-		final Color border, final Integer angle, final float height) {
+	public Rectangle2D drawTriangle(final IScope scope, final Color c, final boolean fill, final Color border,
+		final Integer angle, final float height) {
 		// curWidth is equal to half the width of the triangle
 		final GeneralPath p0 = new GeneralPath();
 		// double dist = curWidth / (2 * Math.sqrt(2.0));
@@ -370,8 +369,8 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param height height of the rectangle but only used in opengl display
 	 */
 	@Override
-	public Rectangle2D drawRectangle(final IScope scope, final Color color, final boolean fill,
-		final Color border, final Integer angle, final float height) {
+	public Rectangle2D drawRectangle(final IScope scope, final Color color, final boolean fill, final Color border,
+		final Integer angle, final float height) {
 		rect.setFrame(curX, curY, curWidth, curHeight);
 		return drawShape(color, rect, fill, border, angle);
 	}
@@ -406,11 +405,11 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param rounded boolean (not yet implemented in JAVA 2D)
 	 */
 	@Override
-	public Rectangle2D drawGeometry(final IScope scope, final Geometry geometry, final Color color,
-		final boolean fill, final Color border, final Integer angle, final boolean rounded) {
+	public Rectangle2D drawGeometry(final IScope scope, final Geometry geometry, final Color color, final boolean fill,
+		final Color border, final Integer angle, final boolean rounded) {
 		Geometry geom = null;
 		ITopology topo = scope.getTopology();
-		if ( topo.isTorus() ) {
+		if ( topo != null && topo.isTorus() ) {
 			geom = topo.returnToroidalGeom(geometry);
 		} else {
 			geom = geometry;
@@ -418,7 +417,7 @@ public class AWTDisplayGraphics implements IGraphics {
 		boolean f = geom instanceof LineString || geom instanceof MultiLineString ? false : fill;
 		return drawShape(color, sw.toShape(geom), f, border, angle);
 	}
-	
+
 	/**
 	 * Method drawGeometry.
 	 * @param geometry GamaShape
@@ -431,10 +430,10 @@ public class AWTDisplayGraphics implements IGraphics {
 	public Rectangle2D drawGamaShape(final IScope scope, final GamaShape geometry, final Color color,
 		final boolean fill, final Color border, final Integer angle, final boolean rounded) {
 		Geometry geom = null;
-		if (geometry == null)
-			return null;
+		if ( geometry == null ) { return null; }
 		ITopology topo = scope.getTopology();
-		if ( topo.isTorus() ) {
+		// Necessary to check in case the scope has been erased (in cases of reload)
+		if ( topo != null && topo.isTorus() ) {
 			geom = topo.returnToroidalGeom(geometry.getInnerGeometry());
 		} else {
 			geom = geometry.getInnerGeometry();
@@ -450,14 +449,13 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * @param fill boolean
 	 * @param angle Integer
 	 */
-	public Rectangle2D drawShape(final Color c, final Shape s, final boolean fill,
-		final Color border, final Integer angle) {
+	public Rectangle2D drawShape(final Color c, final Shape s, final boolean fill, final Color border,
+		final Integer angle) {
 		try {
 			Rectangle2D r = s.getBounds2D();
 			AffineTransform saved = g2.getTransform();
 			if ( angle != null ) {
-				g2.rotate(Maths.toRad * angle, r.getX() + r.getWidth() / 2,
-					r.getY() + r.getHeight() / 2);
+				g2.rotate(Maths.toRad * angle, r.getX() + r.getWidth() / 2, r.getY() + r.getHeight() / 2);
 			}
 			setDrawingColor(c);
 			if ( fill ) {
