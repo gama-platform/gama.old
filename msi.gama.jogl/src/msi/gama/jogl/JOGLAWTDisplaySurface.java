@@ -100,6 +100,9 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 
 	// Use to toggle the selectRectangle tool
 	public boolean SelectRectangle = false;
+	
+	// Use to toggle the Triangulation view
+    public boolean Triangulation = false;
 
 	// Use to draw .shp file
 	final String[] shapeFileName = new String[1];
@@ -685,6 +688,12 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 		 * ((JOGLAWTDisplayGraphics)openGLGraphics).graphicsGLUtils.DrawArcBall();
 		 * }
 		 */
+	}
+	
+
+	@Override
+	public void toggleTriangulation() {
+		Triangulation = ! Triangulation;
 	}
 
 	/**

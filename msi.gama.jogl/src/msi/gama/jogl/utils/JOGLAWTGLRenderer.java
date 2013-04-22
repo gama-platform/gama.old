@@ -45,7 +45,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public MyGraphics graphicsGLUtils;
 
-	// Use to test and siaply basic opengl shape and primitive
+	// Use to test and display basic opengl shape and primitive
 	public MyGLToyDrawer myGLDrawer;
 
 	// Textures list to store all the texture.
@@ -253,6 +253,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				gl.glEnable(GL_LIGHTING);
 			} else {
 				gl.glDisable(GL_LIGHTING);
+			}
+			
+			//Show triangulated polygon or not (trigger by GAMA)
+			if ( !displaySurface.Triangulation ) {
+				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+			} else {
+				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
 			}
 
 			// Blending control
