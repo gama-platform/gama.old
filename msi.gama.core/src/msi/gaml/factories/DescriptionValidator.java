@@ -21,17 +21,15 @@ import msi.gaml.types.*;
  */
 public class DescriptionValidator {
 
-	public static String[] valueFacetsArray = new String[] { VALUE, INIT, FUNCTION, UPDATE, MIN,
-		MAX };
+	public static String[] valueFacetsArray = new String[] { VALUE, INIT, FUNCTION, UPDATE, MIN, MAX };
 	public static List<String> valueFacetsList = Arrays.asList(valueFacetsArray);
 
 	/*
 	 * Verification done after the facets have been compiled
 	 */
 
-	public static void verifyFacetType(final IDescription desc, final String facet,
-		final IExpression expr, final SymbolProto smd, final ModelDescription md,
-		final TypesManager tm) {
+	public static void verifyFacetType(final IDescription desc, final String facet, final IExpression expr,
+		final SymbolProto smd, final ModelDescription md, final TypesManager tm) {
 		FacetProto fmd = smd.getPossibleFacets().get(facet);
 		if ( fmd == null ) { return; }
 
@@ -53,8 +51,8 @@ public class DescriptionValidator {
 		}
 	}
 
-	public static void verifyFacetTypeIsCompatible(final IDescription desc, final String facet,
-		final IExpression expr, final int[] types, final TypesManager tm) {
+	public static void verifyFacetTypeIsCompatible(final IDescription desc, final String facet, final IExpression expr,
+		final int[] types, final TypesManager tm) {
 		boolean compatible = false;
 		IType actualType = expr.getType();
 		for ( int type : types ) {
@@ -68,26 +66,25 @@ public class DescriptionValidator {
 			for ( int i = 0; i < types.length; i++ ) {
 				strings[i] = tm.get(types[i]).toString();
 			}
-			desc.warning("Facet '" + facet + "' is expecting " + Arrays.toString(strings) +
-				" instead of " + actualType, IGamlIssue.SHOULD_CAST, facet, tm.get(types[0])
-				.toString());
+			desc.warning(
+				"Facet '" + facet + "' is expecting " + Arrays.toString(strings) + " instead of " + actualType,
+				IGamlIssue.SHOULD_CAST, facet, tm.get(types[0]).toString());
 		}
 
 	}
 
-	public static void verifyFacetIsAType(final IDescription desc, final String facet,
-		final IExpression expr, final TypesManager tm) {
+	public static void verifyFacetIsAType(final IDescription desc, final String facet, final IExpression expr,
+		final TypesManager tm) {
 		String tt = expr.literalValue();
 		IType type = tm.get(tt);
-		if ( type == Types.NO_TYPE && !UNKNOWN.equals(type.toString()) &&
-			!IKeyword.SIGNAL.equals(type.toString()) ) {
-			desc.error("Facet '" + facet + "' is expecting a type name. " + type +
-				" is not a type name", IGamlIssue.NOT_A_TYPE, facet, tt);
+		if ( type == Types.NO_TYPE && !UNKNOWN.equals(type.toString()) && !IKeyword.SIGNAL.equals(type.toString()) ) {
+			desc.error("Facet '" + facet + "' is expecting a type name. " + type + " is not a type name",
+				IGamlIssue.NOT_A_TYPE, facet, tt);
 		}
 	}
 
-	public static void verifyFacetIsInValues(final IDescription desc, final String facet,
-		final IExpression expr, final String[] values) {
+	public static void verifyFacetIsInValues(final IDescription desc, final String facet, final IExpression expr,
+		final String[] values) {
 		String s = expr.literalValue();
 		boolean compatible = false;
 		for ( String value : values ) {
@@ -97,18 +94,16 @@ public class DescriptionValidator {
 			}
 		}
 		if ( !compatible ) {
-			desc.error(
-				"Facet '" + facet + "' is expecting a value among " + Arrays.toString(values) +
-					" instead of " + s, facet);
+			desc.error("Facet '" + facet + "' is expecting a value among " + Arrays.toString(values) + " instead of " +
+				s, facet);
 		}
 	}
 
-	public static void assertDescriptionIsInsideTheRightSuperDescription(final SymbolProto meta,
-		final IDescription desc) {
+	public static void assertDescriptionIsInsideTheRightSuperDescription(final SymbolProto meta, final IDescription desc) {
 		IDescription sd = desc.getSuperDescription();
 		if ( !meta.verifyContext(sd) ) {
-			desc.error(desc.getKeyword() + " cannot be defined in " + sd.getKeyword(),
-				IGamlIssue.WRONG_CONTEXT, desc.getName());
+			desc.error(desc.getKeyword() + " cannot be defined in " + sd.getKeyword(), IGamlIssue.WRONG_CONTEXT,
+				desc.getName());
 		}
 	}
 
@@ -126,10 +121,10 @@ public class DescriptionValidator {
 					String error =
 						"The " + desc.getKeyword() + " '" + desc.getName() +
 							"' is defined twice. Only one definition is allowed.";
-					child.error(error, IGamlIssue.DUPLICATE_NAME, child.getUnderlyingElement(null),
-						desc.getKeyword(), desc.getName());
-					desc.error(error, IGamlIssue.DUPLICATE_NAME, desc.getUnderlyingElement(null),
-						desc.getKeyword(), desc.getName());
+					child.error(error, IGamlIssue.DUPLICATE_NAME, child.getUnderlyingElement(null), desc.getKeyword(),
+						desc.getName());
+					desc.error(error, IGamlIssue.DUPLICATE_NAME, desc.getUnderlyingElement(null), desc.getKeyword(),
+						desc.getName());
 				}
 			}
 		}
@@ -142,12 +137,9 @@ public class DescriptionValidator {
 		for ( IDescription child : sd.getChildren() ) {
 			if ( child.getKeyword().equals(keyword) && child != desc ) {
 				String error =
-					keyword + " is defined twice. Only one definition is allowed directly in " +
-						sd.getKeyword();
-				child.error(error, IGamlIssue.DUPLICATE_KEYWORD, child.getUnderlyingElement(null),
-					keyword);
-				desc.error(error, IGamlIssue.DUPLICATE_KEYWORD, desc.getUnderlyingElement(null),
-					keyword);
+					keyword + " is defined twice. Only one definition is allowed directly in " + sd.getKeyword();
+				child.error(error, IGamlIssue.DUPLICATE_KEYWORD, child.getUnderlyingElement(null), keyword);
+				desc.error(error, IGamlIssue.DUPLICATE_KEYWORD, desc.getUnderlyingElement(null), keyword);
 
 			}
 		}
@@ -159,8 +151,7 @@ public class DescriptionValidator {
 		IType at = cd.getType();
 		if ( at == Types.NO_TYPE ) { return; }
 		if ( returns.isEmpty() ) {
-			cd.error("Action " + cd.getName() + " must return a result of type " + at,
-				IGamlIssue.MISSING_RETURN);
+			cd.error("Action " + cd.getName() + " must return a result of type " + at, IGamlIssue.MISSING_RETURN);
 			return;
 		}
 		for ( StatementDescription ret : returns ) {
@@ -174,8 +165,7 @@ public class DescriptionValidator {
 			} else {
 				IType rt = ie.getType();
 				if ( !rt.isTranslatableInto(at) ) {
-					ret.error("Cannot convert from " + rt + " to " + at, IGamlIssue.SHOULD_CAST,
-						VALUE, at.toString());
+					ret.error("Cannot convert from " + rt + " to " + at, IGamlIssue.SHOULD_CAST, VALUE, at.toString());
 				}
 			}
 		}
@@ -193,8 +183,8 @@ public class DescriptionValidator {
 				!value.getType().isTranslatableInto(expr.getType()) ) {
 				cd.warning("Variable " + expr.toGaml() + " of type " + expr.getType() +
 					" is assigned a value of type " + value.getType().toString() +
-					", which will be automatically casted.", IGamlIssue.SHOULD_CAST,
-					IKeyword.VALUE, expr.getType().toString());
+					", which will be automatically casted.", IGamlIssue.SHOULD_CAST, IKeyword.VALUE, expr.getType()
+					.toString());
 			}
 			// AD 19/1/13: test of the constants
 			if ( ((IVarExpression) expr).isNotModifiable() ) {
@@ -240,35 +230,31 @@ public class DescriptionValidator {
 		}
 
 		if ( contentType != Types.NO_TYPE && !valueType.isTranslatableInto(contentType) ) {
-			cd.warning("The type of the contents of " + list.toGaml() + " (" + contentType +
-				") does not match with " + valueType, IGamlIssue.SHOULD_CAST, item == null
-				? IKeyword.ALL : IKeyword.ITEM, contentType.toString());
+			cd.warning("The type of the contents of " + list.toGaml() + " (" + contentType + ") does not match with " +
+				valueType, IGamlIssue.SHOULD_CAST, item == null ? IKeyword.ALL : IKeyword.ITEM, contentType.toString());
 		}
 		IType keyType = list.getKeyType();
-		if ( index != null && keyType != Types.NO_TYPE &&
-			!keyType.isTranslatableInto(index.getType()) ) {
+		if ( index != null && keyType != Types.NO_TYPE && !keyType.isTranslatableInto(index.getType()) ) {
 			cd.warning("The type of the index of " + list.toGaml() + " (" + keyType +
-				") does not match with the type of " + index.toGaml() + " (" + index.getType() +
-				")", IGamlIssue.SHOULD_CAST, IKeyword.AT, keyType.toString());
+				") does not match with the type of " + index.toGaml() + " (" + index.getType() + ")",
+				IGamlIssue.SHOULD_CAST, IKeyword.AT, keyType.toString());
 		}
 	}
 
-	public static void assertMicroSpeciesIsVisible(final IDescription cd,
-		final String facetContainingSpecies) {
+	public static void assertMicroSpeciesIsVisible(final IDescription cd, final String facetContainingSpecies) {
 		String microSpeciesName = cd.getFacets().getLabel(facetContainingSpecies);
 		if ( microSpeciesName != null ) {
 			SpeciesDescription macroSpecies = cd.getSpeciesContext();
 			TypeDescription microSpecies = macroSpecies.getMicroSpecies(microSpeciesName);
 			if ( microSpecies == null ) {
-				cd.error(macroSpecies.getName() + " species doesn't contain " + microSpeciesName +
-					" as micro-species", IGamlIssue.UNKNOWN_SUBSPECIES, facetContainingSpecies,
-					microSpeciesName);
+				cd.error(macroSpecies.getName() + " species doesn't contain " + microSpeciesName + " as micro-species",
+					IGamlIssue.UNKNOWN_SUBSPECIES, facetContainingSpecies, microSpeciesName);
 			}
 		}
 	}
 
-	public static void assertFacetValueIsUniqueInSuperDescription(final IDescription desc,
-		final String facet, final IExpression value) {
+	public static void assertFacetValueIsUniqueInSuperDescription(final IDescription desc, final String facet,
+		final IExpression value) {
 		IDescription sd = desc.getSuperDescription();
 		IDescription previous = null;
 		if ( sd == null ) { return; }
@@ -295,8 +281,8 @@ public class DescriptionValidator {
 
 	}
 
-	public static void assertAtLeastOneChildWithFacetValueInSuperDescription(
-		final IDescription desc, final String facet, final IExpression value) {
+	public static void assertAtLeastOneChildWithFacetValueInSuperDescription(final IDescription desc,
+		final String facet, final IExpression value) {
 		IDescription sd = desc.getSuperDescription();
 		if ( sd == null ) { return; }
 		String stringValue = value.toGaml();
@@ -309,19 +295,17 @@ public class DescriptionValidator {
 				if ( v.toGaml().equals(stringValue) ) { return; }
 			}
 		}
-		String error =
-			"No " + desc.getKeyword() + " with '" + facet + "= " + stringValue +
-				"' has been defined. ";
-		sd.error(error, IGamlIssue.MISSING_DEFINITION, sd.getUnderlyingElement(null),
-			desc.getKeyword(), facet, stringValue);
+		String error = "No " + desc.getKeyword() + " with '" + facet + "= " + stringValue + "' has been defined. ";
+		sd.error(error, IGamlIssue.MISSING_DEFINITION, sd.getUnderlyingElement(null), desc.getKeyword(), facet,
+			stringValue);
 	}
 
 	public static void assertBehaviorIsExisting(final IDescription desc, final String facet) {
 		String behavior = desc.getFacets().getLabel(facet);
 		SpeciesDescription sd = desc.getSpeciesContext();
 		if ( !sd.hasBehavior(behavior) ) {
-			desc.error("Behavior " + behavior + " does not exist in " + sd.getName(),
-				IGamlIssue.UNKNOWN_BEHAVIOR, facet, behavior, sd.getName());
+			desc.error("Behavior " + behavior + " does not exist in " + sd.getName(), IGamlIssue.UNKNOWN_BEHAVIOR,
+				facet, behavior, sd.getName());
 		}
 	}
 
@@ -330,8 +314,8 @@ public class DescriptionValidator {
 		SpeciesDescription sd = desc.getSpeciesContext();
 		if ( sd == null ) { return; }
 		if ( !sd.hasAction(action) ) {
-			desc.error("Action " + action + " does not exist in " + sd.getName(),
-				IGamlIssue.UNKNOWN_ACTION, facet, action, sd.getName());
+			// desc.error("Action " + action + " does not exist in " + sd.getName(),
+			// IGamlIssue.UNKNOWN_ACTION, facet, action, sd.getName());
 		}
 
 	}

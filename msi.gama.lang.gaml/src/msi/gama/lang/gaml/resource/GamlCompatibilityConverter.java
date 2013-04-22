@@ -103,7 +103,8 @@ public class GamlCompatibilityConverter {
 			Expression e = stm.getExpr();
 			addFacet(elt, ACTION, convExpr(EGaml.getKeyOf(e)));
 			if ( e instanceof Function ) {
-				Function f = (Function) stm.getExpr();
+				addFacet(elt, INTERNAL_FUNCTION, convExpr(e));
+				Function f = (Function) e;
 				Parameters p = f.getParameters();
 				if ( p != null ) {
 					addFacet(elt, WITH, convExpr(p));

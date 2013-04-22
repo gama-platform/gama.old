@@ -173,9 +173,9 @@ public interface IKeyword {
 	public static final String INCLUDE = "include";
 	public static final String INDEX = "index";
 	public static final String INIT = "init";
-	// public static final String INITER = "initer";
 	public static final String INPUT = "input";
 	public static final String INSPECT = "inspect";
+	public static final String INTERNAL_FUNCTION = "internal_function";
 	public static final String IS = "is";
 	public static final String ISFOLDER = "is_folder";
 	public static final String ITEM = "item";
@@ -280,7 +280,6 @@ public interface IKeyword {
 	public static final String SELF = "self";
 	public static final String SERIES = "series";
 	public static final String SET = "set";
-	// public static final String SETTER = "setter";
 	public static final String SHAPE = "shape";
 	public static final String SIGNAL = "signal";
 	public static final String SIMULATION = "simulation";
@@ -375,10 +374,11 @@ public interface IKeyword {
 	public static final String RGB = "rgb";
 	public static final String CONTAINER = "container";
 	public static final String GEOMETRY = "geometry";
-	
+
 	/*
 	 * files
 	 */
-	public static final String OPEN = "open";	// TODO "launch", or "open", or "sysopen" ? This opens a file with an external progam
-	
+	public static final String OPEN = "open"; // TODO "launch", or "open", or "sysopen" ? This opens a file with an
+												// external progam
+
 }

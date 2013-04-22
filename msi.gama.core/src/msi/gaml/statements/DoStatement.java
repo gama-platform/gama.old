@@ -27,9 +27,10 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 7 févr. 2010
@@ -41,15 +42,18 @@ import msi.gaml.types.IType;
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 @facets(value = { @facet(name = IKeyword.ACTION, type = IType.ID, optional = false),
 	@facet(name = IKeyword.WITH, type = IType.MAP, optional = true),
+	@facet(name = IKeyword.INTERNAL_FUNCTION, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true) }, omissible = IKeyword.ACTION)
 public class DoStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
 	Arguments args;
 	String returnString;
+	final IExpression function;
 
 	public DoStatement(final IDescription desc) {
 		super(desc);
 		returnString = getLiteral(IKeyword.RETURNS);
+		function = getFacet(IKeyword.INTERNAL_FUNCTION);
 		setName(getLiteral(IKeyword.ACTION));
 	}
 
@@ -70,8 +74,13 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		ISpecies context = scope.getAgentScope().getSpecies();
 		IStatement.WithArgs executer = context.getAction(name);
-		executer.setRuntimeArgs(args);
-		Object result = executer.executeOn(scope);
+		Object result = null;
+		if ( executer != null ) {
+			executer.setRuntimeArgs(args);
+			result = executer.executeOn(scope);
+		} else if ( function != null ) {
+			result = function.value(scope);
+		}
 		if ( returnString != null ) {
 			scope.setVarValue(returnString, result);
 		}
@@ -85,27 +94,35 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 	@Override
 	public IType getType() {
 		StatementDescription executer = description.getSpeciesContext().getAction(name);
-		return executer.getType();
+		if ( executer != null ) {
+			return executer.getType();
+		} else if ( function != null ) { return function.getType(); }
+		return Types.NO_TYPE;
 	}
 
 	@Override
 	public IType getContentType() {
 		StatementDescription executer = description.getSpeciesContext().getAction(name);
-		return executer.getContentType();
+		if ( executer != null ) {
+			return executer.getContentType();
+		} else if ( function != null ) { return function.getContentType(); }
+		return Types.NO_TYPE;
 	}
 
 	@Override
 	public IType getKeyType() {
 		StatementDescription executer = description.getSpeciesContext().getAction(name);
-		return executer.getKeyType();
+		if ( executer != null ) {
+			return executer.getKeyType();
+		} else if ( function != null ) { return function.getKeyType(); }
+		return Types.NO_TYPE;
 	}
 
 	@Override
 	public Double computePertinence(final IScope scope) throws GamaRuntimeException {
 		ISpecies context = scope.getAgentScope().getSpecies();
 		IStatement.WithArgs executer = context.getAction(name);
-		if ( executer.getPertinence() != null ) { return Cast.asFloat(scope, executer
-			.getPertinence().value(scope)); }
+		if ( executer.getPertinence() != null ) { return Cast.asFloat(scope, executer.getPertinence().value(scope)); }
 		return 1.0;
 	}
 }

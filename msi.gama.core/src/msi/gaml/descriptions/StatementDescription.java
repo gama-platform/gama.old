@@ -54,9 +54,8 @@ public class StatementDescription extends SymbolDescription {
 		this.helper = helper;
 	}
 
-	public StatementDescription(final String keyword, final IDescription superDesc,
-		final IChildrenProvider cp, final boolean hasScope, final boolean hasArgs,
-		final EObject source, Facets facets) {
+	public StatementDescription(final String keyword, final IDescription superDesc, final IChildrenProvider cp,
+		final boolean hasScope, final boolean hasArgs, final EObject source, Facets facets) {
 		super(keyword, superDesc, cp, source, facets);
 		temps = hasScope ? new LinkedHashMap() : null;
 		args = hasArgs ? new LinkedHashMap() : null;
@@ -141,8 +140,8 @@ public class StatementDescription extends SymbolDescription {
 		return executer;
 	}
 
-	public IVarExpression addNewTempIfNecessary(final String facetName, final IType type,
-		final IType contentType, final IType keyType) {
+	public IVarExpression addNewTempIfNecessary(final String facetName, final IType type, final IType contentType,
+		final IType keyType) {
 		String varName = facets.getLabel(facetName);
 		if ( facetName.equals(VAR) ) {
 			// Case of loops
@@ -154,8 +153,7 @@ public class StatementDescription extends SymbolDescription {
 			error("Impossible to return " + facets.getLabel(facetName), IGamlIssue.GENERAL);
 			return null;
 		}
-		return (IVarExpression) ((StatementDescription) sup).addTemp(varName, type, contentType,
-			keyType);
+		return (IVarExpression) ((StatementDescription) sup).addTemp(varName, type, contentType, keyType);
 	}
 
 	@Override
@@ -170,8 +168,8 @@ public class StatementDescription extends SymbolDescription {
 			}
 		}
 		StatementDescription desc =
-			new StatementDescription(getKeyword(), into, new ChildrenProvider(children),
-				temps != null, args != null, element, facets);
+			new StatementDescription(getKeyword(), into, new ChildrenProvider(children), temps != null, args != null,
+				element, facets);
 		desc.originName = originName;
 		desc.setHelper(helper);
 		return desc;
@@ -183,17 +181,14 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	@Override
-	public IExpression addTemp(final String name, final IType type, final IType contentType,
-		final IType keyType) {
+	public IExpression addTemp(final String name, final IType type, final IType contentType, final IType keyType) {
 		if ( temps == null ) {
 			if ( getSuperDescription() == null ) { return null; }
 			if ( !(getSuperDescription() instanceof StatementDescription) ) { return null; }
-			return ((StatementDescription) getSuperDescription()).addTemp(name, type, contentType,
-				keyType);
+			return ((StatementDescription) getSuperDescription()).addTemp(name, type, contentType, keyType);
 		}
 		IVarExpression result =
-			GAMA.getExpressionFactory().createVar(name, type, contentType, keyType, false,
-				IVarExpression.TEMP, this);
+			GAMA.getExpressionFactory().createVar(name, type, contentType, keyType, false, IVarExpression.TEMP, this);
 		temps.put(name, result);
 		return result;
 	}
@@ -237,9 +232,8 @@ public class StatementDescription extends SymbolDescription {
 		if ( !getKeyword().equals(PRIMITIVE) ) {
 			for ( String arg : mandatoryArgs ) {
 				if ( !names.containsKey(arg) ) {
-					caller.error("Missing argument " + arg + " in call to " + getName() +
-						". Arguments passed are : " + names, IGamlIssue.MISSING_ARGUMENT,
-						caller.getUnderlyingElement(null), new String[] { arg });
+					caller.error("Missing argument " + arg + " in call to " + getName() + ". Arguments passed are : " +
+						names, IGamlIssue.MISSING_ARGUMENT, caller.getUnderlyingElement(null), new String[] { arg });
 				}
 			}
 		}
@@ -247,22 +241,20 @@ public class StatementDescription extends SymbolDescription {
 			if ( arg != null ) {
 				String name = arg.getKey();
 				if ( !allArgs.contains(name) ) {
-					caller.error("Unknown argument " + name + " in call to " + getName(),
-						IGamlIssue.UNKNOWN_ARGUMENT, arg.getValue().getTarget(),
-						new String[] { arg.getKey() });
+					caller.error("Unknown argument " + name + " in call to " + getName(), IGamlIssue.UNKNOWN_ARGUMENT,
+						arg.getValue().getTarget(), new String[] { arg.getKey() });
 				} else {
 					IType formalType = args.get(name).getType();
 					IType callerType = arg.getValue().getExpression().getType();
 					if ( formalType != Types.NO_TYPE && !callerType.isTranslatableInto(formalType) ) {
-						caller.error("The type of argument " + name + " should be " + formalType,
-							IGamlIssue.WRONG_TYPE);
+						caller
+							.error("The type of argument " + name + " should be " + formalType, IGamlIssue.WRONG_TYPE);
 					} else if ( formalType.hasContents() ) {
 						formalType = args.get(name).getContentType();
 						callerType = arg.getValue().getExpression().getContentType();
-						if ( formalType != Types.NO_TYPE &&
-							!callerType.isTranslatableInto(formalType) ) {
-							caller.error("The content type of argument " + name + " should be " +
-								formalType, IGamlIssue.WRONG_TYPE);
+						if ( formalType != Types.NO_TYPE && !callerType.isTranslatableInto(formalType) ) {
+							caller.error("The content type of argument " + name + " should be " + formalType,
+								IGamlIssue.WRONG_TYPE);
 						}
 					}
 				}
@@ -273,7 +265,7 @@ public class StatementDescription extends SymbolDescription {
 	public void verifyArgs(final String actionName, final Arguments args) {
 		StatementDescription executer = getAction();
 		if ( executer == null ) {
-			error("Unknown action " + actionName, ACTION);
+			// error("Unknown action " + actionName, ACTION);
 			return;
 		}
 
@@ -307,8 +299,7 @@ public class StatementDescription extends SymbolDescription {
 				s = DEFAULT;
 			} else {
 				if ( getKeyword().equals(REFLEX) ) {
-					warning("Reflexes should be named", IGamlIssue.MISSING_NAME,
-						getUnderlyingElement(null));
+					warning("Reflexes should be named", IGamlIssue.MISSING_NAME, getUnderlyingElement(null));
 				}
 				s = INTERNAL + getKeyword() + String.valueOf(COMMAND_INDEX++);
 			}
