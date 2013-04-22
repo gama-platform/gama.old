@@ -90,21 +90,11 @@ public class GamlSpecies extends AbstractSpecies {
 		return s.getDescription().getType().isAssignableFrom(getDescription().getType());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.ISpecies#getFrequency()
-	 */
 	@Override
 	public IExpression getFrequency() {
 		return this.getFacet(IKeyword.FREQUENCY);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.ISpecies#getSchedule()
-	 */
 	@Override
 	public IExpression getSchedule() {
 		return this.getFacet(IKeyword.SCHEDULES);
@@ -150,22 +140,6 @@ public class GamlSpecies extends AbstractSpecies {
 		return getPopulation(scope).any(scope);
 	}
 
-	//
-	// @Override
-	// public boolean isFixedLength() {
-	// return true;
-	// }
-
-	// @Override
-	// public boolean checkIndex(final Object index) {
-	// return false;
-	// }
-	//
-	// @Override
-	// public boolean checkValue(final Object value) {
-	// return value instanceof IAgent;
-	// }
-
 	@Override
 	public boolean checkBounds(final Integer index, final boolean forAdding) {
 		return false;
@@ -194,8 +168,6 @@ public class GamlSpecies extends AbstractSpecies {
 
 	@Override
 	public Iterator<IAgent> iterator() {
-		// IExperimentSpecies exp = GAMA.getExperiment();
-		// if ( exp == null ) { return GamaList.EMPTY_LIST.iterator(); }
 		IScope scope = GAMA.getDefaultScope();
 		if ( scope == null ) { return GamaList.EMPTY_LIST.iterator(); }
 		return scope.getSimulationScope().getPopulationFor(this).iterator();

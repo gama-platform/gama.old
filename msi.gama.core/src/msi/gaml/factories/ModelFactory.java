@@ -104,7 +104,6 @@ public class ModelFactory extends SymbolFactory {
 		}
 		SpeciesDescription parent = model.getSpeciesDescription(p);
 		mDesc.setParent(parent);
-		// GuiUtils.debug("Parenting species " + mDesc.getName() + " with " + p);
 		for ( ISyntacticElement speciesNode : micro.getSpeciesChildren() ) {
 			parentSpecies(mDesc, speciesNode, model);
 		}

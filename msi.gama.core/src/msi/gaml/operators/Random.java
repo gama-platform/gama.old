@@ -23,7 +23,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.IMatrix;
@@ -39,7 +39,7 @@ import org.uncommons.maths.number.NumberGenerator;
 public class Random {
 
 	private static RandomUtils RANDOM(IScope scope) {
-		return scope.getSimulationScope().getExperiment().getRandomGenerator();
+		return GAMA.getRandom();
 	}
 
 	@operator(value = { "truncated_gauss", "TGauss" })
@@ -80,19 +80,18 @@ public class Random {
 	@doc(value = "A value from a normally distributed random variable with expected value (mean) and variance (standardDeviation). The probability density function of such a variable is a Gaussian.", special_cases = {
 		"when the operand is a point, it is read as {mean, standardDeviation}",
 		"when standardDeviation value is 0.0, it always returns the mean value" }, examples = {
-		"gauss({0,0.3})  --:  0.22354", "gauss({0,0.3})  --:  -0.1357" }, see = {
-		"truncated_gauss", "poisson" })
+		"gauss({0,0.3})  --:  0.22354", "gauss({0,0.3})  --:  -0.1357" }, see = { "truncated_gauss", "poisson" })
 	public static Double opGauss(final IScope scope, final GamaPoint point) {
 		final double mean = point.x;
 		final double sd = point.y;
 		return RANDOM(scope).createGaussian(mean, sd).nextValue();
 	}
+
 	@operator(value = "gauss")
 	@doc(value = "A value from a normally distributed random variable with expected value (mean) and variance (standardDeviation). The probability density function of such a variable is a Gaussian.", special_cases = {
 		"when the operand is a point, it is read as {mean, standardDeviation}",
 		"when standardDeviation value is 0.0, it always returns the mean value" }, examples = {
-		"gauss(0,0.3)  --:  0.22354", "gauss(0,0.3)  --:  -0.1357" }, see = {
-		"truncated_gauss", "poisson" })
+		"gauss(0,0.3)  --:  0.22354", "gauss(0,0.3)  --:  -0.1357" }, see = { "truncated_gauss", "poisson" })
 	public static Double opGauss(final IScope scope, final double mean, final double sd) {
 		return RANDOM(scope).createGaussian(mean, sd).nextValue();
 	}
@@ -131,8 +130,7 @@ public class Random {
 
 	@operator(value = "shuffle", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(examples = { "shuffle ([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]) --: [[\"c12\",\"c21\",\"c11\"],[\"c13\",\"c22\",\"c23\"]]" })
-	public static IMatrix opShuffle(final IScope scope, final IMatrix target)
-		throws GamaRuntimeException {
+	public static IMatrix opShuffle(final IScope scope, final IMatrix target) throws GamaRuntimeException {
 		IMatrix matrix2 = (IMatrix) target.copy(scope);
 		matrix2.shuffleWith(RANDOM(scope));
 		return matrix2;
@@ -146,8 +144,7 @@ public class Random {
 
 	@operator(value = "rnd")
 	@doc(value = "a random integer in the interval [0, operand]", comment = "to obtain a probability between 0 and 1, use the expression (rnd n) / n, where n is used to indicate the precision", special_cases = { "" }, examples = {
-		"rnd (2) --: 0, 1 or 2",
-		"rnd (1000) / 1000 --: a float between 0 and 1 with a precision of 0.001" }, see = { "flip" })
+		"rnd (2) --: 0, 1 or 2", "rnd (1000) / 1000 --: a float between 0 and 1 with a precision of 0.001" }, see = { "flip" })
 	public static Integer opRnd(final IScope scope, final Integer max) {
 		RandomUtils r = RANDOM(scope);
 		return r.between(0, max);

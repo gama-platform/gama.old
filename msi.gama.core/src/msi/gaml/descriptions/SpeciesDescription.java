@@ -54,9 +54,6 @@ public class SpeciesDescription extends TypeDescription {
 		final IChildrenProvider cp, final EObject source, final Facets facets) {
 		super(keyword, null, macroDesc, parent, cp, source, facets);
 		setSkills(facets.get(SKILLS), new HashSet());
-		// copyJavaAdditions();
-		// GuiUtils.debug("Creation of SpeciesDescription " + getName() + " sub-species of " + String.valueOf(parent));
-		// agentConstructor = parent.getAgentConstructor();
 	}
 
 	/**
@@ -70,7 +67,6 @@ public class SpeciesDescription extends TypeDescription {
 			facets.putAsLabel(CONTROL, ff.get(CONTROL).toString());
 		}
 		setSkills(ff.get(SKILLS), skills2);
-		// copyJavaAdditions();
 		setParent(parent);
 		setAgentConstructor(helper);
 	}
@@ -623,7 +619,6 @@ public class SpeciesDescription extends TypeDescription {
 			// TODO Try to find automatically the type given the "MIRROR" expression
 			addChild(DescriptionFactory.create(AGENT, this, NAME, TARGET));
 		}
-		// GuiUtils.debug("Finalizing the description of :" + getName());
 		control = (IArchitecture) AbstractGamlAdditions.getSkillInstanceFor(getControlName());
 		buildSharedSkills();
 		// recursively finalize the sorted micro-species

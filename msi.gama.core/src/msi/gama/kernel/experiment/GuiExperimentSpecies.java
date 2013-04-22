@@ -236,8 +236,11 @@ public class GuiExperimentSpecies extends GamlSpecies implements IExperimentSpec
 	public void userClose() {
 		GuiUtils.debug("GuiExperimentSpecies.userClose");
 		GAMA.updateSimulationState(GAMA.NOTREADY);
-		agent.closeSimulation();
-		agent.dispose();
+		if ( agent != null ) {
+			agent.closeSimulation();
+			agent.dispose();
+			agent = null;
+		}
 		GAMA.updateSimulationState();
 		if ( output != null ) {
 			output.dispose(true);
