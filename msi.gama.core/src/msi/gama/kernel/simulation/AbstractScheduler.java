@@ -46,7 +46,9 @@ public abstract class AbstractScheduler implements IScheduler {
 		alive = false;
 		on_user_hold = false;
 		agentsToInit.clear();
-		actions.clear();
+		if ( actions != null ) {
+			actions.clear();
+		}
 	}
 
 	@Override
