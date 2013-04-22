@@ -176,7 +176,7 @@ public class ParameterExpandItem extends Item {
 			} else {
 				title = getText();
 			}
-			gc.setFont(SwtGui.expandFont);
+			gc.setFont(SwtGui.getExpandfont());
 			drawX += ParameterExpandItem.SEPARATION;
 			Point size = gc.stringExtent(title);
 			gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY));
@@ -197,7 +197,7 @@ public class ParameterExpandItem extends Item {
 				} else {
 					gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 				}
-				gc.setFont(SwtGui.labelFont);
+				gc.setFont(SwtGui.getLabelfont());
 				drawX += size.x + SEPARATION;
 				size = gc.stringExtent(other);
 				gc.setClipping(drawX, y, endX - drawX, headerHeight);
@@ -229,7 +229,7 @@ public class ParameterExpandItem extends Item {
 			width += ParameterExpandItem.TEXT_INSET + imageWidth;
 		}
 		if ( getText().length() > 0 ) {
-			gc.setFont(SwtGui.expandFont);
+			gc.setFont(SwtGui.getExpandfont());
 			width += gc.stringExtent(getText()).x;
 		}
 		return width;

@@ -79,7 +79,7 @@ public class UserControlView extends GamaViewPart {
 		buttons.setLayoutData(data);
 		Label title = new Label(buttons, SWT.None);
 		title.setText("Control Panel on Agent " + scope.getAgentScope().getName());
-		title.setFont(SwtGui.bigFont);
+		title.setFont(SwtGui.getBigfont());
 		Button inspect = new Button(buttons, SWT.PUSH);
 		inspect.setText("Inspect");
 		inspect.setImage(SwtGui.panel_inspect);

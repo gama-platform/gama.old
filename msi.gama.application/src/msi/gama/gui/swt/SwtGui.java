@@ -76,6 +76,15 @@ public class SwtGui implements IGui {
 
 	protected SwtGui() {}
 
+	public static final Color COLOR_ERROR = new Color(Display.getDefault(), 0xF4, 0x00, 0x15);
+	public static final Color COLOR_OK = new Color(Display.getDefault(), 0x55, 0x8E, 0x1B);
+	public static final Color COLOR_WARNING = new Color(Display.getDefault(), 0xFD, 0xA6, 0x00);
+	private static Font expandFont;
+	private static Font bigFont;
+	private static Font labelFont;
+	public static final String PERSPECTIVE_MODELING_ID = "msi.gama.application.perspectives.ModelingPerspective";
+	public static final String PERSPECTIVE_SIMULATION_ID = "msi.gama.application.perspectives.SimulationPerspective";
+	private static Font unitFont;
 	public static final GridData labelData = new GridData(SWT.END, SWT.CENTER, false, false);
 	private static Logger log;
 	private static Status status = new Status();
@@ -115,7 +124,7 @@ public class SwtGui implements IGui {
 	public static Label createLeftLabel(final Composite parent, final String title) {
 		final Label label = new Label(parent, SWT.NONE);
 		label.setLayoutData(new GridData(SWT.END, SWT.CENTER, false, false));
-		label.setFont(labelFont);
+		label.setFont(getLabelfont());
 		label.setText(title);
 		return label;
 	}
@@ -615,26 +624,7 @@ public class SwtGui implements IGui {
 		public void partBroughtToTop(final IWorkbenchPart part) {}
 	}
 
-	public static final Color COLOR_ERROR = new Color(Display.getDefault(), 0xF4, 0x00, 0x15);
-
-	public static final Color COLOR_OK = new Color(Display.getDefault(), 0x55, 0x8E, 0x1B);
-
-	public static final Color COLOR_WARNING = new Color(Display.getDefault(), 0xFD, 0xA6, 0x00);
-
-	public static final Font expandFont;
-
-	public static final Font bigFont;
-
-	public static final Font labelFont;
-
-	public static final String PERSPECTIVE_MODELING_ID = "msi.gama.application.perspectives.ModelingPerspective";
-
-	/** The Constants perspective ids */
-	public static final String PERSPECTIVE_SIMULATION_ID = "msi.gama.application.perspectives.SimulationPerspective";
-
-	public static final Font unitFont;
-
-	static {
+	static void initFonts() {
 		FontData fd = Display.getDefault().getSystemFont().getFontData()[0];
 		fd.setStyle(1 << 0 /* SWT.BOLD */);
 		labelFont = new Font(Display.getDefault(), fd);
@@ -788,24 +778,7 @@ public class SwtGui implements IGui {
 				System.out.println("Gama perspective " + pluginID + " is loaded");
 			}
 		}
-		// }
 
-		/*
-		 * Class<IDisplaySurface> clazz = displayClasses.get(keyword);
-		 * if ( clazz == null ) { throw new GamaRuntimeException("Display " + keyword +
-		 * " is not defined anywhere."); }
-		 * try {
-		 * IDisplaySurface surface = clazz.newInstance();
-		 * // debug("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword +
-		 * // " display");
-		 * surface.initialize(w, h, layerDisplayOutput);
-		 * return surface;
-		 * } catch (InstantiationException e1) {
-		 * e1.printStackTrace();
-		 * } catch (IllegalAccessException e1) {
-		 * e1.printStackTrace();
-		 * }
-		 */
 		return false; // openPerspective(I);
 	}
 
@@ -984,6 +957,34 @@ public class SwtGui implements IGui {
 
 		});
 
+	}
+
+	public static Font getLabelfont() {
+		if ( labelFont == null ) {
+			initFonts();
+		}
+		return labelFont;
+	}
+
+	public static Font getBigfont() {
+		if ( bigFont == null ) {
+			initFonts();
+		}
+		return bigFont;
+	}
+
+	public static Font getExpandfont() {
+		if ( expandFont == null ) {
+			initFonts();
+		}
+		return expandFont;
+	}
+
+	public static Font getUnitFont() {
+		if ( unitFont == null ) {
+			initFonts();
+		}
+		return unitFont;
 	}
 
 }

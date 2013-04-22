@@ -161,7 +161,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 
 		if ( hasUnit ) {
 			unitLabel = new Label(comp, SWT.READ_ONLY);
-			unitLabel.setFont(SwtGui.unitFont);
+			unitLabel.setFont(SwtGui.getUnitFont());
 			unitLabel.setLayoutData(getParameterGridData());
 			unitLabel.setText(param.getUnitLabel());
 			unitLabel.pack();
