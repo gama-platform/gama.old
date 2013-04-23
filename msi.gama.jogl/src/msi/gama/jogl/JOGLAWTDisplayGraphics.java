@@ -1152,7 +1152,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	@Override
 	public void setAmbientLightValue(final GamaColor lightValue) {
-		myGLRender.ambiantLightValue = lightValue;
+		myGLRender.ambientLightValue = lightValue;
 	}
 
 	@Override

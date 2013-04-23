@@ -67,7 +67,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	// Lighting
 	private static boolean isLightOn;
-	public GamaColor ambiantLightValue;
+	public GamaColor ambientLightValue;
 
 	// Blending
 	private static boolean blendingEnabled; // blending on/off
@@ -158,7 +158,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		GLUtil.enableDepthTest(gl);
 
 		// Set up the lighting for Light-1
-		GLUtil.InitializeLighting(gl, glu, width, ambiantLightValue);
+		GLUtil.InitializeLighting(gl, glu, width, ambientLightValue);
 
 		// PolygonMode (Solid or lines)
 		if ( polygonmode ) {
@@ -232,7 +232,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			// Set background color
 			//gl.glClearColor(ambiantLightValue.floatValue(), ambiantLightValue.floatValue(), ambiantLightValue.floatValue(), 1.0f);
 			//The ambiant_light is always reset in case of dynamic lighting.
-			GLUtil.UpdateAmbiantLight(gl, glu, ambiantLightValue);
+			GLUtil.UpdateAmbiantLight(gl, glu, ambientLightValue);
 			
 			//Show triangulated polygon or not (trigger by GAMA)
 			if ( !displaySurface.Triangulation ) {

@@ -21,13 +21,11 @@ package msi.gama.common.interfaces;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaFile;
-
 import org.jfree.chart.JFreeChart;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -122,8 +120,8 @@ public interface IGraphics {
 	 * @param String name
 	 * @param z float
 	 */
-	public abstract Rectangle2D drawImage(final IScope scope, final BufferedImage img,
-		final Integer angle, final String name, float z);
+	public abstract Rectangle2D drawImage(final IScope scope, final BufferedImage img, final Integer angle,
+		final String name, float z);
 
 	/**
 	 * Method drawCircle.
@@ -134,8 +132,8 @@ public interface IGraphics {
 	 * @param height: height of the circle if using opengl and defining a z value
 	 *            (e.g: draw shape: circle z:1;)
 	 */
-	public abstract Rectangle2D drawCircle(final IScope scope, final Color c, final boolean fill,
-		final Color border, final Integer angle, final float height);
+	public abstract Rectangle2D drawCircle(final IScope scope, final Color c, final boolean fill, final Color border,
+		final Integer angle, final float height);
 
 	/**
 	 * Method drawTriangle.
@@ -146,8 +144,8 @@ public interface IGraphics {
 	 * @param height: height of the triangle if using opengl and defining a z value
 	 *            (e.g: draw shape: trinagle z:1;)
 	 */
-	public abstract Rectangle2D drawTriangle(final IScope scope, final Color c, final boolean fill,
-		final Color border, final Integer angle, final float height);
+	public abstract Rectangle2D drawTriangle(final IScope scope, final Color c, final boolean fill, final Color border,
+		final Integer angle, final float height);
 
 	/**
 	 * Method drawLine.
@@ -166,11 +164,11 @@ public interface IGraphics {
 	 * @param height: height of the rectangle if using opengl and defining a z value
 	 *            (e.g: draw shape: square size:2 color: global_color z:2;)
 	 */
-	public abstract Rectangle2D drawRectangle(final IScope scope, final Color color,
-		final boolean fill, final Color border, final Integer angle, final float height);
+	public abstract Rectangle2D drawRectangle(final IScope scope, final Color color, final boolean fill,
+		final Color border, final Integer angle, final float height);
 
 	/**
-	 * @param agent 
+	 * @param agent
 	 * @return
 	 *         Method drawString.
 	 * @param string String
@@ -190,9 +188,9 @@ public interface IGraphics {
 	 * @param angle Integer
 	 * @param z float
 	 */
-	public abstract Rectangle2D drawGeometry(final IScope scope, final Geometry geometry,
-		final Color color, final boolean fill, final Color border, final Integer angle, final boolean rounded);
-	
+	public abstract Rectangle2D drawGeometry(final IScope scope, final Geometry geometry, final Color color,
+		final boolean fill, final Color border, final Integer angle, final boolean rounded);
+
 	/**
 	 * Method drawGamaShape.
 	 * @param scope IScope
@@ -202,8 +200,8 @@ public interface IGraphics {
 	 * @param angle Integer
 	 * @param z float
 	 */
-	public abstract Rectangle2D drawGamaShape(final IScope scope, final GamaShape geometry,
-		final Color color, final boolean fill, final Color border, final Integer angle, final boolean rounded);
+	public abstract Rectangle2D drawGamaShape(final IScope scope, final GamaShape geometry, final Color color,
+		final boolean fill, final Color border, final Integer angle, final boolean rounded);
 
 	public abstract void setDrawingOffset(final int x, final int y);
 
@@ -229,8 +227,7 @@ public interface IGraphics {
 	 * @return
 	 */
 	// FIXME: Why defining 2 method drawImage
-	Rectangle2D drawImage(final IScope scope, BufferedImage img, Integer angle, boolean smooth,
-		String name, float z);
+	Rectangle2D drawImage(final IScope scope, BufferedImage img, Integer angle, boolean smooth, String name, float z);
 
 	/**
 	 * Draw grid as line
@@ -274,18 +271,18 @@ public interface IGraphics {
 	public boolean useTesselation(boolean useTesselation);
 
 	/*
-	 * Define if the value of the ambiant light (work only in Opengl)
+	 * Define if the value of the ambient light (work only in Opengl)
 	 */
 	public void setAmbientLightValue(GamaColor lightValue);
-	
+
 	/*
 	 * Define if polygon are drawn in solid(true) or as outlines (work only in Opengl)
 	 */
 	public boolean setPolygonMode(boolean polygonMode);
-	
+
 	/*
 	 * Define if polygon are drawn in solid(true) or as outlines (work only in Opengl)
 	 */
-	public abstract void drawDEM(final GamaFile demFileName,final GamaFile textureFileName);
+	public abstract void drawDEM(final GamaFile demFileName, final GamaFile textureFileName);
 
 }

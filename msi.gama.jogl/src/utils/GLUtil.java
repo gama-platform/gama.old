@@ -527,10 +527,10 @@ public class GLUtil {
 
     }
     
-    public static void InitializeLighting(GL gl, GLU glu,float widthEnv,GamaColor ambiantLightValue){
+    public static void InitializeLighting(GL gl, GLU glu,float widthEnv,GamaColor ambientLightValue){
     	
     	
-		float[] lightAmbientValue = { (float)ambiantLightValue.getRed()/255, (float)ambiantLightValue.getGreen()/255, (float)ambiantLightValue.getBlue()/255, 1.0f };
+		float[] lightAmbientValue = { (float)ambientLightValue.getRed()/255, (float)ambientLightValue.getGreen()/255, (float)ambientLightValue.getBlue()/255, 1.0f };
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
 		
 		// Diffuse light 0

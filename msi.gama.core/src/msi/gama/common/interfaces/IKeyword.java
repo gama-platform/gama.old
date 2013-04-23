@@ -34,7 +34,7 @@ public interface IKeyword {
 	public static final String AGENTS = "agents";
 	public static final String AGGREGATION = "aggregation";
 	public static final String ALL = "all";
-	public static final String AMBIANT_LIGHT = "ambiant_light";
+	public static final String AMBIENT_LIGHT = "ambient_light";
 	public static final String AMONG = "among";
 	public static final String ANNEALING = "annealing";
 	public static final String AREA = "area";
