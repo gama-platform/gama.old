@@ -568,7 +568,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	/**
 	 * Not use in Java2D
 	 */
-	public void SetAmbiantLightMeanValue(final GamaColor lightValue) {
+	public void setAmbientLightValue(final GamaColor lightValue) {
 		// TODO Auto-generated method stub
 	}
 
@@ -585,7 +585,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	/**
 	 * Not use in Java2D
 	 */
-	public void DrawDEM(GamaFile demFileName, GamaFile textureFileName) {
+	public void drawDEM(GamaFile demFileName, GamaFile textureFileName) {
 		// TODO Auto-generated method stub
 		
 	}

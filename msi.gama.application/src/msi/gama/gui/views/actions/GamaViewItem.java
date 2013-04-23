@@ -22,6 +22,7 @@ public abstract class GamaViewItem implements IContributionItem {
 
 	GamaViewPart view;
 	private final IContributionItem item;
+	boolean disposed = false;
 
 	GamaViewItem(final GamaViewPart view) {
 		this.view = view;
@@ -47,7 +48,15 @@ public abstract class GamaViewItem implements IContributionItem {
 	 */
 	@Override
 	public void dispose() {
-		item.dispose();
+		if ( disposed ) { return; }
+		try {
+			item.dispose();
+		} catch (org.eclipse.swt.SWTException e) {
+			// e.printStackTrace();
+		} finally {
+			disposed = true;
+		}
+
 	}
 
 	/**
