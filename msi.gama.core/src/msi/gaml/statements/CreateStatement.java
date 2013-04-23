@@ -183,7 +183,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		int num = max == null ? file.length(scope) : Math.min(file.length(scope), max);
 		for ( int i = 0; i < num; i++ ) {
 			GamaGisGeometry g = file.get(scope, i);
-			Map map = g.getAttributes();
+			Map map = g.createAttributes();
 			// The shape is added to the initial values
 			map.put(IKeyword.SHAPE, g);
 			// GIS attributes are mixed with the attributes of agents
