@@ -191,7 +191,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			}
 			
 			if ( surface.getMyGraphics() != null ) {
-			  surface.getMyGraphics().SetAmbiantLightMeanValue((GamaColor)ambiantLightColor);
+			  surface.getMyGraphics().setAmbientLightValue((GamaColor)ambiantLightColor);
 			}
 		}
 				
@@ -251,7 +251,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			// surface.setOutput3D(output3D);
 			surface.initOutput3D(output3D, output3DNbCycles);
 			surface.getMyGraphics().useTesselation(tesselation);
-			surface.getMyGraphics().SetAmbiantLightMeanValue((GamaColor)ambiantLightColor);
+			surface.getMyGraphics().setAmbientLightValue((GamaColor)ambiantLightColor);
 			surface.getMyGraphics().setPolygonMode(polygonmode);
 		}
 	}
