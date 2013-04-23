@@ -41,7 +41,7 @@ entities {
 		}	
 		
 		aspect image{
-			draw image: imageRaster size: 1;
+			draw imageRaster size: 1;
 		}
 		 
 		reflex wander{

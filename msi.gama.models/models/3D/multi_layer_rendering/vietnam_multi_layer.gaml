@@ -46,7 +46,7 @@ entities {
 	  file image;
 	  string label;		
 	  aspect image{
-		draw image:image  size : layerSize;
+		draw image  size : layerSize;
 		draw text:label;
 	  }
 	}

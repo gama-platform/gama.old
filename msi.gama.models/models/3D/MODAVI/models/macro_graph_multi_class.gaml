@@ -63,7 +63,7 @@ global {
 		create macroNode number: nbValuePerClass{	 
 			set self.class <-i;
 			set location <- {(cos (float((class-1)/nbValuePerClass)*360)*50 +50),(sin (float((class-1)/nbValuePerClass)*360)*50+50),0};
-			color <- color hsb_to_rgb ([i/nbValuePerClass,1.0,1.0]);
+			set color <- hsb (i/nbValuePerClass,1.0,1.0);
 			set i<-i+1;	
 			add self to: macroNodes;
 			do updatemyNodes;

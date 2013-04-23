@@ -37,7 +37,7 @@ entities {
 	  	set image <- file(folder.path+"/" + filename);
 	  }	
 	  aspect image{
-		draw image:image  size : layerSize;
+		draw image  size : layerSize;
 	  }
 	}
 }

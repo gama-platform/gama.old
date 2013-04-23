@@ -54,7 +54,7 @@ entities {
 	  string label;
 	  list my3DAgents of:ThreeDAgent;		
 	  aspect image{
-		draw image:image  size : layerSize;
+		draw image  size : layerSize;
 		draw text:label;
 	  }
 	}
