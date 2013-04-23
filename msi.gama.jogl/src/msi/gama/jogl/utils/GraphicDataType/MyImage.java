@@ -15,6 +15,7 @@ public class MyImage {
 	public BufferedImage image;
 	public IAgent agent;
 	public int textureId;
+	public boolean isTextured;
 	public float x;
 	public float y;
 	public float z;

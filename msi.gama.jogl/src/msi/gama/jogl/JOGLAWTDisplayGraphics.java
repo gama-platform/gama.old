@@ -28,14 +28,19 @@ import javax.media.opengl.glu.*;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.GraphicDataType.*;
+import msi.gama.jogl.utils.dem.DigitalElevationModelDrawer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.GamaFile;
 import msi.gaml.types.GamaGeometryType;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.jfree.chart.JFreeChart;
+
+import utils.GLUtil;
+
 import com.vividsolutions.jts.awt.*;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.index.quadtree.IntervalSize;
@@ -486,7 +491,15 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			AddImageInImages(img, null, curX, curY, z, this.envWidth, this.envHeight, name, angle, offSet);
 			rect.setRect(curX, curY, img.getWidth(), img.getHeight());
 		} else {
-			AddImageInImages(img, scope.getAgentScope(), curX, curY, z, curWidth, curHeight, name, angle, offSet);
+			if(scope!=null){
+			  AddImageInImages(img, scope.getAgentScope(), curX, curY, z, curWidth, curHeight, name,
+						angle, offSet);	
+			}
+			else{
+			  AddImageInImages(img, null, curX, curY, z, curWidth, curHeight, name,
+						angle, offSet);	
+			}
+			
 			rect.setRect(curX, curY, curWidth, curHeight);
 		}
 
@@ -716,13 +729,15 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		curImage.name = name;
 		// For grid display and quadtree display the image is recomputed every
 		// iteration
-		if ( curImage.name.equals("GridDisplay") == true || curImage.name.equals("QuadTreeDisplay") ) {
-			myGLRender.InitTexture(img, name);
-		} else {// For texture coming from a file there is no need to redraw it.
-			if ( !IsTextureExist(name) ) {
+
+	
+			if ( curImage.name.equals("GridDisplay") == true || curImage.name.equals("QuadTreeDisplay") ) {
 				myGLRender.InitTexture(img, name);
-			}
-		}
+			} else {// For texture coming from a file there is no need to redraw it.
+				if ( !IsTextureExist(name) ) {
+					myGLRender.InitTexture(img, name);
+				}
+			}	
 		this.myImages.add(curImage);
 
 	}
@@ -1135,7 +1150,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	}
 
 	@Override
-	public void setAmbiantLight(final float lightValue) {
+	public void SetAmbiantLightMeanValue(final Double lightValue) {
 		myGLRender.ambiantLightValue = lightValue;
 	}
 
@@ -1143,6 +1158,16 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public boolean setPolygonMode(boolean polygonMode) {
 
 		return myGLRender.polygonmode = polygonMode;
+	}
+
+	@Override
+	public void DrawDEM(GamaFile demFileName, GamaFile textureFileName) {
+		System.out.println("DEM in opengl" + demFileName.getPath() + "with " + textureFileName.getPath());
+		// FIXME: Need to be place somewhere (triggered by a button in Gama)
+				if ( this.myGLRender.dem != null ) {
+					DigitalElevationModelDrawer.InitDEM(this.myGLRender.gl, demFileName.getPath(), textureFileName.getPath());
+				}
+		
 	}
 
 }

@@ -20,10 +20,10 @@ public class DigitalElevationModelDrawer {
 
 	}
 	
-	public static void InitDEM(GL gl){
+	public static void InitDEM(GL gl,final String TEXTURE_FILEPATH, final String DEM_FILEPATH){
 		
-		final String TEXTURE_FILEPATH = "/Users/Arno/Desktop/DEM/Texture.png";
-		final String DEM_FILEPATH = "/Users/Arno/Desktop/DEM/DEM.png";
+		//final String TEXTURE_FILEPATH = "/Users/Arno/Desktop/DEM/Texture.png";
+		//final String DEM_FILEPATH = "/Users/Arno/Desktop/DEM/DEM.png";
 		
 	    terrain = gl.glGenLists(1);
         gl.glNewList(terrain, GL.GL_COMPILE);

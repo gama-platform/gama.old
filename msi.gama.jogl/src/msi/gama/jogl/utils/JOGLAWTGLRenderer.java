@@ -1,6 +1,8 @@
 package msi.gama.jogl.utils;
 
 import static javax.media.opengl.GL.*;
+
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.nio.FloatBuffer;
@@ -63,7 +65,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	// Lighting
 	private static boolean isLightOn;
-	public float ambiantLightValue;
+	public Double ambiantLightValue;
 
 	// Blending
 	private static boolean blendingEnabled; // blending on/off
@@ -186,42 +188,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		ThisRot.setIdentity(); // Reset Rotation
 		ThisRot.get(matrix);
 
-		// FIXME: Need to be place somewhere (triggered by a button in Gama)
-		if ( dem != null ) {
-			DigitalElevationModelDrawer.InitDEM(gl);
-		}
+		
 
 	}
 
-	@Override
-	public void reshape(GLAutoDrawable drawable, int arg1, int arg2, int arg3, int arg4) {
 
-		// Get the OpenGL graphics context
-		gl = drawable.getGL();
-
-		if ( height == 0 ) {
-			height = 1; // prevent divide by zero
-		}
-		float aspect = (float) width / height;
-
-		// Set the viewport (display area) to cover the entire window
-		gl.glViewport(0, 0, width, height);
-
-		// Enable the model view - any new transformations will affect the
-		// model-view matrix
-		gl.glMatrixMode(GL_MODELVIEW);
-		gl.glLoadIdentity(); // reset
-
-		// perspective view
-		gl.glViewport(10, 10, width - 20, height - 20);
-		gl.glMatrixMode(GL.GL_PROJECTION);
-		gl.glLoadIdentity();
-		glu.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
-		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getZPos(), camera.getXLPos(),
-			camera.getYLPos(), camera.getZLPos(), 0.0, 1.0, 0.0);
-		arcBall.setBounds(width, height);
-
-	}
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
@@ -254,6 +225,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			} else {
 				gl.glDisable(GL_LIGHTING);
 			}
+
+			//FIXME: Now the background is not updated but it should to have a night effect.
+			// Set background color
+			//gl.glClearColor(ambiantLightValue.floatValue(), ambiantLightValue.floatValue(), ambiantLightValue.floatValue(), 1.0f);
+			//The ambiant_light is always reset in case of dynamic lighting.
+			GLUtil.UpdateAmbiantLight(gl, glu, ambiantLightValue);
 			
 			//Show triangulated polygon or not (trigger by GAMA)
 			if ( !displaySurface.Triangulation ) {
@@ -386,6 +363,37 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 					-(realmousePositionPoint.y - ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2));
 
 		}
+
+	}
+	
+	
+	@Override
+	public void reshape(GLAutoDrawable drawable, int arg1, int arg2, int arg3, int arg4) {
+
+		// Get the OpenGL graphics context
+		gl = drawable.getGL();
+
+		if ( height == 0 ) {
+			height = 1; // prevent divide by zero
+		}
+		float aspect = (float) width / height;
+
+		// Set the viewport (display area) to cover the entire window
+		gl.glViewport(0, 0, width, height);
+
+		// Enable the model view - any new transformations will affect the
+		// model-view matrix
+		gl.glMatrixMode(GL_MODELVIEW);
+		gl.glLoadIdentity(); // reset
+
+		// perspective view
+		gl.glViewport(10, 10, width - 20, height - 20);
+		gl.glMatrixMode(GL.GL_PROJECTION);
+		gl.glLoadIdentity();
+		glu.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
+		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getZPos(), camera.getXLPos(),
+			camera.getYLPos(), camera.getZLPos(), 0.0, 1.0, 0.0);
+		arcBall.setBounds(width, height);
 
 	}
 

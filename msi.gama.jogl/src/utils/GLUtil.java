@@ -20,6 +20,7 @@ import static javax.media.opengl.GL.GL_LIGHT1;
 import static javax.media.opengl.GL.GL_POSITION;
 import static javax.media.opengl.GL.GL_TRIANGLES;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.net.URL;
 import java.nio.IntBuffer;
@@ -525,21 +526,21 @@ public class GLUtil {
 
     }
     
-    public static void InitializeLighting(GL gl, GLU glu,float widthEnv,float ambientMean){
+    public static void InitializeLighting(GL gl, GLU glu,float widthEnv,Double ambiantLightValue){
     	
     	
-		float[] lightAmbientValue = { ambientMean, ambientMean, ambientMean, 1.0f };
+		float[] lightAmbientValue = { ambiantLightValue.floatValue(), ambiantLightValue.floatValue(), ambiantLightValue.floatValue(), 1.0f };
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
 		
 		// Diffuse light 0
-		float[] lightDiffuseValue0 = { 0.5f, 0.5f, 0.5f, 1.0f };
+		float[] lightDiffuseValue0 = { 0.0f, 0.0f, 0.0f, 1.0f };
 		// Diffuse light location xyz (directed light)
 		float lightDiffusePosition0[] = { -widthEnv, 0.5f*widthEnv, 0.5f*widthEnv, 0.0f };
 		gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuseValue0, 0);
 		gl.glLightfv(GL.GL_LIGHT0, GL_POSITION, lightDiffusePosition0, 0);
 		
 		// Diffuse light 1
-		float diffuseMean=1f;
+		float diffuseMean=0f;
 		float[] lightDiffuseValue = { diffuseMean, diffuseMean, diffuseMean, 1.0f };
 		// Diffuse light location xyz (positioned light)
 		//float lightDiffusePosition[] = { 4.0f*widthEnv, 8.0f*widthEnv, widthEnv, 1.0f };
@@ -579,7 +580,16 @@ public class GLUtil {
         gl.glMaterialf(GL.GL_FRONT, GL.GL_SHININESS, 0.5f);
     }
     
+    public static void SetAmbiantLightFromValue(GL gl, GLU glu, Color c){
+    	float[] lightAmbientValue = { c.getRed(), c.getGreen(), c.getBlue(), 1.0f };
+		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
+    }
     
+    public static void UpdateAmbiantLight(GL gl, GLU glu, Double ambiantLightValue){
+    
+    	float[] lightAmbientValue = { ambiantLightValue.floatValue(), ambiantLightValue.floatValue(), ambiantLightValue.floatValue(), 1.0f };
+		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
+    }
 
     public static void DrawLight(GL gl, GLU glu){
     	gl.glTranslated(lightDiffusePosition[0], -lightDiffusePosition[1], lightDiffusePosition[2]);
