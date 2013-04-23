@@ -86,5 +86,21 @@ public class Colors {
 				.floatValue());
 		return new GamaColor(c1.getRed(), c1.getGreen(), c1.getBlue());
 	}
+	
+	@operator(value="hsb")
+	@doc(value = "Converts hsb value to Gama color", comment = "h=hue, s=saturation, b=brightness. h,s and b components should be floating-point values between 0.0 and 1.0.", 
+	examples = "set color <- hsb (60,0.5,0);"
+			+ "Hue value Red=(0.0,1.0,1.0), Yellow=(0.16,1.0,1.0), Green=(0.33,1.0,1.0), Cyan=(0.5,1.0,1.0), Blue=(0.66,1.0,1.0), Magenta=(0.83,1.0,1.0)", see = "")
+	public static GamaColor hsb(Double h, Double s, Double b) {
+	      return new GamaColor(Color.getHSBColor(h.floatValue(),s.floatValue(),b.floatValue()));
+	}
+	
+	@operator(value="rgb")
+	@doc(value = "rgb color", comment = "r=red, g=greeb, b=blue. Between 0 and 255", 
+	examples = "set color <- rgb (255,0,0);"
+			, see = "hsb")
+	public static GamaColor rgb(int r, int g, int b) {
+	      return new GamaColor(r, g, b);
+	}
 
 }

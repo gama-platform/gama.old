@@ -33,6 +33,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 import msi.gama.util.GamaList;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
@@ -55,7 +56,7 @@ import com.vividsolutions.jts.geom.Envelope;
 		LayeredDisplayOutput.OPENGL }, optional = true),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true),
-	@facet(name = IKeyword.AMBIANT_LIGHT, type = IType.FLOAT, optional = true),
+	@facet(name = IKeyword.AMBIANT_LIGHT, type = { IType.INT, IType.COLOR }, optional = true),
 	@facet(name = IKeyword.POLYGONMODE, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL, IType.POINT }, optional = true),
 	@facet(name = IKeyword.OUTPUT3D, type = { IType.BOOL, IType.POINT }, optional = true) }, omissible = IKeyword.NAME)
@@ -72,7 +73,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean autosave = false;
 	private boolean output3D = false;
 	private boolean tesselation = true;
-	private double ambiantLight = 1.0;
+	private Color ambiantLightColor = new GamaColor(255,255,255);
 	private boolean constantAmbientLight = true;
 	private boolean polygonmode = true;
 	private String displayType = JAVA2D;
@@ -129,7 +130,15 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		IExpression light = getFacet(IKeyword.AMBIANT_LIGHT);
 		if ( light != null ) {
-			ambiantLight = Cast.asFloat(getOwnScope(), light.value(getOwnScope()));
+			
+			if ( light.getType().equals(Types.get(IType.COLOR)) ) {
+				  ambiantLightColor = Cast.asColor(getOwnScope(), light.value(getOwnScope()));
+				}
+			else{	
+				int meanValue= Cast.asInt(getOwnScope(), light.value(getOwnScope()));
+				ambiantLightColor = new GamaColor(meanValue, meanValue, meanValue);
+			}
+			
 			if(light.isConst()){
 				constantAmbientLight = true;
 			}
@@ -172,11 +181,17 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if(!constantAmbientLight){
 			IExpression light = getFacet(IKeyword.AMBIANT_LIGHT);
 			if ( light != null ) {
-				ambiantLight = Cast.asFloat(getOwnScope(), light.value(getOwnScope()));
+				if ( light.getType().equals(Types.get(IType.COLOR)) ) {
+				  ambiantLightColor = Cast.asColor(getOwnScope(), light.value(getOwnScope()));
+				}
+				else{	
+					int meanValue= Cast.asInt(getOwnScope(), light.value(getOwnScope()));
+					ambiantLightColor = new GamaColor(meanValue, meanValue, meanValue);
+				}
 			}
 			
 			if ( surface.getMyGraphics() != null ) {
-			  surface.getMyGraphics().SetAmbiantLightMeanValue(ambiantLight);
+			  surface.getMyGraphics().SetAmbiantLightMeanValue((GamaColor)ambiantLightColor);
 			}
 		}
 				
@@ -236,7 +251,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			// surface.setOutput3D(output3D);
 			surface.initOutput3D(output3D, output3DNbCycles);
 			surface.getMyGraphics().useTesselation(tesselation);
-			surface.getMyGraphics().SetAmbiantLightMeanValue(ambiantLight);
+			surface.getMyGraphics().SetAmbiantLightMeanValue((GamaColor)ambiantLightColor);
 			surface.getMyGraphics().setPolygonMode(polygonmode);
 		}
 	}

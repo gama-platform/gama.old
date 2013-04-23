@@ -25,6 +25,7 @@ import java.awt.image.BufferedImage;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaFile;
 
 import org.jfree.chart.JFreeChart;
@@ -275,7 +276,7 @@ public interface IGraphics {
 	/*
 	 * Define if the value of the ambiant light (work only in Opengl)
 	 */
-	public void SetAmbiantLightMeanValue(Double lightValue);
+	public void SetAmbiantLightMeanValue(GamaColor lightValue);
 	
 	/*
 	 * Define if polygon are drawn in solid(true) or as outlines (work only in Opengl)
