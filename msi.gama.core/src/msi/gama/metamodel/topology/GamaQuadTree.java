@@ -396,8 +396,10 @@ public class GamaQuadTree implements ISpatialIndex {
 			}
 
 			if ( retVal ) { return true; }
-
-			System.out.println("agent " + env + " is not added to quadtree node; " + bounds);
+			IAgent a = o.getAgent();
+			String name = a != null ? "agent " + a.getName() : "shape";
+			name += " in " + env;
+			System.out.println(name + " is not added to quadtree node; " + bounds);
 			return false;
 		}
 
