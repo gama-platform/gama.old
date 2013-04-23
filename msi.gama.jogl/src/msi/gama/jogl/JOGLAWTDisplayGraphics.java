@@ -1151,7 +1151,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	}
 
 	@Override
-	public void SetAmbiantLightMeanValue(final GamaColor lightValue) {
+	public void setAmbientLightValue(final GamaColor lightValue) {
 		myGLRender.ambiantLightValue = lightValue;
 	}
 
@@ -1162,7 +1162,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	}
 
 	@Override
-	public void DrawDEM(GamaFile demFileName, GamaFile textureFileName) {
+	public void drawDEM(GamaFile demFileName, GamaFile textureFileName) {
 		System.out.println("DEM in opengl" + demFileName.getPath() + "with " + textureFileName.getPath());
 		// FIXME: Need to be place somewhere (triggered by a button in Gama)
 				if ( this.myGLRender.dem != null ) {
