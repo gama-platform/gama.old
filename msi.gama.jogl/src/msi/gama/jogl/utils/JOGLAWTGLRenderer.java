@@ -17,6 +17,8 @@ import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
 import msi.gama.jogl.utils.collada.ColladaReader;
 import msi.gama.jogl.utils.dem.DigitalElevationModelDrawer;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
+
 import org.geotools.data.simple.SimpleFeatureCollection;
 import utils.GLUtil;
 import com.sun.opengl.util.*;
@@ -65,7 +67,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	// Lighting
 	private static boolean isLightOn;
-	public Double ambiantLightValue;
+	public GamaColor ambiantLightValue;
 
 	// Blending
 	private static boolean blendingEnabled; // blending on/off

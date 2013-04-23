@@ -33,6 +33,7 @@ import javax.media.opengl.glu.GLUquadric;
 import org.eclipse.swt.opengl.GLData;
 
 import msi.gama.jogl.utils.MyGLToyDrawer;
+import msi.gama.util.GamaColor;
 
 public class GLUtil {
 
@@ -526,10 +527,10 @@ public class GLUtil {
 
     }
     
-    public static void InitializeLighting(GL gl, GLU glu,float widthEnv,Double ambiantLightValue){
+    public static void InitializeLighting(GL gl, GLU glu,float widthEnv,GamaColor ambiantLightValue){
     	
     	
-		float[] lightAmbientValue = { ambiantLightValue.floatValue(), ambiantLightValue.floatValue(), ambiantLightValue.floatValue(), 1.0f };
+		float[] lightAmbientValue = { (float)ambiantLightValue.getRed()/255, (float)ambiantLightValue.getGreen()/255, (float)ambiantLightValue.getBlue()/255, 1.0f };
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
 		
 		// Diffuse light 0
@@ -581,13 +582,13 @@ public class GLUtil {
     }
     
     public static void SetAmbiantLightFromValue(GL gl, GLU glu, Color c){
-    	float[] lightAmbientValue = { c.getRed(), c.getGreen(), c.getBlue(), 1.0f };
+    	float[] lightAmbientValue = { (float)c.getRed()/255, (float)c.getGreen()/255, (float)c.getBlue()/255, 1.0f };
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
     }
     
-    public static void UpdateAmbiantLight(GL gl, GLU glu, Double ambiantLightValue){
+    public static void UpdateAmbiantLight(GL gl, GLU glu, GamaColor ambiantLightValue){
     
-    	float[] lightAmbientValue = { ambiantLightValue.floatValue(), ambiantLightValue.floatValue(), ambiantLightValue.floatValue(), 1.0f };
+    	float[] lightAmbientValue = { (float)ambiantLightValue.getRed()/255, (float)ambiantLightValue.getGreen()/255, (float)ambiantLightValue.getBlue()/255, 1.0f };
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
     }
 

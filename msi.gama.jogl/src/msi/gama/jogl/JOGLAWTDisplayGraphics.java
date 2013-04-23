@@ -34,6 +34,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaFile;
 import msi.gaml.types.GamaGeometryType;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -1150,7 +1151,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	}
 
 	@Override
-	public void SetAmbiantLightMeanValue(final Double lightValue) {
+	public void SetAmbiantLightMeanValue(final GamaColor lightValue) {
 		myGLRender.ambiantLightValue = lightValue;
 	}
 
