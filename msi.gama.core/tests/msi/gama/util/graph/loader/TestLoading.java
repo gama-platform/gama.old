@@ -14,7 +14,8 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test graph loading
+ * Test graph loading: for each graph loader, ensures it raises
+ * exceptions if the file does not exists.
  * 
  * @author Samuel Thiriot
  *

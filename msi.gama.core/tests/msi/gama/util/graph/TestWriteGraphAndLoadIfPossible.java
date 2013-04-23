@@ -14,6 +14,7 @@ import msi.gama.util.graph.loader.GraphLoader;
 import msi.gama.util.graph.writer.AvailableGraphWriters;
 import msi.gama.util.graph.writer.IGraphWriter;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -55,7 +56,7 @@ public class TestWriteGraphAndLoadIfPossible {
 	private GamaGraph graph;
 	
 	// initialized before test
-	private String filename;
+	private File fileGraph;
 	private GamaGraph readen = null;
 	
 
@@ -81,14 +82,14 @@ public class TestWriteGraphAndLoadIfPossible {
     public void setUp() {
     	
     	// write with neutral ext
-    	filename = testWriteInDefinedFormat(graph, "tmp");
+    	fileGraph = testWriteInDefinedFormat(graph, "tmp");
     			
     	if (AvailableGraphParsers.getAvailableLoaders().contains(format)) {
 			System.out.println("this format is supported for reading, attempting to re-read this graph");
 			
 			readen = GraphLoader.loadGraph(
 					null, 
-					filename, 
+					fileGraph.getAbsolutePath(), 
 					null, 
 					null, 
 					null, 
@@ -96,7 +97,6 @@ public class TestWriteGraphAndLoadIfPossible {
 					format
 					);
 			assertNotNull(readen);
-			assertFalse(graph == readen);
 			//TestUtilsGraphs.compareGamaGraphs(format, graph, readen, 0); // TODO
 			
 		} else {
@@ -104,7 +104,7 @@ public class TestWriteGraphAndLoadIfPossible {
 			try {
 				readen = GraphLoader.loadGraph(
 						null, 
-						filename, 
+						fileGraph.getAbsolutePath(), 
 						null, 
 						null, 
 						null, 
@@ -117,6 +117,11 @@ public class TestWriteGraphAndLoadIfPossible {
 			} 
 		}
     }
+    
+    @After
+    public void tearDown() {
+    	fileGraph.delete();
+    }
 	
 	/**
 	 * Attempts to write the graph in the current format.
@@ -124,7 +129,7 @@ public class TestWriteGraphAndLoadIfPossible {
 	 * @param graph
 	 * @return
 	 */
-	private String testWriteInDefinedFormat(GamaGraph graph, String extension) {
+	private File testWriteInDefinedFormat(GamaGraph graph, String extension) {
 		
 		System.out.println("testing the writing in this format: "+format);
 		
@@ -143,7 +148,7 @@ public class TestWriteGraphAndLoadIfPossible {
 		assertFalse(file.isDirectory());
 		
 		System.out.println("(file was created)");
-		return file.getAbsolutePath();
+		return file;
 	}
 
 	/**
@@ -252,6 +257,13 @@ public class TestWriteGraphAndLoadIfPossible {
 					readen.containsEdge(source, target)
 			);
 		}
+	}
+	
+	@Test
+	public void notSameObjects() {
+		if (readen == null)
+			return;
+		assertNotSame(graph, readen);
 	}
 	
 	

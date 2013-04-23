@@ -32,7 +32,7 @@ public class TestUtilsGraphs {
 
 	}
 
-	protected static Collection<GamaGraph> getGamaGraphsForTest() {
+	public static Collection<GamaGraph> getGamaGraphsForTest() {
 		LinkedList<GamaGraph> graphs = new LinkedList<GamaGraph>();
 
 		GamaGraph g = null;

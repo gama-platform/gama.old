@@ -3,6 +3,8 @@ package msi.gama;
 import java.io.File;
 import java.io.IOException;
 
+import org.junit.rules.TemporaryFolder;
+
 /**
  * Various utils for tests, like creating tmp files, etc.
  * 
@@ -43,5 +45,30 @@ public class TestUtils {
 	
 	public static File getTmpFile(String name) {
 		return getTmpFile(name, "tmp");
+	}
+	
+	
+	public static File getTmpDirectory(String name) {
+		return getTmpFile(name, "tmp");
+	}
+	
+	public static File createTempDirectory() throws IOException {
+	    final File temp;
+
+	    temp = File.createTempFile("temp", Long.toString(System.nanoTime()));
+
+	    if(!(temp.delete()))
+	    {
+	        throw new IOException("Could not delete temp file: " + temp.getAbsolutePath());
+	    }
+
+	    if(!(temp.mkdir()))
+	    {
+	        throw new IOException("Could not create temp directory: " + temp.getAbsolutePath());
+	    }
+
+	    temp.deleteOnExit();
+	    
+	    return temp;
 	}
 }
