@@ -73,6 +73,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean output3D = false;
 	private boolean tesselation = true;
 	private double ambiantLight = 1.0;
+	private boolean constantAmbientLight = true;
 	private boolean polygonmode = true;
 	private String displayType = JAVA2D;
 	private ILocation imageDimension = new GamaPoint(-1, -1);
@@ -129,6 +130,13 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		IExpression light = getFacet(IKeyword.AMBIANT_LIGHT);
 		if ( light != null ) {
 			ambiantLight = Cast.asFloat(getOwnScope(), light.value(getOwnScope()));
+			if(light.isConst()){
+				constantAmbientLight = true;
+			}
+			else{
+				constantAmbientLight = false;
+			}
+			
 		}
 
 		IExpression poly = getFacet(IKeyword.POLYGONMODE);
@@ -161,17 +169,17 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public void update() throws GamaRuntimeException {
 		
 		///////////////// dynamic Lighting ///////////////////
-		// Use only for opengl to update the value of the light
-		IExpression light = getFacet(IKeyword.AMBIANT_LIGHT);
-		if ( light != null ) {
-			ambiantLight = Cast.asFloat(getOwnScope(), light.value(getOwnScope()));
+		if(!constantAmbientLight){
+			IExpression light = getFacet(IKeyword.AMBIANT_LIGHT);
+			if ( light != null ) {
+				ambiantLight = Cast.asFloat(getOwnScope(), light.value(getOwnScope()));
+			}
+			
+			if ( surface.getMyGraphics() != null ) {
+			  surface.getMyGraphics().SetAmbiantLightMeanValue(ambiantLight);
+			}
 		}
-		
-		if ( surface.getMyGraphics() != null ) {
-		  surface.getMyGraphics().SetAmbiantLightMeanValue(ambiantLight);
-		}
-		///////////////////////////////////////////////////////
-		
+				
 		// GUI.debug("Updating output " + getName());
 		if ( surface != null && surface.canBeUpdated() ) {
 			// GUI.debug("Updating the surface of output " + getName());
