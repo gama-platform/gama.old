@@ -1,114 +1,94 @@
 package msi.gama.util.graph.writer;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
-import java.util.*;
+import java.util.Collection;
+import java.util.LinkedList;
+
 import msi.gama.TestUtils;
+import msi.gama.util.PostponedWarningList;
 import msi.gama.util.graph.GamaGraph;
+import msi.gama.util.graph.TestUtilsGraphs;
+
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.*;
+import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Tests graph writing: no error raised and a file is exported.
+ * Tests graph writing:  for many graphs and all the graph writers, 
+ * ensures no error raised and a file is exported.
  * 
  * @author Samuel Thiriot
- * 
+ *
  */
 @RunWith(value = Parameterized.class)
 public class TestWriting {
 
 	@Parameters
-	public static Collection data() {
-		LinkedList params = new LinkedList();
-		for ( String format : AvailableGraphWriters.getAvailableWriters() ) {
-			String[] p = new String[1];
-			p[0] = format;
-			params.add(p);
-		}
-		return params;
-	}
-
+	 public static Collection data() {
+		
+	   LinkedList params = new LinkedList();
+	   for (String format: AvailableGraphWriters.getAvailableWriters()) {
+		   for (GamaGraph g: TestUtilsGraphs.getGamaGraphsForTest()) {
+			   Object[] p = new Object[2];
+			   p[0] = format;
+			   p[1] = g;
+			   params.add(p);   
+		   }
+	   }
+	   return params;
+	   
+	 }
+	
 	String format;
-
-	public TestWriting(String format) {
+	GamaGraph graph;
+	
+	public TestWriting(String format, GamaGraph graph) {
 		this.format = format;
+		this.graph = graph;
 	}
+	
+  @BeforeClass 
+    public static void setUpOnce() {
 
-	public void testAllWritersFileCreated(GamaGraph graph) {
+		// view graph loader & writers warnings
+		PostponedWarningList.writeSystemOut = true; 
 
+		
+    }
+  
+  	@Test
+	public void testWriting() {
+		
 		System.out.println("testing the writing for each accepted format for this graph...");
-
-		System.out.println("testing format : " + format);
-
-		File file = TestUtils.getTmpFile("emptyGraph");
-
+		
+		System.out.println("testing format : "+format);
+		
+		File file = TestUtils.getTmpFile("GamaTestWriteGraph");
+		
 		IGraphWriter writer = AvailableGraphWriters.getGraphWriter(format);
-		writer.writeGraph(null, new GamaGraph(null), null, file.getAbsolutePath());
-
+		writer.writeGraph(
+				null, 
+				graph, 
+				null, 
+				file.getAbsolutePath()
+				);
+		
 		assertTrue(file.exists());
 		assertFalse(file.isDirectory());
+		assertTrue(file.isFile());
 
 		System.out.println("(file was created)");
-
+		
+		file.delete();
+		
 	}
+	
 
-	@Test
-	public void testAllWritersFileCreatedForEmptyGraph() {
-		System.err.println("testing the writing of empty graphs...");
-		testAllWritersFileCreated(new GamaGraph(null));
-	}
-
-	@Test
-	public void testAllWritersFileCreatedSimpleGraph1WithoutAgents() {
-
-		GamaGraph g = new GamaGraph(null);
-		g.addVertex("1");
-		g.addVertex("2");
-		g.addVertex("3");
-
-		testAllWritersFileCreated(g);
-	}
-
-	@Test
-	public void testAllWritersFileCreatedSimpleGraph2WithoutAgents() {
-
-		GamaGraph g = new GamaGraph(null);
-		g.addVertex(1);
-		g.addVertex(2);
-		g.addVertex(3);
-
-		testAllWritersFileCreated(g);
-	}
-
-	@Test
-	public void testAllWritersFileCreatedSimpleGraph3WithoutAgents() {
-
-		GamaGraph g = new GamaGraph(null);
-		g.addVertex(1);
-		g.addVertex(2);
-		g.addVertex(3);
-
-		g.addEdge(1, 2);
-		g.addEdge(1, 3);
-
-		testAllWritersFileCreated(g);
-	}
-
-	@Test
-	public void testAllWritersFileCreatedSimpleGraphRedondantEdgesWithoutAgents() {
-
-		GamaGraph g = new GamaGraph(null);
-		g.addVertex(1);
-		g.addVertex(2);
-		g.addVertex(3);
-
-		g.addEdge(1, 2);
-		g.addEdge(1, 2);
-		g.addEdge(1, 3);
-
-		testAllWritersFileCreated(g);
-	}
+	
 
 }
