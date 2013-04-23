@@ -37,19 +37,20 @@ import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
 import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Display;
 
 /**
  * opens a file with a system editor / viewer
  * 
- * TODO make the "file:" ommissible
- * TODO add a parameter with to select the program. 
+ * TODO change the keywork "type" to something else
  * 
  * @author Samuel Thiriot
  *
  */
 @symbol(name = IKeyword.OPEN, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, with_args = true, remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
-@facets(value = { @facet(name = IKeyword.FILE, type = IType.STRING, optional = true)}) 
+@facets(value = { @facet(name = IKeyword.FILE, type = IType.STRING, optional = false),
+		@facet(name = IKeyword.TYPE, type = IType.ID, optional = true)}, omissible = IKeyword.FILE) 
 public class OpenStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
 	private Arguments init;
@@ -78,11 +79,8 @@ public class OpenStatement extends AbstractStatementSequence implements IStateme
 			return null;
 		}
 			
-		openFilename(scope, path);
-
 		// retrieve the optional "with" facet*
-		/* TODO when the "with" facet will be added
-		IExpression item = getFacet(IKeyword.WITH);
+		IExpression item = getFacet(IKeyword.TYPE);
 		String withParam  = null;
 		if (item != null) {
 			System.err.println("attempting to cast "+item);
@@ -90,19 +88,23 @@ public class OpenStatement extends AbstractStatementSequence implements IStateme
 				//getLiteral(IKeyword.WITH);
 		}
 		if (withParam == null) {
+			System.err.println("no program parameter, will open default editor");
 			openFilename(scope, path);
 		} else {
+			System.err.println("with program: "+withParam+" "+path);
 			openFilenameWithProgram(scope, path, withParam);
 		}
-	*/
-		
+	
 		return null;
 	}
 	
 	protected void openFilenameWithProgram(final IScope scope, String filename, String program) {
 		
 		try {
-			Runtime.getRuntime().exec(program+" "+filename);
+			ProcessBuilder pb = new ProcessBuilder(program, filename);
+			Process p = pb.start();
+			
+			//Runtime.getRuntime().exec(program+" "+filename);
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new GamaRuntimeException("error while attempting to open "+filename+" with program "+program+" ("+e.getMessage()+")");
@@ -127,21 +129,28 @@ public class OpenStatement extends AbstractStatementSequence implements IStateme
 		boolean opened = false;
 		
 		// open file
-		File f = new File(scope.getSimulationScope().getModel().getRelativeFilePath(filename, true));
+		final File f = new File(scope.getSimulationScope().getModel().getRelativeFilePath(filename, true));
 		if (!f.exists())
 			throw new GamaRuntimeException("unable to open this file, which does not exists: "+filename);
 		if (!f.canRead())
 			throw new GamaRuntimeException("unable to open this file, which is not readable: "+filename);
 		
-		if (!f.isDirectory()) {
+		if (!f.isDirectory() && Display.getDefault()!=null) {
 			
 			// second first: open with SWT utils. Not working for directories. Provides a feedback on the result
-			
-			opened = Program.launch(f.getAbsolutePath());
+			opened = true;
+			Display.getDefault().syncExec(new Runnable() {
+				
+				@Override
+				public void run() {
+					Program.launch(f.getAbsolutePath());
+					
+				}
+			});
 			
 		} 
 		
-		if (!opened && Desktop.isDesktopSupported()) {
+		if (!opened && Desktop.isDesktopSupported() && Desktop.getDesktop()!=null) {
 			// first option: recommanded solution in Java. Not supported everywhere, though.
 
 			try {
