@@ -44,7 +44,7 @@ entities {
 
 experiment basicGraph type: gui {
 	output {
-	  display graph_plus_bug type:opengl ambiant_light:0.2 {
+	  display graph_plus_bug type:opengl ambient_light:0.2 {
 	    	species bug aspect:base;
 	        species node aspect: base z:0 position: {125,0,0};
 	        species edge aspect: base z:0 position: {125,0,0};
@@ -53,7 +53,7 @@ experiment basicGraph type: gui {
 	        species edge aspect: dynamic z:0 position: {250,0,0};
 	    }
 	    
-	    display graph_plus_bug_layered type: opengl ambiant_light: 0.2 {
+	    display graph_plus_bug_layered type: opengl ambient_light: 0.2 {
 			species bug aspect: base;
 			species node aspect: base z: 0.2;
 			species edge aspect: base z: 0.2;

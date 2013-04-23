@@ -167,7 +167,7 @@ entities {
 
 /*experiment generate_graph type: gui {
 	output {	
-		display test_display type:opengl ambiant_light: 0.5	{
+		display test_display type:opengl ambient_light: 0.5	{
 					
 			species node aspect: base ; 
 			species edge aspect: base ;		

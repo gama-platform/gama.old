@@ -51,7 +51,7 @@ entities {
 }
 experiment display  type: gui {
 	output {
-		display Poincare refresh_every: 1   type:opengl ambiant_light:0.2{
+		display Poincare refresh_every: 1   type:opengl ambient_light:0.2{
 			species mySquare aspect:RoundCorner;					
 		}
 	}

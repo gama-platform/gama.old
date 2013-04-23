@@ -114,7 +114,7 @@ experiment road_traffic type: gui {
 
 	
 	output {
-		display city_display refresh_every: 1 type: opengl ambiant_light:0.1{
+		display city_display refresh_every: 1 type: opengl ambient_light:0.1{
 			species people aspect: base z:0;
 			species road aspect: base z:0.25;
 			species building aspect:base z:0.5;

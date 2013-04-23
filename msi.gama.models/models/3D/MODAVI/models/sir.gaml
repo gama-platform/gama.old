@@ -286,7 +286,7 @@ entities {
 experiment simulation type: gui { 
  	output {
  		
- 		 display modavi_display type:opengl ambiant_light: 0.2	{
+ 		 display modavi_display type:opengl ambient_light: 0.2	{
  		 	species Host aspect: basic;	
  		 	species node2 aspect: sphere z:0.2;
 	        species edge aspect: base z:0.2;

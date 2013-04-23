@@ -55,7 +55,7 @@ entities {
 }
 experiment cylinder type: gui {
 	output {
-		display Cylinder refresh_every: 1 type: opengl ambiant_light:0.4 {
+		display Cylinder refresh_every: 1 type: opengl ambient_light:0.4 {
 			species cells aspect:cylinder;
 		}
 	}
@@ -63,7 +63,7 @@ experiment cylinder type: gui {
 
 experiment sphere type: gui {
 	output {
-		display Sphere refresh_every: 1 type: opengl ambiant_light:0.4 {
+		display Sphere refresh_every: 1 type: opengl ambient_light:0.4 {
 			species cells aspect: sphere;
 		}
 	}

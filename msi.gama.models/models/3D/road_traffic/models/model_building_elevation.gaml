@@ -115,7 +115,7 @@ experiment road_traffic type: gui {
 	parameter 'Value of destruction when a people agent takes a road' var: destroy category: 'Road' ;
 	
 	output {
-		display city_display refresh_every: 1 type: opengl ambiant_light:0.2 background: rgb('black'){
+		display city_display refresh_every: 1 type: opengl ambient_light:0.2 background: rgb('black'){
 			species road aspect: base refresh:true ;
 			species people aspect: base ;
 			species building aspect:base ;

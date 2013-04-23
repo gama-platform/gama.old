@@ -84,28 +84,28 @@ experiment AugmentedGrid type:gui {
 			species cell aspect: base  refresh:false position: {0,0};
 		}*/
 		
-		display AugmentedDisplay  ambiant_light:0.5 polygonmode:true{	
+		display AugmentedDisplay  ambient_light:0.5 polygonmode:true{	
 		    species cell aspect: base  refresh:false position: {0,0};
 		    species cell aspect: square  refresh:true position: {width*1.1,0};	
 			species cell aspect: circle  refresh:true position: {width*2.3,0};
 			species cell aspect: cylinder  refresh:true position: {width*3.5,0};
 		}
 		
-		display Circle  ambiant_light:0.5 polygonmode:true{		
+		display Circle  ambient_light:0.5 polygonmode:true{		
 			species cell aspect: circle  refresh:true position: {0,0};
 			species cell aspect: square;
 			species cell aspect: cylinder;
 		}
 		
-		display Square  ambiant_light:0.5 polygonmode:true{		
+		display Square  ambient_light:0.5 polygonmode:true{		
 			species cell aspect: square  refresh:true position: {0,0};
 		}
 		
-		display Cylinder ambiant_light:0.5 polygonmode:true{		
+		display Cylinder ambient_light:0.5 polygonmode:true{		
 			species cell aspect: cylinder  refresh:true position: {0,0};
 		}
 		
-		display Box  ambiant_light:0.5 polygonmode:true{		
+		display Box  ambient_light:0.5 polygonmode:true{		
 			species cell aspect: box  refresh:true position: {0,0};
 		}
 	}

@@ -259,11 +259,11 @@ entities {
 experiment generate_graph type: gui {
 	output {	
 		
-		display RealModel  type:opengl ambiant_light: 0.4{
+		display RealModel  type:opengl ambient_light: 0.4{
 		  species node aspect: real ; 	
 		}
 		
-		display MODAVI type:opengl ambiant_light: 0.4{
+		display MODAVI type:opengl ambient_light: 0.4{
 			species node aspect: real z:0;
 			
 			species node aspect: proxy z:0.3; 

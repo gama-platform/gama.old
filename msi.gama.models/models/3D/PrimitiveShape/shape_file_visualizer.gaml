@@ -31,7 +31,7 @@ experiment display_shapefile type: gui {
 	
 
 	output {
-		display city_display refresh_every: 1 type: opengl ambiant_light:0.5{
+		display city_display refresh_every: 1 type: opengl ambient_light:0.5{
 			species myShape aspect: base refresh:false ;
 		}
 	}

@@ -7,7 +7,7 @@ model Graphic_primitive
 
 experiment display type: gui {
 	output {
-		display Poincare refresh_every: 1 type: opengl ambiant_light: 0.2 {
+		display Poincare refresh_every: 1 type: opengl ambient_light: 0.2 {
 			graphics GraphicPrimitive {
 				draw circle(10) color: rgb('red') at: { 0, 0, 0 };
 				draw cylinder(10, 5) color: rgb('red') at: { 25, 0, 0 };

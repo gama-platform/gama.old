@@ -177,7 +177,7 @@ entities {
 }
 experiment display  type: gui {
 	output {
-		display Display refresh_every: 1   type:opengl ambiant_light:0.8{
+		display Display refresh_every: 1   type:opengl ambient_light:0.8{
 			
 			//image name: 'Background' file: imageRaster.path;
 			

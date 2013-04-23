@@ -42,7 +42,7 @@ entities {
 }
 experiment display  type: gui {
 	output {
-		display WanderingSphere type:opengl ambiant_light:0.4 background: rgb('black'){
+		display WanderingSphere type:opengl ambient_light:0.4 background: rgb('black'){
 			species cells;
 		}
 	}
