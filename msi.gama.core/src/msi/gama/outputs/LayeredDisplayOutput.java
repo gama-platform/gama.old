@@ -159,6 +159,19 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public void update() throws GamaRuntimeException {
+		
+		///////////////// dynamic Lighting ///////////////////
+		// Use only for opengl to update the value of the light
+		IExpression light = getFacet(IKeyword.AMBIANT_LIGHT);
+		if ( light != null ) {
+			ambiantLight = Cast.asFloat(getOwnScope(), light.value(getOwnScope()));
+		}
+		
+		if ( surface.getMyGraphics() != null ) {
+		  surface.getMyGraphics().SetAmbiantLightMeanValue(ambiantLight);
+		}
+		///////////////////////////////////////////////////////
+		
 		// GUI.debug("Updating output " + getName());
 		if ( surface != null && surface.canBeUpdated() ) {
 			// GUI.debug("Updating the surface of output " + getName());
@@ -215,7 +228,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			// surface.setOutput3D(output3D);
 			surface.initOutput3D(output3D, output3DNbCycles);
 			surface.getMyGraphics().useTesselation(tesselation);
-			surface.getMyGraphics().setAmbiantLight((float) ambiantLight);
+			surface.getMyGraphics().SetAmbiantLightMeanValue(ambiantLight);
 			surface.getMyGraphics().setPolygonMode(polygonmode);
 		}
 	}

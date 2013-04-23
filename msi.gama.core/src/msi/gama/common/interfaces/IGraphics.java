@@ -25,6 +25,8 @@ import java.awt.image.BufferedImage;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.runtime.IScope;
+import msi.gama.util.file.GamaFile;
+
 import org.jfree.chart.JFreeChart;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -273,11 +275,16 @@ public interface IGraphics {
 	/*
 	 * Define if the value of the ambiant light (work only in Opengl)
 	 */
-	public void setAmbiantLight(float lightValue);
+	public void SetAmbiantLightMeanValue(Double lightValue);
 	
 	/*
-	 * Define if polygon are dran in solid(true) or as outlines (work only in Opengl)
+	 * Define if polygon are drawn in solid(true) or as outlines (work only in Opengl)
 	 */
 	public boolean setPolygonMode(boolean polygonMode);
+	
+	/*
+	 * Define if polygon are drawn in solid(true) or as outlines (work only in Opengl)
+	 */
+	public abstract void DrawDEM(final GamaFile demFileName,final GamaFile textureFileName);
 
 }

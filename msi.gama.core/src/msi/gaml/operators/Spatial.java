@@ -33,6 +33,7 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.util.file.GamaFile;
 import msi.gama.util.matrix.IMatrix;
 import msi.gama.util.path.*;
 import msi.gaml.species.ISpecies;
@@ -1662,6 +1663,21 @@ public abstract class Spatial {
 		public static IShape add_z_pt(final IShape geom, final GamaPoint data) {
 			geom.getInnerGeometry().getCoordinates()[(int) data.x].z = data.y;
 			return geom;
+		}
+		
+				
+		@operator("dem")
+		@doc(value = "A polygon that equivalent to the surface of the texture", 
+		     special_cases = { "returns a point if the operand is lower or equal to 0." }, 
+		     comment = "", examples = { "dem(dem,texture) --: returns a geometry as a rectangle of weight and height equal to the texture." }, 
+		     see = {
+			})
+		public static IShape dem(final IScope scope, final GamaFile demFileName, final GamaFile textureFileName) {
+			//scope.getGraphics().InitDEM(demFileName,textureFileName);
+			ILocation location;
+			IAgent a = scope.getAgentScope();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			return GamaGeometryType.buildRectangle(100, 100, location);
 		}
 	}
 
