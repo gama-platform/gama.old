@@ -540,7 +540,7 @@ public class GLUtil {
 		gl.glLightfv(GL.GL_LIGHT0, GL_POSITION, lightDiffusePosition0, 0);
 		
 		// Diffuse light 1
-		float diffuseMean=0f;
+		float diffuseMean=1f;
 		float[] lightDiffuseValue = { diffuseMean, diffuseMean, diffuseMean, 1.0f };
 		// Diffuse light location xyz (positioned light)
 		//float lightDiffusePosition[] = { 4.0f*widthEnv, 8.0f*widthEnv, widthEnv, 1.0f };
