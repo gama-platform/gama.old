@@ -276,7 +276,7 @@ public interface IGraphics {
 	/*
 	 * Define if the value of the ambiant light (work only in Opengl)
 	 */
-	public void SetAmbiantLightMeanValue(GamaColor lightValue);
+	public void setAmbientLightValue(GamaColor lightValue);
 	
 	/*
 	 * Define if polygon are drawn in solid(true) or as outlines (work only in Opengl)
@@ -286,6 +286,6 @@ public interface IGraphics {
 	/*
 	 * Define if polygon are drawn in solid(true) or as outlines (work only in Opengl)
 	 */
-	public abstract void DrawDEM(final GamaFile demFileName,final GamaFile textureFileName);
+	public abstract void drawDEM(final GamaFile demFileName,final GamaFile textureFileName);
 
 }
