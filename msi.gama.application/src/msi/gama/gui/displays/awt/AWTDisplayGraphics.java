@@ -30,6 +30,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
+import msi.gama.util.file.GamaFile;
 import msi.gaml.operators.Maths;
 import org.jfree.chart.JFreeChart;
 import com.vividsolutions.jts.awt.*;
@@ -566,7 +567,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	/**
 	 * Not use in Java2D
 	 */
-	public void setAmbiantLight(final float lightValue) {
+	public void SetAmbiantLightMeanValue(final Double lightValue) {
 		// TODO Auto-generated method stub
 	}
 
@@ -577,5 +578,14 @@ public class AWTDisplayGraphics implements IGraphics {
 	public boolean setPolygonMode(final boolean polygonMode) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	/**
+	 * Not use in Java2D
+	 */
+	public void DrawDEM(GamaFile demFileName, GamaFile textureFileName) {
+		// TODO Auto-generated method stub
+		
 	}
 }
