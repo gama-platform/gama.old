@@ -30,6 +30,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
+import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaFile;
 import msi.gaml.operators.Maths;
 import org.jfree.chart.JFreeChart;
@@ -567,7 +568,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	/**
 	 * Not use in Java2D
 	 */
-	public void SetAmbiantLightMeanValue(final Double lightValue) {
+	public void SetAmbiantLightMeanValue(final GamaColor lightValue) {
 		// TODO Auto-generated method stub
 	}
 
