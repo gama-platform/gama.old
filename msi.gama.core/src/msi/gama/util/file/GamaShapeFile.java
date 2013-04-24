@@ -19,7 +19,8 @@
 package msi.gama.util.file;
 
 import java.io.*;
-import msi.gama.common.util.GisUtils;
+import java.util.List;
+import msi.gama.common.util.*;
 import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -30,7 +31,8 @@ import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.*;
 import org.geotools.feature.*;
 import org.opengis.feature.simple.*;
-import com.vividsolutions.jts.geom.Envelope;
+import org.opengis.feature.type.*;
+import com.vividsolutions.jts.geom.*;
 
 /**
  * Written by drogoul
@@ -97,8 +99,9 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 		if ( features == null ) { return; }
 		while (features.hasNext()) {
 			SimpleFeature feature = features.next();
-			if ( feature.getDefaultGeometry() != null ) {
-				((IList) buffer).add(new GamaGisGeometry(scope, feature));
+			Geometry g = (Geometry) feature.getDefaultGeometry();
+			if ( g != null ) {
+				((IList) buffer).add(new GamaGisGeometry(scope, g, feature));
 			}
 		}
 		features.close();
@@ -111,6 +114,14 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 			String name = store.getTypeNames()[0];
 			FeatureSource<SimpleFeatureType, SimpleFeature> source = store.getFeatureSource(name);
 			FeatureCollection<SimpleFeatureType, SimpleFeature> featureShp = source.getFeatures();
+			SimpleFeatureType type = store.getSchema();
+			List<AttributeDescriptor> descriptors = type.getAttributeDescriptors();
+			for ( AttributeDescriptor ad : descriptors ) {
+				GuiUtils.debug("Type of attribute " + ad.getLocalName() + ": " +
+					ad.getType().getBinding().getSimpleName() + "; is geometry? " +
+					(ad.getType() instanceof GeometryType));
+			}
+
 			if ( store.getSchema().getCoordinateReferenceSystem() != null ) {
 				ShpFiles shpf = new ShpFiles(file);
 				double latitude = featureShp.getBounds().centre().x;

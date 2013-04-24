@@ -20,6 +20,7 @@ package msi.gama.metamodel.shape;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
+import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -38,17 +39,19 @@ public class GamaGisGeometry extends GamaShape {
 		init(scope.getSimulationScope().getGisUtils().transform(g), null);
 	}
 
-	public GamaGisGeometry(IScope scope, final SimpleFeature feature) {
-		init(scope.getSimulationScope().getGisUtils().transform((Geometry) feature.getDefaultGeometry()), feature);
+	public GamaGisGeometry(IScope scope, Geometry g, final SimpleFeature feature) {
+		init(scope.getSimulationScope().getGisUtils().transform(g), feature);
 	}
 
 	private void init(final Geometry g, SimpleFeature feature) {
 		setInnerGeometry(g);
 		// FIXME Disabled for the moment as the increase of memory usage is quite big
 		// Probably we should filter ?
-		// for ( Property p : feature.getProperties() ) {
-		// setAttribute(p.getName().getLocalPart(), p.getValue());
-		// }
+		for ( Property p : feature.getProperties() ) {
+			if ( !Geometry.class.isAssignableFrom(p.getType().getBinding()) ) {
+				setAttribute(p.getName().getLocalPart(), p.getValue());
+			}
+		}
 	}
 
 	/**
@@ -57,6 +60,7 @@ public class GamaGisGeometry extends GamaShape {
 	 */
 	@Override
 	public void setAgent(IAgent a) {
+		super.setAgent(a);
 		a.setExtraAttributes(attributes);
 	}
 
