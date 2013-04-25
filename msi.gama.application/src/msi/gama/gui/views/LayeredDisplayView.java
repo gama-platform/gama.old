@@ -26,6 +26,7 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.layers.AbstractLayer;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.swing.EmbeddedSwingComposite;
+import msi.gama.outputs.GuiOutputManager;
 import msi.gama.outputs.LayeredDisplayOutput;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -60,7 +61,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		// Add the toggle 3D view button for opengl display
 		if ( this.output.getDescription().getFacets().equals("type", "opengl") ) { return new Integer[] {
 			PAUSE, REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT, SEPARATOR,
-			ZOOM_IN, ZOOM_OUT, ZOOM_FIT, CAMERA, FOCUS, SEPARATOR, ARCBALL,PICKING,SELECT_RECTANGLE, SHAPEFILE , SEPARATOR, TRIANGULATION}; }
+			ZOOM_IN, ZOOM_OUT, ZOOM_FIT, CAMERA, FOCUS, SEPARATOR, ARCBALL,PICKING,SELECT_RECTANGLE, SHAPEFILE , SEPARATOR, TRIANGULATION, SPLITLAYER}; }
 		return new Integer[] { PAUSE, REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT,
 			SEPARATOR, ZOOM_IN, ZOOM_OUT, ZOOM_FIT, FOCUS, SEPARATOR, HIGHLIGHT_COLOR };
 	}
@@ -165,6 +166,8 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			public void mouseDragged(final java.awt.event.MouseEvent e) {}
 		};
 
+		GuiOutputManager.WaitingViews++; // incremented in the SWT thread
+
 		swingCompo =
 			new EmbeddedSwingComposite(parent, SWT.NO_REDRAW_RESIZE | SWT.NO_BACKGROUND,
 				getOutput()) {
@@ -174,6 +177,8 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 					JComponent frameAwt = (JComponent) getOutput().getSurface();
 					getFrame().addMouseListener(mlAwt);
 					getFrame().addMouseMotionListener(mlAwt2);
+					GuiOutputManager.WaitingViews--; // decremented at the end of the AWT thread
+                    // so we are sure the surface has finished its initialization.
 					return frameAwt;
 				}
 			};
@@ -426,6 +431,27 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 					}
 				}
 				surface.toggleTriangulation();
+
+			}
+		}).start();
+	}
+	
+	@Override
+	public void toggleSplitLayer() {
+
+		new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				IDisplaySurface surface = getDisplaySurface();
+				while (!surface.canBeUpdated()) {
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+
+					}
+				}
+				surface.toggleSplitLayer();
 
 			}
 		}).start();

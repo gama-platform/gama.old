@@ -295,7 +295,8 @@ public abstract class Spatial {
 			if ( size == 2 ) { return GamaGeometryType.buildPlan(first, shapes.last(scope), depth); }
 			return GamaGeometryType.buildPolyplan(shapes, depth);
 		}
-
+		
+		
 		@operator({ "link" })
 		@doc(value = "A link between the 2 elements of the pair.", special_cases = {
 			"if the operand is nil, link returns a point {0,0}",

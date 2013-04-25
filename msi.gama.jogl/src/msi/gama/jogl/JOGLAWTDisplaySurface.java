@@ -36,6 +36,7 @@ import msi.gama.common.util.*;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.gui.views.SWTNavigationPanel;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
+import msi.gama.jogl.utils.GraphicDataType.MyImage;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
@@ -86,6 +87,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	private ActionListener menuListener;
 	private ActionListener focusListener;
 
+
 	// Environment properties useful to set the camera position.
 	public float envWidth, envHeight;
 
@@ -103,6 +105,9 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	
 	// Use to toggle the Triangulation view
     public boolean Triangulation = false;
+    
+    // Use to toggle the SplitLayer view
+    public boolean SplitLayer = false;
 
 	// Use to draw .shp file
 	final String[] shapeFileName = new String[1];
@@ -695,6 +700,25 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	public void toggleTriangulation() {
 		Triangulation = ! Triangulation;
 	}
+	
+	@Override
+	public void toggleSplitLayer() {
+
+		SplitLayer = ! SplitLayer;		
+		int nbLayers= this.getManager().getItems().size();
+		int i=0;
+		Iterator<ILayer> it = this.getManager().getItems().iterator();
+			while (it.hasNext()) {
+				ILayer curLayer = it.next();
+				if(SplitLayer){//Split layer
+					curLayer.setElevation((double)i/nbLayers);
+				}
+				else{//put all the layer at zero
+					curLayer.setElevation(0.0);
+				}			
+				i++;
+			}
+	}
 
 	/**
 	 * Add a simple feature collection from a .Shp file.
@@ -902,4 +926,8 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	public void setBgColor(final Color bgColor) {
 		this.bgColor = bgColor;
 	}
+
+	
+	
+
 }

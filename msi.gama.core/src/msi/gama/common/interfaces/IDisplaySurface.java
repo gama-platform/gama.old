@@ -81,6 +81,11 @@ public interface IDisplaySurface {
 	 * Show the triangulation (Only with Opengl view)
 	 */
 	void toggleTriangulation();
+	
+	/**
+	 * Split species layer in 3D
+	 */
+	void toggleSplitLayer();
 
 	ILayerManager getManager();
 

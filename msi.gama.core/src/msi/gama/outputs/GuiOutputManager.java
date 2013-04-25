@@ -33,6 +33,8 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 	private final Map<String, MonitorOutput> monitorOutputs = new HashMap();
 	private final Inspect inspect = new Inspect();
 	List<GamaSelectionListener> listeners = new ArrayList();
+	
+	public static volatile int WaitingViews;
 
 	public GuiOutputManager() {}
 

@@ -191,13 +191,16 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			}
 		}
 
-		// GUI.debug("Updating output " + getName());
-		if ( surface != null && surface.canBeUpdated() ) {
-			// GUI.debug("Updating the surface of output " + getName());
-			surface.updateDisplay();
-			// Use to define which technique is used in opengl to triangulate polygon
+		if (GuiOutputManager.WaitingViews == 0){
+			// GUI.debug("Updating output " + getName());
+			if ( surface != null && surface.canBeUpdated() ) {
+				// GUI.debug("Updating the surface of output " + getName());
+				surface.updateDisplay();
+				// Use to define which technique is used in opengl to triangulate polygon
 
+			}
 		}
+		
 	}
 
 	@Override

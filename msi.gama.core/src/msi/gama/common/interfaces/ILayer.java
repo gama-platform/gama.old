@@ -51,6 +51,8 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	double getYScale();
 
 	void setOpacity(Double value);
+	
+	void setElevation(Double value);
 
 	void updateEnvDimensions(double env_width, double env_height);
 

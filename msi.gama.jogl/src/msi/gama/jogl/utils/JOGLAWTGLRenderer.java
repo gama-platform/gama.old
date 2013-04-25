@@ -186,16 +186,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		LastRot.setIdentity(); // Reset Rotation
 		ThisRot.setIdentity(); // Reset Rotation
 		ThisRot.get(matrix);
-		
+	
 		//FIXME: Need to be place somewhere (triggered by a button in Gama)
 		/*if(dem !=null){
 			dem.InitDEM(gl);        
 		}*/
-
+     
 		isInitialized = true;
 		System.out.println("openGL init ok");
-		
-
 	}
 
 

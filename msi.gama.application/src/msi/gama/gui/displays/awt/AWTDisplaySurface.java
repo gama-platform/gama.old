@@ -674,6 +674,15 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	public void toggleTriangulation() {
 		System.out.println("toggleTriangulation tool is only available for Opengl Display");
 	}
+	
+	/**
+	 * This method does nothing for JAVA2D display
+	 */
+	@Override
+	public void toggleSplitLayer() {
+		System.out.println("toggleSplitLayer tool is only available for Opengl Display");
+		
+	}
 
 	/**
 	 * This method does nothing for JAVA2D display
@@ -707,4 +716,8 @@ public final class AWTDisplaySurface extends JPanel implements IDisplaySurface {
 	public void initOutput3D(boolean output3d, ILocation output3dNbCycles) {
 		;
 	}
+
+	
+
+
 }

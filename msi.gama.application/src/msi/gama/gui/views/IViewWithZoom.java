@@ -39,6 +39,11 @@ public interface IViewWithZoom {
 	 */
 	public void toggleTriangulation();
 	
+	/**
+	 * Split species layer in 3D
+	 */
+	public void toggleSplitLayer();
+	
 	public void snapshot();
 	
 	/**
@@ -52,5 +57,6 @@ public interface IViewWithZoom {
 	 * Enable to load a .Shp file and display it
 	 */
 	public void addShapeFile();
+	
 	
 }

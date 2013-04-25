@@ -173,6 +173,7 @@ public abstract class AbstractLayer implements ILayer {
 		definition.getBox().setExtent(p);
 	}
 
+	@Override
 	public void setElevation(final Double elevation) {
 		definition.setElevation(elevation);
 	}

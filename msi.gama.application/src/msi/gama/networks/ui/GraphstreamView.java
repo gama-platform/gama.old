@@ -569,6 +569,15 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 	public void toggleTriangulation() {
 		System.out.println("triangulation tool is only available for Opengl Display");
 	}
+	
+	/**
+	 * This method does nothing for Graphstream display
+	 */
+	@Override
+	public void toggleSplitLayer() {
+		System.out.println("toggleSplitLayer tool is only available for Opengl Display");
+		
+	}
 
 	/**
 	 * This method does nothing for Graphstream display
