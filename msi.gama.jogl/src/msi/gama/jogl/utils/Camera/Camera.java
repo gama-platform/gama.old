@@ -320,7 +320,7 @@ public class Camera {
 		this.setzPos(maxDim*2);
 		this.setzLPos(0.0f);
 		}
-		//this.PrintParam();
+		this.PrintParam();
 	}
 	
 	

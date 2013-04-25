@@ -786,8 +786,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		this.myStrings.add(curString);
 
 	}
-
-	// /////////////// Draw Method ////////////////////
+	///////////////// Draw Method ////////////////////
 
 	/**
 	 * Once the list of JTSGeometries has been created, OpenGL display call this
@@ -1158,6 +1157,16 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		// if ( this.myGLRender.getDem() != null ) {
 		myGLRender.dem.init(this.myGLRender.gl);// , demFileName.getPath(), textureFileName.getPath());
 		// }
+	}
+	@Override
+	public  void setCameraPosition(final ILocation camPos){
+        
+		if(camPos.equals(new GamaPoint(-1,-1,-1))){//No change
+			System.out.println("no change");	
+		}
+		else{
+			myGLRender.camera.updatePosition(camPos.getX(), camPos.getY(), camPos.getZ());
+		}
 	}
 
 }

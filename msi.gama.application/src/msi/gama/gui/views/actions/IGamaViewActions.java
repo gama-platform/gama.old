@@ -12,7 +12,6 @@ package msi.gama.gui.views.actions;
  * 
  */
 public interface IGamaViewActions {
-
 	public final static int PAUSE = 0;
 	public final static int REFRESH = 1;
 	public final static int SNAPSHOT = 2;
@@ -35,5 +34,4 @@ public interface IGamaViewActions {
 	public final static int SELECT_RECTANGLE = 19;
 	public final static int TRIANGULATION = 20;
 	public final static int SPLITLAYER = 21;
-
 }

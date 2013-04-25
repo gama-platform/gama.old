@@ -23,6 +23,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaFile;
@@ -284,5 +285,10 @@ public interface IGraphics {
 	 * Define if polygon are drawn in solid(true) or as outlines (work only in Opengl)
 	 */
 	public abstract void drawDEM(final GamaFile demFileName, final GamaFile textureFileName);
+	
+	/*
+	 * Define the camera position (work only in Opengl)
+	 */
+	public abstract void setCameraPosition(final ILocation camPos);
 
 }

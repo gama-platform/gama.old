@@ -27,7 +27,9 @@ import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
@@ -586,6 +588,15 @@ public class AWTDisplayGraphics implements IGraphics {
 	 * Not use in Java2D
 	 */
 	public void drawDEM(GamaFile demFileName, GamaFile textureFileName) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	/**
+	 * Not use in Java2D
+	 */
+	public void setCameraPosition(ILocation camPos) {
 		// TODO Auto-generated method stub
 		
 	}

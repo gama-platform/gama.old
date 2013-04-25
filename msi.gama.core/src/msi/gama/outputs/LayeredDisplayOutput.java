@@ -39,6 +39,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
+
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -56,6 +57,7 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.AMBIENT_LIGHT, type = { IType.INT, IType.COLOR }, optional = true),
+	@facet(name = IKeyword.CAMERA_POS, type = IType.POINT, optional = true),
 	@facet(name = IKeyword.POLYGONMODE, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL, IType.POINT }, optional = true),
 	@facet(name = IKeyword.OUTPUT3D, type = { IType.BOOL, IType.POINT }, optional = true) }, omissible = IKeyword.NAME)
@@ -73,7 +75,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean output3D = false;
 	private boolean tesselation = true;
 	private Color ambientLightColor = new GamaColor(255, 255, 255);
+	//Set it to (-1,-1,-1) to set the camera with the right value if no value defined.
+	private ILocation cameraPos = new GamaPoint(-1,-1,-1);
 	private boolean constantAmbientLight = true;
+	private boolean constantCamera = true;
 	private boolean polygonmode = true;
 	private String displayType = JAVA2D;
 	private ILocation imageDimension = new GamaPoint(-1, -1);
@@ -144,6 +149,18 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			}
 
 		}
+		
+		IExpression camera = getFacet(IKeyword.CAMERA_POS);
+		if ( camera != null ) {
+			cameraPos = Cast.asPoint(getOwnScope(), camera.value(getOwnScope()));
+
+			if ( camera.isConst() ) {
+				constantCamera= true;
+			} else {
+				constantCamera = false;
+			}
+
+		}
 
 		IExpression poly = getFacet(IKeyword.POLYGONMODE);
 		if ( poly != null ) {
@@ -188,6 +205,19 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 			if ( surface.getMyGraphics() != null ) {
 				surface.getMyGraphics().setAmbientLightValue((GamaColor) ambientLightColor);
+			}
+		}
+		
+		
+		///////////////////// dynamic camera ///////////////////		
+		if ( !constantCamera ) {
+			IExpression camera = getFacet(IKeyword.CAMERA_POS);
+			if ( camera != null ) {
+			  cameraPos = Cast.asPoint(getOwnScope(), camera.value(getOwnScope()));
+			}
+
+			if ( surface.getMyGraphics() != null ) {
+				surface.getMyGraphics().setCameraPosition((GamaPoint) cameraPos);
 			}
 		}
 
@@ -252,6 +282,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			surface.getMyGraphics().useTesselation(tesselation);
 			surface.getMyGraphics().setAmbientLightValue((GamaColor) ambientLightColor);
 			surface.getMyGraphics().setPolygonMode(polygonmode);
+			surface.getMyGraphics().setCameraPosition(cameraPos);
 		}
 	}
 
