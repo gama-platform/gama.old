@@ -120,8 +120,7 @@ public abstract class AbstractExpression implements IExpression {
 			if ( e == null ) {
 				continue;
 			}
-			types.add(kind == _type ? e.getType() : kind == _content ? e.getContentType() : e
-				.getKeyType());
+			types.add(kind == _type ? e.getType() : kind == _content ? e.getContentType() : e.getKeyType());
 		}
 		IType[] array = types.toArray(new IType[types.size()]);
 		result = array[0];
@@ -134,14 +133,12 @@ public abstract class AbstractExpression implements IExpression {
 
 	@Override
 	public IType getElementsContentType() {
-		return elementsContentType == Types.NO_TYPE ? getContentType().defaultContentType()
-			: elementsContentType;
+		return elementsContentType == Types.NO_TYPE ? getContentType().defaultContentType() : elementsContentType;
 	}
 
 	@Override
 	public IType getElementsKeyType() {
-		return elementsKeyType == Types.NO_TYPE ? getContentType().defaultKeyType()
-			: elementsKeyType;
+		return elementsKeyType == Types.NO_TYPE ? getContentType().defaultKeyType() : elementsKeyType;
 	}
 
 	@Override
