@@ -69,9 +69,8 @@ public class GamaProcessor extends AbstractProcessor {
 
 	private static StandardLocation OUT = StandardLocation.SOURCE_OUTPUT;
 
-	static final Class[] classes = new Class[] { symbol.class, factory.class, species.class,
-		skill.class, getter.class, setter.class, action.class, type.class, operator.class,
-		vars.class, display.class };
+	static final Class[] classes = new Class[] { symbol.class, factory.class, species.class, skill.class, getter.class,
+		setter.class, action.class, type.class, operator.class, vars.class, display.class };
 
 	final static Set<String> annotNames = new HashSet();
 
@@ -144,8 +143,7 @@ public class GamaProcessor extends AbstractProcessor {
 					docProc.processDocXML(env, createWriter("docGAMA.xml"));
 					docProc.firstParsing = false;
 				} else {
-					processingEnv.getMessager().printMessage(Kind.NOTE,
-						"Documentation file has already been produced");
+					processingEnv.getMessager().printMessage(Kind.NOTE, "Documentation file has already been produced");
 				}
 			}
 
@@ -167,8 +165,7 @@ public class GamaProcessor extends AbstractProcessor {
 
 	TypeMirror getISkill() {
 		if ( iSkill == null ) {
-			iSkill =
-				processingEnv.getElementUtils().getTypeElement("msi.gaml.skills.ISkill").asType();
+			iSkill = processingEnv.getElementUtils().getTypeElement("msi.gaml.skills.ISkill").asType();
 		}
 		return iSkill;
 	}
@@ -186,8 +183,7 @@ public class GamaProcessor extends AbstractProcessor {
 
 	protected String check(final String clazz) {
 		for ( int i = 0; i < IMPORTS.length; i++ ) {
-			if ( clazz.startsWith(IMPORTS[i]) ) { return clazz
-				.substring(clazz.lastIndexOf('.') + 1); }
+			if ( clazz.startsWith(IMPORTS[i]) ) { return clazz.substring(clazz.lastIndexOf('.') + 1); }
 		}
 
 		return clazz;
@@ -239,7 +235,7 @@ public class GamaProcessor extends AbstractProcessor {
 					depends += "]";
 					sb.append(',').append("depends_on").append(',').append(depends);
 				}
-				if ( !"".equals(contentType) ) {
+				if ( contentType != 0 ) {
 					sb.append(',').append("of").append(',').append(contentType);
 				}
 				String init = s.init();
@@ -295,8 +291,7 @@ public class GamaProcessor extends AbstractProcessor {
 						sb.append(ex.getSimpleName()).append(SEP);
 						// paramClass
 						boolean isDynamic = !scope && n == 2 || scope && n == 3;
-						sb.append(isDynamic ? args[!scope ? 1 : 2] : args[!scope ? 0 : 1]).append(
-							SEP);
+						sb.append(isDynamic ? args[!scope ? 1 : 2] : args[!scope ? 0 : 1]).append(SEP);
 						// isDynamic
 						sb.append(isDynamic).append(SEP);
 						// scope ?
@@ -662,10 +657,9 @@ public class GamaProcessor extends AbstractProcessor {
 			} catch (Exception e1) {
 				processingEnv.getMessager().printMessage(
 					Kind.ERROR,
-					"Error in processing operator " + declClass + " " + methodName + " " +
-						Arrays.toString(args) + "; number of Java parameters: " + n +
-						"; number of Gaml parameters:" + actual_args_number + "; begin: " + begin +
-						"; shift: " + shift);
+					"Error in processing operator " + declClass + " " + methodName + " " + Arrays.toString(args) +
+						"; number of Java parameters: " + n + "; number of Gaml parameters:" + actual_args_number +
+						"; begin: " + begin + "; shift: " + shift);
 			}
 
 			String ret = rawNameOf(ex.getReturnType());
@@ -790,8 +784,7 @@ public class GamaProcessor extends AbstractProcessor {
 
 	private Writer createWriter(final String s) {
 		try {
-			return processingEnv.getFiler().createResource(OUT, "", s, (Element[]) null)
-				.openWriter();
+			return processingEnv.getFiler().createResource(OUT, "", s, (Element[]) null).openWriter();
 		} catch (Exception e) {
 			processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
 		}
@@ -800,8 +793,8 @@ public class GamaProcessor extends AbstractProcessor {
 
 	private Writer createSourceWriter() {
 		try {
-			return processingEnv.getFiler()
-				.createSourceFile("gaml.additions.GamlAdditions", (Element[]) null).openWriter();
+			return processingEnv.getFiler().createSourceFile("gaml.additions.GamlAdditions", (Element[]) null)
+				.openWriter();
 		} catch (Exception e) {
 			processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());
 		}
@@ -810,8 +803,7 @@ public class GamaProcessor extends AbstractProcessor {
 
 	private Writer createDocSourceWriter() {
 		try {
-			return processingEnv.getFiler()
-				.createSourceFile("gaml.additions.GamlDocumentation", (Element[]) null)
+			return processingEnv.getFiler().createSourceFile("gaml.additions.GamlDocumentation", (Element[]) null)
 				.openWriter();
 		} catch (Exception e) {
 			processingEnv.getMessager().printMessage(Kind.ERROR, e.getMessage());

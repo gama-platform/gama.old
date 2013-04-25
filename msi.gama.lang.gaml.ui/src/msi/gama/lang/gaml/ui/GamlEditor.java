@@ -55,6 +55,12 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 	@Inject
 	private GamlJavaValidator validator;
 
+	// @Inject
+	// private DescriptionUtils descriptionUtils;
+
+	// @Inject
+	// IResourceDescriptions index;
+
 	static {
 		FontData fd = Display.getDefault().getSystemFont().getFontData()[0];
 		fd.setStyle(SWT.BOLD);
@@ -160,7 +166,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 			}
 		});
-
 	}
 
 	private final SelectionListener listener = new SelectionAdapter() {
@@ -186,12 +191,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		}
 
 	};
-
-	// private String convert(final String s) {
-	// if ( s.equals(IKeyword.DEFAULT) ) { return "Run model"; }
-	// if ( s.equals("Run model") ) { return IKeyword.DEFAULT; }
-	// return s;
-	// }
 
 	private void enableButton(final int index, final String text) {
 		if ( text == null ) { return; }
@@ -268,7 +267,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		// Very simple method used here
 		int size = completeNamesOfExperiments.size();
 		abbreviatedNamesOfExperiments.clear();
-		if ( size > 10 ) {
+		if ( size > 6 ) {
 			// We remove "Experiment".
 			for ( String s : completeNamesOfExperiments ) {
 				int i = s.indexOf(' ');
@@ -276,7 +275,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 					abbreviatedNamesOfExperiments.add(s.substring(i));
 				}
 			}
-		} else if ( size > 6 ) {
+		} else if ( size > 4 ) {
 			// We replace "Experiment" by "Exp."
 			for ( String s : completeNamesOfExperiments ) {
 				abbreviatedNamesOfExperiments.add(s.replaceFirst("Experiment ", "Exp."));

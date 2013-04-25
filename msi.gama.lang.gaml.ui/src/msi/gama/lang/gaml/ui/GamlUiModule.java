@@ -57,8 +57,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		binder
 			.bind(String.class)
 			.annotatedWith(
-				com.google.inject.name.Names
-					.named(XtextContentAssistProcessor.COMPLETION_AUTO_ACTIVATION_CHARS))
+				com.google.inject.name.Names.named(XtextContentAssistProcessor.COMPLETION_AUTO_ACTIVATION_CHARS))
 			.toInstance(".");
 	}
 
@@ -100,6 +99,8 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 
 	@Override
 	public Class<? extends org.eclipse.xtext.ui.editor.IXtextEditorCallback> bindIXtextEditorCallback() {
+		// TODO Verify this as it is only needed, normally, for languages that do not use the builder infrastructure
+		// (see http://www.eclipse.org/forums/index.php/mv/msg/167666/532239/)
 		return ValidatingEditorCallback.class;
 	}
 
