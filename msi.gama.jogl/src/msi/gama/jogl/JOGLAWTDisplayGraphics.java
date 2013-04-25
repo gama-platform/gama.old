@@ -28,7 +28,6 @@ import javax.media.opengl.glu.*;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.GraphicDataType.*;
-import msi.gama.jogl.utils.dem.DigitalElevationModelDrawer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -39,9 +38,6 @@ import msi.gama.util.file.GamaFile;
 import msi.gaml.types.GamaGeometryType;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.jfree.chart.JFreeChart;
-
-import utils.GLUtil;
-
 import com.vividsolutions.jts.awt.*;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.index.quadtree.IntervalSize;
@@ -69,7 +65,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	private double curX = 0, curY = 0;
 
 	// GLRenderer.
-	public JOGLAWTGLRenderer myGLRender;
+	public final JOGLAWTGLRenderer myGLRender;
 
 	// List of all the dynamic JTS geometry.
 	public ArrayList<MyJTSGeometry> myJTSGeometries = new ArrayList<MyJTSGeometry>();
@@ -114,8 +110,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public boolean useVertexArray = false;
 	// FIXME: This need to be remove. Only here to return the bounds of a
 	// geometry.
-	
-	
+
 	private final PointTransformation pt = new PointTransformation() {
 
 		@Override
@@ -494,15 +489,12 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			AddImageInImages(img, null, curX, curY, z, this.envWidth, this.envHeight, name, angle, offSet);
 			rect.setRect(curX, curY, img.getWidth(), img.getHeight());
 		} else {
-			if(scope!=null){
-			  AddImageInImages(img, scope.getAgentScope(), curX, curY, z, curWidth, curHeight, name,
-						angle, offSet);	
+			if ( scope != null ) {
+				AddImageInImages(img, scope.getAgentScope(), curX, curY, z, curWidth, curHeight, name, angle, offSet);
+			} else {
+				AddImageInImages(img, null, curX, curY, z, curWidth, curHeight, name, angle, offSet);
 			}
-			else{
-			  AddImageInImages(img, null, curX, curY, z, curWidth, curHeight, name,
-						angle, offSet);	
-			}
-			
+
 			rect.setRect(curX, curY, curWidth, curHeight);
 		}
 
@@ -738,7 +730,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 			if ( !IsTextureExist(name) ) {
 				myGLRender.InitTexture(img, name);
 			}
-		}	
+		}
 		this.myImages.add(curImage);
 
 	}
@@ -1163,9 +1155,9 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	@Override
 	public void drawDEM(GamaFile demFileName, GamaFile textureFileName) {
 		System.out.println("drawDEM in JOGLGraphics " + demFileName.getPath() + "with " + textureFileName.getPath());
-		if ( this.myGLRender.dem != null ) {
-			this.myGLRender.dem.InitDEM(this.myGLRender.gl);//, demFileName.getPath(), textureFileName.getPath());
-		}
+		// if ( this.myGLRender.getDem() != null ) {
+		myGLRender.dem.init(this.myGLRender.gl);// , demFileName.getPath(), textureFileName.getPath());
+		// }
 	}
 
 }

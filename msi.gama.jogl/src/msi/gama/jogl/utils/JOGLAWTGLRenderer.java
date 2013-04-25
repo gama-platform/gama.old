@@ -1,8 +1,6 @@
 package msi.gama.jogl.utils;
 
 import static javax.media.opengl.GL.*;
-
-import java.awt.Color;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.nio.FloatBuffer;
@@ -18,7 +16,6 @@ import msi.gama.jogl.utils.collada.ColladaReader;
 import msi.gama.jogl.utils.dem.DigitalElevationModelDrawer;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
-
 import org.geotools.data.simple.SimpleFeatureCollection;
 import utils.GLUtil;
 import com.sun.opengl.util.*;
@@ -145,8 +142,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		arcBall = new ArcBall(width, height);
 
 		// Set background color
-		gl.glClearColor(displaySurface.getBgColor().getRed(), displaySurface.getBgColor()
-			.getGreen(), displaySurface.getBgColor().getBlue(), 1.0f);
+		gl.glClearColor(displaySurface.getBgColor().getRed(), displaySurface.getBgColor().getGreen(), displaySurface
+			.getBgColor().getBlue(), 1.0f);
 
 		// Enable smooth shading, which blends colors nicely, and smoothes out
 		// lighting.
@@ -186,17 +183,17 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		LastRot.setIdentity(); // Reset Rotation
 		ThisRot.setIdentity(); // Reset Rotation
 		ThisRot.get(matrix);
-	
-		//FIXME: Need to be place somewhere (triggered by a button in Gama)
-		/*if(dem !=null){
-			dem.InitDEM(gl);        
-		}*/
-     
+
+		// FIXME: Need to be place somewhere (triggered by a button in Gama)
+		/*
+		 * if(dem !=null){
+		 * dem.InitDEM(gl);
+		 * }
+		 */
+
 		isInitialized = true;
 		System.out.println("openGL init ok");
 	}
-
-
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
@@ -230,13 +227,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				gl.glDisable(GL_LIGHTING);
 			}
 
-			//FIXME: Now the background is not updated but it should to have a night effect.
+			// FIXME: Now the background is not updated but it should to have a night effect.
 			// Set background color
-			//gl.glClearColor(ambiantLightValue.floatValue(), ambiantLightValue.floatValue(), ambiantLightValue.floatValue(), 1.0f);
-			//The ambiant_light is always reset in case of dynamic lighting.
+			// gl.glClearColor(ambiantLightValue.floatValue(), ambiantLightValue.floatValue(),
+			// ambiantLightValue.floatValue(), 1.0f);
+			// The ambiant_light is always reset in case of dynamic lighting.
 			GLUtil.UpdateAmbiantLight(gl, glu, ambientLightValue);
-			
-			//Show triangulated polygon or not (trigger by GAMA)
+
+			// Show triangulated polygon or not (trigger by GAMA)
 			if ( !displaySurface.Triangulation ) {
 				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
 			} else {
@@ -264,21 +262,18 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
 			gl.glPolygonOffset(1, 1);
 
-			if ( dem.demInitialized == true ) {
+			if ( dem.isInitialized() == true ) {
 				dem.DisplayDEM(gl);
 			} else {
 				this.DrawScene();
 				if ( drawAxes ) {
-					float envMaxDim =
-						((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).maxEnvDim;
+					float envMaxDim = ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).maxEnvDim;
 					((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myGLRender.graphicsGLUtils
 						.DrawXYZAxis(envMaxDim / 10);
-					((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myGLRender.graphicsGLUtils
-						.DrawZValue(-envMaxDim / 10, (float) camera.zPos);
+					((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myGLRender.graphicsGLUtils.DrawZValue(
+						-envMaxDim / 10, (float) camera.zPos);
 				}
 			}
-
-			
 
 			// this.DrawShapeFile();
 			// this.DrawCollada();
@@ -336,10 +331,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			Point windowPressedPoint = new Point(myListener.lastxPressed, myListener.lastyPressed);
 			Point realPressedPoint = GetRealWorldPointFromWindowPoint(windowPressedPoint);
 
-			Point windowmousePositionPoint =
-				new Point(myListener.mousePosition.x, myListener.mousePosition.y);
-			Point realmousePositionPoint =
-				GetRealWorldPointFromWindowPoint(windowmousePositionPoint);
+			Point windowmousePositionPoint = new Point(myListener.mousePosition.x, myListener.mousePosition.y);
+			Point realmousePositionPoint = GetRealWorldPointFromWindowPoint(windowmousePositionPoint);
 
 			System.out.println("From" + realPressedPoint.x + "," + realPressedPoint.y);
 			System.out.println("To" + realmousePositionPoint.x + "," + realmousePositionPoint.y);
@@ -347,8 +340,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			// System.out.println("World coords are (" //+ realPoint.x + ", " + realPoint.y);
 
 			if ( camera.isModelCentered ) {
-				gl.glTranslatef(
-					-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
+				gl.glTranslatef(-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
 					((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2, 0.0f); // translate
 																									// right
 																									// and
@@ -357,21 +349,16 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 																									// screen
 			}
 
-			myGLDrawer
-				.DrawROI(
-					gl,
-					realPressedPoint.x -
-						((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
-					-(realPressedPoint.y - ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2),
-					realmousePositionPoint.x -
-						((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
-					-(realmousePositionPoint.y - ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2));
+			myGLDrawer.DrawROI(gl, realPressedPoint.x -
+				((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
+				-(realPressedPoint.y - ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2),
+				realmousePositionPoint.x - ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
+				-(realmousePositionPoint.y - ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2));
 
 		}
 
 	}
-	
-	
+
 	@Override
 	public void reshape(GLAutoDrawable drawable, int arg1, int arg2, int arg3, int arg4) {
 
@@ -396,8 +383,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glLoadIdentity();
 		glu.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
-		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getZPos(), camera.getXLPos(),
-			camera.getYLPos(), camera.getZLPos(), 0.0, 1.0, 0.0);
+		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getZPos(), camera.getXLPos(), camera.getYLPos(),
+			camera.getZLPos(), 0.0, 1.0, 0.0);
 		arcBall.setBounds(width, height);
 
 	}
@@ -409,8 +396,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		if ( displaySurface.Picking ) {
 			// Display the model center on 0,0,0
 			if ( camera.isModelCentered ) {
-				gl.glTranslatef(
-					-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
+				gl.glTranslatef(-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
 					((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2, 0.0f); // translate
 																									// right
 																									// and
@@ -422,8 +408,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		} else {
 			// Display the model center on 0,0,0
 			if ( camera.isModelCentered ) {
-				gl.glTranslatef(
-					-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
+				gl.glTranslatef(-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
 					((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2, 0.0f); // translate
 																									// right
 																									// and
@@ -516,10 +501,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		}
 
 		// Draw Static Geometry
-		if ( !((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myJTSStaticGeometries
-			.isEmpty() ) {
-			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics)
-				.DrawMyJTSStaticGeometries(picking);
+		if ( !((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myJTSStaticGeometries.isEmpty() ) {
+			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyJTSStaticGeometries(picking);
 		}
 
 		// Draw Image
@@ -594,7 +577,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 					if ( img.angle != 0 ) {
 
-						gl.glTranslatef((img.x + img.width / 2), -(img.y + img.height / 2), 0.0f);
+						gl.glTranslatef(img.x + img.width / 2, -(img.y + img.height / 2), 0.0f);
 						// FIXME:Check counterwise or not, and do we rotate
 						// around the center or around a point.
 						gl.glRotatef(-img.angle, 0.0f, 0.0f, 1.0f);
@@ -614,7 +597,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 						gl.glTexCoord2f(textureLeft, textureTop);
 						gl.glVertex3f(img.x, -img.y, img.z);
 						gl.glEnd();
-						gl.glTranslatef((img.x + img.width / 2), -(img.y + img.height / 2), 0.0f);
+						gl.glTranslatef(img.x + img.width / 2, -(img.y + img.height / 2), 0.0f);
 						gl.glRotatef(img.angle, 0.0f, 0.0f, 1.0f);
 						gl.glTranslatef(-(img.x + img.width / 2), +(img.y + img.height / 2), 0.0f);
 
@@ -710,13 +693,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			// FIXME: need also to apply the arcball matrix to make it work in
 			// 3D
 			if ( camera.isModelCentered ) {
-				gl.glTranslatef(
-					-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
+				gl.glTranslatef(-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
 					((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2, 0.0f);
 				DrawModel(true);
 
-				gl.glTranslatef(
-					((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
+				gl.glTranslatef(((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
 					-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2, 0.0f); // translate
 																									// right
 																									// and
@@ -726,8 +707,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			} else {
 				DrawModel(true);
 			}
-			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).pickedObjectIndex =
-				myListener.endPicking(gl);
+			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).pickedObjectIndex = myListener.endPicking(gl);
 		}
 
 		DrawModel(true);
