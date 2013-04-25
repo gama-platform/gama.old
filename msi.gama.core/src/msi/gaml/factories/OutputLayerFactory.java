@@ -48,6 +48,8 @@ public class OutputLayerFactory extends StatementFactory {
 		// Special case for the compilation of the "species species: ..." layer, which expects an
 		// expression, contrary to the "species" statement, which expects an ID. The same for
 		// "grid".
+
+		// TODO Verify this test
 		if ( tag.equals(SPECIES) ) {
 			IExpressionDescription ed = sd.getFacets().get(tag);
 			String s = ed.compileAsLabel().getExpression().literalValue();
@@ -58,8 +60,7 @@ public class OutputLayerFactory extends StatementFactory {
 				if ( sd.getKeyword().equals(GRID_POPULATION) && !target.isGrid() ) {
 					sd.error(s + " is not a grid", IGamlIssue.WRONG_TYPE, ed.getTarget());
 				} else {
-					IExpression expr =
-						GAMA.getExpressionFactory().createConst(s, Types.get(IType.SPECIES));
+					IExpression expr = GAMA.getExpressionFactory().createConst(s, Types.get(IType.SPECIES));
 					sd.getFacets().put(SPECIES, expr);
 				}
 			}
@@ -72,8 +73,8 @@ public class OutputLayerFactory extends StatementFactory {
 				if ( species.getAspect(a) != null ) {
 					ed.compileAsLabel();
 				} else {
-					sd.error(a + " is not the name of an aspect of " + s, IGamlIssue.GENERAL, sd
-						.getFacets().get(ASPECT).getTarget());
+					sd.error(a + " is not the name of an aspect of " + s, IGamlIssue.GENERAL, sd.getFacets()
+						.get(ASPECT).getTarget());
 				}
 			}
 		} else {
@@ -81,9 +82,8 @@ public class OutputLayerFactory extends StatementFactory {
 		}
 	}
 
-	public static ILayerStatement createAgentsLayer(final String title,
-		final IExpression listOfAgents, final String aspect, final IDisplayLayerBox box)
-		throws GamaRuntimeException {
+	public static ILayerStatement createAgentsLayer(final String title, final IExpression listOfAgents,
+		final String aspect, final IDisplayLayerBox box) throws GamaRuntimeException {
 		IDescription desc;
 		desc = DescriptionFactory.create(IKeyword.AGENTS, IKeyword.NAME, title);
 		AgentLayerStatement l = new AgentLayerStatement(desc);

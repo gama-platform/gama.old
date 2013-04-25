@@ -74,9 +74,6 @@ public class ActionStatement extends AbstractStatementSequence implements IState
 			scope.setStatus(terminated);
 		}
 		actualArgs.clear();
-		// actualArgs.putAll(formalArgs);
-		// FIXME Args should be removed instead ?
-		// formalArgs.stack(scope);
 		return result;
 	}
 
@@ -92,6 +89,5 @@ public class ActionStatement extends AbstractStatementSequence implements IState
 	@Override
 	public void setFormalArgs(final Arguments args) {
 		formalArgs.putAll(args);
-		// actualArgs.putAll(args);
 	}
 }

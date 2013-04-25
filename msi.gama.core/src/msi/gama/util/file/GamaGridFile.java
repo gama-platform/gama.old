@@ -85,7 +85,7 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 
 				rect = new GamaShape(scope.getSimulationScope().getGisUtils().transform(rect.getInnerGeometry()));
 
-				rect.createAttributes();
+				rect.getOrCreateAttributes();
 				rect.getAttributes().put("grid_value", vals[0]);
 				((IList) buffer).add(rect);
 			}

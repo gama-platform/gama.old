@@ -45,6 +45,7 @@ public class StatementDescription extends SymbolDescription {
 	private final static String INTERNAL = "internal_";
 	private static int COMMAND_INDEX = 0;
 	static final Set<String> doFacets = DescriptionFactory.getAllowedFacetsFor(DO);
+	private IDescription previousDescription;
 
 	public IPrimRun getHelper() {
 		return helper;
@@ -126,7 +127,8 @@ public class StatementDescription extends SymbolDescription {
 			String name = arg.getKey();
 			args.put(name, createArg(name, arg.getValue()));
 		}
-		facets.remove(WITH);
+		// FIXME We should not play with the facets like this. Commented for the moment unless it creates problems.
+		// facets.remove(WITH);
 	}
 
 	private StatementDescription getAction() {
@@ -373,5 +375,38 @@ public class StatementDescription extends SymbolDescription {
 				}
 			}
 		}
+	}
+
+	@Override
+	public void setSuperDescription(IDescription desc) {
+		previousDescription = getSuperDescription();
+		super.setSuperDescription(desc);
+	}
+
+	@Override
+	public ModelDescription getModelDescription() {
+		ModelDescription result = super.getModelDescription();
+		if ( result == null && previousDescription != null ) {
+			result = previousDescription.getModelDescription();
+		}
+		return result;
+	}
+
+	@Override
+	public IDescription getDescriptionDeclaringVar(final String name) {
+		IDescription result = super.getDescriptionDeclaringVar(name);
+		if ( result == null && previousDescription != null ) {
+			result = previousDescription.getDescriptionDeclaringVar(name);
+		}
+		return result;
+	}
+
+	@Override
+	public IDescription getDescriptionDeclaringAction(final String name) {
+		IDescription result = super.getDescriptionDeclaringAction(name);
+		if ( result == null && previousDescription != null ) {
+			result = previousDescription.getDescriptionDeclaringAction(name);
+		}
+		return result;
 	}
 }

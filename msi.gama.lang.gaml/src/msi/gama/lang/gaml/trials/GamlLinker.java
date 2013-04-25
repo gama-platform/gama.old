@@ -2,7 +2,7 @@
  * Created by drogoul, 6 avr. 2012
  * 
  */
-package msi.gama.lang.gaml.linking;
+package msi.gama.lang.gaml.trials;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.diagnostics.IDiagnosticConsumer;
@@ -15,6 +15,7 @@ import org.eclipse.xtext.linking.lazy.LazyLinker;
  * @since 6 avr. 2012
  * 
  */
+@Deprecated
 public class GamlLinker extends LazyLinker {
 
 	@Override

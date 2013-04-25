@@ -9,7 +9,7 @@ import msi.gama.common.interfaces.IKeyword;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.impl.*;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
-import org.eclipse.emf.common.util.*;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.resource.IResourceServiceProvider;
@@ -77,7 +77,6 @@ public class EGaml {
 
 		@Override
 		public String caseFunction(final Function object) {
-			// 6v4:
 			String s = object.getOp();
 			if ( s == null ) { return caseActionRef((ActionRef) object.getAction()); }
 			return s;
@@ -135,14 +134,34 @@ public class EGaml {
 
 	public static List<Expression> getExprsOf(final ExpressionList o) {
 		if ( o == null ) { return Collections.EMPTY_LIST; }
-		if ( ((ExpressionListImpl) o).eIsSet(GamlPackage.EXPRESSION_LIST__EXPRS) ) { return o
-			.getExprs(); }
+		if ( ((ExpressionListImpl) o).eIsSet(GamlPackage.EXPRESSION_LIST__EXPRS) ) { return o.getExprs(); }
 		return Collections.EMPTY_LIST;
 	}
 
-	public static EList<Facet> getFacetsOf(final Statement s) {
+	public static List<ArgumentDefinition> getArgsOf(final ActionArguments args) {
+		if ( args == null ) { return Collections.EMPTY_LIST; }
+		if ( ((ActionArgumentsImpl) args).eIsSet(GamlPackage.ACTION_ARGUMENTS__ARGS) ) { return args.getArgs(); }
+		return Collections.EMPTY_LIST;
+	}
+
+	public static List<Facet> getFacetsOf(final Statement s) {
 		if ( ((StatementImpl) s).eIsSet(GamlPackage.STATEMENT__FACETS) ) { return s.getFacets(); }
-		return (EList<Facet>) ECollections.EMPTY_ELIST;
+		return Collections.EMPTY_LIST;
+	}
+
+	public static List<? extends Statement> getStatementsOf(Block block) {
+		if ( ((BlockImpl) block).eIsSet(GamlPackage.BLOCK__STATEMENTS) ) { return block.getStatements(); }
+		return Collections.EMPTY_LIST;
+	}
+
+	public static List<? extends Statement> getStatementsOf(Model block) {
+		if ( ((ModelImpl) block).eIsSet(GamlPackage.MODEL__STATEMENTS) ) { return block.getStatements(); }
+		return Collections.EMPTY_LIST;
+	}
+
+	public static List<? extends Statement> getEquationsOf(S_Equations stm) {
+		if ( ((S_EquationsImpl) stm).eIsSet(GamlPackage.SEQUATIONS__EQUATIONS) ) { return stm.getEquations(); }
+		return Collections.EMPTY_LIST;
 	}
 
 	public static String getKeyOf(final EObject f) {
@@ -195,8 +214,8 @@ public class EGaml {
 			serializer.append("}");
 		} else if ( expr instanceof Array ) {
 			array(((Array) expr).getExprs().getExprs(), false);
-		} else if ( expr instanceof VariableRef || expr instanceof TypeRef ||
-			expr instanceof SkillRef || expr instanceof ActionRef || expr instanceof UnitName ) {
+		} else if ( expr instanceof VariableRef || expr instanceof TypeRef || expr instanceof SkillRef ||
+			expr instanceof ActionRef || expr instanceof UnitName ) {
 			serializer.append(getKeyOf(expr));
 		} else if ( expr instanceof Unary ) {
 			serializer.append(expr.getOp()).append("(");
@@ -262,8 +281,8 @@ public class EGaml {
 	public static <T> T getInstance(final Class<T> c) {
 		if ( injector == null ) {
 			injector =
-				IResourceServiceProvider.Registry.INSTANCE.getResourceServiceProvider(URI
-					.createPlatformResourceURI("dummy/dummy.gaml", false));
+				IResourceServiceProvider.Registry.INSTANCE.getResourceServiceProvider(URI.createPlatformResourceURI(
+					"dummy/dummy.gaml", false));
 		}
 		return injector.get(c);
 	}

@@ -18,11 +18,12 @@
  */
 package msi.gaml.factories;
 
-import static msi.gaml.expressions.GamlExpressionFactory.TRUE_EXPR;
+import static msi.gaml.expressions.IExpressionFactory.TRUE_EXPR;
 import static msi.gaml.factories.DescriptionValidator.*;
 import static msi.gaml.factories.VariableValidator.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
 import msi.gaml.architecture.finite_state_machine.*;
@@ -38,8 +39,8 @@ import msi.gaml.types.*;
  * @todo Description
  * 
  */
-@factory(handles = { ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.SINGLE_STATEMENT,
-	ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
+@factory(handles = { ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.SINGLE_STATEMENT, ISymbolKind.BEHAVIOR,
+	ISymbolKind.ACTION })
 public class StatementFactory extends SymbolFactory implements IKeyword {
 
 	public StatementFactory(final List<Integer> handles) {
@@ -47,15 +48,18 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 	}
 
 	@Override
-	protected StatementDescription buildDescription(final ISyntacticElement source,
-		final IChildrenProvider cp, final IDescription superDesc, final SymbolProto md) {
-		return new StatementDescription(source.getKeyword(), superDesc, cp, md.hasScope(),
-			md.hasArgs(), source.getElement(), source.getFacets());
+	protected StatementDescription buildDescription(final ISyntacticElement source, final IChildrenProvider cp,
+		final IDescription superDesc, final SymbolProto md) {
+		return new StatementDescription(source.getKeyword(), superDesc, cp, md.hasScope(), md.hasArgs(),
+			source.getElement(), source.getFacets());
 	}
 
 	@Override
 	protected void privateValidate(final IDescription desc) {
 		// GuiUtils.debug("Validating statement " + desc);
+		if ( desc.getKeyword().equals("create") && "Physical3DWorld".equals(desc.getFacets().getLabel(SPECIES)) ) {
+			GuiUtils.debug("StatementFactory.privateValidate");
+		}
 		super.privateValidate(desc);
 		String kw = desc.getKeyword();
 		StatementDescription cd = (StatementDescription) desc;
@@ -65,8 +69,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 		} else if ( kw.equals(STATE) ) {
 			assertFacetValueIsUniqueInSuperDescription(cd, FsmStateStatement.INITIAL, TRUE_EXPR);
 			assertFacetValueIsUniqueInSuperDescription(cd, FsmStateStatement.FINAL, TRUE_EXPR);
-			assertAtLeastOneChildWithFacetValueInSuperDescription(cd, FsmStateStatement.INITIAL,
-				TRUE_EXPR);
+			assertAtLeastOneChildWithFacetValueInSuperDescription(cd, FsmStateStatement.INITIAL, TRUE_EXPR);
 		} else if ( kw.equals(DO) ) {
 			assertActionIsExisting(cd, ACTION);
 		} else if ( kw.equals(FsmTransitionStatement.TRANSITION) ) {
@@ -119,6 +122,8 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 					desc.addTemp(MYSELF, t, Types.NO_TYPE, Types.NO_TYPE);
 					previousEnclosingDescription = desc.getSuperDescription();
 					desc.setSuperDescription(desc.getSpeciesDescription(actualSpecies));
+
+					// FIXME ===> Model Description is lost if we are dealing with a built-in species !
 				}
 			}
 		}
@@ -152,8 +157,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 	protected Arguments privateCompileArgs(final StatementDescription cd) {
 		Arguments ca = new Arguments();
 		String keyword = cd.getKeyword();
-		boolean isCalling =
-			keyword.equals(CREATE) || keyword.equals(DO) || keyword.equals(PRIMITIVE);
+		boolean isCalling = keyword.equals(CREATE) || keyword.equals(DO) || keyword.equals(PRIMITIVE);
 		Facets argFacets;
 		for ( IDescription sd : cd.getArgs() ) {
 			argFacets = sd.getFacets();
@@ -175,8 +179,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 				// passed should not be part of the context
 				String typeName = argFacets.getLabel(TYPE);
 				// FIXME Should not be necessary anymore as it should be eliminated by the parser
-				if ( !isCalling &&
-					!cd.getModelDescription().getTypesManager().getTypeNames().contains(typeName) ) {
+				if ( !isCalling && !cd.getModelDescription().getTypesManager().getTypeNames().contains(typeName) ) {
 					cd.error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, TYPE);
 				}
 				IType type = sd.getTypeNamed(typeName);
@@ -224,22 +227,19 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 			String name = arg.getName();
 			if ( !sd.hasVar(name) ) {
 				cd.error("Attribute " + name + " does not exist in species " + sd.getName(),
-					IGamlIssue.UNKNOWN_ARGUMENT, arg.getFacets().get(VALUE).getTarget(),
-					(String[]) null);
+					IGamlIssue.UNKNOWN_ARGUMENT, arg.getFacets().get(VALUE).getTarget(), (String[]) null);
 			} else {
 				IType varType = sd.getVariable(name).getType();
 				IType initType = ca.get(name).getExpression().getType();
 				if ( varType != Types.NO_TYPE && !initType.isTranslatableInto(varType) ) {
-					cd.warning("The type of attribute " + name + " should be " + varType,
-						IGamlIssue.SHOULD_CAST, arg.getFacets().get(VALUE).getTarget(),
-						varType.toString());
+					cd.warning("The type of attribute " + name + " should be " + varType, IGamlIssue.SHOULD_CAST, arg
+						.getFacets().get(VALUE).getTarget(), varType.toString());
 				} else {
 					varType = sd.getVariable(name).getContentType();
 					initType = ca.get(name).getExpression().getContentType();
 					if ( varType != Types.NO_TYPE && !initType.isTranslatableInto(varType) ) {
-						cd.warning("The content type of attribute " + name + " should be " +
-							varType, IGamlIssue.WRONG_TYPE, arg.getFacets().get(VALUE).getTarget(),
-							(String[]) null);
+						cd.warning("The content type of attribute " + name + " should be " + varType,
+							IGamlIssue.WRONG_TYPE, arg.getFacets().get(VALUE).getTarget(), (String[]) null);
 					}
 				}
 			}
@@ -339,8 +339,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 			if ( type == Types.NO_TYPE && contentType != Types.NO_TYPE ) {
 				type = Types.get(IType.CONTAINER);
 			}
-			IVarExpression exp =
-				((StatementDescription) sd).addNewTempIfNecessary(tag, type, contentType, keyType);
+			IVarExpression exp = ((StatementDescription) sd).addNewTempIfNecessary(tag, type, contentType, keyType);
 			ff.put(tag, exp);
 		} else {
 			super.compileFacet(tag, sd, md);

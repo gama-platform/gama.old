@@ -2,7 +2,7 @@
  * Created by drogoul, 20 avr. 2012
  * 
  */
-package msi.gama.lang.gaml.resource;
+package msi.gama.lang.gaml.trials;
 
 import org.eclipse.xtext.resource.impl.DefaultResourceDescriptionManager;
 import org.eclipse.xtext.util.IResourceScopeCache;
@@ -14,6 +14,7 @@ import org.eclipse.xtext.util.IResourceScopeCache;
  * @since 20 avr. 2012
  * 
  */
+@Deprecated
 public class GamlResourceDescriptionManager extends DefaultResourceDescriptionManager {
 
 	@Override

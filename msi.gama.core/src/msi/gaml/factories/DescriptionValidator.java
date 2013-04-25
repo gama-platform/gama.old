@@ -176,7 +176,7 @@ public class DescriptionValidator {
 	public static void assertAssignmentIsOk(final IDescription cd) {
 		IExpression expr = cd.getFacets().getExpr(VAR, cd.getFacets().getExpr(NAME));
 		if ( !(expr instanceof IVarExpression) ) {
-			cd.error("This expression is not a reference to a variable ", VAR);
+			cd.error("The expression " + cd.getFacets().getLabel(VAR) + " is not a reference to a variable ", VAR);
 		} else {
 			IExpression value = cd.getFacets().getExpr(VALUE);
 			if ( value != null && value.getType() != Types.NO_TYPE &&

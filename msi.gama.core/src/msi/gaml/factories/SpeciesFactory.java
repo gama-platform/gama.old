@@ -21,6 +21,7 @@ package msi.gaml.factories;
 import static msi.gama.precompiler.ISymbolKind.SPECIES;
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gaml.compilation.IAgentConstructor;
 import msi.gaml.descriptions.*;
@@ -44,14 +45,11 @@ public class SpeciesFactory extends SymbolFactory {
 		final IDescription sd, final SymbolProto md) {
 		Facets facets = source.getFacets();
 		String name = facets.getLabel(IKeyword.NAME);
-		if ( name == null ) { return null; }
+		if ( name == null ) {
+			GuiUtils.debug("SpeciesFactory.buildDescription: NULL NAME");
+			return null;
+		}
 		DescriptionFactory.addSpeciesNameAsType(name);
-		// String p = facets.getLabel(IKeyword.PARENT);
-		// // If no parent is defined, we assume it is "agent"
-		// if ( p == null && name != IKeyword.AGENT ) {
-		// p = IKeyword.AGENT;
-		// }
-		// SpeciesDescription parent = sd.getSpeciesDescription(p);
 		return new SpeciesDescription(source.getKeyword(), sd, cp, source.getElement(), facets);
 	}
 

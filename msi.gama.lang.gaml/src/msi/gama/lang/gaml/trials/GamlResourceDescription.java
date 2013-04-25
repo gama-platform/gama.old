@@ -2,7 +2,7 @@
  * Created by drogoul, 20 avr. 2012
  * 
  */
-package msi.gama.lang.gaml.resource;
+package msi.gama.lang.gaml.trials;
 
 import java.util.List;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -18,6 +18,8 @@ import com.google.inject.Inject;
  * @since 20 avr. 2012
  * 
  */
+
+@Deprecated
 public class GamlResourceDescription extends DefaultResourceDescription {
 
 	/**

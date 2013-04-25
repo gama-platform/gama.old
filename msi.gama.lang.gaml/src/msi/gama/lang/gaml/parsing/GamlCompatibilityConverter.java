@@ -1,4 +1,4 @@
-package msi.gama.lang.gaml.resource;
+package msi.gama.lang.gaml.parsing;
 
 import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
@@ -9,8 +9,10 @@ import msi.gama.precompiler.ISymbolKind;
 import msi.gaml.compilation.SyntacticElement;
 import msi.gaml.descriptions.*;
 import msi.gaml.factories.DescriptionFactory;
-import org.eclipse.emf.common.util.*;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.diagnostics.*;
+import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
 
 /**
  * 
@@ -23,40 +25,40 @@ import org.eclipse.emf.ecore.EObject;
  */
 public class GamlCompatibilityConverter {
 
-	final GamlResource resource;
-
 	static final List<Integer> STATEMENTS_WITH_ATTRIBUTES = Arrays.asList(ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT,
 		ISymbolKind.OUTPUT, ISymbolKind.MODEL);
 
-	public GamlCompatibilityConverter(GamlResource resource) {
-		this.resource = resource;
-	}
-
-	public ISyntacticElement buildSyntacticContents() {
-		Model m = (Model) resource.getContents().get(0);
-		if ( m == null ) { throw new NullPointerException("The model of " + resource +
+	public static ISyntacticElement buildSyntacticContents(EObject root, Set<Diagnostic> errors) {
+		Model m = (Model) root;
+		if ( m == null ) { throw new NullPointerException("The model of " + root.eResource() +
 			" appears to be null. Please debug to understand the cause."); }
 		ISyntacticElement syntacticContents = new SyntacticElement(MODEL, m);
 		syntacticContents.setFacet(NAME, convExpr(m.getName()));
-		convStatements(syntacticContents, m.getStatements());
+		convStatements(syntacticContents, EGaml.getStatementsOf(m), errors);
 		return syntacticContents;
 	}
 
-	private boolean doesNotDefineAttributes(String keyword) {
+	private static boolean doesNotDefineAttributes(String keyword) {
 		SymbolProto p = DescriptionFactory.getProto(keyword);
 		if ( p == null ) { return true; }
 		int kind = p.getKind();
 		return !STATEMENTS_WITH_ATTRIBUTES.contains(kind);
 	}
 
-	private final ISyntacticElement convStatement(final ISyntacticElement upper, final Statement stm) {
+	private static void addWarning(String message, EObject object, Set<Diagnostic> errors) {
+		Diagnostic d = new EObjectDiagnosticImpl(Severity.WARNING, "", message, object, null, 0, null);
+		errors.add(d);
+	}
+
+	private static final ISyntacticElement convStatement(final ISyntacticElement upper, final Statement stm,
+		Set<Diagnostic> errors) {
 		// We catch its keyword
 		String keyword = EGaml.getKey.caseStatement(stm);
 		if ( keyword == null ) {
 			throw new NullPointerException(
 				"Trying to convert a statement with a null keyword. Please debug to understand the cause.");
 		} else if ( keyword.equals(ENTITIES) ) {
-			convertBlock(stm, upper);
+			convertBlock(stm, upper, errors);
 			return null;
 		} else {
 			keyword = convertKeyword(keyword, upper.getKeyword());
@@ -73,19 +75,19 @@ public class GamlCompatibilityConverter {
 		} else if ( stm instanceof S_Experiment ) {
 			elt.setCategory(ISyntacticElement.IS_EXPERIMENT);
 		} else if ( keyword.equals(ENVIRONMENT) ) {
-			convertBlock(stm, upper);
+			convertBlock(stm, upper, errors);
 		} else if ( stm instanceof S_Assignment ) {
-			keyword = convertAssignment((S_Assignment) stm, keyword, elt, stm.getExpr());
+			keyword = convertAssignment((S_Assignment) stm, keyword, elt, stm.getExpr(), errors);
 		} else if ( stm instanceof S_Definition && !SymbolProto.nonTypeStatements.contains(keyword) ) {
 			S_Definition def = (S_Definition) stm;
 			// If we define a variable with this statement
 			TypeRef t = (TypeRef) def.getTkey();
-			convertType(elt, t);
+			convertType(elt, t, errors);
 			if ( t != null && doesNotDefineAttributes(upper.getKeyword()) ) {
 				// Translation of "type var ..." to "let var type: type ..." if we are not in a
 				// top-level statement (i.e. not in the declaration of a species or an experiment)
 				elt.setKeyword(LET);
-				addFacet(elt, TYPE, convExpr(keyword));
+				addFacet(elt, TYPE, convExpr(keyword), errors);
 				keyword = LET;
 			} else {
 				// Translation of "type1 ID1 (type2 ID2, type3 ID3) {...}" to
@@ -93,62 +95,61 @@ public class GamlCompatibilityConverter {
 				Block b = def.getBlock();
 				if ( b != null && b.getFunction() == null ) {
 					elt.setKeyword(ACTION);
-					addFacet(elt, TYPE, convExpr(keyword));
+					addFacet(elt, TYPE, convExpr(keyword), errors);
 					keyword = ACTION;
 				}
-				convertArgs(def.getArgs(), elt);
+				convertArgs(def.getArgs(), elt, errors);
 			}
 		} else if ( stm instanceof S_Do ) {
 			// Translation of "stm ID (ID1: V1, ID2:V2)" to "stm ID with:(ID1: V1, ID2:V2)"
 			Expression e = stm.getExpr();
-			addFacet(elt, ACTION, convExpr(EGaml.getKeyOf(e)));
+			addFacet(elt, ACTION, convExpr(EGaml.getKeyOf(e)), errors);
 			if ( e instanceof Function ) {
-				addFacet(elt, INTERNAL_FUNCTION, convExpr(e));
+				addFacet(elt, INTERNAL_FUNCTION, convExpr(e), errors);
 				Function f = (Function) e;
 				Parameters p = f.getParameters();
 				if ( p != null ) {
-					addFacet(elt, WITH, convExpr(p));
+					addFacet(elt, WITH, convExpr(p), errors);
 				} else {
 					ExpressionList list = f.getArgs();
 					if ( list != null ) {
-						addFacet(elt, WITH, convExpr(list));
+						addFacet(elt, WITH, convExpr(list), errors);
 					}
 				}
 			}
 		} else if ( stm instanceof S_If ) {
 			// If the statement is "if", we convert its potential "else" part and put it as a child
 			// of the syntactic element (as GAML expects it)
-			convElse((S_If) stm, elt);
+			convElse((S_If) stm, elt, errors);
 		} else if ( stm instanceof S_Action ) {
 			// Conversion of "action ID (type1 ID1 <- V1, type2 ID2)" to
 			// "action ID {arg ID1 type: type1 default: V1; arg ID2 type: type2}"
-			convertArgs(((S_Action) stm).getArgs(), elt);
+			convertArgs(((S_Action) stm).getArgs(), elt, errors);
 		} else if ( stm instanceof S_Reflex ) {
 			// We add the "when" facet to reflexes and inits if necessary
 			S_Reflex ref = (S_Reflex) stm;
 			if ( ref.getExpr() != null ) {
-				addFacet(elt, WHEN, convExpr(ref.getExpr()));
+				addFacet(elt, WHEN, convExpr(ref.getExpr()), errors);
 			}
 		}
 
 		// We apply some conversions to the facets expressed in the statement
-		convertFacets(stm, keyword, elt);
+		convertFacets(stm, keyword, elt, errors);
 
 		if ( stm instanceof S_Var && (keyword.equals(CONST) || keyword.equals(VAR)) ) {
 			// We modify the "var", "const" declarations in order to replace the
 			// keyword by the type
 			String type = elt.getLabel(TYPE);
-			// GuiUtils.debug("Found as S_Var:" + elt.getKeyword() + " type: " + type);
 			if ( type == null ) {
-				resource.error("Facet 'type' is missing", elt, false);
-				return elt;
+				addWarning("Facet 'type' is missing, set by default to 'unknown'", stm, errors);
+				elt.setKeyword(UNKNOWN);
 			} else {
 				elt.setKeyword(type);
 			}
 			if ( keyword.equals(CONST) ) {
 				String constant = elt.getLabel(CONST);
 				if ( constant != null && constant.equals(FALSE) ) {
-					resource.error("Is this variable constant or not ?", elt, true);
+					addWarning("Is this variable constant or not ?", stm, errors);
 				}
 				elt.setFacet(CONST, ConstantExpressionDescription.create(true));
 			}
@@ -156,7 +157,7 @@ public class GamlCompatibilityConverter {
 			// We do it also for experiments, and change their name
 			String type = elt.getLabel(TYPE);
 			if ( type == null ) {
-				resource.error("Facet 'type' is missing, set by default to 'gui'", elt, true);
+				addWarning("Facet 'type' is missing, set by default to 'gui'", stm, errors);
 				elt.setFacet(TYPE, ConstantExpressionDescription.create("gui"));
 				elt.setKeyword("gui");
 			} else {
@@ -175,18 +176,18 @@ public class GamlCompatibilityConverter {
 				elt.setKeyword(type);
 			}
 		} else if ( stm instanceof S_Equations ) {
-			convStatements(elt, ((S_Equations) stm).getEquations());
+			convStatements(elt, EGaml.getEquationsOf((S_Equations) stm), errors);
 		}
 
 		// We add the dependencies (only for variable declarations)
-		assignDependencies(stm, keyword, elt);
+		assignDependencies(stm, keyword, elt, errors);
 		// We convert the block of statements (if any)
-		convertBlock(stm, elt);
+		convertBlock(stm, elt, errors);
 
 		return elt;
 	}
 
-	private void convertType(final ISyntacticElement elt, TypeRef t) {
+	private static void convertType(final ISyntacticElement elt, TypeRef t, Set<Diagnostic> errors) {
 		if ( t != null ) {
 			TypeRef first = (TypeRef) t.getFirst();
 			if ( first == null ) { return; }
@@ -195,43 +196,46 @@ public class GamlCompatibilityConverter {
 			if ( second == null ) {
 				String type = EGaml.getKey.caseTypeRef(first);
 				if ( type != null ) {
-					addFacet(elt, OF, convExpr(type));
+					addFacet(elt, OF, convExpr(type), errors);
 				}
 			} else {
 				String type = EGaml.getKey.caseTypeRef(second);
 				if ( type != null ) {
-					addFacet(elt, OF, convExpr(type));
+					addFacet(elt, OF, convExpr(type), errors);
 					// Translation of "type<i, c> ..." to "type of: c index: i..."
 					type = EGaml.getKey.caseTypeRef(first);
 					if ( type != null ) {
-						addFacet(elt, INDEX, convExpr(type));
+						addFacet(elt, INDEX, convExpr(type), errors);
 					}
 				}
 			}
 		}
 	}
 
-	private void convertBlock(final Statement stm, final ISyntacticElement elt) {
+	private static void convertBlock(final Statement stm, final ISyntacticElement elt, Set<Diagnostic> errors) {
 		Block block = stm.getBlock();
 		if ( block != null ) {
 			Expression function = block.getFunction();
 			if ( function != null ) {
 				// If it is a function (and not a regular block), we add it as a facet
-				addFacet(elt, FUNCTION, convExpr(function));
+				addFacet(elt, FUNCTION, convExpr(function), errors);
 			} else {
-				convStatements(elt, block.getStatements());
+				convStatements(elt, EGaml.getStatementsOf(block), errors);
 			}
 		}
 	}
 
-	private void addFacet(final ISyntacticElement e, final String key, final IExpressionDescription expr) {
+	private static void addFacet(final ISyntacticElement e, final String key, final IExpressionDescription expr,
+		Set<Diagnostic> errors) {
 		if ( e.getFacet(key) != null ) {
-			resource.error("Double definition of facet " + key + ". Only the last one will be considered", e, true);
+			addWarning("Double definition of facet " + key + ". Only the last one will be considered", e.getElement(),
+				errors);
 		}
 		e.setFacet(key, expr);
 	}
 
-	private void assignDependencies(final Statement stm, final String keyword, final ISyntacticElement elt) {
+	private static void assignDependencies(final Statement stm, final String keyword, final ISyntacticElement elt,
+		Set<Diagnostic> errors) {
 		// COMPATIBILITY with the definition of environment
 		if ( !SymbolProto.nonTypeStatements.contains(keyword) ) {
 			Set<String> s = varDependenciesOf(stm);
@@ -242,98 +246,99 @@ public class GamlCompatibilityConverter {
 				String type = elt.getLabel(TYPE);
 				if ( type != null ) {
 					if ( type.equals(keyword) ) {
-						resource.error("Duplicate declaration of type", elt, true);
+						addWarning("Duplicate declaration of type", stm, errors);
 					} else {
-						resource.error("Conflicting declaration of type (" + type + " and " + keyword +
-							"), only the last one will be considered", elt, true);
+						addWarning("Conflicting declaration of type (" + type + " and " + keyword +
+							"), only the last one will be considered", stm, errors);
 					}
 				}
 			}
 		}
 	}
 
-	private final void convElse(final S_If stm, final ISyntacticElement elt) {
+	private static void convElse(final S_If stm, final ISyntacticElement elt, Set<Diagnostic> errors) {
 		EObject elseBlock = stm.getElse();
 		if ( elseBlock != null ) {
 			ISyntacticElement elseElt = new SyntacticElement(ELSE, elseBlock);
 			if ( elseBlock instanceof Statement ) {
-				elseElt.addChild(convStatement(elt, (Statement) elseBlock));
+				elseElt.addChild(convStatement(elt, (Statement) elseBlock, errors));
 			} else {
-				convStatements(elseElt, ((Block) elseBlock).getStatements());
+				convStatements(elseElt, EGaml.getStatementsOf((Block) elseBlock), errors);
 			}
 			elt.addChild(elseElt);
 		}
 	}
 
-	private void convertArgs(final ActionArguments args, final ISyntacticElement elt) {
+	private static void convertArgs(final ActionArguments args, final ISyntacticElement elt, Set<Diagnostic> errors) {
 		if ( args != null ) {
-			for ( ArgumentDefinition def : args.getArgs() ) {
+			for ( ArgumentDefinition def : EGaml.getArgsOf(args) ) {
 				ISyntacticElement arg = new SyntacticElement(ARG, def);
-				addFacet(arg, NAME, convExpr(def.getName()));
+				addFacet(arg, NAME, convExpr(def.getName()), errors);
 				TypeRef type = (TypeRef) def.getType();
-				addFacet(arg, TYPE, convExpr(EGaml.getKey.caseTypeRef(type)));
-				convertType(arg, type);
+				addFacet(arg, TYPE, convExpr(EGaml.getKey.caseTypeRef(type)), errors);
+				convertType(arg, type, errors);
 				Expression e = def.getDefault();
 				if ( e != null ) {
-					addFacet(arg, DEFAULT, convExpr(e));
+					addFacet(arg, DEFAULT, convExpr(e), errors);
 				}
 				elt.addChild(arg);
 			}
 		}
 	}
 
-	private String convertAssignment(final S_Assignment stm, String keyword, final ISyntacticElement elt,
-		Expression expr) {
+	private static String convertAssignment(final S_Assignment stm, String keyword, final ISyntacticElement elt,
+		Expression expr, Set<Diagnostic> errors) {
 		IExpressionDescription value = convExpr(stm.getValue());
 		if ( keyword.equals("<-") || keyword.equals(SET) ) {
 			// Translation of "container[index] <- value" to
 			// "put item: value in: container at: index"
 			if ( expr instanceof Access ) {
 				elt.setKeyword(PUT);
-				addFacet(elt, ITEM, value);
-				addFacet(elt, IN, convExpr(expr.getLeft()));
+				addFacet(elt, ITEM, value, errors);
+				addFacet(elt, IN, convExpr(expr.getLeft()), errors);
 				List<Expression> args = EGaml.getExprsOf(((Access) expr).getArgs());
 				int size = args.size();
 				if ( size == 1 ) { // Integer index
-					addFacet(elt, AT, convExpr(args.get(0)));
+					addFacet(elt, AT, convExpr(args.get(0)), errors);
 				} else if ( size > 1 ) { // Point index
 					IExpressionDescription p =
 						new OperatorExpressionDescription("<->", convExpr(args.get(0)), convExpr(args.get(1)));
-					addFacet(elt, AT, p);
+					addFacet(elt, AT, p, errors);
 				} else {// size = 0 ? maybe "all: true" by default
-					addFacet(elt, ALL, ConstantExpressionDescription.create(true));
+					addFacet(elt, ALL, ConstantExpressionDescription.create(true), errors);
 				}
 				keyword = PUT;
 			} else {
 				// Translation of "var <- value" to "set var value: value"
 				elt.setKeyword(SET);
-				addFacet(elt, VALUE, value);
+				addFacet(elt, VALUE, value, errors);
 				keyword = SET;
 			}
 		} else if ( keyword.equals("<<") || keyword.equals("+=") || keyword.equals("++") ) {
 			// Translation of "container << item" or "container ++ item" to
 			// "add item: item to: container"
 			elt.setKeyword(ADD);
-			addFacet(elt, TO, convExpr(expr));
-			addFacet(elt, ITEM, value);
+			addFacet(elt, TO, convExpr(expr), errors);
+			addFacet(elt, ITEM, value, errors);
 			keyword = ADD;
 		} else if ( keyword.equals("-=") || keyword.equals(">>") || keyword.equals("--") ) {
 			// Translation of "container >> item" or "container -- item" to
 			// "remove item: item from: container"
 			elt.setKeyword(REMOVE);
-			addFacet(elt, FROM, convExpr(expr));
-			addFacet(elt, ITEM, value);
+			addFacet(elt, FROM, convExpr(expr), errors);
+			addFacet(elt, ITEM, value, errors);
 			keyword = REMOVE;
 		} else if ( keyword.equals(EQUATION_OP) ) {
 			// Translation of equations "diff(x, t) = ax + b" to
 			// "= left: diff(x, t) right: ax+b"
-			addFacet(elt, EQUATION_LEFT, convExpr(expr));
-			addFacet(elt, EQUATION_RIGHT, value);
+			addFacet(elt, EQUATION_LEFT, convExpr(expr), errors);
+			addFacet(elt, EQUATION_RIGHT, value, errors);
 		}
 		return keyword;
 	}
 
-	private void convertFacets(final Statement stm, final String keyword, final ISyntacticElement elt) {
+	private static void convertFacets(final Statement stm, final String keyword, final ISyntacticElement elt,
+		Set<Diagnostic> errors) {
 		SymbolProto p = DescriptionFactory.getProto(keyword);
 		for ( Facet f : EGaml.getFacetsOf(stm) ) {
 			String fname = EGaml.getKey.caseFacet(f);
@@ -345,14 +350,14 @@ public class GamlCompatibilityConverter {
 			} else if ( fname.equals(TYPE) ) {
 				// We convert type: ss<tt> to type: ss of: tt
 				if ( f.getExpr() instanceof TypeRef ) {
-					convertType(elt, (TypeRef) f.getExpr());
+					convertType(elt, (TypeRef) f.getExpr(), errors);
 				}
 			}
 			// We compute (and convert) the expression attached to the facet
 			FacetProto fp = p == null ? null : p.getPossibleFacets().get(fname);
 			boolean label = fp == null ? false : fp.isLabel;
 			IExpressionDescription fexpr = convExpr(f, label);
-			addFacet(elt, fname, fexpr);
+			addFacet(elt, fname, fexpr, errors);
 		}
 
 		// We add the "default" (or omissible) facet to the syntactic element
@@ -372,7 +377,7 @@ public class GamlCompatibilityConverter {
 		}
 	}
 
-	private String convertKeyword(final String k, final String upper) {
+	private static String convertKeyword(final String k, final String upper) {
 		String keyword = k;
 		if ( upper.equals(BATCH) && keyword.equals(SAVE) ) {
 			keyword = SAVE_BATCH;
@@ -388,12 +393,12 @@ public class GamlCompatibilityConverter {
 		return keyword;
 	}
 
-	private final IExpressionDescription convExpr(final EObject expr) {
+	private static final IExpressionDescription convExpr(final EObject expr) {
 		if ( expr != null ) { return new EcoreBasedExpressionDescription(expr); }
 		return null;
 	}
 
-	private final IExpressionDescription convExpr(final Facet facet, boolean label) {
+	private static final IExpressionDescription convExpr(final Facet facet, boolean label) {
 		if ( facet != null ) {
 			Expression expr = facet.getExpr();
 			if ( expr != null ) { return label ? convExpr(EGaml.getKeyOf(expr)) : convExpr(expr); }
@@ -403,21 +408,22 @@ public class GamlCompatibilityConverter {
 		return null;
 	}
 
-	final IExpressionDescription convExpr(final String string) {
+	final static IExpressionDescription convExpr(final String string) {
 		return LabelExpressionDescription.create(string);
 		// return convExpr(EGaml.createTerminal(string));
 	}
 
-	final void convStatements(final ISyntacticElement elt, final EList<? extends Statement> ss) {
+	final static void convStatements(final ISyntacticElement elt, final List<? extends Statement> ss,
+		Set<Diagnostic> errors) {
 		for ( final Statement stm : ss ) {
-			ISyntacticElement child = convStatement(elt, stm);
+			ISyntacticElement child = convStatement(elt, stm, errors);
 			if ( child != null ) {
 				elt.addChild(child);
 			}
 		}
 	}
 
-	private final IExpressionDescription findExpr(final Statement stm) {
+	private static final IExpressionDescription findExpr(final Statement stm) {
 		if ( stm == null ) { return null; }
 		// The order below should be important
 		String name = EGaml.getNameOf(stm);
@@ -428,7 +434,7 @@ public class GamlCompatibilityConverter {
 		return null;
 	}
 
-	private final Set<String> varDependenciesOf(final Statement s) {
+	private static final Set<String> varDependenciesOf(final Statement s) {
 		Set<String> list = new HashSet();
 		for ( Facet facet : EGaml.getFacetsOf(s) ) {
 			Expression expr = facet.getExpr();

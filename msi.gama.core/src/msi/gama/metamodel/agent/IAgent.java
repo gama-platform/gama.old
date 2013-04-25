@@ -128,14 +128,15 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	@setter(IKeyword.HOST)
 	public abstract void setHost(final IAgent macroAgent);
 
-	@Override
-	public abstract void dispose();
+	// @Override
+	// public abstract void dispose();
 
 	public abstract void schedule(IScope scope) throws GamaRuntimeException;
 
-	public abstract Object getAttribute(final Object index);
+	// @Override
+	// public abstract Object getAttribute(final Object index);
 
-	public abstract void setAttribute(final String name, final Object val);
+	// public abstract void setAttribute(final String name, final Object val);
 
 	/**
 	 * Allows to set attributes that will be accessed by the "read" or "get" operators. Used for

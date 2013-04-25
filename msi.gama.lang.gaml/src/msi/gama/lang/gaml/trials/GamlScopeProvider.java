@@ -16,7 +16,7 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gama.lang.gaml.scoping;
+package msi.gama.lang.gaml.trials;
 
 import org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider;
 

@@ -41,12 +41,9 @@ import com.vividsolutions.jts.operation.distance.IndexedFacetDistance;
  * 
  */
 @vars({ @var(name = "area", type = IType.FLOAT), @var(name = "width", type = IType.FLOAT),
-	@var(name = "height", type = IType.FLOAT),
-	@var(name = "points", type = IType.LIST, of = IType.POINT),
-	@var(name = "envelope", type = IType.GEOMETRY),
-	@var(name = "geometries", type = IType.LIST, of = IType.GEOMETRY),
-	@var(name = "multiple", type = IType.BOOL),
-	@var(name = "holes", type = IType.LIST, of = IType.GEOMETRY),
+	@var(name = "height", type = IType.FLOAT), @var(name = "points", type = IType.LIST, of = IType.POINT),
+	@var(name = "envelope", type = IType.GEOMETRY), @var(name = "geometries", type = IType.LIST, of = IType.GEOMETRY),
+	@var(name = "multiple", type = IType.BOOL), @var(name = "holes", type = IType.LIST, of = IType.GEOMETRY),
 	@var(name = "contour", type = IType.GEOMETRY) })
 public class GamaShape implements IShape /* , IContainer */{
 
@@ -292,18 +289,18 @@ public class GamaShape implements IShape /* , IContainer */{
 		}
 
 		public boolean covers(final IShape g) {
-			return g.isPoint() ? pl.intersects((Coordinate) g.getLocation(), cached) : preparedOp()
-				.covers(g.getInnerGeometry());
+			return g.isPoint() ? pl.intersects((Coordinate) g.getLocation(), cached) : preparedOp().covers(
+				g.getInnerGeometry());
 		}
 
 		public boolean intersects(final IShape g) {
-			return g.isPoint() ? pl.intersects((Coordinate) g.getLocation(), cached) : preparedOp()
-				.intersects(g.getInnerGeometry());
+			return g.isPoint() ? pl.intersects((Coordinate) g.getLocation(), cached) : preparedOp().intersects(
+				g.getInnerGeometry());
 		}
 
 		public boolean crosses(final IShape g) {
-			return g.isPoint() ? pl.intersects((Coordinate) g.getLocation(), cached) : preparedOp()
-				.crosses(g.getInnerGeometry());
+			return g.isPoint() ? pl.intersects((Coordinate) g.getLocation(), cached) : preparedOp().crosses(
+				g.getInnerGeometry());
 		}
 
 	}
@@ -531,20 +528,24 @@ public class GamaShape implements IShape /* , IContainer */{
 	 * @return the corresponding value of the attribute named 's' in the feature, or null if it is
 	 *         not present
 	 */
+	@Override
 	public Object getAttribute(Object s) {
 		if ( attributes == null ) { return null; }
 		return attributes.get(s);
 	}
 
+	@Override
 	public void setAttribute(Object key, Object value) {
-		createAttributes().put(key, value);
+		getOrCreateAttributes().put(key, value);
 	}
 
+	@Override
 	public boolean hasAttributes() {
 		return attributes != null;
 	}
 
-	public GamaMap createAttributes() {
+	@Override
+	public GamaMap getOrCreateAttributes() {
 		if ( attributes == null ) {
 			attributes = new GamaMap();
 		}
@@ -556,181 +557,9 @@ public class GamaShape implements IShape /* , IContainer */{
 		return attributes;
 	}
 
-	/**
-	 * IContainer implementation to access
-	 */
+	@Override
+	public boolean hasAttribute(Object key) {
+		return attributes != null && attributes.containsKey(key);
+	}
 
-	// @Override
-	// public Iterator iterator() {
-	// return attributes == null ? Collections.EMPTY_LIST.iterator() : attributes.iterator();
-	// }
-	//
-	// @Override
-	// public Object get(IScope scope, Object index) throws GamaRuntimeException {
-	// return attributes == null ? null : attributes.get(scope, index);
-	//
-	// }
-	//
-	// @Override
-	// public Object getFromIndicesList(IScope scope, IList indices) throws GamaRuntimeException {
-	// return attributes == null ? null : attributes.getFromIndicesList(scope, indices);
-	//
-	// }
-	//
-	// @Override
-	// public boolean contains(IScope scope, Object o) throws GamaRuntimeException {
-	// return attributes == null ? false : attributes.contains(scope, o);
-	// }
-	//
-	// @Override
-	// public Object first(IScope scope) throws GamaRuntimeException {
-	// return attributes == null ? null : attributes.first(scope);
-	// }
-	//
-	// @Override
-	// public Object last(IScope scope) throws GamaRuntimeException {
-	// return attributes == null ? null : attributes.last(scope);
-	// }
-	//
-	// @Override
-	// public int length(IScope scope) {
-	// return attributes == null ? 0 : attributes.length(scope);
-	// }
-	//
-	// @Override
-	// public Object max(IScope scope) throws GamaRuntimeException {
-	// return attributes == null ? 0d : attributes.max(scope);
-	// }
-	//
-	// @Override
-	// public Object min(IScope scope) throws GamaRuntimeException {
-	// return attributes == null ? 0d : attributes.min(scope);
-	// }
-	//
-	// @Override
-	// public Object product(IScope scope) throws GamaRuntimeException {
-	// return attributes == null ? 0d : attributes.product(scope);
-	// }
-	//
-	// @Override
-	// public Object sum(IScope scope) throws GamaRuntimeException {
-	// return attributes == null ? 0d : attributes.sum(scope);
-	// }
-	//
-	// @Override
-	// public boolean isEmpty(IScope scope) {
-	// return attributes == null ? true : attributes.isEmpty(scope);
-	// }
-	//
-	// @Override
-	// public IContainer reverse(IScope scope) throws GamaRuntimeException {
-	// return attributes == null ? null : attributes.reverse(scope);
-	// }
-	//
-	// @Override
-	// public Object any(IScope scope) {
-	// return attributes == null ? null : attributes.any(scope);
-	// }
-	//
-	// @Override
-	// public boolean isFixedLength() {
-	// return false;
-	// }
-	//
-	// @Override
-	// public boolean checkIndex(Object index) {
-	// return true;
-	// }
-	//
-	// @Override
-	// public boolean checkValue(Object value) {
-	// return true;
-	// }
-	//
-	// @Override
-	// public boolean checkBounds(Object index, boolean forAdding) {
-	// return true;
-	// }
-	//
-	// @Override
-	// public void addAll(IScope scope, IContainer value, Object param) throws GamaRuntimeException
-	// {
-	// createAttributes().addAll(scope, value, param);
-	// }
-	//
-	// @Override
-	// public void addAll(IScope scope, Object index, IContainer value, Object param)
-	// throws GamaRuntimeException {
-	// createAttributes().addAll(scope, index, value, param);
-	// }
-	//
-	// @Override
-	// public void add(IScope scope, Object value, Object param) throws GamaRuntimeException {
-	// createAttributes().add(scope, value, param);
-	// }
-	//
-	// @Override
-	// public void add(IScope scope, Object index, Object value, Object param)
-	// throws GamaRuntimeException {
-	// createAttributes().add(scope, index, value, param);
-	// }
-	//
-	// @Override
-	// public boolean removeFirst(IScope scope, Object value) throws GamaRuntimeException {
-	// return attributes == null ? false : attributes.removeFirst(scope, value);
-	// }
-	//
-	// @Override
-	// public boolean removeAll(IScope scope, IContainer value) throws GamaRuntimeException {
-	// return attributes == null ? false : attributes.removeAll(scope, value);
-	// }
-	//
-	// @Override
-	// public Object removeAt(IScope scope, Object index) throws GamaRuntimeException {
-	// return attributes == null ? null : attributes.removeAt(scope, index);
-	// }
-	//
-	// @Override
-	// public void putAll(IScope scope, Object value, Object param) throws GamaRuntimeException {
-	// createAttributes().putAll(scope, value, param);
-	// }
-	//
-	// @Override
-	// public void put(IScope scope, Object index, Object value, Object param)
-	// throws GamaRuntimeException {
-	// createAttributes().put(scope, index, value, param);
-	// }
-	//
-	// @Override
-	// public void clear() throws GamaRuntimeException {
-	// if ( attributes != null ) {
-	// attributes.clear();
-	// }
-	// }
-	//
-	// @Override
-	// public IList listValue(IScope scope) throws GamaRuntimeException {
-	// return attributes == null ? null : attributes.listValue(scope);
-	// }
-	//
-	// @Override
-	// public IMatrix matrixValue(IScope scope) throws GamaRuntimeException {
-	// return attributes == null ? null : attributes.matrixValue(scope);
-	// }
-	//
-	// @Override
-	// public IMatrix matrixValue(IScope scope, ILocation preferredSize) throws GamaRuntimeException
-	// {
-	// return attributes == null ? null : attributes.matrixValue(scope, preferredSize);
-	// }
-	//
-	// @Override
-	// public Map mapValue(IScope scope) throws GamaRuntimeException {
-	// return attributes;
-	// }
-	//
-	// @Override
-	// public Iterable iterable(IScope scope) {
-	// return attributes == null ? Collections.EMPTY_LIST : attributes.iterable(scope);
-	// }
 }

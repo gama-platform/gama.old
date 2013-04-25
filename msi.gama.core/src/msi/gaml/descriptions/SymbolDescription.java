@@ -172,8 +172,13 @@ public class SymbolDescription implements IDescription {
 	@Override
 	public void dispose() {
 		if ( isBuiltIn() ) { return; }
-		facets.dispose();
-		facets.clear();
+		// FIXME / TODO Verify that not disposing the previous expressions does not lead to runtime errors, as the
+		// expressions will still be available, after a validation, in the ISyntacticStatement, which shares the facets
+		// with the IDescription and the ISymbol...
+		// TODO A solution to clean this would be to have a generic Facets<T> type, with two subtypes:
+		// Facets<IExpressionDescription> and Facets<IExpression>
+		// facets.dispose();
+		// facets.clear();
 		if ( children != null ) {
 			for ( IDescription c : children ) {
 				c.dispose();
@@ -328,16 +333,6 @@ public class SymbolDescription implements IDescription {
 	}
 
 	/**
-	 * @see msi.gama.common.interfaces.IDescription#getWorldSpecies()
-	 */
-	// @Override
-	// public TypeDescription getWorldSpecies() {
-	// ModelDescription model = getModelDescription();
-	// if ( model == null ) { return null; }
-	// return model; // .getWorldSpecies();
-	// }
-
-	/**
 	 * @see org.eclipse.emf.common.notify.Adapter#notifyChanged(org.eclipse.emf.common.notify.Notification)
 	 */
 	@Override
@@ -404,8 +399,9 @@ public class SymbolDescription implements IDescription {
 
 	@Override
 	public IErrorCollector getErrorCollector() {
-		if ( enclosing == null ) { return null; }
-		return enclosing.getErrorCollector();
+		ModelDescription model = getModelDescription();
+		if ( model == null ) { return null; }
+		return model.getErrorCollector();
 	}
 
 	@Override

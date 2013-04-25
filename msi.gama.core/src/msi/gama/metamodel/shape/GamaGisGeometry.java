@@ -22,12 +22,13 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.type.GeometryType;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * 
  * The class GamaGisGeometry. A subclass of GamaGeometry that maintains a link with the underlying
- * GIS feature
+ * GIS feature attributes
  * 
  * @author drogoul
  * @since 30 nov. 2011
@@ -35,21 +36,14 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class GamaGisGeometry extends GamaShape {
 
-	public GamaGisGeometry(IScope scope, final Geometry g) {
-		init(scope.getSimulationScope().getGisUtils().transform(g), null);
-	}
-
 	public GamaGisGeometry(IScope scope, Geometry g, final SimpleFeature feature) {
-		init(scope.getSimulationScope().getGisUtils().transform(g), feature);
-	}
-
-	private void init(final Geometry g, SimpleFeature feature) {
-		setInnerGeometry(g);
-		// FIXME Disabled for the moment as the increase of memory usage is quite big
-		// Probably we should filter ?
-		for ( Property p : feature.getProperties() ) {
-			if ( !Geometry.class.isAssignableFrom(p.getType().getBinding()) ) {
-				setAttribute(p.getName().getLocalPart(), p.getValue());
+		super(scope.getSimulationScope().getGisUtils().transform(g));
+		if ( feature != null ) {
+			// We filter out the geometries (already loaded before)
+			for ( Property p : feature.getProperties() ) {
+				if ( !(p.getType() instanceof GeometryType) ) {
+					setAttribute(p.getName().getLocalPart(), p.getValue());
+				}
 			}
 		}
 	}

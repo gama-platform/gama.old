@@ -144,7 +144,7 @@ public class ModelFactory extends SymbolFactory {
 			}
 		}
 		String modelName = source.getLabel(NAME).replace(' ', '_') + "_model";
-		globalFacets.put(NAME, modelName);
+		globalFacets.putAsLabel(NAME, modelName);
 
 		ModelDescription model =
 			new ModelDescription(modelName, projectPath, modelPath, source.getElement(), Types.getSpecies(SIMULATION),

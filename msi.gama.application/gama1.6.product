@@ -21,7 +21,7 @@ Visit http://code.google.com/p/gama-platform/
 
    <launcherArgs>
       <programArgs>-nl ${target.nl} -data @noDefault -clean -consoleLog</programArgs>
-      <vmArgs>-Xms256m -Xmx1024m
+      <vmArgs>-Xms256m -Xmx2048m
 -Xmn128m
 -Xss2m
 -XX:PermSize=128m

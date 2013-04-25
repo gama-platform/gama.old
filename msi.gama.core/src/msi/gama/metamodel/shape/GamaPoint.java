@@ -127,7 +127,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 			z = 0.0d;
 		}
 	}
-	
+
 	@Override
 	public void setX(double xx) {
 		x = xx;
@@ -231,8 +231,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public boolean equals(final Object o) {
-		if ( o instanceof GamaPoint ) { return hasZ ? equals3D((GamaPoint) o)
-			: equals2D((GamaPoint) o); }
+		if ( o instanceof GamaPoint ) { return hasZ ? equals3D((GamaPoint) o) : equals2D((GamaPoint) o); }
 		return false;
 	}
 
@@ -256,9 +255,8 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public double euclidianDistanceTo(final ILocation p) {
-		if ( hasZ && ((GamaPoint) p).hasZ ) { return Maths.hypot(x, p.getX(), y, p.getY(), z,
-			p.getZ()); }
-		//return Maths.hypot(x, p.getX(), y, p.getY()); VERY SLOW !
+		if ( hasZ && ((GamaPoint) p).hasZ ) { return Maths.hypot(x, p.getX(), y, p.getY(), z, p.getZ()); }
+		// return Maths.hypot(x, p.getX(), y, p.getY()); VERY SLOW !
 		return this.distance(p.toCoordinate());
 	}
 
@@ -319,6 +317,27 @@ public class GamaPoint extends Coordinate implements ILocation {
 		return null;
 	}
 
-	
+	@Override
+	public GamaMap getOrCreateAttributes() {
+		return null;
+	}
+
+	@Override
+	public Object getAttribute(Object key) {
+		return null;
+	}
+
+	@Override
+	public void setAttribute(Object key, Object value) {}
+
+	@Override
+	public boolean hasAttributes() {
+		return false;
+	}
+
+	@Override
+	public boolean hasAttribute(Object key) {
+		return false;
+	}
 
 }

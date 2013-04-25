@@ -18,9 +18,10 @@
  */
 package msi.gaml.factories;
 
-import static msi.gama.common.interfaces.IKeyword.PRIMITIVE;
+import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
 import msi.gaml.compilation.ISymbol;
@@ -36,8 +37,8 @@ import msi.gaml.types.TypesManager;
  * @todo Description
  * 
  */
-@factory(handles = { ISymbolKind.ENVIRONMENT, ISymbolKind.ABSTRACT_SECTION,
-	ISymbolKind.BATCH_METHOD, ISymbolKind.OUTPUT })
+@factory(handles = { ISymbolKind.ENVIRONMENT, ISymbolKind.ABSTRACT_SECTION, ISymbolKind.BATCH_METHOD,
+	ISymbolKind.OUTPUT })
 public class SymbolFactory {
 
 	protected final Set<Integer> kindsHandled;
@@ -55,8 +56,7 @@ public class SymbolFactory {
 	 * possibly null -- list of children. In this method, the children of the source element are not
 	 * considered, so if "children" is null or empty, the description is created without children.
 	 */
-	final IDescription create(final ISyntacticElement source, final IDescription superDesc,
-		final IChildrenProvider cp) {
+	final IDescription create(final ISyntacticElement source, final IDescription superDesc, final IChildrenProvider cp) {
 		SymbolProto md = getProto(superDesc, source);
 		if ( md == null ) { return null; }
 		return md.getFactory().createDescriptionInternal(source, superDesc, cp, md);
@@ -66,15 +66,14 @@ public class SymbolFactory {
 		String keyword = source.getKeyword();
 		SymbolProto sp = DescriptionFactory.getProto(keyword);
 		if ( sp == null ) {
-			superDesc.error("Unknown statement " + keyword, IGamlIssue.UNKNOWN_KEYWORD,
-				source.getElement());
+			superDesc.error("Unknown statement " + keyword, IGamlIssue.UNKNOWN_KEYWORD, source.getElement());
 			return null;
 		}
 		return sp;
 	}
 
-	private final IDescription createDescriptionInternal(final ISyntacticElement source,
-		final IDescription superDesc, final IChildrenProvider cp, final SymbolProto md) {
+	private final IDescription createDescriptionInternal(final ISyntacticElement source, final IDescription superDesc,
+		final IChildrenProvider cp, final SymbolProto md) {
 		md.verifyFacets(source, source.getFacets(), superDesc);
 		IDescription desc = buildDescription(source, cp, superDesc, md);
 		if ( desc == null ) { return null; }
@@ -106,10 +105,9 @@ public class SymbolFactory {
 		return desc;
 	}
 
-	protected IDescription buildDescription(final ISyntacticElement source,
-		final IChildrenProvider cp, final IDescription superDesc, final SymbolProto md) {
-		return new SymbolDescription(source.getKeyword(), superDesc, cp, source.getElement(),
-			source.getFacets());
+	protected IDescription buildDescription(final ISyntacticElement source, final IChildrenProvider cp,
+		final IDescription superDesc, final SymbolProto md) {
+		return new SymbolDescription(source.getKeyword(), superDesc, cp, source.getElement(), source.getFacets());
 	}
 
 	final ISymbol compile(final IDescription desc) {
@@ -143,12 +141,15 @@ public class SymbolFactory {
 			}
 			String facetName = f.getKey();
 			IExpressionDescription ed = f.getValue();
-			if ( ed == null ) {
+			if ( facetName.equals(WITH) || ed == null ) {
 				continue;
 			}
 			compileFacet(facetName, desc, smd);
 			IExpression expr = ed.getExpression();
 			if ( expr == null ) {
+				if ( facetName.equals(VAR) ) {
+					GuiUtils.debug("SymbolFactory.privateValidate: NULL VAR");
+				}
 				continue;
 			}
 			DescriptionValidator.verifyFacetType(desc, facetName, expr, smd, md, tm);
@@ -181,15 +182,14 @@ public class SymbolFactory {
 		if ( md == null ) { return null; }
 		Facets rawFacets = desc.getFacets();
 		for ( Facet f : rawFacets.entrySet() ) {
-			if ( f != null ) {
+			if ( f != null && !f.getKey().equals(WITH) ) {
 				compileFacet(f.getKey(), desc, md);
 			}
 		}
 		ISymbol cs = md.getConstructor().create(desc);
 		if ( cs == null ) { return null; }
 		if ( md.hasArgs() ) {
-			((IStatement.WithArgs) cs)
-				.setFormalArgs(privateCompileArgs((StatementDescription) desc));
+			((IStatement.WithArgs) cs).setFormalArgs(privateCompileArgs((StatementDescription) desc));
 		}
 		if ( md.hasSequence() && !desc.getKeyword().equals(PRIMITIVE) ) {
 			if ( md.isRemoteContext() ) {

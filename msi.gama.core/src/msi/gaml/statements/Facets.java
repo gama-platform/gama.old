@@ -79,9 +79,7 @@ public class Facets {
 		}
 		int i = 0;
 		for ( ; index < strings.length; index += 2 ) {
-			Facet f =
-				new Facet(strings[index],
-					StringBasedExpressionDescription.create(strings[index + 1]));
+			Facet f = new Facet(strings[index], StringBasedExpressionDescription.create(strings[index + 1]));
 			facets[i++] = f;
 		}
 	}
@@ -227,14 +225,15 @@ public class Facets {
 		return f == null ? o == null : f.equalsString(o);
 	}
 
-	public void dispose() {
-		for ( int i = 0; i < facets.length; i++ ) {
-			if ( facets[i] != null && facets[i].value != null ) {
-				facets[i].value.dispose();
-			}
-		}
-		clear();
-	}
+	//
+	// public void dispose() {
+	// for ( int i = 0; i < facets.length; i++ ) {
+	// if ( facets[i] != null && facets[i].value != null ) {
+	// facets[i].value.dispose();
+	// }
+	// }
+	// clear();
+	// }
 
 	public void clear() {
 		facets = new Facet[0];

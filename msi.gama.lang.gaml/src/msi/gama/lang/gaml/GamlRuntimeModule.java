@@ -19,9 +19,11 @@
 package msi.gama.lang.gaml;
 
 import msi.gama.lang.gaml.linking.GamlLinkingService;
+import msi.gama.lang.gaml.parsing.GamlSyntacticParser;
 import msi.gama.lang.gaml.resource.*;
 import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import org.eclipse.xtext.linking.ILinkingService;
+import org.eclipse.xtext.parser.IParser;
 import org.eclipse.xtext.resource.*;
 import org.eclipse.xtext.resource.containers.StateBasedContainerManager;
 import org.eclipse.xtext.service.SingletonBinding;
@@ -36,8 +38,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	@Override
 	public void configure(final Binder binder) {
 		super.configure(binder);
-		binder.bind(IDefaultResourceDescriptionStrategy.class).to(
-			GamlResourceDescriptionStrategy.class);
+		binder.bind(IDefaultResourceDescriptionStrategy.class).to(GamlResourceDescriptionStrategy.class);
 		// binder.bind(IQualifiedNameConverter.class).to(GamlNameConverter.class);
 		// binder.bind(IResourceDescription.Manager.class).to(GamlResourceDescriptionManager.class);
 		// binder.bind(DescriptionUtils.class).to(GamlDescriptionUtils.class);
@@ -73,6 +74,11 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	@Override
 	public Class<? extends IContainer.Manager> bindIContainer$Manager() {
 		return StateBasedContainerManager.class;
+	}
+
+	@Override
+	public Class<? extends IParser> bindIParser() {
+		return GamlSyntacticParser.class;
 	}
 
 }

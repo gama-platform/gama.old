@@ -6,14 +6,15 @@ package msi.gama.lang.gaml.resource;
 
 import java.util.*;
 import msi.gama.common.interfaces.ISyntacticElement;
-import msi.gama.lang.gaml.validation.*;
-import msi.gaml.compilation.GamlCompilationError;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.lang.gaml.parsing.*;
+import msi.gama.lang.gaml.parsing.GamlSyntacticParser.GamlParseResult;
+import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 import msi.gaml.descriptions.ModelDescription;
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.util.*;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
-import com.google.inject.Inject;
 
 /**
  * The class GamlResource.
@@ -24,24 +25,22 @@ import com.google.inject.Inject;
  */
 public class GamlResource extends LazyLinkingResource {
 
-	static int counter = 0;
-	private ISyntacticElement syntacticContents;
 	private IGamlBuilderListener listener;
-	private GamlCompatibilityConverter converter;
-
-	@Inject
-	GamlJavaValidator validator;
 
 	@Override
 	public String toString() {
 		return "resource" + "[" + getURI() + "]";
 	}
 
-	public GamlCompatibilityConverter getConverter() {
-		if ( converter == null ) {
-			converter = new GamlCompatibilityConverter(this);
-		}
-		return converter;
+	@Override
+	protected void addSyntaxErrors() {
+		super.addSyntaxErrors();
+		getWarnings().addAll(getParseResult().getWarnings());
+	}
+
+	@Override
+	public GamlParseResult getParseResult() {
+		return (GamlParseResult) super.getParseResult();
 	}
 
 	public void setModelDescription(final boolean withErrors, final ModelDescription model) {
@@ -63,17 +62,15 @@ public class GamlResource extends LazyLinkingResource {
 		return listener;
 	}
 
-	public void error(final String message, final ISyntacticElement elt, final boolean warning) {
-		validator.add(new GamlCompilationError(message, elt.getElement(), warning));
-	}
-
 	@Override
 	protected void unload(final EObject oldRootObject) {
+		GuiUtils.debug("GamlResource.unload");
 		if ( oldRootObject != null ) {
 			EList<Adapter> list = new BasicEList<Adapter>(oldRootObject.eAdapters());
 			for ( Adapter adapter : list ) {
 				if ( adapter instanceof ModelDescription ) {
 					((ModelDescription) adapter).dispose();
+					oldRootObject.eAdapters().remove(adapter);
 				}
 			}
 		}
@@ -81,14 +78,15 @@ public class GamlResource extends LazyLinkingResource {
 	}
 
 	public ISyntacticElement getSyntacticContents() {
-		if ( syntacticContents == null ) {
-			syntacticContents = getConverter().buildSyntacticContents();
+		GamlParseResult parseResult = getParseResult();
+		if ( parseResult == null ) { // Should not happen, but in case...
+			Set<org.eclipse.xtext.diagnostics.Diagnostic> errors = new LinkedHashSet();
+			ISyntacticElement result = GamlCompatibilityConverter.buildSyntacticContents(getContents().get(0), errors);
+			getErrors().addAll(errors);
+			return result;
 		}
-		return syntacticContents;
-	}
 
-	public void eraseSyntacticContents() {
-		syntacticContents = null;
+		return parseResult.getSyntacticContents();
 	}
 
 }

@@ -552,12 +552,27 @@ public class GamlAgent implements IAgent {
 	}
 
 	@Override
+	public GamaMap getOrCreateAttributes() {
+		return attributes;
+	}
+
+	@Override
+	public boolean hasAttributes() {
+		return false;
+	}
+
+	@Override
+	public boolean hasAttribute(Object key) {
+		return false;
+	}
+
+	@Override
 	public synchronized Object getAttribute(Object index) {
 		return attributes.get(index);
 	}
 
 	@Override
-	public final synchronized void setAttribute(final String name, final Object val) {
+	public final synchronized void setAttribute(final Object name, final Object val) {
 		attributes.put(name, val);
 	}
 

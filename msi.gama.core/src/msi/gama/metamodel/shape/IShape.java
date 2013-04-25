@@ -23,7 +23,6 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.util.GamaMap;
 import msi.gaml.types.IType;
 import com.vividsolutions.jts.geom.*;
 
@@ -37,7 +36,7 @@ import com.vividsolutions.jts.geom.*;
  * 
  */
 @vars({ @var(name = "perimeter", type = IType.FLOAT) })
-public interface IShape extends ILocated, IValue {
+public interface IShape extends ILocated, IValue, IAttributed {
 
 	public abstract IAgent getAgent();
 
@@ -69,7 +68,5 @@ public interface IShape extends ILocated, IValue {
 	public abstract void setInnerGeometry(Geometry intersection);
 
 	public abstract void dispose();
-
-	public abstract GamaMap getAttributes();
 
 }

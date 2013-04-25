@@ -27,13 +27,13 @@ import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.utils.GamlExpressionCompiler;
 import msi.gama.runtime.GAMA;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ModelDescription;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
-import org.eclipse.emf.ecore.resource.*;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.resource.*;
 import org.eclipse.xtext.util.Arrays;
 import org.eclipse.xtext.validation.Check;
@@ -54,8 +54,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	public synchronized void validate(final Model model) {
 		try {
 
-			// GuiUtils.debug("GamlJavaValidator processing " +
-			// model.eResource().getURI().lastSegment() + "...");
+			GuiUtils.debug("GamlJavaValidator processing " + model.eResource().getURI().lastSegment() + "...");
 			GamlResource r = (GamlResource) model.eResource();
 			currentResource = r;
 			ModelDescription result = null;
@@ -94,7 +93,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		XtextResourceSet resourceSet = (XtextResourceSet) r.getResourceSet();
 		ModelDescription description = parse(r, resourceSet);
 		if ( r.getErrors().isEmpty() ) {
-			cleanResourceSet(resourceSet, false);
+			// cleanResourceSet(resourceSet, false);
 			description = getModelFactory().validate(description);
 		}
 		long end = System.nanoTime();
@@ -121,7 +120,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		LinkedHashSet<GamlResource> newResources = new LinkedHashSet<GamlResource>();
 		// Forcing the resource set to reload the primary resource, even though it has been
 		// passed, in order to be sure that all resources will belong to the same resource set.
-		GamlResource first = (GamlResource) resourceSet.getResource(resource.getURI(), true);
+		GamlResource first = resource; // (GamlResource) resourceSet.getResource(resource.getURI(), true);
 
 		newResources.add(first);
 		while (!newResources.isEmpty()) {
@@ -148,10 +147,10 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			String importUri = imp.getImportURI();
 			URI iu = URI.createURI(importUri).resolve(resource.getURI());
 			GamlResource ir = (GamlResource) resourceSet.getResource(iu, true);
-			if ( !ir.getErrors().isEmpty() ) {
-				resource.error("Imported file " + ir.getURI().lastSegment() + " has errors. Fix them first.",
-					new SyntacticElement(IKeyword.INCLUDE, imp), true);
-			}
+			// if ( !ir.getErrors().isEmpty() ) {
+			// resource.error("Imported file " + ir.getURI().lastSegment() + " has errors. Fix them first.",
+			// new SyntacticElement(IKeyword.INCLUDE, imp), true);
+			// }
 			imports.add(ir);
 		}
 		return imports;
@@ -183,9 +182,11 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	}
 
 	private void cleanResourceSet(final XtextResourceSet resourceSet, final boolean clear) {
-		for ( Resource r : resourceSet.getResources() ) {
-			((GamlResource) r).eraseSyntacticContents();
-		}
+		// for ( Resource r : resourceSet.getResources() ) {
+		// // if ( !r.getErrors().isEmpty() ) {
+		// // ((GamlResource) r).eraseSyntacticContents();
+		// // }
+		// }
 		if ( clear ) {
 			resourceSet.getResources().clear();
 		}
