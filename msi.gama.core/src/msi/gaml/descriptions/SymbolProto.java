@@ -48,7 +48,7 @@ public class SymbolProto {
 	private final boolean isUniqueInContext;
 	private final boolean nameUniqueInContext;
 	private final Set<String> contextKeywords;
-	private final Set<Integer> contextKinds;
+	private final boolean[] contextKinds = new boolean[ISymbolKind.__NUMBER__];
 	private final Map<String, FacetProto> possibleFacets;
 	private final String[][] possibleCombinations;
 	private String bestSuitable = "";
@@ -56,10 +56,9 @@ public class SymbolProto {
 	private final String omissibleFacet;
 	private final SymbolFactory factory;
 
-	static final List<Integer> ids = Arrays.asList(IType.LABEL, IType.ID, IType.NEW_TEMP_ID,
-		IType.NEW_VAR_ID, IType.TYPE_ID);
-	static final List<Integer> definitions = Arrays.asList(IType.ID, IType.NEW_TEMP_ID,
-		IType.NEW_VAR_ID);
+	static final List<Integer> ids = Arrays.asList(IType.LABEL, IType.ID, IType.NEW_TEMP_ID, IType.NEW_VAR_ID,
+		IType.TYPE_ID);
+	static final List<Integer> definitions = Arrays.asList(IType.ID, IType.NEW_TEMP_ID, IType.NEW_VAR_ID);
 
 	static {
 		nonTypeStatements.add(IKeyword.EXPERIMENT);
@@ -67,11 +66,10 @@ public class SymbolProto {
 	}
 
 	public SymbolProto(final boolean hasSequence, final boolean hasArgs, final int kind,
-		final boolean doesNotHaveScope, final Map<String, FacetProto> possibleFacets,
-		final String omissible, final String[][] possibleCombinations,
-		final Set<String> contextKeywords, final Set<Integer> contextKinds,
-		final boolean isRemoteContext, final boolean isUniqueInContext,
-		final boolean nameUniqueInContext, final ISymbolConstructor constr) {
+		final boolean doesNotHaveScope, final Map<String, FacetProto> possibleFacets, final String omissible,
+		final String[][] possibleCombinations, final Set<String> contextKeywords, final Set<Integer> contextKinds,
+		final boolean isRemoteContext, final boolean isUniqueInContext, final boolean nameUniqueInContext,
+		final ISymbolConstructor constr) {
 		factory = DescriptionFactory.getFactory(kind);
 		constructor = constr;
 		this.isRemoteContext = isRemoteContext;
@@ -95,7 +93,10 @@ public class SymbolProto {
 		}
 		this.possibleCombinations = possibleCombinations;
 		this.contextKeywords = contextKeywords;
-		this.contextKinds = contextKinds;
+		Arrays.fill(this.contextKinds, false);
+		for ( Integer i : contextKinds ) {
+			this.contextKinds[i] = true;
+		}
 	}
 
 	public SymbolFactory getFactory() {
@@ -150,8 +151,7 @@ public class SymbolProto {
 		return mandatoryFacets;
 	}
 
-	public void verifyMandatoryFacets(final ISyntacticElement e, final Facets facets,
-		final IDescription context) {
+	public void verifyMandatoryFacets(final ISyntacticElement e, final Facets facets, final IDescription context) {
 		for ( String s : mandatoryFacets ) {
 			if ( !facets.containsKey(s) ) {
 				context.error("Missing facet " + s, IGamlIssue.MISSING_FACET, e.getElement(), s);
@@ -159,16 +159,14 @@ public class SymbolProto {
 		}
 	}
 
-	public void verifyFacetsValidity(final ISyntacticElement e, final Facets facets,
-		final IDescription context) {
+	public void verifyFacetsValidity(final ISyntacticElement e, final Facets facets, final IDescription context) {
 		if ( context == null ) { return; }
 		// Special case for "do", which can accept (at parsing time) any facet
 		if ( e.getKeyword().equals(DO) ) { return; }
 		for ( Facet s : facets.entrySet() ) {
 
 			if ( s != null && !possibleFacets.containsKey(s.getKey()) ) {
-				context.error("Unknown facet " + s.getKey(), IGamlIssue.UNKNOWN_FACET,
-					e.getElement(), s.getKey());
+				context.error("Unknown facet " + s.getKey(), IGamlIssue.UNKNOWN_FACET, e.getElement(), s.getKey());
 			}
 		}
 	}
@@ -177,8 +175,7 @@ public class SymbolProto {
 		return bestSuitable;
 	}
 
-	public void verifyFacetsCombinations(final ISyntacticElement e, final Facets facets,
-		final IDescription context) {
+	public void verifyFacetsCombinations(final ISyntacticElement e, final Facets facets, final IDescription context) {
 		if ( getPossibleCombinations().length > 0 ) {
 			// System.out.println("before\n");
 			// String needFacets="";
@@ -219,14 +216,10 @@ public class SymbolProto {
 
 	public boolean verifyContext(final IDescription upper) {
 		if ( upper == null ) { return true; }
-		String upperKeyword = upper.getKeyword();
-		Integer upperKind = upper.getKind();
-		boolean result = contextKeywords.contains(upperKeyword) || contextKinds.contains(upperKind);
-		return result;
+		return contextKinds[upper.getKind()] || contextKeywords.contains(upper.getKeyword());
 	}
 
-	public void verifyFacetsIds(final ISyntacticElement e, final Facets facets,
-		final IDescription context) {
+	public void verifyFacetsIds(final ISyntacticElement e, final Facets facets, final IDescription context) {
 		for ( Facet facet : facets.entrySet() ) {
 			if ( facet == null ) {
 				continue;
@@ -248,17 +241,17 @@ public class SymbolProto {
 							}
 						}
 						if ( !found ) {
-							context.error("The value of facet " + facet.getKey() +
-								" must be one of " + Arrays.toString(f.values),
-								IGamlIssue.NOT_AMONG, e.getElement());
+							context
+								.error(
+									"The value of facet " + facet.getKey() + " must be one of " +
+										Arrays.toString(f.values), IGamlIssue.NOT_AMONG, e.getElement());
 
 						}
 					}
 				} else {
 					String facetValue = facets.getLabel(facetName).trim();
 					if ( IExpressionCompiler.RESERVED.contains(facetValue) ) {
-						context.error(facetValue +
-							" is a reserved keyword. It cannot be used as an identifier",
+						context.error(facetValue + " is a reserved keyword. It cannot be used as an identifier",
 							IGamlIssue.IS_RESERVED, e.getElement(), facetValue);
 					}
 
@@ -267,8 +260,7 @@ public class SymbolProto {
 		}
 	}
 
-	public void verifyFacets(final ISyntacticElement e, final Facets facets,
-		final IDescription context) {
+	public void verifyFacets(final ISyntacticElement e, final Facets facets, final IDescription context) {
 		verifyMandatoryFacets(e, facets, context);
 		verifyFacetsValidity(e, facets, context);
 		verifyFacetsCombinations(e, facets, context);
@@ -303,8 +295,8 @@ public class SymbolProto {
 		StringBuilder sb = new StringBuilder(200);
 		sb.append("<b>Facets allowed:</b><br><ul>");
 		for ( FacetProto f : this.getPossibleFacets().values() ) {
-			sb.append("<li><b>").append(f.name).append("</b> type: ").append(Types.get(f.types[0]))
-				.append(" <i>[").append(f.optional ? "optional" : "required").append("]</i>");
+			sb.append("<li><b>").append(f.name).append("</b> type: ").append(Types.get(f.types[0])).append(" <i>[")
+				.append(f.optional ? "optional" : "required").append("]</i>");
 			if ( f.values != null && f.values.length != 0 ) {
 				sb.append(" among: ").append(Arrays.toString(f.values));
 			}
