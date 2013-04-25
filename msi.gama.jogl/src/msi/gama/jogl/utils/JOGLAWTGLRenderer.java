@@ -126,7 +126,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		animator = new FPSAnimator(canvas, REFRESH_FPS, true);
 		displaySurface = d;
 
-		// dem = new DigitalElevationModelDrawer();
+		dem = new DigitalElevationModelDrawer(this);
 
 	}
 
@@ -181,15 +181,19 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 		graphicsGLUtils = new MyGraphics(this);
 
-		isInitialized = true;
-		System.out.println("openGL init ok");
-
 		// hdviet added 28j/05/2012
 		// Start Of User Initialization
 		LastRot.setIdentity(); // Reset Rotation
 		ThisRot.setIdentity(); // Reset Rotation
 		ThisRot.get(matrix);
+		
+		//FIXME: Need to be place somewhere (triggered by a button in Gama)
+		/*if(dem !=null){
+			dem.InitDEM(gl);        
+		}*/
 
+		isInitialized = true;
+		System.out.println("openGL init ok");
 		
 
 	}
@@ -262,20 +266,21 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
 			gl.glPolygonOffset(1, 1);
 
-			if ( dem != null ) {
-				DigitalElevationModelDrawer.DisplayDEM(gl);
+			if ( dem.demInitialized == true ) {
+				dem.DisplayDEM(gl);
 			} else {
 				this.DrawScene();
+				if ( drawAxes ) {
+					float envMaxDim =
+						((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).maxEnvDim;
+					((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myGLRender.graphicsGLUtils
+						.DrawXYZAxis(envMaxDim / 10);
+					((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myGLRender.graphicsGLUtils
+						.DrawZValue(-envMaxDim / 10, (float) camera.zPos);
+				}
 			}
 
-			if ( drawAxes ) {
-				float envMaxDim =
-					((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).maxEnvDim;
-				((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myGLRender.graphicsGLUtils
-					.DrawXYZAxis(envMaxDim / 10);
-				((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myGLRender.graphicsGLUtils
-					.DrawZValue(-envMaxDim / 10, (float) camera.zPos);
-			}
+			
 
 			// this.DrawShapeFile();
 			// this.DrawCollada();

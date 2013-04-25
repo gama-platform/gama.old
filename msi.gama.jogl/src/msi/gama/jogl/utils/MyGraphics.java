@@ -151,7 +151,7 @@ public class MyGraphics {
 		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, string);
 		//glut.glutBitmapString(GLUT.BITMAP_8_BY_13, string);
 		myGl.glScalef(0.125f, 0.125f, 0.125f);
-		// myGl.glEnable(GL_BLEND);
+		//myGl.glEnable(GL_BLEND);
 
 	}
 	

@@ -114,6 +114,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 	public boolean useVertexArray = false;
 	// FIXME: This need to be remove. Only here to return the bounds of a
 	// geometry.
+	
+	
 	private final PointTransformation pt = new PointTransformation() {
 
 		@Override
@@ -730,15 +732,13 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 		curImage.name = name;
 		// For grid display and quadtree display the image is recomputed every
 		// iteration
-
-	
-			if ( curImage.name.equals("GridDisplay") == true || curImage.name.equals("QuadTreeDisplay") ) {
+		if ( curImage.name.equals("GridDisplay") == true || curImage.name.equals("QuadTreeDisplay") ) {
+			myGLRender.InitTexture(img, name);
+		} else {// For texture coming from a file there is no need to redraw it.
+			if ( !IsTextureExist(name) ) {
 				myGLRender.InitTexture(img, name);
-			} else {// For texture coming from a file there is no need to redraw it.
-				if ( !IsTextureExist(name) ) {
-					myGLRender.InitTexture(img, name);
-				}
-			}	
+			}
+		}	
 		this.myImages.add(curImage);
 
 	}
@@ -1157,18 +1157,15 @@ public class JOGLAWTDisplayGraphics implements IGraphics {
 
 	@Override
 	public boolean setPolygonMode(boolean polygonMode) {
-
 		return myGLRender.polygonmode = polygonMode;
 	}
 
 	@Override
 	public void drawDEM(GamaFile demFileName, GamaFile textureFileName) {
-		System.out.println("DEM in opengl" + demFileName.getPath() + "with " + textureFileName.getPath());
-		// FIXME: Need to be place somewhere (triggered by a button in Gama)
-				if ( this.myGLRender.dem != null ) {
-					DigitalElevationModelDrawer.InitDEM(this.myGLRender.gl, demFileName.getPath(), textureFileName.getPath());
-				}
-		
+		System.out.println("drawDEM in JOGLGraphics " + demFileName.getPath() + "with " + textureFileName.getPath());
+		if ( this.myGLRender.dem != null ) {
+			this.myGLRender.dem.InitDEM(this.myGLRender.gl);//, demFileName.getPath(), textureFileName.getPath());
+		}
 	}
 
 }

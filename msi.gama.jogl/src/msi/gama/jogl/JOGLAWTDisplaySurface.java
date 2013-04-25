@@ -754,7 +754,7 @@ public final class JOGLAWTDisplaySurface extends JPanel implements IDisplaySurfa
 	@Override
 	public void focusOn(final IShape geometry, final ILayer display) {
 
-		this.openGLGraphicsGLRender.camera.PrintParam();
+		//this.openGLGraphicsGLRender.camera.PrintParam();
 
 		Envelope env = geometry.getEnvelope();
 

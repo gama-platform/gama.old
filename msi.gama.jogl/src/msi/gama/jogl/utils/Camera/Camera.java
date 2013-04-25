@@ -134,8 +134,6 @@ public class Camera {
 				lookPosition(getXLPos(), getYLPos() - translationValue,getZLPos());
 			}
 		}
-		System.out.println("move XY" );
-		this.PrintParam();
 	}
 	
 	// Moves the entity forward according to its pitch and yaw and the
