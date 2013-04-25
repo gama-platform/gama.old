@@ -38,23 +38,16 @@ public interface ISymbolKind {
 
 		public static final int REGULAR = 104;
 
-		public static final Set<Integer> KINDS = new HashSet(Arrays.asList(NUMBER, CONTAINER,
-			REGULAR, SIGNAL));
+		public static final Set<Integer> KINDS = new HashSet(Arrays.asList(NUMBER, CONTAINER, REGULAR, SIGNAL));
 	}
 
 	public static final int SPECIES = 0;
-
-	public static final int SKILL = 7;
 
 	public static final int MODEL = 1;
 
 	public static final int SINGLE_STATEMENT = 2;
 
-	public static final int SEQUENCE_STATEMENT = 11;
-
 	public static final int BEHAVIOR = 3;
-
-	public static final int ACTION = 11;
 
 	public static final int PARAMETER = 4;
 
@@ -62,18 +55,24 @@ public interface ISymbolKind {
 
 	public static final int LAYER = 6;
 
+	public static final int SKILL = 7;
+
 	public static final int BATCH_SECTION = 8;
 
 	public static final int BATCH_METHOD = 9;
 
 	public static final int ENVIRONMENT = 10;
 
+	public static final int SEQUENCE_STATEMENT = 11;
+
+	// Equal to SEQUENCE_STATEMENT
+	public static final int ACTION = 11;
+
 	public static final int EXPERIMENT = 13;
 
-	public static final int GAML_LANGUAGE = -1;
-
-	public static final int GAML_PARSING = -2;
-
 	public static final int ABSTRACT_SECTION = 14;
+
+	// Update this variable when adding a kind of symbol
+	public static final int __NUMBER__ = 15;
 
 }
