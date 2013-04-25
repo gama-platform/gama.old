@@ -1673,11 +1673,11 @@ public abstract class Spatial {
 		     see = {
 			})
 		public static IShape dem(final IScope scope, final GamaFile demFileName, final GamaFile textureFileName) {
-			//scope.getGraphics().InitDEM(demFileName,textureFileName);
+			scope.getGraphics().drawDEM(demFileName,textureFileName);
 			ILocation location;
 			IAgent a = scope.getAgentScope();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
-			return GamaGeometryType.buildRectangle(100, 100, location);
+			return GamaGeometryType.buildRectangle(10, 10, location);
 		}
 	}
 
