@@ -4,16 +4,17 @@
 package msi.gama.lang.gaml;
 
 import java.util.Properties;
-import msi.gama.lang.gaml.trials.GamlScopeProvider;
+
 import org.eclipse.xtext.Constants;
 import org.eclipse.xtext.service.DefaultRuntimeModule;
+
 import com.google.inject.Binder;
 import com.google.inject.name.Names;
 
 /**
  * Manual modifications go to {msi.gama.lang.gaml.GamlRuntimeModule}
  */
-@SuppressWarnings("all")
+ @SuppressWarnings("all")
 public abstract class AbstractGamlRuntimeModule extends DefaultRuntimeModule {
 
 	protected Properties properties = null;
@@ -23,18 +24,16 @@ public abstract class AbstractGamlRuntimeModule extends DefaultRuntimeModule {
 		properties = tryBindProperties(binder, "msi/gama/lang/gaml/Gaml.properties");
 		super.configure(binder);
 	}
-
+	
 	public void configureLanguageName(Binder binder) {
-		binder.bind(String.class).annotatedWith(Names.named(Constants.LANGUAGE_NAME))
-			.toInstance("msi.gama.lang.gaml.Gaml");
+		binder.bind(String.class).annotatedWith(Names.named(Constants.LANGUAGE_NAME)).toInstance("msi.gama.lang.gaml.Gaml");
 	}
-
+	
 	public void configureFileExtensions(Binder binder) {
-		if ( properties == null || properties.getProperty(Constants.FILE_EXTENSIONS) == null ) {
+		if (properties == null || properties.getProperty(Constants.FILE_EXTENSIONS) == null)
 			binder.bind(String.class).annotatedWith(Names.named(Constants.FILE_EXTENSIONS)).toInstance("gaml");
-		}
 	}
-
+	
 	// contributed by org.eclipse.xtext.generator.grammarAccess.GrammarAccessFragment
 	public java.lang.ClassLoader bindClassLoaderToInstance() {
 		return getClass().getClassLoader();
@@ -82,15 +81,12 @@ public abstract class AbstractGamlRuntimeModule extends DefaultRuntimeModule {
 
 	// contributed by org.eclipse.xtext.generator.parser.antlr.XtextAntlrGeneratorFragment
 	public com.google.inject.Provider<msi.gama.lang.gaml.parser.antlr.internal.InternalGamlLexer> provideInternalGamlLexer() {
-		return org.eclipse.xtext.parser.antlr.LexerProvider
-			.create(msi.gama.lang.gaml.parser.antlr.internal.InternalGamlLexer.class);
+		return org.eclipse.xtext.parser.antlr.LexerProvider.create(msi.gama.lang.gaml.parser.antlr.internal.InternalGamlLexer.class);
 	}
 
 	// contributed by org.eclipse.xtext.generator.parser.antlr.XtextAntlrGeneratorFragment
 	public void configureRuntimeLexer(com.google.inject.Binder binder) {
-		binder.bind(org.eclipse.xtext.parser.antlr.Lexer.class)
-			.annotatedWith(com.google.inject.name.Names.named(org.eclipse.xtext.parser.antlr.LexerBindings.RUNTIME))
-			.to(msi.gama.lang.gaml.parser.antlr.internal.InternalGamlLexer.class);
+		binder.bind(org.eclipse.xtext.parser.antlr.Lexer.class).annotatedWith(com.google.inject.name.Names.named(org.eclipse.xtext.parser.antlr.LexerBindings.RUNTIME)).to(msi.gama.lang.gaml.parser.antlr.internal.InternalGamlLexer.class);
 	}
 
 	// contributed by org.eclipse.xtext.generator.parser.antlr.XtextAntlrGeneratorFragment
@@ -99,24 +95,18 @@ public abstract class AbstractGamlRuntimeModule extends DefaultRuntimeModule {
 	}
 
 	// contributed by org.eclipse.xtext.generator.validation.JavaValidatorFragment
-	@org.eclipse.xtext.service.SingletonBinding(eager = true)
-	public Class<? extends msi.gama.lang.gaml.validation.GamlJavaValidator> bindGamlJavaValidator() {
+	@org.eclipse.xtext.service.SingletonBinding(eager=true)	public Class<? extends msi.gama.lang.gaml.validation.GamlJavaValidator> bindGamlJavaValidator() {
 		return msi.gama.lang.gaml.validation.GamlJavaValidator.class;
 	}
 
 	// contributed by org.eclipse.xtext.generator.scoping.AbstractScopingFragment
 	public Class<? extends org.eclipse.xtext.scoping.IScopeProvider> bindIScopeProvider() {
-		return GamlScopeProvider.class;
+		return msi.gama.lang.gaml.scoping.GamlScopeProvider.class;
 	}
 
 	// contributed by org.eclipse.xtext.generator.scoping.AbstractScopingFragment
 	public void configureIScopeProviderDelegate(com.google.inject.Binder binder) {
-		binder
-			.bind(org.eclipse.xtext.scoping.IScopeProvider.class)
-			.annotatedWith(
-				com.google.inject.name.Names
-					.named(org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider.NAMED_DELEGATE))
-			.to(org.eclipse.xtext.scoping.impl.SimpleLocalScopeProvider.class);
+		binder.bind(org.eclipse.xtext.scoping.IScopeProvider.class).annotatedWith(com.google.inject.name.Names.named(org.eclipse.xtext.scoping.impl.AbstractDeclarativeScopeProvider.NAMED_DELEGATE)).to(org.eclipse.xtext.scoping.impl.SimpleLocalScopeProvider.class);
 	}
 
 	// contributed by org.eclipse.xtext.generator.scoping.AbstractScopingFragment
@@ -146,18 +136,12 @@ public abstract class AbstractGamlRuntimeModule extends DefaultRuntimeModule {
 
 	// contributed by org.eclipse.xtext.generator.builder.BuilderIntegrationFragment
 	public void configureIResourceDescriptions(com.google.inject.Binder binder) {
-		binder.bind(org.eclipse.xtext.resource.IResourceDescriptions.class).to(
-			org.eclipse.xtext.resource.impl.ResourceSetBasedResourceDescriptions.class);
+		binder.bind(org.eclipse.xtext.resource.IResourceDescriptions.class).to(org.eclipse.xtext.resource.impl.ResourceSetBasedResourceDescriptions.class);
 	}
 
 	// contributed by org.eclipse.xtext.generator.builder.BuilderIntegrationFragment
 	public void configureIResourceDescriptionsBuilderScope(com.google.inject.Binder binder) {
-		binder
-			.bind(org.eclipse.xtext.resource.IResourceDescriptions.class)
-			.annotatedWith(
-				com.google.inject.name.Names
-					.named(org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider.NAMED_BUILDER_SCOPE))
-			.to(org.eclipse.xtext.resource.impl.ResourceSetBasedResourceDescriptions.class);
+		binder.bind(org.eclipse.xtext.resource.IResourceDescriptions.class).annotatedWith(com.google.inject.name.Names.named(org.eclipse.xtext.resource.impl.ResourceDescriptionsProvider.NAMED_BUILDER_SCOPE)).to(org.eclipse.xtext.resource.impl.ResourceSetBasedResourceDescriptions.class);
 	}
 
 	// contributed by org.eclipse.xtext.generator.generator.GeneratorFragment
