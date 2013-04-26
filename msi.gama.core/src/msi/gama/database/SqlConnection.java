@@ -86,7 +86,14 @@ import msi.gaml.types.IType;
  *      Modify insert methods: Add transform parameter 
  *      Add fromAbsoluteToGis methods
  *      Add fromGisToAbsolute methods
- * Last Modified: 10-Mar-2013
+ *    26-Apr-2013:  
+ *      Remove driver msi.gama.ext/sqljdbc4.jar
+ *      add driver msi.gama.ext/jtds-1.2.6.jar
+ *      Change driver name for MSSQL from com.microsoft.sqlserver.jdbc.SQLServerDriver to net.sourceforge.jtds.jdbc.Driver
+ *      Edit ConnectDB for new driver
+ *      Add new condition for geometry type 2004 (it look like postgres)
+ *      
+ * Last Modified: 26-Apr-2013
  */
 public class SqlConnection {
 		private static final boolean DEBUG = false; // Change DEBUG = false for release version
@@ -102,7 +109,8 @@ public class SqlConnection {
 		public static final String TEXT="TEXT";
 
 		static final String MYSQLDriver = new String("com.mysql.jdbc.Driver");
-		static final String MSSQLDriver = new String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+		static final String MSSQLDriver = new String("net.sourceforge.jtds.jdbc.Driver");
+		//static final String MSSQLDriver = new String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
 		static final String SQLITEDriver = new String("org.sqlite.JDBC");
 		static final String POSTGRESDriver= new String("org.postgresql.Driver");
 		
@@ -191,11 +199,16 @@ public class SqlConnection {
 							DriverManager.getConnection("jdbc:mysql://" + url + ":" + port + "/" + dbName,
 								userName, password);
 					} else if ( vender.equalsIgnoreCase(MSSQL) ) {
+//						Class.forName(MSSQLDriver).newInstance();
+//						conn =
+//							DriverManager.getConnection("jdbc:sqlserver://" + url + ":" + port +
+//								";databaseName=" + dbName + ";user=" + userName + ";password=" + password +
+//								";");
 						Class.forName(MSSQLDriver).newInstance();
 						conn =
-							DriverManager.getConnection("jdbc:sqlserver://" + url + ":" + port +
-								";databaseName=" + dbName + ";user=" + userName + ";password=" + password +
-								";");
+							DriverManager.getConnection("jdbc:jtds:sqlserver://" + url + ":" + port + "/" + dbName,
+									userName, password);
+						
 					} else if ( vender.equalsIgnoreCase(SQLITE) ) {
 						Class.forName(SQLITEDriver).newInstance();
 						conn =
@@ -480,7 +493,7 @@ public class SqlConnection {
 					
 					 /* for Geometry 
 					 - in MySQL Type: -2/-4   - TypeName: UNKNOWN   - size: 2147483647
-					 - In MSSQL Type: -3   - TypeName: geometry     - size: 2147483647
+					 * - In MSSQL with sqljdbc4 driver Type: -3/ with jdts driver type=2004 - TypeName: geometry - size: 2147483647
 					 - In SQLITE Type: 2004   - TypeName: BLOB      - size: 2147483647
 					 - In PostGIS/PostGresSQL Type: 1111   - TypeName: geometry  - size: 2147483647
 					          st_asbinary(geom):   - Type: -2   - TypeName: bytea  - size: 2147483647
@@ -489,6 +502,7 @@ public class SqlConnection {
 					 if ((vender.equalsIgnoreCase(MYSQL) & rsmd.getColumnType(i)==-4 ) || 
 							 (vender.equalsIgnoreCase(MYSQL) & rsmd.getColumnType(i)==-2 ) || 
 							 (vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i)==-3 )||
+							 (vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i)==2004 )||
 							 (vender.equalsIgnoreCase(SQLITE) & rsmd.getColumnType(i)==2004)||
 							 //add:03-Jan-2013
 							 (vender.equalsIgnoreCase(POSTGRES) & rsmd.getColumnType(i)==1111)||
@@ -540,13 +554,14 @@ public class SqlConnection {
 				 for (int i=1; i<=numberOfColumns; i++){
 					 /* for Geometry 
 					 - in MySQL Type: -2/-4   - TypeName: UNKNOWN   - size: 2147483647
-					 - In MSSQL Type: -3   - TypeName: geometry     - size: 2147483647
+					 * - In MSSQL with sqljdbc4 driver Type: -3/ with jdts driver type=2004 - TypeName: geometry - size: 2147483647
 					 - In SQLITE Type: 2004   - TypeName: BLOB      - size: 2147483647
 					 - In PostGIS/PostGresSQL Type: 1111   - TypeName: geometry  - size: 2147483647
 					 */
 				     // Search column with Geometry type
 					 if ((vender.equalsIgnoreCase(MYSQL) & rsmd.getColumnType(i)==-2) || 
 							 (vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i)==-3)||
+							 (vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i)==2004)||
 							 (vender.equalsIgnoreCase(SQLITE) & rsmd.getColumnType(i)==2004)||
 							 //add: 03-Jan-2013
 							 (vender.equalsIgnoreCase(POSTGRES) & rsmd.getColumnType(i)==1111)||
