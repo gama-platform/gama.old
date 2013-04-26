@@ -10,18 +10,20 @@ import msi.gama.util.GamaList;
 import com.vividsolutions.jts.geom.*;
 
 /*
- * @Author
- * TRUONG Minh Thai
- * Fredric AMBLARD
- * Benoit GAUDOU
- * Christophe Sibertin-BLANC
- * 
- * 
- * SQLConnection: Abstract class for any kind of database connection
- * 
- * Created date: 19-April-2013
- * Modified:
- */
+ * @Author  
+ *     TRUONG Minh Thai
+ *     Fredric AMBLARD
+ *     Benoit GAUDOU
+ *     Christophe Sibertin-BLANC
+ * Created date: 19-Apr-2013
+ * Modified:  
+ *    26-Apr-2013:  
+ *      Remove driver msi.gama.ext/sqljdbc4.jar
+ *      add driver msi.gama.ext/jtds-1.2.6.jar
+ *      Change driver name for MSSQL from com.microsoft.sqlserver.jdbc.SQLServerDriver to net.sourceforge.jtds.jdbc.Driver
+ *      
+ * Last Modified: 26-Apr-2013
+*/
 public abstract class SqlConnection {
 
 	private static final boolean DEBUG = false; // Change DEBUG = false for release version
@@ -37,7 +39,8 @@ public abstract class SqlConnection {
 	public static final String TEXT = "TEXT";
 
 	static final String MYSQLDriver = new String("com.mysql.jdbc.Driver");
-	static final String MSSQLDriver = new String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+	//static final String MSSQLDriver = new String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+	static final String MSSQLDriver = new String("net.sourceforge.jtds.jdbc.Driver");
 	static final String SQLITEDriver = new String("org.sqlite.JDBC");
 	static final String POSTGRESDriver = new String("org.postgresql.Driver");
 

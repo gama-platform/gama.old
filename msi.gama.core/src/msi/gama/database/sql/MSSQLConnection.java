@@ -8,7 +8,23 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.*;
-
+/*
+ * @Author  
+ *     TRUONG Minh Thai
+ *     Fredric AMBLARD
+ *     Benoit GAUDOU
+ *     Christophe Sibertin-BLANC
+ * Created date: 19-Apr-2013
+ * Modified: * 
+ *    26-Apr-2013:  
+ *      Remove driver msi.gama.ext/sqljdbc4.jar
+ *      add driver msi.gama.ext/jtds-1.2.6.jar
+ *      Change driver name for MSSQL from com.microsoft.sqlserver.jdbc.SQLServerDriver to net.sourceforge.jtds.jdbc.Driver
+ *      Edit ConnectDB for new driver
+ *      Add new condition for geometry type 2004 (it look like postgres)
+ *      
+ * Last Modified: 26-Apr-2013
+*/
 public class MSSQLConnection extends SqlConnection {
 
 	private static final boolean DEBUG = false; // Change DEBUG = false for release version
@@ -21,10 +37,14 @@ public class MSSQLConnection extends SqlConnection {
 		Connection conn = null;
 		try {
 			if ( vender.equalsIgnoreCase(MSSQL) ) {
+//				Class.forName(MSSQLDriver).newInstance();
+//				conn =
+//					DriverManager.getConnection("jdbc:sqlserver://" + url + ":" + port + ";databaseName=" + dbName +
+//						";user=" + userName + ";password=" + password + ";");
 				Class.forName(MSSQLDriver).newInstance();
 				conn =
-					DriverManager.getConnection("jdbc:sqlserver://" + url + ":" + port + ";databaseName=" + dbName +
-						";user=" + userName + ";password=" + password + ";");
+					DriverManager.getConnection("jdbc:jtds:sqlserver://" + url + ":" + port + "/" + dbName,
+							userName, password);				
 			} else {
 				throw new ClassNotFoundException("MSSQLConnection.connectDB: The " + vender + " is not supported!");
 			}
@@ -115,13 +135,14 @@ public class MSSQLConnection extends SqlConnection {
 			/*
 			 * for Geometry
 			 * - in MySQL Type: -2/-4 - TypeName: UNKNOWN - size: 2147483647
-			 * - In MSSQL Type: -3 - TypeName: geometry - size: 2147483647
+			 * - In MSSQL with sqljdbc4 driver Type: -3/ with jdts driver type=2004 - TypeName: geometry - size: 2147483647
 			 * - In SQLITE Type: 2004 - TypeName: BLOB - size: 2147483647
 			 * - In PostGIS/PostGresSQL Type: 1111 - TypeName: geometry - size: 2147483647
 			 * st_asbinary(geom): - Type: -2 - TypeName: bytea - size: 2147483647
 			 */
 			// Search column with Geometry type
-			if ( vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i) == -3 ) {
+			//if ( vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i) == -3 ) {
+			if ( vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i) == 2004 ) {
 				geoColumn.add(i);
 			}
 		}
@@ -138,12 +159,13 @@ public class MSSQLConnection extends SqlConnection {
 			/*
 			 * for Geometry
 			 * - in MySQL Type: -2/-4 - TypeName: UNKNOWN - size: 2147483647
-			 * - In MSSQL Type: -3 - TypeName: geometry - size: 2147483647
+			 * - In MSSQL with sqljdbc4 driver Type: -3/ with jdts driver type=2004 - TypeName: geometry - size: 2147483647
 			 * - In SQLITE Type: 2004 - TypeName: BLOB - size: 2147483647
 			 * - In PostGIS/PostGresSQL Type: 1111 - TypeName: geometry - size: 2147483647
 			 */
 			// Search column with Geometry type
-			if ( vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i) == -3 ) {
+			//if ( vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i) == -3 ) {
+			if ( vender.equalsIgnoreCase(MSSQL) & rsmd.getColumnType(i) == 2004 ) {
 				columnType.add(GEOMETRYTYPE);
 			} else {
 				columnType.add(rsmd.getColumnTypeName(i).toUpperCase());
