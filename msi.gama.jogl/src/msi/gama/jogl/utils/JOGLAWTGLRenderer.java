@@ -124,6 +124,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		displaySurface = d;
 
 		dem = new DigitalElevationModelDrawer(this);
+		
 
 	}
 
