@@ -26,6 +26,7 @@ import msi.gama.lang.gaml.ui.hover.*;
 import msi.gama.lang.gaml.ui.hover.GamlHoverProvider.GamlDispatchingEObjectTextHover;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.xtext.builder.nature.NatureAddingEditorCallback;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
 import org.eclipse.xtext.resource.ILocationInFileProvider;
 import org.eclipse.xtext.resource.containers.IAllContainersState;
@@ -33,7 +34,6 @@ import org.eclipse.xtext.ui.editor.*;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.*;
-import org.eclipse.xtext.ui.editor.validation.ValidatingEditorCallback;
 import org.eclipse.xtext.ui.resource.*;
 import com.google.inject.*;
 
@@ -101,7 +101,8 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	public Class<? extends org.eclipse.xtext.ui.editor.IXtextEditorCallback> bindIXtextEditorCallback() {
 		// TODO Verify this as it is only needed, normally, for languages that do not use the builder infrastructure
 		// (see http://www.eclipse.org/forums/index.php/mv/msg/167666/532239/)
-		return ValidatingEditorCallback.class;
+		// return ValidatingEditorCallback.class;
+		return NatureAddingEditorCallback.class;
 	}
 
 	public Class<? extends IEObjectHoverProvider> bindIEObjectHoverProvider() {
