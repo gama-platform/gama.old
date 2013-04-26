@@ -73,7 +73,7 @@ public class SpeciesDescription extends TypeDescription {
 
 	@Override
 	public void dispose() {
-		if ( Types.isBuiltIn(getName()) ) { return; }
+		if ( isDisposed || Types.isBuiltIn(getName()) ) { return; }
 		if ( behaviors != null ) {
 			behaviors.clear();
 		}
@@ -93,6 +93,7 @@ public class SpeciesDescription extends TypeDescription {
 			inits.clear();
 		}
 		super.dispose();
+		isDisposed = true;
 	}
 
 	@Override

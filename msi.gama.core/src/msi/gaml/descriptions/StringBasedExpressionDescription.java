@@ -6,6 +6,7 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.StringUtils;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -57,13 +58,22 @@ public class StringBasedExpressionDescription extends BasicExpressionDescription
 		return result;
 	}
 
-	public static IExpressionDescription create(String string2) {
-		if ( string2 == null ) { return null; }
-		if ( string2.equals(IKeyword.NULL) ) { return new ConstantExpressionDescription(null); }
-		if ( string2.equals(IKeyword.FALSE) ) { return new ConstantExpressionDescription(false); }
-		if ( string2.equals(IKeyword.TRUE) ) { return new ConstantExpressionDescription(true); }
-		// TODO Numbers ?
-		return new StringBasedExpressionDescription(string2);
+	public static IExpressionDescription create(String string) {
+		if ( string == null ) { return null; }
+		String s = string.trim();
+		if ( s.equals(IKeyword.NULL) ) { return ConstantExpressionDescription.create((Object) null); }
+		if ( s.equals(IKeyword.FALSE) ) { return ConstantExpressionDescription.create(false); }
+		if ( s.equals(IKeyword.TRUE) ) { return ConstantExpressionDescription.create(true); }
+		if ( StringUtils.isGamaString(s) ) { return LabelExpressionDescription.create(StringUtils.toJavaString(s)); }
+		// try {
+		// Integer i = Integer.valueOf(s);
+		// return ConstantExpressionDescription.create(i);
+		// } catch (NumberFormatException e) {}
+		// try {
+		// Double d = Double.valueOf(s);
+		// return ConstantExpressionDescription.create(d);
+		// } catch (NumberFormatException e) {}
+		return new StringBasedExpressionDescription(string);
 	}
 
 }

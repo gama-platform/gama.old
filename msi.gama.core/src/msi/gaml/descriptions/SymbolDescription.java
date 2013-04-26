@@ -45,6 +45,7 @@ public class SymbolDescription implements IDescription {
 	protected final List<IDescription> children;
 	protected SymbolProto meta;
 	protected String keyword;
+	protected boolean isDisposed = false;
 
 	public SymbolDescription(final String keyword, final IDescription superDesc, final IChildrenProvider cp,
 		final EObject source, final Facets facets) {
@@ -171,7 +172,7 @@ public class SymbolDescription implements IDescription {
 
 	@Override
 	public void dispose() {
-		if ( isBuiltIn() ) { return; }
+		if ( isDisposed || isBuiltIn() ) { return; }
 		// FIXME / TODO Verify that not disposing the previous expressions does not lead to runtime errors, as the
 		// expressions will still be available, after a validation, in the ISyntacticStatement, which shares the facets
 		// with the IDescription and the ISymbol...
@@ -189,6 +190,7 @@ public class SymbolDescription implements IDescription {
 		if ( element != null ) {
 			DescriptionFactory.unsetGamlDescription(element, this);
 		}
+		isDisposed = true;
 	}
 
 	@Override

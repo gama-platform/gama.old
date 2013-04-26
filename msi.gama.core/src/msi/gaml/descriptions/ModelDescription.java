@@ -43,8 +43,6 @@ public class ModelDescription extends SpeciesDescription {
 	private String modelFilePath;
 	private String modelFolderPath;
 	private String modelProjectPath;
-	// private SpeciesDescription worldSpecies;
-	private boolean isDisposed = false;
 	private boolean isTorus = false;
 	private final ErrorCollector collect = new ErrorCollector();
 
@@ -71,14 +69,12 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public void dispose() {
-		if ( isDisposed ) { return; }
-		isDisposed = true;
+		if ( isDisposed || isBuiltIn() ) { return; }
 		experiments.clear();
 		output = null;
 		types.dispose();
-		// worldSpecies = null;
 		super.dispose();
-
+		isDisposed = true;
 	}
 
 	public String constructModelRelativePath(final String filePath, final boolean mustExist) {

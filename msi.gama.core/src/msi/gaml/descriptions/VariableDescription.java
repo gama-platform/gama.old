@@ -65,12 +65,13 @@ public class VariableDescription extends SymbolDescription {
 
 	@Override
 	public void dispose() {
-		if ( isBuiltIn() ) { return; }
+		if ( isDisposed || isBuiltIn() ) { return; }
 		if ( dependencies != null ) {
 			dependencies.clear();
 		}
 		varExpr = null;
 		super.dispose();
+		isDisposed = true;
 	}
 
 	public void copyFrom(final VariableDescription v2) {

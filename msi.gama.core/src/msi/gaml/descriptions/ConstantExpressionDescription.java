@@ -3,22 +3,21 @@ package msi.gaml.descriptions;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.GAMA;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.types.Types;
+import msi.gaml.types.*;
 
 public class ConstantExpressionDescription extends BasicExpressionDescription {
 
-	public ConstantExpressionDescription(Object object) {
-		super(GAMA.getExpressionFactory().createConst(object,
-			object == null ? Types.NO_TYPE : Types.get(object.getClass())));
+	private ConstantExpressionDescription(Object object) {
+		this(object, object == null ? Types.NO_TYPE : Types.get(object.getClass()));
+	}
+
+	private ConstantExpressionDescription(Object object, IType type) {
+		super(GAMA.getExpressionFactory().createConst(object, type));
 	}
 
 	@Override
 	public boolean isConstant() {
 		return true;
-	}
-
-	public static IExpressionDescription create(Object object) {
-		return new ConstantExpressionDescription(object);
 	}
 
 	@Override
@@ -29,6 +28,22 @@ public class ConstantExpressionDescription extends BasicExpressionDescription {
 	@Override
 	public void setExpression(IExpression expr) {
 		GuiUtils.debug("Trying to set a new expression " + expr + " to description " + expression);
+	}
+
+	public static IExpressionDescription create(Object object) {
+		return new ConstantExpressionDescription(object);
+	}
+
+	public static IExpressionDescription create(Integer i) {
+		return new ConstantExpressionDescription(i, Types.get(IType.INT));
+	}
+
+	public static IExpressionDescription create(Double d) {
+		return new ConstantExpressionDescription(d, Types.get(IType.FLOAT));
+	}
+
+	public static IExpressionDescription create(Boolean b) {
+		return new ConstantExpressionDescription(b, Types.get(IType.BOOL));
 	}
 
 }

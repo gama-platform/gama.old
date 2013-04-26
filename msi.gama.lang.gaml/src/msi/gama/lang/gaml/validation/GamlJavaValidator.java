@@ -54,7 +54,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	public synchronized void validate(final Model model) {
 		try {
 
-			GuiUtils.debug("GamlJavaValidator processing " + model.eResource().getURI().lastSegment() + "...");
+			// GuiUtils.debug("GamlJavaValidator processing " + model.eResource().getURI().lastSegment() + "...");
 			GamlResource r = (GamlResource) model.eResource();
 			currentResource = r;
 			ModelDescription result = null;
@@ -211,9 +211,10 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 						GamlPackage.Literals.IMPORT__IMPORT_URI, IGamlIssue.IMPORT_ERROR, object.eResource().getURI()
 							.toString());
 				} else {
-					error("Errors detected in imported file " + object.eResource().getURI() + ": " + e.toString(),
-						getCurrentObject(), GamlPackage.Literals.MODEL__NAME, IGamlIssue.IMPORT_ERROR, object
-							.eResource().getURI().toString());
+					error(
+						"Errors detected in indirectly imported file " + object.eResource().getURI() + ": " +
+							e.toString(), getCurrentObject(), GamlPackage.Literals.MODEL__NAME,
+						IGamlIssue.IMPORT_ERROR, object.eResource().getURI().toString());
 				}
 			}
 			return;

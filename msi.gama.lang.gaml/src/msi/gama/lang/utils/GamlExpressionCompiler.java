@@ -323,13 +323,13 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			IExpressionDescription ed = null;
 			if ( exp instanceof ArgumentPair || exp instanceof Parameter ) {
 				arg = EGaml.getKeyOf(exp);
-				ed = new EcoreBasedExpressionDescription(exp.getRight());
+				ed = EcoreBasedExpressionDescription.create(exp.getRight());
 			} else if ( exp instanceof Pair ) {
 				arg = EGaml.getKeyOf(exp.getLeft());
-				ed = new EcoreBasedExpressionDescription(exp.getRight());
+				ed = EcoreBasedExpressionDescription.create(exp.getRight());
 			} else if ( completeArgs ) {
 				arg = args == null ? String.valueOf(index++) : args.get(index++);
-				ed = new EcoreBasedExpressionDescription(exp);
+				ed = EcoreBasedExpressionDescription.create(exp);
 			}
 			// EGaml.setGamlDescription(exp.getRight(), ed);
 			argMap.put(arg, ed);
@@ -648,10 +648,8 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 				return factory.createConst(s + "__deprecated", Types.get(IType.STRING));
 			}
 
-			context.error("The variable " + s + " has not been previously defined. Check its name or declare it",
+			context.error("The variable " + s + " has not been defined. Check its name or declare it",
 				IGamlIssue.UNKNOWN_VAR, object, s);
-			// return factory.createVar(s, Types.NO_TYPE, Types.NO_TYPE, true,
-			// IVarExpression.TEMP, context);
 		}
 		return null;
 

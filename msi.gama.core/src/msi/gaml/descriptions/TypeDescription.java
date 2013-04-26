@@ -273,6 +273,7 @@ public class TypeDescription extends SymbolDescription {
 
 	@Override
 	public void dispose() {
+		if ( isDisposed || isBuiltIn() ) { return; }
 		if ( actions != null ) {
 			actions.clear();
 		}
@@ -280,6 +281,7 @@ public class TypeDescription extends SymbolDescription {
 			variables.clear();
 		}
 		super.dispose();
+		isDisposed = true;
 	}
 
 	protected void inheritFromParent() {

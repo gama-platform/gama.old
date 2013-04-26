@@ -256,7 +256,7 @@ public class ModelFactory extends SymbolFactory {
 			if ( width != null && height != null ) {
 				bounds = new OperatorExpressionDescription(IExpressionCompiler.INTERNAL_POINT, width, height);
 			} else {
-				bounds = new ConstantExpressionDescription(100);
+				bounds = ConstantExpressionDescription.create(100);
 			}
 		}
 		bounds = new OperatorExpressionDescription("envelope", bounds);

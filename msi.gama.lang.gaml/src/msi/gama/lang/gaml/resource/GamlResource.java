@@ -6,13 +6,11 @@ package msi.gama.lang.gaml.resource;
 
 import java.util.*;
 import msi.gama.common.interfaces.ISyntacticElement;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.lang.gaml.parsing.*;
 import msi.gama.lang.gaml.parsing.GamlSyntacticParser.GamlParseResult;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
-import msi.gaml.descriptions.ModelDescription;
-import org.eclipse.emf.common.notify.Adapter;
-import org.eclipse.emf.common.util.*;
+import msi.gaml.descriptions.*;
+import msi.gaml.factories.DescriptionFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
 
@@ -64,16 +62,20 @@ public class GamlResource extends LazyLinkingResource {
 
 	@Override
 	protected void unload(final EObject oldRootObject) {
-		GuiUtils.debug("GamlResource.unload");
-		if ( oldRootObject != null ) {
-			EList<Adapter> list = new BasicEList<Adapter>(oldRootObject.eAdapters());
-			for ( Adapter adapter : list ) {
-				if ( adapter instanceof ModelDescription ) {
-					((ModelDescription) adapter).dispose();
-					oldRootObject.eAdapters().remove(adapter);
-				}
-			}
+		IGamlDescription desc = DescriptionFactory.getGamlDescription(oldRootObject);
+		if ( desc != null ) {
+			desc.dispose();
+			oldRootObject.eAdapters().remove(desc);
 		}
+		// if ( oldRootObject != null ) {
+		// EList<Adapter> list = new BasicEList<Adapter>(oldRootObject.eAdapters());
+		// for ( Adapter adapter : list ) {
+		// if ( adapter instanceof ModelDescription ) {
+		// ((ModelDescription) adapter).dispose();
+		// oldRootObject.eAdapters().remove(adapter);
+		// }
+		// }
+		// }
 		super.unload(oldRootObject);
 	}
 
@@ -82,7 +84,7 @@ public class GamlResource extends LazyLinkingResource {
 		if ( parseResult == null ) { // Should not happen, but in case...
 			Set<org.eclipse.xtext.diagnostics.Diagnostic> errors = new LinkedHashSet();
 			ISyntacticElement result = GamlCompatibilityConverter.buildSyntacticContents(getContents().get(0), errors);
-			getErrors().addAll(errors);
+			getWarnings().addAll(errors);
 			return result;
 		}
 

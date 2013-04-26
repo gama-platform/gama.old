@@ -23,7 +23,6 @@ import static msi.gaml.factories.DescriptionValidator.*;
 import static msi.gaml.factories.VariableValidator.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
 import msi.gaml.architecture.finite_state_machine.*;
@@ -57,9 +56,6 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 	@Override
 	protected void privateValidate(final IDescription desc) {
 		// GuiUtils.debug("Validating statement " + desc);
-		if ( desc.getKeyword().equals("create") && "Physical3DWorld".equals(desc.getFacets().getLabel(SPECIES)) ) {
-			GuiUtils.debug("StatementFactory.privateValidate");
-		}
 		super.privateValidate(desc);
 		String kw = desc.getKeyword();
 		StatementDescription cd = (StatementDescription) desc;

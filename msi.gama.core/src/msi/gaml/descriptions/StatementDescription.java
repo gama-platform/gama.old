@@ -67,7 +67,7 @@ public class StatementDescription extends SymbolDescription {
 
 	@Override
 	public void dispose() {
-		if ( isBuiltIn() ) { return; }
+		if ( isDisposed || isBuiltIn() ) { return; }
 		if ( temps != null ) {
 			temps.clear();
 		}
@@ -75,6 +75,7 @@ public class StatementDescription extends SymbolDescription {
 			args.clear();
 		}
 		super.dispose();
+		isDisposed = true;
 	}
 
 	@Override

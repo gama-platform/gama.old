@@ -394,7 +394,9 @@ public class GamlCompatibilityConverter {
 	}
 
 	private static final IExpressionDescription convExpr(final EObject expr) {
-		if ( expr != null ) { return new EcoreBasedExpressionDescription(expr); }
+		if ( expr != null ) {
+
+		return EcoreBasedExpressionDescription.create(expr); }
 		return null;
 	}
 
@@ -410,7 +412,6 @@ public class GamlCompatibilityConverter {
 
 	final static IExpressionDescription convExpr(final String string) {
 		return LabelExpressionDescription.create(string);
-		// return convExpr(EGaml.createTerminal(string));
 	}
 
 	final static void convStatements(final ISyntacticElement elt, final List<? extends Statement> ss,
