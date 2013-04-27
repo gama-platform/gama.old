@@ -24,7 +24,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import javax.swing.SwingUtilities;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.ImageUtils;
+import msi.gama.common.util.*;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.IDisplayOutput;
@@ -39,6 +39,7 @@ public final class AWTDisplaySurface extends AbstractDisplaySurface {
 
 	private Point snapshotDimension;
 	private Point mousePosition;
+	private volatile boolean isPainting;
 	private final Thread animationThread = new Thread(new Runnable() {
 
 		@Override
@@ -51,7 +52,8 @@ public final class AWTDisplaySurface extends AbstractDisplaySurface {
 					doIt = false;
 				}
 				if ( doIt ) {
-					repaint();
+					// GuiUtils.debug("AWTDisplaySurface.animationThread repaint");
+					repaint(true);
 				}
 			}
 		}
@@ -74,7 +76,7 @@ public final class AWTDisplaySurface extends AbstractDisplaySurface {
 				}
 				setOrigin(origin.x + p.x - mousePosition.x, origin.y + p.y - mousePosition.y);
 				mousePosition = p;
-				repaint();
+				repaint(true);
 			}
 		}
 
@@ -166,6 +168,7 @@ public final class AWTDisplaySurface extends AbstractDisplaySurface {
 
 	@Override
 	public void outputChanged(final double env_width, final double env_height, final IDisplayOutput output) {
+		GuiUtils.debug("AWTDisplaySurface.outputChanged");
 		bgColor = output.getBackgroundColor();
 		this.setBackground(bgColor);
 		widthHeightConstraint = env_height / env_width;
@@ -351,13 +354,49 @@ public final class AWTDisplaySurface extends AbstractDisplaySurface {
 	}
 
 	@Override
-	public void addMouseEventListener(final MouseListener e) {
-		this.addMouseListener(e);
+	public void initOutput3D(boolean output3d, ILocation output3dNbCycles) {
+		;
 	}
 
 	@Override
-	public void initOutput3D(boolean output3d, ILocation output3dNbCycles) {
-		;
+	public void repaint() {
+		GuiUtils.debug("AWTDisplaySurface.repaint not transmitted");
+		// super.repaint();
+	}
+
+	public void repaint(boolean fromInside) {
+		// GuiUtils.debug("AWTDisplaySurface.repaint transmitted from inside");
+		if ( fromInside && !isPainting ) {
+			super.repaint();
+
+		}
+	}
+
+	@Override
+	public void paintChildren(Graphics g) {
+		// GuiUtils.debug("AWTDisplaySurface.paintChildren");
+		// super.paintChildren(g);
+	}
+
+	@Override
+	public void paintBorder(Graphics g) {
+		// GuiUtils.debug("AWTDisplaySurface.paintBorder");
+		// super.paintBorder(g);
+	}
+
+	//
+	// @Override
+	// public void update(Graphics g) {
+	// GuiUtils.debug("AWTDisplaySurface.update");
+	// super.update(g);
+	// }
+
+	@Override
+	public void paint(Graphics g) {
+		// GuiUtils.debug("AWTDisplaySurface.paint");
+		isPainting = true;
+		super.paint(g);
+		isPainting = false;
 	}
 
 }

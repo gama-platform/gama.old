@@ -60,7 +60,7 @@ public class EventLayer extends AgentLayer {
 		String currentMouseEvent = Cast.asString(scope, eventType.value(scope));
 		String currentAction = Cast.asString(scope, actionName.value(scope));
 		this.display = container;
-		container.addMouseEventListener(new CustomisedEventListener(this, currentMouseEvent, currentAction));
+		container.addMouseListener(new CustomisedEventListener(this, currentMouseEvent, currentAction));
 
 	}
 

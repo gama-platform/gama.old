@@ -416,7 +416,7 @@ public abstract class EmbeddedSwingComposite extends Composite {
 				container.getRootPane().getContentPane().add(swingComponent);
 				setComponentFont();
 				if ( !isOpenGL ) {
-					// Deferred to the OpenGL rendered to signify its initialization
+					// Deferred to the OpenGL renderer to signify its initialization
 					// see JOGLAWTGLRendered.init()
 					OutputSynchronizer.decInitializingViews(outputName);
 				}

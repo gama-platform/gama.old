@@ -460,7 +460,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 
 	@Override
-	public void addMouseEventListener(final MouseListener e) {}
+	public void addMouseListener(final MouseListener e) {}
 
 	@Override
 	public IGraphics getIGraphics() {

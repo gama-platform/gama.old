@@ -41,7 +41,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	private EmbeddedSwingComposite swingCompo;
 	IPerspectiveListener perspectiveListener;
 
-	private IPartListener2 partListener;
+	// private IPartListener2 partListener;
 
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
@@ -115,70 +115,70 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		createItem("Navigation", null, general, true);
 		// nav.populate();
 		displayItems();
-		// final java.awt.event.MouseListener mlAwt = new java.awt.event.MouseListener() {
-		//
-		// @Override
-		// public void mouseReleased(final java.awt.event.MouseEvent e) {}
-		//
-		// @Override
-		// public void mousePressed(final java.awt.event.MouseEvent e) {
-		// // System.err.println("force focus from AWT entered \t\t"+e);
-		// GuiUtils.asyncRun(new Runnable() { // (shift to SWT thread)
-		//
-		// @Override
-		// public void run() {
-		// swingCompo.forceFocus();
-		// }
-		// });
-		// }
-		//
-		// @Override
-		// public void mouseExited(final java.awt.event.MouseEvent e) {}
-		//
-		// @Override
-		// public void mouseEntered(final java.awt.event.MouseEvent e) {
-		// // System.err.println("force focus from AWT entered \t\t"+e);
-		// GuiUtils.asyncRun(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// swingCompo.forceFocus();
-		// }
-		// });
-		// }
-		//
-		// @Override
-		// public void mouseClicked(final java.awt.event.MouseEvent e) {}
-		// };
-		// final java.awt.event.MouseMotionListener mlAwt2 = new java.awt.event.MouseMotionListener() {
-		//
-		// @Override
-		// public void mouseMoved(final java.awt.event.MouseEvent e) {
-		// // System.err.println("force focus from AWT entered \t\t"+e);
-		// GuiUtils.asyncRun(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// swingCompo.forceFocus();
-		// }
-		// });
-		// }
-		//
-		// @Override
-		// public void mouseDragged(final java.awt.event.MouseEvent e) {}
-		// };
+		final java.awt.event.MouseListener mlAwt = new java.awt.event.MouseListener() {
+
+			@Override
+			public void mouseReleased(final java.awt.event.MouseEvent e) {}
+
+			@Override
+			public void mousePressed(final java.awt.event.MouseEvent e) {
+				// System.err.println("force focus from AWT entered \t\t"+e);
+				GuiUtils.asyncRun(new Runnable() { // (shift to SWT thread)
+
+						@Override
+						public void run() {
+							swingCompo.forceFocus();
+						}
+					});
+			}
+
+			@Override
+			public void mouseExited(final java.awt.event.MouseEvent e) {}
+
+			@Override
+			public void mouseEntered(final java.awt.event.MouseEvent e) {
+				// System.err.println("force focus from AWT entered \t\t"+e);
+				GuiUtils.asyncRun(new Runnable() {
+
+					@Override
+					public void run() {
+						swingCompo.forceFocus();
+					}
+				});
+			}
+
+			@Override
+			public void mouseClicked(final java.awt.event.MouseEvent e) {}
+		};
+		final java.awt.event.MouseMotionListener mlAwt2 = new java.awt.event.MouseMotionListener() {
+
+			@Override
+			public void mouseMoved(final java.awt.event.MouseEvent e) {
+				// System.err.println("force focus from AWT entered \t\t"+e);
+				GuiUtils.asyncRun(new Runnable() {
+
+					@Override
+					public void run() {
+						swingCompo.forceFocus();
+					}
+				});
+			}
+
+			@Override
+			public void mouseDragged(final java.awt.event.MouseEvent e) {}
+		};
 
 		OutputSynchronizer.incInitializingViews(getOutput().getName()); // incremented in the SWT thread
 
-		swingCompo = new EmbeddedSwingComposite(parent, SWT.NONE/* SWT.NO_REDRAW_RESIZE | */) {
+		swingCompo = new EmbeddedSwingComposite(parent, SWT.NO_REDRAW_RESIZE) {
 
 			@Override
 			protected JComponent createSwingComponent() {
 				outputName = getOutput().getName();
 				isOpenGL = getOutput().isOpenGL();
 				JComponent frameAwt = (JComponent) getOutput().getSurface();
-				// getFrame().addMouseListener(mlAwt);
-				// getFrame().addMouseMotionListener(mlAwt2);
+				getFrame().addMouseListener(mlAwt);
+				getFrame().addMouseMotionListener(mlAwt2);
 				return frameAwt;
 			}
 		};
@@ -283,6 +283,32 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		// SwtGui.getPage().addPartListener(partListener);
 
 		// FIXME : if swingCompo is not initialized ?
+		// PaintListener pl = new PaintListener() {
+		//
+		// @Override
+		// public void paintControl(PaintEvent e) {
+		// GuiUtils.debug("LayeredDisplayView.(...).new PaintListener() {...}: " + e.toString());
+		// // Thread.dumpStack();
+		// }
+		//
+		// };
+		//
+		// Listener pl2 = new Listener() {
+		//
+		// @Override
+		// public void handleEvent(Event event) {
+		// if ( event.widget == c || event.item == c ) {
+		// GuiUtils
+		// .debug("LayeredDisplayView.ownCreatePartControl(...).new Listener() {...}.handleEvent: paint for " +
+		// event.widget);
+		// }
+		// }
+		//
+		// };
+		// SwtGui.getDisplay().addFilter(SWT.Paint, pl2);
+		// swingCompo.addPaintListener(pl);
+		// Setting the redraw of the swingCompo itself to false (no need to draw it)
+		swingCompo.setRedraw(false);
 		swingCompo.populate();
 
 		// swingCompo.addMouseWheelListener(new MouseWheelListener() {
