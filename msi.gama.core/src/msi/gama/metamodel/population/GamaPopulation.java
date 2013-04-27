@@ -69,7 +69,7 @@ public class GamaPopulation implements IPopulation {
 	 */
 	private LinkedList<IPopulation.Listener> listeners = null;
 
-	class PopulationManagement extends ScheduledAction {
+	class PopulationManagement extends GamaHelper {
 
 		final IExpression listOfTargetAgents;
 
@@ -78,7 +78,7 @@ public class GamaPopulation implements IPopulation {
 		}
 
 		@Override
-		public void execute(final IScope scope) throws GamaRuntimeException {
+		public Object run(final IScope scope) throws GamaRuntimeException {
 			IPopulation pop = GamaPopulation.this;
 			IList<IAgent> targets = Cast.asList(scope, listOfTargetAgents.value(scope));
 			IList<IAgent> toKill = new GamaList();
@@ -99,7 +99,7 @@ public class GamaPopulation implements IPopulation {
 				att.put("target", target);
 				attributes.add(att);
 			}
-			pop.createAgents(scope, targets.size(), attributes, false);
+			return pop.createAgents(scope, targets.size(), attributes, false);
 		}
 
 	}

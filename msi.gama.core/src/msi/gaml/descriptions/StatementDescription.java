@@ -22,7 +22,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaList;
-import msi.gaml.compilation.IPrimRun;
+import msi.gaml.compilation.GamaHelper;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.*;
 import msi.gaml.statements.*;
@@ -39,7 +39,7 @@ import org.eclipse.emf.ecore.EObject;
 
 public class StatementDescription extends SymbolDescription {
 
-	private IPrimRun helper; // TODO Only used by primitives. Should be in a subclass.
+	private GamaHelper helper; // TODO Only used by primitives. Should be in a subclass.
 	private final Map<String, IVarExpression> temps;
 	private final Map<String, IDescription> args;
 	private final static String INTERNAL = "internal_";
@@ -47,11 +47,11 @@ public class StatementDescription extends SymbolDescription {
 	static final Set<String> doFacets = DescriptionFactory.getAllowedFacetsFor(DO);
 	private IDescription previousDescription;
 
-	public IPrimRun getHelper() {
+	public GamaHelper getHelper() {
 		return helper;
 	}
 
-	public void setHelper(final IPrimRun helper) {
+	public void setHelper(final GamaHelper helper) {
 		this.helper = helper;
 	}
 

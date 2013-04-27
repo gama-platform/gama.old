@@ -6,14 +6,11 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gaml.compilation.IScheduledAction;
+import msi.gaml.compilation.GamaHelper;
 
 public abstract class AbstractScheduler implements IScheduler {
 
 	protected final SimulationClock clock;
-	private static final int BEGIN = 0;
-	private static final int END = 1;
-	private static final int DISPOSE = 2;
 
 	// Flag indicating that the simulation has been launched and is alive (maybe paused)
 	public volatile boolean alive = false;
@@ -25,7 +22,7 @@ public abstract class AbstractScheduler implements IScheduler {
 	// Flag indicating that the thread is set to be on hold, waiting for a user input
 	public volatile boolean on_user_hold = false;
 	/* Actions that should be run by the scheduler at the beginning/end of a cycle, or when the scheduler is disposed. */
-	Map<Integer, List<IScheduledAction>> actions = null;
+	List<GamaHelper>[] actions = null;
 	/* The agents that need to be initialized */
 	private final List<IStepable> agentsToInit;
 	/* Whether or not the scheduler is in its initialization sequence */
@@ -46,9 +43,7 @@ public abstract class AbstractScheduler implements IScheduler {
 		alive = false;
 		on_user_hold = false;
 		agentsToInit.clear();
-		if ( actions != null ) {
-			actions.clear();
-		}
+		actions = null;
 	}
 
 	@Override
@@ -65,13 +60,13 @@ public abstract class AbstractScheduler implements IScheduler {
 			}
 		}
 		executeActions(scope, END);
+		executeActions(scope, ONE_SHOT);
 		clock.step();
 	}
 
 	@Override
 	public void insertAgentToInit(final IAgent entity, final IScope scope) throws GamaRuntimeException {
 		if ( inInitSequence ) {
-			// GuiUtils.debug("AbstractScheduler.insertAgentToInit: " + entity);
 			agentsToInit.add(entity);
 		} else {
 			if ( !entity.dead() ) {
@@ -94,15 +89,11 @@ public abstract class AbstractScheduler implements IScheduler {
 		inInitSequence = true;
 		try {
 			while (!agentsToInit.isEmpty()) {
-				int total = agentsToInit.size();
-				IAgent[] toInit = new IAgent[total];
-				agentsToInit.toArray(toInit);
+				IAgent[] toInit = agentsToInit.toArray(new IAgent[agentsToInit.size()]);
 				agentsToInit.clear();
 				for ( int i = 0, n = toInit.length; i < n; i++ ) {
-					// GuiUtils.stopIfCancelled();
 					IAgent a = toInit[i];
 					if ( !a.dead() ) {
-						// GuiUtils.debug("AbstractScheduler.init: " + a);
 						init(a, scope);
 					}
 				}
@@ -112,62 +103,63 @@ public abstract class AbstractScheduler implements IScheduler {
 		}
 	}
 
-	private void executeActions(final IScope scope, final Integer type) {
+	private void executeActions(final IScope scope, final int type) {
 		if ( actions != null ) {
-			List<IScheduledAction> list = actions.get(type);
+			List<GamaHelper> list = actions[type];
 			if ( list != null ) {
-				for ( Iterator<IScheduledAction> iter = list.iterator(); iter.hasNext(); ) {
-					IScheduledAction action = iter.next();
-					action.execute(scope);
-					if ( action.isOneShot() ) {
-						iter.remove();
-					}
+				for ( GamaHelper action : list ) {
+					action.run(scope);
+				}
+				if ( type == ONE_SHOT ) {
+					actions[ONE_SHOT] = null;
 				}
 			}
 		}
 	}
 
 	@Override
-	public void removeAction(final IScheduledAction haltAction) {
+	public void removeAction(final GamaHelper haltAction) {
 		if ( actions == null ) { return; }
-		for ( List<IScheduledAction> list : actions.values() ) {
-			if ( list.remove(haltAction) ) { return; }
+		for ( List<GamaHelper> list : actions ) {
+			if ( list != null && list.remove(haltAction) ) { return; }
 		}
 	}
 
-	private void insertAction(final IScheduledAction action, final Integer type) {
+	private void insertAction(final GamaHelper action, final int type) {
 		if ( action == null ) { return; }
 		if ( actions == null ) {
-			actions = new LinkedHashMap();
+			actions = new ArrayList[4];
 		}
-		List<IScheduledAction> list = actions.get(type);
+		List<GamaHelper> list = actions[type];
 		if ( list == null ) {
 			list = new ArrayList();
-			actions.put(type, list);
+			actions[type] = list;
 		}
 		list.add(action);
 	}
 
 	@Override
-	public void insertDisposeAction(final IScheduledAction action) {
+	public void insertDisposeAction(final GamaHelper action) {
 		insertAction(action, DISPOSE);
 	}
 
 	@Override
-	public void insertEndAction(final IScheduledAction action) {
+	public void insertEndAction(final GamaHelper action) {
 		insertAction(action, END);
 	}
 
+	public void insertOneShotAction(final GamaHelper action) {
+		insertAction(action, ONE_SHOT);
+	}
+
 	@Override
-	public synchronized void executeOneAction(final IScheduledAction action) {
+	public synchronized void executeOneAction(final GamaHelper action) {
 		if ( paused || on_user_hold ) {
 			IScope scope = GAMA.obtainNewScope();
-			action.execute(scope);
-			// TODO outputs update ?
+			action.run(scope);
 			GAMA.releaseScope(scope);
 		} else {
-			action.setOneShot(true);
-			insertEndAction(action);
+			insertOneShotAction(action);
 		}
 	}
 

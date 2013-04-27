@@ -70,7 +70,7 @@ public class BatchExperiment extends GuiExperimentSpecies {
 	private final List<IParameter.Batch> explorableParameters = new ArrayList();
 	private final List<IParameter.Batch> fixedParameters = new ArrayList();
 	private final List<IParameter.Batch> methodParameters = new ArrayList();
-	private IScheduledAction haltAction;
+	private GamaHelper haltAction;
 	private final Semaphore innerLoopSemaphore = new Semaphore(1, false);
 	private/* volatile */int runNumber, innerLoopIndex;
 	private boolean multicore;
@@ -90,11 +90,12 @@ public class BatchExperiment extends GuiExperimentSpecies {
 
 		stopCondition = getFacet(IKeyword.UNTIL);
 		if ( stopCondition != null ) {
-			haltAction = new ScheduledAction() {
+			haltAction = new GamaHelper() {
 
 				@Override
-				public void execute(final IScope scope) throws GamaRuntimeException {
+				public Object run(final IScope scope) throws GamaRuntimeException {
 					conditionalHalt(scope);
+					return null;
 				}
 
 			};

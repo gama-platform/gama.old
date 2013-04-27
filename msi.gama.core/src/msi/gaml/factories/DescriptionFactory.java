@@ -137,6 +137,13 @@ public class DescriptionFactory {
 	}
 
 	public synchronized static IDescription create(final String keyword, final IDescription superDesc,
+		final IChildrenProvider children, final EObject element, final Facets facets) {
+		IDescription result =
+			getFactory(keyword).create(new SyntacticElement(keyword, facets, element), superDesc, children);
+		return result;
+	}
+
+	public synchronized static IDescription create(final String keyword, final IDescription superDesc,
 		final IChildrenProvider children, final Facets facets) {
 		return create(getFactory(keyword), keyword, superDesc, children, facets);
 	}

@@ -6,7 +6,6 @@ package msi.gaml.compilation;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.statements.*;
 import msi.gaml.statements.Facets.Facet;
@@ -34,7 +33,7 @@ public class SyntacticElement implements ISyntacticElement {
 		this(keyword, new Facets(), statement);
 	}
 
-	private SyntacticElement(final String keyword, final Facets facets, final EObject statement) {
+	public SyntacticElement(final String keyword, final Facets facets, final EObject statement) {
 		this.facets = facets;
 		setKeyword(keyword);
 		this.element = statement;
@@ -47,9 +46,6 @@ public class SyntacticElement implements ISyntacticElement {
 
 	@Override
 	public void setKeyword(final String name) {
-		if ( name == null ) {
-			GuiUtils.debug("SyntacticElement.setKeyword: NULL");
-		}
 		facets.putAsLabel(IKeyword.KEYWORD, name);
 	}
 
@@ -117,15 +113,6 @@ public class SyntacticElement implements ISyntacticElement {
 	public String getName() {
 		return getLabel(IKeyword.NAME);
 	}
-
-	//
-	// @Override
-	// public ISyntacticElement getChild(final String name) {
-	// for ( ISyntacticElement e : getChildren() ) {
-	// if ( e.getKeyword().equals(name) ) { return e; }
-	// }
-	// return null;
-	// }
 
 	@Override
 	public EObject getElement() {

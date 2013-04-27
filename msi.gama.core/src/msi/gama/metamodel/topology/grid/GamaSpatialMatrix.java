@@ -20,7 +20,6 @@ package msi.gama.metamodel.topology.grid;
 
 import java.awt.Graphics2D;
 import java.util.*;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -33,9 +32,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.GamaGridFile;
 import msi.gama.util.matrix.*;
-import msi.gama.util.path.GamaSpatialPath;
-import msi.gama.util.path.PathFactory;
-import msi.gaml.compilation.ScheduledAction;
+import msi.gama.util.path.*;
+import msi.gaml.compilation.GamaHelper;
 import msi.gaml.operators.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.GamaGeometryType;
@@ -46,8 +44,7 @@ import com.vividsolutions.jts.operation.distance.DistanceOp;
  * This matrix contains geometries and can serve to organize the agents of a population as a grid in
  * the environment, or as a support for grid topologies
  */
-public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatialIndex */implements
-	ISpatialIndex {
+public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatialIndex */implements ISpatialIndex {
 
 	public class SpatialMatrixIterator implements Iterator<IShape> {
 
@@ -103,10 +100,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	GamaMap hexAgentToLoc = null;
 	GamaMap<GamaShape, Double> gridValue;
 
-
-	public GamaSpatialMatrix(IScope scope, final IShape environment, final Integer cols,
-		final Integer rows, final boolean isTorus, final boolean usesVN)
-		throws GamaRuntimeException {
+	public GamaSpatialMatrix(IScope scope, final IShape environment, final Integer cols, final Integer rows,
+		final boolean isTorus, final boolean usesVN) throws GamaRuntimeException {
 		super(scope, cols, rows);
 		environmentFrame = environment.getGeometry();
 		bounds = environmentFrame.getEnvelope();
@@ -126,41 +121,40 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 		createCells(scope, false);
 	}
 
-	public GamaSpatialMatrix(IScope scope, final GamaGridFile gfile,final boolean isTorus, final boolean usesVN)
-			throws GamaRuntimeException {
-			super(scope, 100, 100);
-			gridValue = new GamaMap<GamaShape, Double>();
-			numRows = gfile.getNbRows();
-			numCols = gfile.getNbCols();
-			environmentFrame = gfile.getGeometry();
-			bounds = environmentFrame.getEnvelope();
-			cellWidth = bounds.getWidth() / numCols;
-			cellHeight = bounds.getHeight() / numRows;
-			precision = bounds.getWidth() / 1000;
-			int size = gfile.length(scope);
-			
-			createMatrix(size);
-			supportImagePixels = new int[size];
-			this.isTorus = isTorus;
-			this.usesVN = usesVN;
-			GRID_NUMBER++;
-			actualNumberOfCells = 0;
-			this.isHexagon = false;
-			firstCell = 0;
-			
-			for ( int i = 0; i < size; i++ ) {
-				GamaShape g = gfile.get(scope, i);
-				gridValue.put(g, (Double) g.getAttribute("grid_value"));
-				matrix[i] = g;
-			}
-			actualNumberOfCells = size;
-			lastCell = size - 1;
-			//createCells(scope, false);
-		}
-
-	public GamaSpatialMatrix(IScope scope, final IShape environment, final Integer cols,
-		final Integer rows, final boolean isTorus, final boolean usesVN, final boolean isHexagon)
+	public GamaSpatialMatrix(IScope scope, final GamaGridFile gfile, final boolean isTorus, final boolean usesVN)
 		throws GamaRuntimeException {
+		super(scope, 100, 100);
+		gridValue = new GamaMap<GamaShape, Double>();
+		numRows = gfile.getNbRows();
+		numCols = gfile.getNbCols();
+		environmentFrame = gfile.getGeometry();
+		bounds = environmentFrame.getEnvelope();
+		cellWidth = bounds.getWidth() / numCols;
+		cellHeight = bounds.getHeight() / numRows;
+		precision = bounds.getWidth() / 1000;
+		int size = gfile.length(scope);
+
+		createMatrix(size);
+		supportImagePixels = new int[size];
+		this.isTorus = isTorus;
+		this.usesVN = usesVN;
+		GRID_NUMBER++;
+		actualNumberOfCells = 0;
+		this.isHexagon = false;
+		firstCell = 0;
+
+		for ( int i = 0; i < size; i++ ) {
+			GamaShape g = gfile.get(scope, i);
+			gridValue.put(g, (Double) g.getAttribute("grid_value"));
+			matrix[i] = g;
+		}
+		actualNumberOfCells = size;
+		lastCell = size - 1;
+		// createCells(scope, false);
+	}
+
+	public GamaSpatialMatrix(IScope scope, final IShape environment, final Integer cols, final Integer rows,
+		final boolean isTorus, final boolean usesVN, final boolean isHexagon) throws GamaRuntimeException {
 		super(scope, cols, rows);
 		environmentFrame = environment.getGeometry();
 		bounds = environmentFrame.getEnvelope();
@@ -201,8 +195,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 			for ( int c = 0; c < numCols; c = c + 2 ) {
 				i = c + numRows * l;
 				GamaShape poly =
-					(GamaShape) GamaGeometryType.buildHexagon(cellWidth, cellHeight, new GamaPoint(
-						xmin + c * cellWidth * 0.75, ymin + l * cellHeight));
+					(GamaShape) GamaGeometryType.buildHexagon(cellWidth, cellHeight, new GamaPoint(xmin + c *
+						cellWidth * 0.75, ymin + l * cellHeight));
 				if ( gbg.covers(poly) ) {
 					if ( firstCell == -1 ) {
 						firstCell = i;
@@ -218,8 +212,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 			for ( int c = 1; c < numCols; c = c + 2 ) {
 				i = c + numRows * l;
 				GamaShape poly =
-					(GamaShape) GamaGeometryType.buildHexagon(cellWidth, cellHeight, new GamaPoint(
-						xmin + c * cellWidth * 0.75, ymin + (l + 0.5) * cellHeight));
+					(GamaShape) GamaGeometryType.buildHexagon(cellWidth, cellHeight, new GamaPoint(xmin + c *
+						cellWidth * 0.75, ymin + (l + 0.5) * cellHeight));
 				if ( gbg.covers(poly) ) {
 					if ( firstCell == -1 ) {
 						firstCell = i;
@@ -238,11 +232,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 		boolean isRectangle = environmentFrame.getInnerGeometry().isRectangle();
 		GamaPoint p = new GamaPoint(0, 0);
 		GamaPoint origin =
-			new GamaPoint(environmentFrame.getEnvelope().getMinX(), environmentFrame.getEnvelope()
-				.getMinY());
+			new GamaPoint(environmentFrame.getEnvelope().getMinX(), environmentFrame.getEnvelope().getMinY());
 
-		IShape translatedReferenceFrame =
-			Spatial.Transformations.translated_by(scope, environmentFrame, origin);
+		IShape translatedReferenceFrame = Spatial.Transformations.translated_by(scope, environmentFrame, origin);
 		// GeometryUtils.translation(g, -origin.x, -origin.y);
 
 		double cmx = cellWidth / 2;
@@ -273,9 +265,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	public GridNeighbourhood getNeighbourhood() {
 		if ( neighbourhood == null ) {
 			neighbourhood =
-				isHexagon ? new GridHexagonalNeighbourhood(matrix, numCols, numRows, isTorus)
-					: usesVN ? new GridVonNeumannNeighbourhood(matrix, numCols, numRows, isTorus)
-						: new GridMooreNeighbourhood(matrix, numCols, numRows, isTorus);
+				isHexagon ? new GridHexagonalNeighbourhood(matrix, numCols, numRows, isTorus) : usesVN
+					? new GridVonNeumannNeighbourhood(matrix, numCols, numRows, isTorus) : new GridMooreNeighbourhood(
+						matrix, numCols, numRows, isTorus);
 		}
 		return neighbourhood;
 	}
@@ -304,8 +296,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 
 	public final int getPlaceIndexAt(final int xx, final int yy) {
 		if ( isHexagon ) { return yy * numCols + xx; }
-		if ( isTorus ) { return (yy < 0 ? yy + numCols : yy) % numRows * numCols +
-			(xx < 0 ? xx + numCols : xx) % numCols; }
+		if ( isTorus ) { return (yy < 0 ? yy + numCols : yy) % numRows * numCols + (xx < 0 ? xx + numCols : xx) %
+			numCols; }
 		if ( xx < 0 || xx >= numCols || yy < 0 || yy >= numRows ) {
 			;
 			return -1;
@@ -317,15 +309,12 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	protected final int getPlaceIndexAt(final ILocation p) {
 		if ( isHexagon ) {
 			final int xx = (int) (p.getX() / (cellWidth * 0.75));
-			final int yy =
-				xx % 2 == 0 ? (int) (p.getY() / cellHeight)
-					: (int) ((p.getY() - cellHeight) / cellHeight);
+			final int yy = xx % 2 == 0 ? (int) (p.getY() / cellHeight) : (int) ((p.getY() - cellHeight) / cellHeight);
 
 			int i = getPlaceIndexAt(xx, yy);
 			if ( matrix[i] == null ) { return -1; }
 			if ( matrix[i].getLocation() == p ) { return i; }
-			List<Integer> toObserve =
-				GridHexagonalNeighbourhood.getNeighboursAtRadius1(i, numCols, numRows, isTorus);
+			List<Integer> toObserve = GridHexagonalNeighbourhood.getNeighboursAtRadius1(i, numCols, numRows, isTorus);
 			toObserve.add(i);
 			double dMin = Double.MAX_VALUE;
 			int x = 0, y = 0;
@@ -397,8 +386,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	}
 
 	@Override
-	public void set(IScope scope, final int col, final int row, final Object obj)
-		throws GamaRuntimeException {
+	public void set(IScope scope, final int col, final int row, final Object obj) throws GamaRuntimeException {
 		// TODO not allowed for the moment (fixed grid)
 	}
 
@@ -416,8 +404,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	}
 
 	@Override
-	public boolean _removeAll(IScope scope, final IContainer<?, IShape> value)
-		throws GamaRuntimeException {
+	public boolean _removeAll(IScope scope, final IContainer<?, IShape> value) throws GamaRuntimeException {
 		// TODO not allowed for the moment (fixed grid)
 		return false;
 	}
@@ -487,8 +474,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 
 	@Override
 	public IMatrix copy(IScope scope) throws GamaRuntimeException {
-		GamaSpatialMatrix result =
-			new GamaSpatialMatrix(scope, environmentFrame, numCols, numRows, isTorus, usesVN);
+		GamaSpatialMatrix result = new GamaSpatialMatrix(scope, environmentFrame, numCols, numRows, isTorus, usesVN);
 		return result;
 	}
 
@@ -498,8 +484,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	}
 
 	@Override
-	public void _putAll(IScope scope, final Object value, final Object param)
-		throws GamaRuntimeException {
+	public void _putAll(IScope scope, final Object value, final Object param) throws GamaRuntimeException {
 		// TODO Not allowed for the moment
 
 	}
@@ -548,8 +533,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 
 	public int manhattanDistanceBetween(final IShape g1, final IShape g2) {
 		// TODO ATTENTION ne tient pas compte du voisinage de Moore
-		Coordinate[] coord =
-			new DistanceOp(g1.getInnerGeometry(), g2.getInnerGeometry()).nearestPoints();
+		Coordinate[] coord = new DistanceOp(g1.getInnerGeometry(), g2.getInnerGeometry()).nearestPoints();
 		return distanceBetween(coord[0], coord[1]);
 	}
 
@@ -566,30 +550,27 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	 * @param distance
 	 * @return
 	 */
-	public GamaList<IAgent> getNeighboursOf(final IScope scope, final ITopology t,
-		final IShape shape, final Double distance) {
-		if ( shape.isPoint() || shape.getAgent() != null &&
-			shape.getAgent().getSpecies() == cellSpecies ) { return getNeighboursOf(scope, t,
-			shape.getLocation(), distance); }
-		final Collection<? extends IAgent> coveredPlaces =
-			getAgentsCoveredBy(shape, cellFilter, true);
+	public GamaList<IAgent> getNeighboursOf(final IScope scope, final ITopology t, final IShape shape,
+		final Double distance) {
+		if ( shape.isPoint() || shape.getAgent() != null && shape.getAgent().getSpecies() == cellSpecies ) { return getNeighboursOf(
+			scope, t, shape.getLocation(), distance); }
+		final Collection<? extends IAgent> coveredPlaces = getAgentsCoveredBy(shape, cellFilter, true);
 		Set<IAgent> result = new HashSet<IAgent>();
 		for ( IAgent a : coveredPlaces ) {
-			result.addAll(getNeighbourhood().getNeighboursIn(getPlaceIndexAt(a.getLocation()),
-				distance.intValue()));
+			result.addAll(getNeighbourhood().getNeighboursIn(getPlaceIndexAt(a.getLocation()), distance.intValue()));
 		}
 		result.removeAll(coveredPlaces);
 		return new GamaList<IAgent>(result);
 	}
 
-	public GamaList<IAgent> getNeighboursOf(final IScope scope, final ITopology t,
-		final ILocation shape, final Double distance) {
+	public GamaList<IAgent> getNeighboursOf(final IScope scope, final ITopology t, final ILocation shape,
+		final Double distance) {
 		return getNeighbourhood().getNeighboursIn(getPlaceIndexAt(shape), distance.intValue());
 	}
 
-	public GamaSpatialPath computeShortestPathBetween(final IScope scope, final IShape source,
-		final IShape target, final ITopology topo) throws GamaRuntimeException {
-		GamaMap<IAgent,Integer> dists = new GamaMap<IAgent,Integer>();
+	public GamaSpatialPath computeShortestPathBetween(final IScope scope, final IShape source, final IShape target,
+		final ITopology topo) throws GamaRuntimeException {
+		GamaMap<IAgent, Integer> dists = new GamaMap<IAgent, Integer>();
 		int currentplace = getPlaceIndexAt(source.getLocation());
 		int targetplace = getPlaceIndexAt(target.getLocation());
 		IAgent startAg = matrix[currentplace].getAgent();
@@ -637,8 +618,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	 * @param matrix representing the background geometry
 	 * @return the "valid" neighborhood of the current position (Van Neuman)
 	 */
-	private List<IAgent> getNeighs(final IScope scope, final IAgent agent, final GamaMap dists,
-		final ITopology t, final List<IAgent> currentList) throws GamaRuntimeException {
+	private List<IAgent> getNeighs(final IScope scope, final IAgent agent, final GamaMap dists, final ITopology t,
+		final List<IAgent> currentList) throws GamaRuntimeException {
 		List<IAgent> agents = getNeighboursOf(scope, t, agent.getLocation(), 1.0);
 		List<IAgent> neighs = new GamaList<IAgent>();
 		for ( IAgent ag : agents ) {
@@ -661,8 +642,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	 * @return the next position of the shortest path
 	 * @return
 	 */
-	private IAgent getNeighDesc(final IScope scope, final IAgent agent, final GamaMap dists,
-		final ITopology t, final int cpt) throws GamaRuntimeException {
+	private IAgent getNeighDesc(final IScope scope, final IAgent agent, final GamaMap dists, final ITopology t,
+		final int cpt) throws GamaRuntimeException {
 		List<IAgent> agents = getNeighboursOf(scope, t, agent.getLocation(), 1.0);
 		Collections.shuffle(agents);
 		for ( IAgent ag : agents ) {
@@ -685,8 +666,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 				if ( g != null ) {
 					IAgent a = g.getAgent();
 					if ( a != null ) {
-						supportImagePixels[index] =
-							((GamaColor) a.getDirectVarValue(scope, IKeyword.COLOR)).getRGB();
+						supportImagePixels[index] = ((GamaColor) a.getDirectVarValue(scope, IKeyword.COLOR)).getRGB();
 					}
 				}
 			}
@@ -696,20 +676,20 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	public GridDiffuser getDiffuser(final IScope scope) {
 		if ( diffuser != null ) { return diffuser; }
 		diffuser = new GridDiffuser(matrix, getNeighbourhood(), cellWidth);
-		scope.getSimulationScope().getScheduler().insertEndAction(new ScheduledAction() {
+		scope.getSimulationScope().getScheduler().insertEndAction(new GamaHelper() {
 
 			@Override
-			public void execute(final IScope scope) throws GamaRuntimeException {
+			public Object run(final IScope scope) throws GamaRuntimeException {
 				diffuse(scope);
+				return null;
 			}
 
 		});
 		return diffuser;
 	}
 
-	public void diffuseVariable(final IScope scope, final String name, final double value,
-		final short type, final double prop, final double variation, final ILocation location,
-		final double range) {
+	public void diffuseVariable(final IScope scope, final String name, final double value, final short type,
+		final double prop, final double variation, final ILocation location, final double range) {
 		getDiffuser(scope).diffuseVariable(name, value, type, prop, variation, location, range);
 	}
 
@@ -719,8 +699,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	 * @param covered
 	 * @return
 	 */
-	public Collection<? extends IAgent> getAgentsCoveredBy(final IShape source,
-		final IAgentFilter f, final boolean covered) {
+	public Collection<? extends IAgent> getAgentsCoveredBy(final IShape source, final IAgentFilter f,
+		final boolean covered) {
 		if ( !f.filterSpecies(cellSpecies) ) { return Collections.EMPTY_LIST; }
 		Envelope env = source.getEnvelope();
 		return (Collection<? extends IAgent>) allInEnvelope(source, env, f, covered);
@@ -840,8 +820,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	// }
 
 	@Override
-	public IList<IShape> allInEnvelope(final IShape source, final Envelope env,
-		final IAgentFilter f, final boolean covered) {
+	public IList<IShape> allInEnvelope(final IShape source, final Envelope env, final IAgentFilter f,
+		final boolean covered) {
 		if ( !f.filterSpecies(cellSpecies) ) { return GamaList.EMPTY_LIST; }
 		// if ( !f.filterSpecies(cellSpecies) ) { return GamaList.EMPTY_LIST; }
 		int minX = getX(env.getMinX());
@@ -859,8 +839,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 					if ( a != null ) {
 						// BUGFIX AD 29/03/13 The filter was absent
 						if ( f.accept(source, a) &&
-							(covered && env.covers(a.getEnvelope()) || !covered &&
-								env.intersects(a.getEnvelope())) ) {
+							(covered && env.covers(a.getEnvelope()) || !covered && env.intersects(a.getEnvelope())) ) {
 							ags.add(a);
 						}
 					}
@@ -884,15 +863,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> /* implements ISpatial
 	public GamaMap<GamaShape, Double> getGridValue() {
 		return gridValue;
 	}
-	
-	
 
 	// @Override
 	// public void update() {}
 
 	// @Override
 	// public void cleanCache() {}
-	
-	
 
 }

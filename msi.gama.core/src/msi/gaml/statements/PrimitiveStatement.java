@@ -69,7 +69,7 @@ public class PrimitiveStatement extends ActionStatement {
 		Object result = null;
 		actualArgs.stack(stack);
 		IAgent agent = stack.getAgentScope();
-		result = getDescription().getHelper().run(skill == null ? agent : skill, agent, stack);
+		result = getDescription().getHelper().run(stack, agent, skill == null ? agent : skill);
 		return result;
 	}
 

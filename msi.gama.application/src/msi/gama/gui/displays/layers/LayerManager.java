@@ -231,4 +231,11 @@ public class LayerManager implements ILayerManager {
 			i.updateEnvDimensions(env_width, env_height);
 		}
 	}
+
+	public boolean stayProportional() {
+		for ( ILayer i : enabledLayers ) {
+			if ( i.stayProportional() ) { return true; }
+		}
+		return false;
+	}
 }

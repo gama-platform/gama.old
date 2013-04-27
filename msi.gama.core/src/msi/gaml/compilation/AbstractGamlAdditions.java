@@ -226,14 +226,14 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	public void _iterator(final String[] keywords, final Class[] classes, final int[] expectedContentTypes,
-		final Class ret, final boolean c, final int t, final int content, final int index, final IOpRun helper,
+		final Class ret, final boolean c, final int t, final int content, final int index, final GamaHelper helper,
 		GamlElementDocumentation doc) {
 		IExpressionCompiler.ITERATORS.addAll(Arrays.asList(keywords));
 		_operator(keywords, classes, expectedContentTypes, ret, c, t, content, index, helper, doc);
 	}
 
 	public void _operator(final String[] keywords, final Class[] classes, final int[] expectedContentTypes,
-		final Class ret, final boolean c, final int t, final int content, final int index, final IOpRun helper,
+		final Class ret, final boolean c, final int t, final int content, final int index, final GamaHelper helper,
 		GamlElementDocumentation doc) {
 		Signature signature = new Signature(classes);
 		for ( int i = 0; i < keywords.length; i++ ) {
@@ -288,8 +288,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	}
 
-	protected void _var(final Class clazz, final IDescription desc, final IVarGetter get, final IVarGetter init,
-		final IVarSetter set) {
+	protected void _var(final Class clazz, final IDescription desc, final GamaHelper get, final GamaHelper init,
+		final GamaHelper set) {
 		add(clazz, desc);
 		((VariableDescription) desc).addHelpers(get, init, set);
 	}
@@ -327,7 +327,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return desc(Types.get(keyword).toString(), facets);
 	}
 
-	protected void _action(final String methodName, final Class clazz, final PrimRun e, final IDescription desc) {
+	protected void _action(final String methodName, final Class clazz, final GamaHelper e, final IDescription desc) {
 		((StatementDescription) desc).setHelper(e);
 		add(clazz, desc);
 	}

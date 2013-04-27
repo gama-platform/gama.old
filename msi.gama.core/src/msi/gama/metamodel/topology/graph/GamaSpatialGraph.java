@@ -28,7 +28,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.GamaGraph;
 import msi.gama.util.path.*;
-import msi.gaml.compilation.ScheduledAction;
+import msi.gaml.compilation.GamaHelper;
 import msi.gaml.species.ISpecies;
 import org.jgrapht.Graphs;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -209,11 +209,12 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 	}
 
 	public void postRefreshManagementAction(final IScope scope) {
-		scope.getSimulationScope().getScheduler().insertEndAction(new ScheduledAction() {
+		scope.getSimulationScope().getScheduler().insertEndAction(new GamaHelper() {
 
 			@Override
-			public void execute(final IScope scope) throws GamaRuntimeException {
+			public Object run(final IScope scope) throws GamaRuntimeException {
 				GamaSpatialGraph.this.refreshEdges();
+				return null;
 			}
 		});
 	}

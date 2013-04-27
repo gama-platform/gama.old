@@ -9,8 +9,7 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.*;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.GamaHelper;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.*;
 
@@ -108,16 +107,17 @@ public class AWTDisplaySurfaceMenu {
 			final IStatement c = source.getCommand();
 			final ILocation p = source.getLocation();
 			if ( c != null && a != null && !a.dead() ) {
-				IScheduledAction action = new ScheduledAction() {
+				GamaHelper action = new GamaHelper() {
 
 					@Override
-					public void execute(final IScope scope) throws GamaRuntimeException {
+					public Object run(final IScope scope) {
 						if ( p != null ) {
 							scope.addVarWithValue(IKeyword.USER_LOCATION, p);
 						}
 						if ( !a.dead() ) {
 							scope.execute(c, a);
 						}
+						return null;
 					}
 
 				};

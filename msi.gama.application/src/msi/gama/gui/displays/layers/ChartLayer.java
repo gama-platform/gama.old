@@ -36,8 +36,7 @@ import org.jfree.experimental.chart.swt.editor.SWTChartEditor;
  */
 public class ChartLayer extends AbstractLayer {
 
-	public ChartLayer(final double env_width, final double env_height, final ILayerStatement model,
-		final IGraphics dg) {
+	public ChartLayer(final double env_width, final double env_height, final ILayerStatement model, final IGraphics dg) {
 		super(env_width, env_height, model, dg);
 	}
 
@@ -86,6 +85,11 @@ public class ChartLayer extends AbstractLayer {
 		if ( !disposed ) {
 			dg.drawChart(getChart());
 		}
+	}
+
+	@Override
+	public boolean stayProportional() {
+		return false;
 	}
 
 }

@@ -18,15 +18,14 @@
  */
 package msi.gaml.expressions;
 
-import msi.gaml.compilation.IOpRun;
+import msi.gaml.compilation.GamaHelper;
 import msi.gaml.types.Types;
 
 public class TypeFieldExpression extends UnaryOperator {
 
 	final static int[] nullInts = new int[0];
 
-	public TypeFieldExpression(final String n, final int tProv, int ctProv, final int ktProv,
-		final IOpRun g) {
+	public TypeFieldExpression(final String n, final int tProv, int ctProv, final int ktProv, final GamaHelper g) {
 		super(Types.NO_TYPE, g, true, tProv, ctProv, ktProv, nullInts);
 		setName(n);
 	}
@@ -34,8 +33,7 @@ public class TypeFieldExpression extends UnaryOperator {
 	@Override
 	public TypeFieldExpression copy() {
 		TypeFieldExpression copy =
-			new TypeFieldExpression(name, typeProvider, contentTypeProvider, keyTypeProvider,
-				helper);
+			new TypeFieldExpression(name, typeProvider, contentTypeProvider, keyTypeProvider, helper);
 		copy.doc = doc;
 		return copy;
 	}

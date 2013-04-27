@@ -62,8 +62,7 @@ public class Variable extends Symbol implements IVariable {
 	protected IType type;
 	protected boolean isNotModifiable, doUpdate;
 	private final int definitionOrder;
-	public IVarGetter getter, initer;
-	public IVarSetter setter;
+	public GamaHelper getter, initer, setter;
 	protected String /* gName, sName, iName, */pName, cName;
 	protected ISkill gSkill/* , iSkill */, sSkill;
 

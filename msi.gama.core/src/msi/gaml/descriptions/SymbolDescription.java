@@ -176,8 +176,8 @@ public class SymbolDescription implements IDescription {
 		// FIXME / TODO Verify that not disposing the previous expressions does not lead to runtime errors, as the
 		// expressions will still be available, after a validation, in the ISyntacticStatement, which shares the facets
 		// with the IDescription and the ISymbol...
-		// TODO A solution to clean this would be to have a generic Facets<T> type, with two subtypes:
-		// Facets<IExpressionDescription> and Facets<IExpression>
+		// TODO A cleaner solution, at the expense of memory, would be to have a generic Facets<T> type, with two
+		// subtypes: Facets<IExpressionDescription> and Facets<IExpression>
 		// facets.dispose();
 		// facets.clear();
 		if ( children != null ) {

@@ -65,9 +65,6 @@ public abstract class AbstractLayer implements ILayer {
 		this.env_height = env_height;
 	}
 
-	// @Override
-	// public void initMenuItems(final IDisplaySurface surface) {}
-
 	@Override
 	public void setOrder(final Integer o) {
 		order = o;
@@ -80,7 +77,7 @@ public abstract class AbstractLayer implements ILayer {
 
 	@Override
 	public int compareTo(final ILayer o) {
-		return order.compareTo(((AbstractLayer) o).getOrder());
+		return order.compareTo(((ILayer) o).getOrder());
 	}
 
 	public void fillComposite(final Composite compo, final IDisplaySurface container) {
@@ -264,11 +261,6 @@ public abstract class AbstractLayer implements ILayer {
 
 	protected abstract String getType();
 
-	// @Override
-	// public Image getMenuImage() {
-	// return images.get(this.getClass());
-	// }
-
 	@Override
 	public final String getName() {
 		return name;
@@ -277,6 +269,11 @@ public abstract class AbstractLayer implements ILayer {
 	@Override
 	public final void setName(final String name) {
 		this.name = name;
+	}
+
+	@Override
+	public boolean stayProportional() {
+		return true;
 	}
 
 }

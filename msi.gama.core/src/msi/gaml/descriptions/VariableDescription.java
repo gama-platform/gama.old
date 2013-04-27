@@ -20,7 +20,7 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gama.runtime.GAMA;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.GamaHelper;
 import msi.gaml.expressions.IVarExpression;
 import msi.gaml.factories.IChildrenProvider;
 import msi.gaml.statements.Facets;
@@ -44,9 +44,7 @@ public class VariableDescription extends SymbolDescription {
 	private IVarExpression varExpr = null;
 	private IType type = null, contentType = null, keyType = null;
 	private final boolean _isGlobal, _isFunction, _isNotModifiable, _isParameter, _isUpdatable;
-	private IVarGetter get;
-	private IVarGetter init;
-	private IVarSetter set;
+	private GamaHelper get, init, set;
 
 	public VariableDescription(final String keyword, final IDescription superDesc, final IChildrenProvider cp,
 		final EObject source, Facets facets) {
@@ -243,21 +241,21 @@ public class VariableDescription extends SymbolDescription {
 		return title + " " + getName() + " of type " + typeToString();
 	}
 
-	public void addHelpers(final IVarGetter get, final IVarGetter init, final IVarSetter set) {
+	public void addHelpers(final GamaHelper get, final GamaHelper init, final GamaHelper set) {
 		this.get = get;
 		this.set = set;
 		this.init = init;
 	}
 
-	public IVarGetter getGetter() {
+	public GamaHelper getGetter() {
 		return get;
 	}
 
-	public IVarGetter getIniter() {
+	public GamaHelper getIniter() {
 		return init;
 	}
 
-	public IVarSetter getSetter() {
+	public GamaHelper getSetter() {
 		return set;
 	}
 

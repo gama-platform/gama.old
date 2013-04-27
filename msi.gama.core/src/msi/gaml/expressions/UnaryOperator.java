@@ -32,7 +32,7 @@ import msi.gaml.types.*;
 public class UnaryOperator extends AbstractExpression implements IOperator {
 
 	protected IExpression child;
-	protected final IOpRun helper;
+	protected final GamaHelper helper;
 	private final boolean canBeConst;
 	protected final int typeProvider, contentTypeProvider, keyTypeProvider;
 	private final int[] expectedContentType;
@@ -43,8 +43,8 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		return canBeConst && child.isConst();
 	}
 
-	public UnaryOperator(final IType rt, final IOpRun exec, final boolean canBeConst,
-		final int tProv, final int ctProv, final int iProv, int[] expectedContentType) {
+	public UnaryOperator(final IType rt, final GamaHelper exec, final boolean canBeConst, final int tProv,
+		final int ctProv, final int iProv, int[] expectedContentType) {
 		type = rt;
 		helper = exec;
 		this.canBeConst = canBeConst;
@@ -74,8 +74,8 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	@Override
 	public UnaryOperator copy() {
 		UnaryOperator copy =
-			new UnaryOperator(type, helper, canBeConst, typeProvider, contentTypeProvider,
-				keyTypeProvider, expectedContentType);
+			new UnaryOperator(type, helper, canBeConst, typeProvider, contentTypeProvider, keyTypeProvider,
+				expectedContentType);
 		copy.setName(getName());
 		// FIXME: Why contentType is initialized ?
 		// copy.contentType = contentType;
@@ -141,8 +141,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	}
 
 	@Override
-	public UnaryOperator init(final String name, final IDescription context,
-		final IExpression ... args) {
+	public UnaryOperator init(final String name, final IDescription context, final IExpression ... args) {
 		setName(name);
 		setChild(context, args[0]);
 		computeType();
@@ -158,8 +157,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		for ( int i = 0; i < expectedContentType.length; i++ ) {
 			if ( ct.isTranslatableInto(Types.get(expectedContentType[i])) ) { return; }
 		}
-		context.error(
-			"The " + getName() + " operator cannot operate on elements of type " + ct.toString(),
+		context.error("The " + getName() + " operator cannot operate on elements of type " + ct.toString(),
 			IGamlIssue.WRONG_TYPE);
 	}
 

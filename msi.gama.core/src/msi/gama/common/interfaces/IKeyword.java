@@ -181,6 +181,7 @@ public interface IKeyword {
 	public static final String ISFOLDER = "is_folder";
 	public static final String ITEM = "item";
 	public static final String ITS = "its";
+	public static final String FRAGMENT = "fragment";
 	public static final String JAVA = "java";
 	public static final String KEEP = "keep";
 	public static final String KEEP_SEED = "keep_seed";

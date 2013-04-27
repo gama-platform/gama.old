@@ -48,8 +48,6 @@ public interface ISyntacticElement {
 
 	List<ISyntacticElement> getChildren();
 
-	// ISyntacticElement getChild(String name);
-
 	EObject getElement();
 
 	void setKeyword(String string);

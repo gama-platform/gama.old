@@ -22,7 +22,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.compilation.ScheduledAction;
+import msi.gaml.compilation.GamaHelper;
 
 /**
  * The Class MessageBroker.
@@ -145,18 +145,20 @@ public class MessageBroker {
 			instance = new MessageBroker();
 			IScheduler s = GAMA.getFrontmostSimulation().getScheduler();
 
-			s.insertEndAction(new ScheduledAction() {
+			s.insertEndAction(new GamaHelper() {
 
 				@Override
-				public void execute(IScope scope) throws GamaRuntimeException {
+				public Object run(IScope scope) throws GamaRuntimeException {
 					instance.manageConversationsAndMessages();
+					return null;
 				}
 			});
-			s.insertDisposeAction(new ScheduledAction() {
+			s.insertDisposeAction(new GamaHelper() {
 
 				@Override
-				public void execute(IScope scope) throws GamaRuntimeException {
+				public Object run(IScope scope) throws GamaRuntimeException {
 					instance.schedulerDisposed();
+					return null;
 				}
 			});
 		}

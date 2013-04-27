@@ -642,24 +642,28 @@ public class SpeciesDescription extends TypeDescription {
 				var.getFacets().put(DEPENDS_ON, new StringListExpressionDescription(dependencies));
 				// GuiUtils.debug("The population of " + microSpec.getName() + " depends on: " + dependencies + " in " +
 				// getName());
-				IVarGetter get = new VarGetter(null) {
+				GamaHelper get = new GamaHelper() {
 
 					@Override
-					public Object run(IScope scope, IAgent agent, ISkill skill) throws GamaRuntimeException {
+					public Object run(IScope scope, IAgent agent, ISkill skill, Object ... values)
+						throws GamaRuntimeException {
 						return agent.getMicroPopulation(microSpec.getName());
 					}
 				};
-				IVarSetter set = new VarSetter(null) {
+				GamaHelper set = new GamaHelper() {
 
 					@Override
-					public void run(IScope scope, IAgent agent, ISkill target, Object value)
-						throws GamaRuntimeException {}
+					public Object run(IScope scope, IAgent agent, ISkill target, Object ... value)
+						throws GamaRuntimeException {
+						return null;
+					}
 
 				};
-				IVarGetter init = new VarGetter(null) {
+				GamaHelper init = new GamaHelper(null) {
 
 					@Override
-					public Object run(IScope scope, IAgent agent, ISkill skill) throws GamaRuntimeException {
+					public Object run(IScope scope, IAgent agent, ISkill skill, Object ... values)
+						throws GamaRuntimeException {
 						agent.initializeMicroPopulation(scope, microSpec.getName());
 						return agent.getMicroPopulation(microSpec.getName());
 					}

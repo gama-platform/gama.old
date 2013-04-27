@@ -23,7 +23,7 @@ import msi.gama.common.interfaces.IStepable;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.IScheduledAction;
+import msi.gaml.compilation.GamaHelper;
 
 /**
  * The class IScheduler.
@@ -35,16 +35,20 @@ import msi.gaml.compilation.IScheduledAction;
 public interface IScheduler extends IStepable {
 
 	public final static Semaphore SCHEDULER_AUTHORIZATION = new Semaphore(1);
+	public static final int BEGIN = 0;
+	public static final int END = 1;
+	public static final int DISPOSE = 2;
+	public static final int ONE_SHOT = 3;
 
 	public abstract void insertAgentToInit(final IAgent entity, IScope scope) throws GamaRuntimeException;
 
-	public abstract void removeAction(final IScheduledAction haltAction);
+	public abstract void removeAction(final GamaHelper haltAction);
 
-	public void executeOneAction(final IScheduledAction action);
+	public void executeOneAction(final GamaHelper action);
 
-	public abstract void insertEndAction(IScheduledAction action);
+	public abstract void insertEndAction(GamaHelper action);
 
-	public abstract void insertDisposeAction(IScheduledAction action);
+	public abstract void insertDisposeAction(GamaHelper action);
 
 	public abstract void start();
 

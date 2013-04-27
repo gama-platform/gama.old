@@ -22,7 +22,7 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.IScheduledAction;
+import msi.gaml.compilation.GamaHelper;
 
 public class Scheduler extends AbstractScheduler implements Runnable {
 
@@ -70,7 +70,7 @@ public class Scheduler extends AbstractScheduler implements Runnable {
 	}
 
 	@Override
-	public synchronized void executeOneAction(final IScheduledAction action) {
+	public synchronized void executeOneAction(final GamaHelper action) {
 		super.executeOneAction(action);
 		if ( paused || on_user_hold ) {
 			GAMA.getExperiment().getOutputManager().forceUpdateOutputs();

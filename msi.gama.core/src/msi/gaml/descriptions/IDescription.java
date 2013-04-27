@@ -88,8 +88,6 @@ public interface IDescription extends IGamlDescription, IKeyword {
 
 	public abstract StatementDescription getAction(String name);
 
-	/* public abstract TypeDescription getWorldSpecies(); */
-
 	public abstract IErrorCollector getErrorCollector();
 
 	public abstract List<GamlCompilationError> getWarnings();

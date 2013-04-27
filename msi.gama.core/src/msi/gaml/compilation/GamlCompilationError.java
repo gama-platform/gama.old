@@ -18,11 +18,10 @@
  */
 package msi.gaml.compilation;
 
-import static msi.gama.common.interfaces.IGamlIssue.GENERAL;
 import org.eclipse.emf.ecore.EObject;
 
 /**
- * The Class GamlException.
+ * The Class GamlCompilationError. Represents the errors produced by the validation/compilation of IDescription's.
  */
 public class GamlCompilationError {
 
@@ -33,24 +32,14 @@ public class GamlCompilationError {
 	protected String[] data;
 	protected EObject source;
 
-	public EObject getStatement() {
-		return source;
-	}
-
-	public GamlCompilationError(final String string, final EObject sourceInformation,
-		final boolean isWarning) {
-		this(string, GENERAL, sourceInformation, isWarning, false, (String[]) null);
-	}
-
-	public GamlCompilationError(final String string, final String code,
-		final EObject sourceInformation, final boolean warning, final boolean info,
-		final String ... data) {
+	public GamlCompilationError(final String string, final String code, final EObject object, final boolean warning,
+		final boolean info, final String ... data) {
 		message = string;
 		isWarning = warning;
 		isInfo = info;
 		this.code = code;
 		this.data = data;
-		addSource(sourceInformation);
+		source = object;
 	}
 
 	public String[] getData() {
@@ -66,12 +55,6 @@ public class GamlCompilationError {
 		return message;
 	}
 
-	public void addSource(final EObject cur) {
-		if ( source == null ) {
-			source = cur;
-		}
-	}
-
 	public boolean isWarning() {
 		return isWarning;
 	}
@@ -80,8 +63,8 @@ public class GamlCompilationError {
 		return isInfo;
 	}
 
-	public void setWarning(final boolean b) {
-		isWarning = b;
+	public EObject getStatement() {
+		return source;
 	}
 
 }

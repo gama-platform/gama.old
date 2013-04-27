@@ -185,6 +185,7 @@ public final class AWTDisplaySurface extends AbstractDisplaySurface {
 
 	@Override
 	public int[] computeBoundsFrom(final int vwidth, final int vheight) {
+		if ( !manager.stayProportional() ) { return new int[] { vwidth, vheight }; }
 		int[] dim = new int[2];
 		if ( widthHeightConstraint < 1 ) {
 			dim[1] = Math.min(vheight, (int) (vwidth * widthHeightConstraint));

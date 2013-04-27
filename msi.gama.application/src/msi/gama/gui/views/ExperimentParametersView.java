@@ -23,8 +23,7 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.*;
 import msi.gama.runtime.*;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.ScheduledAction;
+import msi.gaml.compilation.GamaHelper;
 import msi.gaml.statements.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -86,11 +85,11 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 
 				@Override
 				public void widgetSelected(final SelectionEvent e) {
-					GAMA.getFrontmostSimulation().getScheduler().executeOneAction(new ScheduledAction() {
+					GAMA.getFrontmostSimulation().getScheduler().executeOneAction(new GamaHelper() {
 
 						@Override
-						public void execute(final IScope scope) throws GamaRuntimeException {
-							command.executeOn(scope);
+						public Object run(final IScope scope) {
+							return command.executeOn(scope);
 						}
 
 					});

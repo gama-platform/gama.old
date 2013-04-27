@@ -18,29 +18,58 @@
  */
 package msi.gaml.compilation;
 
-import msi.gaml.skills.Skill;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.IScope;
+import msi.gaml.skills.*;
+import msi.gaml.types.*;
 
 /**
- * Written by drogoul Modified on 14 aožt 2010
+ * Written by drogoul Modified on 14 aožt 2010. Modified on 23 Apr. 2013.
+ * A general purpose helper that can be subclassed like a Runnable.
  * 
  * @todo Description
  * 
  */
-public abstract class GamaHelper implements IGamaHelper {
+public abstract class GamaHelper {
 
 	final Class skillClass;
+	final IType returnType;
+
+	public GamaHelper() {
+		this(null);
+	}
 
 	public GamaHelper(final Class clazz) {
+		this(Types.NO_TYPE, clazz);
+	}
+
+	public GamaHelper(final IType type, final Class clazz) {
 		if ( clazz != null && Skill.class.isAssignableFrom(clazz) ) {
 			skillClass = clazz;
 		} else {
 			skillClass = null;
 		}
+		returnType = type;
 	}
 
-	@Override
 	public Class getSkillClass() {
 		return skillClass;
+	}
+
+	public IType getReturnType() {
+		return returnType;
+	}
+
+	public Object run(IScope scope) {
+		return null;
+	};
+
+	public Object run(IScope scope, Object ... values) {
+		return null;
+	}
+
+	public Object run(IScope scope, IAgent agent, ISkill target, Object ... values) {
+		return null;
 	}
 
 }

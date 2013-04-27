@@ -51,7 +51,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 	double getYScale();
 
 	void setOpacity(Double value);
-	
+
 	void setElevation(Double value);
 
 	void updateEnvDimensions(double env_width, double env_height);
@@ -60,13 +60,6 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	Integer getOrder();
 
-	// void setOrder(Integer order);
-	// Image getMenuImage();
-	// TODO Let the menu be managed entirely by the surface (not the display)
-	// public void putMenuItemsIn(final Menu inMenu, int x, int y);
-
-	// void initMenuItems(IDisplaySurface displaySurface);
-
-	// Point getSize();
+	public abstract boolean stayProportional();
 
 }
