@@ -184,6 +184,6 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 	 */
 	public IGraphics getIGraphics();
 
-	public void addMouseEventListener(MouseListener e);
+	public void addMouseListener(MouseListener e);
 
 }
