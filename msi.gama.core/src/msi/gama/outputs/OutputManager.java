@@ -153,7 +153,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 							// GuiUtils.debug("Scheduling and opening output " + output.getName());
 							output.schedule();
 							output.open();
-							output.update();
+							outputsToUpdateNow.add(output);
 						} catch (GamaRuntimeException e) {
 							e.addContext("in opening output " + output.getName());
 							e.addContext("output " + output.getName() + " has not been opened");
@@ -165,9 +165,14 @@ public class OutputManager extends Symbol implements IOutputManager {
 
 					}
 				}
-				GuiUtils.informStatus("Experiment ready");
+
 			}
 		});
+
+		OutputSynchronizer.waitForViewsToBeInitialized();
+		GuiUtils.informStatus("Experiment ready");
+		updateOutputs();
+
 	}
 
 	public synchronized void dispose(final boolean includingBatch) {
@@ -190,6 +195,15 @@ public class OutputManager extends Symbol implements IOutputManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		// while (GuiOutputManager.getNumberOfViewsWaitingToClose() > 0) {
+		// // try {
+		// GuiUtils.debug("Closing " + GuiOutputManager.getNumberOfViewsWaitingToClose() + " display(s)");
+		// Thread.sleep(100);
+		// // } catch (InterruptedException e) {
+		// // // TODO What to do when interrupted ?
+		// // e.printStackTrace();
+		// // }
+		// }
 	}
 
 	@Override

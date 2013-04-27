@@ -120,4 +120,6 @@ public interface IGui {
 
 	void updateParameterView();
 
+	void cycleDisplayViews(Set<String> names);
+
 }

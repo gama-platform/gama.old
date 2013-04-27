@@ -21,9 +21,7 @@ package msi.gama.common.interfaces;
 import java.awt.Color;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
-
-import msi.gama.metamodel.shape.ILocation;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.IDisplayOutput;
 
 /**
@@ -32,7 +30,7 @@ import msi.gama.outputs.IDisplayOutput;
  * @todo Description
  * 
  */
-public interface IDisplaySurface {
+public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener */{
 
 	public static final double SELECTION_SIZE = 20; // pixels
 	public static final int MAX_SIZE = 8000; // pixels
@@ -76,12 +74,12 @@ public interface IDisplaySurface {
 	 * Activate select rectangle tool (Only with Opengl view)
 	 */
 	void toggleSelectRectangle();
-	
+
 	/**
 	 * Show the triangulation (Only with Opengl view)
 	 */
 	void toggleTriangulation();
-	
+
 	/**
 	 * Split species layer in 3D
 	 */
@@ -108,7 +106,7 @@ public interface IDisplaySurface {
 	void setSynchronized(boolean checked);
 
 	void setAutoSave(boolean autosave, int x, int y);
-		
+
 	void initOutput3D(final boolean output3D, final ILocation output3DNbCycles);
 
 	void setSnapshotFileName(String string);
@@ -184,9 +182,8 @@ public interface IDisplaySurface {
 	/**
 	 * @return IGraphics
 	 */
-	public IGraphics getMyGraphics();
+	public IGraphics getIGraphics();
 
 	public void addMouseEventListener(MouseListener e);
-
 
 }

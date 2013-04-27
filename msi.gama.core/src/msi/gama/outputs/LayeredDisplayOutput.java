@@ -39,7 +39,6 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
-
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -75,8 +74,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean output3D = false;
 	private boolean tesselation = true;
 	private Color ambientLightColor = new GamaColor(255, 255, 255);
-	//Set it to (-1,-1,-1) to set the camera with the right value if no value defined.
-	private ILocation cameraPos = new GamaPoint(-1,-1,-1);
+	// Set it to (-1,-1,-1) to set the camera with the right value if no value defined.
+	private ILocation cameraPos = new GamaPoint(-1, -1, -1);
 	private boolean constantAmbientLight = true;
 	private boolean constantCamera = true;
 	private boolean polygonmode = true;
@@ -149,13 +148,13 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			}
 
 		}
-		
+
 		IExpression camera = getFacet(IKeyword.CAMERA_POS);
 		if ( camera != null ) {
 			cameraPos = Cast.asPoint(getOwnScope(), camera.value(getOwnScope()));
 
 			if ( camera.isConst() ) {
-				constantCamera= true;
+				constantCamera = true;
 			} else {
 				constantCamera = false;
 			}
@@ -182,7 +181,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public void step(final IScope scope) throws GamaRuntimeException {
-		// GUI.debug("Computing the expressions of output " + getName() + " at cycle " + cycle);
 		for ( ILayerStatement layer : getLayers() ) {
 			layer.step(scope);
 		}
@@ -190,47 +188,42 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public void update() throws GamaRuntimeException {
+		if ( surface == null ) { return; }
+		if ( surface.getIGraphics() instanceof IGraphics.OpenGL ) {
+			IGraphics.OpenGL graphics = (IGraphics.OpenGL) surface.getIGraphics();
 
-		// /////////////// dynamic Lighting ///////////////////
-		if ( !constantAmbientLight ) {
-			IExpression light = getFacet(IKeyword.AMBIENT_LIGHT);
-			if ( light != null ) {
-				if ( light.getType().equals(Types.get(IType.COLOR)) ) {
-					ambientLightColor = Cast.asColor(getOwnScope(), light.value(getOwnScope()));
-				} else {
-					int meanValue = Cast.asInt(getOwnScope(), light.value(getOwnScope()));
-					ambientLightColor = new GamaColor(meanValue, meanValue, meanValue);
+			// /////////////// dynamic Lighting ///////////////////
+			if ( !constantAmbientLight ) {
+				IExpression light = getFacet(IKeyword.AMBIENT_LIGHT);
+				if ( light != null ) {
+					if ( light.getType().equals(Types.get(IType.COLOR)) ) {
+						ambientLightColor = Cast.asColor(getOwnScope(), light.value(getOwnScope()));
+					} else {
+						int meanValue = Cast.asInt(getOwnScope(), light.value(getOwnScope()));
+						ambientLightColor = new GamaColor(meanValue, meanValue, meanValue);
+					}
 				}
+				graphics.setAmbientLightValue((GamaColor) ambientLightColor);
 			}
 
-			if ( surface.getMyGraphics() != null ) {
-				surface.getMyGraphics().setAmbientLightValue((GamaColor) ambientLightColor);
-			}
-		}
-		
-		
-		///////////////////// dynamic camera ///////////////////		
-		if ( !constantCamera ) {
-			IExpression camera = getFacet(IKeyword.CAMERA_POS);
-			if ( camera != null ) {
-			  cameraPos = Cast.asPoint(getOwnScope(), camera.value(getOwnScope()));
-			}
-
-			if ( surface.getMyGraphics() != null ) {
-				surface.getMyGraphics().setCameraPosition((GamaPoint) cameraPos);
+			// /////////////////// dynamic camera ///////////////////
+			if ( !constantCamera ) {
+				IExpression camera = getFacet(IKeyword.CAMERA_POS);
+				if ( camera != null ) {
+					cameraPos = Cast.asPoint(getOwnScope(), camera.value(getOwnScope()));
+				}
+				graphics.setCameraPosition(cameraPos);
 			}
 		}
 
-		if (GuiOutputManager.WaitingViews == 0){
-			// GUI.debug("Updating output " + getName());
-			if ( surface != null && surface.canBeUpdated() ) {
-				// GUI.debug("Updating the surface of output " + getName());
-				surface.updateDisplay();
-				// Use to define which technique is used in opengl to triangulate polygon
+		// GUI.debug("Updating output " + getName());
+		if ( surface.canBeUpdated() ) {
+			// GUI.debug("Updating the surface of output " + getName());
+			surface.updateDisplay();
+			// Use to define which technique is used in opengl to triangulate polygon
 
-			}
 		}
-		
+
 	}
 
 	@Override
@@ -276,13 +269,13 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		surface.setAutoSave(autosave, (int) imageDimension.getX(), (int) imageDimension.getY());
 
 		// Use only for opengl
-		if ( surface.getMyGraphics() != null ) {
-			// surface.setOutput3D(output3D);
+		if ( surface.getIGraphics() instanceof IGraphics.OpenGL ) {
+			IGraphics.OpenGL graphics = (IGraphics.OpenGL) surface.getIGraphics();
 			surface.initOutput3D(output3D, output3DNbCycles);
-			surface.getMyGraphics().useTesselation(tesselation);
-			surface.getMyGraphics().setAmbientLightValue((GamaColor) ambientLightColor);
-			surface.getMyGraphics().setPolygonMode(polygonmode);
-			surface.getMyGraphics().setCameraPosition(cameraPos);
+			graphics.useTesselation(tesselation);
+			graphics.setAmbientLightValue((GamaColor) ambientLightColor);
+			graphics.setPolygonMode(polygonmode);
+			graphics.setCameraPosition(cameraPos);
 		}
 	}
 
@@ -292,7 +285,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public String getViewId() {
-
 		return GuiUtils.LAYER_VIEW_ID;
 	}
 
@@ -347,6 +339,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public void resume() {
 		super.resume();
 		surface.setPaused(false);
+	}
+
+	public boolean isOpenGL() {
+		return displayType.equals(OPENGL);
 	}
 
 }

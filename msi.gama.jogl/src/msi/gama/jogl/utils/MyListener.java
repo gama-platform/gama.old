@@ -103,9 +103,9 @@ public class MyListener implements KeyListener, MouseListener,
 		//Arcball
 		
 	
-		if ( ((isArcBallOn(mouseEvent)) && myCamera.isModelCentered) || myRenderer.displaySurface.SelectRectangle) {
+		if ( ((isArcBallOn(mouseEvent)) && myCamera.isModelCentered) || myRenderer.displaySurface.selectRectangle) {
 			//Arcball is not working with picking.
-			if(!myRenderer.displaySurface.Picking){
+			if(!myRenderer.displaySurface.picking){
 				if (SwingUtilities.isLeftMouseButton(mouseEvent)) {
 					myRenderer.startDrag(mouseEvent.getPoint());
 				}
@@ -118,7 +118,7 @@ public class MyListener implements KeyListener, MouseListener,
 			
 		
 		//Picking mode
-		if(myRenderer.displaySurface.Picking){
+		if(myRenderer.displaySurface.picking){
 			//Activate Picking when press and right click and if in Picking mode
 			if(SwingUtilities.isRightMouseButton(mouseEvent)){
 				isPickedPressed = true;	
@@ -133,7 +133,7 @@ public class MyListener implements KeyListener, MouseListener,
 	public void mouseReleased(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 		
-		if (myRenderer.displaySurface.SelectRectangle){
+		if (myRenderer.displaySurface.selectRectangle){
 			enableROIDrawing = false;
 		}
 		
@@ -144,8 +144,8 @@ public class MyListener implements KeyListener, MouseListener,
 	public void mouseDragged(MouseEvent mouseEvent) {
 
 		
-		if ( ((isArcBallOn(mouseEvent)) && myCamera.isModelCentered) || myRenderer.displaySurface.SelectRectangle){
-			if(!myRenderer.displaySurface.Picking){
+		if ( ((isArcBallOn(mouseEvent)) && myCamera.isModelCentered) || myRenderer.displaySurface.selectRectangle){
+			if(!myRenderer.displaySurface.picking){
 				if (SwingUtilities.isLeftMouseButton(mouseEvent)) {
 					myRenderer.drag(mouseEvent.getPoint());
 					mousePosition.x = mouseEvent.getX();
@@ -294,7 +294,7 @@ public class MyListener implements KeyListener, MouseListener,
 	
 	private boolean isArcBallOn(MouseEvent mouseEvent){
 			
-		if(checkCtrlKeyDown(mouseEvent) || myRenderer.displaySurface.Arcball ==true){
+		if(checkCtrlKeyDown(mouseEvent) || myRenderer.displaySurface.arcball ==true){
 			if(mouseEvent.isShiftDown()==false){
 				return true;
 			}

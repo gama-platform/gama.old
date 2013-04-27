@@ -26,7 +26,6 @@ import msi.gama.lang.gaml.ui.hover.*;
 import msi.gama.lang.gaml.ui.hover.GamlHoverProvider.GamlDispatchingEObjectTextHover;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.eclipse.xtext.builder.nature.NatureAddingEditorCallback;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
 import org.eclipse.xtext.resource.ILocationInFileProvider;
 import org.eclipse.xtext.resource.containers.IAllContainersState;
@@ -102,7 +101,7 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		// TODO Verify this as it is only needed, normally, for languages that do not use the builder infrastructure
 		// (see http://www.eclipse.org/forums/index.php/mv/msg/167666/532239/)
 		// return ValidatingEditorCallback.class;
-		return NatureAddingEditorCallback.class;
+		return GamlEditorCallback.class;
 	}
 
 	public Class<? extends IEObjectHoverProvider> bindIEObjectHoverProvider() {

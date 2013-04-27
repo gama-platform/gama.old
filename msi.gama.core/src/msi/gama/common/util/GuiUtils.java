@@ -18,7 +18,7 @@
  */
 package msi.gama.common.util;
 
-import java.util.Map;
+import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.metamodel.agent.IAgent;
@@ -63,6 +63,13 @@ public class GuiUtils {
 	 * Method called by headless builder to change the GUI Mode
 	 * @see ModelFactory
 	 */
+
+	public static void cycleDisplayViews(Set<String> names) {
+		if ( gui != null ) {
+			gui.cycleDisplayViews(names);
+		}
+	}
+
 	public static void setHeadLessMode() {
 		headlessMode = true;
 	}

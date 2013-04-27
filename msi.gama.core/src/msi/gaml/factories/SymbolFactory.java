@@ -21,7 +21,6 @@ package msi.gaml.factories;
 import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
 import msi.gaml.compilation.ISymbol;
@@ -147,9 +146,6 @@ public class SymbolFactory {
 			compileFacet(facetName, desc, smd);
 			IExpression expr = ed.getExpression();
 			if ( expr == null ) {
-				if ( facetName.equals(VAR) ) {
-					GuiUtils.debug("SymbolFactory.privateValidate: NULL VAR");
-				}
 				continue;
 			}
 			DescriptionValidator.verifyFacetType(desc, facetName, expr, smd, md, tm);

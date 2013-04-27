@@ -23,7 +23,7 @@ import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.OutputSynchronizer;
 import msi.gaml.operators.Maths;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
@@ -48,11 +48,11 @@ import org.eclipse.swt.widgets.Event;
  * <li>Working around various AWT/Swing bugs
  * </ul>
  * <P>
- * If, rather than embedding Swing components, you are integrating with Swing by opening Swing
- * dialogs, see the {@link AwtEnvironment} class.
+ * If, rather than embedding Swing components, you are integrating with Swing by opening Swing dialogs, see the
+ * {@link AwtEnvironment} class.
  * <p>
- * This is an abstract that is normally used by extending it and implementing the
- * {@link #createSwingComponent()} method. For example,
+ * This is an abstract that is normally used by extending it and implementing the {@link #createSwingComponent()}
+ * method. For example,
  * 
  * <pre>
  * embeddedComposite = new EmbeddedSwingComposite(parent, SWT.NONE) {
@@ -69,16 +69,16 @@ import org.eclipse.swt.widgets.Event;
  * 
  * <p>
  * The Swing component is created inside a standard Swing containment hierarchy, rooted in a
- * {@link javax.swing.RootPaneContainer}. The root pane container is placed inside an AWT frame, as
- * returned by {@link org.eclipse.swt.awt.SWT_AWT#new_Frame(Composite)}
+ * {@link javax.swing.RootPaneContainer}. The root pane container is placed inside an AWT frame, as returned by
+ * {@link org.eclipse.swt.awt.SWT_AWT#new_Frame(Composite)}
  * <p>
- * <b>Note:</b> When you mix components from Swing/AWT and SWT toolkits, there will be two UI event
- * threads, one for AWT, one for SWT. Most SWT APIs require that you call them from the SWT thread.
- * Swing has similar restrictions though it does not enforce them as much as SWT.
+ * <b>Note:</b> When you mix components from Swing/AWT and SWT toolkits, there will be two UI event threads, one for
+ * AWT, one for SWT. Most SWT APIs require that you call them from the SWT thread. Swing has similar restrictions though
+ * it does not enforce them as much as SWT.
  * <p>
- * Applications need to be aware of the current thread, and, where necessary, schedule tasks to run
- * on another thread. This has always been required in the pure Swing or SWT environments, but when
- * mixing Swing and SWT, more of this scheduling will be necessary.
+ * Applications need to be aware of the current thread, and, where necessary, schedule tasks to run on another thread.
+ * This has always been required in the pure Swing or SWT environments, but when mixing Swing and SWT, more of this
+ * scheduling will be necessary.
  * <p>
  * To schedule work on the AWT event thread, you can use:
  * <ul>
@@ -93,8 +93,8 @@ import org.eclipse.swt.widgets.Event;
  * <li>{@link org.eclipse.swt.widgets.Display#asyncExec(Runnable)}
  * <li>{@link org.eclipse.swt.widgets.Display#syncExec(Runnable)}
  * </ul>
- * Of course, as in single-toolkit environments, long-running tasks should be offloaded from either
- * UI thread to a background thread. The Eclipse jobs API can be used for this purpose.
+ * Of course, as in single-toolkit environments, long-running tasks should be offloaded from either UI thread to a
+ * background thread. The Eclipse jobs API can be used for this purpose.
  */
 public abstract class EmbeddedSwingComposite extends Composite {
 
@@ -180,6 +180,9 @@ public abstract class EmbeddedSwingComposite extends Composite {
 		}
 	};
 
+	protected String outputName;
+	protected boolean isOpenGL;
+
 	// private final IDisplayOutput displayOutput = null;
 
 	/**
@@ -188,15 +191,14 @@ public abstract class EmbeddedSwingComposite extends Composite {
 	 * <p>
 	 * This method must be called from the SWT event thread.
 	 * <p>
-	 * The style value is either one of the style constants defined in class <code>SWT</code> which
-	 * is applicable to instances of this class, or must be built by <em>bitwise OR</em>'ing
-	 * together (that is, using the <code>int</code> "|" operator) two or more of those
-	 * <code>SWT</code> style constants. The class description lists the style constants that are
-	 * applicable to the class. Style bits are also inherited from superclasses.
+	 * The style value is either one of the style constants defined in class <code>SWT</code> which is applicable to
+	 * instances of this class, or must be built by <em>bitwise OR</em>'ing together (that is, using the
+	 * <code>int</code> "|" operator) two or more of those <code>SWT</code> style constants. The class description lists
+	 * the style constants that are applicable to the class. Style bits are also inherited from superclasses.
 	 * </p>
 	 * <p>
-	 * The styles SWT.EMBEDDED and SWT.NO_BACKGROUND will be added to the specified style. Usually,
-	 * no other style bits are needed.
+	 * The styles SWT.EMBEDDED and SWT.NO_BACKGROUND will be added to the specified style. Usually, no other style bits
+	 * are needed.
 	 * 
 	 * @param parent a widget which will be the parent of the new instance (cannot be null)
 	 * @param style the style of widget to construct
@@ -208,12 +210,12 @@ public abstract class EmbeddedSwingComposite extends Composite {
 	 *                </ul>
 	 * @see Widget#getStyle
 	 */
-	public EmbeddedSwingComposite(final Composite parent, final int style,
-		final IDisplayOutput displayOutput) {
+	public EmbeddedSwingComposite(final Composite parent, final int style) {
 		super(parent, style | SWT.EMBEDDED | SWT.NO_BACKGROUND);
 		getDisplay().addListener(SWT.Settings, settingsListener);
 		setLayout(new FillLayout());
 		currentSystemFont = getFont();
+
 		// addKeyListener(keyListener);
 		// this.displayOutput = displayOutput;
 	}
@@ -223,16 +225,16 @@ public abstract class EmbeddedSwingComposite extends Composite {
 	 * <p>
 	 * This method must be called from the SWT event thread.
 	 * <p>
-	 * The Swing component will be created by calling {@link #createSwingComponent()}. The creation
-	 * is scheduled asynchronously on the AWT event thread. This method does not wait for completion
-	 * of this asynchronous task, so it may return before createSwingComponent() is complete.
+	 * The Swing component will be created by calling {@link #createSwingComponent()}. The creation is scheduled
+	 * asynchronously on the AWT event thread. This method does not wait for completion of this asynchronous task, so it
+	 * may return before createSwingComponent() is complete.
 	 * <p>
 	 * The Swing component is created inside a standard Swing containment hierarchy, rooted in a
-	 * {@link javax.swing.RootPaneContainer}. Clients can override
-	 * {@link #addRootPaneContainer(Frame)} to provide their own root pane container implementation.
+	 * {@link javax.swing.RootPaneContainer}. Clients can override {@link #addRootPaneContainer(Frame)} to provide their
+	 * own root pane container implementation.
 	 * <p>
-	 * This method can be called multiple times for a single instance. If an embedded frame exists
-	 * from a previous call, it is disposed.
+	 * This method can be called multiple times for a single instance. If an embedded frame exists from a previous call,
+	 * it is disposed.
 	 * 
 	 * @exception SWTException <ul>
 	 *                <li>ERROR_WIDGET_DISPOSED - if the receiver has been disposed</li> <li>
@@ -248,9 +250,9 @@ public abstract class EmbeddedSwingComposite extends Composite {
 	/**
 	 * Creates the embedded Swing component. This method is called from the AWT event thread.
 	 * <p>
-	 * Implement this method to provide the Swing component that will be shown inside this
-	 * composite. The returned component will be added to the Swing content pane. At least one
-	 * component must be created by this method; null is not a valid return value.
+	 * Implement this method to provide the Swing component that will be shown inside this composite. The returned
+	 * component will be added to the Swing content pane. At least one component must be created by this method; null is
+	 * not a valid return value.
 	 * 
 	 * @return a non-null Swing component
 	 */
@@ -263,10 +265,9 @@ public abstract class EmbeddedSwingComposite extends Composite {
 	 * <p>
 	 * This method is called from the AWT event thread.
 	 * <p>
-	 * If you are defining your own root pane container, make sure that there is at least one
-	 * heavyweight (AWT) component in the frame's containment hierarchy; otherwise, event processing
-	 * will not work correctly. See http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4982522 for
-	 * more information.
+	 * If you are defining your own root pane container, make sure that there is at least one heavyweight (AWT)
+	 * component in the frame's containment hierarchy; otherwise, event processing will not work correctly. See
+	 * http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4982522 for more information.
 	 * 
 	 * @param frame the frame to which the root pane container is added
 	 * @return a non-null Swing component
@@ -277,33 +278,21 @@ public abstract class EmbeddedSwingComposite extends Composite {
 
 		// It is important to set up the proper top level components in the
 		// frame:
-		// 1) For Swing to work properly, Sun documents that there must be an
-		// implementor
-		// of
+		// 1) For Swing to work properly, Sun documents that there must be an implementor of
 		// javax.swing.RootPaneContainer at the top of the component hierarchy.
-		// 2) For proper event handling there must be a heavyweight
-		// an AWT frame must contain a heavyweight component (see
-		// http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4982522)
-		// 3) The Swing implementation further narrows the options by expecting
-		// that the
-		// top of the hierarchy be a JFrame, JDialog, JWindow, or JApplet. See
-		// javax.swing.PopupFactory.
-		// All this drives the choice of JApplet for the top level Swing
-		// component. It is
-		// the
-		// only single component that satisfies all the above. This does not
-		// imply that
-		// we have a true applet; in particular, there is no notion of an applet
-		// lifecycle
-		// in this
-		// context.
+		// 2) For proper event handling there must be a heavyweight an AWT frame must contain a heavyweight component
+		// (see http://bugs.sun.com/bugdatabase/view_bug.do?bug_id=4982522)
+		// 3) The Swing implementation further narrows the options by expecting that the top of the hierarchy be a
+		// JFrame, JDialog, JWindow, or JApplet. See javax.swing.PopupFactory. All this drives the choice of JApplet for
+		// the top level Swing component. It is the only single component that satisfies all the above. This does not
+		// imply that we have a true applet; in particular, there is no notion of an applet lifecycle in this context.
 		final JApplet applet = new JApplet();
+		// final JWindow applet = new JWindow();
 
 		// In JRE 1.4, the JApplet makes itself a focus cycle root. This
 		// interferes with the focus handling installed on the parent frame, so
 		// change it back to a non-root here.
-		// TODO: consider moving the focus policy from the Frame down to the
-		// JApplet
+		// TODO: consider moving the focus policy from the Frame down to the JApplet
 		applet.setFocusCycleRoot(false);
 
 		frame.add(applet);
@@ -317,10 +306,9 @@ public abstract class EmbeddedSwingComposite extends Composite {
 	 * <p>
 	 * This method is called from the AWT event thread.
 	 * <p>
-	 * In most cases it is not necessary to override this method. Normally, the implementation of
-	 * this class will automatically propogate font changes to the embedded Swing components through
-	 * Swing's Look and Feel support. However, if additional special processing is necessary, it can
-	 * be done inside this method.
+	 * In most cases it is not necessary to override this method. Normally, the implementation of this class will
+	 * automatically propogate font changes to the embedded Swing components through Swing's Look and Feel support.
+	 * However, if additional special processing is necessary, it can be done inside this method.
 	 * 
 	 * @param newFont New AWT font
 	 */
@@ -405,8 +393,7 @@ public abstract class EmbeddedSwingComposite extends Composite {
 		// Ensure that AWT popups are dimissed whenever a SWT menu is shown
 		getDisplay().addFilter(SWT.Show, menuListener);
 
-		final EmbeddedChildFocusTraversalPolicy policy =
-			new EmbeddedChildFocusTraversalPolicy(awtHandler);
+		final EmbeddedChildFocusTraversalPolicy policy = new EmbeddedChildFocusTraversalPolicy(awtHandler);
 		frame.setFocusTraversalPolicy(policy);
 	}
 
@@ -428,12 +415,11 @@ public abstract class EmbeddedSwingComposite extends Composite {
 				currentContext.setSwingComponent(swingComponent);
 				container.getRootPane().getContentPane().add(swingComponent);
 				setComponentFont();
-				// ComponentDisplaySurface.addGamaKeysListener(swingComponent);
-
-				/**
-				 * Inform the DisplayOutput that DisplaySurface has just been populated.
-				 */
-				// displayOutput.beReady();
+				if ( !isOpenGL ) {
+					// Deferred to the OpenGL rendered to signify its initialization
+					// see JOGLAWTGLRendered.init()
+					OutputSynchronizer.decInitializingViews(outputName);
+				}
 			}
 		});
 	}
@@ -445,8 +431,7 @@ public abstract class EmbeddedSwingComposite extends Composite {
 		assert currentSystemFont != null;
 		assert EventQueue.isDispatchThread(); // On AWT event thread
 
-		final JComponent swingComponent =
-			awtContext != null ? awtContext.getSwingComponent() : null;
+		final JComponent swingComponent = awtContext != null ? awtContext.getSwingComponent() : null;
 		if ( swingComponent != null && !currentSystemFont.getDevice().isDisposed() ) {
 			GuiUtils.run(new Runnable() {
 
@@ -463,16 +448,10 @@ public abstract class EmbeddedSwingComposite extends Composite {
 					// that matches
 					// when displayed.
 					final int resolution = Toolkit.getDefaultToolkit().getScreenResolution();
-					final int awtFontSize =
-						Maths.round((double) fontData.getHeight() * resolution / 72.0);
+					final int awtFontSize = Maths.round((double) fontData.getHeight() * resolution / 72.0);
 
-					// The style constants for SWT and AWT map exactly, and
-					// since they
-					// are int
-					// constants, they should
-					// never change. So, the SWT style is passed through as the
-					// AWT
-					// style.
+					// The style constants for SWT and AWT map exactly, and since they are int constants, they should
+					// never change. So, the SWT style is passed through as the AWT style.
 					final java.awt.Font awtFont =
 						new java.awt.Font(fontData.getName(), fontData.getStyle(), awtFontSize);
 
@@ -546,7 +525,7 @@ public abstract class EmbeddedSwingComposite extends Composite {
 
 				@Override
 				public void run() {
-					setComponentFont();
+					// setComponentFont();
 				}
 			});
 		}
@@ -563,14 +542,6 @@ public abstract class EmbeddedSwingComposite extends Composite {
 		return swingComponent != null && swingComponent.isFocusable();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.swt.widgets.Control#setFocus()
-	 */
-	/**
-	 * @see org.eclipse.swt.widgets.Composite#setFocus()
-	 */
 	@Override
 	public boolean setFocus() {
 		checkWidget();
@@ -579,14 +550,6 @@ public abstract class EmbeddedSwingComposite extends Composite {
 		return super.setFocus();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.swt.widgets.Control#forceFocus()
-	 */
-	/**
-	 * @see org.eclipse.swt.widgets.Control#forceFocus()
-	 */
 	@Override
 	public boolean forceFocus() {
 		checkWidget();
@@ -595,14 +558,6 @@ public abstract class EmbeddedSwingComposite extends Composite {
 		return super.forceFocus();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.swt.widgets.Widget#dispose()
-	 */
-	/**
-	 * @see org.eclipse.swt.widgets.Widget#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if ( !isDisposed() ) {

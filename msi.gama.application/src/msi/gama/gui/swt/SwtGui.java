@@ -159,6 +159,7 @@ public class SwtGui implements IGui {
 					case close1:
 						try {
 							((IViewPart) view).getSite().getPage().hideView((IViewPart) view);
+							// ((IViewPart) view).dispose();
 						} catch (Exception e) {
 							e.printStackTrace();
 						}
@@ -994,4 +995,36 @@ public class SwtGui implements IGui {
 		return unitFont;
 	}
 
+	@Override
+	public void cycleDisplayViews(final Set<String> names) {
+		final Set<String> names2 = new HashSet(names);
+		run(new Runnable() {
+
+			@Override
+			public void run() {
+				for ( String name : names2 ) {
+					IViewReference r = getPage().findViewReference(GuiUtils.LAYER_VIEW_ID, name);
+					if ( r != null ) {
+						IViewPart p = r.getView(false);
+						GuiUtils.debug("SwtGui.cycleDisplayViews().bringToTop: " + name);
+						getPage().activate(p);
+					}
+				}
+
+				// for ( IViewReference r : getPage().getViewReferences() ) {
+				// IViewPart p = r.getView(false);
+				// if ( p instanceof LayeredDisplayView ) {
+				// GuiUtils.debug("SwtGui.cycleDisplayViews().bringToTop: " + p.getViewSite().getId());
+				// // getPage().activate(p);
+				// // if ( getPage().getActivePart() != p ) {
+				// getPage().activate(p);
+				//
+				// // }
+				//
+				// }
+				// }
+			}
+		});
+
+	}
 }

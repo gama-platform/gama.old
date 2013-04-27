@@ -3,6 +3,7 @@ package msi.gama.kernel.experiment;
 import static msi.gama.kernel.experiment.IExperimentSpecies.*;
 import java.util.concurrent.ArrayBlockingQueue;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.outputs.OutputSynchronizer;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
@@ -54,6 +55,7 @@ public class ExperimentGUIHelper implements Runnable {
 				GuiUtils.debug("ExperimentGUIHelper.processUserCommand: INIT");
 				GAMA.updateSimulationState(GAMA.NOTREADY);
 				try {
+					OutputSynchronizer.waitForViewsToBeClosed();
 					agent.userInitExperiment();
 				} catch (GamaRuntimeException e) {
 					GAMA.closeCurrentExperimentOnException(e);

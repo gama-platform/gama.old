@@ -19,18 +19,17 @@
 package msi.gama.gui.views;
 
 import java.awt.Color;
-import java.awt.event.MouseWheelEvent;
 import javax.swing.JComponent;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.layers.AbstractLayer;
 import msi.gama.gui.parameters.EditorFactory;
+import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.perspectives.ModelingPerspective;
 import msi.gama.gui.swt.swing.EmbeddedSwingComposite;
-import msi.gama.outputs.GuiOutputManager;
-import msi.gama.outputs.LayeredDisplayOutput;
+import msi.gama.outputs.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.MouseWheelListener;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -40,6 +39,9 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	public static final String ID = GuiUtils.LAYER_VIEW_ID;
 
 	private EmbeddedSwingComposite swingCompo;
+	IPerspectiveListener perspectiveListener;
+
+	private IPartListener2 partListener;
 
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
@@ -47,10 +49,10 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		setPartName(output.getViewName());
 	}
 
-	@Override
-	public void setFocus() {
-		swingCompo.setFocus();
-	}
+	// @Override
+	// public void setFocus() {
+	// swingCompo.setFocus();
+	// }
 
 	/**
 	 * @see msi.gama.gui.views.GamaViewPart#getToolbarActionsId()
@@ -59,15 +61,16 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	protected Integer[] getToolbarActionsId() {
 
 		// Add the toggle 3D view button for opengl display
-		if ( this.output.getDescription().getFacets().equals("type", "opengl") ) { return new Integer[] {
-			PAUSE, REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT, SEPARATOR,
-			ZOOM_IN, ZOOM_OUT, ZOOM_FIT, CAMERA, FOCUS, SEPARATOR, ARCBALL,PICKING,SELECT_RECTANGLE, SHAPEFILE , SEPARATOR, TRIANGULATION, SPLITLAYER}; }
-		return new Integer[] { PAUSE, REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT,
-			SEPARATOR, ZOOM_IN, ZOOM_OUT, ZOOM_FIT, FOCUS, SEPARATOR, HIGHLIGHT_COLOR };
+		if ( this.output.getDescription().getFacets().equals("type", "opengl") ) { return new Integer[] { PAUSE,
+			REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT, SEPARATOR, ZOOM_IN, ZOOM_OUT, ZOOM_FIT,
+			CAMERA, FOCUS, SEPARATOR, ARCBALL, PICKING, SELECT_RECTANGLE, SHAPEFILE, SEPARATOR, TRIANGULATION,
+			SPLITLAYER }; }
+		return new Integer[] { PAUSE, REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT, SEPARATOR, ZOOM_IN,
+			ZOOM_OUT, ZOOM_FIT, FOCUS, SEPARATOR, HIGHLIGHT_COLOR };
 	}
 
 	public ILayerManager getDisplayManager() {
-		return ((LayeredDisplayOutput) getOutput()).getSurface().getManager();
+		return getOutput().getSurface().getManager();
 	}
 
 	@Override
@@ -100,128 +103,225 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		data.heightHint = 200;
 		data.widthHint = 200;
 		data.horizontalSpan = 2;
-		
-		aux.setLayoutData(data);
-		EditorFactory.create(general, "Color:", output.getBackgroundColor(),
-			new EditorListener<Color>() {
 
-				@Override
-				public void valueModified(final Color newValue) {
-					output.setBackgroundColor(newValue);
-				}
-			});
+		aux.setLayoutData(data);
+		EditorFactory.create(general, "Color:", output.getBackgroundColor(), new EditorListener<Color>() {
+
+			@Override
+			public void valueModified(final Color newValue) {
+				output.setBackgroundColor(newValue);
+			}
+		});
 		createItem("Navigation", null, general, true);
 		// nav.populate();
 		displayItems();
-		final java.awt.event.MouseListener mlAwt = new java.awt.event.MouseListener() {
+		// final java.awt.event.MouseListener mlAwt = new java.awt.event.MouseListener() {
+		//
+		// @Override
+		// public void mouseReleased(final java.awt.event.MouseEvent e) {}
+		//
+		// @Override
+		// public void mousePressed(final java.awt.event.MouseEvent e) {
+		// // System.err.println("force focus from AWT entered \t\t"+e);
+		// GuiUtils.asyncRun(new Runnable() { // (shift to SWT thread)
+		//
+		// @Override
+		// public void run() {
+		// swingCompo.forceFocus();
+		// }
+		// });
+		// }
+		//
+		// @Override
+		// public void mouseExited(final java.awt.event.MouseEvent e) {}
+		//
+		// @Override
+		// public void mouseEntered(final java.awt.event.MouseEvent e) {
+		// // System.err.println("force focus from AWT entered \t\t"+e);
+		// GuiUtils.asyncRun(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// swingCompo.forceFocus();
+		// }
+		// });
+		// }
+		//
+		// @Override
+		// public void mouseClicked(final java.awt.event.MouseEvent e) {}
+		// };
+		// final java.awt.event.MouseMotionListener mlAwt2 = new java.awt.event.MouseMotionListener() {
+		//
+		// @Override
+		// public void mouseMoved(final java.awt.event.MouseEvent e) {
+		// // System.err.println("force focus from AWT entered \t\t"+e);
+		// GuiUtils.asyncRun(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// swingCompo.forceFocus();
+		// }
+		// });
+		// }
+		//
+		// @Override
+		// public void mouseDragged(final java.awt.event.MouseEvent e) {}
+		// };
+
+		OutputSynchronizer.incInitializingViews(getOutput().getName()); // incremented in the SWT thread
+
+		swingCompo = new EmbeddedSwingComposite(parent, SWT.NONE/* SWT.NO_REDRAW_RESIZE | */) {
 
 			@Override
-			public void mouseReleased(final java.awt.event.MouseEvent e) {}
-
-			@Override
-			public void mousePressed(final java.awt.event.MouseEvent e) {
-				// System.err.println("force focus from AWT entered \t\t"+e);
-				GuiUtils.asyncRun(new Runnable() { // (shift to SWT thread)
-
-						@Override
-						public void run() {
-							swingCompo.forceFocus();
-						}
-					});
+			protected JComponent createSwingComponent() {
+				outputName = getOutput().getName();
+				isOpenGL = getOutput().isOpenGL();
+				JComponent frameAwt = (JComponent) getOutput().getSurface();
+				// getFrame().addMouseListener(mlAwt);
+				// getFrame().addMouseMotionListener(mlAwt2);
+				return frameAwt;
 			}
-
-			@Override
-			public void mouseExited(final java.awt.event.MouseEvent e) {}
-
-			@Override
-			public void mouseEntered(final java.awt.event.MouseEvent e) {
-				// System.err.println("force focus from AWT entered \t\t"+e);
-				GuiUtils.asyncRun(new Runnable() {
-
-					@Override
-					public void run() {
-						swingCompo.forceFocus();
-					}
-				});
-			}
-
-			@Override
-			public void mouseClicked(final java.awt.event.MouseEvent e) {}
 		};
-		final java.awt.event.MouseMotionListener mlAwt2 = new java.awt.event.MouseMotionListener() {
+
+		// partListener = new IPartListener2() {
+		//
+		// @Override
+		// public void partVisible(IWorkbenchPartReference partRef) {
+		// if ( partRef.getPartName().equals(LayeredDisplayView.this.getPartName()) ) {
+		// GuiUtils
+		// .debug("LayeredDisplayView.ownCreatePartControl(...).new IPartListener2() {...}.partVisible " +
+		// LayeredDisplayView.this.getPartName());
+		// }
+		// }
+		//
+		// @Override
+		// public void partOpened(IWorkbenchPartReference partRef) {
+		//
+		// if ( partRef.getPartName().equals(LayeredDisplayView.this.getPartName()) ) {
+		// GuiUtils
+		// .debug("LayeredDisplayView.ownCreatePartControl(...).new IPartListener2() {...}.partOpened " +
+		// LayeredDisplayView.this.getPartName());
+		// }
+		//
+		// }
+		//
+		// @Override
+		// public void partInputChanged(IWorkbenchPartReference partRef) {}
+		//
+		// @Override
+		// public void partHidden(IWorkbenchPartReference partRef) {
+		// if ( partRef.getPartName().equals(LayeredDisplayView.this.getPartName()) ) {
+		// GuiUtils
+		// .debug("LayeredDisplayView.ownCreatePartControl(...).new IPartListener2() {...}.partHidden " +
+		// LayeredDisplayView.this.getPartName());
+		// }
+		// }
+		//
+		// @Override
+		// public void partDeactivated(IWorkbenchPartReference partRef) {
+		// if ( partRef.getPartName().equals(LayeredDisplayView.this.getPartName()) ) {
+		// GuiUtils
+		// .debug("LayeredDisplayView.ownCreatePartControl(...).new IPartListener2() {...}.partDeactivated " +
+		// LayeredDisplayView.this.getPartName());
+		// }
+		// }
+		//
+		// @Override
+		// public void partClosed(IWorkbenchPartReference partRef) {
+		// if ( partRef.getPartName().equals(LayeredDisplayView.this.getPartName()) ) {
+		// GuiUtils
+		// .debug("LayeredDisplayView.ownCreatePartControl(...).new IPartListener2() {...}.partClosed " +
+		// LayeredDisplayView.this.getPartName());
+		// }
+		// }
+		//
+		// @Override
+		// public void partBroughtToTop(IWorkbenchPartReference partRef) {
+		//
+		// if ( partRef.getPartName().equals(LayeredDisplayView.this.getPartName()) ) {
+		// GuiUtils
+		// .debug("LayeredDisplayView.ownCreatePartControl(...).new IPartListener2() {...}.partBroughtToTop  " +
+		// LayeredDisplayView.this.getPartName());
+		// }
+		//
+		// }
+		//
+		// @Override
+		// public void partActivated(IWorkbenchPartReference partRef) {
+		//
+		// if ( partRef.getPartName().equals(LayeredDisplayView.this.getPartName()) ) {
+		// GuiUtils
+		// .debug("LayeredDisplayView.ownCreatePartControl(...).new IPartListener2() {...}.partActivated " +
+		// LayeredDisplayView.this.getPartName());
+		// }
+		//
+		// }
+		// };
+
+		perspectiveListener = new IPerspectiveListener() {
+
+			boolean previousState = false;
 
 			@Override
-			public void mouseMoved(final java.awt.event.MouseEvent e) {
-				// System.err.println("force focus from AWT entered \t\t"+e);
-				GuiUtils.asyncRun(new Runnable() {
+			public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {}
 
-					@Override
-					public void run() {
-						swingCompo.forceFocus();
+			@Override
+			public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+				if ( perspective.getId().equals(ModelingPerspective.ID) ) {
+					if ( getOutput() != null && getOutput().getSurface() != null ) {
+						previousState = getOutput().getSurface().isPaused();
+						getOutput().getSurface().setPaused(true);
 					}
-				});
-			}
-
-			@Override
-			public void mouseDragged(final java.awt.event.MouseEvent e) {}
-		};
-
-		GuiOutputManager.WaitingViews++; // incremented in the SWT thread
-
-		swingCompo =
-			new EmbeddedSwingComposite(parent, SWT.NO_REDRAW_RESIZE | SWT.NO_BACKGROUND,
-				getOutput()) {
-
-				@Override
-				protected JComponent createSwingComponent() {
-					JComponent frameAwt = (JComponent) getOutput().getSurface();
-					getFrame().addMouseListener(mlAwt);
-					getFrame().addMouseMotionListener(mlAwt2);
-					GuiOutputManager.WaitingViews--; // decremented at the end of the AWT thread
-                    // so we are sure the surface has finished its initialization.
-					return frameAwt;
+				} else {
+					if ( getOutput() != null && getOutput().getSurface() != null ) {
+						getOutput().getSurface().setPaused(previousState);
+					}
 				}
-			};
+			}
+		};
+		SwtGui.getWindow().addPerspectiveListener(perspectiveListener);
+		// SwtGui.getPage().addPartListener(partListener);
 
+		// FIXME : if swingCompo is not initialized ?
 		swingCompo.populate();
 
-		swingCompo.addMouseWheelListener(new MouseWheelListener() {
-
-			@Override
-			public void mouseScrolled(final org.eclipse.swt.events.MouseEvent event) {
-
-				// (shift to AWT thread)
-				java.awt.EventQueue.invokeLater(new Runnable() {
-
-					@Override
-					public void run() {
-
-						java.awt.Component c =
-							javax.swing.SwingUtilities.getDeepestComponentAt(swingCompo.getFrame(),
-								event.x, event.y);
-						if ( c != null ) {
-							java.awt.Point bp = swingCompo.getFrame().getLocationOnScreen();
-							java.awt.Point cp = c.getLocationOnScreen();
-							java.awt.event.MouseEvent e =
-								new java.awt.event.MouseWheelEvent(c,
-									java.awt.event.MouseEvent.MOUSE_WHEEL,
-									event.time & 0xFFFFFFFFL,
-									0, // modifiers
-									event.x - (cp.x - bp.x), event.y - (cp.y - bp.y),
-									0, // click count
-									false, MouseWheelEvent.WHEEL_UNIT_SCROLL, -event.count,
-									-event.count);
-							// System.out.println("dispatching AWT event "+e);
-							c.dispatchEvent(e);
-						}
-
-					}
-				});
-
-			}
-		});
+		// swingCompo.addMouseWheelListener(new MouseWheelListener() {
+		//
+		// @Override
+		// public void mouseScrolled(final org.eclipse.swt.events.MouseEvent event) {
+		//
+		// // (shift to AWT thread)
+		// java.awt.EventQueue.invokeLater(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		//
+		// java.awt.Component c =
+		// javax.swing.SwingUtilities.getDeepestComponentAt(swingCompo.getFrame(), event.x, event.y);
+		// if ( c != null ) {
+		// java.awt.Point bp = swingCompo.getFrame().getLocationOnScreen();
+		// java.awt.Point cp = c.getLocationOnScreen();
+		// java.awt.event.MouseEvent e =
+		// new java.awt.event.MouseWheelEvent(c, java.awt.event.MouseEvent.MOUSE_WHEEL,
+		// event.time & 0xFFFFFFFFL, 0, // modifiers
+		// event.x - (cp.x - bp.x), event.y - (cp.y - bp.y), 0, // click count
+		// false, MouseWheelEvent.WHEEL_UNIT_SCROLL, -event.count, -event.count);
+		// // System.out.println("dispatching AWT event "+e);
+		// c.dispatchEvent(e);
+		// }
+		//
+		// }
+		// });
+		//
+		// }
+		// });
 		((SashForm) parent).setWeights(new int[] { 1, 2 });
 		((SashForm) parent).setMaximizedControl(swingCompo);
+	}
+
+	@Override
+	public LayeredDisplayOutput getOutput() {
+		return (LayeredDisplayOutput) super.getOutput();
 	}
 
 	@Override
@@ -237,19 +337,17 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		layout.verticalSpacing = 5;
 		compo.setLayout(layout);
 		if ( d instanceof AbstractLayer ) {
-			((AbstractLayer) d).fillComposite(compo,
-				((LayeredDisplayOutput) getOutput()).getSurface());
+			((AbstractLayer) d).fillComposite(compo, getOutput().getSurface());
 		}
 		return compo;
 	}
 
 	public IDisplaySurface getDisplaySurface() {
-		return ((LayeredDisplayOutput) getOutput()).getSurface();
+		return getOutput().getSurface();
 	}
 
 	public void toggleControls() {
-		((SashForm) parent).setMaximizedControl(((SashForm) parent).getMaximizedControl() == null
-			? swingCompo : null);
+		((SashForm) parent).setMaximizedControl(((SashForm) parent).getMaximizedControl() == null ? swingCompo : null);
 	}
 
 	@Override
@@ -348,14 +446,12 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			}
 		}).start();
 	}
-	
-	
-	
+
 	@Override
 	public void togglePicking() {
-	
+
 		new Thread(new Runnable() {
-	
+
 			@Override
 			public void run() {
 				IDisplaySurface surface = getDisplaySurface();
@@ -363,16 +459,15 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 					try {
 						Thread.sleep(10);
 					} catch (InterruptedException e) {
-	
+
 					}
 				}
 				surface.togglePicking();
-	
+
 			}
 		}).start();
 	}
-	
-	
+
 	@Override
 	public void toggleArcball() {
 
@@ -393,7 +488,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			}
 		}).start();
 	}
-	
+
 	@Override
 	public void toggleSelectRectangle() {
 
@@ -414,7 +509,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			}
 		}).start();
 	}
-	
+
 	@Override
 	public void toggleTriangulation() {
 
@@ -435,7 +530,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			}
 		}).start();
 	}
-	
+
 	@Override
 	public void toggleSplitLayer() {
 
@@ -470,7 +565,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	@Override
 	public void addShapeFile() {
 		new Thread(new Runnable() {
-			
+
 			@Override
 			public void run() {
 				IDisplaySurface surface = getDisplaySurface();
@@ -478,14 +573,25 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 					try {
 						Thread.sleep(10);
 					} catch (InterruptedException e) {
-	
+
 					}
 				}
 				surface.addShapeFile();
-	
+
 			}
 		}).start();
-		
+
+	}
+
+	@Override
+	public void dispose() {
+		SwtGui.getWindow().removePerspectiveListener(perspectiveListener);
+		// FIXME Remove the listeners
+		swingCompo.dispose();
+		// SwtGui.getPage().removePartListener(partListener);
+		super.dispose();
+		GuiUtils.debug("LayeredDisplayView.dispose: DISPOSED " + getOutput().getName());
+
 	}
 
 }

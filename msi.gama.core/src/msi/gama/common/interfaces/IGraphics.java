@@ -21,12 +21,13 @@ package msi.gama.common.interfaces;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.util.Collection;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaFile;
+import org.geotools.data.simple.SimpleFeatureCollection;
 import org.jfree.chart.JFreeChart;
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -260,35 +261,73 @@ public interface IGraphics {
 	 */
 	public abstract void newLayer(double zLayerValue, Boolean refresh);
 
-	// /*
-	// * Return the type of the IGraphics (e.g Java2D or OpenGl)
-	// *
-	// */
-	// public abstract boolean isOpenGL();
+	public interface OpenGL extends IGraphics {
 
-	/*
-	 * Define if the tesselation is used or the Gama Triangulation (work only in Opengl)
-	 */
-	public boolean useTesselation(boolean useTesselation);
+		/*
+		 * Define if the tesselation is used or the Gama Triangulation (work only in Opengl)
+		 */
+		public boolean useTesselation(boolean useTesselation);
 
-	/*
-	 * Define if the value of the ambient light (work only in Opengl)
-	 */
-	public void setAmbientLightValue(GamaColor lightValue);
+		/*
+		 * Define if the value of the ambient light (work only in Opengl)
+		 */
+		public void setAmbientLightValue(GamaColor lightValue);
 
-	/*
-	 * Define if polygon are drawn in solid(true) or as outlines (work only in Opengl)
-	 */
-	public boolean setPolygonMode(boolean polygonMode);
+		/*
+		 * Define if polygon are drawn in solid(true) or as outlines (work only in Opengl)
+		 */
+		public boolean setPolygonMode(boolean polygonMode);
 
-	/*
-	 * Define if polygon are drawn in solid(true) or as outlines (work only in Opengl)
-	 */
-	public abstract void drawDEM(final GamaFile demFileName, final GamaFile textureFileName);
-	
-	/*
-	 * Define the camera position (work only in Opengl)
-	 */
-	public abstract void setCameraPosition(final ILocation camPos);
+		/*
+		 * Define if polygon are drawn in solid(true) or as outlines (work only in Opengl)
+		 */
+		public abstract void drawDEM(final GamaFile demFileName, final GamaFile textureFileName);
+
+		/*
+		 * Define the camera position (work only in Opengl)
+		 */
+		public abstract void setCameraPosition(final ILocation camPos);
+
+		public abstract void cleanStrings();
+
+		public abstract void cleanCollections();
+
+		public abstract void cleanImages();
+
+		public abstract void cleanGeometries();
+
+		public void addCollectionInCollections(SimpleFeatureCollection myCollection, Color color);
+
+		public Collection getJTSGeometries();
+
+		public float getMaxEnvDim();
+
+		public void drawMyJTSGeometries(boolean picking);
+
+		public Collection getMyJTSStaticGeometries();
+
+		public void drawMyJTSStaticGeometries(boolean picking);
+
+		public Collection getImages();
+
+		public Collection getStrings();
+
+		public Collection getCollections();
+
+		public void drawMyStrings();
+
+		public void drawCollection();
+
+		public void drawMyImages(boolean picking);
+
+		public void setPickedObjectIndex(int endPicking);
+
+		public float getEnvWidth();
+
+		public float getEnvHeight();
+
+		public void setPolygonTriangulated(boolean b);
+
+	}
 
 }

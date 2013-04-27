@@ -7,14 +7,14 @@ import java.nio.FloatBuffer;
 import java.util.*;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
-import msi.gama.jogl.*;
+import msi.gama.jogl.JOGLAWTDisplaySurface;
 import msi.gama.jogl.utils.Camera.Camera;
 import msi.gama.jogl.utils.Camera.Arcball.*;
 import msi.gama.jogl.utils.GraphicDataType.*;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
 import msi.gama.jogl.utils.collada.ColladaReader;
 import msi.gama.jogl.utils.dem.DigitalElevationModelDrawer;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.outputs.OutputSynchronizer;
 import msi.gama.util.GamaColor;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import utils.GLUtil;
@@ -28,12 +28,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public GLU glu;
 	public GL gl;
 	public final FPSAnimator animator;
-	public GLContext context;
+	private GLContext context;
 	public GLCanvas canvas;
 
 	public boolean opengl = true;
 
-	public boolean isInitialized = false;
+	public volatile boolean isInitialized = false;
 
 	public boolean enableGlRenderAnimator = true;
 
@@ -124,7 +124,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		displaySurface = d;
 
 		dem = new DigitalElevationModelDrawer(this);
-		
 
 	}
 
@@ -138,7 +137,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// GL Utilities
 		glu = new GLU();
 
-		context = drawable.getContext();
+		setContext(drawable.getContext());
 
 		arcBall = new ArcBall(width, height);
 
@@ -193,7 +192,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		 */
 
 		isInitialized = true;
-		System.out.println("openGL init ok");
+		// GuiUtils.debug("JOGLAWTGLRenderer.init: " + this.displaySurface.outputId);
+		OutputSynchronizer.decInitializingViews(this.displaySurface.getOutputName());
 	}
 
 	@Override
@@ -208,7 +208,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 			// Get the OpenGL graphics context
 			gl = drawable.getGL();
-			context = drawable.getContext();
+			setContext(drawable.getContext());
 
 			width = drawable.getWidth();
 			height = drawable.getHeight();
@@ -236,7 +236,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			GLUtil.UpdateAmbiantLight(gl, glu, ambientLightValue);
 
 			// Show triangulated polygon or not (trigger by GAMA)
-			if ( !displaySurface.Triangulation ) {
+			if ( !displaySurface.triangulation ) {
 				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
 			} else {
 				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
@@ -268,11 +268,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			} else {
 				this.DrawScene();
 				if ( drawAxes ) {
-					float envMaxDim = ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).maxEnvDim;
-					((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myGLRender.graphicsGLUtils
-						.DrawXYZAxis(envMaxDim / 10);
-					((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myGLRender.graphicsGLUtils.DrawZValue(
-						-envMaxDim / 10, (float) camera.zPos);
+					float envMaxDim = displaySurface.getIGraphics().getMaxEnvDim();
+					this.graphicsGLUtils.DrawXYZAxis(envMaxDim / 10);
+					this.graphicsGLUtils.DrawZValue(-envMaxDim / 10, (float) camera.zPos);
 				}
 			}
 
@@ -283,7 +281,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			gl.glPopMatrix();
 
 			// ROI drawer
-			if ( this.displaySurface.SelectRectangle ) {
+			if ( this.displaySurface.selectRectangle ) {
 				DrawROI();
 			}
 
@@ -341,20 +339,19 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			// System.out.println("World coords are (" //+ realPoint.x + ", " + realPoint.y);
 
 			if ( camera.isModelCentered ) {
-				gl.glTranslatef(-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
-					((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2, 0.0f); // translate
-																									// right
-																									// and
-																									// into
-																									// the
-																									// screen
+				gl.glTranslatef(-displaySurface.getIGraphics().getEnvWidth() / 2, displaySurface.getIGraphics()
+					.getEnvHeight() / 2, 0.0f); // translate
+				// right
+				// and
+				// into
+				// the
+				// screen
 			}
 
-			myGLDrawer.DrawROI(gl, realPressedPoint.x -
-				((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
-				-(realPressedPoint.y - ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2),
-				realmousePositionPoint.x - ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
-				-(realmousePositionPoint.y - ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2));
+			myGLDrawer.DrawROI(gl, realPressedPoint.x - displaySurface.getIGraphics().getEnvWidth() / 2,
+				-(realPressedPoint.y - displaySurface.getIGraphics().getEnvHeight() / 2), realmousePositionPoint.x -
+					displaySurface.getIGraphics().getEnvWidth() / 2, -(realmousePositionPoint.y - displaySurface
+					.getIGraphics().getEnvHeight() / 2));
 
 		}
 
@@ -394,72 +391,72 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {}
 
 	public void DrawScene() {
-		if ( displaySurface.Picking ) {
+		if ( displaySurface.picking ) {
 			// Display the model center on 0,0,0
 			if ( camera.isModelCentered ) {
-				gl.glTranslatef(-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
-					((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2, 0.0f); // translate
-																									// right
-																									// and
-																									// into
-																									// the
-																									// screen
+				gl.glTranslatef(-displaySurface.getIGraphics().getEnvWidth() / 2, displaySurface.getIGraphics()
+					.getEnvHeight() / 2, 0.0f); // translate
+				// right
+				// and
+				// into
+				// the
+				// screen
 			}
 			this.DrawPickableObject();
 		} else {
 			// Display the model center on 0,0,0
 			if ( camera.isModelCentered ) {
-				gl.glTranslatef(-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
-					((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2, 0.0f); // translate
-																									// right
-																									// and
-																									// into
-																									// the
-																									// screen
+				gl.glTranslatef(-displaySurface.getIGraphics().getEnvWidth() / 2, displaySurface.getIGraphics()
+					.getEnvHeight() / 2, 0.0f); // translate
+				// right
+				// and
+				// into
+				// the
+				// screen
 			}
 			// FIXME: Need to simplify , give a boolean to DrawModel to know
 			// if it's in Picking mode.
 
 			if ( threeDCube ) {
-				// float envMaxDim = ((JOGLAWTDisplayGraphics)
+				// float envMaxDim = (
 				// displaySurface.openGLGraphics).maxEnvDim;
-				float envMaxDim = ((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth;
+				float envMaxDim = displaySurface.getIGraphics().getEnvWidth();
 
-				this.DrawModel(false);
+				this.drawModel(false);
 				gl.glTranslatef(envMaxDim, 0, 0);
 				gl.glRotatef(90, 0, 1, 0);
-				this.DrawModel(false);
+				this.drawModel(false);
 				gl.glTranslatef(envMaxDim, 0, 0);
 				gl.glRotatef(90, 0, 1, 0);
-				this.DrawModel(false);
+				this.drawModel(false);
 				gl.glTranslatef(envMaxDim, 0, 0);
 				gl.glRotatef(90, 0, 1, 0);
-				this.DrawModel(false);
+				this.drawModel(false);
 				gl.glTranslatef(envMaxDim, 0, 0);
 				gl.glRotatef(90, 0, 1, 0);
 
 				gl.glRotatef(-90, 1, 0, 0);
 				gl.glTranslatef(0, envMaxDim, 0);
-				this.DrawModel(false);
+				this.drawModel(false);
 				gl.glTranslatef(0, -envMaxDim, 0);
 				gl.glRotatef(90, 1, 0, 0);
 
 				gl.glRotatef(90, 1, 0, 0);
 				gl.glTranslatef(0, 0, envMaxDim);
-				this.DrawModel(false);
+				this.drawModel(false);
 
 				gl.glTranslatef(0, 0, -envMaxDim);
 				gl.glRotatef(-90, 1, 0, 0);
 				/*
-				 * gl.glTranslatef(0,((JOGLAWTDisplayGraphics)
+				 * gl.glTranslatef(0,(
 				 * displaySurface.openGLGraphics).envWidth,0);
 				 * this.DrawModel(false);
 				 * 
-				 * gl.glTranslatef(0,-((JOGLAWTDisplayGraphics)
+				 * gl.glTranslatef(0,-(
 				 * displaySurface.openGLGraphics).envWidth,0);
 				 * gl.glRotatef(90, 1, 0, 0);
 				 * 
-				 * gl.glTranslatef(0,-((JOGLAWTDisplayGraphics)
+				 * gl.glTranslatef(0,-(
 				 * displaySurface.openGLGraphics).envWidth,0);
 				 * gl.glRotatef(90, 1, 0, 0);
 				 * this.DrawModel(false);
@@ -468,55 +465,55 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			} else {
 				if ( !multipleViewPort ) {
 					gl.glViewport(0, 0, width, height); // Reset The Current Viewport
-					this.DrawModel(false);
+					this.drawModel(false);
 				} else {
 					// Set The Viewport To The Top Left
 					gl.glViewport(0, height / 2, width / 2, height / 2);
-					this.DrawModel(false);
+					this.drawModel(false);
 
 					// Set The Viewport To The Top Right. It Will Take Up Half The
 					// Screen Width And Height
 					gl.glViewport(width / 2, height / 2, width / 2, height / 2);
-					this.DrawModel(false);
+					this.drawModel(false);
 
 					// Set The Viewport To The Bottom Right
 					gl.glViewport(width / 2, 0, width / 2, height / 2);
-					this.DrawModel(false);
+					this.drawModel(false);
 
 					// Set The Viewport To The Bottom Left
 					gl.glViewport(0, 0, width / 2, height / 2);
-					this.DrawModel(false);
+					this.drawModel(false);
 				}
 			}
 
 		}
 	}
 
-	public void DrawModel(boolean picking) {
+	public void drawModel(boolean picking) {
 
-		// ((JOGLAWTDisplayGraphics)displaySurface.openGLGraphics).DrawEnvironmentBounds(false);
+		// (displaySurface.openGLGraphics).DrawEnvironmentBounds(false);
 
 		// Draw Geometry
-		if ( !((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myJTSGeometries.isEmpty() ) {
-			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyJTSGeometries(picking);
+		if ( !displaySurface.getIGraphics().getJTSGeometries().isEmpty() ) {
+			displaySurface.getIGraphics().drawMyJTSGeometries(picking);
 		}
 
 		// Draw Static Geometry
-		if ( !((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myJTSStaticGeometries.isEmpty() ) {
-			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyJTSStaticGeometries(picking);
+		if ( !displaySurface.getIGraphics().getMyJTSStaticGeometries().isEmpty() ) {
+			displaySurface.getIGraphics().drawMyJTSStaticGeometries(picking);
 		}
 
 		// Draw Image
-		if ( !((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myImages.isEmpty() ) {
+		if ( !displaySurface.getIGraphics().getImages().isEmpty() ) {
 			blendingEnabled = true;
-			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyImages(picking);
+			displaySurface.getIGraphics().drawMyImages(picking);
 		}
 
 		// FIXME: When picking = true produes a glitch when clicking on obejt
 		if ( !picking ) {
 			// Draw String
-			if ( !((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myStrings.isEmpty() ) {
-				((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawMyStrings();
+			if ( !displaySurface.getIGraphics().getStrings().isEmpty() ) {
+				displaySurface.getIGraphics().drawMyStrings();
 			}
 
 		}
@@ -525,12 +522,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	/**
 	 * Draw a given shapefile
 	 **/
-	public void DrawShapeFile() {
+	public void drawShapeFile() {
 
-		if ( !((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).myCollections.isEmpty() ) {
+		if ( !displaySurface.getIGraphics().getCollections().isEmpty() ) {
 			SimpleFeatureCollection myCollection =
 				myShapeFileReader.getFeatureCollectionFromShapeFile(myShapeFileReader.store);
-			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).DrawCollection();
+			displaySurface.getIGraphics().drawCollection();
 			// Adjust the size of the display surface according to the bound of the shapefile.
 			displaySurface.envHeight = (float) myCollection.getBounds().getHeight();
 			displaySurface.envWidth = (float) myCollection.getBounds().getWidth();
@@ -630,17 +627,18 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 		// Create a OpenGL Texture object from (URL, mipmap, file suffix)
 		// need to have an opengl context valide
-		if ( this.context != null ) {
-			this.context.makeCurrent();
-			Texture texture = TextureIO.newTexture(image, false);
-			MyTexture curTexture = new MyTexture();
-			curTexture.texture = texture;
-			curTexture.ImageName = name;
-			this.myTextures.add(curTexture);
-		} else {
-			// FIXME: See issue 310
-			throw new GamaRuntimeException("JOGLRenderer context is null");
-		}
+		// if ( this.context != null ) {
+		this.getContext().makeCurrent();
+		Texture texture = TextureIO.newTexture(image, false);
+		MyTexture curTexture = new MyTexture();
+		curTexture.texture = texture;
+		curTexture.ImageName = name;
+		this.myTextures.add(curTexture);
+		// }
+		// else {
+		// // FIXME: See issue 310
+		// throw new GamaRuntimeException("JOGLRenderer context is null");
+		// }
 
 	}
 
@@ -694,33 +692,28 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			// FIXME: need also to apply the arcball matrix to make it work in
 			// 3D
 			if ( camera.isModelCentered ) {
-				gl.glTranslatef(-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
-					((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2, 0.0f);
-				DrawModel(true);
+				gl.glTranslatef(-displaySurface.getIGraphics().getEnvWidth() / 2, displaySurface.getIGraphics()
+					.getEnvHeight() / 2, 0.0f);
+				drawModel(true);
 
-				gl.glTranslatef(((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envWidth / 2,
-					-((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).envHeight / 2, 0.0f); // translate
-																									// right
-																									// and
-																									// into
-																									// the
-																									// screen
+				gl.glTranslatef(displaySurface.getIGraphics().getEnvWidth() / 2, -displaySurface.getIGraphics()
+					.getEnvHeight() / 2, 0.0f);
 			} else {
-				DrawModel(true);
+				drawModel(true);
 			}
-			((JOGLAWTDisplayGraphics) displaySurface.openGLGraphics).pickedObjectIndex = myListener.endPicking(gl);
+			displaySurface.getIGraphics().setPickedObjectIndex(myListener.endPicking(gl));
 		}
 
-		DrawModel(true);
+		drawModel(true);
 
 	}
 
 	public BufferedImage getScreenShot() {
 		BufferedImage img = null;
-		if ( context != null ) {
-			this.context.makeCurrent();
+		if ( getContext() != null ) {
+			this.getContext().makeCurrent();
 			img = Screenshot.readToBufferedImage(width, height);
-			this.context.release();
+			this.getContext().release();
 		} else {}
 		return img;
 
@@ -732,5 +725,22 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public int getHeight() {
 		return height;
+	}
+
+	public GLContext getContext() {
+		// while (!isInitialized) {
+		// GuiUtils.debug("JOGLAWTGLRenderer.getContext: waiting");
+		// Thread.dumpStack();
+		// try {
+		// Thread.sleep(10);
+		// } catch (InterruptedException e) {
+		// e.printStackTrace();
+		// }
+		// }
+		return context;
+	}
+
+	public void setContext(GLContext context) {
+		this.context = context;
 	}
 }

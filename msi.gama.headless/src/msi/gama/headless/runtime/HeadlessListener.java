@@ -262,4 +262,7 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public void updateParameterView() {}
+
+	@Override
+	public void cycleDisplayViews(Set<String> names) {}
 }

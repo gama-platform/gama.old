@@ -93,8 +93,8 @@ public class DigitalElevationModelDrawer {
 	public Texture loadTexture(String fileName) {
 		Texture text = null;
 		try {
-			if ( myGLRenderer.context != null ) {
-				myGLRenderer.context.makeCurrent();
+			if ( myGLRenderer.getContext() != null ) {
+				myGLRenderer.getContext().makeCurrent();
 				text = TextureIO.newTexture(new File(fileName), false);
 				text.setTexParameteri(GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
 				text.setTexParameteri(GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);

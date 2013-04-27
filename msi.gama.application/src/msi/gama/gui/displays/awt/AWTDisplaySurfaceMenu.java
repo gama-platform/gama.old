@@ -22,7 +22,7 @@ public class AWTDisplaySurfaceMenu {
 	AWTDisplaySurfaceMenu(final IDisplaySurface s) {
 		surface = s;
 		agentsMenu = new PopupMenu();
-		((AWTDisplaySurface) s).add(agentsMenu); // TODO
+		((AbstractDisplaySurface) s).add(agentsMenu); // TODO
 
 	}
 

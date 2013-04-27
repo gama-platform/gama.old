@@ -1,29 +1,20 @@
-	package msi.gama.jogl.utils;
+package msi.gama.jogl.utils;
 
 import static javax.media.opengl.GL.GL_COMPILE;
-import java.util.ArrayList;
-import java.util.Iterator;
-
-
+import java.util.*;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
-
-import org.geotools.data.simple.SimpleFeatureCollection;
-
-import msi.gama.jogl.utils.GraphicDataType.MyCollection;
-import msi.gama.jogl.utils.GraphicDataType.MyImage;
-import msi.gama.jogl.utils.GraphicDataType.MyJTSGeometry;
-
+import msi.gama.jogl.utils.GraphicDataType.*;
 
 public class DisplayListHandler {
 
 	// OpenGL member
-	private GL myGl;
-	private GLU myGlu;
+	private final GL myGl;
+	private final GLU myGlu;
 
 	// need to have the GLRenderer to enable texture mapping.
 	public JOGLAWTGLRenderer myGLRender;
-	
+
 	public BasicOpenGlDrawer basicDrawer;
 
 	float alpha = 1.0f;
@@ -31,19 +22,16 @@ public class DisplayListHandler {
 	// Display List Id
 	private int listId;
 	private int firstList;
-	
+
 	private int listShapeId;
 	private int firstShapeList;
 
-
-	public DisplayListHandler(final GL gl, final GLU glu,
-			final JOGLAWTGLRenderer gLRender) {
+	public DisplayListHandler(final GL gl, final GLU glu, final JOGLAWTGLRenderer gLRender) {
 		myGl = gl;
 		myGlu = glu;
 		myGLRender = gLRender;
-		basicDrawer= new BasicOpenGlDrawer(myGLRender);
+		basicDrawer = new BasicOpenGlDrawer(myGLRender);
 	}
-
 
 	/**
 	 * Create the display list for each JTS geometries (one list per geometry)
@@ -51,11 +39,11 @@ public class DisplayListHandler {
 	 * @param myJTSGeometries
 	 * @param size
 	 */
-	public void buildDisplayLists(ArrayList<MyJTSGeometry> myJTSGeometries) {
+	public void buildDisplayLists(List<MyJTSGeometry> list) {
 		// Build n lists, and returns handle for the first list
-		firstList = myGl.glGenLists(myJTSGeometries.size());
+		firstList = myGl.glGenLists(list.size());
 		listId = firstList;
-		Iterator<MyJTSGeometry> it = myJTSGeometries.iterator();
+		Iterator<MyJTSGeometry> it = list.iterator();
 		while (it.hasNext()) {
 			MyJTSGeometry curGeometry = it.next();
 			myGl.glNewList(listId, GL_COMPILE);
@@ -66,20 +54,17 @@ public class DisplayListHandler {
 	}
 
 	public void DrawDisplayList(int nbDisplayList) {
-		//System.out.println("draw" + nbDisplayList+ "list");
-		for (int i = 1; i <= nbDisplayList; i++) {
-			myGl.glColor3f((float) Math.random(), (float) Math.random(),
-					(float) Math.random());
+		// System.out.println("draw" + nbDisplayList+ "list");
+		for ( int i = 1; i <= nbDisplayList; i++ ) {
+			myGl.glColor3f((float) Math.random(), (float) Math.random(), (float) Math.random());
 			myGl.glCallList(i);
 		}
 	}
 
 	public void DeleteDisplayLists(int nbDisplayList) {
 		myGl.glDeleteLists(firstList, nbDisplayList);
-		listId=1;
+		listId = 1;
 	}
-
-	
 
 	/**
 	 * Create the display list for each Image
@@ -87,12 +72,12 @@ public class DisplayListHandler {
 	 * @param myJTSGeometries
 	 * @param size
 	 */
-	public void buildImageDisplayLists(ArrayList<MyImage> myImages) {
+	public void buildImageDisplayLists(List<MyImage> images) {
 
 		// Build n lists, and returns handle for the first list
-		firstList = myGl.glGenLists(myImages.size());
+		firstList = myGl.glGenLists(images.size());
 		listId = firstList;
-		Iterator<MyImage> it = myImages.iterator();
+		Iterator<MyImage> it = images.iterator();
 
 		while (it.hasNext()) {
 			MyImage curImage = it.next();
@@ -104,7 +89,7 @@ public class DisplayListHandler {
 	}
 
 	public void DrawImageDisplayList(int nbDisplayList) {
-		for (int i = 0; i <= nbDisplayList; i++) {
+		for ( int i = 0; i <= nbDisplayList; i++ ) {
 			myGl.glCallList(i);
 		}
 	}
@@ -115,33 +100,32 @@ public class DisplayListHandler {
 	 * @param myJTSGeometries
 	 * @param size
 	 */
-	public void buildCollectionDisplayLists(ArrayList<MyCollection> myCollections) {
-	
-		// Build n lists, and returns handle for the first list
-		firstShapeList = myGl.glGenLists(myCollections.size());
-		listShapeId = firstShapeList;
-		Iterator<MyCollection> it = myCollections.iterator();
+	public void buildCollectionDisplayLists(List<MyCollection> collections) {
 
-		System.out.println("in build list " + myCollections.size());
+		// Build n lists, and returns handle for the first list
+		firstShapeList = myGl.glGenLists(collections.size());
+		listShapeId = firstShapeList;
+		Iterator<MyCollection> it = collections.iterator();
+
+		System.out.println("in build list " + collections.size());
 		while (it.hasNext()) {
 			MyCollection curCol = it.next();
 			myGl.glNewList(listShapeId, GL_COMPILE);
-			basicDrawer.DrawSimpleFeatureCollection(curCol);
+			basicDrawer.drawSimpleFeatureCollection(curCol);
 			myGl.glEndList();
 			listShapeId = listShapeId + 1;
-		}		
+		}
 	}
 
-	public void DrawCollectionDisplayList(int nbDisplayList) {
-		for (int i = 0; i <= nbDisplayList; i++) {
+	public void drawCollectionDisplayList(int nbDisplayList) {
+		for ( int i = 0; i <= nbDisplayList; i++ ) {
 			myGl.glCallList(i);
 		}
 	}
-	
-	
+
 	public void DeleteCollectionDisplayLists(int nbDisplayList) {
 		myGl.glDeleteLists(firstShapeList, nbDisplayList);
-		listShapeId=1;
+		listShapeId = 1;
 	}
-	
+
 }
