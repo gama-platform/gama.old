@@ -197,11 +197,11 @@ public final class AWTDisplaySurface extends AbstractDisplaySurface {
 		return dim;
 	}
 
-	public void selectAgents(final int x, final int y) {
-		int xc = x - origin.x;
-		int yc = y - origin.y;
+	public void selectAgents(final int mousex, final int mousey) {
+		int xc = mousex - origin.x;
+		int yc = mousey - origin.y;
 		final List<ILayer> displays = manager.getLayersIntersecting(xc, yc);
-		menuManager.selectAgents(xc, yc, displays);
+		menuManager.selectAgents(mousex, mousey, xc, yc, displays);
 	}
 
 	@Override

@@ -21,11 +21,11 @@ public class AWTDisplaySurfaceMenu {
 	AWTDisplaySurfaceMenu(final IDisplaySurface s) {
 		surface = s;
 		agentsMenu = new PopupMenu();
-		((AbstractDisplaySurface) s).add(agentsMenu); // TODO
+		((AbstractDisplaySurface) s).add(agentsMenu);
 
 	}
 
-	public void selectAgents(final int x, final int y, final List<ILayer> displays) {
+	public void selectAgents(final int mousex, final int mousey, final int x, final int y, final List<ILayer> displays) {
 		agentsMenu.removeAll();
 		if ( displays.isEmpty() ) { return; }
 		GamaPoint p = displays.get(0).getModelCoordinatesFrom(x, y);
@@ -52,7 +52,7 @@ public class AWTDisplaySurfaceMenu {
 			}
 			agentsMenu.add(m);
 		}
-		agentsMenu.show((Component) surface, x, y);
+		agentsMenu.show((Component) surface, mousex, mousey);
 	}
 
 	private final ActionListener menuListener = new ActionListener() {
