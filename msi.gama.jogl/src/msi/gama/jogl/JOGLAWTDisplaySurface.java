@@ -568,7 +568,7 @@ public final class JOGLAWTDisplaySurface extends AbstractDisplaySurface {
 	}
 
 	@Override
-	public void addMouseEventListener(final MouseListener e) {
+	public void addMouseListener(final MouseListener e) {
 		openGLGraphicsGLRender.canvas.addMouseListener(e);
 	}
 
