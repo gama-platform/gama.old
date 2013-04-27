@@ -135,6 +135,7 @@ public abstract class GraphStreamGraphParserAbstract implements IGraphParser {
 		}
 		
 		public void endParsing() {
+			listener.endOfParsing();
 			warnings.publishAsGAMAWarning("during the parsing of the graph, warnings have been detected:");
 		}
 		
@@ -193,7 +194,6 @@ public abstract class GraphStreamGraphParserAbstract implements IGraphParser {
 		
 			// end of parsing, warn everybody
 			ourSink.endParsing();
-			listener.endOfParsing();
 		}
 		
 		// that's all folks :-)

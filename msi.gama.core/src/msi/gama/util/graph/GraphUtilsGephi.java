@@ -121,6 +121,7 @@ public class GraphUtilsGephi {
 		} else {
 			gephiGraph = graphModel.getUndirectedGraph();
 		}
+	
 		// graphModel.getMixedGraph();
 		// TODO !!!
 		

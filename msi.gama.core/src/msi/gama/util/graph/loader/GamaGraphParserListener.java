@@ -17,6 +17,7 @@ import msi.gaml.species.ISpecies;
  * <ul>
  * <li>as a general philosophy, warnings are emitted when data was available in the graph, but not used for agents</li>
  * <li>x,y,z attributes are processed as special attributes related to the location</li>
+ * <li>TODO directionality of the resulting graph is automatically detected: if every edge is not directed, then the graph is not directed.
  * </ul>
  * 
  * @author Samuel Thiriot
@@ -37,6 +38,11 @@ public class GamaGraphParserListener implements IGraphParserListener {
 	private Map<String, String> nodeGraphAttribute2AgentAttribute = null;
 	private Map<String, String> edgeGraphAttribute2AgentAttribute = null;
 
+	// TODO
+	private boolean detectedUndirectedEdges = false;
+	private boolean detectedDirectedEdges = false;
+	
+	
 	public GamaGraphParserListener(IScope scope, ISpecies nodeSpecies, ISpecies edgeSpecies,
 		Map<String, String> nodeGraphAttribute2AgentAttribute, Map<String, String> edgeGraphAttribute2AgentAttribute) {
 
@@ -193,11 +199,18 @@ public class GamaGraphParserListener implements IGraphParserListener {
 			agent.getLocation().setZ(parseValueAsDouble(value));
 			return;
 		}
-		if ( attributeName.equalsIgnoreCase("xyz") ) {
-			// if (Object instanceof array)
-			// agent.getLocation().setZ(parseValueAsDouble(value));
-			// return;
-			// TODO !!! process xyz values
+		if ( attributeName.equalsIgnoreCase("XYZ") ) {
+			try {
+				Object[] values = (Object[])value;
+				agent.getLocation().setX(parseValueAsDouble(values[0]));
+				agent.getLocation().setY(parseValueAsDouble(values[1]));
+				agent.getLocation().setY(parseValueAsDouble(values[2]));
+			} catch (ClassCastException e) {
+				warnings.addWarning("unable to process node attribute 'xyz': expected an array of locations, but this was not the case.");
+			} catch (IndexOutOfBoundsException e) {
+				warnings.addWarning("unable to process node attribute 'xyz': expected an array of 3 locations, but the array was not big enough.");
+			}
+			return;
 		}
 
 		// special case of colors

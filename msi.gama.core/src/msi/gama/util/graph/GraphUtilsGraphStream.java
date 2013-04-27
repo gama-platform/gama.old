@@ -14,7 +14,7 @@ import org.graphstream.graph.EdgeRejectedException;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.IdAlreadyInUseException;
 import org.graphstream.graph.Node;
-import org.graphstream.graph.implementations.DefaultGraph;
+import org.graphstream.graph.implementations.MultiGraph;
 
 /**
  * Graph utilities for the use of the graphstream library.
@@ -24,6 +24,14 @@ import org.graphstream.graph.implementations.DefaultGraph;
  */
 public class GraphUtilsGraphStream {
 
+	/**
+	 * Preprocess a gama object before exportation.
+	 * Filters gama objects that have no meaning out of gama;
+	 * notably GAMA colors are translated to RGB values.
+	 * 
+	 * @param gamaValue
+	 * @return
+	 */
 	public static Object preprocessGamaValue(Object gamaValue) {
 		
 		if (gamaValue instanceof GamaColor) {
@@ -35,9 +43,15 @@ public class GraphUtilsGraphStream {
 		return gamaValue;
 	}
 	
+	/**
+	 * Takes a gama graph as an input, returns a graphstream graph as 
+	 * close as possible. Preserves double links (multi graph).
+	 * @param gamaGraph
+	 * @return
+	 */
 	public static Graph getGraphstreamGraphFromGamaGraph(IGraph gamaGraph) {
 		
-		Graph g = new DefaultGraph("tmpGraph");
+		Graph g = new MultiGraph("tmpGraph", true, false);
 		
 		Map<Object,Node> gamaNode2graphStreamNode = new HashMap<Object, Node>(gamaGraph._internalNodesSet().size());
 		
@@ -86,7 +100,8 @@ public class GraphUtilsGraphStream {
 				Edge e = g.addEdge(
 						edgeObj.toString(), 
 						gamaNode2graphStreamNode.get(edge.getSource()),
-						gamaNode2graphStreamNode.get(edge.getTarget())
+						gamaNode2graphStreamNode.get(edge.getTarget()), 
+						gamaGraph.isDirected()								// till now, directionality of an edge depends on the whole gama graph
 						);
 				if (edgeObj instanceof IAgent) {
 					IAgent a = (IAgent)edgeObj;
