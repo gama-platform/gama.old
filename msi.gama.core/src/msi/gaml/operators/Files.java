@@ -117,17 +117,28 @@ public class Files {
 		return new GamaFolderFile(scope, s);
 	}
 
+	@operator("writable")
+	@doc(value = "Marks the file as read-only or not, depending on the second boolean argument, and returns the first argument", comment = "A file is created using its native flags. This operator can change them. Beware that this change is system-wide (and not only restrained to GAMA): changing a file to read-only mode (e.g. \"writable(f, false)\")", examples = { "shapefile(\"../images/point_eau.shp\") writable false --: returns a file in read-only mode" }, see = "file")
+	public static IGamaFile writable(final IScope scope, final IGamaFile s, final Boolean writable) {
+		if ( s == null ) { throw new GamaRuntimeException("Attempt to change the mode of a non-existent file"); }
+		boolean b = writable == null ? false : writable;
+		s.setWritable(b);
+		return s;
+	}
+
 	@operator(value = READ, type = ITypeProvider.FIRST_TYPE, content_type = ITypeProvider.FIRST_CONTENT_TYPE, index_type = ITypeProvider.FIRST_KEY_TYPE)
-	@doc(value = "marks the file so that only read operations are allowed.", comment = "A file is created by default in read-only mode. The operator write can change the mode.", examples = { "read(shapefile(\"../images/point_eau.shp\"))  --:  returns a file in read-only mode representing \"../images/point_eau.shp\"" }, see = {
-		"file", "write" })
+	@doc(deprecated = "use the operator \"writable\" instead", value = "marks the file so that only read operations are allowed.", comment = "A file is created by default in read-only mode. The operator write can change the mode.", examples = { "read(shapefile(\"../images/point_eau.shp\"))  --:  returns a file in read-only mode representing \"../images/point_eau.shp\"" }, see = {
+		"file", "writable" })
+	@Deprecated
 	public static IGamaFile opRead(final IScope scope, final IGamaFile s) {
 		s.setWritable(false);
 		return s;
 	}
 
 	@operator(value = WRITE, type = ITypeProvider.FIRST_TYPE, content_type = ITypeProvider.FIRST_CONTENT_TYPE, index_type = ITypeProvider.FIRST_KEY_TYPE)
-	@doc(value = "marks the file so that read and write operations are allowed.", comment = "A file is created by default in read-only mode.", examples = { "write(shapefile(\"../images/point_eau.shp\"))   --: returns a file in read-write mode representing \"../images/point_eau.shp\"" }, see = {
-		"file", "read" })
+	@doc(deprecated = "use the operator \"writable\" instead", value = "marks the file so that read and write operations are allowed.", comment = "A file is created by default in read-only mode.", examples = { "write(shapefile(\"../images/point_eau.shp\"))   --: returns a file in read-write mode representing \"../images/point_eau.shp\"" }, see = {
+		"file", "writable" })
+	@Deprecated
 	public static IGamaFile opWrite(final IScope scope, final IGamaFile s) {
 		s.setWritable(true);
 		return s;

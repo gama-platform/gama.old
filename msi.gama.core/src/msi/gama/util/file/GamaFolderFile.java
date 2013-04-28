@@ -28,15 +28,17 @@ public class GamaFolderFile extends GamaFile<Integer, String> {
 
 	public GamaFolderFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
-		setWritable(true);
+		// AD 27/04/13 Let the flags of the file remain the same. Can be turned off and on using the "read" and
+		// "write" operators, so no need to decide for a default here
+		// setWritable(true);
 	}
 
 	@Override
 	protected void checkValidity() throws GamaRuntimeException {
-		if ( !getFile().isDirectory() ) { throw new GamaRuntimeException(getFile()
-			.getAbsolutePath() + "is not a folder"); }
-		if ( !getFile().exists() ) { throw new GamaRuntimeException("The folder " +
-			getFile().getAbsolutePath() + " does not exist. Please use 'new_folder' instead"); }
+		if ( !getFile().isDirectory() ) { throw new GamaRuntimeException(getFile().getAbsolutePath() +
+			"is not a folder"); }
+		if ( !getFile().exists() ) { throw new GamaRuntimeException("The folder " + getFile().getAbsolutePath() +
+			" does not exist. Please use 'new_folder' instead"); }
 	}
 
 	@Override

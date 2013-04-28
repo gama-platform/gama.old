@@ -50,15 +50,17 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 		if ( scope != null ) {
 			path = scope.getModel().getRelativeFilePath(pathName, false);
 			checkValidity();
-			setWritable(false);
+			// AD 27/04/13 Let the flags of the file remain the same. Can be turned off and on using the "read" and
+			// "write" operators, so no need to decide for a default here
+			// setWritable(false);
 		} else {
 			path = pathName;
 		}
 	}
 
 	protected void checkValidity() throws GamaRuntimeException {
-		if ( getFile().isDirectory() ) { throw new GamaRuntimeException(
-			getFile().getAbsolutePath() + " is a folder. Files can not overwrite folders"); }
+		if ( getFile().isDirectory() ) { throw new GamaRuntimeException(getFile().getAbsolutePath() +
+			" is a folder. Files can not overwrite folders"); }
 	}
 
 	@Override
@@ -94,8 +96,8 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	 * java.lang.Object)
 	 */
 	@Override
-	public void add(IScope scope, final K index, final Object value, final Object param,
-		final boolean all, final boolean add) throws GamaRuntimeException {
+	public void add(IScope scope, final K index, final Object value, final Object param, final boolean all,
+		final boolean add) throws GamaRuntimeException {
 		getContents(scope);
 		buffer.add(scope, index, value, param, all, add);
 		flushBuffer();
@@ -159,8 +161,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	}
 
 	@Override
-	public V getFromIndicesList(final IScope scope, final IList indices)
-		throws GamaRuntimeException {
+	public V getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
 		getContents(scope);
 		return (V) buffer.getFromIndicesList(scope, indices);
 	}
@@ -188,8 +189,8 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	@Override
 	public IContainer getContents(IScope scope) throws GamaRuntimeException {
 		if ( getFile() == null ) { return null; }
-		if ( !getFile().exists() ) { throw new GamaRuntimeException("File " +
-			getFile().getAbsolutePath() + " does not exist"); }
+		if ( !getFile().exists() ) { throw new GamaRuntimeException("File " + getFile().getAbsolutePath() +
+			" does not exist"); }
 		fillBuffer(scope);
 		return buffer;
 	}
@@ -276,13 +277,11 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	}
 
 	@Override
-	public IMatrix matrixValue(final IScope scope, final ILocation preferredSize)
-		throws GamaRuntimeException {
+	public IMatrix matrixValue(final IScope scope, final ILocation preferredSize) throws GamaRuntimeException {
 		return _matrixValue(scope, preferredSize);
 	}
 
-	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize)
-		throws GamaRuntimeException {
+	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize) throws GamaRuntimeException {
 		getContents(scope);
 		return buffer.matrixValue(scope, preferredSize);
 	}
@@ -308,8 +307,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 
 	@Override
 	public String toGaml() {
-		return (writable ? "write(" : "read(") + getKeyword() + "(" +
-			StringUtils.toGamlString(getPath()) + "))";
+		return (writable ? "write(" : "read(") + getKeyword() + "(" + StringUtils.toGamlString(getPath()) + "))";
 	}
 
 	@Override
