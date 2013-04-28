@@ -163,7 +163,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 	}
 
 	@Override
-	protected Composite createItemContentsFor(final GamaRuntimeException e) {
+	protected Composite createItemContentsFor(final GamaRuntimeException exception) {
 		Composite compo = new Composite(getViewer(), SWT.NONE);
 		GridLayout layout = new GridLayout(1, false);
 		GridData firstColData = new GridData(SWT.FILL, SWT.FILL, true, false);
@@ -171,7 +171,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 		compo.setLayout(layout);
 		Table t = new Table(compo, SWT.V_SCROLL);
 		t.setLayoutData(firstColData);
-		java.util.List<String> strings = e.getContextAsList();
+		java.util.List<String> strings = exception.getContextAsList();
 		// t.setLinesVisible(true);
 		final TableColumn c = new TableColumn(t, SWT.NONE);
 		c.setResizable(true);

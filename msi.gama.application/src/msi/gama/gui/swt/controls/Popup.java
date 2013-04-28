@@ -4,7 +4,9 @@
  */
 package msi.gama.gui.swt.controls;
 
+import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.SwtGui;
+import org.apache.commons.lang.WordUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
@@ -63,50 +65,87 @@ public class Popup {
 	/*
 	 * 
 	 */
-	public Popup(final IPopupProvider provider, final Control ... controls) {
+	public Popup(final IPopupProvider provider, final Widget ... controls) {
 		this.provider = provider;
-		Control parent = provider.getPositionControl();
-		parent.getShell().addListener(SWT.Move, hide);
-		parent.getShell().addListener(SWT.Resize, hide);
-		parent.getShell().addListener(SWT.Close, hide);
-		parent.getShell().addListener(SWT.Deactivate, hide);
-		parent.getShell().addListener(SWT.Hide, hide);
-		for ( Control c : controls ) {
-			c.addMouseTrackListener(mtl);
+		Shell parent = provider.getControllingShell();
+		parent.addListener(SWT.Move, hide);
+		parent.addListener(SWT.Resize, hide);
+		parent.addListener(SWT.Close, hide);
+		parent.addListener(SWT.Deactivate, hide);
+		parent.addListener(SWT.Hide, hide);
+		for ( Widget c : controls ) {
+			if ( c == null ) {
+				continue;
+			}
+			TypedListener typedListener = new TypedListener(mtl);
+			c.addListener(SWT.MouseEnter, typedListener);
+			c.addListener(SWT.MouseExit, typedListener);
+			c.addListener(SWT.MouseHover, typedListener);
 		}
 	}
 
 	public void display() {
+		// We first verify that the popup is still ok
+		Widget c = provider.getControllingShell();
+		if ( c == null || c.isDisposed() ) {
+			hide();
+			return;
+		}
+		// We then grab the text and hide if it is null or empty
 		String s = provider.getPopupText();
 		if ( s == null || s.isEmpty() ) {
 			hide();
 			return;
 		}
+
+		// We set the background of the popup by asking the provider
 		popupText.setBackground(provider.getPopupBackground());
 
-		popupText.setText(s);
-		Control c = provider.getPositionControl();
-		if ( c == null || c.isDisposed() ) {
-			hide();
-			return;
-		}
-		final Point point = c.toDisplay(c.getLocation().x, c.getSize().y);
-		// popup.pack();
+		// We fix the max. width to 400
+		int maxPopupWidth = 400;
+
+		// We compute the width of the text (+ 5 pixels to accomodate for the border)
+		GC gc = new GC(popupText);
+		int textWidth = gc.textExtent(s).x + 5;
+		gc.dispose();
+		GuiUtils.debug("Popup.display: textWidth = " + textWidth);
+		// We grab the location of the popup on the display
+		Point point = provider.getAbsoluteOrigin();
 		popup.setLocation(point.x, point.y);
 
-		// Compute the new window size.
-		final Point newWindowSize = popup.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-
-		// Crop new window size to screen.
-
+		// We compute the available width on the display given this location (and a border of 5 pixels)
 		final Rectangle screenArea = popup.getDisplay().getClientArea();
-		if ( newWindowSize.y > screenArea.height - (point.y - screenArea.y) ) {
-			newWindowSize.y = screenArea.height - (point.y - screenArea.y);
+		int availableWidth = screenArea.x + screenArea.width - point.x - 5;
+		GuiUtils.debug("Popup.display: availableWidth = " + availableWidth);
+		// We compute the final width of the popup
+		int popupWidth = Math.min(availableWidth, maxPopupWidth);
+		GuiUtils.debug("Popup.display: popupWidth = " + popupWidth);
+
+		// If the width of the text is greater than the computed width, we wrap the text accordingly, otherwise we
+		// shrink the popup to the text width
+		if ( textWidth > popupWidth ) {
+			// We grab the longest line
+			String[] lines = s.split("\\r?\\n");
+			int maxLineChars = 0;
+			for ( String line : lines ) {
+				int lineWidth = line.length();
+				maxLineChars = maxLineChars > lineWidth ? maxLineChars : lineWidth;
+				GuiUtils.debug("Popup.display: maxLineCharts = " + maxLineChars);
+			}
+			int wrapLimit = (int) ((double) maxLineChars / (double) textWidth * popupWidth);
+			GuiUtils.debug("Popup.display: wrapLimit = " + wrapLimit);
+
+			s = WordUtils.wrap(s, wrapLimit);
+		} else {
+			popupWidth = textWidth;
 		}
-		if ( newWindowSize.x > screenArea.width - (point.x - screenArea.x) ) {
-			newWindowSize.x = screenArea.width - (point.x - screenArea.x);
-		}
-		popup.setSize(newWindowSize);
+
+		// We set the text of the popup
+		popupText.setText(s);
+
+		// We ask the popup to compute its actual size given the width and to display itself
+		final Point newPopupSize = popup.computeSize(popupWidth, SWT.DEFAULT);
+		popup.setSize(newPopupSize);
 		popup.layout();
 		popup.setVisible(true);
 	}

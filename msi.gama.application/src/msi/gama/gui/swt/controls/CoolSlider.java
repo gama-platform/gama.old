@@ -808,18 +808,20 @@ public class CoolSlider extends Composite implements IPopupProvider {
 	}
 
 	/**
-	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPositionControl()
-	 */
-	@Override
-	public Control getPositionControl() {
-		return leftmostRegion;
-	}
-
-	/**
 	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPopupBackground()
 	 */
 	@Override
 	public Color getPopupBackground() {
 		return popupColor;
+	}
+
+	@Override
+	public Point getAbsoluteOrigin() {
+		return leftmostRegion.toDisplay(new Point(leftmostRegion.getLocation().x, leftmostRegion.getSize().y));
+	}
+
+	@Override
+	public Shell getControllingShell() {
+		return leftmostRegion.getShell();
 	}
 }

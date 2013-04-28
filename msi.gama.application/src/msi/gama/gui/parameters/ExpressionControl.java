@@ -26,7 +26,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
@@ -49,7 +49,7 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 		text.addModifyListener(this);
 		text.addFocusListener(this);
 		text.addSelectionListener(this);
-		popup = new Popup(this, text);
+		popup = new Popup(this, text, editor.getLabel());
 
 	}
 
@@ -175,19 +175,22 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 	}
 
 	/**
-	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPositionControl()
-	 */
-	@Override
-	public Control getPositionControl() {
-		return text;
-	}
-
-	/**
 	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPopupBackground()
 	 */
 	@Override
 	public Color getPopupBackground() {
 		return background;
+	}
+
+	@Override
+	public Shell getControllingShell() {
+		return text.getShell();
+	}
+
+	@Override
+	public Point getAbsoluteOrigin() {
+		Control parent = editor.getLabel().getParent();
+		return parent.toDisplay(new Point(parent.getLocation().x, editor.getLabel().getLocation().y + 20));
 	}
 
 }

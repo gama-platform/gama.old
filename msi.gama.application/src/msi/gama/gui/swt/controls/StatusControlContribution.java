@@ -26,7 +26,7 @@ import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Strings;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
@@ -112,19 +112,21 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	}
 
 	/**
-	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPositionControl()
-	 */
-	@Override
-	public Control getPositionControl() {
-		return label;
-	}
-
-	/**
 	 * @see msi.gama.gui.swt.controls.IPopupProvider#getPopupBackground()
 	 */
 	@Override
 	public Color getPopupBackground() {
 		return status == IGui.ERROR ? SwtGui.COLOR_ERROR : status == IGui.WAIT ? SwtGui.COLOR_WARNING : SwtGui.COLOR_OK;
+	}
+
+	@Override
+	public Shell getControllingShell() {
+		return label.getShell();
+	}
+
+	@Override
+	public Point getAbsoluteOrigin() {
+		return label.toDisplay(new Point(label.getLocation().x, label.getSize().y));
 	}
 
 }

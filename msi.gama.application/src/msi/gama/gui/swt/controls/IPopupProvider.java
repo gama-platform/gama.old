@@ -4,8 +4,8 @@
  */
 package msi.gama.gui.swt.controls;
 
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * The class IPopupProvider.
@@ -18,8 +18,10 @@ public interface IPopupProvider {
 
 	public String getPopupText();
 
-	public Control getPositionControl();
+	public Shell getControllingShell();
 
 	public Color getPopupBackground();
+
+	public Point getAbsoluteOrigin();
 
 }

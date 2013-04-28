@@ -51,6 +51,7 @@ public class ParameterExpandItem extends Item {
 	Control control;
 	boolean expanded;
 	int x, y, width, height;
+
 	private static int imageHeight = 10, imageWidth = 10;
 	boolean isPaused;
 	private static final int TEXT_INSET = 4;
@@ -382,4 +383,5 @@ public class ParameterExpandItem extends Item {
 	public boolean pauseRequested(final int x2, final int y2) {
 		return clickIn(x2, y2, x + width - 2 * ParameterExpandItem.TEXT_INSET - 2 * imageWidth);
 	}
+
 }

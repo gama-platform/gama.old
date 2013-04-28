@@ -118,6 +118,7 @@ public class ColorEditor extends AbstractEditor implements DisposeListener {
 
 	@Override
 	public Control getEditorControl() {
+		if ( expression == null ) { return null; }
 		return expression.getControl();
 	}
 

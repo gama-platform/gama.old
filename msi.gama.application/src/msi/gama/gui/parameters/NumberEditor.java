@@ -127,6 +127,7 @@ public abstract class NumberEditor extends AbstractEditor {
 
 	@Override
 	public Control getEditorControl() {
+		if ( expression == null ) { return null; }
 		return expression.getControl();
 	}
 

@@ -19,6 +19,8 @@
 package msi.gama.gui.parameters;
 
 import msi.gama.common.interfaces.EditorListener;
+import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.controls.*;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.file.IGamaFile;
@@ -26,12 +28,14 @@ import msi.gaml.operators.Files;
 import msi.gaml.types.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 
-public class FileEditor extends AbstractEditor {
+public class FileEditor extends AbstractEditor implements IPopupProvider {
 
 	private Button textBox;
+	private Popup popup;
 
 	FileEditor(final IParameter param) {
 		super(param);
@@ -66,6 +70,7 @@ public class FileEditor extends AbstractEditor {
 		GridData d = new GridData(SWT.LEFT, SWT.CENTER, false, false);
 		d.heightHint = 20;
 		textBox.setLayoutData(d);
+		popup = new Popup(this, textBox, getLabel());
 		return textBox;
 	}
 
@@ -104,6 +109,26 @@ public class FileEditor extends AbstractEditor {
 	@Override
 	public IType getExpectedType() {
 		return Types.get(IType.FILE);
+	}
+
+	@Override
+	public String getPopupText() {
+		return textBox.getText();
+	}
+
+	@Override
+	public Shell getControllingShell() {
+		return textBox.getShell();
+	}
+
+	@Override
+	public Color getPopupBackground() {
+		return SwtGui.COLOR_OK;
+	}
+
+	@Override
+	public Point getAbsoluteOrigin() {
+		return textBox.toDisplay(textBox.getLocation().x, textBox.getSize().y);
 	}
 
 }

@@ -52,10 +52,14 @@ import org.eclipse.swt.widgets.*;
  * @since 3.2
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class ParameterExpandBar extends Composite {
+public class ParameterExpandBar extends Composite implements IPopupProvider {
+
+	private static Color popupColor = new Color(SwtGui.getDisplay(), new RGB(125, 125, 125));
 
 	private ParameterExpandItem[] items;
 	private ParameterExpandItem focusItem;
+	private ParameterExpandItem hoverItem;
+	Popup popup;
 	private int spacing, yCurrentScroll, itemCount;
 	// Font font;
 	private Color foreground;
@@ -114,7 +118,6 @@ public class ParameterExpandBar extends Composite {
 					case SWT.MouseUp:
 						onMouseUp(event);
 						break;
-
 					case SWT.Paint:
 						onPaint(event);
 						break;
@@ -133,6 +136,15 @@ public class ParameterExpandBar extends Composite {
 					case SWT.Traverse:
 						onTraverse(event);
 						break;
+					case SWT.MouseHover:
+						onMouseHover(event);
+						break;
+					case SWT.MouseMove:
+						onMouseHover(event);
+						break;
+					case SWT.MouseEnter:
+						onMouseHover(event);
+						break;
 				}
 			}
 		};
@@ -145,7 +157,9 @@ public class ParameterExpandBar extends Composite {
 		addListener(SWT.FocusIn, listener);
 		addListener(SWT.FocusOut, listener);
 		addListener(SWT.Traverse, listener);
-
+		addListener(SWT.MouseHover, listener);
+		addListener(SWT.MouseMove, listener);
+		addListener(SWT.MouseEnter, listener);
 		ScrollBar verticalBar = getVerticalBar();
 		if ( verticalBar != null ) {
 			verticalBar.addListener(SWT.Selection, new Listener() {
@@ -156,6 +170,7 @@ public class ParameterExpandBar extends Composite {
 				}
 			});
 		}
+		popup = new Popup(this, this);
 		// this.setBackground(getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND));
 	}
 
@@ -481,6 +496,8 @@ public class ParameterExpandBar extends Composite {
 		items = null;
 		foreground = null;
 		setFocusItem(null);
+		hoverItem = null;
+		popup = null;
 	}
 
 	void onFocus() {
@@ -519,6 +536,20 @@ public class ParameterExpandBar extends Composite {
 				break;
 			}
 		}
+	}
+
+	void onMouseHover(final Event event) {
+		int x = event.x;
+		int y = event.y;
+		for ( int i = 0; i < itemCount; i++ ) {
+			ParameterExpandItem item = items[i];
+			boolean hover = item.x <= x && x < item.x + item.width && item.y <= y && y < item.y + bandHeight;
+			if ( hover ) {
+				hoverItem = item;
+				return;
+			}
+		}
+		hoverItem = null;
 	}
 
 	void onMouseDown(final Event event) {
@@ -632,6 +663,33 @@ public class ParameterExpandBar extends Composite {
 				return;
 			}
 		}
+	}
+
+	@Override
+	public String getPopupText() {
+		if ( hoverItem == null ) { return null; }
+		String s = hoverItem.getText();
+		s = s.replace(ItemList.ERROR_CODE, ' ');
+		s = s.replace(ItemList.INFO_CODE, ' ');
+		s = s.replace(ItemList.SEPARATION_CODE, ' ');
+		s = s.replace(ItemList.WARNING_CODE, ' ');
+		return s;
+	}
+
+	@Override
+	public Color getPopupBackground() {
+		return popupColor;
+	}
+
+	@Override
+	public Shell getControllingShell() {
+		return getShell();
+	}
+
+	@Override
+	public Point getAbsoluteOrigin() {
+		if ( hoverItem == null ) { return toDisplay(getLocation()); }
+		return toDisplay(hoverItem.x, hoverItem.y + bandHeight);
 	}
 
 }
