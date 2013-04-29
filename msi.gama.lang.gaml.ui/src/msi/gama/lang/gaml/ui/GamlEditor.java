@@ -6,12 +6,18 @@ package msi.gama.lang.gaml.ui;
 
 import java.util.*;
 import java.util.List;
-import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.validation.*;
 import msi.gama.runtime.GAMA;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.SWT;
@@ -19,9 +25,11 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.*;
+import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import org.eclipse.xtext.util.concurrent.IUnitOfWork;
 import com.google.inject.Inject;
 
@@ -39,18 +47,19 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		.createImage();
 	public static Image reload = AbstractUIPlugin.imageDescriptorFromPlugin(IGui.PLUGIN_ID, "/icons/menu_reload.png")
 		.createImage();
-	public static final Color COLOR_ERROR = new Color(Display.getDefault(), 0xF4, 0x00, 0x15);
-	public static final Color COLOR_OK = new Color(Display.getDefault(), 0x55, 0x8E, 0x1B);
-	public static final Color COLOR_WARNING = new Color(Display.getDefault(), 0xFD, 0xA6, 0x00);
 	public static final Color COLOR_TEXT = Display.getDefault().getSystemColor(SWT.COLOR_WHITE);
 	private static final int INITIAL_BUTTONS = 20;
 	private static Font labelFont;
 	Composite toolbar, top, parent;
 	Button[] buttons = new Button[INITIAL_BUTTONS];
 	Label status;
+	Button menu;
 	List<String> completeNamesOfExperiments = new ArrayList();
 	List<String> abbreviatedNamesOfExperiments = new ArrayList();
 	boolean wasOK = true, inited = false;
+
+	@Inject
+	IResourceSetProvider resourceSetProvider;
 
 	@Inject
 	private GamlJavaValidator validator;
@@ -128,7 +137,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.heightHint = 15;
 		toolbar.setLayoutData(data);
-		layout = new GridLayout(INITIAL_BUTTONS + 1, false);
+		layout = new GridLayout(INITIAL_BUTTONS + 2, false);
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
 		layout.marginWidth = 0;
@@ -150,6 +159,25 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 			buttons[i].addSelectionListener(listener);
 			hideButton(buttons[i]);
 		}
+		menu = new Button(toolbar, SWT.PUSH);
+		data = new GridData(SWT.LEFT, SWT.FILL, false, true);
+		menu.setLayoutData(data);
+		menu.setText("Other...");
+		menu.setToolTipText("Experiments defined in other models of the project");
+		menu.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				Menu old = menu.getMenu();
+				menu.setMenu(null);
+				if ( old != null ) {
+					old.dispose();
+				}
+				Menu dropMenu = createExperimentsSubMenu(menu);
+				dropMenu.setVisible(true);
+			}
+
+		});
 
 		// Asking the editor to fill the rest
 		Composite parent2 = new Composite(parent, SWT.BORDER);
@@ -166,6 +194,130 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 			}
 		});
+	}
+
+	private final SelectionAdapter adapter = new SelectionAdapter() {
+
+		@Override
+		public void widgetSelected(final SelectionEvent e) {
+			MenuItem mi = (MenuItem) e.widget;
+			final URI uri = (URI) mi.getData("uri");
+			String exp = (String) mi.getData("exp");
+			if ( uri != null && exp != null ) {
+				IModel model = getDocument().readOnly(new IUnitOfWork<IModel, XtextResource>() {
+
+					@Override
+					public IModel exec(final XtextResource state) throws Exception {
+						ResourceSet rs = state.getResourceSet();
+						GamlResource resource = (GamlResource) rs.getResource(uri, true);
+						return validator.build(resource);
+					}
+
+				});
+				if ( model == null ) { return; }
+				GuiUtils.openSimulationPerspective();
+				GAMA.newExperiment(exp, model);
+			}
+		}
+	};
+
+	public Menu createExperimentsSubMenu(Button button) {
+		Menu parent = new Menu(button);
+		Map<URI, List<String>> map = grabProjectModelsAndExperiments();
+		if ( map.isEmpty() ) {
+			MenuItem nothing = new MenuItem(parent, SWT.PUSH);
+			nothing.setText("No experiments defined");
+			nothing.setEnabled(false);
+			return parent;
+		}
+		for ( URI uri : map.keySet() ) {
+			MenuItem modelItem = new MenuItem(parent, SWT.CASCADE);
+
+			modelItem.setText("Model " + URI.decode(uri.lastSegment()));
+			modelItem.setImage(SwtGui.getEclipseIcon(ISharedImages.IMG_OBJ_FILE));
+			Menu expMenu = new Menu(modelItem);
+			modelItem.setMenu(expMenu);
+			List<String> expNames = map.get(uri);
+			for ( String name : expNames ) {
+				MenuItem expItem = new MenuItem(expMenu, SWT.PUSH);
+				expItem.setText(name);
+				expItem.setData("uri", uri);
+				expItem.setData("exp", name);
+				expItem.setImage(SwtGui.panel_continue);
+				expItem.addSelectionListener(adapter);
+			}
+		}
+		return parent;
+	}
+
+	/**
+	 * @param resource
+	 * @return
+	 */
+	private Map<URI, List<String>> grabProjectModelsAndExperiments() {
+		final Map<URI, List<String>> map = new LinkedHashMap();
+		getDocument().readOnly(new IUnitOfWork.Void<XtextResource>() {
+
+			@Override
+			public void process(final XtextResource resource) throws Exception {
+				String platformString = resource.getURI().toPlatformString(true);
+				IFile myFile = ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(platformString));
+				IProject proj = myFile.getProject();
+				List<URI> resources = getAllGamaFilesInProject(proj, resource.getURI());
+				ResourceSet rs = resourceSetProvider.get(proj);
+				for ( URI uri : resources ) {
+					// GuiUtils.debug("GamlEditor.fillCombo().new Void() {...}.process : " + uri);
+					GamlResource xr = (GamlResource) rs.getResource(uri, true);
+					if ( xr.getErrors().isEmpty() ) {
+						ISyntacticElement el = xr.getSyntacticContents();
+						for ( ISyntacticElement ch : el.getChildren() ) {
+							if ( ch.isExperiment() ) {
+								if ( !map.containsKey(uri) ) {
+									map.put(uri, new ArrayList());
+								}
+								map.get(uri).add(ch.getName());
+							}
+						}
+					}
+				}
+
+			}
+		});
+		return map;
+	}
+
+	public static ArrayList<URI> getAllGamaFilesInProject(IProject project, URI without) {
+		ArrayList<URI> allGamaFiles = new ArrayList();
+		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
+		IPath path = project.getLocation();
+		recursiveFindGamaFiles(allGamaFiles, path, myWorkspaceRoot, without);
+		return allGamaFiles;
+	}
+
+	private static void recursiveFindGamaFiles(ArrayList<URI> allGamaFiles, IPath path, IWorkspaceRoot myWorkspaceRoot,
+		URI without) {
+		IContainer container = myWorkspaceRoot.getContainerForLocation(path);
+
+		try {
+			IResource[] iResources;
+			iResources = container.members();
+			for ( IResource iR : iResources ) {
+				// for gama files
+				if ( "gaml".equalsIgnoreCase(iR.getFileExtension()) ) {
+					URI uri = URI.createPlatformResourceURI(iR.getFullPath().toString(), true);
+					GuiUtils.debug("GamlEditor.recursiveFindGamaFiles uri:" + uri + " equals " + without);
+					if ( !uri.equals(without) ) {
+						allGamaFiles.add(uri);
+					}
+				}
+				if ( iR.getType() == IResource.FOLDER ) {
+					IPath tempPath = iR.getLocation();
+					recursiveFindGamaFiles(allGamaFiles, tempPath, myWorkspaceRoot, without);
+				}
+			}
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private final SelectionListener listener = new SelectionAdapter() {
@@ -225,27 +377,21 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 					}
 				}
 				if ( ok ) {
-					// TODO Have a button before the title to allow inserting a "default" experiment
 					int size = abbreviatedNamesOfExperiments.size();
-					if ( size == 0 ) { // 1 && abbreviatedNamesOfExperiments.contains(IKeyword.DEFAULT) ) {
-						setStatus(COLOR_WARNING, "Model is functional, but no experiments have been defined.");
+					if ( size == 0 ) {
+						setStatus(SwtGui.COLOR_WARNING, "Model is functional, but no experiments have been defined.");
 					} else {
-						setStatus(COLOR_OK, size == 1 ? "Run experiment:" : "Choose an experiment:");
+						setStatus(SwtGui.COLOR_OK, size == 1 ? "Run experiment:" : "Choose an experiment:");
 					}
 					int i = 0;
-					// if ( abbreviatedNamesOfExperiments.size() > 1 ) {
-					// abbreviatedNamesOfExperiments.remove(IKeyword.DEFAULT);
-					// completeNamesOfExperiments.remove(IKeyword.DEFAULT);
-					// }
 					for ( String e : abbreviatedNamesOfExperiments ) {
 						enableButton(i++, e);
 					}
 				} else {
-					setStatus(COLOR_ERROR, "Error(s) detected. Impossible to run any experiment");
+					setStatus(SwtGui.COLOR_ERROR, "Error(s) detected. Impossible to run any experiment");
 				}
 
 				toolbar.layout(true);
-				// toolbar.update();
 			}
 		});
 
@@ -253,7 +399,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 	private void updateExperiments(final Set<String> newExperiments, final boolean withErrors) {
 		if ( withErrors == true && wasOK == false ) { return; }
-		// GuiUtils.debug("New set of experiments:" + newExperiments);
 		Set<String> oldNames = new LinkedHashSet(completeNamesOfExperiments);
 		if ( inited && wasOK && !withErrors && oldNames.equals(newExperiments) ) { return; }
 		inited = true;
