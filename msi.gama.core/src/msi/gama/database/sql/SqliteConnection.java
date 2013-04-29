@@ -11,9 +11,27 @@ import com.vividsolutions.jts.io.*;
 
 public class SqliteConnection extends SqlConnection {
 
-	private static final boolean DEBUG = false; // Change DEBUG = false for release version
+	//private static final boolean DEBUG = false; // Change DEBUG = false for release version
 	private static final String WKT2GEO = "GeomFromText";
 
+	public SqliteConnection() {
+		super();
+	}
+	
+	public SqliteConnection(String dbName) {
+		super(dbName);
+	}
+
+	public SqliteConnection(String venderName, String database) {
+		super(venderName, database);
+	}
+
+	public SqliteConnection(String venderName, String database, Boolean transformed) {
+		super(venderName, database,transformed);
+	}
+
+
+	
 	@Override
 	public Connection connectDB() throws ClassNotFoundException, InstantiationException, SQLException,
 		IllegalAccessException {

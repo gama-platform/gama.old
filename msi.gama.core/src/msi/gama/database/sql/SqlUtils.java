@@ -3,12 +3,96 @@ package msi.gama.database.sql;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
+
+import msi.gama.common.util.GuiUtils;
+import msi.gama.database.sql.SqlConnection;
+import msi.gama.runtime.IScope;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaList;
+import msi.gaml.types.IType;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 
 public class SqlUtils {
+	private static boolean DEBUG =false;
+	
+	public static SqlConnection createConnectionObject(final IScope scope,final Map<String, Object> params) throws GamaRuntimeException 
+	{
+		String dbtype = (String) params.get("dbtype");
+		String host = (String) params.get("host");
+		String port = (String) params.get("port");
+		String database = (String) params.get("database");
+		String user = (String) params.get("user");
+		String passwd = (String) params.get("passwd");
+		if (DEBUG){
+			GuiUtils.debug("SqlUtils.createConnection:"+dbtype+" - "+host+" - "+ port+" - "+database+" - ");
+		}
+		SqlConnection sqlConn;
+		// create connection
+		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
+			String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+			sqlConn = new SqliteConnection(dbtype, DBRelativeLocation);
+		} else if ( dbtype.equalsIgnoreCase(SqlConnection.MSSQL) ) {
+			
+			sqlConn = new MSSQLConnection(dbtype, host, port, database, user, passwd);
+		}else if ( dbtype.equalsIgnoreCase(SqlConnection.MYSQL) ) {
+			
+			sqlConn = new MySqlConnection(dbtype, host, port, database, user, passwd);
+		}else if ( dbtype.equalsIgnoreCase(SqlConnection.POSTGRES) ||
+				   dbtype.equalsIgnoreCase(SqlConnection.POSTGIS)) {
+			sqlConn = new PostgresConnection(dbtype, host, port, database, user, passwd);
+		}else {
+			throw new GamaRuntimeException("GAMA does not support: " + dbtype);
+		}
+		if (DEBUG){
+			GuiUtils.debug("SqlUtils.createConnection:"+sqlConn.toString());
+		}
+
+		return sqlConn;
+	}
+	
+	public static SqlConnection createConnectionObject(final IScope scope) throws GamaRuntimeException 
+	{
+		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
+//		boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
+		String dbtype = (String) params.get("dbtype");
+		String host = (String) params.get("host");
+		String port = (String) params.get("port");
+		String database = (String) params.get("database");
+		String user = (String) params.get("user");
+		String passwd = (String) params.get("passwd");
+		if (DEBUG){
+			GuiUtils.debug("SqlUtils.createConnection:"+dbtype+" - "+host+" - "+ port+" - "+database+" - ");
+		}
+		SqlConnection sqlConn;
+		// create connection
+		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
+			String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+			sqlConn = new SqliteConnection(dbtype, DBRelativeLocation);
+		} else if ( dbtype.equalsIgnoreCase(SqlConnection.MSSQL) ) {
+			
+			sqlConn = new MSSQLConnection(dbtype, host, port, database, user, passwd);
+		}else if ( dbtype.equalsIgnoreCase(SqlConnection.MYSQL) ) {
+			
+			sqlConn = new MySqlConnection(dbtype, host, port, database, user, passwd);
+		}else if ( dbtype.equalsIgnoreCase(SqlConnection.POSTGRES) ||
+				   dbtype.equalsIgnoreCase(SqlConnection.POSTGIS)) {
+			sqlConn = new PostgresConnection(dbtype, host, port, database, user, passwd);
+		}else {
+			throw new GamaRuntimeException("GAMA does not support: " + dbtype);
+		}
+		if (DEBUG){
+			GuiUtils.debug("SqlUtils.createConnection:"+sqlConn.toString());
+		}
+
+		return sqlConn;
+	}
+
+
+	
 	/*
 	 * @Method: read(byte [] b)
 	 * @Description: Convert Binary to Geometry (MSSQL,Sqlite, Postgres cases)

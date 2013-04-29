@@ -11,9 +11,36 @@ import com.vividsolutions.jts.io.*;
 
 public class PostgresConnection extends SqlConnection {
 
-	private static final boolean DEBUG = false; // Change DEBUG = false for release version
+	//private static final boolean DEBUG = false; // Change DEBUG = false for release version
 	private static final String WKT2GEO = "ST_GeomFromText";
 
+	public PostgresConnection() {
+		super();
+	}
+
+	public PostgresConnection(String dbName) {
+		super(dbName);
+	}
+
+	public PostgresConnection(String venderName, String database) {
+		super(venderName, database);	
+	}
+
+	public PostgresConnection(String venderName, String database, Boolean transformed) {
+		super(venderName, database,transformed);
+	}
+
+
+	public PostgresConnection(String venderName, String url, String port, String dbName, String userName, String password) {
+		super(venderName, url, port, dbName, userName, password);
+	}
+
+	public PostgresConnection(String venderName, String url, String port, String dbName, String userName, String password,
+		Boolean transformed) {
+		super(venderName, url, port, dbName, userName, password, transformed);
+	}
+
+	
 	@Override
 	public Connection connectDB() throws ClassNotFoundException, InstantiationException, SQLException,
 		IllegalAccessException {

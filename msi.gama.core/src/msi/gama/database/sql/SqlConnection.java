@@ -26,7 +26,7 @@ import com.vividsolutions.jts.geom.*;
 */
 public abstract class SqlConnection {
 
-	private static final boolean DEBUG = false; // Change DEBUG = false for release version
+	protected static final boolean DEBUG = false; // Change DEBUG = false for release version
 	public static final String MYSQL = "mysql";
 	public static final String POSTGRES = "postgres";
 	public static final String POSTGIS = "postgis";
@@ -44,52 +44,60 @@ public abstract class SqlConnection {
 	static final String SQLITEDriver = new String("org.sqlite.JDBC");
 	static final String POSTGRESDriver = new String("org.postgresql.Driver");
 
-	static String vender = "";
-	static String dbtype = "";
-	static String url = "";
-	static String port = "";
-	static String dbName = "";
-	static String userName = "";
-	static String password = "";
-	static Boolean transformed = false;
+//	static String vender = "";
+//	static String dbtype = "";
+//	static String url = "";
+//	static String port = "";
+//	static String dbName = "";
+//	static String userName = "";
+//	static String password = "";
+//	static Boolean transformed = false;
+	protected String vender = "";
+	protected String dbtype = "";
+	protected String url = "";
+	protected String port = "";
+	protected String dbName = "";
+	protected String userName = "";
+	protected String password = "";
+	protected static Boolean transformed = false;
 
 	public SqlConnection(String dbName) {
-		SqlConnection.dbName = dbName;
+		this.dbName = dbName;
 	}
 
 	public SqlConnection(String venderName, String database) {
-		SqlConnection.vender = venderName;
-		SqlConnection.dbName = database;
+		this.vender = venderName;
+		this.dbName = database;
 	}
 
 	public SqlConnection(String venderName, String database, Boolean transformed) {
-		SqlConnection.vender = venderName;
-		SqlConnection.dbName = database;
-		SqlConnection.transformed = transformed;
+		this.vender = venderName;
+		this.dbName = database;
+		this.transformed = transformed;
 	}
 
 	public SqlConnection() {}
 
 	public SqlConnection(String venderName, String url, String port, String dbName, String userName, String password) {
-		SqlConnection.vender = venderName;
-		SqlConnection.url = url;
-		SqlConnection.port = port;
-		SqlConnection.dbName = dbName;
-		SqlConnection.userName = userName;
-		SqlConnection.password = password;
-		SqlConnection.dbtype = venderName;
+		this.vender = venderName;
+		this.url = url;
+		this.port = port;
+		this.dbName = dbName;
+		this.userName = userName;
+		this.password = password;
+		this.dbtype = venderName;
 	}
 
 	public SqlConnection(String venderName, String url, String port, String dbName, String userName, String password,
 		Boolean transformed) {
-		SqlConnection.vender = venderName;
-		SqlConnection.url = url;
-		SqlConnection.port = port;
-		SqlConnection.dbName = dbName;
-		SqlConnection.userName = userName;
-		SqlConnection.password = password;
-		SqlConnection.dbtype = venderName;
-		SqlConnection.transformed = transformed;
+		this.vender = venderName;
+		this.url = url;
+		this.port = port;
+		this.dbName = dbName;
+		this.userName = userName;
+		this.password = password;
+		this.dbtype = venderName;
+		this.transformed = transformed;
 
 	}
 

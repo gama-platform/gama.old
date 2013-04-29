@@ -11,8 +11,33 @@ import com.vividsolutions.jts.io.*;
 
 public class MySqlConnection extends SqlConnection {
 
-	private static final boolean DEBUG = false; // Change DEBUG = false for release version
+	//private static final boolean DEBUG = false; // Change DEBUG = false for release version
 	private static final String WKT2GEO = "GeomFromText";
+	public MySqlConnection() {
+		super();
+	}
+
+	public MySqlConnection(String dbName) {
+		super(dbName);
+	}
+
+	public MySqlConnection(String venderName, String database) {
+		super(venderName, database);	
+	}
+
+	public MySqlConnection(String venderName, String database, Boolean transformed) {
+		super(venderName, database,transformed);
+	}
+
+
+	public MySqlConnection(String venderName, String url, String port, String dbName, String userName, String password) {
+		super(venderName, url, port, dbName, userName, password);
+	}
+
+	public MySqlConnection(String venderName, String url, String port, String dbName, String userName, String password,
+		Boolean transformed) {
+		super(venderName, url, port, dbName, userName, password, transformed);
+	}
 
 	@Override
 	public Connection connectDB() throws ClassNotFoundException, InstantiationException, SQLException,
