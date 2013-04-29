@@ -2,7 +2,9 @@ package irit.gaml.skills;
 
 import java.io.IOException;
 import java.util.*;
-import msi.gama.database.SqlConnection;
+
+import msi.gama.database.sql.MSSQLConnection;
+import msi.gama.database.sql.SqlConnection;
 import msi.gama.util.GamaList;
 import org.geotools.factory.GeoTools;
 import com.vividsolutions.jts.geom.*;
@@ -11,7 +13,7 @@ public class MyAPP {
 
 	public static void main(String[] args) throws IOException {
 		System.out.println("Hello GeoTools:" + GeoTools.getVersion());
-		SqlConnection sqlcon = new SqlConnection("SQLSERVER", "tmthai", "1433", "BPH", "sa", "tmt");
+		SqlConnection sqlcon = new MSSQLConnection("SQLSERVER", "tmthai", "1433", "BPH", "sa", "tmt");
 		// GamaList<Object> gamaList=
 		// sqlcon.selectDB("select id_1, name_1,geom.STAsBinary()  from VNM_ADM4");
 		GamaList<Object> gamaList =
