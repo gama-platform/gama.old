@@ -399,55 +399,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 * This method does nothing for Image display
 	 */
 	@Override
-	public void toggleView() {
-		System.out.println("toggle view is only available for Opengl Display");
-	}
-
-	/**
-	 * This method does nothing for Image display
-	 */
-	@Override
-	public void togglePicking() {
-		System.out.println("toggle picking is only available for Opengl Display");
-	}
-
-	/**
-	 * This method does nothing for Image display
-	 */
-	@Override
-	public void toggleArcball() {
-		System.out.println("arcball is only available for Opengl Display");
-	}
-
-	/**
-	 * This method does nothing for Image display
-	 */
-	@Override
-	public void toggleSelectRectangle() {
-		System.out.println("select rectangle tool is only available for Opengl Display");
-	}
-	
-	/**
-	 * This method does nothing for JAVA2D display
-	 */
-	@Override
-	public void toggleTriangulation() {
-		System.out.println("toggleTriangulation tool is only available for Opengl Display");
-	}
-	
-	/**
-	 * This method does nothing for JAVA2D display
-	 */
-	@Override
-	public void toggleSplitLayer() {
-		System.out.println("toggleSplitLayer tool is only available for Opengl Display");
-		
-	}
-
-	/**
-	 * This method does nothing for Image display
-	 */
-	@Override
 	public void addShapeFile() {
 		// TODO Auto-generated method stub
 

@@ -16,7 +16,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Files;
 
-public abstract class AbstractDisplaySurface extends JPanel implements IDisplaySurface {
+public abstract class AbstractAWTDisplaySurface extends JPanel implements IDisplaySurface {
 
 	private String outputName = "";
 	private IGraphics iGraphics;
@@ -43,7 +43,7 @@ public abstract class AbstractDisplaySurface extends JPanel implements IDisplayS
 	protected final GamaRuntimeException[] ex = new GamaRuntimeException[] { null };
 	protected Runnable displayBlock;
 
-	protected AbstractDisplaySurface() {}
+	protected AbstractAWTDisplaySurface() {}
 
 	@Override
 	public ILayerManager getManager() {
@@ -204,55 +204,6 @@ public abstract class AbstractDisplaySurface extends JPanel implements IDisplayS
 	public void setHighlightColor(final int[] rgb) {
 		if ( getIGraphics() == null ) { return; }
 		getIGraphics().setHighlightColor(rgb);
-	}
-
-	/**
-	 * This method does nothing for JAVA2D display
-	 */
-	@Override
-	public void toggleView() {
-		System.out.println("toggle view is only available for Opengl Display");
-	}
-
-	/**
-	 * This method does nothing for JAVA2D display
-	 */
-	@Override
-	public void togglePicking() {
-		System.out.println("toggle picking is only available for Opengl Display");
-	}
-
-	/**
-	 * This method does nothing for JAVA2D display
-	 */
-	@Override
-	public void toggleArcball() {
-		System.out.println("arcball is only available for Opengl Display");
-	}
-
-	/**
-	 * This method does nothing for JAVA2D display
-	 */
-	@Override
-	public void toggleSelectRectangle() {
-		System.out.println("select rectangle tool is only available for Opengl Display");
-	}
-
-	/**
-	 * This method does nothing for JAVA2D display
-	 */
-	@Override
-	public void toggleTriangulation() {
-		System.out.println("toggleTriangulation tool is only available for Opengl Display");
-	}
-
-	/**
-	 * This method does nothing for JAVA2D display
-	 */
-	@Override
-	public void toggleSplitLayer() {
-		System.out.println("toggleSplitLayer tool is only available for Opengl Display");
-
 	}
 
 	/**

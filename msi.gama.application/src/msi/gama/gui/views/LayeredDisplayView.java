@@ -21,6 +21,7 @@ package msi.gama.gui.views;
 import java.awt.Color;
 import javax.swing.JComponent;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IDisplaySurface.OpenGL;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.layers.AbstractLayer;
 import msi.gama.gui.parameters.EditorFactory;
@@ -454,128 +455,134 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 	@Override
 	public void toggleView() {
+		if ( getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
+			new Thread(new Runnable() {
 
-		new Thread(new Runnable() {
+				@Override
+				public void run() {
+					IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
+					while (!surface.canBeUpdated()) {
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
 
-			@Override
-			public void run() {
-				IDisplaySurface surface = getDisplaySurface();
-				while (!surface.canBeUpdated()) {
-					try {
-						Thread.sleep(10);
-					} catch (InterruptedException e) {
-
+						}
 					}
-				}
-				surface.toggleView();
+					surface.toggleView();
 
-			}
-		}).start();
+				}
+			}).start();
+		}
 	}
 
 	@Override
 	public void togglePicking() {
+		if ( getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
+			new Thread(new Runnable() {
 
-		new Thread(new Runnable() {
+				@Override
+				public void run() {
+					IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
+					while (!surface.canBeUpdated()) {
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
 
-			@Override
-			public void run() {
-				IDisplaySurface surface = getDisplaySurface();
-				while (!surface.canBeUpdated()) {
-					try {
-						Thread.sleep(10);
-					} catch (InterruptedException e) {
-
+						}
 					}
-				}
-				surface.togglePicking();
+					surface.togglePicking();
 
-			}
-		}).start();
+				}
+			}).start();
+		}
 	}
 
 	@Override
 	public void toggleArcball() {
+		if ( getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
+			new Thread(new Runnable() {
 
-		new Thread(new Runnable() {
+				@Override
+				public void run() {
+					IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
+					while (!surface.canBeUpdated()) {
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
 
-			@Override
-			public void run() {
-				IDisplaySurface surface = getDisplaySurface();
-				while (!surface.canBeUpdated()) {
-					try {
-						Thread.sleep(10);
-					} catch (InterruptedException e) {
-
+						}
 					}
-				}
-				surface.toggleArcball();
+					surface.toggleArcball();
 
-			}
-		}).start();
+				}
+			}).start();
+		}
 	}
 
 	@Override
 	public void toggleSelectRectangle() {
+		if ( getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
+			new Thread(new Runnable() {
 
-		new Thread(new Runnable() {
+				@Override
+				public void run() {
+					IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
+					while (!surface.canBeUpdated()) {
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
 
-			@Override
-			public void run() {
-				IDisplaySurface surface = getDisplaySurface();
-				while (!surface.canBeUpdated()) {
-					try {
-						Thread.sleep(10);
-					} catch (InterruptedException e) {
-
+						}
 					}
-				}
-				surface.toggleSelectRectangle();
+					surface.toggleSelectRectangle();
 
-			}
-		}).start();
+				}
+			}).start();
+		}
 	}
 
 	@Override
 	public void toggleTriangulation() {
+		if ( getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
+			new Thread(new Runnable() {
 
-		new Thread(new Runnable() {
+				@Override
+				public void run() {
+					IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
+					while (!surface.canBeUpdated()) {
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
 
-			@Override
-			public void run() {
-				IDisplaySurface surface = getDisplaySurface();
-				while (!surface.canBeUpdated()) {
-					try {
-						Thread.sleep(10);
-					} catch (InterruptedException e) {
-
+						}
 					}
-				}
-				surface.toggleTriangulation();
+					surface.toggleTriangulation();
 
-			}
-		}).start();
+				}
+			}).start();
+		}
 	}
 
 	@Override
 	public void toggleSplitLayer() {
+		if ( getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
+			new Thread(new Runnable() {
 
-		new Thread(new Runnable() {
+				@Override
+				public void run() {
+					IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
+					while (!surface.canBeUpdated()) {
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
 
-			@Override
-			public void run() {
-				IDisplaySurface surface = getDisplaySurface();
-				while (!surface.canBeUpdated()) {
-					try {
-						Thread.sleep(10);
-					} catch (InterruptedException e) {
-
+						}
 					}
-				}
-				surface.toggleSplitLayer();
+					surface.toggleSplitLayer();
 
-			}
-		}).start();
+				}
+			}).start();
+		}
 	}
 
 	@Override

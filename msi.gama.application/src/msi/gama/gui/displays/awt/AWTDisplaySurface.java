@@ -35,7 +35,7 @@ import msi.gaml.compilation.ISymbol;
 import com.vividsolutions.jts.geom.Envelope;
 
 @display("java2D")
-public final class AWTDisplaySurface extends AbstractDisplaySurface {
+public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	private Point snapshotDimension;
 	private Point mousePosition;

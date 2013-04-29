@@ -32,6 +32,43 @@ import msi.gama.outputs.IDisplayOutput;
  */
 public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener */{
 
+	public interface OpenGL extends IDisplaySurface {
+
+		/**
+		 * Switch between 2D and 3D view (Only with Opengl view)
+		 */
+		void toggleView();
+
+		/**
+		 * Activate the picking mode (Only with Opengl view)
+		 */
+		void togglePicking();
+
+		/**
+		 * Activate arcball view (Only with Opengl view)
+		 */
+		void toggleArcball();
+
+		/**
+		 * Activate select rectangle tool (Only with Opengl view)
+		 */
+		void toggleSelectRectangle();
+
+		/**
+		 * Show the triangulation (Only with Opengl view)
+		 */
+		void toggleTriangulation();
+
+		/**
+		 * Split species layer in 3D
+		 */
+		void toggleSplitLayer();
+
+		@Override
+		public IGraphics.OpenGL getIGraphics();
+
+	}
+
 	public static final double SELECTION_SIZE = 20; // pixels
 	public static final int MAX_SIZE = 8000; // pixels
 
@@ -54,36 +91,6 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 	void zoomOut();
 
 	void zoomFit();
-
-	/**
-	 * Switch between 2D and 3D view (Only with Opengl view)
-	 */
-	void toggleView();
-
-	/**
-	 * Activate the picking mode (Only with Opengl view)
-	 */
-	void togglePicking();
-
-	/**
-	 * Activate arcball view (Only with Opengl view)
-	 */
-	void toggleArcball();
-
-	/**
-	 * Activate select rectangle tool (Only with Opengl view)
-	 */
-	void toggleSelectRectangle();
-
-	/**
-	 * Show the triangulation (Only with Opengl view)
-	 */
-	void toggleTriangulation();
-
-	/**
-	 * Split species layer in 3D
-	 */
-	void toggleSplitLayer();
 
 	ILayerManager getManager();
 

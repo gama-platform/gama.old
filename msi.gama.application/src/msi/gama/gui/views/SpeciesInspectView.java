@@ -134,11 +134,8 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 					}
 					agentsEditor.updateValue();
 					getViewer().updateItemNames();
-					Menu dropMenu = AgentsMenu.createSpeciesSubMenu(button, species, null); // TODO
-																							// adapt
-					// to
-					// multi-scale
-					// model
+					Menu dropMenu = AgentsMenu.createSpeciesSubMenu(button, species, null);
+					// TODO adapt to multi-scale model
 					button.setMenu(dropMenu);
 					dropMenu.setVisible(true);
 				}

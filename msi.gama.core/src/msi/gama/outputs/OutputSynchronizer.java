@@ -39,21 +39,21 @@ public class OutputSynchronizer {
 	public static void decInitializingViews(String view) {
 		GuiUtils.debug("GuiOutputManager.decInitializingViews: " + view);
 		viewsScheduledToOpen.remove(view);
-		List<String> names = new ArrayList(viewsScheduledToOpen);
 		NumberOpeningViews.decrementAndGet();
-		if ( getNumberOfViewsWaitingToOpen() > 0 ) {
-			GuiUtils.showView(GuiUtils.LAYER_VIEW_ID, names.get(0));
-		}
 	}
 
 	public static void waitForViewsToBeInitialized() {
 		while (getNumberOfViewsWaitingToOpen() > 0) {
 			try {
 				GuiUtils.waitStatus("Initializing " + getNumberOfViewsWaitingToOpen() + " display(s)");
+				if ( getNumberOfViewsWaitingToOpen() > 0 ) {
+					// Workaround for OpenGL views. Necessary to "show" the view even briefly so that OpenGL can call
+					// the init() method of the renderer
+					List<String> names = new ArrayList(viewsScheduledToOpen);
+					GuiUtils.showView(GuiUtils.LAYER_VIEW_ID, names.get(0));
+				}
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
-				// TODO What to do when interrupted ?
-				e.printStackTrace();
 			}
 		}
 	}

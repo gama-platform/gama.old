@@ -27,7 +27,7 @@ import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.displays.awt.AbstractDisplaySurface;
+import msi.gama.gui.displays.awt.AbstractAWTDisplaySurface;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.GraphicDataType.MyJTSGeometry;
@@ -48,7 +48,7 @@ import collada.Output3D;
 import com.vividsolutions.jts.geom.Envelope;
 
 @display("opengl")
-public final class JOGLAWTDisplaySurface extends AbstractDisplaySurface {
+public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface implements IDisplaySurface.OpenGL {
 
 	private static final long serialVersionUID = 1L;
 	private PopupMenu agentsMenu = new PopupMenu();
