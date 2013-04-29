@@ -505,7 +505,7 @@ public class Graphs {
 		value = "returns a graph loaded from a given file encoded into a given format.",
 		comment = comment,
 		special_cases = {
-			"\format\": the format of the file",
+			"\"format\": the format of the file",
 			"\"filename\": the filename of the file containing the network",
 			"\"edges_specy\": the species of edges",
 			"\"vertices_specy\": the species of vertices"},	
@@ -552,7 +552,7 @@ public class Graphs {
 		value = "returns a graph loaded from a given file encoded into a given format.",
 		comment = comment,
 		special_cases = {
-			"\format\": the format of the file",
+			"\"format\": the format of the file",
 			"\"file\": the file containing the network",
 			"\"edges_specy\": the species of edges",
 				"\"vertices_specy\": the species of vertices"},	
@@ -579,7 +579,7 @@ public class Graphs {
 		value = "returns a graph loaded from a given file encoded into a given format.",
 		comment = comment,
 		special_cases = {
-			"\format\": the format of the file",
+			"\"format\": the format of the file",
 			"\"filename\": the filename of the file containing the network"
 			},	
 		examples = {
@@ -600,7 +600,7 @@ public class Graphs {
 		value = "returns a graph loaded from a given file encoded into a given format.",
 		comment = comment,
 		special_cases = {
-			"\format\": the format of the file",
+			"\"format\": the format of the file",
 			"\"file\": the file containing the network",
 			},	
 		examples = {
