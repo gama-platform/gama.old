@@ -2,7 +2,7 @@ model boids
 
 
 global { 
-	int number_of_agents parameter: 'Number of agents' <- 100 min: 1 max: 1000000;
+	int number_of_agents parameter: 'Number of agents' <- 10 min: 1 max: 1000000;
 	int number_of_obstacles parameter: 'Number of obstacles' <- 0 min: 0;
 	float maximal_speed parameter: 'Maximal speed' <- 15.0 min: 0.1 max: 15.0;
 	int cohesion_factor parameter: 'Cohesion Factor' <- 200;
@@ -47,6 +47,12 @@ global {
 			set location <- goal;
 		}
 	}
+	
+	reflex write{
+		write "x: " + first(boids).location.x + " y:" + first(boids).location.y;
+		write "heading: " + first(boids).heading;
+	}
+	
 	
 	 reflex create_flocks {
 	 	if create_flock {
@@ -274,7 +280,7 @@ entities {
 		}
 		
 		aspect image {
-			draw image: images at (rnd(2)) size: 35 rotate: heading color: rgb('black');      
+			draw image: images at (rnd(2)) size: 35 rotate: heading color: rgb('black') ;      
 		}
 		
 		aspect default { 
@@ -286,7 +292,7 @@ entities {
 			let hue <- heading/360;
 			let  color <- color hsb_to_rgb ([hue,1.0,1.0]);
 			let geometry1 <- geometry (triangle(20));
-			draw geometry: geometry1    size: 15 rotate: 90 + heading color: color border:color depth:15;
+			draw geometry: geometry1    size: 15 rotate: 90 + heading color: color border:color depth:5;
 		}
 	} 
 	
@@ -304,17 +310,50 @@ entities {
 experiment start type: gui {
 	output {
 
-		display RealBoids type:opengl {
+
+		display RealBoids  type:opengl {
+		
 			image name:'background' file:'../images/ocean.jpg' z:0;
 			species boids aspect: image z:0.2 transparency:0.5;
 			species boids_goal z:0.25 transparency:0.2;
-			species obstacle ;		
+			species obstacle ;
+			
+			
+			species boids  aspect: dynamicColor z:0.2 transparency:0.2 ;
+			species boids_goal  transparency:0.2; 		
 		}
 		
-		display DynamicColor  type:opengl ambient_light:100{
+		display RealBoids2  type:opengl camera_pos:{-world.shape.width/2+int(first(boids).location.x),world.shape.height/2-int(first(boids).location.y),250} 
+		camera_look_pos:{-world.shape.width/2+int(first(boids).location.x),world.shape.height/2-(first(boids).location.y),0}{
+		//display RealBoids  type:opengl camera_pos:{-world.shape.width/2+time,world.shape.height/2-time,1000} camera_look_pos:{-world.shape.width/2+time,world.shape.height/2-time,0}{	
+		
+			image name:'background' file:'../images/ocean.jpg' z:0;
+			species boids aspect: image z:0.2 transparency:0.5;
+			species boids_goal z:0.25 transparency:0.2;
+			species obstacle ;
+			
+			
+			species boids  aspect: dynamicColor z:0.2 transparency:0.2 ;
+			species boids_goal  transparency:0.2; 		
+		}
+		
+			
+		display RealBoids3  type:opengl ambient_light:100 camera_pos:{-world.shape.width/2+int(first(boids).location.x),world.shape.height/2-int(first(boids).location.y),10} 
+		camera_look_pos:{cos(first(boids).heading)*world.shape.width,-sin(first(boids).heading)*world.shape.height,0} camera_up_vector:{0.0,0.0,1.0}{	
+			image name:'background' file:'../images/ocean.jpg' z:0;
+			species boids aspect: image z:0.0 transparency:0.5;
+			species boids_goal z:0.0 transparency:0.2;
+			species obstacle ;
+			
+			
+			species boids  aspect: dynamicColor z:0.0 transparency:0.2 ;
+			species boids_goal  transparency:0.0; 		
+		}
+		
+		/*display DynamicColor  type:opengl ambient_light:100{
 			species boids  aspect: dynamicColor ;
 			species boids_goal  transparency:0.2 ;	
-		}
+		}*/
 
 	}
 }
