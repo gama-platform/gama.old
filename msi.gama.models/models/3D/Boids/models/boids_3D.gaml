@@ -1,4 +1,6 @@
 model boids 
+
+
 global { 
 	int number_of_agents parameter: 'Number of agents' <- 100 min: 1 max: 1000000;
 	int number_of_obstacles parameter: 'Number of obstacles' <- 0 min: 0;
@@ -276,20 +278,21 @@ entities {
 		}
 		
 		aspect default { 
-			draw triangle(15) rotate: 90 + heading color: rgb('yellow');
+			draw triangle(15) rotate: 90 + heading color: rgb('yellow') ;
 		}
+
 		
 		aspect dynamicColor{
 			let hue <- heading/360;
 			let  color <- color hsb_to_rgb ([hue,1.0,1.0]);
 			let geometry1 <- geometry (triangle(20));
-			draw geometry: geometry1    size: 15 rotate: 90 + heading color: color border:color;
+			draw geometry: geometry1    size: 15 rotate: 90 + heading color: color border:color depth:15;
 		}
 	} 
 	
 	species obstacle skills: [moving] {
 		float speed <- 0.1;
-		 		
+		 
 		aspect default {
 			draw triangle(20) color: rgb('yellow');
 		}
@@ -300,21 +303,18 @@ entities {
 
 experiment start type: gui {
 	output {
-		
-		display RealBoids   type:opengl{
+
+		display RealBoids type:opengl {
 			image name:'background' file:'../images/ocean.jpg' z:0;
 			species boids aspect: image z:0.2 transparency:0.5;
 			species boids_goal z:0.25 transparency:0.2;
-			species obstacle ;	
-			
+			species obstacle ;		
 		}
 		
-		display DynamicColor   type:opengl{
-			species boids  aspect: dynamicColor z:0.25;
-			species boids_goal  transparency:0.2 z:0.25;	
+		display DynamicColor  type:opengl ambient_light:100{
+			species boids  aspect: dynamicColor ;
+			species boids_goal  transparency:0.2 ;	
 		}
-		
-		
 
 	}
 }
