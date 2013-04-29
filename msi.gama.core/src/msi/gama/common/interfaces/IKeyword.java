@@ -56,6 +56,8 @@ public interface IKeyword {
 	public static final String BREAK = "break";
 	public static final String BRIGHTER = "brighter";
 	public static final String CAMERA_POS = "camera_pos";
+	public static final String CAMERA_LOOK_POS = "camera_look_pos";
+	public static final String CAMERA_UP_VECTOR = "camera_up_vector";
 	public static final String CAPTURE = "capture";
 	public static final String CATEGORY = "category";
 	public static final String CELLULAR = "cellular";

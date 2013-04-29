@@ -263,6 +263,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
 			gl.glPolygonOffset(1, 1);
 
+		
+			
 			if ( dem.isInitialized() == true ) {
 				dem.DisplayDEM(gl);
 			} else {

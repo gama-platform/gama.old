@@ -3,6 +3,9 @@ package msi.gama.jogl.utils.Camera;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
+
 public class Camera {
 	public double xPos;
 	public double yPos;
@@ -19,6 +22,8 @@ public class Camera {
 	private float envWidth;
 	private float envHeight;
 	
+	private ILocation upVector;
+	
 	
 	
 	//Draw the model on 0,0,0 coordinate
@@ -32,6 +37,7 @@ public class Camera {
 		xLPos = 0;
 		yLPos = 0;
 		setzLPos(10);
+		setUpVector(new GamaPoint(0.0,1.0,0.0));
 	}
 
 	public Camera(double xPos, double yPos, double zPos, double xLPos,
@@ -286,9 +292,7 @@ public class Camera {
 		//FIXME: need to see the influence of the different parameter.
 		glu.gluPerspective(45.0f, aspect, 0.1f, maxDim*100);
 		glu.gluLookAt(this.getXPos(), this.getYPos(), this.getZPos(),
-				this.getXLPos(), this.getYLPos(), this.getZLPos(), 0.0, 1.0,
-				0.0);
-
+				this.getXLPos(), this.getYLPos(), this.getZLPos(), getUpVector().getX(), getUpVector().getY(),getUpVector().getZ());
 	}
 
 	public void InitializeCamera(float envWidth, float envHeight) {
@@ -375,6 +379,14 @@ public class Camera {
 
 	public void yawLeft(double amount) {
 		this.yaw -= amount;
+	}
+
+	public ILocation getUpVector() {
+		return upVector;
+	}
+
+	public void setUpVector(ILocation upVector) {
+		this.upVector = upVector;
 	}
 
 	/* ---------------------------------------------------- */

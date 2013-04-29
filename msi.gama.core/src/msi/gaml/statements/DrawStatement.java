@@ -310,7 +310,7 @@ public class DrawStatement extends AbstractStatementSequence {
 				g1.getInnerGeometry().setUserData(depth.value(scope));
 
 			}
-
+			
 			return gr.drawGamaShape(scope, g1, getColor(scope), !getEmpty(scope), getBorder(scope),
 				getRotation(scope), getRounded(scope));
 

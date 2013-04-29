@@ -99,6 +99,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	// Picked (to trigg when a new object has been picked)
 	private int currentPicked = -1;
 	private int pickedObjectIndex = -1;
+	
+	private double currentXScale = 1, currentYScale = 1;
 
 	/**
 	 * @param JOGLAWTDisplaySurface displaySurface
@@ -218,7 +220,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	 */
 	@Override
 	public void setXScale(final double scale) {
-		// this.currentXScale = scale;
+		this.currentXScale = scale;
 	}
 
 	/**
@@ -239,7 +241,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	 */
 	@Override
 	public void setYScale(final double scale) {
-		// this.currentYScale = scale;
+		this.currentYScale = scale;
 	}
 
 	/**
@@ -595,12 +597,12 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	public Rectangle2D drawString(final IAgent agent, final String string, final Color stringColor,
 		final Integer angle, final float z) {
 		// Draw the text at the centroid of the Agent
-		if ( agent != null ) {
+		/*if ( agent != null ) {
 			addStringInStrings(string, (float) agent.getGeometry().getLocation().getX(), -(float) agent.getGeometry()
 				.getLocation().getY(), z);
-		} else {
+		} else {*/
 			addStringInStrings(string, (float) curX, -(float) curY, z);
-		}
+		//}
 		setDrawingColor(stringColor);
 		Rectangle2D r = null;
 		return r;
@@ -1157,11 +1159,26 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	@Override
 	public void setCameraPosition(final ILocation camPos) {
 
-		if ( camPos.equals(new GamaPoint(-1, -1, -1)) ) {// No change
-			System.out.println("no change");
+		if ( camPos.equals(new GamaPoint(-1, -1, -1)) ) {// No change;
 		} else {
 			getMyGLRender().camera.updatePosition(camPos.getX(), camPos.getY(), camPos.getZ());
 		}
+	}
+	
+	@Override
+	public void setCameraLookPosition(ILocation camLookPos) {
+		if ( camLookPos.equals(new GamaPoint(-1, -1, -1)) ) {// No change
+		} else {
+			getMyGLRender().camera.lookPosition(camLookPos.getX(), camLookPos.getY(), camLookPos.getZ());
+		}
+		
+	}
+	
+	@Override
+	public void setCameraUpVector(ILocation upVector) {
+		// TODO Auto-generated method stub
+		getMyGLRender().camera.setUpVector(upVector);
+		
 	}
 
 	@Override
@@ -1342,5 +1359,9 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	public void setPickedObjectIndex(int pickedObjectIndex) {
 		this.pickedObjectIndex = pickedObjectIndex;
 	}
+
+	
+
+	
 
 }

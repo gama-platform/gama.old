@@ -287,6 +287,16 @@ public interface IGraphics {
 		 * Define the camera position (work only in Opengl)
 		 */
 		public abstract void setCameraPosition(final ILocation camPos);
+		
+		/*
+		 * Define the camera position (work only in Opengl)
+		 */
+		public abstract void setCameraLookPosition(final ILocation camPos);
+		
+		/*
+		 * Define the camera position (work only in Opengl)
+		 */
+		public abstract void setCameraUpVector(final ILocation upVector);
 
 		public abstract void cleanStrings();
 

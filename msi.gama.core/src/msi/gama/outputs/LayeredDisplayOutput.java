@@ -24,6 +24,7 @@ import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.simulation.ISimulationAgent;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.layers.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -56,7 +57,9 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.AMBIENT_LIGHT, type = { IType.INT, IType.COLOR }, optional = true),
-	@facet(name = IKeyword.CAMERA_POS, type = IType.POINT, optional = true),
+	@facet(name = IKeyword.CAMERA_POS, type = { IType.POINT, IType.AGENT }, optional = true),
+	@facet(name = IKeyword.CAMERA_LOOK_POS, type = IType.POINT, optional = true),
+	@facet(name = IKeyword.CAMERA_UP_VECTOR, type = IType.POINT, optional = true),
 	@facet(name = IKeyword.POLYGONMODE, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL, IType.POINT }, optional = true),
 	@facet(name = IKeyword.OUTPUT3D, type = { IType.BOOL, IType.POINT }, optional = true) }, omissible = IKeyword.NAME)
@@ -76,8 +79,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private Color ambientLightColor = new GamaColor(255, 255, 255);
 	// Set it to (-1,-1,-1) to set the camera with the right value if no value defined.
 	private ILocation cameraPos = new GamaPoint(-1, -1, -1);
+	private ILocation cameraLookPos = new GamaPoint(-1, -1, -1);
+	private ILocation cameraUpVector = new GamaPoint(0, 1, 0);
 	private boolean constantAmbientLight = true;
 	private boolean constantCamera = true;
+	private boolean constantCameraLook = true;
 	private boolean polygonmode = true;
 	private String displayType = JAVA2D;
 	private ILocation imageDimension = new GamaPoint(-1, -1);
@@ -151,6 +157,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		IExpression camera = getFacet(IKeyword.CAMERA_POS);
 		if ( camera != null ) {
+
 			cameraPos = Cast.asPoint(getOwnScope(), camera.value(getOwnScope()));
 
 			if ( camera.isConst() ) {
@@ -159,6 +166,23 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				constantCamera = false;
 			}
 
+		}
+		
+		IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
+		if ( cameraLook != null ) {
+			cameraLookPos = Cast.asPoint(getOwnScope(), cameraLook.value(getOwnScope()));
+
+			if ( cameraLook.isConst() ) {
+				constantCameraLook = true;
+			} else {
+				constantCameraLook = false;
+			}
+
+		}
+		//Set the up vector of the opengl Camera (see gluPerspective)
+		IExpression cameraUp = getFacet(IKeyword.CAMERA_UP_VECTOR);
+		if ( cameraUp != null ) {
+			cameraUpVector = Cast.asPoint(getOwnScope(), cameraUp.value(getOwnScope()));
 		}
 
 		IExpression poly = getFacet(IKeyword.POLYGONMODE);
@@ -210,9 +234,17 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			if ( !constantCamera ) {
 				IExpression camera = getFacet(IKeyword.CAMERA_POS);
 				if ( camera != null ) {
-					cameraPos = Cast.asPoint(getOwnScope(), camera.value(getOwnScope()));
+				  cameraPos = Cast.asPoint(getOwnScope(), camera.value(getOwnScope()));
 				}
 				graphics.setCameraPosition(cameraPos);
+			}
+			
+			if ( !constantCameraLook ) {
+				IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
+				if ( cameraLook != null ) {
+					cameraLookPos = Cast.asPoint(getOwnScope(), cameraLook.value(getOwnScope()));
+				}
+				graphics.setCameraLookPosition(cameraLookPos);
 			}
 		}
 
@@ -276,6 +308,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			graphics.setAmbientLightValue((GamaColor) ambientLightColor);
 			graphics.setPolygonMode(polygonmode);
 			graphics.setCameraPosition(cameraPos);
+			graphics.setCameraLookPosition(cameraLookPos);
+			graphics.setCameraUpVector(cameraUpVector);
 		}
 	}
 
