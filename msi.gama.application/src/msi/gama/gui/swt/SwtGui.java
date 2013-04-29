@@ -129,14 +129,12 @@ public class SwtGui implements IGui {
 		return label;
 	}
 
-	public static ISharedImages eclipseImages = PlatformUI.getWorkbench().getSharedImages();
-
 	/*
 	 * Use "ISharedImages.field"
 	 */
 	public static Image getEclipseIcon(String icon) {
 
-		return eclipseImages.getImage(icon);
+		return PlatformUI.getWorkbench().getSharedImages().getImage(icon);
 	}
 
 	private class Views {
