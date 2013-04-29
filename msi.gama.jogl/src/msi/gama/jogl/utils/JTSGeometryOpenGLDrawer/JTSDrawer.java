@@ -86,12 +86,12 @@ public class JTSDrawer {
 		final boolean fill, final Color border, final boolean isTextured, final Integer angle,
 		final boolean drawPolygonContour,final boolean rounded) {
 
-		// FIXME: Angle rotation is not implemented yet
-
+		
 		// Set z_layer
 		if ( z_layer != 0 ) {
 			myGl.glTranslatef(0.0f, 0.0f, z_layer);
 		}
+		
 
 		myGl.glNormal3f(0.0f, 0.0f, 1.0f);
 
@@ -141,9 +141,15 @@ public class JTSDrawer {
 		if ( isTextured ) {
 			DrawTexturedPolygon(p, angle);
 		}
+		
+		
+		
 		if ( z_layer != 0 ) {
 			myGl.glTranslatef(0.0f, 0.0f, -z_layer);
 		}
+	
+		
+		
 	}
 
 	void DrawTesselatedPolygon(final Polygon p) {
@@ -269,7 +275,7 @@ public class JTSDrawer {
 		// Binds this texture to the current GL context.
 		myGLRender.textures[2].bind();
 
-		if ( angle != 0 ) {
+		/*if ( angle != 0 ) {
 			myGl.glTranslatef((float) p.getCentroid().getX(), yFlag *
 				(float) p.getCentroid().getY(), 0.0f);
 			// FIXME:Check counterwise or not, and do we rotate around the
@@ -284,9 +290,9 @@ public class JTSDrawer {
 			myGl.glRotatef(angle, 0.0f, 0.0f, 1.0f);
 			myGl.glTranslatef(-(float) p.getCentroid().getX(), -yFlag *
 				(float) p.getCentroid().getY(), 0.0f);
-		} else {
+		} else {*/
 			DrawTexturedQuad(p);
-		}
+		//}
 
 		myGl.glDisable(GL.GL_TEXTURE_2D);
 	}
