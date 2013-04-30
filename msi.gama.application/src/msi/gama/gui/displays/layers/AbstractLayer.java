@@ -38,32 +38,21 @@ import org.eclipse.swt.widgets.Composite;
 public abstract class AbstractLayer implements ILayer {
 
 	private Integer order = 0;
-	protected boolean disposed = false;
 	protected ILayerStatement definition;
 	private String name;
-	private final java.awt.Point position; // The position in pixels
-	protected java.awt.Point size; // The extension (from the position) in pixels
-	private double env_width, env_height;
+	private final Point positionInPixels, sizeInPixels;
 
-	protected AbstractLayer(final double env_width, final double env_height, final ILayerStatement layer,
-		final IGraphics dg) {
-
+	protected AbstractLayer(final ILayerStatement layer) {
 		definition = layer;
 		if ( definition != null ) {
-			// model.setPhysicalLayer(this);
 			setName(definition.getName());
 		}
-		size = new Point(0, 0);
-		position = new Point(0, 0);
-		this.env_width = env_width;
-		this.env_height = env_height;
+		sizeInPixels = new Point(0, 0);
+		positionInPixels = new Point(0, 0);
 	}
 
 	@Override
-	public void updateEnvDimensions(final double env_width, final double env_height) {
-		this.env_width = env_width;
-		this.env_height = env_height;
-	}
+	public void outputChanged() {}
 
 	@Override
 	public void setOrder(final Integer o) {
@@ -77,7 +66,7 @@ public abstract class AbstractLayer implements ILayer {
 
 	@Override
 	public int compareTo(final ILayer o) {
-		return order.compareTo(((ILayer) o).getOrder());
+		return order.compareTo(o.getOrder());
 	}
 
 	public void fillComposite(final Composite compo, final IDisplaySurface container) {
@@ -142,17 +131,14 @@ public abstract class AbstractLayer implements ILayer {
 	}
 
 	@Override
-	public void dispose() {
-		// disposed = true;
-	}
+	public void dispose() {}
 
 	@Override
 	public final void drawDisplay(final IGraphics g) throws GamaRuntimeException {
-		if ( disposed ) { return; }
 		if ( definition != null ) {
-			g.newLayer(definition.getElevation(), definition.getRefresh());
 			g.setOpacity(definition.getTransparency());
 			setPositionAndSize(definition.getBoundingBox(), g);
+			g.newLayer(this);
 		}
 		privateDrawDisplay(g);
 	}
@@ -175,70 +161,59 @@ public abstract class AbstractLayer implements ILayer {
 		definition.setElevation(elevation);
 	}
 
+	@Override
+	public double getZPosition() {
+		return definition.getElevation();
+	}
+
+	@Override
+	public Boolean isDynamic() {
+		return definition.getRefresh();
+	}
+
 	/**
 	 * @param boundingBox
 	 * @param g
 	 */
-	private void setPositionAndSize(final Rectangle2D.Double b, final IGraphics g) {
+	private void setPositionAndSize(final Rectangle2D.Double boundingBox, final IGraphics g) {
 		// Voir comment conserver cette information
-		int w = g.getDisplayWidth();
-		int h = g.getDisplayHeight();
-		double x = (Math.signum(b.x) < 0 ? w : 0) + (Math.abs(b.x) <= 1 ? w * b.x : b.x);
-		double y = (Math.signum(b.y) < 0 ? h : 0) + (Math.abs(b.y) <= 1 ? h * b.y : b.y);
-		double width = b.width <= 1 ? w * b.width : b.width;
-		double height = b.height <= 1 ? h * b.height : b.height;
-		// selectionWidthInModel = IDisplaySurface.SELECTION_SIZE / 2d / size.x * env_width;
-		size.setLocation(width, height);
-		position.setLocation(x, y);
-		g.setXScale(size.x / env_width);
-		g.setYScale(size.y / env_height);
-		g.setDrawingOffset(position.x, position.y);
-		g.setDrawingCoordinates(0, 0);
-		g.setDrawingDimensions(size.x, size.y);
-	}
+		int widthOfDisplayInPixels = g.getDisplayWidthInPixels();
+		int heighOfDisplayInPixels = g.getDisplayHeightInPixels();
+		double x =
+			(Math.signum(boundingBox.x) < 0 ? widthOfDisplayInPixels : 0) +
+				(Math.abs(boundingBox.x) <= 1 ? widthOfDisplayInPixels * boundingBox.x : boundingBox.x);
+		double y =
+			(Math.signum(boundingBox.y) < 0 ? heighOfDisplayInPixels : 0) +
+				(Math.abs(boundingBox.y) <= 1 ? heighOfDisplayInPixels * boundingBox.y : boundingBox.y);
+		double width = boundingBox.width <= 1 ? widthOfDisplayInPixels * boundingBox.width : boundingBox.width;
+		double height = boundingBox.height <= 1 ? heighOfDisplayInPixels * boundingBox.height : boundingBox.height;
+		sizeInPixels.setLocation(width, height);
+		positionInPixels.setLocation(x, y);
 
-	public int getDisplayWidth() {
-		return size.x;
 	}
 
 	@Override
-	public double getXScale() {
-		return size.x / env_width;
+	public Point getSizeInPixels() {
+		return sizeInPixels;
 	}
 
 	@Override
-	public double getYScale() {
-		return size.y / env_height;
-	}
-
-	public int getDisplayHeight() {
-		return size.y;
-	}
-
-	public Point getSize() {
-		return size;
-	}
-
-	@Override
-	public Point getPosition() {
-		return position;
-	}
-
-	public Point getEnvironmentSize() {
-		return new Point((int) env_width, (int) env_height);
+	public Point getPositionInPixels() {
+		return positionInPixels;
 	}
 
 	@Override
 	public boolean containsScreenPoint(final int x, final int y) {
-		return x >= position.x && y >= position.y && x <= position.x + size.x && y <= position.y + size.y;
+		return x >= positionInPixels.x && y >= positionInPixels.y && x <= positionInPixels.x + sizeInPixels.x &&
+			y <= positionInPixels.y + sizeInPixels.y;
 	}
 
 	@Override
-	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen) {
-		double xScale = size.x / env_width;
-		double yScale = size.y / env_height;
-		int xInDisplay = xOnScreen - position.x;
-		int yInDisplay = yOnScreen - position.y;
+	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, IDisplaySurface g) {
+		double xScale = sizeInPixels.x / g.getEnvWidth();
+		double yScale = sizeInPixels.y / g.getEnvHeight();
+		int xInDisplay = xOnScreen - positionInPixels.x;
+		int yInDisplay = yOnScreen - positionInPixels.y;
 		double xInModel = xInDisplay / xScale;
 		double yInModel = yInDisplay / yScale;
 		return new GamaPoint(xInModel, yInModel);
@@ -249,7 +224,7 @@ public abstract class AbstractLayer implements ILayer {
 	protected abstract void privateDrawDisplay(final IGraphics g) throws GamaRuntimeException;
 
 	@Override
-	public Set<IAgent> collectAgentsAt(final int x, final int y) {
+	public Set<IAgent> collectAgentsAt(final int x, final int y, IDisplaySurface g) {
 		// Nothing to do by default
 		return Collections.EMPTY_SET;
 	}

@@ -18,7 +18,7 @@
  */
 package msi.gama.gui.displays.layers;
 
-import java.awt.*;
+import java.awt.Color;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.outputs.layers.*;
@@ -34,19 +34,15 @@ import org.eclipse.swt.widgets.Composite;
  */
 public class TextLayer extends AbstractLayer {
 
-	private Font font;
-
-	public TextLayer(final double env_width, final double env_height, final ILayerStatement layer,
-		final IGraphics dg) {
-		super(env_width, env_height, layer, dg);
-		font = new Font("Helvetica", Font.PLAIN, 24);
+	public TextLayer(final ILayerStatement layer) {
+		super(layer);
 	}
 
 	@Override
 	public void fillComposite(final Composite compo, final IDisplaySurface container) {
 		super.fillComposite(compo, container);
-		EditorFactory.createExpression(compo, "Expression:",
-			((TextLayerStatement) definition).getTextExpr(), new EditorListener<IExpression>() {
+		EditorFactory.createExpression(compo, "Expression:", ((TextLayerStatement) definition).getTextExpr(),
+			new EditorListener<IExpression>() {
 
 				@Override
 				public void valueModified(final IExpression newValue) {
@@ -76,17 +72,11 @@ public class TextLayer extends AbstractLayer {
 
 	@Override
 	public void privateDrawDisplay(final IGraphics g) {
-		if ( disposed ) { return; }
 		TextLayerStatement model = (TextLayerStatement) this.definition;
 		String text = model.getText();
 		Color color = model.getColor();
 		String f = model.getFontName();
-		int s = size.y;
-		if ( !font.getName().equals(f) || font.getSize() != s ) {
-			font = new Font(f, Font.PLAIN, s);
-		}
-		g.setFont(font);
-		g.drawString(null,text, color, null,0.0f);
+		g.drawString(text, color, null, null, f, null, null, 0.0);
 	}
 
 	@Override

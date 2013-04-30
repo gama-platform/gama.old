@@ -42,6 +42,8 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	protected Color bgColor = Color.black;
 	protected final GamaRuntimeException[] ex = new GamaRuntimeException[] { null };
 	protected Runnable displayBlock;
+	private double envWidth;
+	private double envHeight;
 
 	protected AbstractAWTDisplaySurface() {}
 
@@ -258,9 +260,9 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	public void setOrigin(final int x, final int y) {
 		this.origin = new Point(x, y);
 		translation.setToTranslation(origin.x, origin.y);
-		if ( getIGraphics() != null ) {
-			getIGraphics().setClipping(getImageClipBounds());
-		}
+		// if ( getIGraphics() != null ) {
+		// ((AWTDisplayGraphics) getIGraphics()).getGraphics2D().setClip(getImageClipBounds());
+		// }
 		redrawNavigator();
 	}
 
@@ -337,12 +339,12 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 			}
 			buffImage = newImage;
 			if ( getIGraphics() == null ) {
-				setIGraphics(new AWTDisplayGraphics(buffImage));
+				setIGraphics(new AWTDisplayGraphics(buffImage, (int) getEnvWidth(), (int) getEnvHeight()));
 			} else {
-				getIGraphics().setDisplayDimensions(bWidth, bHeight);
+				getIGraphics().setDisplayDimensionsInPixels(bWidth, bHeight);
 				getIGraphics().setGraphics((Graphics2D) newImage.getGraphics());
 			}
-			getIGraphics().setClipping(getImageClipBounds());
+			// ((AWTDisplayGraphics) getIGraphics()).getGraphics2D().setClip(getImageClipBounds());
 			redrawNavigator();
 			canBeUpdated(true);
 			return true;
@@ -354,6 +356,24 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	public void setIGraphics(IGraphics iGraphics) {
 		this.iGraphics = iGraphics;
+	}
+
+	@Override
+	public double getEnvWidth() {
+		return envWidth;
+	}
+
+	public void setEnvWidth(double envWidth) {
+		this.envWidth = envWidth;
+	}
+
+	@Override
+	public double getEnvHeight() {
+		return envHeight;
+	}
+
+	public void setEnvHeight(double envHeight) {
+		this.envHeight = envHeight;
 	}
 
 }

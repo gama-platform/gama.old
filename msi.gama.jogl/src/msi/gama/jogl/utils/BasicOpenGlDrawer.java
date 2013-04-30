@@ -36,13 +36,15 @@ public class BasicOpenGlDrawer {
 		if ( geometry.offSet.x != 0 || geometry.offSet.y != 0 ) {
 			myGl.glTranslated(geometry.offSet.x, -geometry.offSet.y, 0.0f);
 		}
-		
+
 		// Rotate angle (in XY plan)
-		if(geometry.angle !=0){
-			myGl.glTranslatef((float) geometry.geometry.getCentroid().getX(), this.myJTSDrawer.yFlag *(float) geometry.geometry.getCentroid().getY(), 0.0f);
+		if ( geometry.angle != 0 ) {
+			myGl.glTranslatef((float) geometry.geometry.getCentroid().getX(), this.myJTSDrawer.yFlag *
+				(float) geometry.geometry.getCentroid().getY(), 0.0f);
 			myGl.glRotatef(-geometry.angle, 0.0f, 0.0f, 1.0f);
-			myGl.glTranslatef(-(float) geometry.geometry.getCentroid().getX(), -this.myJTSDrawer.yFlag*(float) geometry.geometry.getCentroid().getY(),0.0f);
-	        	
+			myGl.glTranslatef(-(float) geometry.geometry.getCentroid().getX(), -this.myJTSDrawer.yFlag *
+				(float) geometry.geometry.getCentroid().getY(), 0.0f);
+
 		}
 
 		for ( int i = 0; i < geometry.geometry.getNumGeometries(); i++ ) {
@@ -89,19 +91,22 @@ public class BasicOpenGlDrawer {
 					myJTSDrawer.DrawSphere(geometry.agent.getLocation(), geometry.z_layer, geometry.height,
 						geometry.color, geometry.alpha);
 				} else {
-					myJTSDrawer.DrawPoint((Point) geometry.geometry, geometry.z_layer, 10, myGLRender.displaySurface
-						.getIGraphics().getMaxEnvDim() / 1000, geometry.color, geometry.alpha);
+					myJTSDrawer.DrawPoint((Point) geometry.geometry, geometry.z_layer, 10,
+						(float) myGLRender.displaySurface.getIGraphics().getMaxEnvDim() / 1000, geometry.color,
+						geometry.alpha);
 				}
 			}
 		}
 		// Rotate angle (in XY plan)
-		if(geometry.angle !=0){
-			myGl.glTranslatef((float) geometry.geometry.getCentroid().getX(), this.myJTSDrawer.yFlag *(float) geometry.geometry.getCentroid().getY(), 0.0f);
+		if ( geometry.angle != 0 ) {
+			myGl.glTranslatef((float) geometry.geometry.getCentroid().getX(), this.myJTSDrawer.yFlag *
+				(float) geometry.geometry.getCentroid().getY(), 0.0f);
 			myGl.glRotatef(geometry.angle, 0.0f, 0.0f, 1.0f);
-			myGl.glTranslatef(-(float) geometry.geometry.getCentroid().getX(), -this.myJTSDrawer.yFlag*(float) geometry.geometry.getCentroid().getY(),0.0f);
-	        	
+			myGl.glTranslatef(-(float) geometry.geometry.getCentroid().getX(), -this.myJTSDrawer.yFlag *
+				(float) geometry.geometry.getCentroid().getY(), 0.0f);
+
 		}
-				
+
 		if ( geometry.offSet.x != 0 || geometry.offSet.y != 0 ) {
 			myGl.glTranslated(-geometry.offSet.x, geometry.offSet.y, 0.0f);
 		}
@@ -115,13 +120,15 @@ public class BasicOpenGlDrawer {
 	public void DrawJTSGeometry(MyJTSGeometry geometry, Color c) {
 
 		myGl.glTranslated(geometry.offSet.x, -geometry.offSet.y, 0.0f);
-		
+
 		// Rotate angle (in XY plan)
-		if(geometry.angle !=0){
-			myGl.glTranslatef((float) geometry.geometry.getCentroid().getX(), this.myJTSDrawer.yFlag *(float) geometry.geometry.getCentroid().getY(), 0.0f);
+		if ( geometry.angle != 0 ) {
+			myGl.glTranslatef((float) geometry.geometry.getCentroid().getX(), this.myJTSDrawer.yFlag *
+				(float) geometry.geometry.getCentroid().getY(), 0.0f);
 			myGl.glRotatef(-geometry.angle, 0.0f, 0.0f, 1.0f);
-			myGl.glTranslatef(-(float) geometry.geometry.getCentroid().getX(), -this.myJTSDrawer.yFlag*(float) geometry.geometry.getCentroid().getY(),0.0f);
-	        	
+			myGl.glTranslatef(-(float) geometry.geometry.getCentroid().getX(), -this.myJTSDrawer.yFlag *
+				(float) geometry.geometry.getCentroid().getY(), 0.0f);
+
 		}
 
 		for ( int i = 0; i < geometry.geometry.getNumGeometries(); i++ ) {
@@ -173,15 +180,17 @@ public class BasicOpenGlDrawer {
 
 			}
 		}
-		
+
 		// Rotate angle (in XY plan)
-		if(geometry.angle !=0){
-			myGl.glTranslatef((float) geometry.geometry.getCentroid().getX(), this.myJTSDrawer.yFlag *(float) geometry.geometry.getCentroid().getY(), 0.0f);
+		if ( geometry.angle != 0 ) {
+			myGl.glTranslatef((float) geometry.geometry.getCentroid().getX(), this.myJTSDrawer.yFlag *
+				(float) geometry.geometry.getCentroid().getY(), 0.0f);
 			myGl.glRotatef(geometry.angle, 0.0f, 0.0f, 1.0f);
-			myGl.glTranslatef(-(float) geometry.geometry.getCentroid().getX(), -this.myJTSDrawer.yFlag*(float) geometry.geometry.getCentroid().getY(),0.0f);
-	        	
+			myGl.glTranslatef(-(float) geometry.geometry.getCentroid().getX(), -this.myJTSDrawer.yFlag *
+				(float) geometry.geometry.getCentroid().getY(), 0.0f);
+
 		}
-		
+
 		myGl.glTranslated(-geometry.offSet.x, geometry.offSet.y, 0.0f);
 	}
 

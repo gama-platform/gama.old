@@ -41,33 +41,26 @@ import org.eclipse.swt.widgets.Composite;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class AgentLayer extends AbstractLayer {
 
-	// private final Set<IAgent> agents = new HashSet();
-
-	// private final Set<SelectedAgent> selectedAgents = new HashSet<SelectedAgent>();
-
-	public AgentLayer(final double env_width, final double env_height, final ILayerStatement layer,
-		final IGraphics dg) {
-		super(env_width, env_height, layer, dg);
+	public AgentLayer(final ILayerStatement layer) {
+		super(layer);
 	}
 
 	@Override
 	public void fillComposite(final Composite compo, final IDisplaySurface container) {
 		super.fillComposite(compo, container);
-		//IExpression expr = ((AgentLayerStatement) definition).getFacet(IKeyword.VALUE);
 		IExpression expr = null;
-		if (definition instanceof AgentLayerStatement)
+		if ( definition instanceof AgentLayerStatement ) {
 			expr = ((AgentLayerStatement) definition).getFacet(IKeyword.VALUE);
+		}
 		if ( expr != null ) {
-			EditorFactory.createExpression(compo, "Agents:", expr.toGaml(),
-				new EditorListener<IExpression>() {
+			EditorFactory.createExpression(compo, "Agents:", expr.toGaml(), new EditorListener<IExpression>() {
 
-					@Override
-					public void valueModified(final IExpression newValue)
-						throws GamaRuntimeException {
-						((AgentLayerStatement) definition).setAgentsExpr(newValue);
-						container.forceUpdateDisplay();
-					}
-				}, Types.get(IType.LIST));
+				@Override
+				public void valueModified(final IExpression newValue) throws GamaRuntimeException {
+					((AgentLayerStatement) definition).setAgentsExpr(newValue);
+					container.forceUpdateDisplay();
+				}
+			}, Types.get(IType.LIST));
 		}
 	}
 
@@ -78,16 +71,14 @@ public class AgentLayer extends AbstractLayer {
 
 		shapes.clear();
 		// performance issue
-		String aspectName = IKeyword.DEFAULT ;
-		if (definition instanceof AgentLayerStatement)
+		String aspectName = IKeyword.DEFAULT;
+		if ( definition instanceof AgentLayerStatement ) {
 			aspectName = ((AgentLayerStatement) definition).getAspectName();
+		}
 		IScope scope = GAMA.obtainNewScope();
 		if ( scope != null ) {
 			scope.setGraphics(g);
 			for ( IAgent a : getAgentsToDisplay() ) {
-				// if ( disposed ) {
-				// break;
-				// }
 				if ( a != null && !a.dead() ) {
 					IAspect aspect = a.getSpecies().getAspect(aspectName);
 					if ( aspect == null ) {
@@ -96,7 +87,7 @@ public class AgentLayer extends AbstractLayer {
 					Rectangle2D r = aspect.draw(scope, a);
 					shapes.put(a, r);
 					if ( a == GuiUtils.getHighlightedAgent() ) {
-						g.highlight(r);
+						g.highlightRectangleInPixels(r);
 					}
 				}
 			}
@@ -112,13 +103,13 @@ public class AgentLayer extends AbstractLayer {
 
 	public Set<IAgent> getAgentsToDisplay() {
 		// return agents;
-		if (definition instanceof AgentLayerStatement)
-			return ((AgentLayerStatement) definition).getAgentsToDisplay();
+		if ( definition instanceof AgentLayerStatement ) { return ((AgentLayerStatement) definition)
+			.getAgentsToDisplay(); }
 		return ((GridLayerStatement) definition).getAgentsToDisplay();
 	}
 
 	@Override
-	public Set<IAgent> collectAgentsAt(final int x, final int y) {
+	public Set<IAgent> collectAgentsAt(final int x, final int y, IDisplaySurface g) {
 		final Set<IAgent> selectedAgents = new HashSet();
 
 		// GamaGeometry selectionPoint = new GamaGeometry(getModelCoordinatesFrom(x, y));
@@ -131,8 +122,8 @@ public class AgentLayer extends AbstractLayer {
 		// globalEnv.queryAllInEnvelope(selectionPoint, selectionEnvelope,
 		// In.list(this.getAgentsToDisplay()), false);
 		Rectangle2D selection = new Rectangle2D.Double();
-		selection.setFrameFromCenter(x, y, x + IDisplaySurface.SELECTION_SIZE / 2, y +
-			IDisplaySurface.SELECTION_SIZE / 2);
+		selection.setFrameFromCenter(x, y, x + IDisplaySurface.SELECTION_SIZE / 2, y + IDisplaySurface.SELECTION_SIZE /
+			2);
 		// Point2D p = new Point2D.Double(x, y);
 
 		// Set<IAgent> closeAgents = new HashSet();

@@ -45,7 +45,7 @@ public interface ILayerManager extends ItemList<ILayer> {
 	 * @param env_width
 	 * @param env_height
 	 */
-	void updateEnvDimensions(double env_width, double env_height);
+	void outputChanged();
 
 	/**
 	 * @param xc

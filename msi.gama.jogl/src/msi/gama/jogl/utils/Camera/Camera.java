@@ -7,6 +7,7 @@ import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 
 public class Camera {
+
 	public double xPos;
 	public double yPos;
 	public double zPos;
@@ -17,17 +18,14 @@ public class Camera {
 
 	private double pitch;
 	private double yaw;
-	
-	private float maxDim;
-	private float envWidth;
-	private float envHeight;
-	
+
+	private double maxDim;
+	private double envWidth;
+	private double envHeight;
+
 	private ILocation upVector;
-	
-	
-	
-	//Draw the model on 0,0,0 coordinate
-	public boolean isModelCentered= true;
+	// Draw the model on 0,0,0 coordinate
+	public boolean isModelCentered = true;
 
 	public Camera() {
 		setxPos(0);
@@ -40,8 +38,7 @@ public class Camera {
 		setUpVector(new GamaPoint(0.0,1.0,0.0));
 	}
 
-	public Camera(double xPos, double yPos, double zPos, double xLPos,
-			double yLPos, double zLPos) {
+	public Camera(double xPos, double yPos, double zPos, double xLPos, double yLPos, double zLPos) {
 		this.setxPos(xPos);
 		this.setyPos(yPos);
 		this.setzPos(zPos);
@@ -71,41 +68,31 @@ public class Camera {
 		this.setzLPos(zLPos);
 	}
 
-	
-	//FIXME: Has been replace by moveXYPlan2 should be remove once every model works well with moveXYPlan2
+	// FIXME: Has been replace by moveXYPlan2 should be remove once every model works well with moveXYPlan2
 	// Move in the XY plan by changing camera pos and look pos.
 	public void moveXYPlan(double diffx, double diffy, double speed) {
 
-		
-		//System.out.println("diffx" + diffx + "diffy" + diffy + "speed" +speed);
-		//System.out.println("before");
-		//System.out.println("this.getXPos()" + this.getXPos() + "this.getYPos()" + this.getYPos());
-		//System.out.println("this.getXLPos()" + this.getXLPos() + "this.getYPos()" + this.getYLPos());
-		if (Math.abs(diffx) > Math.abs(diffy)) {// Move X
+		// System.out.println("diffx" + diffx + "diffy" + diffy + "speed" +speed);
+		// System.out.println("before");
+		// System.out.println("this.getXPos()" + this.getXPos() + "this.getYPos()" + this.getYPos());
+		// System.out.println("this.getXLPos()" + this.getXLPos() + "this.getYPos()" + this.getYLPos());
+		if ( Math.abs(diffx) > Math.abs(diffy) ) {// Move X
 			speed = Math.abs(diffx) * speed;
-			if (diffx > 0) {// move right
-				this.updatePosition(this.getXPos() - speed, this.getYPos(),
-						this.getZPos());
-				this.lookPosition(this.getXLPos() - speed, this.getYLPos(),
-						this.getZLPos());
+			if ( diffx > 0 ) {// move right
+				this.updatePosition(this.getXPos() - speed, this.getYPos(), this.getZPos());
+				this.lookPosition(this.getXLPos() - speed, this.getYLPos(), this.getZLPos());
 			} else {// move left
-				this.updatePosition(this.getXPos() + speed, this.getYPos(),
-						this.getZPos());
-				this.lookPosition(this.getXLPos() + speed, this.getYLPos(),
-						this.getZLPos());
+				this.updatePosition(this.getXPos() + speed, this.getYPos(), this.getZPos());
+				this.lookPosition(this.getXLPos() + speed, this.getYLPos(), this.getZLPos());
 			}
-		} else if (Math.abs(diffx) < Math.abs(diffy)) { // Move Y
+		} else if ( Math.abs(diffx) < Math.abs(diffy) ) { // Move Y
 			speed = Math.abs(diffy) * speed;
-			if (diffy > 0) {// move down
-				this.updatePosition(this.getXPos(), this.getYPos() + speed,
-						this.getZPos());
-				this.lookPosition(this.getXLPos(), this.getYLPos() + speed,
-						this.getZLPos());
+			if ( diffy > 0 ) {// move down
+				this.updatePosition(this.getXPos(), this.getYPos() + speed, this.getZPos());
+				this.lookPosition(this.getXLPos(), this.getYLPos() + speed, this.getZLPos());
 			} else {// move up
-				this.updatePosition(this.getXPos(), this.getYPos() - speed,
-						this.getZPos());
-				this.lookPosition(this.getXLPos(), this.getYLPos() - speed,
-						this.getZLPos());
+				this.updatePosition(this.getXPos(), this.getYPos() - speed, this.getZPos());
+				this.lookPosition(this.getXLPos(), this.getYLPos() - speed, this.getZLPos());
 			}
 
 		}
@@ -114,34 +101,33 @@ public class Camera {
 	// Move in the XY plan by changing camera pos and look pos.
 	public void moveXYPlan2(double diffx, double diffy, double z, double w, double h) {
 
-		
-		double translationValue =0;
+		double translationValue = 0;
 
-		if (Math.abs(diffx) > Math.abs(diffy)) {// Move X
-			
-		    translationValue = (Math.abs(diffx) * ((z+1)/w));
-			
-			if (diffx > 0) {// move right
-				updatePosition(getXPos() - translationValue, getYPos(),getZPos());
-				lookPosition(getXLPos() - translationValue, getYLPos(),getZLPos());
+		if ( Math.abs(diffx) > Math.abs(diffy) ) {// Move X
+
+			translationValue = Math.abs(diffx) * ((z + 1) / w);
+
+			if ( diffx > 0 ) {// move right
+				updatePosition(getXPos() - translationValue, getYPos(), getZPos());
+				lookPosition(getXLPos() - translationValue, getYLPos(), getZLPos());
 			} else {// move left
-				updatePosition(getXPos() + translationValue, getYPos(),getZPos());
-				lookPosition(getXLPos() + translationValue, getYLPos(),getZLPos());
+				updatePosition(getXPos() + translationValue, getYPos(), getZPos());
+				lookPosition(getXLPos() + translationValue, getYLPos(), getZLPos());
 			}
-		} else if (Math.abs(diffx) < Math.abs(diffy)) { // Move Y
-			
-			translationValue = (Math.abs(diffy) * ((z+1)/h));
+		} else if ( Math.abs(diffx) < Math.abs(diffy) ) { // Move Y
 
-			if (diffy > 0) {// move down
-				updatePosition(getXPos(), getYPos() + translationValue,getZPos());
-				this.lookPosition(getXLPos(), getYLPos() + translationValue,getZLPos());
+			translationValue = Math.abs(diffy) * ((z + 1) / h);
+
+			if ( diffy > 0 ) {// move down
+				updatePosition(getXPos(), getYPos() + translationValue, getZPos());
+				this.lookPosition(getXLPos(), getYLPos() + translationValue, getZLPos());
 			} else {// move up
-				updatePosition(getXPos(), getYPos() - translationValue,getZPos());
-				lookPosition(getXLPos(), getYLPos() - translationValue,getZLPos());
+				updatePosition(getXPos(), getYPos() - translationValue, getZPos());
+				lookPosition(getXLPos(), getYLPos() - translationValue, getZLPos());
 			}
 		}
 	}
-	
+
 	// Moves the entity forward according to its pitch and yaw and the
 	// magnitude.
 
@@ -165,29 +151,31 @@ public class Camera {
 	public void strafeLeft(double magnitude) {
 		double pitchTemp = pitch;
 		pitch = 0;
-		yaw = yaw - (0.5 * Math.PI);
+		yaw = yaw - 0.5 * Math.PI;
 		moveForward(magnitude);
 		pitch = pitchTemp;
-		yaw = yaw + (0.5 * Math.PI);
+		yaw = yaw + 0.5 * Math.PI;
 	}
 
 	public void strafeRight(double magnitude) {
 		double pitchTemp = pitch;
 		pitch = 0;
 
-		yaw = yaw + (0.5 * Math.PI);
+		yaw = yaw + 0.5 * Math.PI;
 		moveForward(magnitude);
-		yaw = yaw - (0.5 * Math.PI);
+		yaw = yaw - 0.5 * Math.PI;
 
 		pitch = pitchTemp;
 	}
 
 	public void look(double distanceAway) {
-		if (pitch > 1.0)
+		if ( pitch > 1.0 ) {
 			pitch = 0.99;
+		}
 
-		if (pitch < -1.0)
+		if ( pitch < -1.0 ) {
 			pitch = -0.99;
+		}
 
 		moveForward(10);
 
@@ -284,80 +272,76 @@ public class Camera {
 
 	public void UpdateCamera(GL gl, GLU glu, int width, int height) {
 
-		
-		if (height == 0) {
+		if ( height == 0 ) {
 			height = 1; // prevent divide by zero
 		}
 		float aspect = (float) width / height;
-		//FIXME: need to see the influence of the different parameter.
-		glu.gluPerspective(45.0f, aspect, 0.1f, maxDim*100);
-		glu.gluLookAt(this.getXPos(), this.getYPos(), this.getZPos(),
-				this.getXLPos(), this.getYLPos(), this.getZLPos(), getUpVector().getX(), getUpVector().getY(),getUpVector().getZ());
+		// FIXME: need to see the influence of the different parameter.
+		glu.gluPerspective(45.0f, aspect, 0.1f, maxDim * 100);
+		glu.gluLookAt(this.getXPos(), this.getYPos(), this.getZPos(), this.getXLPos(), this.getYLPos(),
+			this.getZLPos(), getUpVector().getX(), getUpVector().getY(),getUpVector().getZ());
+
 	}
 
-	public void InitializeCamera(float envWidth, float envHeight) {
-		
+	public void InitializeCamera(double envWidth, double envHeight) {
+
 		this.yaw = 0.0f;
 		this.pitch = 0.0f;
-		this.envWidth= envWidth;
+		this.envWidth = envWidth;
 		this.envHeight = envHeight;
-		
-		if (envWidth > envHeight) {
+
+		if ( envWidth > envHeight ) {
 			maxDim = envWidth;
 		} else {
 			maxDim = envHeight;
 		}
-		
-		if(isModelCentered){
+
+		if ( isModelCentered ) {
 			this.setxPos(0);
 			this.setxLPos(0);
 			this.setyPos(0);
 			this.setyLPos(0);
-			this.setzPos(maxDim*2);
+			this.setzPos(maxDim * 2);
+			this.setzLPos(0.0f);
+		} else {
+			this.setxPos(envWidth / 2);
+			this.setxLPos(envWidth / 2);
+			this.setyPos(-envHeight / 2);
+			this.setyLPos(-envHeight / 2);
+			this.setzPos(maxDim * 2);
 			this.setzLPos(0.0f);
 		}
-		else{
-		this.setxPos(envWidth / 2);
-		this.setxLPos(envWidth / 2);
-		this.setyPos(-envHeight / 2);
-		this.setyLPos(-envHeight / 2);
-		this.setzPos(maxDim*2);
-		this.setzLPos(0.0f);
-		}
-		//this.PrintParam();
+		// this.PrintParam();
 	}
-	
-	
-	public void Initialize3DCamera(float envWidth, float envHeight) {
+
+	public void Initialize3DCamera(double envWidth, double envHeight) {
 
 		this.yaw = -1.5f;
 		this.pitch = 0.5f;
 
-		if(isModelCentered){
+		if ( isModelCentered ) {
 			this.setxPos(0);
 			this.setxLPos(0);
-			this.setyPos(-envHeight  * 1.75+envHeight/2);
-			this.setyLPos(-envHeight * 0.5+envHeight/2);
-			this.setzPos(maxDim*2);
+			this.setyPos(-envHeight * 1.75 + envHeight / 2);
+			this.setyLPos(-envHeight * 0.5 + envHeight / 2);
+			this.setzPos(maxDim * 2);
 			this.setzLPos(0);
-			
-		}else{
+
+		} else {
 			this.setxPos(envWidth / 2);
 			this.setxLPos(envWidth / 2);
-			this.setyPos(-envHeight  * 1.75);
+			this.setyPos(-envHeight * 1.75);
 			this.setyLPos(-envHeight * 0.5);
 			this.setzPos(maxDim);
 			this.setzLPos(0);
 		}
-		
-		
-		
-		//this.PrintParam();
+
+		// this.PrintParam();
 	}
 
 	public void PrintParam() {
 		System.out.println("xPos:" + getxPos() + " yPos:" + getyPos() + " zPos:" + getzPos());
-		System.out.println("xLPos:" + xLPos + " yLPos:" + yLPos + " zLPos:"+ getzLPos());
+		System.out.println("xLPos:" + xLPos + " yLPos:" + yLPos + " zLPos:" + getzLPos());
 		System.out.println("yaw:" + yaw + " picth:" + pitch);
 	}
 

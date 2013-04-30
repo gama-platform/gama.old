@@ -36,8 +36,8 @@ public class CustomisedEventListener implements MouseListener {
 
 		double x = initialLoc.x - parent.getDisplay().getOriginX();
 		double y = initialLoc.y - parent.getDisplay().getOriginY();
-		return new Point((int) (x / parent.getDisplayWidth() * parent.getEnvironmentSize().getX()), (int) (y /
-			parent.getDisplayHeight() * parent.getEnvironmentSize().getY()));
+		return new Point((int) (x / parent.getSizeInPixels().x * parent.getDisplay().getEnvWidth()), (int) (y /
+			parent.getSizeInPixels().y * parent.getDisplay().getEnvHeight()));
 	}
 
 	public static int getListeningEvent(String eventTypeName) {
@@ -86,8 +86,8 @@ public class CustomisedEventListener implements MouseListener {
 
 	private void sendEvent(MouseEvent arg0) {
 		Point pp = getMouseLocation(arg0.getPoint());
-		if ( pp.getX() < 0 || pp.getY() < 0 || pp.getX() >= parent.getEnvironmentSize().getX() ||
-			pp.getY() >= parent.getEnvironmentSize().getY() ) { return; }
+		if ( pp.getX() < 0 || pp.getY() < 0 || pp.getX() >= parent.getDisplay().getEnvWidth() ||
+			pp.getY() >= parent.getDisplay().getEnvHeight() ) { return; }
 
 		Arguments args = new Arguments();
 		IList<IAgent> agentset = parent.selectAgent(arg0.getX(), arg0.getY());

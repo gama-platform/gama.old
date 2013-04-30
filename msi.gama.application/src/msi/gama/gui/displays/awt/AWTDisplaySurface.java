@@ -32,7 +32,6 @@ import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.ISymbol;
-import com.vividsolutions.jts.geom.Envelope;
 
 @display("java2D")
 public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
@@ -155,7 +154,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 					} else if ( isImageEdgeInPanel() ) {
 						scaleOrigin();
 					} else {
-						getIGraphics().setClipping(getImageClipBounds());
+						((AWTDisplayGraphics) getIGraphics()).getGraphics2D().setClip(getImageClipBounds());
 					}
 				}
 				updateDisplay();
@@ -169,6 +168,8 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	@Override
 	public void outputChanged(final double env_width, final double env_height, final IDisplayOutput output) {
 		GuiUtils.debug("AWTDisplaySurface.outputChanged");
+		setEnvWidth(env_width);
+		setEnvHeight(env_height);
 		bgColor = output.getBackgroundColor();
 		this.setBackground(bgColor);
 		widthHeightConstraint = env_height / env_width;
@@ -181,7 +182,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 			}
 
 		} else {
-			manager.updateEnvDimensions(env_width, env_height);
+			manager.outputChanged();
 		}
 		paintingNeeded.release();
 	}
@@ -218,7 +219,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	public void drawDisplaysWithoutRepainting() {
 		if ( getIGraphics() == null ) { return; }
 		ex[0] = null;
-		getIGraphics().fill(bgColor, 1);
+		getIGraphics().fillBackground(bgColor, 1);
 		manager.drawLayersOn(getIGraphics());
 	}
 
@@ -299,24 +300,25 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	@Override
 	public void focusOn(final IShape geometry, final ILayer display) {
-		Envelope env = geometry.getEnvelope();
-		double minX = env.getMinX();
-		double minY = env.getMinY();
-		double maxX = env.getMaxX();
-		double maxY = env.getMaxY();
-
-		int leftX = display.getPosition().x + (int) (display.getXScale() * minX + 0.5);
-		int leftY = display.getPosition().y + (int) (display.getYScale() * minY + 0.5);
-		int rightX = display.getPosition().x + (int) (display.getXScale() * maxX + 0.5);
-		int rightY = display.getPosition().y + (int) (display.getYScale() * maxY + 0.5);
-		Rectangle envelop = new Rectangle(leftX + origin.x, leftY + origin.y, rightX - leftX, rightY - leftY);
-		double xScale = (double) getWidth() / (rightX - leftX);
-		double yScale = (double) getHeight() / (rightY - leftY);
-		double zoomFactor = Math.min(xScale, yScale);
-		if ( bWidth * zoomFactor > MAX_SIZE ) {
-			zoomFactor = (double) MAX_SIZE / bWidth;
-		}
-		setZoom(zoomFactor, new Point((int) envelop.getCenterX(), (int) envelop.getCenterY()));
+		// FIXME TO BE ENTIRELY REDEFINED
+		// Envelope env = geometry.getEnvelope();
+		// double minX = env.getMinX();
+		// double minY = env.getMinY();
+		// double maxX = env.getMaxX();
+		// double maxY = env.getMaxY();
+		//
+		// int leftX = display.getPosition().x + (int) (display.getXScale() * minX + 0.5);
+		// int leftY = display.getPosition().y + (int) (display.getYScale() * minY + 0.5);
+		// int rightX = display.getPosition().x + (int) (display.getXScale() * maxX + 0.5);
+		// int rightY = display.getPosition().y + (int) (display.getYScale() * maxY + 0.5);
+		// Rectangle envelop = new Rectangle(leftX + origin.x, leftY + origin.y, rightX - leftX, rightY - leftY);
+		// double xScale = (double) getWidth() / (rightX - leftX);
+		// double yScale = (double) getHeight() / (rightY - leftY);
+		// double zoomFactor = Math.min(xScale, yScale);
+		// if ( bWidth * zoomFactor > MAX_SIZE ) {
+		// zoomFactor = (double) MAX_SIZE / bWidth;
+		// }
+		// setZoom(zoomFactor, new Point((int) envelop.getCenterX(), (int) envelop.getCenterY()));
 	}
 
 	/**
@@ -338,8 +340,8 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 			return;
 		}
 		BufferedImage newImage = ImageUtils.createCompatibleImage(snapshotDimension.x, snapshotDimension.y);
-		IGraphics tempGraphics = new AWTDisplayGraphics(newImage);
-		tempGraphics.fill(bgColor, 1);
+		IGraphics tempGraphics = new AWTDisplayGraphics(newImage, (int) getEnvWidth(), (int) getEnvHeight());
+		tempGraphics.fillBackground(bgColor, 1);
 		manager.drawLayersOn(tempGraphics);
 		save(GAMA.getDefaultScope(), newImage);
 		newImage.flush();

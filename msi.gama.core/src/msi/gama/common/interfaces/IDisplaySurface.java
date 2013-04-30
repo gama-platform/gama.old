@@ -193,4 +193,8 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 	public void addMouseListener(MouseListener e);
 
+	double getEnvWidth();
+
+	double getEnvHeight();
+
 }

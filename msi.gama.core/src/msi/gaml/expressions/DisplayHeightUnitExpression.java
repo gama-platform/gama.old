@@ -32,7 +32,7 @@ public class DisplayHeightUnitExpression extends ConstantExpression {
 	public Double value(final IScope scope) {
 		IGraphics g = scope.getGraphics();
 		if ( g == null ) { return 0d; }
-		return (double) g.getDisplayHeight();
+		return (double) g.getDisplayHeightInPixels();
 	}
 
 	@Override

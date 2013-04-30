@@ -28,16 +28,16 @@ public class AWTDisplaySurfaceMenu {
 	public void selectAgents(final int mousex, final int mousey, final int x, final int y, final List<ILayer> displays) {
 		agentsMenu.removeAll();
 		if ( displays.isEmpty() ) { return; }
-		GamaPoint p = displays.get(0).getModelCoordinatesFrom(x, y);
+		GamaPoint p = displays.get(0).getModelCoordinatesFrom(x, y, surface);
 		SelectedAgent world = new SelectedAgent(GAMA.getFrontmostSimulation(), p);
 		world.buildMenuItems(agentsMenu, displays.get(0), "World agent");
 		agentsMenu.addSeparator();
 		for ( ILayer display : displays ) {
-			Set<IAgent> agents = display.collectAgentsAt(x, y);
+			Set<IAgent> agents = display.collectAgentsAt(x, y, surface);
 			if ( agents.isEmpty() ) {
 				continue;
 			}
-			p = display.getModelCoordinatesFrom(x, y);
+			p = display.getModelCoordinatesFrom(x, y, surface);
 			java.awt.Menu m = new java.awt.Menu(display.getName());
 			MenuItem grey = new MenuItem("Selected agents");
 			grey.setEnabled(false);

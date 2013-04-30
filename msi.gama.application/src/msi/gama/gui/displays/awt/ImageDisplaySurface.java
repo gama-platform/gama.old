@@ -49,6 +49,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	ILayerManager manager;
 	private String snapshotFileName;
 	public static String snapshotFolder = "/tmp/";
+	public double envWidth, envHeight;
 
 	/**
 	 * @see msi.gama.common.interfaces.IDisplaySurface#initialize(double, double, msi.gama.outputs.IDisplayOutput)
@@ -108,6 +109,8 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public void outputChanged(final double env_width, final double env_height, final IDisplayOutput output) {
 		widthHeightConstraint = env_height / env_width;
+		envWidth = env_width;
+		envHeight = env_height;
 		if ( output == null ) { return; }
 		bgColor = output.getBackgroundColor();
 		if ( manager == null ) {
@@ -118,7 +121,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 					displayGraphics));
 			}
 		} else {
-			manager.updateEnvDimensions(env_width, env_height);
+			manager.outputChanged();
 		}
 
 	}
@@ -140,7 +143,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		if ( displayGraphics == null ) {
 			displayGraphics = GuiUtils.newGraphics(newWidth, newHeight);
 		} else {
-			displayGraphics.setDisplayDimensions(newWidth, newHeight);
+			displayGraphics.setDisplayDimensionsInPixels(newWidth, newHeight);
 		}
 		createBuffImage();
 		if ( GAMA.getExperiment().isPaused() ) {
@@ -166,7 +169,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	private void drawAllDisplays() {
 		if ( displayGraphics == null ) { return; }
-		displayGraphics.fill(bgColor, 1);
+		displayGraphics.fillBackground(bgColor, 1);
 		manager.drawLayersOn(displayGraphics);
 	}
 
@@ -399,14 +402,10 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 * This method does nothing for Image display
 	 */
 	@Override
-	public void addShapeFile() {
-		// TODO Auto-generated method stub
-
-	}
+	public void addShapeFile() {}
 
 	@Override
 	public ILayerManager getLayerManager() {
-		// TODO Auto-generated method stub
 		return manager;
 	}
 
@@ -421,5 +420,15 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public void initOutput3D(boolean output3d, ILocation output3dNbCycles) {
 		;
+	}
+
+	@Override
+	public double getEnvWidth() {
+		return envWidth;
+	}
+
+	@Override
+	public double getEnvHeight() {
+		return envHeight;
 	}
 }

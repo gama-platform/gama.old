@@ -50,7 +50,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public MyGLToyDrawer myGLDrawer;
 
 	// Textures list to store all the texture.
-	public ArrayList<MyTexture> myTextures = new ArrayList<MyTexture>();
+	public Map<BufferedImage, MyTexture> myTextures = new LinkedHashMap();
 
 	/** The earth texture. */
 	private Texture earthTexture;
@@ -263,14 +263,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
 			gl.glPolygonOffset(1, 1);
 
-		
-			
 			if ( dem.isInitialized() == true ) {
 				dem.DisplayDEM(gl);
 			} else {
 				this.DrawScene();
 				if ( drawAxes ) {
-					float envMaxDim = displaySurface.getIGraphics().getMaxEnvDim();
+					double envMaxDim = displaySurface.getIGraphics().getMaxEnvDim();
 					this.graphicsGLUtils.DrawXYZAxis(envMaxDim / 10);
 					this.graphicsGLUtils.DrawZValue(-envMaxDim / 10, (float) camera.zPos);
 				}
@@ -341,7 +339,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			// System.out.println("World coords are (" //+ realPoint.x + ", " + realPoint.y);
 
 			if ( camera.isModelCentered ) {
-				gl.glTranslatef(-displaySurface.getIGraphics().getEnvWidth() / 2, displaySurface.getIGraphics()
+				gl.glTranslated(-displaySurface.getIGraphics().getEnvWidth() / 2, displaySurface.getIGraphics()
 					.getEnvHeight() / 2, 0.0f); // translate
 				// right
 				// and
@@ -396,7 +394,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		if ( displaySurface.picking ) {
 			// Display the model center on 0,0,0
 			if ( camera.isModelCentered ) {
-				gl.glTranslatef(-displaySurface.getIGraphics().getEnvWidth() / 2, displaySurface.getIGraphics()
+				gl.glTranslated(-displaySurface.getIGraphics().getEnvWidth() / 2, displaySurface.getIGraphics()
 					.getEnvHeight() / 2, 0.0f); // translate
 				// right
 				// and
@@ -408,7 +406,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		} else {
 			// Display the model center on 0,0,0
 			if ( camera.isModelCentered ) {
-				gl.glTranslatef(-displaySurface.getIGraphics().getEnvWidth() / 2, displaySurface.getIGraphics()
+				gl.glTranslated(-displaySurface.getIGraphics().getEnvWidth() / 2, displaySurface.getIGraphics()
 					.getEnvHeight() / 2, 0.0f); // translate
 				// right
 				// and
@@ -422,7 +420,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			if ( threeDCube ) {
 				// float envMaxDim = (
 				// displaySurface.openGLGraphics).maxEnvDim;
-				float envMaxDim = displaySurface.getIGraphics().getEnvWidth();
+				float envMaxDim = (float) displaySurface.getIGraphics().getEnvWidth();
 
 				this.drawModel(false);
 				gl.glTranslatef(envMaxDim, 0, 0);
@@ -531,8 +529,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				myShapeFileReader.getFeatureCollectionFromShapeFile(myShapeFileReader.store);
 			displaySurface.getIGraphics().drawCollection();
 			// Adjust the size of the display surface according to the bound of the shapefile.
-			displaySurface.envHeight = (float) myCollection.getBounds().getHeight();
-			displaySurface.envWidth = (float) myCollection.getBounds().getWidth();
+			displaySurface.setEnvHeight((float) myCollection.getBounds().getHeight());
+			displaySurface.setEnvWidth((float) myCollection.getBounds().getWidth());
 			if ( !updateEnvDim ) {
 				displaySurface.zoomFit();
 				updateEnvDim = true;
@@ -548,84 +546,68 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	}
 
 	public void DrawTexture(MyImage img) {
-
 		gl.glTranslated(img.offSet.x, -img.offSet.y, img.offSet.z);
-		if ( this.myTextures.size() > 0 ) {
+		MyTexture curTexture = myTextures.get(img.image);
+		if ( curTexture == null ) { return; }
+		// Enable the texture
+		gl.glEnable(GL_TEXTURE_2D);
+		Texture t = curTexture.texture;
+		t.enable();
+		t.bind();
+		// Reset opengl color. Set the transparency of the image to
+		// 1 (opaque).
+		gl.glColor4f(1.0f, 1.0f, 1.0f, img.alpha);
+		TextureCoords textureCoords;
+		textureCoords = t.getImageTexCoords();
+		textureTop = textureCoords.top();
+		textureBottom = textureCoords.bottom();
+		textureLeft = textureCoords.left();
+		textureRight = textureCoords.right();
+		if ( img.angle != 0 ) {
+			gl.glTranslated(img.x + img.width / 2, -(img.y + img.height / 2), 0.0f);
+			// FIXME:Check counterwise or not, and do we rotate
+			// around the center or around a point.
+			gl.glRotatef(-img.angle, 0.0f, 0.0f, 1.0f);
+			gl.glTranslated(-(img.x + img.width / 2), +(img.y + img.height / 2), 0.0f);
 
-			Iterator<MyTexture> it = this.myTextures.iterator();
-			while (it.hasNext()) {
-				MyTexture curTexture = it.next();
-
-				if ( img.name.equals(curTexture.ImageName) ) {
-
-					// Enable the texture
-					gl.glEnable(GL_TEXTURE_2D);
-					Texture t = curTexture.texture;
-
-					t.enable();
-					t.bind();
-
-					// Reset opengl color. Set the transparency of the image to
-					// 1 (opaque).
-					gl.glColor4f(1.0f, 1.0f, 1.0f, img.alpha);
-					TextureCoords textureCoords;
-					textureCoords = t.getImageTexCoords();
-					textureTop = textureCoords.top();
-					textureBottom = textureCoords.bottom();
-					textureLeft = textureCoords.left();
-					textureRight = textureCoords.right();
-
-					if ( img.angle != 0 ) {
-
-						gl.glTranslatef(img.x + img.width / 2, -(img.y + img.height / 2), 0.0f);
-						// FIXME:Check counterwise or not, and do we rotate
-						// around the center or around a point.
-						gl.glRotatef(-img.angle, 0.0f, 0.0f, 1.0f);
-						gl.glTranslatef(-(img.x + img.width / 2), +(img.y + img.height / 2), 0.0f);
-
-						gl.glBegin(GL_QUADS);
-						// bottom-left of the texture and quad
-						gl.glTexCoord2f(textureLeft, textureBottom);
-						gl.glVertex3f(img.x, -(img.y + img.height), img.z);
-						// bottom-right of the texture and quad
-						gl.glTexCoord2f(textureRight, textureBottom);
-						gl.glVertex3f(img.x + img.width, -(img.y + img.height), img.z);
-						// top-right of the texture and quad
-						gl.glTexCoord2f(textureRight, textureTop);
-						gl.glVertex3f(img.x + img.width, -img.y, img.z);
-						// top-left of the texture and quad
-						gl.glTexCoord2f(textureLeft, textureTop);
-						gl.glVertex3f(img.x, -img.y, img.z);
-						gl.glEnd();
-						gl.glTranslatef(img.x + img.width / 2, -(img.y + img.height / 2), 0.0f);
-						gl.glRotatef(img.angle, 0.0f, 0.0f, 1.0f);
-						gl.glTranslatef(-(img.x + img.width / 2), +(img.y + img.height / 2), 0.0f);
-
-					} else {
-						gl.glBegin(GL_QUADS);
-						// bottom-left of the texture and quad
-						gl.glTexCoord2f(textureLeft, textureBottom);
-						gl.glVertex3f(img.x, -(img.y + img.height), img.z);
-						// bottom-right of the texture and quad
-						gl.glTexCoord2f(textureRight, textureBottom);
-						gl.glVertex3f(img.x + img.width, -(img.y + img.height), img.z);
-						// top-right of the texture and quad
-						gl.glTexCoord2f(textureRight, textureTop);
-						gl.glVertex3f(img.x + img.width, -img.y, img.z);
-						// top-left of the texture and quad
-						gl.glTexCoord2f(textureLeft, textureTop);
-						gl.glVertex3f(img.x, -img.y, img.z);
-						gl.glEnd();
-					}
-					gl.glDisable(GL_TEXTURE_2D);
-					break;
-				}
-			}
+			gl.glBegin(GL_QUADS);
+			// bottom-left of the texture and quad
+			gl.glTexCoord2f(textureLeft, textureBottom);
+			gl.glVertex3d(img.x, -(img.y + img.height), img.z);
+			// bottom-right of the texture and quad
+			gl.glTexCoord2f(textureRight, textureBottom);
+			gl.glVertex3d(img.x + img.width, -(img.y + img.height), img.z);
+			// top-right of the texture and quad
+			gl.glTexCoord2f(textureRight, textureTop);
+			gl.glVertex3d(img.x + img.width, -img.y, img.z);
+			// top-left of the texture and quad
+			gl.glTexCoord2f(textureLeft, textureTop);
+			gl.glVertex3d(img.x, -img.y, img.z);
+			gl.glEnd();
+			gl.glTranslated(img.x + img.width / 2, -(img.y + img.height / 2), 0.0f);
+			gl.glRotatef(img.angle, 0.0f, 0.0f, 1.0f);
+			gl.glTranslated(-(img.x + img.width / 2), +(img.y + img.height / 2), 0.0f);
+		} else {
+			gl.glBegin(GL_QUADS);
+			// bottom-left of the texture and quad
+			gl.glTexCoord2f(textureLeft, textureBottom);
+			gl.glVertex3d(img.x, -(img.y + img.height), img.z);
+			// bottom-right of the texture and quad
+			gl.glTexCoord2f(textureRight, textureBottom);
+			gl.glVertex3d(img.x + img.width, -(img.y + img.height), img.z);
+			// top-right of the texture and quad
+			gl.glTexCoord2f(textureRight, textureTop);
+			gl.glVertex3d(img.x + img.width, -img.y, img.z);
+			// top-left of the texture and quad
+			gl.glTexCoord2f(textureLeft, textureTop);
+			gl.glVertex3d(img.x, -img.y, img.z);
+			gl.glEnd();
 		}
+		gl.glDisable(GL_TEXTURE_2D);
 		gl.glTranslated(-img.offSet.x, img.offSet.y, -img.offSet.z);
 	}
 
-	public void InitTexture(BufferedImage image, String name) {
+	public void InitTexture(BufferedImage image, boolean isDynamic) {
 
 		// Create a OpenGL Texture object from (URL, mipmap, file suffix)
 		// need to have an opengl context valide
@@ -634,8 +616,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		Texture texture = TextureIO.newTexture(image, false);
 		MyTexture curTexture = new MyTexture();
 		curTexture.texture = texture;
-		curTexture.ImageName = name;
-		this.myTextures.add(curTexture);
+		curTexture.isDynamic = isDynamic;
+		this.myTextures.put(image, curTexture);
 		// }
 		// else {
 		// // FIXME: See issue 310
@@ -694,11 +676,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			// FIXME: need also to apply the arcball matrix to make it work in
 			// 3D
 			if ( camera.isModelCentered ) {
-				gl.glTranslatef(-displaySurface.getIGraphics().getEnvWidth() / 2, displaySurface.getIGraphics()
+				gl.glTranslated(-displaySurface.getIGraphics().getEnvWidth() / 2, displaySurface.getIGraphics()
 					.getEnvHeight() / 2, 0.0f);
 				drawModel(true);
 
-				gl.glTranslatef(displaySurface.getIGraphics().getEnvWidth() / 2, -displaySurface.getIGraphics()
+				gl.glTranslated(displaySurface.getIGraphics().getEnvWidth() / 2, -displaySurface.getIGraphics()
 					.getEnvHeight() / 2, 0.0f);
 			} else {
 				drawModel(true);

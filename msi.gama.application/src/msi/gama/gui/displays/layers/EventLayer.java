@@ -38,8 +38,8 @@ public class EventLayer extends AgentLayer {
 	private EventLayerStatement myStatement;
 	private IDisplaySurface display;
 
-	public EventLayer(final double env_width, final double env_height, final ILayerStatement layer, final IGraphics dg) {
-		super(env_width, env_height, layer, dg);
+	public EventLayer(final ILayerStatement layer) {
+		super(layer);
 		buildEventLayer();
 	}
 
@@ -83,8 +83,8 @@ public class EventLayer extends AgentLayer {
 		IList<IAgent> result = new GamaList<IAgent>();
 		final List<ILayer> layers = this.getDisplay().getLayerManager().getLayersIntersecting(xc, yc);
 
-		for ( ILayer display : layers ) {
-			Set<IAgent> agents = display.collectAgentsAt(xc, yc);
+		for ( ILayer layer : layers ) {
+			Set<IAgent> agents = layer.collectAgentsAt(xc, yc, getDisplay());
 			if ( !agents.isEmpty() ) {
 				result.addAll(agents);
 			}

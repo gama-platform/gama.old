@@ -1,13 +1,10 @@
 package msi.gama.jogl.utils.GraphicDataType;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import com.sun.opengl.util.texture.*;
-
+import com.sun.opengl.util.texture.Texture;
 
 public class MyTexture {
-	
+
 	public Texture texture;
-	public String ImageName;
+	public boolean isDynamic;
 
 }

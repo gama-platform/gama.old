@@ -43,8 +43,8 @@ public class FileUtils {
 
 		final File[] roots = File.listRoots();
 		for ( int i = 0; i < roots.length; i++ ) {
-			if ( absoluteFilePath.startsWith(roots[i].getAbsolutePath()) ) { return absoluteFilePath
-				.substring(roots[i].getAbsolutePath().length(), absoluteFilePath.length()); }
+			if ( absoluteFilePath.startsWith(roots[i].getAbsolutePath()) ) { return absoluteFilePath.substring(roots[i]
+				.getAbsolutePath().length(), absoluteFilePath.length()); }
 		}
 		return absoluteFilePath;
 	}
@@ -59,12 +59,10 @@ public class FileUtils {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	static public String constructAbsoluteFilePath(final String filePath,
-		final String referenceFile, final boolean mustExist) throws GamaRuntimeException {
+	static public String constructAbsoluteFilePath(final String filePath, final String referenceFile,
+		final boolean mustExist) throws GamaRuntimeException {
 		String baseDirectory = new File(referenceFile).getParent();
-		final GamaRuntimeException ex =
-			new GamaRuntimeException("File denoted by " + filePath +
-				" not found! Tried the following paths : ");
+		final GamaRuntimeException ex;
 		File file = null;
 		if ( isAbsolutePath(filePath) ) {
 			file = new File(filePath);
@@ -76,9 +74,9 @@ public class FileUtils {
 					return file.getAbsolutePath();
 				}
 			}
+			ex = new GamaRuntimeException("File denoted by " + filePath + " not found! Tried the following paths : ");
 			ex.addContext(file.getAbsolutePath());
 			file = new File(baseDirectory + File.separator + removeRoot(filePath));
-
 			if ( file.exists() ) {
 				try {
 					return file.getCanonicalPath();
@@ -98,6 +96,7 @@ public class FileUtils {
 					return file.getAbsolutePath();
 				}
 			}
+			ex = new GamaRuntimeException("File denoted by " + filePath + " not found! Tried the following paths : ");
 			ex.addContext(file.getAbsolutePath());
 		}
 

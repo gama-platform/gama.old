@@ -43,15 +43,21 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 
 		@Override
 		public Rectangle2D draw(final IScope scope, final IAgent agent) throws GamaRuntimeException {
-			GamaColor c = null;
-			if ( agent.getSpecies().hasVar(IKeyword.COLOR) ) {
-				c = Cast.asColor(scope, scope.getAgentVarValue(agent, IKeyword.COLOR));
+			if ( agent != null && agent.acquireLock() ) {
+				try {
+					GamaColor c = null;
+					if ( agent.getSpecies().hasVar(IKeyword.COLOR) ) {
+						c = Cast.asColor(scope, scope.getAgentVarValue(agent, IKeyword.COLOR));
+					}
+					Rectangle2D r =
+						scope.getGraphics().drawGamaShape(scope, agent.getGeometry(), c == null ? Color.YELLOW : c,
+							true, Color.black, 0, false);
+					return r;
+				} finally {
+					agent.releaseLock();
+				}
 			}
-			Rectangle2D r =
-				scope.getGraphics().drawGeometry(scope, agent.getGeometry().getInnerGeometry(),
-					c == null ? Color.YELLOW : c, true, Color.black, 0, false);
-			return r;
-
+			return null;
 		}
 
 	};

@@ -55,20 +55,13 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		super(description);
 		setName(description.getName());
 		isGrid = description.getFacets().equals(IKeyword.KEYWORD, IKeyword.GRID);
-		isGraph =
-			AbstractGraphNodeAgent.class.isAssignableFrom(((TypeDescription) description)
-				.getJavaBase());
+		isGraph = AbstractGraphNodeAgent.class.isAssignableFrom(((TypeDescription) description).getJavaBase());
 	}
 
 	@Override
 	public Iterable<IAgent> iterable(final IScope scope) {
 		return getPopulation(scope);
 	}
-
-	// @Override
-	// public IType type() {
-	// return Types.get(IType.SPECIES);
-	// }
 
 	protected IPopulation getPopulation(final IScope scope) {
 		IAgent a = scope.getAgentScope();
@@ -111,11 +104,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	public boolean isGraph() {
 		return isGraph;
 	}
-
-	// @Override
-	// public String toJava() {
-	// return "SimulationManager.getFrontmostSimulation().getSpecies(" + name + ")";
-	// }
 
 	@Override
 	public String toGaml() {
@@ -194,8 +182,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public boolean hasMicroSpecies() {
 		ISpecies parentSpecies = this.getParentSpecies();
-		return !microSpecies.isEmpty() ||
-			(parentSpecies != null ? parentSpecies.hasMicroSpecies() : false);
+		return !microSpecies.isEmpty() || (parentSpecies != null ? parentSpecies.hasMicroSpecies() : false);
 	}
 
 	@Override
@@ -270,8 +257,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		/**
 		 * species name is unique
 		 */
-		if ( other instanceof ISpecies ) { return this.getName().equals(
-			((ISpecies) other).getName()); }
+		if ( other instanceof ISpecies ) { return this.getName().equals(((ISpecies) other).getName()); }
 
 		return false;
 	}
@@ -393,8 +379,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	protected void createControl() {
 		IArchitecture control = getArchitecture();
 		List<IStatement> behaviors = getBehaviors();
-		if ( control == null ) { throw new GamaRuntimeException(
-			"The control of this species cannot be computed"); }
+		if ( control == null ) { throw new GamaRuntimeException("The control of this species cannot be computed"); }
 		control.setChildren(behaviors);
 		control.verifyBehaviors(this);
 	}

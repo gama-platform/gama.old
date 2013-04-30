@@ -207,7 +207,7 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public IGraphics newGraphics(final int width, final int height) {
-		return new AWTDisplayGraphics(new BufferedImage(1024, 1024, BufferedImage.TYPE_INT_ARGB));
+		return new AWTDisplayGraphics(new BufferedImage(1024, 1024, BufferedImage.TYPE_INT_ARGB), width, height);
 	}
 
 	@Override

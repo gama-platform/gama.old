@@ -19,22 +19,18 @@
 package msi.gama.gui.displays.layers;
 
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.*;
 import org.eclipse.swt.widgets.Composite;
-import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Written by drogoul Modified on 23 août 2008
@@ -42,8 +38,8 @@ import com.vividsolutions.jts.geom.Envelope;
 
 public class SpeciesLayer extends AgentLayer {
 
-	public SpeciesLayer(final double env_width, final double env_height, final ILayerStatement layer, final IGraphics dg) {
-		super(env_width, env_height, layer, dg);
+	public SpeciesLayer(final ILayerStatement layer) {
+		super(layer);
 	}
 
 	@Override
@@ -103,7 +99,7 @@ public class SpeciesLayer extends AgentLayer {
 		if ( aspect == null ) {
 			aspect = AspectStatement.DEFAULT_ASPECT;
 		}
-		g.setOpacity(layer.getTransparency());
+		// g.setOpacity(layer.getTransparency());
 
 		List<IAgent> _agents = population.getAgentsList();
 		if ( !_agents.isEmpty() ) {
@@ -116,7 +112,7 @@ public class SpeciesLayer extends AgentLayer {
 				// TODO Create a "catch GamaRuntimeException" ?
 				Rectangle2D r = aspect.draw(scope, a);
 				if ( a == GuiUtils.getHighlightedAgent() ) {
-					g.highlight(r);
+					g.highlightRectangleInPixels(r);
 				}
 				shapes.put(a, r);
 			}
@@ -132,7 +128,8 @@ public class SpeciesLayer extends AgentLayer {
 							microPop = a.getMicroPopulation(gl.getName());
 
 							if ( microPop != null && microPop.size() > 0 ) {
-								drawGridPopulation(a, gl, microPop, scope, g);
+								// FIXME Needs to be entirely redefined using the new interfaces
+								// drawGridPopulation(a, gl, microPop, scope, g);
 							}
 						} finally {
 							a.releaseLock();
@@ -161,25 +158,25 @@ public class SpeciesLayer extends AgentLayer {
 		}
 	}
 
-	private void drawGridPopulation(final IAgent host, final GridLayerStatement layer, final IPopulation population,
-		final IScope scope, final IGraphics g) throws GamaRuntimeException {
-		GamaSpatialMatrix gridAgentStorage = (GamaSpatialMatrix) population.getTopology().getPlaces();
-		gridAgentStorage.refreshDisplayData(scope);
-
-		// MUST cache this image as GridDisplayLayer does to increase performance
-		BufferedImage supportImage =
-			ImageUtils.createCompatibleImage(gridAgentStorage.numCols, gridAgentStorage.numRows);
-		supportImage.setRGB(0, 0, gridAgentStorage.numCols, gridAgentStorage.numRows,
-			gridAgentStorage.getDisplayData(), 0, gridAgentStorage.numCols);
-
-		IShape hostShape = host.getGeometry();
-		Envelope hostEnv = hostShape.getEnvelope();
-		g.setDrawingCoordinates(hostEnv.getMinX() * g.getXScale(), hostEnv.getMinY() * g.getYScale());
-		g.setDrawingDimensions((int) (gridAgentStorage.numCols * g.getXScale() * 2),
-			(int) (gridAgentStorage.numCols * g.getYScale()));
-		g.setOpacity(layer.getTransparency());
-		g.drawImage(scope, supportImage, null, false, "SpeciesDisplay", 0.0f);
-
-	}
+	// private void drawGridPopulation(final IAgent host, final GridLayerStatement layer, final IPopulation population,
+	// final IScope scope, final IGraphics g) throws GamaRuntimeException {
+	// GamaSpatialMatrix gridAgentStorage = (GamaSpatialMatrix) population.getTopology().getPlaces();
+	// gridAgentStorage.refreshDisplayData(scope);
+	//
+	// // MUST cache this image as GridDisplayLayer does to increase performance
+	// BufferedImage supportImage =
+	// ImageUtils.createCompatibleImage(gridAgentStorage.numCols, gridAgentStorage.numRows);
+	// supportImage.setRGB(0, 0, gridAgentStorage.numCols, gridAgentStorage.numRows,
+	// gridAgentStorage.getDisplayData(), 0, gridAgentStorage.numCols);
+	//
+	// IShape hostShape = host.getGeometry();
+	// Envelope hostEnv = hostShape.getEnvelope();
+	// g.setDrawingCoordinates(hostEnv.getMinX() * g.getXScale(), hostEnv.getMinY() * g.getYScale());
+	// g.setDrawingDimensions((int) (gridAgentStorage.numCols * g.getXScale()),
+	// (int) (gridAgentStorage.numCols * g.getYScale()));
+	// g.setOpacity(layer.getTransparency());
+	// g.drawImage(scope, supportImage, null, 0.0f, true);
+	//
+	// }
 
 }

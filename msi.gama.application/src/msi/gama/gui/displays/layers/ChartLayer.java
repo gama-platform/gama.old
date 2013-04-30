@@ -21,6 +21,7 @@ package msi.gama.gui.displays.layers;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.outputs.layers.*;
+import msi.gama.runtime.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
@@ -36,8 +37,8 @@ import org.jfree.experimental.chart.swt.editor.SWTChartEditor;
  */
 public class ChartLayer extends AbstractLayer {
 
-	public ChartLayer(final double env_width, final double env_height, final ILayerStatement model, final IGraphics dg) {
-		super(env_width, env_height, model, dg);
+	public ChartLayer(final ILayerStatement model) {
+		super(model);
 	}
 
 	private JFreeChart getChart() {
@@ -82,9 +83,12 @@ public class ChartLayer extends AbstractLayer {
 
 	@Override
 	public void privateDrawDisplay(final IGraphics dg) {
-		if ( !disposed ) {
-			dg.drawChart(getChart());
-		}
+		IScope scope = GAMA.obtainNewScope();
+		try {
+			dg.drawChart(scope, getChart(), 0.0);
+		} finally {
+			GAMA.releaseScope(scope);
+		};
 	}
 
 	@Override

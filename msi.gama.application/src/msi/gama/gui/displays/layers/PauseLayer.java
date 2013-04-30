@@ -18,9 +18,8 @@
  */
 package msi.gama.gui.displays.layers;
 
-import java.awt.*;
+import java.awt.Color;
 import msi.gama.common.interfaces.IGraphics;
-import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
@@ -31,15 +30,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public class PauseLayer extends AbstractLayer {
 
-	/**
-	 * @param env_width
-	 * @param env_height
-	 * @param layer
-	 * @param dg
-	 */
-	protected PauseLayer(final double env_width, final double env_height,
-		final ILayerStatement layer, final IGraphics dg) {
-		super(env_width, env_height, layer, dg);
+	protected PauseLayer() {
+		super(null);
 	}
 
 	/**
@@ -47,12 +39,7 @@ public class PauseLayer extends AbstractLayer {
 	 */
 	@Override
 	protected void privateDrawDisplay(final IGraphics g) throws GamaRuntimeException {
-		g.fill(Color.DARK_GRAY, 0.5);
-		g.setFont(new Font("Helvetica", Font.BOLD, 18));
-		g.setDrawingOffset(0, 0);
-		g.setDrawingCoordinates(20, 20);
-		g.setOpacity(1);
-		g.drawString(null,"Display paused", Color.white, 0,0.0f);
+		g.fillBackground(Color.DARK_GRAY, 0.5);
 	}
 
 	/**

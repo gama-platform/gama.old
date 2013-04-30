@@ -22,14 +22,12 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaFile;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.jfree.chart.JFreeChart;
-import com.vividsolutions.jts.geom.Geometry;
 
 /**
  * Written by drogoul Modified on 22 janv. 2011
@@ -40,203 +38,41 @@ import com.vividsolutions.jts.geom.Geometry;
 public interface IGraphics {
 
 	public static final RenderingHints QUALITY_RENDERING = new RenderingHints(null);
-
 	public static final RenderingHints SPEED_RENDERING = new RenderingHints(null);
-
 	public static final RenderingHints MEDIUM_RENDERING = new RenderingHints(null);
 
-	/**
-	 * Method setGraphics.
-	 * @param g Graphics2D
-	 */
 	public abstract void setGraphics(final Graphics2D g);
 
-	/**
-	 * Method getDisplayWidth.
-	 * @return int
-	 */
-	public abstract int getDisplayWidth();
+	public abstract int getDisplayWidthInPixels();
 
-	/**
-	 * Method getDisplayHeight.
-	 * @return int
-	 */
-	public abstract int getDisplayHeight();
+	public abstract int getDisplayHeightInPixels();
 
-	/**
-	 * Method setDisplayDimensions.
-	 * @param width int
-	 * @param height int
-	 */
-	public abstract void setDisplayDimensions(final int width, final int height);
+	public abstract void setDisplayDimensionsInPixels(final int width, final int height);
 
-	/**
-	 * Method setFont.
-	 * @param font Font
-	 */
-	public abstract void setFont(final Font font);
+	// public abstract void setCurrentLayerOffsetAndSizeInModelUnits(Rectangle2D.Double box);
 
-	/**
-	 * Method getXScale.
-	 * @return double
-	 */
-	public abstract double getXScale();
+	public abstract Rectangle2D drawImage(final IScope scope, final BufferedImage img,
+		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, Color gridColor, final Integer angle,
+		Double z, boolean isDynamic);
 
-	/**
-	 * Method setXScale.
-	 * @param scale double
-	 */
-	public abstract void setXScale(final double scale);
+	public abstract Rectangle2D drawString(final String string, final Color stringColor,
+		ILocation locationInModelUnits, Double heightInModelUnits, String fontName, Integer styleName,
+		final Integer angle, final Double z);
 
-	/**
-	 * Method getYScale.
-	 * @return double
-	 */
-	public abstract double getYScale();
-
-	/**
-	 * Method setYScale.
-	 * @param scale double
-	 */
-	public abstract void setYScale(final double scale);
-
-	/**
-	 * Method setDrawingCoordinates.
-	 * @param x double
-	 * @param y double
-	 */
-	public abstract void setDrawingCoordinates(final double x, final double y);
-
-	/**
-	 * Method setDrawingDimensions.
-	 * @param width int
-	 * @param height int
-	 */
-	public abstract void setDrawingDimensions(final int width, final int height);
-
-	/**
-	 * Method drawImage.
-	 * @param scope IScope
-	 * @param img Image
-	 * @param angle Integer
-	 * @param String name
-	 * @param z float
-	 */
-	public abstract Rectangle2D drawImage(final IScope scope, final BufferedImage img, final Integer angle,
-		final String name, float z);
-
-	/**
-	 * Method drawCircle.
-	 * @param scope IScope
-	 * @param c Color
-	 * @param fill boolean
-	 * @param angle Integer
-	 * @param height: height of the circle if using opengl and defining a z value
-	 *            (e.g: draw shape: circle z:1;)
-	 */
-	public abstract Rectangle2D drawCircle(final IScope scope, final Color c, final boolean fill, final Color border,
-		final Integer angle, final float height);
-
-	/**
-	 * Method drawTriangle.
-	 * @param scope IScope
-	 * @param c Color
-	 * @param fill boolean
-	 * @param angle Integer
-	 * @param height: height of the triangle if using opengl and defining a z value
-	 *            (e.g: draw shape: trinagle z:1;)
-	 */
-	public abstract Rectangle2D drawTriangle(final IScope scope, final Color c, final boolean fill, final Color border,
-		final Integer angle, final float height);
-
-	/**
-	 * Method drawLine.
-	 * @param c Color
-	 * @param toX double
-	 * @param toY double
-	 */
-	public abstract Rectangle2D drawLine(final Color c, final double toX, final double toY);
-
-	/**
-	 * Method drawRectangle.
-	 * @param scope IScope
-	 * @param color Color
-	 * @param fill boolean
-	 * @param angle Integer
-	 * @param height: height of the rectangle if using opengl and defining a z value
-	 *            (e.g: draw shape: square size:2 color: global_color z:2;)
-	 */
-	public abstract Rectangle2D drawRectangle(final IScope scope, final Color color, final boolean fill,
-		final Color border, final Integer angle, final float height);
-
-	/**
-	 * @param agent
-	 * @return
-	 *         Method drawString.
-	 * @param string String
-	 * @param stringColor Color
-	 * @param angle Integer
-	 * @param z float
-	 */
-	public abstract Rectangle2D drawString(IAgent agent, final String string, final Color stringColor,
-		final Integer angle, final float z);
-
-	/**
-	 * Method drawGeometry.
-	 * @param scope IScope
-	 * @param geometry Geometry
-	 * @param color Color
-	 * @param fill boolean
-	 * @param angle Integer
-	 * @param z float
-	 */
-	public abstract Rectangle2D drawGeometry(final IScope scope, final Geometry geometry, final Color color,
+	public abstract Rectangle2D drawGamaShape(final IScope scope, final IShape geometry, final Color color,
 		final boolean fill, final Color border, final Integer angle, final boolean rounded);
 
-	/**
-	 * Method drawGamaShape.
-	 * @param scope IScope
-	 * @param geometry GamaShape
-	 * @param color Color
-	 * @param fill boolean
-	 * @param angle Integer
-	 * @param z float
-	 */
-	public abstract Rectangle2D drawGamaShape(final IScope scope, final GamaShape geometry, final Color color,
-		final boolean fill, final Color border, final Integer angle, final boolean rounded);
+	public abstract Rectangle2D drawChart(final IScope scope, JFreeChart chart, Double z);
 
-	public abstract void setDrawingOffset(final int x, final int y);
-
-	public abstract Rectangle2D drawChart(JFreeChart chart);
+	public abstract void highlightRectangleInPixels(Rectangle2D r);
 
 	public abstract void setOpacity(double i);
 
 	public abstract boolean isReady();
 
-	public abstract void fill(Color bgColor, double opacity);
+	public abstract void fillBackground(Color bgColor, double opacity);
 
 	public abstract void setQualityRendering(boolean quality);
-
-	public abstract void setClipping(Rectangle imageClipBounds);
-
-	public abstract Rectangle getClipping();
-
-	/**
-	 * @param img
-	 * @param angle
-	 * @param smooth
-	 * @param name
-	 * @return
-	 */
-	// FIXME: Why defining 2 method drawImage
-	Rectangle2D drawImage(final IScope scope, BufferedImage img, Integer angle, boolean smooth, String name, float z);
-
-	/**
-	 * Draw grid as line
-	 * @param image
-	 * @param lineColor
-	 */
-	public void drawGrid(BufferedImage image, Color lineColor, Point point);
 
 	/**
 	 * 
@@ -246,20 +82,18 @@ public interface IGraphics {
 
 	void setHighlightColor(int[] rgb);
 
-	public abstract void highlight(Rectangle2D r);
-
 	/*
 	 * For IGraphics implementations that support the notion of layers in a way or another...
 	 * Indicates that the painting of all layers is about to begin.
 	 */
-	public abstract void initLayers();
+	public abstract void beginDrawingLayers();
 
 	/*
 	 * For IGraphics implementations that support the notion of layers in a way or another...
 	 * Sets the z value of the new created layer.
 	 * Set wether or not the current layer is static(will bve drawn only once) or dynamic.
 	 */
-	public abstract void newLayer(double zLayerValue, Boolean refresh);
+	public abstract void newLayer(ILayer layer);
 
 	public interface OpenGL extends IGraphics {
 
@@ -287,7 +121,7 @@ public interface IGraphics {
 		 * Define the camera position (work only in Opengl)
 		 */
 		public abstract void setCameraPosition(final ILocation camPos);
-		
+
 		/*
 		 * Define the camera position (work only in Opengl)
 		 */
@@ -310,7 +144,7 @@ public interface IGraphics {
 
 		public Collection getJTSGeometries();
 
-		public float getMaxEnvDim();
+		public double getMaxEnvDim();
 
 		public void drawMyJTSGeometries(boolean picking);
 
@@ -332,12 +166,16 @@ public interface IGraphics {
 
 		public void setPickedObjectIndex(int endPicking);
 
-		public float getEnvWidth();
+		public double getEnvWidth();
 
-		public float getEnvHeight();
+		public double getEnvHeight();
 
 		public void setPolygonTriangulated(boolean b);
 
 	}
+
+	public abstract int getEnvironmentWidth();
+
+	public abstract int getEnvironmentHeight();
 
 }

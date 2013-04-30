@@ -847,7 +847,7 @@ public class SwtGui implements IGui {
 	@Override
 	public IGraphics newGraphics(final int width, final int height) {
 		// TODO Hook OpenGL here
-		return new AWTDisplayGraphics(width, height);
+		return new AWTDisplayGraphics(width, height, width, height);
 	}
 
 	static final Map<String, Class> displayClasses = new HashMap();

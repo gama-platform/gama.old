@@ -117,7 +117,7 @@ public class ModelFactory extends SymbolFactory {
 		final Facets globalFacets = new Facets();
 		final List<ISyntacticElement> otherNodes = new ArrayList();
 		// TODO Verify that it is the right model
-		ISyntacticElement source = models.get(models.size() - 1);
+		ISyntacticElement source = models.get(0);
 		for ( int n = models.size(), i = n - 1; i >= 0; i-- ) {
 			ISyntacticElement e = models.get(i);
 			for ( ISyntacticElement se : e.getChildren() ) {

@@ -29,21 +29,18 @@ import org.eclipse.swt.widgets.Composite;
 
 public class GisLayer extends AbstractLayer {
 
-	public GisLayer(final double env_width, final double env_height, final ILayerStatement layer,
-		final IGraphics dg) {
-		super(env_width, env_height, layer, dg);
+	public GisLayer(final ILayerStatement layer) {
+		super(layer);
 
 	}
 
 	@Override
 	public void privateDrawDisplay(final IGraphics g) {
-		if ( disposed ) { return; }
 		IScope scope = GAMA.obtainNewScope();
 		Color color = ((ImageLayerStatement) definition).getGisLayer().getColor();
 		for ( GamaShape geom : ((ImageLayerStatement) definition).getGisLayer().getObjects() ) {
 			if ( geom != null ) {
 				g.drawGamaShape(scope, geom, color, true, Color.black, null, false);
-				// g.drawGeometry(geom, color, true, Color.black, null);
 			}
 		}
 	}
@@ -51,8 +48,8 @@ public class GisLayer extends AbstractLayer {
 	@Override
 	public void fillComposite(final Composite compo, final IDisplaySurface container) {
 		super.fillComposite(compo, container);
-		EditorFactory.createFile(compo, "Shapefile:",
-			((ImageLayerStatement) definition).getImageFileName(), new EditorListener<String>() {
+		EditorFactory.createFile(compo, "Shapefile:", ((ImageLayerStatement) definition).getImageFileName(),
+			new EditorListener<String>() {
 
 				@Override
 				public void valueModified(final String newValue) throws GamaRuntimeException {

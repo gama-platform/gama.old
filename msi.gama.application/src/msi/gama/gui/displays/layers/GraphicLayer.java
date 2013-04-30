@@ -7,9 +7,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class GraphicLayer extends AbstractLayer {
 
-	protected GraphicLayer(final double env_width, final double env_height, final ILayerStatement layer,
-		final IGraphics dg) {
-		super(env_width, env_height, layer, dg);
+	protected GraphicLayer(final ILayerStatement layer) {
+		super(layer);
 	}
 
 	@Override

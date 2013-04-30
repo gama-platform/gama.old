@@ -58,7 +58,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	private ActionListener focusListener;
 	private boolean output3D = false;
 	// Environment properties useful to set the camera position.
-	public float envWidth, envHeight;
 
 	// Use to toggle the 3D view.
 	public boolean threeD = false; // true; //false;
@@ -120,8 +119,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	@Override
 	public void initialize(final double env_width, final double env_height, final IDisplayOutput layerDisplayOutput) {
 		setOutputName(layerDisplayOutput.getName());
-		envWidth = (float) env_width;
-		envHeight = (float) env_height;
 		this.setLayout(new BorderLayout());
 		outputChanged(env_width, env_height, layerDisplayOutput);
 		setOpaque(true);
@@ -152,8 +149,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 						centerImage();
 					} else if ( isImageEdgeInPanel() ) {
 						scaleOrigin();
-					} else {
-						getIGraphics().setClipping(getImageClipBounds());
 					}
 				}
 				// updateDisplay();
@@ -230,6 +225,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public void outputChanged(final double env_width, final double env_height, final IDisplayOutput output) {
 		setBackgroundColor(output.getBackgroundColor());
 		this.setBackground(getBgColor());
+		setEnvWidth(env_width);
+		setEnvHeight(env_height);
 		widthHeightConstraint = env_height / env_width;
 		menuListener = new ActionListener() {
 
@@ -268,7 +265,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			}
 
 		} else {
-			manager.updateEnvDimensions(env_width, env_height);
+			manager.outputChanged();
 		}
 		paintingNeeded.release();
 	}
@@ -393,13 +390,13 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public void zoomFit() {
 		if ( openGLGraphicsGLRender != null ) {
 			if ( threeD ) {
-				openGLGraphicsGLRender.camera.Initialize3DCamera(envWidth, envHeight);
+				openGLGraphicsGLRender.camera.Initialize3DCamera(getEnvWidth(), getEnvHeight());
 				if ( openGLGraphicsGLRender.camera.isModelCentered ) {
 					openGLGraphicsGLRender.reset();
 				}
 
 			} else {
-				openGLGraphicsGLRender.camera.InitializeCamera(envWidth, envHeight);
+				openGLGraphicsGLRender.camera.InitializeCamera(getEnvWidth(), getEnvHeight());
 				if ( openGLGraphicsGLRender.camera.isModelCentered ) {
 					openGLGraphicsGLRender.reset();
 				}
@@ -537,8 +534,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 		Envelope env = geometry.getEnvelope();
 
-		double xPos = geometry.getLocation().getX() - this.envWidth / 2;
-		double yPos = -(geometry.getLocation().getY() - this.envHeight / 2);
+		double xPos = geometry.getLocation().getX() - this.getEnvWidth() / 2;
+		double yPos = -(geometry.getLocation().getY() - this.getEnvHeight() / 2);
 
 		// FIXME: Need to compute the depth of the shape to adjust ZPos value.
 		// FIXME: Problem when the geometry is a point how to determine the maxExtent of the shape?

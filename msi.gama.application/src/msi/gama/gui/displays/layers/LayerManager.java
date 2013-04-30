@@ -37,7 +37,7 @@ public class LayerManager implements ILayerManager {
 	private final IList<ILayer> enabledLayers = new GamaList();
 	private final IList<ILayer> disabledLayers = new GamaList();
 	private final IDisplaySurface surface;
-	private final PauseLayer pd = new PauseLayer(0d, 0d, null, null);
+	private final PauseLayer pd = new PauseLayer();
 	private int count = 0;
 
 	public LayerManager(final IDisplaySurface surface) {
@@ -125,7 +125,7 @@ public class LayerManager implements ILayerManager {
 	@Override
 	public void drawLayersOn(final IGraphics g) {
 		try {
-			g.initLayers();
+			g.beginDrawingLayers();
 			for ( int i = 0, n = enabledLayers.size(); i < n; i++ ) {
 				final ILayer dis = enabledLayers.get(i);
 				dis.drawDisplay(g);
@@ -188,50 +188,55 @@ public class LayerManager implements ILayerManager {
 		switch (layer.getType()) {
 
 			case ILayerStatement.GRID: {
-				return new GridLayer(env_width, env_height, layer, dg);
+				return new GridLayer(layer);
 			}
 			case ILayerStatement.AGENTS: {
-				return new AgentLayer(env_width, env_height, layer, dg);
+				return new AgentLayer(layer);
 			}
 			case ILayerStatement.SPECIES: {
-				return new SpeciesLayer(env_width, env_height, layer, dg);
+				return new SpeciesLayer(layer);
 			}
 			case ILayerStatement.TEXT: {
-				return new TextLayer(env_width, env_height, layer, dg);
+				return new TextLayer(layer);
 			}
 			case ILayerStatement.IMAGE: {
-				return new ImageLayer(env_width, env_height, layer, dg);
+				return new ImageLayer(layer);
 			}
 			case ILayerStatement.GIS: {
-				return new GisLayer(env_width, env_height, layer, dg);
+				return new GisLayer(layer);
 			}
 			case ILayerStatement.CHART: {
-				return new ChartLayer(env_width, env_height, layer, dg);
+				return new ChartLayer(layer);
 			}
 			case ILayerStatement.QUADTREE: {
-				return new QuadTreeLayer(env_width, env_height, layer, dg);
+				return new QuadTreeLayer(layer);
 			}
 			case ILayerStatement.EVENT: {
-				return new EventLayer(env_width, env_height, layer, dg);
+				return new EventLayer(layer);
 			}
 			case ILayerStatement.GRAPHICS: {
-				return new GraphicLayer(env_width, env_height, layer, dg);
+				return new GraphicLayer(layer);
 			}
 			default:
 				return null;
 		}
 	}
 
+	/**
+	 * Allows the layers to do some cleansing when the output of the display changes
+	 * @see msi.gama.common.interfaces.ILayerManager#outputChanged()
+	 */
 	@Override
-	public void updateEnvDimensions(final double env_width, final double env_height) {
+	public void outputChanged() {
 		for ( ILayer i : enabledLayers ) {
-			i.updateEnvDimensions(env_width, env_height);
+			i.outputChanged();
 		}
 		for ( ILayer i : disabledLayers ) {
-			i.updateEnvDimensions(env_width, env_height);
+			i.outputChanged();
 		}
 	}
 
+	@Override
 	public boolean stayProportional() {
 		for ( ILayer i : enabledLayers ) {
 			if ( i.stayProportional() ) { return true; }

@@ -137,35 +137,23 @@ public class GamlModel extends GamlSpecies implements IModel {
 	public void setChildren(final List<? extends ISymbol> children) {
 		GamaList forExperiment = new GamaList();
 
-		// // add the world_species first
-		// for ( ISymbol s : children ) {
-		// if ( s instanceof ISpecies ) {
-		// this.worldSpecies = (ISpecies) s;
-		// break;
-		// }
-		// }
-		// // gather the experiments from its micro-species
-		// for ( ISymbol s : worldSpecies.getMicroSpecies() ) {
-		// if ( s instanceof IExperiment ) {
-		// addExperiment((IExperiment) s);
-		// experiments.add((IExperiment) s);
-		// }
-		// }
-
-		for ( ISymbol s : children ) {
+		List<IExperimentSpecies> experiments = new ArrayList();
+		for ( Iterator<? extends ISymbol> it = children.iterator(); it.hasNext(); ) {
+			ISymbol s = it.next();
 			if ( s instanceof IExperimentSpecies ) {
-				addExperiment((IExperimentSpecies) s);
+				experiments.add((IExperimentSpecies) s);
+				it.remove();
 			} else if ( s instanceof OutputManager ) {
 				forExperiment.add(s);
-				children.remove(s);
+				it.remove();
 			}
 		}
-		// Add the default outputs, environment, etc. to all experiments
-		for ( IExperimentSpecies e : getExperiments() ) {
-			// They are withdrawn from the children
-			children.remove(e);
-			e.setChildren(forExperiment);
-		}
+		// Add the variables, etc. to the model
 		super.setChildren(children);
+		// Add the experiments and the default outputs to all experiments
+		for ( IExperimentSpecies exp : experiments ) {
+			addExperiment(exp);
+			exp.setChildren(forExperiment);
+		}
 	}
 }

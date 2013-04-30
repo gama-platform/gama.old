@@ -32,7 +32,7 @@ public class DisplayWidthUnitExpression extends ConstantExpression {
 	public Double value(final IScope scope) {
 		IGraphics g = scope.getGraphics();
 		if ( g == null ) { return 0d; }
-		return (double) g.getDisplayWidth();
+		return (double) g.getDisplayWidthInPixels();
 	}
 
 	@Override

@@ -36,9 +36,8 @@ public class ImageLayer extends AbstractLayer {
 	BufferedImage image = null;
 	private String imageFileName = "";
 
-	public ImageLayer(final double env_width, final double env_height, final ILayerStatement layer,
-		final IGraphics dg) {
-		super(env_width, env_height, layer, dg);
+	public ImageLayer(final ILayerStatement layer) {
+		super(layer);
 		buildImage();
 	}
 
@@ -63,8 +62,7 @@ public class ImageLayer extends AbstractLayer {
 		super.fillComposite(compo, container);
 
 		if ( definition instanceof ImageLayerStatement ) {
-			EditorFactory.create(compo, "Image:",
-				((ImageLayerStatement) definition).getImageFileName(), false,
+			EditorFactory.create(compo, "Image:", ((ImageLayerStatement) definition).getImageFileName(), false,
 				new EditorListener<String>() {
 
 					@Override
@@ -80,7 +78,7 @@ public class ImageLayer extends AbstractLayer {
 	public void privateDrawDisplay(final IGraphics dg) {
 		buildImage();
 		if ( image == null ) { return; }
-		dg.drawImage(null, image, null, imageFileName,0.0f);
+		dg.drawImage(null, image, null, null, null, null, 0.0, false);
 	}
 
 	@Override

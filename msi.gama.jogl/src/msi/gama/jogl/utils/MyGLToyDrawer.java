@@ -1,75 +1,40 @@
 package msi.gama.jogl.utils;
 
-import static javax.media.opengl.GL.GL_COLOR_BUFFER_BIT;
-import static javax.media.opengl.GL.GL_COMPILE;
-import static javax.media.opengl.GL.GL_DEPTH_BUFFER_BIT;
-import static javax.media.opengl.GL.GL_LINEAR;
-import static javax.media.opengl.GL.GL_LINEAR_MIPMAP_NEAREST;
-import static javax.media.opengl.GL.GL_NEAREST;
-import static javax.media.opengl.GL.GL_POLYGON;
-import static javax.media.opengl.GL.GL_QUADS;
-import static javax.media.opengl.GL.GL_TEXTURE_2D;
-import static javax.media.opengl.GL.GL_TEXTURE_MAG_FILTER;
-import static javax.media.opengl.GL.GL_TEXTURE_MIN_FILTER;
-import static javax.media.opengl.GL.GL_TRIANGLES;
-
-import java.awt.Color;
+import static javax.media.opengl.GL.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-
-import javax.media.opengl.GL;
-import javax.media.opengl.GLException;
-import javax.media.opengl.glu.GLU;
-import javax.media.opengl.glu.GLUquadric;
+import javax.media.opengl.*;
+import javax.media.opengl.glu.*;
 import javax.xml.xpath.XPathExpressionException;
-
-import org.geotools.data.simple.SimpleFeatureCollection;
-import org.geotools.data.simple.SimpleFeatureIterator;
-import org.opengis.feature.simple.SimpleFeature;
-
 import msi.gama.common.util.ImageUtils;
 import msi.gama.jogl.utils.collada.ColladaReaderXPath;
-
-import com.sun.opengl.util.GLUT;
-import com.sun.opengl.util.texture.Texture;
-import com.sun.opengl.util.texture.TextureCoords;
-import com.sun.opengl.util.texture.TextureIO;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.MultiLineString;
-import com.vividsolutions.jts.geom.MultiPolygon;
-import com.vividsolutions.jts.geom.Point;
-import com.vividsolutions.jts.geom.Polygon;
+import com.sun.opengl.util.texture.*;
 
 public class MyGLToyDrawer {
-	
-	
-	
-	//Texture
+
+	// Texture
 	float textureTop, textureBottom, textureLeft, textureRight;
 	public Texture[] textures = new Texture[3];
 	public static int currTextureFilter = 2; // currently used filter
-	
 
-	
-	// Display list 
+	// Display list
 	private int boxDList;
 	private int topDList;
 
 	// Array of 5 for box colors
 	private static float[][] boxColors = { // Bright: Red, Orange, Yellow,
 			// Green, Blue
-			{ 1.0f, 0.0f, 0.0f }, { 1.0f, 0.5f, 0.0f }, { 1.0f, 1.0f, 0.0f },
-			{ 0.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 1.0f } };
+			{ 1.0f, 0.0f, 0.0f }, { 1.0f, 0.5f, 0.0f }, { 1.0f, 1.0f, 0.0f }, { 0.0f, 1.0f, 0.0f },
+			{ 0.0f, 1.0f, 1.0f } };
 
 	// Array for top colors
 	private static float[][] topColors = { // Dark: Red, Orange, Yellow, Green,
 			// Blue
-			{ .5f, 0.0f, 0.0f }, { 0.5f, 0.25f, 0.0f }, { 0.5f, 0.5f, 0.0f },
-			{ 0.0f, 0.5f, 0.0f }, { 0.0f, 0.5f, 0.5f } };
-	
+			{ .5f, 0.0f, 0.0f }, { 0.5f, 0.25f, 0.0f }, { 0.5f, 0.5f, 0.0f }, { 0.0f, 0.5f, 0.0f },
+			{ 0.0f, 0.5f, 0.5f } };
+
 	// 2D Shape
-	
+
 	public void DrawOpenGLHelloWorldShape(GL gl, float size) {
 
 		gl.glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
@@ -97,314 +62,287 @@ public class MyGLToyDrawer {
 		gl.glEnd();
 	}
 
-	public void DrawColorTriangle(GL gl, float x, float y, float z, float alpha,float size) {
+	public void DrawColorTriangle(GL gl, float x, float y, float z, float alpha, float size) {
 		// ----- Render a triangle -----
 		gl.glTranslatef(x, y, z); // translate left and into the screen
 		gl.glBegin(GL_TRIANGLES); // draw using triangles
 		gl.glNormal3f(0.0f, 0.0f, -1.0f);
-		gl.glColor4f(1.0f, 0.0f, 0.0f,alpha); // Red
+		gl.glColor4f(1.0f, 0.0f, 0.0f, alpha); // Red
 		gl.glVertex3f(0.0f, size, 0.0f);
-		gl.glColor4f(0.0f, 1.0f, 0.0f,alpha); // Green
+		gl.glColor4f(0.0f, 1.0f, 0.0f, alpha); // Green
 		gl.glVertex3f(-size, -size, 0.0f);
-		gl.glColor4f(0.0f, 0.0f, 1.0f,alpha); // Blue
+		gl.glColor4f(0.0f, 0.0f, 1.0f, alpha); // Blue
 		gl.glVertex3f(size, -size, 0.0f);
 		gl.glEnd();
 		gl.glTranslatef(-x, -y, -z); // retranslate right and into the screen
 	}
-	
-	
-	// 3D Shape 
-	
-	public void Draw3DOpenGLHelloWorldShape(GL gl, float size){
 
+	// 3D Shape
 
-	      // ----- Render the Pyramid -----
+	public void Draw3DOpenGLHelloWorldShape(GL gl, float size) {
 
-	      gl.glTranslatef(-1.5f*size, 0.0f, -6.0f); // translate left and into the screen
+		// ----- Render the Pyramid -----
 
-	      gl.glBegin(GL_TRIANGLES); // of the pyramid
+		gl.glTranslatef(-1.5f * size, 0.0f, -6.0f); // translate left and into the screen
 
-	      // Font-face triangle
-	      gl.glColor3f(1.0f, 0.0f, 0.0f); // Red
-	      gl.glVertex3f(0.0f, size, 0.0f);
-	      gl.glColor3f(0.0f, 1.0f, 0.0f); // Green
-	      gl.glVertex3f(-size, -size, size);
-	      gl.glColor3f(0.0f, 0.0f, 1.0f); // Blue
-	      gl.glVertex3f(size, -size, size);
+		gl.glBegin(GL_TRIANGLES); // of the pyramid
 
-	      // Right-face triangle
-	      gl.glColor3f(1.0f, 0.0f, 0.0f); // Red
-	      gl.glVertex3f(0.0f, size, 0.0f);
-	      gl.glColor3f(0.0f, 0.0f, 1.0f); // Blue
-	      gl.glVertex3f(size, -size, size);
-	      gl.glColor3f(0.0f, 1.0f, 0.0f); // Green
-	      gl.glVertex3f(size, -size, -size);
+		// Font-face triangle
+		gl.glColor3f(1.0f, 0.0f, 0.0f); // Red
+		gl.glVertex3f(0.0f, size, 0.0f);
+		gl.glColor3f(0.0f, 1.0f, 0.0f); // Green
+		gl.glVertex3f(-size, -size, size);
+		gl.glColor3f(0.0f, 0.0f, 1.0f); // Blue
+		gl.glVertex3f(size, -size, size);
 
-	      // Back-face triangle
-	      gl.glColor3f(1.0f, 0.0f, 0.0f); // Red
-	      gl.glVertex3f(0.0f, size, 0.0f);
-	      gl.glColor3f(0.0f, 1.0f, 0.0f); // Green
-	      gl.glVertex3f(size, -size, -size);
-	      gl.glColor3f(0.0f, 0.0f, 1.0f); // Blue
-	      gl.glVertex3f(-size, -size, -size);
+		// Right-face triangle
+		gl.glColor3f(1.0f, 0.0f, 0.0f); // Red
+		gl.glVertex3f(0.0f, size, 0.0f);
+		gl.glColor3f(0.0f, 0.0f, 1.0f); // Blue
+		gl.glVertex3f(size, -size, size);
+		gl.glColor3f(0.0f, 1.0f, 0.0f); // Green
+		gl.glVertex3f(size, -size, -size);
 
-	      // Left-face triangle
-	      gl.glColor3f(1.0f, 0.0f, 0.0f); // Red
-	      gl.glVertex3f(0.0f, size, 0.0f);
-	      gl.glColor3f(0.0f, 0.0f, 1.0f); // Blue
-	      gl.glVertex3f(-size, -size, -size);
-	      gl.glColor3f(0.0f, 1.0f, 0.0f); // Green
-	      gl.glVertex3f(-size, -size, size);
+		// Back-face triangle
+		gl.glColor3f(1.0f, 0.0f, 0.0f); // Red
+		gl.glVertex3f(0.0f, size, 0.0f);
+		gl.glColor3f(0.0f, 1.0f, 0.0f); // Green
+		gl.glVertex3f(size, -size, -size);
+		gl.glColor3f(0.0f, 0.0f, 1.0f); // Blue
+		gl.glVertex3f(-size, -size, -size);
 
-	      gl.glEnd(); // of the pyramid
+		// Left-face triangle
+		gl.glColor3f(1.0f, 0.0f, 0.0f); // Red
+		gl.glVertex3f(0.0f, size, 0.0f);
+		gl.glColor3f(0.0f, 0.0f, 1.0f); // Blue
+		gl.glVertex3f(-size, -size, -size);
+		gl.glColor3f(0.0f, 1.0f, 0.0f); // Green
+		gl.glVertex3f(-size, -size, size);
 
-	      // ----- Render the Color Cube -----
-	      
-	      gl.glTranslatef(3.0f*size, 0.0f, 0.0f); // translate right and into the screen
+		gl.glEnd(); // of the pyramid
 
-	      
-	      gl.glBegin(GL_QUADS); // of the color cube
+		// ----- Render the Color Cube -----
 
-	      // Top-face
-	      gl.glColor3f(0.0f, 1.0f, 0.0f); // green
-	      gl.glVertex3f(size, size, -size);
-	      gl.glVertex3f(-size, size, -size);
-	      gl.glVertex3f(-size, size, size);
-	      gl.glVertex3f(size, size, size);
+		gl.glTranslatef(3.0f * size, 0.0f, 0.0f); // translate right and into the screen
 
-	      // Bottom-face
-	      gl.glColor3f(1.0f, 0.5f, 0.0f); // orange
-	      gl.glVertex3f(size, -size, size);
-	      gl.glVertex3f(-size, -size, size);
-	      gl.glVertex3f(-size, -size, -size);
-	      gl.glVertex3f(size, -size, -size);
+		gl.glBegin(GL_QUADS); // of the color cube
 
-	      // Front-face
-	      gl.glColor3f(1.0f, 0.0f, 0.0f); // red
-	      gl.glVertex3f(size, size, size);
-	      gl.glVertex3f(-size, size, size);
-	      gl.glVertex3f(-size, -size, size);
-	      gl.glVertex3f(size, -size, size);
+		// Top-face
+		gl.glColor3f(0.0f, 1.0f, 0.0f); // green
+		gl.glVertex3f(size, size, -size);
+		gl.glVertex3f(-size, size, -size);
+		gl.glVertex3f(-size, size, size);
+		gl.glVertex3f(size, size, size);
 
-	      // Back-face
-	      gl.glColor3f(1.0f, 1.0f, 0.0f); // yellow
-	      gl.glVertex3f(size, -size, -size);
-	      gl.glVertex3f(-size, -size, -size);
-	      gl.glVertex3f(-size, size, -size);
-	      gl.glVertex3f(size, size, -size);
+		// Bottom-face
+		gl.glColor3f(1.0f, 0.5f, 0.0f); // orange
+		gl.glVertex3f(size, -size, size);
+		gl.glVertex3f(-size, -size, size);
+		gl.glVertex3f(-size, -size, -size);
+		gl.glVertex3f(size, -size, -size);
 
-	      // Left-face
-	      gl.glColor3f(0.0f, 0.0f, 1.0f); // blue
-	      gl.glVertex3f(-size, size, size);
-	      gl.glVertex3f(-size, size, -size);
-	      gl.glVertex3f(-size, -size, -size);
-	      gl.glVertex3f(-size, -size, size);
+		// Front-face
+		gl.glColor3f(1.0f, 0.0f, 0.0f); // red
+		gl.glVertex3f(size, size, size);
+		gl.glVertex3f(-size, size, size);
+		gl.glVertex3f(-size, -size, size);
+		gl.glVertex3f(size, -size, size);
 
-	      // Right-face
-	      gl.glColor3f(1.0f, 0.0f, 1.0f); // violet
-	      gl.glVertex3f(size, size, -size);
-	      gl.glVertex3f(size, size, size);
-	      gl.glVertex3f(size, -size, size);
-	      gl.glVertex3f(size, -size, -size);
+		// Back-face
+		gl.glColor3f(1.0f, 1.0f, 0.0f); // yellow
+		gl.glVertex3f(size, -size, -size);
+		gl.glVertex3f(-size, -size, -size);
+		gl.glVertex3f(-size, size, -size);
+		gl.glVertex3f(size, size, -size);
 
-	      gl.glEnd(); // of the color cube
-	      
-	      
-	      
+		// Left-face
+		gl.glColor3f(0.0f, 0.0f, 1.0f); // blue
+		gl.glVertex3f(-size, size, size);
+		gl.glVertex3f(-size, size, -size);
+		gl.glVertex3f(-size, -size, -size);
+		gl.glVertex3f(-size, -size, size);
+
+		// Right-face
+		gl.glColor3f(1.0f, 0.0f, 1.0f); // violet
+		gl.glVertex3f(size, size, -size);
+		gl.glVertex3f(size, size, size);
+		gl.glVertex3f(size, -size, size);
+		gl.glVertex3f(size, -size, -size);
+
+		gl.glEnd(); // of the color cube
+
 	}
-	
-	
-	public void DrawArrayListCube(GL gl,float size){
-	      float vertices[] = {
-				// Top-face
-				size, size, -size,
-			    -size, size, -size,
-			    -size, size, size,
-			    size, size, size, 
-			    // Bottom-face
-			    size, -size, size,
-			    -size, -size, size,
-			    -size, -size, -size,
-			    size, -size, -size,
-			    // Front-face
-			    size, size, size,
-			    -size, size, size,
-			    -size, -size, size,
-			    size, -size, size,
-			    // Back-face
-			    size, -size, -size,
-			    -size, -size, -size,
-			    -size, size, -size,
-			    size, size, -size,
-			    // Left-face
-			    -size, size, size,
-			    -size, size, -size,
-			    -size, -size, -size,
-			    -size, -size, size,
-			    // Right-face
-			    size, size, -size,
-			    size, size, size,
-			    size, -size, size,
-			    size, -size, -size, 
-	      };
-	      
-	      gl.glBegin(GL_QUADS);
-	      for (int i = 0; i < 24; i++)
-	        gl.glVertex3f(vertices[i * 3], vertices[i * 3 + 1], vertices[i * 3 + 2]);
-	      gl.glEnd();
-	}
-	public void Draw3DCube(GL gl, float size){
 
-	      // ----- Render the Centered Cube -----
-		  gl.glColor3f(0.0f, 0.0f, 0.0f); // black
-		  		  
-	      // Top-face
-		  gl.glBegin(GL.GL_LINES);
-		  
-	      gl.glVertex3f(size, size, -size);
-	      gl.glVertex3f(-size, size, -size);
-	      
-	      gl.glVertex3f(-size, size, -size);
-	      gl.glVertex3f(-size, size, size);
-	      
-	      gl.glVertex3f(-size, size, size);
-	      gl.glVertex3f(size, size, size);
-	      
-	      gl.glVertex3f(size, size, size);
-	      gl.glVertex3f(size, size, -size);
-	      
-	      gl.glEnd();
+	public void DrawArrayListCube(GL gl, float size) {
+		float vertices[] = {
+			// Top-face
+			size, size, -size, -size, size, -size, -size, size, size, size, size, size,
+			// Bottom-face
+			size, -size, size, -size, -size, size, -size, -size, -size, size, -size, -size,
+			// Front-face
+			size, size, size, -size, size, size, -size, -size, size, size, -size, size,
+			// Back-face
+			size, -size, -size, -size, -size, -size, -size, size, -size, size, size, -size,
+			// Left-face
+			-size, size, size, -size, size, -size, -size, -size, -size, -size, -size, size,
+			// Right-face
+			size, size, -size, size, size, size, size, -size, size, size, -size, -size, };
 
-	      // Bottom-face
-	      gl.glBegin(GL.GL_LINES);
-	      
-	      gl.glVertex3f(size, -size, size);
-	      gl.glVertex3f(-size, -size, size);
-	      
-	      gl.glVertex3f(-size, -size, size);
-	      gl.glVertex3f(-size, -size, -size);
-	      
-	      gl.glVertex3f(-size, -size, -size);
-	      gl.glVertex3f(size, -size, -size);
-	      
-	      gl.glVertex3f(size, -size, -size);
-	      gl.glVertex3f(size, -size, size);
-	      
-	      gl.glEnd();
-
-	      // Front-face
-	      gl.glBegin(GL.GL_LINES);
-	      
-	      gl.glVertex3f(size, size, size);
-	      gl.glVertex3f(-size, size, size);
-	      
-	      gl.glVertex3f(-size, size, size);
-	      gl.glVertex3f(-size, -size, size);
-	      
-	      gl.glVertex3f(-size, -size, size);
-	      gl.glVertex3f(size, -size, size);
-	      
-	      gl.glVertex3f(size, -size, size);
-	      gl.glVertex3f(size, size, size);
-	      
-	      gl.glEnd();
-
-	      // Back-face
-	      gl.glBegin(GL.GL_LINES);
-	      
-	      gl.glVertex3f(size, -size, -size);
-	      gl.glVertex3f(-size, -size, -size);
-	      
-	      gl.glVertex3f(-size, -size, -size);
-	      gl.glVertex3f(-size, size, -size);
-	      
-	      gl.glVertex3f(-size, size, -size);
-	      gl.glVertex3f(size, size, -size);
-	      
-	      gl.glVertex3f(size, size, -size);
-	      gl.glVertex3f(size, -size, -size);
-	      
-	      
-	      gl.glEnd();
-
-	      // Left-face
-	      gl.glBegin(GL.GL_LINES);
-	      
-	      gl.glVertex3f(-size, size, size);
-	      gl.glVertex3f(-size, size, -size);
-	      
-	      gl.glVertex3f(-size, size, -size);
-	      gl.glVertex3f(-size, -size, -size);
-	      
-	      gl.glVertex3f(-size, -size, -size);
-	      gl.glVertex3f(-size, -size, size);
-	      
-	      gl.glVertex3f(-size, -size, size);
-	      gl.glVertex3f(-size, size, size);
-	      
-	      gl.glEnd();
-
-	      // Right-face
-	      gl.glBegin(GL.GL_LINES);
-	      gl.glVertex3f(size, size, -size);
-	      gl.glVertex3f(size, size, size);
-	      
-	      gl.glVertex3f(size, size, size);
-	      gl.glVertex3f(size, -size, size);
-	      
-	      gl.glVertex3f(size, -size, size);
-	      gl.glVertex3f(size, -size, -size);
-	      
-	      gl.glVertex3f(size, -size, -size);
-	      gl.glVertex3f(size, size, -size);
-	      
-	      gl.glEnd(); 
-	}
-	
-	
-	public void DrawSphere(GL gl, GLU glu,float x, float y, float z, float radius){
-		// Draw sphere (possible styles: FILL, LINE, POINT).
-        gl.glColor3f(0.3f, 0.5f, 1f);
-        GLUquadric earth = glu.gluNewQuadric();
-        glu.gluQuadricDrawStyle(earth, GLU.GLU_FILL);
-        glu.gluQuadricNormals(earth, GLU.GLU_FLAT);
-        glu.gluQuadricOrientation(earth, GLU.GLU_OUTSIDE);
-        final int slices = 16;
-        final int stacks = 16;
-        glu.gluSphere(earth, radius, slices, stacks);
-        glu.gluDeleteQuadric(earth);
-	}
-	
-	
-	public void DrawROI(GL gl, float x1, float y1, float x2, float y2){
-		
-		gl.glBegin(GL.GL_LINES);
-		
-		gl.glVertex3f(x1, -y1 ,0.0f);
-		gl.glVertex3f(x2, -y1 ,0.0f);
-		
-		gl.glVertex3f(x2, -y1 ,0.0f);
-		gl.glVertex3f(x2, -y2 ,0.0f);
-		
-	    gl.glVertex3f(x2, -y2 ,0.0f);
-		gl.glVertex3f(x1, -y2 ,0.0f);
-		
-		gl.glVertex3f(x1, -y2 ,0.0f);
-		gl.glVertex3f(x1, -y1 ,0.0f);
-		
+		gl.glBegin(GL_QUADS);
+		for ( int i = 0; i < 24; i++ ) {
+			gl.glVertex3f(vertices[i * 3], vertices[i * 3 + 1], vertices[i * 3 + 2]);
+		}
 		gl.glEnd();
-		
 	}
-	//textured shape
-	
-	
+
+	public void Draw3DCube(GL gl, float size) {
+
+		// ----- Render the Centered Cube -----
+		gl.glColor3f(0.0f, 0.0f, 0.0f); // black
+
+		// Top-face
+		gl.glBegin(GL.GL_LINES);
+
+		gl.glVertex3f(size, size, -size);
+		gl.glVertex3f(-size, size, -size);
+
+		gl.glVertex3f(-size, size, -size);
+		gl.glVertex3f(-size, size, size);
+
+		gl.glVertex3f(-size, size, size);
+		gl.glVertex3f(size, size, size);
+
+		gl.glVertex3f(size, size, size);
+		gl.glVertex3f(size, size, -size);
+
+		gl.glEnd();
+
+		// Bottom-face
+		gl.glBegin(GL.GL_LINES);
+
+		gl.glVertex3f(size, -size, size);
+		gl.glVertex3f(-size, -size, size);
+
+		gl.glVertex3f(-size, -size, size);
+		gl.glVertex3f(-size, -size, -size);
+
+		gl.glVertex3f(-size, -size, -size);
+		gl.glVertex3f(size, -size, -size);
+
+		gl.glVertex3f(size, -size, -size);
+		gl.glVertex3f(size, -size, size);
+
+		gl.glEnd();
+
+		// Front-face
+		gl.glBegin(GL.GL_LINES);
+
+		gl.glVertex3f(size, size, size);
+		gl.glVertex3f(-size, size, size);
+
+		gl.glVertex3f(-size, size, size);
+		gl.glVertex3f(-size, -size, size);
+
+		gl.glVertex3f(-size, -size, size);
+		gl.glVertex3f(size, -size, size);
+
+		gl.glVertex3f(size, -size, size);
+		gl.glVertex3f(size, size, size);
+
+		gl.glEnd();
+
+		// Back-face
+		gl.glBegin(GL.GL_LINES);
+
+		gl.glVertex3f(size, -size, -size);
+		gl.glVertex3f(-size, -size, -size);
+
+		gl.glVertex3f(-size, -size, -size);
+		gl.glVertex3f(-size, size, -size);
+
+		gl.glVertex3f(-size, size, -size);
+		gl.glVertex3f(size, size, -size);
+
+		gl.glVertex3f(size, size, -size);
+		gl.glVertex3f(size, -size, -size);
+
+		gl.glEnd();
+
+		// Left-face
+		gl.glBegin(GL.GL_LINES);
+
+		gl.glVertex3f(-size, size, size);
+		gl.glVertex3f(-size, size, -size);
+
+		gl.glVertex3f(-size, size, -size);
+		gl.glVertex3f(-size, -size, -size);
+
+		gl.glVertex3f(-size, -size, -size);
+		gl.glVertex3f(-size, -size, size);
+
+		gl.glVertex3f(-size, -size, size);
+		gl.glVertex3f(-size, size, size);
+
+		gl.glEnd();
+
+		// Right-face
+		gl.glBegin(GL.GL_LINES);
+		gl.glVertex3f(size, size, -size);
+		gl.glVertex3f(size, size, size);
+
+		gl.glVertex3f(size, size, size);
+		gl.glVertex3f(size, -size, size);
+
+		gl.glVertex3f(size, -size, size);
+		gl.glVertex3f(size, -size, -size);
+
+		gl.glVertex3f(size, -size, -size);
+		gl.glVertex3f(size, size, -size);
+
+		gl.glEnd();
+	}
+
+	public void DrawSphere(GL gl, GLU glu, float x, float y, float z, float radius) {
+		// Draw sphere (possible styles: FILL, LINE, POINT).
+		gl.glColor3f(0.3f, 0.5f, 1f);
+		GLUquadric earth = glu.gluNewQuadric();
+		glu.gluQuadricDrawStyle(earth, GLU.GLU_FILL);
+		glu.gluQuadricNormals(earth, GLU.GLU_FLAT);
+		glu.gluQuadricOrientation(earth, GLU.GLU_OUTSIDE);
+		final int slices = 16;
+		final int stacks = 16;
+		glu.gluSphere(earth, radius, slices, stacks);
+		glu.gluDeleteQuadric(earth);
+	}
+
+	public void DrawROI(GL gl, double x1, double y1, double x2, double y2) {
+
+		gl.glBegin(GL.GL_LINES);
+
+		gl.glVertex3d(x1, -y1, 0.0f);
+		gl.glVertex3d(x2, -y1, 0.0f);
+
+		gl.glVertex3d(x2, -y1, 0.0f);
+		gl.glVertex3d(x2, -y2, 0.0f);
+
+		gl.glVertex3d(x2, -y2, 0.0f);
+		gl.glVertex3d(x1, -y2, 0.0f);
+
+		gl.glVertex3d(x1, -y2, 0.0f);
+		gl.glVertex3d(x1, -y1, 0.0f);
+
+		gl.glEnd();
+
+	}
+
+	// textured shape
+
 	public void LoadTextureFromImage(GL gl, String textureFileName) {
 
 		// Load textures from image
 		try {
 			// Use URL so that can read from JAR and disk file.
-			BufferedImage image = ImageUtils.getInstance().getImageFromFile(
-					textureFileName);
+			BufferedImage image = ImageUtils.getInstance().getImageFromFile(textureFileName);
 
 			// Create a OpenGL Texture object from (URL, mipmap, file suffix)
 			textures[0] = TextureIO.newTexture(image, false);
@@ -424,8 +362,7 @@ public class MyGLToyDrawer {
 			textures[2] = TextureIO.newTexture(image, true); // mipmap is true
 			// Use mipmap filter is the image is smaller than the texture
 			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER,
-					GL_LINEAR_MIPMAP_NEAREST);
+			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
 
 			// Get the top and bottom coordinates of the textures. Image flips
 			// vertically.
@@ -443,10 +380,10 @@ public class MyGLToyDrawer {
 		}
 
 	}
-	
-	public void DrawTexture(GL gl, float width){
-		
-		//WARNING: Be sure to have call LoadTextureFromImage() in the init method og the GLRenderer
+
+	public void DrawTexture(GL gl, float width) {
+
+		// WARNING: Be sure to have call LoadTextureFromImage() in the init method og the GLRenderer
 
 		// Enables this texture's target (e.g., GL_TEXTURE_2D) in the current GL
 		// context's state.
@@ -467,36 +404,34 @@ public class MyGLToyDrawer {
 		gl.glVertex3f(width, width, width); // top-right of the texture and quad
 		gl.glTexCoord2f(textureLeft, textureTop);
 		gl.glVertex3f(-width, width, width); // top-left of the texture and quad
-		
+
 		gl.glEnd();
-		
+
 	}
-	
-	
-	public void DrawTexturedSphere(GL gl,GLU glu){
-		
+
+	public void DrawTexturedSphere(GL gl, GLU glu) {
+
 		// Apply texture.
 		textures[currTextureFilter].enable();
 		textures[currTextureFilter].bind();
 
-        // Draw sphere (possible styles: FILL, LINE, POINT).
-        GLUquadric earth = glu.gluNewQuadric();
-        glu.gluQuadricTexture(earth, true);
-        glu.gluQuadricDrawStyle(earth, GLU.GLU_FILL);
-        glu.gluQuadricNormals(earth, GLU.GLU_FLAT);
-        glu.gluQuadricOrientation(earth, GLU.GLU_OUTSIDE);
-        final float radius = 6.378f;
-        final int slices = 16;
-        final int stacks = 16;
-        glu.gluSphere(earth, radius, slices, stacks);
-        glu.gluDeleteQuadric(earth);
-		
+		// Draw sphere (possible styles: FILL, LINE, POINT).
+		GLUquadric earth = glu.gluNewQuadric();
+		glu.gluQuadricTexture(earth, true);
+		glu.gluQuadricDrawStyle(earth, GLU.GLU_FILL);
+		glu.gluQuadricNormals(earth, GLU.GLU_FLAT);
+		glu.gluQuadricOrientation(earth, GLU.GLU_OUTSIDE);
+		final float radius = 6.378f;
+		final int slices = 16;
+		final int stacks = 16;
+		glu.gluSphere(earth, radius, slices, stacks);
+		glu.gluDeleteQuadric(earth);
+
 	}
-	
+
 	public void DrawTexturedQuad(GL gl, float width) {
 
-		
-		//WARNING: Be sure to have call LoadTextureFromImage() in the init method og the GLRenderer
+		// WARNING: Be sure to have call LoadTextureFromImage() in the init method og the GLRenderer
 
 		// Enables this texture's target (e.g., GL_TEXTURE_2D) in the current GL
 		// context's state.
@@ -571,11 +506,11 @@ public class MyGLToyDrawer {
 		gl.glEnd();
 
 	}
-	
+
 	public void DrawTexturedQuadWithNormal(GL gl, float width) {
 
-		//WARNING: Be sure to have call LoadTextureFromImage() in the init method og the GLRenderer
-		
+		// WARNING: Be sure to have call LoadTextureFromImage() in the init method og the GLRenderer
+
 		// Enables this texture's target (e.g., GL_TEXTURE_2D) in the current GL
 		// context's state.
 		textures[currTextureFilter].enable();
@@ -656,13 +591,11 @@ public class MyGLToyDrawer {
 
 		gl.glEnd();
 	}
-	
-	
-	//  Display List Shape ///////
-	
+
+	// Display List Shape ///////
+
 	public void buildDisplayLists(GL gl, float size) {
-		
-	
+
 		// Build two lists, and returns handle for the first list
 		int base = gl.glGenLists(2);
 
@@ -748,11 +681,11 @@ public class MyGLToyDrawer {
 		gl.glEndList();
 
 	}
-	
+
 	public void DrawTexturedDisplayList(GL gl, float size) {
 
-		//WARNING: Be sure to call buildDisplayLists() in the init method of the GLRenderer  
-		
+		// WARNING: Be sure to call buildDisplayLists() in the init method of the GLRenderer
+
 		// Enables this texture's target (e.g., GL_TEXTURE_2D) in the current GL
 		// context's state.
 		textures[currTextureFilter].enable();
@@ -782,28 +715,21 @@ public class MyGLToyDrawer {
 
 		gl.glTranslatef(-size, 0.0f, 0.0f);
 
-		
 		gl.glColor3fv(boxColors[4], 0);
 		gl.glCallList(boxDList); // draw the box
 		gl.glColor3fv(topColors[4], 0);
 		gl.glCallList(topDList); // draw the top
 	}
-	
-		
-	public void DrawColladaObject(String filename){
-		
+
+	public void DrawColladaObject(String filename) {
+
 		ColladaReaderXPath myColladaReader = new ColladaReaderXPath(filename);
 		try {
 			ColladaReaderXPath.GetObjectVertex();
 		} catch (XPathExpressionException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
-	
-
-	
-
 
 }

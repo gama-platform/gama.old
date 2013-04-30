@@ -25,6 +25,7 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.combination;
@@ -58,10 +59,8 @@ import msi.gaml.types.*;
 	@facet(name = IMAGE, type = IType.STRING, optional = true),
 	@facet(name = EMPTY, type = IType.BOOL, optional = true),
 	@facet(name = BORDER, type = IType.COLOR, optional = true),
-	@facet(name = ROUNDED, type = IType.BOOL, optional = true),
-	@facet(name = AT, type = IType.POINT, optional = true),
-	@facet(name = SIZE, type = IType.FLOAT, optional = true),
-	@facet(name = TO, type = IType.POINT, optional = true),
+	@facet(name = ROUNDED, type = IType.BOOL, optional = true), @facet(name = AT, type = IType.POINT, optional = true),
+	@facet(name = SIZE, type = IType.FLOAT, optional = true), @facet(name = TO, type = IType.POINT, optional = true),
 	@facet(name = COLOR, type = IType.COLOR, optional = true),
 	@facet(name = SCALE, type = IType.FLOAT, optional = true),
 	@facet(name = ROTATE, type = IType.INT, optional = true),
@@ -73,8 +72,7 @@ combinations = { @combination({ IKeyword.GEOMETRY, EMPTY, BORDER, ROUNDED, COLOR
 	@combination({ SHAPE, COLOR, SIZE, AT, EMPTY, BORDER, ROUNDED, ROTATE, DEPTH }),
 	@combination({ TO, SHAPE, COLOR, SIZE, EMPTY, BORDER, ROUNDED }),
 	@combination({ SHAPE, COLOR, SIZE, EMPTY, BORDER, ROUNDED, ROTATE }),
-	@combination({ TEXT, SIZE, COLOR, AT, ROTATE }),
-	@combination({ IMAGE, SIZE, AT, SCALE, ROTATE, COLOR }) }, omissible = IKeyword.GEOMETRY)
+	@combination({ TEXT, SIZE, COLOR, AT, ROTATE }), @combination({ IMAGE, SIZE, AT, SCALE, ROTATE, COLOR }) }, omissible = IKeyword.GEOMETRY)
 @inside(symbols = { ASPECT, "graphics" }, kinds = { ISymbolKind.SEQUENCE_STATEMENT })
 public class DrawStatement extends AbstractStatementSequence {
 
@@ -99,8 +97,8 @@ public class DrawStatement extends AbstractStatementSequence {
 	private final DrawExecuter executer;
 
 	private final IExpression getShapeExpression(final IDescription desc) {
-		return GAMA.getExpressionFactory().createVar(SHAPE, Types.get(IType.GEOMETRY),
-			Types.get(IType.NONE), Types.get(IType.STRING), false, IVarExpression.AGENT, desc);
+		return GAMA.getExpressionFactory().createVar(SHAPE, Types.get(IType.GEOMETRY), Types.get(IType.NONE),
+			Types.get(IType.STRING), false, IVarExpression.AGENT, desc);
 	}
 
 	public DrawStatement(final IDescription desc) throws GamaRuntimeException {
@@ -164,9 +162,8 @@ public class DrawStatement extends AbstractStatementSequence {
 					IExpression to = getFacet(TO);
 					if ( at == null ) {
 						at =
-							GAMA.getExpressionFactory().createVar("location",
-								Types.get(IType.POINT), Types.get(IType.FLOAT),
-								Types.get(IType.INT), false, IVarExpression.AGENT, desc);
+							GAMA.getExpressionFactory().createVar("location", Types.get(IType.POINT),
+								Types.get(IType.FLOAT), Types.get(IType.INT), false, IVarExpression.AGENT, desc);
 					}
 					List<IExpression> elements = new ArrayList();
 					elements.add(at);
@@ -183,8 +180,8 @@ public class DrawStatement extends AbstractStatementSequence {
 				desc.getFacets().put(IKeyword.GEOMETRY, exp);
 			} else {
 				// If no operator has been found, we throw an exception
-				desc.error("Impossible to patch the expression for compatibility",
-					IGamlIssue.UNKNOWN_UNARY, desc.getUnderlyingElement(null), "");
+				desc.error("Impossible to patch the expression for compatibility", IGamlIssue.UNKNOWN_UNARY,
+					desc.getUnderlyingElement(null), "");
 
 			}
 		}
@@ -228,64 +225,46 @@ public class DrawStatement extends AbstractStatementSequence {
 			rot = getFacet(ROTATE);
 			rounded = getFacet(ROUNDED);
 
-			constSize =
-				size == null ? LOC : size.isConst() ? Cast.asPoint(scope, size.value(scope)) : null;
-			constCol =
-				color != null && color.isConst() ? Cast.asColor(scope, color.value(scope)) : null;
-			constBord =
-				bord != null && bord.isConst() ? Cast.asColor(scope, bord.value(scope)) : null;
+			constSize = size == null ? LOC : size.isConst() ? Cast.asPoint(scope, size.value(scope)) : null;
+			constCol = color != null && color.isConst() ? Cast.asColor(scope, color.value(scope)) : null;
+			constBord = bord != null && bord.isConst() ? Cast.asColor(scope, bord.value(scope)) : null;
 			constRot = rot != null && rot.isConst() ? Cast.asInt(scope, rot.value(scope)) : null;
 			constLoc = loc != null && loc.isConst() ? Cast.asPoint(scope, loc.value(scope)) : null;
-			constRounded =
-				rounded != null && rounded.isConst() ? Cast.asBool(scope, rounded.value(scope))
-					: null;
-		}
-
-		double scale(final double val, final IGraphics g) {
-			return val * g.getXScale();
+			constRounded = rounded != null && rounded.isConst() ? Cast.asBool(scope, rounded.value(scope)) : null;
 		}
 
 		Integer getRotation(final IScope scope) throws GamaRuntimeException {
-			return constRot == null ? rot == null ? null : Cast.asInt(scope, rot.value(scope))
-				: constRot;
+			return constRot == null ? rot == null ? null : Cast.asInt(scope, rot.value(scope)) : constRot;
 		}
 
-		int getSize(final IScope scope, final IGraphics g) {
-			return constSize == null ? Maths
-				.round(scale(Cast.asFloat(scope, size.value(scope)), g)) : Maths.round(scale(
-				constSize.getX(), g));
+		ILocation getSize(final IScope scope) {
+			return constSize == null ? Cast.asPoint(scope, size.value(scope)) : constSize;
 		}
 
 		Color getColor(final IScope scope) {
-			return constCol == null ? color != null ? Cast.asColor(scope, color.value(scope))
-				: scope.getAgentScope().getSpecies().hasVar(COLOR) ? Cast.asColor(scope,
-					scope.getAgentVarValue(scope.getAgentScope(), COLOR)) : Color.yellow : constCol;
+			return constCol == null ? color != null ? Cast.asColor(scope, color.value(scope)) : scope.getAgentScope()
+				.getSpecies().hasVar(COLOR) ? Cast.asColor(scope, scope.getAgentVarValue(scope.getAgentScope(), COLOR))
+				: Color.yellow : constCol;
 		}
 
 		Color getBorder(final IScope scope) {
-			return constBord == null ? bord != null ? Cast.asColor(scope, bord.value(scope))
-				: scope.getAgentScope().getSpecies().hasVar(BORDER) ? Cast.asColor(scope,
-					scope.getAgentVarValue(scope.getAgentScope(), BORDER)) : Color.black
-				: constBord;
+			return constBord == null ? bord != null ? Cast.asColor(scope, bord.value(scope)) : scope.getAgentScope()
+				.getSpecies().hasVar(BORDER) ? Cast.asColor(scope,
+				scope.getAgentVarValue(scope.getAgentScope(), BORDER)) : Color.black : constBord;
 		}
 
 		Boolean getRounded(final IScope scope) {
-			return constRounded == null ? rounded == null ? false : Cast.asBool(scope,
-				rounded.value(scope)) : constRounded;
+			return constRounded == null ? rounded == null ? false : Cast.asBool(scope, rounded.value(scope))
+				: constRounded;
 		}
 
 		Boolean getEmpty(final IScope scope) {
-			return constEmpty == null ? empty == null ? false : Cast.asBool(scope,
-				empty.value(scope)) : constEmpty;
+			return constEmpty == null ? empty == null ? false : Cast.asBool(scope, empty.value(scope)) : constEmpty;
 		}
 
-		ILocation getLocation(final IScope scope, final IGraphics g) {
-			ILocation p =
-				constLoc == null ? loc != null ? Cast.asPoint(scope, loc.value(scope)) : scope
-					.getAgentScope().getLocation() : constLoc;
-
-			// return new GamaPoint(p.getX() * g.getXScale(), p.getY() * g.getYScale());
-			return new GamaPoint(p.getX() * g.getXScale(), p.getY() * g.getYScale(), p.getZ());
+		ILocation getLocation(final IScope scope) {
+			return constLoc == null ? loc != null ? Cast.asPoint(scope, loc.value(scope)) : scope.getAgentScope()
+				.getLocation() : constLoc;
 		}
 
 		abstract Rectangle2D executeOn(IScope agent, IGraphics g) throws GamaRuntimeException;
@@ -300,19 +279,17 @@ public class DrawStatement extends AbstractStatementSequence {
 
 		@Override
 		Rectangle2D executeOn(final IScope scope, final IGraphics gr) throws GamaRuntimeException {
-
 			GamaShape g1 = (GamaShape) Cast.asGeometry(scope, item.value(scope));
-			if ( loc != null ) {
-				g1.setLocation(getLocation(scope, gr));
+			if ( g1 == null ) {
+				GuiUtils.debug("DrawStatement.ShapeExecuter.executeOn : null shape");
+				return null;
 			}
-
+			IShape g2 = Spatial.Transformations.at_location(scope, g1, getLocation(scope));
 			if ( depth != null ) {
-				g1.getInnerGeometry().setUserData(depth.value(scope));
-
+				g2.getInnerGeometry().setUserData(depth.value(scope));
 			}
-			
-			return gr.drawGamaShape(scope, g1, getColor(scope), !getEmpty(scope), getBorder(scope),
-				getRotation(scope), getRounded(scope));
+			return gr.drawGamaShape(scope, g2, getColor(scope), !getEmpty(scope), getBorder(scope), getRotation(scope),
+				getRounded(scope));
 
 		}
 	}
@@ -329,30 +306,28 @@ public class DrawStatement extends AbstractStatementSequence {
 		}
 
 		// FIXME : Penser à placer des exceptions
+		// FIXME Optimiser tout ça
 		@Override
 		Rectangle2D executeOn(final IScope scope, final IGraphics g) throws GamaRuntimeException {
 			IAgent agent = scope.getAgentScope();
-			ILocation from = getLocation(scope, g);
-			int displayWidth = getSize(scope, g);
+			ILocation from = getLocation(scope);
+			Double displayWidth = getSize(scope).getX();
 			GamaImageFile file = constImg == null ? (GamaImageFile) item.value(scope) : constImg;
 			BufferedImage img = file.getImage();
 			int image_width = img.getWidth();
 			int image_height = img.getHeight();
 			double ratio = image_width / (double) image_height;
 			int displayHeight = Maths.round(displayWidth / ratio);
-			int x = Maths.round(from.getX()) - displayWidth / 2;
-			int y = Maths.round(from.getY()) - displayHeight / 2;
-			g.setDrawingDimensions(displayWidth, displayHeight);
-			g.setDrawingCoordinates(x, y);
+			int x = (int) (from.getX() - displayWidth / 2);
+			int y = (int) (from.getY() - displayHeight / 2d);
+
 			Color c = getColor(scope);
 			if ( color != null ) {
-				if ( workImage == null || workImage.getWidth() != image_width ||
-					workImage.getHeight() != image_height ) {
+				if ( workImage == null || workImage.getWidth() != image_width || workImage.getHeight() != image_height ) {
 					if ( workImage != null ) {
 						workImage.flush();
 					}
-					workImage =
-						new BufferedImage(image_width, image_height, BufferedImage.TYPE_INT_ARGB);
+					workImage = new BufferedImage(image_width, image_height, BufferedImage.TYPE_INT_ARGB);
 					if ( g2d != null ) {
 						g2d.dispose();
 					}
@@ -366,13 +341,13 @@ public class DrawStatement extends AbstractStatementSequence {
 				g2d.fillRect(0, 0, image_width, image_height);
 
 				Rectangle2D result =
-					g.drawImage(scope, workImage, getRotation(scope), true, file.getName(),
-						(float) agent.getLocation().getZ());
+					g.drawImage(scope, workImage, new GamaPoint(x, y), new GamaPoint(displayWidth, displayHeight),
+						null, getRotation(scope), agent.getLocation().getZ(), false);
 				workImage.flush();
 				return result;
 			}
-			return g.drawImage(scope, img, getRotation(scope), true, file.getName(), (float) agent
-				.getLocation().getZ());
+			return g.drawImage(scope, img, new GamaPoint(x, y), new GamaPoint(displayWidth, displayHeight), null,
+				getRotation(scope), agent.getLocation().getZ(), false);
 		}
 
 	}
@@ -391,20 +366,17 @@ public class DrawStatement extends AbstractStatementSequence {
 			constText = item.isConst() ? Cast.asString(scope, item.value(scope)) : null;
 			font = getFacet(FONT);
 			constFont =
-				font == null ? Font.SANS_SERIF : font.isConst() ? Cast.asString(scope,
-					font.value(scope)) : null;
+				font == null ? Font.SANS_SERIF : font.isConst() ? Cast.asString(scope, font.value(scope)) : null;
 			style = getFacet(STYLE);
 			constStyle =
-				style == null ? Font.PLAIN : style.isConst() ? CONSTANTS.get(Cast.asString(scope,
-					style.value(scope))) : null;
+				style == null ? Font.PLAIN : style.isConst() ? CONSTANTS.get(Cast.asString(scope, style.value(scope)))
+					: null;
 
 		}
 
 		@Override
 		Rectangle2D executeOn(final IScope scope, final IGraphics g) throws GamaRuntimeException {
 			IAgent agent = scope.getAgentScope();
-			ILocation from = getLocation(scope, g);
-			g.setDrawingCoordinates(Maths.round(from.getX()), Maths.round(from.getY()));
 			String info = constText == null ? Cast.asString(scope, item.value(scope)) : constText;
 			if ( info == null || info.length() == 0 ) {
 				scope.setStatus(ExecutionStatus.skipped);
@@ -412,16 +384,9 @@ public class DrawStatement extends AbstractStatementSequence {
 			}
 			String fName = constFont == null ? Cast.asString(scope, font.value(scope)) : constFont;
 			int fStyle = constStyle == null ? CONSTANTS.get(style.value(scope)) : constStyle;
-			Font f = new Font(fName, fStyle, getSize(scope, g));
-			g.setFont(f);
 
-			// Get the z composante of the agent.
-			// FIXME: (Added by Arno 09/12) Why not changing the method scale in order to make it
-			// return a 3D point instead of a 2D point.
-			if ( Double.isNaN(agent.getLocation().getZ()) ) { return g.drawString(agent, info,
-				getColor(scope), getRotation(scope), 0.0f); }
-			return g.drawString(agent, info, getColor(scope), getRotation(scope), (float) agent
-				.getLocation().getZ());
+			return g.drawString(info, getColor(scope), getLocation(scope), getSize(scope).getX(), fName, fStyle,
+				getRotation(scope), agent.getLocation().getZ());
 
 		}
 	}

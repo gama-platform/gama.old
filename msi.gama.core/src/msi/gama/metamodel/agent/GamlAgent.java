@@ -50,7 +50,7 @@ public class GamlAgent implements IAgent {
 	/** The population that this agent belongs to. */
 	protected final IPopulation population;
 	protected final GamaMap attributes = new GamaMap();
-	protected int index;
+	protected volatile int index;
 	/** The shape of agent with relative coordinate on the environment of host/environment. */
 	protected IShape geometry;
 	protected String name;
@@ -59,7 +59,7 @@ public class GamlAgent implements IAgent {
 	 * In this case, dead() will return true.
 	 * 
 	 */
-	protected boolean dying = false;
+	protected volatile boolean dying = false;
 	/**
 	 * All the populations that manage the micro-agents. Each population manages agents of a
 	 * micro-species. Final so that it is correctly garbaged.

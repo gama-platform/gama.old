@@ -36,30 +36,38 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	void drawDisplay(IGraphics simGraphics) throws GamaRuntimeException;
 
-	Set<IAgent> collectAgentsAt(int x, int y);
+	Set<IAgent> collectAgentsAt(int x, int y, IDisplaySurface g);
 
-	GamaPoint getModelCoordinatesFrom(int x, int y);
+	GamaPoint getModelCoordinatesFrom(int x, int y, IDisplaySurface g);
 
 	public boolean containsScreenPoint(final int x, final int y);
 
 	void dispose();
 
-	Point getPosition();
+	Point getPositionInPixels();
 
-	double getXScale();
+	Point getSizeInPixels();
 
-	double getYScale();
+	// double getXScale();
+
+	// double getYScale();
 
 	void setOpacity(Double value);
 
 	void setElevation(Double value);
 
-	void updateEnvDimensions(double env_width, double env_height);
+	// void updateEnvDimensions(double env_width, double env_height);
 
 	void setOrder(Integer i);
 
 	Integer getOrder();
 
 	public abstract boolean stayProportional();
+
+	void outputChanged();
+
+	double getZPosition();
+
+	Boolean isDynamic();
 
 }

@@ -48,8 +48,8 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 	@Override
 	protected void checkValidity() throws GamaRuntimeException {
 		super.checkValidity();
-		if ( !GamaFileType.isImageFile(getFile().getName()) ) { throw new GamaRuntimeException(
-			"The extension " + this.getExtension() + " is not recognized for image files"); }
+		if ( !GamaFileType.isImageFile(getFile().getName()) ) { throw new GamaRuntimeException("The extension " +
+			this.getExtension() + " is not recognized for image files"); }
 	}
 
 	/*
@@ -74,8 +74,7 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 	// }
 
 	@Override
-	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize)
-		throws GamaRuntimeException {
+	protected IMatrix _matrixValue(final IScope scope, final ILocation preferredSize) throws GamaRuntimeException {
 		getContents(scope);
 		if ( preferredSize != null ) { return matrixValueFromImage(scope, preferredSize); }
 		return (IMatrix) buffer;
@@ -85,7 +84,6 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 		if ( image == null ) {
 			try {
 				image = ImageUtils.getInstance().getImageFromFile(path);
-				// image = ImageIO.read(getFile());
 			} catch (final IOException e) {
 				throw new GamaRuntimeException(e);
 			}
@@ -108,8 +106,7 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 
 	}
 
-	private IMatrix matrixValueFromImage(IScope scope, final ILocation preferredSize)
-		throws GamaRuntimeException {
+	private IMatrix matrixValueFromImage(IScope scope, final ILocation preferredSize) throws GamaRuntimeException {
 		loadImage();
 		int xSize, ySize;
 		if ( preferredSize == null ) {
@@ -118,8 +115,7 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 		} else {
 			xSize = (int) preferredSize.getX();
 			ySize = (int) preferredSize.getY();
-			final BufferedImage resultingImage =
-				new BufferedImage(xSize, ySize, BufferedImage.TYPE_INT_RGB);
+			final BufferedImage resultingImage = new BufferedImage(xSize, ySize, BufferedImage.TYPE_INT_RGB);
 			final Graphics2D g = resultingImage.createGraphics();
 			g.drawImage(image, 0, 0, xSize, ySize, null);
 			g.dispose();
@@ -134,16 +130,14 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 		return matrix;
 	}
 
-	private IMatrix matrixValueFromPgm(IScope scope, final GamaPoint preferredSize)
-		throws GamaRuntimeException {
+	private IMatrix matrixValueFromPgm(IScope scope, final GamaPoint preferredSize) throws GamaRuntimeException {
 		// TODO PreferredSize is not respected here
 		BufferedReader in = null;
 		try {
 			in = new BufferedReader(new FileReader(getFile()));
 			StringTokenizer tok;
 			String str = in.readLine();
-			if ( !str.equals("P2") ) { throw new UnsupportedEncodingException(
-				"File is not in PGM ascii format"); }
+			if ( !str.equals("P2") ) { throw new UnsupportedEncodingException("File is not in PGM ascii format"); }
 			str = in.readLine();
 			if ( str == null ) { return GamaMatrixType.with(scope, 0, preferredSize); }
 			tok = new StringTokenizer(str);
@@ -224,8 +218,7 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 		double y1 = yllcorner;
 		double y2 = yllcorner + cellSizeY * nbRows;
 
-		Envelope boundsEnv =
-			new Envelope(Math.min(x1, x2), Math.max(x1, x2), Math.min(y1, y2), Math.max(y1, y2));
+		Envelope boundsEnv = new Envelope(Math.min(x1, x2), Math.max(x1, x2), Math.min(y1, y2), Math.max(y1, y2));
 		return boundsEnv;
 
 	}

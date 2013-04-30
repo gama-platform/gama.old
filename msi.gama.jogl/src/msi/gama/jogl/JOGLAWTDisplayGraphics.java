@@ -26,7 +26,7 @@ import java.util.*;
 import java.util.List;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.*;
-import msi.gama.common.interfaces.IGraphics;
+import msi.gama.common.interfaces.*;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.GraphicDataType.*;
 import msi.gama.metamodel.agent.IAgent;
@@ -39,7 +39,6 @@ import msi.gama.util.file.GamaFile;
 import msi.gaml.types.GamaGeometryType;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.jfree.chart.JFreeChart;
-import com.vividsolutions.jts.awt.ShapeWriter;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.index.quadtree.IntervalSize;
 
@@ -62,8 +61,13 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	private final Ellipse2D oval = new Ellipse2D.Double(0, 0, 1, 1);
 	private final Line2D line = new Line2D.Double();
 	private float currentAlpha = 1;
-	private int displayWidth, displayHeight, curWidth = 5, curHeight = 5, offsetX = 0, offsetY = 0;
-	private double curX = 0, curY = 0;
+	private int widthOfDisplayInPixels, heightOfDisplayInPixels, widthOfCurrentLayerInPixels = 5,
+		heightOfCurrentLayerInPixels = 5;
+	private double xRatioBetweenPixelsAndModelUnits;
+	private double yRatioBetweenPixelsAndModelUnits;
+	private int xOffsetInPixels = 0;
+	private int yOffsetInPixels = 0;
+
 	// GLRenderer.
 	private final JOGLAWTGLRenderer GLRender;
 	// List of all the dynamic JTS geometry.
@@ -77,9 +81,9 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	// List of all the String
 	private java.util.List<MyString> strings = new ArrayList<MyString>();
 	// Environment properties.
-	private float envWidth;
-	private float envHeight;
-	private float maxEnvDim;
+	private int widthOfEnvironmentInModelUnits = 0;
+	private int heightOfEnvironmentInModelUnits = 0;
+	private double maxEnvDim;
 	// All the geometry of the same layer are drawn in the same z plan.
 	private float currentZLayer = 0.0f;
 	private int currentLayerId = 0;
@@ -95,12 +99,19 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	// use to do the triangulation only once per timestep.
 	private boolean isPolygonTriangulated = false;
 	private boolean useVertexArray = false;
-	private final ShapeWriter sw = new ShapeWriter();
+	// private final PointTransformation pt = new PointTransformation() {
+	//
+	// @Override
+	// public void transform(final Coordinate c, final Point2D p) {
+	// int xp = offsetX + (int) (currentXScale * c.x + 0.5);
+	// int yp = offsetY + (int) (currentYScale * c.y + 0.5);
+	// p.setLocation(xp, yp);
+	// }
+	// };
+	// private final ShapeWriter sw = new ShapeWriter(pt);
 	// Picked (to trigg when a new object has been picked)
 	private int currentPicked = -1;
 	private int pickedObjectIndex = -1;
-	
-	private double currentXScale = 1, currentYScale = 1;
 
 	/**
 	 * @param JOGLAWTDisplaySurface displaySurface
@@ -108,8 +119,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	public JOGLAWTDisplayGraphics(final JOGLAWTDisplaySurface displaySurface) {
 
 		// Initialize the current environment data.
-		setEnvWidth(displaySurface.envWidth);
-		setEnvHeight(displaySurface.envHeight);
+		setEnvWidth(displaySurface.getEnvWidth());
+		setEnvHeight(displaySurface.getEnvHeight());
 
 		if ( getEnvWidth() > getEnvHeight() ) {
 			setMaxEnvDim(getEnvWidth());
@@ -135,21 +146,13 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	}
 
 	@Override
-	public void setQualityRendering(final boolean quality) {
-
-	}
+	public void setQualityRendering(final boolean quality) {}
 
 	@Override
 	public boolean isReady() {
 		return ready;
 	}
 
-	/**
-	 * Method setComposite.
-	 * 
-	 * @param alpha
-	 *            AlphaComposite
-	 */
 	@Override
 	public void setOpacity(final double alpha) {
 		// 1 means opaque ; 0 means transparent
@@ -157,187 +160,20 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 		setCurrentAlpha((float) alpha);
 	}
 
-	/**
-	 * Method getDisplayWidth.
-	 * 
-	 * @return int
-	 */
 	@Override
-	public int getDisplayWidth() {
-		return displayWidth;
+	public int getDisplayWidthInPixels() {
+		return widthOfDisplayInPixels;
 	}
 
-	/**
-	 * Method getDisplayHeight.
-	 * 
-	 * @return int
-	 */
 	@Override
-	public int getDisplayHeight() {
-		return displayHeight;
+	public int getDisplayHeightInPixels() {
+		return heightOfDisplayInPixels;
 	}
 
-	/**
-	 * Method setDisplayDimensions.
-	 * 
-	 * @param width
-	 *            int
-	 * @param height
-	 *            int
-	 */
 	@Override
-	public void setDisplayDimensions(final int width, final int height) {
-		displayWidth = width;
-		displayHeight = height;
-	}
-
-	/**
-	 * Method setFont.
-	 * 
-	 * @param font
-	 *            Font
-	 */
-	@Override
-	public void setFont(final Font font) {
-
-	}
-
-	/**
-	 * Method getXScale.
-	 * 
-	 * @return double
-	 */
-	@Override
-	public double getXScale() {
-		return 1;
-	}
-
-	/**
-	 * Method setXScale.
-	 * 
-	 * @param scale
-	 *            double
-	 */
-	@Override
-	public void setXScale(final double scale) {
-		this.currentXScale = scale;
-	}
-
-	/**
-	 * Method getYScale.
-	 * 
-	 * @return double
-	 */
-	@Override
-	public double getYScale() {
-		return 1;
-	}
-
-	/**
-	 * Method setYScale.
-	 * 
-	 * @param scale
-	 *            double
-	 */
-	@Override
-	public void setYScale(final double scale) {
-		this.currentYScale = scale;
-	}
-
-	/**
-	 * Method setDrawingCoordinates.
-	 * 
-	 * @param x
-	 *            double
-	 * @param y
-	 *            double
-	 */
-	@Override
-	public void setDrawingCoordinates(final double x, final double y) {
-		curX = x + offsetX;
-		curY = y + offsetY;
-	}
-
-	/**
-	 * Method setDrawingOffset.
-	 * 
-	 * @param x
-	 *            int
-	 * @param y
-	 *            int
-	 */
-	@Override
-	public void setDrawingOffset(final int x, final int y) {
-		offsetX = x;
-		offsetY = y;
-	}
-
-	/**
-	 * Method setDrawingDimensions.
-	 * 
-	 * @param width
-	 *            int
-	 * @param height
-	 *            int
-	 */
-	@Override
-	public void setDrawingDimensions(final int width, final int height) {
-		curWidth = width;
-		curHeight = height;
-	}
-
-	/**
-	 * Method setDrawingColor.
-	 * 
-	 * @param c
-	 *            Color
-	 */
-	private void setDrawingColor(final Color c) {
-
-	}
-
-	// //////// draw method ///////////////
-
-	/**
-	 * Method drawGeometry. Add a given JTS Geometry in the list of all the
-	 * existing geometry that will be displayed by openGl.
-	 * 
-	 * @param geometry
-	 *            Geometry
-	 * @param color
-	 *            Color
-	 * @param fill
-	 *            boolean
-	 * @param angle
-	 *            Integer
-	 * @param z float
-	 */
-	@Override
-	public Rectangle2D drawGeometry(final IScope scope, final Geometry geometry, final Color color, final boolean fill,
-		final Color border, final Integer angle, final boolean rounded) {
-
-		// Check if the geometry has a height value (3D Shape or Volume)
-		Geometry geom = null;
-		ITopology topo = scope.getTopology();
-		if ( topo != null && topo.isTorus() ) {
-			geom = topo.returnToroidalGeom(geometry);
-		} else {
-			geom = geometry;
-		}
-
-		GamaPoint offSet = new GamaPoint(offsetX, offsetY);
-
-		// FIXME : Here should check the value of the Property3D of the GamaShape
-		if ( geom.getUserData() != null ) {
-			float height = new Float(geom.getUserData().toString());
-			this.addJTSGeometryInJTSGeometries(geom, scope.getAgentScope().getAgent(), getCurrentZLayer(),
-				getCurrentLayerId(), color, fill, border, false, angle, height, offSet, rounded, "JTS");
-		} else {
-			this.addJTSGeometryInJTSGeometries(geom, scope.getAgentScope().getAgent(), getCurrentZLayer(),
-				getCurrentLayerId(), color, fill, border, false, angle, 0, offSet, rounded, "JTS");
-		}
-		// FIXME: Need to remove the use of sw.
-		return sw.toShape(geom).getBounds2D();
+	public void setDisplayDimensionsInPixels(final int width, final int height) {
+		widthOfDisplayInPixels = width;
+		heightOfDisplayInPixels = height;
 	}
 
 	/**
@@ -355,7 +191,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	 * @param z float
 	 */
 	@Override
-	public Rectangle2D drawGamaShape(IScope scope, GamaShape geometry, Color color, boolean fill, Color border,
+	public Rectangle2D drawGamaShape(IScope scope, IShape geometry, Color color, boolean fill, Color border,
 		Integer angle, boolean rounded) {
 
 		// Check if the geometry has a height value (3D Shape or Volume)
@@ -368,14 +204,18 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 			geom = geometry.getInnerGeometry();
 		}
 
-		GamaPoint offSet = new GamaPoint(offsetX, offsetY);
+		// TODO AD EN PIXELS ???
+		GamaPoint offset =
+			new GamaPoint(xFromPixelsToModelUnits(xOffsetInPixels), yFromPixelsToModelUnits(yOffsetInPixels));
+
+		// GamaPoint offset = new GamaPoint(xOffsetInPixels, yOffsetInPixels);
 
 		// Add a geometry with a depth and type coming from Attributes
 		if ( geometry.getAttribute("depth") != null && geometry.getAttribute("type") != null ) {
 			Double depth = (Double) geometry.getAttribute("depth");
 			String type = (String) geometry.getAttribute("type");
 			this.addJTSGeometryInJTSGeometries(geom, scope.getAgentScope().getAgent(), getCurrentZLayer(),
-				getCurrentLayerId(), color, fill, border, false, angle, depth.floatValue(), offSet, rounded,
+				getCurrentLayerId(), color, fill, border, false, angle, depth.floatValue(), offset, rounded,
 				type.toString());
 		}
 
@@ -384,11 +224,11 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 			if ( geometry.getInnerGeometry().getUserData() != null ) {
 				float height = new Float(geom.getUserData().toString());
 				this.addJTSGeometryInJTSGeometries(geom, scope.getAgentScope().getAgent(), getCurrentZLayer(),
-					getCurrentLayerId(), color, fill, border, false, angle, height, offSet, rounded, "JTS");
+					getCurrentLayerId(), color, fill, border, false, angle, height, offset, rounded, "JTS");
 			} else {
 				// add a 2D geometry without any 3D data.
 				this.addJTSGeometryInJTSGeometries(geom, scope.getAgentScope().getAgent(), getCurrentZLayer(),
-					getCurrentLayerId(), color, fill, border, false, angle, 0, offSet, rounded, "none");
+					getCurrentLayerId(), color, fill, border, false, angle, 0, offset, rounded, "none");
 			}
 
 		}
@@ -406,12 +246,13 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 		 * }
 		 */
 		// FIXME: Need to remove the use of sw.
-		return sw.toShape(geom).getBounds2D();
+		return rect;
+		// return sw.toShape(geom).getBounds2D();
 	}
 
-	@Override
-	public void drawGrid(final BufferedImage image, final Color lineColor, final java.awt.Point point) {
-		GamaPoint offSet = new GamaPoint(offsetX, offsetY);
+	public void drawGrid(final BufferedImage image, final Color lineColor) {
+		// TODO AD Pas du tout testée
+		GamaPoint offSet = new GamaPoint(xOffsetInPixels, yOffsetInPixels);
 		double stepX, stepY;
 		for ( int i = 0; i <= image.getWidth(); i++ ) {
 			stepX = i / (double) image.getWidth() * image.getWidth();
@@ -430,7 +271,44 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 			this.addJTSGeometryInJTSGeometries(g, null, getCurrentZLayer(), getCurrentLayerId(), lineColor, true, null,
 				false, 0, 0, offSet, false, "grid");
 		}
+	}
 
+	private double xFromPixelsToModelUnits(int px) {
+		double mu = (px - xOffsetInPixels) / xRatioBetweenPixelsAndModelUnits;
+		return mu;
+	}
+
+	private double yFromPixelsToModelUnits(int px) {
+		double mu = (px - yOffsetInPixels) / yRatioBetweenPixelsAndModelUnits;
+		return mu;
+	}
+
+	private final int xFromModelUnitsToPixels(double mu) {
+		int px = xOffsetInPixels + (int) (xRatioBetweenPixelsAndModelUnits * mu /* + 0.5 */);
+		return px;
+	}
+
+	private final int yFromModelUnitsToPixels(double mu) {
+		int px = yOffsetInPixels + (int) (yRatioBetweenPixelsAndModelUnits * mu /* + 0.5 */);
+		return px;
+	}
+
+	private final int wFromModelUnitsToPixels(double length) {
+		return (int) (xRatioBetweenPixelsAndModelUnits * length * +0.5);
+	}
+
+	private final int hFromModelUnitsToPixels(double length) {
+		return (int) (yRatioBetweenPixelsAndModelUnits * length + 0.5);
+	}
+
+	private double wFromPixelsToModelUnits(int px) {
+		double mu = px / xRatioBetweenPixelsAndModelUnits;
+		return mu;
+	}
+
+	private double hFromPixelsToModelUnits(int px) {
+		double mu = px / yRatioBetweenPixelsAndModelUnits;
+		return mu;
 	}
 
 	/**
@@ -442,8 +320,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	 *            Integer
 	 */
 	@Override
-	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final Integer angle,
-		final boolean smooth, final String name, final float z) {
+	public Rectangle2D drawImage(IScope scope, BufferedImage img, ILocation locationInModelUnits,
+		ILocation sizeInModelUnits, Color gridColor, Integer angle, Double z, boolean isDynamic) {
 
 		/*
 		 * FIXME Dirty way to check that img represent the environment.
@@ -462,28 +340,59 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 		// +"img.getWidth()"+img.getWidth()+"img.getHeight()"+img.getHeight() +
 		// name);
 
-		GamaPoint offSet = new GamaPoint(offsetX, offsetY, getCurrentZLayer());
+		// if ( curX == 0 && curY == 0 || name.equals("GridDisplay") == true || name.equals("QuadTreeDisplay") ) {
+		// addImageInImages(img, null, curX, curY, z, this.getEnvWidth(), this.getEnvHeight(), name, angle, offSet);
+		// rect.setRect(curX, curY, img.getWidth(), img.getHeight());
+		// }
 
-		if ( curX == 0 && curY == 0 || name.equals("GridDisplay") == true || name.equals("QuadTreeDisplay") ) {
-			addImageInImages(img, null, curX, curY, z, this.getEnvWidth(), this.getEnvHeight(), name, angle, offSet);
-			rect.setRect(curX, curY, img.getWidth(), img.getHeight());
+		// else {
+		// FIXME AD Faut-il passer les coordonnées en pixels ou en model units ??
+		// J'ai essayé en model units, mais rien ne sort...
+		// // EN PIXELS :
+		// int curX, curY;
+		// // GamaPoint offSet = new GamaPoint(xOffsetInPixels, yOffsetInPixels, getCurrentZLayer());
+		// if ( locationInModelUnits == null ) {
+		// curX = 0;
+		// curY = 0;
+		// } else {
+		// curX = xFromModelUnitsToPixels(locationInModelUnits.getX());
+		// curY = yFromModelUnitsToPixels(locationInModelUnits.getY());
+		// }
+		// int curWidth, curHeight;
+		// if ( sizeInModelUnits == null ) {
+		// curWidth = widthOfCurrentLayerInPixels;
+		// curHeight = heightOfCurrentLayerInPixels;
+		// } else {
+		// curWidth = xFromModelUnitsToPixels(sizeInModelUnits.getX());
+		// curHeight = yFromModelUnitsToPixels(sizeInModelUnits.getY());
+		// }
+		// EN MODEL UNITS:
+		double curX, curY;
+		GamaPoint offSet =
+			new GamaPoint(xFromPixelsToModelUnits(xOffsetInPixels), yFromPixelsToModelUnits(yOffsetInPixels),
+				getCurrentZLayer());
+		if ( locationInModelUnits == null ) {
+			curX = 0d;
+			curY = 0d;
 		} else {
-			if ( scope != null ) {
-				addImageInImages(img, scope.getAgentScope(), curX, curY, z, curWidth, curHeight, name, angle, offSet);
-			} else {
-				addImageInImages(img, null, curX, curY, z, curWidth, curHeight, name, angle, offSet);
-			}
-
-			rect.setRect(curX, curY, curWidth, curHeight);
+			curX = locationInModelUnits.getX();
+			curY = locationInModelUnits.getY();
+		}
+		double curWidth, curHeight;
+		if ( sizeInModelUnits == null ) {
+			curWidth = wFromPixelsToModelUnits(widthOfCurrentLayerInPixels);
+			curHeight = hFromPixelsToModelUnits(heightOfCurrentLayerInPixels);
+		} else {
+			curWidth = sizeInModelUnits.getX();
+			curHeight = sizeInModelUnits.getY();
 		}
 
-		return rect.getBounds2D();
-	}
+		addImageInImages(img, scope == null ? null : scope.getAgentScope(), curX, curY, z, curWidth, curHeight, angle,
+			offSet, isDynamic);
+		// rect.setRect(curX, curY, curWidth, curHeight);
+		// }
 
-	@Override
-	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final Integer angle, final String name,
-		final float z) {
-		return drawImage(scope, img, angle, true, name, z);
+		return rect;
 	}
 
 	/**
@@ -493,94 +402,9 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	 *            JFreeChart
 	 */
 	@Override
-	public Rectangle2D drawChart(final JFreeChart chart) {
-		rect.setRect(curX, curY, curWidth, curHeight);
-		return rect.getBounds2D();
-	}
-
-	/**
-	 * Method drawCircle.
-	 * 
-	 * @param c
-	 *            Color
-	 * @param fill
-	 *            boolean
-	 * @param angle
-	 *            Integer
-	 */
-	@Override
-	public Rectangle2D drawCircle(final IScope scope, final Color c, final boolean fill, final Color border,
-		final Integer angle, final float height) {
-		GamaPoint offSet = new GamaPoint(offsetX, offsetY);
-
-		// Geometry g = GamaGeometryType.buildCircle((double) curWidth / 2, new GamaPoint(curX +
-		// (double) curWidth / 2, curY+ (double) curWidth / 2)).getInnerGeometry();
-		Geometry g = GamaGeometryType.buildCircle((double) curWidth / 2, new GamaPoint(curX, curY)).getInnerGeometry();
-
-		this.addJTSGeometryInJTSGeometries(g, scope.getAgentScope(), getCurrentZLayer(), getCurrentLayerId(), c, fill,
-			border, false, 0, height, offSet, false, "shape");
-		oval.setFrame(curX, curY, curWidth, curWidth);
-		return oval.getBounds2D();
-	}
-
-	@Override
-	public Rectangle2D drawTriangle(final IScope scope, final Color c, final boolean fill, final Color border,
-		final Integer angle, final float height) {
-		GamaPoint offSet = new GamaPoint(offsetX, offsetY);
-		// FIXME: check if size is curWidth or curWidth/2
-		Geometry g = GamaGeometryType.buildTriangle(curWidth, new GamaPoint(curX, curY)).getInnerGeometry();
-		this.addJTSGeometryInJTSGeometries(g, scope.getAgentScope(), getCurrentZLayer(), getCurrentLayerId(), c, fill,
-			border, false, angle, height, offSet, false, "shape");
-		Rectangle2D r = null;
-		return r;
-	}
-
-	/**
-	 * Method .
-	 * 
-	 * @param c
-	 *            Color
-	 * @param toX
-	 *            double
-	 * @param toY
-	 *            double
-	 */
-	@Override
-	public Rectangle2D drawLine(final Color c, final double toX, final double toY) {
-		GamaPoint offSet = new GamaPoint(offsetX, offsetY);
-		Geometry g = GamaGeometryType.buildLine(new GamaPoint(curX, curY), new GamaPoint(toX, toY)).getInnerGeometry();
-		this.addJTSGeometryInJTSGeometries(g, null, getCurrentZLayer(), getCurrentLayerId(), c, true, null, false, 0,
-			0, offSet, false, "shape");
-		line.setLine(curX, curY, toX + offsetX, toY + offsetY);
-		return line.getBounds2D();
-	}
-
-	/**
-	 * Method drawRectangle.
-	 * 
-	 * @param color
-	 *            Color
-	 * @param fill
-	 *            boolean
-	 * @param angle
-	 *            Integer
-	 * @param height
-	 *            height of the rectangle if using opengl and defining a z value
-	 *            (e.g: draw shape: square size:2 color: global_color z:2;)
-	 */
-	@Override
-	public Rectangle2D drawRectangle(final IScope scope, final Color c, final boolean fill, final Color border,
-		final Integer angle, final float height) {
-
-		GamaPoint offSet = new GamaPoint(offsetX, offsetY);
-
-		Geometry g = GamaGeometryType.buildRectangle(curWidth, curHeight, new GamaPoint(curX, curY)).getInnerGeometry();
-
-		this.addJTSGeometryInJTSGeometries(g, scope.getAgentScope(), getCurrentZLayer(), getCurrentLayerId(), c, fill,
-			border, false, angle, height, offSet, false, "shape");
-
-		rect.setFrame(curX, curY, curWidth, curHeight);
-		return rect.getBounds2D();
+	public Rectangle2D drawChart(final IScope scope, final JFreeChart chart, final Double z) {
+		BufferedImage im = chart.createBufferedImage(widthOfCurrentLayerInPixels, heightOfCurrentLayerInPixels);
+		return drawImage(scope, im, new GamaPoint(0, 0), null, null, 0, z, true);
 	}
 
 	/**
@@ -594,33 +418,36 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	 *            Integer
 	 */
 	@Override
-	public Rectangle2D drawString(final IAgent agent, final String string, final Color stringColor,
-		final Integer angle, final float z) {
-		// Draw the text at the centroid of the Agent
-		/*if ( agent != null ) {
-			addStringInStrings(string, (float) agent.getGeometry().getLocation().getX(), -(float) agent.getGeometry()
-				.getLocation().getY(), z);
-		} else {*/
-			addStringInStrings(string, (float) curX, -(float) curY, z);
-		//}
-		setDrawingColor(stringColor);
-		Rectangle2D r = null;
-		return r;
+	public Rectangle2D drawString(String string, Color stringColor, ILocation locationInModelUnits,
+		java.lang.Double heightInModelUnits, String fontName, Integer styleName, Integer angle, Double z) {
+		// FIXME fontName ? Angle ? Height ?
+		double curX, curY;
+		if ( locationInModelUnits == null ) {
+			curX = 0d;
+			curY = 0d;
+		} else {
+			curX = locationInModelUnits.getX();
+			curY = locationInModelUnits.getY();
+		}
+		double curHeight;
+		if ( heightInModelUnits == null ) {
+			curHeight = hFromPixelsToModelUnits(heightOfCurrentLayerInPixels);
+		} else {
+			curHeight = heightInModelUnits;
+		}
+
+		addStringInStrings(string, curX, curY, z);
+
+		// }
+		// setDrawingColor(stringColor);
+		// Rectangle2D r = null;
+		// return null;
+		return null;
 	}
 
 	@Override
-	public void fill(final Color bgColor, final double opacity) {
+	public void fillBackground(final Color bgColor, final double opacity) {
 		setOpacity(opacity);
-	}
-
-	@Override
-	public void setClipping(final Rectangle imageClipBounds) {
-		clipping = imageClipBounds;
-	}
-
-	@Override
-	public Rectangle getClipping() {
-		return clipping;
 	}
 
 	// ///////////////Add method ////////////////////////////
@@ -675,8 +502,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	 * @param angle
 	 */
 	private void addImageInImages(final BufferedImage img, final IAgent agent, final double curX, final double curY,
-		final float z, final float widthInModel, final float heightInModel, final String name, final Integer angle,
-		final GamaPoint offSet) {
+		final Double z, final double widthInModel, final double heightInModel, final Integer angle,
+		final GamaPoint offSet, final boolean isDynamic) {
 
 		final MyImage curImage = new MyImage();
 
@@ -700,16 +527,20 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 			curImage.angle = angle;
 		}
 
-		curImage.name = name;
 		// For grid display and quadtree display the image is recomputed every
 		// iteration
-		if ( curImage.name.equals("GridDisplay") == true || curImage.name.equals("QuadTreeDisplay") ) {
-			getMyGLRender().InitTexture(img, name);
-		} else {// For texture coming from a file there is no need to redraw it.
-			if ( !isTextureExist(name) ) {
-				getMyGLRender().InitTexture(img, name);
-			}
+
+		if ( isDynamic || !isTextureExist(img) ) {
+			getMyGLRender().InitTexture(img, isDynamic);
 		}
+		// if ( curImage.name.equals("GridDisplay") == true || curImage.name.equals("QuadTreeDisplay") ) {
+		// getMyGLRender().InitTexture(img, isDynamic);
+		// } else {// For texture coming from a file there is no need to redraw it.
+		// if ( !isTextureExist(img) ) {
+		// getMyGLRender().InitTexture(img, name);
+		// }
+		// }
+
 		this.getImages().add(curImage);
 
 	}
@@ -738,14 +569,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	 * @param name
 	 * @return
 	 */
-	private boolean isTextureExist(final String name) {
-
-		Iterator<MyTexture> it = getMyGLRender().myTextures.iterator();
-		while (it.hasNext()) {
-			MyTexture curTexture = it.next();
-			if ( name.equals(curTexture.ImageName) == true ) { return true; }
-		}
-		return false;
+	private boolean isTextureExist(final BufferedImage img) {
+		return getMyGLRender().myTextures.containsKey(img);
 	}
 
 	/**
@@ -756,8 +581,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	 * @param y
 	 * @param z
 	 */
-	private void addStringInStrings(final String string, final float x, final float y, final float z) {
-
+	private void addStringInStrings(final String string, final double x, final double y, final double z) {
+		// FIXME Add Font information like GLUT.BITMAP_TIMES_ROMAN_24;
 		final MyString curString = new MyString();
 		curString.string = string;
 		curString.x = x;
@@ -959,7 +784,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 		Iterator<MyString> it = this.getStrings().iterator();
 		while (it.hasNext()) {
 			MyString curString = it.next();
-			getMyGLRender().graphicsGLUtils.DrawString(curString.string, curString.x, curString.y, curString.z);
+			getMyGLRender().graphicsGLUtils.drawString(curString.string, curString.x, curString.y, curString.z);
 		}
 	}
 
@@ -967,9 +792,9 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 		GamaPoint offSet = new GamaPoint(0, 0);
 		if ( drawData ) {
 			// Draw Width and height value
-			this.getMyGLRender().graphicsGLUtils.DrawString(String.valueOf(this.getEnvWidth()), this.getEnvWidth() / 2,
+			this.getMyGLRender().graphicsGLUtils.drawString(String.valueOf(this.getEnvWidth()), this.getEnvWidth() / 2,
 				this.getEnvHeight() * 0.01f, 0.0f);
-			this.getMyGLRender().graphicsGLUtils.DrawString(String.valueOf(this.getEnvHeight()),
+			this.getMyGLRender().graphicsGLUtils.drawString(String.valueOf(this.getEnvHeight()),
 				this.getEnvWidth() * 1.01f, -(this.getEnvHeight() / 2), 0.0f);
 		}
 
@@ -1034,18 +859,27 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	@Override
 	public void cleanImages() {
 		this.getImages().clear();
-		Iterator<MyTexture> it = this.getMyGLRender().myTextures.iterator();
-		while (it.hasNext()) {
-			MyTexture curtexture = it.next();
-			// If the texture is coming from a file keep it
-			if ( curtexture.ImageName.indexOf(".png") != -1 || curtexture.ImageName.indexOf(".jpg") != -1 ||
-				curtexture.ImageName.indexOf(".jpeg") != -1 ) {
-
-			}// Else remove to recreate a new texture (e.g for GridDisplay).
-			else {
+		Map<BufferedImage, MyTexture> map = getMyGLRender().myTextures;
+		for ( Iterator<BufferedImage> it = map.keySet().iterator(); it.hasNext(); ) {
+			BufferedImage im = it.next();
+			// FIXME: if an image is not declared as dynamic, it will be kept in memory (even if it is not used)
+			if ( map.get(im).isDynamic ) {
 				it.remove();
 			}
 		}
+		//
+		// Iterator<MyTexture> it = this.getMyGLRender().myTextures.values().iterator();
+		// while (it.hasNext()) {
+		// MyTexture curtexture = it.next();
+		// // If the texture is coming from a file keep it
+		// if ( curtexture.ImageName.indexOf(".png") != -1 || curtexture.ImageName.indexOf(".jpg") != -1 ||
+		// curtexture.ImageName.indexOf(".jpeg") != -1 ) {
+		//
+		// }// Else remove to recreate a new texture (e.g for GridDisplay).
+		// else {
+		// it.remove();
+		// }
+		// }
 	}
 
 	@Override
@@ -1097,13 +931,13 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	public void setHighlightColor(final int[] rgb) {}
 
 	@Override
-	public void highlight(final Rectangle2D r) {}
+	public void highlightRectangleInPixels(final Rectangle2D r) {}
 
 	/**
 	 * Each new step the Z value of the first layer is set to 0.
 	 */
 	@Override
-	public void initLayers() {
+	public void beginDrawingLayers() {
 		setCurrentLayerId(0);
 		setCurrentZLayer(0.0f);
 	}
@@ -1115,23 +949,27 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	 * a dynamic layer (by default or refresh:true)
 	 */
 	@Override
-	public void newLayer(final double zLayerValue, final Boolean refresh) {
-		setCurrentZLayer((float) (getMaxEnvDim() * zLayerValue));
-
+	public void newLayer(ILayer layer) {
+		setCurrentZLayer((float) (getMaxEnvDim() * layer.getZPosition()));
+		Boolean refresh = layer.isDynamic();
 		// If refresh: false -> draw static geometry -> currentLayerIsStatic=true
 		if ( refresh != null ) {
 			setCurrentLayerIsStatic(!refresh);
 		} else {
 			setCurrentLayerIsStatic(false);
 		}
+		// TODO Pourquoi ne pas utiliser l'ordre des layers ? layer.getOrder() ??
 		setCurrentLayerId(getCurrentLayerId() + 1);
-	}
+		xOffsetInPixels = layer.getPositionInPixels().x;
+		yOffsetInPixels = layer.getPositionInPixels().y;
+		widthOfCurrentLayerInPixels = layer.getSizeInPixels().x;
+		heightOfCurrentLayerInPixels = layer.getSizeInPixels().y;
+		xRatioBetweenPixelsAndModelUnits =
+			(double) widthOfCurrentLayerInPixels / (double) widthOfEnvironmentInModelUnits;
+		yRatioBetweenPixelsAndModelUnits =
+			(double) heightOfCurrentLayerInPixels / (double) heightOfEnvironmentInModelUnits;
 
-	//
-	// @Override
-	// public boolean isOpenGL() {
-	// return true;
-	// }
+	}
 
 	@Override
 	public boolean useTesselation(final boolean useTesselation) {
@@ -1164,7 +1002,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 			getMyGLRender().camera.updatePosition(camPos.getX(), camPos.getY(), camPos.getZ());
 		}
 	}
-	
+
 	@Override
 	public void setCameraLookPosition(ILocation camLookPos) {
 		if ( camLookPos.equals(new GamaPoint(-1, -1, -1)) ) {// No change
@@ -1203,28 +1041,30 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 		this.staticGeometries = myJTSStaticGeometries;
 	}
 
-	public float getEnvWidth() {
-		return envWidth;
+	@Override
+	public double getEnvWidth() {
+		return widthOfEnvironmentInModelUnits;
 	}
 
-	public void setEnvWidth(float envWidth) {
-		this.envWidth = envWidth;
-	}
-
-	public float getEnvHeight() {
-		return envHeight;
-	}
-
-	public void setEnvHeight(float envHeight) {
-		this.envHeight = envHeight;
+	public void setEnvWidth(double d) {
+		this.widthOfEnvironmentInModelUnits = (int) d;
 	}
 
 	@Override
-	public float getMaxEnvDim() {
+	public double getEnvHeight() {
+		return heightOfEnvironmentInModelUnits;
+	}
+
+	public void setEnvHeight(double envHeight) {
+		this.heightOfEnvironmentInModelUnits = (int) envHeight;
+	}
+
+	@Override
+	public double getMaxEnvDim() {
 		return maxEnvDim;
 	}
 
-	public void setMaxEnvDim(float maxEnvDim) {
+	public void setMaxEnvDim(double maxEnvDim) {
 		this.maxEnvDim = maxEnvDim;
 	}
 
@@ -1331,6 +1171,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 		return isPolygonTriangulated;
 	}
 
+	@Override
 	public void setPolygonTriangulated(boolean isPolygonTriangulated) {
 		this.isPolygonTriangulated = isPolygonTriangulated;
 	}
@@ -1360,8 +1201,14 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 		this.pickedObjectIndex = pickedObjectIndex;
 	}
 
-	
+	@Override
+	public int getEnvironmentWidth() {
+		return widthOfEnvironmentInModelUnits;
+	}
 
-	
+	@Override
+	public int getEnvironmentHeight() {
+		return heightOfEnvironmentInModelUnits;
+	}
 
 }

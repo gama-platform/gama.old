@@ -33,17 +33,15 @@ import org.eclipse.swt.widgets.Composite;
 public class GridLayer extends ImageLayer {
 
 	private boolean turnGridOn;
-	private Color lineColor;
 
-	public GridLayer(final double env_width, final double env_height, final ILayerStatement model,
-		final IGraphics dg) {
-		super(env_width, env_height, model, dg);
-		turnGridOn = ((GridLayerStatement) model).drawLines();
+	public GridLayer(final ILayerStatement layer) {
+		super(layer);
+		turnGridOn = ((GridLayerStatement) layer).drawLines();
 	}
 
 	@Override
-	public void updateEnvDimensions(final double env_width, final double env_height) {
-		super.updateEnvDimensions(env_width, env_height);
+	public void outputChanged() {
+		super.outputChanged();
 		if ( image != null ) {
 			image.flush();
 			image = null;
@@ -77,14 +75,15 @@ public class GridLayer extends ImageLayer {
 	public void privateDrawDisplay(final IGraphics dg) {
 		buildImage();
 		if ( image == null ) { return; }
-		dg.drawImage(null, image, null, false, "GridDisplay",0.0f);
+		Color lineColor = null;
 		if ( turnGridOn ) {
 			lineColor = ((GridLayerStatement) definition).getLineColor();
 			if ( lineColor == null ) {
 				lineColor = Color.black;
 			}
-			dg.drawGrid(image, lineColor, size);
 		}
+		dg.drawImage(null, image, null, null, lineColor, null, 0.0, true);
+
 	}
 
 	private IAgent getPlaceAt(final GamaPoint loc) {
@@ -92,9 +91,9 @@ public class GridLayer extends ImageLayer {
 	}
 
 	@Override
-	public Set<IAgent> collectAgentsAt(final int x, final int y) {
+	public Set<IAgent> collectAgentsAt(final int x, final int y, IDisplaySurface g) {
 		Set<IAgent> result = new HashSet();
-		result.add(getPlaceAt(this.getModelCoordinatesFrom(x, y)));
+		result.add(getPlaceAt(this.getModelCoordinatesFrom(x, y, g)));
 		return result;
 	}
 

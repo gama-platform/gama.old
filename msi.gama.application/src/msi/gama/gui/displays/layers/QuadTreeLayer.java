@@ -18,6 +18,7 @@
  */
 package msi.gama.gui.displays.layers;
 
+import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.outputs.layers.*;
 
@@ -29,15 +30,14 @@ import msi.gama.outputs.layers.*;
  */
 public class QuadTreeLayer extends AbstractLayer {
 
-	public QuadTreeLayer(final double env_width, final double env_height,
-		final ILayerStatement layer, final IGraphics dg) {
-		super(env_width, env_height, layer, dg);
+	public QuadTreeLayer(final ILayerStatement layer) {
+		super(layer);
 	}
 
 	@Override
 	public void privateDrawDisplay(final IGraphics dg) {
-		if ( disposed ) { return; }
-		dg.drawImage(null, ((QuadTreeLayerStatement) definition).getSupportImage(), null, false,"QuadTreeDisplay",0.0f);
+		BufferedImage image = ((QuadTreeLayerStatement) definition).getSupportImage();
+		dg.drawImage(null, image, null, null, null, null, 0.0, true);
 	}
 
 	@Override
