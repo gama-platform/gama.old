@@ -43,8 +43,10 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 
 		@Override
 		public Rectangle2D draw(final IScope scope, final IAgent agent) throws GamaRuntimeException {
-			if ( agent != null && agent.acquireLock() ) {
+			if ( agent != null ) {
 				try {
+					agent.acquireLock();
+					if ( agent.dead() ) { return null; }
 					GamaColor c = null;
 					if ( agent.getSpecies().hasVar(IKeyword.COLOR) ) {
 						c = Cast.asColor(scope, scope.getAgentVarValue(agent, IKeyword.COLOR));
@@ -69,14 +71,16 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 
 	@Override
 	public Rectangle2D draw(final IScope scope, final IAgent agent) throws GamaRuntimeException {
-		if ( agent != null && agent.acquireLock() ) {
-			Object result;
+		if ( agent != null ) {
 			try {
-				result = scope.execute(this, agent);
+				agent.acquireLock();
+				if ( agent.dead() ) { return null; }
+				Object result = scope.execute(this, agent);
+				return (Rectangle2D) result;
 			} finally {
 				agent.releaseLock();
 			}
-			return (Rectangle2D) result;
+
 		}
 		return null;
 

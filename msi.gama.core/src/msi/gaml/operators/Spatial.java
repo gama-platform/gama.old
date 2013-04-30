@@ -641,12 +641,14 @@ public abstract class Spatial {
 		@operator(value = { IKeyword.PLUS, "buffer", "enlarged_by" })
 		@doc(special_cases = { "if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) enlarged by the right-hand operand distance" }, examples = { "shape + 5 --: returns a geometry corresponding to the geometry of the agent applying the operator enlarged by a distance of 5" })
 		public static IShape enlarged_by(final IShape g, final Double size) {
+			if ( g == null ) { return null; }
 			return new GamaShape(g.getInnerGeometry().buffer(size));
 		}
 
 		@operator(value = { "-", "reduced_by" })
 		@doc(special_cases = { "if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) reduced by the right-hand operand distance" }, examples = { "shape - 5 --: returns a geometry corresponding to the geometry of the agent applying the operator reduced by a distance of 5" })
 		public static IShape reduced_by(final IShape g, final Double size) {
+			if ( g == null ) { return null; }
 			return enlarged_by(g, -size);
 		}
 
@@ -661,12 +663,14 @@ public abstract class Spatial {
 		@doc(value = "A geometry resulting from the application of a rotation by the right-hand operand angle (degree) to the left-hand operand (geometry, agent, point)", examples = { "self rotated_by 45 --: returns the geometry resulting from a 45 degres rotation to the geometry of the agent applying the operator." }, see = {
 			"transformed_by", "translated_by" })
 		public static IShape rotated_by(IScope scope, final IShape g1, final Double angle) {
+			if (g1 == null) return null;
 			return ((GamaShape) g1.getGeometry()).rotatedBy(scope, Math.toRadians(angle));
 		}
 
 		@operator("rotated_by")
 		@doc(comment = "the right-hand operand can be a float or a int")
 		public static IShape rotated_by(IScope scope, final IShape g1, final Integer angle) {
+			if (g1 == null) return null;
 			return ((GamaShape) g1.getGeometry()).rotatedBy(scope, angle);
 		}
 
@@ -683,6 +687,7 @@ public abstract class Spatial {
 		@doc(value = "A geometry resulting from the application of a rotation and a translation (rigth-operand : point {angle(degree), distance} of the left-hand operand (geometry, agent, point)", examples = { "self transformed_by {45, 20} --: returns the geometry resulting from 45¡ rotation and 10m translation of the geometry of the agent applying the operator." }, see = {
 			"rotated_by", "translated_by" })
 		public static IShape transformed_by(final IScope scope, final IShape g, final GamaPoint p) {
+			if (g == null) return null;
 			return scaled_by(scope, rotated_by(scope, g, p.x), p.y);
 		}
 
@@ -697,12 +702,14 @@ public abstract class Spatial {
 		@doc(value = "A geometry resulting from the application of a translation by the right-hand operand distance to the left-hand operand (geometry, agent, point)", examples = { "self translated_by 45 --: returns the geometry resulting from a 10m translation to the geometry of the agent applying the operator." }, see = {
 			"rotated_by", "transformed_by" })
 		public static IShape translated_by(IScope scope, final IShape g, final GamaPoint p) throws GamaRuntimeException {
+		if (g == null) return null;
 			return at_location(scope, g, msi.gaml.operators.Points.add((GamaPoint) g.getLocation(), p));
 		}
 
 		@operator(value = { "at_location", "translated_to" })
 		@doc(value = "A geometry resulting from the tran of a translation to the right-hand operand point of the left-hand operand (geometry, agent, point)", examples = { "self at_location {10, 20} --: returns the geometry resulting from a translation to the location {10, 20} of the geometry of the agent applying the operator." })
 		public static IShape at_location(IScope scope, final IShape g, final ILocation p) throws GamaRuntimeException {
+		if (g == null) return null;
 			GamaShape newShape = (GamaShape) g.copy(scope);
 			newShape.setLocation(p);
 			return newShape;
@@ -711,6 +718,7 @@ public abstract class Spatial {
 		@operator(value = { "without_holes", "solid" })
 		@doc(value = "A geometry corresponding to the operand geometry (geometry, agent, point) without its holes", examples = { "solid(self) --: returns the geometry corresponding to the geometry of the agent applying the operator without its holes." })
 		public static IShape without_holes(final IShape g) {
+			if (g == null) return null;
 			Geometry geom = g.getInnerGeometry();
 			Geometry result = geom;
 
@@ -736,6 +744,7 @@ public abstract class Spatial {
 		@operator(value = "triangulate", content_type = IType.GEOMETRY)
 		@doc(value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand geometry (geometry, agent, point)", examples = { "triangulate(self) --: returns the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator." })
 		public static GamaList<IShape> triangulate(final IScope scope, final IShape g) {
+			if (g == null) return null;
 			return GeometryUtils.triangulation(scope, g.getInnerGeometry());
 		}
 

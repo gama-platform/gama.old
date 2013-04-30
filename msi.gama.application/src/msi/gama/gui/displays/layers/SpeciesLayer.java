@@ -123,18 +123,21 @@ public class SpeciesLayer extends AgentLayer {
 			List<GridLayerStatement> gridLayers = layer.getGridLayers();
 			for ( GridLayerStatement gl : gridLayers ) {
 				for ( IAgent a : _agents ) {
-					if ( a.acquireLock() ) {
-						try {
-							microPop = a.getMicroPopulation(gl.getName());
 
-							if ( microPop != null && microPop.size() > 0 ) {
-								// FIXME Needs to be entirely redefined using the new interfaces
-								// drawGridPopulation(a, gl, microPop, scope, g);
-							}
-						} finally {
-							a.releaseLock();
+					try {
+						a.acquireLock();
+						if ( a.dead() ) {
+							continue;
 						}
+						microPop = a.getMicroPopulation(gl.getName());
+						if ( microPop != null && microPop.size() > 0 ) {
+							// FIXME Needs to be entirely redefined using the new interfaces
+							// drawGridPopulation(a, gl, microPop, scope, g);
+						}
+					} finally {
+						a.releaseLock();
 					}
+
 				}
 			}
 
@@ -142,17 +145,20 @@ public class SpeciesLayer extends AgentLayer {
 			List<SpeciesLayerStatement> microLayers = layer.getMicroSpeciesLayers();
 			for ( SpeciesLayerStatement ml : microLayers ) {
 				for ( IAgent a : _agents ) {
-					if ( a.acquireLock() ) {
-						try {
-							microPop = a.getMicroPopulation(ml.getSpecies());
-
-							if ( microPop != null && microPop.size() > 0 ) {
-								drawPopulation(a, ml, microPop, scope, g);
-							}
-						} finally {
-							a.releaseLock();
+					try {
+						a.acquireLock();
+						if ( a.dead() ) {
+							continue;
 						}
+						microPop = a.getMicroPopulation(ml.getSpecies());
+
+						if ( microPop != null && microPop.size() > 0 ) {
+							drawPopulation(a, ml, microPop, scope, g);
+						}
+					} finally {
+						a.releaseLock();
 					}
+
 				}
 			}
 		}

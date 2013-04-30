@@ -67,7 +67,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public ExperimentAgent(final IPopulation s) throws GamaRuntimeException {
 		super(s);
 		super.setGeometry(SHAPE);
-		index = 0;
+		setIndex(0);
 		buildScheduler();
 		reset();
 	}

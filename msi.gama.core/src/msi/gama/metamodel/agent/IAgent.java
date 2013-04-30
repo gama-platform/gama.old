@@ -128,15 +128,7 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	@setter(IKeyword.HOST)
 	public abstract void setHost(final IAgent macroAgent);
 
-	// @Override
-	// public abstract void dispose();
-
 	public abstract void schedule(IScope scope) throws GamaRuntimeException;
-
-	// @Override
-	// public abstract Object getAttribute(final Object index);
-
-	// public abstract void setAttribute(final String name, final Object val);
 
 	/**
 	 * Allows to set attributes that will be accessed by the "read" or "get" operators. Used for
@@ -160,8 +152,6 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	public void setHeading(Integer heading);
 
 	public Integer getHeading();
-
-	public abstract void die() throws GamaRuntimeException;
 
 	public abstract void updateAttributes(IScope scope) throws GamaRuntimeException;
 
@@ -259,7 +249,7 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	 * true if the agent instance is available for use
 	 * false otherwise
 	 */
-	public abstract boolean acquireLock();
+	public abstract void acquireLock();
 
 	/**
 	 * Releases the object's intrinsic lock.

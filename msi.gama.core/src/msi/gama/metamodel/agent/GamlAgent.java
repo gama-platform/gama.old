@@ -50,7 +50,7 @@ public class GamlAgent implements IAgent {
 	/** The population that this agent belongs to. */
 	protected final IPopulation population;
 	protected final GamaMap attributes = new GamaMap();
-	protected volatile int index;
+	private volatile int index;
 	/** The shape of agent with relative coordinate on the environment of host/environment. */
 	protected IShape geometry;
 	protected String name;
@@ -175,7 +175,7 @@ public class GamlAgent implements IAgent {
 	@action(name = "die")
 	public Object primDie(final IScope scope) throws GamaRuntimeException {
 		scope.setStatus(ExecutionStatus.interrupt);
-		die();
+		dispose();
 		return null;
 	}
 
@@ -196,11 +196,6 @@ public class GamlAgent implements IAgent {
 		return geometry != null && geometry.isPoint();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see msi.gama.interfaces.IAgent#getTopology()
-	 */
 	@Override
 	public ITopology getTopology() {
 		return population.getTopology();
@@ -223,7 +218,7 @@ public class GamlAgent implements IAgent {
 		IPopulation microSpeciesPopulation = this.getPopulationFor(microSpecies);
 		for ( IAgent micro : candidates ) {
 			SavedAgent savedMicro = new SavedAgent(scope, micro);
-			micro.die();
+			micro.dispose();
 			capturedAgents.add(savedMicro.restoreTo(scope, microSpeciesPopulation));
 		}
 
@@ -236,7 +231,7 @@ public class GamlAgent implements IAgent {
 		if ( this.canCapture(microAgent, microSpecies) ) {
 			IPopulation microSpeciesPopulation = this.getMicroPopulation(microSpecies);
 			SavedAgent savedMicro = new SavedAgent(scope, microAgent);
-			microAgent.die();
+			microAgent.dispose();
 			return savedMicro.restoreTo(scope, microSpeciesPopulation);
 		}
 
@@ -252,7 +247,7 @@ public class GamlAgent implements IAgent {
 		for ( IAgent micro : microAgents ) {
 			SavedAgent savedMicro = new SavedAgent(scope, micro);
 			originalSpeciesPopulation = micro.getPopulationFor(micro.getSpecies().getParentSpecies());
-			micro.die();
+			micro.dispose();
 			releasedAgents.add(savedMicro.restoreTo(scope, originalSpeciesPopulation));
 		}
 
@@ -283,7 +278,7 @@ public class GamlAgent implements IAgent {
 			IPopulation microSpeciesPopulation = this.getPopulationFor(newMicroSpecies);
 			for ( IAgent micro : immigrantCandidates ) {
 				SavedAgent savedMicro = new SavedAgent(scope, micro);
-				micro.die();
+				micro.dispose();
 				immigrants.add(savedMicro.restoreTo(scope, microSpeciesPopulation));
 			}
 		}
@@ -308,7 +303,7 @@ public class GamlAgent implements IAgent {
 
 		for ( IAgent m : oldMicroPop.getAgentsList() ) {
 			SavedAgent savedMicro = new SavedAgent(scope, m);
-			m.die();
+			m.dispose();
 			immigrants.add(savedMicro.restoreTo(scope, newMicroPop));
 		}
 
@@ -581,15 +576,11 @@ public class GamlAgent implements IAgent {
 		List<ISpecies> allMicroSpecies = this.getSpecies().getMicroSpecies();
 
 		if ( !allMicroSpecies.isEmpty() ) {
-			// microPopulations = new HashMap<ISpecies, IPopulation>();
 			IPopulation microPop;
 			for ( ISpecies microSpec : allMicroSpecies ) {
-
-				// TODO what to do with built-in species?
 				if ( Types.isBuiltIn(microSpec.getName()) ) {
 					continue;
 				}
-
 				microPop = new GamaPopulation(this, microSpec);
 				microPopulations.put(microSpec, microPop);
 				microPop.initializeFor(scope);
@@ -626,73 +617,73 @@ public class GamlAgent implements IAgent {
 	 * return true if the agent is available for drawing or disposing false otherwise
 	 */
 	@Override
-	public synchronized boolean acquireLock() {
-		if ( index == -1 || lockAcquired ) { return false; }
-		// GUI.debug("Lock acquired by " + this);
+	public synchronized void acquireLock() {
+		while (lockAcquired) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				// e.printStackTrace();
+			}
+		}
 		lockAcquired = true;
-		return true;
 	}
 
 	@Override
 	public synchronized void releaseLock() {
 		lockAcquired = false;
-		// GUI.debug("Lock released by " + this);
 		notify();
 	}
 
 	@Override
 	public synchronized void dispose() {
-		// If agent is being drawn then wait
-		// acquireLock();
-		// while (!acquireLock()) {
-		// try {
-		// wait();
-		// } catch (InterruptedException e) {
-		// e.printStackTrace();
-		// }
-		// }
-
-		// dispose components
-		if ( microPopulations != null ) {
-			for ( IPopulation pop : microPopulations.values() ) {
-				pop.dispose();
-			}
-			microPopulations.clear();
-		}
-		// Do not put it to null yet. Let the GC do its job, while
-		// keeping some degree of compatibility with the other processes
-		// that might want to access the field.
-		// microPopulations = null;
+		if ( dead() ) { return; }
 
 		try {
-			// TODO Check null for scope
-			population.remove(null, null, this, false);
+			acquireLock();
+			dying = true;
+			if ( microPopulations != null ) {
+				for ( IPopulation microPop : microPopulations.values() ) {
+					microPop.killMembers();
+					microPop.dispose();
+				}
+				microPopulations.clear();
+			}
+			GamaGraph graph = (GamaGraph) getAttribute("attached_graph");
+			if ( graph != null ) {
 
-		} catch (GamaRuntimeException e) {
-			GAMA.reportError(e);
-			e.printStackTrace();
-		}
-		acquireLock();
-		// population = null;
-		attributes.clear();
-		// attributes = null;
-		if ( geometry != null ) {
-			geometry.dispose();
-		}
-		index = -1;
-		// simulation = null;
+				Set edgesToModify = graph.edgesOf(this);
+				graph.removeVertex(this);
 
-		releaseLock();
+				for ( Object obj : edgesToModify ) {
+					if ( obj instanceof IAgent ) {
+						((IAgent) obj).dispose();
+					}
+				}
+
+			}
+
+			try {
+				population.remove(null, null, this, false);
+
+			} catch (GamaRuntimeException e) {
+				GAMA.reportError(e);
+			}
+			attributes.clear();
+			if ( geometry != null ) {
+				geometry.dispose();
+			}
+			setIndex(-1);
+		} finally {
+			releaseLock();
+		}
 	}
 
 	@Override
 	public void schedule(final IScope scope) throws GamaRuntimeException {
-		if ( index != -1 ) {
+		if ( getIndex() != -1 ) {
 			scope.getSimulationScope().getScheduler().insertAgentToInit(this, scope);
 		}
 	}
-
-	public void enable(final String behavior, final boolean enabled) {}
 
 	@Override
 	public final int getIndex() {
@@ -701,10 +692,9 @@ public class GamlAgent implements IAgent {
 
 	@Override
 	public String getName() {
-		// if ( dead() ) { return "dead agent"; }
 		if ( name == null ) {
 			if ( dead() ) { return "dead agent"; }
-			return getSpeciesName() + index;
+			return getSpeciesName() + getIndex();
 		}
 		return name;
 	}
@@ -725,36 +715,8 @@ public class GamlAgent implements IAgent {
 	}
 
 	@Override
-	public void die() throws GamaRuntimeException {
-
-		if ( dead() ) { return; }
-
-		dying = true;
-
-		if ( microPopulations != null ) {
-			for ( IPopulation microPop : microPopulations.values() ) {
-				microPop.killMembers();
-			}
-		}
-		GamaGraph graph = (GamaGraph) getAttribute("attached_graph");
-		if ( graph != null ) {
-
-			Set edgesToModify = graph.edgesOf(this);
-			graph.removeVertex(this);
-
-			for ( Object obj : edgesToModify ) {
-				if ( obj instanceof IAgent ) {
-					((IAgent) obj).die();
-				}
-			}
-
-		}
-		dispose();
-	}
-
-	@Override
 	public synchronized boolean dead() {
-		return index == -1 || dying;
+		return getIndex() == -1 || dying;
 	}
 
 	@Override
@@ -764,7 +726,7 @@ public class GamlAgent implements IAgent {
 
 	@Override
 	public synchronized void setGeometry(final IShape newGeometry) {
-		if ( newGeometry == null || newGeometry.getInnerGeometry() == null ) { return; }
+		if ( newGeometry == null || newGeometry.getInnerGeometry() == null || dead() ) { return; }
 
 		ITopology topology = population.getTopology();
 		ILocation newGeomLocation = newGeometry.getLocation().copy(getScope());
@@ -784,7 +746,6 @@ public class GamlAgent implements IAgent {
 		geometry = newLocalGeom;
 
 		topology.updateAgent(previous, this);
-		// topology.updateAgent(this, previousIsPoint, previousLoc, previousEnv);
 
 		// update micro-agents' locations accordingly
 		for ( IPopulation p : microPopulations.values() ) {
@@ -794,8 +755,7 @@ public class GamlAgent implements IAgent {
 
 	@Override
 	public synchronized void setLocation(final ILocation point) {
-		// Pourquoi "synchronized" ?
-		if ( point == null ) { return; }
+		if ( point == null || dead() ) { return; }
 		ILocation newLocation = point.copy(getScope());
 		ITopology topology = population.getTopology();
 		if ( topology == null ) { return; }
@@ -838,15 +798,12 @@ public class GamlAgent implements IAgent {
 
 	@Override
 	public synchronized ILocation getLocation() {
-		// Pourquoi "synchronized" ?
 		if ( geometry == null || geometry.getInnerGeometry() == null ) {
 			ILocation randomLocation = population.getTopology().getRandomLocation();
 			if ( randomLocation == null ) { return null; }
 			setGeometry(GamaGeometryType.createPoint(randomLocation));
-
 			return randomLocation;
 		}
-
 		return geometry.getLocation();
 	}
 
@@ -877,7 +834,6 @@ public class GamlAgent implements IAgent {
 
 	@Override
 	public boolean isInstanceOf(final ISpecies s, final boolean direct) {
-		// if (dead()) return false;
 		if ( s.getName().equals(IKeyword.AGENT) ) { return true; }
 		return population.manages(s, direct);
 	}
@@ -886,7 +842,7 @@ public class GamlAgent implements IAgent {
 	public String toGaml() {
 		if ( dead() ) { return "nil"; }
 		final StringBuilder sb = new StringBuilder(30);
-		sb.append(index);
+		sb.append(getIndex());
 		sb.append(" as ");
 		sb.append(getSpeciesName());
 		return sb.toString();
@@ -920,12 +876,10 @@ public class GamlAgent implements IAgent {
 
 	@Override
 	public boolean hasMembers() {
-		if ( microPopulations == null ) { return false; }
-
+		if ( microPopulations == null || dead() ) { return false; }
 		for ( IPopulation mam : microPopulations.values() ) {
 			if ( mam.size() > 0 ) { return true; }
 		}
-
 		return false;
 	}
 
@@ -946,7 +900,7 @@ public class GamlAgent implements IAgent {
 
 	@Override
 	public void setMembers(final IList<IAgent> newMembers) {
-		// Directly change "members" not supported
+		// Directly changing "members" not supported
 	}
 
 	@Override

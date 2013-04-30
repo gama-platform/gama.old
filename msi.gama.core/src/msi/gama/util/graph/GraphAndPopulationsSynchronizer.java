@@ -1,14 +1,9 @@
 package msi.gama.util.graph;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.shape.GamaDynamicLink;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 
@@ -181,7 +176,7 @@ public class GraphAndPopulationsSynchronizer implements IPopulation.Listener, IG
 				if ( currentEventEdge != event.edge ) {
 					try {
 						currentEventEdge = event.edge;
-						((IAgent) event.edge).die();
+						((IAgent) event.edge).dispose();
 					} catch (RuntimeException e) {
 						e.printStackTrace();
 					}
@@ -192,7 +187,7 @@ public class GraphAndPopulationsSynchronizer implements IPopulation.Listener, IG
 				if ( currentEventVertex != event.vertex ) {
 					try {
 						currentEventVertex = event.vertex;
-						((IAgent) event.vertex).die();
+						((IAgent) event.vertex).dispose();
 					} catch (RuntimeException e) {
 						e.printStackTrace();
 					}

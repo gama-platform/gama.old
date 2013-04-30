@@ -91,7 +91,7 @@ public class GamaPopulation implements IPopulation {
 				}
 			}
 			for ( IAgent agent : toKill ) {
-				agent.die();
+				agent.dispose();
 			}
 			List<Map> attributes = new ArrayList();
 			for ( IAgent target : targets ) {
@@ -428,7 +428,7 @@ public class GamaPopulation implements IPopulation {
 	@Override
 	public void killMembers() throws GamaRuntimeException {
 		for ( IAgent a : this.getAgentsList() ) {
-			a.die();
+			a.dispose();
 		}
 	}
 
