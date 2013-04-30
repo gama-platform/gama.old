@@ -29,7 +29,7 @@ global {
 	}
    
 }   
-//environment bounds: BOUNDS ;
+environment bounds: BOUNDS ;
 entities {   
 	species toto skills: [SQLSKILL]
 	 {  
