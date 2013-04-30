@@ -60,9 +60,9 @@ public class MyGraphics {
 	public void DrawXYZAxis(final double size) {
 
 		myGl.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
-		drawString("1:" + String.valueOf(size), size, size, 0.0f);
+		drawString("1:" + String.valueOf(size), size, size, 0.0f,0.0);
 		// X Axis
-		drawString("x", 1.2f * size, 0.0f, 0.0f);
+		drawString("x", 1.2f * size, 0.0f, 0.0f,0.0);
 		myGl.glBegin(GL.GL_LINES);
 		myGl.glColor4f(1.0f, 0, 0, 1.0f);
 		myGl.glVertex3d(0, 0, 0);
@@ -76,7 +76,7 @@ public class MyGraphics {
 		myGl.glEnd();
 
 		// Y Axis
-		drawString("y", 0.0f, 1.2f * size, 0.0f);
+		drawString("y", 0.0f, 1.2f * size, 0.0f,0.0);
 		myGl.glBegin(GL.GL_LINES);
 		myGl.glColor4f(0, 1.0f, 0, 1.0f);
 		myGl.glVertex3f(0, 0, 0);
@@ -90,7 +90,7 @@ public class MyGraphics {
 
 		// Z Axis
 		myGl.glRasterPos3d(0.0f, 0.0f, 1.2f * size);
-		drawString("z", 0.0f, 0.0f, 1.2f * size);
+		drawString("z", 0.0f, 0.0f, 1.2f * size,0.0);
 		myGl.glBegin(GL.GL_LINES);
 		myGl.glColor4f(0, 0, 1.0f, 1.0f);
 		myGl.glVertex3f(0, 0, 0);
@@ -106,15 +106,15 @@ public class MyGraphics {
 	}
 
 	public void DrawZValue(final double pos, final float value) {
-		drawString("z:" + String.valueOf(value), pos, pos, 0.0f);
+		drawString("z:" + String.valueOf(value), pos, pos, 0.0f, 0.0f);
 	}
 
-	public void drawString(final String string, final double x, final double y, final double z) {
+	public void drawString(final String string, final double x, final double y, final double z,final double z_layer) {
 
 		// Need to disable blending when drawing glutBitmapString;
 		myGl.glDisable(GL_BLEND);
 		myGl.glColor4f(0.0f, 0.0f, 0.0f, 1.0f);
-		myGl.glRasterPos3f((float) x, (float) y, (float) z);
+		myGl.glRasterPos3f((float) x, (float) y, (float) (z + z_layer));
 		myGl.glScalef(8.0f, 8.0f, 8.0f);
 		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, string);
 		// glut.glutBitmapString(GLUT.BITMAP_8_BY_13, string);

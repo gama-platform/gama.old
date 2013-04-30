@@ -207,7 +207,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 		// TODO AD EN PIXELS ???
 		GamaPoint offset =
 			new GamaPoint(xFromPixelsToModelUnits(xOffsetInPixels), yFromPixelsToModelUnits(yOffsetInPixels));
-
+		//System.out.println("xOffsetInPixels" +xOffsetInPixels);
+        //System.out.println("xFromPixelsToModelUnits(xOffsetInPixels)" + xFromPixelsToModelUnits(xOffsetInPixels));
 		// GamaPoint offset = new GamaPoint(xOffsetInPixels, yOffsetInPixels);
 
 		// Add a geometry with a depth and type coming from Attributes
@@ -389,8 +390,6 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 
 		addImageInImages(img, scope == null ? null : scope.getAgentScope(), curX, curY, z, curWidth, curHeight, angle,
 			offSet, isDynamic);
-		// rect.setRect(curX, curY, curWidth, curHeight);
-		// }
 
 		return rect;
 	}
@@ -436,12 +435,8 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 			curHeight = heightInModelUnits;
 		}
 
-		addStringInStrings(string, curX, curY, z);
+		addStringInStrings(string, curX, -curY, z, getCurrentZLayer());
 
-		// }
-		// setDrawingColor(stringColor);
-		// Rectangle2D r = null;
-		// return null;
 		return null;
 	}
 
@@ -581,13 +576,14 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	 * @param y
 	 * @param z
 	 */
-	private void addStringInStrings(final String string, final double x, final double y, final double z) {
+	private void addStringInStrings(final String string, final double x, final double y, final double z, final double z_layer) {
 		// FIXME Add Font information like GLUT.BITMAP_TIMES_ROMAN_24;
 		final MyString curString = new MyString();
 		curString.string = string;
 		curString.x = x;
 		curString.y = y;
 		curString.z = z;
+		curString.z_layer= z_layer;
 		this.getStrings().add(curString);
 
 	}
@@ -784,7 +780,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 		Iterator<MyString> it = this.getStrings().iterator();
 		while (it.hasNext()) {
 			MyString curString = it.next();
-			getMyGLRender().graphicsGLUtils.drawString(curString.string, curString.x, curString.y, curString.z);
+			getMyGLRender().graphicsGLUtils.drawString(curString.string, curString.x, curString.y, curString.z, curString.z_layer);
 		}
 	}
 
@@ -793,9 +789,9 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 		if ( drawData ) {
 			// Draw Width and height value
 			this.getMyGLRender().graphicsGLUtils.drawString(String.valueOf(this.getEnvWidth()), this.getEnvWidth() / 2,
-				this.getEnvHeight() * 0.01f, 0.0f);
+				this.getEnvHeight() * 0.01f, 0.0f,0.0);
 			this.getMyGLRender().graphicsGLUtils.drawString(String.valueOf(this.getEnvHeight()),
-				this.getEnvWidth() * 1.01f, -(this.getEnvHeight() / 2), 0.0f);
+				this.getEnvWidth() * 1.01f, -(this.getEnvHeight() / 2), 0.0f,0.0);
 		}
 
 		// Draw environment rectangle
@@ -960,6 +956,7 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 		}
 		// TODO Pourquoi ne pas utiliser l'ordre des layers ? layer.getOrder() ??
 		setCurrentLayerId(getCurrentLayerId() + 1);
+		
 		xOffsetInPixels = layer.getPositionInPixels().x;
 		yOffsetInPixels = layer.getPositionInPixels().y;
 		widthOfCurrentLayerInPixels = layer.getSizeInPixels().x;

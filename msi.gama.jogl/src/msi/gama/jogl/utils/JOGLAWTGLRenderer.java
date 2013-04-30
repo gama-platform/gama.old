@@ -7,6 +7,8 @@ import java.nio.FloatBuffer;
 import java.util.*;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
+
+import msi.gama.common.util.GuiUtils;
 import msi.gama.jogl.JOGLAWTDisplaySurface;
 import msi.gama.jogl.utils.Camera.Camera;
 import msi.gama.jogl.utils.Camera.Arcball.*;
@@ -192,7 +194,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		 */
 
 		isInitialized = true;
-		// GuiUtils.debug("JOGLAWTGLRenderer.init: " + this.displaySurface.outputId);
+		GuiUtils.debug("JOGLAWTGLRenderer.init: " + this.displaySurface.getOutputName());
 		OutputSynchronizer.decInitializingViews(this.displaySurface.getOutputName());
 	}
 

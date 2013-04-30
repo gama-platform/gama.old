@@ -4,6 +4,6 @@ public class MyString {
 
 	public String string;
 
-	public double x, y, z;
+	public double x, y, z, z_layer;
 
 }
