@@ -1,7 +1,7 @@
 package msi.gama.jogl.utils;
 
 import java.awt.Color;
-import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 import msi.gama.jogl.utils.GraphicDataType.*;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.JTSDrawer;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -11,7 +11,7 @@ import com.vividsolutions.jts.geom.*;
 public class BasicOpenGlDrawer {
 
 	// OpenGL member
-	private final GL myGl;
+	private final GL2 myGl;
 
 	// need to have the GLRenderer to enable texture mapping.
 	public JOGLAWTGLRenderer myGLRender;

@@ -1,7 +1,7 @@
 package utils;
 
 import java.awt.event.*;
-import javax.media.opengl.GLCanvas;
+import javax.media.opengl.awt.GLCanvas;
 
 public class CameraV extends CameraN // implements
 										// MouseListener,MouseMotionListener,MouseWheelListener
@@ -69,11 +69,11 @@ public class CameraV extends CameraN // implements
 	public void mouseExited(final MouseEvent e) {}
 
 	public void updateCamera() {
-		can.getGL().glLoadIdentity();
-		can.getGL().glTranslated(pos_of_camera.x, pos_of_camera.y, pos_of_camera.z);
+		can.getGL().getGL2().glLoadIdentity();
+		can.getGL().getGL2().glTranslated(pos_of_camera.x, pos_of_camera.y, pos_of_camera.z);
 
-		can.getGL().glRotated(phi, 0, 1, 0);
-		can.getGL().glRotated(theta, Math.cos(Math.toRadians(phi)), 0,
+		can.getGL().getGL2().glRotated(phi, 0, 1, 0);
+		can.getGL().getGL2().glRotated(theta, Math.cos(Math.toRadians(phi)), 0,
 			Math.sin(Math.toRadians(phi)));
 
 	}

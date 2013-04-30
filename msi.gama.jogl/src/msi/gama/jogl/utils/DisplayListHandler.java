@@ -1,15 +1,15 @@
 package msi.gama.jogl.utils;
 
-import static javax.media.opengl.GL.GL_COMPILE;
+import static javax.media.opengl.GL2.GL_COMPILE;
 import java.util.*;
-import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLU;
 import msi.gama.jogl.utils.GraphicDataType.*;
 
 public class DisplayListHandler {
 
 	// OpenGL member
-	private final GL myGl;
+	private final GL2 myGl;
 	private final GLU myGlu;
 
 	// need to have the GLRenderer to enable texture mapping.
@@ -26,7 +26,7 @@ public class DisplayListHandler {
 	private int listShapeId;
 	private int firstShapeList;
 
-	public DisplayListHandler(final GL gl, final GLU glu, final JOGLAWTGLRenderer gLRender) {
+	public DisplayListHandler(final GL2 gl, final GLU glu, final JOGLAWTGLRenderer gLRender) {
 		myGl = gl;
 		myGlu = glu;
 		myGLRender = gLRender;

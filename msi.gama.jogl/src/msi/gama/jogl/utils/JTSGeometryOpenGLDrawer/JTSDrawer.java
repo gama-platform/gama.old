@@ -1,10 +1,10 @@
 package msi.gama.jogl.utils.JTSGeometryOpenGLDrawer;
 
-import static javax.media.opengl.GL.*;
+import static javax.media.opengl.GL2.*;
 
 import java.awt.Color;
 import java.util.Iterator;
-import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 import javax.media.opengl.glu.*;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.jogl.utils.*;
@@ -16,7 +16,7 @@ import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 public class JTSDrawer {
 
 	// OpenGL member
-	private final GL myGl;
+	private final GL2 myGl;
 	private final GLU myGlu;
 	public TessellCallBack tessCallback;
 	private final GLUtessellator tobj;
@@ -268,12 +268,12 @@ public class JTSDrawer {
 	}
 
 	void DrawTexturedPolygon(final Polygon p, final int angle) {
-		myGl.glEnable(GL.GL_TEXTURE_2D);
+		myGl.glEnable(GL2.GL_TEXTURE_2D);
 		// Enables this texture's target (e.g., GL_TEXTURE_2D) in the
 		// current GL context's state.
-		myGLRender.textures[2].enable();
+		myGLRender.textures[2].enable(myGl);
 		// Binds this texture to the current GL context.
-		myGLRender.textures[2].bind();
+		myGLRender.textures[2].bind(myGl);
 
 		/*if ( angle != 0 ) {
 			myGl.glTranslatef((float) p.getCentroid().getX(), yFlag *
@@ -294,7 +294,7 @@ public class JTSDrawer {
 			DrawTexturedQuad(p);
 		//}
 
-		myGl.glDisable(GL.GL_TEXTURE_2D);
+		myGl.glDisable(GL2.GL_TEXTURE_2D);
 	}
 
 	void DrawTexturedQuad(final Polygon p) {
@@ -324,7 +324,7 @@ public class JTSDrawer {
 		// Draw Exterior ring
 		myGl.glLineWidth(1.0f);
 
-		myGl.glBegin(GL.GL_LINES);
+		myGl.glBegin(GL2.GL_LINES);
 		myGl.glColor4f((float) border.getRed() / 255, (float) border.getGreen() / 255,
 			(float) border.getBlue() / 255, 1.0f);
 		p.getExteriorRing().apply(visitor);
@@ -332,7 +332,7 @@ public class JTSDrawer {
 
 		// Draw Interior ring
 		for ( int i = 0; i < p.getNumInteriorRing(); i++ ) {
-			myGl.glBegin(GL.GL_LINES);
+			myGl.glBegin(GL2.GL_LINES);
 			myGl.glColor4f((float) border.getRed() / 255, (float) border.getGreen() / 255,
 				(float) border.getBlue() / 255, 1.0f);
 			p.getInteriorRingN(i).apply(visitor);
@@ -420,7 +420,7 @@ public class JTSDrawer {
 			float[] normal = CalculateNormal(vertices[2], vertices[1], vertices[0]);
 
 			if ( fill ) {
-				myGl.glBegin(GL.GL_QUADS);
+				myGl.glBegin(GL2.GL_QUADS);
 
 				myGl.glNormal3fv(normal, 0);
 
@@ -436,7 +436,7 @@ public class JTSDrawer {
 				
 				myGl.glColor4f((float) b.getRed() / 255, (float) b.getGreen() / 255, (float) b.getBlue() / 255, alpha);
 
-				myGl.glBegin(GL.GL_LINES);
+				myGl.glBegin(GL2.GL_LINES);
 
 				myGl.glVertex3f(vertices[0].x, vertices[0].y, vertices[0].z);
 				myGl.glVertex3f(vertices[1].x, vertices[1].y, vertices[1].z);
@@ -457,7 +457,7 @@ public class JTSDrawer {
 			}
 
 			if ( drawNormal == true ) {
-				myGl.glBegin(GL.GL_LINES);
+				myGl.glBegin(GL2.GL_LINES);
 				myGl.glVertex3f(vertices[0].x, vertices[0].y, vertices[0].z);
 				myGl.glVertex3f(vertices[0].x + normal[0] * 2, vertices[0].y + normal[1] * 2,
 					vertices[0].z + normal[2] * 2);
@@ -510,7 +510,7 @@ public class JTSDrawer {
 
 		// FIXME: this will draw a 3d line if the z value of each point has been
 		// set thanks to add_z_pt but if
-		myGl.glBegin(GL.GL_LINES);
+		myGl.glBegin(GL2.GL_LINES);
 		for ( int j = 0; j < numPoints - 1; j++ ) {
 
 			if ( Double.isNaN(line.getPointN(j).getCoordinate().z) == true ) {
@@ -553,7 +553,7 @@ public class JTSDrawer {
 		}
 
 		for ( int j = 0; j < numPoints - 1; j++ ) {
-			myGl.glBegin(GL.GL_QUADS);
+			myGl.glBegin(GL2.GL_QUADS);
 			myGl.glVertex3f((float) l.getPointN(j).getX(), yFlag * (float) l.getPointN(j).getY(), z);
 			myGl.glVertex3f((float) l.getPointN(j + 1).getX(), yFlag *
 				(float) l.getPointN(j + 1).getY(), z);
@@ -570,7 +570,7 @@ public class JTSDrawer {
 		if ( drawPolygonContour == true ) {
 			myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
 			for ( int j = 0; j < numPoints - 1; j++ ) {
-				myGl.glBegin(GL.GL_LINES);
+				myGl.glBegin(GL2.GL_LINES);
 				myGl.glVertex3f((float) l.getPointN(j).getX(), yFlag *
 					(float) l.getPointN(j).getY(), z);
 				myGl.glVertex3f((float) l.getPointN(j + 1).getX(),
@@ -634,7 +634,7 @@ public class JTSDrawer {
 		// FIXME/ Check the cost of this line
 		myGl.glColor4f(0.0f, 0.0f, 0.0f, alpha);
 		myGl.glLineWidth(1.1f);
-		myGl.glBegin(GL.GL_LINES);
+		myGl.glBegin(GL2.GL_LINES);
 		float xBegin, xEnd, yBegin, yEnd;
 		for ( int k = 0; k < numPoints; k++ ) {
 			angle = (float) (k * 2 * Math.PI / numPoints);
@@ -676,7 +676,7 @@ public class JTSDrawer {
 		if ( showTriangulation ) {
 
 			if ( Double.isNaN(polygon.getExteriorRing().getPointN(0).getCoordinate().z) == true ) {
-				myGl.glBegin(GL.GL_LINES); // draw using triangles
+				myGl.glBegin(GL2.GL_LINES); // draw using triangles
 				myGl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(), yFlag *
 					polygon.getExteriorRing().getPointN(0).getY(), 0.0f);
 				myGl.glVertex3d(polygon.getExteriorRing().getPointN(1).getX(), yFlag *
@@ -693,7 +693,7 @@ public class JTSDrawer {
 					polygon.getExteriorRing().getPointN(0).getY(), 0.0f);
 				myGl.glEnd();
 			} else {
-				myGl.glBegin(GL.GL_LINES); // draw using triangles
+				myGl.glBegin(GL2.GL_LINES); // draw using triangles
 				myGl.glVertex3d(polygon.getExteriorRing().getPointN(0).getX(), yFlag *
 					polygon.getExteriorRing().getPointN(0).getY(), polygon.getExteriorRing()
 					.getPointN(0).getCoordinate().z);

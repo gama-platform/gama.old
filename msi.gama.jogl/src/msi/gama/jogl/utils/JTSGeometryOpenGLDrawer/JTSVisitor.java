@@ -1,6 +1,6 @@
 package msi.gama.jogl.utils.JTSGeometryOpenGLDrawer;
 
-import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.CoordinateSequenceFilter;
@@ -8,9 +8,9 @@ import com.vividsolutions.jts.geom.CoordinateSequenceFilter;
 public class JTSVisitor implements CoordinateSequenceFilter{
 	
 	
-	private GL myGl;
+	private GL2 myGl;
 	
-	public JTSVisitor(GL gl){
+	public JTSVisitor(GL2 gl){
 		myGl=gl;
 	}
 

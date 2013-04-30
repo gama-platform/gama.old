@@ -1,12 +1,12 @@
 package msi.gama.jogl.utils.JTSGeometryOpenGLDrawer;
 
-import static javax.media.opengl.GL.GL_QUADS;
-import static javax.media.opengl.GL.GL_TRIANGLES;
+import static javax.media.opengl.GL2.GL_QUADS;
+import static javax.media.opengl.GL2.GL_TRIANGLES;
 
 import java.awt.Color;
 import java.util.Iterator;
 
-import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 import javax.media.opengl.glu.GLUtessellator;

@@ -4,8 +4,9 @@ import java.awt.event.*;
 import javax.swing.*;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
-import com.sun.opengl.util.FPSAnimator;
-import static javax.media.opengl.GL.*; // static import constants
+import com.jogamp.opengl.util.FPSAnimator;
+import static javax.media.opengl.GL2.*; // static import constants
+import javax.media.opengl.awt.GLCanvas;
 
 /**
  * NeHe Lesson 2: Your First Polygon
@@ -65,7 +66,7 @@ public class NeheJOGL02Basics extends JPanel implements GLEventListener {
     */
    @Override
    public void init(GLAutoDrawable drawable) {
-      GL gl = drawable.getGL(); // Get the OpenGL graphics context
+      GL2 gl = drawable.getGL().getGL2(); // Get the OpenGL graphics context
       glu = new GLU(); // GL Utilities
       gl.glClearColor(0.0f, 0.0f, 0.0f, 1.0f);  // Set background (clear) color
       gl.glClearDepth(1.0f); // Set clear depth value to farthest
@@ -85,7 +86,7 @@ public class NeheJOGL02Basics extends JPanel implements GLEventListener {
     */
    @Override
    public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
-      GL gl = drawable.getGL(); // Get the OpenGL graphics context
+      GL2 gl = drawable.getGL().getGL2(); // Get the OpenGL graphics context
 
       if (height == 0) {
          height = 1; // prevent divide by zero
@@ -110,7 +111,7 @@ public class NeheJOGL02Basics extends JPanel implements GLEventListener {
     */
    @Override
    public void display(GLAutoDrawable drawable) {
-      GL gl = drawable.getGL(); // Get the OpenGL graphics context
+      GL2 gl = drawable.getGL().getGL2(); // Get the OpenGL graphics context
       gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // Clear color and depth buffers
       gl.glLoadIdentity();  // reset the model-view matrix
 
@@ -141,7 +142,13 @@ public class NeheJOGL02Basics extends JPanel implements GLEventListener {
     * Called back when the display mode (eg. resolution) has been changed.
     * (not implemented by JOGL)
     */
-   @Override
    public void displayChanged(GLAutoDrawable drawable, boolean modeChanged,
          boolean deviceChanged) {}
+
+
+@Override
+public void dispose(GLAutoDrawable arg0) {
+	// TODO Auto-generated method stub
+	
+}
 }

@@ -1,16 +1,16 @@
 package msi.gama.jogl.utils;
 
-import static javax.media.opengl.GL.*;
-import javax.media.opengl.GL;
+import static javax.media.opengl.GL2.*;
+import javax.media.opengl.GL2;
 import javax.media.opengl.glu.*;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.TessellCallBack;
-import com.sun.opengl.util.GLUT;
+import com.jogamp.opengl.util.gl2.GLUT;
 import com.vividsolutions.jts.geom.*;
 
 public class MyGraphics {
 
 	// OpenGL member
-	private final GL myGl;
+	private final GL2 myGl;
 	private final GLU myGlu;
 	private final TessellCallBack tessCallback;
 	private final GLUtessellator tobj;
@@ -63,7 +63,7 @@ public class MyGraphics {
 		drawString("1:" + String.valueOf(size), size, size, 0.0f,0.0);
 		// X Axis
 		drawString("x", 1.2f * size, 0.0f, 0.0f,0.0);
-		myGl.glBegin(GL.GL_LINES);
+		myGl.glBegin(GL2.GL_LINES);
 		myGl.glColor4f(1.0f, 0, 0, 1.0f);
 		myGl.glVertex3d(0, 0, 0);
 		myGl.glVertex3d(size, 0, 0);
@@ -77,7 +77,7 @@ public class MyGraphics {
 
 		// Y Axis
 		drawString("y", 0.0f, 1.2f * size, 0.0f,0.0);
-		myGl.glBegin(GL.GL_LINES);
+		myGl.glBegin(GL2.GL_LINES);
 		myGl.glColor4f(0, 1.0f, 0, 1.0f);
 		myGl.glVertex3f(0, 0, 0);
 		myGl.glVertex3d(0, size, 0);
@@ -91,7 +91,7 @@ public class MyGraphics {
 		// Z Axis
 		myGl.glRasterPos3d(0.0f, 0.0f, 1.2f * size);
 		drawString("z", 0.0f, 0.0f, 1.2f * size,0.0);
-		myGl.glBegin(GL.GL_LINES);
+		myGl.glBegin(GL2.GL_LINES);
 		myGl.glColor4f(0, 0, 1.0f, 1.0f);
 		myGl.glVertex3f(0, 0, 0);
 		myGl.glVertex3d(0, 0, size);

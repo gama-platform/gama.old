@@ -5,9 +5,10 @@ import java.io.*;
 import java.net.URL;
 import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import com.sun.opengl.util.texture.*;
+import com.jogamp.opengl.util.texture.*;
 
 public class DigitalElevationModelDrawer {
 
@@ -20,30 +21,30 @@ public class DigitalElevationModelDrawer {
 		myGLRenderer = glRenderer;
 	}
 
-	public void init(GL gl) {
+	public void init(GL2 gl) {
 		if ( !isInitialized() ) {
 			System.out.println("InitDEM");
 			final String TEXTURE_FILEPATH = "/Users/Arno/Desktop/DEM/Texture.png";
 			final String DEM_FILEPATH = "/Users/Arno/Desktop/DEM/DEM.png";
 
 			terrain = gl.glGenLists(1);
-			gl.glNewList(terrain, GL.GL_COMPILE);
+			gl.glNewList(terrain, GL2.GL_COMPILE);
 			CreateDEM(gl, DEM_FILEPATH, 20.0f, 20.0f);
 			gl.glEndList();
 
 			/* Load the texture */
-			gl.glEnable(GL.GL_TEXTURE_2D);
+			gl.glEnable(GL2.GL_TEXTURE_2D);
 			loadTexture(TEXTURE_FILEPATH);
 			setInitialized(true);
 		}
 	}
 
-	public void DisplayDEM(GL gl) {
+	public void DisplayDEM(GL2 gl) {
 		System.out.println("DisplayDEM");
 		gl.glCallList(terrain);
 	}
 
-	private void CreateDEM(GL gl, String demFileName, float w, float h) {
+	private void CreateDEM(GL2 gl, String demFileName, float w, float h) {
 
 		int rows, cols;
 		int x, y;
@@ -63,7 +64,7 @@ public class DigitalElevationModelDrawer {
 		gl.glNormal3f(0.0f, 1.0f, 0.0f);
 
 		for ( y = 0; y < rows; y++ ) {
-			gl.glBegin(GL.GL_QUAD_STRIP);
+			gl.glBegin(GL2.GL_QUAD_STRIP);
 			for ( x = 0; x <= cols; x++ ) {
 				vx = tw * x - w / 2.0f;
 				vy = th * y - h / 2.0f;
@@ -96,8 +97,8 @@ public class DigitalElevationModelDrawer {
 			if ( myGLRenderer.getContext() != null ) {
 				myGLRenderer.getContext().makeCurrent();
 				text = TextureIO.newTexture(new File(fileName), false);
-				text.setTexParameteri(GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
-				text.setTexParameteri(GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+				text.setTexParameteri(null, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+				text.setTexParameteri(null, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
 			} else {
 				throw new GamaRuntimeException("(DEM) JOGLRenderer context is null");
 			}

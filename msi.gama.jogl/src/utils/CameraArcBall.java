@@ -4,6 +4,7 @@ import java.awt.Point;
 import java.awt.event.*;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
+import javax.media.opengl.awt.GLCanvas;
 
 // implement all necessery Listeners to have control on the wolrd :)
 public class CameraArcBall implements MouseListener, MouseMotionListener, MouseWheelListener {
@@ -103,7 +104,7 @@ public class CameraArcBall implements MouseListener, MouseMotionListener, MouseW
 	}
 
 	// /////////////////////////////////////////////////////////////////////////////////////////
-	public void updateCamera(final GL gl) {
+	public void updateCamera(final GL2 gl) {
 
 		GLU glu = new GLU();
 		GLUquadric quadric = glu.gluNewQuadric();
@@ -138,7 +139,7 @@ public class CameraArcBall implements MouseListener, MouseMotionListener, MouseW
 			gl.glRotated(mouseSensitivity, axis.x, axis.y, axis.z);
 			// get new modelview matrix
 			float m[] = new float[16];
-			gl.glGetFloatv(GL.GL_MODELVIEW_MATRIX, m, 0);
+			gl.glGetFloatv(GL2.GL_MODELVIEW_MATRIX, m, 0);
 
 			// mutliply rotation matrix by current rotation
 			m_v = mutliplyMatrixAByMatrixB(transpose(m_v), transpose(m));
@@ -150,7 +151,7 @@ public class CameraArcBall implements MouseListener, MouseMotionListener, MouseW
 		axis = axis.scale(.9);
 		gl.glRotated(mouseSensitivity * axis.length, axis.x, axis.y, axis.z);
 		float m[] = new float[16];
-		gl.glGetFloatv(GL.GL_MODELVIEW_MATRIX, m, 0);
+		gl.glGetFloatv(GL2.GL_MODELVIEW_MATRIX, m, 0);
 		m_v = mutliplyMatrixAByMatrixB(transpose(m_v), transpose(m));
 		m_v = transpose(m_v);
 		// ////////////////////////////////////////////////////////////////////////////////
@@ -206,7 +207,7 @@ public class CameraArcBall implements MouseListener, MouseMotionListener, MouseW
 	 * px , py - are point od the screen if you use px = 0 and py = 0 you will point on
 	 * left-up corner of screen
 	 */
-	private Vector updateRadius(final int px, final int py, final GL gl) {
+	private Vector updateRadius(final int px, final int py, final GL2 gl) {
 
 		GLU glu = new GLU();
 
@@ -219,11 +220,11 @@ public class CameraArcBall implements MouseListener, MouseMotionListener, MouseW
 
 		// get modelview matrix
 		double modelViewM[] = new double[16];
-		gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, modelViewM, 0);
+		gl.glGetDoublev(GL2.GL_MODELVIEW_MATRIX, modelViewM, 0);
 
 		// get projection matrix
 		double projectionM[] = new double[16];
-		gl.glGetDoublev(GL.GL_PROJECTION_MATRIX, projectionM, 0);
+		gl.glGetDoublev(GL2.GL_PROJECTION_MATRIX, projectionM, 0);
 
 		// get coordinates of point screen using gluProject function
 		// mp[0],mp[1] contains x,y components , mp[2]-contains value from 0-1 and mean what is the

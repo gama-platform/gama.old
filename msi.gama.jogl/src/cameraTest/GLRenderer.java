@@ -25,7 +25,7 @@ public class GLRenderer implements GLEventListener {
 		// Use debug pipeline
 		// drawable.setGL(new DebugGL(drawable.getGL()));
 
-		GL gl = drawable.getGL();
+		GL2 gl = drawable.getGL().getGL2();
 		System.err.println("INIT GL IS: " + gl.getClass().getName());
 
 		// Enable VSync
@@ -33,7 +33,7 @@ public class GLRenderer implements GLEventListener {
 
 		// Setup the drawing area and shading mode
 		gl.glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		gl.glShadeModel(GL.GL_SMOOTH); // try setting this to GL_FLAT and see what happens.
+		gl.glShadeModel(GL2.GL_SMOOTH); // try setting this to GL_FLAT and see what happens.
 		GLUtil.enableSmooth(gl);
 		GLUtil.enableBlend(gl);
 		GLUtil.enableColorMaterial(gl);
@@ -45,7 +45,7 @@ public class GLRenderer implements GLEventListener {
 	@Override
 	public void reshape(final GLAutoDrawable drawable, final int x, final int y, final int width,
 		int height) {
-		GL gl = drawable.getGL();
+		GL2 gl = drawable.getGL().getGL2();
 		GLU glu = new GLU();
 
 		if ( height <= 0 ) { // avoid a divide by zero error!
@@ -54,16 +54,16 @@ public class GLRenderer implements GLEventListener {
 		}
 		final float h = (float) width / (float) height;
 		gl.glViewport(0, 0, width, height);
-		gl.glMatrixMode(GL.GL_PROJECTION);
+		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glLoadIdentity();
 		glu.gluPerspective(45.0f, h, 1.0, 500.0);
-		gl.glMatrixMode(GL.GL_MODELVIEW);
+		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		gl.glLoadIdentity();
 	}
 
 	@Override
 	public void display(final GLAutoDrawable drawable) {
-		GL gl = drawable.getGL();
+		GL2 gl = drawable.getGL().getGL2();
 
 		// Clear the drawing area
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL.GL_DEPTH_BUFFER_BIT);
@@ -73,8 +73,13 @@ public class GLRenderer implements GLEventListener {
 
 	}
 
-	@Override
 	public void displayChanged(final GLAutoDrawable drawable, final boolean modeChanged,
 		final boolean deviceChanged) {}
+
+	@Override
+	public void dispose(GLAutoDrawable arg0) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }

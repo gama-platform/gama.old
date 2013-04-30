@@ -9,7 +9,8 @@ import java.awt.event.*;
 import java.nio.IntBuffer;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
-import com.sun.opengl.util.BufferUtil;
+import com.jogamp.common.nio.Buffers;
+import javax.media.opengl.awt.GLCanvas;
 
 public class CameraN implements MouseListener, KeyListener, MouseMotionListener, MouseWheelListener {
 
@@ -166,7 +167,7 @@ public class CameraN implements MouseListener, KeyListener, MouseMotionListener,
 
 	}
 
-	public void cameraFPP(final GL gl) {
+	public void cameraFPP(final GL2 gl) {
 
 		gl.glLoadIdentity();
 		gl.glRotatef(cameraCelPhi, 0, 1, 0);
@@ -175,7 +176,7 @@ public class CameraN implements MouseListener, KeyListener, MouseMotionListener,
 		gl.glTranslated(pos_of_camera.x, pos_of_camera.y, pos_of_camera.z - cameraRadius);
 	}
 
-	public void cameraTPP(final GL gl) {
+	public void cameraTPP(final GL2 gl) {
 
 		gl.glLoadIdentity();
 		gl.glRotatef(cameraCelPhi, 0, 1, 0);
@@ -187,24 +188,24 @@ public class CameraN implements MouseListener, KeyListener, MouseMotionListener,
 			(float) Math.sin(Math.toRadians(phi)));
 	}
 
-	public void selectedAtom(final GL gl) {
+	public void selectedAtom(final GL2 gl) {
 		if ( !isPressed ) { return; }
 		isPressed = false;
 		GLU glu = new GLU();
 
 		int capacity = 4 * 100;// it can be changed
 		// creating the selecBuffer
-		IntBuffer selectBuffer = BufferUtil.newIntBuffer(capacity);
+		IntBuffer selectBuffer = Buffers.newDirectIntBuffer(capacity);
 		gl.glSelectBuffer(selectBuffer.capacity(), selectBuffer);
 
 		// set to projection matrix
-		gl.glMatrixMode(GL.GL_PROJECTION);
+		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glPushMatrix();
 		gl.glLoadIdentity();
 
 		// take a height and width of GLcanvas from viewport
 		int viewport[] = new int[4];
-		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
+		gl.glGetIntegerv(GL2.GL_VIEWPORT, viewport, 0);
 		int width = viewport[2];
 		int height = viewport[3];
 
@@ -214,20 +215,20 @@ public class CameraN implements MouseListener, KeyListener, MouseMotionListener,
 		float h = width / (float) height;
 		glu.gluPerspective(30.0f, h, 1.0, 500.0);
 		// shitch to the modelview
-		gl.glMatrixMode(GL.GL_MODELVIEW);
+		gl.glMatrixMode(GL2.GL_MODELVIEW);
 
 		// switch to the select Render mode
-		gl.glRenderMode(GL.GL_SELECT);
+		gl.glRenderMode(GL2.GL_SELECT);
 
 		// here is a place where must be use draw-somthing method
 		// f.e glu.gluSphere(quadric, .8, 15, 15);
 		// display lists also work here
 
-		int howManyObjects = gl.glRenderMode(GL.GL_RENDER);
+		int howManyObjects = gl.glRenderMode(GL2.GL_RENDER);
 
-		gl.glMatrixMode(GL.GL_PROJECTION);
+		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glPopMatrix();
-		gl.glMatrixMode(GL.GL_MODELVIEW);
+		gl.glMatrixMode(GL2.GL_MODELVIEW);
 		System.out.println("Nuber of hits:" + howManyObjects);
 
 		// code below derive which ocjects is nearest from monitor

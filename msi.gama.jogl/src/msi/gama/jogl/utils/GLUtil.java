@@ -16,7 +16,7 @@ import java.net.URL;
 import java.nio.IntBuffer;
 import java.nio.LongBuffer;
 import javax.imageio.ImageIO;
-import javax.media.opengl.GL;
+import javax.media.opengl.GL2;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 
@@ -29,7 +29,7 @@ import javax.media.opengl.glu.GLUquadric;
  */
 public class GLUtil {
 
-    public static final int fogMode[] = {GL.GL_EXP, GL.GL_EXP2, GL.GL_LINEAR};
+    public static final int fogMode[] = {GL2.GL_EXP, GL2.GL_EXP2, GL2.GL_LINEAR};
 
     /**
      *
@@ -39,10 +39,10 @@ public class GLUtil {
      * @param b blue
      * @param a-alfa s cooficient of transparency
      */
-    public static void createAmbientLight(GL gl, float r, float g, float b, float a) {
-        gl.glEnable(GL.GL_LIGHTING);
+    public static void createAmbientLight(GL2 gl, float r, float g, float b, float a) {
+        gl.glEnable(GL2.GL_LIGHTING);
         float colors[] = {r, g, b, a};
-        gl.glLightModelfv(GL.GL_LIGHT_MODEL_AMBIENT, colors, 0);
+        gl.glLightModelfv(GL2.GL_LIGHT_MODEL_AMBIENT, colors, 0);
     }
 
     /**
@@ -52,54 +52,54 @@ public class GLUtil {
      * @param position
      * @param n_ofLight
      */
-    public static void createDiffuseLight(GL gl, float colors[], float position[], int n_ofLight) {
+    public static void createDiffuseLight(GL2 gl, float colors[], float position[], int n_ofLight) {
         switch (n_ofLight) {
             case 0: {
-                gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, colors, 0);
-                gl.glEnable(GL.GL_LIGHT0);
+                gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, colors, 0);
+                gl.glEnable(GL2.GL_LIGHT0);
             }
             break;
             case 1: {
-                gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, colors, 0);
-                gl.glEnable(GL.GL_LIGHT1);
+                gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, colors, 0);
+                gl.glEnable(GL2.GL_LIGHT1);
             }
             break;
             case 2: {
-                gl.glLightfv(GL.GL_LIGHT2, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT2, GL.GL_DIFFUSE, colors, 0);
-                gl.glEnable(GL.GL_LIGHT2);
+                gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_DIFFUSE, colors, 0);
+                gl.glEnable(GL2.GL_LIGHT2);
             }
             break;
             case 3: {
-                gl.glLightfv(GL.GL_LIGHT3, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT3, GL.GL_DIFFUSE, colors, 0);
-                gl.glEnable(GL.GL_LIGHT3);
+                gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_DIFFUSE, colors, 0);
+                gl.glEnable(GL2.GL_LIGHT3);
             }
             break;
             case 4: {
-                gl.glLightfv(GL.GL_LIGHT4, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT4, GL.GL_DIFFUSE, colors, 0);
-                gl.glEnable(GL.GL_LIGHT4);
+                gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_DIFFUSE, colors, 0);
+                gl.glEnable(GL2.GL_LIGHT4);
             }
             break;
             case 5: {
-                gl.glLightfv(GL.GL_LIGHT5, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT5, GL.GL_DIFFUSE, colors, 0);
-                gl.glEnable(GL.GL_LIGHT5);
+                gl.glLightfv(GL2.GL_LIGHT5, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT5, GL2.GL_DIFFUSE, colors, 0);
+                gl.glEnable(GL2.GL_LIGHT5);
             }
             break;
             case 6: {
-                gl.glLightfv(GL.GL_LIGHT6, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT6, GL.GL_DIFFUSE, colors, 0);
-                gl.glEnable(GL.GL_LIGHT6);
+                gl.glLightfv(GL2.GL_LIGHT6, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT6, GL2.GL_DIFFUSE, colors, 0);
+                gl.glEnable(GL2.GL_LIGHT6);
             }
             break;
             case 7: {
-                gl.glLightfv(GL.GL_LIGHT7, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT7, GL.GL_DIFFUSE, colors, 0);
-                gl.glEnable(GL.GL_LIGHT7);
+                gl.glLightfv(GL2.GL_LIGHT7, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT7, GL2.GL_DIFFUSE, colors, 0);
+                gl.glEnable(GL2.GL_LIGHT7);
             }
             break;
             default:
@@ -115,56 +115,56 @@ public class GLUtil {
      * @param position
      * @param n_ofLight
      */
-    public static void createDiffuseLight(GL gl, int n_ofLight) {
+    public static void createDiffuseLight(GL2 gl, int n_ofLight) {
         float colors[] = {1, 1, 1, 1};
         float position[] = {100, 100, 100, 1};
         switch (n_ofLight) {
             case 0: {
-                gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, colors, 0);
-                gl.glEnable(GL.GL_LIGHT0);
+                gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, colors, 0);
+                gl.glEnable(GL2.GL_LIGHT0);
             }
             break;
             case 1: {
-                gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, colors, 0);
-                gl.glEnable(GL.GL_LIGHT1);
+                gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, colors, 0);
+                gl.glEnable(GL2.GL_LIGHT1);
             }
             break;
             case 2: {
-                gl.glLightfv(GL.GL_LIGHT2, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT2, GL.GL_DIFFUSE, colors, 0);
-                gl.glEnable(GL.GL_LIGHT2);
+                gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_DIFFUSE, colors, 0);
+                gl.glEnable(GL2.GL_LIGHT2);
             }
             break;
             case 3: {
-                gl.glLightfv(GL.GL_LIGHT3, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT3, GL.GL_DIFFUSE, colors, 0);
-                gl.glEnable(GL.GL_LIGHT3);
+                gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_DIFFUSE, colors, 0);
+                gl.glEnable(GL2.GL_LIGHT3);
             }
             break;
             case 4: {
-                gl.glLightfv(GL.GL_LIGHT4, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT4, GL.GL_DIFFUSE, colors, 0);
-                gl.glEnable(GL.GL_LIGHT4);
+                gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_DIFFUSE, colors, 0);
+                gl.glEnable(GL2.GL_LIGHT4);
             }
             break;
             case 5: {
-                gl.glLightfv(GL.GL_LIGHT5, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT5, GL.GL_DIFFUSE, colors, 0);
-                gl.glEnable(GL.GL_LIGHT5);
+                gl.glLightfv(GL2.GL_LIGHT5, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT5, GL2.GL_DIFFUSE, colors, 0);
+                gl.glEnable(GL2.GL_LIGHT5);
             }
             break;
             case 6: {
-                gl.glLightfv(GL.GL_LIGHT6, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT6, GL.GL_DIFFUSE, colors, 0);
-                gl.glEnable(GL.GL_LIGHT6);
+                gl.glLightfv(GL2.GL_LIGHT6, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT6, GL2.GL_DIFFUSE, colors, 0);
+                gl.glEnable(GL2.GL_LIGHT6);
             }
             break;
             case 7: {
-                gl.glLightfv(GL.GL_LIGHT7, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT7, GL.GL_DIFFUSE, colors, 0);
-                gl.glEnable(GL.GL_LIGHT7);
+                gl.glLightfv(GL2.GL_LIGHT7, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT7, GL2.GL_DIFFUSE, colors, 0);
+                gl.glEnable(GL2.GL_LIGHT7);
             }
             break;
             default:
@@ -180,18 +180,18 @@ public class GLUtil {
      * @param alfa - determines black-white-shade color of light R=G=B=alfa
      * @param size takse vaules from 0 to 128 and determines size of flash when soft body
      */
-    public static void createSoftMaterial(GL gl, boolean isSoft, float alfa, int size) {
+    public static void createSoftMaterial(GL2 gl, boolean isSoft, float alfa, int size) {
         if (isSoft) {
             float cooficientColor[] = {alfa, alfa, alfa, 1};
-            gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, cooficientColor, 0);
-            gl.glMateriali(GL.GL_FRONT, GL.GL_SHININESS, size);
+            gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, cooficientColor, 0);
+            gl.glMateriali(GL2.GL_FRONT, GL2.GL_SHININESS, size);
 
         } else {
             alfa = 0;
             size = 0;
             float cooficientColor[] = {alfa, alfa, alfa, 1};
-            gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, cooficientColor, 0);
-            gl.glMateriali(GL.GL_FRONT, GL.GL_SHININESS, size);
+            gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, cooficientColor, 0);
+            gl.glMateriali(GL2.GL_FRONT, GL2.GL_SHININESS, size);
         }
     }
 
@@ -206,102 +206,102 @@ public class GLUtil {
      * @param alfa a blank cooficient
      * @param n_ofLight
      */
-    public static void createDirectionLight(GL gl, float disp_color[], float flash_color[], float position[], float direction[], float size, float alfa, int n_ofLight) {
+    public static void createDirectionLight(GL2 gl, float disp_color[], float flash_color[], float position[], float direction[], float size, float alfa, int n_ofLight) {
         switch (n_ofLight) {
             case 0: {
-                gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, disp_color, 0);
-                gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, flash_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, disp_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, flash_color, 0);
 
 
-                gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPOT_DIRECTION, direction, 0);
-                gl.glLightf(GL.GL_LIGHT0, GL.GL_SPOT_CUTOFF, size);
-                gl.glLightf(GL.GL_LIGHT0, GL.GL_SPOT_EXPONENT, alfa);
-                gl.glEnable(GL.GL_LIGHT0);
+                gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPOT_DIRECTION, direction, 0);
+                gl.glLightf(GL2.GL_LIGHT0, GL2.GL_SPOT_CUTOFF, size);
+                gl.glLightf(GL2.GL_LIGHT0, GL2.GL_SPOT_EXPONENT, alfa);
+                gl.glEnable(GL2.GL_LIGHT0);
             }
             break;
             case 1: {
-                gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, disp_color, 0);
-                gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPECULAR, flash_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, disp_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_SPECULAR, flash_color, 0);
 
 
-                gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPOT_DIRECTION, direction, 0);
-                gl.glLightf(GL.GL_LIGHT1, GL.GL_SPOT_CUTOFF, size);
-                gl.glLightf(GL.GL_LIGHT1, GL.GL_SPOT_EXPONENT, alfa);
-                gl.glEnable(GL.GL_LIGHT1);
+                gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_SPOT_DIRECTION, direction, 0);
+                gl.glLightf(GL2.GL_LIGHT1, GL2.GL_SPOT_CUTOFF, size);
+                gl.glLightf(GL2.GL_LIGHT1, GL2.GL_SPOT_EXPONENT, alfa);
+                gl.glEnable(GL2.GL_LIGHT1);
             }
             break;
             case 2: {
-                gl.glLightfv(GL.GL_LIGHT2, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT2, GL.GL_DIFFUSE, disp_color, 0);
-                gl.glLightfv(GL.GL_LIGHT2, GL.GL_SPECULAR, flash_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_DIFFUSE, disp_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_SPECULAR, flash_color, 0);
 
 
-                gl.glLightfv(GL.GL_LIGHT2, GL.GL_SPOT_DIRECTION, direction, 0);
-                gl.glLightf(GL.GL_LIGHT2, GL.GL_SPOT_CUTOFF, size);
-                gl.glLightf(GL.GL_LIGHT2, GL.GL_SPOT_EXPONENT, alfa);
-                gl.glEnable(GL.GL_LIGHT2);
+                gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_SPOT_DIRECTION, direction, 0);
+                gl.glLightf(GL2.GL_LIGHT2, GL2.GL_SPOT_CUTOFF, size);
+                gl.glLightf(GL2.GL_LIGHT2, GL2.GL_SPOT_EXPONENT, alfa);
+                gl.glEnable(GL2.GL_LIGHT2);
             }
             break;
             case 3: {
-                gl.glLightfv(GL.GL_LIGHT3, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT3, GL.GL_DIFFUSE, disp_color, 0);
-                gl.glLightfv(GL.GL_LIGHT3, GL.GL_SPECULAR, flash_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_DIFFUSE, disp_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_SPECULAR, flash_color, 0);
 
 
-                gl.glLightfv(GL.GL_LIGHT3, GL.GL_SPOT_DIRECTION, direction, 0);
-                gl.glLightf(GL.GL_LIGHT3, GL.GL_SPOT_CUTOFF, size);
-                gl.glLightf(GL.GL_LIGHT3, GL.GL_SPOT_EXPONENT, alfa);
-                gl.glEnable(GL.GL_LIGHT3);
+                gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_SPOT_DIRECTION, direction, 0);
+                gl.glLightf(GL2.GL_LIGHT3, GL2.GL_SPOT_CUTOFF, size);
+                gl.glLightf(GL2.GL_LIGHT3, GL2.GL_SPOT_EXPONENT, alfa);
+                gl.glEnable(GL2.GL_LIGHT3);
             }
             break;
             case 4: {
-                gl.glLightfv(GL.GL_LIGHT4, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT4, GL.GL_DIFFUSE, disp_color, 0);
-                gl.glLightfv(GL.GL_LIGHT4, GL.GL_SPECULAR, flash_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_DIFFUSE, disp_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_SPECULAR, flash_color, 0);
 
 
-                gl.glLightfv(GL.GL_LIGHT4, GL.GL_SPOT_DIRECTION, direction, 0);
-                gl.glLightf(GL.GL_LIGHT4, GL.GL_SPOT_CUTOFF, size);
-                gl.glLightf(GL.GL_LIGHT4, GL.GL_SPOT_EXPONENT, alfa);
-                gl.glEnable(GL.GL_LIGHT4);
+                gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_SPOT_DIRECTION, direction, 0);
+                gl.glLightf(GL2.GL_LIGHT4, GL2.GL_SPOT_CUTOFF, size);
+                gl.glLightf(GL2.GL_LIGHT4, GL2.GL_SPOT_EXPONENT, alfa);
+                gl.glEnable(GL2.GL_LIGHT4);
             }
             break;
             case 5: {
-                gl.glLightfv(GL.GL_LIGHT5, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT5, GL.GL_DIFFUSE, disp_color, 0);
-                gl.glLightfv(GL.GL_LIGHT5, GL.GL_SPECULAR, flash_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT5, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT5, GL2.GL_DIFFUSE, disp_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT5, GL2.GL_SPECULAR, flash_color, 0);
 
 
-                gl.glLightfv(GL.GL_LIGHT5, GL.GL_SPOT_DIRECTION, direction, 0);
-                gl.glLightf(GL.GL_LIGHT5, GL.GL_SPOT_CUTOFF, size);
-                gl.glLightf(GL.GL_LIGHT5, GL.GL_SPOT_EXPONENT, alfa);
-                gl.glEnable(GL.GL_LIGHT5);
+                gl.glLightfv(GL2.GL_LIGHT5, GL2.GL_SPOT_DIRECTION, direction, 0);
+                gl.glLightf(GL2.GL_LIGHT5, GL2.GL_SPOT_CUTOFF, size);
+                gl.glLightf(GL2.GL_LIGHT5, GL2.GL_SPOT_EXPONENT, alfa);
+                gl.glEnable(GL2.GL_LIGHT5);
             }
             break;
             case 6: {
-                gl.glLightfv(GL.GL_LIGHT6, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT6, GL.GL_DIFFUSE, disp_color, 0);
-                gl.glLightfv(GL.GL_LIGHT6, GL.GL_SPECULAR, flash_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT6, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT6, GL2.GL_DIFFUSE, disp_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT6, GL2.GL_SPECULAR, flash_color, 0);
 
 
-                gl.glLightfv(GL.GL_LIGHT6, GL.GL_SPOT_DIRECTION, direction, 0);
-                gl.glLightf(GL.GL_LIGHT6, GL.GL_SPOT_CUTOFF, size);
-                gl.glLightf(GL.GL_LIGHT6, GL.GL_SPOT_EXPONENT, alfa);
-                gl.glEnable(GL.GL_LIGHT6);
+                gl.glLightfv(GL2.GL_LIGHT6, GL2.GL_SPOT_DIRECTION, direction, 0);
+                gl.glLightf(GL2.GL_LIGHT6, GL2.GL_SPOT_CUTOFF, size);
+                gl.glLightf(GL2.GL_LIGHT6, GL2.GL_SPOT_EXPONENT, alfa);
+                gl.glEnable(GL2.GL_LIGHT6);
             }
             break;
             case 7: {
-                gl.glLightfv(GL.GL_LIGHT7, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT7, GL.GL_DIFFUSE, disp_color, 0);
-                gl.glLightfv(GL.GL_LIGHT7, GL.GL_SPECULAR, flash_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT7, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT7, GL2.GL_DIFFUSE, disp_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT7, GL2.GL_SPECULAR, flash_color, 0);
 
 
-                gl.glLightfv(GL.GL_LIGHT7, GL.GL_SPOT_DIRECTION, direction, 0);
-                gl.glLightf(GL.GL_LIGHT7, GL.GL_SPOT_CUTOFF, size);
-                gl.glLightf(GL.GL_LIGHT7, GL.GL_SPOT_EXPONENT, alfa);
-                gl.glEnable(GL.GL_LIGHT7);
+                gl.glLightfv(GL2.GL_LIGHT7, GL2.GL_SPOT_DIRECTION, direction, 0);
+                gl.glLightf(GL2.GL_LIGHT7, GL2.GL_SPOT_CUTOFF, size);
+                gl.glLightf(GL2.GL_LIGHT7, GL2.GL_SPOT_EXPONENT, alfa);
+                gl.glEnable(GL2.GL_LIGHT7);
             }
             break;
             default:
@@ -318,106 +318,106 @@ public class GLUtil {
      * @param direction
      * @param n_ofLight
      */
-    public static void createDirectionLight(GL gl, float position[], float direction[], int n_ofLight) {
+    public static void createDirectionLight(GL2 gl, float position[], float direction[], int n_ofLight) {
         float disp_color[] = {1, 1, 1, 1};
         float flash_color[] = {1, 1, 1, 1};
         float size = 30;
         float alfa = 1;
         switch (n_ofLight) {
             case 0: {
-                gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, disp_color, 0);
-                gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPECULAR, flash_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, disp_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, flash_color, 0);
 
 
-                gl.glLightfv(GL.GL_LIGHT0, GL.GL_SPOT_DIRECTION, direction, 0);
-                gl.glLightf(GL.GL_LIGHT0, GL.GL_SPOT_CUTOFF, size);
-                gl.glLightf(GL.GL_LIGHT0, GL.GL_SPOT_EXPONENT, alfa);
-                gl.glEnable(GL.GL_LIGHT0);
+                gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPOT_DIRECTION, direction, 0);
+                gl.glLightf(GL2.GL_LIGHT0, GL2.GL_SPOT_CUTOFF, size);
+                gl.glLightf(GL2.GL_LIGHT0, GL2.GL_SPOT_EXPONENT, alfa);
+                gl.glEnable(GL2.GL_LIGHT0);
             }
             break;
             case 1: {
-                gl.glLightfv(GL.GL_LIGHT1, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, disp_color, 0);
-                gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPECULAR, flash_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, disp_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_SPECULAR, flash_color, 0);
 
 
-                gl.glLightfv(GL.GL_LIGHT1, GL.GL_SPOT_DIRECTION, direction, 0);
-                gl.glLightf(GL.GL_LIGHT1, GL.GL_SPOT_CUTOFF, size);
-                gl.glLightf(GL.GL_LIGHT1, GL.GL_SPOT_EXPONENT, alfa);
-                gl.glEnable(GL.GL_LIGHT1);
+                gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_SPOT_DIRECTION, direction, 0);
+                gl.glLightf(GL2.GL_LIGHT1, GL2.GL_SPOT_CUTOFF, size);
+                gl.glLightf(GL2.GL_LIGHT1, GL2.GL_SPOT_EXPONENT, alfa);
+                gl.glEnable(GL2.GL_LIGHT1);
             }
             break;
             case 2: {
-                gl.glLightfv(GL.GL_LIGHT2, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT2, GL.GL_DIFFUSE, disp_color, 0);
-                gl.glLightfv(GL.GL_LIGHT2, GL.GL_SPECULAR, flash_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_DIFFUSE, disp_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_SPECULAR, flash_color, 0);
 
 
-                gl.glLightfv(GL.GL_LIGHT2, GL.GL_SPOT_DIRECTION, direction, 0);
-                gl.glLightf(GL.GL_LIGHT2, GL.GL_SPOT_CUTOFF, size);
-                gl.glLightf(GL.GL_LIGHT2, GL.GL_SPOT_EXPONENT, alfa);
-                gl.glEnable(GL.GL_LIGHT2);
+                gl.glLightfv(GL2.GL_LIGHT2, GL2.GL_SPOT_DIRECTION, direction, 0);
+                gl.glLightf(GL2.GL_LIGHT2, GL2.GL_SPOT_CUTOFF, size);
+                gl.glLightf(GL2.GL_LIGHT2, GL2.GL_SPOT_EXPONENT, alfa);
+                gl.glEnable(GL2.GL_LIGHT2);
             }
             break;
             case 3: {
-                gl.glLightfv(GL.GL_LIGHT3, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT3, GL.GL_DIFFUSE, disp_color, 0);
-                gl.glLightfv(GL.GL_LIGHT3, GL.GL_SPECULAR, flash_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_DIFFUSE, disp_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_SPECULAR, flash_color, 0);
 
 
-                gl.glLightfv(GL.GL_LIGHT3, GL.GL_SPOT_DIRECTION, direction, 0);
-                gl.glLightf(GL.GL_LIGHT3, GL.GL_SPOT_CUTOFF, size);
-                gl.glLightf(GL.GL_LIGHT3, GL.GL_SPOT_EXPONENT, alfa);
-                gl.glEnable(GL.GL_LIGHT3);
+                gl.glLightfv(GL2.GL_LIGHT3, GL2.GL_SPOT_DIRECTION, direction, 0);
+                gl.glLightf(GL2.GL_LIGHT3, GL2.GL_SPOT_CUTOFF, size);
+                gl.glLightf(GL2.GL_LIGHT3, GL2.GL_SPOT_EXPONENT, alfa);
+                gl.glEnable(GL2.GL_LIGHT3);
             }
             break;
             case 4: {
-                gl.glLightfv(GL.GL_LIGHT4, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT4, GL.GL_DIFFUSE, disp_color, 0);
-                gl.glLightfv(GL.GL_LIGHT4, GL.GL_SPECULAR, flash_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_DIFFUSE, disp_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_SPECULAR, flash_color, 0);
 
 
-                gl.glLightfv(GL.GL_LIGHT4, GL.GL_SPOT_DIRECTION, direction, 0);
-                gl.glLightf(GL.GL_LIGHT4, GL.GL_SPOT_CUTOFF, size);
-                gl.glLightf(GL.GL_LIGHT4, GL.GL_SPOT_EXPONENT, alfa);
-                gl.glEnable(GL.GL_LIGHT4);
+                gl.glLightfv(GL2.GL_LIGHT4, GL2.GL_SPOT_DIRECTION, direction, 0);
+                gl.glLightf(GL2.GL_LIGHT4, GL2.GL_SPOT_CUTOFF, size);
+                gl.glLightf(GL2.GL_LIGHT4, GL2.GL_SPOT_EXPONENT, alfa);
+                gl.glEnable(GL2.GL_LIGHT4);
             }
             break;
             case 5: {
-                gl.glLightfv(GL.GL_LIGHT5, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT5, GL.GL_DIFFUSE, disp_color, 0);
-                gl.glLightfv(GL.GL_LIGHT5, GL.GL_SPECULAR, flash_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT5, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT5, GL2.GL_DIFFUSE, disp_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT5, GL2.GL_SPECULAR, flash_color, 0);
 
 
-                gl.glLightfv(GL.GL_LIGHT5, GL.GL_SPOT_DIRECTION, direction, 0);
-                gl.glLightf(GL.GL_LIGHT5, GL.GL_SPOT_CUTOFF, size);
-                gl.glLightf(GL.GL_LIGHT5, GL.GL_SPOT_EXPONENT, alfa);
-                gl.glEnable(GL.GL_LIGHT5);
+                gl.glLightfv(GL2.GL_LIGHT5, GL2.GL_SPOT_DIRECTION, direction, 0);
+                gl.glLightf(GL2.GL_LIGHT5, GL2.GL_SPOT_CUTOFF, size);
+                gl.glLightf(GL2.GL_LIGHT5, GL2.GL_SPOT_EXPONENT, alfa);
+                gl.glEnable(GL2.GL_LIGHT5);
             }
             break;
             case 6: {
-                gl.glLightfv(GL.GL_LIGHT6, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT6, GL.GL_DIFFUSE, disp_color, 0);
-                gl.glLightfv(GL.GL_LIGHT6, GL.GL_SPECULAR, flash_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT6, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT6, GL2.GL_DIFFUSE, disp_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT6, GL2.GL_SPECULAR, flash_color, 0);
 
 
-                gl.glLightfv(GL.GL_LIGHT6, GL.GL_SPOT_DIRECTION, direction, 0);
-                gl.glLightf(GL.GL_LIGHT6, GL.GL_SPOT_CUTOFF, size);
-                gl.glLightf(GL.GL_LIGHT6, GL.GL_SPOT_EXPONENT, alfa);
-                gl.glEnable(GL.GL_LIGHT6);
+                gl.glLightfv(GL2.GL_LIGHT6, GL2.GL_SPOT_DIRECTION, direction, 0);
+                gl.glLightf(GL2.GL_LIGHT6, GL2.GL_SPOT_CUTOFF, size);
+                gl.glLightf(GL2.GL_LIGHT6, GL2.GL_SPOT_EXPONENT, alfa);
+                gl.glEnable(GL2.GL_LIGHT6);
             }
             break;
             case 7: {
-                gl.glLightfv(GL.GL_LIGHT7, GL.GL_POSITION, position, 0);
-                gl.glLightfv(GL.GL_LIGHT7, GL.GL_DIFFUSE, disp_color, 0);
-                gl.glLightfv(GL.GL_LIGHT7, GL.GL_SPECULAR, flash_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT7, GL2.GL_POSITION, position, 0);
+                gl.glLightfv(GL2.GL_LIGHT7, GL2.GL_DIFFUSE, disp_color, 0);
+                gl.glLightfv(GL2.GL_LIGHT7, GL2.GL_SPECULAR, flash_color, 0);
 
 
-                gl.glLightfv(GL.GL_LIGHT7, GL.GL_SPOT_DIRECTION, direction, 0);
-                gl.glLightf(GL.GL_LIGHT7, GL.GL_SPOT_CUTOFF, size);
-                gl.glLightf(GL.GL_LIGHT7, GL.GL_SPOT_EXPONENT, alfa);
-                gl.glEnable(GL.GL_LIGHT7);
+                gl.glLightfv(GL2.GL_LIGHT7, GL2.GL_SPOT_DIRECTION, direction, 0);
+                gl.glLightf(GL2.GL_LIGHT7, GL2.GL_SPOT_CUTOFF, size);
+                gl.glLightf(GL2.GL_LIGHT7, GL2.GL_SPOT_EXPONENT, alfa);
+                gl.glEnable(GL2.GL_LIGHT7);
             }
             break;
             default:
@@ -435,84 +435,84 @@ public class GLUtil {
      * @param mode - set type of fog param  GL_EXP (the default), GL_EXP2, or GL_LINEAR
      * @param fog_hint hint specifies whether fog calculations are done per pixel (GL_NICEST) or per vertex (GL_FASTEST).
      */
-    public static void enableFog(GL gl, float color[], float start, float end, int mode, int fog_hint, float density) {
-        gl.glEnable(GL.GL_FOG);
-        gl.glFogfv(GL.GL_FOG_COLOR, color, 0);
-        gl.glFogf(GL.GL_FOG_DENSITY, density);
-        gl.glFogf(GL.GL_FOG_START, start);
-        gl.glFogf(GL.GL_FOG_END, end);
-        gl.glFogf(GL.GL_FOG_MODE, mode);
-        gl.glHint(GL.GL_FOG_HINT, fog_hint);
+    public static void enableFog(GL2 gl, float color[], float start, float end, int mode, int fog_hint, float density) {
+        gl.glEnable(GL2.GL_FOG);
+        gl.glFogfv(GL2.GL_FOG_COLOR, color, 0);
+        gl.glFogf(GL2.GL_FOG_DENSITY, density);
+        gl.glFogf(GL2.GL_FOG_START, start);
+        gl.glFogf(GL2.GL_FOG_END, end);
+        gl.glFogf(GL2.GL_FOG_MODE, mode);
+        gl.glHint(GL2.GL_FOG_HINT, fog_hint);
     }
 
-    public static void enableSmooth(GL gl) {
-        gl.glShadeModel(GL.GL_SMOOTH);
+    public static void enableSmooth(GL2 gl) {
+        gl.glShadeModel(GL2.GL_SMOOTH);
     }
 
-    public static void enableFlat(GL gl) {
-        gl.glShadeModel(GL.GL_FLAT);
+    public static void enableFlat(GL2 gl) {
+        gl.glShadeModel(GL2.GL_FLAT);
     }
 
-    public static void enableBlend(GL gl) {
-        gl.glEnable(GL.GL_BLEND);
-        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+    public static void enableBlend(GL2 gl) {
+        gl.glEnable(GL2.GL_BLEND);
+        gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    public static void enableColorMaterial(GL gl) {
-        gl.glEnable(GL.GL_COLOR_MATERIAL);
-        gl.glColorMaterial(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE);
+    public static void enableColorMaterial(GL2 gl) {
+        gl.glEnable(GL2.GL_COLOR_MATERIAL);
+        gl.glColorMaterial(GL2.GL_FRONT_AND_BACK, GL2.GL_AMBIENT_AND_DIFFUSE);
     }
 
-    public static void enableDepthTest(GL gl) {
-        gl.glEnable(GL.GL_DEPTH_TEST);
+    public static void enableDepthTest(GL2 gl) {
+        gl.glEnable(GL2.GL_DEPTH_TEST);
     }
 
-    public static void enableLighting(GL gl) {
-        gl.glEnable(GL.GL_LIGHTING);
+    public static void enableLighting(GL2 gl) {
+        gl.glEnable(GL2.GL_LIGHTING);
     }
 
-    public static void disableFog(GL gl) {
-        gl.glDisable(GL.GL_FOG);
+    public static void disableFog(GL2 gl) {
+        gl.glDisable(GL2.GL_FOG);
     }
 
-    public static void disableLight(GL gl) {
-        gl.glDisable(GL.GL_LIGHTING);
+    public static void disableLight(GL2 gl) {
+        gl.glDisable(GL2.GL_LIGHTING);
     }
 
-    public static void disableBlend(GL gl) {
-        gl.glDisable(GL.GL_BLEND);
+    public static void disableBlend(GL2 gl) {
+        gl.glDisable(GL2.GL_BLEND);
     }
 
-    public static void disableColorMaterial(GL gl) {
-        gl.glDisable(GL.GL_COLOR_MATERIAL);
+    public static void disableColorMaterial(GL2 gl) {
+        gl.glDisable(GL2.GL_COLOR_MATERIAL);
     }
 
-    public static void disableDepthTest(GL gl) {
-        gl.glDisable(GL.GL_DEPTH_TEST);
+    public static void disableDepthTest(GL2 gl) {
+        gl.glDisable(GL2.GL_DEPTH_TEST);
     }
 
-    public static void disableSoftMaterial(GL gl) {
+    public static void disableSoftMaterial(GL2 gl) {
         float cooficientColor[] = {0, 0, 0, 1};
-        gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, cooficientColor, 0);
-        gl.glMateriali(GL.GL_FRONT, GL.GL_SHININESS, 0);
+        gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, cooficientColor, 0);
+        gl.glMateriali(GL2.GL_FRONT, GL2.GL_SHININESS, 0);
 
     }
 
-    public static void setPointSize(GL gl, float size, boolean smooth) {
+    public static void setPointSize(GL2 gl, float size, boolean smooth) {
         gl.glPointSize(size);
         if (smooth) {
-            gl.glEnable(GL.GL_POINT_SMOOTH);
+            gl.glEnable(GL2.GL_POINT_SMOOTH);
         } else {
-            gl.glDisable(GL.GL_POINT_SMOOTH);
+            gl.glDisable(GL2.GL_POINT_SMOOTH);
         }
     }
 
-    public static void setLineWidth(GL gl, float size, boolean smooth) {
+    public static void setLineWidth(GL2 gl, float size, boolean smooth) {
         gl.glLineWidth(size);
         if (smooth) {
-            gl.glEnable(GL.GL_LINE_SMOOTH);
+            gl.glEnable(GL2.GL_LINE_SMOOTH);
         } else {
-            gl.glDisable(GL.GL_LINE_SMOOTH);
+            gl.glDisable(GL2.GL_LINE_SMOOTH);
         }
     }
 
@@ -522,26 +522,26 @@ public class GLUtil {
      * @param gl
      * @param type - 1 or 2.
      */
-    public static void setShadeMode(GL gl, int type) {
+    public static void setShadeMode(GL2 gl, int type) {
         switch (type) {
             case 1:
-                gl.glShadeModel(GL.GL_SMOOTH);
+                gl.glShadeModel(GL2.GL_SMOOTH);
                 break;
             case 2:
-                gl.glShadeModel(GL.GL_FLAT);
+                gl.glShadeModel(GL2.GL_FLAT);
                 break;
             default:
-                gl.glShadeModel(GL.GL_SMOOTH);
+                gl.glShadeModel(GL2.GL_SMOOTH);
         }
 
     }
 
-    public static void drawCircle(GL gl, double size, int n_vertexs) {
+    public static void drawCircle(GL2 gl, double size, int n_vertexs) {
         if (n_vertexs < 3) {
             n_vertexs = 3;
         }
         gl.glPushMatrix();
-        gl.glBegin(GL.GL_TRIANGLE_FAN);
+        gl.glBegin(GL2.GL_TRIANGLE_FAN);
         gl.glVertex3d(0, 0, 0);
         double angle = (2 * Math.PI) / (n_vertexs);
         for (int i = 0; i < n_vertexs; i++) {
@@ -552,12 +552,12 @@ public class GLUtil {
         gl.glPopMatrix();
     }
 
-    public static void drawEmptyCircle(GL gl, double size, int n_vertexs) {
+    public static void drawEmptyCircle(GL2 gl, double size, int n_vertexs) {
         if (n_vertexs < 3) {
             n_vertexs = 3;
         }
         gl.glPushMatrix();
-        gl.glBegin(GL.GL_LINE_LOOP);
+        gl.glBegin(GL2.GL_LINE_LOOP);
         gl.glNormal3d(0, 0, 1);
 
         double angle = (2 * Math.PI) / (n_vertexs);
@@ -578,12 +578,12 @@ public class GLUtil {
 ///////////////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
-    public static void TenableTex2D(GL gl) {
-        gl.glEnable(GL.GL_TEXTURE_2D);
+    public static void TenableTex2D(GL2 gl) {
+        gl.glEnable(GL2.GL_TEXTURE_2D);
     }
 
-    public static void TdisableTex2D(GL gl) {
-        gl.glDisable(GL.GL_TEXTURE_2D);
+    public static void TdisableTex2D(GL2 gl) {
+        gl.glDisable(GL2.GL_TEXTURE_2D);
     }
 
     /**
@@ -594,21 +594,21 @@ public class GLUtil {
      * @param texW - texture width
      * @param texH - texture height
      */
-    public static void TcreateTexture2Dmipmap(GL gl, int texIDs[], int texture[][], int texW, int texH,boolean gluMipMaps) {
+    public static void TcreateTexture2Dmipmap(GL2 gl, int texIDs[], int texture[][], int texW, int texH,boolean gluMipMaps) {
         gl.glGenTextures(texIDs.length, texIDs, 0);
         for (int i = 0; i < texIDs.length; i++) {
-            gl.glBindTexture(GL.GL_TEXTURE_2D, texIDs[i]);
+            gl.glBindTexture(GL2.GL_TEXTURE_2D, texIDs[i]);
 
-            gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_LINEAR);
-            gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_LINEAR);
-            gl.glTexEnvf(GL.GL_TEXTURE_ENV, GL.GL_TEXTURE, GL.GL_MODULATE);
+            gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MAG_FILTER, GL2.GL_LINEAR);
+            gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_MIN_FILTER, GL2.GL_LINEAR);
+            gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE, GL2.GL_MODULATE);
 
                 if(!gluMipMaps){
-                            gl.glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, texW, texH,
-                                    0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, IntBuffer.wrap(texture[i]));
+                            gl.glTexImage2D(GL2.GL_TEXTURE_2D, 0, GL2.GL_RGBA, texW, texH,
+                                    0, GL2.GL_RGBA, GL2.GL_UNSIGNED_BYTE, IntBuffer.wrap(texture[i]));
                 }else{
                             GLU glu = new GLU();
-                            glu.gluBuild2DMipmaps(GL.GL_TEXTURE_2D, GL.GL_RGBA, texW, texH, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, IntBuffer.wrap(texture[i]));
+                            glu.gluBuild2DMipmaps(GL2.GL_TEXTURE_2D, GL2.GL_RGBA, texW, texH, GL2.GL_RGBA, GL2.GL_UNSIGNED_BYTE, IntBuffer.wrap(texture[i]));
                 }
 
         }
@@ -623,7 +623,7 @@ public class GLUtil {
  * @param gluMipMaps - if yes generate texture by gluBuild2DMipMaps method
  * @return - texture ID
  */
-public static int TcreatTexture2DFromImage(GL gl,URL url,boolean gluMipMaps){
+public static int TcreatTexture2DFromImage(GL2 gl,URL url,boolean gluMipMaps){
     BufferedImage image = null ;
     int texID[] = new int[1];
     try {

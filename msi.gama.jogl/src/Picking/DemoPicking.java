@@ -12,7 +12,8 @@ import java.util.logging.*;
 import javax.media.opengl.*;
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
-import com.sun.opengl.util.Animator;
+import com.jogamp.opengl.util.Animator;
+import javax.media.opengl.awt.GLCanvas;
 
 /**
  * 
@@ -107,7 +108,7 @@ public class DemoPicking extends JFrame {
 	 */
 	private GLCapabilities createGLCapabilites() {
 
-		GLCapabilities capabilities = new GLCapabilities();
+		GLCapabilities capabilities = new GLCapabilities(null);
 		capabilities.setHardwareAccelerated(true);
 
 		// try to enable 2x anti aliasing - should be supported on most hardware

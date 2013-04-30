@@ -1,6 +1,6 @@
 package msi.gama.jogl.utils.GraphicDataType;
 
-import com.sun.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.*;
 
 public class MyTexture {
 

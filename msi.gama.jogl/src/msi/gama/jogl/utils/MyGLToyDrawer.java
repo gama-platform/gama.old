@@ -1,6 +1,6 @@
 package msi.gama.jogl.utils;
 
-import static javax.media.opengl.GL.*;
+import static javax.media.opengl.GL2.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.media.opengl.*;
@@ -8,7 +8,9 @@ import javax.media.opengl.glu.*;
 import javax.xml.xpath.XPathExpressionException;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.jogl.utils.collada.ColladaReaderXPath;
-import com.sun.opengl.util.texture.*;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureCoords;
+import com.jogamp.opengl.util.texture.TextureIO;
 
 public class MyGLToyDrawer {
 
@@ -35,7 +37,7 @@ public class MyGLToyDrawer {
 
 	// 2D Shape
 
-	public void DrawOpenGLHelloWorldShape(GL gl, float size) {
+	public void DrawOpenGLHelloWorldShape(GL2 gl, float size) {
 
 		gl.glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
 		// ----- Render a triangle -----
@@ -62,7 +64,7 @@ public class MyGLToyDrawer {
 		gl.glEnd();
 	}
 
-	public void DrawColorTriangle(GL gl, float x, float y, float z, float alpha, float size) {
+	public void DrawColorTriangle(GL2 gl, float x, float y, float z, float alpha, float size) {
 		// ----- Render a triangle -----
 		gl.glTranslatef(x, y, z); // translate left and into the screen
 		gl.glBegin(GL_TRIANGLES); // draw using triangles
@@ -79,7 +81,7 @@ public class MyGLToyDrawer {
 
 	// 3D Shape
 
-	public void Draw3DOpenGLHelloWorldShape(GL gl, float size) {
+	public void Draw3DOpenGLHelloWorldShape(GL2 gl, float size) {
 
 		// ----- Render the Pyramid -----
 
@@ -173,7 +175,7 @@ public class MyGLToyDrawer {
 
 	}
 
-	public void DrawArrayListCube(GL gl, float size) {
+	public void DrawArrayListCube(GL2 gl, float size) {
 		float vertices[] = {
 			// Top-face
 			size, size, -size, -size, size, -size, -size, size, size, size, size, size,
@@ -195,7 +197,7 @@ public class MyGLToyDrawer {
 		gl.glEnd();
 	}
 
-	public void Draw3DCube(GL gl, float size) {
+	public void Draw3DCube(GL2 gl, float size) {
 
 		// ----- Render the Centered Cube -----
 		gl.glColor3f(0.0f, 0.0f, 0.0f); // black
@@ -302,7 +304,7 @@ public class MyGLToyDrawer {
 		gl.glEnd();
 	}
 
-	public void DrawSphere(GL gl, GLU glu, float x, float y, float z, float radius) {
+	public void DrawSphere(GL2 gl, GLU glu, float x, float y, float z, float radius) {
 		// Draw sphere (possible styles: FILL, LINE, POINT).
 		gl.glColor3f(0.3f, 0.5f, 1f);
 		GLUquadric earth = glu.gluNewQuadric();
@@ -315,7 +317,7 @@ public class MyGLToyDrawer {
 		glu.gluDeleteQuadric(earth);
 	}
 
-	public void DrawROI(GL gl, double x1, double y1, double x2, double y2) {
+	public void DrawROI(GL2 gl, double x1, double y1, double x2, double y2) {
 
 		gl.glBegin(GL.GL_LINES);
 
@@ -337,7 +339,7 @@ public class MyGLToyDrawer {
 
 	// textured shape
 
-	public void LoadTextureFromImage(GL gl, String textureFileName) {
+	public void LoadTextureFromImage(GL2 gl, String textureFileName) {
 
 		// Load textures from image
 		try {
@@ -345,21 +347,21 @@ public class MyGLToyDrawer {
 			BufferedImage image = ImageUtils.getInstance().getImageFromFile(textureFileName);
 
 			// Create a OpenGL Texture object from (URL, mipmap, file suffix)
-			textures[0] = TextureIO.newTexture(image, false);
+			textures[0] = com.jogamp.opengl.util.texture.awt.AWTTextureIO.newTexture(null, image, false);
 			// Nearest filter is least compute-intensive
 			// Use nearer filter if image is larger than the original texture
 			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			// Use nearer filter if image is smaller than the original texture
 			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
-			textures[1] = TextureIO.newTexture(image, false);
+			textures[1] = com.jogamp.opengl.util.texture.awt.AWTTextureIO.newTexture(null, image, false);
 			// Linear filter is more compute-intensive
 			// Use linear filter if image is larger than the original texture
 			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			// Use linear filter if image is smaller than the original texture
 			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-			textures[2] = TextureIO.newTexture(image, true); // mipmap is true
+			textures[2] = com.jogamp.opengl.util.texture.awt.AWTTextureIO.newTexture(null, image, true); // mipmap is true
 			// Use mipmap filter is the image is smaller than the texture
 			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
@@ -381,15 +383,15 @@ public class MyGLToyDrawer {
 
 	}
 
-	public void DrawTexture(GL gl, float width) {
+	public void DrawTexture(GL2 gl, float width) {
 
 		// WARNING: Be sure to have call LoadTextureFromImage() in the init method og the GLRenderer
 
 		// Enables this texture's target (e.g., GL_TEXTURE_2D) in the current GL
 		// context's state.
-		textures[currTextureFilter].enable();
+		textures[currTextureFilter].enable(gl);
 		// Binds this texture to the current GL context.
-		textures[currTextureFilter].bind();
+		textures[currTextureFilter].bind(gl);
 
 		gl.glBegin(GL_QUADS);
 
@@ -409,11 +411,11 @@ public class MyGLToyDrawer {
 
 	}
 
-	public void DrawTexturedSphere(GL gl, GLU glu) {
+	public void DrawTexturedSphere(GL2 gl, GLU glu) {
 
 		// Apply texture.
-		textures[currTextureFilter].enable();
-		textures[currTextureFilter].bind();
+		textures[currTextureFilter].enable(gl);
+		textures[currTextureFilter].bind(gl);
 
 		// Draw sphere (possible styles: FILL, LINE, POINT).
 		GLUquadric earth = glu.gluNewQuadric();
@@ -429,15 +431,15 @@ public class MyGLToyDrawer {
 
 	}
 
-	public void DrawTexturedQuad(GL gl, float width) {
+	public void DrawTexturedQuad(GL2 gl, float width) {
 
 		// WARNING: Be sure to have call LoadTextureFromImage() in the init method og the GLRenderer
 
 		// Enables this texture's target (e.g., GL_TEXTURE_2D) in the current GL
 		// context's state.
-		textures[currTextureFilter].enable();
+		textures[currTextureFilter].enable(gl);
 		// Binds this texture to the current GL context.
-		textures[currTextureFilter].bind();
+		textures[currTextureFilter].bind(gl);
 
 		gl.glBegin(GL_QUADS);
 
@@ -507,17 +509,17 @@ public class MyGLToyDrawer {
 
 	}
 
-	public void DrawTexturedQuadWithNormal(GL gl, float width) {
+	public void DrawTexturedQuadWithNormal(GL2 gl, float width) {
 
 		// WARNING: Be sure to have call LoadTextureFromImage() in the init method og the GLRenderer
 
 		// Enables this texture's target (e.g., GL_TEXTURE_2D) in the current GL
 		// context's state.
-		textures[currTextureFilter].enable();
+		textures[currTextureFilter].enable(gl);
 		// Bind the texture with the currently chosen filter to the current
 		// OpenGL
 		// graphics context.
-		textures[currTextureFilter].bind();
+		textures[currTextureFilter].bind(gl);
 
 		gl.glBegin(GL_QUADS); // of the color cube
 
@@ -594,7 +596,7 @@ public class MyGLToyDrawer {
 
 	// Display List Shape ///////
 
-	public void buildDisplayLists(GL gl, float size) {
+	public void buildDisplayLists(GL2 gl, float size) {
 
 		// Build two lists, and returns handle for the first list
 		int base = gl.glGenLists(2);
@@ -682,17 +684,17 @@ public class MyGLToyDrawer {
 
 	}
 
-	public void DrawTexturedDisplayList(GL gl, float size) {
+	public void DrawTexturedDisplayList(GL2 gl, float size) {
 
 		// WARNING: Be sure to call buildDisplayLists() in the init method of the GLRenderer
 
 		// Enables this texture's target (e.g., GL_TEXTURE_2D) in the current GL
 		// context's state.
-		textures[currTextureFilter].enable();
+		textures[currTextureFilter].enable(gl);
 		// Bind the texture with the currently chosen filter to the current
 		// OpenGL
 		// graphics context.
-		textures[currTextureFilter].bind();
+		textures[currTextureFilter].bind(gl);
 
 		gl.glColor3fv(boxColors[0], 0);
 		gl.glCallList(boxDList); // draw the box

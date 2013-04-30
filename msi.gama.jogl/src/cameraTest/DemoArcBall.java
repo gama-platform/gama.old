@@ -14,7 +14,8 @@ import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import utils.CameraArcBall;
-import com.sun.opengl.util.Animator;
+import com.jogamp.opengl.util.Animator;
+import javax.media.opengl.awt.GLCanvas;
 
 /**
  * 
@@ -119,7 +120,7 @@ public class DemoArcBall extends JFrame {
 	 */
 	private GLCapabilities createGLCapabilites() {
 
-		GLCapabilities capabilities = new GLCapabilities();
+		GLCapabilities capabilities = new GLCapabilities(null);
 		capabilities.setHardwareAccelerated(true);
 
 		// try to enable 2x anti aliasing - should be supported on most hardware

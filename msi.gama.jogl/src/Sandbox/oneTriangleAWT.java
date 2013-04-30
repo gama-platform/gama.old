@@ -4,7 +4,7 @@ import javax.media.opengl.GLAutoDrawable;
 import javax.media.opengl.GLEventListener;
 //import javax.media.opengl.GLProfile;
 import javax.media.opengl.GLCapabilities;
-import javax.media.opengl.GLCanvas;
+import javax.media.opengl.awt.GLCanvas;
 
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
@@ -33,7 +33,7 @@ public class oneTriangleAWT {
             
             @Override
             public void reshape( GLAutoDrawable glautodrawable, int x, int y, int width, int height ) {
-                oneTriangle.setup( glautodrawable.getGL(), width, height );
+                oneTriangle.setup( glautodrawable.getGL().getGL2(), width, height );
             }
             
             @Override
@@ -46,12 +46,17 @@ public class oneTriangleAWT {
             
             @Override
             public void display( GLAutoDrawable glautodrawable ) {
-                oneTriangle.render( glautodrawable.getGL(), glautodrawable.getWidth(), glautodrawable.getHeight() );
+                oneTriangle.render( glautodrawable.getGL().getGL2(), glautodrawable.getWidth(), glautodrawable.getHeight() );
             }
 
-			@Override
 			public void displayChanged(GLAutoDrawable arg0, boolean arg1,
 					boolean arg2) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void dispose(GLAutoDrawable arg0) {
 				// TODO Auto-generated method stub
 				
 			}

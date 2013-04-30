@@ -1,6 +1,6 @@
 package msi.gama.jogl.utils;
 
-import static javax.media.opengl.GL.*;
+import static javax.media.opengl.GL2.*;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.nio.FloatBuffer;
@@ -20,15 +20,18 @@ import msi.gama.outputs.OutputSynchronizer;
 import msi.gama.util.GamaColor;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import utils.GLUtil;
-import com.sun.opengl.util.*;
-import com.sun.opengl.util.texture.*;
+import javax.media.opengl.awt.GLCanvas;
+import com.jogamp.opengl.util.FPSAnimator;
+
+import com.jogamp.opengl.util.awt.Screenshot;
+import com.jogamp.opengl.util.texture.*;
 
 public class JOGLAWTGLRenderer implements GLEventListener {
 
 	// ///OpenGL member//////
 	private static final int REFRESH_FPS = 30;
 	public GLU glu;
-	public GL gl;
+	public GL2 gl;
 	public final FPSAnimator animator;
 	private GLContext context;
 	public GLCanvas canvas;
@@ -106,7 +109,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public JOGLAWTGLRenderer(JOGLAWTDisplaySurface d) {
 
 		// Enabling the stencil buffer
-		GLCapabilities cap = new GLCapabilities();
+		GLCapabilities cap = new GLCapabilities(null);
 		cap.setStencilBits(8);
 		// Initialize the user camera
 		camera = new Camera();
@@ -135,7 +138,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		width = drawable.getWidth();
 		height = drawable.getHeight();
 		// Get the OpenGL graphics context
-		gl = drawable.getGL();
+		gl = drawable.getGL().getGL2();
 		// GL Utilities
 		glu = new GLU();
 
@@ -161,13 +164,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 		// PolygonMode (Solid or lines)
 		if ( polygonmode ) {
-			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+			gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
 		} else {
-			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
+			gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
 		}
 
 		// Blending control
-		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
+		gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 
 		gl.glEnable(GL_BLEND);
 		// gl.glDisable(GL_DEPTH_TEST);
@@ -209,7 +212,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			}
 
 			// Get the OpenGL graphics context
-			gl = drawable.getGL();
+			gl = drawable.getGL().getGL2();
 			setContext(drawable.getContext());
 
 			width = drawable.getWidth();
@@ -218,7 +221,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			// Clear the screen and the depth buffer
 			gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			gl.glMatrixMode(GL.GL_PROJECTION);
+			gl.glMatrixMode(GL2.GL_PROJECTION);
 			// Reset the view (x, y, z axes back to normal)
 			gl.glLoadIdentity();
 
@@ -239,9 +242,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 			// Show triangulated polygon or not (trigger by GAMA)
 			if ( !displaySurface.triangulation ) {
-				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+				gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
 			} else {
-				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
+				gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
 			}
 
 			// Blending control
@@ -262,7 +265,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 			// Use polygon offset for a better edges rendering
 			// (http://www.glprogramming.com/red/chapter06.html#name4)
-			gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
+			gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
 			gl.glPolygonOffset(1, 1);
 
 			if ( dem.isInitialized() == true ) {
@@ -278,7 +281,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 			// this.DrawShapeFile();
 			// this.DrawCollada();
-			gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
+			gl.glDisable(GL2.GL_POLYGON_OFFSET_FILL);
 
 			gl.glPopMatrix();
 
@@ -302,14 +305,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 		int x = windowPoint.x, y = windowPoint.y;
 
-		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
-		gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, mvmatrix, 0);
-		gl.glGetDoublev(GL.GL_PROJECTION_MATRIX, projmatrix, 0);
+		gl.glGetIntegerv(GL2.GL_VIEWPORT, viewport, 0);
+		gl.glGetDoublev(GL2.GL_MODELVIEW_MATRIX, mvmatrix, 0);
+		gl.glGetDoublev(GL2.GL_PROJECTION_MATRIX, projmatrix, 0);
 		/* note viewport[3] is height of window in pixels */
 		realy = viewport[3] - y - 1;
 
 		FloatBuffer floatBuffer = FloatBuffer.allocate(1);
-		gl.glReadPixels(x, realy, 1, 1, GL.GL_DEPTH_COMPONENT, GL.GL_FLOAT, floatBuffer);
+		gl.glReadPixels(x, realy, 1, 1, GL2.GL_DEPTH_COMPONENT, GL2.GL_FLOAT, floatBuffer);
 		float z = floatBuffer.get(0);
 
 		glu.gluUnProject(x, realy, z, //
@@ -363,7 +366,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public void reshape(GLAutoDrawable drawable, int arg1, int arg2, int arg3, int arg4) {
 
 		// Get the OpenGL graphics context
-		gl = drawable.getGL();
+		gl = drawable.getGL().getGL2();
 
 		if ( height == 0 ) {
 			height = 1; // prevent divide by zero
@@ -380,7 +383,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 		// perspective view
 		gl.glViewport(10, 10, width - 20, height - 20);
-		gl.glMatrixMode(GL.GL_PROJECTION);
+		gl.glMatrixMode(GL2.GL_PROJECTION);
 		gl.glLoadIdentity();
 		glu.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
 		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getZPos(), camera.getXLPos(), camera.getYLPos(),
@@ -389,7 +392,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	}
 
-	@Override
 	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {}
 
 	public void DrawScene() {
@@ -554,8 +556,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// Enable the texture
 		gl.glEnable(GL_TEXTURE_2D);
 		Texture t = curTexture.texture;
-		t.enable();
-		t.bind();
+		t.enable(gl);
+		t.bind(gl);
 		// Reset opengl color. Set the transparency of the image to
 		// 1 (opaque).
 		gl.glColor4f(1.0f, 1.0f, 1.0f, img.alpha);
@@ -615,7 +617,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// need to have an opengl context valide
 		// if ( this.context != null ) {
 		this.getContext().makeCurrent();
-		Texture texture = TextureIO.newTexture(image, false);
+		Texture texture = com.jogamp.opengl.util.texture.awt.AWTTextureIO.newTexture(GLProfile.getDefault(),image, false);
 		MyTexture curTexture = new MyTexture();
 		curTexture.texture = texture;
 		curTexture.isDynamic = isDynamic;
@@ -728,5 +730,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public void setContext(GLContext context) {
 		this.context = context;
+	}
+
+	@Override
+	public void dispose(GLAutoDrawable arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }

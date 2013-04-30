@@ -6,7 +6,7 @@ import java.nio.FloatBuffer;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
-import com.sun.opengl.util.BufferUtil;
+import com.jogamp.common.nio.Buffers;
 
 import javax.xml.parsers.*;
 import javax.xml.xpath.*;
@@ -142,7 +142,7 @@ public static float[] ProcessMesh() throws XPathExpressionException{
 		
 		System.out.println(nb_coords + " coords: " + float_array);
 
-		FloatBuffer position_buffer = BufferUtil.newFloatBuffer(1);
+		FloatBuffer position_buffer = Buffers.newDirectFloatBuffer(1);
 		return position_buffer;
 
 	}
