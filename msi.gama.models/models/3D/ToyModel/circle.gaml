@@ -19,6 +19,7 @@ global {
 	}  
 } 
 
+
 environment width: width_and_height_of_environment height: width_and_height_of_environment;  
  
   
@@ -55,7 +56,7 @@ entities {
 }
 experiment cylinder type: gui {
 	output {
-		display Cylinder refresh_every: 1 type: opengl ambient_light:0.4 {
+		display Cylinder refresh_every: 1  type:opengl ambient_light:100 {
 			species cells aspect:cylinder;
 		}
 	}
@@ -63,7 +64,7 @@ experiment cylinder type: gui {
 
 experiment sphere type: gui {
 	output {
-		display Sphere refresh_every: 1 type: opengl ambient_light:0.4 {
+		display Sphere refresh_every: 1  ambient_light:100 {
 			species cells aspect: sphere;
 		}
 	}
