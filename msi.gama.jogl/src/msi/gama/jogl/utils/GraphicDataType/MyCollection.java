@@ -7,7 +7,7 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 
 import msi.gama.metamodel.shape.GamaPoint;
 
-import com.jogamp.opengl.util.texture.*;
+import com.sun.opengl.util.texture.*;
 
 
 public class MyCollection {

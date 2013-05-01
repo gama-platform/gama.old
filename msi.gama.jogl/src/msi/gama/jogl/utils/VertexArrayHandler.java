@@ -3,18 +3,18 @@ package msi.gama.jogl.utils;
 import java.awt.Color;
 import java.nio.FloatBuffer;
 import java.util.*;
-import javax.media.opengl.GL2;
+import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.jogl.utils.GraphicDataType.*;
 import msi.gama.metamodel.shape.IShape;
-import com.jogamp.common.nio.Buffers;
+import com.sun.opengl.util.BufferUtil;
 import com.vividsolutions.jts.geom.*;
 
 public class VertexArrayHandler {
 
 	// OpenGL member
-	private final GL2 myGl;
+	private final GL myGl;
 	private final GLU myGlu;
 
 	// need to have the GLRenderer to enable texture mapping.
@@ -40,7 +40,7 @@ public class VertexArrayHandler {
 	private int nbVerticesLine;
 	private int nbVerticesTriangle;
 
-	public VertexArrayHandler(final GL2 gl, final GLU glu, final JOGLAWTGLRenderer gLRender) {
+	public VertexArrayHandler(final GL gl, final GLU glu, final JOGLAWTGLRenderer gLRender) {
 		myGl = gl;
 		myGlu = glu;
 		myGLRender = gLRender;
@@ -98,9 +98,9 @@ public class VertexArrayHandler {
 	public void fillVertexArrayTriangle() {
 
 		totalNumVertsTriangle = nbVerticesTriangle;
-		vertexBufferTriangle = Buffers.newDirectFloatBuffer(nbVerticesTriangle * 3);
+		vertexBufferTriangle = BufferUtil.newFloatBuffer(nbVerticesTriangle * 3);
 
-		colorBufferTriangle = Buffers.newDirectFloatBuffer(nbVerticesTriangle * 3);
+		colorBufferTriangle = BufferUtil.newFloatBuffer(nbVerticesTriangle * 3);
 
 		Iterator<MyTriangulatedGeometry> it2 = triangulatedGeometries.iterator();
 		// For each triangulated shape
@@ -130,8 +130,8 @@ public class VertexArrayHandler {
 	public void fillVertexArrayLine() {
 
 		totalNumVertsLine = nbVerticesLine;
-		vertexBufferLine = Buffers.newDirectFloatBuffer(nbVerticesLine * 3 * 2);
-		colorBufferLine = Buffers.newDirectFloatBuffer(nbVerticesLine * 3 * 2);
+		vertexBufferLine = BufferUtil.newFloatBuffer(nbVerticesLine * 3 * 2);
+		colorBufferLine = BufferUtil.newFloatBuffer(nbVerticesLine * 3 * 2);
 
 		Iterator<MyLine> it = lines.iterator();
 		// For each line
@@ -162,25 +162,25 @@ public class VertexArrayHandler {
 	}
 
 	public void drawVertexArray() {
-		myGl.glEnableClientState(GL2.GL_VERTEX_ARRAY);
-		myGl.glEnableClientState(GL2.GL_COLOR_ARRAY);
+		myGl.glEnableClientState(GL.GL_VERTEX_ARRAY);
+		myGl.glEnableClientState(GL.GL_COLOR_ARRAY);
 
 		// Triangle vertexArray
 		if ( vertexBufferTriangle.hasRemaining() ) {
-			myGl.glVertexPointer(3, GL2.GL_FLOAT, 0, vertexBufferTriangle);
-			myGl.glColorPointer(3, GL2.GL_FLOAT, 0, colorBufferTriangle);
-			myGl.glDrawArrays(GL2.GL_TRIANGLES, 0, totalNumVertsTriangle);
+			myGl.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBufferTriangle);
+			myGl.glColorPointer(3, GL.GL_FLOAT, 0, colorBufferTriangle);
+			myGl.glDrawArrays(GL.GL_TRIANGLES, 0, totalNumVertsTriangle);
 		}
 
 		// Line vertex Array
 		if ( vertexBufferLine.hasRemaining() ) {
-			myGl.glVertexPointer(3, GL2.GL_FLOAT, 0, vertexBufferLine);
-			myGl.glColorPointer(3, GL2.GL_FLOAT, 0, colorBufferLine);
-			myGl.glDrawArrays(GL2.GL_LINES, 0, totalNumVertsLine);
+			myGl.glVertexPointer(3, GL.GL_FLOAT, 0, vertexBufferLine);
+			myGl.glColorPointer(3, GL.GL_FLOAT, 0, colorBufferLine);
+			myGl.glDrawArrays(GL.GL_LINES, 0, totalNumVertsLine);
 		}
 
-		myGl.glDisableClientState(GL2.GL_VERTEX_ARRAY);
-		myGl.glDisableClientState(GL2.GL_COLOR_ARRAY);
+		myGl.glDisableClientState(GL.GL_VERTEX_ARRAY);
+		myGl.glDisableClientState(GL.GL_COLOR_ARRAY);
 	}
 
 	public void DeleteVertexArray() {

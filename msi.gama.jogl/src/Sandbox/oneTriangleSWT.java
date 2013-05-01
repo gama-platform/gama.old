@@ -46,7 +46,7 @@ public class oneTriangleSWT {
         final GLCanvas glcanvas = new GLCanvas( composite, SWT.NO_BACKGROUND, gldata );
         glcanvas.setCurrent();
         //GLProfile glprofile = GLProfile.getDefault();
-        final GLContext glcontext = GLDrawableFactory.getFactory(null).createExternalGLContext();
+        final GLContext glcontext = GLDrawableFactory.getFactory().createExternalGLContext();
 
         // fix the viewport when the user resizes the window
         glcanvas.addListener( SWT.Resize, new Listener() {
@@ -54,7 +54,7 @@ public class oneTriangleSWT {
                 Rectangle rectangle = glcanvas.getClientArea();
                 glcanvas.setCurrent();
                 glcontext.makeCurrent();
-                oneTriangle.setup( glcontext.getGL().getGL2(), rectangle.width, rectangle.height );
+                oneTriangle.setup( glcontext.getGL(), rectangle.width, rectangle.height );
                 glcontext.release();        
             }
         });
@@ -65,7 +65,7 @@ public class oneTriangleSWT {
                 Rectangle rectangle = glcanvas.getClientArea();
                 glcanvas.setCurrent();
                 glcontext.makeCurrent();
-                oneTriangle.render(glcontext.getGL().getGL2(), rectangle.width, rectangle.height);
+                oneTriangle.render(glcontext.getGL(), rectangle.width, rectangle.height);
                 glcanvas.swapBuffers();
                 glcontext.release();        
             }

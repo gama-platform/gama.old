@@ -1,14 +1,14 @@
 package msi.gama.jogl.utils.JTSGeometryOpenGLDrawer;
 
-import javax.media.opengl.GL2;
+import javax.media.opengl.GL;
 import javax.media.opengl.glu.*;
 
 public class TessellCallBack implements GLUtessellatorCallback {
 
-	private final GL2 gl;
+	private final GL gl;
 	private final GLU glu;
 
-	public TessellCallBack(final GL2 gl, final GLU glu) {
+	public TessellCallBack(final GL gl, final GLU glu) {
 		this.gl = gl;
 		this.glu = glu;
 	}

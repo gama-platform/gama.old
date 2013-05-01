@@ -5,14 +5,13 @@ import java.awt.event.*;
 import java.nio.IntBuffer;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
-import com.jogamp.common.nio.Buffers;
-import javax.media.opengl.awt.GLCanvas;
+import com.sun.opengl.util.BufferUtil;
 
 public class Picker implements MouseListener {
 
 	public boolean isPressed = false;
 	private final Point mousePosition;
-	private final IntBuffer selectBuffer = Buffers.newDirectIntBuffer(1024);// will store information
+	private final IntBuffer selectBuffer = BufferUtil.newIntBuffer(1024);// will store information
 
 	// about selected objects
 
@@ -53,7 +52,7 @@ public class Picker implements MouseListener {
 	 * object by using gluPickMatrix() method
 	 * @return if returned value is true that mean the picking is enabled
 	 */
-	public boolean beginPicking(final GL2 gl) {
+	public boolean beginPicking(final GL gl) {
 		if ( !isPressed ) { return false; }
 		GLU glu = new GLU();
 		// 1. Selecting buffer
@@ -62,15 +61,15 @@ public class Picker implements MouseListener {
 		// Pass below is very similar to refresh method in GLrenderer
 		// 2. Take the viewport attributes,
 		int viewport[] = new int[4];
-		gl.glGetIntegerv(GL2.GL_VIEWPORT, viewport, 0);
+		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
 
 		int width = viewport[2]; // get width and
 		int height = viewport[3]; // height from viewport
 
 		// 3. Prepare openGL for rendering in select mode
-		gl.glMatrixMode(GL2.GL_PROJECTION);
+		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glPushMatrix();
-		gl.glRenderMode(GL2.GL_SELECT);
+		gl.glRenderMode(GL.GL_SELECT);
 		gl.glLoadIdentity();
 		// gluPickMatrix method restrict the area where openGL will drawing objects
 		// glu.gluPickMatrix(
@@ -81,7 +80,7 @@ public class Picker implements MouseListener {
 
 		float h = width / (float) height;
 		glu.gluPerspective(45.0f, h, 1.0, 20.0);
-		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		gl.glMatrixMode(GL.GL_MODELVIEW);
 		// 4. After this pass you must draw Objects
 
 		return true;
@@ -92,18 +91,18 @@ public class Picker implements MouseListener {
 	 * After drawing we have to calculate which object was nearest screen and return its index
 	 * @return name of selected object
 	 */
-	public int endPicking(final GL2 gl) {
+	public int endPicking(final GL gl) {
 		if ( !isPressed ) { return -1; }
 		isPressed = false;// no further iterations
 		int selectedIndex;
 
 		// 5. When you back to Render mode gl.glRenderMode() methods return number of hits
-		int howManyObjects = gl.glRenderMode(GL2.GL_RENDER);
+		int howManyObjects = gl.glRenderMode(GL.GL_RENDER);
 
 		// 6. Restore to normal settings
-		gl.glMatrixMode(GL2.GL_PROJECTION);
+		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glPopMatrix();
-		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		gl.glMatrixMode(GL.GL_MODELVIEW);
 
 		// 7. Seach the select buffer to find the nearest object
 

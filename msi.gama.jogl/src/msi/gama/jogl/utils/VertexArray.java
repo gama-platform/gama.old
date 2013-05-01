@@ -2,7 +2,7 @@ package msi.gama.jogl.utils;
 
 import java.nio.FloatBuffer;
 
-import com.jogamp.common.nio.Buffers;
+import com.sun.opengl.util.BufferUtil;
 
 
 

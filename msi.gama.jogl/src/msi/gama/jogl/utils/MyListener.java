@@ -27,11 +27,11 @@ import java.nio.IntBuffer;
 
 
 
-import javax.media.opengl.GL2;
+import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 import javax.swing.SwingUtilities;
 
-import com.jogamp.common.nio.Buffers;
+import com.sun.opengl.util.BufferUtil;
 
 import msi.gama.jogl.utils.Camera.Camera;
 
@@ -55,7 +55,7 @@ public class MyListener implements KeyListener, MouseListener,
 	//picking
 	public boolean isPickedPressed = false;
 	public final Point mousePosition;
-	private final IntBuffer selectBuffer = Buffers.newDirectIntBuffer(1024);// will store information
+	private final IntBuffer selectBuffer = BufferUtil.newIntBuffer(1024);// will store information
 	
 	//ROI Drawing
 	public boolean enableROIDrawing=false;
@@ -316,7 +316,7 @@ public class MyListener implements KeyListener, MouseListener,
 	 * object by using gluPickMatrix() method
 	 * @return if returned value is true that mean the picking is enabled
 	 */
-	public boolean beginPicking(final GL2 gl) {
+	public boolean beginPicking(final GL gl) {
 		if ( !isPickedPressed ) { return false; }
 		GLU glu = new GLU();
 		
@@ -327,13 +327,13 @@ public class MyListener implements KeyListener, MouseListener,
 		// Pass below is very similar to refresh method in GLrenderer
 		// 2. Take the viewport attributes,
 		int viewport[] = new int[4];
-		gl.glGetIntegerv(GL2.GL_VIEWPORT, viewport, 0);
+		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
 
 		int width = viewport[2]; // get width and
 		int height = viewport[3]; // height from viewport
 
 		// 3. Prepare openGL for rendering in select mode
-		gl.glRenderMode(GL2.GL_SELECT);
+		gl.glRenderMode(GL.GL_SELECT);
 
 		/*
 		 * The application must redefine the viewing volume so that it renders only a small 
@@ -343,7 +343,7 @@ public class MyListener implements KeyListener, MouseListener,
 		 * Next initialise the matrix
 		 */
 		
-		gl.glMatrixMode(GL2.GL_PROJECTION);
+		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glPushMatrix();	
 		gl.glLoadIdentity();
 		
@@ -360,7 +360,7 @@ public class MyListener implements KeyListener, MouseListener,
 		
 		this.myCamera.UpdateCamera(gl, glu, width, height);
 		//FIXME: Comment GL_MODELVIEW to debug3D picking (redraw the model when clicking)
-		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		gl.glMatrixMode(GL.GL_MODELVIEW);
 		// 4. After this pass you must draw Objects
 
 		return true;
@@ -371,18 +371,18 @@ public class MyListener implements KeyListener, MouseListener,
 	 * After drawing we have to calculate which object was nearest screen and return its index
 	 * @return name of selected object
 	 */
-	public int endPicking(final GL2 gl) {
+	public int endPicking(final GL gl) {
 		if ( !isPickedPressed ) { return -1; }
 		isPickedPressed = false;// no further iterations
 		int selectedIndex;
 
 		// 5. When you back to Render mode gl.glRenderMode() methods return number of hits
-		int howManyObjects = gl.glRenderMode(GL2.GL_RENDER);
+		int howManyObjects = gl.glRenderMode(GL.GL_RENDER);
 
 		// 6. Restore to normal settings
-		gl.glMatrixMode(GL2.GL_PROJECTION);
+		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glPopMatrix();
-		gl.glMatrixMode(GL2.GL_MODELVIEW);
+		gl.glMatrixMode(GL.GL_MODELVIEW);
 
 		// 7. Seach the select buffer to find the nearest object
 

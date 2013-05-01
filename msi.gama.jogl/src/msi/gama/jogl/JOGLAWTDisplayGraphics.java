@@ -24,7 +24,7 @@ import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
-import javax.media.opengl.GL2;
+import javax.media.opengl.GL;
 import javax.media.opengl.glu.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
@@ -906,11 +906,11 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	//
 	// }
 
-	private void createDisplayList(final GL2 gl) {
+	private void createDisplayList(final GL gl) {
 		GLU glu = new GLU();
 		GLUquadric quadric = glu.gluNewQuadric();
 		listID = gl.glGenLists(1);
-		gl.glNewList(listID, GL2.GL_COMPILE);
+		gl.glNewList(listID, GL.GL_COMPILE);
 		gl.glPushMatrix();
 		gl.glColor3d(1, 1, 1);
 		glu.gluSphere(quadric, 1 + 0.4, 30, 30);

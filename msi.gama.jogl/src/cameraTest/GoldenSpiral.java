@@ -1,6 +1,6 @@
 package cameraTest;
 
-import javax.media.opengl.GL2;
+import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 import javax.media.opengl.glu.GLUquadric;
 import utils.Vector;
@@ -46,7 +46,7 @@ double r;
         }
     }
 
-    public void draw(GL2 gl){
+    public void draw(GL gl){
         
         if(listID == -1){
             createDisplayList(gl);            
@@ -55,11 +55,11 @@ double r;
 
     }
 
-    private void createDisplayList(GL2 gl){
+    private void createDisplayList(GL gl){
         GLU glu = new GLU();
         GLUquadric quadric = glu.gluNewQuadric();
         listID =  gl.glGenLists(1);
-        gl.glNewList(listID, GL2.GL_COMPILE);
+        gl.glNewList(listID, GL.GL_COMPILE);
         gl.glPushMatrix();
             gl.glColor3d(0,0,0);
             glu.gluSphere(quadric, r+0.4, 30, 30);
