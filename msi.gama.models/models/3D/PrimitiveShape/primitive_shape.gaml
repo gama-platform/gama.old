@@ -73,9 +73,9 @@ entities {
 	
 	species myPoint{
 		const color type: rgb <- [0, 175,100] as rgb;
-		//geometry shape <- geometry (point([1,1])) ;
+		geometry shape <- geometry (point([location.x,location.y]));
 		aspect Flat {
-			draw geometry: geometry (point([location.x,location.y])) color: global_color ;
+			draw shape color: global_color ;
 			draw text: "Point" size: 1 color: rgb('black');
 		}		
 	}
@@ -84,7 +84,7 @@ entities {
 		const color type: rgb <- [33, 98,120] as rgb;
 		geometry shape <- line ([{5,3},{7,1}]) ;		
 		aspect Flat {
-			draw geometry: shape color: global_color  ;
+			draw shape color: global_color  ;
 			draw text: "Line" size: 1 color: rgb('black'); 
 		}
 	}
@@ -93,7 +93,7 @@ entities {
 		const color type: rgb <- [2, 78,104] as rgb;
 		geometry shape <- polyline([{9,3},{9,2},{11,2},{11,1}]) ;		
 		aspect Flat {
-			draw geometry: shape color: global_color  ;
+			draw shape color: global_color  ;
 			draw text: "Multiline" size: 1 color: rgb('black'); 
 		}
 	}
@@ -102,7 +102,7 @@ entities {
 		const color type: rgb <- [255, 131,0] as rgb;
 		geometry shape <- rectangle({2, 2})  ;		
 		aspect Flat {
-			draw geometry: shape color: global_color  ;
+			draw shape color: global_color  ;
 			draw text: "Square" size: 1 color: rgb('black'); 
 		}
 	}	
@@ -111,7 +111,7 @@ entities {
 		const color type: rgb <- [255, 73,0] as rgb;
 		geometry shape <- polygon([{17,1.5}, {17.5,1}, {18.5,1}, {19,1.5},{19,2.5},{18.5,3},{17.5,3},{17,2.5}]) ;		
 		aspect Flat {
-			draw geometry: shape color: global_color  ;
+			draw shape color: global_color  ;
 			draw text: "Polygon" size: 1 color: rgb('black');
 		}
 	}
@@ -126,17 +126,18 @@ entities {
 	//3D Object
 	species mySphere{
 		const color type: rgb <- [0, 175,100] as rgb;
+		geometry shape <- geometry (point([location.x,location.y]));
 		aspect Volume {	
-			draw geometry: geometry (point([location.x,location.y])) color: global_color depth:0.1;
+			draw shape  color: global_color depth:0.1;
 			draw text: "Sphere" size: 1 color: rgb('black');
 		}		
 	}
 	
 	species myPlan{
 		const color type: rgb <- [33, 98,120] as rgb;
-		//geometry shape <- line ([{5,7.5},{7,5.5}]) ;		
+		geometry shape <- geometry (line ([{5,7.5},{7,5.5}]));		
 		aspect Volume {
-			draw geometry: geometry (line ([{5,7.5},{7,5.5}])) color: global_color depth:2 ;
+			draw shape  color: global_color depth:2 ;
 			draw text: "Plan" size: 1 color: rgb('black');
 		}
 	}
@@ -151,9 +152,10 @@ entities {
 	}
 		
 	species myCube{
-		const color type: rgb <- [255, 131,0] as rgb;		
+		const color type: rgb <- [255, 131,0] as rgb;	
+		geometry shape <- square(2);
 		aspect Volume {
-			draw square(2) color: global_color depth:2 border: rgb('blue');
+			draw shape color: global_color depth:2 border: rgb('blue');
 			draw text: "Cube" size: 1 color: rgb('black');
 		}
 	}
@@ -161,14 +163,14 @@ entities {
 
 	species myPolyhedron{
 		const color type: rgb <- [255, 73,0] as rgb;
+		geometry shape <- polygon([{17,5.5}, {17.5,5}, {18.5,5}, {19,5.5},{19,6.5},{18.5,7},{17.5,7},{17,6.5}]);
 		aspect Volume {
-			draw geometry: polygon([{17,5.5}, {17.5,5}, {18.5,5}, {19,5.5},{19,6.5},{18.5,7},{17.5,7},{17,6.5}]) color: global_color depth:2;
+			draw shape color: global_color depth:2;
 			draw text: "Polyhedron" size: 1 color: rgb('black');
 		}
 	}
 	
-	species my3DObject{
-		
+	species my3DObject{	
 		aspect file{
     		draw (imageRaster) size: 1;
     	}
@@ -177,7 +179,7 @@ entities {
 }
 experiment display  type: gui {
 	output {
-		display Display refresh_every: 1 type:opengl ambient_light:100{//camera_pos:{100*cos(time),100*sin(time),100}{
+		display Display  type:opengl ambient_light:100{//camera_pos:{100*cos(time),100*sin(time),100}{
 			
 			//image name: 'Background' file: imageRaster.path;
 			
