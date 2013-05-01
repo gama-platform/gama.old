@@ -933,6 +933,33 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 	@Override
 	public void highlightRectangleInPixels(final IAgent a, final Rectangle2D r) {
 		GamaColor c = new GamaColor(highlightColor[0],highlightColor[2],highlightColor[2]);
+		GamaPoint offset =
+				new GamaPoint(xFromPixelsToModelUnits(xOffsetInPixels), yFromPixelsToModelUnits(yOffsetInPixels));
+	
+		
+		// Add a geometry with a depth and type coming from Attributes
+	/*	if ( a.getGeometry().getAttribute("depth") != null && a.getGeometry().getAttribute("type") != null ) {
+			Double depth = (Double) a.getGeometry().getAttribute("depth");
+			String type = (String) a.getGeometry().getAttribute("type");
+			this.addJTSGeometryInJTSGeometries(a.getGeometry().getInnerGeometry(), a, getCurrentZLayer(),
+				getCurrentLayerId(), c, true, c, false, 0, depth.floatValue(), offset, false,
+				type.toString());
+		}
+
+		else {
+			// Add a geometry with a depth and type coming from getUSerData (with add_z operator)
+			if ( a.getGeometry().getInnerGeometry().getUserData() != null ) {
+				float height = new Float(a.getGeometry().getInnerGeometry().getUserData().toString());
+				this.addJTSGeometryInJTSGeometries(a.getGeometry().getInnerGeometry(), a, getCurrentZLayer(),
+					getCurrentLayerId(), c, true, c, false, 0, height, offset, false, "JTS");
+			} else {
+				// add a 2D geometry without any 3D data.
+				this.addJTSGeometryInJTSGeometries(a.getGeometry().getInnerGeometry(), a, getCurrentZLayer(),
+					getCurrentLayerId(), c, true, c, false, 0, 0, offset, false, "none");
+			}
+
+		}*/
+		
 		this.drawGamaShape(a.getScope(), new GamaShape(a.getGeometry().getInnerGeometry().getEnvelope()), c, true, c, 0, false);
 	}
 
