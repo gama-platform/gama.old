@@ -151,7 +151,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 						scaleOrigin();
 					}
 				}
-				//FIXME why it has been commented?
 				updateDisplay();
 				previousPanelSize = getSize();
 			}
