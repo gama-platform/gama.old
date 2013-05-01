@@ -153,7 +153,7 @@ entities {
 	species myCube{
 		const color type: rgb <- [255, 131,0] as rgb;		
 		aspect Volume {
-			draw geometry: square(2) color: global_color depth:2 border: rgb('blue') ;
+			draw square(2) color: global_color depth:2 border: rgb('blue');
 			draw text: "Cube" size: 1 color: rgb('black');
 		}
 	}
@@ -170,19 +170,19 @@ entities {
 	species my3DObject{
 		
 		aspect file{
-    		draw (imageRaster) size: 2.25;
+    		draw (imageRaster) size: 1;
     	}
 	} 
 
 }
 experiment display  type: gui {
 	output {
-		display Display refresh_every: 1   type:opengl ambient_light:0.8{
+		display Display refresh_every: 1 type:opengl ambient_light:100{//camera_pos:{100*cos(time),100*sin(time),100}{
 			
 			//image name: 'Background' file: imageRaster.path;
 			
 			species myPoint aspect:Flat ;
-			species myLine aspect:Flat;
+			species myLine aspect:Flat ;
 			species myMultiLine aspect:Flat;
 			species mySquare aspect:Flat;
 			species myPolygon aspect:Flat;

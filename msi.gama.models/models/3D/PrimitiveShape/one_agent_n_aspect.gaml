@@ -14,7 +14,7 @@ global {
 
 	init { 		
 		create myAgent number:number_of_agents;
-		save myAgent to: ('./shapefile.shp') type: "collada" ; 
+		//save myAgent to: ('./shapefile.shp') type: "collada" ; 
 	}  
 } 
  
@@ -63,7 +63,7 @@ experiment display  type: gui {
 		display dynaSphere refresh_every: 1 type:opengl{
 			species myAgent aspect:dynaSphere;	
 		}
-		display image{
+		display image type:opengl{
 			species myAgent aspect:image;
 		}
 	}

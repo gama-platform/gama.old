@@ -21,7 +21,7 @@ global {
 		//Initialize the value of each cell
 	 	ask cell as list {		
 		 // set color <-   rgb ([0.0,0.0,cellValue]) ;
-		  set color <- color hsb_to_rgb [0.66,(cellValue/255),1.0];
+		  set color <- hsb(0.66,(cellValue/255),1.0);
 	      set elevation <-((cellValue/100)^2);
 		}  
 	} 
@@ -34,7 +34,7 @@ environment bounds: {width,height} {
 	
 		reflex changeCellValue{
 			set cellValue <- rnd(255);	
-			set color <- [0, 0,cellValue] as rgb  ;
+			set color <- hsb(0.66,(cellValue/255),1.0);
 			set elevation <-((cellValue/100)^2);
 			write "" + cellValue;
 		}
@@ -84,28 +84,26 @@ experiment AugmentedGrid type:gui {
 			species cell aspect: base  refresh:false position: {0,0};
 		}*/
 		
-		display AugmentedDisplay  ambient_light:0.5 polygonmode:true{	
+		display AugmentedDisplay  type:opengl ambient_light:100 polygonmode:true{	
 		    species cell aspect: base  refresh:false position: {0,0};
 		    species cell aspect: square  refresh:true position: {width*1.1,0};	
 			species cell aspect: circle  refresh:true position: {width*2.3,0};
 			species cell aspect: cylinder  refresh:true position: {width*3.5,0};
 		}
 		
-		display Circle  ambient_light:0.5 polygonmode:true{		
+		display Circle  type:opengl ambient_light:100 polygonmode:true{		
 			species cell aspect: circle  refresh:true position: {0,0};
-			species cell aspect: square;
-			species cell aspect: cylinder;
 		}
 		
-		display Square  ambient_light:0.5 polygonmode:true{		
+		display Square  type:opengl ambient_light:100 polygonmode:true{		
 			species cell aspect: square  refresh:true position: {0,0};
 		}
 		
-		display Cylinder ambient_light:0.5 polygonmode:true{		
+		display Cylinder type:opengl ambient_light:100 polygonmode:true{		
 			species cell aspect: cylinder  refresh:true position: {0,0};
 		}
 		
-		display Box  ambient_light:0.5 polygonmode:true{		
+		display Box  type:opengl ambient_light:100 polygonmode:true{		
 			species cell aspect: box  refresh:true position: {0,0};
 		}
 	}
