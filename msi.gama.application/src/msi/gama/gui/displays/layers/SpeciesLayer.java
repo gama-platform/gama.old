@@ -112,7 +112,7 @@ public class SpeciesLayer extends AgentLayer {
 				// TODO Create a "catch GamaRuntimeException" ?
 				Rectangle2D r = aspect.draw(scope, a);
 				if ( a == GuiUtils.getHighlightedAgent() ) {
-					g.highlightRectangleInPixels(r);
+					g.highlightRectangleInPixels(a,r);
 				}
 				shapes.put(a, r);
 			}

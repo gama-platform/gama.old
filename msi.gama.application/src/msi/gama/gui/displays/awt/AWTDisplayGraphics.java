@@ -25,6 +25,7 @@ import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
@@ -382,7 +383,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	}
 
 	@Override
-	public void highlightRectangleInPixels(final Rectangle2D r) {
+	public void highlightRectangleInPixels(final IAgent a, final Rectangle2D r) {
 		Stroke oldStroke = g2.getStroke();
 		g2.setStroke(new BasicStroke(5));
 		Color old = g2.getColor();

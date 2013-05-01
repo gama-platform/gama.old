@@ -22,6 +22,8 @@ import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.Collection;
+
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaColor;
@@ -64,7 +66,7 @@ public interface IGraphics {
 
 	public abstract Rectangle2D drawChart(final IScope scope, JFreeChart chart, Double z);
 
-	public abstract void highlightRectangleInPixels(Rectangle2D r);
+	public abstract void highlightRectangleInPixels(IAgent a, Rectangle2D r);
 
 	public abstract void setOpacity(double i);
 

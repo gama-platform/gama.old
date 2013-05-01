@@ -87,7 +87,7 @@ public class AgentLayer extends AbstractLayer {
 					Rectangle2D r = aspect.draw(scope, a);
 					shapes.put(a, r);
 					if ( a == GuiUtils.getHighlightedAgent() ) {
-						g.highlightRectangleInPixels(r);
+						g.highlightRectangleInPixels(a,r);
 					}
 				}
 			}

@@ -27,6 +27,7 @@ import java.util.List;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.GraphicDataType.*;
 import msi.gama.metamodel.agent.IAgent;
@@ -55,6 +56,7 @@ import com.vividsolutions.jts.index.quadtree.IntervalSize;
 
 public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 
+	int[] highlightColor = GuiUtils.defaultHighlight;
 	boolean ready = false;
 	private Rectangle clipping;
 	private final Rectangle2D rect = new Rectangle2D.Double(0, 0, 1, 1);
@@ -920,14 +922,19 @@ public class JOGLAWTDisplayGraphics implements IGraphics.OpenGL {
 
 	@Override
 	public int[] getHighlightColor() {
-		return null;
+		return highlightColor;
 	}
 
 	@Override
-	public void setHighlightColor(final int[] rgb) {}
+	public void setHighlightColor(final int[] rgb) {
+		highlightColor = rgb;
+	}
 
 	@Override
-	public void highlightRectangleInPixels(final Rectangle2D r) {}
+	public void highlightRectangleInPixels(final IAgent a, final Rectangle2D r) {
+		GamaColor c = new GamaColor(highlightColor[0],highlightColor[2],highlightColor[2]);
+		this.drawGamaShape(a.getScope(), new GamaShape(a.getGeometry().getInnerGeometry().getEnvelope()), c, true, c, 0, false);
+	}
 
 	/**
 	 * Each new step the Z value of the first layer is set to 0.
