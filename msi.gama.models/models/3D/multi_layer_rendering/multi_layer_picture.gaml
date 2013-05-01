@@ -4,7 +4,6 @@ global {
 	int layerSize parameter: 'Layer size' min: 10 <- 50 ;
 	file folder <- folder('images/graph/');
 
-
 	int nb_layer<-0;
 
 	init { 			
@@ -33,8 +32,11 @@ entities {
 	  string label;	
 	  
 	  reflex changeImage{
+	  	
 	  	let filename<- one_of (folder);
-	  	set image <- file(folder.path+"/" + filename);
+	  	if (string(filename) contains '.png' or string(filename) contains '.jpg'){
+	  		set image <- file(folder.path+"/" + filename);
+	  	}
 	  }	
 	  aspect image{
 		draw image  size : layerSize;
