@@ -467,6 +467,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			}
 			i++;
 		}
+		this.updateDisplay();
 	}
 
 	/**
