@@ -176,17 +176,17 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	}
 
 	protected void centerImage() {
-		setOrigin((getWidth() - getDisplayHeight()) / 2, (getHeight() - getDisplayWidth()) / 2);
+		setOrigin((getWidth() - getDisplayWidth()) / 2, (getHeight() - getDisplayHeight()) / 2);
 	}
 
 	@Override
 	public int getImageWidth() {
-		return getDisplayHeight();
+		return getDisplayWidth();
 	}
 
 	@Override
 	public int getImageHeight() {
-		return getDisplayWidth();
+		return getDisplayHeight();
 	}
 
 	/**
@@ -286,18 +286,20 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		});
 	}
 
-	protected final Rectangle getImageClipBounds() {
-		int panelX1 = -origin.x;
-		int panelY1 = -origin.y;
-		int panelX2 = getWidth() - 1 + panelX1;
-		int panelY2 = getHeight() - 1 + panelY1;
-		if ( panelX1 >= getDisplayHeight() || panelX2 < 0 || panelY1 >= getDisplayWidth() || panelY2 < 0 ) { return null; }
-		int x1 = panelX1 < 0 ? 0 : panelX1;
-		int y1 = panelY1 < 0 ? 0 : panelY1;
-		int x2 = panelX2 >= getDisplayHeight() ? getDisplayHeight() - 1 : panelX2;
-		int y2 = panelY2 >= getDisplayWidth() ? getDisplayWidth() - 1 : panelY2;
-		return new Rectangle(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
-	}
+	//
+	// protected final Rectangle getImageClipBounds() {
+	// int panelX1 = -origin.x;
+	// int panelY1 = -origin.y;
+	// int panelX2 = getWidth() - 1 + panelX1;
+	// int panelY2 = getHeight() - 1 + panelY1;
+	// if ( panelX1 >= getDisplayHeight() || panelX2 < 0 || panelY1 >= getDisplayWidth() || panelY2 < 0 ) { return null;
+	// }
+	// int x1 = panelX1 < 0 ? 0 : panelX1;
+	// int y1 = panelY1 < 0 ? 0 : panelY1;
+	// int x2 = panelX2 >= getDisplayHeight() ? getDisplayHeight() - 1 : panelX2;
+	// int y2 = panelY2 >= getDisplayWidth() ? getDisplayWidth() - 1 : panelY2;
+	// return new Rectangle(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
+	// }
 
 	@Override
 	public void updateDisplay() {
@@ -328,8 +330,8 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	// Tests whether the image is displayed in its entirety in the panel.
 	public boolean isFullImageInPanel() {
-		return origin.x >= 0 && origin.x + getDisplayHeight() < getWidth() && origin.y >= 0 &&
-			origin.y + getDisplayWidth() < getHeight();
+		return origin.x >= 0 && origin.x + getDisplayWidth() < getWidth() && origin.y >= 0 &&
+			origin.y + getDisplayHeight() < getHeight();
 	}
 
 	@Override

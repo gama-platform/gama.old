@@ -281,25 +281,25 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	@Override
 	public void zoomIn() {
-		mousePosition = new Point(origin.x + getDisplayHeight() / 2, origin.y + getDisplayWidth() / 2);
+		mousePosition = new Point(origin.x + getDisplayWidth() / 2, origin.y + getDisplayHeight() / 2);
 		setZoom(1.0 + zoomIncrement, mousePosition);
 
 	}
 
 	@Override
 	public void zoomOut() {
-		mousePosition = new Point(origin.x + getDisplayHeight() / 2, origin.y + getDisplayWidth() / 2);;
+		mousePosition = new Point(origin.x + getDisplayWidth() / 2, origin.y + getDisplayHeight() / 2);;
 		setZoom(1.0 - zoomIncrement, mousePosition);
 
 	}
 
 	public void setZoom(final double factor, final Point c) {
-		if ( resizeImage(Math.max(1, (int) Math.round(getDisplayHeight() * factor)),
-			Math.max(1, (int) Math.round(getDisplayWidth() * factor))) ) {
+		if ( resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * factor)),
+			Math.max(1, (int) Math.round(getDisplayHeight() * factor))) ) {
 			int imagePX =
-				c.x < origin.x ? 0 : c.x >= getDisplayHeight() + origin.x ? getDisplayHeight() - 1 : c.x - origin.x;
+				c.x < origin.x ? 0 : c.x >= getDisplayWidth() + origin.x ? getDisplayWidth() - 1 : c.x - origin.x;
 			int imagePY =
-				c.y < origin.y ? 0 : c.y >= getDisplayWidth() + origin.y ? getDisplayWidth() - 1 : c.y - origin.y;
+				c.y < origin.y ? 0 : c.y >= getDisplayHeight() + origin.y ? getDisplayHeight() - 1 : c.y - origin.y;
 			zoomFactor = factor;
 			setOrigin(c.x - (int) Math.round(imagePX * zoomFactor), c.y - (int) Math.round(imagePY * zoomFactor));
 			updateDisplay();
