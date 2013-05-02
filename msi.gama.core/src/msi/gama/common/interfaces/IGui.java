@@ -100,7 +100,7 @@ public interface IGui {
 
 	boolean openSimulationPerspective();
 
-	IGraphics newGraphics(int width, int height);
+	// IGraphics newGraphics(int width, int height);
 
 	void clearErrors();
 

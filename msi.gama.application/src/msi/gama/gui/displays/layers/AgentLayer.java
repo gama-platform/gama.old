@@ -21,11 +21,10 @@ package msi.gama.gui.displays.layers;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.layers.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.*;
@@ -67,31 +66,24 @@ public class AgentLayer extends AbstractLayer {
 	protected final Map<IAgent, Rectangle2D> shapes = new HashMap();
 
 	@Override
-	public void privateDrawDisplay(final IGraphics g) throws GamaRuntimeException {
-
+	public void privateDrawDisplay(IScope scope, final IGraphics g) throws GamaRuntimeException {
 		shapes.clear();
 		// performance issue
 		String aspectName = IKeyword.DEFAULT;
 		if ( definition instanceof AgentLayerStatement ) {
 			aspectName = ((AgentLayerStatement) definition).getAspectName();
 		}
-		IScope scope = GAMA.obtainNewScope();
-		if ( scope != null ) {
-			scope.setGraphics(g);
-			for ( IAgent a : getAgentsToDisplay() ) {
-				if ( a != null && !a.dead() ) {
-					IAspect aspect = a.getSpecies().getAspect(aspectName);
-					if ( aspect == null ) {
-						aspect = AspectStatement.DEFAULT_ASPECT;
-					}
-					Rectangle2D r = aspect.draw(scope, a);
+		for ( IAgent a : getAgentsToDisplay() ) {
+			if ( a != null && !a.dead() ) {
+				IAspect aspect = a.getSpecies().getAspect(aspectName);
+				if ( aspect == null ) {
+					aspect = AspectStatement.DEFAULT_ASPECT;
+				}
+				Rectangle2D r = aspect.draw(scope, a);
+				if ( r != null ) {
 					shapes.put(a, r);
-					if ( a == GuiUtils.getHighlightedAgent() ) {
-						g.highlightRectangleInPixels(a,r);
-					}
 				}
 			}
-			GAMA.releaseScope(scope);
 		}
 	}
 

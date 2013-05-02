@@ -20,6 +20,7 @@ package msi.gama.gui.displays.layers;
 
 import java.awt.Color;
 import msi.gama.common.interfaces.IGraphics;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
@@ -38,7 +39,7 @@ public class PauseLayer extends AbstractLayer {
 	 * @see msi.gama.gui.displays.AbstractDisplay#privateDrawDisplay(msi.gama.common.interfaces.IGraphics)
 	 */
 	@Override
-	protected void privateDrawDisplay(final IGraphics g) throws GamaRuntimeException {
+	protected void privateDrawDisplay(IScope scope, final IGraphics g) throws GamaRuntimeException {
 		g.fillBackground(Color.DARK_GRAY, 0.5);
 	}
 

@@ -18,6 +18,7 @@
  */
 package msi.gama.outputs.layers;
 
+import static msi.gama.common.interfaces.IKeyword.STYLE;
 import java.awt.Color;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -30,6 +31,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
+import msi.gaml.statements.DrawStatement;
 import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.TEXT, kind = ISymbolKind.LAYER, with_sequence = false)
@@ -40,6 +42,8 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.SIZE, type = { IType.INT, IType.FLOAT, IType.POINT }, optional = true),
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true),
 	// 10/04/13 Name is not a constant ID anymore but can represent the text to display.
+
+	@facet(name = STYLE, type = IType.ID, values = { "plain", "bold", "italic" }, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.STRING, optional = false),
 	@facet(name = IKeyword.FONT, type = IType.ID, optional = true),
 	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),
@@ -50,12 +54,15 @@ public class TextLayerStatement extends AbstractLayerStatement {
 	private final IExpression color;
 	private final IExpression font;
 	private IExpression text;
+	private final IExpression style;
 	String constantText = null;
 	Color constantColor = null;
 	String constantFont = null;
+	private Integer constantStyle = null;
 	private String currentText = null;
 	private Color currentColor = null;
 	private String currentFont = null;
+	private Integer currentStyle = null;
 
 	public TextLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
@@ -65,6 +72,8 @@ public class TextLayerStatement extends AbstractLayerStatement {
 		font = c == null ? new ConstantExpression("Helvetica") : c;
 		// If 'value:' is not defined, we take the name as the text to display.
 		text = getFacet(IKeyword.VALUE, getFacet(IKeyword.NAME));
+		c = getFacet(IKeyword.STYLE);
+		style = c == null ? new ConstantExpression("plain") : c;
 	}
 
 	public String getText() {
@@ -90,6 +99,9 @@ public class TextLayerStatement extends AbstractLayerStatement {
 		currentText = constantText == null ? Cast.asString(scope, text.value(scope)) : constantText;
 		currentColor = constantColor == null ? Cast.asColor(scope, color.value(scope)) : constantColor;
 		currentFont = constantFont == null ? Cast.asString(scope, font.value(scope)) : constantFont;
+		currentStyle =
+			constantStyle == null ? DrawStatement.CONSTANTS.get(Cast.asString(scope, style.value(scope)))
+				: constantStyle;
 	}
 
 	@Override
@@ -97,12 +109,20 @@ public class TextLayerStatement extends AbstractLayerStatement {
 		super.init(scope);
 		if ( text.isConst() && constantText == null ) {
 			constantText = Cast.asString(scope, text.value(scope));
+			currentText = constantText;
 		}
 		if ( font.isConst() && constantFont == null ) {
 			constantFont = Cast.asString(scope, font.value(scope));
+			currentFont = constantFont;
 		}
 		if ( color.isConst() && constantColor == null ) {
 			constantColor = Cast.asColor(scope, color.value(scope));
+			currentColor = constantColor;
+		}
+		if ( style.isConst() && constantStyle == null ) {
+			// FIXME Rather pass the string to the IGraphics and put the constants there
+			constantStyle = DrawStatement.CONSTANTS.get(Cast.asString(scope, style.value(scope)));
+			currentStyle = constantStyle;
 		}
 	}
 
@@ -121,5 +141,9 @@ public class TextLayerStatement extends AbstractLayerStatement {
 
 	public IExpression getTextExpr() {
 		return text;
+	}
+
+	public Integer getStyle() {
+		return currentStyle;
 	}
 }

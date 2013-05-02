@@ -9,17 +9,18 @@ import java.util.concurrent.Semaphore;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.views.SWTNavigationPanel;
-import msi.gama.outputs.OutputSynchronizer;
+import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Files;
 
 public abstract class AbstractAWTDisplaySurface extends JPanel implements IDisplaySurface {
 
-	private String outputName = "";
-	private IGraphics iGraphics;
+	private IDisplayOutput output;
+	protected int[] highlightColor = GuiUtils.defaultHighlight;
+	protected IGraphics iGraphics;
 	protected String snapshotFileName;
 	protected static String snapshotFolder = "snapshots";
 	protected ILayerManager manager;
@@ -28,14 +29,13 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	protected Point origin = new Point(0, 0);
 	protected Dimension previousPanelSize;
 	protected final Semaphore paintingNeeded = new Semaphore(1, true);
-	protected int bHeight;
-	protected int bWidth;
+	private int displayWidth;
+	private int displayHeight;
 	protected SWTNavigationPanel navigator;
 	protected boolean autosave = false;
 	protected double widthHeightConstraint = 1.0;
 	protected double zoomIncrement = 0.1;
 	protected double zoomFactor = 1.0 + zoomIncrement;
-	protected BufferedImage buffImage;
 	protected boolean navigationImageEnabled = true;
 	protected final AffineTransform translation = new AffineTransform();
 	protected boolean synchronous = false;
@@ -46,6 +46,15 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	private double envHeight;
 
 	protected AbstractAWTDisplaySurface() {}
+
+	@Override
+	public void initialize(final double env_width, final double env_height, final IDisplayOutput layerDisplayOutput) {
+		setOutput(layerDisplayOutput);
+		setOpaque(true);
+		setDoubleBuffered(false);
+		this.setLayout(new BorderLayout());
+		outputChanged(env_width, env_height, layerDisplayOutput);
+	}
 
 	@Override
 	public ILayerManager getManager() {
@@ -61,10 +70,10 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		return this.manager;
 	}
 
-	@Override
-	public IGraphics getIGraphics() {
-		return this.iGraphics;
-	}
+	// @Override
+	// public IGraphics getIGraphics() {
+	// return this.iGraphics;
+	// }
 
 	@Override
 	public void setFont(Font f) {
@@ -83,11 +92,11 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	}
 
 	public String getOutputName() {
-		return outputName;
+		return getOutput().getName();
 	}
 
-	protected void setOutputName(String outputName) {
-		this.outputName = outputName;
+	protected void setOutput(IDisplayOutput output) {
+		this.output = output;
 	}
 
 	@Override
@@ -167,17 +176,17 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	}
 
 	protected void centerImage() {
-		setOrigin((getWidth() - bWidth) / 2, (getHeight() - bHeight) / 2);
+		setOrigin((getWidth() - getDisplayHeight()) / 2, (getHeight() - getDisplayWidth()) / 2);
 	}
 
 	@Override
 	public int getImageWidth() {
-		return bWidth;
+		return getDisplayHeight();
 	}
 
 	@Override
 	public int getImageHeight() {
-		return bHeight;
+		return getDisplayWidth();
 	}
 
 	/**
@@ -198,14 +207,13 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	@Override
 	public int[] getHighlightColor() {
-		if ( getIGraphics() == null ) { return null; }
-		return getIGraphics().getHighlightColor();
+		return highlightColor;
 	}
 
 	@Override
 	public void setHighlightColor(final int[] rgb) {
-		if ( getIGraphics() == null ) { return; }
-		getIGraphics().setHighlightColor(rgb);
+		highlightColor = rgb;
+		iGraphics.setHighlightColor(rgb);
 	}
 
 	/**
@@ -225,8 +233,8 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	@Override
 	public void setQualityRendering(final boolean quality) {
-		if ( getIGraphics() == null ) { return; }
-		getIGraphics().setQualityRendering(quality);
+		if ( iGraphics == null ) { return; }
+		iGraphics.setQualityRendering(quality);
 		if ( isPaused() ) {
 			updateDisplay();
 		}
@@ -249,7 +257,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	@Override
 	public boolean canBeUpdated() {
-		return canBeUpdated && getIGraphics() != null && getIGraphics().isReady();
+		return canBeUpdated && iGraphics != null;
 	}
 
 	public void setNavigationImageEnabled(final boolean enabled) {
@@ -283,11 +291,11 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		int panelY1 = -origin.y;
 		int panelX2 = getWidth() - 1 + panelX1;
 		int panelY2 = getHeight() - 1 + panelY1;
-		if ( panelX1 >= bWidth || panelX2 < 0 || panelY1 >= bHeight || panelY2 < 0 ) { return null; }
+		if ( panelX1 >= getDisplayHeight() || panelX2 < 0 || panelY1 >= getDisplayWidth() || panelY2 < 0 ) { return null; }
 		int x1 = panelX1 < 0 ? 0 : panelX1;
 		int y1 = panelY1 < 0 ? 0 : panelY1;
-		int x2 = panelX2 >= bWidth ? bWidth - 1 : panelX2;
-		int y2 = panelY2 >= bHeight ? bHeight - 1 : panelY2;
+		int x2 = panelX2 >= getDisplayHeight() ? getDisplayHeight() - 1 : panelX2;
+		int y2 = panelY2 >= getDisplayWidth() ? getDisplayWidth() - 1 : panelY2;
 		return new Rectangle(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
 	}
 
@@ -320,41 +328,35 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	// Tests whether the image is displayed in its entirety in the panel.
 	public boolean isFullImageInPanel() {
-		return origin.x >= 0 && origin.x + bWidth < getWidth() && origin.y >= 0 && origin.y + bHeight < getHeight();
+		return origin.x >= 0 && origin.x + getDisplayHeight() < getWidth() && origin.y >= 0 &&
+			origin.y + getDisplayWidth() < getHeight();
 	}
 
 	@Override
-	public boolean resizeImage(final int x, final int y) {
+	public final boolean resizeImage(final int x, final int y) {
 		canBeUpdated(false);
 		int[] point = computeBoundsFrom(x, y);
 		int imageWidth = Math.max(1, point[0]);
 		int imageHeight = Math.max(1, point[1]);
 		if ( imageWidth <= MAX_SIZE && imageHeight <= MAX_SIZE ) {
-			BufferedImage newImage = ImageUtils.createCompatibleImage(imageWidth, imageHeight);
-			bWidth = newImage.getWidth();
-			bHeight = newImage.getHeight();
-			if ( buffImage != null ) {
-				newImage.getGraphics().drawImage(buffImage, 0, 0, bWidth, bHeight, null);
-				buffImage.flush();
-			}
-			buffImage = newImage;
-			if ( getIGraphics() == null ) {
-				setIGraphics(new AWTDisplayGraphics(buffImage, (int) getEnvWidth(), (int) getEnvHeight()));
-			} else {
-				getIGraphics().setDisplayDimensionsInPixels(bWidth, bHeight);
-				getIGraphics().setGraphics((Graphics2D) newImage.getGraphics());
-			}
-			// ((AWTDisplayGraphics) getIGraphics()).getGraphics2D().setClip(getImageClipBounds());
+			createNewImage(imageWidth, imageHeight);
+			createIGraphics();
 			redrawNavigator();
 			canBeUpdated(true);
 			return true;
 		}
 		canBeUpdated(true);
 		return false;
-
 	}
 
-	public void setIGraphics(IGraphics iGraphics) {
+	protected void createNewImage(int width, int height) {
+		setDisplayHeight(height);
+		setDisplayWidth(width);
+	}
+
+	protected abstract void createIGraphics();
+
+	protected void setIGraphics(IGraphics iGraphics) {
 		this.iGraphics = iGraphics;
 	}
 
@@ -374,6 +376,28 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	public void setEnvHeight(double envHeight) {
 		this.envHeight = envHeight;
+	}
+
+	@Override
+	public int getDisplayWidth() {
+		return displayWidth;
+	}
+
+	protected void setDisplayWidth(int displayWidth) {
+		this.displayWidth = displayWidth;
+	}
+
+	@Override
+	public int getDisplayHeight() {
+		return displayHeight;
+	}
+
+	protected void setDisplayHeight(int displayHeight) {
+		this.displayHeight = displayHeight;
+	}
+
+	public IDisplayOutput getOutput() {
+		return output;
 	}
 
 }

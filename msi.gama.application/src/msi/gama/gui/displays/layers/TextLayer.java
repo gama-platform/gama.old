@@ -22,6 +22,7 @@ import java.awt.Color;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.outputs.layers.*;
+import msi.gama.runtime.IScope;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.*;
 import org.eclipse.swt.widgets.Composite;
@@ -71,12 +72,13 @@ public class TextLayer extends AbstractLayer {
 	}
 
 	@Override
-	public void privateDrawDisplay(final IGraphics g) {
+	public void privateDrawDisplay(IScope scope, final IGraphics g) {
 		TextLayerStatement model = (TextLayerStatement) this.definition;
 		String text = model.getText();
 		Color color = model.getColor();
 		String f = model.getFontName();
-		g.drawString(text, color, null, null, f, null, null, 0.0);
+		Integer s = model.getStyle();
+		g.drawString(text, color, null, null, f, s, null, 0.0);
 	}
 
 	@Override

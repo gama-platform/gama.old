@@ -52,7 +52,7 @@ public class GamaSimulator implements ISimulator {
 		if ( output instanceof MonitorOutput ) {
 			return ((MonitorOutput) output).getLastValue();
 		} else if ( output instanceof LayeredDisplayOutput ) {
-			BufferedImage buf = ((LayeredDisplayOutput) output).getImage();
+			BufferedImage buf = ((IDisplayOutput) output).getImage();
 			return writeImageInFile(buf, name);
 		}
 		return null;

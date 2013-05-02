@@ -77,7 +77,11 @@ public class StringEditor extends AbstractEditor {
 
 	@Override
 	protected void displayParameterValue() {
-		textBox.setText(asLabel ? (String) currentValue : StringUtils.toGaml(currentValue));
+		String s = asLabel ? (String) currentValue : StringUtils.toGaml(currentValue);
+		if ( s == null ) {
+			s = "Not constant";
+		}
+		textBox.setText(s);
 	}
 
 	@Override

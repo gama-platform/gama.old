@@ -599,8 +599,8 @@ public class GamaQuadTree implements ISpatialIndex {
 			lock.lock();
 
 			root.drawOn(g2, x_ratio, y_ratio);
-			g2.setColor(Color.red);
-			g2.setFont(new Font("Helvetica", Font.BOLD, 9));
+			g2.setColor(Color.ORANGE);
+			g2.setFont(new Font("Helvetica", Font.BOLD, height / 75));
 			g2.drawString("Agents: " + totalAgents + "; Nodes: " + totalNodes, 10, 10);
 		} finally {
 			lock.unlock();

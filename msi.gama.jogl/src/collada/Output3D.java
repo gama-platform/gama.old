@@ -1,7 +1,6 @@
 package collada;
 
 import java.io.*;
-import java.util.*;
 import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
@@ -26,7 +25,7 @@ public class Output3D {
 	// doc = Output3D.createXML();
 	// }
 
-	public Output3D(ILocation nbCycles, Collection collection, JOGLAWTGLRenderer openGLGraphicsGLRender) {
+	public Output3D(ILocation nbCycles, JOGLAWTGLRenderer openGLGraphicsGLRender) {
 		doc = Output3D.createXML();
 		nbCycle = (int) nbCycles.getY();
 		// initGLGEModel(myJTSGeometries,openGLGraphicsGLRender);
@@ -35,16 +34,16 @@ public class Output3D {
 		System.out.println("NbCycles to store: " + nbCycle);
 	}
 
-	public void updateOutput3D(List<MyJTSGeometry> myJTSGeometries, JOGLAWTGLRenderer openGLGraphicsGLRender) {
+	public void updateOutput3D(JOGLAWTGLRenderer openGLGraphicsGLRender) {
 		// TODO
 		int currentClock = GAMA.getDefaultScope().getClock().getCycle();
 		System.out.println("Nb cycle " + GAMA.getDefaultScope().getClock().getCycle());
 		if ( currentClock == 0 ) {
-			initGLGEModel(myJTSGeometries, openGLGraphicsGLRender);
+			initGLGEModel(openGLGraphicsGLRender);
 		}
 
 		// Update of the animations
-		for ( MyJTSGeometry myGeom : myJTSGeometries ) {
+		for ( MyJTSGeometry myGeom : openGLGraphicsGLRender.getJTSGeometries() ) {
 			String animID = myGeom.agent.getName() + "anim";
 			// Find the Element with id = animID
 			// add a position
@@ -74,7 +73,7 @@ public class Output3D {
 		}
 	}
 
-	public void initGLGEModel(List<MyJTSGeometry> myJTSGeometries, JOGLAWTGLRenderer openGLGraphicsGLRender) {
+	public void initGLGEModel(JOGLAWTGLRenderer openGLGraphicsGLRender) {
 
 		Element root = doc.createElement("glge");
 
@@ -86,7 +85,7 @@ public class Output3D {
 
 		Element groupElt = doc.createElement("group");
 		groupElt.setAttribute("id", "objects");
-		for ( MyJTSGeometry myGeom : myJTSGeometries ) {
+		for ( MyJTSGeometry myGeom : openGLGraphicsGLRender.getJTSGeometries() ) {
 			// For each geometry, we write a mesh, a material, animations and an object in the scene
 			String materialID = myGeom.agent.getName() + "material";
 			// String animationID = myGeom.agent.getName()+"animation";

@@ -21,6 +21,7 @@ package msi.gama.gui.displays.layers;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.outputs.layers.*;
+import msi.gama.runtime.IScope;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
@@ -35,9 +36,9 @@ public class QuadTreeLayer extends AbstractLayer {
 	}
 
 	@Override
-	public void privateDrawDisplay(final IGraphics dg) {
+	public void privateDrawDisplay(IScope scope, final IGraphics dg) {
 		BufferedImage image = ((QuadTreeLayerStatement) definition).getSupportImage();
-		dg.drawImage(null, image, null, null, null, null, 0.0, true);
+		dg.drawImage(scope, image, null, null, null, null, 0.0, true);
 	}
 
 	@Override

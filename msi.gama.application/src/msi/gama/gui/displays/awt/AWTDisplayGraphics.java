@@ -23,9 +23,8 @@ import static java.awt.RenderingHints.*;
 import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
@@ -33,7 +32,6 @@ import msi.gaml.operators.Maths;
 import org.jfree.chart.JFreeChart;
 import com.vividsolutions.jts.awt.*;
 import com.vividsolutions.jts.geom.*;
-import com.vividsolutions.jts.index.quadtree.IntervalSize;
 
 /**
  * 
@@ -48,35 +46,12 @@ import com.vividsolutions.jts.index.quadtree.IntervalSize;
  * @version $Revision: 1.13 $ $Date: 2010-03-19 07:12:24 $
  */
 
-public class AWTDisplayGraphics implements IGraphics {
+public class AWTDisplayGraphics extends AbstractDisplayGraphics implements PointTransformation {
 
-	int[] highlightColor = GuiUtils.defaultHighlight;
-	boolean ready = false;
-	private Graphics2D g2;
-	// private Rectangle clipping;
-	private final Rectangle2D rect = new Rectangle2D.Double(0, 0, 1, 1);
+	private final Graphics2D renderer;
+	private final ShapeWriter sw = new ShapeWriter(this);
 
-	private double currentAlpha = 1;
-	private int widthOfDisplayInPixels, heightOfDisplayInPixels;
-	private int xOffsetInPixels = 0;
-	private int yOffsetInPixels = 0;
-	private int widthOfCurrentLayerInPixels = 0;
-	private int heightOfCurrentLayerInPixels = 0;
-	private int widthOfEnvironmentInModelUnits = 0;
-	private int heightOfEnvironmentInModelUnits = 0;
-	private final PointTransformation fromModelUnitsToPixels = new PointTransformation() {
-
-		@Override
-		public void transform(final Coordinate c, final Point2D p) {
-			int xp = xFromModelUnitsToPixels(c.x);
-			int yp = yFromModelUnitsToPixels(c.y);
-			p.setLocation(xp, yp);
-		}
-	};
-	private final ShapeWriter sw = new ShapeWriter(fromModelUnitsToPixels);
-	private double xRatioBetweenPixelsAndModelUnits;
-	private double yRatioBetweenPixelsAndModelUnits;
-	private static final Font defaultFont = new Font("Helvetica", Font.PLAIN, 12);
+	private static final Font defaultFont = new Font("Helvetica", Font.BOLD, 12);
 
 	static {
 
@@ -96,124 +71,42 @@ public class AWTDisplayGraphics implements IGraphics {
 		SPEED_RENDERING.put(KEY_COLOR_RENDERING, VALUE_COLOR_RENDER_SPEED);
 		SPEED_RENDERING.put(KEY_ALPHA_INTERPOLATION, VALUE_ALPHA_INTERPOLATION_SPEED);
 		SPEED_RENDERING.put(KEY_INTERPOLATION, VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-		SPEED_RENDERING.put(KEY_ANTIALIASING, VALUE_ANTIALIAS_OFF);
+		SPEED_RENDERING.put(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
 
 	}
 
-	private final int xFromModelUnitsToPixels(double length) {
-		return xOffsetInPixels + (int) (xRatioBetweenPixelsAndModelUnits * length /* + 0.5 */);
-	}
-
-	private final int yFromModelUnitsToPixels(double length) {
-		return yOffsetInPixels + (int) (yRatioBetweenPixelsAndModelUnits * length /* + 0.5 */);
-	}
-
-	private final int wFromModelUnitsToPixels(double length) {
-		return (int) (xRatioBetweenPixelsAndModelUnits * length * +0.5);
-	}
-
-	private final int hFromModelUnitsToPixels(double length) {
-		return (int) (yRatioBetweenPixelsAndModelUnits * length + 0.5);
-	}
-
-	public AWTDisplayGraphics(final BufferedImage image, int env_width, int env_height) {
-		this(image.getWidth(), image.getHeight(), env_width, env_height);
-		setGraphics((Graphics2D) image.getGraphics());
-	}
-
-	public AWTDisplayGraphics(final int width, final int height, int env_width, int env_height) {
-		setDisplayDimensionsInPixels(width, height);
-		widthOfEnvironmentInModelUnits = env_width;
-		heightOfEnvironmentInModelUnits = env_height;
-	}
-
-	/**
-	 * Method setGraphics.
-	 * @param g Graphics2D
-	 */
-	@Override
-	public void setGraphics(final Graphics2D g) {
-		ready = true;
-		g2 = g;
-		setQualityRendering(false);
-		g2.setFont(defaultFont);
+	public AWTDisplayGraphics(final IDisplaySurface surface, final Graphics2D g2) {
+		super(surface);
+		renderer = g2;
+		// setQualityRendering(true); // Turned on by default
+		renderer.setFont(defaultFont);
 	}
 
 	@Override
 	public void setQualityRendering(final boolean quality) {
-		if ( g2 != null ) {
-			g2.setRenderingHints(quality ? QUALITY_RENDERING : SPEED_RENDERING);
-		}
+		renderer.setRenderingHints(quality ? QUALITY_RENDERING : SPEED_RENDERING);
 	}
 
-	@Override
-	public boolean isReady() {
-		return ready;
-	}
-
-	/**
-	 * Method setComposite.
-	 * @param alpha AlphaComposite
-	 */
 	@Override
 	public void setOpacity(final double alpha) {
-		// 1 means opaque ; 0 means transparent
-		if ( IntervalSize.isZeroWidth(alpha, currentAlpha) ) { return; }
-		currentAlpha = alpha;
-		g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) alpha));
+		super.setOpacity(alpha);
+		renderer.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) alpha));
 	}
 
 	/**
-	 * Method getDisplayWidth.
-	 * @return int
+	 * Implements PointTransformation.transform
+	 * @see com.vividsolutions.jts.awt.PointTransformation#transform(com.vividsolutions.jts.geom.Coordinate,
+	 *      java.awt.geom.Point2D)
 	 */
 	@Override
-	public int getDisplayWidthInPixels() {
-		return widthOfDisplayInPixels;
+	public void transform(final Coordinate c, final Point2D p) {
+		p.setLocation(xFromModelUnitsToPixels(c.x), yFromModelUnitsToPixels(c.y));
 	}
 
-	/**
-	 * Method getDisplayHeight.
-	 * @return int
-	 */
-	@Override
-	public int getDisplayHeightInPixels() {
-		return heightOfDisplayInPixels;
-	}
-
-	/**
-	 * Method setDisplayDimensions.
-	 * @param width int
-	 * @param height int
-	 */
-	@Override
-	public void setDisplayDimensionsInPixels(final int width, final int height) {
-		widthOfDisplayInPixels = width;
-		heightOfDisplayInPixels = height;
-	}
-
-	/**
-	 * Method setDrawingColor.
-	 * @param c Color
-	 */
-	private void setDrawingColor(final Color c) {
-		if ( g2 != null && g2.getColor() != c ) {
-			g2.setColor(c);
-		}
-	}
-
-	/**
-	 * Method drawImage.
-	 * @param img Image
-	 * @param angle Integer
-	 * @param smooth boolean
-	 * @param name String
-	 * @param z float (has no effet in java 2D)
-	 */
 	@Override
 	public Rectangle2D drawImage(IScope scope, BufferedImage img, ILocation locationInModelUnits,
 		ILocation sizeInModelUnits, Color gridColor, Integer angle, Double z, boolean isDynamic) {
-		AffineTransform saved = g2.getTransform();
+		AffineTransform saved = renderer.getTransform();
 		int curX, curY;
 		if ( locationInModelUnits == null ) {
 			curX = xOffsetInPixels;
@@ -224,31 +117,34 @@ public class AWTDisplayGraphics implements IGraphics {
 		}
 		int curWidth, curHeight;
 		if ( sizeInModelUnits == null ) {
-			curWidth = widthOfCurrentLayerInPixels;
-			curHeight = heightOfCurrentLayerInPixels;
+			curWidth = widthOfLayerInPixels;
+			curHeight = heightOfLayerInPixels;
 		} else {
 			curWidth = wFromModelUnitsToPixels(sizeInModelUnits.getX());
 			curHeight = hFromModelUnitsToPixels(sizeInModelUnits.getY());
 		}
 		if ( angle != null ) {
-			g2.rotate(Maths.toRad * angle, curX + curWidth / 2, curY + curHeight / 2);
+			renderer.rotate(Maths.toRad * angle, curX + curWidth / 2, curY + curHeight / 2);
 		}
-		g2.drawImage(img, curX, curY, curWidth, curHeight, null);
+		renderer.drawImage(img, curX, curY, curWidth, curHeight, null);
 		if ( gridColor != null ) {
 			drawGrid(img, gridColor);
 		}
-		g2.setTransform(saved);
+		renderer.setTransform(saved);
 		rect.setRect(curX, curY, curWidth, curHeight);
+		if ( highlight ) {
+			highlightRectangleInPixels(rect);
+		}
 		return rect.getBounds2D();
 	}
 
 	/**
-	 * Method drawChart.
+	 * Method drawChart.Simply creates an image from the chart and displays it.
 	 * @param chart JFreeChart
 	 */
 	@Override
 	public Rectangle2D drawChart(final IScope scope, final JFreeChart chart, final Double z) {
-		BufferedImage im = chart.createBufferedImage(widthOfCurrentLayerInPixels, heightOfCurrentLayerInPixels);
+		BufferedImage im = chart.createBufferedImage(widthOfLayerInPixels, heightOfLayerInPixels);
 		return drawImage(scope, im, new GamaPoint(0, 0), null, null, 0, z, true);
 	}
 
@@ -262,7 +158,7 @@ public class AWTDisplayGraphics implements IGraphics {
 	@Override
 	public Rectangle2D drawString(String string, Color stringColor, ILocation locationInModelUnits,
 		java.lang.Double heightInModelUnits, String fontName, Integer styleName, Integer angle, Double z) {
-		setDrawingColor(stringColor);
+		renderer.setColor(highlight ? highlightColor : stringColor);
 		int curX, curY;
 		if ( locationInModelUnits == null ) {
 			curX = xOffsetInPixels;
@@ -273,21 +169,24 @@ public class AWTDisplayGraphics implements IGraphics {
 		}
 		int curHeight;
 		if ( heightInModelUnits == null ) {
-			curHeight = heightOfCurrentLayerInPixels;
+			curHeight = heightOfLayerInPixels;
+			GuiUtils.debug("AWTDisplayGraphics.drawString  " + string + " " + curHeight);
 		} else {
 			curHeight = hFromModelUnitsToPixels(heightInModelUnits);
+			GuiUtils.debug("AWTDisplayGraphics.drawString  " + string + " " + curHeight);
+
 		} // FIXME Optimize by keeping the current values
 		int style = styleName == null ? Font.PLAIN : styleName;
 		Font f = new Font(fontName, style, curHeight);
-		g2.setFont(f);
-		AffineTransform saved = g2.getTransform();
+		renderer.setFont(f);
+		AffineTransform saved = renderer.getTransform();
 		if ( angle != null ) {
-			Rectangle2D r = g2.getFontMetrics().getStringBounds(string, g2);
-			g2.rotate(Maths.toRad * angle, curX + r.getWidth() / 2, curY + r.getHeight() / 2);
+			Rectangle2D r = renderer.getFontMetrics().getStringBounds(string, renderer);
+			renderer.rotate(Maths.toRad * angle, curX + r.getWidth() / 2, curY + r.getHeight() / 2);
 		}
-		g2.drawString(string, curX, curY);
-		g2.setTransform(saved);
-		return g2.getFontMetrics().getStringBounds(string, g2);
+		renderer.drawString(string, curX, curY);
+		renderer.setTransform(saved);
+		return renderer.getFontMetrics().getStringBounds(string, renderer);
 	}
 
 	/**
@@ -311,31 +210,20 @@ public class AWTDisplayGraphics implements IGraphics {
 			geom = geometry.getInnerGeometry();
 		}
 		boolean f = geom instanceof LineString || geom instanceof MultiLineString ? false : fill;
-		return drawShape(color, sw.toShape(geom), f, border, angle);
-	}
-
-	/**
-	 * Method drawShape.
-	 * @param c Color
-	 * @param s Shape
-	 * @param fill boolean
-	 * @param angle Integer
-	 */
-	public Rectangle2D drawShape(final Color c, final Shape s, final boolean fill, final Color border,
-		final Integer angle) {
+		Shape s = sw.toShape(geom);
 		try {
 			Rectangle2D r = s.getBounds2D();
-			AffineTransform saved = g2.getTransform();
+			AffineTransform saved = renderer.getTransform();
 			if ( angle != null ) {
-				g2.rotate(Maths.toRad * angle, r.getX() + r.getWidth() / 2, r.getY() + r.getHeight() / 2);
+				renderer.rotate(Maths.toRad * angle, r.getX() + r.getWidth() / 2, r.getY() + r.getHeight() / 2);
 			}
-			setDrawingColor(c);
-			if ( fill ) {
-				g2.fill(s);
-				setDrawingColor(border);
+			renderer.setColor(highlight ? highlightColor : color);
+			if ( f ) {
+				renderer.fill(s);
+				renderer.setColor(highlight ? highlightColor : border);
 			}
-			g2.draw(s);
-			g2.setTransform(saved);
+			renderer.draw(s);
+			renderer.setTransform(saved);
 			return r;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -346,81 +234,56 @@ public class AWTDisplayGraphics implements IGraphics {
 	@Override
 	public void fillBackground(final Color bgColor, final double opacity) {
 		setOpacity(opacity);
-		g2.setColor(bgColor);
-		g2.fillRect(0, 0, widthOfDisplayInPixels, heightOfDisplayInPixels);
+		renderer.setColor(bgColor);
+		renderer.fillRect(0, 0, widthOfDisplayInPixels, heightOfDisplayInPixels);
 	}
 
 	public void drawGrid(final BufferedImage image, final Color lineColor) {
 		final Line2D line = new Line2D.Double();
+		renderer.setColor(lineColor);
 		// The image contains the dimensions of the grid.
-		double stepx = (double) widthOfCurrentLayerInPixels / image.getWidth();
-		for ( double step = 0.0, end = widthOfCurrentLayerInPixels; step < end + 1; step += stepx ) {
-			line.setLine(step, 0, step, heightOfCurrentLayerInPixels);
-			drawShape(lineColor, line, false, null, null);
+		double stepx = (double) widthOfLayerInPixels / image.getWidth();
+		for ( double step = 0.0, end = widthOfLayerInPixels; step < end + 1; step += stepx ) {
+			line.setLine(xOffsetInPixels + step, yOffsetInPixels, xOffsetInPixels + step, yOffsetInPixels +
+				heightOfLayerInPixels);
+			renderer.draw(line);
 		}
-		line.setLine(widthOfCurrentLayerInPixels - 1, 0, widthOfCurrentLayerInPixels - 1,
-			heightOfCurrentLayerInPixels - 1);
-		drawShape(lineColor, line, false, null, null);
-		double stepy = (double) heightOfCurrentLayerInPixels / image.getHeight();
-		for ( double step = 0.0, end = heightOfCurrentLayerInPixels; step < end + 1; step += stepy ) {
-			line.setLine(0, step, widthOfCurrentLayerInPixels, step);
-			drawShape(lineColor, line, false, null, null);
+		line.setLine(xOffsetInPixels + widthOfLayerInPixels - 1, yOffsetInPixels, xOffsetInPixels +
+			widthOfLayerInPixels - 1, yOffsetInPixels + heightOfLayerInPixels - 1);
+		renderer.draw(line);
+		double stepy = (double) heightOfLayerInPixels / image.getHeight();
+		for ( double step = 0.0, end = heightOfLayerInPixels; step < end + 1; step += stepy ) {
+			line.setLine(xOffsetInPixels, yOffsetInPixels + step, xOffsetInPixels + widthOfLayerInPixels,
+				yOffsetInPixels + step);
+			renderer.draw(line);
 		}
-		line.setLine(0, heightOfCurrentLayerInPixels - 1, widthOfCurrentLayerInPixels - 1,
-			heightOfCurrentLayerInPixels - 1);
-		drawShape(lineColor, line, false, null, null);
+		line.setLine(xOffsetInPixels, yOffsetInPixels + heightOfLayerInPixels - 1, xOffsetInPixels +
+			widthOfLayerInPixels - 1, yOffsetInPixels + heightOfLayerInPixels - 1);
+		renderer.draw(line);
 
 	}
 
+	private void highlightRectangleInPixels(final Rectangle2D r) {
+		if ( r == null ) { return; }
+		Stroke oldStroke = renderer.getStroke();
+		renderer.setStroke(new BasicStroke(5));
+		Color old = renderer.getColor();
+		renderer.setColor(highlightColor);
+		renderer.draw(r);
+		renderer.setStroke(oldStroke);
+		renderer.setColor(old);
+	}
+
+	private boolean highlight;
+
 	@Override
-	public int[] getHighlightColor() {
-		return highlightColor;
+	public void beginHighlight() {
+		highlight = true;
 	}
 
 	@Override
-	public void setHighlightColor(final int[] rgb) {
-		highlightColor = rgb;
-	}
-
-	@Override
-	public void highlightRectangleInPixels(final IAgent a, final Rectangle2D r) {
-		Stroke oldStroke = g2.getStroke();
-		g2.setStroke(new BasicStroke(5));
-		Color old = g2.getColor();
-		g2.setColor(new Color(highlightColor[0], highlightColor[1], highlightColor[2]));
-		g2.draw(r);
-		g2.setStroke(oldStroke);
-		g2.setColor(old);
-	}
-
-	@Override
-	public void beginDrawingLayers() {}
-
-	@Override
-	public void newLayer(ILayer layer) {
-		xOffsetInPixels = layer.getPositionInPixels().x;
-		yOffsetInPixels = layer.getPositionInPixels().y;
-		widthOfCurrentLayerInPixels = layer.getSizeInPixels().x;
-		heightOfCurrentLayerInPixels = layer.getSizeInPixels().y;
-		xRatioBetweenPixelsAndModelUnits =
-			(double) widthOfCurrentLayerInPixels / (double) widthOfEnvironmentInModelUnits;
-		yRatioBetweenPixelsAndModelUnits =
-			(double) heightOfCurrentLayerInPixels / (double) heightOfEnvironmentInModelUnits;
-
-	}
-
-	public Graphics2D getGraphics2D() {
-		return g2;
-	}
-
-	@Override
-	public int getEnvironmentWidth() {
-		return widthOfEnvironmentInModelUnits;
-	}
-
-	@Override
-	public int getEnvironmentHeight() {
-		return heightOfEnvironmentInModelUnits;
+	public void endHighlight() {
+		highlight = false;
 	}
 
 }

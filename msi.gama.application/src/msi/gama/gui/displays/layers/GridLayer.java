@@ -27,6 +27,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
 import msi.gama.outputs.layers.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.swt.widgets.Composite;
 
@@ -72,7 +73,7 @@ public class GridLayer extends ImageLayer {
 	}
 
 	@Override
-	public void privateDrawDisplay(final IGraphics dg) {
+	public void privateDrawDisplay(IScope scope, final IGraphics dg) {
 		buildImage();
 		if ( image == null ) { return; }
 		Color lineColor = null;
@@ -82,7 +83,7 @@ public class GridLayer extends ImageLayer {
 				lineColor = Color.black;
 			}
 		}
-		dg.drawImage(null, image, null, null, lineColor, null, 0.0, true);
+		dg.drawImage(scope, image, null, null, lineColor, null, 0.0, true);
 
 	}
 

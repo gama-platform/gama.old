@@ -23,6 +23,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.outputs.layers.*;
+import msi.gama.runtime.IScope;
 import org.eclipse.swt.widgets.Composite;
 
 /**
@@ -75,10 +76,10 @@ public class ImageLayer extends AbstractLayer {
 	}
 
 	@Override
-	public void privateDrawDisplay(final IGraphics dg) {
+	public void privateDrawDisplay(IScope scope, final IGraphics dg) {
 		buildImage();
 		if ( image == null ) { return; }
-		dg.drawImage(null, image, null, null, null, null, 0.0, false);
+		dg.drawImage(scope, image, null, null, null, null, 0.0, false);
 	}
 
 	@Override

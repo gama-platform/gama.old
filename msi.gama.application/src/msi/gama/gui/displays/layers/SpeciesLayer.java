@@ -21,7 +21,6 @@ package msi.gama.gui.displays.layers;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -72,53 +71,34 @@ public class SpeciesLayer extends AgentLayer {
 	}
 
 	@Override
-	public void privateDrawDisplay(final IGraphics g) throws GamaRuntimeException {
-
+	public void privateDrawDisplay(IScope scope, final IGraphics g) throws GamaRuntimeException {
 		shapes.clear();
-		IScope scope = GAMA.obtainNewScope();
-		try {
-			ISpecies species = ((SpeciesLayerStatement) definition).getSpecies();
-			IAgent world = scope.getSimulationScope();
-			if ( !world.dead() ) {
-				IPopulation microPop = world.getMicroPopulation(species);
-				if ( microPop != null ) {
-					scope.setGraphics(g);
-					drawPopulation(world, (SpeciesLayerStatement) definition, microPop, scope, g);
-				}
+		ISpecies species = ((SpeciesLayerStatement) definition).getSpecies();
+		IAgent world = scope.getSimulationScope();
+		if ( !world.dead() ) {
+			IPopulation microPop = world.getMicroPopulation(species);
+			if ( microPop != null ) {
+				drawPopulation(scope, g, world, (SpeciesLayerStatement) definition, microPop);
 			}
-
-		} finally {
-			GAMA.releaseScope(scope);
 		}
-
 	}
 
-	private void drawPopulation(final IAgent host, final SpeciesLayerStatement layer, final IPopulation population,
-		final IScope scope, final IGraphics g) throws GamaRuntimeException {
+	private void drawPopulation(final IScope scope, final IGraphics g, final IAgent host,
+		final SpeciesLayerStatement layer, final IPopulation population) throws GamaRuntimeException {
 		IAspect aspect = population.getAspect(layer.getAspectName());
 		if ( aspect == null ) {
 			aspect = AspectStatement.DEFAULT_ASPECT;
 		}
-		// g.setOpacity(layer.getTransparency());
-
 		List<IAgent> _agents = population.getAgentsList();
 		if ( !_agents.isEmpty() ) {
-
 			// draw the population
 			for ( IAgent a : _agents ) {
-				if ( a == null || a.dead() ) {
-					continue;
-				}
-				// TODO Create a "catch GamaRuntimeException" ?
 				Rectangle2D r = aspect.draw(scope, a);
-				if ( a == GuiUtils.getHighlightedAgent() ) {
-					g.highlightRectangleInPixels(a,r);
+				if ( r != null ) {
+					shapes.put(a, r);
 				}
-				shapes.put(a, r);
 			}
-
 			IPopulation microPop;
-
 			// draw grids first...
 			List<GridLayerStatement> gridLayers = layer.getGridLayers();
 			for ( GridLayerStatement gl : gridLayers ) {
@@ -153,7 +133,7 @@ public class SpeciesLayer extends AgentLayer {
 						microPop = a.getMicroPopulation(ml.getSpecies());
 
 						if ( microPop != null && microPop.size() > 0 ) {
-							drawPopulation(a, ml, microPop, scope, g);
+							drawPopulation(scope, g, a, ml, microPop);
 						}
 					} finally {
 						a.releaseLock();

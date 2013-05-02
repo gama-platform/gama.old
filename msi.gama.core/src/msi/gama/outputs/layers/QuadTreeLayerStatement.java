@@ -20,7 +20,7 @@ package msi.gama.outputs.layers;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -66,6 +66,15 @@ public class QuadTreeLayerStatement extends AbstractLayerStatement {
 
 	@Override
 	public void step(final IScope scope) throws GamaRuntimeException {
+		IGraphics g = scope.getGraphics();
+		if ( g != null ) {
+			if ( supportImage.getWidth() != g.getDisplayWidthInPixels() ||
+				supportImage.getHeight() != g.getDisplayHeightInPixels() ) {
+				supportImage.flush();
+				supportImage =
+					ImageUtils.createCompatibleImage(g.getDisplayWidthInPixels(), g.getDisplayHeightInPixels());
+			}
+		}
 		Graphics2D g2 = (Graphics2D) supportImage.getGraphics();
 		scope.getSimulationScope().displaySpatialIndexOn(g2, supportImage.getWidth(), supportImage.getHeight());
 		super.step(scope);

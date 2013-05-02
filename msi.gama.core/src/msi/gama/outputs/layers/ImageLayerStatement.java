@@ -189,7 +189,6 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	public void setGisLayerName(final String newValue) throws GamaRuntimeException {
 		setName(newValue);
 		IScope scope = GAMA.obtainNewScope();
-		if ( scope == null ) { throw new GamaRuntimeException("No simulation running"); }
 		try {
 			buildGisLayer(scope);
 		} finally {

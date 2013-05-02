@@ -23,7 +23,6 @@ import java.util.*;
 import java.util.concurrent.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.displays.awt.AWTDisplayGraphics;
 import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
@@ -829,25 +828,6 @@ public class SwtGui implements IGui {
 	@Override
 	public IEditorFactory getEditorFactory() {
 		return EditorFactory.getInstance();
-	}
-
-	/**
-	 * @see msi.gama.common.interfaces.IGui#createDisplay(msi.gama.outputs.layers.IDisplayLayer, double, double,
-	 *      msi.gama.common.interfaces.IGraphics)
-	 */
-	// @Override
-	// public IDisplay createDisplay(final IDisplayLayer layer, final double w, final double h,
-	// final IGraphics g) {
-	// return DisplayManager.createDisplay(layer, w, h, g);
-	// }
-
-	/**
-	 * @see msi.gama.common.interfaces.IGui#newGraphics(int, int)
-	 */
-	@Override
-	public IGraphics newGraphics(final int width, final int height) {
-		// TODO Hook OpenGL here
-		return new AWTDisplayGraphics(width, height, width, height);
 	}
 
 	static final Map<String, Class> displayClasses = new HashMap();

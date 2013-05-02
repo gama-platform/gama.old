@@ -22,6 +22,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gaml.compilation.ISymbol;
 
 /**
@@ -46,4 +47,20 @@ public interface IDisplayOutput extends IOutput {
 	public void setBackgroundColor(Color value);
 
 	public void forceUpdate();
+
+	public abstract ILocation getOutput3DNbCycles();
+
+	public abstract boolean getPolygonMode();
+
+	public abstract Color getAmbientLightColor();
+
+	public abstract ILocation getCameraUpVector();
+
+	public abstract ILocation getCameraLookPos();
+
+	public abstract ILocation getCameraPos();
+
+	public abstract boolean getOutput3D();
+
+	public abstract boolean getTesselation();
 }

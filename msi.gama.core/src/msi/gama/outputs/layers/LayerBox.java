@@ -54,8 +54,8 @@ public class LayerBox implements IDisplayLayerBox {
 	Rectangle2D.Double currentBoundingBox = new Rectangle2D.Double();
 	boolean constantBoundingBox = false;
 
-	public LayerBox(final IExpression transp, final IExpression pos, final IExpression ext,
-		final IExpression elev, final IExpression refr) throws GamaRuntimeException {
+	public LayerBox(final IExpression transp, final IExpression pos, final IExpression ext, final IExpression elev,
+		final IExpression refr) throws GamaRuntimeException {
 		if ( transp != null ) {
 			transparency = transp;
 		}
@@ -72,15 +72,15 @@ public class LayerBox implements IDisplayLayerBox {
 		if ( refr != null ) {
 			refresh = refr;
 		}
-		setTransparency(transparency);
-		setPosition(position);
-		setExtent(extent);
-		setElevation(elevation);
-		setRefresh(refr);
+		IScope scope = GAMA.getDefaultScope();
+		setTransparency(scope, transparency);
+		setPosition(scope, position);
+		setExtent(scope, extent);
+		setElevation(scope, elevation);
+		setRefresh(scope, refr);
 	}
 
-	public LayerBox(final Double transp, final GamaPoint pos, final GamaPoint ext,
-		final Double elev, final Boolean refr) {
+	public LayerBox(final Double transp, final GamaPoint pos, final GamaPoint ext, final Double elev, final Boolean refr) {
 		setTransparency(transp);
 		setPosition(pos);
 		setExtent(ext);
@@ -88,8 +88,8 @@ public class LayerBox implements IDisplayLayerBox {
 		setRefresh(refr);
 	}
 
-	public LayerBox(final Double transp, final Double posx, final Double posy, final Double extx,
-		final Double exty, final Double elev, final Boolean refr) {
+	public LayerBox(final Double transp, final Double posx, final Double posy, final Double extx, final Double exty,
+		final Double elev, final Boolean refr) {
 		setTransparency(transp);
 		setPosition(posx, posy);
 		setExtent(extx, exty);
@@ -98,28 +98,20 @@ public class LayerBox implements IDisplayLayerBox {
 	}
 
 	@Override
-	public void compute(final IScope sim) throws GamaRuntimeException {
+	public void compute(final IScope scope) throws GamaRuntimeException {
 		try {
 			currentTransparency =
-				constantTransparency == null ? 1d - Math.min(
-					Math.max(Cast.asFloat(sim, transparency.value(sim)), 0d), 1d)
-					: constantTransparency;
+				constantTransparency == null ? 1d - Math.min(Math.max(Cast.asFloat(scope, transparency.value(scope)), 0d),
+					1d) : constantTransparency;
 			if ( !constantBoundingBox ) {
-				currentPosition =
-					constantPosition == null ? Cast.asPoint(sim, position.value(sim))
-						: constantPosition;
-				currentExtent =
-					constantExtent == null ? Cast.asPoint(sim, extent.value(sim)) : constantExtent;
+				currentPosition = constantPosition == null ? Cast.asPoint(scope, position.value(scope)) : constantPosition;
+				currentExtent = constantExtent == null ? Cast.asPoint(scope, extent.value(scope)) : constantExtent;
 				if ( currentPosition != null && currentExtent != null ) {
 					computeBoundingBox();
 				}
 				currentElevation =
-					constantElevation == null ? Cast.asFloat(sim, elevation.value(sim))
-						: constantElevation;
-
-				currentRefresh =
-					constantRefresh == null ? Cast.asBool(sim, refresh.value(sim))
-						: constantRefresh;
+					constantElevation == null ? Cast.asFloat(scope, elevation.value(scope)) : constantElevation;
+				currentRefresh = constantRefresh == null ? Cast.asBool(scope, refresh.value(scope)) : constantRefresh;
 			}
 		} catch (Exception e) {
 			throw new GamaRuntimeException(e);
@@ -128,54 +120,51 @@ public class LayerBox implements IDisplayLayerBox {
 	}
 
 	@Override
-	public void setTransparency(final IExpression t) throws GamaRuntimeException {
+	public void setTransparency(IScope scope, final IExpression t) throws GamaRuntimeException {
 		if ( t != null ) {
 			transparency = t;
 			if ( t.isConst() ) {
-				setTransparency(Cast.asFloat(GAMA.getDefaultScope(),
-					t.value(GAMA.getDefaultScope())));
+				setTransparency(Cast.asFloat(scope, t.value(scope)));
 			}
 		}
 	}
 
 	@Override
-	public void setPosition(final IExpression p) throws GamaRuntimeException {
+	public void setPosition(final IScope scope, final IExpression p) throws GamaRuntimeException {
 		if ( p != null ) {
 			position = p;
 			if ( p.isConst() ) {
-				setPosition(Cast.asPoint(GAMA.getDefaultScope(),
-					position.value(GAMA.getDefaultScope())));
+				setPosition(Cast.asPoint(scope, position.value(scope)));
 			}
 		}
 	}
 
 	@Override
-	public void setExtent(final IExpression e) throws GamaRuntimeException {
+	public void setExtent(final IScope scope, final IExpression e) throws GamaRuntimeException {
 		if ( e != null ) {
 			extent = e;
 			if ( e.isConst() ) {
-				setExtent(Cast
-					.asPoint(GAMA.getDefaultScope(), extent.value(GAMA.getDefaultScope())));
+				setExtent(Cast.asPoint(scope, extent.value(scope)));
 			}
 		}
 	}
 
 	@Override
-	public void setElevation(final IExpression e) throws GamaRuntimeException {
+	public void setElevation(final IScope scope, final IExpression e) throws GamaRuntimeException {
 		if ( e != null ) {
 			elevation = e;
 			if ( e.isConst() ) {
-				setElevation(Cast.asFloat(GAMA.getDefaultScope(), e.value(GAMA.getDefaultScope())));
+				setElevation(Cast.asFloat(scope, e.value(scope)));
 			}
 		}
 	}
 
 	@Override
-	public void setRefresh(IExpression r) throws GamaRuntimeException {
+	public void setRefresh(final IScope scope, IExpression r) throws GamaRuntimeException {
 		if ( r != null ) {
 			refresh = r;
 			if ( r.isConst() ) {
-				setRefresh(Cast.asBool(GAMA.getDefaultScope(), r.value(GAMA.getDefaultScope())));
+				setRefresh(Cast.asBool(scope, r.value(scope)));
 			}
 		}
 
@@ -256,8 +245,8 @@ public class LayerBox implements IDisplayLayerBox {
 	}
 
 	private Rectangle2D.Double computeBoundingBox() {
-		currentBoundingBox.setRect(currentPosition.getX(), currentPosition.getY(),
-			Math.abs(currentExtent.getX()), Math.abs(currentExtent.getY()));
+		currentBoundingBox.setRect(currentPosition.getX(), currentPosition.getY(), Math.abs(currentExtent.getX()),
+			Math.abs(currentExtent.getY()));
 		return currentBoundingBox;
 	}
 

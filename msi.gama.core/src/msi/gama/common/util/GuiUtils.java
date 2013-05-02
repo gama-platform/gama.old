@@ -308,14 +308,15 @@ public class GuiUtils {
 		}
 	}
 
-	/**
-	 * @param newWidth
-	 * @param newHeight
-	 * @return
-	 */
-	public static IGraphics newGraphics(final int width, final int height) {
-		return gui != null ? gui.newGraphics(width, height) : null;
-	}
+	//
+	// /**
+	// * @param newWidth
+	// * @param newHeight
+	// * @return
+	// */
+	// public static IGraphics newGraphics(final int width, final int height) {
+	// return gui != null ? gui.newGraphics(width, height) : null;
+	// }
 
 	/**
 	 * @param layerDisplayOutput
@@ -350,6 +351,7 @@ public class GuiUtils {
 		gui.closeDialogs();
 	}
 
+	// TODO Transform this into a list
 	public static IAgent getHighlightedAgent() {
 		if ( gui == null ) { return null; }
 		return gui.getHighlightedAgent();

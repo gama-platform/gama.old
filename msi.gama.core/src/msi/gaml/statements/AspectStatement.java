@@ -20,7 +20,8 @@ package msi.gaml.statements;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -29,7 +30,6 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaColor;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
@@ -44,18 +44,21 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 		@Override
 		public Rectangle2D draw(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 			if ( agent != null ) {
+				IGraphics g = scope.getGraphics();
+				if ( g == null ) { return null; }
 				try {
 					agent.acquireLock();
 					if ( agent.dead() ) { return null; }
-					GamaColor c = null;
-					if ( agent.getSpecies().hasVar(IKeyword.COLOR) ) {
-						c = Cast.asColor(scope, scope.getAgentVarValue(agent, IKeyword.COLOR));
+					if ( agent == GuiUtils.getHighlightedAgent() ) {
+						g.beginHighlight();
 					}
-					Rectangle2D r =
-						scope.getGraphics().drawGamaShape(scope, agent.getGeometry(), c == null ? Color.YELLOW : c,
-							true, Color.black, 0, false);
+					Color c =
+						agent.getSpecies().hasVar(IKeyword.COLOR) ? Cast.asColor(scope,
+							agent.getDirectVarValue(scope, IKeyword.COLOR)) : Color.YELLOW;
+					Rectangle2D r = g.drawGamaShape(scope, agent.getGeometry(), c, true, Color.black, 0, false);
 					return r;
 				} finally {
+					g.endHighlight();
 					agent.releaseLock();
 				}
 			}
@@ -72,12 +75,19 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 	@Override
 	public Rectangle2D draw(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		if ( agent != null ) {
+			IGraphics g = scope.getGraphics();
+			if ( g == null ) { return null; }
 			try {
 				agent.acquireLock();
 				if ( agent.dead() ) { return null; }
+				if ( agent == GuiUtils.getHighlightedAgent() ) {
+					g.beginHighlight();
+				}
 				Object result = scope.execute(this, agent);
-				return (Rectangle2D) result;
+				if ( result instanceof Rectangle2D ) { return (Rectangle2D) result; }
+				return null;
 			} finally {
+				g.endHighlight();
 				agent.releaseLock();
 			}
 

@@ -20,31 +20,21 @@ package msi.gama.gui.views;
 
 import java.awt.Color;
 import javax.swing.JComponent;
-import msi.gama.common.interfaces.EditorListener;
-import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.interfaces.IDisplaySurface.OpenGL;
-import msi.gama.common.interfaces.ILayer;
-import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.layers.AbstractLayer;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.perspectives.ModelingPerspective;
 import msi.gama.gui.swt.swing.EmbeddedSwingComposite;
-import msi.gama.outputs.LayeredDisplayOutput;
-import msi.gama.outputs.OutputSynchronizer;
+import msi.gama.outputs.*;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveListener;
-import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.swt.layout.*;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 
 public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements IViewWithZoom {
 
@@ -94,21 +84,6 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		GridLayout layout = new GridLayout(2, false);
 
 		general.setLayout(layout);
-		// final Button label = new Button(general, SWT.CHECK);
-		// label.setFont(SwtGui.labelFont);
-		// label.setLayoutData(SwtGui.labelData);
-		// label.setText("");
-		// label.setSelection(false);
-		// label.addSelectionListener(new SelectionAdapter() {
-		//
-		// @Override
-		// public void widgetSelected(final SelectionEvent e) {
-		// ((AWTDisplaySurface) ((LayerDisplayOutput) getOutput()).getSurface())
-		// .setNavigationImageEnabled(label.getSelection());
-		// }
-		//
-		// });
-
 		Control aux = new SWTNavigationPanel(general, SWT.None, getOutput().getSurface());
 		GridData data = new GridData(SWT.CENTER, SWT.FILL, true, true);
 		data.minimumHeight = 200;
@@ -125,7 +100,6 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			}
 		});
 		createItem("Navigation", null, general, true);
-		// nav.populate();
 		displayItems();
 		final java.awt.event.MouseListener mlAwt = new java.awt.event.MouseListener() {
 
@@ -181,8 +155,8 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		};
 
 		OutputSynchronizer.incInitializingViews(getOutput().getName()); // incremented in the SWT thread
-
-		swingCompo = new EmbeddedSwingComposite(parent, SWT.NO_REDRAW_RESIZE) {
+		int flags = Platform.getOS().equals(Platform.OS_MACOSX) ? SWT.NO_REDRAW_RESIZE : SWT.NONE;
+		swingCompo = new EmbeddedSwingComposite(parent, flags) {
 
 			@Override
 			protected JComponent createSwingComponent() {
@@ -320,7 +294,6 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		// SwtGui.getDisplay().addFilter(SWT.Paint, pl2);
 		// swingCompo.addPaintListener(pl);
 		// Setting the redraw of the swingCompo itself to false (no need to draw it)
-		// swingCompo.setRedraw(false);
 		if ( Platform.getOS().equals(Platform.OS_MACOSX) ) {
 			swingCompo.setRedraw(false);
 		}
@@ -632,6 +605,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 	@Override
 	public void dispose() {
+		// FIXME Should not be redefined, but we should add a DisposeListener instead
 		SwtGui.getWindow().removePerspectiveListener(perspectiveListener);
 		// FIXME Remove the listeners
 		swingCompo.dispose();

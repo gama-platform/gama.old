@@ -31,22 +31,6 @@ import msi.gama.metamodel.topology.ISpatialIndex.Compound;
  */
 public interface ISimulationAgent extends IAgent {
 
-	// public abstract boolean isAlive();
-
-	// public abstract boolean isPaused();
-
-	// public abstract void pause();
-
-	// public abstract void stop();
-
-	// public abstract void step();
-
-	// public abstract void start();
-
-	// public abstract void close();
-
-	// public abstract void initialize(ParametersSet parameters) throws GamaRuntimeException;
-
 	public GisUtils getGisUtils();
 
 	public abstract Compound getSpatialIndex();

@@ -22,6 +22,7 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 
@@ -122,6 +123,46 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	@Override
 	public String getId() {
 		return isUnique() ? getViewId() : getViewId() + getName();
+	}
+
+	@Override
+	public ILocation getOutput3DNbCycles() {
+		return null;
+	}
+
+	@Override
+	public boolean getPolygonMode() {
+		return false;
+	}
+
+	@Override
+	public Color getAmbientLightColor() {
+		return null;
+	}
+
+	@Override
+	public ILocation getCameraUpVector() {
+		return null;
+	}
+
+	@Override
+	public ILocation getCameraLookPos() {
+		return null;
+	}
+
+	@Override
+	public ILocation getCameraPos() {
+		return null;
+	}
+
+	@Override
+	public boolean getOutput3D() {
+		return false;
+	}
+
+	@Override
+	public boolean getTesselation() {
+		return false;
 	}
 
 }

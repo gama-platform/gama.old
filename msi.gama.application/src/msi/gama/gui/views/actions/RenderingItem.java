@@ -30,7 +30,7 @@ public class RenderingItem extends GamaViewItem {
 	 */
 	@Override
 	protected IContributionItem createItem() {
-		IAction action = new Action("Enable quality rendering", IAction.AS_CHECK_BOX) {
+		IAction action = new Action("Turn anti-aliasing on and off", IAction.AS_CHECK_BOX) {
 
 			@Override
 			public void run() {
@@ -38,6 +38,9 @@ public class RenderingItem extends GamaViewItem {
 				surface.setQualityRendering(this.isChecked());
 			}
 		};
+		action
+			.setToolTipText("Antialiasing of images is turned off by default, but you can choose to turn it on using this button");
+		// action.setChecked(true);
 		action.setImageDescriptor(getImageDescriptor("icons/button_rendering.png"));
 		return new ActionContributionItem(action);
 	}

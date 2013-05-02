@@ -1,7 +1,7 @@
 package msi.gama.jogl.utils;
 
 import java.awt.Color;
-import java.nio.FloatBuffer;
+import java.nio.DoubleBuffer;
 import java.util.*;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
@@ -24,17 +24,16 @@ public class VertexArrayHandler {
 
 	float alpha = 1.0f;
 
-	private final ArrayList<MyTriangulatedGeometry> triangulatedGeometries =
-		new ArrayList<MyTriangulatedGeometry>();
+	private final ArrayList<MyTriangulatedGeometry> triangulatedGeometries = new ArrayList<MyTriangulatedGeometry>();
 	private final ArrayList<MyLine> lines = new ArrayList<MyLine>();
 
 	private int totalNumVertsTriangle;
-	private FloatBuffer vertexBufferTriangle;
-	private FloatBuffer colorBufferTriangle;
+	private DoubleBuffer vertexBufferTriangle;
+	private DoubleBuffer colorBufferTriangle;
 
 	private int totalNumVertsLine;
-	private FloatBuffer vertexBufferLine;
-	private FloatBuffer colorBufferLine;
+	private DoubleBuffer vertexBufferLine;
+	private DoubleBuffer colorBufferLine;
 
 	private MyJTSGeometry curGeometry;
 	private int nbVerticesLine;
@@ -67,25 +66,23 @@ public class VertexArrayHandler {
 			for ( int i = 0; i < curGeometry.geometry.getNumGeometries(); i++ ) {
 
 				if ( curGeometry.geometry.getGeometryType() == "MultiPolygon" ) {
-					buildMultiPolygonVertexArray((MultiPolygon) curGeometry.geometry,
-						curGeometry.z_layer, curGeometry.color, curGeometry.alpha,
-						curGeometry.fill, curGeometry.angle, curGeometry.height);
+					buildMultiPolygonVertexArray((MultiPolygon) curGeometry.geometry, curGeometry.z_layer,
+						curGeometry.color, curGeometry.alpha, curGeometry.fill, curGeometry.angle, curGeometry.height);
 				}
 
 				else if ( curGeometry.geometry.getGeometryType() == "Polygon" ) {
-					buildPolygonVertexArray((Polygon) curGeometry.geometry, curGeometry.z_layer,
-						curGeometry.color, curGeometry.alpha, curGeometry.fill,
-						curGeometry.isTextured, curGeometry.angle);
+					buildPolygonVertexArray((Polygon) curGeometry.geometry, curGeometry.z_layer, curGeometry.color,
+						curGeometry.alpha, curGeometry.fill, curGeometry.isTextured, curGeometry.angle);
 				}
 
 				else if ( curGeometry.geometry.getGeometryType() == "MultiLineString" ) {
-					buildMultiLineStringVertexArray((MultiLineString) curGeometry.geometry,
-						curGeometry.z_layer, curGeometry.color, curGeometry.alpha);
+					buildMultiLineStringVertexArray((MultiLineString) curGeometry.geometry, curGeometry.z_layer,
+						curGeometry.color, curGeometry.alpha);
 				}
 
 				else if ( curGeometry.geometry.getGeometryType() == "LineString" ) {
-					buildLineStringVertexArray((LineString) curGeometry.geometry,
-						curGeometry.z_layer, curGeometry.color, curGeometry.alpha);
+					buildLineStringVertexArray((LineString) curGeometry.geometry, curGeometry.z_layer,
+						curGeometry.color, curGeometry.alpha);
 
 				}
 			}
@@ -98,9 +95,9 @@ public class VertexArrayHandler {
 	public void fillVertexArrayTriangle() {
 
 		totalNumVertsTriangle = nbVerticesTriangle;
-		vertexBufferTriangle = BufferUtil.newFloatBuffer(nbVerticesTriangle * 3);
+		vertexBufferTriangle = BufferUtil.newDoubleBuffer(nbVerticesTriangle * 3);
 
-		colorBufferTriangle = BufferUtil.newFloatBuffer(nbVerticesTriangle * 3);
+		colorBufferTriangle = BufferUtil.newDoubleBuffer(nbVerticesTriangle * 3);
 
 		Iterator<MyTriangulatedGeometry> it2 = triangulatedGeometries.iterator();
 		// For each triangulated shape
@@ -114,8 +111,7 @@ public class VertexArrayHandler {
 				Polygon polygon = (Polygon) curTriangle.getInnerGeometry();
 				for ( int i = 0; i < 3; i++ ) {
 					vertexBufferTriangle.put((float) polygon.getExteriorRing().getPointN(i).getX());
-					vertexBufferTriangle
-						.put((float) -polygon.getExteriorRing().getPointN(i).getY());
+					vertexBufferTriangle.put((float) -polygon.getExteriorRing().getPointN(i).getY());
 					vertexBufferTriangle.put(curTriangulatedGeo.z);
 					colorBufferTriangle.put((float) curTriangulatedGeo.color.getRed() / 255);
 					colorBufferTriangle.put((float) curTriangulatedGeo.color.getGreen() / 255);
@@ -130,8 +126,8 @@ public class VertexArrayHandler {
 	public void fillVertexArrayLine() {
 
 		totalNumVertsLine = nbVerticesLine;
-		vertexBufferLine = BufferUtil.newFloatBuffer(nbVerticesLine * 3 * 2);
-		colorBufferLine = BufferUtil.newFloatBuffer(nbVerticesLine * 3 * 2);
+		vertexBufferLine = BufferUtil.newDoubleBuffer(nbVerticesLine * 3 * 2);
+		colorBufferLine = BufferUtil.newDoubleBuffer(nbVerticesLine * 3 * 2);
 
 		Iterator<MyLine> it = lines.iterator();
 		// For each line
@@ -208,9 +204,8 @@ public class VertexArrayHandler {
 
 	}
 
-	public void buildMultiPolygonVertexArray(final MultiPolygon polygons, final float z,
-		final Color c, final float alpha, final boolean fill, final Integer angle,
-		final float elevation) {
+	public void buildMultiPolygonVertexArray(final MultiPolygon polygons, final double z, final Color c,
+		final double alpha, final boolean fill, final Integer angle, final double elevation) {
 
 		int numGeometries = polygons.getNumGeometries();
 
@@ -233,8 +228,8 @@ public class VertexArrayHandler {
 
 	}
 
-	public void buildPolygonVertexArray(final Polygon polygon, final float z, final Color c,
-		final float alpha, final boolean fill, final boolean isTextured, final Integer angle) {
+	public void buildPolygonVertexArray(final Polygon polygon, final double z, final Color c, final double alpha,
+		final boolean fill, final boolean isTextured, final Integer angle) {
 
 		MyTriangulatedGeometry curTriangulatedGeometry = new MyTriangulatedGeometry();
 		curTriangulatedGeometry.triangles = GeometryUtils.triangulation(null, polygon); // VERIFY
@@ -250,8 +245,8 @@ public class VertexArrayHandler {
 
 	}
 
-	public void buildMultiLineStringVertexArray(final MultiLineString multiline, final float z,
-		final Color c, final float alpha) {
+	public void buildMultiLineStringVertexArray(final MultiLineString multiline, final double z, final Color c,
+		final double alpha2) {
 
 		// get the number of line in the multiline.
 		int numGeometries = multiline.getNumGeometries();
@@ -263,20 +258,19 @@ public class VertexArrayHandler {
 			curLine.line = (LineString) multiline.getGeometryN(i);
 			curLine.z = z;
 			curLine.color = c;
-			curLine.alpha = alpha;
+			curLine.alpha = alpha2;
 			lines.add(curLine);
 			nbVerticesLine = nbVerticesLine + multiline.getGeometryN(i).getNumPoints() * 2;
 		}
 
 	}
 
-	public void buildLineStringVertexArray(final LineString line, final float z, final Color c,
-		final float alpha) {
+	public void buildLineStringVertexArray(final LineString line, final double z, final Color c, final double alpha2) {
 		MyLine curLine = new MyLine();
 		curLine.line = line;
 		curLine.z = z;
 		curLine.color = c;
-		curLine.alpha = alpha;
+		curLine.alpha = alpha2;
 		lines.add(curLine);
 		nbVerticesLine = nbVerticesLine + line.getNumPoints() * 2;
 	}

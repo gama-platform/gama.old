@@ -32,10 +32,12 @@ public class BasicOpenGlDrawer {
 	 * 
 	 * @param geometry
 	 */
-	public void DrawJTSGeometry(MyJTSGeometry geometry) {
+	public void drawJTSGeometry(MyJTSGeometry geometry) {
 		if ( geometry.offSet.x != 0 || geometry.offSet.y != 0 ) {
 			myGl.glTranslated(geometry.offSet.x, -geometry.offSet.y, 0.0f);
 		}
+		// TODO Scale en Z
+		myGl.glScaled(geometry.scale.x, geometry.scale.y, 1);
 
 		// Rotate angle (in XY plan)
 		if ( geometry.angle != 0 ) {
@@ -92,8 +94,7 @@ public class BasicOpenGlDrawer {
 						geometry.color, geometry.alpha);
 				} else {
 					myJTSDrawer.DrawPoint((Point) geometry.geometry, geometry.z_layer, 10,
-						(float) myGLRender.displaySurface.getIGraphics().getMaxEnvDim() / 1000, geometry.color,
-						geometry.alpha);
+						myGLRender.getMaxEnvDim() / 1000, geometry.color, geometry.alpha);
 				}
 			}
 		}
@@ -106,7 +107,7 @@ public class BasicOpenGlDrawer {
 				(float) geometry.geometry.getCentroid().getY(), 0.0f);
 
 		}
-
+		myGl.glScaled(1 / geometry.scale.x, 1 / geometry.scale.y, 1);
 		if ( geometry.offSet.x != 0 || geometry.offSet.y != 0 ) {
 			myGl.glTranslated(-geometry.offSet.x, geometry.offSet.y, 0.0f);
 		}
@@ -120,7 +121,7 @@ public class BasicOpenGlDrawer {
 	public void DrawJTSGeometry(MyJTSGeometry geometry, Color c) {
 
 		myGl.glTranslated(geometry.offSet.x, -geometry.offSet.y, 0.0f);
-
+		myGl.glScaled(geometry.scale.x, geometry.scale.y, 1);
 		// Rotate angle (in XY plan)
 		if ( geometry.angle != 0 ) {
 			myGl.glTranslatef((float) geometry.geometry.getCentroid().getX(), this.myJTSDrawer.yFlag *
@@ -190,7 +191,7 @@ public class BasicOpenGlDrawer {
 				(float) geometry.geometry.getCentroid().getY(), 0.0f);
 
 		}
-
+		myGl.glScaled(1 / geometry.scale.x, 1 / geometry.scale.y, 1);
 		myGl.glTranslated(-geometry.offSet.x, geometry.offSet.y, 0.0f);
 	}
 

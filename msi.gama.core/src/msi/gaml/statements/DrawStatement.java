@@ -77,7 +77,7 @@ combinations = { @combination({ IKeyword.GEOMETRY, EMPTY, BORDER, ROUNDED, COLOR
 public class DrawStatement extends AbstractStatementSequence {
 
 	static final GamaPoint LOC = new GamaPoint(1.0, 1.0);
-	private static final Map<String, Integer> CONSTANTS = new HashMap();
+	public static final Map<String, Integer> CONSTANTS = new HashMap();
 	public static final Map<String, Integer> SHAPES = new HashMap();
 	static {
 		CONSTANTS.put("plain", 0);
@@ -385,7 +385,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			String fName = constFont == null ? Cast.asString(scope, font.value(scope)) : constFont;
 			int fStyle = constStyle == null ? CONSTANTS.get(style.value(scope)) : constStyle;
 
-			return g.drawString(info, getColor(scope), getLocation(scope), getSize(scope).getX(), fName, fStyle,
+			return g.drawString(info, getColor(scope), getLocation(scope), getSize(scope).getY(), fName, fStyle,
 				getRotation(scope), agent.getLocation().getZ());
 
 		}

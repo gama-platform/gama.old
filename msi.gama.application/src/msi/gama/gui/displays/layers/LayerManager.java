@@ -21,6 +21,7 @@ package msi.gama.gui.displays.layers;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.outputs.layers.ILayerStatement;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 
@@ -124,20 +125,26 @@ public class LayerManager implements ILayerManager {
 
 	@Override
 	public void drawLayersOn(final IGraphics g) {
+		IScope scope = GAMA.obtainNewScope();
+		// If the experiment is already closed
+		if ( scope == null ) { return; }
+		scope.setGraphics(g);
 		try {
 			g.beginDrawingLayers();
 			for ( int i = 0, n = enabledLayers.size(); i < n; i++ ) {
 				final ILayer dis = enabledLayers.get(i);
-				dis.drawDisplay(g);
+				dis.drawDisplay(scope, g);
 			}
 			if ( surface.isPaused() ) {
-				pd.drawDisplay(g);
+				pd.drawDisplay(scope, g);
 			}
 		} catch (GamaRuntimeException e) {
 			// e.addContext("in drawing layer " + dis.getMenuName());
 			// throw e;
 			// Temporarily disabled so that it does not appear on the interface.
 			e.printStackTrace();
+		} finally {
+			GAMA.releaseScope(scope);
 		}
 	}
 

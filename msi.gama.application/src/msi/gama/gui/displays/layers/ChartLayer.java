@@ -21,7 +21,7 @@ package msi.gama.gui.displays.layers;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.outputs.layers.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridData;
@@ -82,13 +82,8 @@ public class ChartLayer extends AbstractLayer {
 	}
 
 	@Override
-	public void privateDrawDisplay(final IGraphics dg) {
-		IScope scope = GAMA.obtainNewScope();
-		try {
-			dg.drawChart(scope, getChart(), 0.0);
-		} finally {
-			GAMA.releaseScope(scope);
-		};
+	public void privateDrawDisplay(IScope scope, final IGraphics dg) {
+		dg.drawChart(scope, getChart(), 0.0);
 	}
 
 	@Override

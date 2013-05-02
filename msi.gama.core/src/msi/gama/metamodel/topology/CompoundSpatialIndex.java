@@ -177,8 +177,8 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	// }
 
 	@Override
-	public IList<IShape> allInEnvelope(final IShape source, final Envelope envelope,
-		final IAgentFilter f, final boolean contained) {
+	public IList<IShape> allInEnvelope(final IShape source, final Envelope envelope, final IAgentFilter f,
+		final boolean contained) {
 		Set<ISpatialIndex> sis = findSpatialIndexes(f);
 		if ( sis.isEmpty() ) { return new GamaList(); }
 		IList<IShape> shapes = new GamaList();
@@ -190,7 +190,8 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 
 	@Override
 	public void drawOn(final Graphics2D g2, final int width, final int height) {
-		// NOTHING TO DO
+		// By default, we draw the quadtree
+		quadtree.drawOn(g2, width, height);
 	}
 
 	// @Override

@@ -25,7 +25,7 @@ import java.io.*;
 import java.util.List;
 import javax.imageio.ImageIO;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.IDisplayOutput;
@@ -57,11 +57,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public void initialize(final double w, final double h, final IDisplayOutput output) {
 		outputChanged(w, h, output);
-		// Hack Nico
-		if ( displayGraphics == null ) {
-			displayGraphics = GuiUtils.newGraphics((int) w, (int) h);
-		}
-
 	}
 
 	/**
@@ -140,11 +135,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		this.width = newWidth;
 		this.height = newHeight;
 		Image copy = buffImage;
-		if ( displayGraphics == null ) {
-			displayGraphics = GuiUtils.newGraphics(newWidth, newHeight);
-		} else {
-			displayGraphics.setDisplayDimensionsInPixels(newWidth, newHeight);
-		}
 		createBuffImage();
 		if ( GAMA.getExperiment().isPaused() ) {
 			updateDisplay();
@@ -176,7 +166,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	private void createBuffImage() {
 		buffImage = ImageUtils.createCompatibleImage(width, height);
 		g2 = (Graphics2D) buffImage.getGraphics();
-		displayGraphics.setGraphics(g2);
+		displayGraphics = new AWTDisplayGraphics(this, (Graphics2D) buffImage.getGraphics());
 	}
 
 	private void paint() {
@@ -413,11 +403,6 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public void addMouseListener(final MouseListener e) {}
 
 	@Override
-	public IGraphics getIGraphics() {
-		return this.displayGraphics;
-	}
-
-	@Override
 	public void initOutput3D(boolean output3d, ILocation output3dNbCycles) {
 		;
 	}
@@ -430,5 +415,15 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public double getEnvHeight() {
 		return envHeight;
+	}
+
+	@Override
+	public int getDisplayWidth() {
+		return 0;
+	}
+
+	@Override
+	public int getDisplayHeight() {
+		return 0;
 	}
 }

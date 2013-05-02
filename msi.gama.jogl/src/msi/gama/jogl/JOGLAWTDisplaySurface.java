@@ -30,7 +30,6 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.awt.AbstractAWTDisplaySurface;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
-import msi.gama.jogl.utils.GraphicDataType.MyJTSGeometry;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -81,7 +80,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	final String[] shapeFileName = new String[1];
 
 	// private (return the renderer of the openGLGraphics)
-	private JOGLAWTGLRenderer openGLGraphicsGLRender;
+	private JOGLAWTGLRenderer renderer;
 
 	// private: the class of the Output3D manager
 	Output3D output3DManager;
@@ -94,75 +93,96 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			public void run() {
 				if ( !canBeUpdated() ) { return; }
 				canBeUpdated(false);
-				getIGraphics().cleanGeometries();
-				getIGraphics().cleanImages();
-				getIGraphics().cleanStrings();
-				getIGraphics().setPolygonTriangulated(false);
+				renderer.cleanGeometries();
+				renderer.cleanImages();
+				renderer.cleanStrings();
+				renderer.setPolygonTriangulated(false);
+				renderer.setTessellation(getOutput().getTesselation());
+				renderer.setAmbientLightValue(getOutput().getAmbientLightColor());
+				renderer.setPolygonMode(getOutput().getPolygonMode());
+				renderer.setCameraPosition(getOutput().getCameraPos());
+				renderer.setCameraLookPosition(getOutput().getCameraLookPos());
+				renderer.setCameraUpVector(getOutput().getCameraUpVector());
 
-				if ( autosave == true ) {
+				if ( autosave ) {
 					snapshot();
 				}
 
 				drawDisplaysWithoutRepainting();
 				paintingNeeded.release();
 				canBeUpdated(true);
-				if ( output3D == true ) {
-					output3DManager.updateOutput3D((List<MyJTSGeometry>) getIGraphics().getJTSGeometries(),
-						openGLGraphicsGLRender);
+				if ( output3D ) {
+					output3DManager.updateOutput3D(renderer);
 				}
-				Toolkit.getDefaultToolkit().sync();
+
+				// Toolkit.getDefaultToolkit().sync();
 			}
 		};
 
 	}
 
 	@Override
-	public void initialize(final double env_width, final double env_height, final IDisplayOutput layerDisplayOutput) {
-		setOutputName(layerDisplayOutput.getName());
-		this.setLayout(new BorderLayout());
-		outputChanged(env_width, env_height, layerDisplayOutput);
-		setOpaque(true);
-		setDoubleBuffered(false);
+	public void initialize(final double env_width, final double env_height, final IDisplayOutput out) {
+		super.initialize(env_width, env_height, out);
 		agentsMenu = new PopupMenu();
 		add(agentsMenu);
+		renderer = new JOGLAWTGLRenderer(this);
+		renderer.setPolygonTriangulated(false);
+		renderer.setTessellation(getOutput().getTesselation());
+		renderer.setAmbientLightValue(getOutput().getAmbientLightColor());
+		renderer.setPolygonMode(getOutput().getPolygonMode());
+		renderer.setCameraPosition(getOutput().getCameraPos());
+		renderer.setCameraLookPosition(getOutput().getCameraLookPos());
+		renderer.setCameraUpVector(getOutput().getCameraUpVector());
 
-		// new way
-		JOGLAWTDisplayGraphics g = new JOGLAWTDisplayGraphics(this);
-		setIGraphics(g);
-		openGLGraphicsGLRender = g.getMyGLRender();
-		add(openGLGraphicsGLRender.canvas, BorderLayout.CENTER);
-
+		add(renderer.canvas, BorderLayout.CENTER);
+		// openGLGraphicsGLRender.animator.start();
 		zoomFit();
+		// new way
+		// createIGraphics();
 
 		addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentResized(final ComponentEvent e) {
 				// GuiUtils.debug("JOGLAWTDisplaySurface.componentResized: " + layerDisplayOutput.getId());
-				if ( buffImage == null ) {
-					// zoomFit();
-					if ( resizeImage(getWidth(), getHeight()) ) {
-						centerImage();
-					}
-				} else {
-					if ( isFullImageInPanel() ) {
-						centerImage();
-					} else if ( isImageEdgeInPanel() ) {
-						scaleOrigin();
-					}
-				}
+				// if ( buffImage == null ) {
+				// // zoomFit();
+				// if ( resizeImage(getWidth(), getHeight()) ) {
+				// centerImage();
+				// }
+				// } else {
+				// if ( isFullImageInPanel() ) {
+				// centerImage();
+				// } else if ( isImageEdgeInPanel() ) {
+				// scaleOrigin();
+				// }
+				// }
+				resizeImage(getWidth(), getHeight());
+				initOutput3D(out.getOutput3D(), out.getOutput3DNbCycles());
 				updateDisplay();
 				previousPanelSize = getSize();
 			}
 		});
+		renderer.animator.start();
+	}
+
+	@Override
+	protected void createIGraphics() {
+		if ( iGraphics == null ) {
+			iGraphics = new JOGLAWTDisplayGraphics(this, renderer);
+			// openGLGraphicsGLRender = g.getMyGLRender();
+			// add(openGLGraphicsGLRender.canvas, BorderLayout.CENTER);
+			// zoomFit();
+		}
 	}
 
 	@Override
 	public void setPaused(final boolean flag) {
 		if ( flag == true ) {
-			openGLGraphicsGLRender.animator.stop();
+			renderer.animator.stop();
 		} else {
-			openGLGraphicsGLRender.animator.start();
+			renderer.animator.start();
 		}
 		super.setPaused(flag);
 	}
@@ -259,8 +279,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			final List<? extends ISymbol> layers = output.getChildren();
 			for ( final ISymbol layer : layers ) {
 				// IDisplay d =
-				manager.addLayer(LayerManager.createLayer((ILayerStatement) layer, env_width, env_height,
-					getIGraphics()));
+				manager.addLayer(LayerManager.createLayer((ILayerStatement) layer, env_width, env_height, iGraphics));
 				// d.initMenuItems(this);
 			}
 
@@ -290,8 +309,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		sa.buildMenuItems(m, manager.getItems().get(layerId));
 
 		agentsMenu.add(m);
-		agentsMenu.show(this, openGLGraphicsGLRender.myListener.mousePosition.x,
-			openGLGraphicsGLRender.myListener.mousePosition.y);
+		agentsMenu.show(this, renderer.myListener.mousePosition.x, renderer.myListener.mousePosition.y);
 
 	}
 
@@ -305,16 +323,15 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	}
 
 	public void drawDisplaysWithoutRepainting() {
-		if ( getIGraphics() == null ) { return; }
+		if ( iGraphics == null ) { return; }
 		ex[0] = null;
-		manager.drawLayersOn(getIGraphics());
-
+		manager.drawLayersOn(iGraphics);
 	}
 
 	@Override
 	public void paintComponent(final Graphics g) {
 		super.paintComponent(g);
-		((Graphics2D) g).drawRenderedImage(buffImage, translation);
+		// ((Graphics2D) g).drawRenderedImage(buffImage, translation);
 		/*
 		 * The autosave has been move in the penGLUpdateDisplayBlock
 		 * if ( autosave ) {
@@ -345,7 +362,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	@Override
 	public BufferedImage getImage() {
-		buffImage = openGLGraphicsGLRender.getScreenShot();
+		BufferedImage buffImage = renderer.getScreenShot();
 		return buffImage;
 	}
 
@@ -353,52 +370,52 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public void zoomIn() {
 		float incrementalZoomStep;
 		// Check if Z is not equal to 0 (avoid being block on z=0)
-		if ( openGLGraphicsGLRender.camera.zPos != 0 ) {
-			incrementalZoomStep = (float) openGLGraphicsGLRender.camera.zPos / 10;
+		if ( renderer.camera.zPos != 0 ) {
+			incrementalZoomStep = (float) renderer.camera.zPos / 10;
 		} else {
 			incrementalZoomStep = 0.1f;
 		}
-		openGLGraphicsGLRender.camera.zPos -= incrementalZoomStep;
-		openGLGraphicsGLRender.camera.zLPos -= incrementalZoomStep;
+		renderer.camera.zPos -= incrementalZoomStep;
+		renderer.camera.zLPos -= incrementalZoomStep;
 	}
 
 	@Override
 	public void zoomOut() {
 		float incrementalZoomStep;
 		// Check if Z is not equal to 0 (avoid being block on z=0)
-		if ( openGLGraphicsGLRender.camera.zPos != 0 ) {
-			incrementalZoomStep = (float) openGLGraphicsGLRender.camera.zPos / 10;
+		if ( renderer.camera.zPos != 0 ) {
+			incrementalZoomStep = (float) renderer.camera.zPos / 10;
 		} else {
 			incrementalZoomStep = 0.1f;
 		}
-		openGLGraphicsGLRender.camera.zPos += incrementalZoomStep;
-		openGLGraphicsGLRender.camera.zLPos += incrementalZoomStep;
+		renderer.camera.zPos += incrementalZoomStep;
+		renderer.camera.zLPos += incrementalZoomStep;
 
 	}
 
-	public void setZoom(final double factor, final Point c) {
-		if ( resizeImage((int) Math.round(bWidth * factor), (int) Math.round(bHeight * factor)) ) {
-			int imagePX = c.x < origin.x ? 0 : c.x >= bWidth + origin.x ? bWidth - 1 : c.x - origin.x;
-			int imagePY = c.y < origin.y ? 0 : c.y >= bHeight + origin.y ? bHeight - 1 : c.y - origin.y;
-			zoomFactor = factor;
-			setOrigin(c.x - (int) Math.round(imagePX * zoomFactor), c.y - (int) Math.round(imagePY * zoomFactor));
-			updateDisplay();
-		}
-	}
+	// public void setZoom(final double factor, final Point c) {
+	// if ( resizeImage((int) Math.round(bWidth * factor), (int) Math.round(bHeight * factor)) ) {
+	// int imagePX = c.x < origin.x ? 0 : c.x >= bWidth + origin.x ? bWidth - 1 : c.x - origin.x;
+	// int imagePY = c.y < origin.y ? 0 : c.y >= bHeight + origin.y ? bHeight - 1 : c.y - origin.y;
+	// zoomFactor = factor;
+	// setOrigin(c.x - (int) Math.round(imagePX * zoomFactor), c.y - (int) Math.round(imagePY * zoomFactor));
+	// updateDisplay();
+	// }
+	// }
 
 	@Override
 	public void zoomFit() {
-		if ( openGLGraphicsGLRender != null ) {
+		if ( renderer != null ) {
 			if ( threeD ) {
-				openGLGraphicsGLRender.camera.Initialize3DCamera(getEnvWidth(), getEnvHeight());
-				if ( openGLGraphicsGLRender.camera.isModelCentered ) {
-					openGLGraphicsGLRender.reset();
+				renderer.camera.Initialize3DCamera(getEnvWidth(), getEnvHeight());
+				if ( renderer.camera.isModelCentered ) {
+					renderer.reset();
 				}
 
 			} else {
-				openGLGraphicsGLRender.camera.InitializeCamera(getEnvWidth(), getEnvHeight());
-				if ( openGLGraphicsGLRender.camera.isModelCentered ) {
-					openGLGraphicsGLRender.reset();
+				renderer.camera.InitializeCamera(getEnvWidth(), getEnvHeight());
+				if ( renderer.camera.isModelCentered ) {
+					renderer.reset();
 				}
 			}
 		}
@@ -506,14 +523,14 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 						}
 
-						openGLGraphicsGLRender.myShapeFileReader = new ShapeFileReader(shapeFileName[0]);
+						renderer.myShapeFileReader = new ShapeFileReader(shapeFileName[0]);
 						SimpleFeatureCollection myCollection =
-							openGLGraphicsGLRender.myShapeFileReader
-								.getFeatureCollectionFromShapeFile(openGLGraphicsGLRender.myShapeFileReader.store);
+							renderer.myShapeFileReader
+								.getFeatureCollectionFromShapeFile(renderer.myShapeFileReader.store);
 						Color color =
 							new Color((int) (Math.random() * 255), (int) (Math.random() * 255),
 								(int) (Math.random() * 255));
-						getIGraphics().addCollectionInCollections(myCollection, color);
+						renderer.addCollections(myCollection, color);
 						// FIXME: Need to reinitialise th displaylist
 
 					}
@@ -523,10 +540,11 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	}
 
-	@Override
-	public IGraphics.OpenGL getIGraphics() {
-		return (IGraphics.OpenGL) super.getIGraphics();
-	}
+	//
+	// @Override
+	// public IGraphics.OpenGL getIGraphics() {
+	// return (IGraphics.OpenGL) super.getIGraphics();
+	// }
 
 	@Override
 	public void focusOn(final IShape geometry, final ILayer display) {
@@ -543,15 +561,15 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		double zPos = env.maxExtent() * 2 + geometry.getLocation().getZ();
 		double zLPos = -(env.maxExtent() * 2);
 
-		this.openGLGraphicsGLRender.camera.updatePosition(xPos, yPos, zPos);
-		this.openGLGraphicsGLRender.camera.lookPosition(xPos, yPos, zLPos);
+		this.renderer.camera.updatePosition(xPos, yPos, zPos);
+		this.renderer.camera.lookPosition(xPos, yPos, zLPos);
 	}
 
 	@Override
-	public void initOutput3D(final boolean output3D, final ILocation output3DNbCycles) {
-		this.output3D = output3D;
-		if ( this.output3D ) {
-			output3DManager = new Output3D(output3DNbCycles, getIGraphics().getJTSGeometries(), openGLGraphicsGLRender);
+	public void initOutput3D(final boolean yes, final ILocation output3DNbCycles) {
+		output3D = yes;
+		if ( output3D ) {
+			output3DManager = new Output3D(output3DNbCycles, renderer);
 			// (new Output3D()).to3DGLGEModel(((JOGLAWTDisplayGraphics) openGLGraphics).myJTSGeometries,
 			// openGLGraphicsGLRender);
 		}
@@ -559,15 +577,12 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	@Override
 	public void snapshot() {
-		buffImage = openGLGraphicsGLRender.getScreenShot();
-		if ( buffImage != null ) {
-			save(GAMA.getDefaultScope(), buffImage);
-		}
+		save(GAMA.getDefaultScope(), getImage());
 	}
 
 	@Override
-	public void addMouseListener(final MouseListener e) {
-		openGLGraphicsGLRender.canvas.addMouseListener(e);
+	public synchronized void addMouseListener(final MouseListener e) {
+		renderer.canvas.addMouseListener(e);
 	}
 
 	public Color getBgColor() {

@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -35,15 +35,15 @@ public interface IDisplayLayerBox {
 
 	public abstract void compute(final IScope sim) throws GamaRuntimeException;
 
-	public abstract void setTransparency(final IExpression t) throws GamaRuntimeException;
+	public abstract void setTransparency(final IScope sim, final IExpression t) throws GamaRuntimeException;
 
-	public abstract void setPosition(final IExpression p) throws GamaRuntimeException;
+	public abstract void setPosition(final IScope sim, final IExpression p) throws GamaRuntimeException;
 
-	public abstract void setExtent(final IExpression e) throws GamaRuntimeException;
-	
-	public abstract void setElevation(final IExpression e) throws GamaRuntimeException;
-	
-	public abstract void setRefresh(final IExpression r) throws GamaRuntimeException;
+	public abstract void setExtent(final IScope sim, final IExpression e) throws GamaRuntimeException;
+
+	public abstract void setElevation(final IScope sim, final IExpression e) throws GamaRuntimeException;
+
+	public abstract void setRefresh(final IScope sim, final IExpression r) throws GamaRuntimeException;
 
 	public abstract void setTransparency(final double f);
 
@@ -54,9 +54,9 @@ public interface IDisplayLayerBox {
 	public abstract void setPosition(final ILocation p);
 
 	public abstract void setPosition(final double x, final double y);
-	
+
 	public abstract void setElevation(final double e);
-	
+
 	public abstract void setRefresh(final Boolean r);
 
 	public abstract Double getTransparency();
@@ -66,9 +66,9 @@ public interface IDisplayLayerBox {
 	public abstract ILocation getPosition();
 
 	public abstract ILocation getExtent();
-	
+
 	public abstract Double getElevation();
-	
+
 	public abstract Boolean getRefresh();
 
 }

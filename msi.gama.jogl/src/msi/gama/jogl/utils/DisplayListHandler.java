@@ -47,7 +47,7 @@ public class DisplayListHandler {
 		while (it.hasNext()) {
 			MyJTSGeometry curGeometry = it.next();
 			myGl.glNewList(listId, GL_COMPILE);
-			basicDrawer.DrawJTSGeometry(curGeometry);
+			basicDrawer.drawJTSGeometry(curGeometry);
 			myGl.glEndList();
 			listId = listId + 1;
 		}
@@ -82,7 +82,7 @@ public class DisplayListHandler {
 		while (it.hasNext()) {
 			MyImage curImage = it.next();
 			myGl.glNewList(listId, GL_COMPILE);
-			myGLRender.DrawTexture(curImage);
+			myGLRender.drawTexture(curImage);
 			myGl.glEndList();
 			listId = listId + 1;
 		}

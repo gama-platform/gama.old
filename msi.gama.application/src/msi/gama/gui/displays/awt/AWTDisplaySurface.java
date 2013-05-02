@@ -39,6 +39,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	private Point snapshotDimension;
 	private Point mousePosition;
 	private volatile boolean isPainting;
+	protected BufferedImage buffImage;
 	private final Thread animationThread = new Thread(new Runnable() {
 
 		@Override
@@ -131,11 +132,25 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	}
 
 	@Override
+	protected void createIGraphics() {
+		iGraphics = new AWTDisplayGraphics(this, (Graphics2D) buffImage.getGraphics());
+	}
+
+	@Override
+	protected void createNewImage(int width, int height) {
+		super.createNewImage(width, height);
+		BufferedImage newImage = ImageUtils.createCompatibleImage(width, height);
+		if ( buffImage != null ) {
+			newImage.getGraphics().drawImage(buffImage, 0, 0, width, height, null);
+			buffImage.flush();
+		}
+		buffImage = newImage;
+
+	}
+
+	@Override
 	public void initialize(final double env_width, final double env_height, final IDisplayOutput layerDisplayOutput) {
-		setOutputName(layerDisplayOutput.getName());
-		outputChanged(env_width, env_height, layerDisplayOutput);
-		setOpaque(true);
-		setDoubleBuffered(false);
+		super.initialize(env_width, env_height, layerDisplayOutput);
 		setCursor(createCursor());
 		menuManager = new AWTDisplaySurfaceMenu(this);
 		DisplayMouseListener d = new DisplayMouseListener();
@@ -153,9 +168,10 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 						centerImage();
 					} else if ( isImageEdgeInPanel() ) {
 						scaleOrigin();
-					} else {
-						((AWTDisplayGraphics) getIGraphics()).getGraphics2D().setClip(getImageClipBounds());
 					}
+					// else {
+					// ((AWTDisplayGraphics) getIGraphics()).getGraphics2D().setClip(getImageClipBounds());
+					// }
 				}
 				updateDisplay();
 				previousPanelSize = getSize();
@@ -177,8 +193,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 			manager = new LayerManager(this);
 			final List<? extends ISymbol> layers = output.getChildren();
 			for ( final ISymbol layer : layers ) {
-				manager.addLayer(LayerManager.createLayer((ILayerStatement) layer, env_width, env_height,
-					getIGraphics()));
+				manager.addLayer(LayerManager.createLayer((ILayerStatement) layer, env_width, env_height, iGraphics));
 			}
 
 		} else {
@@ -217,10 +232,10 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	}
 
 	public void drawDisplaysWithoutRepainting() {
-		if ( getIGraphics() == null ) { return; }
+		if ( iGraphics == null ) { return; }
 		ex[0] = null;
-		getIGraphics().fillBackground(bgColor, 1);
-		manager.drawLayersOn(getIGraphics());
+		iGraphics.fillBackground(bgColor, 1);
+		manager.drawLayersOn(iGraphics);
 	}
 
 	@Override
@@ -266,23 +281,25 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	@Override
 	public void zoomIn() {
-		mousePosition = new Point(origin.x + bWidth / 2, origin.y + bHeight / 2);
+		mousePosition = new Point(origin.x + getDisplayHeight() / 2, origin.y + getDisplayWidth() / 2);
 		setZoom(1.0 + zoomIncrement, mousePosition);
 
 	}
 
 	@Override
 	public void zoomOut() {
-		mousePosition = new Point(origin.x + bWidth / 2, origin.y + bHeight / 2);;
+		mousePosition = new Point(origin.x + getDisplayHeight() / 2, origin.y + getDisplayWidth() / 2);;
 		setZoom(1.0 - zoomIncrement, mousePosition);
 
 	}
 
 	public void setZoom(final double factor, final Point c) {
-		if ( resizeImage(Math.max(1, (int) Math.round(bWidth * factor)),
-			Math.max(1, (int) Math.round(bHeight * factor))) ) {
-			int imagePX = c.x < origin.x ? 0 : c.x >= bWidth + origin.x ? bWidth - 1 : c.x - origin.x;
-			int imagePY = c.y < origin.y ? 0 : c.y >= bHeight + origin.y ? bHeight - 1 : c.y - origin.y;
+		if ( resizeImage(Math.max(1, (int) Math.round(getDisplayHeight() * factor)),
+			Math.max(1, (int) Math.round(getDisplayWidth() * factor))) ) {
+			int imagePX =
+				c.x < origin.x ? 0 : c.x >= getDisplayHeight() + origin.x ? getDisplayHeight() - 1 : c.x - origin.x;
+			int imagePY =
+				c.y < origin.y ? 0 : c.y >= getDisplayWidth() + origin.y ? getDisplayWidth() - 1 : c.y - origin.y;
 			zoomFactor = factor;
 			setOrigin(c.x - (int) Math.round(imagePX * zoomFactor), c.y - (int) Math.round(imagePY * zoomFactor));
 			updateDisplay();
@@ -340,7 +357,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 			return;
 		}
 		BufferedImage newImage = ImageUtils.createCompatibleImage(snapshotDimension.x, snapshotDimension.y);
-		IGraphics tempGraphics = new AWTDisplayGraphics(newImage, (int) getEnvWidth(), (int) getEnvHeight());
+		IGraphics tempGraphics = new AWTDisplayGraphics(this, (Graphics2D) newImage.getGraphics());
 		tempGraphics.fillBackground(bgColor, 1);
 		manager.drawLayersOn(tempGraphics);
 		save(GAMA.getDefaultScope(), newImage);

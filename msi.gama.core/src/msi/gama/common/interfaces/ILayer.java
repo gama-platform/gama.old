@@ -22,6 +22,7 @@ import java.awt.Point;
 import java.util.Set;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
@@ -34,7 +35,7 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	String getMenuName();
 
-	void drawDisplay(IGraphics simGraphics) throws GamaRuntimeException;
+	void drawDisplay(IScope scope, IGraphics simGraphics) throws GamaRuntimeException;
 
 	Set<IAgent> collectAgentsAt(int x, int y, IDisplaySurface g);
 

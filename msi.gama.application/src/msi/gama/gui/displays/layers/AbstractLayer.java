@@ -22,10 +22,12 @@ import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.layers.ILayerStatement;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.swt.widgets.Composite;
 
@@ -134,13 +136,15 @@ public abstract class AbstractLayer implements ILayer {
 	public void dispose() {}
 
 	@Override
-	public final void drawDisplay(final IGraphics g) throws GamaRuntimeException {
+	public final void drawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {
 		if ( definition != null ) {
+			definition.step(scope);
 			g.setOpacity(definition.getTransparency());
 			setPositionAndSize(definition.getBoundingBox(), g);
-			g.newLayer(this);
 		}
-		privateDrawDisplay(g);
+		g.beginDrawingLayer(this);
+		privateDrawDisplay(scope, g);
+		g.endDrawingLayer(this);
 	}
 
 	@Override
@@ -181,15 +185,22 @@ public abstract class AbstractLayer implements ILayer {
 		int heighOfDisplayInPixels = g.getDisplayHeightInPixels();
 		double x =
 			(Math.signum(boundingBox.x) < 0 ? widthOfDisplayInPixels : 0) +
-				(Math.abs(boundingBox.x) <= 1 ? widthOfDisplayInPixels * boundingBox.x : boundingBox.x);
+				(Math.abs(boundingBox.x) <= 1 ? widthOfDisplayInPixels * boundingBox.x : g
+					.getxRatioBetweenPixelsAndModelUnits() * boundingBox.x);
 		double y =
 			(Math.signum(boundingBox.y) < 0 ? heighOfDisplayInPixels : 0) +
-				(Math.abs(boundingBox.y) <= 1 ? heighOfDisplayInPixels * boundingBox.y : boundingBox.y);
-		double width = boundingBox.width <= 1 ? widthOfDisplayInPixels * boundingBox.width : boundingBox.width;
-		double height = boundingBox.height <= 1 ? heighOfDisplayInPixels * boundingBox.height : boundingBox.height;
+				(Math.abs(boundingBox.y) <= 1 ? heighOfDisplayInPixels * boundingBox.y : g
+					.getyRatioBetweenPixelsAndModelUnits() * boundingBox.y);
+		double width =
+			boundingBox.width <= 1 ? widthOfDisplayInPixels * boundingBox.width : g
+				.getxRatioBetweenPixelsAndModelUnits() * boundingBox.width;
+		double height =
+			boundingBox.height <= 1 ? heighOfDisplayInPixels * boundingBox.height : g
+				.getyRatioBetweenPixelsAndModelUnits() * boundingBox.height;
 		sizeInPixels.setLocation(width, height);
+		GuiUtils.debug("AbstractLayer.setSize : " + sizeInPixels);
 		positionInPixels.setLocation(x, y);
-
+		GuiUtils.debug("AbstractLayer.setPosition : " + positionInPixels);
 	}
 
 	@Override
@@ -219,9 +230,7 @@ public abstract class AbstractLayer implements ILayer {
 		return new GamaPoint(xInModel, yInModel);
 	}
 
-	// private double selectionWidthInModel = 0;
-
-	protected abstract void privateDrawDisplay(final IGraphics g) throws GamaRuntimeException;
+	protected abstract void privateDrawDisplay(IScope scope, final IGraphics g) throws GamaRuntimeException;
 
 	@Override
 	public Set<IAgent> collectAgentsAt(final int x, final int y, IDisplaySurface g) {

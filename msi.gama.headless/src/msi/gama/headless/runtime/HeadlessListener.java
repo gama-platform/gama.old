@@ -1,9 +1,7 @@
 package msi.gama.headless.runtime;
 
-import java.awt.image.BufferedImage;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.gui.displays.awt.AWTDisplayGraphics;
 import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.IDisplayOutput;
@@ -205,10 +203,10 @@ public class HeadlessListener implements IGui {
 		return true;
 	}
 
-	@Override
-	public IGraphics newGraphics(final int width, final int height) {
-		return new AWTDisplayGraphics(new BufferedImage(1024, 1024, BufferedImage.TYPE_INT_ARGB), width, height);
-	}
+	// @Override
+	// public IGraphics newGraphics(final int width, final int height) {
+	// return new AWTDisplayGraphics(new BufferedImage(1024, 1024, BufferedImage.TYPE_INT_ARGB), width, height);
+	// }
 
 	@Override
 	public void clearErrors() {
@@ -241,7 +239,7 @@ public class HeadlessListener implements IGui {
 		if ( clazz == null ) { throw new GamaRuntimeException("Display " + keyword + " is not defined anywhere."); }
 		try {
 			IDisplaySurface surface = clazz.newInstance();
-			System.out.println("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword + " display");
+			// System.out.println("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword + " display");
 			debug("Instantiating " + clazz.getSimpleName() + " to produce a " + keyword + " display");
 			surface.initialize(w, h, layerDisplayOutput);
 			return surface;

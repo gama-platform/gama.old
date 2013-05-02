@@ -54,7 +54,9 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 	}
 
 	@Override
-	public void init(final IScope sim) throws GamaRuntimeException {}
+	public void init(final IScope scope) throws GamaRuntimeException {
+		getBox().compute(scope);
+	}
 
 	@Override
 	public void setDisplayOutput(IDisplayOutput out) {

@@ -23,7 +23,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.metamodel.shape.GamaShape;
 import msi.gama.outputs.layers.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.swt.widgets.Composite;
 
@@ -35,8 +35,7 @@ public class GisLayer extends AbstractLayer {
 	}
 
 	@Override
-	public void privateDrawDisplay(final IGraphics g) {
-		IScope scope = GAMA.obtainNewScope();
+	public void privateDrawDisplay(IScope scope, final IGraphics g) {
 		Color color = ((ImageLayerStatement) definition).getGisLayer().getColor();
 		for ( GamaShape geom : ((ImageLayerStatement) definition).getGisLayer().getObjects() ) {
 			if ( geom != null ) {

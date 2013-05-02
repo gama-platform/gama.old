@@ -24,7 +24,6 @@ import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.simulation.ISimulationAgent;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.layers.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -84,7 +83,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean constantAmbientLight = true;
 	private boolean constantCamera = true;
 	private boolean constantCameraLook = true;
-	private boolean polygonmode = true;
+	private boolean polygonMode = true;
 	private String displayType = JAVA2D;
 	private ILocation imageDimension = new GamaPoint(-1, -1);
 	private ILocation output3DNbCycles = new GamaPoint(0, 0);
@@ -134,17 +133,17 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		// OpenGL parameter initialization
 		IExpression tess = getFacet(IKeyword.TESSELATION);
 		if ( tess != null ) {
-			tesselation = Cast.asBool(getOwnScope(), tess.value(getOwnScope()));
+			setTesselation(Cast.asBool(getOwnScope(), tess.value(getOwnScope())));
 		}
 
 		IExpression light = getFacet(IKeyword.AMBIENT_LIGHT);
 		if ( light != null ) {
 
 			if ( light.getType().equals(Types.get(IType.COLOR)) ) {
-				ambientLightColor = Cast.asColor(getOwnScope(), light.value(getOwnScope()));
+				setAmbientLightColor(Cast.asColor(getOwnScope(), light.value(getOwnScope())));
 			} else {
 				int meanValue = Cast.asInt(getOwnScope(), light.value(getOwnScope()));
-				ambientLightColor = new GamaColor(meanValue, meanValue, meanValue);
+				setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue));
 			}
 
 			if ( light.isConst() ) {
@@ -158,7 +157,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		IExpression camera = getFacet(IKeyword.CAMERA_POS);
 		if ( camera != null ) {
 
-			cameraPos = Cast.asPoint(getOwnScope(), camera.value(getOwnScope()));
+			setCameraPos(Cast.asPoint(getOwnScope(), camera.value(getOwnScope())));
 
 			if ( camera.isConst() ) {
 				constantCamera = true;
@@ -167,10 +166,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			}
 
 		}
-		
+
 		IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
 		if ( cameraLook != null ) {
-			cameraLookPos = Cast.asPoint(getOwnScope(), cameraLook.value(getOwnScope()));
+			setCameraLookPos(Cast.asPoint(getOwnScope(), cameraLook.value(getOwnScope())));
 
 			if ( cameraLook.isConst() ) {
 				constantCameraLook = true;
@@ -179,24 +178,24 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			}
 
 		}
-		//Set the up vector of the opengl Camera (see gluPerspective)
+		// Set the up vector of the opengl Camera (see gluPerspective)
 		IExpression cameraUp = getFacet(IKeyword.CAMERA_UP_VECTOR);
 		if ( cameraUp != null ) {
-			cameraUpVector = Cast.asPoint(getOwnScope(), cameraUp.value(getOwnScope()));
+			setCameraUpVector(Cast.asPoint(getOwnScope(), cameraUp.value(getOwnScope())));
 		}
 
 		IExpression poly = getFacet(IKeyword.POLYGONMODE);
 		if ( poly != null ) {
-			polygonmode = Cast.asBool(getOwnScope(), poly.value(getOwnScope()));
+			setPolygonMode(Cast.asBool(getOwnScope(), poly.value(getOwnScope())));
 		}
 
 		IExpression out3D = getFacet(IKeyword.OUTPUT3D);
 		if ( out3D != null ) {
 			if ( out3D.getType().equals(Types.get(IType.POINT)) ) {
-				output3D = true;
-				output3DNbCycles = Cast.asPoint(getOwnScope(), out3D.value(getOwnScope()));
+				setOutput3D(true);
+				setOutput3DNbCycles(Cast.asPoint(getOwnScope(), out3D.value(getOwnScope())));
 			} else {
-				output3D = Cast.asBool(getOwnScope(), out3D.value(getOwnScope()));
+				setOutput3D(Cast.asBool(getOwnScope(), out3D.value(getOwnScope())));
 			}
 		}
 
@@ -205,47 +204,43 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public void step(final IScope scope) throws GamaRuntimeException {
-		for ( ILayerStatement layer : getLayers() ) {
-			layer.step(scope);
-		}
+		// for ( ILayerStatement layer : getLayers() ) {
+		// layer.step(scope);
+		// }
 	}
 
 	@Override
 	public void update() throws GamaRuntimeException {
 		if ( surface == null ) { return; }
-		if ( surface.getIGraphics() instanceof IGraphics.OpenGL ) {
-			IGraphics.OpenGL graphics = (IGraphics.OpenGL) surface.getIGraphics();
+		// /////////////// dynamic Lighting ///////////////////
+		if ( !constantAmbientLight ) {
+			IExpression light = getFacet(IKeyword.AMBIENT_LIGHT);
+			if ( light != null ) {
+				if ( light.getType().equals(Types.get(IType.COLOR)) ) {
+					setAmbientLightColor(Cast.asColor(getOwnScope(), light.value(getOwnScope())));
+				} else {
+					int meanValue = Cast.asInt(getOwnScope(), light.value(getOwnScope()));
+					setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue));
+				}
+			}
+			// graphics.setAmbientLightValue((GamaColor) getAmbientLightColor());
+		}
 
-			// /////////////// dynamic Lighting ///////////////////
-			if ( !constantAmbientLight ) {
-				IExpression light = getFacet(IKeyword.AMBIENT_LIGHT);
-				if ( light != null ) {
-					if ( light.getType().equals(Types.get(IType.COLOR)) ) {
-						ambientLightColor = Cast.asColor(getOwnScope(), light.value(getOwnScope()));
-					} else {
-						int meanValue = Cast.asInt(getOwnScope(), light.value(getOwnScope()));
-						ambientLightColor = new GamaColor(meanValue, meanValue, meanValue);
-					}
-				}
-				graphics.setAmbientLightValue((GamaColor) ambientLightColor);
+		// /////////////////// dynamic camera ///////////////////
+		if ( !constantCamera ) {
+			IExpression camera = getFacet(IKeyword.CAMERA_POS);
+			if ( camera != null ) {
+				setCameraPos(Cast.asPoint(getOwnScope(), camera.value(getOwnScope())));
 			}
+			// graphics.setCameraPosition(getCameraPos());
+		}
 
-			// /////////////////// dynamic camera ///////////////////
-			if ( !constantCamera ) {
-				IExpression camera = getFacet(IKeyword.CAMERA_POS);
-				if ( camera != null ) {
-				  cameraPos = Cast.asPoint(getOwnScope(), camera.value(getOwnScope()));
-				}
-				graphics.setCameraPosition(cameraPos);
+		if ( !constantCameraLook ) {
+			IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
+			if ( cameraLook != null ) {
+				setCameraLookPos(Cast.asPoint(getOwnScope(), cameraLook.value(getOwnScope())));
 			}
-			
-			if ( !constantCameraLook ) {
-				IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
-				if ( cameraLook != null ) {
-					cameraLookPos = Cast.asPoint(getOwnScope(), cameraLook.value(getOwnScope()));
-				}
-				graphics.setCameraLookPosition(cameraLookPos);
-			}
+			// graphics.setCameraLookPosition(getCameraLookPos());
 		}
 
 		// GUI.debug("Updating output " + getName());
@@ -301,16 +296,16 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		surface.setAutoSave(autosave, (int) imageDimension.getX(), (int) imageDimension.getY());
 
 		// Use only for opengl
-		if ( surface.getIGraphics() instanceof IGraphics.OpenGL ) {
-			IGraphics.OpenGL graphics = (IGraphics.OpenGL) surface.getIGraphics();
-			surface.initOutput3D(output3D, output3DNbCycles);
-			graphics.useTesselation(tesselation);
-			graphics.setAmbientLightValue((GamaColor) ambientLightColor);
-			graphics.setPolygonMode(polygonmode);
-			graphics.setCameraPosition(cameraPos);
-			graphics.setCameraLookPosition(cameraLookPos);
-			graphics.setCameraUpVector(cameraUpVector);
-		}
+		// if ( surface.getIGraphics() instanceof IGraphics.OpenGL ) {
+		// IGraphics.OpenGL graphics = (IGraphics.OpenGL) surface.getIGraphics();
+		// surface.initOutput3D(output3D, output3DNbCycles);
+		// graphics.useTesselation(tesselation);
+		// graphics.setAmbientLightValue((GamaColor) ambientLightColor);
+		// graphics.setPolygonMode(polygonmode);
+		// graphics.setCameraPosition(cameraPos);
+		// graphics.setCameraLookPosition(cameraLookPos);
+		// graphics.setCameraUpVector(cameraUpVector);
+		// }
 	}
 
 	public void setSurface(final IDisplaySurface sur) {
@@ -377,6 +372,78 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	public boolean isOpenGL() {
 		return displayType.equals(OPENGL);
+	}
+
+	@Override
+	public boolean getTesselation() {
+		return tesselation;
+	}
+
+	private void setTesselation(boolean tesselation) {
+		this.tesselation = tesselation;
+	}
+
+	@Override
+	public boolean getOutput3D() {
+		return output3D;
+	}
+
+	private void setOutput3D(boolean output3D) {
+		this.output3D = output3D;
+	}
+
+	@Override
+	public ILocation getCameraPos() {
+		return cameraPos;
+	}
+
+	private void setCameraPos(ILocation cameraPos) {
+		this.cameraPos = cameraPos;
+	}
+
+	@Override
+	public ILocation getCameraLookPos() {
+		return cameraLookPos;
+	}
+
+	private void setCameraLookPos(ILocation cameraLookPos) {
+		this.cameraLookPos = cameraLookPos;
+	}
+
+	@Override
+	public ILocation getCameraUpVector() {
+		return cameraUpVector;
+	}
+
+	private void setCameraUpVector(ILocation cameraUpVector) {
+		this.cameraUpVector = cameraUpVector;
+	}
+
+	@Override
+	public Color getAmbientLightColor() {
+		return ambientLightColor;
+	}
+
+	private void setAmbientLightColor(Color ambientLightColor) {
+		this.ambientLightColor = ambientLightColor;
+	}
+
+	@Override
+	public boolean getPolygonMode() {
+		return polygonMode;
+	}
+
+	private void setPolygonMode(boolean polygonMode) {
+		this.polygonMode = polygonMode;
+	}
+
+	@Override
+	public ILocation getOutput3DNbCycles() {
+		return output3DNbCycles;
+	}
+
+	private void setOutput3DNbCycles(ILocation output3DNbCycles) {
+		this.output3DNbCycles = output3DNbCycles;
 	}
 
 }

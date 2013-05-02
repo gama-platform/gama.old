@@ -64,8 +64,8 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 		 */
 		void toggleSplitLayer();
 
-		@Override
-		public IGraphics.OpenGL getIGraphics();
+		// @Override
+		// public IGraphics.OpenGL getIGraphics();
 
 	}
 
@@ -189,12 +189,16 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 	/**
 	 * @return IGraphics
 	 */
-	public IGraphics getIGraphics();
+	// public IGraphics getIGraphics();
 
 	public void addMouseListener(MouseListener e);
 
 	double getEnvWidth();
 
 	double getEnvHeight();
+
+	public abstract int getDisplayWidth();
+
+	public abstract int getDisplayHeight();
 
 }
