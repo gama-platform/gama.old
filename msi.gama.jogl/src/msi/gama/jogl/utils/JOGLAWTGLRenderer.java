@@ -553,6 +553,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		if ( curTexture == null ) { return; }
 		// Enable the texture
 		gl.glEnable(GL_TEXTURE_2D);
+		gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+        gl.glTexParameteri(GL.GL_TEXTURE_2D, GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
 		Texture t = curTexture.texture;
 		t.enable();
 		t.bind();
