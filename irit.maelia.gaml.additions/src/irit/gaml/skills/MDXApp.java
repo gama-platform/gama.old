@@ -4,14 +4,14 @@ import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.List;
-
-import msi.gama.database.MDXConnection;
-
 import org.olap4j.*;
 import org.olap4j.metadata.Member;
 import org.olap4j.metadata.NamedList;
 import org.olap4j.layout.RectangularCellSetFormatter;
 
+import msi.gama.database.mdx.MSASConnection;
+import msi.gama.database.mdx.MdxConnection;
+import msi.gama.database.mdx.MdxUtils;
 
 public class MDXApp { 
 
@@ -21,22 +21,22 @@ public class MDXApp {
 		OlapConnection olapConnection;
 		//try{
 			Class.forName("org.olap4j.driver.xmla.XmlaOlap4jDriver");
-			Connection connection =
-			    DriverManager.getConnection(
+//			Connection connection =
+//			    DriverManager.getConnection(
 //			    			    "jdbc:xmla:Server=http://tmthai/olap/msmdpump.dll;"
 //			    			    + "Cache=org.olap4j.driver.xmla.cache.XmlaOlap4jNamedMemoryCache;"
 //			    			    + "Cache.Mode=LFU;Cache.Timeout=600;Cache.Size=100");	    		
 //			    		"jdbc:xmla:Server=http://tmthai/olap/msmdpump.dll;Catalog=Northwind ASP");
-						"jdbc:xmla:Server=http://tmthai/olap/msmdpump.dll;");
+//						"jdbc:xmla:Server=http://tmthai/olap/msmdpump.dll;");
 			    		//"jdbc:xmla:Server=http://localhost/olap/msxisapi.dll;Catalog=Northwind ASP");
-			 wrapper = (OlapWrapper) connection;
-			 olapConnection = wrapper.unwrap(OlapConnection.class);	
+//			 wrapper = (OlapWrapper) connection;
+//			 olapConnection = wrapper.unwrap(OlapConnection.class);	
 			// OlapStatement statement =   olapConnection.createStatement();
-			 MDXConnection mdxConnection = new MDXConnection("MSAS","localhost","80","olap","sa","tmt");
-			 olapConnection = mdxConnection.connectMDB();
-			 OlapStatement statement = (OlapStatement) connection.createStatement();
-			 System.out.println("OK");
-			 System.out.println(olapConnection.getCatalog());
+			 MdxConnection mdxConnection = MdxUtils.createConnectionObject("MSAS","localhost","80","olap","sa","tmt");
+			 conn = mdxConnection.connectMDB();
+//			 OlapStatement statement = (OlapStatement) conn.createStatement();
+//			 System.out.println("OK");
+//			 System.out.println(olapConnection.getCatalog());
 			//-------------------------------------------------------------------------------
 //			 CellSet cellSet =
 //					    statement.executeOlapQuery(
@@ -73,18 +73,29 @@ public class MDXApp {
 //
 //			 +" WHERE ( [Customer].[Company Name].[All] ) ");
 			 //------------------------------------------------------------------------------------
-			 CellSet cellSet =
-					    statement.executeOlapQuery(			 
-			 "SELECT { [Measures].[Quantity], [Measures].[Price] } ON COLUMNS ,"
-
-			+" { { { [Time].[Year].[All].CHILDREN } * "
-			+" { [Product].[Product Category].[All].CHILDREN } * "
-			+"{ [Customer].[Company Name].&[Alfreds Futterkiste], " +
-			"[Customer].[Company Name].&[Ana Trujillo Emparedados y helados], " +
-			"[Customer].[Company Name].&[Antonio Moreno Taquería] } } } ON ROWS " 
-
-			 +"FROM [Northwind Star] ");
+//			 CellSet cellSet =
+//					    statement.executeOlapQuery(			 
+//			 "SELECT { [Measures].[Quantity], [Measures].[Price] } ON COLUMNS ,"
+//
+//			+" { { { [Time].[Year].[All].CHILDREN } * "
+//			+" { [Product].[Product Category].[All].CHILDREN } * "
+//			+"{ [Customer].[Company Name].&[Alfreds Futterkiste], " +
+//			"[Customer].[Company Name].&[Ana Trujillo Emparedados y helados], " +
+//			"[Customer].[Company Name].&[Antonio Moreno Taquería] } } } ON ROWS " 
+//
+//			 +"FROM [Northwind Star] ");
 			//------------------------------------------------------------------------------------
+			 String selectStr=
+					 "SELECT { [Measures].[Quantity], [Measures].[Price] } ON COLUMNS ,"
+					 
+					 			+ " { { { [Time].[Year].[All].CHILDREN } * "
+					 			+ " { [Product].[Product Category].[All].CHILDREN } * "
+					 			+ "{ [Customer].[Company Name].&[Alfreds Futterkiste], " 
+					 			+ "[Customer].[Company Name].&[Ana Trujillo Emparedados y helados], " 
+					 			+ "[Customer].[Company Name].&[Antonio Moreno Taquería] } } } ON ROWS " 
+					 +"FROM [Northwind Star] ";
+					 
+			 CellSet cellSet= mdxConnection.selectMDB(conn,selectStr);
 			 System.out.println("MDX OK");
 			 
 			 List<CellSetAxis> cellSetAxes = cellSet.getAxes();
@@ -163,8 +174,8 @@ public class MDXApp {
 //		          System.out.println();
 //		        }
 		        // Close the statement and connection.
-		        statement.close();
-		        connection.close();
+//		        statement.close();
+//		        connection.close();
 			 //CellSetMetaData cellMetaData = cellSet.getMetaData();
 			 //System.out.println("Column count:"+ Integer.toString(cellMetaData.getColumnCount()));
 			 //System.out.println( (cellMetaData).toString());
