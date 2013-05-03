@@ -23,8 +23,8 @@ import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.awt.AbstractDisplayGraphics;
+import msi.gama.jogl.scene.*;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -48,7 +48,9 @@ import com.vividsolutions.jts.geom.Geometry;
 public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements IGraphics.OpenGL {
 
 	// GLRenderer.
+	// TODO remove references to renderer
 	private final JOGLAWTGLRenderer renderer;
+	private final ModelScene scene;
 	// All the geometry of the same layer are drawn in the same z plan.
 	private double currentZLayer = 0.0f;
 	private int currentLayerId = 0;
@@ -56,6 +58,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	private boolean currentLayerIsStatic = false;
 	private GamaPoint currentOffset;
 	private GamaPoint currentScale;
+	private boolean highlight = false;
 
 	// OpenGL list ID
 	// private final int listID = -1;
@@ -66,6 +69,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	public JOGLAWTDisplayGraphics(final JOGLAWTDisplaySurface surface, JOGLAWTGLRenderer r) {
 		super(surface);
 		renderer = r;
+		scene = r.getScene();
 	}
 
 	/**
@@ -73,8 +77,8 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	 * existing geometry that will be displayed by openGl.
 	 */
 	@Override
-	public Rectangle2D drawGamaShape(IScope scope, IShape geometry, Color color, boolean fill, Color border,
-		Integer angle, boolean rounded) {
+	public Rectangle2D drawGamaShape(IScope scope, IShape geometry, Color c, boolean fill, Color border, Integer angle,
+		boolean rounded) {
 
 		// Check if the geometry has a height value (3D Shape or Volume)
 		Geometry geom = null;
@@ -85,14 +89,14 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		} else {
 			geom = geometry.getInnerGeometry();
 		}
-
+		Color color = highlight ? highlightColor : c;
 		// GamaPoint offset = new GamaPoint(xOffsetInPixels, yOffsetInPixels);
 
 		// Add a geometry with a depth and type coming from Attributes
 		if ( geometry.getAttribute("depth") != null && geometry.getAttribute("type") != null ) {
 			Double depth = (Double) geometry.getAttribute("depth");
 			String type = (String) geometry.getAttribute("type");
-			renderer.addJTSGeometry(geom, scope.getAgentScope().getAgent(), currentZLayer, currentLayerId, color, fill,
+			scene.addGeometry(geom, scope.getAgentScope().getAgent(), currentZLayer, currentLayerId, color, fill,
 				border, false, angle, depth.floatValue(), currentOffset, currentScale, rounded, type.toString(),
 				currentLayerIsStatic, getCurrentAlpha());
 		}
@@ -101,13 +105,13 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			// Add a geometry with a depth and type coming from getUSerData (with add_z operator)
 			if ( geometry.getInnerGeometry().getUserData() != null ) {
 				float height = new Float(geom.getUserData().toString());
-				renderer.addJTSGeometry(geom, scope.getAgentScope().getAgent(), currentZLayer, currentLayerId, color,
-					fill, border, false, angle, height, currentOffset, currentScale, rounded, "JTS",
-					currentLayerIsStatic, getCurrentAlpha());
+				scene.addGeometry(geom, scope.getAgentScope().getAgent(), currentZLayer, currentLayerId, color, fill,
+					border, false, angle, height, currentOffset, currentScale, rounded, "JTS", currentLayerIsStatic,
+					getCurrentAlpha());
 			} else {
 				// add a 2D geometry without any 3D data.
-				renderer.addJTSGeometry(geom, scope.getAgentScope().getAgent(), currentZLayer, currentLayerId, color,
-					fill, border, false, angle, 0, currentOffset, currentScale, rounded, "none", currentLayerIsStatic,
+				scene.addGeometry(geom, scope.getAgentScope().getAgent(), currentZLayer, currentLayerId, color, fill,
+					border, false, angle, 0, currentOffset, currentScale, rounded, "none", currentLayerIsStatic,
 					getCurrentAlpha());
 			}
 
@@ -131,13 +135,14 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	}
 
 	public void drawGrid(final BufferedImage image, final Color lineColor) {
+		// TODO AD Pas du tout testée
 		double stepX, stepY;
 		for ( int i = 0; i <= image.getWidth(); i++ ) {
 			stepX = i / (double) image.getWidth() * image.getWidth();
 			Geometry g =
 				GamaGeometryType.buildLine(new GamaPoint(stepX, 0), new GamaPoint(stepX, image.getWidth()))
 					.getInnerGeometry();
-			renderer.addJTSGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
+			scene.addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
 				currentOffset, currentScale, false, "grid", currentLayerIsStatic, getCurrentAlpha());
 		}
 
@@ -146,7 +151,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			Geometry g =
 				GamaGeometryType.buildLine(new GamaPoint(0, stepY), new GamaPoint(image.getHeight(), stepY))
 					.getInnerGeometry();
-			renderer.addJTSGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
+			scene.addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
 				currentOffset, currentScale, false, "grid", currentLayerIsStatic, getCurrentAlpha());
 		}
 	}
@@ -178,9 +183,17 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			curWidth = sizeInModelUnits.getX();
 			curHeight = sizeInModelUnits.getY();
 		}
+		MyTexture texture = null;
+		if ( !scene.getTextures().containsKey(img) ) {
+			texture = renderer.createTexture(img, isDynamic);
+		}
 
-		renderer.addImages(img, scope == null ? null : scope.getAgentScope(), curX, curY, z, curWidth, curHeight,
-			angle, currentOffset, currentScale, isDynamic, getCurrentAlpha());
+		scene.addImage(img, scope == null ? null : scope.getAgentScope(), curX, curY, z, curWidth, curHeight, angle,
+			currentOffset, currentScale, isDynamic, getCurrentAlpha(), texture);
+		// TODO If highlight ? Should be shaded by the color.
+
+		// rect.setRect(curX, curY, curWidth, curHeight);
+		// }
 
 		if ( gridColor != null ) {
 			drawGrid(img, gridColor);
@@ -197,7 +210,9 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	 */
 	@Override
 	public Rectangle2D drawChart(final IScope scope, final JFreeChart chart, final Double z) {
-		BufferedImage im = chart.createBufferedImage(widthOfLayerInPixels, heightOfLayerInPixels);
+		BufferedImage im =
+		// ImageUtils.toCompatibleImage(chart.createBufferedImage(widthOfLayerInPixels, heightOfLayerInPixels));
+			chart.createBufferedImage(widthOfLayerInPixels, heightOfLayerInPixels);
 		return drawImage(scope, im, new GamaPoint(0, 0), null, null, 0, z, true);
 	}
 
@@ -214,7 +229,6 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	@Override
 	public Rectangle2D drawString(String string, Color stringColor, ILocation locationInModelUnits,
 		java.lang.Double heightInModelUnits, String fontName, Integer styleName, Integer angle, Double z) {
-		// FIXME fontName ? Angle ? Height ?
 		double curX, curY;
 		if ( locationInModelUnits == null ) {
 			curX = 0d;
@@ -229,14 +243,8 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		} else {
 			curHeight = heightInModelUnits;
 		}
-		// TODO Do not suppress the "-" !
-		renderer.addString(string, curX, -curY, z, curHeight, currentOffset, currentScale, stringColor, fontName,
-			styleName, angle);
-
-		// }
-		// setDrawingColor(stringColor);
-		// Rectangle2D r = null;
-		// return null;
+		scene.addString(string, curX, -curY, z, curHeight, currentOffset, currentScale, stringColor, fontName,
+			styleName, angle, getCurrentAlpha());
 		return null;
 	}
 
@@ -244,28 +252,6 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	public void fillBackground(final Color bgColor, final double opacity) {
 		setOpacity(opacity);
 	}
-
-	//
-	// public void draw(final GL gl) {
-	//
-	// if ( listID == -1 ) {
-	// createDisplayList(gl);
-	// }
-	// gl.glCallList(listID);
-	//
-	// }
-
-	// private void createDisplayList(final GL gl) {
-	// GLU glu = new GLU();
-	// GLUquadric quadric = glu.gluNewQuadric();
-	// listID = gl.glGenLists(1);
-	// gl.glNewList(listID, GL.GL_COMPILE);
-	// gl.glPushMatrix();
-	// gl.glColor3d(1, 1, 1);
-	// glu.gluSphere(quadric, 1 + 0.4, 30, 30);
-	// gl.glPopMatrix();
-	// gl.glEndList();
-	// }
 
 	/**
 	 * Each new step the Z value of the first layer is set to 0.
@@ -292,12 +278,8 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		super.beginDrawingLayer(layer);
 		this.currentZLayer = (float) (getMaxEnvDim() * layer.getZPosition());
 		Boolean refresh = layer.isDynamic();
-		// If refresh: false -> draw static geometry -> currentLayerIsStatic=true
-		if ( refresh != null ) {
-			this.currentLayerIsStatic = !refresh;
-		} else {
-			this.currentLayerIsStatic = false;
-		}
+		currentLayerIsStatic = refresh == null ? false : !refresh;
+
 		// TODO Pourquoi ne pas utiliser l'ordre des layers ? layer.getOrder() ??
 		this.currentLayerId = currentLayerId + 1;
 		currentOffset =
@@ -308,8 +290,8 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		currentScale =
 			new GamaPoint(widthOfLayerInPixels / (double) widthOfDisplayInPixels, heightOfLayerInPixels /
 				(double) heightOfDisplayInPixels, 1);
-		GuiUtils.debug("JOGLAWTDisplayGraphics.beginDrawingLayer currentScale: " + currentScale);
-		GuiUtils.debug("JOGLAWTDisplayGraphics.beginDrawingLayer currentOffset: " + currentOffset);
+		// GuiUtils.debug("JOGLAWTDisplayGraphics.beginDrawingLayer currentScale: " + currentScale);
+		// GuiUtils.debug("JOGLAWTDisplayGraphics.beginDrawingLayer currentOffset: " + currentOffset);
 	}
 
 	@Override
@@ -325,12 +307,12 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 	@Override
 	public void beginHighlight() {
-		renderer.turnHighlight(true);
+		highlight = true;
 	}
 
 	@Override
 	public void endHighlight() {
-		renderer.turnHighlight(false);
+		highlight = false;
 	}
 
 }

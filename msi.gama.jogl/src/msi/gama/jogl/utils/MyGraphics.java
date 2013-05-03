@@ -12,20 +12,14 @@ import com.vividsolutions.jts.geom.*;
 public class MyGraphics {
 
 	// OpenGL member
-	private final GL myGl;
+	private final GL gl;
 	private final GLU myGlu;
 	private final TessellCallBack tessCallback;
 	private final GLUtessellator tobj;
 	// Use to draw Bitmap String
 	private final GLUT glut;
-
-	// need to have the GLRenderer to enable texture mapping.
-	public JOGLAWTGLRenderer myGLRender;
-
 	public BasicOpenGlDrawer basicDrawer;
-
-	public DisplayListHandler displayListHandler;
-
+	// public DisplayListHandler displayListHandler;
 	public VertexArrayHandler vertexArrayHandler;
 
 	// FIXME: Is it better to declare an objet polygon here than in
@@ -39,15 +33,14 @@ public class MyGraphics {
 
 	double alpha = 1.0d;
 
-	public MyGraphics(final JOGLAWTGLRenderer gLRender) {
+	public MyGraphics(final JOGLAWTGLRenderer myGLRender) {
 
-		myGl = gLRender.gl;
-		myGlu = gLRender.glu;
-		myGLRender = gLRender;
+		gl = myGLRender.gl;
+		myGlu = myGLRender.glu;
 		basicDrawer = new BasicOpenGlDrawer(myGLRender);
-		displayListHandler = new DisplayListHandler(myGl, myGlu, myGLRender);
-		vertexArrayHandler = new VertexArrayHandler(myGl, myGlu, myGLRender);
-		tessCallback = new TessellCallBack(myGl, myGlu);
+		// displayListHandler = new DisplayListHandler(myGl, myGlu, myGLRender);
+		vertexArrayHandler = new VertexArrayHandler(gl, myGlu, myGLRender);
+		tessCallback = new TessellCallBack(gl, myGlu);
 		tobj = myGlu.gluNewTess();
 
 		glut = new GLUT();
@@ -65,49 +58,49 @@ public class MyGraphics {
 	public void DrawXYZAxis(final double size) {
 		// FIXME Define as static constants
 
-		myGl.glColor4d(0.0d, 0.0d, 0.0d, 1.0d);
+		gl.glColor4d(0.0d, 0.0d, 0.0d, 1.0d);
 		drawString("1:" + String.valueOf(size), size, size, 0.0d, 0.0, offset, scale, Color.black);
 		// X Axis
 		drawString("x", 1.2f * size, 0.0d, 0.0d, 0.0, offset, scale, Color.black);
-		myGl.glBegin(GL.GL_LINES);
-		myGl.glColor4d(1.0d, 0, 0, 1.0d);
-		myGl.glVertex3d(0, 0, 0);
-		myGl.glVertex3d(size, 0, 0);
-		myGl.glEnd();
+		gl.glBegin(GL.GL_LINES);
+		gl.glColor4d(1.0d, 0, 0, 1.0d);
+		gl.glVertex3d(0, 0, 0);
+		gl.glVertex3d(size, 0, 0);
+		gl.glEnd();
 
-		myGl.glBegin(GL_TRIANGLES);
-		myGl.glVertex3d(1.0d * size, 0.05d * size, 0.0d);
-		myGl.glVertex3d(1.0d * size, -0.05d * size, 0.0d);
-		myGl.glVertex3d(1.1f * size, 0.0d, 0.0d);
-		myGl.glEnd();
+		gl.glBegin(GL_TRIANGLES);
+		gl.glVertex3d(1.0d * size, 0.05d * size, 0.0d);
+		gl.glVertex3d(1.0d * size, -0.05d * size, 0.0d);
+		gl.glVertex3d(1.1f * size, 0.0d, 0.0d);
+		gl.glEnd();
 
 		// Y Axis
 		drawString("y", 0.0d, 1.2f * size, 0.0d, 0.0, offset, scale, Color.black);
-		myGl.glBegin(GL.GL_LINES);
-		myGl.glColor4d(0, 1.0d, 0, 1.0d);
-		myGl.glVertex3d(0, 0, 0);
-		myGl.glVertex3d(0, size, 0);
-		myGl.glEnd();
-		myGl.glBegin(GL_TRIANGLES);
-		myGl.glVertex3d(-0.05d * size, 1.0d * size, 0.0d);
-		myGl.glVertex3d(0.05d * size, 1.0d * size, 0.0d);
-		myGl.glVertex3d(0.0d, 1.1f * size, 0.0d);
-		myGl.glEnd();
+		gl.glBegin(GL.GL_LINES);
+		gl.glColor4d(0, 1.0d, 0, 1.0d);
+		gl.glVertex3d(0, 0, 0);
+		gl.glVertex3d(0, size, 0);
+		gl.glEnd();
+		gl.glBegin(GL_TRIANGLES);
+		gl.glVertex3d(-0.05d * size, 1.0d * size, 0.0d);
+		gl.glVertex3d(0.05d * size, 1.0d * size, 0.0d);
+		gl.glVertex3d(0.0d, 1.1f * size, 0.0d);
+		gl.glEnd();
 
 		// Z Axis
-		myGl.glRasterPos3d(0.0d, 0.0d, 1.2f * size);
+		gl.glRasterPos3d(0.0d, 0.0d, 1.2f * size);
 		drawString("z", 0.0d, 0.0d, 1.2f * size, 0.0, offset, scale, Color.black);
-		myGl.glBegin(GL.GL_LINES);
-		myGl.glColor4d(0, 0, 1.0d, 1.0d);
-		myGl.glVertex3d(0, 0, 0);
-		myGl.glVertex3d(0, 0, size);
-		myGl.glEnd();
+		gl.glBegin(GL.GL_LINES);
+		gl.glColor4d(0, 0, 1.0d, 1.0d);
+		gl.glVertex3d(0, 0, 0);
+		gl.glVertex3d(0, 0, size);
+		gl.glEnd();
 
-		myGl.glBegin(GL_TRIANGLES);
-		myGl.glVertex3d(0.0d, 0.05d * size, 1.0d * size);
-		myGl.glVertex3d(0.0d, -0.05d * size, 1.0d * size);
-		myGl.glVertex3d(0.0d, 0.0d, 1.1f * size);
-		myGl.glEnd();
+		gl.glBegin(GL_TRIANGLES);
+		gl.glVertex3d(0.0d, 0.05d * size, 1.0d * size);
+		gl.glVertex3d(0.0d, -0.05d * size, 1.0d * size);
+		gl.glVertex3d(0.0d, 0.0d, 1.1f * size);
+		gl.glEnd();
 
 	}
 
@@ -117,23 +110,22 @@ public class MyGraphics {
 
 	public void drawString(final String string, final double x, final double y, final double z, final double z_layer,
 		final GamaPoint offset, final GamaPoint scale, final Color color) {
-		myGl.glTranslated(offset.x, -offset.y, 0.0);
+		gl.glTranslated(offset.x, -offset.y, 0.0);
 		// TODO Scale en Z
-		myGl.glScaled(scale.x, scale.y, 1);
+		gl.glScaled(scale.x, scale.y, 1);
 
 		// Need to disable blending when drawing glutBitmapString;
-		myGl.glDisable(GL_BLEND);
-		myGl.glColor4d(color.getRed(), color.getGreen(), color.getBlue(), 1.0d);
-		myGl.glRasterPos3d(x, y, z + z_layer);
-		myGl.glScaled(8.0d, 8.0d, 8.0d);
+		gl.glDisable(GL_BLEND);
+		gl.glColor4d(color.getRed(), color.getGreen(), color.getBlue(), 1.0d);
+		gl.glRasterPos3d(x, y, z + z_layer);
+		gl.glScaled(8.0d, 8.0d, 8.0d);
 		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, string);
 		// glut.glutBitmapString(GLUT.BITMAP_8_BY_13, string);
-		myGl.glScaled(0.125d, 0.125d, 0.125d);
+		gl.glScaled(0.125d, 0.125d, 0.125d);
 		// myGl.glEnable(GL_BLEND);
 		// TODO Scale en Z
-		myGl.glScaled(1 / scale.x, 1 / scale.y, 1);
-		myGl.glTranslated(-offset.x, offset.y, 0.0);
-
+		gl.glScaled(1 / scale.x, 1 / scale.y, 1);
+		gl.glTranslated(-offset.x, offset.y, 0.0);
 	}
 
 	void DrawTorus(double innerRadius, double outterRadius, int sides, int rings) {
@@ -146,16 +138,16 @@ public class MyGraphics {
 		// DrawXYZAxis(1.0d);
 		double innerRadius = 0.075d;
 		double outterRadius = 1.0d;
-		myGl.glColor3d(0.0d, 0.0d, 1.0d);
+		gl.glColor3d(0.0d, 0.0d, 1.0d);
 		DrawTorus(innerRadius, outterRadius, 100, 100);
 
-		myGl.glRotated(90, 0.0d, 1.0d, 0.0d);
-		myGl.glColor3d(1.0d, 0.0d, 0.0d);
+		gl.glRotated(90, 0.0d, 1.0d, 0.0d);
+		gl.glColor3d(1.0d, 0.0d, 0.0d);
 		DrawTorus(innerRadius, outterRadius, 100, 100);
-		myGl.glRotated(90, 0.0d, -1.0d, 0.0d);
+		gl.glRotated(90, 0.0d, -1.0d, 0.0d);
 
-		myGl.glRotated(90, 1.0d, 0.0d, 0.0d);
-		myGl.glColor3d(0.0d, 1.0d, 0.0d);
+		gl.glRotated(90, 1.0d, 0.0d, 0.0d);
+		gl.glColor3d(0.0d, 1.0d, 0.0d);
 		DrawTorus(innerRadius, outterRadius, 100, 100);
 	}
 
@@ -166,33 +158,33 @@ public class MyGraphics {
 		double width = p.getEnvelopeInternal().getWidth();
 		double height = p.getEnvelopeInternal().getHeight();
 
-		myGl.glTranslated(p.getCentroid().getX(), -p.getCentroid().getY(), 0.0d);
+		gl.glTranslated(p.getCentroid().getX(), -p.getCentroid().getY(), 0.0d);
 		DrawRectangle(width, height * 0.8, p.getCentroid());
 		DrawRectangle(width * 0.8, height, p.getCentroid());
 		DrawRoundCorner(width, height, width * 0.1, height * 0.1, 5);
-		myGl.glTranslated(-p.getCentroid().getX(), p.getCentroid().getY(), 0.0d);
+		gl.glTranslated(-p.getCentroid().getX(), p.getCentroid().getY(), 0.0d);
 
 	}
 
 	void DrawRectangle(double width, double height, Point point) {
-		myGl.glBegin(GL_POLYGON); // draw using quads
-		myGl.glVertex3d(-width / 2, height / 2, 0.0d);
-		myGl.glVertex3d(width / 2, height / 2, 0.0d);
-		myGl.glVertex3d(width / 2, -height / 2, 0.0d);
-		myGl.glVertex3d(-width / 2, -height / 2, 0.0d);
-		myGl.glEnd();
+		gl.glBegin(GL_POLYGON); // draw using quads
+		gl.glVertex3d(-width / 2, height / 2, 0.0d);
+		gl.glVertex3d(width / 2, height / 2, 0.0d);
+		gl.glVertex3d(width / 2, -height / 2, 0.0d);
+		gl.glVertex3d(-width / 2, -height / 2, 0.0d);
+		gl.glEnd();
 	}
 
 	void DrawFan(double radius, double x, double y, int or_x, int or_y, int timestep) {
-		myGl.glBegin(GL_TRIANGLE_FAN); // upper right
-		myGl.glVertex3d(or_x * x, or_y * y, 0.0d);
+		gl.glBegin(GL_TRIANGLE_FAN); // upper right
+		gl.glVertex3d(or_x * x, or_y * y, 0.0d);
 		for ( int i = 0; i <= timestep; i++ ) {
 			double anglerad = Math.PI / 2 * i / timestep;
 			double xi = Math.cos(anglerad) * radius;
 			double yi = Math.sin(anglerad) * radius;
-			myGl.glVertex3d(or_x * (x + xi), y + yi, 0.0d);
+			gl.glVertex3d(or_x * (x + xi), y + yi, 0.0d);
 		}
-		myGl.glEnd();
+		gl.glEnd();
 	}
 
 	void DrawRoundCorner(double width, double height, double x_radius, double y_radius, int nbPoints) {
@@ -201,47 +193,47 @@ public class MyGraphics {
 		double yc = height / 2 * 0.8;
 		// Enhancement implement DrawFan(radius, xc, yc, 10);
 
-		myGl.glBegin(GL_TRIANGLE_FAN); // upper right
-		myGl.glVertex3d(xc, yc, 0.0d);
+		gl.glBegin(GL_TRIANGLE_FAN); // upper right
+		gl.glVertex3d(xc, yc, 0.0d);
 		for ( int i = 0; i <= nbPoints; i++ ) {
 			double anglerad = Math.PI / 2 * i / nbPoints;
 			double xi = Math.cos(anglerad) * x_radius;
 			double yi = Math.sin(anglerad) * y_radius;
-			myGl.glVertex3d(xc + xi, yc + yi, 0.0d);
+			gl.glVertex3d(xc + xi, yc + yi, 0.0d);
 		}
-		myGl.glEnd();
+		gl.glEnd();
 
-		myGl.glBegin(GL_TRIANGLE_FAN); // upper right
+		gl.glBegin(GL_TRIANGLE_FAN); // upper right
 
-		myGl.glVertex3d(xc, -yc, 0.0d);
+		gl.glVertex3d(xc, -yc, 0.0d);
 		for ( int i = 0; i <= nbPoints; i++ ) {
 			double anglerad = Math.PI / 2 * i / nbPoints;
 			double xi = Math.cos(anglerad) * x_radius;
 			double yi = Math.sin(anglerad) * y_radius;
-			myGl.glVertex3d(xc + xi, -(yc + yi), 0.0d);
+			gl.glVertex3d(xc + xi, -(yc + yi), 0.0d);
 		}
-		myGl.glEnd();
+		gl.glEnd();
 
-		myGl.glBegin(GL_TRIANGLE_FAN); // upper left
+		gl.glBegin(GL_TRIANGLE_FAN); // upper left
 
-		myGl.glVertex3d(-xc, yc, 0.0d);
+		gl.glVertex3d(-xc, yc, 0.0d);
 		for ( int i = 0; i <= nbPoints; i++ ) {
 			double anglerad = Math.PI / 2 * i / nbPoints;
 			double xi = Math.cos(anglerad) * x_radius;
 			double yi = Math.sin(anglerad) * y_radius;
-			myGl.glVertex3d(-(xc + xi), yc + yi, 0.0d);
+			gl.glVertex3d(-(xc + xi), yc + yi, 0.0d);
 		}
-		myGl.glEnd();
+		gl.glEnd();
 
-		myGl.glBegin(GL_TRIANGLE_FAN);
-		myGl.glVertex3d(-xc, -yc, 0.0d); // down left
+		gl.glBegin(GL_TRIANGLE_FAN);
+		gl.glVertex3d(-xc, -yc, 0.0d); // down left
 		for ( int i = 0; i <= nbPoints; i++ ) {
 			double anglerad = Math.PI / 2 * i / nbPoints;
 			double xi = Math.cos(anglerad) * x_radius;
 			double yi = Math.sin(anglerad) * y_radius;
-			myGl.glVertex3d(-(xc + xi), -(yc + yi), 0.0d);
+			gl.glVertex3d(-(xc + xi), -(yc + yi), 0.0d);
 		}
-		myGl.glEnd();
+		gl.glEnd();
 	}
 
 }

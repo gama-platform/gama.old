@@ -19,7 +19,6 @@
 package msi.gaml.expressions;
 
 import msi.gama.common.interfaces.IGraphics;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.*;
 
@@ -34,7 +33,7 @@ public class PixelUnitExpression extends ConstantExpression {
 		IGraphics g = scope.getGraphics();
 		if ( g == null ) { return 0d; }
 		Double v = scope.getSimulationScope().getEnvelope().getHeight() / g.getDisplayHeightInPixels();
-		GuiUtils.debug("PixelUnitExpression.value" + v);
+		// GuiUtils.debug("PixelUnitExpression.value" + v);
 		return v;
 	}
 

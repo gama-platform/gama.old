@@ -26,7 +26,6 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.awt.AbstractAWTDisplaySurface;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
@@ -93,10 +92,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			public void run() {
 				if ( !canBeUpdated() ) { return; }
 				canBeUpdated(false);
-				renderer.cleanGeometries();
-				renderer.cleanImages();
-				renderer.cleanStrings();
-				renderer.setPolygonTriangulated(false);
+				renderer.getScene().wipe(renderer);
+				// renderer.setPolygonTriangulated(false);
 				renderer.setTessellation(getOutput().getTesselation());
 				renderer.setAmbientLightValue(getOutput().getAmbientLightColor());
 				renderer.setPolygonMode(getOutput().getPolygonMode());
@@ -127,7 +124,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		agentsMenu = new PopupMenu();
 		add(agentsMenu);
 		renderer = new JOGLAWTGLRenderer(this);
-		renderer.setPolygonTriangulated(false);
+		// renderer.setPolygonTriangulated(false);
 		renderer.setTessellation(getOutput().getTesselation());
 		renderer.setAmbientLightValue(getOutput().getAmbientLightColor());
 		renderer.setPolygonMode(getOutput().getPolygonMode());
@@ -343,7 +340,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	@Override
 	public void dispose() {
-		GuiUtils.debug("JOGLAWTDisplaySurface.dispose: " + getOutputName());
+		// GuiUtils.debug("JOGLAWTDisplaySurface.dispose: " + getOutputName());
 		// SwingUtilities.invokeLater(new Runnable() {
 		//
 		// @Override
@@ -530,7 +527,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 						Color color =
 							new Color((int) (Math.random() * 255), (int) (Math.random() * 255),
 								(int) (Math.random() * 255));
-						renderer.addCollections(myCollection, color);
+						renderer.getScene().addCollections(myCollection, color);
 						// FIXME: Need to reinitialise th displaylist
 
 					}

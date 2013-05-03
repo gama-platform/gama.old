@@ -6,7 +6,7 @@ import java.util.*;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 import msi.gama.common.util.GeometryUtils;
-import msi.gama.jogl.utils.GraphicDataType.*;
+import msi.gama.jogl.scene.*;
 import msi.gama.metamodel.shape.IShape;
 import com.sun.opengl.util.BufferUtil;
 import com.vividsolutions.jts.geom.*;
@@ -35,7 +35,7 @@ public class VertexArrayHandler {
 	private DoubleBuffer vertexBufferLine;
 	private DoubleBuffer colorBufferLine;
 
-	private MyJTSGeometry curGeometry;
+	private GeometryObject curGeometry;
 	private int nbVerticesLine;
 	private int nbVerticesTriangle;
 
@@ -52,12 +52,12 @@ public class VertexArrayHandler {
 	 * @param myJTSGeometries
 	 * @param size
 	 */
-	public void buildVertexArray(final ArrayList<MyJTSGeometry> myJTSGeometries) {
+	public void buildVertexArray(final List<GeometryObject> list) {
 
 		nbVerticesTriangle = 0;
 		nbVerticesLine = 0;
 
-		Iterator<MyJTSGeometry> it = myJTSGeometries.iterator();
+		Iterator<GeometryObject> it = list.iterator();
 
 		// Loop over all the geometries, triangulate them and get the total
 		// number of vertices.

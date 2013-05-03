@@ -22,7 +22,6 @@ import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -198,9 +197,9 @@ public abstract class AbstractLayer implements ILayer {
 			boundingBox.height <= 1 ? heighOfDisplayInPixels * boundingBox.height : g
 				.getyRatioBetweenPixelsAndModelUnits() * boundingBox.height;
 		sizeInPixels.setLocation(width, height);
-		GuiUtils.debug("AbstractLayer.setSize : " + sizeInPixels);
+		// GuiUtils.debug("AbstractLayer.setSize : " + sizeInPixels);
 		positionInPixels.setLocation(x, y);
-		GuiUtils.debug("AbstractLayer.setPosition : " + positionInPixels);
+		// GuiUtils.debug("AbstractLayer.setPosition : " + positionInPixels);
 	}
 
 	@Override

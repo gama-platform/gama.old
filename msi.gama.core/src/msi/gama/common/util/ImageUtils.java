@@ -147,12 +147,10 @@ public class ImageUtils {
 		BufferedImage new_image = null;
 		if ( GuiUtils.isInHeadLessMode() ) {
 			new_image =
-				new BufferedImage(width != 0 ? width : 1024, height != 0 ? height : 1024,
-					BufferedImage.TYPE_INT_RGB);
+				new BufferedImage(width != 0 ? width : 1024, height != 0 ? height : 1024, BufferedImage.TYPE_INT_RGB);
 		} else {
 			GraphicsConfiguration gfx_config =
-				GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-					.getDefaultConfiguration();
+				GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
 			new_image = gfx_config.createCompatibleImage(width, height);
 			new_image.setAccelerationPriority(1f);
 		}
@@ -162,8 +160,7 @@ public class ImageUtils {
 	public static BufferedImage toCompatibleImage(final BufferedImage image) {
 		// obtain the current system graphical settings
 		GraphicsConfiguration gfx_config =
-			GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-				.getDefaultConfiguration();
+			GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
 
 		/*
 		 * if image is already compatible and optimized for current system settings, simply return
@@ -173,8 +170,7 @@ public class ImageUtils {
 
 		// image is not optimized, so create a new image that is
 		BufferedImage new_image =
-			gfx_config.createCompatibleImage(image.getWidth(), image.getHeight(),
-				image.getTransparency());
+			gfx_config.createCompatibleImage(image.getWidth(), image.getHeight(), image.getTransparency());
 
 		// get the graphics context of the new image to draw the old image on
 		Graphics2D g2d = (Graphics2D) new_image.getGraphics();
@@ -194,8 +190,7 @@ public class ImageUtils {
 	private BufferedImage get(final String s, final int angle) {
 		BufferedImage[] map = cache.get(s);
 		if ( map == null ) { return null; }
-		int position =
-			(int) Math.round((double) (angle % (360 - ANGLE_INCREMENT)) / ANGLE_INCREMENT);
+		int position = (int) Math.round((double) (angle % (360 - ANGLE_INCREMENT)) / ANGLE_INCREMENT);
 		return map[position];
 	}
 
@@ -203,18 +198,15 @@ public class ImageUtils {
 		if ( bufferedImage.getColorModel() instanceof DirectColorModel ) {
 			DirectColorModel colorModel = (DirectColorModel) bufferedImage.getColorModel();
 			PaletteData palette =
-				new PaletteData(colorModel.getRedMask(), colorModel.getGreenMask(),
-					colorModel.getBlueMask());
+				new PaletteData(colorModel.getRedMask(), colorModel.getGreenMask(), colorModel.getBlueMask());
 			ImageData data =
-				new ImageData(bufferedImage.getWidth(), bufferedImage.getHeight(),
-					colorModel.getPixelSize(), palette);
+				new ImageData(bufferedImage.getWidth(), bufferedImage.getHeight(), colorModel.getPixelSize(), palette);
 			WritableRaster raster = bufferedImage.getRaster();
 			int[] pixelArray = new int[3];
 			for ( int y = 0; y < data.height; y++ ) {
 				for ( int x = 0; x < data.width; x++ ) {
 					raster.getPixel(x, y, pixelArray);
-					int pixel =
-						palette.getPixel(new RGB(pixelArray[0], pixelArray[1], pixelArray[2]));
+					int pixel = palette.getPixel(new RGB(pixelArray[0], pixelArray[1], pixelArray[2]));
 					data.setPixel(x, y, pixel);
 				}
 			}
@@ -234,8 +226,7 @@ public class ImageUtils {
 			}
 			PaletteData palette = new PaletteData(rgbs);
 			ImageData data =
-				new ImageData(bufferedImage.getWidth(), bufferedImage.getHeight(),
-					colorModel.getPixelSize(), palette);
+				new ImageData(bufferedImage.getWidth(), bufferedImage.getHeight(), colorModel.getPixelSize(), palette);
 			data.transparentPixel = colorModel.getTransparentPixel();
 			WritableRaster raster = bufferedImage.getRaster();
 			int[] pixelArray = new int[1];
@@ -259,8 +250,7 @@ public class ImageUtils {
 	 *            in pixels
 	 * @param targetHeight the desired height of the scaled instance,
 	 *            in pixels
-	 * @param hint one of the rendering hints that corresponds to
-	 *            {@code RenderingHints.KEY_INTERPOLATION} (e.g.
+	 * @param hint one of the rendering hints that corresponds to {@code RenderingHints.KEY_INTERPOLATION} (e.g.
 	 *            {@code RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR},
 	 *            {@code RenderingHints.VALUE_INTERPOLATION_BILINEAR},
 	 *            {@code RenderingHints.VALUE_INTERPOLATION_BICUBIC})
@@ -272,12 +262,11 @@ public class ImageUtils {
 	 *            the {@code BILINEAR} hint is specified)
 	 * @return a scaled version of the original {@code BufferedImage}
 	 */
-	public static BufferedImage downScale(final BufferedImage img, final int targetWidth,
-		final int targetHeight, final Object hint, final boolean higherQuality) {
+	public static BufferedImage downScale(final BufferedImage img, final int targetWidth, final int targetHeight,
+		final Object hint, final boolean higherQuality) {
 
 		int type =
-			img.getTransparency() == Transparency.OPAQUE ? BufferedImage.TYPE_INT_RGB
-				: BufferedImage.TYPE_INT_ARGB;
+			img.getTransparency() == Transparency.OPAQUE ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
 		BufferedImage ret = img;
 		int w, h;
 		if ( higherQuality ) {
@@ -310,8 +299,7 @@ public class ImageUtils {
 
 			BufferedImage tmp = new BufferedImage(w, h, type);
 			Graphics2D g2 = tmp.createGraphics();
-			g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION,
-				RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+			g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 			g2.drawImage(ret, 0, 0, w, h, null);
 			g2.dispose();
 

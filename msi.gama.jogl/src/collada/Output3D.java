@@ -5,8 +5,8 @@ import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import msi.gama.jogl.scene.GeometryObject;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
-import msi.gama.jogl.utils.GraphicDataType.MyJTSGeometry;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -43,7 +43,7 @@ public class Output3D {
 		}
 
 		// Update of the animations
-		for ( MyJTSGeometry myGeom : openGLGraphicsGLRender.getJTSGeometries() ) {
+		for ( GeometryObject myGeom : openGLGraphicsGLRender.getScene().getGeometries() ) {
 			String animID = myGeom.agent.getName() + "anim";
 			// Find the Element with id = animID
 			// add a position
@@ -85,7 +85,7 @@ public class Output3D {
 
 		Element groupElt = doc.createElement("group");
 		groupElt.setAttribute("id", "objects");
-		for ( MyJTSGeometry myGeom : openGLGraphicsGLRender.getJTSGeometries() ) {
+		for ( GeometryObject myGeom : openGLGraphicsGLRender.getScene().getGeometries() ) {
 			// For each geometry, we write a mesh, a material, animations and an object in the scene
 			String materialID = myGeom.agent.getName() + "material";
 			// String animationID = myGeom.agent.getName()+"animation";
@@ -169,7 +169,7 @@ public class Output3D {
 		doc.appendChild(root);
 	}
 
-	public Element createMeshElement(MyJTSGeometry myGeom) {
+	public Element createMeshElement(GeometryObject myGeom) {
 		Geometry geom;
 
 		// <mesh id="cube">

@@ -25,7 +25,6 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.combination;
@@ -205,7 +204,7 @@ public class DrawStatement extends AbstractStatementSequence {
 		private final Integer constRot;
 		private final Boolean constEmpty;
 		private final Boolean constRounded;
-		private final ILocation constLoc;
+		protected final ILocation constLoc;
 
 		DrawExecuter(final IDescription desc) throws GamaRuntimeException {
 			IScope scope = GAMA.getDefaultScope();
@@ -277,14 +276,19 @@ public class DrawStatement extends AbstractStatementSequence {
 			super(desc);
 		}
 
+		ILocation getLocation(final IScope scope, final IShape shape) {
+			return constLoc == null ? loc != null ? Cast.asPoint(scope, loc.value(scope)) : shape.getLocation()
+				: constLoc;
+		}
+
 		@Override
 		Rectangle2D executeOn(final IScope scope, final IGraphics gr) throws GamaRuntimeException {
 			GamaShape g1 = (GamaShape) Cast.asGeometry(scope, item.value(scope));
 			if ( g1 == null ) {
-				GuiUtils.debug("DrawStatement.ShapeExecuter.executeOn : null shape");
+				// GuiUtils.debug("DrawStatement.ShapeExecuter.executeOn : null shape");
 				return null;
 			}
-			IShape g2 = Spatial.Transformations.at_location(scope, g1, getLocation(scope));
+			IShape g2 = Spatial.Transformations.at_location(scope, g1, getLocation(scope, g1));
 			if ( depth != null ) {
 				g2.getInnerGeometry().setUserData(depth.value(scope));
 			}

@@ -1,4 +1,4 @@
-package msi.gama.jogl.utils.GraphicDataType;
+package msi.gama.jogl.scene;
 
 import com.sun.opengl.util.texture.Texture;
 

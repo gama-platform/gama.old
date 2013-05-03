@@ -6,7 +6,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import msi.gama.jogl.utils.GraphicDataType.MyJTSGeometry;
+import msi.gama.jogl.scene.GeometryObject;
 
 import com.jmex.model.collada.ColladaImporter;
 

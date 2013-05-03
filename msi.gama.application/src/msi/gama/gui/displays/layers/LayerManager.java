@@ -136,6 +136,15 @@ public class LayerManager implements ILayerManager {
 				dis.drawDisplay(scope, g);
 			}
 			if ( surface.isPaused() ) {
+				double max_z = 0d;
+				for ( int i = 0, n = enabledLayers.size(); i < n; i++ ) {
+					final ILayer dis = enabledLayers.get(i);
+					double z = dis.getZPosition();
+					if ( z > max_z ) {
+						max_z = z;
+					}
+				}
+				pd.setElevation(max_z);
 				pd.drawDisplay(scope, g);
 			}
 		} catch (GamaRuntimeException e) {

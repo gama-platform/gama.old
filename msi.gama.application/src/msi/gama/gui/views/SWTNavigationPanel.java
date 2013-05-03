@@ -53,13 +53,14 @@ public class SWTNavigationPanel extends Canvas implements PaintListener, MouseLi
 	 */
 	@Override
 	public void paintControl(final PaintEvent e) {
-		if ( surface.getImage() == null ) { return; }
+		BufferedImage large = surface.getImage();
+		if ( large == null ) { return; }
 		int[] dim = surface.computeBoundsFrom(this.getSize().x, this.getSize().y);
 		imgWidth = dim[0];
 		imgHeight = dim[1];
 		BufferedImage awtImage = ImageUtils.createCompatibleImage(imgWidth, imgHeight);
 		java.awt.Graphics2D gc = (java.awt.Graphics2D) awtImage.getGraphics();
-		gc.drawImage(surface.getImage(), 0, 0, imgWidth, imgHeight, null);
+		gc.drawImage(large, 0, 0, imgWidth, imgHeight, null);
 		gc.dispose();
 		if ( image != null ) {
 			image.dispose();

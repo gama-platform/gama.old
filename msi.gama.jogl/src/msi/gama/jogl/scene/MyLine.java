@@ -1,4 +1,4 @@
-package msi.gama.jogl.utils.GraphicDataType;
+package msi.gama.jogl.scene;
 
 import java.awt.Color;
 import com.vividsolutions.jts.geom.LineString;

@@ -31,6 +31,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public class PauseLayer extends AbstractLayer {
 
+	double elevation = 1d;
+
 	protected PauseLayer() {
 		super(null);
 	}
@@ -49,5 +51,19 @@ public class PauseLayer extends AbstractLayer {
 	@Override
 	protected String getType() {
 		return "Pause screen";
+	}
+
+	public void setElevation(double z) {
+		elevation = z;
+	}
+
+	@Override
+	public double getZPosition() {
+		return elevation;
+	}
+
+	@Override
+	public Boolean isDynamic() {
+		return true;
 	}
 }

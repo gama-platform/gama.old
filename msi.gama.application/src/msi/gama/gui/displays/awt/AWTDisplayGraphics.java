@@ -24,7 +24,6 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.IDisplaySurface;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
@@ -170,10 +169,10 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		int curHeight;
 		if ( heightInModelUnits == null ) {
 			curHeight = heightOfLayerInPixels;
-			GuiUtils.debug("AWTDisplayGraphics.drawString  " + string + " " + curHeight);
+			// GuiUtils.debug("AWTDisplayGraphics.drawString  " + string + " " + curHeight);
 		} else {
 			curHeight = hFromModelUnitsToPixels(heightInModelUnits);
-			GuiUtils.debug("AWTDisplayGraphics.drawString  " + string + " " + curHeight);
+			// GuiUtils.debug("AWTDisplayGraphics.drawString  " + string + " " + curHeight);
 
 		} // FIXME Optimize by keeping the current values
 		int style = styleName == null ? Font.PLAIN : styleName;
