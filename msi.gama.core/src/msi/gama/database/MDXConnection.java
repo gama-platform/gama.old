@@ -27,23 +27,17 @@ import org.olap4j.*;
 public class MDXConnection {
 	private static final boolean DEBUG = false; // Change DEBUG = false for release version
 	public static final String MONDRIAN ="MONDRIAN";
-	public static final String POSTGRES="postgres";
-	public static final String POSTGIS="postgis";
 	public static final String MSAS ="MSAS"; //Micrsoft SQL Server Analysis Services
-	public static final String SQLITE="sqlite";
 	public static final String GEOMETRYTYPE="GEOMETRY";
 	static final String MONDRIANDriver = new String("mondrian.olap4j.MondrianOlap4jDriver");
 	static final String MSASDriver = new String("org.olap4j.driver.xmla.XmlaOlap4jDriver");
 	
-	static final String SQLITEDriver = new String("org.sqlite.JDBC");
-	static final String POSTGRESDriver= new String("org.postgresql.Driver");
-	
-	static String vender="";
-	static String url="";
-	static String port="";
-	static String dbName="";
-	static String userName="";
-	static String password="";
+	protected String vender="";
+	protected String url="";
+	protected String port="";
+	protected String dbName="";
+	protected String userName="";
+	protected String password="";
 	
 	public MDXConnection(String vender)
 	{
@@ -118,5 +112,7 @@ public class MDXConnection {
 			}
 			return olapConnection;
 	}
+
+	
 
 }
