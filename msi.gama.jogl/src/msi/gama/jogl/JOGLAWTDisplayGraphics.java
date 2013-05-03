@@ -131,7 +131,6 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	}
 
 	public void drawGrid(final BufferedImage image, final Color lineColor) {
-		// TODO AD Pas du tout testée
 		double stepX, stepY;
 		for ( int i = 0; i <= image.getWidth(); i++ ) {
 			stepX = i / (double) image.getWidth() * image.getWidth();
@@ -182,8 +181,10 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 		renderer.addImages(img, scope == null ? null : scope.getAgentScope(), curX, curY, z, curWidth, curHeight,
 			angle, currentOffset, currentScale, isDynamic, getCurrentAlpha());
-		// rect.setRect(curX, curY, curWidth, curHeight);
-		// }
+
+		if ( gridColor != null ) {
+			drawGrid(img, gridColor);
+		}
 
 		return rect;
 	}
