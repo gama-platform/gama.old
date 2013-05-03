@@ -1,25 +1,13 @@
 package msi.gama.database.mdx;
 
-import java.io.PrintWriter;
+
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
-
-import msi.gama.database.MDXConnection;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-
-import org.olap4j.Axis;
-import org.olap4j.Cell;
 import org.olap4j.CellSet;
-import org.olap4j.CellSetAxis;
-import org.olap4j.CellSetMetaData;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapException;
 import org.olap4j.OlapStatement;
-import org.olap4j.Position;
-import org.olap4j.layout.RectangularCellSetFormatter;
-import org.olap4j.metadata.Member;
 
 /*
  * @Author  
@@ -37,9 +25,9 @@ import org.olap4j.metadata.Member;
  * 
  * Created date: 18-Jan-2013
  * Modified:
- *     dd-mm-yyyy: description
+ *     03-05-2013: add selectMDB methods
  *        
- * Last Modified: 18-Jan-2013
+ * Last Modified: 03-May-2013
  */
 public abstract class MdxConnection {
 	private static final boolean DEBUG = false; // Change DEBUG = false for release version
