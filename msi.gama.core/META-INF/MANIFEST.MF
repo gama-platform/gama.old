@@ -47,6 +47,7 @@ Export-Package: msi.gama.common.interfaces;
    com.vividsolutions.jts.geom,
    msi.gama.runtime.exceptions",
  msi.gama.database,
+ msi.gama.database.mdx,
  msi.gama.database.sql,
  msi.gama.kernel.batch;
   uses:="org.uncommons.maths.number,
