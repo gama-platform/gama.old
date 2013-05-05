@@ -91,7 +91,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		public void mouseWheelMoved(final MouseWheelEvent e) {
 			boolean zoomIn = e.getWheelRotation() < 0;
 			mousePosition = e.getPoint();
-			setZoom(zoomIn ? 1.0 + zoomIncrement : 1.0 - zoomIncrement, mousePosition);
+			applyZoom(zoomIn ? 1.0 + zoomIncrement : 1.0 - zoomIncrement, mousePosition);
 			updateDisplay();
 		}
 
@@ -161,7 +161,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 			@Override
 			public void componentResized(final ComponentEvent e) {
-				if ( buffImage == null ) {
+				if ( buffImage == null || zoomFit ) {
 					zoomFit();
 				} else {
 					if ( isFullImageInPanel() ) {
@@ -172,8 +172,12 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 					// else {
 					// ((AWTDisplayGraphics) getIGraphics()).getGraphics2D().setClip(getImageClipBounds());
 					// }
+
 				}
 				updateDisplay();
+				double newZoom =
+					Math.min(getWidth() / (double) getDisplayWidth(), getHeight() / (double) getDisplayHeight());
+				setZoomLevel(1 / newZoom);
 				previousPanelSize = getSize();
 			}
 		});
@@ -282,26 +286,27 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	@Override
 	public void zoomIn() {
 		mousePosition = new Point(origin.x + getDisplayWidth() / 2, origin.y + getDisplayHeight() / 2);
-		setZoom(1.0 + zoomIncrement, mousePosition);
+		applyZoom(1.0 + zoomIncrement, mousePosition);
 
 	}
 
 	@Override
 	public void zoomOut() {
 		mousePosition = new Point(origin.x + getDisplayWidth() / 2, origin.y + getDisplayHeight() / 2);;
-		setZoom(1.0 - zoomIncrement, mousePosition);
+		applyZoom(1.0 - zoomIncrement, mousePosition);
 
 	}
 
-	public void setZoom(final double factor, final Point c) {
+	public void applyZoom(final double factor, final Point c) {
 		if ( resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * factor)),
 			Math.max(1, (int) Math.round(getDisplayHeight() * factor))) ) {
+			zoomFit = false;
+			setZoomLevel(zoomLevel * factor);
 			int imagePX =
 				c.x < origin.x ? 0 : c.x >= getDisplayWidth() + origin.x ? getDisplayWidth() - 1 : c.x - origin.x;
 			int imagePY =
 				c.y < origin.y ? 0 : c.y >= getDisplayHeight() + origin.y ? getDisplayHeight() - 1 : c.y - origin.y;
-			zoomFactor = factor;
-			setOrigin(c.x - (int) Math.round(imagePX * zoomFactor), c.y - (int) Math.round(imagePY * zoomFactor));
+			setOrigin(c.x - (int) Math.round(imagePX * factor), c.y - (int) Math.round(imagePY * factor));
 			updateDisplay();
 		}
 	}
@@ -310,6 +315,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	public void zoomFit() {
 		mousePosition = new Point(getWidth() / 2, getHeight() / 2);
 		if ( resizeImage(getWidth(), getHeight()) ) {
+			super.zoomFit();
 			centerImage();
 			updateDisplay();
 		}

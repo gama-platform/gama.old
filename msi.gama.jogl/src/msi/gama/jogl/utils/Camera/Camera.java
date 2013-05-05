@@ -2,19 +2,19 @@ package msi.gama.jogl.utils.Camera;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
-
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.*;
 
 public class Camera {
 
+	public final static double INIT_Z_FACTOR = 1.5;
+
 	public double xPos;
 	public double yPos;
-	public double zPos;
+	private double zPos;
 
 	public double xLPos;
 	public double yLPos;
-	public double zLPos;
+	private double zLPos;
 
 	private double pitch;
 	private double yaw;
@@ -35,7 +35,7 @@ public class Camera {
 		xLPos = 0;
 		yLPos = 0;
 		setzLPos(10);
-		setUpVector(new GamaPoint(0.0,1.0,0.0));
+		setUpVector(new GamaPoint(0.0, 1.0, 0.0));
 	}
 
 	public Camera(double xPos, double yPos, double zPos, double xLPos, double yLPos, double zLPos) {
@@ -79,19 +79,19 @@ public class Camera {
 		if ( Math.abs(diffx) > Math.abs(diffy) ) {// Move X
 			speed = Math.abs(diffx) * speed;
 			if ( diffx > 0 ) {// move right
-				this.updatePosition(this.getXPos() - speed, this.getYPos(), this.getZPos());
+				this.updatePosition(this.getXPos() - speed, this.getYPos(), this.getzPos());
 				this.lookPosition(this.getXLPos() - speed, this.getYLPos(), this.getZLPos());
 			} else {// move left
-				this.updatePosition(this.getXPos() + speed, this.getYPos(), this.getZPos());
+				this.updatePosition(this.getXPos() + speed, this.getYPos(), this.getzPos());
 				this.lookPosition(this.getXLPos() + speed, this.getYLPos(), this.getZLPos());
 			}
 		} else if ( Math.abs(diffx) < Math.abs(diffy) ) { // Move Y
 			speed = Math.abs(diffy) * speed;
 			if ( diffy > 0 ) {// move down
-				this.updatePosition(this.getXPos(), this.getYPos() + speed, this.getZPos());
+				this.updatePosition(this.getXPos(), this.getYPos() + speed, this.getzPos());
 				this.lookPosition(this.getXLPos(), this.getYLPos() + speed, this.getZLPos());
 			} else {// move up
-				this.updatePosition(this.getXPos(), this.getYPos() - speed, this.getZPos());
+				this.updatePosition(this.getXPos(), this.getYPos() - speed, this.getzPos());
 				this.lookPosition(this.getXLPos(), this.getYLPos() - speed, this.getZLPos());
 			}
 
@@ -108,10 +108,10 @@ public class Camera {
 			translationValue = Math.abs(diffx) * ((z + 1) / w);
 
 			if ( diffx > 0 ) {// move right
-				updatePosition(getXPos() - translationValue, getYPos(), getZPos());
+				updatePosition(getXPos() - translationValue, getYPos(), getzPos());
 				lookPosition(getXLPos() - translationValue, getYLPos(), getZLPos());
 			} else {// move left
-				updatePosition(getXPos() + translationValue, getYPos(), getZPos());
+				updatePosition(getXPos() + translationValue, getYPos(), getzPos());
 				lookPosition(getXLPos() + translationValue, getYLPos(), getZLPos());
 			}
 		} else if ( Math.abs(diffx) < Math.abs(diffy) ) { // Move Y
@@ -119,10 +119,10 @@ public class Camera {
 			translationValue = Math.abs(diffy) * ((z + 1) / h);
 
 			if ( diffy > 0 ) {// move down
-				updatePosition(getXPos(), getYPos() + translationValue, getZPos());
+				updatePosition(getXPos(), getYPos() + translationValue, getzPos());
 				this.lookPosition(getXLPos(), getYLPos() + translationValue, getZLPos());
 			} else {// move up
-				updatePosition(getXPos(), getYPos() - translationValue, getZPos());
+				updatePosition(getXPos(), getYPos() - translationValue, getzPos());
 				lookPosition(getXLPos(), getYLPos() - translationValue, getZLPos());
 			}
 		}
@@ -196,10 +196,6 @@ public class Camera {
 
 	public double getYPos() {
 		return getyPos();
-	}
-
-	public double getZPos() {
-		return getzPos();
 	}
 
 	public double getXLPos() {
@@ -277,13 +273,13 @@ public class Camera {
 		}
 		float aspect = (float) width / height;
 		// FIXME: need to see the influence of the different parameter.
-		glu.gluPerspective(45.0f, aspect, 0.1f, maxDim * 100);
-		glu.gluLookAt(this.getXPos(), this.getYPos(), this.getZPos(), this.getXLPos(), this.getYLPos(),
-			this.getZLPos(), getUpVector().getX(), getUpVector().getY(),getUpVector().getZ());
+		glu.gluPerspective(45.0f, aspect, 0.1f, getMaxDim() * 100);
+		glu.gluLookAt(this.getXPos(), this.getYPos(), this.getzPos(), this.getXLPos(), this.getYLPos(),
+			this.getZLPos(), getUpVector().getX(), getUpVector().getY(), getUpVector().getZ());
 
 	}
 
-	public void InitializeCamera(double envWidth, double envHeight) {
+	public void initializeCamera(double envWidth, double envHeight) {
 
 		this.yaw = 0.0f;
 		this.pitch = 0.0f;
@@ -291,9 +287,9 @@ public class Camera {
 		this.envHeight = envHeight;
 
 		if ( envWidth > envHeight ) {
-			maxDim = envWidth;
+			setMaxDim(envWidth);
 		} else {
-			maxDim = envHeight;
+			setMaxDim(envHeight);
 		}
 
 		if ( isModelCentered ) {
@@ -301,20 +297,20 @@ public class Camera {
 			this.setxLPos(0);
 			this.setyPos(0);
 			this.setyLPos(0);
-			this.setzPos(maxDim * 2);
+			this.setzPos(getMaxDim() * INIT_Z_FACTOR);
 			this.setzLPos(0.0f);
 		} else {
 			this.setxPos(envWidth / 2);
 			this.setxLPos(envWidth / 2);
 			this.setyPos(-envHeight / 2);
 			this.setyLPos(-envHeight / 2);
-			this.setzPos(maxDim * 2);
+			this.setzPos(getMaxDim() * INIT_Z_FACTOR);
 			this.setzLPos(0.0f);
 		}
 		// this.PrintParam();
 	}
 
-	public void Initialize3DCamera(double envWidth, double envHeight) {
+	public void initialize3DCamera(double envWidth, double envHeight) {
 
 		this.yaw = -1.5f;
 		this.pitch = 0.5f;
@@ -324,7 +320,7 @@ public class Camera {
 			this.setxLPos(0);
 			this.setyPos(-envHeight * 1.75 + envHeight / 2);
 			this.setyLPos(-envHeight * 0.5 + envHeight / 2);
-			this.setzPos(maxDim * 2);
+			this.setzPos(getMaxDim() * INIT_Z_FACTOR);
 			this.setzLPos(0);
 
 		} else {
@@ -332,7 +328,7 @@ public class Camera {
 			this.setxLPos(envWidth / 2);
 			this.setyPos(-envHeight * 1.75);
 			this.setyLPos(-envHeight * 0.5);
-			this.setzPos(maxDim);
+			this.setzPos(getMaxDim());
 			this.setzLPos(0);
 		}
 
@@ -371,6 +367,14 @@ public class Camera {
 
 	public void setUpVector(ILocation upVector) {
 		this.upVector = upVector;
+	}
+
+	public double getMaxDim() {
+		return maxDim;
+	}
+
+	public void setMaxDim(double maxDim) {
+		this.maxDim = maxDim;
 	}
 
 	/* ---------------------------------------------------- */

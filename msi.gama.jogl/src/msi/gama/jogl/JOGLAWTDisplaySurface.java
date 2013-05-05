@@ -28,7 +28,9 @@ import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.displays.awt.AbstractAWTDisplaySurface;
 import msi.gama.gui.displays.layers.LayerManager;
+import msi.gama.jogl.scene.ModelScene;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
+import msi.gama.jogl.utils.Camera.Camera;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -92,27 +94,31 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			public void run() {
 				if ( !canBeUpdated() ) { return; }
 				canBeUpdated(false);
-				renderer.getScene().wipe(renderer);
-				// renderer.setPolygonTriangulated(false);
-				renderer.setTessellation(getOutput().getTesselation());
-				renderer.setAmbientLightValue(getOutput().getAmbientLightColor());
-				renderer.setPolygonMode(getOutput().getPolygonMode());
-				renderer.setCameraPosition(getOutput().getCameraPos());
-				renderer.setCameraLookPosition(getOutput().getCameraLookPos());
-				renderer.setCameraUpVector(getOutput().getCameraUpVector());
+				ModelScene s = renderer.getScene();
+				if ( s != null ) {
+					s.wipe(renderer);
 
-				if ( autosave ) {
-					snapshot();
+					// renderer.setPolygonTriangulated(false);
+					renderer.setTessellation(getOutput().getTesselation());
+					renderer.setAmbientLightValue(getOutput().getAmbientLightColor());
+					renderer.setPolygonMode(getOutput().getPolygonMode());
+					renderer.setCameraPosition(getOutput().getCameraPos());
+					renderer.setCameraLookPosition(getOutput().getCameraLookPos());
+					renderer.setCameraUpVector(getOutput().getCameraUpVector());
+
+					if ( autosave ) {
+						snapshot();
+					}
+
+					drawDisplaysWithoutRepainting();
+					paintingNeeded.release();
+					canBeUpdated(true);
+					if ( output3D ) {
+						output3DManager.updateOutput3D(renderer);
+					}
+
+					// Toolkit.getDefaultToolkit().sync();
 				}
-
-				drawDisplaysWithoutRepainting();
-				paintingNeeded.release();
-				canBeUpdated(true);
-				if ( output3D ) {
-					output3DManager.updateOutput3D(renderer);
-				}
-
-				// Toolkit.getDefaultToolkit().sync();
 			}
 		};
 
@@ -134,7 +140,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 		add(renderer.canvas, BorderLayout.CENTER);
 		// openGLGraphicsGLRender.animator.start();
-		zoomFit();
+		// zoomFit();
 		// new way
 		// createIGraphics();
 
@@ -155,10 +161,14 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 				// scaleOrigin();
 				// }
 				// }
+				if ( zoomFit ) {
+					zoomFit();
+				}
 				resizeImage(getWidth(), getHeight());
 				initOutput3D(out.getOutput3D(), out.getOutput3DNbCycles());
 				updateDisplay();
 				previousPanelSize = getSize();
+
 			}
 		});
 		renderer.animator.start();
@@ -348,7 +358,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		//
 		// }
 		// });
-
+		// remove(renderer.canvas);
+		renderer.dispose();
 		if ( manager != null ) {
 			manager.dispose();
 		}
@@ -367,55 +378,58 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public void zoomIn() {
 		float incrementalZoomStep;
 		// Check if Z is not equal to 0 (avoid being block on z=0)
-		if ( renderer.camera.zPos != 0 ) {
-			incrementalZoomStep = (float) renderer.camera.zPos / 10;
+		if ( renderer.camera.getzPos() != 0 ) {
+			incrementalZoomStep = (float) renderer.camera.getzPos() / 10;
 		} else {
 			incrementalZoomStep = 0.1f;
 		}
-		renderer.camera.zPos -= incrementalZoomStep;
-		renderer.camera.zLPos -= incrementalZoomStep;
+		renderer.camera.setzPos(renderer.camera.getzPos() - incrementalZoomStep);
+		renderer.camera.setzLPos(renderer.camera.getzLPos() - incrementalZoomStep);
+		setZoomLevel(renderer.camera.getMaxDim() * Camera.INIT_Z_FACTOR / renderer.camera.getzPos());
+		// FIXME Approximate
+		resizeImage((int) (getWidth() * zoomLevel), (int) (getHeight() * zoomLevel));
+		// setZoomLevel(zoomLevel + zoomLevel * 0.1);
+		updateDisplay();
+		zoomFit = false;
 	}
 
 	@Override
 	public void zoomOut() {
 		float incrementalZoomStep;
 		// Check if Z is not equal to 0 (avoid being block on z=0)
-		if ( renderer.camera.zPos != 0 ) {
-			incrementalZoomStep = (float) renderer.camera.zPos / 10;
+		if ( renderer.camera.getzPos() != 0 ) {
+			incrementalZoomStep = (float) renderer.camera.getzPos() / 10;
 		} else {
 			incrementalZoomStep = 0.1f;
 		}
-		renderer.camera.zPos += incrementalZoomStep;
-		renderer.camera.zLPos += incrementalZoomStep;
-
+		renderer.camera.setzPos(renderer.camera.getzPos() + incrementalZoomStep);
+		renderer.camera.setzLPos(renderer.camera.getzLPos() + incrementalZoomStep);
+		setZoomLevel(renderer.camera.getMaxDim() * Camera.INIT_Z_FACTOR / renderer.camera.getzPos());
+		// FIXME Approximate
+		resizeImage((int) (getWidth() * zoomLevel), (int) (getHeight() * zoomLevel));
+		updateDisplay();
+		zoomFit = false;
 	}
-
-	// public void setZoom(final double factor, final Point c) {
-	// if ( resizeImage((int) Math.round(bWidth * factor), (int) Math.round(bHeight * factor)) ) {
-	// int imagePX = c.x < origin.x ? 0 : c.x >= bWidth + origin.x ? bWidth - 1 : c.x - origin.x;
-	// int imagePY = c.y < origin.y ? 0 : c.y >= bHeight + origin.y ? bHeight - 1 : c.y - origin.y;
-	// zoomFactor = factor;
-	// setOrigin(c.x - (int) Math.round(imagePX * zoomFactor), c.y - (int) Math.round(imagePY * zoomFactor));
-	// updateDisplay();
-	// }
-	// }
 
 	@Override
 	public void zoomFit() {
+		resizeImage(getWidth(), getHeight());
 		if ( renderer != null ) {
+			super.zoomFit();
 			if ( threeD ) {
-				renderer.camera.Initialize3DCamera(getEnvWidth(), getEnvHeight());
+				renderer.camera.initialize3DCamera(getEnvWidth(), getEnvHeight());
 				if ( renderer.camera.isModelCentered ) {
 					renderer.reset();
 				}
 
 			} else {
-				renderer.camera.InitializeCamera(getEnvWidth(), getEnvHeight());
+				renderer.camera.initializeCamera(getEnvWidth(), getEnvHeight());
 				if ( renderer.camera.isModelCentered ) {
 					renderer.reset();
 				}
 			}
 		}
+		// updateDisplay();
 	}
 
 	@Override

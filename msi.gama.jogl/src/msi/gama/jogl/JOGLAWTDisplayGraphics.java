@@ -96,22 +96,22 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		if ( geometry.getAttribute("depth") != null && geometry.getAttribute("type") != null ) {
 			Double depth = (Double) geometry.getAttribute("depth");
 			String type = (String) geometry.getAttribute("type");
-			scene.addGeometry(geom, scope.getAgentScope().getAgent(), currentZLayer, currentLayerId, color, fill,
-				border, false, angle, depth.floatValue(), currentOffset, currentScale, rounded, type.toString(),
-				currentLayerIsStatic, getCurrentAlpha());
+			scene.addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color, fill, border, false,
+				angle, depth.floatValue(), currentOffset, currentScale, rounded, type, currentLayerIsStatic,
+				getCurrentAlpha());
 		}
 
 		else {
 			// Add a geometry with a depth and type coming from getUSerData (with add_z operator)
 			if ( geometry.getInnerGeometry().getUserData() != null ) {
 				float height = new Float(geom.getUserData().toString());
-				scene.addGeometry(geom, scope.getAgentScope().getAgent(), currentZLayer, currentLayerId, color, fill,
-					border, false, angle, height, currentOffset, currentScale, rounded, "JTS", currentLayerIsStatic,
+				scene.addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color, fill, border,
+					false, angle, height, currentOffset, currentScale, rounded, "JTS", currentLayerIsStatic,
 					getCurrentAlpha());
 			} else {
 				// add a 2D geometry without any 3D data.
-				scene.addGeometry(geom, scope.getAgentScope().getAgent(), currentZLayer, currentLayerId, color, fill,
-					border, false, angle, 0, currentOffset, currentScale, rounded, "none", currentLayerIsStatic,
+				scene.addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color, fill, border,
+					false, angle, 0, currentOffset, currentScale, rounded, "none", currentLayerIsStatic,
 					getCurrentAlpha());
 			}
 
@@ -228,7 +228,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	 */
 	@Override
 	public Rectangle2D drawString(String string, Color stringColor, ILocation locationInModelUnits,
-		java.lang.Double heightInModelUnits, String fontName, Integer styleName, Integer angle, Double z) {
+		Double heightInModelUnits, String fontName, Integer styleName, Integer angle, Double z) {
 		double curX, curY;
 		if ( locationInModelUnits == null ) {
 			curX = 0d;
@@ -237,14 +237,19 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			curX = locationInModelUnits.getX();
 			curY = locationInModelUnits.getY();
 		}
-		double curHeight;
+		Integer size;
+		Double sizeInModelUnits;
 		if ( heightInModelUnits == null ) {
-			curHeight = hFromPixelsToModelUnits(heightOfLayerInPixels);
+			size = heightOfLayerInPixels;
+			sizeInModelUnits =
+				heightOfDisplayInPixels / (double) heightOfEnvironmentInModelUnits * heightOfLayerInPixels;
 		} else {
-			curHeight = heightInModelUnits;
+			sizeInModelUnits = heightInModelUnits;
+			size =
+				(int) ((double) heightOfDisplayInPixels / (double) heightOfEnvironmentInModelUnits * heightInModelUnits);
 		}
-		scene.addString(string, curX, -curY, z, curHeight, currentOffset, currentScale, stringColor, fontName,
-			styleName, angle, getCurrentAlpha());
+		scene.addString(string, curX, -curY, z, size, sizeInModelUnits, currentOffset, currentScale, stringColor,
+			fontName, styleName, angle, getCurrentAlpha());
 		return null;
 	}
 

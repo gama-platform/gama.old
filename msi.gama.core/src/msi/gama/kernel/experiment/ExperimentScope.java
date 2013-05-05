@@ -20,6 +20,7 @@ package msi.gama.kernel.experiment;
 
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.ISimulationAgent;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.AbstractScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
@@ -58,7 +59,9 @@ public class ExperimentScope extends AbstractScope {
 
 	@Override
 	public ISimulationAgent getSimulationScope() {
-		return experiment.getAgent().getSimulation();
+		IAgent a = experiment.getAgent();
+		if ( a == null ) { return null; }
+		return a.getSimulation();
 	}
 
 	@Override

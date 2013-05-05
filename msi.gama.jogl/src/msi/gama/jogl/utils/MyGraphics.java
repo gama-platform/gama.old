@@ -1,11 +1,9 @@
 package msi.gama.jogl.utils;
 
 import static javax.media.opengl.GL.*;
-import java.awt.Color;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.*;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.TessellCallBack;
-import msi.gama.metamodel.shape.GamaPoint;
 import com.sun.opengl.util.GLUT;
 import com.vividsolutions.jts.geom.*;
 
@@ -50,82 +48,6 @@ public class MyGraphics {
 		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_END, tessCallback);// endCallback);
 		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_ERROR, tessCallback);// errorCallback)
 
-	}
-
-	final GamaPoint offset = new GamaPoint(0, 0, 0);
-	final GamaPoint scale = new GamaPoint(1, 1, 1);
-
-	public void DrawXYZAxis(final double size) {
-		// FIXME Define as static constants
-
-		gl.glColor4d(0.0d, 0.0d, 0.0d, 1.0d);
-		drawString("1:" + String.valueOf(size), size, size, 0.0d, 0.0, offset, scale, Color.black);
-		// X Axis
-		drawString("x", 1.2f * size, 0.0d, 0.0d, 0.0, offset, scale, Color.black);
-		gl.glBegin(GL.GL_LINES);
-		gl.glColor4d(1.0d, 0, 0, 1.0d);
-		gl.glVertex3d(0, 0, 0);
-		gl.glVertex3d(size, 0, 0);
-		gl.glEnd();
-
-		gl.glBegin(GL_TRIANGLES);
-		gl.glVertex3d(1.0d * size, 0.05d * size, 0.0d);
-		gl.glVertex3d(1.0d * size, -0.05d * size, 0.0d);
-		gl.glVertex3d(1.1f * size, 0.0d, 0.0d);
-		gl.glEnd();
-
-		// Y Axis
-		drawString("y", 0.0d, 1.2f * size, 0.0d, 0.0, offset, scale, Color.black);
-		gl.glBegin(GL.GL_LINES);
-		gl.glColor4d(0, 1.0d, 0, 1.0d);
-		gl.glVertex3d(0, 0, 0);
-		gl.glVertex3d(0, size, 0);
-		gl.glEnd();
-		gl.glBegin(GL_TRIANGLES);
-		gl.glVertex3d(-0.05d * size, 1.0d * size, 0.0d);
-		gl.glVertex3d(0.05d * size, 1.0d * size, 0.0d);
-		gl.glVertex3d(0.0d, 1.1f * size, 0.0d);
-		gl.glEnd();
-
-		// Z Axis
-		gl.glRasterPos3d(0.0d, 0.0d, 1.2f * size);
-		drawString("z", 0.0d, 0.0d, 1.2f * size, 0.0, offset, scale, Color.black);
-		gl.glBegin(GL.GL_LINES);
-		gl.glColor4d(0, 0, 1.0d, 1.0d);
-		gl.glVertex3d(0, 0, 0);
-		gl.glVertex3d(0, 0, size);
-		gl.glEnd();
-
-		gl.glBegin(GL_TRIANGLES);
-		gl.glVertex3d(0.0d, 0.05d * size, 1.0d * size);
-		gl.glVertex3d(0.0d, -0.05d * size, 1.0d * size);
-		gl.glVertex3d(0.0d, 0.0d, 1.1f * size);
-		gl.glEnd();
-
-	}
-
-	public void DrawZValue(final double pos, final float value) {
-		drawString("z:" + String.valueOf(value), pos, pos, 0.0d, 0.0d, offset, scale, Color.black);
-	}
-
-	public void drawString(final String string, final double x, final double y, final double z, final double z_layer,
-		final GamaPoint offset, final GamaPoint scale, final Color color) {
-		gl.glTranslated(offset.x, -offset.y, 0.0);
-		// TODO Scale en Z
-		gl.glScaled(scale.x, scale.y, 1);
-
-		// Need to disable blending when drawing glutBitmapString;
-		gl.glDisable(GL_BLEND);
-		gl.glColor4d(color.getRed(), color.getGreen(), color.getBlue(), 1.0d);
-		gl.glRasterPos3d(x, y, z + z_layer);
-		gl.glScaled(8.0d, 8.0d, 8.0d);
-		glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, string);
-		// glut.glutBitmapString(GLUT.BITMAP_8_BY_13, string);
-		gl.glScaled(0.125d, 0.125d, 0.125d);
-		// myGl.glEnable(GL_BLEND);
-		// TODO Scale en Z
-		gl.glScaled(1 / scale.x, 1 / scale.y, 1);
-		gl.glTranslated(-offset.x, offset.y, 0.0);
 	}
 
 	void DrawTorus(double innerRadius, double outterRadius, int sides, int rings) {

@@ -28,6 +28,7 @@ import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.perspectives.ModelingPerspective;
 import msi.gama.gui.swt.swing.EmbeddedSwingComposite;
+import msi.gama.gui.views.actions.ZoomIndicatorItem;
 import msi.gama.outputs.*;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
@@ -42,6 +43,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 	private EmbeddedSwingComposite swingCompo;
 	IPerspectiveListener perspectiveListener;
+	ZoomIndicatorItem zoomIndicator;
 
 	// private IPartListener2 partListener;
 
@@ -64,11 +66,11 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 		// Add the toggle 3D view button for opengl display
 		if ( this.output.getDescription().getFacets().equals("type", "opengl") ) { return new Integer[] { PAUSE,
-			REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT, SEPARATOR, ZOOM_IN, ZOOM_OUT, ZOOM_FIT,
-			FOCUS, SEPARATOR, CAMERA, SEPARATOR, ARCBALL, PICKING, SELECT_RECTANGLE, SHAPEFILE, SEPARATOR,
+			REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT, SEPARATOR, ZOOM_IN, ZOOM_INDICATOR, ZOOM_OUT,
+			ZOOM_FIT, FOCUS, SEPARATOR, CAMERA, SEPARATOR, ARCBALL, PICKING, SELECT_RECTANGLE, SHAPEFILE, SEPARATOR,
 			TRIANGULATION, SPLITLAYER }; }
 		return new Integer[] { PAUSE, REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT, SEPARATOR, ZOOM_IN,
-			ZOOM_OUT, ZOOM_FIT, FOCUS, SEPARATOR, HIGHLIGHT_COLOR };
+			ZOOM_INDICATOR, ZOOM_OUT, ZOOM_FIT, FOCUS, SEPARATOR, HIGHLIGHT_COLOR };
 	}
 
 	public ILayerManager getDisplayManager() {
@@ -329,6 +331,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		//
 		// }
 		// });
+		getOutput().getSurface().setZoomListener(this);
 		((SashForm) parent).setWeights(new int[] { 1, 2 });
 		((SashForm) parent).setMaximizedControl(swingCompo);
 	}
@@ -615,4 +618,21 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 	}
 
+	@Override
+	public void setIndicator(ZoomIndicatorItem indicator) {
+		zoomIndicator = indicator;
+	}
+
+	@Override
+	public void newZoomLevel(double zoomLevel) {
+		final int zoom = (int) (zoomLevel * 100);
+		GuiUtils.run(new Runnable() {
+
+			@Override
+			public void run() {
+				zoomIndicator.setText(String.valueOf(zoom) + "%");
+			}
+		});
+
+	}
 }

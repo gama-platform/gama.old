@@ -4,6 +4,7 @@ import java.awt.Frame;
 import java.util.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.views.*;
+import msi.gama.gui.views.actions.ZoomIndicatorItem;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.util.graph.*;
 import org.apache.log4j.Logger;
@@ -195,13 +196,11 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 
 		// create the SWT AWT bridge
 		awtFrame = SWT_AWT.new_Frame(myComposite);
-		if ( awtFrame == null ) { throw new RuntimeException(
-			"unable to intialize the SWT to AWT bridge"); }
+		if ( awtFrame == null ) { throw new RuntimeException("unable to intialize the SWT to AWT bridge"); }
 
 		graphstreamGraph = new SingleGraph("I can see dead pixels");
 
-		graphstreamViewer =
-			new Viewer(graphstreamGraph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+		graphstreamViewer = new Viewer(graphstreamGraph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
 		graphstreamViewer.setCloseFramePolicy(CloseFramePolicy.CLOSE_VIEWER);
 
 		graphstreamLayout = new SpringBox();
@@ -309,8 +308,7 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 						// the graphstream graph
 					}
 				} else {
-					logger.warn("unable to find edge " + event.vertex +
-						", the display may be broken");
+					logger.warn("unable to find edge " + event.vertex + ", the display may be broken");
 				}
 			}
 				break;
@@ -327,8 +325,7 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 						e.getStackTrace();
 					}
 				} else {
-					logger.warn("unable to find vertex " + event.vertex +
-						", the display may be broken");
+					logger.warn("unable to find vertex " + event.vertex + ", the display may be broken");
 				}
 			}
 				break;
@@ -351,8 +348,7 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 		for ( Object e : gamaGraph.getEdges() ) {
 
 			try {
-				graphstreamGraph.addEdge(getOrCreateIdForEdge(e),
-					getOrCreateIdForVertex(gamaGraph.getEdgeSource(e)),
+				graphstreamGraph.addEdge(getOrCreateIdForEdge(e), getOrCreateIdForVertex(gamaGraph.getEdgeSource(e)),
 					getOrCreateIdForVertex(gamaGraph.getEdgeTarget(e)));
 			} catch (EdgeRejectedException e2) {
 				logger.warn("unable to display an edge " + e);
@@ -432,8 +428,7 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 		if ( gamaGraph == null ) {
 
 			if ( logger.isDebugEnabled() ) {
-				logger
-					.debug("gama graph not available, attempting to retrieve the graph passed as parameter...");
+				logger.debug("gama graph not available, attempting to retrieve the graph passed as parameter...");
 			}
 			gamaGraph = novelGraph;
 
@@ -482,8 +477,7 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 	public void zoomIn() {
 
 		graphstreamView.getCamera().setAutoFitView(false);
-		graphstreamView.getCamera().setViewPercent(
-			graphstreamView.getCamera().getViewPercent() * 0.9);
+		graphstreamView.getCamera().setViewPercent(graphstreamView.getCamera().getViewPercent() * 0.9);
 
 	}
 
@@ -491,8 +485,7 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 	public void zoomOut() {
 
 		graphstreamView.getCamera().setAutoFitView(false);
-		graphstreamView.getCamera().setViewPercent(
-			graphstreamView.getCamera().getViewPercent() * 1.1);
+		graphstreamView.getCamera().setViewPercent(graphstreamView.getCamera().getViewPercent() * 1.1);
 
 	}
 
@@ -536,7 +529,7 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 	public void toggleView() {
 		System.out.println("toggle view is only available for Opengl Display");
 	}
-	
+
 	/**
 	 * This method does nothing for Graphstream display
 	 */
@@ -544,8 +537,7 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 	public void togglePicking() {
 		System.out.println("toggle picking is only available for Opengl Display");
 	}
-	
-	
+
 	/**
 	 * This method does nothing for Graphstream display
 	 */
@@ -553,7 +545,7 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 	public void toggleArcball() {
 		System.out.println("arcball view is only available for Opengl Display");
 	}
-	
+
 	/**
 	 * This method does nothing for Graphstream display
 	 */
@@ -561,7 +553,7 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 	public void toggleSelectRectangle() {
 		System.out.println("select rectangle tool is only available for Opengl Display");
 	}
-	
+
 	/**
 	 * This method does nothing for Graphstream display
 	 */
@@ -569,14 +561,14 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 	public void toggleTriangulation() {
 		System.out.println("triangulation tool is only available for Opengl Display");
 	}
-	
+
 	/**
 	 * This method does nothing for Graphstream display
 	 */
 	@Override
 	public void toggleSplitLayer() {
 		System.out.println("toggleSplitLayer tool is only available for Opengl Display");
-		
+
 	}
 
 	/**
@@ -585,7 +577,13 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 	@Override
 	public void addShapeFile() {
 		// TODO Auto-generated method stub
-		
+
 	}
+
+	@Override
+	public void newZoomLevel(double zoomLevel) {}
+
+	@Override
+	public void setIndicator(ZoomIndicatorItem indicator) {}
 
 }

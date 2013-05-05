@@ -1,12 +1,15 @@
 package msi.gama.jogl.scene;
 
 import static javax.media.opengl.GL.*;
+import java.awt.Font;
+import java.util.*;
 import javax.media.opengl.GL;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.JTSDrawer;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
 import com.sun.opengl.util.GLUT;
+import com.sun.opengl.util.j2d.TextRenderer;
 import com.sun.opengl.util.texture.*;
 import com.vividsolutions.jts.geom.*;
 
@@ -21,12 +24,13 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 		gl = r.gl;
 	}
 
-	final void draw(T object) {
+	// Better to subclass _draw than this one
+	void draw(T object) {
+		gl.glPushMatrix();
 		gl.glTranslated(object.offset.x, -object.offset.y, object.offset.z);
 		gl.glScaled(object.scale.x, object.scale.y, 1);
 		_draw(object);
-		gl.glScaled(1 / object.scale.x, 1 / object.scale.y, 1);
-		gl.glTranslated(-object.offset.x, object.offset.y, -object.offset.z);
+		gl.glPopMatrix();
 	}
 
 	protected abstract void _draw(T object);
@@ -213,6 +217,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 		public void _draw(CollectionObject collection) {
 			// Draw Shape file so need to inverse the y composante.
 			jtsDrawer.yFlag = 1;
+			gl.glPushMatrix();
 			gl.glTranslated(-collection.collection.getBounds().centre().x,
 				-collection.collection.getBounds().centre().y, 0.0d);
 			// Iterate throught all the collection
@@ -235,8 +240,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 					jtsDrawer.DrawPoint((Point) sourceGeometry, 0.0d, 10, 10, collection.color, 1.0d);
 				}
 			}
-			gl.glTranslated(collection.collection.getBounds().centre().x,
-				+collection.collection.getBounds().centre().y, 0.0d);
+			gl.glPopMatrix();
 			jtsDrawer.yFlag = -1;
 		}
 	}
@@ -252,12 +256,50 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 
 	public static class StringDrawer extends ObjectDrawer<StringObject> {
 
+		// Setting it to true requires that the ModelScene handles strings outside a list (see ModelScene)
+		static final boolean USE_VERTEX_ARRAYS = false;
+		Map<String, Map<Integer, Map<Integer, TextRenderer>>> cache = new LinkedHashMap();
+
+		// static String[] fonts = { "Helvetica", "Geneva", "Times", "Courier", "Arial", "Gill Sans", "Sans Serif" };
+		// static int[] sizes = { 8, 10, 12, 14, 16, 20, 24, 36, 48, 60, 72 };
+		// static int[] styles = { Font.PLAIN, Font.BOLD, Font.ITALIC };
+		// static {
+		// for ( String f : fonts ) {
+		// for ( int s : sizes ) {
+		// for ( int t : styles ) {
+		// get(f, s, t);
+		// }
+		//
+		// }
+		// }
+		// }
+
+		TextRenderer get(String font, int size, int style) {
+			Map<Integer, Map<Integer, TextRenderer>> map1 = cache.get(font);
+			if ( map1 == null ) {
+				map1 = new HashMap();
+				cache.put(font, map1);
+			}
+			Map<Integer, TextRenderer> map2 = map1.get(size);
+			if ( map2 == null ) {
+				map2 = new HashMap();
+				map1.put(size, map2);
+			}
+			TextRenderer r = map2.get(style);
+			if ( r == null ) {
+				r = new TextRenderer(new Font(font, style, size), true, true, null, true);
+				r.setSmoothing(true);
+				r.setUseVertexArrays(USE_VERTEX_ARRAYS);
+				map2.put(style, r);
+			}
+			return r;
+		}
+
 		public StringDrawer(JOGLAWTGLRenderer r) {
 			super(r);
 		}
 
-		@Override
-		protected void _draw(StringObject s) {
+		protected void _drawOld(StringObject s) {
 			gl.glDisable(GL_BLEND);
 			gl.glColor4d(s.color.getRed(), s.color.getGreen(), s.color.getBlue(), 1.0d);
 			gl.glRasterPos3d(s.x, s.y, s.z + s.z_layer);
@@ -267,6 +309,63 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			gl.glEnable(GL_BLEND);
 
 		}
+
+		@Override
+		public void draw(StringObject object) {
+			// gl.glTranslated(object.offset.x, -object.offset.y, object.offset.z);
+			// gl.glScaled(object.scale.x, object.scale.y, 1);
+			_draw(object);
+			// gl.glScaled(1 / object.scale.x, 1 / object.scale.y, 1);
+			// gl.glTranslated(-object.offset.x, object.offset.y, -object.offset.z);
+
+		}
+
+		@Override
+		protected void _draw(StringObject s) {
+
+			// FIXME height ?
+			// renderer.getContext().makeCurrent();
+			// GuiUtils.debug("ObjectDrawer.StringDrawer._draw env size " + renderer.getWidth() + " ;" +
+			// renderer.getHeight());
+
+			TextRenderer r = get(s.font, s.size, s.style);
+			r.setColor(s.color);
+			r.begin3DRendering();
+			float x = (float) ((float) s.x * s.scale.x + s.offset.x);
+			float y = (float) ((float) s.y * s.scale.y - s.offset.y);
+			// GuiUtils.debug("ObjectDrawer.StringDrawer._draw '" + s.string + "' at " + x + " ; " + y + " [original: "
+			// +
+			// s.x + " ; " + s.y + "]" + "[offset: " + s.offset.x + " ; " + s.offset.y + "]");
+			// gl.glTranslated(s.offset.x, -s.offset.y, s.offset.z);
+			gl.glPushMatrix();
+			// gl.glScaled(s.scale.x, s.scale.y, 1);
+			r.draw3D(s.string, x, y, (float) (s.z + s.z_layer),
+				(float) (/* s.scale.y * */renderer.env_height / renderer.getHeight()));
+			// gl.glScaled(1 / s.scale.x, 1 / s.scale.y, 1);
+			gl.glPopMatrix();
+			// gl.glTranslated(-s.offset.x, s.offset.y, -s.offset.z);
+			r.end3DRendering();
+			// r.begin3DRendering();
+			// r.draw3D(s.string, (float) s.x, (float) s.y, (float) (s.z + s.z_layer), s.alpha.floatValue());
+			// r.flush();
+			// r.end3DRendering();
+			// renderer.getContext().release();
+			// gl.glDisable(GL_BLEND);
+			// gl.glColor4d(s.color.getRed(), s.color.getGreen(), s.color.getBlue(), 1.0d);
+			// gl.glRasterPos3d(s.x, s.y, s.z + s.z_layer);
+			// gl.glScaled(8.0d, 8.0d, 8.0d);
+			// glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, s.string);
+			// gl.glScaled(0.125d, 0.125d, 0.125d);
+			// gl.glEnable(GL_BLEND);
+
+		}
+
+		@Override
+		public void dispose() {
+			cache.clear();
+		}
 	}
+
+	public void dispose() {}
 
 }

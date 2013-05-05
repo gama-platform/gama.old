@@ -426,4 +426,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public int getDisplayHeight() {
 		return 0;
 	}
+
+	@Override
+	public void setZoomListener(IZoomListener listener) {}
 }

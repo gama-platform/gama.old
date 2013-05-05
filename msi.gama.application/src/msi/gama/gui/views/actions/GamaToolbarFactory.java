@@ -4,6 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
+import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.views.GamaViewPart;
 import org.eclipse.jface.action.*;
 import org.eclipse.ui.IViewSite;
@@ -25,6 +26,8 @@ public class GamaToolbarFactory implements IGamaViewActions {
 				return new SnapshotItem(view);
 			case ZOOM_IN:
 				return new ZoomInItem(view);
+			case ZOOM_INDICATOR:
+				return new ZoomIndicatorItem(view);
 			case ZOOM_OUT:
 				return new ZoomOutItem(view);
 			case ZOOM_FIT:
@@ -71,7 +74,12 @@ public class GamaToolbarFactory implements IGamaViewActions {
 	public static void buildToolbar(final GamaViewPart view, final Integer ... codes) {
 		IToolBarManager manager = ((IViewSite) view.getSite()).getActionBars().getToolBarManager();
 		for ( Integer i : codes ) {
-			manager.add(createContributionItem(view, i));
+			IContributionItem item = createContributionItem(view, i);
+			if ( item != null ) {
+				manager.add(item);
+			} else {
+				GuiUtils.debug("Item id " + i + " cannot be created for view " + view.getPartName());
+			}
 		}
 		manager.update(true);
 	}

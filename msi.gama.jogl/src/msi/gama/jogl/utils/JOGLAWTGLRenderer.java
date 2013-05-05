@@ -34,7 +34,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	// Event Listener
 	public MyListener myListener;
 	private int width, height;
-	private final double env_width, env_height;
+	public final double env_width;
+	public final double env_height;
 	// Camera
 	public Camera camera;
 	public MyGraphics graphicsGLUtils;
@@ -51,9 +52,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public JOGLAWTDisplaySurface displaySurface;
 	private ModelScene scene;
-	// private final boolean highlight = false;
-	// picking
-	private final boolean drawAxes = true;
 	// Use multiple view port
 	private final boolean multipleViewPort = false;
 	// Display model a a 3D Cube
@@ -148,7 +146,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// gl.glDisable(GL_DEPTH_TEST);
 		// FIXME : should be turn on only if need (if we draw image)
 		// problem when true with glutBitmapString
-		setBlendingEnabled(true);
+		JOGLAWTGLRenderer.BLENDING_ENABLED = true;
 		IS_LIGHT_ON = true;
 		camera.UpdateCamera(gl, glu, width, height);
 		scene = new ModelScene(this);
@@ -213,7 +211,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			}
 
 			// Blending control
-			if ( isBlendingEnabled() ) {
+			if ( BLENDING_ENABLED ) {
 				gl.glEnable(GL_BLEND); // Turn blending on
 				// FIXME: This has been comment (09/12 r4989) to have the depth testing when image
 				// are drawn but need to know why it was initially disabled?
@@ -237,11 +235,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				dem.DisplayDEM(gl);
 			} else {
 				this.drawScene();
-				if ( drawAxes ) {
-					double envMaxDim = getMaxEnvDim();
-					this.graphicsGLUtils.DrawXYZAxis(envMaxDim / 10);
-					this.graphicsGLUtils.DrawZValue(-envMaxDim / 10, (float) camera.zPos);
-				}
+				// if ( drawAxes ) {
+				// double envMaxDim = getMaxEnvDim();
+				// this.graphicsGLUtils.DrawXYZAxis(envMaxDim / 10);
+				// this.graphicsGLUtils.DrawZValue(-envMaxDim / 10, (float) camera.zPos);
+				// }
 			}
 
 			// this.DrawShapeFile();
@@ -336,7 +334,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glLoadIdentity();
 		glu.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
-		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getZPos(), camera.getXLPos(), camera.getYLPos(),
+		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getzPos(), camera.getXLPos(), camera.getYLPos(),
 			camera.getZLPos(), 0.0, 1.0, 0.0);
 		arcBall.setBounds(width, height);
 	}
@@ -444,7 +442,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	 */
 
 	public void drawModel(boolean picking) {
-		scene.draw(picking);
+		scene.draw(this, picking, true, true);
 	}
 
 	/**
@@ -471,76 +469,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	//
 	// ColladaReader myColReader = new ColladaReader();
 	// return;
-	// }
-
-	// public void drawTexture(ImageObject img) {
-	// gl.glTranslated(img.offSet.x, -img.offSet.y, img.offSet.z);
-	// // TODO Scale en Z
-	// gl.glScaled(img.scale.x, img.scale.y, 1);
-	// MyTexture curTexture = scene.getTextures().get(img.image);
-	// if ( curTexture == null ) {
-	// // GuiUtils.debug("JOGLAWTGLRenderer.drawTexture for " + img.image + " is null ");
-	// return;
-	// }
-	// // Enable the texture
-	// gl.glEnable(GL_TEXTURE_2D);
-	// gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, antialiasing);
-	// gl.glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, antialiasing);
-	// Texture t = curTexture.texture;
-	// t.enable();
-	// t.bind();
-	// // Reset opengl color. Set the transparency of the image to
-	// // 1 (opaque).
-	// gl.glColor4d(1.0d, 1.0d, 1.0d, img.alpha);
-	// TextureCoords textureCoords;
-	// textureCoords = t.getImageTexCoords();
-	// textureTop = textureCoords.top();
-	// textureBottom = textureCoords.bottom();
-	// textureLeft = textureCoords.left();
-	// textureRight = textureCoords.right();
-	// if ( img.angle != 0 ) {
-	// gl.glTranslated(img.x + img.width / 2, -(img.y + img.height / 2), 0.0f);
-	// // FIXME:Check counterwise or not, and do we rotate
-	// // around the center or around a point.
-	// gl.glRotatef(-img.angle, 0.0f, 0.0f, 1.0f);
-	// gl.glTranslated(-(img.x + img.width / 2), +(img.y + img.height / 2), 0.0f);
-	//
-	// gl.glBegin(GL_QUADS);
-	// // bottom-left of the texture and quad
-	// gl.glTexCoord2f(textureLeft, textureBottom);
-	// gl.glVertex3d(img.x, -(img.y + img.height), img.z);
-	// // bottom-right of the texture and quad
-	// gl.glTexCoord2f(textureRight, textureBottom);
-	// gl.glVertex3d(img.x + img.width, -(img.y + img.height), img.z);
-	// // top-right of the texture and quad
-	// gl.glTexCoord2f(textureRight, textureTop);
-	// gl.glVertex3d(img.x + img.width, -img.y, img.z);
-	// // top-left of the texture and quad
-	// gl.glTexCoord2f(textureLeft, textureTop);
-	// gl.glVertex3d(img.x, -img.y, img.z);
-	// gl.glEnd();
-	// gl.glTranslated(img.x + img.width / 2, -(img.y + img.height / 2), 0.0f);
-	// gl.glRotatef(img.angle, 0.0f, 0.0f, 1.0f);
-	// gl.glTranslated(-(img.x + img.width / 2), +(img.y + img.height / 2), 0.0f);
-	// } else {
-	// gl.glBegin(GL_QUADS);
-	// // bottom-left of the texture and quad
-	// gl.glTexCoord2f(textureLeft, textureBottom);
-	// gl.glVertex3d(img.x, -(img.y + img.height), img.z);
-	// // bottom-right of the texture and quad
-	// gl.glTexCoord2f(textureRight, textureBottom);
-	// gl.glVertex3d(img.x + img.width, -(img.y + img.height), img.z);
-	// // top-right of the texture and quad
-	// gl.glTexCoord2f(textureRight, textureTop);
-	// gl.glVertex3d(img.x + img.width, -img.y, img.z);
-	// // top-left of the texture and quad
-	// gl.glTexCoord2f(textureLeft, textureTop);
-	// gl.glVertex3d(img.x, -img.y, img.z);
-	// gl.glEnd();
-	// }
-	// gl.glDisable(GL_TEXTURE_2D);
-	// gl.glScaled(1 / img.scale.x, 1 / img.scale.y, 1);
-	// gl.glTranslated(-img.offSet.x, img.offSet.y, -img.offSet.z);
 	// }
 
 	public MyTexture createTexture(BufferedImage image, boolean isDynamic) {
@@ -673,70 +601,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		camera.setUpVector(upVector);
 	}
 
-	private static boolean isBlendingEnabled() {
-		return BLENDING_ENABLED;
-	}
-
-	public static void setBlendingEnabled(boolean blendingEnabled) {
-		JOGLAWTGLRenderer.BLENDING_ENABLED = blendingEnabled;
-	}
-
 	public double getMaxEnvDim() {
 		return env_width > env_height ? env_width : env_height;
 	}
 
-	// public void drawMyJTSGeometries(final boolean picking) {
-	// if ( !USE_VERTEX_ARRAY ) {
-	// scene.getGeometries().draw(this);
-	// } else {
-	// if ( !isPolygonTriangulated ) {
-	// graphicsGLUtils.vertexArrayHandler.buildVertexArray(scene.getGeometries().getObjects());
-	// setPolygonTriangulated(true);
-	// } else {
-	// graphicsGLUtils.vertexArrayHandler.drawVertexArray();
-	// }
-	// }
-	//
-	// }
-
-	// public void drawEnvironmentBounds(final boolean drawData) {
-	// GamaPoint offSet = new GamaPoint(0, 0);
-	// GamaPoint scale = new GamaPoint(0, 0);
-	// if ( drawData ) {
-	// // Draw Width and height value
-	// graphicsGLUtils.drawString(String.valueOf(this.getEnvWidth()), this.getEnvWidth() / 2,
-	// this.getEnvHeight() * 0.01f, 0.0f, 0.0);
-	// graphicsGLUtils.drawString(String.valueOf(this.getEnvHeight()), this.getEnvWidth() * 1.01f,
-	// -(this.getEnvHeight() / 2), 0.0f, 0.0);
-	// }
-	//
-	// // Draw environment rectangle
-	// Geometry g =
-	// GamaGeometryType.buildRectangle(getEnvWidth(), getEnvHeight(),
-	// new GamaPoint(getEnvWidth() / 2, getEnvHeight() / 2)).getInnerGeometry();
-	//
-	// Color c = new Color(225, 225, 225);
-	// MyJTSGeometry curGeometry =
-	// new MyJTSGeometry(g, null, -0.01f, -1, c, 1.0f, true, c, false, 0, 0.0f, offSet, scale, false,
-	// "environment");
-	// graphicsGLUtils.basicDrawer.drawJTSGeometry(curGeometry);
-	// }
-
-	// public void setPolygonTriangulated(boolean isPolygonTriangulated) {
-	// this.isPolygonTriangulated = isPolygonTriangulated;
-	// }
-
 	public void setPickedObjectIndex(int pickedObjectIndex) {
 		this.pickedObjectIndex = pickedObjectIndex;
 	}
-
-	// public void turnHighlight(boolean b) {
-	// highlight = b;
-	// }
-	//
-	// public boolean isHighlightTurnedOn() {
-	// return highlight;
-	// }
 
 	public void cleanListsAndVertices() {
 		if ( USE_VERTEX_ARRAY ) {
@@ -746,6 +617,10 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public ModelScene getScene() {
 		return scene;
+	}
+
+	public void dispose() {
+		scene.dispose();
 	}
 
 }

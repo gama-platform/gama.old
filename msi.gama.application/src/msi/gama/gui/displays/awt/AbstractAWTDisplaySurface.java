@@ -35,7 +35,8 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	protected boolean autosave = false;
 	protected double widthHeightConstraint = 1.0;
 	protected double zoomIncrement = 0.1;
-	protected double zoomFactor = 1.0 + zoomIncrement;
+	protected double zoomLevel;
+	protected boolean zoomFit = true;
 	protected boolean navigationImageEnabled = true;
 	protected final AffineTransform translation = new AffineTransform();
 	protected boolean synchronous = false;
@@ -44,6 +45,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	protected Runnable displayBlock;
 	private double envWidth;
 	private double envHeight;
+	private IZoomListener zoomListener;
 
 	protected AbstractAWTDisplaySurface() {}
 
@@ -268,9 +270,6 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	public void setOrigin(final int x, final int y) {
 		this.origin = new Point(x, y);
 		translation.setToTranslation(origin.x, origin.y);
-		// if ( getIGraphics() != null ) {
-		// ((AWTDisplayGraphics) getIGraphics()).getGraphics2D().setClip(getImageClipBounds());
-		// }
 		redrawNavigator();
 	}
 
@@ -285,21 +284,6 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 			}
 		});
 	}
-
-	//
-	// protected final Rectangle getImageClipBounds() {
-	// int panelX1 = -origin.x;
-	// int panelY1 = -origin.y;
-	// int panelX2 = getWidth() - 1 + panelX1;
-	// int panelY2 = getHeight() - 1 + panelY1;
-	// if ( panelX1 >= getDisplayHeight() || panelX2 < 0 || panelY1 >= getDisplayWidth() || panelY2 < 0 ) { return null;
-	// }
-	// int x1 = panelX1 < 0 ? 0 : panelX1;
-	// int y1 = panelY1 < 0 ? 0 : panelY1;
-	// int x2 = panelX2 >= getDisplayHeight() ? getDisplayHeight() - 1 : panelX2;
-	// int y2 = panelY2 >= getDisplayWidth() ? getDisplayWidth() - 1 : panelY2;
-	// return new Rectangle(x1, y1, x2 - x1 + 1, y2 - y1 + 1);
-	// }
 
 	@Override
 	public void updateDisplay() {
@@ -400,6 +384,24 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	public IDisplayOutput getOutput() {
 		return output;
+	}
+
+	protected void setZoomLevel(Double newZoomLevel) {
+		zoomLevel = newZoomLevel;
+		if ( zoomListener != null ) {
+			zoomListener.newZoomLevel(zoomLevel);
+		}
+	}
+
+	@Override
+	public void setZoomListener(IZoomListener listener) {
+		zoomListener = listener;
+	}
+
+	@Override
+	public void zoomFit() {
+		setZoomLevel(1d);
+		zoomFit = true;
 	}
 
 }
