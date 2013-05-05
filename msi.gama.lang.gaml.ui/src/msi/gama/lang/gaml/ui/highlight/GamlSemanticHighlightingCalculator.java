@@ -165,7 +165,7 @@ public class GamlSemanticHighlightingCalculator extends GamlSwitch implements IS
 	}
 
 	private final boolean setStyle(final String s, final INode n) {
-		if ( !done.contains(n) ) {
+		if ( !done.contains(n) && n != null ) {
 			done.add(n);
 			acceptor.addPosition(n.getOffset(), n.getLength(), s);
 			return true;
