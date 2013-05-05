@@ -105,15 +105,15 @@ public class GamlCompatibilityConverter {
 			Expression e = stm.getExpr();
 			addFacet(elt, ACTION, convExpr(EGaml.getKeyOf(e)), errors);
 			if ( e instanceof Function ) {
-				addFacet(elt, INTERNAL_FUNCTION, convExpr(e), errors);
+				addFacet(elt, INTERNAL_FUNCTION, convExpr(e, errors), errors);
 				Function f = (Function) e;
 				Parameters p = f.getParameters();
 				if ( p != null ) {
-					addFacet(elt, WITH, convExpr(p), errors);
+					addFacet(elt, WITH, convExpr(p, errors), errors);
 				} else {
 					ExpressionList list = f.getArgs();
 					if ( list != null ) {
-						addFacet(elt, WITH, convExpr(list), errors);
+						addFacet(elt, WITH, convExpr(list, errors), errors);
 					}
 				}
 			}
@@ -129,7 +129,7 @@ public class GamlCompatibilityConverter {
 			// We add the "when" facet to reflexes and inits if necessary
 			S_Reflex ref = (S_Reflex) stm;
 			if ( ref.getExpr() != null ) {
-				addFacet(elt, WHEN, convExpr(ref.getExpr()), errors);
+				addFacet(elt, WHEN, convExpr(ref.getExpr(), errors), errors);
 			}
 		}
 
@@ -218,7 +218,7 @@ public class GamlCompatibilityConverter {
 			Expression function = block.getFunction();
 			if ( function != null ) {
 				// If it is a function (and not a regular block), we add it as a facet
-				addFacet(elt, FUNCTION, convExpr(function), errors);
+				addFacet(elt, FUNCTION, convExpr(function, errors), errors);
 			} else {
 				convStatements(elt, EGaml.getStatementsOf(block), errors);
 			}
@@ -279,7 +279,7 @@ public class GamlCompatibilityConverter {
 				convertType(arg, type, errors);
 				Expression e = def.getDefault();
 				if ( e != null ) {
-					addFacet(arg, DEFAULT, convExpr(e), errors);
+					addFacet(arg, DEFAULT, convExpr(e, errors), errors);
 				}
 				elt.addChild(arg);
 			}
@@ -288,21 +288,22 @@ public class GamlCompatibilityConverter {
 
 	private static String convertAssignment(final S_Assignment stm, String keyword, final ISyntacticElement elt,
 		Expression expr, Set<Diagnostic> errors) {
-		IExpressionDescription value = convExpr(stm.getValue());
+		IExpressionDescription value = convExpr(stm.getValue(), errors);
 		if ( keyword.equals("<-") || keyword.equals(SET) ) {
 			// Translation of "container[index] <- value" to
 			// "put item: value in: container at: index"
 			if ( expr instanceof Access ) {
 				elt.setKeyword(PUT);
 				addFacet(elt, ITEM, value, errors);
-				addFacet(elt, IN, convExpr(expr.getLeft()), errors);
+				addFacet(elt, IN, convExpr(expr.getLeft(), errors), errors);
 				List<Expression> args = EGaml.getExprsOf(((Access) expr).getArgs());
 				int size = args.size();
 				if ( size == 1 ) { // Integer index
-					addFacet(elt, AT, convExpr(args.get(0)), errors);
+					addFacet(elt, AT, convExpr(args.get(0), errors), errors);
 				} else if ( size > 1 ) { // Point index
 					IExpressionDescription p =
-						new OperatorExpressionDescription("<->", convExpr(args.get(0)), convExpr(args.get(1)));
+						new OperatorExpressionDescription("<->", convExpr(args.get(0), errors), convExpr(args.get(1),
+							errors));
 					addFacet(elt, AT, p, errors);
 				} else {// size = 0 ? maybe "all: true" by default
 					addFacet(elt, ALL, ConstantExpressionDescription.create(true), errors);
@@ -318,20 +319,20 @@ public class GamlCompatibilityConverter {
 			// Translation of "container << item" or "container ++ item" to
 			// "add item: item to: container"
 			elt.setKeyword(ADD);
-			addFacet(elt, TO, convExpr(expr), errors);
+			addFacet(elt, TO, convExpr(expr, errors), errors);
 			addFacet(elt, ITEM, value, errors);
 			keyword = ADD;
 		} else if ( keyword.equals("-=") || keyword.equals(">>") || keyword.equals("--") ) {
 			// Translation of "container >> item" or "container -- item" to
 			// "remove item: item from: container"
 			elt.setKeyword(REMOVE);
-			addFacet(elt, FROM, convExpr(expr), errors);
+			addFacet(elt, FROM, convExpr(expr, errors), errors);
 			addFacet(elt, ITEM, value, errors);
 			keyword = REMOVE;
 		} else if ( keyword.equals(EQUATION_OP) ) {
 			// Translation of equations "diff(x, t) = ax + b" to
 			// "= left: diff(x, t) right: ax+b"
-			addFacet(elt, EQUATION_LEFT, convExpr(expr), errors);
+			addFacet(elt, EQUATION_LEFT, convExpr(expr, errors), errors);
 			addFacet(elt, EQUATION_RIGHT, value, errors);
 		}
 		return keyword;
@@ -356,7 +357,7 @@ public class GamlCompatibilityConverter {
 			// We compute (and convert) the expression attached to the facet
 			FacetProto fp = p == null ? null : p.getPossibleFacets().get(fname);
 			boolean label = fp == null ? false : fp.isLabel;
-			IExpressionDescription fexpr = convExpr(f, label);
+			IExpressionDescription fexpr = convExpr(f, label, errors);
 			addFacet(elt, fname, fexpr, errors);
 		}
 
@@ -370,7 +371,7 @@ public class GamlCompatibilityConverter {
 			def = DescriptionFactory.getOmissibleFacetForSymbol(keyword);
 		}
 		if ( def != null && !def.isEmpty() && elt.getFacet(def) == null ) {
-			IExpressionDescription ed = findExpr(stm);
+			IExpressionDescription ed = findExpr(stm, errors);
 			if ( ed != null ) {
 				elt.setFacet(def, ed);
 			}
@@ -393,17 +394,17 @@ public class GamlCompatibilityConverter {
 		return keyword;
 	}
 
-	private static final IExpressionDescription convExpr(final EObject expr) {
+	private static final IExpressionDescription convExpr(final EObject expr, Set<Diagnostic> errors) {
 		if ( expr != null ) {
 
-		return EcoreBasedExpressionDescription.create(expr); }
+		return EcoreBasedExpressionDescription.create(expr, errors); }
 		return null;
 	}
 
-	private static final IExpressionDescription convExpr(final Facet facet, boolean label) {
+	private static final IExpressionDescription convExpr(final Facet facet, boolean label, Set<Diagnostic> errors) {
 		if ( facet != null ) {
 			Expression expr = facet.getExpr();
-			if ( expr != null ) { return label ? convExpr(EGaml.getKeyOf(expr)) : convExpr(expr); }
+			if ( expr != null ) { return label ? convExpr(EGaml.getKeyOf(expr)) : convExpr(expr, errors); }
 			String name = facet.getName();
 			if ( name != null ) { return convExpr(name); }
 		}
@@ -424,13 +425,13 @@ public class GamlCompatibilityConverter {
 		}
 	}
 
-	private static final IExpressionDescription findExpr(final Statement stm) {
+	private static final IExpressionDescription findExpr(final Statement stm, Set<Diagnostic> errors) {
 		if ( stm == null ) { return null; }
 		// The order below should be important
 		String name = EGaml.getNameOf(stm);
 		if ( name != null ) { return convExpr(name); }
 		Expression expr = stm.getExpr();
-		if ( expr != null ) { return convExpr(expr); }
+		if ( expr != null ) { return convExpr(expr, errors); }
 
 		return null;
 	}

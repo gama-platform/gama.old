@@ -11,6 +11,8 @@ import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.*;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.xtext.diagnostics.*;
+import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
 
 /**
  * The class EcoreBasedExpressionDescription.
@@ -71,12 +73,28 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 
 		@Override
 		public IExpressionDescription caseIntLiteral(IntLiteral object) {
-			return ConstantExpressionDescription.create(Integer.parseInt(object.getOp()));
+			try {
+				return ConstantExpressionDescription.create(Integer.parseInt(object.getOp()));
+			} catch (NumberFormatException e) {
+				Diagnostic d =
+					new EObjectDiagnosticImpl(Severity.WARNING, "",
+						"Impossible to parse this int value, automatically set to 0", object, null, 0, null);
+				currentErrors.add(d);
+				return ConstantExpressionDescription.create(0);
+			}
 		}
 
 		@Override
 		public IExpressionDescription caseDoubleLiteral(DoubleLiteral object) {
-			return ConstantExpressionDescription.create(Double.parseDouble(object.getOp()));
+			try {
+				return ConstantExpressionDescription.create(Double.parseDouble(object.getOp()));
+			} catch (NumberFormatException e) {
+				Diagnostic d =
+					new EObjectDiagnosticImpl(Severity.WARNING, "",
+						"Impossible to parse this float value, automatically set to 0.0", object, null, 0, null);
+				currentErrors.add(d);
+				return ConstantExpressionDescription.create(0d);
+			}
 		}
 
 		@Override
@@ -96,8 +114,12 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 
 	};
 
-	public static IExpressionDescription create(EObject expr) {
+	private static Set<Diagnostic> currentErrors;
+
+	public static IExpressionDescription create(EObject expr, Set<Diagnostic> errors) {
+		currentErrors = errors;
 		IExpressionDescription result = getExpr.doSwitch(expr);
+		currentErrors = null;
 		result.setTarget(expr);
 		return result;
 	}
