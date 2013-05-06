@@ -20,13 +20,14 @@ package msi.gama.kernel.simulation;
 
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamaHelper;
 
 public class Scheduler extends AbstractScheduler implements Runnable {
 
-	public final Thread executionThread;
+	public Thread executionThread;
 
 	private static int threadCount = 0;
 
@@ -82,15 +83,18 @@ public class Scheduler extends AbstractScheduler implements Runnable {
 		super.dispose();
 		if ( executionThread != null ) {
 			executionThread.interrupt();
-			try {
-				while (executionThread.isAlive()) {
-					Thread.sleep(10);
-				}
-
-				// executionThread.join();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
+			executionThread = null;
+			// try {
+			// while (executionThread.isAlive()) {
+			// Thread.sleep(100);
+			// }
+			//
+			// // executionThread.join();
+			// } catch (InterruptedException e) {
+			//
+			// executionThread.interrupt();
+			// e.printStackTrace();
+			// }
 		}
 	}
 

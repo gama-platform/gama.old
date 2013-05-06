@@ -1,7 +1,14 @@
 package msi.gama.kernel.experiment;
 
-import static msi.gama.kernel.experiment.IExperimentSpecies.*;
+import static msi.gama.kernel.experiment.IExperimentSpecies._INIT;
+import static msi.gama.kernel.experiment.IExperimentSpecies._PAUSE;
+import static msi.gama.kernel.experiment.IExperimentSpecies._RELOAD;
+import static msi.gama.kernel.experiment.IExperimentSpecies._START;
+import static msi.gama.kernel.experiment.IExperimentSpecies._STEP;
+import static msi.gama.kernel.experiment.IExperimentSpecies._STOP;
+
 import java.util.concurrent.ArrayBlockingQueue;
+
 import msi.gama.common.util.GuiUtils;
 import msi.gama.outputs.OutputSynchronizer;
 import msi.gama.runtime.GAMA;
@@ -94,7 +101,7 @@ public class ExperimentGUIHelper implements Runnable {
 				GuiUtils.debug("ExperimentGUIHelper.processUserCommand: RELOAD");
 				GAMA.updateSimulationState(GAMA.NOTREADY);
 				try {
-					agent.userReloadExperiment();
+				agent.userReloadExperiment(true);
 				} catch (GamaRuntimeException e) {
 					GAMA.closeCurrentExperimentOnException(e);
 				} catch (Exception e) {

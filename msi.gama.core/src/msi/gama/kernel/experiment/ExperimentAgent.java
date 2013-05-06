@@ -1,24 +1,41 @@
 package msi.gama.kernel.experiment;
 
 import java.net.URL;
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.*;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.RandomUtils;
 import msi.gama.kernel.model.IModel;
-import msi.gama.kernel.simulation.*;
-import msi.gama.metamodel.agent.*;
-import msi.gama.metamodel.population.*;
-import msi.gama.metamodel.shape.*;
+import msi.gama.kernel.simulation.AbstractScheduler;
+import msi.gama.kernel.simulation.GamlSimulation;
+import msi.gama.kernel.simulation.IScheduler;
+import msi.gama.kernel.simulation.ISimulationAgent;
+import msi.gama.kernel.simulation.Scheduler;
+import msi.gama.metamodel.agent.GamlAgent;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulation;
+import msi.gama.metamodel.population.WorldPopulation;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
+import msi.gama.runtime.RuntimeScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
-import msi.gaml.types.*;
+import msi.gama.util.GamaList;
+import msi.gama.util.IList;
+import msi.gaml.types.GamaGeometryType;
+import msi.gaml.types.IType;
+
 import org.eclipse.core.runtime.Platform;
 
 @species(name = IKeyword.EXPERIMENT)
@@ -216,7 +233,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		return random == null ? RandomUtils.getDefault() : random;
 	}
 
-	public void userReloadExperiment() {
+	public void userReloadExperiment(boolean autoStartSimulation) {
 		GuiUtils.debug("ExperimentAgent.userReloadExperiment");
 		boolean wasRunning = isRunning() && !isPaused();
 		buildScheduler();
@@ -226,8 +243,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		getSpecies().buildOutputs();
 		userInitExperiment();
 
-		// getSpecies().getOutputManager().init(executionStack);
-		if ( wasRunning ) {
+		getSpecies().getOutputManager().init(executionStack);
+		if (wasRunning && autoStartSimulation) {
 			startSimulation();
 		}
 	}

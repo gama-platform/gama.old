@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Benoît Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - BenoÔøΩt Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -18,26 +18,36 @@
  */
 package msi.gama.kernel.experiment;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Semaphore;
-import msi.gama.common.interfaces.*;
+
+import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.kernel.batch.*;
+import msi.gama.kernel.batch.BatchOutput;
+import msi.gama.kernel.batch.ExhaustiveSearch;
+import msi.gama.kernel.batch.IExploration;
 import msi.gama.outputs.FileOutput;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.precompiler.ISymbolKind;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
-import msi.gaml.compilation.*;
+import msi.gama.util.GamaList;
+import msi.gama.util.IList;
+import msi.gaml.compilation.GamaHelper;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
+
 import org.jfree.data.statistics.Statistics;
 
 /**
@@ -114,32 +124,31 @@ public class BatchExperiment extends GuiExperimentSpecies {
 		GuiUtils.informStatus(" Batch ready ");
 	}
 
-	@Override
-	protected void processUserCommand(final int command) throws InterruptedException {
-		if ( command == _NEXT ) {
-			closeCurrentSimulation(false);
-		} else {
-			super.processUserCommand(command);
-		}
-	}
+	// @Override
+	// public ParametersSet getCurrentSolution() throws GamaRuntimeException {
+	// return currentSolution;
+	// }
 
-	@Override
-	public ParametersSet getCurrentSolution() throws GamaRuntimeException {
-		return currentSolution;
-	}
-
-	@Override
-	public void initializeNewSimulation(final ParametersSet sol, final Double seed) throws GamaRuntimeException,
-		InterruptedException {
-		super.initializeNewSimulation(sol, seed);
-		getCurrentSimulation().getScheduler().insertEndAction(haltAction);
-	}
 
 	public void conditionalHalt(final IScope scope) {
 		try {
 			if ( Cast.asBool(scope, stopCondition.value(scope)) ) {
-				commands.offer(_NEXT);
-				getCurrentSimulation().getScheduler().removeAction(haltAction);
+				// getCurrentSimulation().getScheduler().removeAction(haltAction);
+				// System.out.println("\t" + innerLoopIndex + " " +
+				// seeds.length);
+				
+				if (innerLoopIndex < seeds.length) {
+					innerLoopIndex++;
+					agent.userPauseExperiment();
+					closeCurrentSimulation(false);
+					agent.userReloadExperiment(false);
+					getCurrentSimulation().getScheduler().insertEndAction(
+							haltAction);
+					agent.startSimulation();
+				} else {
+					agent.userStopExperiment();
+
+				}
 			}
 		} catch (GamaRuntimeException e) {
 			e.addContext("in the halt condition of batch experiment " + getName());
@@ -152,38 +161,37 @@ public class BatchExperiment extends GuiExperimentSpecies {
 		return true;
 	}
 
-	@Override
+
 	public void closeCurrentSimulation(final boolean closingExperiment) {
-		if ( getCurrentSimulation() == null ) { return; }
-		// currentSimulation.stop();
-		if ( !closingExperiment ) {
-			try { // while the simulation is still "alive"
-				IExpression fitness = exploAlgo.getFitnessExpression();
-				if ( fitness != null ) {
-					lastFitnessValue = Cast.asFloat(this.getExperimentScope(), fitness.value(getExperimentScope()));
-					fitnessValues.add(lastFitnessValue);
-				}
-				if ( log != null ) {
-					log.doRefreshWriteAndClose(currentSolution, lastFitnessValue);
-				}
-			} catch (GamaRuntimeException e) {
-				e.addContext("in saving the results of the batch");
-				GAMA.reportError(e);
-			}
+		if (getCurrentSimulation() == null) {
+			return;
 		}
-		// if ( currentSimulation != null ) {
-		getCurrentSimulation().close();
-		// currentSimulation = null;
+		// if ( !closingExperiment ) {
+		 try { // while the simulation is still "alive"
+			IExpression fitness = exploAlgo.getFitnessExpression();
+			if (fitness != null) {
+				lastFitnessValue = Cast.asFloat(this.getExperimentScope(),
+						fitness.value(getExperimentScope()));
+				fitnessValues.add(lastFitnessValue);
+			}
+			if (log != null) {
+				log.doRefreshWriteAndClose(currentSolution, lastFitnessValue);
+			}
+		} catch (GamaRuntimeException e) {
+			e.addContext("in saving the results of the batch");
+			GAMA.reportError(e);
+		}
 		// }
-		if ( !closingExperiment ) {
+		// getCurrentSimulation().close();
+		if (!closingExperiment) {
 			innerLoopSemaphore.release(2);
 		}
 	}
 
-	@Override
-	public void userStopExperiment() {
-		closeCurrentSimulation(true);
-	}
+	// @Override
+	// public void userStopExperiment() {
+	// closeCurrentSimulation(true);
+	// }
 
 	void initRandom() {
 
@@ -199,7 +207,8 @@ public class BatchExperiment extends GuiExperimentSpecies {
 	}
 
 	@Override
-	public void startExperiment() {
+	public void userStart() {
+
 		if ( !isRunning() ) {
 			initRandom();
 			exploAlgo.start();
@@ -210,14 +219,20 @@ public class BatchExperiment extends GuiExperimentSpecies {
 		currentSolution = sol;
 		fitnessValues.clear();
 		runNumber = runNumber + 1;
-		for ( innerLoopIndex = 0; innerLoopIndex < seeds.length; innerLoopIndex++ ) {
+		// for ( innerLoopIndex = 0; innerLoopIndex < seeds.length;
+		// innerLoopIndex++ ) {
 			try {
-				innerLoopSemaphore.acquire(1);
-				initialize(currentSolution, seeds[innerLoopIndex]);
-				startCurrentSimulation();
-				innerLoopSemaphore.acquire(1);
-			} catch (InterruptedException e) {}
+			innerLoopSemaphore.acquire(1);
+			// agent.initializeNewSimulation(currentSolution,
+			// seeds[innerLoopIndex]);
+				getCurrentSimulation().getScheduler().insertEndAction(
+						haltAction);
+			// helper.offer(_START);
+			agent.startSimulation();
+			innerLoopSemaphore.acquire(1);
+		} catch (Exception e) {
 		}
+		// }
 		short fitnessCombination = exploAlgo.getCombination();
 		return fitnessCombination == IExploration.C_MAX ? Collections.max(fitnessValues)
 			: fitnessCombination == IExploration.C_MIN ? Collections.min(fitnessValues) : Statistics
@@ -231,15 +246,16 @@ public class BatchExperiment extends GuiExperimentSpecies {
 		exploAlgo = null;
 	}
 
-	@Override
-	public void reloadExperiment() throws GamaRuntimeException, InterruptedException {
-		boolean wasRunning = isRunning() && !isPaused();
-		stopExperiment();
-		initializeSimulation();
-		if ( wasRunning ) {
-			startExperiment();
-		}
-	}
+	// @Override
+	// public void reloadExperiment() throws GamaRuntimeException,
+	// InterruptedException {
+	// boolean wasRunning = isRunning() && !isPaused();
+	// stopExperiment();
+	// initializeSimulation();
+	// if ( wasRunning ) {
+	// startExperiment();
+	// }
+	// }
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> children) {
@@ -269,7 +285,7 @@ public class BatchExperiment extends GuiExperimentSpecies {
 	}
 
 	private void createOutput(final BatchOutput output) throws GamaRuntimeException {
-		// TODO revoir tout ceci. Devrait plutôt être une commande
+		// TODO revoir tout ceci. Devrait plutÔøΩt ÔøΩtre une commande
 		if ( output == null ) { return; }
 		IExpression data = output.getFacet(IKeyword.DATA);
 		if ( data == null ) {
@@ -283,7 +299,8 @@ public class BatchExperiment extends GuiExperimentSpecies {
 	protected void addOwnParameters() {
 		// ISpecies world = model.getWorldSpecies();
 		for ( IVariable v : model.getVars() ) {
-			if ( v.isParameter() ) {
+			if (v.isParameter())
+			{
 				ExperimentParameter p = new ExperimentParameter(stack, v);
 				if ( p.canBeExplored() ) {
 					p.setEditable(false);
@@ -391,7 +408,8 @@ public class BatchExperiment extends GuiExperimentSpecies {
 	}
 
 	public void addExplorableParameter(final IParameter.Batch p) {
-		if ( registerParameter(p) ) {
+		// if ( registerParameter(p) )
+		{
 			p.setCategory(EXPLORABLE_CATEGORY_NAME);
 			explorableParameters.add(p);
 		}
