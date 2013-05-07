@@ -40,7 +40,8 @@ import msi.gaml.statements.DrawStatement;
 import msi.gaml.types.*;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource.Diagnostic;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.xtext.diagnostics.Diagnostic;
 import org.eclipse.xtext.resource.*;
 
 /**
@@ -321,17 +322,22 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		for ( Expression exp : parameters ) {
 			String arg = null;
 			IExpressionDescription ed = null;
+			Set<Diagnostic> errors = new LinkedHashSet();
 			if ( exp instanceof ArgumentPair || exp instanceof Parameter ) {
 				arg = EGaml.getKeyOf(exp);
-				ed = EcoreBasedExpressionDescription.create(exp.getRight());
+				ed = EcoreBasedExpressionDescription.create(exp.getRight(), errors);
 			} else if ( exp instanceof Pair ) {
 				arg = EGaml.getKeyOf(exp.getLeft());
-				ed = EcoreBasedExpressionDescription.create(exp.getRight());
+				ed = EcoreBasedExpressionDescription.create(exp.getRight(), errors);
 			} else if ( completeArgs ) {
 				arg = args == null ? String.valueOf(index++) : args.get(index++);
-				ed = EcoreBasedExpressionDescription.create(exp);
+				ed = EcoreBasedExpressionDescription.create(exp, errors);
 			}
-			// EGaml.setGamlDescription(exp.getRight(), ed);
+			if ( !errors.isEmpty() ) {
+				for ( Diagnostic d : errors ) {
+					context.warning(d.getMessage(), "", exp);
+				}
+			}
 			argMap.put(arg, ed);
 		}
 		return argMap;
@@ -631,6 +637,9 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		if ( isSkillName(s) ) { return skill(s); }
 
 		// By default, we try to find a variable
+		// if ( s.equals(MYSELF) ) {
+		// GuiUtils.debug("GamlExpressionCompiler.caseVar MYSELF");
+		// }
 
 		temp_sd = context == null ? null : context.getDescriptionDeclaringVar(s);
 		if ( temp_sd != null ) { return temp_sd.getVarExpr(s); }
@@ -703,7 +712,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 				result = ((StringEvaluator) e).getExpr();
 			}
 		} else {
-			Diagnostic d = resource.getErrors().get(0);
+			Resource.Diagnostic d = resource.getErrors().get(0);
 			throw new GamaRuntimeException(d.getMessage());
 		}
 		long end = System.nanoTime();
