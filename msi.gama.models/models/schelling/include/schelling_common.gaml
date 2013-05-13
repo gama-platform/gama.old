@@ -6,7 +6,7 @@ global {
 	rgb color_3 <- rgb ('blue') parameter: 'Color of group 3:' category: 'User interface';
 	rgb color_4 <- rgb ('orange') parameter: 'Color of group 4:' category: 'User interface';
 	rgb color_5 <- rgb ('green') parameter: 'Color of group 5:' category: 'User interface';
-	rgb color_6 <- rgb ('pink') parameter: 'Color of group 6:' category: 'User interface';
+	rgb color_6 <- rgb ('pink') parameter: 'Color of group 6:' category: 'User interface';   
 	rgb color_7 <- rgb ('magenta') parameter: 'Color of group 7:' category: 'User interface';
 	rgb color_8 <- rgb ('cyan') parameter: 'Color of group 8:' category: 'User interface';
 	const black type: rgb <- rgb ('black');
@@ -21,7 +21,7 @@ global {
 	int sum_similar_neighbours <- 0 value: sum (all_people collect each.similar_nearby);
 	int sum_total_neighbours <- 1 value: sum (all_people collect each.total_nearby) min: 1;
 	list all_places <- [] of: agent;
-	list all_people <- [] of: base;
+	list all_people <- [] of: base;  
 	action description {
 		write
 		'\\n\\u25B6 Description. \\n\\u25B6 Thomas Schelling model of residential segregation is a classic study of the effects of local decisions on global dynamics. Agents with mild preferences for same-type neighbors, but without preferences for segregated neighborhoods, can wind up producing complete segregation.\\n\\u25B6 In this model, agents populate a grid with a given *density*. They are in two different states : happy when the percentage of same-color neighbours is above their *desired percentage of similarity*; unhappy otherwise. In the latter case, they change their location randomly until they find a neighbourhood that fits their desire. \\n\\u25B6 In addition to the previous parameter, one can adjust the *distance of perception* (i.e.  the distance at which they consider other agents as neighbours) of the agents to see how it affects the global process. ';
@@ -41,7 +41,7 @@ global {
 entities {
 	species base {
 		rgb color;
-		list my_neighbours <- [] of: base;
+		list<base> my_neighbours;
 		int similar_nearby -> {
 			(my_neighbours count (each.color = color))
 		};
