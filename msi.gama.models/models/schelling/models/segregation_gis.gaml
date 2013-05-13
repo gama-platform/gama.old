@@ -20,7 +20,10 @@ global {
 			do move_to_new_place;      
 		}   
 		set all_people <- people as list;  
-	}           
+	}      
+	
+	action initialize_places {}   
+	
 } 
 entities {      
 	species people parent: base {   
@@ -75,7 +78,7 @@ entities {
 		aspect gis {
 			let color <- empty(insiders) ? rgb('white') : rgb( [mean (insiders collect each.red), mean (insiders collect each.green), mean (insiders collect each.blue)]);
 			let pp <- one_of(space as list);
-			draw shape color: color;
+			draw shape color: color depth: rnd(100);
 		} 
 	}
 }
@@ -83,7 +86,8 @@ entities {
 
 experiment schelling type: gui {	
 	output {
-		display Town_display refresh_every: 1 {
+
+		display Town_display refresh_every: 1 type: opengl{
 			species space size: {0.8,0.8} position: {0.1,0.1} aspect: gis;
 			species people size: {0.8,0.8} position: {0.1,0.1} aspect: simple;
 		}
