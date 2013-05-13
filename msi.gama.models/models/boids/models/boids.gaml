@@ -177,7 +177,7 @@ entities {
 	}
 }
 
-experiment boids type: gui {
+experiment Boids type: gui {
 	parameter 'Number of agents' var: number_of_agents;
 	parameter 'Number of obstacles' var: number_of_obstacles;
 	parameter 'Maximal speed' var: maximal_speed;
