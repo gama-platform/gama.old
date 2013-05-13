@@ -119,7 +119,7 @@ entities {
 			}
 		}
 		 
-		aspect default {
+		aspect my_aspect {
 			draw shape color: pedestrian_color;
 		}
 	}
@@ -130,7 +130,7 @@ entities {
 		species captured_pedestrian parent: pedestrian schedules: [] {
 			int released_time;
 			
-			aspect default { }
+			aspect my_aspect { }
 		}
 		
 		init {
@@ -159,7 +159,7 @@ entities {
 			}
 		}
 		
-		aspect default {
+		aspect my_aspect {
 			draw shape color: corridor_color;
 		}
 	}
@@ -169,7 +169,7 @@ entities {
 			create corridor_wall_info_drawer number: 1 with: [target :: self];
 		}
 		
-		aspect name: default {
+		aspect name: my_aspect {
 			draw shape color: corridor_wall_color;
 		}
 	}
@@ -177,9 +177,9 @@ entities {
 	species corridor_info_drawer {
 		corridor target;
 		
-		aspect default {
-			draw text: 'Captured pedestrians: ' + (string (length (target.members))) color: rgb ('blue') size: 65 at: {(target.location).x - 480, (target.location).y};
-			draw text: 'Pedestrians: ' + (string (length (list (pedestrian)))) color: rgb ('blue') size: 65 at: {(target.location).x - 135, (target.location).y + 100};
+		aspect my_aspect {
+			draw text: 'Captured pedestrians: ' + (string (length (target.members))) color: rgb ('blue') size: 12°px at: {(target.location).x - 480, (target.location).y};
+			draw text: 'Pedestrians: ' + (string (length (list (pedestrian)))) color: rgb ('blue') size: 12°px at: {(target.location).x - 135, (target.location).y + 100};
 		}
 	}
 	
@@ -190,8 +190,8 @@ entities {
 			set location value: target.location;
 		}
 		
-		aspect default { 
-			draw text: 'WALL' color: rgb ('green') size: 65 at: {(location).x - 40, (location).y};
+		aspect my_aspect { 
+			draw text: 'WALL' color: rgb ('green') size: 15°px at: {(location).x - 40, (location).y};
 		}
 	}
 }
@@ -199,15 +199,15 @@ entities {
 experiment default_expr type: gui{
 	output {
 		display defaut_display {
-			species pedestrian aspect: default;
+			species pedestrian;
 			
-			species corridor aspect: default transparency: 0.8 {
+			species corridor aspect: my_aspect transparency: 0.8 {
 				species captured_pedestrian;
 			}
 			
-			species corridor_wall aspect: default transparency: 0.7;
-			species corridor_info_drawer aspect: default;
-			species corridor_wall_info_drawer aspect: default;
+			species corridor_wall aspect: my_aspect transparency: 0.7;
+			species corridor_info_drawer aspect: my_aspect;
+			species corridor_wall_info_drawer aspect: my_aspect;
 		}
 
 		display Execution_Time refresh_every: 25 {
