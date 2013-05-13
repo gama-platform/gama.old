@@ -28,7 +28,7 @@ public class GamaSimulator implements ISimulator {
 	@Override
 	public void nextStep(int currentStep) {
 		this.currentStep = currentStep;
-		experiment.userStep();
+		GAMA.controller.userStep();
 	}
 
 	@Override

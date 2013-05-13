@@ -53,7 +53,8 @@ public class HeadlessSimulationLoader {
 		for ( Map.Entry<String, Object> entry : params.entrySet() ) {
 			GAMA.getExperiment().setParameterValue(entry.getKey(), entry.getValue());
 		}
-		GAMA.getExperiment().getAgent().userInitExperiment();
+		// FIXME ???
+		GAMA.getExperiment().schedule();
 		waitLoading(exp);
 		return exp;
 
@@ -111,7 +112,7 @@ public class HeadlessSimulationLoader {
 			// fireBuildEnded(m, lastModel);
 		}
 		// FIXME Experiment default no longer exists. Needs to specify one name
-		GAMA.newExperiment(IKeyword.DEFAULT, lastModel);
+		GAMA.controller.newExperiment(IKeyword.DEFAULT, lastModel);
 		System.out.println("Experiment created ");
 	}
 

@@ -8,6 +8,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
@@ -18,7 +19,7 @@ import msi.gaml.types.IType;
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { IKeyword.HEADLESS_UI }, optional = false) }, omissible = IKeyword.NAME)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
-public class HeadLessExperiment extends GuiExperimentSpecies implements IHeadLessExperiment {
+public class HeadLessExperiment extends ExperimentSpecies implements IHeadLessExperiment {
 
 	public HeadLessExperiment(final IDescription description) {
 		super(description);
@@ -32,7 +33,7 @@ public class HeadLessExperiment extends GuiExperimentSpecies implements IHeadLes
 	@Override
 	public void start(final int nbStep) {
 		for ( int i = 0; i < nbStep; i++ ) {
-			this.userStep();
+			GAMA.controller.userStep();
 		}
 
 	}
@@ -45,11 +46,11 @@ public class HeadLessExperiment extends GuiExperimentSpecies implements IHeadLes
 		return result;
 	}
 
-	@Override
-	public void stop() {}
-
-	@Override
-	public void userPause() {}
+	// @Override
+	// public void stop() {}
+	//
+	// @Override
+	// public void userPause() {}
 
 	@Override
 	public boolean isGui() {
@@ -82,13 +83,13 @@ public class HeadLessExperiment extends GuiExperimentSpecies implements IHeadLes
 		return result;
 	}
 
-	@Override
-	public void userStep() {
-		// FIXME Verify this
-		agent.userStepExperiment();
-		// TODO Auto-generated method stub
-
-	}
+	// @Override
+	// public void userStep() {
+	// // FIXME Verify this
+	// agent.userStepExperiment();
+	// // TODO Auto-generated method stub
+	//
+	// }
 
 	@Override
 	public void setParameterWithName(final String name, final Object value) throws GamaRuntimeException,
