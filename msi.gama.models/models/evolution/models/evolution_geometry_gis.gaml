@@ -71,15 +71,15 @@ species people topology: topology(shape_file_name_init) {
 		}	
 	}
 		
-	aspect default {
-		draw geometry: shape color: color;
+	aspect geometry {
+		draw geometry:(shape) color: color;
 	}
 }
 
 species background {
 	rgb color;
-	aspect default {
-		draw geometry: shape color: color;
+	aspect geometry {
+		draw geometry:(shape) color: color;
 	}	
 }
 experiment evolution_geometry type: gui {
@@ -98,8 +98,8 @@ experiment evolution_geometry type: gui {
 	parameter 'Size background side:' var: background_size_side category: 'Population' ;
 	output {
 		display space_display refresh_every: 1{
-			species background;
-			species people ;
+			species background aspect: geometry;
+			species people aspect: geometry;
 		}
 	}
 }
