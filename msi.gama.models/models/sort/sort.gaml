@@ -62,12 +62,13 @@ experiment sort type: gui{
 	parameter 'Number of agents:' var: ants category: 'Agents' ;
 	
 	init {
-		map inits <- user_input("Sort: Enter initial parameters", ["Colors"::3]);
-		number_of_different_colors <- int(inits["Colors"]);
+//		map inits <- user_input("Sort: Enter initial parameters", ["Colors"::3, "Agents"::100]);
+//		number_of_different_colors <- int(inits["Colors"]);
+//		ants <- int(inits["Agents"]);
 	}
 	
 	output {
-		display grille refresh_every: 100 {
+		display grille refresh_every: 1  {
 			grid ant_grid size: {0.8,0.8} position: {0.1,0.1} ;
 			species ant transparency: 0.2 size: {0.8,0.8} position: {0.1,0.1};
 		}

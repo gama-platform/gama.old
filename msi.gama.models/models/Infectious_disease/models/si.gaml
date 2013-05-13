@@ -97,7 +97,7 @@ entities {
     }
 }
 
-experiment simulation type: gui { 
+experiment Simulation type: gui { 
  	output { 
 	    display si_display {
 	        grid si_grid lines: rgb("black");

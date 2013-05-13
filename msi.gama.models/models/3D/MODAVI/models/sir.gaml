@@ -283,7 +283,7 @@ entities {
     }
 }
 
-experiment simulation type: gui { 
+experiment Simulation type: gui { 
  	output {
  		
  		 display modavi_display type:opengl ambient_light: 0.2	{

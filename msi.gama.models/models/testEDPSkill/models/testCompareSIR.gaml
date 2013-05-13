@@ -130,7 +130,7 @@ entities {
 	}
 }
 
-experiment simulation type: gui { 
+experiment Simulation type: gui { 
  	output { 
 	    display sir_display {
 	        grid sir_grid lines: rgb("black");
