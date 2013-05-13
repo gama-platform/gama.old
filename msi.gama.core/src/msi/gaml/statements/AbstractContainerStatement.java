@@ -72,12 +72,11 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 		if ( cont instanceof IContainer ) { return (IContainer) cont; }
 		if ( cont instanceof ISpecies ) { return (ISpecies) cont; }
 		if ( cont instanceof IShape ) { return ((IShape) cont).getAttributes(); }
-		throw new GamaRuntimeException("Cannot use " + list.getType().toString() + " " +
-			list.toGaml() + " as a container", true);
+		throw GamaRuntimeException.warning("Cannot use " + list.getType().toString() + " " + list.toGaml() +
+			" as a container");
 	}
 
-	private Object createKey(final IScope scope, final IContainer container)
-		throws GamaRuntimeException {
+	private Object createKey(final IScope scope, final IContainer container) throws GamaRuntimeException {
 		Object position = index == null ? null : index.value(scope);
 		// AD 29/02/13 : Normally taken in charge by the parser, now.
 		// if ( index != null && !container.checkIndex(position) ) { throw new GamaIndexTypeWarning(
@@ -92,8 +91,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 		return position;
 	}
 
-	private Object createItem(final IScope scope, final IContainer container)
-		throws GamaRuntimeException {
+	private Object createItem(final IScope scope, final IContainer container) throws GamaRuntimeException {
 		Object result = null;
 		if ( all == null ) {
 			// Case add item: ITEM to: LIST
@@ -110,8 +108,8 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 				} else {
 					// Case add item: ITEM all: ITEMS to: LIST
 					// Impossible
-					throw new GamaRuntimeException("'all: " + StringUtils.toGaml(whole) +
-						"' cannot be used in " + getName(), true);
+					throw GamaRuntimeException.warning("'all: " + StringUtils.toGaml(whole) + "' cannot be used in " +
+						getName());
 				}
 			} else {
 				// Case add all: [...] to: LIST
@@ -155,7 +153,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 		// return whole;
 	}
 
-	protected abstract void apply(IScope stack, Object object, Object position, Boolean whole,
-		IContainer container) throws GamaRuntimeException;
+	protected abstract void apply(IScope stack, Object object, Object position, Boolean whole, IContainer container)
+		throws GamaRuntimeException;
 
 }

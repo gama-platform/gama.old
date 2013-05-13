@@ -100,7 +100,7 @@ public class FileOutput extends AbstractOutput {
 		if ( exp == null ) {
 			setHeader(getHeader());
 		} else {
-			setHeader(Cast.asString(getOwnScope(), exp.value(getOwnScope())));
+			setHeader(Cast.asString(getScope(), exp.value(getScope())));
 		}
 	}
 
@@ -109,7 +109,7 @@ public class FileOutput extends AbstractOutput {
 		if ( exp == null ) {
 			setFooter(getFooter());
 		} else {
-			setFooter(Cast.asString(getOwnScope(), exp.value(getOwnScope())));
+			setFooter(Cast.asString(getScope(), exp.value(getScope())));
 		}
 	}
 
@@ -118,7 +118,7 @@ public class FileOutput extends AbstractOutput {
 		if ( exp == null ) {
 			setRewrite(false);
 		} else {
-			setRewrite(Cast.asBool(getOwnScope(), exp.value(getOwnScope())));
+			setRewrite(Cast.asBool(getScope(), exp.value(getScope())));
 		}
 	}
 
@@ -179,7 +179,7 @@ public class FileOutput extends AbstractOutput {
 	public void init(final IScope scope) throws GamaRuntimeException {
 		super.init(scope);
 		createType();
-		createFileName(scope.getSimulationScope().getModel());
+		createFileName(getScope().getSimulationScope().getModel());
 		createRewrite();
 		createHeader();
 		createFooter();
@@ -202,7 +202,7 @@ public class FileOutput extends AbstractOutput {
 
 	public void prepare(final IExperimentSpecies exp) throws GamaRuntimeException {
 		// FIXME Verify this scope
-		setOwnScope(exp.getExperimentScope());
+		setScope(GAMA.obtainNewScope());
 		outputManager = exp.getOutputManager();
 		createType();
 		createFileName(exp.getModel());
@@ -234,7 +234,7 @@ public class FileOutput extends AbstractOutput {
 		try {
 			file.createNewFile();
 		} catch (final IOException e) {
-			throw new GamaRuntimeException(e);
+			throw GamaRuntimeException.create(e);
 		}
 	}
 
@@ -249,18 +249,19 @@ public class FileOutput extends AbstractOutput {
 
 	@Override
 	public void step(final IScope scope) {
+		if ( scope.interrupted() ) { return; }
 		setLastValue(data.value(scope));
 	}
 
 	@Override
 	public void update() throws GamaRuntimeException {
-		writeToFile(getOwnScope().getClock().getCycle());
+		writeToFile(getScope().getClock().getCycle());
 	}
 
 	public void doRefreshWriteAndClose(final ParametersSet sol, final Object fitness) throws GamaRuntimeException {
 		setSolution(sol);
 		if ( fitness == null ) {
-			step(getOwnScope());
+			step(getScope());
 		} else {
 			setLastValue(fitness);
 		}

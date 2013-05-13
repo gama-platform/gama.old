@@ -42,7 +42,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 	protected int id;
 	protected String name;
 	protected Class[] supports;
-	Map<String, TypeFieldExpression> getters = new HashMap();
+	Map<String, TypeFieldExpression> getters;
 	protected IType parent;
 	protected boolean parented;
 	protected int varKind;
@@ -84,11 +84,13 @@ public abstract class GamaType<Support> implements IType<Support> {
 
 	@Override
 	public IExpression getGetter(final String field) {
+		if ( getters == null ) { return null; }
 		return getters.get(field);
 	}
 
 	@Override
 	public Map<String, ? extends IGamlDescription> getFieldDescriptions(final ModelDescription desc) {
+		if ( getters == null ) { return Collections.EMPTY_MAP; }
 		return getters;
 	}
 

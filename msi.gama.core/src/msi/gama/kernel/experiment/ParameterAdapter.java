@@ -44,8 +44,7 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 		this.category = category;
 	}
 
-	public ParameterAdapter(final String title, final String category, final String unit,
-		final int type) {
+	public ParameterAdapter(final String title, final String category, final String unit, final int type) {
 		this(title, category, type);
 		this.unitLabel = unit;
 	}
@@ -150,8 +149,9 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	@Override
 	public void reinitRandomly() {}
 
-	@Override
-	public void tryToInit(IScope scope) {}
+	//
+	// @Override
+	// public void tryToInit(IScope scope) {}
 
 	@Override
 	public Set<Object> neighbourValues() throws GamaRuntimeException {

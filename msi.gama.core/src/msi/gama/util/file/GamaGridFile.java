@@ -31,12 +31,12 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 			if ( store.getCrs() != null ) {
 				double latitude = env.centre().x;
 				double longitude = env.centre().y;
-				GisUtils gis = scope.getSimulationScope().getGisUtils();
+				GisUtils gis = scope.getTopology().getGisUtils();
 				gis.setTransformCRS(store.getCrs(), latitude, longitude);
 				env = gis.transform(env);
 			}
 		} catch (IOException e) {
-			throw new GamaRuntimeException(e);
+			throw GamaRuntimeException.create(e);
 		}
 		store.dispose();
 		return env;
@@ -83,7 +83,7 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 					(double[]) coverage.evaluate(new DirectPosition2D(rect.getLocation().getX(), rect.getLocation()
 						.getY()));
 
-				rect = new GamaShape(scope.getSimulationScope().getGisUtils().transform(rect.getInnerGeometry()));
+				rect = new GamaShape(scope.getTopology().getGisUtils().transform(rect.getInnerGeometry()));
 
 				rect.getOrCreateAttributes();
 				rect.getAttributes().put("grid_value", vals[0]);
@@ -134,7 +134,7 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 	@Override
 	protected void checkValidity() throws GamaRuntimeException {
 		super.checkValidity();
-		if ( !GamaFileType.isGrid(getFile().getName()) ) { throw new GamaRuntimeException("The extension " +
+		if ( !GamaFileType.isGrid(getFile().getName()) ) { throw GamaRuntimeException.error("The extension " +
 			this.getExtension() + " is not recognized for ArcGrid files"); }
 	}
 
@@ -146,7 +146,7 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 			store = new ArcGridReader(gridFile.toURI().toURL());
 			nbRows = store.getOriginalGridRange().getHigh(1) + 1;
 		} catch (IOException e) {
-			throw new GamaRuntimeException(e);
+			throw GamaRuntimeException.create(e);
 		}
 		store.dispose();
 		return nbRows;
@@ -160,7 +160,7 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 			store = new ArcGridReader(gridFile.toURI().toURL());
 			nbRows = store.getOriginalGridRange().getHigh(0) + 1;
 		} catch (IOException e) {
-			throw new GamaRuntimeException(e);
+			throw GamaRuntimeException.create(e);
 		}
 		store.dispose();
 		return nbRows;
@@ -181,7 +181,7 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 			shapes.add(shapes.get(0));
 			geom = GamaGeometryType.buildPolygon(shapes);
 		} catch (IOException e) {
-			throw new GamaRuntimeException(e);
+			throw GamaRuntimeException.create(e);
 		}
 		store.dispose();
 		return geom;

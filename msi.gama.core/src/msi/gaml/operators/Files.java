@@ -64,7 +64,7 @@ public class Files {
 		if ( GamaFileType.isShape(s) ) { return shapeFile(scope, s); }
 		if ( GamaFileType.isGrid(s) ) { return gridFile(scope, s); }
 		if ( new File(s).isDirectory() ) { return folderFile(scope, s); }
-		throw new GamaRuntimeException("Unknown file type: " + s);
+		throw GamaRuntimeException.error("Unknown file type: " + s);
 	}
 
 	@operator(value = IMAGE, can_be_const = true, index_type = IType.POINT)
@@ -120,7 +120,7 @@ public class Files {
 	@operator("writable")
 	@doc(value = "Marks the file as read-only or not, depending on the second boolean argument, and returns the first argument", comment = "A file is created using its native flags. This operator can change them. Beware that this change is system-wide (and not only restrained to GAMA): changing a file to read-only mode (e.g. \"writable(f, false)\")", examples = { "shapefile(\"../images/point_eau.shp\") writable false --: returns a file in read-only mode" }, see = "file")
 	public static IGamaFile writable(final IScope scope, final IGamaFile s, final Boolean writable) {
-		if ( s == null ) { throw new GamaRuntimeException("Attempt to change the mode of a non-existent file"); }
+		if ( s == null ) { throw GamaRuntimeException.error("Attempt to change the mode of a non-existent file"); }
 		boolean b = writable == null ? false : writable;
 		s.setWritable(b);
 		return s;
@@ -206,7 +206,7 @@ public class Files {
 		theName = model.getRelativeFilePath(folder, false);
 
 		final File file = new File(theName);
-		if ( file.exists() && !file.isDirectory() ) { throw new GamaRuntimeException("The folder " + folder +
+		if ( file.exists() && !file.isDirectory() ) { throw GamaRuntimeException.error("The folder " + folder +
 			" can not overwrite a file with the same name"); }
 		if ( !file.exists() ) {
 			file.mkdir();

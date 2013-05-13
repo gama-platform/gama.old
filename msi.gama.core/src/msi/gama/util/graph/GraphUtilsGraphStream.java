@@ -111,9 +111,9 @@ public class GraphUtilsGraphStream {
 					}
 				}
 			} catch (EdgeRejectedException e) {
-				GAMA.reportError(new GamaRuntimeException("an edge was rejected during the transformation, probably because it was a double one", true));
+				GAMA.reportError(GamaRuntimeException.warning("an edge was rejected during the transformation, probably because it was a double one"));
 			} catch (IdAlreadyInUseException e) {
-				GAMA.reportError(new GamaRuntimeException("an edge was rejected during the transformation, probably because it was a double one", true));
+				GAMA.reportError(GamaRuntimeException.warning("an edge was rejected during the transformation, probably because it was a double one"));
 			}
 			
 
@@ -123,17 +123,13 @@ public class GraphUtilsGraphStream {
 		// some basic tests for integrity
 		if (gamaGraph.getVertices().size() != g.getNodeCount())
 			GAMA.reportError(
-					new GamaRuntimeException(
-							"The exportation ran without error, but an integrity test failed: " +
-							"the number of vertices is not correct("+g.getNodeCount()+" instead of "+gamaGraph.getVertices().size()+")", 
-							true)
+					GamaRuntimeException.warning("The exportation ran without error, but an integrity test failed: " +
+					"the number of vertices is not correct("+g.getNodeCount()+" instead of "+gamaGraph.getVertices().size()+")")
 					);
 		if (gamaGraph.getEdges().size() != g.getEdgeCount())
 			GAMA.reportError(
-					new GamaRuntimeException(
-							"The exportation ran without error, but an integrity test failed: " +
-							"the number of edges is not correct("+g.getEdgeCount()+" instead of "+gamaGraph.getEdges().size()+")", 
-							true)
+					GamaRuntimeException.warning("The exportation ran without error, but an integrity test failed: " +
+					"the number of edges is not correct("+g.getEdgeCount()+" instead of "+gamaGraph.getEdges().size()+")")
 					);
 
 								

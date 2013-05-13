@@ -61,16 +61,16 @@ public class GraphsGraphstream {
 			boolean directed) {
 
 			// check parameter
-			if ( directed != gamaGraph.isDirected() ) { throw new GamaRuntimeException("Attempted to read an " +
+			if ( directed != gamaGraph.isDirected() ) { throw GamaRuntimeException.error("Attempted to read an " +
 				(directed ? "" : "un") + "directed edge for a " + (gamaGraph.isDirected() ? "" : "un") +
 				"directed graph"); }
 
 			// retrieve the agents for this edge
 			IAgent agentFrom = nodeId2agent.get(fromNodeId);
-			if ( agentFrom == null ) { throw new GamaRuntimeException("Error while parsing graph: the node " +
+			if ( agentFrom == null ) { throw GamaRuntimeException.error("Error while parsing graph: the node " +
 				fromNodeId + " was not declared"); }
 			IAgent agentTo = nodeId2agent.get(toNodeId);
-			if ( agentTo == null ) { throw new GamaRuntimeException("Error while parsing graph: the node " + toNodeId +
+			if ( agentTo == null ) { throw GamaRuntimeException.error("Error while parsing graph: the node " + toNodeId +
 				" was not declared");
 			// TODO : add support for nodes that were not declared ? (may be supported in some file
 			// formats)

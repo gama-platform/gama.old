@@ -38,36 +38,20 @@ public interface IType<Support> {
 	public static final int TYPE_ID = -202;
 	public static final int NEW_VAR_ID = -203;
 	public static final int NEW_TEMP_ID = -204;
-	/** Constant field NO_TYPE. */
 	public static final int NONE = 0;
-	public static final int NONE_STR = NONE;
-	/** Constant field INT. */
 	public final static int INT = 1;
-	/** Constant field FLOAT. */
 	public final static int FLOAT = 2;
-	/** Constant field BOOL. */
 	public final static int BOOL = 3;
-	/** Constant field STRING. */
 	public final static int STRING = 4;
-	/** Constant field LIST. */
 	public final static int LIST = 5;
-	/** Constant field COLOR. */
 	public final static int COLOR = 6;
-	/** Constant field POINT. */
 	public final static int POINT = 7;
-	/** Constant field MATRIX. */
 	public final static int MATRIX = 8;
-	/** Constant field PAIR. */
 	public final static int PAIR = 9;
-	/** Constant field MAP. */
 	public final static int MAP = 10;
-	/** Constant field AGENT. */
 	public final static int AGENT = 11;
-	/** Constant field SPECIES. */
 	public final static int SPECIES = 14;
-	/** Constant field FILE. */
 	public final static int FILE = 12;
-	/** Constant field GEOMETRY. */
 	public static final int GEOMETRY = 13;
 	public static final int GRAPH = 15;
 	public static final int PATH = 17;
@@ -107,12 +91,6 @@ public interface IType<Support> {
 	public void setParent(IType p);
 
 	public IType getParent();
-
-	// public void addSubType(IType p);
-
-	// public Collection<IType> getSubTypes();
-
-	// public void clearSubTypes();
 
 	IType coerce(IType expr, IDescription context);
 

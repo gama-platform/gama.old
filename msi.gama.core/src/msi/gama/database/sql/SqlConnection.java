@@ -171,19 +171,19 @@ public abstract class SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.selectDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.selectDB: " + e.toString());
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.selectDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.selectDB: " + e.toString());
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.selectDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.selectDB: " + e.toString());
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.selectDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.selectDB: " + e.toString());
 		}
 
 		if ( DEBUG ) {
@@ -229,7 +229,7 @@ public abstract class SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.selectDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.selectDB: " + e.toString());
 		}
 		// return repRequest;
 		return result;
@@ -257,19 +257,19 @@ public abstract class SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.executeUpdateDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.executeUpdateDB: " + e.toString());
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.executeUpdateDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.executeUpdateDB: " + e.toString());
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.executeUpdateDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.executeUpdateDB: " + e.toString());
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.executeUpdateDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.executeUpdateDB: " + e.toString());
 		}
 
 		if ( DEBUG ) {
@@ -297,7 +297,7 @@ public abstract class SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.executeUpdateDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.executeUpdateDB: " + e.toString());
 		}
 		return n;
 	}
@@ -513,7 +513,7 @@ public abstract class SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.insertBD " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.insertBD " + e.toString());
 		}
 
 		return rec_no;
@@ -547,19 +547,19 @@ public abstract class SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.insertBD " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.insertBD " + e.toString());
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.insertDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.insertDB: " + e.toString());
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.insertBD: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.insertBD: " + e.toString());
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.insertBD: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.insertBD: " + e.toString());
 		}
 		return rec_no;
 	}
@@ -593,7 +593,7 @@ public abstract class SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.insertBD " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.insertBD " + e.toString());
 		}
 		return rec_no;
 	}
@@ -617,19 +617,19 @@ public abstract class SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.insertBD " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.insertBD " + e.toString());
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.insertDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.insertDB: " + e.toString());
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.insertBD: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.insertBD: " + e.toString());
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.insertBD: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.insertBD: " + e.toString());
 		}
 		return rec_no;
 	}
@@ -692,7 +692,7 @@ public abstract class SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.selectDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.selectDB: " + e.toString());
 		}
 		// return repRequest;
 		return result;
@@ -728,19 +728,19 @@ public abstract class SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.executeQuery: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.executeQuery: " + e.toString());
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.executeQuery: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.executeQuery: " + e.toString());
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.executeQuery: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.executeQuery: " + e.toString());
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.executeQuery: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.executeQuery: " + e.toString());
 		}
 
 		return result;
@@ -784,7 +784,7 @@ public abstract class SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.selectDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.selectDB: " + e.toString());
 		}
 		return row_count;
 	}
@@ -815,19 +815,19 @@ public abstract class SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.executeUpdateDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.executeUpdateDB: " + e.toString());
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.executeUpdateDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.executeUpdateDB: " + e.toString());
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.executeUpdateDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.executeUpdateDB: " + e.toString());
 		} catch (IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.executeUpdateDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.executeUpdateDB: " + e.toString());
 		}
 		return row_count;
 	}
@@ -837,12 +837,12 @@ public abstract class SqlConnection {
 	}
 
 	public static Geometry fromGisToAbsolute(IScope scope, Geometry geom) {
-		return scope.getSimulationScope().getGisUtils().transform(geom);
+		return scope.getTopology().getGisUtils().transform(geom);
 
 	}
 
 	public static Geometry fromAbsoluteToGis(IScope scope, Geometry geom) {
-		return scope.getSimulationScope().getGisUtils().inverseTransform(geom);
+		return scope.getTopology().getGisUtils().inverseTransform(geom);
 
 	}
 
@@ -883,7 +883,7 @@ public abstract class SqlConnection {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.Gis2Absolute: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.Gis2Absolute: " + e.toString());
 		}
 	}
 
@@ -926,7 +926,7 @@ public abstract class SqlConnection {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLConnection.Gis2Absolute: " + e.toString());
+			throw GamaRuntimeException.error("SQLConnection.Gis2Absolute: " + e.toString());
 
 		}
 	}

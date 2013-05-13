@@ -281,7 +281,7 @@ public final class FloydWarshallStaticOptimizer extends AbstractStaticOptimizer<
 
 	@Override
 	GamaPoint computeCenterOfIntersections() {
-		Envelope env = GAMA.getFrontmostSimulation().getEnvelope();
+		Envelope env = GAMA.getSimulation().getEnvelope();
 		center = new GamaPoint(env.getWidth() / 2, env.getHeight() / 2);
 		return center;
 	}

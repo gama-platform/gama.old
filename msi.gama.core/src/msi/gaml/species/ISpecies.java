@@ -22,10 +22,9 @@ import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.*;
 import msi.gaml.architecture.IArchitecture;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISymbol;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.*;
-import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
 
 /**
@@ -69,7 +68,7 @@ public interface ISpecies extends ISymbol, IContainer<Integer, IAgent> {
 	 * 
 	 * @return
 	 */
-	public abstract IList<String> getMicroSpeciesNames();
+	// public abstract IList<String> getMicroSpeciesNames();
 
 	/**
 	 * Verifies if this species has micro-species or not.
@@ -100,7 +99,7 @@ public interface ISpecies extends ISymbol, IContainer<Integer, IAgent> {
 	 * 
 	 * @return
 	 */
-	public abstract IList<ISpecies> getPeersSpecies();
+	// public abstract IList<ISpecies> getPeersSpecies();
 
 	/**
 	 * Returns a peer species with the specified name.
@@ -108,7 +107,7 @@ public interface ISpecies extends ISymbol, IContainer<Integer, IAgent> {
 	 * @param peerName name of the peer species.
 	 * @return a peer species with the specified name or null.
 	 */
-	public abstract ISpecies getPeerSpecies(String peerName);
+	// public abstract ISpecies getPeerSpecies(String peerName);
 
 	/**
 	 * Verifies that if this species is the peer species of other species.
@@ -120,15 +119,15 @@ public interface ISpecies extends ISymbol, IContainer<Integer, IAgent> {
 
 	public abstract List<ISpecies> getSelfWithParents();
 
-	public abstract void addAction(final IStatement ce);
+	// public abstract void addAction(final IStatement ce);
 
-	public abstract void addAspect(final IStatement ce);
+	// public abstract void addAspect(final IStatement ce);
 
-	public abstract void addBehavior(IStatement b);
+	// public abstract void addBehavior(IStatement b);
 
-	public abstract void addChild(final ISymbol s);
+	// public abstract void addChild(final ISymbol s);
 
-	public abstract void addVariable(final IVariable v);
+	// public abstract void addVariable(final IVariable v);
 
 	public abstract Collection<UserCommandStatement> getUserCommands();
 
@@ -139,9 +138,9 @@ public interface ISpecies extends ISymbol, IContainer<Integer, IAgent> {
 
 	public IList<ActionStatement> getActions();
 
-	public abstract IAgentConstructor getAgentConstructor();
+	// public abstract IAgentConstructor getAgentConstructor();
 
-	public abstract IType getAgentType();
+	// public abstract IType getAgentType();
 
 	public abstract IAspect getAspect(final String n);
 

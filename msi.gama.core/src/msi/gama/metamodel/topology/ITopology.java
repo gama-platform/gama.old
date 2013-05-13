@@ -18,7 +18,9 @@
  */
 package msi.gama.metamodel.topology;
 
+import java.awt.Graphics2D;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
@@ -49,6 +51,14 @@ import com.vividsolutions.jts.geom.Geometry;
 })
 public interface ITopology extends IValue {
 
+	public GisUtils getGisUtils();
+
+	public abstract ISpatialIndex getSpatialIndex();
+
+	public abstract void displaySpatialIndexOn(Graphics2D g2, int width, int height);
+
+	// public void setTorus(boolean asBool);
+
 	public abstract void initialize(IPopulation pop) throws GamaRuntimeException;
 
 	// public abstract void updateAgent(final IAgent agent, final boolean previousShapeIsPoint,
@@ -64,14 +74,13 @@ public interface ITopology extends IValue {
 
 	public abstract IAgent getAgentClosestTo(final ILocation source, IAgentFilter filter);
 
-	public abstract IList<IAgent> getNeighboursOf(final IShape source, final Double distance,
-		IAgentFilter filter) throws GamaRuntimeException;
+	public abstract IList<IAgent> getNeighboursOf(final IShape source, final Double distance, IAgentFilter filter)
+		throws GamaRuntimeException;
 
-	public abstract IList<IAgent> getNeighboursOf(final ILocation source, final Double distance,
-		IAgentFilter filter) throws GamaRuntimeException;
+	public abstract IList<IAgent> getNeighboursOf(final ILocation source, final Double distance, IAgentFilter filter)
+		throws GamaRuntimeException;
 
-	public abstract IList<IAgent> getAgentsIn(final IShape source, final IAgentFilter f,
-		boolean covered);
+	public abstract IList<IAgent> getAgentsIn(final IShape source, final IAgentFilter f, boolean covered);
 
 	public abstract boolean isTorus();
 
@@ -86,8 +95,7 @@ public interface ITopology extends IValue {
 	 */
 	public abstract Double distanceBetween(IScope scope, final IShape source, final IShape target);
 
-	public abstract Double distanceBetween(IScope scope, final ILocation source,
-		final ILocation target);
+	public abstract Double distanceBetween(IScope scope, final ILocation source, final ILocation target);
 
 	public abstract GamaSpatialPath pathBetween(IScope scope, final IShape source, final IShape target)
 		throws GamaRuntimeException;
@@ -107,8 +115,8 @@ public interface ITopology extends IValue {
 	 *            the destination is outside the topology
 	 * @return a point or null if no random locations are available
 	 */
-	public abstract ILocation getDestination(final ILocation source, final int direction,
-		final double distance, boolean nullIfOutside);
+	public abstract ILocation getDestination(final ILocation source, final int direction, final double distance,
+		boolean nullIfOutside);
 
 	/**
 	 * Return a random location inside the bounds of the environment's shape.

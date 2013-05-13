@@ -58,14 +58,13 @@ public class QuadTreeLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void init(final IScope scope) throws GamaRuntimeException {
-		super.init(scope);
+	public void _init(final IScope scope) throws GamaRuntimeException {
 		Envelope env = scope.getSimulationScope().getEnvelope();
 		supportImage = ImageUtils.createCompatibleImage((int) env.getWidth(), (int) env.getHeight());
 	}
 
 	@Override
-	public void step(final IScope scope) throws GamaRuntimeException {
+	public void _step(final IScope scope) throws GamaRuntimeException {
 		IGraphics g = scope.getGraphics();
 		if ( g != null ) {
 			if ( supportImage.getWidth() != g.getDisplayWidthInPixels() ||
@@ -76,8 +75,7 @@ public class QuadTreeLayerStatement extends AbstractLayerStatement {
 			}
 		}
 		Graphics2D g2 = (Graphics2D) supportImage.getGraphics();
-		scope.getSimulationScope().displaySpatialIndexOn(g2, supportImage.getWidth(), supportImage.getHeight());
-		super.step(scope);
+		scope.getTopology().displaySpatialIndexOn(g2, supportImage.getWidth(), supportImage.getHeight());
 	}
 
 	@Override

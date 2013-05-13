@@ -31,8 +31,8 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.OF, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.INDEX, type = IType.TYPE_ID, optional = true),
-	@facet(name = IKeyword.VALUE, type = { IType.NONE_STR }, optional = true),
-	@facet(name = IKeyword.DEFAULT, type = { IType.NONE_STR }, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.VALUE, type = { IType.NONE }, optional = true),
+	@facet(name = IKeyword.DEFAULT, type = { IType.NONE }, optional = true) }, omissible = IKeyword.NAME)
 @symbol(name = { IKeyword.ARG }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, unique_name = true)
 @inside(symbols = { IKeyword.ACTION, IKeyword.DO })
 public class ArgStatement extends AbstractPlaceHolderStatement {

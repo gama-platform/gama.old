@@ -38,12 +38,11 @@ import msi.gaml.species.ISpecies;
 public class GamaSpeciesType extends GamaType<ISpecies> {
 
 	@Override
-	public ISpecies cast(final IScope scope, final Object obj, final Object param)
-		throws GamaRuntimeException {
+	public ISpecies cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
+		// TODO Add a more general cast with list of agents to find a common species.
 		ISpecies species =
-			obj == null ? getDefault() : obj instanceof ISpecies ? (ISpecies) obj
-				: obj instanceof IAgent ? ((IAgent) obj).getSpecies() : obj instanceof String
-					? scope.getAgentScope().getPopulationFor((String) obj).getSpecies()
+			obj == null ? getDefault() : obj instanceof ISpecies ? (ISpecies) obj : obj instanceof IAgent
+				? ((IAgent) obj).getSpecies() : obj instanceof String ? scope.getModel().getSpecies((String) obj)
 					: getDefault();
 		return species;
 	}

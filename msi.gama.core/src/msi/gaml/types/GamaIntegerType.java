@@ -65,7 +65,7 @@ public class GamaIntegerType extends GamaType<Integer> {
 				// for ( Character c : n.toCharArray() ) {
 				// System.out.printf("U+%04x ", (int) c);
 				// }
-				throw new GamaRuntimeException(e);
+				throw GamaRuntimeException.create(e);
 			}
 		}
 		if ( obj instanceof Boolean ) { return (Boolean) obj ? 1 : 0; }

@@ -19,7 +19,7 @@
 package msi.gama.common.interfaces;
 
 /**
- * The class IKeyword.
+ * The class IKeyword. Defines most of the keywords used in GAMA and GAML.
  * 
  * @author drogoul
  * @since 13 d�c. 2011

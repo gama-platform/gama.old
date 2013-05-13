@@ -6,7 +6,7 @@ import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.util.*;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.factories.IChildrenProvider;
+import msi.gaml.factories.*;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 import org.eclipse.emf.ecore.EObject;
@@ -21,11 +21,11 @@ import org.eclipse.emf.ecore.EObject;
  */
 public class TypeDescription extends SymbolDescription {
 
-	private Map<String, StatementDescription> actions;
+	protected Map<String, StatementDescription> actions;
 	private Map<String, VariableDescription> variables;
 	private Class javaBase;
 	protected TypeDescription parent;
-	private int varCount = 0;
+	private static int varCount = 0;
 	private IList<String> sortedVariableNames;
 	private IList<String> updatableVariableNames;
 
@@ -35,7 +35,6 @@ public class TypeDescription extends SymbolDescription {
 		// parent can be null
 		setJavaBase(clazz);
 		setParent((TypeDescription) parent);
-		// javaBase = clazz == null ? getDefaultJavaBase() : clazz;
 	}
 
 	public void copyJavaAdditions() {
@@ -70,28 +69,35 @@ public class TypeDescription extends SymbolDescription {
 		String actionName = primitive.getName();
 		StatementDescription existing = getAction(actionName);
 		if ( existing != null ) {
+			// FIXME This block is never executed (to verify)
 			if ( existing.getKeyword().equals(ACTION) && !primitive.isAbstract() ) {
 				existing.error("Action " + actionName + " replaces a primitive of the same name defined in " +
 					primitive.getOriginName() + ". Consider renaming it.", IGamlIssue.GENERAL);
 			}
+			DescriptionValidator.assertActionsAreCompatible(existing, primitive, primitive.getOriginName());
 			children.remove(existing);
 		}
 		if ( actions == null ) {
 			actions = new LinkedHashMap<String, StatementDescription>();
 		}
 		actions.put(actionName, primitive);
+
 	}
 
 	protected void addAction(final StatementDescription redeclaredAction) {
+
+		// TODO VERIFIER LES PARENTS RESPECTIFS ET COMPRENDRE POURQUOI ERREUR SUR L'AJOUT D'ACTIONS ABSTRAITES
 		String actionName = redeclaredAction.getName();
 		StatementDescription existingAction = getAction(actionName);
 		if ( existingAction != null ) {
 			// Skills primitives are added first
-			if ( existingAction.getKeyword().equals(PRIMITIVE) && !existingAction.isAbstract() ) {
-				redeclaredAction.error("Action " + actionName + " replaces a primitive of the same name defined in " +
-					existingAction.getOriginName() + ". Consider renaming it.", IGamlIssue.GENERAL);
-				return;
-			}
+			// if ( existingAction.getKeyword().equals(PRIMITIVE) && !existingAction.isAbstract() ) {
+			// redeclaredAction.error("Action " + actionName + " replaces a primitive of the same name defined in " +
+			// existingAction.getOriginName() + ". Consider renaming it.", IGamlIssue.GENERAL);
+			// return;
+			// }
+			DescriptionValidator.assertActionsAreCompatible(redeclaredAction, existingAction,
+				existingAction.getOriginName());
 			if ( !existingAction.isAbstract() ) {
 				duplicateError(redeclaredAction, existingAction);
 			}
@@ -101,6 +107,28 @@ public class TypeDescription extends SymbolDescription {
 			actions = new LinkedHashMap<String, StatementDescription>();
 		}
 		actions.put(actionName, redeclaredAction);
+	}
+
+	protected void inheritAction(final TypeDescription parent, final StatementDescription parentAction) {
+		String actionName = parentAction.getName();
+		if ( !hasAction(actionName) ) {
+			// The current species does not define such an action. If it is abstract in
+			// the super species, we issue an error
+			if ( parentAction.isAbstract() ) {
+				this.error("Abstract action '" + actionName + "', inherited from " + parent.getName() +
+					", should be redefined.", IGamlIssue.MISSING_ACTION);
+			} else {
+				// Otherwise we add it.
+				addChild(parentAction);
+			}
+			return;
+		}
+
+		// The action has already been defined in the current species. Just need to check
+		// if it coherent with the inherited action
+		StatementDescription myAction = getAction(actionName);
+
+		DescriptionValidator.assertActionsAreCompatible(myAction, parentAction, parent.getName());
 	}
 
 	@Override
@@ -273,7 +301,7 @@ public class TypeDescription extends SymbolDescription {
 
 	@Override
 	public void dispose() {
-		if ( isDisposed || isBuiltIn() ) { return; }
+		if ( /* isDisposed || */isBuiltIn() ) { return; }
 		if ( actions != null ) {
 			actions.clear();
 		}
@@ -281,7 +309,7 @@ public class TypeDescription extends SymbolDescription {
 			variables.clear();
 		}
 		super.dispose();
-		isDisposed = true;
+		// isDisposed = true;
 	}
 
 	protected void inheritFromParent() {
@@ -387,45 +415,13 @@ public class TypeDescription extends SymbolDescription {
 		variables.put(vName, v);
 	}
 
-	protected void inheritAction(final TypeDescription parent, final StatementDescription parentAction) {
-		String actionName = parentAction.getName();
-		if ( !hasAction(actionName) ) {
-			// The current species does not define such an action. If it is abstract in
-			// the super species, we issue an error
-			if ( parentAction.isAbstract() ) {
-				this.error("Abstract action '" + actionName + "', inherited from " + parent.getName() +
-					", should be redefined.", IGamlIssue.MISSING_ACTION);
-			} else {
-				// Otherwise we add it.
-				addChild(parentAction);
-			}
-			return;
-		}
-
-		// The action has already been defined in the current species. Just need to check
-		// if it coherent with the inherited action
-		StatementDescription myAction = getAction(actionName);
-
-		IType myType = myAction.getType();
-		IType parentType = parentAction.getType();
-		if ( parentType != myType ) {
-			myAction.error("Return type (" + myType + ") differs from that (" + parentType +
-				") of the implementation of  " + actionName + " in " + parent.getName());
-		} else if ( myType.hasContents() ) {
-			myType = myAction.getContentType();
-			parentType = parentAction.getContentType();
-			if ( parentType != myType ) {
-				myAction.error("Content type (" + myType + ") differs from that (" + parentType +
-					") of the implementation of  " + actionName + " in " + parent.getName());
-			}
-		}
-		if ( !parentAction.getArgNames().containsAll(myAction.getArgNames()) ) {
-			String error =
-				"The list of arguments (" + myAction.getArgNames() + ") differs from that of the implementation of " +
-					actionName + " in " + parent.getName() + " (" + parentAction.getArgNames() + ")";
-			myAction.error(error, IGamlIssue.DIFFERENT_ARGUMENTS);
-		}
-
-	}
+	// public void finalizeDescription() {
+	// for ( StatementDescription action : actions.values() ) {
+	// if ( action.isAbstract() && !this.isBuiltIn() ) {
+	// this.error("Abstract action '" + action.getName() + "', defined in " + action.getOriginName() +
+	// ", should be redefined.", IGamlIssue.MISSING_ACTION);
+	// }
+	// }
+	// }
 
 }

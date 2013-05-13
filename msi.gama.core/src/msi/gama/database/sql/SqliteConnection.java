@@ -219,7 +219,7 @@ public class SqliteConnection extends SqlConnection {
 					if ( transformed ) {
 						WKTReader wkt = new WKTReader();
 						Geometry geo2 =
-							scope.getSimulationScope().getGisUtils()
+							scope.getTopology().getGisUtils()
 								.inverseTransform(wkt.read(values.get(i).toString()));
 						valueStr = valueStr + WKT2GEO + "('" + geo2.toString() + "')";
 					} else {
@@ -252,11 +252,11 @@ public class SqliteConnection extends SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SqliteConnection.insertBD " + e.toString());
+			throw GamaRuntimeException.error("SqliteConnection.insertBD " + e.toString());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SqliteConnection.insertBD " + e.toString());
+			throw GamaRuntimeException.error("SqliteConnection.insertBD " + e.toString());
 		}
 
 		return insertStr;
@@ -306,7 +306,7 @@ public class SqliteConnection extends SqlConnection {
 					if ( transformed ) {
 						WKTReader wkt = new WKTReader();
 						Geometry geo2 =
-							scope.getSimulationScope().getGisUtils()
+							scope.getTopology().getGisUtils()
 								.inverseTransform(wkt.read(values.get(i).toString()));
 						valueStr = valueStr + WKT2GEO + "('" + geo2.toString() + "')";
 					} else {
@@ -343,11 +343,11 @@ public class SqliteConnection extends SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SqliteConnection.getInsertString:" + e.toString());
+			throw GamaRuntimeException.error("SqliteConnection.getInsertString:" + e.toString());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SqliteConnection.getInsertString:" + e.toString());
+			throw GamaRuntimeException.error("SqliteConnection.getInsertString:" + e.toString());
 		}
 
 		return insertStr;

@@ -27,6 +27,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -35,16 +36,14 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.ANNEALING, kind = ISymbolKind.BATCH_METHOD, with_sequence = false)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
-@facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
+@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = SimulatedAnnealing.TEMP_END, type = IType.FLOAT, optional = true),
 	@facet(name = SimulatedAnnealing.TEMP_DECREASE, type = IType.FLOAT, optional = true),
 	@facet(name = SimulatedAnnealing.TEMP_INIT, type = IType.FLOAT, optional = true),
 	@facet(name = SimulatedAnnealing.NB_ITER, type = IType.INT, optional = true),
 	@facet(name = IKeyword.MAXIMIZE, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.MINIMIZE, type = IType.FLOAT, optional = true),
-	@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = {
-		IKeyword.MIN, IKeyword.MAX }) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = { IKeyword.MIN, IKeyword.MAX }) }, omissible = IKeyword.NAME)
 public class SimulatedAnnealing extends LocalSearchAlgorithm {
 
 	private double temperatureEnd = 1;
@@ -64,24 +63,30 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 	@Override
 	public void initializeFor(final BatchExperiment f) throws GamaRuntimeException {
 		super.initializeFor(f);
-		IScope scope = GAMA.getDefaultScope();
-		final IExpression tempend = getFacet(TEMP_END);
-		if ( tempend != null ) {
-			temperatureEnd = Cast.asFloat(scope, tempend.value(scope));
-		}
-		final IExpression tempdecrease = getFacet(TEMP_DECREASE);
-		if ( tempdecrease != null ) {
-			tempDimCoeff = Cast.asFloat(scope, tempdecrease.value(scope));
-		}
-		final IExpression tempinit = getFacet(TEMP_INIT);
-		if ( tempinit != null ) {
-			temperatureInit = Cast.asFloat(scope, tempinit.value(scope));
-		}
+		GAMA.run(new InScope.Void() {
 
-		final IExpression nbIterCstT = getFacet(NB_ITER);
-		if ( nbIterCstT != null ) {
-			nbIterCstTemp = Cast.asInt(scope, nbIterCstT.value(scope));
-		}
+			@Override
+			public void process(IScope scope) {
+				final IExpression tempend = getFacet(TEMP_END);
+				if ( tempend != null ) {
+					temperatureEnd = Cast.asFloat(scope, tempend.value(scope));
+				}
+				final IExpression tempdecrease = getFacet(TEMP_DECREASE);
+				if ( tempdecrease != null ) {
+					tempDimCoeff = Cast.asFloat(scope, tempdecrease.value(scope));
+				}
+				final IExpression tempinit = getFacet(TEMP_INIT);
+				if ( tempinit != null ) {
+					temperatureInit = Cast.asFloat(scope, tempinit.value(scope));
+				}
+
+				final IExpression nbIterCstT = getFacet(NB_ITER);
+				if ( nbIterCstT != null ) {
+					nbIterCstTemp = Cast.asInt(scope, nbIterCstT.value(scope));
+				}
+
+			}
+		});
 
 	}
 
@@ -104,8 +109,7 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 			}
 			int iter = 0;
 			while (iter < nbIterCstTemp) {
-				final ParametersSet neighborSol =
-					neighbors.get(GAMA.getRandom().between(0, neighbors.size() - 1));
+				final ParametersSet neighborSol = neighbors.get(GAMA.getRandom().between(0, neighbors.size() - 1));
 				if ( neighborSol == null ) {
 					neighbors.removeAll(Collections.singleton(null));
 					if ( neighbors.isEmpty() ) {
@@ -115,9 +119,7 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 				}
 				Double neighborFitness = testedSolutions.get(neighborSol);
 				if ( neighborFitness == null ) {
-					neighborFitness =
-						Double
-							.valueOf(currentExperiment.launchSimulationsWithSolution(neighborSol));
+					neighborFitness = Double.valueOf(currentExperiment.launchSimulationsWithSolution(neighborSol));
 				}
 				testedSolutions.put(neighborSol, neighborFitness);
 
@@ -130,8 +132,7 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 					bestSolutionAlgo = neighborSol;
 					currentFitness = neighborFitness.doubleValue();
 				}
-				if ( isMaximize() && currentFitness > bestFitness || !isMaximize() &&
-					currentFitness < bestFitness ) {
+				if ( isMaximize() && currentFitness > bestFitness || !isMaximize() && currentFitness < bestFitness ) {
 					bestSolution = new ParametersSet(bestSolutionAlgo);
 					bestFitness = currentFitness;
 				}
@@ -150,8 +151,8 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 	@Override
 	public void addParametersTo(final BatchExperiment exp) {
 		super.addParametersTo(exp);
-		exp.addMethodParameter(new ParameterAdapter("Final temperature",
-			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.FLOAT) {
+		exp.addMethodParameter(new ParameterAdapter("Final temperature", IExperimentSpecies.BATCH_CATEGORY_NAME,
+			IType.FLOAT) {
 
 			@Override
 			public Object value() {
@@ -159,8 +160,8 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 			}
 
 		});
-		exp.addMethodParameter(new ParameterAdapter("Initial temperature",
-			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.FLOAT) {
+		exp.addMethodParameter(new ParameterAdapter("Initial temperature", IExperimentSpecies.BATCH_CATEGORY_NAME,
+			IType.FLOAT) {
 
 			@Override
 			public Object value() {

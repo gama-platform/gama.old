@@ -59,7 +59,7 @@ public class GraphUtilsPrefuse {
 		
 		// basic verification
 		if (graph._internalVertexMap().size() != g.getNodeCount())
-			throw new GamaRuntimeException("error during the translation of a Gama graph to a prefuse graph: the number of nodes is not the same.");
+			throw GamaRuntimeException.error("error during the translation of a Gama graph to a prefuse graph: the number of nodes is not the same.");
 		
 		return g;
 		
@@ -107,7 +107,7 @@ public class GraphUtilsPrefuse {
 		
 		// basic verification
 		if (graph._internalVertexMap().size() != g.getNodeCount())
-			throw new GamaRuntimeException("error during the translation of a Gama graph to a prefuse graph: the number of nodes is not the same.");
+			throw GamaRuntimeException.error("error during the translation of a Gama graph to a prefuse graph: the number of nodes is not the same.");
 		
 		return g;
 		

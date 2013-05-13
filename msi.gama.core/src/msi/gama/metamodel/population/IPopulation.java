@@ -19,6 +19,7 @@
 package msi.gama.metamodel.population;
 
 import java.util.*;
+import msi.gama.common.interfaces.IStepable;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -37,7 +38,7 @@ import msi.gaml.variables.IVariable;
  * @todo Description
  * 
  */
-public interface IPopulation extends Comparable<IPopulation>, IContainer<Integer, IAgent> {
+public interface IPopulation extends Comparable<IPopulation>, IContainer<Integer, IAgent>, IStepable {
 
 	public interface Listener {
 
@@ -55,13 +56,9 @@ public interface IPopulation extends Comparable<IPopulation>, IContainer<Integer
 
 	public abstract void createVariablesFor(IScope scope, IAgent agent) throws GamaRuntimeException;
 
-	public abstract void updateVariablesFor(IScope scope, IAgent agent) throws GamaRuntimeException;
+	// public abstract void updateVariablesFor(IScope scope, IAgent agent) throws GamaRuntimeException;
 
 	public abstract boolean hasVar(final String n);
-
-	public abstract void init(IScope scope) throws GamaRuntimeException;
-
-	public abstract void step(IScope scope) throws GamaRuntimeException;
 
 	public abstract void dispose();
 
@@ -143,7 +140,7 @@ public interface IPopulation extends Comparable<IPopulation>, IContainer<Integer
 	 * @param scope
 	 * @param list
 	 */
-	public abstract void computeAgentsToSchedule(IScope scope, IList list) throws GamaRuntimeException;
+	// public abstract void computeAgentsToSchedule(IScope scope, IList list) throws GamaRuntimeException;
 
 	/**
 	 * @param obj
@@ -154,5 +151,7 @@ public interface IPopulation extends Comparable<IPopulation>, IContainer<Integer
 	public void addListener(IPopulation.Listener listener);
 
 	public void removeListener(IPopulation.Listener listener);
+
+	public abstract void updateVariables(IScope scope, IAgent a);
 
 }

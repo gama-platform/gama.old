@@ -20,7 +20,6 @@ package msi.gama.outputs;
 
 import java.io.PrintWriter;
 import java.util.*;
-import java.util.concurrent.Semaphore;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.IExperimentSpecies;
@@ -46,44 +45,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 	private final Map<String, IOutput> outputs = new HashMap<String, IOutput>();
 	private final Set<IOutput> outputsToUnschedule = new HashSet<IOutput>();
 	private final Set<IOutput> scheduledOutputs = new HashSet<IOutput>();
-
-	// /* Hack Nico need to be checked for the headless */
-	// public static Thread OUTPUT_THREAD = new Thread(null, new Runnable() {
-	//
-	// @Override
-	// public void run() {
-	// boolean cond = false;
-	// while (cond) {
-	// /*
-	// * C'est du code mort ça??? est ce que ça peut entrer dans la boucle sachant
-	// * l'instruction juste avant cond=false...
-	// */
-	// try {
-	// OutputManager.OUTPUT_AUTHORIZATION.acquire();
-	// } catch (InterruptedException e1) {
-	// e1.printStackTrace();
-	// }
-	// IExperiment exp = GAMA.getExperiment();
-	// if ( exp != null && exp.isRunning() ) {
-	// try {
-	// OutputManager.OUTPUT_FINISHED.acquire();
-	// } catch (InterruptedException e) {
-	// e.printStackTrace();
-	// }
-	// try {
-	// exp.getOutputManager().updateOutputs();
-	// } finally {
-	// OutputManager.OUTPUT_FINISHED.release();
-	// }
-	// }
-	//
-	// }
-	// }
-	// }, "Output thread");
-	//
-	// static {
-	// // OUTPUT_THREAD.start();
-	// }
+	private final Set<IOutput> outputsToUpdateNow = new HashSet();
 
 	public OutputManager(final IDescription desc) {
 		super(desc);
@@ -116,7 +78,6 @@ public class OutputManager extends Symbol implements IOutputManager {
 		}
 		if ( exp.isGui() ) {
 			displays = new GuiOutputManager(this);
-
 		} else if ( GuiUtils.isInHeadLessMode() ) {
 			displays = new HeadlessOutputManager(this);
 		}
@@ -137,6 +98,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 			@Override
 			public void run() {
 				for ( final IOutput output : outputs.values() ) {
+					if ( scope.interrupted() ) { return; }
 					if ( !output.isPermanent() ) {
 						try {
 							// GuiUtils.debug("Preparing output " + output.getName());
@@ -171,13 +133,13 @@ public class OutputManager extends Symbol implements IOutputManager {
 
 		OutputSynchronizer.waitForViewsToBeInitialized();
 		GuiUtils.informStatus("Experiment ready");
-		updateOutputs();
+		step(scope);
 
 	}
 
 	public synchronized void dispose(final boolean includingBatch) {
 		try {
-			// GuiUtils.debug("Disposing the outputs");
+			GuiUtils.debug("Disposing the outputs");
 			outputsToUpdateNow.clear();
 			if ( displays != null ) {
 				displays.dispose();
@@ -195,15 +157,6 @@ public class OutputManager extends Symbol implements IOutputManager {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		// while (GuiOutputManager.getNumberOfViewsWaitingToClose() > 0) {
-		// // try {
-		// GuiUtils.debug("Closing " + GuiOutputManager.getNumberOfViewsWaitingToClose() + " display(s)");
-		// Thread.sleep(100);
-		// // } catch (InterruptedException e) {
-		// // // TODO What to do when interrupted ?
-		// // e.printStackTrace();
-		// // }
-		// }
 	}
 
 	@Override
@@ -222,10 +175,6 @@ public class OutputManager extends Symbol implements IOutputManager {
 		scheduledOutputs.add(output);
 	}
 
-	private final Set<IOutput> outputsToUpdateNow = new HashSet();
-	public final static Semaphore OUTPUT_AUTHORIZATION = new Semaphore(1);
-	public final static Semaphore OUTPUT_FINISHED = new Semaphore(1, true);
-
 	@Override
 	public void updateOutputs() {
 		try {
@@ -234,7 +183,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 					try {
 						o.update();
 					} catch (Exception e) {
-						throw new GamaRuntimeException(e);
+						throw GamaRuntimeException.create(e);
 					}
 				} catch (GamaRuntimeException e) {
 					e.addContext("in updating output " + o.getName());
@@ -261,6 +210,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 		scheduledOutputs.removeAll(outputsToUnschedule);
 		outputsToUnschedule.clear();
 		for ( IOutput o : scheduledOutputs ) {
+			if ( scope.interrupted() ) { return; }
 			if ( !o.isPaused() && !o.isClosed() ) {
 				long ii = o.getNextTime();
 				// GUI.debug("At cycle " + cycle + ", next update time for " + o.getName() + ": " +
@@ -270,12 +220,13 @@ public class OutputManager extends Symbol implements IOutputManager {
 						try {
 							// ? o.hasBeenComputed(false);
 							o.step(scope);
-							outputsToUpdateNow.add(o);
+							o.update();
+							// outputsToUpdateNow.add(o);
 							// ? o.hasBeenComputed(true);
 						} catch (GamaRuntimeException e) {
 							throw e;
 						} catch (Exception e) {
-							throw new GamaRuntimeException(e);
+							throw GamaRuntimeException.create(e);
 						}
 					} catch (GamaRuntimeException e) {
 						e.addContext("in computing output " + o.getName());

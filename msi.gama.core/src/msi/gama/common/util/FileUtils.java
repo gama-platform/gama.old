@@ -74,7 +74,7 @@ public class FileUtils {
 					return file.getAbsolutePath();
 				}
 			}
-			ex = new GamaRuntimeException("File denoted by " + filePath + " not found! Tried the following paths : ");
+			ex = GamaRuntimeException.error("File denoted by " + filePath + " not found! Tried the following paths : ");
 			ex.addContext(file.getAbsolutePath());
 			file = new File(baseDirectory + File.separator + removeRoot(filePath));
 			if ( file.exists() ) {
@@ -96,7 +96,7 @@ public class FileUtils {
 					return file.getAbsolutePath();
 				}
 			}
-			ex = new GamaRuntimeException("File denoted by " + filePath + " not found! Tried the following paths : ");
+			ex = GamaRuntimeException.error("File denoted by " + filePath + " not found! Tried the following paths : ");
 			ex.addContext(file.getAbsolutePath());
 		}
 

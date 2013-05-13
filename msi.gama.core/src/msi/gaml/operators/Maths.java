@@ -262,8 +262,7 @@ public class Maths {
 	@doc(value = "returns the natural logarithm (base e) of the operand.", special_cases = "an exception is raised if the operand is less than zero.", examples = "ln(1) 	--:	 0.0", see = "exp")
 	public static Double ln(final Double x) {
 		if ( x <= 0 ) {
-			GAMA.reportError(new GamaRuntimeException(
-				"The ln operator cannot accept negative or null inputs", true));
+			GAMA.reportError(GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs"));
 			return Double.MAX_VALUE; // A compromise...
 		}
 		return Math.log(x);
@@ -272,8 +271,7 @@ public class Maths {
 	@operator(value = "ln", can_be_const = true)
 	@doc()
 	public static Double ln(final Integer x) {
-		if ( x <= 0 ) { throw new GamaRuntimeException(
-			"The ln operator cannot accept negative or null inputs", true);
+		if ( x <= 0 ) { throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs");
 		// return Double.MAX_VALUE; // A compromise...
 		}
 		return Math.log(x);
@@ -313,16 +311,14 @@ public class Maths {
 	@operator(value = "sqrt", can_be_const = true)
 	@doc(value = "returns the square root of the operand.", special_cases = "if the operand is negative, an exception is raised", examples = "sqrt(4) 	--:	 2.0")
 	public static Double sqrt(final Integer v) throws GamaRuntimeException {
-		if ( v < 0 ) { throw new GamaRuntimeException(
-			"The sqrt operator cannot accept negative inputs", true); }
+		if ( v < 0 ) { throw GamaRuntimeException.warning("The sqrt operator cannot accept negative inputs"); }
 		return Math.sqrt(v);
 	}
 
 	@operator(value = "sqrt", can_be_const = true)
 	@doc()
 	public static Double sqrt(final Double v) throws GamaRuntimeException {
-		if ( v < 0 ) { throw new GamaRuntimeException(
-			"The sqrt operator cannot accept negative inputs", true); }
+		if ( v < 0 ) { throw GamaRuntimeException.warning("The sqrt operator cannot accept negative inputs"); }
 		return Math.sqrt(v);
 	}
 
@@ -344,28 +340,28 @@ public class Maths {
 	@operator(value = IKeyword.DIVIDE, can_be_const = true)
 	@doc(value = "a float, equal to the division of the left-hand operand by the rigth-hand operand.", special_cases = "if the right-hand operand is equal to zero, raises a \"Division by zero\" exception", examples = "", see = "*")
 	public static Double opDivide(final Integer a, final Integer b) throws GamaRuntimeException {
-		if ( b == 0 ) { throw new GamaRuntimeException("Division by zero"); }
+		if ( b == 0 ) { throw GamaRuntimeException.error("Division by zero"); }
 		return Double.valueOf(a.doubleValue() / b.doubleValue());
 	}
 
 	@operator(value = IKeyword.DIVIDE, can_be_const = true)
 	@doc(examples = "")
 	public static Double opDivide(final Double a, final Integer b) throws GamaRuntimeException {
-		if ( b == 0 ) { throw new GamaRuntimeException("Division by zero"); }
+		if ( b == 0 ) { throw GamaRuntimeException.error("Division by zero"); }
 		return a / b.doubleValue();
 	}
 
 	@operator(value = IKeyword.DIVIDE, can_be_const = true)
 	@doc()
 	public static Double opDivide(final Double a, final Double b) throws GamaRuntimeException {
-		if ( b.equals(0.0) ) { throw new GamaRuntimeException("Division by zero"); }
+		if ( b.equals(0.0) ) { throw GamaRuntimeException.error("Division by zero"); }
 		return a / b;
 	}
 
 	@operator(value = IKeyword.DIVIDE, can_be_const = true)
 	@doc()
 	public static Double opDivide(final Integer a, final Double b) throws GamaRuntimeException {
-		if ( b.equals(0.0) ) { throw new GamaRuntimeException("Division by zero"); }
+		if ( b.equals(0.0) ) { throw GamaRuntimeException.error("Division by zero"); }
 		return a.doubleValue() / b.doubleValue();
 	}
 
@@ -499,28 +495,28 @@ public class Maths {
 	@operator(value = "div", can_be_const = true)
 	@doc(value = "an int, equal to the truncation of the division of the left-hand operand by the rigth-hand operand.", special_cases = "if the right-hand operand is equal to zero, raises an exception.", examples = "40 div 3 	--:  13", see = "mod")
 	public static Integer div(final Integer a, final Integer b) throws GamaRuntimeException {
-		if ( b == 0 ) { throw new GamaRuntimeException("Division by zero"); }
+		if ( b == 0 ) { throw GamaRuntimeException.error("Division by zero"); }
 		return a / b;
 	}
 
 	@operator(value = "div", can_be_const = true)
 	@doc()
 	public static Integer div(final Double a, final Integer b) throws GamaRuntimeException {
-		if ( b == 0 ) { throw new GamaRuntimeException("Division by zero"); }
+		if ( b == 0 ) { throw GamaRuntimeException.error("Division by zero"); }
 		return (int) (a / b);
 	}
 
 	@operator(value = "div", can_be_const = true)
 	@doc(examples = "40 div 4.1		--:  9")
 	public static Integer div(final Integer a, final Double b) throws GamaRuntimeException {
-		if ( b.equals(0.0) ) { throw new GamaRuntimeException("Division by zero"); }
+		if ( b.equals(0.0) ) { throw GamaRuntimeException.error("Division by zero"); }
 		return (int) (a / b);
 	}
 
 	@operator(value = "div", can_be_const = true)
 	@doc()
 	public static Integer div(final Double a, final Double b) throws GamaRuntimeException {
-		if ( b.equals(0.0) ) { throw new GamaRuntimeException("Division by zero"); }
+		if ( b.equals(0.0) ) { throw GamaRuntimeException.error("Division by zero"); }
 		return (int) (a / b);
 	}
 

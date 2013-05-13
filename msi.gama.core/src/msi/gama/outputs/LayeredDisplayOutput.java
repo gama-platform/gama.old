@@ -23,7 +23,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.kernel.simulation.ISimulationAgent;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.layers.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -104,10 +104,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		IExpression color = getFacet(IKeyword.BACKGROUND);
 		if ( color != null ) {
-			setBackgroundColor(Cast.asColor(getOwnScope(), color.value(getOwnScope())));
+			setBackgroundColor(Cast.asColor(getScope(), color.value(getScope())));
 		} else {
 			if ( getBackgroundColor() == null ) {
-				setBackgroundColor(Cast.asColor(getOwnScope(), "white"));
+				setBackgroundColor(Cast.asColor(getScope(), "white"));
 			}
 		}
 
@@ -115,16 +115,16 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( auto != null ) {
 			if ( auto.getType().equals(Types.get(IType.POINT)) ) {
 				autosave = true;
-				imageDimension = Cast.asPoint(getOwnScope(), auto.value(getOwnScope()));
+				imageDimension = Cast.asPoint(getScope(), auto.value(getScope()));
 			} else {
-				autosave = Cast.asBool(getOwnScope(), auto.value(getOwnScope()));
+				autosave = Cast.asBool(getScope(), auto.value(getScope()));
 			}
 		}
 
 		for ( final ILayerStatement layer : getLayers() ) {
 			try {
 				layer.setDisplayOutput(this);
-				layer.init(getOwnScope());
+				layer.init(getScope());
 			} catch (GamaRuntimeException e) {
 				GAMA.reportError(e);
 			}
@@ -133,16 +133,16 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		// OpenGL parameter initialization
 		IExpression tess = getFacet(IKeyword.TESSELATION);
 		if ( tess != null ) {
-			setTesselation(Cast.asBool(getOwnScope(), tess.value(getOwnScope())));
+			setTesselation(Cast.asBool(getScope(), tess.value(getScope())));
 		}
 
 		IExpression light = getFacet(IKeyword.AMBIENT_LIGHT);
 		if ( light != null ) {
 
 			if ( light.getType().equals(Types.get(IType.COLOR)) ) {
-				setAmbientLightColor(Cast.asColor(getOwnScope(), light.value(getOwnScope())));
+				setAmbientLightColor(Cast.asColor(getScope(), light.value(getScope())));
 			} else {
-				int meanValue = Cast.asInt(getOwnScope(), light.value(getOwnScope()));
+				int meanValue = Cast.asInt(getScope(), light.value(getScope()));
 				setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue));
 			}
 
@@ -157,7 +157,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		IExpression camera = getFacet(IKeyword.CAMERA_POS);
 		if ( camera != null ) {
 
-			setCameraPos(Cast.asPoint(getOwnScope(), camera.value(getOwnScope())));
+			setCameraPos(Cast.asPoint(getScope(), camera.value(getScope())));
 
 			if ( camera.isConst() ) {
 				constantCamera = true;
@@ -169,7 +169,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
 		if ( cameraLook != null ) {
-			setCameraLookPos(Cast.asPoint(getOwnScope(), cameraLook.value(getOwnScope())));
+			setCameraLookPos(Cast.asPoint(getScope(), cameraLook.value(getScope())));
 
 			if ( cameraLook.isConst() ) {
 				constantCameraLook = true;
@@ -181,21 +181,21 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		// Set the up vector of the opengl Camera (see gluPerspective)
 		IExpression cameraUp = getFacet(IKeyword.CAMERA_UP_VECTOR);
 		if ( cameraUp != null ) {
-			setCameraUpVector(Cast.asPoint(getOwnScope(), cameraUp.value(getOwnScope())));
+			setCameraUpVector(Cast.asPoint(getScope(), cameraUp.value(getScope())));
 		}
 
 		IExpression poly = getFacet(IKeyword.POLYGONMODE);
 		if ( poly != null ) {
-			setPolygonMode(Cast.asBool(getOwnScope(), poly.value(getOwnScope())));
+			setPolygonMode(Cast.asBool(getScope(), poly.value(getScope())));
 		}
 
 		IExpression out3D = getFacet(IKeyword.OUTPUT3D);
 		if ( out3D != null ) {
 			if ( out3D.getType().equals(Types.get(IType.POINT)) ) {
 				setOutput3D(true);
-				setOutput3DNbCycles(Cast.asPoint(getOwnScope(), out3D.value(getOwnScope())));
+				setOutput3DNbCycles(Cast.asPoint(getScope(), out3D.value(getScope())));
 			} else {
-				setOutput3D(Cast.asBool(getOwnScope(), out3D.value(getOwnScope())));
+				setOutput3D(Cast.asBool(getScope(), out3D.value(getScope())));
 			}
 		}
 
@@ -204,9 +204,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public void step(final IScope scope) throws GamaRuntimeException {
-		// for ( ILayerStatement layer : getLayers() ) {
-		// layer.step(scope);
-		// }
+		for ( ILayerStatement layer : getLayers() ) {
+			layer.step(getScope());
+		}
 	}
 
 	@Override
@@ -217,9 +217,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			IExpression light = getFacet(IKeyword.AMBIENT_LIGHT);
 			if ( light != null ) {
 				if ( light.getType().equals(Types.get(IType.COLOR)) ) {
-					setAmbientLightColor(Cast.asColor(getOwnScope(), light.value(getOwnScope())));
+					setAmbientLightColor(Cast.asColor(getScope(), light.value(getScope())));
 				} else {
-					int meanValue = Cast.asInt(getOwnScope(), light.value(getOwnScope()));
+					int meanValue = Cast.asInt(getScope(), light.value(getScope()));
 					setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue));
 				}
 			}
@@ -230,7 +230,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( !constantCamera ) {
 			IExpression camera = getFacet(IKeyword.CAMERA_POS);
 			if ( camera != null ) {
-				setCameraPos(Cast.asPoint(getOwnScope(), camera.value(getOwnScope())));
+				setCameraPos(Cast.asPoint(getScope(), camera.value(getScope())));
 			}
 			// graphics.setCameraPosition(getCameraPos());
 		}
@@ -238,7 +238,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( !constantCameraLook ) {
 			IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
 			if ( cameraLook != null ) {
-				setCameraLookPos(Cast.asPoint(getOwnScope(), cameraLook.value(getOwnScope())));
+				setCameraLookPos(Cast.asPoint(getScope(), cameraLook.value(getScope())));
 			}
 			// graphics.setCameraLookPosition(getCameraLookPos());
 		}
@@ -264,7 +264,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public void schedule() throws GamaRuntimeException {
-		step(getOwnScope());
+		step(getScope());
 		super.schedule();
 	}
 
@@ -283,7 +283,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		getLayers().clear();
 	}
 
-	protected void createSurface(final ISimulationAgent sim) {
+	protected void createSurface(final IAgent sim) {
 		Envelope env = sim.getEnvelope();
 		double w = env.getWidth();
 		double h = env.getHeight();

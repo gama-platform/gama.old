@@ -41,12 +41,12 @@ import msi.gaml.types.IType;
  */
 
 @facets(value = {
-	@facet(name = IKeyword.AT, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.KEY, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.ALL, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.ITEM, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.EDGE, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.VERTEX, type = IType.NONE_STR, optional = true),
+	@facet(name = IKeyword.AT, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.KEY, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.ALL, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.ITEM, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.EDGE, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.VERTEX, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.WEIGHT, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.IN, type = { IType.CONTAINER, IType.SPECIES, IType.AGENT, IType.GEOMETRY }, optional = false) }, combinations = {
 	@combination({ IKeyword.AT, IKeyword.ITEM, IKeyword.IN }),
@@ -70,10 +70,9 @@ public class PutStatement extends AbstractContainerStatement {
 			listType == IType.FLOAT ? Cast.asFloat(scope, toAdd) : listType == IType.INT ? Cast
 				.asInt(scope, toAdd) : toAdd;
 		if ( !whole ) {
-			if ( index == null ) { throw new GamaRuntimeException("Cannot put " +
+			if ( index == null ) { throw GamaRuntimeException.error("Cannot put " +
 				StringUtils.toGaml(object) + " in " + list.toGaml() + " without a valid index"); }
-			if ( !container.checkBounds(position, false) ) { throw new GamaRuntimeException(
-				"Index " + position + " out of bounds of " + list.toGaml()); }
+			if ( !container.checkBounds(position, false) ) { throw GamaRuntimeException.error("Index " + position + " out of bounds of " + list.toGaml()); }
 		}
 		container.add(scope, position, object, null, whole, false);
 

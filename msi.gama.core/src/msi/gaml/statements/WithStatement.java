@@ -26,7 +26,7 @@ import msi.gama.precompiler.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
 
-@facets(value = { @facet(name = IKeyword.INIT, type = IType.NONE_STR, optional = false) }, omissible = IKeyword.INIT)
+@facets(value = { @facet(name = IKeyword.INIT, type = IType.NONE, optional = false) }, omissible = IKeyword.INIT)
 @symbol(name = { IKeyword.WITH }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 public class WithStatement extends AbstractPlaceHolderStatement {
 

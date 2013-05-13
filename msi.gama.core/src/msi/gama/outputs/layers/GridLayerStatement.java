@@ -70,17 +70,16 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	// BufferedImage supportImage;
 
 	@Override
-	public void init(final IScope sim) throws GamaRuntimeException {
-		super.init(sim);
+	public void _init(final IScope scope) throws GamaRuntimeException {
 		lineColor = getFacet(IKeyword.LINES);
 		if ( lineColor != null ) {
-			constantColor = Cast.asColor(sim, lineColor.value(sim));
+			constantColor = Cast.asColor(scope, lineColor.value(scope));
 			currentColor = constantColor;
 		}
-		final IPopulation gridPop = sim.getAgentScope().getPopulationFor(getName());
+		final IPopulation gridPop = scope.getAgentScope().getPopulationFor(getName());
 		if ( gridPop == null ) {
-			throw new GamaRuntimeException("missing environment for output " + getName());
-		} else if ( !gridPop.isGrid() ) { throw new GamaRuntimeException("not a grid environment for: " + getName()); }
+			throw GamaRuntimeException.error("missing environment for output " + getName());
+		} else if ( !gridPop.isGrid() ) { throw GamaRuntimeException.error("not a grid environment for: " + getName()); }
 
 		grid = (GamaSpatialMatrix) gridPop.getTopology().getPlaces();
 		agents = new HashSet<IAgent>();
@@ -114,8 +113,7 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void step(final IScope sim) throws GamaRuntimeException {
-		super.step(sim);
+	public void _step(final IScope sim) throws GamaRuntimeException {
 		if ( grid.getIsHexagon() ) {
 			synchronized (agents) {
 				if ( sim.getClock().getCycle() == 0 || agentsHaveChanged() ) {

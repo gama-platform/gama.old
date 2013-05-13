@@ -37,7 +37,7 @@ import com.vividsolutions.jts.geom.Geometry;
 public class GamaGisGeometry extends GamaShape {
 
 	public GamaGisGeometry(IScope scope, Geometry g, final SimpleFeature feature) {
-		super(scope.getSimulationScope().getGisUtils().transform(g));
+		super(scope.getTopology().getGisUtils().transform(g));
 		if ( feature != null ) {
 			// We filter out the geometries (already loaded before)
 			for ( Property p : feature.getProperties() ) {

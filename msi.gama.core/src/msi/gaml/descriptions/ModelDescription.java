@@ -37,7 +37,10 @@ import org.eclipse.emf.ecore.EObject;
  */
 public class ModelDescription extends SpeciesDescription {
 
-	private final Map<String, ExperimentDescription> experiments = new HashMap();
+	// TODO Move elsewhere
+	public static ModelDescription ROOT;
+	private final Map<String, ExperimentDescription> experiments = new LinkedHashMap();
+	private final Map<String, ExperimentDescription> titledExperiments = new LinkedHashMap();
 	private IDescription output;
 	final TypesManager types;
 	private String modelFilePath;
@@ -46,10 +49,12 @@ public class ModelDescription extends SpeciesDescription {
 	private boolean isTorus = false;
 	private final ErrorCollector collect = new ErrorCollector();
 
-	public ModelDescription(String name, String projectPath, String modelPath, EObject source,
-		SpeciesDescription parent, Facets facets) {
-		super(MODEL, null, parent, IChildrenProvider.NONE, source, facets);
-		types = new TypesManager();
+	public ModelDescription(String name, Class clazz, String projectPath, String modelPath, EObject source,
+		SpeciesDescription macro, SpeciesDescription parent, Facets facets) {
+		super(MODEL, clazz, macro, parent, IChildrenProvider.NONE, source, facets);
+		types =
+			new TypesManager(parent instanceof ModelDescription ? ((ModelDescription) parent).types
+				: Types.builtInTypes);
 		setModelFilePath(projectPath, modelPath);
 		// number = count++;
 	}
@@ -64,17 +69,19 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public String toString() {
+		if ( modelFilePath.isEmpty() ) { return "abstract model"; }
 		return "description of " + modelFilePath.substring(modelFilePath.lastIndexOf(File.separator));
 	}
 
 	@Override
 	public void dispose() {
-		if ( isDisposed || isBuiltIn() ) { return; }
+		if ( /* isDisposed || */isBuiltIn() ) { return; }
 		experiments.clear();
+		titledExperiments.clear();
 		output = null;
 		types.dispose();
 		super.dispose();
-		isDisposed = true;
+		// isDisposed = true;
 	}
 
 	public String constructModelRelativePath(final String filePath, final boolean mustExist) {
@@ -132,6 +139,7 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	public void addSpeciesType(final TypeDescription species) {
+		// GuiUtils.debug("ModelDescription.addSpeciesType " + species.getName() + " in " + getName());
 		types.addSpeciesType(species);
 	}
 
@@ -141,6 +149,9 @@ public class ModelDescription extends SpeciesDescription {
 		if ( child instanceof ExperimentDescription ) {
 			String s = child.getName();
 			experiments.put(s, (ExperimentDescription) child);
+			s = child.getFacets().getLabel(TITLE);
+			titledExperiments.put(s, (ExperimentDescription) child);
+			addSpeciesType((TypeDescription) child);
 			// return child;
 			// FIXME: Experiments are not disposed ?
 			// If the experiment is not the "default" one, we return the child directly without
@@ -148,7 +159,7 @@ public class ModelDescription extends SpeciesDescription {
 			// if ( !DEFAULT_EXP.equals(s) ) { return child; }
 			// FIXME Verify this
 			children.add(child);
-		} else if ( child.getKeyword().equals(OUTPUT) ) {
+		} else if ( child != null && child.getKeyword().equals(OUTPUT) ) {
 			if ( output == null ) {
 				output = child;
 			} else {
@@ -180,7 +191,7 @@ public class ModelDescription extends SpeciesDescription {
 	// }
 
 	public boolean hasExperiment(final String name) {
-		return experiments.containsKey(name);
+		return experiments.containsKey(name) || titledExperiments.containsKey(name);
 	}
 
 	// @Override
@@ -219,12 +230,15 @@ public class ModelDescription extends SpeciesDescription {
 
 	@Override
 	public SpeciesDescription getSpeciesContext() {
-		// TODO : Soon, ModelDescription will be a SpeciesDescription as well.
-		return this; // return getWorldSpecies() ?
+		return this;
 	}
 
 	public Set<String> getExperimentNames() {
-		return new HashSet(experiments.keySet());
+		return new LinkedHashSet(experiments.keySet());
+	}
+
+	public Set<String> getExperimentTitles() {
+		return new LinkedHashSet(titledExperiments.keySet());
 	}
 
 	@Override
@@ -239,7 +253,37 @@ public class ModelDescription extends SpeciesDescription {
 	// }
 
 	public ExperimentDescription getExperiment(String name) {
-		return experiments.get(name);
+		ExperimentDescription desc = experiments.get(name);
+		if ( desc == null ) {
+			desc = titledExperiments.get(name);
+		}
+		return desc;
+	}
+
+	// @Override
+	// protected void addPrimitive(StatementDescription action) {
+	// GuiUtils.debug("ModelDescription.addPrimitive: " + action.getName() +
+	// (action.isAbstract() ? " -- abstract " : ""));
+	// super.addPrimitive(action);
+	// }
+	//
+	// @Override
+	// protected void addAction(StatementDescription action) {
+	// GuiUtils
+	// .debug("ModelDescription.addAction: " + action.getName() + (action.isAbstract() ? " -- abstract " : ""));
+	// super.addAction(action);
+	// }
+
+	@Override
+	public void finalizeDescription() {
+		super.finalizeDescription();
+		for ( StatementDescription action : actions.values() ) {
+			if ( action.isAbstract() &&
+				!action.getUnderlyingElement(null).eResource().equals(getUnderlyingElement(null).eResource()) ) {
+				this.error("Abstract action '" + action.getName() + "', defined in " + action.getOriginName() +
+					", should be redefined.", IGamlIssue.MISSING_ACTION);
+			}
+		}
 	}
 
 }

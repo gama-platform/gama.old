@@ -37,8 +37,7 @@ public class GamaTextFile extends GamaFile<Integer, String> {
 	@Override
 	protected void checkValidity() throws GamaRuntimeException {
 		super.checkValidity();
-		if ( !GamaFileType.isTextFile(getFile().getName()) ) { throw new GamaRuntimeException(
-			"The extension " + this.getExtension() + " is not recognized for text files"); }
+		if ( !GamaFileType.isTextFile(getFile().getName()) ) { throw GamaRuntimeException.error("The extension " + this.getExtension() + " is not recognized for text files"); }
 	}
 
 	@Override
@@ -97,7 +96,7 @@ public class GamaTextFile extends GamaFile<Integer, String> {
 			in.close();
 			buffer = allLines;
 		} catch (final IOException e) {
-			throw new GamaRuntimeException(e);
+			throw GamaRuntimeException.create(e);
 		}
 	}
 
@@ -137,7 +136,7 @@ public class GamaTextFile extends GamaFile<Integer, String> {
 						cellSize * nbRows);
 				in.close();
 			} catch (IOException e) {
-				throw new GamaRuntimeException(e);
+				throw GamaRuntimeException.create(e);
 			}
 		}
 		return boundsEnv;

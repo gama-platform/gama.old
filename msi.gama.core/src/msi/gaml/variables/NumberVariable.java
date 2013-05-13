@@ -39,8 +39,8 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.INIT, type = IType.INT, optional = true),
 	@facet(name = IKeyword.VALUE, type = IType.INT, optional = true),
-	@facet(name = IKeyword.UPDATE, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.FUNCTION, type = IType.NONE_STR, optional = true),
+	@facet(name = IKeyword.UPDATE, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.FUNCTION, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.CONST, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.CATEGORY, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.PARAMETER, type = IType.LABEL, optional = true),
@@ -61,37 +61,38 @@ public class NumberVariable extends Variable {
 
 	public NumberVariable(final IDescription sd) throws GamaRuntimeException {
 		super(sd);
-		IScope scope = GAMA.getDefaultScope();
+		IScope scope = GAMA.obtainNewScope();
 		min = getFacet(IKeyword.MIN);
 		max = getFacet(IKeyword.MAX);
 		step = getFacet(IKeyword.STEP);
 		if ( min != null && min.isConst() ) {
 			if ( type.id() == IType.INT ) {
-				minVal = Cast.asInt(scope, min.value(GAMA.getDefaultScope()));
+				minVal = Cast.asInt(scope, min.value(scope));
 			} else {
-				minVal = Cast.asFloat(scope, min.value(GAMA.getDefaultScope()));
+				minVal = Cast.asFloat(scope, min.value(scope));
 			}
 		} else {
 			minVal = null;
 		}
 		if ( max != null && max.isConst() ) {
 			if ( type.id() == IType.INT ) {
-				maxVal = Cast.asInt(scope, max.value(GAMA.getDefaultScope()));
+				maxVal = Cast.asInt(scope, max.value(scope));
 			} else {
-				maxVal = Cast.asFloat(scope, max.value(GAMA.getDefaultScope()));
+				maxVal = Cast.asFloat(scope, max.value(scope));
 			}
 		} else {
 			maxVal = null;
 		}
 		if ( step != null && step.isConst() ) {
 			if ( type.id() == IType.INT ) {
-				stepVal = Cast.asInt(scope, step.value(GAMA.getDefaultScope()));
+				stepVal = Cast.asInt(scope, step.value(scope));
 			} else {
-				stepVal = Cast.asFloat(scope, step.value(GAMA.getDefaultScope()));
+				stepVal = Cast.asFloat(scope, step.value(scope));
 			}
 		} else {
 			stepVal = null;
 		}
+		GAMA.releaseScope(scope);
 	}
 
 	@Override

@@ -86,8 +86,7 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, 
 	}
 
 	@Override
-	public IMatrix matrixValue(final IScope scope, final ILocation preferredSize)
-		throws GamaRuntimeException {
+	public IMatrix matrixValue(final IScope scope, final ILocation preferredSize) throws GamaRuntimeException {
 		return matrixValue(scope);
 	}
 
@@ -102,7 +101,7 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, 
 
 	@Override
 	public String toGaml() {
-		return "(" + listValue(null).toGaml() + " as map )";
+		return "(" + getPairs().toGaml() + " as map )";
 	}
 
 	//
@@ -134,8 +133,7 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, 
 	}
 
 	@Override
-	public void add(IScope scope, final K index, final Object value, final Object param,
-		boolean all, boolean add) {
+	public void add(IScope scope, final K index, final Object value, final Object param, boolean all, boolean add) {
 		if ( index == null ) {
 			if ( all ) {
 				if ( value instanceof GamaMap ) {
@@ -267,8 +265,7 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, 
 		public IMatrix matrix;
 		private int i;
 
-		public boolean execute(IScope scope, final Object a, final Object b)
-			throws GamaRuntimeException {
+		public boolean execute(IScope scope, final Object a, final Object b) throws GamaRuntimeException {
 			matrix.set(scope, 0, i, a);
 			matrix.set(scope, 1, i, b);
 			i++;
@@ -385,8 +382,7 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, 
 	}
 
 	@Override
-	public Object getFromIndicesList(final IScope scope, final IList indices)
-		throws GamaRuntimeException {
+	public Object getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
 		if ( indices == null || indices.isEmpty() ) { return null; }
 		return get(scope, indices.get(0));
 		// We do not consider the case where multiple indices are used. Maybe could be used in the

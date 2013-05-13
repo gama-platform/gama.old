@@ -40,8 +40,8 @@ public class ContinuousTopology extends AbstractTopology {
 	 * @param directMacro
 	 * @param torus
 	 */
-	public ContinuousTopology(final IScope scope, final IShape environment, final boolean torus) {
-		super(scope, environment, torus);
+	public ContinuousTopology(final IScope scope, final IShape environment) {
+		super(scope, environment, null);
 		places = GamaList.with(environment);
 	}
 
@@ -66,7 +66,7 @@ public class ContinuousTopology extends AbstractTopology {
 	 */
 	@Override
 	protected ITopology _copy(IScope scope) {
-		return new ContinuousTopology(scope, environment, isTorus);
+		return new ContinuousTopology(scope, environment);
 	}
 
 	/**
@@ -91,7 +91,7 @@ public class ContinuousTopology extends AbstractTopology {
 		// faire une DistanceOp().getNearestPoints()
 		ILocation source = g1.getLocation();
 		ILocation target = g2.getLocation();
-		if ( isTorus ) {
+		if ( isTorus() ) {
 			source = normalizeLocation(source, false);
 			target = normalizeLocation(target, false);
 		}
@@ -119,7 +119,7 @@ public class ContinuousTopology extends AbstractTopology {
 		// TODO is it useful to keep these tests ?
 		// if ( !isValidGeometry(g2) ) { return Double.MAX_VALUE; }
 		if ( g1 == g2 ) { return 0d; }
-		if ( isTorus ) { return returnToroidalGeom(g1).distance(returnToroidalGeom(g2)); }
+		if ( isTorus() ) { return returnToroidalGeom(g1).distance(returnToroidalGeom(g2)); }
 		return g1.euclidianDistanceTo(g2);
 	}
 
@@ -129,14 +129,8 @@ public class ContinuousTopology extends AbstractTopology {
 		// TODO is it useful to keep these tests ?
 		// if ( !isValidLocation(g2) ) { return Double.MAX_VALUE; }
 		if ( g1 == g2 ) { return 0d; }
-		if ( isTorus ) { return returnToroidalGeom(g1).distance(returnToroidalGeom(g2)); }
+		if ( isTorus() ) { return returnToroidalGeom(g1).distance(returnToroidalGeom(g2)); }
 		return g1.euclidianDistanceTo(g2);
-	}
-
-	@Override
-	public boolean isTorus() {
-		// TODO Auto-generated method stub
-		return isTorus;
 	}
 
 }

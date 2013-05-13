@@ -21,9 +21,9 @@ package msi.gama.metamodel.agent;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
-import msi.gama.kernel.experiment.IExperimentAgent;
+import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
-import msi.gama.kernel.simulation.*;
+import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -36,6 +36,7 @@ import msi.gama.util.*;
 import msi.gama.util.graph.GamaGraph;
 import msi.gaml.operators.*;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.IStatement;
 import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
 import com.vividsolutions.jts.geom.*;
@@ -59,7 +60,7 @@ public class GamlAgent implements IAgent {
 	 * In this case, dead() will return true.
 	 * 
 	 */
-	protected volatile boolean dying = false;
+	protected volatile boolean dead = false;
 	/**
 	 * All the populations that manage the micro-agents. Each population manages agents of a
 	 * micro-species. Final so that it is correctly garbaged.
@@ -89,7 +90,6 @@ public class GamlAgent implements IAgent {
 			IVariable varOfHost = host.getPopulation().getVar(host, n);
 			if ( varOfHost != null ) { return varOfHost.value(scope, host); }
 		}
-
 		return null;
 	}
 
@@ -98,47 +98,82 @@ public class GamlAgent implements IAgent {
 		population.getVar(this, s).setVal(scope, this, v);
 	}
 
+	/**
+	 * During the call to init, the agent will search for the action named _init_ and execute it. Its default
+	 * implementation is provided in this class as well.
+	 * @see GamlAgent#_init_()
+	 * @see msi.gama.common.interfaces.IStepable#step(msi.gama.runtime.IScope)
+	 * @warning This method should NOT be overriden (except for some rare occasions like in SimulationAgent). Always
+	 *          override _init_(IScope) instead.
+	 */
 	@Override
-	public void updateAttributes(final IScope scope) throws GamaRuntimeException {
-		getPopulation().updateVariablesFor(scope, this);
+	public void init(final IScope scope) {
+		executeCallbackAction(scope, "_init_");
 	}
 
+	/**
+	 * During the call to step, the agent will search for the action named _step_ and execute it. Its default
+	 * implementation is provided in this class as well.
+	 * @see GamlAgent#_step_()
+	 * @see msi.gama.common.interfaces.IStepable#step(msi.gama.runtime.IScope)
+	 * @warning This method should NOT be overriden (except for some rare occasions like in SimulationAgent). Always
+	 *          override _step_(IScope) instead.
+	 */
 	@Override
-	public void init(final IScope scope) throws GamaRuntimeException {
-		// callback from the scheduler once the agent has been scheduled.
-		getPopulation().init(scope);
+	public void step(final IScope scope) {
+		executeCallbackAction(scope, "_step_");
 	}
 
-	@Override
-	// TODO move up to AbstractAgent
-	public void step(final IScope scope) throws GamaRuntimeException {
-		if ( dead()/* || !simulation.isAlive() */) { return; }
-		scope.push(this);
+	/**
+	 * Callback Actions
+	 * 
+	 */
+
+	protected Object executeCallbackAction(IScope scope, String name) {
+		if ( dead() || scope.interrupted() ) { return null; }
+		IStatement action = getSpecies().getAction(name);
+		if ( action == null ) { return null; }
 		try {
-			updateAttributes(scope);
-			getPopulation().step(scope);
+			return scope.execute(action, this);
 		} catch (GamaRuntimeException g) {
 			g.addAgent(this.getName());
 			GAMA.reportError(g);
-		} finally {
-			scope.pop(this);
+			return null;
 		}
 	}
 
-	@Override
-	public void computeAgentsToSchedule(final IScope scope, final IList list) throws GamaRuntimeException {
-		List<IPopulation> pops = this.getMicroPopulations();
+	@action(name = "_init_")
+	public Object _init_(IScope scope) {
+		getSpecies().getArchitecture().init(scope);
+		return this;
+	}
 
+	@action(name = "_step_")
+	public Object _step_(IScope scope) {
+		if ( scope.interrupted() || dead() ) { return null; }
+		getPopulation().updateVariables(scope, this);
+		// we ask the architecture to execute on this
+		getSpecies().getArchitecture().executeOn(scope);
+		// we ask the sub-populations to step their agents
+		return stepSubPopulations(scope);
+	}
+
+	protected Object stepSubPopulations(IScope scope) {
 		try {
-			scope.push(this);
-
+			List<IPopulation> pops = this.getMicroPopulations();
 			for ( IPopulation pop : pops ) {
-				pop.computeAgentsToSchedule(scope, list);
+				if ( scope.interrupted() ) { return null; }
+				pop.step(scope);
 			}
-		} finally {
-			scope.pop(this);
+		} catch (GamaRuntimeException g) {
+			GAMA.reportError(g);
 		}
+		return this;
 	}
+
+	/**
+	 * GAML actions
+	 */
 
 	@action(name = "debug")
 	@args(names = { "message" })
@@ -174,6 +209,7 @@ public class GamlAgent implements IAgent {
 
 	@action(name = "die")
 	public Object primDie(final IScope scope) throws GamaRuntimeException {
+		// FIXME VERIFY THIS STATUS
 		scope.setStatus(ExecutionStatus.interrupt);
 		dispose();
 		return null;
@@ -505,13 +541,13 @@ public class GamlAgent implements IAgent {
 		geometry.setInnerGeometry(geom);
 	}
 
-	@Override
-	public ISimulationAgent getSimulation() {
-		return getHost().getSimulation();
-	}
+	// @Override
+	// public ISimulationAgent getSimulation() {
+	// return getHost().getSimulation();
+	// }
 
 	@Override
-	public IScheduler getScheduler() {
+	public AgentScheduler getScheduler() {
 		return getHost().getScheduler();
 	}
 
@@ -527,7 +563,7 @@ public class GamlAgent implements IAgent {
 
 	@Override
 	public IScope getScope() {
-		return getExperiment().getExecutionScope();
+		return getHost().getScope();
 	}
 
 	@Override
@@ -578,9 +614,11 @@ public class GamlAgent implements IAgent {
 		if ( !allMicroSpecies.isEmpty() ) {
 			IPopulation microPop;
 			for ( ISpecies microSpec : allMicroSpecies ) {
-				if ( Types.isBuiltIn(microSpec.getName()) ) {
-					continue;
-				}
+				// FIXME Why disallow built-in populations ?
+				// TODO Would be better to see if they are actually in use in the model
+				// if ( Types.isBuiltIn(microSpec.getName()) ) {
+				// continue;
+				// }
 				microPop = new GamaPopulation(this, microSpec);
 				microPopulations.put(microSpec, microPop);
 				microPop.initializeFor(scope);
@@ -590,9 +628,11 @@ public class GamlAgent implements IAgent {
 
 	@Override
 	public void initializeMicroPopulation(final IScope scope, final String name) {
-		ISpecies microSpec = getSpecies().getMicroSpecies(name);
+		ISpecies microSpec = getModel().getSpecies(name);
 		if ( microSpec == null ) { return; }
-		if ( Types.isBuiltIn(name) ) { return; }
+		// FIXME Why disallow built-in populations ?
+		// TODO Would be better to see if they are actually in use in the model
+		// if ( Types.isBuiltIn(name) ) { return; }
 		IPopulation microPop = new GamaPopulation(this, microSpec);
 		microPopulations.put(microSpec, microPop);
 		microPop.initializeFor(scope);
@@ -635,12 +675,12 @@ public class GamlAgent implements IAgent {
 	}
 
 	@Override
-	public synchronized void dispose() {
+	public void dispose() {
 		if ( dead() ) { return; }
 
 		try {
 			acquireLock();
-			dying = true;
+			dead = true;
 			if ( microPopulations != null ) {
 				for ( IPopulation microPop : microPopulations.values() ) {
 					microPop.killMembers();
@@ -672,16 +712,17 @@ public class GamlAgent implements IAgent {
 			if ( geometry != null ) {
 				geometry.dispose();
 			}
-			setIndex(-1);
+			// setIndex(-1);
 		} finally {
 			releaseLock();
 		}
 	}
 
 	@Override
-	public void schedule(final IScope scope) throws GamaRuntimeException {
-		if ( getIndex() != -1 ) {
-			scope.getSimulationScope().getScheduler().insertAgentToInit(this, scope);
+	public void schedule() {
+		// GuiUtils.debug("GamlAgent.schedule : " + this);
+		if ( !dead() ) {
+			getScheduler().insertAgentToInit(this, getScope());
 		}
 	}
 
@@ -715,8 +756,8 @@ public class GamlAgent implements IAgent {
 	}
 
 	@Override
-	public synchronized boolean dead() {
-		return getIndex() == -1 || dying;
+	public boolean dead() {
+		return /* getIndex() == -1 || */dead;
 	}
 
 	@Override
@@ -865,7 +906,8 @@ public class GamlAgent implements IAgent {
 
 	@Override
 	public synchronized IPopulation getMicroPopulation(final String microSpeciesName) {
-		ISpecies microSpecies = this.getSpecies().getMicroSpecies(microSpeciesName);
+		// FIX : Now catches the species from the model
+		ISpecies microSpecies = getModel().getSpecies(microSpeciesName);
 		return microPopulations.get(microSpecies);
 	}
 
@@ -942,12 +984,15 @@ public class GamlAgent implements IAgent {
 	}
 
 	@Override
-	public IPopulation getPopulationFor(final ISpecies species) throws GamaRuntimeException {
-		return getPopulationFor(species.getName());
+	public IPopulation getPopulationFor(final ISpecies species) {
+		IPopulation microPopulation = this.getMicroPopulation(species);
+		if ( microPopulation == null && getHost() != null ) { return getHost().getPopulationFor(species); }
+		return microPopulation;
 	}
 
 	@Override
-	public IPopulation getPopulationFor(final String speciesName) throws GamaRuntimeException {
+	public IPopulation getPopulationFor(final String speciesName) {
+		// FIXME : THE BEHAVIOR OF THIS METHOD IS CLEARLY WRONG COMPARED TO THE PREVIOUS ONE
 		IPopulation microPopulation = this.getMicroPopulation(speciesName);
 		if ( microPopulation != null ) { return microPopulation; }
 
@@ -992,6 +1037,11 @@ public class GamlAgent implements IAgent {
 	}
 
 	@Override
+	public SimulationClock getClock() {
+		return getHost().getClock();
+	}
+
+	@Override
 	public void setHost(final IAgent macroAgent) {
 		// not supported
 	}
@@ -1001,4 +1051,46 @@ public class GamlAgent implements IAgent {
 		return this;
 	}
 
+	@Override
+	public IScope obtainNewScope() {
+		if ( dead ) { return null; }
+		return new Scope();
+	}
+
+	@Override
+	public void releaseScope(final IScope scope) {
+		if ( scope != null ) {
+			scope.clear();
+		}
+	}
+
+	protected class Scope extends AbstractScope {
+
+		public Scope() {
+			super(GamlAgent.this);
+		}
+
+		@Override
+		public boolean interrupted() {
+			return dead;
+		}
+
+		@Override
+		public IAgent getRoot() {
+			return GamlAgent.this;
+		}
+
+		@Override
+		public void setInterrupted(boolean interrupted) {
+			if ( !GamlAgent.this.dead ) {
+				GamlAgent.this.dispose();
+			}
+		}
+
+		@Override
+		public IScope copy() {
+			return new Scope();
+		}
+
+	}
 }

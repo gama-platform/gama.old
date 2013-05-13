@@ -38,17 +38,17 @@ import msi.gaml.types.IType;
 
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.NEW_VAR_ID, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
-	@facet(name = IKeyword.INIT, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.VALUE, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.UPDATE, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.FUNCTION, type = IType.NONE_STR, optional = true),
+	@facet(name = IKeyword.INIT, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.VALUE, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.UPDATE, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.FUNCTION, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.CONST, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.CATEGORY, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.PARAMETER, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.SIZE, type = { IType.INT, IType.POINT }, optional = true),
 	@facet(name = IKeyword.OF, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.INDEX, type = IType.TYPE_ID, optional = true),
-	@facet(name = IKeyword.FILL_WITH, type = IType.NONE_STR, optional = true) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.FILL_WITH, type = IType.NONE, optional = true) }, omissible = IKeyword.NAME)
 @symbol(kind = ISymbolKind.Variable.CONTAINER, with_sequence = false)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
 public class ContainerVariable extends Variable {

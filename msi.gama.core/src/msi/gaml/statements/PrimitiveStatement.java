@@ -27,7 +27,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.skills.ISkill;
 import msi.gaml.types.IType;
@@ -40,12 +40,13 @@ import msi.gaml.types.IType;
 @symbol(name = IKeyword.PRIMITIVE, kind = ISymbolKind.BEHAVIOR, with_sequence = true, with_args = true)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL }, symbols = IKeyword.CHART)
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false),
-	@facet(name = IKeyword.JAVA, type = IType.ID, optional = false),
+	// @facet(name = IKeyword.JAVA, type = IType.ID, optional = false),
 	@facet(name = IKeyword.VIRTUAL, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true) }, omissible = IKeyword.NAME)
 public class PrimitiveStatement extends ActionStatement {
 
 	private ISkill skill = null;
+	private final GamaHelper helper;
 
 	/**
 	 * The Constructor.
@@ -53,15 +54,17 @@ public class PrimitiveStatement extends ActionStatement {
 	 * @param actionDesc the action desc
 	 * @param sim the sim
 	 */
+
 	public PrimitiveStatement(final IDescription desc) {
 		super(desc);
+		helper = getDescription().getHelper();
 		// skill = desc.getSpeciesContext().getSkillFor(((StatementDescription) desc).getHelper().getSkillClass());
-		skill = AbstractGamlAdditions.getSkillInstanceFor(((StatementDescription) desc).getHelper().getSkillClass());
+		skill = AbstractGamlAdditions.getSkillInstanceFor(helper.getSkillClass());
 	}
 
 	@Override
-	public StatementDescription getDescription() {
-		return (StatementDescription) description;
+	public PrimitiveDescription getDescription() {
+		return (PrimitiveDescription) description;
 	}
 
 	@Override
@@ -69,7 +72,7 @@ public class PrimitiveStatement extends ActionStatement {
 		Object result = null;
 		actualArgs.stack(stack);
 		IAgent agent = stack.getAgentScope();
-		result = getDescription().getHelper().run(stack, agent, skill == null ? agent : skill);
+		result = helper.run(stack, agent, skill == null ? agent : skill);
 		return result;
 	}
 
@@ -80,7 +83,7 @@ public class PrimitiveStatement extends ActionStatement {
 
 	@Override
 	public IType getType() {
-		return getDescription().getHelper().getReturnType();
+		return helper.getReturnType();
 	}
 
 	// FIXME for the moment, only scarce information about primitives

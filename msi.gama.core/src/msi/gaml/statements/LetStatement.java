@@ -37,7 +37,7 @@ import msi.gaml.types.IType;
 
 @facets(value = { @facet(name = IKeyword.VAR, type = IType.NEW_TEMP_ID, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.NEW_TEMP_ID, optional = true),
-	@facet(name = IKeyword.VALUE, type = { IType.NONE_STR }, optional = false),
+	@facet(name = IKeyword.VALUE, type = { IType.NONE }, optional = false),
 	@facet(name = IKeyword.OF, type = { IType.TYPE_ID }, optional = true),
 	@facet(name = IKeyword.INDEX, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.TYPE, type = { IType.TYPE_ID }, optional = true) },

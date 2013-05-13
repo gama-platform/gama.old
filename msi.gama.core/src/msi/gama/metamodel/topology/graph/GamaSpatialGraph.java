@@ -159,6 +159,7 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 		boolean related, already;
 		for ( IShape s1 : vSet ) {
 			for ( IShape s2 : vSet ) {
+				if ( scope.interrupted() ) { return; }
 				if ( vertexRelation.equivalent(scope, s1, s2) ) {
 					continue;
 				}

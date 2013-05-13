@@ -35,14 +35,6 @@ import msi.gaml.species.ISpecies;
  */
 public interface IExperimentSpecies extends ISpecies {
 
-	public static final int _INIT = 0;
-	public static final int _START = 1;
-	public static final int _STEP = 2;
-	public static final int _PAUSE = 3;
-	public static final int _STOP = 4;
-	public static final int _CLOSE = 5;
-	public static final int _RELOAD = 6;
-	public static final int _NEXT = 7;
 	static final String BATCH_CATEGORY_NAME = "Exploration method";
 	static final String EXPLORABLE_CATEGORY_NAME = "Parameters to explore";
 	static final String FIXED_CATEGORY_NAME = "Fixed parameters";
@@ -82,31 +74,17 @@ public interface IExperimentSpecies extends ISpecies {
 
 	public abstract Double getCurrentSeed();
 
-	public abstract void userOpen();
+	public abstract void open();
 
-	public abstract void stop();
+	public abstract void reload();
 
-	public abstract void userStart();
+	public abstract void schedule();
 
-	public abstract void userPause();
-
-	public abstract void userStep();
-
-	public abstract void userClose();
-
-	public abstract void userReload();
-
-	public abstract void userInterrupt();
-
-	public abstract void userInit();
+	public abstract void close();
 
 	public abstract ISimulationAgent getCurrentSimulation();
 
 	public abstract boolean isLoading();
-
-	public abstract boolean isPaused();
-
-	public abstract boolean isRunning();
 
 	public abstract void buildOutputs();
 

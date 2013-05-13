@@ -18,7 +18,6 @@
  */
 package msi.gama.kernel.model;
 
-import java.util.Collection;
 import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gaml.species.ISpecies;
 
@@ -39,8 +38,6 @@ public interface IModel extends ISpecies {
 	String getFolderPath();
 
 	public abstract String getFilePath();
-
-	public abstract Collection<IExperimentSpecies> getExperiments();
 
 	public abstract String getProjectPath();
 

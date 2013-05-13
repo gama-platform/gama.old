@@ -79,9 +79,9 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 		return currentImage;
 	}
 
+	// FIXME Use GamaImageFile
 	@Override
-	public void init(final IScope scope) throws GamaRuntimeException {
-		super.init(scope);
+	public void _init(final IScope scope) throws GamaRuntimeException {
 		if ( getFacet(IKeyword.GIS) != null ) {
 			buildGisLayer(scope);
 		} else {
@@ -91,7 +91,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 				if ( tag == null ) {
 					tag = getFacet(IKeyword.FILE);
 				}
-				if ( tag == null ) { throw new GamaRuntimeException("Missing properties " + IKeyword.NAME + " and " +
+				if ( tag == null ) { throw GamaRuntimeException.error("Missing properties " + IKeyword.NAME + " and " +
 					IKeyword.FILE); }
 				if ( tag.isConst() ) {
 					setName(Cast.asString(scope, tag.value(scope)));
@@ -102,7 +102,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 				if ( imageFileExpression == null ) {
 					imageFileExpression = getFacet(IKeyword.NAME);
 				}
-				if ( imageFileExpression == null ) { throw new GamaRuntimeException("Image file not defined"); }
+				if ( imageFileExpression == null ) { throw GamaRuntimeException.error("Image file not defined"); }
 				// setFacet(IKeyword.FILE, imageFileExpression);
 				if ( imageFileExpression.isConst() ) {
 					constantImage = Cast.asString(scope, imageFileExpression.value(scope));
@@ -111,7 +111,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 						ImageUtils.getInstance().getImageFromFile(constantImage);
 					} catch (final Exception ex) {
 						constantImage = null;
-						throw new GamaRuntimeException(ex);
+						throw GamaRuntimeException.create(ex);
 					}
 				}
 			}
@@ -173,8 +173,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void step(final IScope scope) throws GamaRuntimeException {
-		super.step(scope);
+	public void _step(final IScope scope) throws GamaRuntimeException {
 		if ( gisLayer == null ) {
 			currentImage =
 				constantImage != null ? constantImage : Cast.asString(scope, imageFileExpression.value(scope));

@@ -26,14 +26,14 @@ import msi.gama.metamodel.topology.*;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaList;
 import msi.gama.util.file.GamaGridFile;
 import msi.gama.util.path.GamaSpatialPath;
 
 public class GridTopology extends AbstractTopology {
 
 	public GridTopology(final IScope scope, final GamaSpatialMatrix matrix) {
-		super(scope, matrix.environmentFrame, false);
+		super(scope, matrix.environmentFrame, null);
 		places = matrix;
 	}
 
@@ -53,10 +53,10 @@ public class GridTopology extends AbstractTopology {
 	@Override
 	public void initialize(final IPopulation pop) throws GamaRuntimeException {
 		getPlaces().setCellSpecies(pop);
-		spatialIndex.add(getPlaces(), pop.getSpecies());
+		((ISpatialIndex.Compound) getSpatialIndex()).add(getPlaces(), pop.getSpecies());
 		super.initialize(pop);
-		if (getPlaces().getGridValue() != null && ! getPlaces().getGridValue().isEmpty()) {
-			for (IAgent ag : pop) {
+		if ( getPlaces().getGridValue() != null && !getPlaces().getGridValue().isEmpty() ) {
+			for ( IAgent ag : pop ) {
 				ag.setAttribute("grid_value", getPlaces().getGridValue(ag));
 			}
 			getPlaces().clearGridValue();
@@ -68,26 +68,28 @@ public class GridTopology extends AbstractTopology {
 		return true;
 	}
 
-	public GridTopology(final IScope scope, final IShape environment, final int rows,
-		final int columns, final boolean isTorus, final boolean usesVN, final boolean isHexagon)
-		throws GamaRuntimeException {
-		super(scope, environment, isTorus);
+	public GridTopology(final IScope scope, final IShape environment, final int rows, final int columns,
+		final boolean isTorus, final boolean usesVN, final boolean isHexagon) throws GamaRuntimeException {
+		super(scope, environment, null);
 		if ( isHexagon ) {
-			places =
-				new GamaSpatialMatrix(scope, environment, rows, columns, isTorus, usesVN, isHexagon);
+			places = new GamaSpatialMatrix(scope, environment, rows, columns, isTorus, usesVN, isHexagon);
 		} else {
 			places = new GamaSpatialMatrix(scope, environment, rows, columns, isTorus, usesVN);
 		}
+		// FIXME Not sure it needs to be set
+		// root.setTorus(isTorus);
+
 	}
 
-	public GridTopology(final IScope scope, final IShape environment,final GamaGridFile file, final boolean isTorus, final boolean usesVN)
-			throws GamaRuntimeException {
-			super(scope, environment, isTorus);
-			places =
-					new GamaSpatialMatrix(scope, file, isTorus, usesVN);
-			
-		}
-	
+	public GridTopology(final IScope scope, final IShape environment, final GamaGridFile file, final boolean isTorus,
+		final boolean usesVN) throws GamaRuntimeException {
+		super(scope, environment, null);
+		places = new GamaSpatialMatrix(scope, file, isTorus, usesVN);
+		// FIXME Not sure it needs to be set
+
+		// root.setTorus(isTorus);
+	}
+
 	@Override
 	public IAgent getAgentClosestTo(final IShape source, final IAgentFilter filter) {
 		// We first grab the cell at the location closest to the centroid of the source
@@ -132,8 +134,7 @@ public class GridTopology extends AbstractTopology {
 	protected ITopology _copy(IScope scope) throws GamaRuntimeException {
 		return new GridTopology(scope, environment, ((GamaSpatialMatrix) places).getRows(scope),
 			((GamaSpatialMatrix) places).getCols(scope), ((GamaSpatialMatrix) places).isTorus,
-			((GamaSpatialMatrix) places).neighbourhood.isVN(),
-			((GamaSpatialMatrix) places).isHexagon);
+			((GamaSpatialMatrix) places).neighbourhood.isVN(), ((GamaSpatialMatrix) places).isHexagon);
 	}
 
 	@Override
@@ -143,8 +144,7 @@ public class GridTopology extends AbstractTopology {
 
 	/**
 	 * @throws GamaRuntimeException
-	 * @see msi.gama.environment.ITopology#pathBetween(msi.gama.interfaces.IGeometry,
-	 *      msi.gama.interfaces.IGeometry)
+	 * @see msi.gama.environment.ITopology#pathBetween(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry)
 	 */
 	@Override
 	public GamaSpatialPath pathBetween(IScope scope, final IShape source, final IShape target)
@@ -176,8 +176,8 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	/**
-	 * @see msi.gama.environment.ITopology#distanceBetween(msi.gama.interfaces.IGeometry,
-	 *      msi.gama.interfaces.IGeometry, java.lang.Double)
+	 * @see msi.gama.environment.ITopology#distanceBetween(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry,
+	 *      java.lang.Double)
 	 */
 	@Override
 	public Double distanceBetween(IScope scope, final IShape source, final IShape target) {
@@ -223,21 +223,15 @@ public class GridTopology extends AbstractTopology {
 	// }
 
 	@Override
-	public GamaList<IAgent> getNeighboursOf(final IShape source, final Double distance,
-		final IAgentFilter filter) throws GamaRuntimeException {
+	public GamaList<IAgent> getNeighboursOf(final IShape source, final Double distance, final IAgentFilter filter)
+		throws GamaRuntimeException {
 		return getPlaces().getNeighboursOf(scope, this, source, distance); // AgentFilter ?
 	}
 
 	@Override
-	public GamaList<IAgent> getNeighboursOf(final ILocation source, final Double distance,
-		final IAgentFilter filter) throws GamaRuntimeException {
+	public GamaList<IAgent> getNeighboursOf(final ILocation source, final Double distance, final IAgentFilter filter)
+		throws GamaRuntimeException {
 		return getPlaces().getNeighboursOf(scope, this, source, distance); // AgentFilter ?
-	}
-
-	@Override
-	public boolean isTorus() {
-		// TODO Auto-generated method stub
-		return isTorus;
 	}
 
 }

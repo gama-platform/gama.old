@@ -413,7 +413,7 @@ public class Stats {
 
 		} catch (Exception ex) {
 
-			throw new GamaRuntimeException("RCallerExecutionException " + ex.getMessage());
+			throw GamaRuntimeException.error("RCallerExecutionException " + ex.getMessage());
 		}
 	}
 
@@ -421,8 +421,7 @@ public class Stats {
 	public static GamaMap operateRFileEvaluate(final IScope scope, final String RFile,
 		final IContainer param) throws GamaRuntimeException, RCallerParseException,
 		RCallerExecutionException {
-		if ( param.length(scope) == 0 ) { throw new GamaRuntimeException(
-			"Missing Parameter Exception"); }
+		if ( param.length(scope) == 0 ) { throw GamaRuntimeException.error("Missing Parameter Exception"); }
 		try {
 			// Call R
 			RCaller caller = new RCaller();
@@ -512,7 +511,7 @@ public class Stats {
 
 		} catch (Exception ex) {
 
-			throw new GamaRuntimeException("RCallerExecutionException " + ex.getMessage());
+			throw GamaRuntimeException.error("RCallerExecutionException " + ex.getMessage());
 		}
 	}
 

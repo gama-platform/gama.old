@@ -18,11 +18,13 @@
  */
 package msi.gama.metamodel.topology;
 
+import java.awt.Graphics2D;
 import java.util.*;
-import msi.gama.common.util.GeometryUtils;
+import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.topology.continuous.ContinuousTopology;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -35,28 +37,90 @@ import com.vividsolutions.jts.geom.util.AffineTransformation;
 
 public abstract class AbstractTopology implements ITopology {
 
+	public static class RootTopology extends ContinuousTopology {
+
+		public RootTopology(IScope scope, IShape gisGeom, IShape geom, boolean isTorus) {
+			super(scope, geom);
+			Envelope env = gisGeom.getEnvelope();
+			gis.init(env);
+			// GamaPoint p = new GamaPoint(-1 * env.getMinX(), -1 * env.getMinY());
+			// IShape geometry = Transformations.translated_by(scope, geom, p);
+			Envelope bounds = geom.getEnvelope();
+			spatialIndex = new CompoundSpatialIndex(bounds);
+			this.isTorus = isTorus;
+		}
+
+		private final ISpatialIndex.Compound spatialIndex;
+		private final boolean isTorus;
+		private final GisUtils gis = new GisUtils();
+
+		@Override
+		public ISpatialIndex getSpatialIndex() {
+			return spatialIndex;
+		}
+
+		@Override
+		public boolean isTorus() {
+			return isTorus;
+		}
+
+		@Override
+		protected void setRoot(RootTopology root) {}
+
+		public RootTopology getRoot() {
+			return this;
+		}
+
+		//
+		// @Override
+		// public void setTorus(boolean torus) {
+		// isTorus = torus;
+		// }
+
+		@Override
+		public GisUtils getGisUtils() {
+			return gis;
+		}
+
+		@Override
+		public void displaySpatialIndexOn(final Graphics2D g2, final int width, final int height) {
+			if ( spatialIndex == null ) { return; }
+			spatialIndex.drawOn(g2, width, height);
+		}
+
+		@Override
+		public void dispose() {
+			super.dispose();
+			if ( spatialIndex != null ) {
+				spatialIndex.dispose();
+			}
+		}
+
+	}
+
 	protected IScope scope;
 	protected IShape environment;
-	protected ISpatialIndex.Compound spatialIndex;
+	protected RootTopology root;
 	protected IContainer<?, IShape> places;
 	protected double environmentWidth, environmentHeight;
 	protected double environmentMinX, environmentMinY, environmentMaxX, environmentMaxY;
-
-	protected Boolean isTorus = false;
 
 	// VARIABLES USED IN TORUS ENVIRONMENT
 	protected double[] adjustedXVector;
 	protected double[] adjustedYVector;
 
-	public AbstractTopology(final IScope scope, final IShape env, final Boolean isTorus) {
+	public AbstractTopology(final IScope scope, final IShape env, RootTopology root) {
+		this.scope = scope.copy();
+		setRoot(root);
 		environment = env;
-		this.scope = scope;
 		setEnvironmentBounds();
-		spatialIndex = scope.getSimulationScope().getSpatialIndex();
-		this.isTorus = isTorus;
 		if ( isTorus() ) {
 			createVirtualEnvironments();
 		}
+	}
+
+	protected void setRoot(RootTopology root) {
+		this.root = (RootTopology) (root == null ? scope.getSimulationScope().getTopology() : root);
 	}
 
 	@Override
@@ -164,7 +228,7 @@ public abstract class AbstractTopology implements ITopology {
 
 	@Override
 	public void removeAgent(final IAgent agent) {
-		spatialIndex.remove(agent.getGeometry(), agent);
+		getSpatialIndex().remove(agent.getGeometry(), agent);
 		// final IShape g = agent.getGeometry();
 		// if ( g == null ) { return; }
 		// if ( g.isPoint() ) {
@@ -208,9 +272,9 @@ public abstract class AbstractTopology implements ITopology {
 	@Override
 	public void updateAgent(final IShape previous, final IShape agent) {
 		if ( previous != null ) {
-			spatialIndex.remove(previous, agent);
+			getSpatialIndex().remove(previous, agent);
 		}
-		spatialIndex.insert(agent);
+		getSpatialIndex().insert(agent);
 	}
 
 	@Override
@@ -308,7 +372,7 @@ public abstract class AbstractTopology implements ITopology {
 	public IAgent getAgentClosestTo(final IShape source, final IAgentFilter filter) {
 		IAgent result = null;
 		if ( !isTorus() ) {
-			IShape min_neighbour = spatialIndex.firstAtDistance(source, 0, filter);
+			IShape min_neighbour = getSpatialIndex().firstAtDistance(source, 0, filter);
 			if ( min_neighbour != null ) {
 				result = min_neighbour.getAgent();
 			}
@@ -347,7 +411,7 @@ public abstract class AbstractTopology implements ITopology {
 		IAgent result = null;
 		if ( !isTorus() ) {
 			// for ( int i = 0; i < steps.length; i++ ) {
-			IShape min_neighbour = spatialIndex.firstAtDistance(source, 0, filter);
+			IShape min_neighbour = getSpatialIndex().firstAtDistance(source, 0, filter);
 			if ( min_neighbour != null ) {
 				result = min_neighbour.getAgent();
 				// break;
@@ -377,7 +441,7 @@ public abstract class AbstractTopology implements ITopology {
 		throws GamaRuntimeException {
 		IList<IAgent> agents;
 		if ( !isTorus() ) {
-			IList<IShape> shapes = spatialIndex.allAtDistance(source, distance, filter);
+			IList<IShape> shapes = getSpatialIndex().allAtDistance(source, distance, filter);
 			agents = new GamaList(shapes.size());
 			for ( IShape s : shapes ) {
 				IAgent a = s.getAgent();
@@ -408,7 +472,7 @@ public abstract class AbstractTopology implements ITopology {
 		throws GamaRuntimeException {
 		IList<IAgent> agents;
 		if ( !isTorus() ) {
-			IList<IShape> shapes = spatialIndex.allAtDistance(source, distance, filter);
+			IList<IShape> shapes = getSpatialIndex().allAtDistance(source, distance, filter);
 			agents = new GamaList(shapes.size());
 			for ( IShape s : shapes ) {
 				IAgent a = s.getAgent();
@@ -456,31 +520,20 @@ public abstract class AbstractTopology implements ITopology {
 	@Override
 	public void dispose() {
 		// host = null;
-		spatialIndex = null;
 		scope = null;
 	}
 
-	/**
-	 * @see msi.gama.interfaces.IValue#type()
-	 */
-	// @Override
-	// public IType type() {
-	// return Types.get(IType.TOPOLOGY);
-	// }
-
-	private static PreparedGeometryFactory pgFact = new PreparedGeometryFactory();
+	private final PreparedGeometryFactory pgFact = new PreparedGeometryFactory();
 
 	/**
 	 * @see msi.gama.environment.ITopology#getAgentsIn(msi.gama.interfaces.IGeometry, msi.gama.environment.IAgentFilter,
 	 *      boolean)
 	 */
-	// @Override
-	// @Override
 	public IList<IAgent> getAgentsInOld(final IShape source, final IAgentFilter f, final boolean covered) {
 		GamaList<IAgent> result = new GamaList();
 		if ( !isValidGeometry(source) ) { return result; }
 		Envelope envelope = source.getEnvelope().intersection(environment.getEnvelope());
-		IList<IShape> shapes = spatialIndex.allInEnvelope(source, envelope, f, covered);
+		IList<IShape> shapes = getSpatialIndex().allInEnvelope(source, envelope, f, covered);
 		PreparedGeometry pg = pgFact.create(source.getInnerGeometry());
 		PreparedGeometry penv = pgFact.create(environment.getInnerGeometry());
 		for ( IShape sh : shapes ) {
@@ -496,14 +549,13 @@ public abstract class AbstractTopology implements ITopology {
 		return result;
 	}
 
-	// @Override
 	@Override
 	public IList<IAgent> getAgentsIn(final IShape source, final IAgentFilter f, final boolean covered) {
 		// if ( !isValidGeometry(source) ) { return GamaList.EMPTY_LIST; }
 		if ( source == null ) { return GamaList.EMPTY_LIST; }
 		if ( !isTorus() ) {
 			Envelope envelope = source.getEnvelope().intersection(environment.getEnvelope());
-			IList<IShape> shapes = spatialIndex.allInEnvelope(source, envelope, f, covered);
+			IList<IShape> shapes = getSpatialIndex().allInEnvelope(source, envelope, f, covered);
 			PreparedGeometry pg = pgFact.create(source.getInnerGeometry());
 			GamaList<IAgent> result = new GamaList(shapes.size());
 			for ( IShape sh : shapes ) {
@@ -535,6 +587,32 @@ public abstract class AbstractTopology implements ITopology {
 		}
 		return result;
 
+	}
+
+	@Override
+	public ISpatialIndex getSpatialIndex() {
+		return root.getSpatialIndex();
+	}
+
+	@Override
+	public boolean isTorus() {
+		return root.isTorus();
+	}
+
+	//
+	// @Override
+	// public void setTorus(boolean isTorus) {
+	// root.setTorus(isTorus);
+	// }
+
+	@Override
+	public GisUtils getGisUtils() {
+		return root.getGisUtils();
+	}
+
+	@Override
+	public void displaySpatialIndexOn(final Graphics2D g2, final int width, final int height) {
+		root.displaySpatialIndexOn(g2, width, height);
 	}
 
 }

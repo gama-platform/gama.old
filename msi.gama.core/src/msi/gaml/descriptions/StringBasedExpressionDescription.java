@@ -65,14 +65,6 @@ public class StringBasedExpressionDescription extends BasicExpressionDescription
 		if ( s.equals(IKeyword.FALSE) ) { return ConstantExpressionDescription.create(false); }
 		if ( s.equals(IKeyword.TRUE) ) { return ConstantExpressionDescription.create(true); }
 		if ( StringUtils.isGamaString(s) ) { return LabelExpressionDescription.create(StringUtils.toJavaString(s)); }
-		// try {
-		// Integer i = Integer.valueOf(s);
-		// return ConstantExpressionDescription.create(i);
-		// } catch (NumberFormatException e) {}
-		// try {
-		// Double d = Double.valueOf(s);
-		// return ConstantExpressionDescription.create(d);
-		// } catch (NumberFormatException e) {}
 		return new StringBasedExpressionDescription(string);
 	}
 

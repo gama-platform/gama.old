@@ -109,8 +109,25 @@ public class ModelFactory extends SymbolFactory {
 		}
 	}
 
+	private void parentExperiment(final ModelDescription macro, final ISyntacticElement micro, ModelDescription model) {
+		// Gather the previously created species
+		SpeciesDescription mDesc = macro.getExperiment(micro.getName());
+		if ( mDesc == null ) { return; }
+		String p = mDesc.getFacets().getLabel(IKeyword.PARENT);
+		// If no parent is defined, we assume it is "experiment"
+		SpeciesDescription parent = model.getExperiment(p);
+		if ( parent == null ) {
+			parent = (SpeciesDescription) ModelDescription.ROOT.getTypesManager().getSpecies(IKeyword.EXPERIMENT);
+		}
+		mDesc.setParent(parent);
+		// for ( ISyntacticElement speciesNode : micro.getSpeciesChildren() ) {
+		// parentSpecies(mDesc, speciesNode, model);
+		// }
+	}
+
 	public ModelDescription assemble(final String projectPath, final String modelPath,
 		final List<ISyntacticElement> models) {
+		// GuiUtils.debug("ModelFactory.assemble BEGIN " + modelPath);
 		final List<ISyntacticElement> speciesNodes = new ArrayList();
 		final List<ISyntacticElement> experimentNodes = new ArrayList();
 		final ISyntacticElement globalNodes = new SyntacticElement(GLOBAL, (EObject) null);
@@ -118,6 +135,7 @@ public class ModelFactory extends SymbolFactory {
 		final List<ISyntacticElement> otherNodes = new ArrayList();
 		// TODO Verify that it is the right model
 		ISyntacticElement source = models.get(0);
+		ISyntacticElement lastGlobalNode = source;
 		for ( int n = models.size(), i = n - 1; i >= 0; i-- ) {
 			ISyntacticElement e = models.get(i);
 			for ( ISyntacticElement se : e.getChildren() ) {
@@ -130,6 +148,9 @@ public class ModelFactory extends SymbolFactory {
 						} else if ( ge.isExperiment() ) {
 							experimentNodes.add(ge);
 						} else {
+							if ( i == 0 ) {
+								lastGlobalNode = ge;
+							}
 							globalNodes.addChild(ge);
 						}
 					}
@@ -143,18 +164,16 @@ public class ModelFactory extends SymbolFactory {
 				}
 			}
 		}
+
 		String modelName = source.getLabel(NAME).replace(' ', '_') + "_model";
 		globalFacets.putAsLabel(NAME, modelName);
 
 		ModelDescription model =
-			new ModelDescription(modelName, projectPath, modelPath, source.getElement(), Types.getSpecies(SIMULATION),
-				globalFacets);
+			new ModelDescription(modelName, null, projectPath, modelPath, lastGlobalNode.getElement(), null,
+				ModelDescription.ROOT, globalFacets);
 		DescriptionFactory.setGamlDescription(source.getElement(), model);
-		model.setGlobal(true);
+		// model.setGlobal(true);
 		model.addSpeciesType(model);
-
-		// Collect and build built-in species
-		// SpeciesDescription world = model;
 
 		// recursively add user-defined species to world and down on to the hierarchy
 		for ( ISyntacticElement speciesNode : speciesNodes ) {
@@ -164,9 +183,13 @@ public class ModelFactory extends SymbolFactory {
 			addExperiment(model, experimentNode);
 		}
 
-		// Parent the species of the model (all species are now known). Experiments are already parented
+		// Parent the species and the experiments of the model (all are now known).
 		for ( ISyntacticElement speciesNode : speciesNodes ) {
 			parentSpecies(model, speciesNode, model);
+		}
+
+		for ( ISyntacticElement experimentNode : experimentNodes ) {
+			parentExperiment(model, experimentNode, model);
 		}
 		// Initialize the hierarchy of types
 		model.buildTypes();
@@ -185,28 +208,32 @@ public class ModelFactory extends SymbolFactory {
 		// GuiUtils.debug("Hierarchy: " + hierarchy.toStringWithDepth());
 		List<TypeNode<SpeciesDescription>> list = hierarchy.build(TypeTree.Order.PRE_ORDER);
 
-		// GuiUtils.debug("Copying Java additions and parent additions to " + world.getName());
-		// world.copyJavaAdditions();
 		model.inheritFromParent();
+		// GuiUtils.debug("ModelFactory.assemble building inheritance for " + list);
 		for ( TypeNode<SpeciesDescription> node : list ) {
+
 			SpeciesDescription sd = node.getData();
 			if ( !sd.isBuiltIn() ) {
 				// GuiUtils.debug("Copying Java additions and parent additions to " + sd.getName());
 				sd.inheritFromParent();
+				if ( sd.isExperiment() ) {
+					sd.finalizeDescription();
+				}
 			}
 		}
 
 		// The same for experiments
-		for ( String s : model.getExperimentNames() ) {
-			ExperimentDescription ed = model.getExperiment(s);
-			ed.inheritFromParent();
-			ed.finalizeDescription();
-
-		}
+		// FIXME Needs to be done hierarchically
+		// for ( String s : model.getExperimentNames() ) {
+		// ExperimentDescription ed = model.getExperiment(s);
+		// ed.inheritFromParent();
+		// ed.finalizeDescription();
+		//
+		// }
 		model.finalizeDescription();
 
 		// We now can safely put the model inside "experiment"
-		model.setSuperDescription(Types.getSpecies(EXPERIMENT));
+		model.setEnclosingDescription(ModelDescription.ROOT.getSpeciesDescription(EXPERIMENT));
 
 		// Parse the other definitions (output, environment, ...)
 		boolean environmentDefined = false;
@@ -283,6 +310,13 @@ public class ModelFactory extends SymbolFactory {
 	public ModelDescription validate(final ModelDescription description) {
 		super.validate(description);
 		return description;
+	}
+
+	public ModelDescription createRootModel(String name, Class clazz, SpeciesDescription macro,
+		SpeciesDescription parent) {
+		Facets f = new Facets(NAME, name, KEYWORD, MODEL);
+		ModelDescription.ROOT = new ModelDescription(name, clazz, "", "", null, macro, parent, f);
+		return ModelDescription.ROOT;
 	}
 
 }

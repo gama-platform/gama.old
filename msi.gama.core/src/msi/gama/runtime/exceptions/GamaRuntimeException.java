@@ -19,7 +19,7 @@
 package msi.gama.runtime.exceptions;
 
 import java.util.*;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.runtime.GAMA;
 import msi.gaml.statements.IStatement;
 import org.eclipse.emf.ecore.EObject;
@@ -34,13 +34,26 @@ import org.eclipse.emf.ecore.EObject;
 public class GamaRuntimeException extends RuntimeException {
 
 	private final long cycle;
-	private String agent;
+	private String agent = null;
 	private boolean isWarning;
 	protected final List<String> context = new ArrayList();
+	protected EObject editorContext;
 	protected int lineNumber;
-	protected boolean sent;
+	protected int times = 0;
 
-	public GamaRuntimeException(final Throwable ex) {
+	public static GamaRuntimeException create(Throwable ex) {
+		return new GamaRuntimeException(ex);
+	}
+
+	public static GamaRuntimeException error(String s) {
+		return new GamaRuntimeException(s, false);
+	}
+
+	public static GamaRuntimeException warning(String s) {
+		return new GamaRuntimeException(s, true);
+	}
+
+	private GamaRuntimeException(final Throwable ex) {
 		super(ex.toString(), ex);
 		addContext(ex.toString());
 		for ( StackTraceElement element : ex.getStackTrace() ) {
@@ -50,15 +63,10 @@ public class GamaRuntimeException extends RuntimeException {
 
 	}
 
-	public GamaRuntimeException(final String s, final boolean warning) {
-		super(/* (warning ? WARNING : ERROR) + */s);
+	protected GamaRuntimeException(final String s, final boolean warning) {
+		super(s);
 		cycle = computeCycle();
 		isWarning = warning;
-	}
-
-	public GamaRuntimeException(final String s) {
-		super(/* (warning ? WARNING : ERROR) + */s);
-		cycle = computeCycle();
 	}
 
 	public void addContext(final String c) {
@@ -68,21 +76,26 @@ public class GamaRuntimeException extends RuntimeException {
 	public void addContext(final IStatement s) {
 		addContext("in " + s.toGaml());
 		final EObject e = s.getDescription().getUnderlyingElement(null);
-		if ( e != null && !sent ) {
-			sent = true;
-			GuiUtils.asyncRun(new Runnable() {
-
-				@Override
-				public void run() {
-					GuiUtils.openEditorAndSelect(e);
-				}
-			});
+		if ( e != null ) {
+			editorContext = e;
 		}
 	}
 
+	public EObject getEditorContext() {
+		return editorContext;
+	}
+
 	public void addAgent(final String agent) {
-		this.agent = agent;
-		addContext("in agent " + agent);
+		times++;
+		if ( times == 1 ) {
+			this.agent = agent;
+			addContext("in agent(s) " + agent);
+		} else {
+			this.agent = String.valueOf(times) + " agents";
+			String oldContext = context.remove(context.size() - 1);
+			String newContext = oldContext + ", " + agent;
+			addContext(newContext);
+		}
 	}
 
 	public long getCycle() {
@@ -98,7 +111,8 @@ public class GamaRuntimeException extends RuntimeException {
 	}
 
 	public static long computeCycle() {
-		return GAMA.getClock().getCycle();
+		SimulationClock clock = GAMA.getClock();
+		return clock == null ? 0l : clock.getCycle();
 	}
 
 	public List<String> getContextAsList() {
@@ -110,7 +124,10 @@ public class GamaRuntimeException extends RuntimeException {
 		String s = getClass().getName();
 		String message = getLocalizedMessage();
 		return message != null ? message : s;
+	}
 
+	public boolean equivalentTo(GamaRuntimeException ex) {
+		return editorContext == ex.editorContext && getMessage().equals(ex.getMessage()) && getCycle() == ex.getCycle();
 	}
 
 }

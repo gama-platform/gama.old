@@ -35,7 +35,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.file.GamaImageFile;
+import msi.gama.util.file.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.*;
@@ -46,14 +46,9 @@ import msi.gaml.types.*;
 @symbol(name = DRAW, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @facets(value = {
 	// Allows to pass any arbitrary geometry to the drawing command
-	@facet(name = IKeyword.GEOMETRY, type = IType.NONE_STR, optional = true),
+	@facet(name = IKeyword.GEOMETRY, type = IType.NONE, optional = true),
 	// AD 18/01/13: geometry is now accepting an y type of data
-	@facet(name = SHAPE, type = IType.NONE_STR, optional = true/*
-																 * , values = { "geometry",
-																 * "square",
-																 * "circle", "triangle",
-																 * "rectangle", "disc", "line" }
-																 */),
+	@facet(name = SHAPE, type = IType.NONE, optional = true),
 	@facet(name = TEXT, type = IType.STRING, optional = true),
 	@facet(name = IMAGE, type = IType.STRING, optional = true),
 	@facet(name = EMPTY, type = IType.BOOL, optional = true),
@@ -207,7 +202,7 @@ public class DrawStatement extends AbstractStatementSequence {
 		protected final ILocation constLoc;
 
 		DrawExecuter(final IDescription desc) throws GamaRuntimeException {
-			IScope scope = GAMA.getDefaultScope();
+			IScope scope = GAMA.obtainNewScope();
 			empty = getFacet(EMPTY);
 			if ( empty == null ) {
 				constEmpty = false;
@@ -230,6 +225,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			constRot = rot != null && rot.isConst() ? Cast.asInt(scope, rot.value(scope)) : null;
 			constLoc = loc != null && loc.isConst() ? Cast.asPoint(scope, loc.value(scope)) : null;
 			constRounded = rounded != null && rounded.isConst() ? Cast.asBool(scope, rounded.value(scope)) : null;
+			GAMA.releaseScope(scope);
 		}
 
 		Integer getRotation(final IScope scope) throws GamaRuntimeException {
@@ -306,7 +302,7 @@ public class DrawStatement extends AbstractStatementSequence {
 
 		private ImageExecuter(final IDescription desc) throws GamaRuntimeException {
 			super(desc);
-			constImg = (GamaImageFile) (item.isConst() ? item.value(GAMA.getDefaultScope()) : null);
+			constImg = (GamaImageFile) (item.isConst() ? Cast.as(item, IGamaFile.class) : null);
 		}
 
 		// FIXME : Penser ˆ placer des exceptions
@@ -317,7 +313,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			ILocation from = getLocation(scope);
 			Double displayWidth = getSize(scope).getX();
 			GamaImageFile file = constImg == null ? (GamaImageFile) item.value(scope) : constImg;
-			BufferedImage img = file.getImage();
+			BufferedImage img = file.getImage(scope);
 			int image_width = img.getWidth();
 			int image_height = img.getHeight();
 			double ratio = image_width / (double) image_height;
@@ -366,7 +362,7 @@ public class DrawStatement extends AbstractStatementSequence {
 
 		private TextExecuter(final IDescription desc) throws GamaRuntimeException {
 			super(desc);
-			IScope scope = GAMA.getDefaultScope();
+			IScope scope = GAMA.obtainNewScope();
 			constText = item.isConst() ? Cast.asString(scope, item.value(scope)) : null;
 			font = getFacet(FONT);
 			constFont =
@@ -375,6 +371,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			constStyle =
 				style == null ? Font.PLAIN : style.isConst() ? CONSTANTS.get(Cast.asString(scope, style.value(scope)))
 					: null;
+			GAMA.releaseScope(scope);
 
 		}
 

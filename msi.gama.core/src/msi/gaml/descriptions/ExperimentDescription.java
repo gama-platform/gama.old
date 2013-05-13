@@ -18,27 +18,34 @@
  */
 package msi.gaml.descriptions;
 
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GuiUtils;
 import msi.gaml.factories.IChildrenProvider;
 import msi.gaml.statements.Facets;
-import msi.gaml.types.Types;
+import msi.gaml.types.IType;
 import org.eclipse.emf.ecore.EObject;
 
 public class ExperimentDescription extends SpeciesDescription {
 
 	// final ModelDescription model;
 
-	// We assume experiments are firstly created *within* a model, in which case we can gather the superDesc argument
+	// We assume experiments are firstly created *within* a model, in which case we can gather the enclosing argument
 	// and keep it for when the relationship will be reversed (i.e. when the model will be *inside* the experiment)
-	public ExperimentDescription(final String keyword, final IDescription superDesc, final IChildrenProvider cp,
+	public ExperimentDescription(final String keyword, final IDescription enclosing, final IChildrenProvider cp,
 		final EObject source, final Facets facets) {
-		super(keyword, superDesc, cp, source, facets);
-		setParent(Types.getSpecies(IKeyword.EXPERIMENT));
+		super(keyword, null, enclosing, null, cp, source, facets);
+		// ModelDescription.ROOT.getTypesManager().getSpecies(IKeyword.EXPERIMENT),
+		// setParent(ModelDescription.ROOT.getTypesManager().getSpecies(IKeyword.EXPERIMENT));
 	}
 
 	@Override
 	protected void addVariable(final VariableDescription var) {
-		if ( var.getKeyword().equals(PARAMETER) ) {} else {
+		if ( !var.getKeyword().equals(PARAMETER) ) {
+			if ( var.getName().equals(SIMULATION) ) {
+				// We are dealing with the built-in variable. We gather the precise type of the model itself and pass it
+				// to the variable (instead of its generic "agent" type).
+				IType t = enclosing.getModelDescription().getType();
+				var.setType(t);
+			}
 			super.addVariable(var);
 		}
 	}
@@ -51,6 +58,12 @@ public class ExperimentDescription extends SpeciesDescription {
 	@Override
 	public boolean isExperiment() {
 		return true;
+	}
+
+	@Override
+	public void inheritFromParent() {
+		super.inheritFromParent();
+		GuiUtils.debug("ExperimentDescription.inheritFromParent: " + getName() + " from " + parent.getName());
 	}
 
 }

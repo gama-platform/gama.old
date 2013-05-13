@@ -48,8 +48,11 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 
 	@Override
 	protected StatementDescription buildDescription(final ISyntacticElement source, final IChildrenProvider cp,
-		final IDescription superDesc, final SymbolProto md) {
-		return new StatementDescription(source.getKeyword(), superDesc, cp, md.hasScope(), md.hasArgs(),
+		final IDescription enclosing, final SymbolProto proto) {
+		String s = source.getKeyword();
+		if ( s.equals(PRIMITIVE) ) { return new PrimitiveDescription(source.getKeyword(), enclosing, cp,
+			proto.hasScope(), proto.hasArgs(), source.getElement(), source.getFacets()); }
+		return new StatementDescription(source.getKeyword(), enclosing, cp, proto.hasScope(), proto.hasArgs(),
 			source.getElement(), source.getFacets());
 	}
 
@@ -116,8 +119,8 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 				if ( s != null ) {
 					IType t = s.getType();
 					desc.addTemp(MYSELF, t, Types.NO_TYPE, Types.NO_TYPE);
-					previousEnclosingDescription = desc.getSuperDescription();
-					desc.setSuperDescription(desc.getSpeciesDescription(actualSpecies));
+					previousEnclosingDescription = desc.getEnclosingDescription();
+					desc.setEnclosingDescription(desc.getSpeciesDescription(actualSpecies));
 
 					// FIXME ===> Model Description is lost if we are dealing with a built-in species !
 				}
@@ -125,7 +128,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 		}
 		super.privateValidateChildren(desc);
 		if ( previousEnclosingDescription != null ) {
-			desc.setSuperDescription(previousEnclosingDescription);
+			desc.setEnclosingDescription(previousEnclosingDescription);
 		}
 	}
 
@@ -136,7 +139,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 			if ( actualSpecies != null ) {
 				IType t = desc.getSpeciesContext().getType();
 				desc.addTemp(MYSELF, t, Types.NO_TYPE, Types.NO_TYPE);
-				desc.setSuperDescription(desc.getSpeciesDescription(actualSpecies));
+				desc.setEnclosingDescription(desc.getSpeciesDescription(actualSpecies));
 			}
 		}
 		return super.privateCompileChildren(desc);
@@ -159,7 +162,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 			argFacets = sd.getFacets();
 			String name = sd.getName();
 			IExpression e = null;
-			IDescription superDesc = cd.getSuperDescription();
+			IDescription superDesc = cd.getEnclosingDescription();
 			IExpressionDescription ed = argFacets.get(VALUE);
 			if ( ed != null ) {
 				e = ed.compile(superDesc);
@@ -218,6 +221,12 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 	// Only for create ?
 	private void verifyInits(StatementDescription cd, Arguments ca) {
 		SpeciesDescription sd = cd.getSpeciesDescription(computeSpecies(cd));
+		if ( sd == null ) {
+			cd.warning(
+				"Impossible to verify the validity of the arguments. Use them at your own risk ! (and don't complain about exceptions)",
+				IGamlIssue.UNKNOWN_ARGUMENT);
+			return;
+		}
 		Collection<IDescription> args = cd.getArgs();
 		for ( IDescription arg : args ) {
 			String name = arg.getName();
@@ -352,6 +361,10 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 			IType t = speciesFacet.getType();
 			if ( t.isSpeciesType() ) {
 				type = t;
+			}
+			if ( t.id() == IType.STRING && speciesFacet.isConst() ) {
+				String s = speciesFacet.literalValue();
+				if ( ce.getSpeciesDescription(s) != null ) { return s; }
 			} else {
 				t = speciesFacet.getContentType();
 				if ( t.isSpeciesType() ) {

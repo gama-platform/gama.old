@@ -68,7 +68,7 @@ public class GamaColorType extends GamaType<GamaColor> {
 				try {
 					c = new GamaColor(Color.decode(s));
 				} catch (NumberFormatException e) {
-					throw new GamaRuntimeException(e);
+					throw GamaRuntimeException.create(e);
 				}
 				GamaColor.colors.put(s, c);
 			}

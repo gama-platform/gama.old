@@ -106,13 +106,13 @@ public class AvailableGraphParsers {
 			// no singleton created
 			Class<? extends IGraphParser> classLayout= name2parser.get(name);
 			if (classLayout == null)
-				throw new GamaRuntimeException("unknown parser name: "+name+"; please choose one of "+getAvailableLoaders().toString());
+				throw GamaRuntimeException.error("unknown parser name: "+name+"; please choose one of "+getAvailableLoaders().toString());
 			try {
 				res = classLayout.newInstance();
 			} catch (InstantiationException e) {
-				throw new GamaRuntimeException(e);
+				throw GamaRuntimeException.create(e);
 			} catch (IllegalAccessException e) {
-				throw new GamaRuntimeException(e);
+				throw GamaRuntimeException.create(e);
 			}
 			name2singleton.put(name, res);
 		}

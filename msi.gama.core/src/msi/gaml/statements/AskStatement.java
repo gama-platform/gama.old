@@ -37,8 +37,7 @@ import msi.gaml.types.IType;
 // A group of commands that can be executed on remote agents.
 
 @symbol(name = IKeyword.ASK, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true, remote_context = true)
-@facets(value = {
-	@facet(name = IKeyword.TARGET, type = { IType.CONTAINER, IType.AGENT }, optional = false),
+@facets(value = { @facet(name = IKeyword.TARGET, type = { IType.CONTAINER, IType.AGENT }, optional = false),
 	@facet(name = IKeyword.AS, type = { IType.SPECIES }, optional = true) }, omissible = IKeyword.TARGET)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 public class AskStatement extends AbstractStatementSequence {
@@ -76,23 +75,21 @@ public class AskStatement extends AbstractStatementSequence {
 				if ( o instanceof IAgent ) {
 					targets[index++] = (IAgent) o;
 				} else {
-					throw new GamaRuntimeException("ask can only be invoked on agents. " + o +
-						" is not an agent");
+					throw GamaRuntimeException.error("ask can only be invoked on agents. " + o + " is not an agent");
 				}
 			}
 		} else if ( t instanceof IAgent ) {
 			targets = new IAgent[1];
 			targets[0] = (IAgent) t;
 		} else {
-			throw new GamaRuntimeException("ask can only be invoked on agents. " + t +
-				" is not an agent");
+			throw GamaRuntimeException.error("ask can only be invoked on agents. " + t + " is not an agent");
 		}
 
 		IAgent scopeAgent = scope.getAgentScope();
 		scope.addVarWithValue(IKeyword.MYSELF, scopeAgent);
 		for ( int i = 0, n = targets.length; i < n; i++ ) {
 			IAgent remoteAgent = targets[i];
-			if ( !remoteAgent.dead() ) {
+			if ( !remoteAgent.dead() && !scope.interrupted() ) {
 				scope.execute(sequence, remoteAgent);
 			}
 			scope.setStatus(ExecutionStatus.skipped);

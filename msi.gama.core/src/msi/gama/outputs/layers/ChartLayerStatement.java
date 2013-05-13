@@ -396,8 +396,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void init(final IScope scope) throws GamaRuntimeException {
-		super.init(scope);
+	public void _init(final IScope scope) throws GamaRuntimeException {
 		history = new StringBuilder(500);
 		IExpression string1 = getFacet(IKeyword.TYPE);
 		if ( string1 != null ) {
@@ -427,8 +426,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void step(final IScope scope) throws GamaRuntimeException {
-		super.step(scope);
+	public void _step(final IScope scope) throws GamaRuntimeException {
 		lastComputeCycle = (long) scope.getClock().getCycle();
 		switch (type) {
 			case XY_CHART:

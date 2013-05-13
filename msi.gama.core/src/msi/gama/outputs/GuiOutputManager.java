@@ -46,7 +46,9 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 
 		public void setEntity(final Object ent) {
 			entity = ent;
-			GuiUtils.asyncRun(this);
+			if ( ent != null ) {
+				GuiUtils.asyncRun(this);
+			}
 		}
 
 		@Override
@@ -60,34 +62,18 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 				}
 			}
 			for ( final GamaSelectionListener l : listeners ) {
-				// GUI.debug("Telling " + l + " that the selection has changed to " + entity);
 				l.selectionChanged(entity);
 			}
 		}
 	}
 
 	public void buildOutputs(final IExperimentSpecies exp) {
-		/* GuiUtils.run */new Runnable() {
-
-			@Override
-			public void run() {
-				// GUI.debug("Displaying the console");
-				// GuiUtils.showConsoleView();
-				// GuiUtils.showView("org.eclipse.swt.tools.views.SpyView", null);
-				// GUI.debug("Hiding the monitors (if any)");
-				GuiUtils.hideMonitorView();
-				// GUI.debug("Setting the title of the workbench");
-				GuiUtils.setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
-				if ( !monitorOutputs.isEmpty() ) {
-					// GUI.debug("Redisplaying the monitors");
-					GuiUtils.showView(GuiUtils.MONITOR_VIEW_ID, null);
-				}
-				// if ( !exp.getParametersToDisplay().isEmpty() ) {
-				// GUI.debug("Showing the parameters view");
-				GuiUtils.showParameterView(exp);
-				// }
-			}
-		}.run();
+		GuiUtils.hideMonitorView();
+		GuiUtils.setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
+		if ( !monitorOutputs.isEmpty() ) {
+			GuiUtils.showView(GuiUtils.MONITOR_VIEW_ID, null);
+		}
+		GuiUtils.showParameterView(exp);
 	}
 
 	public void addDisplayOutput(final IOutput output) {
@@ -125,15 +111,13 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 	}
 
 	public void dispose() {
-		// GUI.debug("Cancelling the current selection");
 		fireSelectionChanged(null);
 		for ( IDisplayOutput out : new GamaList<IDisplayOutput>(displayOutputs.values()) ) {
-			// GUI.debug("Closing the view of output " + out.getName());
 			GuiUtils.closeViewOf(out);
 		}
 		displayOutputs.clear();
 		monitorOutputs.clear();
-		// GUI.debug("Closing the parameter view");
+		inspect.setEntity(null);
 		GuiUtils.hideView(GuiUtils.PARAMETER_VIEW_ID);
 		GuiUtils.hideMonitorView();
 	}
@@ -141,14 +125,12 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 	@Override
 	public void addGamaSelectionListener(final GamaSelectionListener listener) {
 		if ( !listeners.contains(listener) ) {
-			// GUI.debug("Gama listener added :" + listener);
 			listeners.add(listener);
 		}
 	}
 
 	@Override
 	public void fireSelectionChanged(final Object entity) {
-		// GUI.debug("Selection has changed :" + entity);
 		if ( inspect != null ) {
 			inspect.setEntity(entity);
 		}
@@ -156,7 +138,6 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 
 	@Override
 	public void removeGamaSelectionListener(final GamaSelectionListener listener) {
-		// GUI.debug("Gama listener removed :" + listener);
 		listeners.remove(listener);
 	}
 
@@ -164,38 +145,6 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 	public void selectionChanged(final Object entity) {
 		fireSelectionChanged(entity);
 	}
-
-	// @Override
-	// public void partActivated(final IWorkbenchPart part) {}
-	//
-	// @Override
-	// public void partBroughtToTop(final IWorkbenchPart part) {}
-	//
-	// @Override
-	// public void partClosed(final IWorkbenchPart part) {
-	// if ( part instanceof IGamaView ) {
-	// IDisplayOutput output = ((IGamaView) part).getOutput();
-	// GUI.debug("Output " + output.toGaml() +
-	// " closed and unscheduled because its view is closed");
-	// output.close();
-	// manager.unscheduleOutput(output);
-	// removeDisplayOutput(output);
-	// output.dispose();
-	// }
-	// }
-	//
-	// @Override
-	// public void partDeactivated(final IWorkbenchPart part) {}
-	//
-	// @Override
-	// public void partOpened(final IWorkbenchPart part) {
-	// if ( part instanceof IGamaView ) {
-	// IDisplayOutput output = ((IGamaView) part).getOutput();
-	// if ( !output.isOpen() ) {
-	// output.open();
-	// }
-	// }
-	// }
 
 	public void setShowDisplayOutputs(final IScope sim, final boolean selection) throws GamaRuntimeException {
 		if ( !selection ) {
@@ -205,9 +154,6 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 		}
 	}
 
-	/**
-	 * 
-	 */
 	public void desynchronizeOutputs() {
 		for ( IDisplayOutput o : displayOutputs.values() ) {
 			IDisplaySurface s = o.getSurface();
@@ -218,7 +164,6 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 	}
 
 	public void forceUpdateOutputs() {
-
 		for ( IDisplayOutput o : displayOutputs.values() ) {
 			o.update();
 		}

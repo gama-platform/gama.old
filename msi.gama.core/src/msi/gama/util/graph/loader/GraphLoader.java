@@ -28,11 +28,11 @@ public class GraphLoader {
 			f = new File(filename);
 		}
 
-		if ( !f.exists() ) { throw new GamaRuntimeException("unable to open this file, which does not exists: " +
+		if ( !f.exists() ) { throw GamaRuntimeException.error("unable to open this file, which does not exists: " +
 			filename); }
-		if ( !f.canRead() ) { throw new GamaRuntimeException("unable to open this file, which is not readable: " +
+		if ( !f.canRead() ) { throw GamaRuntimeException.error("unable to open this file, which is not readable: " +
 			filename); }
-		if ( !f.isFile() ) { throw new GamaRuntimeException("this is not a file (probably a directory): " + filename); }
+		if ( !f.isFile() ) { throw GamaRuntimeException.error("this is not a file (probably a directory): " + filename); }
 
 		// this listener will receive events
 		GamaGraphParserListener list =
@@ -43,7 +43,7 @@ public class GraphLoader {
 		try {
 			parser.parseFile(list, f.getAbsolutePath());
 		} catch (Throwable t) {
-			throw new GamaRuntimeException(t);
+			throw GamaRuntimeException.create(t);
 		}
 
 		// and return the corresponding result !
@@ -77,12 +77,11 @@ public class GraphLoader {
 					GamaGraph res =
 						loadAGraph(scope, nodeSpecies, edgeSpecies, nodeGraphAttribute2AgentAttribute,
 							edgeGraphAttribute2AgentAttribute, AvailableGraphParsers.getLoader(extension), filename);
-					GAMA.reportError(new GamaRuntimeException(
-						"Automatically detected the type of this graph from file extension ('" + extension +
-							"'). Hope this was the relevant type ?"));
+					GAMA.reportError(GamaRuntimeException.error("Automatically detected the type of this graph from file extension ('" + extension +
+						"'). Hope this was the relevant type ?"));
 					return res;
 				} catch (GamaRuntimeException e) {
-					throw new GamaRuntimeException("attempted to detect the type of this graph from file extension ('" +
+					throw GamaRuntimeException.error("attempted to detect the type of this graph from file extension ('" +
 						extension + "'), but the parsing failed.");
 				}
 			}
@@ -94,7 +93,7 @@ public class GraphLoader {
 				GamaGraph res =
 					loadAGraph(scope, nodeSpecies, edgeSpecies, nodeGraphAttribute2AgentAttribute,
 						edgeGraphAttribute2AgentAttribute, AvailableGraphParsers.getLoader(loaderName), filename);
-				GAMA.reportError(new GamaRuntimeException("Automatically detected the type of this graph :'" +
+				GAMA.reportError(GamaRuntimeException.error("Automatically detected the type of this graph :'" +
 					loaderName + "'; loaded " + res.vertexSet().size() + " vertices and " + res.edgeSet().size() +
 					" edges. Hope this was the relevant type ?"));
 				return res;
@@ -106,9 +105,8 @@ public class GraphLoader {
 		}
 
 		// raise an error !
-		throw new GamaRuntimeException(
-			"attempted to detect the type of this graph automatically; no type detected among the supported parsers: " +
-				AvailableGraphParsers.getLoadersForAutoDetection());
+		throw GamaRuntimeException.error("attempted to detect the type of this graph automatically; no type detected among the supported parsers: " +
+			AvailableGraphParsers.getLoadersForAutoDetection());
 
 	}
 }

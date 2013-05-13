@@ -37,6 +37,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	protected final int typeProvider, contentTypeProvider, keyTypeProvider;
 	private final int[] expectedContentType;
 	protected GamlElementDocumentation doc;
+	private final boolean lazy;
 
 	@Override
 	public boolean isConst() {
@@ -44,10 +45,11 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	}
 
 	public UnaryOperator(final IType rt, final GamaHelper exec, final boolean canBeConst, final int tProv,
-		final int ctProv, final int iProv, int[] expectedContentType) {
+		final int ctProv, final int iProv, int[] expectedContentType, final boolean lazy) {
 		type = rt;
 		helper = exec;
 		this.canBeConst = canBeConst;
+		this.lazy = lazy;
 		typeProvider = tProv;
 		contentTypeProvider = ctProv;
 		keyTypeProvider = iProv;
@@ -57,7 +59,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
 
-		Object childValue = child.value(scope);
+		Object childValue = lazy ? child : child.value(scope);
 		try {
 			return helper.run(scope, childValue);
 		} catch (GamaRuntimeException e1) {
@@ -65,7 +67,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 			throw e1;
 
 		} catch (Exception e) {
-			GamaRuntimeException ee = new GamaRuntimeException(e);
+			GamaRuntimeException ee = GamaRuntimeException.create(e);
 			ee.addContext("when applying the " + literalValue() + " operator on " + childValue);
 			throw ee;
 		}
@@ -75,7 +77,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	public UnaryOperator copy() {
 		UnaryOperator copy =
 			new UnaryOperator(type, helper, canBeConst, typeProvider, contentTypeProvider, keyTypeProvider,
-				expectedContentType);
+				expectedContentType, lazy);
 		copy.setName(getName());
 		// FIXME: Why contentType is initialized ?
 		// copy.contentType = contentType;

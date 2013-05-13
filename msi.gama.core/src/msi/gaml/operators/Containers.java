@@ -854,8 +854,7 @@ public class Containers {
 		} else if ( filter instanceof ListExpression ) {
 			return as_map(scope, original, ((ListExpression) filter).getElements()[0]);
 		} else {
-			throw new GamaRuntimeException(
-				"The as_map operator expects either a pair or a map for its second argument");
+			throw GamaRuntimeException.error("The as_map operator expects either a pair or a map for its second argument");
 		}
 		for ( Object each : original.iterable(scope) ) {
 			scope.setEach(each);

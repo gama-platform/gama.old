@@ -27,7 +27,7 @@ public class MdxUtils {
 		}else if ( dbtype.equalsIgnoreCase(MdxConnection.MONDRIAN)) {
 			mdxConn = new MondrianConnection(dbtype, host, port, database, user, passwd);
 		}else {
-			throw new GamaRuntimeException("GAMA does not support: " + dbtype);
+			throw GamaRuntimeException.error("GAMA does not support: " + dbtype);
 		}
 		if (DEBUG){
 			GuiUtils.debug("MdxUtils.createConnection:"+mdxConn.toString());
@@ -55,7 +55,7 @@ public class MdxUtils {
 		}else if ( dbtype.equalsIgnoreCase(MdxConnection.MONDRIAN)) {
 			mdxConn = new MondrianConnection(dbtype, host, port, database, user, passwd);
 		}else {
-			throw new GamaRuntimeException("GAMA does not support: " + dbtype);
+			throw GamaRuntimeException.error("GAMA does not support: " + dbtype);
 		}
 		if (DEBUG){
 			GuiUtils.debug("MdxUtils.createConnection:"+mdxConn.toString());
@@ -76,7 +76,7 @@ public class MdxUtils {
 		}else if ( dbtype.equalsIgnoreCase(MdxConnection.MONDRIAN)) {
 			mdxConn = new MondrianConnection(dbtype, host, port, database, user, passwd);
 		}else {
-			throw new GamaRuntimeException("GAMA does not support: " + dbtype);
+			throw GamaRuntimeException.error("GAMA does not support: " + dbtype);
 		}
 		if (DEBUG){
 			GuiUtils.debug("MdxUtils.createConnection:"+mdxConn.toString());

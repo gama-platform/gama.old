@@ -72,8 +72,6 @@ public interface IOutput extends ISymbol, IStepable {
 	 */
 	public void update() throws GamaRuntimeException;
 
-	// void prepare(ISimulationAgent sim) throws GamaRuntimeException;
-
-	public IScope getStack();
+	public IScope getScope();
 
 }

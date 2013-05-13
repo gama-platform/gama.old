@@ -155,8 +155,8 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 	public Number getStepValue() {
 		return null;
 	}
-
-	@Override
-	public void tryToInit(IScope scope) {}
+	//
+	// @Override
+	// public void tryToInit(IScope scope) {}
 
 }

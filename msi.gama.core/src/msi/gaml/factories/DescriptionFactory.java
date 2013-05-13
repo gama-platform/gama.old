@@ -89,7 +89,6 @@ public class DescriptionFactory {
 	}
 
 	public static void addSpeciesNameAsType(final String name) {
-
 		if ( !name.equals(AGENT) ) {
 			KEYWORDS_PROTOS.put(name, KEYWORDS_PROTOS.get(AGENT));
 		}
@@ -182,9 +181,14 @@ public class DescriptionFactory {
 
 	public static SpeciesDescription createBuiltInSpeciesDescription(final String name, final Class clazz,
 		final IDescription superDesc, SpeciesDescription parent, final IAgentConstructor helper,
-		final Set<String> skills, final Facets facets) {
+		final Set<String> skills) {
 		return ((SpeciesFactory) getFactory(ISymbolKind.SPECIES)).createBuiltInSpeciesDescription(name, clazz,
-			superDesc, parent, helper, skills, facets == null ? new Facets() : facets);
+			superDesc, parent, helper, skills, new Facets());
+	}
+
+	public static ModelDescription createRootModelDescription(final String name, Class clazz, SpeciesDescription macro,
+		SpeciesDescription parent) {
+		return ((ModelFactory) getFactory(ISymbolKind.MODEL)).createRootModel(name, clazz, macro, parent);
 	}
 
 }

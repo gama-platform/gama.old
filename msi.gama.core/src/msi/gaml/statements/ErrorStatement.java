@@ -57,7 +57,7 @@ public class ErrorStatement extends AbstractStatement {
 		String mes = null;
 		if ( agent != null && !agent.dead() ) {
 			mes = Cast.asString(stack, message.value(stack));
-			throw new GamaRuntimeException(mes);
+			throw GamaRuntimeException.error(mes);
 		}
 		return mes;
 	}

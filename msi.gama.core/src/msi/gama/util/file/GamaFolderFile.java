@@ -18,6 +18,7 @@
  */
 package msi.gama.util.file;
 
+import msi.gama.common.util.StringUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -35,9 +36,9 @@ public class GamaFolderFile extends GamaFile<Integer, String> {
 
 	@Override
 	protected void checkValidity() throws GamaRuntimeException {
-		if ( !getFile().isDirectory() ) { throw new GamaRuntimeException(getFile().getAbsolutePath() +
+		if ( !getFile().isDirectory() ) { throw GamaRuntimeException.error(getFile().getAbsolutePath() +
 			"is not a folder"); }
-		if ( !getFile().exists() ) { throw new GamaRuntimeException("The folder " + getFile().getAbsolutePath() +
+		if ( !getFile().exists() ) { throw GamaRuntimeException.error("The folder " + getFile().getAbsolutePath() +
 			" does not exist. Please use 'new_folder' instead"); }
 	}
 
@@ -55,7 +56,7 @@ public class GamaFolderFile extends GamaFile<Integer, String> {
 
 	@Override
 	public String toGaml() {
-		return Files.FOLDER + "(" + getFile().getPath() + ")";
+		return Files.FOLDER + "(" + StringUtils.toGamlString(getPath()) + ")";
 	}
 
 	/*

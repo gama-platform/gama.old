@@ -27,6 +27,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
@@ -74,18 +75,25 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 			type = targetedGlobalVar.getType();
 		}
 		setCategory(desc.getFacets().getLabel(IKeyword.CATEGORY));
-		IExpression min = getFacet(IKeyword.MIN);
-		IExpression max = getFacet(IKeyword.MAX);
-		IExpression step = getFacet(IKeyword.STEP);
-		IExpression among = getFacet(IKeyword.AMONG);
+		final IExpression min = getFacet(IKeyword.MIN);
+		final IExpression max = getFacet(IKeyword.MAX);
+		final IExpression step = getFacet(IKeyword.STEP);
+		final IExpression among = getFacet(IKeyword.AMONG);
 		init =
 			this.hasFacet(IKeyword.INIT) ? getFacet(IKeyword.INIT) : targetedGlobalVar.getFacets().getExpr(
 				IKeyword.INIT);
 		order = desc.getDefinitionOrder();
-		minValue = min == null ? null : (Number) min.value(GAMA.getDefaultScope());
-		maxValue = max == null ? null : (Number) max.value(GAMA.getDefaultScope());
-		stepValue = step == null ? null : (Number) step.value(GAMA.getDefaultScope());
-		amongValue = among == null ? null : (List) among.value(GAMA.getDefaultScope());
+		GAMA.run(new InScope.Void() {
+
+			@Override
+			public void process(IScope scope) {
+				minValue = min == null ? null : (Number) min.value(scope);
+				maxValue = max == null ? null : (Number) max.value(scope);
+				stepValue = step == null ? null : (Number) step.value(scope);
+				amongValue = among == null ? null : (List) among.value(scope);
+			}
+		});
+
 		// setValue(init == null ? UNDEFINED : init.value(GAMA.getDefaultScope()));
 		isEditable = true;
 		isLabel = false; // ??
@@ -206,7 +214,6 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		setValue(UNDEFINED);
 	}
 
-	@Override
 	public void tryToInit(IScope scope) {
 		if ( value != UNDEFINED ) { return; }
 		if ( init == null ) { return; }
@@ -250,7 +257,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		if ( type.id() == IType.INT ) {
 			int min = minValue == null ? Integer.MIN_VALUE : minValue.intValue();
 			int max = maxValue == null ? Integer.MAX_VALUE : maxValue.intValue();
-			int val = Cast.asInt(GAMA.getDefaultScope(), value());
+			int val = Cast.as(value(), Integer.class);
 			if ( val >= min + (int) step ) {
 				neighbourValues.add(val - (int) step);
 			}
@@ -260,7 +267,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		} else if ( type.id() == IType.FLOAT ) {
 			double min = minValue == null ? Double.MIN_VALUE : minValue.doubleValue();
 			double max = maxValue == null ? Double.MAX_VALUE : maxValue.doubleValue();
-			double val = Cast.asFloat(GAMA.getDefaultScope(), value());
+			double val = Cast.as(value(), Double.class);
 			if ( val >= min + step ) {
 				final double valLow = (int) ((val - step) * 100000 + 0.5) / 100000.0;
 				neighbourValues.add(valLow);
@@ -305,7 +312,15 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public Object value() {
-		return getValue(GAMA.getDefaultScope());
+		return GAMA.run(new InScope() {
+
+			@Override
+			public Object run(IScope scope) {
+				return getValue(scope);
+			}
+
+		});
+
 	}
 
 	@Override
@@ -340,7 +355,14 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 	@Override
 	public String toGaml() {
-		return StringUtils.toGaml(getValue(GAMA.getDefaultScope()));
+		return GAMA.run(new InScope<String>() {
+
+			@Override
+			public String run(IScope scope) {
+				return StringUtils.toGaml(getValue(scope));
+			}
+		});
+
 	}
 
 	@Override

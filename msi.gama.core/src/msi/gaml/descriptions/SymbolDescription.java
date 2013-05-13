@@ -38,13 +38,13 @@ import org.eclipse.emf.ecore.EObject;
  */
 public class SymbolDescription implements IDescription {
 
-	protected Facets facets;
+	protected final Facets facets;
 	protected final EObject element;
 	protected IDescription enclosing;
 	protected String originName;
 	protected final List<IDescription> children;
-	protected SymbolProto meta;
-	protected String keyword;
+	// private final SymbolProto meta;
+	protected final String keyword;
 	protected boolean isDisposed = false;
 
 	public SymbolDescription(final String keyword, final IDescription superDesc, final IChildrenProvider cp,
@@ -56,9 +56,9 @@ public class SymbolDescription implements IDescription {
 		if ( superDesc != null ) {
 			originName = superDesc.getName();
 		}
-		meta = DescriptionFactory.getProto(keyword);
-		setSuperDescription(superDesc);
-		if ( meta.hasSequence() ) {
+		// meta = DescriptionFactory.getProto(keyword);
+		setEnclosingDescription(superDesc);
+		if ( getMeta().hasSequence() ) {
 			this.children = new ArrayList();
 			addChildren(cp.getChildren());
 		} else {
@@ -76,12 +76,12 @@ public class SymbolDescription implements IDescription {
 
 	@Override
 	public int getKind() {
-		return meta.getKind();
+		return getMeta().getKind();
 	}
 
 	@Override
 	public SymbolProto getMeta() {
-		return meta;
+		return DescriptionFactory.getProto(keyword);
 	}
 
 	private void flagError(final String s, final String code, final boolean warning, final boolean info,
@@ -90,7 +90,7 @@ public class SymbolDescription implements IDescription {
 		IDescription desc = this;
 		EObject e = source;
 		while (e == null && desc != null) {
-			desc = desc.getSuperDescription();
+			desc = desc.getEnclosingDescription();
 			if ( desc != null ) {
 				e = desc.getUnderlyingElement(null);
 			}
@@ -101,7 +101,7 @@ public class SymbolDescription implements IDescription {
 		}
 		// throws a runtime exception if there is no way to signal the error in the source
 		// (i.e. we are probably in a runtime scenario)
-		if ( e == null ) { throw new GamaRuntimeException(s, warning); }
+		if ( e == null ) { throw warning ? GamaRuntimeException.warning(s) : GamaRuntimeException.error(s); }
 		IErrorCollector c = getErrorCollector();
 		if ( c == null ) {
 			System.out.println((warning ? "Warning" : "Error") + ": " + s);
@@ -172,7 +172,7 @@ public class SymbolDescription implements IDescription {
 
 	@Override
 	public void dispose() {
-		if ( isDisposed || isBuiltIn() ) { return; }
+		if ( /* isDisposed || */isBuiltIn() ) { return; }
 		// FIXME / TODO Verify that not disposing the previous expressions does not lead to runtime errors, as the
 		// expressions will still be available, after a validation, in the ISyntacticStatement, which shares the facets
 		// with the IDescription and the ISymbol...
@@ -190,7 +190,7 @@ public class SymbolDescription implements IDescription {
 		if ( element != null ) {
 			DescriptionFactory.unsetGamlDescription(element, this);
 		}
-		isDisposed = true;
+		// isDisposed = true;
 	}
 
 	@Override
@@ -210,13 +210,13 @@ public class SymbolDescription implements IDescription {
 	@Override
 	public IDescription addChild(final IDescription child) {
 		if ( child == null ) { return null; }
-		child.setSuperDescription(this);
+		child.setEnclosingDescription(this);
 		children.add(child);
 		return child;
 	}
 
 	@Override
-	public void setSuperDescription(final IDescription desc) {
+	public void setEnclosingDescription(final IDescription desc) {
 		enclosing = desc;
 	}
 
@@ -247,7 +247,7 @@ public class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public IDescription getSuperDescription() {
+	public IDescription getEnclosingDescription() {
 		return enclosing;
 	}
 
@@ -376,7 +376,7 @@ public class SymbolDescription implements IDescription {
 
 	@Override
 	public String getDocumentation() {
-		return meta.getDocumentation();
+		return getMeta().getDocumentation();
 	}
 
 	@Override

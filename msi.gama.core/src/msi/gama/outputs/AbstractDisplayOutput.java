@@ -23,6 +23,7 @@ import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.ILocation;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 
@@ -68,6 +69,9 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	public void dispose() {
 		if ( disposed ) { return; }
 		disposed = true;
+		if ( getScope() != null ) {
+			GAMA.releaseScope(getScope());
+		}
 	}
 
 	@Override
@@ -83,6 +87,7 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 
 	@Override
 	public void update() throws GamaRuntimeException {
+
 		GuiUtils.updateViewOf(this);
 	}
 

@@ -122,10 +122,10 @@ public class GamaGraphParserListener implements IGraphParserListener {
 		if ( populationNodes != null ) {
 			// retrieve the agents for this edge
 			nodeFrom = nodeId2agent.get(fromNodeId);
-			if ( nodeFrom == null ) { throw new GamaRuntimeException("Error while parsing graph: the node " +
+			if ( nodeFrom == null ) { throw GamaRuntimeException.error("Error while parsing graph: the node " +
 				fromNodeId + " was not declared"); }
 			nodeTo = nodeId2agent.get(toNodeId);
-			if ( nodeTo == null ) { throw new GamaRuntimeException("Error while parsing graph: the node " + toNodeId +
+			if ( nodeTo == null ) { throw GamaRuntimeException.error("Error while parsing graph: the node " + toNodeId +
 				" was not declared");
 			// TODO : add support for nodes that were not declared ? (may be supported in some file
 			// formats)
@@ -183,7 +183,7 @@ public class GamaGraphParserListener implements IGraphParserListener {
 		}
 
 		IAgent agent = nodeId2agent.get(nodeId);
-		if ( agent == null ) { throw new GamaRuntimeException("Error while parsing graph: the node " + nodeId +
+		if ( agent == null ) { throw GamaRuntimeException.error("Error while parsing graph: the node " + nodeId +
 			" was not declared"); }
 
 		// special case of attributes for position: x,y,z
@@ -248,7 +248,7 @@ public class GamaGraphParserListener implements IGraphParserListener {
 		}
 
 		IAgent agent = edgeId2agent.get(edgeId);
-		if ( agent == null ) { throw new GamaRuntimeException("Error while parsing graph: the edge " + edgeId +
+		if ( agent == null ) { throw GamaRuntimeException.error("Error while parsing graph: the edge " + edgeId +
 			" was not declared"); }
 
 		if ( edgeGraphAttribute2AgentAttribute == null ) {

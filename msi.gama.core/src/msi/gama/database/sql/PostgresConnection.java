@@ -11,7 +11,7 @@ import com.vividsolutions.jts.io.*;
 
 public class PostgresConnection extends SqlConnection {
 
-	//private static final boolean DEBUG = false; // Change DEBUG = false for release version
+	// private static final boolean DEBUG = false; // Change DEBUG = false for release version
 	private static final String WKT2GEO = "ST_GeomFromText";
 
 	public PostgresConnection() {
@@ -23,24 +23,23 @@ public class PostgresConnection extends SqlConnection {
 	}
 
 	public PostgresConnection(String venderName, String database) {
-		super(venderName, database);	
+		super(venderName, database);
 	}
 
 	public PostgresConnection(String venderName, String database, Boolean transformed) {
-		super(venderName, database,transformed);
+		super(venderName, database, transformed);
 	}
 
-
-	public PostgresConnection(String venderName, String url, String port, String dbName, String userName, String password) {
+	public PostgresConnection(String venderName, String url, String port, String dbName, String userName,
+		String password) {
 		super(venderName, url, port, dbName, userName, password);
 	}
 
-	public PostgresConnection(String venderName, String url, String port, String dbName, String userName, String password,
-		Boolean transformed) {
+	public PostgresConnection(String venderName, String url, String port, String dbName, String userName,
+		String password, Boolean transformed) {
 		super(venderName, url, port, dbName, userName, password, transformed);
 	}
 
-	
 	@Override
 	public Connection connectDB() throws ClassNotFoundException, InstantiationException, SQLException,
 		IllegalAccessException {
@@ -234,8 +233,7 @@ public class PostgresConnection extends SqlConnection {
 					if ( transformed ) {
 						WKTReader wkt = new WKTReader();
 						Geometry geo2 =
-							scope.getSimulationScope().getGisUtils()
-								.inverseTransform(wkt.read(values.get(i).toString()));
+							scope.getTopology().getGisUtils().inverseTransform(wkt.read(values.get(i).toString()));
 						valueStr = valueStr + WKT2GEO + "('" + geo2.toString() + "')";
 					} else {
 						valueStr = valueStr + WKT2GEO + "('" + values.get(i).toString() + "')";
@@ -267,11 +265,11 @@ public class PostgresConnection extends SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("PostgresConnection.getInsertString:" + e.toString());
+			throw GamaRuntimeException.error("PostgresConnection.getInsertString:" + e.toString());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("PostgresConnection.getInsertString:" + e.toString());
+			throw GamaRuntimeException.error("PostgresConnection.getInsertString:" + e.toString());
 		}
 
 		return insertStr;
@@ -321,7 +319,7 @@ public class PostgresConnection extends SqlConnection {
 					if ( transformed ) {
 						WKTReader wkt = new WKTReader();
 						Geometry geo2 =
-							scope.getSimulationScope().getGisUtils()
+							scope.getTopology().getGisUtils()
 								.inverseTransform(wkt.read(values.get(i).toString()));
 						valueStr = valueStr + WKT2GEO + "('" + geo2.toString() + "')";
 					} else {
@@ -358,11 +356,11 @@ public class PostgresConnection extends SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("PostgresConnection.getInsertString:" + e.toString());
+			throw GamaRuntimeException.error("PostgresConnection.getInsertString:" + e.toString());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("PostgresConnection.getInsertString:" + e.toString());
+			throw GamaRuntimeException.error("PostgresConnection.getInsertString:" + e.toString());
 		}
 
 		return insertStr;

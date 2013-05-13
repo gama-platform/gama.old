@@ -18,10 +18,7 @@
  */
 package msi.gama.kernel.simulation;
 
-import java.awt.Graphics2D;
-import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.topology.ISpatialIndex.Compound;
 
 /**
  * Written by drogoul Modified on 18 aožt 2010
@@ -30,13 +27,5 @@ import msi.gama.metamodel.topology.ISpatialIndex.Compound;
  * 
  */
 public interface ISimulationAgent extends IAgent {
-
-	public GisUtils getGisUtils();
-
-	public abstract Compound getSpatialIndex();
-
-	public abstract void displaySpatialIndexOn(Graphics2D g2, int width, int height);
-
-	public void setTorus(Boolean asBool);
 
 }

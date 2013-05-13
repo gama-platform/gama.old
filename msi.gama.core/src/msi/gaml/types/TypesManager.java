@@ -24,40 +24,53 @@ import msi.gaml.descriptions.*;
 
 public class TypesManager {
 
-	private int current_index = Types.CURRENT_INDEX;
-	private final Map<String, TypeDescription> modelSpecies = new LinkedHashMap(Types.BUILT_IN_SPECIES);
-	private final Map<Integer, IType> idToIType = new LinkedHashMap(Types.ID2ITYPE);
-	private final Map<String, IType> stringToIType = new LinkedHashMap(Types.STRING2ITYPE);
-	private final Map<Class, IType> classToIType = new LinkedHashMap(Types.CLASS2ITYPE);
+	public static int CURRENT_INDEX = IType.SPECIES_TYPES;
+
+	private final TypesManager parent;
+
+	// private int current_index = IType.CURRENT_INDEX;
+	private final Map<String, TypeDescription> modelSpecies = new LinkedHashMap(/* Types.BUILT_IN_SPECIES */);
+	private final Map<Integer, IType> idToIType = new LinkedHashMap(/* Types.ID2ITYPE */);
+	private final Map<String, IType> stringToIType = new LinkedHashMap(/* Types.STRING2ITYPE */);
+	private final Map<Class, IType> classToIType = new LinkedHashMap(/* Types.CLASS2ITYPE */);
 	private final TypeTree<IType> hierarchy = new TypeTree();
 
-	/**
-	 * 
-	 * @param name species name
-	 * @param base
-	 * @return
-	 */
-	public IType addSpeciesType(final TypeDescription species) {
-		String name = species.getName();
-		Class base = species.getJavaBase();
-		if ( stringToIType.containsKey(name) ) {
-			// if ( name.equals(IKeyword.AGENT) ) { return stringToIType.get(IKeyword.AGENT); }
-			species.error("Species " + name + " already declared. Species name must be unique",
-				IGamlIssue.DUPLICATE_NAME, species.getUnderlyingElement(null), name);
-		}
-		modelSpecies.put(name, species);
-		int newId = ++current_index;
-		return addType(new GamaAgentType(name, newId, base));
-		// idToIType.put(newId, newType);
-		// stringToIType.put(name, newType);
-		// classToIType.put(base == null ? Types.get(AGENT).toClass() : base, newType);
-		// return newType;
+	public TypesManager(TypesManager parent) {
+		this.parent = parent;
+		// current_index = parent == null ? msi.gaml.types.IType.SPECIES_TYPES : parent.current_index;
 	}
 
-	public IType addType(IType t) {
+	public IType addSpeciesType(final TypeDescription species) {
+		String name = species.getName();
+		modelSpecies.put(name, species);
+		if ( !name.equals(IKeyword.AGENT) ) {
+			if ( get(name) != Types.NO_TYPE ) {
+				// if ( name.equals(IKeyword.AGENT) ) { return stringToIType.get(IKeyword.AGENT); }
+				species.error("Species " + name + " already declared. Species name must be unique",
+					IGamlIssue.DUPLICATE_NAME, species.getUnderlyingElement(null), name);
+			}
+			return addType(new GamaAgentType(name, ++CURRENT_INDEX, species.getJavaBase()), species.getJavaBase());
+		}
+		return get(IKeyword.AGENT);
+	}
+
+	public IType initType(final String keyword, IType typeInstance, final int id, final int varKind,
+		final Class ... wraps) {
+		if ( keyword.equals(IKeyword.UNKNOWN) ) {
+			typeInstance = Types.NO_TYPE;
+		}
+		typeInstance.init(varKind, id, keyword, wraps);
+		return addType(typeInstance, wraps);
+	}
+
+	private IType addType(IType t, Class ... wraps) {
 		idToIType.put(t.id(), t);
 		stringToIType.put(t.toString(), t);
-		classToIType.put(t.toClass(), t);
+		// Hack to allow types to be declared with their id as string
+		stringToIType.put(String.valueOf(t.id()), t);
+		for ( Class cc : wraps ) {
+			classToIType.put(cc, t);
+		}
 		return t;
 	}
 
@@ -72,58 +85,93 @@ public class TypesManager {
 			TypeDescription parent = entry.getValue().getParent();
 			type.setParent(parent == null ? get(IKeyword.AGENT) : get(parent.getName()));
 		}
-		buildHierarchy();
+		buildHierarchy(hierarchy.setRoot(Types.NO_TYPE));
 	}
 
 	public TypeDescription getSpecies(String name) {
-		return modelSpecies.get(name);
+		if ( name == null ) { return null; }
+		TypeDescription td = modelSpecies.get(name);
+		if ( td == null ) {
+			td = parent == null ? null : parent.getSpecies(name);
+		}
+		return td;
 	}
 
 	public boolean containsSpecies(String name) {
-		return modelSpecies.containsKey(name);
+		if ( modelSpecies.containsKey(name) ) { return true; }
+		if ( parent != null ) { return parent.containsSpecies(name); }
+		return false;
 	}
 
 	public List<String> getTypeNames() {
-		return new ArrayList(stringToIType.keySet());
+		List<String> result = parent == null ? new ArrayList() : parent.getTypeNames();
+		result.addAll(stringToIType.keySet());
+		return result;
+	}
+
+	Set<IType> getAllTypes() {
+		Set<IType> types = new LinkedHashSet(parent == null ? Collections.EMPTY_SET : parent.getAllTypes());
+		types.addAll(idToIType.values());
+		return types;
+	}
+
+	public Collection<TypeDescription> getAllSpecies() {
+		Set<TypeDescription> species =
+			new LinkedHashSet(parent == null ? Collections.EMPTY_SET : parent.getAllSpecies());
+		species.addAll(modelSpecies.values());
+		return species;
+
 	}
 
 	public IType get(final int type) {
 		IType t = idToIType.get(type);
-
-		return t == null ? Types.NO_TYPE : t;
+		return t == null ? parent != null ? parent.get(type) : Types.NO_TYPE : t;
 	}
 
 	public IType get(final String type) {
 		IType t = stringToIType.get(type);
+		return t == null ? parent != null ? parent.get(type) : Types.NO_TYPE : t;
+	}
 
+	public <T> IType<T> get(final Class<T> type) {
+		IType<T> t = internalGet(type);
 		return t == null ? Types.NO_TYPE : t;
 	}
 
-	public IType get(final Class type) {
+	private <T> IType<T> internalGet(final Class<T> type) {
 		IType t = classToIType.get(type);
-
-		return t == null ? Types.NO_TYPE : t;
+		if ( t == null ) {
+			if ( parent != null ) {
+				t = parent.internalGet(type);
+			}
+			if ( t == null && !type.isInterface() ) {
+				for ( Map.Entry<Class, IType> c : classToIType.entrySet() ) {
+					Class support = c.getKey();
+					if ( support != Object.class && support.isAssignableFrom(type) ) { return c.getValue(); }
+				}
+			}
+		}
+		return t;
 	}
 
 	public void dispose() {
 		idToIType.clear();
 		stringToIType.clear();
 		classToIType.clear();
+		if ( hierarchy != null ) {
+			hierarchy.dispose();
+		}
 	}
 
-	public Set<IType> getDirectSubTypes(IType t) {
+	private Set<IType> getDirectSubTypes(IType t) {
 		if ( t == null ) { return Collections.EMPTY_SET; }
 		Set<IType> types = new LinkedHashSet();
-		for ( IType st : idToIType.values() ) {
+		for ( IType st : getAllTypes() ) {
 			if ( t.equals(st.getParent()) ) {
 				types.add(st);
 			}
 		}
 		return types;
-	}
-
-	private void buildHierarchy() {
-		buildHierarchy(hierarchy.setRoot(Types.NO_TYPE));
 	}
 
 	private void buildHierarchy(TypeNode<IType> currentNode) {
@@ -137,16 +185,16 @@ public class TypesManager {
 		}
 	}
 
-	public TypeTree<IType> getTypeHierarchy() {
-		return hierarchy;
-	}
+	// public TypeTree<IType> getTypeHierarchy() {
+	// return hierarchy;
+	// }
 
-	public TypeTree<IType> getTypeHierarchyFrom(IType t) {
-		return new TypeTree(hierarchy.find(t));
-	}
+	// public TypeTree<IType> getTypeHierarchyFrom(IType t) {
+	// return new TypeTree(hierarchy.find(t));
+	// }
 
 	public TypeTree<SpeciesDescription> getSpeciesHierarchy() {
-		return new TypeTree(createSpeciesNodesFrom(hierarchy.find(get(IType.AGENT))));
+		return new TypeTree(createSpeciesNodesFrom(hierarchy.find(get(msi.gaml.types.IType.AGENT))));
 	}
 
 	private TypeNode<SpeciesDescription> createSpeciesNodesFrom(TypeNode<IType> type) {

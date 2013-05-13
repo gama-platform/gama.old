@@ -38,9 +38,9 @@ import msi.gaml.types.IType;
  * 
  */
 
-@facets(value = { @facet(name = IKeyword.VAR, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.NAME, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.VALUE, type = { IType.NONE_STR }, optional = false) }, combinations = {
+@facets(value = { @facet(name = IKeyword.VAR, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.NAME, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.VALUE, type = { IType.NONE }, optional = false) }, combinations = {
 	@combination({ IKeyword.VAR, IKeyword.VALUE }), @combination({ IKeyword.NAME, IKeyword.VALUE }) }, omissible = IKeyword.VAR)
 @symbol(name = { IKeyword.SET }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)

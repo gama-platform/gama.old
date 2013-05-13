@@ -27,7 +27,7 @@ public class PrefuseStaticLayoutRadialTree extends
 						);
 				
 			} catch (ClassCastException e) {
-				throw new GamaRuntimeException("Option "+OPTION_NAME_RADIUS+" of this layout is supposed to be an integer.");
+				throw GamaRuntimeException.error("Option "+OPTION_NAME_RADIUS+" of this layout is supposed to be an integer.");
 			}
 		} else {
 			return new RadialTreeLayout(PREFUSE_GRAPH);

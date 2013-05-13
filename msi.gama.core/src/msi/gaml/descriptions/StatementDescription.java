@@ -22,7 +22,6 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaList;
-import msi.gaml.compilation.GamaHelper;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.*;
 import msi.gaml.statements.*;
@@ -39,21 +38,12 @@ import org.eclipse.emf.ecore.EObject;
 
 public class StatementDescription extends SymbolDescription {
 
-	private GamaHelper helper; // TODO Only used by primitives. Should be in a subclass.
-	private final Map<String, IVarExpression> temps;
-	private final Map<String, IDescription> args;
+	protected final Map<String, IVarExpression> temps;
+	protected final Map<String, IDescription> args;
 	private final static String INTERNAL = "internal_";
 	private static int COMMAND_INDEX = 0;
 	static final Set<String> doFacets = DescriptionFactory.getAllowedFacetsFor(DO);
 	private IDescription previousDescription;
-
-	public GamaHelper getHelper() {
-		return helper;
-	}
-
-	public void setHelper(final GamaHelper helper) {
-		this.helper = helper;
-	}
 
 	public StatementDescription(final String keyword, final IDescription superDesc, final IChildrenProvider cp,
 		final boolean hasScope, final boolean hasArgs, final EObject source, Facets facets) {
@@ -67,7 +57,7 @@ public class StatementDescription extends SymbolDescription {
 
 	@Override
 	public void dispose() {
-		if ( isDisposed || isBuiltIn() ) { return; }
+		if ( /* isDisposed || */isBuiltIn() ) { return; }
 		if ( temps != null ) {
 			temps.clear();
 		}
@@ -75,17 +65,17 @@ public class StatementDescription extends SymbolDescription {
 			args.clear();
 		}
 		super.dispose();
-		isDisposed = true;
+		// isDisposed = true;
 	}
 
 	@Override
 	public void copyTempsAbove() {
-		IDescription d = getSuperDescription();
+		IDescription d = getEnclosingDescription();
 		while (d != null && d instanceof StatementDescription) {
 			if ( ((StatementDescription) d).hasTemps() ) {
 				temps.putAll(((StatementDescription) d).temps);
 			}
-			d = d.getSuperDescription();
+			d = d.getEnclosingDescription();
 		}
 	}
 
@@ -117,7 +107,7 @@ public class StatementDescription extends SymbolDescription {
 	private IDescription createArg(final String n, final IExpressionDescription v) {
 		Facets f = new Facets(NAME, n);
 		f.put(VALUE, v);
-		IDescription a = DescriptionFactory.create(ARG, this, null, f);
+		IDescription a = DescriptionFactory.create(ARG, this, IChildrenProvider.NONE, f);
 		return a;
 	}
 
@@ -151,7 +141,7 @@ public class StatementDescription extends SymbolDescription {
 			return (IVarExpression) addTemp(varName, type, contentType, keyType);
 		}
 
-		IDescription sup = getSuperDescription();
+		IDescription sup = getEnclosingDescription();
 		if ( !(sup instanceof StatementDescription) ) {
 			error("Impossible to return " + facets.getLabel(facetName), IGamlIssue.GENERAL);
 			return null;
@@ -174,7 +164,6 @@ public class StatementDescription extends SymbolDescription {
 			new StatementDescription(getKeyword(), into, new ChildrenProvider(children), temps != null, args != null,
 				element, facets);
 		desc.originName = originName;
-		desc.setHelper(helper);
 		return desc;
 	}
 
@@ -186,9 +175,9 @@ public class StatementDescription extends SymbolDescription {
 	@Override
 	public IExpression addTemp(final String name, final IType type, final IType contentType, final IType keyType) {
 		if ( temps == null ) {
-			if ( getSuperDescription() == null ) { return null; }
-			if ( !(getSuperDescription() instanceof StatementDescription) ) { return null; }
-			return ((StatementDescription) getSuperDescription()).addTemp(name, type, contentType, keyType);
+			if ( getEnclosingDescription() == null ) { return null; }
+			if ( !(getEnclosingDescription() instanceof StatementDescription) ) { return null; }
+			return ((StatementDescription) getEnclosingDescription()).addTemp(name, type, contentType, keyType);
 		}
 		IVarExpression result =
 			GAMA.getExpressionFactory().createVar(name, type, contentType, keyType, false, IVarExpression.TEMP, this);
@@ -352,8 +341,8 @@ public class StatementDescription extends SymbolDescription {
 			}
 		}
 		String in = "";
-		if ( meta.isTopLevel() ) {
-			in = " of " + getSuperDescription().getTitle();
+		if ( getMeta().isTopLevel() ) {
+			in = " of " + getEnclosingDescription().getTitle();
 		}
 		return kw + " " + getName() + " " + in;
 	}
@@ -379,9 +368,9 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	@Override
-	public void setSuperDescription(IDescription desc) {
-		previousDescription = getSuperDescription();
-		super.setSuperDescription(desc);
+	public void setEnclosingDescription(IDescription desc) {
+		previousDescription = getEnclosingDescription();
+		super.setEnclosingDescription(desc);
 	}
 
 	@Override

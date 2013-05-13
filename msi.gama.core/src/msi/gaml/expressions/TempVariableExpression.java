@@ -21,12 +21,12 @@ package msi.gaml.expressions;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 
 public class TempVariableExpression extends VariableExpression {
 
-	protected TempVariableExpression(final String n, final IType type, final IType contentType,
-		IType keyType, final IDescription definitionDescription) {
+	protected TempVariableExpression(final String n, final IType type, final IType contentType, IType keyType,
+		final IDescription definitionDescription) {
 		super(n, type, contentType, keyType, false, definitionDescription);
 	}
 
@@ -36,9 +36,8 @@ public class TempVariableExpression extends VariableExpression {
 	}
 
 	@Override
-	public void setVal(final IScope scope, final Object v, final boolean create)
-		throws GamaRuntimeException {
-		Object val = Types.coerce(scope, v, type, null);
+	public void setVal(final IScope scope, final Object v, final boolean create) throws GamaRuntimeException {
+		Object val = type.cast(scope, v, null);
 		if ( create ) {
 			scope.addVarWithValue(getName(), val);
 		} else {

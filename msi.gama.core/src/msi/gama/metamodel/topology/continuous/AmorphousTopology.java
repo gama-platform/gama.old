@@ -18,16 +18,17 @@
  */
 package msi.gama.metamodel.topology.continuous;
 
+import java.awt.Graphics2D;
+import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.ITopology;
+import msi.gama.metamodel.topology.*;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gama.util.path.GamaSpatialPath;
-import msi.gama.util.path.PathFactory;
+import msi.gama.util.path.*;
 import msi.gaml.operators.*;
 import msi.gaml.types.GamaGeometryType;
 import com.vividsolutions.jts.geom.Geometry;
@@ -42,6 +43,7 @@ import com.vividsolutions.jts.geom.Geometry;
 public class AmorphousTopology implements ITopology {
 
 	IShape expandableEnvironment = GamaGeometryType.createPoint(new GamaPoint(0, 0));
+	ISpatialIndex index = new GamaQuadTree(expandableEnvironment.getEnvelope());
 
 	/**
 	 * @see msi.gama.interfaces.IValue#type()
@@ -64,7 +66,7 @@ public class AmorphousTopology implements ITopology {
 	 */
 	@Override
 	public String toGaml() {
-		return "topology {0,0}";
+		return "topology({0,0})";
 	}
 
 	/**
@@ -82,8 +84,8 @@ public class AmorphousTopology implements ITopology {
 	public void initialize(final IPopulation pop) throws GamaRuntimeException {}
 
 	/**
-	 * @see msi.gama.environment.ITopology#updateAgent(msi.gama.interfaces.IAgent, boolean,
-	 *      msi.gama.util.GamaPoint, com.vividsolutions.jts.geom.Envelope)
+	 * @see msi.gama.environment.ITopology#updateAgent(msi.gama.interfaces.IAgent, boolean, msi.gama.util.GamaPoint,
+	 *      com.vividsolutions.jts.geom.Envelope)
 	 */
 	// @Override
 	// public void updateAgent(final IAgent agent, final boolean previousShapeIsPoint,
@@ -95,8 +97,7 @@ public class AmorphousTopology implements ITopology {
 	//
 	@Override
 	public void updateAgent(final IShape previous, final IShape agent) {
-		IShape ng =
-			Spatial.Operators.union(expandableEnvironment.getGeometry(), agent.getGeometry());
+		IShape ng = Spatial.Operators.union(expandableEnvironment.getGeometry(), agent.getGeometry());
 		expandableEnvironment.setGeometry(new GamaShape(ng.getInnerGeometry().getEnvelope()));
 	}
 
@@ -116,28 +117,26 @@ public class AmorphousTopology implements ITopology {
 	}
 
 	/**
-	 * @see msi.gama.environment.ITopology#getNeighboursOf(msi.gama.interfaces.IGeometry,
-	 *      java.lang.Double, msi.gama.environment.IAgentFilter)
+	 * @see msi.gama.environment.ITopology#getNeighboursOf(msi.gama.interfaces.IGeometry, java.lang.Double,
+	 *      msi.gama.environment.IAgentFilter)
 	 */
 	@Override
-	public GamaList<IAgent> getNeighboursOf(final IShape source, final Double distance,
-		final IAgentFilter filter) throws GamaRuntimeException {
+	public GamaList<IAgent> getNeighboursOf(final IShape source, final Double distance, final IAgentFilter filter)
+		throws GamaRuntimeException {
 		return GamaList.EMPTY_LIST;
 	}
 
 	/**
-	 * @see msi.gama.environment.ITopology#getAgentsIn(msi.gama.interfaces.IGeometry,
-	 *      msi.gama.environment.IAgentFilter, boolean)
+	 * @see msi.gama.environment.ITopology#getAgentsIn(msi.gama.interfaces.IGeometry, msi.gama.environment.IAgentFilter,
+	 *      boolean)
 	 */
 	@Override
-	public GamaList<IAgent> getAgentsIn(final IShape source, final IAgentFilter f,
-		final boolean covered) {
+	public GamaList<IAgent> getAgentsIn(final IShape source, final IAgentFilter f, final boolean covered) {
 		return GamaList.EMPTY_LIST;
 	}
 
 	/**
-	 * @see msi.gama.environment.ITopology#distanceBetween(msi.gama.interfaces.IGeometry,
-	 *      msi.gama.interfaces.IGeometry)
+	 * @see msi.gama.environment.ITopology#distanceBetween(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry)
 	 */
 	@Override
 	public Double distanceBetween(IScope scope, final IShape source, final IShape target) {
@@ -150,23 +149,21 @@ public class AmorphousTopology implements ITopology {
 	}
 
 	/**
-	 * @see msi.gama.environment.ITopology#pathBetween(msi.gama.interfaces.IGeometry,
-	 *      msi.gama.interfaces.IGeometry)
+	 * @see msi.gama.environment.ITopology#pathBetween(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry)
 	 */
 	@Override
 	public GamaSpatialPath pathBetween(IScope scope, final IShape source, final IShape target)
 		throws GamaRuntimeException {
 		// return new GamaPath(this, GamaList.with(source, target));
-		return (GamaSpatialPath)PathFactory.newInstance(this, GamaList.with(source, target));
+		return PathFactory.newInstance(this, GamaList.with(source, target));
 	}
 
 	/**
-	 * @see msi.gama.environment.ITopology#getDestination(msi.gama.util.GamaPoint, int, double,
-	 *      boolean)
+	 * @see msi.gama.environment.ITopology#getDestination(msi.gama.util.GamaPoint, int, double, boolean)
 	 */
 	@Override
-	public ILocation getDestination(final ILocation source, final int direction,
-		final double distance, final boolean nullIfOutside) {
+	public ILocation getDestination(final ILocation source, final int direction, final double distance,
+		final boolean nullIfOutside) {
 		double cos = distance * Maths.cos(direction);
 		double sin = distance * Maths.sin(direction);
 		return new GamaPoint(source.getX() + cos, source.getY() + sin);
@@ -275,12 +272,12 @@ public class AmorphousTopology implements ITopology {
 	}
 
 	/**
-	 * @see msi.gama.metamodel.topology.ITopology#getNeighboursOf(msi.gama.metamodel.shape.ILocation,
-	 *      java.lang.Double, msi.gama.metamodel.topology.filter.IAgentFilter)
+	 * @see msi.gama.metamodel.topology.ITopology#getNeighboursOf(msi.gama.metamodel.shape.ILocation, java.lang.Double,
+	 *      msi.gama.metamodel.topology.filter.IAgentFilter)
 	 */
 	@Override
-	public IList<IAgent> getNeighboursOf(final ILocation source, final Double distance,
-		final IAgentFilter filter) throws GamaRuntimeException {
+	public IList<IAgent> getNeighboursOf(final ILocation source, final Double distance, final IAgentFilter filter)
+		throws GamaRuntimeException {
 		return GamaList.EMPTY_LIST;
 	}
 
@@ -292,19 +289,30 @@ public class AmorphousTopology implements ITopology {
 	public GamaSpatialPath pathBetween(IScope scope, final ILocation source, final ILocation target)
 		throws GamaRuntimeException {
 		// return new GamaPath(this, GamaList.with(source, target));
-		return (GamaSpatialPath)PathFactory.newInstance(this, GamaList.with(source, target));
+		return PathFactory.newInstance(this, GamaList.with(source, target));
 	}
 
 	@Override
 	public Geometry returnToroidalGeom(final Geometry geom) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public boolean isTorus() {
-		// TODO Auto-generated method stub
 		return false;
 	}
+
+	@Override
+	public GisUtils getGisUtils() {
+		return new GisUtils();
+	}
+
+	@Override
+	public ISpatialIndex getSpatialIndex() {
+		return index;
+	}
+
+	@Override
+	public void displaySpatialIndexOn(Graphics2D g2, int width, int height) {}
 
 }

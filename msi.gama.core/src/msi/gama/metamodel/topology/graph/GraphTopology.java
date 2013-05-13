@@ -44,13 +44,13 @@ public class GraphTopology extends AbstractTopology {
 	 * @param torus
 	 */
 	public GraphTopology(final IScope scope, final IShape env, final GamaSpatialGraph graph) {
-		super(scope, env, false);
+		super(scope, env, null);
 		places = graph;
 	}
 
 	// The default topologies for graphs.
 	public GraphTopology(final GamaSpatialGraph graph) {
-		this(GAMA.getDefaultScope(), GAMA.getDefaultScope().getSimulationScope().getGeometry(), graph);
+		this(GAMA.obtainNewScope(), GAMA.getSimulation().getGeometry(), graph);
 	}
 
 	@Override

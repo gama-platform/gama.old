@@ -41,7 +41,7 @@ import msi.gaml.types.IType;
 @symbol(name = IKeyword.MONITOR, kind = ISymbolKind.OUTPUT, with_sequence = false)
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
-	@facet(name = IKeyword.VALUE, type = IType.NONE_STR, optional = false) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.VALUE, type = IType.NONE, optional = false) }, omissible = IKeyword.NAME)
 @inside(symbols = IKeyword.OUTPUT)
 public class MonitorOutput extends AbstractDisplayOutput {
 
@@ -51,12 +51,13 @@ public class MonitorOutput extends AbstractDisplayOutput {
 		expressionText = value == null ? "" : value.toGaml();
 	}
 
-	public MonitorOutput(final String name, final String expr, final IScope scope, final boolean openRightNow) {
+	public MonitorOutput(final String name, final String expr, final boolean openRightNow) {
 		super(DescriptionFactory.create(IKeyword.MONITOR, IKeyword.VALUE, expr, IKeyword.NAME, name == null ? expr
 			: name));
+		setScope(GAMA.obtainNewScope());
 		setUserCreated(true);
-		setNewExpressionText(expr, scope);
-		init(scope);
+		setNewExpressionText(expr, getScope());
+		init(getScope());
 		outputManager.addOutput(this);
 		if ( openRightNow ) {
 			schedule();
@@ -66,7 +67,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 
 	private String expressionText = "";
 	protected IExpression value;
-	protected Object lastValue = "No expression to monitor";
+	protected Object lastValue = "";
 	private boolean isUserCreated = false;
 
 	@Override
@@ -94,6 +95,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 
 	@Override
 	public void step(final IScope scope) {
+		if ( scope.interrupted() ) { return; }
 		if ( value != null ) {
 			try {
 				lastValue = value.value(scope);
@@ -123,7 +125,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	public void setNewExpression(final IExpression expr) throws GamaRuntimeException {
 		expressionText = expr == null ? "" : expr.toGaml();
 		value = expr;
-		step(getOwnScope());
+		step(getScope());
 	}
 
 	@Override
@@ -141,14 +143,12 @@ public class MonitorOutput extends AbstractDisplayOutput {
 
 	@Override
 	public String toGaml() {
-		// FIXME Rewrite this for GAML
 		final List<MonitorOutput> outputs = (List<MonitorOutput>) outputManager.getMonitors();
 		StringBuilder s = new StringBuilder(200);
 		for ( final MonitorOutput output : outputs ) {
-			s.append("<monitor name=\"").append(output.getViewName()).append("\" value=\"")
-				.append(output.expressionText).append("\" refresh_every=\"")
-				.append(output.getFacet(IKeyword.REFRESH_EVERY).toString());
-			s.append("\" />\n");
+			s.append("monitor \"").append(output.getViewName()).append("\" value: ").append(output.expressionText)
+				.append(" refresh_every: ").append(output.getFacet(IKeyword.REFRESH_EVERY).toString());
+			s.append("\n");
 		}
 		return s.toString();
 	}

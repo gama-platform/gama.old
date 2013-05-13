@@ -232,7 +232,7 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 			sb.append(uselessOptions);
 			sb.append(" (as a reminder, this layout accepts the following options: ");
 			sb.append(getLayoutOptions()).append(")");
-			GAMA.reportError(new GamaRuntimeException(sb.toString(), true));
+			GAMA.reportError(GamaRuntimeException.warning(sb.toString()));
 		}
 	}
 

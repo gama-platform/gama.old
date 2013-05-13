@@ -53,8 +53,8 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 		public void remove(IScope scope, final Object index, final Object value, final boolean all) {}
 
 		@Override
-		public void add(IScope scope, final Integer index, final Object value, final Object param,
-			boolean all, boolean add) {}
+		public void add(IScope scope, final Integer index, final Object value, final Object param, boolean all,
+			boolean add) {}
 
 		@Override
 		public GamaList clone() {
@@ -241,8 +241,8 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	@Override
-	public void add(IScope scope, final Integer i, final Object value, final Object param,
-		boolean all, boolean add) throws GamaRuntimeException {
+	public void add(IScope scope, final Integer i, final Object value, final Object param, boolean all, boolean add)
+		throws GamaRuntimeException {
 		if ( i == null ) {
 			if ( all && !add ) {
 				for ( int index = 0, n = size(); index < n; index++ ) {
@@ -594,8 +594,8 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	//
 	// }
 
-	public static GamaList with(final Object ... a) {
-		return new GamaList(a);
+	public static <T> GamaList with(final T ... a) {
+		return new GamaList<T>(a);
 	}
 
 	@Override
@@ -705,8 +705,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	@Override
-	public E getFromIndicesList(final IScope scope, final IList indices)
-		throws GamaRuntimeException {
+	public E getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
 		if ( indices == null || indices.isEmpty() ) { return null; }
 		return get(scope, Cast.asInt(scope, indices.get(0)));
 		// We do not consider the case where multiple indices are used. Maybe could be used in the

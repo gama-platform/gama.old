@@ -107,7 +107,7 @@ public class OpenStatement extends AbstractStatementSequence implements IStateme
 			//Runtime.getRuntime().exec(program+" "+filename);
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new GamaRuntimeException("error while attempting to open "+filename+" with program "+program+" ("+e.getMessage()+")");
+			throw GamaRuntimeException.error("error while attempting to open "+filename+" with program "+program+" ("+e.getMessage()+")");
 		}
 		
 	}
@@ -131,9 +131,9 @@ public class OpenStatement extends AbstractStatementSequence implements IStateme
 		// open file
 		final File f = new File(scope.getSimulationScope().getModel().getRelativeFilePath(filename, true));
 		if (!f.exists())
-			throw new GamaRuntimeException("unable to open this file, which does not exists: "+filename);
+			throw GamaRuntimeException.error("unable to open this file, which does not exists: "+filename);
 		if (!f.canRead())
-			throw new GamaRuntimeException("unable to open this file, which is not readable: "+filename);
+			throw GamaRuntimeException.error("unable to open this file, which is not readable: "+filename);
 		
 		if (!f.isDirectory() && Display.getDefault()!=null) {
 			
@@ -158,14 +158,14 @@ public class OpenStatement extends AbstractStatementSequence implements IStateme
 				opened = true;
 			} catch (IOException e) {
 				e.printStackTrace();
-				throw new GamaRuntimeException("error while opening "+filename+" : "+e.getMessage());
+				throw GamaRuntimeException.error("error while opening "+filename+" : "+e.getMessage());
 
 			}
 			
 		} 
 		
 		if (!opened) {
-			throw new GamaRuntimeException("Unable to open the file in this operating system "+filename);
+			throw GamaRuntimeException.error("Unable to open the file in this operating system "+filename);
 		}
 		
 		// this solution is not multiplatform; let's avoid this kind of dangerous cooking ?

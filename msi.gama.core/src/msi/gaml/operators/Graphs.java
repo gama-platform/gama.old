@@ -149,8 +149,7 @@ public class Graphs {
 		"let graphFromMap type: graph <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);",
 		"graphFromMap contains_vertex {1,5}  --: true" }, see = { "contains_edge" })
 	public static Boolean containsVertex(final GamaGraph graph, final Object vertex) {
-		if ( graph == null ) { throw new GamaRuntimeException(
-			"In the contains_vertex operator, the graph should not be null!"); }
+		if ( graph == null ) { throw GamaRuntimeException.error("In the contains_vertex operator, the graph should not be null!"); }
 		return graph.containsVertex(vertex);
 	}
 
@@ -159,8 +158,7 @@ public class Graphs {
 		"let graphFromMap type: graph <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);",
 		"graphFromMap contains_edge link({1,5}::{12,45})  --: true" }, see = { "contains_vertex" })
 	public static Boolean containsEdge(final IGraph graph, final Object edge) {
-		if ( graph == null ) { throw new GamaRuntimeException(
-			"In the contains_edge operator, the graph should not be null!"); }
+		if ( graph == null ) { throw GamaRuntimeException.error("In the contains_edge operator, the graph should not be null!"); }
 		return graph.containsEdge(edge);
 	}
 
@@ -169,8 +167,7 @@ public class Graphs {
 		"let graphEpidemio type: graph <- generate_barabasi_albert( [\"edges_specy\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5] );",
 		"graphEpidemio contains_edge (node(0)::node(3));   --:   true" })
 	public static Boolean containsEdge(final IGraph graph, final GamaPair edge) {
-		if ( graph == null ) { throw new GamaRuntimeException(
-			"In the contains_edge operator, the graph should not be null!"); }
+		if ( graph == null ) { throw GamaRuntimeException.error("In the contains_edge operator, the graph should not be null!"); }
 		return graph.containsEdge(edge.first(), edge.last());
 	}
 
@@ -181,8 +178,7 @@ public class Graphs {
 		"let graphFromMap type: graph <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);",
 		"graphFromMap source_of(link({1,5}::{12,45}))  	--: {1.0;5.0}" }, see = { "target_of" })
 	public static Object sourceOf(final IGraph graph, final Object edge) {
-		if ( graph == null ) { throw new GamaRuntimeException(
-			"In the source_of operator, the graph should not be null!"); }
+		if ( graph == null ) { throw GamaRuntimeException.error("In the source_of operator, the graph should not be null!"); }
 		if ( graph.containsEdge(edge) ) { return graph.getEdgeSource(edge); }
 		return null;
 	}
@@ -194,8 +190,7 @@ public class Graphs {
 		"let graphFromMap type: graph <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);",
 		"graphFromMap source_of(link({1,5}::{12,45}))  	--: {1.0;5.0}" }, see = "source_of")
 	public static Object targetOf(final IGraph graph, final Object edge) {
-		if ( graph == null ) { throw new GamaRuntimeException(
-			"In the target_of operator, the graph should not be null!"); }
+		if ( graph == null ) { throw GamaRuntimeException.error("In the target_of operator, the graph should not be null!"); }
 		if ( graph.containsEdge(edge) ) { return graph.getEdgeTarget(edge); }
 		return null;
 	}
@@ -208,8 +203,7 @@ public class Graphs {
 		"let graphFromMap type: graph <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);",
 		"graphFromMap source_of(link({1,5}::{12,45}))  --: 41.48493702538308" })
 	public static Double weightOf(final IGraph graph, final Object edge) {
-		if ( graph == null ) { throw new GamaRuntimeException(
-			"In the weight_of operator, the graph should not be null!"); }
+		if ( graph == null ) { throw GamaRuntimeException.error("In the weight_of operator, the graph should not be null!"); }
 		if ( graph.containsEdge(edge) ) {
 			return graph.getEdgeWeight(edge);
 		} else if ( graph.containsVertex(edge) ) { return graph.getVertexWeight(edge); }
@@ -219,8 +213,7 @@ public class Graphs {
 	@operator(value = "in_edges_of", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "returns the list of the in-edges of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = { "graphFromMap in_edges_of node({12,45})  --:  [LineString]" }, see = "out_edges_of")
 	public static IList inEdgesOf(final IGraph graph, final Object vertex) {
-		if ( graph == null ) { throw new GamaRuntimeException(
-			"In the in_edges_of operator, the graph should not be null!"); }
+		if ( graph == null ) { throw GamaRuntimeException.error("In the in_edges_of operator, the graph should not be null!"); }
 		if ( graph.containsVertex(vertex) ) { return new GamaList(graph.incomingEdgesOf(vertex)); }
 		return new GamaList();
 	}
@@ -229,8 +222,7 @@ public class Graphs {
 	@doc(value = "returns the in degree of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = { "graphEpidemio in_degree_of (node(3))   --:  2" }, see = {
 		"out_degree_of", "degree_of" })
 	public static int inDregreeOf(final IGraph graph, final Object vertex) {
-		if ( graph == null ) { throw new GamaRuntimeException(
-			"In the in_degree_of operator, the graph should not be null!"); }
+		if ( graph == null ) { throw GamaRuntimeException.error("In the in_degree_of operator, the graph should not be null!"); }
 		if ( graph.containsVertex(vertex) ) { return graph.inDegreeOf(vertex); }
 		return 0;
 	}
@@ -238,8 +230,7 @@ public class Graphs {
 	@operator(value = "out_edges_of", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "returns the list of the out-edges of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = { "graphEpidemio out_edges_of (node(3))" }, see = "in_edges_of")
 	public static IList outEdgesOf(final IGraph graph, final Object vertex) {
-		if ( graph == null ) { throw new GamaRuntimeException(
-			"In the out_edges_of operator, the graph should not be null!"); }
+		if ( graph == null ) { throw GamaRuntimeException.error("In the out_edges_of operator, the graph should not be null!"); }
 		if ( graph.containsVertex(vertex) ) { return new GamaList(graph.outgoingEdgesOf(vertex)); }
 		return new GamaList();
 	}
@@ -248,8 +239,7 @@ public class Graphs {
 	@doc(value = "returns the out degree of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = { "graphEpidemio out_degree_of (node(3))" }, see = {
 		"in_degree_of", "degree_of" })
 	public static int outDregreeOf(final IGraph graph, final Object vertex) {
-		if ( graph == null ) { throw new GamaRuntimeException(
-			"In the in_degree_of operator, the graph should not be null!"); }
+		if ( graph == null ) { throw GamaRuntimeException.error("In the in_degree_of operator, the graph should not be null!"); }
 		if ( graph.containsVertex(vertex) ) { return graph.outDegreeOf(vertex); }
 		return 0;
 	}
@@ -258,8 +248,7 @@ public class Graphs {
 	@doc(value = "returns the degree (in+out) of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = { "graphEpidemio degree_of (node(3))" }, see = {
 		"in_degree_of", "out_degree_of" })
 	public static int degreeOf(final IGraph graph, final Object vertex) {
-		if ( graph == null ) { throw new GamaRuntimeException(
-			"In the in_degree_of operator, the graph should not be null!"); }
+		if ( graph == null ) { throw GamaRuntimeException.error("In the in_degree_of operator, the graph should not be null!"); }
 		if ( graph.containsVertex(vertex) ) { return graph.degreeOf(vertex); }
 		return 0;
 	}
@@ -270,8 +259,7 @@ public class Graphs {
 		"graphFromMap neighbours_of node({12,45}) 	--: [{1.0;5.0},{34.0;56.0}]" }, see = {
 		"predecessors_of", "successors_of" })
 	public static IList neighboursOf(final IGraph graph, final Object vertex) {
-		if ( graph == null ) { throw new GamaRuntimeException(
-			"In the neighbours_of operator, the graph should not be null!"); }
+		if ( graph == null ) { throw GamaRuntimeException.error("In the neighbours_of operator, the graph should not be null!"); }
 		if ( graph.containsVertex(vertex) ) { return new GamaList(
 			org.jgrapht.Graphs.neighborListOf(graph, vertex)); }
 		return new GamaList();
@@ -567,7 +555,7 @@ public class Graphs {
 			final String format, final GamaFile<?,?> gamaFile, final ISpecies vertex_specy, final ISpecies edge_specy) throws GamaRuntimeException {		
 		
 		// TODO !
-		throw new GamaRuntimeException("not implemented: loading from gama file");
+		throw GamaRuntimeException.error("not implemented: loading from gama file");
 		
 	}
 	
@@ -611,7 +599,7 @@ public class Graphs {
 	public static IGraph primLoadGraphFromFile(final IScope scope,
 			final String format, final GamaFile<?,?> gamaFile) throws GamaRuntimeException {		
 		
-		throw new GamaRuntimeException("not implemented: loading from gama file");
+		throw GamaRuntimeException.error("not implemented: loading from gama file");
 
 	}
 	

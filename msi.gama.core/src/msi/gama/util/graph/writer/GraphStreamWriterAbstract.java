@@ -31,7 +31,7 @@ public abstract class GraphStreamWriterAbstract implements IGraphWriter {
 			sink.writeAll(GraphUtilsGraphStream.getGraphstreamGraphFromGamaGraph(thegraph), outputFilename);
 		} catch (IOException e) {
 			e.printStackTrace();
-			throw new GamaRuntimeException("error during the exportation of the graph to file "+outputFilename);
+			throw GamaRuntimeException.error("error during the exportation of the graph to file "+outputFilename);
 		}
 		
 			

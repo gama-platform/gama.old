@@ -34,7 +34,7 @@ public class _SpatialEdge extends _Edge<IShape> {
 	@Override
 	protected void init(final Object edge, final Object source, final Object target)
 		throws GamaRuntimeException {
-		if ( !(edge instanceof IShape) ) { throw new GamaRuntimeException(StringUtils.toGaml(edge) +
+		if ( !(edge instanceof IShape) ) { throw GamaRuntimeException.error(StringUtils.toGaml(edge) +
 			" is not a geometry"); }
 		super.init(edge, source, target);
 	}

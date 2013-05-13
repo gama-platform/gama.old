@@ -108,16 +108,14 @@ public class CaptureStatement extends AbstractStatementSequence {
 			if ( microSpeciesName != null ) { // micro-species name is specified in the "as" facet.
 				ISpecies microSpecies = macroSpecies.getMicroSpecies(microSpeciesName);
 
-				if ( microSpecies == null ) { throw new GamaRuntimeException(this.name +
-					" can't capture other agents as members of " + microSpeciesName +
-					" population because the " + microSpeciesName +
-					" population is not visible or doesn't exist."); }
+				if ( microSpecies == null ) { throw GamaRuntimeException.error(this.name +
+					" can't capture other agents as members of " + microSpeciesName + " population because the " +
+					microSpeciesName + " population is not visible or doesn't exist."); }
 
 				IPopulation microPopulation = macroAgent.getPopulationFor(microSpecies);
-				if ( microPopulation == null ) { throw new GamaRuntimeException(this.name +
-					" can't capture other agents as members of " + microSpeciesName +
-					" population because the " + microSpeciesName +
-					" population is not visible or doesn't exist."); }
+				if ( microPopulation == null ) { throw GamaRuntimeException.error(this.name +
+					" can't capture other agents as members of " + microSpeciesName + " population because the " +
+					microSpeciesName + " population is not visible or doesn't exist."); }
 
 				for ( IAgent c : microAgents ) {
 					if ( !macroAgent.canCapture(c, microSpecies) ) {
@@ -130,8 +128,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 				}
 
 				if ( !microAgents.isEmpty() ) {
-					capturedAgents =
-						macroAgent.captureMicroAgents(scope, microSpecies, microAgents);
+					capturedAgents = macroAgent.captureMicroAgents(scope, microSpecies, microAgents);
 					microAgents.clear();
 
 					if ( !capturedAgents.isEmpty() ) {
@@ -178,15 +175,14 @@ public class CaptureStatement extends AbstractStatementSequence {
 			}
 			raStr.remove(raStr.size() - 1);
 
-			StringBuffer raB = new StringBuffer();
+			StringBuilder raB = new StringBuilder();
 			for ( String s : raStr ) {
 				raB.append(s);
 			}
 
-			if ( microSpeciesName != null ) { throw new GamaRuntimeException(macroAgent.getName() +
-				" can't capture " + raStr.toString() + " as " + microSpeciesName + " agent"); }
-			throw new GamaRuntimeException(macroAgent.getName() + " can't capture " +
-				raStr.toString() +
+			if ( microSpeciesName != null ) { throw GamaRuntimeException.error(macroAgent.getName() + " can't capture " +
+				raStr.toString() + " as " + microSpeciesName + " agent"); }
+			throw GamaRuntimeException.error(macroAgent.getName() + " can't capture " + raStr.toString() +
 				" as micro-agents because no appripriate micro-population is found to welcome these agents.");
 		}
 

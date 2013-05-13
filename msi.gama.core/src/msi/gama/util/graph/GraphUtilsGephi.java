@@ -274,7 +274,7 @@ public class GraphUtilsGephi {
 			
 			// actually add the edge to the network
 			if (!gephiGraph.addEdge(createdEdge)) {
-				GAMA.reportError(new GamaRuntimeException("an edge was ignored, probably because some edges are redondant"));
+				GAMA.reportError(GamaRuntimeException.error("an edge was ignored, probably because some edges are redondant"));
 				continue;
 			}
 

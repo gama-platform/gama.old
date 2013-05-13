@@ -21,6 +21,7 @@ package msi.gama.outputs.layers;
 import java.awt.geom.Rectangle2D;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
@@ -72,12 +73,18 @@ public class LayerBox implements IDisplayLayerBox {
 		if ( refr != null ) {
 			refresh = refr;
 		}
-		IScope scope = GAMA.getDefaultScope();
-		setTransparency(scope, transparency);
-		setPosition(scope, position);
-		setExtent(scope, extent);
-		setElevation(scope, elevation);
-		setRefresh(scope, refr);
+		GAMA.run(new InScope.Void() {
+
+			@Override
+			public void process(IScope scope) {
+				setTransparency(scope, transparency);
+				setPosition(scope, position);
+				setExtent(scope, extent);
+				setElevation(scope, elevation);
+				setRefresh(scope, refr);
+			}
+		});
+
 	}
 
 	public LayerBox(final Double transp, final GamaPoint pos, final GamaPoint ext, final Double elev, final Boolean refr) {
@@ -101,10 +108,11 @@ public class LayerBox implements IDisplayLayerBox {
 	public void compute(final IScope scope) throws GamaRuntimeException {
 		try {
 			currentTransparency =
-				constantTransparency == null ? 1d - Math.min(Math.max(Cast.asFloat(scope, transparency.value(scope)), 0d),
-					1d) : constantTransparency;
+				constantTransparency == null ? 1d - Math.min(
+					Math.max(Cast.asFloat(scope, transparency.value(scope)), 0d), 1d) : constantTransparency;
 			if ( !constantBoundingBox ) {
-				currentPosition = constantPosition == null ? Cast.asPoint(scope, position.value(scope)) : constantPosition;
+				currentPosition =
+					constantPosition == null ? Cast.asPoint(scope, position.value(scope)) : constantPosition;
 				currentExtent = constantExtent == null ? Cast.asPoint(scope, extent.value(scope)) : constantExtent;
 				if ( currentPosition != null && currentExtent != null ) {
 					computeBoundingBox();
@@ -114,7 +122,7 @@ public class LayerBox implements IDisplayLayerBox {
 				currentRefresh = constantRefresh == null ? Cast.asBool(scope, refresh.value(scope)) : constantRefresh;
 			}
 		} catch (Exception e) {
-			throw new GamaRuntimeException(e);
+			throw GamaRuntimeException.create(e);
 		}
 
 	}

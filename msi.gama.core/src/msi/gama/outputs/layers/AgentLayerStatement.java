@@ -81,8 +81,7 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void step(final IScope scope) throws GamaRuntimeException {
-		super.step(scope);
+	public void _step(final IScope scope) {
 		// GUI.debug("Computing AgentDisplayLayer " + getName());
 		synchronized (agents) {
 			if ( scope.getClock().getCycle() == 0 || agentsHaveChanged() ) {
@@ -98,8 +97,7 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void init(final IScope scope) throws GamaRuntimeException {
-		super.init(scope);
+	public void _init(final IScope scope) {
 		computeAspectName(scope);
 		// compute(sim, 0);
 	}

@@ -26,7 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -88,12 +88,11 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.NAME, type = IType.NEW_VAR_ID, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.VALUE, type = IType.FLOAT, optional = false),
-	@facet(name = IKeyword.UPDATE, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.FUNCTION, type = IType.NONE_STR, optional = true),
+	@facet(name = IKeyword.UPDATE, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.FUNCTION, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.ENVIRONMENT, type = IType.SPECIES, optional = false),
 	@facet(name = IKeyword.DECAY, type = IType.FLOAT, optional = false),
-	@facet(name = IKeyword.PROPAGATION, type = IType.LABEL, values = { IKeyword.DIFFUSION,
-		IKeyword.GRADIENT }, optional = true),
+	@facet(name = IKeyword.PROPAGATION, type = IType.LABEL, values = { IKeyword.DIFFUSION, IKeyword.GRADIENT }, optional = true),
 	@facet(name = IKeyword.PROPORTION, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.VARIATION, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.RANGE, type = IType.FLOAT, optional = true),
@@ -105,6 +104,7 @@ public class SignalVariable extends NumberVariable {
 	private final Short signalType;
 	private final Double prop, range, variation;
 	private final String envName;
+	private GamaSpatialMatrix environment; // Lazily built
 	private final IExpression typeExpr, propExpr, rangeExpr, variationExpr;
 
 	public SignalVariable(final IDescription sd) throws GamaRuntimeException {
@@ -118,35 +118,36 @@ public class SignalVariable extends NumberVariable {
 		signalType = typeExpr == null ? GridDiffuser.DIFFUSION : null;
 		prop = propExpr == null ? 1.0 : null;
 		variation = variationExpr == null ? signalType == null ? null : 0d : null;
-		range =
-			rangeExpr == null ? -1000.0 : rangeExpr.isConst() ? Cast.asFloat(null,
-				rangeExpr.value(GAMA.getDefaultScope())) : null;
+		range = rangeExpr == null ? -1000.0 : rangeExpr.isConst() ? Cast.as(rangeExpr, Double.class) : null;
 	}
 
 	@Override
-	protected void _setVal(final IAgent agent, final IScope scope, final Object v)
-		throws GamaRuntimeException {
+	protected void _setVal(final IAgent agent, final IScope scope, final Object v) throws GamaRuntimeException {
 		super._setVal(agent, scope, v);
-		GamaSpatialMatrix environment =
-			(GamaSpatialMatrix) agent.getPopulationFor(envName).getTopology().getPlaces();
+
 		final double result = Cast.asFloat(scope, v);
 		if ( result > 0.0 ) {
 			short signalType =
 				this.signalType == null ? IKeyword.GRADIENT.equals(scope.evaluate(typeExpr, agent))
 					? GridDiffuser.GRADIENT : GridDiffuser.DIFFUSION : this.signalType;
 			double prop =
-				this.prop == null ? Math.min(1.0,
-					Math.max(0.0, Cast.asFloat(scope, scope.evaluate(propExpr, agent))))
+				this.prop == null ? Math.min(1.0, Math.max(0.0, Cast.asFloat(scope, scope.evaluate(propExpr, agent))))
 					: this.prop;
 			double variation =
-				this.variation == null ? Cast.asFloat(scope, scope.evaluate(variationExpr, agent))
-					: this.variation;
+				this.variation == null ? Cast.asFloat(scope, scope.evaluate(variationExpr, agent)) : this.variation;
 			double range =
-				this.range == null ? Math.max(0.0,
-					Cast.asFloat(scope, scope.evaluate(rangeExpr, agent))) : this.range;
-			environment.diffuseVariable(scope, getName(), result, signalType, prop, variation,
+				this.range == null ? Math.max(0.0, Cast.asFloat(scope, scope.evaluate(rangeExpr, agent))) : this.range;
+			getEnvironment(scope).diffuseVariable(scope, getName(), result, signalType, prop, variation,
 				agent.getLocation(), range);
 		}
+	}
+
+	private GamaSpatialMatrix getEnvironment(IScope scope) {
+		if ( environment == null ) {
+			environment =
+				(GamaSpatialMatrix) scope.getSimulationScope().getPopulationFor(envName).getTopology().getPlaces();
+		}
+		return environment;
 	}
 
 }

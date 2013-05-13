@@ -27,7 +27,8 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.GAMA;
+import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.descriptions.IDescription;
@@ -45,7 +46,7 @@ import msi.gaml.types.IType;
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
-	@facet(name = IKeyword.VALUE, type = IType.NONE_STR, optional = true),
+	@facet(name = IKeyword.VALUE, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.AGENT, IKeyword.SPECIES, IKeyword.DYNAMIC }, optional = false) }, omissible = IKeyword.NAME)
 public class InspectDisplayOutput extends MonitorOutput {
 
@@ -82,11 +83,18 @@ public class InspectDisplayOutput extends MonitorOutput {
 	}
 
 	public void launch() throws GamaRuntimeException {
-		init(GAMA.getDefaultScope());
-		outputManager.addOutput(this);
-		schedule();
-		open();
-		update();
+		GAMA.run(new InScope.Void() {
+
+			@Override
+			public void process(IScope scope) {
+				init(scope);
+				outputManager.addOutput(InspectDisplayOutput.this);
+				schedule();
+				open();
+				update();
+			}
+		});
+
 	}
 
 	@Override

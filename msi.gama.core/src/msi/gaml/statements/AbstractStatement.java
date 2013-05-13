@@ -49,6 +49,7 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
 		Object result = null;
+		if ( scope.interrupted() ) { return result; }
 		try {
 			result = privateExecuteIn(scope);
 		} catch (GamaRuntimeException e) {
@@ -98,10 +99,10 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 		sb.append(k).append(' ');
 		for ( Facet e : description.getFacets().entrySet() ) {
 			if ( e != null && !e.getKey().equals(IKeyword.KEYWORD) ) {
-				sb.append(e.getKey()).append(": ").append(e.getValue().getExpression().toGaml())
-					.append(" ");
+				sb.append(e.getKey()).append(": ").append(e.getValue().getExpression().toGaml()).append(" ");
 			}
 		}
+		// FIXME Add ";" / Consider the case of blocks.
 		return sb.toString();
 	}
 

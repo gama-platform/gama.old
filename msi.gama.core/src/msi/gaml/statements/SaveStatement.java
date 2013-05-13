@@ -50,7 +50,7 @@ import com.vividsolutions.jts.geom.Geometry;
 @symbol(name = IKeyword.SAVE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, with_args = true, remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
 @facets(value = { @facet(name = IKeyword.TYPE, type = IType.ID, optional = true),
-	@facet(name = IKeyword.DATA, type = IType.NONE_STR, optional = true),
+	@facet(name = IKeyword.DATA, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.REWRITE, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.TO, type = IType.STRING, optional = false),
 	@facet(name = IKeyword.WITH, type = { IType.MAP }, optional = true) }, omissible = IKeyword.DATA)
@@ -114,7 +114,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			} catch (GamaRuntimeException e) {
 				throw e;
 			} catch (IOException e) {
-				throw new GamaRuntimeException(e);
+				throw GamaRuntimeException.create(e);
 			} 
 			IExpression item = getFacet(IKeyword.DATA);
 			saveText(type, item, fileTxt, scope);
@@ -138,7 +138,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 		} else {
 
-			throw new GamaRuntimeException("Unable to save, because this format is not recognized ('" + type + "')");
+			throw GamaRuntimeException.error("Unable to save, because this format is not recognized ('" + type + "')");
 		}
 		return Cast.asString(scope, file.value(scope));
 	}
@@ -165,7 +165,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		} catch (GamaRuntimeException e) {
 			throw e;
 		} catch (Exception e) {
-			throw new GamaRuntimeException(e);
+			throw GamaRuntimeException.create(e);
 		}
 
 	}
@@ -195,7 +195,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		} catch (GamaRuntimeException e) {
 			throw e;
 		} catch (IOException e) {
-			throw new GamaRuntimeException(e);
+			throw GamaRuntimeException.create(e);
 		}
 
 	}
@@ -243,7 +243,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 			// TODO Pr�voir un locationConverter pour passer d'un environnement � l'autre
 
-			geom = scope.getSimulationScope().getGisUtils().inverseTransform(geom);
+			geom = scope.getTopology().getGisUtils().inverseTransform(geom);
 			liste.add(geom);
 			if ( attributes != null ) {
 				for ( Object e : attributes.values() ) {
@@ -263,7 +263,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	}
 
 	private void writePRJ(IScope scope, final String path) {
-		CoordinateReferenceSystem crs = scope.getSimulationScope().getGisUtils().getCrs();
+		CoordinateReferenceSystem crs = scope.getTopology().getGisUtils().getCrs();
 		if ( crs != null ) {
 			try {
 				FileWriter fw = new FileWriter(path.replace(".shp", ".prj"));

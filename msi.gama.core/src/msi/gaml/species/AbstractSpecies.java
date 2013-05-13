@@ -31,7 +31,6 @@ import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.*;
 import msi.gaml.statements.IStatement.WithArgs;
-import msi.gaml.types.IType;
 import msi.gaml.variables.IVariable;
 
 /**
@@ -86,8 +85,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public GamaMap mapValue(final IScope scope) throws GamaRuntimeException {
 		IList<IAgent> agents = listValue(scope);
-		// Default behavior : Returns a map containing the names of agents as keys and the
-		// agents themselves as values
+		// Default behavior : Returns a map containing the names of agents as keys and the agents themselves as values
 		final GamaMap result = new GamaMap();
 		for ( IAgent agent : agents ) {
 			result.put(agent.getName(), agent);
@@ -121,34 +119,14 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 		// Species are immutable
 	}
 
-	private void addOneMicroSpecies(final ISpecies oneMicroSpecies) {
-		oneMicroSpecies.setMacroSpecies(this);
-		microSpecies.put(oneMicroSpecies.getName(), oneMicroSpecies);
-	}
-
 	@Override
 	public IList<ISpecies> getMicroSpecies() {
 		IList<ISpecies> retVal = new GamaList<ISpecies>();
 		retVal.addAll(microSpecies.values());
-
 		ISpecies parentSpecies = this.getParentSpecies();
 		if ( parentSpecies != null ) {
 			retVal.addAll(parentSpecies.getMicroSpecies());
 		}
-
-		return retVal;
-	}
-
-	@Override
-	public IList<String> getMicroSpeciesNames() {
-		IList<String> retVal = new GamaList<String>();
-		retVal.addAll(microSpecies.keySet());
-
-		ISpecies parentSpecies = this.getParentSpecies();
-		if ( parentSpecies != null ) {
-			retVal.addAll(parentSpecies.getMicroSpeciesNames());
-		}
-
 		return retVal;
 	}
 
@@ -162,16 +140,11 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	public ISpecies getMicroSpecies(final String microSpeciesName) {
 		ISpecies retVal = microSpecies.get(microSpeciesName);
 		if ( retVal != null ) { return retVal; }
-
 		ISpecies parentSpecies = this.getParentSpecies();
 		if ( parentSpecies != null ) { return parentSpecies.getMicroSpecies(microSpeciesName); }
-
 		return null;
 	}
 
-	/**
-	 * @see ISpecies
-	 */
 	@Override
 	public boolean containMicroSpecies(final ISpecies species) {
 		ISpecies parentSpecies = this.getParentSpecies();
@@ -191,14 +164,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public IList<ISpecies> getPeersSpecies() {
-		if ( macroSpecies == null ) { return GamaList.EMPTY_LIST; }
-		IList<ISpecies> result = new GamaList(macroSpecies.getMicroSpecies());
-		result.remove(this);
-		return result;
-	}
-
-	@Override
 	public boolean isPeer(final ISpecies other) {
 		return other != null && other.getMacroSpecies().equals(this.getMacroSpecies());
 	}
@@ -207,7 +172,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	public List<ISpecies> getSelfWithParents() {
 		List<ISpecies> retVal = new GamaList<ISpecies>();
 		retVal.add(this);
-
 		ISpecies currentParent = this.getParentSpecies();
 		while (currentParent != null) {
 			retVal.add(currentParent);
@@ -229,47 +193,17 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 			if ( potentialParent != null ) { return potentialParent; }
 			currentMacroSpec = currentMacroSpec.getMacroSpecies();
 		}
-
-		return null;
-
-		/*
-		 * if ( parentSpecies != null ) { return parentSpecies; }
-		 * 
-		 * SpeciesDescription parentSpecDesc = getDescription().getParentSpecies();
-		 * if ( parentSpecDesc == null ) { return null; }
-		 * 
-		 * parentSpecies = findParentSpecies(parentSpecDesc);
-		 * return parentSpecies;
-		 */
-	}
-
-	@Override
-	public ISpecies getPeerSpecies(final String peerName) {
-		for ( ISpecies p : getPeersSpecies() ) {
-			if ( p.getName().equals(peerName) ) { return p; }
-		}
-
 		return null;
 	}
 
 	@Override
 	public boolean equals(final Object other) {
-		/**
-		 * species name is unique
-		 */
-		if ( other instanceof ISpecies ) { return this.getName().equals(((ISpecies) other).getName()); }
-
-		return false;
+		return other instanceof ISpecies && this.getName().equals(((ISpecies) other).getName());
 	}
 
 	@Override
 	public IArchitecture getArchitecture() {
 		return getDescription().getControl();
-	}
-
-	@Override
-	public void addVariable(final IVariable v) {
-		variables.put(v.getName(), v);
 	}
 
 	@Override
@@ -293,15 +227,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public void addAction(final IStatement ce) {
-		actions.put(ce.getName(), (ActionStatement) ce);
-	}
-
-	public void addUserCommand(final IStatement ce) {
-		userCommands.put(ce.getName(), (UserCommandStatement) ce);
-	}
-
-	@Override
 	public Collection<UserCommandStatement> getUserCommands() {
 		return userCommands.values();
 	}
@@ -314,11 +239,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public IList<ActionStatement> getActions() {
 		return new GamaList<ActionStatement>(actions.values());
-	}
-
-	@Override
-	public void addAspect(final IStatement ce) {
-		aspects.put(ce.getName(), (AspectStatement) ce);
 	}
 
 	@Override
@@ -342,11 +262,6 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public void addBehavior(final IStatement c) {
-		behaviors.add(c);
-	}
-
-	@Override
 	public IList<IStatement> getBehaviors() {
 		return behaviors;
 	}
@@ -354,32 +269,29 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public void setChildren(final List<? extends ISymbol> children) {
 		for ( ISymbol s : children ) {
-			addChild(s);
+			if ( s instanceof ISpecies ) {
+				ISpecies oneMicroSpecies = (ISpecies) s;
+				oneMicroSpecies.setMacroSpecies(this);
+				microSpecies.put(oneMicroSpecies.getName(), oneMicroSpecies);
+			} else if ( s instanceof IVariable ) {
+				variables.put(s.getName(), (IVariable) s);
+			} else if ( s instanceof AspectStatement ) {
+				aspects.put(s.getName(), (AspectStatement) s);
+			} else if ( s instanceof ActionStatement ) {
+				actions.put(s.getName(), (ActionStatement) s);
+			} else if ( s instanceof UserCommandStatement ) {
+				userCommands.put(s.getName(), (UserCommandStatement) s);
+			} else if ( s instanceof IStatement ) {
+				behaviors.add((IStatement) s); // reflexes, states or tasks
+			}
 		}
 		createControl();
-	}
-
-	@Override
-	public void addChild(final ISymbol s) {
-		if ( s instanceof ISpecies ) {
-			addOneMicroSpecies((ISpecies) s);
-		} else if ( s instanceof IVariable ) {
-			addVariable((IVariable) s);
-		} else if ( s instanceof AspectStatement ) {
-			addAspect((AspectStatement) s);
-		} else if ( s instanceof ActionStatement ) {
-			addAction((ActionStatement) s);
-		} else if ( s instanceof UserCommandStatement ) {
-			addUserCommand((UserCommandStatement) s);
-		} else if ( s instanceof IStatement ) {
-			addBehavior((IStatement) s); // reflexes, states or tasks
-		}
 	}
 
 	protected void createControl() {
 		IArchitecture control = getArchitecture();
 		List<IStatement> behaviors = getBehaviors();
-		if ( control == null ) { throw new GamaRuntimeException("The control of this species cannot be computed"); }
+		if ( control == null ) { throw GamaRuntimeException.error("The control of this species cannot be computed"); }
 		control.setChildren(behaviors);
 		control.verifyBehaviors(this);
 	}
@@ -387,41 +299,26 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public void dispose() {
 		super.dispose();
-
 		for ( IVariable v : variables.values() ) {
 			v.dispose();
 		}
 		variables.clear();
-
 		for ( AspectStatement ac : aspects.values() ) {
 			ac.dispose();
 		}
 		aspects.clear();
-
 		for ( ActionStatement ac : actions.values() ) {
 			ac.dispose();
 		}
 		actions.clear();
-
 		for ( IStatement c : behaviors ) {
 			c.dispose();
 		}
+		// TODO Behaviors are not disposed ?
 		behaviors.clear();
-
 		macroSpecies = null;
-
 		// TODO dispose micro_species first???
 		microSpecies.clear();
-	}
-
-	@Override
-	public IType getAgentType() {
-		return getDescription().getType();
-	}
-
-	@Override
-	public IAgentConstructor getAgentConstructor() {
-		return getDescription().getAgentConstructor();
 	}
 
 	// TODO review this

@@ -22,18 +22,16 @@ import java.util.*;
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 
 public class GamaObjectMatrix extends GamaMatrix<Object> {
 
 	static public GamaObjectMatrix from(IScope scope, final int c, final int r, final IMatrix m) {
-		if ( m instanceof GamaFloatMatrix ) { return new GamaObjectMatrix(scope, c, r,
-			((GamaFloatMatrix) m).matrix); }
-		if ( m instanceof GamaObjectMatrix ) { return new GamaObjectMatrix(scope, c, r,
-			((GamaObjectMatrix) m).matrix); }
-		if ( m instanceof GamaIntMatrix ) { return new GamaObjectMatrix(scope, c, r,
-			((GamaIntMatrix) m).matrix); }
+		if ( m instanceof GamaFloatMatrix ) { return new GamaObjectMatrix(scope, c, r, ((GamaFloatMatrix) m).matrix); }
+		if ( m instanceof GamaObjectMatrix ) { return new GamaObjectMatrix(scope, c, r, ((GamaObjectMatrix) m).matrix); }
+		if ( m instanceof GamaIntMatrix ) { return new GamaObjectMatrix(scope, c, r, ((GamaIntMatrix) m).matrix); }
 		return null;
 	}
 
@@ -64,8 +62,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 		java.lang.System.arraycopy(objects, 0, matrix, 0, Math.min(objects.length, rows * cols));
 	}
 
-	public GamaObjectMatrix(IScope scope, final List objects, final boolean flat,
-		final ILocation preferredSize) {
+	public GamaObjectMatrix(IScope scope, final List objects, final boolean flat, final ILocation preferredSize) {
 		super(scope, objects, flat, preferredSize);
 		matrix = new Object[numRows * numCols];
 
@@ -256,8 +253,7 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 	}
 
 	@Override
-	public boolean _removeAll(IScope scope, final IContainer<?, Object> list)
-		throws GamaRuntimeException {
+	public boolean _removeAll(IScope scope, final IContainer<?, Object> list) throws GamaRuntimeException {
 		boolean removed = false;
 		for ( int i = 0; i < matrix.length; i++ ) {
 			if ( list.contains(scope, matrix[i]) ) { // VERIFY NULL SCOPE
@@ -276,19 +272,26 @@ public class GamaObjectMatrix extends GamaMatrix<Object> {
 
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder(numRows * numCols * 5);
+		final StringBuilder sb = new StringBuilder(numRows * numCols * 5);
 		sb.append('[');
-		for ( int row = 0; row < numRows; row++ ) {
-			for ( int col = 0; col < numCols; col++ ) {
-				sb.append(get(GAMA.getDefaultScope(), col, row));
-				if ( col < numCols - 1 ) {
-					sb.append(',');
+		GAMA.run(new InScope.Void() {
+
+			@Override
+			public void process(IScope scope) {
+				for ( int row = 0; row < numRows; row++ ) {
+					for ( int col = 0; col < numCols; col++ ) {
+						sb.append(get(scope, col, row));
+						if ( col < numCols - 1 ) {
+							sb.append(',');
+						}
+					}
+					if ( row < numRows - 1 ) {
+						sb.append(';');
+					}
 				}
 			}
-			if ( row < numRows - 1 ) {
-				sb.append(';');
-			}
-		}
+		});
+
 		sb.append(']');
 		return sb.toString();
 	}

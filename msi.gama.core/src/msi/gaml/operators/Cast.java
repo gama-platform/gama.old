@@ -27,7 +27,7 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
@@ -45,11 +45,26 @@ import msi.gaml.types.*;
  */
 public class Cast {
 
+	public static <T> T as(Object value, Class<T> clazz) {
+		IScope scope = GAMA.obtainNewScope();
+		IType<T> t = Types.get(clazz);
+		T result = t.cast(scope, value, null);
+		GAMA.releaseScope(scope);
+		return result;
+	}
+
+	public static <T> T as(IExpression value, Class<T> clazz) {
+		IScope scope = GAMA.obtainNewScope();
+		IType<T> t = Types.get(clazz);
+		T result = t.cast(scope, value.value(scope), null);
+		GAMA.releaseScope(scope);
+		return result;
+	}
+
 	@operator(value = { IKeyword.IS })
 	@doc(value = "returns true is the left operand is of the right operand type, false otherwise", examples = {
 		"0 is int 		--: 	true", "an_agent is node 	--: 	true", "1 is float 		--: 	false" })
-	public static Boolean isA(final IScope scope, final Object a, final IExpression b)
-		throws GamaRuntimeException {
+	public static Boolean isA(final IScope scope, final Object a, final IExpression b) throws GamaRuntimeException {
 		IType type = asType(scope, b);
 		if ( a == null ) { return type == Types.NO_TYPE; }
 		if ( a instanceof Integer ) { return type == Types.get(IType.INT); }
@@ -69,14 +84,13 @@ public class Cast {
 		return s.implementsSkill(skill);
 	}
 
-	public static IType asType(final IScope scope, final IExpression expr)
-		throws GamaRuntimeException {
+	public static IType asType(final IScope scope, final IExpression expr) throws GamaRuntimeException {
 		Object value = expr.value(scope);
 		if ( value instanceof String ) {
 			IModel m = scope.getSimulationScope().getModel();
 			return m.getDescription().getTypeNamed((String) value);
 		} else if ( value instanceof ISpecies ) {
-			return ((ISpecies) value).getAgentType();
+			return ((ISpecies) value).getDescription().getType();
 		} else {
 			return expr.getType();
 		}
@@ -84,10 +98,8 @@ public class Cast {
 
 	@operator(value = IKeyword.CONTAINER, content_type = ITypeProvider.FIRST_CONTENT_TYPE, index_type = ITypeProvider.FIRST_KEY_TYPE)
 	@doc(value = "casting of the operand to a container", special_cases = {
-		"if the operand is a container, returns itself",
-		"otherwise, returns the operand casted to a list" }, see = "list")
-	public static IContainer asContainer(final IScope scope, final Object val)
-		throws GamaRuntimeException {
+		"if the operand is a container, returns itself", "otherwise, returns the operand casted to a list" }, see = "list")
+	public static IContainer asContainer(final IScope scope, final Object val) throws GamaRuntimeException {
 		return GamaContainerType.staticCast(scope, val, null);
 	}
 
@@ -104,8 +116,8 @@ public class Cast {
 	@doc(value = "casting of the operand to a graph.", special_cases = {
 		"if the operand is a graph, returns the graph itself",
 		"if the operand is a list, returns a new graph with the elements of the left-hand operand as vertices and no edge. "
-			+ "The graph will be spatial is the right-hand operand is true;",
-		"if the operand is a map, ", "otherwise, returns nil" }, examples = {
+			+ "The graph will be spatial is the right-hand operand is true;", "if the operand is a map, ",
+		"otherwise, returns nil" }, examples = {
 		"graph([1,5,9,3]) 	--: ([1: in[] + out[], 3: in[] + out[], 5: in[] + out[], 9: in[] + out[]], [])",
 		"graph(['a'::345, 'b'::13])  --:  ([b: in[] + out[b::13], a: in[] + out[a::345], 13: in[b::13] + out[], 345: in[a::345] + out[]], [a::345=(a,345), b::13=(b,13)])",
 		"graph(a_graph)	--: a_graph", "graph(node1)	--: null" })
@@ -126,8 +138,7 @@ public class Cast {
 		"topology(0) 		--: null",
 		"topology(a_graph)	--: Multiple topology in POLYGON ((24.712119771887785 7.867357373616512, 24.712119771887785 61.283226839310565, 82.4013676510046  7.867357373616512)) "
 			+ "at location[53.556743711446195;34.57529210646354]" }, see = { "geometry" })
-	public static ITopology asTopology(final IScope scope, final Object val)
-		throws GamaRuntimeException {
+	public static ITopology asTopology(final IScope scope, final Object val) throws GamaRuntimeException {
 		return GamaTopologyType.staticCast(scope, val, null);
 	}
 
@@ -137,9 +148,8 @@ public class Cast {
 		"if the operand is an agent, returns the agent (resp. tries to cast this agent to species name and returns nil if the agent is instance of another species);",
 		"if the operand is an int, returns the agent (resp. instance of species name) with this unique index;" }, examples = {
 		"species node {}", "node(0) 	--: node0", "node(3.78) 		--: null", "node(true) 		--: null",
-		"node({23, 4.0} 		--: node2", "node(5::34) 		--: null", "node(green) 		--: null",
-		"node([1,5,9,3]) 	--: null", "node(node1)		--: node1", "node('4')		--: null" }, see = {
-		"of_species", "species" })
+		"node({23, 4.0} 		--: node2", "node(5::34) 		--: null", "node(green) 		--: null", "node([1,5,9,3]) 	--: null",
+		"node(node1)		--: node1", "node('4')		--: null" }, see = { "of_species", "species" })
 	public static IAgent asAgent(final IScope scope, final Object val) throws GamaRuntimeException {
 		return (IAgent) Types.get(IType.AGENT).cast(scope, val, null);
 	}
@@ -150,8 +160,7 @@ public class Cast {
 		"if the left-hand operand is nil, returns nil",
 		"if the left-hand operand is an agent, if the right-hand is a agent, returns it, otherwise returns nil",
 		"if the left-oprand is a integer, returns an agent with the right-operans as id",
-		"if the left-operand is a poiny, returns the agent the closest to right-hand operand",
-		"otherwise, returns nil" }, see = { "agent" })
+		"if the left-operand is a poiny, returns the agent the closest to right-hand operand", "otherwise, returns nil" }, see = { "agent" })
 	public static IAgent asAgent(final IScope scope, final Object val, final ISpecies species)
 		throws GamaRuntimeException {
 		if ( val == null ) { return null; }
@@ -160,12 +169,10 @@ public class Cast {
 			// if ( ((IAgent) val).dead() ) { return null; }
 			boolean result = ((IAgent) val).isInstanceOf(species, false);
 			if ( result ) { return (IAgent) val; }
-			throw new GamaRuntimeException("Cast exception: " + val + " can not be casted into a " +
-				species);
+			throw GamaRuntimeException.error("Cast exception: " + val + " can not be casted into a " + species);
 		}
 		// if ( val instanceof String ) { return species.getAgent((String) val); }
-		if ( val instanceof Integer ) { return scope.getAgentScope().getPopulationFor(species)
-			.getAgent((Integer) val); }
+		if ( val instanceof Integer ) { return scope.getAgentScope().getPopulationFor(species).getAgent((Integer) val); }
 		if ( val instanceof ILocation ) { return scope.getAgentScope().getPopulationFor(species)
 			.getAgent((GamaPoint) val); }
 		return null;
@@ -174,22 +181,19 @@ public class Cast {
 	@operator(value = IKeyword.AS_SKILL, type = ITypeProvider.FIRST_TYPE)
 	public static IAgent asSkill(final IScope scope, final Object val, final String skill) {
 		if ( isSkill(scope, val, skill) ) { return (IAgent) val; }
-		throw new GamaRuntimeException("Cast exception: " + val + " can not be viewed as a " +
-			skill);
+		throw GamaRuntimeException.error("Cast exception: " + val + " can not be viewed as a " + skill);
 	}
 
 	@operator(value = IKeyword.BOOL, can_be_const = true)
 	@doc(value = "casting of the operand to a boolean value.", special_cases = {
-		"if the operand is null, returns false;",
-		"if the operand is an agent, returns true if the agent is not dead;",
+		"if the operand is null, returns false;", "if the operand is an agent, returns true if the agent is not dead;",
 		"if the operand is an int or a float, returns true if it is not equal to 0 (or 0.0);",
 		"if the operand is a file, bool is formally equivalent to exists;",
 		"if the operand is a container, bool is formally equivalent to not empty (a la Lisp);",
-		"if the operand is a string, returns true is the operand is true;",
-		"Otherwise, returns false." }, examples = { "bool(3.78) 		--: true",
-		"bool(true) 		--: true", "bool({23, 4.0} 	--: false", "bool(5::34) 		--: false",
-		"bool(green) 		--: false", "bool([1,5,9,3]) 	--: true", "bool(node1)		--: true",
-		"bool('4')			--: false", "bool('4.7')		--: false " })
+		"if the operand is a string, returns true is the operand is true;", "Otherwise, returns false." }, examples = {
+		"bool(3.78) 		--: true", "bool(true) 		--: true", "bool({23, 4.0} 	--: false", "bool(5::34) 		--: false",
+		"bool(green) 		--: false", "bool([1,5,9,3]) 	--: true", "bool(node1)		--: true", "bool('4')			--: false",
+		"bool('4.7')		--: false " })
 	public static Boolean asBool(final IScope scope, final Object val) {
 		return GamaBoolType.staticCast(scope, val, null);
 	}
@@ -210,10 +214,8 @@ public class Cast {
 		"rgb(3.78) 		--: rgb([0,0,3])", "rgb(true) 		--: rgb([0,0,0]) //black ",
 		"rgb({23, 4.0} 		--: rgb([0,0,0]) //black ", "rgb(5::34) 		--: rgb([0,0,0]) //black ",
 		"rgb(green) 		--: rgb([0,255,0]) //green ", "rgb([1,5,9,3]) 			--: rgb([1,5,9])",
-		"rgb(node1)		--: rgb([0,0,1])", "rgb('4')		--: rgb([0,0,4])",
-		"rgb('4.7')		--:  // Exception " })
-	public static GamaColor asColor(final IScope scope, final Object val)
-		throws GamaRuntimeException {
+		"rgb(node1)		--: rgb([0,0,1])", "rgb('4')		--: rgb([0,0,4])", "rgb('4.7')		--:  // Exception " })
+	public static GamaColor asColor(final IScope scope, final Object val) throws GamaRuntimeException {
 		return GamaColorType.staticCast(scope, val, null);
 	}
 
@@ -221,10 +223,9 @@ public class Cast {
 	@doc(value = "casting of the operand to a floating point value.", special_cases = {
 		"if the operand is numerical value, returns its value as a floating point value;",
 		"if the operand is a string, tries to convert its content to a floating point value;",
-		"if the operand is a boolean, returns 1.0 for true and 0.0 for false;",
-		"otherwise, returns 0.0" }, examples = { "float(7) 				--: 7.0", "float(true) 			--: 1.0",
-		"float({23, 4.0} 		--: 0.0", "float(5::34) 			--: 0.0", "float(green) 			--: 0.0",
-		"float([1,5,9,3]) 		--: 0.0", "float(node1)			--: 0.0", "int('4')				--: 4.0",
+		"if the operand is a boolean, returns 1.0 for true and 0.0 for false;", "otherwise, returns 0.0" }, examples = {
+		"float(7) 				--: 7.0", "float(true) 			--: 1.0", "float({23, 4.0} 		--: 0.0", "float(5::34) 			--: 0.0",
+		"float(green) 			--: 0.0", "float([1,5,9,3]) 		--: 0.0", "float(node1)			--: 0.0", "int('4')				--: 4.0",
 		"int('4.7')				--: 4.7 " }, see = { "int" })
 	public static Double asFloat(final IScope scope, final Object val) {
 		return GamaFloatType.staticCast(scope, val, null);
@@ -238,10 +239,9 @@ public class Cast {
 		"if the operand is a pair of two agents or geometries, returns the link between the geometry of each element of the operand",
 		"if the operans is a graph, returns the corresponding multi-points geometry",
 		"if the operand is a container of points, if first and the last points are the same, returns the polygon built from these points",
-		"if the operand is a container, returns the union of the geometry of each element",
-		"otherwise, returns nil" }, examples = { "geometry({23, 4.0}) 					--: Point",
-		"geometry(a_graph)						--: MultiPoint", "geometry(node1)						--: Point",
-		"geometry([{0,0},{1,4},{4,8},{0,0}])	--: Polygon	" })
+		"if the operand is a container, returns the union of the geometry of each element", "otherwise, returns nil" }, examples = {
+		"geometry({23, 4.0}) 					--: Point", "geometry(a_graph)						--: MultiPoint",
+		"geometry(node1)						--: Point", "geometry([{0,0},{1,4},{4,8},{0,0}])	--: Polygon	" })
 	public static IShape asGeometry(final IScope scope, final Object s) throws GamaRuntimeException {
 		return GamaGeometryType.staticCast(scope, s, null);
 	}
@@ -254,8 +254,8 @@ public class Cast {
 		"if the operand is a boolean, returns 1 for true and 0 for false;",
 		"if the operand is a color, returns its RGB value as an integer;", "otherwise, returns 0" }, examples = {
 		"int(3.78) 			--: 3", "int(true) 			--: 1", "int({23, 4.0} 		--: 0", "int(5::34) 		--: 0",
-		"int(green) 		--: -16711936", "int([1,5,9,3]) 	--: 0", "int(node1)			--: 1",
-		"int('4')			--: 4", "int('4.7')			--:  // Exception " }, see = { "round", "float" })
+		"int(green) 		--: -16711936", "int([1,5,9,3]) 	--: 0", "int(node1)			--: 1", "int('4')			--: 4",
+		"int('4.7')			--:  // Exception " }, see = { "round", "float" })
 	public static Integer asInt(final IScope scope, final Object val) {
 		return GamaIntegerType.staticCast(scope, val, null);
 	}
@@ -264,8 +264,8 @@ public class Cast {
 	@doc(value = "parses the string argument as a signed integer in the radix specified by the second argument.", special_cases = {
 		"if the left operand is nil or empty, as_int returns 0",
 		"if the left operand does not represent an integer in the specified radix, as_int throws an exception " }, examples = {
-		"'20' as_int 10 		--: 20;", "'20' as_int 8 		--: 16;", "'20' as_int 16 		--: 32",
-		"'1F' as_int 16		--: 31", "'hello' as_int 32 	--: 18306744" }, see = { "int" })
+		"'20' as_int 10 		--: 20;", "'20' as_int 8 		--: 16;", "'20' as_int 16 		--: 32", "'1F' as_int 16		--: 31",
+		"'hello' as_int 32 	--: 18306744" }, see = { "int" })
 	public static Integer asInt(final IScope scope, final String string, final Integer radix)
 		throws GamaRuntimeException {
 		if ( string == null || string.isEmpty() ) { return 0; }
@@ -313,8 +313,7 @@ public class Cast {
 		"if the operand is a list, returns a 1-row matrix. Notice that each element of the list should be a single element or lists with the same length;",
 		"if the operand is a graph, returns nil;",
 		"otherwise, returns a 1x1 matrix with the operand at the (0,0) position." }, see = "as_matrix")
-	public static IMatrix asMatrix(final IScope scope, final Object val)
-		throws GamaRuntimeException {
+	public static IMatrix asMatrix(final IScope scope, final Object val) throws GamaRuntimeException {
 		return asMatrix(scope, val, null);
 	}
 
@@ -348,9 +347,8 @@ public class Cast {
 		"if the operand is a map, returns the pair where the first element is the list of all the keys of the map and the second element is the list of all the values of the map;",
 		"if the operand is a list, returns a pair with the two first element of the list used to built the pair",
 		"if the operand is a link, returns a pair source_link::destination_link",
-		"Otherwise, returns the pair string(operand)::operand." }, examples = {
-		"pair(true) 			--: true::true", "pair({23, 4.0} 			--: 23.0::4.0",
-		"pair([1,5,9,3]) 		--: 1::5", "pair([[3,7],[2,6,9],0]) 	--: [3,7]::[2,6,9]",
+		"Otherwise, returns the pair string(operand)::operand." }, examples = { "pair(true) 			--: true::true",
+		"pair({23, 4.0} 			--: 23.0::4.0", "pair([1,5,9,3]) 		--: 1::5", "pair([[3,7],[2,6,9],0]) 	--: [3,7]::[2,6,9]",
 		"pair(['a'::345, 'b'::13, 'c'::12])  	--: [b,c,a]::[13,12,345]" })
 	public static GamaPair asPair(final IScope scope, final Object val) throws GamaRuntimeException {
 		return (GamaPair) Types.get(IType.PAIR).cast(scope, val, null);
@@ -365,9 +363,8 @@ public class Cast {
 		"if the operand is a map, returns the point with values associated respectively with keys \"x\" and \"y\"",
 		"if the operand is a pair, returns a point with the two elements of the pair (casted to float)",
 		"otherwise, returns a point {val,val} where val is the float value of the operand" }, examples = {
-		"point(0) 			--: {0.0;0.0}", "point(true) 		--: {1.0;1.0}",
-		"point(5::34) 		--: {5.0;34.0}", "point([1,5,9,3]) 	--: {1.0;5.0}",
-		"point([[3,7],[2,6,9],0]) 	--:{0.0;0.0}",
+		"point(0) 			--: {0.0;0.0}", "point(true) 		--: {1.0;1.0}", "point(5::34) 		--: {5.0;34.0}",
+		"point([1,5,9,3]) 	--: {1.0;5.0}", "point([[3,7],[2,6,9],0]) 	--:{0.0;0.0}",
 		"point(['a'::345, 'y'::13, 'c'::12]) 	--:  {0.0;13.0}",
 		"point(node1)				--: {64.06165572529225;18.401233796267537}   // centroid of node1 shape" })
 	public static ILocation asPoint(final IScope scope, final Object val) {
@@ -375,14 +372,12 @@ public class Cast {
 	}
 
 	@operator(value = { IKeyword.SPECIES, "species_of" }, content_type = ITypeProvider.FIRST_TYPE)
-	@doc(value = "casting of the operand to a species.", special_cases = {
-		"if the operand is nil, returns nil;", "if the operand is an agent, returns its species;",
-		"if the operand is a string, returns the species with this name (nil if not found);",
-		"otherwise, returns nil" }, examples = {
+	@doc(value = "casting of the operand to a species.", special_cases = { "if the operand is nil, returns nil;",
+		"if the operand is an agent, returns its species;",
+		"if the operand is a string, returns the species with this name (nil if not found);", "otherwise, returns nil" }, examples = {
 		"species(self)			--: species of the current agent", "species('node')		--: node",
 		"species([1,5,9,3]) 	--: null", "species(node1)			--: node" })
-	public static ISpecies asSpecies(final IScope scope, final Object val)
-		throws GamaRuntimeException {
+	public static ISpecies asSpecies(final IScope scope, final Object val) throws GamaRuntimeException {
 		return (ISpecies) Types.get(IType.SPECIES).cast(scope, val, null);
 	}
 
@@ -395,8 +390,8 @@ public class Cast {
 		"if the operand is a boolean, returns 'true' or 'false';",
 		"if the operand is a species, returns its name;",
 		"if the operand is a color, returns its litteral value if it has been created with one (i.e. 'black', 'green', etc.) or the string representation of its hexadecimal value.",
-		"if the operand is a container, returns its string representation." }, examples = {
-		"string(0) 			--: 0", "string({23, 4.0} 	--: {23.0;4.0}", "string(5::34) 		--: 5::34",
+		"if the operand is a container, returns its string representation." }, examples = { "string(0) 			--: 0",
+		"string({23, 4.0} 	--: {23.0;4.0}", "string(5::34) 		--: 5::34",
 		"string(['a'::345, 'b'::13, 'c'::12])  --:  b,13; c,12; a,345;" })
 	public static String asString(final IScope scope, final Object val) throws GamaRuntimeException {
 		return GamaStringType.staticCast(scope, val, null);
@@ -423,7 +418,7 @@ public class Cast {
 	@operator(value = "to_java")
 	@doc(value = "represents the java way to write an expression in java, depending on its type", comment = "NOT YET IMPLEMENTED", see = { "to_gaml" })
 	public static String toJava(final Object val) throws GamaRuntimeException {
-		throw new GamaRuntimeException("to_java is not yet implemented")/* Cast.toJava(val) */;
+		throw GamaRuntimeException.error("to_java is not yet implemented");
 	}
 
 }

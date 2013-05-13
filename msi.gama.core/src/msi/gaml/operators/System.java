@@ -61,10 +61,10 @@ public class System {
 	@doc(value = "returns an evaluation of the expresion (right-hand operand) in the scope the given agent.", special_cases = "if the agent is nil or dead, throws an exception", examples = "agent.location 		--: 	returns the location of the agent")
 	public static Object opGetValue(final IScope scope, final IAgent a, final IExpression s)
 		throws GamaRuntimeException {
-		if ( a == null ) { throw new GamaRuntimeException("Cannot evaluate " + s.toGaml() +
-			" as the target agent is null", true); }
-		if ( a.dead() ) { throw new GamaRuntimeException("Cannot evaluate " + s.toGaml() +
-			" as the target agent is dead", true); }
+		if ( a == null ) { throw GamaRuntimeException.warning("Cannot evaluate " + s.toGaml() +
+			" as the target agent is null"); }
+		if ( a.dead() ) { throw GamaRuntimeException.warning("Cannot evaluate " + s.toGaml() +
+			" as the target agent is dead"); }
 		return scope.evaluate(s, a);
 	}
 
@@ -80,15 +80,15 @@ public class System {
 		+ "The dialog is modal and will interrupt the execution of the simulation until the user has either dismissed or accepted it. It can be used, for instance, in an init section to force the user to input new values instead of relying on the initial values of parameters :", examples = {
 		"init {", "	let values <- user_input([\"Number\" :: 100, \"Location\" :: {10, 10}]);",
 		"	create node number : int(values at \"Number\") with: [location:: (point(values at \"Location\"))];", "}" })
-	public static Map<String, Object> userInput(final IScope scope, final IExpression map) {
+	public static GamaMap<String, Object> userInput(final IScope scope, final IExpression map) {
 		IAgent agent = scope.getAgentScope();
 		return userInput(scope, agent.getSpeciesName() + " #" + agent.getIndex() + " request", map);
 	}
 
 	@operator(value = "user_input")
-	public static Map<String, Object> userInput(final IScope scope, final String title, IExpression expr) {
-		Map<String, Object> initialValues = new GamaMap();
-		Map<String, IType> initialTypes = new GamaMap();
+	public static GamaMap<String, Object> userInput(final IScope scope, final String title, IExpression expr) {
+		GamaMap<String, Object> initialValues = new GamaMap();
+		GamaMap<String, IType> initialTypes = new GamaMap();
 		if ( expr instanceof MapExpression ) {
 			MapExpression map = (MapExpression) expr;
 			for ( Map.Entry<IExpression, IExpression> entry : map.getElements().entrySet() ) {

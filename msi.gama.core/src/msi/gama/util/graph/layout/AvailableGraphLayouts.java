@@ -51,13 +51,13 @@ public class AvailableGraphLayouts {
 			// no singleton created
 			Class<? extends IStaticLayout> classLayout= name2layout.get(name);
 			if (classLayout == null)
-				throw new GamaRuntimeException("unknown layout name: "+name+"; please choose one of "+getAvailableLayouts().toString());
+				throw GamaRuntimeException.error("unknown layout name: "+name+"; please choose one of "+getAvailableLayouts().toString());
 			try {
 				res = classLayout.newInstance();
 			} catch (InstantiationException e) {
-				throw new GamaRuntimeException(e);
+				throw GamaRuntimeException.create(e);
 			} catch (IllegalAccessException e) {
-				throw new GamaRuntimeException(e);
+				throw GamaRuntimeException.create(e);
 			}
 			name2singleton.put(name, res);
 		}

@@ -40,11 +40,9 @@ public class MultipleTopology extends ContinuousTopology {
 	 * @param scope
 	 * @param environment
 	 */
-	public MultipleTopology(final IScope scope, final IContainer<?, IShape> places)
-		throws GamaRuntimeException {
+	public MultipleTopology(final IScope scope, final IContainer<?, IShape> places) throws GamaRuntimeException {
 		// For the moment, use the geometric envelope in order to simplify the "environment".
-		super(scope, GamaGeometryType.geometriesToGeometry(scope, places).getGeometricEnvelope(),
-			false);
+		super(scope, GamaGeometryType.geometriesToGeometry(scope, places).getGeometricEnvelope());
 		this.places = places;
 	}
 

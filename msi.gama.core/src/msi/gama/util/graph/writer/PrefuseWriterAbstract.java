@@ -21,7 +21,7 @@ public abstract class PrefuseWriterAbstract implements IGraphWriter {
 		try {
 			writer.writeGraph(prefuseGraph, filename);
 		} catch (DataIOException e) {
-			throw new GamaRuntimeException("error during the exportation of the graph with a prefuse exporter: "+e.getMessage());
+			throw GamaRuntimeException.error("error during the exportation of the graph with a prefuse exporter: "+e.getMessage());
 		}
 		
 	}

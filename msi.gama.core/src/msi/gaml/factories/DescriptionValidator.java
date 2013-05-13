@@ -28,6 +28,32 @@ public class DescriptionValidator {
 	 * Verification done after the facets have been compiled
 	 */
 
+	public static void assertActionsAreCompatible(StatementDescription myAction, StatementDescription parentAction,
+		String parentName) {
+		String actionName = parentAction.getName();
+		IType myType = myAction.getType();
+		IType parentType = parentAction.getType();
+		if ( parentType != myType ) {
+			myAction.error("Return type (" + myType + ") differs from that (" + parentType +
+				") of the implementation of  " + actionName + " in " + parentName);
+		} else if ( myType.hasContents() ) {
+			myType = myAction.getContentType();
+			parentType = parentAction.getContentType();
+			if ( parentType != myType ) {
+				myAction.error("Content type (" + myType + ") differs from that (" + parentType +
+					") of the implementation of  " + actionName + " in " + parentName);
+			}
+		}
+		// if ( !parentAction.getArgNames().containsAll(myAction.getArgNames()) ) {
+		if ( !new HashSet(parentAction.getArgNames()).equals(new HashSet(myAction.getArgNames())) ) {
+			String error =
+				"The list of arguments " + myAction.getArgNames() + " differs from that of the implementation of " +
+					actionName + " in " + parentName + " " + parentAction.getArgNames() + "";
+			myAction.warning(error, IGamlIssue.DIFFERENT_ARGUMENTS, myAction.getUnderlyingElement(null));
+		}
+
+	}
+
 	public static void verifyFacetType(final IDescription desc, final String facet, final IExpression expr,
 		final SymbolProto smd, final ModelDescription md, final TypesManager tm) {
 		FacetProto fmd = smd.getPossibleFacets().get(facet);
@@ -100,7 +126,7 @@ public class DescriptionValidator {
 	}
 
 	public static void assertDescriptionIsInsideTheRightSuperDescription(final SymbolProto meta, final IDescription desc) {
-		IDescription sd = desc.getSuperDescription();
+		IDescription sd = desc.getEnclosingDescription();
 		if ( !meta.verifyContext(sd) ) {
 			desc.error(desc.getKeyword() + " cannot be defined in " + sd.getKeyword(), IGamlIssue.WRONG_CONTEXT,
 				desc.getName());
@@ -108,7 +134,7 @@ public class DescriptionValidator {
 	}
 
 	public static void assertNameIsUniqueInSuperDescription(final IDescription desc) {
-		IDescription sd = desc.getSuperDescription();
+		IDescription sd = desc.getEnclosingDescription();
 		String the_name = desc.getFacets().getLabel(NAME);
 		if ( sd == null ) { return; }
 		for ( IDescription child : sd.getChildren() ) {
@@ -131,7 +157,7 @@ public class DescriptionValidator {
 	}
 
 	public static void assertKeywordIsUniqueInSuperDescription(final IDescription desc) {
-		IDescription sd = desc.getSuperDescription();
+		IDescription sd = desc.getEnclosingDescription();
 		String keyword = desc.getKeyword();
 		if ( sd == null ) { return; }
 		for ( IDescription child : sd.getChildren() ) {
@@ -255,7 +281,7 @@ public class DescriptionValidator {
 
 	public static void assertFacetValueIsUniqueInSuperDescription(final IDescription desc, final String facet,
 		final IExpression value) {
-		IDescription sd = desc.getSuperDescription();
+		IDescription sd = desc.getEnclosingDescription();
 		IDescription previous = null;
 		if ( sd == null ) { return; }
 		String stringValue = value.toGaml();
@@ -283,7 +309,7 @@ public class DescriptionValidator {
 
 	public static void assertAtLeastOneChildWithFacetValueInSuperDescription(final IDescription desc,
 		final String facet, final IExpression value) {
-		IDescription sd = desc.getSuperDescription();
+		IDescription sd = desc.getEnclosingDescription();
 		if ( sd == null ) { return; }
 		String stringValue = value.toGaml();
 		for ( IDescription child : sd.getChildren() ) {

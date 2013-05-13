@@ -48,8 +48,7 @@ import msi.gaml.types.IType;
 combinations = {
 
 @combination({ IKeyword.FROM, IKeyword.TO, IKeyword.VAR, IKeyword.STEP }),
-	@combination({ IKeyword.FROM, IKeyword.TO, IKeyword.VAR }),
-	@combination({ IKeyword.OVER, IKeyword.VAR }),
+	@combination({ IKeyword.FROM, IKeyword.TO, IKeyword.VAR }), @combination({ IKeyword.OVER, IKeyword.VAR }),
 	@combination({ IKeyword.OVER, IKeyword.VAR, IKeyword.STEP }), @combination({ IKeyword.TIMES }),
 	@combination({ IKeyword.WHILE }) }, omissible = IKeyword.VAR)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
@@ -63,10 +62,9 @@ public class LoopStatement extends AbstractStatementSequence {
 		boolean isList = getFacet(IKeyword.OVER) != null;
 		boolean isBounded = getFacet(IKeyword.FROM) != null && getFacet(IKeyword.TO) != null;
 		executer =
-			isWhile ? new LoopWhileExecuter(this) : isList
-				? getFacet(IKeyword.OVER).getType().id() == IType.POINT ? new LoopIntervalExecuter(
-					this) : new LoopListExecuter(this) : isBounded ? new LoopBoundedExecuter(this)
-					: new LoopTimesExecuter(this);
+			isWhile ? new LoopWhileExecuter(this) : isList ? getFacet(IKeyword.OVER).getType().id() == IType.POINT
+				? new LoopIntervalExecuter(this) : new LoopListExecuter(this) : isBounded ? new LoopBoundedExecuter(
+				this) : new LoopTimesExecuter(this);
 
 		// TODO Donner un nom
 	}
@@ -95,21 +93,23 @@ public class LoopStatement extends AbstractStatementSequence {
 
 		LoopBoundedExecuter(final LoopStatement com) throws GamaRuntimeException {
 			super(com);
+			IScope scope = GAMA.obtainNewScope();
 			from = com.getFacet(IKeyword.FROM);
 			if ( from.isConst() ) {
-				constantFrom = Cast.asInt(null, from.value(GAMA.getDefaultScope()));
+				constantFrom = Cast.asInt(null, from.value(scope));
 			}
 			to = com.getFacet(IKeyword.TO);
 			if ( to.isConst() ) {
-				constantTo = Cast.asInt(null, to.value(GAMA.getDefaultScope()));
+				constantTo = Cast.asInt(null, to.value(scope));
 			}
 			step = com.getFacet(IKeyword.STEP);
 			if ( step == null ) {
 				constantStep = 1;
 			} else if ( step.isConst() ) {
-				constantStep = Cast.asInt(null, step.value(GAMA.getDefaultScope()));
+				constantStep = Cast.asInt(null, step.value(scope));
 			}
 			varName = com.getLiteral(IKeyword.VAR);
+			GAMA.releaseScope(scope);
 		}
 
 		@Override
@@ -151,23 +151,24 @@ public class LoopStatement extends AbstractStatementSequence {
 
 		LoopIntervalExecuter(final LoopStatement com) throws GamaRuntimeException {
 			super(com);
+			IScope scope = GAMA.obtainNewScope();
 			over = com.getFacet(IKeyword.OVER);
 			if ( over.isConst() ) {
-				constantOver = Cast.asPoint(null, over.value(GAMA.getDefaultScope()));
+				constantOver = Cast.asPoint(null, over.value(scope));
 			}
 			step = com.getFacet(IKeyword.STEP);
 			if ( step == null ) {
 				constantStep = 1;
 			} else if ( step.isConst() ) {
-				constantStep = Cast.asInt(null, step.value(GAMA.getDefaultScope()));
+				constantStep = Cast.asInt(null, step.value(scope));
 			}
 			varName = com.getLiteral(IKeyword.VAR);
+			GAMA.releaseScope(scope);
 		}
 
 		@Override
 		public Object runIn(final IScope scope) throws GamaRuntimeException {
-			ILocation interval =
-				constantOver == null ? Cast.asPoint(scope, over.value(scope)) : constantOver;
+			ILocation interval = constantOver == null ? Cast.asPoint(scope, over.value(scope)) : constantOver;
 			final int first = (int) interval.getX();
 			final int last = (int) interval.getY();
 			if ( first > last ) {
@@ -213,8 +214,7 @@ public class LoopStatement extends AbstractStatementSequence {
 		@Override
 		public Object runIn(final IScope scope) throws GamaRuntimeException {
 			Object obj = over.value(scope);
-			final IContainer list_ =
-				!(obj instanceof IContainer) ? Cast.asList(scope, obj) : (IContainer) obj;
+			final IContainer list_ = !(obj instanceof IContainer) ? Cast.asList(scope, obj) : (IContainer) obj;
 			boolean allSkipped = true;
 			Object result = null;
 			if ( list_ == null || list_.isEmpty(scope) ) {
@@ -249,14 +249,13 @@ public class LoopStatement extends AbstractStatementSequence {
 			super(com);
 			times = com.getFacet(IKeyword.TIMES);
 			if ( times.isConst() ) {
-				constantTimes = Cast.asInt(null, times.value(GAMA.getDefaultScope()));
+				constantTimes = Cast.as(times, Integer.class);
 			}
 		}
 
 		@Override
 		public Object runIn(final IScope scope) throws GamaRuntimeException {
-			final int max =
-				constantTimes == null ? Cast.asInt(scope, times.value(scope)) : constantTimes;
+			final int max = constantTimes == null ? Cast.asInt(scope, times.value(scope)) : constantTimes;
 			boolean allSkipped = true;
 			if ( max <= 0 ) {
 				scope.setStatus(ExecutionStatus.skipped);

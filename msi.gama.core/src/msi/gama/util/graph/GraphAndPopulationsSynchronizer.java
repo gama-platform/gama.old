@@ -76,8 +76,7 @@ public class GraphAndPopulationsSynchronizer implements IPopulation.Listener, IG
 	@Override
 	public void notifyAgentAdded(final IPopulation pop, final IAgent agent) {
 
-		if ( pop != popVertices ) { throw new GamaRuntimeException(
-			"Cannot create edge agents from the population (please add an edge in the graph instead)"); }
+		if ( pop != popVertices ) { throw GamaRuntimeException.error("Cannot create edge agents from the population (please add an edge in the graph instead)"); }
 
 		if ( currentEventVertex != agent ) {
 			try {

@@ -25,9 +25,9 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.IContainer;
+import msi.gama.util.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -40,7 +40,7 @@ import msi.gaml.types.IType;
  */
 @symbol(name = { IKeyword.MATCH, IKeyword.MATCH_BETWEEN, IKeyword.MATCH_ONE }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @inside(symbols = IKeyword.SWITCH)
-@facets(value = { @facet(name = IKeyword.VALUE, type = IType.NONE_STR, optional = true) }, omissible = IKeyword.VALUE)
+@facets(value = { @facet(name = IKeyword.VALUE, type = IType.NONE, optional = true) }, omissible = IKeyword.VALUE)
 public class MatchStatement extends AbstractStatementSequence {
 
 	final IExpression value;
@@ -53,16 +53,14 @@ public class MatchStatement extends AbstractStatementSequence {
 		String keyword = desc.getKeyword();
 		setName(keyword + " " + (value == null ? "" : value.toGaml()));
 		executer =
-			keyword.equals(IKeyword.MATCH) ? new SimpleMatch() : keyword.equals(IKeyword.MATCH_ONE)
-				? new MatchOne() : keyword.equals(IKeyword.MATCH_BETWEEN) ? new MatchBetween()
-					: null;
+			keyword.equals(IKeyword.MATCH) ? new SimpleMatch() : keyword.equals(IKeyword.MATCH_ONE) ? new MatchOne()
+				: keyword.equals(IKeyword.MATCH_BETWEEN) ? new MatchBetween() : null;
 		if ( executer != null ) {
 			executer.acceptValue();
 		}
 	}
 
-	public boolean matches(final IScope scope, final Object switchValue)
-		throws GamaRuntimeException {
+	public boolean matches(final IScope scope, final Object switchValue) throws GamaRuntimeException {
 		if ( executer == null ) { return false; }
 		return executer.matches(scope, switchValue);
 	}
@@ -73,7 +71,7 @@ public class MatchStatement extends AbstractStatementSequence {
 
 		void acceptValue() {
 			if ( value.isConst() ) {
-				constantValue = value.value(GAMA.getDefaultScope());
+				constantValue = Cast.as(value, Object.class);
 			}
 		}
 
@@ -85,8 +83,7 @@ public class MatchStatement extends AbstractStatementSequence {
 	class SimpleMatch extends MatchExecuter {
 
 		@Override
-		public boolean matches(final IScope scope, final Object switchValue)
-			throws GamaRuntimeException {
+		public boolean matches(final IScope scope, final Object switchValue) throws GamaRuntimeException {
 			Object val = getValue(scope);
 			return val == null ? switchValue == null : val.equals(switchValue);
 		}
@@ -96,11 +93,9 @@ public class MatchStatement extends AbstractStatementSequence {
 	class MatchOne extends MatchExecuter {
 
 		@Override
-		public boolean matches(final IScope scope, final Object switchValue)
-			throws GamaRuntimeException {
+		public boolean matches(final IScope scope, final Object switchValue) throws GamaRuntimeException {
 			Object val = getValue(scope);
-			if ( val instanceof IContainer ) { return ((IContainer) val).contains(scope,
-				switchValue); }
+			if ( val instanceof IContainer ) { return ((IContainer) val).contains(scope, switchValue); }
 			return Cast.asList(scope, val).contains(switchValue);
 		}
 
@@ -110,7 +105,7 @@ public class MatchStatement extends AbstractStatementSequence {
 			if ( constantValue != null ) {
 				if ( !(constantValue instanceof IContainer) ) {
 					if ( !(constantValue instanceof ILocation) ) {
-						constantValue = Cast.asList(GAMA.getDefaultScope(), constantValue);
+						constantValue = Cast.as(constantValue, IList.class);
 					}
 				}
 			}
@@ -120,10 +115,9 @@ public class MatchStatement extends AbstractStatementSequence {
 	class MatchBetween extends MatchExecuter {
 
 		@Override
-		public boolean matches(final IScope scope, final Object switchValue)
-			throws GamaRuntimeException {
-			if ( !(switchValue instanceof Number) ) { throw new GamaRuntimeException(
-				"Can only match if a number is in an interval. " + switchValue + " is not a number"); }
+		public boolean matches(final IScope scope, final Object switchValue) throws GamaRuntimeException {
+			if ( !(switchValue instanceof Number) ) { throw GamaRuntimeException
+				.error("Can only match if a number is in an interval. " + switchValue + " is not a number"); }
 			Object val = value.value(scope);
 			if ( !(val instanceof ILocation) ) {
 				val = Cast.asPoint(scope, val);
@@ -142,7 +136,7 @@ public class MatchStatement extends AbstractStatementSequence {
 			super.acceptValue();
 			if ( constantValue != null ) {
 				if ( !(constantValue instanceof ILocation) ) {
-					constantValue = Cast.asPoint(GAMA.getDefaultScope(), constantValue);
+					constantValue = Cast.as(constantValue, ILocation.class);
 				}
 			}
 

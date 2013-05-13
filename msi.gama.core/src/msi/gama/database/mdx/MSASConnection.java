@@ -48,16 +48,16 @@ public class MSASConnection extends MdxConnection {
 				 wrapper = (OlapWrapper) conn;
 				 olapConnection = wrapper.unwrap(OlapConnection.class);	
 			} else {
-				throw new GamaRuntimeException("MSASConnection.connectMDB: The " 
+				throw GamaRuntimeException.error("MSASConnection.connectMDB: The " 
 			                                       + vender
 			                                       + " is not supported!");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			throw new GamaRuntimeException(e.toString());
+			throw GamaRuntimeException.error(e.toString());
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-			throw new GamaRuntimeException(e.toString());
+			throw GamaRuntimeException.error(e.toString());
 		}
 		return conn;
 	}

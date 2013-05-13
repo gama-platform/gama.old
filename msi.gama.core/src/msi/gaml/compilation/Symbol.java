@@ -50,8 +50,7 @@ public abstract class Symbol implements ISymbol {
 		if ( description == null ) { return null; }
 		if ( !description.getFacets().containsKey(key) ) { return null; }
 		IExpression result = description.getFacets().getExpr(key);
-		if ( result == null ) { throw new GamaRuntimeException("Facet " + key +
-			" could not be compiled."); }
+		if ( result == null ) { throw GamaRuntimeException.error("Facet " + key + " could not be compiled."); }
 		return result;
 	}
 
@@ -102,6 +101,8 @@ public abstract class Symbol implements ISymbol {
 	}
 
 	@Override
-	public void dispose() {}
+	public void dispose() {
+
+	}
 
 }

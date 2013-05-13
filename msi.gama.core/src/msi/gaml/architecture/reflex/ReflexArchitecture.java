@@ -70,6 +70,7 @@ public class ReflexArchitecture extends AbstractArchitecture {
 
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
+		if ( scope.interrupted() ) { return null; }
 		return executeReflexes(scope);
 	}
 
@@ -79,7 +80,7 @@ public class ReflexArchitecture extends AbstractArchitecture {
 		IAgent a = getCurrentAgent(scope);
 		for ( int i = 0; i < _reflexesNumber; i++ ) {
 			IStatement r = _reflexes.get(i);
-			if ( !a.dead() ) {
+			if ( !a.dead() && !scope.interrupted() ) {
 				result = r.executeOn(scope);
 			}
 		}
@@ -89,6 +90,7 @@ public class ReflexArchitecture extends AbstractArchitecture {
 	@Override
 	public void init(final IScope scope) throws GamaRuntimeException {
 		for ( int i = 0; i < _inits_number; i++ ) {
+			if ( scope.interrupted() ) { return; }
 			_inits.get(i).executeOn(scope);
 		}
 	}

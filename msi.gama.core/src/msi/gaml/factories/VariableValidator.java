@@ -24,20 +24,21 @@ public class VariableValidator extends DescriptionValidator {
 	 * @param vd
 	 */
 	public static void assertNameIsNotTypeOrSpecies(final IDescription vd) {
-		String type =
-			"It cannot be used as a " + (vd instanceof VariableDescription ? "variable" : vd.getKeyword()) + " name.";
 		IType t = vd.getTypeNamed(vd.getName());
 		if ( t != Types.NO_TYPE ) {
+			String type =
+				"It cannot be used as a " + (vd instanceof VariableDescription ? "variable" : vd.getKeyword()) +
+					" name.";
 			String species = t.isSpeciesType() ? "species" : "type";
 			vd.error(vd.getName() + " is a " + species + " name. " + type, IGamlIssue.IS_A_TYPE, NAME, vd.getName());
 		}
 	}
 
 	public static void assertNameIsNotType(final IDescription vd) {
-		String type =
-			"It cannot be used as a " + (vd instanceof VariableDescription ? "variable" : vd.getKeyword()) + " name.";
 		IType t = vd.getTypeNamed(vd.getName());
 		if ( t == Types.NO_TYPE || t.isSpeciesType() ) { return; }
+		String type =
+			"It cannot be used as a " + (vd instanceof VariableDescription ? "variable" : vd.getKeyword()) + " name.";
 		vd.error(vd.getName() + " is a type name. " + type, IGamlIssue.IS_A_TYPE, NAME, vd.getName());
 	}
 
@@ -57,11 +58,12 @@ public class VariableValidator extends DescriptionValidator {
 
 	public static void assertNameIsNotReserved(final IDescription vd) {
 		String name = vd.getName();
-		String type =
-			"It cannot be used as a " + (vd instanceof VariableDescription ? "variable" : vd.getKeyword()) + " name.";
 		if ( name == null ) {
 			vd.error("The attribute 'name' is missing", IGamlIssue.MISSING_NAME);
 		} else if ( IExpressionCompiler.RESERVED.contains(name) ) {
+			String type =
+				"It cannot be used as a " + (vd instanceof VariableDescription ? "variable" : vd.getKeyword()) +
+					" name.";
 			vd.error(name + " is a reserved keyword. " + type + " Reserved keywords are: " +
 				IExpressionCompiler.RESERVED, IGamlIssue.IS_RESERVED, NAME, name);
 		}
@@ -117,7 +119,7 @@ public class VariableValidator extends DescriptionValidator {
 	}
 
 	public static void assertCanBeParameter(final VariableDescription vd) {
-		String p = "Parameter '" + vd.getParameterName() + "' ";
+
 		// Facets facets = new Facets();
 		Facets facets = vd.getFacets();
 		if ( facets.equals(KEYWORD, PARAMETER) ) {
@@ -125,10 +127,12 @@ public class VariableValidator extends DescriptionValidator {
 			String varName = facets.getLabel(VAR);
 			VariableDescription targetedVar = vd.getModelDescription().getVariable(varName);
 			if ( targetedVar == null ) {
+				String p = "Parameter '" + vd.getParameterName() + "' ";
 				vd.error(p + "cannot refer to the non-global variable " + varName, IGamlIssue.UNKNOWN_VAR, IKeyword.VAR);
 				return;
 			}
 			if ( !vd.getType().equals(Types.NO_TYPE) && vd.getType().id() != targetedVar.getType().id() ) {
+				String p = "Parameter '" + vd.getParameterName() + "' ";
 				vd.error(p + "type must be the same as that of " + varName, IGamlIssue.UNMATCHED_TYPES, IKeyword.TYPE);
 			}
 			assertCanBeAmong(vd, targetedVar.getType(), facets);
@@ -142,21 +146,27 @@ public class VariableValidator extends DescriptionValidator {
 			vd.error("Functions cannot be used as parameters", IGamlIssue.REMOVE_FUNCTION, FUNCTION);
 		}
 		if ( min != null && !min.isConst() ) {
+			String p = "Parameter '" + vd.getParameterName() + "' ";
 			vd.error(p + " min value must be constant", IGamlIssue.NOT_CONST, MIN);
 		}
 		if ( max != null && !max.isConst() ) {
+			String p = "Parameter '" + vd.getParameterName() + "' ";
 			vd.error(p + " max value must be constant", IGamlIssue.NOT_CONST, MAX);
 		}
 		if ( facets.getExpr(INIT) == null ) {
+			String p = "Parameter '" + vd.getParameterName() + "' ";
 			vd.error(p + " must have an initial value", IGamlIssue.NO_INIT, vd.getUnderlyingElement(null), vd.getType()
 				.toString());
 		} else if ( !facets.getExpr(INIT).isConst() ) {
+			String p = "Parameter '" + vd.getParameterName() + "' ";
 			vd.error(p + "initial value must be constant", IGamlIssue.NOT_CONST, INIT);
 		}
 		IExpression updateExpression = facets.getExpr(UPDATE, facets.getExpr(VALUE));
 		if ( updateExpression != null ) {
+			String p = "Parameter '" + vd.getParameterName() + "' ";
 			vd.error(p + "cannot have an 'update' or 'value' facet", IGamlIssue.REMOVE_VALUE);
 		} else if ( vd.isNotModifiable() ) {
+			String p = "Parameter '" + vd.getParameterName() + "' ";
 			vd.error(p + " cannot be declared as constant ", IGamlIssue.REMOVE_CONST);
 		}
 	}

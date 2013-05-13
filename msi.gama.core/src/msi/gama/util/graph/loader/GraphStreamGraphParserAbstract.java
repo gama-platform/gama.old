@@ -169,7 +169,7 @@ public abstract class GraphStreamGraphParserAbstract implements IGraphParser {
 		try {
 			is = new FileInputStream(filename);
 		} catch (FileNotFoundException e) {
-			throw new GamaRuntimeException("Unable to load file from " + filename +
+			throw GamaRuntimeException.error("Unable to load file from " + filename +
 				" (" + e.getLocalizedMessage() + ")");
 		}
 		
@@ -182,13 +182,13 @@ public abstract class GraphStreamGraphParserAbstract implements IGraphParser {
 			}
 			fileSource.end();
 		} catch (IOException e) {
-			throw new GamaRuntimeException("Error while parsing a graph from " +
+			throw GamaRuntimeException.error("Error while parsing a graph from " +
 				filename+ " (" + e.getLocalizedMessage() + ")");
 		} catch (Exception e) {
-			throw new GamaRuntimeException("Error while parsing a graph from " +
+			throw GamaRuntimeException.error("Error while parsing a graph from " +
 					filename+ " (" + e.getLocalizedMessage() + ")");
 		} catch(Throwable e) {
-			throw new GamaRuntimeException("Error while parsing a graph from " +
+			throw GamaRuntimeException.error("Error while parsing a graph from " +
 					filename+ " (" + e.getLocalizedMessage() + ")");
 		} finally {
 		

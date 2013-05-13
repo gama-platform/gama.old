@@ -46,7 +46,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	protected IContainer<K, V> buffer;
 
 	public GamaFile(final IScope scope, final String pathName) throws GamaRuntimeException {
-		if ( pathName == null ) { throw new GamaRuntimeException("Attempt to create a null file"); }
+		if ( pathName == null ) { throw GamaRuntimeException.error("Attempt to create a null file"); }
 		if ( scope != null ) {
 			path = scope.getModel().getRelativeFilePath(pathName, false);
 			checkValidity();
@@ -59,7 +59,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	}
 
 	protected void checkValidity() throws GamaRuntimeException {
-		if ( getFile().isDirectory() ) { throw new GamaRuntimeException(getFile().getAbsolutePath() +
+		if ( getFile().isDirectory() ) { throw GamaRuntimeException.error(getFile().getAbsolutePath() +
 			" is a folder. Files can not overwrite folders"); }
 	}
 
@@ -189,7 +189,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	@Override
 	public IContainer getContents(IScope scope) throws GamaRuntimeException {
 		if ( getFile() == null ) { return null; }
-		if ( !getFile().exists() ) { throw new GamaRuntimeException("File " + getFile().getAbsolutePath() +
+		if ( !getFile().exists() ) { throw GamaRuntimeException.error("File " + getFile().getAbsolutePath() +
 			" does not exist"); }
 		fillBuffer(scope);
 		return buffer;
@@ -307,7 +307,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 
 	@Override
 	public String toGaml() {
-		return (writable ? "write(" : "read(") + getKeyword() + "(" + StringUtils.toGamlString(getPath()) + "))";
+		return getKeyword() + "(" + StringUtils.toGamlString(getPath()) + ")";
 	}
 
 	@Override

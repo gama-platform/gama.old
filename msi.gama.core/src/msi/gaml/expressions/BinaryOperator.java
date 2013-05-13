@@ -79,6 +79,14 @@ public class BinaryOperator extends AbstractNAryOperator {
 		return this;
 	}
 
+	static List<String> symbols = Arrays.asList("+", "-", "/", "*", "^", "**", "<", ">", "<=", ">=", "?", ":", ".");
+
+	@Override
+	public String toGaml() {
+		if ( symbols.contains(name) ) { return " (" + parenthesize(left()) + name + parenthesize(right()) + ") "; }
+		return name + parenthesize(left(), right());
+	}
+
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
 		Object leftVal = "(nil)", rightVal = "(nil)";
@@ -92,7 +100,7 @@ public class BinaryOperator extends AbstractNAryOperator {
 			e1.addContext("when applying the " + literalValue() + " operator on " + leftVal + " and " + rightVal);
 			throw e1;
 		} catch (Exception e) {
-			GamaRuntimeException ee = new GamaRuntimeException(e);
+			GamaRuntimeException ee = GamaRuntimeException.create(e);
 			ee.addContext("when applying the " + literalValue() + " operator on " + leftVal + " and " + rightVal);
 			throw ee;
 		}
@@ -175,6 +183,11 @@ public class BinaryOperator extends AbstractNAryOperator {
 		public IVarExpression right() {
 			if ( exprs == null ) { return null; }
 			return (IVarExpression) exprs[1];
+		}
+
+		@Override
+		public String toGaml() {
+			return left().toGaml() + "." + right().toGaml();
 		}
 
 		@Override

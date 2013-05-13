@@ -37,7 +37,7 @@ public class GamaBundleLoader {
 		}
 
 		// CRUCIAL INITIALIZATIONS
-		AbstractGamlAdditions.buildAllSpecies();
+		AbstractGamlAdditions.buildMetaModel();
 		Types.init();
 
 		long end = System.currentTimeMillis();

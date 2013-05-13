@@ -80,13 +80,13 @@ public class AvailableGraphWriters {
 			// no singleton created
 			Class<? extends IGraphWriter> classWriter = name2writer.get(name);
 			if (classWriter == null)
-				throw new GamaRuntimeException("unknown writer name: "+name+"; please choose one of "+getAvailableWriters().toString());
+				throw GamaRuntimeException.error("unknown writer name: "+name+"; please choose one of "+getAvailableWriters().toString());
 			try {
 				res = classWriter.newInstance();
 			} catch (InstantiationException e) {
-				throw new GamaRuntimeException(e);
+				throw GamaRuntimeException.create(e);
 			} catch (IllegalAccessException e) {
-				throw new GamaRuntimeException(e);
+				throw GamaRuntimeException.create(e);
 			}
 			name2singleton.put(name, res);
 		}

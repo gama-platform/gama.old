@@ -54,7 +54,7 @@ public class PostponedWarningList {
 		
 		// raise errors
 		if (header != null && !header.isEmpty() && warning2count.size() > 1)
-			GAMA.reportError(new GamaRuntimeException(header));
+			GAMA.reportError(GamaRuntimeException.error(header));
 		for (String msg : warning2count.keySet()) {
 			Integer times = warning2count.get(msg);
 			StringBuffer sb = new StringBuffer();
@@ -68,7 +68,7 @@ public class PostponedWarningList {
 			if (writeSystemOut)
 				System.err.println(sb.toString());
 			
-			GAMA.reportError(new GamaRuntimeException(sb.toString()));
+			GAMA.reportError(GamaRuntimeException.error(sb.toString()));
 		}
 	
 	}

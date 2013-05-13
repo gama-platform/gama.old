@@ -26,7 +26,6 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -35,13 +34,11 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.HILL_CLIMBING, kind = ISymbolKind.BATCH_METHOD, with_sequence = false)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
-@facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
+@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = HillClimbing.ITER_MAX, type = IType.INT, optional = true),
 	@facet(name = IKeyword.MAXIMIZE, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.MINIMIZE, type = IType.FLOAT, optional = true),
-	@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = {
-		IKeyword.MIN, IKeyword.MAX }) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = { IKeyword.MIN, IKeyword.MAX }) }, omissible = IKeyword.NAME)
 public class HillClimbing extends LocalSearchAlgorithm {
 
 	protected static final String ITER_MAX = "iter_max";
@@ -77,9 +74,7 @@ public class HillClimbing extends LocalSearchAlgorithm {
 				}
 				Double neighborFitness = testedSolutions.get(neighborSol);
 				if ( neighborFitness == null ) {
-					neighborFitness =
-						Double
-							.valueOf(currentExperiment.launchSimulationsWithSolution(neighborSol));
+					neighborFitness = Double.valueOf(currentExperiment.launchSimulationsWithSolution(neighborSol));
 				}
 				testedSolutions.put(neighborSol, neighborFitness);
 
@@ -108,7 +103,7 @@ public class HillClimbing extends LocalSearchAlgorithm {
 		super.initializeFor(f);
 		final IExpression maxItExp = getFacet("iter_max");
 		if ( maxItExp != null ) {
-			maxIt = Cast.asInt(GAMA.getDefaultScope(), maxItExp.value(GAMA.getDefaultScope()));
+			maxIt = Cast.as(maxItExp, Integer.class);
 			stoppingCriterion = new StoppingCriterionMaxIt(maxIt);
 		}
 

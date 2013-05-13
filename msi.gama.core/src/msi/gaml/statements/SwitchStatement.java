@@ -40,7 +40,7 @@ import msi.gaml.types.IType;
  */
 @symbol(name = IKeyword.SWITCH, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
-@facets(value = { @facet(name = IKeyword.VALUE, type = IType.NONE_STR, optional = false) }, omissible = IKeyword.VALUE)
+@facets(value = { @facet(name = IKeyword.VALUE, type = IType.NONE, optional = false) }, omissible = IKeyword.VALUE)
 public class SwitchStatement extends AbstractStatementSequence {
 
 	public MatchStatement[] matches;

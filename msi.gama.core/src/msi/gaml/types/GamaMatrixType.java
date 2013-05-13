@@ -43,8 +43,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 			return with(scope, obj);
 		}
 
-		if ( ((GamaPoint) param).getX() <= 0 || ((GamaPoint) param).getY() < 0 ) { throw new GamaRuntimeException(
-			"Dimensions of a matrix should be positive."); }
+		if ( ((GamaPoint) param).getX() <= 0 || ((GamaPoint) param).getY() < 0 ) { throw GamaRuntimeException.error("Dimensions of a matrix should be positive."); }
 
 		if ( obj instanceof IContainer ) { return ((IContainer) obj).matrixValue(scope,
 			(GamaPoint) param); }

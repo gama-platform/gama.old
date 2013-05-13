@@ -94,8 +94,7 @@ public class TextLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void step(final IScope scope) {
-		super.step(scope);
+	public void _step(final IScope scope) {
 		currentText = constantText == null ? Cast.asString(scope, text.value(scope)) : constantText;
 		currentColor = constantColor == null ? Cast.asColor(scope, color.value(scope)) : constantColor;
 		currentFont = constantFont == null ? Cast.asString(scope, font.value(scope)) : constantFont;
@@ -105,8 +104,7 @@ public class TextLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void init(final IScope scope) {
-		super.init(scope);
+	public void _init(final IScope scope) {
 		if ( text.isConst() && constantText == null ) {
 			constantText = Cast.asString(scope, text.value(scope));
 			currentText = constantText;

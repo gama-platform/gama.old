@@ -35,14 +35,12 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.TABU, kind = ISymbolKind.BATCH_METHOD, with_sequence = false)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
-@facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
+@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = TabuSearch.ITER_MAX, type = IType.INT, optional = true),
 	@facet(name = TabuSearch.LIST_SIZE, type = IType.INT, optional = true),
 	@facet(name = IKeyword.MAXIMIZE, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.MINIMIZE, type = IType.FLOAT, optional = true),
-	@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = {
-		IKeyword.MIN, IKeyword.MAX }) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = { IKeyword.MIN, IKeyword.MAX }) }, omissible = IKeyword.NAME)
 public class TabuSearch extends LocalSearchAlgorithm {
 
 	protected static final String ITER_MAX = "iter_max";
@@ -93,21 +91,18 @@ public class TabuSearch extends LocalSearchAlgorithm {
 				}
 				Double neighborFitness = testedSolutions.get(neighborSol);
 				if ( neighborFitness == null ) {
-					neighborFitness =
-						Double
-							.valueOf(currentExperiment.launchSimulationsWithSolution(neighborSol));
+					neighborFitness = Double.valueOf(currentExperiment.launchSimulationsWithSolution(neighborSol));
 					nbIt++;
 				}
 				testedSolutions.put(neighborSol, neighborFitness);
 
-				if ( isMaximize() && neighborFitness.doubleValue() > bestFitnessAlgo ||
-					!isMaximize() && neighborFitness.doubleValue() < bestFitnessAlgo ) {
+				if ( isMaximize() && neighborFitness.doubleValue() > bestFitnessAlgo || !isMaximize() &&
+					neighborFitness.doubleValue() < bestFitnessAlgo ) {
 					bestNeighbor = neighborSol;
 					bestFitnessAlgo = neighborFitness.doubleValue();
 				}
 
-				if ( isMaximize() && currentFitness > bestFitness || !isMaximize() &&
-					currentFitness < bestFitness ) {
+				if ( isMaximize() && currentFitness > bestFitness || !isMaximize() && currentFitness < bestFitness ) {
 					bestSolution = new ParametersSet(bestSolutionAlgo);
 					bestFitness = currentFitness;
 				}
@@ -140,21 +135,19 @@ public class TabuSearch extends LocalSearchAlgorithm {
 		super.initializeFor(f);
 		final IExpression maxIt = getFacet(ITER_MAX);
 		if ( maxIt != null ) {
-			iterMax = Cast.asInt(GAMA.getDefaultScope(), maxIt.value(GAMA.getDefaultScope()));
+			iterMax = Cast.as(maxIt, Integer.class);
 			stoppingCriterion = new StoppingCriterionMaxIt(iterMax);
 		}
 		final IExpression listsize = getFacet(LIST_SIZE);
 		if ( listsize != null ) {
-			tabuListSize =
-				Cast.asInt(GAMA.getDefaultScope(), listsize.value(GAMA.getDefaultScope()));
+			tabuListSize = Cast.as(listsize, Integer.class);
 		}
 	}
 
 	@Override
 	public void addParametersTo(final BatchExperiment exp) {
 		super.addParametersTo(exp);
-		exp.addMethodParameter(new ParameterAdapter("Tabu list size",
-			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
+		exp.addMethodParameter(new ParameterAdapter("Tabu list size", IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
 
 			@Override
 			public Object value() {

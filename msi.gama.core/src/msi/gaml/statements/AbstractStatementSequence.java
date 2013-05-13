@@ -61,6 +61,7 @@ public class AbstractStatementSequence extends AbstractStatement {
 		Object lastResult = null;
 		ExecutionStatus statusBeforeSkipped = success;
 		for ( int i = 0; i < commands.length; i++ ) {
+			if ( scope.interrupted() ) { return null; }
 			lastResult = commands[i].executeOn(scope);
 			ExecutionStatus status = scope.getStatus();
 			if ( status != skipped ) {
@@ -115,7 +116,5 @@ public class AbstractStatementSequence extends AbstractStatement {
 	public IStatement[] getCommands() {
 		return commands;
 	}
-	
-	
 
 }

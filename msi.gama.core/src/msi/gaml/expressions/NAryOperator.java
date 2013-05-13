@@ -34,10 +34,15 @@ public class NAryOperator extends BinaryOperator {
 			e1.addContext("when applying the " + literalValue() + " operator on " + values);
 			throw e1;
 		} catch (Exception e) {
-			GamaRuntimeException ee = new GamaRuntimeException(e);
+			GamaRuntimeException ee = GamaRuntimeException.create(e);
 			ee.addContext("when applying the " + literalValue() + " operator on " + values);
 			throw ee;
 		}
+	}
+
+	@Override
+	public String toGaml() {
+		return literalValue() + parenthesize(exprs);
 	}
 
 	@Override

@@ -27,7 +27,7 @@ public class PrefuseStaticLayoutSquarifiedTreeMap extends
 						);
 				
 			} catch (ClassCastException e) {
-				throw new GamaRuntimeException("Option "+OPTION_NAME_FRAME+" of this layout is supposed to be an double.");
+				throw GamaRuntimeException.error("Option "+OPTION_NAME_FRAME+" of this layout is supposed to be an double.");
 			}
 		} else {
 			return new SquarifiedTreeMapLayout(PREFUSE_GRAPH);

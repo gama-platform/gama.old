@@ -26,14 +26,15 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.IList;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.skills.ISkill;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 
 /**
  * The Class Var.
@@ -46,10 +47,10 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.TYPE, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.OF, type = IType.TYPE_ID, optional = true),
 	@facet(name = IKeyword.INDEX, type = IType.TYPE_ID, optional = true),
-	@facet(name = IKeyword.INIT, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.VALUE, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.UPDATE, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.FUNCTION, type = IType.NONE_STR, optional = true),
+	@facet(name = IKeyword.INIT, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.VALUE, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.UPDATE, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.FUNCTION, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.CONST, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.CATEGORY, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.PARAMETER, type = IType.LABEL, optional = true),
@@ -97,7 +98,7 @@ public class Variable extends Symbol implements IVariable {
 	}
 
 	protected Object coerce(final IAgent agent, final IScope scope, final Object v) throws GamaRuntimeException {
-		return Types.coerce(scope, v, type, null);
+		return type.cast(scope, v, null);
 	}
 
 	// private void computeSpeciesConst(final IScope scope) {
@@ -228,6 +229,7 @@ public class Variable extends Symbol implements IVariable {
 		Object val;
 		val = coerce(agent, scope, v);
 		val = checkAmong(agent, scope, val);
+		// TODO Verify that the agent is in the scope
 		if ( setter != null ) {
 			setter.run(scope, agent, sSkill == null ? agent : sSkill, val);
 		} else {
@@ -241,7 +243,8 @@ public class Variable extends Symbol implements IVariable {
 		if ( among == null ) { return val; }
 		if ( among.contains(val) ) { return val; }
 		if ( among.isEmpty() ) { return null; }
-		throw new GamaRuntimeException("Value " + val + " is not included in the possible values of variable " + name);
+		throw GamaRuntimeException
+			.error("Value " + val + " is not included in the possible values of variable " + name);
 	}
 
 	@Override
@@ -291,7 +294,7 @@ public class Variable extends Symbol implements IVariable {
 		if ( amongExpression == null ) { return null; }
 		if ( !amongExpression.isConst() ) { return null; }
 		try {
-			return Cast.asList(GAMA.getDefaultScope(), amongExpression.value(GAMA.getDefaultScope()));
+			return Cast.as(amongExpression, IList.class);
 		} catch (GamaRuntimeException e) {
 			return null;
 		}
@@ -328,9 +331,6 @@ public class Variable extends Symbol implements IVariable {
 	public boolean allowsTooltip() {
 		return true;
 	}
-
-	@Override
-	public void tryToInit(IScope scope) {}
 
 	public ISkill getgSkill() {
 		return gSkill;

@@ -18,12 +18,12 @@
  */
 package msi.gama.common.util;
 
-import java.io.StringWriter;
 import java.text.*;
 import java.util.*;
 import java.util.regex.*;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gaml.expressions.IExpression;
 import org.apache.commons.lang.StringEscapeUtils;
 
 /**
@@ -34,14 +34,6 @@ import org.apache.commons.lang.StringEscapeUtils;
  * 
  */
 public class StringUtils {
-
-	/**
-	 * tokenize Created 31 août 07 by drogoul.
-	 * 
-	 * @param string the expression
-	 * 
-	 * @return the list of tokens found in the expression
-	 */
 
 	final static String strings = "'(?:[^\\\\']+|\\\\.)*'"; // Old: '[^'\\\r\n]*(?:\\.[^'\\\r\n]*)*'
 	final static String operators = "::|<>|!=|>=|<=|//";
@@ -86,12 +78,15 @@ public class StringUtils {
 	 */
 	static public String unescapeJava(final String str) {
 		if ( str == null ) { return null; }
-
-		final StringWriter writer = new StringWriter(str.length());
 		unescapeJava(writer, str);
-		return writer.toString();
+		String result = writer.toString();
+		writer.setLength(0);
+		return result;
 
 	}
+
+	private static final StringBuilder writer = new StringBuilder();
+	private static final StringBuilder unicode = new StringBuilder(4);
 
 	/**
 	 * Unescape java.
@@ -99,10 +94,10 @@ public class StringUtils {
 	 * @param out the out
 	 * @param str the str
 	 */
-	static private void unescapeJava(final StringWriter out, final String str) {
+	static private void unescapeJava(StringBuilder writer, final String str) {
 		if ( str == null ) { return; }
 		final int sz = str.length();
-		final StringBuffer unicode = new StringBuffer(4);
+
 		boolean hadSlash = false;
 		boolean inUnicode = false;
 		for ( int i = 0; i < sz; i++ ) {
@@ -114,15 +109,11 @@ public class StringUtils {
 				if ( unicode.length() == 4 ) {
 					// digits
 					// which represents our unicode character
-					try {
-						final int value = Integer.parseInt(unicode.toString(), 16);
-						out.write((char) value);
-						unicode.setLength(0);
-						inUnicode = false;
-						hadSlash = false;
-					} catch (final NumberFormatException nfe) {
-						nfe.printStackTrace();
-					}
+					final int value = Integer.parseInt(unicode.toString(), 16);
+					writer.append((char) value);
+					unicode.setLength(0);
+					inUnicode = false;
+					hadSlash = false;
 				}
 				continue;
 			}
@@ -131,28 +122,28 @@ public class StringUtils {
 				hadSlash = false;
 				switch (ch) {
 					case '\\':
-						out.write('\\');
+						writer.append('\\');
 						break;
 					case '\'':
-						out.write('\'');
+						writer.append('\'');
 						break;
 					case '\"':
-						out.write('"');
+						writer.append('"');
 						break;
 					case 'r':
-						out.write('\r');
+						writer.append('\r');
 						break;
 					case 'f':
-						out.write('\f');
+						writer.append('\f');
 						break;
 					case 't':
-						out.write('\t');
+						writer.append('\t');
 						break;
 					case 'n':
-						out.write('\n');
+						writer.append('\n');
 						break;
 					case 'b':
-						out.write('\b');
+						writer.append('\b');
 						break;
 					case 'u': {
 						// uh-oh, we're in unicode country....
@@ -160,7 +151,7 @@ public class StringUtils {
 						break;
 					}
 					default:
-						out.write(ch);
+						writer.append(ch);
 						break;
 				}
 				continue;
@@ -168,11 +159,11 @@ public class StringUtils {
 				hadSlash = true;
 				continue;
 			}
-			out.write(ch);
+			writer.append(ch);
 		}
 		if ( hadSlash ) {
 			// string, let's output it anyway.
-			out.write('\\');
+			writer.append('\\');
 		}
 	}
 
@@ -207,8 +198,8 @@ public class StringUtils {
 
 	public static String toGaml(final Object val) {
 		if ( val == null ) { return "nil"; }
-		if ( val instanceof IPopulation ) { return "Internal population of " +
-			((IPopulation) val).getSpecies().getName(); }
+		if ( val instanceof IExpression ) { return ((IExpression) val).toGaml(); }
+		if ( val instanceof IPopulation ) { return ((IPopulation) val).getSpecies().getName(); }
 		if ( val instanceof IValue ) { return ((IValue) val).toGaml(); }
 		if ( val instanceof String ) { return toGamlString((String) val); }
 		if ( val instanceof Double ) { return DEFAULT_DECIMAL_FORMAT.format(val); }

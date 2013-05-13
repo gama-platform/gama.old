@@ -81,5 +81,4 @@ public interface IParameter {
 
 	}
 
-	public abstract void tryToInit(IScope scope);
 }

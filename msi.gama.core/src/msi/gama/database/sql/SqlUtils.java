@@ -45,7 +45,7 @@ public class SqlUtils {
 				   dbtype.equalsIgnoreCase(SqlConnection.POSTGIS)) {
 			sqlConn = new PostgresConnection(dbtype, host, port, database, user, passwd);
 		}else {
-			throw new GamaRuntimeException("GAMA does not support: " + dbtype);
+			throw GamaRuntimeException.error("GAMA does not support: " + dbtype);
 		}
 		if (DEBUG){
 			GuiUtils.debug("SqlUtils.createConnection:"+sqlConn.toString());
@@ -82,7 +82,7 @@ public class SqlUtils {
 				   dbtype.equalsIgnoreCase(SqlConnection.POSTGIS)) {
 			sqlConn = new PostgresConnection(dbtype, host, port, database, user, passwd);
 		}else {
-			throw new GamaRuntimeException("GAMA does not support: " + dbtype);
+			throw GamaRuntimeException.error("GAMA does not support: " + dbtype);
 		}
 		if (DEBUG){
 			GuiUtils.debug("SqlUtils.createConnection:"+sqlConn.toString());

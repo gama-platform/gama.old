@@ -8,7 +8,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.finite_state_machine.FsmStateStatement;
 import msi.gaml.compilation.ISymbol;
@@ -48,7 +48,7 @@ public class UserPanelStatement extends FsmStateStatement {
 		super.bodyExecution(scope);
 		if ( !userCommands.isEmpty() ) {
 			GuiUtils.openUserControlPanel(scope, this);
-			while (scope.getAgentScope().getScheduler().isUserHold()) {
+			while (GAMA.controller.scheduler.on_user_hold) {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {

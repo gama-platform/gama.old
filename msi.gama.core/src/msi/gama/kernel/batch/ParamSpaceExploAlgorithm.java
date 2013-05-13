@@ -39,8 +39,8 @@ import org.uncommons.maths.number.NumberGenerator;
 public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExploration {
 
 	public final static String[] COMBINATIONS = new String[] { "maximum", "minimum", "average" };
-	public static final Class[] CLASSES = { GeneticAlgorithm.class, SimulatedAnnealing.class,
-		HillClimbing.class, TabuSearch.class, TabuSearchReactive.class, ExhaustiveSearch.class };
+	public static final Class[] CLASSES = { GeneticAlgorithm.class, SimulatedAnnealing.class, HillClimbing.class,
+		TabuSearch.class, TabuSearchReactive.class, ExhaustiveSearch.class };
 
 	static {
 		AbstractGamlAdditions._constants(COMBINATIONS);
@@ -91,7 +91,6 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 		} catch (GamaRuntimeException e) {
 			GAMA.reportError(e);
 		}
-		GAMA.getExperiment().stop();
 	}
 
 	@Override
@@ -108,8 +107,8 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 
 	@Override
 	public void addParametersTo(final BatchExperiment exp) {
-		exp.addMethodParameter(new ParameterAdapter("Exploration method",
-			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.STRING) {
+		exp.addMethodParameter(new ParameterAdapter("Exploration method", IExperimentSpecies.BATCH_CATEGORY_NAME,
+			IType.STRING) {
 
 			@Override
 			public Object value() {

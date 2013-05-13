@@ -181,7 +181,6 @@ Export-Package: msi.gama.common.interfaces;
    msi.gama.runtime,
    msi.gaml.descriptions,
    msi.gama.util.graph",
- msi.gama.opengl;uses:="msi.gama.outputs,msi.gama.runtime,msi.gaml.descriptions",
  msi.gama.outputs;
   uses:="msi.gaml.expressions,
    msi.gama.kernel.experiment,

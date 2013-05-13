@@ -58,17 +58,15 @@ public class GamaTopologyType extends GamaType<ITopology> {
 	}
 
 	/**
-	 * @see msi.gama.internal.types.GamaType#cast(msi.gama.interfaces.IScope, java.lang.Object,
-	 *      java.lang.Object)
+	 * @see msi.gama.internal.types.GamaType#cast(msi.gama.interfaces.IScope, java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public ITopology cast(final IScope scope, final Object obj, final Object param)
-		throws GamaRuntimeException {
+	public ITopology cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
 		return staticCast(scope, obj, param);
 	}
 
 	public static ITopology from(final IScope scope, final IShape obj) {
-		return new ContinuousTopology(scope, obj, false);
+		return new ContinuousTopology(scope, obj);
 	}
 
 	/**
@@ -77,8 +75,7 @@ public class GamaTopologyType extends GamaType<ITopology> {
 	 * @param obj
 	 * @return
 	 */
-	private static ITopology from(final IScope scope, final IContainer obj)
-		throws GamaRuntimeException {
+	private static ITopology from(final IScope scope, final IContainer obj) throws GamaRuntimeException {
 		if ( obj instanceof GamaSpatialGraph ) {
 			return ((GamaSpatialGraph) obj).getTopology();
 		} else if ( obj instanceof GamaSpatialMatrix ) {

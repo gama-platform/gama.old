@@ -27,6 +27,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -35,8 +36,7 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.GENETIC, kind = ISymbolKind.BATCH_METHOD, with_sequence = false)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
-@facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
+@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = GeneticAlgorithm.POP_DIM, type = IType.INT, optional = true),
 	@facet(name = GeneticAlgorithm.CROSSOVER_PROB, type = IType.FLOAT, optional = true),
 	@facet(name = GeneticAlgorithm.MUTATION_PROB, type = IType.FLOAT, optional = true),
@@ -44,8 +44,7 @@ import msi.gaml.types.IType;
 	@facet(name = GeneticAlgorithm.MAX_GEN, type = IType.INT, optional = true),
 	@facet(name = IKeyword.MAXIMIZE, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.MINIMIZE, type = IType.FLOAT, optional = true),
-	@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = {
-		IKeyword.MIN, IKeyword.MAX }) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = { IKeyword.MIN, IKeyword.MAX }) }, omissible = IKeyword.NAME)
 public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 
 	private int populationDim = 3;
@@ -72,31 +71,37 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 	@Override
 	public void initializeFor(final BatchExperiment f) throws GamaRuntimeException {
 		super.initializeFor(f);
-		IScope scope = GAMA.getDefaultScope();
-		initPop = new InitializationUniform();
-		crossOverOp = new CrossOver1Pt();
-		mutationOp = new Mutation1Var();
-		selectionOp = new SelectionRoulette();
-		final IExpression popDim = getFacet(POP_DIM);
-		if ( popDim != null ) {
-			populationDim = Cast.asInt(scope, popDim.value(scope));
-		}
-		final IExpression crossOverPb = getFacet(CROSSOVER_PROB);
-		if ( crossOverPb != null ) {
-			crossoverProb = Cast.asFloat(scope, crossOverPb.value(scope));
-		}
-		final IExpression mutationPb = getFacet(MUTATION_PROB);
-		if ( mutationPb != null ) {
-			mutationProb = Cast.asFloat(scope, mutationPb.value(scope));
-		}
-		final IExpression nbprelimgen = getFacet(NB_GEN);
-		if ( nbprelimgen != null ) {
-			nbPrelimGenerations = Cast.asInt(scope, nbprelimgen.value(scope));
-		}
-		final IExpression maxgen = getFacet(MAX_GEN);
-		if ( maxgen != null ) {
-			maxGenerations = Cast.asInt(scope, maxgen.value(scope));
-		}
+		GAMA.run(new InScope.Void() {
+
+			@Override
+			public void process(IScope scope) {
+				initPop = new InitializationUniform();
+				crossOverOp = new CrossOver1Pt();
+				mutationOp = new Mutation1Var();
+				selectionOp = new SelectionRoulette();
+				final IExpression popDim = getFacet(POP_DIM);
+				if ( popDim != null ) {
+					populationDim = Cast.asInt(scope, popDim.value(scope));
+				}
+				final IExpression crossOverPb = getFacet(CROSSOVER_PROB);
+				if ( crossOverPb != null ) {
+					crossoverProb = Cast.asFloat(scope, crossOverPb.value(scope));
+				}
+				final IExpression mutationPb = getFacet(MUTATION_PROB);
+				if ( mutationPb != null ) {
+					mutationProb = Cast.asFloat(scope, mutationPb.value(scope));
+				}
+				final IExpression nbprelimgen = getFacet(NB_GEN);
+				if ( nbprelimgen != null ) {
+					nbPrelimGenerations = Cast.asInt(scope, nbprelimgen.value(scope));
+				}
+				final IExpression maxgen = getFacet(MAX_GEN);
+				if ( maxgen != null ) {
+					maxGenerations = Cast.asInt(scope, maxgen.value(scope));
+				}
+
+			}
+		});
 
 	}
 
@@ -105,8 +110,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 		List<IParameter.Batch> variables = currentExperiment.getParametersToExplore();
 		testedSolutions = new Hashtable<ParametersSet, Double>();
 		List<Chromosome> population =
-			initPop.initializePop(variables, currentExperiment, populationDim, nbPrelimGenerations,
-				isMaximize());
+			initPop.initializePop(variables, currentExperiment, populationDim, nbPrelimGenerations, isMaximize());
 		bestFitness = isMaximize() ? Double.MIN_VALUE : Double.MAX_VALUE;
 		int nbGen = 1;
 		while (nbGen <= maxGenerations) {
@@ -139,8 +143,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 
 	private void computePopFitness(final List<Chromosome> population) throws GamaRuntimeException {
 		for ( final Chromosome chromosome : population ) {
-			final ParametersSet sol =
-				chromosome.convertToSolution(currentExperiment.getParametersToExplore());
+			final ParametersSet sol = chromosome.convertToSolution(currentExperiment.getParametersToExplore());
 			Double fitness = testedSolutions.get(sol);
 			if ( fitness == null ) {
 				fitness = Double.valueOf(currentExperiment.launchSimulationsWithSolution(sol));
@@ -159,8 +162,8 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 	@Override
 	public void addParametersTo(final BatchExperiment exp) {
 		super.addParametersTo(exp);
-		exp.addMethodParameter(new ParameterAdapter("Mutation probability",
-			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.FLOAT) {
+		exp.addMethodParameter(new ParameterAdapter("Mutation probability", IExperimentSpecies.BATCH_CATEGORY_NAME,
+			IType.FLOAT) {
 
 			@Override
 			public Object value() {
@@ -168,8 +171,8 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 			}
 
 		});
-		exp.addMethodParameter(new ParameterAdapter("Crossover probability",
-			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.FLOAT) {
+		exp.addMethodParameter(new ParameterAdapter("Crossover probability", IExperimentSpecies.BATCH_CATEGORY_NAME,
+			IType.FLOAT) {
 
 			@Override
 			public Object value() {
@@ -177,8 +180,8 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 			}
 
 		});
-		exp.addMethodParameter(new ParameterAdapter("Population dimension",
-			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
+		exp.addMethodParameter(new ParameterAdapter("Population dimension", IExperimentSpecies.BATCH_CATEGORY_NAME,
+			IType.INT) {
 
 			@Override
 			public Object value() {

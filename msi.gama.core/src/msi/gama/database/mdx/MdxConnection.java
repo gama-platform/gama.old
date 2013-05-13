@@ -121,10 +121,10 @@ public abstract class MdxConnection {
 	        connection.close();
 		}catch (OlapException e){
 			e.printStackTrace();
-			throw new GamaRuntimeException(e.toString());
+			throw GamaRuntimeException.error(e.toString());
 		}catch (SQLException e) {
 			e.printStackTrace();
-			throw new GamaRuntimeException(e.toString());
+			throw GamaRuntimeException.error(e.toString());
 		}
 		 return resultCellSet;
 	}

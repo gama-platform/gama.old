@@ -21,7 +21,7 @@ package msi.gama.runtime;
 import java.util.Map;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.kernel.model.IModel;
-import msi.gama.kernel.simulation.*;
+import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -71,7 +71,7 @@ public abstract class AbstractScope implements IScope {
 	private IGraphics context;
 	private ITopology topology;
 	private ExecutionStatus currentStatus;
-	private final String name;
+	private final IAgent root;
 
 	{
 		for ( int i = 0; i < vars.length; i++ ) {
@@ -79,26 +79,34 @@ public abstract class AbstractScope implements IScope {
 		}
 	}
 
-	public AbstractScope(final String name) {
-		this.name = name;
+	public AbstractScope(final IAgent root) {
+		this.root = root;
+		push(root);
 	}
 
 	@Override
 	public String getName() {
-		return name;
+		return "Scope of " + getRoot().getName();
 	}
 
 	@Override
-	public abstract void setGlobalVarValue(final String name, final Object v) throws GamaRuntimeException;
+	public void setGlobalVarValue(final String name, final Object v) {
+		getRoot().setDirectVarValue(this, name, v);
+	}
 
 	@Override
-	public abstract Object getGlobalVarValue(final String name) throws GamaRuntimeException;
+	public Object getGlobalVarValue(final String name) {
+		return getRoot().getDirectVarValue(this, name);
+	}
 
 	@Override
-	public void setAgentVarValue(final String name, final Object v) throws GamaRuntimeException {
-		if ( agentsPointer == 0 ) { return; }
+	public void setAgentVarValue(final String name, final Object v) {
+		if ( agentsPointer == 0 ) {
+			setGlobalVarValue(name, v);
+			return;
+		}
 		IAgent agent = agentsStack[agentsPointer - 1];
-		if ( agent.dead() ) { return; }
+		if ( agent == null || agent.dead() ) { return; }
 		agent.setDirectVarValue(this, name, v); // ??
 	}
 
@@ -107,22 +115,20 @@ public abstract class AbstractScope implements IScope {
 		if ( agentsPointer == 0 ) { return getGlobalVarValue(name); } // ?
 		for ( int i = agentsPointer; i > 0; i-- ) {
 			IAgent agent = agentsStack[i - 1];
-
-			if ( !agent.dead() ) { return agent.getDirectVarValue(this, name); // What if agent
-																				// doesn't
-																				// have var?
-			}
-
+			if ( agent != null && !agent.dead() ) { return agent.getDirectVarValue(this, name); }
 		}
-		// Error ?
 		return null;
 	}
 
 	@Override
-	public abstract ISimulationAgent getSimulationScope();
+	public IAgent getSimulationScope() {
+		return getRoot();
+	}
 
 	@Override
-	public abstract IModel getModel();
+	public IModel getModel() {
+		return getRoot().getModel();
+	}
 
 	@Override
 	public final Object getVarValue(final String varName) {
@@ -349,8 +355,11 @@ public abstract class AbstractScope implements IScope {
 
 	@Override
 	public final SimulationClock getClock() {
-		ISimulationAgent sim = getSimulationScope();
-		return sim == null ? null : sim.getScheduler().getClock();
+		return getRoot().getClock();
+	}
+
+	protected IAgent getRoot() {
+		return root;
 	}
 
 }

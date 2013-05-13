@@ -27,6 +27,7 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -35,8 +36,7 @@ import msi.gaml.types.IType;
 
 @symbol(name = IKeyword.REACTIVE_TABU, kind = ISymbolKind.BATCH_METHOD, with_sequence = false)
 @inside(kinds = { ISymbolKind.EXPERIMENT })
-@facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
+@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = false),
 	@facet(name = TabuSearchReactive.ITER_MAX, type = IType.INT, optional = true),
 	@facet(name = TabuSearchReactive.LIST_SIZE_INIT, type = IType.INT, optional = true),
 	@facet(name = TabuSearchReactive.LIST_SIZE_MAX, type = IType.INT, optional = true),
@@ -46,8 +46,7 @@ import msi.gaml.types.IType;
 	@facet(name = TabuSearchReactive.CYCLE_SIZE_MIN, type = IType.INT, optional = true),
 	@facet(name = IKeyword.MAXIMIZE, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.MINIMIZE, type = IType.FLOAT, optional = true),
-	@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = {
-		IKeyword.MIN, IKeyword.MAX }) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.AGGREGATION, type = IType.LABEL, optional = true, values = { IKeyword.MIN, IKeyword.MAX }) }, omissible = IKeyword.NAME)
 public class TabuSearchReactive extends LocalSearchAlgorithm {
 
 	private int tabuListSizeInit = 5;
@@ -76,36 +75,42 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 	@Override
 	public void initializeFor(final BatchExperiment f) throws GamaRuntimeException {
 		super.initializeFor(f);
-		IScope scope = GAMA.getDefaultScope();
-		final IExpression maxIt = getFacet(ITER_MAX);
-		if ( maxIt != null ) {
-			iterMax = Cast.asInt(scope, maxIt.value(scope));
-			stoppingCriterion = new StoppingCriterionMaxIt(iterMax);
-		}
-		final IExpression listSizeInit = getFacet(LIST_SIZE_INIT);
-		if ( listSizeInit != null ) {
-			tabuListSizeInit = Cast.asInt(scope, listSizeInit.value(scope));
-		}
-		final IExpression listSizeMax = getFacet(LIST_SIZE_MAX);
-		if ( listSizeMax != null ) {
-			tabuListSizeMax = Cast.asInt(scope, listSizeMax.value(scope));
-		}
-		final IExpression listSizeMin = getFacet(LIST_SIZE_MIN);
-		if ( listSizeMin != null ) {
-			tabuListSizeMin = Cast.asInt(scope, listSizeMin.value(scope));
-		}
-		final IExpression nbTestWtoutColMax = getFacet(NB_TESTS_MAX);
-		if ( nbTestWtoutColMax != null ) {
-			nbTestWithoutCollisionMax = Cast.asInt(scope, nbTestWtoutColMax.value(scope));
-		}
-		final IExpression cycleMax = getFacet(CYCLE_SIZE_MAX);
-		if ( cycleMax != null ) {
-			cycleSizeMax = Cast.asInt(scope, cycleMax.value(scope));
-		}
-		final IExpression cycleMin = getFacet(CYCLE_SIZE_MIN);
-		if ( cycleMin != null ) {
-			cycleSizeMin = Cast.asInt(scope, cycleMin.value(scope));
-		}
+		GAMA.run(new InScope.Void() {
+
+			@Override
+			public void process(IScope scope) {
+				final IExpression maxIt = getFacet(ITER_MAX);
+				if ( maxIt != null ) {
+					iterMax = Cast.asInt(scope, maxIt.value(scope));
+					stoppingCriterion = new StoppingCriterionMaxIt(iterMax);
+				}
+				final IExpression listSizeInit = getFacet(LIST_SIZE_INIT);
+				if ( listSizeInit != null ) {
+					tabuListSizeInit = Cast.asInt(scope, listSizeInit.value(scope));
+				}
+				final IExpression listSizeMax = getFacet(LIST_SIZE_MAX);
+				if ( listSizeMax != null ) {
+					tabuListSizeMax = Cast.asInt(scope, listSizeMax.value(scope));
+				}
+				final IExpression listSizeMin = getFacet(LIST_SIZE_MIN);
+				if ( listSizeMin != null ) {
+					tabuListSizeMin = Cast.asInt(scope, listSizeMin.value(scope));
+				}
+				final IExpression nbTestWtoutColMax = getFacet(NB_TESTS_MAX);
+				if ( nbTestWtoutColMax != null ) {
+					nbTestWithoutCollisionMax = Cast.asInt(scope, nbTestWtoutColMax.value(scope));
+				}
+				final IExpression cycleMax = getFacet(CYCLE_SIZE_MAX);
+				if ( cycleMax != null ) {
+					cycleSizeMax = Cast.asInt(scope, cycleMax.value(scope));
+				}
+				final IExpression cycleMin = getFacet(CYCLE_SIZE_MIN);
+				if ( cycleMin != null ) {
+					cycleSizeMin = Cast.asInt(scope, cycleMin.value(scope));
+				}
+
+			}
+		});
 	}
 
 	@Override
@@ -154,19 +159,16 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 				}
 				Double neighborFitness = testedSolutions.get(neighborSol);
 				if ( neighborFitness == null ) {
-					neighborFitness =
-						Double
-							.valueOf(currentExperiment.launchSimulationsWithSolution(neighborSol));
+					neighborFitness = Double.valueOf(currentExperiment.launchSimulationsWithSolution(neighborSol));
 				}
 				testedSolutions.put(neighborSol, neighborFitness);
 
-				if ( isMaximize() && neighborFitness.doubleValue() > bestFitnessAlgo ||
-					!isMaximize() && neighborFitness.doubleValue() < bestFitnessAlgo ) {
+				if ( isMaximize() && neighborFitness.doubleValue() > bestFitnessAlgo || !isMaximize() &&
+					neighborFitness.doubleValue() < bestFitnessAlgo ) {
 					bestNeighbor = neighborSol;
 					bestFitnessAlgo = neighborFitness.doubleValue();
 				}
-				if ( isMaximize() && currentFitness > bestFitness || !isMaximize() &&
-					currentFitness < bestFitness ) {
+				if ( isMaximize() && currentFitness > bestFitness || !isMaximize() && currentFitness < bestFitness ) {
 					bestSolution = new ParametersSet(bestSolutionAlgo);
 					bestFitness = currentFitness;
 				}
@@ -193,25 +195,20 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 				} else {
 					final int depl = (int) (1 + GAMA.getRandom().next() * cycleSize / 2.0);
 					for ( int i = 0; i < depl; i++ ) {
-						final List<ParametersSet> neighborsAlea =
-							neighborhood.neighbor(bestSolutionAlgo);
+						final List<ParametersSet> neighborsAlea = neighborhood.neighbor(bestSolutionAlgo);
 						neighborsAlea.removeAll(tabuList);
 						if ( neighborsAlea.isEmpty() ) {
 							break;
 						}
-						bestSolutionAlgo =
-							neighborsAlea
-								.get(GAMA.getRandom().between(0, neighborsAlea.size() - 1));
+						bestSolutionAlgo = neighborsAlea.get(GAMA.getRandom().between(0, neighborsAlea.size() - 1));
 						if ( tabuList.size() == tabuListSize ) {
 							tabuList.remove(0);
 						}
 						tabuList.add(bestSolutionAlgo);
 					}
-					currentFitness =
-						currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo);
+					currentFitness = currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo);
 					testedSolutions.put(bestSolutionAlgo, new Double(currentFitness));
-					if ( isMaximize() && currentFitness > bestFitness || !isMaximize() &&
-						currentFitness < bestFitness ) {
+					if ( isMaximize() && currentFitness > bestFitness || !isMaximize() && currentFitness < bestFitness ) {
 						bestSolution = new ParametersSet(bestSolutionAlgo);
 						bestFitness = currentFitness;
 					}
@@ -246,8 +243,8 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 	@Override
 	public void addParametersTo(final BatchExperiment exp) {
 		super.addParametersTo(exp);
-		exp.addMethodParameter(new ParameterAdapter("Tabu list initial size",
-			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
+		exp.addMethodParameter(new ParameterAdapter("Tabu list initial size", IExperimentSpecies.BATCH_CATEGORY_NAME,
+			IType.INT) {
 
 			@Override
 			public Object value() {
@@ -255,8 +252,8 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 			}
 
 		});
-		exp.addMethodParameter(new ParameterAdapter("Tabu list maximum size",
-			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
+		exp.addMethodParameter(new ParameterAdapter("Tabu list maximum size", IExperimentSpecies.BATCH_CATEGORY_NAME,
+			IType.INT) {
 
 			@Override
 			public Object value() {
@@ -264,8 +261,8 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 			}
 
 		});
-		exp.addMethodParameter(new ParameterAdapter("Tabu list minimum size",
-			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
+		exp.addMethodParameter(new ParameterAdapter("Tabu list minimum size", IExperimentSpecies.BATCH_CATEGORY_NAME,
+			IType.INT) {
 
 			@Override
 			public Object value() {
@@ -282,8 +279,8 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 			}
 
 		});
-		exp.addMethodParameter(new ParameterAdapter("Maximum cycle size",
-			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
+		exp.addMethodParameter(new ParameterAdapter("Maximum cycle size", IExperimentSpecies.BATCH_CATEGORY_NAME,
+			IType.INT) {
 
 			@Override
 			public Object value() {
@@ -291,8 +288,8 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 			}
 
 		});
-		exp.addMethodParameter(new ParameterAdapter("Minimum cycle size",
-			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
+		exp.addMethodParameter(new ParameterAdapter("Minimum cycle size", IExperimentSpecies.BATCH_CATEGORY_NAME,
+			IType.INT) {
 
 			@Override
 			public Object value() {

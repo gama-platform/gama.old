@@ -38,12 +38,12 @@ import msi.gaml.types.IType;
  */
 
 @facets(value = {
-	@facet(name = IKeyword.ITEM, type = IType.NONE_STR, optional = true),
+	@facet(name = IKeyword.ITEM, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.FROM, type = { IType.CONTAINER, IType.SPECIES, IType.AGENT,
 		IType.GEOMETRY }, optional = false),
-	@facet(name = IKeyword.INDEX, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.KEY, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.ALL, type = IType.NONE_STR, optional = true) }, omissible = IKeyword.ITEM)
+	@facet(name = IKeyword.INDEX, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.KEY, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.ALL, type = IType.NONE, optional = true) }, omissible = IKeyword.ITEM)
 @symbol(name = IKeyword.REMOVE, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 public class RemoveStatement extends AbstractContainerStatement {
@@ -60,8 +60,7 @@ public class RemoveStatement extends AbstractContainerStatement {
 		// if ( container.isFixedLength() ) { throw new GamaRuntimeException("Cannot remove from " +
 		// list.toGaml(), true); }
 		if ( position != null ) {
-			if ( !container.checkBounds(position, false) ) { throw new GamaRuntimeException(
-				"Index " + position + " out of bounds of " + item.toGaml(), true); }
+			if ( !container.checkBounds(position, false) ) { throw GamaRuntimeException.warning("Index " + position + " out of bounds of " + item.toGaml()); }
 		}
 		container.remove(scope, position, object, whole);
 	}

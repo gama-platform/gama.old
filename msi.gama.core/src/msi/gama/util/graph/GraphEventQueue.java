@@ -29,7 +29,7 @@ public class GraphEventQueue implements IGraphEventListener {
 	@Override
 	public void receiveEvent(GraphEvent event) {
 		if (queue.size() >= MAX_EVENTS_MEMORY)
-			throw new GamaRuntimeException("Too much graph events in memory ("+MAX_EVENTS_MEMORY+")");
+			throw GamaRuntimeException.error("Too much graph events in memory ("+MAX_EVENTS_MEMORY+")");
 		synchronized (queue) {
 			queue.addLast(event);	
 		}

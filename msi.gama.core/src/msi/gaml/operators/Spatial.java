@@ -321,15 +321,24 @@ public abstract class Spatial {
 			if ( g2.isPoint() && g1.covers(g2.getLocation()) ) { return new GamaShape(g2); }
 			if ( g1.isPoint() && g2.covers(g1.getLocation()) ) { return new GamaShape(g1); }
 			Geometry geom = null;
+			Geometry geom1 = g1.getInnerGeometry();
+			Geometry geom2 = g2.getInnerGeometry();
 			try {
-				geom = g1.getInnerGeometry().intersection(g2.getInnerGeometry());
+
+				geom = geom1.intersection(geom2);
 			} catch (Exception ex) {
-				PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
-				geom =
-					GeometryPrecisionReducer.reducePointwise(g1.getInnerGeometry(), pm).intersection(
-						GeometryPrecisionReducer.reducePointwise(g2.getInnerGeometry(), pm));
+				ex.printStackTrace();
+				try {
+					PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
+					geom =
+						GeometryPrecisionReducer.reducePointwise(geom1, pm).intersection(
+							GeometryPrecisionReducer.reducePointwise(geom2, pm));
+				} catch (Exception e) {
+					// AD 12/04/13 : Addition of a third method in case of exception
+					geom = geom1.buffer(0.01).intersection(geom2.buffer(0.01));
+				}
 			}
-			if ( geom.isEmpty() ) { return null; }
+			if ( geom == null || geom.isEmpty() ) { return null; }
 			return new GamaShape(geom);
 		}
 
@@ -341,22 +350,27 @@ public abstract class Spatial {
 				return g2;
 			}
 			if ( g2 == null ) { return g1; }
-			return new GamaShape(_union(g1.getInnerGeometry(), g2.getInnerGeometry()));
-		}
-
-		private static Geometry _union(final Geometry geom1, final Geometry geom2) {
+			Geometry geom1 = g1.getInnerGeometry();
+			Geometry geom2 = g2.getInnerGeometry();
 			Geometry geom;
 			try {
 				geom = geom1.union(geom2);
 			} catch (Exception e) {
+				e.printStackTrace();
 				// geom = geom1.buffer(0.01).union(geom2.buffer(0.01));
-				PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
-				geom =
-					GeometryPrecisionReducer.reducePointwise(geom1, pm).intersection(
-						GeometryPrecisionReducer.reducePointwise(geom2, pm));
+				try {
+					PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
+					geom =
+						GeometryPrecisionReducer.reducePointwise(geom1, pm).intersection(
+							GeometryPrecisionReducer.reducePointwise(geom2, pm));
+				} catch (Exception e1) {
+					// AD 12/04/13 : Addition of a third method in case of exception
+					geom = geom1.buffer(0.01).union(geom2.buffer(0.01));
+				}
 
 			}
-			return geom;
+			if ( geom == null || geom.isEmpty() ) { return null; }
+			return new GamaShape(geom);
 		}
 
 		@operator(value = { "union" }, expected_content_type = { IType.POINT, IType.GEOMETRY, IType.AGENT })
@@ -663,14 +677,14 @@ public abstract class Spatial {
 		@doc(value = "A geometry resulting from the application of a rotation by the right-hand operand angle (degree) to the left-hand operand (geometry, agent, point)", examples = { "self rotated_by 45 --: returns the geometry resulting from a 45 degres rotation to the geometry of the agent applying the operator." }, see = {
 			"transformed_by", "translated_by" })
 		public static IShape rotated_by(IScope scope, final IShape g1, final Double angle) {
-			if (g1 == null) return null;
+			if ( g1 == null ) { return null; }
 			return ((GamaShape) g1.getGeometry()).rotatedBy(scope, Math.toRadians(angle));
 		}
 
 		@operator("rotated_by")
 		@doc(comment = "the right-hand operand can be a float or a int")
 		public static IShape rotated_by(IScope scope, final IShape g1, final Integer angle) {
-			if (g1 == null) return null;
+			if ( g1 == null ) { return null; }
 			return ((GamaShape) g1.getGeometry()).rotatedBy(scope, angle);
 		}
 
@@ -687,7 +701,7 @@ public abstract class Spatial {
 		@doc(value = "A geometry resulting from the application of a rotation and a translation (rigth-operand : point {angle(degree), distance} of the left-hand operand (geometry, agent, point)", examples = { "self transformed_by {45, 20} --: returns the geometry resulting from 45¡ rotation and 10m translation of the geometry of the agent applying the operator." }, see = {
 			"rotated_by", "translated_by" })
 		public static IShape transformed_by(final IScope scope, final IShape g, final GamaPoint p) {
-			if (g == null) return null;
+			if ( g == null ) { return null; }
 			return scaled_by(scope, rotated_by(scope, g, p.x), p.y);
 		}
 
@@ -702,14 +716,14 @@ public abstract class Spatial {
 		@doc(value = "A geometry resulting from the application of a translation by the right-hand operand distance to the left-hand operand (geometry, agent, point)", examples = { "self translated_by 45 --: returns the geometry resulting from a 10m translation to the geometry of the agent applying the operator." }, see = {
 			"rotated_by", "transformed_by" })
 		public static IShape translated_by(IScope scope, final IShape g, final GamaPoint p) throws GamaRuntimeException {
-		if (g == null) return null;
+			if ( g == null ) { return null; }
 			return at_location(scope, g, msi.gaml.operators.Points.add((GamaPoint) g.getLocation(), p));
 		}
 
 		@operator(value = { "at_location", "translated_to" })
 		@doc(value = "A geometry resulting from the tran of a translation to the right-hand operand point of the left-hand operand (geometry, agent, point)", examples = { "self at_location {10, 20} --: returns the geometry resulting from a translation to the location {10, 20} of the geometry of the agent applying the operator." })
 		public static IShape at_location(IScope scope, final IShape g, final ILocation p) throws GamaRuntimeException {
-		if (g == null) return null;
+			if ( g == null ) { return null; }
 			GamaShape newShape = (GamaShape) g.copy(scope);
 			newShape.setLocation(p);
 			return newShape;
@@ -718,10 +732,9 @@ public abstract class Spatial {
 		@operator(value = { "without_holes", "solid" })
 		@doc(value = "A geometry corresponding to the operand geometry (geometry, agent, point) without its holes", examples = { "solid(self) --: returns the geometry corresponding to the geometry of the agent applying the operator without its holes." })
 		public static IShape without_holes(final IShape g) {
-			if (g == null) return null;
+			if ( g == null ) { return null; }
 			Geometry geom = g.getInnerGeometry();
 			Geometry result = geom;
-
 			if ( geom instanceof Polygon ) {
 				result =
 					GeometryUtils.getFactory().createPolygon(
@@ -744,7 +757,7 @@ public abstract class Spatial {
 		@operator(value = "triangulate", content_type = IType.GEOMETRY)
 		@doc(value = "A list of geometries (triangles) corresponding to the Delaunay triangulation of the operand geometry (geometry, agent, point)", examples = { "triangulate(self) --: returns the list of geometries (triangles) corresponding to the Delaunay triangulation of the geometry of the agent applying the operator." })
 		public static GamaList<IShape> triangulate(final IScope scope, final IShape g) {
-			if (g == null) return null;
+			if ( g == null ) { return null; }
 			return GeometryUtils.triangulation(scope, g.getInnerGeometry());
 		}
 
@@ -1208,12 +1221,12 @@ public abstract class Spatial {
 			throws GamaRuntimeException {
 			if ( pair == null ) { return GamaList.EMPTY_LIST; }
 			Object a = pair.key;
-			if ( a == null ) { throw new GamaRuntimeException("Cannot compute neighbours of a null agent"); }
-			if ( !(a instanceof IShape) ) { throw new GamaRuntimeException(
-				"The operator neighbours_of expects a pair agent::float as its right member"); }
+			if ( a == null ) { throw GamaRuntimeException.error("Cannot compute neighbours of a null agent"); }
+			if ( !(a instanceof IShape) ) { throw GamaRuntimeException
+				.error("The operator neighbours_of expects a pair agent::float as its right member"); }
 			Object d = pair.value;
-			if ( !(d instanceof Number) ) { throw new GamaRuntimeException(
-				"The operator neighbours_of expects a pair agent::float as its right member"); }
+			if ( !(d instanceof Number) ) { throw GamaRuntimeException
+				.error("The operator neighbours_of expects a pair agent::float as its right member"); }
 			if ( a instanceof ILocation ) { return t.getNeighboursOf((ILocation) a, Cast.asFloat(scope, d),
 				Different.with()); }
 			return t.getNeighboursOf((IShape) a, Cast.asFloat(scope, d), Different.with());
@@ -1319,7 +1332,7 @@ public abstract class Spatial {
 				return scope.getTopology().getAgentClosestTo((ILocation) source, In.list(scope, targets));
 			} else if ( source instanceof IShape ) { return scope.getTopology().getAgentClosestTo(source,
 				In.list(scope, targets)); }
-			throw new GamaRuntimeException(StringUtils.toGaml(source) + " is not a geometrical object");
+			throw GamaRuntimeException.error(StringUtils.toGaml(source) + " is not a geometrical object");
 		}
 
 		@operator(value = { "closest_to" }, type = ITypeProvider.FIRST_CONTENT_TYPE)
@@ -1336,7 +1349,7 @@ public abstract class Spatial {
 			if ( source instanceof ILocation ) {
 				return t.getAgentClosestTo((ILocation) source, In.population(pop));
 			} else if ( source instanceof IShape ) { return t.getAgentClosestTo(source, In.population(pop)); }
-			throw new GamaRuntimeException(StringUtils.toGaml(source) + " is not a geometrical object");
+			throw GamaRuntimeException.error(StringUtils.toGaml(source) + " is not a geometrical object");
 		}
 
 		@operator(value = "agent_closest_to", type = IType.AGENT)
@@ -1348,7 +1361,7 @@ public abstract class Spatial {
 				return scope.getTopology().getAgentClosestTo((ILocation) source, Different.with());
 			} else if ( source instanceof IShape ) { return scope.getTopology().getAgentClosestTo((IShape) source,
 				Different.with()); }
-			throw new GamaRuntimeException(StringUtils.toGaml(source) + " is not a geometrical object");
+			throw GamaRuntimeException.error(StringUtils.toGaml(source) + " is not a geometrical object");
 		}
 
 		@operator(value = "agents_inside", content_type = IType.AGENT)

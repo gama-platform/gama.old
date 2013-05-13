@@ -27,7 +27,7 @@ import msi.gama.metamodel.topology.continuous.ContinuousTopology;
 import msi.gama.metamodel.topology.filter.In;
 import msi.gama.metamodel.topology.graph.*;
 import msi.gama.metamodel.topology.grid.GridTopology;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.GamaGridFile;
@@ -35,8 +35,8 @@ import msi.gama.util.graph.AbstractGraphNodeAgent;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.architecture.IArchitecture;
 import msi.gaml.compilation.*;
-import msi.gaml.descriptions.TypeDescription;
-import msi.gaml.expressions.*;
+import msi.gaml.descriptions.*;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IAspect;
@@ -60,9 +60,9 @@ public class GamaPopulation implements IPopulation {
 	protected final String[] orderedVarNames;
 	protected final IVariable[] updatableVars;
 	protected int currentAgentIndex;
-
+	protected final IArchitecture architecture;
 	protected IList<IAgent> agents = new GamaList();
-	IExpression scheduleFrequency = new ConstantExpression(1);
+	final IExpression scheduleFrequency;
 
 	/**
 	 * Listeners, created in a lazy way
@@ -107,6 +107,7 @@ public class GamaPopulation implements IPopulation {
 	public GamaPopulation(final IAgent host, final ISpecies species) {
 		this.host = host;
 		this.species = species;
+		architecture = species.getArchitecture();
 		TypeDescription ecd = (TypeDescription) species.getDescription();
 		orderedVarNames = ecd.getVarNames().toArray(new String[0]);
 		List<String> updatableVarNames = ecd.getUpdatableVarNames();
@@ -121,22 +122,73 @@ public class GamaPopulation implements IPopulation {
 		}
 
 		// Add an attribute to the agents (dans SpeciesDescription)
-		IExpression exp = species.getFrequency();
-		if ( exp != null ) {
-			scheduleFrequency = exp;
-		}
+		scheduleFrequency = species.getFrequency();
 	}
 
 	@Override
 	public void step(final IScope scope) throws GamaRuntimeException {
-		IArchitecture c = species.getArchitecture();
-		c.executeOn(scope);
+
+		// Do whatever the population has to do every step ?
+
+		List<IAgent> agentsToSchedule = computeAgentsToSchedule(scope);
+
+		// if ( number == 0 ) { return; }
+
+		// for ( int j = 0; j < updatableVars.length; j++ ) {
+		// for ( int i = 0; i < number; i++ ) {
+		// IAgent a = agentsToSchedule[i];
+		// if ( a != null && !a.dead() ) {
+		// scope.push(a);
+		// try {
+		// updatableVars[j].updateFor(scope, a);
+		// } catch (GamaRuntimeException g) {
+		// g.addAgent(a.getName());
+		// GAMA.reportError(g);
+		// } finally {
+		// scope.pop(a);
+		// }
+		// }
+		//
+		// }
+		// }
+
+		for ( int i = 0, n = agentsToSchedule.size(); i < n; i++ ) {
+			if ( scope.interrupted() ) { return; }
+			IAgent a = agentsToSchedule.get(i);
+			if ( a != null && !a.dead() ) {
+				scope.push(a);
+				try {
+					// The call to the architecture is in the agent as well as the update of variables
+					// architecture.executeOn(scope);
+					a.step(scope);
+
+				} catch (GamaRuntimeException g) {
+					g.addAgent(a.getName());
+					GAMA.reportError(g);
+				} finally {
+					scope.pop(a);
+				}
+			}
+		}
+
+		// IArchitecture c = species.getArchitecture();
+		// c.executeOn(scope);
+	}
+
+	@Override
+	public void updateVariables(IScope scope, IAgent a) {
+		for ( int j = 0; j < updatableVars.length; j++ ) {
+			updatableVars[j].updateFor(scope, a);
+		}
 	}
 
 	@Override
 	public void init(final IScope scope) throws GamaRuntimeException {
-		IArchitecture control = species.getArchitecture();
-		control.init(scope);
+
+		// // Do whatever the population has to do at the first step ?
+		// Ideally, the list of agents to init should be there rather than in the scheduler
+		// IArchitecture control = species.getArchitecture();
+		// control.init(scope);
 	}
 
 	@Override
@@ -147,33 +199,35 @@ public class GamaPopulation implements IPopulation {
 		}
 	}
 
-	@Override
-	public void updateVariablesFor(final IScope scope, final IAgent agent) throws GamaRuntimeException {
-		for ( int i = 0; i < updatableVars.length; i++ ) {
-			updatableVars[i].updateFor(scope, agent);
-		}
-	}
+	// @Override
+	// public void updateVariablesFor(final IScope scope, final IAgent agent) throws GamaRuntimeException {
+	// for ( int i = 0; i < updatableVars.length; i++ ) {
+	// updatableVars[i].updateFor(scope, agent);
+	// }
+	// }
+
+	// IAgent[] agentsToSchedule = new IAgent[0];
 
 	/**
 	 * 
 	 * @see msi.gama.interfaces.IPopulation#computeAgentsToSchedule(msi.gama.interfaces.IScope, msi.gama.util.GamaList)
 	 */
-	@Override
-	public void computeAgentsToSchedule(final IScope scope, final IList list) throws GamaRuntimeException {
-		int frequency = Cast.asInt(scope, scheduleFrequency.value(scope));
+	// @Override
+	public List<IAgent> computeAgentsToSchedule(final IScope scope) {
+		int frequency = scheduleFrequency == null ? 1 : Cast.asInt(scope, scheduleFrequency.value(scope));
 		int step = scope.getClock().getCycle();
+		if ( step % frequency != 0 ) { return Collections.EMPTY_LIST; }
 		IExpression ags = getSpecies().getSchedule();
-		List<IAgent> allAgents = getAgentsList();
-		List<IAgent> agents = ags == null ? allAgents : Cast.asList(scope, ags.value(scope));
-		if ( step % frequency == 0 ) {
-			list.addAll(agents);
-		}
-		if ( species.hasMicroSpecies() ) {
-			for ( IAgent agent : allAgents ) {
-				// FIXME: shouldn't it be "agents" rather than "allAgents" ?
-				agent.computeAgentsToSchedule(scope, list);
-			}
-		}
+		List<IAgent> agents = ags == null ? getAgentsList() : Cast.asList(scope, ags.value(scope));
+		// agentsToSchedule = agents.toArray(agentsToSchedule);
+		return agents;
+
+		// if ( species.hasMicroSpecies() ) {
+		// for ( IAgent agent : allAgents ) {
+		// // FIXME: shouldn't it be "agents" rather than "allAgents" ?
+		// agent.computeAgentsToSchedule(scope, list);
+		// }
+		// }
 	}
 
 	@Override
@@ -211,10 +265,11 @@ public class GamaPopulation implements IPopulation {
 
 	@Override
 	public void dispose() {
-		IAgent[] ags = agents.toArray(new IAgent[0]);
-		for ( int i = 0, n = ags.length; i < n; i++ ) {
-			ags[i].dispose();
+		IAgent[] agentsToDispose = agents.toArray(new IAgent[agents.size()]);
+		for ( int i = 0, n = agentsToDispose.length; i < n; i++ ) {
+			agentsToDispose[i].dispose();
 		}
+		Arrays.fill(agentsToDispose, null);
 		agents.clear();
 		firePopulationCleared();
 		if ( topology != null ) {
@@ -236,7 +291,7 @@ public class GamaPopulation implements IPopulation {
 		int number = geometries.length(scope);
 		if ( number == 0 ) { return GamaList.EMPTY_LIST; }
 		IList<IAgent> list = new GamaList(number);
-		IAgentConstructor constr = species.getAgentConstructor();
+		IAgentConstructor constr = ((SpeciesDescription) species.getDescription()).getAgentConstructor();
 		for ( IShape geom : geometries ) {
 			IAgent a = constr.createOneAgent(this);
 			int ind = currentAgentIndex++;
@@ -251,7 +306,7 @@ public class GamaPopulation implements IPopulation {
 		// a.initializeMicroPopulations(scope);
 		// }
 		for ( IAgent a : list ) {
-			a.schedule(scope);
+			a.schedule();
 		}
 		createVariablesFor(scope, list, Collections.EMPTY_LIST);
 		fireAgentsAdded(list);
@@ -264,7 +319,7 @@ public class GamaPopulation implements IPopulation {
 		final boolean isRestored) throws GamaRuntimeException {
 		if ( number == 0 ) { return GamaList.EMPTY_LIST; }
 		IList<IAgent> list = new GamaList(number);
-		IAgentConstructor constr = species.getAgentConstructor();
+		IAgentConstructor constr = ((SpeciesDescription) species.getDescription()).getAgentConstructor();
 		for ( int i = 0; i < number; i++ ) {
 			IAgent a = constr.createOneAgent(this);
 			int ind = currentAgentIndex++;
@@ -297,7 +352,7 @@ public class GamaPopulation implements IPopulation {
 			// if agent is restored (on the capture or release); then don't need to run the "init"
 			// reflex
 			if ( !isRestored ) {
-				a.schedule(scope);
+				a.schedule();
 			}
 		}
 		fireAgentsAdded(list);
@@ -382,8 +437,8 @@ public class GamaPopulation implements IPopulation {
 				topology = GamaTopologyType.staticCast(scope, scope.evaluate(expr, host), null);
 				return;
 			}
-			throw new GamaRuntimeException("Impossible to assign a topology to " + species.getName() +
-				" as it already defines one.", true);
+			throw GamaRuntimeException.warning("Impossible to assign a topology to " + species.getName() +
+				" as it already defines one.");
 		}
 		if ( species.isGrid() ) {
 			IExpression exp = species.getFacet(IKeyword.WIDTH);
@@ -415,7 +470,7 @@ public class GamaPopulation implements IPopulation {
 			g.postRefreshManagementAction(scope);
 			topology = new GraphTopology(scope, this.getHost(), g);
 		} else {
-			topology = new ContinuousTopology(scope, this.getHost(), scope.getSimulationScope().getModel().isTorus());
+			topology = new ContinuousTopology(scope, this.getHost());
 		}
 
 	}
@@ -501,38 +556,6 @@ public class GamaPopulation implements IPopulation {
 	}
 
 	/**
-	 * @see msi.gama.util.IContainer#max(msi.gama.runtime.IScope)
-	 */
-	// @Override
-	// public IAgent max(final IScope scope) throws GamaRuntimeException {
-	// return agents.max(scope);
-	// }
-	//
-	// /**
-	// * @see msi.gama.util.IContainer#min(msi.gama.runtime.IScope)
-	// */
-	// @Override
-	// public IAgent min(final IScope scope) throws GamaRuntimeException {
-	// return agents.min(scope);
-	// }
-	//
-	// /**
-	// * @see msi.gama.util.IContainer#product(msi.gama.runtime.IScope)
-	// */
-	// @Override
-	// public Object product(final IScope scope) throws GamaRuntimeException {
-	// return agents.product(scope);
-	// }
-	//
-	// /**
-	// * @see msi.gama.util.IContainer#sum(msi.gama.runtime.IScope)
-	// */
-	// @Override
-	// public Object sum(final IScope scope) throws GamaRuntimeException {
-	// return agents.sum(scope);
-	// }
-
-	/**
 	 * @see msi.gama.util.IContainer#isEmpty()
 	 */
 	@Override
@@ -600,24 +623,6 @@ public class GamaPopulation implements IPopulation {
 	public Iterable<IAgent> iterable(final IScope scope) {
 		return agents;
 	}
-
-	/**
-	 * @see msi.gama.util.IContainer#putAll(java.lang.Object, java.lang.Object)
-	 */
-	// @Override
-	// public void putAll(IScope scope, final IAgent value, final Object param)
-	// throws GamaRuntimeException {
-	// agents.putAll(scope, value, param);
-	// }
-	//
-	// /**
-	// * @see msi.gama.util.IContainer#put(java.lang.Object, java.lang.Object, java.lang.Object)
-	// */
-	// @Override
-	// public void put(IScope scope, final Integer index, final IAgent value, final Object param)
-	// throws GamaRuntimeException {
-	// agents.put(scope, index, value, param);
-	// }
 
 	/**
 	 * @see msi.gama.util.IContainer#listValue(msi.gama.runtime.IScope)

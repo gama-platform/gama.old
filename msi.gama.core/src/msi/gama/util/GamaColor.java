@@ -33,10 +33,8 @@ import msi.gaml.types.IType;
  * 
  * @author drogoul
  */
-@vars({ @var(name = IKeyword.COLOR_RED, type = IType.INT),
-	@var(name = IKeyword.COLOR_GREEN, type = IType.INT),
-	@var(name = IKeyword.COLOR_BLUE, type = IType.INT),
-	@var(name = IKeyword.BRIGHTER, type = IType.COLOR),
+@vars({ @var(name = IKeyword.COLOR_RED, type = IType.INT), @var(name = IKeyword.COLOR_GREEN, type = IType.INT),
+	@var(name = IKeyword.COLOR_BLUE, type = IType.INT), @var(name = IKeyword.BRIGHTER, type = IType.COLOR),
 	@var(name = IKeyword.DARKER, type = IType.COLOR) })
 public class GamaColor extends Color implements IValue/* implements IContainer<Integer, Integer> */{
 
@@ -82,12 +80,12 @@ public class GamaColor extends Color implements IValue/* implements IContainer<I
 
 	@Override
 	public String toString() {
-		return "GamaColor[" + getRGB() /* + ";" + swtValue */+ "]";
+		return "color[" + getRGB() /* + ";" + swtValue */+ "]";
 	}
 
 	@Override
 	public String toGaml() {
-		return "rgb (" + getRGB() + ")";
+		return "rgb (" + red() + ", " + green() + ", " + blue() + ")";
 	}
 
 	@Override

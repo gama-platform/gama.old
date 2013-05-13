@@ -43,7 +43,7 @@ public class VariableDescription extends SymbolDescription {
 	private int definitionOrder = -1;
 	private IVarExpression varExpr = null;
 	private IType type = null, contentType = null, keyType = null;
-	private final boolean _isGlobal, _isFunction, _isNotModifiable, _isParameter, _isUpdatable;
+	private final boolean _isGlobal,/* _isFunction, */_isNotModifiable, _isParameter, _isUpdatable;
 	private GamaHelper get, init, set;
 
 	public VariableDescription(final String keyword, final IDescription superDesc, final IChildrenProvider cp,
@@ -53,23 +53,24 @@ public class VariableDescription extends SymbolDescription {
 		if ( !facets.containsKey(TYPE) && !isExperimentParameter ) {
 			facets.putAsLabel(TYPE, keyword);
 		}
-		_isGlobal = superDesc != null && ((SpeciesDescription) superDesc).isGlobal();
-		_isFunction = facets.containsKey(FUNCTION);
+		_isGlobal = superDesc instanceof ModelDescription;
+		// _isFunction = facets.containsKey(FUNCTION);
 		_isParameter = isExperimentParameter || facets.containsKey(PARAMETER);
-		_isNotModifiable = _isFunction || facets.equals(CONST, TRUE) && !_isParameter;
+		_isNotModifiable =
+		/* _isFunction */facets.containsKey(FUNCTION) || facets.equals(CONST, TRUE) && !_isParameter;
 		_isUpdatable = !_isNotModifiable && (facets.containsKey(VALUE) || facets.containsKey(UPDATE));
 
 	}
 
 	@Override
 	public void dispose() {
-		if ( isDisposed || isBuiltIn() ) { return; }
+		if ( /* isDisposed || */isBuiltIn() ) { return; }
 		if ( dependencies != null ) {
 			dependencies.clear();
 		}
 		varExpr = null;
 		super.dispose();
-		isDisposed = true;
+		// isDisposed = true;
 	}
 
 	public void copyFrom(final VariableDescription v2) {
@@ -158,9 +159,9 @@ public class VariableDescription extends SymbolDescription {
 		return _isUpdatable;
 	}
 
-	public boolean isFunction() {
-		return _isFunction;
-	}
+	// public boolean isFunction() {
+	// return _isFunction;
+	// }
 
 	public boolean isNotModifiable() {
 		return _isNotModifiable;
@@ -204,9 +205,9 @@ public class VariableDescription extends SymbolDescription {
 		if ( varExpr != null ) { return varExpr; }
 		//
 		varExpr =
-			GAMA.getExpressionFactory()
-				.createVar(getName(), getType(), getContentType(), getKeyType(), isNotModifiable(),
-					_isGlobal ? IVarExpression.GLOBAL : IVarExpression.AGENT, this.getSuperDescription());
+			GAMA.getExpressionFactory().createVar(getName(), getType(), getContentType(), getKeyType(),
+				isNotModifiable(), _isGlobal ? IVarExpression.GLOBAL : IVarExpression.AGENT,
+				this.getEnclosingDescription());
 		return varExpr;
 	}
 
@@ -257,6 +258,10 @@ public class VariableDescription extends SymbolDescription {
 
 	public GamaHelper getSetter() {
 		return set;
+	}
+
+	public void setType(IType t) {
+		type = t;
 	}
 
 }

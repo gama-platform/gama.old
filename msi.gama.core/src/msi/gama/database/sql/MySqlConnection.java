@@ -229,7 +229,7 @@ public class MySqlConnection extends SqlConnection {
 					if ( transformed ) {
 						WKTReader wkt = new WKTReader();
 						Geometry geo2 =
-							scope.getSimulationScope().getGisUtils()
+							scope.getTopology().getGisUtils()
 								.inverseTransform(wkt.read(values.get(i).toString()));
 						valueStr = valueStr + WKT2GEO + "('" + geo2.toString() + "')";
 					} else {
@@ -262,11 +262,11 @@ public class MySqlConnection extends SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("MySqlConection.getInsertString:" + e.toString());
+			throw GamaRuntimeException.error("MySqlConection.getInsertString:" + e.toString());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("MySqlConection.getInsertString:" + e.toString());
+			throw GamaRuntimeException.error("MySqlConection.getInsertString:" + e.toString());
 		}
 
 		return insertStr;
@@ -315,7 +315,7 @@ public class MySqlConnection extends SqlConnection {
 					if ( transformed ) {
 						WKTReader wkt = new WKTReader();
 						Geometry geo2 =
-							scope.getSimulationScope().getGisUtils()
+							scope.getTopology().getGisUtils()
 								.inverseTransform(wkt.read(values.get(i).toString()));
 						valueStr = valueStr + WKT2GEO + "('" + geo2.toString() + "')";
 					} else {
@@ -352,11 +352,11 @@ public class MySqlConnection extends SqlConnection {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("MySqlConection.getInsertString:" + e.toString());
+			throw GamaRuntimeException.error("MySqlConection.getInsertString:" + e.toString());
 		} catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("MySqlConection.getInsertString:" + e.toString());
+			throw GamaRuntimeException.error("MySqlConection.getInsertString:" + e.toString());
 		}
 
 		return insertStr;

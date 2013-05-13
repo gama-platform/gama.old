@@ -317,7 +317,7 @@ public class GeometryUtils {
 				dtb.setTolerance(sizeTol);
 				tri = (GeometryCollection) dtb.getTriangles(getFactory());
 			} catch (LocateFailureException e) {
-				throw new GamaRuntimeException("Impossible to draw Geometry");
+				throw GamaRuntimeException.error("Impossible to draw Geometry");
 			}
 			PreparedGeometry pg = pgfactory.create(polygon.buffer(sizeTol, 5, 0));
 			PreparedGeometry env = pgfactory.create(pg.getGeometry().getEnvelope());
@@ -544,7 +544,7 @@ public class GeometryUtils {
 //			double longitude = env.centre().y;
 //
 //			if ( crs != null || srid != null ) {
-//				GisUtils gis = scope.getSimulationScope().getGisUtils();
+//				GisUtils gis = scope.getTopology().getGisUtils();
 //				if ( crs != null ) {
 //					gis.setTransformCRS(crs, latitude, longitude);
 //				} else {
@@ -575,7 +575,7 @@ public class GeometryUtils {
 			double latitude = env.centre().x;
 			double longitude = env.centre().y;
 			if ( crs != null || srid != null ) {
-				GisUtils gis = scope.getSimulationScope().getGisUtils();
+				GisUtils gis = scope.getTopology().getGisUtils();
 				if ( crs != null ) {
 					gis.setTransformCRS(crs, latitude, longitude);
 				} else {
@@ -584,7 +584,7 @@ public class GeometryUtils {
 				env = gis.transform(env);
 			}
 		} catch (IOException e) {
-			throw new GamaRuntimeException("GeometryUtils.computeEnvelopeFromSQLData:" + e.toString());
+			throw GamaRuntimeException.error("GeometryUtils.computeEnvelopeFromSQLData:" + e.toString());
 		}
 		//GuiUtils.debug("GeometryUtils.computeEnvelopeFromSQLData.Envelop:"+env.toString());
 		return env;

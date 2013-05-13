@@ -168,9 +168,11 @@ public class GamlSpecies extends AbstractSpecies {
 
 	@Override
 	public Iterator<IAgent> iterator() {
-		IScope scope = GAMA.getDefaultScope();
+		IScope scope = GAMA.obtainNewScope();
 		if ( scope == null ) { return GamaList.EMPTY_LIST.iterator(); }
-		return scope.getSimulationScope().getPopulationFor(this).iterator();
+		Iterator<IAgent> result = scope.getSimulationScope().getPopulationFor(this).iterator();
+		GAMA.releaseScope(scope);
+		return result;
 	}
 
 	@Override

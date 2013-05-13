@@ -7,6 +7,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
@@ -29,8 +30,7 @@ public class GraphicLayerStatement extends AbstractLayerStatement {
 
 	public GraphicLayerStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
-		IDescription d =
-			DescriptionFactory.create(IKeyword.ASPECT, desc, IKeyword.NAME, "graphic_aspect" + i++);
+		IDescription d = DescriptionFactory.create(IKeyword.ASPECT, desc, IKeyword.NAME, "graphic_aspect" + i++);
 		aspect = new AspectStatement(d);
 	}
 
@@ -47,5 +47,11 @@ public class GraphicLayerStatement extends AbstractLayerStatement {
 	public short getType() {
 		return ILayerStatement.GRAPHICS;
 	}
+
+	@Override
+	protected void _init(IScope scope) {}
+
+	@Override
+	protected void _step(IScope scope) {}
 
 }

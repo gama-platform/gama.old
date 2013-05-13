@@ -53,7 +53,7 @@ public interface IDescription extends IGamlDescription, IKeyword {
 
 	public abstract ModelDescription getModelDescription();
 
-	public abstract void setSuperDescription(final IDescription desc);
+	public abstract void setEnclosingDescription(final IDescription desc);
 
 	public abstract EObject getUnderlyingElement(Object facet);
 
@@ -61,7 +61,7 @@ public interface IDescription extends IGamlDescription, IKeyword {
 
 	public abstract Facets getFacets();
 
-	public abstract IDescription getSuperDescription();
+	public abstract IDescription getEnclosingDescription();
 
 	public abstract IDescription getDescriptionDeclaringVar(final String name);
 

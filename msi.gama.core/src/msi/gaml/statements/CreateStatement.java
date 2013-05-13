@@ -65,7 +65,7 @@ import com.vividsolutions.jts.geom.Geometry;
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT })
 @facets(value = { @facet(name = IKeyword.SPECIES, type = IType.SPECIES, optional = true),
 	@facet(name = IKeyword.RETURNS, type = IType.NEW_TEMP_ID, optional = true),
-	@facet(name = IKeyword.FROM, type = IType.NONE_STR, optional = true),
+	@facet(name = IKeyword.FROM, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.NUMBER, type = IType.INT, optional = true),
 	@facet(name = IKeyword.AS, type = { IType.SPECIES }, optional = true),
 	@facet(name = IKeyword.WITH, type = { IType.MAP }, optional = true),
@@ -117,8 +117,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		if ( species == null ) {
 			pop = executor.getPopulationFor(description.getSpeciesContext().getName());
 		} else {
-			ISpecies s = (ISpecies) species.value(scope);
-			if ( s == null ) { throw new GamaRuntimeException("No population of " + species.literalValue() +
+			ISpecies s = Cast.asSpecies(scope, species.value(scope));
+			if ( s == null ) { throw GamaRuntimeException.error("No population of " + species.literalValue() +
 				" is accessible in the context of " + executor + "."); }
 			pop = executor.getPopulationFor(s);
 		}
@@ -303,7 +303,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 				int val = colNames.indexOf(columnName);
 				if ( ((String) colTypes.get(val)).equalsIgnoreCase("GEOMETRY") ) {
 					Geometry geom = (Geometry) rowList.get(val);
-					values.put(f.getKey(), new GamaShape(scope.getSimulationScope().getGisUtils().transform(geom)));
+					values.put(f.getKey(), new GamaShape(scope.getTopology().getGisUtils().transform(geom)));
 				} else {
 					values.put(f.getKey(), rowList.get(val));
 				}

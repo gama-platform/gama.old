@@ -41,11 +41,11 @@ import msi.gaml.types.IType;
 @facets(value = {
 	@facet(name = IKeyword.TO, type = { IType.CONTAINER, IType.SPECIES, IType.AGENT,
 		IType.GEOMETRY }, optional = false),
-	@facet(name = IKeyword.ITEM, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.EDGE, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.VERTEX, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.AT, type = IType.NONE_STR, optional = true),
-	@facet(name = IKeyword.ALL, type = IType.NONE_STR, optional = true),
+	@facet(name = IKeyword.ITEM, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.EDGE, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.VERTEX, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.AT, type = IType.NONE, optional = true),
+	@facet(name = IKeyword.ALL, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.WEIGHT, type = IType.FLOAT, optional = true) }, omissible = IKeyword.ITEM)
 @symbol(name = IKeyword.ADD, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
@@ -66,8 +66,7 @@ public class AddStatement extends AbstractContainerStatement {
 		// if ( container.isFixedLength() ) { throw new GamaRuntimeException("Cannot add to " +
 		// list.toGaml(), true); }
 		Object param = weight == null ? null : weight.value(scope);
-		if ( position != null && !container.checkBounds(position, true) ) { throw new GamaRuntimeException(
-			"Index " + position + " out of bounds of " + list.toGaml(), true); }
+		if ( position != null && !container.checkBounds(position, true) ) { throw GamaRuntimeException.warning("Index " + position + " out of bounds of " + list.toGaml()); }
 		container.add(scope, position, toAdd, param, whole, true);
 
 	}

@@ -209,4 +209,11 @@ public class TypeTree<T> {
 
 		return stringRepresentation;
 	}
+
+	public void dispose() {
+		if ( root != null ) {
+			root.dispose();
+			root = null;
+		}
+	}
 }

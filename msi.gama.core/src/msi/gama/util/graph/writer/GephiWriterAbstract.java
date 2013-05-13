@@ -29,7 +29,7 @@ public abstract class GephiWriterAbstract implements IGraphWriter {
 			
 		}
 		if (exporter == null) {
-			throw new GamaRuntimeException("unable to find an exporter for format "+getFormat());
+			throw GamaRuntimeException.error("unable to find an exporter for format "+getFormat());
 		}
 		
 		// configure the exporter
@@ -43,10 +43,10 @@ public abstract class GephiWriterAbstract implements IGraphWriter {
         			);
         } catch (RuntimeException e) {
         	e.printStackTrace();
-        	 throw new GamaRuntimeException("Unable to export the graph in file "+filename+" ("+ e.getMessage()+")");
+        	 throw GamaRuntimeException.error("Unable to export the graph in file "+filename+" ("+ e.getMessage()+")");
         } catch (IOException e) {
         	e.printStackTrace();
-       	 	throw new GamaRuntimeException("Unable to export the graph in file "+filename+" ("+ e.getMessage()+")");
+       	 	throw GamaRuntimeException.error("Unable to export the graph in file "+filename+" ("+ e.getMessage()+")");
         } 
 	}
 	

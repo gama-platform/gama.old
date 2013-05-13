@@ -48,7 +48,7 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 	@Override
 	protected void checkValidity() throws GamaRuntimeException {
 		super.checkValidity();
-		if ( !GamaFileType.isImageFile(getFile().getName()) ) { throw new GamaRuntimeException("The extension " +
+		if ( !GamaFileType.isImageFile(getFile().getName()) ) { throw GamaRuntimeException.error("The extension " +
 			this.getExtension() + " is not recognized for image files"); }
 	}
 
@@ -80,34 +80,34 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 		return (IMatrix) buffer;
 	}
 
-	private void loadImage() {
+	private void loadImage(IScope scope) {
 		if ( image == null ) {
 			try {
 				image = ImageUtils.getInstance().getImageFromFile(path);
 			} catch (final IOException e) {
-				throw new GamaRuntimeException(e);
+				throw GamaRuntimeException.create(e);
 			}
 		}
 	}
 
-	public BufferedImage getImage() {
-		loadImage();
+	public BufferedImage getImage(IScope scope) {
+		loadImage(scope);
 		return image;
 	}
 
-	public int getWidth() {
-		loadImage();
+	public int getWidth(IScope scope) {
+		loadImage(scope);
 		return image.getWidth();
 	}
 
-	public int getHeight() {
-		loadImage();
+	public int getHeight(IScope scope) {
+		loadImage(scope);
 		return image.getHeight();
 
 	}
 
 	private IMatrix matrixValueFromImage(IScope scope, final ILocation preferredSize) throws GamaRuntimeException {
-		loadImage();
+		loadImage(scope);
 		int xSize, ySize;
 		if ( preferredSize == null ) {
 			xSize = image.getWidth();
@@ -144,7 +144,7 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 			final int xSize = Integer.valueOf(tok.nextToken());
 			final int ySize = Integer.valueOf(tok.nextToken());
 			in.readLine();
-			StringBuffer buf = new StringBuffer();
+			StringBuilder buf = new StringBuilder();
 			String line = in.readLine();
 			while (line != null) {
 				buf.append(line);
@@ -162,13 +162,13 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 			}
 			return matrix;
 		} catch (final Exception ex) {
-			throw new GamaRuntimeException(ex);
+			throw GamaRuntimeException.create(ex);
 		} finally {
 			if ( in != null ) {
 				try {
 					in.close();
 				} catch (IOException e) {
-					throw new GamaRuntimeException(e);
+					throw GamaRuntimeException.create(e);
 				}
 			}
 		}
@@ -176,8 +176,8 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 
 	@Override
 	public Envelope computeEnvelope(final IScope scope) {
-		int nbCols = getWidth();
-		int nbRows = getHeight();
+		int nbCols = getWidth(scope);
+		int nbRows = getHeight(scope);
 		String extension = getExtension();
 		String geodataFile = getPath().replaceAll(extension, "");
 		if ( extension.equals("jpg") ) {
@@ -210,7 +210,7 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 				yllcorner = Double.valueOf(yllcornerStr[yllcornerStr.length - 1]);
 				in.close();
 			} catch (Exception e) {
-				throw new GamaRuntimeException(e);
+				throw GamaRuntimeException.create(e);
 			}
 		}
 		double x1 = xllcorner;

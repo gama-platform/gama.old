@@ -26,7 +26,7 @@ public class TypeFieldExpression extends UnaryOperator {
 	final static int[] nullInts = new int[0];
 
 	public TypeFieldExpression(final String n, final int tProv, int ctProv, final int ktProv, final GamaHelper g) {
-		super(Types.NO_TYPE, g, true, tProv, ctProv, ktProv, nullInts);
+		super(Types.NO_TYPE, g, true, tProv, ctProv, ktProv, nullInts, false);
 		setName(n);
 	}
 

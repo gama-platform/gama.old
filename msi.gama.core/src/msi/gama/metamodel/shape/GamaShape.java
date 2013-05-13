@@ -48,7 +48,7 @@ import com.vividsolutions.jts.operation.distance.IndexedFacetDistance;
 public class GamaShape implements IShape /* , IContainer */{
 
 	protected Geometry geometry;
-	protected ILocation location;
+	protected volatile ILocation location;
 	private boolean isPoint;
 	private Operations optimizedOperations;
 	private IAgent agent;
@@ -152,14 +152,6 @@ public class GamaShape implements IShape /* , IContainer */{
 			geometry.geometryChanged();
 		}
 	}
-
-	// @Override
-	// public boolean equals(final Object o) {
-	// if ( !(o instanceof GamaGeometry) ) { return false; }
-	// GamaGeometry g = (GamaGeometry) o;
-	// if ( isPoint && g.isPoint ) { return location.equals(g.location); }
-	// return geometry.equals(((GamaGeometry) o).geometry);
-	// }
 
 	public GamaShape rotatedBy(IScope scope, final int angle) {
 		return rotatedBy(scope, Maths.toRad * angle);
@@ -438,17 +430,6 @@ public class GamaShape implements IShape /* , IContainer */{
 		agent = null;
 	}
 
-	//
-	// public boolean contains(final Object o) {
-	// if ( o == null ) { return false; }
-	// if ( o instanceof Geometry ) { return getInnerGeometry().covers((Geometry) o); }
-	// if ( o instanceof GamaShape ) { return getInnerGeometry().covers(
-	// ((GamaShape) o).getInnerGeometry()); }
-	// if ( o instanceof ILocation ) { return contains(GeometryUtils.getFactory().createPoint(
-	// ((ILocation) o).toCoordinate())); }
-	// return false;
-	// }
-
 	@Override
 	public boolean equals(final Object o) {
 		if ( o instanceof GamaShape ) {
@@ -470,11 +451,16 @@ public class GamaShape implements IShape /* , IContainer */{
 
 	@Override
 	public GamaShape copy(IScope scope) {
-		GamaShape g = new GamaShape((Geometry) geometry.clone());
+		GamaShape g = null;
+		// synchronized (geometry) {
+		g = new GamaShape((Geometry) geometry.clone());
+		// }
 		if ( attributes != null ) {
 			g.attributes = new GamaMap(attributes);
 		}
+		// synchronized (location) {
 		g.setLocation(location.copy(scope));
+		// }
 		return g;
 	}
 

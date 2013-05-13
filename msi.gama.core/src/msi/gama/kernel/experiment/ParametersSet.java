@@ -19,7 +19,8 @@
 package msi.gama.kernel.experiment;
 
 import java.util.*;
-import msi.gama.runtime.GAMA;
+import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
@@ -27,25 +28,37 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public class ParametersSet extends HashMap<String, Object> {
 
-	public ParametersSet(final Map<String, IParameter> variables, final boolean reinit)
-		throws GamaRuntimeException {
-		for ( final String var : variables.keySet() ) {
-			final IParameter varBat = variables.get(var);
-			if ( reinit && varBat instanceof IParameter.Batch ) {
-				((IParameter.Batch) varBat).reinitRandomly();
+	public ParametersSet(final Map<String, IParameter> variables, final boolean reinit) throws GamaRuntimeException {
+		GAMA.run(new InScope.Void() {
+
+			@Override
+			public void process(IScope scope) {
+				for ( final String var : variables.keySet() ) {
+					final IParameter varBat = variables.get(var);
+					if ( reinit && varBat instanceof IParameter.Batch ) {
+						((IParameter.Batch) varBat).reinitRandomly();
+					}
+					put(var, varBat.value(scope));
+				}
 			}
-			put(var, varBat.value(GAMA.getDefaultScope()));
-		}
+		});
+
 	}
 
-	public ParametersSet(final List<? extends IParameter> parameters, final boolean reinit)
-		throws GamaRuntimeException {
-		for ( IParameter p : parameters ) {
-			if ( reinit && p instanceof IParameter.Batch ) {
-				((IParameter.Batch) p).reinitRandomly();
+	public ParametersSet(final List<? extends IParameter> parameters, final boolean reinit) throws GamaRuntimeException {
+		GAMA.run(new InScope.Void() {
+
+			@Override
+			public void process(IScope scope) {
+				for ( IParameter p : parameters ) {
+					if ( reinit && p instanceof IParameter.Batch ) {
+						((IParameter.Batch) p).reinitRandomly();
+					}
+					put(p.getName(), p.value(scope));
+				}
 			}
-			put(p.getName(), p.value(GAMA.getDefaultScope()));
-		}
+		});
+
 	}
 
 	public ParametersSet() {

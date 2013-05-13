@@ -68,18 +68,15 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 	}
 
 	@Override
-	public void init(final IScope scope) throws GamaRuntimeException {
-		// TODO search for hostSpecies; may have several hostSpecies incase of micro-species are
-		// inherited
-
+	public void _init(final IScope scope) throws GamaRuntimeException {
 		// top level species layer is a direct micro-species of "world_species" for sure
 		if ( hostSpecies == null ) {
 			hostSpecies = scope.getSimulationScope().getSpecies();
 		}
 
 		species = hostSpecies.getMicroSpecies(getName());
-		if ( species == null ) { throw new GamaRuntimeException("not a suitable species to display: " + getName()); }
-		super.init(scope);
+		if ( species == null ) { throw GamaRuntimeException.error("not a suitable species to display: " + getName()); }
+		super._init(scope);
 
 		for ( SpeciesLayerStatement microLayer : microSpeciesLayers ) {
 			microLayer.setHostSpecies(species);
@@ -88,9 +85,8 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 	}
 
 	@Override
-	public void step(final IScope scope) throws GamaRuntimeException {
-		super.step(scope);
-
+	public void _step(final IScope scope) throws GamaRuntimeException {
+		super._step(scope);
 		for ( SpeciesLayerStatement microLayer : microSpeciesLayers ) {
 			microLayer.step(scope);
 		}

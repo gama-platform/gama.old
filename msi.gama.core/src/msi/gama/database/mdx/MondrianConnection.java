@@ -47,16 +47,16 @@ public class MondrianConnection extends MdxConnection {
 				 wrapper = (OlapWrapper) conn;
 				 olapConnection = wrapper.unwrap(OlapConnection.class);
 			} else {
-				throw new GamaRuntimeException("MondrianConnection.connectMDB: The " 
+				throw GamaRuntimeException.error("MondrianConnection.connectMDB: The " 
 			                                       + vender
 			                                       + " is not supported!");
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
-			throw new GamaRuntimeException(e.toString());
+			throw GamaRuntimeException.error(e.toString());
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-			throw new GamaRuntimeException(e.toString());
+			throw GamaRuntimeException.error(e.toString());
 		}
 		return conn;
 	}

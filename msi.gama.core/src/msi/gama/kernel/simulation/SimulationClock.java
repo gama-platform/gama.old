@@ -82,20 +82,24 @@ public class SimulationClock {
 	 *             Sets a new value to the cycle.
 	 * @param i the new value
 	 */
+
+	// FIXME Make setCycle() or incrementCycle() advance the other variables as well, so as to allow writing
+	// "cycle <- cycle + 1" in GAML and have the correct information computed.
 	private void setCycle(final int i) throws GamaRuntimeException {
-		if ( i < 0 ) { throw new GamaRuntimeException(
-			"The current cycle of a simulation cannot be negative"); }
+		if ( i < 0 ) { throw GamaRuntimeException.error("The current cycle of a simulation cannot be negative"); }
+
 		cycle = i;
 	}
 
-	/**
-	 * Increments the cycle by 1.
-	 * @return the new value of cycle
-	 */
-	private int incrementCycle() {
-		cycle++;
-		return cycle;
-	}
+	// /**
+	// * Increments the cycle by 1.
+	// * @return the new value of cycle
+	// */
+	//
+	// private int incrementCycle() {
+	// cycle++;
+	// return cycle;
+	// }
 
 	/**
 	 * Returns the current value of cycle
@@ -111,18 +115,8 @@ public class SimulationClock {
 	 * @param i a positive double
 	 */
 	public void setTime(final double i) throws GamaRuntimeException {
-		if ( i < 0 ) { throw new GamaRuntimeException(
-			"The current time of a simulation cannot be negative"); }
+		if ( i < 0 ) { throw GamaRuntimeException.error("The current time of a simulation cannot be negative"); }
 		time = i;
-	}
-
-	/**
-	 * Increments the time by the value of step
-	 * @return the current value of time
-	 */
-	private double incrementTime() {
-		time += step;
-		return time;
 	}
 
 	/**
@@ -144,8 +138,8 @@ public class SimulationClock {
 	 */
 
 	public void setStep(final double i) throws GamaRuntimeException {
-		if ( i < 0 ) { throw new GamaRuntimeException(
-			"The interval between two cycles of a simulation cannot be negative"); }
+		if ( i < 0 ) { throw GamaRuntimeException
+			.error("The interval between two cycles of a simulation cannot be negative"); }
 		step = i <= 0 ? 1 : i;
 	}
 
@@ -198,8 +192,8 @@ public class SimulationClock {
 	}
 
 	public void step() {
-		incrementCycle();
-		incrementTime();
+		setCycle(cycle + 1);
+		setTime(time + step);
 		computeDuration();
 		waitDelay();
 	}

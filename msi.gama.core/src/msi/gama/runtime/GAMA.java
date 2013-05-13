@@ -19,7 +19,7 @@
 package msi.gama.runtime;
 
 import msi.gama.common.util.*;
-import msi.gama.kernel.experiment.IExperimentSpecies;
+import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.IAgent;
@@ -36,144 +36,131 @@ public class GAMA {
 
 	public final static String VERSION = "GAMA 1.6";
 
-	public final static String PAUSED = "STOPPED";
-	public final static String RUNNING = "RUNNING";
-	public final static String NOTREADY = "NOTREADY";
-	public final static String NONE = "NONE";
 	public static final String _FATAL = "fatal";
 	public static final String _WARNINGS = "warnings";
 
-	public static boolean TREAT_ERRORS_AS_FATAL = true;
+	public static boolean REVEAL_ERRORS_IN_EDITOR = true;
 	public static boolean TREAT_WARNINGS_AS_ERRORS = false;
 
-	private static volatile IExperimentSpecies currentExperiment = null;
 	private static IExpressionFactory expressionFactory = null;
-	public static ISimulationStateProvider state = null;
+	public static FrontEndController controller = new FrontEndController(new FrontEndScheduler());
 
-	public static void interruptLoading() {
-		if ( currentExperiment != null ) {
-			currentExperiment.userInterrupt();
-		}
-	}
+	/**
+	 * 
+	 * Access to experiments and their components
+	 * 
+	 */
 
-	public static void newExperiment(final String id, final IModel model) {
-		final IExperimentSpecies newExperiment = model.getExperiment(id);
-		if ( newExperiment == currentExperiment && currentExperiment != null ) {
-			currentExperiment.userReload();
-			return;
-		}
-		// TODO if newExperiment.isGui() ...
-		if ( currentExperiment != null ) {
-			IModel m = currentExperiment.getModel();
-			if ( !m.getFilePath().equals(model.getFilePath()) ) {
-				if ( !verifyClose() ) { return; }
-				closeCurrentExperiment();
-				m.dispose();
-			} else if ( !id.equals(currentExperiment.getName()) ) {
-				if ( !verifyClose() ) { return; }
-				closeCurrentExperiment();
-			} else {
-				if ( !verifyClose() ) { return; }
-				closeCurrentExperiment();
-			}
-		}
-		currentExperiment = newExperiment;
-		currentExperiment.userOpen();
-		currentExperiment.userInit();
-
-	}
-
-	public static void closeCurrentExperiment() {
-		if ( currentExperiment != null ) {
-			currentExperiment.userClose();
-			currentExperiment = null;
-		}
-	}
-
-	public static void closeCurrentExperimentOnException(GamaRuntimeException e) {
-		GuiUtils.errorStatus(e.getMessage());
-		GuiUtils.runtimeError(e);
-		closeCurrentExperiment();
-	}
-
-	public static void updateSimulationState() {
-		updateSimulationState(getFrontmostSimulationState());
-	}
-
-	public static void updateSimulationState(final String forcedState) {
-		if ( state != null ) {
-			GuiUtils.run(new Runnable() {
-
-				@Override
-				public void run() {
-					state.updateStateTo(forcedState);
-				}
-			});
-		}
-	}
-
-	public static void stepExperiment() {
-		if ( currentExperiment != null ) {
-			currentExperiment.userStep();
-		}
-	}
-
-	public static void startOrPauseExperiment() {
-		if ( currentExperiment == null ) {
-			return;
-		} else if ( !currentExperiment.isRunning() || currentExperiment.isPaused() ) {
-			currentExperiment.userStart();
-		} else {
-			currentExperiment.userPause();
-		}
-	}
-
-	private static boolean verifyClose() {
-		if ( currentExperiment == null ) { return true; }
-		currentExperiment.userPause();
-		return GuiUtils.confirmClose(currentExperiment);
-	}
-
-	public static ISimulationAgent getFrontmostSimulation() {
-		if ( currentExperiment == null ) { return null; }
-		return currentExperiment.getCurrentSimulation();
+	public static ISimulationAgent getSimulation() {
+		if ( controller.experiment == null ) { return null; }
+		return controller.experiment.getCurrentSimulation();
 	}
 
 	public static IExperimentSpecies getExperiment() {
-		return currentExperiment;
-	}
-
-	public static IScope getDefaultScope() {
-		if ( currentExperiment == null ) { return null; }
-		return currentExperiment.getExperimentScope();
+		return controller.experiment;
 	}
 
 	public static SimulationClock getClock() {
-		SimulationClock clock = currentExperiment == null ? null : currentExperiment.getExperimentScope().getClock();
-		return clock == null ? new SimulationClock() : clock;
+		IScope scope = getDefaultScope();
+		if ( scope == null ) { return new SimulationClock(); }
+		return scope.getClock();
 	}
 
 	public static RandomUtils getRandom() {
-		if ( currentExperiment == null || currentExperiment.getAgent() == null ) { return RandomUtils.getDefault(); }
-		return currentExperiment.getAgent().getRandomGenerator();
+		if ( controller.experiment == null || controller.experiment.getAgent() == null ) { return RandomUtils
+			.getDefault(); }
+		return controller.experiment.getAgent().getRandomGenerator();
 	}
 
 	public static IModel getModel() {
-		if ( currentExperiment == null ) { return null; }
-		return currentExperiment.getModel();
+		if ( controller.experiment == null ) { return null; }
+		return controller.experiment.getModel();
 	}
 
-	public static String getFrontmostSimulationState() {
-		if ( currentExperiment == null ) {
-			return NONE;
-		} else if ( currentExperiment.isLoading() ) {
-			return NOTREADY;
-		} else if ( currentExperiment.isPaused() ) {
-			return PAUSED;
-		} else if ( currentExperiment.isRunning() ) { return RUNNING; }
-		return NONE;
+	/**
+	 * 
+	 * Exception and life-cycle related utilities
+	 * 
+	 */
 
+	public static void reportError(final GamaRuntimeException g) {
+		GuiUtils.runtimeError(g);
+		if ( controller.experiment == null ) { return; }
+		if ( REVEAL_ERRORS_IN_EDITOR ) {
+			if ( TREAT_WARNINGS_AS_ERRORS || !g.isWarning() ) {
+				controller.userPause();
+			}
+		}
 	}
+
+	public static void shutdown() {
+		controller.shutdown();
+	}
+
+	public static boolean isPaused() {
+		return controller.scheduler.paused;
+	}
+
+	/**
+	 * 
+	 * Scoping utilities
+	 * 
+	 */
+
+	public static void releaseScope(final IScope scope) {
+		if ( scope != null ) {
+			scope.clear();
+		}
+	}
+
+	public static IScope obtainNewScope() {
+		IScope scope = getDefaultScope();
+		if ( scope != null ) { return scope.copy(); }
+		return null;
+	}
+
+	private static IScope getDefaultScope() {
+		if ( controller.experiment == null ) { return null; }
+		ExperimentAgent a = controller.experiment.getAgent();
+		if ( a == null || a.dead() ) { return controller.experiment.getExperimentScope(); }
+		ISimulationAgent s = a.getSimulation();
+		if ( s == null || s.dead() ) { return a.getScope(); }
+		return s.getScope();
+	}
+
+	public static interface InScope<T> {
+
+		public abstract static class Void implements InScope {
+
+			@Override
+			public Object run(IScope scope) {
+				process(scope);
+				return null;
+			}
+
+			public abstract void process(IScope scope);
+
+		}
+
+		T run(IScope scope);
+	}
+
+	public static <T> T run(InScope<T> r) {
+		IScope scope = obtainNewScope();
+		// if ( scope == null ) { throw GamaRuntimeException.error("Impossible to obtain a scope"); } // Exception?
+		try {
+			T result = r.run(scope);
+			return result;
+		} finally {
+			releaseScope(scope);
+		}
+	}
+
+	/**
+	 * 
+	 * Parsing and compiling GAML utilities
+	 * 
+	 */
 
 	public static IExpressionFactory getExpressionFactory() {
 		if ( expressionFactory == null ) {
@@ -182,48 +169,28 @@ public class GAMA {
 		return expressionFactory;
 	}
 
-	public static void reportError(final GamaRuntimeException g) {
-		GuiUtils.runtimeError(g);
-		if ( currentExperiment == null ) { return; }
-		if ( TREAT_ERRORS_AS_FATAL ) {
-			if ( TREAT_WARNINGS_AS_ERRORS || !g.isWarning() ) {
-				currentExperiment.userPause();
-			}
-		}
-	}
-
 	public static Object evaluateExpression(final String expression, final IAgent a) throws GamaRuntimeException {
 		if ( a == null ) { return null; }
 		final IExpression expr = compileExpression(expression, a);
 		if ( expr == null ) { return null; }
-		return getDefaultScope().evaluate(expr, a);
+		return run(new InScope() {
+
+			@Override
+			public Object run(IScope scope) {
+				return scope.evaluate(expr, a);
+			}
+		});
+
 	}
 
 	public static IExpression compileExpression(final String expression, final IAgent agent)
 		throws GamaRuntimeException {
 		return getExpressionFactory().createExpr(expression, agent.getSpecies().getDescription());
-
 	}
 
-	public static void releaseScope(final IScope scope) {
-		if ( currentExperiment == null || currentExperiment.getCurrentSimulation() == null ) { return; }
-		currentExperiment.getAgent().releaseScope(scope);
-
-	}
-
-	public static IScope obtainNewScope() {
-		if ( currentExperiment == null || currentExperiment.getCurrentSimulation() == null ) { return null; }
-		return currentExperiment.getAgent().obtainNewScope();
-	}
-
-	public final static String SIMULATION_RUNNING_STATE = "msi.gama.application.commands.SimulationRunningState";
-
-	/**
-	 * @return
-	 */
 	public static IDescription getModelContext() {
-		if ( currentExperiment == null ) { return null; }
-		return currentExperiment.getModel().getDescription();
+		if ( controller.experiment == null ) { return null; }
+		return controller.experiment.getModel().getDescription();
 	}
 
 }

@@ -20,9 +20,9 @@ package msi.gama.metamodel.agent;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.kernel.experiment.IExperimentAgent;
+import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
-import msi.gama.kernel.simulation.*;
+import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -128,7 +128,7 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	@setter(IKeyword.HOST)
 	public abstract void setHost(final IAgent macroAgent);
 
-	public abstract void schedule(IScope scope) throws GamaRuntimeException;
+	public abstract void schedule();
 
 	/**
 	 * Allows to set attributes that will be accessed by the "read" or "get" operators. Used for
@@ -153,7 +153,7 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 
 	public Integer getHeading();
 
-	public abstract void updateAttributes(IScope scope) throws GamaRuntimeException;
+	// public abstract void updateAttributes(IScope scope) throws GamaRuntimeException;
 
 	public abstract Object getDirectVarValue(IScope scope, String s) throws GamaRuntimeException;
 
@@ -325,11 +325,7 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	 */
 	public abstract void hostChangesShape();
 
-	public abstract void computeAgentsToSchedule(final IScope scope, final IList<IAgent> list);
-
-	public ISimulationAgent getSimulation();
-
-	public IScheduler getScheduler();
+	public AgentScheduler getScheduler();
 
 	public IModel getModel();
 
@@ -338,5 +334,11 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	public IScope getScope();
 
 	public abstract boolean isInstanceOf(String skill, boolean direct);
+
+	public SimulationClock getClock();
+
+	public abstract void releaseScope(IScope scope);
+
+	public abstract IScope obtainNewScope();
 
 }

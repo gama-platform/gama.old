@@ -23,6 +23,7 @@ import java.awt.geom.Rectangle2D;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -55,7 +56,8 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 					Color c =
 						agent.getSpecies().hasVar(IKeyword.COLOR) ? Cast.asColor(scope,
 							agent.getDirectVarValue(scope, IKeyword.COLOR)) : Color.YELLOW;
-					Rectangle2D r = g.drawGamaShape(scope, agent.getGeometry(), c, true, Color.black, 0, false);
+					Rectangle2D r =
+						g.drawGamaShape(scope, (IShape) agent.getGeometry().copy(scope), c, true, Color.black, 0, false);
 					return r;
 				} finally {
 					g.endHighlight();
@@ -79,7 +81,7 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 			if ( g == null ) { return null; }
 			try {
 				agent.acquireLock();
-				if ( agent.dead() ) { return null; }
+				if ( agent.dead() || scope.interrupted() ) { return null; }
 				if ( agent == GuiUtils.getHighlightedAgent() ) {
 					g.beginHighlight();
 				}

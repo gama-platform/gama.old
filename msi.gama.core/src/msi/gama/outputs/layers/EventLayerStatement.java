@@ -54,11 +54,11 @@ public class EventLayerStatement extends AgentLayerStatement {
 	}
 
 	@Override
-	public void init(final IScope scope) throws GamaRuntimeException {
-		super.init(scope);
+	public void _init(final IScope scope) throws GamaRuntimeException {
+		super._init(scope);
 		IExpression eventType = getFacet(IKeyword.NAME);
 		IExpression actionName = getFacet(IKeyword.ACTION);
-		if ( eventType == null || actionName == null ) { throw new GamaRuntimeException("Missing properties " +
+		if ( eventType == null || actionName == null ) { throw GamaRuntimeException.error("Missing properties " +
 			IKeyword.NAME + " and " + IKeyword.ACTION); }
 	}
 

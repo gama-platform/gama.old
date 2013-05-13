@@ -55,7 +55,7 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 	@Override
 	protected void checkValidity() throws GamaRuntimeException {
 		super.checkValidity();
-		if ( !GamaFileType.isShape(getFile().getName()) ) { throw new GamaRuntimeException("The extension " +
+		if ( !GamaFileType.isShape(getFile().getName()) ) { throw GamaRuntimeException.error("The extension " +
 			this.getExtension() + " is not recognized for ESRI shapefiles"); }
 	}
 
@@ -108,8 +108,10 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 	}
 
 	public FeatureIterator<SimpleFeature> getFeatureIterator(IScope scope) {
+		File file = null;
+		ShpFiles shpf = null;
 		try {
-			File file = getFile();
+			file = getFile();
 			ShapefileDataStore store = new ShapefileDataStore(file.toURI().toURL());
 			String name = store.getTypeNames()[0];
 			FeatureSource<SimpleFeatureType, SimpleFeature> source = store.getFeatureSource(name);
@@ -123,14 +125,16 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 			}
 
 			if ( store.getSchema().getCoordinateReferenceSystem() != null ) {
-				ShpFiles shpf = new ShpFiles(file);
+				shpf = new ShpFiles(file);
 				double latitude = featureShp.getBounds().centre().x;
 				double longitude = featureShp.getBounds().centre().y;
-				scope.getSimulationScope().getGisUtils().setTransformCRS(shpf, latitude, longitude);
+				scope.getTopology().getGisUtils().setTransformCRS(shpf, latitude, longitude);
 			}
 			return featureShp.features();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			return null;
+		} finally {
+			// clean ?
 		}
 	}
 
@@ -160,12 +164,12 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 				ShpFiles shpf = new ShpFiles(shpFile);
 				double latitude = env.centre().x;
 				double longitude = env.centre().y;
-				GisUtils gis = scope.getSimulationScope().getGisUtils();
+				GisUtils gis = scope.getTopology().getGisUtils();
 				gis.setTransformCRS(shpf, latitude, longitude);
 				env = gis.transform(env);
 			}
 		} catch (IOException e) {
-			throw new GamaRuntimeException(e);
+			throw GamaRuntimeException.create(e);
 		}
 		store.dispose();
 		return env;

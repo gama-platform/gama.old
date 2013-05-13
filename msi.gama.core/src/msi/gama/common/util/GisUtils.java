@@ -117,43 +117,46 @@ public class GisUtils {
 		if ( transforms() ) { return; }
 		PrjFileReader prjreader = new PrjFileReader(shpf);
 		MathTransform transfCRS = null;
-		crsInit = null;
 		try {
-			crsInit = CRS.parseWKT(prjreader.getCoodinateSystem().toWKT());
-			// begin
-			// ---------------------------------------------------------------------------------------------
-			// Thai.truongminh@gmail.com
-			// 18-sep-2012: for create agen from:list
-			// for tracing nly
-
-			if ( DEBUG ) {
-				GuiUtils.informConsole("GisUtil.CRS=" + crsInit.toString());
-				// ---------------------------------------------------------------------------------------------
-				// end
-			}
-		} catch (FactoryException e2) {
-			e2.printStackTrace();
-		}
-		ProjectedCRS projectd = CRS.getProjectedCRS(crsInit);
-		if ( projectd == null ) {
-			System.out.println("NOT PROJECTED");
+			crsInit = null;
 			try {
-				int index = (int) (0.5 + (latitude + 180.0) / 360 * 60);
-				boolean north = longitude > 0;
-				int wgs84utm = 32600 + index + (north ? 0 : 100);
-				CoordinateReferenceSystem crs = CRS.decode("EPSG:" + wgs84utm);
-				transfCRS = CRS.findMathTransform(crsInit, crs);
-				System.out.println("decodedcrs : " + crs);
-			} catch (NoSuchAuthorityCodeException e) {
-				System.out.println("WARNING : STILL NOT PROJECTED");
-			} catch (FactoryException e) {
-				System.out.println("WARNING : STILL NOT PROJECTED");
+				crsInit = CRS.parseWKT(prjreader.getCoodinateSystem().toWKT());
+				// begin
+				// ---------------------------------------------------------------------------------------------
+				// Thai.truongminh@gmail.com
+				// 18-sep-2012: for create agen from:list
+				// for tracing nly
+
+				if ( DEBUG ) {
+					GuiUtils.informConsole("GisUtil.CRS=" + crsInit.toString());
+					// ---------------------------------------------------------------------------------------------
+					// end
+				}
+			} catch (FactoryException e2) {
+				e2.printStackTrace();
 			}
-		} else {
-			System.out.println(" IT IS ALREADY PROJECTED" + projectd.toWKT());
+			ProjectedCRS projectd = CRS.getProjectedCRS(crsInit);
+			if ( projectd == null ) {
+				System.out.println("NOT PROJECTED");
+				try {
+					int index = (int) (0.5 + (latitude + 180.0) / 360 * 60);
+					boolean north = longitude > 0;
+					int wgs84utm = 32600 + index + (north ? 0 : 100);
+					CoordinateReferenceSystem crs = CRS.decode("EPSG:" + wgs84utm);
+					transfCRS = CRS.findMathTransform(crsInit, crs);
+					System.out.println("decodedcrs : " + crs);
+				} catch (NoSuchAuthorityCodeException e) {
+					System.out.println("WARNING : STILL NOT PROJECTED");
+				} catch (FactoryException e) {
+					System.out.println("WARNING : STILL NOT PROJECTED");
+				}
+			} else {
+				System.out.println(" IT IS ALREADY PROJECTED" + projectd.toWKT());
+			}
+		} finally {
+			prjreader.close();
+			setTransformCRS(transfCRS);
 		}
-		prjreader.close();
-		setTransformCRS(transfCRS);
 	}
 
 	public void setTransformCRS(final CoordinateReferenceSystem crsI, final double latitude, final double longitude) {

@@ -1,45 +1,37 @@
 package msi.gama.kernel.experiment;
 
 import java.net.URL;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
-import msi.gama.common.util.RandomUtils;
+import msi.gama.common.util.*;
 import msi.gama.kernel.model.IModel;
-import msi.gama.kernel.simulation.AbstractScheduler;
-import msi.gama.kernel.simulation.GamlSimulation;
-import msi.gama.kernel.simulation.IScheduler;
-import msi.gama.kernel.simulation.ISimulationAgent;
-import msi.gama.kernel.simulation.Scheduler;
-import msi.gama.metamodel.agent.GamlAgent;
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.population.WorldPopulation;
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.kernel.simulation.*;
+import msi.gama.metamodel.agent.*;
+import msi.gama.metamodel.population.*;
+import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
-import msi.gama.runtime.RuntimeScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gama.util.IList;
-import msi.gaml.types.GamaGeometryType;
-import msi.gaml.types.IType;
-
+import msi.gaml.types.*;
 import org.eclipse.core.runtime.Platform;
 
+/**
+ * 
+ * The class ExperimentAgent. Represents the support for the different experiment species
+ * 
+ * @author drogoul
+ * @since 13 mai 2013
+ * 
+ */
 @species(name = IKeyword.EXPERIMENT)
 @vars({
+	@var(name = IKeyword.SIMULATION, type = IType.AGENT, doc = @doc(value = "contains a reference to the current simulation being run by this experiment", comment = "will be nil if no simulation have been created. In case several simulations are launched, contains a reference to the latest one")),
 	@var(name = GAMA._FATAL, type = IType.BOOL),
 	@var(name = GAMA._WARNINGS, type = IType.BOOL, init = "false"),
 	@var(name = ExperimentAgent.MODEL_PATH, type = IType.STRING, constant = true, doc = @doc(value = "Contains the absolute path to the folder in which the current model is located", comment = "Always terminated with a trailing separator")),
@@ -54,6 +46,8 @@ import org.eclipse.core.runtime.Platform;
 		" is another choice. Much faster than the previous ones, but with short sequences; and " +
 		IKeyword.JAVA +
 		" invokes the standard Java generator")),
+
+	// FIXME These variables should be part of the model agent instead
 	@var(name = ExperimentAgent.MACHINE_TIME, type = IType.FLOAT, doc = @doc(value = "Returns the current system time in milliseconds", comment = "The return value is a float number")),
 	@var(name = ExperimentAgent.DURATION, type = IType.STRING, doc = @doc("Returns a string containing the duration, in milliseconds, of the previous simulation cycle")),
 	@var(name = ExperimentAgent.TOTAL_DURATION, type = IType.STRING, doc = @doc("Returns a string containing the total duration, in milliseconds, of the simulation since it has been launched ")),
@@ -72,72 +66,79 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	private static final IShape SHAPE = GamaGeometryType.createPoint(new GamaPoint(-1, -1));
 
-	private IScope executionStack;
-	private List<IScope> stackPool;
-	protected ISimulationAgent currentSimulation;
-	protected AbstractScheduler scheduler;
+	private IScope scope;
+	protected ISimulationAgent simulation;
+	protected AgentScheduler scheduler;
 	final Map<String, Object> extraParametersMap = new LinkedHashMap();
 	protected RandomUtils random;
-
 	protected boolean isLoading;
 
 	public ExperimentAgent(final IPopulation s) throws GamaRuntimeException {
 		super(s);
 		super.setGeometry(SHAPE);
-		setIndex(0);
-		buildScheduler();
+		// setIndex(0);
 		reset();
 	}
 
-	public void buildScheduler() {
-		if ( scheduler != null ) {
-			scheduler.dispose();
-		}
-		scheduler = new Scheduler(this);
-	}
-
 	public void reset() {
-		extraParametersMap.clear();
-		// executionStack.clear();
-		stackPool = new GamaList();
-		executionStack = obtainNewScope("Execution stack of " + getName());
-
-		initializeWorldPopulation();
-		if ( currentSimulation != null ) {
-			currentSimulation.dispose();
-		}
-		currentSimulation = new FakeSimulation();
-		random = new RandomUtils(getSpecies().getCurrentSeed());
-		schedule(executionStack);
-	}
-
-	protected void initializeWorldPopulation() {
-		WorldPopulation pop = (WorldPopulation) getMicroPopulation(getModel());
-		if ( pop != null ) {
-			pop.dispose();
-		}
-		pop = new WorldPopulation(getModel());
-		pop.initializeFor(executionStack);
-		microPopulations.put(getModel(), pop);
-		pop.setHost(this);
-	}
-
-	@Override
-	public synchronized void dispose() {
-		if ( currentSimulation != null ) {
-			currentSimulation.dispose();
-			currentSimulation = null;
-		}
+		// We close any simulation that might be running
+		closeSimulation();
+		// We set the "interrupted" flag to false
+		// interrupted = false;
+		// We create a fresh new scope
+		GAMA.releaseScope(scope);
+		scope = obtainNewScope();
+		// We create a new scheduler if there isnt one already and unschedule the existing one if needed
 		if ( scheduler != null ) {
-			scheduler.dispose();
+			GAMA.controller.scheduler.unschedule(scheduler);
 		}
-		stackPool.clear();
-		super.dispose();
+		scheduler = new AgentScheduler(scope, this);
+		// We initialize the population that will host the simulation
+		createSimulationPopulation();
+		// // We create a fake simulation (used until the "true" simulation is created in init())
+		// simulation = new FakeSimulation();
+		// We initialize a new random number generator
+		random = new RandomUtils(getSpecies().getCurrentSeed());
+		// And we schedule the agent in its own scheduler
+		// schedule();
 	}
 
 	@Override
-	public boolean isRunning() {
-		return scheduler.alive;
+	public IScope obtainNewScope() {
+		if ( dead ) { return null; }
+		return new ExperimentAgentScope();
+	}
+
+	protected void closeSimulation() {
+		// GuiUtils.debug("ExperimentAgent.closeSimulation");
+		// // We dispose of any scheduler still running
+		// if ( scheduler != null ) {
+		// // We set the flag to interrupted
+		// // interrupted = true;
+		// // GuiUtils.debug("ExperimentAgent.closeSimulation MARKING INTERRUPTED AT TRUE");
+		// scheduler.dispose();
+		// scheduler = null;
+		// }
+		// We dispose of the simulation if any
+		if ( simulation != null ) {
+			simulation.dispose();
+			simulation = null;
+		}
+	}
+
+	@Override
+	public void dispose() {
+		// GuiUtils.debug("ExperimentAgent.dispose");
+		if ( dead ) { return; }
+		super.dispose();
+		closeSimulation();
+		// We dispose of any scheduler still running
+		if ( scheduler != null ) {
+			// GuiUtils.debug("ExperimentAgent.closeSimulation MARKING INTERRUPTED AT TRUE");
+			scheduler.dispose();
+			scheduler = null;
+		}
+
 	}
 
 	@Override
@@ -145,26 +146,117 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		return isLoading;
 	}
 
+	/**
+	 * Redefinition of the callback method
+	 * @see msi.gama.metamodel.agent.GamlAgent#_init_(msi.gama.runtime.IScope)
+	 */
 	@Override
-	public boolean isPaused() {
-		return scheduler.paused || scheduler.on_user_hold;
+	public Object _init_(IScope scope) {
+		// GuiUtils.debug("ExperimentAgent._init_");
+		if ( scope.interrupted() ) { return null; }
+		// We execute any behavior defined in GAML. The simulation is not yet defined (only the 'fake' one).
+		super._init_(scope);
+		// We gather the parameters set in the experiment
+		ParametersSet parameters = new ParametersSet(getSpecies().getCurrentSolution());
+		// Add the ones set during the "fake" simulation episode
+		parameters.putAll(extraParametersMap);
+		// This is where the simulation agent is created
+		return createSimulationAgent(parameters, getSpecies().getCurrentSeed());
+
 	}
 
-	@Override
-	public void startSimulation() {
-		GuiUtils.debug("ExperimentAgent.startSimulation");
-		if ( currentSimulation != null && isPaused() ) {
-			scheduler.start();
+	// Callback from SimulationPopulation.createAgents() once a new simulation is created
+	public void scheduleSimulation(SimulationAgent sim) {
+		// GuiUtils.debug("ExperimentAgent.scheduleSimulation in GLOBAL SCHEDULER");
+		// The scheduler of the outputs is scheduled in the global scheduler in its own scope that is linked with the
+		// simulation.
+		// The launch could have been interrupted before, so we are careful to check if we still have a valid agent and
+		// a valid scope
+		GAMA.controller.scheduler.schedule(sim.getScheduler(), sim.getScope());
+		IScope outputScope = sim.obtainNewScope();
+		if ( outputScope != null ) {
+			GAMA.controller.scheduler.schedule(getSpecies().getOutputManager(), outputScope);
+		} else {
+			GuiUtils.hideView(GuiUtils.PARAMETER_VIEW_ID);
+			GuiUtils.hideMonitorView();
 		}
+
 	}
 
 	@Override
+	protected Object stepSubPopulations(IScope scope) {
+		// The experiment DOES NOT step its subpopulations
+		return this;
+	}
+
+	@Override
+	public RandomUtils getRandomGenerator() {
+		return random == null ? RandomUtils.getDefault() : random;
+	}
+
+	/**
+	 * Building the simulation agent and its population
+	 */
+
+	protected void createSimulationPopulation() {
+		SimulationPopulation pop = (SimulationPopulation) getMicroPopulation(getModel());
+		if ( pop != null ) {
+			pop.dispose();
+		}
+		pop = new SimulationPopulation(getModel());
+		pop.initializeFor(scope);
+		microPopulations.put(getModel(), pop);
+		pop.setHost(this);
+	}
+
+	protected IAgent createSimulationAgent(final HashMap<String, Object> sol, final Double seed) {
+		// GuiUtils.debug("ExperimentAgent.createSimulationAgent");
+		GuiUtils.waitStatus("Initializing simulation");
+		isLoading = true;
+		IPopulation pop = getMicroPopulation(getModel());
+		// 'simulation' is set by a callback call to setSimulation()
+		pop.createAgents(scope, 1, GamaList.with(sol), false);
+		if ( scope.interrupted() ) {
+			isLoading = false;
+			return null;
+		}
+		GuiUtils.waitStatus("Instantiating agents");
+		if ( scope.interrupted() ) {
+			isLoading = false;
+			return null;
+		}
+		// GuiUtils.debug("ExperimentAgent.createSimulationAgent : Scheduling the simulation in its scheduler");
+		// simulation.schedule();
+		isLoading = false;
+		GuiUtils.informStatus("Simulation Ready");
+		return simulation;
+	}
+
+	public void setSimulation(ISimulationAgent sim) {
+		simulation = sim;
+	}
+
+	/**
+	 * Scope related utilities
+	 * 
+	 */
+
+	@Override
+	public IScope getScope() {
+		return scope;
+	}
+
+	/**
+	 * Overrides of GamlAgent
+	 * @see msi.gama.metamodel.agent.GamlAgent#getSimulation()
+	 */
+
 	public ISimulationAgent getSimulation() {
-		return currentSimulation;
+		return simulation;
 	}
 
 	@Override
-	public IScheduler getScheduler() {
+	public AgentScheduler getScheduler() {
 		return scheduler;
 	}
 
@@ -179,136 +271,20 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	@Override
-	public synchronized void setLocation(final ILocation newGlobalLoc) {}
-
-	@Override
-	public synchronized void setGeometry(final IShape newGlobalGeometry) {}
-
-	@Override
-	public void step(final IScope scope) {
-		// GuiUtils.debug("ExperimentAgent.step");
-		getSpecies().getOutputManager().step(scope);
-		getSpecies().getOutputManager().updateOutputs();
-		super.step(scope);
-	}
-
-	@Override
-	public void init(IScope scope) {
-		GuiUtils.debug("ExperimentAgent.init");
-		// TODO If has init...
-		super.init(scope);
-		// TODO Else..
-		ParametersSet parameters = new ParametersSet(getSpecies().getCurrentSolution());
-		parameters.putAll(extraParametersMap);
-		initializeNewSimulation(parameters, getSpecies().getCurrentSeed());
-
-	}
-
-	@Override
-	public IScope getExecutionScope() {
-		return executionStack;
-	}
-
-	@Override
-	public IScope obtainNewScope() {
-		if ( stackPool.isEmpty() ) { return new RuntimeScope(this, "Pool runtime scope for " + getName()); }
-		return stackPool.remove(stackPool.size() - 1);
-	}
-
-	public IScope obtainNewScope(final String name) {
-		for ( IScope scope : stackPool ) {
-			if ( scope.getName().equals(name) ) { return scope; }
-		}
-		return new RuntimeScope(this, name);
-	}
-
-	@Override
-	public void releaseScope(final IScope scope) {
-		scope.clear();
-		stackPool.add(scope);
-	}
-
-	@Override
-	public RandomUtils getRandomGenerator() {
-		return random == null ? RandomUtils.getDefault() : random;
-	}
-
-	public void userReloadExperiment(boolean autoStartSimulation) {
-		GuiUtils.debug("ExperimentAgent.userReloadExperiment");
-		boolean wasRunning = isRunning() && !isPaused();
-		buildScheduler();
-		getSpecies().desynchronizeOutputs();
-		closeSimulation();
-		reset();
-		getSpecies().buildOutputs();
-		userInitExperiment();
-
-		getSpecies().getOutputManager().init(executionStack);
-		if (wasRunning && autoStartSimulation) {
-			startSimulation();
-		}
-	}
-
-	public void userInitExperiment() {
-		GuiUtils.debug("ExperimentAgent.userInitExperiment");
-		try {
-			scheduler.init(executionStack);
-		} catch (GamaRuntimeException e) {
-			// TODO
-			e.printStackTrace();
-		}
-		getSpecies().getOutputManager().init(executionStack);
-	}
-
-	public void initializeNewSimulation(final ParametersSet sol, final Double seed) {
-		GuiUtils.debug("ExperimentAgent.initializeNewSimulation");
-		GuiUtils.waitStatus("Initializing simulation");
-		isLoading = true;
-		WorldPopulation pop = (WorldPopulation) getMicroPopulation(getModel());
-		// Necessary to create it first, and then to finalize the creation (since this creation can trigger the creation
-		// of other agents, which may rely on the value of getSimulation()
-		currentSimulation = new GamlSimulation(pop);
-		pop.finishInitializeWorld(executionStack, currentSimulation, GamaList.with(sol));
-		GuiUtils.waitStatus(" Instantiating agents ");
-		currentSimulation.schedule(executionStack);
-		isLoading = false;
-	}
-
-	@Override
 	public IExperimentSpecies getSpecies() {
 		return (IExperimentSpecies) super.getSpecies();
 	}
 
 	@Override
-	public void userStepExperiment() {
-		GuiUtils.debug("ExperimentAgent.userStepExperiment");
-		if ( !isLoading() ) {
-			scheduler.stepByStep();
-		}
-	}
+	public synchronized void setLocation(final ILocation newGlobalLoc) {}
 
 	@Override
-	public void userStopExperiment() {
-		GuiUtils.debug("ExperimentAgent.userStopExperiment");
-		scheduler.alive = false;
-	}
+	public synchronized void setGeometry(final IShape newGlobalGeometry) {}
 
-	@Override
-	public void userPauseExperiment() {
-		GuiUtils.debug("ExperimentAgent.userPauseExperiment");
-		if ( !isLoading() ) {
-			scheduler.pause();
-		}
-	}
-
-	protected void closeSimulation() {
-		GuiUtils.debug("ExperimentAgent.closeSimulation");
-		userStopExperiment();
-		// Hack. Should be put somewhere else but the dialogs may
-		// block the execution thread.
-		GuiUtils.closeDialogs();
-		currentSimulation.dispose();
-	}
+	/**
+	 * GAML global variables
+	 * 
+	 */
 
 	@getter(ExperimentAgent.MODEL_PATH)
 	public String getModelPath(final IAgent agent) {
@@ -328,17 +304,17 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@getter(DURATION)
 	public String getDuration(final IScope scope, final IAgent agent) {
-		return Long.toString(scope.getClock().getDuration());
+		return Long.toString(simulation.getClock().getDuration());
 	}
 
 	@getter(TOTAL_DURATION)
 	public String getTotalDuration(final IScope scope, final IAgent agent) {
-		return Long.toString(scope.getClock().getTotalDuration());
+		return Long.toString(simulation.getClock().getTotalDuration());
 	}
 
 	@getter(AVERAGE_DURATION)
 	public String getAverageDuration(final IScope scope, final IAgent agent) {
-		return Double.toString(scope.getClock().getAverageDuration());
+		return Double.toString(simulation.getClock().getAverageDuration());
 	}
 
 	@getter(MACHINE_TIME)
@@ -353,7 +329,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@getter(value = GAMA._FATAL, initializer = true)
 	public Boolean getFatalErrors(final IAgent agent) {
-		return GAMA.TREAT_ERRORS_AS_FATAL;
+		return GAMA.REVEAL_ERRORS_IN_EDITOR;
 	}
 
 	@getter(value = GAMA._WARNINGS, initializer = true)
@@ -386,10 +362,22 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		GAMA.getRandom().setGenerator(newRng);
 	}
 
+	@getter(IKeyword.SIMULATION)
+	public IAgent getSimulation(IAgent agent) {
+		return simulation;
+	}
+
+	@setter(IKeyword.SIMULATION)
+	public void setSimulation(IAgent agent, final IAgent sim) {
+		// TODO Nothing to do ? The 'simulation' variable is normally initialized automatically whenever a simulation is
+		// created
+	}
+
 	/**
 	 * 
-	 * The class FakeSimulation. A "pass through" class used when the simulation is not yet computed. It returns and
-	 * sets the values of parameters when they are defined in the experiment, and also allows extra parameters to be
+	 * The class ExperimentAgentScope. A "pass through" class used when the simulation is not yet computed and when an
+	 * experiment tries to have access to simulation attributes (which is the case in most of the models). It returns
+	 * and sets the values of parameters when they are defined in the experiment, and also allows extra parameters to be
 	 * set.
 	 * TODO Allow this class to read the init values of global variables that are not defined as parameters.
 	 * 
@@ -397,46 +385,41 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * @since 22 avr. 2013
 	 * 
 	 */
-	private class FakeSimulation extends GamlSimulation {
+	private class ExperimentAgentScope extends Scope {
 
-		public FakeSimulation() throws GamaRuntimeException {
-			super(ExperimentAgent.this.getMicroPopulation(ExperimentAgent.this.getModel()));
-			// TODO Init the local dictionary with the variables ? Parameters ?
+		@Override
+		public Object getGlobalVarValue(String name) {
+			if ( ExperimentAgent.this.hasAttribute(name) ) {
+				return super.getGlobalVarValue(name);
+			} else if ( getSimulation() != null ) {
+				return getSimulation().getScope().getGlobalVarValue(name);
+			} else if ( ExperimentAgent.this.getSpecies().hasParameter(name) ) { return ExperimentAgent.this
+				.getSpecies().getParameterValue(name); }
+			return extraParametersMap.get(name);
 		}
 
 		@Override
-		public Object getDirectVarValue(IScope scope, String n) throws GamaRuntimeException {
-			if ( ExperimentAgent.this.getSpecies().hasParameter(n) ) { return ExperimentAgent.this.getSpecies()
-				.getParameterValue(n); }
-			return extraParametersMap.get(n);
-		}
-
-		@Override
-		public void setDirectVarValue(IScope scope, String s, Object v) throws GamaRuntimeException {
-			if ( ExperimentAgent.this.getSpecies().hasParameter(s) ) {
-				ExperimentAgent.this.getSpecies().setParameterValue(s, v);
-				// FIXME Verify this
+		public void setGlobalVarValue(String name, Object v) {
+			if ( ExperimentAgent.this.hasAttribute(name) ) {
+				super.setGlobalVarValue(name, v);
+			} else if ( getSimulation() != null ) {
+				getSimulation().getScope().setGlobalVarValue(name, v);
+			} else if ( ExperimentAgent.this.getSpecies().hasParameter(name) ) {
+				ExperimentAgent.this.getSpecies().setParameterValue(name, v);
 				GuiUtils.updateParameterView();
 			} else {
-				extraParametersMap.put(s, v);
+				extraParametersMap.put(name, v);
 			}
 		}
 
-		@Override
-		public void computeAgentsToSchedule(IScope scope, IList list) throws GamaRuntimeException {
-			return;
-		}
-
-		@Override
-		public IExperimentAgent getExperiment() {
-			return ExperimentAgent.this;
-		}
-
-		@Override
-		public IAgent getHost() {
-			return ExperimentAgent.this;
-		}
-
 	}
+	//
+	// private class ExperimentAgentScheduler extends AgentScheduler {
+	//
+	// public ExperimentAgentScheduler(IScope scope, IStepable owner) {
+	// super(scope, owner);
+	// }
+	//
+	// }
 
 }

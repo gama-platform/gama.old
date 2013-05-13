@@ -31,7 +31,6 @@ import msi.gaml.compilation.*;
 import msi.gaml.factories.*;
 import msi.gaml.skills.*;
 import msi.gaml.statements.Facets;
-import msi.gaml.types.Types;
 import org.eclipse.emf.ecore.EObject;
 
 public class SpeciesDescription extends TypeDescription {
@@ -41,19 +40,20 @@ public class SpeciesDescription extends TypeDescription {
 	protected final Map<Class, ISkill> skills = new HashMap();
 	protected IArchitecture control;
 	private Map<String, SpeciesDescription> microSpecies;
-	protected SpeciesDescription macroSpecies;
+	// protected SpeciesDescription macroSpecies;
 	private IAgentConstructor agentConstructor;
-	private boolean isGlobal = false;
+
+	// private final boolean isGlobal = false;
 
 	public SpeciesDescription(final String keyword, final IDescription macroDesc, final IChildrenProvider cp,
 		final EObject source, final Facets facets) {
-		this(keyword, macroDesc, null, cp, source, facets);
+		this(keyword, null, macroDesc, null, cp, source, facets);
 	}
 
-	public SpeciesDescription(final String keyword, final IDescription macroDesc, IDescription parent,
-		final IChildrenProvider cp, final EObject source, final Facets facets) {
-		super(keyword, null, macroDesc, parent, cp, source, facets);
-		setSkills(facets.get(SKILLS), new HashSet());
+	public SpeciesDescription(final String keyword, final Class clazz, final IDescription macroDesc,
+		IDescription parent, final IChildrenProvider cp, final EObject source, final Facets facets) {
+		super(keyword, clazz, macroDesc, parent, cp, source, facets);
+		setSkills(facets.get(SKILLS), Collections.EMPTY_SET);
 	}
 
 	/**
@@ -73,7 +73,8 @@ public class SpeciesDescription extends TypeDescription {
 
 	@Override
 	public void dispose() {
-		if ( isDisposed || Types.isBuiltIn(getName()) ) { return; }
+		if ( isBuiltIn() ) { return; }
+		// if ( /* isDisposed || */Types.isBuiltIn(getName()) ) { return; }
 		if ( behaviors != null ) {
 			behaviors.clear();
 		}
@@ -84,7 +85,7 @@ public class SpeciesDescription extends TypeDescription {
 		if ( control != null ) {
 			control.dispose();
 		}
-		macroSpecies = null;
+		// macroSpecies = null;
 
 		if ( microSpecies != null ) {
 			microSpecies.clear();
@@ -93,16 +94,16 @@ public class SpeciesDescription extends TypeDescription {
 			inits.clear();
 		}
 		super.dispose();
-		isDisposed = true;
+		// isDisposed = true;
 	}
 
-	@Override
-	public void setSuperDescription(final IDescription desc) {
-		super.setSuperDescription(desc);
-		if ( desc instanceof SpeciesDescription ) {
-			macroSpecies = (SpeciesDescription) desc;
-		}
-	}
+	// @Override
+	// public void setSuperDescription(final IDescription desc) {
+	// super.setSuperDescription(desc);
+	// if ( desc instanceof SpeciesDescription ) {
+	// macroSpecies = (SpeciesDescription) desc;
+	// }
+	// }
 
 	protected void setSkills(final IExpressionDescription userDefinedSkills, final Set<String> builtInSkills) {
 		Set<String> skillNames = new LinkedHashSet();
@@ -184,6 +185,7 @@ public class SpeciesDescription extends TypeDescription {
 		IDescription desc = super.addChild(child);
 		if ( desc == null ) { return null; }
 		if ( desc instanceof StatementDescription ) {
+			// FIXME Move this to TypeDescription !
 			StatementDescription statement = (StatementDescription) desc;
 			String kw = desc.getKeyword();
 			if ( PRIMITIVE.equals(kw) ) {
@@ -341,7 +343,9 @@ public class SpeciesDescription extends TypeDescription {
 	}
 
 	public SpeciesDescription getMacroSpecies() {
-		return macroSpecies;
+		IDescription d = getEnclosingDescription();
+		if ( d instanceof SpeciesDescription ) { return (SpeciesDescription) d; }
+		return null;
 	}
 
 	@Override
@@ -354,16 +358,13 @@ public class SpeciesDescription extends TypeDescription {
 		SpeciesDescription parent = getParent();
 		if ( parent != null ) {
 			if ( !parent.getJavaBase().isAssignableFrom(getJavaBase()) ) {
-				// if ( javaBase == GamlAgent.class ) { // default base class
-				// javaBase = parent.javaBase;
-				// agentConstructor = parent.agentConstructor;
-				// } else {
 				error("Species " + getName() + " Java base class (" + getJavaBase().getSimpleName() +
 					") is not a subclass of its parent species " + parent.getName() + " base class (" +
 					parent.getJavaBase().getSimpleName() + ")", IGamlIssue.GENERAL);
 				// }
 			}
 			// GuiUtils.debug(" **** " + getName() + " inherits from " + parent.getName());
+			inheritMicroSpecies(parent);
 			inheritSkills(parent);
 			inheritBehaviors(parent);
 			inheritInits(parent);
@@ -371,6 +372,16 @@ public class SpeciesDescription extends TypeDescription {
 			super.inheritFromParent();
 		}
 
+	}
+
+	// FIXME HACK !
+	private void inheritMicroSpecies(SpeciesDescription parent) {
+		for ( Map.Entry<String, SpeciesDescription> entry : parent.getMicroSpecies().entrySet() ) {
+			if ( !getMicroSpecies().containsKey(entry.getKey()) ) {
+				getMicroSpecies().put(entry.getKey(), entry.getValue());
+				children.add(entry.getValue());
+			}
+		}
 	}
 
 	private void inheritAspects(final SpeciesDescription parent) {
@@ -616,10 +627,12 @@ public class SpeciesDescription extends TypeDescription {
 	 * @throws GamlException
 	 */
 	public void finalizeDescription() {
+		// super.finalizeDescription();
 		if ( isMirror() ) {
 			// TODO Try to find automatically the type given the "MIRROR" expression
 			addChild(DescriptionFactory.create(AGENT, this, NAME, TARGET));
 		}
+
 		control = (IArchitecture) AbstractGamlAdditions.getSkillInstanceFor(getControlName());
 		buildSharedSkills();
 		// recursively finalize the sorted micro-species
@@ -627,8 +640,9 @@ public class SpeciesDescription extends TypeDescription {
 			microSpec.finalizeDescription();
 			if ( !microSpec.isExperiment() ) {
 				VariableDescription var =
-					(VariableDescription) DescriptionFactory
-						.create(IKeyword.CONTAINER, this, NAME, microSpec.getName()); // CONST = TRUE ?
+					(VariableDescription) DescriptionFactory.create(IKeyword.CONTAINER, this, NAME,
+						microSpec.getName(), OF, microSpec.getName()); // CONST = TRUE ?
+				// FIXME : OF, microSpec.getName() ??
 				var.setContentType(microSpec.getType());
 				// We compute the dependencies of micro species with respect to the variables
 				// defined in the macro species.
@@ -701,14 +715,6 @@ public class SpeciesDescription extends TypeDescription {
 
 	public Map<Class, ISkill> getSkills() {
 		return skills;
-	}
-
-	public void setGlobal(boolean global) {
-		isGlobal = global;
-	}
-
-	public boolean isGlobal() {
-		return isGlobal;
 	}
 
 }

@@ -21,7 +21,7 @@ package msi.gama.runtime;
 import java.util.Map;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.kernel.model.IModel;
-import msi.gama.kernel.simulation.*;
+import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -39,18 +39,54 @@ public interface IScope {
 
 	public abstract void clear();
 
+	/**
+	 * Make the agent the current agent in the scope
+	 * @param agent
+	 * @see getAgentScope()
+	 */
 	public abstract void push(IAgent agent);
+
+	/**
+	 * Makes the statement the current statement in the scope
+	 * @param statement
+	 */
 
 	public abstract void push(IStatement statement);
 
+	/**
+	 * Removes the current agent
+	 * @param agent
+	 */
 	public abstract void pop(IAgent agent);
+
+	/**
+	 * Removes the current statement
+	 * @param statement
+	 */
 
 	public abstract void pop(IStatement statement);
 
+	/**
+	 * Executes the statement on this agent. Equivalent to:
+	 * scope.push(agent); statement.executeOn(scope); scope.pop(agent);
+	 * @param statement
+	 * @param agent
+	 * @return
+	 * @throws GamaRuntimeException
+	 */
 	public abstract Object execute(IStatement statement, IAgent agent) throws GamaRuntimeException;
 
 	public abstract Object execute(IStatement.WithArgs statement, IAgent agent, Arguments args)
 		throws GamaRuntimeException;
+
+	/**
+	 * Evaluates the expression on the agent. Equivalent to:
+	 * scope.push(agent); expr.value(scope); scope.pop(agent);
+	 * @param expr
+	 * @param agent
+	 * @return
+	 * @throws GamaRuntimeException
+	 */
 
 	public abstract Object evaluate(IExpression expr, IAgent agent) throws GamaRuntimeException;
 
@@ -95,6 +131,10 @@ public interface IScope {
 	public abstract void setStatus(ExecutionStatus status);
 
 	public abstract ExecutionStatus getStatus();
+
+	public boolean interrupted();
+
+	public void setInterrupted(boolean interrupted);
 
 	public abstract Object getGlobalVarValue(String name) throws GamaRuntimeException;
 
@@ -154,9 +194,11 @@ public interface IScope {
 	 *         by a simulation)
 	 */
 
-	public abstract ISimulationAgent getSimulationScope();
+	public abstract IAgent getSimulationScope();
 
 	public abstract IModel getModel();
 
 	public abstract SimulationClock getClock();
+
+	public abstract IScope copy();
 }

@@ -151,4 +151,21 @@ public abstract class AbstractExpression implements IExpression {
 		elementsKeyType = t;
 	}
 
+	protected String parenthesize(IExpression ... exp) {
+		return surround('(', ')', exp);
+	}
+
+	protected String surround(char first, char last, IExpression ... exp) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(' ').append(first);
+		for ( int i = 0; i < exp.length; i++ ) {
+			if ( i > 0 ) {
+				sb.append(',');
+			}
+			sb.append(exp[i].toGaml());
+		}
+		sb.append(last).append(' ');
+		return sb.toString();
+	}
+
 }

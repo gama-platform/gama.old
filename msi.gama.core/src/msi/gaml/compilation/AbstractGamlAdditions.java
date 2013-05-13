@@ -59,6 +59,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return Types.get(c);
 	}
 
+	public final static Map<Integer, Set<String>> VARTYPE2KEYWORDS = new LinkedHashMap();
+
 	public void _display(final String string, final Class class1, final IDisplayCreator d) {
 		IGui.displays.put(string, d);
 	}
@@ -69,44 +71,40 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	}
 
-	public static void buildAllSpecies() {
+	public static void buildMetaModel() {
 
-		// We first build "agent" as the root of all other species (incl. "world_species")
+		// We first build "agent" as the root of all other species (incl. "simulation")
 		SpeciesProto ap = tempSpecies.remove(AGENT);
 		// "agent" has no super-species yet
 		SpeciesDescription agent = buildSpecies(ap, null, null, false);
 
-		// We create "experimentator" as the root of all experiments, sub-species of "agent"
+		// We then build "simulation", sub-species of "agent"
+		SpeciesProto wp = tempSpecies.remove(MODEL);
+		ModelDescription model = (ModelDescription) buildSpecies(wp, null, agent, true);
+
+		// We close the first loop by putting agent "inside" simulation
+		agent.setEnclosingDescription(model);
+		model.addChild(agent);
+
+		// We create "experiment" as the root of all experiments, sub-species of "agent"
 		SpeciesProto ep = tempSpecies.remove(EXPERIMENT);
-		SpeciesDescription experimentator = buildSpecies(ep, null, agent, false);
+		SpeciesDescription experiment = buildSpecies(ep, null, agent, false);
+		model.addSpeciesType(experiment);
 
-		// We then build "world_species", sub-species of "agent" and micro-species of experimentator
-		SpeciesProto wp = tempSpecies.remove(SIMULATION);
-		SpeciesDescription world = buildSpecies(wp, experimentator, agent, true);
-		// We now can attach "agent" as a micro-species of "world_species"
-		agent.setSuperDescription(world);
-		world.addChild(agent);
+		// // We then build "simulation", sub-species of "agent" and micro-species of "experiment"
+		// SpeciesProto wp = tempSpecies.remove(SIMULATION);
+		// SpeciesDescription world = buildSpecies(wp, experimentator, agent, true);
 
-		// We then create all other built-in species and attach them to "world_species"
+		// We now can attach "simulation" as a micro-species of "experiment"
+		model.setEnclosingDescription(experiment);
+
+		// We then create all other built-in species and attach them to "simulation"
 		for ( SpeciesProto proto : tempSpecies.values() ) {
-			world.addChild(buildSpecies(proto, world, agent, false));
+			model.addChild(buildSpecies(proto, model, agent, false));
 		}
-
-		// We then create the default experiment and attach it to the world as well
-		// createDefaultExperiment(world);
-
-		world.finalizeDescription();
+		model.buildTypes();
+		model.finalizeDescription();
 	}
-
-	// private static IDescription createDefaultExperiment(SpeciesDescription world) {
-	// // FIXME Not sure this information is available at this stage
-	// String type = GuiUtils.isInHeadLessMode() ? HEADLESS_UI : GUI_;
-	// ExperimentDescription desc =
-	// (ExperimentDescription) DescriptionFactory.create(type, NAME, DEFAULT_EXP, TYPE, type);
-	// // desc.setSuperDescription(world);
-	// // world.addChild(desc);
-	// return desc;
-	// }
 
 	public static SpeciesDescription buildSpecies(final SpeciesProto proto, SpeciesDescription macro,
 		SpeciesDescription parent, boolean isGlobal) {
@@ -119,10 +117,15 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		if ( builtInSkills != null ) {
 			allSkills.addAll(builtInSkills);
 		}
-		SpeciesDescription desc =
-			DescriptionFactory.createBuiltInSpeciesDescription(name, clazz, macro, parent, helper, allSkills, null);
-		Types.addSpeciesType(desc);
-		desc.setGlobal(isGlobal);
+		SpeciesDescription desc;
+		if ( !isGlobal ) {
+			desc = DescriptionFactory.createBuiltInSpeciesDescription(name, clazz, macro, parent, helper, allSkills);
+		} else {
+			desc = DescriptionFactory.createRootModelDescription(name, clazz, macro, parent);
+			Types.builtInTypes.addSpeciesType(desc);
+		}
+
+		// desc.setGlobal(isGlobal);
 		List<IDescription> additions = getAdditions(clazz);
 		if ( additions == null ) {
 			additions = new GamaList();
@@ -160,7 +163,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	protected void _type(final String keyword, final IType typeInstance, final int id, final int varKind,
 		final Class ... wraps) {
-		Types.initType(keyword, typeInstance, id, varKind, wraps);
+		AbstractGamlAdditions.initType(keyword, typeInstance, id, varKind, wraps);
 	}
 
 	protected void _skill(final String name, final Class clazz, final ISkillConstructor helper,
@@ -211,7 +214,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		List<String> keywords = new ArrayList(Arrays.asList(names));
 		// if the symbol is a variable
 		if ( ISymbolKind.Variable.KINDS.contains(sKind) ) {
-			Set<String> additonal = Types.VARTYPE2KEYWORDS.get(sKind);
+			Set<String> additonal = AbstractGamlAdditions.VARTYPE2KEYWORDS.get(sKind);
 			if ( additonal != null ) {
 				keywords.addAll(additonal);
 			}
@@ -247,7 +250,9 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 				IOperator exp;
 				IType rt = Types.get(ret);
 				if ( classes.length == 1 ) { // unary
-					exp = new UnaryOperator(rt, helper, c, t, content, index, expectedContentTypes);
+					exp =
+						new UnaryOperator(rt, helper, c, t, content, index, expectedContentTypes,
+							IExpression.class.equals(classes[0]));
 				} else if ( classes.length == 2 ) { // binary
 					if ( kw.equals(OF) || kw.equals(_DOT) ) {
 						exp =
@@ -328,8 +333,17 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 	}
 
 	protected void _action(final String methodName, final Class clazz, final GamaHelper e, final IDescription desc) {
-		((StatementDescription) desc).setHelper(e);
+		((PrimitiveDescription) desc).setHelper(e);
 		add(clazz, desc);
+	}
+
+	public static void initType(final String keyword, IType typeInstance, final int id, final int varKind,
+		final Class ... wraps) {
+		Types.builtInTypes.initType(keyword, typeInstance, id, varKind, wraps);
+		if ( !VARTYPE2KEYWORDS.containsKey(varKind) ) {
+			VARTYPE2KEYWORDS.put(varKind, new HashSet());
+		}
+		VARTYPE2KEYWORDS.get(varKind).add(keyword);
 	}
 
 	public static List<IDescription> getAdditions(final Class clazz) {
@@ -416,7 +430,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public static Collection<String> getAllVars() {
 		Set<String> result = new HashSet();
-		for ( SpeciesDescription s : Types.getBuiltInSpecies() ) {
+		for ( TypeDescription s : Types.getBuiltInSpecies() ) {
 			result.addAll(s.getVariables().keySet());
 			for ( String a : s.getActionNames() ) {
 				StatementDescription action = s.getAction(a);
@@ -440,8 +454,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public static Collection<String> getAllAspects() {
 		Set<String> result = new HashSet();
-		for ( SpeciesDescription s : Types.getBuiltInSpecies() ) {
-			result.addAll(s.getAspectNames());
+		for ( TypeDescription s : Types.getBuiltInSpecies() ) {
+			result.addAll(((SpeciesDescription) s).getAspectNames());
 		}
 		return result;
 	}
@@ -452,7 +466,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public static Collection<String> getAllActions() {
 		Set<String> result = new HashSet();
-		for ( SpeciesDescription s : Types.getBuiltInSpecies() ) {
+		for ( TypeDescription s : Types.getBuiltInSpecies() ) {
 			result.addAll(s.getActionNames());
 		}
 		for ( Class c : SKILL_CLASSES.values() ) {

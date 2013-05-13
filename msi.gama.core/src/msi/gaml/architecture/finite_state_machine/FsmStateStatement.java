@@ -91,7 +91,7 @@ public class FsmStateStatement extends AbstractStatementSequence {
 
 	protected boolean beginExecution(final IScope scope) throws GamaRuntimeException {
 		IAgent agent = scope.getAgentScope();
-		if ( agent.dead() ) { return false; }
+		if ( agent.dead() || scope.interrupted() ) { return false; }
 		Map<String, Object> memory = (Map) agent.getAttribute(STATE_MEMORY);
 		if ( memory == null ) {
 			memory = new HashMap();

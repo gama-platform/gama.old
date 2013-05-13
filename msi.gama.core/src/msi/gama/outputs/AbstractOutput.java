@@ -37,7 +37,7 @@ import msi.gaml.operators.Cast;
 public abstract class AbstractOutput extends Symbol implements IOutput {
 
 	protected IOutputManager outputManager;
-	private IScope ownStack;
+	private IScope scope;
 	boolean paused = false;
 	private boolean isPermanent = false;
 	boolean open = false;
@@ -57,19 +57,14 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	}
 
 	@Override
-	public IScope getStack() {
-		return getOwnScope();
-	}
-
-	@Override
 	public void init(final IScope scope) {
-		setOwnScope(GAMA.obtainNewScope());
+		setScope(scope.copy());
 		outputManager = GAMA.getExperiment().getOutputManager();
 		IExpression refresh = getFacet(IKeyword.REFRESH_EVERY);
 		if ( refresh != null ) {
-			setRefreshRate(Cast.asInt(getOwnScope(), refresh.value(getOwnScope())));
+			setRefreshRate(Cast.asInt(getScope(), refresh.value(getScope())));
 		}
-		setNextTime(getOwnScope().getClock().getCycle());
+		setNextTime(getScope().getClock().getCycle());
 	}
 
 	@Override
@@ -135,12 +130,12 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 
 	@Override
 	public void schedule() throws GamaRuntimeException {
-		setNextTime(getOwnScope().getClock().getCycle());
+		setNextTime(getScope().getClock().getCycle());
 		outputManager.scheduleOutput(this);
 	}
 
 	private void reschedule() {
-		setNextTime(getOwnScope().getClock().getCycle() + getRefreshRate());
+		setNextTime(getScope().getClock().getCycle() + getRefreshRate());
 	}
 
 	@Override
@@ -188,12 +183,16 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		return getName(); // by default
 	}
 
-	protected void setOwnScope(final IScope ownStack) {
-		this.ownStack = ownStack;
+	protected void setScope(final IScope scope) {
+		if ( this.scope != null ) {
+			GAMA.releaseScope(scope);
+		}
+		this.scope = scope;
 	}
 
-	public IScope getOwnScope() {
-		return ownStack;
+	@Override
+	public IScope getScope() {
+		return scope;
 	}
 
 }

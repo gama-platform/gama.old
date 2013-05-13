@@ -31,7 +31,7 @@ public class PrefuseStaticLayoutFruchtermanReingoldLayout extends
 						);
 				
 			} catch (ClassCastException e) {
-				throw new GamaRuntimeException("Option "+OPTION_NAME_MAXITER+" of this layout is supposed to be an integer.");
+				throw GamaRuntimeException.error("Option "+OPTION_NAME_MAXITER+" of this layout is supposed to be an integer.");
 			}
 		} else {
 			return new FruchtermanReingoldLayout(PREFUSE_GRAPH);

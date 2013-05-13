@@ -47,7 +47,7 @@ public class GraphstreamOutput extends AbstractDisplayOutput {
 	@Override
 	public void step(final IScope scope) throws GamaRuntimeException {
 		// retrieve the graph to be displayed
-		Object tmp = Cast.asGraph(getOwnScope(), graphExpr);
+		Object tmp = Cast.asGraph(getScope(), graphExpr);
 		if ( tmp != null ) {
 			this.graph = (IGraph) tmp;
 		}
@@ -59,18 +59,18 @@ public class GraphstreamOutput extends AbstractDisplayOutput {
 		super.init(scope);
 
 		// retrieve the graph to be displayed
-		Object tmp = Cast.asGraph(getOwnScope(), graphExpr);
+		Object tmp = Cast.asGraph(getScope(), graphExpr);
 		if ( tmp != null ) {
 			this.graph = (IGraph) tmp;
 		}
 
-		lowquality = Cast.asBool(getOwnScope(), getFacet("lowquality"));
+		lowquality = Cast.asBool(getScope(), getFacet("lowquality"));
 
 	}
 
 	public IGraph getGraph() {
 
-		Object tmp = Cast.asGraph(getOwnScope(), graphExpr);
+		Object tmp = Cast.asGraph(getScope(), graphExpr);
 		if ( tmp != null ) {
 			this.graph = (IGraph) tmp;
 		}

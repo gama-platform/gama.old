@@ -11,7 +11,7 @@ import java.util.regex.*;
 public class TypeNode<T> {
 
 	private T data;
-	private List<TypeNode<T>> children;
+	private final List<TypeNode<T>> children;
 	private TypeNode<T> parent;
 
 	public TypeNode() {
@@ -40,14 +40,6 @@ public class TypeNode<T> {
 		return getNumberOfChildren() > 0;
 	}
 
-	public void setChildren(final List<TypeNode<T>> children) {
-		for ( TypeNode<T> child : children ) {
-			child.parent = this;
-		}
-
-		this.children = children;
-	}
-
 	public void addChildren(final Collection<T> children) {
 		for ( T child : children ) {
 			addChild(child);
@@ -68,10 +60,6 @@ public class TypeNode<T> {
 	public void addChildAt(final int index, final TypeNode<T> child) throws IndexOutOfBoundsException {
 		child.parent = this;
 		children.add(index, child);
-	}
-
-	public void removeChildren() {
-		this.children = new ArrayList<TypeNode<T>>();
 	}
 
 	public void removeChildAt(final int index) throws IndexOutOfBoundsException {
@@ -135,5 +123,13 @@ public class TypeNode<T> {
 		stringRepresentation += "]";
 
 		return stringRepresentation;
+	}
+
+	public void dispose() {
+		parent = null;
+		for ( TypeNode<T> node : children ) {
+			node.dispose();
+		}
+		children.clear();
 	}
 }
