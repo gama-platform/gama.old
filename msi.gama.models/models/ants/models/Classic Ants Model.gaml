@@ -104,7 +104,7 @@ entities {
 		}
 	}
 }
-experiment ant type: gui {
+experiment Ant type: gui {
 	parameter 'Number of ants:' var: ants_number category: 'Model' ;
 	parameter 'Rate of evaporation of the signal (%/cycle):' var: evaporation_rate category: 'Model' ;
 	parameter 'Rate of diffusion of the signal (%/cycle):' var: diffusion_rate category: 'Model' ;
