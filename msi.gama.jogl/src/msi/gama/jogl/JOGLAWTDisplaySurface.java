@@ -26,6 +26,7 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.awt.AbstractAWTDisplaySurface;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.jogl.scene.ModelScene;
@@ -37,7 +38,8 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.precompiler.GamlAnnotations.display;
-import msi.gama.runtime.GAMA;
+import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.species.ISpecies;
 import org.eclipse.swt.SWT;
@@ -126,6 +128,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	@Override
 	public void initialize(final double env_width, final double env_height, final IDisplayOutput out) {
+		GuiUtils.debug("JOGLAWTDisplaySurface.initialize");
 		super.initialize(env_width, env_height, out);
 		agentsMenu = new PopupMenu();
 		add(agentsMenu);
@@ -148,7 +151,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 			@Override
 			public void componentResized(final ComponentEvent e) {
-				// GuiUtils.debug("JOGLAWTDisplaySurface.componentResized: " + layerDisplayOutput.getId());
+				GuiUtils.debug("JOGLAWTDisplaySurface.componentResized: " + out.getId());
 				// if ( buffImage == null ) {
 				// // zoomFit();
 				// if ( resizeImage(getWidth(), getHeight()) ) {
@@ -588,7 +591,14 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	@Override
 	public void snapshot() {
-		save(GAMA.getDefaultScope(), getImage());
+		GAMA.run(new InScope.Void() {
+
+			@Override
+			public void process(IScope scope) {
+				save(scope, getImage());
+			}
+		});
+
 	}
 
 	@Override

@@ -24,7 +24,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.displays.awt.AbstractDisplayGraphics;
-import msi.gama.jogl.scene.*;
+import msi.gama.jogl.scene.MyTexture;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -50,7 +50,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	// GLRenderer.
 	// TODO remove references to renderer
 	private final JOGLAWTGLRenderer renderer;
-	private final ModelScene scene;
+	// private final ModelScene renderer.getScene();
 	// All the geometry of the same layer are drawn in the same z plan.
 	private double currentZLayer = 0.0f;
 	private int currentLayerId = 0;
@@ -69,7 +69,6 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	public JOGLAWTDisplayGraphics(final JOGLAWTDisplaySurface surface, JOGLAWTGLRenderer r) {
 		super(surface);
 		renderer = r;
-		scene = r.getScene();
 	}
 
 	/**
@@ -96,22 +95,22 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		if ( geometry.getAttribute("depth") != null && geometry.getAttribute("type") != null ) {
 			Double depth = (Double) geometry.getAttribute("depth");
 			String type = (String) geometry.getAttribute("type");
-			scene.addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color, fill, border, false,
-				angle, depth.floatValue(), currentOffset, currentScale, rounded, type, currentLayerIsStatic,
-				getCurrentAlpha());
+			renderer.getScene().addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color, fill,
+				border, false, angle, depth.floatValue(), currentOffset, currentScale, rounded, type,
+				currentLayerIsStatic, getCurrentAlpha());
 		}
 
 		else {
 			// Add a geometry with a depth and type coming from getUSerData (with add_z operator)
 			if ( geometry.getInnerGeometry().getUserData() != null ) {
 				float height = new Float(geom.getUserData().toString());
-				scene.addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color, fill, border,
-					false, angle, height, currentOffset, currentScale, rounded, "JTS", currentLayerIsStatic,
-					getCurrentAlpha());
+				renderer.getScene().addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color,
+					fill, border, false, angle, height, currentOffset, currentScale, rounded, "JTS",
+					currentLayerIsStatic, getCurrentAlpha());
 			} else {
 				// add a 2D geometry without any 3D data.
-				scene.addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color, fill, border,
-					false, angle, 0, currentOffset, currentScale, rounded, "none", currentLayerIsStatic,
+				renderer.getScene().addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color,
+					fill, border, false, angle, 0, currentOffset, currentScale, rounded, "none", currentLayerIsStatic,
 					getCurrentAlpha());
 			}
 
@@ -142,7 +141,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			Geometry g =
 				GamaGeometryType.buildLine(new GamaPoint(stepX, 0), new GamaPoint(stepX, image.getWidth()))
 					.getInnerGeometry();
-			scene.addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
+			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
 				currentOffset, currentScale, false, "grid", currentLayerIsStatic, getCurrentAlpha());
 		}
 
@@ -151,7 +150,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			Geometry g =
 				GamaGeometryType.buildLine(new GamaPoint(0, stepY), new GamaPoint(image.getHeight(), stepY))
 					.getInnerGeometry();
-			scene.addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
+			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
 				currentOffset, currentScale, false, "grid", currentLayerIsStatic, getCurrentAlpha());
 		}
 	}
@@ -184,12 +183,12 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			curHeight = sizeInModelUnits.getY();
 		}
 		MyTexture texture = null;
-		if ( !scene.getTextures().containsKey(img) ) {
+		if ( !renderer.getScene().getTextures().containsKey(img) ) {
 			texture = renderer.createTexture(img, isDynamic);
 		}
 
-		scene.addImage(img, scope == null ? null : scope.getAgentScope(), curX, curY, z, curWidth, curHeight, angle,
-			currentOffset, currentScale, isDynamic, getCurrentAlpha(), texture);
+		renderer.getScene().addImage(img, scope == null ? null : scope.getAgentScope(), curX, curY, z, curWidth,
+			curHeight, angle, currentOffset, currentScale, isDynamic, getCurrentAlpha(), texture);
 		// TODO If highlight ? Should be shaded by the color.
 
 		// rect.setRect(curX, curY, curWidth, curHeight);
@@ -248,8 +247,8 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			size =
 				(int) ((double) heightOfDisplayInPixels / (double) heightOfEnvironmentInModelUnits * heightInModelUnits);
 		}
-		scene.addString(string, curX, -curY, z, size, sizeInModelUnits, currentOffset, currentScale, stringColor,
-			fontName, styleName, angle, getCurrentAlpha());
+		renderer.getScene().addString(string, curX, -curY, z, size, sizeInModelUnits, currentOffset, currentScale,
+			stringColor, fontName, styleName, angle, getCurrentAlpha());
 		return null;
 	}
 

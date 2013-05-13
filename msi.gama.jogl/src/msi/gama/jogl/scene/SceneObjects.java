@@ -67,24 +67,24 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 
 	public void draw(boolean picking) {
 		if ( picking ) {
-			drawer.gl.glPushMatrix();
-			drawer.gl.glInitNames();
-			drawer.gl.glPushName(0);
+			drawer.getGL().glPushMatrix();
+			drawer.getGL().glInitNames();
+			drawer.getGL().glPushName(0);
 			for ( T object : objects ) {
 				object.draw(drawer, picking);
 			}
-			drawer.gl.glPopName();
-			drawer.gl.glPopMatrix();
+			drawer.getGL().glPopName();
+			drawer.getGL().glPopMatrix();
 		} else if ( drawAsList ) {
 			if ( openGLListIndex == null ) {
-				openGLListIndex = drawer.gl.glGenLists(1);
-				drawer.gl.glNewList(openGLListIndex, GL_COMPILE);
+				openGLListIndex = drawer.getGL().glGenLists(1);
+				drawer.getGL().glNewList(openGLListIndex, GL_COMPILE);
 				for ( T object : objects ) {
 					object.draw(drawer, picking);
 				}
-				drawer.gl.glEndList();
+				drawer.getGL().glEndList();
 			}
-			drawer.gl.glCallList(openGLListIndex);
+			drawer.getGL().glCallList(openGLListIndex);
 		} else {
 			for ( T object : objects ) {
 				object.draw(drawer, picking);
@@ -95,7 +95,7 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 	public void dispose() {
 		drawer.dispose();
 		// if ( openGLListIndex != null ) {
-		// drawer.gl.glDeleteLists(openGLListIndex, 1);
+		// drawer.getGL().glDeleteLists(openGLListIndex, 1);
 		// }
 	}
 

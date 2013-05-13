@@ -17,20 +17,21 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 
 	final JOGLAWTGLRenderer renderer;
 	final GLUT glut = new GLUT();
-	final GL gl;
+
+	// final GL gl;
 
 	public ObjectDrawer(JOGLAWTGLRenderer r) {
 		renderer = r;
-		gl = r.gl;
+		// gl = r.gl;
 	}
 
 	// Better to subclass _draw than this one
 	void draw(T object) {
-		gl.glPushMatrix();
-		gl.glTranslated(object.offset.x, -object.offset.y, object.offset.z);
-		gl.glScaled(object.scale.x, object.scale.y, 1);
+		renderer.gl.glPushMatrix();
+		renderer.gl.glTranslated(object.offset.x, -object.offset.y, object.offset.z);
+		renderer.gl.glScaled(object.scale.x, object.scale.y, 1);
 		_draw(object);
-		gl.glPopMatrix();
+		renderer.gl.glPopMatrix();
 	}
 
 	protected abstract void _draw(T object);
@@ -56,13 +57,13 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			MyTexture curTexture = renderer.getScene().getTextures().get(img.image);
 			if ( curTexture == null ) { return; }
 			// Enable the texture
-			gl.glEnable(GL_TEXTURE_2D);
+			renderer.gl.glEnable(GL_TEXTURE_2D);
 			Texture t = curTexture.texture;
 			t.enable();
 			t.bind();
 			// Reset opengl color. Set the transparency of the image to
 			// 1 (opaque).
-			gl.glColor4d(1.0d, 1.0d, 1.0d, img.alpha);
+			renderer.gl.glColor4d(1.0d, 1.0d, 1.0d, img.alpha);
 			TextureCoords textureCoords;
 			textureCoords = t.getImageTexCoords();
 			textureTop = textureCoords.top();
@@ -70,46 +71,46 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			textureLeft = textureCoords.left();
 			textureRight = textureCoords.right();
 			if ( img.angle != 0 ) {
-				gl.glTranslated(img.x + img.width / 2, -(img.y + img.height / 2), 0.0d);
+				renderer.gl.glTranslated(img.x + img.width / 2, -(img.y + img.height / 2), 0.0d);
 				// FIXME:Check counterwise or not, and do we rotate
 				// around the center or around a point.
-				gl.glRotated(-img.angle, 0.0d, 0.0d, 1.0d);
-				gl.glTranslated(-(img.x + img.width / 2), +(img.y + img.height / 2), 0.0d);
+				renderer.gl.glRotated(-img.angle, 0.0d, 0.0d, 1.0d);
+				renderer.gl.glTranslated(-(img.x + img.width / 2), +(img.y + img.height / 2), 0.0d);
 
-				gl.glBegin(GL_QUADS);
+				renderer.gl.glBegin(GL_QUADS);
 				// bottom-left of the texture and quad
-				gl.glTexCoord2f(textureLeft, textureBottom);
-				gl.glVertex3d(img.x, -(img.y + img.height), img.z);
+				renderer.gl.glTexCoord2f(textureLeft, textureBottom);
+				renderer.gl.glVertex3d(img.x, -(img.y + img.height), img.z);
 				// bottom-right of the texture and quad
-				gl.glTexCoord2f(textureRight, textureBottom);
-				gl.glVertex3d(img.x + img.width, -(img.y + img.height), img.z);
+				renderer.gl.glTexCoord2f(textureRight, textureBottom);
+				renderer.gl.glVertex3d(img.x + img.width, -(img.y + img.height), img.z);
 				// top-right of the texture and quad
-				gl.glTexCoord2f(textureRight, textureTop);
-				gl.glVertex3d(img.x + img.width, -img.y, img.z);
+				renderer.gl.glTexCoord2f(textureRight, textureTop);
+				renderer.gl.glVertex3d(img.x + img.width, -img.y, img.z);
 				// top-left of the texture and quad
-				gl.glTexCoord2f(textureLeft, textureTop);
-				gl.glVertex3d(img.x, -img.y, img.z);
-				gl.glEnd();
-				gl.glTranslated(img.x + img.width / 2, -(img.y + img.height / 2), 0.0d);
-				gl.glRotated(img.angle, 0.0d, 0.0d, 1.0d);
-				gl.glTranslated(-(img.x + img.width / 2), +(img.y + img.height / 2), 0.0d);
+				renderer.gl.glTexCoord2f(textureLeft, textureTop);
+				renderer.gl.glVertex3d(img.x, -img.y, img.z);
+				renderer.gl.glEnd();
+				renderer.gl.glTranslated(img.x + img.width / 2, -(img.y + img.height / 2), 0.0d);
+				renderer.gl.glRotated(img.angle, 0.0d, 0.0d, 1.0d);
+				renderer.gl.glTranslated(-(img.x + img.width / 2), +(img.y + img.height / 2), 0.0d);
 			} else {
-				gl.glBegin(GL_QUADS);
+				renderer.gl.glBegin(GL_QUADS);
 				// bottom-left of the texture and quad
-				gl.glTexCoord2f(textureLeft, textureBottom);
-				gl.glVertex3d(img.x, -(img.y + img.height), img.z);
+				renderer.gl.glTexCoord2f(textureLeft, textureBottom);
+				renderer.gl.glVertex3d(img.x, -(img.y + img.height), img.z);
 				// bottom-right of the texture and quad
-				gl.glTexCoord2f(textureRight, textureBottom);
-				gl.glVertex3d(img.x + img.width, -(img.y + img.height), img.z);
+				renderer.gl.glTexCoord2f(textureRight, textureBottom);
+				renderer.gl.glVertex3d(img.x + img.width, -(img.y + img.height), img.z);
 				// top-right of the texture and quad
-				gl.glTexCoord2f(textureRight, textureTop);
-				gl.glVertex3d(img.x + img.width, -img.y, img.z);
+				renderer.gl.glTexCoord2f(textureRight, textureTop);
+				renderer.gl.glVertex3d(img.x + img.width, -img.y, img.z);
 				// top-left of the texture and quad
-				gl.glTexCoord2f(textureLeft, textureTop);
-				gl.glVertex3d(img.x, -img.y, img.z);
-				gl.glEnd();
+				renderer.gl.glTexCoord2f(textureLeft, textureTop);
+				renderer.gl.glVertex3d(img.x, -img.y, img.z);
+				renderer.gl.glEnd();
 			}
-			gl.glDisable(GL_TEXTURE_2D);
+			renderer.gl.glDisable(GL_TEXTURE_2D);
 		}
 	}
 
@@ -134,10 +135,10 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 		protected void _draw(GeometryObject geometry) {
 			// Rotate angle (in XY plan)
 			if ( geometry.angle != 0 ) {
-				gl.glTranslated(geometry.geometry.getCentroid().getX(), this.jtsDrawer.yFlag *
+				renderer.gl.glTranslated(geometry.geometry.getCentroid().getX(), this.jtsDrawer.yFlag *
 					geometry.geometry.getCentroid().getY(), 0.0d);
-				gl.glRotated(-geometry.angle, 0.0d, 0.0d, 1.0d);
-				gl.glTranslated(-geometry.geometry.getCentroid().getX(), -this.jtsDrawer.yFlag *
+				renderer.gl.glRotated(-geometry.angle, 0.0d, 0.0d, 1.0d);
+				renderer.gl.glTranslated(-geometry.geometry.getCentroid().getX(), -this.jtsDrawer.yFlag *
 					geometry.geometry.getCentroid().getY(), 0.0d);
 			}
 			for ( int i = 0; i < geometry.geometry.getNumGeometries(); i++ ) {
@@ -186,10 +187,10 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			}
 			// Rotate angle (in XY plan)
 			if ( geometry.angle != 0 ) {
-				gl.glTranslated(geometry.geometry.getCentroid().getX(), this.jtsDrawer.yFlag *
+				renderer.gl.glTranslated(geometry.geometry.getCentroid().getX(), this.jtsDrawer.yFlag *
 					geometry.geometry.getCentroid().getY(), 0.0d);
-				gl.glRotated(geometry.angle, 0.0d, 0.0d, 1.0d);
-				gl.glTranslated(-geometry.geometry.getCentroid().getX(), -this.jtsDrawer.yFlag *
+				renderer.gl.glRotated(geometry.angle, 0.0d, 0.0d, 1.0d);
+				renderer.gl.glTranslated(-geometry.geometry.getCentroid().getX(), -this.jtsDrawer.yFlag *
 					geometry.geometry.getCentroid().getY(), 0.0d);
 
 			}
@@ -217,9 +218,9 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 		public void _draw(CollectionObject collection) {
 			// Draw Shape file so need to inverse the y composante.
 			jtsDrawer.yFlag = 1;
-			gl.glPushMatrix();
-			gl.glTranslated(-collection.collection.getBounds().centre().x,
-				-collection.collection.getBounds().centre().y, 0.0d);
+			renderer.gl.glPushMatrix();
+			renderer.gl.glTranslated(-collection.collection.getBounds().centre().x, -collection.collection.getBounds()
+				.centre().y, 0.0d);
 			// Iterate throught all the collection
 			SimpleFeatureIterator iterator = collection.collection.features();
 			// Color color= Color.red;
@@ -240,7 +241,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 					jtsDrawer.DrawPoint((Point) sourceGeometry, 0.0d, 10, 10, collection.color, 1.0d);
 				}
 			}
-			gl.glPopMatrix();
+			renderer.gl.glPopMatrix();
 			jtsDrawer.yFlag = -1;
 		}
 	}
@@ -300,23 +301,23 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 		}
 
 		protected void _drawOld(StringObject s) {
-			gl.glDisable(GL_BLEND);
-			gl.glColor4d(s.color.getRed(), s.color.getGreen(), s.color.getBlue(), 1.0d);
-			gl.glRasterPos3d(s.x, s.y, s.z + s.z_layer);
-			gl.glScaled(8.0d, 8.0d, 8.0d);
+			renderer.gl.glDisable(GL_BLEND);
+			renderer.gl.glColor4d(s.color.getRed(), s.color.getGreen(), s.color.getBlue(), 1.0d);
+			renderer.gl.glRasterPos3d(s.x, s.y, s.z + s.z_layer);
+			renderer.gl.glScaled(8.0d, 8.0d, 8.0d);
 			glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, s.string);
-			gl.glScaled(0.125d, 0.125d, 0.125d);
-			gl.glEnable(GL_BLEND);
+			renderer.gl.glScaled(0.125d, 0.125d, 0.125d);
+			renderer.gl.glEnable(GL_BLEND);
 
 		}
 
 		@Override
 		public void draw(StringObject object) {
-			// gl.glTranslated(object.offset.x, -object.offset.y, object.offset.z);
-			// gl.glScaled(object.scale.x, object.scale.y, 1);
+			// renderer.gl.glTranslated(object.offset.x, -object.offset.y, object.offset.z);
+			// renderer.gl.glScaled(object.scale.x, object.scale.y, 1);
 			_draw(object);
-			// gl.glScaled(1 / object.scale.x, 1 / object.scale.y, 1);
-			// gl.glTranslated(-object.offset.x, object.offset.y, -object.offset.z);
+			// renderer.gl.glScaled(1 / object.scale.x, 1 / object.scale.y, 1);
+			// renderer.gl.glTranslated(-object.offset.x, object.offset.y, -object.offset.z);
 
 		}
 
@@ -336,27 +337,27 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			// GuiUtils.debug("ObjectDrawer.StringDrawer._draw '" + s.string + "' at " + x + " ; " + y + " [original: "
 			// +
 			// s.x + " ; " + s.y + "]" + "[offset: " + s.offset.x + " ; " + s.offset.y + "]");
-			// gl.glTranslated(s.offset.x, -s.offset.y, s.offset.z);
-			gl.glPushMatrix();
-			// gl.glScaled(s.scale.x, s.scale.y, 1);
+			// renderer.gl.glTranslated(s.offset.x, -s.offset.y, s.offset.z);
+			renderer.gl.glPushMatrix();
+			// renderer.gl.glScaled(s.scale.x, s.scale.y, 1);
 			r.draw3D(s.string, x, y, (float) (s.z + s.z_layer),
 				(float) (/* s.scale.y * */renderer.env_height / renderer.getHeight()));
-			// gl.glScaled(1 / s.scale.x, 1 / s.scale.y, 1);
-			gl.glPopMatrix();
-			// gl.glTranslated(-s.offset.x, s.offset.y, -s.offset.z);
+			// renderer.gl.glScaled(1 / s.scale.x, 1 / s.scale.y, 1);
+			renderer.gl.glPopMatrix();
+			// renderer.gl.glTranslated(-s.offset.x, s.offset.y, -s.offset.z);
 			r.end3DRendering();
 			// r.begin3DRendering();
 			// r.draw3D(s.string, (float) s.x, (float) s.y, (float) (s.z + s.z_layer), s.alpha.floatValue());
 			// r.flush();
 			// r.end3DRendering();
 			// renderer.getContext().release();
-			// gl.glDisable(GL_BLEND);
-			// gl.glColor4d(s.color.getRed(), s.color.getGreen(), s.color.getBlue(), 1.0d);
-			// gl.glRasterPos3d(s.x, s.y, s.z + s.z_layer);
-			// gl.glScaled(8.0d, 8.0d, 8.0d);
+			// renderer.gl.glDisable(GL_BLEND);
+			// renderer.gl.glColor4d(s.color.getRed(), s.color.getGreen(), s.color.getBlue(), 1.0d);
+			// renderer.gl.glRasterPos3d(s.x, s.y, s.z + s.z_layer);
+			// renderer.gl.glScaled(8.0d, 8.0d, 8.0d);
 			// glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, s.string);
-			// gl.glScaled(0.125d, 0.125d, 0.125d);
-			// gl.glEnable(GL_BLEND);
+			// renderer.gl.glScaled(0.125d, 0.125d, 0.125d);
+			// renderer.gl.glEnable(GL_BLEND);
 
 		}
 
@@ -367,5 +368,9 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 	}
 
 	public void dispose() {}
+
+	public GL getGL() {
+		return renderer.gl;
+	}
 
 }

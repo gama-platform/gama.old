@@ -36,8 +36,8 @@ public class Output3D {
 
 	public void updateOutput3D(JOGLAWTGLRenderer openGLGraphicsGLRender) {
 		// TODO
-		int currentClock = GAMA.getDefaultScope().getClock().getCycle();
-		System.out.println("Nb cycle " + GAMA.getDefaultScope().getClock().getCycle());
+		int currentClock = GAMA.getClock().getCycle();
+		System.out.println("Nb cycle " + currentClock);
 		if ( currentClock == 0 ) {
 			initGLGEModel(openGLGraphicsGLRender);
 		}
@@ -272,7 +272,7 @@ public class Output3D {
 
 	public void writeXML() {
 		DOMSource source = new DOMSource(doc);
-		IScope scope = GAMA.getDefaultScope();
+		IScope scope = GAMA.obtainNewScope();
 		try {
 			Files.newFolder(scope, FILE3DFOLDER);
 		} catch (GamaRuntimeException e1) {
@@ -308,6 +308,7 @@ public class Output3D {
 			e.printStackTrace();
 		}
 		System.out.println("Finished!!");
+		GAMA.releaseScope(scope);
 	}
 
 }

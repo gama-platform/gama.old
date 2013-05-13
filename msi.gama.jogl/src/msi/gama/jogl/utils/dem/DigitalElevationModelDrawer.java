@@ -99,7 +99,7 @@ public class DigitalElevationModelDrawer {
 				text.setTexParameteri(GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
 				text.setTexParameteri(GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
 			} else {
-				throw new GamaRuntimeException("(DEM) JOGLRenderer context is null");
+				throw GamaRuntimeException.error("(DEM) JOGLRenderer context is null");
 			}
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
