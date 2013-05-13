@@ -461,7 +461,7 @@ public class JavaWriter {
 		args += "))";
 		String desc =
 			"desc(PRIMITIVE, null, " + args + ", NAME, " + toJavaString(name) + ",TYPE, " + "T(" + toClassObject(ret) +
-				").toString(), JAVA," + toJavaString(method) + ", VIRTUAL," + toJavaString(virtual) + ")";
+				").toString(), VIRTUAL," + toJavaString(virtual) + ")";
 		sb.append(concat(in, "_action(", toJavaString(method), ",", toClassObject(clazz), ",new GamaHelper(T(",
 			toClassObject(ret), "), ", toClassObject(clazz), "){", OVERRIDE, "public ", ret.equals("void") ? "Object"
 				: ret, " run(", ISCOPE, " s, ", IAGENT, " a,", ISKILL, " t, Object... v){ ", !ret.equals("void")

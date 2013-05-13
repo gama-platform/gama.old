@@ -713,7 +713,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			}
 		} else {
 			Resource.Diagnostic d = resource.getErrors().get(0);
-			throw new GamaRuntimeException(d.getMessage());
+			throw GamaRuntimeException.error(d.getMessage());
 		}
 		long end = System.nanoTime();
 		double ms = (end - begin) / 1000000d;

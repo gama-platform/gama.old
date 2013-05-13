@@ -511,7 +511,9 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				}
 				else break;
 			case GamlPackage.MODEL:
-				if(context == grammarAccess.getModelRule()) {
+				if(context == grammarAccess.getGamlDefinitionRule() ||
+				   context == grammarAccess.getModelRule() ||
+				   context == grammarAccess.getVarDefinitionRule()) {
 					sequence_Model(context, (Model) semanticObject); 
 					return; 
 				}
@@ -785,7 +787,9 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 				}
 				else break;
 			case GamlPackage.STRING_EVALUATOR:
-				if(context == grammarAccess.getModelRule()) {
+				if(context == grammarAccess.getGamlDefinitionRule() ||
+				   context == grammarAccess.getModelRule() ||
+				   context == grammarAccess.getVarDefinitionRule()) {
 					sequence_Model(context, (StringEvaluator) semanticObject); 
 					return; 
 				}

@@ -216,7 +216,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 				});
 				if ( model == null ) { return; }
 				GuiUtils.openSimulationPerspective();
-				GAMA.newExperiment(exp, model);
+				GAMA.controller.newExperiment(exp, model);
 			}
 		}
 	};
@@ -305,7 +305,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 				// for gama files
 				if ( "gaml".equalsIgnoreCase(iR.getFileExtension()) ) {
 					URI uri = URI.createPlatformResourceURI(iR.getFullPath().toString(), true);
-					GuiUtils.debug("GamlEditor.recursiveFindGamaFiles uri:" + uri + " equals " + without);
+					// GuiUtils.debug("GamlEditor.recursiveFindGamaFiles uri:" + uri + " equals " + without);
 					if ( !uri.equals(without) ) {
 						allGamaFiles.add(uri);
 					}
@@ -338,8 +338,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 			});
 			if ( model == null ) { return; }
-			GuiUtils.openSimulationPerspective();
-			GAMA.newExperiment(name, model);
+
+			GAMA.controller.newExperiment(name, model);
 		}
 
 	};

@@ -60,6 +60,62 @@ public interface GamlPackage extends EPackage
   GamlPackage eINSTANCE = msi.gama.lang.gaml.gaml.impl.GamlPackageImpl.init();
 
   /**
+   * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.GamlDefinitionImpl <em>Definition</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see msi.gama.lang.gaml.gaml.impl.GamlDefinitionImpl
+   * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getGamlDefinition()
+   * @generated
+   */
+  int GAML_DEFINITION = 27;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GAML_DEFINITION__NAME = 0;
+
+  /**
+   * The number of structural features of the '<em>Definition</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int GAML_DEFINITION_FEATURE_COUNT = 1;
+
+  /**
+   * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.VarDefinitionImpl <em>Var Definition</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see msi.gama.lang.gaml.gaml.impl.VarDefinitionImpl
+   * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getVarDefinition()
+   * @generated
+   */
+  int VAR_DEFINITION = 30;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VAR_DEFINITION__NAME = GAML_DEFINITION__NAME;
+
+  /**
+   * The number of structural features of the '<em>Var Definition</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VAR_DEFINITION_FEATURE_COUNT = GAML_DEFINITION_FEATURE_COUNT + 0;
+
+  /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.ModelImpl <em>Model</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -76,7 +132,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL__NAME = 0;
+  int MODEL__NAME = VAR_DEFINITION__NAME;
 
   /**
    * The feature id for the '<em><b>Imports</b></em>' containment reference list.
@@ -85,7 +141,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL__IMPORTS = 1;
+  int MODEL__IMPORTS = VAR_DEFINITION_FEATURE_COUNT + 0;
 
   /**
    * The feature id for the '<em><b>Statements</b></em>' containment reference list.
@@ -94,7 +150,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL__STATEMENTS = 2;
+  int MODEL__STATEMENTS = VAR_DEFINITION_FEATURE_COUNT + 1;
 
   /**
    * The number of structural features of the '<em>Model</em>' class.
@@ -103,7 +159,7 @@ public interface GamlPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_FEATURE_COUNT = 3;
+  int MODEL_FEATURE_COUNT = VAR_DEFINITION_FEATURE_COUNT + 2;
 
   /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.ImportImpl <em>Import</em>}' class.
@@ -1411,62 +1467,6 @@ public interface GamlPackage extends EPackage
    * @ordered
    */
   int ACTION_ARGUMENTS_FEATURE_COUNT = 1;
-
-  /**
-   * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.GamlDefinitionImpl <em>Definition</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see msi.gama.lang.gaml.gaml.impl.GamlDefinitionImpl
-   * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getGamlDefinition()
-   * @generated
-   */
-  int GAML_DEFINITION = 27;
-
-  /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int GAML_DEFINITION__NAME = 0;
-
-  /**
-   * The number of structural features of the '<em>Definition</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int GAML_DEFINITION_FEATURE_COUNT = 1;
-
-  /**
-   * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.VarDefinitionImpl <em>Var Definition</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see msi.gama.lang.gaml.gaml.impl.VarDefinitionImpl
-   * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getVarDefinition()
-   * @generated
-   */
-  int VAR_DEFINITION = 30;
-
-  /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int VAR_DEFINITION__NAME = GAML_DEFINITION__NAME;
-
-  /**
-   * The number of structural features of the '<em>Var Definition</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int VAR_DEFINITION_FEATURE_COUNT = GAML_DEFINITION_FEATURE_COUNT + 0;
 
   /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.ArgumentDefinitionImpl <em>Argument Definition</em>}' class.
@@ -3447,17 +3447,6 @@ public interface GamlPackage extends EPackage
   EClass getModel();
 
   /**
-   * Returns the meta object for the attribute '{@link msi.gama.lang.gaml.gaml.Model#getName <em>Name</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Name</em>'.
-   * @see msi.gama.lang.gaml.gaml.Model#getName()
-   * @see #getModel()
-   * @generated
-   */
-  EAttribute getModel_Name();
-
-  /**
    * Returns the meta object for the containment reference list '{@link msi.gama.lang.gaml.gaml.Model#getImports <em>Imports</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4592,14 +4581,6 @@ public interface GamlPackage extends EPackage
      * @generated
      */
     EClass MODEL = eINSTANCE.getModel();
-
-    /**
-     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute MODEL__NAME = eINSTANCE.getModel_Name();
 
     /**
      * The meta object literal for the '<em><b>Imports</b></em>' containment reference list feature.

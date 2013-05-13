@@ -43,7 +43,7 @@ public class GamlResource extends LazyLinkingResource {
 
 	public void setModelDescription(final boolean withErrors, final ModelDescription model) {
 		if ( listener != null ) {
-			Set<String> exp = model == null ? Collections.EMPTY_SET : model.getExperimentNames();
+			Set<String> exp = model == null ? Collections.EMPTY_SET : model.getExperimentTitles();
 			listener.validationEnded(exp, withErrors);
 		}
 	}

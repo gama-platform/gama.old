@@ -17,7 +17,7 @@
 package msi.gaml.extensions.fipa;
 
 import java.util.*;
-import msi.gama.kernel.simulation.IScheduler;
+import msi.gama.kernel.experiment.AgentScheduler;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -143,7 +143,7 @@ public class MessageBroker {
 	public static MessageBroker getInstance() {
 		if ( instance == null ) {
 			instance = new MessageBroker();
-			IScheduler s = GAMA.getFrontmostSimulation().getScheduler();
+			AgentScheduler s = GAMA.getSimulation().getScheduler();
 
 			s.insertEndAction(new GamaHelper() {
 

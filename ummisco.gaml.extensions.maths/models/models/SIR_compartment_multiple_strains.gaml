@@ -92,7 +92,7 @@ entities {
 
 }
 
-experiment simulation type : gui {
+experiment Simulation type : gui {
 	output {
 		display chart_3system_eq refresh_every : 1 {
 			chart 'Susceptible' type : series background : rgb('lightGray') {

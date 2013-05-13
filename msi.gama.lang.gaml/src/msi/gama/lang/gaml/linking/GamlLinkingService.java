@@ -11,8 +11,9 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.xtext.linking.impl.*;
+import org.eclipse.xtext.naming.*;
 import org.eclipse.xtext.nodemodel.INode;
-import org.eclipse.xtext.resource.XtextResourceSet;
+import org.eclipse.xtext.resource.*;
 import org.eclipse.xtext.scoping.IScope;
 import com.google.inject.Inject;
 
@@ -36,6 +37,9 @@ public class GamlLinkingService extends DefaultLinkingService {
 
 	@Inject
 	private XtextResourceSet resourceSet;
+
+	@Inject
+	IQualifiedNameConverter qualifiedNameConverter;
 
 	public GamlLinkingService() {
 		super();
@@ -77,14 +81,21 @@ public class GamlLinkingService extends DefaultLinkingService {
 	 * resource.
 	 */
 	@Override
-	public List<EObject> getLinkedObjects(final EObject context, final EReference ref,
-		final INode node) throws IllegalNodeException {
+	public List<EObject> getLinkedObjects(final EObject context, final EReference ref, final INode node)
+		throws IllegalNodeException {
 		List<EObject> result = super.getLinkedObjects(context, ref, node);
 		// If the default implementation resolved the link, return it
 		if ( null != result && !result.isEmpty() ) { return result; }
+		String name = getCrossRefNodeAsString(node);
 		if ( GamlPackage.eINSTANCE.getTypeDefinition().isSuperTypeOf(ref.getEReferenceType()) ) {
-			String name = getCrossRefNodeAsString(node);
 			return addSymbol(name, ref.getEReferenceType());
+		} else if ( GamlPackage.eINSTANCE.getVarDefinition().isSuperTypeOf(ref.getEReferenceType()) &&
+			name.contains("_model") ) {
+			String newVar = name.replace("_model", "");
+			final IScope scope = getScope(context, ref);
+			QualifiedName qualifiedLinkName = qualifiedNameConverter.toQualifiedName(newVar);
+			IEObjectDescription eObjectDescription = scope.getSingleElement(qualifiedLinkName);
+			if ( eObjectDescription != null ) { return addSymbol(name, ref.getEReferenceType()); }
 		}
 		return Collections.EMPTY_LIST;
 	}

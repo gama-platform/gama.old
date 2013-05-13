@@ -1526,6 +1526,7 @@
     <alternatives xsi:type="xtext:Alternatives">
       <elements xsi:type="xtext:RuleCall" predicated="true" rule="//@rules.9"/>
       <elements xsi:type="xtext:Alternatives">
+        <elements xsi:type="xtext:RuleCall" rule="//@rules.0"/>
         <elements xsi:type="xtext:RuleCall" rule="//@rules.32"/>
         <elements xsi:type="xtext:RuleCall" rule="//@rules.41"/>
         <elements xsi:type="xtext:RuleCall" rule="//@rules.81"/>

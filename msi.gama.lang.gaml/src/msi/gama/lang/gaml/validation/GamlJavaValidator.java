@@ -213,7 +213,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 				} else {
 					error(
 						"Errors detected in indirectly imported file " + object.eResource().getURI() + ": " +
-							e.toString(), getCurrentObject(), GamlPackage.Literals.MODEL__NAME,
+							e.toString(), getCurrentObject(), GamlPackage.Literals.GAML_DEFINITION__NAME,
 						IGamlIssue.IMPORT_ERROR, object.eResource().getURI().toString());
 				}
 			}

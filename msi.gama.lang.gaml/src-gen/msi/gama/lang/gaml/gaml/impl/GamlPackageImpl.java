@@ -613,19 +613,9 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
-  public EAttribute getModel_Name()
-  {
-    return (EAttribute)modelEClass.getEStructuralFeatures().get(0);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   public EReference getModel_Imports()
   {
-    return (EReference)modelEClass.getEStructuralFeatures().get(1);
+    return (EReference)modelEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -635,7 +625,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    */
   public EReference getModel_Statements()
   {
-    return (EReference)modelEClass.getEStructuralFeatures().get(2);
+    return (EReference)modelEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -1709,7 +1699,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     // Create classes and their features
     modelEClass = createEClass(MODEL);
-    createEAttribute(modelEClass, MODEL__NAME);
     createEReference(modelEClass, MODEL__IMPORTS);
     createEReference(modelEClass, MODEL__STATEMENTS);
 
@@ -1910,6 +1899,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     // Set bounds for type parameters
 
     // Add supertypes to classes
+    modelEClass.getESuperTypes().add(this.getVarDefinition());
     s_DoEClass.getESuperTypes().add(this.getStatement());
     s_LoopEClass.getESuperTypes().add(this.getS_Declaration());
     s_IfEClass.getESuperTypes().add(this.getStatement());
@@ -1975,7 +1965,6 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     // Initialize classes and features; add operations and parameters
     initEClass(modelEClass, Model.class, "Model", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEAttribute(getModel_Name(), ecorePackage.getEString(), "name", null, 0, 1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getModel_Imports(), this.getImport(), null, "imports", null, 0, -1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getModel_Statements(), this.getStatement(), null, "statements", null, 0, -1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 

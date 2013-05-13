@@ -3434,31 +3434,35 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final RuleCall cS_DeclarationParserRuleCall_0 = (RuleCall)cAlternatives.eContents().get(0);
 		private final Alternatives cAlternatives_1 = (Alternatives)cAlternatives.eContents().get(1);
-		private final RuleCall cArgumentDefinitionParserRuleCall_1_0 = (RuleCall)cAlternatives_1.eContents().get(0);
-		private final RuleCall cDefinitionFacetParserRuleCall_1_1 = (RuleCall)cAlternatives_1.eContents().get(1);
-		private final RuleCall cVarFakeDefinitionParserRuleCall_1_2 = (RuleCall)cAlternatives_1.eContents().get(2);
+		private final RuleCall cModelParserRuleCall_1_0 = (RuleCall)cAlternatives_1.eContents().get(0);
+		private final RuleCall cArgumentDefinitionParserRuleCall_1_1 = (RuleCall)cAlternatives_1.eContents().get(1);
+		private final RuleCall cDefinitionFacetParserRuleCall_1_2 = (RuleCall)cAlternatives_1.eContents().get(2);
+		private final RuleCall cVarFakeDefinitionParserRuleCall_1_3 = (RuleCall)cAlternatives_1.eContents().get(3);
 		
 		//VarDefinition:
-		//	S_Declaration | (ArgumentDefinition | DefinitionFacet | VarFakeDefinition);
+		//	S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition);
 		public ParserRule getRule() { return rule; }
 
-		//=> S_Declaration | (ArgumentDefinition | DefinitionFacet | VarFakeDefinition)
+		//=> S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition)
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//=> S_Declaration
 		public RuleCall getS_DeclarationParserRuleCall_0() { return cS_DeclarationParserRuleCall_0; }
 
-		//ArgumentDefinition | DefinitionFacet | VarFakeDefinition
+		//Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition
 		public Alternatives getAlternatives_1() { return cAlternatives_1; }
 
+		//Model
+		public RuleCall getModelParserRuleCall_1_0() { return cModelParserRuleCall_1_0; }
+
 		//ArgumentDefinition
-		public RuleCall getArgumentDefinitionParserRuleCall_1_0() { return cArgumentDefinitionParserRuleCall_1_0; }
+		public RuleCall getArgumentDefinitionParserRuleCall_1_1() { return cArgumentDefinitionParserRuleCall_1_1; }
 
 		//DefinitionFacet
-		public RuleCall getDefinitionFacetParserRuleCall_1_1() { return cDefinitionFacetParserRuleCall_1_1; }
+		public RuleCall getDefinitionFacetParserRuleCall_1_2() { return cDefinitionFacetParserRuleCall_1_2; }
 
 		//VarFakeDefinition
-		public RuleCall getVarFakeDefinitionParserRuleCall_1_2() { return cVarFakeDefinitionParserRuleCall_1_2; }
+		public RuleCall getVarFakeDefinitionParserRuleCall_1_3() { return cVarFakeDefinitionParserRuleCall_1_3; }
 	}
 
 	public class ActionDefinitionElements extends AbstractParserRuleElementFinder {
@@ -4690,7 +4694,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//VarDefinition:
-	//	S_Declaration | (ArgumentDefinition | DefinitionFacet | VarFakeDefinition);
+	//	S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition);
 	public VarDefinitionElements getVarDefinitionAccess() {
 		return (pVarDefinition != null) ? pVarDefinition : (pVarDefinition = new VarDefinitionElements());
 	}

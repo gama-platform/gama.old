@@ -32,7 +32,7 @@ public class CommunicatingException extends GamaRuntimeException {
 	 * @param message the message
 	 */
 	protected CommunicatingException(final String message) {
-		super(message);
+		super(message, true);
 	}
 
 }

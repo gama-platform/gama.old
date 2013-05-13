@@ -14,7 +14,7 @@ import msi.gaml.expressions.*;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 
-@facets(value = { @facet(name = IKeyword.EQUATION_LEFT, type = IType.NONE_STR, optional = false),
+@facets(value = { @facet(name = IKeyword.EQUATION_LEFT, type = IType.NONE, optional = false),
 	@facet(name = IKeyword.EQUATION_RIGHT, type = IType.FLOAT, optional = false) }, omissible = IKeyword.EQUATION_RIGHT)
 @symbol(name = { IKeyword.EQUATION_OP }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(symbols = IKeyword.EQUATION)

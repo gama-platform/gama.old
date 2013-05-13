@@ -79,6 +79,8 @@ public class GamlSwitch<T> extends Switch<T>
       {
         Model model = (Model)theEObject;
         T result = caseModel(model);
+        if (result == null) result = caseVarDefinition(model);
+        if (result == null) result = caseGamlDefinition(model);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -417,6 +419,8 @@ public class GamlSwitch<T> extends Switch<T>
         StringEvaluator stringEvaluator = (StringEvaluator)theEObject;
         T result = caseStringEvaluator(stringEvaluator);
         if (result == null) result = caseModel(stringEvaluator);
+        if (result == null) result = caseVarDefinition(stringEvaluator);
+        if (result == null) result = caseGamlDefinition(stringEvaluator);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }

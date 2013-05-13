@@ -7,7 +7,6 @@ import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.utils.EGaml;
 import msi.gama.precompiler.IUnits;
 import msi.gaml.compilation.AbstractGamlAdditions;
-import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.types.Types;
 import org.eclipse.emf.common.util.URI;
@@ -111,17 +110,17 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	public Map<QualifiedName, IEObjectDescription> getEObjectDescriptions(EClass eClass) {
 		if ( descriptions == null ) {
 			initResources();
-			for ( String t : Types.STRING2ITYPE.keySet() ) {
+			for ( String t : Types.getTypeNames() ) {
 				add(eType, t);
 				add(eVar, t);
 				add(eAction, t);
 			}
-			for ( SpeciesDescription s : Types.getBuiltInSpecies() ) {
-				String t = s.getName();
-				add(eType, t);
-				add(eVar, t);
-				add(eAction, t);
-			}
+			// for ( TypeDescription s : Types.getBuiltInSpecies() ) {
+			// String t = s.getName();
+			// add(eType, t);
+			// add(eVar, t);
+			// add(eAction, t);
+			// }
 			for ( String t : AbstractGamlAdditions.CONSTANTS ) {
 				add(eType, t);
 				add(eVar, t);

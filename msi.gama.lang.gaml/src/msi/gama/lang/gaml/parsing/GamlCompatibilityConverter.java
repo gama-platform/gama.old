@@ -165,7 +165,8 @@ public class GamlCompatibilityConverter {
 			}
 			// We modify the names of experiments so as not to confuse them with species
 			String name = elt.getLabel(NAME);
-			elt.setFacet(NAME, convExpr("Experiment " + name));
+			elt.setFacet(TITLE, convExpr("Experiment " + name));
+			elt.setFacet(NAME, convExpr(name));
 		} else // TODO Change this by implementing only one class of methods (that delegates to
 				// others)
 		if ( keyword.equals(METHOD) ) {

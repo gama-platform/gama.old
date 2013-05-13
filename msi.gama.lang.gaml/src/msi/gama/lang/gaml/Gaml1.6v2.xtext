@@ -286,7 +286,7 @@ TypeDefinition:
 	S_Species | TypeFakeDefinition;
 
 VarDefinition:
-	=>S_Declaration | (ArgumentDefinition | DefinitionFacet | VarFakeDefinition);
+	=>S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition);
 
 ActionDefinition:
 	S_Action | ActionFakeDefinition | S_Definition | TypeDefinition;

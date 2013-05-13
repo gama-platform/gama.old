@@ -10,7 +10,6 @@
   <genPackages prefix="Gaml" basePackage="msi.gama.lang.gaml" disposableProviderFactory="true"
       ecorePackage="Gaml.ecore#/">
     <genClasses ecoreClass="Gaml.ecore#//Model">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Model/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Model/imports"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Model/statements"/>
     </genClasses>

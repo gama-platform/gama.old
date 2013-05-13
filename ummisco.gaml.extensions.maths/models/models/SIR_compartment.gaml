@@ -85,7 +85,7 @@ entities {
 		}
 	}
 }
-experiment simulation type : gui {
+experiment Simulation type : gui {
 	output {
 		display chart1 refresh_every : 1 {
 			chart 'Susceptible' type : series background : rgb ( 'lightGray' ) {
