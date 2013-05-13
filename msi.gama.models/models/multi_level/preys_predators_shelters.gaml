@@ -37,7 +37,7 @@ global {
 
 entities {  
 	species prey skills: [moving] control: fsm {
-		geometry shape <- circle (prey_size);
+		geometry shape <- square (prey_size);
 		rgb color <- prey_color;
 		list nearby_predators of: predator value: (agents_overlapping (shape + prey_perception)) of_species predator;
 		int invisible_time min: 1 init: int(time);
@@ -70,17 +70,17 @@ entities {
 				set invisible_time value: time;
 				set heading value: rnd (359) ;
 			}
-			do move;
+			do move; 
 			transition to: move_around when: ( (time - invisible_time) > prey_invisible_max_time );
 		}
 		
 		aspect default {
-			draw shape color: color;
+			draw geometry: shape color: color;
 		}
 	}
 	
 	species predator skills: [moving] schedules: shuffle (list (predator)) {
-		geometry shape <- circle (predator_size);
+		geometry shape <- square (predator_size);
 		prey target_prey value: self choose_target_prey [];
 		
 		action choose_target_prey type: prey {
@@ -96,16 +96,16 @@ entities {
 		reflex chase_prey when: (target_prey != nil) { do move heading: self towards target_prey speed: predator_speed;}
 		
 		aspect default {
-			draw shape color: predator_color;
+			draw geometry:shape color: predator_color;
 		} 
 	} 
 	
 	species shelter skills: [moving]  frequency: 2 {
-		geometry shape <- (circle (50.0)) at_location {250, 250};
+		geometry shape <- (square (50.0)) at_location {250, 250};
 		list chased_preys of: prey value: (list (prey)) where ( (each.shape intersects shape) and (each.state = 'flee_predator') );
 		
 		reflex move_around {
-			do wander speed: shelter_speed; 
+			//do wander speed: shelter_speed; 
 		}
 		 
 		reflex capture_chased_preys when: !(empty (chased_preys)) { 
@@ -120,7 +120,7 @@ entities {
 			 
 			release to_be_released in: world as: prey { 
 				set state value: 'invisible';
-				set shape value:  at_location (circle (prey_size), self.location);   
+				set shape value:  at_location (square (prey_size), self.location);   
 			}
 		} 
 		
@@ -133,27 +133,27 @@ entities {
 			}
 			
 			aspect default {
-				draw shape color: predator_in_shelter_color;
-			}
+				draw geometry: shape color: predator_in_shelter_color;
+			} 
 		}
 		
 		aspect default {
-			draw shape color: shelter_color;
+			draw geometry:shape color: shelter_color;
 			draw text: 'Members: ' + (string (length ((members)))) color: rgb ('white') size: 8 at: {(location).x - 20, (location).y};
 		}
 	}
 
 }
 
-environment width: 500 height: 500;
+environment width: 400 height: 400;
 
 experiment default_experiment type: gui {
 	output {
-		display default_display {
-			species prey;
-			species predator transparency: 0.5;
-			species shelter transparency: 0.5 {
-				species prey_in_shelter;
+		display default_display  {
+			species prey aspect: default;
+			species predator transparency: 0.5 aspect: default;
+			species shelter transparency: 0.5 aspect: default { 
+				species prey_in_shelter aspect: default;
 			}
 		}
 	}
