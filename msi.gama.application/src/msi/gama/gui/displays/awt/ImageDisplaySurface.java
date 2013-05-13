@@ -80,7 +80,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 			os = new DataOutputStream(new FileOutputStream(file));
 			ImageIO.write(image, "png", os);
 		} catch (java.io.IOException ex) {
-			GamaRuntimeException e = new GamaRuntimeException(ex);
+			GamaRuntimeException e = GamaRuntimeException.create(ex);
 			e.addContext("Unable to create output stream for snapshot image");
 			GAMA.reportError(e);
 		} finally {
@@ -89,7 +89,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 					os.close();
 				}
 			} catch (Exception ex) {
-				GamaRuntimeException e = new GamaRuntimeException(ex);
+				GamaRuntimeException e = GamaRuntimeException.create(ex);
 				e.addContext("Unable to close output stream for snapshot image");
 				GAMA.reportError(e);
 			}
@@ -136,7 +136,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		this.height = newHeight;
 		Image copy = buffImage;
 		createBuffImage();
-		if ( GAMA.getExperiment().isPaused() ) {
+		if ( GAMA.isPaused() ) {
 			updateDisplay();
 		} else {
 			g2.drawImage(copy, 0, 0, newWidth, newHeight, null);
@@ -317,7 +317,9 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void snapshot() {
-		save(GAMA.getDefaultScope(), buffImage);
+		IScope scope = GAMA.obtainNewScope();
+		save(scope, buffImage);
+		GAMA.releaseScope(scope);
 	}
 
 	/**

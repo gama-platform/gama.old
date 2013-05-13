@@ -35,12 +35,10 @@ import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
 
 public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
-	private static final String PERSPECTIVE_MODELING_ID =
-		"msi.gama.application.perspectives.ModelingPerspective";
+	private static final String PERSPECTIVE_MODELING_ID = "msi.gama.application.perspectives.ModelingPerspective";
 
 	@Override
-	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(
-		final IWorkbenchWindowConfigurer configurer) {
+	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(final IWorkbenchWindowConfigurer configurer) {
 		return new ApplicationWorkbenchWindowAdvisor(this, configurer);
 	}
 
@@ -114,7 +112,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		// }
 		/* Close the current experiment */
 		try {
-			GAMA.closeCurrentExperiment();
+			GAMA.controller.shutdown();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -180,8 +178,8 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 			WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
 
 				@Override
-				protected void execute(final IProgressMonitor monitor) throws CoreException,
-					InvocationTargetException, InterruptedException {
+				protected void execute(final IProgressMonitor monitor) throws CoreException, InvocationTargetException,
+					InterruptedException {
 					if ( !proj.exists() ) {
 						proj.create(description, monitor);
 					}

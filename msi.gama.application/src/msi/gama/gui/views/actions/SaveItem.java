@@ -63,7 +63,7 @@ public class SaveItem extends GamaViewItem {
 						try {
 							pw = new PrintWriter(file);
 						} catch (FileNotFoundException e) {
-							GAMA.reportError(new GamaRuntimeException(e));
+							GAMA.reportError(GamaRuntimeException.create(e));
 							return;
 						}
 						pw.println("<?xml version=\"1.0\" encoding=\"ISO-8859-1\" standalone=\"yes\"?>");

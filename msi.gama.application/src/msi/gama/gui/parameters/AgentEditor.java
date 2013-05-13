@@ -106,7 +106,7 @@ public class AgentEditor extends AbstractEditor {
 		}
 		// FIXME Not adapted to multiple scales !
 		Menu dropMenu =
-			AgentsMenu.createSpeciesSubMenu(agentChooser, GAMA.getFrontmostSimulation().getMicroPopulation(species),
+			AgentsMenu.createSpeciesSubMenu(agentChooser, GAMA.getSimulation().getMicroPopulation(species),
 				new SelectionAdapter() {
 
 					@Override

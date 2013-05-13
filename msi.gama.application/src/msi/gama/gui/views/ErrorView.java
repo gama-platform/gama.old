@@ -23,8 +23,12 @@ import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
+import msi.gama.gui.swt.SwtGui;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
@@ -50,10 +54,21 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 		return true;
 	}
 
-	public void addNewError(final GamaRuntimeException e) {
-		if ( e != null ) {
-			exceptions.add(e);
+	public synchronized void addNewError(final GamaRuntimeException ex) {
+		for ( GamaRuntimeException e : exceptions ) {
+			if ( e.equivalentTo(ex) ) {
+				e.addAgent(ex.getAgent());
+				if ( showErrors ) {
+					reset();
+					displayItems();
+				}
+				return;
+			}
 		}
+		exceptions.add(ex);
+
+		gotoEditor(ex);
+
 		if ( showErrors ) {
 			reset();
 			displayItems();
@@ -78,18 +93,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 		parentLayout.marginHeight = 0;
 		parentLayout.verticalSpacing = 0;
 		intermediate.setLayout(parentLayout);
-
-		// ExpandableComposite expandable = new ExpandableComposite(intermediate, SWT.SHADOW_IN);
-		// expandable.setText("Preferences");
 		Composite parameters = new Group(intermediate, SWT.None);
-		// expandable.setClient(parameters);
-		// expandable.addExpansionListener(new ExpansionAdapter() {
-		//
-		// @Override
-		// public void expansionStateChanged(final ExpansionEvent e) {
-		// view.layout(true);
-		// }
-		// });
 		GridLayout layout = new GridLayout(2, false);
 
 		parameters.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
@@ -110,28 +114,6 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 
 			});
 
-		// EditorFactory.create(parameters, "Pause and reveal in editor",
-		// GAMA.TREAT_ERRORS_AS_FATAL,
-		// new EditorListener<Boolean>() {
-		//
-		// @Override
-		// public void valueModified(final Boolean newValue) {
-		//
-		// GAMA.TREAT_ERRORS_AS_FATAL = newValue;
-		// }
-		//
-		// });
-		// EditorFactory.create(parameters, "Treat warnings as errors ",
-		// GAMA.TREAT_WARNINGS_AS_ERRORS, new EditorListener<Boolean>() {
-		//
-		// @Override
-		// public void valueModified(final Boolean newValue) {
-		//
-		// GAMA.TREAT_WARNINGS_AS_ERRORS = newValue;
-		// }
-		//
-		// });
-
 		EditorFactory.create(parameters, "Most recent first", mostRecentFirst, new EditorListener<Boolean>() {
 
 			@Override
@@ -143,23 +125,24 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 			}
 
 		});
-		// EditorFactory.create(parameters, "Show errors/warnings", showErrors,
-		// new EditorListener<Boolean>() {
-		//
-		// @Override
-		// public void valueModified(final Boolean newValue) {
-		//
-		// showErrors = newValue;
-		// if ( showErrors ) {
-		// reset();
-		// displayItems();
-		// }
-		//
-		// }
-		//
-		// });
+
 		parameters.pack();
 		parent = intermediate;
+	}
+
+	private void gotoEditor(GamaRuntimeException exception) {
+
+		final EObject o = exception.getEditorContext();
+		if ( o != null && GAMA.REVEAL_ERRORS_IN_EDITOR ) {
+			GuiUtils.asyncRun(new Runnable() {
+
+				@Override
+				public void run() {
+					GuiUtils.openEditorAndSelect(o);
+				}
+			});
+		}
+
 	}
 
 	@Override
@@ -170,9 +153,20 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 		layout.verticalSpacing = 5;
 		compo.setLayout(layout);
 		Table t = new Table(compo, SWT.V_SCROLL);
+		t.addSelectionListener(new SelectionListener() {
+
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				gotoEditor(exception);
+			}
+
+			@Override
+			public void widgetDefaultSelected(SelectionEvent e) {}
+		});
 		t.setLayoutData(firstColData);
 		java.util.List<String> strings = exception.getContextAsList();
-		// t.setLinesVisible(true);
+		t.setLinesVisible(true);
+		t.setForeground(exception.isWarning() ? SwtGui.COLOR_WARNING : SwtGui.COLOR_ERROR);
 		final TableColumn c = new TableColumn(t, SWT.NONE);
 		c.setResizable(true);
 		final TableColumn column2 = new TableColumn(t, SWT.NONE);
@@ -200,11 +194,9 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 	@Override
 	public String getItemDisplayName(final GamaRuntimeException obj, final String previousName) {
 		StringBuilder sb = new StringBuilder(300);
-		if ( obj instanceof GamaRuntimeException ) {
-			String a = obj.getAgent();
-			if ( a != null ) {
-				sb.append(a).append(" at ");
-			}
+		String a = obj.getAgent();
+		if ( a != null ) {
+			sb.append(a).append(" at ");
 		}
 		sb.append("cycle ").append(obj.getCycle()).append(ItemList.SEPARATION_CODE)
 			.append(obj.isWarning() ? ItemList.WARNING_CODE : ItemList.ERROR_CODE).append(obj.getMessage());
@@ -222,7 +214,6 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 		int end = size;
 		int begin = end - numberOfDisplayedErrors;
 		begin = begin < 0 ? 0 : begin;
-
 		errors.addAll(exceptions.subList(begin, end));
 		if ( mostRecentFirst ) {
 			Collections.reverse(errors);
@@ -231,7 +222,9 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 	}
 
 	@Override
-	public void updateItemValues() {}
+	public void updateItemValues() {
+		this.getViewer().updateItemNames();
+	}
 
 	public void clearErrors() {
 		this.reset();

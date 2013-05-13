@@ -18,7 +18,8 @@
  */
 package msi.gama.gui.parameters;
 
-import msi.gama.runtime.GAMA;
+import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -55,22 +56,29 @@ public class MatrixEditorDialog extends Dialog {
 		TableColumn columnIndex = new TableColumn(table, SWT.CENTER);
 		columnIndex.setWidth(30);
 
-		int index = 0;
 		/** Creation of table columns */
-		for ( int i = 0; i < data.getCols(GAMA.getDefaultScope()); i++ ) {
-			TableColumn column = new TableColumn(table, SWT.CENTER);
-			column.setWidth(90);
-		}
-		/** Creation of table rows */
-		for ( int i = 0; i < data.getRows(GAMA.getDefaultScope()); i++ ) {
-			TableItem item = new TableItem(table, SWT.NONE);
-			item.setText(0, String.valueOf(index));
-			item.setBackground(0, gray);
-			index++;
-			for ( int j = 0; j < data.getCols(GAMA.getDefaultScope()); j++ ) {
-				item.setText(j + 1, "" + data.get(GAMA.getDefaultScope(), j, i));
+		GAMA.run(new InScope.Void() {
+
+			@Override
+			public void process(IScope scope) {
+				int index = 0;
+				for ( int i = 0; i < data.getCols(scope); i++ ) {
+					TableColumn column = new TableColumn(table, SWT.CENTER);
+					column.setWidth(90);
+				}
+				/** Creation of table rows */
+				for ( int i = 0; i < data.getRows(scope); i++ ) {
+					TableItem item = new TableItem(table, SWT.NONE);
+					item.setText(0, String.valueOf(index));
+					item.setBackground(0, gray);
+					index++;
+					for ( int j = 0; j < data.getCols(scope); j++ ) {
+						item.setText(j + 1, "" + data.get(scope, j, i));
+					}
+				}
 			}
-		}
+		});
+
 		/** Get the table editable */
 		final TableEditor editor = new TableEditor(table);
 		editor.horizontalAlignment = SWT.LEFT;
@@ -223,22 +231,33 @@ public class MatrixEditorDialog extends Dialog {
 	private IMatrix getNewMatrix() throws GamaRuntimeException {
 		final int rows = table.getItemCount();
 		final int cols = table.getColumnCount() - 1;
-		IMatrix m = null;
-		if ( data instanceof GamaIntMatrix ) {
-			m = new GamaIntMatrix(GAMA.getDefaultScope(), cols, rows);
-		} else if ( data instanceof GamaFloatMatrix ) {
-			m = new GamaFloatMatrix(GAMA.getDefaultScope(), cols, rows);
-		} else if ( data instanceof GamaObjectMatrix ) {
-			m = new GamaObjectMatrix(GAMA.getDefaultScope(), cols, rows);
-		} else {
-			return null;
-		}
-		for ( int r = 0; r < rows; r++ ) {
-			for ( int c = 1; c < cols + 1; c++ ) {
-				final TableItem item = table.getItem(r);
-				m.set(GAMA.getDefaultScope(), c - 1, r, item.getText(c));
+
+		final IMatrix m = GAMA.run(new InScope<IMatrix>() {
+
+			@Override
+			public IMatrix run(IScope scope) {
+				if ( data instanceof GamaIntMatrix ) {
+					return new GamaIntMatrix(scope, cols, rows);
+				} else if ( data instanceof GamaFloatMatrix ) {
+					return new GamaFloatMatrix(scope, cols, rows);
+				} else {
+					return new GamaObjectMatrix(scope, cols, rows);
+				}
 			}
-		}
+		});
+		GAMA.run(new InScope.Void() {
+
+			@Override
+			public void process(IScope scope) {
+				for ( int r = 0; r < rows; r++ ) {
+					for ( int c = 1; c < cols + 1; c++ ) {
+						final TableItem item = table.getItem(r);
+						m.set(scope, c - 1, r, item.getText(c));
+					}
+				}
+			}
+		});
+
 		return m;
 	}
 

@@ -136,8 +136,9 @@ public abstract class AbstractLayer implements ILayer {
 
 	@Override
 	public final void drawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {
+		if ( scope.interrupted() ) { return; }
 		if ( definition != null ) {
-			definition.step(scope);
+			// definition.step(scope);
 			g.setOpacity(definition.getTransparency());
 			setPositionAndSize(definition.getBoundingBox(), g);
 		}

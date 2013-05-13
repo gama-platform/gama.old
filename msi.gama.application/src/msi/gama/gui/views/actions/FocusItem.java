@@ -172,7 +172,7 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 				displayMenu.setText(display.getType() + ": " + display.getName());
 				displayMenu.setImage(images.get(display.getClass()));
 				AgentsMenu.createSpeciesSubMenu(displayMenu,
-					GAMA.getFrontmostSimulation().getMicroPopulation(display.getName()), adapter);
+					GAMA.getSimulation().getMicroPopulation(display.getName()), adapter);
 			} else if ( item instanceof AgentLayer ) {
 				AgentLayer display = (AgentLayer) item;
 				MenuItem displayMenu = new MenuItem(menu, SWT.CASCADE);
@@ -193,7 +193,7 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 				displayMenu.setText("Grid layer: " + display.getName());
 				displayMenu.setImage(images.get(display.getClass()));
 				AgentsMenu.createSpeciesSubMenu(displayMenu,
-					GAMA.getFrontmostSimulation().getMicroPopulation(display.getName()), adapter);
+					GAMA.getSimulation().getMicroPopulation(display.getName()), adapter);
 			}
 		}
 	}

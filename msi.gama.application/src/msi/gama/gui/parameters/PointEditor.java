@@ -23,6 +23,8 @@ import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
 import org.eclipse.swt.SWT;
@@ -117,7 +119,14 @@ public class PointEditor extends AbstractEditor implements VerifyListener {
 	@Override
 	public void modifyText(final ModifyEvent me) {
 		if ( internalModification ) { return; }
-		modifyValue(new GamaPoint(Cast.asFloat(getScope(), xText.getText()), Cast.asFloat(getScope(), yText.getText())));
+		GAMA.run(new InScope.Void() {
+
+			@Override
+			public void process(IScope scope) {
+				modifyValue(new GamaPoint(Cast.asFloat(scope, xText.getText()), Cast.asFloat(scope, yText.getText())));
+			}
+		});
+
 	}
 
 	@Override

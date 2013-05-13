@@ -30,7 +30,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.precompiler.GamlAnnotations.display;
-import msi.gama.runtime.GAMA;
+import msi.gama.runtime.*;
 import msi.gaml.compilation.ISymbol;
 
 @display("java2D")
@@ -273,7 +273,9 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		// } catch (InterruptedException e) {
 		// e.printStackTrace();
 		// }
-		buffImage.flush();
+		if ( buffImage != null ) {
+			buffImage.flush();
+		}
 		if ( navigator == null || navigator.isDisposed() ) { return; }
 		navigator.dispose();
 	}
@@ -358,16 +360,22 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	 */
 	@Override
 	public void snapshot() {
-		if ( snapshotDimension.x == -1 && snapshotDimension.y == -1 ) {
-			save(GAMA.getDefaultScope(), buffImage);
-			return;
+		IScope scope = GAMA.obtainNewScope();
+		try {
+			if ( snapshotDimension.x == -1 && snapshotDimension.y == -1 ) {
+				save(scope, buffImage);
+				return;
+			}
+			BufferedImage newImage = ImageUtils.createCompatibleImage(snapshotDimension.x, snapshotDimension.y);
+			IGraphics tempGraphics = new AWTDisplayGraphics(this, (Graphics2D) newImage.getGraphics());
+			tempGraphics.fillBackground(bgColor, 1);
+			manager.drawLayersOn(tempGraphics);
+			save(scope, newImage);
+			newImage.flush();
+		} finally {
+			GAMA.releaseScope(scope);
 		}
-		BufferedImage newImage = ImageUtils.createCompatibleImage(snapshotDimension.x, snapshotDimension.y);
-		IGraphics tempGraphics = new AWTDisplayGraphics(this, (Graphics2D) newImage.getGraphics());
-		tempGraphics.fillBackground(bgColor, 1);
-		manager.drawLayersOn(tempGraphics);
-		save(GAMA.getDefaultScope(), newImage);
-		newImage.flush();
+
 	}
 
 	/**

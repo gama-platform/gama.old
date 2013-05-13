@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -32,22 +32,20 @@ import org.eclipse.ui.handlers.IHandlerService;
 
 /**
  * An environment to enable the proper display of AWT/Swing windows within a SWT or RCP application.
- * This class extends the base {@link org.eclipse.swt.awt.SWT_AWT Eclipse SWT/AWT integration}
- * support by
+ * This class extends the base {@link org.eclipse.swt.awt.SWT_AWT Eclipse SWT/AWT integration} support by
  * <ul>
  * <li>Using the platform-specific system Look and Feel.
  * <li>Ensuring AWT modal dialogs are modal across the SWT application.
  * <li>Working around various AWT/Swing bugs
  * </ul>
  * <p>
- * This class is most helpful to applications which create new AWT/Swing windows (e.g. dialogs)
- * rather than those which embed AWT/Swing components in SWT windows. For support specific to
- * embedding AWT/Swing components see {@link EmbeddedSwingComposite}.
+ * This class is most helpful to applications which create new AWT/Swing windows (e.g. dialogs) rather than those which
+ * embed AWT/Swing components in SWT windows. For support specific to embedding AWT/Swing components see
+ * {@link EmbeddedSwingComposite}.
  * <p>
  * There is at most one instance of this class per SWT {@link org.eclipse.swt.widgets.Display
- * Display}. In almost all applications this means that there is exactly one instance for the entire
- * application. In fact, the current implementation always limits the number of instances to exactly
- * one.
+ * Display}. In almost all applications this means that there is exactly one instance for the entire application. In
+ * fact, the current implementation always limits the number of instances to exactly one.
  * <p>
  * An instance of this class can be obtained with the static {@link #getInstance(Display)} method.
  */
@@ -61,8 +59,7 @@ public final class AwtEnvironment {
 	// level?
 
 	/** The Constant GTK_LOOK_AND_FEEL_NAME. */
-	private static final String GTK_LOOK_AND_FEEL_NAME =
-		"com.sun.java.swing.plaf.gtk.GTKLookAndFeel"; //$NON-NLS-1$
+	private static final String GTK_LOOK_AND_FEEL_NAME = "com.sun.java.swing.plaf.gtk.GTKLookAndFeel"; //$NON-NLS-1$
 
 	/** The instance. */
 	private static AwtEnvironment instance = null;
@@ -84,9 +81,8 @@ public final class AwtEnvironment {
 	 * <p>
 	 * The first call to this method must occur before any AWT/Swing APIs are called.
 	 * <p>
-	 * The current implementation limits the number of instances of AwtEnvironment to one. If this
-	 * method is called with a display different to one used on a previous call,
-	 * {@link UnsupportedOperationException} is thrown.
+	 * The current implementation limits the number of instances of AwtEnvironment to one. If this method is called with
+	 * a display different to one used on a previous call, {@link UnsupportedOperationException} is thrown.
 	 * 
 	 * @param display the non-null SWT display
 	 * 
@@ -165,13 +161,12 @@ public final class AwtEnvironment {
 	 * thread. The SWT event thread will remain blocked until the runnable task completes, at which
 	 * point this method will return.
 	 * <p>
-	 * This method is useful for displayng modal AWT/Swing dialogs from the SWT event thread. The
-	 * modal AWT/Swing dialog will always block input across the whole application, but not until it
-	 * appears. By calling this method, it is guaranteed that SWT input is blocked immediately, even
-	 * before the AWT/Swing dialog appears.
+	 * This method is useful for displayng modal AWT/Swing dialogs from the SWT event thread. The modal AWT/Swing dialog
+	 * will always block input across the whole application, but not until it appears. By calling this method, it is
+	 * guaranteed that SWT input is blocked immediately, even before the AWT/Swing dialog appears.
 	 * <p>
-	 * To avoid unnecessary flicker, AWT/Swing dialogs should have their parent set to a frame
-	 * returned by {@link #createDialogParentFrame()}.
+	 * To avoid unnecessary flicker, AWT/Swing dialogs should have their parent set to a frame returned by
+	 * {@link #createDialogParentFrame()}.
 	 * <p>
 	 * This method must be called from the SWT event thread.
 	 * 
@@ -228,11 +223,10 @@ public final class AwtEnvironment {
 	/**
 	 * Creates an AWT frame suitable as a parent for AWT/Swing dialogs.
 	 * <p>
-	 * This method must be called from the SWT event thread. There must be an active shell
-	 * associated with the environment's display.
+	 * This method must be called from the SWT event thread. There must be an active shell associated with the
+	 * environment's display.
 	 * <p>
-	 * The created frame is a non-visible child of the active shell and will be disposed when that
-	 * shell is disposed.
+	 * The created frame is a non-visible child of the active shell and will be disposed when that shell is disposed.
 	 * <p>
 	 * See {@link #createDialogParentFrame(Shell)} for more details.
 	 * 
@@ -255,15 +249,14 @@ public final class AwtEnvironment {
 	/**
 	 * Creates an AWT frame suitable as a parent for AWT/Swing dialogs.
 	 * <p>
-	 * This method must be called from the SWT event thread. There must be an active shell
-	 * associated with the environment's display.
+	 * This method must be called from the SWT event thread. There must be an active shell associated with the
+	 * environment's display.
 	 * <p>
-	 * The created frame is a non-visible child of the given shell and will be disposed when that
-	 * shell is disposed.
+	 * The created frame is a non-visible child of the given shell and will be disposed when that shell is disposed.
 	 * <p>
-	 * This method is useful for creating a frame to parent any AWT/Swing dialogs created for use
-	 * inside a SWT application. A modal AWT/Swing dialogs will flicker less if its parent is set to
-	 * the returned frame rather than to null or to an independently created {@link java.awt.Frame}.
+	 * This method is useful for creating a frame to parent any AWT/Swing dialogs created for use inside a SWT
+	 * application. A modal AWT/Swing dialogs will flicker less if its parent is set to the returned frame rather than
+	 * to null or to an independently created {@link java.awt.Frame}.
 	 * 
 	 * @param parent the parent
 	 * 
@@ -362,48 +355,43 @@ public final class AwtEnvironment {
 		// better) to send the keystroke to the SWT event loop.
 		// TODO : HACK
 
-		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(
-			new KeyEventDispatcher() {
+		KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
 
-				@Override
-				public boolean dispatchKeyEvent(final KeyEvent e) {
-					if ( e.getID() == KeyEvent.KEY_PRESSED && e.isMetaDown() ) {
-						IHandlerService service =
-							(IHandlerService) SwtGui.getWindow().getWorkbench()
-								.getService(IHandlerService.class);
-						Character c = e.getKeyChar();
-						if ( c == 'p' ) {
-							String command =
-								GAMA.getExperiment().isPaused()
-									? "msi.gama.application.commands.PlaySimulation"
-									: "msi.gama.application.commands.PauseSimulation";
+			@Override
+			public boolean dispatchKeyEvent(final KeyEvent e) {
+				if ( e.getID() == KeyEvent.KEY_PRESSED && e.isMetaDown() ) {
+					IHandlerService service =
+						(IHandlerService) SwtGui.getWindow().getWorkbench().getService(IHandlerService.class);
+					Character c = e.getKeyChar();
+					if ( c == 'p' ) {
+						String command =
+							GAMA.isPaused() ? "msi.gama.application.commands.PlaySimulation"
+								: "msi.gama.application.commands.PauseSimulation";
 
-							try {
-								service.executeCommand(command, null);
-							} catch (Exception e1) {
-								e1.printStackTrace();
-							}
+						try {
+							service.executeCommand(command, null);
+						} catch (Exception e1) {
+							e1.printStackTrace();
+						}
 
-						} else if ( c == 'P' ) {
-							try {
-								service.executeCommand(
-									"msi.gama.application.commands.StepByStepSimulation", null);
-							} catch (Exception e1) {
-								e1.printStackTrace();
-							}
-						} else if ( c == 'R' ) {
-							try {
-								service.executeCommand(
-									"msi.gama.application.commands.ReloadSimulation", null);
-							} catch (Exception e1) {
-								e1.printStackTrace();
-							}
+					} else if ( c == 'P' ) {
+						try {
+							service.executeCommand("msi.gama.application.commands.StepByStepSimulation", null);
+						} catch (Exception e1) {
+							e1.printStackTrace();
+						}
+					} else if ( c == 'R' ) {
+						try {
+							service.executeCommand("msi.gama.application.commands.ReloadSimulation", null);
+						} catch (Exception e1) {
+							e1.printStackTrace();
 						}
 					}
-					return true;
 				}
+				return true;
+			}
 
-			});
+		});
 	}
 
 }

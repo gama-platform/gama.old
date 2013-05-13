@@ -21,7 +21,8 @@ package msi.gama.gui.parameters;
 import msi.gama.common.util.StringUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.*;
-import msi.gama.runtime.GAMA;
+import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 import org.eclipse.swt.SWT;
@@ -115,8 +116,14 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 			return currentException.getMessage();
 		}
 		String string = "Result: " + StringUtils.toGaml(currentValue);
-		IType expectedType = editor.getExpectedType();
-		if ( expectedType.canBeTypeOf(GAMA.getDefaultScope(), currentValue) ) {
+		final IType expectedType = editor.getExpectedType();
+		if ( GAMA.run(new InScope<Boolean>() {
+
+			@Override
+			public Boolean run(IScope scope) {
+				return expectedType.canBeTypeOf(scope, currentValue);
+			}
+		}) ) {
 			background = SwtGui.COLOR_OK;
 		} else {
 			background = SwtGui.COLOR_WARNING;
@@ -133,7 +140,7 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 	@Override
 	public void focusGained(final FocusEvent e) {
 		computeValue();
-		popup.display();
+		// popup.display();
 	}
 
 	@Override

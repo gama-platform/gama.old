@@ -24,7 +24,6 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.outputs.*;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.*;
@@ -113,7 +112,6 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> {
 					public void valueModified(final IExpression newValue) throws GamaRuntimeException {
 						output.setNewExpression(newValue);
 						update(output);
-						// getViewer().collapseItemWithData(output);
 					}
 
 				}, Types.get(IType.NONE)).getEditor();
@@ -181,7 +179,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> {
 	}
 
 	public static void createNewMonitor() {
-		new MonitorOutput("monitor" + count++, null, GAMA.getDefaultScope(), true);
+		new MonitorOutput("monitor" + count++, null, true);
 	}
 
 	@Override

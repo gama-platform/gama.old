@@ -129,7 +129,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 			os = new DataOutputStream(new FileOutputStream(file));
 			ImageIO.write(image, "png", os);
 		} catch (java.io.IOException ex) {
-			GamaRuntimeException e = new GamaRuntimeException(ex);
+			GamaRuntimeException e = GamaRuntimeException.create(ex);
 			e.addContext("Unable to create output stream for snapshot image");
 			GAMA.reportError(e);
 		} finally {
@@ -138,7 +138,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 					os.close();
 				}
 			} catch (Exception ex) {
-				GamaRuntimeException e = new GamaRuntimeException(ex);
+				GamaRuntimeException e = GamaRuntimeException.create(ex);
 				e.addContext("Unable to close output stream for snapshot image");
 				GAMA.reportError(e);
 			}
@@ -287,7 +287,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	@Override
 	public void updateDisplay() {
-		if ( synchronous && !EventQueue.isDispatchThread() && !GAMA.getExperiment().isPaused() ) {
+		if ( synchronous && !EventQueue.isDispatchThread() && !GAMA.isPaused() ) {
 			try {
 				EventQueue.invokeAndWait(displayBlock);
 			} catch (InterruptedException e) {

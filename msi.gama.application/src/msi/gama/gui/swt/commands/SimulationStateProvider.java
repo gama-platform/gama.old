@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -25,6 +25,8 @@ import org.eclipse.ui.services.IServiceLocator;
 
 public class SimulationStateProvider extends AbstractSourceProvider implements ISimulationStateProvider {
 
+	public final static String SIMULATION_RUNNING_STATE = "msi.gama.application.commands.SimulationRunningState";
+
 	private final static Map<String, String> map = new HashMap<String, String>(1);
 
 	@Override
@@ -32,17 +34,17 @@ public class SimulationStateProvider extends AbstractSourceProvider implements I
 
 	@Override
 	public void initialize(final IServiceLocator locator) {
-		GAMA.state = this;
+		GAMA.controller.state = this;
 	}
 
 	@Override
 	public String[] getProvidedSourceNames() {
-		return new String[] { GAMA.SIMULATION_RUNNING_STATE };
+		return new String[] { SIMULATION_RUNNING_STATE };
 	}
 
 	@Override
 	public Map<String, String> getCurrentState() {
-		map.put(GAMA.SIMULATION_RUNNING_STATE, GAMA.getFrontmostSimulationState());
+		map.put(SIMULATION_RUNNING_STATE, GAMA.controller.getFrontmostSimulationState());
 		return map;
 	}
 
@@ -51,7 +53,7 @@ public class SimulationStateProvider extends AbstractSourceProvider implements I
 	 */
 	@Override
 	public void updateStateTo(final String state) {
-		fireSourceChanged(ISources.WORKBENCH, GAMA.SIMULATION_RUNNING_STATE, state);
+		fireSourceChanged(ISources.WORKBENCH, SIMULATION_RUNNING_STATE, state);
 	}
 
 }

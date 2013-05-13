@@ -57,8 +57,12 @@ public class SpeciesLayer extends AgentLayer {
 
 	@Override
 	public Set<IAgent> getAgentsForMenu() {
-		return new HashSet(GAMA.getDefaultScope().getSimulationScope()
-			.getMicroPopulation(((SpeciesLayerStatement) definition).getSpecies()).getAgentsList());
+		IScope scope = GAMA.obtainNewScope();
+		Set<IAgent> result =
+			new HashSet(scope.getSimulationScope()
+				.getMicroPopulation(((SpeciesLayerStatement) definition).getSpecies()).getAgentsList());
+		GAMA.releaseScope(scope);
+		return result;
 	}
 
 	private void changeAspect(final String s) {
@@ -106,7 +110,7 @@ public class SpeciesLayer extends AgentLayer {
 
 					try {
 						a.acquireLock();
-						if ( a.dead() ) {
+						if ( a.dead() || scope.interrupted() ) {
 							continue;
 						}
 						microPop = a.getMicroPopulation(gl.getName());

@@ -25,6 +25,7 @@ import msi.gama.kernel.simulation.ISimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.GAMA;
+import msi.gaml.species.ISpecies;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -122,7 +123,11 @@ public class AgentsMenu extends ContributionItem {
 		microAgentsItem.setMenu(microSpeciesMenu);
 
 		IPopulation microPopulation;
-		List<String> microSpeciesNames = macro.getSpecies().getMicroSpeciesNames();
+		List<ISpecies> microSpecies = macro.getSpecies().getMicroSpecies();
+		List<String> microSpeciesNames = new ArrayList();
+		for ( ISpecies spec : microSpecies ) {
+			microSpeciesNames.add(spec.getName());
+		}
 		Collections.sort(microSpeciesNames);
 		for ( String microSpec : microSpeciesNames ) {
 			microPopulation = macro.getMicroPopulation(microSpec);
@@ -202,7 +207,7 @@ public class AgentsMenu extends ContributionItem {
 	}
 
 	public static void fill(final Menu parent, final SelectionListener listener) {
-		ISimulationAgent sim = GAMA.getFrontmostSimulation();
+		ISimulationAgent sim = GAMA.getSimulation();
 		if ( sim == null ) { return; }
 		IPopulation worldPopulation = sim.getPopulation();
 		populateSpecies(parent, worldPopulation, true, listener);

@@ -24,6 +24,8 @@ import msi.gama.common.util.StringUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import msi.gama.util.GamaMap;
 import msi.gaml.types.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -77,11 +79,19 @@ public class MapEditor extends AbstractEditor {
 
 	@Override
 	public void widgetSelected(final SelectionEvent event) {
-		MapEditorDialog mapParameterDialog =
-			new MapEditorDialog(getScope(), Display.getCurrent().getActiveShell(), (GamaMap) currentValue);
-		if ( mapParameterDialog.open() == IDialogConstants.OK_ID ) {
-			modifyValue(mapParameterDialog.getMap());
-		}
+		GAMA.run(new InScope.Void() {
+
+			@Override
+			public void process(IScope scope) {
+				MapEditorDialog mapParameterDialog =
+					new MapEditorDialog(scope, Display.getCurrent().getActiveShell(), (GamaMap) currentValue);
+				if ( mapParameterDialog.open() == IDialogConstants.OK_ID ) {
+					modifyValue(mapParameterDialog.getMap());
+				}
+			}
+
+		});
+
 	}
 
 	@Override

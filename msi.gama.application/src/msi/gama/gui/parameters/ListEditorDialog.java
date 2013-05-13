@@ -70,8 +70,7 @@ public class ListEditorDialog extends Dialog {
 		container.setLayout(gridLayout);
 
 		final Label dialogLabel = new Label(container, SWT.NONE);
-		dialogLabel
-			.setLayoutData(new GridData(GridData.CENTER, GridData.CENTER, false, false, 3, 1));
+		dialogLabel.setLayoutData(new GridData(GridData.CENTER, GridData.CENTER, false, false, 3, 1));
 		dialogLabel.setText("Modify the list \'" + listname + "\'");
 
 		/** The Text widget containing the new element to be added. */
@@ -80,8 +79,7 @@ public class ListEditorDialog extends Dialog {
 
 			@Override
 			public void modifyText(final ModifyEvent me) {
-				if ( newElementText.getText() == null ||
-					newElementText.getText().trim().length() == 0 ) {
+				if ( newElementText.getText() == null || newElementText.getText().trim().length() == 0 ) {
 					newElementButton.setEnabled(false);
 				}
 				if ( newElementText.getText().trim().length() > 0 ) {
@@ -90,8 +88,7 @@ public class ListEditorDialog extends Dialog {
 			}
 		});
 
-		final GridData newElementTextGridData =
-			new GridData(GridData.FILL, GridData.CENTER, true, false);
+		final GridData newElementTextGridData = new GridData(GridData.FILL, GridData.CENTER, true, false);
 		newElementTextGridData.widthHint = 40;
 		newElementText.setLayoutData(newElementTextGridData);
 
@@ -288,7 +285,7 @@ public class ListEditorDialog extends Dialog {
 		// GamaList result = new GamaList();
 
 		boolean isFirstElement = true;
-		final StringBuffer tmp = new StringBuffer("[");
+		final StringBuilder tmp = new StringBuilder("[");
 
 		for ( final String element : data ) {
 			if ( isFirstElement ) {

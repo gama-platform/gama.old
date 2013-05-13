@@ -102,7 +102,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		if ( status == IGui.ERROR || status == IGui.WAIT ) { return label.getText(); }
 		StringBuilder sb = new StringBuilder(300);
 		String nl = StringUtils.getLineSeparator();
-		SimulationClock clock = GAMA.getFrontmostSimulation().getScheduler().getClock();
+		SimulationClock clock = GAMA.getSimulation().getClock();
 		sb.append("Cycles elapsed: ").append("\t").append(clock.getCycle()).append(nl);
 		sb.append("Simulated time: ").append("\t").append(Strings.asDate(clock.getTime(), null)).append(nl);
 		sb.append("Cycle duration: ").append("\t").append("\t").append(clock.getDuration()).append("ms").append(nl);

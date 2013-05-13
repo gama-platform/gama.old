@@ -21,7 +21,6 @@ package msi.gama.gui.parameters;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
@@ -37,14 +36,12 @@ public class FloatEditor extends NumberEditor {
 		this(agent, param, canBeNull, null);
 	}
 
-	FloatEditor(final IAgent agent, final IParameter param, final boolean canBeNull,
-		final EditorListener l) {
+	FloatEditor(final IAgent agent, final IParameter param, final boolean canBeNull, final EditorListener l) {
 		super(agent, param, l, canBeNull);
 	}
 
-	FloatEditor(final Composite parent, final String title, final Double value, final Double min,
-		final Double max, final Double step, final boolean canBeNull,
-		final EditorListener<Double> whenModified) {
+	FloatEditor(final Composite parent, final String title, final Double value, final Double min, final Double max,
+		final Double step, final boolean canBeNull, final EditorListener<Double> whenModified) {
 		// Convenience method
 		super(new InputParameter(title, value, min, max, step), whenModified, canBeNull);
 		this.createComposite(parent);
@@ -60,11 +57,11 @@ public class FloatEditor extends NumberEditor {
 
 	@Override
 	protected void modifyValue(final Object val) throws GamaRuntimeException {
-		Double i = Cast.asFloat(GAMA.getDefaultScope(), val);
-		if ( minValue != null && i < minValue.doubleValue() ) { throw new GamaRuntimeException(
-			"Value " + i + " should be greater than " + minValue); }
-		if ( maxValue != null && i > maxValue.doubleValue() ) { throw new GamaRuntimeException(
-			"Value " + i + " should be smaller than " + maxValue); }
+		Double i = Cast.as(val, Double.class);
+		if ( minValue != null && i < minValue.doubleValue() ) { throw GamaRuntimeException.error("Value " + i +
+			" should be greater than " + minValue); }
+		if ( maxValue != null && i > maxValue.doubleValue() ) { throw GamaRuntimeException.error("Value " + i +
+			" should be smaller than " + maxValue); }
 		currentValue = val;
 		titleLabel.setBackground(isValueModified() ? changed_bg : normal_bg);
 		if ( !internalModification ) {
@@ -77,14 +74,12 @@ public class FloatEditor extends NumberEditor {
 		if ( acceptNull && val == null ) {
 			super.setOriginalValue(val);
 		}
-		super.setOriginalValue(Cast.asFloat(GAMA.getDefaultScope(), val));
+		super.setOriginalValue(Cast.as(val, Double.class));
 	}
 
 	@Override
 	protected Double normalizeValues() throws GamaRuntimeException {
-		Double valueToConsider =
-			getOriginalValue() == null ? 0.0 : Cast.asFloat(GAMA.getDefaultScope(),
-				getOriginalValue());
+		Double valueToConsider = getOriginalValue() == null ? 0.0 : Cast.as(getOriginalValue(), Double.class);
 		currentValue = getOriginalValue() == null ? null : valueToConsider;
 		minValue = minValue == null ? null : minValue.doubleValue();
 		maxValue = maxValue == null ? null : maxValue.doubleValue();

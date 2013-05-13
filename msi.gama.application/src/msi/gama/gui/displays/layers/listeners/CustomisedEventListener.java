@@ -27,7 +27,7 @@ public class CustomisedEventListener implements MouseListener {
 		this.parent = prt;
 		// this.myStatement=myEStt;
 		listenedEvent = getListeningEvent(event);
-		this.currentScope = GAMA.getDefaultScope();
+		this.currentScope = GAMA.obtainNewScope();
 		ISpecies context = currentScope.getAgentScope().getSpecies();
 		this.executer = context.getAction(action);
 	}

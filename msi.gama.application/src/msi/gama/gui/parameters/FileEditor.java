@@ -23,6 +23,8 @@ import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.*;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import msi.gama.util.file.IGamaFile;
 import msi.gaml.operators.Files;
 import msi.gaml.types.*;
@@ -81,9 +83,16 @@ public class FileEditor extends AbstractEditor implements IPopupProvider {
 		dialog.setFileName(file.getPath());
 		// dialog.set
 		dialog.setText("Choose a file for parameter '" + param.getTitle() + "'");
-		String path = dialog.open();
+		final String path = dialog.open();
 		if ( path != null ) {
-			file = Files.from(getScope(), path);
+			file = GAMA.run(new InScope<IGamaFile>() {
+
+				@Override
+				public IGamaFile run(IScope scope) {
+					return Files.from(scope, path);
+				}
+
+			});
 			modifyAndDisplayValue(file);
 		}
 	}

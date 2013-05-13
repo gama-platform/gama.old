@@ -30,7 +30,7 @@ import msi.gama.kernel.simulation.ISimulationAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.GAMA;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridLayout;
@@ -82,13 +82,13 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 		layout.verticalSpacing = 0;
 		compo.setLayout(layout);
 		String cat = getItemDisplayName(species, null);
-		boolean isBuiltIn = Types.isBuiltIn(species.getName());
+		// boolean isBuiltIn = Types.isBuiltIn(species.getName());
 		boolean hasParent = species.getSpecies().getParentName() != null;
-		boolean hasAgents = species.size() != 0;
+		// boolean hasAgents = species.size() != 0;
 		boolean hasAspects = !species.getAspectNames().isEmpty();
 		boolean hasBehaviors = species.getSpecies().getBehaviors().size() != 0;
 
-		if ( !hasParent && !hasAgents && !hasBehaviors ) { return compo; }
+		if ( !hasParent /* && !hasAgents */&& !hasBehaviors ) { return compo; }
 
 		if ( hasParent ) {
 			editors.add(EditorFactory.create(compo, new ParameterAdapter("Parent: ", cat, IType.STRING) {
@@ -100,49 +100,49 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 
 			}));
 		}
-		if ( !isBuiltIn || hasAgents ) {
-			final AbstractEditor agentsEditor =
-				EditorFactory.create(compo, new ParameterAdapter("Population: ", cat, " ", IType.STRING) {
+		// if ( !isBuiltIn /* || hasAgents */) {}
 
-					@Override
-					public String value() {
-						return "" + species.size() + " living agents";
-					}
-
-					@Override
-					public boolean allowsTooltip() {
-						return false;
-					}
-
-				});
-			editors.add(agentsEditor);
-			Label label = agentsEditor.getUnitLabel();
-			Composite p = label.getParent();
-			label.dispose();
-			final Button button = new Button(p, SWT.FLAT | SWT.PUSH);
-			button.setImage(SwtGui.speciesImage);
-			button.setText("Inspect");
-			button.setToolTipText("Click to select an agent from the drop-down menu");
-			button.addSelectionListener(new SelectionAdapter() {
+		final AbstractEditor agentsEditor =
+			EditorFactory.create(compo, new ParameterAdapter("Population: ", cat, " ", IType.STRING) {
 
 				@Override
-				public void widgetSelected(final SelectionEvent e) {
-					Menu old = button.getMenu();
-					button.setMenu(null);
-					if ( old != null ) {
-						old.dispose();
-					}
-					agentsEditor.updateValue();
-					getViewer().updateItemNames();
-					Menu dropMenu = AgentsMenu.createSpeciesSubMenu(button, species, null);
-					// TODO adapt to multi-scale model
-					button.setMenu(dropMenu);
-					dropMenu.setVisible(true);
+				public String value() {
+					return "" + species.size() + " living agents";
+				}
+
+				@Override
+				public boolean allowsTooltip() {
+					return false;
 				}
 
 			});
+		editors.add(agentsEditor);
+		Label label = agentsEditor.getUnitLabel();
+		Composite p = label.getParent();
+		label.dispose();
+		final Button button = new Button(p, SWT.FLAT | SWT.PUSH);
+		button.setImage(SwtGui.speciesImage);
+		button.setText("Inspect");
+		button.setToolTipText("Click to select an agent from the drop-down menu");
+		button.addSelectionListener(new SelectionAdapter() {
 
-		}
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				Menu old = button.getMenu();
+				button.setMenu(null);
+				if ( old != null ) {
+					old.dispose();
+				}
+				agentsEditor.updateValue();
+				getViewer().updateItemNames();
+				Menu dropMenu = AgentsMenu.createSpeciesSubMenu(button, species, null);
+				// TODO adapt to multi-scale model
+				button.setMenu(dropMenu);
+				dropMenu.setVisible(true);
+			}
+
+		});
+
 		if ( hasBehaviors ) {
 			editors.add(EditorFactory.create(compo, new ParameterAdapter("Behaviors: ", cat, IType.INT) {
 
@@ -239,23 +239,23 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 
 	@Override
 	public List<IPopulation> getItems() {
-		final ISimulationAgent sim = GAMA.getFrontmostSimulation();
-		List<IPopulation> finalSpeciesList;
-		final List<IPopulation> allSpeciesList = sim.getMicroPopulations(); // TODO adapt
-																			// to
-																			// multi-scale
-																			// model
-		Collections.sort(allSpeciesList);
+		final ISimulationAgent sim = GAMA.getSimulation();
+		// List<IPopulation> finalSpeciesList;
+		final List<IPopulation> finalSpeciesList = sim.getMicroPopulations(); // TODO adapt
+																				// to
+																				// multi-scale
+																				// model
+		Collections.sort(finalSpeciesList);
 		final IPopulation worldSpecies = sim.getPopulation();
-		final List<IPopulation> builtInSpeciesList = new ArrayList();
-		for ( IPopulation m : allSpeciesList ) {
-			if ( Types.isBuiltIn(m.getName()) ) {
-				builtInSpeciesList.add(m);
-			}
-		}
-		allSpeciesList.removeAll(builtInSpeciesList);
-		finalSpeciesList = new ArrayList(builtInSpeciesList);
-		finalSpeciesList.addAll(allSpeciesList);
+		// final List<IPopulation> builtInSpeciesList = new ArrayList();
+		// for ( IPopulation m : allSpeciesList ) {
+		// if ( Types.isBuiltIn(m.getName()) ) {
+		// builtInSpeciesList.add(m);
+		// }
+		// }
+		// allSpeciesList.removeAll(builtInSpeciesList);
+		// finalSpeciesList = new ArrayList(builtInSpeciesList);
+		// finalSpeciesList.addAll(allSpeciesList);
 		finalSpeciesList.remove(worldSpecies);
 		finalSpeciesList.add(0, worldSpecies);
 		return finalSpeciesList;
@@ -263,10 +263,13 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 
 	@Override
 	public String getItemDisplayName(final IPopulation obj, final String previousName) {
-		boolean isBuiltIn = Types.isBuiltIn(obj.getName());
+		// boolean isBuiltIn = ;
 		int size = obj.size();
-		return "Species" + ItemList.SEPARATION_CODE + (isBuiltIn ? ItemList.ERROR_CODE : ItemList.INFO_CODE) +
-			obj.getName() + (isBuiltIn ? " (built-in)" : "") + " - " + size + (size < 2 ? " agent" : " agents");
+		return "Species" + ItemList.SEPARATION_CODE + ItemList.INFO_CODE + obj.getName() + "" + " - " + size +
+			(size < 2 ? " agent" : " agents");
+
+		// return "Species" + ItemList.SEPARATION_CODE + (/*isBuiltIn ? ItemList.ERROR_CODE : */ItemList.INFO_CODE) +
+		// obj.getName() + (/*isBuiltIn ? " (built-in)" :*/ "") + " - " + size + (size < 2 ? " agent" : " agents");
 	}
 
 	@Override

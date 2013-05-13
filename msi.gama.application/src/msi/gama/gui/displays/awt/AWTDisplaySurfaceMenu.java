@@ -29,7 +29,7 @@ public class AWTDisplaySurfaceMenu {
 		agentsMenu.removeAll();
 		if ( displays.isEmpty() ) { return; }
 		GamaPoint p = displays.get(0).getModelCoordinatesFrom(x, y, surface);
-		SelectedAgent world = new SelectedAgent(GAMA.getFrontmostSimulation(), p);
+		SelectedAgent world = new SelectedAgent(GAMA.getSimulation(), p);
 		world.buildMenuItems(agentsMenu, displays.get(0), "World agent");
 		agentsMenu.addSeparator();
 		for ( ILayer display : displays ) {
@@ -121,7 +121,7 @@ public class AWTDisplaySurfaceMenu {
 					}
 
 				};
-				GAMA.getFrontmostSimulation().getScheduler().executeOneAction(action);
+				GAMA.getSimulation().getScheduler().executeOneAction(action);
 			}
 		}
 

@@ -333,6 +333,9 @@ public class SwtGui implements IGui {
 	@Override
 	public void prepareFor(final boolean isGui) {
 		if ( isGui ) {
+			updateParameterView();
+			clearErrors();
+			showConsoleView();
 			tell = new Tell();
 			error = new Error();
 			views = new Views();
@@ -536,10 +539,10 @@ public class SwtGui implements IGui {
 
 			}
 			if ( o instanceof IGamaView ) { return (IGamaView) o; }
-			o = new GamaRuntimeException("Impossible to open view " + viewId);
+			o = GamaRuntimeException.error("Impossible to open view " + viewId);
 		}
 		if ( o instanceof Exception ) {
-			GAMA.reportError(new GamaRuntimeException((Exception) o));
+			GAMA.reportError(GamaRuntimeException.create((Exception) o));
 		}
 		return null;
 	}
@@ -842,7 +845,7 @@ public class SwtGui implements IGui {
 			surface = creator.create();
 			surface.initialize(w, h, layerDisplayOutput);
 		} else {
-			throw new GamaRuntimeException("Display " + keyword + " is not defined anywhere.");
+			throw GamaRuntimeException.error("Display " + keyword + " is not defined anywhere.");
 		}
 		return surface;
 	}
@@ -892,7 +895,7 @@ public class SwtGui implements IGui {
 					part.initFor(scope, panel.getUserCommands(),
 						"[" + scope.getAgentScope().getName() + "] " + panel.getName());
 				}
-				GAMA.getFrontmostSimulation().getScheduler().setUserHold(true);
+				GAMA.controller.scheduler.setUserHold(true);
 				try {
 					getPage().showView(UserControlView.ID);
 				} catch (PartInitException e) {

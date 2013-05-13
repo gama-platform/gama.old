@@ -24,6 +24,7 @@ import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.types.*;
@@ -69,11 +70,11 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 	public void valueModified(final Object newValue) throws GamaRuntimeException {
 		IAgent a = agent;
 		if ( a == null ) {
-			a = GAMA.getDefaultScope().getSimulationScope();
+			a = GAMA.getExperiment().getAgent();
 			param.setValue(newValue);
 		}
 		if ( a != null && a.getSpecies().hasVar(param.getName()) ) {
-			GAMA.getDefaultScope().setAgentVarValue(a, param.getName(), newValue);
+			GAMA.getExperiment().getAgent().getScope().setAgentVarValue(a, param.getName(), newValue);
 		}
 	}
 
@@ -170,8 +171,15 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 	}
 
 	protected Object getParameterValue() throws GamaRuntimeException {
-		if ( agent == null ) { return param.value(getScope()); }
-		return getScope().getAgentVarValue(getAgent(), param.getName());
+		return GAMA.run(new InScope() {
+
+			@Override
+			public Object run(IScope scope) {
+				if ( agent == null ) { return param.value(scope); }
+				return scope.getAgentVarValue(getAgent(), param.getName());
+			}
+		});
+
 	}
 
 	protected void setParameterValue(final Object val) {
@@ -185,7 +193,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 				} catch (GamaRuntimeException e) {
 					e.printStackTrace();
 					e.addContext("Value of " + name + " cannot be modified");
-					GAMA.reportError(new GamaRuntimeException(e));
+					GAMA.reportError(GamaRuntimeException.create(e));
 					return;
 				}
 			}
@@ -310,12 +318,15 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 		}
 	}
 
-	protected final IScope getScope() {
-		return GAMA.getDefaultScope();
-	}
-
 	protected IAgent getAgent() {
-		return agent == null ? getScope().getSimulationScope() : agent;
+		if ( agent != null ) { return agent; }
+		return GAMA.run(new InScope<IAgent>() {
+
+			@Override
+			public IAgent run(IScope scope) {
+				return scope.getSimulationScope();
+			}
+		});
 	}
 
 	protected boolean acceptTooltip() {

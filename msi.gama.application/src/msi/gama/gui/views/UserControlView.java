@@ -98,7 +98,7 @@ public class UserControlView extends GamaViewPart {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				GAMA.getFrontmostSimulation().getScheduler().setUserHold(false);
+				GAMA.controller.scheduler.setUserHold(false);
 				deactivate(parent);
 				// GuiUtils.hideView(ID);
 			}

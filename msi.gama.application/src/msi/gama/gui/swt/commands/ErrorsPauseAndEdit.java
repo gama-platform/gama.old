@@ -13,7 +13,7 @@ public class ErrorsPauseAndEdit extends AbstractHandler implements IElementUpdat
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		GAMA.TREAT_ERRORS_AS_FATAL = !GAMA.TREAT_ERRORS_AS_FATAL;
+		GAMA.REVEAL_ERRORS_IN_EDITOR = !GAMA.REVEAL_ERRORS_IN_EDITOR;
 		ICommandService service =
 			(ICommandService) HandlerUtil.getActiveWorkbenchWindowChecked(event).getService(
 				ICommandService.class);
@@ -23,7 +23,7 @@ public class ErrorsPauseAndEdit extends AbstractHandler implements IElementUpdat
 
 	@Override
 	public void updateElement(UIElement element, Map parameters) {
-		element.setChecked(GAMA.TREAT_ERRORS_AS_FATAL);
+		element.setChecked(GAMA.REVEAL_ERRORS_IN_EDITOR);
 	}
 
 }

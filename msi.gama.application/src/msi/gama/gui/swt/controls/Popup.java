@@ -4,7 +4,6 @@
  */
 package msi.gama.gui.swt.controls;
 
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.SwtGui;
 import org.apache.commons.lang.WordUtils;
 import org.eclipse.swt.SWT;
@@ -108,7 +107,7 @@ public class Popup {
 		GC gc = new GC(popupText);
 		int textWidth = gc.textExtent(s).x + 5;
 		gc.dispose();
-		GuiUtils.debug("Popup.display: textWidth = " + textWidth);
+		// GuiUtils.debug("Popup.display: textWidth = " + textWidth);
 		// We grab the location of the popup on the display
 		Point point = provider.getAbsoluteOrigin();
 		popup.setLocation(point.x, point.y);
@@ -116,10 +115,10 @@ public class Popup {
 		// We compute the available width on the display given this location (and a border of 5 pixels)
 		final Rectangle screenArea = popup.getDisplay().getClientArea();
 		int availableWidth = screenArea.x + screenArea.width - point.x - 5;
-		GuiUtils.debug("Popup.display: availableWidth = " + availableWidth);
+		// GuiUtils.debug("Popup.display: availableWidth = " + availableWidth);
 		// We compute the final width of the popup
 		int popupWidth = Math.min(availableWidth, maxPopupWidth);
-		GuiUtils.debug("Popup.display: popupWidth = " + popupWidth);
+		// GuiUtils.debug("Popup.display: popupWidth = " + popupWidth);
 
 		// If the width of the text is greater than the computed width, we wrap the text accordingly, otherwise we
 		// shrink the popup to the text width
@@ -130,10 +129,10 @@ public class Popup {
 			for ( String line : lines ) {
 				int lineWidth = line.length();
 				maxLineChars = maxLineChars > lineWidth ? maxLineChars : lineWidth;
-				GuiUtils.debug("Popup.display: maxLineCharts = " + maxLineChars);
+				// GuiUtils.debug("Popup.display: maxLineCharts = " + maxLineChars);
 			}
 			int wrapLimit = (int) ((double) maxLineChars / (double) textWidth * popupWidth);
-			GuiUtils.debug("Popup.display: wrapLimit = " + wrapLimit);
+			// GuiUtils.debug("Popup.display: wrapLimit = " + wrapLimit);
 
 			s = WordUtils.wrap(s, wrapLimit);
 		} else {

@@ -25,9 +25,7 @@ public class ReloadSimulationHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		if ( GAMA.getExperiment() != null ) {
-			GAMA.getExperiment().userReload();
-		}
+		GAMA.controller.userReload();
 		return null;
 	}
 
