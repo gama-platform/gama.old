@@ -230,7 +230,7 @@ public class SQLSkill extends Skill {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLSkill.executeUpdateDB: " + e.toString());
+			throw GamaRuntimeException.error("SQLSkill.executeUpdateDB: " + e.toString());
 		}
 		if ( DEBUG ) {
 			GuiUtils.debug(updateComm + " was run");
@@ -318,7 +318,7 @@ public class SQLSkill extends Skill {
 			// conn.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLSkill.insert: " + e.toString());
+			throw GamaRuntimeException.error("SQLSkill.insert: " + e.toString());
 		}
 		if ( DEBUG ) {
 			GuiUtils.debug("Insert into " + " was run");
@@ -445,7 +445,7 @@ public class SQLSkill extends Skill {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("SQLSkill.select_QM: " + e.toString());
+			throw GamaRuntimeException.error("SQLSkill.select_QM: " + e.toString());
 		}
 		
 //------------------------------------------------------------------------------------------

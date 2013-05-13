@@ -204,7 +204,7 @@ public class WaterLevelUtils {
 					res=currentheight+sol1;
 					if ((sol2>0)&(sol2<(previousheight-currentheight)))
 					{
-						throw new GamaRuntimeException("2 possible water level, pb...");
+						throw GamaRuntimeException.error("2 possible water level, pb...");
 						
 					}
 					
@@ -215,7 +215,7 @@ public class WaterLevelUtils {
 					res=currentheight+sol2;
 					if ((sol1>0)&(sol1<(previousheight-currentheight)))
 					{
-						throw new GamaRuntimeException("2 possible water level, pb...");
+						throw GamaRuntimeException.error("2 possible water level, pb...");
 						
 					}
 					
@@ -226,7 +226,7 @@ public class WaterLevelUtils {
 				finished=true;
 		}
 		if (!trouve)
-			throw new GamaRuntimeException("no possible water level, pb...");
+			throw GamaRuntimeException.error("no possible water level, pb...");
 		return res;
 	}
 	

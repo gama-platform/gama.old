@@ -42,10 +42,10 @@ public class UserEDPSystem extends SystemEDP {
 				systemReturn.add(exprb.build().calculate());
 			} catch (UnknownFunctionException e) {
 				e.printStackTrace();
-				throw new GamaRuntimeException("EDPSystem Computation Exception:  " + e.toString());
+				throw GamaRuntimeException.error("EDPSystem Computation Exception:  " + e.toString());
 			} catch (UnparsableExpressionException e) {
 				e.printStackTrace();
-				throw new GamaRuntimeException("EDPSystem Computation Exception:  " + e.toString());
+				throw GamaRuntimeException.error("EDPSystem Computation Exception:  " + e.toString());
 			}
 		}
 		return systemReturn;

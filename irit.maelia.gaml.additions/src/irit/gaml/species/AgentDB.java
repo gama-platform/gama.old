@@ -89,7 +89,7 @@ public class AgentDB extends GamlAgent {
 			isConnection = false;
 		} catch (SQLException e) {
 			// e.printStackTrace();
-			throw new GamaRuntimeException("AgentDB.close error:" + e.toString());
+			throw GamaRuntimeException.error("AgentDB.close error:" + e.toString());
 		}
 		return null;
 
@@ -184,7 +184,7 @@ public class AgentDB extends GamlAgent {
 //		SqlConnection sqlConn;
 		
 	if ( isConnection ) { 
-		throw new GamaRuntimeException("AgentDB.connection error: a connection is already opened");
+		throw GamaRuntimeException.error("AgentDB.connection error: a connection is already opened");
 	}
 	try {
 		sqlConn = SqlUtils.createConnectionObject(scope);
@@ -192,16 +192,16 @@ public class AgentDB extends GamlAgent {
 		isConnection = true;
 	} catch (SQLException e) {
 		e.printStackTrace();
-		throw new GamaRuntimeException("AgentDB.connect:" + e.toString());
+		throw GamaRuntimeException.error("AgentDB.connect:" + e.toString());
 	} catch (ClassNotFoundException e) {
 		e.printStackTrace();
-		throw new GamaRuntimeException("AgentDB.connect:" + e.toString());
+		throw GamaRuntimeException.error("AgentDB.connect:" + e.toString());
 	} catch (InstantiationException e) {
 		e.printStackTrace();
-		throw new GamaRuntimeException("AgentDB.connect:" + e.toString());
+		throw GamaRuntimeException.error("AgentDB.connect:" + e.toString());
 	} catch (IllegalAccessException e) {
 		e.printStackTrace();
-		throw new GamaRuntimeException("AgentDB.connect:" + e.toString());
+		throw GamaRuntimeException.error("AgentDB.connect:" + e.toString());
 	}
 	return null;
 //----------------------------------------------------------------------------------------------------------
@@ -309,7 +309,7 @@ public class AgentDB extends GamlAgent {
 // Edit 29/April/2013
 //------------------------------------------------------------------------------------------------
 		if (!isConnection){
-			throw new GamaRuntimeException("AgentDB.select: Connection was not established " );
+			throw GamaRuntimeException.error("AgentDB.select: Connection was not established ");
 		}
 		String selectComm = (String) scope.getArg("select", IType.STRING);
 		GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
@@ -328,7 +328,7 @@ public class AgentDB extends GamlAgent {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("AgentDB.select: " + e.toString());
+			throw GamaRuntimeException.error("AgentDB.select: " + e.toString());
 		}
 //--------------------------------------------------------------------------------------------------
 		
@@ -377,7 +377,7 @@ public class AgentDB extends GamlAgent {
 // Edit 29/April/2013
 //------------------------------------------------------------------------------------------------
 		if (!isConnection){
-			throw new GamaRuntimeException("AgentDB.select: Connection was not established " );
+			throw GamaRuntimeException.error("AgentDB.select: Connection was not established ");
 		}
 		String updateComm = (String) scope.getArg("updateComm", IType.STRING);
 		GamaList<Object> values = (GamaList<Object>) scope.getArg("values", IType.LIST);
@@ -394,7 +394,7 @@ public class AgentDB extends GamlAgent {
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			throw new GamaRuntimeException("AgentDB.executeUpdate: " + e.toString());
+			throw GamaRuntimeException.error("AgentDB.executeUpdate: " + e.toString());
 		}
 		if ( DEBUG ) {
 			GuiUtils.informConsole(updateComm + " was run");
@@ -462,7 +462,7 @@ public class AgentDB extends GamlAgent {
 // Edit 29/April/2013
 //------------------------------------------------------------------------------------------------
 		if (!isConnection){
-			throw new GamaRuntimeException("AgentDB.select: Connection was not established " );
+			throw GamaRuntimeException.error("AgentDB.select: Connection was not established ");
 		}
 		String table_name = (String) scope.getArg("into", IType.STRING);
 		GamaList<Object> cols = (GamaList<Object>) scope.getArg("columns", IType.LIST);
@@ -482,7 +482,7 @@ public class AgentDB extends GamlAgent {
 			// conn.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-			throw new GamaRuntimeException("AgentDB.insert: " + e.toString());
+			throw GamaRuntimeException.error("AgentDB.insert: " + e.toString());
 		}
 		if ( DEBUG ) {
 			GuiUtils.informConsole("Insert into " + " was run");
