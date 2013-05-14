@@ -30,7 +30,7 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gama.util.graph.*;
+import msi.gama.util.graph.IGraph;
 import msi.gama.util.graph.writer.AvailableGraphWriters;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -66,9 +66,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		String typeExp = getLiteral(IKeyword.TYPE);
-		IExpression file = getFacet(IKeyword.TO);
-		IExpression rewriteExp = getFacet(IKeyword.REWRITE);
+		final String typeExp = getLiteral(IKeyword.TYPE);
+		final IExpression file = getFacet(IKeyword.TO);
+		final IExpression rewriteExp = getFacet(IKeyword.REWRITE);
 
 		String path = "";
 		if ( file == null ) {
@@ -86,7 +86,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			type = typeExp;
 		}
 		if ( type.equals("shp") ) {
-			IExpression item = getFacet(IKeyword.DATA);
+			final IExpression item = getFacet(IKeyword.DATA);
 			List<? extends IAgent> agents;
 			if ( item == null ) {
 				scope.setStatus(ExecutionStatus.failure);
@@ -100,9 +100,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			if ( agents.isEmpty() ) {}
 			saveShape(agents, path, scope);
 		} else if ( type.equals("text") || type.equals("csv") ) {
-			File fileTxt = new File(path);
+			final File fileTxt = new File(path);
 			if ( rewriteExp != null ) {
-				boolean rewrite = Cast.asBool(scope, rewriteExp.value(scope));
+				final boolean rewrite = Cast.asBool(scope, rewriteExp.value(scope));
 				if ( rewrite ) {
 					if ( fileTxt.exists() ) {
 						fileTxt.delete();
@@ -111,17 +111,17 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			}
 			try {
 				fileTxt.createNewFile();
-			} catch (GamaRuntimeException e) {
+			} catch (final GamaRuntimeException e) {
 				throw e;
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				throw GamaRuntimeException.create(e);
-			} 
-			IExpression item = getFacet(IKeyword.DATA);
+			}
+			final IExpression item = getFacet(IKeyword.DATA);
 			saveText(type, item, fileTxt, scope);
 
-		} else if (AvailableGraphWriters.getAvailableWriters().contains(type.trim().toLowerCase())) {
+		} else if ( AvailableGraphWriters.getAvailableWriters().contains(type.trim().toLowerCase()) ) {
 
-			IExpression item = getFacet(IKeyword.DATA);
+			final IExpression item = getFacet(IKeyword.DATA);
 			IGraph g;
 			if ( item == null ) {
 				scope.setStatus(ExecutionStatus.failure);
@@ -132,9 +132,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				scope.setStatus(ExecutionStatus.failure);
 				return null;
 			}
-			AvailableGraphWriters
-				.getGraphWriter(type.trim().toLowerCase())
-				.writeGraph(scope, g, null, path);
+			AvailableGraphWriters.getGraphWriter(type.trim().toLowerCase()).writeGraph(scope, g, null, path);
 
 		} else {
 
@@ -145,26 +143,26 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	public void saveShape(final List<? extends IAgent> agents, final String path, final IScope scope)
 		throws GamaRuntimeException {
-		Map<String, String> attributes = new GamaMap();
+		final Map<String, String> attributes = new GamaMap();
 		computeInits(scope, attributes);
-		StringBuilder specs = new StringBuilder(agents.size() * 20);
-		for ( IAgent be : agents ) {
+		final StringBuilder specs = new StringBuilder(agents.size() * 20);
+		for ( final IAgent be : agents ) {
 			if ( be.getGeometry() != null ) {
-				IAgent ag = be;
+				final IAgent ag = be;
 				specs.append("geom:" + ag.getInnerGeometry().getClass().getSimpleName());
 				break;
 			}
 		}
 
 		try {
-			for ( String e : attributes.keySet() ) {
+			for ( final String e : attributes.keySet() ) {
 				specs.append(',').append(e).append(':').append(typeJava(agents.get(0).getAttribute(attributes.get(e))));
 			}
-			String featureTypeName = agents.get(0).getSpeciesName();
+			final String featureTypeName = agents.get(0).getSpeciesName();
 			saveShapeFile(scope, path, agents, featureTypeName, specs.toString(), attributes);
-		} catch (GamaRuntimeException e) {
+		} catch (final GamaRuntimeException e) {
 			throw e;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw GamaRuntimeException.create(e);
 		}
 
@@ -173,7 +171,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	public void saveText(final String type, final IExpression item, final File fileTxt, final IScope scope)
 		throws GamaRuntimeException {
 		try {
-			FileWriter fw = new FileWriter(fileTxt, true);
+			final FileWriter fw = new FileWriter(fileTxt, true);
 
 			if ( item != null ) {
 				if ( type.equals("text") ) {
@@ -181,7 +179,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				} else if ( type.equals("csv") ) {
 					item.getContentType();
 					if ( item.getType().id() == IType.LIST ) {
-						IList values = Cast.asList(scope, item.value(scope));
+						final IList values = Cast.asList(scope, item.value(scope));
 						for ( int i = 0; i < values.size() - 1; i++ ) {
 							fw.write(Cast.asString(scope, values.get(i)) + ",");
 						}
@@ -192,9 +190,9 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				}
 			}
 			fw.close();
-		} catch (GamaRuntimeException e) {
+		} catch (final GamaRuntimeException e) {
 			throw e;
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e);
 		}
 
@@ -216,7 +214,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	private void computeInits(final IScope scope, final Map<String, String> values) throws GamaRuntimeException {
 		if ( init == null ) { return; }
-		for ( Facet f : init.entrySet() ) {
+		for ( final Facet f : init.entrySet() ) {
 			if ( f != null ) {
 				values.put(f.getValue().toString(), f.getKey());
 			}
@@ -227,18 +225,18 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		final String featureTypeName, final String specs, final Map<String, String> attributes) throws IOException,
 		SchemaException, GamaRuntimeException {
 
-		ShapefileDataStore store = new ShapefileDataStore(new File(path).toURI().toURL());
-		SimpleFeatureType type = DataUtilities.createType(featureTypeName, specs);
+		final ShapefileDataStore store = new ShapefileDataStore(new File(path).toURI().toURL());
+		final SimpleFeatureType type = DataUtilities.createType(featureTypeName, specs);
 
 		store.createSchema(type);
-		FeatureStore<FeatureType, Feature> featureStore = (FeatureStore) store.getFeatureSource(featureTypeName);
-		Transaction t = new DefaultTransaction();
-		FeatureCollection collection = FeatureCollections.newCollection();
+		final FeatureStore<FeatureType, Feature> featureStore = (FeatureStore) store.getFeatureSource(featureTypeName);
+		final Transaction t = new DefaultTransaction();
+		final FeatureCollection collection = FeatureCollections.newCollection();
 
 		int i = 1;
 
-		for ( IAgent ag : agents ) {
-			List<Object> liste = new GamaList<Object>();
+		for ( final IAgent ag : agents ) {
+			final List<Object> liste = new GamaList<Object>();
 			Geometry geom = (Geometry) ag.getInnerGeometry().clone();
 
 			// TODO Pr�voir un locationConverter pour passer d'un environnement � l'autre
@@ -246,12 +244,12 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			geom = scope.getTopology().getGisUtils().inverseTransform(geom);
 			liste.add(geom);
 			if ( attributes != null ) {
-				for ( Object e : attributes.values() ) {
+				for ( final Object e : attributes.values() ) {
 					liste.add(ag.getAttribute(e.toString()));
 				}
 			}
 
-			SimpleFeature simpleFeature = SimpleFeatureBuilder.build(type, liste.toArray(), String.valueOf(i++));
+			final SimpleFeature simpleFeature = SimpleFeatureBuilder.build(type, liste.toArray(), String.valueOf(i++));
 			collection.add(simpleFeature);
 		}
 
@@ -262,14 +260,14 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		writePRJ(scope, path);
 	}
 
-	private void writePRJ(IScope scope, final String path) {
-		CoordinateReferenceSystem crs = scope.getTopology().getGisUtils().getCrs();
+	private void writePRJ(final IScope scope, final String path) {
+		final CoordinateReferenceSystem crs = scope.getTopology().getGisUtils().getCrs();
 		if ( crs != null ) {
 			try {
-				FileWriter fw = new FileWriter(path.replace(".shp", ".prj"));
+				final FileWriter fw = new FileWriter(path.replace(".shp", ".prj"));
 				fw.write(crs.toString());
 				fw.close();
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				e.printStackTrace();
 			}
 		}

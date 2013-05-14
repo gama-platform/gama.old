@@ -144,10 +144,8 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 		"if it is a graph, one_of returns one of the nodes of the graph",
 		"if it is a file, one_of returns one of the elements of the content of the file (that is also a container)",
 		"if it is a population, one_of returns one of the agents of the population" }, examples = {
-		"any ([1,2,3]) 		--: 	1, 2, or 3",
-		"one_of ([1,2,3]) 	--:	 	1, 2, or 3",
-		"one_of ([2::3, 4::5, 6::7]) 	--: 	3, 5 or 7",
-		"// The species bug has previously been defined",
+		"any ([1,2,3]) 		--: 	1, 2, or 3", "one_of ([1,2,3]) 	--:	 	1, 2, or 3",
+		"one_of ([2::3, 4::5, 6::7]) 	--: 	3, 5 or 7", "// The species bug has previously been defined",
 		"one_of (bug) 		--:		 bug3",
 		"let mat3 type:matrix value: matrix([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]])",
 		"one_of(mat3) 		--: 	 \"c11\",\"c12\",\"c13\", \"c21\",\"c22\" or \"c23\"" })
@@ -173,8 +171,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	 *            or should replace existing values (at index, or everywhere if <code>all</code> is
 	 *            true)
 	 */
-	public void add(IScope scope, final KeyType index, final Object value, Object parameter,
-		boolean all, boolean add);
+	public void add(IScope scope, final KeyType index, final Object value, Object parameter, boolean all, boolean add);
 
 	/**
 	 * The general method for removing values from containers. Called by the
@@ -198,8 +195,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	public abstract IMatrix matrixValue(IScope scope) throws GamaRuntimeException;
 
 	@operator(value = "as_matrix", content_type = ITypeProvider.FIRST_CONTENT_TYPE, can_be_const = true)
-	public abstract IMatrix matrixValue(IScope scope, ILocation preferredSize)
-		throws GamaRuntimeException;
+	public abstract IMatrix matrixValue(IScope scope, ILocation preferredSize) throws GamaRuntimeException;
 
 	@operator(value = IKeyword.MAP, can_be_const = true)
 	public abstract GamaMap mapValue(IScope scope) throws GamaRuntimeException;
@@ -210,6 +206,6 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	 * @return an Iterable that can be dependent on the scope (usually "this", but species return
 	 *         their population)
 	 */
-	public Iterable<ValueType> iterable(final IScope scope);
+	public Iterable<? extends ValueType> iterable(final IScope scope);
 
 }

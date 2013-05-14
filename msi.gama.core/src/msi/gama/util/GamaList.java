@@ -50,11 +50,11 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 		}
 
 		@Override
-		public void remove(IScope scope, final Object index, final Object value, final boolean all) {}
+		public void remove(final IScope scope, final Object index, final Object value, final boolean all) {}
 
 		@Override
-		public void add(IScope scope, final Integer index, final Object value, final Object param, boolean all,
-			boolean add) {}
+		public void add(final IScope scope, final Integer index, final Object value, final Object param,
+			final boolean all, final boolean add) {}
 
 		@Override
 		public GamaList clone() {
@@ -62,7 +62,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 		}
 
 		@Override
-		public GamaList copy(IScope scope) {
+		public GamaList copy(final IScope scope) {
 			return this;
 		}
 
@@ -101,6 +101,38 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 	}
 
+	// A completely immutable array-backed list
+
+	public static class Array extends GamaList.Immutable {
+
+		final Object[] array;
+
+		public Array(final Object[] objects) {
+			array = objects;
+		}
+
+		@Override
+		public Object get(final int index) {
+			return array[index];
+		}
+
+		@Override
+		public Object get(final IScope scope, final Integer index) {
+			return array[index];
+		}
+
+		@Override
+		public int size() {
+			return array.length;
+		}
+
+		@Override
+		public boolean isEmpty() {
+			return array.length == 0;
+		}
+
+	}
+
 	public GamaList() {
 		super();
 	}
@@ -118,14 +150,14 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 	public GamaList(final double[] tab) {
 		super(tab.length + 2);
-		for ( double d : tab ) {
+		for ( final double d : tab ) {
 			add((E) Double.valueOf(d));
 		}
 	}
 
 	public GamaList(final int[] tab) {
 		super(tab.length + 2);
-		for ( int d : tab ) {
+		for ( final int d : tab ) {
 			add((E) Integer.valueOf(d));
 		}
 	}
@@ -167,7 +199,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 	@Override
 	// @operator(value = "string", can_be_const = true)
-	public String stringValue(IScope scope) throws GamaRuntimeException {
+	public String stringValue(final IScope scope) throws GamaRuntimeException {
 		final StringBuilder sb = new StringBuilder(size() * 5);
 		sb.append('[');
 		for ( int i = 0, n = size(); i < n; i++ ) {
@@ -220,7 +252,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 		final GamaMap result = new GamaMap();
 		if ( isPairs(this) ) {
 			for ( final E e : this ) {
-				GamaPair pair = (GamaPair) e;
+				final GamaPair pair = (GamaPair) e;
 				result.put(pair.first(), pair.last());
 			}
 		} else {
@@ -241,8 +273,8 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	@Override
-	public void add(IScope scope, final Integer i, final Object value, final Object param, boolean all, boolean add)
-		throws GamaRuntimeException {
+	public void add(final IScope scope, final Integer i, final Object value, final Object param, final boolean all,
+		final boolean add) throws GamaRuntimeException {
 		if ( i == null ) {
 			if ( all && !add ) {
 				for ( int index = 0, n = size(); index < n; index++ ) {
@@ -267,16 +299,16 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	@Override
-	public void remove(IScope scope, final Object index, final Object value, boolean all) {
+	public void remove(final IScope scope, final Object index, final Object value, final boolean all) {
 		if ( index == null ) {
 			if ( all ) {
 				if ( value instanceof IContainer ) {
-					for ( Object o : (IContainer) value ) {
+					for ( final Object o : (IContainer) value ) {
 						remove(scope, null, o, true);
 					}
 				} else if ( value != null ) {
-					for ( Iterator iterator = iterator(); iterator.hasNext(); ) {
-						Object obj = iterator.next();
+					for ( final Iterator iterator = iterator(); iterator.hasNext(); ) {
+						final Object obj = iterator.next();
 						if ( obj.equals(value) ) {
 							iterator.remove();
 						}
@@ -288,7 +320,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 				remove(value);
 			}
 		} else {
-			int i = Cast.asInt(scope, index);
+			final int i = Cast.asInt(scope, index);
 			remove(i);
 		}
 	}
@@ -580,7 +612,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 	@Override
 	public IContainer<Integer, E> reverse(final IScope scope) {
-		GamaList list = clone();
+		final GamaList list = clone();
 		Collections.reverse(list);
 		return list;
 	}
@@ -604,7 +636,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	}
 
 	@Override
-	public GamaList copy(IScope scope) {
+	public GamaList copy(final IScope scope) {
 		return new GamaList(this);
 	}
 
@@ -635,8 +667,8 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	 */
 	@Override
 	public boolean checkBounds(final Integer index, final boolean forAdding) {
-		int size = size();
-		boolean upper = forAdding ? index <= size : index < size;
+		final int size = size();
+		final boolean upper = forAdding ? index <= size : index < size;
 		return index >= 0 && upper;
 	}
 
@@ -685,7 +717,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 	public E any(final IScope scope) {
 		if ( isEmpty() ) { return null; }
 
-		int i = GAMA.getRandom().between(0, size() - 1);
+		final int i = GAMA.getRandom().between(0, size() - 1);
 		return get(i);
 	}
 

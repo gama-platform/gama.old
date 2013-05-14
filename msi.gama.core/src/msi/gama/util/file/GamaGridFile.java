@@ -15,27 +15,27 @@ import com.vividsolutions.jts.geom.Envelope;
 
 public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 
-	public GamaGridFile(IScope scope, String pathName) throws GamaRuntimeException {
+	public GamaGridFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}
 
 	@Override
-	public Envelope computeEnvelope(IScope scope) {
-		File gridFile = getFile();
+	public Envelope computeEnvelope(final IScope scope) {
+		final File gridFile = getFile();
 		ArcGridReader store = null;
 		Envelope env = null;
 		try {
 			store = new ArcGridReader(gridFile.toURI().toURL());
-			GeneralEnvelope genv = store.getOriginalEnvelope();
+			final GeneralEnvelope genv = store.getOriginalEnvelope();
 			env = new Envelope(genv.getMinimum(0), genv.getMaximum(0), genv.getMinimum(1), genv.getMaximum(1));
 			if ( store.getCrs() != null ) {
-				double latitude = env.centre().x;
-				double longitude = env.centre().y;
-				GisUtils gis = scope.getTopology().getGisUtils();
+				final double latitude = env.centre().x;
+				final double longitude = env.centre().y;
+				final GisUtils gis = scope.getTopology().getGisUtils();
 				gis.setTransformCRS(store.getCrs(), latitude, longitude);
 				env = gis.transform(env);
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e);
 		}
 		store.dispose();
@@ -43,43 +43,43 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 	}
 
 	@Override
-	protected void fillBuffer(IScope scope) throws GamaRuntimeException {
+	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if ( buffer != null ) { return; }
 		buffer = new GamaList();
-		File gridFile = getFile();
+		final File gridFile = getFile();
 		ArcGridReader store;
 		try {
 			store = new ArcGridReader(gridFile.toURI().toURL());
-			GeneralEnvelope genv = store.getOriginalEnvelope();
-			int numRows = store.getOriginalGridRange().getHigh(0) + 1;
-			int numCols = store.getOriginalGridRange().getHigh(1) + 1;
-			double cellHeight = genv.getSpan(1) / numRows;
-			double cellWidth = genv.getSpan(0) / numCols;
-			GamaList<IShape> shapes = new GamaList<IShape>();
+			final GeneralEnvelope genv = store.getOriginalEnvelope();
+			final int numRows = store.getOriginalGridRange().getHigh(0) + 1;
+			final int numCols = store.getOriginalGridRange().getHigh(1) + 1;
+			final double cellHeight = genv.getSpan(1) / numRows;
+			final double cellWidth = genv.getSpan(0) / numCols;
+			final GamaList<IShape> shapes = new GamaList<IShape>();
 			shapes.add(new GamaPoint(genv.getMinimum(0), genv.getMinimum(1)));
 			shapes.add(new GamaPoint(genv.getMaximum(0), genv.getMinimum(1)));
 			shapes.add(new GamaPoint(genv.getMaximum(0), genv.getMaximum(1)));
 			shapes.add(new GamaPoint(genv.getMinimum(0), genv.getMaximum(1)));
 			shapes.add(shapes.get(0));
-			IShape environmentFrame = GamaGeometryType.buildPolygon(shapes);
+			// IShape environmentFrame = GamaGeometryType.buildPolygon(shapes);
 
-			GamaPoint p = new GamaPoint(0, 0);
+			final GamaPoint p = new GamaPoint(0, 0);
 			// GamaPoint origin =
 			// new GamaPoint(environmentFrame.getEnvelope().getMinX(), environmentFrame.getEnvelope()
 			// .getMinY());
-			double originX = genv.getMinimum(0);
-			double originY = genv.getMinimum(1);
+			final double originX = genv.getMinimum(0);
+			final double originY = genv.getMinimum(1);
 			// GeometryUtils.translation(g, -origin.x, -origin.y);
-			GridCoverage2D coverage = store.read(null);
-			double cmx = cellWidth / 2;
-			double cmy = cellHeight / 2;
+			final GridCoverage2D coverage = store.read(null);
+			final double cmx = cellWidth / 2;
+			final double cmy = cellHeight / 2;
 			for ( int i = 0, n = numRows * numCols; i < n; i++ ) {
-				int yy = i / numCols;
-				int xx = i - yy * numCols;
+				final int yy = i / numCols;
+				final int xx = i - yy * numCols;
 				p.x = originX + xx * cellWidth + cmx;
 				p.y = originY + yy * cellHeight + cmy;
 				GamaShape rect = (GamaShape) GamaGeometryType.buildRectangle(cellWidth, cellHeight, p);
-				double[] vals =
+				final double[] vals =
 					(double[]) coverage.evaluate(new DirectPosition2D(rect.getLocation().getX(), rect.getLocation()
 						.getY()));
 
@@ -107,7 +107,7 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 			 */
 
 			store.dispose();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 
@@ -120,7 +120,7 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 	}
 
 	@Override
-	protected IGamaFile _copy(IScope scope) {
+	protected IGamaFile _copy(final IScope scope) {
 		// TODO ? Will require to do a copy of the file. But how to get the new name ? Or maybe just
 		// as something usable like
 		return null;
@@ -139,13 +139,13 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 	}
 
 	public int getNbRows() {
-		File gridFile = getFile();
+		final File gridFile = getFile();
 		ArcGridReader store = null;
 		int nbRows = 0;
 		try {
 			store = new ArcGridReader(gridFile.toURI().toURL());
 			nbRows = store.getOriginalGridRange().getHigh(1) + 1;
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e);
 		}
 		store.dispose();
@@ -153,13 +153,13 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 	}
 
 	public int getNbCols() {
-		File gridFile = getFile();
+		final File gridFile = getFile();
 		ArcGridReader store = null;
 		int nbRows = 0;
 		try {
 			store = new ArcGridReader(gridFile.toURI().toURL());
 			nbRows = store.getOriginalGridRange().getHigh(0) + 1;
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e);
 		}
 		store.dispose();
@@ -167,20 +167,20 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 	}
 
 	public IShape getGeometry() {
-		File gridFile = getFile();
+		final File gridFile = getFile();
 		ArcGridReader store = null;
 		IShape geom = null;
 		try {
 			store = new ArcGridReader(gridFile.toURI().toURL());
-			GeneralEnvelope genv = store.getOriginalEnvelope();
-			GamaList<IShape> shapes = new GamaList<IShape>();
+			final GeneralEnvelope genv = store.getOriginalEnvelope();
+			final GamaList<IShape> shapes = new GamaList<IShape>();
 			shapes.add(new GamaPoint(genv.getMinimum(0), genv.getMinimum(1)));
 			shapes.add(new GamaPoint(genv.getMaximum(0), genv.getMinimum(1)));
 			shapes.add(new GamaPoint(genv.getMaximum(0), genv.getMaximum(1)));
 			shapes.add(new GamaPoint(genv.getMinimum(0), genv.getMaximum(1)));
 			shapes.add(shapes.get(0));
 			geom = GamaGeometryType.buildPolygon(shapes);
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e);
 		}
 		store.dispose();

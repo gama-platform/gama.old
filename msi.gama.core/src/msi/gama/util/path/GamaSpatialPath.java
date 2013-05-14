@@ -284,7 +284,7 @@ public class GamaSpatialPath extends GamaPath<IShape,IShape> {
 				for ( int i = 0; i < nbSp - 1; i++ ) {
 					temp[0] = coords[i];
 					temp[1] = coords[i + 1];
-					LineString segment = GeometryUtils.getFactory().createLineString(temp);
+					LineString segment = GeometryUtils.factory.createLineString(temp);
 					double distS = segment.distance(pointGeom);
 					if ( distS < distanceS ) {
 						distanceS = distS;
@@ -308,7 +308,7 @@ public class GamaSpatialPath extends GamaPath<IShape,IShape> {
 				for ( int i = 0; i < nbSp - 1; i++ ) {
 					temp[0] = coords[i];
 					temp[1] = coords[i + 1];
-					LineString segment = GeometryUtils.getFactory().createLineString(temp);
+					LineString segment = GeometryUtils.factory.createLineString(temp);
 					double distT = segment.distance(pointGeom);
 					if ( distT < distanceT ) {
 						distanceT = distT;

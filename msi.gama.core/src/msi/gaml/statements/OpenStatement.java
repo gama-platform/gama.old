@@ -19,23 +19,19 @@
 package msi.gaml.statements;
 
 import java.awt.Desktop;
-import java.io.File;
-import java.io.IOException;
-
+import java.io.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.ISymbolKind;
-import msi.gama.runtime.ExecutionStatus;
-import msi.gama.runtime.IScope;
+import msi.gama.precompiler.*;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
-
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Display;
 
@@ -45,12 +41,12 @@ import org.eclipse.swt.widgets.Display;
  * TODO change the keywork "type" to something else
  * 
  * @author Samuel Thiriot
- *
+ * 
  */
 @symbol(name = IKeyword.OPEN, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false, with_args = true, remote_context = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.ACTION })
 @facets(value = { @facet(name = IKeyword.FILE, type = IType.STRING, optional = false),
-		@facet(name = IKeyword.TYPE, type = IType.ID, optional = true)}, omissible = IKeyword.FILE) 
+	@facet(name = IKeyword.TYPE, type = IType.ID, optional = true) }, omissible = IKeyword.FILE)
 public class OpenStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
 	private Arguments init;
@@ -61,55 +57,55 @@ public class OpenStatement extends AbstractStatementSequence implements IStateme
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		
+
 		// retrieve the file to export
-		IExpression file = getFacet(IKeyword.FILE);
-		
+		final IExpression file = getFacet(IKeyword.FILE);
+
 		String path = "";
 		if ( file == null ) {
 			scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
-			
+
 		path =
-			scope.getSimulationScope().getModel()
-				.getRelativeFilePath(Cast.asString(scope, file.value(scope)), false);
+			scope.getSimulationScope().getModel().getRelativeFilePath(Cast.asString(scope, file.value(scope)), false);
 		if ( path.equals("") ) {
 			scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
-			
+
 		// retrieve the optional "with" facet*
-		IExpression item = getFacet(IKeyword.TYPE);
-		String withParam  = null;
-		if (item != null) {
-			System.err.println("attempting to cast "+item);
+		final IExpression item = getFacet(IKeyword.TYPE);
+		String withParam = null;
+		if ( item != null ) {
+			System.err.println("attempting to cast " + item);
 			withParam = Cast.asString(scope, item.value(scope));
-				//getLiteral(IKeyword.WITH);
+			// getLiteral(IKeyword.WITH);
 		}
-		if (withParam == null) {
+		if ( withParam == null ) {
 			System.err.println("no program parameter, will open default editor");
 			openFilename(scope, path);
 		} else {
-			System.err.println("with program: "+withParam+" "+path);
+			System.err.println("with program: " + withParam + " " + path);
 			openFilenameWithProgram(scope, path, withParam);
 		}
-	
+
 		return null;
 	}
-	
-	protected void openFilenameWithProgram(final IScope scope, String filename, String program) {
-		
+
+	protected void openFilenameWithProgram(final IScope scope, final String filename, final String program) {
+
 		try {
-			ProcessBuilder pb = new ProcessBuilder(program, filename);
-			Process p = pb.start();
-			
-			//Runtime.getRuntime().exec(program+" "+filename);
-		} catch (IOException e) {
+			final ProcessBuilder pb = new ProcessBuilder(program, filename);
+			final Process p = pb.start();
+
+			// Runtime.getRuntime().exec(program+" "+filename);
+		} catch (final IOException e) {
 			e.printStackTrace();
-			throw GamaRuntimeException.error("error while attempting to open "+filename+" with program "+program+" ("+e.getMessage()+")");
+			throw GamaRuntimeException.error("error while attempting to open " + filename + " with program " + program +
+				" (" + e.getMessage() + ")");
 		}
-		
+
 	}
 
 	/**
@@ -120,59 +116,57 @@ public class OpenStatement extends AbstractStatementSequence implements IStateme
 	 * @param scope
 	 * @param filename
 	 */
-	protected void openFilename(final IScope scope, String filename) {
+	protected void openFilename(final IScope scope, final String filename) {
 		// for details: see
 		// http://help.eclipse.org/indigo/index.jsp?topic=%2Forg.eclipse.platform.doc.isv%2Freference%2Fapi%2Forg%2Feclipse%2Fswt%2Fprogram%2FProgram.html
 		// http://stackoverflow.com/questions/526037/how-to-open-user-system-preferred-editor-for-given-file
 		// http://www.rgagnon.com/javadetails/java-0014.html
-		
+
 		boolean opened = false;
-		
+
 		// open file
 		final File f = new File(scope.getSimulationScope().getModel().getRelativeFilePath(filename, true));
-		if (!f.exists())
-			throw GamaRuntimeException.error("unable to open this file, which does not exists: "+filename);
-		if (!f.canRead())
-			throw GamaRuntimeException.error("unable to open this file, which is not readable: "+filename);
-		
-		if (!f.isDirectory() && Display.getDefault()!=null) {
-			
+		if ( !f.exists() ) { throw GamaRuntimeException.error("unable to open this file, which does not exists: " +
+			filename); }
+		if ( !f.canRead() ) { throw GamaRuntimeException.error("unable to open this file, which is not readable: " +
+			filename); }
+
+		if ( !f.isDirectory() && Display.getDefault() != null ) {
+
 			// second first: open with SWT utils. Not working for directories. Provides a feedback on the result
 			opened = true;
 			Display.getDefault().syncExec(new Runnable() {
-				
+
 				@Override
 				public void run() {
 					Program.launch(f.getAbsolutePath());
-					
+
 				}
 			});
-			
-		} 
-		
-		if (!opened && Desktop.isDesktopSupported() && Desktop.getDesktop()!=null) {
+
+		}
+
+		if ( !opened && Desktop.isDesktopSupported() && Desktop.getDesktop() != null ) {
 			// first option: recommanded solution in Java. Not supported everywhere, though.
 
 			try {
 				Desktop.getDesktop().open(f);
 				opened = true;
-			} catch (IOException e) {
+			} catch (final IOException e) {
 				e.printStackTrace();
-				throw GamaRuntimeException.error("error while opening "+filename+" : "+e.getMessage());
+				throw GamaRuntimeException.error("error while opening " + filename + " : " + e.getMessage());
 
 			}
-			
-		} 
-		
-		if (!opened) {
-			throw GamaRuntimeException.error("Unable to open the file in this operating system "+filename);
+
 		}
-		
+
+		if ( !opened ) { throw GamaRuntimeException.error("Unable to open the file in this operating system " +
+			filename); }
+
 		// this solution is not multiplatform; let's avoid this kind of dangerous cooking ?
 		// Process p = Runtime.getRuntime().exec("open "+f.getAbsolutePath());
 
 	}
-
 
 	@Override
 	public void setFormalArgs(final Arguments args) {

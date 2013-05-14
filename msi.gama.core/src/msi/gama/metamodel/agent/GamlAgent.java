@@ -51,7 +51,7 @@ public class GamlAgent implements IAgent {
 	/** The population that this agent belongs to. */
 	protected final IPopulation population;
 	protected final GamaMap attributes = new GamaMap();
-	private volatile int index;
+	protected volatile int index;
 	/** The shape of agent with relative coordinate on the environment of host/environment. */
 	protected IShape geometry;
 	protected String name;
@@ -65,6 +65,8 @@ public class GamlAgent implements IAgent {
 	 * All the populations that manage the micro-agents. Each population manages agents of a
 	 * micro-species. Final so that it is correctly garbaged.
 	 */
+
+	// FIXME Could be put in a subclass as most models dont need it.
 	protected final Map<ISpecies, IPopulation> microPopulations = new HashMap();
 	private volatile boolean lockAcquired = false;
 
@@ -83,11 +85,11 @@ public class GamlAgent implements IAgent {
 
 	@Override
 	public Object getDirectVarValue(final IScope scope, final String n) throws GamaRuntimeException {
-		IVariable var = population.getVar(this, n);
+		final IVariable var = population.getVar(this, n);
 		if ( var != null ) { return var.value(scope, this); }
-		IAgent host = this.getHost();
+		final IAgent host = this.getHost();
 		if ( host != null ) {
-			IVariable varOfHost = host.getPopulation().getVar(host, n);
+			final IVariable varOfHost = host.getPopulation().getVar(host, n);
 			if ( varOfHost != null ) { return varOfHost.value(scope, host); }
 		}
 		return null;
@@ -129,13 +131,13 @@ public class GamlAgent implements IAgent {
 	 * 
 	 */
 
-	protected Object executeCallbackAction(IScope scope, String name) {
+	protected Object executeCallbackAction(final IScope scope, final String name) {
 		if ( dead() || scope.interrupted() ) { return null; }
-		IStatement action = getSpecies().getAction(name);
+		final IStatement action = getSpecies().getAction(name);
 		if ( action == null ) { return null; }
 		try {
 			return scope.execute(action, this);
-		} catch (GamaRuntimeException g) {
+		} catch (final GamaRuntimeException g) {
 			g.addAgent(this.getName());
 			GAMA.reportError(g);
 			return null;
@@ -143,13 +145,13 @@ public class GamlAgent implements IAgent {
 	}
 
 	@action(name = "_init_")
-	public Object _init_(IScope scope) {
+	public Object _init_(final IScope scope) {
 		getSpecies().getArchitecture().init(scope);
 		return this;
 	}
 
 	@action(name = "_step_")
-	public Object _step_(IScope scope) {
+	public Object _step_(final IScope scope) {
 		if ( scope.interrupted() || dead() ) { return null; }
 		getPopulation().updateVariables(scope, this);
 		// we ask the architecture to execute on this
@@ -158,14 +160,14 @@ public class GamlAgent implements IAgent {
 		return stepSubPopulations(scope);
 	}
 
-	protected Object stepSubPopulations(IScope scope) {
+	protected Object stepSubPopulations(final IScope scope) {
 		try {
-			List<IPopulation> pops = this.getMicroPopulations();
-			for ( IPopulation pop : pops ) {
+			final List<IPopulation> pops = this.getMicroPopulations();
+			for ( final IPopulation pop : pops ) {
 				if ( scope.interrupted() ) { return null; }
 				pop.step(scope);
 			}
-		} catch (GamaRuntimeException g) {
+		} catch (final GamaRuntimeException g) {
 			GAMA.reportError(g);
 		}
 		return this;
@@ -186,7 +188,7 @@ public class GamlAgent implements IAgent {
 	@action(name = "write")
 	@args(names = { "message" })
 	public final Object primWrite(final IScope scope) throws GamaRuntimeException {
-		String s = (String) scope.getArg("message", IType.STRING);
+		final String s = (String) scope.getArg("message", IType.STRING);
 		GuiUtils.informConsole(s);
 		return s;
 	}
@@ -194,7 +196,7 @@ public class GamlAgent implements IAgent {
 	@action(name = IKeyword.ERROR)
 	@args(names = { "message" })
 	public final Object primError(final IScope scope) throws GamaRuntimeException {
-		String error = (String) scope.getArg("message", IType.STRING);
+		final String error = (String) scope.getArg("message", IType.STRING);
 		GuiUtils.error(error);
 		return error;
 	}
@@ -222,7 +224,7 @@ public class GamlAgent implements IAgent {
 	}
 
 	@Override
-	public IAgent copy(IScope scope) {
+	public IAgent copy(final IScope scope) {
 		return this;
 		// agents are immutable
 	}
@@ -243,17 +245,17 @@ public class GamlAgent implements IAgent {
 		if ( microAgents == null || microAgents.isEmpty() || microSpecies == null ||
 			!this.getSpecies().getMicroSpecies().contains(microSpecies) ) { return GamaList.EMPTY_LIST; }
 
-		List<IAgent> candidates = new GamaList<IAgent>();
-		for ( IAgent a : microAgents ) {
+		final List<IAgent> candidates = new GamaList<IAgent>();
+		for ( final IAgent a : microAgents ) {
 			if ( this.canCapture(a, microSpecies) ) {
 				candidates.add(a);
 			}
 		}
 
-		IList<IAgent> capturedAgents = new GamaList<IAgent>();
-		IPopulation microSpeciesPopulation = this.getPopulationFor(microSpecies);
-		for ( IAgent micro : candidates ) {
-			SavedAgent savedMicro = new SavedAgent(scope, micro);
+		final IList<IAgent> capturedAgents = new GamaList<IAgent>();
+		final IPopulation microSpeciesPopulation = this.getPopulationFor(microSpecies);
+		for ( final IAgent micro : candidates ) {
+			final SavedAgent savedMicro = new SavedAgent(scope, micro);
 			micro.dispose();
 			capturedAgents.add(savedMicro.restoreTo(scope, microSpeciesPopulation));
 		}
@@ -265,8 +267,8 @@ public class GamlAgent implements IAgent {
 	public IAgent captureMicroAgent(final IScope scope, final ISpecies microSpecies, final IAgent microAgent)
 		throws GamaRuntimeException {
 		if ( this.canCapture(microAgent, microSpecies) ) {
-			IPopulation microSpeciesPopulation = this.getMicroPopulation(microSpecies);
-			SavedAgent savedMicro = new SavedAgent(scope, microAgent);
+			final IPopulation microSpeciesPopulation = this.getMicroPopulation(microSpecies);
+			final SavedAgent savedMicro = new SavedAgent(scope, microAgent);
 			microAgent.dispose();
 			return savedMicro.restoreTo(scope, microSpeciesPopulation);
 		}
@@ -278,10 +280,10 @@ public class GamlAgent implements IAgent {
 	public IList<IAgent> releaseMicroAgents(final IScope scope, final IList<IAgent> microAgents)
 		throws GamaRuntimeException {
 		IPopulation originalSpeciesPopulation;
-		IList<IAgent> releasedAgents = new GamaList<IAgent>();
+		final IList<IAgent> releasedAgents = new GamaList<IAgent>();
 
-		for ( IAgent micro : microAgents ) {
-			SavedAgent savedMicro = new SavedAgent(scope, micro);
+		for ( final IAgent micro : microAgents ) {
+			final SavedAgent savedMicro = new SavedAgent(scope, micro);
 			originalSpeciesPopulation = micro.getPopulationFor(micro.getSpecies().getParentSpecies());
 			micro.dispose();
 			releasedAgents.add(savedMicro.restoreTo(scope, originalSpeciesPopulation));
@@ -301,19 +303,19 @@ public class GamlAgent implements IAgent {
 	@Override
 	public IList<IAgent> migrateMicroAgents(final IScope scope, final IList<IAgent> microAgents,
 		final ISpecies newMicroSpecies) {
-		IList<IAgent> immigrantCandidates = new GamaList<IAgent>();
+		final IList<IAgent> immigrantCandidates = new GamaList<IAgent>();
 
-		for ( IAgent m : microAgents ) {
+		for ( final IAgent m : microAgents ) {
 			if ( m.getSpecies().isPeer(newMicroSpecies) ) {
 				immigrantCandidates.add(m);
 			}
 		}
 
-		IList<IAgent> immigrants = new GamaList<IAgent>();
+		final IList<IAgent> immigrants = new GamaList<IAgent>();
 		if ( !immigrantCandidates.isEmpty() ) {
-			IPopulation microSpeciesPopulation = this.getPopulationFor(newMicroSpecies);
-			for ( IAgent micro : immigrantCandidates ) {
-				SavedAgent savedMicro = new SavedAgent(scope, micro);
+			final IPopulation microSpeciesPopulation = this.getPopulationFor(newMicroSpecies);
+			for ( final IAgent micro : immigrantCandidates ) {
+				final SavedAgent savedMicro = new SavedAgent(scope, micro);
 				micro.dispose();
 				immigrants.add(savedMicro.restoreTo(scope, microSpeciesPopulation));
 			}
@@ -333,12 +335,12 @@ public class GamlAgent implements IAgent {
 	@Override
 	public IList<IAgent> migrateMicroAgents(final IScope scope, final ISpecies oldMicroSpecies,
 		final ISpecies newMicroSpecies) {
-		IPopulation oldMicroPop = this.getPopulationFor(oldMicroSpecies);
-		IPopulation newMicroPop = this.getPopulationFor(newMicroSpecies);
-		IList<IAgent> immigrants = new GamaList<IAgent>();
+		final IPopulation oldMicroPop = this.getPopulationFor(oldMicroSpecies);
+		final IPopulation newMicroPop = this.getPopulationFor(newMicroSpecies);
+		final IList<IAgent> immigrants = new GamaList<IAgent>();
 
-		for ( IAgent m : oldMicroPop.getAgentsList() ) {
-			SavedAgent savedMicro = new SavedAgent(scope, m);
+		for ( final IAgent m : oldMicroPop.getAgentsList() ) {
+			final SavedAgent savedMicro = new SavedAgent(scope, m);
 			m.dispose();
 			immigrants.add(savedMicro.restoreTo(scope, newMicroPop));
 		}
@@ -371,8 +373,8 @@ public class GamlAgent implements IAgent {
 		 */
 		private void saveAttributes(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 			variables = new HashMap<String, Object>();
-			ISpecies species = agent.getSpecies();
-			for ( String specVar : species.getVarNames() ) {
+			final ISpecies species = agent.getSpecies();
+			for ( final String specVar : species.getVarNames() ) {
 				if ( UNSAVABLE_VARIABLES.contains(specVar) ) {
 					continue;
 				}
@@ -397,10 +399,10 @@ public class GamlAgent implements IAgent {
 		private void saveMicroAgents(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 			innerPopulations = new HashMap<String, List<SavedAgent>>();
 
-			for ( IPopulation microPop : agent.getMicroPopulations() ) {
-				List<SavedAgent> savedAgents = new GamaList<SavedAgent>();
+			for ( final IPopulation microPop : agent.getMicroPopulations() ) {
+				final List<SavedAgent> savedAgents = new GamaList<SavedAgent>();
 
-				for ( IAgent micro : microPop.getAgentsList() ) {
+				for ( final IAgent micro : microPop.getAgentsList() ) {
 					savedAgents.add(new SavedAgent(scope, micro));
 				}
 
@@ -417,9 +419,9 @@ public class GamlAgent implements IAgent {
 		 * @throws GamaRuntimeException
 		 */
 		IAgent restoreTo(final IScope scope, final IPopulation targetPopulation) throws GamaRuntimeException {
-			List<Map> agentAttrs = new GamaList<Map>();
+			final List<Map> agentAttrs = new GamaList<Map>();
 			agentAttrs.add(variables);
-			List<? extends IAgent> restoredAgents = targetPopulation.createAgents(scope, 1, agentAttrs, true);
+			final List<? extends IAgent> restoredAgents = targetPopulation.createAgents(scope, 1, agentAttrs, true);
 			restoreMicroAgents(scope, restoredAgents.get(0));
 
 			return restoredAgents.get(0);
@@ -433,17 +435,17 @@ public class GamlAgent implements IAgent {
 		 */
 		void restoreMicroAgents(final IScope scope, final IAgent host) throws GamaRuntimeException {
 
-			for ( String microPopName : innerPopulations.keySet() ) {
-				IPopulation microPop = host.getMicroPopulation(microPopName);
+			for ( final String microPopName : innerPopulations.keySet() ) {
+				final IPopulation microPop = host.getMicroPopulation(microPopName);
 
 				if ( microPop != null ) {
-					List<SavedAgent> savedMicros = innerPopulations.get(microPopName);
-					List<Map> microAttrs = new GamaList<Map>();
-					for ( SavedAgent sa : savedMicros ) {
+					final List<SavedAgent> savedMicros = innerPopulations.get(microPopName);
+					final List<Map> microAttrs = new GamaList<Map>();
+					for ( final SavedAgent sa : savedMicros ) {
 						microAttrs.add(sa.variables);
 					}
 
-					List<? extends IAgent> microAgents =
+					final List<? extends IAgent> microAgents =
 						microPop.createAgents(scope, savedMicros.size(), microAttrs, true);
 
 					for ( int i = 0; i < microAgents.size(); i++ ) {
@@ -459,7 +461,7 @@ public class GamlAgent implements IAgent {
 	 */
 	@Override
 	public Geometry getInnerGeometry() {
-		IShape g = getGeometry();
+		final IShape g = getGeometry();
 		return g == null ? null : g.getInnerGeometry();
 	}
 
@@ -468,7 +470,7 @@ public class GamlAgent implements IAgent {
 	 */
 	@Override
 	public Envelope getEnvelope() {
-		IShape g = getGeometry();
+		final IShape g = getGeometry();
 		return g == null ? null : g.getEnvelope();
 	}
 
@@ -477,7 +479,7 @@ public class GamlAgent implements IAgent {
 	 */
 	@Override
 	public boolean covers(final IShape g) {
-		IShape gg = getGeometry();
+		final IShape gg = getGeometry();
 		return gg == null ? false : gg.covers(g);
 	}
 
@@ -486,13 +488,13 @@ public class GamlAgent implements IAgent {
 	 */
 	@Override
 	public double euclidianDistanceTo(final IShape g) {
-		IShape gg = getGeometry();
+		final IShape gg = getGeometry();
 		return gg == null ? 0d : gg.euclidianDistanceTo(g);
 	}
 
 	@Override
 	public double euclidianDistanceTo(final ILocation g) {
-		IShape gg = getGeometry();
+		final IShape gg = getGeometry();
 		return gg == null ? 0d : gg.euclidianDistanceTo(g);
 	}
 
@@ -501,13 +503,13 @@ public class GamlAgent implements IAgent {
 	 */
 	@Override
 	public boolean intersects(final IShape g) {
-		IShape gg = getGeometry();
+		final IShape gg = getGeometry();
 		return gg == null ? false : gg.intersects(g);
 	}
 
 	@Override
 	public boolean crosses(final IShape g) {
-		IShape gg = getGeometry();
+		final IShape gg = getGeometry();
 		return gg == null ? false : gg.crosses(g);
 	}
 
@@ -572,7 +574,7 @@ public class GamlAgent implements IAgent {
 	}
 
 	@Override
-	public void setExtraAttributes(Map<Object, Object> map) {
+	public void setExtraAttributes(final Map<Object, Object> map) {
 		if ( map == null ) { return; }
 		attributes.putAll(map);
 	}
@@ -593,12 +595,12 @@ public class GamlAgent implements IAgent {
 	}
 
 	@Override
-	public boolean hasAttribute(Object key) {
+	public boolean hasAttribute(final Object key) {
 		return false;
 	}
 
 	@Override
-	public synchronized Object getAttribute(Object index) {
+	public synchronized Object getAttribute(final Object index) {
 		return attributes.get(index);
 	}
 
@@ -609,17 +611,17 @@ public class GamlAgent implements IAgent {
 
 	@Override
 	public void initializeMicroPopulations(final IScope scope) throws GamaRuntimeException {
-		List<ISpecies> allMicroSpecies = this.getSpecies().getMicroSpecies();
+		final List<ISpecies> allMicroSpecies = this.getSpecies().getMicroSpecies();
 
 		if ( !allMicroSpecies.isEmpty() ) {
 			IPopulation microPop;
-			for ( ISpecies microSpec : allMicroSpecies ) {
+			for ( final ISpecies microSpec : allMicroSpecies ) {
 				// FIXME Why disallow built-in populations ?
 				// TODO Would be better to see if they are actually in use in the model
 				// if ( Types.isBuiltIn(microSpec.getName()) ) {
 				// continue;
 				// }
-				microPop = new GamaPopulation(this, microSpec);
+				microPop = GamaPopulation.createPopulation(scope, this, microSpec);
 				microPopulations.put(microSpec, microPop);
 				microPop.initializeFor(scope);
 			}
@@ -628,12 +630,12 @@ public class GamlAgent implements IAgent {
 
 	@Override
 	public void initializeMicroPopulation(final IScope scope, final String name) {
-		ISpecies microSpec = getModel().getSpecies(name);
+		final ISpecies microSpec = getModel().getSpecies(name);
 		if ( microSpec == null ) { return; }
 		// FIXME Why disallow built-in populations ?
 		// TODO Would be better to see if they are actually in use in the model
 		// if ( Types.isBuiltIn(name) ) { return; }
-		IPopulation microPop = new GamaPopulation(this, microSpec);
+		final IPopulation microPop = GamaPopulation.createPopulation(scope, this, microSpec);
 		microPopulations.put(microSpec, microPop);
 		microPop.initializeFor(scope);
 	}
@@ -661,7 +663,7 @@ public class GamlAgent implements IAgent {
 		while (lockAcquired) {
 			try {
 				wait();
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 				// e.printStackTrace();
 			}
 		}
@@ -682,19 +684,19 @@ public class GamlAgent implements IAgent {
 			acquireLock();
 			dead = true;
 			if ( microPopulations != null ) {
-				for ( IPopulation microPop : microPopulations.values() ) {
+				for ( final IPopulation microPop : microPopulations.values() ) {
 					microPop.killMembers();
 					microPop.dispose();
 				}
 				microPopulations.clear();
 			}
-			GamaGraph graph = (GamaGraph) getAttribute("attached_graph");
+			final GamaGraph graph = (GamaGraph) getAttribute("attached_graph");
 			if ( graph != null ) {
 
-				Set edgesToModify = graph.edgesOf(this);
+				final Set edgesToModify = graph.edgesOf(this);
 				graph.removeVertex(this);
 
-				for ( Object obj : edgesToModify ) {
+				for ( final Object obj : edgesToModify ) {
 					if ( obj instanceof IAgent ) {
 						((IAgent) obj).dispose();
 					}
@@ -705,7 +707,7 @@ public class GamlAgent implements IAgent {
 			try {
 				population.remove(null, null, this, false);
 
-			} catch (GamaRuntimeException e) {
+			} catch (final GamaRuntimeException e) {
 				GAMA.reportError(e);
 			}
 			attributes.clear();
@@ -769,13 +771,13 @@ public class GamlAgent implements IAgent {
 	public synchronized void setGeometry(final IShape newGeometry) {
 		if ( newGeometry == null || newGeometry.getInnerGeometry() == null || dead() ) { return; }
 
-		ITopology topology = population.getTopology();
-		ILocation newGeomLocation = newGeometry.getLocation().copy(getScope());
+		final ITopology topology = population.getTopology();
+		final ILocation newGeomLocation = newGeometry.getLocation().copy(getScope());
 
 		// if the old geometry is "shared" with another agent, we create a new one.
 		// otherwise, we copy it directly.
-		IAgent other = newGeometry.getAgent();
-		GamaShape newLocalGeom = (GamaShape) (other == null ? newGeometry : newGeometry.copy(getScope()));
+		final IAgent other = newGeometry.getAgent();
+		final GamaShape newLocalGeom = (GamaShape) (other == null ? newGeometry : newGeometry.copy(getScope()));
 		topology.normalizeLocation(newGeomLocation, false);
 
 		if ( !newGeomLocation.equals(newLocalGeom.getLocation()) ) {
@@ -783,13 +785,13 @@ public class GamlAgent implements IAgent {
 		}
 
 		newLocalGeom.setAgent(this);
-		IShape previous = geometry;
+		final IShape previous = geometry;
 		geometry = newLocalGeom;
 
 		topology.updateAgent(previous, this);
 
 		// update micro-agents' locations accordingly
-		for ( IPopulation p : microPopulations.values() ) {
+		for ( final IPopulation p : microPopulations.values() ) {
 			p.hostChangesShape();
 		}
 	}
@@ -797,39 +799,39 @@ public class GamlAgent implements IAgent {
 	@Override
 	public synchronized void setLocation(final ILocation point) {
 		if ( point == null || dead() ) { return; }
-		ILocation newLocation = point.copy(getScope());
-		ITopology topology = population.getTopology();
+		final ILocation newLocation = point.copy(getScope());
+		final ITopology topology = population.getTopology();
 		if ( topology == null ) { return; }
 		topology.normalizeLocation(newLocation, false);
 
 		if ( geometry == null || geometry.getInnerGeometry() == null ) {
 			setGeometry(GamaGeometryType.createPoint(newLocation));
 		} else {
-			ILocation previousPoint = geometry.getLocation();
+			final ILocation previousPoint = geometry.getLocation();
 			if ( newLocation.equals(previousPoint) ) { return; }
-			IShape previous =
+			final IShape previous =
 				geometry.isPoint() ? previousPoint : new GamaShape(geometry.getInnerGeometry().getEnvelope());
 			// Envelope previousEnvelope = geometry.getEnvelope();
 			geometry.setLocation(newLocation);
-			Integer newHeading = topology.directionInDegreesTo(getScope(), previousPoint, newLocation);
+			final Integer newHeading = topology.directionInDegreesTo(getScope(), previousPoint, newLocation);
 			if ( newHeading != null && !getTopology().isTorus() ) {
 				setHeading(newHeading);
 			}
 			topology.updateAgent(previous, this);
 
 			// update micro-agents' locations accordingly
-			for ( IPopulation p : microPopulations.values() ) {
+			for ( final IPopulation p : microPopulations.values() ) {
 				// FIXME DOES NOT WORK FOR THE MOMENT
 				p.hostChangesShape();
 			}
 		}
-		GamaGraph graph = (GamaGraph) getAttribute("attached_graph");
+		final GamaGraph graph = (GamaGraph) getAttribute("attached_graph");
 		if ( graph != null ) {
-			Set edgesToModify = graph.edgesOf(this);
-			for ( Object obj : edgesToModify ) {
+			final Set edgesToModify = graph.edgesOf(this);
+			for ( final Object obj : edgesToModify ) {
 				if ( obj instanceof IAgent ) {
-					IShape ext1 = (IShape) graph.getEdgeSource(obj);
-					IShape ext2 = (IShape) graph.getEdgeTarget(obj);
+					final IShape ext1 = (IShape) graph.getEdgeSource(obj);
+					final IShape ext2 = (IShape) graph.getEdgeTarget(obj);
 					((IAgent) obj).setGeometry(GamaGeometryType.buildLine(ext1.getLocation(), ext2.getLocation()));
 				}
 			}
@@ -840,7 +842,7 @@ public class GamlAgent implements IAgent {
 	@Override
 	public synchronized ILocation getLocation() {
 		if ( geometry == null || geometry.getInnerGeometry() == null ) {
-			ILocation randomLocation = population.getTopology().getRandomLocation();
+			final ILocation randomLocation = population.getTopology().getRandomLocation();
 			if ( randomLocation == null ) { return null; }
 			setGeometry(GamaGeometryType.createPoint(randomLocation));
 			return randomLocation;
@@ -890,7 +892,7 @@ public class GamlAgent implements IAgent {
 	}
 
 	@Override
-	public String stringValue(IScope scope) {
+	public String stringValue(final IScope scope) {
 		return getName();
 	}
 
@@ -907,7 +909,7 @@ public class GamlAgent implements IAgent {
 	@Override
 	public synchronized IPopulation getMicroPopulation(final String microSpeciesName) {
 		// FIX : Now catches the species from the model
-		ISpecies microSpecies = getModel().getSpecies(microSpeciesName);
+		final ISpecies microSpecies = getModel().getSpecies(microSpeciesName);
 		return microPopulations.get(microSpecies);
 	}
 
@@ -919,7 +921,7 @@ public class GamlAgent implements IAgent {
 	@Override
 	public boolean hasMembers() {
 		if ( microPopulations == null || dead() ) { return false; }
-		for ( IPopulation mam : microPopulations.values() ) {
+		for ( final IPopulation mam : microPopulations.values() ) {
 			if ( mam.size() > 0 ) { return true; }
 		}
 		return false;
@@ -929,12 +931,12 @@ public class GamlAgent implements IAgent {
 	public IList<IAgent> getMembers() {
 		if ( dead() ) { return GamaList.EMPTY_LIST; }
 		int size = 0;
-		for ( IPopulation pop : microPopulations.values() ) {
+		for ( final IPopulation pop : microPopulations.values() ) {
 			size += pop.size();
 		}
 		if ( size == 0 ) { return GamaList.EMPTY_LIST; }
-		GamaList<IAgent> members = new GamaList(size);
-		for ( IPopulation pop : microPopulations.values() ) {
+		final GamaList<IAgent> members = new GamaList(size);
+		for ( final IPopulation pop : microPopulations.values() ) {
 			members.addAll(pop.getAgentsList());
 		}
 		return members;
@@ -954,10 +956,10 @@ public class GamlAgent implements IAgent {
 	public IList<IAgent> getAgents() {
 		if ( !hasMembers() ) { return GamaList.EMPTY_LIST; }
 
-		List<IAgent> members = getMembers();
-		IList<IAgent> agents = new GamaList<IAgent>();
+		final List<IAgent> members = getMembers();
+		final IList<IAgent> agents = new GamaList<IAgent>();
 		agents.addAll(members);
-		for ( IAgent m : members ) {
+		for ( final IAgent m : members ) {
 			if ( m != null ) {
 				agents.addAll(m.getAgents());
 			}
@@ -973,10 +975,10 @@ public class GamlAgent implements IAgent {
 
 	@Override
 	public IList<IAgent> getPeers() throws GamaRuntimeException {
-		IAgent host = getHost();
+		final IAgent host = getHost();
 		if ( host != null ) {
-			IPopulation pop = host.getPopulationFor(this.getSpecies());
-			IList<IAgent> retVal = pop.getAgentsList();
+			final IPopulation pop = host.getPopulationFor(this.getSpecies());
+			final IList<IAgent> retVal = pop.getAgentsList();
 			retVal.remove(this);
 			return retVal;
 		}
@@ -985,7 +987,7 @@ public class GamlAgent implements IAgent {
 
 	@Override
 	public IPopulation getPopulationFor(final ISpecies species) {
-		IPopulation microPopulation = this.getMicroPopulation(species);
+		final IPopulation microPopulation = this.getMicroPopulation(species);
 		if ( microPopulation == null && getHost() != null ) { return getHost().getPopulationFor(species); }
 		return microPopulation;
 	}
@@ -993,17 +995,17 @@ public class GamlAgent implements IAgent {
 	@Override
 	public IPopulation getPopulationFor(final String speciesName) {
 		// FIXME : THE BEHAVIOR OF THIS METHOD IS CLEARLY WRONG COMPARED TO THE PREVIOUS ONE
-		IPopulation microPopulation = this.getMicroPopulation(speciesName);
+		final IPopulation microPopulation = this.getMicroPopulation(speciesName);
 		if ( microPopulation != null ) { return microPopulation; }
 
-		IAgent host = this.getHost();
+		final IAgent host = this.getHost();
 		if ( host != null ) { return host.getPopulationFor(speciesName); }
 		return null;
 	}
 
 	@Override
 	public List<IAgent> getMacroAgents() {
-		List<IAgent> retVal = new GamaList<IAgent>();
+		final List<IAgent> retVal = new GamaList<IAgent>();
 		IAgent currentMacro = this.getHost();
 		while (currentMacro != null) {
 			retVal.add(currentMacro);
@@ -1081,7 +1083,7 @@ public class GamlAgent implements IAgent {
 		}
 
 		@Override
-		public void setInterrupted(boolean interrupted) {
+		public void setInterrupted(final boolean interrupted) {
 			if ( !GamlAgent.this.dead ) {
 				GamlAgent.this.dispose();
 			}

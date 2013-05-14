@@ -117,15 +117,15 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		if ( species == null ) {
 			pop = executor.getPopulationFor(description.getSpeciesContext().getName());
 		} else {
-			ISpecies s = Cast.asSpecies(scope, species.value(scope));
+			final ISpecies s = Cast.asSpecies(scope, species.value(scope));
 			if ( s == null ) { throw GamaRuntimeException.error("No population of " + species.literalValue() +
 				" is accessible in the context of " + executor + "."); }
 			pop = executor.getPopulationFor(s);
 		}
 		scope.addVarWithValue(IKeyword.MYSELF, executor);
 		// We grab whatever initial values are defined (from CSV, GIS, or user)
-		List<Map> inits = new GamaList(max == null ? 10 : max);
-		Object source = getSource(scope);
+		final List<Map> inits = new GamaList(max == null ? 10 : max);
+		final Object source = getSource(scope);
 		if ( source instanceof IList ) {
 			fillInits(scope, inits, max, (IList) source);
 		} else if ( source instanceof GamaShapeFile ) {
@@ -138,14 +138,14 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 			fillInits(scope, inits, max);
 		}
 		// and we create and return the agent(s)
-		IList<? extends IAgent> agents = createAgents(scope, pop, inits);
+		final IList<? extends IAgent> agents = createAgents(scope, pop, inits);
 		if ( returns != null ) {
 			scope.setVarValue(returns, agents);
 		}
 		return agents;
 	}
 
-	private Object getSource(IScope scope) {
+	private Object getSource(final IScope scope) {
 		Object source = from == null ? null : from.value(scope);
 		if ( source instanceof String ) {
 			source = Files.from(scope, (String) source);
@@ -156,17 +156,17 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	/**
 	 * Method used to read initial values and attributes from a CSV file.
 	 */
-	private void fillInits(final IScope scope, List<Map> inits, final Integer max, final GamaTextFile file) {
-		boolean hasHeader = header == null ? false : Cast.asBool(scope, header.value(scope));
+	private void fillInits(final IScope scope, final List<Map> inits, final Integer max, final GamaTextFile file) {
+		final boolean hasHeader = header == null ? false : Cast.asBool(scope, header.value(scope));
 		final GamaList<String[]> rows = new GamaList(file.length(scope));
-		for ( String str : file ) {
+		for ( final String str : file ) {
 			rows.add(GamaMatrixType.csvPattern.split(str, -1));
 		}
-		int num = max == null ? rows.size() : Math.min(rows.size(), max);
-		String[] headers = rows.get(0);
+		final int num = max == null ? rows.size() : Math.min(rows.size(), max);
+		final String[] headers = rows.get(0);
 		for ( int i = hasHeader ? 1 : 0; i < num; i++ ) {
-			GamaMap map = new GamaMap();
-			String[] splitStr = rows.get(i);
+			final GamaMap map = new GamaMap();
+			final String[] splitStr = rows.get(i);
 			for ( int j = 0; j < splitStr.length; j++ ) {
 				map.put(hasHeader ? headers[j] : j, splitStr[j]);
 			}
@@ -179,11 +179,11 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	/**
 	 * Method used to read initial values and attributes from a GIS file.
 	 */
-	private void fillInits(final IScope scope, List<Map> inits, final Integer max, final GamaShapeFile file) {
-		int num = max == null ? file.length(scope) : Math.min(file.length(scope), max);
+	private void fillInits(final IScope scope, final List<Map> inits, final Integer max, final GamaShapeFile file) {
+		final int num = max == null ? file.length(scope) : Math.min(file.length(scope), max);
 		for ( int i = 0; i < num; i++ ) {
-			GamaGisGeometry g = file.get(scope, i);
-			Map map = g.getOrCreateAttributes();
+			final GamaGisGeometry g = file.get(scope, i);
+			final Map map = g.getOrCreateAttributes();
 			// The shape is added to the initial values
 			map.put(IKeyword.SHAPE, g);
 			// GIS attributes are mixed with the attributes of agents
@@ -195,11 +195,11 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	/**
 	 * Method used to read initial values and attributes from a GRID file.
 	 */
-	private void fillInits(final IScope scope, List<Map> inits, final Integer max, final GamaGridFile file) {
-		int num = max == null ? file.length(scope) : Math.min(file.length(scope), max);
+	private void fillInits(final IScope scope, final List<Map> inits, final Integer max, final GamaGridFile file) {
+		final int num = max == null ? file.length(scope) : Math.min(file.length(scope), max);
 		for ( int i = 0; i < num; i++ ) {
-			GamaGisGeometry g = file.get(scope, i);
-			Map map = g.getOrCreateAttributes();
+			final GamaGisGeometry g = file.get(scope, i);
+			final Map map = g.getOrCreateAttributes();
 			// The shape is added to the initial values
 			map.put(IKeyword.SHAPE, g);
 			// GIS attributes are mixed with the attributes of agents
@@ -213,9 +213,9 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	 */
 	private void fillInits(final IScope scope, final List<Map> inits, final Integer max) {
 		if ( init == null ) { return; }
-		int num = max == null ? 1 : max;
+		final int num = max == null ? 1 : max;
 		for ( int i = 0; i < num; i++ ) {
-			Map map = new GamaMap();
+			final Map map = new GamaMap();
 			fillWithUserInit(scope, map);
 			inits.add(map);
 		}
@@ -226,28 +226,28 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	 * @author thai.truongminh@gmail.com
 	 * @since 04-09-2012
 	 */
-	private void fillInits(final IScope scope, List<Map> initialValues, Integer max, final IList list)
+	private void fillInits(final IScope scope, final List<Map> initialValues, final Integer max, final IList list)
 		throws GamaRuntimeException {
 		// get Column name
-		GamaList<Object> colNames = (GamaList<Object>) list.get(0);
+		final GamaList<Object> colNames = (GamaList<Object>) list.get(0);
 		// get Column type
-		GamaList<Object> colTypes = (GamaList<Object>) list.get(1);
+		final GamaList<Object> colTypes = (GamaList<Object>) list.get(1);
 		// Get ResultSet
-		GamaList<GamaList<Object>> initValue = (GamaList<GamaList<Object>>) list.get(2);
+		final GamaList<GamaList<Object>> initValue = (GamaList<GamaList<Object>>) list.get(2);
 		// set initialValues to generate species
-		int num = max == null ? initValue.length(scope) : Math.min(max, initValue.length(scope));
+		final int num = max == null ? initValue.length(scope) : Math.min(max, initValue.length(scope));
 		for ( int i = 0; i < num; i++ ) {
-			GamaList<Object> rowList = initValue.get(i);
-			Map map = new GamaMap();
+			final GamaList<Object> rowList = initValue.get(i);
+			final Map map = new GamaMap();
 			computeInits(scope, map, rowList, colTypes, colNames);
 			initialValues.add(map);
 		}
 	}
 
 	private IList<? extends IAgent> createAgents(final IScope scope, final IPopulation population, final List<Map> inits) {
-		IList<? extends IAgent> list = population.createAgents(scope, inits.size(), inits, false);
+		final IList<? extends IAgent> list = population.createAgents(scope, inits.size(), inits, false);
 		if ( !sequence.isEmpty() ) {
-			for ( IAgent remoteAgent : list ) {
+			for ( final IAgent remoteAgent : list ) {
 				scope.execute(sequence, remoteAgent);
 			}
 			scope.setStatus(ExecutionStatus.skipped);
@@ -259,7 +259,7 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		if ( init == null ) { return; }
 		Files.tempAttributes.push(values);
 		try {
-			for ( Facet f : init.entrySet() ) {
+			for ( final Facet f : init.entrySet() ) {
 				if ( f != null ) {
 					values.put(f.getKey(), f.getValue().getExpression().value(scope));
 				}
@@ -294,15 +294,15 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 	private void computeInits(final IScope scope, final Map values, final GamaList<Object> rowList,
 		final GamaList<Object> colTypes, final GamaList<Object> colNames) throws GamaRuntimeException {
 		if ( init == null ) { return; }
-		for ( Facet f : init.entrySet() ) {
+		for ( final Facet f : init.entrySet() ) {
 			if ( f != null ) {
-				IExpression valueExpr = f.getValue().getExpression();
+				final IExpression valueExpr = f.getValue().getExpression();
 				// get parameter
-				String columnName = valueExpr.value(scope).toString().toUpperCase();
+				final String columnName = valueExpr.value(scope).toString().toUpperCase();
 				// get column number of parameter
-				int val = colNames.indexOf(columnName);
+				final int val = colNames.indexOf(columnName);
 				if ( ((String) colTypes.get(val)).equalsIgnoreCase("GEOMETRY") ) {
-					Geometry geom = (Geometry) rowList.get(val);
+					final Geometry geom = (Geometry) rowList.get(val);
 					values.put(f.getKey(), new GamaShape(scope.getTopology().getGisUtils().transform(geom)));
 				} else {
 					values.put(f.getKey(), rowList.get(val));

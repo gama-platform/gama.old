@@ -1,5 +1,7 @@
 package msi.gaml.compilation;
 
+import msi.gama.common.util.GuiUtils;
+
 /**
  * 
  * The class GamlElementDocumentation. Represents the Java view of annotation @doc
@@ -19,30 +21,33 @@ public class GamlElementDocumentation {
 	String[] examples;
 	String[] see;
 
-	public GamlElementDocumentation(String[] array) {
+	public GamlElementDocumentation(final String[] array) {
 		if ( !(array == null || array.length == 0) ) {
-			// See msi.gama.precompiler.GamaProcessor#docToString() method
-			int index = 0;
-			main = array[index++];
-			deprecated = array[index++];
-			setReturns(array[index++]);
-			comment = array[index++];
-			int number = Integer.decode(array[index++]);
-			special_cases = new String[number];
-			for ( int i = 0; i < number; i++ ) {
-				special_cases[i] = array[index++];
+			try {
+				// See msi.gama.precompiler.GamaProcessor#docToString() method
+				int index = 0;
+				main = array[index++];
+				deprecated = array[index++];
+				setReturns(array[index++]);
+				comment = array[index++];
+				int number = Integer.decode(array[index++]);
+				special_cases = new String[number];
+				for ( int i = 0; i < number; i++ ) {
+					special_cases[i] = array[index++];
+				}
+				number = Integer.decode(array[index++]);
+				examples = new String[number];
+				for ( int i = 0; i < number; i++ ) {
+					examples[i] = array[index++];
+				}
+				number = Integer.decode(array[index++]);
+				see = new String[number];
+				for ( int i = 0; i < number; i++ ) {
+					see[i] = array[index++];
+				}
+			} catch (final Exception e) {
+				GuiUtils.debug("WARNING :: GamlElementDocumentation: " + e.toString());
 			}
-			number = Integer.decode(array[index++]);
-			examples = new String[number];
-			for ( int i = 0; i < number; i++ ) {
-				examples[i] = array[index++];
-			}
-			number = Integer.decode(array[index++]);
-			see = new String[number];
-			for ( int i = 0; i < number; i++ ) {
-				see[i] = array[index++];
-			}
-
 		}
 	}
 
@@ -50,7 +55,7 @@ public class GamlElementDocumentation {
 		return returns;
 	}
 
-	void setReturns(String returns) {
+	void setReturns(final String returns) {
 		this.returns = returns == null ? "" : returns;
 	}
 
@@ -58,7 +63,7 @@ public class GamlElementDocumentation {
 		return main;
 	}
 
-	public void setMain(String main) {
+	public void setMain(final String main) {
 		this.main = main == null ? NO : main;
 	}
 
@@ -66,7 +71,7 @@ public class GamlElementDocumentation {
 		return deprecated;
 	}
 
-	public void setDeprecated(String deprecated) {
+	public void setDeprecated(final String deprecated) {
 		this.deprecated = deprecated == null ? "" : deprecated;
 	}
 
@@ -74,7 +79,7 @@ public class GamlElementDocumentation {
 		return comment;
 	}
 
-	public void setComment(String comment) {
+	public void setComment(final String comment) {
 		this.comment = comment == null ? "" : comment;
 	}
 
@@ -82,7 +87,7 @@ public class GamlElementDocumentation {
 		return special_cases;
 	}
 
-	public void setSpecial_cases(String[] special_cases) {
+	public void setSpecial_cases(final String[] special_cases) {
 		this.special_cases = special_cases;
 	}
 
@@ -90,7 +95,7 @@ public class GamlElementDocumentation {
 		return examples;
 	}
 
-	public void setExamples(String[] examples) {
+	public void setExamples(final String[] examples) {
 		this.examples = examples;
 	}
 
@@ -98,7 +103,7 @@ public class GamlElementDocumentation {
 		return see;
 	}
 
-	public void setSee(String[] see) {
+	public void setSee(final String[] see) {
 		this.see = see;
 	}
 

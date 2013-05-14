@@ -72,7 +72,7 @@ public class UserCommandStatement extends AbstractStatementSequence implements I
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> children) {
-		for ( ISymbol c : children ) {
+		for ( final ISymbol c : children ) {
 			if ( c instanceof UserInputStatement ) {
 				inputs.add((UserInputStatement) c);
 			}
@@ -85,10 +85,10 @@ public class UserCommandStatement extends AbstractStatementSequence implements I
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		if ( isEnabled(scope) ) {
 			if ( actionName == null ) { return super.privateExecuteIn(scope); }
-			ISpecies context = scope.getAgentScope().getSpecies();
-			IStatement.WithArgs executer = context.getAction(actionName);
+			final ISpecies context = scope.getAgentScope().getSpecies();
+			final IStatement.WithArgs executer = context.getAction(actionName);
 			executer.setRuntimeArgs(args);
-			Object result = executer.executeOn(scope);
+			final Object result = executer.executeOn(scope);
 			return result;
 		}
 		scope.setStatus(ExecutionStatus.skipped);
@@ -101,21 +101,21 @@ public class UserCommandStatement extends AbstractStatementSequence implements I
 	@Override
 	public IType getType() {
 		if ( actionName == null ) { return super.getType(); }
-		StatementDescription executer = description.getSpeciesContext().getAction(actionName);
+		final StatementDescription executer = description.getSpeciesContext().getAction(actionName);
 		return executer.getType();
 	}
 
 	@Override
 	public IType getContentType() {
 		if ( actionName == null ) { return super.getContentType(); }
-		StatementDescription executer = description.getSpeciesContext().getAction(name);
+		final StatementDescription executer = description.getSpeciesContext().getAction(name);
 		return executer.getContentType();
 	}
 
 	@Override
 	public IType getKeyType() {
 		if ( actionName == null ) { return Types.NO_TYPE; }
-		StatementDescription executer = description.getSpeciesContext().getAction(name);
+		final StatementDescription executer = description.getSpeciesContext().getAction(name);
 		return executer.getKeyType();
 	}
 

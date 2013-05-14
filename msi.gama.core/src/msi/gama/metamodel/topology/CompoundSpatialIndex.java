@@ -5,7 +5,7 @@ import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
-import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
+import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
 import com.vividsolutions.jts.geom.Envelope;
@@ -31,7 +31,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 		ISpatialIndex si = indexes.get(s);
 		if ( si == null ) {
 			if ( s.isGrid() ) {
-				si = (GamaSpatialMatrix) a.getTopology().getPlaces();
+				si = (IGrid) a.getTopology().getPlaces();
 			} else {
 				si = quadtree;
 			}

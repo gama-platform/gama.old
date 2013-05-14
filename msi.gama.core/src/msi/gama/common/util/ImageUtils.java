@@ -112,9 +112,9 @@ public class ImageUtils {
 	}
 
 	public BufferedImage getImageFromFile(final String fileName) throws IOException {
-		BufferedImage image = get(fileName);
+		final BufferedImage image = get(fileName);
 		if ( image != null ) { return image; }
-		File f = new File(GAMA.getModel().getRelativeFilePath(fileName, true));
+		final File f = new File(GAMA.getModel().getRelativeFilePath(fileName, true));
 		return getImageFromFile(f);
 	}
 
@@ -139,7 +139,7 @@ public class ImageUtils {
 		if ( !cache.containsKey(s) ) {
 			cache.put(s, new BufferedImage[POSITIONS]);
 		}
-		BufferedImage[] map = cache.get(s);
+		final BufferedImage[] map = cache.get(s);
 		map[position] = toCompatibleImage(image);
 	}
 
@@ -149,7 +149,7 @@ public class ImageUtils {
 			new_image =
 				new BufferedImage(width != 0 ? width : 1024, height != 0 ? height : 1024, BufferedImage.TYPE_INT_RGB);
 		} else {
-			GraphicsConfiguration gfx_config =
+			final GraphicsConfiguration gfx_config =
 				GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
 			new_image = gfx_config.createCompatibleImage(width, height);
 			new_image.setAccelerationPriority(1f);
@@ -159,7 +159,7 @@ public class ImageUtils {
 
 	public static BufferedImage toCompatibleImage(final BufferedImage image) {
 		// obtain the current system graphical settings
-		GraphicsConfiguration gfx_config =
+		final GraphicsConfiguration gfx_config =
 			GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
 
 		/*
@@ -169,11 +169,11 @@ public class ImageUtils {
 		if ( image.getColorModel().equals(gfx_config.getColorModel()) ) { return image; }
 
 		// image is not optimized, so create a new image that is
-		BufferedImage new_image =
+		final BufferedImage new_image =
 			gfx_config.createCompatibleImage(image.getWidth(), image.getHeight(), image.getTransparency());
 
 		// get the graphics context of the new image to draw the old image on
-		Graphics2D g2d = (Graphics2D) new_image.getGraphics();
+		final Graphics2D g2d = (Graphics2D) new_image.getGraphics();
 
 		// actually draw the image and dispose of context no longer needed
 		g2d.drawImage(image, 0, 0, null);
@@ -188,48 +188,48 @@ public class ImageUtils {
 	}
 
 	private BufferedImage get(final String s, final int angle) {
-		BufferedImage[] map = cache.get(s);
+		final BufferedImage[] map = cache.get(s);
 		if ( map == null ) { return null; }
-		int position = (int) Math.round((double) (angle % (360 - ANGLE_INCREMENT)) / ANGLE_INCREMENT);
+		final int position = (int) Math.round((double) (angle % (360 - ANGLE_INCREMENT)) / ANGLE_INCREMENT);
 		return map[position];
 	}
 
 	public static ImageData convertToSWT(final BufferedImage bufferedImage) {
 		if ( bufferedImage.getColorModel() instanceof DirectColorModel ) {
-			DirectColorModel colorModel = (DirectColorModel) bufferedImage.getColorModel();
-			PaletteData palette =
+			final DirectColorModel colorModel = (DirectColorModel) bufferedImage.getColorModel();
+			final PaletteData palette =
 				new PaletteData(colorModel.getRedMask(), colorModel.getGreenMask(), colorModel.getBlueMask());
-			ImageData data =
+			final ImageData data =
 				new ImageData(bufferedImage.getWidth(), bufferedImage.getHeight(), colorModel.getPixelSize(), palette);
-			WritableRaster raster = bufferedImage.getRaster();
-			int[] pixelArray = new int[3];
+			final WritableRaster raster = bufferedImage.getRaster();
+			final int[] pixelArray = new int[3];
 			for ( int y = 0; y < data.height; y++ ) {
 				for ( int x = 0; x < data.width; x++ ) {
 					raster.getPixel(x, y, pixelArray);
-					int pixel = palette.getPixel(new RGB(pixelArray[0], pixelArray[1], pixelArray[2]));
+					final int pixel = palette.getPixel(new RGB(pixelArray[0], pixelArray[1], pixelArray[2]));
 					data.setPixel(x, y, pixel);
 				}
 			}
 			return data;
 		} else if ( bufferedImage.getColorModel() instanceof IndexColorModel ) {
-			IndexColorModel colorModel = (IndexColorModel) bufferedImage.getColorModel();
-			int size = colorModel.getMapSize();
-			byte[] reds = new byte[size];
-			byte[] greens = new byte[size];
-			byte[] blues = new byte[size];
+			final IndexColorModel colorModel = (IndexColorModel) bufferedImage.getColorModel();
+			final int size = colorModel.getMapSize();
+			final byte[] reds = new byte[size];
+			final byte[] greens = new byte[size];
+			final byte[] blues = new byte[size];
 			colorModel.getReds(reds);
 			colorModel.getGreens(greens);
 			colorModel.getBlues(blues);
-			RGB[] rgbs = new RGB[size];
+			final RGB[] rgbs = new RGB[size];
 			for ( int i = 0; i < rgbs.length; i++ ) {
 				rgbs[i] = new RGB(reds[i] & 0xFF, greens[i] & 0xFF, blues[i] & 0xFF);
 			}
-			PaletteData palette = new PaletteData(rgbs);
-			ImageData data =
+			final PaletteData palette = new PaletteData(rgbs);
+			final ImageData data =
 				new ImageData(bufferedImage.getWidth(), bufferedImage.getHeight(), colorModel.getPixelSize(), palette);
 			data.transparentPixel = colorModel.getTransparentPixel();
-			WritableRaster raster = bufferedImage.getRaster();
-			int[] pixelArray = new int[1];
+			final WritableRaster raster = bufferedImage.getRaster();
+			final int[] pixelArray = new int[1];
 			for ( int y = 0; y < data.height; y++ ) {
 				for ( int x = 0; x < data.width; x++ ) {
 					raster.getPixel(x, y, pixelArray);
@@ -265,7 +265,7 @@ public class ImageUtils {
 	public static BufferedImage downScale(final BufferedImage img, final int targetWidth, final int targetHeight,
 		final Object hint, final boolean higherQuality) {
 
-		int type =
+		final int type =
 			img.getTransparency() == Transparency.OPAQUE ? BufferedImage.TYPE_INT_RGB : BufferedImage.TYPE_INT_ARGB;
 		BufferedImage ret = img;
 		int w, h;
@@ -297,8 +297,8 @@ public class ImageUtils {
 				}
 			}
 
-			BufferedImage tmp = new BufferedImage(w, h, type);
-			Graphics2D g2 = tmp.createGraphics();
+			final BufferedImage tmp = new BufferedImage(w, h, type);
+			final Graphics2D g2 = tmp.createGraphics();
 			g2.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
 			g2.drawImage(ret, 0, 0, w, h, null);
 			g2.dispose();
@@ -307,5 +307,14 @@ public class ImageUtils {
 		} while (w != targetWidth || h != targetHeight);
 
 		return ret;
+	}
+
+	/**
+	 * @param x
+	 * @param y
+	 * @return
+	 */
+	public static BufferedImage createCompatibleImage(final double x, final double y) {
+		return createCompatibleImage((int) x, (int) y);
 	}
 }

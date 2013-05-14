@@ -91,8 +91,8 @@ public class GeometricSkill extends Skill {
 			coordinates[1] = prec;
 			coordinates[2] = next;
 			coordinates[3] = coord_loc;
-			LinearRing closeRing = GeometryUtils.getFactory().createLinearRing(coordinates);
-			Geometry percept = GeometryUtils.getFactory().createPolygon(closeRing, null);
+			LinearRing closeRing = GeometryUtils.factory.createLinearRing(coordinates);
+			Geometry percept = GeometryUtils.factory.createPolygon(closeRing, null);
 
 			Geometry areaPerc = null;
 			Geometry frontier = null;

@@ -32,18 +32,10 @@ import msi.gama.util.path.GamaSpatialPath;
 
 public class GridTopology extends AbstractTopology {
 
-	public GridTopology(final IScope scope, final GamaSpatialMatrix matrix) {
-		super(scope, matrix.environmentFrame, null);
+	public GridTopology(final IScope scope, final IGrid matrix) {
+		super(scope, matrix.getEnvironmentFrame(), null);
 		places = matrix;
 	}
-
-	// @Override
-	// public void updateAgent(final IAgent agent, final boolean previousShapeIsPoint,
-	// final ILocation previousLoc, final Envelope previousEnv) {
-	// // TODO grid agents should not be added to the spatial index. However, it may break some
-	// // algorithms.
-	// // super.updateAgent(agent, previousShapeIsPoint, previousLoc, previousEnv);
-	// }
 
 	@Override
 	public void updateAgent(final IShape previous, final IShape agent) {
@@ -55,12 +47,12 @@ public class GridTopology extends AbstractTopology {
 		getPlaces().setCellSpecies(pop);
 		((ISpatialIndex.Compound) getSpatialIndex()).add(getPlaces(), pop.getSpecies());
 		super.initialize(pop);
-		if ( getPlaces().getGridValue() != null && !getPlaces().getGridValue().isEmpty() ) {
-			for ( IAgent ag : pop ) {
-				ag.setAttribute("grid_value", getPlaces().getGridValue(ag));
-			}
-			getPlaces().clearGridValue();
-		}
+		// if ( getPlaces().getGridValue() != null && !getPlaces().getGridValue().isEmpty() ) {
+		// for ( final IAgent ag : pop ) {
+		// ag.setAttribute("grid_value", getPlaces().getGridValue(ag));
+		// }
+		// getPlaces().clearGridValue();
+		// }
 	}
 
 	@Override
@@ -93,7 +85,7 @@ public class GridTopology extends AbstractTopology {
 	@Override
 	public IAgent getAgentClosestTo(final IShape source, final IAgentFilter filter) {
 		// We first grab the cell at the location closest to the centroid of the source
-		IAgent place = getPlaces().getAgentAt(source.getLocation());
+		final IAgent place = getPlaces().getAgentAt(source.getLocation());
 		// If the filter accepts it, we return it
 		if ( filter.accept(source, place) ) { return place; }
 		// Otherwise we get the "normal" closest agent (in the spatial index)
@@ -103,7 +95,7 @@ public class GridTopology extends AbstractTopology {
 	@Override
 	public IAgent getAgentClosestTo(final ILocation source, final IAgentFilter filter) {
 		// We first grab the cell at the location closest to the centroid of the source
-		IAgent place = getPlaces().getAgentAt(source);
+		final IAgent place = getPlaces().getAgentAt(source);
 		// If the filter accepts it, we return it
 		if ( filter.accept(source, place) ) { return place; }
 		// Otherwise we get the "normal" closest agent (in the spatial index)
@@ -114,7 +106,7 @@ public class GridTopology extends AbstractTopology {
 	 * @see msi.gama.interfaces.IValue#stringValue()
 	 */
 	@Override
-	public String stringValue(IScope scope) throws GamaRuntimeException {
+	public String stringValue(final IScope scope) throws GamaRuntimeException {
 		return "Grid topology in " + environment.toString() + " as " + places.toString();
 	}
 
@@ -131,15 +123,15 @@ public class GridTopology extends AbstractTopology {
 	 * @see msi.gama.environment.AbstractTopology#_copy()
 	 */
 	@Override
-	protected ITopology _copy(IScope scope) throws GamaRuntimeException {
-		return new GridTopology(scope, environment, ((GamaSpatialMatrix) places).getRows(scope),
-			((GamaSpatialMatrix) places).getCols(scope), ((GamaSpatialMatrix) places).isTorus,
-			((GamaSpatialMatrix) places).neighbourhood.isVN(), ((GamaSpatialMatrix) places).isHexagon);
+	protected ITopology _copy(final IScope scope) throws GamaRuntimeException {
+		final IGrid grid = (IGrid) places;
+		return new GridTopology(scope, environment, grid.getRows(scope), grid.getCols(scope), grid.isTorus(), grid
+			.getNeighbourhood().isVN(), grid.isHexagon());
 	}
 
 	@Override
-	public GamaSpatialMatrix getPlaces() {
-		return (GamaSpatialMatrix) super.getPlaces();
+	public IGrid getPlaces() {
+		return (IGrid) super.getPlaces();
 	}
 
 	/**
@@ -147,13 +139,13 @@ public class GridTopology extends AbstractTopology {
 	 * @see msi.gama.environment.ITopology#pathBetween(msi.gama.interfaces.IGeometry, msi.gama.interfaces.IGeometry)
 	 */
 	@Override
-	public GamaSpatialPath pathBetween(IScope scope, final IShape source, final IShape target)
+	public GamaSpatialPath pathBetween(final IScope scope, final IShape source, final IShape target)
 		throws GamaRuntimeException {
 		return getPlaces().computeShortestPathBetween(scope, source, target, this);
 	}
 
 	@Override
-	public GamaSpatialPath pathBetween(IScope scope, final ILocation source, final ILocation target)
+	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target)
 		throws GamaRuntimeException {
 		return getPlaces().computeShortestPathBetween(scope, source, target, this);
 	}
@@ -163,7 +155,7 @@ public class GridTopology extends AbstractTopology {
 	 */
 	@Override
 	public boolean isValidLocation(final ILocation p) {
-		return ((GamaSpatialMatrix) places).getPlaceAt(p) != null;
+		return getPlaces().getPlaceAt(p) != null;
 
 	}
 
@@ -180,14 +172,14 @@ public class GridTopology extends AbstractTopology {
 	 *      java.lang.Double)
 	 */
 	@Override
-	public Double distanceBetween(IScope scope, final IShape source, final IShape target) {
+	public Double distanceBetween(final IScope scope, final IShape source, final IShape target) {
 		if ( !isValidGeometry(source) || !isValidGeometry(target) ) { return Double.MAX_VALUE; }
 		// TODO null or Double.MAX_VALUE ?
 		return (double) getPlaces().manhattanDistanceBetween(source, target);
 	}
 
 	@Override
-	public Double distanceBetween(IScope scope, final ILocation source, final ILocation target) {
+	public Double distanceBetween(final IScope scope, final ILocation source, final ILocation target) {
 		if ( !isValidLocation(source) || !isValidLocation(target) ) { return Double.MAX_VALUE; }
 		// TODO null or Double.MAX_VALUE ?
 		return (double) getPlaces().manhattanDistanceBetween(source, target);
@@ -198,7 +190,7 @@ public class GridTopology extends AbstractTopology {
 	 *      msi.gama.interfaces.IGeometry)
 	 */
 	@Override
-	public Integer directionInDegreesTo(IScope scope, final IShape source, final IShape target) {
+	public Integer directionInDegreesTo(final IScope scope, final IShape source, final IShape target) {
 		// TODO compute from the path
 		return null;
 	}

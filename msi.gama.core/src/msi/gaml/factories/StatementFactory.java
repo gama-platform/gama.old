@@ -49,7 +49,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 	@Override
 	protected StatementDescription buildDescription(final ISyntacticElement source, final IChildrenProvider cp,
 		final IDescription enclosing, final SymbolProto proto) {
-		String s = source.getKeyword();
+		final String s = source.getKeyword();
 		if ( s.equals(PRIMITIVE) ) { return new PrimitiveDescription(source.getKeyword(), enclosing, cp,
 			proto.hasScope(), proto.hasArgs(), source.getElement(), source.getFacets()); }
 		return new StatementDescription(source.getKeyword(), enclosing, cp, proto.hasScope(), proto.hasArgs(),
@@ -60,8 +60,8 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 	protected void privateValidate(final IDescription desc) {
 		// GuiUtils.debug("Validating statement " + desc);
 		super.privateValidate(desc);
-		String kw = desc.getKeyword();
-		StatementDescription cd = (StatementDescription) desc;
+		final String kw = desc.getKeyword();
+		final StatementDescription cd = (StatementDescription) desc;
 		if ( kw.equals(ARG) || kw.equals(LET) || kw.equals(ACTION) || kw.equals(REFLEX) ) {
 			assertNameIsNotReserved(cd); // Actions, reflexes, states, etc.
 			assertNameIsNotTypeOrSpecies(cd);
@@ -89,8 +89,8 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 		} else if ( kw.equals(MIGRATE) ) {
 			assertMicroSpeciesIsVisible(cd, TARGET);
 		} else if ( kw.equals(CREATE) ) {
-			String s = cd.getFacets().getLabel(SPECIES);
-			SpeciesDescription species = cd.getSpeciesDescription(s);
+			final String s = cd.getFacets().getLabel(SPECIES);
+			final SpeciesDescription species = cd.getSpeciesDescription(s);
 			// FIXME Not the right place to do it.
 			if ( species != null ) {
 				if ( species.isAbstract() ) {
@@ -113,11 +113,11 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 		}
 		IDescription previousEnclosingDescription = null;
 		if ( desc.getMeta().isRemoteContext() ) {
-			String actualSpecies = computeSpecies(desc);
+			final String actualSpecies = computeSpecies(desc);
 			if ( actualSpecies != null ) {
-				SpeciesDescription s = desc.getSpeciesContext();
+				final SpeciesDescription s = desc.getSpeciesContext();
 				if ( s != null ) {
-					IType t = s.getType();
+					final IType t = s.getType();
 					desc.addTemp(MYSELF, t, Types.NO_TYPE, Types.NO_TYPE);
 					previousEnclosingDescription = desc.getEnclosingDescription();
 					desc.setEnclosingDescription(desc.getSpeciesDescription(actualSpecies));
@@ -135,9 +135,9 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 	@Override
 	protected List<ISymbol> privateCompileChildren(final IDescription desc) {
 		if ( desc.getMeta().isRemoteContext() ) {
-			String actualSpecies = computeSpecies(desc);
+			final String actualSpecies = computeSpecies(desc);
 			if ( actualSpecies != null ) {
-				IType t = desc.getSpeciesContext().getType();
+				final IType t = desc.getSpeciesContext().getType();
 				desc.addTemp(MYSELF, t, Types.NO_TYPE, Types.NO_TYPE);
 				desc.setEnclosingDescription(desc.getSpeciesDescription(actualSpecies));
 			}
@@ -154,15 +154,15 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 
 	@Override
 	protected Arguments privateCompileArgs(final StatementDescription cd) {
-		Arguments ca = new Arguments();
-		String keyword = cd.getKeyword();
-		boolean isCalling = keyword.equals(CREATE) || keyword.equals(DO) || keyword.equals(PRIMITIVE);
+		final Arguments ca = new Arguments();
+		final String keyword = cd.getKeyword();
+		final boolean isCalling = keyword.equals(CREATE) || keyword.equals(DO) || keyword.equals(PRIMITIVE);
 		Facets argFacets;
-		for ( IDescription sd : cd.getArgs() ) {
+		for ( final IDescription sd : cd.getArgs() ) {
 			argFacets = sd.getFacets();
-			String name = sd.getName();
+			final String name = sd.getName();
 			IExpression e = null;
-			IDescription superDesc = cd.getEnclosingDescription();
+			final IDescription superDesc = cd.getEnclosingDescription();
 			IExpressionDescription ed = argFacets.get(VALUE);
 			if ( ed != null ) {
 				e = ed.compile(superDesc);
@@ -219,17 +219,17 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 	}
 
 	// Only for create ?
-	private void verifyInits(StatementDescription cd, Arguments ca) {
-		SpeciesDescription sd = cd.getSpeciesDescription(computeSpecies(cd));
+	private void verifyInits(final StatementDescription cd, final Arguments ca) {
+		final SpeciesDescription sd = cd.getSpeciesDescription(computeSpecies(cd));
 		if ( sd == null ) {
 			cd.warning(
 				"Impossible to verify the validity of the arguments. Use them at your own risk ! (and don't complain about exceptions)",
 				IGamlIssue.UNKNOWN_ARGUMENT);
 			return;
 		}
-		Collection<IDescription> args = cd.getArgs();
-		for ( IDescription arg : args ) {
-			String name = arg.getName();
+		final Collection<IDescription> args = cd.getArgs();
+		for ( final IDescription arg : args ) {
+			final String name = arg.getName();
 			if ( !sd.hasVar(name) ) {
 				cd.error("Attribute " + name + " does not exist in species " + sd.getName(),
 					IGamlIssue.UNKNOWN_ARGUMENT, arg.getFacets().get(VALUE).getTarget(), (String[]) null);
@@ -250,37 +250,13 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 			}
 
 		}
-		// for ( Facet ff : ca.entrySet() ) {
-		// if ( ff != null ) {
-		// String name = ff.getKey();
-		// if ( !sd.hasVar(name) ) {
-		// cd.error("Attribute " + name + " does not exist in species " + sd.getName(),
-		// IGamlIssue.UNKNOWN_ARGUMENT, ff.getValue().getTarget(), (String[]) null);
-		// } else {
-		// IType varType = sd.getVariable(name).getType();
-		// IType initType = ff.getValue().getExpression().getType();
-		// if ( varType != Types.NO_TYPE && !initType.isTranslatableInto(varType) ) {
-		// cd.warning("The type of attribute " + name + " should be " + varType,
-		// IGamlIssue.WRONG_TYPE, ff.getValue().getTarget(), (String[]) null);
-		// } else {
-		// varType = sd.getVariable(name).getContentType();
-		// initType = ff.getValue().getExpression().getContentType();
-		// if ( varType != Types.NO_TYPE && !initType.isTranslatableInto(varType) ) {
-		// cd.warning("The content type of attribute " + name + " should be " +
-		// varType, IGamlIssue.WRONG_TYPE, ff.getValue().getTarget(),
-		// (String[]) null);
-		// }
-		// }
-		// }
-		// }
-		// }
 	}
 
 	@Override
-	protected void compileFacet(final String tag, final IDescription sd, SymbolProto md) {
+	protected void compileFacet(final String tag, final IDescription sd, final SymbolProto md) {
 		// GuiUtils.debug("Compiling facet " + tag);
 		if ( md.isFacetDeclaringANewTemp(tag) ) {
-			Facets ff = sd.getFacets();
+			final Facets ff = sd.getFacets();
 			IType type = sd.getTypeNamed(ff.getLabel(TYPE));
 			IType keyType = sd.getTypeNamed(ff.getLabel(INDEX));
 			IType contentType = sd.getTypeNamed(ff.getLabel(AS));
@@ -297,19 +273,19 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 					type = Types.get(IType.LIST);
 				} else if ( ff.containsKey(VALUE) ) {
 					compileFacet(VALUE, sd, md);
-					IExpression expr = ff.getExpr(VALUE);
+					final IExpression expr = ff.getExpr(VALUE);
 					if ( expr != null ) {
 						type = expr.getType();
 					}
 				} else if ( ff.containsKey(OVER) ) {
 					compileFacet(OVER, sd, md);
-					IExpression expr = ff.getExpr(OVER);
+					final IExpression expr = ff.getExpr(OVER);
 					if ( expr != null ) {
 						type = expr.getContentType();
 					}
 				} else if ( ff.containsKey(FROM) && ff.containsKey(TO) ) {
 					compileFacet(FROM, sd, md);
-					IExpression expr = ff.getExpr(FROM);
+					final IExpression expr = ff.getExpr(FROM);
 					if ( expr != null ) {
 						type = expr.getType();
 					}
@@ -319,7 +295,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 				if ( contentType == Types.NO_TYPE ) {
 					if ( ff.containsKey(VALUE) ) {
 						compileFacet(VALUE, sd, md);
-						IExpression expr = ff.getExpr(VALUE);
+						final IExpression expr = ff.getExpr(VALUE);
 						if ( expr != null ) {
 							contentType = expr.getContentType();
 						}
@@ -331,7 +307,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 				if ( keyType == Types.NO_TYPE ) {
 					if ( ff.containsKey(VALUE) ) {
 						compileFacet(VALUE, sd, md);
-						IExpression expr = ff.getExpr(VALUE);
+						final IExpression expr = ff.getExpr(VALUE);
 						if ( expr != null ) {
 							keyType = expr.getKeyType();
 						}
@@ -344,7 +320,8 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 			if ( type == Types.NO_TYPE && contentType != Types.NO_TYPE ) {
 				type = Types.get(IType.CONTAINER);
 			}
-			IVarExpression exp = ((StatementDescription) sd).addNewTempIfNecessary(tag, type, contentType, keyType);
+			final IVarExpression exp =
+				((StatementDescription) sd).addNewTempIfNecessary(tag, type, contentType, keyType);
 			ff.put(tag, exp);
 		} else {
 			super.compileFacet(tag, sd, md);
@@ -355,15 +332,15 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 		// TODO is there a way to extract the species from a constant expression (like
 		// species("ant")) ? cf. Issue 145
 		IType type = null;
-		Facets ff = ce.getFacets();
-		IExpression speciesFacet = ff.getExpr(SPECIES, ff.getExpr(AS, ff.getExpr(TARGET)));
+		final Facets ff = ce.getFacets();
+		final IExpression speciesFacet = ff.getExpr(SPECIES, ff.getExpr(AS, ff.getExpr(TARGET)));
 		if ( speciesFacet != null ) {
 			IType t = speciesFacet.getType();
 			if ( t.isSpeciesType() ) {
 				type = t;
 			}
 			if ( t.id() == IType.STRING && speciesFacet.isConst() ) {
-				String s = speciesFacet.literalValue();
+				final String s = speciesFacet.literalValue();
 				if ( ce.getSpeciesDescription(s) != null ) { return s; }
 			} else {
 				t = speciesFacet.getContentType();

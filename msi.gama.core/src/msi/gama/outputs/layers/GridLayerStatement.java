@@ -23,7 +23,7 @@ import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
+import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -59,13 +59,13 @@ public class GridLayerStatement extends AbstractLayerStatement {
 		setName(getFacet(IKeyword.SPECIES).literalValue());
 	}
 
-	GamaSpatialMatrix grid;
+	IGrid grid;
 	IExpression lineColor;
 	GamaColor currentColor, constantColor;
-	HashSet<IAgent> agents;
+	// HashSet<IAgent> agents;
 	private IExpression setOfAgents;
 
-	HashSet<IAgent> agentsForLayer;
+	// HashSet<IAgent> agentsForLayer;
 
 	// BufferedImage supportImage;
 
@@ -81,22 +81,22 @@ public class GridLayerStatement extends AbstractLayerStatement {
 			throw GamaRuntimeException.error("missing environment for output " + getName());
 		} else if ( !gridPop.isGrid() ) { throw GamaRuntimeException.error("not a grid environment for: " + getName()); }
 
-		grid = (GamaSpatialMatrix) gridPop.getTopology().getPlaces();
-		agents = new HashSet<IAgent>();
-		agents.addAll(computeAgents());
+		grid = (IGrid) gridPop.getTopology().getPlaces();
+		// agents = new HashSet<IAgent>();
+		// agents.addAll(computeAgents());
 		// if ( supportImage != null ) {
 		// supportImage.flush();
 		// }
 		// supportImage = ImageUtils.createCompatibleImage(grid.numCols, grid.numRows);
 	}
 
-	public GamaSpatialMatrix getEnvironment() {
+	public IGrid getEnvironment() {
 		return grid;
 	}
 
 	@Override
 	public short getType() {
-		if ( grid.getIsHexagon() ) { return ILayerStatement.AGENTS; }
+		if ( grid.isHexagon() ) { return ILayerStatement.AGENTS; }
 		return ILayerStatement.GRID;
 	}
 
@@ -114,22 +114,22 @@ public class GridLayerStatement extends AbstractLayerStatement {
 
 	@Override
 	public void _step(final IScope sim) throws GamaRuntimeException {
-		if ( grid.getIsHexagon() ) {
-			synchronized (agents) {
-				if ( sim.getClock().getCycle() == 0 || agentsHaveChanged() ) {
-					agents.clear();
-					agents.addAll(computeAgents());
-				}
-				agentsForLayer = (HashSet<IAgent>) agents.clone();
-			}
+		if ( grid.isHexagon() ) {
+			// synchronized (agents) {
+			// if ( sim.getClock().getCycle() == 0 || agentsHaveChanged() ) {
+			// agents.clear();
+			// agents.addAll(computeAgents());
+			// }
+			// agentsForLayer = (HashSet<IAgent>) agents.clone();
+			// }
 		} else {
 			if ( lineColor == null || constantColor != null ) { return; }
 			currentColor = Cast.asColor(sim, lineColor.value(sim));
 		}
 	}
 
-	public synchronized HashSet<IAgent> getAgentsToDisplay() {
-		return agentsForLayer;
+	public synchronized Collection<IAgent> getAgentsToDisplay() {
+		return /* agentsForLayer; */grid.getAgents();
 	}
 
 	public List<? extends IAgent> computeAgents() throws GamaRuntimeException {

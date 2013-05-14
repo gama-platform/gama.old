@@ -18,12 +18,10 @@
  */
 package msi.gaml.expressions;
 
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
-import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.*;
 
@@ -35,51 +33,61 @@ import msi.gaml.statements.*;
 
 public class PrimitiveOperator extends AbstractNAryOperator {
 
-	IStatement.WithArgs statement;
+	// IStatement.WithArgs statement;
+	Arguments parameters;
 
 	public PrimitiveOperator(final String op) {
 		setName(op);
 	}
 
 	@Override
-	public PrimitiveOperator init(final String op, final IDescription context,
-		final IExpression ... args) {
-		StatementDescription action = context.getAction(op);
+	public PrimitiveOperator init(final String op, final IDescription context, final IExpression ... args) {
+		final StatementDescription action = context.getAction(op);
 		return init(op, context, action, args);
 	}
 
-	public PrimitiveOperator init(final String op, final IDescription callerContext,
-		StatementDescription action, final IExpression ... args) {
+	public PrimitiveOperator init(final String op, final IDescription callerContext, final StatementDescription action,
+		final IExpression ... args) {
 		this.exprs = args;
 		type = action.getType();
 		contentType = action.getContentType();
 		keyType = action.getKeyType();
-		Arguments param = createArgs();
-		IDescription cd =
-			DescriptionFactory.create(IKeyword.DO, action.getSpeciesContext(), IKeyword.ACTION, op);
-		action.verifyArgs(callerContext, param);
-		statement = new DoStatement(cd);
-		if ( statement != null ) {
-			statement.setFormalArgs(param);
-		}
+		parameters = createArgs();
+		// final IDescription cd = DescriptionFactory.create(IKeyword.DO, action.getSpeciesContext(), IKeyword.ACTION,
+		// op);
+		action.verifyArgs(callerContext, parameters);
+		// statement = new DoStatement(cd);
+		// if ( statement != null ) {
+		// statement.setFormalArgs(param);
+		// }
 		return this;
 	}
 
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
 		if ( scope == null ) { return null; }
-		IAgent target = Cast.asAgent(scope, arg(0).value(scope));
+		final IAgent target = Cast.asAgent(scope, arg(0).value(scope));
 		if ( target == null ) { return null; }
-		Object result = scope.execute(statement, target);
-		return result;
+		// AD 13/05/13 The target should not be pushed so early to the scope, as the arguments will be (incorrectly)
+		// evaluated in its context, but how to prevent it ? See Issue 401.
+		// One way is (1) to gather the executer
+		final IStatement.WithArgs executer = target.getSpecies().getAction(getName());
+		// Then, (2) to set the caller to the actual agent on the scope (in the context of which the arguments need to
+		// be evaluated
+		if ( executer != null ) {
+			parameters.setCaller(scope.getAgentScope());
+			// And finally, (3) to execute the executer on the target (it will be pushed in the scope)
+			return scope.execute(executer, target, parameters);
+		}
+		return null;
 	}
 
 	private Arguments createArgs() {
-		Arguments result = new Arguments();
-		IExpression right = arg(1); // FIXME A bit dangerous !
+		final Arguments result = new Arguments();
+		final IExpression right = arg(1); // FIXME A bit dangerous !
 		if ( !(right instanceof MapExpression) ) { return result; }
-		IExpression[] keys = ((MapExpression) right).keysArray();
-		IExpression[] values = ((MapExpression) right).valuesArray();
+		final IExpression[] keys = ((MapExpression) right).keysArray();
+		final IExpression[] values = ((MapExpression) right).valuesArray();
 		for ( int i = 0; i < keys.length; i++ ) {
 			result.put(keys[i].literalValue(), values[i]);
 		}
@@ -98,21 +106,19 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 
 	@Override
 	public String getTitle() {
-		StringBuilder sb = new StringBuilder(50);
-		sb.append("action ").append(getName()).append(" of ")
-			.append(statement.getDescription().getSpeciesContext().getTitle()).append(" returns ")
-			.append(typeToString());
+		final StringBuilder sb = new StringBuilder(50);
+		sb.append("action ").append(getName()).append(" of ").append(arg(0).getType().getSpeciesName())
+			.append(" returns ").append(typeToString());
 		return sb.toString();
 
 	}
 
 	@Override
 	public String getDocumentation() {
-		StringBuilder sb = new StringBuilder(200);
+		final StringBuilder sb = new StringBuilder(200);
 		// TODO insert here a @documentation if possible
 		sb.append("Returns a value of type ").append(type.toString()).append("<br>");
-		sb.append("Defined in ").append(statement.getDescription().getSpeciesContext().getTitle())
-			.append("<br>");
+		sb.append("Defined in ").append(arg(0).getType().getSpeciesName()).append("<br>");
 		return sb.toString();
 	}
 

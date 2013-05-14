@@ -72,8 +72,8 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		ISpecies context = scope.getAgentScope().getSpecies();
-		IStatement.WithArgs executer = context.getAction(name);
+		final ISpecies context = scope.getAgentScope().getSpecies();
+		final IStatement.WithArgs executer = context.getAction(name);
 		Object result = null;
 		if ( executer != null ) {
 			executer.setRuntimeArgs(args);
@@ -93,7 +93,7 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 
 	@Override
 	public IType getType() {
-		StatementDescription executer = description.getSpeciesContext().getAction(name);
+		final StatementDescription executer = description.getSpeciesContext().getAction(name);
 		if ( executer != null ) {
 			return executer.getType();
 		} else if ( function != null ) { return function.getType(); }
@@ -102,7 +102,7 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 
 	@Override
 	public IType getContentType() {
-		StatementDescription executer = description.getSpeciesContext().getAction(name);
+		final StatementDescription executer = description.getSpeciesContext().getAction(name);
 		if ( executer != null ) {
 			return executer.getContentType();
 		} else if ( function != null ) { return function.getContentType(); }
@@ -111,7 +111,7 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 
 	@Override
 	public IType getKeyType() {
-		StatementDescription executer = description.getSpeciesContext().getAction(name);
+		final StatementDescription executer = description.getSpeciesContext().getAction(name);
 		if ( executer != null ) {
 			return executer.getKeyType();
 		} else if ( function != null ) { return function.getKeyType(); }
@@ -120,8 +120,8 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 
 	@Override
 	public Double computePertinence(final IScope scope) throws GamaRuntimeException {
-		ISpecies context = scope.getAgentScope().getSpecies();
-		IStatement.WithArgs executer = context.getAction(name);
+		final ISpecies context = scope.getAgentScope().getSpecies();
+		final IStatement.WithArgs executer = context.getAction(name);
 		if ( executer.getPertinence() != null ) { return Cast.asFloat(scope, executer.getPertinence().value(scope)); }
 		return 1.0;
 	}

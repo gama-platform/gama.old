@@ -18,6 +18,8 @@
  */
 package msi.gaml.statements;
 
+import java.util.Map;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IExpressionDescription;
@@ -28,15 +30,49 @@ import msi.gaml.expressions.IExpression;
  */
 public class Arguments extends Facets {
 
-	public void stack(final IScope scope) throws GamaRuntimeException {
-		for ( Facet entry : entrySet() ) {
-			if ( entry == null ) {
-				continue;
+	/*
+	 * The caller represents the agent in the context of which the arguments need to be evaluated.
+	 */
+	IAgent caller;
+
+	public Arguments() {}
+
+	public Arguments(final IAgent caller) {
+		this.caller = caller;
+	}
+
+	public Arguments(final Arguments args) {
+		this.caller = args.caller;
+		for ( final Map.Entry<String, IExpressionDescription> entry : args.entrySet() ) {
+			if ( entry != null ) {
+				put(entry.getKey(), entry.getValue());
 			}
-			IExpressionDescription o = entry.getValue();
-			IExpression e = o.getExpression();
-			if ( e != null ) {
-				scope.addVarWithValue(entry.getKey(), e.value(scope));
+		}
+	}
+
+	public void setCaller(final IAgent caller) {
+		this.caller = caller;
+	}
+
+	public void stack(final IScope scope) throws GamaRuntimeException {
+		// The arguments are always evaluated in the scope of the caller agent
+		if ( caller != null ) {
+			scope.push(caller);
+		}
+		try {
+			for ( final Facet entry : entrySet() ) {
+				if ( entry == null ) {
+					continue;
+				}
+				final IExpressionDescription o = entry.getValue();
+				final IExpression e = o.getExpression();
+				if ( e != null ) {
+					scope.addVarWithValue(entry.getKey(), e.value(scope));
+				}
+			}
+		} finally {
+			if ( caller != null ) {
+				scope.pop(caller);
 			}
 		}
 	}

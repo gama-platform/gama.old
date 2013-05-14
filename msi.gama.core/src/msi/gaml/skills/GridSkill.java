@@ -18,20 +18,16 @@
  */
 package msi.gaml.skills;
 
-import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.topology.filter.IAgentFilter.Not;
-import msi.gama.metamodel.topology.filter.*;
-import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
-import msi.gama.precompiler.GamlAnnotations.doc;
+import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation.GridAgent;
+import msi.gama.metamodel.topology.grid.*;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.util.*;
+import msi.gama.util.GamaColor;
 import msi.gaml.types.IType;
 
 /**
@@ -42,7 +38,8 @@ import msi.gaml.types.IType;
  */
 @vars({
 	@var(name = IKeyword.COLOR, type = IType.COLOR),
-	@var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT, doc = @doc(deprecated = "This variable is deprecated for grid agents. Use agents_inside(cell) or agents_overlapping(cell) instead")),
+	// @var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT, doc = @doc(deprecated =
+	// "This variable is deprecated for grid agents. Use agents_inside(cell) or agents_overlapping(cell) instead")),
 	@var(name = IKeyword.GRID_VALUE, type = IType.FLOAT),
 	@var(name = IKeyword.GRID_X, type = IType.INT, constant = true),
 	@var(name = IKeyword.GRID_Y, type = IType.INT, constant = true) })
@@ -51,36 +48,42 @@ public class GridSkill extends GeometricSkill {
 
 	public static final String SKILL_NAME = "grid";
 
-	protected final GamaSpatialMatrix getGrid(final IAgent agent) {
-		return (GamaSpatialMatrix) agent.getPopulation().getTopology().getPlaces();
+	protected final IGrid getGrid(final IAgent agent) {
+		return (IGrid) agent.getPopulation().getTopology().getPlaces();
 	}
 
-	@getter("agents")
-	@Deprecated
-	public final List<IAgent> getAgents(final IAgent agent) {
-		List<IAgent> agents =
-			agent.getTopology().getAgentsIn(agent, new Not(In.population(agent.getPopulation())),
-				false);
-		return agents;
-
-		// TODO Remove this (to consider instead "agents_in" or "agents_intersecting")
-	}
+	// @getter("agents")
+	// @Deprecated
+	// public final List<IAgent> getAgents(final IAgent agent) {
+	// final List<IAgent> agents =
+	// agent.getTopology().getAgentsIn(agent, new Not(In.population(agent.getPopulation())), false);
+	// return agents;
+	//
+	// // TODO Remove this (to consider instead "agents_in" or "agents_intersecting")
+	// }
 
 	@getter("grid_x")
 	public final int getX(final IAgent agent) {
-		if ( getGrid(agent).getIsHexagon() ) { return getGrid(agent).getX(agent.getGeometry()); }
-		return getGrid(agent).getX(agent.getLocation().getX());
+		return ((GridAgent) agent).getX();
 	}
 
-	
+	@getter("grid_value")
+	public final double getValue(final IAgent agent) {
+		return ((GridAgent) agent).getValue();
+	}
+
 	@getter("grid_y")
 	public final int getY(final IAgent agent) {
-		if ( getGrid(agent).getIsHexagon() ) { return getGrid(agent).getY(agent.getGeometry()); }
-		return getGrid(agent).getY(agent.getLocation().getY());
+		return ((GridAgent) agent).getY();
 	}
 
 	@setter("grid_x")
 	public final void setX(final IAgent agent, final Integer i) {
+
+	}
+
+	@setter("grid_value")
+	public final void setValue(final IAgent agent, final Double d) {
 
 	}
 
@@ -89,24 +92,24 @@ public class GridSkill extends GeometricSkill {
 
 	}
 
-	@setter("agents")
-	public final void setAgents(final IAgent agent, final GamaList agents) {
-
-	}
+	// @setter("agents")
+	// public final void setAgents(final IAgent agent, final GamaList agents) {
+	//
+	// }
 
 	@getter("color")
 	public GamaColor getColor(final IAgent agent) {
-		if ( getGrid(agent).getIsHexagon() ) { return (GamaColor) agent
-			.getAttribute(IKeyword.COLOR); }
-		return getGrid(agent).getColor(agent.getLocation());
+		return ((GridAgent) agent).getColor();
 	}
 
 	@setter("color")
 	public void setColor(final IAgent agent, final GamaColor color) {
-		if ( getGrid(agent).getIsHexagon() ) {
-			agent.setAttribute(IKeyword.COLOR, color);
-		}
-		getGrid(agent).setColor(agent.getLocation(), color);
+		((GridAgent) agent).setColor(color);
 	}
+
+	// @getter("shape")
+	// public IShape getShape(final IAgent agent) {
+	//
+	// }
 
 }

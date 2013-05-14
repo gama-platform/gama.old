@@ -20,9 +20,7 @@ package msi.gama.common.util;
 
 import java.io.IOException;
 import java.util.*;
-//import msi.gama.database.SqlConnection;
-import msi.gama.database.sql.SqlConnection;
-import msi.gama.database.sql.SqlUtils;
+import msi.gama.database.sql.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -46,17 +44,9 @@ import com.vividsolutions.jts.triangulate.quadedge.LocateFailureException;
  */
 public class GeometryUtils {
 
-	// TODO static CoordinateSequenceFactory csf = new PackedCoordinateSequenceFactory(
-	// PackedCoordinateSequenceFactory.DOUBLE, 2);
-
 	public static GeometryFactory factory = new GeometryFactory();
 	public static PreparedGeometryFactory pgfactory = new PreparedGeometryFactory();
-
-	// TODO : see the possibility to use new LiteCoordinateSequenceFactory()
-
-	public static GeometryFactory getFactory() {
-		return factory;
-	}
+	public static CoordinateSequenceFactory coordFactory = factory.getCoordinateSequenceFactory();
 
 	// types of geometry
 	private final static int NULL = -1;
@@ -70,35 +60,35 @@ public class GeometryUtils {
 	public static GamaPoint pointInGeom(final Geometry geom, final RandomUtils rand) {
 		if ( geom instanceof Point ) { return new GamaPoint(geom.getCoordinate()); }
 		if ( geom instanceof LineString ) {
-			int i = rand.between(0, geom.getCoordinates().length - 2);
-			Coordinate source = geom.getCoordinates()[i];
-			Coordinate target = geom.getCoordinates()[i + 1];
+			final int i = rand.between(0, geom.getCoordinates().length - 2);
+			final Coordinate source = geom.getCoordinates()[i];
+			final Coordinate target = geom.getCoordinates()[i + 1];
 			if ( source.x != target.x ) {
-				double a = (source.y - target.y) / (source.x - target.x);
-				double b = source.y - a * source.x;
-				double x = rand.between(source.x, target.x);
-				double y = a * x + b;
+				final double a = (source.y - target.y) / (source.x - target.x);
+				final double b = source.y - a * source.x;
+				final double x = rand.between(source.x, target.x);
+				final double y = a * x + b;
 				return new GamaPoint(x, y);
 			}
-			double x = source.x;
-			double y = rand.between(source.y, target.y);
+			final double x = source.x;
+			final double y = rand.between(source.y, target.y);
 			return new GamaPoint(x, y);
 		}
 		if ( geom instanceof Polygon ) {
-			Envelope env = geom.getEnvelopeInternal();
-			double xMin = env.getMinX();
-			double xMax = env.getMaxX();
-			double yMin = env.getMinY();
-			double yMax = env.getMaxY();
-			double x = rand.between(xMin, xMax);
-			Coordinate coord1 = new Coordinate(x, yMin);
-			Coordinate coord2 = new Coordinate(x, yMax);
-			Coordinate[] coords = { coord1, coord2 };
-			Geometry line = getFactory().createLineString(coords);
+			final Envelope env = geom.getEnvelopeInternal();
+			final double xMin = env.getMinX();
+			final double xMax = env.getMaxX();
+			final double yMin = env.getMinY();
+			final double yMax = env.getMaxY();
+			final double x = rand.between(xMin, xMax);
+			final Coordinate coord1 = new Coordinate(x, yMin);
+			final Coordinate coord2 = new Coordinate(x, yMax);
+			final Coordinate[] coords = { coord1, coord2 };
+			Geometry line = factory.createLineString(coords);
 			try {
 				line = line.intersection(geom);
-			} catch (Exception e) {
-				PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
+			} catch (final Exception e) {
+				final PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
 				line =
 					GeometryPrecisionReducer.reducePointwise(line, pm).intersection(
 						GeometryPrecisionReducer.reducePointwise(geom, pm));
@@ -114,19 +104,19 @@ public class GeometryUtils {
 	}
 
 	private static Coordinate[] minimiseLength(final Coordinate[] coords) {
-		GeometryFactory geomFact = getFactory();
-		double dist1 = geomFact.createLineString(coords).getLength();
-		Coordinate[] coordstest1 = new Coordinate[3];
+		final GeometryFactory geomFact = factory;
+		final double dist1 = geomFact.createLineString(coords).getLength();
+		final Coordinate[] coordstest1 = new Coordinate[3];
 		coordstest1[0] = coords[0];
 		coordstest1[1] = coords[2];
 		coordstest1[2] = coords[1];
-		double dist2 = geomFact.createLineString(coordstest1).getLength();
+		final double dist2 = geomFact.createLineString(coordstest1).getLength();
 
-		Coordinate[] coordstest2 = new Coordinate[3];
+		final Coordinate[] coordstest2 = new Coordinate[3];
 		coordstest2[0] = coords[1];
 		coordstest2[1] = coords[0];
 		coordstest2[2] = coords[2];
-		double dist3 = geomFact.createLineString(coordstest2).getLength();
+		final double dist3 = geomFact.createLineString(coordstest2).getLength();
 
 		if ( dist1 <= dist2 && dist1 <= dist3 ) { return coords; }
 		if ( dist2 <= dist1 && dist2 <= dist3 ) { return coordstest1; }
@@ -135,24 +125,24 @@ public class GeometryUtils {
 	}
 
 	public static Coordinate[] extractPoints(final IShape triangle, final Geometry geom, final int degree) {
-		Coordinate[] coords = triangle.getInnerGeometry().getCoordinates();
-		Coordinate[] c1 = { coords[0], coords[1] };
-		Coordinate[] c2 = { coords[1], coords[2] };
-		Coordinate[] c3 = { coords[2], coords[3] };
-		LineString l1 = getFactory().createLineString(c1);
-		LineString l2 = getFactory().createLineString(c2);
-		LineString l3 = getFactory().createLineString(c3);
-		Coordinate[] pts = new Coordinate[degree];
+		final Coordinate[] coords = triangle.getInnerGeometry().getCoordinates();
+		final Coordinate[] c1 = { coords[0], coords[1] };
+		final Coordinate[] c2 = { coords[1], coords[2] };
+		final Coordinate[] c3 = { coords[2], coords[3] };
+		final LineString l1 = factory.createLineString(c1);
+		final LineString l2 = factory.createLineString(c2);
+		final LineString l3 = factory.createLineString(c3);
+		final Coordinate[] pts = new Coordinate[degree];
 		if ( degree == 3 ) {
 			pts[0] = l1.getCentroid().getCoordinate();
 			pts[1] = l2.getCentroid().getCoordinate();
 			pts[2] = l3.getCentroid().getCoordinate();
 			return minimiseLength(pts);
 		} else if ( degree == 2 ) {
-			Geometry bounds = geom.getBoundary().buffer(1);
-			double val1 = bounds.intersection(l1).getLength() / l1.getLength();
-			double val2 = bounds.intersection(l2).getLength() / l2.getLength();
-			double val3 = bounds.intersection(l3).getLength() / l3.getLength();
+			final Geometry bounds = geom.getBoundary().buffer(1);
+			final double val1 = bounds.intersection(l1).getLength() / l1.getLength();
+			final double val2 = bounds.intersection(l2).getLength() / l2.getLength();
+			final double val3 = bounds.intersection(l3).getLength() / l3.getLength();
 			if ( val1 > val2 ) {
 				if ( val1 > val3 ) {
 					pts[0] = l2.getCentroid().getCoordinate();
@@ -177,18 +167,18 @@ public class GeometryUtils {
 	}
 
 	public static GamaList<IShape> hexagonalGridFromGeom(final IShape geom, final int nbRows, final int nbColumns) {
-		double widthEnv = geom.getEnvelope().getWidth();
-		double heightEnv = geom.getEnvelope().getHeight();
+		final double widthEnv = geom.getEnvelope().getWidth();
+		final double heightEnv = geom.getEnvelope().getHeight();
 		double xmin = geom.getEnvelope().getMinX();
 		double ymin = geom.getEnvelope().getMinY();
-		double widthHex = widthEnv / (nbColumns * 0.75 + 0.25);
-		double heightHex = heightEnv / nbRows;
-		GamaList<IShape> geoms = new GamaList<IShape>();
+		final double widthHex = widthEnv / (nbColumns * 0.75 + 0.25);
+		final double heightHex = heightEnv / nbRows;
+		final GamaList<IShape> geoms = new GamaList<IShape>();
 		xmin += widthHex / 2.0;
 		ymin += heightHex / 2.0;
 		for ( int l = 0; l < nbRows; l++ ) {
 			for ( int c = 0; c < nbColumns; c = c + 2 ) {
-				GamaShape poly =
+				final GamaShape poly =
 					(GamaShape) GamaGeometryType.buildHexagon(widthHex, heightHex, new GamaPoint(xmin + c * widthHex *
 						0.75, ymin + l * heightHex));
 				// GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size, xmin + (c * 1.5)
@@ -200,7 +190,7 @@ public class GeometryUtils {
 		}
 		for ( int l = 0; l < nbRows; l++ ) {
 			for ( int c = 1; c < nbColumns; c = c + 2 ) {
-				GamaShape poly =
+				final GamaShape poly =
 					(GamaShape) GamaGeometryType.buildHexagon(widthHex, heightHex, new GamaPoint(xmin + c * widthHex *
 						0.75, ymin + (l + 0.5) * heightHex));
 				// GamaShape poly = (GamaShape) GamaGeometryType.buildHexagon(size, xmin + (c * 1.5)
@@ -224,35 +214,35 @@ public class GeometryUtils {
 	}
 
 	public static List<Geometry> discretisation(final Geometry geom, final double size, final boolean complex) {
-		List<Geometry> geoms = new ArrayList<Geometry>();
+		final List<Geometry> geoms = new ArrayList<Geometry>();
 		if ( geom instanceof GeometryCollection ) {
-			GeometryCollection gc = (GeometryCollection) geom;
+			final GeometryCollection gc = (GeometryCollection) geom;
 			for ( int i = 0; i < gc.getNumGeometries(); i++ ) {
 				geoms.addAll(discretisation(gc.getGeometryN(i), size, complex));
 			}
 		} else {
-			Envelope env = geom.getEnvelopeInternal();
-			double xMax = env.getMaxX();
-			double yMax = env.getMaxY();
+			final Envelope env = geom.getEnvelopeInternal();
+			final double xMax = env.getMaxX();
+			final double yMax = env.getMaxY();
 			double x = env.getMinX();
 			double y = env.getMinY();
-			GeometryFactory geomFact = getFactory();
+			final GeometryFactory geomFact = factory;
 			while (x < xMax) {
 				y = env.getMinY();
 				while (y < yMax) {
-					Coordinate c1 = new Coordinate(x, y);
-					Coordinate c2 = new Coordinate(x + size, y);
-					Coordinate c3 = new Coordinate(x + size, y + size);
-					Coordinate c4 = new Coordinate(x, y + size);
-					Coordinate[] cc = { c1, c2, c3, c4, c1 };
-					Geometry square = geomFact.createPolygon(geomFact.createLinearRing(cc), null);
+					final Coordinate c1 = new Coordinate(x, y);
+					final Coordinate c2 = new Coordinate(x + size, y);
+					final Coordinate c3 = new Coordinate(x + size, y + size);
+					final Coordinate c4 = new Coordinate(x, y + size);
+					final Coordinate[] cc = { c1, c2, c3, c4, c1 };
+					final Geometry square = geomFact.createPolygon(geomFact.createLinearRing(cc), null);
 					y += size;
 					try {
 						Geometry g = null;
 						try {
 							g = square.intersection(geom);
-						} catch (Exception e) {
-							PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
+						} catch (final Exception e) {
+							final PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
 							g =
 								GeometryPrecisionReducer.reducePointwise(geom, pm).intersection(
 									GeometryPrecisionReducer.reducePointwise(square, pm));
@@ -264,7 +254,7 @@ public class GeometryUtils {
 							if ( g instanceof Polygon ) {
 								geoms.add(g);
 							} else if ( g instanceof MultiPolygon ) {
-								MultiPolygon mp = (MultiPolygon) g;
+								final MultiPolygon mp = (MultiPolygon) g;
 								for ( int i = 0; i < mp.getNumGeometries(); i++ ) {
 									if ( mp.getGeometryN(i) instanceof Polygon ) {
 										geoms.add(mp.getGeometryN(i));
@@ -272,7 +262,7 @@ public class GeometryUtils {
 								}
 							}
 						}
-					} catch (TopologyException e) {}
+					} catch (final TopologyException e) {}
 				}
 				x += size;
 			}
@@ -281,50 +271,50 @@ public class GeometryUtils {
 	}
 
 	public static GamaList<IShape> triangulation(final IScope scope, final IList<IShape> lines) {
-		GamaList<IShape> geoms = new GamaList<IShape>();
-		ConformingDelaunayTriangulationBuilder dtb = new ConformingDelaunayTriangulationBuilder();
+		final GamaList<IShape> geoms = new GamaList<IShape>();
+		final ConformingDelaunayTriangulationBuilder dtb = new ConformingDelaunayTriangulationBuilder();
 
-		Geometry points = GamaGeometryType.geometriesToGeometry(scope, lines).getInnerGeometry();
-		double sizeTol = Math.sqrt(points.getEnvelope().getArea()) / 100.0;
+		final Geometry points = GamaGeometryType.geometriesToGeometry(scope, lines).getInnerGeometry();
+		final double sizeTol = Math.sqrt(points.getEnvelope().getArea()) / 100.0;
 
 		dtb.setSites(points);
 		dtb.setConstraints(points);
 		dtb.setTolerance(sizeTol);
-		GeometryCollection tri = (GeometryCollection) dtb.getTriangles(getFactory());
-		int nb = tri.getNumGeometries();
+		final GeometryCollection tri = (GeometryCollection) dtb.getTriangles(factory);
+		final int nb = tri.getNumGeometries();
 		for ( int i = 0; i < nb; i++ ) {
-			Geometry gg = tri.getGeometryN(i);
+			final Geometry gg = tri.getGeometryN(i);
 			geoms.add(new GamaShape(gg));
 		}
 		return geoms;
 	}
 
 	public static GamaList<IShape> triangulation(final IScope scope, final Geometry geom) {
-		GamaList<IShape> geoms = new GamaList<IShape>();
+		final GamaList<IShape> geoms = new GamaList<IShape>();
 		if ( geom instanceof GeometryCollection ) {
-			GeometryCollection gc = (GeometryCollection) geom;
+			final GeometryCollection gc = (GeometryCollection) geom;
 			for ( int i = 0; i < gc.getNumGeometries(); i++ ) {
 				geoms.addAll(triangulation(scope, gc.getGeometryN(i)));
 			}
 		} else if ( geom instanceof Polygon ) {
-			Polygon polygon = (Polygon) geom;
-			double sizeTol = Math.sqrt(polygon.getArea()) / 100.0;
-			ConformingDelaunayTriangulationBuilder dtb = new ConformingDelaunayTriangulationBuilder();
+			final Polygon polygon = (Polygon) geom;
+			final double sizeTol = Math.sqrt(polygon.getArea()) / 100.0;
+			final ConformingDelaunayTriangulationBuilder dtb = new ConformingDelaunayTriangulationBuilder();
 			GeometryCollection tri = null;
 			try {
 				dtb.setSites(polygon);
 				dtb.setConstraints(polygon);
 				dtb.setTolerance(sizeTol);
-				tri = (GeometryCollection) dtb.getTriangles(getFactory());
-			} catch (LocateFailureException e) {
+				tri = (GeometryCollection) dtb.getTriangles(factory);
+			} catch (final LocateFailureException e) {
 				throw GamaRuntimeException.error("Impossible to draw Geometry");
 			}
-			PreparedGeometry pg = pgfactory.create(polygon.buffer(sizeTol, 5, 0));
-			PreparedGeometry env = pgfactory.create(pg.getGeometry().getEnvelope());
-			int nb = tri.getNumGeometries();
+			final PreparedGeometry pg = pgfactory.create(polygon.buffer(sizeTol, 5, 0));
+			final PreparedGeometry env = pgfactory.create(pg.getGeometry().getEnvelope());
+			final int nb = tri.getNumGeometries();
 			for ( int i = 0; i < nb; i++ ) {
 
-				Geometry gg = tri.getGeometryN(i);
+				final Geometry gg = tri.getGeometryN(i);
 
 				if ( env.covers(gg) && pg.covers(gg) ) {
 					geoms.add(new GamaShape(gg));
@@ -338,7 +328,7 @@ public class GeometryUtils {
 
 		@Override
 		public ConstraintVertex createVertex(final Coordinate p, final Segment constraintSeg) {
-			Coordinate c = new Coordinate(p);
+			final Coordinate c = new Coordinate(p);
 			c.z = p.z;
 			return new ConstraintVertex(c);
 		}
@@ -346,14 +336,14 @@ public class GeometryUtils {
 	}
 
 	public static List<LineString> squeletisation(final IScope scope, final Geometry geom) {
-		IList<LineString> network = new GamaList<LineString>();
-		IList polys = new GamaList(GeometryUtils.triangulation(scope, geom));
-		IGraph graph = Graphs.spatialLineIntersection(scope, polys);
+		final IList<LineString> network = new GamaList<LineString>();
+		final IList polys = new GamaList(GeometryUtils.triangulation(scope, geom));
+		final IGraph graph = Graphs.spatialLineIntersection(scope, polys);
 
-		Collection<GamaShape> nodes = graph.vertexSet();
-		GeometryFactory geomFact = GeometryUtils.getFactory();
-		for ( GamaShape node : nodes ) {
-			Coordinate[] coordsArr = GeometryUtils.extractPoints(node, geom, graph.degreeOf(node) / 2);
+		final Collection<GamaShape> nodes = graph.vertexSet();
+		final GeometryFactory geomFact = GeometryUtils.factory;
+		for ( final GamaShape node : nodes ) {
+			final Coordinate[] coordsArr = GeometryUtils.extractPoints(node, geom, graph.degreeOf(node) / 2);
 			if ( coordsArr != null ) {
 				network.add(geomFact.createLineString(coordsArr));
 			}
@@ -363,115 +353,121 @@ public class GeometryUtils {
 	}
 
 	public static Geometry buildGeometryJTS(final List<List<List<ILocation>>> listPoints) {
-		int geometryType = geometryType(listPoints);
-		if ( geometryType == NULL ) {
-			return null;
-		} else if ( geometryType == POINT ) {
-			return buildPoint(listPoints.get(0));
-		} else if ( geometryType == LINE ) {
-			return buildLine(listPoints.get(0));
-		} else if ( geometryType == POLYGON ) {
-
-			return buildPolygon(listPoints.get(0));
-		} else if ( geometryType == MULTIPOINT ) {
-			int nb = listPoints.size();
-			Point[] geoms = new Point[nb];
-			for ( int i = 0; i < nb; i++ ) {
-				geoms[i] = (Point) buildPoint(listPoints.get(i));
-			}
-			return getFactory().createMultiPoint(geoms);
-		} else if ( geometryType == MULTILINE ) {
-			int nb = listPoints.size();
-			LineString[] geoms = new LineString[nb];
-			for ( int i = 0; i < nb; i++ ) {
-				geoms[i] = (LineString) buildLine(listPoints.get(i));
-			}
-			return getFactory().createMultiLineString(geoms);
-		} else if ( geometryType == MULTIPOLYGON ) {
-			int nb = listPoints.size();
-			Polygon[] geoms = new Polygon[nb];
-			for ( int i = 0; i < nb; i++ ) {
-				geoms[i] = (Polygon) buildPolygon(listPoints.get(i));
-			}
-			return getFactory().createMultiPolygon(geoms);
+		final int geometryType = geometryType(listPoints);
+		switch (geometryType) {
+			case NULL:
+				return null;
+			case POINT:
+				return buildPoint(listPoints.get(0));
+			case LINE:
+				return buildLine(listPoints.get(0));
+			case POLYGON:
+				return buildPolygon(listPoints.get(0));
+			case MULTIPOINT:
+				final int nb = listPoints.size();
+				final Point[] geoms = new Point[nb];
+				for ( int i = 0; i < nb; i++ ) {
+					geoms[i] = (Point) buildPoint(listPoints.get(i));
+				}
+				return factory.createMultiPoint(geoms);
+			case MULTILINE:
+				final int n = listPoints.size();
+				final LineString[] lines = new LineString[n];
+				for ( int i = 0; i < n; i++ ) {
+					lines[i] = (LineString) buildLine(listPoints.get(i));
+				}
+				return factory.createMultiLineString(lines);
+			case MULTIPOLYGON:
+				final int n3 = listPoints.size();
+				final Polygon[] polys = new Polygon[n3];
+				for ( int i = 0; i < n3; i++ ) {
+					polys[i] = (Polygon) buildPolygon(listPoints.get(i));
+				}
+				return factory.createMultiPolygon(polys);
+			default:
+				return null;
 		}
-		return null;
 	}
 
 	private static Geometry buildPoint(final List<List<ILocation>> listPoints) {
-		return getFactory().createPoint(listPoints.get(0).get(0).toCoordinate());
+		return factory.createPoint((Coordinate) listPoints.get(0).get(0));
 	}
 
 	private static Geometry buildLine(final List<List<ILocation>> listPoints) {
-		List<ILocation> coords = listPoints.get(0);
-		int nb = coords.size();
-		Coordinate[] coordinates = new Coordinate[nb];
+		final List<ILocation> coords = listPoints.get(0);
+		final int nb = coords.size();
+		final Coordinate[] coordinates = new Coordinate[nb];
 		for ( int i = 0; i < nb; i++ ) {
-			coordinates[i] = coords.get(i).toCoordinate();
+			coordinates[i] = (Coordinate) coords.get(i);
 		}
-		return getFactory().createLineString(coordinates);
+		return factory.createLineString(coordinates);
 	}
 
 	private static Geometry buildPolygon(final List<List<ILocation>> listPoints) {
-		List<ILocation> coords = listPoints.get(0);
-		int nb = coords.size();
-		Coordinate[] coordinates = new Coordinate[nb];
+		final List<ILocation> coords = listPoints.get(0);
+		final int nb = coords.size();
+		final Coordinate[] coordinates = new Coordinate[nb];
 		for ( int i = 0; i < nb; i++ ) {
-			coordinates[i] = coords.get(i).toCoordinate();
+			coordinates[i] = (Coordinate) coords.get(i);
 		}
-		int nbHoles = listPoints.size() - 1;
+		final int nbHoles = listPoints.size() - 1;
 		LinearRing[] holes = null;
 		if ( nbHoles > 0 ) {
 			holes = new LinearRing[nbHoles];
 			for ( int i = 0; i < nbHoles; i++ ) {
-				List<ILocation> coordsH = listPoints.get(i + 1);
-				int nbp = coordsH.size();
-				Coordinate[] coordinatesH = new Coordinate[nbp];
+				final List<ILocation> coordsH = listPoints.get(i + 1);
+				final int nbp = coordsH.size();
+				final Coordinate[] coordinatesH = new Coordinate[nbp];
 				for ( int j = 0; j < nbp; j++ ) {
-					coordinatesH[j] = coordsH.get(j).toCoordinate();
+					coordinatesH[j] = (Coordinate) coordsH.get(j);
 				}
-				holes[i] = getFactory().createLinearRing(coordinatesH);
+				holes[i] = factory.createLinearRing(coordinatesH);
 			}
 		}
-		Polygon poly = getFactory().createPolygon(getFactory().createLinearRing(coordinates), holes);
+		final Polygon poly = factory.createPolygon(factory.createLinearRing(coordinates), holes);
 		return poly;
 	}
 
 	private static int geometryType(final List<List<List<ILocation>>> listPoints) {
-		if ( listPoints.size() == 0 ) { return NULL; }
-		if ( listPoints.size() == 1 ) { return geometryTypeSimp(listPoints.get(0)); }
-		int type = geometryTypeSimp(listPoints.get(0));
-		if ( type == POINT ) { return MULTIPOINT; }
-		if ( type == LINE ) { return MULTILINE; }
-		if ( type == POLYGON ) { return MULTIPOLYGON; }
-		return NULL;
+		final int size = listPoints.size();
+		if ( size == 0 ) { return NULL; }
+		if ( size == 1 ) { return geometryTypeSimp(listPoints.get(0)); }
+		final int type = geometryTypeSimp(listPoints.get(0));
+		switch (type) {
+			case POINT:
+				return MULTIPOINT;
+			case LINE:
+				return MULTILINE;
+			case POLYGON:
+				return POLYGON;
+			default:
+				return NULL;
+		}
 	}
 
 	private static int geometryTypeSimp(final List<List<ILocation>> listPoints) {
 		if ( listPoints.isEmpty() || listPoints.get(0).isEmpty() ) { return NULL; }
-		if ( listPoints.get(0).size() == 1 || listPoints.get(0).size() == 2 &&
-			listPoints.get(0).get(0).equals(listPoints.get(0).get(listPoints.size() - 1)) ) { return POINT; }
-
-		if ( !listPoints.get(0).get(0).equals(listPoints.get(0).get(listPoints.size() - 1)) ||
-			listPoints.get(0).size() < 3 ) { return LINE; }
-
+		final List<ILocation> list0 = listPoints.get(0);
+		final int size0 = list0.size();
+		if ( size0 == 1 || size0 == 2 && list0.get(0).equals(list0.get(listPoints.size() - 1)) ) { return POINT; }
+		if ( !list0.get(0).equals(list0.get(listPoints.size() - 1)) || size0 < 3 ) { return LINE; }
 		return POLYGON;
 	}
 
 	public static GamaList<GamaPoint> locExteriorRing(final Geometry geom, final Double distance) {
-		GamaList<GamaPoint> locs = new GamaList<GamaPoint>();
+		final GamaList<GamaPoint> locs = new GamaList<GamaPoint>();
 		if ( geom instanceof Point ) {
 			locs.add(new GamaPoint(geom.getCoordinate()));
 		} else if ( geom instanceof LineString ) {
 			double dist_cur = 0;
-			int nbSp = geom.getNumPoints();
-			Coordinate[] coordsSimp = geom.getCoordinates();
+			final int nbSp = geom.getNumPoints();
+			final Coordinate[] coordsSimp = geom.getCoordinates();
 			boolean same = false;
 			double x_t = 0, y_t = 0, x_s = 0, y_s = 0;
 			for ( int i = 0; i < nbSp - 1; i++ ) {
 				if ( !same ) {
-					Coordinate s = coordsSimp[i];
-					Coordinate t = coordsSimp[i + 1];
+					final Coordinate s = coordsSimp[i];
+					final Coordinate t = coordsSimp[i + 1];
 					x_t = t.x;
 					y_t = t.y;
 					x_s = s.x;
@@ -479,9 +475,9 @@ public class GeometryUtils {
 				} else {
 					i = i - 1;
 				}
-				double dist = Math.sqrt(Math.pow(x_s - x_t, 2) + Math.pow(y_s - y_t, 2));
+				final double dist = Math.sqrt(Math.pow(x_s - x_t, 2) + Math.pow(y_s - y_t, 2));
 				if ( dist_cur < dist ) {
-					double ratio = dist_cur / dist;
+					final double ratio = dist_cur / dist;
 					x_s = x_s + ratio * (x_t - x_s);
 					y_s = y_s + ratio * (y_t - y_s);
 					locs.add(new GamaPoint(x_s, y_s));
@@ -497,7 +493,7 @@ public class GeometryUtils {
 				}
 			}
 		} else if ( geom instanceof Polygon ) {
-			Polygon poly = (Polygon) geom;
+			final Polygon poly = (Polygon) geom;
 			locs.addAll(locExteriorRing(poly.getExteriorRing(), distance));
 			for ( int i = 0; i < poly.getNumInteriorRing(); i++ ) {
 				locs.addAll(locExteriorRing(poly.getInteriorRingN(i), distance));
@@ -511,71 +507,72 @@ public class GeometryUtils {
 	// Created date:24-Feb-2013: Process for SQL - MAP type
 	// Modified: 29-Apr-2013
 
-	public static Envelope computeEnvelopeFromSQLData(final IScope scope, final Map<String, Object> bounds) 
-	{
-//		Map<String, Object> params = bounds;
-//
-//		String dbtype = (String) params.get("dbtype");
-//		String host = (String) params.get("host");
-//		String port = (String) params.get("port");
-//		String database = (String) params.get("database");
-//		String user = (String) params.get("user");
-//		String passwd = (String) params.get("passwd");
-//		String crs = (String) params.get("crs");
-//		String srid = (String) params.get("srid");
-//		Boolean longitudeFirst = params.get("longitudeFirst") == null ? true : (Boolean) params.get("longitudeFirst");
-//		SqlConnection sqlConn;
-//		Envelope env = null;
-//		// create connection
-//		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
-//			String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
-//
-//			// sqlConn=new SqlConnection(dbtype,database);
-//			sqlConn = new SqlConnection(dbtype, DBRelativeLocation);
-//		} else {
-//			sqlConn = new SqlConnection(dbtype, host, port, database, user, passwd);
-//		}
-//
-//		GamaList<Object> gamaList = sqlConn.selectDB((String) params.get("select"));
-//
-//		try {
-//			env = SqlConnection.getBounds(scope, gamaList);
-//			double latitude = env.centre().x;
-//			double longitude = env.centre().y;
-//
-//			if ( crs != null || srid != null ) {
-//				GisUtils gis = scope.getTopology().getGisUtils();
-//				if ( crs != null ) {
-//					gis.setTransformCRS(crs, latitude, longitude);
-//				} else {
-//					gis.setTransformCRS(srid, longitudeFirst, latitude, longitude);
-//				}
-//				env = gis.transform(env);
-//
-//			}
-//		} catch (IOException e) {
-//			throw new GamaRuntimeException(e);
-//		}
-//		return env;
-// Edit 29/April/2013
-//---------------------------------------------------------------------------------------------------------
+	public static Envelope computeEnvelopeFromSQLData(final IScope scope, final Map<String, Object> bounds) {
+		// Map<String, Object> params = bounds;
+		//
+		// String dbtype = (String) params.get("dbtype");
+		// String host = (String) params.get("host");
+		// String port = (String) params.get("port");
+		// String database = (String) params.get("database");
+		// String user = (String) params.get("user");
+		// String passwd = (String) params.get("passwd");
+		// String crs = (String) params.get("crs");
+		// String srid = (String) params.get("srid");
+		// Boolean longitudeFirst = params.get("longitudeFirst") == null ? true : (Boolean)
+		// params.get("longitudeFirst");
+		// SqlConnection sqlConn;
+		// Envelope env = null;
+		// // create connection
+		// if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
+		// String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
+		//
+		// // sqlConn=new SqlConnection(dbtype,database);
+		// sqlConn = new SqlConnection(dbtype, DBRelativeLocation);
+		// } else {
+		// sqlConn = new SqlConnection(dbtype, host, port, database, user, passwd);
+		// }
+		//
+		// GamaList<Object> gamaList = sqlConn.selectDB((String) params.get("select"));
+		//
+		// try {
+		// env = SqlConnection.getBounds(scope, gamaList);
+		// double latitude = env.centre().x;
+		// double longitude = env.centre().y;
+		//
+		// if ( crs != null || srid != null ) {
+		// GisUtils gis = scope.getTopology().getGisUtils();
+		// if ( crs != null ) {
+		// gis.setTransformCRS(crs, latitude, longitude);
+		// } else {
+		// gis.setTransformCRS(srid, longitudeFirst, latitude, longitude);
+		// }
+		// env = gis.transform(env);
+		//
+		// }
+		// } catch (IOException e) {
+		// throw new GamaRuntimeException(e);
+		// }
+		// return env;
+		// Edit 29/April/2013
+		// ---------------------------------------------------------------------------------------------------------
 
-		Map<String, Object> params = bounds;
-		String crs = (String) params.get("crs");
-		String srid = (String) params.get("srid");
-		Boolean longitudeFirst = params.get("longitudeFirst") == null ? true : (Boolean) params.get("longitudeFirst");
+		final Map<String, Object> params = bounds;
+		final String crs = (String) params.get("crs");
+		final String srid = (String) params.get("srid");
+		final Boolean longitudeFirst =
+			params.get("longitudeFirst") == null ? true : (Boolean) params.get("longitudeFirst");
 		SqlConnection sqlConn;
 		Envelope env = null;
 		// create connection
 		try {
-			sqlConn = SqlUtils.createConnectionObject(scope,bounds);
-			//get data 
-			GamaList<Object> gamaList = sqlConn.selectDB((String) params.get("select"));
+			sqlConn = SqlUtils.createConnectionObject(scope, bounds);
+			// get data
+			final GamaList<Object> gamaList = sqlConn.selectDB((String) params.get("select"));
 			env = SqlConnection.getBounds(scope, gamaList);
-			double latitude = env.centre().x;
-			double longitude = env.centre().y;
+			final double latitude = env.centre().x;
+			final double longitude = env.centre().y;
 			if ( crs != null || srid != null ) {
-				GisUtils gis = scope.getTopology().getGisUtils();
+				final GisUtils gis = scope.getTopology().getGisUtils();
 				if ( crs != null ) {
 					gis.setTransformCRS(crs, latitude, longitude);
 				} else {
@@ -583,21 +580,21 @@ public class GeometryUtils {
 				}
 				env = gis.transform(env);
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw GamaRuntimeException.error("GeometryUtils.computeEnvelopeFromSQLData:" + e.toString());
 		}
-		//GuiUtils.debug("GeometryUtils.computeEnvelopeFromSQLData.Envelop:"+env.toString());
+		// GuiUtils.debug("GeometryUtils.computeEnvelopeFromSQLData.Envelop:"+env.toString());
 		return env;
-//----------------------------------------------------------------------------------------------------
+		// ----------------------------------------------------------------------------------------------------
 	}
 
 	public static Envelope computeEnvelopeFrom(final IScope scope, final Object obj) {
 		Envelope result = null;
 		if ( obj instanceof Number ) {
-			double size = ((Number) obj).doubleValue();
+			final double size = ((Number) obj).doubleValue();
 			result = new Envelope(0, size, 0, size);
 		} else if ( obj instanceof ILocation ) {
-			ILocation size = (ILocation) obj;
+			final ILocation size = (ILocation) obj;
 			result = new Envelope(0, size.getX(), 0, size.getY());
 		} else if ( obj instanceof IShape ) {
 			result = ((IShape) obj).getEnvelope();
@@ -611,8 +608,8 @@ public class GeometryUtils {
 			result = ((IGamaFile) obj).computeEnvelope(scope);
 		} else if ( obj instanceof IList ) {
 			Envelope boundsEnv = null;
-			for ( Object bounds : (IList) obj ) {
-				Envelope env = computeEnvelopeFrom(scope, bounds);
+			for ( final Object bounds : (IList) obj ) {
+				final Envelope env = computeEnvelopeFrom(scope, bounds);
 				if ( boundsEnv == null ) {
 					boundsEnv = env;
 				} else {

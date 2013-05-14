@@ -396,7 +396,7 @@ public abstract class Spatial {
 		@doc(special_cases = { "if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the difference between the left-geometry and all of the right-geometries" }, examples = { "geom1 - [geom2, geom3, geom4] --: a geometry corresponding to geom1 - (geom2 + geom3 + geom4)" })
 		public static IShape minus(final IScope scope, final IShape g1, final IContainer<?, IShape> agents) {
 			if ( agents == null || agents.isEmpty(scope) ) { return g1; }
-			Geometry geom1 = GeometryUtils.getFactory().createGeometry(g1.getInnerGeometry());
+			Geometry geom1 = GeometryUtils.factory.createGeometry(g1.getInnerGeometry());
 			for ( IShape ag : agents ) {
 				if ( ag != null && ag.getInnerGeometry() != null ) {
 					geom1 = geom1.difference(ag.getInnerGeometry());
@@ -418,21 +418,21 @@ public abstract class Spatial {
 			if ( geometry instanceof Point || geometry instanceof MultiPoint ) {
 				coord[0] = geometry.getCoordinate();
 				coord[1] = point;
-				geom_Tmp = GeometryUtils.getFactory().createLineString(coord);
+				geom_Tmp = GeometryUtils.factory.createLineString(coord);
 			} else if ( geometry instanceof LineString || geometry instanceof MultiLineString ) {
 				for ( int i = 0; i < nb; i++ ) {
 					coord[i] = geometry.getCoordinates()[i];
 				}
 				coord[nb] = point;
-				geom_Tmp = GeometryUtils.getFactory().createLineString(coord);
+				geom_Tmp = GeometryUtils.factory.createLineString(coord);
 			} else if ( geometry instanceof Polygon || geometry instanceof MultiPolygon ) {
 				for ( int i = 0; i < nb - 1; i++ ) {
 					coord[i] = geometry.getCoordinates()[i];
 				}
 				coord[nb - 1] = point;
 				coord[nb] = geometry.getCoordinates()[nb - 1];
-				LinearRing ring = GeometryUtils.getFactory().createLinearRing(coord);
-				geom_Tmp = GeometryUtils.getFactory().createPolygon(ring, null);
+				LinearRing ring = GeometryUtils.factory.createLinearRing(coord);
+				geom_Tmp = GeometryUtils.factory.createPolygon(ring, null);
 			}
 			if ( geom_Tmp != null && geom_Tmp.isValid() ) { return new GamaShape(geom_Tmp);
 
@@ -449,12 +449,12 @@ public abstract class Spatial {
 			if ( precision == null ) {
 				precision = 120.0;
 			}
-			Geometry visiblePercept = GeometryUtils.getFactory().createGeometry(source.getInnerGeometry());
+			Geometry visiblePercept = GeometryUtils.factory.createGeometry(source.getInnerGeometry());
 			if ( obstacles != null && !obstacles.isEmpty(scope) ) {
 				Envelope env = visiblePercept.getEnvelopeInternal();
 				double percep_dist = Math.max(env.getHeight(), env.getWidth());
 				Geometry locG =
-					GeometryUtils.getFactory().createPoint(location.toCoordinate()).buffer(0.01).getEnvelope();
+					GeometryUtils.factory.createPoint(location.toCoordinate()).buffer(0.01).getEnvelope();
 
 				IList<Geometry> geoms = new GamaList<Geometry>();
 				Coordinate prec = new Coordinate(location.getX() + percep_dist, location.getY());
@@ -473,9 +473,9 @@ public abstract class Spatial {
 					coordinates[1] = prec;
 					coordinates[2] = next;
 					coordinates[3] = location.toCoordinate();
-					LinearRing closeRing = GeometryUtils.getFactory().createLinearRing(coordinates);
+					LinearRing closeRing = GeometryUtils.factory.createLinearRing(coordinates);
 					geoms.add(source.getGeometry().getInnerGeometry()
-						.intersection(GeometryUtils.getFactory().createPolygon(closeRing, null)));
+						.intersection(GeometryUtils.factory.createPolygon(closeRing, null)));
 					prec = next;
 				}
 				IList<Geometry> geomsVisible = new GamaList<Geometry>();
@@ -536,7 +536,7 @@ public abstract class Spatial {
 			GamaList<Geometry> geoms = null;
 			if ( geom.getInnerGeometry() instanceof LineString ) {
 				Coordinate[] coords = ((LineString) geom.getInnerGeometry()).getCoordinates();
-				Point pt1 = GeometryUtils.getFactory().createPoint(new GamaPoint(pt.getLocation()));
+				Point pt1 = GeometryUtils.factory.createPoint(new GamaPoint(pt.getLocation()));
 				int nb = coords.length;
 				int indexTarget = -1;
 				double distanceT = Double.MAX_VALUE;
@@ -544,7 +544,7 @@ public abstract class Spatial {
 					Coordinate s = coords[i];
 					Coordinate t = coords[i + 1];
 					Coordinate[] seg = { s, t };
-					Geometry segment = GeometryUtils.getFactory().createLineString(seg);
+					Geometry segment = GeometryUtils.factory.createLineString(seg);
 					double distT = segment.distance(pt1);
 					if ( distT < distanceT ) {
 						distanceT = distT;
@@ -567,11 +567,11 @@ public abstract class Spatial {
 					k++;
 				}
 				GamaList<Geometry> geoms1 = new GamaList<Geometry>();
-				geoms1.add(GeometryUtils.getFactory().createLineString(coords1));
-				geoms1.add(GeometryUtils.getFactory().createLineString(coords2));
+				geoms1.add(GeometryUtils.factory.createLineString(coords1));
+				geoms1.add(GeometryUtils.factory.createLineString(coords2));
 				geoms = geoms1;
 			} else if ( geom.getInnerGeometry() instanceof MultiLineString ) {
-				Point point = GeometryUtils.getFactory().createPoint((Coordinate) pt);
+				Point point = GeometryUtils.factory.createPoint((Coordinate) pt);
 				Geometry geom2 = null;
 				double distMin = Double.MAX_VALUE;
 				MultiLineString ml = (MultiLineString) geom.getInnerGeometry();
@@ -583,7 +583,7 @@ public abstract class Spatial {
 					}
 				}
 				Coordinate[] coords = ((LineString) geom2).getCoordinates();
-				Point pt1 = GeometryUtils.getFactory().createPoint(new GamaPoint(pt.getLocation()));
+				Point pt1 = GeometryUtils.factory.createPoint(new GamaPoint(pt.getLocation()));
 				int nb = coords.length;
 				int indexTarget = -1;
 				double distanceT = Double.MAX_VALUE;
@@ -591,7 +591,7 @@ public abstract class Spatial {
 					Coordinate s = coords[i];
 					Coordinate t = coords[i + 1];
 					Coordinate[] seg = { s, t };
-					Geometry segment = GeometryUtils.getFactory().createLineString(seg);
+					Geometry segment = GeometryUtils.factory.createLineString(seg);
 					double distT = segment.distance(pt1);
 					if ( distT < distanceT ) {
 						distanceT = distT;
@@ -614,8 +614,8 @@ public abstract class Spatial {
 					k++;
 				}
 				GamaList<Geometry> geoms1 = new GamaList<Geometry>();
-				geoms1.add(GeometryUtils.getFactory().createLineString(coords1));
-				geoms1.add(GeometryUtils.getFactory().createLineString(coords2));
+				geoms1.add(GeometryUtils.factory.createLineString(coords1));
+				geoms1.add(GeometryUtils.factory.createLineString(coords2));
 				geoms = geoms1;
 			}
 			if ( geoms != null ) {
@@ -737,8 +737,8 @@ public abstract class Spatial {
 			Geometry result = geom;
 			if ( geom instanceof Polygon ) {
 				result =
-					GeometryUtils.getFactory().createPolygon(
-						GeometryUtils.getFactory()
+					GeometryUtils.factory.createPolygon(
+						GeometryUtils.factory
 							.createLinearRing(((Polygon) geom).getExteriorRing().getCoordinates()), null);
 			} else if ( geom instanceof MultiPolygon ) {
 				MultiPolygon mp = (MultiPolygon) geom;
@@ -746,10 +746,10 @@ public abstract class Spatial {
 				for ( int i = 0; i < mp.getNumGeometries(); i++ ) {
 					Polygon p = (Polygon) mp.getGeometryN(i);
 					polys[i] =
-						GeometryUtils.getFactory().createPolygon(
-							GeometryUtils.getFactory().createLinearRing(p.getExteriorRing().getCoordinates()), null);
+						GeometryUtils.factory.createPolygon(
+							GeometryUtils.factory.createLinearRing(p.getExteriorRing().getCoordinates()), null);
 				}
-				result = GeometryUtils.getFactory().createMultiPolygon(polys);
+				result = GeometryUtils.factory.createMultiPolygon(polys);
 			}
 			return new GamaShape(result);
 		}
@@ -836,7 +836,7 @@ public abstract class Spatial {
 				for ( int i = 0; i < nb; i++ ) {
 					polys[i] = (Polygon) mp.getGeometryN(i).buffer(0.0);
 				}
-				return new GamaShape(GeometryUtils.getFactory().createMultiPolygon(polys));
+				return new GamaShape(GeometryUtils.factory.createMultiPolygon(polys));
 			}
 			return new GamaShape(g.getInnerGeometry());
 		}

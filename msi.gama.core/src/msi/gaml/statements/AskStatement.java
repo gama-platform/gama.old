@@ -69,7 +69,7 @@ public class AskStatement extends AbstractStatementSequence {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		Object t = target.value(scope);
+		final Object t = target.value(scope);
 		if ( t == null ) {
 			scope.setStatus(ExecutionStatus.failure);
 			return null;
@@ -78,7 +78,7 @@ public class AskStatement extends AbstractStatementSequence {
 		if ( t instanceof IContainer ) {
 			targets = new IAgent[((IContainer) t).length(scope)];
 			int index = 0;
-			for ( Object o : (IContainer) t ) {
+			for ( final Object o : (IContainer) t ) {
 				if ( o instanceof IAgent ) {
 					targets[index++] = (IAgent) o;
 				} else {
@@ -92,10 +92,10 @@ public class AskStatement extends AbstractStatementSequence {
 			throw GamaRuntimeException.error("ask can only be invoked on agents. " + t + " is not an agent");
 		}
 
-		IAgent scopeAgent = scope.getAgentScope();
+		final IAgent scopeAgent = scope.getAgentScope();
 		scope.addVarWithValue(IKeyword.MYSELF, scopeAgent);
 		for ( int i = 0, n = targets.length; i < n; i++ ) {
-			IAgent remoteAgent = targets[i];
+			final IAgent remoteAgent = targets[i];
 			if ( !remoteAgent.dead() && !scope.interrupted() ) {
 				scope.execute(sequence, remoteAgent);
 			}

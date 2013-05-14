@@ -19,7 +19,6 @@
 package msi.gaml.statements;
 
 import static msi.gama.runtime.ExecutionStatus.*;
-import java.util.Map;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -28,7 +27,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.*;
+import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
 
 /**
@@ -46,7 +45,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.PERTINENCE, type = IType.FLOAT, optional = true) }, omissible = IKeyword.NAME)
 public class ActionStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
-	Arguments actualArgs = new Arguments();
+	Arguments actualArgs;
 	Arguments formalArgs = new Arguments();
 
 	/**
@@ -67,23 +66,18 @@ public class ActionStatement extends AbstractStatementSequence implements IState
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		actualArgs.complementWith(formalArgs);
 		actualArgs.stack(scope);
-		Object result = super.privateExecuteIn(scope);
+		final Object result = super.privateExecuteIn(scope);
 		if ( scope.getStatus() == interrupt ) {
 			scope.setStatus(terminated);
 		}
-		actualArgs.clear();
 		return result;
 	}
 
 	@Override
 	public void setRuntimeArgs(final Arguments args) {
-		for ( Map.Entry<String, IExpressionDescription> entry : args.entrySet() ) {
-			if ( entry != null ) {
-				actualArgs.put(entry.getKey(), entry.getValue());
-			}
-		}
+		actualArgs = new Arguments(args);
+		actualArgs.complementWith(formalArgs);
 	}
 
 	@Override

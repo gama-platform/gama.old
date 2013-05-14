@@ -15,13 +15,12 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.ConstantExpressionDescription;
 import msi.gaml.operators.Cast;
-import msi.gaml.statements.Arguments;
-import msi.gaml.statements.IStatement;
+import msi.gaml.statements.*;
 import msi.gaml.types.IType;
 
 // FIXME: Add all the necessary variables (degree, neighbours, edges)
 @species(name = "graph_node")
-@vars({ @var(name = IKeyword.MYGRAPH, type = IType.GRAPH)})
+@vars({ @var(name = IKeyword.MYGRAPH, type = IType.GRAPH) })
 public class AbstractGraphNodeAgent extends GamlAgent {
 
 	final static Arguments args = new Arguments();
@@ -31,15 +30,13 @@ public class AbstractGraphNodeAgent extends GamlAgent {
 		IStatement.WithArgs action;
 
 		@Override
-		public boolean related(final IScope scope, final AbstractGraphNodeAgent p1,
-			final AbstractGraphNodeAgent p2) {
+		public boolean related(final IScope scope, final AbstractGraphNodeAgent p1, final AbstractGraphNodeAgent p2) {
 			args.put("other", ConstantExpressionDescription.create(p2));
 			return Cast.asBool(scope, scope.execute(getAction(p1), p1, args));
 		}
 
 		@Override
-		public boolean equivalent(final IScope scope, final AbstractGraphNodeAgent p1,
-			final AbstractGraphNodeAgent p2) {
+		public boolean equivalent(final IScope scope, final AbstractGraphNodeAgent p1, final AbstractGraphNodeAgent p2) {
 			return p1 == p2;
 		}
 
@@ -65,10 +62,9 @@ public class AbstractGraphNodeAgent extends GamlAgent {
 		GuiUtils.debug("Should never be called !");
 		return false;
 	}
-	
 
 	@getter(IKeyword.MYGRAPH)
-	public GamaGraph getGraph(){
+	public GamaGraph getGraph() {
 		return (GamaGraph) getTopology().getPlaces();
 	}
 }

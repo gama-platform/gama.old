@@ -19,6 +19,7 @@
 package msi.gama.common.util;
 
 import java.util.*;
+import com.google.common.collect.*;
 
 /**
  * Written by drogoul Modified on 28 déc. 2010
@@ -32,11 +33,10 @@ public class JavaUtils {
 	private static Map<Class, Set<Class>> allInterfaces = new HashMap();
 	private static Map<Class, Set<Class>> allSuperclasses = new HashMap();
 
-	private static void addAllInterfaces(final Class clazz, final Set allInterfaces,
-		final Set<Class> in) {
+	private static void addAllInterfaces(final Class clazz, final Set allInterfaces, final Set<Class> in) {
 		if ( clazz == null ) { return; }
 		final Class[] interfaces = clazz.getInterfaces();
-		for ( Class c : interfaces ) {
+		for ( final Class c : interfaces ) {
 			if ( in.contains(c) ) {
 				allInterfaces.add(c);
 			}
@@ -45,8 +45,7 @@ public class JavaUtils {
 		addAllInterfaces(clazz.getSuperclass(), allInterfaces, in);
 	}
 
-	private static void addAllInterfaces(final Class[] clazzes, final Set allInterfaces,
-		final Set<Class> in) {
+	private static void addAllInterfaces(final Class[] clazzes, final Set allInterfaces, final Set<Class> in) {
 		if ( clazzes != null ) {
 			for ( int i = 0; i < clazzes.length; i++ ) {
 				addAllInterfaces(clazzes[i], allInterfaces, in);
@@ -78,12 +77,12 @@ public class JavaUtils {
 		return result;
 	}
 
-	public static List<Class> collectImplementationClasses(final Class baseClass,
-		final Set<Class> skillClasses, final Set<Class> in) {
-		Set<Class> classes = new HashSet();
+	public static List<Class> collectImplementationClasses(final Class baseClass, final Set<Class> skillClasses,
+		final Set<Class> in) {
+		final Set<Class> classes = new HashSet();
 		classes.add(baseClass);
 		classes.addAll(skillClasses);
-		Set<Class> key = new HashSet(classes);
+		final Set<Class> key = new HashSet(classes);
 		if ( IMPLEMENTATION_CLASSES.containsKey(key) ) { return IMPLEMENTATION_CLASSES.get(key); }
 		classes.addAll(allInterfacesOf(baseClass, in));
 		for ( final Class classi : new ArrayList<Class>(classes) ) {
@@ -105,6 +104,22 @@ public class JavaUtils {
 
 		IMPLEMENTATION_CLASSES.put(key, classes2);
 		return classes2;
+	}
+
+	public static <F> Iterator<F> iterator(final Object[] array) {
+		if ( array != null ) { return (Iterator<F>) Iterators.forArray(array); }
+		return new UnmodifiableIterator<F>() {
+
+			@Override
+			public boolean hasNext() {
+				return false;
+			}
+
+			@Override
+			public F next() {
+				return null;
+			}
+		};
 	}
 
 }

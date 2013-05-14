@@ -68,11 +68,11 @@ public class PrimitiveStatement extends ActionStatement {
 	}
 
 	@Override
-	public Object privateExecuteIn(final IScope stack) throws GamaRuntimeException {
+	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		Object result = null;
-		actualArgs.stack(stack);
-		IAgent agent = stack.getAgentScope();
-		result = helper.run(stack, agent, skill == null ? agent : skill);
+		actualArgs.stack(scope);
+		final IAgent agent = scope.getAgentScope();
+		result = helper.run(scope, agent, skill == null ? agent : skill);
 		return result;
 	}
 

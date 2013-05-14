@@ -23,7 +23,7 @@ public class FrontEndScheduler implements Runnable {
 			executionThread = new Thread(null, this, "Front end scheduler");
 			try {
 				lock.acquire();
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
 			startThread();
@@ -38,7 +38,7 @@ public class FrontEndScheduler implements Runnable {
 		} else if ( !executionThread.isAlive() ) {
 			try {
 				executionThread.start();
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				GuiUtils.error("FrontEndScheduler.startThread : reloading thread due to an internal error");
 				executionThread = new Thread(null, this, "Front end scheduler");
 				executionThread.start();
@@ -53,7 +53,7 @@ public class FrontEndScheduler implements Runnable {
 		if ( paused /* || toStep.isEmpty() */) {
 			try {
 				lock.acquire();
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 				alive = false;
 				return;
 			}
@@ -64,7 +64,7 @@ public class FrontEndScheduler implements Runnable {
 			scopes = toStep.values().toArray(new IScope[toStep.size()]);
 		}
 		for ( int i = 0; i < stepables.length; i++ ) {
-			IScope scope = scopes[i];
+			final IScope scope = scopes[i];
 			try {
 				if ( scope.interrupted() ) {
 					// GuiUtils.debug("FrontEndScheduler.step : removal of " + entry.getKey());
@@ -76,7 +76,7 @@ public class FrontEndScheduler implements Runnable {
 					// GuiUtils.debug("FrontEndScheduler.step : step of " + entry.getKey());
 					stepables[i].step(scope);
 				}
-			} catch (GamaRuntimeException e) {
+			} catch (final GamaRuntimeException e) {
 				if ( scope.interrupted() ) {
 					GuiUtils.debug("Exception in experiment interruption: " + e.getMessage());
 				} else {
@@ -136,7 +136,7 @@ public class FrontEndScheduler implements Runnable {
 		paused = true;
 	}
 
-	public void schedule(IStepable stepable, IScope scope) {
+	public void schedule(final IStepable stepable, final IScope scope) {
 		synchronized (toStep) {
 			toStep.put(stepable, scope);
 		}
@@ -144,9 +144,9 @@ public class FrontEndScheduler implements Runnable {
 		// GuiUtils.debug("FrontEndScheduler.schedule " + stepable);
 		try {
 			stepable.init(scope);
-		} catch (Exception e) {
+		} catch (final Exception e) {
+			GuiUtils.debug("WARNING :: Exception in front end scheduler: " + e.getMessage());
 			if ( scope != null && scope.interrupted() ) {
-				// GuiUtils.debug("Exception in experiment interruption: " + e.getMessage());
 				synchronized (toStep) {
 					// GuiUtils.debug("FrontEndScheduler.schedule : Removal of " + stepable);
 					toStep.remove(stepable);
@@ -163,7 +163,7 @@ public class FrontEndScheduler implements Runnable {
 		toStep.clear();
 	}
 
-	public void unschedule(IStepable scheduler) {
+	public void unschedule(final IStepable scheduler) {
 		synchronized (toStep) {
 			toStep.remove(scheduler);
 		}

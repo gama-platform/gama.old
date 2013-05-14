@@ -104,7 +104,7 @@ public class SignalVariable extends NumberVariable {
 	private final Short signalType;
 	private final Double prop, range, variation;
 	private final String envName;
-	private GamaSpatialMatrix environment; // Lazily built
+	private IGrid environment; // Lazily built
 	private final IExpression typeExpr, propExpr, rangeExpr, variationExpr;
 
 	public SignalVariable(final IDescription sd) throws GamaRuntimeException {
@@ -127,25 +127,24 @@ public class SignalVariable extends NumberVariable {
 
 		final double result = Cast.asFloat(scope, v);
 		if ( result > 0.0 ) {
-			short signalType =
+			final short signalType =
 				this.signalType == null ? IKeyword.GRADIENT.equals(scope.evaluate(typeExpr, agent))
 					? GridDiffuser.GRADIENT : GridDiffuser.DIFFUSION : this.signalType;
-			double prop =
+			final double prop =
 				this.prop == null ? Math.min(1.0, Math.max(0.0, Cast.asFloat(scope, scope.evaluate(propExpr, agent))))
 					: this.prop;
-			double variation =
+			final double variation =
 				this.variation == null ? Cast.asFloat(scope, scope.evaluate(variationExpr, agent)) : this.variation;
-			double range =
+			final double range =
 				this.range == null ? Math.max(0.0, Cast.asFloat(scope, scope.evaluate(rangeExpr, agent))) : this.range;
 			getEnvironment(scope).diffuseVariable(scope, getName(), result, signalType, prop, variation,
 				agent.getLocation(), range);
 		}
 	}
 
-	private GamaSpatialMatrix getEnvironment(IScope scope) {
+	private IGrid getEnvironment(final IScope scope) {
 		if ( environment == null ) {
-			environment =
-				(GamaSpatialMatrix) scope.getSimulationScope().getPopulationFor(envName).getTopology().getPlaces();
+			environment = (IGrid) scope.getSimulationScope().getPopulationFor(envName).getTopology().getPlaces();
 		}
 		return environment;
 	}

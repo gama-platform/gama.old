@@ -72,7 +72,7 @@ public class SimulationAgent extends GamlAgent implements ISimulationAgent {
 	@Override
 	// TODO A redefinition of this method in GAML will lose all information regarding the clock and the advance of time,
 	// which will have to be done manually (i.e. cycle <- cycle + 1; time <- time + step;)
-	public Object _step_(IScope scope) {
+	public Object _step_(final IScope scope) {
 		clock.beginCycle();
 		// A simulation always runs in its own scope
 		super._step_(this.scope);
@@ -81,7 +81,7 @@ public class SimulationAgent extends GamlAgent implements ISimulationAgent {
 	}
 
 	@Override
-	public Object _init_(IScope scope) {
+	public Object _init_(final IScope scope) {
 		// A simulation always runs in its own scope
 		return super._init_(this.scope);
 	}
@@ -130,11 +130,11 @@ public class SimulationAgent extends GamlAgent implements ISimulationAgent {
 
 	@Override
 	public synchronized void setGeometry(final IShape geom) {
-		Envelope env = geom.getEnvelope();
-		GamaPoint p = new GamaPoint(-env.getMinX(), -env.getMinY());
+		final Envelope env = geom.getEnvelope();
+		final GamaPoint p = new GamaPoint(-env.getMinX(), -env.getMinY());
 		geometry = Transformations.translated_by(getScope(), geom, p);
 		getPopulation().setTopology(getScope(), geom, geometry);
-		for ( IAgent ag : getAgents() ) {
+		for ( final IAgent ag : getAgents() ) {
 			ag.setGeometry(Transformations.translated_by(getScope(), ag.getGeometry(), p));
 		}
 
@@ -149,9 +149,9 @@ public class SimulationAgent extends GamlAgent implements ISimulationAgent {
 	public IPopulation getPopulationFor(final String speciesName) throws GamaRuntimeException {
 		IPopulation pop = super.getPopulationFor(speciesName);
 		if ( pop != null ) { return pop; }
-		ISpecies microSpec = getSpecies().getMicroSpecies(speciesName);
+		final ISpecies microSpec = getSpecies().getMicroSpecies(speciesName);
 		if ( microSpec == null ) { return null; }
-		pop = new GamaPopulation(this, microSpec);
+		pop = GamaPopulation.createPopulation(getScope(), this, microSpec);
 		microPopulations.put(microSpec, pop);
 		pop.initializeFor(getScope());
 		return pop;
@@ -159,21 +159,21 @@ public class SimulationAgent extends GamlAgent implements ISimulationAgent {
 
 	@getter(CYCLE)
 	public Integer getCycle(final IScope scope, final IAgent agent) {
-		SimulationClock clock = getClock();
+		final SimulationClock clock = getClock();
 		if ( clock != null ) { return clock.getCycle(); }
 		return 0;
 	}
 
 	@getter(IKeyword.STEP)
 	public double getTimeStep(final IScope scope, final IAgent agent) {
-		SimulationClock clock = getClock();
+		final SimulationClock clock = getClock();
 		if ( clock != null ) { return clock.getStep(); }
 		return 1d;
 	}
 
 	@setter(IKeyword.STEP)
 	public void setTimeStep(final IScope scope, final IAgent agent, final double t) throws GamaRuntimeException {
-		SimulationClock clock = getClock();
+		final SimulationClock clock = getClock();
 		if ( clock != null ) {
 			clock.setStep(t);
 		}
@@ -181,14 +181,14 @@ public class SimulationAgent extends GamlAgent implements ISimulationAgent {
 
 	@getter(IKeyword.TIME)
 	public double getTime(final IScope scope, final IAgent agent) {
-		SimulationClock clock = getClock();
+		final SimulationClock clock = getClock();
 		if ( clock != null ) { return clock.getTime(); }
 		return 0d;
 	}
 
 	@setter(IKeyword.TIME)
 	public void setTime(final IScope scope, final IAgent agent, final double t) throws GamaRuntimeException {
-		SimulationClock clock = getClock();
+		final SimulationClock clock = getClock();
 		if ( clock != null ) {
 			clock.setTime(t);
 		}

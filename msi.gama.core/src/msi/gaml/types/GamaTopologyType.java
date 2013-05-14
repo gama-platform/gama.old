@@ -78,8 +78,8 @@ public class GamaTopologyType extends GamaType<ITopology> {
 	private static ITopology from(final IScope scope, final IContainer obj) throws GamaRuntimeException {
 		if ( obj instanceof GamaSpatialGraph ) {
 			return ((GamaSpatialGraph) obj).getTopology();
-		} else if ( obj instanceof GamaSpatialMatrix ) {
-			return new GridTopology(scope, (GamaSpatialMatrix) obj);
+		} else if ( obj instanceof IGrid ) {
+			return new GridTopology(scope, (IGrid) obj);
 		} else {
 			return new MultipleTopology(scope, obj);
 		}

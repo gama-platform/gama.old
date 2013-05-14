@@ -105,7 +105,7 @@ public abstract class AbstractScope implements IScope {
 			setGlobalVarValue(name, v);
 			return;
 		}
-		IAgent agent = agentsStack[agentsPointer - 1];
+		final IAgent agent = agentsStack[agentsPointer - 1];
 		if ( agent == null || agent.dead() ) { return; }
 		agent.setDirectVarValue(this, name, v); // ??
 	}
@@ -114,7 +114,7 @@ public abstract class AbstractScope implements IScope {
 	public Object getAgentVarValue(final String name) throws GamaRuntimeException {
 		if ( agentsPointer == 0 ) { return getGlobalVarValue(name); } // ?
 		for ( int i = agentsPointer; i > 0; i-- ) {
-			IAgent agent = agentsStack[i - 1];
+			final IAgent agent = agentsStack[i - 1];
 			if ( agent != null && !agent.dead() ) { return agent.getDirectVarValue(this, name); }
 		}
 		return null;
@@ -169,14 +169,14 @@ public abstract class AbstractScope implements IScope {
 
 	@Override
 	public final Object getArg(final String varName, final int type) throws GamaRuntimeException {
-		int i = getVarIndex(varName); // Only in the local scope
-		Object result = i > -1 && i >= statementsPointers[statementsPointer - 1] ? vars[i].value : null;
+		final int i = getVarIndex(varName); // Only in the local scope
+		final Object result = i > -1 && i >= statementsPointers[statementsPointer - 1] ? vars[i].value : null;
 		return type == IType.NONE ? result : Types.get(type).cast(this, result, null);
 	}
 
 	@Override
 	public final boolean hasArg(final String varName) {
-		int i = getVarIndex(varName);// Only in the local scope
+		final int i = getVarIndex(varName);// Only in the local scope
 		return i > -1 && i >= statementsPointers[statementsPointer - 1];
 	}
 
@@ -197,7 +197,7 @@ public abstract class AbstractScope implements IScope {
 
 	@Override
 	public final void addVarWithValue(final String varName, final Object val) {
-		Record r = vars[varsPointer++];
+		final Record r = vars[varsPointer++];
 		r.name = varName;
 		r.value = val;
 	}
@@ -255,6 +255,8 @@ public abstract class AbstractScope implements IScope {
 
 	@Override
 	public final Object execute(final IStatement statement, final IAgent agent) throws GamaRuntimeException {
+		if ( statement instanceof IStatement.WithArgs ) { return execute((IStatement.WithArgs) statement, agent,
+			new Arguments()); }
 		Object result;
 		push(agent);
 		try {
@@ -341,14 +343,14 @@ public abstract class AbstractScope implements IScope {
 	@Override
 	public final ITopology getTopology() {
 		if ( topology != null ) { return topology; }
-		IAgent agent = getAgentScope();
+		final IAgent agent = getAgentScope();
 		if ( agent != null ) { return agent.getTopology(); }
 		return null;
 	}
 
 	@Override
 	public final ITopology setTopology(final ITopology topo) {
-		ITopology previous = topology;
+		final ITopology previous = topology;
 		topology = topo;
 		return previous;
 	}

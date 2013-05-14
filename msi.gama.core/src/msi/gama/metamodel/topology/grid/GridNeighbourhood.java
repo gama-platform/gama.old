@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -19,7 +19,6 @@
 package msi.gama.metamodel.topology.grid;
 
 import java.util.List;
-
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.util.GamaList;
@@ -36,12 +35,10 @@ public abstract class GridNeighbourhood {
 	int xSize, ySize;
 	boolean isTorus;
 
-	protected int[][] neighbours;
 	// i : index of agents; j : index of neighbours
-	// protected List<Integer>[] neighboursIndexes;
-	protected int[][] neighboursIndexes;
-
+	protected int[][] neighbours;
 	// i : index of agents; j : index of the neighbours by distance
+	protected int[][] neighboursIndexes;
 
 	public GridNeighbourhood(final IShape[] agents, final int xSize, final int ySize, final boolean isTorus) {
 		this.agents = agents;
@@ -83,14 +80,13 @@ public abstract class GridNeighbourhood {
 			final int previousIndex = i == 1 ? 0 : neighboursIndexes[placeIndex][i - 2];
 			final List<Integer> list = getNeighboursAtRadius(placeIndex, i);
 			final int size = list.size();
-			int[] listArray = new int[size];
+			final int[] listArray = new int[size];
 			for ( int j = 0; j < size; j++ ) {
 				listArray[j] = list.get(j);
 			}
 			final int[] newArray = new int[neighbours[placeIndex].length + size];
 			if ( neighbours[placeIndex].length != 0 ) {
-				System.arraycopy(neighbours[placeIndex], 0, newArray, 0,
-					neighbours[placeIndex].length);
+				System.arraycopy(neighbours[placeIndex], 0, newArray, 0, neighbours[placeIndex].length);
 			}
 			System.arraycopy(listArray, 0, newArray, neighbours[placeIndex].length, size);
 			neighbours[placeIndex] = newArray;
@@ -100,8 +96,8 @@ public abstract class GridNeighbourhood {
 	}
 
 	private final void addToNeighboursIndex(final int placeIndex, final int newIndex) {
-		int[] previous = neighboursIndexes[placeIndex];
-		int[] newOne = new int[previous.length + 1];
+		final int[] previous = neighboursIndexes[placeIndex];
+		final int[] newOne = new int[previous.length + 1];
 		System.arraycopy(previous, 0, newOne, 0, previous.length);
 		newOne[previous.length] = newIndex;
 		neighboursIndexes[placeIndex] = newOne;
@@ -109,18 +105,14 @@ public abstract class GridNeighbourhood {
 
 	int neighboursIndexOf(final int placeIndex, final int n) {
 		if ( n == 1 ) { return 0; }
-		// final int size = neighboursIndexes[placeIndex].size();
 		final int size = neighboursIndexes[placeIndex].length;
 		if ( n > size ) { return neighbours[placeIndex].length - 1; }
-		// return neighboursIndexes[placeIndex].get(n - 2);
 		return neighboursIndexes[placeIndex][n - 2];
 	}
 
 	public GamaList<IAgent> getNeighboursIn(final int placeIndex, final int radius) {
-		// List<Integer> n = neighboursIndexes[placeIndex];
 		int[] n = neighboursIndexes[placeIndex];
 		if ( n == null ) {
-			// n = new ArrayList<Integer>();
 			n = new int[0];
 			neighboursIndexes[placeIndex] = n;
 		}
@@ -128,8 +120,8 @@ public abstract class GridNeighbourhood {
 		if ( radius > size ) {
 			computeNeighboursFrom(placeIndex, size + 1, radius);
 		}
-		int[] nn = neighbours[placeIndex];
-		int nnSize = neighboursIndexes[placeIndex][radius - 1];
+		final int[] nn = neighbours[placeIndex];
+		final int nnSize = neighboursIndexes[placeIndex][radius - 1];
 		final GamaList<IAgent> result = new GamaList(nnSize);
 		for ( int i = 0; i < nnSize; i++ ) {
 			result.add(agents[nn[i]].getAgent());
@@ -137,9 +129,6 @@ public abstract class GridNeighbourhood {
 		return result;
 	}
 
-	/**
-	 * @return
-	 */
 	public abstract boolean isVN();
 
 }

@@ -65,7 +65,7 @@ public class GamaShape implements IShape /* , IContainer */{
 	}
 
 	public GamaShape(final ILocation point) {
-		this(GeometryUtils.getFactory().createPoint(
+		this(GeometryUtils.factory.createPoint(
 			point instanceof Coordinate ? (Coordinate) point : point.toCoordinate()));
 	}
 
@@ -244,7 +244,7 @@ public class GamaShape implements IShape /* , IContainer */{
 	public static class Operations {
 
 		final static GamaPoint currentPoint = new GamaPoint(0d, 0d);
-		final static Point point = GeometryUtils.getFactory().createPoint(new Coordinate(0, 0));
+		final static Point point = GeometryUtils.factory.createPoint(new Coordinate(0, 0));
 		final static PointPairDistance ppd = new PointPairDistance();
 		final static PointLocator pl = new PointLocator();
 
@@ -338,7 +338,7 @@ public class GamaShape implements IShape /* , IContainer */{
 			for ( int i = 0; i < mp.getNumGeometries(); i++ ) {
 				lines[i] = ((Polygon) mp.getGeometryN(i)).getExteriorRing();
 			}
-			result = GeometryUtils.getFactory().createMultiLineString(lines);
+			result = GeometryUtils.factory.createMultiLineString(lines);
 
 		}
 		return new GamaShape(result);
