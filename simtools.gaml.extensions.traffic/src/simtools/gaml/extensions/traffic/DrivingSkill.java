@@ -251,7 +251,7 @@ public class DrivingSkill extends MovingSkill {
 		double newY = currentLocation.y + 0.01 * (target.y - currentLocation.y);
 		Coordinate[] segment2 = { new GamaPoint(newX, newY), target };
 		double minDist = distance;
-		Geometry basicLine = GeometryUtils.getFactory().createLineString(segment2);
+		Geometry basicLine = GeometryUtils.factory.createLineString(segment2);
 		// Geometry frontRectangle = basicLine.buffer(tolerance, 3, /**TODO To be modified, to find
 		// the right constant name**/2);
 		// PreparedPolygon fr2 = new PreparedPolygon((Polygonal) frontRectangle);

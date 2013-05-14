@@ -358,7 +358,7 @@ public class HumanMovingSkill extends MovingSkill {
 
 		for ( int i = 0; i < 9; i++ ) {
 			Geometry point =
-				GeometryUtils.getFactory()
+				GeometryUtils.factory
 					.createPoint(candidatePoint[(i + index) % 8].getLocation().toCoordinate())
 					.buffer(agentSize);
 			// Geometry point =
@@ -491,7 +491,7 @@ public class HumanMovingSkill extends MovingSkill {
 		for ( int i = 0; i < 9; i++ ) {
 
 			GamaPoint point = candidatePoint[(i + index) % 8];
-			Geometry geomCand = GeometryUtils.getFactory().createPoint(point).buffer(agentSize);
+			Geometry geomCand = GeometryUtils.factory.createPoint(point).buffer(agentSize);
 			// System.out.println("point : " + point+" candidat numero "+i);
 
 			if ( backgdGeom != null && !backgdGeom.contains(geomCand) ) {
@@ -639,7 +639,7 @@ public class HumanMovingSkill extends MovingSkill {
 		for ( int i = 0; i < 8; i++ ) {
 			ok[i] = false;
 			Geometry point =
-				GeometryUtils.getFactory().createPoint(candidatePoint[i].toCoordinate())
+				GeometryUtils.factory.createPoint(candidatePoint[i].toCoordinate())
 					.buffer(agentSize);
 
 			if ( isInBackgroundAgent ) {
@@ -781,7 +781,7 @@ public class HumanMovingSkill extends MovingSkill {
 		for ( int i = 0; i < 8; i++ ) {
 			ok[i] = false;
 			GamaPoint point = candidatePoint[i];
-			Geometry geomCand = GeometryUtils.getFactory().createPoint(point).buffer(agentSize);
+			Geometry geomCand = GeometryUtils.factory.createPoint(point).buffer(agentSize);
 			// System.out.println("point : " + point+" candidat numero "+i);
 
 			if ( backgdGeom != null && !backgdGeom.contains(geomCand) ) {
@@ -1011,7 +1011,7 @@ public class HumanMovingSkill extends MovingSkill {
 		for ( int i = 0; i < 8; i++ ) {
 			ok[i] = false;
 			Geometry point =
-				GeometryUtils.getFactory().createPoint(candidatePoint[i].toCoordinate())
+				GeometryUtils.factory.createPoint(candidatePoint[i].toCoordinate())
 					.buffer(agentSize);
 
 			if ( isInBackgroundAgent ) {
@@ -1102,7 +1102,7 @@ public class HumanMovingSkill extends MovingSkill {
 			for ( int i = 0; i < 8; i++ ) {
 				ok[i] = false;
 				Geometry point =
-					GeometryUtils.getFactory().createPoint(candidatePoint[i].toCoordinate())
+					GeometryUtils.factory.createPoint(candidatePoint[i].toCoordinate())
 						.buffer(agentSize);
 
 				if ( isInBackgroundAgent ) {
@@ -1299,7 +1299,7 @@ public class HumanMovingSkill extends MovingSkill {
 		for ( int i = 0; i < 8; i++ ) {
 			ok[i] = false;
 			GamaPoint point = candidatePoint[i];
-			Geometry geomCand = GeometryUtils.getFactory().createPoint(point).buffer(agentSize);
+			Geometry geomCand = GeometryUtils.factory.createPoint(point).buffer(agentSize);
 			// System.out.println("point : " + point+" candidat numero "+i);
 
 			if ( backgdGeom != null && !backgdGeom.contains(geomCand) ) {
@@ -1612,7 +1612,7 @@ public class HumanMovingSkill extends MovingSkill {
 
 			GamaPoint px = new GamaPoint(x, y1);
 			Geometry point =
-				GeometryUtils.getFactory().createPoint(px.toCoordinate()).buffer(agentSize);
+				GeometryUtils.factory.createPoint(px.toCoordinate()).buffer(agentSize);
 			if ( isInBackgroundAgent ) {
 				if ( isExteriorOfAgents(neighbours, point) &&
 					backgroundAgent.getInnerGeometry().contains(point) ) {
@@ -1633,7 +1633,7 @@ public class HumanMovingSkill extends MovingSkill {
 			}
 
 			px = new GamaPoint(x, y2);
-			point = GeometryUtils.getFactory().createPoint(px.toCoordinate()).buffer(agentSize);
+			point = GeometryUtils.factory.createPoint(px.toCoordinate()).buffer(agentSize);
 			if ( isInBackgroundAgent ) {
 				if ( isExteriorOfAgents(neighbours, point) &&
 					backgroundAgent.getInnerGeometry().contains(point) ) {
@@ -1860,7 +1860,7 @@ public class HumanMovingSkill extends MovingSkill {
 		/****/
 		for ( int i = 0; i < 9; i++ ) {
 			Geometry point =
-				GeometryUtils.getFactory().createPoint(candidatePoint[i]).buffer(agentSize);
+				GeometryUtils.factory.createPoint(candidatePoint[i]).buffer(agentSize);
 			if ( isInBackgroundAgent ) {
 				String ss = point.toString();
 				if ( !isExteriorOfAgents(neighbours, point) ||
@@ -1996,7 +1996,7 @@ public class HumanMovingSkill extends MovingSkill {
 
 			if ( !isPassedPoint ) {
 				Geometry point =
-					GeometryUtils.getFactory().createPoint(candidatePoint[i].toCoordinate())
+					GeometryUtils.factory.createPoint(candidatePoint[i].toCoordinate())
 						.buffer(agentSize);
 				if ( isInBackgroundAgent ) {
 					if ( isExteriorOfAgents(neighbours, point) /*
@@ -2247,7 +2247,7 @@ public class HumanMovingSkill extends MovingSkill {
 		while (i < 8) {
 			i++;
 			GamaPoint point = candidatePoint[i];
-			Geometry geomCand = GeometryUtils.getFactory().createPoint(point).buffer(agentSize);
+			Geometry geomCand = GeometryUtils.factory.createPoint(point).buffer(agentSize);
 			// System.out.println("point : " + point+" candidat numero "+i);
 
 			if ( backgdGeom != null && !backgdGeom.contains(geomCand) ) {
