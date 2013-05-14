@@ -33,7 +33,7 @@ public class MDXApp {
 //			 olapConnection = wrapper.unwrap(OlapConnection.class);	
 			// OlapStatement statement =   olapConnection.createStatement();
 			 MdxConnection mdxConnection = MdxUtils.createConnectionObject("MSAS","localhost","80","olap","sa","tmt");
-			 olapConnection = mdxConnection.connectMDB();
+			 olapConnection = (OlapConnection) mdxConnection.connectMDB();
 //			 OlapStatement statement = (OlapStatement) conn.createStatement();
 //			 System.out.println("OK");
 //			 System.out.println(olapConnection.getCatalog());
