@@ -44,18 +44,14 @@ public class GamaAgentType extends GamaType<IAgent> {
 	}
 
 	@Override
-	public IAgent cast(final IScope scope, final Object obj, final Object param)
-		throws GamaRuntimeException {
-		ISpecies species = (ISpecies) param;
+	public IAgent cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
+		final ISpecies species = (ISpecies) param;
 		if ( obj == null ) { return null; }
 		if ( species == null ) { return (IAgent) Types.get(IType.AGENT).cast(scope, obj, param); }
-		if ( obj instanceof IAgent ) { return ((IAgent) obj).isInstanceOf(species, false)
-			? (IAgent) obj : null; }
-		if ( obj instanceof Integer ) { return scope.getAgentScope().getPopulationFor(species)
-			.getAgent((Integer) obj); }
+		if ( obj instanceof IAgent ) { return ((IAgent) obj).isInstanceOf(species, false) ? (IAgent) obj : null; }
+		if ( obj instanceof Integer ) { return scope.getAgentScope().getPopulationFor(species).getAgent((Integer) obj); }
 		if ( obj instanceof ILocation ) {
-			IAgent result =
-				scope.getAgentScope().getPopulationFor(species).getAgent((ILocation) obj);
+			final IAgent result = scope.getAgentScope().getPopulationFor(species).getAgent((ILocation) obj);
 			return result;
 		}
 		return null;
@@ -82,18 +78,19 @@ public class GamaAgentType extends GamaType<IAgent> {
 		return name;
 	}
 
-	@Override
-	public boolean isSuperTypeOf(final IType type) {
-		return type != this && type instanceof GamaAgentType &&
-			toClass().isAssignableFrom(type.toClass());
-	}
+	//
+	// @Override
+	// public boolean isSuperTypeOf(final IType type) {
+	// return type != this && type instanceof GamaAgentType &&
+	// toClass().isAssignableFrom(type.toClass());
+	// }
 
 	@Override
 	public boolean canBeTypeOf(final IScope scope, final Object obj) {
-		boolean b = super.canBeTypeOf(scope, obj);
+		final boolean b = super.canBeTypeOf(scope, obj);
 		if ( b ) { return true; }
 		if ( obj instanceof IAgent ) {
-			ISpecies s = scope.getSimulationScope().getModel().getSpecies(getSpeciesName());
+			final ISpecies s = scope.getSimulationScope().getModel().getSpecies(getSpeciesName());
 			return ((IAgent) obj).isInstanceOf(s, false);
 		}
 		return false;
