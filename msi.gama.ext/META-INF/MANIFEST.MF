@@ -62,7 +62,8 @@ Bundle-ClassPath: commons-compiler-jdk.jar,
  gephi-toolkit.jar,
  jtds-1.2.6.jar
 Bundle-Vendor: MSI
-Export-Package: com.googlecode.sqlsheet,
+Export-Package: com.google.common.collect,
+ com.googlecode.sqlsheet,
  com.jmex.model.collada,
  com.jmex.model.collada.schema,
  com.jmex.xml,
