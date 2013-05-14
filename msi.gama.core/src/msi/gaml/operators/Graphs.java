@@ -513,8 +513,6 @@ public class Graphs {
 	
 	@operator(value = "load_graph_from_file")
 	@doc(
-		value = "returns a graph loaded from a given file encoded into a given format.",
-		comment = comment,
 		special_cases = {
 			"\"filename\": the filename of the file containing the network",
 			"\"edges_specy\": the species of edges",
@@ -537,8 +535,6 @@ public class Graphs {
 	
 	@operator(value = "load_graph_from_file")
 	@doc(
-		value = "returns a graph loaded from a given file encoded into a given format.",
-		comment = comment,
 		special_cases = {
 			"\"format\": the format of the file",
 			"\"file\": the file containing the network",
@@ -564,8 +560,6 @@ public class Graphs {
 	
 	@operator(value = "load_graph_from_file")
 	@doc(
-		value = "returns a graph loaded from a given file encoded into a given format.",
-		comment = comment,
 		special_cases = {
 			"\"format\": the format of the file",
 			"\"filename\": the filename of the file containing the network"
@@ -585,8 +579,6 @@ public class Graphs {
 	
 	@operator(value = "load_graph_from_file")
 	@doc(
-		value = "returns a graph loaded from a given file encoded into a given format.",
-		comment = comment,
 		special_cases = {
 			"\"format\": the format of the file",
 			"\"file\": the file containing the network",
@@ -606,8 +598,6 @@ public class Graphs {
 
 	@operator(value = "load_graph_from_file")
 	@doc(
-		value = "returns a graph loaded from a given file encoded into a given format.",
-		comment = comment,
 		special_cases = {
 			"\"file\": the file containing the network"
 			},	

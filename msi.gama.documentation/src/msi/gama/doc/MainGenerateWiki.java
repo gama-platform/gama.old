@@ -12,7 +12,6 @@ import org.xml.sax.SAXException;
 import msi.gama.doc.util.PrepareEnv;
 import msi.gama.doc.util.SVNUtils;
 import msi.gama.doc.util.UnifyDoc;
-import msi.gama.doc.util.WikiCleaner;
 import msi.gama.doc.util.XmlToWiki;
 
 public class MainGenerateWiki {
@@ -41,9 +40,14 @@ public class MainGenerateWiki {
 		XmlToWiki.createAllWikis();
 		System.out.println("DONE");		
 		
-		System.out.print("Checkout Wiki Files from GAMA SVN................");		
-		SVNUtils.checkoutSVNGamaDoc();		
-		System.out.println("DONE");			
+		// FIXME send the documentation on the SVN repository
+		try {
+			System.out.print("Checkout Wiki Files from GAMA SVN................");		
+			SVNUtils.checkoutSVNGamaDoc();		
+			System.out.println("DONE");			
+		} catch (Exception e){
+			System.out.println("NO AVAILABLE CONNECTION");
+		}
 	}
 
 }

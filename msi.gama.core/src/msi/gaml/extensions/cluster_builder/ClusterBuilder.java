@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -22,7 +22,9 @@ import java.util.List;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.action;
+import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.args;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -97,10 +99,22 @@ public class ClusterBuilder extends GamlAgent {
 	 * maximum number of clusters min_num_clusters -- set minimum number of clusters seed -- The
 	 * random number seed to be used.
 	 */
-	@action(name = "clustering_xmeans")
-	@args(names = { "agents", "attributes", "bin_value", "cut_off_factor", "distance_f",
-		"max_iterations", "max_kmeans", "max_kmeans_for_children", "max_kmeans_for_children",
-		"max_num_clusters", "min_num_clusters", "seed" })
+	@action(name = "clustering_xmeans", args ={
+			@arg(name = "agents", type= IType.LIST, optional = false),
+			@arg(name = "attributes", type= IType.LIST, optional = false),			
+			@arg(name = "bin_value", type = IType.FLOAT, optional = true, doc = @doc("value that represents true in the new attributes")),
+			@arg(name = "cut_off_factor", type = IType.FLOAT, optional = true, doc = @doc("the cut-off factor to use")),
+			@arg(name = "distance_f", type = IType.STRING, optional = true, doc = @doc("The distance function to use. 4 possible distance functions: " +
+					"euclidean (by default) ; 'chebyshev', 'manhattan' or 'levenshtein'")),
+			@arg(name = "max_iterations", type = IType.INT, optional = true, doc = @doc("the maximum number of iterations to perform")),
+			@arg(name = "max_kmeans", type = IType.INT, optional = true, doc = @doc("the maximum number of iterations to perform in KMeans")),
+			@arg(name = "max_kmeans_for_children", type = IType.INT, optional = true, doc = @doc("the maximum number of iterations KMeans that is performed on the child centers")),	
+			@arg(name = "max_num_clusters", type = IType.INT, optional = true, doc = @doc("the maximum number of clusters")),
+			@arg(name = "min_num_clusters", type = IType.INT, optional = true, doc = @doc("the maximum number of clusters")),
+			@arg(name = "seed", type = IType.INT, optional = true, doc = @doc("random number seed to be used"))})
+//	@args(names = { "agents", "attributes", "bin_value", "cut_off_factor", "distance_f",
+//		"max_iterations", "max_kmeans", "max_kmeans_for_children", "max_kmeans_for_children",
+//		"max_num_clusters", "min_num_clusters", "seed" })
 	public List<List<IAgent>> primClusteringXMeans(final IScope scope) throws GamaRuntimeException {
 		final IList<IAgent> agents = scope.getListArg("agents");
 		IList<String> attributes = scope.getListArg("attributes");
@@ -159,9 +173,17 @@ public class ClusterBuilder extends GamlAgent {
 	 * of clusters preserve_instances_order -- Preserve order of instances. seed -- The random
 	 * number seed to be used.
 	 */
-	@action(name = "clustering_simple_kmeans")
-	@args(names = { "agents", "attributes", "distance_f", "dont_replace_missing_values",
-		"max_iterations", "num_clusters", "preserve_instances_order", "seed" })
+	@action(name = "clustering_simple_kmeans", args ={
+		@arg(name = "agents", type= IType.LIST, optional = false),
+		@arg(name = "attributes", type= IType.LIST, optional = false),
+		@arg(name = "distance_f", optional = true),
+		@arg(name = "dont_replace_missing_values", optional = true),
+		@arg(name = "max_iterations", optional = true),
+		@arg(name = "num_clusters", optional = true),
+		@arg(name = "preserve_instances_order", optional = true),
+		@arg(name = "seed", optional = true)})
+//	@args(names = { "agents", "attributes", "distance_f", "dont_replace_missing_values",
+//		"max_iterations", "num_clusters", "preserve_instances_order", "seed" })
 	public List<List<IAgent>> primClusteringSimpleKMeans(final IScope scope)
 		throws GamaRuntimeException {
 		final IList<IAgent> agents = scope.getListArg("agents");

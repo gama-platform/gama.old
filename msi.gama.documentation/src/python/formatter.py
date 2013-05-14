@@ -432,7 +432,8 @@ class Formatter(FormatterBase):
         Send HTML data.
     """
 
-    hardspace = '&nbsp;'
+    #hardspace = '&nbsp;'
+    hardspace = '&#160;'
     indentspace = ' '
 
     def __init__(self, **kw):

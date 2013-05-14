@@ -30,16 +30,19 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
+import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
+import msi.gama.precompiler.utils.doc.DocProcessorAnnotations;
+import msi.gama.precompiler.utils.doc.TypeConverter;
+
 import org.w3c.dom.*;
 
 @SupportedAnnotationTypes({ "msi.gama.precompiler.GamlAnnotations.*" })
@@ -50,9 +53,8 @@ public class GamlDocProcessor {
 
 	ProcessingEnvironment processingEnv;
 	Messager mes;
-	HashMap<String, String> properNameTypeMap;
-	HashMap<String, String> properCategoryNameMap;
-
+	TypeConverter tc;
+	
 	boolean firstParsing;
 
 	// Statistiques values
@@ -69,8 +71,7 @@ public class GamlDocProcessor {
 		nbrOperatorsDoc = 0;
 		nbrSkills = 0;
 		nbrSymbols = 0;
-		properNameTypeMap = initProperNameTypeMap();
-		properCategoryNameMap = initProperNameCategoriesMap();
+		tc = new TypeConverter();
 	}
 
 	public void processDocXML(final RoundEnvironment env, final Writer out) {
@@ -164,14 +165,14 @@ public class GamlDocProcessor {
 		for ( ExecutableElement e : set ) {
 
 			String categoryName =
-				getProperCategory(e.getEnclosingElement().getSimpleName().toString());
+				tc.getProperCategory(e.getEnclosingElement().getSimpleName().toString());
 
 			NodeList nL = operatorsCategories.getElementsByTagName("category");
 			int i = 0;
 			boolean found = false;
 			while (!found && i < nL.getLength()) {
 				org.w3c.dom.Element elt = (org.w3c.dom.Element) nL.item(i);
-				if ( categoryName.equals(getProperCategory(elt.getAttribute("id"))) ) {
+				if ( categoryName.equals(tc.getProperCategory(elt.getAttribute("id"))) ) {
 					found = true;
 				}
 				i++;
@@ -216,11 +217,11 @@ public class GamlDocProcessor {
 				if ( firstInstanceOperator ) {
 					// if("".equals(operator.getAttribute("id"))){
 					operator.setAttribute("id",
-						getProperOperatorName(e.getAnnotation(operator.class).value()[0]));
+						tc.getProperOperatorName(e.getAnnotation(operator.class).value()[0]));
 					operator.setAttribute("name",
-						getProperOperatorName(e.getAnnotation(operator.class).value()[0]));
+						tc.getProperOperatorName(e.getAnnotation(operator.class).value()[0]));
 					// }
-					operator.setAttribute("category", getProperCategory(e.getEnclosingElement()
+					operator.setAttribute("category", tc.getProperCategory(e.getEnclosingElement()
 						.getSimpleName().toString()));
 				}
 				// Parse the alternative names of the operator
@@ -234,7 +235,7 @@ public class GamlDocProcessor {
 							altElt = doc.createElement("operator");
 							altElt.setAttribute("id", name);
 							altElt.setAttribute("name", name);
-							altElt.setAttribute("category", getProperCategory(e
+							altElt.setAttribute("category", tc.getProperCategory(e
 								.getEnclosingElement().getSimpleName().toString()));
 							altElt.setAttribute("alternativeNameOf", e
 								.getAnnotation(operator.class).value()[0]);
@@ -265,7 +266,7 @@ public class GamlDocProcessor {
 				}
 
 				org.w3c.dom.Element operands = doc.createElement("operands");
-				operands.setAttribute("returnType", getProperType(e.getReturnType().toString()));
+				operands.setAttribute("returnType", tc.getProperType(e.getReturnType().toString()));
 				operands.setAttribute("contentType", "" +
 					e.getAnnotation(operator.class).content_type());
 				operands.setAttribute("type", "" + e.getAnnotation(operator.class).type());
@@ -283,7 +284,7 @@ public class GamlDocProcessor {
 
 				if ( !isStatic ) {
 					org.w3c.dom.Element operand = doc.createElement("operand");
-					operand.setAttribute("type", getProperType(e.getEnclosingElement().asType()
+					operand.setAttribute("type", tc.getProperType(e.getEnclosingElement().asType()
 						.toString()));
 					operand.setAttribute("position", "" + arity);
 					arity++;
@@ -296,7 +297,7 @@ public class GamlDocProcessor {
 					for ( int i = first_index; i <= args.size() - 1; i++ ) {
 						org.w3c.dom.Element operand = doc.createElement("operand");
 						operand
-							.setAttribute("type", getProperType(args.get(i).asType().toString()));
+							.setAttribute("type", tc.getProperType(args.get(i).asType().toString()));
 						operand.setAttribute("position", "" + arity);
 						arity++;
 						operand.setAttribute("name", args.get(i).getSimpleName().toString());
@@ -309,100 +310,19 @@ public class GamlDocProcessor {
 
 				// /////////////////////////////////////////////////////
 				// Parsing of the documentation
-				doc docAnnot = e.getAnnotation(doc.class);
-
-				if ( docAnnot == null ) {
-					mes.printMessage(Kind.ERROR, "The operator __" +
-						e.getAnnotation(operator.class).value()[0] + "__ is not documented.");
+				org.w3c.dom.Element docElt;
+				if(operator.getElementsByTagName("documentation").getLength() == 0){
+					docElt = DocProcessorAnnotations.getDocElt(e.getAnnotation(doc.class), doc, mes, "Operator " + operator.getAttribute("name"), tc);
 				} else {
-					nbrOperatorsDoc++;
-					boolean firstdocElt = true;
-					org.w3c.dom.Element docElt; // = doc.createElement("documentation");
-
-					if ( operator.getElementsByTagName("documentation").getLength() == 0 ) {
-						docElt = doc.createElement("documentation");
-						firstdocElt = true;
-					} else {
-						docElt =
-							(org.w3c.dom.Element) operator.getElementsByTagName("documentation")
-								.item(0);
-						firstdocElt = false;
-					}
-
-					if ( firstdocElt ) {
-						org.w3c.dom.Element resultElt = doc.createElement("result");
-						resultElt.setTextContent(docAnnot.value());
-						docElt.appendChild(resultElt);
-
-						org.w3c.dom.Element commentElt = doc.createElement("comment");
-						commentElt.setTextContent(docAnnot.comment());
-						docElt.appendChild(commentElt);
-					} else {
-						docElt
-							.getElementsByTagName("result")
-							.item(0)
-							.setTextContent(
-								docElt.getElementsByTagName("result").item(0).getTextContent() +
-									docAnnot.value());
-						docElt
-							.getElementsByTagName("comment")
-							.item(0)
-							.setTextContent(
-								docElt.getElementsByTagName("comment").item(0).getTextContent() +
-									docAnnot.comment());
-					}
-
-					org.w3c.dom.Element specialCasesElt;
-					if ( firstdocElt ) {
-						specialCasesElt = doc.createElement("specialCases");
-					} else {
-						specialCasesElt =
-							(org.w3c.dom.Element) docElt.getElementsByTagName("specialCases").item(
-								0);
-					}
-
-					// org.w3c.dom.Element specialCasesElt = doc.createElement("specialCases");
-					for ( String cases : docAnnot.special_cases() ) {
-						if ( !"".equals(cases) ) {
-							org.w3c.dom.Element caseElt = doc.createElement("case");
-							caseElt.setAttribute("item", cases);
-							specialCasesElt.appendChild(caseElt);
-						}
-					}
-					docElt.appendChild(specialCasesElt);
-
-					org.w3c.dom.Element examplesElt;
-					if ( firstdocElt ) {
-						examplesElt = doc.createElement("examples");
-					} else {
-						examplesElt =
-							(org.w3c.dom.Element) docElt.getElementsByTagName("examples").item(0);
-					}
-
-					// org.w3c.dom.Element examplesElt = doc.createElement("examples");
-					for ( String example : docAnnot.examples() ) {
-						org.w3c.dom.Element exampleElt = doc.createElement("example");
-						exampleElt.setAttribute("code", example);
-						examplesElt.appendChild(exampleElt);
-					}
-					docElt.appendChild(examplesElt);
-
-					org.w3c.dom.Element seeAlsoElt;
-					if ( firstdocElt ) {
-						seeAlsoElt = doc.createElement("seeAlso");
-					} else {
-						seeAlsoElt =
-							(org.w3c.dom.Element) docElt.getElementsByTagName("seeAlso").item(0);
-					}
-					// org.w3c.dom.Element seeAlsoElt = doc.createElement("seeAlso");
-					for ( String see : docAnnot.see() ) {
-						org.w3c.dom.Element seesElt = doc.createElement("see");
-						seesElt.setAttribute("id", see);
-						seeAlsoElt.appendChild(seesElt);
-					}
-					docElt.appendChild(seeAlsoElt);
+					docElt = DocProcessorAnnotations.getDocElt(e.getAnnotation(doc.class), doc,
+							(org.w3c.dom.Element) operator.getElementsByTagName("documentation").item(0),
+							mes, "Operator " + operator.getAttribute("name"), tc);
+				}
+				
+				if(docElt != null){
 					operator.appendChild(docElt);
 				}
+				
 				operators.appendChild(operator);
 			}
 		}
@@ -417,23 +337,18 @@ public class GamlDocProcessor {
 		for ( Element e : setSkills ) {
 			nbrSkills++;
 			org.w3c.dom.Element skillElt = doc.createElement("skill");
-			// TODO : id should be precised
-			String id = e.getAnnotation(skill.class).name();
 
-			skillElt.setAttribute("id", id);
+			skillElt.setAttribute("id", e.getAnnotation(skill.class).name());
 			skillElt.setAttribute("name", e.getAnnotation(skill.class).name());
 
 			// get extends
 			skillElt.setAttribute("class", ((TypeElement) e).getQualifiedName().toString());
 			skillElt.setAttribute("extends", ((TypeElement) e).getSuperclass().toString());
-
-			if ( e.getAnnotation(doc.class) != null ) {
-				org.w3c.dom.Element docElt = doc.createElement("description");
-				docElt.setTextContent(e.getAnnotation(doc.class).value());
-				skillElt.appendChild(docElt);
-			} else {
-				mes.printMessage(Kind.ERROR, "The skill __" + e.getAnnotation(skill.class).name() +
-					"__ is not described. Add a @doc block");
+			
+			org.w3c.dom.Element docEltSkill = 
+					DocProcessorAnnotations.getDocElt(e.getAnnotation(doc.class), doc, mes, e.getSimpleName().toString(), tc);
+			if(docEltSkill != null){
+				skillElt.appendChild(docEltSkill);
 			}
 
 			// Parsing of vars
@@ -442,13 +357,15 @@ public class GamlDocProcessor {
 				for ( var v : e.getAnnotation(vars.class).value() ) {
 					org.w3c.dom.Element varElt = doc.createElement("var");
 					varElt.setAttribute("name", v.name());
-					varElt.setAttribute("type", String.valueOf(v.type()));
+					varElt.setAttribute("type", tc.getTypeString(Integer.valueOf(v.type())));
 					varElt.setAttribute("constant", "" + v.constant());
-					// FIXME For the moment, very simple parsing of the doc attached (only the text
-					// is grabbed).
-					if ( v.doc().length > 0 ) {
-						varElt.setAttribute("doc", v.doc()[0].value());
+					
+					org.w3c.dom.Element docEltVar = 
+							DocProcessorAnnotations.getDocElt(v.doc(), doc, mes, "Var " + v.name() + " from " + skillElt.getAttribute("name"), tc);
+					if(docEltVar != null){
+						varElt.appendChild(docEltVar);
 					}
+					
 					String dependsOn = new String();
 					for ( String dependElement : v.depends_on() ) {
 						dependsOn = ("".equals(dependsOn) ? "" : dependsOn + ",") + dependElement;
@@ -463,28 +380,14 @@ public class GamlDocProcessor {
 			org.w3c.dom.Element actionsElt = doc.createElement("actions");
 
 			for ( Element eltMethod : e.getEnclosedElements() ) {
-				if ( eltMethod.getAnnotation(action.class) != null ) {
-					org.w3c.dom.Element actionElt = doc.createElement("action");
-					actionElt.setAttribute("name", eltMethod.getAnnotation(action.class).name());
-					actionElt.setAttribute("returnType", ((ExecutableElement) eltMethod)
-						.getReturnType().toString());
-
-					if ( eltMethod.getAnnotation(args.class) != null ) {
-						org.w3c.dom.Element argsElt = doc.createElement("args");
-						for ( String argAction : eltMethod.getAnnotation(args.class).names() ) {
-							org.w3c.dom.Element argElt = doc.createElement("arg");
-							argElt.setAttribute("name", argAction);
-							argsElt.appendChild(argElt);
-						}
-						actionElt.appendChild(argsElt);
-					}
+				org.w3c.dom.Element actionElt = 
+						DocProcessorAnnotations.getActionElt(eltMethod.getAnnotation(action.class), doc, mes, eltMethod, tc);		
+				
+				if(actionElt != null){
 					actionsElt.appendChild(actionElt);
 				}
 			}
-
-			// if(actionsElt.getElementsByTagName("action").getLength() != 0){
 			skillElt.appendChild(actionsElt);
-			// }
 
 			skills.appendChild(skillElt);
 
@@ -528,146 +431,69 @@ public class GamlDocProcessor {
 			org.w3c.dom.Element spec = doc.createElement("species");
 			spec.setAttribute("id", e.getAnnotation(species.class).name());
 			spec.setAttribute("name", e.getAnnotation(species.class).name());
+			
+			org.w3c.dom.Element docEltSkill = 
+					DocProcessorAnnotations.getDocElt(e.getAnnotation(doc.class), doc, mes, e.getSimpleName().toString(), tc);
+			if(docEltSkill != null){
+				spec.appendChild(docEltSkill);
+			}
 
+			// Parsing of actions
+			org.w3c.dom.Element actionsElt = doc.createElement("actions");
+			for ( Element eltMethod : e.getEnclosedElements() ) {
+				org.w3c.dom.Element actionElt = 
+						DocProcessorAnnotations.getActionElt(eltMethod.getAnnotation(action.class), doc, mes, eltMethod, tc);		
+				
+				if(actionElt != null){
+					actionsElt.appendChild(actionElt);
+				}
+			}
+			spec.appendChild(actionsElt);
+			
 			species.appendChild(spec);
 		}
 		return species;
 	}
 
-	private org.w3c.dom.Element processDocXMLStatements(final Set<? extends Element> setCommand,
+	private org.w3c.dom.Element processDocXMLStatements(final Set<? extends Element> setStatement,
 		final Document doc) {
-		org.w3c.dom.Element cmdsElt = doc.createElement("statements");
+		org.w3c.dom.Element statementsElt = doc.createElement("statements");
 
-		for ( Element e : setCommand ) {
+		for ( Element e : setStatement ) {
 			nbrSymbols++;
-			org.w3c.dom.Element cmdElt = doc.createElement("statement");
+			org.w3c.dom.Element statElt = doc.createElement("statement");
 			if ( e.getAnnotation(symbol.class).name().length != 0 ) {
-				cmdElt.setAttribute("id", e.getAnnotation(symbol.class).name()[0]);
-				cmdElt.setAttribute("name", e.getAnnotation(symbol.class).name()[0]);
+				statElt.setAttribute("id", e.getAnnotation(symbol.class).name()[0]);
+				statElt.setAttribute("name", e.getAnnotation(symbol.class).name()[0]);
 			} else {
 				// TODO : case of variables declarations ... Variable, ContainerVariable,
 				// NumberVariable
 			}
-			cmdElt.setAttribute("kind", "" + e.getAnnotation(symbol.class).kind());
+			statElt.setAttribute("kind", "" + e.getAnnotation(symbol.class).kind());
 
 			// Parsing of facets
-			if ( e.getAnnotation(facets.class) != null ) {
-				org.w3c.dom.Element facetsElt = doc.createElement("facets");
-				for ( facet f : e.getAnnotation(facets.class).value() ) {
-					org.w3c.dom.Element facetElt = doc.createElement("facet");
-					facetElt.setAttribute("name", f.name());
-					// TODO : check several types
-					facetElt.setAttribute("type", String.valueOf(f.type()[0]));
-					// FIXME Very simple documentation parsing as only the text is grabbed.
-					facetElt.setAttribute("optional", "" + f.optional());
-					if ( f.doc().length > 0 ) {
-						facetElt.setAttribute("doc", f.doc()[0].value());
-					}
-					facetElt.setAttribute("omissible",
-						f.name().equals(e.getAnnotation(facets.class).omissible()) ? "true"
-							: "false");
-					facetsElt.appendChild(facetElt);
-				}
-				cmdElt.appendChild(facetsElt);
+			org.w3c.dom.Element facetsElt = 
+				DocProcessorAnnotations.getFacetsElt(e.getAnnotation(facets.class), doc, mes, statElt.getAttribute("name"), tc);
+			if(facetsElt != null){
+				statElt.appendChild(facetsElt);
 			}
 
-			cmdsElt.appendChild(cmdElt);
+			// Parsing of documentation
+			org.w3c.dom.Element docstatElt = 
+				DocProcessorAnnotations.getDocElt(e.getAnnotation(doc.class), doc, mes, "Statement " + statElt.getAttribute("name"), tc);
+			if(docstatElt != null){
+				statElt.appendChild(docstatElt);
+			}
+
+			// Parsing of inside
+			org.w3c.dom.Element insideElt = 
+				DocProcessorAnnotations.getInsideElt(e.getAnnotation(inside.class), doc);
+			if(insideElt != null){
+				statElt.appendChild(insideElt);
+			}
+			
+			statementsElt.appendChild(statElt);
 		}
-		return cmdsElt;
-	}
-
-	private HashMap<String, String> initProperNameTypeMap() {
-		HashMap<String, String> hm = new HashMap<String, String>();
-		hm.put("msi.gama.metamodel.shape.IShape", "shape");
-		hm.put("msi.gama.util.matrix.IMatrix<T>", "matrix");
-		hm.put("msi.gama.util.matrix.IMatrix", "matrix");
-		hm.put("java.lang.Integer", "int");
-		hm.put("java.lang.Double", "float");
-		hm.put("msi.gama.util.file.IGamaFile", "file");
-		hm.put("msi.gama.util.GamaColor", "rgb");
-		hm.put("msi.gama.util.IList", "list");
-		hm.put("msi.gama.util.GamaList", "list");
-		hm.put("java.util.List", "list");
-		hm.put("java.util.List<T>", "list");
-		hm.put("msi.gama.util.IList<T>", "list");
-		hm.put("msi.gama.util.IList<msi.gama.util.IList<T>>", "list of lists");
-		hm.put("msi.gama.util.IList<msi.gama.metamodel.shape.IShape>", "list of shapes");
-		hm.put("msi.gama.util.IList<msi.gama.metamodel.shape.GamaPoint>", "list of points");
-		hm.put("msi.gama.util.IList<msi.gama.metamodel.agent.IAgent>", "list of agents");
-		hm.put("msi.gama.util.GamaList<msi.gama.metamodel.agent.IAgent>", "list of agents");
-		hm.put("msi.gama.util.GamaList<msi.gama.metamodel.shape.IShape>", "list of shapes");
-		hm.put("msi.gama.metamodel.shape.GamaPoint", "point");
-		hm.put("msi.gama.metamodel.shape.ILocation", "point");
-		hm.put("java.lang.Object", "any");
-		hm.put("msi.gama.util.GamaPair", "pair");
-		hm.put("java.lang.Boolean", "bool");
-		hm.put("msi.gama.metamodel.agent.IAgent", "agent");
-		hm.put("java.lang.String", "string");
-		hm.put("msi.gama.util.graph.IGraph", "graph");
-		hm.put("msi.gama.util.graph.GamaGraph", "graph");
-		hm.put("msi.gama.metamodel.topology.ITopology", "topology");
-		hm.put("msi.gama.util.IPath", "path");
-		hm.put("msi.gama.util.GamaMap", "map");
-		hm.put("msi.gaml.expressions.IExpression", "any expression");
-		hm.put("msi.gaml.species.ISpecies", "species");
-		hm.put("msi.gama.util.IContainer", "container");
-		hm.put("msi.gama.util.IContainer<KeyType,ValueType>", "container");
-		hm.put("msi.gama.util.IContainer<?,msi.gama.metamodel.shape.IShape>", "container of shapes");
-		hm.put("java.util.Map", "map");
-		hm.put("java.util.Map<java.lang.String,java.lang.Object>", "map");
-		return hm;
-	}
-
-	private String getProperType(String rawName) {
-		if ( properNameTypeMap.containsKey(rawName) ) {
-			return properNameTypeMap.get(rawName);
-		} else {
-			return rawName;
-		}
-	}
-
-	private static String getProperOperatorName(String opName) {
-		// if("*".equals(opName)) return "`*`";
-		return opName;
-	}
-
-	private String getProperCategory(String rawName) {
-		if ( properCategoryNameMap.containsKey(rawName) ) {
-			return properCategoryNameMap.get(rawName);
-		} else {
-			return rawName;
-		}
-	}
-
-	private HashMap<String, String> initProperNameCategoriesMap() {
-		HashMap<String, String> hm = new HashMap<String, String>();
-		hm.put("Cast", "Casting operators");
-		hm.put("Colors", "Mathematics operators");
-		hm.put("Comparison", "Comparison operators");
-		hm.put("IContainer", "Containers-related operators");
-		hm.put("Containers", "Containers-related operators");
-		hm.put("GamaMap", "Containers-related operators");
-		hm.put("Files", "Files-related operators");
-		hm.put("GamaFileType", "Files-related operators");
-		hm.put("Graphs", "Graphs-related operators");
-		hm.put("GraphsGraphstream", "Graphs-related operators");
-		hm.put("Logic", "Logical operators");
-		hm.put("Maths", "Mathematics operators");
-		hm.put("IMatrix", "Matrix-related operators");
-		hm.put("Creation", "Spatial operators");
-		hm.put("Operators", "Spatial operators");
-		hm.put("Points", "Spatial operators");
-		hm.put("Properties", "Spatial operators");
-		hm.put("Punctal", "Spatial operators");
-		hm.put("Queries", "Spatial operators");
-		hm.put("ThreeD", "Spatial operators");
-		hm.put("Random", "Random operators");
-		hm.put("Statistics", "Spatial operators");
-		hm.put("Strings", "Strings-related operators");
-		hm.put("Transformations", "Spatial operators");
-		hm.put("Relations", "Spatial operators");
-		hm.put("Stats", "Statistical operators");
-		hm.put("System", "System");
-		return hm;
+		return statementsElt;
 	}
 }

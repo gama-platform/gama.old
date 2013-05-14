@@ -58,6 +58,7 @@ if speed = 5 {
 	<xsl:for-each select="doc/skills/skill">
     	<xsl:sort select="@name" />
 = &lt;font color="blue"&gt; <xsl:value-of select="@name"/> &lt;/font&gt; = 	
+<xsl:value-of select="documentation/result"/> 
 		<xsl:call-template name="buildVariables"/>
 		<xsl:call-template name="buildActions"/>		
 	</xsl:for-each>
@@ -67,23 +68,36 @@ if speed = 5 {
     
  	<xsl:template name="buildVariables"> 
 == Variables ==
-		<xsl:for-each select="vars/var">		
-		<xsl:sort select="@name" />   
-  * <xsl:value-of select="@name"/> (<xsl:value-of select="@type"/>)
+	<xsl:for-each select="vars/var">		
+	<xsl:sort select="@name" />   
+  * *<xsl:value-of select="@name"/>* (<xsl:value-of select="@type"/>): <xsl:value-of select="documentation/result"/> 
 		</xsl:for-each>
 	</xsl:template>
 
  	<xsl:template name="buildActions"> 
+ 	
 == Actions == 
-		<xsl:for-each select="actions/action">		
-		<xsl:sort select="@name" />   
+	<xsl:for-each select="actions/action">		
+	<xsl:sort select="@name" />  
+	 
 === *<xsl:value-of select="@name"/>* === 
-  * returns: <xsl:value-of select="@returnType"/>)
-  			<xsl:for-each select="args/arg">
-			<xsl:sort select="@name" />  			
-  * <xsl:value-of select="@name"/>
+<xsl:value-of select="documentation/result"/>
+  * returns: <xsl:value-of select="@returnType"/>
+  			<xsl:for-each select="args/arg"> 			
+  * → *<xsl:value-of select="@name"/>* (<xsl:value-of select="@type"/>): <xsl:value-of select="documentation/result"/> 
   			</xsl:for-each>
-		</xsl:for-each>
+		
+<xsl:if test="documentation/examples[node()]">
+
+{{{
+<xsl:for-each select="documentation/examples/example" >
+<xsl:if test="@code != ''"><xsl:value-of select="@code"/><xsl:text>
+</xsl:text>
+</xsl:if>
+</xsl:for-each>}}} 
+</xsl:if>	
+		
+		</xsl:for-each>	
 
 [#Table_of_Contents Top of the page] 
 	</xsl:template>

@@ -60,7 +60,22 @@ statement_keyword1 expression1 attribute2: expression2... {
 	</xsl:template>
 
  	<xsl:template name="buildDefinition"> 
+ 	<xsl:if test="documentation[text()]"> 
+ 	
 == Definition == 
+
+<xsl:value-of select="documentation/result"/>
+
+<xsl:if test="documentation/examples[node()]">
+{{{
+<xsl:for-each select="documentation/examples/example" >
+<xsl:if test="@code != ''"><xsl:value-of select="@code"/><xsl:text>
+</xsl:text>
+</xsl:if>
+</xsl:for-each>}}} 
+</xsl:if>
+
+</xsl:if>
 
 [#Table_of_Contents Top of the page] 
 	</xsl:template>
