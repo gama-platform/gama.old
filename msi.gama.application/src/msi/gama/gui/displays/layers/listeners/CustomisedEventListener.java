@@ -23,24 +23,24 @@ public class CustomisedEventListener implements MouseListener {
 	private final EventLayer parent;
 	private final IStatement.WithArgs executer;
 
-	public CustomisedEventListener(EventLayer prt, String event, String action) {
+	public CustomisedEventListener(final EventLayer prt, final String event, final String action) {
 		this.parent = prt;
 		// this.myStatement=myEStt;
 		listenedEvent = getListeningEvent(event);
 		this.currentScope = GAMA.obtainNewScope();
-		ISpecies context = currentScope.getAgentScope().getSpecies();
+		final ISpecies context = currentScope.getAgentScope().getSpecies();
 		this.executer = context.getAction(action);
 	}
 
-	public Point getMouseLocation(Point initialLoc) {
+	public Point getMouseLocation(final Point initialLoc) {
 
-		double x = initialLoc.x - parent.getDisplay().getOriginX();
-		double y = initialLoc.y - parent.getDisplay().getOriginY();
+		final double x = initialLoc.x - parent.getDisplay().getOriginX();
+		final double y = initialLoc.y - parent.getDisplay().getOriginY();
 		return new Point((int) (x / parent.getSizeInPixels().x * parent.getDisplay().getEnvWidth()), (int) (y /
 			parent.getSizeInPixels().y * parent.getDisplay().getEnvHeight()));
 	}
 
-	public static int getListeningEvent(String eventTypeName) {
+	public static int getListeningEvent(final String eventTypeName) {
 		if ( eventTypeName.equals(IKeyword.MOUSE_DOWN) ) {
 
 		return MOUSE_PRESS; }
@@ -51,25 +51,25 @@ public class CustomisedEventListener implements MouseListener {
 	}
 
 	@Override
-	public void mouseClicked(MouseEvent arg0) {
+	public void mouseClicked(final MouseEvent arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent arg0) {
+	public void mouseEntered(final MouseEvent arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void mouseExited(MouseEvent arg0) {
+	public void mouseExited(final MouseEvent arg0) {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void mousePressed(MouseEvent arg0) {
+	public void mousePressed(final MouseEvent arg0) {
 		// /currentScope.getSimulationScope().
 
 		if ( MOUSE_PRESS == listenedEvent && arg0.getButton() == MouseEvent.BUTTON1 ) {
@@ -78,19 +78,19 @@ public class CustomisedEventListener implements MouseListener {
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent arg0) {
+	public void mouseReleased(final MouseEvent arg0) {
 		if ( MOUSE_RELEASED == listenedEvent && arg0.getButton() == MouseEvent.BUTTON1 ) {
 			sendEvent(arg0);
 		}
 	}
 
-	private void sendEvent(MouseEvent arg0) {
-		Point pp = getMouseLocation(arg0.getPoint());
+	private void sendEvent(final MouseEvent arg0) {
+		final Point pp = getMouseLocation(arg0.getPoint());
 		if ( pp.getX() < 0 || pp.getY() < 0 || pp.getX() >= parent.getDisplay().getEnvWidth() ||
 			pp.getY() >= parent.getDisplay().getEnvHeight() ) { return; }
 
-		Arguments args = new Arguments();
-		IList<IAgent> agentset = parent.selectAgent(arg0.getX(), arg0.getY());
+		final Arguments args = new Arguments();
+		final IList<IAgent> agentset = parent.selectAgent(arg0.getX(), arg0.getY());
 		args.put("location", ConstantExpressionDescription.create(new GamaPoint(pp.x, pp.y)));
 		args.put("selected_agents", ConstantExpressionDescription.create(new GamaList(agentset)));
 		executer.setRuntimeArgs(args);

@@ -50,7 +50,7 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 	 */
 	@Override
 	protected IContributionItem createItem() {
-		IAction action =
+		final IAction action =
 			new GamaAction("Focus on...", IAction.AS_DROP_DOWN_MENU, getImageDescriptor("icons/button_focus.png")) {
 
 				@Override
@@ -90,7 +90,7 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
-			MenuItem mi = (MenuItem) e.widget;
+			final MenuItem mi = (MenuItem) e.widget;
 			final IAgent a = (IAgent) mi.getData("agent");
 			final ILayer d = (ILayer) mi.getData("display");
 			final IDisplaySurface s = (IDisplaySurface) mi.getData("surface");
@@ -102,7 +102,7 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 						while (!s.canBeUpdated()) {
 							try {
 								Thread.sleep(10);
-							} catch (InterruptedException e) {
+							} catch (final InterruptedException e) {
 
 							}
 						}
@@ -129,7 +129,7 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
-			MenuItem mi = (MenuItem) e.widget;
+			final MenuItem mi = (MenuItem) e.widget;
 			final IAgent a = (IAgent) mi.getData("agent");
 			if ( a != null && !a.dead() ) {
 				new Thread(new Runnable() {
@@ -139,7 +139,7 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 						while (!surface.canBeUpdated()) {
 							try {
 								Thread.sleep(10);
-							} catch (InterruptedException e) {
+							} catch (final InterruptedException e) {
 
 							}
 						}
@@ -162,34 +162,33 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 
 	@Override
 	public void fill(final Menu menu, final int index) {
-		LayeredDisplayView view = (LayeredDisplayView) SwtGui.getPage().getActivePart();
+		final LayeredDisplayView view = (LayeredDisplayView) SwtGui.getPage().getActivePart();
 		final IDisplaySurface displaySurface = view.getDisplaySurface();
 		for ( final ILayer item : view.getDisplayManager().getItems() ) {
-			FocusOnSelection adapter = new FocusOnSelection(item, displaySurface);
+			final FocusOnSelection adapter = new FocusOnSelection(item, displaySurface);
 			if ( item instanceof SpeciesLayer ) {
-				SpeciesLayer display = (SpeciesLayer) item;
-				MenuItem displayMenu = new MenuItem(menu, SWT.CASCADE);
+				final SpeciesLayer display = (SpeciesLayer) item;
+				final MenuItem displayMenu = new MenuItem(menu, SWT.CASCADE);
 				displayMenu.setText(display.getType() + ": " + display.getName());
 				displayMenu.setImage(images.get(display.getClass()));
 				AgentsMenu.createSpeciesSubMenu(displayMenu,
 					GAMA.getSimulation().getMicroPopulation(display.getName()), adapter);
 			} else if ( item instanceof AgentLayer ) {
-				AgentLayer display = (AgentLayer) item;
-				MenuItem displayMenu = new MenuItem(menu, SWT.CASCADE);
+				final AgentLayer display = (AgentLayer) item;
+				final MenuItem displayMenu = new MenuItem(menu, SWT.CASCADE);
 				displayMenu.setText(display.getType() + ": " + display.getName());
 				displayMenu.setImage(images.get(display.getClass()));
-				Menu agentsMenu = new Menu(displayMenu);
-				Set<IAgent> agents = display.getAgentsForMenu();
-				for ( IAgent agent : agents ) {
-					MenuItem agentItem = new MenuItem(agentsMenu, SWT.PUSH);
+				final Menu agentsMenu = new Menu(displayMenu);
+				for ( final IAgent agent : display.getAgentsForMenu() ) {
+					final MenuItem agentItem = new MenuItem(agentsMenu, SWT.PUSH);
 					agentItem.setData("agent", agent);
 					agentItem.setText(agent.getName());
 					agentItem.addSelectionListener(adapter);
 				}
 				displayMenu.setMenu(agentsMenu);
 			} else if ( item instanceof GridLayer ) {
-				GridLayer display = (GridLayer) item;
-				MenuItem displayMenu = new MenuItem(menu, SWT.CASCADE);
+				final GridLayer display = (GridLayer) item;
+				final MenuItem displayMenu = new MenuItem(menu, SWT.CASCADE);
 				displayMenu.setText("Grid layer: " + display.getName());
 				displayMenu.setImage(images.get(display.getClass()));
 				AgentsMenu.createSpeciesSubMenu(displayMenu,

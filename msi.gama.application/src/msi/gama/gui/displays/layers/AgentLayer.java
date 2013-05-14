@@ -66,20 +66,20 @@ public class AgentLayer extends AbstractLayer {
 	protected final Map<IAgent, Rectangle2D> shapes = new HashMap();
 
 	@Override
-	public void privateDrawDisplay(IScope scope, final IGraphics g) throws GamaRuntimeException {
+	public void privateDrawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {
 		shapes.clear();
 		// performance issue
 		String aspectName = IKeyword.DEFAULT;
 		if ( definition instanceof AgentLayerStatement ) {
 			aspectName = ((AgentLayerStatement) definition).getAspectName();
 		}
-		for ( IAgent a : getAgentsToDisplay() ) {
+		for ( final IAgent a : getAgentsToDisplay() ) {
 			if ( a != null && !a.dead() && !scope.interrupted() ) {
 				IAspect aspect = a.getSpecies().getAspect(aspectName);
 				if ( aspect == null ) {
 					aspect = AspectStatement.DEFAULT_ASPECT;
 				}
-				Rectangle2D r = aspect.draw(scope, a);
+				final Rectangle2D r = aspect.draw(scope, a);
 				if ( r != null ) {
 					shapes.put(a, r);
 				}
@@ -87,13 +87,13 @@ public class AgentLayer extends AbstractLayer {
 		}
 	}
 
-	public Set<IAgent> getAgentsForMenu() {
+	public Collection<IAgent> getAgentsForMenu() {
 		if ( shapes.isEmpty() ) { return getAgentsToDisplay(); }
 		// Avoid recalculating the agents
-		return new HashSet(shapes.values());
+		return shapes.keySet();
 	}
 
-	public Set<IAgent> getAgentsToDisplay() {
+	public Collection<IAgent> getAgentsToDisplay() {
 		// return agents;
 		if ( definition instanceof AgentLayerStatement ) { return ((AgentLayerStatement) definition)
 			.getAgentsToDisplay(); }
@@ -101,7 +101,7 @@ public class AgentLayer extends AbstractLayer {
 	}
 
 	@Override
-	public Set<IAgent> collectAgentsAt(final int x, final int y, IDisplaySurface g) {
+	public Set<IAgent> collectAgentsAt(final int x, final int y, final IDisplaySurface g) {
 		final Set<IAgent> selectedAgents = new HashSet();
 
 		// GamaGeometry selectionPoint = new GamaGeometry(getModelCoordinatesFrom(x, y));
@@ -113,13 +113,13 @@ public class AgentLayer extends AbstractLayer {
 		// GamaList<IAgent> agents =
 		// globalEnv.queryAllInEnvelope(selectionPoint, selectionEnvelope,
 		// In.list(this.getAgentsToDisplay()), false);
-		Rectangle2D selection = new Rectangle2D.Double();
+		final Rectangle2D selection = new Rectangle2D.Double();
 		selection.setFrameFromCenter(x, y, x + IDisplaySurface.SELECTION_SIZE / 2, y + IDisplaySurface.SELECTION_SIZE /
 			2);
 		// Point2D p = new Point2D.Double(x, y);
 
 		// Set<IAgent> closeAgents = new HashSet();
-		for ( Map.Entry<IAgent, Rectangle2D> entry : shapes.entrySet() ) {
+		for ( final Map.Entry<IAgent, Rectangle2D> entry : shapes.entrySet() ) {
 			if ( entry.getValue().intersects(selection) ) {
 				selectedAgents.add(entry.getKey());
 			}

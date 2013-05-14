@@ -24,8 +24,8 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.topology.grid.GamaSpatialMatrix;
+import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -64,16 +64,17 @@ public class GridLayer extends ImageLayer {
 
 	@Override
 	protected void buildImage() {
-		GridLayerStatement g = (GridLayerStatement) definition;
-		GamaSpatialMatrix m = g.getEnvironment();
+		final GridLayerStatement g = (GridLayerStatement) definition;
+		final IGrid m = g.getEnvironment();
+		final ILocation p = m.getDimensions();
 		if ( image == null ) {
-			image = ImageUtils.createCompatibleImage(m.numCols, m.numRows);
+			image = ImageUtils.createCompatibleImage(p.getX(), p.getY());
 		}
-		image.setRGB(0, 0, m.numCols, m.numRows, m.getDisplayData(), 0, m.numCols);
+		image.setRGB(0, 0, (int) p.getX(), (int) p.getY(), m.getDisplayData(), 0, (int) p.getX());
 	}
 
 	@Override
-	public void privateDrawDisplay(IScope scope, final IGraphics dg) {
+	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
 		buildImage();
 		if ( image == null ) { return; }
 		Color lineColor = null;
@@ -88,12 +89,12 @@ public class GridLayer extends ImageLayer {
 	}
 
 	private IAgent getPlaceAt(final GamaPoint loc) {
-		return ((GridLayerStatement) definition).getEnvironment().getPlaceAt(loc).getAgent();
+		return ((GridLayerStatement) definition).getEnvironment().getAgentAt(loc);
 	}
 
 	@Override
-	public Set<IAgent> collectAgentsAt(final int x, final int y, IDisplaySurface g) {
-		Set<IAgent> result = new HashSet();
+	public Set<IAgent> collectAgentsAt(final int x, final int y, final IDisplaySurface g) {
+		final Set<IAgent> result = new HashSet();
 		result.add(getPlaceAt(this.getModelCoordinatesFrom(x, y, g)));
 		return result;
 	}
