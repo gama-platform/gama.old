@@ -33,7 +33,7 @@ public class MDXApp {
 //			 olapConnection = wrapper.unwrap(OlapConnection.class);	
 			// OlapStatement statement =   olapConnection.createStatement();
 			 MdxConnection mdxConnection = MdxUtils.createConnectionObject("MSAS","localhost","80","olap","sa","tmt");
-			 conn = mdxConnection.connectMDB();
+			 olapConnection = mdxConnection.connectMDB();
 //			 OlapStatement statement = (OlapStatement) conn.createStatement();
 //			 System.out.println("OK");
 //			 System.out.println(olapConnection.getCatalog());
@@ -95,7 +95,7 @@ public class MDXApp {
 					 			+ "[Customer].[Company Name].&[Antonio Moreno Taquería] } } } ON ROWS " 
 					 +"FROM [Northwind Star] ";
 					 
-			 CellSet cellSet= mdxConnection.selectMDB(conn,selectStr);
+			 CellSet cellSet= mdxConnection.selectMDB(olapConnection,selectStr);
 			 System.out.println("MDX OK");
 			 
 			 List<CellSetAxis> cellSetAxes = cellSet.getAxes();
