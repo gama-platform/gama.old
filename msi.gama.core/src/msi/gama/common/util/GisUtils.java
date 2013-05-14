@@ -33,7 +33,8 @@ public class GisUtils {
 	static final boolean DEBUG = false; // Change DEBUG = false for release version
 
 	Envelope translationEnvelope;
-	private GeometryCoordinateSequenceTransformer transformer, inverseTransformer;
+	private  static GeometryCoordinateSequenceTransformer transformer;
+	private GeometryCoordinateSequenceTransformer inverseTransformer;
 	private CoordinateReferenceSystem crsInit;
 
 	public void init(Envelope bounds) {
@@ -125,7 +126,7 @@ public class GisUtils {
 				// ---------------------------------------------------------------------------------------------
 				// Thai.truongminh@gmail.com
 				// 18-sep-2012: for create agen from:list
-				// for tracing nly
+				// for tracing only
 
 				if ( DEBUG ) {
 					GuiUtils.informConsole("GisUtil.CRS=" + crsInit.toString());
