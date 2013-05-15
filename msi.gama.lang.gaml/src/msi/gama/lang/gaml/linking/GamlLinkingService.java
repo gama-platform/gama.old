@@ -4,17 +4,30 @@
  */
 package msi.gama.lang.gaml.linking;
 
-import java.util.*;
-import msi.gama.lang.gaml.gaml.*;
+import java.util.Collections;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import msi.gama.lang.gaml.gaml.GamlDefinition;
+import msi.gama.lang.gaml.gaml.GamlPackage;
 import msi.gama.lang.utils.EGaml;
+
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.*;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.xtext.linking.impl.*;
-import org.eclipse.xtext.naming.*;
+import org.eclipse.xtext.linking.impl.DefaultLinkingService;
+import org.eclipse.xtext.linking.impl.IllegalNodeException;
+import org.eclipse.xtext.naming.IQualifiedNameConverter;
+import org.eclipse.xtext.naming.QualifiedName;
 import org.eclipse.xtext.nodemodel.INode;
-import org.eclipse.xtext.resource.*;
+import org.eclipse.xtext.resource.IEObjectDescription;
+import org.eclipse.xtext.resource.XtextResourceSet;
 import org.eclipse.xtext.scoping.IScope;
+
 import com.google.inject.Inject;
 
 /**
@@ -48,8 +61,9 @@ public class GamlLinkingService extends DefaultLinkingService {
 
 	public List<EObject> addSymbol(final String name, EClass clazz) {
 		List<EObject> list = stubbedRefs.get(name);
-		if ( list == null ) {
-			GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(clazz);
+		if (list == null) {
+			GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(
+					clazz);
 			stub.setName(name);
 			getResource().getContents().add(stub);
 			list = Collections.singletonList((EObject) stub);
@@ -59,8 +73,9 @@ public class GamlLinkingService extends DefaultLinkingService {
 	}
 
 	private Resource getResource() {
-		if ( stubsResource == null ) {
-			stubsResource = resourceSet.createResource(URI.createURI("gaml:/newSymbols.xmi"));
+		if (stubsResource == null) {
+			stubsResource = resourceSet.createResource(URI
+					.createURI("gaml:/newSymbols.xmi"));
 		}
 		return stubsResource;
 	}
@@ -81,21 +96,34 @@ public class GamlLinkingService extends DefaultLinkingService {
 	 * resource.
 	 */
 	@Override
-	public List<EObject> getLinkedObjects(final EObject context, final EReference ref, final INode node)
-		throws IllegalNodeException {
+	public List<EObject> getLinkedObjects(final EObject context,
+			final EReference ref, final INode node) throws IllegalNodeException {
 		List<EObject> result = super.getLinkedObjects(context, ref, node);
 		// If the default implementation resolved the link, return it
-		if ( null != result && !result.isEmpty() ) { return result; }
+		if (null != result && !result.isEmpty()) {
+			return result;
+		}
 		String name = getCrossRefNodeAsString(node);
-		if ( GamlPackage.eINSTANCE.getTypeDefinition().isSuperTypeOf(ref.getEReferenceType()) ) {
+		if (GamlPackage.eINSTANCE.getTypeDefinition().isSuperTypeOf(
+				ref.getEReferenceType())) {
 			return addSymbol(name, ref.getEReferenceType());
-		} else if ( GamlPackage.eINSTANCE.getVarDefinition().isSuperTypeOf(ref.getEReferenceType()) &&
-			name.contains("_model") ) {
+		} else if (GamlPackage.eINSTANCE.getVarDefinition().isSuperTypeOf(
+				ref.getEReferenceType())
+				&& name.contains("_model")) {
 			String newVar = name.replace("_model", "");
-			final IScope scope = getScope(context, ref);
-			QualifiedName qualifiedLinkName = qualifiedNameConverter.toQualifiedName(newVar);
-			IEObjectDescription eObjectDescription = scope.getSingleElement(qualifiedLinkName);
-			if ( eObjectDescription != null ) { return addSymbol(name, ref.getEReferenceType()); }
+			QualifiedName qualifiedLinkName = qualifiedNameConverter
+					.toQualifiedName(newVar);
+			Iterator<Resource> r = context.eResource().getResourceSet()
+					.getResources().iterator();
+			while (r.hasNext()) {
+				EObject context1 = r.next().getContents().get(0);
+				final IScope scope = getScope(context1, ref);
+				IEObjectDescription eObjectDescription = scope
+						.getSingleElement(qualifiedLinkName);
+				if (eObjectDescription != null) {
+					return addSymbol(name, ref.getEReferenceType());
+				}
+			}
 		}
 		return Collections.EMPTY_LIST;
 	}
