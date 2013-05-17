@@ -6,7 +6,7 @@
 model Graphic_primitive
 
 global{
-	file dem parameter: 'DEM' <- file('includes/DEM/MNT.png');
+	file dem parameter: 'DEM' <- file('includes/DEM/MNT-scaled.png');
     file texture parameter: 'DEM' <- file('includes/DEM/Texture.png');
 }
 
