@@ -6,6 +6,8 @@ import java.awt.image.BufferedImage;
 import java.nio.FloatBuffer;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
+
+import msi.gama.common.util.GuiUtils;
 import msi.gama.jogl.JOGLAWTDisplaySurface;
 import msi.gama.jogl.scene.*;
 import msi.gama.jogl.utils.Camera.Camera;
@@ -158,11 +160,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		ThisRot.get(matrix);
 
 		// FIXME: Need to be place somewhere (triggered by a button in Gama)
-		/*
-		 * if(dem !=null){
-		 * dem.InitDEM(gl);
-		 * }
-		 */
+		
+		 /*if(dem !=null){
+			 GuiUtils.debug("init in joglrender");
+		     dem.init(gl);
+		  }*/
+		
 		OutputSynchronizer.decInitializingViews(this.displaySurface.getOutputName());
 	}
 
@@ -231,6 +234,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
 			gl.glPolygonOffset(1, 1);
 
+			//gl.glDisable(GL_DEPTH_TEST);
+			//dem.DisplayDEM(gl);
 			if ( dem.isInitialized() == true ) {
 				dem.DisplayDEM(gl);
 			} else {
@@ -254,6 +259,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			}
 
 		}
+		
+		//this.displaySurface.snapshot();
 	}
 
 	public Point GetRealWorldPointFromWindowPoint(Point windowPoint) {
@@ -622,5 +629,10 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public void dispose() {
 		scene.dispose();
 	}
+	
+	public void CalculateFrameRate()
+    {
+
+    }
 
 }

@@ -8,12 +8,15 @@ import javax.media.opengl.GL;
 import msi.gama.jogl.scene.ObjectDrawer.CollectionDrawer;
 import msi.gama.jogl.scene.ObjectDrawer.GeometryDrawer;
 import msi.gama.jogl.scene.ObjectDrawer.ImageDrawer;
+import msi.gama.jogl.scene.ObjectDrawer.DEMDrawer;
 import msi.gama.jogl.scene.ObjectDrawer.StringDrawer;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gaml.types.GamaGeometryType;
 import org.geotools.data.simple.SimpleFeatureCollection;
+
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -30,6 +33,7 @@ public class ModelScene {
 	private final SceneObjects<GeometryObject> geometries;
 	private final SceneObjects<GeometryObject> staticObjects;
 	private final SceneObjects<ImageObject> images;
+	private final SceneObjects<DEMObject> dems;
 	private final SceneObjects<CollectionObject> collections;
 	private final SceneObjects<StringObject> strings;
 	private final Map<BufferedImage, MyTexture> textures = new LinkedHashMap();
@@ -42,6 +46,7 @@ public class ModelScene {
 		collections = new SceneObjects(new CollectionDrawer(renderer), true);
 		strings = new SceneObjects(new StringDrawer(renderer), !StringDrawer.USE_VERTEX_ARRAYS);
 		images = new SceneObjects(new ImageDrawer(renderer), true);
+		dems = new SceneObjects(new DEMDrawer(renderer), true);
 		staticObjects = new SceneObjects.Static(new GeometryDrawer(renderer), true);
 		envWidth = renderer.env_width;
 		envHeight = renderer.env_height;
@@ -54,6 +59,7 @@ public class ModelScene {
 		geometries.clear(renderer);
 		collections.clear(renderer);
 		images.clear(renderer);
+		dems.clear(renderer);
 		strings.clear(renderer);
 		for ( Iterator<BufferedImage> it = textures.keySet().iterator(); it.hasNext(); ) {
 			BufferedImage im = it.next();
@@ -79,6 +85,7 @@ public class ModelScene {
 		geometries.draw(picking);
 		staticObjects.draw(picking);
 		images.draw(picking);
+		dems.draw(picking);
 		strings.draw(picking);
 	}
 
@@ -101,6 +108,10 @@ public class ModelScene {
 		if ( texture != null ) {
 			textures.put(img, texture);
 		}
+	}
+	
+	public void addDEM(final BufferedImage dem, final BufferedImage texture, final Envelope env){
+		dems.add(new DEMObject(dem,texture,env,null,null,null,null));
 	}
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final double z_layer,
@@ -196,6 +207,7 @@ public class ModelScene {
 		geometries.dispose();
 		strings.dispose();
 		images.dispose();
+		dems.dispose();
 		staticObjects.dispose();
 	}
 

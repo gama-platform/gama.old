@@ -22,7 +22,13 @@ package msi.gama.jogl;
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.IOException;
+
+import javax.media.opengl.GL;
+
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.awt.AbstractDisplayGraphics;
 import msi.gama.jogl.scene.MyTexture;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
@@ -32,6 +38,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaFile;
 import msi.gaml.types.GamaGeometryType;
 import org.jfree.chart.JFreeChart;
+
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
 /**
@@ -136,6 +144,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	public void drawGrid(final BufferedImage image, final Color lineColor) {
 		// TODO AD Pas du tout testée
 		double stepX, stepY;
+		
 		for ( int i = 0; i <= image.getWidth(); i++ ) {
 			stepX = i / (double) image.getWidth() * image.getWidth();
 			Geometry g =
@@ -199,6 +208,30 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		}
 
 		return rect;
+	}
+	
+	@Override
+	public void drawDEM(GamaFile demFileName, GamaFile textureFileName, Envelope env) {
+		BufferedImage dem = null;
+		BufferedImage texture = null;
+		try {
+			dem = ImageUtils.getInstance().getImageFromFile(demFileName.getPath());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		try {
+			texture = ImageUtils.getInstance().getImageFromFile(textureFileName.getPath());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		MyTexture _texture = null;
+		if ( !renderer.getScene().getTextures().containsKey(texture) ) {
+			_texture = renderer.createTexture(texture, false);
+		}
+		renderer.getScene().addDEM(dem,texture,env);
 	}
 
 	/**
@@ -298,11 +331,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		// GuiUtils.debug("JOGLAWTDisplayGraphics.beginDrawingLayer currentOffset: " + currentOffset);
 	}
 
-	@Override
-	public void drawDEM(GamaFile demFileName, GamaFile textureFileName) {
-		System.out.println("drawDEM in JOGLGraphics " + demFileName.getPath() + "with " + textureFileName.getPath());
-		renderer.dem.init(this.renderer.gl);// , demFileName.getPath(), textureFileName.getPath());
-	}
+	
 
 	private double getMaxEnvDim() {
 		return widthOfEnvironmentInModelUnits > heightOfEnvironmentInModelUnits ? widthOfEnvironmentInModelUnits

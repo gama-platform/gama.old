@@ -39,8 +39,10 @@ public class DigitalElevationModelDrawer {
 	}
 
 	public void DisplayDEM(GL gl) {
-		System.out.println("DisplayDEM");
-		gl.glCallList(terrain);
+		//System.out.println("DisplayDEM");
+		if(isInitialized()){
+		  gl.glCallList(terrain);
+		}
 	}
 
 	private void CreateDEM(GL gl, String demFileName, float w, float h) {

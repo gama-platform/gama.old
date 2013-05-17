@@ -2,10 +2,19 @@ package msi.gama.jogl.scene;
 
 import static javax.media.opengl.GL.*;
 import java.awt.Font;
+import java.awt.image.AffineTransformOp;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.*;
+
+import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.JTSDrawer;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
+
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
 import com.sun.opengl.util.GLUT;
@@ -111,6 +120,148 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 				renderer.gl.glEnd();
 			}
 			renderer.gl.glDisable(GL_TEXTURE_2D);
+		}
+	}
+	
+	/**
+	 * 
+	 * The class DEMDrawer.
+	 * 
+	 * @author grignard
+	 * @since 15 mai 2013
+	 * 
+	 */
+	public static class DEMDrawer extends ObjectDrawer<DEMObject> {
+
+		private boolean initialized;
+
+		public DEMDrawer(JOGLAWTGLRenderer r) {
+			super(r);
+		}
+		
+		public Texture loadTexture(String fileName) {
+			Texture text = null;
+			try {
+				if ( renderer.getContext() != null ) {
+					renderer.getContext().makeCurrent();
+					text = TextureIO.newTexture(new File(fileName), false);
+					text.setTexParameteri(GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+					text.setTexParameteri(GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+				} else {
+					throw GamaRuntimeException.error("(DEM) JOGLRenderer context is null");
+				}
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+				System.out.println("Error loading texture " + fileName);
+			}
+			return text;
+		}
+		
+		
+		private BufferedImage FlipUpSideDownImage(BufferedImage img){
+				java.awt.geom.AffineTransform tx = java.awt.geom.AffineTransform.getScaleInstance(1, -1);
+				tx.translate(0, -img.getHeight(null));
+				AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+				img = op.filter(img, null);
+				return img;
+			
+		}
+		
+		private BufferedImage FlipRightSideLeftImage(BufferedImage img){
+			java.awt.geom.AffineTransform tx = java.awt.geom.AffineTransform.getScaleInstance(-1, 1);
+			tx.translate(-img.getWidth(null), 0);
+			AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+			img = op.filter(img, null);
+			return img;
+		
+	}
+
+		@Override
+		protected void _draw(DEMObject demObj) {
+			
+			if ( !isInitialized() ) {
+				renderer.gl.glEnable(GL.GL_TEXTURE_2D);
+				
+			    loadTexture(demObj.texture.toString());
+				setInitialized(true);
+			}
+
+			
+			int rows, cols;
+			int x, y;
+			float vx, vy, s, t;
+			float ts, tt, tw, th;
+
+			//BufferedImage dem = readPNGImage(demFileName);
+			BufferedImage dem = demObj.dem;
+			dem = FlipUpSideDownImage(dem);
+			dem = FlipRightSideLeftImage(dem);
+			
+			rows = dem.getHeight() - 1;
+			cols = dem.getWidth() - 1;
+			ts = 1.0f / cols;
+			tt = 1.0f / rows;
+
+			//FIXME/ need to set w and h dynamicly
+			float w = (float) demObj.envelope.getWidth();
+			float h = (float) demObj.envelope.getHeight();
+			
+			float altFactor = (float)demObj.envelope.getWidth()/(20*255);//0.025f;//dem.getWidth();
+			
+			tw = w / cols;
+			th = h / rows;
+
+			renderer.gl.glTranslated(w/2, -h/2, 0);
+			
+			renderer.gl.glNormal3f(0.0f, 1.0f, 0.0f);
+
+			for ( y = 0; y < rows; y++ ) {
+				renderer.gl.glBegin(GL.GL_QUAD_STRIP);
+				for ( x = 0; x <= cols; x++ ) {
+					vx = tw * x - w / 2.0f;
+					vy = th * y - h / 2.0f;
+					s = 1.0f - ts * x;
+					t = 1.0f - tt * y;
+
+					float alt1 = (dem.getRGB(cols - x, y) & 255) * altFactor;
+					float alt2 = (dem.getRGB(cols - x, y + 1) & 255) * altFactor;
+					
+					boolean isTextured = false;
+					if(isTextured){
+						renderer.gl.glTexCoord2f(s, t);
+						renderer.gl.glVertex3f(vx, vy, alt1);
+						renderer.gl.glTexCoord2f(s, t - tt);
+						renderer.gl.glVertex3f(vx, vy + th, alt2);	
+					}
+					else{
+						float color = ((dem.getRGB(cols - x, y) & 255));
+						color = (color)/255.0f;
+						/*System.out.println("dem:" + dem.getRGB(cols - x, y));
+						System.out.println("dem&:" + (dem.getRGB(cols - x, y) & 255));
+						System.out.println("color" + color);*/
+
+						renderer.gl.glColor3f(color, color, color);
+						renderer.gl.glVertex3f(vx, vy, alt1);
+						renderer.gl.glVertex3f(vx, vy + th, alt2);	
+					}
+					
+				}
+				renderer.gl.glEnd();
+			}
+			renderer.gl.glTranslated(-w/2, h/2, 0);
+			
+			//FIXME: Add disable texture?
+
+		}
+
+		public boolean isInitialized() {
+			return initialized;
+		}
+
+
+
+		public void setInitialized(boolean initialized) {
+			this.initialized = initialized;
 		}
 	}
 
