@@ -31,7 +31,7 @@ public class ZoomIndicatorItem extends GamaViewItem {
 	}
 
 	public void setText(String s) {
-		GuiUtils.debug("ZoomIndicatorItem.setText " + s);
+		//GuiUtils.debug("ZoomIndicatorItem.setText " + s);
 		if ( text != null && !text.isDisposed() ) {
 			text.setText(s);
 			text.redraw();
