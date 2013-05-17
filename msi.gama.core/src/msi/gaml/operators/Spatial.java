@@ -1609,7 +1609,7 @@ public abstract class Spatial {
 		public static IShape dem(final IScope scope, final GamaFile demFileName, final GamaFile textureFileName) {
 			IGraphics graphics = scope.getGraphics();
 			if ( graphics instanceof IGraphics.OpenGL ) {
-				((IGraphics.OpenGL) graphics).drawDEM(demFileName, textureFileName);
+				((IGraphics.OpenGL) graphics).drawDEM(demFileName, textureFileName, scope.getSimulationScope().getEnvelope());
 			}
 			ILocation location;
 			IAgent a = scope.getAgentScope();

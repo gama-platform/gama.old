@@ -26,6 +26,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaFile;
 import org.jfree.chart.JFreeChart;
 
+import com.vividsolutions.jts.geom.Envelope;
+
 /**
  * Written by drogoul Modified on 22 janv. 2011
  * 
@@ -85,7 +87,7 @@ public interface IGraphics {
 
 	public interface OpenGL extends IGraphics {
 
-		public abstract void drawDEM(final GamaFile demFileName, final GamaFile textureFileName);
+		public abstract void drawDEM(final GamaFile demFileName, final GamaFile textureFileName, Envelope env);
 
 	}
 
