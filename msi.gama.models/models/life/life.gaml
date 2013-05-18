@@ -16,7 +16,7 @@ global {
 		do description ;     
 	}
 	
-	action _step_ {
+	reflex generation {
 		ask life_cell {
 			do evolve ;
 		}
@@ -75,7 +75,7 @@ experiment life type: gui{
 	parameter 'Color of dead cells:' var: deadcolor category: 'Colors' ;
 	
 	output {
-		display Life {
+		display Life type: opengl{
 			grid life_cell ;
 		}
 		inspect name: 'Agents' type: agent ;
