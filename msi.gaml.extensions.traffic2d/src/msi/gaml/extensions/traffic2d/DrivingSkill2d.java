@@ -1,6 +1,7 @@
 package msi.gaml.extensions.traffic2d;
 
 import java.io.*;
+import java.util.Iterator;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -19,8 +20,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gama.util.path.IPath;
-import msi.gama.util.path.GamaPath;
+import msi.gama.util.path.*;
 import msi.gaml.operators.*;
 import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.skills.MovingSkill;
@@ -119,24 +119,21 @@ public class DrivingSkill2d extends MovingSkill {
 
 	protected GamaList<ISpecies> computeObstacleSpecies(final IScope scope, final IAgent agent)
 		throws GamaRuntimeException {
-		return (GamaList<ISpecies>) (scope.hasArg(OBSTACLE_SPECIES) ? scope
-			.getListArg(OBSTACLE_SPECIES) : getObstacleSpecies(agent));
+		return (GamaList<ISpecies>) (scope.hasArg(OBSTACLE_SPECIES) ? scope.getListArg(OBSTACLE_SPECIES)
+			: getObstacleSpecies(agent));
 	}
 
 	protected GamaList<ISpecies> computeBackgroundSpecies(final IScope scope, final IAgent agent)
 		throws GamaRuntimeException {
-		return (GamaList<ISpecies>) (scope.hasArg(BACKGROUND_SPECIES) ? scope
-			.getListArg(BACKGROUND_SPECIES) : getBackgroundSpecies(agent));
+		return (GamaList<ISpecies>) (scope.hasArg(BACKGROUND_SPECIES) ? scope.getListArg(BACKGROUND_SPECIES)
+			: getBackgroundSpecies(agent));
 	}
 
-	protected int computeConsideringRange(final IScope scope, final IAgent agent)
-		throws GamaRuntimeException {
-		return scope.hasArg(CONSIDERING_RANGE) ? scope.getIntArg(CONSIDERING_RANGE)
-			: getConsideringRange(agent);
+	protected int computeConsideringRange(final IScope scope, final IAgent agent) throws GamaRuntimeException {
+		return scope.hasArg(CONSIDERING_RANGE) ? scope.getIntArg(CONSIDERING_RANGE) : getConsideringRange(agent);
 	}
 
-	protected boolean computeIsCalculatedPerimeter(final IScope scope, final IAgent agent)
-		throws GamaRuntimeException {
+	protected boolean computeIsCalculatedPerimeter(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		return scope.hasArg("isCalculatedPerimeter") ? scope.getBoolArg("isCalculatedPerimeter")
 			: getIsCalculatedPerimeter(agent);
 	}
@@ -147,22 +144,20 @@ public class DrivingSkill2d extends MovingSkill {
 	@action(name = "vehicle_goto", args = {
 		@arg(name = "target", type = { IType.POINT, IType.GEOMETRY, IType.AGENT }, optional = false, doc = @doc("the location or entity towards which to move.")),
 		@arg(name = IKeyword.SPEED, type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "background", type = { IType.LIST, IType.AGENT, IType.GRAPH,
-			IType.GEOMETRY }, optional = false, doc = @doc("list, agent, graph, geometry on which the agent moves (the agent moves inside this geometry)")),
+		@arg(name = "background", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = false, doc = @doc("list, agent, graph, geometry on which the agent moves (the agent moves inside this geometry)")),
 		@arg(name = "on", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = true, doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "the path followed by the agent.", examples = { "do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}" }))
 	@args(names = { "target", IKeyword.SPEED, "on", "target_type" })
 	public Integer primVehicleGoto(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
-		ILocation source = agent.getLocation().copy(scope);
+		final ILocation source = agent.getLocation().copy(scope);
 		double maxDist = computeDistance(scope, agent);
 		ILocation goal = computeTarget(scope, agent);
 		final GamaList<ISpecies> obsSpecies = computeObstacleSpecies(scope, agent);
 		// System.out.println("obstacle species: " + obsSpecies.toString());
 		final GamaList<ISpecies> backgroundSpecies = computeBackgroundSpecies(scope, agent);
 		// System.out.println("background species: " + backgroundSpecies.toString());
-		final boolean hasBackground =
-			backgroundSpecies != null && backgroundSpecies.length(scope) > 0;
-		int consideringRange = computeConsideringRange(scope, agent);
+		final boolean hasBackground = backgroundSpecies != null && backgroundSpecies.length(scope) > 0;
+		final int consideringRange = computeConsideringRange(scope, agent);
 		// System.out.println("considering range : " + consideringRange);
 		if ( goal == null ) {
 			scope.setStatus(ExecutionStatus.failure);
@@ -175,8 +170,8 @@ public class DrivingSkill2d extends MovingSkill {
 			return -1;
 		}
 		IPath path = (GamaPath) agent.getAttribute("current_path");
-		if ( path == null || !path.getTopology().equals(topo) ||
-			!path.getEndVertex().equals(goal) || !path.getStartVertex().equals(source) ) {
+		if ( path == null || !path.getTopology().equals(topo) || !path.getEndVertex().equals(goal) ||
+			!path.getStartVertex().equals(source) ) {
 			path = topo.pathBetween(scope, source, goal);
 		}
 		if ( path == null ) {
@@ -185,32 +180,32 @@ public class DrivingSkill2d extends MovingSkill {
 			return -1;
 		}
 
-		IList<IShape> edges = path.getEdgeGeometry();
-		IShape lineEnd = edges.last(scope);
-		GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to((IShape)path.getEndVertex(), lineEnd);
+		final IList<IShape> edges = path.getEdgeGeometry();
+		final IShape lineEnd = edges.last(scope);
+		final GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to((IShape) path.getEndVertex(), lineEnd);
 
-		Boolean targetType = (Boolean) scope.getArg("target_type", IType.NONE);
+		final Boolean targetType = (Boolean) scope.getArg("target_type", IType.NONE);
 		if ( targetType != null && !targetType ) {
 			goal = falseTarget;
 		}
 
-		boolean isReachedTargetCheck = isReachedTarget(scope, agent, goal);
+		final boolean isReachedTargetCheck = isReachedTarget(scope, agent, goal);
 		if ( isReachedTargetCheck ) { return 2; }
-		boolean isReachedFalseTarget = isReachedTarget(scope, agent, falseTarget);
+		final boolean isReachedFalseTarget = isReachedTarget(scope, agent, falseTarget);
 		/**
 		 * if (isReachedFalseTarget){
 		 * System.out.println("M: DrivingSKill - Reached the false target");
 		 * }
 		 * /
 		 **/
-		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
+		final GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		// System.out.println("Max distance: " + maxDist);
 		/* obstacle agents */
-		IList<IAgent> neighbours =
-			agent.getTopology().getNeighboursOf(currentLocation, maxDist + consideringRange,
-				Different.with());
-		GamaList<IAgent> obstacleAgents = new GamaList<IAgent>();
-		for ( IAgent ia : neighbours ) {
+		final Iterator<IAgent> neighbours =
+			agent.getTopology().getNeighboursOf(currentLocation, maxDist + consideringRange, Different.with());
+		final GamaList<IAgent> obstacleAgents = new GamaList<IAgent>();
+		while (neighbours.hasNext()) {
+			final IAgent ia = neighbours.next();
 			if ( obsSpecies.contains(ia.getSpecies()) ) {
 				obstacleAgents.add(ia);
 			}
@@ -221,24 +216,24 @@ public class DrivingSkill2d extends MovingSkill {
 
 		/* creating candidate points */
 
-		GamaList<CandidateEntry> candidateEntries = new GamaList<CandidateEntry>();
+		final GamaList<CandidateEntry> candidateEntries = new GamaList<CandidateEntry>();
 		GamaPoint pointToAdd = null;
-		int currentHeadingAngle = agent.getHeading();
+		final int currentHeadingAngle = agent.getHeading();
 		int candidateHeading, dAngle;
 		// System.out.println("M: maxDist before: " + maxDist);
-		GamaShape agentShape = (GamaShape) agent.getGeometry();
+		final GamaShape agentShape = (GamaShape) agent.getGeometry();
 		IShape consideringBackgroundAgentForCurrentPosition = null;
 		if ( hasBackground ) {
-			for ( ISpecies currentSpecy : backgroundSpecies ) {
-				IList<IAgent> overlappingBackgroundWithCurrentPosition =
+			for ( final ISpecies currentSpecy : backgroundSpecies ) {
+				final IList<IAgent> overlappingBackgroundWithCurrentPosition =
 					msi.gaml.operators.Spatial.Queries.overlapping(scope, currentSpecy, agentShape);
-				for ( IAgent ia : overlappingBackgroundWithCurrentPosition ) {
+				for ( final IAgent ia : overlappingBackgroundWithCurrentPosition ) {
 					if ( consideringBackgroundAgentForCurrentPosition == null ) {
 						consideringBackgroundAgentForCurrentPosition = ia.getGeometry();
 					} else {
 						consideringBackgroundAgentForCurrentPosition =
-							msi.gaml.operators.Spatial.Operators.union(
-								consideringBackgroundAgentForCurrentPosition, ia.getGeometry());
+							msi.gaml.operators.Spatial.Operators.union(consideringBackgroundAgentForCurrentPosition,
+								ia.getGeometry());
 					}
 				}
 			}
@@ -246,9 +241,7 @@ public class DrivingSkill2d extends MovingSkill {
 				distanceToNearestInFront(scope, agent, obstacleAgents, 45,
 					consideringBackgroundAgentForCurrentPosition, consideringRange, maxDist);
 		} else {
-			maxDist =
-				distanceToNearestInFront(scope, agent, obstacleAgents, 45, null, consideringRange,
-					maxDist);
+			maxDist = distanceToNearestInFront(scope, agent, obstacleAgents, 45, null, consideringRange, maxDist);
 		}
 		// System.out.println(agent.getName() + " M: maxDist after: " + maxDist);
 		for ( int i = -4; i <= 4; i++ ) {
@@ -256,33 +249,30 @@ public class DrivingSkill2d extends MovingSkill {
 			candidateHeading = currentHeadingAngle + dAngle;
 			candidateHeading = Maths.checkHeading(candidateHeading);
 			pointToAdd =
-				new GamaPoint(currentLocation.x + maxDist * Maths.cos(candidateHeading),
-					currentLocation.y + maxDist * Maths.sin(candidateHeading));
+				new GamaPoint(currentLocation.x + maxDist * Maths.cos(candidateHeading), currentLocation.y + maxDist *
+					Maths.sin(candidateHeading));
 			// System.out.println("heading: " + currentHeadingAngle + " | " + " candidate angle: " +
 			// candidateAngle);
 			// System.out.println("current location: " + currentLocation.toString() + " | " +
 			// " candidate location: " + pointToAdd.toString());
-			GamaShape candidateShape =
-				(GamaShape) msi.gaml.operators.Spatial.Transformations.rotated_by(scope,
-					agentShape, dAngle);
+			final GamaShape candidateShape =
+				(GamaShape) msi.gaml.operators.Spatial.Transformations.rotated_by(scope, agentShape, dAngle);
 			candidateShape.setLocation(pointToAdd);
 			// check for non-overlapping
 			if ( isNonOverlapping(scope, candidateShape, obstacleAgents) ) {
 				if ( hasBackground ) {
 					// get background agents
-					IShape consideringBackgroundAgent =
-						consideringBackgroundAgentForCurrentPosition;
-					for ( ISpecies currentSpecy : backgroundSpecies ) {
-						IList<IAgent> overlappingBackgroundWithCandidatePosition =
-							msi.gaml.operators.Spatial.Queries.overlapping(scope, currentSpecy,
-								candidateShape);
-						for ( IAgent ia : overlappingBackgroundWithCandidatePosition ) {
+					IShape consideringBackgroundAgent = consideringBackgroundAgentForCurrentPosition;
+					for ( final ISpecies currentSpecy : backgroundSpecies ) {
+						final IList<IAgent> overlappingBackgroundWithCandidatePosition =
+							msi.gaml.operators.Spatial.Queries.overlapping(scope, currentSpecy, candidateShape);
+						for ( final IAgent ia : overlappingBackgroundWithCandidatePosition ) {
 							if ( consideringBackgroundAgent == null ) {
 								consideringBackgroundAgent = ia.getGeometry();
 							} else {
 								consideringBackgroundAgent =
-									msi.gaml.operators.Spatial.Operators.union(
-										consideringBackgroundAgent, ia.getGeometry());
+									msi.gaml.operators.Spatial.Operators.union(consideringBackgroundAgent,
+										ia.getGeometry());
 							}
 						}
 					}
@@ -290,14 +280,13 @@ public class DrivingSkill2d extends MovingSkill {
 						// System.out.println(((GamaShape)consideringBackgroundAgent).getPoints().toString());
 						if ( msi.gaml.operators.Spatial.Properties.covered_by(candidateShape,
 							consideringBackgroundAgent) ) {
-							CandidateEntry candidateEntry =
+							final CandidateEntry candidateEntry =
 								new CandidateEntry(pointToAdd, candidateHeading, dAngle);
 							candidateEntries.add(candidateEntry);
 						}
 					}
 				} else {
-					CandidateEntry candidateEntry =
-						new CandidateEntry(pointToAdd, candidateHeading, dAngle);
+					final CandidateEntry candidateEntry = new CandidateEntry(pointToAdd, candidateHeading, dAngle);
 					candidateEntries.add(candidateEntry);
 				}
 			}
@@ -308,11 +297,10 @@ public class DrivingSkill2d extends MovingSkill {
 		if ( candidateEntries.size() > 0 ) {
 			CandidateEntry chosenCandidate = null;
 			double minDistance = Double.MAX_VALUE;
-			double currentDistance = getCurrentDistance(agent);
-			for ( CandidateEntry currenEntry : candidateEntries ) {
-				GamaPoint currentPoint = currenEntry.candidatePoint;
-				double candidateDistance =
-					topo.distanceBetween(scope, currentPoint.getLocation(), falseTarget);
+			final double currentDistance = getCurrentDistance(agent);
+			for ( final CandidateEntry currenEntry : candidateEntries ) {
+				final GamaPoint currentPoint = currenEntry.candidatePoint;
+				final double candidateDistance = topo.distanceBetween(scope, currentPoint.getLocation(), falseTarget);
 				if ( candidateDistance < minDistance && candidateDistance != currentDistance ) {
 					chosenCandidate = currenEntry;
 					minDistance = candidateDistance;
@@ -325,22 +313,20 @@ public class DrivingSkill2d extends MovingSkill {
 			// System.out.println("distance: "+ minDistance + ", location: " +
 			// chosenCandidate.toString());
 			setCurrentDistance(agent, minDistance);
-			int newHeading = chosenCandidate.candidateHeading;
-			int newRotateAngle = chosenCandidate.dAngle;
-			agent.setGeometry(msi.gaml.operators.Spatial.Transformations.rotated_by(scope, agent,
-				newRotateAngle));
+			final int newHeading = chosenCandidate.candidateHeading;
+			final int newRotateAngle = chosenCandidate.dAngle;
+			agent.setGeometry(msi.gaml.operators.Spatial.Transformations.rotated_by(scope, agent, newRotateAngle));
 			agent.setLocation(chosenCandidate.candidatePoint);
 			agent.setHeading(newHeading);
 		} else {
 			/* move back */
 			candidateHeading = currentHeadingAngle + 180;
 			candidateHeading = Maths.checkHeading(candidateHeading);
-			GamaPoint chosenCandidate =
-				new GamaPoint(currentLocation.x + maxDist * Maths.cos(candidateHeading),
-					currentLocation.y + maxDist * Maths.sin(candidateHeading));
-			GamaShape candidateShape =
-				(GamaShape) msi.gaml.operators.Spatial.Transformations.at_location(scope,
-					agentShape, chosenCandidate);
+			final GamaPoint chosenCandidate =
+				new GamaPoint(currentLocation.x + maxDist * Maths.cos(candidateHeading), currentLocation.y + maxDist *
+					Maths.sin(candidateHeading));
+			final GamaShape candidateShape =
+				(GamaShape) msi.gaml.operators.Spatial.Transformations.at_location(scope, agentShape, chosenCandidate);
 			if ( isNonOverlapping(scope, candidateShape, obstacleAgents) ) {
 				agent.setLocation(chosenCandidate);
 			}
@@ -351,11 +337,10 @@ public class DrivingSkill2d extends MovingSkill {
 		return 0;
 	}
 
-	private boolean isNonOverlapping(final IScope scope, GamaShape candidateShape,
-		GamaList<IAgent> obstacleAgents) {
-		for ( IAgent ia : obstacleAgents ) {
-			if ( msi.gaml.operators.Spatial.Properties.overlaps(scope, candidateShape,
-				ia.getGeometry()) ) { return false; }
+	private boolean isNonOverlapping(final IScope scope, final GamaShape candidateShape,
+		final GamaList<IAgent> obstacleAgents) {
+		for ( final IAgent ia : obstacleAgents ) {
+			if ( msi.gaml.operators.Spatial.Properties.overlaps(scope, candidateShape, ia.getGeometry()) ) { return false; }
 		}
 		return true;
 	}
@@ -366,22 +351,20 @@ public class DrivingSkill2d extends MovingSkill {
 	@action(name = "pedestrian_goto", args = {
 		@arg(name = "target", type = { IType.POINT, IType.GEOMETRY, IType.AGENT }, optional = false, doc = @doc("the location or entity towards which to move.")),
 		@arg(name = IKeyword.SPEED, type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "background", type = { IType.LIST, IType.AGENT, IType.GRAPH,
-			IType.GEOMETRY }, optional = false, doc = @doc("list, agent, graph, geometry on which the agent moves (the agent moves inside this geometry)")),
+		@arg(name = "background", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = false, doc = @doc("list, agent, graph, geometry on which the agent moves (the agent moves inside this geometry)")),
 		@arg(name = "on", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = true, doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")) }, doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "the path followed by the agent.", examples = { "do action: goto{\n arg target value: one_of (list (species (self))); \n arg speed value: speed * 2; \n arg on value: road_network;}" }))
 	@args(names = { "target", IKeyword.SPEED, "on", "target_type" })
 	public Integer primPedestrianGoto(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
-		ILocation source = agent.getLocation().copy(scope);
+		final ILocation source = agent.getLocation().copy(scope);
 		double maxDist = computeDistance(scope, agent);
 		ILocation goal = computeTarget(scope, agent);
 		final GamaList<ISpecies> obsSpecies = computeObstacleSpecies(scope, agent);
 		// System.out.println("obstacle species: " + obsSpecies.toString());
 		final GamaList<ISpecies> backgroundSpecies = computeBackgroundSpecies(scope, agent);
 		// System.out.println("background species: " + backgroundSpecies.toString());
-		final boolean hasBackground =
-			backgroundSpecies != null && backgroundSpecies.length(scope) > 0;
-		int consideringRange = computeConsideringRange(scope, agent);
+		final boolean hasBackground = backgroundSpecies != null && backgroundSpecies.length(scope) > 0;
+		final int consideringRange = computeConsideringRange(scope, agent);
 		// System.out.println("considering range : " + consideringRange);
 		if ( goal == null ) {
 			scope.setStatus(ExecutionStatus.failure);
@@ -394,8 +377,8 @@ public class DrivingSkill2d extends MovingSkill {
 			return -1;
 		}
 		IPath path = (GamaPath) agent.getAttribute("current_path");
-		if ( path == null || !path.getTopology().equals(topo) ||
-			!path.getEndVertex().equals(goal) || !path.getStartVertex().equals(source) ) {
+		if ( path == null || !path.getTopology().equals(topo) || !path.getEndVertex().equals(goal) ||
+			!path.getStartVertex().equals(source) ) {
 			path = topo.pathBetween(scope, source, goal);
 		}
 		if ( path == null ) {
@@ -404,32 +387,32 @@ public class DrivingSkill2d extends MovingSkill {
 			return -1;
 		}
 
-		IList<IShape> edges = path.getEdgeGeometry();
-		IShape lineEnd = edges.last(scope);
-		GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to((IShape)path.getEndVertex(), lineEnd);
+		final IList<IShape> edges = path.getEdgeGeometry();
+		final IShape lineEnd = edges.last(scope);
+		final GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to((IShape) path.getEndVertex(), lineEnd);
 
-		Boolean targetType = (Boolean) scope.getArg("target_type", IType.NONE);
+		final Boolean targetType = (Boolean) scope.getArg("target_type", IType.NONE);
 		if ( targetType != null && !targetType ) {
 			goal = falseTarget;
 		}
 
-		boolean isReachedTargetCheck = isReachedTarget(scope, agent, goal);
+		final boolean isReachedTargetCheck = isReachedTarget(scope, agent, goal);
 		if ( isReachedTargetCheck ) { return 2; }
-		boolean isReachedFalseTarget = isReachedTarget(scope, agent, falseTarget);
+		final boolean isReachedFalseTarget = isReachedTarget(scope, agent, falseTarget);
 		/**
 		 * if (isReachedFalseTarget){
 		 * System.out.println("M: DrivingSKill - Reached the false target");
 		 * }
 		 * /
 		 **/
-		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
+		final GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		// System.out.println("Max distance: " + maxDist);
 		/* obstacle agents */
-		IList<IAgent> neighbours =
-			agent.getTopology().getNeighboursOf(currentLocation, maxDist + consideringRange,
-				Different.with());
-		GamaList<IAgent> obstacleAgents = new GamaList<IAgent>();
-		for ( IAgent ia : neighbours ) {
+		final Iterator<IAgent> neighbours =
+			agent.getTopology().getNeighboursOf(currentLocation, maxDist + consideringRange, Different.with());
+		final GamaList<IAgent> obstacleAgents = new GamaList<IAgent>();
+		while (neighbours.hasNext()) {
+			final IAgent ia = neighbours.next();
 			if ( obsSpecies.contains(ia.getSpecies()) ) {
 				obstacleAgents.add(ia);
 			}
@@ -440,19 +423,18 @@ public class DrivingSkill2d extends MovingSkill {
 
 		/* creating candidate points */
 		try {
-			GamaList<CandidateEntry> candidateEntries = new GamaList<CandidateEntry>();
+			final GamaList<CandidateEntry> candidateEntries = new GamaList<CandidateEntry>();
 			GamaPoint pointToAdd = null;
-			int currentHeadingAngle = agent.getHeading();
+			final int currentHeadingAngle = agent.getHeading();
 			int candidateHeading, dAngle;
 			// System.out.println("M: maxDist before: " + maxDist);
-			GamaShape agentShape = (GamaShape) agent.getGeometry();
+			final GamaShape agentShape = (GamaShape) agent.getGeometry();
 			IShape consideringBackgroundAgentForCurrentPosition = null;
 			if ( hasBackground ) {
-				for ( ISpecies currentSpecy : backgroundSpecies ) {
-					IList<IAgent> overlappingBackgroundWithCurrentPosition =
-						msi.gaml.operators.Spatial.Queries.overlapping(scope, currentSpecy,
-							agentShape);
-					for ( IAgent ia : overlappingBackgroundWithCurrentPosition ) {
+				for ( final ISpecies currentSpecy : backgroundSpecies ) {
+					final IList<IAgent> overlappingBackgroundWithCurrentPosition =
+						msi.gaml.operators.Spatial.Queries.overlapping(scope, currentSpecy, agentShape);
+					for ( final IAgent ia : overlappingBackgroundWithCurrentPosition ) {
 						if ( consideringBackgroundAgentForCurrentPosition == null ) {
 							consideringBackgroundAgentForCurrentPosition = ia.getGeometry();
 						} else {
@@ -466,9 +448,7 @@ public class DrivingSkill2d extends MovingSkill {
 					distanceToNearestInFront(scope, agent, obstacleAgents, 45,
 						consideringBackgroundAgentForCurrentPosition, consideringRange, maxDist);
 			} else {
-				maxDist =
-					distanceToNearestInFront(scope, agent, obstacleAgents, 45, null,
-						consideringRange, maxDist);
+				maxDist = distanceToNearestInFront(scope, agent, obstacleAgents, 45, null, consideringRange, maxDist);
 			}
 			// System.out.println(agent.getName() + " M: maxDist after: " + maxDist);
 			for ( int i = 0; i <= 5; i++ ) {
@@ -476,33 +456,30 @@ public class DrivingSkill2d extends MovingSkill {
 				candidateHeading = currentHeadingAngle + dAngle;
 				candidateHeading = Maths.checkHeading(candidateHeading);
 				pointToAdd =
-					new GamaPoint(currentLocation.x + maxDist * Maths.cos(candidateHeading),
-						currentLocation.y + maxDist * Maths.sin(candidateHeading));
+					new GamaPoint(currentLocation.x + maxDist * Maths.cos(candidateHeading), currentLocation.y +
+						maxDist * Maths.sin(candidateHeading));
 				// System.out.println("heading: " + currentHeadingAngle + " | " +
 				// " candidate angle: " + candidateAngle);
 				// System.out.println("current location: " + currentLocation.toString() + " | " +
 				// " candidate location: " + pointToAdd.toString());
-				GamaShape candidateShape =
-					(GamaShape) msi.gaml.operators.Spatial.Transformations.rotated_by(scope,
-						agentShape, dAngle);
+				final GamaShape candidateShape =
+					(GamaShape) msi.gaml.operators.Spatial.Transformations.rotated_by(scope, agentShape, dAngle);
 				candidateShape.setLocation(pointToAdd);
 				// check for non-overlapping
 				if ( isNonOverlapping(scope, candidateShape, obstacleAgents) ) {
 					if ( hasBackground ) {
 						// get background agents
-						IShape consideringBackgroundAgent =
-							consideringBackgroundAgentForCurrentPosition;
-						for ( ISpecies currentSpecy : backgroundSpecies ) {
-							IList<IAgent> overlappingBackgroundWithCandidatePosition =
-								msi.gaml.operators.Spatial.Queries.overlapping(scope, currentSpecy,
-									candidateShape);
-							for ( IAgent ia : overlappingBackgroundWithCandidatePosition ) {
+						IShape consideringBackgroundAgent = consideringBackgroundAgentForCurrentPosition;
+						for ( final ISpecies currentSpecy : backgroundSpecies ) {
+							final IList<IAgent> overlappingBackgroundWithCandidatePosition =
+								msi.gaml.operators.Spatial.Queries.overlapping(scope, currentSpecy, candidateShape);
+							for ( final IAgent ia : overlappingBackgroundWithCandidatePosition ) {
 								if ( consideringBackgroundAgent == null ) {
 									consideringBackgroundAgent = ia.getGeometry();
 								} else {
 									consideringBackgroundAgent =
-										msi.gaml.operators.Spatial.Operators.union(
-											consideringBackgroundAgent, ia.getGeometry());
+										msi.gaml.operators.Spatial.Operators.union(consideringBackgroundAgent,
+											ia.getGeometry());
 								}
 							}
 						}
@@ -510,14 +487,13 @@ public class DrivingSkill2d extends MovingSkill {
 							// System.out.println(((GamaShape)consideringBackgroundAgent).getPoints().toString());
 							if ( msi.gaml.operators.Spatial.Properties.covered_by(candidateShape,
 								consideringBackgroundAgent) ) {
-								CandidateEntry candidateEntry =
+								final CandidateEntry candidateEntry =
 									new CandidateEntry(pointToAdd, candidateHeading, dAngle);
 								candidateEntries.add(candidateEntry);
 							}
 						}
 					} else {
-						CandidateEntry candidateEntry =
-							new CandidateEntry(pointToAdd, candidateHeading, dAngle);
+						final CandidateEntry candidateEntry = new CandidateEntry(pointToAdd, candidateHeading, dAngle);
 						candidateEntries.add(candidateEntry);
 					}
 				}
@@ -528,10 +504,10 @@ public class DrivingSkill2d extends MovingSkill {
 			if ( candidateEntries.size() > 0 ) {
 				CandidateEntry chosenCandidate = null;
 				double minDistance = Double.MAX_VALUE;
-				double currentDistance = getCurrentDistance(agent);
-				for ( CandidateEntry currenEntry : candidateEntries ) {
-					GamaPoint currentPoint = currenEntry.candidatePoint;
-					double candidateDistance =
+				final double currentDistance = getCurrentDistance(agent);
+				for ( final CandidateEntry currenEntry : candidateEntries ) {
+					final GamaPoint currentPoint = currenEntry.candidatePoint;
+					final double candidateDistance =
 						topo.distanceBetween(scope, currentPoint.getLocation(), falseTarget);
 					if ( candidateDistance < minDistance && candidateDistance != currentDistance ) {
 						chosenCandidate = currenEntry;
@@ -545,20 +521,20 @@ public class DrivingSkill2d extends MovingSkill {
 				// System.out.println("distance: "+ minDistance + ", location: " +
 				// chosenCandidate.toString());
 				setCurrentDistance(agent, minDistance);
-				int newHeading = chosenCandidate.candidateHeading;
+				final int newHeading = chosenCandidate.candidateHeading;
 				agent.setLocation(chosenCandidate.candidatePoint);
 				agent.setHeading(newHeading);
 			}
 			scope.setStatus(ExecutionStatus.success);
 			if ( isReachedFalseTarget ) { return 1; }
 			return 0;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return -1;
 		}
 	}
 
 	private double getCalculatedPerimeter(final IAgent agent) throws GamaRuntimeException {
-		boolean isCalculatedPerimeter = getIsCalculatedPerimeter(agent);
+		final boolean isCalculatedPerimeter = getIsCalculatedPerimeter(agent);
 		double currentPerimeter = 0;
 		if ( isCalculatedPerimeter ) {
 			currentPerimeter = getCurrentPerimeter(agent);
@@ -572,39 +548,38 @@ public class DrivingSkill2d extends MovingSkill {
 
 	private boolean isReachedTarget(final IScope scope, final IAgent agent, final ILocation goal) {
 		double currentPerimeter = getCalculatedPerimeter(agent);
-		double maxDist = computeDistance(scope, agent);
+		final double maxDist = computeDistance(scope, agent);
 		if ( currentPerimeter < maxDist ) {
 			currentPerimeter = maxDist;
 		}
-		double distanceToTarget = agent.euclidianDistanceTo(goal);
+		final double distanceToTarget = agent.euclidianDistanceTo(goal);
 		return distanceToTarget <= currentPerimeter;
 	}
 
-	private double distanceToNearestInFront(IScope scope, final IAgent agent,
-		GamaList<IAgent> obstacleAgents, int dAngle,
-		IShape consideringBackgroundAgentForCurrentPosition, int consideringRange,
-		double minDistance) {
-		int currentHeading = agent.getHeading();
-		double currentPointX = agent.getLocation().getX();
-		double currentPointY = agent.getLocation().getY();
-		double agentRadius = getCalculatedPerimeter(agent) / 4;
+	private double distanceToNearestInFront(final IScope scope, final IAgent agent,
+		final GamaList<IAgent> obstacleAgents, final int dAngle,
+		final IShape consideringBackgroundAgentForCurrentPosition, final int consideringRange, double minDistance) {
+		final int currentHeading = agent.getHeading();
+		final double currentPointX = agent.getLocation().getX();
+		final double currentPointY = agent.getLocation().getY();
+		final double agentRadius = getCalculatedPerimeter(agent) / 4;
 		// System.out.println(agent.getName() + ": agentRadius :" + agentRadius);
-		GamaPoint headPoint =
-			new GamaPoint(currentPointX + agentRadius * Maths.cos(currentHeading), currentPointY +
-				agentRadius * Maths.sin(currentHeading));
+		final GamaPoint headPoint =
+			new GamaPoint(currentPointX + agentRadius * Maths.cos(currentHeading), currentPointY + agentRadius *
+				Maths.sin(currentHeading));
 		boolean isFoundObstacleInFront = false;
 		try {
 			if ( obstacleAgents != null && obstacleAgents.length(scope) > 0 ) {
-				for ( IAgent ia : obstacleAgents ) {
-					double obstaclePointX = ia.getLocation().getX();
-					double obstaclePointY = ia.getLocation().getY();
-					double dy = obstaclePointY - headPoint.getY();
-					double dx = obstaclePointX - headPoint.getX();
-					double obstacleAngle = Math.atan2(dy, dx) * Maths.toDeg;
-					int obstacleHeading = Maths.checkHeading((int) obstacleAngle);
+				for ( final IAgent ia : obstacleAgents ) {
+					final double obstaclePointX = ia.getLocation().getX();
+					final double obstaclePointY = ia.getLocation().getY();
+					final double dy = obstaclePointY - headPoint.getY();
+					final double dx = obstaclePointX - headPoint.getX();
+					final double obstacleAngle = Math.atan2(dy, dx) * Maths.toDeg;
+					final int obstacleHeading = Maths.checkHeading((int) obstacleAngle);
 					if ( Maths.abs(obstacleHeading - currentHeading) <= dAngle ) {
 						isFoundObstacleInFront = true;
-						double obstacleDistance = Math.sqrt(dx * dx + dy * dy);
+						final double obstacleDistance = Math.sqrt(dx * dx + dy * dy);
 						// System.out.println(ia.getName() + ":" + obstacleDistance);
 						if ( obstacleDistance > 0 && obstacleDistance < minDistance ) {
 							minDistance = obstacleDistance;
@@ -612,28 +587,28 @@ public class DrivingSkill2d extends MovingSkill {
 					}
 				}
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			GuiUtils.debug("obstacle " + e.getStackTrace());
 		}
 
 		try {
 			if ( !isFoundObstacleInFront ) {
 				if ( consideringBackgroundAgentForCurrentPosition != null ) {
-					double xx = consideringRange * Maths.cos(currentHeading);
-					double yy = consideringRange * Maths.sin(currentHeading);
-					GamaPoint aheadPoint = new GamaPoint(headPoint.x + xx, headPoint.y + yy);
-					IShape gl = GamaGeometryType.buildLine(aheadPoint, headPoint);
+					final double xx = consideringRange * Maths.cos(currentHeading);
+					final double yy = consideringRange * Maths.sin(currentHeading);
+					final GamaPoint aheadPoint = new GamaPoint(headPoint.x + xx, headPoint.y + yy);
+					final IShape gl = GamaGeometryType.buildLine(aheadPoint, headPoint);
 					if ( gl != null ) {
-						IShape interShape =
-							msi.gaml.operators.Spatial.Operators.inter(gl,
-								consideringBackgroundAgentForCurrentPosition);
+						final IShape interShape =
+							msi.gaml.operators.Spatial.Operators
+								.inter(gl, consideringBackgroundAgentForCurrentPosition);
 						if ( interShape != null ) {
-							Coordinate coords[] = interShape.getInnerGeometry().getCoordinates();
+							final Coordinate coords[] = interShape.getInnerGeometry().getCoordinates();
 							// System.out.println(coords.length);
 							for ( int i = 0; i < coords.length; i++ ) {
-								double dx = headPoint.getX() - coords[i].x;
-								double dy = headPoint.getY() - coords[i].y;
-								double borderDistance = Math.sqrt(dx * dx + dy * dy);
+								final double dx = headPoint.getX() - coords[i].x;
+								final double dy = headPoint.getY() - coords[i].y;
+								final double borderDistance = Math.sqrt(dx * dx + dy * dy);
 								if ( borderDistance > 0.1 && borderDistance < minDistance ) {
 									minDistance = borderDistance;
 								}
@@ -642,7 +617,7 @@ public class DrivingSkill2d extends MovingSkill {
 					}
 				}
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			GuiUtils.debug(agent.getName() + " background ");
 		}
 		if ( minDistance < 0.5 ) {
@@ -657,31 +632,29 @@ public class DrivingSkill2d extends MovingSkill {
 		String fileName = (String) scope.getArg("file_name", IType.NONE);
 
 		if ( fileName == null ) { return null; }
-		fileName =
-			scope.getSimulationScope().getModel()
-				.getRelativeFilePath(Cast.asString(scope, fileName), true);
+		fileName = scope.getSimulationScope().getModel().getRelativeFilePath(Cast.asString(scope, fileName), true);
 		GuiUtils.debug("1: " + fileName);
 		try {
-			File file = new File(fileName);
+			final File file = new File(fileName);
 			if ( !file.exists() || !file.isFile() ) { return null; }
 			final BufferedReader in = new BufferedReader(new FileReader(file));
-			GamaList<Object> result = new GamaList<Object>();
+			final GamaList<Object> result = new GamaList<Object>();
 			GamaList<GamaPoint> positionList = null;
 			String readingLine = in.readLine();
 			// System.out.println("2: " + readingLine);
 			while (readingLine != null) {
-				String[] tokens = readingLine.split(":");
+				final String[] tokens = readingLine.split(":");
 				if ( tokens.length >= 3 ) {
 					positionList = new GamaList<GamaPoint>();
 					// System.out.println("3:" + tokens[0] + "|" + tokens[1]);
-					String[] positions = tokens[2].split(";");
+					final String[] positions = tokens[2].split(";");
 					// System.out.println("4:" + tokens[1] + "|" + positions.length);
-					for ( String positionItem : positions ) {
-						String[] coordinates = positionItem.split(",");
+					for ( final String positionItem : positions ) {
+						final String[] coordinates = positionItem.split(",");
 						if ( coordinates.length >= 2 ) {
-							double x = Double.parseDouble(coordinates[0]);
-							double y = Double.parseDouble(coordinates[1]);
-							GamaPoint addingPoint = new GamaPoint(x, y);
+							final double x = Double.parseDouble(coordinates[0]);
+							final double y = Double.parseDouble(coordinates[1]);
+							final GamaPoint addingPoint = new GamaPoint(x, y);
 							positionList.add(addingPoint);
 						}
 					}
@@ -691,7 +664,7 @@ public class DrivingSkill2d extends MovingSkill {
 			}
 			in.close();
 			return result;
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 		}
 		return null;
@@ -704,26 +677,23 @@ public class DrivingSkill2d extends MovingSkill {
 	public Object primSaveReplayStep(final IScope scope) throws GamaRuntimeException {
 		String fileName = (String) scope.getArg("file_name", IType.NONE);
 		if ( fileName == null ) { return null; }
-		fileName =
-			scope.getSimulationScope().getModel()
-				.getRelativeFilePath(Cast.asString(scope, fileName), true);
+		fileName = scope.getSimulationScope().getModel().getRelativeFilePath(Cast.asString(scope, fileName), true);
 		GuiUtils.debug("1: " + fileName);
-		IList agent_information = (IList) scope.getArg("agent_information", IType.NONE);
+		final IList agent_information = (IList) scope.getArg("agent_information", IType.NONE);
 		if ( agent_information == null || agent_information.size() < 3 ) { return null; }
 		GuiUtils.debug("2: " + agent_information.size());
-		String currentFileName =
-			scope.getSimulationScope().getModel()
-				.getRelativeFilePath(Cast.asString(scope, "."), true) +
-				"/log/" + fileName;
+		final String currentFileName =
+			scope.getSimulationScope().getModel().getRelativeFilePath(Cast.asString(scope, "."), true) + "/log/" +
+				fileName;
 		GuiUtils.debug("3: " + currentFileName);
 		try {
 			// File file = new File(fileName);
 			// if (!file.exists() || !file.isFile()) return null;
-			ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(currentFileName));
+			final ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(currentFileName));
 			out.writeObject(agent_information);
 			out.close();
 			return null;
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 		}
 		return null;
@@ -735,18 +705,16 @@ public class DrivingSkill2d extends MovingSkill {
 		String fileName = (String) scope.getArg("file_name", IType.NONE);
 
 		if ( fileName == null ) { return null; }
-		fileName =
-			scope.getSimulationScope().getModel()
-				.getRelativeFilePath(Cast.asString(scope, fileName), true);
+		fileName = scope.getSimulationScope().getModel().getRelativeFilePath(Cast.asString(scope, fileName), true);
 		// System.out.println("1: " + fileName);
 		try {
-			File file = new File(fileName);
+			final File file = new File(fileName);
 			if ( !file.exists() || !file.isFile() ) { return null; }
-			ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
-			GamaList result = (GamaList) in.readObject();
+			final ObjectInputStream in = new ObjectInputStream(new FileInputStream(file));
+			final GamaList result = (GamaList) in.readObject();
 			in.close();
 			return result;
-		} catch (Exception ex) {
+		} catch (final Exception ex) {
 			ex.printStackTrace();
 		}
 		return null;
@@ -759,7 +727,7 @@ class CandidateEntry {
 	public int candidateHeading;
 	public int dAngle;
 
-	public CandidateEntry(GamaPoint inputPoint, int inputHeading, int inputDAngle) {
+	public CandidateEntry(final GamaPoint inputPoint, final int inputHeading, final int inputDAngle) {
 		this.candidatePoint = inputPoint;
 		this.candidateHeading = inputHeading;
 		this.dAngle = inputDAngle;
