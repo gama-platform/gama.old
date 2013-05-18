@@ -5,6 +5,9 @@ import "../include/schelling_common.gaml"
 global {
 	list free_places <- [] of: space; 
 	list all_places <- [] of: space;
+	float percent_similar_wanted <- 0.6;
+	int neighbours_distance <- 4; 
+	int number_of_groups <- 3;
 	const google_buildings type: list <- [rgb('#EBE6DC'), rgb('#D1D0CD'), rgb('#F2EFE9'), rgb('#EEEBE1'), rgb('#F9EFE8')] ;
 	list available_places of: space ;
 	string bitmap_file_name <- '../images/hanoi.png' parameter: 'Name of image file to load:' category: 'Environment' ;
