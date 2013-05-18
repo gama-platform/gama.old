@@ -49,7 +49,7 @@ entities {
         	if size<0 { set size <- 0; }
         }
         reflex basic_move {
-            let destination type: stupid_cell <- last ((shuffle ((myPlace neighbours(4)) where empty(each.agents))) sort_by (each.food));
+            let destination type: stupid_cell <- last ((shuffle ((myPlace neighbours(4)) where empty(agents overlapping each))) sort_by (each.food));
             if (destination != nil) {
                  set myPlace <- destination;
                  set location <- myPlace.location;                                                
@@ -65,7 +65,7 @@ entities {
         }
         reflex multiply {
             if (size > 10) {
-                let possible_nests <- (myPlace neighbours_at 3) where empty(each.agents);
+                let possible_nests <- (myPlace neighbours_at 3) where empty(agents overlapping each);
                 loop times: 5 {
                     let nest <- one_of(possible_nests);
                     if (nest != nil) {

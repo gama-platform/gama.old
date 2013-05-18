@@ -33,11 +33,11 @@ global {
 
 		create ant number: ants_number with: (location: center);
 	}
-
+ 
 }
 
 environment width: gridsize height: gridsize {
-	grid ant_grid width: gridsize height: gridsize neighbours: 8 torus: false frequency: grid_frequency {
+	grid ant_grid width: gridsize height: gridsize neighbours: 8 torus: false frequency: grid_frequency use_regular_agents: false{
 		const neighbours type: list of: ant_grid <- self neighbours_at 1;
 		const is_nest type: bool <- (topology(ant_grid) distance_between [self, center]) < 4;
 		rgb color <- is_nest ? nest_color : ((food > 0) ? food_color : ((float(road) < 0.001) ? background : rgb(#009900) + int(road * 5))) update: is_nest ? nest_color : ((food > 0) ?
@@ -51,6 +51,7 @@ species ant skills: [moving] control: fsm {
 	float speed <- 1.0;
 	bool has_food <- false;
 	signal road value: has_food ? 240 : 0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid;
+	
 	action pick (int amount) {
 		has_food <- true;
 		ant_grid place <- ant_grid(location);

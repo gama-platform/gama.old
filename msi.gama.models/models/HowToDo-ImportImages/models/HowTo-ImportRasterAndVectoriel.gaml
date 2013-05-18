@@ -74,7 +74,7 @@ entities {
 	}	
 	species izard {	
 		init{
-			set location <- (shuffle(cell as list) first_with ((each.color != rgb('white')) and (empty(each.agents)))).location ;
+			set location <- (shuffle(cell as list) first_with ((each.color != rgb('white')) and (empty(agents overlapping each)))).location ;
 		}	
 		aspect basic{
     		draw square(5000) color: rgb('orange');

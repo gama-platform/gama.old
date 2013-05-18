@@ -14,7 +14,7 @@ entities {
     species bug {
         reflex basic_move {
             let place type: stupid_cell <- (location as stupid_cell);
-            let destination type: stupid_cell <- one_of ((place neighbours_at 4) where empty(each.agents));
+            let destination type: stupid_cell <- one_of ((place neighbours_at 4) where empty(agents overlapping each));
             if (destination != nil) {
                 set location <- destination.location;
             }

@@ -30,7 +30,7 @@ entities {
         stupid_cell myPlace <- (location as stupid_cell); 
 
         reflex basic_move {
-            let destination type: stupid_cell <- one_of ((myPlace neighbours_at 4) where empty(each.agents));
+            let destination type: stupid_cell <- one_of ((myPlace neighbours_at 4) where empty(agents overlapping each));
             if (destination != nil) {
                  set myPlace <- destination;
                  set location <- myPlace.location;                                                

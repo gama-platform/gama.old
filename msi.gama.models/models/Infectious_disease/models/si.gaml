@@ -67,7 +67,7 @@ entities {
         	if(local_infection) {
         		let nb_hosts type: int <- 0;
         		let nb_hosts_infected type: int <- 0;
-        		loop hst over: ((myPlace.neighbours + myPlace) accumulate (each.agents)) of_species Host{
+        		loop hst over: ((myPlace.neighbours + myPlace) accumulate (Host overlapping each)) {
         			set nb_hosts <- nb_hosts + 1;
         			if (Host(hst).is_infected) {set nb_hosts_infected <- nb_hosts_infected + 1;}
         		}

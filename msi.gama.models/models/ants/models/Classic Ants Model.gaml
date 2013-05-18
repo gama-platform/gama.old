@@ -30,7 +30,7 @@ global {
 
 }
 environment width: gridsize height: gridsize {  
-	grid ant_grid width: gridsize height: gridsize neighbours: 8 {
+	grid ant_grid width: gridsize height: gridsize neighbours: 8 use_regular_agents: false {
 		const neighbours <- self neighbours_at 1 type: list of: ant_grid ;
 		const multiagent type: bool <- true ;
 		const type type: int <- int(types at {grid_x,grid_y}) ;

@@ -2,8 +2,8 @@ model voronoi
  
 global {
 	int num_points <- 15 min: 1 max: 1000;
-	int env_width <- 120 min: 10 max: 400;
-	int env_height <- 120 min: 10 max: 400;
+	int env_width <- 100 min: 10 max: 400;
+	int env_height <- 100 min: 10 max: 400;
 	init { 
 		write 'This model shows how Voronoi-like shapes can be drawn on a regular surface. A set of mobile agents is placed on a grid. Each agent possesses an attribute called *inside_color*. Each step, the agents move randomly and the grid cells paint themselves using the *inside_color* of the nearest agent. Dynamical boundaries then appear on the screen without any further calculations.';
 		create center number: num_points ;  
@@ -11,7 +11,7 @@ global {
 } 
 
 environment width: env_width height: env_height  {
-	grid cell width: env_width height: env_height neighbours: 8  {
+	grid cell width: env_width height: env_height neighbours: 8 use_regular_agents: false {
 		rgb color <- rgb('white') update: (center closest_to (self)).color;
 	}
 } 

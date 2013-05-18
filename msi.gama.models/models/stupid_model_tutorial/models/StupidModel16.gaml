@@ -50,7 +50,7 @@ entities {
         	if size<0 { set size <- 0; }
         }
         reflex basic_move {
-            let destination type: stupid_cell <- last (((myPlace.neighbours(4) where empty(each.agents))) sort_by (each.food));
+            let destination type: stupid_cell <- last (((myPlace.neighbours(4) where empty(agents overlapping each))) sort_by (each.food));
             if (destination != nil) {
                  set myPlace <- destination;
                  set location <- myPlace.location;                                                
@@ -66,7 +66,7 @@ entities {
         }
         reflex multiply {
             if condition: size > 10 {
-                let possible_nests <- (myPlace neighbours_at 3) where empty(each.agents);
+                let possible_nests <- (myPlace neighbours_at 3) where empty(agents overlapping each);
                 loop times: 5 {
                     let nest <- one_of(possible_nests);
                     if (nest != nil) {
@@ -86,11 +86,11 @@ entities {
 		 
 		reflex hunt {
 			let the_neighbours type: list <- (location as stupid_cell).neighbours();
-			let the_neighbours_bug type:list value: the_neighbours accumulate (each.agents of_species bug);
+			let the_neighbours_bug type:list value: the_neighbours accumulate (bug overlapping each);
      		let chosenPrey type: bug <- one_of( the_neighbours_bug);
 		    if (chosenPrey != nil) {
 		     	let new_loc type: stupid_cell <- chosenPrey.location as stupid_cell;	
-		     	if (empty(new_loc.agents of_species predator )) {
+		     	if (empty(predator overlapping new_loc )) {
 		     		set location <- point(new_loc) ;
 		     		ask chosenPrey {
 		     			do die;
