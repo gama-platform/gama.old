@@ -20,7 +20,6 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaList;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.*;
@@ -113,7 +112,7 @@ public class StatementDescription extends SymbolDescription {
 
 	private void explodeArgs() {
 		if ( getKeyword().equals(ACTION) || getKeyword().equals(PRIMITIVE) ) { return; }
-		for ( Map.Entry<String, IExpressionDescription> arg : GAMA.getExpressionFactory()
+		for ( Map.Entry<String, IExpressionDescription> arg : msi.gama.util.GAML.getExpressionFactory()
 			.createArgumentMap(getAction(), facets.get(WITH), this).entrySet() ) {
 			String name = arg.getKey();
 			args.put(name, createArg(name, arg.getValue()));
@@ -180,7 +179,7 @@ public class StatementDescription extends SymbolDescription {
 			return ((StatementDescription) getEnclosingDescription()).addTemp(name, type, contentType, keyType);
 		}
 		IVarExpression result =
-			GAMA.getExpressionFactory().createVar(name, type, contentType, keyType, false, IVarExpression.TEMP, this);
+			msi.gama.util.GAML.getExpressionFactory().createVar(name, type, contentType, keyType, false, IVarExpression.TEMP, this);
 		temps.put(name, result);
 		return result;
 	}

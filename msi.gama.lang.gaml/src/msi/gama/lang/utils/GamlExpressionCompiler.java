@@ -29,7 +29,6 @@ import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.precompiler.IUnits;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.AbstractGamlAdditions;
@@ -68,7 +67,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 	}
 
 	public GamlExpressionCompiler() {
-		factory = GAMA.getExpressionFactory();
+		factory = GAML.getExpressionFactory();
 	}
 
 	@Override
@@ -277,7 +276,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 	}
 
 	private IDescription getContext() {
-		if ( context == null ) { return GAMA.getModelContext(); }
+		if ( context == null ) { return GAML.getModelContext(); }
 		return context;
 	}
 

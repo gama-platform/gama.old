@@ -22,8 +22,8 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.kernel.model.IModel;
-import msi.gama.kernel.simulation.ISimulationAgent;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.metamodel.agent.IMacroAgent;
 import msi.gama.outputs.OutputManager;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -101,8 +101,8 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 	}
 
 	protected void createAgent() {
-		ExperimentPopulation pop = new ExperimentPopulation(this);
-		IScope scope = getExperimentScope();
+		final ExperimentPopulation pop = new ExperimentPopulation(this);
+		final IScope scope = getExperimentScope();
 		pop.initializeFor(scope);
 		agent = (ExperimentAgent) pop.createAgents(scope, 1, Collections.EMPTY_LIST, false).get(0);
 	}
@@ -119,12 +119,12 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 	}
 
 	protected void addOwnParameters() {
-		String cat = getSystemParametersCategory();
+		final String cat = getSystemParametersCategory();
 		addSystemParameter(new ExperimentParameter(stack, getVar(IKeyword.RNG), "Random number generator", cat,
 			RandomUtils.GENERATOR_NAMES, false));
 		addSystemParameter(new ExperimentParameter(stack, getVar(IKeyword.SEED), "Random seed", cat, null, true));
 		if ( !isBatch() ) { // FIXME Test to be removed at some point
-			for ( IVariable v : model.getVars() ) {
+			for ( final IVariable v : model.getVars() ) {
 				if ( v.isParameter() ) {
 					addRegularParameter(new ExperimentParameter(stack, v));
 				}
@@ -145,7 +145,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 	@Override
 	public void setChildren(final List<? extends ISymbol> children) {
 		super.setChildren(children);
-		for ( ISymbol s : children ) {
+		for ( final ISymbol s : children ) {
 			if ( s instanceof OutputManager ) {
 				if ( output != null ) {
 					output.setChildren(((OutputManager) s).getChildren());
@@ -159,7 +159,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 	}
 
 	protected boolean registerParameter(final IParameter p) {
-		String name = p.getName();
+		final String name = p.getName();
 		if ( targetedVars.containsKey(name) ) { return false; }
 		targetedVars.put(name, p);
 		return true;
@@ -172,7 +172,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 
 	@Override
 	public Double getCurrentSeed() {
-		Object o = getParameter(IKeyword.SEED).getInitialValue(stack);
+		final Object o = getParameter(IKeyword.SEED).getInitialValue(stack);
 		if ( o == null ) { return null; }
 		if ( o instanceof Number ) { return ((Number) o).doubleValue(); }
 		return null;
@@ -274,7 +274,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 	}
 
 	public IParameter.Batch getParameter(final String name) {
-		IParameter p = targetedVars.get(name);
+		final IParameter p = targetedVars.get(name);
 		if ( p != null && p instanceof IParameter.Batch ) { return (IParameter.Batch) p; }
 		return null;
 	}
@@ -289,7 +289,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 	}
 
 	protected IParameter.Batch checkGetParameter(final String name) throws GamaRuntimeException {
-		IParameter.Batch v = getParameter(name);
+		final IParameter.Batch v = getParameter(name);
 		if ( v == null ) { throw GamaRuntimeException.error("No parameter named " + name + " in experiment " +
 			getName()); }
 		return v;
@@ -312,14 +312,14 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 
 	@Override
 	public IList<IParameter> getParametersToDisplay() {
-		IList<IParameter> result = new GamaList();
+		final IList<IParameter> result = new GamaList();
 		result.addAll(regularParameters);
 		result.addAll(systemParameters);
 		return result;
 	}
 
 	@Override
-	public ISimulationAgent getCurrentSimulation() {
+	public SimulationAgent getCurrentSimulation() {
 		if ( agent == null ) { return null; }
 		return agent.getSimulation();
 	}
@@ -348,7 +348,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 		 */
 		private volatile boolean interrupted;
 
-		public Scope(final IAgent root) {
+		public Scope(final IMacroAgent root) {
 			super(root);
 		}
 
@@ -368,8 +368,8 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 		}
 
 		@Override
-		public ISimulationAgent getSimulationScope() {
-			ExperimentAgent a = getAgent();
+		public SimulationAgent getSimulationScope() {
+			final ExperimentAgent a = getAgent();
 			if ( a == null ) { return null; }
 			return a.getSimulation();
 		}
@@ -385,7 +385,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 		}
 
 		@Override
-		public void setInterrupted(boolean interrupted) {
+		public void setInterrupted(final boolean interrupted) {
 			this.interrupted = interrupted;
 		}
 

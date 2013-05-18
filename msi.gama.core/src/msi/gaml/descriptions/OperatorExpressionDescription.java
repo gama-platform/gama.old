@@ -1,7 +1,7 @@
 package msi.gaml.descriptions;
 
 import msi.gama.common.interfaces.IGamlIssue;
-import msi.gama.runtime.GAMA;
+import msi.gama.util.GAML;
 import msi.gaml.expressions.IExpression;
 import org.eclipse.emf.ecore.EObject;
 
@@ -43,7 +43,7 @@ public class OperatorExpressionDescription extends BasicExpressionDescription {
 			for ( int i = 0; i < exprs.length; i++ ) {
 				exprs[i] = args[i].compile(context);
 			}
-			expression = GAMA.getExpressionFactory().createOperator(operator, context, exprs);
+			expression = GAML.getExpressionFactory().createOperator(operator, context, exprs);
 			if ( expression == null ) {
 				// If no operator has been found, we throw an exception
 				context.error("Operator " + operator + " does not exist", IGamlIssue.UNKNOWN_UNARY,

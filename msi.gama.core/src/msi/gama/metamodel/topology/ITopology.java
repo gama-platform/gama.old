@@ -19,6 +19,7 @@
 package msi.gama.metamodel.topology;
 
 import java.awt.Graphics2D;
+import java.util.Iterator;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -30,7 +31,7 @@ import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.IContainer;
 import msi.gama.util.path.GamaSpatialPath;
 import msi.gaml.types.IType;
 import com.vividsolutions.jts.geom.Geometry;
@@ -74,13 +75,13 @@ public interface ITopology extends IValue {
 
 	public abstract IAgent getAgentClosestTo(final ILocation source, IAgentFilter filter);
 
-	public abstract IList<IAgent> getNeighboursOf(final IShape source, final Double distance, IAgentFilter filter)
+	public abstract Iterator<IAgent> getNeighboursOf(final IShape source, final Double distance, IAgentFilter filter)
 		throws GamaRuntimeException;
 
-	public abstract IList<IAgent> getNeighboursOf(final ILocation source, final Double distance, IAgentFilter filter)
+	public abstract Iterator<IAgent> getNeighboursOf(final ILocation source, final Double distance, IAgentFilter filter)
 		throws GamaRuntimeException;
 
-	public abstract IList<IAgent> getAgentsIn(final IShape source, final IAgentFilter f, boolean covered);
+	public abstract Iterator<IAgent> getAgentsIn(final IShape source, final IAgentFilter f, boolean covered);
 
 	public abstract boolean isTorus();
 

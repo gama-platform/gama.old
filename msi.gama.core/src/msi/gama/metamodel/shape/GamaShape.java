@@ -65,8 +65,7 @@ public class GamaShape implements IShape /* , IContainer */{
 	}
 
 	public GamaShape(final ILocation point) {
-		this(GeometryUtils.factory.createPoint(
-			point instanceof Coordinate ? (Coordinate) point : point.toCoordinate()));
+		this(GeometryUtils.factory.createPoint(point instanceof Coordinate ? (Coordinate) point : point.toCoordinate()));
 	}
 
 	public GamaShape() {
@@ -86,7 +85,7 @@ public class GamaShape implements IShape /* , IContainer */{
 
 	@getter("geometries")
 	public GamaList<GamaShape> getGeometries() {
-		GamaList<GamaShape> result = new GamaList();
+		final GamaList<GamaShape> result = new GamaList();
 		if ( isMultiple() ) {
 			for ( int i = 0, n = getInnerGeometry().getNumGeometries(); i < n; i++ ) {
 				result.add(new GamaShape(getInnerGeometry().getGeometryN(i)));
@@ -103,7 +102,7 @@ public class GamaShape implements IShape /* , IContainer */{
 	}
 
 	@Override
-	public String stringValue(IScope scope) {
+	public String stringValue(final IScope scope) {
 		return getInnerGeometry().getGeometryType();
 	}
 
@@ -111,7 +110,7 @@ public class GamaShape implements IShape /* , IContainer */{
 	public String toGaml() {
 		if ( isPoint ) { return getLocation().toGaml() + " as geometry"; }
 		if ( isMultiple() ) { return getGeometries().toGaml() + " as geometry"; }
-		GamaList<GamaShape> holes = getHoles();
+		final GamaList<GamaShape> holes = getHoles();
 		String result = "";
 		if ( getInnerGeometry() instanceof LineString ) {
 			result = "polyline (" + new GamaList(getPoints()).toGaml() + ")";
@@ -119,7 +118,7 @@ public class GamaShape implements IShape /* , IContainer */{
 			result = "polygon (" + new GamaList(getPoints()).toGaml() + ")";
 		}
 		if ( holes.isEmpty() ) { return result; }
-		for ( GamaShape g : holes ) {
+		for ( final GamaShape g : holes ) {
 			result = "(" + result + ") - (" + g.toGaml() + ")";
 		}
 		return result;
@@ -144,39 +143,39 @@ public class GamaShape implements IShape /* , IContainer */{
 				geometry.apply(modification.with((Coordinate) location));
 			} else {
 				// if ( isPoint ) {
-				double dx = location.getX() - previous.getX();
-				double dy = location.getY() - previous.getY();
-				double dz = location.getZ() - previous.getZ();
+				final double dx = location.getX() - previous.getX();
+				final double dy = location.getY() - previous.getY();
+				final double dz = location.getZ() - previous.getZ();
 				geometry.apply(translation.by(dx, dy, dz));
 			}
 			geometry.geometryChanged();
 		}
 	}
 
-	public GamaShape rotatedBy(IScope scope, final int angle) {
+	public GamaShape rotatedBy(final IScope scope, final int angle) {
 		return rotatedBy(scope, Maths.toRad * angle);
 	}
 
-	public GamaShape rotatedBy(IScope scope, final double angle) {
+	public GamaShape rotatedBy(final IScope scope, final double angle) {
 		if ( isPoint ) { return copy(scope); }
-		Geometry newGeom = (Geometry) geometry.clone();
+		final Geometry newGeom = (Geometry) geometry.clone();
 		newGeom.apply(rotation.of(angle, (Coordinate) location));
 		return new GamaShape(newGeom);
 	}
 
-	public GamaShape scaledBy(IScope scope, final double coeff) {
+	public GamaShape scaledBy(final IScope scope, final double coeff) {
 		if ( isPoint ) { return copy(scope); }
-		Geometry newGeom = (Geometry) geometry.clone();
+		final Geometry newGeom = (Geometry) geometry.clone();
 		newGeom.apply(scaling.of(coeff, (Coordinate) location));
 		return new GamaShape(newGeom);
 	}
 
-	private static Translation translation = new Translation();
-	private static Modification modification = new Modification();
-	private static Rotation rotation = new Rotation();
-	private static Scaling scaling = new Scaling();
+	public static Translation translation = new Translation();
+	public static Modification modification = new Modification();
+	public static Rotation rotation = new Rotation();
+	public static Scaling scaling = new Scaling();
 
-	private static class Translation implements CoordinateFilter {
+	static class Translation implements CoordinateFilter {
 
 		double dx, dy, dz;
 
@@ -200,6 +199,13 @@ public class GamaShape implements IShape /* , IContainer */{
 			this.dx = dx;
 			this.dy = dy;
 			this.dz = dz;
+			return this;
+		}
+
+		public Translation by(final ILocation translation) {
+			this.dx = translation.getX();
+			this.dy = translation.getY();
+			this.dz = translation.getZ();
 			return this;
 		}
 
@@ -245,7 +251,7 @@ public class GamaShape implements IShape /* , IContainer */{
 
 		final static GamaPoint currentPoint = new GamaPoint(0d, 0d);
 		final static Point point = GeometryUtils.factory.createPoint(new Coordinate(0, 0));
-		final static PointPairDistance ppd = new PointPairDistance();
+		public final static PointPairDistance ppd = new PointPairDistance();
 		final static PointLocator pl = new PointLocator();
 
 		final Geometry cached;
@@ -268,6 +274,12 @@ public class GamaShape implements IShape /* , IContainer */{
 				prepared = PreparedGeometryFactory.prepare(cached);
 			}
 			return prepared;
+		}
+
+		public static double getDistance(final Geometry source, final Coordinate target) {
+			ppd.initialize();
+			DistanceToPoint.computeDistance(source, target, ppd);
+			return ppd.getDistance();
 		}
 
 		public double getDistance(final IShape g2) {
@@ -314,10 +326,10 @@ public class GamaShape implements IShape /* , IContainer */{
 
 	@getter("holes")
 	public GamaList<GamaShape> getHoles() {
-		GamaList<GamaShape> holes = new GamaList();
+		final GamaList<GamaShape> holes = new GamaList();
 		if ( getInnerGeometry() instanceof Polygon ) {
-			Polygon p = (Polygon) getInnerGeometry();
-			int n = p.getNumInteriorRing();
+			final Polygon p = (Polygon) getInnerGeometry();
+			final int n = p.getNumInteriorRing();
 			for ( int i = 0; i < n; i++ ) {
 				holes.add(new GamaShape(p.getInteriorRingN(i)));
 			}
@@ -333,8 +345,8 @@ public class GamaShape implements IShape /* , IContainer */{
 		} else
 
 		if ( result instanceof MultiPolygon ) {
-			MultiPolygon mp = (MultiPolygon) result;
-			LineString lines[] = new LineString[mp.getNumGeometries()];
+			final MultiPolygon mp = (MultiPolygon) result;
+			final LineString lines[] = new LineString[mp.getNumGeometries()];
 			for ( int i = 0; i < mp.getNumGeometries(); i++ ) {
 				lines[i] = ((Polygon) mp.getGeometryN(i)).getExteriorRing();
 			}
@@ -361,9 +373,9 @@ public class GamaShape implements IShape /* , IContainer */{
 
 	@getter("points")
 	public IList<GamaPoint> getPoints() {
-		GamaList<GamaPoint> result = new GamaList();
-		Coordinate[] points = getInnerGeometry().getCoordinates();
-		for ( Coordinate c : points ) {
+		final GamaList<GamaPoint> result = new GamaList();
+		final Coordinate[] points = getInnerGeometry().getCoordinates();
+		for ( final Coordinate c : points ) {
 			result.add(new GamaPoint(c));
 		}
 		return result;
@@ -411,7 +423,7 @@ public class GamaShape implements IShape /* , IContainer */{
 	}
 
 	private void computeLocation() {
-		Coordinate c = getInnerGeometry().getCentroid().getCoordinate();
+		final Coordinate c = getInnerGeometry().getCentroid().getCoordinate();
 		if ( location == null ) {
 			location = new GamaPoint(c);
 		} else {
@@ -450,7 +462,7 @@ public class GamaShape implements IShape /* , IContainer */{
 	}
 
 	@Override
-	public GamaShape copy(IScope scope) {
+	public GamaShape copy(final IScope scope) {
 		GamaShape g = null;
 		// synchronized (geometry) {
 		g = new GamaShape((Geometry) geometry.clone());
@@ -515,19 +527,14 @@ public class GamaShape implements IShape /* , IContainer */{
 	 *         not present
 	 */
 	@Override
-	public Object getAttribute(Object s) {
+	public Object getAttribute(final Object s) {
 		if ( attributes == null ) { return null; }
 		return attributes.get(s);
 	}
 
 	@Override
-	public void setAttribute(Object key, Object value) {
+	public void setAttribute(final Object key, final Object value) {
 		getOrCreateAttributes().put(key, value);
-	}
-
-	@Override
-	public boolean hasAttributes() {
-		return attributes != null;
 	}
 
 	@Override
@@ -544,7 +551,7 @@ public class GamaShape implements IShape /* , IContainer */{
 	}
 
 	@Override
-	public boolean hasAttribute(Object key) {
+	public boolean hasAttribute(final Object key) {
 		return attributes != null && attributes.containsKey(key);
 	}
 

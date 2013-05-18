@@ -18,6 +18,7 @@
  */
 package msi.gama.metamodel.topology.grid;
 
+import java.util.Iterator;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -26,7 +27,6 @@ import msi.gama.metamodel.topology.*;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.file.GamaGridFile;
 import msi.gama.util.path.GamaSpatialPath;
 
@@ -61,12 +61,15 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	public GridTopology(final IScope scope, final IShape environment, final int rows, final int columns,
-		final boolean isTorus, final boolean usesVN, final boolean isHexagon) throws GamaRuntimeException {
+		final boolean isTorus, final boolean usesVN, final boolean isHexagon, final boolean useIndividualShapes)
+		throws GamaRuntimeException {
 		super(scope, environment, null);
 		if ( isHexagon ) {
-			places = new GamaSpatialMatrix(scope, environment, rows, columns, isTorus, usesVN, isHexagon);
+			places =
+				new GamaSpatialMatrix(scope, environment, rows, columns, isTorus, usesVN, isHexagon,
+					useIndividualShapes);
 		} else {
-			places = new GamaSpatialMatrix(scope, environment, rows, columns, isTorus, usesVN);
+			places = new GamaSpatialMatrix(scope, environment, rows, columns, isTorus, usesVN, useIndividualShapes);
 		}
 		// FIXME Not sure it needs to be set
 		// root.setTorus(isTorus);
@@ -74,9 +77,9 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	public GridTopology(final IScope scope, final IShape environment, final GamaGridFile file, final boolean isTorus,
-		final boolean usesVN) throws GamaRuntimeException {
+		final boolean usesVN, final boolean useIndividualShapes) throws GamaRuntimeException {
 		super(scope, environment, null);
-		places = new GamaSpatialMatrix(scope, file, isTorus, usesVN);
+		places = new GamaSpatialMatrix(scope, file, isTorus, usesVN, useIndividualShapes);
 		// FIXME Not sure it needs to be set
 
 		// root.setTorus(isTorus);
@@ -126,7 +129,7 @@ public class GridTopology extends AbstractTopology {
 	protected ITopology _copy(final IScope scope) throws GamaRuntimeException {
 		final IGrid grid = (IGrid) places;
 		return new GridTopology(scope, environment, grid.getRows(scope), grid.getCols(scope), grid.isTorus(), grid
-			.getNeighbourhood().isVN(), grid.isHexagon());
+			.getNeighbourhood().isVN(), grid.isHexagon(), grid.usesIndiviualShapes());
 	}
 
 	@Override
@@ -195,35 +198,24 @@ public class GridTopology extends AbstractTopology {
 		return null;
 	}
 
-	/**
-	 * @see msi.gama.environment.ITopology#getAgentsInEnvelope(msi.gama.interfaces.IGeometry,
-	 *      com.vividsolutions.jts.geom.Envelope, msi.gama.environment.IAgentFilter, boolean)
-	 */
-	// @Override
-	// public IList<IAgent> getAgentsIn(final IShape source, final IAgentFilter f,
-	// final boolean covered) {
-	// List<IAgent> agents = super.getAgentsIn(source, f, covered);
-	// GamaList<IAgent> result = new GamaList();
-	// for ( IAgent ag : agents ) {
-	// if ( !ag.dead() && isValidGeometry(ag) ) {
-	// result.add(ag);
-	// }
-	// }
-	// // We then add the corresponding cells (if they are accepted by the filter).
-	// result.addAll(getPlaces().getAgentsCoveredBy(source, f, covered));
-	// return result;
-	// }
-
 	@Override
-	public GamaList<IAgent> getNeighboursOf(final IShape source, final Double distance, final IAgentFilter filter)
+	public Iterator<IAgent> getNeighboursOf(final IShape source, final Double distance, final IAgentFilter filter)
 		throws GamaRuntimeException {
+		// GuiUtils.debug("GridTopology.getNeighboursOf");
 		return getPlaces().getNeighboursOf(scope, this, source, distance); // AgentFilter ?
 	}
 
 	@Override
-	public GamaList<IAgent> getNeighboursOf(final ILocation source, final Double distance, final IAgentFilter filter)
+	public Iterator<IAgent> getNeighboursOf(final ILocation source, final Double distance, final IAgentFilter filter)
 		throws GamaRuntimeException {
+		// GuiUtils.debug("GridTopology.getNeighboursOf");
 		return getPlaces().getNeighboursOf(scope, this, source, distance); // AgentFilter ?
+	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		getPlaces().dispose();
 	}
 
 }

@@ -26,7 +26,7 @@ import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.kernel.experiment.ParameterAdapter;
-import msi.gama.kernel.simulation.ISimulationAgent;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.GAMA;
@@ -35,6 +35,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
+import com.google.common.collect.Lists;
 
 /**
  * The SpeciesView.
@@ -77,16 +78,16 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 
 	@Override
 	protected Composite createItemContentsFor(final IPopulation species) {
-		Composite compo = new Composite(getViewer(), SWT.NONE);
-		GridLayout layout = new GridLayout(2, false);
+		final Composite compo = new Composite(getViewer(), SWT.NONE);
+		final GridLayout layout = new GridLayout(2, false);
 		layout.verticalSpacing = 0;
 		compo.setLayout(layout);
-		String cat = getItemDisplayName(species, null);
+		final String cat = getItemDisplayName(species, null);
 		// boolean isBuiltIn = Types.isBuiltIn(species.getName());
-		boolean hasParent = species.getSpecies().getParentName() != null;
+		final boolean hasParent = species.getSpecies().getParentName() != null;
 		// boolean hasAgents = species.size() != 0;
-		boolean hasAspects = !species.getAspectNames().isEmpty();
-		boolean hasBehaviors = species.getSpecies().getBehaviors().size() != 0;
+		final boolean hasAspects = !species.getAspectNames().isEmpty();
+		final boolean hasBehaviors = species.getSpecies().getBehaviors().size() != 0;
 
 		if ( !hasParent /* && !hasAgents */&& !hasBehaviors ) { return compo; }
 
@@ -117,8 +118,8 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 
 			});
 		editors.add(agentsEditor);
-		Label label = agentsEditor.getUnitLabel();
-		Composite p = label.getParent();
+		final Label label = agentsEditor.getUnitLabel();
+		final Composite p = label.getParent();
 		label.dispose();
 		final Button button = new Button(p, SWT.FLAT | SWT.PUSH);
 		button.setImage(SwtGui.speciesImage);
@@ -128,14 +129,14 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				Menu old = button.getMenu();
+				final Menu old = button.getMenu();
 				button.setMenu(null);
 				if ( old != null ) {
 					old.dispose();
 				}
 				agentsEditor.updateValue();
 				getViewer().updateItemNames();
-				Menu dropMenu = AgentsMenu.createSpeciesSubMenu(button, species, null);
+				final Menu dropMenu = AgentsMenu.createSpeciesSubMenu(button, species, null);
 				// TODO adapt to multi-scale model
 				button.setMenu(dropMenu);
 				dropMenu.setVisible(true);
@@ -239,12 +240,9 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 
 	@Override
 	public List<IPopulation> getItems() {
-		final ISimulationAgent sim = GAMA.getSimulation();
+		final SimulationAgent sim = GAMA.getSimulation();
 		// List<IPopulation> finalSpeciesList;
-		final List<IPopulation> finalSpeciesList = sim.getMicroPopulations(); // TODO adapt
-																				// to
-																				// multi-scale
-																				// model
+		final List<IPopulation> finalSpeciesList = Lists.newArrayList(sim.getMicroPopulations());
 		Collections.sort(finalSpeciesList);
 		final IPopulation worldSpecies = sim.getPopulation();
 		// final List<IPopulation> builtInSpeciesList = new ArrayList();
@@ -264,7 +262,7 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 	@Override
 	public String getItemDisplayName(final IPopulation obj, final String previousName) {
 		// boolean isBuiltIn = ;
-		int size = obj.size();
+		final int size = obj.size();
 		return "Species" + ItemList.SEPARATION_CODE + ItemList.INFO_CODE + obj.getName() + "" + " - " + size +
 			(size < 2 ? " agent" : " agents");
 
@@ -274,7 +272,7 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 
 	@Override
 	public void updateItemValues() {
-		for ( IParameterEditor ed : editors ) {
+		for ( final IParameterEditor ed : editors ) {
 			ed.updateValue();
 		}
 

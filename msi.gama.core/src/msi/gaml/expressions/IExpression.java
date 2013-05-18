@@ -41,7 +41,7 @@ public interface IExpression extends IGamlDescription {
 
 	/*
 	 * Returns an expression where all the temp variables belonging to the scope passed in parameter
-	 * are replaced by constants representing their value
+	 * are replaced by constants representing their values
 	 */
 	public abstract IExpression resolveAgainst(IScope scope);
 

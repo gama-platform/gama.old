@@ -85,7 +85,6 @@ public class GridLayer extends ImageLayer {
 			}
 		}
 		dg.drawImage(scope, image, null, null, lineColor, null, 0.0, true);
-
 	}
 
 	private IAgent getPlaceAt(final GamaPoint loc) {

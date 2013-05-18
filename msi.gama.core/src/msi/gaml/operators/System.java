@@ -28,7 +28,7 @@ import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaMap;
+import msi.gama.util.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.types.*;
@@ -113,7 +113,7 @@ public class System {
 		IAgent agent = scope.getAgentScope();
 		IDescription d = agent.getSpecies().getDescription();
 		try {
-			IExpression e = GAMA.getExpressionFactory().createExpr(gaml, d);
+			IExpression e = GAML.getExpressionFactory().createExpr(gaml, d);
 			return scope.evaluate(e, agent);
 		} catch (GamaRuntimeException e) {
 			GuiUtils.informConsole("Error in evaluating Gaml code : '" + gaml + "' in " + scope.getAgentScope() +

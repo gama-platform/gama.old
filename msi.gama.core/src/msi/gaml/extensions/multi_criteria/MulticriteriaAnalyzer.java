@@ -38,17 +38,17 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 	@action(name = "weighted_means_DM")
 	@args(names = { "candidates", "criteria" })
 	public Integer WeightedMeansDecisionMaking(final IScope scope) throws GamaRuntimeException {
-		List<List<Double>> cands = scope.getListArg("candidates");
-		List<Map<String, Object>> criteriaMap = scope.getListArg("criteria");
+		final List<List<Double>> cands = scope.getListArg("candidates");
+		final List<Map<String, Object>> criteriaMap = scope.getListArg("criteria");
 		if ( cands == null || cands.isEmpty() ) { return -1;
 
 		}
-		List<String> criteriaStr = new LinkedList<String>();
-		Map<String, Double> weight = new HashMap<String, Double>();
-		for ( Map<String, Object> critMap : criteriaMap ) {
-			String name = (String) critMap.get("name");
+		final List<String> criteriaStr = new LinkedList<String>();
+		final Map<String, Double> weight = new HashMap<String, Double>();
+		for ( final Map<String, Object> critMap : criteriaMap ) {
+			final String name = (String) critMap.get("name");
 			criteriaStr.add(name);
-			Object w = critMap.get("weight");
+			final Object w = critMap.get("weight");
 			if ( w instanceof Integer ) {
 				weight.put(name, ((Integer) w).doubleValue());
 			} else if ( w instanceof Double ) {
@@ -61,10 +61,10 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 		double utilityMax = -1;
 		int indexCand = -1;
 		boolean first = true;
-		for ( List<Double> cand : cands ) {
+		for ( final List<Double> cand : cands ) {
 			int i = 0;
 			double utility = 0;
-			for ( String crit : criteriaStr ) {
+			for ( final String crit : criteriaStr ) {
 				utility += weight.get(crit) * cand.get(i);
 				i++;
 			}
@@ -82,20 +82,20 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 	@action(name = "promethee_DM")
 	@args(names = { "candidates", "criteria" })
 	public Integer PrometheeDecisionMaking(final IScope scope) throws GamaRuntimeException {
-		List<List<Double>> cands = scope.getListArg("candidates");
-		List<Map<String, Object>> criteriaMap = scope.getListArg("criteria");
+		final List<List<Double>> cands = scope.getListArg("candidates");
+		final List<Map<String, Object>> criteriaMap = scope.getListArg("criteria");
 		if ( cands == null || cands.isEmpty() ) { return -1;
 
 		}
 		int cpt = 0;
-		LinkedList<Candidate> candidates = new LinkedList<Candidate>();
-		List<String> criteriaStr = new LinkedList<String>();
-		Map<String, FonctionPreference> fctPrefCrit = new HashMap<String, FonctionPreference>();
-		Map<String, Double> weight = new Hashtable<String, Double>();
-		for ( Map<String, Object> critMap : criteriaMap ) {
-			String name = (String) critMap.get("name");
+		final LinkedList<Candidate> candidates = new LinkedList<Candidate>();
+		final List<String> criteriaStr = new LinkedList<String>();
+		final Map<String, FonctionPreference> fctPrefCrit = new HashMap<String, FonctionPreference>();
+		final Map<String, Double> weight = new Hashtable<String, Double>();
+		for ( final Map<String, Object> critMap : criteriaMap ) {
+			final String name = (String) critMap.get("name");
 			criteriaStr.add(name);
-			Object w = critMap.get("weight");
+			final Object w = critMap.get("weight");
 			if ( w instanceof Integer ) {
 				weight.put(name, ((Integer) w).doubleValue());
 			} else if ( w instanceof Double ) {
@@ -104,13 +104,13 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 				weight.put(name, 1.0);
 			}
 			String typeFct = "type_5";
-			Object typeObj = critMap.get("type");
+			final Object typeObj = critMap.get("type");
 			if ( typeObj != null ) {
 				typeFct = typeObj.toString();
 			}
-			Object q = critMap.get("q");
-			Object p = critMap.get("p");
-			Object s = critMap.get("s");
+			final Object q = critMap.get("q");
+			final Object p = critMap.get("p");
+			final Object s = critMap.get("s");
 			Double pf = 1.0, qf = 0.0, sf = 1.0;
 			if ( q != null ) {
 				if ( q instanceof Double ) {
@@ -141,26 +141,25 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 			}
 
 		}
-		Promethee promethee = new Promethee(criteriaStr);
+		final Promethee promethee = new Promethee(criteriaStr);
 		promethee.setFctPrefCrit(fctPrefCrit);
 		promethee.setPoidsCrit(weight);
 
-		for ( List<Double> cand : cands ) {
-			Map<String, Double> valCriteria = new HashMap<String, Double>();
+		for ( final List<Double> cand : cands ) {
+			final Map<String, Double> valCriteria = new HashMap<String, Double>();
 			int i = 0;
-			for ( String crit : criteriaStr ) {
+			for ( final String crit : criteriaStr ) {
 				valCriteria.put(crit, cand.get(i));
 				i++;
 			}
-			Candidate c = new Candidate(cpt, valCriteria);
+			final Candidate c = new Candidate(cpt, valCriteria);
 			candidates.add(c);
 			cpt++;
 		}
-		LinkedList<Candidate> candsFilter = filtering(candidates, new HashMap<String, Boolean>());
+		final LinkedList<Candidate> candsFilter = filtering(candidates, new HashMap<String, Boolean>());
 		if ( candsFilter.isEmpty() ) { return GAMA.getRandom().between(0, candidates.size() - 1); }
-		if ( candsFilter.size() == 1 ) { return new GamaList<Candidate>(candsFilter).first(scope)
-			.getIndex(); }
-		Candidate decision = promethee.decision(candsFilter);
+		if ( candsFilter.size() == 1 ) { return new GamaList<Candidate>((Iterable) candsFilter).first(scope).getIndex(); }
+		final Candidate decision = promethee.decision(candsFilter);
 		return decision.getIndex();
 
 	}
@@ -168,24 +167,24 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 	@action(name = "electre_DM")
 	@args(names = { "candidates", "criteria", "fuzzy_cut" })
 	public Integer electreDecisionMaking(final IScope scope) throws GamaRuntimeException {
-		List<List<Double>> cands = scope.getListArg("candidates");
-		List<Map<String, Object>> criteriaMap = scope.getListArg("criteria");
+		final List<List<Double>> cands = scope.getListArg("candidates");
+		final List<Map<String, Object>> criteriaMap = scope.getListArg("criteria");
 		Double fuzzyCut = scope.hasArg("fuzzy_cut") ? scope.getFloatArg("fuzzy_cut") : null;
 		if ( fuzzyCut == null ) {
 			fuzzyCut = Double.valueOf(0.7);
 		}
 		if ( cands == null || cands.isEmpty() ) { return -1; }
 		int cpt = 0;
-		List<Candidate> candidates = new GamaList<Candidate>();
-		List<String> criteriaStr = new GamaList<String>();
-		Map<String, Double> weight = new HashMap<String, Double>();
-		Map<String, Double> preference = new HashMap<String, Double>();
-		Map<String, Double> indifference = new HashMap<String, Double>();
-		Map<String, Double> veto = new HashMap<String, Double>();
-		for ( Map<String, Object> critMap : criteriaMap ) {
-			String name = (String) critMap.get("name");
+		final List<Candidate> candidates = new GamaList<Candidate>();
+		final List<String> criteriaStr = new GamaList<String>();
+		final Map<String, Double> weight = new HashMap<String, Double>();
+		final Map<String, Double> preference = new HashMap<String, Double>();
+		final Map<String, Double> indifference = new HashMap<String, Double>();
+		final Map<String, Double> veto = new HashMap<String, Double>();
+		for ( final Map<String, Object> critMap : criteriaMap ) {
+			final String name = (String) critMap.get("name");
 			criteriaStr.add(name);
-			Object w = critMap.get("weight");
+			final Object w = critMap.get("weight");
 			if ( w instanceof Integer ) {
 				weight.put(name, ((Integer) w).doubleValue());
 			} else if ( w instanceof Double ) {
@@ -193,9 +192,9 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 			} else {
 				weight.put(name, 1.0);
 			}
-			Object p = critMap.get("p");
-			Object q = critMap.get("q");
-			Object v = critMap.get("v");
+			final Object p = critMap.get("p");
+			final Object q = critMap.get("q");
+			final Object v = critMap.get("v");
 			Double pf = 0.5, qf = 0.0, vf = 1.0;
 
 			if ( q instanceof Double ) {
@@ -219,27 +218,27 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 			}
 			veto.put(name, vf);
 		}
-		Electre electre = new Electre(criteriaStr);
+		final Electre electre = new Electre(criteriaStr);
 		electre.setPoids(weight);
 		electre.setIndifference(indifference);
 		electre.setPreference(preference);
 		electre.setVeto(veto);
 		electre.setSeuilCoupe(fuzzyCut);
 
-		for ( List<Double> cand : cands ) {
-			Map<String, Double> valCriteria = new HashMap<String, Double>();
+		for ( final List<Double> cand : cands ) {
+			final Map<String, Double> valCriteria = new HashMap<String, Double>();
 			int i = 0;
-			for ( String crit : criteriaStr ) {
+			for ( final String crit : criteriaStr ) {
 				valCriteria.put(crit, cand.get(i));
 				i++;
 			}
-			Candidate c = new Candidate(cpt, valCriteria);
+			final Candidate c = new Candidate(cpt, valCriteria);
 			candidates.add(c);
 			cpt++;
 		}
-		LinkedList<Candidate> candsFilter = filtering(candidates, new HashMap<String, Boolean>());
+		final LinkedList<Candidate> candsFilter = filtering(candidates, new HashMap<String, Boolean>());
 		if ( candsFilter.isEmpty() ) { return GAMA.getRandom().between(0, candidates.size() - 1); }
-		Candidate decision = electre.decision(candsFilter);
+		final Candidate decision = electre.decision(candsFilter);
 		return decision.getIndex();
 
 	}
@@ -247,23 +246,22 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 	@action(name = "evidence_theory_DM")
 	@args(names = { "candidates", "criteria", "simple" })
 	public Integer evidenceTheoryDecisionMaking(final IScope scope) throws GamaRuntimeException {
-		List<List> cands = scope.getListArg("candidates");
-		List<Map<String, Object>> criteriaMap = scope.getListArg("criteria");
+		final List<List> cands = scope.getListArg("candidates");
+		final List<Map<String, Object>> criteriaMap = scope.getListArg("criteria");
 		if ( cands == null || cands.isEmpty() ) { return -1; }
 		int cpt = 0;
 		Boolean simple = scope.getBoolArg("simple");
 		if ( simple == null ) {
 			simple = false;
 		}
-		Map<String, Boolean> maximizeCrit = new HashMap<String, Boolean>();
-		LinkedList<Candidate> candidates = new LinkedList<Candidate>();
-		List<String> criteriaStr = new LinkedList<String>();
-		LinkedList<CritereFonctionsCroyances> criteresFC =
-			new LinkedList<CritereFonctionsCroyances>();
-		for ( Map<String, Object> critMap : criteriaMap ) {
-			String name = (String) critMap.get("name");
+		final Map<String, Boolean> maximizeCrit = new HashMap<String, Boolean>();
+		final LinkedList<Candidate> candidates = new LinkedList<Candidate>();
+		final List<String> criteriaStr = new LinkedList<String>();
+		final LinkedList<CritereFonctionsCroyances> criteresFC = new LinkedList<CritereFonctionsCroyances>();
+		for ( final Map<String, Object> critMap : criteriaMap ) {
+			final String name = (String) critMap.get("name");
 			criteriaStr.add(name);
-			Object s1r = critMap.get("s1");
+			final Object s1r = critMap.get("s1");
 			Double s1 = 0.0, s2 = 1.0, v1Pour = 0.0, v2Pour = 1.0, v1Contre = 0.0, v2Contre = 0.0;
 			if ( s1r != null ) {
 				if ( s1r instanceof Integer ) {
@@ -272,7 +270,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 					s1 = (Double) s1r;
 				}
 			}
-			Object s2r = critMap.get("s2");
+			final Object s2r = critMap.get("s2");
 			if ( s2r != null ) {
 				if ( s2r instanceof Integer ) {
 					s2 = ((Integer) s2r).doubleValue();
@@ -280,7 +278,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 					s2 = (Double) s2r;
 				}
 			}
-			Object v1pr = critMap.get("v1p");
+			final Object v1pr = critMap.get("v1p");
 			if ( v1pr != null ) {
 				if ( v1pr instanceof Integer ) {
 					v1Pour = ((Integer) v1pr).doubleValue();
@@ -288,7 +286,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 					v1Pour = (Double) v1pr;
 				}
 			}
-			Object v2pr = critMap.get("v2p");
+			final Object v2pr = critMap.get("v2p");
 			if ( v2pr != null ) {
 				if ( v2pr instanceof Integer ) {
 					v2Pour = ((Integer) v2pr).doubleValue();
@@ -296,7 +294,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 					v2Pour = (Double) v2pr;
 				}
 			}
-			Object v1cr = critMap.get("v1c");
+			final Object v1cr = critMap.get("v1c");
 			if ( v1cr != null ) {
 				if ( v1cr instanceof Integer ) {
 					v1Contre = ((Integer) v1cr).doubleValue();
@@ -304,7 +302,7 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 					v1Contre = (Double) v1cr;
 				}
 			}
-			Object v2cr = critMap.get("v2c");
+			final Object v2cr = critMap.get("v2c");
 			if ( v2cr != null ) {
 				if ( v2cr instanceof Integer ) {
 					v2Contre = ((Integer) v2cr).doubleValue();
@@ -312,22 +310,22 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 					v2Contre = (Double) v2cr;
 				}
 			}
-			Object max = critMap.get("maximize");
+			final Object max = critMap.get("maximize");
 			if ( max != null && max instanceof Boolean ) {
 				maximizeCrit.put(name, (Boolean) max);
 			}
 			// System.out.println(name + " s1 : " + s1 + " s2: " + s2 + " v1Pour : " + v1Pour +
 			// " v2Pour : " + v2Pour + " v1Contre : " + v1Contre + " v2Contre : " + v2Contre);
-			CritereFonctionsCroyances cfc =
+			final CritereFonctionsCroyances cfc =
 				new CritereFctCroyancesBasique(name, s1, v2Pour, v1Pour, v1Contre, v2Contre, s2);
 			criteresFC.add(cfc);
 		}
-		EvidenceTheory evt = new EvidenceTheory();
-		for ( List cand : cands ) {
-			Map<String, Double> valCriteria = new HashMap<String, Double>();
+		final EvidenceTheory evt = new EvidenceTheory();
+		for ( final List cand : cands ) {
+			final Map<String, Double> valCriteria = new HashMap<String, Double>();
 			int i = 0;
-			for ( String crit : criteriaStr ) {
-				Object val = cand.get(i);
+			for ( final String crit : criteriaStr ) {
+				final Object val = cand.get(i);
 				if ( val instanceof Integer ) {
 					valCriteria.put(crit, ((Integer) val).doubleValue());
 				} else {
@@ -335,17 +333,17 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 				}
 				i++;
 			}
-			Candidate c = new Candidate(cpt, valCriteria);
+			final Candidate c = new Candidate(cpt, valCriteria);
 			candidates.add(c);
 			cpt++;
 		}
 		// System.out.println("candidates : " + candidates.size());
-		LinkedList<Candidate> candsFilter = filtering(candidates, maximizeCrit);
+		final LinkedList<Candidate> candsFilter = filtering(candidates, maximizeCrit);
 		if ( candsFilter.isEmpty() ) { return GAMA.getRandom().between(0, candidates.size() - 1);
 
 		}
 		// System.out.println("candfilter : " + candsFilter);
-		Candidate decision = evt.decision(criteresFC, candsFilter, simple);
+		final Candidate decision = evt.decision(criteresFC, candsFilter, simple);
 		// System.out.println("decision : " + decision.getIndex());
 
 		return decision.getIndex();
@@ -354,11 +352,11 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 
 	private LinkedList<Candidate> filtering(final Collection<Candidate> candidates,
 		final Map<String, Boolean> maximizeCrit) {
-		LinkedList<Candidate> cands = new LinkedList<Candidate>();
-		LinkedList<Map<String, Double>> paretoVals = new LinkedList<Map<String, Double>>();
-		for ( Candidate c1 : candidates ) {
+		final LinkedList<Candidate> cands = new LinkedList<Candidate>();
+		final LinkedList<Map<String, Double>> paretoVals = new LinkedList<Map<String, Double>>();
+		for ( final Candidate c1 : candidates ) {
 			boolean paretoFront = true;
-			for ( Candidate c2 : candidates ) {
+			for ( final Candidate c2 : candidates ) {
 				if ( c1 == c2 ) {
 					continue;
 				}
@@ -375,13 +373,12 @@ public class MulticriteriaAnalyzer extends GamlAgent {
 		return cands;
 	}
 
-	private boolean paretoInf(final Candidate c1, final Candidate c2,
-		final Map<String, Boolean> maximizeCrit) {
+	private boolean paretoInf(final Candidate c1, final Candidate c2, final Map<String, Boolean> maximizeCrit) {
 		int equals = 0;
-		for ( String crit : c1.getValCriteria().keySet() ) {
-			boolean maximize = !maximizeCrit.containsKey(crit) ? true : maximizeCrit.get(crit);
-			double v1 = c1.getValCriteria().get(crit);
-			double v2 = c2.getValCriteria().get(crit);
+		for ( final String crit : c1.getValCriteria().keySet() ) {
+			final boolean maximize = !maximizeCrit.containsKey(crit) ? true : maximizeCrit.get(crit);
+			final double v1 = c1.getValCriteria().get(crit);
+			final double v2 = c2.getValCriteria().get(crit);
 			if ( maximize ) {
 				if ( v1 > v2 ) { return false; }
 			} else {

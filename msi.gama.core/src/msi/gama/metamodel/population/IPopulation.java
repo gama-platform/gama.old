@@ -20,7 +20,7 @@ package msi.gama.metamodel.population;
 
 import java.util.*;
 import msi.gama.common.interfaces.IStepable;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
@@ -120,7 +120,7 @@ public interface IPopulation extends Comparable<IPopulation>, IContainer<Integer
 	 * 
 	 * @return
 	 */
-	public abstract IAgent getHost();
+	public abstract IMacroAgent getHost();
 
 	/**
 	 * @throws GamaRuntimeException

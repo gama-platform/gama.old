@@ -20,9 +20,8 @@ package msi.gama.gui.parameters;
 
 import java.util.ArrayList;
 import msi.gama.common.util.StringUtils;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -297,7 +296,7 @@ public class ListEditorDialog extends Dialog {
 		}
 		tmp.append("]");
 		try {
-			return (GamaList) GAMA.evaluateExpression(tmp.toString(), editor.getAgent());
+			return (GamaList) GAML.evaluateExpression(tmp.toString(), editor.getAgent());
 		} catch (GamaRuntimeException e) {
 			return new GamaList();
 		}

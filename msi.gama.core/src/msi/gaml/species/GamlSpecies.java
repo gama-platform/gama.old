@@ -22,6 +22,7 @@ import java.util.Iterator;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.getter;
@@ -43,11 +44,15 @@ import msi.gaml.types.IType;
  * 
  * @author drogoul
  */
+// TODO Reorganize species with a dedicated GridSpecies
 @symbol(name = { IKeyword.SPECIES, IKeyword.GLOBAL, IKeyword.GRID }, kind = ISymbolKind.SPECIES, with_sequence = true)
 @inside(kinds = { ISymbolKind.MODEL, ISymbolKind.ENVIRONMENT, ISymbolKind.SPECIES })
-@facets(value = { @facet(name = IKeyword.WIDTH, type = IType.INT, optional = true),
+@facets(value = {
+	@facet(name = IKeyword.WIDTH, type = IType.INT, optional = true),
 	@facet(name = IKeyword.HEIGHT, type = IType.INT, optional = true),
 	@facet(name = IKeyword.NEIGHBOURS, type = IType.INT, optional = true),
+	@facet(name = "use_individual_shapes", type = IType.BOOL, optional = true, doc = { @doc(value = "Allows to specify whether or not the agents of the grid will have distinct geometries. If set to false, they will all have simpler proxy geometries", see = "use_regular_agents", comment = "This facet, when set to true, allows to save memory by generating only one reference geometry and proxy geometries for the agents") }),
+	@facet(name = "use_regular_agents", type = IType.BOOL, optional = true, doc = { @doc(value = "Allows to specify if the agents of the grid are regular agents (like those of any other species) or minimal ones (which can't have sub-populations, can't inherit from a regular species, etc.)") }),
 	@facet(name = IKeyword.FILE, type = IType.FILE, optional = true),
 	@facet(name = IKeyword.TORUS, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = false),
@@ -61,8 +66,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.SCHEDULES, type = IType.CONTAINER, optional = true),
 	@facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY, optional = true) }, omissible = IKeyword.NAME)
 @vars({ @var(name = IKeyword.NAME, type = IType.STRING) })
-// FIXME Build a list of control architectures dynamically at startup and populate the values
-// attribute
+// TODO Build a list of control architectures dynamically at startup and populate the values attribute
 public class GamlSpecies extends AbstractSpecies {
 
 	public GamlSpecies(final IDescription desc) {
@@ -146,13 +150,14 @@ public class GamlSpecies extends AbstractSpecies {
 	}
 
 	@Override
-	public void add(IScope scope, final Integer index, final Object value, final Object param, boolean all, boolean add)
-		throws GamaRuntimeException {
+	public void add(final IScope scope, final Integer index, final Object value, final Object param, final boolean all,
+		final boolean add) throws GamaRuntimeException {
 		// NOT ALLOWED
 	}
 
 	@Override
-	public void remove(IScope scope, Object index, final Object value, boolean all) throws GamaRuntimeException {
+	public void remove(final IScope scope, final Object index, final Object value, final boolean all)
+		throws GamaRuntimeException {
 		// NOT ALLOWED
 	}
 
@@ -168,9 +173,9 @@ public class GamlSpecies extends AbstractSpecies {
 
 	@Override
 	public Iterator<IAgent> iterator() {
-		IScope scope = GAMA.obtainNewScope();
+		final IScope scope = GAMA.obtainNewScope();
 		if ( scope == null ) { return GamaList.EMPTY_LIST.iterator(); }
-		Iterator<IAgent> result = scope.getSimulationScope().getPopulationFor(this).iterator();
+		final Iterator<IAgent> result = scope.getSimulationScope().getPopulationFor(this).iterator();
 		GAMA.releaseScope(scope);
 		return result;
 	}

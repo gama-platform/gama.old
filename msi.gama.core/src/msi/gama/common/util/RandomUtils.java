@@ -1,5 +1,5 @@
 /*
- * GAMA - V1.4  http://gama-platform.googlecode.com
+ * GAMA - V1.4 http://gama-platform.googlecode.com
  * 
  * (c) 2007-2011 UMI 209 UMMISCO IRD/UPMC & Partners (see below)
  * 
@@ -7,7 +7,7 @@
  * 
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
- * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen  (Batch, GeoTools & JTS), 2009-2012
+ * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
  * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
@@ -53,8 +53,8 @@ public class RandomUtils implements SeedGenerator {
 		uniform = createUniform(0., 1.);
 	}
 
-	public static final List<String> GENERATOR_NAMES = Arrays.asList(IKeyword.CELLULAR,
-		IKeyword.XOR, IKeyword.JAVA, IKeyword.MERSENNE);
+	public static final List<String> GENERATOR_NAMES = Arrays.asList(IKeyword.CELLULAR, IKeyword.XOR, IKeyword.JAVA,
+		IKeyword.MERSENNE);
 
 	/**
 	 * Inits the generator.
@@ -70,7 +70,7 @@ public class RandomUtils implements SeedGenerator {
 			} else if ( generatorName.equals(IKeyword.MERSENNE) ) {
 				generator = createMersenneTwisterGenerator();
 			}
-		} catch (SeedException e) {
+		} catch (final SeedException e) {
 			generator = new Random();
 		}
 	}
@@ -179,7 +179,7 @@ public class RandomUtils implements SeedGenerator {
 
 	private static byte[] create8BytesSeed(final long seed) {
 		long l = seed;
-		byte[] retVal = new byte[8];
+		final byte[] retVal = new byte[8];
 
 		for ( int i = 0; i < 8; i++ ) {
 			retVal[i] = (byte) l;
@@ -248,7 +248,7 @@ public class RandomUtils implements SeedGenerator {
 		if ( seed == null ) { return DefaultSeedGenerator.getInstance().generateSeed(length); }
 		try {
 			result = createSeed(seed, length);
-		} catch (SeedException e) {
+		} catch (final SeedException e) {
 			result = DefaultSeedGenerator.getInstance().generateSeed(length);
 		}
 		return result;
@@ -261,7 +261,7 @@ public class RandomUtils implements SeedGenerator {
 	 */
 	public void setSeed(final Long newSeed) {
 		// GUI.debug("New seed for RandomAgent: " + newSeed);
-		Long oldSeed = seed;
+		final Long oldSeed = seed;
 		seed = newSeed == null || newSeed.equals(0L) ? seed : newSeed;
 		if ( seed == null || !seed.equals(oldSeed) ) {
 			initGenerator();
@@ -290,8 +290,8 @@ public class RandomUtils implements SeedGenerator {
 	}
 
 	public long getSeed() {
-		if ( seed == null ) { return BinaryUtils.convertBytesToLong(DefaultSeedGenerator
-			.getInstance().generateSeed(8), 0); }
+		if ( seed == null ) { return BinaryUtils.convertBytesToLong(DefaultSeedGenerator.getInstance().generateSeed(8),
+			0); }
 		return seed;
 	}
 
@@ -303,24 +303,29 @@ public class RandomUtils implements SeedGenerator {
 		return generator;
 	}
 
-	public void shuffle(final List list) {
+	public List shuffle(final List list) {
 		for ( int i = list.size(); i > 1; i-- ) {
-			swap(list, i - 1, between(0, i - 1));
+			final int i1 = i - 1;
+			final int j = between(0, i - 1);
+			final Object tmp = list.get(i1);
+			list.set(i1, list.get(j));
+			list.set(j, tmp);
 		}
+		return list;
 	}
 
 	public String shuffle(final String string) {
-		char[] c = string.toCharArray();
+		final char[] c = string.toCharArray();
 		shuffle(c);
 		return String.copyValueOf(c);
 	}
 
 	public <T> T[] shuffle(final T[] array) {
-		T[] copy = array.clone();
+		final T[] copy = array.clone();
 		for ( int i = array.length; i > 1; i-- ) {
-			int i1 = i - 1;
-			int j = between(0, i - 1);
-			T tmp = copy[i1];
+			final int i1 = i - 1;
+			final int j = between(0, i - 1);
+			final T tmp = copy[i1];
 			copy[i1] = copy[j];
 			copy[j] = tmp;
 		}
@@ -343,21 +348,15 @@ public class RandomUtils implements SeedGenerator {
 		return uniform.nextValue();
 	}
 
-	private static void swap(final List list, final int i, final int j) {
-		Object tmp = list.get(i);
-		list.set(i, list.get(j));
-		list.set(j, tmp);
-	}
-
 	/**
 	 * @param matrix
 	 * @return
 	 */
 	public double[] shuffle(final double[] array) {
 		for ( int i = array.length; i > 1; i-- ) {
-			int i1 = i - 1;
-			int j = between(0, i - 1);
-			double tmp = array[i1];
+			final int i1 = i - 1;
+			final int j = between(0, i - 1);
+			final double tmp = array[i1];
 			array[i1] = array[j];
 			array[j] = tmp;
 		}
@@ -366,9 +365,9 @@ public class RandomUtils implements SeedGenerator {
 
 	public int[] shuffle(final int[] array) {
 		for ( int i = array.length; i > 1; i-- ) {
-			int i1 = i - 1;
-			int j = between(0, i - 1);
-			int tmp = array[i1];
+			final int i1 = i - 1;
+			final int j = between(0, i - 1);
+			final int tmp = array[i1];
 			array[i1] = array[j];
 			array[j] = tmp;
 		}
@@ -377,9 +376,9 @@ public class RandomUtils implements SeedGenerator {
 
 	public char[] shuffle(final char[] array) {
 		for ( int i = array.length; i > 1; i-- ) {
-			int i1 = i - 1;
-			int j = between(0, i - 1);
-			char tmp = array[i1];
+			final int i1 = i - 1;
+			final int j = between(0, i - 1);
+			final char tmp = array[i1];
 			array[i1] = array[j];
 			array[j] = tmp;
 		}

@@ -30,7 +30,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
 /**
@@ -62,7 +61,7 @@ public class IfStatement extends AbstractStatementSequence {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
-		for ( ISymbol c : commands ) {
+		for ( final ISymbol c : commands ) {
 			if ( c instanceof ElseStatement ) {
 				alt = (IStatement) c;
 			}
@@ -72,8 +71,7 @@ public class IfStatement extends AbstractStatementSequence {
 	}
 
 	@Override
-	public Object privateExecuteIn(final IScope stack) throws GamaRuntimeException {
-		return Cast.asBool(stack, cond.value(stack)) ? super.privateExecuteIn(stack) : alt != null
-			? alt.executeOn(stack) : null;
+	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		return (Boolean) cond.value(scope) ? super.privateExecuteIn(scope) : alt != null ? alt.executeOn(scope) : null;
 	}
 }

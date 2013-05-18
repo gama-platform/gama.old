@@ -28,6 +28,8 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.path.*;
 import msi.gaml.operators.Maths;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterators;
 
 /**
  * The class GraphTopology.
@@ -68,7 +70,7 @@ public class GraphTopology extends AbstractTopology {
 
 		IShape edgeS = null, edgeT = null;
 
-		IAgentFilter filter = In.edgesOf(getPlaces());
+		final IAgentFilter filter = In.edgesOf(getPlaces());
 
 		edgeS =
 			source instanceof ILocation ? getAgentClosestTo((ILocation) source, filter) : getAgentClosestTo(source,
@@ -110,17 +112,17 @@ public class GraphTopology extends AbstractTopology {
 				source.getLocation()) ) {
 			nodeS = s2;
 		}
-		IList<IShape> edges = getPlaces().computeBestRouteBetween(nodeS, nodeT);
+		final IList<IShape> edges = getPlaces().computeBestRouteBetween(nodeS, nodeT);
 
 		if ( edges.isEmpty() || edges.get(0) == null ) { return null; }
-		HashSet edgesSetInit = new HashSet(Arrays.asList(edges.get(0).getInnerGeometry().getCoordinates()));
-		HashSet edgesSetS = new HashSet(Arrays.asList(edgeS.getInnerGeometry().getCoordinates()));
+		final HashSet edgesSetInit = new HashSet(Arrays.asList(edges.get(0).getInnerGeometry().getCoordinates()));
+		final HashSet edgesSetS = new HashSet(Arrays.asList(edgeS.getInnerGeometry().getCoordinates()));
 		if ( !edgesSetS.equals(edgesSetInit) ) {
 			edges.add(0, edgeS);
 		}
-		HashSet edgesSetEnd =
+		final HashSet edgesSetEnd =
 			new HashSet(Arrays.asList(edges.get(edges.size() - 1).getInnerGeometry().getCoordinates()));
-		HashSet edgesSetT = new HashSet(Arrays.asList(edgeT.getInnerGeometry().getCoordinates()));
+		final HashSet edgesSetT = new HashSet(Arrays.asList(edgeT.getInnerGeometry().getCoordinates()));
 
 		if ( !edgesSetT.equals(edgesSetEnd) ) {
 			edges.add(edgeT);
@@ -130,15 +132,15 @@ public class GraphTopology extends AbstractTopology {
 	}
 
 	@Override
-	public GamaSpatialPath pathBetween(IScope scope, final ILocation source, final ILocation target) {
+	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target) {
 		IShape edgeS = null, edgeT = null;
 		if ( !this.getPlaces().getEdges().isEmpty() ) {
 			if ( this.getPlaces() instanceof GamaSpatialGraph && !((GamaSpatialGraph) this.getPlaces()).isAgentEdge() ) {
 				double distMinT = Double.MAX_VALUE;
 				double distMinS = Double.MAX_VALUE;
-				for ( IShape shp : this.getPlaces().getEdges() ) {
-					double distS = shp.euclidianDistanceTo(source);
-					double distT = shp.euclidianDistanceTo(target);
+				for ( final IShape shp : this.getPlaces().getEdges() ) {
+					final double distS = shp.euclidianDistanceTo(source);
+					final double distT = shp.euclidianDistanceTo(target);
 					if ( distS < distMinS ) {
 						distMinS = distS;
 						edgeS = shp;
@@ -149,7 +151,7 @@ public class GraphTopology extends AbstractTopology {
 					}
 				}
 			} else {
-				IAgentFilter filter = In.edgesOf(getPlaces());
+				final IAgentFilter filter = In.edgesOf(getPlaces());
 				edgeS = getAgentClosestTo(source, filter);
 				edgeT = getAgentClosestTo(target, filter);
 			}
@@ -161,7 +163,7 @@ public class GraphTopology extends AbstractTopology {
 	 * @see msi.gama.interfaces.IValue#stringValue()
 	 */
 	@Override
-	public String stringValue(IScope scope) throws GamaRuntimeException {
+	public String stringValue(final IScope scope) throws GamaRuntimeException {
 		return "GraphTopology";
 	}
 
@@ -177,7 +179,7 @@ public class GraphTopology extends AbstractTopology {
 	 * @see msi.gama.environment.AbstractTopology#_copy()
 	 */
 	@Override
-	protected ITopology _copy(IScope scope) {
+	protected ITopology _copy(final IScope scope) {
 		return new GraphTopology(scope, environment, (GamaSpatialGraph) places);
 	}
 
@@ -204,7 +206,7 @@ public class GraphTopology extends AbstractTopology {
 	@Override
 	public boolean isValidGeometry(final IShape g) {
 		// Geometry g2 = g.getInnerGeometry();
-		for ( IShape g1 : places ) {
+		for ( final IShape g1 : places ) {
 			if ( g1.intersects(g) ) { return true; }
 			// TODO covers or intersects ?
 		}
@@ -217,15 +219,15 @@ public class GraphTopology extends AbstractTopology {
 	 *      java.lang.Double)
 	 */
 	@Override
-	public Double distanceBetween(IScope scope, final IShape source, final IShape target) {
-		GamaSpatialPath path = this.pathBetween(scope, source, target);
+	public Double distanceBetween(final IScope scope, final IShape source, final IShape target) {
+		final GamaSpatialPath path = this.pathBetween(scope, source, target);
 		if ( path == null ) { return Double.MAX_VALUE; }
 		return path.getDistance(scope);
 	}
 
 	@Override
-	public Double distanceBetween(IScope scope, final ILocation source, final ILocation target) {
-		GamaSpatialPath path = this.pathBetween(scope, source, target);
+	public Double distanceBetween(final IScope scope, final ILocation source, final ILocation target) {
+		final GamaSpatialPath path = this.pathBetween(scope, source, target);
 		if ( path == null ) { return Double.MAX_VALUE; }
 		return path.getDistance(scope);
 	}
@@ -236,8 +238,8 @@ public class GraphTopology extends AbstractTopology {
 	 *      msi.gama.interfaces.IGeometry)
 	 */
 	@Override
-	public Integer directionInDegreesTo(IScope scope, final IShape source, final IShape target) {
-		GamaSpatialPath path = this.pathBetween(scope, source, target);
+	public Integer directionInDegreesTo(final IScope scope, final IShape source, final IShape target) {
+		final GamaSpatialPath path = this.pathBetween(scope, source, target);
 		if ( path == null ) { return null; }
 		// LineString ls = (LineString) path.getEdgeList().first().getInnerGeometry();
 		// TODO Check this
@@ -252,15 +254,14 @@ public class GraphTopology extends AbstractTopology {
 	 *      boolean)
 	 */
 	@Override
-	public IList<IAgent> getAgentsIn(final IShape source, final IAgentFilter f, final boolean covered) {
-		List<IAgent> agents = super.getAgentsIn(source, f, covered);
-		GamaList<IAgent> result = new GamaList<IAgent>();
-		for ( IAgent ag : agents ) {
-			if ( !ag.dead() && isValidGeometry(ag) ) {
-				result.add(ag);
+	public Iterator<IAgent> getAgentsIn(final IShape source, final IAgentFilter f, final boolean covered) {
+		return Iterators.filter(super.getAgentsIn(source, f, covered), new Predicate<IAgent>() {
+
+			@Override
+			public boolean apply(final IAgent ag) {
+				return !ag.dead() && isValidGeometry(ag);
 			}
-		}
-		return result;
+		});
 	}
 
 	@Override

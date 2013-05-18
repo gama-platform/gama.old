@@ -19,68 +19,62 @@
 package msi.gama.util.path;
 
 import java.util.*;
-
-import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.metamodel.topology.graph.*;
-import msi.gama.runtime.*;
+import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
-import msi.gama.util.IList;
+import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
-import msi.gaml.operators.*;
+import msi.gaml.operators.Cast;
 import org.jgrapht.*;
-import org.jgrapht.Graphs;
 
 // Si construit à partir d'une liste de points, crée la géométrie correspondante
 // Si construit à partir d'un graphe spatial, crée la géométrie à partir des edges passés.
 // Si
 
-public class GamaPath<V,E> implements GraphPath<V,E>, IPath<V,E> {
+public class GamaPath<V, E> implements GraphPath<V, E>, IPath<V, E> {
 
 	V source, target;
 	GamaList<E> edges;
 
 	// The graph attribute is override in GamaSpatialPath by a GamaSpatialGraph
-	IGraph<V,E> graph;
+	IGraph<V, E> graph;
 	int graphVersion;
 
 	// FIXME virer le constructeur par défaut... used for the inheritance...
-	public GamaPath(){}
+	public GamaPath() {}
 
-	public GamaPath(final IGraph<V,E> g, final V start, final V target,
-		final IList<E> _edges) {
+	public GamaPath(final IGraph<V, E> g, final V start, final V target, final IList<E> _edges) {
 		init(g, start, target, _edges, true);
 		this.graph = g;
 	}
 
-	public GamaPath(final IGraph<V,E> g, final V start, final V target,
-		final IList<E> _edges, final boolean modify_edges) {
+	public GamaPath(final IGraph<V, E> g, final V start, final V target, final IList<E> _edges,
+		final boolean modify_edges) {
 		init(g, start, target, _edges, modify_edges);
 		this.graph = g;
 	}
 
-	public void init(final IGraph<V,E> g, final V start, final V target,
-		final IList<E> _edges, final boolean modify_edges) {
+	public void init(final IGraph<V, E> g, final V start, final V target, final IList<E> _edges,
+		final boolean modify_edges) {
 		this.source = start;
 		this.target = target;
 		this.edges = new GamaList<E>();
 		graphVersion = 0;
-		
-		if(_edges != null && _edges.size() > 0){
-			for(E edge : _edges){
+
+		if ( _edges != null && _edges.size() > 0 ) {
+			for ( final E edge : _edges ) {
 				edges.add(edge);
 			}
-		}			
+		}
 	}
 
-	public GamaPath(final IGraph<V,E> g, final List<V> nodes) {
-		if(!(g instanceof GamaSpatialGraph) && nodes.isEmpty()){
+	public GamaPath(final IGraph<V, E> g, final List<V> nodes) {
+		if ( !(g instanceof GamaSpatialGraph) && nodes.isEmpty() ) {
 			throw new ClassCastException("We cannot create an empty path in a non-spatial graph");
-		}
-		else if ( nodes.isEmpty() ) {
+		} else if ( nodes.isEmpty() ) {
 			source = null;
 			target = null;
 		} else {
@@ -89,17 +83,17 @@ public class GamaPath<V,E> implements GraphPath<V,E>, IPath<V,E> {
 		}
 		edges = new GamaList<E>();
 
-		for(int i = 0, n = nodes.size(); i < n -1; i ++){
-			edges.add(g.getEdge(nodes.get(i), nodes.get(i+1)));
+		for ( int i = 0, n = nodes.size(); i < n - 1; i++ ) {
+			edges.add(g.getEdge(nodes.get(i), nodes.get(i + 1)));
 		}
 		graph = g;
 	}
 
-	///////////////////////////////////////////////////
+	// /////////////////////////////////////////////////
 	// Implements methods from GraphPath
-	
+
 	@Override
-	public IGraph<V,E> getGraph() {
+	public IGraph<V, E> getGraph() {
 		return graph;
 	}
 
@@ -120,42 +114,41 @@ public class GamaPath<V,E> implements GraphPath<V,E>, IPath<V,E> {
 
 	@Override
 	public double getWeight() {
-		IGraph<V,E> graph = getGraph();
+		final IGraph<V, E> graph = getGraph();
 		if ( graph == null ) { return 0.0; }
 		return graph.computeWeight(this);
-	}	
+	}
 
-	///////////////////////////////////////////////////
+	// /////////////////////////////////////////////////
 	// Implements methods from IValue
-	
+
 	@Override
-	public String stringValue(IScope scope) {
+	public String stringValue(final IScope scope) {
 		return toGaml();
 	}
-	
+
 	@Override
-	public GamaPath<V,E> copy(IScope scope) {
-		return new GamaPath<V,E>(graph, source, target, edges);
+	public GamaPath<V, E> copy(final IScope scope) {
+		return new GamaPath<V, E>(graph, source, target, edges);
 	}
-	
-	///////////////////////////////////////////////////
+
+	// /////////////////////////////////////////////////
 	// Implements methods from IPath
-	
-//	@Override
-//	public IList<IShape> getAgentList() {
-//		GamaList<IShape> ags = new GamaList<IShape>();
-//		ags.addAll(new HashSet<IShape>(realObjects.values()));
-//		return ags;
-//	}
+
+	// @Override
+	// public IList<IShape> getAgentList() {
+	// GamaList<IShape> ags = new GamaList<IShape>();
+	// ags.addAll(new HashSet<IShape>(realObjects.values()));
+	// return ags;
+	// }
 
 	@Override
 	public IList<V> getVertexList() {
-		return new GamaList<V>(Graphs.getPathVertexList(this));
+		return new GamaList<V>((Collection) Graphs.getPathVertexList(this));
 		// return getPoints();
 	}
-	
-	
-	// TODO  :to check 
+
+	// TODO :to check
 	@Override
 	public double getWeight(final IShape line) throws GamaRuntimeException {
 		return line.getGeometry().getPerimeter(); // workaround for the moment
@@ -168,24 +161,24 @@ public class GamaPath<V,E> implements GraphPath<V,E>, IPath<V,E> {
 	 * geometry can be cached.
 	 */
 	// FIXME BEN
-//	private void computeGeometry() {
-//		if ( super.getInnerGeometry() == null ) {
-//			try {
-//				setGeometry(GamaGeometryType.geometriesToGeometry(null, segments)); // Verify null
-//																					// parameter
-//			} catch (GamaRuntimeException e) {
-//				GAMA.reportError(e);
-//				e.printStackTrace();
-//			}
-//			// Faire une methode geometriesToPolyline ? linesToPolyline ?
-//		}
-//	}
+	// private void computeGeometry() {
+	// if ( super.getInnerGeometry() == null ) {
+	// try {
+	// setGeometry(GamaGeometryType.geometriesToGeometry(null, segments)); // Verify null
+	// // parameter
+	// } catch (GamaRuntimeException e) {
+	// GAMA.reportError(e);
+	// e.printStackTrace();
+	// }
+	// // Faire une methode geometriesToPolyline ? linesToPolyline ?
+	// }
+	// }
 
 	@Override
 	public String toString() {
 		return "path between " + getStartVertex().toString() + " and " + getEndVertex().toString();
 	}
-	
+
 	@Override
 	// FIXME
 	public void acceptVisitor(final IAgent agent) {
@@ -240,23 +233,25 @@ public class GamaPath<V,E> implements GraphPath<V,E>, IPath<V,E> {
 
 	@Override
 	// FIXME est-ce pertinent ?
-	public double getDistance(IScope scope) {
+	public double getDistance(final IScope scope) {
 		if ( getEdgeList() == null || getEdgeList().isEmpty() ) { return Double.MAX_VALUE; }
 		return getWeight();
 	}
-	
+
 	@Override
 	public ITopology getTopology() {
-		return (graph instanceof GamaSpatialGraph) ? ((GamaSpatialGraph) graph).getTopology() : null;
+		return graph instanceof GamaSpatialGraph ? ((GamaSpatialGraph) graph).getTopology() : null;
 	}
 
 	@Override
-	public void setRealObjects(final Map<IShape,IShape> realObjects) {;}
+	public void setRealObjects(final Map<IShape, IShape> realObjects) {
+		;
+	}
 
 	@Override
 	public IShape getRealObject(final Object obj) {
 		return null;
-	}	
+	}
 
 	@Override
 	public void setSource(final V source) {

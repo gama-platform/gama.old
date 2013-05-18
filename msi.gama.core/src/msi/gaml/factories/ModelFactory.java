@@ -24,7 +24,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.GAMA;
+import msi.gama.util.GAML;
 import msi.gaml.compilation.SyntacticElement;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
@@ -253,7 +253,7 @@ public class ModelFactory extends SymbolFactory {
 			VariableDescription vd = model.getVariable(SHAPE);
 			if ( !vd.getFacets().containsKey(INIT) ) {
 				Facets f = new Facets(NAME, SHAPE);
-				f.put(INIT, GAMA.getExpressionFactory().createOperator("envelope", model, new ConstantExpression(100)));
+				f.put(INIT, GAML.getExpressionFactory().createOperator("envelope", model, new ConstantExpression(100)));
 				ISyntacticElement shape = new SyntacticElement(IKeyword.GEOMETRY, f);
 				vd = (VariableDescription) create(shape, model);
 				model.addChild(vd);

@@ -1,7 +1,7 @@
 package msi.gaml.descriptions;
 
 import msi.gama.common.util.GuiUtils;
-import msi.gama.runtime.GAMA;
+import msi.gama.util.GAML;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.*;
 
@@ -12,7 +12,7 @@ public class ConstantExpressionDescription extends BasicExpressionDescription {
 	}
 
 	private ConstantExpressionDescription(Object object, IType type) {
-		super(GAMA.getExpressionFactory().createConst(object, type));
+		super(GAML.getExpressionFactory().createConst(object, type));
 	}
 
 	@Override

@@ -30,6 +30,7 @@ import msi.gama.util.matrix.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
+
 /**
  * The Class GamaMap.
  */
@@ -52,7 +53,7 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, 
 	private static final GamaMap.ToReverseProcedure toReverseProcedure = new ToReverseProcedure();
 
 	public static GamaMap with(final IList keys, final IList values) {
-		GamaMap result = new GamaMap(keys.size());
+		final GamaMap result = new GamaMap(keys.size());
 		for ( int i = 0, n = keys.size(); i < n; i++ ) {
 			result.put(keys.get(i), values.get(i));
 		}
@@ -72,14 +73,14 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, 
 
 	@Override
 	public GamaList<V> listValue(final IScope scope) {
-		GamaList<V> list = new GamaList(values());
+		final GamaList<V> list = new GamaList(values());
 		return list;
 	}
 
 	@Override
 	public IMatrix matrixValue(final IScope scope) throws GamaRuntimeException {
 		toMatrixProcedure.init(scope, size());
-		for ( Map.Entry entry : entrySet() ) {
+		for ( final Map.Entry entry : entrySet() ) {
 			toMatrixProcedure.execute(scope, entry.getKey(), entry.getValue());
 		}
 		return toMatrixProcedure.matrix;
@@ -91,9 +92,9 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, 
 	}
 
 	@Override
-	public String stringValue(IScope scope) {
+	public String stringValue(final IScope scope) {
 		toStringProcedure.string = "";
-		for ( Map.Entry<K, V> entry : entrySet() ) {
+		for ( final Map.Entry<K, V> entry : entrySet() ) {
 			toStringProcedure.execute(entry.getKey(), entry.getValue());
 		}
 		return toStringProcedure.string;
@@ -127,35 +128,36 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, 
 	@Override
 	public V any(final IScope scope) {
 		if ( isEmpty() ) { return null; }
-		V[] array = (V[]) values().toArray();
-		int i = GAMA.getRandom().between(0, array.length - 1);
+		final V[] array = (V[]) values().toArray();
+		final int i = GAMA.getRandom().between(0, array.length - 1);
 		return array[i];
 	}
 
 	@Override
-	public void add(IScope scope, final K index, final Object value, final Object param, boolean all, boolean add) {
+	public void add(final IScope scope, final K index, final Object value, final Object param, final boolean all,
+		final boolean add) {
 		if ( index == null ) {
 			if ( all ) {
 				if ( value instanceof GamaMap ) {
 					putAll((GamaMap) value);
 				} else if ( value instanceof IContainer ) {
-					for ( Object o : (IContainer) value ) {
+					for ( final Object o : (IContainer) value ) {
 						add(scope, null, o, null, false, false);
 					}
 				} else {
-					for ( Map.Entry e : entrySet() ) {
+					for ( final Map.Entry e : entrySet() ) {
 						e.setValue(value);
 					}
 				}
 			} else {
 				if ( value instanceof GamaPair ) {
-					GamaPair<K, V> p = (GamaPair) value;
+					final GamaPair<K, V> p = (GamaPair) value;
 					// TODO Check type with class cast exception ?
 					put(p.getKey(), p.getValue());
 				} else if ( value instanceof GamaMap ) {
 					putAll((GamaMap) value);
 				} else {
-					GamaPair<K, V> p = Cast.asPair(scope, value);
+					final GamaPair<K, V> p = Cast.asPair(scope, value);
 					put(p.getKey(), p.getValue());
 				}
 			}
@@ -166,11 +168,11 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, 
 	}
 
 	@Override
-	public void remove(IScope scope, Object index, Object value, boolean all) {
+	public void remove(final IScope scope, final Object index, final Object value, final boolean all) {
 		if ( index == null ) {
 			if ( all ) {
 				if ( value instanceof IContainer ) {
-					for ( Object obj : (IContainer) value ) {
+					for ( final Object obj : (IContainer) value ) {
 						remove(scope, null, obj, true);
 					}
 				} else if ( value != null ) {
@@ -188,15 +190,15 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, 
 
 	@Override
 	public V first(final IScope scope) {
-		Iterator<Map.Entry<K, V>> it = entrySet().iterator();
-		Map.Entry<K, V> entry = it.hasNext() ? it.next() : null;
+		final Iterator<Map.Entry<K, V>> it = entrySet().iterator();
+		final Map.Entry<K, V> entry = it.hasNext() ? it.next() : null;
 		return entry == null ? null : entry.getValue();
 	}
 
-	public GamaPair getAtIndex(Integer index) {
+	public GamaPair getAtIndex(final Integer index) {
 		if ( index >= size() ) { return null; }
-		List<Map.Entry<Object, Object>> list = new GamaList(entrySet());
-		Map.Entry entry = list.get(index);
+		final List<Map.Entry<Object, Object>> list = new GamaList(entrySet());
+		final Map.Entry entry = list.get(index);
 		return entry == null ? null : new GamaPair(entry.getKey(), entry.getValue());
 
 	}
@@ -204,8 +206,8 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, 
 	@Override
 	public V last(final IScope scope) {
 		if ( size() == 0 ) { return null; }
-		List<Map.Entry<K, V>> list = new GamaList(entrySet());
-		Map.Entry<K, V> entry = list.get(list.size() - 1);
+		final List<Map.Entry<K, V>> list = new GamaList(entrySet());
+		final Map.Entry<K, V> entry = list.get(list.size() - 1);
 		return entry == null ? null : entry.getValue();
 	}
 
@@ -265,14 +267,14 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, 
 		public IMatrix matrix;
 		private int i;
 
-		public boolean execute(IScope scope, final Object a, final Object b) throws GamaRuntimeException {
+		public boolean execute(final IScope scope, final Object a, final Object b) throws GamaRuntimeException {
 			matrix.set(scope, 0, i, a);
 			matrix.set(scope, 1, i, b);
 			i++;
 			return true;
 		}
 
-		public void init(IScope scope, final int size) {
+		public void init(final IScope scope, final int size) {
 			matrix = new GamaObjectMatrix(scope, 2, size);
 			i = 0;
 		}
@@ -285,7 +287,7 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, 
 
 		public boolean execute(final Object a, final Object b) {
 
-			StringBuilder res = new StringBuilder(50);
+			final StringBuilder res = new StringBuilder(50);
 			res.append(string);
 			res.append(a);
 			res.append(',');
@@ -300,7 +302,7 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, 
 	@Override
 	public IContainer reverse(final IScope scope) {
 		toReverseProcedure.init(size());
-		for ( Map.Entry<K, V> entry : entrySet() ) {
+		for ( final Map.Entry<K, V> entry : entrySet() ) {
 			toReverseProcedure.execute(entry.getKey(), entry.getValue());
 		}
 		return toReverseProcedure.map;
@@ -320,16 +322,16 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, 
 	public IList getPairs() {
 		// FIXME: in the future, this method will be directly operating upon the entry set (so as to
 		// avoir duplications). See GamaPair
-		GamaPairList pairs = new GamaPairList();
-		for ( Map.Entry<K, V> entry : entrySet() ) {
+		final GamaPairList pairs = new GamaPairList();
+		for ( final Map.Entry<K, V> entry : entrySet() ) {
 			pairs.add(new GamaPair(entry));
 		}
 		return pairs;
 	}
 
 	@Override
-	public GamaMap copy(IScope scope) {
-		GamaMap result = new GamaMap(this);
+	public GamaMap copy(final IScope scope) {
+		final GamaMap result = new GamaMap(this);
 		return result;
 	}
 
@@ -378,7 +380,7 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, 
 
 	@Override
 	public Iterable<V> iterable(final IScope scope) {
-		return listValue(scope);
+		return (listValue(scope));
 	}
 
 	@Override

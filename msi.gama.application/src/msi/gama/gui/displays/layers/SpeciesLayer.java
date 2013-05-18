@@ -22,7 +22,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.parameters.EditorFactory;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.*;
@@ -57,8 +57,8 @@ public class SpeciesLayer extends AgentLayer {
 
 	@Override
 	public Set<IAgent> getAgentsForMenu() {
-		IScope scope = GAMA.obtainNewScope();
-		Set<IAgent> result =
+		final IScope scope = GAMA.obtainNewScope();
+		final Set<IAgent> result =
 			new HashSet(scope.getSimulationScope()
 				.getMicroPopulation(((SpeciesLayerStatement) definition).getSpecies()).getAgentsList());
 		GAMA.releaseScope(scope);
@@ -75,12 +75,12 @@ public class SpeciesLayer extends AgentLayer {
 	}
 
 	@Override
-	public void privateDrawDisplay(IScope scope, final IGraphics g) throws GamaRuntimeException {
+	public void privateDrawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {
 		shapes.clear();
-		ISpecies species = ((SpeciesLayerStatement) definition).getSpecies();
-		IAgent world = scope.getSimulationScope();
+		final ISpecies species = ((SpeciesLayerStatement) definition).getSpecies();
+		final IMacroAgent world = scope.getSimulationScope();
 		if ( !world.dead() ) {
-			IPopulation microPop = world.getMicroPopulation(species);
+			final IPopulation microPop = world.getMicroPopulation(species);
 			if ( microPop != null ) {
 				drawPopulation(scope, g, world, (SpeciesLayerStatement) definition, microPop);
 			}
@@ -93,56 +93,60 @@ public class SpeciesLayer extends AgentLayer {
 		if ( aspect == null ) {
 			aspect = AspectStatement.DEFAULT_ASPECT;
 		}
-		List<IAgent> _agents = population.getAgentsList();
+		final List<IAgent> _agents = population.getAgentsList();
 		if ( !_agents.isEmpty() ) {
 			// draw the population
-			for ( IAgent a : _agents ) {
-				Rectangle2D r = aspect.draw(scope, a);
+			for ( final IAgent a : _agents ) {
+				final Rectangle2D r = aspect.draw(scope, a);
 				if ( r != null ) {
 					shapes.put(a, r);
 				}
 			}
+
 			IPopulation microPop;
 			// draw grids first...
-			List<GridLayerStatement> gridLayers = layer.getGridLayers();
-			for ( GridLayerStatement gl : gridLayers ) {
-				for ( IAgent a : _agents ) {
+			final List<GridLayerStatement> gridLayers = layer.getGridLayers();
+			for ( final GridLayerStatement gl : gridLayers ) {
+				for ( final IAgent a : _agents ) {
+					if ( a instanceof IMacroAgent ) {
+						try {
+							a.acquireLock();
+							if ( a.dead() || scope.interrupted() ) {
+								continue;
+							}
+							microPop = ((IMacroAgent) a).getMicroPopulation(gl.getName());
+							if ( microPop != null && microPop.size() > 0 ) {
+								// FIXME Needs to be entirely redefined using the new interfaces
+								// drawGridPopulation(a, gl, microPop, scope, g);
+							}
+						} finally {
+							a.releaseLock();
+						}
 
-					try {
-						a.acquireLock();
-						if ( a.dead() || scope.interrupted() ) {
-							continue;
-						}
-						microPop = a.getMicroPopulation(gl.getName());
-						if ( microPop != null && microPop.size() > 0 ) {
-							// FIXME Needs to be entirely redefined using the new interfaces
-							// drawGridPopulation(a, gl, microPop, scope, g);
-						}
-					} finally {
-						a.releaseLock();
 					}
-
 				}
 			}
 
 			// then recursively draw the micro-populations
-			List<SpeciesLayerStatement> microLayers = layer.getMicroSpeciesLayers();
-			for ( SpeciesLayerStatement ml : microLayers ) {
-				for ( IAgent a : _agents ) {
-					try {
-						a.acquireLock();
-						if ( a.dead() ) {
-							continue;
-						}
-						microPop = a.getMicroPopulation(ml.getSpecies());
+			final List<SpeciesLayerStatement> microLayers = layer.getMicroSpeciesLayers();
+			for ( final SpeciesLayerStatement ml : microLayers ) {
+				for ( final IAgent a : _agents ) {
+					if ( a instanceof IMacroAgent ) {
+						try {
+							a.acquireLock();
+							if ( a.dead() ) {
+								continue;
+							}
+							microPop = ((IMacroAgent) a).getMicroPopulation(ml.getSpecies());
 
-						if ( microPop != null && microPop.size() > 0 ) {
-							drawPopulation(scope, g, a, ml, microPop);
+							if ( microPop != null && microPop.size() > 0 ) {
+								drawPopulation(scope, g, a, ml, microPop);
+							}
+						} finally {
+							a.releaseLock();
 						}
-					} finally {
-						a.releaseLock();
+
 					}
-
 				}
 			}
 		}

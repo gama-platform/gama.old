@@ -2,7 +2,7 @@ package msi.gaml.statements;
 
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -54,10 +54,10 @@ public class MigrateStatement extends AbstractStatementSequence {
 	}
 
 	private void verifyTarget() {
-		SpeciesDescription species = this.getDescription().getSpeciesContext();
-		TypeDescription targetSpeciesDesc = species.getMicroSpecies(target);
-		if ( targetSpeciesDesc == null ) { throw GamaRuntimeException.error(target +
-			" is not a micro-species of " + species.getName()); }
+		final SpeciesDescription species = this.getDescription().getSpeciesContext();
+		final TypeDescription targetSpeciesDesc = species.getMicroSpecies(target);
+		if ( targetSpeciesDesc == null ) { throw GamaRuntimeException.error(target + " is not a micro-species of " +
+			species.getName()); }
 	}
 
 	@Override
@@ -69,14 +69,14 @@ public class MigrateStatement extends AbstractStatementSequence {
 
 	@Override
 	public Object privateExecuteIn(final IScope stack) throws GamaRuntimeException {
-		IAgent executor = stack.getAgentScope();
-		IList<IAgent> immigrants = new GamaList<IAgent>();
+		// TODO Verify it is a macro agent
+		final IMacroAgent executor = (IMacroAgent) stack.getAgentScope();
+		final IList<IAgent> immigrants = new GamaList<IAgent>();
 
-		ISpecies targetMicroSpecies = executor.getSpecies().getMicroSpecies(target);
-		ISpecies sourceMicroSpecies = executor.getSpecies().getMicroSpecies(source);
+		final ISpecies targetMicroSpecies = executor.getSpecies().getMicroSpecies(target);
+		final ISpecies sourceMicroSpecies = executor.getSpecies().getMicroSpecies(source);
 
-		immigrants.addAll(executor
-			.migrateMicroAgents(stack, sourceMicroSpecies, targetMicroSpecies));
+		immigrants.addAll(executor.migrateMicroAgents(stack, sourceMicroSpecies, targetMicroSpecies));
 
 		/*
 		 * Object immigrantCandidates = source.value(stack);

@@ -36,11 +36,11 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class GamaGisGeometry extends GamaShape {
 
-	public GamaGisGeometry(IScope scope, Geometry g, final SimpleFeature feature) {
+	public GamaGisGeometry(final IScope scope, final Geometry g, final SimpleFeature feature) {
 		super(scope.getTopology().getGisUtils().transform(g));
 		if ( feature != null ) {
 			// We filter out the geometries (already loaded before)
-			for ( Property p : feature.getProperties() ) {
+			for ( final Property p : feature.getProperties() ) {
 				if ( !(p.getType() instanceof GeometryType) ) {
 					setAttribute(p.getName().getLocalPart(), p.getValue());
 				}
@@ -53,9 +53,10 @@ public class GamaGisGeometry extends GamaShape {
 	 * @see msi.gama.metamodel.shape.GamaShape#setAgent(msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
-	public void setAgent(IAgent a) {
+	public void setAgent(final IAgent a) {
 		super.setAgent(a);
-		a.setExtraAttributes(attributes);
+		// a.setExtraAttributes(attributes);
+		// attributes = null;
 	}
 
 }

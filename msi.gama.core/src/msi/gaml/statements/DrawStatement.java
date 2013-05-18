@@ -35,6 +35,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GAML;
 import msi.gama.util.file.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
@@ -91,7 +92,7 @@ public class DrawStatement extends AbstractStatementSequence {
 	private final DrawExecuter executer;
 
 	private final IExpression getShapeExpression(final IDescription desc) {
-		return GAMA.getExpressionFactory().createVar(SHAPE, Types.get(IType.GEOMETRY), Types.get(IType.NONE),
+		return GAML.getExpressionFactory().createVar(SHAPE, Types.get(IType.GEOMETRY), Types.get(IType.NONE),
 			Types.get(IType.STRING), false, IVarExpression.AGENT, desc);
 	}
 
@@ -139,35 +140,35 @@ public class DrawStatement extends AbstractStatementSequence {
 				if ( old.equals("disc") || old.equals("circle") ) {
 					IExpression sizeExp = getFacet(SIZE);
 					if ( sizeExp == null ) {
-						sizeExp = GAMA.getExpressionFactory().createConst(1, Types.get(IType.INT));
+						sizeExp = GAML.getExpressionFactory().createConst(1, Types.get(IType.INT));
 					}
-					newExpr = GAMA.getExpressionFactory().createOperator("circle", desc, sizeExp);
+					newExpr = GAML.getExpressionFactory().createOperator("circle", desc, sizeExp);
 				} else if ( old.equals("rectangle") || old.equals("square") ) {
 					IExpression sizeExp = getFacet(SIZE);
 					if ( sizeExp == null ) {
-						sizeExp = GAMA.getExpressionFactory().createConst(1, Types.get(IType.INT));
+						sizeExp = GAML.getExpressionFactory().createConst(1, Types.get(IType.INT));
 					}
 
-					newExpr = GAMA.getExpressionFactory().createOperator("square", desc, sizeExp);
+					newExpr = GAML.getExpressionFactory().createOperator("square", desc, sizeExp);
 				} else if ( old.equals("geometry") ) {
 					newExpr = getShapeExpression(desc);
 				} else if ( old.equals("line") ) {
 					IExpression at = getFacet(AT);
-					IExpression to = getFacet(TO);
+					final IExpression to = getFacet(TO);
 					if ( at == null ) {
 						at =
-							GAMA.getExpressionFactory().createVar("location", Types.get(IType.POINT),
+							GAML.getExpressionFactory().createVar("location", Types.get(IType.POINT),
 								Types.get(IType.FLOAT), Types.get(IType.INT), false, IVarExpression.AGENT, desc);
 					}
-					List<IExpression> elements = new ArrayList();
+					final List<IExpression> elements = new ArrayList();
 					elements.add(at);
 					elements.add(to);
-					IExpression list = GAMA.getExpressionFactory().createList(elements);
-					newExpr = GAMA.getExpressionFactory().createOperator("line", desc, list);
+					final IExpression list = GAML.getExpressionFactory().createList(elements);
+					newExpr = GAML.getExpressionFactory().createOperator("line", desc, list);
 				}
 			} else {
 				if ( GamaFileType.isImageFile(old) ) {
-					newExpr = GAMA.getExpressionFactory().createOperator("file", desc, exp);
+					newExpr = GAML.getExpressionFactory().createOperator("file", desc, exp);
 				}
 			}
 			if ( newExpr != null ) {
@@ -184,7 +185,7 @@ public class DrawStatement extends AbstractStatementSequence {
 
 	@Override
 	public Rectangle2D privateExecuteIn(final IScope stack) throws GamaRuntimeException {
-		IGraphics g = stack.getGraphics();
+		final IGraphics g = stack.getGraphics();
 		if ( g == null ) { return null; }
 		return executer.executeOn(stack, g);
 	}
@@ -202,7 +203,7 @@ public class DrawStatement extends AbstractStatementSequence {
 		protected final ILocation constLoc;
 
 		DrawExecuter(final IDescription desc) throws GamaRuntimeException {
-			IScope scope = GAMA.obtainNewScope();
+			final IScope scope = GAMA.obtainNewScope();
 			empty = getFacet(EMPTY);
 			if ( empty == null ) {
 				constEmpty = false;
@@ -279,12 +280,12 @@ public class DrawStatement extends AbstractStatementSequence {
 
 		@Override
 		Rectangle2D executeOn(final IScope scope, final IGraphics gr) throws GamaRuntimeException {
-			GamaShape g1 = (GamaShape) Cast.asGeometry(scope, item.value(scope));
+			final GamaShape g1 = (GamaShape) Cast.asGeometry(scope, item.value(scope));
 			if ( g1 == null ) {
 				// GuiUtils.debug("DrawStatement.ShapeExecuter.executeOn : null shape");
 				return null;
 			}
-			IShape g2 = Spatial.Transformations.at_location(scope, g1, getLocation(scope, g1));
+			final IShape g2 = Spatial.Transformations.at_location(scope, g1, getLocation(scope, g1));
 			if ( depth != null ) {
 				g2.getInnerGeometry().setUserData(depth.value(scope));
 			}
@@ -309,19 +310,19 @@ public class DrawStatement extends AbstractStatementSequence {
 		// FIXME Optimiser tout ça
 		@Override
 		Rectangle2D executeOn(final IScope scope, final IGraphics g) throws GamaRuntimeException {
-			IAgent agent = scope.getAgentScope();
-			ILocation from = getLocation(scope);
-			Double displayWidth = getSize(scope).getX();
-			GamaImageFile file = constImg == null ? (GamaImageFile) item.value(scope) : constImg;
-			BufferedImage img = file.getImage(scope);
-			int image_width = img.getWidth();
-			int image_height = img.getHeight();
-			double ratio = image_width / (double) image_height;
-			int displayHeight = Maths.round(displayWidth / ratio);
-			int x = (int) (from.getX() - displayWidth / 2);
-			int y = (int) (from.getY() - displayHeight / 2d);
+			final IAgent agent = scope.getAgentScope();
+			final ILocation from = getLocation(scope);
+			final Double displayWidth = getSize(scope).getX();
+			final GamaImageFile file = constImg == null ? (GamaImageFile) item.value(scope) : constImg;
+			final BufferedImage img = file.getImage(scope);
+			final int image_width = img.getWidth();
+			final int image_height = img.getHeight();
+			final double ratio = image_width / (double) image_height;
+			final int displayHeight = Maths.round(displayWidth / ratio);
+			final int x = (int) (from.getX() - displayWidth / 2);
+			final int y = (int) (from.getY() - displayHeight / 2d);
 
-			Color c = getColor(scope);
+			final Color c = getColor(scope);
 			if ( color != null ) {
 				if ( workImage == null || workImage.getWidth() != image_width || workImage.getHeight() != image_height ) {
 					if ( workImage != null ) {
@@ -340,7 +341,7 @@ public class DrawStatement extends AbstractStatementSequence {
 				g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP));
 				g2d.fillRect(0, 0, image_width, image_height);
 
-				Rectangle2D result =
+				final Rectangle2D result =
 					g.drawImage(scope, workImage, new GamaPoint(x, y), new GamaPoint(displayWidth, displayHeight),
 						null, getRotation(scope), agent.getLocation().getZ(), false);
 				workImage.flush();
@@ -362,7 +363,7 @@ public class DrawStatement extends AbstractStatementSequence {
 
 		private TextExecuter(final IDescription desc) throws GamaRuntimeException {
 			super(desc);
-			IScope scope = GAMA.obtainNewScope();
+			final IScope scope = GAMA.obtainNewScope();
 			constText = item.isConst() ? Cast.asString(scope, item.value(scope)) : null;
 			font = getFacet(FONT);
 			constFont =
@@ -377,14 +378,14 @@ public class DrawStatement extends AbstractStatementSequence {
 
 		@Override
 		Rectangle2D executeOn(final IScope scope, final IGraphics g) throws GamaRuntimeException {
-			IAgent agent = scope.getAgentScope();
-			String info = constText == null ? Cast.asString(scope, item.value(scope)) : constText;
+			final IAgent agent = scope.getAgentScope();
+			final String info = constText == null ? Cast.asString(scope, item.value(scope)) : constText;
 			if ( info == null || info.length() == 0 ) {
 				scope.setStatus(ExecutionStatus.skipped);
 				return null;
 			}
-			String fName = constFont == null ? Cast.asString(scope, font.value(scope)) : constFont;
-			int fStyle = constStyle == null ? CONSTANTS.get(style.value(scope)) : constStyle;
+			final String fName = constFont == null ? Cast.asString(scope, font.value(scope)) : constFont;
+			final int fStyle = constStyle == null ? CONSTANTS.get(style.value(scope)) : constStyle;
 
 			return g.drawString(info, getColor(scope), getLocation(scope), getSize(scope).getY(), fName, fStyle,
 				getRotation(scope), agent.getLocation().getZ());

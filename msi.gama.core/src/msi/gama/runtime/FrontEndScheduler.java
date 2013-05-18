@@ -146,6 +146,7 @@ public class FrontEndScheduler implements Runnable {
 			stepable.init(scope);
 		} catch (final Exception e) {
 			GuiUtils.debug("WARNING :: Exception in front end scheduler: " + e.getMessage());
+			e.printStackTrace();
 			if ( scope != null && scope.interrupted() ) {
 				synchronized (toStep) {
 					// GuiUtils.debug("FrontEndScheduler.schedule : Removal of " + stepable);

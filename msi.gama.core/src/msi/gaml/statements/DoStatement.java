@@ -84,7 +84,6 @@ public class DoStatement extends AbstractStatementSequence implements IStatement
 		if ( returnString != null ) {
 			scope.setVarValue(returnString, result);
 		}
-
 		return result;
 	}
 

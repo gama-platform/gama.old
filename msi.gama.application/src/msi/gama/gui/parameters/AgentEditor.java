@@ -24,6 +24,7 @@ import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.GAMA;
+import msi.gama.util.GAML;
 import msi.gaml.types.IType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -138,7 +139,7 @@ public class AgentEditor extends AbstractEditor {
 
 	@Override
 	public IType getExpectedType() {
-		return GAMA.getModelContext().getTypeNamed(species);
+		return GAML.getModelContext().getTypeNamed(species);
 	}
 
 }

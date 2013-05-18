@@ -23,7 +23,6 @@ import msi.gama.common.interfaces.*;
 import msi.gama.outputs.layers.*;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
@@ -60,7 +59,7 @@ public class OutputLayerFactory extends StatementFactory {
 				if ( sd.getKeyword().equals(GRID_POPULATION) && !target.isGrid() ) {
 					sd.error(s + " is not a grid", IGamlIssue.WRONG_TYPE, ed.getTarget());
 				} else {
-					IExpression expr = GAMA.getExpressionFactory().createConst(s, Types.get(IType.SPECIES));
+					IExpression expr = msi.gama.util.GAML.getExpressionFactory().createConst(s, Types.get(IType.SPECIES));
 					sd.getFacets().put(SPECIES, expr);
 				}
 			}

@@ -43,20 +43,11 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-@vars({ @var(name = IKeyword.NAME, type = IType.STRING), @var(name = IKeyword.MEMBERS, type = IType.LIST),
-	@var(name = IKeyword.PEERS, type = IType.LIST), @var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT),
+@vars({ @var(name = IKeyword.NAME, type = IType.STRING), @var(name = IKeyword.PEERS, type = IType.LIST),
 	@var(name = IKeyword.HOST, type = IType.AGENT),
 	@var(name = IKeyword.LOCATION, type = IType.POINT, depends_on = IKeyword.SHAPE),
 	@var(name = IKeyword.SHAPE, type = IType.GEOMETRY) })
 public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, IStepable {
-
-	/**
-	 * Returns all the agents which consider this agent as direct host.
-	 * 
-	 * @return
-	 */
-	@getter(IKeyword.MEMBERS)
-	public abstract IList<IAgent> getMembers();
 
 	/**
 	 * Returns the topology which manages this agent.
@@ -65,20 +56,6 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	 */
 	// @getter(IKeyword.TOPOLOGY)
 	public abstract ITopology getTopology();
-
-	@setter(IKeyword.MEMBERS)
-	public abstract void setMembers(IList<IAgent> members);
-
-	@setter(IKeyword.AGENTS)
-	public abstract void setAgents(IList<IAgent> agents);
-
-	/**
-	 * Returns all the agents which consider this agent as direct or in-direct host.
-	 * 
-	 * @return
-	 */
-	@getter(IKeyword.AGENTS)
-	public abstract IList<IAgent> getAgents();
 
 	@setter(IKeyword.PEERS)
 	public abstract void setPeers(IList<IAgent> peers);
@@ -123,10 +100,10 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	 * @return
 	 */
 	@getter(IKeyword.HOST)
-	public abstract IAgent getHost();
+	public abstract IMacroAgent getHost();
 
 	@setter(IKeyword.HOST)
-	public abstract void setHost(final IAgent macroAgent);
+	public abstract void setHost(final IMacroAgent macroAgent);
 
 	public abstract void schedule();
 
@@ -153,13 +130,54 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 
 	public Integer getHeading();
 
-	// public abstract void updateAttributes(IScope scope) throws GamaRuntimeException;
-
 	public abstract Object getDirectVarValue(IScope scope, String s) throws GamaRuntimeException;
 
 	public void setDirectVarValue(IScope scope, String s, Object v) throws GamaRuntimeException;
 
-	public abstract boolean contains(IAgent component);
+	public abstract List<IAgent> getMacroAgents();
+
+	/**
+	 * Acquires the object's intrinsic lock.
+	 * 
+	 * Solves the synchronization problem between Execution Thread and Event Dispatch Thread.
+	 * 
+	 * The synchronization problem may happen when
+	 * 1. The Event Dispatch Thread is drawing an agent while the Execution Thread tries to it;
+	 * 2. The Execution Thread is disposing the agent while the Event Dispatch Thread tries to draw
+	 * it.
+	 * 
+	 * To avoid this, the corresponding thread has to invoke "acquireLock" to lock the agent before
+	 * drawing or disposing the agent.
+	 * After finish the task, the thread invokes "releaseLock" to release the agent's lock.
+	 * 
+	 * return
+	 * true if the agent instance is available for use
+	 * false otherwise
+	 */
+	public abstract void acquireLock();
+
+	/**
+	 * Releases the object's intrinsic lock.
+	 */
+	public abstract void releaseLock();
+
+	/**
+	 * Tells this agent that the host has changed its shape.
+	 * This agent will then ask the topology to add its shape to the new ISpatialIndex.
+	 */
+	public abstract void hostChangesShape();
+
+	public AgentScheduler getScheduler();
+
+	public IModel getModel();
+
+	public IExperimentAgent getExperiment();
+
+	public IScope getScope();
+
+	public abstract boolean isInstanceOf(String skill, boolean direct);
+
+	public SimulationClock getClock();
 
 	/**
 	 * @throws GamaRuntimeException
@@ -190,155 +208,5 @@ public interface IAgent extends ISkill, IShape, INamed, Comparable<IAgent>, ISte
 	 * @return
 	 */
 	public abstract IPopulation getPopulationFor(final String speciesName);
-
-	/**
-	 * Initialize Populations to manage micro-agents.
-	 */
-	public abstract void initializeMicroPopulations(IScope scope);
-
-	public abstract void initializeMicroPopulation(IScope scope, String name);
-
-	/**
-	 * Returns a list of populations of (direct) micro-species.
-	 * 
-	 * @return
-	 */
-	public abstract IList<IPopulation> getMicroPopulations();
-
-	/**
-	 * Returns the population of the specified (direct) micro-species.
-	 * 
-	 * @param microSpeciesName
-	 * @return
-	 */
-	public abstract IPopulation getMicroPopulation(String microSpeciesName);
-
-	/**
-	 * Returns the population of the specified (direct) micro-species.
-	 * 
-	 * @param microSpecies
-	 * @return
-	 */
-	public abstract IPopulation getMicroPopulation(ISpecies microSpecies);
-
-	/**
-	 * Verifies if this agent contains micro-agents or not.
-	 * 
-	 * @return true if this agent contains micro-agent(s)
-	 *         false otherwise
-	 */
-	public abstract boolean hasMembers();
-
-	public abstract List<IAgent> getMacroAgents();
-
-	/**
-	 * Acquires the object's intrinsic lock.
-	 * 
-	 * Solves the synchronization problem between Execution Thread and Event Dispatch Thread.
-	 * 
-	 * The synchronization problem may happen when
-	 * 1. The Event Dispatch Thread is drawing an agent while the Execution Thread tries to it;
-	 * 2. The Execution Thread is disposing the agent while the Event Dispatch Thread tries to draw
-	 * it.
-	 * 
-	 * To avoid this, the corresponding thread has to invoke "acquireLock" to lock the agent before
-	 * drawing or disposing the agent.
-	 * After finish the task, the thread invokes "releaseLock" to release the agent's lock.
-	 * 
-	 * return
-	 * true if the agent instance is available for use
-	 * false otherwise
-	 */
-	public abstract void acquireLock();
-
-	/**
-	 * Releases the object's intrinsic lock.
-	 */
-	public abstract void releaseLock();
-
-	/**
-	 * Verifies if this agent can capture other agent as the specified micro-species.
-	 * 
-	 * An agent A can capture another agent B as newSpecies if the following conditions are correct:
-	 * 1. other is not this agent;
-	 * 2. other is not "world" agent;
-	 * 3. newSpecies is a (direct) micro-species of A's species;
-	 * 4. newSpecies is a direct sub-species of B's species.
-	 * 
-	 * @param other
-	 * @return
-	 *         true if this agent can capture other agent
-	 *         false otherwise
-	 */
-	public abstract boolean canCapture(IAgent other, ISpecies newSpecies);
-
-	/**
-	 * Captures some agents as micro-agents with the specified micro-species as their new species.
-	 * 
-	 * @param microSpecies the species that the captured agents will become, this must be a
-	 *            micro-species of this agent's species.
-	 * @param microAgents
-	 * @return
-	 * @throws GamaRuntimeException
-	 */
-	public abstract IList<IAgent> captureMicroAgents(IScope scope, final ISpecies microSpecies,
-		final IList<IAgent> microAgents) throws GamaRuntimeException;
-
-	public abstract IAgent captureMicroAgent(IScope scope, final ISpecies microSpecies, final IAgent microAgent)
-		throws GamaRuntimeException;
-
-	/**
-	 * Releases some micro-agents of this agent.
-	 * 
-	 * @param microAgents
-	 * @return
-	 * @throws GamaRuntimeException
-	 */
-	public abstract IList<IAgent> releaseMicroAgents(IScope scope, final IList<IAgent> microAgents)
-		throws GamaRuntimeException;
-
-	/**
-	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's
-	 * species.
-	 * 
-	 * @param microAgent
-	 * @param newMicroSpecies
-	 * @return
-	 */
-	public abstract IList<IAgent> migrateMicroAgents(IScope scope, final IList<IAgent> microAgents,
-		final ISpecies newMicroSpecies);
-
-	/**
-	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's
-	 * species.
-	 * 
-	 * @param microAgent
-	 * @param newMicroSpecies
-	 * @return
-	 */
-	public abstract IList<IAgent> migrateMicroAgents(IScope scope, final ISpecies oldMicroSpecies,
-		final ISpecies newMicroSpecies);
-
-	/**
-	 * Tells this agent that the host has changed its shape.
-	 * This agent will then ask the topology to add its shape to the new ISpatialIndex.
-	 */
-	public abstract void hostChangesShape();
-
-	public AgentScheduler getScheduler();
-
-	public IModel getModel();
-
-	public IExperimentAgent getExperiment();
-
-	public IScope getScope();
-
-	public abstract boolean isInstanceOf(String skill, boolean direct);
-
-	public SimulationClock getClock();
-
-	public abstract void releaseScope(IScope scope);
-
-	public abstract IScope obtainNewScope();
 
 }

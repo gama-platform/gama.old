@@ -37,13 +37,6 @@ public interface IAttributed {
 	public void setAttribute(Object key, Object value);
 
 	/**
-	 * Answers whether or not this object has any attribute set.
-	 * 
-	 * @return true if the object has attributes, false otherwise
-	 */
-	public boolean hasAttributes();
-
-	/**
 	 * Answers whether or not this object has any value set at key "key".
 	 * 
 	 * @return true if the object has such an attribute, false otherwise

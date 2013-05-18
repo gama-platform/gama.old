@@ -20,8 +20,7 @@ package msi.gaml.skills;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation.GridAgent;
-import msi.gama.metamodel.topology.grid.*;
+import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
@@ -46,6 +45,21 @@ import msi.gaml.types.IType;
 @skill(name = GridSkill.SKILL_NAME)
 public class GridSkill extends GeometricSkill {
 
+	public static interface IGridAgent {
+
+		public GamaColor getColor();
+
+		public void setColor(final GamaColor color);
+
+		public int getX();
+
+		public int getY();
+
+		public double getValue();
+
+		public void setValue(final double d);
+	}
+
 	public static final String SKILL_NAME = "grid";
 
 	protected final IGrid getGrid(final IAgent agent) {
@@ -64,17 +78,17 @@ public class GridSkill extends GeometricSkill {
 
 	@getter("grid_x")
 	public final int getX(final IAgent agent) {
-		return ((GridAgent) agent).getX();
+		return ((IGridAgent) agent).getX();
 	}
 
 	@getter("grid_value")
 	public final double getValue(final IAgent agent) {
-		return ((GridAgent) agent).getValue();
+		return ((IGridAgent) agent).getValue();
 	}
 
 	@getter("grid_y")
 	public final int getY(final IAgent agent) {
-		return ((GridAgent) agent).getY();
+		return ((IGridAgent) agent).getY();
 	}
 
 	@setter("grid_x")
@@ -84,7 +98,7 @@ public class GridSkill extends GeometricSkill {
 
 	@setter("grid_value")
 	public final void setValue(final IAgent agent, final Double d) {
-
+		((IGridAgent) agent).setValue(d);
 	}
 
 	@setter("grid_y")
@@ -99,12 +113,12 @@ public class GridSkill extends GeometricSkill {
 
 	@getter("color")
 	public GamaColor getColor(final IAgent agent) {
-		return ((GridAgent) agent).getColor();
+		return ((IGridAgent) agent).getColor();
 	}
 
 	@setter("color")
 	public void setColor(final IAgent agent, final GamaColor color) {
-		((GridAgent) agent).setColor(color);
+		((IGridAgent) agent).setColor(color);
 	}
 
 	// @getter("shape")

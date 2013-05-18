@@ -27,6 +27,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.IMatrix;
 
+
 /**
  * Written by drogoul Modified on 3 juin 2010
  * 
@@ -203,7 +204,7 @@ public interface IContainer<KeyType, ValueType> extends IValue, Iterable<ValueTy
 	/**
 	 * 
 	 * @param scope
-	 * @return an Iterable that can be dependent on the scope (usually "this", but species return
+	 * @return a Iterable that can be dependent on the scope (usually "this", but species return
 	 *         their population)
 	 */
 	public Iterable<? extends ValueType> iterable(final IScope scope);

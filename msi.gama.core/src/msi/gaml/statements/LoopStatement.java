@@ -70,8 +70,8 @@ public class LoopStatement extends AbstractStatementSequence {
 	}
 
 	@Override
-	public Object privateExecuteIn(final IScope stack) throws GamaRuntimeException {
-		return executer.runIn(stack);
+	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		return executer.runIn(scope);
 	}
 
 	abstract class LoopExecuter {

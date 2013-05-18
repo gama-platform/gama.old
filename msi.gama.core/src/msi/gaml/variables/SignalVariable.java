@@ -20,7 +20,7 @@ package msi.gaml.variables;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.topology.grid.*;
+import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -115,7 +115,7 @@ public class SignalVariable extends NumberVariable {
 		variationExpr = getFacet(IKeyword.VARIATION);
 		rangeExpr = getFacet(IKeyword.RANGE);
 		envName = getLiteral(IKeyword.ENVIRONMENT);
-		signalType = typeExpr == null ? GridDiffuser.DIFFUSION : null;
+		signalType = typeExpr == null ? IGrid.DIFFUSION : null;
 		prop = propExpr == null ? 1.0 : null;
 		variation = variationExpr == null ? signalType == null ? null : 0d : null;
 		range = rangeExpr == null ? -1000.0 : rangeExpr.isConst() ? Cast.as(rangeExpr, Double.class) : null;
@@ -128,8 +128,8 @@ public class SignalVariable extends NumberVariable {
 		final double result = Cast.asFloat(scope, v);
 		if ( result > 0.0 ) {
 			final short signalType =
-				this.signalType == null ? IKeyword.GRADIENT.equals(scope.evaluate(typeExpr, agent))
-					? GridDiffuser.GRADIENT : GridDiffuser.DIFFUSION : this.signalType;
+				this.signalType == null ? IKeyword.GRADIENT.equals(scope.evaluate(typeExpr, agent)) ? IGrid.GRADIENT
+					: IGrid.DIFFUSION : this.signalType;
 			final double prop =
 				this.prop == null ? Math.min(1.0, Math.max(0.0, Cast.asFloat(scope, scope.evaluate(propExpr, agent))))
 					: this.prop;

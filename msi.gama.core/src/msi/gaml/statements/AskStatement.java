@@ -18,7 +18,7 @@
  */
 package msi.gaml.statements;
 
-import java.util.List;
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -27,13 +27,13 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.runtime.IScope;
 import msi.gama.util.IContainer;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
+import com.google.common.collect.Iterators;
 
 // A group of commands that can be executed on remote agents.
 
@@ -41,12 +41,9 @@ import msi.gaml.types.IType;
 @facets(value = { @facet(name = IKeyword.TARGET, type = { IType.CONTAINER, IType.AGENT }, optional = false),
 	@facet(name = IKeyword.AS, type = { IType.SPECIES }, optional = true) }, omissible = IKeyword.TARGET)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
-@doc(value = "Allows an agent, the sender agent (that can be the [Sections151#global world agent]), to ask another (or other) agent(s) to perform a set of statements. " +
-		"It obeys the following syntax, where the target attribute denotes the receiver agent(s):", 
-	examples = {
-		"ask receiver_agent(s) {",
-		"     [statements]",
-		"}"})
+@doc(value = "Allows an agent, the sender agent (that can be the [Sections151#global world agent]), to ask another (or other) agent(s) to perform a set of statements. "
+	+ "It obeys the following syntax, where the target attribute denotes the receiver agent(s):", examples = {
+	"ask receiver_agent(s) {", "     [statements]", "}" })
 public class AskStatement extends AbstractStatementSequence {
 
 	private AbstractStatementSequence sequence = null;
@@ -68,38 +65,18 @@ public class AskStatement extends AbstractStatementSequence {
 	}
 
 	@Override
-	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+	public Object privateExecuteIn(final IScope scope) {
 		final Object t = target.value(scope);
-		if ( t == null ) {
-			scope.setStatus(ExecutionStatus.failure);
-			return null;
-		}
-		IAgent[] targets;
-		if ( t instanceof IContainer ) {
-			targets = new IAgent[((IContainer) t).length(scope)];
-			int index = 0;
-			for ( final Object o : (IContainer) t ) {
-				if ( o instanceof IAgent ) {
-					targets[index++] = (IAgent) o;
-				} else {
-					throw GamaRuntimeException.error("ask can only be invoked on agents. " + o + " is not an agent");
-				}
-			}
-		} else if ( t instanceof IAgent ) {
-			targets = new IAgent[1];
-			targets[0] = (IAgent) t;
-		} else {
-			throw GamaRuntimeException.error("ask can only be invoked on agents. " + t + " is not an agent");
-		}
-
+		final Iterator<IAgent> runners =
+			t instanceof IContainer ? ((IContainer) t).iterator() : t instanceof IAgent ? Iterators
+				.singletonIterator(t) : Iterators.emptyIterator();
 		final IAgent scopeAgent = scope.getAgentScope();
 		scope.addVarWithValue(IKeyword.MYSELF, scopeAgent);
-		for ( int i = 0, n = targets.length; i < n; i++ ) {
-			final IAgent remoteAgent = targets[i];
-			if ( !remoteAgent.dead() && !scope.interrupted() ) {
-				scope.execute(sequence, remoteAgent);
+		while (runners.hasNext()) {
+			final IAgent a = runners.next();
+			if ( !a.dead() && !scope.interrupted() ) {
+				scope.execute(sequence, a);
 			}
-			scope.setStatus(ExecutionStatus.skipped);
 		}
 		return null;
 	}

@@ -26,7 +26,7 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.utils.GamlExpressionCompiler;
-import msi.gama.runtime.GAMA;
+import msi.gama.util.GAML;
 import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ModelDescription;
 import org.eclipse.core.resources.*;
@@ -41,7 +41,7 @@ import org.eclipse.xtext.validation.Check;
 public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
 	static {
-		GAMA.getExpressionFactory().registerParser(new GamlExpressionCompiler());
+		GAML.getExpressionFactory().registerParser(new GamlExpressionCompiler());
 	}
 
 	private final static XtextResourceSet buildResourceSet = new SynchronizedXtextResourceSet();
@@ -159,7 +159,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	@SuppressWarnings("restriction")
 	private ModelDescription parse(final GamlResource resource, final XtextResourceSet resourceSet) {
 		final Map<URI, ISyntacticElement> models = buildCompleteSyntacticTree(resource, resourceSet);
-		GAMA.getExpressionFactory().getParser().reset();
+		GAML.getExpressionFactory().getParser().reset();
 		IPath path = new Path(resource.getURI().toPlatformString(false));
 		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		// NullPointerException when accessing a file / project with a space in it !

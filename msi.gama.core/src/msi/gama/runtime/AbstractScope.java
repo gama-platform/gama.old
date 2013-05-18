@@ -22,7 +22,7 @@ import java.util.Map;
 import msi.gama.common.interfaces.IGraphics;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationClock;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
@@ -71,7 +71,7 @@ public abstract class AbstractScope implements IScope {
 	private IGraphics context;
 	private ITopology topology;
 	private ExecutionStatus currentStatus;
-	private final IAgent root;
+	private final IMacroAgent root;
 
 	{
 		for ( int i = 0; i < vars.length; i++ ) {
@@ -79,7 +79,7 @@ public abstract class AbstractScope implements IScope {
 		}
 	}
 
-	public AbstractScope(final IAgent root) {
+	public AbstractScope(final IMacroAgent root) {
 		this.root = root;
 		push(root);
 	}
@@ -121,7 +121,7 @@ public abstract class AbstractScope implements IScope {
 	}
 
 	@Override
-	public IAgent getSimulationScope() {
+	public IMacroAgent getSimulationScope() {
 		return getRoot();
 	}
 
@@ -273,6 +273,7 @@ public abstract class AbstractScope implements IScope {
 		Object result;
 		push(agent);
 		try {
+			args.setCaller(getAgentScope());
 			statement.setRuntimeArgs(args);
 			result = statement.executeOn(this);
 		} finally {
@@ -360,7 +361,7 @@ public abstract class AbstractScope implements IScope {
 		return getRoot().getClock();
 	}
 
-	protected IAgent getRoot() {
+	protected IMacroAgent getRoot() {
 		return root;
 	}
 

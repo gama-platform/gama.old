@@ -20,7 +20,7 @@ package msi.gama.kernel.experiment;
 
 import msi.gama.common.interfaces.ItemList;
 import msi.gama.kernel.model.IModel;
-import msi.gama.kernel.simulation.ISimulationAgent;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.outputs.IOutputManager;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -82,7 +82,7 @@ public interface IExperimentSpecies extends ISpecies {
 
 	public abstract void close();
 
-	public abstract ISimulationAgent getCurrentSimulation();
+	public abstract SimulationAgent getCurrentSimulation();
 
 	public abstract boolean isLoading();
 

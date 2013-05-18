@@ -20,7 +20,7 @@ package msi.gama.metamodel.population;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.continuous.ContinuousTopology;
@@ -51,18 +51,21 @@ import msi.gaml.variables.IVariable;
  */
 public class GamaPopulation implements IPopulation {
 
-	public static GamaPopulation createPopulation(final IScope scope, final IAgent host, final ISpecies species) {
+	public static GamaPopulation createPopulation(final IScope scope, final IMacroAgent host, final ISpecies species) {
 		if ( species.isGrid() ) {
-			// In case of grids, we build the topology first
+			final IExpression exp = species.getFacet("use_regular_agents");
+			final boolean useRegularAgents = exp == null || Cast.asBool(scope, exp.value(scope));
+			// if ( useRegularAgents ) { return new GamaPopulation(host, species); }
+			// In case of grids, we build the topology first if we use the minimal agents
 			final ITopology t = buildGridTopology(scope, species, host);
 			final GamaSpatialMatrix m = (GamaSpatialMatrix) t.getPlaces();
-			return m.new GridPopulation(t, host, species);
+			return m.new GridPopulation(t, host, species, useRegularAgents);
 		}
 		return new GamaPopulation(host, species);
 	}
 
 	/** The agent hosting this population which is considered as the direct macro-agent. */
-	protected IAgent host;
+	protected IMacroAgent host;
 
 	/** The object describing how the agents of this population are spatially organized */
 	protected ITopology topology;
@@ -114,7 +117,7 @@ public class GamaPopulation implements IPopulation {
 
 	}
 
-	protected GamaPopulation(final IAgent host, final ISpecies species) {
+	protected GamaPopulation(final IMacroAgent host, final ISpecies species) {
 		this.host = host;
 		this.species = species;
 		architecture = species.getArchitecture();
@@ -188,7 +191,7 @@ public class GamaPopulation implements IPopulation {
 	public List<IAgent> computeAgentsToSchedule(final IScope scope) {
 		final int frequency = scheduleFrequency == null ? 1 : Cast.asInt(scope, scheduleFrequency.value(scope));
 		final int step = scope.getClock().getCycle();
-		if ( step % frequency != 0 ) { return Collections.EMPTY_LIST; }
+		if ( frequency == 0 || step % frequency != 0 ) { return Collections.EMPTY_LIST; }
 		final IExpression ags = getSpecies().getSchedule();
 		final List<IAgent> agents = ags == null ? getAgentsList() : Cast.asList(scope, ags.value(scope));
 		return agents;
@@ -229,11 +232,7 @@ public class GamaPopulation implements IPopulation {
 
 	@Override
 	public void dispose() {
-		final IAgent[] agentsToDispose = agents.toArray(new IAgent[agents.size()]);
-		for ( int i = 0, n = agentsToDispose.length; i < n; i++ ) {
-			agentsToDispose[i].dispose();
-		}
-		Arrays.fill(agentsToDispose, null);
+		killMembers();
 		agents.clear();
 		firePopulationCleared();
 		if ( topology != null ) {
@@ -431,17 +430,22 @@ public class GamaPopulation implements IPopulation {
 		final int columns = exp == null ? 100 : Cast.asInt(scope, exp.value(scope));
 		exp = species.getFacet(IKeyword.TORUS);
 		final boolean isTorus = exp != null && Cast.asBool(scope, exp.value(scope));
+		// exp = species.getFacet("use_regular_agents");
+		// final boolean useRegularAgents = exp != null && Cast.asBool(scope, exp.value(scope));
+		exp = species.getFacet("use_individual_shapes");
+		final boolean useIndividualShapes = exp != null && Cast.asBool(scope, exp.value(scope));
 		exp = species.getFacet(IKeyword.NEIGHBOURS);
 		final boolean usesVN = exp == null || Cast.asInt(scope, exp.value(scope)) == 4;
 		final boolean isHexagon = exp != null && Cast.asInt(scope, exp.value(scope)) == 6;
 		exp = species.getFacet(IKeyword.FILE);
 		final GamaGridFile file = (GamaGridFile) (exp != null ? exp.value(scope) : null);
-		if ( file == null ) { return new GridTopology(scope, host, rows, columns, isTorus, usesVN, isHexagon); }
-		return new GridTopology(scope, host, file, isTorus, usesVN);
+		if ( file == null ) { return new GridTopology(scope, host, rows, columns, isTorus, usesVN, isHexagon,
+			useIndividualShapes); }
+		return new GridTopology(scope, host, file, isTorus, usesVN, useIndividualShapes);
 	}
 
 	@Override
-	public IAgent getHost() {
+	public IMacroAgent getHost() {
 		return host;
 	}
 
@@ -586,7 +590,7 @@ public class GamaPopulation implements IPopulation {
 
 	@Override
 	public Iterable<IAgent> iterable(final IScope scope) {
-		return agents;
+		return this;
 	}
 
 	/**

@@ -26,6 +26,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
 
+
 /**
  * Written by drogoul Modified on 18 nov. 2008
  * 
@@ -449,13 +450,11 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see java.lang.Iterable#iterator()
 	 */
 	@Override
-	public Iterator<T> iterator() {
-		return listValue(null).iterator();
-	}
+	public abstract Iterator<T> iterator();
 
 	@Override
-	public Iterable<T> iterable(final IScope scope) {
-		return listValue(scope);
+	public final Iterable<T> iterable(final IScope scope) {
+		return (this);
 	}
 
 	/**

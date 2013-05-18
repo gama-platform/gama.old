@@ -51,7 +51,7 @@ import com.vividsolutions.jts.geom.Envelope;
 	@var(name = IKeyword.STEP, type = IType.FLOAT, doc = @doc(value = "Represents the value of the interval, in model time, between two simulation cycles", comment = "If not set, its value is equal to 1.0 and, since the default time unit is the second, to 1 second")),
 	@var(name = IKeyword.TIME, type = IType.FLOAT, doc = @doc(value = "Represents the total time passed, in model time, since the beginning of the simulation", comment = "Equal to cycle * step if the user does not arbitrarily initialize it.")),
 	@var(name = SimulationAgent.CYCLE, type = IType.INT, doc = @doc("Returns the current cycle of the simulation")), })
-public class SimulationAgent extends GamlAgent implements ISimulationAgent {
+public class SimulationAgent extends GamlAgent {
 
 	public static final String CYCLE = "cycle";
 	final SimulationClock clock;
@@ -152,7 +152,7 @@ public class SimulationAgent extends GamlAgent implements ISimulationAgent {
 		final ISpecies microSpec = getSpecies().getMicroSpecies(speciesName);
 		if ( microSpec == null ) { return null; }
 		pop = GamaPopulation.createPopulation(getScope(), this, microSpec);
-		microPopulations.put(microSpec, pop);
+		attributes.put(microSpec, pop);
 		pop.initializeFor(getScope());
 		return pop;
 	}

@@ -26,10 +26,11 @@ import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
+import com.google.common.primitives.Ints;
 
 public class GamaIntMatrix extends GamaMatrix<Integer> {
 
-	static public GamaIntMatrix from(IScope scope, final IMatrix m) {
+	static public GamaIntMatrix from(final IScope scope, final IMatrix m) {
 		if ( m instanceof GamaIntMatrix ) { return (GamaIntMatrix) m; }
 		if ( m instanceof GamaObjectMatrix ) { return new GamaIntMatrix(scope, m.getCols(scope), m.getRows(scope),
 			((GamaObjectMatrix) m).matrix); }
@@ -38,7 +39,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		return null;
 	}
 
-	static public GamaIntMatrix from(IScope scope, final int c, final int r, final IMatrix m) {
+	static public GamaIntMatrix from(final IScope scope, final int c, final int r, final IMatrix m) {
 		if ( m instanceof GamaFloatMatrix ) { return new GamaIntMatrix(scope, c, r, ((GamaFloatMatrix) m).matrix); }
 		if ( m instanceof GamaObjectMatrix ) { return new GamaIntMatrix(scope, c, r, ((GamaObjectMatrix) m).matrix); }
 		if ( m instanceof GamaIntMatrix ) { return new GamaIntMatrix(scope, c, r, ((GamaIntMatrix) m).matrix); }
@@ -50,38 +51,38 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 
 	int[] matrix;
 
-	public GamaIntMatrix(IScope scope, final GamaPoint p) {
+	public GamaIntMatrix(final IScope scope, final GamaPoint p) {
 		this(scope, (int) p.x, (int) p.y);
 	}
 
-	public GamaIntMatrix(IScope scope, final int cols, final int rows) {
+	public GamaIntMatrix(final IScope scope, final int cols, final int rows) {
 		super(scope, cols, rows);
 		matrix = new int[cols * rows];
 	}
 
-	public GamaIntMatrix(IScope scope, final int cols, final int rows, final double[] objects) {
+	public GamaIntMatrix(final IScope scope, final int cols, final int rows, final double[] objects) {
 		this(scope, cols, rows);
 		java.lang.System.arraycopy(objects, 0, matrix, 0, Math.min(objects.length, rows * cols));
 	}
 
-	public GamaIntMatrix(IScope scope, final int cols, final int rows, final int[] objects) {
+	public GamaIntMatrix(final IScope scope, final int cols, final int rows, final int[] objects) {
 		this(scope, cols, rows);
 		java.lang.System.arraycopy(objects, 0, matrix, 0, Math.min(objects.length, rows * cols));
 	}
 
-	public GamaIntMatrix(IScope scope, final int cols, final int rows, final Object[] objects) {
+	public GamaIntMatrix(final IScope scope, final int cols, final int rows, final Object[] objects) {
 		this(scope, cols, rows);
 		for ( int i = 0, n = Math.min(objects.length, rows * cols); i < n; i++ ) {
 			matrix[i] = Cast.asInt(scope, objects[i]);
 		}
 	}
 
-	public GamaIntMatrix(IScope scope, final int[] mat) {
+	public GamaIntMatrix(final IScope scope, final int[] mat) {
 		super(scope, 1, mat.length);
 		matrix = mat;
 	}
 
-	public GamaIntMatrix(IScope scope, final List objects, final boolean flat, final GamaPoint preferredSize) {
+	public GamaIntMatrix(final IScope scope, final List objects, final boolean flat, final GamaPoint preferredSize) {
 		super(scope, objects, flat, preferredSize);
 		matrix = new int[numRows * numCols];
 		if ( preferredSize != null ) {
@@ -101,7 +102,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		}
 	}
 
-	public GamaIntMatrix(IScope scope, final Object[] mat) {
+	public GamaIntMatrix(final IScope scope, final Object[] mat) {
 		this(scope, 1, mat.length);
 		for ( int i = 0; i < mat.length; i++ ) {
 			matrix[i] = Cast.asInt(null, mat[i]);
@@ -114,13 +115,13 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	@Override
-	protected void _putAll(IScope scope, final Object o, final Object param) throws GamaRuntimeException {
+	protected void _putAll(final IScope scope, final Object o, final Object param) throws GamaRuntimeException {
 		// TODO Verify type
 		fillWith((Integer) o);
 	}
 
 	@Override
-	protected boolean _contains(IScope scope, final Object o) {
+	protected boolean _contains(final IScope scope, final Object o) {
 		for ( int i = 0; i < matrix.length; i++ ) {
 			if ( o instanceof Integer && matrix[i] == ((Integer) o).intValue() ) { return true; }
 		}
@@ -128,19 +129,19 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	@Override
-	public Integer _first(IScope scope) {
+	public Integer _first(final IScope scope) {
 		if ( matrix.length == 0 ) { return 0; }
 		return matrix[0];
 	}
 
 	@Override
-	public Integer _last(IScope scope) {
+	public Integer _last(final IScope scope) {
 		if ( matrix.length == 0 ) { return 0; }
 		return matrix[matrix.length - 1];
 	}
 
 	@Override
-	public Integer _length(IScope scope) {
+	public Integer _length(final IScope scope) {
 		return matrix.length;
 	}
 
@@ -185,7 +186,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	// }
 
 	@Override
-	public boolean _isEmpty(IScope scope) {
+	public boolean _isEmpty(final IScope scope) {
 		for ( int i = 0; i < matrix.length; i++ ) {
 			if ( matrix[i] != 0d ) { return false; }
 		}
@@ -206,8 +207,8 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	@Override
-	public IMatrix _reverse(IScope scope) throws GamaRuntimeException {
-		IMatrix result = new GamaIntMatrix(scope, numRows, numCols);
+	public IMatrix _reverse(final IScope scope) throws GamaRuntimeException {
+		final IMatrix result = new GamaIntMatrix(scope, numRows, numCols);
 		for ( int i = 0; i < numCols; i++ ) {
 			for ( int j = 0; j < numRows; j++ ) {
 				result.set(scope, j, i, get(scope, i, j));
@@ -217,7 +218,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	@Override
-	public GamaIntMatrix copy(IScope scope) {
+	public GamaIntMatrix copy(final IScope scope) {
 		return new GamaIntMatrix(scope, numCols, numRows, matrix);
 	}
 
@@ -225,7 +226,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	public boolean equals(final Object m) {
 		if ( this == m ) { return true; }
 		if ( !(m instanceof GamaIntMatrix) ) { return false; }
-		GamaIntMatrix mat = (GamaIntMatrix) m;
+		final GamaIntMatrix mat = (GamaIntMatrix) m;
 		return Arrays.equals(this.matrix, mat.matrix);
 	}
 
@@ -239,7 +240,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	@Override
-	public Integer get(IScope scope, final int col, final int row) {
+	public Integer get(final IScope scope, final int col, final int row) {
 		if ( col >= numCols || col < 0 || row >= numRows || row < 0 ) { return 0; }
 		return matrix[row * numCols + col];
 	}
@@ -249,13 +250,13 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	// @Override
-	public void set(IScope scope, final int col, final int row, final int obj) {
+	public void set(final IScope scope, final int col, final int row, final int obj) {
 		if ( col >= numCols || col < 0 || row >= numRows || row < 0 ) { return; }
 		matrix[row * numCols + col] = obj;
 	}
 
 	@Override
-	public void set(IScope scope, final int col, final int row, final Object obj) {
+	public void set(final IScope scope, final int col, final int row, final Object obj) {
 		if ( col >= numCols || col < 0 || row >= numRows || row < 0 ) { return; }
 		matrix[row * numCols + col] = Cast.asInt(scope, obj);
 		// put(col, row, Cast.asInt(GAMA.getDefaultScope(), obj).intValue());
@@ -272,7 +273,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	@Override
-	public Integer remove(IScope scope, final int col, final int row) {
+	public Integer remove(final IScope scope, final int col, final int row) {
 		if ( col >= numCols || col < 0 || row >= numRows || row < 0 ) { return 0; }
 		final int o = matrix[row * numCols + col];
 		matrix[row * numCols + col] = 0;
@@ -280,7 +281,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	@Override
-	public boolean _removeFirst(IScope scope, final Integer o) {
+	public boolean _removeFirst(final IScope scope, final Integer o) {
 		return remove(o.intValue());
 	}
 
@@ -296,8 +297,8 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	}
 
 	@Override
-	public boolean _removeAll(IScope scope, final IContainer<?, Integer> list) {
-		for ( Integer o : list ) {
+	public boolean _removeAll(final IScope scope, final IContainer<?, Integer> list) {
+		for ( final Integer o : list ) {
 			removeAll(o.intValue());
 		}
 		// TODO Make a test to verify the return
@@ -320,7 +321,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 		GAMA.run(new InScope.Void() {
 
 			@Override
-			public void process(IScope scope) {
+			public void process(final IScope scope) {
 				for ( int row = 0; row < numRows; row++ ) {
 					for ( int col = 0; col < numCols; col++ ) {
 						sb.append(get(scope, col, row));
@@ -342,6 +343,15 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 	@Override
 	public String toGaml() {
 		return new GamaList(this.matrix).toGaml() + " as matrix";
+	}
+
+	/**
+	 * Method iterator()
+	 * @see msi.gama.util.matrix.GamaMatrix#iterator()
+	 */
+	@Override
+	public Iterator<Integer> iterator() {
+		return Ints.asList(matrix).iterator();
 	}
 
 	//

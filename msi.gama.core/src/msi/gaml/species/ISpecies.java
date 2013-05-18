@@ -174,4 +174,9 @@ public interface ISpecies extends ISymbol, IContainer<Integer, IAgent> {
 
 	public abstract Boolean implementsSkill(String skill);
 
+	/**
+	 * @return
+	 */
+	public abstract Collection<String> getMicroSpeciesNames();
+
 }

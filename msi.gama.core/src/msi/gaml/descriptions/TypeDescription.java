@@ -23,7 +23,7 @@ public class TypeDescription extends SymbolDescription {
 
 	protected Map<String, StatementDescription> actions;
 	private Map<String, VariableDescription> variables;
-	private Class javaBase;
+	protected Class javaBase;
 	protected TypeDescription parent;
 	private static int varCount = 0;
 	private IList<String> sortedVariableNames;
@@ -38,18 +38,18 @@ public class TypeDescription extends SymbolDescription {
 	}
 
 	public void copyJavaAdditions() {
-		Class clazz = getJavaBase();
+		final Class clazz = getJavaBase();
 		if ( clazz == null ) {
 			error("This species cannot be compiled as its parent is unknown. ", IGamlIssue.UNKNOWN_SUBSPECIES);
 			return;
 		}
 		final Set<IDescription> children = AbstractGamlAdditions.getAllChildrenOf(getJavaBase(), getSkillClasses());
-		for ( IDescription v : children ) {
+		for ( final IDescription v : children ) {
 			addChild(v.copy(this));
 		}
 	}
 
-	public void setParent(TypeDescription parent) {
+	public void setParent(final TypeDescription parent) {
 		this.parent = parent;
 	}
 
@@ -58,16 +58,16 @@ public class TypeDescription extends SymbolDescription {
 	}
 
 	protected void duplicateError(final IDescription one, final IDescription two) {
-		String name = one.getFacets().getLabel(NAME);
-		String key = one.getKeyword();
-		String error = key + " " + name + " is declared twice. Only this one will be kept.";
+		final String name = one.getFacets().getLabel(NAME);
+		final String key = one.getKeyword();
+		final String error = key + " " + name + " is declared twice. Only this one will be kept.";
 		one.info(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, name);
 		// two.info(error, IGamlIssue.DUPLICATE_DEFINITION, NAME, name);
 	}
 
 	protected void addPrimitive(final StatementDescription primitive) {
-		String actionName = primitive.getName();
-		StatementDescription existing = getAction(actionName);
+		final String actionName = primitive.getName();
+		final StatementDescription existing = getAction(actionName);
 		if ( existing != null ) {
 			// FIXME This block is never executed (to verify)
 			if ( existing.getKeyword().equals(ACTION) && !primitive.isAbstract() ) {
@@ -87,8 +87,8 @@ public class TypeDescription extends SymbolDescription {
 	protected void addAction(final StatementDescription redeclaredAction) {
 
 		// TODO VERIFIER LES PARENTS RESPECTIFS ET COMPRENDRE POURQUOI ERREUR SUR L'AJOUT D'ACTIONS ABSTRAITES
-		String actionName = redeclaredAction.getName();
-		StatementDescription existingAction = getAction(actionName);
+		final String actionName = redeclaredAction.getName();
+		final StatementDescription existingAction = getAction(actionName);
 		if ( existingAction != null ) {
 			// Skills primitives are added first
 			// if ( existingAction.getKeyword().equals(PRIMITIVE) && !existingAction.isAbstract() ) {
@@ -110,7 +110,7 @@ public class TypeDescription extends SymbolDescription {
 	}
 
 	protected void inheritAction(final TypeDescription parent, final StatementDescription parentAction) {
-		String actionName = parentAction.getName();
+		final String actionName = parentAction.getName();
 		if ( !hasAction(actionName) ) {
 			// The current species does not define such an action. If it is abstract in
 			// the super species, we issue an error
@@ -126,7 +126,7 @@ public class TypeDescription extends SymbolDescription {
 
 		// The action has already been defined in the current species. Just need to check
 		// if it coherent with the inherited action
-		StatementDescription myAction = getAction(actionName);
+		final StatementDescription myAction = getAction(actionName);
 
 		DescriptionValidator.assertActionsAreCompatible(myAction, parentAction, parent.getName());
 	}
@@ -156,7 +156,7 @@ public class TypeDescription extends SymbolDescription {
 
 	@Override
 	public IExpression getVarExpr(final String n) {
-		VariableDescription vd = getVariable(n);
+		final VariableDescription vd = getVariable(n);
 		if ( vd == null ) { return null; }
 		return vd.getVarExpr();
 	}
@@ -168,7 +168,7 @@ public class TypeDescription extends SymbolDescription {
 		return javaBase;
 	}
 
-	protected void setJavaBase(Class javaBase) {
+	protected void setJavaBase(final Class javaBase) {
 		this.javaBase = javaBase;
 	}
 
@@ -178,7 +178,7 @@ public class TypeDescription extends SymbolDescription {
 	}
 
 	public boolean isArgOf(final String op, final String arg) {
-		StatementDescription action = getAction(op);
+		final StatementDescription action = getAction(op);
 		if ( action != null ) { return action.containsArg(arg); }
 		return false;
 	}
@@ -201,7 +201,7 @@ public class TypeDescription extends SymbolDescription {
 
 	public boolean isAbstract() {
 		if ( actions == null ) { return false; }
-		for ( StatementDescription a : actions.values() ) {
+		for ( final StatementDescription a : actions.values() ) {
 			if ( a.isAbstract() ) { return true; }
 		}
 		return false;
@@ -249,8 +249,8 @@ public class TypeDescription extends SymbolDescription {
 			sortedVariableNames.clear();
 		}
 		for ( int i = 0; i < result.size(); i++ ) {
-			VariableDescription v = result.get(i);
-			String s = v.getName();
+			final VariableDescription v = result.get(i);
+			final String s = v.getName();
 			sortedVariableNames.add(s);
 			if ( v.isUpdatable() ) {
 				if ( updatableVariableNames == null ) {
@@ -277,7 +277,7 @@ public class TypeDescription extends SymbolDescription {
 		sortedVariableNames.remove(var.getName());
 		int index = 0;
 		for ( int j = 0, n = sortedVariableNames.size(); j < n; j++ ) {
-			VariableDescription vd = getVariable(sortedVariableNames.get(j));
+			final VariableDescription vd = getVariable(sortedVariableNames.get(j));
 			if ( var.getDependencies().contains(vd) ) {
 				index = j;
 			};
@@ -338,14 +338,14 @@ public class TypeDescription extends SymbolDescription {
 	}
 
 	protected void inheritVariable(final VariableDescription parentVariable) {
-		String varName = parentVariable.getName();
+		final String varName = parentVariable.getName();
 		// GuiUtils.debug("       **** " + getName() + " receives " + " var " + varName + " from " + parent.getName());
 
 		if ( !hasVar(varName) ) {
 			addChild(parentVariable);
 			return;
 		}
-		VariableDescription myVar = getVariable(varName);
+		final VariableDescription myVar = getVariable(varName);
 		// If the variable already in place is builtin, we replace it
 		if ( myVar.isBuiltIn() ) {
 			// We inherit another builtin variable. No need to do anything
@@ -375,10 +375,10 @@ public class TypeDescription extends SymbolDescription {
 	}
 
 	protected void addVariable(final VariableDescription v) {
-		String vName = v.getName();
+		final String vName = v.getName();
 
 		if ( hasVar(vName) ) {
-			IDescription builtIn = getVariables().get(vName);
+			final IDescription builtIn = getVariables().get(vName);
 			if ( !builtIn.isBuiltIn() ) {
 				duplicateError(v, builtIn);
 				getChildren().remove(builtIn);
@@ -397,11 +397,11 @@ public class TypeDescription extends SymbolDescription {
 			// builtIn.getOriginName(), IGamlIssue.REDEFINES, target, (String[]) null);
 			// }
 			// }
-			IType bType = builtIn.getTypeNamed(builtIn.getFacets().getLabel(TYPE));
-			IType vType = v.getTypeNamed(v.getFacets().getLabel(TYPE));
+			final IType bType = builtIn.getTypeNamed(builtIn.getFacets().getLabel(TYPE));
+			final IType vType = v.getTypeNamed(v.getFacets().getLabel(TYPE));
 			if ( bType != vType ) {
-				String builtInType = bType.toString();
-				String varType = vType.toString();
+				final String builtInType = bType.toString();
+				final String varType = vType.toString();
 				v.error(
 					"variable " + vName + " is of type " + builtInType + " and cannot be redefined as a " + varType,
 					IGamlIssue.WRONG_REDEFINITION);

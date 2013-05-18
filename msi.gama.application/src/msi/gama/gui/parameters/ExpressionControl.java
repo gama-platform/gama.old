@@ -24,6 +24,7 @@ import msi.gama.gui.swt.controls.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GAML;
 import msi.gaml.types.IType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -85,7 +86,7 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 		try {
 			currentException = null;
 			currentValue =
-				editor.evaluateExpression() ? GAMA.evaluateExpression(text.getText(), editor.getAgent()) : GAMA
+				editor.evaluateExpression() ? GAML.evaluateExpression(text.getText(), editor.getAgent()) : GAML
 					.compileExpression(text.getText(), editor.getAgent());
 		} catch (Exception e) {
 			currentException = e;

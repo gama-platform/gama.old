@@ -1,7 +1,7 @@
 package msi.gama.kernel.experiment;
 
 import java.util.*;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.GamaPopulation;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.topology.continuous.AmorphousTopology;
@@ -20,7 +20,7 @@ public class ExperimentPopulation extends GamaPopulation {
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number, final List<Map> initialValues,
 		final boolean isRestored) throws GamaRuntimeException {
 		if ( size() == 0 ) {
-			ExperimentAgent exp = new ExperimentAgent(this);
+			final ExperimentAgent exp = new ExperimentAgent(this);
 			// exp.setIndex(0);
 			agents.add(exp);
 			createVariablesFor(scope, agents, initialValues);
@@ -39,7 +39,7 @@ public class ExperimentPopulation extends GamaPopulation {
 	}
 
 	@Override
-	public IAgent getHost() {
+	public IMacroAgent getHost() {
 		return null;
 	}
 

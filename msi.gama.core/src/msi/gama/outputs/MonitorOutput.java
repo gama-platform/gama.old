@@ -28,6 +28,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GAML;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
@@ -118,7 +119,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 
 	public boolean setNewExpressionText(final String string, final IScope scope) {
 		expressionText = string;
-		value = GAMA.compileExpression(string, scope.getSimulationScope());
+		value = GAML.compileExpression(string, scope.getSimulationScope());
 		return true;
 	}
 

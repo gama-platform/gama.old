@@ -20,7 +20,7 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gama.common.util.StringUtils;
-import msi.gama.runtime.GAMA;
+import msi.gama.util.GAML;
 import msi.gaml.expressions.IExpression;
 import org.eclipse.emf.ecore.EObject;
 
@@ -69,7 +69,7 @@ public class BasicExpressionDescription implements IExpressionDescription {
 	@Override
 	public IExpression compile(final IDescription context) {
 		if ( expression == null ) {
-			expression = GAMA.getExpressionFactory().createExpr(this, context);
+			expression = GAML.getExpressionFactory().createExpr(this, context);
 		}
 		return expression;
 	}

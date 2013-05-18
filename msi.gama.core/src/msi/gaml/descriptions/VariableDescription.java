@@ -19,7 +19,6 @@
 package msi.gaml.descriptions;
 
 import java.util.*;
-import msi.gama.runtime.GAMA;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.expressions.IVarExpression;
 import msi.gaml.factories.IChildrenProvider;
@@ -205,7 +204,7 @@ public class VariableDescription extends SymbolDescription {
 		if ( varExpr != null ) { return varExpr; }
 		//
 		varExpr =
-			GAMA.getExpressionFactory().createVar(getName(), getType(), getContentType(), getKeyType(),
+			msi.gama.util.GAML.getExpressionFactory().createVar(getName(), getType(), getContentType(), getKeyType(),
 				isNotModifiable(), _isGlobal ? IVarExpression.GLOBAL : IVarExpression.AGENT,
 				this.getEnclosingDescription());
 		return varExpr;

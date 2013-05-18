@@ -5,7 +5,7 @@ import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
 import msi.gama.kernel.model.IModel;
-import msi.gama.kernel.simulation.*;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
@@ -67,7 +67,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	private static final IShape SHAPE = GamaGeometryType.createPoint(new GamaPoint(-1, -1));
 
 	private IScope scope;
-	protected ISimulationAgent simulation;
+	protected SimulationAgent simulation;
 	protected AgentScheduler scheduler;
 	final Map<String, Object> extraParametersMap = new LinkedHashMap();
 	protected RandomUtils random;
@@ -151,13 +151,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * @see msi.gama.metamodel.agent.GamlAgent#_init_(msi.gama.runtime.IScope)
 	 */
 	@Override
-	public Object _init_(IScope scope) {
+	public Object _init_(final IScope scope) {
 		// GuiUtils.debug("ExperimentAgent._init_");
 		if ( scope.interrupted() ) { return null; }
 		// We execute any behavior defined in GAML. The simulation is not yet defined (only the 'fake' one).
 		super._init_(scope);
 		// We gather the parameters set in the experiment
-		ParametersSet parameters = new ParametersSet(getSpecies().getCurrentSolution());
+		final ParametersSet parameters = new ParametersSet(getSpecies().getCurrentSolution());
 		// Add the ones set during the "fake" simulation episode
 		parameters.putAll(extraParametersMap);
 		// This is where the simulation agent is created
@@ -166,14 +166,14 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	// Callback from SimulationPopulation.createAgents() once a new simulation is created
-	public void scheduleSimulation(SimulationAgent sim) {
+	public void scheduleSimulation(final SimulationAgent sim) {
 		// GuiUtils.debug("ExperimentAgent.scheduleSimulation in GLOBAL SCHEDULER");
 		// The scheduler of the outputs is scheduled in the global scheduler in its own scope that is linked with the
 		// simulation.
 		// The launch could have been interrupted before, so we are careful to check if we still have a valid agent and
 		// a valid scope
 		GAMA.controller.scheduler.schedule(sim.getScheduler(), sim.getScope());
-		IScope outputScope = sim.obtainNewScope();
+		final IScope outputScope = sim.obtainNewScope();
 		if ( outputScope != null ) {
 			GAMA.controller.scheduler.schedule(getSpecies().getOutputManager(), outputScope);
 		} else {
@@ -184,7 +184,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	@Override
-	protected Object stepSubPopulations(IScope scope) {
+	protected Object stepSubPopulations(final IScope scope) {
 		// The experiment DOES NOT step its subpopulations
 		return this;
 	}
@@ -205,7 +205,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		}
 		pop = new SimulationPopulation(getModel());
 		pop.initializeFor(scope);
-		microPopulations.put(getModel(), pop);
+		attributes.put(getModel().getName(), pop);
 		pop.setHost(this);
 	}
 
@@ -213,7 +213,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		// GuiUtils.debug("ExperimentAgent.createSimulationAgent");
 		GuiUtils.waitStatus("Initializing simulation");
 		isLoading = true;
-		IPopulation pop = getMicroPopulation(getModel());
+		final IPopulation pop = getMicroPopulation(getModel());
 		// 'simulation' is set by a callback call to setSimulation()
 		pop.createAgents(scope, 1, GamaList.with(sol), false);
 		if ( scope.interrupted() ) {
@@ -232,7 +232,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		return simulation;
 	}
 
-	public void setSimulation(ISimulationAgent sim) {
+	public void setSimulation(final SimulationAgent sim) {
 		simulation = sim;
 	}
 
@@ -251,7 +251,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * @see msi.gama.metamodel.agent.GamlAgent#getSimulation()
 	 */
 
-	public ISimulationAgent getSimulation() {
+	public SimulationAgent getSimulation() {
 		return simulation;
 	}
 
@@ -293,7 +293,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@getter(value = WORKSPACE_PATH, initializer = true)
 	public String getWorkspacePath(final IAgent agent) {
-		URL url = Platform.getInstanceLocation().getURL();
+		final URL url = Platform.getInstanceLocation().getURL();
 		return url.getPath();
 	}
 
@@ -363,12 +363,12 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	}
 
 	@getter(IKeyword.SIMULATION)
-	public IAgent getSimulation(IAgent agent) {
+	public IAgent getSimulation(final IAgent agent) {
 		return simulation;
 	}
 
 	@setter(IKeyword.SIMULATION)
-	public void setSimulation(IAgent agent, final IAgent sim) {
+	public void setSimulation(final IAgent agent, final IAgent sim) {
 		// TODO Nothing to do ? The 'simulation' variable is normally initialized automatically whenever a simulation is
 		// created
 	}
@@ -388,7 +388,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	private class ExperimentAgentScope extends Scope {
 
 		@Override
-		public Object getGlobalVarValue(String name) {
+		public Object getGlobalVarValue(final String name) {
 			if ( ExperimentAgent.this.hasAttribute(name) ) {
 				return super.getGlobalVarValue(name);
 			} else if ( getSimulation() != null ) {
@@ -399,7 +399,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		}
 
 		@Override
-		public void setGlobalVarValue(String name, Object v) {
+		public void setGlobalVarValue(final String name, final Object v) {
 			if ( ExperimentAgent.this.hasAttribute(name) ) {
 				super.setGlobalVarValue(name, v);
 			} else if ( getSimulation() != null ) {

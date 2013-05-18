@@ -25,6 +25,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.*;
 import msi.gaml.operators.Cast;
+import com.google.common.collect.*;
 
 /**
  * Written by drogoul Modified on 21 nov. 2008
@@ -62,7 +63,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 		}
 
 		@Override
-		public GamaList copy(final IScope scope) {
+		public final GamaList copy(final IScope scope) {
 			return this;
 		}
 
@@ -135,6 +136,14 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 	public GamaList() {
 		super();
+	}
+
+	public GamaList(final Iterable<E> i) {
+		super(ImmutableList.copyOf(i));
+	}
+
+	public GamaList(final Iterator<E> i) {
+		super(ImmutableList.copyOf(i));
 	}
 
 	public GamaList(final Collection arg0) {
@@ -733,7 +742,7 @@ public class GamaList<E> extends ArrayList<E> implements IList<E> {
 
 	@Override
 	public Iterable<E> iterable(final IScope scope) {
-		return this;
+		return (this);
 	}
 
 	@Override

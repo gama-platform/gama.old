@@ -19,9 +19,9 @@
 package msi.gama.metamodel.topology;
 
 import java.awt.Graphics2D;
+import java.util.Iterator;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
-import msi.gama.util.IList;
 import msi.gaml.species.ISpecies;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -39,43 +39,18 @@ public interface ISpatialIndex {
 
 	public abstract void remove(final IShape previous, final IShape agent);
 
-	// public abstract void insert(final Coordinate location, final IShape agent);
+	public abstract Iterator<IShape> allAtDistance(final IShape source, final double dist, final IAgentFilter f);
 
-	// public abstract void remove(final Envelope bounds, final IShape o);
+	public abstract IShape firstAtDistance(final IShape source, final double dist, final IAgentFilter f);
 
-	// public abstract void remove(final Coordinate previousLoc, final IShape agent);
-
-	public abstract IList<IShape> allAtDistance(final IShape source, final double dist,
-		final IAgentFilter f);
-
-	//
-	// public abstract IList<IShape> allAtDistance(final ILocation source, final double dist,
-	// final IAgentFilter f);
-
-	public abstract IShape firstAtDistance(final IShape source, final double dist,
-		final IAgentFilter f);
-
-	// public abstract IShape firstAtDistance(final ILocation source, final double dist,
-	// final IAgentFilter f);
-
-	public abstract IList<IShape> allInEnvelope(final IShape source, final Envelope envelope,
-		final IAgentFilter f, boolean contained);
+	public abstract Iterator<IShape> allInEnvelope(final IShape source, final Envelope envelope, final IAgentFilter f,
+		boolean contained);
 
 	public abstract void drawOn(Graphics2D g2, int width, int height);
 
-	// public abstract void update();
-
-	// public abstract void cleanCache();
-
 	public interface Compound extends ISpatialIndex {
 
-		// final static IList<IShape> _SHAPES = new GamaList();
-
-		// final static Set<ISpatialIndex> _INDEXES = new HashSet();
-
 		public abstract void add(ISpatialIndex index, ISpecies species);
-
-		public abstract void remove(ISpatialIndex index);
 
 		public abstract void dispose();
 	}

@@ -69,7 +69,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public GamaPoint(final ILocation point) {
 		x = point.getX();
 		y = point.getY();
-		double zz = point.getZ();
+		final double zz = point.getZ();
 		hasZ = !Double.isNaN(zz);
 
 		if ( hasZ ) {
@@ -129,17 +129,17 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	@Override
-	public void setX(double xx) {
+	public void setX(final double xx) {
 		x = xx;
 	}
 
 	@Override
-	public void setY(double yy) {
+	public void setY(final double yy) {
 		y = yy;
 	}
 
 	@Override
-	public void setZ(double zz) {
+	public void setZ(final double zz) {
 		hasZ = !Double.isNaN(zz);
 		if ( hasZ ) {
 			z = zz;
@@ -156,7 +156,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public String toGaml() {
-		String zStr = hasZ ? "," + z : "";
+		final String zStr = hasZ ? "," + z : "";
 		return "{" + x + "," + y + zStr + "}";
 	}
 
@@ -166,8 +166,8 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	@Override
-	public String stringValue(IScope scope) {
-		String zStr = hasZ ? "," + z : "";
+	public String stringValue(final IScope scope) {
+		final String zStr = hasZ ? "," + z : "";
 		return "{" + x + "," + y + zStr + "}";
 	}
 
@@ -181,7 +181,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 		x = x + loc.getX();
 		y = y + loc.getY();
 		if ( hasZ ) {
-			double zz = loc.getZ();
+			final double zz = loc.getZ();
 			if ( !Double.isNaN(zz) ) {
 				z = z + zz;
 			}
@@ -194,7 +194,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	@Override
-	public GamaPoint copy(IScope scope) {
+	public GamaPoint copy(final IScope scope) {
 		return new GamaPoint(x, y, z);
 	}
 
@@ -302,7 +302,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 	 */
 	@Override
 	public void setInnerGeometry(final Geometry point) {
-		Coordinate p = point.getCoordinate();
+		final Coordinate p = point.getCoordinate();
 		setLocation(p.x, p.y, p.z);
 	}
 
@@ -323,20 +323,15 @@ public class GamaPoint extends Coordinate implements ILocation {
 	}
 
 	@Override
-	public Object getAttribute(Object key) {
+	public Object getAttribute(final Object key) {
 		return null;
 	}
 
 	@Override
-	public void setAttribute(Object key, Object value) {}
+	public void setAttribute(final Object key, final Object value) {}
 
 	@Override
-	public boolean hasAttributes() {
-		return false;
-	}
-
-	@Override
-	public boolean hasAttribute(Object key) {
+	public boolean hasAttribute(final Object key) {
 		return false;
 	}
 

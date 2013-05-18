@@ -20,61 +20,38 @@ package msi.gama.metamodel.agent;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.*;
-import msi.gama.kernel.experiment.*;
-import msi.gama.kernel.model.IModel;
-import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.action;
-import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.species;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.GamaGraph;
-import msi.gaml.operators.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.IStatement;
-import msi.gaml.types.*;
+import msi.gaml.types.GamaGeometryType;
 import msi.gaml.variables.IVariable;
-import com.vividsolutions.jts.geom.*;
+import com.google.common.collect.Iterables;
 
 /**
  * The Class GamlAgent. Represents agents that can be manipulated in GAML. They are provided with
  * everything their species defines .
  */
 @species(name = IKeyword.AGENT)
-public class GamlAgent implements IAgent {
+public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	/** The population that this agent belongs to. */
 	protected final IPopulation population;
-	protected final GamaMap attributes = new GamaMap();
-	protected volatile int index;
-	/** The shape of agent with relative coordinate on the environment of host/environment. */
+	protected final GamaMap<Object, Object> attributes = new GamaMap();
 	protected IShape geometry;
 	protected String name;
-	/**
-	 * If true, this means that the agent will soon be dead.
-	 * In this case, dead() will return true.
-	 * 
-	 */
-	protected volatile boolean dead = false;
-	/**
-	 * All the populations that manage the micro-agents. Each population manages agents of a
-	 * micro-species. Final so that it is correctly garbaged.
-	 */
-
-	// FIXME Could be put in a subclass as most models dont need it.
-	protected final Map<ISpecies, IPopulation> microPopulations = new HashMap();
-	private volatile boolean lockAcquired = false;
 
 	/**
 	 * @param s the population used to prototype the agent.
-	 * @throws GamaRuntimeException
 	 */
-	public GamlAgent(final IPopulation s) throws GamaRuntimeException {
+	public GamlAgent(final IPopulation s) {
 		population = s;
 	}
 
@@ -162,8 +139,7 @@ public class GamlAgent implements IAgent {
 
 	protected Object stepSubPopulations(final IScope scope) {
 		try {
-			final List<IPopulation> pops = this.getMicroPopulations();
-			for ( final IPopulation pop : pops ) {
+			for ( final IPopulation pop : getMicroPopulations() ) {
 				if ( scope.interrupted() ) { return null; }
 				pop.step(scope);
 			}
@@ -171,72 +147,6 @@ public class GamlAgent implements IAgent {
 			GAMA.reportError(g);
 		}
 		return this;
-	}
-
-	/**
-	 * GAML actions
-	 */
-
-	@action(name = "debug")
-	@args(names = { "message" })
-	public final Object primDebug(final IScope scope) throws GamaRuntimeException {
-		final String m = (String) scope.getArg("message", IType.STRING);
-		GuiUtils.debugConsole(scope.getClock().getCycle(), m + "\nsender: " + Cast.asMap(scope, this));
-		return m;
-	}
-
-	@action(name = "write")
-	@args(names = { "message" })
-	public final Object primWrite(final IScope scope) throws GamaRuntimeException {
-		final String s = (String) scope.getArg("message", IType.STRING);
-		GuiUtils.informConsole(s);
-		return s;
-	}
-
-	@action(name = IKeyword.ERROR)
-	@args(names = { "message" })
-	public final Object primError(final IScope scope) throws GamaRuntimeException {
-		final String error = (String) scope.getArg("message", IType.STRING);
-		GuiUtils.error(error);
-		return error;
-	}
-
-	@action(name = "tell")
-	@args(names = { "message" })
-	public final Object primTell(final IScope scope) throws GamaRuntimeException {
-		final String s = getName() + " says : " + scope.getArg("message", IType.STRING);
-		GuiUtils.tell(s);
-		return s;
-	}
-
-	@action(name = "die")
-	public Object primDie(final IScope scope) throws GamaRuntimeException {
-		// FIXME VERIFY THIS STATUS
-		scope.setStatus(ExecutionStatus.interrupt);
-		dispose();
-		return null;
-	}
-
-	@Override
-	public boolean contains(final IAgent component) {
-		if ( component == null ) { return false; }
-		return this.equals(component.getHost());
-	}
-
-	@Override
-	public IAgent copy(final IScope scope) {
-		return this;
-		// agents are immutable
-	}
-
-	@Override
-	public boolean isPoint() {
-		return geometry != null && geometry.isPoint();
-	}
-
-	@Override
-	public ITopology getTopology() {
-		return population.getTopology();
 	}
 
 	@Override
@@ -362,7 +272,9 @@ public class GamlAgent implements IAgent {
 
 		SavedAgent(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 			saveAttributes(scope, agent);
-			saveMicroAgents(scope, agent);
+			if ( agent instanceof IMacroAgent ) {
+				saveMicroAgents(scope, (IMacroAgent) agent);
+			}
 		}
 
 		/**
@@ -396,7 +308,7 @@ public class GamlAgent implements IAgent {
 		 * @param agent The agent having micro-agents to be saved.
 		 * @throws GamaRuntimeException
 		 */
-		private void saveMicroAgents(final IScope scope, final IAgent agent) throws GamaRuntimeException {
+		private void saveMicroAgents(final IScope scope, final IMacroAgent agent) throws GamaRuntimeException {
 			innerPopulations = new HashMap<String, List<SavedAgent>>();
 
 			for ( final IPopulation microPop : agent.getMicroPopulations() ) {
@@ -436,7 +348,7 @@ public class GamlAgent implements IAgent {
 		void restoreMicroAgents(final IScope scope, final IAgent host) throws GamaRuntimeException {
 
 			for ( final String microPopName : innerPopulations.keySet() ) {
-				final IPopulation microPop = host.getMicroPopulation(microPopName);
+				final IPopulation microPop = getHost().getMicroPopulation(microPopName);
 
 				if ( microPop != null ) {
 					final List<SavedAgent> savedMicros = innerPopulations.get(microPopName);
@@ -456,159 +368,6 @@ public class GamlAgent implements IAgent {
 		}
 	}
 
-	/**
-	 * @see msi.gama.interfaces.IGeometry#getInnerGeometry()
-	 */
-	@Override
-	public Geometry getInnerGeometry() {
-		final IShape g = getGeometry();
-		return g == null ? null : g.getInnerGeometry();
-	}
-
-	/**
-	 * @see msi.gama.interfaces.IGeometry#getEnvelope()
-	 */
-	@Override
-	public Envelope getEnvelope() {
-		final IShape g = getGeometry();
-		return g == null ? null : g.getEnvelope();
-	}
-
-	/**
-	 * @see msi.gama.interfaces.IGeometry#covers(msi.gama.interfaces.IGeometry)
-	 */
-	@Override
-	public boolean covers(final IShape g) {
-		final IShape gg = getGeometry();
-		return gg == null ? false : gg.covers(g);
-	}
-
-	/**
-	 * @see msi.gama.interfaces.IGeometry#euclidianDistanceTo(msi.gama.interfaces.IGeometry)
-	 */
-	@Override
-	public double euclidianDistanceTo(final IShape g) {
-		final IShape gg = getGeometry();
-		return gg == null ? 0d : gg.euclidianDistanceTo(g);
-	}
-
-	@Override
-	public double euclidianDistanceTo(final ILocation g) {
-		final IShape gg = getGeometry();
-		return gg == null ? 0d : gg.euclidianDistanceTo(g);
-	}
-
-	/**
-	 * @see msi.gama.interfaces.IGeometry#intersects(msi.gama.interfaces.IGeometry)
-	 */
-	@Override
-	public boolean intersects(final IShape g) {
-		final IShape gg = getGeometry();
-		return gg == null ? false : gg.intersects(g);
-	}
-
-	@Override
-	public boolean crosses(final IShape g) {
-		final IShape gg = getGeometry();
-		return gg == null ? false : gg.crosses(g);
-	}
-
-	/**
-	 * @see msi.gama.interfaces.IGeometry#getAgent()
-	 */
-	@Override
-	public IAgent getAgent() {
-		return this;
-	}
-
-	/**
-	 * @see msi.gama.interfaces.IGeometry#setAgent(msi.gama.interfaces.IAgent)
-	 */
-	@Override
-	public void setAgent(final IAgent agent) {}
-
-	/**
-	 * @see msi.gama.interfaces.IGeometry#getPerimeter()
-	 */
-	@Override
-	public double getPerimeter() {
-		return geometry.getPerimeter();
-	}
-
-	/**
-	 * @see msi.gama.common.interfaces.IGeometry#setInnerGeometry(com.vividsolutions.jts.geom.Geometry)
-	 */
-	@Override
-	public void setInnerGeometry(final Geometry geom) {
-		geometry.setInnerGeometry(geom);
-	}
-
-	// @Override
-	// public ISimulationAgent getSimulation() {
-	// return getHost().getSimulation();
-	// }
-
-	@Override
-	public AgentScheduler getScheduler() {
-		return getHost().getScheduler();
-	}
-
-	@Override
-	public IModel getModel() {
-		return getHost().getModel();
-	}
-
-	@Override
-	public IExperimentAgent getExperiment() {
-		return getHost().getExperiment();
-	}
-
-	@Override
-	public IScope getScope() {
-		return getHost().getScope();
-	}
-
-	@Override
-	public boolean isInstanceOf(final String skill, final boolean direct) {
-		return getSpecies().implementsSkill(skill);
-	}
-
-	@Override
-	public void setExtraAttributes(final Map<Object, Object> map) {
-		if ( map == null ) { return; }
-		attributes.putAll(map);
-	}
-
-	@Override
-	public GamaMap getAttributes() {
-		return attributes;
-	}
-
-	@Override
-	public GamaMap getOrCreateAttributes() {
-		return attributes;
-	}
-
-	@Override
-	public boolean hasAttributes() {
-		return false;
-	}
-
-	@Override
-	public boolean hasAttribute(final Object key) {
-		return false;
-	}
-
-	@Override
-	public synchronized Object getAttribute(final Object index) {
-		return attributes.get(index);
-	}
-
-	@Override
-	public final synchronized void setAttribute(final Object name, final Object val) {
-		attributes.put(name, val);
-	}
-
 	@Override
 	public void initializeMicroPopulations(final IScope scope) throws GamaRuntimeException {
 		final List<ISpecies> allMicroSpecies = this.getSpecies().getMicroSpecies();
@@ -622,7 +381,7 @@ public class GamlAgent implements IAgent {
 				// continue;
 				// }
 				microPop = GamaPopulation.createPopulation(scope, this, microSpec);
-				microPopulations.put(microSpec, microPop);
+				attributes.put(microSpec.getName(), microPop);
 				microPop.initializeFor(scope);
 			}
 		}
@@ -636,44 +395,8 @@ public class GamlAgent implements IAgent {
 		// TODO Would be better to see if they are actually in use in the model
 		// if ( Types.isBuiltIn(name) ) { return; }
 		final IPopulation microPop = GamaPopulation.createPopulation(scope, this, microSpec);
-		microPopulations.put(microSpec, microPop);
+		attributes.put(microSpec.getName(), microPop);
 		microPop.initializeFor(scope);
-	}
-
-	@Override
-	public int compareTo(final IAgent a) {
-		return Integer.valueOf(getIndex()).compareTo(a.getIndex());
-	}
-
-	/**
-	 * Solve the synchronization problem between Execution Thread and Event Dispatch Thread.
-	 * 
-	 * The synchronization problem may happen when 1. The Event Dispatch Thread is drawing an agent
-	 * while the Execution Thread tries to it; 2. The Execution Thread is disposing the agent while
-	 * the Event Dispatch Thread tries to draw it.
-	 * 
-	 * To avoid this, the corresponding thread has to invoke "acquireLock" to lock the agent before
-	 * drawing or disposing the agent. After finish the task, the thread invokes "releaseLock" to
-	 * release the agent's lock.
-	 * 
-	 * return true if the agent is available for drawing or disposing false otherwise
-	 */
-	@Override
-	public synchronized void acquireLock() {
-		while (lockAcquired) {
-			try {
-				wait();
-			} catch (final InterruptedException e) {
-				// e.printStackTrace();
-			}
-		}
-		lockAcquired = true;
-	}
-
-	@Override
-	public synchronized void releaseLock() {
-		lockAcquired = false;
-		notify();
 	}
 
 	@Override
@@ -683,13 +406,20 @@ public class GamlAgent implements IAgent {
 		try {
 			acquireLock();
 			dead = true;
-			if ( microPopulations != null ) {
-				for ( final IPopulation microPop : microPopulations.values() ) {
-					microPop.killMembers();
+			for ( final Map.Entry<Object, Object> entry : attributes.entrySet() ) {
+				if ( entry.getValue() instanceof IPopulation ) {
+					final IPopulation microPop = (IPopulation) entry.getValue();
+					// microPop.killMembers();
 					microPop.dispose();
 				}
-				microPopulations.clear();
 			}
+			// if ( microPopulations != null ) {
+			// for ( final IPopulation microPop : microPopulations.values() ) {
+			// microPop.killMembers();
+			// microPop.dispose();
+			// }
+			// microPopulations.clear();
+			// }
 			final GamaGraph graph = (GamaGraph) getAttribute("attached_graph");
 			if ( graph != null ) {
 
@@ -721,45 +451,14 @@ public class GamlAgent implements IAgent {
 	}
 
 	@Override
-	public void schedule() {
-		// GuiUtils.debug("GamlAgent.schedule : " + this);
-		if ( !dead() ) {
-			getScheduler().insertAgentToInit(this, getScope());
-		}
-	}
-
-	@Override
-	public final int getIndex() {
-		return index;
-	}
-
-	@Override
 	public String getName() {
-		if ( name == null ) {
-			if ( dead() ) { return "dead agent"; }
-			return getSpeciesName() + getIndex();
-		}
+		if ( name == null ) { return super.getName(); }
 		return name;
 	}
 
 	@Override
 	public void setName(final String name) {
 		this.name = name;
-	}
-
-	@Override
-	public String toString() {
-		return getName();
-	}
-
-	@Override
-	public final void setIndex(final int index) {
-		this.index = index;
-	}
-
-	@Override
-	public boolean dead() {
-		return /* getIndex() == -1 || */dead;
 	}
 
 	@Override
@@ -791,8 +490,9 @@ public class GamlAgent implements IAgent {
 		topology.updateAgent(previous, this);
 
 		// update micro-agents' locations accordingly
-		for ( final IPopulation p : microPopulations.values() ) {
-			p.hostChangesShape();
+
+		for ( final IPopulation pop : getMicroPopulations() ) {
+			pop.hostChangesShape();
 		}
 	}
 
@@ -820,9 +520,9 @@ public class GamlAgent implements IAgent {
 			topology.updateAgent(previous, this);
 
 			// update micro-agents' locations accordingly
-			for ( final IPopulation p : microPopulations.values() ) {
+			for ( final IPopulation pop : getMicroPopulations() ) {
 				// FIXME DOES NOT WORK FOR THE MOMENT
-				p.hostChangesShape();
+				pop.hostChangesShape();
 			}
 		}
 		final GamaGraph graph = (GamaGraph) getAttribute("attached_graph");
@@ -856,73 +556,35 @@ public class GamlAgent implements IAgent {
 	}
 
 	@Override
-	public Integer getHeading() {
-		Integer h = (Integer) getAttribute(IKeyword.HEADING);
-		if ( h == null ) {
-			h = RandomUtils.getDefault().between(0, 359);
-			setHeading(h);
-		}
-		return Maths.checkHeading(h);
-	}
-
-	@Override
-	public void setHeading(final Integer newHeading) {
-		setAttribute(IKeyword.HEADING, newHeading);
-	}
-
-	@Override
-	public ISpecies getSpecies() {
-		return population.getSpecies();
-	}
-
-	@Override
 	public boolean isInstanceOf(final ISpecies s, final boolean direct) {
 		if ( s.getName().equals(IKeyword.AGENT) ) { return true; }
-		return population.manages(s, direct);
+		return getPopulation().manages(s, direct);
 	}
 
 	@Override
-	public String toGaml() {
-		if ( dead() ) { return "nil"; }
-		final StringBuilder sb = new StringBuilder(30);
-		sb.append(getIndex());
-		sb.append(" as ");
-		sb.append(getSpeciesName());
-		return sb.toString();
-	}
+	public Iterable<IPopulation> getMicroPopulations() {
 
-	@Override
-	public String stringValue(final IScope scope) {
-		return getName();
-	}
-
-	@Override
-	public String getSpeciesName() {
-		return getSpecies().getName();
-	}
-
-	@Override
-	public IList<IPopulation> getMicroPopulations() {
-		return new GamaList<IPopulation>(microPopulations.values());
+		return Iterables.filter(attributes.values(), IPopulation.class);
+		// return new GamaList<IPopulation>(microPopulations.values());
 	}
 
 	@Override
 	public synchronized IPopulation getMicroPopulation(final String microSpeciesName) {
 		// FIX : Now catches the species from the model
-		final ISpecies microSpecies = getModel().getSpecies(microSpeciesName);
-		return microPopulations.get(microSpecies);
+		// final ISpecies microSpecies = getModel().getSpecies(microSpeciesName);
+		return (IPopulation) attributes.get(microSpeciesName);
 	}
 
 	@Override
 	public IPopulation getMicroPopulation(final ISpecies microSpecies) {
-		return microPopulations.get(microSpecies);
+		return (IPopulation) attributes.get(microSpecies.getName());
 	}
 
 	@Override
 	public boolean hasMembers() {
-		if ( microPopulations == null || dead() ) { return false; }
-		for ( final IPopulation mam : microPopulations.values() ) {
-			if ( mam.size() > 0 ) { return true; }
+		if ( dead() ) { return false; }
+		for ( final IPopulation pop : getMicroPopulations() ) {
+			if ( pop.size() > 0 ) { return true; }
 		}
 		return false;
 	}
@@ -930,13 +592,8 @@ public class GamlAgent implements IAgent {
 	@Override
 	public IList<IAgent> getMembers() {
 		if ( dead() ) { return GamaList.EMPTY_LIST; }
-		int size = 0;
-		for ( final IPopulation pop : microPopulations.values() ) {
-			size += pop.size();
-		}
-		if ( size == 0 ) { return GamaList.EMPTY_LIST; }
-		final GamaList<IAgent> members = new GamaList(size);
-		for ( final IPopulation pop : microPopulations.values() ) {
+		final GamaList<IAgent> members = new GamaList(100);
+		for ( final IPopulation pop : getMicroPopulations() ) {
 			members.addAll(pop.getAgentsList());
 		}
 		return members;
@@ -960,29 +617,12 @@ public class GamlAgent implements IAgent {
 		final IList<IAgent> agents = new GamaList<IAgent>();
 		agents.addAll(members);
 		for ( final IAgent m : members ) {
-			if ( m != null ) {
-				agents.addAll(m.getAgents());
+			if ( m != null && m instanceof IMacroAgent ) {
+				agents.addAll(((IMacroAgent) m).getAgents());
 			}
 		}
 
 		return agents;
-	}
-
-	@Override
-	public void setPeers(final IList<IAgent> peers) {
-		// "peers" is read-only attribute
-	}
-
-	@Override
-	public IList<IAgent> getPeers() throws GamaRuntimeException {
-		final IAgent host = getHost();
-		if ( host != null ) {
-			final IPopulation pop = host.getPopulationFor(this.getSpecies());
-			final IList<IAgent> retVal = pop.getAgentsList();
-			retVal.remove(this);
-			return retVal;
-		}
-		return GamaList.EMPTY_LIST;
 	}
 
 	@Override
@@ -999,20 +639,8 @@ public class GamlAgent implements IAgent {
 		if ( microPopulation != null ) { return microPopulation; }
 
 		final IAgent host = this.getHost();
-		if ( host != null ) { return host.getPopulationFor(speciesName); }
+		if ( host != null ) { return getHost().getPopulationFor(speciesName); }
 		return null;
-	}
-
-	@Override
-	public List<IAgent> getMacroAgents() {
-		final List<IAgent> retVal = new GamaList<IAgent>();
-		IAgent currentMacro = this.getHost();
-		while (currentMacro != null) {
-			retVal.add(currentMacro);
-			currentMacro = currentMacro.getHost();
-		}
-
-		return retVal;
 	}
 
 	/**
@@ -1031,26 +659,6 @@ public class GamlAgent implements IAgent {
 		if ( this.getMacroAgents().contains(other) ) { return false; }
 		if ( other.getHost().equals(this) ) { return false; }
 		return true;
-	}
-
-	@Override
-	public IAgent getHost() {
-		return population.getHost();
-	}
-
-	@Override
-	public SimulationClock getClock() {
-		return getHost().getClock();
-	}
-
-	@Override
-	public void setHost(final IAgent macroAgent) {
-		// not supported
-	}
-
-	@Override
-	public IAgent duplicate() {
-		return this;
 	}
 
 	@Override
@@ -1078,7 +686,7 @@ public class GamlAgent implements IAgent {
 		}
 
 		@Override
-		public IAgent getRoot() {
+		public IMacroAgent getRoot() {
 			return GamlAgent.this;
 		}
 

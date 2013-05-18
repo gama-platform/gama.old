@@ -63,31 +63,31 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	protected IPopulation getPopulation(final IScope scope) {
-		IAgent a = scope.getAgentScope();
+		final IAgent a = scope.getAgentScope();
 		if ( a != null ) { return a.getPopulationFor(this); }
 		return null;
 	}
 
 	@Override
 	public IList listValue(final IScope scope) throws GamaRuntimeException {
-		IAgent a = scope.getAgentScope();
+		final IAgent a = scope.getAgentScope();
 		if ( a == null ) { return GamaList.EMPTY_LIST; }
-		IPopulation p = a.getPopulationFor(this);
+		final IPopulation p = a.getPopulationFor(this);
 		if ( p == null ) { return GamaList.EMPTY_LIST; }
 		return p.getAgentsList();
 	}
 
 	@Override
-	public String stringValue(IScope scope) {
+	public String stringValue(final IScope scope) {
 		return name;
 	}
 
 	@Override
 	public GamaMap mapValue(final IScope scope) throws GamaRuntimeException {
-		IList<IAgent> agents = listValue(scope);
+		final IList<IAgent> agents = listValue(scope);
 		// Default behavior : Returns a map containing the names of agents as keys and the agents themselves as values
 		final GamaMap result = new GamaMap();
-		for ( IAgent agent : agents ) {
+		for ( final IAgent agent : agents ) {
 			result.put(agent.getName(), agent);
 		}
 		return result;
@@ -114,20 +114,25 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	@Override
-	public ISpecies copy(IScope scope) {
+	public ISpecies copy(final IScope scope) {
 		return this;
 		// Species are immutable
 	}
 
 	@Override
 	public IList<ISpecies> getMicroSpecies() {
-		IList<ISpecies> retVal = new GamaList<ISpecies>();
+		final IList<ISpecies> retVal = new GamaList<ISpecies>();
 		retVal.addAll(microSpecies.values());
-		ISpecies parentSpecies = this.getParentSpecies();
+		final ISpecies parentSpecies = this.getParentSpecies();
 		if ( parentSpecies != null ) {
 			retVal.addAll(parentSpecies.getMicroSpecies());
 		}
 		return retVal;
+	}
+
+	@Override
+	public Collection<String> getMicroSpeciesNames() {
+		return microSpecies.keySet();
 	}
 
 	/**
@@ -138,23 +143,23 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	 */
 	@Override
 	public ISpecies getMicroSpecies(final String microSpeciesName) {
-		ISpecies retVal = microSpecies.get(microSpeciesName);
+		final ISpecies retVal = microSpecies.get(microSpeciesName);
 		if ( retVal != null ) { return retVal; }
-		ISpecies parentSpecies = this.getParentSpecies();
+		final ISpecies parentSpecies = this.getParentSpecies();
 		if ( parentSpecies != null ) { return parentSpecies.getMicroSpecies(microSpeciesName); }
 		return null;
 	}
 
 	@Override
 	public boolean containMicroSpecies(final ISpecies species) {
-		ISpecies parentSpecies = this.getParentSpecies();
+		final ISpecies parentSpecies = this.getParentSpecies();
 		return microSpecies.values().contains(species) ||
 			(parentSpecies != null ? parentSpecies.containMicroSpecies(species) : false);
 	}
 
 	@Override
 	public boolean hasMicroSpecies() {
-		ISpecies parentSpecies = this.getParentSpecies();
+		final ISpecies parentSpecies = this.getParentSpecies();
 		return !microSpecies.isEmpty() || (parentSpecies != null ? parentSpecies.hasMicroSpecies() : false);
 	}
 
@@ -170,7 +175,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public List<ISpecies> getSelfWithParents() {
-		List<ISpecies> retVal = new GamaList<ISpecies>();
+		final List<ISpecies> retVal = new GamaList<ISpecies>();
 		retVal.add(this);
 		ISpecies currentParent = this.getParentSpecies();
 		while (currentParent != null) {
@@ -183,7 +188,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public ISpecies getParentSpecies() {
-		TypeDescription parentSpecDesc = getDescription().getParent();
+		final TypeDescription parentSpecDesc = getDescription().getParent();
 		if ( parentSpecDesc == null ) { return null; }
 
 		ISpecies currentMacroSpec = this.getMacroSpecies();
@@ -238,7 +243,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public IList<ActionStatement> getActions() {
-		return new GamaList<ActionStatement>(actions.values());
+		return new GamaList<ActionStatement>((Iterable) actions.values());
 	}
 
 	@Override
@@ -253,12 +258,12 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public IList<IAspect> getAspects() {
-		return new GamaList<IAspect>(aspects.values());
+		return new GamaList<IAspect>((Iterable) aspects.values());
 	}
 
 	@Override
 	public IList<String> getAspectNames() {
-		return new GamaList<String>(aspects.keySet());
+		return new GamaList<String>((Iterable) aspects.keySet());
 	}
 
 	@Override
@@ -268,9 +273,9 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> children) {
-		for ( ISymbol s : children ) {
+		for ( final ISymbol s : children ) {
 			if ( s instanceof ISpecies ) {
-				ISpecies oneMicroSpecies = (ISpecies) s;
+				final ISpecies oneMicroSpecies = (ISpecies) s;
 				oneMicroSpecies.setMacroSpecies(this);
 				microSpecies.put(oneMicroSpecies.getName(), oneMicroSpecies);
 			} else if ( s instanceof IVariable ) {
@@ -289,8 +294,8 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	protected void createControl() {
-		IArchitecture control = getArchitecture();
-		List<IStatement> behaviors = getBehaviors();
+		final IArchitecture control = getArchitecture();
+		final List<IStatement> behaviors = getBehaviors();
 		if ( control == null ) { throw GamaRuntimeException.error("The control of this species cannot be computed"); }
 		control.setChildren(behaviors);
 		control.verifyBehaviors(this);
@@ -299,19 +304,19 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	@Override
 	public void dispose() {
 		super.dispose();
-		for ( IVariable v : variables.values() ) {
+		for ( final IVariable v : variables.values() ) {
 			v.dispose();
 		}
 		variables.clear();
-		for ( AspectStatement ac : aspects.values() ) {
+		for ( final AspectStatement ac : aspects.values() ) {
 			ac.dispose();
 		}
 		aspects.clear();
-		for ( ActionStatement ac : actions.values() ) {
+		for ( final ActionStatement ac : actions.values() ) {
 			ac.dispose();
 		}
 		actions.clear();
-		for ( IStatement c : behaviors ) {
+		for ( final IStatement c : behaviors ) {
 			c.dispose();
 		}
 		// TODO Behaviors are not disposed ?
@@ -339,12 +344,12 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public <T> IStatement getStatement(final Class<T> clazz, final String valueOfFacetName) {
-		for ( IStatement s : behaviors ) {
-			boolean instance = clazz.isAssignableFrom(s.getClass());
+		for ( final IStatement s : behaviors ) {
+			final boolean instance = clazz.isAssignableFrom(s.getClass());
 			if ( instance ) {
-				String t = s.getFacet(IKeyword.NAME).literalValue();
+				final String t = s.getFacet(IKeyword.NAME).literalValue();
 				if ( t != null ) {
-					boolean named = t.equals(valueOfFacetName);
+					final boolean named = t.equals(valueOfFacetName);
 					if ( named ) { return s; }
 				}
 			}

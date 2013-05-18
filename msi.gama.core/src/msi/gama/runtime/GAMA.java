@@ -22,10 +22,7 @@ import msi.gama.common.util.*;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.*;
 
 /**
  * Written by drogoul Modified on 23 nov. 2009
@@ -35,14 +32,11 @@ import msi.gaml.expressions.*;
 public class GAMA {
 
 	public final static String VERSION = "GAMA 1.6";
-
 	public static final String _FATAL = "fatal";
 	public static final String _WARNINGS = "warnings";
-
 	public static boolean REVEAL_ERRORS_IN_EDITOR = true;
 	public static boolean TREAT_WARNINGS_AS_ERRORS = false;
 
-	private static IExpressionFactory expressionFactory = null;
 	public static FrontEndController controller = new FrontEndController(new FrontEndScheduler());
 
 	/**
@@ -51,7 +45,7 @@ public class GAMA {
 	 * 
 	 */
 
-	public static ISimulationAgent getSimulation() {
+	public static SimulationAgent getSimulation() {
 		if ( controller.experiment == null ) { return null; }
 		return controller.experiment.getCurrentSimulation();
 	}
@@ -61,7 +55,7 @@ public class GAMA {
 	}
 
 	public static SimulationClock getClock() {
-		IScope scope = getDefaultScope();
+		final IScope scope = getDefaultScope();
 		if ( scope == null ) { return new SimulationClock(); }
 		return scope.getClock();
 	}
@@ -114,16 +108,16 @@ public class GAMA {
 	}
 
 	public static IScope obtainNewScope() {
-		IScope scope = getDefaultScope();
+		final IScope scope = getDefaultScope();
 		if ( scope != null ) { return scope.copy(); }
 		return null;
 	}
 
 	private static IScope getDefaultScope() {
 		if ( controller.experiment == null ) { return null; }
-		ExperimentAgent a = controller.experiment.getAgent();
+		final ExperimentAgent a = controller.experiment.getAgent();
 		if ( a == null || a.dead() ) { return controller.experiment.getExperimentScope(); }
-		ISimulationAgent s = a.getSimulation();
+		final SimulationAgent s = a.getSimulation();
 		if ( s == null || s.dead() ) { return a.getScope(); }
 		return s.getScope();
 	}
@@ -133,64 +127,26 @@ public class GAMA {
 		public abstract static class Void implements InScope {
 
 			@Override
-			public Object run(IScope scope) {
+			public Object run(final IScope scope) {
 				process(scope);
 				return null;
 			}
 
 			public abstract void process(IScope scope);
-
 		}
 
 		T run(IScope scope);
 	}
 
-	public static <T> T run(InScope<T> r) {
-		IScope scope = obtainNewScope();
+	public static <T> T run(final InScope<T> r) {
+		final IScope scope = obtainNewScope();
 		// if ( scope == null ) { throw GamaRuntimeException.error("Impossible to obtain a scope"); } // Exception?
 		try {
-			T result = r.run(scope);
+			final T result = r.run(scope);
 			return result;
 		} finally {
 			releaseScope(scope);
 		}
-	}
-
-	/**
-	 * 
-	 * Parsing and compiling GAML utilities
-	 * 
-	 */
-
-	public static IExpressionFactory getExpressionFactory() {
-		if ( expressionFactory == null ) {
-			expressionFactory = new GamlExpressionFactory();
-		}
-		return expressionFactory;
-	}
-
-	public static Object evaluateExpression(final String expression, final IAgent a) throws GamaRuntimeException {
-		if ( a == null ) { return null; }
-		final IExpression expr = compileExpression(expression, a);
-		if ( expr == null ) { return null; }
-		return run(new InScope() {
-
-			@Override
-			public Object run(IScope scope) {
-				return scope.evaluate(expr, a);
-			}
-		});
-
-	}
-
-	public static IExpression compileExpression(final String expression, final IAgent agent)
-		throws GamaRuntimeException {
-		return getExpressionFactory().createExpr(expression, agent.getSpecies().getDescription());
-	}
-
-	public static IDescription getModelContext() {
-		if ( controller.experiment == null ) { return null; }
-		return controller.experiment.getModel().getDescription();
 	}
 
 }

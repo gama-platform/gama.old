@@ -31,6 +31,7 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GAML;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
@@ -240,7 +241,7 @@ public class FileOutput extends AbstractOutput {
 
 	public void refreshExpression() throws GamaRuntimeException {
 		// in case the file writer persists over different simulations (like in the batch)
-		data = GAMA.getExpressionFactory().createExpr(expressionText, GAMA.getModelContext());
+		data = GAML.getExpressionFactory().createExpr(expressionText, GAML.getModelContext());
 	}
 
 	public Object getLastValue() {

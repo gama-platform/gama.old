@@ -20,6 +20,7 @@ package msi.gaml.expressions;
 
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GAML;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
 
@@ -62,6 +63,6 @@ public class TempVariableExpression extends VariableExpression {
 
 	@Override
 	public IExpression resolveAgainst(final IScope scope) {
-		return GAMA.getExpressionFactory().createConst(value(scope), type, contentType);
+		return GAML.getExpressionFactory().createConst(value(scope), type, contentType);
 	}
 }

@@ -56,7 +56,7 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 			if ( !displayOutputs.containsKey(GuiUtils.AGENT_VIEW_ID) && entity != null ) {
 				try {
 					new InspectDisplayOutput("Agent inspector", InspectDisplayOutput.INSPECT_AGENT).launch();
-				} catch (GamaRuntimeException g) {
+				} catch (final GamaRuntimeException g) {
 					g.addContext("In opening the agent inspector");
 					GAMA.reportError(g);
 				}
@@ -112,7 +112,7 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 
 	public void dispose() {
 		fireSelectionChanged(null);
-		for ( IDisplayOutput out : new GamaList<IDisplayOutput>(displayOutputs.values()) ) {
+		for ( final IDisplayOutput out : new GamaList<IDisplayOutput>((Collection) displayOutputs.values()) ) {
 			GuiUtils.closeViewOf(out);
 		}
 		displayOutputs.clear();
@@ -155,8 +155,8 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 	}
 
 	public void desynchronizeOutputs() {
-		for ( IDisplayOutput o : displayOutputs.values() ) {
-			IDisplaySurface s = o.getSurface();
+		for ( final IDisplayOutput o : displayOutputs.values() ) {
+			final IDisplaySurface s = o.getSurface();
 			if ( s != null ) {
 				s.setSynchronized(false);
 			}
@@ -164,7 +164,7 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 	}
 
 	public void forceUpdateOutputs() {
-		for ( IDisplayOutput o : displayOutputs.values() ) {
+		for ( final IDisplayOutput o : displayOutputs.values() ) {
 			o.update();
 		}
 	}
