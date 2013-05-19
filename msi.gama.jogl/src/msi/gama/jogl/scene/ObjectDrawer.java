@@ -174,14 +174,13 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			img = op.filter(img, null);
 			return img;
 		
-	}
+	    }
 
-		@Override
+	    @Override
 		protected void _draw(DEMObject demObj) {
 			
 			if ( !isInitialized() ) {
 				renderer.gl.glEnable(GL.GL_TEXTURE_2D);
-				
 			    loadTexture(demObj.texture.toString());
 				setInitialized(true);
 			}
@@ -226,7 +225,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 					float alt1 = (dem.getRGB(cols - x, y) & 255) * altFactor;
 					float alt2 = (dem.getRGB(cols - x, y + 1) & 255) * altFactor;
 					
-					boolean isTextured = false;
+					boolean isTextured = true;
 					if(isTextured){
 						renderer.gl.glTexCoord2f(s, t);
 						renderer.gl.glVertex3f(vx, vy, alt1);
@@ -253,16 +252,82 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			//FIXME: Add disable texture?
 
 		}
+		
+		
+		//@Override
+		protected void _drawOLd(DEMObject demObj) {
+		
+		    if ( !isInitialized() ) {
+				//renderer.gl.glEnable(GL.GL_TEXTURE_2D);
+			    //loadTexture(demObj.texture.toString());
+				setInitialized(true);
+			}
+	
+			int rows, cols;
+			int x, y;
+			float vx, vy, s, t;
+			float ts, tt, tw, th;
 
-		public boolean isInitialized() {
-			return initialized;
-		}
+
+			BufferedImage dem = demObj.dem;
+		
+			rows = dem.getHeight()-1;
+			cols = dem.getWidth();
+			//System.out.println("rows: " + rows + " cols" +cols );
+			//ts = 1.0f / cols;
+			//tt = 1.0f / rows;
+
+			//FIXME/ need to set w and h dynamicly
+			//float w = (float) demObj.envelope.getWidth();
+			//float h = (float) demObj.envelope.getHeight();
+			
+			float altFactor = (float)demObj.envelope.getWidth()/(20*255);//0.025f;//dem.getWidth();
+			
+			//tw = w / cols;
+			//th = h / rows;
+
+			for ( y = 0; y < rows; y++ ) {
+				renderer.gl.glBegin(GL.GL_QUAD_STRIP);
+				for ( x = 0; x < cols; x++ ) {
+
+					float alt1 = (dem.getRGB(x, y) & 255) * altFactor;
+					float alt2 = (dem.getRGB(x, y + 1) & 255) * altFactor;
+					
+					
+					boolean isTextured = false;
+
+						int color = ((dem.getRGB(x, y) & 255));
+						 int alpha = (color >> 24) & 0xff;
+						    int red = (color >> 16) & 0xff;
+						    int green = (color >> 8) & 0xff;
+						    int blue = (color) & 0xff;
+						    System.out.println("argb: " + alpha + ", " + red + ", " + green + ", " + blue);
+					
+						//color = (float)(Math.random() *255.0f)/255.0f ;
+						//alt1 = (float)(Math.random() *20.0f);
+						//alt2 = (float)(Math.random() *20.0f);
+						//System.out.println("x: " + x + " y:" +y + " alt1:" + alt1 + " color:" + color);
+						renderer.gl.glColor3f(red, green, blue);
+						renderer.gl.glVertex3f(x, -y, alt1);
+						renderer.gl.glVertex3f(x, -(y + 1), alt2);	
+					}
+				renderer.gl.glEnd();
+				}
+				
+			//renderer.gl.glTranslated(-w/2, h/2, 0);
+			}
+			
+			
+			public boolean isInitialized() {
+				
+				return initialized;
+			}
 
 
 
-		public void setInitialized(boolean initialized) {
-			this.initialized = initialized;
-		}
+			public void setInitialized(boolean initialized) {
+				this.initialized = initialized;
+			}
 	}
 
 	/**

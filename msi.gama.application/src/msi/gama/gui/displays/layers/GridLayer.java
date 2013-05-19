@@ -84,7 +84,8 @@ public class GridLayer extends ImageLayer {
 				lineColor = Color.black;
 			}
 		}
-		dg.drawImage(scope, image, null, null, lineColor, null, 0.0, true);
+		
+		dg.drawGrid(scope, image, null, null, lineColor, null, 0.0, true);
 	}
 
 	private IAgent getPlaceAt(final GamaPoint loc) {

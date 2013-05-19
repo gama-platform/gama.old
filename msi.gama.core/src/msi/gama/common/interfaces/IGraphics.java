@@ -43,6 +43,10 @@ public interface IGraphics {
 	public abstract int getDisplayWidthInPixels();
 
 	public abstract int getDisplayHeightInPixels();
+	
+	public abstract Rectangle2D drawGrid(final IScope scope, final BufferedImage img,
+			final ILocation locationInModelUnits, final ILocation sizeInModelUnits, Color gridColor, final Integer angle,
+			Double z, boolean isDynamic);
 
 	public abstract Rectangle2D drawImage(final IScope scope, final BufferedImage img,
 		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, Color gridColor, final Integer angle,
@@ -87,7 +91,7 @@ public interface IGraphics {
 
 	public interface OpenGL extends IGraphics {
 
-		public abstract void drawDEM(final GamaFile demFileName, final GamaFile textureFileName, Envelope env);
+		public abstract Rectangle2D drawDEM(final GamaFile demFileName, final GamaFile textureFileName, Envelope env);
 
 	}
 

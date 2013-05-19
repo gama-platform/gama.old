@@ -21,6 +21,7 @@ package msi.gama.jogl;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
@@ -141,7 +142,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		// return sw.toShape(geom).getBounds2D();
 	}
 
-	public void drawGrid(final BufferedImage image, final Color lineColor) {
+	public void drawGridLine(final BufferedImage image, final Color lineColor) {
 		// TODO AD Pas du tout testée
 		double stepX, stepY;
 		
@@ -164,6 +165,17 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		}
 	}
 
+
+	@Override
+	public Rectangle2D drawGrid(IScope scope, BufferedImage img, ILocation locationInModelUnits,
+		ILocation sizeInModelUnits, Color gridColor, Integer angle, Double z, boolean isDynamic) {
+		if ( gridColor != null ) {
+			drawGridLine(img, gridColor);
+		}
+		return drawDEM2(img, img, scope.getSimulationScope().getEnvelope());
+	}
+	
+	
 	/**
 	 * Method drawImage.
 	 * 
@@ -204,14 +216,23 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		// }
 
 		if ( gridColor != null ) {
-			drawGrid(img, gridColor);
+			drawGridLine(img, gridColor);
 		}
 
 		return rect;
 	}
 	
+	private BufferedImage FlipRightSideLeftImage(BufferedImage img){
+		java.awt.geom.AffineTransform tx = java.awt.geom.AffineTransform.getScaleInstance(-1, 1);
+		tx.translate(-img.getWidth(null), 0);
+		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+		img = op.filter(img, null);
+		return img;
+	
+    }
+	
 	@Override
-	public void drawDEM(GamaFile demFileName, GamaFile textureFileName, Envelope env) {
+	public Rectangle2D drawDEM(GamaFile demFileName, GamaFile textureFileName, Envelope env) {
 		BufferedImage dem = null;
 		BufferedImage texture = null;
 		try {
@@ -226,12 +247,26 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		//FIXME: Need to flip vertically the image (need excactly to know why)
+		texture = FlipRightSideLeftImage(texture);
+		MyTexture _texture = null;
+		if ( !renderer.getScene().getTextures().containsKey(texture) ) {
+			_texture = renderer.createTexture(texture, false);
+		}
+		renderer.getScene().addDEM(dem,texture,env);
+		return null;
+	}
+	
+	
+	public Rectangle2D drawDEM2(BufferedImage dem, BufferedImage texture, Envelope env) {
+
 		
 		MyTexture _texture = null;
 		if ( !renderer.getScene().getTextures().containsKey(texture) ) {
 			_texture = renderer.createTexture(texture, false);
 		}
 		renderer.getScene().addDEM(dem,texture,env);
+		return null;
 	}
 
 	/**

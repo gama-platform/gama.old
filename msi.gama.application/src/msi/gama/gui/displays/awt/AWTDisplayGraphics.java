@@ -101,6 +101,14 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	public void transform(final Coordinate c, final Point2D p) {
 		p.setLocation(xFromModelUnitsToPixels(c.x), yFromModelUnitsToPixels(c.y));
 	}
+	
+
+	@Override
+	public Rectangle2D drawGrid(IScope scope, BufferedImage img, ILocation locationInModelUnits,
+		ILocation sizeInModelUnits, Color gridColor, Integer angle, Double z, boolean isDynamic) {
+		return drawImage(scope, img, locationInModelUnits,
+				sizeInModelUnits, gridColor, angle, z, isDynamic);
+	}
 
 	@Override
 	public Rectangle2D drawImage(IScope scope, BufferedImage img, ILocation locationInModelUnits,
@@ -127,7 +135,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		}
 		renderer.drawImage(img, curX, curY, curWidth, curHeight, null);
 		if ( gridColor != null ) {
-			drawGrid(img, gridColor);
+			drawGridLine(img, gridColor);
 		}
 		renderer.setTransform(saved);
 		rect.setRect(curX, curY, curWidth, curHeight);
@@ -237,7 +245,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		renderer.fillRect(0, 0, widthOfDisplayInPixels, heightOfDisplayInPixels);
 	}
 
-	public void drawGrid(final BufferedImage image, final Color lineColor) {
+	public void drawGridLine(final BufferedImage image, final Color lineColor) {
 		final Line2D line = new Line2D.Double();
 		renderer.setColor(lineColor);
 		// The image contains the dimensions of the grid.
