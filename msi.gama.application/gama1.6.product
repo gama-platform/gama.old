@@ -63,7 +63,6 @@ Visit http://code.google.com/p/gama-platform/
 
    <plugins>
       <plugin id="cenres.gaml.extensions.hydro"/>
-      <plugin id="com.google.guava"/>
       <plugin id="com.google.inject"/>
       <plugin id="com.ibm.icu"/>
       <plugin id="com.jogamp.jogl"/>
