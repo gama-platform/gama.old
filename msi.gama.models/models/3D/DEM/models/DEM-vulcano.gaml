@@ -4,8 +4,8 @@
 model Graphic_primitive
 
 global{
-	file dem parameter: 'DEM' <- file(project_path + 'DEM/includes/DEM-Vulcano/DEM.png');
-    file texture parameter: 'Texture' <- file(project_path + 'DEM/includes/DEM-Vulcano/Texture.png');
+	file dem parameter: 'DEM' <- file('../includes/DEM-Vulcano/DEM.png');
+    file texture parameter: 'Texture' <- file('../includes/DEM-Vulcano/Texture.png');
 }
 
 environment width:500 height:395;
