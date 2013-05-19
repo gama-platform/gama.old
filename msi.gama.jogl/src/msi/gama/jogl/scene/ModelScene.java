@@ -110,8 +110,8 @@ public class ModelScene {
 		}
 	}
 	
-	public void addDEM(final BufferedImage dem, final BufferedImage texture, final Envelope env){
-		dems.add(new DEMObject(dem,texture,env,null,null,null,null));
+	public void addDEM(final BufferedImage dem, final BufferedImage texture, final Envelope env, final Double alpha, GamaPoint offset, GamaPoint scale){
+		dems.add(new DEMObject(dem,texture,env,null,offset,scale,alpha));
 	}
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final double z_layer,

@@ -180,6 +180,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 		protected void _draw(DEMObject demObj) {
 			
 			if ( !isInitialized() ) {
+				renderer.gl.glColor4d(1.0d, 1.0d, 1.0d, demObj.alpha);
 				renderer.gl.glEnable(GL.GL_TEXTURE_2D);
 			    loadTexture(demObj.texture.toString());
 				setInitialized(true);
@@ -205,7 +206,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			float w = (float) demObj.envelope.getWidth();
 			float h = (float) demObj.envelope.getHeight();
 			
-			float altFactor = (float)demObj.envelope.getWidth()/(20*255);//0.025f;//dem.getWidth();
+			float altFactor = (float)demObj.envelope.getWidth()/(10*255);//0.025f;//dem.getWidth();
 			
 			tw = w / cols;
 			th = h / rows;
@@ -225,6 +226,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 					float alt1 = (dem.getRGB(cols - x, y) & 255) * altFactor;
 					float alt2 = (dem.getRGB(cols - x, y + 1) & 255) * altFactor;
 					
+			
 					boolean isTextured = true;
 					if(isTextured){
 						renderer.gl.glTexCoord2f(s, t);
@@ -235,10 +237,6 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 					else{
 						float color = ((dem.getRGB(cols - x, y) & 255));
 						color = (color)/255.0f;
-						/*System.out.println("dem:" + dem.getRGB(cols - x, y));
-						System.out.println("dem&:" + (dem.getRGB(cols - x, y) & 255));
-						System.out.println("color" + color);*/
-
 						renderer.gl.glColor3f(color, color, color);
 						renderer.gl.glVertex3f(vx, vy, alt1);
 						renderer.gl.glVertex3f(vx, vy + th, alt2);	
@@ -287,21 +285,21 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			//th = h / rows;
 
 			for ( y = 0; y < rows; y++ ) {
-				renderer.gl.glBegin(GL.GL_QUAD_STRIP);
-				for ( x = 0; x < cols; x++ ) {
-
-					float alt1 = (dem.getRGB(x, y) & 255) * altFactor;
+				
+				for ( x = 0; x < cols-1; x++ ) {
+					renderer.gl.glBegin(GL.GL_QUADS);
+					float alt1 = 1.0f;//(dem.getRGB(x, y) & 255) * altFactor;
 					float alt2 = (dem.getRGB(x, y + 1) & 255) * altFactor;
 					
 					
 					boolean isTextured = false;
 
-						int color = ((dem.getRGB(x, y) & 255));
+						int color = ((dem.getRGB(x, y)));
 						 int alpha = (color >> 24) & 0xff;
 						    int red = (color >> 16) & 0xff;
 						    int green = (color >> 8) & 0xff;
 						    int blue = (color) & 0xff;
-						    System.out.println("argb: " + alpha + ", " + red + ", " + green + ", " + blue);
+						   // System.out.println("argb: " + alpha + ", " + red + ", " + green + ", " + blue);
 					
 						//color = (float)(Math.random() *255.0f)/255.0f ;
 						//alt1 = (float)(Math.random() *20.0f);
@@ -309,9 +307,19 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 						//System.out.println("x: " + x + " y:" +y + " alt1:" + alt1 + " color:" + color);
 						renderer.gl.glColor3f(red, green, blue);
 						renderer.gl.glVertex3f(x, -y, alt1);
-						renderer.gl.glVertex3f(x, -(y + 1), alt2);	
+						renderer.gl.glVertex3f(x, -(y + 1), alt1);	
+						renderer.gl.glVertex3f(x+1, -(y + 1), alt1);
+						renderer.gl.glVertex3f(x+1, -y, alt1);
+					renderer.gl.glEnd();
+					renderer.gl.glBegin(GL.GL_LINE_STRIP);
+					renderer.gl.glColor3f(0.0f, 0.0f, 0.0f);
+					renderer.gl.glVertex3f(x, -y, alt1);
+					renderer.gl.glVertex3f(x, -(y + 1), alt1);	
+					renderer.gl.glVertex3f(x+1, -(y + 1), alt1);
+					renderer.gl.glVertex3f(x+1, -y, alt1);
+					renderer.gl.glEnd();
 					}
-				renderer.gl.glEnd();
+				
 				}
 				
 			//renderer.gl.glTranslated(-w/2, h/2, 0);

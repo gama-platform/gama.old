@@ -138,7 +138,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		}
 		//FIXME: Need to flip vertically the image (need excactly to know why)
 		BufferedImage texture = FlipRightSideLeftImage(img);
-		return drawDEM2(img, texture, scope.getSimulationScope().getEnvelope());
+		return drawDEM2(img, texture, scope.getSimulationScope().getEnvelope(),getCurrentAlpha(),currentOffset, currentScale);
 	}
 
 	/**
@@ -213,17 +213,18 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		if ( !renderer.getScene().getTextures().containsKey(texture) ) {
 			_texture = renderer.createTexture(texture, false);
 		}
-		renderer.getScene().addDEM(dem, texture, env);
+		//FIXME: alpha,scale,offset not taken in account when usong the operator dem
+		renderer.getScene().addDEM(dem, texture, env,null,null,null);
 		return null;
 	}
 
-	public Rectangle2D drawDEM2(final BufferedImage dem, final BufferedImage texture, final Envelope env) {
+	public Rectangle2D drawDEM2(final BufferedImage dem, final BufferedImage texture, final Envelope env, Double alpha,final GamaPoint offset, final GamaPoint scale) {
 
 		MyTexture _texture = null;
 		if ( !renderer.getScene().getTextures().containsKey(texture) ) {
 			_texture = renderer.createTexture(texture, false);
 		}
-		renderer.getScene().addDEM(dem, texture, env);
+		renderer.getScene().addDEM(dem, texture, env, alpha, offset, scale);
 		return null;
 	}
 
