@@ -27,7 +27,11 @@ import com.google.common.collect.AbstractIterator;
 public class GAML {
 
 	public static <T> T nullCheck(final T object) {
-		if ( object == null ) { throw GamaRuntimeException.error("Error: nil value detected"); }
+		return nullCheck(object, "Error: nil value detected");
+	}
+
+	public static <T> T nullCheck(final T object, final String error) {
+		if ( object == null ) { throw GamaRuntimeException.error(error); }
 		return object;
 	}
 

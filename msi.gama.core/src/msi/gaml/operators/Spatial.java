@@ -18,7 +18,6 @@
  */
 package msi.gaml.operators;
 
-import java.awt.geom.Rectangle2D;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
@@ -639,8 +638,11 @@ public abstract class Spatial {
 		@operator(value = { IKeyword.MULTIPLY, "scaled_by" })
 		@doc(special_cases = { "if the left-hand operand is a geometry and the rigth-hand operand a float, returns a geometry corresponding to the left-hand operand (geometry, agent, point) scaled by the right-hand operand coefficient" }, examples = { "shape * 2 --: returns a geometry corresponding to the geometry of the agent applying the operator scaled by a coefficient of 2" })
 		public static IShape scaled_by(final IScope scope, final IShape g, final Double coefficient) {
-			return ((GamaShape) g.getGeometry()).scaledBy(scope, coefficient);
+			final IShape g1 = g.getGeometry();
+			if ( g1 instanceof GamaShape ) { return ((GamaShape) g1).scaledBy(scope, coefficient); }
+			return new GamaShape(g1.getInnerGeometry()).scaledBy(scope, coefficient);
 			// return new GamaShape(GeometryUtils.homothetie(g.getInnerGeometry(), coefficient));
+
 		}
 
 		@operator(value = { IKeyword.PLUS, "buffer", "enlarged_by" })
@@ -680,8 +682,8 @@ public abstract class Spatial {
 		public static IShape rotated_by(final IScope scope, final IShape g1, final Double angle) {
 			if ( g1 == null ) { return null; }
 			final IShape s = g1.getGeometry();
-			if ( !(s instanceof GamaShape) ) { return s; }
-			return ((GamaShape) s).rotatedBy(scope, Math.toRadians(angle));
+			if ( s instanceof GamaShape ) { return ((GamaShape) s).rotatedBy(scope, Math.toRadians(angle)); }
+			return new GamaShape(s.getInnerGeometry()).rotatedBy(scope, Math.toRadians(angle));
 		}
 
 		@operator("rotated_by")
@@ -689,8 +691,8 @@ public abstract class Spatial {
 		public static IShape rotated_by(final IScope scope, final IShape g1, final Integer angle) {
 			if ( g1 == null ) { return null; }
 			final IShape s = g1.getGeometry();
-			if ( !(s instanceof GamaShape) ) { return s; }
-			return ((GamaShape) s).rotatedBy(scope, angle);
+			if ( s instanceof GamaShape ) { return ((GamaShape) s).rotatedBy(scope, angle); }
+			return new GamaShape(s.getInnerGeometry()).rotatedBy(scope, angle);
 		}
 
 		/**
@@ -731,7 +733,7 @@ public abstract class Spatial {
 		public static IShape at_location(final IScope scope, final IShape g, final ILocation p)
 			throws GamaRuntimeException {
 			if ( g == null ) { return null; }
-			final GamaShape newShape = (GamaShape) g.copy(scope);
+			final IShape newShape = (IShape) g.copy(scope);
 			newShape.setLocation(p);
 			return newShape;
 		}
@@ -1627,7 +1629,8 @@ public abstract class Spatial {
 		public static IShape dem(final IScope scope, final GamaFile demFileName, final GamaFile textureFileName) {
 			final IGraphics graphics = scope.getGraphics();
 			if ( graphics instanceof IGraphics.OpenGL ) {
-				((IGraphics.OpenGL) graphics).drawDEM(demFileName, textureFileName, scope.getSimulationScope().getEnvelope());
+				((IGraphics.OpenGL) graphics).drawDEM(demFileName, textureFileName, scope.getSimulationScope()
+					.getEnvelope());
 			}
 			ILocation location;
 			final IAgent a = scope.getAgentScope();

@@ -81,7 +81,7 @@ public class GridSkill extends GeometricSkill {
 		return ((IGridAgent) agent).getX();
 	}
 
-	@getter("grid_value")
+	@getter(value = "grid_value", initializer = true)
 	public final double getValue(final IAgent agent) {
 		return ((IGridAgent) agent).getValue();
 	}
@@ -111,7 +111,7 @@ public class GridSkill extends GeometricSkill {
 	//
 	// }
 
-	@getter("color")
+	@getter(value = "color", initializer = true)
 	public GamaColor getColor(final IAgent agent) {
 		return ((IGridAgent) agent).getColor();
 	}

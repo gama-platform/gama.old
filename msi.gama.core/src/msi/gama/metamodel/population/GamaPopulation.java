@@ -430,10 +430,8 @@ public class GamaPopulation implements IPopulation {
 		final int columns = exp == null ? 100 : Cast.asInt(scope, exp.value(scope));
 		exp = species.getFacet(IKeyword.TORUS);
 		final boolean isTorus = exp != null && Cast.asBool(scope, exp.value(scope));
-		// exp = species.getFacet("use_regular_agents");
-		// final boolean useRegularAgents = exp != null && Cast.asBool(scope, exp.value(scope));
 		exp = species.getFacet("use_individual_shapes");
-		final boolean useIndividualShapes = exp != null && Cast.asBool(scope, exp.value(scope));
+		final boolean useIndividualShapes = exp == null || Cast.asBool(scope, exp.value(scope));
 		exp = species.getFacet(IKeyword.NEIGHBOURS);
 		final boolean usesVN = exp == null || Cast.asInt(scope, exp.value(scope)) == 4;
 		final boolean isHexagon = exp != null && Cast.asInt(scope, exp.value(scope)) == 6;

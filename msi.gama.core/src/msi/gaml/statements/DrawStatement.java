@@ -280,14 +280,14 @@ public class DrawStatement extends AbstractStatementSequence {
 
 		@Override
 		Rectangle2D executeOn(final IScope scope, final IGraphics gr) throws GamaRuntimeException {
-			final GamaShape g1 = (GamaShape) Cast.asGeometry(scope, item.value(scope));
+			final IShape g1 = Cast.asGeometry(scope, item.value(scope));
 			if ( g1 == null ) {
 				// GuiUtils.debug("DrawStatement.ShapeExecuter.executeOn : null shape");
 				return null;
 			}
 			final IShape g2 = Spatial.Transformations.at_location(scope, g1, getLocation(scope, g1));
 			if ( depth != null ) {
-				g2.getInnerGeometry().setUserData(depth.value(scope));
+				g2.setAttribute("depth", depth.value(scope));
 			}
 			return gr.drawGamaShape(scope, g2, getColor(scope), !getEmpty(scope), getBorder(scope), getRotation(scope),
 				getRounded(scope));

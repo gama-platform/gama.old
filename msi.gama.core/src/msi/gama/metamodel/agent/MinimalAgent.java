@@ -1,5 +1,6 @@
 package msi.gama.metamodel.agent;
 
+import static msi.gama.util.GAML.nullCheck;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
@@ -39,6 +40,9 @@ import com.vividsolutions.jts.geom.*;
  * Furthermore, and contrary to GamlAgent, this class does not delegate its step() and init() behaviors to GAML actions
  * (_init_ and _step_).
  * 
+ * Most of the methods observe a "fail-fast" pattern. That is, if either the population or the geometry of the agent is
+ * null, it throws an exception and does not attempt to return guessed values.
+ * 
  * Abstract methods to override:
  * - getGeometry()
  * - getPopulation()
@@ -60,6 +64,27 @@ public abstract class MinimalAgent implements IAgent {
 	@Override
 	public abstract IShape getGeometry();
 
+	/**
+	 * 
+	 * @return the population of the agent if it not null, otherwise throws a runtime exeception.
+	 * @note If checking for a null value of population imposes too much overhead in cases where the population is sure
+	 *       not
+	 *       to be nil, this method can be safely overriden with a direct call to getPopulation()
+	 */
+	protected IPopulation checkedPopulation() {
+		return nullCheck(getPopulation(), "The agent's population is nil");
+	}
+
+	/**
+	 * 
+	 * @return the geometry of the agent if it not null, otherwise throws a runtime exeception.
+	 * @note If checking for a null value in geometry imposes too much overhead in cases where the geometry is sure not
+	 *       to be nil, this method can be safely overriden with a direct call to getGeometry()
+	 */
+	protected IShape checkedGeometry() {
+		return nullCheck(getGeometry(), "The agent's shape is nil");
+	}
+
 	@Override
 	public ISkill duplicate() {
 		return this;
@@ -75,7 +100,7 @@ public abstract class MinimalAgent implements IAgent {
 
 	@Override
 	public boolean isPoint() {
-		return getGeometry().isPoint();
+		return checkedGeometry().isPoint();
 	}
 
 	/**
@@ -83,8 +108,7 @@ public abstract class MinimalAgent implements IAgent {
 	 */
 	@Override
 	public Geometry getInnerGeometry() {
-		final IShape g = getGeometry();
-		return g == null ? null : g.getInnerGeometry();
+		return checkedGeometry().getInnerGeometry();
 	}
 
 	/**
@@ -92,8 +116,7 @@ public abstract class MinimalAgent implements IAgent {
 	 */
 	@Override
 	public Envelope getEnvelope() {
-		final IShape g = getGeometry();
-		return g == null ? null : g.getEnvelope();
+		return checkedGeometry().getEnvelope();
 	}
 
 	/**
@@ -101,8 +124,7 @@ public abstract class MinimalAgent implements IAgent {
 	 */
 	@Override
 	public boolean covers(final IShape g) {
-		final IShape gg = getGeometry();
-		return gg == null ? false : gg.covers(g);
+		return checkedGeometry().covers(g);
 	}
 
 	/**
@@ -110,14 +132,12 @@ public abstract class MinimalAgent implements IAgent {
 	 */
 	@Override
 	public double euclidianDistanceTo(final IShape g) {
-		final IShape gg = getGeometry();
-		return gg == null ? 0d : gg.euclidianDistanceTo(g);
+		return checkedGeometry().euclidianDistanceTo(g);
 	}
 
 	@Override
 	public double euclidianDistanceTo(final ILocation g) {
-		final IShape gg = getGeometry();
-		return gg == null ? 0d : gg.euclidianDistanceTo(g);
+		return checkedGeometry().euclidianDistanceTo(g);
 	}
 
 	/**
@@ -125,14 +145,12 @@ public abstract class MinimalAgent implements IAgent {
 	 */
 	@Override
 	public boolean intersects(final IShape g) {
-		final IShape gg = getGeometry();
-		return gg == null ? false : gg.intersects(g);
+		return checkedGeometry().intersects(g);
 	}
 
 	@Override
 	public boolean crosses(final IShape g) {
-		final IShape gg = getGeometry();
-		return gg == null ? false : gg.crosses(g);
+		return checkedGeometry().crosses(g);
 	}
 
 	/**
@@ -140,7 +158,7 @@ public abstract class MinimalAgent implements IAgent {
 	 */
 	@Override
 	public double getPerimeter() {
-		return getGeometry().getPerimeter();
+		return checkedGeometry().getPerimeter();
 	}
 
 	/**
@@ -148,11 +166,33 @@ public abstract class MinimalAgent implements IAgent {
 	 */
 	@Override
 	public void setInnerGeometry(final Geometry geom) {
-		getGeometry().setInnerGeometry(geom);
+		checkedGeometry().setInnerGeometry(geom);
 	}
 
 	@Override
-	public void dispose() {}
+	public void dispose() {
+		if ( dead() ) { return; }
+		acquireLock();
+		try {
+			dead = true;
+			try {
+				final IPopulation p = getPopulation();
+				if ( p != null ) {
+					p.remove(null, null, this, false);
+				}
+
+			} catch (final GamaRuntimeException e) {
+				GAMA.reportError(e);
+			}
+			final IShape s = getGeometry();
+			if ( s != null ) {
+				s.dispose();
+			}
+			attributes.clear();
+		} finally {
+			releaseLock();
+		}
+	}
 
 	@Override
 	public String stringValue(final IScope scope) throws GamaRuntimeException {
@@ -196,12 +236,12 @@ public abstract class MinimalAgent implements IAgent {
 	}
 
 	@Override
-	public synchronized Object getAttribute(final Object index) {
+	public/* synchronized */Object getAttribute(final Object index) {
 		return attributes.get(index);
 	}
 
 	@Override
-	public synchronized void setAttribute(final Object name, final Object val) {
+	public/* synchronized */void setAttribute(final Object name, final Object val) {
 		attributes.put(name, val);
 	}
 
@@ -225,7 +265,7 @@ public abstract class MinimalAgent implements IAgent {
 		if ( scope.interrupted() || dead() ) { return; }
 		scope.push(this);
 		try {
-			getPopulation().updateVariables(scope, this);
+			checkedPopulation().updateVariables(scope, this);
 			getSpecies().getArchitecture().executeOn(scope);
 		} finally {
 			scope.pop(this);
@@ -234,7 +274,7 @@ public abstract class MinimalAgent implements IAgent {
 
 	@Override
 	public ITopology getTopology() {
-		return getPopulation().getTopology();
+		return checkedPopulation().getTopology();
 	}
 
 	@Override
@@ -244,9 +284,8 @@ public abstract class MinimalAgent implements IAgent {
 
 	@Override
 	public IList<IAgent> getPeers() throws GamaRuntimeException {
-		final IAgent host = getHost();
-		if ( host != null ) {
-			final IPopulation pop = host.getPopulationFor(this.getSpecies());
+		final IPopulation pop = getHost().getPopulationFor(this.getSpecies());
+		if ( pop != null ) {
 			final IList<IAgent> retVal = pop.getAgentsList();
 			retVal.remove(this);
 			return retVal;
@@ -265,16 +304,18 @@ public abstract class MinimalAgent implements IAgent {
 
 	@Override
 	public ILocation getLocation() {
-		return getGeometry().getLocation();
+		return checkedGeometry().getLocation();
 	}
 
 	@Override
 	public void setLocation(final ILocation l) {
-		getGeometry().setLocation(l);
+		checkedGeometry().setLocation(l);
 	}
 
 	@Override
-	public void setGeometry(final IShape newGeometry) {}
+	public void setGeometry(final IShape newGeometry) {
+		checkedGeometry().setGeometry(newGeometry);
+	}
 
 	@Override
 	public boolean dead() {
@@ -283,7 +324,7 @@ public abstract class MinimalAgent implements IAgent {
 
 	@Override
 	public IMacroAgent getHost() {
-		return getPopulation().getHost();
+		return checkedPopulation().getHost();
 	}
 
 	@Override
@@ -291,7 +332,6 @@ public abstract class MinimalAgent implements IAgent {
 
 	@Override
 	public void schedule() {
-		// GuiUtils.debug("GamlAgent.schedule : " + this);
 		if ( !dead() ) {
 			getScheduler().insertAgentToInit(this, getScope());
 		}
@@ -314,12 +354,12 @@ public abstract class MinimalAgent implements IAgent {
 
 	@Override
 	public ISpecies getSpecies() {
-		return getPopulation().getSpecies();
+		return checkedPopulation().getSpecies();
 	}
 
 	@Override
 	public boolean isInstanceOf(final ISpecies s, final boolean direct) {
-		return getPopulation().manages(s, direct);
+		return checkedPopulation().manages(s, direct);
 	}
 
 	@Override
@@ -339,7 +379,7 @@ public abstract class MinimalAgent implements IAgent {
 
 	@Override
 	public Object getDirectVarValue(final IScope scope, final String n) throws GamaRuntimeException {
-		final IVariable var = getPopulation().getVar(this, n);
+		final IVariable var = checkedPopulation().getVar(this, n);
 		if ( var != null ) { return var.value(scope, this); }
 		final IMacroAgent host = this.getHost();
 		if ( host != null ) {
@@ -351,7 +391,7 @@ public abstract class MinimalAgent implements IAgent {
 
 	@Override
 	public void setDirectVarValue(final IScope scope, final String s, final Object v) throws GamaRuntimeException {
-		getPopulation().getVar(this, s).setVal(scope, this, v);
+		checkedPopulation().getVar(this, s).setVal(scope, this, v);
 	}
 
 	@Override
@@ -401,12 +441,16 @@ public abstract class MinimalAgent implements IAgent {
 
 	@Override
 	public AgentScheduler getScheduler() {
-		return getHost().getScheduler();
+		final IMacroAgent a = getHost();
+		if ( a == null ) { return null; }
+		return a.getScheduler();
 	}
 
 	@Override
 	public IModel getModel() {
-		return getHost().getModel();
+		final IMacroAgent a = getHost();
+		if ( a == null ) { return GAMA.getModel(); }
+		return a.getModel();
 	}
 
 	@Override
@@ -416,7 +460,9 @@ public abstract class MinimalAgent implements IAgent {
 
 	@Override
 	public IScope getScope() {
-		return getHost().getScope();
+		final IMacroAgent a = getHost();
+		if ( a == null ) { return GAMA.obtainNewScope(); }
+		return a.getScope();
 	}
 
 	@Override
@@ -426,8 +472,9 @@ public abstract class MinimalAgent implements IAgent {
 
 	@Override
 	public SimulationClock getClock() {
-		if ( getHost() == null ) { return GAMA.getClock(); }
-		return getHost().getClock();
+		final IMacroAgent a = getHost();
+		if ( a == null ) { return GAMA.getClock(); }
+		return a.getClock();
 	}
 
 	/**
@@ -436,7 +483,7 @@ public abstract class MinimalAgent implements IAgent {
 	 */
 	@Override
 	public IPopulation getPopulationFor(final ISpecies microSpecies) {
-		return getHost().getPopulationFor(microSpecies);
+		return getPopulationFor(microSpecies.getName());
 	}
 
 	/**
@@ -445,6 +492,8 @@ public abstract class MinimalAgent implements IAgent {
 	 */
 	@Override
 	public IPopulation getPopulationFor(final String speciesName) {
+		final IMacroAgent a = getHost();
+		if ( a == null ) { return null; }
 		return getHost().getPopulationFor(speciesName);
 	}
 

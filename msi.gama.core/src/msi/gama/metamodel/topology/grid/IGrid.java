@@ -54,7 +54,7 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex {
 
 	public abstract boolean isTorus();
 
-	public abstract GamaSpatialMatrix.GridNeighbourhood getNeighbourhood();
+	public abstract INeighbourhood getNeighbourhood();
 
 	public abstract IShape getEnvironmentFrame();
 

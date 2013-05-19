@@ -44,7 +44,6 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	/** The population that this agent belongs to. */
 	protected final IPopulation population;
-	protected final GamaMap<Object, Object> attributes = new GamaMap();
 	protected IShape geometry;
 	protected String name;
 
@@ -53,6 +52,18 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	 */
 	public GamlAgent(final IPopulation s) {
 		population = s;
+	}
+
+	@Override
+	protected IPopulation checkedPopulation() {
+		// The population is never null
+		return population;
+	}
+
+	@Override
+	protected IShape checkedGeometry() {
+		// The geometry is never null (?)
+		return getGeometry();
 	}
 
 	@Override
@@ -161,7 +172,6 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 				candidates.add(a);
 			}
 		}
-
 		final IList<IAgent> capturedAgents = new GamaList<IAgent>();
 		final IPopulation microSpeciesPopulation = this.getPopulationFor(microSpecies);
 		for ( final IAgent micro : candidates ) {
@@ -169,7 +179,6 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 			micro.dispose();
 			capturedAgents.add(savedMicro.restoreTo(scope, microSpeciesPopulation));
 		}
-
 		return capturedAgents;
 	}
 
@@ -198,7 +207,6 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 			micro.dispose();
 			releasedAgents.add(savedMicro.restoreTo(scope, originalSpeciesPopulation));
 		}
-
 		return releasedAgents;
 	}
 
@@ -375,11 +383,6 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		if ( !allMicroSpecies.isEmpty() ) {
 			IPopulation microPop;
 			for ( final ISpecies microSpec : allMicroSpecies ) {
-				// FIXME Why disallow built-in populations ?
-				// TODO Would be better to see if they are actually in use in the model
-				// if ( Types.isBuiltIn(microSpec.getName()) ) {
-				// continue;
-				// }
 				microPop = GamaPopulation.createPopulation(scope, this, microSpec);
 				attributes.put(microSpec.getName(), microPop);
 				microPop.initializeFor(scope);
@@ -391,9 +394,6 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	public void initializeMicroPopulation(final IScope scope, final String name) {
 		final ISpecies microSpec = getModel().getSpecies(name);
 		if ( microSpec == null ) { return; }
-		// FIXME Why disallow built-in populations ?
-		// TODO Would be better to see if they are actually in use in the model
-		// if ( Types.isBuiltIn(name) ) { return; }
 		final IPopulation microPop = GamaPopulation.createPopulation(scope, this, microSpec);
 		attributes.put(microSpec.getName(), microPop);
 		microPop.initializeFor(scope);
@@ -405,7 +405,6 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 		try {
 			acquireLock();
-			dead = true;
 			for ( final Map.Entry<Object, Object> entry : attributes.entrySet() ) {
 				if ( entry.getValue() instanceof IPopulation ) {
 					final IPopulation microPop = (IPopulation) entry.getValue();
@@ -413,13 +412,6 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 					microPop.dispose();
 				}
 			}
-			// if ( microPopulations != null ) {
-			// for ( final IPopulation microPop : microPopulations.values() ) {
-			// microPop.killMembers();
-			// microPop.dispose();
-			// }
-			// microPopulations.clear();
-			// }
 			final GamaGraph graph = (GamaGraph) getAttribute("attached_graph");
 			if ( graph != null ) {
 
@@ -431,23 +423,11 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 						((IAgent) obj).dispose();
 					}
 				}
-
 			}
-
-			try {
-				population.remove(null, null, this, false);
-
-			} catch (final GamaRuntimeException e) {
-				GAMA.reportError(e);
-			}
-			attributes.clear();
-			if ( geometry != null ) {
-				geometry.dispose();
-			}
-			// setIndex(-1);
 		} finally {
 			releaseLock();
 		}
+		super.dispose();
 	}
 
 	@Override
@@ -570,8 +550,6 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	@Override
 	public synchronized IPopulation getMicroPopulation(final String microSpeciesName) {
-		// FIX : Now catches the species from the model
-		// final ISpecies microSpecies = getModel().getSpecies(microSpeciesName);
 		return (IPopulation) attributes.get(microSpeciesName);
 	}
 
@@ -634,7 +612,6 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	@Override
 	public IPopulation getPopulationFor(final String speciesName) {
-		// FIXME : THE BEHAVIOR OF THIS METHOD IS CLEARLY WRONG COMPARED TO THE PREVIOUS ONE
 		final IPopulation microPopulation = this.getMicroPopulation(speciesName);
 		if ( microPopulation != null ) { return microPopulation; }
 

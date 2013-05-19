@@ -52,6 +52,7 @@ public class GamaShape implements IShape /* , IContainer */{
 	private boolean isPoint;
 	private Operations optimizedOperations;
 	private IAgent agent;
+
 	// Property map to add all kinds of information (e.g to specify if the geometry is a sphere, a
 	// cube, etc...). Can be reused by subclasses (for example to store GIS information)
 	protected GamaMap attributes;
@@ -464,15 +465,11 @@ public class GamaShape implements IShape /* , IContainer */{
 	@Override
 	public GamaShape copy(final IScope scope) {
 		GamaShape g = null;
-		// synchronized (geometry) {
 		g = new GamaShape((Geometry) geometry.clone());
-		// }
 		if ( attributes != null ) {
 			g.attributes = new GamaMap(attributes);
 		}
-		// synchronized (location) {
 		g.setLocation(location.copy(scope));
-		// }
 		return g;
 	}
 

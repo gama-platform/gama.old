@@ -12,25 +12,33 @@ import msi.gama.util.GamaMap;
 import com.vividsolutions.jts.geom.*;
 
 /**
- * Class GamaTranslatedGeometry. A geometry that possesses a link to a reference IShape and a translation. All the
- * operations are transmitted to the reference geometry, but take this translation into account.
+ * Class GamaProxyGeometry. A geometry that represents a wrapper to a reference geometry and a translation. All the
+ * operations are transmitted to the reference geometry, taking this translation into account. The inner geometry of
+ * each instance is computed dynamically every time.
  * 
- * This class does not allow any other transformation to the geometry than translation (no scaling, no rotation, etc.).
- * TODO This might come later when rotatedBy() and scaledBy() will be redefined outside GamaShape.
+ * This class does not allow any other transformation to its geometry than translation (no scaling, no rotation, etc.).
+ * TODO This might come later when rotatedBy() and scaledBy() are redefined outside GamaShape.
+ * 
+ * Abstract methods to override:
+ * getReferenceGeometry()
+ * 
+ * Caching of the resulting innner geometry can be achieved by redefining getInnerGeometry() and implementing
+ * the policy there. However, the purpose of this class is principally to save memory (see. GamaSpatialMatrix).
+ * 
+ * The geometries dont have individual attributes. Instead, they read from / write to the attributes of the reference
+ * geometry. This can be a simple way to implement properties common to a set of geometries. Subclasses that wish to
+ * implement individual attributes can do so by overriding the corresponding methods.
+ * 
  * 
  * @author drogoul
  * @since 18 mai 2013
  * 
  */
-public class GamaTranslatedGeometry implements IShape {
+public abstract class GamaProxyGeometry implements IShape {
 
 	ILocation absoluteLocation;
-	double dx, dy, dz;
-	final IShape reference;
-	IAgent agent;
 
-	public GamaTranslatedGeometry(final IShape reference, final ILocation loc) {
-		this.reference = reference;
+	public GamaProxyGeometry(final ILocation loc) {
 		setLocation(loc);
 	}
 
@@ -41,9 +49,6 @@ public class GamaTranslatedGeometry implements IShape {
 	@Override
 	public void setLocation(final ILocation loc) {
 		absoluteLocation = loc;
-		dx = absoluteLocation.getX() - reference.getLocation().getX();
-		dy = absoluteLocation.getY() - reference.getLocation().getY();
-		dz = absoluteLocation.getZ() - reference.getLocation().getZ();
 	}
 
 	/**
@@ -61,8 +66,15 @@ public class GamaTranslatedGeometry implements IShape {
 	 */
 	@Override
 	public String stringValue(final IScope scope) throws GamaRuntimeException {
-		return reference.stringValue(scope) + " translated to " + absoluteLocation.stringValue(scope);
+		return getReferenceGeometry().stringValue(scope) + " translated to " + absoluteLocation.stringValue(scope);
 	}
+
+	/**
+	 * @return The geometry wrapped by this proxy. This geometry can be static or dynamic (all translations are computed
+	 *         dynamically). No caching being made in the basic implementation, it can also change during the lifetime
+	 *         of the proxy.
+	 */
+	protected abstract IShape getReferenceGeometry();
 
 	/**
 	 * Method copy()
@@ -70,7 +82,7 @@ public class GamaTranslatedGeometry implements IShape {
 	 */
 	@Override
 	public IValue copy(final IScope scope) throws GamaRuntimeException {
-		return new GamaTranslatedGeometry((IShape) reference.copy(scope), absoluteLocation.copy(scope));
+		return this; // TODO Declare it as abstract ?
 	}
 
 	/**
@@ -79,7 +91,7 @@ public class GamaTranslatedGeometry implements IShape {
 	 */
 	@Override
 	public String toGaml() {
-		return reference.toGaml() + " at_location " + absoluteLocation.toGaml();
+		return getReferenceGeometry().toGaml() + " at_location " + absoluteLocation.toGaml();
 	}
 
 	/**
@@ -89,7 +101,7 @@ public class GamaTranslatedGeometry implements IShape {
 	 */
 	@Override
 	public GamaMap getAttributes() {
-		return reference.getAttributes();
+		return getReferenceGeometry().getAttributes();
 	}
 
 	/**
@@ -98,7 +110,7 @@ public class GamaTranslatedGeometry implements IShape {
 	 */
 	@Override
 	public GamaMap getOrCreateAttributes() {
-		return reference.getOrCreateAttributes();
+		return getReferenceGeometry().getOrCreateAttributes();
 	}
 
 	/**
@@ -107,7 +119,7 @@ public class GamaTranslatedGeometry implements IShape {
 	 */
 	@Override
 	public Object getAttribute(final Object key) {
-		return reference.getAttribute(key);
+		return getReferenceGeometry().getAttribute(key);
 	}
 
 	/**
@@ -116,7 +128,7 @@ public class GamaTranslatedGeometry implements IShape {
 	 */
 	@Override
 	public void setAttribute(final Object key, final Object value) {
-		reference.setAttribute(key, value);
+		getReferenceGeometry().setAttribute(key, value);
 	}
 
 	/**
@@ -125,7 +137,7 @@ public class GamaTranslatedGeometry implements IShape {
 	 */
 	@Override
 	public boolean hasAttribute(final Object key) {
-		return reference.hasAttribute(key);
+		return getReferenceGeometry().hasAttribute(key);
 	}
 
 	/**
@@ -134,7 +146,8 @@ public class GamaTranslatedGeometry implements IShape {
 	 */
 	@Override
 	public IAgent getAgent() {
-		return agent;
+		// This method is intended to be subclassed if necessary
+		return null;
 	}
 
 	/**
@@ -143,7 +156,7 @@ public class GamaTranslatedGeometry implements IShape {
 	 */
 	@Override
 	public void setAgent(final IAgent agent) {
-		this.agent = agent;
+		// This method is intended to be subclassed if necessary
 	}
 
 	/**
@@ -152,7 +165,7 @@ public class GamaTranslatedGeometry implements IShape {
 	 */
 	@Override
 	public IShape getGeometry() {
-		return this; // or the translated geometry ??
+		return this; // TODO or the translated geometry ??
 	}
 
 	/**
@@ -170,7 +183,7 @@ public class GamaTranslatedGeometry implements IShape {
 	 */
 	@Override
 	public boolean isPoint() {
-		return reference.isPoint();
+		return getReferenceGeometry().isPoint();
 	}
 
 	/**
@@ -179,7 +192,10 @@ public class GamaTranslatedGeometry implements IShape {
 	 */
 	@Override
 	public Geometry getInnerGeometry() {
-		final Geometry copy = (Geometry) reference.getInnerGeometry().clone();
+		final Geometry copy = (Geometry) getReferenceGeometry().getInnerGeometry().clone();
+		final double dx = getLocation().getX() - getReferenceGeometry().getLocation().getX();
+		final double dy = getLocation().getY() - getReferenceGeometry().getLocation().getY();
+		final double dz = getLocation().getZ() - getReferenceGeometry().getLocation().getZ();
 		copy.apply(GamaShape.translation.by(dx, dy, dz));
 		copy.geometryChanged();
 		return copy;
@@ -191,7 +207,9 @@ public class GamaTranslatedGeometry implements IShape {
 	 */
 	@Override
 	public Envelope getEnvelope() {
-		final Envelope copy = new Envelope(reference.getEnvelope());
+		final Envelope copy = new Envelope(getReferenceGeometry().getEnvelope());
+		final double dx = getLocation().getX() - getReferenceGeometry().getLocation().getX();
+		final double dy = getLocation().getY() - getReferenceGeometry().getLocation().getY();
 		copy.translate(dx, dy);
 		return copy;
 	}
@@ -249,7 +267,7 @@ public class GamaTranslatedGeometry implements IShape {
 	 */
 	@Override
 	public double getPerimeter() {
-		return reference.getPerimeter();
+		return getReferenceGeometry().getPerimeter();
 	}
 
 	/**
