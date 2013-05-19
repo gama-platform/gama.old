@@ -110,11 +110,11 @@ public abstract class AbstractExpression implements IExpression {
 		return this;
 	}
 
-	protected IType findCommonType(List<? extends IExpression> elements, int kind) {
+	protected IType findCommonType(final List<? extends IExpression> elements, final int kind) {
 		IType result = Types.NO_TYPE;
 		if ( elements.isEmpty() ) { return result; }
-		Set<IType> types = new LinkedHashSet();
-		for ( IExpression e : elements ) {
+		final Set<IType> types = new LinkedHashSet();
+		for ( final IExpression e : elements ) {
 			// TODO Indicates a previous error in compiling expressions. Maybe we should cut this
 			// part
 			if ( e == null ) {
@@ -122,7 +122,8 @@ public abstract class AbstractExpression implements IExpression {
 			}
 			types.add(kind == _type ? e.getType() : kind == _content ? e.getContentType() : e.getKeyType());
 		}
-		IType[] array = types.toArray(new IType[types.size()]);
+		final IType[] array = types.toArray(new IType[types.size()]);
+		if ( array.length == 0 ) { return result; }
 		result = array[0];
 		if ( array.length == 1 ) { return result; }
 		for ( int i = 1; i < array.length; i++ ) {
@@ -142,21 +143,21 @@ public abstract class AbstractExpression implements IExpression {
 	}
 
 	@Override
-	public void setElementsContentType(IType t) {
+	public void setElementsContentType(final IType t) {
 		elementsContentType = t;
 	}
 
 	@Override
-	public void setElementsKeyType(IType t) {
+	public void setElementsKeyType(final IType t) {
 		elementsKeyType = t;
 	}
 
-	protected String parenthesize(IExpression ... exp) {
+	protected String parenthesize(final IExpression ... exp) {
 		return surround('(', ')', exp);
 	}
 
-	protected String surround(char first, char last, IExpression ... exp) {
-		StringBuilder sb = new StringBuilder();
+	protected String surround(final char first, final char last, final IExpression ... exp) {
+		final StringBuilder sb = new StringBuilder();
 		sb.append(' ').append(first);
 		for ( int i = 0; i < exp.length; i++ ) {
 			if ( i > 0 ) {
