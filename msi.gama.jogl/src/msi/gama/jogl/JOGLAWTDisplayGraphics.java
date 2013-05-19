@@ -136,7 +136,9 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		if ( gridColor != null ) {
 			drawGridLine(img, gridColor);
 		}
-		return drawDEM2(img, img, scope.getSimulationScope().getEnvelope());
+		//FIXME: Need to flip vertically the image (need excactly to know why)
+		BufferedImage texture = FlipRightSideLeftImage(img);
+		return drawDEM2(img, texture, scope.getSimulationScope().getEnvelope());
 	}
 
 	/**
