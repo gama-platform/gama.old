@@ -787,7 +787,7 @@ public abstract class Spatial {
 		public static IMatrix as_grid(final IScope scope, final IShape g, final GamaPoint dim)
 			throws GamaRuntimeException {
 			// cols, rows
-			return new GamaSpatialMatrix(scope, g, (int) dim.x, (int) dim.y, false, false, false);
+			return new GamaSpatialMatrix(scope, g, (int) dim.x, (int) dim.y, false, false, false, false);
 		}
 
 		@operator(value = "as_4_grid", content_type = IType.GEOMETRY)
@@ -795,7 +795,7 @@ public abstract class Spatial {
 		public static IMatrix as_4_grid(final IScope scope, final IShape g, final GamaPoint dim)
 			throws GamaRuntimeException {
 			// cols, rows
-			return new GamaSpatialMatrix(scope, g, (int) dim.x, (int) dim.y, false, true, false);
+			return new GamaSpatialMatrix(scope, g, (int) dim.x, (int) dim.y, false, true, false, false);
 		}
 
 		@operator(value = "split_lines", content_type = IType.GEOMETRY)

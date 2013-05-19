@@ -66,4 +66,9 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex {
 
 	public abstract boolean usesIndiviualShapes();
 
+	/**
+	 * @return
+	 */
+	public abstract boolean usesNeighboursCache();
+
 }

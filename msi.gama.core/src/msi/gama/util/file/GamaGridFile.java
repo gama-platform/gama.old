@@ -51,8 +51,8 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 		try {
 			store = new ArcGridReader(gridFile.toURI().toURL());
 			final GeneralEnvelope genv = store.getOriginalEnvelope();
-			final int numRows = store.getOriginalGridRange().getHigh(0) + 1;
-			final int numCols = store.getOriginalGridRange().getHigh(1) + 1;
+			final int numRows = store.getOriginalGridRange().getHigh(1) + 1;
+			final int numCols = store.getOriginalGridRange().getHigh(0) + 1;
 			final double cellHeight = genv.getSpan(1) / numRows;
 			final double cellWidth = genv.getSpan(0) / numCols;
 			final GamaList<IShape> shapes = new GamaList<IShape>();

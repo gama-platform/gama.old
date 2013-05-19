@@ -54,7 +54,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	/** The geometry of host. */
 
 	public final boolean useIndividualShapes;
-	public boolean USE_NEIGHBOURS_CACHE;
+	public boolean useNeighboursCache = false;
 
 	public final IShape environmentFrame;
 	final Envelope bounds;
@@ -68,7 +68,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	protected Boolean isTorus = null;
 	protected Boolean isHexagon = null;
 	protected GridDiffuser diffuser;
-	public GridNeighbourhood neighbourhood;
+	public INeighbourhood neighbourhood;
 
 	int actualNumberOfCells;
 	int firstCell, lastCell;
@@ -89,7 +89,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	}
 
 	public GamaSpatialMatrix(final IScope scope, final IShape environment, final Integer cols, final Integer rows,
-		final boolean isTorus, final boolean usesVN, final boolean indiv) throws GamaRuntimeException {
+		final boolean isTorus, final boolean usesVN, final boolean indiv, final boolean useNeighboursCache)
+		throws GamaRuntimeException {
 		super(scope, cols, rows);
 		environmentFrame = environment.getGeometry();
 		bounds = environmentFrame.getEnvelope();
@@ -107,11 +108,12 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		lastCell = -1;
 		this.isHexagon = false;
 		useIndividualShapes = indiv;
+		this.useNeighboursCache = useNeighboursCache;
 		createCells(scope, false);
 	}
 
 	public GamaSpatialMatrix(final IScope scope, final GamaGridFile gfile, final boolean isTorus, final boolean usesVN,
-		final boolean indiv) throws GamaRuntimeException {
+		final boolean indiv, final boolean useNeighboursCache) throws GamaRuntimeException {
 		super(scope, 100, 100);
 		numRows = gfile.getNbRows();
 		numCols = gfile.getNbCols();
@@ -130,6 +132,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		useIndividualShapes = indiv;
 		actualNumberOfCells = 0;
 		this.isHexagon = false;
+		this.useNeighboursCache = useNeighboursCache;
 		firstCell = 0;
 
 		for ( int i = 0; i < size; i++ ) {
@@ -144,7 +147,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	}
 
 	public GamaSpatialMatrix(final IScope scope, final IShape environment, final Integer cols, final Integer rows,
-		final boolean isTorus, final boolean usesVN, final boolean isHexagon, final boolean indiv) {
+		final boolean isTorus, final boolean usesVN, final boolean isHexagon, final boolean indiv,
+		final boolean useNeighboursCache) {
 		super(scope, cols, rows);
 		environmentFrame = environment.getGeometry();
 		bounds = environmentFrame.getEnvelope();
@@ -163,6 +167,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		firstCell = -1;
 		lastCell = -1;
 		useIndividualShapes = indiv;
+		this.useNeighboursCache = useNeighboursCache;
 		createHexagons(false);
 	}
 
@@ -261,10 +266,12 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	@Override
 	public INeighbourhood getNeighbourhood() {
 		if ( neighbourhood == null ) {
-			if ( neighbourhood == null ) {
+			if ( useNeighboursCache ) {
 				neighbourhood =
 					isHexagon ? new GridHexagonalNeighbourhood() : usesVN ? new GridVonNeumannNeighbourhood()
 						: new GridMooreNeighbourhood();
+			} else {
+				neighbourhood = new NoCacheNeighbourhood();
 			}
 		}
 		return neighbourhood;
@@ -439,7 +446,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	@Override
 	public IMatrix copy(final IScope scope) throws GamaRuntimeException {
 		final IGrid result =
-			new GamaSpatialMatrix(scope, environmentFrame, numCols, numRows, isTorus, usesVN, useIndividualShapes);
+			new GamaSpatialMatrix(scope, environmentFrame, numCols, numRows, isTorus, usesVN, useIndividualShapes,
+				useNeighboursCache);
 		return result;
 	}
 
@@ -1101,6 +1109,119 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	}
 
+	private class IntToAgents implements Function<Integer, IAgent> {
+
+		@Override
+		public IAgent apply(final Integer input) {
+			return matrix[input].getAgent();
+		}
+
+	}
+
+	private final Function<Integer, IAgent> intToAgents = new IntToAgents();
+
+	public class NoCacheNeighbourhood implements INeighbourhood {
+
+		public NoCacheNeighbourhood() {}
+
+		/**
+		 * Method getNeighboursIn()
+		 * @see msi.gama.metamodel.topology.grid.INeighbourhood#getNeighboursIn(int, int)
+		 */
+		@Override
+		public Iterator<IAgent> getNeighboursIn(final int placeIndex, final int radius) {
+			return computeNeighboursFrom(placeIndex, 1, radius);
+		}
+
+		private Iterator<IAgent> computeNeighboursFrom(final int placeIndex, final int begin, final int end) {
+			Iterable<Integer> iterable = FluentIterable.from(ImmutableSet.<Integer> of());
+
+			for ( int i = begin; i <= end; i++ ) {
+				iterable =
+					Iterables.concat(iterable,
+						usesVN ? get4NeighboursAtRadius(placeIndex, i) : get8NeighboursAtRadius(placeIndex, i));
+			}
+			final Iterable<IAgent> result = Iterables.transform(iterable, intToAgents);
+			return result.iterator();
+
+		}
+
+		protected List<Integer> get8NeighboursAtRadius(final int placeIndex, final int radius) {
+			final int y = placeIndex / numCols;
+			final int x = placeIndex - y * numCols;
+			final List<Integer> v = new ArrayList<Integer>(radius + 1 * radius + 1);
+			int p;
+			for ( int i = 1 - radius; i < radius; i++ ) {
+				p = getPlaceIndexAt(x + i, y - radius);
+				if ( p != -1 ) {
+					v.add(p);
+				}
+				p = getPlaceIndexAt(x - i, y + radius);
+				if ( p != -1 ) {
+					v.add(p);
+				}
+			}
+			for ( int i = -radius; i < radius + 1; i++ ) {
+				p = getPlaceIndexAt(x - radius, y - i);
+				if ( p != -1 ) {
+					v.add(p);
+				}
+				p = getPlaceIndexAt(x + radius, y + i);
+				if ( p != -1 ) {
+					v.add(p);
+				}
+			}
+			return v;
+		}
+
+		protected List<Integer> get4NeighboursAtRadius(final int placeIndex, final int radius) {
+			final int y = placeIndex / numCols;
+			final int x = placeIndex - y * numCols;
+
+			final List<Integer> v = new ArrayList<Integer>(radius << 2);
+			int p;
+			for ( int i = -radius; i < radius; i++ ) {
+				p = getPlaceIndexAt(x - i, y - Math.abs(i) + radius);
+				if ( p != -1 ) {
+					v.add(p);
+				}
+				p = getPlaceIndexAt(x + i, y + Math.abs(i) - radius);
+				if ( p != -1 ) {
+					v.add(p);
+				}
+			}
+			return v;
+		}
+
+		/**
+		 * Method isVN()
+		 * @see msi.gama.metamodel.topology.grid.INeighbourhood#isVN()
+		 */
+		@Override
+		public boolean isVN() {
+			return false;
+		}
+
+		/**
+		 * Method getRawNeighboursIncluding()
+		 * @see msi.gama.metamodel.topology.grid.INeighbourhood#getRawNeighboursIncluding(int, int)
+		 */
+		@Override
+		public int[] getRawNeighboursIncluding(final int placeIndex, final int range) {
+			throw GamaRuntimeException.warning("The diffusion of signals must rely on a neighbours cache in the grid");
+		}
+
+		/**
+		 * Method neighboursIndexOf()
+		 * @see msi.gama.metamodel.topology.grid.INeighbourhood#neighboursIndexOf(int, int)
+		 */
+		@Override
+		public int neighboursIndexOf(final int placeIndex, final int n) {
+			throw GamaRuntimeException.warning("The diffusion of signals must rely on a neighbours cache in the grid");
+		}
+
+	}
+
 	/**
 	 * Written by drogoul Modified on 8 mars 2011
 	 * 
@@ -1120,7 +1241,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			neighboursIndexes = new int[matrix.length][];
 		}
 
-		int[] getRawNeighboursIncluding(final int placeIndex, final int radius) {
+		@Override
+		public int[] getRawNeighboursIncluding(final int placeIndex, final int radius) {
 			// List<Integer> n = neighboursIndexes[placeIndex];
 			int[] n = neighboursIndexes[placeIndex];
 			if ( n == null ) {
@@ -1167,7 +1289,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			neighboursIndexes[placeIndex] = newOne;
 		}
 
-		int neighboursIndexOf(final int placeIndex, final int n) {
+		@Override
+		public int neighboursIndexOf(final int placeIndex, final int n) {
 			if ( n == 1 ) { return 0; }
 			final int size = neighboursIndexes[placeIndex].length;
 			if ( n > size ) { return neighbours[placeIndex].length - 1; }
@@ -1309,7 +1432,15 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					max_range++;
 				}
 				range = Math.min(range, max_range);
-				neighbours = neighbourhood.getRawNeighboursIncluding(placeIndex, range);
+				try {
+					neighbours = neighbourhood.getRawNeighboursIncluding(placeIndex, range);
+				} catch (final GamaRuntimeException e) {
+					// We change the neighbourhood to a cached version dynamically
+					GAMA.reportError(e);
+					useNeighboursCache = true;
+					neighbourhood = null;
+					neighbours = getNeighbourhood().getRawNeighboursIncluding(placeIndex, range);
+				}
 				for ( n = 1; n <= range; n++ ) {
 					final int begin = neighbourhood.neighboursIndexOf(placeIndex, n);
 					final int end = neighbourhood.neighboursIndexOf(placeIndex, n + 1);
@@ -1352,7 +1483,15 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					max_range++;
 				}
 				range = Math.min(range, max_range);
-				neighbours = neighbourhood.getRawNeighboursIncluding(placeIndex, range);
+				try {
+					neighbours = neighbourhood.getRawNeighboursIncluding(placeIndex, range);
+				} catch (final GamaRuntimeException e) {
+					// We change the neighbourhood to a cached version dynamically
+					GAMA.reportError(e);
+					useNeighboursCache = true;
+					neighbourhood = null;
+					neighbours = getNeighbourhood().getRawNeighboursIncluding(placeIndex, range);
+				}
 				boolean cont = true;
 				for ( n = 1; n <= range; n++ ) {
 					final int begin = neighbourhood.neighboursIndexOf(placeIndex, n);
@@ -1554,6 +1693,15 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		public boolean isVN() {
 			return true;
 		}
+	}
+
+	/**
+	 * Method usesNeighboursCache()
+	 * @see msi.gama.metamodel.topology.grid.IGrid#usesNeighboursCache()
+	 */
+	@Override
+	public boolean usesNeighboursCache() {
+		return useNeighboursCache;
 	}
 
 }

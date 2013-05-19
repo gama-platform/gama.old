@@ -432,14 +432,16 @@ public class GamaPopulation implements IPopulation {
 		final boolean isTorus = exp != null && Cast.asBool(scope, exp.value(scope));
 		exp = species.getFacet("use_individual_shapes");
 		final boolean useIndividualShapes = exp == null || Cast.asBool(scope, exp.value(scope));
+		exp = species.getFacet("use_neighbours_cache");
+		final boolean useNeighboursCache = exp == null || Cast.asBool(scope, exp.value(scope));
 		exp = species.getFacet(IKeyword.NEIGHBOURS);
 		final boolean usesVN = exp == null || Cast.asInt(scope, exp.value(scope)) == 4;
 		final boolean isHexagon = exp != null && Cast.asInt(scope, exp.value(scope)) == 6;
 		exp = species.getFacet(IKeyword.FILE);
 		final GamaGridFile file = (GamaGridFile) (exp != null ? exp.value(scope) : null);
 		if ( file == null ) { return new GridTopology(scope, host, rows, columns, isTorus, usesVN, isHexagon,
-			useIndividualShapes); }
-		return new GridTopology(scope, host, file, isTorus, usesVN, useIndividualShapes);
+			useIndividualShapes, useNeighboursCache); }
+		return new GridTopology(scope, host, file, isTorus, usesVN, useIndividualShapes, useNeighboursCache);
 	}
 
 	@Override
