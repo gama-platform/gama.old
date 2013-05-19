@@ -21,14 +21,9 @@ package msi.gama.jogl;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.AffineTransformOp;
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.IOException;
-
-import javax.media.opengl.GL;
-
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.awt.AbstractDisplayGraphics;
 import msi.gama.jogl.scene.MyTexture;
@@ -37,11 +32,10 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaFile;
+import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaGeometryType;
 import org.jfree.chart.JFreeChart;
-
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.*;
 
 /**
  * 
@@ -75,7 +69,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	/**
 	 * @param JOGLAWTDisplaySurface displaySurface
 	 */
-	public JOGLAWTDisplayGraphics(final JOGLAWTDisplaySurface surface, JOGLAWTGLRenderer r) {
+	public JOGLAWTDisplayGraphics(final JOGLAWTDisplaySurface surface, final JOGLAWTGLRenderer r) {
 		super(surface);
 		renderer = r;
 	}
@@ -85,70 +79,40 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	 * existing geometry that will be displayed by openGl.
 	 */
 	@Override
-	public Rectangle2D drawGamaShape(IScope scope, IShape geometry, Color c, boolean fill, Color border, Integer angle,
-		boolean rounded) {
+	public Rectangle2D drawGamaShape(final IScope scope, final IShape geometry, final Color c, final boolean fill,
+		final Color border, final Integer angle, final boolean rounded) {
 
-		// Check if the geometry has a height value (3D Shape or Volume)
 		Geometry geom = null;
 		if ( geometry == null ) { return null; }
-		ITopology topo = scope.getTopology();
+		final ITopology topo = scope.getTopology();
 		if ( topo != null && topo.isTorus() ) {
 			geom = topo.returnToroidalGeom(geometry.getInnerGeometry());
 		} else {
 			geom = geometry.getInnerGeometry();
 		}
-		Color color = highlight ? highlightColor : c;
-		// GamaPoint offset = new GamaPoint(xOffsetInPixels, yOffsetInPixels);
-
+		final Color color = highlight ? highlightColor : c;
+		Double depth = 0d;
+		String type = "none";
 		// Add a geometry with a depth and type coming from Attributes
-		if ( geometry.getAttribute("depth") != null && geometry.getAttribute("type") != null ) {
-			Double depth = (Double) geometry.getAttribute("depth");
-			String type = (String) geometry.getAttribute("type");
-			renderer.getScene().addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color, fill,
-				border, false, angle, depth.floatValue(), currentOffset, currentScale, rounded, type,
-				currentLayerIsStatic, getCurrentAlpha());
+		if ( geometry.hasAttribute("depth") ) {
+			depth = Cast.asFloat(scope, geometry.getAttribute("depth"));
+			type = "JTS";
 		}
-
-		else {
-			// Add a geometry with a depth and type coming from getUSerData (with add_z operator)
-			if ( geometry.getInnerGeometry().getUserData() != null ) {
-				float height = new Float(geom.getUserData().toString());
-				renderer.getScene().addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color,
-					fill, border, false, angle, height, currentOffset, currentScale, rounded, "JTS",
-					currentLayerIsStatic, getCurrentAlpha());
-			} else {
-				// add a 2D geometry without any 3D data.
-				renderer.getScene().addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color,
-					fill, border, false, angle, 0, currentOffset, currentScale, rounded, "none", currentLayerIsStatic,
-					getCurrentAlpha());
-			}
-
+		if ( geometry.hasAttribute("type") ) {
+			type = Cast.asString(scope, geometry.getAttribute("type"));
 		}
-
-		// FIXME : Here should check the value of the Property3D of the GamaShape
-		/*
-		 * if ( geom.getUserData() != null ) {
-		 * float height = new Float(geom.getUserData().toString());
-		 * this.AddJTSGeometryInJTSGeometries(geom, scope.getAgentScope().getAgent(),
-		 * currentZLayer, currentLayerId, color, fill, border, false, angle, height,
-		 * offSet,rounded);
-		 * } else {
-		 * this.AddJTSGeometryInJTSGeometries(geom, scope.getAgentScope().getAgent(),
-		 * currentZLayer, currentLayerId, color, fill, border, false, angle, 0, offSet,rounded);
-		 * }
-		 */
-		// FIXME: Need to remove the use of sw.
+		renderer.getScene().addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color, fill,
+			border, false, angle, depth.floatValue(), currentOffset, currentScale, rounded, type, currentLayerIsStatic,
+			getCurrentAlpha());
 		return rect;
-		// return sw.toShape(geom).getBounds2D();
 	}
 
 	public void drawGridLine(final BufferedImage image, final Color lineColor) {
-		// TODO AD Pas du tout testée
 		double stepX, stepY;
-		
+
 		for ( int i = 0; i <= image.getWidth(); i++ ) {
 			stepX = i / (double) image.getWidth() * image.getWidth();
-			Geometry g =
+			final Geometry g =
 				GamaGeometryType.buildLine(new GamaPoint(stepX, 0), new GamaPoint(stepX, image.getWidth()))
 					.getInnerGeometry();
 			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
@@ -157,7 +121,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 		for ( int i = 0; i <= image.getHeight(); i++ ) {
 			stepY = i / (double) image.getHeight() * image.getHeight();;
-			Geometry g =
+			final Geometry g =
 				GamaGeometryType.buildLine(new GamaPoint(0, stepY), new GamaPoint(image.getHeight(), stepY))
 					.getInnerGeometry();
 			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
@@ -165,17 +129,16 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		}
 	}
 
-
 	@Override
-	public Rectangle2D drawGrid(IScope scope, BufferedImage img, ILocation locationInModelUnits,
-		ILocation sizeInModelUnits, Color gridColor, Integer angle, Double z, boolean isDynamic) {
+	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final ILocation locationInModelUnits,
+		final ILocation sizeInModelUnits, final Color gridColor, final Integer angle, final Double z,
+		final boolean isDynamic) {
 		if ( gridColor != null ) {
 			drawGridLine(img, gridColor);
 		}
 		return drawDEM2(img, img, scope.getSimulationScope().getEnvelope());
 	}
-	
-	
+
 	/**
 	 * Method drawImage.
 	 * 
@@ -185,8 +148,9 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	 *            Integer
 	 */
 	@Override
-	public Rectangle2D drawImage(IScope scope, BufferedImage img, ILocation locationInModelUnits,
-		ILocation sizeInModelUnits, Color gridColor, Integer angle, Double z, boolean isDynamic) {
+	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final ILocation locationInModelUnits,
+		final ILocation sizeInModelUnits, final Color gridColor, final Integer angle, final Double z,
+		final boolean isDynamic) {
 		double curX, curY;
 		if ( locationInModelUnits == null ) {
 			curX = 0d;
@@ -210,10 +174,6 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 		renderer.getScene().addImage(img, scope == null ? null : scope.getAgentScope(), curX, curY, z, curWidth,
 			curHeight, angle, currentOffset, currentScale, isDynamic, getCurrentAlpha(), texture);
-		// TODO If highlight ? Should be shaded by the color.
-
-		// rect.setRect(curX, curY, curWidth, curHeight);
-		// }
 
 		if ( gridColor != null ) {
 			drawGridLine(img, gridColor);
@@ -221,51 +181,47 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 		return rect;
 	}
-	
-	private BufferedImage FlipRightSideLeftImage(BufferedImage img){
-		java.awt.geom.AffineTransform tx = java.awt.geom.AffineTransform.getScaleInstance(-1, 1);
+
+	private BufferedImage FlipRightSideLeftImage(BufferedImage img) {
+		final java.awt.geom.AffineTransform tx = java.awt.geom.AffineTransform.getScaleInstance(-1, 1);
 		tx.translate(-img.getWidth(null), 0);
-		AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+		final AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
 		img = op.filter(img, null);
 		return img;
-	
-    }
-	
+
+	}
+
 	@Override
-	public Rectangle2D drawDEM(GamaFile demFileName, GamaFile textureFileName, Envelope env) {
+	public Rectangle2D drawDEM(final GamaFile demFileName, final GamaFile textureFileName, final Envelope env) {
 		BufferedImage dem = null;
 		BufferedImage texture = null;
 		try {
 			dem = ImageUtils.getInstance().getImageFromFile(demFileName.getPath());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
 		try {
 			texture = ImageUtils.getInstance().getImageFromFile(textureFileName.getPath());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (final IOException e) {
 			e.printStackTrace();
 		}
-		//FIXME: Need to flip vertically the image (need excactly to know why)
+		// FIXME: Need to flip vertically the image (need excactly to know why)
 		texture = FlipRightSideLeftImage(texture);
 		MyTexture _texture = null;
 		if ( !renderer.getScene().getTextures().containsKey(texture) ) {
 			_texture = renderer.createTexture(texture, false);
 		}
-		renderer.getScene().addDEM(dem,texture,env);
+		renderer.getScene().addDEM(dem, texture, env);
 		return null;
 	}
-	
-	
-	public Rectangle2D drawDEM2(BufferedImage dem, BufferedImage texture, Envelope env) {
 
-		
+	public Rectangle2D drawDEM2(final BufferedImage dem, final BufferedImage texture, final Envelope env) {
+
 		MyTexture _texture = null;
 		if ( !renderer.getScene().getTextures().containsKey(texture) ) {
 			_texture = renderer.createTexture(texture, false);
 		}
-		renderer.getScene().addDEM(dem,texture,env);
+		renderer.getScene().addDEM(dem, texture, env);
 		return null;
 	}
 
@@ -277,7 +233,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	 */
 	@Override
 	public Rectangle2D drawChart(final IScope scope, final JFreeChart chart, final Double z) {
-		BufferedImage im =
+		final BufferedImage im =
 		// ImageUtils.toCompatibleImage(chart.createBufferedImage(widthOfLayerInPixels, heightOfLayerInPixels));
 			chart.createBufferedImage(widthOfLayerInPixels, heightOfLayerInPixels);
 		return drawImage(scope, im, new GamaPoint(0, 0), null, null, 0, z, true);
@@ -294,8 +250,9 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	 *            Integer
 	 */
 	@Override
-	public Rectangle2D drawString(String string, Color stringColor, ILocation locationInModelUnits,
-		Double heightInModelUnits, String fontName, Integer styleName, Integer angle, Double z) {
+	public Rectangle2D drawString(final String string, final Color stringColor, final ILocation locationInModelUnits,
+		final Double heightInModelUnits, final String fontName, final Integer styleName, final Integer angle,
+		final Double z) {
 		double curX, curY;
 		if ( locationInModelUnits == null ) {
 			curX = 0d;
@@ -346,10 +303,10 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	 * a dynamic layer (by default or refresh:true)
 	 */
 	@Override
-	public void beginDrawingLayer(ILayer layer) {
+	public void beginDrawingLayer(final ILayer layer) {
 		super.beginDrawingLayer(layer);
 		this.currentZLayer = (float) (getMaxEnvDim() * layer.getZPosition());
-		Boolean refresh = layer.isDynamic();
+		final Boolean refresh = layer.isDynamic();
 		currentLayerIsStatic = refresh == null ? false : !refresh;
 
 		// TODO Pourquoi ne pas utiliser l'ordre des layers ? layer.getOrder() ??
@@ -365,8 +322,6 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		// GuiUtils.debug("JOGLAWTDisplayGraphics.beginDrawingLayer currentScale: " + currentScale);
 		// GuiUtils.debug("JOGLAWTDisplayGraphics.beginDrawingLayer currentOffset: " + currentOffset);
 	}
-
-	
 
 	private double getMaxEnvDim() {
 		return widthOfEnvironmentInModelUnits > heightOfEnvironmentInModelUnits ? widthOfEnvironmentInModelUnits
