@@ -4,7 +4,6 @@ global {
     
     
     file shape_file_river <- file(project_path + 'DEM/includes/Mekong_River/majortribdskratie.shp');
-    
     file mntImageRaster <- file(project_path + 'DEM/includes/France/france_mnt_100.png') ;
     int nb_rows <- 100;
     int nb_lines <- 100;
@@ -15,6 +14,8 @@ global {
 			set color <- mntImageRaster at {grid_x,grid_y} ;
 			set z <- 255-mean(list (color));
 		}
+		
+		
 		
 		ask cell as list {		
 			let cells_possibles type: list of: cell <- (self neighbours_at 2) + self;
