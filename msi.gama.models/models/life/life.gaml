@@ -39,7 +39,7 @@ global {
 }
 
 environment width: environment_width height: environment_height {
-	grid life_cell width: environment_width height: environment_height neighbours: 8 torus: torus_environment {
+	grid life_cell width: environment_width height: environment_height neighbours: 8 torus: torus_environment use_individual_shapes: false use_regular_agents: false frequency: 0{
 		bool new_state;
 		bool state <- (rnd(100)) < density ;
 		rgb color <- state ? livingcolor : deadcolor ;  
