@@ -18,6 +18,7 @@
  */
 package msi.gaml.operators;
 
+import java.awt.geom.Rectangle2D;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
@@ -1631,7 +1632,7 @@ public abstract class Spatial {
 			ILocation location;
 			final IAgent a = scope.getAgentScope();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
-			return GamaGeometryType.buildRectangle(10, 10, location);
+			return null;// new GamaShape(scope.getSimulationScope().getInnerGeometry());
 		}
 	}
 
