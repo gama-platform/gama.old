@@ -31,9 +31,9 @@ import msi.gaml.species.ISpecies;
 public class GamaMapType extends GamaContainerType<GamaMap> {
 
 	@Override
-	public GamaMap cast(final IScope scope, final Object obj, final Object param)
-		throws GamaRuntimeException {
+	public GamaMap cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
 		if ( obj == null ) { return new GamaMap(); }
+		if ( obj instanceof GamaPair ) { return new GamaMap((GamaPair) obj); }
 		if ( obj instanceof ISpecies ) { return ((ISpecies) obj).mapValue(scope); }
 		if ( obj instanceof IAgent ) { return ((IAgent) obj).getAttributes(); }
 		if ( obj instanceof IContainer ) { return ((IContainer) obj).mapValue(scope); }

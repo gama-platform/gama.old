@@ -30,7 +30,6 @@ import msi.gama.util.matrix.*;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
-
 /**
  * The Class GamaMap.
  */
@@ -69,6 +68,11 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, 
 	public GamaMap(final Map arg0) {
 		this(arg0.size());
 		putAll(arg0);
+	}
+
+	public GamaMap(final GamaPair<K, V> pair) {
+		this(1);
+		put(pair.key, pair.value);
 	}
 
 	@Override
@@ -380,7 +384,7 @@ public class GamaMap<K, V> extends LinkedHashMap<K, V> implements IContainer<K, 
 
 	@Override
 	public Iterable<V> iterable(final IScope scope) {
-		return (listValue(scope));
+		return listValue(scope);
 	}
 
 	@Override

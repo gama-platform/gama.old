@@ -5,7 +5,7 @@ import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.*;
 import msi.gama.kernel.model.IModel;
-import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
@@ -72,12 +72,18 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	final Map<String, Object> extraParametersMap = new LinkedHashMap();
 	protected RandomUtils random;
 	protected boolean isLoading;
+	protected SimulationClock clock = new SimulationClock();
 
 	public ExperimentAgent(final IPopulation s) throws GamaRuntimeException {
 		super(s);
 		super.setGeometry(SHAPE);
 		// setIndex(0);
 		reset();
+	}
+
+	@Override
+	public SimulationClock getClock() {
+		return clock;
 	}
 
 	public void reset() {
