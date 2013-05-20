@@ -68,7 +68,6 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 			// new GamaPoint(environmentFrame.getEnvelope().getMinX(), environmentFrame.getEnvelope()
 			// .getMinY());
 			final double originX = genv.getMinimum(0);
-			final double originY = genv.getMinimum(1);
 			final double maxY = genv.getMaximum(1);
 			// GeometryUtils.translation(g, -origin.x, -origin.y);
 			final GridCoverage2D coverage = store.read(null);
