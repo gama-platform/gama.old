@@ -69,6 +69,7 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 			// .getMinY());
 			final double originX = genv.getMinimum(0);
 			final double originY = genv.getMinimum(1);
+			final double maxY = genv.getMaximum(1);
 			// GeometryUtils.translation(g, -origin.x, -origin.y);
 			final GridCoverage2D coverage = store.read(null);
 			final double cmx = cellWidth / 2;
@@ -77,7 +78,7 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 				final int yy = i / numCols;
 				final int xx = i - yy * numCols;
 				p.x = originX + xx * cellWidth + cmx;
-				p.y = originY + yy * cellHeight + cmy;
+				p.y = maxY- (yy * cellHeight + cmy);
 				GamaShape rect = (GamaShape) GamaGeometryType.buildRectangle(cellWidth, cellHeight, p);
 				final double[] vals =
 					(double[]) coverage.evaluate(new DirectPosition2D(rect.getLocation().getX(), rect.getLocation()
