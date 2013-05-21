@@ -32,6 +32,8 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
+import msi.gama.util.matrix.GamaFloatMatrix;
+import msi.gama.util.matrix.GamaObjectMatrix;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
@@ -50,6 +52,8 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.SPECIES, type = IType.SPECIES, optional = false),
 	@facet(name = IKeyword.LINES, type = IType.COLOR, optional = true),
+	@facet(name = IKeyword.DEM, type = IType.MATRIX, optional = true),
+	@facet(name = IKeyword.TEXTURE, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.Z, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true) }, omissible = IKeyword.SPECIES)
 public class GridLayerStatement extends AbstractLayerStatement {
@@ -61,6 +65,10 @@ public class GridLayerStatement extends AbstractLayerStatement {
 
 	IGrid grid;
 	IExpression lineColor;
+	IExpression demGridExp;
+	IExpression textureExp;
+	GamaFloatMatrix demGridMatrix;
+	Boolean isTextured = true;
 	GamaColor currentColor, constantColor;
 	// HashSet<IAgent> agents;
 	private IExpression setOfAgents;
@@ -76,6 +84,19 @@ public class GridLayerStatement extends AbstractLayerStatement {
 			constantColor = Cast.asColor(scope, lineColor.value(scope));
 			currentColor = constantColor;
 		}
+		
+		demGridExp = getFacet(IKeyword.DEM);
+		if (demGridExp != null) {
+			demGridMatrix = GamaFloatMatrix.from( scope, (GamaObjectMatrix) Cast.asMatrix(scope, demGridExp.value(scope))); 
+		}
+		
+		textureExp = getFacet(IKeyword.TEXTURE);
+		if (textureExp != null) {
+			isTextured = Cast.asBool(scope, textureExp.value(scope));
+		}
+		
+		
+		
 		final IPopulation gridPop = scope.getAgentScope().getPopulationFor(getName());
 		if ( gridPop == null ) {
 			throw GamaRuntimeException.error("missing environment for output " + getName());
@@ -152,6 +173,14 @@ public class GridLayerStatement extends AbstractLayerStatement {
 
 	IExpression getAgentsExpr() {
 		return setOfAgents;
+	}
+	
+	public GamaFloatMatrix getGridValueMatrix(){
+		return demGridMatrix;
+	}
+	
+	public Boolean isTextured(){
+		return isTextured;
 	}
 
 }

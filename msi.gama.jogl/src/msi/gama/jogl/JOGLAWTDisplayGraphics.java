@@ -32,6 +32,8 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaFile;
+import msi.gama.util.matrix.GamaFloatMatrix;
+import msi.gama.util.matrix.IMatrix;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaGeometryType;
 import org.jfree.chart.JFreeChart;
@@ -107,6 +109,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		return rect;
 	}
 
+	//FIXME: Won't work for a rectangle grid inverse buildline height on x and with width on y
 	public void drawGridLine(final BufferedImage image, final Color lineColor) {
 		double stepX, stepY;
 
@@ -130,16 +133,54 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	}
 
 	@Override
-	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final ILocation locationInModelUnits,
+	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img,final double[] gridValueMatrix,  final boolean isTextured, final ILocation locationInModelUnits,
 		final ILocation sizeInModelUnits, final Color gridColor, final Integer angle, final Double z,
 		final boolean isDynamic) {
+		//FIXME : need to chek the drawGridLIne method
 		if ( gridColor != null ) {
 			drawGridLine(img, gridColor);
 		}
-		//FIXME: Need to flip vertically the image (need excactly to know why)
-		BufferedImage texture = FlipRightSideLeftImage(img);
-		return drawDEM2(img, texture, scope.getSimulationScope().getEnvelope(),getCurrentAlpha(),currentOffset, currentScale);
+		return drawDEM2(gridValueMatrix, img, isTextured, scope.getSimulationScope().getEnvelope(),getCurrentAlpha(),currentOffset, currentScale);
 	}
+	
+	//Build a grid with a dem corresponding to the value in gridValue and textured by texture
+	public Rectangle2D drawDEM2(final double[] dem, final BufferedImage texture, final boolean  isTextured, final Envelope env, Double alpha,final GamaPoint offset, final GamaPoint scale) {
+		MyTexture _texture = null;
+		if ( !renderer.getScene().getTextures().containsKey(texture) ) {
+			_texture = renderer.createTexture(texture, false);
+		}
+		renderer.getScene().addDEM(dem, texture,isTextured, env, alpha, offset, scale);
+		return null;
+	}
+	
+	//Build a dem from a dem.png and a texture.png
+	@Override
+	public Rectangle2D drawDEM(final GamaFile demFileName, final GamaFile textureFileName, final Envelope env) {
+		BufferedImage dem = null;
+		BufferedImage texture = null;
+		try {
+			dem = ImageUtils.getInstance().getImageFromFile(demFileName.getPath());
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			texture = ImageUtils.getInstance().getImageFromFile(textureFileName.getPath());
+		} catch (final IOException e) {
+			e.printStackTrace();
+		}
+		// FIXME: Need to flip vertically the image (need excactly to know why)
+		texture = FlipRightSideLeftImage(texture);
+		MyTexture _texture = null;
+		if ( !renderer.getScene().getTextures().containsKey(texture) ) {
+			_texture = renderer.createTexture(texture, false);
+		}
+	
+		//FIXME: alpha,scale,offset not taken in account when usong the operator dem
+		//renderer.getScene().addDEM(dem, texture, env,null,null,null);
+		return null;
+	}
+
+	
 
 	/**
 	 * Method drawImage.
@@ -193,40 +234,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 	}
 
-	@Override
-	public Rectangle2D drawDEM(final GamaFile demFileName, final GamaFile textureFileName, final Envelope env) {
-		BufferedImage dem = null;
-		BufferedImage texture = null;
-		try {
-			dem = ImageUtils.getInstance().getImageFromFile(demFileName.getPath());
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
-		try {
-			texture = ImageUtils.getInstance().getImageFromFile(textureFileName.getPath());
-		} catch (final IOException e) {
-			e.printStackTrace();
-		}
-		// FIXME: Need to flip vertically the image (need excactly to know why)
-		texture = FlipRightSideLeftImage(texture);
-		MyTexture _texture = null;
-		if ( !renderer.getScene().getTextures().containsKey(texture) ) {
-			_texture = renderer.createTexture(texture, false);
-		}
-		//FIXME: alpha,scale,offset not taken in account when usong the operator dem
-		renderer.getScene().addDEM(dem, texture, env,null,null,null);
-		return null;
-	}
 
-	public Rectangle2D drawDEM2(final BufferedImage dem, final BufferedImage texture, final Envelope env, Double alpha,final GamaPoint offset, final GamaPoint scale) {
-
-		MyTexture _texture = null;
-		if ( !renderer.getScene().getTextures().containsKey(texture) ) {
-			_texture = renderer.createTexture(texture, false);
-		}
-		renderer.getScene().addDEM(dem, texture, env, alpha, offset, scale);
-		return null;
-	}
 
 	/**
 	 * Method drawChart.

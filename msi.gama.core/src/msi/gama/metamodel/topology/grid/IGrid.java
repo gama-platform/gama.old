@@ -51,6 +51,8 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex {
 	public abstract IShape getPlaceAt(final ILocation c);
 
 	public abstract int[] getDisplayData();
+	
+	public abstract double[] getGridValue();
 
 	public abstract boolean isTorus();
 

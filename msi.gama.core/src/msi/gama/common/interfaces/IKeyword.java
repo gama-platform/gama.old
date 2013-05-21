@@ -85,6 +85,7 @@ public interface IKeyword {
 	public static final String DECAY = "decay";
 	public static final String DEFAULT = "default";
 	// public static final String DEFAULT_EXP = "default";
+	public static final String DEM = "dem";
 	public static final String DEPENDS_ON = "depends_on";
 	public static final String DEPTH = "depth";
 	public static final String DESTINATION = "destination";
@@ -307,6 +308,7 @@ public interface IKeyword {
 	public static final String TARGETS = "scheduling_targets";
 	public static final String TESSELATION = "tesselation";
 	public static final String TEXT = "text";
+	public static final String TEXTURE = "texture";
 	public static final String THE = "the";
 	public static final String THEIR = "their";
 	public static final String THREE_D = "3d";

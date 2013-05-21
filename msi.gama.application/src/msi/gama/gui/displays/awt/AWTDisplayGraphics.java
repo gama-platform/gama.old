@@ -27,6 +27,7 @@ import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
+import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gaml.operators.Maths;
 import org.jfree.chart.JFreeChart;
 import com.vividsolutions.jts.awt.*;
@@ -104,7 +105,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	
 
 	@Override
-	public Rectangle2D drawGrid(IScope scope, BufferedImage img, ILocation locationInModelUnits,
+	public Rectangle2D drawGrid(IScope scope, BufferedImage img, double[] gridValueMatrix, final boolean isTextured, ILocation locationInModelUnits,
 		ILocation sizeInModelUnits, Color gridColor, Integer angle, Double z, boolean isDynamic) {
 		return drawImage(scope, img, locationInModelUnits,
 				sizeInModelUnits, gridColor, angle, z, isDynamic);

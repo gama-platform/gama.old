@@ -29,15 +29,23 @@ import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.matrix.GamaFloatMatrix;
+import msi.gama.util.matrix.GamaObjectMatrix;
+import msi.gama.util.matrix.IMatrix;
 import org.eclipse.swt.widgets.Composite;
 
 public class GridLayer extends ImageLayer {
 
 	private boolean turnGridOn;
+	private double[] gridValue;
+	private double[] gridValueMatrix;
+	private boolean isTextured;
+	private boolean drawAsDEM;
 
 	public GridLayer(final ILayerStatement layer) {
 		super(layer);
 		turnGridOn = ((GridLayerStatement) layer).drawLines();
+		drawAsDEM = false;
 	}
 
 	@Override
@@ -71,8 +79,22 @@ public class GridLayer extends ImageLayer {
 			image = ImageUtils.createCompatibleImage(p.getX(), p.getY());
 		}
 		image.setRGB(0, 0, (int) p.getX(), (int) p.getY(), m.getDisplayData(), 0, (int) p.getX());
+	
+			//As their is 2 ways to give the dem we need to check which one is active
+			//FIXME : what happen if the 2 are defined in the model?
+			if(g.getGridValueMatrix() != null){
+				gridValueMatrix=g.getGridValueMatrix().getMatrix();
+				isTextured = g.isTextured();
+				drawAsDEM = true;
+			}
+			if(m.getGridValue() != null){
+				gridValueMatrix = m.getGridValue();
+				isTextured = g.isTextured();
+				drawAsDEM = true;
+			}
 	}
 
+	
 	@Override
 	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
 		buildImage();
@@ -85,7 +107,12 @@ public class GridLayer extends ImageLayer {
 			}
 		}
 		
-		dg.drawGrid(scope, image, null, null, lineColor, null, 0.0, true);
+		if(drawAsDEM){
+			dg.drawGrid(scope, image, gridValueMatrix,isTextured,null, null, lineColor, null, 0.0, true);	
+		}
+		else{
+			dg.drawImage(scope, image, null, null, lineColor, null, 0.0, true);	
+		}		
 	}
 
 	private IAgent getPlaceAt(final GamaPoint loc) {

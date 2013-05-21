@@ -281,6 +281,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public int[] getDisplayData() {
 		return supportImagePixels;
 	}
+	
+	@Override
+	public double[] getGridValue() {
+		return gridValue;
+	}
 
 	private final int getPlaceIndexAt(final int xx, final int yy) {
 		if ( isHexagon ) { return yy * numCols + xx; }

@@ -13,6 +13,7 @@ import msi.gama.jogl.scene.ObjectDrawer.StringDrawer;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gaml.types.GamaGeometryType;
 import org.geotools.data.simple.SimpleFeatureCollection;
 
@@ -110,8 +111,8 @@ public class ModelScene {
 		}
 	}
 	
-	public void addDEM(final BufferedImage dem, final BufferedImage texture, final Envelope env, final Double alpha, GamaPoint offset, GamaPoint scale){
-		dems.add(new DEMObject(dem,texture,env,null,offset,scale,alpha));
+	public void addDEM(final double[] dem, final BufferedImage texture, final boolean isTextured,  final Envelope env, final Double alpha, GamaPoint offset, GamaPoint scale){
+		dems.add(new DEMObject(dem,texture,env,isTextured, null,offset,scale,alpha));
 	}
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final double z_layer,

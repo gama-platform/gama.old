@@ -1,6 +1,8 @@
 package msi.gama.jogl.scene;
 
 import static javax.media.opengl.GL.*;
+
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.image.AffineTransformOp;
 import java.awt.image.BufferedImage;
@@ -13,7 +15,9 @@ import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.JTSDrawer;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.types.GamaGeometryType;
 
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.opengis.feature.simple.SimpleFeature;
@@ -175,157 +179,216 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			return img;
 		
 	    }
-
-	    @Override
+		
+		@Override
 		protected void _draw(DEMObject demObj) {
 			
-			if ( !isInitialized() ) {
+			//Get Environment Properties
+			double envWidth = demObj.envelope.getWidth();
+			double envHeight = demObj.envelope.getHeight();
+			
+			//Get Texture Properties
+			double textureWidth = demObj.texture.getWidth();
+			double textureHeight = demObj.texture.getHeight();	
+			double textureWidthStep = 1/ textureWidth;
+			double textureHeightStep = 1/ textureHeight;
+			double textureWidthInEnvironment = envWidth/textureWidth;
+			double textureHeightInEnvironment = envHeight/textureHeight;
+			
+			
+			//FIXME: Need to set it dynamiclay
+			double altFactor = envWidth/100;
+			double maxZ= 10;
+			
+			double x1,x2,y1,y2;
+			Double zValue=0.0;
+			double stepX, stepY;
+			
+			boolean drawLines = false;
+			boolean drawSquare = true;
+			boolean drawContour = true;
+			boolean drawTriangle = false;
+			boolean drawText= false;
+			
+			
+			//Draw grid only with  the lines
+			if(drawLines){
+				renderer.gl.glColor3f(0.0f, 0.0f, 0.0f);
+				renderer.gl.glLineWidth(0.0001f);
+				
+				for ( int i = 0; i <= textureWidth; i++ ){			
+					stepX = (i / textureWidth) * envWidth;
+					renderer.gl.glBegin(GL_LINES);
+					renderer.gl.glVertex3d(stepX, 0.0, 0.0);
+					renderer.gl.glVertex3d(stepX, -envHeight, 0.0);
+					renderer.gl.glEnd();
+				}
+				for ( int i = 0; i <= textureHeight; i++ ){
+					stepY = (i / textureHeight) * envHeight;
+					renderer.gl.glBegin(GL_LINES);
+					renderer.gl.glVertex3d(0.0, -stepY, 0.0);
+					renderer.gl.glVertex3d(envWidth, -stepY,0.0);
+					renderer.gl.glEnd();
+				}
+			}
+			
+			//Draw Grid with square 
+			// if texture draw with color coming from the texture and z according to gridvalue
+			// else draw the grid with color according the gridValue in gray value
+
+			if ( !isInitialized() && demObj.isTextured) {
+				renderer.gl.glNormal3d(0, 0, 1);
 				renderer.gl.glColor4d(1.0d, 1.0d, 1.0d, demObj.alpha);
 				renderer.gl.glEnable(GL.GL_TEXTURE_2D);
-			    loadTexture(demObj.texture.toString());
 				setInitialized(true);
 			}
+			if(drawSquare){
+				for ( int i = 0; i < textureWidth; i++ ){			
+					x1 = (i / textureWidth) * envWidth;
+					x2 = ((i+1) / textureWidth) * envWidth;
+					for ( int j = 0; j < textureHeight; j++ ){
+						y1 = (j / textureHeight) * envHeight;
+						y2 = ((j+1) / textureHeight) * envHeight;
+						if (demObj.dem != null){
+							zValue = demObj.dem[(int)(j*textureWidth+i)];
+						}
 
-			
-			int rows, cols;
-			int x, y;
-			float vx, vy, s, t;
-			float ts, tt, tw, th;
-
-			//BufferedImage dem = readPNGImage(demFileName);
-			BufferedImage dem = demObj.dem;
-			dem = FlipUpSideDownImage(dem);
-			dem = FlipRightSideLeftImage(dem);
-			
-			rows = dem.getHeight() - 1;
-			cols = dem.getWidth() - 1;
-			ts = 1.0f / cols;
-			tt = 1.0f / rows;
-
-			//FIXME/ need to set w and h dynamicly
-			float w = (float) demObj.envelope.getWidth();
-			float h = (float) demObj.envelope.getHeight();
-			
-			float altFactor = (float)demObj.envelope.getWidth()/(10*255);//0.025f;//dem.getWidth();
-			
-			tw = w / cols;
-			th = h / rows;
-
-			renderer.gl.glTranslated(w/2, -h/2, 0);
-			
-			renderer.gl.glNormal3f(0.0f, 1.0f, 0.0f);
-
-			for ( y = 0; y < rows; y++ ) {
-				renderer.gl.glBegin(GL.GL_QUAD_STRIP);
-				for ( x = 0; x <= cols; x++ ) {
-					vx = tw * x - w / 2.0f;
-					vy = th * y - h / 2.0f;
-					s = 1.0f - ts * x;
-					t = 1.0f - tt * y;
-
-					float alt1 = (dem.getRGB(cols - x, y) & 255) * altFactor;
-					float alt2 = (dem.getRGB(cols - x, y + 1) & 255) * altFactor;
-					
-			
-					boolean isTextured = true;
-					if(isTextured){
-						renderer.gl.glTexCoord2f(s, t);
-						renderer.gl.glVertex3f(vx, vy, alt1);
-						renderer.gl.glTexCoord2f(s, t - tt);
-						renderer.gl.glVertex3f(vx, vy + th, alt2);	
+						if(demObj.isTextured){
+							renderer.gl.glBegin(GL_QUADS);
+							renderer.gl.glTexCoord2d(textureWidthStep*i, textureHeightStep*j);
+							renderer.gl.glVertex3d(x1, -y1, zValue*altFactor);
+							renderer.gl.glTexCoord2d(textureWidthStep*(i+1), textureHeightStep*(j+1));
+							renderer.gl.glVertex3d(x2, -y1, zValue*altFactor);
+							renderer.gl.glTexCoord2d(textureWidthStep*(i+1), textureHeightStep*j);
+							renderer.gl.glVertex3d(x2, -y2, zValue*altFactor);
+							renderer.gl.glTexCoord2d(textureWidthStep*i, textureHeightStep*(j+1));
+							renderer.gl.glVertex3d(x1, -y2, zValue*altFactor);
+							renderer.gl.glEnd();
+						}
+						else{
+							renderer.gl.glColor3d(zValue/maxZ, zValue/maxZ, zValue/maxZ);
+							renderer.gl.glBegin(GL_QUADS);
+							renderer.gl.glVertex3d(x1, -y1, zValue*altFactor);
+							renderer.gl.glVertex3d(x2, -y1, zValue*altFactor);
+							renderer.gl.glVertex3d(x2, -y2, zValue*altFactor);
+							renderer.gl.glVertex3d(x1, -y2, zValue*altFactor);
+							renderer.gl.glEnd();
+							
+							if(drawContour){
+								renderer.gl.glColor3d(0.0, 0.0, 0.0);
+								renderer.gl.glBegin(GL_LINE_STRIP);
+								renderer.gl.glVertex3d(x1, -y1, zValue*altFactor);
+								renderer.gl.glVertex3d(x1, -y2, zValue*altFactor);
+								renderer.gl.glVertex3d(x2, -y2, zValue*altFactor);
+								renderer.gl.glVertex3d(x2, -y1, zValue*altFactor);
+								renderer.gl.glVertex3d(x1, -y1, zValue*altFactor);
+								renderer.gl.glEnd();
+							}
+						}
 					}
-					else{
-						float color = ((dem.getRGB(cols - x, y) & 255));
-						color = (color)/255.0f;
-						renderer.gl.glColor3f(color, color, color);
-						renderer.gl.glVertex3f(vx, vy, alt1);
-						renderer.gl.glVertex3f(vx, vy + th, alt2);	
-					}
-					
 				}
-				renderer.gl.glEnd();
 			}
-			renderer.gl.glTranslated(-w/2, h/2, 0);
 			
-			//FIXME: Add disable texture?
 
+	      drawContour= false;
+	      Double z1= 0.0;
+	      Double z2= 0.0;
+	      Double z3= 0.0;
+	      Double z4= 0.0;
+			
+			if(drawTriangle){
+				for ( int i = 0; i < textureWidth; i++ ){			
+					x1 = (i / textureWidth) * envWidth;
+					x2 = ((i+1) / textureWidth) * envWidth;
+					for ( int j = 0; j < textureHeight; j++ ){
+						y1 = (j / textureHeight) * envHeight;
+						y2 = ((j+1) / textureHeight) * envHeight;
+						if (demObj.dem != null){
+							zValue = demObj.dem[(int)(j*textureWidth+i)];
+							
+							if(i<textureWidth-1 && j < textureHeight-1)
+						    {
+								z1= demObj.dem[(int)(j*textureWidth+i)];
+								z2= demObj.dem[(int)((j+1)*textureWidth+i)];
+								z3 = demObj.dem[(int)((j+1)*textureWidth+(i+1))];
+								z4 = demObj.dem[(int)((j)*textureWidth+(i+1))];
+							}
+							 
+							//Last rows
+							if(j == textureHeight -1 && i < textureWidth -1){
+								z1= demObj.dem[(int)(j*textureWidth+i)];
+								z4 = demObj.dem[(int)((j)*textureWidth+(i+1))];
+								z2=z1;
+								z3=z4;
+							}
+							//Last cols
+							if(i == textureWidth -1 && j < textureHeight -1){
+								z1= demObj.dem[(int)(j*textureWidth+i)];
+								z2= demObj.dem[(int)((j+1)*textureWidth+i)];
+								z3 = z2;
+								z4 = z1;
+							}
+							
+							//last cell
+							if(i == textureWidth -1 && j == textureHeight -1){
+								z1= demObj.dem[(int)(j*textureWidth+i)];
+								z2= z1;
+								z3=z1;
+								z4=z1;
+							}
+							
+						}
+						renderer.gl.glColor3d(zValue/maxZ, zValue/maxZ, zValue/maxZ);
+						renderer.gl.glBegin(GL.GL_TRIANGLE_STRIP);
+						renderer.gl.glVertex3d(x1, -y1, z1*altFactor);
+						renderer.gl.glVertex3d(x1, -y2, z2*altFactor);
+						renderer.gl.glVertex3d(x2, -y1, z4*altFactor);
+						renderer.gl.glVertex3d(x2, -y2, z3*altFactor);
+						renderer.gl.glEnd();
+						
+						/*if(drawContour){
+							renderer.gl.glColor3d(0.0, 0.0, 0.0);
+							renderer.gl.glBegin(GL_LINE_STRIP);
+							renderer.gl.glVertex3d(x1, -y1, z1*altFactor);
+							renderer.gl.glVertex3d(x1, -y2, z2*altFactor);
+							renderer.gl.glVertex3d(x2, -y1, z4*altFactor);
+							renderer.gl.glVertex3d(x1, -y1, z1*altFactor);
+							renderer.gl.glEnd();
+							renderer.gl.glBegin(GL_LINE_STRIP);
+							renderer.gl.glVertex3d(x1, -y2, z2*altFactor);
+							renderer.gl.glVertex3d(x2, -y1, z4*altFactor);
+							renderer.gl.glVertex3d(x2, -y2, z3*altFactor);
+							renderer.gl.glVertex3d(x1, -y2, z2*altFactor);
+							renderer.gl.glEnd();
+						}*/
+					}
+				}
+			}
+			
+			
+			
+			if(drawText){
+				//Draw gridvalue as text inside each cell
+				Double gridValue=0.0;
+				renderer.gl.glDisable(GL_BLEND);
+				renderer.gl.glColor4d(0.0, 0.0, 0.0, 1.0d);
+				for ( int i = 0; i < textureWidth; i++ ){			
+					stepX = (i / textureWidth) * envWidth;
+					for ( int j = 0; j < textureHeight; j++ ){
+						stepY = (j / textureHeight) * envHeight;
+						if (demObj.dem != null){
+							gridValue = demObj.dem[(int)(j*textureWidth+i)];
+						}
+						renderer.gl.glRasterPos3d((stepX+textureWidthInEnvironment/2), -(stepY+textureHeightInEnvironment/2), 0.0f);
+						renderer.gl.glScaled(8.0d, 8.0d, 8.0d);
+						glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, gridValue.toString());
+						renderer.gl.glScaled(0.125d, 0.125d, 0.125d);
+					}
+				}		
+				renderer.gl.glEnable(GL_BLEND);
+			}
 		}
-		
-		
-		//@Override
-		protected void _drawOLd(DEMObject demObj) {
-		
-		    if ( !isInitialized() ) {
-				//renderer.gl.glEnable(GL.GL_TEXTURE_2D);
-			    //loadTexture(demObj.texture.toString());
-				setInitialized(true);
-			}
-	
-			int rows, cols;
-			int x, y;
-			float vx, vy, s, t;
-			float ts, tt, tw, th;
 
-
-			BufferedImage dem = demObj.dem;
-		
-			rows = dem.getHeight()-1;
-			cols = dem.getWidth();
-			//System.out.println("rows: " + rows + " cols" +cols );
-			//ts = 1.0f / cols;
-			//tt = 1.0f / rows;
-
-			//FIXME/ need to set w and h dynamicly
-			//float w = (float) demObj.envelope.getWidth();
-			//float h = (float) demObj.envelope.getHeight();
-			
-			float altFactor = (float)demObj.envelope.getWidth()/(20*255);//0.025f;//dem.getWidth();
-			
-			//tw = w / cols;
-			//th = h / rows;
-
-			for ( y = 0; y < rows; y++ ) {
-				
-				for ( x = 0; x < cols-1; x++ ) {
-					renderer.gl.glBegin(GL.GL_QUADS);
-					float alt1 = 1.0f;//(dem.getRGB(x, y) & 255) * altFactor;
-					float alt2 = (dem.getRGB(x, y + 1) & 255) * altFactor;
-					
-					
-					boolean isTextured = false;
-
-						int color = ((dem.getRGB(x, y)));
-						 int alpha = (color >> 24) & 0xff;
-						    int red = (color >> 16) & 0xff;
-						    int green = (color >> 8) & 0xff;
-						    int blue = (color) & 0xff;
-						   // System.out.println("argb: " + alpha + ", " + red + ", " + green + ", " + blue);
-					
-						//color = (float)(Math.random() *255.0f)/255.0f ;
-						//alt1 = (float)(Math.random() *20.0f);
-						//alt2 = (float)(Math.random() *20.0f);
-						//System.out.println("x: " + x + " y:" +y + " alt1:" + alt1 + " color:" + color);
-						renderer.gl.glColor3f(red, green, blue);
-						renderer.gl.glVertex3f(x, -y, alt1);
-						renderer.gl.glVertex3f(x, -(y + 1), alt1);	
-						renderer.gl.glVertex3f(x+1, -(y + 1), alt1);
-						renderer.gl.glVertex3f(x+1, -y, alt1);
-					renderer.gl.glEnd();
-					renderer.gl.glBegin(GL.GL_LINE_STRIP);
-					renderer.gl.glColor3f(0.0f, 0.0f, 0.0f);
-					renderer.gl.glVertex3f(x, -y, alt1);
-					renderer.gl.glVertex3f(x, -(y + 1), alt1);	
-					renderer.gl.glVertex3f(x+1, -(y + 1), alt1);
-					renderer.gl.glVertex3f(x+1, -y, alt1);
-					renderer.gl.glEnd();
-					}
-				
-				}
-				
-			//renderer.gl.glTranslated(-w/2, h/2, 0);
-			}
-			
-			
 			public boolean isInitialized() {
 				
 				return initialized;

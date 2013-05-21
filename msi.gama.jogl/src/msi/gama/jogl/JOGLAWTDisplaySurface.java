@@ -391,8 +391,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		setZoomLevel(renderer.camera.getMaxDim() * Camera.INIT_Z_FACTOR / renderer.camera.getzPos());
 		// FIXME Approximate
 		resizeImage((int) (getWidth() * zoomLevel), (int) (getHeight() * zoomLevel));
-		// setZoomLevel(zoomLevel + zoomLevel * 0.1);
-		updateDisplay();
+		//setZoomLevel(zoomLevel + zoomLevel * 0.1);
+		//updateDisplay();
 		zoomFit = false;
 	}
 
@@ -410,7 +410,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		setZoomLevel(renderer.camera.getMaxDim() * Camera.INIT_Z_FACTOR / renderer.camera.getzPos());
 		// FIXME Approximate
 		resizeImage((int) (getWidth() * zoomLevel), (int) (getHeight() * zoomLevel));
-		updateDisplay();
+		//updateDisplay();
 		zoomFit = false;
 	}
 

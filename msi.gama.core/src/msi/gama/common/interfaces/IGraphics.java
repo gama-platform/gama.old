@@ -24,6 +24,9 @@ import java.awt.image.BufferedImage;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaFile;
+import msi.gama.util.matrix.GamaFloatMatrix;
+
+
 import org.jfree.chart.JFreeChart;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -44,7 +47,7 @@ public interface IGraphics {
 
 	public abstract int getDisplayHeightInPixels();
 	
-	public abstract Rectangle2D drawGrid(final IScope scope, final BufferedImage img,
+	public abstract Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix, final boolean isTextured,
 			final ILocation locationInModelUnits, final ILocation sizeInModelUnits, Color gridColor, final Integer angle,
 			Double z, boolean isDynamic);
 
