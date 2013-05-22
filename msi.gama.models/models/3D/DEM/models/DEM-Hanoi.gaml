@@ -1,21 +1,42 @@
 /**
  *  Author: Arnaud Grignard
+ *  Digital Model Elevation representation of Hanoi city.
  */
-model Graphic_primitive
+model Hanoi_DEM
 
 global{
-	file dem parameter: 'DEM' <- file('../includes/MNT-Hanoi/MNT.png');
-    file texture parameter: 'Texture' <- file('../includes/MNT-Hanoi/photo-hanoi-bing.png');
+	file dem parameter: 'DEM' <- file('../includes/DEM_Hanoi/DEM.png');
+    file map_texture parameter: 'Texture' <- file('../includes/DEM_Hanoi/maps.png');
+    file street_texture parameter: 'Texture' <- file('../includes/DEM_Hanoi/street.png');
 }
 
+//The size of the environment must fit with the size of the DEM file.
 environment width:500 height:395;
 
 experiment display type: gui {
 	output {
-		display Poincare  type: opengl ambient_light:255 {
-			graphics GraphicPrimitive {
-				draw dem(dem, texture);
+		
+		
+		//Display a DEM model with its associated texture coming from google maps for instance.
+		display HanoiMap  type: opengl ambient_light:255 {
+			graphics DEMTextured {
+				draw dem(dem, map_texture);
 			}
 		}
+		
+		//Display a DEM model with its associated texture coming from google maps for instance.
+		display HanoiStreet  type: opengl ambient_light:255 {
+			graphics DEMTextured {
+				draw dem(dem, street_texture);
+			}
+		}
+		
+	    //Display a DEM model with the original color of the DEM file.
+		display HanoiDEM  type: opengl ambient_light:255 {
+			graphics DEM {
+				draw dem(dem, dem);
+			}
+		}
+		
 	}
 }
