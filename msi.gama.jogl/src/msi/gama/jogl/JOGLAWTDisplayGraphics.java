@@ -149,7 +149,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		if ( !renderer.getScene().getTextures().containsKey(texture) ) {
 			_texture = renderer.createTexture(texture, false);
 		}
-		renderer.getScene().addDEM(dem, texture,isTextured, env, alpha, offset, scale);
+		renderer.getScene().addDEM(dem, texture,null,isTextured, false, env, alpha, offset, scale);
 		return null;
 	}
 	
@@ -174,9 +174,10 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		if ( !renderer.getScene().getTextures().containsKey(texture) ) {
 			_texture = renderer.createTexture(texture, false);
 		}
+		
 	
 		//FIXME: alpha,scale,offset not taken in account when usong the operator dem
-		//renderer.getScene().addDEM(dem, texture, env,null,null,null);
+		renderer.getScene().addDEM(null, texture, dem, false, true, env,null,null,null);
 		return null;
 	}
 

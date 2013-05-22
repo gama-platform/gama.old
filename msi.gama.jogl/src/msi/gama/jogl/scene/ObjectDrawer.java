@@ -183,6 +183,8 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 		@Override
 		protected void _draw(DEMObject demObj) {
 			
+			
+			if(!demObj.fromImage){
 			//Get Environment Properties
 			double envWidth = demObj.envelope.getWidth();
 			double envHeight = demObj.envelope.getHeight();
@@ -196,9 +198,9 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			double textureHeightInEnvironment = envHeight/textureHeight;
 			
 			
-			//FIXME: Need to set it dynamiclay
+			//FIXME: Need to set it dynamicly
 			double altFactor = envWidth/100;
-			double maxZ= 10;
+			double maxZ= 100;
 			
 			double x1,x2,y1,y2;
 			Double zValue=0.0;
@@ -387,6 +389,10 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 				}		
 				renderer.gl.glEnable(GL_BLEND);
 			}
+			}
+			else{
+				drawFromPNG(demObj);
+			}
 		}
 
 			public boolean isInitialized() {
@@ -399,7 +405,88 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			public void setInitialized(boolean initialized) {
 				this.initialized = initialized;
 			}
+			
+			
+            protected void drawFromPNG(DEMObject demObj) {
+                
+                if ( !isInitialized() ) {
+                        renderer.gl.glEnable(GL.GL_TEXTURE_2D);
+                    loadTexture(demObj.texture.toString());
+                        setInitialized(true);
+                }
+
+               
+                int rows, cols;
+                int x, y;
+                float vx, vy, s, t;
+                float ts, tt, tw, th;
+
+                //BufferedImage dem = readPNGImage(demFileName);
+                BufferedImage dem = demObj.demImg;
+                dem = FlipUpSideDownImage(dem);
+                dem = FlipRightSideLeftImage(dem);
+               
+                rows = dem.getHeight() - 1;
+                cols = dem.getWidth() - 1;
+                ts = 1.0f / cols;
+                tt = 1.0f / rows;
+
+                //FIXME/ need to set w and h dynamicly
+                float w = (float) demObj.envelope.getWidth();
+                float h = (float) demObj.envelope.getHeight();
+               
+                float altFactor = (float)demObj.envelope.getWidth()/(20*255);//0.025f;//dem.getWidth();
+               
+                tw = w / cols;
+                th = h / rows;
+
+                renderer.gl.glTranslated(w/2, -h/2, 0);
+               
+                renderer.gl.glNormal3f(0.0f, 1.0f, 0.0f);
+
+                for ( y = 0; y < rows; y++ ) {
+                        renderer.gl.glBegin(GL.GL_QUAD_STRIP);
+                        for ( x = 0; x <= cols; x++ ) {
+                                vx = tw * x - w / 2.0f;
+                                vy = th * y - h / 2.0f;
+                                s = 1.0f - ts * x;
+                                t = 1.0f - tt * y;
+
+                                float alt1 = (dem.getRGB(cols - x, y) & 255) * altFactor;
+                                float alt2 = (dem.getRGB(cols - x, y + 1) & 255) * altFactor;
+                               
+                                boolean isTextured = true;
+                                if(isTextured){
+                                        renderer.gl.glTexCoord2f(s, t);
+                                        renderer.gl.glVertex3f(vx, vy, alt1);
+                                        renderer.gl.glTexCoord2f(s, t - tt);
+                                        renderer.gl.glVertex3f(vx, vy + th, alt2);      
+                                }
+                                else{
+                                        float color = ((dem.getRGB(cols - x, y) & 255));
+                                        color = (color)/255.0f;
+                                        /*System.out.println("dem:" + dem.getRGB(cols - x, y));
+                                        System.out.println("dem&:" + (dem.getRGB(cols - x, y) & 255));
+                                        System.out.println("color" + color);*/
+
+                                        renderer.gl.glColor3f(color, color, color);
+                                        renderer.gl.glVertex3f(vx, vy, alt1);
+                                        renderer.gl.glVertex3f(vx, vy + th, alt2);      
+                                }
+                               
+                        }
+                        renderer.gl.glEnd();
+                }
+                renderer.gl.glTranslated(-w/2, h/2, 0);
+               
+                //FIXME: Add disable texture?
+
+        }
+
 	}
+	
+	
+	
 
 	/**
 	 * 

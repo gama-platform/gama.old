@@ -111,8 +111,8 @@ public class ModelScene {
 		}
 	}
 	
-	public void addDEM(final double[] dem, final BufferedImage texture, final boolean isTextured,  final Envelope env, final Double alpha, GamaPoint offset, GamaPoint scale){
-		dems.add(new DEMObject(dem,texture,env,isTextured, null,offset,scale,alpha));
+	public void addDEM(final double[] dem, final BufferedImage texture, final BufferedImage demImg,final boolean isTextured,  final boolean fromImage, final Envelope env, final Double alpha, GamaPoint offset, GamaPoint scale){
+		dems.add(new DEMObject(dem,texture,demImg,env,isTextured, fromImage, null,offset,scale,alpha));
 	}
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final double z_layer,
