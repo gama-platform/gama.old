@@ -64,6 +64,10 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 		 */
 		void toggleSplitLayer();
 
+		/**
+		 * Split species layer in 3D
+		 */
+		void toggleRotation();
 		// @Override
 		// public IGraphics.OpenGL getIGraphics();
 

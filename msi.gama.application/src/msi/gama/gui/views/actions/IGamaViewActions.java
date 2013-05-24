@@ -36,4 +36,5 @@ public interface IGamaViewActions {
 	public final static int TRIANGULATION = 20;
 	public final static int SPLITLAYER = 21;
 	public final static int ZOOM_INDICATOR = 22;
+	public final static int ROTATION = 23;
 }

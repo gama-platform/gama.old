@@ -66,6 +66,8 @@ public class GamaToolbarFactory implements IGamaViewActions {
 				return new TriangulationItem(view);
 			case SPLITLAYER:
 				return new SplitLayerItem(view);
+			case ROTATION:
+				return new RotationItem(view);
 
 		}
 		return null;

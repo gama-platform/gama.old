@@ -68,7 +68,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		if ( this.output.getDescription().getFacets().equals("type", "opengl") ) { return new Integer[] { PAUSE,
 			REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT, SEPARATOR, ZOOM_IN, ZOOM_INDICATOR, ZOOM_OUT,
 			ZOOM_FIT, FOCUS, SEPARATOR, CAMERA, SEPARATOR, ARCBALL, PICKING, SELECT_RECTANGLE, SHAPEFILE, SEPARATOR,
-			TRIANGULATION, SPLITLAYER }; }
+			TRIANGULATION, SPLITLAYER, ROTATION }; }
 		return new Integer[] { PAUSE, REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT, SEPARATOR, ZOOM_IN,
 			ZOOM_INDICATOR, ZOOM_OUT, ZOOM_FIT, FOCUS, SEPARATOR, HIGHLIGHT_COLOR };
 	}
@@ -569,6 +569,28 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 						}
 					}
 					surface.toggleSplitLayer();
+
+				}
+			}).start();
+		}
+	}
+	
+	@Override
+	public void toggleRotation() {
+		if ( getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
+					while (!surface.canBeUpdated()) {
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
+
+						}
+					}
+					surface.toggleRotation();
 
 				}
 			}).start();

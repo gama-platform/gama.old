@@ -78,6 +78,9 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	// Use to toggle the SplitLayer view
 	public boolean splitLayer = false;
+	
+	// Use to toggle the Rotation view
+	public boolean rotation = false;
 
 	// Use to draw .shp file
 	final String[] shapeFileName = new String[1];
@@ -417,6 +420,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	@Override
 	public void zoomFit() {
 		resizeImage(getWidth(), getHeight());
+		renderer.frame=0;
 		if ( renderer != null ) {
 			super.zoomFit();
 			if ( threeD ) {
@@ -499,6 +503,11 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			i++;
 		}
 		this.updateDisplay();
+	}
+	
+	@Override
+	public void toggleRotation() {
+		rotation = !rotation;
 	}
 
 	/**

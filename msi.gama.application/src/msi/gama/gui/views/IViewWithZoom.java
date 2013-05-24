@@ -34,7 +34,7 @@ public interface IViewWithZoom extends IZoomListener {
 	public void toggleArcball();
 
 	/**
-	 * Activate the arcball View
+	 * Activate the select rectangle View
 	 */
 	public void toggleSelectRectangle();
 
@@ -47,6 +47,11 @@ public interface IViewWithZoom extends IZoomListener {
 	 * Split species layer in 3D
 	 */
 	public void toggleSplitLayer();
+	
+	/**
+	 * Rotate the mode l around z axes
+	 */
+	public void toggleRotation();
 
 	public void snapshot();
 

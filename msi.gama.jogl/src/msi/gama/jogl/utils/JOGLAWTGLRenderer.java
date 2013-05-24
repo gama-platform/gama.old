@@ -78,7 +78,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public ISceneObject currentPickedObject;
 	private int antialiasing = GL_NEAREST;
 	
-	private int frame=0;
+	public int frame=0;
 
 	// hdviet 27/05/2012
 	// add new listener for ArcBall
@@ -185,6 +185,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 			width = drawable.getWidth();
 			height = drawable.getHeight();
+			
+			
+			
 
 			// Clear the screen and the depth buffer
 			gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -241,6 +244,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			if ( dem.isInitialized() == true ) {
 				dem.DisplayDEM(gl);
 			} else {
+				if(this.displaySurface.rotation){		
+					frame++;
+				}
+				gl.glRotatef(frame, 0, 0, 1);
+				
 				this.drawScene();
 				// if ( drawAxes ) {
 				// double envMaxDim = getMaxEnvDim();
@@ -259,7 +267,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			if ( this.displaySurface.selectRectangle ) {
 				DrawROI();
 			}
-			frame++;
+			
 		}
 		
 		//this.displaySurface.snapshot();

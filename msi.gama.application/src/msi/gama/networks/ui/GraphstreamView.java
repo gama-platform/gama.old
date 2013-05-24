@@ -570,6 +570,15 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 		System.out.println("toggleSplitLayer tool is only available for Opengl Display");
 
 	}
+	
+	/**
+	 * This method does nothing for Graphstream display
+	 */
+	@Override
+	public void toggleRotation() {
+		System.out.println("toggleRotation tool is only available for Opengl Display");
+
+	}
 
 	/**
 	 * This method does nothing for Graphstream display
