@@ -54,6 +54,8 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.LINES, type = IType.COLOR, optional = true),
 	@facet(name = IKeyword.DEM, type = IType.MATRIX, optional = true),
 	@facet(name = IKeyword.TEXTURE, type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.TRIANGULATION, type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.TEXT, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.Z, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true) }, omissible = IKeyword.SPECIES)
 public class GridLayerStatement extends AbstractLayerStatement {
@@ -67,8 +69,12 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	IExpression lineColor;
 	IExpression demGridExp;
 	IExpression textureExp;
+	IExpression triExp;
+	IExpression textExp;
 	GamaFloatMatrix demGridMatrix;
 	Boolean isTextured = true;
+	Boolean isTriangulated = false;
+	Boolean showText = false;
 	GamaColor currentColor, constantColor;
 	// HashSet<IAgent> agents;
 	private IExpression setOfAgents;
@@ -93,6 +99,16 @@ public class GridLayerStatement extends AbstractLayerStatement {
 		textureExp = getFacet(IKeyword.TEXTURE);
 		if (textureExp != null) {
 			isTextured = Cast.asBool(scope, textureExp.value(scope));
+		}
+		
+		triExp = getFacet(IKeyword.TRIANGULATION);
+		if (triExp != null) {
+			isTriangulated = Cast.asBool(scope, triExp.value(scope));
+		}
+		
+		textExp = getFacet(IKeyword.TEXT);
+		if (textExp != null) {
+			showText = Cast.asBool(scope, textExp.value(scope));
 		}
 		
 		
@@ -181,6 +197,14 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	
 	public Boolean isTextured(){
 		return isTextured;
+	}
+	
+	public Boolean isTriangulated(){
+		return isTriangulated;
+	}
+	
+	public Boolean isShowText(){
+		return showText;
 	}
 
 }

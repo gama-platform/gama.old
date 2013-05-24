@@ -47,7 +47,8 @@ public interface IGraphics {
 
 	public abstract int getDisplayHeightInPixels();
 	
-	public abstract Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix, final boolean isTextured,
+	public abstract Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix, 
+			final boolean isTextured, final boolean isTriangulated,final boolean isShowText,
 			final ILocation locationInModelUnits, final ILocation sizeInModelUnits, Color gridColor, final Integer angle,
 			Double z, boolean isDynamic);
 

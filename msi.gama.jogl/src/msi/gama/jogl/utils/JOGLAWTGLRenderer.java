@@ -24,7 +24,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	// ///Static members//////
 	private static final boolean USE_VERTEX_ARRAY = false;
-	private static final int REFRESH_FPS = 10;
+	private static final int REFRESH_FPS = 30;
 	public static int CURR_TEXTURE_FILTER = 2; // currently used filter
 	private static boolean BLENDING_ENABLED; // blending on/off
 	private static boolean IS_LIGHT_ON;
@@ -77,6 +77,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public int pickedObjectIndex = -1;
 	public ISceneObject currentPickedObject;
 	private int antialiasing = GL_NEAREST;
+	
+	private int frame=0;
 
 	// hdviet 27/05/2012
 	// add new listener for ArcBall
@@ -257,7 +259,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			if ( this.displaySurface.selectRectangle ) {
 				DrawROI();
 			}
-
+			frame++;
 		}
 		
 		//this.displaySurface.snapshot();

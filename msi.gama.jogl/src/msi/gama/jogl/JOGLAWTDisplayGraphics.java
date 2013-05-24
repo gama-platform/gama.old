@@ -133,27 +133,30 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	}
 
 	@Override
-	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img,final double[] gridValueMatrix,  final boolean isTextured, final ILocation locationInModelUnits,
-		final ILocation sizeInModelUnits, final Color gridColor, final Integer angle, final Double z,
+	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img,final double[] gridValueMatrix,  
+			final boolean isTextured, final boolean isTriangulated,final boolean isShowText,
+			final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final Color gridColor, final Integer angle, final Double z,
 		final boolean isDynamic) {
 		//FIXME : need to chek the drawGridLIne method
 		if ( gridColor != null ) {
 			drawGridLine(img, gridColor);
 		}
-		return drawDEM2(gridValueMatrix, img, isTextured, scope.getSimulationScope().getEnvelope(),getCurrentAlpha(),currentOffset, currentScale);
+		return drawDEM2(gridValueMatrix, img, isTextured, isTriangulated,isShowText,scope.getSimulationScope().getEnvelope(),getCurrentAlpha(),currentOffset, currentScale);
 	}
 	
 	//Build a grid with a dem corresponding to the value in gridValue and textured by texture
-	public Rectangle2D drawDEM2(final double[] dem, final BufferedImage texture, final boolean  isTextured, final Envelope env, Double alpha,final GamaPoint offset, final GamaPoint scale) {
+	public Rectangle2D drawDEM2(final double[] dem, final BufferedImage texture, 
+			final boolean  isTextured, final boolean isTriangulated,final boolean isShowText, 
+			final Envelope env, Double alpha,final GamaPoint offset, final GamaPoint scale) {
 		MyTexture _texture = null;
 		if ( !renderer.getScene().getTextures().containsKey(texture) ) {
 			_texture = renderer.createTexture(texture, false);
 		}
-		renderer.getScene().addDEM(dem, texture,null,isTextured, false, env, alpha, offset, scale);
+		renderer.getScene().addDEM(dem, texture,null,isTextured, isTriangulated, isShowText,false, env, alpha, offset, scale);
 		return null;
 	}
 	
-	//Build a dem from a dem.png and a texture.png
+	//Build a dem from a dem.png and a texture.png (used when using the operator dem)
 	@Override
 	public Rectangle2D drawDEM(final GamaFile demFileName, final GamaFile textureFileName, final Envelope env) {
 		BufferedImage dem = null;
@@ -175,10 +178,23 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			_texture = renderer.createTexture(texture, false);
 		}
 		
-	
-		//FIXME: alpha,scale,offset not taken in account when usong the operator dem
-		renderer.getScene().addDEM(null, texture, dem, false, true, env,null,null,null);
+		// getASCfromImg(dem);
+		//FIXME: alpha,scale,offset not taken in account when using the operator dem
+		renderer.getScene().addDEM(null, texture, dem, false,false,false, true, env,null,null,null);
 		return null;
+	}
+	
+	public void getASCfromImg(BufferedImage dem){
+		double value;
+		System.out.println("asc");
+		for (int i=0;i<dem.getHeight();i++){
+			System.out.println();
+			for (int j=0;j< dem.getWidth();j++){	
+				value = dem.getRGB(i, j) & 255;
+				System.out.print(value);
+				System.out.print(" ");
+			}
+		}
 	}
 
 	

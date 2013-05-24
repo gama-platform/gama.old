@@ -40,6 +40,8 @@ public class GridLayer extends ImageLayer {
 	private double[] gridValue;
 	private double[] gridValueMatrix;
 	private boolean isTextured;
+	private boolean isTriangulated;
+	private boolean isShowText;
 	private boolean drawAsDEM;
 
 	public GridLayer(final ILayerStatement layer) {
@@ -85,11 +87,15 @@ public class GridLayer extends ImageLayer {
 			if(g.getGridValueMatrix() != null){
 				gridValueMatrix=g.getGridValueMatrix().getMatrix();
 				isTextured = g.isTextured();
+				isTriangulated = g.isTriangulated();
+				isShowText = g.isShowText();
 				drawAsDEM = true;
 			}
 			if(m.getGridValue() != null){
 				gridValueMatrix = m.getGridValue();
 				isTextured = g.isTextured();
+				isTriangulated = g.isTriangulated();
+				isShowText = g.isShowText();
 				drawAsDEM = true;
 			}
 	}
@@ -108,7 +114,7 @@ public class GridLayer extends ImageLayer {
 		}
 		
 		if(drawAsDEM){
-			dg.drawGrid(scope, image, gridValueMatrix,isTextured,null, null, lineColor, null, 0.0, true);	
+			dg.drawGrid(scope, image, gridValueMatrix,isTextured,isTriangulated,isShowText,null, null, lineColor, null, 0.0, true);	
 		}
 		else{
 			dg.drawImage(scope, image, null, null, lineColor, null, 0.0, true);	

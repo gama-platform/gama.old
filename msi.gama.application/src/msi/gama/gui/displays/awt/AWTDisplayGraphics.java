@@ -105,8 +105,9 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	
 
 	@Override
-	public Rectangle2D drawGrid(IScope scope, BufferedImage img, double[] gridValueMatrix, final boolean isTextured, ILocation locationInModelUnits,
-		ILocation sizeInModelUnits, Color gridColor, Integer angle, Double z, boolean isDynamic) {
+	public Rectangle2D drawGrid(IScope scope, BufferedImage img, double[] gridValueMatrix, 
+		final boolean isTextured, final boolean isTriangulated, final boolean isShowText, 
+		ILocation locationInModelUnits,ILocation sizeInModelUnits, Color gridColor, Integer angle, Double z, boolean isDynamic) {
 		return drawImage(scope, img, locationInModelUnits,
 				sizeInModelUnits, gridColor, angle, z, isDynamic);
 	}

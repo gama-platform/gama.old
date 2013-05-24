@@ -321,6 +321,7 @@ public interface IKeyword {
 	public static final String TOPOLOGY = "topology";
 	public static final String TORUS = "torus";
 	public static final String TRANSPARENCY = "transparency";
+	public static final String TRIANGULATION = "triangulation";
 	public static final String TRUE = "true";
 	public static final String TYPE = "type";
 	public static final String UNIT = "unit";

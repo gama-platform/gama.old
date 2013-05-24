@@ -309,6 +309,37 @@ public class Camera {
 		}
 		// this.PrintParam();
 	}
+	
+	public void circleCamera(double envWidth, double envHeight, double x, double y, double xlpos, double ylpos ) {
+
+		this.yaw = 0.0f;
+		this.pitch = 0.0f;
+		this.envWidth = envWidth;
+		this.envHeight = envHeight;
+
+		if ( envWidth > envHeight ) {
+			setMaxDim(envWidth);
+		} else {
+			setMaxDim(envHeight);
+		}
+
+		if ( isModelCentered ) {
+			this.setxPos(x);
+			this.setxLPos(xlpos);
+			this.setyPos(y);
+			this.setyLPos(ylpos);
+			this.setzPos(getMaxDim() * INIT_Z_FACTOR);
+			this.setzLPos(0.0f);
+		} else {
+			this.setxPos(envWidth / 2 + x );
+			this.setxLPos(envWidth / 2);
+			this.setyPos(-(envHeight / 2+y));
+			this.setyLPos(-envHeight / 2);
+			this.setzPos(getMaxDim() * INIT_Z_FACTOR);
+			this.setzLPos(0.0f);
+		}
+		// this.PrintParam();
+	}
 
 	public void initialize3DCamera(double envWidth, double envHeight) {
 

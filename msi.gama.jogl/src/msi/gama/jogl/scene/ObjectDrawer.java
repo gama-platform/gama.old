@@ -180,6 +180,19 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 		
 	    }
 		
+		private double GetMaxValue(double[] gridValue){
+			double maxValue = 0.0;
+			if(gridValue == null){
+				return maxValue;
+			}
+			for(int i= 0; i< gridValue.length;i++){
+				if(gridValue[i] > maxValue){
+					maxValue = gridValue[i];
+				}
+			}
+			return maxValue;
+		}
+		
 		@Override
 		protected void _draw(DEMObject demObj) {
 			
@@ -200,17 +213,16 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			
 			//FIXME: Need to set it dynamicly
 			double altFactor = envWidth/100;
-			double maxZ= 100;
+			double maxZ= GetMaxValue(demObj.dem);
+		
 			
 			double x1,x2,y1,y2;
 			Double zValue=0.0;
 			double stepX, stepY;
 			
 			boolean drawLines = false;
-			boolean drawSquare = true;
 			boolean drawContour = true;
-			boolean drawTriangle = false;
-			boolean drawText= false;
+		
 			
 			
 			//Draw grid only with  the lines
@@ -244,7 +256,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 				renderer.gl.glEnable(GL.GL_TEXTURE_2D);
 				setInitialized(true);
 			}
-			if(drawSquare){
+			if(!demObj.isTriangulated){
 				for ( int i = 0; i < textureWidth; i++ ){			
 					x1 = (i / textureWidth) * envWidth;
 					x2 = ((i+1) / textureWidth) * envWidth;
@@ -298,7 +310,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 	      Double z3= 0.0;
 	      Double z4= 0.0;
 			
-			if(drawTriangle){
+			if(demObj.isTriangulated){
 				for ( int i = 0; i < textureWidth; i++ ){			
 					x1 = (i / textureWidth) * envWidth;
 					x2 = ((i+1) / textureWidth) * envWidth;
@@ -340,6 +352,21 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 							}
 							
 						}
+						
+						if(demObj.isTextured){
+							renderer.gl.glBegin(GL.GL_TRIANGLE_STRIP);
+							renderer.gl.glTexCoord2d(textureWidthStep*i, textureHeightStep*j);
+							renderer.gl.glVertex3d(x1, -y1, z1*altFactor);
+							renderer.gl.glTexCoord2d(textureWidthStep*i, textureHeightStep*(j+1));
+							renderer.gl.glVertex3d(x1, -y2, z2*altFactor);
+							renderer.gl.glTexCoord2d(textureWidthStep*(i+1), textureHeightStep*(j+1));
+							renderer.gl.glVertex3d(x2, -y1, z4*altFactor);
+							renderer.gl.glTexCoord2d(textureWidthStep*(i+1), textureHeightStep*j);
+							renderer.gl.glVertex3d(x2, -y2, z3*altFactor);
+							renderer.gl.glEnd();
+						}
+						else{
+						
 						renderer.gl.glColor3d(zValue/maxZ, zValue/maxZ, zValue/maxZ);
 						renderer.gl.glBegin(GL.GL_TRIANGLE_STRIP);
 						renderer.gl.glVertex3d(x1, -y1, z1*altFactor);
@@ -347,6 +374,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 						renderer.gl.glVertex3d(x2, -y1, z4*altFactor);
 						renderer.gl.glVertex3d(x2, -y2, z3*altFactor);
 						renderer.gl.glEnd();
+						}
 						
 						/*if(drawContour){
 							renderer.gl.glColor3d(0.0, 0.0, 0.0);
@@ -369,7 +397,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			
 			
 			
-			if(drawText){
+			if(demObj.isShowText){
 				//Draw gridvalue as text inside each cell
 				Double gridValue=0.0;
 				renderer.gl.glDisable(GL_BLEND);
@@ -381,7 +409,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 						if (demObj.dem != null){
 							gridValue = demObj.dem[(int)(j*textureWidth+i)];
 						}
-						renderer.gl.glRasterPos3d((stepX+textureWidthInEnvironment/2), -(stepY+textureHeightInEnvironment/2), 0.0f);
+						renderer.gl.glRasterPos3d((stepX+textureWidthInEnvironment/2), -(stepY+textureHeightInEnvironment/2), gridValue*altFactor);
 						renderer.gl.glScaled(8.0d, 8.0d, 8.0d);
 						glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, gridValue.toString());
 						renderer.gl.glScaled(0.125d, 0.125d, 0.125d);
@@ -395,16 +423,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			}
 		}
 
-			public boolean isInitialized() {
-				
-				return initialized;
-			}
-
-
-
-			public void setInitialized(boolean initialized) {
-				this.initialized = initialized;
-			}
+			
 			
 			
             protected void drawFromPNG(DEMObject demObj) {
@@ -435,7 +454,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
                 float w = (float) demObj.envelope.getWidth();
                 float h = (float) demObj.envelope.getHeight();
                
-                float altFactor = (float)demObj.envelope.getWidth()/(20*255);//0.025f;//dem.getWidth();
+                float altFactor = (float)demObj.envelope.getWidth()/(10*255);//0.025f;//dem.getWidth();
                
                 tw = w / cols;
                 th = h / rows;
@@ -465,23 +484,29 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
                                 else{
                                         float color = ((dem.getRGB(cols - x, y) & 255));
                                         color = (color)/255.0f;
-                                        /*System.out.println("dem:" + dem.getRGB(cols - x, y));
-                                        System.out.println("dem&:" + (dem.getRGB(cols - x, y) & 255));
-                                        System.out.println("color" + color);*/
 
                                         renderer.gl.glColor3f(color, color, color);
                                         renderer.gl.glVertex3f(vx, vy, alt1);
                                         renderer.gl.glVertex3f(vx, vy + th, alt2);      
-                                }
-                               
+                                }       
                         }
                         renderer.gl.glEnd();
                 }
                 renderer.gl.glTranslated(-w/2, h/2, 0);
                
                 //FIXME: Add disable texture?
-
         }
+            
+public boolean isInitialized() {
+				
+				return initialized;
+			}
+
+
+
+			public void setInitialized(boolean initialized) {
+				this.initialized = initialized;
+			}
 
 	}
 	
