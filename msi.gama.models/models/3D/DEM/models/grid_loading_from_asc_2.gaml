@@ -28,7 +28,7 @@ experiment gridloading type: gui {
 		}
 		
 		display grid type:opengl {
-			grid cell texture:false;
+			grid cell texture:false text:true;
 		}
 		
 		display java2D {

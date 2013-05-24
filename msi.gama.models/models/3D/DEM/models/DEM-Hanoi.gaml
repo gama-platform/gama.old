@@ -16,27 +16,26 @@ environment width:500 height:395;
 experiment display type: gui {
 	output {
 		
-		
-		//Display a DEM model with its associated texture coming from google maps for instance.
-		display HanoiMap  type: opengl ambient_light:255 {
-			graphics DEMTextured {
-				draw dem(dem, map_texture);
-			}
-		}
-		
-		//Display a DEM model with its associated texture coming from google maps for instance.
-		display HanoiStreet  type: opengl ambient_light:255 {
-			graphics DEMTextured {
-				draw dem(dem, street_texture);
-			}
-		}
-		
-	    //Display a DEM model with the original color of the DEM file.
-		display HanoiDEM  type: opengl ambient_light:255 {
-			graphics DEM {
-				draw dem(dem, dem);
-			}
-		}
+//Display a DEM model with its associated texture coming from google maps for instance.
+display HanoiMap  type: opengl ambient_light:255 {
+	graphics DEMTextured {
+		draw dem(dem, map_texture);
+	}
+}
+
+//Display a DEM model with its associated texture coming from google maps for instance.
+display HanoiStreet  type: opengl ambient_light:255 {
+	graphics DEMTextured {
+		draw dem(dem, street_texture);
+	}
+}
+
+//Display a DEM model with the original color of the DEM file.
+display HanoiDEM  type: opengl ambient_light:255 {
+	graphics DEM {
+		draw dem(dem, dem);
+	}
+}
 		
 	}
 }
