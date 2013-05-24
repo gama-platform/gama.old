@@ -12,13 +12,13 @@ environment width:100 height:100;
 
 experiment display type: gui {
 	output {
-display Vuclano  type: opengl ambient_light:255 {
+display Vulcano  type: opengl ambient_light:255 {
 	graphics GraphicPrimitive {
 		draw dem(dem, texture);
 	}
 }
 
-display VuclanoDEM  type: opengl ambient_light:255 {
+display VulcanoDEM  type: opengl ambient_light:255 {
 	graphics GraphicPrimitive {
 		draw dem(dem, dem);
 	}
