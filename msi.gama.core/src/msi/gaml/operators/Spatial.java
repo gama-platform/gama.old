@@ -44,6 +44,7 @@ import com.vividsolutions.jts.geom.prep.*;
 import com.vividsolutions.jts.operation.distance.DistanceOp;
 import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
+import com.vividsolutions.jts.util.AssertionFailedException;
 
 /**
  * Written by drogoul Modified on 10 dec. 2010
@@ -357,7 +358,6 @@ public abstract class Spatial {
 				geom = geom1.union(geom2);
 			} catch (final Exception e) {
 				e.printStackTrace();
-				// geom = geom1.buffer(0.01).union(geom2.buffer(0.01));
 				try {
 					final PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
 					geom =
@@ -386,24 +386,51 @@ public abstract class Spatial {
 		@operator(IKeyword.MINUS)
 		@doc(special_cases = { "if the right-operand is a point, a geometry or an agent, returns the geometry resulting from the difference between both geometries" }, examples = { "geom1 - geom2 --: a geometry corresponding to difference between geom1 and geom2" })
 		public static IShape minus(final IShape g1, final IShape g2) {
-			if ( g2 == null || g2.getInnerGeometry() == null ) { return g1; }
-			final Geometry gdiff = g1.getInnerGeometry().difference(g2.getInnerGeometry());
-			if ( gdiff != null && !gdiff.isEmpty() ) { return new GamaShape(gdiff); }
+			if (g1 == null || g2 == null || g1.getInnerGeometry() == null || g2.getInnerGeometry() == null ) { return g1; }
+			Geometry res = difference(g1.getInnerGeometry(),g2.getInnerGeometry());
+			if (res != null)
+				return new GamaShape(res);
 			return null;
 		}
 
 		@operator(IKeyword.MINUS)
 		@doc(special_cases = { "if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the difference between the left-geometry and all of the right-geometries" }, examples = { "geom1 - [geom2, geom3, geom4] --: a geometry corresponding to geom1 - (geom2 + geom3 + geom4)" })
 		public static IShape minus(final IScope scope, final IShape g1, final IContainer<?, IShape> agents) {
-			if ( agents == null || agents.isEmpty(scope) ) { return g1; }
+			if (g1 == null || agents == null || g1.getInnerGeometry() == null || agents.isEmpty(scope) ) { return g1; }
 			Geometry geom1 = GeometryUtils.factory.createGeometry(g1.getInnerGeometry());
 			for ( final IShape ag : agents ) {
 				if ( ag != null && ag.getInnerGeometry() != null ) {
-					geom1 = geom1.difference(ag.getInnerGeometry());
+					geom1 = difference(geom1, ag.getInnerGeometry());
 					if ( geom1 == null || geom1.isEmpty() ) { return null; }
 				}
 			}
+			if (geom1 == null)
+				return null;
 			return new GamaShape(geom1);
+		}
+		
+		private static Geometry difference(Geometry g1, Geometry g2) {
+			if (g2 instanceof GeometryCollection) {
+				GeometryCollection g2c = (GeometryCollection) g2;
+				int nb = g2c.getNumGeometries();
+				for (int i = 0; i < nb; i++) {
+					g1 = difference(g1, g2c.getGeometryN(i));
+					if ( g1 == null || g1.isEmpty() ) { return null; }
+				}
+				return g1;
+			} else {
+				try {
+					return g1.difference(g2);
+				} catch (AssertionFailedException e) {
+					try {
+						final PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
+						return GeometryPrecisionReducer.reducePointwise(g1, pm).difference(
+								GeometryPrecisionReducer.reducePointwise(g2, pm));
+					} catch (final Exception e1) {
+						return g1.difference(g2.buffer(0.01));
+					}
+				}
+			}
 		}
 
 		@operator(value = { "add_point" })
@@ -522,6 +549,9 @@ public abstract class Spatial {
 			}
 			return new GamaShape(visiblePercept);
 		}
+		
+		
+
 
 		@operator("masked_by")
 		@doc(examples = { "perception_geom masked_by obstacle_list --: returns the geometry representing the part of perception_geom visible from the agent position considering the list of obstacles obstacle_list." })
