@@ -595,4 +595,10 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 	@Override
 	public void setIndicator(ZoomIndicatorItem indicator) {}
 
+	@Override
+	public void toggleCamera() {
+		// TODO Auto-generated method stub
+		System.out.println("toggleCamera tool is only available for Opengl Display");
+	}
+
 }

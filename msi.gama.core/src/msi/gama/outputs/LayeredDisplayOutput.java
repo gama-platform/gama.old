@@ -52,7 +52,7 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { LayeredDisplayOutput.JAVA2D,
-		LayeredDisplayOutput.OPENGL }, optional = true),
+		LayeredDisplayOutput.OPENGL, LayeredDisplayOutput.SWT }, optional = true),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.AMBIENT_LIGHT, type = { IType.INT, IType.COLOR }, optional = true),
@@ -67,6 +67,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	public static final String JAVA2D = "java2D";
 	public static final String OPENGL = "opengl";
+	public static final String SWT = "swt";
 
 	private List<AbstractLayerStatement> layers;
 	private Color backgroundColor;
@@ -87,12 +88,16 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private String displayType = JAVA2D;
 	private ILocation imageDimension = new GamaPoint(-1, -1);
 	private ILocation output3DNbCycles = new GamaPoint(0, 0);
+	private boolean isSwt = false;
+	private double envWidth;
+	private double envHeight;
 
 	public LayeredDisplayOutput(final IDescription desc) {
 		super(desc);
 
 		if ( hasFacet(IKeyword.TYPE) ) {
 			displayType = getLiteral(IKeyword.TYPE);
+			isSwt = displayType.equals(SWT);
 		}
 		layers = new GamaList<AbstractLayerStatement>();
 
@@ -198,8 +203,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				setOutput3D(Cast.asBool(getScope(), out3D.value(getScope())));
 			}
 		}
-
-		createSurface(scope.getSimulationScope());
+		Envelope env = scope.getSimulationScope().getEnvelope();
+		this.envWidth = env.getWidth();
+		this.envHeight = env.getHeight();
+		if (!isSwt) createSurface(scope.getSimulationScope());
 	}
 
 	@Override
@@ -312,10 +319,16 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		surface = sur;
 	}
 
+	public double getEnvWidth(){return envWidth;}
+	
+	public double getEnvHeight(){return envHeight;}
+	
 	@Override
 	public String getViewId() {
-		return GuiUtils.LAYER_VIEW_ID;
+		return  isSwt ? GuiUtils.SWT_LAYER_VIEW_ID : GuiUtils.LAYER_VIEW_ID;
 	}
+	
+	public boolean isSWT(){	return this.isSwt;}
 
 	@Override
 	public IDisplaySurface getSurface() {

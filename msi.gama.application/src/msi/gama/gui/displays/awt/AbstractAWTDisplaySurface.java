@@ -386,7 +386,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		return output;
 	}
 
-	protected void setZoomLevel(Double newZoomLevel) {
+	public void setZoomLevel(Double newZoomLevel) {
 		zoomLevel = newZoomLevel;
 		if ( zoomListener != null ) {
 			zoomListener.newZoomLevel(zoomLevel);

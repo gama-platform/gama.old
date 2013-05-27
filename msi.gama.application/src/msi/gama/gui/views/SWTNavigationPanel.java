@@ -37,7 +37,7 @@ public class SWTNavigationPanel extends Canvas implements PaintListener, MouseLi
 
 	private final IDisplaySurface surface;
 
-	SWTNavigationPanel(final Composite parent, final int style, final IDisplaySurface surface) {
+	public SWTNavigationPanel(final Composite parent, final int style, final IDisplaySurface surface) {
 		super(parent, style);
 		this.surface = surface;
 		surface.setNavigator(this);

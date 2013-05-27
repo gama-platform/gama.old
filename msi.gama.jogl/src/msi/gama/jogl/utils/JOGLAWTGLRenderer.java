@@ -10,7 +10,9 @@ import javax.media.opengl.glu.GLU;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.jogl.JOGLAWTDisplaySurface;
 import msi.gama.jogl.scene.*;
+import msi.gama.jogl.utils.Camera.AbstractCamera;
 import msi.gama.jogl.utils.Camera.Camera;
+import msi.gama.jogl.utils.Camera.FreeFlyCamera;
 import msi.gama.jogl.utils.Camera.Arcball.*;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
 import msi.gama.jogl.utils.dem.DigitalElevationModelDrawer;
@@ -33,13 +35,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public final FPSAnimator animator;
 	private GLContext context;
 	public GLCanvas canvas;
-	// Event Listener
-	public MyListener myListener;
+
 	private int width, height;
 	public final double env_width;
 	public final double env_height;
 	// Camera
-	public Camera camera;
+	public AbstractCamera camera;
 	public MyGraphics graphicsGLUtils;
 	// Use to test and display basic opengl shape and primitive
 	public MyGLToyDrawer myGLDrawer;
@@ -55,7 +56,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public JOGLAWTDisplaySurface displaySurface;
 	private ModelScene scene;
 	// Use multiple view port
-	private final boolean multipleViewPort = false;
+	public final boolean multipleViewPort = false;
 	// Display model a a 3D Cube
 	private final boolean threeDCube = false;
 	// Handle Shape file
@@ -93,27 +94,48 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public JOGLAWTGLRenderer(JOGLAWTDisplaySurface d) {
 
+		
 		// Enabling the stencil buffer
 		GLCapabilities cap = new GLCapabilities();
 		cap.setStencilBits(8);
 		// Initialize the user camera
-		camera = new Camera();
+		camera = new Camera(this);
 		myGLDrawer = new MyGLToyDrawer();
 		canvas = new GLCanvas(cap);
-		myListener = new MyListener(camera, this);
 		canvas.addGLEventListener(this);
-		canvas.addKeyListener(myListener);
-		canvas.addMouseListener(myListener);
-		canvas.addMouseMotionListener(myListener);
-		canvas.addMouseWheelListener(myListener);
-		canvas.setFocusable(true); // To receive key event
-		canvas.requestFocusInWindow();
+//		canvas.addKeyListener(camera);
+		canvas.addMouseListener(camera);
+		canvas.addMouseMotionListener(camera);
+		canvas.addMouseWheelListener(camera);
+//		canvas.setVisible(true);
+//		canvas.setFocusable(true); // To receive key event
+//		canvas.requestFocusInWindow();
 		animator = new FPSAnimator(canvas, REFRESH_FPS, true);
 		displaySurface = d;
 		dem = new DigitalElevationModelDrawer(this);
 		env_width = d.getEnvWidth();
 		env_height = d.getEnvHeight();
+		
 
+	}
+	
+	public void switchCamera()
+	{
+		canvas.removeKeyListener(camera);
+		canvas.removeMouseListener(camera);
+		canvas.removeMouseMotionListener(camera);
+		canvas.removeMouseWheelListener(camera);
+		
+		if(displaySurface.switchCamera)
+			camera = new FreeFlyCamera(this);
+		else
+			camera = new Camera(this);
+		
+		canvas.addKeyListener(camera);
+		canvas.addMouseListener(camera);
+		canvas.addMouseMotionListener(camera);
+		canvas.addMouseWheelListener(camera);
+		
 	}
 
 	public void setAntiAliasing(boolean antialias) {
@@ -122,6 +144,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
+		
 		width = drawable.getWidth();
 		height = drawable.getHeight();
 		gl = drawable.getGL();
@@ -309,11 +332,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public void DrawROI() {
 
-		if ( myListener.enableROIDrawing ) {
-			Point windowPressedPoint = new Point(myListener.lastxPressed, myListener.lastyPressed);
+		if ( camera.enableROIDrawing ) {
+			Point windowPressedPoint = new Point(camera.lastxPressed, camera.lastyPressed);
 			Point realPressedPoint = GetRealWorldPointFromWindowPoint(windowPressedPoint);
 
-			Point windowmousePositionPoint = new Point(myListener.mousePosition.x, myListener.mousePosition.y);
+			Point windowmousePositionPoint = new Point(camera.mousePosition.x, camera.mousePosition.y);
 			Point realmousePositionPoint = GetRealWorldPointFromWindowPoint(windowmousePositionPoint);
 
 			System.out.println("From" + realPressedPoint.x + "," + realPressedPoint.y);
@@ -536,7 +559,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	}
 
 	public void drawPickableObjects() {
-		if ( myListener.beginPicking(gl) ) {
+		if ( camera.beginPicking(gl) ) {
 			// Need to to do a translation before to draw object and retranslate
 			// after.
 			// FIXME: need also to apply the arcball matrix to make it work in
@@ -549,7 +572,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			} else {
 				drawModel(true);
 			}
-			setPickedObjectIndex(myListener.endPicking(gl));
+			setPickedObjectIndex(camera.endPicking(gl));
 		}
 
 		drawModel(true);

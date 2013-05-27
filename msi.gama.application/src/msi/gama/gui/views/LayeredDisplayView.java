@@ -41,9 +41,14 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 	public static final String ID = GuiUtils.LAYER_VIEW_ID;
 
+	protected Composite surfaceCompo;
+	protected Composite general;
 	private EmbeddedSwingComposite swingCompo;
-	IPerspectiveListener perspectiveListener;
-	ZoomIndicatorItem zoomIndicator;
+	protected IPerspectiveListener perspectiveListener;
+	protected Control aux;
+	protected GridData data;
+	
+	protected ZoomIndicatorItem zoomIndicator;
 
 	// private IPartListener2 partListener;
 
@@ -68,7 +73,11 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		if ( this.output.getDescription().getFacets().equals("type", "opengl") ) { return new Integer[] { PAUSE,
 			REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT, SEPARATOR, ZOOM_IN, ZOOM_INDICATOR, ZOOM_OUT,
 			ZOOM_FIT, FOCUS, SEPARATOR, CAMERA, SEPARATOR, ARCBALL, PICKING, SELECT_RECTANGLE, SHAPEFILE, SEPARATOR,
-			TRIANGULATION, SPLITLAYER, ROTATION }; }
+			TRIANGULATION, SPLITLAYER, ROTATION, SWITCHCAMERA }; }
+		else if ( this.output.getDescription().getFacets().equals("type", "swt") ) { return new Integer[] { PAUSE,
+			REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT, SEPARATOR, ZOOM_IN, ZOOM_INDICATOR, ZOOM_OUT,
+			ZOOM_FIT, FOCUS, SEPARATOR, CAMERA, SEPARATOR, ARCBALL, PICKING, SELECT_RECTANGLE, SHAPEFILE, SEPARATOR,
+			TRIANGULATION, SPLITLAYER }; }
 		return new Integer[] { PAUSE, REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT, SEPARATOR, ZOOM_IN,
 			ZOOM_INDICATOR, ZOOM_OUT, ZOOM_FIT, FOCUS, SEPARATOR, HIGHLIGHT_COLOR };
 	}
@@ -82,27 +91,42 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		super.ownCreatePartControl(c);
 		parent = new SashForm(c, SWT.HORIZONTAL | SWT.SMOOTH);
 		createViewer();
-		Composite general = new Composite(getViewer(), SWT.None);
+		general = new Composite(getViewer(), SWT.None);
 		GridLayout layout = new GridLayout(2, false);
 
 		general.setLayout(layout);
-		Control aux = new SWTNavigationPanel(general, SWT.None, getOutput().getSurface());
-		GridData data = new GridData(SWT.CENTER, SWT.FILL, true, true);
-		data.minimumHeight = 200;
-		data.heightHint = 200;
-		data.widthHint = 200;
-		data.horizontalSpan = 2;
 
-		aux.setLayoutData(data);
-		EditorFactory.create(general, "Color:", output.getBackgroundColor(), new EditorListener<Color>() {
+		//If not type swt, then create embedded swing component		
+		if(!((LayeredDisplayOutput)getOutput()).isSWT())
+		{
+			aux = new SWTNavigationPanel(general, SWT.None, getOutput().getSurface());
+			data = new GridData(SWT.CENTER, SWT.FILL, true, true);
+			data.minimumHeight = 200;
+			data.heightHint = 200;
+			data.widthHint = 200;
+			data.horizontalSpan = 2;
+			aux.setLayoutData(data);
+			
+			EditorFactory.create(general, "Color:", output.getBackgroundColor(), new EditorListener<Color>() {
 
-			@Override
-			public void valueModified(final Color newValue) {
-				output.setBackgroundColor(newValue);
-			}
-		});
-		createItem("Navigation", null, general, true);
-		displayItems();
+				@Override
+				public void valueModified(final Color newValue) {
+					output.setBackgroundColor(newValue);
+				}
+			});
+			createItem("Navigation", null, general, true);
+			displayItems();
+			
+			surfaceCompo = createSurfaceComposite();
+			getOutput().getSurface().setZoomListener(this);
+			((SashForm) parent).setWeights(new int[] { 1, 2 });
+			((SashForm) parent).setMaximizedControl(surfaceCompo);		
+		}
+		
+	}
+
+	protected Composite createSurfaceComposite()
+	{
 		final java.awt.event.MouseListener mlAwt = new java.awt.event.MouseListener() {
 
 			@Override
@@ -330,10 +354,10 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		// });
 		//
 		// }
+		// });	
+		return swingCompo;
+		
 		// });
-		getOutput().getSurface().setZoomListener(this);
-		((SashForm) parent).setWeights(new int[] { 1, 2 });
-		((SashForm) parent).setMaximizedControl(swingCompo);
 	}
 
 	@Override
@@ -364,7 +388,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	}
 
 	public void toggleControls() {
-		((SashForm) parent).setMaximizedControl(((SashForm) parent).getMaximizedControl() == null ? swingCompo : null);
+		((SashForm) parent).setMaximizedControl(((SashForm) parent).getMaximizedControl() == null ? surfaceCompo : null);
 	}
 
 	@Override
@@ -633,7 +657,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		// FIXME Should not be redefined, but we should add a DisposeListener instead
 		SwtGui.getWindow().removePerspectiveListener(perspectiveListener);
 		// FIXME Remove the listeners
-		swingCompo.dispose();
+		surfaceCompo.dispose();
 		// SwtGui.getPage().removePartListener(partListener);
 		super.dispose();
 		GuiUtils.debug("LayeredDisplayView.dispose: DISPOSED " + getOutput().getName());
@@ -656,5 +680,28 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			}
 		});
 
+	}
+
+	@Override
+	public void toggleCamera() {
+		// TODO Auto-generated method stub
+		if ( getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
+					while (!surface.canBeUpdated()) {
+						try {
+							Thread.sleep(10);
+						} catch (InterruptedException e) {
+
+						}
+					}
+					surface.toggleCamera();
+
+				}
+			}).start();
+		}
 	}
 }

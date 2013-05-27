@@ -62,6 +62,15 @@
             restorable="false">
       </view>
       <view
+            allowMultiple="true"
+            category="msi.gama.gui.category.gama"
+            class="msi.gama.jogl.view.SWTLayeredDisplayView"
+            icon="icons/view_layers.png"
+            id="msi.gama.jogl.view.SWTLayeredDisplayView"
+            name="DisplaySWT"
+            restorable="false">
+      </view>
+      <view
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.ExperimentParametersView"

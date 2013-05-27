@@ -32,8 +32,8 @@ import org.eclipse.ui.part.ViewPart;
  */
 public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaViewActions {
 
-	IDisplayOutput output = null;
-	Composite parent;
+	protected IDisplayOutput output = null;
+	protected Composite parent;
 
 	@Override
 	public void init(final IViewSite site) throws PartInitException {

@@ -50,7 +50,7 @@ import collada.Output3D;
 import com.vividsolutions.jts.geom.Envelope;
 
 @display("opengl")
-public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface implements IDisplaySurface.OpenGL {
+public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface implements IDisplaySurface.OpenGL, KeyListener {
 
 	private static final long serialVersionUID = 1L;
 	private PopupMenu agentsMenu = new PopupMenu();
@@ -78,6 +78,9 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	// Use to toggle the SplitLayer view
 	public boolean splitLayer = false;
+	
+	//Us toggle to switch cameras
+	public boolean switchCamera = false;
 	
 	// Use to toggle the Rotation view
 	public boolean rotation = false;
@@ -149,6 +152,11 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		// zoomFit();
 		// new way
 		// createIGraphics();
+		this.setEnabled(true);
+		this.setVisible(true);
+		this.setFocusable(true);
+		this.requestFocus();
+		this.addKeyListener(this);
 
 		addComponentListener(new ComponentAdapter() {
 
@@ -322,7 +330,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		sa.buildMenuItems(m, manager.getItems().get(layerId));
 
 		agentsMenu.add(m);
-		agentsMenu.show(this, renderer.myListener.mousePosition.x, renderer.myListener.mousePosition.y);
+		agentsMenu.show(this, renderer.camera.mousePosition.x, renderer.camera.mousePosition.y);
 
 	}
 
@@ -617,6 +625,33 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	public Color getBgColor() {
 		return bgColor;
+	}
+
+	@Override
+	public void toggleCamera() {
+		// TODO Auto-generated method stub
+		switchCamera = !switchCamera;
+		renderer.switchCamera();
+		zoomFit();
+		updateDisplay();
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		System.out.println("listener surface");
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		System.out.println("listener surface");
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		System.out.println("listener surface");
 	}
 
 }

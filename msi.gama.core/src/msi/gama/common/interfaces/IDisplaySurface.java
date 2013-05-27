@@ -70,6 +70,8 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 		void toggleRotation();
 		// @Override
 		// public IGraphics.OpenGL getIGraphics();
+		
+		void toggleCamera();
 
 	}
 

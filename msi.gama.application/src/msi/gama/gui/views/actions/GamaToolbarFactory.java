@@ -68,6 +68,8 @@ public class GamaToolbarFactory implements IGamaViewActions {
 				return new SplitLayerItem(view);
 			case ROTATION:
 				return new RotationItem(view);
+			case SWITCHCAMERA:
+				return new SwitchCameraItem(view);
 
 		}
 		return null;

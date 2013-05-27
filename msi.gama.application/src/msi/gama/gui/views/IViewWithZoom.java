@@ -52,6 +52,11 @@ public interface IViewWithZoom extends IZoomListener {
 	 * Rotate the mode l around z axes
 	 */
 	public void toggleRotation();
+	
+	/*
+	 *  Switch between ArcBall and FreeFly Cameras
+	 */
+	public void toggleCamera();
 
 	public void snapshot();
 

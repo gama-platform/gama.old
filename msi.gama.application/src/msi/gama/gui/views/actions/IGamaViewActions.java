@@ -37,4 +37,5 @@ public interface IGamaViewActions {
 	public final static int SPLITLAYER = 21;
 	public final static int ZOOM_INDICATOR = 22;
 	public final static int ROTATION = 23;
+	public final static int SWITCHCAMERA = 24;
 }

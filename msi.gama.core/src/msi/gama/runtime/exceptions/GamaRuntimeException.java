@@ -53,7 +53,7 @@ public class GamaRuntimeException extends RuntimeException {
 		return new GamaRuntimeException(s, true);
 	}
 
-	private GamaRuntimeException(final Throwable ex) {
+	public GamaRuntimeException(final Throwable ex) {
 		super(ex.toString(), ex);
 		addContext(ex.toString());
 		for ( StackTraceElement element : ex.getStackTrace() ) {
