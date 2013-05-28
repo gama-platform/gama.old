@@ -19,6 +19,8 @@
 package msi.gama.gui.displays.layers;
 
 import java.awt.Color;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
@@ -29,17 +31,21 @@ import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.file.GamaFile;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gama.util.matrix.GamaObjectMatrix;
 import msi.gama.util.matrix.IMatrix;
 import org.eclipse.swt.widgets.Composite;
+import com.vividsolutions.jts.geom.Envelope;
 
 public class GridLayer extends ImageLayer {
 
 	private boolean turnGridOn;
 	private double[] gridValue;
 	private double[] gridValueMatrix;
+	private GamaFile textureFile;
 	private boolean isTextured;
+	private boolean isTexturedWithImage;
 	private boolean isTriangulated;
 	private boolean isShowText;
 	private boolean drawAsDEM;
@@ -86,14 +92,29 @@ public class GridLayer extends ImageLayer {
 			//FIXME : what happen if the 2 are defined in the model?
 			if(g.getGridValueMatrix() != null){
 				gridValueMatrix=g.getGridValueMatrix().getMatrix();
-				isTextured = g.isTextured();
+				textureFile = g.textureFile();	
+				
+				if(textureFile!=null){
+					isTextured = true;
+				}
+				else{
+					isTextured = g.isTextured();
+				}
 				isTriangulated = g.isTriangulated();
 				isShowText = g.isShowText();
 				drawAsDEM = true;
 			}
 			if(m.getGridValue() != null){
 				gridValueMatrix = m.getGridValue();
-				isTextured = g.isTextured();
+				textureFile = g.textureFile();
+				
+				if(textureFile!=null){
+					isTextured = true;
+				}
+				else{
+					isTextured = g.isTextured();
+				}
+				
 				isTriangulated = g.isTriangulated();
 				isShowText = g.isShowText();
 				drawAsDEM = true;
@@ -114,7 +135,21 @@ public class GridLayer extends ImageLayer {
 		}
 		
 		if(drawAsDEM){
-			dg.drawGrid(scope, image, gridValueMatrix,isTextured,isTriangulated,isShowText,null, null, lineColor, null, 0.0, true);	
+			
+		if(textureFile !=null){ //display grid dem:texturefile
+			BufferedImage texture = null;
+			try {
+				texture = ImageUtils.getInstance().getImageFromFile(textureFile.getPath());
+			} catch (final IOException e) {
+				e.printStackTrace();
+			}
+			dg.drawGrid(scope, texture, gridValueMatrix,isTextured,isTriangulated,isShowText,null, null, lineColor, null, 0.0, true);
+		}
+		else{
+			dg.drawGrid(scope, image, gridValueMatrix,isTextured,isTriangulated,isShowText,null, null, lineColor, null, 0.0, true);		
+		}
+			
+			
 		}
 		else{
 			dg.drawImage(scope, image, null, null, lineColor, null, 0.0, true);	

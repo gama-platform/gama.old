@@ -193,6 +193,10 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			return maxValue;
 		}
 		
+		/*private void PrintParam(){
+			System.out.println()
+		}*/
+		
 		@Override
 		protected void _draw(DEMObject demObj) {
 			
@@ -201,15 +205,14 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			//Get Environment Properties
 			double envWidth = demObj.envelope.getWidth();
 			double envHeight = demObj.envelope.getHeight();
+			double envWidthStep = 1/envWidth;
+            double envHeightStep = 1/ envHeight;
 			
 			//Get Texture Properties
 			double textureWidth = demObj.texture.getWidth();
 			double textureHeight = demObj.texture.getHeight();	
-			double textureWidthStep = 1/ textureWidth;
-			double textureHeightStep = 1/ textureHeight;
 			double textureWidthInEnvironment = envWidth/textureWidth;
 			double textureHeightInEnvironment = envHeight/textureHeight;
-			
 			
 			//FIXME: Need to set it dynamicly
 			double altFactor = envWidth/100;
@@ -257,25 +260,25 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 				setInitialized(true);
 			}
 			if(!demObj.isTriangulated){
-				for ( int i = 0; i < textureWidth; i++ ){			
-					x1 = (i / textureWidth) * envWidth;
-					x2 = ((i+1) / textureWidth) * envWidth;
-					for ( int j = 0; j < textureHeight; j++ ){
-						y1 = (j / textureHeight) * envHeight;
-						y2 = ((j+1) / textureHeight) * envHeight;
+				for ( int i = 0; i < envWidth; i++ ){			
+					x1 = (i / envWidth) * envWidth;
+					x2 = ((i+1) / envWidth) * envWidth;
+					for ( int j = 0; j < envHeight; j++ ){
+						y1 = (j / envHeight) * envHeight;
+						y2 = ((j+1) / envHeight) * envHeight;
 						if (demObj.dem != null){
-							zValue = demObj.dem[(int)(j*textureWidth+i)];
+							zValue = demObj.dem[(int)(j*envWidth+i)];
 						}
 
 						if(demObj.isTextured){
 							renderer.gl.glBegin(GL_QUADS);
-							renderer.gl.glTexCoord2d(textureWidthStep*i, textureHeightStep*j);
+							renderer.gl.glTexCoord2d(envWidthStep*i, envHeightStep*j);
 							renderer.gl.glVertex3d(x1, -y1, zValue*altFactor);
-							renderer.gl.glTexCoord2d(textureWidthStep*(i+1), textureHeightStep*(j+1));
+							renderer.gl.glTexCoord2d(envWidthStep*(i+1), envHeightStep*(j));
 							renderer.gl.glVertex3d(x2, -y1, zValue*altFactor);
-							renderer.gl.glTexCoord2d(textureWidthStep*(i+1), textureHeightStep*j);
+							renderer.gl.glTexCoord2d(envWidthStep*(i+1), envHeightStep*(j+1));
 							renderer.gl.glVertex3d(x2, -y2, zValue*altFactor);
-							renderer.gl.glTexCoord2d(textureWidthStep*i, textureHeightStep*(j+1));
+							renderer.gl.glTexCoord2d(envWidthStep*i, envHeightStep*(j+1));
 							renderer.gl.glVertex3d(x1, -y2, zValue*altFactor);
 							renderer.gl.glEnd();
 						}
@@ -311,41 +314,41 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 	      Double z4= 0.0;
 			
 			if(demObj.isTriangulated){
-				for ( int i = 0; i < textureWidth; i++ ){			
-					x1 = (i / textureWidth) * envWidth;
-					x2 = ((i+1) / textureWidth) * envWidth;
-					for ( int j = 0; j < textureHeight; j++ ){
-						y1 = (j / textureHeight) * envHeight;
-						y2 = ((j+1) / textureHeight) * envHeight;
+				for ( int i = 0; i < envWidth; i++ ){			
+					x1 = (i / envWidth) * envWidth;
+					x2 = ((i+1) / envWidth) * envWidth;
+					for ( int j = 0; j < envHeight; j++ ){
+						y1 = (j / envHeight) * envHeight;
+						y2 = ((j+1) / envHeight) * envHeight;
 						if (demObj.dem != null){
-							zValue = demObj.dem[(int)(j*textureWidth+i)];
+							zValue = demObj.dem[(int)(j*envWidth+i)];
 							
-							if(i<textureWidth-1 && j < textureHeight-1)
+							if(i<envWidth-1 && j < envHeight-1)
 						    {
-								z1= demObj.dem[(int)(j*textureWidth+i)];
-								z2= demObj.dem[(int)((j+1)*textureWidth+i)];
-								z3 = demObj.dem[(int)((j+1)*textureWidth+(i+1))];
-								z4 = demObj.dem[(int)((j)*textureWidth+(i+1))];
+								z1= demObj.dem[(int)(j*envWidth+i)];
+								z2= demObj.dem[(int)((j+1)*envWidth+i)];
+								z3 = demObj.dem[(int)((j+1)*envWidth+(i+1))];
+								z4 = demObj.dem[(int)((j)*envWidth+(i+1))];
 							}
 							 
 							//Last rows
-							if(j == textureHeight -1 && i < textureWidth -1){
-								z1= demObj.dem[(int)(j*textureWidth+i)];
-								z4 = demObj.dem[(int)((j)*textureWidth+(i+1))];
+							if(j == envHeight -1 && i < envWidth -1){
+								z1= demObj.dem[(int)(j*envWidth+i)];
+								z4 = demObj.dem[(int)((j)*envWidth+(i+1))];
 								z2=z1;
 								z3=z4;
 							}
 							//Last cols
-							if(i == textureWidth -1 && j < textureHeight -1){
-								z1= demObj.dem[(int)(j*textureWidth+i)];
-								z2= demObj.dem[(int)((j+1)*textureWidth+i)];
+							if(i == envWidth -1 && j < envHeight -1){
+								z1= demObj.dem[(int)(j*envWidth+i)];
+								z2= demObj.dem[(int)((j+1)*envWidth+i)];
 								z3 = z2;
 								z4 = z1;
 							}
 							
 							//last cell
-							if(i == textureWidth -1 && j == textureHeight -1){
-								z1= demObj.dem[(int)(j*textureWidth+i)];
+							if(i == envWidth -1 && j == envHeight -1){
+								z1= demObj.dem[(int)(j*envWidth+i)];
 								z2= z1;
 								z3=z1;
 								z4=z1;
@@ -355,13 +358,13 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 						
 						if(demObj.isTextured){
 							renderer.gl.glBegin(GL.GL_TRIANGLE_STRIP);
-							renderer.gl.glTexCoord2d(textureWidthStep*i, textureHeightStep*j);
+							renderer.gl.glTexCoord2d(envWidthStep*i, envHeightStep*j);
 							renderer.gl.glVertex3d(x1, -y1, z1*altFactor);
-							renderer.gl.glTexCoord2d(textureWidthStep*i, textureHeightStep*(j+1));
+							renderer.gl.glTexCoord2d(envWidthStep*i, envHeightStep*(j+1));
 							renderer.gl.glVertex3d(x1, -y2, z2*altFactor);
-							renderer.gl.glTexCoord2d(textureWidthStep*(i+1), textureHeightStep*(j+1));
+							renderer.gl.glTexCoord2d(envWidthStep*(i+1), envHeightStep*(j));
 							renderer.gl.glVertex3d(x2, -y1, z4*altFactor);
-							renderer.gl.glTexCoord2d(textureWidthStep*(i+1), textureHeightStep*j);
+							renderer.gl.glTexCoord2d(envWidthStep*(i+1), envHeightStep*(j+1));
 							renderer.gl.glVertex3d(x2, -y2, z3*altFactor);
 							renderer.gl.glEnd();
 						}

@@ -178,7 +178,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			_texture = renderer.createTexture(texture, false);
 		}
 		
-		// getASCfromImg(dem);
+		//getASCfromImg(dem);
 		//FIXME: alpha,scale,offset not taken in account when using the operator dem
 		renderer.getScene().addDEM(null, texture, dem, false,false,false, true, env,null,null,null);
 		return null;
@@ -187,11 +187,11 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	public void getASCfromImg(BufferedImage dem){
 		double value;
 		System.out.println("asc");
-		for (int i=0;i<dem.getHeight();i++){
+		for (int i=0;i<dem.getWidth();i++){
 			System.out.println();
-			for (int j=0;j< dem.getWidth();j++){	
-				value = dem.getRGB(i, j) & 255;
-				System.out.print(value);
+			for (int j=0;j< dem.getHeight();j++){	
+				value = dem.getRGB(j, i) & 255;
+				System.out.print(value/6);
 				System.out.print(" ");
 			}
 		}

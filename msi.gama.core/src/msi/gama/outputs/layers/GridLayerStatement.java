@@ -32,12 +32,14 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
+import msi.gama.util.file.GamaFile;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gama.util.matrix.GamaObjectMatrix;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
@@ -53,7 +55,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.SPECIES, type = IType.SPECIES, optional = false),
 	@facet(name = IKeyword.LINES, type = IType.COLOR, optional = true),
 	@facet(name = IKeyword.DEM, type = IType.MATRIX, optional = true),
-	@facet(name = IKeyword.TEXTURE, type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.TEXTURE, type = {IType.BOOL, IType.FILE}, optional = true),
 	@facet(name = IKeyword.TRIANGULATION, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.TEXT, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.Z, type = IType.FLOAT, optional = true),
@@ -73,6 +75,7 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	IExpression textExp;
 	GamaFloatMatrix demGridMatrix;
 	Boolean isTextured = true;
+	GamaFile textureFile = null;
 	Boolean isTriangulated = false;
 	Boolean showText = false;
 	GamaColor currentColor, constantColor;
@@ -98,7 +101,16 @@ public class GridLayerStatement extends AbstractLayerStatement {
 		
 		textureExp = getFacet(IKeyword.TEXTURE);
 		if (textureExp != null) {
-			isTextured = Cast.asBool(scope, textureExp.value(scope));
+			
+			if ( textureExp.getType().equals(Types.get(IType.BOOL)) ) {
+				isTextured = Cast.asBool(scope, textureExp.value(scope));	
+			}
+			
+			if ( textureExp.getType().equals(Types.get(IType.FILE)) ) {
+				textureFile = (GamaFile) textureExp.value(scope);	
+			}
+			
+			
 		}
 		
 		triExp = getFacet(IKeyword.TRIANGULATION);
@@ -197,6 +209,10 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	
 	public Boolean isTextured(){
 		return isTextured;
+	}
+	
+	public GamaFile textureFile(){
+		return textureFile;
 	}
 	
 	public Boolean isTriangulated(){
