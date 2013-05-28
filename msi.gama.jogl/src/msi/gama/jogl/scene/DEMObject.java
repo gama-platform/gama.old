@@ -19,10 +19,12 @@ public class DEMObject extends AbstractObject {
 	public boolean isShowText;
 	public boolean fromImage;
 	public Envelope envelope;
+	public Double z_factor;
 	
 	
 	
-	public DEMObject(double[] dem, BufferedImage texture,BufferedImage demImg,Envelope env, boolean isTextured, boolean isTriangulated,boolean isShowText,  boolean fromImage,Color c, GamaPoint o, GamaPoint s, Double a) {
+	public DEMObject(double[] dem, BufferedImage texture,BufferedImage demImg,Envelope env, boolean isTextured, boolean isTriangulated,boolean isShowText,  
+			boolean fromImage, Double z_factor, Color c, GamaPoint o, GamaPoint s, Double a) {
 		super(c, o, s, a);
 		this.dem = dem;
 		this.texture = texture;
@@ -32,5 +34,6 @@ public class DEMObject extends AbstractObject {
 		this.isShowText = isShowText;
 		this.fromImage = fromImage;
 		this.envelope=env;
+		this.z_factor = z_factor;
 	}
 }

@@ -95,7 +95,7 @@ public interface IGraphics {
 
 	public interface OpenGL extends IGraphics {
 
-		public abstract Rectangle2D drawDEM(final GamaFile demFileName, final GamaFile textureFileName, Envelope env);
+		public abstract Rectangle2D drawDEM(final GamaFile demFileName, final GamaFile textureFileName, Envelope env, final Double z_factor);
 
 	}
 

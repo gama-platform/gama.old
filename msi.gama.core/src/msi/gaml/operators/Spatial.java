@@ -1660,7 +1660,21 @@ public abstract class Spatial {
 			final IGraphics graphics = scope.getGraphics();
 			if ( graphics instanceof IGraphics.OpenGL ) {
 				((IGraphics.OpenGL) graphics).drawDEM(demFileName, textureFileName, scope.getSimulationScope()
-					.getEnvelope());
+					.getEnvelope(),1.0);
+			}
+			ILocation location;
+			final IAgent a = scope.getAgentScope();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			return null;// new GamaShape(scope.getSimulationScope().getInnerGeometry());
+		}
+		
+		@operator("dem")
+		@doc(value = "A polygon that equivalent to the surface of the texture", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "", examples = { "dem(dem,texture,z_factor) --: returns a geometry as a rectangle of weight and height equal to the texture." }, see = {})
+		public static IShape dem(final IScope scope, final GamaFile demFileName, final GamaFile textureFileName, final Double z_factor) {
+			final IGraphics graphics = scope.getGraphics();
+			if ( graphics instanceof IGraphics.OpenGL ) {
+				((IGraphics.OpenGL) graphics).drawDEM(demFileName, textureFileName, scope.getSimulationScope()
+					.getEnvelope(),z_factor);
 			}
 			ILocation location;
 			final IAgent a = scope.getAgentScope();

@@ -141,24 +141,24 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		if ( gridColor != null ) {
 			drawGridLine(img, gridColor);
 		}
-		return drawDEM2(gridValueMatrix, img, isTextured, isTriangulated,isShowText,scope.getSimulationScope().getEnvelope(),getCurrentAlpha(),currentOffset, currentScale);
+		return drawDEM2(gridValueMatrix, img, isTextured, isTriangulated,isShowText,scope.getSimulationScope().getEnvelope(),1.0,getCurrentAlpha(),currentOffset, currentScale);
 	}
 	
 	//Build a grid with a dem corresponding to the value in gridValue and textured by texture
 	public Rectangle2D drawDEM2(final double[] dem, final BufferedImage texture, 
 			final boolean  isTextured, final boolean isTriangulated,final boolean isShowText, 
-			final Envelope env, Double alpha,final GamaPoint offset, final GamaPoint scale) {
+			final Envelope env, final Double z_factor,Double alpha,final GamaPoint offset, final GamaPoint scale) {
 		MyTexture _texture = null;
 		if ( !renderer.getScene().getTextures().containsKey(texture) ) {
 			_texture = renderer.createTexture(texture, false);
 		}
-		renderer.getScene().addDEM(dem, texture,null,isTextured, isTriangulated, isShowText,false, env, alpha, offset, scale);
+		renderer.getScene().addDEM(dem, texture,null,isTextured, isTriangulated, isShowText,false, env, z_factor,alpha, offset, scale);
 		return null;
 	}
 	
 	//Build a dem from a dem.png and a texture.png (used when using the operator dem)
 	@Override
-	public Rectangle2D drawDEM(final GamaFile demFileName, final GamaFile textureFileName, final Envelope env) {
+	public Rectangle2D drawDEM(final GamaFile demFileName, final GamaFile textureFileName, final Envelope env, final Double z_factor) {
 		BufferedImage dem = null;
 		BufferedImage texture = null;
 		try {
@@ -180,7 +180,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		
 		//getASCfromImg(dem);
 		//FIXME: alpha,scale,offset not taken in account when using the operator dem
-		renderer.getScene().addDEM(null, texture, dem, false,false,false, true, env,null,null,null);
+		renderer.getScene().addDEM(null, texture, dem, false,false,false, true, env,z_factor,null,null,null);
 		return null;
 	}
 	

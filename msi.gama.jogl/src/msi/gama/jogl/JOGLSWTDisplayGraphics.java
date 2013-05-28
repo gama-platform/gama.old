@@ -320,7 +320,7 @@ public class JOGLSWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 	@Override
 	public Rectangle2D drawDEM(GamaFile demFileName, GamaFile textureFileName,
-			Envelope env) {
+			Envelope env, final Double z_factor) {
 		// TODO Auto-generated method stub
 		return null;
 	}

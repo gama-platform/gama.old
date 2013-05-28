@@ -113,8 +113,8 @@ public class ModelScene {
 	
 	public void addDEM(final double[] dem, final BufferedImage texture, final BufferedImage demImg,
 			final boolean isTextured, final boolean isTriangulated,final boolean isShowText,  
-			final boolean fromImage, final Envelope env, final Double alpha, GamaPoint offset, GamaPoint scale){
-		dems.add(new DEMObject(dem,texture,demImg,env,isTextured,isTriangulated,isShowText, fromImage, null,offset,scale,alpha));
+			final boolean fromImage, final Envelope env, final Double z_factor,final Double alpha, GamaPoint offset, GamaPoint scale){
+		dems.add(new DEMObject(dem,texture,demImg,env,isTextured,isTriangulated,isShowText, fromImage, z_factor, null,offset,scale,alpha));
 	}
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final double z_layer,

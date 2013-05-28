@@ -215,7 +215,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			double textureHeightInEnvironment = envHeight/textureHeight;
 			
 			//FIXME: Need to set it dynamicly
-			double altFactor = envWidth/100;
+			double altFactor = demObj.z_factor;
 			double maxZ= GetMaxValue(demObj.dem);
 		
 			
@@ -457,7 +457,9 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
                 float w = (float) demObj.envelope.getWidth();
                 float h = (float) demObj.envelope.getHeight();
                
-                float altFactor = (float)demObj.envelope.getWidth()/(10*255);//0.025f;//dem.getWidth();
+                //float altFactor = (float)demObj.envelope.getWidth()/(10*255);//0.025f;//dem.getWidth();
+                
+                float altFactor = demObj.z_factor.floatValue();
                
                 tw = w / cols;
                 th = h / rows;
