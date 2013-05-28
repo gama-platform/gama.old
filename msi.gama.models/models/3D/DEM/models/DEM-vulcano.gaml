@@ -14,14 +14,14 @@ experiment display type: gui {
 	output {
 		display Vulcano  type: opengl ambient_light:255 {
 			graphics GraphicPrimitive {
-				draw dem(dem, texture);
+				draw dem(dem, texture,0.1);
 			}
 		}
 		
-		/*display VulcanoDEM  type: opengl ambient_light:255 {
+		display VulcanoDEM  type: opengl ambient_light:255 {
 			graphics GraphicPrimitive {
-				draw dem(dem, dem);
+				draw dem(dem, dem,0.1);
 			}
-		}*/
+		}
 	}
 }

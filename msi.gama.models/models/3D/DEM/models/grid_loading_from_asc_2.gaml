@@ -25,8 +25,7 @@ experiment gridloading type: gui {
 		display grid type:opengl {
 			grid cell;
 		}
-		
-		
+			
 		display gridTriangulated type:opengl {
 			grid cell  triangulation:false;  
 		}
