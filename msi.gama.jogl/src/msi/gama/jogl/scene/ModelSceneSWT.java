@@ -73,7 +73,7 @@ public class ModelSceneSWT {
 		if ( drawAxes ) {
 			System.out.println(" if draw axes"+renderer.getMaxEnvDim() / 20);
 			this.drawAxes(renderer.gl, renderer.getMaxEnvDim() / 20);
-			drawZValue(-renderer.getMaxEnvDim() / 20, (float) renderer.camera.getzPos());
+			drawZValue(-renderer.getMaxEnvDim() / 20, (float) renderer.camera.getPosition().getZ());
 		}
 		if ( drawBounds ) {
 			this.drawEnvironmentBounds(renderer);

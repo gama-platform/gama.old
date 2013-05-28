@@ -20,16 +20,6 @@ import msi.gama.metamodel.shape.*;
 
 public class Camera extends AbstractCamera {
 
-	public final static double INIT_Z_FACTOR = 1.5;
-
-	public double xPos;
-	public double yPos;
-	private double zPos;
-
-	public double xLPos;
-	public double yLPos;
-	private double zLPos;
-
 	private double pitch;
 	private double yaw;
 
@@ -43,24 +33,21 @@ public class Camera extends AbstractCamera {
 
 	public Camera(JOGLAWTGLRenderer joglawtglRenderer) {
 		super(joglawtglRenderer);
-		setxPos(0);
-		setyPos(0);
-		setzPos(0);
-
-		xLPos = 0;
-		yLPos = 0;
-		setzLPos(10);
+		
+		_target.z = 10;
 		setUpVector(new GamaPoint(0.0, 1.0, 0.0));
 	}
 
 	public Camera(double xPos, double yPos, double zPos, double xLPos, double yLPos, double zLPos, JOGLAWTGLRenderer joglawtglRenderer)  {
-		super(zLPos, zLPos, zLPos, zLPos, zLPos, zLPos, joglawtglRenderer);
-		this.setxPos(xPos);
-		this.setyPos(yPos);
-		this.setzPos(zPos);
-		this.xLPos = xLPos;
-		this.yLPos = yLPos;
-		this.setzLPos(zLPos);
+		super(xPos, yPos, zPos, xLPos, yLPos, zLPos, joglawtglRenderer);
+		
+		_position.x= xPos;
+		_position.y= yPos;
+		_position.z= zPos;
+		
+		_target.x= xLPos;
+		_target.y= yLPos;
+		_target.z= zLPos;
 	}
 
 	public void setPitch(double pitch) {
@@ -73,16 +60,16 @@ public class Camera extends AbstractCamera {
 	
 	@Override
 	public void updatePosition(double xPos, double yPos, double zPos) {
-		this.setxPos(xPos);
-		this.setyPos(yPos);
-		this.setzPos(zPos);
+		_position.x= xPos;
+		_position.y= yPos;
+		_position.z= zPos;
 	}
 
 	@Override
 	public void lookPosition(double xLPos, double yLPos, double zLPos) {
-		this.xLPos = xLPos;
-		this.yLPos = yLPos;
-		this.setzLPos(zLPos);
+		_target.x= xLPos;
+		_target.y= yLPos;
+		_target.z= zLPos;
 	}
 
 	// FIXME: Has been replace by moveXYPlan2 should be remove once every model works well with moveXYPlan2
@@ -92,25 +79,25 @@ public class Camera extends AbstractCamera {
 
 		// System.out.println("diffx" + diffx + "diffy" + diffy + "speed" +speed);
 		// System.out.println("before");
-		// System.out.println("this.getXPos()" + this.getXPos() + "this.getYPos()" + this.getYPos());
-		// System.out.println("this.getXLPos()" + this.getXLPos() + "this.getYPos()" + this.getYLPos());
+		// System.out.println("this._position.getX()" + this._position.getX() + "this.getYPos()" + this.getYPos());
+		// System.out.println("this._target.getX()" + this._target.getX() + "this.getYPos()" + this._target.getY());
 		if ( Math.abs(diffx) > Math.abs(diffy) ) {// Move X
 			speed = Math.abs(diffx) * speed;
 			if ( diffx > 0 ) {// move right
-				this.updatePosition(this.getXPos() - speed, this.getYPos(), this.getzPos());
-				this.lookPosition(this.getXLPos() - speed, this.getYLPos(), this.getZLPos());
+				this.updatePosition(_position.getX() - speed, _position.getY(), _position.getZ());
+				this.lookPosition(_target.getX() - speed, _target.getY(), _target.getZ());
 			} else {// move left
-				this.updatePosition(this.getXPos() + speed, this.getYPos(), this.getzPos());
-				this.lookPosition(this.getXLPos() + speed, this.getYLPos(), this.getZLPos());
+				this.updatePosition(_position.getX() + speed, _position.getY(), _position.getZ());
+				this.lookPosition(_target.getX() + speed, _target.getY(), _target.getZ());
 			}
 		} else if ( Math.abs(diffx) < Math.abs(diffy) ) { // Move Y
 			speed = Math.abs(diffy) * speed;
 			if ( diffy > 0 ) {// move down
-				this.updatePosition(this.getXPos(), this.getYPos() + speed, this.getzPos());
-				this.lookPosition(this.getXLPos(), this.getYLPos() + speed, this.getZLPos());
+				this.updatePosition(_position.getX(), _position.getY() + speed, _position.getZ());
+				this.lookPosition(_target.getX(), _target.getY() + speed, _target.getZ());
 			} else {// move up
-				this.updatePosition(this.getXPos(), this.getYPos() - speed, this.getzPos());
-				this.lookPosition(this.getXLPos(), this.getYLPos() - speed, this.getZLPos());
+				this.updatePosition(_position.getX(), _position.getY() - speed, _position.getZ());
+				this.lookPosition(_target.getX(), _target.getY() - speed, _target.getZ());
 			}
 
 		}
@@ -127,22 +114,22 @@ public class Camera extends AbstractCamera {
 			translationValue = Math.abs(diffx) * ((z + 1) / w);
 
 			if ( diffx > 0 ) {// move right
-				updatePosition(getXPos() - translationValue, getYPos(), getzPos());
-				lookPosition(getXLPos() - translationValue, getYLPos(), getZLPos());
+				updatePosition(_position.getX() - translationValue, _position.getY(), _position.getZ());
+				lookPosition(_target.getX() - translationValue, _target.getY(), _target.getZ());
 			} else {// move left
-				updatePosition(getXPos() + translationValue, getYPos(), getzPos());
-				lookPosition(getXLPos() + translationValue, getYLPos(), getZLPos());
+				updatePosition(_position.getX() + translationValue, _position.getY(), _position.getZ());
+				lookPosition(_target.getX() + translationValue, _target.getY(), _target.getZ());
 			}
 		} else if ( Math.abs(diffx) < Math.abs(diffy) ) { // Move Y
 
 			translationValue = Math.abs(diffy) * ((z + 1) / h);
 
 			if ( diffy > 0 ) {// move down
-				updatePosition(getXPos(), getYPos() + translationValue, getzPos());
-				this.lookPosition(getXLPos(), getYLPos() + translationValue, getZLPos());
+				updatePosition(_position.getX(), _position.getY()+ translationValue, _position.getZ());
+				this.lookPosition(_target.getX(), _target.getY() + translationValue, _target.getZ());
 			} else {// move up
-				updatePosition(getXPos(), getYPos() - translationValue, getzPos());
-				lookPosition(getXLPos(), getYLPos() - translationValue, getZLPos());
+				updatePosition(_position.getX(), _position.getY()- translationValue, _position.getZ());
+				lookPosition(_target.getX(), _target.getY() - translationValue, _target.getZ());
 			}
 		}
 	}
@@ -151,9 +138,9 @@ public class Camera extends AbstractCamera {
 	// magnitude.
 	@Override
 	public void moveForward(double magnitude) {
-		double xCurrent = this.getxPos();
-		double yCurrent = this.getyPos();
-		double zCurrent = this.getzPos();
+		double xCurrent = this._position.getX();
+		double yCurrent = this._position.getY();
+		double zCurrent = this._position.getZ();
 
 		// Spherical coordinates maths
 		double xMovement = magnitude * Math.cos(pitch) * Math.cos(yaw);
@@ -201,9 +188,9 @@ public class Camera extends AbstractCamera {
 
 		moveForward(10);
 
-		double xLook = getxPos();
-		double yLook = getyPos();
-		double zLook = getzPos();
+		double xLook = _position.getX();
+		double yLook = _position.getY();
+		double zLook = _position.getZ();
 
 		moveForward(-10);
 
@@ -211,26 +198,6 @@ public class Camera extends AbstractCamera {
 	}
 
 	/* -------Get commands--------- */
-	@Override
-	public double getXPos() {
-		return getxPos();
-	}
-	@Override
-	public double getYPos() {
-		return getyPos();
-	}
-	@Override
-	public double getXLPos() {
-		return xLPos;
-	}
-	@Override
-	public double getYLPos() {
-		return yLPos;
-	}
-	@Override
-	public double getZLPos() {
-		return getzLPos();
-	}
 	@Override
 	public double getPitch() {
 		return pitch;
@@ -242,55 +209,6 @@ public class Camera extends AbstractCamera {
 	}
 	
 	@Override
-	public double getzPos() {
-		return zPos;
-	}
-	
-	@Override
-	public void setzPos(double zPos) {
-		this.zPos = zPos;
-	}
-	@Override
-	public double getxPos() {
-		return xPos;
-	}
-	@Override
-	public void setxPos(double xPos) {
-		this.xPos = xPos;
-	}
-	@Override
-	public double getyPos() {
-		return yPos;
-	}
-	@Override
-	public void setyPos(double yPos) {
-		this.yPos = yPos;
-	}
-	@Override
-	public double getxLPos() {
-		return xLPos;
-	}
-	@Override
-	public void setxLPos(double xLPos) {
-		this.xLPos = xLPos;
-	}
-	@Override
-	public double getyLPos() {
-		return yLPos;
-	}
-	@Override
-	public void setyLPos(double yLPos) {
-		this.yLPos = yLPos;
-	}
-	@Override
-	public double getzLPos() {
-		return zLPos;
-	}
-	@Override
-	public void setzLPos(double zLPos) {
-		this.zLPos = zLPos;
-	}
-	@Override
 	public void UpdateCamera(GL gl, GLU glu, int width, int height) {
 
 		if ( height == 0 ) {
@@ -299,8 +217,8 @@ public class Camera extends AbstractCamera {
 		float aspect = (float) width / height;
 		// FIXME: need to see the influence of the different parameter.
 		glu.gluPerspective(45.0f, aspect, 0.1f, getMaxDim() * 100);
-		glu.gluLookAt(this.getXPos(), this.getYPos(), this.getzPos(), this.getXLPos(), this.getYLPos(),
-			this.getZLPos(), getUpVector().getX(), getUpVector().getY(), getUpVector().getZ());
+		glu.gluLookAt(this._position.getX(), this._position.getY(), this._position.getZ(), this._target.getX(), this._target.getY(),
+			this._target.getZ(), getUpVector().getX(), getUpVector().getY(), getUpVector().getZ());
 
 	}
 	@Override
@@ -318,21 +236,21 @@ public class Camera extends AbstractCamera {
 		}
 
 		if ( isModelCentered ) {
-			this.setxPos(0);
-			this.setxLPos(0);
-			this.setyPos(0);
-			this.setyLPos(0);
-			this.setzPos(getMaxDim() * INIT_Z_FACTOR);
-			this.setzLPos(0.0f);
+			_position.x = 0;
+			_target.x = 0;
+			_position.y = 0;
+			_target.y = 0;
+			_position.z = getMaxDim() * INIT_Z_FACTOR;
+			_target.z = 0;
 		} else {
-			this.setxPos(envWidth / 2);
-			this.setxLPos(envWidth / 2);
-			this.setyPos(-envHeight / 2);
-			this.setyLPos(-envHeight / 2);
-			this.setzPos(getMaxDim() * INIT_Z_FACTOR);
-			this.setzLPos(0.0f);
+			_position.x = envWidth / 2;
+			_target.x = envWidth / 2;
+			_position.y = -envWidth / 2;
+			_target.y = -envWidth / 2;
+			_position.z = getMaxDim() * INIT_Z_FACTOR;
+			_target.z = 0;
 		}
-		// this.PrintParam();
+		 this.PrintParam();
 	}
 	
 	@Override	
@@ -350,19 +268,19 @@ public class Camera extends AbstractCamera {
 		}
 
 		if ( isModelCentered ) {
-			this.setxPos(x);
-			this.setxLPos(xlpos);
-			this.setyPos(y);
-			this.setyLPos(ylpos);
-			this.setzPos(getMaxDim() * INIT_Z_FACTOR);
-			this.setzLPos(0.0f);
+			_position.x = x;
+			_target.x = xlpos;
+			_position.y = y;
+			_target.y = ylpos;
+			_position.z = getMaxDim() * INIT_Z_FACTOR;
+			_target.z = 0;
 		} else {
-			this.setxPos(envWidth / 2 + x );
-			this.setxLPos(envWidth / 2);
-			this.setyPos(-(envHeight / 2+y));
-			this.setyLPos(-envHeight / 2);
-			this.setzPos(getMaxDim() * INIT_Z_FACTOR);
-			this.setzLPos(0.0f);
+			_position.x = envWidth / 2 + x;
+			_target.x = envWidth / 2;
+			_position.y = -(envHeight / 2+y);
+			_target.y = -envHeight / 2;
+			_position.z = getMaxDim() * INIT_Z_FACTOR;
+			_target.z = 0;
 		}
 		// this.PrintParam();
 	}
@@ -373,28 +291,28 @@ public class Camera extends AbstractCamera {
 		this.pitch = 0.5f;
 
 		if ( isModelCentered ) {
-			this.setxPos(0);
-			this.setxLPos(0);
-			this.setyPos(-envHeight * 1.75 + envHeight / 2);
-			this.setyLPos(-envHeight * 0.5 + envHeight / 2);
-			this.setzPos(getMaxDim() * INIT_Z_FACTOR);
-			this.setzLPos(0);
-
-		} else {
-			this.setxPos(envWidth / 2);
-			this.setxLPos(envWidth / 2);
-			this.setyPos(-envHeight * 1.75);
-			this.setyLPos(-envHeight * 0.5);
-			this.setzPos(getMaxDim());
-			this.setzLPos(0);
+			_position.x = 0;
+			_target.x = 0;
+			_position.y = -envHeight  * 1.75+envHeight/2;
+			_target.y = -envHeight * 0.5+envHeight/2;
+			_position.z = getMaxDim() * INIT_Z_FACTOR;
+			_target.z = 0;
+		}
+		else{
+			_position.x = envWidth / 2;
+			_target.x = envWidth / 2;
+			_position.y = -envHeight  * 1.75;
+			_target.y = -envHeight * 0.5;
+			_position.z = getMaxDim();
+			_target.z = 0;
 		}
 
 		// this.PrintParam();
 	}
 	@Override
 	public void PrintParam() {
-		System.out.println("xPos:" + getxPos() + " yPos:" + getyPos() + " zPos:" + getzPos());
-		System.out.println("xLPos:" + xLPos + " yLPos:" + yLPos + " zLPos:" + getzLPos());
+		System.out.println("xPos:" + _position.x + " yPos:" + _position.y  + " zPos:" + _position.z );
+		System.out.println("xLPos:" + _target.x + " yLPos:" + _target.y + " zLPos:" + _target.z);
 		System.out.println("yaw:" + yaw + " picth:" + pitch);
 	}
 
@@ -424,14 +342,6 @@ public class Camera extends AbstractCamera {
 	@Override
 	public void setUpVector(ILocation upVector) {
 		this.upVector = upVector;
-	}
-	@Override
-	public double getMaxDim() {
-		return maxDim;
-	}
-	@Override
-	public void setMaxDim(double maxDim) {
-		this.maxDim = maxDim;
 	}
 	
 	@Override
@@ -485,14 +395,14 @@ public class Camera extends AbstractCamera {
 			double speed = 0.035;
 
 			// Decrease the speed of the translation if z is negative.
-			if ( getzPos() < 0 ) {
-				speed = speed / Math.abs(getzPos()) * 2;
+			if ( _position.getZ() < 0 ) {
+				speed = speed / Math.abs(_position.getZ()) * 2;
 			} else {
-				speed = speed * Math.abs(getzPos()) / 4;
+				speed = speed * Math.abs(_position.getZ()) / 4;
 			}
 			// camera.PrintParam();
 			// moveXYPlan(diffx, diffy,speed);
-			moveXYPlan2(diffx, diffy, getzPos(), this.myRenderer.getWidth(),
+			moveXYPlan2(diffx, diffy, _position.getZ(), this.myRenderer.getWidth(),
 				this.myRenderer.getHeight());
 		}
 	}

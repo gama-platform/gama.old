@@ -103,13 +103,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		myGLDrawer = new MyGLToyDrawer();
 		canvas = new GLCanvas(cap);
 		canvas.addGLEventListener(this);
-//		canvas.addKeyListener(camera);
+		canvas.addKeyListener(camera);
 		canvas.addMouseListener(camera);
 		canvas.addMouseMotionListener(camera);
 		canvas.addMouseWheelListener(camera);
-//		canvas.setVisible(true);
-//		canvas.setFocusable(true); // To receive key event
-//		canvas.requestFocusInWindow();
+		canvas.setVisible(true);
+		canvas.setFocusable(true); // To receive key event
+		canvas.requestFocusInWindow();
 		animator = new FPSAnimator(canvas, REFRESH_FPS, true);
 		displaySurface = d;
 		dem = new DigitalElevationModelDrawer(this);
@@ -144,6 +144,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	@Override
 	public void init(GLAutoDrawable drawable) {
+		
 		
 		width = drawable.getWidth();
 		height = drawable.getHeight();
@@ -374,8 +375,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glLoadIdentity();
 		glu.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
-		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getzPos(), camera.getXLPos(), camera.getYLPos(),
-			camera.getZLPos(), 0.0, 1.0, 0.0);
+		glu.gluLookAt(camera.getPosition().getX(), camera.getPosition().getY(), camera.getPosition().getZ(), camera.getTarget().getX(), 
+				camera.getTarget().getY(), camera.getTarget().getZ(), 0.0, 1.0, 0.0);
 		arcBall.setBounds(width, height);
 	}
 

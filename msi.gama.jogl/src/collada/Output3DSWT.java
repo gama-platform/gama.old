@@ -136,7 +136,7 @@ public class Output3DSWT {
 				animVec.appendChild(animCurveElt);
 			}
 			sceneElt.appendChild(animVec);
-		}
+		} 
 		sceneElt.appendChild(groupElt);
 
 		// defining the camera
@@ -144,9 +144,9 @@ public class Output3DSWT {
 		cameraGroupElt.setAttribute("id", "cameraOffset");
 		Element cameraElt = doc.createElement("camera");
 		cameraElt.setAttribute("id", "maincamera");
-		cameraElt.setAttribute("loc_x", "" + openGLGraphicsGLRender.camera.getxPos());
-		cameraElt.setAttribute("loc_y", "" + openGLGraphicsGLRender.camera.getyPos());
-		cameraElt.setAttribute("loc_z", "" + openGLGraphicsGLRender.camera.getzPos());
+		cameraElt.setAttribute("loc_x", "" + openGLGraphicsGLRender.camera.getPosition().getX());
+		cameraElt.setAttribute("loc_y", "" + openGLGraphicsGLRender.camera.getPosition().getY());
+		cameraElt.setAttribute("loc_z", "" + openGLGraphicsGLRender.camera.getPosition().getZ());
 		cameraElt.setAttribute("rot_order", "ROT_XZY");
 		cameraElt.setAttribute("xtype", "C_ORTHO");
 		cameraElt.setAttribute("rot_x", "0");

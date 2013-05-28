@@ -16,6 +16,7 @@ import javax.media.opengl.glu.GLU;
 import com.sun.opengl.util.BufferUtil;
 
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
+import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
 import msi.gama.metamodel.shape.ILocation;
 
 
@@ -46,8 +47,17 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 	public int lastxPressed;
 	public int lastyPressed;
 	
+	protected Vector3D _position;
+	protected Vector3D _target;
+	
+	public final static double INIT_Z_FACTOR = 1.5;
+	
 	public AbstractCamera(JOGLAWTGLRenderer renderer) {
 		myRenderer = renderer;
+		
+    	_position = new Vector3D();
+    	_target = new Vector3D();
+		
 		detectMacOS();
 		mousePosition = new Point(0, 0);
 	}
@@ -77,56 +87,21 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 
 	/* -------Get commands--------- */
 
-	public double getXPos() {
-		return 0;}
-
-	public double getYPos() {
-		return 0;}
-
-	public double getXLPos() {
-		return 0;}
-
-	public double getYLPos() {
-		return 0;}
-
-	public double getZLPos() {
-		return 0;}
-
+	public Vector3D getPosition()
+	{
+		return _position;
+	}
+	
+	public Vector3D getTarget()
+	{
+		return _target;
+	}
+	
 	public double getPitch() {
 		return 0;}
 
 	public double getYaw() {
 		return 0;}
-
-	public double getzPos() {
-		return 0;}
-
-	public void setzPos(double zPos) {}
-
-	public double getxPos() {
-		return 0;}
-
-	public void setxPos(double xPos) {}
-
-	public double getyPos() {
-		return 0;}
-
-	public void setyPos(double yPos) {}
-
-	public double getxLPos() {
-		return 0;}
-
-	public void setxLPos(double xLPos) {}
-
-	public double getyLPos() {
-		return 0;}
-
-	public void setyLPos(double yLPos) {}
-
-	public double getzLPos() {
-		return 0;}
-
-	public void setzLPos(double zLPos) {}
 
 	public void UpdateCamera(GL gl, GLU glu, int width, int height) {}
 
@@ -152,11 +127,6 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 		return null;}
 
 	public void setUpVector(ILocation upVector) {}
-
-	public double getMaxDim() {
-		return 0;}
-
-	public void setMaxDim(double maxDim) {}
 	
 	
 	/*---------------------------------------*/
@@ -322,6 +292,14 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 			double y, double xlpos, double ylpos) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	public double getMaxDim() {
+		return maxDim;
+	}
+	
+	public void setMaxDim(double maxDim) {
+		this.maxDim = maxDim;
 	}
 
 }

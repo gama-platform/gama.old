@@ -78,7 +78,7 @@ public class ModelScene {
 	public void draw(JOGLAWTGLRenderer renderer, boolean picking, boolean drawAxes, boolean drawBounds) {
 		if ( drawAxes ) {
 			this.drawAxes(renderer.gl, renderer.getMaxEnvDim() / 20);
-			drawZValue(-renderer.getMaxEnvDim() / 20, (float) renderer.camera.getzPos());
+			drawZValue(-renderer.getMaxEnvDim() / 20, (float) renderer.camera.getPosition().getZ());
 		}
 		if ( drawBounds ) {
 			this.drawEnvironmentBounds(renderer);

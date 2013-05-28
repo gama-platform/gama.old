@@ -167,14 +167,14 @@ public class MyListenerSWT implements Listener {
 								double speed = 0.035;
 
 								// Decrease the speed of the translation if z is negative.
-								if ( myCamera.getzPos() < 0 ) {
-									speed = speed / Math.abs(myCamera.getzPos()) * 2;
+								if ( myCamera.getPosition().getZ() < 0 ) {
+									speed = speed / Math.abs(myCamera.getPosition().getZ()) * 2;
 								} else {
-									speed = speed * Math.abs(myCamera.getzPos()) / 4;
+									speed = speed * Math.abs(myCamera.getPosition().getZ()) / 4;
 								}
 								// camera.PrintParam();
 								// myCamera.moveXYPlan(diffx, diffy,speed);
-								myCamera.moveXYPlan2(diffx, diffy, myCamera.getzPos(), this.myRenderer.getWidth(),
+								myCamera.moveXYPlan2(diffx, diffy, myCamera.getPosition().getZ(), this.myRenderer.getWidth(),
 									this.myRenderer.getHeight());
 							}
 						}

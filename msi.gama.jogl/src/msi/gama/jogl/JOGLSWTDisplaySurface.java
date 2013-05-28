@@ -422,39 +422,39 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 	public void zoomIn() {
 		float incrementalZoomStep;
 		// Check if Z is not equal to 0 (avoid being block on z=0)
-		if ( renderer.camera.getzPos() != 0 ) {
-			incrementalZoomStep = (float) renderer.camera.getzPos() / 10;
+		if ( renderer.camera.getPosition().getZ() != 0 ) {
+			incrementalZoomStep = (float) renderer.camera.getPosition().getZ() / 10;
 		} else {
 			incrementalZoomStep = 0.1f;
 		}
-		renderer.camera.setzPos(renderer.camera.getzPos() - incrementalZoomStep);
-		renderer.camera.setzLPos(renderer.camera.getzLPos() - incrementalZoomStep);
-		setZoomLevel(renderer.camera.getMaxDim() * Camera.INIT_Z_FACTOR / renderer.camera.getzPos());
+		renderer.camera.getPosition().setZ(renderer.camera.getPosition().getZ() - incrementalZoomStep);
+		renderer.camera.getTarget().setZ(renderer.camera.getTarget().getZ() - incrementalZoomStep);
+		setZoomLevel(renderer.camera.getMaxDim() * Camera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
 		// FIXME Approximate
 		resizeImage((int) (getWidth() * zoomLevel), (int) (getHeight() * zoomLevel));
-		// setZoomLevel(zoomLevel + zoomLevel * 0.1);
-		updateDisplay();
+		//setZoomLevel(zoomLevel + zoomLevel * 0.1);
+		//updateDisplay();
 		zoomFit = false;
-
 	}
 
 	@Override
 	public void zoomOut() {
 		float incrementalZoomStep;
 		// Check if Z is not equal to 0 (avoid being block on z=0)
-		if ( renderer.camera.getzPos() != 0 ) {
-			incrementalZoomStep = (float) renderer.camera.getzPos() / 10;
+		if ( renderer.camera.getPosition().getZ() != 0 ) {
+			incrementalZoomStep = (float) renderer.camera.getPosition().getZ() / 10;
 		} else {
 			incrementalZoomStep = 0.1f;
 		}
-		renderer.camera.setzPos(renderer.camera.getzPos() + incrementalZoomStep);
-		renderer.camera.setzLPos(renderer.camera.getzLPos() + incrementalZoomStep);
-		setZoomLevel(renderer.camera.getMaxDim() * Camera.INIT_Z_FACTOR / renderer.camera.getzPos());
+		renderer.camera.getPosition().setZ(renderer.camera.getPosition().getZ() + incrementalZoomStep);
+		renderer.camera.getTarget().setZ(renderer.camera.getTarget().getZ() + incrementalZoomStep);
+		setZoomLevel(renderer.camera.getMaxDim() * Camera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
 		// FIXME Approximate
 		resizeImage((int) (getWidth() * zoomLevel), (int) (getHeight() * zoomLevel));
-		updateDisplay();
+		//updateDisplay();
 		zoomFit = false;
 	}
+
 
 	@Override
 	public void zoomFit() {

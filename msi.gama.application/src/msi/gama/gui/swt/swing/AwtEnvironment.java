@@ -388,7 +388,7 @@ public final class AwtEnvironment {
 						}
 					}
 				}
-				return true;
+				return false;
 			}
 
 		});

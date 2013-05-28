@@ -20,8 +20,7 @@ public class FreeFlyCamera extends AbstractCamera {
 	
 	public Vector3D _forward;
 	public Vector3D _left;
-	public Vector3D _position;
-	public Vector3D _target;
+
 	public double _theta;
 	public double _phi;
 	
@@ -30,15 +29,13 @@ public class FreeFlyCamera extends AbstractCamera {
 	
 	public boolean forward, backward, strafeLeft, strafeRight;
 	
-	public final static double INIT_Z_FACTOR = 1.5;
 	
 	public FreeFlyCamera(JOGLAWTGLRenderer renderer)
     {      
     	super(renderer);
     	_forward = new Vector3D();
     	_left = new Vector3D();
-    	_position = new Vector3D();
-    	_target = new Vector3D();
+    	
     	_phi = 0.0;
         _theta = 0.0;
         
@@ -95,7 +92,7 @@ public class FreeFlyCamera extends AbstractCamera {
     
     @Override
     public void UpdateCamera(GL gl,GLU glu, int width, int height)
-    {
+    {	
     	
     	float aspect = (float) width / height;
     	    	
@@ -104,8 +101,11 @@ public class FreeFlyCamera extends AbstractCamera {
                 _target.x,_target.y,_target.z,
                 0.0f,0.0f,1.0f);
     	
-    	//animate();
-//    	PrintParam();
+    	animate();
+
+    	gl.glRotated(-90.0,0.0,0.0,1.0);
+
+    	PrintParam();
     }
     
     @Override
@@ -128,12 +128,12 @@ public class FreeFlyCamera extends AbstractCamera {
 		else{
 			_position.x = envWidth / 2;
 			_target.x = envWidth / 2;
-			_position.y = envWidth / 2;
-			_target.y = envWidth / 2;
+			_position.y = -envWidth / 2;
+			_target.y = -envWidth / 2;
 			_position.z = (float) (maxDim*1.5);
 			_target.z = 0;
 		}
-		PrintParam();
+//		PrintParam();
 
 	}
   	
@@ -168,13 +168,13 @@ public class FreeFlyCamera extends AbstractCamera {
 		if(arg0.getWheelRotation() > 0)
 		{
 			_position = _position.subtract(_forward.scalarMultiply(_speed*800)); //on recule
-			myRenderer.displaySurface.setZoomLevel(myRenderer.camera.getMaxDim() * INIT_Z_FACTOR / getzPos());
+			myRenderer.displaySurface.setZoomLevel(myRenderer.camera.getMaxDim() * INIT_Z_FACTOR / _position.getZ());
 			_target = _forward.add(_position.x, _position.y, _position.z); //comme on a bougé, on recalcule la cible fixée par la caméra
 		}
 		else
 		{
 			_position = _position.add(_forward.scalarMultiply(_speed*800)); //on avance
-			myRenderer.displaySurface.setZoomLevel(myRenderer.camera.getMaxDim() * INIT_Z_FACTOR / getzPos());
+			myRenderer.displaySurface.setZoomLevel(myRenderer.camera.getMaxDim() * INIT_Z_FACTOR / _position.getZ());
 			_target = _forward.add(_position.x, _position.y, _position.z); //comme on a bougé, on recalcule la cible fixée par la caméra
 		}
 	}
@@ -206,7 +206,7 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-		PrintParam();
+//		PrintParam();
 	}
 
 	@Override
@@ -252,16 +252,19 @@ public class FreeFlyCamera extends AbstractCamera {
 	public void keyPressed(KeyEvent arg0) {
 		switch (arg0.getKeyCode()) {
 		case VK_LEFT: 
-			//System.out.println("left arrow");
+			System.out.println("left arrow");
 			strafeLeft = true;
 			break;
 		case VK_RIGHT: 
+			System.out.println("left arrow");
 			strafeRight = true;
 			break;
 		case VK_UP:
+			System.out.println("left arrow");
 			forward = true;
 			break;
 		case VK_DOWN:
+			System.out.println("left arrow");
 			backward = true;
 			break;
 		}
@@ -290,10 +293,6 @@ public class FreeFlyCamera extends AbstractCamera {
 		System.out.println("left arrow");
 	}
 	
-	@Override
-	public double getzPos() {
-		return _position.z;	}
-	
 	public double getMaxDim() {
 		return maxDim;}
 	
@@ -301,7 +300,7 @@ public class FreeFlyCamera extends AbstractCamera {
 	public void PrintParam() {
 		System.out.println("xPos:" + _position.x + " yPos:" + _position.y  + " zPos:" + _position.z );
 		System.out.println("xLPos:" + _target.x + " yLPos:" + _target.y + " zLPos:" + _target.z);
-		System.out.println("_forwardX:" + _forward.x + " _forwardY:" + _forward.y + " _forwardZ:" + _forward.z);
+//		System.out.println("_forwardX:" + _forward.x + " _forwardY:" + _forward.y + " _forwardZ:" + _forward.z);
 
 	}
 	

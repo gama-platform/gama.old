@@ -245,8 +245,8 @@ public class JOGLSWTGLRenderer /*implements GLEventListener*/ {
 		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glLoadIdentity();
 		glu.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
-		glu.gluLookAt(camera.getXPos(), camera.getYPos(), camera.getzPos(), camera.getXLPos(), camera.getYLPos(),
-			camera.getZLPos(), 0.0, 1.0, 0.0);
+		glu.gluLookAt(camera.getPosition().getX(), camera.getPosition().getY(), camera.getPosition().getZ(), camera.getTarget().getX(), 
+				camera.getTarget().getY(), camera.getTarget().getZ(), 0.0, 1.0, 0.0);
 		arcBall.setBounds(width, height);		
 	}
 

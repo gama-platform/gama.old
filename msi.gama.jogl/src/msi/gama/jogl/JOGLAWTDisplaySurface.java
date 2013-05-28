@@ -50,7 +50,7 @@ import collada.Output3D;
 import com.vividsolutions.jts.geom.Envelope;
 
 @display("opengl")
-public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface implements IDisplaySurface.OpenGL, KeyListener {
+public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface implements IDisplaySurface.OpenGL{
 
 	private static final long serialVersionUID = 1L;
 	private PopupMenu agentsMenu = new PopupMenu();
@@ -152,11 +152,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		// zoomFit();
 		// new way
 		// createIGraphics();
-		this.setEnabled(true);
 		this.setVisible(true);
-		this.setFocusable(true);
-		this.requestFocus();
-		this.addKeyListener(this);
+
 
 		addComponentListener(new ComponentAdapter() {
 
@@ -392,14 +389,14 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public void zoomIn() {
 		float incrementalZoomStep;
 		// Check if Z is not equal to 0 (avoid being block on z=0)
-		if ( renderer.camera.getzPos() != 0 ) {
-			incrementalZoomStep = (float) renderer.camera.getzPos() / 10;
+		if ( renderer.camera.getPosition().getZ() != 0 ) {
+			incrementalZoomStep = (float) renderer.camera.getPosition().getZ() / 10;
 		} else {
 			incrementalZoomStep = 0.1f;
 		}
-		renderer.camera.setzPos(renderer.camera.getzPos() - incrementalZoomStep);
-		renderer.camera.setzLPos(renderer.camera.getzLPos() - incrementalZoomStep);
-		setZoomLevel(renderer.camera.getMaxDim() * Camera.INIT_Z_FACTOR / renderer.camera.getzPos());
+		renderer.camera.getPosition().setZ(renderer.camera.getPosition().getZ() - incrementalZoomStep);
+		renderer.camera.getTarget().setZ(renderer.camera.getTarget().getZ() - incrementalZoomStep);
+		setZoomLevel(renderer.camera.getMaxDim() * Camera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
 		// FIXME Approximate
 		resizeImage((int) (getWidth() * zoomLevel), (int) (getHeight() * zoomLevel));
 		//setZoomLevel(zoomLevel + zoomLevel * 0.1);
@@ -411,14 +408,14 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public void zoomOut() {
 		float incrementalZoomStep;
 		// Check if Z is not equal to 0 (avoid being block on z=0)
-		if ( renderer.camera.getzPos() != 0 ) {
-			incrementalZoomStep = (float) renderer.camera.getzPos() / 10;
+		if ( renderer.camera.getPosition().getZ() != 0 ) {
+			incrementalZoomStep = (float) renderer.camera.getPosition().getZ() / 10;
 		} else {
 			incrementalZoomStep = 0.1f;
 		}
-		renderer.camera.setzPos(renderer.camera.getzPos() + incrementalZoomStep);
-		renderer.camera.setzLPos(renderer.camera.getzLPos() + incrementalZoomStep);
-		setZoomLevel(renderer.camera.getMaxDim() * Camera.INIT_Z_FACTOR / renderer.camera.getzPos());
+		renderer.camera.getPosition().setZ(renderer.camera.getPosition().getZ() + incrementalZoomStep);
+		renderer.camera.getTarget().setZ(renderer.camera.getTarget().getZ() + incrementalZoomStep);
+		setZoomLevel(renderer.camera.getMaxDim() * Camera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
 		// FIXME Approximate
 		resizeImage((int) (getWidth() * zoomLevel), (int) (getHeight() * zoomLevel));
 		//updateDisplay();
@@ -456,7 +453,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	@Override
 	public void togglePicking() {
 
-		if ( picking == false ) {
+		if ( picking == false && !switchCamera ) {
 			threeD = false;
 			zoomFit();
 		}
@@ -634,24 +631,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		renderer.switchCamera();
 		zoomFit();
 		updateDisplay();
-	}
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
-		System.out.println("listener surface");
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-		System.out.println("listener surface");
-	}
-
-	@Override
-	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		System.out.println("listener surface");
 	}
 
 }
