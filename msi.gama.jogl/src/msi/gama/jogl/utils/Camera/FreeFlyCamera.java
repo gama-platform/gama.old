@@ -82,7 +82,7 @@ public class FreeFlyCamera extends AbstractCamera {
     {
     	 	if (this.forward) 
     	 	{
-    	 		if(ctrlKeyDown)
+    	 		if(shiftKeyDown)
     	 		{				
     	 			_phi -= -_keyboardSensivity*_sensivity; 	 			
     	 			vectorsFromAngles();
@@ -90,30 +90,33 @@ public class FreeFlyCamera extends AbstractCamera {
     	 		else
     	 			_position = _position.add(_forward.scalarMultiply(_speed*200)); //go forward
     	 	}
-    	    if (this.backward)
-    	    	if(ctrlKeyDown)
+    	    if (this.backward){
+    	    	if(shiftKeyDown)
     	 		{				
     	 			_phi -= _keyboardSensivity*_sensivity;   	 			
     	 			vectorsFromAngles();
     	 		}
     	 		else
     	    	_position = _position.subtract(_forward.scalarMultiply(_speed*200)); //go backward
-    	    if (this.strafeLeft)
-    	    	if(ctrlKeyDown)
+    	    }
+    	    if (this.strafeLeft){
+    	    	if(shiftKeyDown)
     	 		{
     	 			_theta -= -_keyboardSensivity*_sensivity;					
     	 			vectorsFromAngles();
     	 		}
     	 		else
     	    	_position = _position.add(_left.scalarMultiply(_speed*200)); //move on the right
-    	    if (this.strafeRight)
-    	    	if(ctrlKeyDown)
+    	    }
+    	    if (this.strafeRight){
+    	    	if(shiftKeyDown)
     	 		{
     	 			_theta -= _keyboardSensivity*_sensivity;					
     	 			vectorsFromAngles();
     	 		}
     	 		else
     	    	_position = _position.subtract(_left.scalarMultiply(_speed*200)); //move on the left
+    	    }
   	    
     	    _target = _forward.add(_position.x, _position.y, _position.z);
     }
@@ -283,22 +286,23 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	@Override
 	public void keyPressed(KeyEvent arg0) {
+		System.out.println();
 		switch (arg0.getKeyCode()) {
 		case VK_LEFT: 
 			strafeLeft = true;
-			ctrlKeyDown = checkCtrlKeyDown(arg0);
+			shiftKeyDown = checkShiftKeyDown(arg0);
 			break;
 		case VK_RIGHT: 
 			strafeRight = true;
-			ctrlKeyDown = checkCtrlKeyDown(arg0);
+			shiftKeyDown = checkShiftKeyDown(arg0);
 			break;
 		case VK_UP:
 			forward = true;
-			ctrlKeyDown = checkCtrlKeyDown(arg0);
+			shiftKeyDown = checkShiftKeyDown(arg0);
 			break;
 		case VK_DOWN:
 			backward = true;
-			ctrlKeyDown = checkCtrlKeyDown(arg0);
+			shiftKeyDown = checkShiftKeyDown(arg0);
 			break;
 		}
 	}
@@ -308,19 +312,15 @@ public class FreeFlyCamera extends AbstractCamera {
 		switch (arg0.getKeyCode()) {
 		case VK_LEFT: // player turns left (scene rotates right)
 			strafeLeft = false;
-			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
 		case VK_RIGHT: // player turns right (scene rotates left)
 			strafeRight = false;
-			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
 		case VK_UP:
 			forward = false;
-			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
 		case VK_DOWN:
 			backward = false;
-			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
 		}
 	}

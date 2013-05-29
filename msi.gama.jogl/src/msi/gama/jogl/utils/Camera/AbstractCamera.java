@@ -56,6 +56,8 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 	
 	public boolean forward, backward, strafeLeft, strafeRight;
 	public boolean ctrlKeyDown = false;
+	public boolean shiftKeyDown = false;
+
 	
 	public AbstractCamera(JOGLAWTGLRenderer renderer) {
 		myRenderer = renderer;
@@ -192,6 +194,10 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 			specicalKeyDown = event.isControlDown();
 		}
 		return specicalKeyDown;
+	}
+	
+	protected boolean checkShiftKeyDown(KeyEvent event) {
+		return event.isShiftDown();
 	}
 
 	protected boolean detectMacOS() {
