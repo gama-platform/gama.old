@@ -27,6 +27,7 @@ public class Camera extends AbstractCamera {
 	private double envHeight;
 
 	private ILocation upVector;
+	
 
 
 
@@ -35,6 +36,8 @@ public class Camera extends AbstractCamera {
 		super(joglawtglRenderer);
 		
 		_target.z = 10;
+		_keyboardSensivity= 4;
+
 		setUpVector(new GamaPoint(0.0, 1.0, 0.0));
 	}
 
@@ -48,6 +51,8 @@ public class Camera extends AbstractCamera {
 		_target.x= xLPos;
 		_target.y= yLPos;
 		_target.z= zLPos;
+		
+		_keyboardSensivity= 4;
 	}
 
 	public void setPitch(double pitch) {
@@ -220,7 +225,26 @@ public class Camera extends AbstractCamera {
 		glu.gluLookAt(this._position.getX(), this._position.getY(), this._position.getZ(), this._target.getX(), this._target.getY(),
 			this._target.getZ(), getUpVector().getX(), getUpVector().getY(), getUpVector().getZ());
 
+		animate();
 	}
+	
+  	@Override
+    public void animate()
+    {
+    	 	if (this.forward) 
+    			moveXYPlan2(0, _keyboardSensivity, _position.getZ(), this.myRenderer.getWidth(),
+    						this.myRenderer.getHeight());
+    	    if (this.backward)
+    	    	moveXYPlan2(0, -_keyboardSensivity, _position.getZ(), this.myRenderer.getWidth(),
+    						this.myRenderer.getHeight());  
+    	    if (this.strafeLeft)
+    	    	moveXYPlan2(_keyboardSensivity, 0, _position.getZ(), this.myRenderer.getWidth(),
+    						this.myRenderer.getHeight());    	    
+    	    if (this.strafeRight)
+    	    	moveXYPlan2(-_keyboardSensivity, 0, _position.getZ(), this.myRenderer.getWidth(),
+    						this.myRenderer.getHeight());  
+    }
+	
 	@Override
 	public void initializeCamera(double envWidth, double envHeight) {
 
@@ -250,7 +274,7 @@ public class Camera extends AbstractCamera {
 			_position.z = getMaxDim() * INIT_Z_FACTOR;
 			_target.z = 0;
 		}
-		 this.PrintParam();
+//		 this.PrintParam();
 	}
 	
 	@Override	
@@ -375,12 +399,12 @@ public class Camera extends AbstractCamera {
 	public void mouseDragged(MouseEvent arg0) {
 
 		if ( isArcBallOn(arg0) && isModelCentered || myRenderer.displaySurface.selectRectangle ) {
-			if ( !myRenderer.displaySurface.picking ) {
+//			if ( !myRenderer.displaySurface.picking ) {
 				if ( SwingUtilities.isLeftMouseButton(arg0) ) {
 					myRenderer.drag(arg0.getPoint());
 					mousePosition.x = arg0.getX();
 					mousePosition.y = arg0.getY();
-				}
+//				}
 			}
 		} else {
 			// check the difference between the current x and the last x position
@@ -434,11 +458,11 @@ public class Camera extends AbstractCamera {
 
 		if ( isArcBallOn(arg0) && isModelCentered || myRenderer.displaySurface.selectRectangle ) {
 			// Arcball is not working with picking.
-			if ( !myRenderer.displaySurface.picking ) {
+//			if ( !myRenderer.displaySurface.picking ) {
 				if ( SwingUtilities.isLeftMouseButton(arg0) ) {
 					myRenderer.startDrag(arg0.getPoint());
 				}
-			}
+//			}
 			enableROIDrawing = true;
 		}
 
@@ -467,25 +491,21 @@ public class Camera extends AbstractCamera {
 	@Override
 	public void keyPressed(KeyEvent arg0) {
 		switch (arg0.getKeyCode()) {
-		case VK_LEFT: // player turns left (scene rotates right)
-			strafeLeft(0.1);
-			look(10);
+		case VK_LEFT: 
+			strafeLeft = true;
+			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
-		case VK_RIGHT: // player turns right (scene rotates left)
-			strafeRight(0.1);
-			look(10);
+		case VK_RIGHT: 
+			strafeRight = true;
+			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
 		case VK_UP:
-			// cameraZPosition += 0.1;
-			// cameraLZPosition += 0.1;
-			moveForward(0.1);
-			look(10);
+			forward = true;
+			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
 		case VK_DOWN:
-			// myWorld.cameraZPosition -= 0.1;
-			// myWorld.cameraLZPosition -= 0.1;
-			moveForward(-0.1);
-			look(10);
+			backward = true;
+			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
 		case KeyEvent.VK_PAGE_UP:
 			pitchDown(0.05);
@@ -513,7 +533,26 @@ public class Camera extends AbstractCamera {
 	}
 
 	@Override
-	public void keyReleased(KeyEvent arg0) {}
+	public void keyReleased(KeyEvent arg0) {
+		switch (arg0.getKeyCode()) {
+		case VK_LEFT: // player turns left (scene rotates right)
+			strafeLeft = false;
+			ctrlKeyDown = checkCtrlKeyDown(arg0);
+			break;
+		case VK_RIGHT: // player turns right (scene rotates left)
+			strafeRight = false;
+			ctrlKeyDown = checkCtrlKeyDown(arg0);
+			break;
+		case VK_UP:
+			forward = false;
+			ctrlKeyDown = checkCtrlKeyDown(arg0);
+			break;
+		case VK_DOWN:
+			backward = false;
+			ctrlKeyDown = checkCtrlKeyDown(arg0);
+			break;
+		}
+	}
 
 	@Override
 	public void keyTyped(KeyEvent arg0) {}
