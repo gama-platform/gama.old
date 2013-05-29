@@ -45,7 +45,7 @@ public class GuiUtils {
 	public static final String AGENT_VIEW_ID = "msi.gama.application.view.AgentInspectView";
 	public static final String DYNAMIC_VIEW_ID = "msi.gama.application.view.DynamicAgentInspectView";
 	public static final String LAYER_VIEW_ID = "msi.gama.application.view.LayeredDisplayView";
-	public static final String SWT_LAYER_VIEW_ID = "msi.gama.jogl.view.SWTLayeredDisplayView";
+	public static final String SWT_LAYER_VIEW_ID = "msi.gama.application.view.SWTLayeredDisplayView";
 	public static final String ERROR_VIEW_ID = "msi.gama.application.view.ErrorView";
 	public static final String PARAMETER_VIEW_ID = "msi.gama.application.view.ParameterView";
 
@@ -326,8 +326,8 @@ public class GuiUtils {
 	 * @return
 	 */
 	public static IDisplaySurface getDisplaySurfaceFor(final String keyword, final IDisplayOutput layerDisplayOutput,
-		final double w, final double h) {
-		return gui != null ? gui.getDisplaySurfaceFor(keyword, layerDisplayOutput, w, h) : null;
+		final double w, final double h, Object...args) {
+		return gui != null ? gui.getDisplaySurfaceFor(keyword, layerDisplayOutput, w, h, args) : null;
 	}
 
 	public static void clearErrors() {

@@ -58,6 +58,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	protected Point mousePosition;
 	private ActionListener menuListener;
 	private ActionListener focusListener;
+	private ActionListener followListener;
 	private boolean output3D = false;
 	// Environment properties useful to set the camera position.
 
@@ -84,6 +85,10 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	
 	// Use to toggle the Rotation view
 	public boolean rotation = false;
+	
+	//Used to follow an agent
+	public boolean followAgent = false;
+	public IAgent agent;
 
 	// Use to draw .shp file
 	final String[] shapeFileName = new String[1];
@@ -94,7 +99,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	// private: the class of the Output3D manager
 	Output3D output3DManager;
 
-	public JOGLAWTDisplaySurface() {
+	public JOGLAWTDisplaySurface(Object...args) {
 		displayBlock = new Runnable() {
 
 			// Remove all the already existing entity in openGLGraphics and redraw the existing ones.
@@ -241,6 +246,10 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			MenuItem focusItem = new AgentMenuItem("Focus", macro, display);
 			focusItem.addActionListener(focusListener);
 			macroMenu.add(focusItem);
+			
+			MenuItem followItem = new AgentMenuItem("Follow", macro, display);
+			focusItem.addActionListener(followListener);
+			macroMenu.add(followItem);
 
 			if ( micros != null && !micros.isEmpty() ) {
 				Menu microsMenu = new Menu("Micro agents");
@@ -287,6 +296,21 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 				IAgent a = source.getAgent();
 				if ( a != null ) {
 					focusOn(a.getGeometry(), source.getDisplay());
+				}
+			}
+
+		};
+		
+		followListener = new ActionListener() {
+
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				AgentMenuItem source = (AgentMenuItem) e.getSource();
+				IAgent a = source.getAgent();
+				if ( a != null ) {
+					System.out.println("follow Agent performed");
+					agent = a;
+					followAgent = !followAgent;
 				}
 			}
 

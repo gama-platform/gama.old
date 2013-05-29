@@ -286,8 +286,8 @@ public class OutputManager extends Symbol implements IOutputManager {
 
 	@Override
 	public IDisplaySurface getDisplaySurfaceFor(final String keyword, final IDisplayOutput layerDisplayOutput,
-		final double w, final double h) {
-		if ( displays != null ) { return GuiUtils.getDisplaySurfaceFor(keyword, layerDisplayOutput, w, h); }
+		final double w, final double h, Object...args) {
+		if ( displays != null ) { return GuiUtils.getDisplaySurfaceFor(keyword, layerDisplayOutput, w, h,args); }
 		return null;
 		// return new ImageDisplaySurface(w, h);
 	}

@@ -115,7 +115,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	}
 
-	public AWTDisplaySurface() {
+	public AWTDisplaySurface(Object...args) {
 		displayBlock = new Runnable() {
 
 			@Override

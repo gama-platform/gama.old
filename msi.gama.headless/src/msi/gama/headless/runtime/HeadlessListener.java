@@ -216,7 +216,7 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public IDisplaySurface getDisplaySurfaceFor(final String keyword, final IDisplayOutput layerDisplayOutput,
-		final double w, final double h) {
+		final double w, final double h, Object...args) {
 		// FIXME Raw dynamic version -- the map needs to be created and cached somewhere
 
 		Map<String, Class> displayClasses = new HashMap();

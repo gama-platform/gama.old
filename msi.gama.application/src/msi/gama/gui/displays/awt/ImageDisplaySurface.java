@@ -51,6 +51,9 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public static String snapshotFolder = "/tmp/";
 	public double envWidth, envHeight;
 
+	public ImageDisplaySurface(Object...args){
+		super();
+	}
 	/**
 	 * @see msi.gama.common.interfaces.IDisplaySurface#initialize(double, double, msi.gama.outputs.IDisplayOutput)
 	 */

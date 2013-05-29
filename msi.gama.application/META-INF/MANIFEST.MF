@@ -30,8 +30,7 @@ Bundle-Vendor: MSI
 Bundle-Version: 1.6
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: msi.gama.application;singleton:=true
-Import-Package: msi.gama.jogl.view,
- msi.gama.precompiler,
+Import-Package: msi.gama.precompiler,
  org.apache.log4j,
  org.eclipse.emf.ecore
 Bundle-ClassPath: .

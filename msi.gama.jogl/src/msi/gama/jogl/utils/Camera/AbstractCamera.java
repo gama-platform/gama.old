@@ -17,6 +17,7 @@ import com.sun.opengl.util.BufferUtil;
 
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
 
 
@@ -51,6 +52,10 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 	protected Vector3D _target;
 	
 	public final static double INIT_Z_FACTOR = 1.5;
+	public double _keyboardSensivity;
+	
+	public boolean forward, backward, strafeLeft, strafeRight;
+	public boolean ctrlKeyDown = false;
 	
 	public AbstractCamera(JOGLAWTGLRenderer renderer) {
 		myRenderer = renderer;
@@ -84,6 +89,8 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 	public void strafeRight(double magnitude) {}
 	
 	public void look(double distanceAway) {}
+	
+	public void animate(){}
 
 	/* -------Get commands--------- */
 
@@ -172,6 +179,17 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 			specicalKeyDown = mouseEvent.isMetaDown();
 		} else {
 			specicalKeyDown = mouseEvent.isControlDown();
+		}
+		return specicalKeyDown;
+	}
+	
+	// add for check Meta Button pressed in MAC Os or Ctrl in Window OS
+	protected boolean checkCtrlKeyDown(KeyEvent event) {
+		boolean specicalKeyDown = false;
+		if ( isMacOS ) {
+			specicalKeyDown = event.isMetaDown();
+		} else {
+			specicalKeyDown = event.isControlDown();
 		}
 		return specicalKeyDown;
 	}
@@ -289,10 +307,7 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 	}
 
 	public void circleCamera(double envWidth, double envHeight, double x,
-			double y, double xlpos, double ylpos) {
-		// TODO Auto-generated method stub
-		
-	}
+			double y, double xlpos, double ylpos) {}
 	
 	public double getMaxDim() {
 		return maxDim;
@@ -301,5 +316,7 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 	public void setMaxDim(double maxDim) {
 		this.maxDim = maxDim;
 	}
+
+	public void followAgent(IAgent a, GLU glu) {}
 
 }

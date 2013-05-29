@@ -486,7 +486,7 @@ public class JavaWriter {
 		String name = segments[0];
 		String clazz = segments[1];
 		sb.append(concat(in, "_display(", toJavaString(name), ",", toClassObject(clazz), ", new IDisplayCreator(){",
-			OVERRIDE, "public IDisplaySurface create(){return new ", clazz, "();}}"));
+			OVERRIDE, "public IDisplaySurface create(Object...args){return new ", clazz, "(args);}}"));
 		sb.append(");");
 	}
 

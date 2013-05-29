@@ -15,6 +15,8 @@ import javax.swing.SwingUtilities;
 
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
+import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.ILocation;
 
 public class FreeFlyCamera extends AbstractCamera {
 	
@@ -27,8 +29,6 @@ public class FreeFlyCamera extends AbstractCamera {
 	public double _speed;
 	public double _sensivity;
 	
-	public boolean forward, backward, strafeLeft, strafeRight;
-	
 	
 	public FreeFlyCamera(JOGLAWTGLRenderer renderer)
     {      
@@ -39,8 +39,9 @@ public class FreeFlyCamera extends AbstractCamera {
     	_phi = 0.0;
         _theta = 0.0;
         
-        _speed = 0.02;
+        _speed = 0.04;
         _sensivity = 0.4;
+        _keyboardSensivity= 4;
         
         forward = false;
         backward = false;
@@ -69,24 +70,51 @@ public class FreeFlyCamera extends AbstractCamera {
 	    _forward.y = r_temp*Math.sin((_theta*Math.PI)/180.f);
 	    
 	    _left = Vector3D.crossProduct(up, _forward);
-	    _left.normalize();
+	    //_left.normalize();
 	    
 	//calculate the target of the camera
 	    _target = _forward.add(_position.x, _position.y, _position.z);
 	    
     }
     
+  	@Override
     public void animate()
     {
     	 	if (this.forward) 
-    	        _position = _position.add(_forward.scalarMultiply(_speed*200)); //go forward
+    	 	{
+    	 		if(ctrlKeyDown)
+    	 		{				
+    	 			_phi -= -_keyboardSensivity*_sensivity; 	 			
+    	 			vectorsFromAngles();
+    	 		}
+    	 		else
+    	 			_position = _position.add(_forward.scalarMultiply(_speed*200)); //go forward
+    	 	}
     	    if (this.backward)
+    	    	if(ctrlKeyDown)
+    	 		{				
+    	 			_phi -= _keyboardSensivity*_sensivity;   	 			
+    	 			vectorsFromAngles();
+    	 		}
+    	 		else
     	    	_position = _position.subtract(_forward.scalarMultiply(_speed*200)); //go backward
     	    if (this.strafeLeft)
+    	    	if(ctrlKeyDown)
+    	 		{
+    	 			_theta -= -_keyboardSensivity*_sensivity;					
+    	 			vectorsFromAngles();
+    	 		}
+    	 		else
     	    	_position = _position.add(_left.scalarMultiply(_speed*200)); //move on the right
-    	    if (this.strafeRight) 
+    	    if (this.strafeRight)
+    	    	if(ctrlKeyDown)
+    	 		{
+    	 			_theta -= _keyboardSensivity*_sensivity;					
+    	 			vectorsFromAngles();
+    	 		}
+    	 		else
     	    	_position = _position.subtract(_left.scalarMultiply(_speed*200)); //move on the left
-    	    
+  	    
     	    _target = _forward.add(_position.x, _position.y, _position.z);
     }
     
@@ -97,20 +125,24 @@ public class FreeFlyCamera extends AbstractCamera {
     	float aspect = (float) width / height;
     	    	
 		glu.gluPerspective(45.0f, aspect, 0.1f, maxDim*10);
-    	glu.gluLookAt(_position.x,_position.y,_position.z,
-                _target.x,_target.y,_target.z,
-                0.0f,0.0f,1.0f);
-    	
+
+		glu.gluLookAt(_position.x,_position.y,_position.z,
+				_target.x,_target.y,_target.z,
+				0.0f,0.0f,1.0f);
     	animate();
 
-    	gl.glRotated(-90.0,0.0,0.0,1.0);
-
-    	PrintParam();
+//    	PrintParam();
     }
+    
+	public void followAgent(IAgent a, GLU glu) {
+		ILocation l = a.getLocation();
+		glu.gluLookAt(l.getX(), l.getY(), l.getZ(),
+				l.getX(), l.getY(), l.getZ()+a.getHeading(),
+				 0.0f,0.0f,1.0f);
+	}
     
     @Override
   	public void initializeCamera(double envWidth, double envHeight) {
-
 		if (envWidth > envHeight) {
 			maxDim = envWidth;
 		} else {
@@ -120,7 +152,7 @@ public class FreeFlyCamera extends AbstractCamera {
 		if(isModelCentered){
 			_position.x = 0;
 			_target.x = 0;
-			_position.y = -1;
+			_position.y = 0;
 			_target.y = 0;
 			_position.z = (float) (maxDim*1.5);
 			_target.z = 0;
@@ -133,6 +165,11 @@ public class FreeFlyCamera extends AbstractCamera {
 			_position.z = (float) (maxDim*1.5);
 			_target.z = 0;
 		}
+		
+		_phi -= 90;
+		_theta -= -90;
+		vectorsFromAngles();
+		
 //		PrintParam();
 
 	}
@@ -198,11 +235,7 @@ public class FreeFlyCamera extends AbstractCamera {
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent arg0) {
-//		if (SwingUtilities.isLeftMouseButton(arg0))
-//		{
-//		}
-	}
+	public void mouseMoved(MouseEvent arg0) {}
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
@@ -252,20 +285,20 @@ public class FreeFlyCamera extends AbstractCamera {
 	public void keyPressed(KeyEvent arg0) {
 		switch (arg0.getKeyCode()) {
 		case VK_LEFT: 
-			System.out.println("left arrow");
 			strafeLeft = true;
+			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
 		case VK_RIGHT: 
-			System.out.println("left arrow");
 			strafeRight = true;
+			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
 		case VK_UP:
-			System.out.println("left arrow");
 			forward = true;
+			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
 		case VK_DOWN:
-			System.out.println("left arrow");
 			backward = true;
+			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
 		}
 	}
@@ -275,22 +308,25 @@ public class FreeFlyCamera extends AbstractCamera {
 		switch (arg0.getKeyCode()) {
 		case VK_LEFT: // player turns left (scene rotates right)
 			strafeLeft = false;
+			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
 		case VK_RIGHT: // player turns right (scene rotates left)
 			strafeRight = false;
+			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
 		case VK_UP:
 			forward = false;
+			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
 		case VK_DOWN:
 			backward = false;
+			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
 		}
 	}
 
 	@Override
 	public void keyTyped(KeyEvent arg0) {
-		System.out.println("left arrow");
 	}
 	
 	public double getMaxDim() {

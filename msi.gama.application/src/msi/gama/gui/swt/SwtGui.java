@@ -837,12 +837,12 @@ public class SwtGui implements IGui {
 
 	@Override
 	public IDisplaySurface getDisplaySurfaceFor(final String keyword, final IDisplayOutput layerDisplayOutput,
-		final double w, final double h) {
+		final double w, final double h, Object...args) {
 
 		IDisplaySurface surface = null;
 		IDisplayCreator creator = displays.get(keyword);
 		if ( creator != null ) {
-			surface = creator.create();
+			surface = creator.create(args);
 			surface.initialize(w, h, layerDisplayOutput);
 		} else {
 			throw GamaRuntimeException.error("Display " + keyword + " is not defined anywhere.");

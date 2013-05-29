@@ -64,9 +64,9 @@
       <view
             allowMultiple="true"
             category="msi.gama.gui.category.gama"
-            class="msi.gama.jogl.view.SWTLayeredDisplayView"
+            class="msi.gama.gui.views.SWTLayeredDisplayView"
             icon="icons/view_layers.png"
-            id="msi.gama.jogl.view.SWTLayeredDisplayView"
+            id="msi.gama.application.view.SWTLayeredDisplayView"
             name="DisplaySWT"
             restorable="false">
       </view>

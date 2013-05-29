@@ -35,6 +35,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.ILayerStatement;
+import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.GAMA.InScope;
@@ -54,7 +55,7 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import collada.Output3DSWT;
 
 import com.vividsolutions.jts.geom.Envelope;
-
+@display("swt")
 public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface implements IDisplaySurface.OpenGL {
 
 	public Menu agentsMenu;
@@ -97,6 +98,10 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 	
 	public IDisplayOutput output;
 
+	public JOGLSWTDisplaySurface(Object...args) {
+		this((Composite)args[0], (Integer)args[1]);
+	}
+	
 	public JOGLSWTDisplaySurface(Composite parent, int style) {
 		super(parent, style);
 		// TODO Auto-generated constructor stub

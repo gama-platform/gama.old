@@ -1,43 +1,24 @@
-package msi.gama.jogl.view;
+package msi.gama.gui.views;
 
 import java.awt.Color;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.GLContext;
-import javax.media.opengl.GLDrawableFactory;
-import javax.media.opengl.glu.GLU;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.awt.SWT_AWT;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.opengl.GLCanvas;
-import org.eclipse.swt.opengl.GLData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveListener;
-import org.eclipse.ui.IWorkbenchPage;
-
-
 import msi.gama.common.interfaces.EditorListener;
+import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.perspectives.ModelingPerspective;
-import msi.gama.gui.views.LayeredDisplayView;
-import msi.gama.gui.views.SWTNavigationPanel;
-import msi.gama.jogl.JOGLSWTDisplaySurface;
 import msi.gama.outputs.LayeredDisplayOutput;
+import msi.gama.runtime.GAMA;
 
-import javax.media.opengl.GLContext;
-import javax.media.opengl.GLDrawableFactory;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.IWorkbenchPage;
 
 public class SWTLayeredDisplayView extends LayeredDisplayView {
 
@@ -139,9 +120,10 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 	
 	public void createSurface(Composite c)
 	{
-		GLData gldata = new GLData();
-        gldata.doubleBuffer = true;
-		JOGLSWTDisplaySurface s = new JOGLSWTDisplaySurface(c,SWT.NO_BACKGROUND);
+//		GLData gldata = new GLData();
+//        gldata.doubleBuffer = true;
+		IDisplaySurface s = GAMA.getExperiment().getOutputManager().getDisplaySurfaceFor("swt", getOutput(), ((LayeredDisplayOutput) getOutput()).getEnvWidth(), ((LayeredDisplayOutput) getOutput()).getEnvHeight(), c,SWT.NO_BACKGROUND);
+//		JOGLSWTDisplaySurface s = new JOGLSWTDisplaySurface(c,SWT.NO_BACKGROUND);
 		s.initialize(((LayeredDisplayOutput) getOutput()).getEnvWidth(),((LayeredDisplayOutput) getOutput()).getEnvHeight(),getOutput());
 
 		getOutput().setSurface(s);

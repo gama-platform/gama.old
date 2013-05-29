@@ -2,6 +2,6 @@ package msi.gama.common.interfaces;
 
 public interface IDisplayCreator {
 
-	IDisplaySurface create();
+	IDisplaySurface create(Object...args);
 
 }
