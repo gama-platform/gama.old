@@ -16,7 +16,7 @@ global {
 	const green type: rgb <- rgb('green') ;
 	const white type: rgb <- rgb('white') ; 
 	const FF00FF type: rgb <- rgb('gray') ; 
-	const C00CC00 type: rgb <- rgb('#00CC00') ;   
+	const C00CC00 type: rgb <- rgb('#00CC00') ;    
 	const C009900 type: rgb <- rgb('#009900') ; 
 	const C005500 type: rgb <- rgb('#005500') ; 
 	const yellow type: rgb <- rgb('yellow') ; 
@@ -91,7 +91,7 @@ entities {
 		}
 		aspect text {
 			if use_icons {
-				draw image: hasFood ? file(ant_shape_full) : file(ant_shape_empty) rotate: heading at: my location size: 3 ;
+				draw  hasFood ? file(ant_shape_full) : file(ant_shape_empty) rotate: heading at: my location size: 16°px ;
 			} else {
 					draw circle(1.0) empty: !hasFood color: rgb ('orange') ;
 			}
@@ -111,7 +111,7 @@ experiment Ant type: gui {
 	parameter 'Use icons for the agents:' var: use_icons category: 'Display' ;
 	parameter 'Display state of agents:' var: display_state category: 'Display' ;
 	output {
-		display Ants refresh_every: 1 type:opengl {
+		display Ants refresh_every: 1 type: opengl{
 			grid ant_grid ;
 			species ant aspect: text ;
 		}
