@@ -16,19 +16,19 @@ global {
 } 
 
 environment width: environment_width height: environment_height {
-	grid cell width: environment_width height: environment_height neighbours: 8  {
+	grid cell width: environment_width height: environment_height neighbours: 8 use_neighbours_cache: false use_regular_agents: true  {
 		rgb color <- rgb('white') update: (center closest_to (self)).color;
 	}
 }
 
 entities {	 
-	species center skills: [moving] {
+	species center skills: [moving] { 
 		rgb color <- rgb([rnd (255),rnd (255),rnd (255)]);
 		reflex wander {
 			do wander amplitude: 90;
 		}  
 		aspect default {  
-			draw circle(3) color: color;
+			draw square(3) color: color;
 		}
 	}
 }
