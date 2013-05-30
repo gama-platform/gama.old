@@ -4,7 +4,7 @@ import 'bug.gaml'
 
 
 global{
-	int distance parameter: 'Distance' min: 1 <- 20 category: 'Model';	
+	int distance parameter: 'Distance' min: 1 <- 5 category: 'Model';	
 }
 
 entities{
@@ -19,7 +19,7 @@ entities{
 		//two node are connected if their euclidian distance is smaller than a given value.
 		bool related_to(node other){
 			using topology(target){
-				return (target distance_to other.target) < distance;
+				return (target.location distance_to other.target.location) < distance;
 			}
 		}
 		aspect base{
@@ -27,7 +27,7 @@ entities{
 		}
 		aspect dynamic{
 		int degree <-(my_graph) degree_of(self);
-		  draw sphere(1+ (degree / 5.0)) color: rgb('blue');
+		  draw sphere(1+ (degree / 5.0)) color: rgb('blue'); 
 		}
 
    }
