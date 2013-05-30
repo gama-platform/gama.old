@@ -73,8 +73,7 @@ global {
 environment bounds: environment_bounds;
 
 entities {
-	species pedestrian skills: [situated, moving] topology: ( topology (shape - (corridor_wall_0_shape + corridor_wall_1_shape)) ) frequency: 1 schedules: shuffle (list (pedestrian)) {
-//		var shape <-  (copy(pedestrian_shape)) type: geometry;
+	species pedestrian skills: [moving] topology: ( topology (shape - (corridor_wall_0_shape + corridor_wall_1_shape)) ) /*schedules: shuffle (list (pedestrian)*/ {
 		geometry shape <-  circle (pedestrian_size);
 		point initial_location;
 		point target_location;
@@ -178,8 +177,8 @@ entities {
 		corridor target;
 		
 		aspect my_aspect {
-			draw text: 'Captured pedestrians: ' + (string (length (target.members))) color: rgb ('blue') size: 12°px at: {(target.location).x - 480, (target.location).y};
-			draw text: 'Pedestrians: ' + (string (length (list (pedestrian)))) color: rgb ('blue') size: 12°px at: {(target.location).x - 135, (target.location).y + 100};
+			draw  'Captured pedestrians: ' + (string (length (target.members))) color: rgb ('blue') size: 12°px at: {(target.location).x - 480, (target.location).y};
+			draw  'Pedestrians: ' + (string (length (list (pedestrian)))) color: rgb ('blue') size: 12°px at: {(target.location).x - 135, (target.location).y + 100};
 		}
 	}
 	
@@ -191,7 +190,7 @@ entities {
 		}
 		
 		aspect my_aspect { 
-			draw text: 'WALL' color: rgb ('green') size: 15°px at: {(location).x - 40, (location).y};
+			draw 'WALL' color: rgb ('green') size: 15°px at: {(location).x - 40, (location).y};
 		}
 	}
 }
