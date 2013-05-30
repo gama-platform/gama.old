@@ -39,13 +39,14 @@ global {
 }
 
 environment width: environment_width height: environment_height {
-	grid life_cell width: environment_width height: environment_height neighbours: 8 torus: torus_environment use_individual_shapes: false use_regular_agents: false frequency: 0{
+	grid life_cell width: environment_width height: environment_height neighbours: 8 torus: torus_environment use_individual_shapes: false use_regular_agents: false frequency: 0 use_neighbours_cache: false {
 		bool new_state;
+		list<life_cell> neighbours <- self neighbours_at 1;
 		bool state <- (rnd(100)) < density ;
 		rgb color <- state ? livingcolor : deadcolor ;  
 		
 		action evolve {
-			let living type: int <- (self neighbours_at 1) count each.state ;
+			let living type: int <- neighbours count each.state ;
 			if  state {
 				set new_state <- living in living_conditions ;
 				set color <- new_state ? livingcolor : dyingcolor ;
@@ -75,7 +76,7 @@ experiment life type: gui{
 	parameter 'Color of dead cells:' var: deadcolor category: 'Colors' ;
 	
 	output {
-		display Life type: opengl{
+		display Life {
 			grid life_cell ;
 		}
 		inspect name: 'Agents' type: agent ;
