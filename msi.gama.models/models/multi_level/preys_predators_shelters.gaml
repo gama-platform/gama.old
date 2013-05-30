@@ -2,7 +2,7 @@ model preys_predators_shelters
 
 global { 
 	rgb prey_color <- rgb ('green') const: true;
-	float prey_perception <- 3.0;
+	float prey_perception <- 20.0;
 	float prey_size <- 2.0 const: true;
 	float prey_speed <- 1.0;
 	rgb prey_flee_color <- rgb ('orange');
@@ -39,7 +39,7 @@ entities {
 	species prey skills: [moving] control: fsm {
 		geometry shape <- square (prey_size);
 		rgb color <- prey_color;
-		list nearby_predators of: predator value: (agents_overlapping (shape + prey_perception)) of_species predator;
+		list nearby_predators value: (agents_overlapping (shape + prey_perception)) of_species predator;
 		int invisible_time min: 1 init: int(time);
 
 		shelter nearest_shelter;		
@@ -139,7 +139,7 @@ entities {
 		
 		aspect default {
 			draw geometry:shape color: shelter_color;
-			draw text: 'Members: ' + (string (length ((members)))) color: rgb ('white') size: 8 at: {(location).x - 20, (location).y};
+			draw text: 'Members: ' + (string (length ((members)))) color: rgb ('white') size: 6 at: {(location).x - 20, (location).y};
 		}
 	}
 
