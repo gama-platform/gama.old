@@ -79,6 +79,7 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	Boolean isTriangulated = false;
 	Boolean showText = false;
 	GamaColor currentColor, constantColor;
+	int cellSize;
 	// HashSet<IAgent> agents;
 	private IExpression setOfAgents;
 
@@ -131,6 +132,7 @@ public class GridLayerStatement extends AbstractLayerStatement {
 		} else if ( !gridPop.isGrid() ) { throw GamaRuntimeException.error("not a grid environment for: " + getName()); }
 
 		grid = (IGrid) gridPop.getTopology().getPlaces();
+
 		// agents = new HashSet<IAgent>();
 		// agents.addAll(computeAgents());
 		// if ( supportImage != null ) {

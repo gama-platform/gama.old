@@ -50,7 +50,7 @@ public interface IGraphics {
 	public abstract Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix, 
 			final boolean isTextured, final boolean isTriangulated,final boolean isShowText,
 			final ILocation locationInModelUnits, final ILocation sizeInModelUnits, Color gridColor, final Integer angle,
-			Double z, boolean isDynamic);
+			Double z, boolean isDynamic, final int cellSize);
 
 	public abstract Rectangle2D drawImage(final IScope scope, final BufferedImage img,
 		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, Color gridColor, final Integer angle,

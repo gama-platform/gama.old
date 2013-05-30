@@ -136,23 +136,23 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img,final double[] gridValueMatrix,  
 			final boolean isTextured, final boolean isTriangulated,final boolean isShowText,
 			final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final Color gridColor, final Integer angle, final Double z,
-		final boolean isDynamic) {
+		final boolean isDynamic, final int cellSize) {
 		//FIXME : need to chek the drawGridLIne method
 		if ( gridColor != null ) {
 			drawGridLine(img, gridColor);
 		}
-		return drawDEM2(gridValueMatrix, img, isTextured, isTriangulated,isShowText,scope.getSimulationScope().getEnvelope(),1.0,getCurrentAlpha(),currentOffset, currentScale);
+		return drawDEM2(gridValueMatrix, img, isTextured, isTriangulated,isShowText,scope.getSimulationScope().getEnvelope(),1.0,getCurrentAlpha(),currentOffset, currentScale, cellSize);
 	}
 	
 	//Build a grid with a dem corresponding to the value in gridValue and textured by texture
 	public Rectangle2D drawDEM2(final double[] dem, final BufferedImage texture, 
 			final boolean  isTextured, final boolean isTriangulated,final boolean isShowText, 
-			final Envelope env, final Double z_factor,Double alpha,final GamaPoint offset, final GamaPoint scale) {
+			final Envelope env, final Double z_factor,Double alpha,final GamaPoint offset, final GamaPoint scale,final int cellSize) {
 		MyTexture _texture = null;
 		if ( !renderer.getScene().getTextures().containsKey(texture) ) {
 			_texture = renderer.createTexture(texture, false);
 		}
-		renderer.getScene().addDEM(dem, texture,null,isTextured, isTriangulated, isShowText,false, env, z_factor,alpha, offset, scale);
+		renderer.getScene().addDEM(dem, texture,null,isTextured, isTriangulated, isShowText,false, env, z_factor,alpha, offset, scale, cellSize);
 		return null;
 	}
 	
@@ -180,7 +180,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		
 		//getASCfromImg(dem);
 		//FIXME: alpha,scale,offset not taken in account when using the operator dem
-		renderer.getScene().addDEM(null, texture, dem, false,false,false, true, env,z_factor,null,null,null);
+		renderer.getScene().addDEM(null, texture, dem, false,false,false, true, env,z_factor,null,null,null,1);
 		return null;
 	}
 	

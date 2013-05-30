@@ -49,6 +49,7 @@ public class GridLayer extends ImageLayer {
 	private boolean isTriangulated;
 	private boolean isShowText;
 	private boolean drawAsDEM;
+	private int cellSize;
 
 	public GridLayer(final ILayerStatement layer) {
 		super(layer);
@@ -83,6 +84,8 @@ public class GridLayer extends ImageLayer {
 		final GridLayerStatement g = (GridLayerStatement) definition;
 		final IGrid m = g.getEnvironment();
 		final ILocation p = m.getDimensions();
+		cellSize=(int) m.getAgents().get(0).getGeometry().getEnvelope().getWidth();
+		
 		if ( image == null ) {
 			image = ImageUtils.createCompatibleImage(p.getX(), p.getY());
 		}
@@ -143,10 +146,10 @@ public class GridLayer extends ImageLayer {
 			} catch (final IOException e) {
 				e.printStackTrace();
 			}
-			dg.drawGrid(scope, texture, gridValueMatrix,isTextured,isTriangulated,isShowText,null, null, lineColor, null, 0.0, true);
+			dg.drawGrid(scope, texture, gridValueMatrix,isTextured,isTriangulated,isShowText,null, null, lineColor, null, 0.0, true,cellSize);
 		}
 		else{
-			dg.drawGrid(scope, image, gridValueMatrix,isTextured,isTriangulated,isShowText,null, null, lineColor, null, 0.0, true);		
+			dg.drawGrid(scope, image, gridValueMatrix,isTextured,isTriangulated,isShowText,null, null, lineColor, null, 0.0, true,cellSize);		
 		}
 			
 			

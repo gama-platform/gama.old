@@ -203,8 +203,8 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			
 			if(!demObj.fromImage){
 			//Get Environment Properties
-			double envWidth = demObj.envelope.getWidth();
-			double envHeight = demObj.envelope.getHeight();
+			double envWidth = demObj.envelope.getWidth()/demObj.cellSize;
+			double envHeight = demObj.envelope.getHeight()/demObj.cellSize;
 			double envWidthStep = 1/envWidth;
             double envHeightStep = 1/ envHeight;
 			
@@ -222,33 +222,8 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			double x1,x2,y1,y2;
 			Double zValue=0.0;
 			double stepX, stepY;
-			
-			boolean drawLines = false;
-			boolean drawContour = true;
-		
-			
-			
-			//Draw grid only with  the lines
-			if(drawLines){
-				renderer.gl.glColor3f(0.0f, 0.0f, 0.0f);
-				renderer.gl.glLineWidth(0.0001f);
-				
-				for ( int i = 0; i <= textureWidth; i++ ){			
-					stepX = (i / textureWidth) * envWidth;
-					renderer.gl.glBegin(GL_LINES);
-					renderer.gl.glVertex3d(stepX, 0.0, 0.0);
-					renderer.gl.glVertex3d(stepX, -envHeight, 0.0);
-					renderer.gl.glEnd();
-				}
-				for ( int i = 0; i <= textureHeight; i++ ){
-					stepY = (i / textureHeight) * envHeight;
-					renderer.gl.glBegin(GL_LINES);
-					renderer.gl.glVertex3d(0.0, -stepY, 0.0);
-					renderer.gl.glVertex3d(envWidth, -stepY,0.0);
-					renderer.gl.glEnd();
-				}
-			}
-			
+
+
 			//Draw Grid with square 
 			// if texture draw with color coming from the texture and z according to gridvalue
 			// else draw the grid with color according the gridValue in gray value
@@ -267,47 +242,34 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 						y1 = (j / envHeight) * envHeight;
 						y2 = ((j+1) / envHeight) * envHeight;
 						if (demObj.dem != null){
-							zValue = demObj.dem[(int)(j*envWidth+i)];
+							zValue = demObj.dem[(int)(j*(envWidth)+i)];
 						}
 
 						if(demObj.isTextured){
 							renderer.gl.glBegin(GL_QUADS);
 							renderer.gl.glTexCoord2d(envWidthStep*i, envHeightStep*j);
-							renderer.gl.glVertex3d(x1, -y1, zValue*altFactor);
+							renderer.gl.glVertex3d(x1*demObj.cellSize, -y1*demObj.cellSize, zValue*altFactor);
 							renderer.gl.glTexCoord2d(envWidthStep*(i+1), envHeightStep*(j));
-							renderer.gl.glVertex3d(x2, -y1, zValue*altFactor);
+							renderer.gl.glVertex3d(x2*demObj.cellSize, -y1*demObj.cellSize, zValue*altFactor);
 							renderer.gl.glTexCoord2d(envWidthStep*(i+1), envHeightStep*(j+1));
-							renderer.gl.glVertex3d(x2, -y2, zValue*altFactor);
+							renderer.gl.glVertex3d(x2*demObj.cellSize, -y2*demObj.cellSize, zValue*altFactor);
 							renderer.gl.glTexCoord2d(envWidthStep*i, envHeightStep*(j+1));
-							renderer.gl.glVertex3d(x1, -y2, zValue*altFactor);
+							renderer.gl.glVertex3d(x1*demObj.cellSize, -y2*demObj.cellSize, zValue*altFactor);
 							renderer.gl.glEnd();
 						}
 						else{
 							renderer.gl.glColor3d(zValue/maxZ, zValue/maxZ, zValue/maxZ);
 							renderer.gl.glBegin(GL_QUADS);
-							renderer.gl.glVertex3d(x1, -y1, zValue*altFactor);
-							renderer.gl.glVertex3d(x2, -y1, zValue*altFactor);
-							renderer.gl.glVertex3d(x2, -y2, zValue*altFactor);
-							renderer.gl.glVertex3d(x1, -y2, zValue*altFactor);
+							renderer.gl.glVertex3d(x1*demObj.cellSize, -y1*demObj.cellSize, zValue*altFactor);
+							renderer.gl.glVertex3d(x2*demObj.cellSize, -y1*demObj.cellSize, zValue*altFactor);
+							renderer.gl.glVertex3d(x2*demObj.cellSize, -y2*demObj.cellSize, zValue*altFactor);
+							renderer.gl.glVertex3d(x1*demObj.cellSize, -y2*demObj.cellSize, zValue*altFactor);
 							renderer.gl.glEnd();
-							
-							if(drawContour){
-								renderer.gl.glColor3d(0.0, 0.0, 0.0);
-								renderer.gl.glBegin(GL_LINE_STRIP);
-								renderer.gl.glVertex3d(x1, -y1, zValue*altFactor);
-								renderer.gl.glVertex3d(x1, -y2, zValue*altFactor);
-								renderer.gl.glVertex3d(x2, -y2, zValue*altFactor);
-								renderer.gl.glVertex3d(x2, -y1, zValue*altFactor);
-								renderer.gl.glVertex3d(x1, -y1, zValue*altFactor);
-								renderer.gl.glEnd();
-							}
 						}
 					}
 				}
 			}
 			
-
-	      drawContour= false;
 	      Double z1= 0.0;
 	      Double z2= 0.0;
 	      Double z3= 0.0;
@@ -359,41 +321,25 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 						if(demObj.isTextured){
 							renderer.gl.glBegin(GL.GL_TRIANGLE_STRIP);
 							renderer.gl.glTexCoord2d(envWidthStep*i, envHeightStep*j);
-							renderer.gl.glVertex3d(x1, -y1, z1*altFactor);
+							renderer.gl.glVertex3d(x1*demObj.cellSize, -y1*demObj.cellSize, z1*altFactor);
 							renderer.gl.glTexCoord2d(envWidthStep*i, envHeightStep*(j+1));
-							renderer.gl.glVertex3d(x1, -y2, z2*altFactor);
+							renderer.gl.glVertex3d(x1*demObj.cellSize, -y2*demObj.cellSize, z2*altFactor);
 							renderer.gl.glTexCoord2d(envWidthStep*(i+1), envHeightStep*(j));
-							renderer.gl.glVertex3d(x2, -y1, z4*altFactor);
+							renderer.gl.glVertex3d(x2*demObj.cellSize, -y1*demObj.cellSize, z4*altFactor);
 							renderer.gl.glTexCoord2d(envWidthStep*(i+1), envHeightStep*(j+1));
-							renderer.gl.glVertex3d(x2, -y2, z3*altFactor);
+							renderer.gl.glVertex3d(x2*demObj.cellSize, -y2*demObj.cellSize, z3*altFactor);
 							renderer.gl.glEnd();
 						}
 						else{
 						
 						renderer.gl.glColor3d(zValue/maxZ, zValue/maxZ, zValue/maxZ);
 						renderer.gl.glBegin(GL.GL_TRIANGLE_STRIP);
-						renderer.gl.glVertex3d(x1, -y1, z1*altFactor);
-						renderer.gl.glVertex3d(x1, -y2, z2*altFactor);
-						renderer.gl.glVertex3d(x2, -y1, z4*altFactor);
-						renderer.gl.glVertex3d(x2, -y2, z3*altFactor);
+						renderer.gl.glVertex3d(x1*demObj.cellSize, -y1*demObj.cellSize, z1*altFactor);
+						renderer.gl.glVertex3d(x1*demObj.cellSize, -y2*demObj.cellSize, z2*altFactor);
+						renderer.gl.glVertex3d(x2*demObj.cellSize, -y1*demObj.cellSize, z4*altFactor);
+						renderer.gl.glVertex3d(x2*demObj.cellSize, -y2*demObj.cellSize, z3*altFactor);
 						renderer.gl.glEnd();
 						}
-						
-						/*if(drawContour){
-							renderer.gl.glColor3d(0.0, 0.0, 0.0);
-							renderer.gl.glBegin(GL_LINE_STRIP);
-							renderer.gl.glVertex3d(x1, -y1, z1*altFactor);
-							renderer.gl.glVertex3d(x1, -y2, z2*altFactor);
-							renderer.gl.glVertex3d(x2, -y1, z4*altFactor);
-							renderer.gl.glVertex3d(x1, -y1, z1*altFactor);
-							renderer.gl.glEnd();
-							renderer.gl.glBegin(GL_LINE_STRIP);
-							renderer.gl.glVertex3d(x1, -y2, z2*altFactor);
-							renderer.gl.glVertex3d(x2, -y1, z4*altFactor);
-							renderer.gl.glVertex3d(x2, -y2, z3*altFactor);
-							renderer.gl.glVertex3d(x1, -y2, z2*altFactor);
-							renderer.gl.glEnd();
-						}*/
 					}
 				}
 			}

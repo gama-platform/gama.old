@@ -565,8 +565,8 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 					IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
 					while (!surface.canBeUpdated()) {
 						try {
-							Thread.sleep(10);
-						} catch (InterruptedException e) {
+								Thread.sleep(10);
+							} catch (InterruptedException e) {
 
 						}
 					}

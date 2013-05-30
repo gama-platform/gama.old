@@ -330,7 +330,7 @@ public class JOGLSWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			double[] gridValueMatrix, boolean isTextured,
 			boolean isTriangulated, boolean isShowText,
 			ILocation locationInModelUnits, ILocation sizeInModelUnits,
-			Color gridColor, Integer angle, Double z, boolean isDynamic) {
+			Color gridColor, Integer angle, Double z, boolean isDynamic, final int cellSize) {
 		// TODO Auto-generated method stub
 		return null;
 	}
