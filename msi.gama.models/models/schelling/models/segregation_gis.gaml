@@ -78,7 +78,7 @@ entities {
 		aspect gis {
 			let color <- empty(insiders) ? rgb('white') : rgb( [mean (insiders collect each.red), mean (insiders collect each.green), mean (insiders collect each.blue)]);
 			let pp <- one_of(space as list);
-			draw shape color: color depth: rnd(100);
+			draw shape color: color depth: length(insiders) * 10 border: rgb("black");
 		} 
 	}
 }
