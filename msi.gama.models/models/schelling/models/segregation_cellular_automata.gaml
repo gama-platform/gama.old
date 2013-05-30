@@ -21,7 +21,7 @@ global {
 	}
 
 	reflex migrate {
-		ask all_people {
+		ask copy(all_people) {
 			do migrate;
 		}
 
