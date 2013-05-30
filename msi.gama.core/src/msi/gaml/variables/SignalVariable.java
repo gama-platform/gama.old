@@ -104,7 +104,7 @@ public class SignalVariable extends NumberVariable {
 	private final Short signalType;
 	private final Double prop, range, variation;
 	private final String envName;
-	private IGrid environment; // Lazily built
+	// private IGrid environment; // Lazily built
 	private final IExpression typeExpr, propExpr, rangeExpr, variationExpr;
 
 	public SignalVariable(final IDescription sd) throws GamaRuntimeException {
@@ -143,10 +143,7 @@ public class SignalVariable extends NumberVariable {
 	}
 
 	private IGrid getEnvironment(final IScope scope) {
-		if ( environment == null ) {
-			environment = (IGrid) scope.getSimulationScope().getPopulationFor(envName).getTopology().getPlaces();
-		}
-		return environment;
+		return (IGrid) scope.getSimulationScope().getPopulationFor(envName).getTopology().getPlaces();
 	}
 
 }

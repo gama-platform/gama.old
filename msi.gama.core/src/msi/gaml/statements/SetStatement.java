@@ -25,7 +25,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
@@ -57,10 +57,10 @@ public class SetStatement extends AbstractStatement {
 	}
 
 	@Override
-	protected Object privateExecuteIn(final IScope stack) throws GamaRuntimeException {
-		Object val = value.value(stack);
-		varExpr.setVal(stack, val, isLet());
-		stack.setStatus(ExecutionStatus.skipped);
+	protected Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		final Object val = value.value(scope);
+		varExpr.setVal(scope, val, isLet());
+		// stack.setStatus(ExecutionStatus.success);
 		return val;
 	}
 

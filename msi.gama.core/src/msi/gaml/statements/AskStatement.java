@@ -18,6 +18,7 @@
  */
 package msi.gaml.statements;
 
+import static com.google.common.collect.Iterators.*;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
@@ -32,8 +33,8 @@ import msi.gama.util.IContainer;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
+import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
-import com.google.common.collect.Iterators;
 
 // A group of commands that can be executed on remote agents.
 
@@ -67,17 +68,12 @@ public class AskStatement extends AbstractStatementSequence {
 	@Override
 	public Object privateExecuteIn(final IScope scope) {
 		final Object t = target.value(scope);
-		final Iterator<IAgent> runners =
-			t instanceof IContainer ? ((IContainer) t).iterator() : t instanceof IAgent ? Iterators
-				.singletonIterator(t) : Iterators.emptyIterator();
-		final IAgent scopeAgent = scope.getAgentScope();
-		scope.addVarWithValue(IKeyword.MYSELF, scopeAgent);
-		while (runners.hasNext()) {
-			final IAgent a = runners.next();
-			if ( !a.dead() && !scope.interrupted() ) {
-				scope.execute(sequence, a);
-			}
-		}
+		final Iterator<IAgent> runners;
+		runners =
+			t instanceof ISpecies ? ((ISpecies) t).iterator() : t instanceof IContainer ? ((IContainer) t).iterable(
+				scope).iterator() : t instanceof IAgent ? singletonIterator(t) : emptyIterator();
+		scope.addVarWithValue(IKeyword.MYSELF, scope.getAgentScope());
+		while (runners.hasNext() && scope.execute(sequence, runners.next(), null) != IScope.INTERRUPTED) {}
 		return null;
 	}
 

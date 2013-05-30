@@ -18,7 +18,7 @@
  */
 package msi.gaml.skills;
 
-import java.util.List;
+import java.util.*;
 import msi.gama.common.util.GeometryUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -26,7 +26,7 @@ import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.skill;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.species.ISpecies;
@@ -54,8 +54,8 @@ public class GeometricSkill extends Skill {
 	@action(name = "percieved_area")
 	@args(names = { "agent", "geometry", "range", "precision" })
 	public GamaShape primPercievedArea(final IScope scope) throws GamaRuntimeException {
-		List<List<List<ILocation>>> coords = scope.getListArg("geometry");
-		IAgent ag = (IAgent) scope.getArg("agent", IType.AGENT);
+		final List<List<List<ILocation>>> coords = scope.getListArg("geometry");
+		final IAgent ag = (IAgent) scope.getArg("agent", IType.AGENT);
 		Geometry geom = null;
 		if ( ag != null ) {
 			geom = ag.getInnerGeometry();
@@ -73,11 +73,11 @@ public class GeometricSkill extends Skill {
 		if ( precision == null ) {
 			precision = 10;
 		}
-		List<Geometry> geoms = new GamaList<Geometry>();
-		Coordinate coord_loc = getCurrentAgent(scope).getLocation().toCoordinate();
+		final List<Geometry> geoms = new GamaList<Geometry>();
+		final Coordinate coord_loc = getCurrentAgent(scope).getLocation().toCoordinate();
 		Coordinate prec = new Coordinate(coord_loc.x + percep_dist, coord_loc.y);
 		for ( int k = 1; k <= precision; k++ ) {
-			double angle = (double) k / precision * 2 * Math.PI;
+			final double angle = (double) k / precision * 2 * Math.PI;
 			Coordinate next = null;
 			if ( k < precision ) {
 				next =
@@ -86,13 +86,13 @@ public class GeometricSkill extends Skill {
 			} else {
 				next = new Coordinate(coord_loc.x + percep_dist, coord_loc.y);
 			}
-			Coordinate[] coordinates = new Coordinate[4];
+			final Coordinate[] coordinates = new Coordinate[4];
 			coordinates[0] = coord_loc;
 			coordinates[1] = prec;
 			coordinates[2] = next;
 			coordinates[3] = coord_loc;
-			LinearRing closeRing = GeometryUtils.factory.createLinearRing(coordinates);
-			Geometry percept = GeometryUtils.factory.createPolygon(closeRing, null);
+			final LinearRing closeRing = GeometryUtils.factory.createLinearRing(coordinates);
+			final Geometry percept = GeometryUtils.factory.createPolygon(closeRing, null);
 
 			Geometry areaPerc = null;
 			Geometry frontier = null;
@@ -102,11 +102,11 @@ public class GeometricSkill extends Skill {
 			 * } catch (AssertionFailedException e) { frontier =
 			 * backgd.intersection(percept.buffer(0.001)); }
 			 */
-			PreparedGeometry ref =
+			final PreparedGeometry ref =
 				PreparedGeometryFactory.prepare(getCurrentAgent(scope).getGeometry().getInnerGeometry().buffer(0.01));
 			if ( frontier instanceof GeometryCollection ) {
-				GeometryCollection gc = (GeometryCollection) frontier;
-				int nb = gc.getNumGeometries();
+				final GeometryCollection gc = (GeometryCollection) frontier;
+				final int nb = gc.getNumGeometries();
 				for ( int i = 0; i < nb; i++ ) {
 					if ( !ref.disjoint(gc.getGeometryN(i)) ) {
 						frontier = gc.getGeometryN(i);
@@ -134,7 +134,7 @@ public class GeometricSkill extends Skill {
 		/*
 		 * for (Geometry g : geoms){ g.buffer(0.1); }
 		 */
-		Geometry geomFinal = CascadedPolygonUnion.union(geoms);
+		final Geometry geomFinal = CascadedPolygonUnion.union(geoms);
 		// geomFinal.buffer(1);
 		// /
 		// System.out.println(geomFinal);
@@ -159,26 +159,28 @@ public class GeometricSkill extends Skill {
 	@action(name = "neighbourhood_exclusive")
 	@args(names = { "distance", "species", "buffer_others", "buffer_in" })
 	public IShape primNeighbourhoodExclu(final IScope scope) throws GamaRuntimeException {
-		Double distance = scope.hasArg("distance") ? scope.getFloatArg("distance") : null;
+		final Double distance = scope.hasArg("distance") ? scope.getFloatArg("distance") : null;
 		if ( distance == null ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
 		Geometry geom = getCurrentAgent(scope).getInnerGeometry().buffer(distance.doubleValue());
 
-		Double buffer_in = scope.getFloatArg("buffer_in");
+		final Double buffer_in = scope.getFloatArg("buffer_in");
 		if ( buffer_in != null ) {
-			Geometry geom2 = getCurrentAgent(scope).getInnerGeometry();
+			final Geometry geom2 = getCurrentAgent(scope).getInnerGeometry();
 			geom = geom.difference(geom2.buffer(buffer_in.doubleValue()));
 		}
 
-		Double buffer = scope.hasArg("buffer_others") ? scope.getFloatArg("buffer_others") : null;
-		List<ISpecies> species = scope.getListArg("species");
+		final Double buffer = scope.hasArg("buffer_others") ? scope.getFloatArg("buffer_others") : null;
+		final List<ISpecies> species = scope.getListArg("species");
 
 		if ( !species.isEmpty() ) {
-			for ( ISpecies sp : species ) {
-				List<IAgent> ags = scope.getAgentScope().getPopulationFor(sp).getAgentsList();
-				for ( IAgent be : ags ) {
+			for ( final ISpecies sp : species ) {
+				final Iterator<IAgent> it = scope.getAgentScope().getPopulationFor(sp).iterator();
+
+				while (it.hasNext()) {
+					final IAgent be = it.next();
 					try {
 						if ( be != null && be.getGeometry() != null ) {
 							if ( buffer != null ) {
@@ -187,7 +189,7 @@ public class GeometricSkill extends Skill {
 								geom = geom.difference(be.getInnerGeometry());
 							}
 						}
-					} catch (Exception e) {}
+					} catch (final Exception e) {}
 				}
 			}
 		}

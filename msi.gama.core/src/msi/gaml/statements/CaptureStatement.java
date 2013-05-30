@@ -28,7 +28,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
@@ -49,7 +49,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 	private IExpression target;
 	private final String returnString;
 	private String microSpeciesName = null;
-	private IList<IAgent> microAgents = new GamaList<IAgent>();
+	// private IList<IAgent> microAgents = new GamaList<IAgent>();
 
 	private AbstractStatementSequence sequence = null;
 
@@ -80,12 +80,13 @@ public class CaptureStatement extends AbstractStatementSequence {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		final IList<IAgent> microAgents = new GamaList<IAgent>();
 		final IMacroAgent macroAgent = (IMacroAgent) scope.getAgentScope();
 		final ISpecies macroSpecies = macroAgent.getSpecies();
 
 		final Object t = target.value(scope);
 		if ( t == null ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
 
@@ -135,7 +136,9 @@ public class CaptureStatement extends AbstractStatementSequence {
 						scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
 						if ( sequence != null && !sequence.isEmpty() ) {
 							for ( final IAgent capturedA : capturedAgents ) {
-								scope.execute(sequence, capturedA);
+								if ( scope.execute(sequence, capturedA, null) == IScope.INTERRUPTED ) {
+									break;
+								}
 							}
 						}
 					}
@@ -151,7 +154,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 						capturedAgent = macroAgent.captureMicroAgent(scope, microSpecies, c);
 
 						if ( sequence != null && !sequence.isEmpty() ) {
-							scope.execute(sequence, capturedAgent);
+							scope.execute(sequence, capturedAgent, null);
 						}
 
 						capturedAgents.add(capturedAgent);
@@ -183,7 +186,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 			if ( microSpeciesName != null ) { throw GamaRuntimeException.error(macroAgent.getName() +
 				" can't capture " + raStr.toString() + " as " + microSpeciesName + " agent"); }
 			throw GamaRuntimeException.error(macroAgent.getName() + " can't capture " + raStr.toString() +
-				" as micro-agents because no appripriate micro-population is found to welcome these agents.");
+				" as micro-agents because no appropriate micro-population is found to welcome these agents.");
 		}
 
 		return null;
@@ -194,7 +197,5 @@ public class CaptureStatement extends AbstractStatementSequence {
 		super.dispose();
 		target = null;
 		microSpeciesName = null;
-		microAgents.clear();
-		microAgents = null;
 	}
 }

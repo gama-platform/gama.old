@@ -31,7 +31,7 @@ import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ModelDescription;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.common.util.*;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.resource.*;
@@ -50,27 +50,29 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	static boolean FORCE_VALIDATION = false;
 	GamlResource currentResource;
 
+	private DiagnosticChain diagnosticsChain;
+
 	@Check()
 	public synchronized void validate(final Model model) {
 		try {
 
 			// GuiUtils.debug("GamlJavaValidator processing " + model.eResource().getURI().lastSegment() + "...");
-			GamlResource r = (GamlResource) model.eResource();
+			final GamlResource r = (GamlResource) model.eResource();
 			currentResource = r;
 			ModelDescription result = null;
 			if ( FORCE_VALIDATION || r.getErrors().isEmpty() ) {
 				result = validate(r);
 			}
-			boolean hasError = result == null || !result.getErrors().isEmpty();
+			final boolean hasError = result == null || !result.getErrors().isEmpty();
 			if ( result != null ) {
-				for ( GamlCompilationError warning : result.getWarnings() ) {
+				for ( final GamlCompilationError warning : result.getWarnings() ) {
 					add(warning);
 				}
-				for ( GamlCompilationError info : result.getInfos() ) {
+				for ( final GamlCompilationError info : result.getInfos() ) {
 					add(info);
 				}
 				if ( hasError ) {
-					for ( GamlCompilationError error : result.getErrors() ) {
+					for ( final GamlCompilationError error : result.getErrors() ) {
 						add(error);
 					}
 					r.setModelDescription(true, result);
@@ -80,33 +82,37 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			} else {
 				r.setModelDescription(true, null);
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	private static long timeInValidation = 0;
 
-	private ModelDescription validate(GamlResource r) {
+	public ModelDescription validate(final GamlResource r) {
 		// this.listVisibleResourcesFromMe();
-		long begin = System.nanoTime();
-		XtextResourceSet resourceSet = (XtextResourceSet) r.getResourceSet();
+		final long begin = System.nanoTime();
+		final XtextResourceSet resourceSet = (XtextResourceSet) r.getResourceSet();
 		ModelDescription description = parse(r, resourceSet);
 		if ( r.getErrors().isEmpty() ) {
 			// cleanResourceSet(resourceSet, false);
 			description = getModelFactory().validate(description);
 		}
-		long end = System.nanoTime();
+		final long end = System.nanoTime();
 		timeInValidation += end - begin;
-		double ms = (end - begin) / 1000000d;
+		final double ms = (end - begin) / 1000000d;
 		GuiUtils.debug("=> " + description + " in " + ms + " ms (total: " + timeInValidation / 1000000d + ")");
 		return description;
 	}
 
+	public ModelDescription validateForContentAssist(final GamlResource r) {
+		return null;
+	}
+
 	public IModel build(final GamlResource resource) {
-		ModelDescription description = parse(resource, buildResourceSet);
+		final ModelDescription description = parse(resource, buildResourceSet);
 		if ( resource.getErrors().isEmpty() ) {
-			IModel model = getModelFactory().compile(description);
+			final IModel model = getModelFactory().compile(description);
 			cleanResourceSet(buildResourceSet, true);
 			return model;
 		}
@@ -116,24 +122,24 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	public Map<URI, ISyntacticElement> buildCompleteSyntacticTree(final GamlResource resource,
 		final ResourceSet resourceSet) {
 		final Map<URI, ISyntacticElement> models = new LinkedHashMap();
-		LinkedHashSet<GamlResource> totalResources = new LinkedHashSet<GamlResource>();
-		LinkedHashSet<GamlResource> newResources = new LinkedHashSet<GamlResource>();
+		final LinkedHashSet<GamlResource> totalResources = new LinkedHashSet<GamlResource>();
+		final LinkedHashSet<GamlResource> newResources = new LinkedHashSet<GamlResource>();
 		// Forcing the resource set to reload the primary resource, even though it has been
 		// passed, in order to be sure that all resources will belong to the same resource set.
-		GamlResource first = resource; // (GamlResource) resourceSet.getResource(resource.getURI(), true);
+		final GamlResource first = resource; // (GamlResource) resourceSet.getResource(resource.getURI(), true);
 
 		newResources.add(first);
 		while (!newResources.isEmpty()) {
-			List<GamlResource> resourcesToConsider = new ArrayList<GamlResource>(newResources);
+			final List<GamlResource> resourcesToConsider = new ArrayList<GamlResource>(newResources);
 			newResources.clear();
-			for ( GamlResource gr : resourcesToConsider ) {
+			for ( final GamlResource gr : resourcesToConsider ) {
 				if ( totalResources.add(gr) ) {
-					LinkedHashSet<GamlResource> imports = listImports(gr, resourceSet);
+					final LinkedHashSet<GamlResource> imports = listImports(gr, resourceSet);
 					newResources.addAll(imports);
 				}
 			}
 		}
-		for ( GamlResource r : totalResources ) {
+		for ( final GamlResource r : totalResources ) {
 			// GuiUtils.debug("Building " + r + " as part of the validation of " + resource);
 			models.put(r.getURI(), r.getSyntacticContents());
 		}
@@ -141,12 +147,12 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	}
 
 	public LinkedHashSet<GamlResource> listImports(final GamlResource resource, final ResourceSet resourceSet) {
-		LinkedHashSet<GamlResource> imports = new LinkedHashSet();
-		Model model = (Model) resource.getContents().get(0);
-		for ( Import imp : model.getImports() ) {
-			String importUri = imp.getImportURI();
-			URI iu = URI.createURI(importUri).resolve(resource.getURI());
-			GamlResource ir = (GamlResource) resourceSet.getResource(iu, true);
+		final LinkedHashSet<GamlResource> imports = new LinkedHashSet();
+		final Model model = (Model) resource.getContents().get(0);
+		for ( final Import imp : model.getImports() ) {
+			final String importUri = imp.getImportURI();
+			final URI iu = URI.createURI(importUri).resolve(resource.getURI());
+			final GamlResource ir = (GamlResource) resourceSet.getResource(iu, true);
 			// if ( !ir.getErrors().isEmpty() ) {
 			// resource.error("Imported file " + ir.getURI().lastSegment() + " has errors. Fix them first.",
 			// new SyntacticElement(IKeyword.INCLUDE, imp), true);
@@ -160,24 +166,24 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	private ModelDescription parse(final GamlResource resource, final XtextResourceSet resourceSet) {
 		final Map<URI, ISyntacticElement> models = buildCompleteSyntacticTree(resource, resourceSet);
 		GAML.getExpressionFactory().getParser().reset();
-		IPath path = new Path(resource.getURI().toPlatformString(false));
-		IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
+		final IPath path = new Path(resource.getURI().toPlatformString(false));
+		final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		// NullPointerException when accessing a file / project with a space in it !
 		// FIX: see http://trac.rtsys.informatik.uni-kiel.de/trac/kieler/ticket/1065
 		// This is a workaround, not very elegant, but it works.
 		IPath fullPath = file.getLocation();
 		if ( fullPath == null && file instanceof org.eclipse.core.internal.resources.Resource ) {
-			org.eclipse.core.internal.resources.Resource r = (org.eclipse.core.internal.resources.Resource) file;
+			final org.eclipse.core.internal.resources.Resource r = (org.eclipse.core.internal.resources.Resource) file;
 			fullPath = r.getLocalManager().locationFor(r);
 		}
-		String modelPath = fullPath == null ? "" : fullPath.toOSString();
+		final String modelPath = fullPath == null ? "" : fullPath.toOSString();
 		fullPath = file.getProject().getLocation();
 		if ( fullPath == null && file.getProject() instanceof org.eclipse.core.internal.resources.Resource ) {
-			org.eclipse.core.internal.resources.Resource r =
+			final org.eclipse.core.internal.resources.Resource r =
 				(org.eclipse.core.internal.resources.Resource) file.getProject();
 			fullPath = r.getLocalManager().locationFor(r);
 		}
-		String projectPath = fullPath == null ? "" : fullPath.toOSString();
+		final String projectPath = fullPath == null ? "" : fullPath.toOSString();
 		return getModelFactory().assemble(projectPath, modelPath, new ArrayList(models.values()));
 	}
 
@@ -197,7 +203,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	}
 
 	public void add(final GamlCompilationError e) {
-		EObject object = e.getStatement();
+		final EObject object = e.getStatement();
 		if ( object == null ) {
 			GuiUtils.debug("*** Internal compilation problem : " + e.toString());
 			return;
@@ -205,7 +211,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		if ( object.eResource() == null ) { return; }
 		if ( object.eResource() != getCurrentRessource() ) {
 			if ( !e.isWarning() && !e.isInfo() ) {
-				EObject imp = findImport(object.eResource().getURI());
+				final EObject imp = findImport(object.eResource().getURI());
 				if ( imp != null ) {
 					error("Error detected in imported file: " + e.toString(), imp,
 						GamlPackage.Literals.IMPORT__IMPORT_URI, IGamlIssue.IMPORT_ERROR, object.eResource().getURI()
@@ -238,13 +244,68 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		Model m;
 		try {
 			m = (Model) getCurrentObject();
-		} catch (NullPointerException ex) {
+		} catch (final NullPointerException ex) {
 			return null;
 		}
-		for ( Import imp : m.getImports() ) {
-			URI iu = URI.createURI(imp.getImportURI()).resolve(getCurrentRessource().getURI());
+		for ( final Import imp : m.getImports() ) {
+			final URI iu = URI.createURI(imp.getImportURI()).resolve(getCurrentRessource().getURI());
 			if ( uri.equals(iu) ) { return imp; }
 		}
 		return null;
 	}
+	//
+	// @Override
+	// public void acceptWarning(final String message, final EObject object, final EStructuralFeature feature,
+	// final int index, final String code, final String ... issueData) {
+	// diagnosticsChain.add(createDiagnostic(Severity.WARNING, message, object, feature, index, code, issueData));
+	// }
+	//
+	// @Override
+	// public void acceptInfo(final String message, final EObject object, final EStructuralFeature feature,
+	// final int index, final String code, final String ... issueData) {
+	// diagnosticsChain.add(createDiagnostic(Severity.INFO, message, object, feature, index, code, issueData));
+	// }
+	//
+	// @Override
+	// public void acceptError(final String message, final EObject object, final int offset, final int length,
+	// final String code, final String ... issueData) {
+	// diagnosticsChain.add(createDiagnostic(Severity.ERROR, message, object, offset, length, code, issueData));
+	// }
+	//
+	// @Override
+	// public void acceptWarning(final String message, final EObject object, final int offset, final int length,
+	// final String code, final String ... issueData) {
+	// diagnosticsChain.add(createDiagnostic(Severity.WARNING, message, object, offset, length, code, issueData));
+	// }
+	//
+	// @Override
+	// public void acceptInfo(final String message, final EObject object, final int offset, final int length,
+	// final String code, final String ... issueData) {
+	// diagnosticsChain.add(createDiagnostic(Severity.INFO, message, object, offset, length, code, issueData));
+	// }
+	//
+	// /**
+	// * @param diagnostics
+	// */
+	// public void setDiagnosticsChain(final DiagnosticChain diagnostics) {
+	// diagnosticsChain = diagnostics;
+	// }
+	//
+	// @Override
+	// protected Diagnostic createDiagnostic(final Severity severity, final String message, final EObject object,
+	// final EStructuralFeature feature, final int index, final String code, final String ... issueData) {
+	// final int diagnosticSeverity = toDiagnosticSeverity(severity);
+	// final Diagnostic result =
+	// new FeatureBasedDiagnostic(diagnosticSeverity, message, object, feature, index, CheckType.FAST, code,
+	// issueData);
+	// return result;
+	// }
+
+	// protected Diagnostic createDiagnostic(Severity severity, String message, EObject object, int offset, int length,
+	// String code, String... issueData) {
+	// int diagnosticSeverity = toDiagnosticSeverity(severity);
+	// Diagnostic result = new RangeBasedDiagnostic(diagnosticSeverity, message, object, offset, length,
+	// CheckType.FAST, code, issueData);
+	// return result;
+	// }
 }

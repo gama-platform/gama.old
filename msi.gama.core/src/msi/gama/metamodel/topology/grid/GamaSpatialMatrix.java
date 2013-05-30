@@ -82,9 +82,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	@Override
 	public void dispose() {
+		// GuiUtils.debug("GamaSpatialMatrix.dispose");
 		neighbourhood = null;
 		gridValue = null;
 		matrix = null;
+		diffuser = null;
 		iterator = null;
 	}
 
@@ -92,6 +94,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		final boolean isTorus, final boolean usesVN, final boolean indiv, final boolean useNeighboursCache)
 		throws GamaRuntimeException {
 		super(scope, cols, rows);
+		// GuiUtils.debug("GamaSpatialMatrix.GamaSpatialMatrix create new");
 		environmentFrame = environment.getGeometry();
 		bounds = environmentFrame.getEnvelope();
 		cellWidth = bounds.getWidth() / cols;
@@ -115,6 +118,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public GamaSpatialMatrix(final IScope scope, final GamaGridFile gfile, final boolean isTorus, final boolean usesVN,
 		final boolean indiv, final boolean useNeighboursCache) throws GamaRuntimeException {
 		super(scope, 100, 100);
+		// GuiUtils.debug("GamaSpatialMatrix.GamaSpatialMatrix create new");
 		numRows = gfile.getNbRows();
 		numCols = gfile.getNbCols();
 		environmentFrame = gfile.getGeometry();
@@ -130,10 +134,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		this.isTorus = isTorus;
 		this.usesVN = usesVN;
 		useIndividualShapes = indiv;
-		actualNumberOfCells = 0;
 		this.isHexagon = false;
 		this.useNeighboursCache = useNeighboursCache;
-		firstCell = 0;
 
 		for ( int i = 0; i < size; i++ ) {
 			final GamaShape g = gfile.get(scope, i);
@@ -141,8 +143,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			// WARNING A bit overkill as we only use the GamaGisGeometry for its attribute...
 			// matrix[i] = g;
 		}
-		actualNumberOfCells = size;
-		lastCell = size - 1;
+		actualNumberOfCells = 0;
+		firstCell = -1;
+		lastCell = -1;
 		createCells(scope, false);
 	}
 
@@ -150,6 +153,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		final boolean isTorus, final boolean usesVN, final boolean isHexagon, final boolean indiv,
 		final boolean useNeighboursCache) {
 		super(scope, cols, rows);
+		// GuiUtils.debug("GamaSpatialMatrix.GamaSpatialMatrix create new");
 		environmentFrame = environment.getGeometry();
 		bounds = environmentFrame.getEnvelope();
 		cellWidth = bounds.getWidth() / cols;
@@ -281,7 +285,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public int[] getDisplayData() {
 		return supportImagePixels;
 	}
-	
+
 	@Override
 	public double[] getGridValue() {
 		return gridValue;
@@ -405,11 +409,13 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	@Override
 	protected GamaList _listValue(final IScope scope) {
+		if ( actualNumberOfCells == 0 ) { return GamaList.EMPTY_LIST; }
 		final GamaList result = new GamaList(actualNumberOfCells);
-		if ( actualNumberOfCells == 0 ) { return new GamaList(); }
-		for ( final IShape a : this ) {
-			final IAgent ag = a.getAgent();
-			result.add(ag == null ? a : ag);
+		for ( final IShape a : matrix ) {
+			if ( a != null ) {
+				final IAgent ag = a.getAgent();
+				result.add(ag == null ? a : ag);
+			}
 		}
 		return result;
 	}
@@ -458,7 +464,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	@Override
 	public boolean _contains(final IScope scope, final Object o) {
-		return listValue(scope).contains(o);
+		return Iterators.contains(Iterators.forArray(matrix), o);
+		// return listValue(scope).contains(o);
 	}
 
 	@Override
@@ -573,7 +580,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				}
 				neighb2.addAll(getNeighs(scope, ag, dists, topo, neighb));
 			}
-			neighb = new GamaList<IAgent>((Collection) neighb2);
+			neighb = new GamaList<IAgent>(neighb2);
 			if ( cpt > max ) { return null; }
 		}
 	}
@@ -823,16 +830,22 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 		@Override
 		public IList<? extends IAgent> createAgents(final IScope scope, final IContainer<?, IShape> geometries) {
-			for ( int i = 0; i < matrix.length; i++ ) {
-				final IAgent g = usesRegularAgents ? new GamlGridAgent(i) : new MinimalGridAgent(i);
-				matrix[i] = g;
-				g.schedule();
+			for ( int i = 0; i < actualNumberOfCells; i++ ) {
+				final IShape s = matrix[i];
+				if ( s != null ) {
+					final IAgent g = usesRegularAgents ? new GamlGridAgent(i) : new MinimalGridAgent(i);
+					matrix[i] = g;
+					g.schedule();
+				}
 			}
 
 			for ( final String s : orderedVarNames ) {
 				final IVariable var = species.getVar(s);
-				for ( final IAgent g : this ) {
-					var.initializeWith(scope, g, null);
+				for ( int i = 0; i < actualNumberOfCells; i++ ) {
+					final IAgent a = (IAgent) matrix[i];
+					if ( a != null ) {
+						var.initializeWith(scope, a, null);
+					}
 				}
 			}
 			// WARNING FOR THE MOMENT NO EVENT IS FIRED
@@ -855,25 +868,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			if ( frequency == 0 || step % frequency != 0 ) { return; }
 
 			for ( final IShape s : matrix ) {
-				if ( scope.interrupted() ) { return; }
-				final IAgent a = (IAgent) s;
-				if ( a != null && !a.dead() ) {
-					scope.push(a);
-					try {
-						a.step(scope);
-					} catch (final GamaRuntimeException g) {
-						g.addAgent(a.getName());
-						GAMA.reportError(g);
-					} finally {
-						scope.pop(a);
-					}
-				}
+				if ( !scope.step((IAgent) s) ) { return; }
 			}
-		}
-
-		@Override
-		public void updateVariables(final IScope scope, final IAgent a) {
-			super.updateVariables(scope, a);
 		}
 
 		@Override
@@ -891,6 +887,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		@Override
 		public void initializeFor(final IScope scope) throws GamaRuntimeException {
 			topology.initialize(this);
+			// GuiUtils.debug("GamaSpatialMatrix.GridPopulation.initializeFor : size " + size());
 		}
 
 		@Override
@@ -906,20 +903,20 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		@Override
 		public void killMembers() throws GamaRuntimeException {
 			for ( final IShape a : GamaSpatialMatrix.this.matrix ) {
-				a.dispose();
+				if ( a != null ) {
+					a.dispose();
+				}
 			}
 		}
 
 		@Override
-		public int size() {
-			return GamaSpatialMatrix.this.matrix.length;
+		public synchronized IAgent[] toArray() {
+			return Arrays.copyOf(matrix, matrix.length, IAgent[].class);
 		}
 
 		@Override
-		public GamaList<IAgent> getAgentsList() {
-			// WARNING matrix is supposed to contain IShapes. Normally, they are IAgents if we call it from here, but
-			// it'd be better to check before
-			return new GamaList.Array(matrix);
+		public int size() {
+			return actualNumberOfCells;
 		}
 
 		@Override
@@ -930,30 +927,28 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 		@Override
 		public IAgent get(final IScope scope, final Integer index) throws GamaRuntimeException {
+			// WARNING False if the matrix is not dense
 			return (IAgent) matrix[index];
 		}
 
 		@Override
 		public boolean contains(final IScope scope, final Object o) throws GamaRuntimeException {
-			for ( final IShape s : matrix ) {
-				if ( s != null && s.equals(o) ) { return true; }
-			}
-			return false;
+			return _contains(scope, o);
 		}
 
 		@Override
 		public IAgent first(final IScope scope) throws GamaRuntimeException {
-			return (IAgent) matrix[0];
+			return (IAgent) _first(scope);
 		}
 
 		@Override
 		public IAgent last(final IScope scope) throws GamaRuntimeException {
-			return (IAgent) matrix[size() - 1];
+			return (IAgent) _last(scope);
 		}
 
 		@Override
 		public int length(final IScope scope) {
-			return size();
+			return actualNumberOfCells;
 		}
 
 		@Override
@@ -967,8 +962,23 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 
 		@Override
-		public IList listValue(final IScope scope) throws GamaRuntimeException {
-			return getAgentsList();
+		public Iterable<IAgent> iterable(final IScope scope) {
+			return listValue(scope);
+		}
+
+		@Override
+		public boolean isEmpty() {
+			return _isEmpty(null);
+		}
+
+		@Override
+		public boolean isEmpty(final IScope scope) {
+			return _isEmpty(scope);
+		}
+
+		@Override
+		public GamaList<IAgent> listValue(final IScope scope) throws GamaRuntimeException {
+			return _listValue(scope);
 		}
 
 		@Override
@@ -1428,7 +1438,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				p = gridDiffusion.places[i].getAgent();
 				final int placeIndex = p.getIndex();
 				r0 = gridDiffusion.values[i];
-				scope.setAgentVarValue(p, v, (Double) scope.getAgentVarValue(p, v) + r0 * propInit);
+				final Double previous = (Double) scope.getAgentVarValue(p, v);
+				// If we cant get access to the value of the variable, it means probably that the agent is dead. Better
+				// to stop spreading !
+				if ( previous == null ) { return; }
+				scope.setAgentVarValue(p, v, previous + r0 * propInit);
 				rn = r0 * prop - variation;
 				int max_range = 1;
 				double vn = rn;
@@ -1452,7 +1466,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					for ( int k = begin; k < end; k++ ) {
 						final IAgent z = matrix[neighbours[k]].getAgent();
 						// v.addDirectFloat(z, rn);
-						scope.setAgentVarValue(z, v, (Double) scope.getAgentVarValue(z, v) + rn);
+						final Double value = (Double) scope.getAgentVarValue(z, v);
+						// If we cant get access to the value of the variable, it means probably that the agent is dead.
+						// Better to stop spreading !
+						if ( value == null ) { return; }
+						scope.setAgentVarValue(z, v, value + rn);
 					}
 					rn = rn * prop - variation;
 				}
@@ -1477,8 +1495,10 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				p = gridDiffusion.places[i].getAgent();
 				final int placeIndex = p.getIndex();
 				r0 = gridDiffusion.values[i];
-
-				if ( (Double) scope.getAgentVarValue(p, v) > r0 ) { return; }
+				final Double previous = (Double) scope.getAgentVarValue(p, v);
+				// If we cant get access to the value of the variable, it means probably that the agent is dead. Better
+				// to stop spreading !
+				if ( previous == null || previous > r0 ) { return; }
 				scope.setAgentVarValue(p, v, r0);
 				rn = r0 * proportion - variation;
 				int max_range = 1;
@@ -1504,8 +1524,11 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					cont = false;
 					for ( int k = begin; k < end; k++ ) {
 						final IAgent z = matrix[neighbours[k]].getAgent();
-
-						if ( (Double) scope.getAgentVarValue(z, v) < rn ) {
+						final Double value = (Double) scope.getAgentVarValue(z, v);
+						// If we cant get access to the value of the variable, it means probably that the agent is dead.
+						// Better to stop spreading !
+						if ( value == null ) { return; }
+						if ( value < rn ) {
 							scope.setAgentVarValue(z, v, rn);
 							cont = true;
 						}
@@ -1553,7 +1576,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				currentNeigh.addAll(newNeigh);
 			}
 			currentNeigh.remove(new Integer(placeIndex));
-			return new GamaList<Integer>((Collection) currentNeigh);
+			return new GamaList<Integer>(currentNeigh);
 
 		}
 

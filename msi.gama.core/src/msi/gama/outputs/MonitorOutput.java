@@ -58,11 +58,12 @@ public class MonitorOutput extends AbstractDisplayOutput {
 		setScope(GAMA.obtainNewScope());
 		setUserCreated(true);
 		setNewExpressionText(expr, getScope());
-		init(getScope());
-		outputManager.addOutput(this);
-		if ( openRightNow ) {
-			schedule();
-			open();
+		if ( getScope().init(this) ) {
+			outputManager.addOutput(this);
+			if ( openRightNow ) {
+				schedule();
+				open();
+			}
 		}
 	}
 
@@ -100,7 +101,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 		if ( value != null ) {
 			try {
 				lastValue = value.value(scope);
-			} catch (GamaRuntimeException e) {
+			} catch (final GamaRuntimeException e) {
 				lastValue = ItemList.ERROR_CODE + e.getMessage();
 			}
 		} else {
@@ -126,7 +127,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	public void setNewExpression(final IExpression expr) throws GamaRuntimeException {
 		expressionText = expr == null ? "" : expr.toGaml();
 		value = expr;
-		step(getScope());
+		getScope().step(this);
 	}
 
 	@Override
@@ -145,7 +146,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	@Override
 	public String toGaml() {
 		final List<MonitorOutput> outputs = (List<MonitorOutput>) outputManager.getMonitors();
-		StringBuilder s = new StringBuilder(200);
+		final StringBuilder s = new StringBuilder(200);
 		for ( final MonitorOutput output : outputs ) {
 			s.append("monitor \"").append(output.getViewName()).append("\" value: ").append(output.expressionText)
 				.append(" refresh_every: ").append(output.getFacet(IKeyword.REFRESH_EVERY).toString());

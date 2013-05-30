@@ -24,7 +24,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -51,7 +51,6 @@ public class ReflexStatement extends AbstractStatementSequence {
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		if ( when == null || Cast.asBool(scope, when.value(scope)) ) { return super.privateExecuteIn(scope); }
-		scope.setStatus(ExecutionStatus.skipped);
 		return null;
 	}
 

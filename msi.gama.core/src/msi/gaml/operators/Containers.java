@@ -220,7 +220,7 @@ public class Containers {
 		IKeyword.MINUS + " returns the left operand" }, examples = { "[1,2,3,4,5,6] - [2,4,9] 	--: 	[1,3,5,6]",
 		"[1,2,3,4,5,6] - [0,8] 		--:	 	[1,2,3,4,5,6]" }, see = { "" + IKeyword.PLUS })
 	public static IList minus(final IScope scope, final IContainer source, final IContainer l) {
-		final IList result = nullCheck(source).listValue(scope);
+		final IList result = (IList) nullCheck(source).listValue(scope).copy(scope);
 		Iterables.removeAll(result, nullCheck(l).listValue(scope));
 		return result;
 	}
@@ -230,7 +230,7 @@ public class Containers {
 		" returns a list containining the elements of the left operand minus all the occurences of this object" }, examples = {
 		"[1,2,3,4,5,6] - 2 		--: 	[1,3,4,5,6]", "[1,2,3,4,5,6] - 0 		--:	 	[1,2,3,4,5,6]" })
 	public static IList minus(final IScope scope, final IList l1, final Object object) {
-		final IList result = nullCheck(l1).listValue(scope);
+		final IList result = (IList) nullCheck(l1).listValue(scope).copy(scope);
 		Iterables.removeIf(result, equalTo(object));
 		return result;
 	}
@@ -297,7 +297,7 @@ public class Containers {
 		" returns a list of the elemets of the left operand, to which this object has been added" }, examples = {
 		"[1,2,3,4,5,6] + 2 		--: 	[1,2,3,4,5,6,2]", "[1,2,3,4,5,6] + 0 		--:	 	[1,2,3,4,5,6,0]" })
 	public static IList plus(final IScope scope, final IContainer l1, final Object l) {
-		final IList result = nullCheck(l1).listValue(scope);
+		final IList result = (IList) nullCheck(l1).listValue(scope).copy(scope);
 		result.add(l);
 		return result;
 	}
@@ -507,7 +507,7 @@ public class Containers {
 		return orderOn(function(scope, filter)).min(container.iterable(scope));
 	}
 
-	@operator(value = { "accumulate" }, content_type = ITypeProvider.SECOND_CONTENT_TYPE, iterator = true)
+	@operator(value = { "accumulate" }, content_type = ITypeProvider.SECOND_CONTENT_TYPE_OR_TYPE, iterator = true)
 	@doc(value = "returns a new flat list, in which each element is the evaluation of the right-hand operand. If this evaluation returns a list, the elements of this result are added directly to the list returned", comment = "accumulate is dedicated to the application of a same computation on each element of a container (and returns a list) "
 		+ "In the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", examples = {
 		"[a1,a2,a3] accumulate (each neighbours_at 10)  		--: 	a flat list of all the neighbours of these three agents",

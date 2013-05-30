@@ -57,7 +57,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 	}
 
 	public IOutput getOutputWithName(final String name) {
-		for ( IOutput output : outputs.values() ) {
+		for ( final IOutput output : outputs.values() ) {
 			if ( output.getName().equals(name) ) { return output; }
 		}
 		return null;
@@ -82,7 +82,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 			displays = new HeadlessOutputManager(this);
 		}
 
-		for ( IOutput output : outputs.values() ) {
+		for ( final IOutput output : outputs.values() ) {
 			if ( output instanceof IDisplayOutput ) {
 				displays.addDisplayOutput(output);
 			}
@@ -98,17 +98,16 @@ public class OutputManager extends Symbol implements IOutputManager {
 			@Override
 			public void run() {
 				for ( final IOutput output : outputs.values() ) {
-					if ( scope.interrupted() ) { return; }
 					if ( !output.isPermanent() ) {
 						try {
 							// GuiUtils.debug("Preparing output " + output.getName());
-							output.init(scope);
-						} catch (GamaRuntimeException e) {
+							if ( !scope.init(output) ) { return; }
+						} catch (final GamaRuntimeException e) {
 							e.addContext("in preparing output " + output.getName());
 							e.addContext("output " + output.getName() + " has not been opened");
 							GAMA.reportError(e);
 							continue;
-						} catch (Exception e) {
+						} catch (final Exception e) {
 							e.printStackTrace();
 						}
 						try {
@@ -116,12 +115,12 @@ public class OutputManager extends Symbol implements IOutputManager {
 							output.schedule();
 							output.open();
 							outputsToUpdateNow.add(output);
-						} catch (GamaRuntimeException e) {
+						} catch (final GamaRuntimeException e) {
 							e.addContext("in opening output " + output.getName());
 							e.addContext("output " + output.getName() + " has not been opened");
 							GAMA.reportError(e);
 							continue;
-						} catch (Exception e) {
+						} catch (final Exception e) {
 							e.printStackTrace();
 						}
 
@@ -133,13 +132,13 @@ public class OutputManager extends Symbol implements IOutputManager {
 
 		OutputSynchronizer.waitForViewsToBeInitialized();
 		GuiUtils.informStatus("Experiment ready");
-		step(scope);
+		scope.step(this);
 
 	}
 
 	public synchronized void dispose(final boolean includingBatch) {
 		try {
-			GuiUtils.debug("Disposing the outputs");
+			// GuiUtils.debug("Disposing the outputs");
 			outputsToUpdateNow.clear();
 			if ( displays != null ) {
 				displays.dispose();
@@ -154,14 +153,14 @@ public class OutputManager extends Symbol implements IOutputManager {
 			}
 			outputs.clear();
 			// GuiUtils.debug("Ouputs disposed");
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Override
 	public List<MonitorOutput> getMonitors() {
-		List<MonitorOutput> result = new GamaList();
+		final List<MonitorOutput> result = new GamaList();
 		for ( final IOutput out : outputs.values() ) {
 			if ( out instanceof MonitorOutput ) {
 				result.add((MonitorOutput) out);
@@ -176,28 +175,6 @@ public class OutputManager extends Symbol implements IOutputManager {
 	}
 
 	@Override
-	public void updateOutputs() {
-		try {
-			for ( IOutput o : outputsToUpdateNow ) {
-				try {
-					try {
-						o.update();
-					} catch (Exception e) {
-						throw GamaRuntimeException.create(e);
-					}
-				} catch (GamaRuntimeException e) {
-					e.addContext("in updating output " + o.getName());
-					e.addContext("output " + o.getName() + " has not been updated ");
-					GAMA.reportError(e);
-					continue;
-				}
-			}
-		} finally {
-			outputsToUpdateNow.clear();
-		}
-	}
-
-	@Override
 	public void unscheduleOutput(final IOutput o) {
 		if ( scheduledOutputs.contains(o) ) {
 			outputsToUnschedule.add(o);
@@ -206,29 +183,28 @@ public class OutputManager extends Symbol implements IOutputManager {
 
 	@Override
 	public void step(final IScope scope) {
-		int cycle = scope.getClock().getCycle();
+		final int cycle = scope.getClock().getCycle();
 		scheduledOutputs.removeAll(outputsToUnschedule);
 		outputsToUnschedule.clear();
-		for ( IOutput o : scheduledOutputs ) {
-			if ( scope.interrupted() ) { return; }
+		for ( final IOutput o : scheduledOutputs ) {
 			if ( !o.isPaused() && !o.isClosed() ) {
-				long ii = o.getNextTime();
+				final long ii = o.getNextTime();
 				// GUI.debug("At cycle " + cycle + ", next update time for " + o.getName() + ": " +
 				// ii);
 				if ( cycle >= ii ) {
 					try {
 						try {
 							// ? o.hasBeenComputed(false);
-							o.step(scope);
+							if ( !scope.step(o) ) { return; }
 							o.update();
 							// outputsToUpdateNow.add(o);
 							// ? o.hasBeenComputed(true);
-						} catch (GamaRuntimeException e) {
+						} catch (final GamaRuntimeException e) {
 							throw e;
-						} catch (Exception e) {
+						} catch (final Exception e) {
 							throw GamaRuntimeException.create(e);
 						}
-					} catch (GamaRuntimeException e) {
+					} catch (final GamaRuntimeException e) {
 						e.addContext("in computing output " + o.getName());
 						e.addContext("output " + o.getName() + " has not been computed at cycle " + cycle);
 						GAMA.reportError(e);
@@ -242,7 +218,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
-		for ( ISymbol s : commands ) {
+		for ( final ISymbol s : commands ) {
 			if ( s instanceof IOutput ) {
 				addOutput((IOutput) s);
 			}

@@ -45,7 +45,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	}
 
 	public UnaryOperator(final IType rt, final GamaHelper exec, final boolean canBeConst, final int tProv,
-		final int ctProv, final int iProv, int[] expectedContentType, final boolean lazy) {
+		final int ctProv, final int iProv, final int[] expectedContentType, final boolean lazy) {
 		type = rt;
 		helper = exec;
 		this.canBeConst = canBeConst;
@@ -59,15 +59,15 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	@Override
 	public Object value(final IScope scope) throws GamaRuntimeException {
 
-		Object childValue = lazy ? child : child.value(scope);
+		final Object childValue = lazy ? child : child.value(scope);
 		try {
 			return helper.run(scope, childValue);
-		} catch (GamaRuntimeException e1) {
+		} catch (final GamaRuntimeException e1) {
 			e1.addContext("when applying the " + literalValue() + " operator on " + childValue);
 			throw e1;
 
-		} catch (Exception e) {
-			GamaRuntimeException ee = GamaRuntimeException.create(e);
+		} catch (final Exception e) {
+			final GamaRuntimeException ee = GamaRuntimeException.create(e);
 			ee.addContext("when applying the " + literalValue() + " operator on " + childValue);
 			throw ee;
 		}
@@ -75,7 +75,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 
 	@Override
 	public UnaryOperator copy() {
-		UnaryOperator copy =
+		final UnaryOperator copy =
 			new UnaryOperator(type, helper, canBeConst, typeProvider, contentTypeProvider, keyTypeProvider,
 				expectedContentType, lazy);
 		copy.setName(getName());
@@ -97,7 +97,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 
 	@Override
 	public String getTitle() {
-		StringBuilder sb = new StringBuilder(50);
+		final StringBuilder sb = new StringBuilder(50);
 		sb.append("operator <b>").append(getName()).append("</b> (");
 		sb.append(child == null ? "nil" : child.getType());
 		sb.append(") returns ");
@@ -107,24 +107,28 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 
 	@Override
 	public String getDocumentation() {
-		StringBuilder sb = new StringBuilder(200);
+		final StringBuilder sb = new StringBuilder(200);
 		sb.append(doc.getMain());
 		return sb.toString();
 	}
 
-	private IType computeType(int t, IType def) {
+	private IType computeType(final int t, final IType def) {
 		if ( t == NONE ) { return def; }
 		if ( t == FIRST_ELEMENT_CONTENT_TYPE ) {
 			if ( child instanceof ListExpression ) {
-				IExpression[] array = ((ListExpression) child).elements;
+				final IExpression[] array = ((ListExpression) child).elements;
 				if ( array.length == 0 ) { return Types.NO_TYPE; }
 				return array[0].getContentType();
 			} else if ( child instanceof MapExpression ) {
-				IExpression[] array = ((MapExpression) child).valuesArray();
+				final IExpression[] array = ((MapExpression) child).valuesArray();
 				if ( array.length == 0 ) { return Types.NO_TYPE; }
 				return array[0].getContentType();
 			}
 			return def;
+		} else if ( t == FIRST_CONTENT_TYPE_OR_TYPE ) {
+			final IType t2 = child.getContentType();
+			if ( t2 == Types.NO_TYPE ) { return child.getType(); }
+			return t2;
 		}
 		return t == FIRST_TYPE ? child.getType() : t == FIRST_CONTENT_TYPE ? child.getContentType()
 			: t == FIRST_KEY_TYPE ? child.getKeyType() : t >= 0 ? Types.get(t) : def;
@@ -155,7 +159,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	private void setChild(final IDescription context, final IExpression c) {
 		child = c;
 		if ( expectedContentType.length == 0 ) { return; }
-		IType ct = c.getContentType();
+		final IType ct = c.getContentType();
 		for ( int i = 0; i < expectedContentType.length; i++ ) {
 			if ( ct.isTranslatableInto(Types.get(expectedContentType[i])) ) { return; }
 		}
@@ -169,7 +173,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 
 	@Override
 	public IOperator resolveAgainst(final IScope scope) {
-		UnaryOperator copy = copy();
+		final UnaryOperator copy = copy();
 		copy.child = child.resolveAgainst(scope);
 		return copy;
 	}
@@ -182,7 +186,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	// FIXME: need to create sometime an operator prototype from which to derive operators instead
 	// of copying them
 	@Override
-	public void setDoc(GamlElementDocumentation doc) {
+	public void setDoc(final GamlElementDocumentation doc) {
 		this.doc = doc;
 	}
 

@@ -51,7 +51,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 	@Override
 	public void preWindowOpen() {
 		super.preWindowOpen();
-		IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
+		final IWorkbenchWindowConfigurer configurer = getWindowConfigurer();
 		configurer.setInitialSize(new Point(700, 550));
 		configurer.setShowFastViewBars(false);
 		configurer.setShowMenuBar(true);
@@ -71,11 +71,11 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 
 	@Override
 	public boolean preWindowShellClose() {
-		IEclipsePreferences preferenceStore = InstanceScope.INSTANCE.getNode(IGui.PLUGIN_ID);
-		boolean promptOnExit = preferenceStore.getBoolean(PROMPT_ON_EXIT, false);
+		final IEclipsePreferences preferenceStore = InstanceScope.INSTANCE.getNode(IGui.PLUGIN_ID);
+		final boolean promptOnExit = preferenceStore.getBoolean(PROMPT_ON_EXIT, false);
 
 		if ( !promptOnExit ) {
-			MessageDialogWithToggle dlg =
+			final MessageDialogWithToggle dlg =
 				MessageDialogWithToggle.openOkCancelConfirm(Display.getDefault().getActiveShell(), "Confirm Exit",
 					"Exit " + Platform.getProduct().getName() + " ?", "Always exit without prompt", false, null, null);
 
@@ -84,7 +84,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 			InstanceScope.INSTANCE.getNode(IGui.PLUGIN_ID).putBoolean(PROMPT_ON_EXIT, dlg.getToggleState());
 			try {
 				InstanceScope.INSTANCE.getNode(IGui.PLUGIN_ID).flush();
-			} catch (BackingStoreException e) {
+			} catch (final BackingStoreException e) {
 				System.out.println("Preferences can not be saved");
 				e.printStackTrace();
 			}
@@ -93,19 +93,19 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 	}
 
 	private static List<String> CATEGORIES_TO_REMOVE = new GamaList(new String[] { "org.eclipse.jdt.debug.ui.java",
-		"org.eclipse.jdt.junit", "org.eclipse.pde.PDE", "org.eclipse.ui.Basic",
+		"org.eclipse.jdt.junit", "org.eclipse.pde.PDE", /* "org.eclipse.ui.Basic", */
 		"org.eclipse.emf.codegen.ecore.ui.wizardCategory", "org.eclipse.jdt.ui.java" });
 
 	@Override
 	public void postWindowOpen() {
-		AbstractExtensionWizardRegistry wizardRegistry =
+		final AbstractExtensionWizardRegistry wizardRegistry =
 			(AbstractExtensionWizardRegistry) PlatformUI.getWorkbench().getNewWizardRegistry();
-		IWizardCategory[] categories =
+		final IWizardCategory[] categories =
 			PlatformUI.getWorkbench().getNewWizardRegistry().getRootCategory().getCategories();
-		for ( IWizardDescriptor wizard : getAllWizards(categories) ) {
-			String id = wizard.getCategory().getId();
+		for ( final IWizardDescriptor wizard : getAllWizards(categories) ) {
+			final String id = wizard.getCategory().getId();
 			if ( CATEGORIES_TO_REMOVE.contains(id) ) {
-				WorkbenchWizardElement wizardElement = (WorkbenchWizardElement) wizard;
+				final WorkbenchWizardElement wizardElement = (WorkbenchWizardElement) wizard;
 				wizardRegistry.removeExtension(wizardElement.getConfigurationElement().getDeclaringExtension(),
 					new Object[] { wizardElement });
 			}
@@ -113,14 +113,14 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 
 		// Menu manager
 
-		IWorkbenchWindow window = Workbench.getInstance().getActiveWorkbenchWindow();
+		final IWorkbenchWindow window = Workbench.getInstance().getActiveWorkbenchWindow();
 
 		if ( window instanceof WorkbenchWindow ) {
-			MenuManager menuManager = ((WorkbenchWindow) window).getMenuManager();
+			final MenuManager menuManager = ((WorkbenchWindow) window).getMenuManager();
 
 			// Finding the original "Switch Workspace ... " item
-			MenuManager item = (MenuManager) menuManager.find("file");
-			ActionContributionItem ws = (ActionContributionItem) item.find("openWorkspace");
+			final MenuManager item = (MenuManager) menuManager.find("file");
+			final ActionContributionItem ws = (ActionContributionItem) item.find("openWorkspace");
 
 			if ( ws != null ) {
 				ws.setVisible(false);
@@ -134,9 +134,9 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 
 	}
 
-	private IWizardDescriptor[] getAllWizards(IWizardCategory[] categories) {
-		List<IWizardDescriptor> results = new ArrayList<IWizardDescriptor>();
-		for ( IWizardCategory wizardCategory : categories ) {
+	private IWizardDescriptor[] getAllWizards(final IWizardCategory[] categories) {
+		final List<IWizardDescriptor> results = new ArrayList<IWizardDescriptor>();
+		for ( final IWizardCategory wizardCategory : categories ) {
 			System.out.println("Category:" + wizardCategory.getId());
 			results.addAll(Arrays.asList(wizardCategory.getWizards()));
 			results.addAll(Arrays.asList(getAllWizards(wizardCategory.getCategories())));

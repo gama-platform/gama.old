@@ -85,7 +85,7 @@ public class FileOutput extends AbstractOutput {
 	private int type;
 
 	private void createType() {
-		String t = getLiteral(IKeyword.TYPE, IKeyword.TEXT);
+		final String t = getLiteral(IKeyword.TYPE, IKeyword.TEXT);
 		type = t.equals(IKeyword.CSV) ? CSV : t.equals(IKeyword.XML) ? XML : TEXT;
 	}
 
@@ -97,7 +97,7 @@ public class FileOutput extends AbstractOutput {
 	}
 
 	private void createHeader() throws GamaRuntimeException {
-		IExpression exp = getFacet(IKeyword.HEADER);
+		final IExpression exp = getFacet(IKeyword.HEADER);
 		if ( exp == null ) {
 			setHeader(getHeader());
 		} else {
@@ -106,7 +106,7 @@ public class FileOutput extends AbstractOutput {
 	}
 
 	private void createFooter() throws GamaRuntimeException {
-		IExpression exp = getFacet(IKeyword.FOOTER);
+		final IExpression exp = getFacet(IKeyword.FOOTER);
 		if ( exp == null ) {
 			setFooter(getFooter());
 		} else {
@@ -115,7 +115,7 @@ public class FileOutput extends AbstractOutput {
 	}
 
 	private void createRewrite() throws GamaRuntimeException {
-		IExpression exp = getFacet(IKeyword.REWRITE);
+		final IExpression exp = getFacet(IKeyword.REWRITE);
 		if ( exp == null ) {
 			setRewrite(false);
 		} else {
@@ -262,7 +262,7 @@ public class FileOutput extends AbstractOutput {
 	public void doRefreshWriteAndClose(final ParametersSet sol, final Object fitness) throws GamaRuntimeException {
 		setSolution(sol);
 		if ( fitness == null ) {
-			step(getScope());
+			getScope().step(this);
 		} else {
 			setLastValue(fitness);
 		}
@@ -285,7 +285,7 @@ public class FileOutput extends AbstractOutput {
 				break;
 			case CSV:
 				if ( solution == null ) { return; }
-				StringBuilder s = new StringBuilder(loggedBatchParam.size() * 8);
+				final StringBuilder s = new StringBuilder(loggedBatchParam.size() * 8);
 				for ( final String var : loggedBatchParam ) {
 					s.append(solution.get(var)).append(',');
 				}
@@ -397,7 +397,7 @@ public class FileOutput extends AbstractOutput {
 				}
 				break;
 			case CSV:
-				StringBuilder s = new StringBuilder(loggedBatchParam.size() * 8);
+				final StringBuilder s = new StringBuilder(loggedBatchParam.size() * 8);
 				for ( final String var : loggedBatchParam ) {
 					s.append(var).append(',');
 				}

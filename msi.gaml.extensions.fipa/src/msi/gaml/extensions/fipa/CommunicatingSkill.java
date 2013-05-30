@@ -26,7 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
@@ -39,8 +39,7 @@ import msi.gaml.types.*;
  */
 
 @skill(name = "communicating")
-@vars({
-	@var(name = "conversations", type = IType.LIST, of = MessageType.MESSAGE_ID, init = "[]"),
+@vars({ @var(name = "conversations", type = IType.LIST, of = MessageType.MESSAGE_ID, init = "[]"),
 	@var(name = "messages", type = IType.LIST, of = MessageType.MESSAGE_ID, init = "[]"),
 	@var(name = "accept_proposals", type = IType.LIST, of = MessageType.MESSAGE_ID),
 	@var(name = "agrees", type = IType.LIST, of = MessageType.MESSAGE_ID),
@@ -98,12 +97,11 @@ public class CommunicatingSkill extends Skill {
 	public Message primSendMessage(final IScope scope) throws GamaRuntimeException {
 		final Message m =
 			(Message) Types.get(MessageType.MESSAGE_STR).cast(scope,
-				scope.getArg(MessageType.MESSAGE_STR, Types.get(MessageType.MESSAGE_STR).id()),
-				null);
+				scope.getArg(MessageType.MESSAGE_STR, Types.get(MessageType.MESSAGE_STR).id()), null);
 		Message message;
 		message = m == null ? new Message() : m;
 
-		List receivers = Cast.asList(scope, scope.getArg("receivers", IType.LIST));
+		final List receivers = Cast.asList(scope, scope.getArg("receivers", IType.LIST));
 		if ( receivers == null || receivers.isEmpty() || receivers.contains(null) ) {
 			// scope.setStatus(CommandStatus.failure);
 		}
@@ -116,30 +114,29 @@ public class CommunicatingSkill extends Skill {
 			message.setContent(new GamaList(content));
 		}
 
-		final String performative =
-			Cast.asString(scope, scope.getArg("performative", IType.STRING));
+		final String performative = Cast.asString(scope, scope.getArg("performative", IType.STRING));
 
 		if ( performative != null ) {
 			message.setPerformative(performativeIndexes.get(performative));
 		}
 		if ( message.getPerformative() == -1 ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 			return message;
 		}
 
-		Conversation conv = message.getConversation();
+		final Conversation conv = message.getConversation();
 		if ( conv != null ) { // The message belongs to a conversation
 			message.setConversation(conv);
 			MessageBroker.getInstance().scheduleForDelivery(message);
 		} else { // This is the start of a new conversation
 			final String protocol = Cast.asString(scope, scope.getArg("protocol", IType.STRING));
 			if ( protocol == null ) {
-				scope.setStatus(ExecutionStatus.failure);
+				// scope.setStatus(ExecutionStatus.failure);
 				return message;
 			}
 			MessageBroker.getInstance().scheduleForDelivery(message, protocolIndexes.get(protocol));
 		}
-		scope.setStatus(ExecutionStatus.skipped);
+		// scope.setStatus(ExecutionStatus.success);
 		return message;
 	}
 
@@ -163,8 +160,8 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	private Object replyMessage(final IScope scope, final IList<Message> originals,
-		final int performative, final IList content) throws GamaRuntimeException {
+	private Object replyMessage(final IScope scope, final IList<Message> originals, final int performative,
+		final IList content) throws GamaRuntimeException {
 		for ( final Message original : originals ) {
 			original.setUnread(false);
 			final IAgent receiver = original.getSender();
@@ -206,17 +203,15 @@ public class CommunicatingSkill extends Skill {
 	public Object primReplyToMessage(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 		}
 
-		final String performative =
-			Cast.asString(scope, scope.getArg("performative", IType.STRING));
+		final String performative = Cast.asString(scope, scope.getArg("performative", IType.STRING));
 		if ( performative == null ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 		}
-		scope.setStatus(ExecutionStatus.skipped);
-		return replyMessage(scope, originals, performativeIndexes.get(performative),
-			getContentArg(scope));
+		// scope.setStatus(ExecutionStatus.success);
+		return replyMessage(scope, originals, performativeIndexes.get(performative), getContentArg(scope));
 	}
 
 	/**
@@ -234,9 +229,9 @@ public class CommunicatingSkill extends Skill {
 	public Object primAcceptProposal(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 		}
-		scope.setStatus(ExecutionStatus.skipped);
+		// scope.setStatus(ExecutionStatus.success);
 		return replyMessage(scope, originals, ACCEPT_PROPOSAL, getContentArg(scope));
 	}
 
@@ -255,10 +250,10 @@ public class CommunicatingSkill extends Skill {
 	public Object primAgree(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 		}
 
-		scope.setStatus(ExecutionStatus.skipped);
+		// scope.setStatus(ExecutionStatus.success);
 		return replyMessage(scope, originals, AGREE, getContentArg(scope));
 	}
 
@@ -277,10 +272,10 @@ public class CommunicatingSkill extends Skill {
 	public Object primCancel(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 		}
 
-		scope.setStatus(ExecutionStatus.skipped);
+		// scope.setStatus(ExecutionStatus.success);
 		return replyMessage(scope, originals, CANCEL, getContentArg(scope));
 	}
 
@@ -299,10 +294,10 @@ public class CommunicatingSkill extends Skill {
 	public Object primCfp(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 		}
 
-		scope.setStatus(ExecutionStatus.skipped);
+		// scope.setStatus(ExecutionStatus.success);
 		return replyMessage(scope, originals, CFP, getContentArg(scope));
 	}
 
@@ -321,12 +316,11 @@ public class CommunicatingSkill extends Skill {
 	public Object primEnd(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 		}
 
-		scope.setStatus(ExecutionStatus.skipped);
-		return replyMessage(scope, originals, FIPAConstants.Performatives.END_CONVERSATION,
-			getContentArg(scope));
+		// scope.setStatus(ExecutionStatus.success);
+		return replyMessage(scope, originals, FIPAConstants.Performatives.END_CONVERSATION, getContentArg(scope));
 	}
 
 	/**
@@ -344,10 +338,10 @@ public class CommunicatingSkill extends Skill {
 	public Object primFailure(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 		}
 
-		scope.setStatus(ExecutionStatus.skipped);
+		// scope.setStatus(ExecutionStatus.success);
 		return replyMessage(scope, originals, FAILURE, getContentArg(scope));
 	}
 
@@ -366,10 +360,10 @@ public class CommunicatingSkill extends Skill {
 	public Object primInform(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 		}
 
-		scope.setStatus(ExecutionStatus.skipped);
+		// scope.setStatus(ExecutionStatus.success);
 		return replyMessage(scope, originals, INFORM, getContentArg(scope));
 	}
 
@@ -388,10 +382,10 @@ public class CommunicatingSkill extends Skill {
 	public Object primPropose(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 		}
 
-		scope.setStatus(ExecutionStatus.skipped);
+		// scope.setStatus(ExecutionStatus.success);
 		return replyMessage(scope, originals, PROPOSE, getContentArg(scope));
 	}
 
@@ -410,10 +404,10 @@ public class CommunicatingSkill extends Skill {
 	public Object primQuery(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 		}
 
-		scope.setStatus(ExecutionStatus.skipped);
+		// scope.setStatus(ExecutionStatus.success);
 		return replyMessage(scope, originals, QUERY, getContentArg(scope));
 	}
 
@@ -432,10 +426,10 @@ public class CommunicatingSkill extends Skill {
 	public Object primRefuse(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 		}
 
-		scope.setStatus(ExecutionStatus.skipped);
+		// scope.setStatus(ExecutionStatus.success);
 		return replyMessage(scope, originals, REFUSE, getContentArg(scope));
 	}
 
@@ -454,10 +448,10 @@ public class CommunicatingSkill extends Skill {
 	public Object primRejectProposal(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 		}
 
-		scope.setStatus(ExecutionStatus.skipped);
+		// scope.setStatus(ExecutionStatus.success);
 		return replyMessage(scope, originals, REJECT_PROPOSAL, getContentArg(scope));
 	}
 
@@ -476,10 +470,10 @@ public class CommunicatingSkill extends Skill {
 	public Object primRequest(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 		}
 
-		scope.setStatus(ExecutionStatus.skipped);
+		// scope.setStatus(ExecutionStatus.success);
 		return replyMessage(scope, originals, REQUEST, getContentArg(scope));
 	}
 
@@ -498,10 +492,10 @@ public class CommunicatingSkill extends Skill {
 	public Object primSubscribe(final IScope scope) throws GamaRuntimeException {
 		final IList originals = getMessageArg(scope);
 		if ( originals == null || originals.size() == 0 ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 		}
 
-		scope.setStatus(ExecutionStatus.skipped);
+		// scope.setStatus(ExecutionStatus.success);
 		return replyMessage(scope, originals, SUBSCRIBE, getContentArg(scope));
 
 	}
@@ -513,12 +507,12 @@ public class CommunicatingSkill extends Skill {
 	 */
 	@getter("messages")
 	public IList<Message> getMessages(final IAgent agent) {
-		IList<Message> result = MessageBroker.getInstance().getMessagesFor(agent);
+		final IList<Message> result = MessageBroker.getInstance().getMessagesFor(agent);
 
-		List<Message> received = MessageBroker.getInstance().deliverMessagesFor(agent);
+		final List<Message> received = MessageBroker.getInstance().deliverMessagesFor(agent);
 		result.addAll(received);
-		for ( Iterator<Message> it = result.iterator(); it.hasNext(); ) {
-			Message m = it.next();
+		for ( final Iterator<Message> it = result.iterator(); it.hasNext(); ) {
+			final Message m = it.next();
 			// if ( !m.isUnread() || m.getConversation().isEnded() ) {
 			if ( !m.isUnread() ) {
 				it.remove();
@@ -668,8 +662,7 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	protected void receiveMessage(final IAgent agent, final Message message)
-		throws GamaRuntimeException {
+	protected void receiveMessage(final IAgent agent, final Message message) throws GamaRuntimeException {
 		Message messageToAdd;
 		messageToAdd = new Message(message);
 		getMessages(agent).add(messageToAdd);
@@ -683,7 +676,7 @@ public class CommunicatingSkill extends Skill {
 	 * @return the gama list< i message>
 	 */
 	private IList<Message> filter(final IAgent agent, final int performative) {
-		List<Message> inBox = getMessages(agent);
+		final List<Message> inBox = getMessages(agent);
 		if ( inBox.isEmpty() ) { return GamaList.EMPTY_LIST; }
 		final GamaList<Message> result = new GamaList();
 		for ( final Message m : inBox ) {
@@ -701,9 +694,8 @@ public class CommunicatingSkill extends Skill {
 	 * 
 	 * @param conv the conv
 	 */
-	protected void addConversation(final IAgent agent, final Conversation conv)
-		throws GamaRuntimeException {
-		List<Conversation> conversations = getConversations(agent);
+	protected void addConversation(final IAgent agent, final Conversation conv) throws GamaRuntimeException {
+		final List<Conversation> conversations = getConversations(agent);
 		conversations.add(conv);
 	}
 }

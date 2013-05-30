@@ -38,7 +38,7 @@ import msi.gaml.variables.IVariable;
  * @todo Description
  * 
  */
-public interface IPopulation extends Comparable<IPopulation>, IContainer<Integer, IAgent>, IStepable {
+public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, IStepable {
 
 	public interface Listener {
 
@@ -56,11 +56,7 @@ public interface IPopulation extends Comparable<IPopulation>, IContainer<Integer
 
 	public abstract void createVariablesFor(IScope scope, IAgent agent) throws GamaRuntimeException;
 
-	// public abstract void updateVariablesFor(IScope scope, IAgent agent) throws GamaRuntimeException;
-
 	public abstract boolean hasVar(final String n);
-
-	public abstract void dispose();
 
 	public abstract IAgent getAgent(final ILocation value);
 
@@ -84,11 +80,9 @@ public interface IPopulation extends Comparable<IPopulation>, IContainer<Integer
 	public abstract IList<? extends IAgent> createAgents(final IScope scope, final IContainer<?, IShape> geometries)
 		throws GamaRuntimeException;
 
-	public abstract IList<IAgent> getAgentsList();
+	// public abstract Iterator<IAgent> getAgentsList();
 
 	public abstract String getName();
-
-	public abstract int size();
 
 	public abstract boolean isGrid();
 
@@ -134,13 +128,6 @@ public interface IPopulation extends Comparable<IPopulation>, IContainer<Integer
 	 * @throws GamaRuntimeException
 	 */
 	public abstract void killMembers() throws GamaRuntimeException;
-
-	/**
-	 * @throws GamaRuntimeException
-	 * @param scope
-	 * @param list
-	 */
-	// public abstract void computeAgentsToSchedule(IScope scope, IList list) throws GamaRuntimeException;
 
 	/**
 	 * @param obj

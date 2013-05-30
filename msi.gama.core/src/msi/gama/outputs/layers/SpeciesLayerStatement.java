@@ -78,17 +78,17 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 		if ( species == null ) { throw GamaRuntimeException.error("not a suitable species to display: " + getName()); }
 		super._init(scope);
 
-		for ( SpeciesLayerStatement microLayer : microSpeciesLayers ) {
+		for ( final SpeciesLayerStatement microLayer : microSpeciesLayers ) {
 			microLayer.setHostSpecies(species);
-			microLayer.init(scope);
+			if ( !scope.init(microLayer) ) { return; }
 		}
 	}
 
 	@Override
 	public void _step(final IScope scope) throws GamaRuntimeException {
 		super._step(scope);
-		for ( SpeciesLayerStatement microLayer : microSpeciesLayers ) {
-			microLayer.step(scope);
+		for ( final SpeciesLayerStatement microLayer : microSpeciesLayers ) {
+			if ( !scope.step(microLayer) ) { return; }
 		}
 	}
 
@@ -137,10 +137,10 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
-		List<SpeciesLayerStatement> microL = new GamaList<SpeciesLayerStatement>();
-		List<GridLayerStatement> gridL = new GamaList<GridLayerStatement>();
+		final List<SpeciesLayerStatement> microL = new GamaList<SpeciesLayerStatement>();
+		final List<GridLayerStatement> gridL = new GamaList<GridLayerStatement>();
 
-		for ( ISymbol c : commands ) {
+		for ( final ISymbol c : commands ) {
 			if ( c instanceof SpeciesLayerStatement ) {
 				microL.add((SpeciesLayerStatement) c);
 			} else if ( c instanceof GridLayerStatement ) {

@@ -25,6 +25,7 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.GAMA;
+import msi.gama.util.GamaList;
 import msi.gaml.species.ISpecies;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.swt.SWT;
@@ -67,8 +68,8 @@ public class AgentsMenu extends ContributionItem {
 			return;
 		}
 		final SelectionListener listener = select == null ? adapter : select;
-		final List<IAgent> agents = species.getAgentsList();
-		final int size = agents.size();
+		final IAgent[] agents = species.toArray(new IAgent[0]);
+		final int size = agents.length;
 		if ( size < 100 ) {
 			for ( final IAgent agent : agents ) {
 				final MenuItem agentItem = new MenuItem(menu, SWT.PUSH);
@@ -86,7 +87,7 @@ public class AgentsMenu extends ContributionItem {
 				rangeItem.setText("From " + begin + " to " + (end - 1));
 				final Menu rangeMenu = new Menu(rangeItem);
 				for ( int j = begin; j < end; j++ ) {
-					final IAgent agent = agents.get(j);
+					final IAgent agent = agents[j];
 					final MenuItem agentItem = new MenuItem(rangeMenu, SWT.PUSH);
 					agentItem.setData("agent", agent);
 					agentItem.setText(agent.getName());
@@ -183,7 +184,7 @@ public class AgentsMenu extends ContributionItem {
 		final Menu speciesMenu = new Menu(speciesItem);
 		speciesItem.setMenu(speciesMenu);
 
-		final List<IAgent> agents = population.getAgentsList();
+		final List<IAgent> agents = new GamaList(population.iterator());
 		final int size = agents.size();
 
 		if ( size < 100 ) {

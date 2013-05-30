@@ -26,7 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.species;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
@@ -42,23 +42,23 @@ public class ClusterBuilder extends GamlAgent {
 		super(s);
 	}
 
-	private Instances convertToInstances(final IScope scope, final IList<String> attributes,
-		final IList<IAgent> agents) throws GamaRuntimeException {
-		FastVector attribs = new FastVector();
-		for ( String att : attributes ) {
+	private Instances convertToInstances(final IScope scope, final IList<String> attributes, final IList<IAgent> agents)
+		throws GamaRuntimeException {
+		final FastVector attribs = new FastVector();
+		for ( final String att : attributes ) {
 			attribs.addElement(new Attribute(att));
 		}
-		Instances dataset = new Instances(getName(), attribs, agents.size());
-		for ( IAgent ag : agents ) {
+		final Instances dataset = new Instances(getName(), attribs, agents.size());
+		for ( final IAgent ag : agents ) {
 
-			int nb = attributes.size();
-			double vals[] = new double[nb];
+			final int nb = attributes.size();
+			final double vals[] = new double[nb];
 			for ( int i = 0; i < nb; i++ ) {
-				String attrib = attributes.get(i);
-				Double var = Cast.asFloat(scope, ag.getDirectVarValue(scope, attrib));
+				final String attrib = attributes.get(i);
+				final Double var = Cast.asFloat(scope, ag.getDirectVarValue(scope, attrib));
 				vals[i] = var;
 			}
-			Instance instance = new Instance(1, vals);
+			final Instance instance = new Instance(1, vals);
 			dataset.add(instance);
 		}
 		return dataset;
@@ -66,24 +66,24 @@ public class ClusterBuilder extends GamlAgent {
 
 	private List<List<IAgent>> clusteringUsingWeka(final IScope scope, final Clusterer clusterer,
 		final IList<String> attributes, final IList<IAgent> agents) throws GamaRuntimeException {
-		Instances dataset = convertToInstances(scope, attributes, agents);
+		final Instances dataset = convertToInstances(scope, attributes, agents);
 		try {
 			clusterer.buildClusterer(dataset);
 
-			List<List<IAgent>> groupes = new GamaList<List<IAgent>>();
+			final List<List<IAgent>> groupes = new GamaList<List<IAgent>>();
 
 			for ( int i = 0; i < clusterer.numberOfClusters(); i++ ) {
 				groupes.add(new GamaList<IAgent>());
 			}
 			for ( int i = 0; i < dataset.numInstances(); i++ ) {
-				Instance inst = dataset.instance(i);
+				final Instance inst = dataset.instance(i);
 				int clusterIndex = -1;
 				clusterIndex = clusterer.clusterInstance(inst);
-				List<IAgent> groupe = groupes.get(clusterIndex);
+				final List<IAgent> groupe = groupes.get(clusterIndex);
 				groupe.add(agents.get(i));
 			}
 			return groupes;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return null;
 		}
 
@@ -99,26 +99,26 @@ public class ClusterBuilder extends GamlAgent {
 	 * maximum number of clusters min_num_clusters -- set minimum number of clusters seed -- The
 	 * random number seed to be used.
 	 */
-	@action(name = "clustering_xmeans", args ={
-			@arg(name = "agents", type= IType.LIST, optional = false),
-			@arg(name = "attributes", type= IType.LIST, optional = false),			
-			@arg(name = "bin_value", type = IType.FLOAT, optional = true, doc = @doc("value that represents true in the new attributes")),
-			@arg(name = "cut_off_factor", type = IType.FLOAT, optional = true, doc = @doc("the cut-off factor to use")),
-			@arg(name = "distance_f", type = IType.STRING, optional = true, doc = @doc("The distance function to use. 4 possible distance functions: " +
-					"euclidean (by default) ; 'chebyshev', 'manhattan' or 'levenshtein'")),
-			@arg(name = "max_iterations", type = IType.INT, optional = true, doc = @doc("the maximum number of iterations to perform")),
-			@arg(name = "max_kmeans", type = IType.INT, optional = true, doc = @doc("the maximum number of iterations to perform in KMeans")),
-			@arg(name = "max_kmeans_for_children", type = IType.INT, optional = true, doc = @doc("the maximum number of iterations KMeans that is performed on the child centers")),	
-			@arg(name = "max_num_clusters", type = IType.INT, optional = true, doc = @doc("the maximum number of clusters")),
-			@arg(name = "min_num_clusters", type = IType.INT, optional = true, doc = @doc("the maximum number of clusters")),
-			@arg(name = "seed", type = IType.INT, optional = true, doc = @doc("random number seed to be used"))})
-//	@args(names = { "agents", "attributes", "bin_value", "cut_off_factor", "distance_f",
-//		"max_iterations", "max_kmeans", "max_kmeans_for_children", "max_kmeans_for_children",
-//		"max_num_clusters", "min_num_clusters", "seed" })
+	@action(name = "clustering_xmeans", args = {
+		@arg(name = "agents", type = IType.LIST, optional = false),
+		@arg(name = "attributes", type = IType.LIST, optional = false),
+		@arg(name = "bin_value", type = IType.FLOAT, optional = true, doc = @doc("value that represents true in the new attributes")),
+		@arg(name = "cut_off_factor", type = IType.FLOAT, optional = true, doc = @doc("the cut-off factor to use")),
+		@arg(name = "distance_f", type = IType.STRING, optional = true, doc = @doc("The distance function to use. 4 possible distance functions: "
+			+ "euclidean (by default) ; 'chebyshev', 'manhattan' or 'levenshtein'")),
+		@arg(name = "max_iterations", type = IType.INT, optional = true, doc = @doc("the maximum number of iterations to perform")),
+		@arg(name = "max_kmeans", type = IType.INT, optional = true, doc = @doc("the maximum number of iterations to perform in KMeans")),
+		@arg(name = "max_kmeans_for_children", type = IType.INT, optional = true, doc = @doc("the maximum number of iterations KMeans that is performed on the child centers")),
+		@arg(name = "max_num_clusters", type = IType.INT, optional = true, doc = @doc("the maximum number of clusters")),
+		@arg(name = "min_num_clusters", type = IType.INT, optional = true, doc = @doc("the maximum number of clusters")),
+		@arg(name = "seed", type = IType.INT, optional = true, doc = @doc("random number seed to be used")) })
+	// @args(names = { "agents", "attributes", "bin_value", "cut_off_factor", "distance_f",
+	// "max_iterations", "max_kmeans", "max_kmeans_for_children", "max_kmeans_for_children",
+	// "max_num_clusters", "min_num_clusters", "seed" })
 	public List<List<IAgent>> primClusteringXMeans(final IScope scope) throws GamaRuntimeException {
 		final IList<IAgent> agents = scope.getListArg("agents");
-		IList<String> attributes = scope.getListArg("attributes");
-		XMeans xmeans = new XMeans();
+		final IList<String> attributes = scope.getListArg("attributes");
+		final XMeans xmeans = new XMeans();
 		if ( scope.hasArg("bin_value") ) {
 			xmeans.setBinValue(scope.getFloatArg("bin_value"));
 		}
@@ -126,7 +126,7 @@ public class ClusterBuilder extends GamlAgent {
 			xmeans.setCutOffFactor(scope.getFloatArg("cut_off_factor"));
 		}
 		if ( scope.hasArg("distance_f") ) {
-			String distanceFct = scope.getStringArg("distance_f");
+			final String distanceFct = scope.getStringArg("distance_f");
 			if ( distanceFct.equals("chebyshev") ) {
 				xmeans.setDistanceF(new ChebyshevDistance());
 			} else if ( distanceFct.equals("manhattan") ) {
@@ -138,8 +138,8 @@ public class ClusterBuilder extends GamlAgent {
 		if ( scope.hasArg("max_iterations") ) {
 			try {
 				xmeans.setMaxIterations((Integer) scope.getArg("max_iterations", IType.INT));
-			} catch (Exception e) {
-				scope.setStatus(ExecutionStatus.failure);
+			} catch (final Exception e) {
+				// scope.setStatus(ExecutionStatus.failure);
 				return null;
 			}
 		}
@@ -159,10 +159,10 @@ public class ClusterBuilder extends GamlAgent {
 			xmeans.setSeed(scope.getIntArg("seed"));
 		}
 
-		List<List<IAgent>> groupes = clusteringUsingWeka(scope, xmeans, attributes, agents);
-		{
-			scope.setStatus(groupes == null ? ExecutionStatus.failure : ExecutionStatus.success);
-		}
+		final List<List<IAgent>> groupes = clusteringUsingWeka(scope, xmeans, attributes, agents);
+		// {
+		// scope.setStatus(groupes == null ? ExecutionStatus.failure : ExecutionStatus.success);
+		// }
 		return groupes;
 	}
 
@@ -173,25 +173,20 @@ public class ClusterBuilder extends GamlAgent {
 	 * of clusters preserve_instances_order -- Preserve order of instances. seed -- The random
 	 * number seed to be used.
 	 */
-	@action(name = "clustering_simple_kmeans", args ={
-		@arg(name = "agents", type= IType.LIST, optional = false),
-		@arg(name = "attributes", type= IType.LIST, optional = false),
-		@arg(name = "distance_f", optional = true),
-		@arg(name = "dont_replace_missing_values", optional = true),
-		@arg(name = "max_iterations", optional = true),
-		@arg(name = "num_clusters", optional = true),
-		@arg(name = "preserve_instances_order", optional = true),
-		@arg(name = "seed", optional = true)})
-//	@args(names = { "agents", "attributes", "distance_f", "dont_replace_missing_values",
-//		"max_iterations", "num_clusters", "preserve_instances_order", "seed" })
-	public List<List<IAgent>> primClusteringSimpleKMeans(final IScope scope)
-		throws GamaRuntimeException {
+	@action(name = "clustering_simple_kmeans", args = { @arg(name = "agents", type = IType.LIST, optional = false),
+		@arg(name = "attributes", type = IType.LIST, optional = false), @arg(name = "distance_f", optional = true),
+		@arg(name = "dont_replace_missing_values", optional = true), @arg(name = "max_iterations", optional = true),
+		@arg(name = "num_clusters", optional = true), @arg(name = "preserve_instances_order", optional = true),
+		@arg(name = "seed", optional = true) })
+	// @args(names = { "agents", "attributes", "distance_f", "dont_replace_missing_values",
+	// "max_iterations", "num_clusters", "preserve_instances_order", "seed" })
+	public List<List<IAgent>> primClusteringSimpleKMeans(final IScope scope) throws GamaRuntimeException {
 		final IList<IAgent> agents = scope.getListArg("agents");
-		IList<String> attributes = scope.getListArg("attributes");
-		SimpleKMeans kmeans = new SimpleKMeans();
+		final IList<String> attributes = scope.getListArg("attributes");
+		final SimpleKMeans kmeans = new SimpleKMeans();
 		try {
 			if ( scope.hasArg("distance_f") ) {
-				String distanceFct = scope.getStringArg("distance_f");
+				final String distanceFct = scope.getStringArg("distance_f");
 				if ( distanceFct.equals("chebyshev") ) {
 					kmeans.setDistanceFunction(new ChebyshevDistance());
 				} else if ( distanceFct.equals("manhattan") ) {
@@ -215,14 +210,14 @@ public class ClusterBuilder extends GamlAgent {
 			if ( scope.hasArg("seed") ) {
 				kmeans.setSeed(scope.getIntArg("seed"));
 			}
-		} catch (Exception e) {
-			scope.setStatus(ExecutionStatus.failure);
+		} catch (final Exception e) {
+			// scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
-		List<List<IAgent>> groupes = clusteringUsingWeka(scope, kmeans, attributes, agents);
-		{
-			scope.setStatus(groupes == null ? ExecutionStatus.failure : ExecutionStatus.success);
-		}
+		final List<List<IAgent>> groupes = clusteringUsingWeka(scope, kmeans, attributes, agents);
+		// {
+		// scope.setStatus(groupes == null ? ExecutionStatus.failure : ExecutionStatus.success);
+		// }
 		return groupes;
 	}
 
@@ -235,8 +230,8 @@ public class ClusterBuilder extends GamlAgent {
 	@args(names = { "agents", "attributes", "max_iterations", "num_clusters", "min_std_dev", "seed" })
 	public List<List<IAgent>> primClusteringEM(final IScope scope) throws GamaRuntimeException {
 		final IList<IAgent> agents = scope.getListArg("agents");
-		IList<String> attributes = scope.getListArg("attributes");
-		EM em = new EM();
+		final IList<String> attributes = scope.getListArg("attributes");
+		final EM em = new EM();
 		try {
 
 			if ( scope.hasArg("max_iterations") ) {
@@ -251,14 +246,14 @@ public class ClusterBuilder extends GamlAgent {
 			if ( scope.hasArg("seed") ) {
 				em.setSeed(scope.getIntArg("seed"));
 			}
-		} catch (Exception e) {
-			scope.setStatus(ExecutionStatus.failure);
+		} catch (final Exception e) {
+			// scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
-		List<List<IAgent>> groupes = clusteringUsingWeka(scope, em, attributes, agents);
-		{
-			scope.setStatus(groupes == null ? ExecutionStatus.failure : ExecutionStatus.success);
-		}
+		final List<List<IAgent>> groupes = clusteringUsingWeka(scope, em, attributes, agents);
+		// {
+		// scope.setStatus(groupes == null ? ExecutionStatus.failure : ExecutionStatus.success);
+		// }
 		return groupes;
 	}
 
@@ -269,11 +264,10 @@ public class ClusterBuilder extends GamlAgent {
 	 */
 	@action(name = "clustering_farthestFirst")
 	@args(names = { "agents", "attributes", "num_clusters", "seed" })
-	public List<List<IAgent>> primClusteringFarthestFirst(final IScope scope)
-		throws GamaRuntimeException {
+	public List<List<IAgent>> primClusteringFarthestFirst(final IScope scope) throws GamaRuntimeException {
 		final IList<IAgent> agents = scope.getListArg("agents");
-		IList<String> attributes = scope.getListArg("attributes");
-		FarthestFirst ff = new FarthestFirst();
+		final IList<String> attributes = scope.getListArg("attributes");
+		final FarthestFirst ff = new FarthestFirst();
 		try {
 
 			if ( scope.hasArg("num_clusters") ) {
@@ -282,14 +276,14 @@ public class ClusterBuilder extends GamlAgent {
 			if ( scope.hasArg("seed") ) {
 				ff.setSeed(scope.getIntArg("seed"));
 			}
-		} catch (Exception e) {
-			scope.setStatus(ExecutionStatus.failure);
+		} catch (final Exception e) {
+			// scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
-		List<List<IAgent>> groupes = clusteringUsingWeka(scope, ff, attributes, agents);
-		{
-			scope.setStatus(groupes == null ? ExecutionStatus.failure : ExecutionStatus.success);
-		}
+		final List<List<IAgent>> groupes = clusteringUsingWeka(scope, ff, attributes, agents);
+		// {
+		// scope.setStatus(groupes == null ? ExecutionStatus.failure : ExecutionStatus.success);
+		// }
 		return groupes;
 	}
 
@@ -303,11 +297,11 @@ public class ClusterBuilder extends GamlAgent {
 	@args(names = { "agents", "attributes", "distance_f", "epsilon", "min_points" })
 	public List<List<IAgent>> primClusteringDBScan(final IScope scope) throws GamaRuntimeException {
 		final IList<IAgent> agents = scope.getListArg("agents");
-		IList<String> attributes = scope.getListArg("attributes");
-		DBScan dbScan = new DBScan();
+		final IList<String> attributes = scope.getListArg("attributes");
+		final DBScan dbScan = new DBScan();
 		try {
 			if ( scope.hasArg("distance_f") ) {
-				String distanceFct = scope.getStringArg("distance_f");
+				final String distanceFct = scope.getStringArg("distance_f");
 				if ( distanceFct.equals("manhattan") ) {
 					dbScan.setDatabase_distanceType(ManhattanDataObject.class.getName());
 				} else {
@@ -320,14 +314,14 @@ public class ClusterBuilder extends GamlAgent {
 			if ( scope.hasArg("min_points") ) {
 				dbScan.setMinPoints(scope.getIntArg("min_points"));
 			}
-		} catch (Exception e) {
-			scope.setStatus(ExecutionStatus.failure);
+		} catch (final Exception e) {
+			// scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
-		List<List<IAgent>> groupes = clusteringUsingWeka(scope, dbScan, attributes, agents);
-		{
-			scope.setStatus(groupes == null ? ExecutionStatus.failure : ExecutionStatus.success);
-		}
+		final List<List<IAgent>> groupes = clusteringUsingWeka(scope, dbScan, attributes, agents);
+		// {
+		// scope.setStatus(groupes == null ? ExecutionStatus.failure : ExecutionStatus.success);
+		// }
 		return groupes;
 	}
 
@@ -339,8 +333,8 @@ public class ClusterBuilder extends GamlAgent {
 	@args(names = { "agents", "attributes", "acuity", "cutoff", "seed" })
 	public List<List<IAgent>> primClusteringCobweb(final IScope scope) throws GamaRuntimeException {
 		final IList<IAgent> agents = scope.getListArg("agents");
-		IList<String> attributes = scope.getListArg("attributes");
-		Cobweb cutOff = new Cobweb();
+		final IList<String> attributes = scope.getListArg("attributes");
+		final Cobweb cutOff = new Cobweb();
 		try {
 
 			if ( scope.hasArg("acuity") ) {
@@ -352,14 +346,14 @@ public class ClusterBuilder extends GamlAgent {
 			if ( scope.hasArg("seed") ) {
 				cutOff.setSeed(scope.getIntArg("seed"));
 			}
-		} catch (Exception e) {
-			scope.setStatus(ExecutionStatus.failure);
+		} catch (final Exception e) {
+			// scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
-		List<List<IAgent>> groupes = clusteringUsingWeka(scope, cutOff, attributes, agents);
-		{
-			scope.setStatus(groupes == null ? ExecutionStatus.failure : ExecutionStatus.success);
-		}
+		final List<List<IAgent>> groupes = clusteringUsingWeka(scope, cutOff, attributes, agents);
+		// {
+		// scope.setStatus(groupes == null ? ExecutionStatus.failure : ExecutionStatus.success);
+		// }
 		return groupes;
 
 	}

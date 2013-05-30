@@ -30,7 +30,7 @@ import com.vividsolutions.jts.geom.*;
  * in a dynamic fashion), no Population (leaving the programmer the possibility to redeclare getPopulation(), for
  * example in a dynamic fashion, etc.)
  * 
- * These agents have no sub-population by default (but subclasses can be decalred as implementing IMacroAgent, and the
+ * These agents have no sub-population by default (but subclasses can be declared by implementing IMacroAgent, and the
  * appropriate methods can be redefined). Their name is fixed by construction (but subclasses can always implement a
  * name).
  * 
@@ -112,11 +112,13 @@ public abstract class MinimalAgent implements IAgent {
 	}
 
 	/**
+	 * Returns the envelope of the geometry of the agent, or null if the geometry has not yet been defined
 	 * @see msi.gama.interfaces.IGeometry#getEnvelope()
 	 */
 	@Override
 	public Envelope getEnvelope() {
-		return checkedGeometry().getEnvelope();
+		final IShape g = getGeometry();
+		return g == null ? null : g.getEnvelope();
 	}
 
 	/**
@@ -215,6 +217,11 @@ public abstract class MinimalAgent implements IAgent {
 	}
 
 	@Override
+	public String toString() {
+		return getName();
+	}
+
+	@Override
 	public void setExtraAttributes(final Map<Object, Object> map) {
 		if ( map == null ) { return; }
 		attributes.putAll(map);
@@ -252,23 +259,13 @@ public abstract class MinimalAgent implements IAgent {
 
 	@Override
 	public void init(final IScope scope) throws GamaRuntimeException {
-		scope.push(this);
-		try {
-			getSpecies().getArchitecture().init(scope);
-		} finally {
-			scope.pop(this);
-		}
+		getSpecies().getArchitecture().init(scope);
 	}
 
 	@Override
 	public void step(final IScope scope) throws GamaRuntimeException {
-		if ( scope.interrupted() || dead() ) { return; }
-		scope.push(this);
-		try {
-			checkedPopulation().updateVariables(scope, this);
-			getSpecies().getArchitecture().executeOn(scope);
-		} finally {
-			scope.pop(this);
+		if ( scope.update(this) ) {
+			scope.execute(getSpecies().getArchitecture(), this, null);
 		}
 	}
 
@@ -286,7 +283,7 @@ public abstract class MinimalAgent implements IAgent {
 	public IList<IAgent> getPeers() throws GamaRuntimeException {
 		final IPopulation pop = getHost().getPopulationFor(this.getSpecies());
 		if ( pop != null ) {
-			final IList<IAgent> retVal = pop.getAgentsList();
+			final IList<IAgent> retVal = new GamaList(pop.toArray());
 			retVal.remove(this);
 			return retVal;
 		}
@@ -295,8 +292,7 @@ public abstract class MinimalAgent implements IAgent {
 
 	@Override
 	public String getName() {
-		if ( dead() ) { return "dead agent"; }
-		return getSpeciesName() + getIndex();
+		return getSpeciesName() + getIndex() + (dead() ? " (dead)" : "");
 	}
 
 	@Override
@@ -535,8 +531,10 @@ public abstract class MinimalAgent implements IAgent {
 
 	@action(name = "die")
 	public Object primDie(final IScope scope) throws GamaRuntimeException {
-		// FIXME VERIFY THIS STATUS
-		scope.setStatus(ExecutionStatus.interrupt);
+		// if ( getSpecies().getName().equals("flock") ) {
+		// GuiUtils.debug("Flock destroyed : " + this);
+		// }
+		scope.interruptAgent();
 		dispose();
 		return null;
 	}

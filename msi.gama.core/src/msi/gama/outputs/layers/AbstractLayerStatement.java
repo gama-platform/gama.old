@@ -47,7 +47,7 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 		super(desc);
 		setBox(new LayerBox(getFacet(IKeyword.TRANSPARENCY), getFacet(IKeyword.POSITION), getFacet(IKeyword.SIZE),
 			getFacet(IKeyword.Z), getFacet(IKeyword.REFRESH)));
-		IExpression title = getFacet(IKeyword.NAME);
+		final IExpression title = getFacet(IKeyword.NAME);
 		if ( title != null && title.isConst() ) {
 			setName(title.literalValue());
 		}
@@ -55,16 +55,14 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 
 	@Override
 	public final void init(final IScope scope) throws GamaRuntimeException {
-		if ( !scope.interrupted() ) {
-			getBox().compute(scope);
-			_init(scope);
-		}
+		getBox().compute(scope);
+		_init(scope);
 	}
 
 	protected abstract void _init(IScope scope);
 
 	@Override
-	public void setDisplayOutput(IDisplayOutput out) {
+	public void setDisplayOutput(final IDisplayOutput out) {
 		output = out;
 	}
 
@@ -77,10 +75,8 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 
 	@Override
 	public final void step(final IScope scope) throws GamaRuntimeException {
-		if ( !scope.interrupted() ) {
-			getBox().compute(scope);
-			_step(scope);
-		}
+		getBox().compute(scope);
+		_step(scope);
 	}
 
 	protected abstract void _step(IScope scope);

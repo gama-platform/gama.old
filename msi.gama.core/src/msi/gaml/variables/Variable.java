@@ -61,7 +61,7 @@ public class Variable extends Symbol implements IVariable {
 
 	protected IExpression updateExpression, initExpression, amongExpression, functionExpression;
 	protected IType type;
-	protected boolean isNotModifiable, doUpdate;
+	protected boolean isNotModifiable /* , doUpdate */;
 	private final int definitionOrder;
 	public GamaHelper getter, initer, setter;
 	protected String /* gName, sName, iName, */pName, cName;
@@ -69,8 +69,8 @@ public class Variable extends Symbol implements IVariable {
 
 	public Variable(final IDescription sd) {
 		super(sd);
-		VariableDescription desc = (VariableDescription) sd;
-		doUpdate = true;
+		final VariableDescription desc = (VariableDescription) sd;
+		// doUpdate = true;
 		setName(getFacet(IKeyword.NAME).literalValue());
 		pName = desc.getParameterName();
 		cName = getLiteral(IKeyword.CATEGORY, null);
@@ -85,7 +85,7 @@ public class Variable extends Symbol implements IVariable {
 	}
 
 	private void buildHelpers(final VariableDescription var) {
-		SpeciesDescription species = var.getSpeciesContext();
+		final SpeciesDescription species = var.getSpeciesContext();
 		getter = var.getGetter();
 		if ( getter != null ) {
 			gSkill = species.getSkillFor(getter.getSkillClass());
@@ -131,7 +131,7 @@ public class Variable extends Symbol implements IVariable {
 
 	@Override
 	public void setValue(final Object initial) {
-		IExpressionDescription desc = ConstantExpressionDescription.create(initial);
+		final IExpressionDescription desc = ConstantExpressionDescription.create(initial);
 		initExpression = desc.getExpression();
 		setFacet(IKeyword.INIT, desc);
 	}
@@ -174,7 +174,7 @@ public class Variable extends Symbol implements IVariable {
 	@Override
 	public void initializeWith(final IScope scope, final IAgent a, final Object v) throws GamaRuntimeException {
 		try {
-			doUpdate = false;
+			// doUpdate = false;
 			if ( v != null ) {
 				_setVal(a, scope, v);
 			} else if ( initExpression != null ) {
@@ -182,10 +182,10 @@ public class Variable extends Symbol implements IVariable {
 			} else if ( initer != null ) {
 				_setVal(a, scope, initer.run(scope, a, gSkill == null ? (ISkill) a : gSkill));
 			} else {
-				doUpdate = true;
+				// doUpdate = true;
 				_setVal(a, scope, getType().getDefault());
 			}
-		} catch (GamaRuntimeException e) {
+		} catch (final GamaRuntimeException e) {
 			e.addContext("in initializing attribute " + getName());
 			throw e;
 		}
@@ -239,7 +239,7 @@ public class Variable extends Symbol implements IVariable {
 
 	protected Object checkAmong(final IAgent agent, final IScope scope, final Object val) throws GamaRuntimeException {
 		if ( amongExpression == null ) { return val; }
-		List among = Cast.asList(scope, scope.evaluate(amongExpression, agent));
+		final List among = Cast.asList(scope, scope.evaluate(amongExpression, agent));
 		if ( among == null ) { return val; }
 		if ( among.contains(val) ) { return val; }
 		if ( among.isEmpty() ) { return null; }
@@ -259,19 +259,23 @@ public class Variable extends Symbol implements IVariable {
 		return agent.getAttribute(name);
 	}
 
-	@Override
-	public void updateFor(final IScope scope, final IAgent agent) throws GamaRuntimeException {
-		if ( !doUpdate ) {
-			doUpdate = true;
-			return;
-		}
-		try {
-			_setVal(agent, scope, updateExpression.value(scope));
-		} catch (GamaRuntimeException e) {
-			e.addContext("in updating attribute " + getName());
-			throw e;
-		}
+	// @Override
+	// public void updateFor(final IScope scope, final IAgent agent) throws GamaRuntimeException {
+	// // if ( !doUpdate ) {
+	// // doUpdate = true;
+	// // return;
+	// // }
+	// try {
+	// _setVal(agent, scope, updateExpression.value(scope));
+	// } catch (final GamaRuntimeException e) {
+	// e.addContext("in updating attribute " + getName());
+	// throw e;
+	// }
+	// }
 
+	@Override
+	public Object getUpdatedValue(final IScope scope) {
+		return updateExpression.value(scope);
 	}
 
 	@Override
@@ -295,17 +299,17 @@ public class Variable extends Symbol implements IVariable {
 		if ( !amongExpression.isConst() ) { return null; }
 		try {
 			return Cast.as(amongExpression, IList.class);
-		} catch (GamaRuntimeException e) {
+		} catch (final GamaRuntimeException e) {
 			return null;
 		}
 	}
 
 	@Override
-	public Object getInitialValue(IScope scope) {
+	public Object getInitialValue(final IScope scope) {
 		if ( initExpression != null /* && initExpression.isConst() */) {
 			try {
 				return initExpression.value(scope);
-			} catch (GamaRuntimeException e) {
+			} catch (final GamaRuntimeException e) {
 				return null;
 			}
 		}

@@ -43,9 +43,9 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	protected final boolean isGrid, isGraph;
 	protected final Map<String, ISpecies> microSpecies = new HashMap<String, ISpecies>();
-	private final Map<String, IVariable> variables = new HashMap<String, IVariable>();
-	private final Map<String, AspectStatement> aspects = new HashMap<String, AspectStatement>();
-	private final Map<String, ActionStatement> actions = new HashMap<String, ActionStatement>();
+	private final Map<String, IVariable> variables = new LinkedHashMap<String, IVariable>();
+	private final Map<String, AspectStatement> aspects = new LinkedHashMap<String, AspectStatement>();
+	private final Map<String, ActionStatement> actions = new LinkedHashMap<String, ActionStatement>();
 	private final Map<String, UserCommandStatement> userCommands = new LinkedHashMap();
 	private final IList<IStatement> behaviors = new GamaList<IStatement>();
 	protected ISpecies macroSpecies;
@@ -70,11 +70,7 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 
 	@Override
 	public IList listValue(final IScope scope) throws GamaRuntimeException {
-		final IAgent a = scope.getAgentScope();
-		if ( a == null ) { return GamaList.EMPTY_LIST; }
-		final IPopulation p = a.getPopulationFor(this);
-		if ( p == null ) { return GamaList.EMPTY_LIST; }
-		return p.getAgentsList();
+		return getPopulation(scope);
 	}
 
 	@Override

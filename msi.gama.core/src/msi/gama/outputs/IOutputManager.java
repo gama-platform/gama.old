@@ -36,8 +36,6 @@ public interface IOutputManager extends IStepable, GamaSelectionListener, GamaSe
 
 	List<? extends IOutput> getMonitors();
 
-	void updateOutputs();
-
 	void addOutput(IOutput monitorOutput);
 
 	void exportOutputsOn(PrintWriter pw);
@@ -46,15 +44,8 @@ public interface IOutputManager extends IStepable, GamaSelectionListener, GamaSe
 
 	IOutput getOutput(String id);
 
-	/**
-	 * @param keyword
-	 * @param layerDisplayOutput
-	 * @param w
-	 * @param h
-	 * @return
-	 */
-	IDisplaySurface getDisplaySurfaceFor(String keyword, IDisplayOutput layerDisplayOutput,
-		double w, double h, Object...args);
+	IDisplaySurface getDisplaySurfaceFor(String keyword, IDisplayOutput layerDisplayOutput, double w, double h,
+		Object ... args);
 
 	void forceUpdateOutputs();
 

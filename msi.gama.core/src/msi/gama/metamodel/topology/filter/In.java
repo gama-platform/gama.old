@@ -84,7 +84,7 @@ public abstract class In implements IAgentFilter {
 		 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getShapes()
 		 */
 		@Override
-		public Collection<? extends IShape> getShapes(IScope scope) {
+		public Collection<? extends IShape> getShapes(final IScope scope) {
 			return agents;
 		}
 
@@ -107,8 +107,7 @@ public abstract class In implements IAgentFilter {
 
 		@Override
 		public boolean accept(final IShape source, final IShape a) {
-			return a.getGeometry() != source.getGeometry() && byEdges ? graph.containsEdge(a)
-				: graph.containsVertex(a);
+			return a.getGeometry() != source.getGeometry() && byEdges ? graph.containsEdge(a) : graph.containsVertex(a);
 
 		}
 
@@ -126,7 +125,7 @@ public abstract class In implements IAgentFilter {
 		 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getShapes()
 		 */
 		@Override
-		public Collection<? extends IShape> getShapes(IScope scope) {
+		public Collection<? extends IShape> getShapes(final IScope scope) {
 			return byEdges ? graph.edgeSet() : graph.getVertices();
 		}
 
@@ -146,10 +145,10 @@ public abstract class In implements IAgentFilter {
 
 		@Override
 		public boolean accept(final IShape source, final IShape a) {
-			IAgent agent = a.getAgent();
+			final IAgent agent = a.getAgent();
 			if ( agent == null ) { return false; }
 			if ( agent.getPopulation() != pop ) { return false; }
-			IAgent as = source.getAgent();
+			final IAgent as = source.getAgent();
 			if ( as != null && as.getPopulation() != pop ) {
 				if ( agent == as ) { return false; }
 			}
@@ -174,8 +173,8 @@ public abstract class In implements IAgentFilter {
 		 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getShapes()
 		 */
 		@Override
-		public Collection<? extends IShape> getShapes(IScope scope) {
-			return pop.getAgentsList();
+		public Collection<? extends IShape> getShapes(final IScope scope) {
+			return (Collection<? extends IShape>) pop.iterable(scope);
 		}
 
 		@Override

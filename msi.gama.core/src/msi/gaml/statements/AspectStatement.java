@@ -45,7 +45,7 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 		@Override
 		public Rectangle2D draw(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 			if ( agent != null ) {
-				IGraphics g = scope.getGraphics();
+				final IGraphics g = scope.getGraphics();
 				if ( g == null ) { return null; }
 				try {
 					agent.acquireLock();
@@ -53,11 +53,15 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 					if ( agent == GuiUtils.getHighlightedAgent() ) {
 						g.beginHighlight();
 					}
-					Color c =
+					final Color c =
 						agent.getSpecies().hasVar(IKeyword.COLOR) ? Cast.asColor(scope,
 							agent.getDirectVarValue(scope, IKeyword.COLOR)) : Color.YELLOW;
-					Rectangle2D r =
-						g.drawGamaShape(scope, (IShape) agent.getGeometry().copy(scope), c, true, Color.black, 0, false);
+					// if ( agent.getSpecies().getName().equals("pedestrian") ) {
+					// GuiUtils.debug("AspectStatement: draw " + agent);
+					// }
+					final IShape ag = agent.getGeometry();
+					final IShape ag2 = (IShape) ag.copy(scope);
+					final Rectangle2D r = g.drawGamaShape(scope, ag2, c, true, Color.black, 0, false);
 					return r;
 				} finally {
 					g.endHighlight();
@@ -77,15 +81,15 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 	@Override
 	public Rectangle2D draw(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 		if ( agent != null ) {
-			IGraphics g = scope.getGraphics();
+			final IGraphics g = scope.getGraphics();
 			if ( g == null ) { return null; }
 			try {
 				agent.acquireLock();
-				if ( agent.dead() || scope.interrupted() ) { return null; }
+				if ( scope.interrupted() ) { return null; }
 				if ( agent == GuiUtils.getHighlightedAgent() ) {
 					g.beginHighlight();
 				}
-				Object result = scope.execute(this, agent);
+				final Object result = scope.execute(this, agent, null);
 				if ( result instanceof Rectangle2D ) { return (Rectangle2D) result; }
 				return null;
 			} finally {
@@ -102,7 +106,7 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 	public Rectangle2D privateExecuteIn(final IScope stack) throws GamaRuntimeException {
 		Rectangle2D result = null;
 		for ( int i = 0; i < commands.length; i++ ) {
-			Object c = commands[i].executeOn(stack);
+			final Object c = commands[i].executeOn(stack);
 			if ( result != null ) {
 				if ( c instanceof Rectangle2D ) {
 					result = result.createUnion((Rectangle2D) c);

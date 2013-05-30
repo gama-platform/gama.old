@@ -20,15 +20,18 @@ package msi.gama.lang.gaml.ui;
 
 import msi.gama.common.util.GuiUtils;
 import msi.gama.lang.gaml.ui.GamlEditor.GamaSourceViewerConfiguration;
-import msi.gama.lang.gaml.ui.contentassist.ContentAssistContextFactory;
+import msi.gama.lang.gaml.ui.contentassist.*;
 import msi.gama.lang.gaml.ui.highlight.*;
 import msi.gama.lang.gaml.ui.hover.*;
 import msi.gama.lang.gaml.ui.hover.GamlHoverProvider.GamlDispatchingEObjectTextHover;
+import msi.gama.lang.gaml.validation.GamlJavaValidator;
+import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider;
 import org.eclipse.xtext.resource.ILocationInFileProvider;
 import org.eclipse.xtext.resource.containers.IAllContainersState;
+import org.eclipse.xtext.service.SingletonBinding;
 import org.eclipse.xtext.ui.editor.*;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
@@ -60,10 +63,15 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 			.toInstance(".");
 	}
 
-	// @Override
-	// public Class<? extends IContentAssistProcessor> bindIContentAssistProcessor() {
-	// return GamlContentAssistProcessor.class;
-	// }
+	@SingletonBinding(eager = true)
+	public Class<? extends msi.gama.lang.gaml.validation.GamlJavaValidator> bindGamlJavaValidator() {
+		return GamlJavaValidator.class;
+	}
+
+	@Override
+	public Class<? extends IContentAssistProcessor> bindIContentAssistProcessor() {
+		return GamlContentAssistProcessor.class;
+	}
 
 	public Class<? extends org.eclipse.xtext.ui.editor.contentassist.antlr.ParserBasedContentAssistContextFactory.StatefulFactory> bindStatefulFactory() {
 		return ContentAssistContextFactory.class;

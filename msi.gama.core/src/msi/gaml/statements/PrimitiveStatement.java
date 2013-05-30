@@ -70,7 +70,7 @@ public class PrimitiveStatement extends ActionStatement {
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 		Object result = null;
-		actualArgs.stack(scope);
+		scope.stackArguments(actualArgs);
 		final IAgent agent = scope.getAgentScope();
 		result = helper.run(scope, agent, skill == null ? agent : skill);
 		return result;

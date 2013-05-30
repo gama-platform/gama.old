@@ -67,7 +67,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	public InspectDisplayOutput(final IDescription desc) {
 		super(desc);
-		String type = getLiteral(IKeyword.TYPE);
+		final String type = getLiteral(IKeyword.TYPE);
 		if ( value != null ) {
 			target = INSPECT_DYNAMIC;
 		} else {
@@ -86,8 +86,8 @@ public class InspectDisplayOutput extends MonitorOutput {
 		GAMA.run(new InScope.Void() {
 
 			@Override
-			public void process(IScope scope) {
-				init(scope);
+			public void process(final IScope scope) {
+				if ( !scope.init(InspectDisplayOutput.this) ) { return; }
 				outputManager.addOutput(InspectDisplayOutput.this);
 				schedule();
 				open();
@@ -125,7 +125,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 	public List<IAgent> getLastValue() {
 		if ( lastValue instanceof IAgent ) { return GamaList.with(lastValue); }
 		if ( lastValue instanceof List ) {
-			for ( Object o : (List) lastValue ) {
+			for ( final Object o : (List) lastValue ) {
 				if ( !(o instanceof IAgent) ) { return null; }
 			}
 			return (List) lastValue;

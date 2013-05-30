@@ -145,9 +145,9 @@ public class MovingSkill extends GeometricSkill {
 		if ( target != null && target instanceof ILocated ) {
 			result = ((ILocated) target).getLocation();
 		}
-		if ( result == null ) {
-			scope.setStatus(ExecutionStatus.failure);
-		}
+		// if ( result == null ) {
+		// scope.setStatus(ExecutionStatus.failure);
+		// }
 		return result;
 	}
 
@@ -192,7 +192,7 @@ public class MovingSkill extends GeometricSkill {
 			((GamaPoint) loc).z = agent.getLocation().getZ();
 			agent.setLocation(loc);
 		}
-		scope.setStatus(loc == null ? ExecutionStatus.failure : ExecutionStatus.success);
+		// scope.setStatus(loc == null ? ExecutionStatus.failure : ExecutionStatus.success);
 		// return null;
 	}
 
@@ -225,7 +225,7 @@ public class MovingSkill extends GeometricSkill {
 			// pathFollowed = new GamaPath(this.getTopology(agent), GamaList.with(location, loc));
 			agent.setLocation(loc);
 		}
-		scope.setStatus(loc == null ? ExecutionStatus.failure : ExecutionStatus.success);
+		// scope.setStatus(loc == null ? ExecutionStatus.failure : ExecutionStatus.success);
 		return null;
 	}
 
@@ -254,7 +254,7 @@ public class MovingSkill extends GeometricSkill {
 			// pathFollowed = new GamaPath(this.getTopology(agent), GamaList.with(location, loc));
 			agent.setLocation(loc);
 		}
-		scope.setStatus(loc == null ? ExecutionStatus.failure : ExecutionStatus.success);
+		// scope.setStatus(loc == null ? ExecutionStatus.failure : ExecutionStatus.success);
 		return null;
 	}
 
@@ -273,17 +273,17 @@ public class MovingSkill extends GeometricSkill {
 			if ( returnPath != null && returnPath ) {
 				final IPath pathFollowed = moveToNextLocAlongPath(scope, agent, path, dist, weigths);
 				if ( pathFollowed == null ) {
-					scope.setStatus(ExecutionStatus.failure);
+					// scope.setStatus(ExecutionStatus.failure);
 					return null;
 				}
-				scope.setStatus(ExecutionStatus.success);
+				// scope.setStatus(ExecutionStatus.success);
 				return pathFollowed;
 			}
 			moveToNextLocAlongPathSimplified(scope, agent, path, dist, weigths);
-			scope.setStatus(ExecutionStatus.success);
+			// scope.setStatus(ExecutionStatus.success);
 			return null;
 		}
-		scope.setStatus(ExecutionStatus.failure);
+		// scope.setStatus(ExecutionStatus.failure);
 		return null;
 	}
 
@@ -299,12 +299,12 @@ public class MovingSkill extends GeometricSkill {
 		final double maxDist = computeDistance(scope, agent);
 		final ILocation goal = computeTarget(scope, agent);
 		if ( goal == null ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
 		final ITopology topo = computeTopology(scope, agent);
 		if ( topo == null ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
 		IPath path = (GamaPath) agent.getAttribute("current_path");
@@ -322,7 +322,7 @@ public class MovingSkill extends GeometricSkill {
 		}
 
 		if ( path == null ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
 		final Boolean returnPath = (Boolean) scope.getArg("return_path", IType.NONE);
@@ -330,14 +330,14 @@ public class MovingSkill extends GeometricSkill {
 		if ( returnPath != null && returnPath ) {
 			final IPath pathFollowed = moveToNextLocAlongPath(scope, agent, path, maxDist, weigths);
 			if ( pathFollowed == null ) {
-				scope.setStatus(ExecutionStatus.failure);
+				// scope.setStatus(ExecutionStatus.failure);
 				return null;
 			}
-			scope.setStatus(ExecutionStatus.success);
+			// scope.setStatus(ExecutionStatus.success);
 			return pathFollowed;
 		}
 		moveToNextLocAlongPathSimplified(scope, agent, path, maxDist, weigths);
-		scope.setStatus(ExecutionStatus.success);
+		// scope.setStatus(ExecutionStatus.success);
 		return null;
 	}
 

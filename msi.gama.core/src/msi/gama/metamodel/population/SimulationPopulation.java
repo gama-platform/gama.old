@@ -2,13 +2,14 @@ package msi.gama.metamodel.population;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.AbstractTopology.RootTopology;
 import msi.gama.metamodel.topology.continuous.AmorphousTopology;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
@@ -21,23 +22,43 @@ public class SimulationPopulation extends GamaPopulation {
 	}
 
 	@Override
+	public void killMembers() throws GamaRuntimeException {
+		// Simulations should be killed in a more precautious way...
+		// for ( final IAgent a : toArray() ) {
+		// if ( a.getScope().interrupted() ) {
+		// a.dispose();
+		// }
+		// }
+	}
+
+	@Override
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number, final List<Map> initialValues,
 		final boolean isRestored) throws GamaRuntimeException {
-		if ( size() == 0 ) {
-			SimulationAgent world = new SimulationAgent(this);
-			IAgent a = getHost();
-			if ( a instanceof ExperimentAgent ) {
-				((ExperimentAgent) a).setSimulation(world);
-			}
-
-			world.setIndex(0);
-			agents.add(world);
-			createVariablesFor(world.getScope(), agents, initialValues);
-			if ( a instanceof ExperimentAgent ) {
-				((ExperimentAgent) a).scheduleSimulation(world);
+		GuiUtils.waitStatus("Initializing simulation");
+		final SimulationAgent world = new SimulationAgent(this);
+		final IAgent a = getHost();
+		if ( a instanceof ExperimentAgent ) {
+			((ExperimentAgent) a).setSimulation(world);
+		}
+		add(world);
+		if ( scope.interrupted() ) { return null; }
+		GuiUtils.waitStatus("Instantiating agents");
+		createVariablesFor(world.getScope(), this, initialValues);
+		world.schedule();
+		GAMA.controller.scheduler.schedule(world.getScheduler(), world.getScope());
+		if ( a instanceof ExperimentAgent ) {
+			// TODO Here we probably have a chance to decide what to do with the outputs defined in ExperimentSpecies
+			final IScope simulationScope = world.obtainNewScope();
+			if ( simulationScope != null ) {
+				GAMA.controller.scheduler.schedule(((ExperimentAgent) a).getSpecies().getOutputManager(),
+					simulationScope);
+			} else {
+				GuiUtils.hideView(GuiUtils.PARAMETER_VIEW_ID);
+				GuiUtils.hideMonitorView();
 			}
 		}
-		return agents;
+		GuiUtils.informStatus("Simulation Ready");
+		return this;
 	}
 
 	@Override
@@ -49,8 +70,8 @@ public class SimulationPopulation extends GamaPopulation {
 		host = agent;
 	}
 
-	public void setTopology(IScope scope, IShape gisShape, IShape shape) {
-		boolean torus = Cast.asBool(scope, species.getFacet(IKeyword.TORUS));
+	public void setTopology(final IScope scope, final IShape gisShape, final IShape shape) {
+		final boolean torus = Cast.asBool(scope, species.getFacet(IKeyword.TORUS));
 		topology = new RootTopology(scope, gisShape, shape, torus);
 	}
 
@@ -60,9 +81,12 @@ public class SimulationPopulation extends GamaPopulation {
 		topology = new AmorphousTopology();
 	}
 
-	@Override
-	public List<IAgent> computeAgentsToSchedule(IScope scope) {
-		return Collections.EMPTY_LIST;
-	}
+	// @Override
+	// public IList<IAgent> computeAgentsToSchedule(final IScope scope) {
+	// final int frequency = scheduleFrequency == null ? 1 : Cast.asInt(scope, scheduleFrequency.value(scope));
+	// final int step = scope.getClock().getCycle();
+	// if ( frequency == 0 || step % frequency != 0 ) { return GamaList.EMPTY_LIST; }
+	//
+	// }
 
 }

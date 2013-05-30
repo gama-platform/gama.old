@@ -24,7 +24,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import javax.swing.SwingUtilities;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.IDisplayOutput;
@@ -48,7 +48,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 			while (doIt) {
 				try {
 					paintingNeeded.acquire();
-				} catch (InterruptedException e) {
+				} catch (final InterruptedException e) {
 					doIt = false;
 				}
 				if ( doIt ) {
@@ -70,7 +70,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 			if ( SwingUtilities.isLeftMouseButton(e) ) {
 				dragging = true;
 				canBeUpdated(false);
-				Point p = e.getPoint();
+				final Point p = e.getPoint();
 				if ( mousePosition == null ) {
 					mousePosition = new Point(getWidth() / 2, getHeight() / 2);
 				}
@@ -89,7 +89,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 		@Override
 		public void mouseWheelMoved(final MouseWheelEvent e) {
-			boolean zoomIn = e.getWheelRotation() < 0;
+			final boolean zoomIn = e.getWheelRotation() < 0;
 			mousePosition = e.getPoint();
 			applyZoom(zoomIn ? 1.0 + zoomIncrement : 1.0 - zoomIncrement, mousePosition);
 			updateDisplay();
@@ -115,7 +115,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	}
 
-	public AWTDisplaySurface(Object...args) {
+	public AWTDisplaySurface(final Object ... args) {
 		displayBlock = new Runnable() {
 
 			@Override
@@ -137,9 +137,9 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	}
 
 	@Override
-	protected void createNewImage(int width, int height) {
+	protected void createNewImage(final int width, final int height) {
 		super.createNewImage(width, height);
-		BufferedImage newImage = ImageUtils.createCompatibleImage(width, height);
+		final BufferedImage newImage = ImageUtils.createCompatibleImage(width, height);
 		if ( buffImage != null ) {
 			newImage.getGraphics().drawImage(buffImage, 0, 0, width, height, null);
 			buffImage.flush();
@@ -153,7 +153,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		super.initialize(env_width, env_height, layerDisplayOutput);
 		setCursor(createCursor());
 		menuManager = new AWTDisplaySurfaceMenu(this);
-		DisplayMouseListener d = new DisplayMouseListener();
+		final DisplayMouseListener d = new DisplayMouseListener();
 		addMouseListener(d);
 		addMouseMotionListener(d);
 		addMouseWheelListener(d);
@@ -175,7 +175,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 				}
 				updateDisplay();
-				double newZoom =
+				final double newZoom =
 					Math.min(getWidth() / (double) getDisplayWidth(), getHeight() / (double) getDisplayHeight());
 				setZoomLevel(1 / newZoom);
 				previousPanelSize = getSize();
@@ -187,7 +187,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	@Override
 	public void outputChanged(final double env_width, final double env_height, final IDisplayOutput output) {
-		GuiUtils.debug("AWTDisplaySurface.outputChanged");
+		// GuiUtils.debug("AWTDisplaySurface.outputChanged");
 		setEnvWidth(env_width);
 		setEnvHeight(env_height);
 		bgColor = output.getBackgroundColor();
@@ -209,7 +209,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	@Override
 	public int[] computeBoundsFrom(final int vwidth, final int vheight) {
 		if ( !manager.stayProportional() ) { return new int[] { vwidth, vheight }; }
-		int[] dim = new int[2];
+		final int[] dim = new int[2];
 		if ( widthHeightConstraint < 1 ) {
 			dim[1] = Math.min(vheight, (int) (vwidth * widthHeightConstraint));
 			dim[0] = Math.min(vwidth, (int) (dim[1] / widthHeightConstraint));
@@ -221,15 +221,15 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	}
 
 	public void selectAgents(final int mousex, final int mousey) {
-		int xc = mousex - origin.x;
-		int yc = mousey - origin.y;
+		final int xc = mousex - origin.x;
+		final int yc = mousey - origin.y;
 		final List<ILayer> displays = manager.getLayersIntersecting(xc, yc);
 		menuManager.selectAgents(mousex, mousey, xc, yc, displays);
 	}
 
 	@Override
 	public void forceUpdateDisplay() {
-		boolean old = synchronous;
+		final boolean old = synchronous;
 		setSynchronized(false);
 		updateDisplay();
 		setSynchronized(old);
@@ -304,9 +304,9 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 			Math.max(1, (int) Math.round(getDisplayHeight() * factor))) ) {
 			zoomFit = false;
 			setZoomLevel(zoomLevel * factor);
-			int imagePX =
+			final int imagePX =
 				c.x < origin.x ? 0 : c.x >= getDisplayWidth() + origin.x ? getDisplayWidth() - 1 : c.x - origin.x;
-			int imagePY =
+			final int imagePY =
 				c.y < origin.y ? 0 : c.y >= getDisplayHeight() + origin.y ? getDisplayHeight() - 1 : c.y - origin.y;
 			setOrigin(c.x - (int) Math.round(imagePX * factor), c.y - (int) Math.round(imagePY * factor));
 			updateDisplay();
@@ -360,14 +360,14 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	 */
 	@Override
 	public void snapshot() {
-		IScope scope = GAMA.obtainNewScope();
+		final IScope scope = GAMA.obtainNewScope();
 		try {
 			if ( snapshotDimension.x == -1 && snapshotDimension.y == -1 ) {
 				save(scope, buffImage);
 				return;
 			}
-			BufferedImage newImage = ImageUtils.createCompatibleImage(snapshotDimension.x, snapshotDimension.y);
-			IGraphics tempGraphics = new AWTDisplayGraphics(this, (Graphics2D) newImage.getGraphics());
+			final BufferedImage newImage = ImageUtils.createCompatibleImage(snapshotDimension.x, snapshotDimension.y);
+			final IGraphics tempGraphics = new AWTDisplayGraphics(this, (Graphics2D) newImage.getGraphics());
 			tempGraphics.fillBackground(bgColor, 1);
 			manager.drawLayersOn(tempGraphics);
 			save(scope, newImage);
@@ -387,17 +387,17 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	}
 
 	@Override
-	public void initOutput3D(boolean output3d, ILocation output3dNbCycles) {
+	public void initOutput3D(final boolean output3d, final ILocation output3dNbCycles) {
 		;
 	}
 
 	@Override
 	public void repaint() {
-		GuiUtils.debug("AWTDisplaySurface.repaint not transmitted");
+		// GuiUtils.debug("AWTDisplaySurface.repaint not transmitted");
 		// super.repaint();
 	}
 
-	public void repaint(boolean fromInside) {
+	public void repaint(final boolean fromInside) {
 		// GuiUtils.debug("AWTDisplaySurface.repaint transmitted from inside");
 		if ( fromInside && !isPainting ) {
 			super.repaint();
@@ -406,13 +406,13 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	}
 
 	@Override
-	public void paintChildren(Graphics g) {
+	public void paintChildren(final Graphics g) {
 		// GuiUtils.debug("AWTDisplaySurface.paintChildren");
 		// super.paintChildren(g);
 	}
 
 	@Override
-	public void paintBorder(Graphics g) {
+	public void paintBorder(final Graphics g) {
 		// GuiUtils.debug("AWTDisplaySurface.paintBorder");
 		// super.paintBorder(g);
 	}
@@ -425,7 +425,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	// }
 
 	@Override
-	public void paint(Graphics g) {
+	public void paint(final Graphics g) {
 		// GuiUtils.debug("AWTDisplaySurface.paint");
 		isPainting = true;
 		super.paint(g);

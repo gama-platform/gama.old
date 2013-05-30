@@ -60,7 +60,7 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	public void init(final IScope scope) {
 		setScope(scope.copy());
 		outputManager = GAMA.getExperiment().getOutputManager();
-		IExpression refresh = getFacet(IKeyword.REFRESH_EVERY);
+		final IExpression refresh = getFacet(IKeyword.REFRESH_EVERY);
 		if ( refresh != null ) {
 			setRefreshRate(Cast.asInt(getScope(), refresh.value(getScope())));
 		}
@@ -185,7 +185,7 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 
 	protected void setScope(final IScope scope) {
 		if ( this.scope != null ) {
-			GAMA.releaseScope(scope);
+			GAMA.releaseScope(this.scope);
 		}
 		this.scope = scope;
 	}

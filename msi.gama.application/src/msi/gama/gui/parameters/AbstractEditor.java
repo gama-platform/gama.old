@@ -73,7 +73,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 			a = GAMA.getExperiment().getAgent();
 			param.setValue(newValue);
 		}
-		if ( a != null && a.getSpecies().hasVar(param.getName()) ) {
+		if ( a != null /* && a.getSpecies().hasVar(param.getName()) */) {
 			GAMA.getExperiment().getAgent().getScope().setAgentVarValue(a, param.getName(), newValue);
 		}
 	}
@@ -131,7 +131,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 		titleLabel = SwtGui.createLeftLabel(parent, name);
 		try {
 			setOriginalValue(getParameterValue());
-		} catch (GamaRuntimeException e1) {
+		} catch (final GamaRuntimeException e1) {
 			e1.addContext("Impossible to obtain the value of " + name);
 			GAMA.reportError(e1);
 		}
@@ -148,7 +148,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 			paramControl =
 				!isEditable ? createLabelParameterControl(comp) : isCombo ? createComboParameterControl(comp)
 					: createCustomParameterControl(comp);
-		} catch (GamaRuntimeException e1) {
+		} catch (final GamaRuntimeException e1) {
 			e1.addContext("The editor for " + name + " could not be created");
 			GAMA.reportError(e1);
 			return;
@@ -174,7 +174,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 		return GAMA.run(new InScope() {
 
 			@Override
-			public Object run(IScope scope) {
+			public Object run(final IScope scope) {
 				if ( agent == null ) { return param.value(scope); }
 				return scope.getAgentVarValue(getAgent(), param.getName());
 			}
@@ -190,7 +190,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 			public void run() {
 				try {
 					listener.valueModified(val);
-				} catch (GamaRuntimeException e) {
+				} catch (final GamaRuntimeException e) {
 					e.printStackTrace();
 					e.addContext("Value of " + name + " cannot be modified");
 					GAMA.reportError(GamaRuntimeException.create(e));
@@ -201,7 +201,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 	}
 
 	protected GridData getParameterGridData() {
-		GridData d = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		final GridData d = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		d.minimumWidth = 100;
 		d.widthHint = 300; // SWT.DEFAULT
 		return d;
@@ -218,7 +218,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 
 	protected Control createComboParameterControl(final Composite composite) {
 		possibleValues = new GamaList(param.getAmongValue());
-		String[] valuesAsString = new String[possibleValues.size()];
+		final String[] valuesAsString = new String[possibleValues.size()];
 		for ( int i = 0; i < possibleValues.size(); i++ ) {
 			if ( param.isLabel() ) {
 				valuesAsString[i] = possibleValues.get(i).toString();
@@ -293,14 +293,14 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 	@Override
 	public void updateValue() {
 		try {
-			Object newVal = getParameterValue();
+			final Object newVal = getParameterValue();
 			if ( !isValueDifferent(newVal) ) { return; }
 			internalModification = true;
 			if ( titleLabel != null ) {
 				modifyAndDisplayValue(newVal);
 			}
 			internalModification = false;
-		} catch (GamaRuntimeException e) {
+		} catch (final GamaRuntimeException e) {
 			e.addContext("Unable to obtain the value of " + name);
 			GAMA.reportError(e);
 			return;
@@ -323,7 +323,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 		return GAMA.run(new InScope<IAgent>() {
 
 			@Override
-			public IAgent run(IScope scope) {
+			public IAgent run(final IScope scope) {
 				return scope.getSimulationScope();
 			}
 		});

@@ -25,7 +25,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserInputStatement;
 import msi.gaml.compilation.ISymbol;
@@ -91,7 +91,7 @@ public class UserCommandStatement extends AbstractStatementSequence implements I
 			final Object result = executer.executeOn(scope);
 			return result;
 		}
-		scope.setStatus(ExecutionStatus.skipped);
+		// scope.setStatus(ExecutionStatus.success);
 		return null;
 	}
 

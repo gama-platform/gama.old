@@ -40,8 +40,8 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 
 	public AbstractStatement(final IDescription desc) {
 		super(desc);
-		String k = getLiteral(IKeyword.KEYWORD);
-		String n = getLiteral(IKeyword.NAME);
+		final String k = getLiteral(IKeyword.KEYWORD);
+		final String n = getLiteral(IKeyword.NAME);
 		setName(k == null ? "" : k + " " + n == null ? "" : n);
 		pertinence = null;
 	}
@@ -49,10 +49,10 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
 		Object result = null;
-		if ( scope.interrupted() ) { return result; }
+		// if ( scope.interrupted() ) { return result; }
 		try {
 			result = privateExecuteIn(scope);
-		} catch (GamaRuntimeException e) {
+		} catch (final GamaRuntimeException e) {
 			e.addContext(this);
 			if ( e.isWarning() ) {
 				GAMA.reportError(e);
@@ -75,14 +75,14 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 
 	@Override
 	public IType getContentType() {
-		IType t = getType();
+		final IType t = getType();
 		if ( t != null ) { return t.defaultContentType(); }
 		return null;
 	}
 
 	@Override
 	public IType getKeyType() {
-		IType t = getType();
+		final IType t = getType();
 		if ( t != null ) { return t.defaultKeyType(); }
 		return null;
 	}
@@ -94,10 +94,10 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 
 	@Override
 	public String toGaml() {
-		String k = getLiteral(IKeyword.KEYWORD);
-		StringBuilder sb = new StringBuilder(100);
+		final String k = getLiteral(IKeyword.KEYWORD);
+		final StringBuilder sb = new StringBuilder(100);
 		sb.append(k).append(' ');
-		for ( Facet e : description.getFacets().entrySet() ) {
+		for ( final Facet e : description.getFacets().entrySet() ) {
 			if ( e != null && !e.getKey().equals(IKeyword.KEYWORD) ) {
 				sb.append(e.getKey()).append(": ").append(e.getValue().getExpression().toGaml()).append(" ");
 			}

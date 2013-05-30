@@ -26,7 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -99,14 +99,14 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 
 	@Override
 	public IType getType() {
-		IType type = description.getModelDescription().getTypeNamed(getLiteral(IKeyword.TYPE));
+		final IType type = description.getModelDescription().getTypeNamed(getLiteral(IKeyword.TYPE));
 		if ( type != Types.NO_TYPE ) { return type; }
 		if ( value == null ) { return Types.NO_TYPE; }
 		return description.getModelDescription().getTypesManager().get(value.getClass());
 	}
 
 	@Override
-	public Object getInitialValue(IScope scope) {
+	public Object getInitialValue(final IScope scope) {
 		return initialValue;
 	}
 
@@ -122,7 +122,6 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 
 	@Override
 	protected Object privateExecuteIn(final IScope scope) {
-		scope.setStatus(ExecutionStatus.skipped);
 		scope.setVarValue(tempVar, value);
 		return value;
 	}

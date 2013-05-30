@@ -16,7 +16,7 @@ import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.path.*;
@@ -124,12 +124,12 @@ public class DrivingSkill extends MovingSkill {
 
 		final ILocation goal = computeTarget(scope, agent);
 		if ( goal == null ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
 		final ITopology topo = computeTopology(scope, agent);
 		if ( topo == null ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
 		final GamaPath path = scope.hasArg("path") ? (GamaPath) scope.getArg("path", IType.NONE) : null;
@@ -139,18 +139,18 @@ public class DrivingSkill extends MovingSkill {
 					moveToNextLocAlongPathTraffic(scope, agent, path, maxDist, weigths, livingSpace, tolerance,
 						laneAttributes, obsSpecies);
 				if ( pathFollowed == null ) {
-					scope.setStatus(ExecutionStatus.failure);
+					// scope.setStatus(ExecutionStatus.failure);
 					return null;
 				}
-				scope.setStatus(ExecutionStatus.success);
+				// scope.setStatus(ExecutionStatus.success);
 				return pathFollowed;
 			}
 			moveToNextLocAlongPathSimplifiedTraffic(scope, agent, path, maxDist, weigths, livingSpace, tolerance,
 				laneAttributes, obsSpecies);
-			scope.setStatus(ExecutionStatus.success);
+			// scope.setStatus(ExecutionStatus.success);
 			return null;
 		}
-		scope.setStatus(ExecutionStatus.failure);
+		// scope.setStatus(ExecutionStatus.failure);
 		return null;
 	}
 
@@ -177,12 +177,12 @@ public class DrivingSkill extends MovingSkill {
 
 		final ILocation goal = computeTarget(scope, agent);
 		if ( goal == null ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
 		final ITopology topo = computeTopology(scope, agent);
 		if ( topo == null ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
 		IPath path = (GamaPath) agent.getAttribute("current_path");
@@ -200,7 +200,7 @@ public class DrivingSkill extends MovingSkill {
 		}
 
 		if ( path == null ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
 		final Boolean returnPath = (Boolean) scope.getArg("return_path", IType.NONE);
@@ -210,15 +210,15 @@ public class DrivingSkill extends MovingSkill {
 				moveToNextLocAlongPathTraffic(scope, agent, path, maxDist, weigths, livingSpace, tolerance,
 					laneAttributes, obsSpecies);
 			if ( pathFollowed == null ) {
-				scope.setStatus(ExecutionStatus.failure);
+				// scope.setStatus(ExecutionStatus.failure);
 				return null;
 			}
-			scope.setStatus(ExecutionStatus.success);
+			// scope.setStatus(ExecutionStatus.success);
 			return pathFollowed;
 		}
 		moveToNextLocAlongPathSimplifiedTraffic(scope, agent, path, maxDist, weigths, livingSpace, tolerance,
 			laneAttributes, obsSpecies);
-		scope.setStatus(ExecutionStatus.success);
+		// scope.setStatus(ExecutionStatus.success);
 		return null;
 	}
 

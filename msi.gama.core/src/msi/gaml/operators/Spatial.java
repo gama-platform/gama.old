@@ -1181,8 +1181,8 @@ public abstract class Spatial {
 			"any_location_in", "any_point_in", "closest_points_with", "farthest_point_to" })
 		public static GamaList points_at(final IScope scope, final Integer nbLoc, final Double distance) {
 			if ( distance == null || nbLoc == null ) {
-				scope.setStatus(ExecutionStatus.failure);
-				return null;
+				// scope.setStatus(ExecutionStatus.failure);
+				throw GamaRuntimeException.error("Impossible to compute points_at");
 			}
 			final GamaList<ILocation> locations = new GamaList();
 			final ILocation loc = scope.getAgentScope().getLocation();
@@ -1456,7 +1456,7 @@ public abstract class Spatial {
 			final int nb = agents.length(scope);
 
 			if ( nb == 0 ) {
-				scope.setStatus(ExecutionStatus.failure);
+				// scope.setStatus(ExecutionStatus.failure);
 				return null;
 			}
 			double distMin = Double.MAX_VALUE;
@@ -1546,7 +1546,7 @@ public abstract class Spatial {
 			final int nb = agents.length(scope);
 
 			if ( nb == 0 ) {
-				scope.setStatus(ExecutionStatus.failure);
+				// scope.setStatus(ExecutionStatus.failure);
 				return null;
 			}
 			double distMin = Double.MAX_VALUE;

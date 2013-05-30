@@ -30,6 +30,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.*;
 import org.eclipse.swt.widgets.Composite;
+import com.google.common.collect.ImmutableSet;
 
 /**
  * Written by drogoul Modified on 23 août 2008
@@ -59,8 +60,8 @@ public class SpeciesLayer extends AgentLayer {
 	public Set<IAgent> getAgentsForMenu() {
 		final IScope scope = GAMA.obtainNewScope();
 		final Set<IAgent> result =
-			new HashSet(scope.getSimulationScope()
-				.getMicroPopulation(((SpeciesLayerStatement) definition).getSpecies()).getAgentsList());
+			ImmutableSet.copyOf(scope.getSimulationScope()
+				.getMicroPopulation(((SpeciesLayerStatement) definition).getSpecies()).iterator());
 		GAMA.releaseScope(scope);
 		return result;
 	}
@@ -93,63 +94,56 @@ public class SpeciesLayer extends AgentLayer {
 		if ( aspect == null ) {
 			aspect = AspectStatement.DEFAULT_ASPECT;
 		}
-		final List<IAgent> _agents = population.getAgentsList();
-		if ( !_agents.isEmpty() ) {
-			// draw the population
-			for ( final IAgent a : _agents ) {
-				final Rectangle2D r = aspect.draw(scope, a);
-				if ( r != null ) {
-					shapes.put(a, r);
-				}
-			}
+		// IAgent[] _agents = null;
+		// _agents = Iterators.toArray(population.iterator(), IAgent.class);
 
+		// draw the population
+		for ( final IAgent a : population.toArray(new IAgent[0]) ) {
+			final Rectangle2D r = aspect.draw(scope, a);
+			if ( r != null ) {
+				shapes.put(a, r);
+			}
+			if ( !(a instanceof IMacroAgent) ) {
+				continue;
+			}
 			IPopulation microPop;
 			// draw grids first...
 			final List<GridLayerStatement> gridLayers = layer.getGridLayers();
 			for ( final GridLayerStatement gl : gridLayers ) {
-				for ( final IAgent a : _agents ) {
-					if ( a instanceof IMacroAgent ) {
-						try {
-							a.acquireLock();
-							if ( a.dead() || scope.interrupted() ) {
-								continue;
-							}
-							microPop = ((IMacroAgent) a).getMicroPopulation(gl.getName());
-							if ( microPop != null && microPop.size() > 0 ) {
-								// FIXME Needs to be entirely redefined using the new interfaces
-								// drawGridPopulation(a, gl, microPop, scope, g);
-							}
-						} finally {
-							a.releaseLock();
-						}
-
+				try {
+					a.acquireLock();
+					if ( a.dead() /* || scope.interrupted() */) {
+						continue;
 					}
+					microPop = ((IMacroAgent) a).getMicroPopulation(gl.getName());
+					if ( microPop != null && microPop.size() > 0 ) {
+						// FIXME Needs to be entirely redefined using the new interfaces
+						// drawGridPopulation(a, gl, microPop, scope, g);
+					}
+				} finally {
+					a.releaseLock();
 				}
 			}
 
 			// then recursively draw the micro-populations
 			final List<SpeciesLayerStatement> microLayers = layer.getMicroSpeciesLayers();
 			for ( final SpeciesLayerStatement ml : microLayers ) {
-				for ( final IAgent a : _agents ) {
-					if ( a instanceof IMacroAgent ) {
-						try {
-							a.acquireLock();
-							if ( a.dead() ) {
-								continue;
-							}
-							microPop = ((IMacroAgent) a).getMicroPopulation(ml.getSpecies());
-
-							if ( microPop != null && microPop.size() > 0 ) {
-								drawPopulation(scope, g, a, ml, microPop);
-							}
-						} finally {
-							a.releaseLock();
-						}
-
+				try {
+					a.acquireLock();
+					if ( a.dead() ) {
+						continue;
 					}
+					microPop = ((IMacroAgent) a).getMicroPopulation(ml.getSpecies());
+
+					if ( microPop != null && microPop.size() > 0 ) {
+						drawPopulation(scope, g, a, ml, microPop);
+					}
+				} finally {
+					a.releaseLock();
 				}
 			}
 		}
+
 	}
 
 	// private void drawGridPopulation(final IAgent host, final GridLayerStatement layer, final IPopulation population,

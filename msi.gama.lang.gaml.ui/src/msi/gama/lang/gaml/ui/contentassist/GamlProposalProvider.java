@@ -19,11 +19,21 @@
 package msi.gama.lang.gaml.ui.contentassist;
 
 import java.util.Set;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.ui.labeling.GamlLabelProvider;
+import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import msi.gama.precompiler.GamlProperties;
+import msi.gaml.descriptions.IGamlDescription;
+import msi.gaml.factories.DescriptionFactory;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.xtext.*;
 import org.eclipse.xtext.ui.IImageHelper;
+import org.eclipse.xtext.ui.editor.contentassist.*;
+import org.eclipse.xtext.util.Strings;
 import com.google.inject.Inject;
 
 /**
@@ -35,20 +45,81 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 
 	private static Set<String> typeList;
 	private static GamlProperties allowedFacets;
-	private static Image rgbImage = ImageDescriptor.createFromFile(GamlProposalProvider.class,
-		"/icons/_rgb.png").createImage();
-	private static Image facetImage = ImageDescriptor.createFromFile(GamlProposalProvider.class,
-		"/icons/_facet.png").createImage();
-	private static Image typeImage = ImageDescriptor.createFromFile(GamlProposalProvider.class,
-		"/icons/_type.png").createImage();
-	private static Image varImage = ImageDescriptor.createFromFile(GamlProposalProvider.class,
-		"/icons/_var.png").createImage();
+	private static Image rgbImage = ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_rgb.png")
+		.createImage();
+	private static Image facetImage = ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_facet.png")
+		.createImage();
+	private static Image typeImage = ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_type.png")
+		.createImage();
+	private static Image varImage = ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_var.png")
+		.createImage();
 
 	@Inject
 	GamlLabelProvider provider;
 
 	@Inject
 	private IImageHelper imageHelper;
+
+	@Inject
+	private GamlJavaValidator validator;
+
+	@Override
+	public void createProposals(final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+		GuiUtils.debug("GamlProposalProvider.createProposals: validating first");
+		final GamlResource r = (GamlResource) context.getCurrentModel().eResource();
+		// validator.validate(r);
+		// WARNING Asynchronous : r.getResourceServiceProvider().getResourceValidator().validate(r, CheckMode.FAST_ONLY,
+		// null);
+		GuiUtils.debug("GamlProposalProvider.createProposals : building proposals");
+		final ICompletionProposalAcceptor nullSafe = new NullSafeCompletionProposalAcceptor(acceptor);
+		final IFollowElementAcceptor selector = createSelector(context, nullSafe);
+		for ( final AbstractElement element : context.getFirstSetGrammarElements() ) {
+			selector.accept(element);
+		}
+	}
+
+	@Override
+	public void completeKeyword(final Keyword keyword, final ContentAssistContext contentAssistContext,
+		final ICompletionProposalAcceptor acceptor) {
+		final ICompletionProposal proposal =
+			createCompletionProposal(keyword.getValue(), getKeywordDisplayString(keyword), getImage(keyword),
+				contentAssistContext);
+		getPriorityHelper().adjustKeywordPriority(proposal, contentAssistContext.getPrefix());
+		acceptor.accept(proposal);
+	}
+
+	@Override
+	public void completeRuleCall(final RuleCall ruleCall, final ContentAssistContext contentAssistContext,
+		final ICompletionProposalAcceptor acceptor) {
+		final AbstractRule calledRule = ruleCall.getRule();
+		final String methodName = "complete_" + calledRule.getName();
+		GuiUtils.debug("GamlProposalProvider.completeRuleCall " + methodName);
+		EObject e = contentAssistContext.getCurrentModel();
+		IGamlDescription g = DescriptionFactory.getGamlDescription(e);
+		GuiUtils.debug("GamlProposalProvider.completeAssignment: description under edition : " + g);
+		e = contentAssistContext.getPreviousModel();
+		g = DescriptionFactory.getGamlDescription(e);
+		GuiUtils.debug("GamlProposalProvider.completeAssignment : previous description " + g);
+		// invokeMethod(methodName, acceptor, contentAssistContext.getCurrentModel(), ruleCall, contentAssistContext);
+	}
+
+	@Override
+	public void completeAssignment(final Assignment assignment, final ContentAssistContext contentAssistContext,
+		final ICompletionProposalAcceptor acceptor) {
+		final ParserRule parserRule = GrammarUtil.containingParserRule(assignment);
+		final String methodName =
+			"complete" + Strings.toFirstUpper(parserRule.getName()) + "_" +
+				Strings.toFirstUpper(assignment.getFeature());
+		GuiUtils.debug("GamlProposalProvider.completeAssignment " + methodName);
+		EObject e = contentAssistContext.getCurrentModel();
+		IGamlDescription g = DescriptionFactory.getGamlDescription(e);
+		GuiUtils.debug("GamlProposalProvider.completeAssignment: description under edition : " + g);
+		e = contentAssistContext.getPreviousModel();
+		g = DescriptionFactory.getGamlDescription(e);
+		GuiUtils.debug("GamlProposalProvider.completeAssignment : previous description " + g);
+
+		// invokeMethod(methodName, acceptor, contentAssistContext.getCurrentModel(), assignment, contentAssistContext);
+	}
 
 	// @Override
 	// public void completeDot_Op(final EObject model, final Assignment assignment,

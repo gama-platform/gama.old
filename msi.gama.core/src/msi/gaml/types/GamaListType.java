@@ -32,18 +32,18 @@ import msi.gama.util.*;
 public class GamaListType extends GamaContainerType<IList> {
 
 	@Override
-	public IList cast(final IScope scope, final Object obj, final Object param)
-		throws GamaRuntimeException {
+	public IList cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
 		return staticCast(scope, obj, param);
 	}
 
 	public static IList staticCast(final IScope scope, final Object obj, final Object param)
 		throws GamaRuntimeException {
 		if ( obj == null ) { return new GamaList(); }
+		if ( obj instanceof IList ) { return (IList) obj; }
 		if ( obj instanceof IContainer ) { return ((IContainer) obj).listValue(scope); }
 		if ( obj instanceof Collection ) { return new GamaList((Collection) obj); }
 		if ( obj instanceof Color ) {
-			Color c = (Color) obj;
+			final Color c = (Color) obj;
 			return GamaList.with(c.getRed(), c.getGreen(), c.getBlue());
 		}
 		if ( obj instanceof String ) { return new GamaList(StringUtils.tokenize((String) obj)); }

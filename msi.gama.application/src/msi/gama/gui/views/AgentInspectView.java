@@ -59,8 +59,8 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements G
 
 		// add highlight in the expand bar ?
 
-		Composite attributes = super.createItemContentsFor(agent);
-		AbstractEditor ed = EditorFactory.create(attributes, new ParameterAdapter("highlight", IType.BOOL) {
+		final Composite attributes = super.createItemContentsFor(agent);
+		final AbstractEditor ed = EditorFactory.create(attributes, new ParameterAdapter("highlight", IType.BOOL) {
 
 			@Override
 			public void setValue(final Object value) {
@@ -92,20 +92,20 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements G
 		// ed.getEditor().setBackground(
 		// SwtGui.getDisplay().getSystemColor(SWT.COLOR_TITLE_INACTIVE_FOREGROUND));
 		// ed.getEditor().moveAbove(null);
-		ISpecies species = agent.getSpecies();
-		Collection<UserCommandStatement> userCommands = species.getUserCommands();
+		final ISpecies species = agent.getSpecies();
+		final Collection<UserCommandStatement> userCommands = species.getUserCommands();
 		if ( userCommands.isEmpty() ) { return attributes; }
-		Composite buttons = new Composite(attributes, SWT.BORDER_SOLID);
+		final Composite buttons = new Composite(attributes, SWT.BORDER_SOLID);
 		buttons.moveAbove(null);
 		buttons.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
 		buttons.setForeground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
-		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
+		final GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);
 		buttons.setLayoutData(data);
-		GridLayout layout = new GridLayout(3, false);
+		final GridLayout layout = new GridLayout(3, false);
 		buttons.setLayout(layout);
 
 		for ( final IStatement command : userCommands ) {
-			Button b = new Button(buttons, SWT.PUSH);
+			final Button b = new Button(buttons, SWT.PUSH);
 			b.setText(command.getName());
 			b.addSelectionListener(new SelectionAdapter() {
 
@@ -116,8 +116,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements G
 
 						@Override
 						public Object run(final IScope scope) {
-							if ( !agent.dead() ) { return scope.execute(command, agent); }
-							return null;
+							return scope.execute(command, agent, null);
 						}
 
 					});

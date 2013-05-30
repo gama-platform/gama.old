@@ -74,7 +74,7 @@ public class AgentLayer extends AbstractLayer {
 			aspectName = ((AgentLayerStatement) definition).getAspectName();
 		}
 		for ( final IAgent a : getAgentsToDisplay() ) {
-			if ( a != null && !a.dead() && !scope.interrupted() ) {
+			if ( a != null/* && !scope.interrupted() */) {
 				IAspect aspect = a.getSpecies().getAspect(aspectName);
 				if ( aspect == null ) {
 					aspect = AspectStatement.DEFAULT_ASPECT;

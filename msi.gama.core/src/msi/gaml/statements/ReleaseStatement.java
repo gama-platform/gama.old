@@ -18,7 +18,7 @@
  */
 package msi.gaml.statements;
 
-import java.util.List;
+import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -26,7 +26,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
@@ -47,7 +47,6 @@ public class ReleaseStatement extends AbstractStatementSequence {
 	private final IExpression asExpr;
 	private final IExpression inExpr;
 	private final String returnString;
-	private IList<IAgent> microAgents = new GamaList<IAgent>();
 
 	private AbstractStatementSequence sequence = null;
 
@@ -76,9 +75,10 @@ public class ReleaseStatement extends AbstractStatementSequence {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		final IList<IAgent> microAgents = new GamaList<IAgent>();
 		final Object t = target.value(scope);
 		if ( t == null ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
 
@@ -88,19 +88,16 @@ public class ReleaseStatement extends AbstractStatementSequence {
 					microAgents.add((IAgent) o);
 				}
 			}
-		} else {
+		} else if ( t instanceof IAgent ) {
 			microAgents.add((IAgent) t);
 		}
-
 		final IAgent macroAgent = scope.getAgentScope();
-		final List<IAgent> removedAgents = new GamaList<IAgent>();
-
-		for ( final IAgent m : microAgents ) {
-			if ( !m.getHost().equals(macroAgent) ) {
-				removedAgents.add(m);
+		final Iterator<IAgent> it = microAgents.iterator();
+		while (it.hasNext()) {
+			if ( !it.next().getHost().equals(macroAgent) ) {
+				it.remove();
 			}
 		}
-		microAgents.removeAll(removedAgents);
 
 		IMacroAgent targetAgent;
 		ISpecies microSpecies = null;
@@ -108,10 +105,8 @@ public class ReleaseStatement extends AbstractStatementSequence {
 		List<IAgent> releasedMicroAgents = GamaList.EMPTY_LIST;
 		if ( asExpr != null && inExpr != null ) {
 			targetAgent = (IMacroAgent) inExpr.value(scope);
-
 			if ( targetAgent != null && !targetAgent.equals(macroAgent) ) {
 				microSpecies = (ISpecies) scope.evaluate(asExpr, targetAgent);
-
 				releasedMicroAgents = targetAgent.captureMicroAgents(scope, microSpecies, microAgents);
 			}
 		} else if ( asExpr != null && inExpr == null ) {
@@ -169,21 +164,21 @@ public class ReleaseStatement extends AbstractStatementSequence {
 		}
 
 		// TODO change the following code
-		if ( !microAgents.isEmpty() ) {
-			// IAgent host = stack.getAgentScope();
-			// releasedMicroAgents = host.releaseMicroAgents(microAgents);
-			microAgents.clear();
 
-			if ( !releasedMicroAgents.isEmpty() ) {
-				scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
-				if ( !sequence.isEmpty() ) {
-					for ( final IAgent releasedA : releasedMicroAgents ) {
-						scope.execute(sequence, releasedA);
+		if ( !releasedMicroAgents.isEmpty() ) {
+			scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
+			if ( !sequence.isEmpty() ) {
+				for ( final IAgent releasedA : releasedMicroAgents ) {
+					if ( scope.execute(sequence, releasedA, null) == IScope.INTERRUPTED ) {
+						break;
 					}
 				}
 			}
 		}
 
+		// GuiUtils.debug("ReleaseStatement.privateExecuteIn : " + macroAgent + " released " +
+		// releasedMicroAgents.size() +
+		// " agents");
 		if ( returnString != null ) {
 			scope.setVarValue(returnString, releasedMicroAgents);
 		}
@@ -191,10 +186,4 @@ public class ReleaseStatement extends AbstractStatementSequence {
 		return null;
 	}
 
-	@Override
-	public void dispose() {
-		super.dispose();
-		microAgents.clear();
-		microAgents = null;
-	}
 }

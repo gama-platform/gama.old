@@ -17,7 +17,7 @@ import msi.gama.precompiler.GamlAnnotations.setter;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.precompiler.GamlAnnotations.var;
 import msi.gama.precompiler.GamlAnnotations.vars;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.path.*;
@@ -160,13 +160,13 @@ public class DrivingSkill2d extends MovingSkill {
 		final int consideringRange = computeConsideringRange(scope, agent);
 		// System.out.println("considering range : " + consideringRange);
 		if ( goal == null ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 			return -1;
 		}
 
 		final ITopology topo = computeTopology(scope, agent);
 		if ( topo == null ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 			return -1;
 		}
 		IPath path = (GamaPath) agent.getAttribute("current_path");
@@ -175,7 +175,7 @@ public class DrivingSkill2d extends MovingSkill {
 			path = topo.pathBetween(scope, source, goal);
 		}
 		if ( path == null ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 			GuiUtils.debug("M: DrivingSKill - can not get the path");
 			return -1;
 		}
@@ -332,7 +332,7 @@ public class DrivingSkill2d extends MovingSkill {
 			}
 			/**/
 		}
-		scope.setStatus(ExecutionStatus.success);
+		// scope.setStatus(ExecutionStatus.success);
 		if ( isReachedFalseTarget ) { return 1; }
 		return 0;
 	}
@@ -367,13 +367,13 @@ public class DrivingSkill2d extends MovingSkill {
 		final int consideringRange = computeConsideringRange(scope, agent);
 		// System.out.println("considering range : " + consideringRange);
 		if ( goal == null ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 			return -1;
 		}
 
 		final ITopology topo = computeTopology(scope, agent);
 		if ( topo == null ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 			return -1;
 		}
 		IPath path = (GamaPath) agent.getAttribute("current_path");
@@ -382,7 +382,7 @@ public class DrivingSkill2d extends MovingSkill {
 			path = topo.pathBetween(scope, source, goal);
 		}
 		if ( path == null ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 			GuiUtils.debug("M: DrivingSKill - can not get the path");
 			return -1;
 		}
@@ -525,7 +525,7 @@ public class DrivingSkill2d extends MovingSkill {
 				agent.setLocation(chosenCandidate.candidatePoint);
 				agent.setHeading(newHeading);
 			}
-			scope.setStatus(ExecutionStatus.success);
+			// scope.setStatus(ExecutionStatus.success);
 			if ( isReachedFalseTarget ) { return 1; }
 			return 0;
 		} catch (final Exception e) {

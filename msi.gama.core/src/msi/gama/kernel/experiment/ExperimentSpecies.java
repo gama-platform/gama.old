@@ -183,7 +183,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 		// GuiUtils.debug("GuiExperimentSpecies.schedule");
 		if ( agent == null ) { return; }
 		// The scheduler of the agent is scheduled in the global scheduler
-		GAMA.controller.scheduler.schedule(agent.getScheduler(), agent.getScope());
+		GAMA.controller.scheduler.schedule(agent/* .getScheduler() */, agent.getScope());
 	}
 
 	@Override
@@ -343,8 +343,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 
 		/**
 		 * A flag indicating that the experiment is shutting down. As this scope is used before any experiment agent
-		 * (and
-		 * runtime scope) is defined, it is necessary to define it here.
+		 * (and runtime scope) is defined, it is necessary to define it here.
 		 */
 		private volatile boolean interrupted;
 
@@ -380,7 +379,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 		}
 
 		@Override
-		public boolean interrupted() {
+		protected boolean _root_interrupted() {
 			return interrupted;
 		}
 
@@ -391,7 +390,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 
 		@Override
 		public IScope copy() {
-			return new Scope(getRoot());
+			return new Scope(root);
 		}
 
 	}

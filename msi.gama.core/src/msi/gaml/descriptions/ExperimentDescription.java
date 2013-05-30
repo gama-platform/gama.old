@@ -18,7 +18,6 @@
  */
 package msi.gaml.descriptions;
 
-import msi.gama.common.util.GuiUtils;
 import msi.gaml.factories.IChildrenProvider;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
@@ -43,7 +42,7 @@ public class ExperimentDescription extends SpeciesDescription {
 			if ( var.getName().equals(SIMULATION) ) {
 				// We are dealing with the built-in variable. We gather the precise type of the model itself and pass it
 				// to the variable (instead of its generic "agent" type).
-				IType t = enclosing.getModelDescription().getType();
+				final IType t = enclosing.getModelDescription().getType();
 				var.setType(t);
 			}
 			super.addVariable(var);
@@ -59,11 +58,11 @@ public class ExperimentDescription extends SpeciesDescription {
 	public boolean isExperiment() {
 		return true;
 	}
-
-	@Override
-	public void inheritFromParent() {
-		super.inheritFromParent();
-		GuiUtils.debug("ExperimentDescription.inheritFromParent: " + getName() + " from " + parent.getName());
-	}
+	//
+	// @Override
+	// public void inheritFromParent() {
+	// super.inheritFromParent();
+	// GuiUtils.debug("ExperimentDescription.inheritFromParent: " + getName() + " from " + parent.getName());
+	// }
 
 }

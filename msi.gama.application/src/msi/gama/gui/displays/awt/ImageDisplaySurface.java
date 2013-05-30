@@ -51,9 +51,8 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public static String snapshotFolder = "/tmp/";
 	public double envWidth, envHeight;
 
-	public ImageDisplaySurface(Object...args){
-		super();
-	}
+	public ImageDisplaySurface(final Object ... args) {}
+
 	/**
 	 * @see msi.gama.common.interfaces.IDisplaySurface#initialize(double, double, msi.gama.outputs.IDisplayOutput)
 	 */
@@ -70,20 +69,20 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public void save(final IScope scope, final RenderedImage image) {
 		try {
 			Files.newFolder(scope, snapshotFolder);
-		} catch (GamaRuntimeException e1) {
+		} catch (final GamaRuntimeException e1) {
 			e1.addContext("Impossible to create folder " + snapshotFolder);
 			GAMA.reportError(e1);
 			e1.printStackTrace();
 			return;
 		}
 
-		String file = snapshotFolder + "/" + snapshotFileName + scope.getClock().getCycle() + ".png";
+		final String file = snapshotFolder + "/" + snapshotFileName + scope.getClock().getCycle() + ".png";
 		DataOutputStream os = null;
 		try {
 			os = new DataOutputStream(new FileOutputStream(file));
 			ImageIO.write(image, "png", os);
-		} catch (java.io.IOException ex) {
-			GamaRuntimeException e = GamaRuntimeException.create(ex);
+		} catch (final java.io.IOException ex) {
+			final GamaRuntimeException e = GamaRuntimeException.create(ex);
 			e.addContext("Unable to create output stream for snapshot image");
 			GAMA.reportError(e);
 		} finally {
@@ -91,8 +90,8 @@ public class ImageDisplaySurface implements IDisplaySurface {
 				if ( os != null ) {
 					os.close();
 				}
-			} catch (Exception ex) {
-				GamaRuntimeException e = GamaRuntimeException.create(ex);
+			} catch (final Exception ex) {
+				final GamaRuntimeException e = GamaRuntimeException.create(ex);
 				e.addContext("Unable to close output stream for snapshot image");
 				GAMA.reportError(e);
 			}
@@ -126,7 +125,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public int[] computeBoundsFrom(final int vwidth, final int vheight) {
-		int[] dim = new int[2];
+		final int[] dim = new int[2];
 		dim[0] = vwidth > vheight ? (int) (vheight / widthHeightConstraint) : vwidth;
 		dim[1] = vwidth <= vheight ? (int) (vwidth * widthHeightConstraint) : vheight;
 		return dim;
@@ -137,7 +136,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		if ( width == newWidth && height == newHeight ) { return false; }
 		this.width = newWidth;
 		this.height = newHeight;
-		Image copy = buffImage;
+		final Image copy = buffImage;
 		createBuffImage();
 		if ( GAMA.isPaused() ) {
 			updateDisplay();
@@ -320,7 +319,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void snapshot() {
-		IScope scope = GAMA.obtainNewScope();
+		final IScope scope = GAMA.obtainNewScope();
 		save(scope, buffImage);
 		GAMA.releaseScope(scope);
 	}
@@ -408,7 +407,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public void addMouseListener(final MouseListener e) {}
 
 	@Override
-	public void initOutput3D(boolean output3d, ILocation output3dNbCycles) {
+	public void initOutput3D(final boolean output3d, final ILocation output3dNbCycles) {
 		;
 	}
 
@@ -433,5 +432,5 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 
 	@Override
-	public void setZoomListener(IZoomListener listener) {}
+	public void setZoomListener(final IZoomListener listener) {}
 }

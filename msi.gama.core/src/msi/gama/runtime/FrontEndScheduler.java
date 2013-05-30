@@ -15,8 +15,9 @@ public class FrontEndScheduler implements Runnable {
 	public volatile boolean on_user_hold = false;
 	/* The stepables that need to be stepped */
 	private final Map<IStepable, IScope> toStep = new LinkedHashMap();
+	private volatile Set<IStepable> toStop = new HashSet();
 	private Thread executionThread;
-	private volatile Semaphore lock = new Semaphore(1);
+	volatile Semaphore lock = new Semaphore(1);
 
 	public FrontEndScheduler() {
 		if ( !GuiUtils.isInHeadLessMode() ) {
@@ -50,7 +51,7 @@ public class FrontEndScheduler implements Runnable {
 	private IScope[] scopes = null;
 
 	public void step() {
-		if ( paused /* || toStep.isEmpty() */) {
+		if ( paused ) {
 			try {
 				lock.acquire();
 			} catch (final InterruptedException e) {
@@ -59,22 +60,15 @@ public class FrontEndScheduler implements Runnable {
 			}
 		}
 
-		synchronized (toStep) {
-			stepables = toStep.keySet().toArray(new IStepable[toStep.size()]);
-			scopes = toStep.values().toArray(new IScope[toStep.size()]);
-		}
+		stepables = toStep.keySet().toArray(new IStepable[toStep.size()]);
+		scopes = toStep.values().toArray(new IScope[toStep.size()]);
 		for ( int i = 0; i < stepables.length; i++ ) {
 			final IScope scope = scopes[i];
 			try {
-				if ( scope.interrupted() ) {
-					// GuiUtils.debug("FrontEndScheduler.step : removal of " + entry.getKey());
-					toStep.remove(stepables[i]);
-					if ( toStep.isEmpty() ) {
-						pause();
-					}
-				} else {
-					// GuiUtils.debug("FrontEndScheduler.step : step of " + entry.getKey());
-					stepables[i].step(scope);
+				// GuiUtils.debug("FrontEndScheduler.step : stepping " + stepables[i]);
+				if ( !scope.step(stepables[i]) ) {
+					// GuiUtils.debug("FrontEndScheduler.step : removal of " + stepables[i]);
+					toStop.add(stepables[i]);
 				}
 			} catch (final GamaRuntimeException e) {
 				if ( scope.interrupted() ) {
@@ -84,35 +78,30 @@ public class FrontEndScheduler implements Runnable {
 				}
 			}
 		}
+	}
 
-		// for ( Iterator<Map.Entry<IStepable, IScope>> it = toStep.entrySet().iterator(); it.hasNext(); ) {
-		// Map.Entry<IStepable, IScope> entry = it.next();
-		// IScope scope = entry.getValue();
-		// try {
-		// if ( scope.interrupted() ) {
-		// // GuiUtils.debug("FrontEndScheduler.step : removal of " + entry.getKey());
-		// it.remove();
-		// if ( toStep.isEmpty() ) {
-		// pause();
-		// }
-		// } else {
-		// // GuiUtils.debug("FrontEndScheduler.step : step of " + entry.getKey());
-		// entry.getKey().step(scope);
-		// }
-		// } catch (GamaRuntimeException e) {
-		// if ( scope.interrupted() ) {
-		// GuiUtils.debug("Exception in experiment interruption: " + e.getMessage());
-		// } else {
-		// GAMA.reportError(e);
-		// }
-		// }
-		// }
+	private void clean() {
+		if ( toStop.isEmpty() ) { return; }
+		synchronized (toStop) {
+			for ( final IStepable s : toStop ) {
+				final IScope scope = toStep.get(s);
+				if ( !scope.interrupted() ) {
+					// GuiUtils.debug("FrontEndScheduler.clean : Interrupting " + scope);
+					scope.setInterrupted(true);
+				}
+				toStep.remove(s);
+				// GuiUtils.debug("FrontEndScheduler.clean : Disposing " + s);
+				// s.dispose();
+			}
+			toStop.clear();
+		}
 	}
 
 	@Override
 	public void run() {
 		while (alive) {
 			step();
+			clean();
 		}
 	}
 
@@ -137,21 +126,18 @@ public class FrontEndScheduler implements Runnable {
 	}
 
 	public void schedule(final IStepable stepable, final IScope scope) {
-		synchronized (toStep) {
-			toStep.put(stepable, scope);
-		}
+		toStep.put(stepable, scope);
 		// We first init the stepable before it is scheduled
 		// GuiUtils.debug("FrontEndScheduler.schedule " + stepable);
 		try {
-			stepable.init(scope);
+			if ( !scope.init(stepable) ) {
+				toStop.add(stepable);
+			}
 		} catch (final Exception e) {
-			GuiUtils.debug("WARNING :: Exception in front end scheduler: " + e.getMessage());
+			// GuiUtils.debug("WARNING :: Exception in front end scheduler: " + e.getMessage());
 			e.printStackTrace();
 			if ( scope != null && scope.interrupted() ) {
-				synchronized (toStep) {
-					// GuiUtils.debug("FrontEndScheduler.schedule : Removal of " + stepable);
-					toStep.remove(stepable);
-				}
+				toStop.add(stepable);
 			} else {
 				throw GamaRuntimeException.create(e);
 			}
@@ -161,12 +147,14 @@ public class FrontEndScheduler implements Runnable {
 
 	public void dispose() {
 		alive = false;
+		toStop.clear();
 		toStep.clear();
 	}
 
 	public void unschedule(final IStepable scheduler) {
-		synchronized (toStep) {
-			toStep.remove(scheduler);
+		if ( toStep.containsKey(scheduler) ) {
+			toStep.get(scheduler).setInterrupted(true);
+			// toStop.add(scheduler);
 		}
 	}
 

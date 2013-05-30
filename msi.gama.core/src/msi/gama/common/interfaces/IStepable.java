@@ -34,4 +34,6 @@ public interface IStepable {
 
 	public void step(IScope scope) throws GamaRuntimeException;
 
+	public void dispose();
+
 }

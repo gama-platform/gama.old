@@ -21,7 +21,6 @@ package msi.gaml.types;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GeometryUtils;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
@@ -50,10 +49,8 @@ public class GamaGeometryType extends GamaType<IShape> {
 		throws GamaRuntimeException {
 		if ( obj instanceof IShape ) { return ((IShape) obj).getGeometry(); }
 		if ( obj instanceof ILocation ) { return GamaGeometryType.createPoint((GamaPoint) obj); }
-		if ( obj instanceof ISpecies ) {
-			final IList<IAgent> agents = scope.getAgentScope().getPopulationFor((ISpecies) obj).getAgentsList();
-			return geometriesToGeometry(scope, agents);
-		}
+		if ( obj instanceof ISpecies ) { return geometriesToGeometry(scope,
+			scope.getAgentScope().getPopulationFor((ISpecies) obj)); }
 		if ( obj instanceof GamaPair ) { return pairToGeometry(scope, (GamaPair) obj); }
 		if ( obj instanceof IContainer ) {
 			if ( isPoints(scope, (IContainer) obj) ) { return pointsToGeometry(scope, (IContainer<?, ILocation>) obj); }
@@ -205,8 +202,8 @@ public class GamaGeometryType extends GamaType<IShape> {
 	}
 
 	public static IShape createPoint(final IShape location) {
-		return new GamaShape(GeometryUtils.factory.createPoint(
-			location == null ? new GamaPoint(0, 0) : (GamaPoint) location.getLocation()));
+		return new GamaShape(GeometryUtils.factory.createPoint(location == null ? new GamaPoint(0, 0)
+			: (GamaPoint) location.getLocation()));
 	}
 
 	public static IShape buildSquare(final double side_size, final ILocation location) {

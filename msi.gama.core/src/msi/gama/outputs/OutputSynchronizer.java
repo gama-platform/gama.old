@@ -22,22 +22,22 @@ public class OutputSynchronizer {
 		return NumberClosingViews.get();
 	}
 
-	public static void incInitializingViews(String view) {
-		GuiUtils.debug("GuiOutputManager.incInitializingViews: " + view);
+	public static void incInitializingViews(final String view) {
+		// GuiUtils.debug("GuiOutputManager.incInitializingViews: " + view);
 		viewsScheduledToOpen.add(view);
 		viewsScheduledToClose.add(view);
 		NumberOpeningViews.incrementAndGet();
 		NumberClosingViews.incrementAndGet();
 	}
 
-	public static void decClosingViews(String view) {
-		GuiUtils.debug("GuiOutputManager.decClosingViews: " + view);
+	public static void decClosingViews(final String view) {
+		// GuiUtils.debug("GuiOutputManager.decClosingViews: " + view);
 		viewsScheduledToClose.remove(view);
 		NumberClosingViews.decrementAndGet();
 	}
 
-	public static void decInitializingViews(String view) {
-		GuiUtils.debug("GuiOutputManager.decInitializingViews: " + view);
+	public static void decInitializingViews(final String view) {
+		// GuiUtils.debug("GuiOutputManager.decInitializingViews: " + view);
 		viewsScheduledToOpen.remove(view);
 		NumberOpeningViews.decrementAndGet();
 	}
@@ -49,12 +49,11 @@ public class OutputSynchronizer {
 				if ( getNumberOfViewsWaitingToOpen() > 0 ) {
 					// Workaround for OpenGL views. Necessary to "show" the view even briefly so that OpenGL can call
 					// the init() method of the renderer
-					List<String> names = new ArrayList(viewsScheduledToOpen);
+					final List<String> names = new ArrayList(viewsScheduledToOpen);
 					GuiUtils.showView(GuiUtils.LAYER_VIEW_ID, names.get(0));
 				}
 				Thread.sleep(100);
-			} catch (InterruptedException e) {
-			}
+			} catch (final InterruptedException e) {}
 		}
 	}
 
@@ -63,7 +62,7 @@ public class OutputSynchronizer {
 			GuiUtils.waitStatus("Closing previous displays");
 			try {
 				Thread.sleep(100);
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
 		}

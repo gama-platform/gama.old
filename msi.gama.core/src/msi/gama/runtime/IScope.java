@@ -19,7 +19,7 @@
 package msi.gama.runtime;
 
 import java.util.Map;
-import msi.gama.common.interfaces.IGraphics;
+import msi.gama.common.interfaces.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.metamodel.agent.*;
@@ -37,6 +37,8 @@ import msi.gaml.statements.*;
  */
 public interface IScope {
 
+	public static final Object INTERRUPTED = new Object();
+
 	public abstract void clear();
 
 	/**
@@ -44,7 +46,7 @@ public interface IScope {
 	 * @param agent
 	 * @see getAgentScope()
 	 */
-	public abstract void push(IAgent agent);
+	public abstract boolean push(IAgent agent);
 
 	/**
 	 * Makes the statement the current statement in the scope
@@ -74,10 +76,7 @@ public interface IScope {
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
-	public abstract Object execute(IStatement statement, IAgent agent) throws GamaRuntimeException;
-
-	public abstract Object execute(IStatement.WithArgs statement, IAgent agent, Arguments args)
-		throws GamaRuntimeException;
+	public abstract Object execute(IStatement statement, IAgent agent, Arguments args);
 
 	/**
 	 * Evaluates the expression on the agent. Equivalent to:
@@ -128,9 +127,9 @@ public interface IScope {
 
 	public abstract void setAgentVarValue(IAgent agent, String name, Object v) throws GamaRuntimeException;
 
-	public abstract void setStatus(ExecutionStatus status);
+	// public abstract void setStatus(ExecutionStatus status);
 
-	public abstract ExecutionStatus getStatus();
+	// public abstract ExecutionStatus getStatus();
 
 	public boolean interrupted();
 
@@ -183,12 +182,6 @@ public interface IScope {
 	public abstract IAgent getAgentScope();
 
 	/**
-	 * Return the current world of the simulation in which this scope is defined
-	 * @return
-	 */
-	// public abstract WorldAgent getWorldScope();
-
-	/**
 	 * Returns the current simulation in which this scope is defined.
 	 * @return the current simulation or null if none is defined (unlikely as the scope is created
 	 *         by a simulation)
@@ -201,4 +194,44 @@ public interface IScope {
 	public abstract SimulationClock getClock();
 
 	public abstract IScope copy();
+
+	/**
+	 * Indicates that a loop is finishing : should clear any _loop_halted status present
+	 */
+	public abstract void popLoop();
+
+	/**
+	 * Indicates that an action is finishing : should clear any _action_halted status present
+	 */
+	public abstract void popAction();
+
+	/**
+	 * Should set the _action_halted flag to true.
+	 */
+	public abstract void interruptAction();
+
+	/**
+	 * Should set the _agent_halted flag to true.
+	 */
+	public abstract void interruptAgent();
+
+	/**
+	 * Should set the _loop_halted flag to true.
+	 */
+	public abstract void interruptLoop();
+
+	public abstract boolean init(final IStepable agent);
+
+	public abstract boolean step(final IStepable agent);
+
+	/**
+	 * @param actualArgs
+	 */
+	public abstract void stackArguments(Arguments actualArgs);
+
+	/**
+	 * @param gamlAgent
+	 */
+	public abstract boolean update(IAgent agent);
+
 }

@@ -26,7 +26,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.descriptions.IDescription;
@@ -63,8 +63,10 @@ public class System {
 		throws GamaRuntimeException {
 		if ( a == null ) { throw GamaRuntimeException.warning("Cannot evaluate " + s.toGaml() +
 			" as the target agent is null"); }
-		if ( a.dead() ) { throw GamaRuntimeException.warning("Cannot evaluate " + s.toGaml() +
-			" as the target agent is dead"); }
+		if ( a.dead() ) {
+			// GuiUtils.debug("System.opGetValue");
+			throw GamaRuntimeException.warning("Cannot evaluate " + s.toGaml() + " as the target agent is dead");
+		}
 		return scope.evaluate(s, a);
 	}
 
@@ -81,25 +83,25 @@ public class System {
 		"init {", "	let values <- user_input([\"Number\" :: 100, \"Location\" :: {10, 10}]);",
 		"	create node number : int(values at \"Number\") with: [location:: (point(values at \"Location\"))];", "}" })
 	public static GamaMap<String, Object> userInput(final IScope scope, final IExpression map) {
-		IAgent agent = scope.getAgentScope();
+		final IAgent agent = scope.getAgentScope();
 		return userInput(scope, agent.getSpeciesName() + " #" + agent.getIndex() + " request", map);
 	}
 
 	@operator(value = "user_input")
-	public static GamaMap<String, Object> userInput(final IScope scope, final String title, IExpression expr) {
+	public static GamaMap<String, Object> userInput(final IScope scope, final String title, final IExpression expr) {
 		GamaMap<String, Object> initialValues = new GamaMap();
-		GamaMap<String, IType> initialTypes = new GamaMap();
+		final GamaMap<String, IType> initialTypes = new GamaMap();
 		if ( expr instanceof MapExpression ) {
-			MapExpression map = (MapExpression) expr;
-			for ( Map.Entry<IExpression, IExpression> entry : map.getElements().entrySet() ) {
-				String key = Cast.asString(scope, entry.getKey().value(scope));
-				IExpression val = entry.getValue();
+			final MapExpression map = (MapExpression) expr;
+			for ( final Map.Entry<IExpression, IExpression> entry : map.getElements().entrySet() ) {
+				final String key = Cast.asString(scope, entry.getKey().value(scope));
+				final IExpression val = entry.getValue();
 				initialValues.put(key, val.value(scope));
 				initialTypes.put(key, val.getType());
 			}
 		} else {
 			initialValues = Cast.asMap(scope, expr.value(scope));
-			for ( Map.Entry<String, Object> entry : initialValues.entrySet() ) {
+			for ( final Map.Entry<String, Object> entry : initialValues.entrySet() ) {
 				initialTypes.put(entry.getKey(), Types.get(entry.getValue().getClass()));
 			}
 		}
@@ -110,12 +112,12 @@ public class System {
 	@operator(value = "eval_gaml", can_be_const = false)
 	@doc(value = "evaluates the given GAML string.", examples = "eval_gaml(\"2+3\")    --:   5", see = "eval_java")
 	public static Object opEvalGaml(final IScope scope, final String gaml) {
-		IAgent agent = scope.getAgentScope();
-		IDescription d = agent.getSpecies().getDescription();
+		final IAgent agent = scope.getAgentScope();
+		final IDescription d = agent.getSpecies().getDescription();
 		try {
-			IExpression e = GAML.getExpressionFactory().createExpr(gaml, d);
+			final IExpression e = GAML.getExpressionFactory().createExpr(gaml, d);
 			return scope.evaluate(e, agent);
-		} catch (GamaRuntimeException e) {
+		} catch (final GamaRuntimeException e) {
 			GuiUtils.informConsole("Error in evaluating Gaml code : '" + gaml + "' in " + scope.getAgentScope() +
 				java.lang.System.getProperty("line.separator") + "Reason: " + e.getMessage());
 
@@ -129,14 +131,14 @@ public class System {
 		"evaluate_with" })
 	public static Object opEvalJava(final IScope scope, final String code) {
 		try {
-			ScriptEvaluator se = new ScriptEvaluator();
+			final ScriptEvaluator se = new ScriptEvaluator();
 			se.setReturnType(Object.class);
 			se.cook(code);
 			// Evaluate script with actual parameter values.
 			return se.evaluate(new Object[0]);
 
 			// Version sans arguments pour l'instant.
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			GuiUtils.informConsole("Error in evaluating Java code : '" + code + "' in " + scope.getAgentScope() +
 				java.lang.System.getProperty("line.separator") + "Reason: " + e.getMessage());
 			return null;
@@ -156,21 +158,21 @@ public class System {
 			} else {
 				param = new GamaMap();
 			}
-			String[] parameterNames = new String[param.size() + 1];
-			Class[] parameterTypes = new Class[param.size() + 1];
-			Object[] parameterValues = new Object[param.size() + 1];
+			final String[] parameterNames = new String[param.size() + 1];
+			final Class[] parameterTypes = new Class[param.size() + 1];
+			final Object[] parameterValues = new Object[param.size() + 1];
 			parameterNames[0] = "scope";
 			parameterTypes[0] = IScope.class;
 			parameterValues[0] = scope;
 			int i = 1;
-			for ( Object e : param.entrySet() ) {
-				Map.Entry<IExpression, IExpression> entry = (Map.Entry<IExpression, IExpression>) e;
+			for ( final Object e : param.entrySet() ) {
+				final Map.Entry<IExpression, IExpression> entry = (Map.Entry<IExpression, IExpression>) e;
 				parameterNames[i] = entry.getKey().literalValue();
 				parameterTypes[i] = entry.getValue().getType().toClass();
 				parameterValues[i] = entry.getValue().value(scope);
 				i++;
 			}
-			ScriptEvaluator se = new ScriptEvaluator();
+			final ScriptEvaluator se = new ScriptEvaluator();
 			se.setReturnType(Object.class);
 			se.setDefaultImports(gamaDefaultImports);
 			se.setParameters(parameterNames, parameterTypes);
@@ -178,8 +180,8 @@ public class System {
 			// Evaluate script with actual parameter values.
 			return se.evaluate(parameterValues);
 
-		} catch (Exception e) {
-			Throwable ee =
+		} catch (final Exception e) {
+			final Throwable ee =
 				e instanceof InvocationTargetException ? ((InvocationTargetException) e).getTargetException() : e;
 			GuiUtils.informConsole("Error in evaluating Java code : '" + code + "' in " + scope.getAgentScope() +
 				java.lang.System.getProperty("line.separator") + "Reason: " + ee.getMessage());

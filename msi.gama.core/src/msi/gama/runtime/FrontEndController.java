@@ -29,7 +29,7 @@ public class FrontEndController implements Runnable {
 	protected volatile boolean running = true;
 	public final FrontEndScheduler scheduler;
 
-	public FrontEndController(FrontEndScheduler scheduler) {
+	public FrontEndController(final FrontEndScheduler scheduler) {
 		this.scheduler = scheduler;
 		commands = new ArrayBlockingQueue(10);
 		if ( GuiUtils.isInHeadLessMode() ) {
@@ -44,14 +44,14 @@ public class FrontEndController implements Runnable {
 	public void run() {
 		while (running) {
 			try {
-				Integer i = commands.take();
+				final Integer i = commands.take();
 				if ( i == null ) { throw new InterruptedException("Internal error. Please retry"); }
 				processUserCommand(i);
-			} catch (InterruptedException e) {}
+			} catch (final Exception e) {}
 		}
 	}
 
-	public void offer(int command) {
+	public void offer(final int command) {
 		if ( commandThread == null || !commandThread.isAlive() ) {
 			processUserCommand(command);
 		} else {
@@ -67,13 +67,9 @@ public class FrontEndController implements Runnable {
 				try {
 					OutputSynchronizer.waitForViewsToBeClosed();
 					experiment.schedule();
-				} catch (GamaRuntimeException e) {
+				} catch (final GamaRuntimeException e) {
 					closeExperiment(e);
-				}
-				// catch (Exception e) {
-				// closeExperiment(new GamaRuntimeException(e));
-				// }
-				finally {
+				} finally {
 					updateSimulationState();
 				}
 				break;
@@ -81,7 +77,7 @@ public class FrontEndController implements Runnable {
 				// GuiUtils.debug("FrontEndController.processUserCommand _START");
 				try {
 					scheduler.start();
-				} catch (GamaRuntimeException e) {
+				} catch (final GamaRuntimeException e) {
 					closeExperiment(e);
 				} finally {
 					updateSimulationState(RUNNING);
@@ -101,7 +97,7 @@ public class FrontEndController implements Runnable {
 				// GuiUtils.debug("FrontEndController.processUserCommand _RELOAD");
 				updateSimulationState(NOTREADY);
 				try {
-					boolean wasRunning = !scheduler.paused;
+					final boolean wasRunning = !scheduler.paused;
 					scheduler.pause();
 					GuiUtils.waitStatus("Reloading...");
 					experiment.reload();
@@ -110,9 +106,9 @@ public class FrontEndController implements Runnable {
 					} else {
 						GuiUtils.informStatus("Experiment reloaded");
 					}
-				} catch (GamaRuntimeException e) {
+				} catch (final GamaRuntimeException e) {
 					closeExperiment(e);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					closeExperiment(GamaRuntimeException.create(e));
 				} finally {
 					updateSimulationState();
@@ -175,7 +171,7 @@ public class FrontEndController implements Runnable {
 		}
 	}
 
-	public void closeExperiment(GamaRuntimeException e) {
+	public void closeExperiment(final GamaRuntimeException e) {
 		GuiUtils.errorStatus(e.getMessage());
 		// GuiUtils.runtimeError(e);
 		closeExperiment();
@@ -221,7 +217,7 @@ public class FrontEndController implements Runnable {
 			return;
 		}
 		if ( experiment != null ) {
-			IModel m = experiment.getModel();
+			final IModel m = experiment.getModel();
 			if ( !m.getFilePath().equals(model.getFilePath()) ) {
 				if ( !verifyClose() ) { return; }
 				closeExperiment();

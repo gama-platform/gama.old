@@ -31,7 +31,7 @@ import msi.gama.gui.displays.awt.AbstractAWTDisplaySurface;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.jogl.scene.ModelScene;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
-import msi.gama.jogl.utils.Camera.Camera;
+import msi.gama.jogl.utils.Camera.AbstractCamera;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -50,7 +50,7 @@ import collada.Output3D;
 import com.vividsolutions.jts.geom.Envelope;
 
 @display("opengl")
-public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface implements IDisplaySurface.OpenGL{
+public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface implements IDisplaySurface.OpenGL {
 
 	private static final long serialVersionUID = 1L;
 	private PopupMenu agentsMenu = new PopupMenu();
@@ -79,10 +79,10 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	// Use to toggle the SplitLayer view
 	public boolean splitLayer = false;
-	
-	//Us toggle to switch cameras
+
+	// Us toggle to switch cameras
 	public boolean switchCamera = false;
-	
+
 	// Use to toggle the Rotation view
 	public boolean rotation = false;
 	
@@ -99,7 +99,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	// private: the class of the Output3D manager
 	Output3D output3DManager;
 
-	public JOGLAWTDisplaySurface(Object...args) {
+	public JOGLAWTDisplaySurface(final Object ... args) {
 		displayBlock = new Runnable() {
 
 			// Remove all the already existing entity in openGLGraphics and redraw the existing ones.
@@ -107,7 +107,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			public void run() {
 				if ( !canBeUpdated() ) { return; }
 				canBeUpdated(false);
-				ModelScene s = renderer.getScene();
+				final ModelScene s = renderer.getScene();
 				if ( s != null ) {
 					s.wipe(renderer);
 
@@ -159,12 +159,11 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		// createIGraphics();
 		this.setVisible(true);
 
-
 		addComponentListener(new ComponentAdapter() {
 
 			@Override
 			public void componentResized(final ComponentEvent e) {
-				GuiUtils.debug("JOGLAWTDisplaySurface.componentResized: " + out.getId());
+				// GuiUtils.debug("JOGLAWTDisplaySurface.componentResized: " + out.getId());
 				// if ( buffImage == null ) {
 				// // zoomFit();
 				// if ( resizeImage(getWidth(), getHeight()) ) {
@@ -236,14 +235,14 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		Map<ISpecies, List<SelectedAgent>> micros;
 
 		void buildMenuItems(final Menu parentMenu, final ILayer display) {
-			Menu macroMenu = new Menu(macro.getName());
+			final Menu macroMenu = new Menu(macro.getName());
 			parentMenu.add(macroMenu);
 
-			MenuItem inspectItem = new AgentMenuItem("Inspect", macro, display);
+			final MenuItem inspectItem = new AgentMenuItem("Inspect", macro, display);
 			inspectItem.addActionListener(menuListener);
 			macroMenu.add(inspectItem);
 
-			MenuItem focusItem = new AgentMenuItem("Focus", macro, display);
+			final MenuItem focusItem = new AgentMenuItem("Focus", macro, display);
 			focusItem.addActionListener(focusListener);
 			macroMenu.add(focusItem);
 			
@@ -252,15 +251,15 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			macroMenu.add(followItem);
 
 			if ( micros != null && !micros.isEmpty() ) {
-				Menu microsMenu = new Menu("Micro agents");
+				final Menu microsMenu = new Menu("Micro agents");
 				macroMenu.add(microsMenu);
 
 				Menu microSpecMenu;
-				for ( ISpecies microSpec : micros.keySet() ) {
+				for ( final ISpecies microSpec : micros.keySet() ) {
 					microSpecMenu = new Menu("Species " + microSpec.getName());
 					microsMenu.add(microSpecMenu);
 
-					for ( SelectedAgent micro : micros.get(microSpec) ) {
+					for ( final SelectedAgent micro : micros.get(microSpec) ) {
 						micro.buildMenuItems(microSpecMenu, display);
 					}
 				}
@@ -279,8 +278,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				AgentMenuItem source = (AgentMenuItem) e.getSource();
-				IAgent a = source.getAgent();
+				final AgentMenuItem source = (AgentMenuItem) e.getSource();
+				final IAgent a = source.getAgent();
 				if ( a != null ) {
 					fireSelectionChanged(a);
 				}
@@ -292,8 +291,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				AgentMenuItem source = (AgentMenuItem) e.getSource();
-				IAgent a = source.getAgent();
+				final AgentMenuItem source = (AgentMenuItem) e.getSource();
+				final IAgent a = source.getAgent();
 				if ( a != null ) {
 					focusOn(a.getGeometry(), source.getDisplay());
 				}
@@ -334,7 +333,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	@Override
 	public int[] computeBoundsFrom(final int vwidth, final int vheight) {
 		// we take the smallest dimension as a guide
-		int[] dim = new int[2];
+		final int[] dim = new int[2];
 		dim[0] = vwidth > vheight ? (int) (vheight / widthHeightConstraint) : vwidth;
 		dim[1] = vwidth <= vheight ? (int) (vwidth * widthHeightConstraint) : vheight;
 		return dim;
@@ -345,8 +344,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		agentsMenu.removeAll();
 		agentsMenu.setLabel("Layers");
 
-		java.awt.Menu m = new java.awt.Menu(manager.getItems().get(layerId).getName());
-		SelectedAgent sa = new SelectedAgent();
+		final java.awt.Menu m = new java.awt.Menu(manager.getItems().get(layerId).getName());
+		final SelectedAgent sa = new SelectedAgent();
 		sa.macro = agent;
 		sa.buildMenuItems(m, manager.getItems().get(layerId));
 
@@ -405,7 +404,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	@Override
 	public BufferedImage getImage() {
-		BufferedImage buffImage = renderer.getScreenShot();
+		final BufferedImage buffImage = renderer.getScreenShot();
 		return buffImage;
 	}
 
@@ -420,11 +419,11 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		}
 		renderer.camera.getPosition().setZ(renderer.camera.getPosition().getZ() - incrementalZoomStep);
 		renderer.camera.getTarget().setZ(renderer.camera.getTarget().getZ() - incrementalZoomStep);
-		setZoomLevel(renderer.camera.getMaxDim() * Camera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
+		setZoomLevel(renderer.camera.getMaxDim() * AbstractCamera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
 		// FIXME Approximate
 		resizeImage((int) (getWidth() * zoomLevel), (int) (getHeight() * zoomLevel));
-		//setZoomLevel(zoomLevel + zoomLevel * 0.1);
-		//updateDisplay();
+		// setZoomLevel(zoomLevel + zoomLevel * 0.1);
+		// updateDisplay();
 		zoomFit = false;
 	}
 
@@ -439,17 +438,17 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		}
 		renderer.camera.getPosition().setZ(renderer.camera.getPosition().getZ() + incrementalZoomStep);
 		renderer.camera.getTarget().setZ(renderer.camera.getTarget().getZ() + incrementalZoomStep);
-		setZoomLevel(renderer.camera.getMaxDim() * Camera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
+		setZoomLevel(renderer.camera.getMaxDim() * AbstractCamera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
 		// FIXME Approximate
 		resizeImage((int) (getWidth() * zoomLevel), (int) (getHeight() * zoomLevel));
-		//updateDisplay();
+		// updateDisplay();
 		zoomFit = false;
 	}
 
 	@Override
 	public void zoomFit() {
 		resizeImage(getWidth(), getHeight());
-		renderer.frame=0;
+		renderer.frame = 0;
 		if ( renderer != null ) {
 			super.zoomFit();
 			if ( threeD ) {
@@ -519,11 +518,11 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public void toggleSplitLayer() {
 
 		splitLayer = !splitLayer;
-		int nbLayers = this.getManager().getItems().size();
+		final int nbLayers = this.getManager().getItems().size();
 		int i = 0;
-		Iterator<ILayer> it = this.getManager().getItems().iterator();
+		final Iterator<ILayer> it = this.getManager().getItems().iterator();
 		while (it.hasNext()) {
-			ILayer curLayer = it.next();
+			final ILayer curLayer = it.next();
 			if ( splitLayer ) {// Split layer
 				curLayer.setElevation((double) i / nbLayers);
 			} else {// put all the layer at zero
@@ -533,7 +532,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		}
 		this.updateDisplay();
 	}
-	
+
 	@Override
 	public void toggleRotation() {
 		rotation = !rotation;
@@ -553,8 +552,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 					@Override
 					public void run() {
 
-						Shell shell = new Shell(Display.getDefault());
-						FileDialog dialog = new FileDialog(shell, SWT.OPEN);
+						final Shell shell = new Shell(Display.getDefault());
+						final FileDialog dialog = new FileDialog(shell, SWT.OPEN);
 
 						dialog.setText("Browse for a .shp file");
 
@@ -564,9 +563,9 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 						if ( dialog.open() != null ) {
 
-							String path = dialog.getFilterPath();
+							final String path = dialog.getFilterPath();
 
-							String[] names = dialog.getFileNames();
+							final String[] names = dialog.getFileNames();
 
 							for ( int i = 0; i < names.length; i++ ) {
 								shapeFileName[i] = path + "/" + names[i];
@@ -576,10 +575,10 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 						}
 
 						renderer.myShapeFileReader = new ShapeFileReader(shapeFileName[0]);
-						SimpleFeatureCollection myCollection =
+						final SimpleFeatureCollection myCollection =
 							renderer.myShapeFileReader
 								.getFeatureCollectionFromShapeFile(renderer.myShapeFileReader.store);
-						Color color =
+						final Color color =
 							new Color((int) (Math.random() * 255), (int) (Math.random() * 255),
 								(int) (Math.random() * 255));
 						renderer.getScene().addCollections(myCollection, color);
@@ -603,15 +602,15 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 		// this.openGLGraphicsGLRender.camera.PrintParam();
 
-		Envelope env = geometry.getEnvelope();
+		final Envelope env = geometry.getEnvelope();
 
-		double xPos = geometry.getLocation().getX() - this.getEnvWidth() / 2;
-		double yPos = -(geometry.getLocation().getY() - this.getEnvHeight() / 2);
+		final double xPos = geometry.getLocation().getX() - this.getEnvWidth() / 2;
+		final double yPos = -(geometry.getLocation().getY() - this.getEnvHeight() / 2);
 
 		// FIXME: Need to compute the depth of the shape to adjust ZPos value.
 		// FIXME: Problem when the geometry is a point how to determine the maxExtent of the shape?
-		double zPos = env.maxExtent() * 2 + geometry.getLocation().getZ();
-		double zLPos = -(env.maxExtent() * 2);
+		final double zPos = env.maxExtent() * 2 + geometry.getLocation().getZ();
+		final double zLPos = -(env.maxExtent() * 2);
 
 		this.renderer.camera.updatePosition(xPos, yPos, zPos);
 		this.renderer.camera.lookPosition(xPos, yPos, zLPos);
@@ -632,7 +631,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		GAMA.run(new InScope.Void() {
 
 			@Override
-			public void process(IScope scope) {
+			public void process(final IScope scope) {
 				save(scope, getImage());
 			}
 		});

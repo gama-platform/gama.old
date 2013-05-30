@@ -38,7 +38,7 @@ import org.uncommons.maths.number.NumberGenerator;
  */
 public class Random {
 
-	private static RandomUtils RANDOM(IScope scope) {
+	private static RandomUtils RANDOM(final IScope scope) {
 		return GAMA.getRandom();
 	}
 
@@ -64,7 +64,7 @@ public class Random {
 		 */
 		// double internalRange = bound / 2;
 		double tmpResult = 0;
-		NumberGenerator<Double> gen = RANDOM(scope).createGaussian(mean, range / 2);
+		final NumberGenerator<Double> gen = RANDOM(scope).createGaussian(mean, range / 2);
 		// 'do while' does the truncature
 
 		do {
@@ -116,7 +116,7 @@ public class Random {
 	@doc(value = "The elements of the operand in random order.", special_cases = { "if the operand is empty, returns an empty list (or string, matrix)" }, examples = { "shuffle ([12, 13, 14]) --: [14,12,13];" }, see = { "reverse" })
 	public static IList opShuffle(final IScope scope, final IContainer target) {
 		if ( target == null || target.isEmpty(scope) ) { return new GamaList(); }
-		final IList list = target.listValue(scope);
+		final IList list = (IList) target.listValue(scope).copy(scope);
 		RANDOM(scope).shuffle(list);
 		return list;
 	}
@@ -131,7 +131,7 @@ public class Random {
 	@operator(value = "shuffle", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(examples = { "shuffle ([[\"c11\",\"c12\",\"c13\"],[\"c21\",\"c22\",\"c23\"]]) --: [[\"c12\",\"c21\",\"c11\"],[\"c13\",\"c22\",\"c23\"]]" })
 	public static IMatrix opShuffle(final IScope scope, final IMatrix target) throws GamaRuntimeException {
-		IMatrix matrix2 = (IMatrix) target.copy(scope);
+		final IMatrix matrix2 = (IMatrix) target.copy(scope);
 		matrix2.shuffleWith(RANDOM(scope));
 		return matrix2;
 	}
@@ -146,7 +146,7 @@ public class Random {
 	@doc(value = "a random integer in the interval [0, operand]", comment = "to obtain a probability between 0 and 1, use the expression (rnd n) / n, where n is used to indicate the precision", special_cases = { "" }, examples = {
 		"rnd (2) --: 0, 1 or 2", "rnd (1000) / 1000 --: a float between 0 and 1 with a precision of 0.001" }, see = { "flip" })
 	public static Integer opRnd(final IScope scope, final Integer max) {
-		RandomUtils r = RANDOM(scope);
+		final RandomUtils r = RANDOM(scope);
 		return r.between(0, max);
 	}
 

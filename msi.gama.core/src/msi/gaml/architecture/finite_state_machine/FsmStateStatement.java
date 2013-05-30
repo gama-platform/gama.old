@@ -73,7 +73,7 @@ public class FsmStateStatement extends AbstractStatementSequence {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> children) {
-		for ( ISymbol c : children ) {
+		for ( final ISymbol c : children ) {
 			if ( c instanceof FsmEnterStatement ) {
 				enterActions = (FsmEnterStatement) c;
 			} else if ( c instanceof FsmExitStatement ) {
@@ -90,19 +90,19 @@ public class FsmStateStatement extends AbstractStatementSequence {
 	}
 
 	protected boolean beginExecution(final IScope scope) throws GamaRuntimeException {
-		IAgent agent = scope.getAgentScope();
-		if ( agent.dead() || scope.interrupted() ) { return false; }
+		final IAgent agent = scope.getAgentScope();
+		if ( scope.interrupted() ) { return false; }
 		Map<String, Object> memory = (Map) agent.getAttribute(STATE_MEMORY);
 		if ( memory == null ) {
 			memory = new HashMap();
 			agent.setAttribute(STATE_MEMORY, memory);
 		}
-		for ( Map.Entry<String, Object> entry : memory.entrySet() ) {
+		for ( final Map.Entry<String, Object> entry : memory.entrySet() ) {
 			scope.addVarWithValue(entry.getKey(), entry.getValue());
 		}
-		Boolean enter = (Boolean) agent.getAttribute(ENTER);
+		final Boolean enter = (Boolean) agent.getAttribute(ENTER);
 		if ( enter ) {
-			FsmStateStatement stateToExit = (FsmStateStatement) agent.getAttribute(IKeyword.STATE_TO_EXIT);
+			final FsmStateStatement stateToExit = (FsmStateStatement) agent.getAttribute(IKeyword.STATE_TO_EXIT);
 			if ( stateToExit != null ) {
 				stateToExit.haltOn(scope);
 			}
@@ -124,7 +124,7 @@ public class FsmStateStatement extends AbstractStatementSequence {
 	}
 
 	protected String evaluateTransitions(final IScope scope) throws GamaRuntimeException {
-		IAgent agent = scope.getAgentScope();
+		final IAgent agent = scope.getAgentScope();
 		for ( int i = 0; i < transitionsSize; i++ ) {
 			final FsmTransitionStatement transition = transitions.get(i);
 

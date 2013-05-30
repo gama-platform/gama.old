@@ -6,8 +6,6 @@ import java.awt.image.BufferedImage;
 import java.nio.FloatBuffer;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
-
-import msi.gama.common.util.GuiUtils;
 import msi.gama.jogl.JOGLAWTDisplaySurface;
 import msi.gama.jogl.scene.*;
 import msi.gama.jogl.utils.Camera.AbstractCamera;
@@ -92,11 +90,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private final Object matrixLock = new Object();
 	private final float[] matrix = new float[16];
 
-	public JOGLAWTGLRenderer(JOGLAWTDisplaySurface d) {
+	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {
 
 		
 		// Enabling the stencil buffer
-		GLCapabilities cap = new GLCapabilities();
+		final GLCapabilities cap = new GLCapabilities();
 		cap.setStencilBits(8);
 		// Initialize the user camera
 		camera = new Camera(this);
@@ -138,12 +136,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		
 	}
 
-	public void setAntiAliasing(boolean antialias) {
+	public void setAntiAliasing(final boolean antialias) {
 		antialiasing = antialias ? GL_LINEAR : GL_NEAREST;
 	}
 
 	@Override
-	public void init(GLAutoDrawable drawable) {
+	public void init(final GLAutoDrawable drawable) {
+		
+		
 		
 		
 		width = drawable.getWidth();
@@ -186,17 +186,19 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		ThisRot.get(matrix);
 
 		// FIXME: Need to be place somewhere (triggered by a button in Gama)
-		
-		 /*if(dem !=null){
-			 GuiUtils.debug("init in joglrender");
-		     dem.init(gl);
-		  }*/
-		
+
+		/*
+		 * if(dem !=null){
+		 * GuiUtils.debug("init in joglrender");
+		 * dem.init(gl);
+		 * }
+		 */
+
 		OutputSynchronizer.decInitializingViews(this.displaySurface.getOutputName());
 	}
 
 	@Override
-	public void display(GLAutoDrawable drawable) {
+	public void display(final GLAutoDrawable drawable) {
 		if ( displaySurface.canBeUpdated() ) {
 			// hdviet added 28/05/2012
 			synchronized (matrixLock) {
@@ -263,8 +265,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
 			gl.glPolygonOffset(1, 1);
 
-			//gl.glDisable(GL_DEPTH_TEST);
-			//dem.DisplayDEM(gl);
+			// gl.glDisable(GL_DEPTH_TEST);
+			// dem.DisplayDEM(gl);
 			if ( dem.isInitialized() == true ) {
 				dem.DisplayDEM(gl);
 			} else {
@@ -293,19 +295,19 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			}
 			
 		}
-		
-		//this.displaySurface.snapshot();
+
+		// this.displaySurface.snapshot();
 	}
 
-	public Point GetRealWorldPointFromWindowPoint(Point windowPoint) {
+	public Point GetRealWorldPointFromWindowPoint(final Point windowPoint) {
 
-		int viewport[] = new int[4];
-		double mvmatrix[] = new double[16];
-		double projmatrix[] = new double[16];
+		final int viewport[] = new int[4];
+		final double mvmatrix[] = new double[16];
+		final double projmatrix[] = new double[16];
 		int realy = 0;// GL y coord pos
-		double wcoord[] = new double[4];// wx, wy, wz;// returned xyz coords
+		final double wcoord[] = new double[4];// wx, wy, wz;// returned xyz coords
 
-		int x = windowPoint.x, y = windowPoint.y;
+		final int x = windowPoint.x, y = windowPoint.y;
 
 		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
 		gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, mvmatrix, 0);
@@ -313,9 +315,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		/* note viewport[3] is height of window in pixels */
 		realy = viewport[3] - y - 1;
 
-		FloatBuffer floatBuffer = FloatBuffer.allocate(1);
+		final FloatBuffer floatBuffer = FloatBuffer.allocate(1);
 		gl.glReadPixels(x, realy, 1, 1, GL.GL_DEPTH_COMPONENT, GL.GL_FLOAT, floatBuffer);
-		float z = floatBuffer.get(0);
+		final float z = floatBuffer.get(0);
 
 		glu.gluUnProject(x, realy, z, //
 			mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
@@ -327,7 +329,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 		gl.glFlush();
 
-		Point realWorldPoint = new Point((int) wcoord[0], (int) wcoord[1]);
+		final Point realWorldPoint = new Point((int) wcoord[0], (int) wcoord[1]);
 		return realWorldPoint;
 	}
 
@@ -357,13 +359,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	}
 
 	@Override
-	public void reshape(GLAutoDrawable drawable, int arg1, int arg2, int arg3, int arg4) {
+	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int arg3, final int arg4) {
 		// Get the OpenGL graphics context
 		gl = drawable.getGL();
 		if ( height == 0 ) {
 			height = 1; // prevent divide by zero
 		}
-		float aspect = (float) width / height;
+		final float aspect = (float) width / height;
 		// Set the viewport (display area) to cover the entire window
 		gl.glViewport(0, 0, width, height);
 		// Enable the model view - any new transformations will affect the
@@ -381,7 +383,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	}
 
 	@Override
-	public void displayChanged(GLAutoDrawable arg0, boolean arg1, boolean arg2) {}
+	public void displayChanged(final GLAutoDrawable arg0, final boolean arg1, final boolean arg2) {}
 
 	public void drawScene() {
 		if ( displaySurface.picking ) {
@@ -431,7 +433,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private void draw3DCube() {
 		// float envMaxDim = (
 		// displaySurface.openGLGraphics).maxEnvDim;
-		float envMaxDim = (float) env_width;
+		final float envMaxDim = (float) env_width;
 
 		this.drawModel(false);
 		gl.glTranslatef(envMaxDim, 0, 0);
@@ -482,7 +484,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	 * 
 	 */
 
-	public void drawModel(boolean picking) {
+	public void drawModel(final boolean picking) {
 		scene.draw(this, picking, true, true);
 	}
 
@@ -512,14 +514,19 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	// return;
 	// }
 
-	public MyTexture createTexture(BufferedImage image, boolean isDynamic) {
+	public MyTexture createTexture(final BufferedImage image, final boolean isDynamic) {
 		// Create a OpenGL Texture object from (URL, mipmap, file suffix)
 		// need to have an opengl context valide
 		this.getContext().makeCurrent();
-		Texture texture = TextureIO.newTexture(image, false);
+		Texture texture;
+		try {
+			texture = TextureIO.newTexture(image, false);
+		} catch (final GLException e) {
+			return null;
+		}
 		texture.setTexParameteri(GL_TEXTURE_MIN_FILTER, antialiasing);
 		texture.setTexParameteri(GL_TEXTURE_MAG_FILTER, antialiasing);
-		MyTexture curTexture = new MyTexture();
+		final MyTexture curTexture = new MyTexture();
 		curTexture.texture = texture;
 		curTexture.isDynamic = isDynamic;
 		// GuiUtils.debug("JOGLAWTGLRenderer.createTexture for " + image);
@@ -528,9 +535,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	}
 
 	// add function to capture mouse event of ArcBall model
-	public void drag(Point mousePoint) {
+	public void drag(final Point mousePoint) {
 
-		Quat4f ThisQuat = new Quat4f();
+		final Quat4f ThisQuat = new Quat4f();
 
 		arcBall.drag(mousePoint, ThisQuat); // Update End Vector And Get
 											// Rotation As Quaternion
@@ -541,7 +548,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		}
 	}
 
-	public void startDrag(Point mousePoint) {
+	public void startDrag(final Point mousePoint) {
 		// ArcBall
 		synchronized (matrixLock) {
 			LastRot.set(ThisRot); // Set Last Static Rotation To Last Dynamic
@@ -603,15 +610,15 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		return context;
 	}
 
-	public void setContext(GLContext context) {
+	public void setContext(final GLContext context) {
 		this.context = context;
 	}
 
-	public void setAmbientLightValue(Color ambientLightValue) {
+	public void setAmbientLightValue(final Color ambientLightValue) {
 		this.ambientLightValue = ambientLightValue;
 	}
 
-	public boolean setPolygonMode(boolean polygonMode) {
+	public boolean setPolygonMode(final boolean polygonMode) {
 		return this.polygonMode = polygonMode;
 	}
 
@@ -619,26 +626,26 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		return useTessellation;
 	}
 
-	public boolean setTessellation(boolean useTessellation) {
+	public boolean setTessellation(final boolean useTessellation) {
 		this.useTessellation = useTessellation;
 		return useTessellation;
 	}
 
-	public void setCameraPosition(ILocation cameraPos) {
+	public void setCameraPosition(final ILocation cameraPos) {
 		if ( cameraPos.equals(new GamaPoint(-1, -1, -1)) ) {// No change;
 		} else {
 			camera.updatePosition(cameraPos.getX(), cameraPos.getY(), cameraPos.getZ());
 		}
 	}
 
-	public void setCameraLookPosition(ILocation camLookPos) {
+	public void setCameraLookPosition(final ILocation camLookPos) {
 		if ( camLookPos.equals(new GamaPoint(-1, -1, -1)) ) {// No change
 		} else {
 			camera.lookPosition(camLookPos.getX(), camLookPos.getY(), camLookPos.getZ());
 		}
 	}
 
-	public void setCameraUpVector(ILocation upVector) {
+	public void setCameraUpVector(final ILocation upVector) {
 		camera.setUpVector(upVector);
 	}
 
@@ -646,7 +653,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		return env_width > env_height ? env_width : env_height;
 	}
 
-	public void setPickedObjectIndex(int pickedObjectIndex) {
+	public void setPickedObjectIndex(final int pickedObjectIndex) {
 		this.pickedObjectIndex = pickedObjectIndex;
 	}
 
@@ -663,10 +670,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public void dispose() {
 		scene.dispose();
 	}
-	
-	public void CalculateFrameRate()
-    {
 
-    }
+	public void CalculateFrameRate() {
+
+	}
 
 }

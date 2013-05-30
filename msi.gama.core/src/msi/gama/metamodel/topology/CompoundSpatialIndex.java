@@ -66,14 +66,20 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	public void insert(final IShape o) {
 		final IAgent a = o.getAgent();
 		if ( a == null ) { return; }
-		findSpatialIndex(a).insert(o);
+		final ISpatialIndex si = findSpatialIndex(a);
+		if ( si != null ) {
+			si.insert(o);
+		}
 	}
 
 	@Override
 	public void remove(final IShape previous, final IShape o) {
 		final IAgent a = o.getAgent();
 		if ( a == null ) { return; }
-		findSpatialIndex(a).remove(previous, o);
+		final ISpatialIndex si = findSpatialIndex(a);
+		if ( si != null ) {
+			si.remove(previous, o);
+		}
 	}
 
 	@Override
@@ -137,6 +143,7 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 
 	@Override
 	public void dispose() {
+		// GuiUtils.debug("CompoundSpatialIndex.dispose");
 		quadtree = null;
 		indexes.clear();
 		all.clear();

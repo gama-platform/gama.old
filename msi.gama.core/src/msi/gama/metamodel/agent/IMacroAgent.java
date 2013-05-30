@@ -95,7 +95,7 @@ public interface IMacroAgent extends IAgent {
 	/**
 	 * Initialize Populations to manage micro-agents.
 	 */
-	public abstract void initializeMicroPopulations(IScope scope);
+	// public abstract void initializeMicroPopulations(IScope scope);
 
 	/**
 	 * Migrates some micro-agents from one micro-species to another micro-species of this agent's

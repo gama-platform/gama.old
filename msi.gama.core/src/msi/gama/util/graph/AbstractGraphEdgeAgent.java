@@ -33,10 +33,10 @@ public class AbstractGraphEdgeAgent extends GamlAgent {
 	// }
 
 	@Override
-	public Object _step_(IScope scope) {
-		if ( scope.interrupted() || dead() ) { return null; }
-		IAgent s = (IAgent) getAttribute(IKeyword.SOURCE);
-		IAgent t = (IAgent) getAttribute(IKeyword.TARGET);
+	public Object _step_(final IScope scope) {
+		// if ( scope.interrupted() || dead() ) { return null; }
+		final IAgent s = (IAgent) getAttribute(IKeyword.SOURCE);
+		final IAgent t = (IAgent) getAttribute(IKeyword.TARGET);
 		if ( s == null || t == null ) { return null; }
 		setGeometry(GamaGeometryType.buildLine(s.getLocation(), t.getLocation()));
 		return super._step_(scope);

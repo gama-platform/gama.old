@@ -53,8 +53,8 @@ import msi.gaml.types.IType;
 public class AgentLayerStatement extends AbstractLayerStatement {
 
 	private IExpression setOfAgents;
-	final HashSet<IAgent> agents;
-	HashSet<IAgent> agentsForLayer;
+	// final HashSet<IAgent> agents;
+	HashSet<IAgent> agentsForLayer = new HashSet();
 	protected String constantAspectName = null;
 	protected IExpression aspectExpr;
 	protected IExpression focusExpr;
@@ -67,7 +67,7 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 			constantAspectName = aspectExpr.literalValue();
 		}
 		focusExpr = getFacet(IKeyword.FOCUS);
-		agents = new HashSet();
+		// agents = new HashSet();
 	}
 
 	public synchronized HashSet<IAgent> getAgentsToDisplay() {
@@ -82,13 +82,11 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 
 	@Override
 	public void _step(final IScope scope) {
+		// final HashSet<IAgent> agents;
 		// GUI.debug("Computing AgentDisplayLayer " + getName());
-		synchronized (agents) {
-			if ( scope.getClock().getCycle() == 0 || agentsHaveChanged() ) {
-				agents.clear();
-				agents.addAll(computeAgents(scope));
-			}
-			agentsForLayer = (HashSet<IAgent>) agents.clone();
+		if ( scope.getClock().getCycle() == 0 || agentsHaveChanged() ) {
+			agentsForLayer = new HashSet(computeAgents(scope));
+			// agentsForLayer = (HashSet<IAgent>) agents.clone();
 		}
 	}
 
@@ -108,7 +106,7 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 	}
 
 	public void computeAspectName(final IScope scope) throws GamaRuntimeException {
-		String aspectName =
+		final String aspectName =
 			constantAspectName == null ? aspectExpr == null ? IKeyword.DEFAULT : Cast.asString(scope,
 				aspectExpr.value(scope)) : constantAspectName;
 		setAspect(aspectName);

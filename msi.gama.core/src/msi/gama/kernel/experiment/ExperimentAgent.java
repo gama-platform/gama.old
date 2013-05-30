@@ -68,7 +68,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	private IScope scope;
 	protected SimulationAgent simulation;
-	protected AgentScheduler scheduler;
+	// protected AgentScheduler scheduler;
 	final Map<String, Object> extraParametersMap = new LinkedHashMap();
 	protected RandomUtils random;
 	protected boolean isLoading;
@@ -77,7 +77,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public ExperimentAgent(final IPopulation s) throws GamaRuntimeException {
 		super(s);
 		super.setGeometry(SHAPE);
-		// setIndex(0);
 		reset();
 	}
 
@@ -89,24 +88,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public void reset() {
 		// We close any simulation that might be running
 		closeSimulation();
-		// We set the "interrupted" flag to false
-		// interrupted = false;
 		// We create a fresh new scope
 		GAMA.releaseScope(scope);
 		scope = obtainNewScope();
-		// We create a new scheduler if there isnt one already and unschedule the existing one if needed
-		if ( scheduler != null ) {
-			GAMA.controller.scheduler.unschedule(scheduler);
-		}
-		scheduler = new AgentScheduler(scope, this);
 		// We initialize the population that will host the simulation
 		createSimulationPopulation();
-		// // We create a fake simulation (used until the "true" simulation is created in init())
-		// simulation = new FakeSimulation();
 		// We initialize a new random number generator
 		random = new RandomUtils(getSpecies().getCurrentSeed());
-		// And we schedule the agent in its own scheduler
-		// schedule();
 	}
 
 	@Override
@@ -115,36 +103,22 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		return new ExperimentAgentScope();
 	}
 
-	protected void closeSimulation() {
-		// GuiUtils.debug("ExperimentAgent.closeSimulation");
-		// // We dispose of any scheduler still running
-		// if ( scheduler != null ) {
-		// // We set the flag to interrupted
-		// // interrupted = true;
-		// // GuiUtils.debug("ExperimentAgent.closeSimulation MARKING INTERRUPTED AT TRUE");
-		// scheduler.dispose();
-		// scheduler = null;
-		// }
-		// We dispose of the simulation if any
+	@Override
+	public void closeSimulation() {
+		// We unschedule the simulation if any
 		if ( simulation != null ) {
-			simulation.dispose();
-			simulation = null;
+			GAMA.controller.scheduler.unschedule(simulation.getScheduler());
 		}
 	}
 
 	@Override
 	public void dispose() {
-		// GuiUtils.debug("ExperimentAgent.dispose");
 		if ( dead ) { return; }
 		super.dispose();
 		closeSimulation();
-		// We dispose of any scheduler still running
-		if ( scheduler != null ) {
-			// GuiUtils.debug("ExperimentAgent.closeSimulation MARKING INTERRUPTED AT TRUE");
-			scheduler.dispose();
-			scheduler = null;
+		if ( simulation != null ) {
+			simulation.dispose();
 		}
-
 	}
 
 	@Override
@@ -167,25 +141,14 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		// Add the ones set during the "fake" simulation episode
 		parameters.putAll(extraParametersMap);
 		// This is where the simulation agent is created
-		return createSimulationAgent(parameters, getSpecies().getCurrentSeed());
+		isLoading = true;
+		final IPopulation pop = getMicroPopulation(getModel());
+		// 'simulation' is set by a callback call to setSimulation()
+		pop.createAgents(scope, 1, GamaList.with(parameters), false);
 
-	}
+		isLoading = false;
 
-	// Callback from SimulationPopulation.createAgents() once a new simulation is created
-	public void scheduleSimulation(final SimulationAgent sim) {
-		// GuiUtils.debug("ExperimentAgent.scheduleSimulation in GLOBAL SCHEDULER");
-		// The scheduler of the outputs is scheduled in the global scheduler in its own scope that is linked with the
-		// simulation.
-		// The launch could have been interrupted before, so we are careful to check if we still have a valid agent and
-		// a valid scope
-		GAMA.controller.scheduler.schedule(sim.getScheduler(), sim.getScope());
-		final IScope outputScope = sim.obtainNewScope();
-		if ( outputScope != null ) {
-			GAMA.controller.scheduler.schedule(getSpecies().getOutputManager(), outputScope);
-		} else {
-			GuiUtils.hideView(GuiUtils.PARAMETER_VIEW_ID);
-			GuiUtils.hideMonitorView();
-		}
+		return simulation;
 
 	}
 
@@ -215,30 +178,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		pop.setHost(this);
 	}
 
-	protected IAgent createSimulationAgent(final HashMap<String, Object> sol, final Double seed) {
-		// GuiUtils.debug("ExperimentAgent.createSimulationAgent");
-		GuiUtils.waitStatus("Initializing simulation");
-		isLoading = true;
-		final IPopulation pop = getMicroPopulation(getModel());
-		// 'simulation' is set by a callback call to setSimulation()
-		pop.createAgents(scope, 1, GamaList.with(sol), false);
-		if ( scope.interrupted() ) {
-			isLoading = false;
-			return null;
-		}
-		GuiUtils.waitStatus("Instantiating agents");
-		if ( scope.interrupted() ) {
-			isLoading = false;
-			return null;
-		}
-		// GuiUtils.debug("ExperimentAgent.createSimulationAgent : Scheduling the simulation in its scheduler");
-		// simulation.schedule();
-		isLoading = false;
-		GuiUtils.informStatus("Simulation Ready");
-		return simulation;
-	}
-
 	public void setSimulation(final SimulationAgent sim) {
+		if ( simulation != null && simulation.getScope().interrupted() ) {
+			simulation.dispose();
+		}
+		// else {
+		// GuiUtils.debug("ExperimentAgent.setSimulation : old simulation not disposed");
+		// }
 		simulation = sim;
 	}
 
@@ -259,11 +205,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	public SimulationAgent getSimulation() {
 		return simulation;
-	}
-
-	@Override
-	public AgentScheduler getScheduler() {
-		return scheduler;
 	}
 
 	@Override
@@ -418,14 +359,15 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			}
 		}
 
+		@Override
+		public void setAgentVarValue(final IAgent a, final String name, final Object value) {
+			if ( a == ExperimentAgent.this ) {
+				setGlobalVarValue(name, value);
+			} else {
+				super.setAgentVarValue(a, name, value);
+			}
+		}
+
 	}
-	//
-	// private class ExperimentAgentScheduler extends AgentScheduler {
-	//
-	// public ExperimentAgentScheduler(IScope scope, IStepable owner) {
-	// super(scope, owner);
-	// }
-	//
-	// }
 
 }

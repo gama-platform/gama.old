@@ -7,7 +7,7 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.topology.continuous.AmorphousTopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.IList;
+import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
 
 public class ExperimentPopulation extends GamaPopulation {
@@ -22,15 +22,15 @@ public class ExperimentPopulation extends GamaPopulation {
 		if ( size() == 0 ) {
 			final ExperimentAgent exp = new ExperimentAgent(this);
 			// exp.setIndex(0);
-			agents.add(exp);
-			createVariablesFor(scope, agents, initialValues);
+			/* agents. */add(exp);
+			createVariablesFor(scope, this /* agents */, initialValues);
 		}
-		return agents;
+		return /* agents */this;
 	}
 
 	@Override
-	public List<IAgent> computeAgentsToSchedule(final IScope scope) {
-		return getAgentsList();
+	public IList<IAgent> computeAgentsToSchedule(final IScope scope) {
+		return GamaList.with(/* agents. */get(0));
 	}
 
 	@Override

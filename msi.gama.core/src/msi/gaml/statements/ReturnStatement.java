@@ -24,7 +24,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
@@ -50,9 +50,10 @@ public class ReturnStatement extends AbstractStatement {
 	}
 
 	@Override
-	public Object privateExecuteIn(final IScope stack) throws GamaRuntimeException {
-		stack.setStatus(ExecutionStatus.interrupt);
-		return value.value(stack);
+	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+		final Object result = value.value(scope);
+		scope.interruptAction();
+		return result;
 	}
 
 	@Override

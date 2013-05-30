@@ -2,6 +2,7 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.util.*;
 import msi.gaml.compilation.AbstractGamlAdditions;
@@ -71,8 +72,10 @@ public class TypeDescription extends SymbolDescription {
 		if ( existing != null ) {
 			// FIXME This block is never executed (to verify)
 			if ( existing.getKeyword().equals(ACTION) && !primitive.isAbstract() ) {
-				existing.error("Action " + actionName + " replaces a primitive of the same name defined in " +
-					primitive.getOriginName() + ". Consider renaming it.", IGamlIssue.GENERAL);
+				existing.info(
+					"Action " + actionName + " replaces a primitive of the same name defined in " +
+						primitive.getOriginName() + ". If it was not your intention, consider renaming it.",
+					IGamlIssue.GENERAL);
 			}
 			DescriptionValidator.assertActionsAreCompatible(existing, primitive, primitive.getOriginName());
 			children.remove(existing);
@@ -85,6 +88,9 @@ public class TypeDescription extends SymbolDescription {
 	}
 
 	protected void addAction(final StatementDescription redeclaredAction) {
+		if ( redeclaredAction.getName().equals("related_to") ) {
+			GuiUtils.debug("TypeDescription.addAction related_to");
+		}
 
 		// TODO VERIFIER LES PARENTS RESPECTIFS ET COMPRENDRE POURQUOI ERREUR SUR L'AJOUT D'ACTIONS ABSTRAITES
 		final String actionName = redeclaredAction.getName();
@@ -111,24 +117,50 @@ public class TypeDescription extends SymbolDescription {
 
 	protected void inheritAction(final TypeDescription parent, final StatementDescription parentAction) {
 		final String actionName = parentAction.getName();
-		if ( !hasAction(actionName) ) {
-			// The current species does not define such an action. If it is abstract in
-			// the super species, we issue an error
-			if ( parentAction.isAbstract() ) {
-				this.error("Abstract action '" + actionName + "', inherited from " + parent.getName() +
-					", should be redefined.", IGamlIssue.MISSING_ACTION);
-			} else {
-				// Otherwise we add it.
-				addChild(parentAction);
-			}
+		final StatementDescription existingAction = getAction(actionName);
+		if ( existingAction == null ) {
+			// The action does not replace any. Just proceed.
+			addChild(parentAction);
 			return;
 		}
+		if ( existingAction.isAbstract() && parentAction.isAbstract() ) {
+			this.error("Abstract action '" + actionName + "', inherited from " + parent.getName() +
+				", should be redefined.", IGamlIssue.MISSING_ACTION, NAME);
+			return;
+		}
+		DescriptionValidator.assertActionsAreCompatible(existingAction, parentAction, parent.getName());
+		if ( existingAction.isBuiltIn() ) {
+			addChild(parentAction);
+			return;
+		}
+		existingAction.info(
+			"Redefinition of the action " + actionName + " defined in  " + parentAction.getOriginName(),
+			IGamlIssue.REDEFINES);
 
-		// The action has already been defined in the current species. Just need to check
-		// if it coherent with the inherited action
-		final StatementDescription myAction = getAction(actionName);
+		// addChild(parentAction);
 
-		DescriptionValidator.assertActionsAreCompatible(myAction, parentAction, parent.getName());
+		// if ( actionName.equals("related_to") ) {
+		// GuiUtils.debug("TypeDescription.addAction related_to");
+		// }
+		// if ( !hasAction(actionName) || getAction(actionName).isAbstract() ) {
+		// // WARNING : the actions inherited from Java species are actually copied two times !
+		// // The current species does not define such an action. If it is abstract in
+		// // the super species, we issue an error
+		// if ( parentAction.isAbstract() ) {
+		// this.error("Abstract action '" + actionName + "', inherited from " + parent.getName() +
+		// ", should be redefined.", IGamlIssue.MISSING_ACTION, NAME);
+		// } else {
+		// // Otherwise we add it.
+		// addChild(parentAction);
+		// }
+		// return;
+		// }
+		//
+		// // The action has already been defined in the current species. Just need to check
+		// // if it coherent with the inherited action
+		// final StatementDescription myAction = getAction(actionName);
+		//
+		// DescriptionValidator.assertActionsAreCompatible(myAction, parentAction, parent.getName());
 	}
 
 	@Override

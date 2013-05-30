@@ -39,31 +39,33 @@ public class AgentScheduler implements IStepable {
 		return alive;
 	}
 
-	// @Override
 	// // TODO REMOVE / ONLY FOR DEBUG
-	// public String toString() {
-	// if ( owner == null ) {
-	// GuiUtils.debug("AgentScheduler.toString : NULL");
-	// }
-	// return "Scheduler of " + owner;
-	// }
+	@Override
+	public String toString() {
+		return "Scheduler of " + owner;
+	}
 
+	public void reset() {
+		actions = null;
+		stepablesToInit.clear();
+		inInitSequence = true;
+	}
+
+	@Override
 	public void dispose() {
 		executeActions(scope, DISPOSE);
-		scope.setInterrupted(true);
+		// scope.setInterrupted(true);
 		// We wait for the scheduler to become "idle" (i.e. when all the interruptions have become
 		// effective) if the global scheduler is not paused.
 		// WARNING: if the scope is not marked as "interrupted", this will result in an endless loop
 		if ( !GAMA.controller.scheduler.paused ) {
 			while (alive) {
 				try {
-					// GuiUtils.debug("ExperimentScheduler.dispose: WAITING");
+					// GuiUtils.debug("ExperimentScheduler.dispose: DOING THE LAST STEP(S)");
 					// Give it a chance to cleanup before being disposed
-					// if ( scope.interrupted() ) {
 					step(scope);
-					// }
 					Thread.sleep(100);
-				} catch (Exception e) {
+				} catch (final Exception e) {
 					// GuiUtils.debug("Interruption experiment exception: " + e.getMessage());
 					alive = false;
 				}
@@ -71,8 +73,7 @@ public class AgentScheduler implements IStepable {
 		}
 		// And unschedule the scheduler (although it shouldn't be necessary, as it has been marked as interrupted.
 		// GAMA.controller.scheduler.unschedule(this);
-		stepablesToInit.clear();
-		actions = null;
+		reset();
 	}
 
 	@Override
@@ -80,10 +81,11 @@ public class AgentScheduler implements IStepable {
 
 		if ( owner != null && alive ) {
 			executeActions(scope, BEGIN);
-			owner.step(scope);
-			executeActions(scope, END);
-			executeActions(scope, ONE_SHOT);
-			alive = !scope.interrupted();
+			alive = scope.step(owner);
+			if ( alive ) {
+				executeActions(scope, END);
+				executeActions(scope, ONE_SHOT);
+			}
 		}
 	}
 
@@ -97,9 +99,7 @@ public class AgentScheduler implements IStepable {
 		if ( inInitSequence ) {
 			stepablesToInit.add(entity);
 		} else {
-			if ( !entity.dead() && !scope.interrupted() ) {
-				entity.init(scope);
-			}
+			scope.init(entity);
 		}
 	}
 
@@ -108,14 +108,13 @@ public class AgentScheduler implements IStepable {
 		inInitSequence = true;
 		try {
 			while (!stepablesToInit.isEmpty()) {
-				IStepable[] toInit = stepablesToInit.toArray(new IStepable[stepablesToInit.size()]);
+				final IStepable[] toInit = stepablesToInit.toArray(new IStepable[stepablesToInit.size()]);
 				stepablesToInit.clear();
 				for ( int i = 0, n = toInit.length; i < n; i++ ) {
-					if ( scope.interrupted() ) {
+					if ( !scope.init(toInit[i]) ) {
 						inInitSequence = false;
 						return;
 					}
-					toInit[i].init(scope);
 				}
 			}
 		} finally {
@@ -125,9 +124,9 @@ public class AgentScheduler implements IStepable {
 
 	private void executeActions(final IScope scope, final int type) {
 		if ( actions != null ) {
-			List<GamaHelper> list = actions[type];
+			final List<GamaHelper> list = actions[type];
 			if ( list != null ) {
-				for ( GamaHelper action : list ) {
+				for ( final GamaHelper action : list ) {
 					action.run(scope);
 				}
 				if ( type == ONE_SHOT ) {
@@ -139,7 +138,7 @@ public class AgentScheduler implements IStepable {
 
 	public void removeAction(final GamaHelper haltAction) {
 		if ( actions == null ) { return; }
-		for ( List<GamaHelper> list : actions ) {
+		for ( final List<GamaHelper> list : actions ) {
 			if ( list != null && list.remove(haltAction) ) { return; }
 		}
 	}

@@ -107,7 +107,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public void init(final IScope scope) throws GamaRuntimeException {
 		super.init(scope);
 
-		IExpression color = getFacet(IKeyword.BACKGROUND);
+		final IExpression color = getFacet(IKeyword.BACKGROUND);
 		if ( color != null ) {
 			setBackgroundColor(Cast.asColor(getScope(), color.value(getScope())));
 		} else {
@@ -116,7 +116,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			}
 		}
 
-		IExpression auto = getFacet(IKeyword.AUTOSAVE);
+		final IExpression auto = getFacet(IKeyword.AUTOSAVE);
 		if ( auto != null ) {
 			if ( auto.getType().equals(Types.get(IType.POINT)) ) {
 				autosave = true;
@@ -129,25 +129,25 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		for ( final ILayerStatement layer : getLayers() ) {
 			try {
 				layer.setDisplayOutput(this);
-				layer.init(getScope());
-			} catch (GamaRuntimeException e) {
+				if ( !getScope().init(layer) ) { return; }
+			} catch (final GamaRuntimeException e) {
 				GAMA.reportError(e);
 			}
 		}
 
 		// OpenGL parameter initialization
-		IExpression tess = getFacet(IKeyword.TESSELATION);
+		final IExpression tess = getFacet(IKeyword.TESSELATION);
 		if ( tess != null ) {
 			setTesselation(Cast.asBool(getScope(), tess.value(getScope())));
 		}
 
-		IExpression light = getFacet(IKeyword.AMBIENT_LIGHT);
+		final IExpression light = getFacet(IKeyword.AMBIENT_LIGHT);
 		if ( light != null ) {
 
 			if ( light.getType().equals(Types.get(IType.COLOR)) ) {
 				setAmbientLightColor(Cast.asColor(getScope(), light.value(getScope())));
 			} else {
-				int meanValue = Cast.asInt(getScope(), light.value(getScope()));
+				final int meanValue = Cast.asInt(getScope(), light.value(getScope()));
 				setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue));
 			}
 
@@ -159,7 +159,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		}
 
-		IExpression camera = getFacet(IKeyword.CAMERA_POS);
+		final IExpression camera = getFacet(IKeyword.CAMERA_POS);
 		if ( camera != null ) {
 
 			setCameraPos(Cast.asPoint(getScope(), camera.value(getScope())));
@@ -172,7 +172,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		}
 
-		IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
+		final IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
 		if ( cameraLook != null ) {
 			setCameraLookPos(Cast.asPoint(getScope(), cameraLook.value(getScope())));
 
@@ -184,17 +184,17 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		}
 		// Set the up vector of the opengl Camera (see gluPerspective)
-		IExpression cameraUp = getFacet(IKeyword.CAMERA_UP_VECTOR);
+		final IExpression cameraUp = getFacet(IKeyword.CAMERA_UP_VECTOR);
 		if ( cameraUp != null ) {
 			setCameraUpVector(Cast.asPoint(getScope(), cameraUp.value(getScope())));
 		}
 
-		IExpression poly = getFacet(IKeyword.POLYGONMODE);
+		final IExpression poly = getFacet(IKeyword.POLYGONMODE);
 		if ( poly != null ) {
 			setPolygonMode(Cast.asBool(getScope(), poly.value(getScope())));
 		}
 
-		IExpression out3D = getFacet(IKeyword.OUTPUT3D);
+		final IExpression out3D = getFacet(IKeyword.OUTPUT3D);
 		if ( out3D != null ) {
 			if ( out3D.getType().equals(Types.get(IType.POINT)) ) {
 				setOutput3D(true);
@@ -211,8 +211,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public void step(final IScope scope) throws GamaRuntimeException {
-		for ( ILayerStatement layer : getLayers() ) {
-			layer.step(getScope());
+		for ( final ILayerStatement layer : getLayers() ) {
+			if ( !getScope().step(layer) ) { return; }
 		}
 	}
 
@@ -221,12 +221,12 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( surface == null ) { return; }
 		// /////////////// dynamic Lighting ///////////////////
 		if ( !constantAmbientLight ) {
-			IExpression light = getFacet(IKeyword.AMBIENT_LIGHT);
+			final IExpression light = getFacet(IKeyword.AMBIENT_LIGHT);
 			if ( light != null ) {
 				if ( light.getType().equals(Types.get(IType.COLOR)) ) {
 					setAmbientLightColor(Cast.asColor(getScope(), light.value(getScope())));
 				} else {
-					int meanValue = Cast.asInt(getScope(), light.value(getScope()));
+					final int meanValue = Cast.asInt(getScope(), light.value(getScope()));
 					setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue));
 				}
 			}
@@ -235,7 +235,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		// /////////////////// dynamic camera ///////////////////
 		if ( !constantCamera ) {
-			IExpression camera = getFacet(IKeyword.CAMERA_POS);
+			final IExpression camera = getFacet(IKeyword.CAMERA_POS);
 			if ( camera != null ) {
 				setCameraPos(Cast.asPoint(getScope(), camera.value(getScope())));
 			}
@@ -243,7 +243,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		}
 
 		if ( !constantCameraLook ) {
-			IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
+			final IExpression cameraLook = getFacet(IKeyword.CAMERA_LOOK_POS);
 			if ( cameraLook != null ) {
 				setCameraLookPos(Cast.asPoint(getScope(), cameraLook.value(getScope())));
 			}
@@ -271,8 +271,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public void schedule() throws GamaRuntimeException {
-		step(getScope());
 		super.schedule();
+		getScope().step(this);
 	}
 
 	public void setImageFileName(final String fileName) {
@@ -291,9 +291,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	}
 
 	protected void createSurface(final IAgent sim) {
-		Envelope env = sim.getEnvelope();
-		double w = env.getWidth();
-		double h = env.getHeight();
+		final Envelope env = sim.getEnvelope();
+		final double w = env.getWidth();
+		final double h = env.getHeight();
 		if ( surface != null ) {
 			surface.outputChanged(w, h, this);
 			return;
@@ -392,7 +392,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		return tesselation;
 	}
 
-	private void setTesselation(boolean tesselation) {
+	private void setTesselation(final boolean tesselation) {
 		this.tesselation = tesselation;
 	}
 
@@ -401,7 +401,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		return output3D;
 	}
 
-	private void setOutput3D(boolean output3D) {
+	private void setOutput3D(final boolean output3D) {
 		this.output3D = output3D;
 	}
 
@@ -410,7 +410,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		return cameraPos;
 	}
 
-	private void setCameraPos(ILocation cameraPos) {
+	private void setCameraPos(final ILocation cameraPos) {
 		this.cameraPos = cameraPos;
 	}
 
@@ -419,7 +419,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		return cameraLookPos;
 	}
 
-	private void setCameraLookPos(ILocation cameraLookPos) {
+	private void setCameraLookPos(final ILocation cameraLookPos) {
 		this.cameraLookPos = cameraLookPos;
 	}
 
@@ -428,7 +428,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		return cameraUpVector;
 	}
 
-	private void setCameraUpVector(ILocation cameraUpVector) {
+	private void setCameraUpVector(final ILocation cameraUpVector) {
 		this.cameraUpVector = cameraUpVector;
 	}
 
@@ -437,7 +437,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		return ambientLightColor;
 	}
 
-	private void setAmbientLightColor(Color ambientLightColor) {
+	private void setAmbientLightColor(final Color ambientLightColor) {
 		this.ambientLightColor = ambientLightColor;
 	}
 
@@ -446,7 +446,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		return polygonMode;
 	}
 
-	private void setPolygonMode(boolean polygonMode) {
+	private void setPolygonMode(final boolean polygonMode) {
 		this.polygonMode = polygonMode;
 	}
 
@@ -455,7 +455,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		return output3DNbCycles;
 	}
 
-	private void setOutput3DNbCycles(ILocation output3DNbCycles) {
+	private void setOutput3DNbCycles(final ILocation output3DNbCycles) {
 		this.output3DNbCycles = output3DNbCycles;
 	}
 

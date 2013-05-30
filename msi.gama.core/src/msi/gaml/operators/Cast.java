@@ -45,18 +45,18 @@ import msi.gaml.types.*;
  */
 public class Cast {
 
-	public static <T> T as(Object value, Class<T> clazz) {
-		IScope scope = GAMA.obtainNewScope();
-		IType<T> t = Types.get(clazz);
-		T result = t.cast(scope, value, null);
+	public static <T> T as(final Object value, final Class<T> clazz) {
+		final IScope scope = GAMA.obtainNewScope();
+		final IType<T> t = Types.get(clazz);
+		final T result = t.cast(scope, value, null);
 		GAMA.releaseScope(scope);
 		return result;
 	}
 
-	public static <T> T as(IExpression value, Class<T> clazz) {
-		IScope scope = GAMA.obtainNewScope();
-		IType<T> t = Types.get(clazz);
-		T result = t.cast(scope, value.value(scope), null);
+	public static <T> T as(final IExpression value, final Class<T> clazz) {
+		final IScope scope = GAMA.obtainNewScope();
+		final IType<T> t = Types.get(clazz);
+		final T result = t.cast(scope, value.value(scope), null);
 		GAMA.releaseScope(scope);
 		return result;
 	}
@@ -65,12 +65,12 @@ public class Cast {
 	@doc(value = "returns true is the left operand is of the right operand type, false otherwise", examples = {
 		"0 is int 		--: 	true", "an_agent is node 	--: 	true", "1 is float 		--: 	false" })
 	public static Boolean isA(final IScope scope, final Object a, final IExpression b) throws GamaRuntimeException {
-		IType type = asType(scope, b);
+		final IType type = asType(scope, b);
 		if ( a == null ) { return type == Types.NO_TYPE; }
 		if ( a instanceof Integer ) { return type == Types.get(IType.INT); }
 		if ( a instanceof Double ) { return type == Types.get(IType.FLOAT); }
 		if ( type.isSpeciesType() ) {
-			ISpecies s = scope.getSimulationScope().getModel().getSpecies(type.getSpeciesName());
+			final ISpecies s = scope.getSimulationScope().getModel().getSpecies(type.getSpeciesName());
 			if ( a instanceof IAgent ) { return ((IAgent) a).isInstanceOf(s, false); }
 			return false;
 		}
@@ -80,14 +80,14 @@ public class Cast {
 	@operator(value = IKeyword.IS_SKILL)
 	public static Boolean isSkill(final IScope scope, final Object a, final String skill) {
 		if ( !(a instanceof IAgent) ) { return false; }
-		ISpecies s = ((IAgent) a).getSpecies();
+		final ISpecies s = ((IAgent) a).getSpecies();
 		return s.implementsSkill(skill);
 	}
 
 	public static IType asType(final IScope scope, final IExpression expr) throws GamaRuntimeException {
-		Object value = expr.value(scope);
+		final Object value = expr.value(scope);
 		if ( value instanceof String ) {
-			IModel m = scope.getSimulationScope().getModel();
+			final IModel m = scope.getSimulationScope().getModel();
 			return m.getDescription().getTypeNamed((String) value);
 		} else if ( value instanceof ISpecies ) {
 			return ((ISpecies) value).getDescription().getType();
@@ -96,7 +96,7 @@ public class Cast {
 		}
 	}
 
-	@operator(value = IKeyword.CONTAINER, content_type = ITypeProvider.FIRST_CONTENT_TYPE, index_type = ITypeProvider.FIRST_KEY_TYPE)
+	@operator(value = IKeyword.CONTAINER, content_type = ITypeProvider.FIRST_CONTENT_TYPE_OR_TYPE, index_type = ITypeProvider.FIRST_KEY_TYPE)
 	@doc(value = "casting of the operand to a container", special_cases = {
 		"if the operand is a container, returns itself", "otherwise, returns the operand casted to a list" }, see = "list")
 	public static IContainer asContainer(final IScope scope, final Object val) throws GamaRuntimeException {
@@ -112,7 +112,7 @@ public class Cast {
 		return GamaPathType.staticCast(scope, object, null);
 	}
 
-	@operator(value = IKeyword.GRAPH, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@operator(value = IKeyword.GRAPH, content_type = ITypeProvider.FIRST_CONTENT_TYPE_OR_TYPE)
 	@doc(value = "casting of the operand to a graph.", special_cases = {
 		"if the operand is a graph, returns the graph itself",
 		"if the operand is a list, returns a new graph with the elements of the left-hand operand as vertices and no edge. "
@@ -167,7 +167,7 @@ public class Cast {
 		if ( species == null ) { return asAgent(scope, val); }
 		if ( val instanceof IAgent ) {
 			// if ( ((IAgent) val).dead() ) { return null; }
-			boolean result = ((IAgent) val).isInstanceOf(species, false);
+			final boolean result = ((IAgent) val).isInstanceOf(species, false);
 			if ( result ) { return (IAgent) val; }
 			throw GamaRuntimeException.error("Cast exception: " + val + " can not be casted into a " + species);
 		}
@@ -272,7 +272,7 @@ public class Cast {
 		return GamaIntegerType.staticCast(scope, string, radix);
 	}
 
-	@operator(value = IKeyword.LIST, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@operator(value = IKeyword.LIST, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE_OR_TYPE)
 	@doc(value = "transforms the operand into a list", comment = "list always tries to cast the operand except if it is an int, a bool or a float; "
 		+ "to create a list, instead, containing the operand (including another list), use the + operator on an empty list (like [] + 'abc').", special_cases = {
 		"if the operand is a point or a pair, returns a list containing its components (two coordinates or the key and the value);",

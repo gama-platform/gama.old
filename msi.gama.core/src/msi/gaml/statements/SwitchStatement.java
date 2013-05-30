@@ -18,7 +18,6 @@
  */
 package msi.gaml.statements;
 
-import static msi.gama.runtime.ExecutionStatus.*;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -26,7 +25,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
@@ -61,8 +60,8 @@ public class SwitchStatement extends AbstractStatementSequence {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
-		List<MatchStatement> cases = new ArrayList();
-		for ( ISymbol c : commands ) {
+		final List<MatchStatement> cases = new ArrayList();
+		for ( final ISymbol c : commands ) {
 			if ( c instanceof MatchStatement ) {
 				if ( ((MatchStatement) c).getLiteral(IKeyword.KEYWORD).equals(IKeyword.DEFAULT) ) {
 					defaultMatch = (MatchStatement) c;
@@ -79,31 +78,24 @@ public class SwitchStatement extends AbstractStatementSequence {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		ExecutionStatus statusBeforeSkipped = success;
-		boolean allSkipped = true;
 		boolean hasMatched = false;
-		Object switchValue = value.value(scope);
+		final Object switchValue = value.value(scope);
 		Object lastResult = null;
 		for ( int i = 0; i < matches.length; i++ ) {
+			if ( scope.interrupted() ) { return lastResult; }
 			if ( matches[i].matches(scope, switchValue) ) {
 				lastResult = matches[i].executeOn(scope);
 				hasMatched = true;
-				ExecutionStatus status = scope.getStatus();
-				if ( status != skipped ) {
-					if ( status == interrupt ) {
-						scope.setStatus(interrupt);
-						return lastResult;
-					} else if ( status == _break ) {
-						scope.setStatus(success);
-						return lastResult;
-					}
-					allSkipped = false;
-					statusBeforeSkipped = status;
-				}
 			}
-			scope.setStatus(allSkipped ? skipped : statusBeforeSkipped);
 		}
 		if ( !hasMatched && defaultMatch != null ) { return defaultMatch.executeOn(scope); }
 		return lastResult;
+	}
+
+	@Override
+	public void leaveScope(final IScope scope) {
+		// Clears any _loop_halted status
+		scope.popLoop();
+		super.leaveScope(scope);
 	}
 }

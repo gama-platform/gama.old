@@ -49,8 +49,8 @@ public class ModelDescription extends SpeciesDescription {
 	private boolean isTorus = false;
 	private final ErrorCollector collect = new ErrorCollector();
 
-	public ModelDescription(String name, Class clazz, String projectPath, String modelPath, EObject source,
-		SpeciesDescription macro, SpeciesDescription parent, Facets facets) {
+	public ModelDescription(final String name, final Class clazz, final String projectPath, final String modelPath,
+		final EObject source, final SpeciesDescription macro, final SpeciesDescription parent, final Facets facets) {
 		super(MODEL, clazz, macro, parent, IChildrenProvider.NONE, source, facets);
 		types =
 			new TypesManager(parent instanceof ModelDescription ? ((ModelDescription) parent).types
@@ -59,7 +59,7 @@ public class ModelDescription extends SpeciesDescription {
 		// number = count++;
 	}
 
-	public void setTorus(boolean b) {
+	public void setTorus(final boolean b) {
 		isTorus = b;
 	}
 
@@ -87,7 +87,7 @@ public class ModelDescription extends SpeciesDescription {
 	public String constructModelRelativePath(final String filePath, final boolean mustExist) {
 		try {
 			return FileUtils.constructAbsoluteFilePath(filePath, modelFilePath, mustExist);
-		} catch (GamaRuntimeException e) {
+		} catch (final GamaRuntimeException e) {
 			error(e.getMessage(), IGamlIssue.GENERAL);
 			return filePath;
 		}
@@ -167,44 +167,16 @@ public class ModelDescription extends SpeciesDescription {
 				return child;
 			}
 		} else {
-
-			// GuiUtils.debug(" ..." + child + " added.");
 			super.addChild(child);
-			// else if ( child instanceof SpeciesDescription ) { // world_species
-			// worldSpecies = (SpeciesDescription) child;
-			// addSpeciesType(worldSpecies);
-			// }
 		}
 
 		return child;
 	}
 
-	// @Override
-	// public SpeciesDescription getWorldSpecies() {
-	// return this;
-	// // return worldSpecies;
-	// }
-
-	// @Override
-	// protected boolean hasVar(final String name) {
-	// return getWorldSpecies().hasVar(name);
-	// }
-
 	public boolean hasExperiment(final String name) {
 		return experiments.containsKey(name) || titledExperiments.containsKey(name);
 	}
 
-	// @Override
-	// public IDescription getDescriptionDeclaringVar(final String name) {
-	// if ( hasVar(name) ) { return getWorldSpecies(); }
-	// return null;
-	// }
-
-	// @Override
-	// public IExpression getVarExpr(final String name) {
-	// return getWorldSpecies().getVarExpr(name);
-	// }
-	//
 	@Override
 	public ModelDescription getModelDescription() {
 		return this;
@@ -246,13 +218,7 @@ public class ModelDescription extends SpeciesDescription {
 		return collect;
 	}
 
-	//
-	// @Override
-	// public boolean isAbstract() {
-	// return this.getWorldSpecies().isAbstract();
-	// }
-
-	public ExperimentDescription getExperiment(String name) {
+	public ExperimentDescription getExperiment(final String name) {
 		ExperimentDescription desc = experiments.get(name);
 		if ( desc == null ) {
 			desc = titledExperiments.get(name);
@@ -260,24 +226,10 @@ public class ModelDescription extends SpeciesDescription {
 		return desc;
 	}
 
-	// @Override
-	// protected void addPrimitive(StatementDescription action) {
-	// GuiUtils.debug("ModelDescription.addPrimitive: " + action.getName() +
-	// (action.isAbstract() ? " -- abstract " : ""));
-	// super.addPrimitive(action);
-	// }
-	//
-	// @Override
-	// protected void addAction(StatementDescription action) {
-	// GuiUtils
-	// .debug("ModelDescription.addAction: " + action.getName() + (action.isAbstract() ? " -- abstract " : ""));
-	// super.addAction(action);
-	// }
-
 	@Override
 	public void finalizeDescription() {
 		super.finalizeDescription();
-		for ( StatementDescription action : actions.values() ) {
+		for ( final StatementDescription action : actions.values() ) {
 			if ( action.isAbstract() &&
 				!action.getUnderlyingElement(null).eResource().equals(getUnderlyingElement(null).eResource()) ) {
 				this.error("Abstract action '" + action.getName() + "', defined in " + action.getOriginName() +

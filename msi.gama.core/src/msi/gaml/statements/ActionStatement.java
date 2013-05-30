@@ -18,7 +18,6 @@
  */
 package msi.gaml.statements;
 
-import static msi.gama.runtime.ExecutionStatus.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -66,12 +65,16 @@ public class ActionStatement extends AbstractStatementSequence implements IState
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		actualArgs.stack(scope);
+		scope.stackArguments(actualArgs);
 		final Object result = super.privateExecuteIn(scope);
-		if ( scope.getStatus() == interrupt ) {
-			scope.setStatus(terminated);
-		}
 		return result;
+	}
+
+	@Override
+	public void leaveScope(final IScope scope) {
+		// Clears any _action_halted status present
+		scope.popAction();
+		super.leaveScope(scope);
 	}
 
 	@Override

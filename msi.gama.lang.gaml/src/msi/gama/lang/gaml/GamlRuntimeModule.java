@@ -21,9 +21,10 @@ package msi.gama.lang.gaml;
 import msi.gama.lang.gaml.linking.GamlLinkingService;
 import msi.gama.lang.gaml.parsing.GamlSyntacticParser;
 import msi.gama.lang.gaml.resource.*;
-import msi.gama.lang.gaml.validation.GamlJavaValidator;
+import msi.gama.lang.gaml.validation.*;
 import msi.gama.lang.utils.GamlExpressionCompiler;
 import msi.gaml.expressions.IExpressionCompiler;
+import org.eclipse.emf.ecore.util.Diagnostician;
 import org.eclipse.xtext.linking.ILinkingService;
 import org.eclipse.xtext.parser.IParser;
 import org.eclipse.xtext.resource.*;
@@ -85,6 +86,12 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 	@Override
 	public Class<? extends IParser> bindIParser() {
 		return GamlSyntacticParser.class;
+	}
+
+	@Override
+	@SingletonBinding
+	public Class<? extends Diagnostician> bindDiagnostician() {
+		return GamlDiagnostician.class;
 	}
 
 }

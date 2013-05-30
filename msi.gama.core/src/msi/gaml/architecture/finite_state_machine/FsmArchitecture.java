@@ -83,7 +83,7 @@ public class FsmArchitecture extends ReflexArchitecture {
 
 	@getter(IKeyword.STATE)
 	public String getStateName(final IAgent agent) {
-		FsmStateStatement currentState = (FsmStateStatement) agent.getAttribute(IKeyword.CURRENT_STATE);
+		final FsmStateStatement currentState = (FsmStateStatement) agent.getAttribute(IKeyword.CURRENT_STATE);
 		if ( currentState == null ) { return null; }
 		return currentState.getName();
 	}
@@ -102,7 +102,7 @@ public class FsmArchitecture extends ReflexArchitecture {
 	@Override
 	public void addBehavior(final IStatement c) {
 		if ( c instanceof FsmStateStatement ) {
-			FsmStateStatement state = (FsmStateStatement) c;
+			final FsmStateStatement state = (FsmStateStatement) c;
 			states.put(state.getName(), state);
 		} else {
 			super.addBehavior(c);
@@ -116,15 +116,15 @@ public class FsmArchitecture extends ReflexArchitecture {
 	}
 
 	protected Object executeCurrentState(final IScope scope) throws GamaRuntimeException {
-		IAgent agent = getCurrentAgent(scope);
-		if ( agent.dead() || scope.interrupted() ) { return null; }
-		FsmStateStatement currentState = (FsmStateStatement) agent.getAttribute(IKeyword.CURRENT_STATE);
+		final IAgent agent = getCurrentAgent(scope);
+		if ( scope.interrupted() ) { return null; }
+		final FsmStateStatement currentState = (FsmStateStatement) agent.getAttribute(IKeyword.CURRENT_STATE);
 		if ( currentState == null ) { return null; }
 		return currentState.executeOn(scope);
 	}
 
 	public void setCurrentState(final IAgent agent, final FsmStateStatement state) {
-		FsmStateStatement currentState = (FsmStateStatement) agent.getAttribute(IKeyword.CURRENT_STATE);
+		final FsmStateStatement currentState = (FsmStateStatement) agent.getAttribute(IKeyword.CURRENT_STATE);
 		if ( currentState == state ) { return; }
 		if ( currentState != null && currentState.hasExitActions() ) {
 			agent.setAttribute(IKeyword.STATE_TO_EXIT, currentState);

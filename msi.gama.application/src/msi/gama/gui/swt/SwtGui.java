@@ -131,7 +131,7 @@ public class SwtGui implements IGui {
 	/*
 	 * Use "ISharedImages.field"
 	 */
-	public static Image getEclipseIcon(String icon) {
+	public static Image getEclipseIcon(final String icon) {
 
 		return PlatformUI.getWorkbench().getSharedImages().getImage(icon);
 	}
@@ -154,12 +154,12 @@ public class SwtGui implements IGui {
 			@Override
 			public void run() {
 				if ( action == none ) { return; }
-				IWorkbenchPage page = getPage();
+				final IWorkbenchPage page = getPage();
 				if ( page == null ) { return; } // Closing the workbench
 				final IViewReference ref =
 					page.findViewReference(output.getViewId(), output.isUnique() ? null : output.getName());
 				if ( ref == null ) { return; }
-				IViewPart part = ref.getView(true);
+				final IViewPart part = ref.getView(true);
 				if ( !(part instanceof IGamaView) ) { return; }
 				final IGamaView view = (IGamaView) part;
 				switch (action) {
@@ -167,7 +167,7 @@ public class SwtGui implements IGui {
 						try {
 							((IViewPart) view).getSite().getPage().hideView((IViewPart) view);
 							// ((IViewPart) view).dispose();
-						} catch (Exception e) {
+						} catch (final Exception e) {
 							e.printStackTrace();
 						}
 						break;
@@ -249,7 +249,7 @@ public class SwtGui implements IGui {
 							}
 						}
 					});
-				} catch (InterruptedException e) {
+				} catch (final InterruptedException e) {
 					e.printStackTrace();
 				}
 
@@ -418,7 +418,7 @@ public class SwtGui implements IGui {
 
 			@Override
 			public void run() {
-				Shell s = getShell();
+				final Shell s = getShell();
 				if ( s == null ) { return; }
 				final ExceptionDetailsDialog d =
 					new ExceptionDetailsDialog(getShell(), "Gama", null, e.getMessage(), e);
@@ -452,8 +452,8 @@ public class SwtGui implements IGui {
 	}
 
 	public void informConsole(final Throwable e) {
-		StringWriter s = new StringWriter();
-		PrintWriter pw = new PrintWriter(s);
+		final StringWriter s = new StringWriter();
+		final PrintWriter pw = new PrintWriter(s);
 		e.printStackTrace(pw);
 	}
 
@@ -499,11 +499,11 @@ public class SwtGui implements IGui {
 			@Override
 			public void run() {
 				try {
-					ExperimentParametersView view =
+					final ExperimentParametersView view =
 						(ExperimentParametersView) getPage().showView(ExperimentParametersView.ID, null,
 							IWorkbenchPage.VIEW_VISIBLE);
 					view.addItem(exp);
-				} catch (PartInitException e) {
+				} catch (final PartInitException e) {
 					e.printStackTrace();
 				}
 			}
@@ -519,7 +519,7 @@ public class SwtGui implements IGui {
 			public void run() {
 				try {
 					result[0] = getPage().showView(viewId, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
-				} catch (PartInitException e) {
+				} catch (final PartInitException e) {
 					result[0] = e;
 				}
 			}
@@ -555,7 +555,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void hideMonitorView() {
-		MonitorView m = (MonitorView) hideView(MonitorView.ID);
+		final MonitorView m = (MonitorView) hideView(MonitorView.ID);
 		if ( m != null ) {
 			m.reset();
 		}
@@ -593,9 +593,9 @@ public class SwtGui implements IGui {
 			// Passe 4 fois dedans !!!
 
 			if ( partRef instanceof IGamaView ) {
-				IExperimentSpecies s = GAMA.getExperiment();
+				final IExperimentSpecies s = GAMA.getExperiment();
 				if ( s == null ) { return; }
-				IOutputManager m = s.getOutputManager();
+				final IOutputManager m = s.getOutputManager();
 				if ( m != null && partRef instanceof GamaSelectionListener ) {
 					m.removeGamaSelectionListener((GamaSelectionListener) partRef);
 				}
@@ -643,7 +643,7 @@ public class SwtGui implements IGui {
 	}
 
 	static void initFonts() {
-		FontData fd = Display.getDefault().getSystemFont().getFontData()[0];
+		final FontData fd = Display.getDefault().getSystemFont().getFontData()[0];
 		fd.setStyle(1 << 0 /* SWT.BOLD */);
 		labelFont = new Font(Display.getDefault(), fd);
 		expandFont = new Font(Display.getDefault(), fd);
@@ -657,7 +657,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void asyncRun(final Runnable r) {
-		Display d = getDisplay();
+		final Display d = getDisplay();
 		if ( d != null && !d.isDisposed() ) {
 			d.asyncExec(r);
 		}
@@ -672,9 +672,9 @@ public class SwtGui implements IGui {
 	}
 
 	public static IWorkbenchPage getPage() {
-		IWorkbenchWindow w = getWindow();
+		final IWorkbenchWindow w = getWindow();
 		if ( w == null ) { return null; }
-		IWorkbenchPage p = w.getActivePage();
+		final IWorkbenchPage p = w.getActivePage();
 		return p;
 	}
 
@@ -684,7 +684,7 @@ public class SwtGui implements IGui {
 			try {
 				p = getWindow().openPage(perspectiveId, null);
 
-			} catch (WorkbenchException e) {
+			} catch (final WorkbenchException e) {
 				e.printStackTrace();
 			}
 		}
@@ -696,7 +696,7 @@ public class SwtGui implements IGui {
 	}
 
 	public static IWorkbenchWindow getWindow() {
-		IWorkbenchWindow w = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		final IWorkbenchWindow w = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 
 		if ( w == null ) {
 			final IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
@@ -712,9 +712,9 @@ public class SwtGui implements IGui {
 
 			@Override
 			public void run() {
-				IWorkbenchPage activePage = getPage();
+				final IWorkbenchPage activePage = getPage();
 				if ( activePage == null ) { return; } // Closing the workbench
-				IWorkbenchPart part = activePage.findView(id);
+				final IWorkbenchPart part = activePage.findView(id);
 				if ( part != null && part instanceof IGamaView && activePage.isPartVisible(part) ) {
 					activePage.hideView((IViewPart) part);
 					parts[0] = (IGamaView) part;
@@ -742,7 +742,7 @@ public class SwtGui implements IGui {
 	public final boolean openPerspective(final String perspectiveId) {
 		loadPerspectives();
 		final IWorkbenchPage activePage = getPage(perspectiveId);
-		IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
+		final IPerspectiveRegistry reg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 		final IPerspectiveDescriptor descriptor = reg.findPerspectiveWithId(perspectiveId);
 		final IPerspectiveDescriptor currentDescriptor = activePage.getPerspective();
 
@@ -779,18 +779,18 @@ public class SwtGui implements IGui {
 	public final boolean loadPerspectives() {
 		if ( !perspectiveClasses.isEmpty() ) { return true; }
 
-		IConfigurationElement[] config =
+		final IConfigurationElement[] config =
 			Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.perspectives");
-		for ( IConfigurationElement e : config ) {
+		for ( final IConfigurationElement e : config ) {
 			final String pluginID = e.getAttribute("id");
 			final String pluginClass = e.getAttribute("class");
 			final String pluginName = e.getContributor().getName();
 			// Check if is a gama perspective...
 			if ( pluginID.contains("msi.gama") ) {
-				ClassLoader cl = GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
+				final ClassLoader cl = GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
 				try {
 					perspectiveClasses.put(pluginID, cl.loadClass(pluginClass));
-				} catch (ClassNotFoundException e1) {
+				} catch (final ClassNotFoundException e1) {
 					e1.printStackTrace();
 				}
 				System.out.println("Gama perspective " + pluginID + " is loaded");
@@ -808,7 +808,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void run(final Runnable r) {
-		Display d = getDisplay();
+		final Display d = getDisplay();
 		if ( d != null && !d.isDisposed() ) {
 			d.syncExec(r);
 		}
@@ -840,7 +840,7 @@ public class SwtGui implements IGui {
 		final double w, final double h, Object...args) {
 
 		IDisplaySurface surface = null;
-		IDisplayCreator creator = displays.get(keyword);
+		final IDisplayCreator creator = displays.get(keyword);
 		if ( creator != null ) {
 			surface = creator.create(args);
 			surface.initialize(w, h, layerDisplayOutput);
@@ -858,7 +858,7 @@ public class SwtGui implements IGui {
 
 			@Override
 			public void run() {
-				EditorsDialog dialog = new EditorsDialog(getShell(), initialValues, types, title);
+				final EditorsDialog dialog = new EditorsDialog(getShell(), initialValues, types, title);
 				result.putAll(dialog.open() == Window.OK ? dialog.getValues() : initialValues);
 			}
 		});
@@ -870,7 +870,7 @@ public class SwtGui implements IGui {
 
 			@Override
 			public void run() {
-				UserControlDialog dialog =
+				final UserControlDialog dialog =
 					new UserControlDialog(getShell(), panel.getUserCommands(), "[" + scope.getAgentScope().getName() +
 						"] " + panel.getName(), scope);
 				dialog.open();
@@ -888,7 +888,7 @@ public class SwtGui implements IGui {
 				UserControlView part = null;
 				try {
 					part = (UserControlView) getPage().showView(UserControlView.ID, null, IWorkbenchPage.VIEW_CREATE);
-				} catch (PartInitException e) {
+				} catch (final PartInitException e) {
 					e.printStackTrace();
 				}
 				if ( part != null ) {
@@ -898,7 +898,7 @@ public class SwtGui implements IGui {
 				GAMA.controller.scheduler.setUserHold(true);
 				try {
 					getPage().showView(UserControlView.ID);
-				} catch (PartInitException e) {
+				} catch (final PartInitException e) {
 					e.printStackTrace();
 				}
 			}
@@ -913,7 +913,7 @@ public class SwtGui implements IGui {
 
 			@Override
 			public void run() {
-				UserControlDialog d = UserControlDialog.current;
+				final UserControlDialog d = UserControlDialog.current;
 				if ( d != null ) {
 					d.close();
 				}
@@ -945,11 +945,11 @@ public class SwtGui implements IGui {
 			@Override
 			public void run() {
 				try {
-					ExperimentParametersView view =
+					final ExperimentParametersView view =
 						(ExperimentParametersView) getPage().showView(ExperimentParametersView.ID, null,
 							IWorkbenchPage.VIEW_VISIBLE);
 					view.updateItemValues();
-				} catch (PartInitException e) {
+				} catch (final PartInitException e) {
 					e.printStackTrace();
 				}
 			}
@@ -993,11 +993,11 @@ public class SwtGui implements IGui {
 
 			@Override
 			public void run() {
-				for ( String name : names2 ) {
-					IViewReference r = getPage().findViewReference(GuiUtils.LAYER_VIEW_ID, name);
+				for ( final String name : names2 ) {
+					final IViewReference r = getPage().findViewReference(GuiUtils.LAYER_VIEW_ID, name);
 					if ( r != null ) {
-						IViewPart p = r.getView(false);
-						GuiUtils.debug("SwtGui.cycleDisplayViews().bringToTop: " + name);
+						final IViewPart p = r.getView(false);
+						// GuiUtils.debug("SwtGui.cycleDisplayViews().bringToTop: " + name);
 						getPage().activate(p);
 					}
 				}

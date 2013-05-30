@@ -136,7 +136,7 @@ public abstract class AbstractLayer implements ILayer {
 
 	@Override
 	public final void drawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {
-		if ( scope.interrupted() ) { return; }
+		// if ( scope.interrupted() ) { return; }
 		if ( definition != null ) {
 			// definition.step(scope);
 			g.setOpacity(definition.getTransparency());
@@ -181,20 +181,20 @@ public abstract class AbstractLayer implements ILayer {
 	 */
 	private void setPositionAndSize(final Rectangle2D.Double boundingBox, final IGraphics g) {
 		// Voir comment conserver cette information
-		int widthOfDisplayInPixels = g.getDisplayWidthInPixels();
-		int heighOfDisplayInPixels = g.getDisplayHeightInPixels();
-		double x =
+		final int widthOfDisplayInPixels = g.getDisplayWidthInPixels();
+		final int heighOfDisplayInPixels = g.getDisplayHeightInPixels();
+		final double x =
 			(Math.signum(boundingBox.x) < 0 ? widthOfDisplayInPixels : 0) +
 				(Math.abs(boundingBox.x) <= 1 ? widthOfDisplayInPixels * boundingBox.x : g
 					.getxRatioBetweenPixelsAndModelUnits() * boundingBox.x);
-		double y =
+		final double y =
 			(Math.signum(boundingBox.y) < 0 ? heighOfDisplayInPixels : 0) +
 				(Math.abs(boundingBox.y) <= 1 ? heighOfDisplayInPixels * boundingBox.y : g
 					.getyRatioBetweenPixelsAndModelUnits() * boundingBox.y);
-		double width =
+		final double width =
 			boundingBox.width <= 1 ? widthOfDisplayInPixels * boundingBox.width : g
 				.getxRatioBetweenPixelsAndModelUnits() * boundingBox.width;
-		double height =
+		final double height =
 			boundingBox.height <= 1 ? heighOfDisplayInPixels * boundingBox.height : g
 				.getyRatioBetweenPixelsAndModelUnits() * boundingBox.height;
 		sizeInPixels.setLocation(width, height);
@@ -220,20 +220,20 @@ public abstract class AbstractLayer implements ILayer {
 	}
 
 	@Override
-	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, IDisplaySurface g) {
-		double xScale = sizeInPixels.x / g.getEnvWidth();
-		double yScale = sizeInPixels.y / g.getEnvHeight();
-		int xInDisplay = xOnScreen - positionInPixels.x;
-		int yInDisplay = yOnScreen - positionInPixels.y;
-		double xInModel = xInDisplay / xScale;
-		double yInModel = yInDisplay / yScale;
+	public GamaPoint getModelCoordinatesFrom(final int xOnScreen, final int yOnScreen, final IDisplaySurface g) {
+		final double xScale = sizeInPixels.x / g.getEnvWidth();
+		final double yScale = sizeInPixels.y / g.getEnvHeight();
+		final int xInDisplay = xOnScreen - positionInPixels.x;
+		final int yInDisplay = yOnScreen - positionInPixels.y;
+		final double xInModel = xInDisplay / xScale;
+		final double yInModel = yInDisplay / yScale;
 		return new GamaPoint(xInModel, yInModel);
 	}
 
 	protected abstract void privateDrawDisplay(IScope scope, final IGraphics g) throws GamaRuntimeException;
 
 	@Override
-	public Set<IAgent> collectAgentsAt(final int x, final int y, IDisplaySurface g) {
+	public Set<IAgent> collectAgentsAt(final int x, final int y, final IDisplaySurface g) {
 		// Nothing to do by default
 		return Collections.EMPTY_SET;
 	}

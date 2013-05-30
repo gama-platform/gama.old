@@ -18,9 +18,8 @@
  */
 package msi.gaml.statements;
 
-import static msi.gama.runtime.ExecutionStatus.*;
 import java.util.List;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
@@ -57,23 +56,11 @@ public class AbstractStatementSequence extends AbstractStatement {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		boolean allSkipped = true;
 		Object lastResult = null;
-		ExecutionStatus statusBeforeSkipped = success;
 		for ( int i = 0; i < commands.length; i++ ) {
-			if ( scope.interrupted() ) { return null; }
+			if ( scope.interrupted() ) { return lastResult; }
 			lastResult = commands[i].executeOn(scope);
-			ExecutionStatus status = scope.getStatus();
-			if ( status != skipped ) {
-				if ( status == interrupt ) {
-					scope.setStatus(interrupt);
-					return lastResult;
-				}
-				allSkipped = false;
-				statusBeforeSkipped = status;
-			}
 		}
-		scope.setStatus(allSkipped ? skipped : statusBeforeSkipped);
 		return lastResult;
 	}
 
@@ -89,16 +76,16 @@ public class AbstractStatementSequence extends AbstractStatement {
 	public IType getType() {
 		IType result = null;
 		for ( int i = 0; i < commands.length; i++ ) {
-			IStatement c = commands[i];
-			IType rt = c.getType();
+			final IStatement c = commands[i];
+			final IType rt = c.getType();
 			if ( rt == null ) {
 				continue;
 			}
 			if ( result == null ) {
 				result = rt;
 			} else {
-				IType ft = result;
-				IType nt = rt;
+				final IType ft = result;
+				final IType nt = rt;
 				if ( ft != nt ) {
 					if ( ft.id() == IType.INT && nt.id() == IType.FLOAT || nt.id() == IType.INT &&
 						rt.id() == IType.FLOAT ) {

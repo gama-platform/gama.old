@@ -44,6 +44,8 @@ public interface ITypeProvider {
 	 * The content type is provided by the type of the second child of the expression
 	 */
 	static final int SECOND_TYPE = -17;
+	static final int SECOND_CONTENT_TYPE_OR_TYPE = -25;
+	static final int FIRST_CONTENT_TYPE_OR_TYPE = -26;
 	/*
 	 * The content type is provided by the type of of the expression itself (i.e. species)
 	 */

@@ -20,6 +20,7 @@ package msi.gama.metamodel.agent;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -30,10 +31,9 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.GamaGraph;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.IStatement;
 import msi.gaml.types.GamaGeometryType;
 import msi.gaml.variables.IVariable;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.*;
 
 /**
  * The Class GamlAgent. Represents agents that can be manipulated in GAML. They are provided with
@@ -120,16 +120,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	 */
 
 	protected Object executeCallbackAction(final IScope scope, final String name) {
-		if ( dead() || scope.interrupted() ) { return null; }
-		final IStatement action = getSpecies().getAction(name);
-		if ( action == null ) { return null; }
-		try {
-			return scope.execute(action, this);
-		} catch (final GamaRuntimeException g) {
-			g.addAgent(this.getName());
-			GAMA.reportError(g);
-			return null;
-		}
+		return scope.execute(getSpecies().getAction(name), this, null);
 	}
 
 	@action(name = "_init_")
@@ -140,19 +131,20 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	@action(name = "_step_")
 	public Object _step_(final IScope scope) {
-		if ( scope.interrupted() || dead() ) { return null; }
-		getPopulation().updateVariables(scope, this);
+		scope.update(this);
+		// getPopulation().updateVariables(scope, this);
 		// we ask the architecture to execute on this
-		getSpecies().getArchitecture().executeOn(scope);
-		// we ask the sub-populations to step their agents
-		return stepSubPopulations(scope);
+		if ( scope.execute(getSpecies().getArchitecture(), this, null) != IScope.INTERRUPTED ) {
+			// we ask the sub-populations to step their agents
+			return stepSubPopulations(scope);
+		}
+		return this;
 	}
 
 	protected Object stepSubPopulations(final IScope scope) {
 		try {
-			for ( final IPopulation pop : getMicroPopulations() ) {
-				if ( scope.interrupted() ) { return null; }
-				pop.step(scope);
+			for ( final IPopulation pop : ImmutableList.copyOf(getMicroPopulations()) ) {
+				if ( !scope.step(pop) ) { return null; }
 			}
 		} catch (final GamaRuntimeException g) {
 			GAMA.reportError(g);
@@ -256,8 +248,9 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		final IPopulation oldMicroPop = this.getPopulationFor(oldMicroSpecies);
 		final IPopulation newMicroPop = this.getPopulationFor(newMicroSpecies);
 		final IList<IAgent> immigrants = new GamaList<IAgent>();
-
-		for ( final IAgent m : oldMicroPop.getAgentsList() ) {
+		final Iterator<IAgent> it = oldMicroPop.iterator();
+		while (it.hasNext()) {
+			final IAgent m = it.next();
 			final SavedAgent savedMicro = new SavedAgent(scope, m);
 			m.dispose();
 			immigrants.add(savedMicro.restoreTo(scope, newMicroPop));
@@ -268,7 +261,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	/** Variables which are not saved during the capture and release process. */
 	private static final List<String> UNSAVABLE_VARIABLES = Arrays.asList(IKeyword.PEERS, IKeyword.AGENTS,
-		IKeyword.HOST, IKeyword.TOPOLOGY);
+		IKeyword.HOST, IKeyword.TOPOLOGY, IKeyword.MEMBERS);
 
 	/**
 	 * A helper class to save agent and restore/recreate agent as a member of a population.
@@ -305,7 +298,6 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 						new GamaShape(((GamaShape) species.getVar(specVar).value(scope, agent)).getInnerGeometry()));
 					continue;
 				}
-				// variables.put(specVar, agent.getAttribute(specVar));
 				variables.put(specVar, species.getVar(specVar).value(scope, agent));
 			}
 		}
@@ -321,9 +313,9 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 			for ( final IPopulation microPop : agent.getMicroPopulations() ) {
 				final List<SavedAgent> savedAgents = new GamaList<SavedAgent>();
-
-				for ( final IAgent micro : microPop.getAgentsList() ) {
-					savedAgents.add(new SavedAgent(scope, micro));
+				final Iterator<IAgent> it = microPop.iterator();
+				while (it.hasNext()) {
+					savedAgents.add(new SavedAgent(scope, it.next()));
 				}
 
 				innerPopulations.put(microPop.getSpecies().getName(), savedAgents);
@@ -376,19 +368,19 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		}
 	}
 
-	@Override
-	public void initializeMicroPopulations(final IScope scope) throws GamaRuntimeException {
-		final List<ISpecies> allMicroSpecies = this.getSpecies().getMicroSpecies();
-
-		if ( !allMicroSpecies.isEmpty() ) {
-			IPopulation microPop;
-			for ( final ISpecies microSpec : allMicroSpecies ) {
-				microPop = GamaPopulation.createPopulation(scope, this, microSpec);
-				attributes.put(microSpec.getName(), microPop);
-				microPop.initializeFor(scope);
-			}
-		}
-	}
+	// @Override
+	// public void initializeMicroPopulations(final IScope scope) throws GamaRuntimeException {
+	// final List<ISpecies> allMicroSpecies = this.getSpecies().getMicroSpecies();
+	//
+	// if ( !allMicroSpecies.isEmpty() ) {
+	// IPopulation microPop;
+	// for ( final ISpecies microSpec : allMicroSpecies ) {
+	// microPop = GamaPopulation.createPopulation(scope, this, microSpec);
+	// attributes.put(microSpec.getName(), microPop);
+	// microPop.initializeFor(scope);
+	// }
+	// }
+	// }
 
 	@Override
 	public void initializeMicroPopulation(final IScope scope, final String name) {
@@ -396,13 +388,18 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		if ( microSpec == null ) { return; }
 		final IPopulation microPop = GamaPopulation.createPopulation(scope, this, microSpec);
 		attributes.put(microSpec.getName(), microPop);
+		if ( name.equals("space") ) {
+			GuiUtils.debug("GamlAgent.initializeMicroPopulation : " + name);
+		}
 		microPop.initializeFor(scope);
 	}
 
 	@Override
 	public void dispose() {
 		if ( dead() ) { return; }
-
+		// if ( getSpecies().getName().equals("flock") ) {
+		// GuiUtils.debug("GamlAgent.dispose " + this);
+		// }
 		try {
 			acquireLock();
 			for ( final Map.Entry<Object, Object> entry : attributes.entrySet() ) {
@@ -543,7 +540,6 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	@Override
 	public Iterable<IPopulation> getMicroPopulations() {
-
 		return Iterables.filter(attributes.values(), IPopulation.class);
 		// return new GamaList<IPopulation>(microPopulations.values());
 	}
@@ -572,7 +568,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		if ( dead() ) { return GamaList.EMPTY_LIST; }
 		final GamaList<IAgent> members = new GamaList(100);
 		for ( final IPopulation pop : getMicroPopulations() ) {
-			members.addAll(pop.getAgentsList());
+			members.addAll(pop);
 		}
 		return members;
 	}
@@ -613,11 +609,8 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	@Override
 	public IPopulation getPopulationFor(final String speciesName) {
 		final IPopulation microPopulation = this.getMicroPopulation(speciesName);
-		if ( microPopulation != null ) { return microPopulation; }
-
-		final IAgent host = this.getHost();
-		if ( host != null ) { return getHost().getPopulationFor(speciesName); }
-		return null;
+		if ( microPopulation == null && getHost() != null ) { return getHost().getPopulationFor(speciesName); }
+		return microPopulation;
 	}
 
 	/**
@@ -653,25 +646,24 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 
 	protected class Scope extends AbstractScope {
 
+		volatile boolean interrupted = false;
+
 		public Scope() {
 			super(GamlAgent.this);
 		}
 
 		@Override
-		public boolean interrupted() {
-			return dead;
-		}
-
-		@Override
-		public IMacroAgent getRoot() {
-			return GamlAgent.this;
+		protected boolean _root_interrupted() {
+			return interrupted || dead;
 		}
 
 		@Override
 		public void setInterrupted(final boolean interrupted) {
-			if ( !GamlAgent.this.dead ) {
-				GamlAgent.this.dispose();
-			}
+			this.interrupted = true;
+			// GuiUtils.debug("GamlAgent.Scope.setInterrupted : " + this);
+			// if ( !GamlAgent.this.dead ) {
+			// GamlAgent.this.dispose();
+			// }
 		}
 
 		@Override

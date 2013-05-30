@@ -60,8 +60,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	 */
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
-		List<ISymbol> others = new ArrayList<ISymbol>();
-		for ( ISymbol s : commands ) {
+		final List<ISymbol> others = new ArrayList<ISymbol>();
+		for ( final ISymbol s : commands ) {
 			if ( s instanceof SingleEquationStatement ) {
 				equations.add((SingleEquationStatement) s);
 				variables.add(((SingleEquationStatement) s).var);
@@ -94,12 +94,12 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		}
 		if ( simultan != null ) {
 			equations_ext.clear();
-			Object t = simultan.value(scope);
+			final Object t = simultan.value(scope);
 			if ( t != null ) {
 				if ( t instanceof GamaList ) {
-					GamaList lst = ((GamaList) t).listValue(scope);
+					final GamaList lst = ((GamaList) t).listValue(scope);
 					for ( int i = 0; i < lst.size(); i++ ) {
-						Object o = lst.get(i);
+						final Object o = lst.get(i);
 
 						if ( o instanceof IAgent ) {
 							final IAgent remoteAgent = (IAgent) o;
@@ -107,7 +107,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 								equations_ext.add(remoteAgent);
 							}
 						} else if ( o instanceof GamlSpecies ) {
-							Iterator<IAgent> ia = ((GamlSpecies) o).iterator();
+							final Iterator<IAgent> ia = ((GamlSpecies) o).iterator();
 							while (ia.hasNext()) {
 								final IAgent remoteAgent = ia.next();
 								if ( !remoteAgent.dead() && !equations_ext.contains(remoteAgent) ) {
@@ -130,12 +130,12 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		return super.privateExecuteIn(scope);
 	}
 
-	private void addEquationsExtern(IAgent remoteAgent, String eqName) {
-		SystemOfEquationsStatement ses =
+	private void addEquationsExtern(final IAgent remoteAgent, final String eqName) {
+		final SystemOfEquationsStatement ses =
 			(SystemOfEquationsStatement) remoteAgent.getSpecies()
 				.getStatement(SystemOfEquationsStatement.class, eqName);
 		if ( ses != null ) {
-			int n = equaAgents.size();
+			final int n = equaAgents.size();
 			// System.out.println(equaAgents);
 			for ( int i = 0; i < ses.equations.size(); i++ ) {
 				equaAgents.add(n + i, remoteAgent);
@@ -150,8 +150,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 
 	}
 
-	private void removeEquationsExtern(IAgent remoteAgent, String eqName) {
-		SystemOfEquationsStatement ses =
+	private void removeEquationsExtern(final IAgent remoteAgent, final String eqName) {
+		final SystemOfEquationsStatement ses =
 			(SystemOfEquationsStatement) remoteAgent.getSpecies()
 				.getStatement(SystemOfEquationsStatement.class, eqName);
 		if ( ses != null ) {
@@ -165,11 +165,11 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 
 	}
 
-	public void addExtern(String eqName) {
+	public void addExtern(final String eqName) {
 		if ( equations_ext.size() > 0 ) {
 			// System.out.println("ex "+equations_ext);
 			for ( int i = 0, n = equations_ext.size(); i < n; i++ ) {
-				Object o = equations_ext.get(i);
+				final Object o = equations_ext.get(i);
 				final IAgent remoteAgent = (IAgent) o;
 				if ( !remoteAgent.dead() ) {
 					addEquationsExtern(remoteAgent, eqName);
@@ -189,17 +189,17 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 
 	}
 
-	public void removeExtern(String eqName) {
+	public void removeExtern(final String eqName) {
 		if ( equations_ext.size() > 0 ) {
 			for ( int i = 0, n = equations_ext.size(); i < n; i++ ) {
-				Object o = equations_ext.get(i);
+				final Object o = equations_ext.get(i);
 				if ( o instanceof IAgent ) {
 					final IAgent remoteAgent = (IAgent) o;
 					if ( !remoteAgent.dead() ) {
 						removeEquationsExtern(remoteAgent, eqName);
 					}
 				} else if ( o instanceof GamlSpecies ) {
-					Iterator<IAgent> ia = ((GamlSpecies) o).iterator();
+					final Iterator<IAgent> ia = ((GamlSpecies) o).iterator();
 					while (ia.hasNext()) {
 						final IAgent remoteAgent = ia.next();
 						if ( !remoteAgent.dead() ) {
@@ -232,21 +232,24 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	// double gamma=0.2;
 	// double delta=0.85;
 
-	public void assignValue(double time, double[] y) {
-
+	public void assignValue(final double time, final double[] y) {
+		// TODO Should be rewritten in a more correct way (by calling scope.setAgentVarValue(...)
 		for ( int i = 0, n = getDimension(); i < n; i++ ) {
-			SingleEquationStatement s = equations.get(i);
-			IVarExpression v = variables.get(i);
-			Object o = equaAgents.get(i);
+			final SingleEquationStatement s = equations.get(i);
+			final IVarExpression v = variables.get(i);
+			final Object o = equaAgents.get(i);
 			final IAgent remoteAgent = (IAgent) o;
+			boolean pushed = false;
 			if ( !remoteAgent.dead() ) {
-				currentScope.push(remoteAgent);
+				pushed = currentScope.push(remoteAgent);
 				try {
 
 					s.var_t.setVal(currentScope, time, false);
 					v.setVal(currentScope, y[i], false);
-				} catch (Exception ex1) {} finally {
-					currentScope.pop(remoteAgent);
+				} catch (final Exception ex1) {} finally {
+					if ( pushed ) {
+						currentScope.pop(remoteAgent);
+					}
 				}
 			}
 			/*
@@ -333,18 +336,23 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		 * loop through equations (internal and external) to get singleequation
 		 * value
 		 */
+
+		// TODO Should be rewritten in a more correct way : scope.execute(s, agent)...
 		for ( int i = 0, n = getDimension(); i < n; i++ ) {
-			SingleEquationStatement s = equations.get(i);
+			final SingleEquationStatement s = equations.get(i);
 			// ydot[i] = (Double) s.executeOn(currentScope);// ydottmp[i];
+			boolean pushed = false;
 			if ( equaAgents.size() > 0 ) {
-				currentScope.push(equaAgents.get(i));
+				pushed = currentScope.push(equaAgents.get(i));
 			}
 			try {
 				ydot[i] = Double.parseDouble("" + s.executeOn(currentScope));
-			} catch (Exception ex1) {} finally {
+			} catch (final Exception ex1) {} finally {
 
 				if ( equaAgents.size() > 0 ) {
-					currentScope.pop(equaAgents.get(i));
+					if ( pushed ) {
+						currentScope.pop(equaAgents.get(i));
+					}
 				}
 			}
 		}

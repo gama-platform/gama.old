@@ -55,263 +55,161 @@ combinations = {
 public class LoopStatement extends AbstractStatementSequence {
 
 	private final LoopExecuter executer;
+	private final String varName;
 
 	public LoopStatement(final IDescription desc) throws GamaRuntimeException {
 		super(desc);
-		boolean isWhile = getFacet(IKeyword.WHILE) != null;
-		boolean isList = getFacet(IKeyword.OVER) != null;
-		boolean isBounded = getFacet(IKeyword.FROM) != null && getFacet(IKeyword.TO) != null;
+		final boolean isWhile = getFacet(IKeyword.WHILE) != null;
+		final boolean isList = getFacet(IKeyword.OVER) != null;
+		final boolean isPoint = isList && getFacet(IKeyword.OVER).getType().id() == IType.POINT;
+		final boolean isBounded = getFacet(IKeyword.FROM) != null && getFacet(IKeyword.TO) != null;
+		varName = getLiteral(IKeyword.VAR);
 		executer =
-			isWhile ? new LoopWhileExecuter(this) : isList ? getFacet(IKeyword.OVER).getType().id() == IType.POINT
-				? new LoopIntervalExecuter(this) : new LoopListExecuter(this) : isBounded ? new LoopBoundedExecuter(
-				this) : new LoopTimesExecuter(this);
+			isWhile ? new While() : isList ? isPoint ? new Interval() : new Over() : isBounded ? new Bounded()
+				: new Times();
+	}
 
-		// TODO Donner un nom
+	@Override
+	public void enterScope(final IScope scope) {
+		super.enterScope(scope);
+		if ( varName != null ) {
+			scope.addVarWithValue(varName, null);
+		}
+	}
+
+	@Override
+	public void leaveScope(final IScope scope) {
+		// Should clear any _loop_halted status present
+		scope.popLoop();
+		super.leaveScope(scope);
 	}
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		return executer.runIn(scope);
+		executer.runIn(scope);
+		return true;
 	}
 
-	abstract class LoopExecuter {
-
-		// protected final LoopCommand command;
-
-		LoopExecuter(final LoopStatement com) {
-			// command = com;
+	protected boolean loopBody(final IScope scope, final Object var) {
+		scope.push(this);
+		if ( varName != null ) {
+			scope.setVarValue(varName, var);
 		}
-
-		abstract Object runIn(final IScope scope) throws GamaRuntimeException;
+		final Object result = super.privateExecuteIn(scope);
+		scope.pop(this);
+		return result != IScope.INTERRUPTED;
 	}
 
-	class LoopBoundedExecuter extends LoopExecuter {
+	interface LoopExecuter {
 
-		private final IExpression from, to, step;
+		abstract void runIn(final IScope scope);
+	}
+
+	class Bounded implements LoopExecuter {
+
+		private final IExpression from = getFacet(IKeyword.FROM);
+		private final IExpression to = getFacet(IKeyword.TO);
+		private final IExpression step = getFacet(IKeyword.STEP);
 		private Integer constantFrom, constantTo, constantStep;
-		private final String varName;
 
-		LoopBoundedExecuter(final LoopStatement com) throws GamaRuntimeException {
-			super(com);
-			IScope scope = GAMA.obtainNewScope();
-			from = com.getFacet(IKeyword.FROM);
+		Bounded() throws GamaRuntimeException {
+			final IScope scope = GAMA.obtainNewScope();
 			if ( from.isConst() ) {
-				constantFrom = Cast.asInt(null, from.value(scope));
+				constantFrom = Cast.asInt(scope, from.value(scope));
 			}
-			to = com.getFacet(IKeyword.TO);
 			if ( to.isConst() ) {
-				constantTo = Cast.asInt(null, to.value(scope));
+				constantTo = Cast.asInt(scope, to.value(scope));
 			}
-			step = com.getFacet(IKeyword.STEP);
 			if ( step == null ) {
 				constantStep = 1;
 			} else if ( step.isConst() ) {
-				constantStep = Cast.asInt(null, step.value(scope));
+				constantStep = Cast.asInt(scope, step.value(scope));
 			}
-			varName = com.getLiteral(IKeyword.VAR);
 			GAMA.releaseScope(scope);
 		}
 
 		@Override
-		public Object runIn(final IScope scope) throws GamaRuntimeException {
-			boolean allSkipped = true;
-			int f = constantFrom == null ? Cast.asInt(scope, from.value(scope)) : constantFrom;
-			int t = constantTo == null ? Cast.asInt(scope, to.value(scope)) : constantTo;
-			int s = constantStep == null ? Cast.asInt(scope, step.value(scope)) : constantStep;
-			if ( f > t ) {
-				scope.setStatus(ExecutionStatus.skipped);
-			}
-			Object result = null;
-			for ( int i = f, n = t + 1; i < n; i += s ) {
-				scope.push(LoopStatement.this);
-				scope.addVarWithValue(varName, i);
-				result = LoopStatement.super.privateExecuteIn(scope);
-				scope.pop(LoopStatement.this);
-				final ExecutionStatus status = scope.getStatus();
-				if ( status == ExecutionStatus.interrupt ) {
-					return result;
-				} else if ( status == ExecutionStatus._break ) {
-					scope.setStatus(ExecutionStatus.success);
-					return result;
-				}
-				allSkipped = allSkipped && status == ExecutionStatus.skipped;
-			}
-			scope.setStatus(allSkipped ? ExecutionStatus.skipped : ExecutionStatus.success);
-			return result;
+		public void runIn(final IScope scope) throws GamaRuntimeException {
+			final int f = constantFrom == null ? Cast.asInt(scope, from.value(scope)) : constantFrom;
+			final int t = constantTo == null ? Cast.asInt(scope, to.value(scope)) : constantTo;
+			final int s = constantStep == null ? Cast.asInt(scope, step.value(scope)) : constantStep;
+			for ( int i = f, n = t + 1; i < n && loopBody(scope, i); i += s ) {}
 		}
 	}
 
-	class LoopIntervalExecuter extends LoopExecuter {
+	class Interval implements LoopExecuter {
 
-		private final IExpression over;
+		private final IExpression over = getFacet(IKeyword.OVER);
 		ILocation constantOver;
-		private final IExpression step;
-		Integer constantStep;
-		private final String varName;
+		private final IExpression step = getFacet(IKeyword.STEP);
+		Integer constantStep = 1;
 
-		LoopIntervalExecuter(final LoopStatement com) throws GamaRuntimeException {
-			super(com);
-			IScope scope = GAMA.obtainNewScope();
-			over = com.getFacet(IKeyword.OVER);
+		Interval() throws GamaRuntimeException {
+			final IScope scope = GAMA.obtainNewScope();
 			if ( over.isConst() ) {
-				constantOver = Cast.asPoint(null, over.value(scope));
+				constantOver = Cast.asPoint(scope, over.value(scope));
 			}
-			step = com.getFacet(IKeyword.STEP);
-			if ( step == null ) {
-				constantStep = 1;
-			} else if ( step.isConst() ) {
-				constantStep = Cast.asInt(null, step.value(scope));
+			if ( step != null && step.isConst() ) {
+				constantStep = Cast.asInt(scope, step.value(scope));
 			}
-			varName = com.getLiteral(IKeyword.VAR);
 			GAMA.releaseScope(scope);
 		}
 
 		@Override
-		public Object runIn(final IScope scope) throws GamaRuntimeException {
-			ILocation interval = constantOver == null ? Cast.asPoint(scope, over.value(scope)) : constantOver;
+		public void runIn(final IScope scope) throws GamaRuntimeException {
+			final ILocation interval = constantOver == null ? Cast.asPoint(scope, over.value(scope)) : constantOver;
 			final int first = (int) interval.getX();
 			final int last = (int) interval.getY();
-			if ( first > last ) {
-				scope.setStatus(ExecutionStatus.skipped);
-			}
+			if ( first > last ) { return; }
 			final int step_ = constantStep == null ? Cast.asInt(scope, step.value(scope)) : 1;
-			if ( step_ <= 0 || step_ > last - first ) {
-				scope.setStatus(ExecutionStatus.skipped);
-			}
-			boolean allSkipped = true;
-			Object result = null;
-			for ( int i = first; i < last; i += step_ ) {
-				scope.push(LoopStatement.this);
-				scope.addVarWithValue(varName, i);
-				result = LoopStatement.super.privateExecuteIn(scope);
-				scope.pop(LoopStatement.this);
-				final ExecutionStatus status = scope.getStatus();
-				if ( status == ExecutionStatus.interrupt ) {
-					return result;
-				} else if ( status == ExecutionStatus._break ) {
-					scope.setStatus(ExecutionStatus.success);
-					return result;
-				}
-				allSkipped = allSkipped && status == ExecutionStatus.skipped;
-			}
-			scope.setStatus(allSkipped ? ExecutionStatus.skipped : ExecutionStatus.success);
-			return result;
+			if ( step_ <= 0 || step_ > last - first ) { return; }
+			for ( int i = first; i < last && loopBody(scope, i); i += step_ ) {}
 		}
 
 	}
 
-	class LoopListExecuter extends LoopExecuter {
+	class Over implements LoopExecuter {
 
-		private final IExpression over;
-		private final String varName;
-
-		LoopListExecuter(final LoopStatement com) {
-			super(com);
-			over = com.getFacet(IKeyword.OVER);
-			varName = com.getLiteral(IKeyword.VAR);
-		}
+		private final IExpression over = getFacet(IKeyword.OVER);
 
 		@Override
-		public Object runIn(final IScope scope) throws GamaRuntimeException {
-			Object obj = over.value(scope);
+		public void runIn(final IScope scope) throws GamaRuntimeException {
+			final Object obj = over.value(scope);
 			final IContainer list_ = !(obj instanceof IContainer) ? Cast.asList(scope, obj) : (IContainer) obj;
-			boolean allSkipped = true;
-			Object result = null;
-			if ( list_ == null || list_.isEmpty(scope) ) {
-				scope.setStatus(ExecutionStatus.skipped);
-				return null;
-			}
-			for ( Object each : list_.iterable(scope) ) {
-				scope.push(LoopStatement.this);
-				scope.addVarWithValue(varName, each);
-				result = LoopStatement.super.privateExecuteIn(scope);
-				scope.pop(LoopStatement.this);
-				final ExecutionStatus status = scope.getStatus();
-				if ( status == ExecutionStatus.interrupt ) {
-					return result;
-				} else if ( status == ExecutionStatus._break ) {
-					scope.setStatus(ExecutionStatus.success);
-					return result;
+			for ( final Object each : list_.iterable(scope) ) {
+				if ( !loopBody(scope, each) ) {
+					break;
 				}
-				allSkipped = allSkipped && status == ExecutionStatus.skipped;
 			}
-			scope.setStatus(allSkipped ? ExecutionStatus.skipped : ExecutionStatus.success);
-			return result;
 		}
 	}
 
-	class LoopTimesExecuter extends LoopExecuter {
+	class Times implements LoopExecuter {
 
-		private final IExpression times;
+		private final IExpression times = getFacet(IKeyword.TIMES);
 		private Integer constantTimes;
 
-		LoopTimesExecuter(final LoopStatement com) throws GamaRuntimeException {
-			super(com);
-			times = com.getFacet(IKeyword.TIMES);
+		Times() throws GamaRuntimeException {
 			if ( times.isConst() ) {
 				constantTimes = Cast.as(times, Integer.class);
 			}
 		}
 
 		@Override
-		public Object runIn(final IScope scope) throws GamaRuntimeException {
+		public void runIn(final IScope scope) throws GamaRuntimeException {
 			final int max = constantTimes == null ? Cast.asInt(scope, times.value(scope)) : constantTimes;
-			boolean allSkipped = true;
-			if ( max <= 0 ) {
-				scope.setStatus(ExecutionStatus.skipped);
-			}
-			Object result = null;
-			for ( int i = 0; i < max; i++ ) {
-				scope.push(LoopStatement.this);
-				result = LoopStatement.super.privateExecuteIn(scope);
-				scope.pop(LoopStatement.this);
-				final ExecutionStatus status = scope.getStatus();
-				if ( status == ExecutionStatus.interrupt ) {
-					return result;
-				} else if ( status == ExecutionStatus._break ) {
-					scope.setStatus(ExecutionStatus.success);
-					return result;
-				}
-				allSkipped = allSkipped && status == ExecutionStatus.skipped;
-			}
-			scope.setStatus(allSkipped ? ExecutionStatus.skipped : ExecutionStatus.success);
-			return result;
+			for ( int i = 0; i < max && loopBody(scope, null); i++ ) {}
 		}
 
 	}
 
-	class LoopWhileExecuter extends LoopExecuter {
+	class While implements LoopExecuter {
 
-		private final IExpression cond;
-
-		LoopWhileExecuter(final LoopStatement com) {
-			super(com);
-			cond = com.getFacet(IKeyword.WHILE);
-		}
+		private final IExpression cond = getFacet(IKeyword.WHILE);
 
 		@Override
-		public Object runIn(final IScope scope) throws GamaRuntimeException {
-			boolean c = Cast.asBool(scope, cond.value(scope));
-			boolean allSkipped = true;
-			if ( !c ) {
-				scope.setStatus(ExecutionStatus.skipped);
-			}
-			Object result = null;
-			while (c) {
-				scope.push(LoopStatement.this);
-				result = LoopStatement.super.privateExecuteIn(scope);
-				scope.pop(LoopStatement.this);
-				final ExecutionStatus status = scope.getStatus();
-				if ( status == ExecutionStatus.interrupt ) {
-					return result;
-				} else if ( status == ExecutionStatus._break ) {
-					scope.setStatus(ExecutionStatus.success);
-					return result;
-				}
-				allSkipped = allSkipped && status == ExecutionStatus.skipped;
-				c = Cast.asBool(scope, cond.value(scope));
-			}
-			return allSkipped ? ExecutionStatus.skipped : ExecutionStatus.success;
+		public void runIn(final IScope scope) throws GamaRuntimeException {
+			while (Cast.asBool(scope, cond.value(scope)) && loopBody(scope, null)) {}
 		}
 	}
 

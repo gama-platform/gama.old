@@ -28,6 +28,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -55,7 +56,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 	}
 
 	public synchronized void addNewError(final GamaRuntimeException ex) {
-		for ( GamaRuntimeException e : exceptions ) {
+		for ( final GamaRuntimeException e : exceptions ) {
 			if ( e.equivalentTo(ex) ) {
 				e.addAgent(ex.getAgent());
 				if ( showErrors ) {
@@ -87,14 +88,14 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 	@Override
 	public void ownCreatePartControl(final Composite view) {
 		super.ownCreatePartControl(view);
-		Composite intermediate = new Composite(view, SWT.VERTICAL);
-		GridLayout parentLayout = new GridLayout(1, false);
+		final Composite intermediate = new Composite(view, SWT.VERTICAL);
+		final GridLayout parentLayout = new GridLayout(1, false);
 		parentLayout.marginWidth = 0;
 		parentLayout.marginHeight = 0;
 		parentLayout.verticalSpacing = 0;
 		intermediate.setLayout(parentLayout);
-		Composite parameters = new Group(intermediate, SWT.None);
-		GridLayout layout = new GridLayout(2, false);
+		final Composite parameters = new Group(intermediate, SWT.None);
+		final GridLayout layout = new GridLayout(2, false);
 
 		parameters.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		layout.verticalSpacing = 0;
@@ -130,7 +131,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 		parent = intermediate;
 	}
 
-	private void gotoEditor(GamaRuntimeException exception) {
+	private void gotoEditor(final GamaRuntimeException exception) {
 
 		final EObject o = exception.getEditorContext();
 		if ( o != null && GAMA.REVEAL_ERRORS_IN_EDITOR ) {
@@ -147,36 +148,39 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 
 	@Override
 	protected Composite createItemContentsFor(final GamaRuntimeException exception) {
-		Composite compo = new Composite(getViewer(), SWT.NONE);
-		GridLayout layout = new GridLayout(1, false);
-		GridData firstColData = new GridData(SWT.FILL, SWT.FILL, true, false);
+		final ScrolledComposite compo = new ScrolledComposite(getViewer(), SWT.NONE);
+		final GridLayout layout = new GridLayout(1, false);
+		final GridData firstColData = new GridData(SWT.FILL, SWT.FILL, true, false);
 		layout.verticalSpacing = 5;
 		compo.setLayout(layout);
-		Table t = new Table(compo, SWT.V_SCROLL);
+		final Table t = new Table(compo, SWT.H_SCROLL | SWT.V_SCROLL);
+
 		t.addSelectionListener(new SelectionListener() {
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				gotoEditor(exception);
 			}
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {}
+			public void widgetDefaultSelected(final SelectionEvent e) {}
 		});
 		t.setLayoutData(firstColData);
-		java.util.List<String> strings = exception.getContextAsList();
+		final java.util.List<String> strings = exception.getContextAsList();
 		t.setLinesVisible(true);
 		t.setForeground(exception.isWarning() ? SwtGui.COLOR_WARNING : SwtGui.COLOR_ERROR);
 		final TableColumn c = new TableColumn(t, SWT.NONE);
 		c.setResizable(true);
 		final TableColumn column2 = new TableColumn(t, SWT.NONE);
 		for ( int i = 0; i < strings.size(); i++ ) {
-			TableItem item = new TableItem(t, SWT.NONE);
+			final TableItem item = new TableItem(t, SWT.NONE);
 			item.setText(new String[] { String.valueOf(i), strings.get(i) });
 		}
 		c.pack();
 		column2.pack();
-		t.pack();
+		t.setSize(t.computeSize(1000, 200));
+		compo.setContent(t);
+		compo.setSize(compo.computeSize(SWT.DEFAULT, 200));
 		return compo;
 	}
 
@@ -193,8 +197,8 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 
 	@Override
 	public String getItemDisplayName(final GamaRuntimeException obj, final String previousName) {
-		StringBuilder sb = new StringBuilder(300);
-		String a = obj.getAgent();
+		final StringBuilder sb = new StringBuilder(300);
+		final String a = obj.getAgent();
 		if ( a != null ) {
 			sb.append(a).append(" at ");
 		}
@@ -208,10 +212,10 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 
 	@Override
 	public List<GamaRuntimeException> getItems() {
-		List<GamaRuntimeException> errors = new ArrayList();
-		int size = exceptions.size();
+		final List<GamaRuntimeException> errors = new ArrayList();
+		final int size = exceptions.size();
 		if ( size == 0 ) { return errors; }
-		int end = size;
+		final int end = size;
 		int begin = end - numberOfDisplayedErrors;
 		begin = begin < 0 ? 0 : begin;
 		errors.addAll(exceptions.subList(begin, end));

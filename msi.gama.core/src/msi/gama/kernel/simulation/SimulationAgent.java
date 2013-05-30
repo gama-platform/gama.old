@@ -66,7 +66,7 @@ public class SimulationAgent extends GamlAgent {
 		setName("Simulation " + number);
 		clock = new SimulationClock();
 		scope = obtainNewScope();
-		scheduler = new AgentScheduler(scope, this);
+		scheduler = new AgentScheduler(scope, pop);
 	}
 
 	@Override
@@ -83,6 +83,7 @@ public class SimulationAgent extends GamlAgent {
 	@Override
 	public Object _init_(final IScope scope) {
 		// A simulation always runs in its own scope
+		// GuiUtils.debug("SimulationAgent._init_");
 		return super._init_(this.scope);
 	}
 
@@ -108,7 +109,7 @@ public class SimulationAgent extends GamlAgent {
 
 	@Override
 	public void dispose() {
-		// GuiUtils.debug("SimulationAgent.dispose");
+		// GuiUtils.debug("SimulationAgent.dispose : " + this);
 		if ( dead ) { return; }
 		super.dispose();
 		// We dispose of any scheduler still running
@@ -201,30 +202,16 @@ public class SimulationAgent extends GamlAgent {
 		return null;
 	}
 
-	@action(name = "halt", doc = @doc("Allows to stop the current simulation. It cannot be continued after. All the behaviors and updates are stopped, and the simulation is disposed of, as well as all the other agents. "))
+	@action(name = "halt", doc = @doc(deprecated = "It is preferable to use 'die' instead to kill a simulation, or 'pause' to stop it temporarily", value = "Allows to stop the current simulation so that cannot be continued after. All the behaviors and updates are stopped. "))
 	@args(names = {})
 	public Object halt(final IScope scope) {
-		return primDie(scope);
+		getExperiment().closeSimulation();
+		return null;
 	}
 
-	// private class SimulationScheduler extends AgentScheduler{
-	//
-	// public SimulationScheduler(IScope scope, IStepable owner) {
-	// super(scope, owner);
-	// }
-	//
-	// @Override
-	// public void step(IScope scope) throws GamaRuntimeException {
-	// super.step(SimulationAgent.this.scope);
-	// }
-	//
-	// @Override
-	// public void init(IScope scope) throws GamaRuntimeException {
-	// super.init(SimulationAgent.this.scope);
-	// }
-	//
-	//
-	//
-	// }
+	@Override
+	public String toString() {
+		return super.toString() + " (" + number + ")";
+	}
 
 }

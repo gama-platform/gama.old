@@ -217,6 +217,7 @@ public class GridTopology extends AbstractTopology {
 
 	@Override
 	public void dispose() {
+		// GuiUtils.debug("GridTopology.dispose");
 		super.dispose();
 		getPlaces().dispose();
 	}

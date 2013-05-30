@@ -20,7 +20,6 @@ package msi.gama.kernel.model;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.outputs.OutputManager;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -106,7 +105,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 	public void dispose() {
 		super.dispose();
 		// worldSpecies.dispose();
-		for ( IExperimentSpecies exp : experiments.values() ) {
+		for ( final IExperimentSpecies exp : experiments.values() ) {
 			exp.dispose();
 		}
 		experiments.clear();
@@ -126,15 +125,15 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 	protected Map<String, ISpecies> getAllSpecies() {
 		if ( allSpecies == null ) {
 			allSpecies = new LinkedHashMap();
-			Deque<ISpecies> speciesStack = new ArrayDeque<ISpecies>();
+			final Deque<ISpecies> speciesStack = new ArrayDeque<ISpecies>();
 			speciesStack.push(this);
 			ISpecies currentSpecies;
 			while (!speciesStack.isEmpty()) {
 				currentSpecies = speciesStack.pop();
-				GuiUtils.debug("GamlModelSpecies: effectively adding " + currentSpecies.getName());
+				// GuiUtils.debug("GamlModelSpecies: effectively adding " + currentSpecies.getName());
 				allSpecies.put(currentSpecies.getName(), currentSpecies);
-				List<ISpecies> microSpecies = currentSpecies.getMicroSpecies();
-				for ( ISpecies microSpec : microSpecies ) {
+				final List<ISpecies> microSpecies = currentSpecies.getMicroSpecies();
+				for ( final ISpecies microSpec : microSpecies ) {
 					if ( microSpec.getMacroSpecies().equals(currentSpecies) ) {
 						speciesStack.push(microSpec);
 					}
@@ -146,11 +145,11 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 
 	@Override
 	public void setChildren(final List<? extends ISymbol> children) {
-		GamaList forExperiment = new GamaList();
+		final GamaList forExperiment = new GamaList();
 
-		List<IExperimentSpecies> experiments = new ArrayList();
-		for ( Iterator<? extends ISymbol> it = children.iterator(); it.hasNext(); ) {
-			ISymbol s = it.next();
+		final List<IExperimentSpecies> experiments = new ArrayList();
+		for ( final Iterator<? extends ISymbol> it = children.iterator(); it.hasNext(); ) {
+			final ISymbol s = it.next();
 			if ( s instanceof IExperimentSpecies ) {
 				experiments.add((IExperimentSpecies) s);
 				it.remove();
@@ -162,7 +161,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 		// Add the variables, etc. to the model
 		super.setChildren(children);
 		// Add the experiments and the default outputs to all experiments
-		for ( IExperimentSpecies exp : experiments ) {
+		for ( final IExperimentSpecies exp : experiments ) {
 			addExperiment(exp);
 			exp.setChildren(forExperiment);
 		}

@@ -28,7 +28,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.file.*;
@@ -248,9 +248,10 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		final IList<? extends IAgent> list = population.createAgents(scope, inits.size(), inits, false);
 		if ( !sequence.isEmpty() ) {
 			for ( final IAgent remoteAgent : list ) {
-				scope.execute(sequence, remoteAgent);
+				if ( scope.execute(sequence, remoteAgent, null) == IScope.INTERRUPTED ) {
+					break;
+				}
 			}
-			scope.setStatus(ExecutionStatus.skipped);
 		}
 		return list;
 	}

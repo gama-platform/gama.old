@@ -19,8 +19,7 @@
 package msi.gama.util.file;
 
 import java.io.*;
-import java.util.List;
-import msi.gama.common.util.*;
+import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -31,7 +30,6 @@ import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.*;
 import org.geotools.feature.*;
 import org.opengis.feature.simple.*;
-import org.opengis.feature.type.*;
 import com.vividsolutions.jts.geom.*;
 
 /**
@@ -64,7 +62,7 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 	 * @see msi.gama.util.GamaFile#_copy()
 	 */
 	@Override
-	protected IGamaFile _copy(IScope scope) {
+	protected IGamaFile _copy(final IScope scope) {
 		// TODO ? Will require to do a copy of the file. But how to get the new name ? Or maybe just
 		// as something usable like
 		// let f type: file value: write(copy(f2))
@@ -92,14 +90,14 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 	 * @see msi.gama.util.GamaFile#fillBuffer()
 	 */
 	@Override
-	protected void fillBuffer(IScope scope) throws GamaRuntimeException {
+	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if ( buffer != null ) { return; }
 		buffer = new GamaList();
-		FeatureIterator<SimpleFeature> features = getFeatureIterator(scope);
+		final FeatureIterator<SimpleFeature> features = getFeatureIterator(scope);
 		if ( features == null ) { return; }
 		while (features.hasNext()) {
-			SimpleFeature feature = features.next();
-			Geometry g = (Geometry) feature.getDefaultGeometry();
+			final SimpleFeature feature = features.next();
+			final Geometry g = (Geometry) feature.getDefaultGeometry();
 			if ( g != null ) {
 				((IList) buffer).add(new GamaGisGeometry(scope, g, feature));
 			}
@@ -107,31 +105,31 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 		features.close();
 	}
 
-	public FeatureIterator<SimpleFeature> getFeatureIterator(IScope scope) {
+	public FeatureIterator<SimpleFeature> getFeatureIterator(final IScope scope) {
 		File file = null;
 		ShpFiles shpf = null;
 		try {
 			file = getFile();
-			ShapefileDataStore store = new ShapefileDataStore(file.toURI().toURL());
-			String name = store.getTypeNames()[0];
-			FeatureSource<SimpleFeatureType, SimpleFeature> source = store.getFeatureSource(name);
-			FeatureCollection<SimpleFeatureType, SimpleFeature> featureShp = source.getFeatures();
-			SimpleFeatureType type = store.getSchema();
-			List<AttributeDescriptor> descriptors = type.getAttributeDescriptors();
-			for ( AttributeDescriptor ad : descriptors ) {
-				GuiUtils.debug("Type of attribute " + ad.getLocalName() + ": " +
-					ad.getType().getBinding().getSimpleName() + "; is geometry? " +
-					(ad.getType() instanceof GeometryType));
-			}
+			final ShapefileDataStore store = new ShapefileDataStore(file.toURI().toURL());
+			final String name = store.getTypeNames()[0];
+			final FeatureSource<SimpleFeatureType, SimpleFeature> source = store.getFeatureSource(name);
+			final FeatureCollection<SimpleFeatureType, SimpleFeature> featureShp = source.getFeatures();
+			// final SimpleFeatureType type = store.getSchema();
+			// final List<AttributeDescriptor> descriptors = type.getAttributeDescriptors();
+			// for ( AttributeDescriptor ad : descriptors ) {
+			// GuiUtils.debug("Type of attribute " + ad.getLocalName() + ": " +
+			// ad.getType().getBinding().getSimpleName() + "; is geometry? " +
+			// (ad.getType() instanceof GeometryType));
+			// }
 
 			if ( store.getSchema().getCoordinateReferenceSystem() != null ) {
 				shpf = new ShpFiles(file);
-				double latitude = featureShp.getBounds().centre().x;
-				double longitude = featureShp.getBounds().centre().y;
+				final double latitude = featureShp.getBounds().centre().x;
+				final double longitude = featureShp.getBounds().centre().y;
 				scope.getTopology().getGisUtils().setTransformCRS(shpf, latitude, longitude);
 			}
 			return featureShp.features();
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			return null;
 		} finally {
 			// clean ?
@@ -152,23 +150,23 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 
 	@Override
 	public Envelope computeEnvelope(final IScope scope) {
-		File shpFile = getFile();
+		final File shpFile = getFile();
 		ShapefileDataStore store = null;
 		Envelope env = null;
 		try {
 			store = new ShapefileDataStore(shpFile.toURI().toURL());
-			String name = store.getTypeNames()[0];
-			FeatureSource<SimpleFeatureType, SimpleFeature> source = store.getFeatureSource(name);
+			final String name = store.getTypeNames()[0];
+			final FeatureSource<SimpleFeatureType, SimpleFeature> source = store.getFeatureSource(name);
 			env = source.getBounds();
 			if ( store.getSchema().getCoordinateReferenceSystem() != null ) {
-				ShpFiles shpf = new ShpFiles(shpFile);
-				double latitude = env.centre().x;
-				double longitude = env.centre().y;
-				GisUtils gis = scope.getTopology().getGisUtils();
+				final ShpFiles shpf = new ShpFiles(shpFile);
+				final double latitude = env.centre().x;
+				final double longitude = env.centre().y;
+				final GisUtils gis = scope.getTopology().getGisUtils();
 				gis.setTransformCRS(shpf, latitude, longitude);
 				env = gis.transform(env);
 			}
-		} catch (IOException e) {
+		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e);
 		}
 		store.dispose();

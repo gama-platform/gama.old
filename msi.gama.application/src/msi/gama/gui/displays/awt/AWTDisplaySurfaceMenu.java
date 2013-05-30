@@ -29,24 +29,24 @@ public class AWTDisplaySurfaceMenu {
 		agentsMenu.removeAll();
 		if ( displays.isEmpty() ) { return; }
 		GamaPoint p = displays.get(0).getModelCoordinatesFrom(x, y, surface);
-		SelectedAgent world = new SelectedAgent(GAMA.getSimulation(), p);
+		final SelectedAgent world = new SelectedAgent(GAMA.getSimulation(), p);
 		world.buildMenuItems(agentsMenu, displays.get(0), "World agent");
 		agentsMenu.addSeparator();
-		for ( ILayer display : displays ) {
-			Set<IAgent> agents = display.collectAgentsAt(x, y, surface);
+		for ( final ILayer display : displays ) {
+			final Set<IAgent> agents = display.collectAgentsAt(x, y, surface);
 			if ( agents.isEmpty() ) {
 				continue;
 			}
 			p = display.getModelCoordinatesFrom(x, y, surface);
-			java.awt.Menu m = new java.awt.Menu(display.getName());
-			MenuItem grey = new MenuItem("Selected agents");
+			final java.awt.Menu m = new java.awt.Menu(display.getName());
+			final MenuItem grey = new MenuItem("Selected agents");
 			grey.setEnabled(false);
 			m.add(grey);
 			if ( !agents.isEmpty() ) {
 				m.addSeparator();
 
-				for ( IAgent agent : agents ) {
-					SelectedAgent sa = new SelectedAgent(agent, p);
+				for ( final IAgent agent : agents ) {
+					final SelectedAgent sa = new SelectedAgent(agent, p);
 					sa.buildMenuItems(m, display);
 				}
 			}
@@ -59,8 +59,8 @@ public class AWTDisplaySurfaceMenu {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			AWTDisplaySurfaceMenu.AgentMenuItem source = (AWTDisplaySurfaceMenu.AgentMenuItem) e.getSource();
-			IAgent a = source.getAgent();
+			final AWTDisplaySurfaceMenu.AgentMenuItem source = (AWTDisplaySurfaceMenu.AgentMenuItem) e.getSource();
+			final IAgent a = source.getAgent();
 			if ( a != null ) {
 				surface.fireSelectionChanged(a);
 			}
@@ -72,8 +72,8 @@ public class AWTDisplaySurfaceMenu {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			AWTDisplaySurfaceMenu.AgentMenuItem source = (AWTDisplaySurfaceMenu.AgentMenuItem) e.getSource();
-			IAgent a = source.getAgent();
+			final AWTDisplaySurfaceMenu.AgentMenuItem source = (AWTDisplaySurfaceMenu.AgentMenuItem) e.getSource();
+			final IAgent a = source.getAgent();
 			if ( a != null ) {
 				surface.focusOn(a.getGeometry(), source.getDisplay());
 			}
@@ -85,8 +85,8 @@ public class AWTDisplaySurfaceMenu {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			AWTDisplaySurfaceMenu.AgentMenuItem source = (AWTDisplaySurfaceMenu.AgentMenuItem) e.getSource();
-			IAgent a = source.getAgent();
+			final AWTDisplaySurfaceMenu.AgentMenuItem source = (AWTDisplaySurfaceMenu.AgentMenuItem) e.getSource();
+			final IAgent a = source.getAgent();
 			if ( a != null ) {
 				if ( a == GuiUtils.getHighlightedAgent() ) {
 					GuiUtils.setHighlightedAgent(null);
@@ -102,21 +102,19 @@ public class AWTDisplaySurfaceMenu {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
-			AgentMenuItem source = (AgentMenuItem) e.getSource();
+			final AgentMenuItem source = (AgentMenuItem) e.getSource();
 			final IAgent a = source.getAgent();
 			final IStatement c = source.getCommand();
 			final ILocation p = source.getLocation();
 			if ( c != null && a != null && !a.dead() ) {
-				GamaHelper action = new GamaHelper() {
+				final GamaHelper action = new GamaHelper() {
 
 					@Override
 					public Object run(final IScope scope) {
 						if ( p != null ) {
 							scope.addVarWithValue(IKeyword.USER_LOCATION, p);
 						}
-						if ( !a.dead() ) {
-							scope.execute(c, a);
-						}
+						scope.execute(c, a, null);
 						return null;
 					}
 
@@ -144,42 +142,42 @@ public class AWTDisplaySurfaceMenu {
 		}
 
 		void buildMenuItems(final Menu parentMenu, final ILayer display, final String name) {
-			Menu macroMenu = new Menu(name);
+			final Menu macroMenu = new Menu(name);
 			parentMenu.add(macroMenu);
 
-			MenuItem inspectItem = new AgentMenuItem("Inspect", macro, display);
+			final MenuItem inspectItem = new AgentMenuItem("Inspect", macro, display);
 			inspectItem.addActionListener(menuListener);
 			macroMenu.add(inspectItem);
 
-			MenuItem focusItem = new AgentMenuItem("Focus", macro, display);
+			final MenuItem focusItem = new AgentMenuItem("Focus", macro, display);
 			focusItem.addActionListener(focusListener);
 			macroMenu.add(focusItem);
 
-			MenuItem highlightItem =
+			final MenuItem highlightItem =
 				new AgentMenuItem(macro == GuiUtils.getHighlightedAgent() ? "Remove highlight" : "Highlight", macro,
 					display);
 			highlightItem.addActionListener(highlightListener);
 			macroMenu.add(highlightItem);
 
-			Collection<UserCommandStatement> commands = macro.getSpecies().getUserCommands();
+			final Collection<UserCommandStatement> commands = macro.getSpecies().getUserCommands();
 			if ( !commands.isEmpty() ) {
 				macroMenu.addSeparator();
-				for ( UserCommandStatement c : commands ) {
-					MenuItem actionItem = new AgentMenuItem(macro, c, userLocation);
+				for ( final UserCommandStatement c : commands ) {
+					final MenuItem actionItem = new AgentMenuItem(macro, c, userLocation);
 					actionItem.addActionListener(commandListener);
 					macroMenu.add(actionItem);
 				}
 			}
 			if ( micros != null && !micros.isEmpty() ) {
-				Menu microsMenu = new Menu("Micro agents");
+				final Menu microsMenu = new Menu("Micro agents");
 				macroMenu.add(microsMenu);
 
 				Menu microSpecMenu;
-				for ( ISpecies microSpec : micros.keySet() ) {
+				for ( final ISpecies microSpec : micros.keySet() ) {
 					microSpecMenu = new Menu("Species " + microSpec.getName());
 					microsMenu.add(microSpecMenu);
 
-					for ( SelectedAgent micro : micros.get(microSpec) ) {
+					for ( final SelectedAgent micro : micros.get(microSpec) ) {
 						micro.buildMenuItems(microSpecMenu, display);
 					}
 				}

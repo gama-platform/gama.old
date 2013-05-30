@@ -58,7 +58,7 @@ public class BinaryOperator extends AbstractNAryOperator {
 	}
 
 	public BinaryOperator(final IType ret, final GamaHelper exec, final boolean canBeConst, final int tProv,
-		final int ctProv, int iProv, final boolean lazy, int[] expectedContentType) {
+		final int ctProv, final int iProv, final boolean lazy, final int[] expectedContentType) {
 		this.lazy = lazy;
 		this.canBeConst = canBeConst;
 		type = ret;
@@ -92,30 +92,54 @@ public class BinaryOperator extends AbstractNAryOperator {
 		Object leftVal = "(nil)", rightVal = "(nil)";
 		try {
 			leftVal = left().value(scope);
+			// if ( right() instanceof AgentVariableExpression &&
+			// ((AgentVariableExpression) right()).getName().equals("boids_in_flock") ) {
+			// GuiUtils.debug("BinaryOperator.value");
+			// }
 			rightVal = lazy ? right() : right().value(scope);
 
-			Object result = helper.run(scope, leftVal, rightVal);
+			final Object result = helper.run(scope, leftVal, rightVal);
 			return result;
-		} catch (GamaRuntimeException e1) {
+		} catch (final GamaRuntimeException e1) {
 			e1.addContext("when applying the " + literalValue() + " operator on " + leftVal + " and " + rightVal);
 			throw e1;
-		} catch (Exception e) {
-			GamaRuntimeException ee = GamaRuntimeException.create(e);
+		} catch (final Exception e) {
+			final GamaRuntimeException ee = GamaRuntimeException.create(e);
 			ee.addContext("when applying the " + literalValue() + " operator on " + leftVal + " and " + rightVal);
 			throw ee;
 		}
 	}
 
-	private IType computeType(IDescription context, int t, IType def, int kind) {
-		if ( t == NONE ) { return def; }
-		if ( t == BOTH ) {
-			List<IExpression> expressions = Arrays.asList(exprs);
-			return findCommonType(expressions, kind);
+	private IType computeType(final IDescription context, final int t, final IType def, final int kind) {
+		switch (t) {
+			case NONE:
+				return def;
+			case BOTH:
+				final List<IExpression> expressions = Arrays.asList(exprs);
+				return findCommonType(expressions, kind);
+			case FIRST_TYPE:
+				return left().getType();
+			case FIRST_CONTENT_TYPE_OR_TYPE:
+				final IType t2 = left().getContentType();
+				if ( t2 == Types.NO_TYPE ) { return left().getType(); }
+				return t2;
+			case SECOND_TYPE:
+				return right().getType();
+			case FIRST_CONTENT_TYPE:
+				return left().getContentType();
+			case FIRST_KEY_TYPE:
+				return left().getKeyType();
+			case SECOND_CONTENT_TYPE:
+				return right().getContentType();
+			case SECOND_CONTENT_TYPE_OR_TYPE:
+				final IType t3 = right().getContentType();
+				if ( t3 == Types.NO_TYPE ) { return right().getType(); }
+				return t3;
+			case SECOND_KEY_TYPE:
+				return right().getKeyType();
+			default:
+				return t >= 0 ? Types.get(t) : def;
 		}
-		return t == FIRST_TYPE ? left().getType() : t == SECOND_TYPE ? right().getType() : t == FIRST_CONTENT_TYPE
-			? left().getContentType() : t == FIRST_KEY_TYPE ? left().getKeyType() : t == SECOND_CONTENT_TYPE ? right()
-				.getContentType() : t == SECOND_KEY_TYPE ? right().getKeyType() : t >= 0 ? Types.get(t) : def;
-
 	}
 
 	public void computeType(final IDescription context) {
@@ -132,7 +156,7 @@ public class BinaryOperator extends AbstractNAryOperator {
 
 	@Override
 	public BinaryOperator copy() {
-		BinaryOperator copy =
+		final BinaryOperator copy =
 			new BinaryOperator(type, helper, canBeConst, typeProvider, contentTypeProvider, keyTypeProvider, lazy,
 				expectedContentType);
 		copy.doc = doc;
@@ -141,7 +165,7 @@ public class BinaryOperator extends AbstractNAryOperator {
 
 	@Override
 	public IOperator resolveAgainst(final IScope scope) {
-		BinaryOperator copy = copy();
+		final BinaryOperator copy = copy();
 		copy.exprs = new IExpression[2];
 		copy.exprs[0] = left().resolveAgainst(scope);
 		copy.exprs[1] = right().resolveAgainst(scope);
@@ -151,13 +175,13 @@ public class BinaryOperator extends AbstractNAryOperator {
 	public static class BinaryVarOperator extends BinaryOperator implements IVarExpression {
 
 		public BinaryVarOperator(final IType ret, final GamaHelper exec, final boolean canBeConst, final int type,
-			final int contentType, final int keyType, final boolean lazy, int[] expectedContentType) {
+			final int contentType, final int keyType, final boolean lazy, final int[] expectedContentType) {
 			super(ret, exec, canBeConst, type, contentType, keyType, lazy, expectedContentType);
 		}
 
 		@Override
 		public void setVal(final IScope scope, final Object v, final boolean create) throws GamaRuntimeException {
-			IAgent agent = Cast.asAgent(scope, left().value(scope));
+			final IAgent agent = Cast.asAgent(scope, left().value(scope));
 			if ( agent == null || agent.dead() ) { return; }
 			scope.setAgentVarValue(agent, right().literalValue(), v);
 		}
@@ -192,7 +216,7 @@ public class BinaryOperator extends AbstractNAryOperator {
 
 		@Override
 		public BinaryVarOperator copy() {
-			BinaryVarOperator copy =
+			final BinaryVarOperator copy =
 				new BinaryVarOperator(type, helper, canBeConst, typeProvider, contentTypeProvider, keyTypeProvider,
 					lazy, expectedContentType);
 			copy.doc = doc;

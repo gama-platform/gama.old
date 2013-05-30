@@ -21,7 +21,7 @@ package msi.gaml.statements;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gaml.descriptions.IDescription;
@@ -51,11 +51,10 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		IContainer container = createContainer(scope);
-		Object position = createKey(scope, container);
-		Object object = createItem(scope, container);
+		final IContainer container = createContainer(scope);
+		final Object position = createKey(scope, container);
+		final Object object = createItem(scope, container);
 		apply(scope, object, position, asAll, container);
-		scope.setStatus(ExecutionStatus.skipped);
 		if ( list instanceof IVarExpression ) {
 			((IVarExpression) list).setVal(scope, container, false);
 		}
@@ -82,8 +81,8 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 		// if ( index != null && !container.checkIndex(position) ) { throw new GamaIndexTypeWarning(
 		// position, index.getType(), list); }
 		if ( index != null ) {
-			IType t = list.getKeyType();
-			IType i = index.getType();
+			final IType t = list.getKeyType();
+			final IType i = index.getType();
 			if ( !i.isTranslatableInto(t) ) {
 				position = t.cast(scope, position, null);
 			}
@@ -99,7 +98,7 @@ public abstract class AbstractContainerStatement extends AbstractStatement {
 				result = item.value(scope);
 			}
 		} else {
-			Object whole = all.value(scope);
+			final Object whole = all.value(scope);
 			if ( item != null ) {
 				if ( whole instanceof Boolean ) {
 					// Case add item: ITEM all: true to: LIST

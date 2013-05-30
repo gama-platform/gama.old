@@ -372,7 +372,7 @@ public abstract class AbstractTopology implements ITopology {
 			}
 		} else {
 			final Geometry g0 = returnToroidalGeom(source.getGeometry());
-			final Map<Geometry, IAgent> agents = getAgents(filter);
+			final Map<Geometry, IAgent> agents = getTororoidalAgents(filter);
 			double distMin = Double.MAX_VALUE;
 			for ( final Geometry g1 : agents.keySet() ) {
 				final IAgent ag = agents.get(g1);
@@ -390,7 +390,7 @@ public abstract class AbstractTopology implements ITopology {
 		return result;
 	}
 
-	public Map<Geometry, IAgent> getAgents(final IAgentFilter filter) {
+	public Map<Geometry, IAgent> getTororoidalAgents(final IAgentFilter filter) {
 		Collection shps;
 		if ( filter != null ) {
 			shps = filter.getShapes(scope);
@@ -412,7 +412,7 @@ public abstract class AbstractTopology implements ITopology {
 				// }
 			}
 		} else {
-			final Map<Geometry, IAgent> agents = getAgents(filter);
+			final Map<Geometry, IAgent> agents = getTororoidalAgents(filter);
 			double distMin = Double.MAX_VALUE;
 			final Geometry g0 = returnToroidalGeom(source);
 			for ( final Geometry g1 : agents.keySet() ) {
@@ -440,7 +440,7 @@ public abstract class AbstractTopology implements ITopology {
 		}
 		final Geometry g0 = returnToroidalGeom(source.getGeometry());
 		final IList<IAgent> agents = new GamaList<IAgent>();
-		final Map<Geometry, IAgent> agentsMap = getAgents(filter);
+		final Map<Geometry, IAgent> agentsMap = getTororoidalAgents(filter);
 		for ( final Geometry g1 : agentsMap.keySet() ) {
 			final IAgent ag = agentsMap.get(g1);
 			if ( source.getAgent() != null && ag == source.getAgent() ) {
@@ -467,7 +467,7 @@ public abstract class AbstractTopology implements ITopology {
 		IList<IAgent> agents;
 		final Geometry g0 = returnToroidalGeom(source);
 		agents = new GamaList<IAgent>();
-		final Map<Geometry, IAgent> agentsMap = getAgents(filter);
+		final Map<Geometry, IAgent> agentsMap = getTororoidalAgents(filter);
 		for ( final Geometry g1 : agentsMap.keySet() ) {
 			final IAgent ag = agentsMap.get(g1);
 			if ( source.getAgent() != null && ag == source.getAgent() ) {
@@ -496,8 +496,9 @@ public abstract class AbstractTopology implements ITopology {
 	public void shapeChanged(final IPopulation pop) {
 		setEnvironmentBounds();
 		// TODO CHANGE THIS
-		for ( final IAgent a : pop.getAgentsList() ) {
-			a.hostChangesShape();
+		final Iterator<IAgent> it = pop.iterator();
+		while (it.hasNext()) {
+			it.next().hostChangesShape();
 		}
 	}
 
@@ -557,7 +558,7 @@ public abstract class AbstractTopology implements ITopology {
 		}
 		final Geometry sourceTo = returnToroidalGeom(source);
 		final PreparedGeometry pg = pgFact.create(sourceTo);
-		final Map<Geometry, IAgent> agentsMap = getAgents(f);
+		final Map<Geometry, IAgent> agentsMap = getTororoidalAgents(f);
 		final GamaList<IAgent> result = new GamaList();
 		for ( final Geometry sh : agentsMap.keySet() ) {
 			final IAgent ag = agentsMap.get(sh);

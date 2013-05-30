@@ -9,4 +9,6 @@ public interface IExperimentAgent extends IAgent {
 
 	public abstract RandomUtils getRandomGenerator();
 
+	public abstract void closeSimulation();
+
 }

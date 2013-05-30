@@ -380,10 +380,7 @@ public class DrawStatement extends AbstractStatementSequence {
 		Rectangle2D executeOn(final IScope scope, final IGraphics g) throws GamaRuntimeException {
 			final IAgent agent = scope.getAgentScope();
 			final String info = constText == null ? Cast.asString(scope, item.value(scope)) : constText;
-			if ( info == null || info.length() == 0 ) {
-				scope.setStatus(ExecutionStatus.skipped);
-				return null;
-			}
+			if ( info == null || info.length() == 0 ) { return null; }
 			final String fName = constFont == null ? Cast.asString(scope, font.value(scope)) : constFont;
 			final int fStyle = constStyle == null ? CONSTANTS.get(style.value(scope)) : constStyle;
 

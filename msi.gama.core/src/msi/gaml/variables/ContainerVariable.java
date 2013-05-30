@@ -98,14 +98,14 @@ public class ContainerVariable extends Variable {
 							v == null ? new GamaObjectMatrix(scope, size) : GamaObjectMatrix.from(scope, (int) size.x,
 								(int) size.y, (IMatrix) v);
 				}
-				Object o =
+				final Object o =
 					fillExpr == null ? description.getContentType().getDefault() : scope.evaluate(fillExpr, owner);
 				((IMatrix) result).add(scope, null, o, null, true, false);
 				break;
 			}
 			case IType.LIST: {
-				Object[] contents = new Object[Cast.asInt(scope, value)];
-				Object o =
+				final Object[] contents = new Object[Cast.asInt(scope, value)];
+				final Object o =
 					fillExpr == null ? description.getContentType().getDefault() : scope.evaluate(fillExpr, owner);
 				Arrays.fill(contents, o);
 				result = new GamaList(contents);
@@ -117,7 +117,7 @@ public class ContainerVariable extends Variable {
 
 	@Override
 	protected Object coerce(final IAgent agent, final IScope scope, final Object v) throws GamaRuntimeException {
-		Object result = type.cast(scope, v, size);
+		final Object result = type.cast(scope, v, size);
 		return result;
 	}
 

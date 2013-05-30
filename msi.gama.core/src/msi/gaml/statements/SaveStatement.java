@@ -27,7 +27,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.graph.IGraph;
@@ -72,13 +72,13 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 		String path = "";
 		if ( file == null ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
 		path =
 			scope.getSimulationScope().getModel().getRelativeFilePath(Cast.asString(scope, file.value(scope)), false);
 		if ( path.equals("") ) {
-			scope.setStatus(ExecutionStatus.failure);
+			// scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
 		String type = "text";
@@ -89,12 +89,12 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final IExpression item = getFacet(IKeyword.DATA);
 			List<? extends IAgent> agents;
 			if ( item == null ) {
-				scope.setStatus(ExecutionStatus.failure);
+				// scope.setStatus(ExecutionStatus.failure);
 				return null;
 			}
 			agents = Cast.asList(scope, item.value(scope));
 			if ( agents == null ) {
-				scope.setStatus(ExecutionStatus.failure);
+				// scope.setStatus(ExecutionStatus.failure);
 				return null;
 			}
 			if ( agents.isEmpty() ) {}
@@ -124,12 +124,12 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 			final IExpression item = getFacet(IKeyword.DATA);
 			IGraph g;
 			if ( item == null ) {
-				scope.setStatus(ExecutionStatus.failure);
+				// scope.setStatus(ExecutionStatus.failure);
 				return null;
 			}
 			g = Cast.asGraph(scope, item);
 			if ( g == null ) {
-				scope.setStatus(ExecutionStatus.failure);
+				// scope.setStatus(ExecutionStatus.failure);
 				return null;
 			}
 			AvailableGraphWriters.getGraphWriter(type.trim().toLowerCase()).writeGraph(scope, g, null, path);
