@@ -49,7 +49,7 @@ global {
 				create group number: 1 returns: new_groups;
 				
 				ask target: (new_groups at 0) as: group {
-					capture target: one_group as: ball_in_group;
+					capture target: one_group as: ball_in_group; 
 				}
 			}
 		}
@@ -92,7 +92,7 @@ entities {
 				let tmp_location type: point value: {(rnd (xmax - xmin)) + xmin, (rnd (ymax - ymin)) + ymin} ;
 				let potential_geom type: geometry value: ball_shape at_location tmp_location ; 
 				
-				if ( empty ( ball where  ( each.shape intersects potential_geom ) ) )  {
+				if ( empty ( ball where  ( each intersects potential_geom ) ) )  {
 					set location value: tmp_location ;
 					set continue_loop value: false ;
 				}
@@ -100,8 +100,8 @@ entities {
 		}
 		
 		action separation {
-			arg nearby_balls type: list ;
-			
+			arg nearby_balls type: list;
+			 
 			let repulsive_dx type: float value: 0 ;
 			let repulsive_dy type: float value: 0 ;
 			loop nb over: nearby_balls {
@@ -153,7 +153,7 @@ entities {
 			let tmp_location type: point value: location + {step_x, step_y} ;
 			if condition: (self in_bounds (tmp_location)) {
 				set location value: tmp_location ;
-				do action: separation {
+				do separation {
 					arg nearby_balls value: ((ball overlapping (shape + ball_separation)) - self) ;
 				}
 			}
@@ -415,7 +415,7 @@ entities {
 		}
 	 	 
 		aspect default {
-			draw shape color: color  empty: true;
+			draw geometry: shape color: color  empty: true;
 			draw text: name + ' with ' + (string(length(members))) + ' groups.' size: 15 color: color style: bold at: {location.x - 65, location.y};
 		}
 	}
@@ -435,7 +435,7 @@ entities {
 
 environment bounds: environment_bounds ;
 
-experiment default_experiment type: gui {
+experiment default_experiment2 type: gui {
 	output {
 		display name: 'Standard display' {
 			species ball aspect: default transparency: 0.5 ;
