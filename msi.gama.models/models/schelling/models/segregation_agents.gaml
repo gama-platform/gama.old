@@ -10,7 +10,7 @@ global {
 		set all_people <- people as list;  
 	} 
 	action initialize_places { 
-		set all_places <- shuffle (space as list);
+		set all_places <- shuffle (space);
 		set free_places <- all_places;  
 	} 
 	
