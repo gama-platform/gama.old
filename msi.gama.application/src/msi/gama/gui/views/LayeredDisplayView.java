@@ -181,14 +181,14 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		};
 
 		OutputSynchronizer.incInitializingViews(getOutput().getName()); // incremented in the SWT thread
-		int flags = Platform.getOS().equals(Platform.OS_MACOSX) ? SWT.NO_REDRAW_RESIZE : SWT.NONE;
+		final int flags = Platform.getOS().equals(Platform.OS_MACOSX) ? SWT.NO_REDRAW_RESIZE : SWT.NONE;
 		swingCompo = new EmbeddedSwingComposite(parent, flags) {
 
 			@Override
 			protected JComponent createSwingComponent() {
 				outputName = getOutput().getName();
 				isOpenGL = getOutput().isOpenGL();
-				JComponent frameAwt = (JComponent) getOutput().getSurface();
+				final JComponent frameAwt = (JComponent) getOutput().getSurface();
 				getFrame().addMouseListener(mlAwt);
 				getFrame().addMouseMotionListener(mlAwt2);
 				return frameAwt;
@@ -275,10 +275,11 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			boolean previousState = false;
 
 			@Override
-			public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {}
+			public void perspectiveChanged(final IWorkbenchPage page, final IPerspectiveDescriptor perspective,
+				final String changeId) {}
 
 			@Override
-			public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+			public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
 				if ( perspective.getId().equals(ModelingPerspective.ID) ) {
 					if ( getOutput() != null && getOutput().getSurface() != null ) {
 						previousState = getOutput().getSurface().isPaused();
@@ -373,8 +374,8 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 	@Override
 	protected Composite createItemContentsFor(final ILayer d) {
-		Composite compo = new Composite(getViewer(), SWT.NONE);
-		GridLayout layout = new GridLayout(2, false);
+		final Composite compo = new Composite(getViewer(), SWT.NONE);
+		final GridLayout layout = new GridLayout(2, false);
 		layout.verticalSpacing = 5;
 		compo.setLayout(layout);
 		if ( d instanceof AbstractLayer ) {
@@ -411,11 +412,11 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 			@Override
 			public void run() {
-				IDisplaySurface surface = getDisplaySurface();
+				final IDisplaySurface surface = getDisplaySurface();
 				while (!surface.canBeUpdated()) {
 					try {
 						Thread.sleep(10);
-					} catch (InterruptedException e) {
+					} catch (final InterruptedException e) {
 
 					}
 				}
@@ -432,11 +433,11 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 			@Override
 			public void run() {
-				IDisplaySurface imageCanvas = getDisplaySurface();
+				final IDisplaySurface imageCanvas = getDisplaySurface();
 				while (!imageCanvas.canBeUpdated()) {
 					try {
 						Thread.sleep(10);
-					} catch (InterruptedException e) {
+					} catch (final InterruptedException e) {
 
 					}
 				}
@@ -453,11 +454,11 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 			@Override
 			public void run() {
-				IDisplaySurface imageCanvas = getDisplaySurface();
+				final IDisplaySurface imageCanvas = getDisplaySurface();
 				while (!imageCanvas.canBeUpdated()) {
 					try {
 						Thread.sleep(10);
-					} catch (InterruptedException e) {
+					} catch (final InterruptedException e) {
 
 					}
 				}
@@ -474,11 +475,11 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 				@Override
 				public void run() {
-					IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
+					final IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
 					while (!surface.canBeUpdated()) {
 						try {
 							Thread.sleep(10);
-						} catch (InterruptedException e) {
+						} catch (final InterruptedException e) {
 
 						}
 					}
@@ -496,11 +497,11 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 				@Override
 				public void run() {
-					IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
+					final IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
 					while (!surface.canBeUpdated()) {
 						try {
 							Thread.sleep(10);
-						} catch (InterruptedException e) {
+						} catch (final InterruptedException e) {
 
 						}
 					}
@@ -518,11 +519,11 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 				@Override
 				public void run() {
-					IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
+					final IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
 					while (!surface.canBeUpdated()) {
 						try {
 							Thread.sleep(10);
-						} catch (InterruptedException e) {
+						} catch (final InterruptedException e) {
 
 						}
 					}
@@ -540,11 +541,11 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 				@Override
 				public void run() {
-					IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
+					final IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
 					while (!surface.canBeUpdated()) {
 						try {
 							Thread.sleep(10);
-						} catch (InterruptedException e) {
+						} catch (final InterruptedException e) {
 
 						}
 					}
@@ -562,11 +563,11 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 				@Override
 				public void run() {
-					IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
+					final IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
 					while (!surface.canBeUpdated()) {
 						try {
-								Thread.sleep(10);
-							} catch (InterruptedException e) {
+							Thread.sleep(10);
+						} catch (final InterruptedException e) {
 
 						}
 					}
@@ -584,11 +585,11 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 				@Override
 				public void run() {
-					IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
+					final IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
 					while (!surface.canBeUpdated()) {
 						try {
 							Thread.sleep(10);
-						} catch (InterruptedException e) {
+						} catch (final InterruptedException e) {
 
 						}
 					}
@@ -598,7 +599,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			}).start();
 		}
 	}
-	
+
 	@Override
 	public void toggleRotation() {
 		if ( getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
@@ -606,11 +607,11 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 				@Override
 				public void run() {
-					IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
+					final IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
 					while (!surface.canBeUpdated()) {
 						try {
 							Thread.sleep(10);
-						} catch (InterruptedException e) {
+						} catch (final InterruptedException e) {
 
 						}
 					}
@@ -637,11 +638,11 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 			@Override
 			public void run() {
-				IDisplaySurface surface = getDisplaySurface();
+				final IDisplaySurface surface = getDisplaySurface();
 				while (!surface.canBeUpdated()) {
 					try {
 						Thread.sleep(10);
-					} catch (InterruptedException e) {
+					} catch (final InterruptedException e) {
 
 					}
 				}
@@ -660,17 +661,17 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		surfaceCompo.dispose();
 		// SwtGui.getPage().removePartListener(partListener);
 		super.dispose();
-		GuiUtils.debug("LayeredDisplayView.dispose: DISPOSED " + getOutput().getName());
+		// GuiUtils.debug("LayeredDisplayView.dispose: DISPOSED " + getOutput().getName());
 
 	}
 
 	@Override
-	public void setIndicator(ZoomIndicatorItem indicator) {
+	public void setIndicator(final ZoomIndicatorItem indicator) {
 		zoomIndicator = indicator;
 	}
 
 	@Override
-	public void newZoomLevel(double zoomLevel) {
+	public void newZoomLevel(final double zoomLevel) {
 		final int zoom = (int) (zoomLevel * 100);
 		GuiUtils.run(new Runnable() {
 
