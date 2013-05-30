@@ -16,6 +16,7 @@ global {
 	const background type: rgb <- rgb(#99CC66);
 	const food_color type: rgb <- rgb(#312200);
 	const nest_color type: rgb <- rgb(#000000);
+	
 	init {
 		loop times: number_of_food_places {
 			point loc <- { rnd(gridsize - 10) + 5, rnd(gridsize - 10) + 5 };
@@ -33,11 +34,11 @@ global {
 
 		create ant number: ants_number with: (location: center);
 	}
- 
+  
 }
 
 environment width: gridsize height: gridsize {
-	grid ant_grid width: gridsize height: gridsize neighbours: 8 torus: false frequency: grid_frequency use_regular_agents: false{
+	grid ant_grid width: gridsize height: gridsize neighbours: 8 torus: false frequency: grid_frequency use_regular_agents: false use_individual_shapes: false{
 		const neighbours type: list of: ant_grid <- self neighbours_at 1;
 		const is_nest type: bool <- (topology(ant_grid) distance_between [self, center]) < 4;
 		rgb color <- is_nest ? nest_color : ((food > 0) ? food_color : ((float(road) < 0.001) ? background : rgb(#009900) + int(road * 5))) update: is_nest ? nest_color : ((food > 0) ?
