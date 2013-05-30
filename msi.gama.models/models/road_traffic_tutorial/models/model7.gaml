@@ -23,7 +23,7 @@ global {
 			}
 		}
 		create road from: shape_file_roads ;
-		let weights_map type: map <- (list (road)) as_map [each:: each.destruction_coeff];
+		let weights_map type: map <- (list (road)) as_map (each:: each.destruction_coeff);
 		set the_graph <- as_edge_graph(list(road))  with_weights weights_map;
 		
 		let residential_buildings type: list of: building <- list(building) where (each.type='Residential');
@@ -45,7 +45,7 @@ global {
 		}
 	}
 	reflex update_graph{
-		let weights_map type: map <- (list (road)) as_map [each:: each.destruction_coeff];
+		let weights_map type: map <- (list (road)) as_map (each:: each.destruction_coeff);
 		set the_graph <- the_graph  with_weights weights_map;
 	}
 }
