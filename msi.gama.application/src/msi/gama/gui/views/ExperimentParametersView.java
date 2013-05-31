@@ -40,8 +40,8 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 	@Override
 	public void ownCreatePartControl(final Composite view) {
 		super.ownCreatePartControl(view);
-		Composite intermediate = new Composite(view, SWT.NONE);
-		GridLayout parentLayout = new GridLayout(1, false);
+		final Composite intermediate = new Composite(view, SWT.NONE);
+		final GridLayout parentLayout = new GridLayout(1, false);
 		parentLayout.marginWidth = 0;
 		parentLayout.marginHeight = 0;
 		parentLayout.verticalSpacing = 0;
@@ -50,7 +50,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 		commands.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
 		commands.setForeground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
 		commands.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-		GridLayout layout = new GridLayout(3, false);
+		final GridLayout layout = new GridLayout(3, false);
 		layout.verticalSpacing = 0;
 		commands.setLayout(layout);
 		commands.pack();
@@ -74,12 +74,12 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 	@Override
 	public void displayItems() {
 		super.displayItems();
-		for ( Control c : commands.getChildren() ) {
+		for ( final Control c : commands.getChildren() ) {
 			c.dispose();
 		}
-		Collection<UserCommandStatement> userCommands = experiment.getUserCommands();
+		final Collection<UserCommandStatement> userCommands = experiment.getUserCommands();
 		for ( final IStatement command : userCommands ) {
-			Button b = new Button(commands, SWT.PUSH);
+			final Button b = new Button(commands, SWT.PUSH);
 			b.setText(command.getName());
 			b.addSelectionListener(new SelectionAdapter() {
 
@@ -89,7 +89,9 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 
 						@Override
 						public Object run(final IScope scope) {
-							return command.executeOn(scope);
+							final Object result = command.executeOn(scope);
+							experiment.getOutputManager().forceUpdateOutputs();
+							return result;
 						}
 
 					});
