@@ -374,7 +374,7 @@ public class TypeDescription extends SymbolDescription {
 		// GuiUtils.debug("       **** " + getName() + " receives " + " var " + varName + " from " + parent.getName());
 
 		if ( !hasVar(varName) ) {
-			addChild(parentVariable);
+			addChild(parentVariable.copy(this)); // TODO Verify the copy(...)
 			return;
 		}
 		final VariableDescription myVar = getVariable(varName);
