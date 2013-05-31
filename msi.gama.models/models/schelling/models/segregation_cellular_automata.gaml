@@ -32,12 +32,12 @@ global {
 environment width: dimensions height: dimensions {
 	grid space parent: base width: dimensions height: dimensions neighbours: 8 torus: true {
 		rgb color <- black;
-		list<space> my_neighbours -> { ((self neighbours_at neighbours_distance) of_species space) select (each.color = black) };
+		list<space> my_neighbours <- self neighbours_at neighbours_distance;
 		action migrate {
 			//write my_neighbours;
 			if !is_happy {
 				//write "" + self + "is not happy";
-				let pp <- any(my_neighbours);
+				let pp <- any(my_neighbours where (each.color = black));
 				if (pp != nil) {
 					//write "" + self + " exchanges with " + pp;
 					free_places << self;
