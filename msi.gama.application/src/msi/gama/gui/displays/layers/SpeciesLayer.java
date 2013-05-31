@@ -98,7 +98,7 @@ public class SpeciesLayer extends AgentLayer {
 		// _agents = Iterators.toArray(population.iterator(), IAgent.class);
 
 		// draw the population
-		for ( final IAgent a : population.toArray(new IAgent[0]) ) {
+		for ( final IAgent a : population.iterable(scope) ) {
 			final Rectangle2D r = aspect.draw(scope, a);
 			if ( r != null ) {
 				shapes.put(a, r);
