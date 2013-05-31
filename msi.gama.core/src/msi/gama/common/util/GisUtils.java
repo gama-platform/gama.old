@@ -58,7 +58,7 @@ public class GisUtils {
 		public void filter(Coordinate coord) {
 			if ( translationEnvelope == null ) { return; }
 			coord.x += translationEnvelope.getMinX();
-			coord.y = coord.y + translationEnvelope.getHeight() - translationEnvelope.getMinY();
+			coord.y = -coord.y + translationEnvelope.getHeight() + translationEnvelope.getMinY();
 		}
 
 	};

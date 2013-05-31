@@ -22,6 +22,7 @@ import java.io.*;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -35,6 +36,7 @@ import msi.gama.util.graph.writer.AvailableGraphWriters;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
+import msi.gaml.species.ISpecies;
 import msi.gaml.statements.Facets.Facet;
 import msi.gaml.types.IType;
 import org.geotools.data.*;
@@ -153,12 +155,14 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 				break;
 			}
 		}
-
 		try {
+			ISpecies species = ((IPopulation) agents).getSpecies();
 			for ( final String e : attributes.keySet() ) {
-				specs.append(',').append(e).append(':').append(typeJava(agents.get(0).getAttribute(attributes.get(e))));
+				String var = attributes.get(e);
+				specs.append(',').append(e).append(':').append(type(species.getVar(var).getType()));	
 			}
-			final String featureTypeName = agents.get(0).getSpeciesName();
+			final String featureTypeName =  species.toString();
+			
 			saveShapeFile(scope, path, agents, featureTypeName, specs.toString(), attributes);
 		} catch (final GamaRuntimeException e) {
 			throw e;
@@ -198,13 +202,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 	}
 
-	public String typeJava(final Object obj) {
-		if ( obj instanceof Boolean ) { return "Boolean"; }
-		if ( obj instanceof Double ) { return "Double"; }
-		if ( obj instanceof Integer ) { return "Integer"; }
-		return "String";
-	}
-
 	public String type(final IType gamaName) {
 		if ( gamaName.id() == IType.BOOL ) { return "Boolean"; }
 		if ( gamaName.id() == IType.FLOAT ) { return "Double"; }
@@ -212,6 +209,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		return "String";
 	}
 
+	
 	private void computeInits(final IScope scope, final Map<String, String> values) throws GamaRuntimeException {
 		if ( init == null ) { return; }
 		for ( final Facet f : init.entrySet() ) {
@@ -224,7 +222,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 	public void saveShapeFile(final IScope scope, final String path, final List<? extends IAgent> agents,
 		final String featureTypeName, final String specs, final Map<String, String> attributes) throws IOException,
 		SchemaException, GamaRuntimeException {
-
+		
 		final ShapefileDataStore store = new ShapefileDataStore(new File(path).toURI().toURL());
 		final SimpleFeatureType type = DataUtilities.createType(featureTypeName, specs);
 
@@ -238,7 +236,6 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 		for ( final IAgent ag : agents ) {
 			final List<Object> liste = new GamaList<Object>();
 			Geometry geom = (Geometry) ag.getInnerGeometry().clone();
-
 			// TODO Pr�voir un locationConverter pour passer d'un environnement � l'autre
 
 			geom = scope.getTopology().getGisUtils().inverseTransform(geom);
@@ -251,6 +248,7 @@ public class SaveStatement extends AbstractStatementSequence implements IStateme
 
 			final SimpleFeature simpleFeature = SimpleFeatureBuilder.build(type, liste.toArray(), String.valueOf(i++));
 			collection.add(simpleFeature);
+			
 		}
 
 		featureStore.addFeatures(collection);
