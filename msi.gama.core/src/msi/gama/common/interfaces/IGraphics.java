@@ -24,11 +24,7 @@ import java.awt.image.BufferedImage;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaFile;
-import msi.gama.util.matrix.GamaFloatMatrix;
-
-
 import org.jfree.chart.JFreeChart;
-
 import com.vividsolutions.jts.geom.Envelope;
 
 /**
@@ -46,11 +42,11 @@ public interface IGraphics {
 	public abstract int getDisplayWidthInPixels();
 
 	public abstract int getDisplayHeightInPixels();
-	
-	public abstract Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix, 
-			final boolean isTextured, final boolean isTriangulated,final boolean isShowText,
-			final ILocation locationInModelUnits, final ILocation sizeInModelUnits, Color gridColor, final Integer angle,
-			Double z, boolean isDynamic, final int cellSize);
+
+	public abstract Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
+		final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
+		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, Color gridColor, final Integer angle,
+		Double z, boolean isDynamic, final int cellSize);
 
 	public abstract Rectangle2D drawImage(final IScope scope, final BufferedImage img,
 		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, Color gridColor, final Integer angle,
@@ -89,13 +85,16 @@ public interface IGraphics {
 
 	public abstract void endDrawingLayer(ILayer layer);
 
+	public abstract void endDrawingLayers();
+
 	public abstract void beginHighlight();
 
 	public abstract void endHighlight();
 
 	public interface OpenGL extends IGraphics {
 
-		public abstract Rectangle2D drawDEM(final GamaFile demFileName, final GamaFile textureFileName, Envelope env, final Double z_factor);
+		public abstract Rectangle2D drawDEM(final GamaFile demFileName, final GamaFile textureFileName, Envelope env,
+			final Double z_factor);
 
 	}
 

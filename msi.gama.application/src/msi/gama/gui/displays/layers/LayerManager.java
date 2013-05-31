@@ -47,10 +47,10 @@ public class LayerManager implements ILayerManager {
 
 	@Override
 	public void dispose() {
-		for ( ILayer d : enabledLayers ) {
+		for ( final ILayer d : enabledLayers ) {
 			d.dispose();
 		}
-		for ( ILayer d : disabledLayers ) {
+		for ( final ILayer d : disabledLayers ) {
 			d.dispose();
 		}
 		pd.dispose();
@@ -75,8 +75,8 @@ public class LayerManager implements ILayerManager {
 
 	@Override
 	public List<ILayer> getLayersIntersecting(final int x, final int y) {
-		List<ILayer> result = new ArrayList();
-		for ( ILayer display : enabledLayers ) {
+		final List<ILayer> result = new ArrayList();
+		for ( final ILayer display : enabledLayers ) {
 			if ( display.containsScreenPoint(x, y) ) {
 				result.add(display);
 			}
@@ -97,7 +97,7 @@ public class LayerManager implements ILayerManager {
 	}
 
 	private void disable(final ILayer found) {
-		ILayer ff = removeLayer(found);
+		final ILayer ff = removeLayer(found);
 		if ( ff != null ) {
 			disabledLayers.add(ff);
 		}
@@ -108,11 +108,11 @@ public class LayerManager implements ILayerManager {
 		while (!surface.canBeUpdated()) {
 			try {
 				Thread.sleep(100);
-			} catch (InterruptedException e) {
+			} catch (final InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
-		boolean before = surface.canBeUpdated();
+		final boolean before = surface.canBeUpdated();
 		surface.canBeUpdated(false);
 		if ( enable ) {
 			enable(display);
@@ -125,7 +125,7 @@ public class LayerManager implements ILayerManager {
 
 	@Override
 	public void drawLayersOn(final IGraphics g) {
-		IScope scope = GAMA.obtainNewScope();
+		final IScope scope = GAMA.obtainNewScope();
 		// If the experiment is already closed
 		if ( scope == null ) { return; }
 		scope.setGraphics(g);
@@ -139,7 +139,7 @@ public class LayerManager implements ILayerManager {
 				double max_z = 0d;
 				for ( int i = 0, n = enabledLayers.size(); i < n; i++ ) {
 					final ILayer dis = enabledLayers.get(i);
-					double z = dis.getZPosition();
+					final double z = dis.getZPosition();
 					if ( z > max_z ) {
 						max_z = z;
 					}
@@ -147,19 +147,20 @@ public class LayerManager implements ILayerManager {
 				pd.setElevation(max_z);
 				pd.drawDisplay(scope, g);
 			}
-		} catch (GamaRuntimeException e) {
+		} catch (final GamaRuntimeException e) {
 			// e.addContext("in drawing layer " + dis.getMenuName());
 			// throw e;
 			// Temporarily disabled so that it does not appear on the interface.
 			e.printStackTrace();
 		} finally {
+			g.endDrawingLayers();
 			GAMA.releaseScope(scope);
 		}
 	}
 
 	@Override
 	public List<ILayer> getItems() {
-		List<ILayer> items = new ArrayList();
+		final List<ILayer> items = new ArrayList();
 		items.addAll(enabledLayers);
 		items.addAll(disabledLayers);
 		Collections.sort(items);
@@ -244,17 +245,17 @@ public class LayerManager implements ILayerManager {
 	 */
 	@Override
 	public void outputChanged() {
-		for ( ILayer i : enabledLayers ) {
+		for ( final ILayer i : enabledLayers ) {
 			i.outputChanged();
 		}
-		for ( ILayer i : disabledLayers ) {
+		for ( final ILayer i : disabledLayers ) {
 			i.outputChanged();
 		}
 	}
 
 	@Override
 	public boolean stayProportional() {
-		for ( ILayer i : enabledLayers ) {
+		for ( final ILayer i : enabledLayers ) {
 			if ( i.stayProportional() ) { return true; }
 		}
 		return false;

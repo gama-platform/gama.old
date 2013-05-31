@@ -23,10 +23,8 @@ import java.awt.Color;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.awt.AbstractDisplayGraphics;
 import msi.gama.jogl.scene.MyTexture;
-import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.JOGLSWTGLRenderer;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -34,9 +32,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.util.file.GamaFile;
 import msi.gaml.types.GamaGeometryType;
 import org.jfree.chart.JFreeChart;
-
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.*;
 
 /**
  * 
@@ -70,7 +66,7 @@ public class JOGLSWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	/**
 	 * @param JOGLAWTDisplaySurface displaySurface
 	 */
-	public JOGLSWTDisplayGraphics(final JOGLSWTDisplaySurface surface, JOGLSWTGLRenderer r) {
+	public JOGLSWTDisplayGraphics(final JOGLSWTDisplaySurface surface, final JOGLSWTGLRenderer r) {
 		super(surface);
 		renderer = r;
 	}
@@ -80,25 +76,25 @@ public class JOGLSWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	 * existing geometry that will be displayed by openGl.
 	 */
 	@Override
-	public Rectangle2D drawGamaShape(IScope scope, IShape geometry, Color c, boolean fill, Color border, Integer angle,
-		boolean rounded) {
+	public Rectangle2D drawGamaShape(final IScope scope, final IShape geometry, final Color c, final boolean fill,
+		final Color border, final Integer angle, final boolean rounded) {
 
 		// Check if the geometry has a height value (3D Shape or Volume)
 		Geometry geom = null;
 		if ( geometry == null ) { return null; }
-		ITopology topo = scope.getTopology();
+		final ITopology topo = scope.getTopology();
 		if ( topo != null && topo.isTorus() ) {
 			geom = topo.returnToroidalGeom(geometry.getInnerGeometry());
 		} else {
 			geom = geometry.getInnerGeometry();
 		}
-		Color color = highlight ? highlightColor : c;
+		final Color color = highlight ? highlightColor : c;
 		// GamaPoint offset = new GamaPoint(xOffsetInPixels, yOffsetInPixels);
 
 		// Add a geometry with a depth and type coming from Attributes
 		if ( geometry.getAttribute("depth") != null && geometry.getAttribute("type") != null ) {
-			Double depth = (Double) geometry.getAttribute("depth");
-			String type = (String) geometry.getAttribute("type");
+			final Double depth = (Double) geometry.getAttribute("depth");
+			final String type = (String) geometry.getAttribute("type");
 			renderer.getScene().addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color, fill,
 				border, false, angle, depth.floatValue(), currentOffset, currentScale, rounded, type,
 				currentLayerIsStatic, getCurrentAlpha());
@@ -107,7 +103,7 @@ public class JOGLSWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		else {
 			// Add a geometry with a depth and type coming from getUSerData (with add_z operator)
 			if ( geometry.getInnerGeometry().getUserData() != null ) {
-				float height = new Float(geom.getUserData().toString());
+				final float height = new Float(geom.getUserData().toString());
 				renderer.getScene().addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color,
 					fill, border, false, angle, height, currentOffset, currentScale, rounded, "JTS",
 					currentLayerIsStatic, getCurrentAlpha());
@@ -142,7 +138,7 @@ public class JOGLSWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		double stepX, stepY;
 		for ( int i = 0; i <= image.getWidth(); i++ ) {
 			stepX = i / (double) image.getWidth() * image.getWidth();
-			Geometry g =
+			final Geometry g =
 				GamaGeometryType.buildLine(new GamaPoint(stepX, 0), new GamaPoint(stepX, image.getWidth()))
 					.getInnerGeometry();
 			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
@@ -151,7 +147,7 @@ public class JOGLSWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 		for ( int i = 0; i <= image.getHeight(); i++ ) {
 			stepY = i / (double) image.getHeight() * image.getHeight();;
-			Geometry g =
+			final Geometry g =
 				GamaGeometryType.buildLine(new GamaPoint(0, stepY), new GamaPoint(image.getHeight(), stepY))
 					.getInnerGeometry();
 			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
@@ -168,8 +164,9 @@ public class JOGLSWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	 *            Integer
 	 */
 	@Override
-	public Rectangle2D drawImage(IScope scope, BufferedImage img, ILocation locationInModelUnits,
-		ILocation sizeInModelUnits, Color gridColor, Integer angle, Double z, boolean isDynamic) {
+	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final ILocation locationInModelUnits,
+		final ILocation sizeInModelUnits, final Color gridColor, final Integer angle, final Double z,
+		final boolean isDynamic) {
 		double curX, curY;
 		if ( locationInModelUnits == null ) {
 			curX = 0d;
@@ -213,7 +210,7 @@ public class JOGLSWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	 */
 	@Override
 	public Rectangle2D drawChart(final IScope scope, final JFreeChart chart, final Double z) {
-		BufferedImage im =
+		final BufferedImage im =
 		// ImageUtils.toCompatibleImage(chart.createBufferedImage(widthOfLayerInPixels, heightOfLayerInPixels));
 			chart.createBufferedImage(widthOfLayerInPixels, heightOfLayerInPixels);
 		return drawImage(scope, im, new GamaPoint(0, 0), null, null, 0, z, true);
@@ -230,8 +227,9 @@ public class JOGLSWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	 *            Integer
 	 */
 	@Override
-	public Rectangle2D drawString(String string, Color stringColor, ILocation locationInModelUnits,
-		Double heightInModelUnits, String fontName, Integer styleName, Integer angle, Double z) {
+	public Rectangle2D drawString(final String string, final Color stringColor, final ILocation locationInModelUnits,
+		final Double heightInModelUnits, final String fontName, final Integer styleName, final Integer angle,
+		final Double z) {
 		double curX, curY;
 		if ( locationInModelUnits == null ) {
 			curX = 0d;
@@ -282,10 +280,10 @@ public class JOGLSWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	 * a dynamic layer (by default or refresh:true)
 	 */
 	@Override
-	public void beginDrawingLayer(ILayer layer) {
+	public void beginDrawingLayer(final ILayer layer) {
 		super.beginDrawingLayer(layer);
 		this.currentZLayer = (float) (getMaxEnvDim() * layer.getZPosition());
-		Boolean refresh = layer.isDynamic();
+		final Boolean refresh = layer.isDynamic();
 		currentLayerIsStatic = refresh == null ? false : !refresh;
 
 		// TODO Pourquoi ne pas utiliser l'ordre des layers ? layer.getOrder() ??
@@ -317,22 +315,29 @@ public class JOGLSWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		highlight = false;
 	}
 
-
 	@Override
-	public Rectangle2D drawDEM(GamaFile demFileName, GamaFile textureFileName,
-			Envelope env, final Double z_factor) {
+	public Rectangle2D drawDEM(final GamaFile demFileName, final GamaFile textureFileName, final Envelope env,
+		final Double z_factor) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Rectangle2D drawGrid(IScope scope, BufferedImage img,
-			double[] gridValueMatrix, boolean isTextured,
-			boolean isTriangulated, boolean isShowText,
-			ILocation locationInModelUnits, ILocation sizeInModelUnits,
-			Color gridColor, Integer angle, Double z, boolean isDynamic, final int cellSize) {
+	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
+		final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
+		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final Color gridColor,
+		final Integer angle, final Double z, final boolean isDynamic, final int cellSize) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	/**
+	 * Method endDrawingLayers()
+	 * @see msi.gama.common.interfaces.IGraphics#endDrawingLayers()
+	 */
+	@Override
+	public void endDrawingLayers() {
+		renderer.getScene().lockStaticObjects();
 	}
 
 }

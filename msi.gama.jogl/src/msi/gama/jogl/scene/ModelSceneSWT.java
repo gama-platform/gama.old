@@ -36,8 +36,9 @@ public class ModelSceneSWT {
 	final GamaPoint offset = new GamaPoint(0, 0, 0);
 	final GamaPoint scale = new GamaPoint(1, 1, 1);
 	final Double envWidth, envHeight;
+	private boolean staticObjectsAreLocked;
 
-	public ModelSceneSWT(JOGLSWTGLRenderer renderer) {
+	public ModelSceneSWT(final JOGLSWTGLRenderer renderer) {
 		geometries = new SceneObjectsSWT(new GeometryDrawerSWT(renderer), true);
 		collections = new SceneObjectsSWT(new CollectionDrawerSWT(renderer), true);
 		strings = new SceneObjectsSWT(new StringDrawerSWT(renderer), !StringDrawerSWT.USE_VERTEX_ARRAYS);
@@ -50,13 +51,13 @@ public class ModelSceneSWT {
 	/**
 	 * Called every new iteration when updateDisplay() is called on the surface
 	 */
-	public void wipe(JOGLSWTGLRenderer renderer) {
+	public void wipe(final JOGLSWTGLRenderer renderer) {
 		geometries.clear(renderer);
 		collections.clear(renderer);
 		images.clear(renderer);
 		strings.clear(renderer);
-		for ( Iterator<BufferedImage> it = textures.keySet().iterator(); it.hasNext(); ) {
-			BufferedImage im = it.next();
+		for ( final Iterator<BufferedImage> it = textures.keySet().iterator(); it.hasNext(); ) {
+			final BufferedImage im = it.next();
 			// FIXME: if an image is not declared as dynamic, it will be kept in memory (even if it is not used)
 			if ( textures.get(im).isDynamic ) {
 				// FIXME The textures are never disposed. Is it ok ?
@@ -68,10 +69,11 @@ public class ModelSceneSWT {
 
 	}
 
-	public void draw(JOGLSWTGLRenderer renderer, boolean picking, boolean drawAxes, boolean drawBounds) {
+	public void draw(final JOGLSWTGLRenderer renderer, final boolean picking, final boolean drawAxes,
+		final boolean drawBounds) {
 		System.out.println("draw-----------");
 		if ( drawAxes ) {
-			System.out.println(" if draw axes"+renderer.getMaxEnvDim() / 20);
+			System.out.println(" if draw axes" + renderer.getMaxEnvDim() / 20);
 			this.drawAxes(renderer.gl, renderer.getMaxEnvDim() / 20);
 			drawZValue(-renderer.getMaxEnvDim() / 20, (float) renderer.camera.getPosition().getZ());
 		}
@@ -88,18 +90,18 @@ public class ModelSceneSWT {
 		collections.add(new CollectionObjectSWT(collection, color));
 	}
 
-	public void addString(final String string, final double x, final double y, final double z, Integer size,
-		Double sizeInModelUnits, GamaPoint offset, GamaPoint scale, Color color, String font, Integer style,
-		Integer angle, Double alpha) {
+	public void addString(final String string, final double x, final double y, final double z, final Integer size,
+		final Double sizeInModelUnits, final GamaPoint offset, final GamaPoint scale, final Color color,
+		final String font, final Integer style, final Integer angle, final Double alpha) {
 		strings.add(new StringObjectSWT(string, font, style, offset, scale, color, angle, x, y, z, 0, sizeInModelUnits,
 			size, alpha));
 	}
 
 	public void addImage(final BufferedImage img, final IAgent agent, final Double x, final Double y, final Double z,
 		final Double width, final Double height, final Integer angle, final GamaPoint offset, final GamaPoint scale,
-		final boolean isDynamic, Double alpha, MyTexture texture) {
-		images.add(new ImageObjectSWT(img, agent, x, y, Double.isNaN(z) ? 0 : z, alpha, width, height, angle == null ? 0
-			: angle, offset, scale, isDynamic, texture));
+		final boolean isDynamic, final Double alpha, final MyTexture texture) {
+		images.add(new ImageObjectSWT(img, agent, x, y, Double.isNaN(z) ? 0 : z, alpha, width, height, angle == null
+			? 0 : angle, offset, scale, isDynamic, texture));
 		if ( texture != null ) {
 			textures.put(img, texture);
 		}
@@ -107,9 +109,9 @@ public class ModelSceneSWT {
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final double z_layer,
 		final int currentLayerId, final Color color, final boolean fill, final Color border, final boolean isTextured,
-		final Integer angle, final double height, final GamaPoint offSet, GamaPoint scale, final boolean roundCorner,
-		final String type, boolean currentLayerIsStatic, double alpha) {
-		GeometryObjectSWT curJTSGeometry =
+		final Integer angle, final double height, final GamaPoint offSet, final GamaPoint scale,
+		final boolean roundCorner, final String type, final boolean currentLayerIsStatic, final double alpha) {
+		final GeometryObjectSWT curJTSGeometry =
 			new GeometryObjectSWT(geometry, agent, z_layer, currentLayerId, color, alpha, fill, border, isTextured,
 				angle == null ? 0 : angle, height, offSet, scale, roundCorner, type);
 		if ( currentLayerIsStatic ) {
@@ -119,7 +121,7 @@ public class ModelSceneSWT {
 		}
 	}
 
-	public void drawAxes(GL gl, final double size) {
+	public void drawAxes(final GL gl, final double size) {
 		// FIXME Should be put in the static list (get the list from the id of staticObjects)
 		System.out.println("draw axes");
 		gl.glColor4d(0.0d, 0.0d, 0.0d, 1.0d);
@@ -165,7 +167,7 @@ public class ModelSceneSWT {
 
 	}
 
-	public void drawEnvironmentBounds(JOGLSWTGLRenderer renderer) {
+	public void drawEnvironmentBounds(final JOGLSWTGLRenderer renderer) {
 		// Draw Width and height value
 		addString(String.valueOf(envWidth), envWidth / 2, envHeight * 0.01d, 0.0d, 12, 12d, offset, scale, Color.black,
 			"Helvetica", 0, 0, 1d);
@@ -173,10 +175,10 @@ public class ModelSceneSWT {
 			Color.black, "Helvetica", 0, 0, 1d);
 
 		// Draw environment rectangle
-		Geometry g =
+		final Geometry g =
 			GamaGeometryType.buildRectangle(envWidth, envHeight, new GamaPoint(envWidth / 2, envHeight / 2))
 				.getInnerGeometry();
-		Color c = new Color(225, 225, 225);
+		final Color c = new Color(225, 225, 225);
 		addGeometry(g, null, 0, 0, c, false, c, false, 0, 0, offset, scale, true, "", false, 1d);
 	}
 
@@ -199,6 +201,13 @@ public class ModelSceneSWT {
 		strings.dispose();
 		images.dispose();
 		staticObjects.dispose();
+	}
+
+	/**
+	 * 
+	 */
+	public void lockStaticObjects() {
+		staticObjectsAreLocked = true;
 	}
 
 }

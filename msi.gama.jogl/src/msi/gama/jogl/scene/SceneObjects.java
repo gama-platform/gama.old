@@ -8,18 +8,21 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 
 	public static class Static<T extends AbstractObject> extends SceneObjects<T> {
 
-		Static(ObjectDrawer<T> drawer, boolean asList) {
+		Static(final ObjectDrawer<T> drawer, final boolean asList) {
 			super(drawer, asList);
 		}
 
 		@Override
-		public void add(T object) {
-			if ( openGLListIndex != null ) { return; }
+		public void add(final T object) {
 			super.add(object);
+			if ( openGLListIndex != null ) {
+				drawer.renderer.gl.glDeleteLists(openGLListIndex, 1);
+				openGLListIndex = null;
+			}
 		}
 
 		@Override
-		public void clear(JOGLAWTGLRenderer renderer) {}
+		public void clear(final JOGLAWTGLRenderer renderer) {}
 	}
 
 	final ObjectDrawer<T> drawer;
@@ -27,7 +30,7 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 	Integer openGLListIndex;
 	final boolean drawAsList;
 
-	SceneObjects(ObjectDrawer<T> drawer, boolean asList) {
+	SceneObjects(final ObjectDrawer<T> drawer, final boolean asList) {
 		this.drawer = drawer;
 		drawAsList = asList;
 	}
@@ -41,7 +44,7 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 		objects.clear();
 	}
 
-	public void clear(JOGLAWTGLRenderer renderer) {
+	public void clear(final JOGLAWTGLRenderer renderer) {
 		clearObjects();
 		if ( openGLListIndex != null ) {
 			renderer.gl.glDeleteLists(openGLListIndex, 1);
@@ -53,7 +56,7 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 		return openGLListIndex;
 	}
 
-	public void setIndexInOpenGLList(Integer index) {
+	public void setIndexInOpenGLList(final Integer index) {
 		this.openGLListIndex = index;
 	}
 
@@ -61,16 +64,16 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 		return objects;
 	}
 
-	public void add(T object) {
+	public void add(final T object) {
 		objects.add(object);
 	}
 
-	public void draw(boolean picking) {
+	public void draw(final boolean picking) {
 		if ( picking ) {
 			drawer.getGL().glPushMatrix();
 			drawer.getGL().glInitNames();
 			drawer.getGL().glPushName(0);
-			for ( T object : objects ) {
+			for ( final T object : objects ) {
 				object.draw(drawer, picking);
 			}
 			drawer.getGL().glPopName();
@@ -79,14 +82,14 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 			if ( openGLListIndex == null ) {
 				openGLListIndex = drawer.getGL().glGenLists(1);
 				drawer.getGL().glNewList(openGLListIndex, GL_COMPILE);
-				for ( T object : objects ) {
+				for ( final T object : objects ) {
 					object.draw(drawer, picking);
 				}
 				drawer.getGL().glEndList();
 			}
 			drawer.getGL().glCallList(openGLListIndex);
 		} else {
-			for ( T object : objects ) {
+			for ( final T object : objects ) {
 				object.draw(drawer, picking);
 			}
 		}

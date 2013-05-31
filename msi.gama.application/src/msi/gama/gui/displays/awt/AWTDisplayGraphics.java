@@ -27,7 +27,6 @@ import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
-import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gaml.operators.Maths;
 import org.jfree.chart.JFreeChart;
 import com.vividsolutions.jts.awt.*;
@@ -102,20 +101,20 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	public void transform(final Coordinate c, final Point2D p) {
 		p.setLocation(xFromModelUnitsToPixels(c.x), yFromModelUnitsToPixels(c.y));
 	}
-	
 
 	@Override
-	public Rectangle2D drawGrid(IScope scope, BufferedImage img, double[] gridValueMatrix, 
-		final boolean isTextured, final boolean isTriangulated, final boolean isShowText, 
-		ILocation locationInModelUnits,ILocation sizeInModelUnits, Color gridColor, Integer angle, Double z, boolean isDynamic, final int cellSize) {
-		return drawImage(scope, img, locationInModelUnits,
-				sizeInModelUnits, gridColor, angle, z, isDynamic);
+	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
+		final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
+		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final Color gridColor,
+		final Integer angle, final Double z, final boolean isDynamic, final int cellSize) {
+		return drawImage(scope, img, locationInModelUnits, sizeInModelUnits, gridColor, angle, z, isDynamic);
 	}
 
 	@Override
-	public Rectangle2D drawImage(IScope scope, BufferedImage img, ILocation locationInModelUnits,
-		ILocation sizeInModelUnits, Color gridColor, Integer angle, Double z, boolean isDynamic) {
-		AffineTransform saved = renderer.getTransform();
+	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final ILocation locationInModelUnits,
+		final ILocation sizeInModelUnits, final Color gridColor, final Integer angle, final Double z,
+		final boolean isDynamic) {
+		final AffineTransform saved = renderer.getTransform();
 		int curX, curY;
 		if ( locationInModelUnits == null ) {
 			curX = xOffsetInPixels;
@@ -153,7 +152,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	 */
 	@Override
 	public Rectangle2D drawChart(final IScope scope, final JFreeChart chart, final Double z) {
-		BufferedImage im = chart.createBufferedImage(widthOfLayerInPixels, heightOfLayerInPixels);
+		final BufferedImage im = chart.createBufferedImage(widthOfLayerInPixels, heightOfLayerInPixels);
 		return drawImage(scope, im, new GamaPoint(0, 0), null, null, 0, z, true);
 	}
 
@@ -165,8 +164,9 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	 * @param z float (has no effect in 2D)
 	 */
 	@Override
-	public Rectangle2D drawString(String string, Color stringColor, ILocation locationInModelUnits,
-		java.lang.Double heightInModelUnits, String fontName, Integer styleName, Integer angle, Double z) {
+	public Rectangle2D drawString(final String string, final Color stringColor, final ILocation locationInModelUnits,
+		final java.lang.Double heightInModelUnits, final String fontName, final Integer styleName, final Integer angle,
+		final Double z) {
 		renderer.setColor(highlight ? highlightColor : stringColor);
 		int curX, curY;
 		if ( locationInModelUnits == null ) {
@@ -185,12 +185,12 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			// GuiUtils.debug("AWTDisplayGraphics.drawString  " + string + " " + curHeight);
 
 		} // FIXME Optimize by keeping the current values
-		int style = styleName == null ? Font.PLAIN : styleName;
-		Font f = new Font(fontName, style, curHeight);
+		final int style = styleName == null ? Font.PLAIN : styleName;
+		final Font f = new Font(fontName, style, curHeight);
 		renderer.setFont(f);
-		AffineTransform saved = renderer.getTransform();
+		final AffineTransform saved = renderer.getTransform();
 		if ( angle != null ) {
-			Rectangle2D r = renderer.getFontMetrics().getStringBounds(string, renderer);
+			final Rectangle2D r = renderer.getFontMetrics().getStringBounds(string, renderer);
 			renderer.rotate(Maths.toRad * angle, curX + r.getWidth() / 2, curY + r.getHeight() / 2);
 		}
 		renderer.drawString(string, curX, curY);
@@ -211,18 +211,18 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		final Color border, final Integer angle, final boolean rounded) {
 		Geometry geom = null;
 		if ( geometry == null ) { return null; }
-		ITopology topo = scope.getTopology();
+		final ITopology topo = scope.getTopology();
 		// Necessary to check in case the scope has been erased (in cases of reload)
 		if ( topo != null && topo.isTorus() ) {
 			geom = topo.returnToroidalGeom(geometry.getInnerGeometry());
 		} else {
 			geom = geometry.getInnerGeometry();
 		}
-		boolean f = geom instanceof LineString || geom instanceof MultiLineString ? false : fill;
-		Shape s = sw.toShape(geom);
+		final boolean f = geom instanceof LineString || geom instanceof MultiLineString ? false : fill;
+		final Shape s = sw.toShape(geom);
 		try {
-			Rectangle2D r = s.getBounds2D();
-			AffineTransform saved = renderer.getTransform();
+			final Rectangle2D r = s.getBounds2D();
+			final AffineTransform saved = renderer.getTransform();
 			if ( angle != null ) {
 				renderer.rotate(Maths.toRad * angle, r.getX() + r.getWidth() / 2, r.getY() + r.getHeight() / 2);
 			}
@@ -234,7 +234,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 			renderer.draw(s);
 			renderer.setTransform(saved);
 			return r;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			e.printStackTrace();
 			return null;
 		}
@@ -251,7 +251,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		final Line2D line = new Line2D.Double();
 		renderer.setColor(lineColor);
 		// The image contains the dimensions of the grid.
-		double stepx = (double) widthOfLayerInPixels / image.getWidth();
+		final double stepx = (double) widthOfLayerInPixels / image.getWidth();
 		for ( double step = 0.0, end = widthOfLayerInPixels; step < end + 1; step += stepx ) {
 			line.setLine(xOffsetInPixels + step, yOffsetInPixels, xOffsetInPixels + step, yOffsetInPixels +
 				heightOfLayerInPixels);
@@ -260,7 +260,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		line.setLine(xOffsetInPixels + widthOfLayerInPixels - 1, yOffsetInPixels, xOffsetInPixels +
 			widthOfLayerInPixels - 1, yOffsetInPixels + heightOfLayerInPixels - 1);
 		renderer.draw(line);
-		double stepy = (double) heightOfLayerInPixels / image.getHeight();
+		final double stepy = (double) heightOfLayerInPixels / image.getHeight();
 		for ( double step = 0.0, end = heightOfLayerInPixels; step < end + 1; step += stepy ) {
 			line.setLine(xOffsetInPixels, yOffsetInPixels + step, xOffsetInPixels + widthOfLayerInPixels,
 				yOffsetInPixels + step);
@@ -274,9 +274,9 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 
 	private void highlightRectangleInPixels(final Rectangle2D r) {
 		if ( r == null ) { return; }
-		Stroke oldStroke = renderer.getStroke();
+		final Stroke oldStroke = renderer.getStroke();
 		renderer.setStroke(new BasicStroke(5));
-		Color old = renderer.getColor();
+		final Color old = renderer.getColor();
 		renderer.setColor(highlightColor);
 		renderer.draw(r);
 		renderer.setStroke(oldStroke);
@@ -294,5 +294,8 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	public void endHighlight() {
 		highlight = false;
 	}
+
+	@Override
+	public void endDrawingLayers() {}
 
 }
