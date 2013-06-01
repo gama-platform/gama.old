@@ -48,8 +48,8 @@ public class MonitorOutput extends AbstractDisplayOutput {
 
 	public MonitorOutput(final IDescription desc) {
 		super(desc);
-		value = getFacet(IKeyword.VALUE);
-		expressionText = value == null ? "" : value.toGaml();
+		setValue(getFacet(IKeyword.VALUE));
+		expressionText = getValue() == null ? "" : getValue().toGaml();
 	}
 
 	public MonitorOutput(final String name, final String expr, final boolean openRightNow) {
@@ -68,7 +68,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	}
 
 	private String expressionText = "";
-	protected IExpression value;
+	private IExpression value;
 	protected Object lastValue = "";
 	private boolean isUserCreated = false;
 
@@ -98,9 +98,9 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	@Override
 	public void step(final IScope scope) {
 		if ( scope.interrupted() ) { return; }
-		if ( value != null ) {
+		if ( getValue() != null ) {
 			try {
-				lastValue = value.value(scope);
+				lastValue = getValue().value(scope);
 			} catch (final GamaRuntimeException e) {
 				lastValue = ItemList.ERROR_CODE + e.getMessage();
 			}
@@ -120,13 +120,13 @@ public class MonitorOutput extends AbstractDisplayOutput {
 
 	public boolean setNewExpressionText(final String string, final IScope scope) {
 		expressionText = string;
-		value = GAML.compileExpression(string, scope.getSimulationScope());
+		setValue(GAML.compileExpression(string, scope.getSimulationScope()));
 		return true;
 	}
 
 	public void setNewExpression(final IExpression expr) throws GamaRuntimeException {
 		expressionText = expr == null ? "" : expr.toGaml();
-		value = expr;
+		setValue(expr);
 		getScope().step(this);
 	}
 
@@ -153,6 +153,10 @@ public class MonitorOutput extends AbstractDisplayOutput {
 			s.append("\n");
 		}
 		return s.toString();
+	}
+
+	protected void setValue(IExpression value) {
+		this.value = value;
 	}
 
 }

@@ -43,6 +43,7 @@ public interface IKeyword {
 	public static final String ASK = "ask";
 	public static final String ASPECT = "aspect";
 	public static final String AT = "at";
+	public static final String ATTRIBUTES = "attributes";
 	public static final String AUTHOR = "author";
 	public static final String AUTOSAVE = "autosave";
 	public static final String AXES = "axes";
@@ -316,6 +317,7 @@ public interface IKeyword {
 	public static final String TIMES = "times";
 	public static final String TIMEXSERIES = "timexseries"; // hqnghi facet timeXseries for
 															// continuous Chart
+	public static final String TABLE = "table";
 	public static final String TITLE = "title";
 	public static final String TO = "to";
 	public static final String TOPOLOGY = "topology";

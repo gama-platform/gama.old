@@ -18,19 +18,21 @@
  */
 package msi.gama.gui.views;
 
-import java.util.Collection;
+import java.util.*;
+import java.util.List;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.*;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.outputs.InspectDisplayOutput;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gaml.compilation.GamaHelper;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.*;
 import msi.gaml.types.IType;
+import msi.gaml.variables.IVariable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
@@ -135,11 +137,25 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements G
 			editors = new AgentAttributesEditorsList();
 		}
 		if ( !editors.getCategories().containsKey(agent) ) {
-			editors.add(new GamaList<IParameter>(agent.getSpecies().getVars()), agent);
+			editors.add(getParametersToInspect(agent), agent);
 			createItem(agent, true);
 			return true;
 		}
 		return false;
+	}
+
+	private List<IParameter> getParametersToInspect(final IAgent agent) {
+		List<String> names = ((InspectDisplayOutput) getOutput()).getAttributes();
+		if ( names == null ) {
+			names = agent.getSpecies().getVarNames();
+		}
+		final List<IParameter> params = new ArrayList();
+		for ( final IVariable v : agent.getSpecies().getVars() ) {
+			if ( names.contains(v.getName()) ) {
+				params.add(v);
+			}
+		}
+		return params;
 	}
 
 	/**

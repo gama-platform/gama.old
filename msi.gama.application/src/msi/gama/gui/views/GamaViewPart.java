@@ -39,11 +39,11 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
 		final String s_id = site.getSecondaryId();
-		final String id = site.getId() + (s_id == null ? "" : s_id);
+		final String id = site.getId() + (s_id == null ? "" :  s_id);
 		if ( GAMA.getExperiment() != null ) {
-			IOutputManager manager = GAMA.getExperiment().getOutputManager();
+			final IOutputManager manager = GAMA.getExperiment().getOutputManager();
 			if ( manager != null ) {
-				IDisplayOutput out = (IDisplayOutput) manager.getOutput(id);
+				final IDisplayOutput out = (IDisplayOutput) manager.getOutput(id);
 				setOutput(out);
 			}
 		}
@@ -65,8 +65,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 	public abstract void ownCreatePartControl(Composite parent);
 
 	public void activateContext() {
-		IContextService contextService =
-			(IContextService) getSite().getService(IContextService.class);
+		final IContextService contextService = (IContextService) getSite().getService(IContextService.class);
 		contextService.activateContext("msi.gama.application.simulation.context");
 	}
 

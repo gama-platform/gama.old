@@ -18,11 +18,15 @@
  */
 package msi.gama.runtime;
 
+import java.util.*;
 import msi.gama.common.util.*;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.species.ISpecies;
+import com.google.common.collect.Lists;
 
 /**
  * Written by drogoul Modified on 23 nov. 2009
@@ -48,6 +52,21 @@ public class GAMA {
 	public static SimulationAgent getSimulation() {
 		if ( controller.experiment == null ) { return null; }
 		return controller.experiment.getCurrentSimulation();
+	}
+
+	public static List<IPopulation> getModelPopulations() {
+		final SimulationAgent sim = getSimulation();
+		if ( sim == null ) { return Collections.EMPTY_LIST; }
+		final List<ISpecies> species = new ArrayList(getModel().getAllSpecies().values());
+		final List<IPopulation> populations = Lists.newArrayList();
+		for ( final ISpecies s : species ) {
+			if ( !s.getDescription().isBuiltIn() ) {
+				populations.add(sim.getPopulationFor(s));
+			}
+		}
+		// Collections.sort(populations);
+		return populations;
+
 	}
 
 	public static IExperimentSpecies getExperiment() {

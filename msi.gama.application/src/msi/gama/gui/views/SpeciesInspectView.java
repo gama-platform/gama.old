@@ -26,7 +26,6 @@ import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.kernel.experiment.ParameterAdapter;
-import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.GAMA;
@@ -35,7 +34,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
-import com.google.common.collect.Lists;
 
 /**
  * The SpeciesView.
@@ -240,23 +238,7 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 
 	@Override
 	public List<IPopulation> getItems() {
-		final SimulationAgent sim = GAMA.getSimulation();
-		// List<IPopulation> finalSpeciesList;
-		final List<IPopulation> finalSpeciesList = Lists.newArrayList(sim.getMicroPopulations());
-		Collections.sort(finalSpeciesList);
-		final IPopulation worldSpecies = sim.getPopulation();
-		// final List<IPopulation> builtInSpeciesList = new ArrayList();
-		// for ( IPopulation m : allSpeciesList ) {
-		// if ( Types.isBuiltIn(m.getName()) ) {
-		// builtInSpeciesList.add(m);
-		// }
-		// }
-		// allSpeciesList.removeAll(builtInSpeciesList);
-		// finalSpeciesList = new ArrayList(builtInSpeciesList);
-		// finalSpeciesList.addAll(allSpeciesList);
-		finalSpeciesList.remove(worldSpecies);
-		finalSpeciesList.add(0, worldSpecies);
-		return finalSpeciesList;
+		return GAMA.getModelPopulations();
 	}
 
 	@Override
@@ -265,9 +247,6 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 		final int size = obj.size();
 		return "Species" + ItemList.SEPARATION_CODE + ItemList.INFO_CODE + obj.getName() + "" + " - " + size +
 			(size < 2 ? " agent" : " agents");
-
-		// return "Species" + ItemList.SEPARATION_CODE + (/*isBuiltIn ? ItemList.ERROR_CODE : */ItemList.INFO_CODE) +
-		// obj.getName() + (/*isBuiltIn ? " (built-in)" :*/ "") + " - " + size + (size < 2 ? " agent" : " agents");
 	}
 
 	@Override

@@ -30,9 +30,11 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
+import msi.gama.util.*;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.operators.Cast;
 import msi.gaml.types.IType;
 
 /**
@@ -47,12 +49,15 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.VALUE, type = IType.NONE, optional = true),
-	@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.AGENT, IKeyword.SPECIES, IKeyword.DYNAMIC }, optional = false) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.ATTRIBUTES, type = IType.LIST, optional = true),
+	@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.AGENT, IKeyword.SPECIES, IKeyword.DYNAMIC,
+		IKeyword.TABLE }, optional = false) }, omissible = IKeyword.NAME)
 public class InspectDisplayOutput extends MonitorOutput {
 
 	public static final short INSPECT_AGENT = 0;
 	public static final short INSPECT_DYNAMIC = 2;
 	public static final short INSPECT_SPECIES = 1;
+	public static final short INSPECT_TABLE = 3;
 
 	static int count = 0;
 
@@ -61,24 +66,32 @@ public class InspectDisplayOutput extends MonitorOutput {
 	// The agents inspected should also be known at runtime (instead of being kept by the view).
 	// This in order to compute the new values of their attributes.
 
-	static final List<String> types = Arrays.asList(IKeyword.AGENT, IKeyword.SPECIES, IKeyword.DYNAMIC);
+	static final List<String> types = Arrays.asList(IKeyword.AGENT, IKeyword.SPECIES, IKeyword.DYNAMIC, IKeyword.TABLE);
 
 	int target;
+	IExpression attributes;
+	private List<String> listOfAttributes;
 
 	public InspectDisplayOutput(final IDescription desc) {
 		super(desc);
 		final String type = getLiteral(IKeyword.TYPE);
-		if ( value != null ) {
-			target = INSPECT_DYNAMIC;
-		} else {
-			target = types.indexOf(type);
+		target = types.indexOf(type);
+		attributes = getFacet(IKeyword.ATTRIBUTES);
+	}
+
+	@Override
+	public void init(final IScope scope) {
+		super.init(scope);
+		if ( attributes != null ) {
+			listOfAttributes = Cast.asList(scope, attributes.value(scope));
 		}
+
 	}
 
 	public InspectDisplayOutput(final String name, final short type) {
 		// Opens directly an inspector
 		super(DescriptionFactory.create(IKeyword.INSPECT, IKeyword.NAME, name +
-			(type != INSPECT_SPECIES ? count++ : ""), IKeyword.TYPE, types.get(type)));
+			(type != INSPECT_SPECIES && type != INSPECT_TABLE ? count++ : ""), IKeyword.TYPE, types.get(type)));
 		target = type;
 	}
 
@@ -99,7 +112,12 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	@Override
 	public boolean isUnique() {
-		return target != INSPECT_DYNAMIC;
+		return target != INSPECT_DYNAMIC && target != INSPECT_TABLE;
+	}
+
+	@Override
+	public String getId() {
+		return isUnique() ? getViewId() : getViewId() + getName();
 	}
 
 	@Override
@@ -111,6 +129,8 @@ public class InspectDisplayOutput extends MonitorOutput {
 				return GuiUtils.AGENT_VIEW_ID;
 			case INSPECT_SPECIES:
 				return GuiUtils.SPECIES_VIEW_ID;
+			case INSPECT_TABLE:
+				return GuiUtils.TABLE_VIEW_ID;
 			default:
 				return GuiUtils.AGENT_VIEW_ID;
 		}
@@ -124,13 +144,17 @@ public class InspectDisplayOutput extends MonitorOutput {
 	@Override
 	public List<IAgent> getLastValue() {
 		if ( lastValue instanceof IAgent ) { return GamaList.with(lastValue); }
-		if ( lastValue instanceof List ) {
-			for ( final Object o : (List) lastValue ) {
+		if ( lastValue instanceof IContainer ) {
+			for ( final Object o : (IContainer) lastValue ) {
 				if ( !(o instanceof IAgent) ) { return null; }
 			}
-			return (List) lastValue;
+			return ((IContainer) lastValue).listValue(getScope());
 		}
 		return null;
+	}
+
+	public List<String> getAttributes() {
+		return listOfAttributes;
 	}
 
 }

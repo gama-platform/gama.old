@@ -30,10 +30,10 @@
       <view
             allowMultiple="true"
             category="msi.gama.gui.category.gama"
-            class="msi.gama.gui.views.AgentInspectView"
-            icon="icons/display_agents.png"
-            id="msi.gama.application.view.AgentInspectView"
-            name="Agent Inspector">
+            class="msi.gama.gui.views.TableAgentInspectView"
+            icon="icons/display_grid.png"
+            id="msi.gama.application.view.TableAgentInspectView"
+            name="Agents Inspector">
       </view>
       <view
             allowMultiple="false"

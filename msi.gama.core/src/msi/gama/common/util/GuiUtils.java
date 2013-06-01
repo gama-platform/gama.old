@@ -44,6 +44,7 @@ public class GuiUtils {
 	public static final String SPECIES_VIEW_ID = "msi.gama.application.view.SpeciesInspectView";
 	public static final String AGENT_VIEW_ID = "msi.gama.application.view.AgentInspectView";
 	public static final String DYNAMIC_VIEW_ID = "msi.gama.application.view.DynamicAgentInspectView";
+	public static final String TABLE_VIEW_ID = "msi.gama.application.view.TableAgentInspectView";
 	public static final String LAYER_VIEW_ID = "msi.gama.application.view.LayeredDisplayView";
 	public static final String SWT_LAYER_VIEW_ID = "msi.gama.application.view.SWTLayeredDisplayView";
 	public static final String ERROR_VIEW_ID = "msi.gama.application.view.ErrorView";
@@ -65,7 +66,7 @@ public class GuiUtils {
 	 * @see ModelFactory
 	 */
 
-	public static void cycleDisplayViews(Set<String> names) {
+	public static void cycleDisplayViews(final Set<String> names) {
 		if ( gui != null ) {
 			gui.cycleDisplayViews(names);
 		}
@@ -326,7 +327,7 @@ public class GuiUtils {
 	 * @return
 	 */
 	public static IDisplaySurface getDisplaySurfaceFor(final String keyword, final IDisplayOutput layerDisplayOutput,
-		final double w, final double h, Object...args) {
+		final double w, final double h, final Object ... args) {
 		return gui != null ? gui.getDisplaySurfaceFor(keyword, layerDisplayOutput, w, h, args) : null;
 	}
 
@@ -337,7 +338,7 @@ public class GuiUtils {
 	}
 
 	public static Map<String, Object> openUserInputDialog(final String title, final Map<String, Object> initialValues,
-		Map<String, IType> types) {
+		final Map<String, IType> types) {
 		if ( gui == null ) { return initialValues; }
 		return gui.openUserInputDialog(title, initialValues, types);
 	}

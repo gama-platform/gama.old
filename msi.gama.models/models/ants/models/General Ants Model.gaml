@@ -225,7 +225,8 @@ experiment Complete type: gui {
 			text 'Carrying ants: ' + (((100 * ant count (each.has_food or each.state = "followingRoad")) / length(ant)) with_precision 2) + '%' position: { 0.5, 0.03 } color: rgb('black')
 			size: { 1, 0.02 };
 		}
-
+		inspect "One" type: table value: ant attributes: ['name', 'location', 'heading','state'];
+		inspect "Two" type: table value: ant;
 	}
 
 }

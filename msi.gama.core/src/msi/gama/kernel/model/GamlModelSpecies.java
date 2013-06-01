@@ -122,7 +122,8 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 		return getAllSpecies().get(speciesName);
 	}
 
-	protected Map<String, ISpecies> getAllSpecies() {
+	@Override
+	public Map<String, ISpecies> getAllSpecies() {
 		if ( allSpecies == null ) {
 			allSpecies = new LinkedHashMap();
 			final Deque<ISpecies> speciesStack = new ArrayDeque<ISpecies>();
