@@ -61,7 +61,10 @@ public class GAMA {
 		final List<IPopulation> populations = Lists.newArrayList();
 		for ( final ISpecies s : species ) {
 			if ( !s.getDescription().isBuiltIn() ) {
-				populations.add(sim.getPopulationFor(s));
+				final IPopulation p = sim.getPopulationFor(s);
+				if ( p != null ) { // Multiple scale population
+					populations.add(p);
+				}
 			}
 		}
 		// Collections.sort(populations);

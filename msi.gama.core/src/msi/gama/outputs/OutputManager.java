@@ -186,7 +186,7 @@ public class OutputManager extends Symbol implements IOutputManager {
 		final int cycle = scope.getClock().getCycle();
 		scheduledOutputs.removeAll(outputsToUnschedule);
 		outputsToUnschedule.clear();
-		for ( final IOutput o : scheduledOutputs ) {
+		for ( final IOutput o : new HashSet<IOutput>(scheduledOutputs) ) {
 			if ( !o.isPaused() && !o.isClosed() ) {
 				final long ii = o.getNextTime();
 				// GUI.debug("At cycle " + cycle + ", next update time for " + o.getName() + ": " +
@@ -262,8 +262,8 @@ public class OutputManager extends Symbol implements IOutputManager {
 
 	@Override
 	public IDisplaySurface getDisplaySurfaceFor(final String keyword, final IDisplayOutput layerDisplayOutput,
-		final double w, final double h, Object...args) {
-		if ( displays != null ) { return GuiUtils.getDisplaySurfaceFor(keyword, layerDisplayOutput, w, h,args); }
+		final double w, final double h, final Object ... args) {
+		if ( displays != null ) { return GuiUtils.getDisplaySurfaceFor(keyword, layerDisplayOutput, w, h, args); }
 		return null;
 		// return new ImageDisplaySurface(w, h);
 	}

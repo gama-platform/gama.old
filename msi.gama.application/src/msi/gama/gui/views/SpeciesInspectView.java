@@ -24,11 +24,11 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.kernel.experiment.ParameterAdapter;
 import msi.gama.metamodel.population.IPopulation;
-import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.*;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.types.IType;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
@@ -120,9 +120,9 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 		final Composite p = label.getParent();
 		label.dispose();
 		final Button button = new Button(p, SWT.FLAT | SWT.PUSH);
-		button.setImage(SwtGui.speciesImage);
+		button.setImage(SwtGui.gridImage);
 		button.setText("Inspect");
-		button.setToolTipText("Click to select an agent from the drop-down menu");
+		button.setToolTipText("Open an inspector for the population of this species");
 		button.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -132,12 +132,17 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 				if ( old != null ) {
 					old.dispose();
 				}
-				agentsEditor.updateValue();
-				getViewer().updateItemNames();
-				final Menu dropMenu = AgentsMenu.createSpeciesSubMenu(button, species, null);
-				// TODO adapt to multi-scale model
-				button.setMenu(dropMenu);
-				dropMenu.setVisible(true);
+				try {
+					new InspectDisplayOutput(species.getSpecies()).launch();
+				} catch (final GamaRuntimeException ex) {
+					GAMA.reportError(ex);
+				}
+				// agentsEditor.updateValue();
+				// getViewer().updateItemNames();
+				// final Menu dropMenu = AgentsMenu.createSpeciesSubMenu(button, species, null);
+				// // TODO adapt to multi-scale model
+				// button.setMenu(dropMenu);
+				// dropMenu.setVisible(true);
 			}
 
 		});

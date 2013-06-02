@@ -48,22 +48,22 @@ public class VariableFactory extends SymbolFactory {
 	@Override
 	protected IDescription buildDescription(final ISyntacticElement source, final IChildrenProvider cp,
 		final IDescription superDesc, final SymbolProto md) {
-		Facets facets = source.getFacets();
-		String keyword = source.getKeyword();
+		final Facets facets = source.getFacets();
+		final String keyword = source.getKeyword();
 		if ( keyword.equals(SIGNAL) ) {
 			buildSignalDescription(source, keyword, superDesc);
 		} else if ( keyword.equals(PARAMETER) ) {
 			// We copy the relevant facets from the targeted var of the parameter
-			String varName = facets.getLabel(VAR);
-			VariableDescription targetedVar = superDesc.getModelDescription().getVariable(varName);
+			final String varName = facets.getLabel(VAR);
+			final VariableDescription targetedVar = superDesc.getModelDescription().getVariable(varName);
 			if ( targetedVar != null ) {
 				facets.complementWith(targetedVar.getFacets());
 			}
 			// We should remove the facets that are not relevant to parameters (see if another way
 			// is possible)
-			Set<String> possibleFacets = md.getPossibleFacets().keySet();
+			final Set<String> possibleFacets = md.getPossibleFacets().keySet();
 			for ( int i = 0; i < facets.entrySet().length; i++ ) {
-				Facet f = facets.entrySet()[i];
+				final Facet f = facets.entrySet()[i];
 				if ( f != null && !possibleFacets.contains(f.getKey()) ) {
 					facets.entrySet()[i] = null;
 				}
@@ -74,9 +74,9 @@ public class VariableFactory extends SymbolFactory {
 
 	private void buildSignalDescription(final ISyntacticElement source, final String keyword,
 		final IDescription superDesc) {
-		Facets facets = source.getFacets();
-		String name = facets.getLabel(NAME);
-		String env = facets.getLabel(ENVIRONMENT);
+		final Facets facets = source.getFacets();
+		final String name = facets.getLabel(NAME);
+		final String env = facets.getLabel(ENVIRONMENT);
 		if ( env == null ) {
 			superDesc.error("No environment defined for signal " + name, IGamlIssue.NO_ENVIRONMENT);
 			return;
@@ -86,10 +86,10 @@ public class VariableFactory extends SymbolFactory {
 			decay = "0.1";
 		}
 		final String value = name + " < 0.1 ? 0.0 :" + name + " * ( 1 - " + decay + ")";
-		VariableDescription vd =
+		final VariableDescription vd =
 			(VariableDescription) create(new SyntacticElement(IKeyword.FLOAT, new Facets(NAME, name, TYPE,
 				IKeyword.FLOAT, UPDATE, value, MIN, "0.0")), superDesc, null);
-		SpeciesDescription environment = superDesc.getSpeciesDescription(env);
+		final SpeciesDescription environment = superDesc.getSpeciesDescription(env);
 		if ( environment == null || !environment.isGrid() ) {
 			superDesc.error("Environment " + env + " of signal " + name + " cannot be determined.",
 				IGamlIssue.UNKNOWN_ENVIRONMENT, ENVIRONMENT, env);
@@ -100,11 +100,11 @@ public class VariableFactory extends SymbolFactory {
 	}
 
 	@Override
-	protected void compileFacet(final String tag, final IDescription sd, SymbolProto md) {
+	protected void compileFacet(final String tag, final IDescription sd, final SymbolProto md) {
 		super.compileFacet(tag, sd, md);
 		if ( valueFacetsList.contains(tag) ) {
-			IExpression expr = sd.getFacets().getExpr(tag);
-			IType t = sd.getContentType();
+			final IExpression expr = sd.getFacets().getExpr(tag);
+			final IType t = sd.getContentType();
 			if ( (t == null || t == Types.NO_TYPE) && expr != null ) {
 				((VariableDescription) sd).setContentType(expr.getContentType());
 			}
@@ -112,9 +112,9 @@ public class VariableFactory extends SymbolFactory {
 	}
 
 	@Override
-	protected void privateValidate(final IDescription desc) {
+	protected VariableDescription privateValidate(final IDescription desc) {
 		super.privateValidate(desc);
-		VariableDescription vd = (VariableDescription) desc;
+		final VariableDescription vd = (VariableDescription) desc;
 		assertNameIsNotType(vd);
 		assertNameIsNotReserved(vd);
 		assertCanBeFunction(vd);
@@ -126,6 +126,7 @@ public class VariableFactory extends SymbolFactory {
 		} else if ( vd.isParameter() ) {
 			assertCanBeParameter(vd);
 		}
+		return vd;
 	}
 
 }

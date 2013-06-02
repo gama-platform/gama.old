@@ -80,6 +80,7 @@ public class SwtGui implements IGui {
 	public static final Color COLOR_WARNING = new Color(Display.getDefault(), 0xFD, 0xA6, 0x00);
 	private static Font expandFont;
 	private static Font bigFont;
+	private static Font smallFont;
 	private static Font labelFont;
 	public static final String PERSPECTIVE_MODELING_ID = "msi.gama.application.perspectives.ModelingPerspective";
 	public static final String PERSPECTIVE_SIMULATION_ID = "msi.gama.application.perspectives.SimulationPerspective";
@@ -95,6 +96,7 @@ public class SwtGui implements IGui {
 	private static int dialogReturnCode;
 	public static Image speciesImage = getImageDescriptor("/icons/display_species.png").createImage();
 	public static Image agentImage = getImageDescriptor("/icons/display_agents.png").createImage();
+	public static Image gridImage = getImageDescriptor("/icons/display_grid.png").createImage();
 	public static Image editImage = getImageDescriptor("/icons/button_edit.png").createImage();
 	public static Image experimentMenuImage = AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID,
 		"/icons/menu_run.png").createImage();
@@ -653,6 +655,10 @@ public class SwtGui implements IGui {
 		fd.setHeight(14);
 		fd.setName("Helvetica");
 		bigFont = new Font(Display.getDefault(), fd);
+		fd.setStyle(SWT.NORMAL);
+		fd.setHeight(10);
+		fd.setName("Geneva");
+		smallFont = new Font(Display.getDefault(), fd);
 	}
 
 	@Override
@@ -837,7 +843,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public IDisplaySurface getDisplaySurfaceFor(final String keyword, final IDisplayOutput layerDisplayOutput,
-		final double w, final double h, Object...args) {
+		final double w, final double h, final Object ... args) {
 
 		IDisplaySurface surface = null;
 		final IDisplayCreator creator = displays.get(keyword);
@@ -972,6 +978,13 @@ public class SwtGui implements IGui {
 		return bigFont;
 	}
 
+	public static Font getSmallFont() {
+		if ( smallFont == null ) {
+			initFonts();
+		}
+		return smallFont;
+	}
+
 	public static Font getExpandfont() {
 		if ( expandFont == null ) {
 			initFonts();
@@ -1018,4 +1031,5 @@ public class SwtGui implements IGui {
 		});
 
 	}
+
 }

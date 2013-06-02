@@ -57,7 +57,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 	}
 
 	@Override
-	protected void privateValidate(final IDescription desc) {
+	protected StatementDescription privateValidate(final IDescription desc) {
 		// GuiUtils.debug("Validating statement " + desc);
 		super.privateValidate(desc);
 		final String kw = desc.getKeyword();
@@ -100,6 +100,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 				}
 			}
 		}
+		return cd;
 	}
 
 	/**

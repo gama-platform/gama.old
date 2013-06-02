@@ -23,6 +23,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
+import msi.gama.util.GAML;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
@@ -56,14 +57,14 @@ public class SymbolFactory {
 	 * considered, so if "children" is null or empty, the description is created without children.
 	 */
 	final IDescription create(final ISyntacticElement source, final IDescription superDesc, final IChildrenProvider cp) {
-		SymbolProto md = getProto(superDesc, source);
+		final SymbolProto md = getProto(superDesc, source);
 		if ( md == null ) { return null; }
 		return md.getFactory().createDescriptionInternal(source, superDesc, cp, md);
 	}
 
 	private SymbolProto getProto(final IDescription superDesc, final ISyntacticElement source) {
-		String keyword = source.getKeyword();
-		SymbolProto sp = DescriptionFactory.getProto(keyword);
+		final String keyword = source.getKeyword();
+		final SymbolProto sp = DescriptionFactory.getProto(keyword);
 		if ( sp == null ) {
 			superDesc.error("Unknown statement " + keyword, IGamlIssue.UNKNOWN_KEYWORD, source.getElement());
 			return null;
@@ -74,7 +75,7 @@ public class SymbolFactory {
 	private final IDescription createDescriptionInternal(final ISyntacticElement source, final IDescription superDesc,
 		final IChildrenProvider cp, final SymbolProto md) {
 		md.verifyFacets(source, source.getFacets(), superDesc);
-		IDescription desc = buildDescription(source, cp, superDesc, md);
+		final IDescription desc = buildDescription(source, cp, superDesc, md);
 		if ( desc == null ) { return null; }
 		DescriptionFactory.setGamlDescription(source.getElement(), desc);
 		return desc;
@@ -86,20 +87,20 @@ public class SymbolFactory {
 	 */
 	final IDescription create(final ISyntacticElement source, final IDescription superDesc) {
 		if ( source == null ) { return null; }
-		SymbolProto md = getProto(superDesc, source);
+		final SymbolProto md = getProto(superDesc, source);
 		if ( md == null ) { return null; }
 		return md.getFactory().createDescriptionRecursivelyInternal(source, superDesc, md);
 	}
 
 	private final IDescription createDescriptionRecursivelyInternal(final ISyntacticElement source,
 		final IDescription superDesc, final SymbolProto md) {
-		Facets facets = source.getFacets();
+		final Facets facets = source.getFacets();
 		md.verifyFacets(source, facets, superDesc);
-		List<IDescription> children = new ArrayList();
-		for ( ISyntacticElement e : source.getChildren() ) {
+		final List<IDescription> children = new ArrayList();
+		for ( final ISyntacticElement e : source.getChildren() ) {
 			children.add(create(e, superDesc));
 		}
-		IDescription desc = buildDescription(source, new ChildrenProvider(children), superDesc, md);
+		final IDescription desc = buildDescription(source, new ChildrenProvider(children), superDesc, md);
 		DescriptionFactory.setGamlDescription(source.getElement(), desc);
 		return desc;
 	}
@@ -110,41 +111,44 @@ public class SymbolFactory {
 	}
 
 	final ISymbol compile(final IDescription desc) {
-		SymbolProto sp = DescriptionFactory.getProto(desc.getKeyword());
+		final SymbolProto sp = DescriptionFactory.getProto(desc.getKeyword());
 		return sp.getFactory().privateCompile(desc);
 	}
 
-	final void validate(final IDescription desc) {
-		SymbolProto sp = DescriptionFactory.getProto(desc.getKeyword());
+	final IDescription validate(final IDescription desc) {
+		final SymbolProto sp = DescriptionFactory.getProto(desc.getKeyword());
 		if ( sp == null ) {
 			desc.error("Impossible to validate " + desc.getKeyword(), IGamlIssue.UNKNOWN_KEYWORD,
 				desc.getUnderlyingElement(null), desc.getKeyword());
-			return;
+			return null;
 		}
-		sp.getFactory().privateValidate(desc);
+		return sp.getFactory().privateValidate(desc);
 	}
 
-	protected void privateValidate(final IDescription desc) {
-		SymbolProto smd = desc.getMeta();
-		if ( smd == null ) { return; }
+	protected IDescription privateValidate(final IDescription desc) {
+		final SymbolProto smd = desc.getMeta();
+		if ( smd == null ) { return null; }
 		ModelDescription md = desc.getModelDescription();
-		if ( md == null ) { return; }
-		TypesManager tm = md.getTypesManager();
+		if ( md == null ) {
+			md = (ModelDescription) GAML.getModelContext();
+			if ( md == null ) { return null; }
+		}
+		final TypesManager tm = md.getTypesManager();
 		DescriptionValidator.assertDescriptionIsInsideTheRightSuperDescription(smd, desc);
-		Facets rawFacets = desc.getFacets();
+		final Facets rawFacets = desc.getFacets();
 		// Validation of the facets (through their compilation)
 
-		for ( Facet f : rawFacets.entrySet() ) {
+		for ( final Facet f : rawFacets.entrySet() ) {
 			if ( f == null ) {
 				continue;
 			}
-			String facetName = f.getKey();
-			IExpressionDescription ed = f.getValue();
+			final String facetName = f.getKey();
+			final IExpressionDescription ed = f.getValue();
 			if ( facetName.equals(WITH) || ed == null ) {
 				continue;
 			}
 			compileFacet(facetName, desc, smd);
-			IExpression expr = ed.getExpression();
+			final IExpression expr = ed.getExpression();
 			if ( expr == null ) {
 				continue;
 			}
@@ -157,16 +161,17 @@ public class SymbolFactory {
 			}
 			privateValidateChildren(desc);
 		}
+		return desc;
 	}
 
 	protected void privateValidateChildren(final IDescription desc) {
-		for ( IDescription sd : desc.getChildren() ) {
+		for ( final IDescription sd : desc.getChildren() ) {
 			validate(sd);
 		}
 	}
 
-	protected void compileFacet(final String tag, final IDescription sd, SymbolProto sp) {
-		IExpressionDescription ed = sd.getFacets().get(tag);
+	protected void compileFacet(final String tag, final IDescription sd, final SymbolProto sp) {
+		final IExpressionDescription ed = sd.getFacets().get(tag);
 		if ( ed == null ) { return; }
 		if ( !sp.isLabel(tag) ) {
 			ed.compile(sd);
@@ -174,15 +179,15 @@ public class SymbolFactory {
 	}
 
 	final ISymbol privateCompile(final IDescription desc) {
-		SymbolProto md = desc.getMeta();
+		final SymbolProto md = desc.getMeta();
 		if ( md == null ) { return null; }
-		Facets rawFacets = desc.getFacets();
-		for ( Facet f : rawFacets.entrySet() ) {
+		final Facets rawFacets = desc.getFacets();
+		for ( final Facet f : rawFacets.entrySet() ) {
 			if ( f != null && !f.getKey().equals(WITH) ) {
 				compileFacet(f.getKey(), desc, md);
 			}
 		}
-		ISymbol cs = md.getConstructor().create(desc);
+		final ISymbol cs = md.getConstructor().create(desc);
 		if ( cs == null ) { return null; }
 		if ( md.hasArgs() ) {
 			((IStatement.WithArgs) cs).setFormalArgs(privateCompileArgs((StatementDescription) desc));
@@ -202,9 +207,9 @@ public class SymbolFactory {
 	}
 
 	protected List<ISymbol> privateCompileChildren(final IDescription desc) {
-		List<ISymbol> lce = new ArrayList();
-		for ( IDescription sd : desc.getChildren() ) {
-			ISymbol s = compile(sd);
+		final List<ISymbol> lce = new ArrayList();
+		for ( final IDescription sd : desc.getChildren() ) {
+			final ISymbol s = compile(sd);
 			if ( s != null ) {
 				lce.add(s);
 			}

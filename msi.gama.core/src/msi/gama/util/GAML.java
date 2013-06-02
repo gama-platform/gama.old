@@ -6,10 +6,11 @@ package msi.gama.util;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
 import com.google.common.base.*;
@@ -235,17 +236,17 @@ public class GAML {
 	 */
 
 	public static IExpressionFactory getExpressionFactory() {
-		if ( GAML.expressionFactory == null ) {
-			GAML.expressionFactory = new GamlExpressionFactory();
+		if ( expressionFactory == null ) {
+			expressionFactory = new GamlExpressionFactory();
 		}
-		return GAML.expressionFactory;
+		return expressionFactory;
 	}
 
 	public static IExpressionFactory expressionFactory = null;
 
 	public static Object evaluateExpression(final String expression, final IAgent a) throws GamaRuntimeException {
 		if ( a == null ) { return null; }
-		final IExpression expr = GAML.compileExpression(expression, a);
+		final IExpression expr = compileExpression(expression, a);
 		if ( expr == null ) { return null; }
 		return GAMA.run(new GAMA.InScope() {
 
@@ -264,8 +265,14 @@ public class GAML {
 		return getExpressionFactory().createExpr(expression, agent.getSpecies().getDescription());
 	}
 
-	public static IDescription getModelContext() {
+	public static ModelDescription getModelContext() {
 		if ( GAMA.controller.experiment == null ) { return null; }
-		return GAMA.controller.experiment.getModel().getDescription();
+		return (ModelDescription) GAMA.controller.experiment.getModel().getDescription();
+	}
+
+	public static ExperimentDescription getExperimentContext() {
+		final IExperimentSpecies exp = GAMA.getExperiment();
+		if ( exp == null ) { return null; }
+		return (ExperimentDescription) exp.getDescription();
 	}
 }

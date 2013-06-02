@@ -35,6 +35,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
+import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
 /**
@@ -90,9 +91,15 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	public InspectDisplayOutput(final String name, final short type) {
 		// Opens directly an inspector
-		super(DescriptionFactory.create(IKeyword.INSPECT, IKeyword.NAME, name +
+		this(DescriptionFactory.create(IKeyword.INSPECT, IKeyword.NAME, name +
 			(type != INSPECT_SPECIES && type != INSPECT_TABLE ? count++ : ""), IKeyword.TYPE, types.get(type)));
-		target = type;
+	}
+
+	public InspectDisplayOutput(final ISpecies species) {
+		// Opens a table inspector on the agents of this species
+		this(DescriptionFactory.validate(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(),
+			IKeyword.NAME, species.getName(), IKeyword.VALUE, species.getName(), IKeyword.TYPE,
+			types.get(INSPECT_TABLE))));
 	}
 
 	public void launch() throws GamaRuntimeException {
