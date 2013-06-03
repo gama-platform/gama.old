@@ -36,6 +36,14 @@
             name="Population Inspector">
       </view>
       <view
+            allowMultiple="true"
+            category="msi.gama.gui.category.gama"
+            class="msi.gama.gui.views.AgentInspectView"
+            icon="icons/display_agents.png"
+            id="msi.gama.application.view.AgentInspectView"
+            name="Agent Inspector">
+      </view>
+      <view
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.SpeciesInspectView"
