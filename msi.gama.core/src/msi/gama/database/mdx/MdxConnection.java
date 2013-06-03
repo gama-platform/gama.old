@@ -353,7 +353,7 @@ public abstract class MdxConnection {
         for (int rIndex=0; rIndex<m;++rIndex){
        		System.out.print("row"+ rIndex+":\t");
        		// print member
-       		int k = this.getRowDataAt(olapResult, rIndex).size();
+       		int k = this.getAllMembersAt(olapResult, rIndex).size();
        		for (int mIndex=0;mIndex<k;mIndex++){
        			System.out.print(this.getRowMemberAt(olapResult, rIndex, mIndex).toString()+"\t");
        		}
