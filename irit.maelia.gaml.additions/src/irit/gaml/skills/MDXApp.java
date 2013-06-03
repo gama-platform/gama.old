@@ -12,6 +12,7 @@ import org.olap4j.layout.RectangularCellSetFormatter;
 import msi.gama.database.mdx.MSASConnection;
 import msi.gama.database.mdx.MdxConnection;
 import msi.gama.database.mdx.MdxUtils;
+import msi.gama.util.GamaList;
 
 public class MDXApp { 
 
@@ -94,19 +95,66 @@ public class MDXApp {
 					 			+ "[Customer].[Company Name].&[Ana Trujillo Emparedados y helados], " 
 					 			+ "[Customer].[Company Name].&[Antonio Moreno Taquería] } } } ON ROWS " 
 					 +"FROM [Northwind Star] ";
-					 
-			 CellSet cellSet= mdxConnection.selectMDB(olapConnection,selectStr);
+			 
+//			 String selectStr=
+//			 "SELECT { [Product].[Product Category].[All].CHILDREN } ON COLUMNS ,"
+//
+//			 +"{ [Measures].[unitprice], [Measures].[Quantity], [Measures].[Price] } ON ROWS  "
+//
+//			+" FROM [Northwind Star]";
+
+//			 String selectStr=
+//					 "SELECT { [Product].[Product Category].[All].CHILDREN } ON COLUMNS ,"
+//					 
+//					 			 +"{ [Measures].[unitprice], [Measures].[Quantity], [Measures].[Price] } ON ROWS  "
+//					 
+//					 			+" FROM [Northwind Star]";
+//
+			 CellSet cellSet= mdxConnection.select(olapConnection,selectStr);
 			 System.out.println("MDX OK");
 			 
 			 List<CellSetAxis> cellSetAxes = cellSet.getAxes();
 			  // Print headings.
 		        System.out.print("\t\t");
 		        CellSetAxis columnsAxis = cellSetAxes.get(Axis.COLUMNS.axisOrdinal());
-		        for (Position position : columnsAxis.getPositions()) {
-		            Member measure = position.getMembers().get(0);
-		            System.out.print(measure.getName()+'\t');
-		        }
-		        System.out.print("\n");
+//		        for (Position position : columnsAxis.getPositions()) {
+//		            Member measure = position.getMembers().get(0);
+//		            System.out.print(measure.getName()+'\t');
+//		        }
+//		        GamaList<Object> cols=mdxConnection.getColumnName(cellSet);
+//		        int n=cols.size();
+//		        System.out.print("&&----------------------------------------------------------\n");
+//		        for (int i=0; i<n;++i){
+//		        	System.out.print(cols.get(i).toString()+";\t");
+//		        }
+//		        System.out.print("\n&&----------------------------------------------------------\n");
+//		        GamaList<Object> rowsData=mdxConnection.getRowData(cellSet);
+//		         int m=rowsData.size();
+//		        for (int i=0; i<m;++i){
+//		        	System.out.print("row"+ i+":\t");
+//		        	GamaList<Object> row= (GamaList<Object>) rowsData.get(i);
+//		        	GamaList<Object> members= (GamaList<Object>) row.get(0);
+//		        	GamaList<Object> values= (GamaList<Object>) row.get(1);
+//		        	// print member
+//		        	int k = members.size();
+//		        	for (int j=0;j<k;j++){
+//		        		System.out.print(members.get(j).toString()+"\t");
+//		        	}
+//		        	//print value
+//		        	int l = values.size();
+//		        	for (int j=0;j<l;j++){
+//		        		System.out.print(values.get(j).toString()+"\t");
+//		        	}
+//		        	System.out.println();
+//
+//		        }
+		        System.out.print("\nKiem tra lai2----------------------------------------------------------\n");
+				GamaList<Object> olapResult = mdxConnection.selectMDB(olapConnection,selectStr);
+				mdxConnection.prinColumnsName(olapResult);
+				System.out.println();
+				mdxConnection.printRowsData(olapResult);
+		        System.out.print("\nKiem tra lai3----------------------------------------------------------\n");
+				
 		        // Print rows.
 		        CellSetAxis rowsAxis = cellSetAxes.get(Axis.ROWS.axisOrdinal());
 		        int cellOrdinal = 0;
