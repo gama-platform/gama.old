@@ -419,7 +419,7 @@ public class Containers {
 		"3 among [1,2,4,3,5,7,6,8] 		--: 	[1,2,8]", "3 among g2 					--: 	[node6,node11,node7]",
 		"3 among list(node)    			--:  	[node1,node11,node4]" })
 	public static IList among(final IScope scope, final Integer number, final IContainer c) throws GamaRuntimeException {
-		final List l = nullCheck(c).listValue(scope);
+		final List l = new GamaList(nullCheck(c).listValue(scope));
 		return new GamaList(FluentIterable.from(GAMA.getRandom().shuffle(l)).limit(number < 0 ? 0 : number));
 		// TODO: reorder with .toSortedList(Ordering.explicit(l)));
 	}
