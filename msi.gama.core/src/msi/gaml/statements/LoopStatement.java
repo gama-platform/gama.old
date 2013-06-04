@@ -95,9 +95,9 @@ public class LoopStatement extends AbstractStatementSequence {
 		if ( varName != null ) {
 			scope.setVarValue(varName, var);
 		}
-		final Object result = super.privateExecuteIn(scope);
+		super.privateExecuteIn(scope);
 		scope.pop(this);
-		return result != IScope.INTERRUPTED;
+		return !scope.interrupted();
 	}
 
 	interface LoopExecuter {
