@@ -27,10 +27,6 @@ public class Camera extends AbstractCamera {
 	private double envHeight;
 
 	private ILocation upVector;
-	
-
-
-
 
 	public Camera(JOGLAWTGLRenderer joglawtglRenderer) {
 		super(joglawtglRenderer);
@@ -62,20 +58,6 @@ public class Camera extends AbstractCamera {
 	public void setYaw(double yaw) {
 		this.yaw = yaw;
 	}
-	
-	@Override
-	public void updatePosition(double xPos, double yPos, double zPos) {
-		_position.x= xPos;
-		_position.y= yPos;
-		_position.z= zPos;
-	}
-
-	@Override
-	public void lookPosition(double xLPos, double yLPos, double zLPos) {
-		_target.x= xLPos;
-		_target.y= yLPos;
-		_target.z= zLPos;
-	}
 
 	// FIXME: Has been replace by moveXYPlan2 should be remove once every model works well with moveXYPlan2
 	// Move in the XY plan by changing camera pos and look pos.
@@ -105,37 +87,6 @@ public class Camera extends AbstractCamera {
 				this.lookPosition(_target.getX(), _target.getY() - speed, _target.getZ());
 			}
 
-		}
-	}
-
-	// Move in the XY plan by changing camera pos and look pos.
-	@Override
-	public void moveXYPlan2(double diffx, double diffy, double z, double w, double h) {
-
-		double translationValue = 0;
-
-		if ( Math.abs(diffx) > Math.abs(diffy) ) {// Move X
-
-			translationValue = Math.abs(diffx) * ((z + 1) / w);
-
-			if ( diffx > 0 ) {// move right
-				updatePosition(_position.getX() - translationValue, _position.getY(), _position.getZ());
-				lookPosition(_target.getX() - translationValue, _target.getY(), _target.getZ());
-			} else {// move left
-				updatePosition(_position.getX() + translationValue, _position.getY(), _position.getZ());
-				lookPosition(_target.getX() + translationValue, _target.getY(), _target.getZ());
-			}
-		} else if ( Math.abs(diffx) < Math.abs(diffy) ) { // Move Y
-
-			translationValue = Math.abs(diffy) * ((z + 1) / h);
-
-			if ( diffy > 0 ) {// move down
-				updatePosition(_position.getX(), _position.getY()+ translationValue, _position.getZ());
-				this.lookPosition(_target.getX(), _target.getY() + translationValue, _target.getZ());
-			} else {// move up
-				updatePosition(_position.getX(), _position.getY()- translationValue, _position.getZ());
-				lookPosition(_target.getX(), _target.getY() - translationValue, _target.getZ());
-			}
 		}
 	}
 
@@ -331,7 +282,7 @@ public class Camera extends AbstractCamera {
 			_target.z = 0;
 		}
 
-		// this.PrintParam();
+		this.PrintParam();
 	}
 	@Override
 	public void PrintParam() {
@@ -493,19 +444,15 @@ public class Camera extends AbstractCamera {
 		switch (arg0.getKeyCode()) {
 		case VK_LEFT: 
 			strafeLeft = true;
-			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
 		case VK_RIGHT: 
 			strafeRight = true;
-			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
 		case VK_UP:
 			forward = true;
-			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
 		case VK_DOWN:
 			backward = true;
-			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
 		case KeyEvent.VK_PAGE_UP:
 			pitchDown(0.05);
@@ -537,19 +484,15 @@ public class Camera extends AbstractCamera {
 		switch (arg0.getKeyCode()) {
 		case VK_LEFT: // player turns left (scene rotates right)
 			strafeLeft = false;
-			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
 		case VK_RIGHT: // player turns right (scene rotates left)
 			strafeRight = false;
-			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
 		case VK_UP:
 			forward = false;
-			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
 		case VK_DOWN:
 			backward = false;
-			ctrlKeyDown = checkCtrlKeyDown(arg0);
 			break;
 		}
 	}

@@ -309,6 +309,8 @@ public class Vector3D implements Serializable {
 	public Vector3D add(final double factor, final Vector3D v) {
 		return new Vector3D(x + factor * v.x, y + factor * v.y, z + factor * v.z);
 	}
+	
+	
 
 	/**
 	 * Subtract a vector from the instance.
@@ -332,6 +334,10 @@ public class Vector3D implements Serializable {
 	 */
 	public Vector3D subtract(final double factor, final Vector3D v) {
 		return new Vector3D(x - factor * v.x, y - factor * v.y, z - factor * v.z);
+	}
+	
+	public Vector3D subtract(double vx, double vy, double vz) {
+		return new Vector3D(x - vx, y - vy, z - vz);
 	}
 
 	/**

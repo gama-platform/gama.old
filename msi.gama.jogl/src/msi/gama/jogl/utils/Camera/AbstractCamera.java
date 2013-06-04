@@ -22,6 +22,7 @@ import msi.gama.metamodel.shape.ILocation;
 
 
 
+
 public abstract class AbstractCamera implements KeyListener, MouseListener, 
 							MouseMotionListener, MouseWheelListener{
 	
@@ -51,6 +52,9 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 	protected Vector3D _position;
 	protected Vector3D _target;
 	
+	public double _theta;
+	public double _phi;
+	
 	public final static double INIT_Z_FACTOR = 1.5;
 	public double _keyboardSensivity;
 	
@@ -76,13 +80,50 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 		mousePosition = new Point(0, 0);
 	}
 	
-	public void updatePosition(double xPos, double yPos, double zPos) {}
+	public void updatePosition(double xPos, double yPos, double zPos) {
+		_position.x= xPos;
+		_position.y= yPos;
+		_position.z= zPos;
+	}
 
-	public void lookPosition(double xLPos, double yLPos, double zLPos) {}
+
+	public void lookPosition(double xLPos, double yLPos, double zLPos) {
+		_target.x= xLPos;
+		_target.y= yLPos;
+		_target.z= zLPos;
+	}
 	
 	public void moveXYPlan(double diffx, double diffy, double speed) {}
 	
-	public void moveXYPlan2(double diffx, double diffy, double z, double w, double h) {}
+	// Move in the XY plan by changing camera pos and look pos.
+	public void moveXYPlan2(double diffx, double diffy, double z, double w, double h) {
+
+		double translationValue = 0;
+
+		if ( Math.abs(diffx) > Math.abs(diffy) ) {// Move X
+
+			translationValue = Math.abs(diffx) * ((z + 1) / w);
+
+			if ( diffx > 0 ) {// move right
+				updatePosition(_position.getX() - translationValue, _position.getY(), _position.getZ());
+				lookPosition(_target.getX() - translationValue, _target.getY(), _target.getZ());
+			} else {// move left
+				updatePosition(_position.getX() + translationValue, _position.getY(), _position.getZ());
+				lookPosition(_target.getX() + translationValue, _target.getY(), _target.getZ());
+			}
+		} else if ( Math.abs(diffx) < Math.abs(diffy) ) { // Move Y
+
+			translationValue = Math.abs(diffy) * ((z + 1) / h);
+
+			if ( diffy > 0 ) {// move down
+				updatePosition(_position.getX(), _position.getY()+ translationValue, _position.getZ());
+				this.lookPosition(_target.getX(), _target.getY() + translationValue, _target.getZ());
+			} else {// move up
+				updatePosition(_position.getX(), _position.getY()- translationValue, _position.getZ());
+				lookPosition(_target.getX(), _target.getY() - translationValue, _target.getZ());
+			}
+		}
+	}
 	
 	public void moveForward(double magnitude) {}
 	
@@ -117,8 +158,6 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 	public void initializeCamera(double envWidth, double envHeight) {}
 
 	public void initialize3DCamera(double envWidth, double envHeight) {}
-
-	public void PrintParam() {}
 
 	/* --------------------------- */
 
@@ -199,6 +238,10 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 	protected boolean checkShiftKeyDown(KeyEvent event) {
 		return event.isShiftDown();
 	}
+	
+	protected boolean checkShiftKeyDown(MouseEvent event) {
+		return event.isShiftDown();
+	}
 
 	protected boolean detectMacOS() {
 		String os = System.getProperty("os.name");
@@ -209,7 +252,18 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 	}
 
 	protected boolean isArcBallOn(MouseEvent mouseEvent) {
-		return false;}
+		if ( checkCtrlKeyDown(mouseEvent) || myRenderer.displaySurface.arcball == true ) {
+			if ( mouseEvent.isShiftDown() == false ) {
+				return true;
+			}
+
+			else {
+				return false;
+			}
+		} else {
+			return false;
+		}
+	}
 	
 	// Picking method
 	// //////////////////////////////////////////////////////////////////////////////////////
@@ -323,6 +377,16 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 		this.maxDim = maxDim;
 	}
 
-	public void followAgent(IAgent a, GLU glu) {}
+	public void followAgent(IAgent a) {}
+	
+	public double getRadius(){return (Double) null;}
+	
+	public void setRadius(double r){}
+	
+	public void PrintParam() {
+		System.out.println("xPos:" + _position.x + " yPos:" + _position.y  + " zPos:" + _position.z );
+		System.out.println("xLPos:" + _target.x + " yLPos:" + _target.y + " zLPos:" + _target.z);
+		System.out.println("_phi "+_phi+" _theta "+_theta);
+	}
 
 }

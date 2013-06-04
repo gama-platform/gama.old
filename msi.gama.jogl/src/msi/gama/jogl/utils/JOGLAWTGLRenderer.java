@@ -11,6 +11,7 @@ import msi.gama.jogl.scene.*;
 import msi.gama.jogl.utils.Camera.AbstractCamera;
 import msi.gama.jogl.utils.Camera.Camera;
 import msi.gama.jogl.utils.Camera.FreeFlyCamera;
+import msi.gama.jogl.utils.Camera.CameraArcBall;
 import msi.gama.jogl.utils.Camera.Arcball.*;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
 import msi.gama.jogl.utils.dem.DigitalElevationModelDrawer;
@@ -97,7 +98,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		final GLCapabilities cap = new GLCapabilities();
 		cap.setStencilBits(8);
 		// Initialize the user camera
-		camera = new Camera(this);
+		camera = new CameraArcBall(this);
 		myGLDrawer = new MyGLToyDrawer();
 		canvas = new GLCanvas(cap);
 		canvas.addGLEventListener(this);
@@ -127,7 +128,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		if(displaySurface.switchCamera)
 			camera = new FreeFlyCamera(this);
 		else
-			camera = new Camera(this);
+			camera = new CameraArcBall(this);
 		
 		canvas.addKeyListener(camera);
 		canvas.addMouseListener(camera);
@@ -378,7 +379,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glLoadIdentity();
 		glu.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
 		glu.gluLookAt(camera.getPosition().getX(), camera.getPosition().getY(), camera.getPosition().getZ(), camera.getTarget().getX(), 
-				camera.getTarget().getY(), camera.getTarget().getZ(), 0.0, 1.0, 0.0);
+				camera.getTarget().getY(), camera.getTarget().getZ(), 0,0,1);
 		arcBall.setBounds(width, height);
 	}
 

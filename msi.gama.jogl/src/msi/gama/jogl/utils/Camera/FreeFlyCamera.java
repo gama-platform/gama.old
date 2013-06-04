@@ -22,9 +22,6 @@ public class FreeFlyCamera extends AbstractCamera {
 	
 	public Vector3D _forward;
 	public Vector3D _left;
-
-	public double _theta;
-	public double _phi;
 	
 	public double _speed;
 	public double _sensivity;
@@ -59,9 +56,9 @@ public class FreeFlyCamera extends AbstractCamera {
     {
     	Vector3D up = new Vector3D(0.0f,0.0f,1.0f); 
     	
-	    if (_phi > 89)
+	    if (_phi >89)
 	        _phi = 89;
-	    else if (_phi < -89)
+	    else if (_phi <-89)
 	        _phi = -89;
 
 	    double r_temp = Math.cos(_phi*Math.PI/180.f);
@@ -70,7 +67,7 @@ public class FreeFlyCamera extends AbstractCamera {
 	    _forward.y = r_temp*Math.sin((_theta*Math.PI)/180.f);
 	    
 	    _left = Vector3D.crossProduct(up, _forward);
-	    //_left.normalize();
+	    _left.normalize();
 	    
 	//calculate the target of the camera
 	    _target = _forward.add(_position.x, _position.y, _position.z);
@@ -97,7 +94,7 @@ public class FreeFlyCamera extends AbstractCamera {
     	 			vectorsFromAngles();
     	 		}
     	 		else
-    	    	_position = _position.subtract(_forward.scalarMultiply(_speed*200)); //go backward
+    	 			_position = _position.subtract(_forward.scalarMultiply(_speed*200)); //go backward
     	    }
     	    if (this.strafeLeft){
     	    	if(shiftKeyDown)
@@ -118,34 +115,40 @@ public class FreeFlyCamera extends AbstractCamera {
     	    	_position = _position.subtract(_left.scalarMultiply(_speed*200)); //move on the left
     	    }
   	    
-    	    _target = _forward.add(_position.x, _position.y, _position.z);
+    	    _target = _position.add(_forward.x,_forward.y,_forward.z);
     }
     
     @Override
     public void UpdateCamera(GL gl,GLU glu, int width, int height)
     {	
-    	
+		if ( height == 0 ) {
+			height = 1; // prevent divide by zero
+		}
     	float aspect = (float) width / height;
     	    	
 		glu.gluPerspective(45.0f, aspect, 0.1f, maxDim*10);
 
+
 		glu.gluLookAt(_position.x,_position.y,_position.z,
 				_target.x,_target.y,_target.z,
 				0.0f,0.0f,1.0f);
-    	animate();
-
-//    	PrintParam();
+		animate(); 	
     }
     
 	public void followAgent(IAgent a, GLU glu) {
 		ILocation l = a.getLocation();
-		glu.gluLookAt(l.getX(), l.getY(), l.getZ(),
-				l.getX(), l.getY(), l.getZ()+a.getHeading(),
-				 0.0f,0.0f,1.0f);
+		_position.x = l.getX();
+		_position.y = l.getY();
+		_position.z = l.getZ();
+		glu.gluLookAt(0,0,(float) (maxDim*1.5),
+				0,0,0,
+				0.0f,0.0f,1.0f);
 	}
     
     @Override
   	public void initializeCamera(double envWidth, double envHeight) {
+    	
+    	
 		if (envWidth > envHeight) {
 			maxDim = envWidth;
 		} else {
@@ -169,12 +172,9 @@ public class FreeFlyCamera extends AbstractCamera {
 			_target.z = 0;
 		}
 		
-		_phi -= 90;
-		_theta -= -90;
+		_phi = -90;
+		_theta = 90;
 		vectorsFromAngles();
-		
-//		PrintParam();
-
 	}
   	
     @Override
@@ -184,12 +184,12 @@ public class FreeFlyCamera extends AbstractCamera {
 		} else {
 			maxDim = envHeight;
 		}
-		if(isModelCentered){
+		if ( isModelCentered ) {
 			_position.x = 0;
 			_target.x = 0;
 			_position.y = -envHeight  * 1.75+envHeight/2;
 			_target.y = -envHeight * 0.5+envHeight/2;
-			_position.z = maxDim;
+			_position.z = getMaxDim() * INIT_Z_FACTOR;
 			_target.z = 0;
 		}
 		else{
@@ -197,9 +197,11 @@ public class FreeFlyCamera extends AbstractCamera {
 			_target.x = envWidth / 2;
 			_position.y = -envHeight  * 1.75;
 			_target.y = -envHeight * 0.5;
-			_position.z = maxDim;
+			_position.z = getMaxDim();
 			_target.z = 0;
 		}
+		_phi = -45;
+		vectorsFromAngles();		
 	}
 	
     
@@ -286,7 +288,6 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	@Override
 	public void keyPressed(KeyEvent arg0) {
-		System.out.println();
 		switch (arg0.getKeyCode()) {
 		case VK_LEFT: 
 			strafeLeft = true;
@@ -336,7 +337,7 @@ public class FreeFlyCamera extends AbstractCamera {
 	public void PrintParam() {
 		System.out.println("xPos:" + _position.x + " yPos:" + _position.y  + " zPos:" + _position.z );
 		System.out.println("xLPos:" + _target.x + " yLPos:" + _target.y + " zLPos:" + _target.z);
-//		System.out.println("_forwardX:" + _forward.x + " _forwardY:" + _forward.y + " _forwardZ:" + _forward.z);
+		System.out.println("_forwardX:" + _forward.x + " _forwardY:" + _forward.y + " _forwardZ:" + _forward.z);
 
 	}
 	
