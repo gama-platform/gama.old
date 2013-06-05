@@ -98,7 +98,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		final GLCapabilities cap = new GLCapabilities();
 		cap.setStencilBits(8);
 		// Initialize the user camera
-		camera = new CameraArcBall(this);
+		camera = new Camera(this);
 		myGLDrawer = new MyGLToyDrawer();
 		canvas = new GLCanvas(cap);
 		canvas.addGLEventListener(this);
@@ -128,7 +128,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		if(displaySurface.switchCamera)
 			camera = new FreeFlyCamera(this);
 		else
-			camera = new CameraArcBall(this);
+			camera = new Camera(this);
 		
 		canvas.addKeyListener(camera);
 		canvas.addMouseListener(camera);
@@ -143,9 +143,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	@Override
 	public void init(final GLAutoDrawable drawable) {
-		
-		
-		
 		
 		width = drawable.getWidth();
 		height = drawable.getHeight();
@@ -266,23 +263,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
 			gl.glPolygonOffset(1, 1);
 
-			// gl.glDisable(GL_DEPTH_TEST);
-			// dem.DisplayDEM(gl);
-			if ( dem.isInitialized() == true ) {
-				dem.DisplayDEM(gl);
-			} else {
-				if(this.displaySurface.rotation){		
-					frame++;
-				}
-				gl.glRotatef(frame, 0, 0, 1);
-				
-				this.drawScene();
-				// if ( drawAxes ) {
-				// double envMaxDim = getMaxEnvDim();
-				// this.graphicsGLUtils.DrawXYZAxis(envMaxDim / 10);
-				// this.graphicsGLUtils.DrawZValue(-envMaxDim / 10, (float) camera.zPos);
-				// }
+			//gl.glDisable(GL_DEPTH_TEST);
+
+			if(this.displaySurface.rotation){		
+				frame++;
 			}
+			gl.glRotatef(frame, 0, 0, 1);
+			
+			this.drawScene();
 
 			// this.DrawShapeFile();
 			// this.DrawCollada();
@@ -319,6 +307,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		final FloatBuffer floatBuffer = FloatBuffer.allocate(1);
 		gl.glReadPixels(x, realy, 1, 1, GL.GL_DEPTH_COMPONENT, GL.GL_FLOAT, floatBuffer);
 		final float z = floatBuffer.get(0);
+
 
 		glu.gluUnProject(x, realy, z, //
 			mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
