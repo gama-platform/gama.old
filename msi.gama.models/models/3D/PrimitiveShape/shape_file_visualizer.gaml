@@ -21,7 +21,7 @@ entities {
 	species myShape {
 		string type; 
 		aspect base {
-			draw geometry: shape color: shapeColor;
+			draw shape;// color: shapeColor;
 		}
 	}
 }
@@ -31,7 +31,7 @@ experiment display_shapefile type: gui {
 	
 
 	output {
-		display city_display refresh_every: 1 type: opengl ambient_light:0.5{
+		display city_display type:opengl  ambient_light:100{
 			species myShape aspect: base refresh:false ;
 		}
 	}

@@ -67,6 +67,10 @@ environment bounds: {width,height} {
 			draw circle (cellValue/(255*2)) color: color border:color; 
 		}
 		
+		aspect sphere{ 
+			draw sphere (cellValue/(255*2)) color: color border:color; 
+		}
+		
 		aspect cylinder{ 
 			draw circle (cellValue/(255*2)) color: color border:color depth:elevation; 
 		}
@@ -80,8 +84,8 @@ entities {
 
 experiment AugmentedGrid type:gui {
 	output {
-		/*display TextDisplay {
-			species cell aspect: base  refresh:false position: {0,0};
+		/*display Grid {
+			grid cell ;
 		}*/
 		
 		display AugmentedDisplay  type:opengl ambient_light:100 polygonmode:true{	
@@ -91,8 +95,12 @@ experiment AugmentedGrid type:gui {
 			species cell aspect: cylinder  refresh:true position: {width*3.5,0};
 		}
 		
-		display Circle  type:opengl ambient_light:100 polygonmode:true{		
+		display Circle type:opengl ambient_light:100 polygonmode:true{		
 			species cell aspect: circle  refresh:true position: {0,0};
+		}
+		
+		display Sphere type:opengl   ambient_light:100 polygonmode:true{		
+			species cell aspect: sphere  refresh:true position: {0,0};
 		}
 		
 		display Square  type:opengl ambient_light:100 polygonmode:true{		
