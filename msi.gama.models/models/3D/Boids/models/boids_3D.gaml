@@ -307,40 +307,29 @@ experiment start type: gui {
 	output {
 
 
-		display RealBoids  type:opengl {
-		
+		display RealBoids  type:opengl ambient_light:255{
 			image name:'background' file:'../images/ocean.jpg' z:0;
 			species boids aspect: image z:0.2 transparency:0.5;
 			species boids_goal z:0.25 transparency:0.2;
 			species obstacle ;
-			
-			
 			species boids  aspect: dynamicColor z:0.19 transparency:0.2 ;
 			species boids_goal  transparency:0.2; 		
 		}
 		
-		display RealBoids2  type:opengl camera_pos:{-world.shape.width/2+int(first(boids).location.x),world.shape.height/2-int(first(boids).location.y),250} 
+		display ThirdPersonn  type:opengl camera_pos:{-world.shape.width/2+int(first(boids).location.x),world.shape.height/2-int(first(boids).location.y),250} 
 		camera_look_pos:{-world.shape.width/2+int(first(boids).location.x),world.shape.height/2-(first(boids).location.y),0} {
 		
 			image name:'background' file:'../images/ocean.jpg' z:0;
-			species boids aspect: image z:0.2 transparency:0.5;
-			species boids_goal z:0.25 transparency:0.2;
-			species obstacle ;
-			
-			
-			species boids  aspect: dynamicColor z:0.2 transparency:0.2 ;
+			species obstacle;
+			species boids  aspect: dynamicColor transparency:0.2 ;
 			species boids_goal  transparency:0.2; 		
 		}
 		
 			
-		display RealBoids3  type:opengl ambient_light:100 camera_pos:{-world.shape.width/2+int(first(boids).location.x),world.shape.height/2-int(first(boids).location.y),10} 
+		display FirstPerson  type:opengl ambient_light:100 camera_pos:{-world.shape.width/2+int(first(boids).location.x),world.shape.height/2-int(first(boids).location.y),10} 
 		camera_look_pos:{cos(first(boids).heading)*world.shape.width,-sin(first(boids).heading)*world.shape.height,0} camera_up_vector:{0.0,0.0,1.0} {	
 			image name:'background' file:'../images/ocean.jpg' z:0;
-			species boids aspect: image z:0.0 transparency:0.5;
-			species boids_goal z:0.0 transparency:0.2;
 			species obstacle ;
-			
-			
 			species boids  aspect: dynamicColor z:0.0 transparency:0.2 ;
 			species boids_goal  transparency:0.0; 		
 		}
