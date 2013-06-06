@@ -250,6 +250,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		final ISpecies newMicroSpecies) {
 		final IPopulation oldMicroPop = this.getPopulationFor(oldMicroSpecies);
 		final IPopulation newMicroPop = this.getPopulationFor(newMicroSpecies);
+		// WARNING oldMicroPop appears to be null under certain conditions
 		final IList<IAgent> immigrants = new GamaList<IAgent>();
 		final Iterator<IAgent> it = oldMicroPop.iterator();
 		while (it.hasNext()) {

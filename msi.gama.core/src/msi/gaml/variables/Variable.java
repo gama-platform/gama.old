@@ -60,7 +60,7 @@ import msi.gaml.types.IType;
 public class Variable extends Symbol implements IVariable {
 
 	protected IExpression updateExpression, initExpression, amongExpression, functionExpression;
-	protected IType type;
+	protected IType type, contentType;
 	protected boolean isNotModifiable /* , doUpdate */;
 	private final int definitionOrder;
 	public GamaHelper getter, initer, setter;
@@ -80,6 +80,7 @@ public class Variable extends Symbol implements IVariable {
 		amongExpression = getFacet(IKeyword.AMONG);
 		isNotModifiable = desc.isNotModifiable();
 		type = desc.getType();
+		contentType = desc.getContentType();
 		definitionOrder = desc.getDefinitionOrder();
 		buildHelpers(desc);
 	}
@@ -338,6 +339,15 @@ public class Variable extends Symbol implements IVariable {
 
 	public ISkill getgSkill() {
 		return gSkill;
+	}
+
+	/**
+	 * Method getContentType()
+	 * @see msi.gama.kernel.experiment.IParameter#getContentType()
+	 */
+	@Override
+	public IType getContentType() {
+		return contentType;
 	}
 
 }

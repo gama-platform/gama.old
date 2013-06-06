@@ -119,12 +119,17 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	}
 
 	@Override
+	public IType getContentType() {
+		return Types.NO_TYPE;
+	}
+
+	@Override
 	public String toGaml() {
 		return StringUtils.toGaml(value());
 	}
 
 	@Override
-	public Object getInitialValue(IScope scope) {
+	public Object getInitialValue(final IScope scope) {
 		return value();
 	}
 

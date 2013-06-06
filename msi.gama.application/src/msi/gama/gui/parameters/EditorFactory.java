@@ -116,15 +116,18 @@ public class EditorFactory implements IEditorFactory {
 	public AbstractEditor create(final IAgent agent, final IParameter var, final EditorListener l) {
 		final boolean canBeNull = var instanceof ExperimentParameter ? ((ExperimentParameter) var).canBeNull() : false;
 		final int type = var.getType().id();
+		// final int contentType = var.getContentType().id();
+		boolean isPopulation = var.getType().hasContents() && var.getContentType().isSpeciesType();
 		AbstractEditor gp =
-			type == IType.SPECIES ? new PopulationEditor(agent, var, l) : var.getType().isSpeciesType() |
-				type == IType.AGENT ? new AgentEditor(agent, var, l) : type == IType.BOOL ? new BooleanEditor(agent,
-				var, l) : type == IType.COLOR ? new ColorEditor(agent, var, l) : type == IType.FLOAT ? new FloatEditor(
-				agent, var, canBeNull, l) : type == IType.INT ? new IntEditor(agent, var, canBeNull, l)
-				: type == IType.LIST ? new ListEditor(agent, var, l) : type == IType.POINT ? new PointEditor(agent,
-					var, l) : type == IType.MAP ? new MapEditor(agent, var, l) : type == IType.MATRIX
-					? new MatrixEditor(agent, var, l) : type == IType.FILE ? new FileEditor(agent, var, l)
-						: type == IType.STRING ? new StringEditor(agent, var, l) : new GenericEditor(agent, var, l);
+			isPopulation ? new PopulationEditor(agent, var, l) : var.getType().isSpeciesType() | type == IType.AGENT
+				? new AgentEditor(agent, var, l) : type == IType.BOOL ? new BooleanEditor(agent, var, l)
+					: type == IType.COLOR ? new ColorEditor(agent, var, l) : type == IType.FLOAT ? new FloatEditor(
+						agent, var, canBeNull, l) : type == IType.INT ? new IntEditor(agent, var, canBeNull, l)
+						: type == IType.LIST ? new ListEditor(agent, var, l) : type == IType.POINT ? new PointEditor(
+							agent, var, l) : type == IType.MAP ? new MapEditor(agent, var, l) : type == IType.MATRIX
+							? new MatrixEditor(agent, var, l) : type == IType.FILE ? new FileEditor(agent, var, l)
+								: type == IType.STRING ? new StringEditor(agent, var, l) : new GenericEditor(agent,
+									var, l);
 		return gp;
 	}
 }

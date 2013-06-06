@@ -178,9 +178,9 @@ public class InspectDisplayOutput extends MonitorOutput {
 		if ( lastValue instanceof ISpecies && rootAgent != null ) { return rootAgent
 			.getMicroPopulation((ISpecies) lastValue); }
 		if ( lastValue instanceof IContainer ) {
-			for ( final Object o : (IContainer) lastValue ) {
-				if ( !(o instanceof IAgent) ) { return null; }
-			}
+			// for ( final Object o : (IContainer) lastValue ) {
+			// if ( !(o instanceof IAgent) ) { return null; }
+			// }
 			return ((IContainer) lastValue).listValue(getScope());
 		}
 		return null;

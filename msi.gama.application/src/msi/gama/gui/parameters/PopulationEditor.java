@@ -80,10 +80,8 @@ public class PopulationEditor extends AbstractEditor {
 				}
 			}
 		});
-		populationInspector.setImage(SwtGui.agentImage);
+		populationInspector.setImage(SwtGui.gridImage);
 		populationInspector.setText("Browse");
-		// TODO To be removed at one point to allow browsing sub-populations
-		populationInspector.setEnabled(false);
 		return populationDisplayer;
 	}
 

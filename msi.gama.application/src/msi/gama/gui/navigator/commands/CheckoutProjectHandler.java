@@ -21,6 +21,7 @@ package msi.gama.gui.navigator.commands;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.navigator.*;
 import msi.gama.gui.svn.SVNAccess;
 import org.eclipse.core.commands.*;
@@ -28,7 +29,6 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.viewers.*;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.tmatesoft.svn.core.SVNURL;
@@ -44,8 +44,7 @@ public class CheckoutProjectHandler extends AbstractHandler {
 
 		/* Get the selection */
 		ISelection activeSelection =
-			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService()
-				.getSelection();
+			PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection();
 		final StructuredSelection currentSelection =
 			new StructuredSelection(((TreeSelection) activeSelection).toArray());
 
@@ -56,8 +55,7 @@ public class CheckoutProjectHandler extends AbstractHandler {
 				monitor.beginTask("Please wait...", IProgressMonitor.UNKNOWN);
 
 				/* Get the file */
-				FileBean fb =
-					(FileBean) ((IStructuredSelection) currentSelection).getFirstElement();
+				FileBean fb = (FileBean) ((IStructuredSelection) currentSelection).getFirstElement();
 				File f = new File(fb.getPath());
 				try {
 					BufferedReader reader = new BufferedReader(new FileReader(f));
@@ -134,9 +132,8 @@ public class CheckoutProjectHandler extends AbstractHandler {
 						WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
 
 							@Override
-							protected void execute(final IProgressMonitor monitor)
-								throws CoreException, InvocationTargetException,
-								InterruptedException {
+							protected void execute(final IProgressMonitor monitor) throws CoreException,
+								InvocationTargetException, InterruptedException {
 								if ( !proj.exists() ) {
 									proj.create(description, monitor);
 								}
@@ -184,7 +181,7 @@ public class CheckoutProjectHandler extends AbstractHandler {
 
 	protected void handleJobFinished() {
 		final IViewPart view = page.findView("msi.gama.gui.view.GamaNavigator");
-		Display.getCurrent().syncExec(new Runnable() {
+		GuiUtils.run(new Runnable() {
 
 			@Override
 			public void run() {

@@ -56,7 +56,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	Number minValue, maxValue, stepValue;
 	List amongValue;
 	String varName, title, category, unitLabel;
-	IType type;
+	IType type, contentType;
 	boolean isEditable, allowsTooltip, isLabel;
 	boolean canBeNull;
 	final IExpression init;
@@ -66,6 +66,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		VariableDescription desc = (VariableDescription) sd;
 		setName(desc.getFacets().getLabel(IKeyword.VAR));
 		type = desc.getType();
+		contentType = desc.getContentType();
 		title = getLiteral(IKeyword.NAME);
 		unitLabel = getLiteral(IKeyword.UNIT);
 		ModelDescription wd = desc.getModelDescription();
@@ -86,7 +87,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		GAMA.run(new InScope.Void() {
 
 			@Override
-			public void process(IScope scope) {
+			public void process(final IScope scope) {
 				minValue = min == null ? null : (Number) min.value(scope);
 				maxValue = max == null ? null : (Number) max.value(scope);
 				stepValue = step == null ? null : (Number) step.value(scope);
@@ -100,16 +101,16 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		allowsTooltip = true; // ??
 	}
 
-	public ExperimentParameter(IScope scope, final IParameter p) {
+	public ExperimentParameter(final IScope scope, final IParameter p) {
 		this(scope, p, p.getTitle(), p.getCategory(), p.getAmongValue(), false);
 	}
 
-	public ExperimentParameter(IScope scope, final IParameter p, final String title, final String category,
+	public ExperimentParameter(final IScope scope, final IParameter p, final String title, final String category,
 		final List among, final boolean canBeNull) {
 		this(scope, p, title, category, null, among, canBeNull);
 	}
 
-	public ExperimentParameter(IScope scope, final IParameter p, final String title, final String category,
+	public ExperimentParameter(final IScope scope, final IParameter p, final String title, final String category,
 		final String unit, final List among, final boolean canBeNull) {
 		super(null);
 		init = null;
@@ -214,7 +215,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		setValue(UNDEFINED);
 	}
 
-	public void tryToInit(IScope scope) {
+	public void tryToInit(final IScope scope) {
 		if ( value != UNDEFINED ) { return; }
 		if ( init == null ) { return; }
 		setValue(init.value(scope));
@@ -315,7 +316,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		return GAMA.run(new InScope() {
 
 			@Override
-			public Object run(IScope scope) {
+			public Object run(final IScope scope) {
 				return getValue(scope);
 			}
 
@@ -324,7 +325,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	}
 
 	@Override
-	public Object getInitialValue(IScope scope) {
+	public Object getInitialValue(final IScope scope) {
 		return getValue(scope);
 	}
 
@@ -358,7 +359,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		return GAMA.run(new InScope<String>() {
 
 			@Override
-			public String run(IScope scope) {
+			public String run(final IScope scope) {
 				return StringUtils.toGaml(getValue(scope));
 			}
 		});
@@ -387,9 +388,18 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		return unitLabel;
 	}
 
-	Object getValue(IScope scope) {
+	Object getValue(final IScope scope) {
 		tryToInit(scope);
 		return value;
+	}
+
+	/**
+	 * Method getContentType()
+	 * @see msi.gama.kernel.experiment.IParameter#getContentType()
+	 */
+	@Override
+	public IType getContentType() {
+		return contentType;
 	}
 
 }

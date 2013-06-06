@@ -47,6 +47,8 @@ public interface IParameter {
 
 	public abstract IType getType();
 
+	public abstract IType getContentType();
+
 	public String toGaml();
 
 	public abstract Object getInitialValue(IScope scope);

@@ -67,7 +67,9 @@ public class PopulationInspectView extends GamaViewPart {
 	private ExpressionEditor customEditor;
 	// private CLabel sizeLabel;
 	private CTabItem currentTab;
+	private CTabFolder tabFolder;
 	Map<String, List<String>> selectedColumns = new HashMap();
+	final private AgentContentProvider provider = new AgentContentProvider();
 
 	@Override
 	public void update(final IDisplayOutput output) {
@@ -78,16 +80,20 @@ public class PopulationInspectView extends GamaViewPart {
 			viewer.setInput(null);
 		}
 		changePartName(currentTab.getText());
+		refreshTabVisibility();
 		viewer.refresh();
 	}
 
 	private int computeSize() {
+		int size;
 		final IExpression expr = getOutput().getValue();
 		if ( expr != null ) {
 			final List list = getOutput().getLastValue();
-			return list == null ? 0 : list.size();
+			size = list == null ? 0 : list.size();
+		} else {
+			size = 0;
 		}
-		return 0;
+		return size;
 	}
 
 	@Override
@@ -107,6 +113,7 @@ public class PopulationInspectView extends GamaViewPart {
 				setSpeciesName(CUSTOM, true);
 			}
 		}
+		comparator = new AgentComparator();
 	}
 
 	private void setSpeciesName(final String name, final boolean fromMenu) {
@@ -147,6 +154,7 @@ public class PopulationInspectView extends GamaViewPart {
 	}
 
 	private void changePartName(final String name) {
+		if ( name == null ) { return; }
 		this.setContentDescription(StringUtils.capitalize(name) + " population in macro-agent " +
 			getOutput().getRootAgent().getName() + "; size: " + computeSize() + " agents");
 		if ( name.equals(CUSTOM) ) {
@@ -164,13 +172,6 @@ public class PopulationInspectView extends GamaViewPart {
 		layout.marginHeight = 0;
 		layout.verticalSpacing = 1;
 		menuComposite.setLayout(layout);
-
-		// sizeLabel = new CLabel(menuComposite, SWT.LEFT);
-		// sizeLabel.setFont(SwtGui.getLabelfont());
-		// sizeLabel.setText("0 agents");
-		// sizeLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		// final Label title = new Label(menuComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
-		// title.setText(""); // Spacer
 		attributesLabel = new Label(menuComposite, SWT.NONE);
 		attributesLabel.setText("Attributes");
 		attributesLabel.setFont(SwtGui.getLabelfont());
@@ -273,24 +274,28 @@ public class PopulationInspectView extends GamaViewPart {
 		}
 	}
 
+	private void createTab(final String s) {
+		final CTabItem item = new CTabItem(tabFolder, SWT.CLOSE);
+		item.setText(s);
+		item.setImage(SwtGui.speciesImage);
+		item.setShowClose(true);
+	}
+
 	@Override
 	public void ownCreatePartControl(final Composite c) {
-		final CTabFolder tabFolder = new CTabFolder(c, SWT.TOP);
+		tabFolder = new CTabFolder(c, SWT.TOP);
 		tabFolder.setBorderVisible(true);
 		tabFolder.setBackgroundMode(SWT.INHERIT_DEFAULT);
 		tabFolder.setSimple(true); // rounded tabs
 		tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		final Iterable<IPopulation> populations = getOutput().getRootAgent().getMicroPopulations();
+		final Iterable<ISpecies> populations = getOutput().getRootAgent().getSpecies().getMicroSpecies();
 		final List<String> names = new ArrayList();
-		for ( final IPopulation pop : populations ) {
+		for ( final ISpecies pop : populations ) {
 			names.add(pop.getName());
 		}
 		names.add(CUSTOM);
 		for ( final String s : names ) {
-			final CTabItem item = new CTabItem(tabFolder, SWT.CLOSE);
-			item.setText(s);
-			item.setImage(SwtGui.speciesImage);
-			item.setShowClose(true);
+			createTab(s);
 		}
 		// Adds a composite to the tab
 
@@ -332,8 +337,6 @@ public class PopulationInspectView extends GamaViewPart {
 		intermediate.setLayout(intermediateLayout);
 		createMenus(intermediate);
 		createViewer(intermediate);
-		comparator = new AgentComparator();
-		viewer.setComparator(comparator);
 		intermediate.layout(true);
 		parent = intermediate;
 	}
@@ -352,15 +355,50 @@ public class PopulationInspectView extends GamaViewPart {
 		expressionComposite.getParent().layout();
 	}
 
+	class AgentContentProvider implements ILazyContentProvider {
+
+		List<IAgent> elements;
+
+		@Override
+		public void dispose() {
+			elements = null;
+		}
+
+		@Override
+		public void inputChanged(final Viewer v, final Object oldInput, final Object newInput) {
+			List<IAgent> agents = (List<IAgent>) newInput;
+			if ( agents == null ) {
+				elements = Collections.EMPTY_LIST;
+			} else {
+				elements = new GamaList(agents);
+				if ( comparator != null ) {
+					sortElements();
+				}
+			}
+			viewer.setItemCount(elements.size());
+		}
+
+		@Override
+		public void updateElement(final int index) {
+			viewer.replace(elements.get(index), index);
+		}
+
+		public void sortElements() {
+			Collections.sort(elements, comparator);
+		}
+
+	}
+
 	private void createViewer(final Composite parent) {
-		viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
+		viewer = new TableViewer(parent, SWT.VIRTUAL | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		createColumns();
 		final Table table = viewer.getTable();
 		table.setHeaderVisible(true);
 		table.setLinesVisible(true);
 		table.setFont(SwtGui.getSmallFont());
 		viewer.setUseHashlookup(true);
-		viewer.setContentProvider(new ArrayContentProvider());
+		// viewer.setContentProvider(ArrayContentProvider.getInstance());
+		viewer.setContentProvider(provider);
 		viewer.addDoubleClickListener(new IDoubleClickListener() {
 
 			@Override
@@ -399,14 +437,37 @@ public class PopulationInspectView extends GamaViewPart {
 		final GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gridData.horizontalSpan = 1;
 		viewer.getControl().setLayoutData(gridData);
+		// comparator = new AgentComparator();
+		// viewer.setComparator(comparator);
 	}
 
 	private void recreateViewer() {
 		final Table table = viewer.getTable();
 		table.dispose();
 		createViewer(parent);
-		// parent.pack(true);
 		parent.layout(true);
+	}
+
+	private CTabItem getItem(final String s) {
+		for ( CTabItem i : tabFolder.getItems() ) {
+			if ( i.getText().equals(s) ) { return i; }
+		}
+		return null;
+	}
+
+	private void refreshTabVisibility() {
+		for ( IPopulation p : getOutput().getRootAgent().getMicroPopulations() ) {
+			CTabItem item = getItem(p.getName());
+			if ( p.isEmpty() ) {
+				if ( item != null ) {
+					item.dispose();
+				}
+			} else {
+				if ( item == null ) {
+					createTab(p.getName());
+				}
+			}
+		}
 	}
 
 	private void createColumns() {
@@ -437,6 +498,9 @@ public class PopulationInspectView extends GamaViewPart {
 				final int dir = comparator.getDirection();
 				viewer.getTable().setSortDirection(dir);
 				viewer.getTable().setSortColumn(column);
+				if ( GAMA.controller.scheduler.paused || getOutput().isPaused() ) {
+					provider.sortElements();
+				}
 				viewer.refresh();
 			}
 		};
