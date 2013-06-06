@@ -7,7 +7,7 @@ global {
 	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 2000 ; 
 	int range_of_agents parameter: 'Range of Agents' min: 1 <- 25 ;
 	float speed_of_agents parameter: 'Speed of Agents' min: 1.0  <- 10.0 ; 
-	int size_of_agents <- 10;
+	int size_of_agents <- 30;
 	const center type: point <- {width_and_height_of_environment/2,width_and_height_of_environment/2};
     list blueCombination <- [([0,113,188]),([68,199,244]),([157,220,249]),([212,239,252])];
 	init { 
@@ -56,7 +56,7 @@ entities {
 }
 experiment cylinder type: gui {
 	output {
-		display Cylinder refresh_every: 1  type:opengl ambient_light:100 {
+		display Cylinder refresh_every: 1  type:opengl ambient_light:100{
 			species cells aspect:cylinder;
 		}
 	}
@@ -64,7 +64,7 @@ experiment cylinder type: gui {
 
 experiment sphere type: gui {
 	output {
-		display Sphere refresh_every: 1  ambient_light:100 {
+		display Sphere3 refresh_every: 1  type:opengl ambient_light:100 {
 			species cells aspect: sphere;
 		}
 	}
