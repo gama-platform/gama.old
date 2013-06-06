@@ -25,9 +25,6 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
-
-import javax.media.opengl.glu.GLU;
-
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.awt.AbstractAWTDisplaySurface;
@@ -88,8 +85,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	// Use to toggle the Rotation view
 	public boolean rotation = false;
-	
-	//Used to follow an agent
+
+	// Used to follow an agent
 	public boolean followAgent = false;
 	public IAgent agent;
 
@@ -248,7 +245,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			final MenuItem focusItem = new AgentMenuItem("Focus", macro, display);
 			focusItem.addActionListener(focusListener);
 			macroMenu.add(focusItem);
-			
+
 			MenuItem followItem = new AgentMenuItem("Follow", macro, display);
 			followItem.addActionListener(followListener);
 			macroMenu.add(followItem);
@@ -302,7 +299,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			}
 
 		};
-		
+
 		followListener = new ActionListener() {
 
 			@Override
@@ -421,7 +418,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			incrementalZoomStep = 0.1f;
 		}
 		renderer.camera.getPosition().setZ(renderer.camera.getPosition().getZ() - incrementalZoomStep);
-//		renderer.camera.getTarget().setZ(renderer.camera.getTarget().getZ() - incrementalZoomStep);
+		// renderer.camera.getTarget().setZ(renderer.camera.getTarget().getZ() - incrementalZoomStep);
 		renderer.camera.setRadius(renderer.camera.getPosition().getZ() - incrementalZoomStep);
 		setZoomLevel(renderer.camera.getMaxDim() * AbstractCamera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
 		// FIXME Approximate
@@ -441,7 +438,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			incrementalZoomStep = 0.1f;
 		}
 		renderer.camera.getPosition().setZ(renderer.camera.getPosition().getZ() + incrementalZoomStep);
-//		renderer.camera.getTarget().setZ(renderer.camera.getTarget().getZ() + incrementalZoomStep);
+		// renderer.camera.getTarget().setZ(renderer.camera.getTarget().getZ() + incrementalZoomStep);
 		setZoomLevel(renderer.camera.getMaxDim() * AbstractCamera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
 		renderer.camera.setRadius(renderer.camera.getPosition().getZ() + incrementalZoomStep);
 		// FIXME Approximate
@@ -474,8 +471,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	@Override
 	public void toggleView() {
-//		threeD = !threeD;
-//		zoomFit();
+		// threeD = !threeD;
+		// zoomFit();
 		followAgent = !followAgent;
 		updateDisplay();
 	}
@@ -483,10 +480,10 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	@Override
 	public void togglePicking() {
 
-//		if ( picking == false && !switchCamera ) {
-//			threeD = false;
-//			zoomFit();
-//		}
+		// if ( picking == false && !switchCamera ) {
+		// threeD = false;
+		// zoomFit();
+		// }
 		// FIXME: need to change the status of the button
 		if ( threeD == true ) {
 			threeD = false;
@@ -618,15 +615,14 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		// FIXME: Problem when the geometry is a point how to determine the maxExtent of the shape?
 		final double zPos = env.maxExtent() * 2 + geometry.getLocation().getZ();
 		final double zLPos = -(env.maxExtent() * 2);
-		System.out.println("xPos:" + xPos + " yPos:" + yPos  + " zPos:" + zPos );
-		System.out.println("xLPos:" + xPos + " yLPos:" + yPos+ " zLPos:" + zLPos);
+		System.out.println("xPos:" + xPos + " yPos:" + yPos + " zPos:" + zPos);
+		System.out.println("xLPos:" + xPos + " yLPos:" + yPos + " zLPos:" + zLPos);
 		this.renderer.camera.updatePosition(xPos, yPos, zPos);
 		this.renderer.camera.lookPosition(xPos, yPos, zLPos);
 	}
-	
-	public void followAgent(IAgent a) {
-		
-		
+
+	public void followAgent(final IAgent a) {
+
 		new Thread(new Runnable() {
 
 			@Override
@@ -635,22 +631,22 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 					@Override
 					public void run() {
-							ILocation l = agent.getGeometry().getLocation();
-							Envelope env = agent.getGeometry().getEnvelope();
-							
-							double xPos = l.getX() - getEnvWidth() / 2;
-							double yPos = -(l.getY() - getEnvHeight() / 2);
-							
-							double zPos = env.maxExtent() * 2 + l.getZ();
-							double zLPos = -(env.maxExtent() * 2);
-							
-							renderer.camera.updatePosition(xPos, yPos, zPos);
-							renderer.camera.lookPosition(xPos, yPos, zLPos);
+						ILocation l = agent.getGeometry().getLocation();
+						Envelope env = agent.getGeometry().getEnvelope();
+
+						double xPos = l.getX() - getEnvWidth() / 2;
+						double yPos = -(l.getY() - getEnvHeight() / 2);
+
+						double zPos = env.maxExtent() * 2 + l.getZ();
+						double zLPos = -(env.maxExtent() * 2);
+
+						renderer.camera.updatePosition(xPos, yPos, zPos);
+						renderer.camera.lookPosition(xPos, yPos, zLPos);
 					}
 				});
 			}
 		}).start();
-		
+
 	}
 
 	@Override
