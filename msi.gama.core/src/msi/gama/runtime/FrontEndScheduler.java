@@ -59,7 +59,7 @@ public class FrontEndScheduler implements Runnable {
 				return;
 			}
 		}
-
+		// GuiUtils.debug("FrontEndScheduler.step");
 		stepables = toStep.keySet().toArray(new IStepable[toStep.size()]);
 		scopes = toStep.values().toArray(new IScope[toStep.size()]);
 		for ( int i = 0; i < stepables.length; i++ ) {
@@ -92,6 +92,9 @@ public class FrontEndScheduler implements Runnable {
 				toStep.remove(s);
 				// GuiUtils.debug("FrontEndScheduler.clean : Disposing " + s);
 				// s.dispose();
+			}
+			if ( toStep.isEmpty() ) {
+				this.pause();
 			}
 			toStop.clear();
 		}
@@ -133,6 +136,9 @@ public class FrontEndScheduler implements Runnable {
 			if ( !scope.init(stepable) ) {
 				toStop.add(stepable);
 			}
+			// else {
+			// paused = false;
+			// }
 		} catch (final Exception e) {
 			// GuiUtils.debug("WARNING :: Exception in front end scheduler: " + e.getMessage());
 			e.printStackTrace();

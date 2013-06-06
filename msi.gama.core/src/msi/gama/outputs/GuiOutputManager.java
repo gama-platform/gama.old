@@ -85,7 +85,7 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 	}
 
 	public void removeDisplayOutput(final IOutput output) {
-		if ( output instanceof MonitorOutput ) {
+		if ( output instanceof MonitorOutput && !(output instanceof InspectDisplayOutput) ) {
 			monitorOutputs.remove(output.getName());
 		} else if ( output != null ) {
 			displayOutputs.remove(output.getId());
@@ -112,7 +112,7 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 
 	public void dispose() {
 		fireSelectionChanged(null);
-		for ( final IDisplayOutput out : new GamaList<IDisplayOutput>((Collection) displayOutputs.values()) ) {
+		for ( final IDisplayOutput out : new GamaList<IDisplayOutput>(displayOutputs.values()) ) {
 			GuiUtils.closeViewOf(out);
 		}
 		displayOutputs.clear();

@@ -133,7 +133,12 @@ public class FrontEndController implements Runnable {
 
 	public void userInterrupt() {
 		if ( experiment != null ) {
+			IModel m = experiment.getModel();
 			closeExperiment(GamaRuntimeException.warning("Interrupted by user"));
+			if ( m != null ) {
+				m.dispose();
+			}
+			GuiUtils.openModelingPerspective();
 		}
 	}
 

@@ -248,7 +248,8 @@ public class CreateStatement extends AbstractStatementSequence implements IState
 		final IList<? extends IAgent> list = population.createAgents(scope, inits.size(), inits, false);
 		if ( !sequence.isEmpty() ) {
 			for ( final IAgent remoteAgent : list ) {
-				if ( scope.execute(sequence, remoteAgent, null) == IScope.INTERRUPTED ) {
+				Object[] result = new Object[1];
+				if ( !scope.execute(sequence, remoteAgent, null, result) ) {
 					break;
 				}
 			}

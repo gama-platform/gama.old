@@ -114,8 +114,9 @@ public class AWTDisplaySurfaceMenu {
 						if ( p != null ) {
 							scope.addVarWithValue(IKeyword.USER_LOCATION, p);
 						}
-						scope.execute(c, a, null);
-						return null;
+						Object[] result = new Object[1];
+						scope.execute(c, a, null, result);
+						return result[0];
 					}
 
 				};

@@ -33,7 +33,7 @@
             class="msi.gama.gui.views.PopulationInspectView"
             icon="icons/display_grid.png"
             id="msi.gama.application.view.TableAgentInspectView"
-            name="Population Inspector">
+            name="Populations Browser">
       </view>
       <view
             allowMultiple="true"
@@ -281,6 +281,54 @@
                visible="false">
          </view>
       </perspectiveExtension>
+      <perspectiveExtension
+            targetID="*">
+         <hiddenMenuItem
+               id="org.eclipse.ui.project.buildAll">
+         </hiddenMenuItem>
+         <hiddenMenuItem
+               id="org.eclipse.pde.ui.junitWorkbenchShortcut.debug">
+         </hiddenMenuItem>
+         <hiddenMenuItem
+               id="org.eclipse.pde.ui.junitWorkbenchShortcut.run">
+         </hiddenMenuItem>
+         <hiddenMenuItem
+               id="org.eclipse.ui.externaltools.ExternalToolMenuDelegateToolbar">
+         </hiddenMenuItem>
+         <hiddenMenuItem
+               id="org.eclipse.ui.externalTools.commands.OpenExternalToolsConfigurations">
+         </hiddenMenuItem>
+         <hiddenMenuItem
+               id="org.eclipse.ui.navigate.addToWorkingSet">
+         </hiddenMenuItem>
+         <hiddenMenuItem
+               id="org.eclipse.ui.navigate.removeFromWorkingSet">
+         </hiddenMenuItem>
+         <hiddenToolBarItem
+               id="org.eclipse.ui.navigate.back">
+         </hiddenToolBarItem>
+         <hiddenToolBarItem
+               id="org.eclipse.ui.navigate.forward">
+         </hiddenToolBarItem>
+         <hiddenToolBarItem
+               id="org.eclipse.ui.navigate.up">
+         </hiddenToolBarItem>
+         <hiddenToolBarItem
+               id="org.eclipse.ui.navigate.next">
+         </hiddenToolBarItem>
+         <hiddenToolBarItem
+               id="org.eclipse.ui.navigate.backwardHistory">
+         </hiddenToolBarItem>
+         <hiddenToolBarItem
+               id="org.eclipse.ui.navigate.forwardHistory">
+         </hiddenToolBarItem>
+         <hiddenToolBarItem
+               id="org.eclipse.ui.navigate.previous">
+         </hiddenToolBarItem>
+         <hiddenToolBarItem
+               id="org.eclipse.ui.edit.text.gotoPreviousAnnotation">
+         </hiddenToolBarItem>
+      </perspectiveExtension>
     </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -370,32 +418,6 @@
                      definitionId="isSimulationReady">
                </reference>
             </visibleWhen>
-            <separator
-                  name="msi.gama.application.separator1"
-                  visible="true">
-            </separator>
-            <command
-                  commandId="msi.gama.application.commands.InspectSpecies"
-                  icon="icons/display_species.png"
-                  label="Show species inspector"
-                  style="push">
-            </command>
-            <command
-                  commandId="msi.gama.application.commands.InspectAgent"
-                  icon="icons/display_agents.png"
-                  label="Show agent inspector"
-                  style="push">
-            </command>
-            <separator
-                  name="msi.gama.application.separator2"
-                  visible="true">
-            </separator>
-            <command
-                  commandId="msi.gama.application.commands.InspectDynamicAgent"
-                  icon="icons/display_agents.png"
-                  label="Open dynamic agent inspector"
-                  style="push">
-            </command>
          </menu>
          <menu
                id="viewMenu"
@@ -523,29 +545,6 @@
                   id="msi.gama.application.status">
             </control>
             <command
-                  commandId="msi.gama.application.commands.Cancel"
-                  icon="icons/menu_cancel.png"
-                  label="Cancel"
-                  style="push"
-                  tooltip="Cancel the launch of the simulation">
-               <visibleWhen
-                     checkEnabled="false">
-                  <and>
-                     <reference
-                           definitionId="isInSimulationPerspective">
-                     </reference>
-                     <not>
-                        <reference
-                              definitionId="isSimulationReady">
-                        </reference>
-                     </not>
-                     <reference
-                           definitionId="isSimulationExisting">
-                     </reference>
-                  </and>
-               </visibleWhen>
-            </command>
-            <command
                   commandId="msi.gama.application.commands.PlaySimulation"
                   icon="icons/menu_play.png"
                   label="Run"
@@ -591,10 +590,6 @@
                   </reference>
                </visibleWhen>
             </command>
-            <separator
-                  name="msi.gama.application.separator1"
-                  visible="true">
-            </separator>
             <command
                   commandId="msi.gama.application.commands.ReloadSimulation"
                   icon="icons/menu_reload.png"
@@ -605,6 +600,28 @@
                   <reference
                         definitionId="isSimulationReady">
                   </reference>
+               </visibleWhen>
+            </command>
+            <separator
+                  name="msi.gama.application.separator1"
+                  visible="true">
+            </separator>
+            <command
+                  commandId="msi.gama.application.commands.Cancel"
+                  icon="icons/menu_cancel.png"
+                  label="Cancel"
+                  style="push"
+                  tooltip="Interrupt the experiment and dispose of it.">
+               <visibleWhen
+                     checkEnabled="false">
+                  <and>
+                     <reference
+                           definitionId="isInSimulationPerspective">
+                     </reference>
+                     <reference
+                           definitionId="isSimulationExisting">
+                     </reference>
+                  </and>
                </visibleWhen>
             </command>
          </toolbar>
@@ -977,11 +994,6 @@
                <reference
                      definitionId="isInSimulationPerspective">
                </reference>
-               <not>
-                  <reference
-                        definitionId="isSimulationReady">
-                  </reference>
-               </not>
             </and>
          </activeWhen>
       </handler>

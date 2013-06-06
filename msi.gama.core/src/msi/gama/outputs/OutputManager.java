@@ -179,6 +179,9 @@ public class OutputManager extends Symbol implements IOutputManager {
 		if ( scheduledOutputs.contains(o) ) {
 			outputsToUnschedule.add(o);
 		}
+		if ( displays != null ) {
+			displays.removeDisplayOutput(o);
+		}
 	}
 
 	@Override

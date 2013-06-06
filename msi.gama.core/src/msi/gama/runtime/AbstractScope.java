@@ -118,9 +118,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public final boolean interrupted() {
-		if ( _root_interrupted() ) { return true; }
-		if ( _action_halted || _loop_halted || _agent_halted ) { return true; }
-		return false;
+		return _root_interrupted() || _action_halted || _loop_halted || _agent_halted;
 		// final IAgent a = agents.peek();
 		// return a == null || a.dead();
 	}
@@ -220,9 +218,9 @@ public abstract class AbstractScope implements IScope {
 	 * @see msi.gama.runtime.IScope#execute(msi.gaml.statements.IStatement, msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
-	public Object execute(final IStatement statement, final IAgent agent, final Arguments args) {
+	public boolean execute(final IStatement statement, final IAgent agent, final Arguments args, final Object[] result) {
 		// If the statement or the agent is null, we act as if the scope had been marked as INTERRUPTED
-		if ( statement == null || agent == null || interrupted() || agent.dead() ) { return INTERRUPTED; }
+		if ( statement == null || agent == null || interrupted() || agent.dead() ) { return false; }
 		// We then try to push the agent on the stack
 		final boolean pushed = push(agent);
 		try {
@@ -231,18 +229,19 @@ public abstract class AbstractScope implements IScope {
 				args.setCaller(agent);
 				((IStatement.WithArgs) statement).setRuntimeArgs(args);
 			}
-			return statement.executeOn(this);
+			result[0] = statement.executeOn(this);
 		} catch (final GamaRuntimeException g) {
 			// If an exception occurs, we throw it and return null (could be INTERRUPTED as well)
 			g.addAgent(agent.getName());
 			GAMA.reportError(g);
-			return null;
+			return false;
 		} finally {
 			// Whatever the outcome, we pop the agent from the stack if it has been previously pushed
 			if ( pushed ) {
 				pop(agent);
 			}
 		}
+		return true;
 
 	}
 
@@ -321,6 +320,7 @@ public abstract class AbstractScope implements IScope {
 
 	@Override
 	public boolean step(final IStepable agent) {
+		// GuiUtils.debug("AbstractScope.step" + agent);
 		final boolean isAgent = agent instanceof IAgent;
 		if ( agent == null || interrupted() || isAgent && ((IAgent) agent).dead() ) { return false; }
 		final boolean pushed = isAgent && push((IAgent) agent);

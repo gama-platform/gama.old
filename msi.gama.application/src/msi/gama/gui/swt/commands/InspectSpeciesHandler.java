@@ -19,7 +19,9 @@
 package msi.gama.gui.swt.commands;
 
 import msi.gama.outputs.InspectDisplayOutput;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.species.ISpecies;
 import org.eclipse.core.commands.*;
 
 public class InspectSpeciesHandler extends AbstractHandler {
@@ -27,10 +29,7 @@ public class InspectSpeciesHandler extends AbstractHandler {
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
 		try {
-			// NE MARCHE PAS if ( m.hasOutputID(AgentInspectView.ID) ) { return null; }
-
-			new InspectDisplayOutput("Species inspector", InspectDisplayOutput.INSPECT_SPECIES)
-				.launch();
+			new InspectDisplayOutput(GAMA.getSimulation(), (ISpecies) null).launch();
 		} catch (GamaRuntimeException e) {
 			throw new ExecutionException(e.getMessage());
 		}

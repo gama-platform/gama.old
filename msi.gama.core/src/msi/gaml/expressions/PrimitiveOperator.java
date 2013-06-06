@@ -77,7 +77,9 @@ public class PrimitiveOperator extends AbstractNAryOperator {
 		if ( executer != null ) {
 			// Now done by the scope itself: parameters.setCaller(scope.getAgentScope());
 			// And finally, (3) to execute the executer on the target (it will be pushed in the scope)
-			return scope.execute(executer, target, parameters);
+			Object[] result = new Object[1];
+			scope.execute(executer, target, parameters, result);
+			return result[0];
 		}
 		return null;
 	}

@@ -28,8 +28,8 @@ public abstract class VariableExpression extends AbstractExpression implements I
 	protected final Boolean isNotModifiable;
 	private final IDescription definitionDescription;
 
-	protected VariableExpression(final String n, final IType type, final IType contentType,
-		IType keyType, final boolean notModifiable, final IDescription definitionDescription) {
+	protected VariableExpression(final String n, final IType type, final IType contentType, final IType keyType,
+		final boolean notModifiable, final IDescription definitionDescription) {
 		setName(n);
 		setType(type);
 		setContentType(contentType);
@@ -81,8 +81,13 @@ public abstract class VariableExpression extends AbstractExpression implements I
 
 	@Override
 	public String getTitle() {
-		return isNotModifiable ? "constant" : "variable " + getName() + " of type " +
-			typeToString() + " defined in " + getDefinitionDescription().getTitle();
+		return isNotModifiable ? "constant" : "variable " + getName() + " of type " + typeToString() + " defined in " +
+			getDefinitionDescription().getTitle();
+	}
+
+	@Override
+	public boolean shouldBeParenthesized() {
+		return false;
 	}
 
 }

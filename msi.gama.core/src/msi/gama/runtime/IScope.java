@@ -38,6 +38,7 @@ import msi.gaml.statements.*;
 public interface IScope {
 
 	public static final Object INTERRUPTED = new Object();
+	public static final Object OK = new Object();
 
 	public abstract void clear();
 
@@ -76,7 +77,8 @@ public interface IScope {
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
-	public abstract Object execute(IStatement statement, IAgent agent, Arguments args);
+	public abstract boolean execute(final IStatement statement, final IAgent agent, final Arguments args,
+		Object[] result);
 
 	/**
 	 * Evaluates the expression on the agent. Equivalent to:

@@ -169,7 +169,8 @@ public class ReleaseStatement extends AbstractStatementSequence {
 			scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
 			if ( !sequence.isEmpty() ) {
 				for ( final IAgent releasedA : releasedMicroAgents ) {
-					if ( scope.execute(sequence, releasedA, null) == IScope.INTERRUPTED ) {
+					Object[] result = new Object[1];
+					if ( !scope.execute(sequence, releasedA, null, result) ) {
 						break;
 					}
 				}
@@ -183,7 +184,7 @@ public class ReleaseStatement extends AbstractStatementSequence {
 			scope.setVarValue(returnString, releasedMicroAgents);
 		}
 
-		return null;
+		return releasedMicroAgents;
 	}
 
 }

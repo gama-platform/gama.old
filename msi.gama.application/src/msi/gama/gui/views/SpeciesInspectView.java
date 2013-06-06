@@ -133,7 +133,7 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 					old.dispose();
 				}
 				try {
-					new InspectDisplayOutput(species.getSpecies()).launch();
+					new InspectDisplayOutput(species.getHost(), species.getSpecies()).launch();
 				} catch (final GamaRuntimeException ex) {
 					GAMA.reportError(ex);
 				}

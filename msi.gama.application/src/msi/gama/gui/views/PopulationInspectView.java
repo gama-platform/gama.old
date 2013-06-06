@@ -20,21 +20,27 @@ package msi.gama.gui.views;
 
 import java.util.*;
 import java.util.List;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.*;
 import msi.gama.runtime.*;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
+import org.apache.commons.lang.StringUtils;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -45,28 +51,43 @@ import org.eclipse.swt.widgets.*;
  * @todo Description
  * 
  */
+// TODO Change this to a TabFolder
 public class PopulationInspectView extends GamaViewPart {
 
 	public static final String ID = GuiUtils.TABLE_VIEW_ID;
+	public static final String CUSTOM = "custom";
 	public static final List<String> DONT_INSPECT = Arrays.asList(IKeyword.PEERS, IKeyword.MEMBERS, IKeyword.AGENTS);
-
-	String speciesName = "";
-	final List<String> columnNames = new GamaList();
+	final IScope scope = GAMA.obtainNewScope();
 	boolean locked;
 	TableViewer viewer;
-	org.eclipse.swt.widgets.List speciesMenu, attributesMenu;
+	org.eclipse.swt.widgets.List /* speciesMenu, */attributesMenu;
 	private AgentComparator comparator;
+	private Label attributesLabel;
+	private Composite expressionComposite;
+	private ExpressionEditor customEditor;
+	// private CLabel sizeLabel;
+	private CTabItem currentTab;
+	Map<String, List<String>> selectedColumns = new HashMap();
 
 	@Override
 	public void update(final IDisplayOutput output) {
-		if ( speciesName != null ) {
-			final List list = new ArrayList(GAMA.getSimulation().getPopulationFor(speciesName));
-			// Collections.sort(list, comparator);
-			viewer.setInput(list);
+		final IExpression expr = getOutput().getValue();
+		if ( expr != null ) {
+			viewer.setInput(getOutput().getLastValue());
 		} else {
 			viewer.setInput(null);
 		}
+		changePartName(currentTab.getText());
 		viewer.refresh();
+	}
+
+	private int computeSize() {
+		final IExpression expr = getOutput().getValue();
+		if ( expr != null ) {
+			final List list = getOutput().getLastValue();
+			return list == null ? 0 : list.size();
+		}
+		return 0;
 	}
 
 	@Override
@@ -77,118 +98,258 @@ public class PopulationInspectView extends GamaViewPart {
 	@Override
 	public void setOutput(final IDisplayOutput output) {
 		super.setOutput(output);
-		if ( getOutput().getValue() != null ) {
-			setSpeciesName(getOutput().getValue().getContentType().getSpeciesName());
+		final IExpression expr = getOutput().getValue();
+		if ( expr != null ) {
+			final String name = expr.getContentType().getSpeciesName();
+			if ( expr.literalValue().equals(name) ) {
+				setSpeciesName(name, true);
+			} else {
+				setSpeciesName(CUSTOM, true);
+			}
 		}
 	}
 
-	private void setSpeciesName(final String name) {
-		speciesName = name;
-		final List<String> names = getOutput().getAttributes();
-		columnNames.clear();
-		if ( names != null ) {
-			columnNames.addAll(names);
-		} else if ( getOutput().getValue() != null ) {
-			final ISpecies species = GAMA.getModel().getSpecies(speciesName);
-			if ( species == null ) { return; }
-			columnNames.addAll(species.getVarNames());
-			columnNames.removeAll(DONT_INSPECT);
+	private void setSpeciesName(final String name, final boolean fromMenu) {
+		final String speciesName = name;
+		if ( !CUSTOM.equals(speciesName) ) {
+			if ( fromMenu ) {
+				hideExpressionComposite();
+				getOutput().setNewExpressionText(name);
+			}
+		} else {
+			if ( fromMenu ) {
+				showExpressionComposite();
+				if ( customEditor != null ) {
+					customEditor.setEditorTextNoPopup(getOutput().getExpressionText());
+				}
+			}
 		}
-		Collections.sort(columnNames);
-		if ( columnNames.remove(IKeyword.NAME) ) {
-			columnNames.add(0, IKeyword.NAME);
+		if ( !selectedColumns.containsKey(name) ) {
+			selectedColumns.put(name, new ArrayList());
+			final List<String> names = getOutput().getAttributes();
+			if ( names != null ) {
+				selectedColumns.get(name).addAll(names);
+			} else if ( getOutput().getValue() != null ) {
+				final IExpression expr = getOutput().getValue();
+				final String realSpecies = expr.getContentType().getSpeciesName();
+				final ISpecies species = GAMA.getModel().getSpecies(realSpecies);
+				if ( species == null ) { return; }
+				selectedColumns.get(name).addAll(species.getVarNames());
+				selectedColumns.get(name).removeAll(DONT_INSPECT);
+			}
+			Collections.sort(selectedColumns.get(name));
+			if ( selectedColumns.get(name).remove(IKeyword.NAME) ) {
+				selectedColumns.get(name).add(0, IKeyword.NAME);
+			}
 		}
+		changePartName(name);
 
+	}
+
+	private void changePartName(final String name) {
+		this.setContentDescription(StringUtils.capitalize(name) + " population in macro-agent " +
+			getOutput().getRootAgent().getName() + "; size: " + computeSize() + " agents");
+		if ( name.equals(CUSTOM) ) {
+			setPartName("Custom population browser");
+		} else {
+			setPartName("Population browser on " + name);
+		}
 	}
 
 	private void createMenus(final Composite parent) {
-		final ScrolledComposite sc = new ScrolledComposite(parent, SWT.H_SCROLL | SWT.V_SCROLL);
-		final Composite menuComposite = new Composite(sc, SWT.NONE);
-		sc.setContent(menuComposite);
-		sc.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
+		final Composite menuComposite = new Composite(parent, SWT.NONE);
+		menuComposite.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, true));
 		final GridLayout layout = new GridLayout(1, false);
-		layout.verticalSpacing = 5;
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
+		layout.verticalSpacing = 1;
 		menuComposite.setLayout(layout);
-		Label title = new Label(menuComposite, SWT.NONE);
-		title.setText("Species:");
-		title.setFont(SwtGui.getLabelfont());
-		speciesMenu = new org.eclipse.swt.widgets.List(menuComposite, SWT.BORDER);
-		speciesMenu.setToolTipText("The list of species used in the simulation. Select the one you want to inspect");
-		final List<IPopulation> populations = GAMA.getModelPopulations();
+
+		// sizeLabel = new CLabel(menuComposite, SWT.LEFT);
+		// sizeLabel.setFont(SwtGui.getLabelfont());
+		// sizeLabel.setText("0 agents");
+		// sizeLabel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		// final Label title = new Label(menuComposite, SWT.SEPARATOR | SWT.HORIZONTAL);
+		// title.setText(""); // Spacer
+		attributesLabel = new Label(menuComposite, SWT.NONE);
+		attributesLabel.setText("Attributes");
+		attributesLabel.setFont(SwtGui.getLabelfont());
+		attributesMenu = new org.eclipse.swt.widgets.List(menuComposite, SWT.V_SCROLL | SWT.MULTI);
+		attributesMenu.setBackground(parent.getBackground());
+		attributesMenu.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		fillAttributeMenu();
+		menuComposite.pack(true);
+	}
+
+	private void createExpressionComposite(final Composite intermediate) {
+		expressionComposite = new Composite(intermediate, SWT.BORDER_SOLID);
+		expressionComposite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+		final GridLayout layout = new GridLayout(3, false);
+		layout.verticalSpacing = 5;
+		expressionComposite.setLayout(layout);
+		final Label lock = new Label(expressionComposite, SWT.NONE);
+		lock.setImage(SwtGui.lock);
+		lock.setToolTipText("Lock the current expression results (the list of agents will not be changed)");
+
+		customEditor =
+			EditorFactory.createExpression(expressionComposite, "Agents to inspect:", "",
+				new EditorListener<IExpression>() {
+
+					@Override
+					public void valueModified(final IExpression newValue) {
+						if ( output == null ) { return; }
+						try {
+							((InspectDisplayOutput) output).setNewExpression(newValue);
+						} catch (final GamaRuntimeException e) {
+							e.printStackTrace();
+						}
+						final ISpecies species = getOutput().getSpecies();
+						setSpeciesName(species == null ? null : species.getName(), false);
+						fillAttributeMenu();
+						// TODO Make a test on the columns.
+						recreateViewer();
+						update(output);
+					}
+				}, Types.get(IType.LIST));
+
+		customEditor.getEditor().setToolTipText("Enter a GAML expression returning one or several agents ");
+		lock.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseDown(final MouseEvent e) {
+				locked = !locked;
+				lock.setImage(locked ? SwtGui.unlock : SwtGui.lock);
+				customEditor.getEditor().setEnabled(!locked);
+			}
+
+		});
+		expressionComposite.pack();
+
+	}
+
+	private final SelectionAdapter attributeAdapter = new SelectionAdapter() {
+
+		@Override
+		public void widgetSelected(final SelectionEvent e) {
+			selectedColumns.put(currentTab.getText(), Arrays.asList(attributesMenu.getSelection()));
+			recreateViewer();
+			update(getOutput());
+		}
+
+	};
+
+	private void fillAttributeMenu() {
+		final String speciesName = currentTab.getText();
+		attributesMenu.removeAll();
+		attributesMenu.setVisible(false);
+		attributesLabel.setVisible(false);
+		String tooltipText;
+		if ( speciesName.equals(CUSTOM) ) {
+			tooltipText = "A list of the attributes common to the agents returned by the custom expression";
+		} else {
+			tooltipText =
+				"A list of the attributes defined in species " + speciesName +
+					". Select the ones you want to display in the table";
+		}
+		attributesMenu.setToolTipText(tooltipText);
+		final IExpression expr = getOutput().getValue();
+		if ( expr != null ) {
+			final String realSpecies = expr.getContentType().getSpeciesName();
+			final ISpecies species = GAMA.getModel().getSpecies(realSpecies);
+			if ( species != null ) {
+				final List<String> names = species.getVarNames();
+				Collections.sort(names);
+				attributesMenu.setItems(names.toArray(new String[0]));
+				for ( int i = 0; i < names.size(); i++ ) {
+					if ( selectedColumns.get(speciesName) != null &&
+						selectedColumns.get(speciesName).contains(names.get(i)) ) {
+						attributesMenu.select(i);
+					}
+				}
+				attributesMenu.addSelectionListener(attributeAdapter);
+				attributesLabel.setVisible(true);
+				attributesMenu.setVisible(true);
+			}
+		}
+	}
+
+	@Override
+	public void ownCreatePartControl(final Composite c) {
+		final CTabFolder tabFolder = new CTabFolder(c, SWT.TOP);
+		tabFolder.setBorderVisible(true);
+		tabFolder.setBackgroundMode(SWT.INHERIT_DEFAULT);
+		tabFolder.setSimple(true); // rounded tabs
+		tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
+		final Iterable<IPopulation> populations = getOutput().getRootAgent().getMicroPopulations();
 		final List<String> names = new ArrayList();
 		for ( final IPopulation pop : populations ) {
 			names.add(pop.getName());
 		}
-		final String[] strings = names.toArray(new String[0]);
-		speciesMenu.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
-		speciesMenu.setItems(strings);
-		speciesMenu.addSelectionListener(new SelectionAdapter() {
-
-			@Override
-			public void widgetSelected(final SelectionEvent e) {
-				final String[] strings = speciesMenu.getSelection();
-				if ( strings.length > 0 && !speciesName.equals(strings[0]) ) {
-					setSpeciesName(strings[0]);
-					fillAttributeMenu();
-					recreateViewer();
-					update(getOutput());
-				}
-
-			}
-
-		});
-		speciesMenu.select(names.indexOf(speciesName));
-		title = new Label(menuComposite, SWT.NONE);
-		title.setText(""); // Spacer
-		title = new Label(menuComposite, SWT.NONE);
-		title.setText("Attributes:");
-		title.setFont(SwtGui.getLabelfont());
-		attributesMenu = new org.eclipse.swt.widgets.List(menuComposite, SWT.BORDER | SWT.V_SCROLL | SWT.MULTI);
-		fillAttributeMenu();
-	}
-
-	private void fillAttributeMenu() {
-		attributesMenu.removeAll();
-		attributesMenu.setToolTipText("A list of all the attributes defined in species " + speciesName +
-			". Select the ones you want to display in the table");
-		final ISpecies species = GAMA.getModel().getSpecies(speciesName);
-		if ( species == null ) { return; }
-		final List<String> names = species.getVarNames();
-		Collections.sort(names);
-		attributesMenu.setItems(names.toArray(new String[0]));
-		for ( int i = 0; i < names.size(); i++ ) {
-			if ( columnNames.contains(names.get(i)) ) {
-				attributesMenu.select(i);
-			}
+		names.add(CUSTOM);
+		for ( final String s : names ) {
+			final CTabItem item = new CTabItem(tabFolder, SWT.CLOSE);
+			item.setText(s);
+			item.setImage(SwtGui.speciesImage);
+			item.setShowClose(true);
 		}
-		attributesMenu.addSelectionListener(new SelectionAdapter() {
+		// Adds a composite to the tab
+
+		final Composite view = new Composite(/* c */tabFolder, SWT.None);
+		final String speciesName = getOutput().getExpressionText();
+		int index = names.indexOf(speciesName);
+		if ( index == -1 ) {
+			index = names.indexOf(CUSTOM);
+		}
+		currentTab = tabFolder.getItem(index);
+		currentTab.setControl(view);
+		tabFolder.setSelection(currentTab);
+		tabFolder.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
+				currentTab = (CTabItem) e.item;
+				final String name = currentTab.getText();
+				currentTab.setControl(view);
+				setSpeciesName(name, true);
+				fillAttributeMenu();
 				recreateViewer();
+				update(getOutput());
 			}
 
 		});
-		attributesMenu.pack(true);
-		attributesMenu.getParent().setSize(attributesMenu.getParent().computeSize(SWT.DEFAULT, SWT.DEFAULT));
-	}
-
-	@Override
-	public void ownCreatePartControl(final Composite view) {
+		final GridLayout viewLayout = new GridLayout(1, false);
+		viewLayout.marginWidth = 0;
+		viewLayout.marginHeight = 0;
+		viewLayout.verticalSpacing = 0;
+		view.setLayout(viewLayout);
+		createExpressionComposite(view);
 		final Composite intermediate = new Composite(view, SWT.NONE);
-		final GridLayout parentLayout = new GridLayout(2, false);
-		parentLayout.marginWidth = 0;
-		parentLayout.marginHeight = 0;
-		parentLayout.verticalSpacing = 0;
-
-		intermediate.setLayout(parentLayout);
+		intermediate.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		final GridLayout intermediateLayout = new GridLayout(2, false);
+		intermediateLayout.marginWidth = 0;
+		intermediateLayout.marginHeight = 0;
+		intermediateLayout.verticalSpacing = 0;
+		intermediate.setLayout(intermediateLayout);
 		createMenus(intermediate);
 		createViewer(intermediate);
 		comparator = new AgentComparator();
 		viewer.setComparator(comparator);
-		view.pack();
-		view.layout();
+		intermediate.layout(true);
 		parent = intermediate;
+	}
+
+	private void hideExpressionComposite() {
+		if ( expressionComposite == null ) { return; }
+		expressionComposite.setVisible(false);
+		((GridData) expressionComposite.getLayoutData()).exclude = true;
+		expressionComposite.getParent().layout();
+	}
+
+	private void showExpressionComposite() {
+		if ( expressionComposite == null ) { return; }
+		expressionComposite.setVisible(true);
+		((GridData) expressionComposite.getLayoutData()).exclude = false;
+		expressionComposite.getParent().layout();
 	}
 
 	private void createViewer(final Composite parent) {
@@ -212,6 +373,28 @@ public class PopulationInspectView extends GamaViewPart {
 			}
 		});
 
+		MenuManager menuMgr = new MenuManager();
+		menuMgr.setRemoveAllWhenShown(false);
+		menuMgr.addMenuListener(new IMenuListener() {
+
+			@Override
+			public void menuAboutToShow(final IMenuManager manager) {
+				IAgent agent = null;
+				final IStructuredSelection s = (IStructuredSelection) viewer.getSelection();
+				final Object o = s.getFirstElement();
+				if ( o instanceof IAgent ) {
+					agent = (IAgent) o;
+				}
+				if ( agent != null ) {
+					manager.removeAll();
+					manager.update(true);
+					AgentsMenu.createMenuForAgent(viewer.getControl().getMenu(), agent, false);
+				}
+			}
+		});
+		Menu menu = menuMgr.createContextMenu(viewer.getControl());
+		viewer.getControl().setMenu(menu);
+
 		// Layout the viewer
 		final GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gridData.horizontalSpan = 1;
@@ -222,6 +405,7 @@ public class PopulationInspectView extends GamaViewPart {
 		final Table table = viewer.getTable();
 		table.dispose();
 		createViewer(parent);
+		// parent.pack(true);
 		parent.layout(true);
 	}
 
@@ -237,7 +421,7 @@ public class PopulationInspectView extends GamaViewPart {
 				public String getText(final Object element) {
 					final IAgent agent = (IAgent) element;
 					if ( agent.dead() && !title.equals(IKeyword.NAME) ) { return "N/A"; }
-					return Cast.toGaml(GAMA.getSimulation().getScope().getAgentVarValue(agent, title));
+					return Cast.toGaml(scope.getAgentVarValue(agent, title));
 				}
 			});
 		}
@@ -245,7 +429,7 @@ public class PopulationInspectView extends GamaViewPart {
 	}
 
 	private SelectionAdapter getSelectionAdapter(final TableColumn column, final String name) {
-		final SelectionAdapter selectionAdapter = new SelectionAdapter() {
+		final SelectionAdapter columnSortAdapter = new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
@@ -256,7 +440,7 @@ public class PopulationInspectView extends GamaViewPart {
 				viewer.refresh();
 			}
 		};
-		return selectionAdapter;
+		return columnSortAdapter;
 	}
 
 	private TableViewerColumn createTableViewerColumn(final String title, final int bound, final int colNumber) {
@@ -319,7 +503,6 @@ public class PopulationInspectView extends GamaViewPart {
 			if ( attribute == null ) {
 				rc = p1.compareTo(p2);
 			} else {
-				final IScope scope = GAMA.obtainNewScope();
 				try {
 					final Object v1 = scope.getAgentVarValue(p1, attribute);
 					if ( v1 == null ) {
@@ -329,7 +512,7 @@ public class PopulationInspectView extends GamaViewPart {
 						if ( v2 == null ) {
 							rc = 1;
 						} else {
-							final IVariable v = GAMA.getModel().getSpecies(speciesName).getVar(attribute);
+							final IVariable v = getOutput().getSpecies().getVar(attribute);
 							final int id = v.getType().id();
 							switch (id) {
 								case IType.INT:
@@ -348,8 +531,6 @@ public class PopulationInspectView extends GamaViewPart {
 					}
 				} catch (final Exception ex) {
 					ex.printStackTrace();
-				} finally {
-					GAMA.releaseScope(scope);
 				}
 			}
 
@@ -455,6 +636,12 @@ public class PopulationInspectView extends GamaViewPart {
 			if ( i >= s.length() ) { return 0; }
 			return s.charAt(i);
 		}
+	}
+
+	@Override
+	public void dispose() {
+		GAMA.releaseScope(scope);
+		super.dispose();
 	}
 
 }

@@ -21,7 +21,7 @@ package msi.gama.outputs;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.agent.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -72,6 +72,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 	int target;
 	IExpression attributes;
 	private List<String> listOfAttributes;
+	IMacroAgent rootAgent;
 
 	public InspectDisplayOutput(final IDescription desc) {
 		super(desc);
@@ -86,6 +87,9 @@ public class InspectDisplayOutput extends MonitorOutput {
 		if ( attributes != null ) {
 			listOfAttributes = Cast.asList(scope, attributes.value(scope));
 		}
+		if ( rootAgent == null ) {
+			rootAgent = scope.getSimulationScope();
+		}
 
 	}
 
@@ -95,11 +99,12 @@ public class InspectDisplayOutput extends MonitorOutput {
 			(type != INSPECT_SPECIES && type != INSPECT_TABLE ? count++ : ""), IKeyword.TYPE, types.get(type)));
 	}
 
-	public InspectDisplayOutput(final ISpecies species) {
+	public InspectDisplayOutput(final IMacroAgent rootAgent, final ISpecies species) {
 		// Opens a table inspector on the agents of this species
 		this(DescriptionFactory.validate(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(),
-			IKeyword.NAME, species.getName(), IKeyword.VALUE, species.getName(), IKeyword.TYPE,
-			types.get(INSPECT_TABLE))));
+			IKeyword.NAME, species == null ? "custom" + count++ : species.getName(), IKeyword.VALUE, species == null
+				? "nil" : species.getName(), IKeyword.TYPE, types.get(INSPECT_TABLE))));
+		this.rootAgent = rootAgent;
 	}
 
 	public void launch() throws GamaRuntimeException {
@@ -115,6 +120,22 @@ public class InspectDisplayOutput extends MonitorOutput {
 			}
 		});
 
+	}
+
+	@Override
+	public void step(final IScope scope) {
+		if ( target == INSPECT_TABLE ) {
+			if ( rootAgent == null || rootAgent.dead() ) { return; }
+			boolean pushed = scope.push(rootAgent);
+			try {
+				super.step(scope);
+			} finally {
+				if ( pushed ) {
+					scope.pop(rootAgent);
+				}
+			}
+		}
+		super.step(scope);
 	}
 
 	@Override
@@ -150,7 +171,12 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	@Override
 	public List<IAgent> getLastValue() {
+		if ( target == INSPECT_TABLE ) {
+			if ( rootAgent == null || rootAgent.dead() ) { return Collections.EMPTY_LIST; }
+		}
 		if ( lastValue instanceof IAgent ) { return GamaList.with(lastValue); }
+		if ( lastValue instanceof ISpecies && rootAgent != null ) { return rootAgent
+			.getMicroPopulation((ISpecies) lastValue); }
 		if ( lastValue instanceof IContainer ) {
 			for ( final Object o : (IContainer) lastValue ) {
 				if ( !(o instanceof IAgent) ) { return null; }
@@ -160,8 +186,20 @@ public class InspectDisplayOutput extends MonitorOutput {
 		return null;
 	}
 
+	public ISpecies getSpecies() {
+		if ( getValue() == null ) { return null; }
+		return GAMA.getModel().getSpecies(getValue().getContentType().getSpeciesName());
+	}
+
 	public List<String> getAttributes() {
 		return listOfAttributes;
+	}
+
+	/**
+	 * @return
+	 */
+	public IMacroAgent getRootAgent() {
+		return rootAgent;
 	}
 
 }

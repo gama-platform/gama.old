@@ -176,6 +176,7 @@ public class GamlSpecies extends AbstractSpecies {
 	public Iterator<IAgent> iterator() {
 		final IScope scope = GAMA.obtainNewScope();
 		if ( scope == null ) { return GamaList.EMPTY_LIST.iterator(); }
+		// WARNING: using this scope-less iterator prevents micro-species from computing their agents...
 		final Iterator<IAgent> result = scope.getSimulationScope().getPopulationFor(this).iterator();
 		GAMA.releaseScope(scope);
 		return result;

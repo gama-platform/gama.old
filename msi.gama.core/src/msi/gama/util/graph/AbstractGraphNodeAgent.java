@@ -32,7 +32,9 @@ public class AbstractGraphNodeAgent extends GamlAgent {
 		@Override
 		public boolean related(final IScope scope, final AbstractGraphNodeAgent p1, final AbstractGraphNodeAgent p2) {
 			args.put("other", ConstantExpressionDescription.create(p2));
-			return Cast.asBool(scope, scope.execute(getAction(p1), p1, args));
+			Object[] result = new Object[1];
+			scope.execute(getAction(p1), p1, args, result);
+			return Cast.asBool(scope, result[0]);
 		}
 
 		@Override

@@ -86,4 +86,9 @@ public class ConstantExpression extends AbstractExpression {
 		return literalValue();
 	}
 
+	@Override
+	public boolean shouldBeParenthesized() {
+		return false;
+	}
+
 }

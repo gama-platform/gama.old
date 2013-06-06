@@ -136,7 +136,8 @@ public class CaptureStatement extends AbstractStatementSequence {
 						scope.addVarWithValue(IKeyword.MYSELF, macroAgent);
 						if ( sequence != null && !sequence.isEmpty() ) {
 							for ( final IAgent capturedA : capturedAgents ) {
-								if ( scope.execute(sequence, capturedA, null) == IScope.INTERRUPTED ) {
+								Object[] result = new Object[1];
+								if ( !scope.execute(sequence, capturedA, null, result) ) {
 									break;
 								}
 							}
@@ -154,7 +155,8 @@ public class CaptureStatement extends AbstractStatementSequence {
 						capturedAgent = macroAgent.captureMicroAgent(scope, microSpecies, c);
 
 						if ( sequence != null && !sequence.isEmpty() ) {
-							scope.execute(sequence, capturedAgent, null);
+							Object[] result = new Object[1];
+							scope.execute(sequence, capturedAgent, null, result);
 						}
 
 						capturedAgents.add(capturedAgent);
@@ -189,7 +191,7 @@ public class CaptureStatement extends AbstractStatementSequence {
 				" as micro-agents because no appropriate micro-population is found to welcome these agents.");
 		}
 
-		return null;
+		return capturedAgents;
 	}
 
 	@Override

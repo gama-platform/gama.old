@@ -153,6 +153,7 @@ public abstract class AbstractExpression implements IExpression {
 	}
 
 	protected String parenthesize(final IExpression ... exp) {
+		if ( exp.length == 1 && !exp[0].shouldBeParenthesized() ) { return " " + exp[0].toGaml() + " "; }
 		return surround('(', ')', exp);
 	}
 
@@ -167,6 +168,11 @@ public abstract class AbstractExpression implements IExpression {
 		}
 		sb.append(last).append(' ');
 		return sb.toString();
+	}
+
+	@Override
+	public boolean shouldBeParenthesized() {
+		return true;
 	}
 
 }

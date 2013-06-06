@@ -203,6 +203,6 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 	@Override
 	public String toString() {
 		// StringBuffer sb = new StringBuffer();
-		return "SpeciesDisplayLayer species: " + this.getFacet(IKeyword.NAME).literalValue();
+		return "SpeciesDisplayLayer species: " + getName();
 	}
 }

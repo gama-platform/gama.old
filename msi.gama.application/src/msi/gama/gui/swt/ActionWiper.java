@@ -19,78 +19,104 @@
 package msi.gama.gui.swt;
 
 import msi.gama.common.util.GuiUtils;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.*;
+import org.eclipse.ui.internal.WorkbenchWindow;
 
-public class ActionWiper implements IStartup, IPerspectiveListener, IPartListener {
+public class ActionWiper implements IStartup, IPerspectiveListener/* , IPartListener */{
 
-	private static final String[] ACTIONS_2_WIPE = new String[] {
-		// "org.eclipse.ui.edit.text.actionSet.presentation",
-		// "org.eclipse.jdt.ui.edit.text.java.toggleMarkOccurrences",
-		"org.eclipse.cdt.ui.text.c.actionSet.presentation",
-		"org.eclipse.jdt.ui.text.java.actionSet.presentation",
-		"org.eclipse.ui.externaltools.ExternalToolsSet",
-	// "org.eclipse.update.ui.softwareUpdates"
-		};
+	// private static final String[] ACTIONS_2_WIPE = new String[] { "org.eclipse.ui.edit.text.actionSet.presentation",
+	// "org.eclipse.jdt.ui.edit.text.java.toggleMarkOccurrences", "org.eclipse.cdt.ui.text.c.actionSet.presentation",
+	// "org.eclipse.jdt.ui.text.java.actionSet.presentation", "org.eclipse.ui.externaltools.ExternalToolsSet",
+	// "org.eclipse.ui.workbench.navigate", "org.eclipse.ui.edit.text.actionSet.annotationNavigation"
+	// // "org.eclipse.update.ui.softwareUpdates"
+	// };
 
-	@Override
-	public void partActivated(final IWorkbenchPart part) {
-		// if ( !(part instanceof IEditorPart) ) { return; }
-		// GuiUtils.openModelingPerspective();
-	}
-
+	// @Override
+	// public void partActivated(final IWorkbenchPart part) {
+	// // if ( !(part instanceof IEditorPart) ) { return; }
+	// // GuiUtils.openModelingPerspective();
+	// }
+	//
 	@Override
 	public void earlyStartup() {
 		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 		for ( int i = 0; i < windows.length; i++ ) {
 			IWorkbenchPage page = windows[i].getActivePage();
 			if ( page != null ) {
-				wipeActions(page);
-				ActionWiper aw = new ActionWiper();
-				page.addPartListener(aw);
+				// // wipeActions(page);
+				// // ActionWiper aw = new ActionWiper();
+				// // page.addPartListener(aw);
+				// }
+				// Doing the initial cleanup on the default perspective (modeling)
+				this.perspectiveActivated(page, null);
 			}
 			windows[i].addPerspectiveListener(this);
 		}
 	}
 
-	private void wipeActions(final IWorkbenchPage page) {
-		for ( int i = 0; i < ACTIONS_2_WIPE.length; i++ ) {
-			wipeAction(page, ACTIONS_2_WIPE[i]);
-		}
-	}
+	// private void wipeActions(final IWorkbenchPage page) {
+	// for ( int i = 0; i < ACTIONS_2_WIPE.length; i++ ) {
+	// wipeAction(page, ACTIONS_2_WIPE[i]);
+	// }
+	// }
+	//
+	// private void wipeAction(final IWorkbenchPage page, final String actionsetId) {
+	// }
 
-	private void wipeAction(final IWorkbenchPage page, final String actionsetId) {
+	// static String[] ItemsToHide = { "org.eclipse.ui.workbench.file", "org.eclipse.debug.ui.launchActionSet",
+	// "org.eclipse.search.searchActionSet", "org.eclipse.ui.edit.text.actionSet.presentation",
+	// "org.eclipse.ui.workbench.navigate", "org.eclipse.ui.workbench.help", "org.eclipse.ui.DefaultTextEditor",
+	// "msi.gama.lang.gaml.Gaml" };
+	//
+	// static String[] MenusToHide = { "org.eclipse.ui.run" };
+
+	@Override
+	public void perspectiveActivated(final IWorkbenchPage page, final IPerspectiveDescriptor perspective) {
+		final WorkbenchWindow w = (WorkbenchWindow) page.getWorkbenchWindow();
 		GuiUtils.run(new Runnable() {
 
 			@Override
 			public void run() {
-				page.hideActionSet(actionsetId);
+				IContributionItem[] items = w.getCoolBarManager2().getItems();
+				// We remove all contributions to the toolbar that do not relate to gama
+				for ( IContributionItem item : items ) {
+					if ( !item.getId().contains("gama") ) {
+						w.getCoolBarManager2().remove(item);
+					}
+				}
+				// Special case for the contribution of XText
+				w.getCoolBarManager2().remove("msi.gama.lang.gaml.Gaml");
+				// Special case for the Run menu
+				w.getMenuBarManager().remove("org.eclipse.ui.run");
+				w.getMenuManager().remove("org.eclipse.ui.run");
+				// Update the tool and menu bars
+				w.getCoolBarManager2().update(true);
+				w.getMenuManager().update(true);
+				w.getMenuBarManager().update(true);
 			}
-		});
-	}
 
-	@Override
-	public void perspectiveActivated(final IWorkbenchPage page,
-		final IPerspectiveDescriptor perspective) {
-		wipeActions(page);
-		// if ( GAMA.getFrontmostSimulation() == null ) {
-		// GuiUtils.informStatus("No simulation");
+		});
+
+		// for ( IContributionItem item : w.getMenuManager().getItems() ) {
+		// GuiUtils.debug("ActionWiper.perspectiveActivated + showing item in MENUMANAGER " +
+		// item.getClass().getSimpleName() + " id= " + item.getId());
 		// }
 	}
 
 	@Override
-	public void perspectiveChanged(final IWorkbenchPage p, final IPerspectiveDescriptor d,
-		final String c) {}
+	public void perspectiveChanged(final IWorkbenchPage p, final IPerspectiveDescriptor d, final String c) {}
 
-	@Override
-	public void partBroughtToTop(final IWorkbenchPart part) {}
-
-	@Override
-	public void partClosed(final IWorkbenchPart part) {}
-
-	@Override
-	public void partDeactivated(final IWorkbenchPart part) {}
-
-	@Override
-	public void partOpened(final IWorkbenchPart part) {}
+	// @Override
+	// public void partBroughtToTop(final IWorkbenchPart part) {}
+	//
+	// @Override
+	// public void partClosed(final IWorkbenchPart part) {}
+	//
+	// @Override
+	// public void partDeactivated(final IWorkbenchPart part) {}
+	//
+	// @Override
+	// public void partOpened(final IWorkbenchPart part) {}
 
 }

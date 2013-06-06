@@ -73,8 +73,9 @@ public class AskStatement extends AbstractStatementSequence {
 			t instanceof ISpecies ? ((ISpecies) t).iterator() : t instanceof IContainer ? ((IContainer) t).iterable(
 				scope).iterator() : t instanceof IAgent ? singletonIterator(t) : emptyIterator();
 		scope.addVarWithValue(IKeyword.MYSELF, scope.getAgentScope());
-		while (runners.hasNext() && scope.execute(sequence, runners.next(), null) != IScope.INTERRUPTED) {}
-		return null;
+		Object[] result = new Object[1];
+		while (runners.hasNext() && scope.execute(sequence, runners.next(), null, result)) {}
+		return result[0];
 	}
 
 }

@@ -120,7 +120,9 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	 */
 
 	protected Object executeCallbackAction(final IScope scope, final String name) {
-		return scope.execute(getSpecies().getAction(name), this, null);
+		Object[] result = new Object[1];
+		scope.execute(getSpecies().getAction(name), this, null, result);
+		return result[0];
 	}
 
 	@action(name = "_init_")
@@ -134,11 +136,12 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		scope.update(this);
 		// getPopulation().updateVariables(scope, this);
 		// we ask the architecture to execute on this
-		if ( scope.execute(getSpecies().getArchitecture(), this, null) != IScope.INTERRUPTED ) {
+		Object[] result = new Object[1];
+		if ( scope.execute(getSpecies().getArchitecture(), this, null, result) ) {
 			// we ask the sub-populations to step their agents
 			return stepSubPopulations(scope);
 		}
-		return this;
+		return result[0];
 	}
 
 	protected Object stepSubPopulations(final IScope scope) {
@@ -660,7 +663,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		@Override
 		public void setInterrupted(final boolean interrupted) {
 			this.interrupted = true;
-			// GuiUtils.debug("GamlAgent.Scope.setInterrupted : " + this);
+			GuiUtils.debug("GamlAgent.Scope.setInterrupted : " + this);
 			// if ( !GamlAgent.this.dead ) {
 			// GamlAgent.this.dispose();
 			// }

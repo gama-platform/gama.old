@@ -127,6 +127,20 @@ public class Containers {
 		return new GamaList(l1.subList(beginIndex, endIndex));
 	}
 
+	@operator(value = { "first" }, can_be_const = true, content_type = ITypeProvider.SECOND_CONTENT_TYPE)
+	@doc(value = "Returns the nth first elements of the container. If n is greater than the list size, a translation of the container to a list is returned. If it is equal or less than zero, returns an empty list")
+	public static IList first(final Integer number, final IContainer l1) {
+		return new GamaList(Iterables.limit(l1, number < 0 ? 0 : number));
+	}
+
+	@operator(value = { "last" }, can_be_const = true, content_type = ITypeProvider.SECOND_CONTENT_TYPE)
+	@doc(value = "Returns the nth last elements of the container. If n is greater than the list size, a translation of the container to a list is returned. If it is equal or less than zero, returns an empty list")
+	public static IList last(final IScope scope, final Integer number, final IContainer l1) {
+		IList result =
+			new GamaList(Iterables.limit(Lists.reverse(nullCheck(l1).listValue(scope)), number < 0 ? 0 : number));
+		return result;
+	}
+
 	@operator(value = "in", can_be_const = true)
 	@doc(value = "true if the right operand contains the left operand, false otherwise", comment = "the definition of in depends on the container", special_cases = { "if the right operand is nil or empty, in returns false" }, examples = {
 		"2 in [1,2,3,4,5,6] : true", "7 in [1,2,3,4,5,6] : false", "3 in [1::2, 3::4, 5::6] : true",
@@ -363,12 +377,6 @@ public class Containers {
 		"[1::2, 3::4, 5::6] first_with (each.key > 4) 					--: 	5::6" }, see = { "group_by", "last_with", "where" })
 	public static Object first_with(final IScope scope, final IContainer original, final IExpression filter) {
 		return find(nullCheck(original).iterable(scope), withPredicate(scope, filter), null);
-		// if ( original == null ) { return null; }
-		// for ( final Object each : original.iterable(scope) ) {
-		// scope.setEach(each);
-		// if ( Cast.asBool(scope, filter.value(scope)) ) { return each; }
-		// }
-		// return null;
 	}
 
 	@operator(value = { "max_of" }, type = ITypeProvider.SECOND_TYPE, iterator = true)

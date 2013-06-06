@@ -25,8 +25,8 @@ import msi.gaml.types.IType;
 
 public class AgentVariableExpression extends VariableExpression {
 
-	protected AgentVariableExpression(final String n, final IType type, final IType contentType,
-		IType keyType, final boolean notModifiable, final IDescription def) {
+	protected AgentVariableExpression(final String n, final IType type, final IType contentType, final IType keyType,
+		final boolean notModifiable, final IDescription def) {
 		super(n, type, contentType, keyType, notModifiable, def);
 	}
 
@@ -36,8 +36,7 @@ public class AgentVariableExpression extends VariableExpression {
 	}
 
 	@Override
-	public void setVal(final IScope scope, final Object v, final boolean create)
-		throws GamaRuntimeException {
+	public void setVal(final IScope scope, final Object v, final boolean create) throws GamaRuntimeException {
 		if ( isNotModifiable ) { return; }
 		scope.setAgentVarValue(getName(), v);
 	}
@@ -45,7 +44,7 @@ public class AgentVariableExpression extends VariableExpression {
 	@Override
 	public String getDocumentation() {
 		IDescription desc = getDefinitionDescription();
-		return "Type " + type.toString() +
-			(desc == null ? "<br>Built In" : "<br>Defined in " + desc.getTitle());
+		return "Type " + type.toString() + (desc == null ? "<br>Built In" : "<br>Defined in " + desc.getTitle());
 	}
+
 }

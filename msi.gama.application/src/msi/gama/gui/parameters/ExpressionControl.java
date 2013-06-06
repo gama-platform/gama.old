@@ -46,12 +46,12 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 	public ExpressionControl(final Composite comp, final AbstractEditor ed) {
 		editor = ed;
 		text = createTextBox(comp);
-		GridData d = ed.getParameterGridData();
+		final GridData d = ed.getParameterGridData();
 		text.setLayoutData(d);
 		text.addModifyListener(this);
 		text.addFocusListener(this);
 		text.addSelectionListener(this);
-		popup = new Popup(this, text, editor.getLabel());
+		popup = new Popup(this, editor.getLabel(), text);
 
 	}
 
@@ -79,7 +79,7 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 			modifyNoPopup();
 			Popup.hide();
 
-		} catch (Exception e) {}
+		} catch (final Exception e) {}
 	}
 
 	private void computeValue() {
@@ -88,13 +88,13 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 			currentValue =
 				editor.evaluateExpression() ? GAML.evaluateExpression(text.getText(), editor.getAgent()) : GAML
 					.compileExpression(text.getText(), editor.getAgent());
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			currentException = e;
 		}
 	}
 
 	private void modifyValue() {
-		Object oldValue = currentValue;
+		final Object oldValue = currentValue;
 		computeValue();
 		if ( currentException != null ) {
 			currentValue = oldValue;
@@ -102,7 +102,7 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 		}
 		try {
 			editor.modifyValue(currentValue);
-		} catch (GamaRuntimeException e) {
+		} catch (final GamaRuntimeException e) {
 			currentValue = oldValue;
 			currentException = e;
 		}
@@ -121,7 +121,7 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 		if ( GAMA.run(new InScope<Boolean>() {
 
 			@Override
-			public Boolean run(IScope scope) {
+			public Boolean run(final IScope scope) {
 				return expectedType.canBeTypeOf(scope, currentValue);
 			}
 		}) ) {
@@ -178,7 +178,7 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 	@Override
 	public String getPopupText() {
 		if ( text.getText().isEmpty() ) { return null; }
-		String string = getPopupBody() + "\n" + editor.getTooltipText();
+		final String string = getPopupBody() + "\n" + editor.getTooltipText();
 		return string;
 	}
 
@@ -192,12 +192,13 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 
 	@Override
 	public Shell getControllingShell() {
-		return text.getShell();
+		if ( text.getVisible() ) { return text.getShell(); }
+		return null;
 	}
 
 	@Override
 	public Point getAbsoluteOrigin() {
-		Control parent = editor.getLabel().getParent();
+		final Control parent = editor.getLabel().getParent();
 		return parent.toDisplay(new Point(parent.getLocation().x, editor.getLabel().getLocation().y + 20));
 	}
 

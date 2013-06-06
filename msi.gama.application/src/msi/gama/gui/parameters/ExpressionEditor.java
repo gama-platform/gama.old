@@ -58,4 +58,24 @@ public class ExpressionEditor extends GenericEditor {
 		return false;
 	}
 
+	public void setEditorTextNoPopup(final String s) {
+		internalModification = true;
+		control.getControl().setText(s);
+		internalModification = false;
+	}
+
+	//
+	// @Override
+	// public void modifyText(final ModifyEvent e) {
+	// super.modifyText(e);
+	// }
+
+	/**
+	 * @return
+	 *         //
+	 */
+	// public String getText() {
+	// return expressionText;
+	// }
+
 }

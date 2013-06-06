@@ -57,7 +57,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 			: name));
 		setScope(GAMA.obtainNewScope());
 		setUserCreated(true);
-		setNewExpressionText(expr, getScope());
+		setNewExpressionText(expr);
 		if ( getScope().init(this) ) {
 			outputManager.addOutput(this);
 			if ( openRightNow ) {
@@ -105,7 +105,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 				lastValue = ItemList.ERROR_CODE + e.getMessage();
 			}
 		} else {
-			lastValue = "No expression to monitor";
+			lastValue = null;
 		}
 	}
 
@@ -118,9 +118,10 @@ public class MonitorOutput extends AbstractDisplayOutput {
 		return true;
 	}
 
-	public boolean setNewExpressionText(final String string, final IScope scope) {
+	public boolean setNewExpressionText(final String string) {
 		expressionText = string;
-		setValue(GAML.compileExpression(string, scope.getSimulationScope()));
+		setValue(GAML.compileExpression(string, getScope().getSimulationScope()));
+		getScope().step(this);
 		return true;
 	}
 
@@ -155,7 +156,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 		return s.toString();
 	}
 
-	protected void setValue(IExpression value) {
+	protected void setValue(final IExpression value) {
 		this.value = value;
 	}
 

@@ -88,7 +88,7 @@ public class FileEditor extends AbstractEditor implements IPopupProvider {
 			file = GAMA.run(new InScope<IGamaFile>() {
 
 				@Override
-				public IGamaFile run(IScope scope) {
+				public IGamaFile run(final IScope scope) {
 					return Files.from(scope, path);
 				}
 

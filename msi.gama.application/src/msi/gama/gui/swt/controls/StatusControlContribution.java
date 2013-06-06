@@ -59,7 +59,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		layout.marginWidth = 2;
 		compo.setLayout(layout);
 		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
-		data.widthHint = 150;
+		data.widthHint = 300;
 		label = new Label(compo, SWT.CENTER);
 		label.setLayoutData(data);
 		label.setBackground(SwtGui.COLOR_OK);

@@ -89,8 +89,8 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 				if ( agent == GuiUtils.getHighlightedAgent() ) {
 					g.beginHighlight();
 				}
-				final Object result = scope.execute(this, agent, null);
-				if ( result instanceof Rectangle2D ) { return (Rectangle2D) result; }
+				Object[] result = new Object[1];
+				if ( scope.execute(this, agent, null, result) && result[0] instanceof Rectangle2D ) { return (Rectangle2D) result[0]; }
 				return null;
 			} finally {
 				g.endHighlight();

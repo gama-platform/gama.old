@@ -54,9 +54,9 @@ public class DynamicAgentInspectView extends AgentInspectView {
 			super.update(output);
 			return;
 		}
-		InspectDisplayOutput out = (InspectDisplayOutput) output;
+		final InspectDisplayOutput out = (InspectDisplayOutput) output;
 		if ( out.getValue() == null ) { return; }
-		List<IAgent> result = out.getLastValue();
+		final List<IAgent> result = out.getLastValue();
 		if ( result == null ) {
 			reset();
 			return;
@@ -79,22 +79,12 @@ public class DynamicAgentInspectView extends AgentInspectView {
 		return currentAgents;
 	}
 
-	@Override
-	public void ownCreatePartControl(final Composite view) {
-		super.ownCreatePartControl(view);
-		Composite intermediate = new Composite(view, SWT.NONE);
-		GridLayout parentLayout = new GridLayout(1, false);
-		parentLayout.marginWidth = 0;
-		parentLayout.marginHeight = 0;
-		parentLayout.verticalSpacing = 0;
-		intermediate.setLayout(parentLayout);
-		Composite searchComposite = new Composite(intermediate, SWT.BORDER_SOLID);
-		searchComposite.setBackground(SwtGui.getDisplay().getSystemColor(
-			SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
-		searchComposite.setForeground(SwtGui.getDisplay().getSystemColor(
-			SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
+	private void createExpressionComposite(final Composite intermediate) {
+		final Composite searchComposite = new Composite(intermediate, SWT.BORDER_SOLID);
+		searchComposite.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
+		searchComposite.setForeground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
 		searchComposite.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-		GridLayout layout = new GridLayout(3, false);
+		final GridLayout layout = new GridLayout(3, false);
 		layout.verticalSpacing = 5;
 		searchComposite.setLayout(layout);
 		final Label lock = new Label(searchComposite, SWT.NONE);
@@ -110,7 +100,7 @@ public class DynamicAgentInspectView extends AgentInspectView {
 						if ( output == null ) { return; }
 						try {
 							((InspectDisplayOutput) output).setNewExpression(newValue);
-						} catch (GamaRuntimeException e) {
+						} catch (final GamaRuntimeException e) {
 							e.printStackTrace();
 						}
 						update(output);
@@ -130,8 +120,20 @@ public class DynamicAgentInspectView extends AgentInspectView {
 
 		});
 		searchComposite.pack();
-		view.pack();
 		((Text) ed.getEditor()).setText("");
+	}
+
+	@Override
+	public void ownCreatePartControl(final Composite view) {
+		super.ownCreatePartControl(view);
+		final Composite intermediate = new Composite(view, SWT.NONE);
+		final GridLayout parentLayout = new GridLayout(1, false);
+		parentLayout.marginWidth = 0;
+		parentLayout.marginHeight = 0;
+		parentLayout.verticalSpacing = 0;
+		intermediate.setLayout(parentLayout);
+		createExpressionComposite(intermediate);
+		view.pack();
 		view.layout();
 		parent = intermediate;
 	}

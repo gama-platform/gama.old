@@ -86,23 +86,22 @@ public class LoopStatement extends AbstractStatementSequence {
 
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
-		executer.runIn(scope);
-		return true;
+		return executer.runIn(scope);
 	}
 
-	protected boolean loopBody(final IScope scope, final Object var) {
+	protected boolean loopBody(final IScope scope, final Object var, final Object[] result) {
 		scope.push(this);
 		if ( varName != null ) {
 			scope.setVarValue(varName, var);
 		}
-		super.privateExecuteIn(scope);
+		result[0] = super.privateExecuteIn(scope);
 		scope.pop(this);
 		return !scope.interrupted();
 	}
 
 	interface LoopExecuter {
 
-		abstract void runIn(final IScope scope);
+		abstract Object runIn(final IScope scope);
 	}
 
 	class Bounded implements LoopExecuter {
@@ -129,11 +128,13 @@ public class LoopStatement extends AbstractStatementSequence {
 		}
 
 		@Override
-		public void runIn(final IScope scope) throws GamaRuntimeException {
+		public Object runIn(final IScope scope) throws GamaRuntimeException {
 			final int f = constantFrom == null ? Cast.asInt(scope, from.value(scope)) : constantFrom;
 			final int t = constantTo == null ? Cast.asInt(scope, to.value(scope)) : constantTo;
 			final int s = constantStep == null ? Cast.asInt(scope, step.value(scope)) : constantStep;
-			for ( int i = f, n = t + 1; i < n && loopBody(scope, i); i += s ) {}
+			Object[] result = new Object[1];
+			for ( int i = f, n = t + 1; i < n && loopBody(scope, i, result); i += s ) {}
+			return result[0];
 		}
 	}
 
@@ -156,14 +157,16 @@ public class LoopStatement extends AbstractStatementSequence {
 		}
 
 		@Override
-		public void runIn(final IScope scope) throws GamaRuntimeException {
+		public Object runIn(final IScope scope) throws GamaRuntimeException {
 			final ILocation interval = constantOver == null ? Cast.asPoint(scope, over.value(scope)) : constantOver;
 			final int first = (int) interval.getX();
 			final int last = (int) interval.getY();
-			if ( first > last ) { return; }
+			if ( first > last ) { return null; }
 			final int step_ = constantStep == null ? Cast.asInt(scope, step.value(scope)) : 1;
-			if ( step_ <= 0 || step_ > last - first ) { return; }
-			for ( int i = first; i < last && loopBody(scope, i); i += step_ ) {}
+			if ( step_ <= 0 || step_ > last - first ) { return null; }
+			Object result[] = new Object[1];
+			for ( int i = first; i < last && loopBody(scope, i, result); i += step_ ) {}
+			return result[0];
 		}
 
 	}
@@ -173,14 +176,16 @@ public class LoopStatement extends AbstractStatementSequence {
 		private final IExpression over = getFacet(IKeyword.OVER);
 
 		@Override
-		public void runIn(final IScope scope) throws GamaRuntimeException {
+		public Object runIn(final IScope scope) throws GamaRuntimeException {
 			final Object obj = over.value(scope);
 			final IContainer list_ = !(obj instanceof IContainer) ? Cast.asList(scope, obj) : (IContainer) obj;
+			Object[] result = new Object[1];
 			for ( final Object each : list_.iterable(scope) ) {
-				if ( !loopBody(scope, each) ) {
+				if ( !loopBody(scope, each, result) ) {
 					break;
 				}
 			}
+			return result[0];
 		}
 	}
 
@@ -196,9 +201,11 @@ public class LoopStatement extends AbstractStatementSequence {
 		}
 
 		@Override
-		public void runIn(final IScope scope) throws GamaRuntimeException {
+		public Object runIn(final IScope scope) throws GamaRuntimeException {
 			final int max = constantTimes == null ? Cast.asInt(scope, times.value(scope)) : constantTimes;
-			for ( int i = 0; i < max && loopBody(scope, null); i++ ) {}
+			Object[] result = new Object[1];
+			for ( int i = 0; i < max && loopBody(scope, null, result); i++ ) {}
+			return result[0];
 		}
 
 	}
@@ -208,8 +215,10 @@ public class LoopStatement extends AbstractStatementSequence {
 		private final IExpression cond = getFacet(IKeyword.WHILE);
 
 		@Override
-		public void runIn(final IScope scope) throws GamaRuntimeException {
-			while (Cast.asBool(scope, cond.value(scope)) && loopBody(scope, null)) {}
+		public Object runIn(final IScope scope) throws GamaRuntimeException {
+			Object[] result = new Object[1];
+			while (Cast.asBool(scope, cond.value(scope)) && loopBody(scope, null, result)) {}
+			return result[0];
 		}
 	}
 

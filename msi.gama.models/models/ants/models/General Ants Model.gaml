@@ -226,7 +226,7 @@ experiment Complete type: gui {
 			size: { 1, 0.02 };
 		}
 		inspect "One" type: table value: ant attributes: ['name', 'location', 'heading','state'];
-		inspect "Two" type: table value: ant;
+		inspect "Two" type: table value: 10 among ant attributes: ['state'];
 	}
 
 }

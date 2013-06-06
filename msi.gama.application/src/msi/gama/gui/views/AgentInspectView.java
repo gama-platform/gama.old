@@ -118,7 +118,9 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements G
 
 						@Override
 						public Object run(final IScope scope) {
-							return scope.execute(command, agent, null);
+							Object[] result = new Object[1];
+							scope.execute(command, agent, null, result);
+							return result[0];
 						}
 
 					});

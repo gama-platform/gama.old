@@ -79,11 +79,13 @@ public class BinaryOperator extends AbstractNAryOperator {
 		return this;
 	}
 
-	static List<String> symbols = Arrays.asList("+", "-", "/", "*", "^", "**", "<", ">", "<=", ">=", "?", ":", ".");
+	static List<String> symbols = Arrays.asList("+", "-", "/", "*", "^", "**", "<", ">", "<=", ">=", "?", ":", ".",
+		"where", "select", "collect", "first_with", "last_with", "overlapping", "at_distance", "in", "inside",
+		"with_max_of", "with_min_of", "of_species", "of_generic_species", "sort_by");
 
 	@Override
 	public String toGaml() {
-		if ( symbols.contains(name) ) { return " (" + parenthesize(left()) + name + parenthesize(right()) + ") "; }
+		if ( symbols.contains(name) ) { return parenthesize(left()) + name + parenthesize(right()); }
 		return name + parenthesize(left(), right());
 	}
 

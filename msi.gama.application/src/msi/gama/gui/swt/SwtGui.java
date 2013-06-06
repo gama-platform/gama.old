@@ -97,6 +97,7 @@ public class SwtGui implements IGui {
 	public static Image speciesImage = getImageDescriptor("/icons/display_species.png").createImage();
 	public static Image agentImage = getImageDescriptor("/icons/display_agents.png").createImage();
 	public static Image gridImage = getImageDescriptor("/icons/display_grid.png").createImage();
+	public static Image tableImage = getImageDescriptor("/icons/table.png").createImage();
 	public static Image editImage = getImageDescriptor("/icons/button_edit.png").createImage();
 	public static Image experimentMenuImage = AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID,
 		"/icons/menu_run.png").createImage();
@@ -120,7 +121,9 @@ public class SwtGui implements IGui {
 	public static Image panel_continue = getImageDescriptor("/icons/panel_continue.png").createImage();
 	public static Image panel_goto = getImageDescriptor("/icons/panel_goto.png").createImage();
 	public static Image panel_inspect = getImageDescriptor("/icons/display_agents.png").createImage();
-	public static Image highlight = getImageDescriptor("/icons/highlighter-small.png").createImage();
+	public static Image magnifier = getImageDescriptor("/icons/button_focus.png").createImage();
+	public static Image highlight = getImageDescriptor("/icons/selection-blue.png").createImage();
+	public static Image action = getImageDescriptor("/icons/action_run.png").createImage();
 
 	public static Label createLeftLabel(final Composite parent, final String title) {
 		final Label label = new Label(parent, SWT.NONE);
@@ -534,8 +537,9 @@ public class SwtGui implements IGui {
 
 		Object o = internalShowView(viewId, secondaryId);
 		if ( o instanceof IWorkbenchPart ) {
-			((IPartService) ((IWorkbenchPart) o).getSite().getService(IPartService.class))
-				.addPartListener(new SwtGui.GamaPartListener());
+			IPartService ps = (IPartService) ((IWorkbenchPart) o).getSite().getService(IPartService.class);
+
+			ps.addPartListener(SwtGui.getPartListener());
 			if ( o instanceof GamaSelectionListener ) {
 				GAMA.getExperiment().getOutputManager().addGamaSelectionListener((GamaSelectionListener) o);
 
@@ -547,6 +551,15 @@ public class SwtGui implements IGui {
 			GAMA.reportError(GamaRuntimeException.create((Exception) o));
 		}
 		return null;
+	}
+
+	private static IPartListener partListener;
+
+	private static IPartListener getPartListener() {
+		if ( partListener == null ) {
+			partListener = new GamaPartListener();
+		}
+		return partListener;
 	}
 
 	@Override
@@ -577,6 +590,7 @@ public class SwtGui implements IGui {
 
 		@Override
 		public void partActivated(final IWorkbenchPart partRef) {
+			// GuiUtils.debug("SwtGui.GamaPartListener.partActivated" + partRef);
 
 			// ViewSourceProvider state =
 			// (ViewSourceProvider) ((ISourceProviderService) getWindow().getService(
@@ -592,20 +606,15 @@ public class SwtGui implements IGui {
 		 */
 		@Override
 		public void partClosed(final IWorkbenchPart partRef) {
-			// Passe 4 fois dedans !!!
-
 			if ( partRef instanceof IGamaView ) {
 				final IExperimentSpecies s = GAMA.getExperiment();
 				if ( s == null ) { return; }
 				final IOutputManager m = s.getOutputManager();
 				if ( m != null && partRef instanceof GamaSelectionListener ) {
 					m.removeGamaSelectionListener((GamaSelectionListener) partRef);
+					m.unscheduleOutput(((IGamaView) partRef).getOutput());
 				}
-				// m.unscheduleOutput(((IGamaView) partRef).getOutput());
-				// GuiOutputManager g = m.getDisplayOutputManager();
-				// if ( g != null ) {
-				// g.removeDisplayOutput(((IGamaView) partRef).getOutput());
-				// }
+
 			}
 
 		}
@@ -619,6 +628,7 @@ public class SwtGui implements IGui {
 		@Override
 		public void partDeactivated(final IWorkbenchPart partRef) {
 			// TODO Auto-generated method stub
+			// GuiUtils.debug("SwtGui.GamaPartListener.partDeactivated" + partRef);
 
 		}
 
@@ -630,6 +640,7 @@ public class SwtGui implements IGui {
 		@Override
 		public void partOpened(final IWorkbenchPart partRef) {
 			// TODO Auto-generated method stub
+			// GuiUtils.debug("SwtGui.GamaPartListener.partOpened" + partRef);
 
 		}
 

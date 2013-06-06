@@ -36,71 +36,69 @@ public class EditorFactory implements IEditorFactory {
 		return instance;
 	}
 
-	public static BooleanEditor create(final Composite parent, final String title,
-		final Boolean value, final EditorListener<Boolean> whenModified) {
+	public static BooleanEditor create(final Composite parent, final String title, final Boolean value,
+		final EditorListener<Boolean> whenModified) {
 		return new BooleanEditor(parent, title, value, whenModified);
 	}
 
-	public static ColorEditor create(final Composite parent, final String title,
-		final java.awt.Color value, final EditorListener<java.awt.Color> whenModified) {
+	public static ColorEditor create(final Composite parent, final String title, final java.awt.Color value,
+		final EditorListener<java.awt.Color> whenModified) {
 		return new ColorEditor(parent, title, value, whenModified);
 	}
 
-	public static ExpressionEditor createExpression(final Composite parent, final String title,
-		final Object value, final EditorListener<IExpression> whenModified, final IType expectedType) {
+	public static ExpressionEditor createExpression(final Composite parent, final String title, final Object value,
+		final EditorListener<IExpression> whenModified, final IType expectedType) {
 		return new ExpressionEditor(parent, title, value, whenModified, expectedType);
 	}
 
-	public static FileEditor createFile(final Composite parent, final String title,
-		final Object value, final EditorListener<String> whenModified) {
+	public static FileEditor createFile(final Composite parent, final String title, final Object value,
+		final EditorListener<String> whenModified) {
 		return new FileEditor(parent, title, value, whenModified);
 	}
 
-	public static FloatEditor create(final Composite parent, final String title,
-		final Double value, final Double min, final Double max, final Double step,
-		final boolean canBeNull, final EditorListener<Double> whenModified) {
+	public static FloatEditor create(final Composite parent, final String title, final Double value, final Double min,
+		final Double max, final Double step, final boolean canBeNull, final EditorListener<Double> whenModified) {
 		return new FloatEditor(parent, title, value, min, max, step, canBeNull, whenModified);
 	}
 
-	public static GenericEditor createGeneric(final Composite parent, final String title,
-		final Object value, final EditorListener whenModified) {
+	public static GenericEditor createGeneric(final Composite parent, final String title, final Object value,
+		final EditorListener whenModified) {
 		return new GenericEditor(parent, title, value, whenModified);
 	}
 
-	public static IntEditor create(final Composite parent, final String title, final String unit,
-		final Integer value, final Integer min, final Integer max, final Integer step,
-		final boolean canBeNull, final EditorListener<Integer> whenModified) {
+	public static IntEditor create(final Composite parent, final String title, final String unit, final Integer value,
+		final Integer min, final Integer max, final Integer step, final boolean canBeNull,
+		final EditorListener<Integer> whenModified) {
 		return new IntEditor(parent, title, unit, value, min, max, step, whenModified, canBeNull);
 	}
 
-	public static ListEditor create(final Composite parent, final String title,
-		final java.util.List value, final EditorListener<java.util.List> whenModified) {
+	public static ListEditor create(final Composite parent, final String title, final java.util.List value,
+		final EditorListener<java.util.List> whenModified) {
 		return new ListEditor(parent, title, value, whenModified);
 	}
 
-	public static MapEditor create(final Composite parent, final String title,
-		final java.util.Map value, final EditorListener<java.util.Map> whenModified) {
+	public static MapEditor create(final Composite parent, final String title, final java.util.Map value,
+		final EditorListener<java.util.Map> whenModified) {
 		return new MapEditor(parent, title, value, whenModified);
 	}
 
-	public static MatrixEditor create(final Composite parent, final String title,
-		final IMatrix value, final EditorListener<IMatrix> whenModified) {
+	public static MatrixEditor create(final Composite parent, final String title, final IMatrix value,
+		final EditorListener<IMatrix> whenModified) {
 		return new MatrixEditor(parent, title, value, whenModified);
 	}
 
-	public static PointEditor create(final Composite parent, final String title,
-		final ILocation value, final EditorListener<GamaPoint> whenModified) {
+	public static PointEditor create(final Composite parent, final String title, final ILocation value,
+		final EditorListener<GamaPoint> whenModified) {
 		return new PointEditor(parent, title, value, whenModified);
 	}
 
-	public static StringEditor create(final Composite parent, final String title,
-		final String value, final boolean asLabel, final EditorListener<String> whenModified) {
+	public static StringEditor create(final Composite parent, final String title, final String value,
+		final boolean asLabel, final EditorListener<String> whenModified) {
 		return new StringEditor(parent, title, value, whenModified, asLabel);
 	}
 
-	public static StringEditor choose(final Composite parent, final String title,
-		final String value, final boolean asLabel, final List<String> among,
-		final EditorListener<String> whenModified) {
+	public static StringEditor choose(final Composite parent, final String title, final String value,
+		final boolean asLabel, final List<String> among, final EditorListener<String> whenModified) {
 		return new StringEditor(parent, title, value, among, whenModified, asLabel);
 	}
 
@@ -108,8 +106,7 @@ public class EditorFactory implements IEditorFactory {
 		return create(parent, var, null);
 	}
 
-	public static AbstractEditor create(final Composite parent, final IParameter var,
-		final EditorListener l) {
+	public static AbstractEditor create(final Composite parent, final IParameter var, final EditorListener l) {
 		AbstractEditor ed = instance.create((IAgent) null, var, l);
 		ed.createComposite(parent);
 		return ed;
@@ -117,21 +114,17 @@ public class EditorFactory implements IEditorFactory {
 
 	@Override
 	public AbstractEditor create(final IAgent agent, final IParameter var, final EditorListener l) {
-		final boolean canBeNull =
-			var instanceof ExperimentParameter ? ((ExperimentParameter) var).canBeNull() : false;
+		final boolean canBeNull = var instanceof ExperimentParameter ? ((ExperimentParameter) var).canBeNull() : false;
 		final int type = var.getType().id();
 		AbstractEditor gp =
-			var.getType().isSpeciesType() | type == IType.AGENT ? new AgentEditor(agent, var, l)
-				: type == IType.BOOL ? new BooleanEditor(agent, var, l) : type == IType.COLOR
-					? new ColorEditor(agent, var, l) : type == IType.FLOAT ? new FloatEditor(agent,
-						var, canBeNull, l) : type == IType.INT ? new IntEditor(agent, var,
-						canBeNull, l) : type == IType.LIST ? new ListEditor(agent, var, l)
-						: type == IType.POINT ? new PointEditor(agent, var, l) : type == IType.MAP
-							? new MapEditor(agent, var, l) : type == IType.MATRIX
-								? new MatrixEditor(agent, var, l) : type == IType.FILE
-									? new FileEditor(agent, var, l) : type == IType.STRING
-										? new StringEditor(agent, var, l) : new GenericEditor(
-											agent, var, l);
+			type == IType.SPECIES ? new PopulationEditor(agent, var, l) : var.getType().isSpeciesType() |
+				type == IType.AGENT ? new AgentEditor(agent, var, l) : type == IType.BOOL ? new BooleanEditor(agent,
+				var, l) : type == IType.COLOR ? new ColorEditor(agent, var, l) : type == IType.FLOAT ? new FloatEditor(
+				agent, var, canBeNull, l) : type == IType.INT ? new IntEditor(agent, var, canBeNull, l)
+				: type == IType.LIST ? new ListEditor(agent, var, l) : type == IType.POINT ? new PointEditor(agent,
+					var, l) : type == IType.MAP ? new MapEditor(agent, var, l) : type == IType.MATRIX
+					? new MatrixEditor(agent, var, l) : type == IType.FILE ? new FileEditor(agent, var, l)
+						: type == IType.STRING ? new StringEditor(agent, var, l) : new GenericEditor(agent, var, l);
 		return gp;
 	}
 }

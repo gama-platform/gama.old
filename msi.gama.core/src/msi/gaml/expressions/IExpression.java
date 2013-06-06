@@ -60,4 +60,9 @@ public interface IExpression extends IGamlDescription {
 
 	public abstract void setElementsKeyType(IType t);
 
+	/**
+	 * @return
+	 */
+	public abstract boolean shouldBeParenthesized();
+
 }
