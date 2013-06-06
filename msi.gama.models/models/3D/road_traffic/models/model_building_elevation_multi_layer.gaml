@@ -93,7 +93,7 @@ entities {
 			}
 		}
 		aspect base {
-			draw circle(10) color: color;
+			draw sphere(10) color: color;
 		}
 	}
 }

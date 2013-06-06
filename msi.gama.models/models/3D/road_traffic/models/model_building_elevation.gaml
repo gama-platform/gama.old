@@ -26,7 +26,7 @@ global {
 			set height <-rnd(100);
 	  	}
 		create road from: shape_file_roads ;
-		let weights_map type: map <- (list (road)) as_map [each:: each.destruction_coeff];
+		let weights_map type: map <- (list (road)) as_map ( each :: each.destruction_coeff );
 		set the_graph <- as_edge_graph(list(road))  with_weights weights_map;
 		
 		let residential_buildings type: list of: building <- list(building) where (each.type='Residential');
@@ -115,8 +115,8 @@ experiment road_traffic type: gui {
 	parameter 'Value of destruction when a people agent takes a road' var: destroy category: 'Road' ;
 	
 	output {
-		display city_display refresh_every: 1 type:opengl ambient_light:100{
-			species road aspect: base refresh:true ;
+		display city_display type:opengl ambient_light:100 {
+			species road aspect: base  ;
 			species people aspect: base ;
 			species building aspect:base ;
 		}
