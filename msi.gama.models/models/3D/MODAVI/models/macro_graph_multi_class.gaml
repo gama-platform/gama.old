@@ -28,7 +28,7 @@ global {
 	
 	graph my_graph ;
 	
-	int nbAgent parameter: 'Number of Agents' min: 1 <- 100 category: 'Model';
+	int nbAgent parameter: 'Number of Agents' min: 1 <- 500 category: 'Model';
 	int nbTypeOfClass parameter: "Type of class" min:0 <-1 category: 'Model';
 	int nbValuePerClass parameter: 'Number of value per class' min: 1 max:100 <- 15 category: 'Model';
 	int threshold parameter: 'Threshold' min: 0 <- 0 category: 'Model';
@@ -189,7 +189,7 @@ entities {
 		} 
 		
 		aspect sphere{
-			draw geometry (point([location.x,location.y])) color: color depth:(nbAggregatedNodes[0]/10)*macroNodeSize;
+			draw geometry (point([location.x,location.y]))  color: color depth:(nbAggregatedNodes[0]/10)*macroNodeSize;
 			//draw sphere((nbAggregatedNodes[0]/10)*macroNodeSize) color: color at: point([location.x,location.y]) ;
 		}
 		
@@ -259,26 +259,31 @@ entities {
 experiment generate_graph type: gui {
 	output {	
 		
-		display RealModel  type:opengl ambient_light: 0.4{
+		display RealModel  type:opengl ambient_light: 100{
 		  species node aspect: real ; 	
 		}
 		
-		display MODAVI type:opengl ambient_light: 0.4{
+		display MODAVI type:opengl ambient_light: 100{
+			species node aspect: classGenericColored z:0.0; 
+			species edge aspect: edgeGenericSpatialized z:0.0;
+			species macroNode aspect:Generic z:0.0 position: {125,0.0,0};
+			species macroEdge aspect:base z:0.0 position: {125,0.0,0};	
+		}
+		
+		display MODAVI_3D type:opengl ambient_light: 100{
 			species node aspect: real z:0;
-			
 			species node aspect: proxy z:0.3; 
 			species edge aspect: base z:0.3;
-			
 			species node aspect: classGenericColored z:0.6; 
 			species edge aspect: edgeGenericSpatialized z:0.6;
-			
 			species macroNode aspect:Generic z:0.9;
 			species macroEdge aspect:base z:0.9;	
-			
-			graphics arrow{
-				
-			}		
 		}
+		
+		
+		
+		
+
 		
 	}		
 }
