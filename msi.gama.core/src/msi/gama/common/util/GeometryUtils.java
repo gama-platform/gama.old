@@ -569,14 +569,14 @@ public class GeometryUtils {
 			// get data
 			final GamaList<Object> gamaList = sqlConn.selectDB((String) params.get("select"));
 			env = SqlConnection.getBounds(scope, gamaList);
-			final double latitude = env.centre().x;
-			final double longitude = env.centre().y;
+			final double latitude = env.centre().y;
+			final double longitude = env.centre().x;
 			if ( crs != null || srid != null ) {
 				final GisUtils gis = scope.getTopology().getGisUtils();
 				if ( crs != null ) {
-					gis.setTransformCRS(crs, latitude, longitude);
+					gis.setTransformCRS(crs, longitude, latitude);
 				} else {
-					gis.setTransformCRS(srid, longitudeFirst, latitude, longitude);
+					gis.setTransformCRS(srid, longitudeFirst, longitude, latitude);
 				}
 				env = gis.transform(env);
 			}

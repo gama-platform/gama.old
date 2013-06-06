@@ -45,6 +45,7 @@ public class Files {
 	public static final String PROPERTIES = "properties";
 	public static final String FOLDER = "folder";
 	public static final String SHAPE = "shapefile";
+	public static final String OSM = "osmfile";
 	public static final String GRID = "gridfile";
 	public static final String READ = "read";
 	public static final String WRITE = "write";
@@ -63,6 +64,7 @@ public class Files {
 		if ( GamaFileType.isProperties(s) ) { return propertyFile(scope, s); }
 		if ( GamaFileType.isShape(s) ) { return shapeFile(scope, s); }
 		if ( GamaFileType.isGrid(s) ) { return gridFile(scope, s); }
+		if ( GamaFileType.isOsm(s) ) { return osmFile(scope, s); }
 		if ( new File(s).isDirectory() ) { return folderFile(scope, s); }
 		throw GamaRuntimeException.error("Unknown file type: " + s);
 	}
@@ -106,6 +108,15 @@ public class Files {
 		"properties", "image", "text", "shapefile" })
 	public static IGamaFile gridFile(final IScope scope, final String s) throws GamaRuntimeException {
 		return new GamaGridFile(scope, s);
+	}
+	
+	@operator(value = OSM, can_be_const = true, index_type = IType.INT)
+	@doc(value = "opens a file that a is a kind of osmfile.", comment = "The file should have a gridfile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing gridfile file, an exception is risen.", examples = {
+		"file fileT <- gridfile(\"../includes/testProperties.asc\");",
+		"            // fileT represents the gridfile file \"../includes/testProperties.asc\"" }, see = { "file",
+		"properties", "image", "text", "shapefile" })
+	public static IGamaFile osmFile(final IScope scope, final String s) throws GamaRuntimeException {
+		return new GamaOsmFile(scope, s);
 	}
 
 	@operator(value = FOLDER, can_be_const = true, index_type = IType.INT)

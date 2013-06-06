@@ -23,6 +23,8 @@ import org.geotools.data.shapefile.ShpFiles;
 import org.geotools.data.shapefile.prj.PrjFileReader;
 import org.geotools.geometry.jts.*;
 import org.geotools.referencing.CRS;
+import org.geotools.referencing.crs.DefaultGeocentricCRS;
+import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.referencing.*;
 import org.opengis.referencing.crs.*;
 import org.opengis.referencing.operation.*;
@@ -114,8 +116,8 @@ public class GisUtils {
 		return transformer != null;
 	}
 
-	public void setTransformCRS(final ShpFiles shpf, final double latitude, final double longitude) throws IOException {
-		if ( transforms() ) { return; }
+	public void setTransformCRS(final ShpFiles shpf, final double longitude, final double latitude) throws IOException {
+		//if ( transforms() ) { return; }
 		PrjFileReader prjreader = new PrjFileReader(shpf);
 		MathTransform transfCRS = null;
 		try {
@@ -138,19 +140,7 @@ public class GisUtils {
 			}
 			ProjectedCRS projectd = CRS.getProjectedCRS(crsInit);
 			if ( projectd == null ) {
-				System.out.println("NOT PROJECTED");
-				try {
-					int index = (int) (0.5 + (latitude + 180.0) / 360 * 60);
-					boolean north = longitude > 0;
-					int wgs84utm = 32600 + index + (north ? 0 : 100);
-					CoordinateReferenceSystem crs = CRS.decode("EPSG:" + wgs84utm);
-					transfCRS = CRS.findMathTransform(crsInit, crs);
-					System.out.println("decodedcrs : " + crs);
-				} catch (NoSuchAuthorityCodeException e) {
-					System.out.println("WARNING : STILL NOT PROJECTED");
-				} catch (FactoryException e) {
-					System.out.println("WARNING : STILL NOT PROJECTED");
-				}
+				transfCRS = computeProjection(longitude, latitude);
 			} else {
 				System.out.println(" IT IS ALREADY PROJECTED" + projectd.toWKT());
 			}
@@ -159,26 +149,21 @@ public class GisUtils {
 			setTransformCRS(transfCRS);
 		}
 	}
+	
+	
+	public void setTransformCRS(final double longitude, final double latitude) throws IOException {
+		crsInit = DefaultGeographicCRS.WGS84;
+		MathTransform transfCRS = computeProjection(longitude, latitude);
+		setTransformCRS(transfCRS);
+	}
 
-	public void setTransformCRS(final CoordinateReferenceSystem crsI, final double latitude, final double longitude) {
-		if ( transforms() ) { return; }
+	public void setTransformCRS(final CoordinateReferenceSystem crsI, final double longitude, final double latitude) {
+		//if ( transforms() ) { return; }
 		MathTransform transfCRS = null;
 		crsInit = crsI;
 		ProjectedCRS projectd = CRS.getProjectedCRS(crsInit);
 		if ( projectd == null ) {
-			System.out.println("NOT PROJECTED");
-			try {
-				int index = (int) (0.5 + (latitude + 180.0) / 360 * 60);
-				boolean north = longitude > 0;
-				int wgs84utm = 32600 + index + (north ? 0 : 100);
-				CoordinateReferenceSystem crs = CRS.decode("EPSG:" + wgs84utm);
-				transfCRS = CRS.findMathTransform(crsInit, crs);
-				System.out.println("decodedcrs : " + crs);
-			} catch (NoSuchAuthorityCodeException e) {
-				System.out.println("WARNING : STILL NOT PROJECTED");
-			} catch (FactoryException e) {
-				System.out.println("WARNING : STILL NOT PROJECTED");
-			}
+			transfCRS = computeProjection(longitude, latitude);
 		} else {
 			System.out.println(" IT IS ALREADY PROJECTED" + projectd.toWKT());
 		}
@@ -187,8 +172,8 @@ public class GisUtils {
 
 	// Begin
 	// -----------------------------------------------------------------------------------
-	public void setTransformCRS(final String coordinateRS, final double latitude, final double longitude) {
-		if ( transforms() ) { return; }
+	public void setTransformCRS(final String coordinateRS, final double longitude, final double latitude) {
+		//if ( transforms() ) { return; }
 		MathTransform transfCRS = null;
 		crsInit = null;
 		try {
@@ -201,19 +186,7 @@ public class GisUtils {
 		}
 		ProjectedCRS projectd = CRS.getProjectedCRS(crsInit);
 		if ( projectd == null ) {
-			System.out.println("NOT PROJECTED");
-			try {
-				int index = (int) (0.5 + (latitude + 180.0) / 360 * 60);
-				boolean north = longitude > 0;
-				int wgs84utm = 32600 + index + (north ? 0 : 100);
-				CoordinateReferenceSystem crs = CRS.decode("EPSG:" + wgs84utm);
-				transfCRS = CRS.findMathTransform(crsInit, crs);
-				System.out.println("decodedcrs : " + crs);
-			} catch (NoSuchAuthorityCodeException e) {
-				System.out.println("WARNING : STILL NOT PROJECTED");
-			} catch (FactoryException e) {
-				System.out.println("WARNING : STILL NOT PROJECTED");
-			}
+			transfCRS = computeProjection(longitude, latitude);
 		} else {
 			System.out.println(" IT IS ALREADY PROJECTED" + projectd.toWKT());
 		}
@@ -221,19 +194,36 @@ public class GisUtils {
 
 	}
 
-	public void setTransformCRS(final String srid, final boolean longitudeFirst, final double latitude,
-		final double longitude) {
-		if ( transforms() ) { return; }
+	public void setTransformCRS(final String srid, final boolean longitudeFirst, final double longitude,final double latitude) {
+		//if ( transforms() ) { return; }
 		crsInit = null;
 		try {
 			crsInit = CRS.decode("EPSG:" + srid, longitudeFirst);
-			setTransformCRS(crsInit.toWKT(), latitude, longitude);
+			setTransformCRS(crsInit.toWKT(), longitude, latitude);
 			if ( DEBUG ) {
 				GuiUtils.informConsole("GisUtil.setTransformCRS:" + crsInit.toString());
 			}
 		} catch (FactoryException e2) {
 			e2.printStackTrace();
 		}
+	}
+	
+	private MathTransform computeProjection(final double longitude, final double latitude) {
+		MathTransform transfCRS = null;
+		System.out.println("NOT PROJECTED");
+		try {
+			int index = (int) (0.5 + (longitude + 186.0) / 6);
+			boolean north = latitude > 0;
+			int wgs84utm = 32600 + index + (north ? 0 : 100);
+			CoordinateReferenceSystem crs = CRS.decode("EPSG:" + wgs84utm);
+			transfCRS = CRS.findMathTransform(crsInit, crs);
+			System.out.println("decodedcrs : " + crs);
+		} catch (NoSuchAuthorityCodeException e) {
+			System.out.println("WARNING : STILL NOT PROJECTED");
+		} catch (FactoryException e) {
+			System.out.println("WARNING : STILL NOT PROJECTED");
+		}
+		return transfCRS;
 	}
 
 	public CoordinateReferenceSystem getCrs() {

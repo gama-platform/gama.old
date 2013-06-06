@@ -19,6 +19,9 @@
 package msi.gama.util.file;
 
 import java.io.*;
+import java.util.Iterator;
+import java.util.List;
+
 import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.runtime.IScope;
@@ -29,6 +32,9 @@ import msi.gaml.types.GamaFileType;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.*;
 import org.geotools.feature.*;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.input.SAXBuilder;
 import org.opengis.feature.simple.*;
 import com.vividsolutions.jts.geom.*;
 
@@ -39,22 +45,22 @@ import com.vividsolutions.jts.geom.*;
  * @todo Description
  * 
  */
-public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
+public class GamaOsmFile extends GamaFile<Integer, GamaGisGeometry> {
 
 	/**
 	 * @throws GamaRuntimeException
 	 * @param scope
 	 * @param pathName
 	 */
-	public GamaShapeFile(final IScope scope, final String pathName) throws GamaRuntimeException {
+	public GamaOsmFile(final IScope scope, final String pathName) throws GamaRuntimeException {
 		super(scope, pathName);
 	}
 
 	@Override
 	protected void checkValidity() throws GamaRuntimeException {
 		super.checkValidity();
-		if ( !GamaFileType.isShape(getFile().getName()) ) { throw GamaRuntimeException.error("The extension " +
-			this.getExtension() + " is not recognized for ESRI shapefiles"); }
+		if ( !GamaFileType.isOsm(getFile().getName()) ) { throw GamaRuntimeException.error("The extension " +
+			this.getExtension() + " is not recognized for Open Street Map Files"); }
 	}
 
 	/**
@@ -83,7 +89,7 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 	 */
 	@Override
 	public String getKeyword() {
-		return Files.SHAPE;
+		return Files.OSM;
 	}
 
 	/**
@@ -91,49 +97,12 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 	 */
 	@Override
 	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
-		if ( buffer != null ) { return; }
-		buffer = new GamaList();
-		final FeatureIterator<SimpleFeature> features = getFeatureIterator(scope);
-		if ( features == null ) { return; }
-		while (features.hasNext()) {
-			final SimpleFeature feature = features.next();
-			final Geometry g = (Geometry) feature.getDefaultGeometry();
-			if ( g != null ) {
-				((IList) buffer).add(new GamaGisGeometry(scope, g, feature));
-			}
-		}
-		features.close();
+		// TO DO
 	}
 
 	public FeatureIterator<SimpleFeature> getFeatureIterator(final IScope scope) {
-		File file = null;
-		ShpFiles shpf = null;
-		try {
-			file = getFile();
-			final ShapefileDataStore store = new ShapefileDataStore(file.toURI().toURL());
-			final String name = store.getTypeNames()[0];
-			final FeatureSource<SimpleFeatureType, SimpleFeature> source = store.getFeatureSource(name);
-			final FeatureCollection<SimpleFeatureType, SimpleFeature> featureShp = source.getFeatures();
-			// final SimpleFeatureType type = store.getSchema();
-			// final List<AttributeDescriptor> descriptors = type.getAttributeDescriptors();
-			// for ( AttributeDescriptor ad : descriptors ) {
-			// GuiUtils.debug("Type of attribute " + ad.getLocalName() + ": " +
-			// ad.getType().getBinding().getSimpleName() + "; is geometry? " +
-			// (ad.getType() instanceof GeometryType));
-			// }
-
-			if ( store.getSchema().getCoordinateReferenceSystem() != null ) {
-				shpf = new ShpFiles(file);
-				final double latitude = featureShp.getBounds().centre().y;
-				final double longitude = featureShp.getBounds().centre().x;
-				scope.getTopology().getGisUtils().setTransformCRS(shpf, longitude, latitude);
-			}
-			return featureShp.features();
-		} catch (final Exception e) {
-			return null;
-		} finally {
-			// clean ?
-		}
+		// TO DO
+		return null;
 	}
 
 	/*
@@ -150,26 +119,39 @@ public class GamaShapeFile extends GamaFile<Integer, GamaGisGeometry> {
 
 	@Override
 	public Envelope computeEnvelope(final IScope scope) {
-		final File shpFile = getFile();
-		ShapefileDataStore store = null;
+		final File osmFile = getFile();
 		Envelope env = null;
 		try {
-			store = new ShapefileDataStore(shpFile.toURI().toURL());
-			final String name = store.getTypeNames()[0];
-			final FeatureSource<SimpleFeatureType, SimpleFeature> source = store.getFeatureSource(name);
-			env = source.getBounds();
-			if ( store.getSchema().getCoordinateReferenceSystem() != null ) {
-				final ShpFiles shpf = new ShpFiles(shpFile);
-				final double longitude = env.centre().x;
+			 SAXBuilder sxb = new SAXBuilder();
+		      try
+		      {
+		         Document document = sxb.build(osmFile);
+		         List<Element> listBounds = document.getRootElement().getChildren("bounds");
+		         Iterator i = listBounds.iterator();
+		         while(i.hasNext())
+		         {
+		            Element courant = (Element)i.next();
+		            double minlat = Double.valueOf(courant.getAttributeValue("minlat"));
+		            double minlon = Double.valueOf(courant.getAttributeValue("minlon"));
+		            double maxlat = Double.valueOf(courant.getAttributeValue("maxlat"));
+		            double maxlon = Double.valueOf(courant.getAttributeValue("maxlon"));
+		           env = new Envelope(minlon, maxlon, minlat, maxlat);
+		           break;
+		         }
+		        
+		      } catch(Exception e){}
+		      
+			
+			if ( env != null ) {
 				final double latitude = env.centre().y;
+				final double longitude = env.centre().x;
 				final GisUtils gis = scope.getTopology().getGisUtils();
-				gis.setTransformCRS(shpf, longitude, latitude);
+				gis.setTransformCRS(longitude, latitude);
 				env = gis.transform(env);
 			}
 		} catch (final IOException e) {
 			throw GamaRuntimeException.create(e);
 		}
-		store.dispose();
 		return env;
 
 	}

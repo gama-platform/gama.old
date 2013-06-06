@@ -39,8 +39,9 @@ import msi.gaml.operators.Files;
 public class GamaFileType extends GamaContainerType<IGamaFile> {
 
 	private static final List<String> textSuffixes = Arrays.asList(".txt", ".data", ".csv",
-		".text", ".tsv");
+		".text", ".tsv", "xml");
 	private static final String shpSuffix = ".shp";
+	private static final String osmSuffix = ".osm";
 	private static final List<String> gridSuffixes = Arrays.asList(".asc");
 
 	private static final String propertiesSuffix = ".properties";
@@ -110,6 +111,17 @@ public class GamaFileType extends GamaContainerType<IGamaFile> {
 		"is_properties", "is_image" })
 	public static Boolean isShape(final String f) {
 		return f.toLowerCase().endsWith(shpSuffix);
+	}
+	
+	@operator(value = "is_osm")
+	@doc(value = "the operator tests whether the operand represents the name of a supported osm file", comment = "cf. file type definition for supported (espacially image) file extensions.", examples = {
+		"is_osm(\"../includes/Stupid_Cell.Data\")    --:  false;",
+		"is_osm(\"../includes/test.png\")            --:  false;",
+		"is_osm(\"../includes/test.properties\")     --:  false;",
+		"is_osm(\"../includes/test.osm\")            --:  true;" }, see = { "image", "is_text",
+		"is_properties", "is_image" })
+	public static Boolean isOsm(final String f) {
+		return f.toLowerCase().endsWith(osmSuffix);
 	}
 	
 	@operator(value = "is_grid")

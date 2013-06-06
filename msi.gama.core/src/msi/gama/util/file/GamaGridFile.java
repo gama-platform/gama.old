@@ -31,10 +31,10 @@ public class GamaGridFile extends GamaFile<Integer, GamaGisGeometry> {
 			final GeneralEnvelope genv = store.getOriginalEnvelope();
 			env = new Envelope(genv.getMinimum(0), genv.getMaximum(0), genv.getMinimum(1), genv.getMaximum(1));
 			if ( store.getCrs() != null ) {
-				final double latitude = env.centre().x;
-				final double longitude = env.centre().y;
+				final double latitude = env.centre().y;
+				final double longitude = env.centre().x;
 				final GisUtils gis = scope.getTopology().getGisUtils();
-				gis.setTransformCRS(store.getCrs(), latitude, longitude);
+				gis.setTransformCRS(store.getCrs(), longitude,latitude);
 				env = gis.transform(env);
 			}
 		} catch (final IOException e) {
