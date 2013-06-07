@@ -9,6 +9,9 @@ global{
 	geometry shape <- envelope(gridfile);
 	
 	init{
+		ask cell where (each.grid_value < 0) {
+			grid_value <- 0;
+		}
 		create people number:100{
 			//set shape <- shape add_z 10;
 		}
