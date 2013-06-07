@@ -21,60 +21,27 @@ package msi.gama.outputs;
 import java.util.*;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.kernel.experiment.IExperimentSpecies;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 
-public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionListener
-/* ,IPartListener */{
+public class GuiOutputManager {
 
 	private final Map<String, IDisplayOutput> displayOutputs = new HashMap();
 	private final Map<String, MonitorOutput> monitorOutputs = new HashMap();
-	private final Inspect inspect = new Inspect();
-	List<GamaSelectionListener> listeners = new ArrayList();
 
-	public GuiOutputManager() {}
-
-	GuiOutputManager(final OutputManager m) {
-		GuiUtils.prepareFor(true);
+	GuiOutputManager(final SimulationOutputManager m) {
+		// GuiUtils.prepareFor(true);
 	}
 
-	private class Inspect implements Runnable {
-
-		Object entity;
-
-		public void setEntity(final Object ent) {
-			entity = ent;
-			if ( ent != null ) {
-				GuiUtils.asyncRun(this);
-			}
-		}
-
-		@Override
-		public void run() {
-			if ( !displayOutputs.containsKey(GuiUtils.AGENT_VIEW_ID) && entity != null ) {
-				try {
-					new InspectDisplayOutput("Agent inspector", InspectDisplayOutput.INSPECT_AGENT).launch();
-				} catch (final GamaRuntimeException g) {
-					g.addContext("In opening the agent inspector");
-					GAMA.reportError(g);
-				}
-			}
-			for ( final GamaSelectionListener l : listeners ) {
-				l.selectionChanged(entity);
-			}
-		}
-	}
-
-	public void buildOutputs(final IExperimentSpecies exp) {
-		GuiUtils.hideMonitorView();
-		GuiUtils.setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
-		if ( !monitorOutputs.isEmpty() ) {
-			GuiUtils.showView(GuiUtils.MONITOR_VIEW_ID, null);
-		}
-		GuiUtils.showParameterView(exp);
-	}
+	// public void buildOutputs(final IExperimentSpecies exp) {
+	// GuiUtils.hideMonitorView();
+	// GuiUtils.setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
+	// if ( !monitorOutputs.isEmpty() ) {
+	// GuiUtils.showView(GuiUtils.MONITOR_VIEW_ID, null);
+	// }
+	// GuiUtils.showParameterView(exp);
+	// }
 
 	public void addDisplayOutput(final IOutput output) {
 		if ( output.getClass() == MonitorOutput.class ) {
@@ -106,44 +73,20 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 			if ( output.isOpen() && !output.isPermanent() ) {
 				output.pause();
 			}
-
 		}
 	}
 
 	public void dispose() {
-		fireSelectionChanged(null);
+		// fireSelectionChanged(null);
+		GuiUtils.setSelectedAgent(null);
+		GuiUtils.setHighlightedAgent(null);
 		for ( final IDisplayOutput out : new GamaList<IDisplayOutput>(displayOutputs.values()) ) {
 			GuiUtils.closeViewOf(out);
 		}
 		displayOutputs.clear();
 		monitorOutputs.clear();
-		inspect.setEntity(null);
 		GuiUtils.hideView(GuiUtils.PARAMETER_VIEW_ID);
 		GuiUtils.hideMonitorView();
-	}
-
-	@Override
-	public void addGamaSelectionListener(final GamaSelectionListener listener) {
-		if ( !listeners.contains(listener) ) {
-			listeners.add(listener);
-		}
-	}
-
-	@Override
-	public void fireSelectionChanged(final Object entity) {
-		if ( inspect != null ) {
-			inspect.setEntity(entity);
-		}
-	}
-
-	@Override
-	public void removeGamaSelectionListener(final GamaSelectionListener listener) {
-		listeners.remove(listener);
-	}
-
-	@Override
-	public void selectionChanged(final Object entity) {
-		fireSelectionChanged(entity);
 	}
 
 	public void setShowDisplayOutputs(final IScope sim, final boolean selection) throws GamaRuntimeException {
@@ -167,14 +110,6 @@ public class GuiOutputManager implements GamaSelectionProvider, GamaSelectionLis
 		for ( final IDisplayOutput o : displayOutputs.values() ) {
 			o.update();
 		}
-	}
-
-	public Map<String, IDisplayOutput> getDisplayOutputs() {
-		return displayOutputs;
-	}
-
-	public Map<String, MonitorOutput> getMonitorOutputs() {
-		return monitorOutputs;
 	}
 
 }

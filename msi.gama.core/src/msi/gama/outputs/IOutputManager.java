@@ -18,10 +18,7 @@
  */
 package msi.gama.outputs;
 
-import java.io.PrintWriter;
-import java.util.List;
-import msi.gama.common.interfaces.*;
-import msi.gama.runtime.*;
+import msi.gama.common.interfaces.IStepable;
 
 /**
  * The class IOutputManager.
@@ -30,22 +27,22 @@ import msi.gama.runtime.*;
  * @since 14 déc. 2011
  * 
  */
-public interface IOutputManager extends IStepable, GamaSelectionListener, GamaSelectionProvider {
+public interface IOutputManager extends IStepable/* , GamaSelectionListener, GamaSelectionProvider */{
 
 	void scheduleOutput(IOutput abstractOutput);
 
-	List<? extends IOutput> getMonitors();
+	// List<? extends IOutput> getMonitors();
 
 	void addOutput(IOutput monitorOutput);
 
-	void exportOutputsOn(PrintWriter pw);
+	// void exportOutputsOn(PrintWriter pw);
 
 	void unscheduleOutput(IOutput abstractDisplayOutput);
 
 	IOutput getOutput(String id);
 
-	IDisplaySurface getDisplaySurfaceFor(String keyword, IDisplayOutput layerDisplayOutput, double w, double h,
-		Object ... args);
+	// IDisplaySurface getDisplaySurfaceFor(String keyword, IDisplayOutput layerDisplayOutput, double w, double h,
+	// Object ... args);
 
 	void forceUpdateOutputs();
 

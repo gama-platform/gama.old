@@ -232,11 +232,11 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 * 
 	 * @see msi.gama.gui.graphics.IDisplaySurface#fireSelectionChanged(java.lang.Object)
 	 */
-	@Override
-	public void fireSelectionChanged(final Object a) {
-		// TODO Auto-generated method stub
-
-	}
+	// @Override
+	// public void fireSelectionChanged(final Object a) {
+	// // TODO Auto-generated method stub
+	//
+	// }
 
 	/*
 	 * (non-Javadoc)

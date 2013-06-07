@@ -144,9 +144,9 @@ public class DynamicAgentInspectView extends AgentInspectView {
 	}
 
 	@Override
-	public void selectionChanged(final Object entity) {
+	public void inspectAgent(final IAgent entity) {
 		if ( entity == null ) {
-			super.selectionChanged(null);
+			super.inspectAgent(null);
 		}
 	}
 

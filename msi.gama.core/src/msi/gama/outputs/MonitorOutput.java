@@ -18,7 +18,6 @@
  */
 package msi.gama.outputs;
 
-import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -144,17 +143,17 @@ public class MonitorOutput extends AbstractDisplayOutput {
 		return value;
 	}
 
-	@Override
-	public String toGaml() {
-		final List<MonitorOutput> outputs = (List<MonitorOutput>) outputManager.getMonitors();
-		final StringBuilder s = new StringBuilder(200);
-		for ( final MonitorOutput output : outputs ) {
-			s.append("monitor \"").append(output.getViewName()).append("\" value: ").append(output.expressionText)
-				.append(" refresh_every: ").append(output.getFacet(IKeyword.REFRESH_EVERY).toString());
-			s.append("\n");
-		}
-		return s.toString();
-	}
+	// @Override
+	// public String toGaml() {
+	// final List<MonitorOutput> outputs = (List<MonitorOutput>) outputManager.getMonitors();
+	// final StringBuilder s = new StringBuilder(200);
+	// for ( final MonitorOutput output : outputs ) {
+	// s.append("monitor \"").append(output.getViewName()).append("\" value: ").append(output.expressionText)
+	// .append(" refresh_every: ").append(output.getFacet(IKeyword.REFRESH_EVERY).toString());
+	// s.append("\n");
+	// }
+	// return s.toString();
+	// }
 
 	protected void setValue(final IExpression value) {
 		this.value = value;

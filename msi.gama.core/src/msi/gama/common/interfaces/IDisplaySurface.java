@@ -68,9 +68,10 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 		 * Split species layer in 3D
 		 */
 		void toggleRotation();
+
 		// @Override
 		// public IGraphics.OpenGL getIGraphics();
-		
+
 		void toggleCamera();
 
 	}
@@ -105,7 +106,7 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 	ILayerManager getManager();
 
-	void fireSelectionChanged(Object a);
+	// void fireSelectionChanged(Object a);
 
 	void focusOn(IShape geometry, ILayer display);
 

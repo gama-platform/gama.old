@@ -206,7 +206,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		Envelope env = scope.getSimulationScope().getEnvelope();
 		this.envWidth = env.getWidth();
 		this.envHeight = env.getHeight();
-		if (!isSwt) createSurface(scope.getSimulationScope());
+		if ( !isSwt ) {
+			createSurface(scope.getSimulationScope());
+		}
 	}
 
 	@Override
@@ -298,7 +300,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			surface.outputChanged(w, h, this);
 			return;
 		}
-		surface = outputManager.getDisplaySurfaceFor(displayType, this, w, h);
+		surface = GuiUtils.getDisplaySurfaceFor(displayType, this, w, h);
 		surface.setSnapshotFileName(getName() + "_snapshot");
 		surface.setAutoSave(autosave, (int) imageDimension.getX(), (int) imageDimension.getY());
 
@@ -319,16 +321,22 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		surface = sur;
 	}
 
-	public double getEnvWidth(){return envWidth;}
-	
-	public double getEnvHeight(){return envHeight;}
-	
+	public double getEnvWidth() {
+		return envWidth;
+	}
+
+	public double getEnvHeight() {
+		return envHeight;
+	}
+
 	@Override
 	public String getViewId() {
-		return  isSwt ? GuiUtils.SWT_LAYER_VIEW_ID : GuiUtils.LAYER_VIEW_ID;
+		return isSwt ? GuiUtils.SWT_LAYER_VIEW_ID : GuiUtils.LAYER_VIEW_ID;
 	}
-	
-	public boolean isSWT(){	return this.isSwt;}
+
+	public boolean isSWT() {
+		return this.isSwt;
+	}
 
 	@Override
 	public IDisplaySurface getSurface() {

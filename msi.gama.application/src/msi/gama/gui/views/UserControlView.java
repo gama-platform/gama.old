@@ -2,6 +2,7 @@ package msi.gama.gui.views;
 
 import java.util.List;
 import msi.gama.common.interfaces.EditorListener;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.outputs.IDisplayOutput;
@@ -87,7 +88,7 @@ public class UserControlView extends GamaViewPart {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				GAMA.getExperiment().getOutputManager().selectionChanged(scope.getAgentScope());
+				GuiUtils.setSelectedAgent(scope.getAgentScope());
 			}
 
 		});

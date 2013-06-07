@@ -47,7 +47,7 @@ public class GamaSimulator implements ISimulator {
 
 	@Override
 	public Object getVariableWithName(String name) {
-		IOutput output = ((OutputManager) GAMA.getExperiment().getOutputManager()).getOutputWithName(name);
+		IOutput output = ((SimulationOutputManager) GAMA.getExperiment().getOutputManager()).getOutputWithName(name);
 
 		if ( output instanceof MonitorOutput ) {
 			return ((MonitorOutput) output).getLastValue();
@@ -72,7 +72,7 @@ public class GamaSimulator implements ISimulator {
 
 	@Override
 	public DataType getVariableTypeWithName(String name) {
-		IOutput output = ((OutputManager) GAMA.getExperiment().getOutputManager()).getOutputWithName(name);
+		IOutput output = ((SimulationOutputManager) GAMA.getExperiment().getOutputManager()).getOutputWithName(name);
 		if ( output instanceof LayeredDisplayOutput ) { return DataType.DISPLAY2D; }
 		if ( !(output instanceof MonitorOutput) ) { return DataType.UNDEFINED; }
 
@@ -95,7 +95,7 @@ public class GamaSimulator implements ISimulator {
 
 	@Override
 	public boolean containVariableWithName(String name) {
-		IOutput output = ((OutputManager) GAMA.getExperiment().getOutputManager()).getOutputWithName(name);
+		IOutput output = ((SimulationOutputManager) GAMA.getExperiment().getOutputManager()).getOutputWithName(name);
 		return output == null;
 	}
 

@@ -124,7 +124,7 @@ public class AgentsMenu extends ContributionItem {
 			final MenuItem mi = (MenuItem) e.widget;
 			final IAgent a = (IAgent) mi.getData("agent");
 			if ( a != null && !a.dead() ) {
-				GAMA.getExperiment().getOutputManager().selectionChanged(a);
+				GuiUtils.setSelectedAgent(a);
 			}
 		}
 	};
@@ -137,6 +137,7 @@ public class AgentsMenu extends ContributionItem {
 			final IAgent a = (IAgent) mi.getData("agent");
 			if ( a != null && !a.dead() ) {
 				GuiUtils.setHighlightedAgent(a);
+				GAMA.getExperiment().getOutputManager().forceUpdateOutputs();
 			}
 		}
 	};

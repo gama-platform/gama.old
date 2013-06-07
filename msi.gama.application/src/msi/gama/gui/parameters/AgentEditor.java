@@ -19,6 +19,7 @@
 package msi.gama.gui.parameters;
 
 import msi.gama.common.interfaces.EditorListener;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.kernel.experiment.IParameter;
@@ -79,7 +80,7 @@ public class AgentEditor extends AbstractEditor {
 				if ( currentValue instanceof IAgent ) {
 					IAgent a = (IAgent) currentValue;
 					if ( a != null && !a.dead() ) {
-						GAMA.getExperiment().getOutputManager().selectionChanged(a);
+						GuiUtils.setSelectedAgent(a);
 					}
 				}
 			}

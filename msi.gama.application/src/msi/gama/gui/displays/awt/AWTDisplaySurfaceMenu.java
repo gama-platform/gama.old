@@ -62,7 +62,7 @@ public class AWTDisplaySurfaceMenu {
 			final AWTDisplaySurfaceMenu.AgentMenuItem source = (AWTDisplaySurfaceMenu.AgentMenuItem) e.getSource();
 			final IAgent a = source.getAgent();
 			if ( a != null ) {
-				surface.fireSelectionChanged(a);
+				GuiUtils.setSelectedAgent(a);
 			}
 		}
 
@@ -93,6 +93,7 @@ public class AWTDisplaySurfaceMenu {
 				} else {
 					GuiUtils.setHighlightedAgent(a);
 				}
+				GAMA.getExperiment().getOutputManager().forceUpdateOutputs();
 			}
 		}
 

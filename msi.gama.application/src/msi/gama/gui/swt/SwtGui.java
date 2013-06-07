@@ -147,18 +147,18 @@ public class SwtGui implements IGui {
 
 		class ViewAction implements Runnable {
 
-			int action;
+			int actionId;
 			IDisplayOutput output;
 
 			ViewAction(final IDisplayOutput out, final int act) {
-				action = act;
+				actionId = act;
 				output = out;
 
 			}
 
 			@Override
 			public void run() {
-				if ( action == none ) { return; }
+				if ( actionId == none ) { return; }
 				final IWorkbenchPage page = getPage();
 				if ( page == null ) { return; } // Closing the workbench
 				final IViewReference ref =
@@ -167,7 +167,7 @@ public class SwtGui implements IGui {
 				final IViewPart part = ref.getView(true);
 				if ( !(part instanceof IGamaView) ) { return; }
 				final IGamaView view = (IGamaView) part;
-				switch (action) {
+				switch (actionId) {
 					case close1:
 						try {
 							((IViewPart) view).getSite().getPage().hideView((IViewPart) view);
@@ -185,7 +185,7 @@ public class SwtGui implements IGui {
 					case none:
 						break;
 					default:
-						view.setRefreshRate(action);
+						view.setRefreshRate(actionId);
 				}
 
 			}
@@ -540,10 +540,10 @@ public class SwtGui implements IGui {
 			IPartService ps = (IPartService) ((IWorkbenchPart) o).getSite().getService(IPartService.class);
 
 			ps.addPartListener(SwtGui.getPartListener());
-			if ( o instanceof GamaSelectionListener ) {
-				GAMA.getExperiment().getOutputManager().addGamaSelectionListener((GamaSelectionListener) o);
-
-			}
+			// if ( o instanceof GamaSelectionListener ) {
+			// GAMA.getExperiment().getOutputManager().addGamaSelectionListener((GamaSelectionListener) o);
+			//
+			// }
 			if ( o instanceof IGamaView ) { return (IGamaView) o; }
 			o = GamaRuntimeException.error("Impossible to open view " + viewId);
 		}
@@ -560,12 +560,6 @@ public class SwtGui implements IGui {
 			partListener = new GamaPartListener();
 		}
 		return partListener;
-	}
-
-	@Override
-	public void stopIfCancelled() throws InterruptedException {
-		Thread.yield(); // let another thread have some time perhaps to stop this one.
-		if ( Thread.currentThread().isInterrupted() ) { throw new InterruptedException("Cancelled"); }
 	}
 
 	@Override
@@ -610,8 +604,8 @@ public class SwtGui implements IGui {
 				final IExperimentSpecies s = GAMA.getExperiment();
 				if ( s == null ) { return; }
 				final IOutputManager m = s.getOutputManager();
-				if ( m != null && partRef instanceof GamaSelectionListener ) {
-					m.removeGamaSelectionListener((GamaSelectionListener) partRef);
+				if ( m != null ) /* && partRef instanceof GamaSelectionListener ) */{
+					// m.removeGamaSelectionListener((GamaSelectionListener) partRef);
 					m.unscheduleOutput(((IGamaView) partRef).getOutput());
 				}
 
@@ -1026,21 +1020,33 @@ public class SwtGui implements IGui {
 					}
 				}
 
-				// for ( IViewReference r : getPage().getViewReferences() ) {
-				// IViewPart p = r.getView(false);
-				// if ( p instanceof LayeredDisplayView ) {
-				// GuiUtils.debug("SwtGui.cycleDisplayViews().bringToTop: " + p.getViewSite().getId());
-				// // getPage().activate(p);
-				// // if ( getPage().getActivePart() != p ) {
-				// getPage().activate(p);
-				//
-				// // }
-				//
-				// }
-				// }
 			}
 		});
 
 	}
 
+	/**
+	 * Method setSelectedAgent()
+	 * @see msi.gama.common.interfaces.IGui#setSelectedAgent(msi.gama.metamodel.agent.IAgent)
+	 */
+	@Override
+	public void setSelectedAgent(final IAgent a) {
+		asyncRun(new Runnable() {
+
+			@Override
+			public void run() {
+				final IViewReference r = getPage().findViewReference(GuiUtils.AGENT_VIEW_ID, "");
+				if ( r == null ) {
+					try {
+						new InspectDisplayOutput("Agent inspector", InspectDisplayOutput.INSPECT_AGENT).launch();
+					} catch (final GamaRuntimeException g) {
+						g.addContext("In opening the agent inspector");
+						GAMA.reportError(g);
+					}
+				}
+				AgentInspectView v = (AgentInspectView) showView(GuiUtils.AGENT_VIEW_ID, null);
+				v.inspectAgent(a);
+			}
+		});
+	}
 }

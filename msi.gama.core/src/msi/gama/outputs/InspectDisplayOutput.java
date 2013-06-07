@@ -56,16 +56,13 @@ import msi.gaml.types.IType;
 public class InspectDisplayOutput extends MonitorOutput {
 
 	public static final short INSPECT_AGENT = 0;
+	@Deprecated
 	public static final short INSPECT_DYNAMIC = 2;
+	@Deprecated
 	public static final short INSPECT_SPECIES = 1;
 	public static final short INSPECT_TABLE = 3;
 
 	static int count = 0;
-
-	// TODO Add the dynamic inspector to the outputs (for the moment, only computed by the view
-	// directly)
-	// The agents inspected should also be known at runtime (instead of being kept by the view).
-	// This in order to compute the new values of their attributes.
 
 	static final List<String> types = Arrays.asList(IKeyword.AGENT, IKeyword.SPECIES, IKeyword.DYNAMIC, IKeyword.TABLE);
 
@@ -78,6 +75,9 @@ public class InspectDisplayOutput extends MonitorOutput {
 		super(desc);
 		final String type = getLiteral(IKeyword.TYPE);
 		target = types.indexOf(type);
+		if ( target == INSPECT_SPECIES || target == INSPECT_DYNAMIC ) {
+			target = INSPECT_TABLE;
+		}
 		attributes = getFacet(IKeyword.ATTRIBUTES);
 	}
 
@@ -87,8 +87,9 @@ public class InspectDisplayOutput extends MonitorOutput {
 		if ( attributes != null ) {
 			listOfAttributes = Cast.asList(scope, attributes.value(scope));
 		}
-		if ( rootAgent == null ) {
+		if ( rootAgent == null || rootAgent.dead() ) {
 			rootAgent = scope.getSimulationScope();
+			GuiUtils.debug("InspectDisplayOutput.init rootAgent = " + rootAgent);
 		}
 
 	}
@@ -134,13 +135,14 @@ public class InspectDisplayOutput extends MonitorOutput {
 					scope.pop(rootAgent);
 				}
 			}
+			return;
 		}
-		super.step(scope);
+		// super.step(scope);
 	}
 
 	@Override
 	public boolean isUnique() {
-		return target != INSPECT_DYNAMIC && target != INSPECT_TABLE;
+		return /* target != INSPECT_DYNAMIC && */target != INSPECT_TABLE;
 	}
 
 	@Override
@@ -151,12 +153,12 @@ public class InspectDisplayOutput extends MonitorOutput {
 	@Override
 	public String getViewId() {
 		switch (target) {
-			case INSPECT_DYNAMIC:
-				return GuiUtils.DYNAMIC_VIEW_ID;
+		// case INSPECT_DYNAMIC:
+		// return GuiUtils.DYNAMIC_VIEW_ID;
 			case INSPECT_AGENT:
 				return GuiUtils.AGENT_VIEW_ID;
-			case INSPECT_SPECIES:
-				return GuiUtils.SPECIES_VIEW_ID;
+				// case INSPECT_SPECIES:
+				// return GuiUtils.SPECIES_VIEW_ID;
 			case INSPECT_TABLE:
 				return GuiUtils.TABLE_VIEW_ID;
 			default:
@@ -177,12 +179,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 		if ( lastValue instanceof IAgent ) { return GamaList.with(lastValue); }
 		if ( lastValue instanceof ISpecies && rootAgent != null ) { return rootAgent
 			.getMicroPopulation((ISpecies) lastValue); }
-		if ( lastValue instanceof IContainer ) {
-			// for ( final Object o : (IContainer) lastValue ) {
-			// if ( !(o instanceof IAgent) ) { return null; }
-			// }
-			return ((IContainer) lastValue).listValue(getScope());
-		}
+		if ( lastValue instanceof IContainer ) { return ((IContainer) lastValue).listValue(getScope()); }
 		return null;
 	}
 
@@ -195,9 +192,6 @@ public class InspectDisplayOutput extends MonitorOutput {
 		return listOfAttributes;
 	}
 
-	/**
-	 * @return
-	 */
 	public IMacroAgent getRootAgent() {
 		return rootAgent;
 	}

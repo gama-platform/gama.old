@@ -162,6 +162,7 @@ public class GAMA {
 
 	public static <T> T run(final InScope<T> r) {
 		final IScope scope = obtainNewScope();
+		if ( scope == null ) { return null; }
 		// if ( scope == null ) { throw GamaRuntimeException.error("Impossible to obtain a scope"); } // Exception?
 		try {
 			final T result = r.run(scope);

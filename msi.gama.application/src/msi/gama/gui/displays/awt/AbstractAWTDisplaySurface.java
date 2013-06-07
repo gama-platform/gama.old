@@ -78,7 +78,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	// }
 
 	@Override
-	public void setFont(Font f) {
+	public void setFont(final Font f) {
 		// super.setFont(null);
 	}
 
@@ -97,7 +97,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		return getOutput().getName();
 	}
 
-	protected void setOutput(IDisplayOutput output) {
+	protected void setOutput(final IDisplayOutput output) {
 		this.output = output;
 	}
 
@@ -167,10 +167,11 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		// GuiUtils.debug("AWTDisplaySurface.removeNotify: FINISHED" + outputName);
 	}
 
-	@Override
-	public void fireSelectionChanged(final Object entity) {
-		GAMA.getExperiment().getOutputManager().selectionChanged(entity);
-	}
+	//
+	// @Override
+	// public void fireSelectionChanged(final Object entity) {
+	// GuiUtils.setSelectedAgent(entity);
+	// }
 
 	protected void scaleOrigin() {
 		setOrigin(origin.x * getWidth() / previousPanelSize.width, origin.y * getHeight() / previousPanelSize.height);
@@ -335,14 +336,14 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		return false;
 	}
 
-	protected void createNewImage(int width, int height) {
+	protected void createNewImage(final int width, final int height) {
 		setDisplayHeight(height);
 		setDisplayWidth(width);
 	}
 
 	protected abstract void createIGraphics();
 
-	protected void setIGraphics(IGraphics iGraphics) {
+	protected void setIGraphics(final IGraphics iGraphics) {
 		this.iGraphics = iGraphics;
 	}
 
@@ -351,7 +352,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		return envWidth;
 	}
 
-	public void setEnvWidth(double envWidth) {
+	public void setEnvWidth(final double envWidth) {
 		this.envWidth = envWidth;
 	}
 
@@ -360,7 +361,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		return envHeight;
 	}
 
-	public void setEnvHeight(double envHeight) {
+	public void setEnvHeight(final double envHeight) {
 		this.envHeight = envHeight;
 	}
 
@@ -369,7 +370,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		return displayWidth;
 	}
 
-	protected void setDisplayWidth(int displayWidth) {
+	protected void setDisplayWidth(final int displayWidth) {
 		this.displayWidth = displayWidth;
 	}
 
@@ -378,7 +379,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		return displayHeight;
 	}
 
-	protected void setDisplayHeight(int displayHeight) {
+	protected void setDisplayHeight(final int displayHeight) {
 		this.displayHeight = displayHeight;
 	}
 
@@ -386,7 +387,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		return output;
 	}
 
-	public void setZoomLevel(Double newZoomLevel) {
+	public void setZoomLevel(final Double newZoomLevel) {
 		zoomLevel = newZoomLevel;
 		if ( zoomListener != null ) {
 			zoomListener.newZoomLevel(zoomLevel);
@@ -394,7 +395,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	}
 
 	@Override
-	public void setZoomListener(IZoomListener listener) {
+	public void setZoomListener(final IZoomListener listener) {
 		zoomListener = listener;
 	}
 

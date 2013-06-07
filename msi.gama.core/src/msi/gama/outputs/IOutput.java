@@ -56,7 +56,7 @@ public interface IOutput extends ISymbol, IStepable {
 
 	public long getNextTime();
 
-	public String toGaml();
+	// public String toGaml();
 
 	public boolean isUserCreated();
 

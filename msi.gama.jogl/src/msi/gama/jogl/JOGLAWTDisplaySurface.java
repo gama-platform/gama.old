@@ -281,7 +281,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 				final AgentMenuItem source = (AgentMenuItem) e.getSource();
 				final IAgent a = source.getAgent();
 				if ( a != null ) {
-					fireSelectionChanged(a);
+					GuiUtils.setSelectedAgent(a);
 				}
 			}
 

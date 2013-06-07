@@ -72,12 +72,13 @@ public class HeadlessListener implements IGui {
 		return null;
 	}
 
-	@Override
-	public void stopIfCancelled() throws InterruptedException {
-		// TODO Auto-generated method stub
-		// System.out.println("Stop Simulation");
-
-	}
+	//
+	// @Override
+	// public void stopIfCancelled() throws InterruptedException {
+	// // TODO Auto-generated method stub
+	// // System.out.println("Stop Simulation");
+	//
+	// }
 
 	@Override
 	public void tell(final String message) {
@@ -216,7 +217,7 @@ public class HeadlessListener implements IGui {
 
 	@Override
 	public IDisplaySurface getDisplaySurfaceFor(final String keyword, final IDisplayOutput layerDisplayOutput,
-		final double w, final double h, Object...args) {
+		final double w, final double h, final Object ... args) {
 		// FIXME Raw dynamic version -- the map needs to be created and cached somewhere
 
 		Map<String, Class> displayClasses = new HashMap();
@@ -262,5 +263,12 @@ public class HeadlessListener implements IGui {
 	public void updateParameterView() {}
 
 	@Override
-	public void cycleDisplayViews(Set<String> names) {}
+	public void cycleDisplayViews(final Set<String> names) {}
+
+	/**
+	 * Method setSelectedAgent()
+	 * @see msi.gama.common.interfaces.IGui#setSelectedAgent(msi.gama.metamodel.agent.IAgent)
+	 */
+	@Override
+	public void setSelectedAgent(final IAgent a) {}
 }

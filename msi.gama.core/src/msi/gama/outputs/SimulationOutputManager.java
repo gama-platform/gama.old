@@ -18,7 +18,6 @@
  */
 package msi.gama.outputs;
 
-import java.io.PrintWriter;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
@@ -39,15 +38,16 @@ import msi.gaml.descriptions.IDescription;
  */
 @symbol(name = IKeyword.OUTPUT, kind = ISymbolKind.OUTPUT, with_sequence = true)
 @inside(kinds = { ISymbolKind.MODEL, ISymbolKind.EXPERIMENT })
-public class OutputManager extends Symbol implements IOutputManager {
+public class SimulationOutputManager extends Symbol implements IOutputManager {
 
-	private GuiOutputManager displays;
 	private final Map<String, IOutput> outputs = new HashMap<String, IOutput>();
+	private final Map<String, IDisplayOutput> displayOutputs = new HashMap();
+	private final Map<String, MonitorOutput> monitorOutputs = new HashMap();
 	private final Set<IOutput> outputsToUnschedule = new HashSet<IOutput>();
 	private final Set<IOutput> scheduledOutputs = new HashSet<IOutput>();
 	private final Set<IOutput> outputsToUpdateNow = new HashSet();
 
-	public OutputManager(final IDescription desc) {
+	public SimulationOutputManager(final IDescription desc) {
 		super(desc);
 	}
 
@@ -67,32 +67,28 @@ public class OutputManager extends Symbol implements IOutputManager {
 	public void addOutput(final IOutput output) {
 		if ( output == null || outputs.containsValue(output) ) { return; }
 		outputs.put(output.getId(), output);
-		if ( displays != null && output instanceof IDisplayOutput ) {
-			displays.addDisplayOutput(output);
+		if ( output instanceof IDisplayOutput ) {
+			if ( output.getClass() == MonitorOutput.class ) {
+				monitorOutputs.put(output.getName(), (MonitorOutput) output);
+			} else {
+				displayOutputs.put(output.getId(), (IDisplayOutput) output);
+			}
 		}
 	}
 
 	public void buildOutputs(final IExperimentSpecies exp) {
-		if ( displays != null ) {
-			displays.fireSelectionChanged(null);
+		GuiUtils.prepareFor(exp.isGui());
+		GuiUtils.hideMonitorView();
+		GuiUtils.setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
+		if ( !monitorOutputs.isEmpty() ) {
+			GuiUtils.showView(GuiUtils.MONITOR_VIEW_ID, null);
 		}
-		if ( exp.isGui() ) {
-			displays = new GuiOutputManager(this);
-		} else if ( GuiUtils.isInHeadLessMode() ) {
-			displays = new HeadlessOutputManager(this);
-		}
-
-		for ( final IOutput output : outputs.values() ) {
-			if ( output instanceof IDisplayOutput ) {
-				displays.addDisplayOutput(output);
-			}
-		}
-		displays.buildOutputs(exp);
-
+		GuiUtils.showParameterView(exp);
 	}
 
 	@Override
 	public void init(final IScope scope) {
+		GuiUtils.debug("SimulationOutputManager.init");
 		GuiUtils.run(new Runnable() {
 
 			@Override
@@ -100,7 +96,6 @@ public class OutputManager extends Symbol implements IOutputManager {
 				for ( final IOutput output : outputs.values() ) {
 					if ( !output.isPermanent() ) {
 						try {
-							// GuiUtils.debug("Preparing output " + output.getName());
 							if ( !scope.init(output) ) { return; }
 						} catch (final GamaRuntimeException e) {
 							e.addContext("in preparing output " + output.getName());
@@ -111,7 +106,6 @@ public class OutputManager extends Symbol implements IOutputManager {
 							e.printStackTrace();
 						}
 						try {
-							// GuiUtils.debug("Scheduling and opening output " + output.getName());
 							output.schedule();
 							output.open();
 							outputsToUpdateNow.add(output);
@@ -138,35 +132,28 @@ public class OutputManager extends Symbol implements IOutputManager {
 
 	public synchronized void dispose(final boolean includingBatch) {
 		try {
-			// GuiUtils.debug("Disposing the outputs");
 			outputsToUpdateNow.clear();
-			if ( displays != null ) {
-				displays.dispose();
+			GuiUtils.setSelectedAgent(null);
+			GuiUtils.setHighlightedAgent(null);
+			for ( final IDisplayOutput out : new GamaList<IDisplayOutput>(displayOutputs.values()) ) {
+				GuiUtils.closeViewOf(out);
 			}
+			displayOutputs.clear();
+			monitorOutputs.clear();
+			GuiUtils.hideView(GuiUtils.PARAMETER_VIEW_ID);
+			GuiUtils.hideMonitorView();
+
 			outputsToUnschedule.clear();
 			scheduledOutputs.clear();
 			for ( final IOutput output : outputs.values() ) {
 				if ( includingBatch || !output.isPermanent() ) {
-					// GuiUtils.debug("Disposing of output " + output.getName());
 					output.dispose();
 				}
 			}
 			outputs.clear();
-			// GuiUtils.debug("Ouputs disposed");
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	@Override
-	public List<MonitorOutput> getMonitors() {
-		final List<MonitorOutput> result = new GamaList();
-		for ( final IOutput out : outputs.values() ) {
-			if ( out instanceof MonitorOutput ) {
-				result.add((MonitorOutput) out);
-			}
-		}
-		return result;
 	}
 
 	@Override
@@ -179,8 +166,10 @@ public class OutputManager extends Symbol implements IOutputManager {
 		if ( scheduledOutputs.contains(o) ) {
 			outputsToUnschedule.add(o);
 		}
-		if ( displays != null ) {
-			displays.removeDisplayOutput(o);
+		if ( o instanceof MonitorOutput && !(o instanceof InspectDisplayOutput) ) {
+			monitorOutputs.remove(o.getName());
+		} else if ( o != null ) {
+			displayOutputs.remove(o.getId());
 		}
 	}
 
@@ -192,16 +181,11 @@ public class OutputManager extends Symbol implements IOutputManager {
 		for ( final IOutput o : new HashSet<IOutput>(scheduledOutputs) ) {
 			if ( !o.isPaused() && !o.isClosed() ) {
 				final long ii = o.getNextTime();
-				// GUI.debug("At cycle " + cycle + ", next update time for " + o.getName() + ": " +
-				// ii);
 				if ( cycle >= ii ) {
 					try {
 						try {
-							// ? o.hasBeenComputed(false);
 							if ( !scope.step(o) ) { return; }
 							o.update();
-							// outputsToUpdateNow.add(o);
-							// ? o.hasBeenComputed(true);
 						} catch (final GamaRuntimeException e) {
 							throw e;
 						} catch (final Exception e) {
@@ -228,77 +212,20 @@ public class OutputManager extends Symbol implements IOutputManager {
 		}
 	}
 
-	public List<? extends ISymbol> getChildren() {
-		return new GamaList(outputs.values());
-	}
-
-	@Override
-	public void selectionChanged(final Object entity) {
-		if ( displays != null ) {
-			displays.selectionChanged(entity);
-		}
-	}
-
-	@Override
-	public void addGamaSelectionListener(final GamaSelectionListener listener) {
-		if ( displays != null ) {
-			displays.addGamaSelectionListener(listener);
-		}
-
-	}
-
-	@Override
-	public void removeGamaSelectionListener(final GamaSelectionListener listener) {
-		if ( displays != null ) {
-			displays.removeGamaSelectionListener(listener);
-		}
-
-	}
-
-	@Override
-	public void fireSelectionChanged(final Object entity) {
-		if ( displays != null ) {
-			displays.fireSelectionChanged(entity);
-		}
-
-	}
-
-	@Override
-	public IDisplaySurface getDisplaySurfaceFor(final String keyword, final IDisplayOutput layerDisplayOutput,
-		final double w, final double h, final Object ... args) {
-		if ( displays != null ) { return GuiUtils.getDisplaySurfaceFor(keyword, layerDisplayOutput, w, h, args); }
-		return null;
-		// return new ImageDisplaySurface(w, h);
-	}
-
-	@Override
-	public void exportOutputsOn(final PrintWriter pw) {
-		pw.println("<output>");
-		for ( final IOutput output : outputs.values() ) {
-			if ( output.isUserCreated() ) {
-				final String s = output.toGaml();
-				if ( s != null ) {
-					pw.println(s);
-				}
+	public void desynchronizeOutputs() {
+		for ( final IDisplayOutput o : displayOutputs.values() ) {
+			final IDisplaySurface s = o.getSurface();
+			if ( s != null ) {
+				s.setSynchronized(false);
 			}
 		}
-		pw.println("</output>");
-	}
-
-	public GuiOutputManager getDisplayOutputManager() {
-		return displays;
-	}
-
-	/**
-	 * 
-	 */
-	public void desynchronizeOutputs() {
-		displays.desynchronizeOutputs();
 	}
 
 	@Override
 	public void forceUpdateOutputs() {
-		displays.forceUpdateOutputs();
+		for ( final IDisplayOutput o : displayOutputs.values() ) {
+			o.update();
+		}
 	}
 
 	public Map<String, IOutput> getOutputs() {

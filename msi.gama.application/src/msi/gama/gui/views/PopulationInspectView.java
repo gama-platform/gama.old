@@ -57,7 +57,7 @@ public class PopulationInspectView extends GamaViewPart {
 	public static final String ID = GuiUtils.TABLE_VIEW_ID;
 	public static final String CUSTOM = "custom";
 	public static final List<String> DONT_INSPECT = Arrays.asList(IKeyword.PEERS, IKeyword.MEMBERS, IKeyword.AGENTS);
-	final IScope scope = GAMA.obtainNewScope();
+	// final IScope scope = GAMA.obtainNewScope();
 	boolean locked;
 	TableViewer viewer;
 	org.eclipse.swt.widgets.List /* speciesMenu, */attributesMenu;
@@ -407,6 +407,7 @@ public class PopulationInspectView extends GamaViewPart {
 				final Object o = s.getFirstElement();
 				if ( o instanceof IAgent ) {
 					GuiUtils.setHighlightedAgent((IAgent) o);
+					GAMA.getExperiment().getOutputManager().forceUpdateOutputs();
 				}
 			}
 		});
@@ -482,7 +483,7 @@ public class PopulationInspectView extends GamaViewPart {
 				public String getText(final Object element) {
 					final IAgent agent = (IAgent) element;
 					if ( agent.dead() && !title.equals(IKeyword.NAME) ) { return "N/A"; }
-					return Cast.toGaml(scope.getAgentVarValue(agent, title));
+					return Cast.toGaml(getOutput().getScope().getAgentVarValue(agent, title));
 				}
 			});
 		}
@@ -563,6 +564,7 @@ public class PopulationInspectView extends GamaViewPart {
 		public int compare(final Object e1, final Object e2) {
 			final IAgent p1 = (IAgent) e1;
 			final IAgent p2 = (IAgent) e2;
+			final IScope scope = getOutput().getScope();
 			int rc = 0;
 			if ( attribute == null ) {
 				rc = p1.compareTo(p2);
@@ -702,10 +704,10 @@ public class PopulationInspectView extends GamaViewPart {
 		}
 	}
 
-	@Override
-	public void dispose() {
-		GAMA.releaseScope(scope);
-		super.dispose();
-	}
+	// @Override
+	// public void dispose() {
+	// //GAMA.releaseScope(scope);
+	// super.dispose();
+	// }
 
 }

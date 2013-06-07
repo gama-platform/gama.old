@@ -157,11 +157,11 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		isPermanent = batchOutput;
 	}
 
-	@Override
-	public String toGaml() {
-		// To redefine for outputs that need to be saved
-		return null;
-	}
+	// @Override
+	// public String toGaml() {
+	// // To redefine for outputs that need to be saved
+	// return null;
+	// }
 
 	@Override
 	public boolean isUserCreated() {

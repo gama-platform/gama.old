@@ -52,8 +52,6 @@ public interface IGui {
 
 	IGamaView showView(String viewId, String name);
 
-	void stopIfCancelled() throws InterruptedException;
-
 	void tell(String message);
 
 	void error(String error);
@@ -104,7 +102,8 @@ public interface IGui {
 
 	void clearErrors();
 
-	IDisplaySurface getDisplaySurfaceFor(String keyword, IDisplayOutput layerDisplayOutput, double w, double h, Object...args);
+	IDisplaySurface getDisplaySurfaceFor(String keyword, IDisplayOutput layerDisplayOutput, double w, double h,
+		Object ... args);
 
 	Map<String, Object> openUserInputDialog(String title, Map<String, Object> initialValues, Map<String, IType> types);
 
@@ -115,6 +114,8 @@ public interface IGui {
 	IAgent getHighlightedAgent();
 
 	void setHighlightedAgent(IAgent a);
+
+	void setSelectedAgent(IAgent a);
 
 	void openEditorAndSelect(Object eObject);
 

@@ -29,32 +29,29 @@ import msi.gama.gui.displays.awt.AbstractSWTDisplaySurface;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.jogl.scene.ModelSceneSWT;
 import msi.gama.jogl.utils.JOGLSWTGLRenderer;
-import msi.gama.jogl.utils.Camera.Camera;
+import msi.gama.jogl.utils.Camera.AbstractCamera;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.precompiler.GamlAnnotations.display;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.species.ISpecies;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import collada.Output3DSWT;
-
 import com.vividsolutions.jts.geom.Envelope;
+
 @display("swt")
 public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface implements IDisplaySurface.OpenGL {
 
@@ -83,8 +80,8 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 
 	// Use to toggle the SplitLayer view
 	public boolean splitLayer = false;
-	
-	//Used to switch between cameras (if true switch to FreeFlyCamera)
+
+	// Used to switch between cameras (if true switch to FreeFlyCamera)
 	public boolean switchCamera = false;
 
 	// Use to draw .shp file
@@ -95,14 +92,14 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 
 	// private: the class of the Output3D manager
 	Output3DSWT output3DManager;
-	
+
 	public IDisplayOutput output;
 
-	public JOGLSWTDisplaySurface(Object...args) {
-		this((Composite)args[0], (Integer)args[1]);
+	public JOGLSWTDisplaySurface(final Object ... args) {
+		this((Composite) args[0], (Integer) args[1]);
 	}
-	
-	public JOGLSWTDisplaySurface(Composite parent, int style) {
+
+	public JOGLSWTDisplaySurface(final Composite parent, final int style) {
 		super(parent, style);
 		// TODO Auto-generated constructor stub
 		displayBlock = new Runnable() {
@@ -154,16 +151,18 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 		renderer.setCameraUpVector(getOutput().getCameraUpVector());
 
 		this.output = out;
-		
+
 		// add(renderer.canvas, BorderLayout.CENTER);
 		// openGLGraphicsGLRender.animator.start();
 		// zoomFit();
 		// new way
 		// createIGraphics();
 
-		renderer.canvas.addListener( SWT.Resize, new Listener() {
-            public void handleEvent(Event event) {  
-            	GuiUtils.debug("JOGLSWTDisplaySurface.componentResized: " + out.getId());
+		renderer.canvas.addListener(SWT.Resize, new Listener() {
+
+			@Override
+			public void handleEvent(final Event event) {
+				GuiUtils.debug("JOGLSWTDisplaySurface.componentResized: " + out.getId());
 				// if ( buffImage == null ) {
 				// // zoomFit();
 				// if ( resizeImage(getWidth(), getHeight()) ) {
@@ -183,9 +182,9 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 				initOutput3D(out.getOutput3D(), out.getOutput3DNbCycles());
 				updateDisplay();
 				previousPanelSize = new Dimension(getSize().x, getSize().y);
-			} 
-            
-        });
+			}
+
+		});
 	}
 
 	@Override
@@ -213,7 +212,8 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 		private final IAgent agent;
 		private final ILayer display;
 
-		AgentMenuItem(final Menu parentMenu, final String name, final IAgent agent, final ILayer display, int style) {
+		AgentMenuItem(final Menu parentMenu, final String name, final IAgent agent, final ILayer display,
+			final int style) {
 			super(parentMenu, style);
 			this.agent = agent;
 			this.display = display;
@@ -226,9 +226,9 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 		ILayer getDisplay2() {
 			return this.display;
 		}
-		
-		protected void checkSubclass() { 
-		} 
+
+		@Override
+		protected void checkSubclass() {}
 	}
 
 	public class SelectedAgent {
@@ -236,40 +236,38 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 		IAgent macro;
 		Map<ISpecies, List<SelectedAgent>> micros;
 
-		void buildMenuItems(final Menu parentMenu, final ILayer display, final MenuItem mItem) 
-		{
-			MenuItem macroMenuHeader = new MenuItem(parentMenu,SWT.CASCADE);
+		void buildMenuItems(final Menu parentMenu, final ILayer display, final MenuItem mItem) {
+			MenuItem macroMenuHeader = new MenuItem(parentMenu, SWT.CASCADE);
 			macroMenuHeader.setText(macro.getName());
-			
+
 			Menu macroMenu = new Menu(macroMenuHeader);
 			macroMenu.setOrientation(SWT.LEFT_TO_RIGHT);
 
-			MenuItem inspectItem = new AgentMenuItem(macroMenu,"Inspect", macro, display,SWT.PUSH);
+			MenuItem inspectItem = new AgentMenuItem(macroMenu, "Inspect", macro, display, SWT.PUSH);
 			inspectItem.setText("Inspect");
 			inspectItem.addSelectionListener(menuListener);
-			
 
-			MenuItem focusItem = new AgentMenuItem(macroMenu,"Focus", macro, display,SWT.PUSH);
+			MenuItem focusItem = new AgentMenuItem(macroMenu, "Focus", macro, display, SWT.PUSH);
 			focusItem.setText("Focus");
 			focusItem.addSelectionListener(focusListener);
-			
+
 			macroMenuHeader.setMenu(macroMenu);
 			if ( micros != null && !micros.isEmpty() ) {
-				MenuItem microsMenuHeader = new MenuItem(macroMenu,SWT.CASCADE);
+				MenuItem microsMenuHeader = new MenuItem(macroMenu, SWT.CASCADE);
 				microsMenuHeader.setText("Micro agents");
-				
+
 				Menu microsMenu = new Menu(microsMenuHeader);
 				microsMenu.setOrientation(SWT.LEFT_TO_RIGHT);
 
 				MenuItem microSpecMenuHeader;
 				for ( ISpecies microSpec : micros.keySet() ) {
-					microSpecMenuHeader = new MenuItem(microsMenu,SWT.CASCADE);
+					microSpecMenuHeader = new MenuItem(microsMenu, SWT.CASCADE);
 					microSpecMenuHeader.setText("Species " + microSpec.getName());
-					
+
 					Menu microSpecMenu = new Menu(microSpecMenuHeader);
 
 					for ( SelectedAgent micro : micros.get(microSpec) ) {
-						micro.buildMenuItems(microSpecMenu, display,mItem);
+						micro.buildMenuItems(microSpecMenu, display, mItem);
 					}
 				}
 			}
@@ -286,21 +284,21 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 		menuListener = new SelectionListener() {
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				AgentMenuItem source = (AgentMenuItem) e.getSource();
 				IAgent a = source.getAgent();
 				if ( a != null ) {
-					fireSelectionChanged(a);
+					GuiUtils.setSelectedAgent(a);
 				}
 			}
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
+			public void widgetDefaultSelected(final SelectionEvent e) {
 				// TODO Auto-generated method stub
 				AgentMenuItem source = (AgentMenuItem) e.getSource();
 				IAgent a = source.getAgent();
 				if ( a != null ) {
-					fireSelectionChanged(a);
+					GuiUtils.setSelectedAgent(a);
 				}
 			}
 		};
@@ -308,7 +306,7 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 		focusListener = new SelectionListener() {
 
 			@Override
-			public void widgetSelected(SelectionEvent e) {
+			public void widgetSelected(final SelectionEvent e) {
 				AgentMenuItem source = (AgentMenuItem) e.getSource();
 				IAgent a = source.getAgent();
 				if ( a != null ) {
@@ -317,7 +315,7 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 			}
 
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
+			public void widgetDefaultSelected(final SelectionEvent e) {
 				// TODO Auto-generated method stub
 				AgentMenuItem source = (AgentMenuItem) e.getSource();
 				IAgent a = source.getAgent();
@@ -355,30 +353,32 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 	public void selectAgents(final int x, final int y, final IAgent agent, final int layerId) {
 
 		Runnable r = new Runnable() {
-			 public void run() {
-				 	agentsMenu.setOrientation(SWT.LEFT_TO_RIGHT);
-					Menu m = new Menu(agentsMenu);
-					m.setOrientation(SWT.LEFT_TO_RIGHT);
-					MenuItem mHeader = new MenuItem(agentsMenu, SWT.CASCADE);
-					mHeader.setText(manager.getItems().get(layerId).getName());
-					mHeader.setMenu(m);
-					SelectedAgent sa = new SelectedAgent();
-					sa.macro = agent;
-					sa.buildMenuItems(m, manager.getItems().get(layerId),mHeader);
-					 agentsMenu.setVisible(true);
-					 while (!agentsMenu.isDisposed() && agentsMenu.isVisible()) {
-				          if (!Display.getDefault().readAndDispatch())
-				            Display.getDefault().sleep();
-				        }
-			 }
-			};
-			 
-			if(Display.getCurrent() != null) {
-				r.run();
+
+			@Override
+			public void run() {
+				agentsMenu.setOrientation(SWT.LEFT_TO_RIGHT);
+				Menu m = new Menu(agentsMenu);
+				m.setOrientation(SWT.LEFT_TO_RIGHT);
+				MenuItem mHeader = new MenuItem(agentsMenu, SWT.CASCADE);
+				mHeader.setText(manager.getItems().get(layerId).getName());
+				mHeader.setMenu(m);
+				SelectedAgent sa = new SelectedAgent();
+				sa.macro = agent;
+				sa.buildMenuItems(m, manager.getItems().get(layerId), mHeader);
+				agentsMenu.setVisible(true);
+				while (!agentsMenu.isDisposed() && agentsMenu.isVisible()) {
+					if ( !Display.getDefault().readAndDispatch() ) {
+						Display.getDefault().sleep();
+					}
+				}
 			}
-			else {
-				Display.getDefault().asyncExec(r);
-			}
+		};
+
+		if ( Display.getCurrent() != null ) {
+			r.run();
+		} else {
+			Display.getDefault().asyncExec(r);
+		}
 
 	}
 
@@ -434,11 +434,11 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 		}
 		renderer.camera.getPosition().setZ(renderer.camera.getPosition().getZ() - incrementalZoomStep);
 		renderer.camera.getTarget().setZ(renderer.camera.getTarget().getZ() - incrementalZoomStep);
-		setZoomLevel(renderer.camera.getMaxDim() * Camera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
+		setZoomLevel(renderer.camera.getMaxDim() * AbstractCamera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
 		// FIXME Approximate
 		resizeImage((int) (getWidth() * zoomLevel), (int) (getHeight() * zoomLevel));
-		//setZoomLevel(zoomLevel + zoomLevel * 0.1);
-		//updateDisplay();
+		// setZoomLevel(zoomLevel + zoomLevel * 0.1);
+		// updateDisplay();
 		zoomFit = false;
 	}
 
@@ -453,13 +453,12 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 		}
 		renderer.camera.getPosition().setZ(renderer.camera.getPosition().getZ() + incrementalZoomStep);
 		renderer.camera.getTarget().setZ(renderer.camera.getTarget().getZ() + incrementalZoomStep);
-		setZoomLevel(renderer.camera.getMaxDim() * Camera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
+		setZoomLevel(renderer.camera.getMaxDim() * AbstractCamera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
 		// FIXME Approximate
 		resizeImage((int) (getWidth() * zoomLevel), (int) (getHeight() * zoomLevel));
-		//updateDisplay();
+		// updateDisplay();
 		zoomFit = false;
 	}
-
 
 	@Override
 	public void zoomFit() {
@@ -641,14 +640,12 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 		GAMA.run(new InScope.Void() {
 
 			@Override
-			public void process(IScope scope) {
+			public void process(final IScope scope) {
 				save(scope, getImage());
 			}
 		});
 
 	}
-
-
 
 	public Color getBgColor() {
 		return bgColor;
@@ -667,21 +664,21 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 	}
 
 	@Override
-	public void addMouseListener(MouseListener e) {
+	public void addMouseListener(final MouseListener e) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void toggleRotation() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void toggleCamera() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 }

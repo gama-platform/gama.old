@@ -1,8 +1,8 @@
 package msi.gama.gui.displays.awt;
 
 import java.awt.*;
-import java.awt.geom.*;
-import java.awt.image.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.RenderedImage;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.concurrent.Semaphore;
@@ -15,14 +15,13 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Files;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.graphics.Cursor;
-
 
 public abstract class AbstractSWTDisplaySurface extends Composite implements IDisplaySurface {
 
-	public AbstractSWTDisplaySurface(Composite parent, int style) {
+	public AbstractSWTDisplaySurface(final Composite parent, final int style) {
 		super(parent, style);
 		// TODO Auto-generated constructor stub
 	}
@@ -56,14 +55,13 @@ public abstract class AbstractSWTDisplaySurface extends Composite implements IDi
 	private double envHeight;
 	protected IZoomListener zoomListener;
 
-
 	@Override
 	public void initialize(final double env_width, final double env_height, final IDisplayOutput layerDisplayOutput) {
 		setOutput(layerDisplayOutput);
 
-		//mettre un swt borderLayout
-		this.setLayout(new FillLayout() );
-		
+		// mettre un swt borderLayout
+		this.setLayout(new FillLayout());
+
 		outputChanged(env_width, env_height, layerDisplayOutput);
 	}
 
@@ -86,7 +84,6 @@ public abstract class AbstractSWTDisplaySurface extends Composite implements IDi
 	// return this.iGraphics;
 	// }
 
-
 	@Override
 	public boolean isPaused() {
 		return paused;
@@ -102,7 +99,7 @@ public abstract class AbstractSWTDisplaySurface extends Composite implements IDi
 		return getOutput().getName();
 	}
 
-	protected void setOutput(IDisplayOutput output) {
+	protected void setOutput(final IDisplayOutput output) {
 		this.output = output;
 	}
 
@@ -151,22 +148,23 @@ public abstract class AbstractSWTDisplaySurface extends Composite implements IDi
 	}
 
 	protected Cursor createCursor() {
-//		System.out.println("create cursor");
-//		Image im = new BufferedImage((int) SELECTION_SIZE + 4, (int) SELECTION_SIZE + 4, BufferedImage.TYPE_INT_ARGB);
-//		Graphics2D g = (Graphics2D) im.getGraphics();
-//		g.setColor(Color.black);
-//		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-//		g.setStroke(new BasicStroke(3.0f));
-//		g.draw(new Rectangle2D.Double(2, 2, SELECTION_SIZE, SELECTION_SIZE));
-//		g.dispose();
-//		Cursor c =
-//			getToolkit().createCustomCursor(im, new Point((int) (SELECTION_SIZE / 2), (int) SELECTION_SIZE / 2),
-//				"CIRCLE");
-//		return c;
-		
-		Cursor handCursor = new Cursor(getDisplay(),SWT.CURSOR_HAND);
+		// System.out.println("create cursor");
+		// Image im = new BufferedImage((int) SELECTION_SIZE + 4, (int) SELECTION_SIZE + 4,
+		// BufferedImage.TYPE_INT_ARGB);
+		// Graphics2D g = (Graphics2D) im.getGraphics();
+		// g.setColor(Color.black);
+		// g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		// g.setStroke(new BasicStroke(3.0f));
+		// g.draw(new Rectangle2D.Double(2, 2, SELECTION_SIZE, SELECTION_SIZE));
+		// g.dispose();
+		// Cursor c =
+		// getToolkit().createCustomCursor(im, new Point((int) (SELECTION_SIZE / 2), (int) SELECTION_SIZE / 2),
+		// "CIRCLE");
+		// return c;
+
+		Cursor handCursor = new Cursor(getDisplay(), SWT.CURSOR_HAND);
 		this.setCursor(handCursor);
-		
+
 		return handCursor;
 	}
 
@@ -176,10 +174,10 @@ public abstract class AbstractSWTDisplaySurface extends Composite implements IDi
 		// GuiUtils.debug("AWTDisplaySurface.removeNotify: FINISHED" + outputName);
 	}
 
-	@Override
-	public void fireSelectionChanged(final Object entity) {
-		GAMA.getExperiment().getOutputManager().selectionChanged(entity);
-	}
+	// @Override
+	// public void fireSelectionChanged(final Object entity) {
+	// GAMA.getExperiment().getOutputManager().selectionChanged(entity);
+	// }
 
 	protected void scaleOrigin() {
 		setOrigin(origin.x * getWidth() / previousPanelSize.width, origin.y * getHeight() / previousPanelSize.height);
@@ -299,7 +297,8 @@ public abstract class AbstractSWTDisplaySurface extends Composite implements IDi
 
 	@Override
 	public void updateDisplay() {
-		if ( synchronous && !EventQueue.isDispatchThread() && !((AbstractSWTDisplaySurface) GAMA.getExperiment()).isPaused() ) {
+		if ( synchronous && !EventQueue.isDispatchThread() &&
+			!((AbstractSWTDisplaySurface) GAMA.getExperiment()).isPaused() ) {
 			try {
 				EventQueue.invokeAndWait(displayBlock);
 			} catch (InterruptedException e) {
@@ -347,14 +346,14 @@ public abstract class AbstractSWTDisplaySurface extends Composite implements IDi
 		return false;
 	}
 
-	protected void createNewImage(int width, int height) {
+	protected void createNewImage(final int width, final int height) {
 		setDisplayHeight(height);
 		setDisplayWidth(width);
 	}
 
 	protected abstract void createIGraphics();
 
-	protected void setIGraphics(IGraphics iGraphics) {
+	protected void setIGraphics(final IGraphics iGraphics) {
 		this.iGraphics = iGraphics;
 	}
 
@@ -363,7 +362,7 @@ public abstract class AbstractSWTDisplaySurface extends Composite implements IDi
 		return envWidth;
 	}
 
-	public void setEnvWidth(double envWidth) {
+	public void setEnvWidth(final double envWidth) {
 		this.envWidth = envWidth;
 	}
 
@@ -372,7 +371,7 @@ public abstract class AbstractSWTDisplaySurface extends Composite implements IDi
 		return envHeight;
 	}
 
-	public void setEnvHeight(double envHeight) {
+	public void setEnvHeight(final double envHeight) {
 		this.envHeight = envHeight;
 	}
 
@@ -381,7 +380,7 @@ public abstract class AbstractSWTDisplaySurface extends Composite implements IDi
 		return displayWidth;
 	}
 
-	protected void setDisplayWidth(int displayWidth) {
+	protected void setDisplayWidth(final int displayWidth) {
 		this.displayWidth = displayWidth;
 	}
 
@@ -390,15 +389,15 @@ public abstract class AbstractSWTDisplaySurface extends Composite implements IDi
 		return displayHeight;
 	}
 
-	protected void setDisplayHeight(int displayHeight) {
+	protected void setDisplayHeight(final int displayHeight) {
 		this.displayHeight = displayHeight;
 	}
 
 	public IDisplayOutput getOutput() {
 		return output;
 	}
-	
-	protected void setZoomLevel(Double newZoomLevel) {
+
+	protected void setZoomLevel(final Double newZoomLevel) {
 		zoomLevel = newZoomLevel;
 		if ( zoomListener != null ) {
 			zoomListener.newZoomLevel(zoomLevel);
@@ -406,7 +405,7 @@ public abstract class AbstractSWTDisplaySurface extends Composite implements IDi
 	}
 
 	@Override
-	public void setZoomListener(IZoomListener listener) {
+	public void setZoomListener(final IZoomListener listener) {
 		zoomListener = listener;
 	}
 

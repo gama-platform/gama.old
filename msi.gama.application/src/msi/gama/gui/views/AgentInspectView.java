@@ -38,16 +38,16 @@ import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-public class AgentInspectView extends AttributesEditorsView<IAgent> implements GamaSelectionListener {
+public class AgentInspectView extends AttributesEditorsView<IAgent> /* implements GamaSelectionListener */{
 
 	public static final String ID = GuiUtils.AGENT_VIEW_ID;
 
-	@Override
-	public void selectionChanged(final Object entity) {
+	// @Override
+	public void inspectAgent(final IAgent entity) {
 		if ( entity == null ) {
 			reset();
 		} else {
-			addItem((IAgent) entity);
+			addItem(entity);
 		}
 	}
 
@@ -71,6 +71,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> implements G
 				} else {
 					GuiUtils.setHighlightedAgent(null);
 				}
+				GAMA.getExperiment().getOutputManager().forceUpdateOutputs();
 			}
 
 			@Override

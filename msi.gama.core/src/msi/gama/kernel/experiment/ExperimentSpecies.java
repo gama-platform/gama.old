@@ -24,7 +24,7 @@ import msi.gama.common.util.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
-import msi.gama.outputs.OutputManager;
+import msi.gama.outputs.SimulationOutputManager;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -59,7 +59,7 @@ import msi.gaml.variables.IVariable;
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
 public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies {
 
-	protected OutputManager output;
+	protected SimulationOutputManager output;
 	private ItemList parametersEditors;
 	protected final Map<String, IParameter> targetedVars;
 	protected final List<IParameter> systemParameters;
@@ -138,7 +138,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 	}
 
 	@Override
-	public final OutputManager getOutputManager() {
+	public final SimulationOutputManager getOutputManager() {
 		return output;
 	}
 
@@ -146,11 +146,11 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 	public void setChildren(final List<? extends ISymbol> children) {
 		super.setChildren(children);
 		for ( final ISymbol s : children ) {
-			if ( s instanceof OutputManager ) {
+			if ( s instanceof SimulationOutputManager ) {
 				if ( output != null ) {
-					output.setChildren(((OutputManager) s).getChildren());
+					output.setChildren(new GamaList(((SimulationOutputManager) s).getOutputs().values()));
 				} else {
-					output = (OutputManager) s;
+					output = (SimulationOutputManager) s;
 				}
 			} else if ( s instanceof IParameter.Batch ) {
 				addRegularParameter((IParameter) s);
@@ -219,7 +219,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 	@Override
 	public void buildOutputs() {
 		if ( output == null ) {
-			output = new OutputManager(null);
+			output = new SimulationOutputManager(null);
 		}
 		GuiUtils.waitStatus(" Building outputs ");
 		output.buildOutputs(this);

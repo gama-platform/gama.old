@@ -23,7 +23,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.IDisplayOutput;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.types.IType;
@@ -120,12 +120,6 @@ public class GuiUtils {
 			gui.raise(ex);
 		} else {
 			ex.printStackTrace();
-		}
-	}
-
-	public static void stopIfCancelled() throws InterruptedException {
-		if ( gui != null ) {
-			gui.stopIfCancelled();
 		}
 	}
 
@@ -362,7 +356,11 @@ public class GuiUtils {
 	public static void setHighlightedAgent(final IAgent a) {
 		if ( gui == null ) { return; }
 		gui.setHighlightedAgent(a);
-		GAMA.getExperiment().getOutputManager().forceUpdateOutputs();
+	}
+
+	public static void setSelectedAgent(final IAgent a) {
+		if ( gui == null ) { return; }
+		gui.setSelectedAgent(a);
 	}
 
 	public static void openEditorAndSelect(final Object eObject) {
