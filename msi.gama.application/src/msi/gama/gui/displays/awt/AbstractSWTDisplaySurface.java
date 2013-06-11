@@ -56,13 +56,14 @@ public abstract class AbstractSWTDisplaySurface extends Composite implements IDi
 	protected IZoomListener zoomListener;
 
 	@Override
-	public void initialize(final double env_width, final double env_height, final IDisplayOutput layerDisplayOutput) {
+	public void initialize(final double env_width, final double env_height,
+		final LayeredDisplayOutput layerDisplayOutput) {
 		setOutput(layerDisplayOutput);
 
 		// mettre un swt borderLayout
 		this.setLayout(new FillLayout());
 
-		outputChanged(env_width, env_height, layerDisplayOutput);
+		// outputChanged(env_width, env_height, layerDisplayOutput);
 	}
 
 	@Override
@@ -393,8 +394,8 @@ public abstract class AbstractSWTDisplaySurface extends Composite implements IDi
 		this.displayHeight = displayHeight;
 	}
 
-	public IDisplayOutput getOutput() {
-		return output;
+	public LayeredDisplayOutput getOutput() {
+		return (LayeredDisplayOutput) output;
 	}
 
 	protected void setZoomLevel(final Double newZoomLevel) {

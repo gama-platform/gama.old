@@ -22,6 +22,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
+import msi.gama.metamodel.topology.ITopology;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -58,13 +59,14 @@ public class QuadTreeLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void _init(final IScope scope) throws GamaRuntimeException {
+	public boolean _init(final IScope scope) throws GamaRuntimeException {
 		Envelope env = scope.getSimulationScope().getEnvelope();
 		supportImage = ImageUtils.createCompatibleImage((int) env.getWidth(), (int) env.getHeight());
+		return true;
 	}
 
 	@Override
-	public void _step(final IScope scope) throws GamaRuntimeException {
+	public boolean _step(final IScope scope) throws GamaRuntimeException {
 		IGraphics g = scope.getGraphics();
 		if ( g != null ) {
 			if ( supportImage.getWidth() != g.getDisplayWidthInPixels() ||
@@ -75,7 +77,11 @@ public class QuadTreeLayerStatement extends AbstractLayerStatement {
 			}
 		}
 		Graphics2D g2 = (Graphics2D) supportImage.getGraphics();
-		scope.getTopology().displaySpatialIndexOn(g2, supportImage.getWidth(), supportImage.getHeight());
+		ITopology t = scope.getTopology();
+		if ( t != null ) {
+			t.displaySpatialIndexOn(g2, supportImage.getWidth(), supportImage.getHeight());
+		}
+		return true;
 	}
 
 	@Override

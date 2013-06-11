@@ -50,12 +50,12 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	protected AbstractAWTDisplaySurface() {}
 
 	@Override
-	public void initialize(final double env_width, final double env_height, final IDisplayOutput layerDisplayOutput) {
-		setOutput(layerDisplayOutput);
+	public void initialize(final double env_width, final double env_height, final LayeredDisplayOutput output) {
+		setOutput(output);
 		setOpaque(true);
 		setDoubleBuffered(false);
 		this.setLayout(new BorderLayout());
-		outputChanged(env_width, env_height, layerDisplayOutput);
+		outputChanged(env_width, env_height, output);
 	}
 
 	@Override
@@ -383,8 +383,8 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		this.displayHeight = displayHeight;
 	}
 
-	public IDisplayOutput getOutput() {
-		return output;
+	public LayeredDisplayOutput getOutput() {
+		return (LayeredDisplayOutput) output;
 	}
 
 	public void setZoomLevel(final Double newZoomLevel) {

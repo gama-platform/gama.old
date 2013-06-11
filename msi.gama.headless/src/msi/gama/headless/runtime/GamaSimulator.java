@@ -26,7 +26,7 @@ public class GamaSimulator implements ISimulator {
 	}
 
 	@Override
-	public void nextStep(int currentStep) {
+	public void nextStep(final int currentStep) {
 		this.currentStep = currentStep;
 		GAMA.controller.userStep();
 	}
@@ -38,7 +38,7 @@ public class GamaSimulator implements ISimulator {
 	}
 
 	@Override
-	public void setParameterWithName(String name, Object value) {
+	public void setParameterWithName(final String name, final Object value) {
 		if ( this.params.containsKey(name) ) {
 			this.params.remove(name);
 		}
@@ -46,19 +46,19 @@ public class GamaSimulator implements ISimulator {
 	}
 
 	@Override
-	public Object getVariableWithName(String name) {
-		IOutput output = ((SimulationOutputManager) GAMA.getExperiment().getOutputManager()).getOutputWithName(name);
+	public Object getVariableWithName(final String name) {
+		IOutput output = ((AbstractOutputManager) GAMA.getExperiment().getSimulationOutputs()).getOutputWithName(name);
 
 		if ( output instanceof MonitorOutput ) {
 			return ((MonitorOutput) output).getLastValue();
 		} else if ( output instanceof LayeredDisplayOutput ) {
-			BufferedImage buf = ((IDisplayOutput) output).getImage();
+			BufferedImage buf = ((LayeredDisplayOutput) output).getImage();
 			return writeImageInFile(buf, name);
 		}
 		return null;
 	}
 
-	private Display2D writeImageInFile(BufferedImage img, String name) {
+	private Display2D writeImageInFile(final BufferedImage img, final String name) {
 		String fileName = name + this.getExperimentID() + "-" + currentStep + ".png";
 		String fileFullName = Globals.IMAGES_PATH + "/" + fileName;
 		try {
@@ -71,8 +71,8 @@ public class GamaSimulator implements ISimulator {
 	}
 
 	@Override
-	public DataType getVariableTypeWithName(String name) {
-		IOutput output = ((SimulationOutputManager) GAMA.getExperiment().getOutputManager()).getOutputWithName(name);
+	public DataType getVariableTypeWithName(final String name) {
+		IOutput output = ((AbstractOutputManager) GAMA.getExperiment().getSimulationOutputs()).getOutputWithName(name);
 		if ( output instanceof LayeredDisplayOutput ) { return DataType.DISPLAY2D; }
 		if ( !(output instanceof MonitorOutput) ) { return DataType.UNDEFINED; }
 
@@ -94,20 +94,20 @@ public class GamaSimulator implements ISimulator {
 	}
 
 	@Override
-	public boolean containVariableWithName(String name) {
-		IOutput output = ((SimulationOutputManager) GAMA.getExperiment().getOutputManager()).getOutputWithName(name);
+	public boolean containVariableWithName(final String name) {
+		IOutput output = ((AbstractOutputManager) GAMA.getExperiment().getSimulationOutputs()).getOutputWithName(name);
 		return output == null;
 	}
 
 	@Override
-	public void load(String var, int exp) {
+	public void load(final String var, final int exp) {
 		this.fileName = var;
 		this.experimentID = exp;
 
 	}
 
 	@Override
-	public void setSeed(double seed) {
+	public void setSeed(final double seed) {
 		this.seed = seed;
 
 	}

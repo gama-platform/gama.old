@@ -4,7 +4,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserPanelStatement;
@@ -139,7 +139,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void prepareFor(final boolean isGui) {
+	public void prepareForExperiment(final IExperimentSpecies exp) {
 		// TODO Auto-generated method stub
 
 	}
@@ -216,7 +216,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public IDisplaySurface getDisplaySurfaceFor(final String keyword, final IDisplayOutput layerDisplayOutput,
+	public IDisplaySurface getDisplaySurfaceFor(final String keyword, final LayeredDisplayOutput layerDisplayOutput,
 		final double w, final double h, final Object ... args) {
 		// FIXME Raw dynamic version -- the map needs to be created and cached somewhere
 
@@ -260,7 +260,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void updateParameterView() {}
+	public void updateParameterView(final IExperimentSpecies exp) {}
 
 	@Override
 	public void cycleDisplayViews(final Set<String> names) {}
@@ -271,4 +271,18 @@ public class HeadlessListener implements IGui {
 	 */
 	@Override
 	public void setSelectedAgent(final IAgent a) {}
+
+	/**
+	 * Method cleanAfterExperiment()
+	 * @see msi.gama.common.interfaces.IGui#cleanAfterExperiment(msi.gama.kernel.experiment.IExperimentSpecies)
+	 */
+	@Override
+	public void cleanAfterExperiment(final IExperimentSpecies exp) {}
+
+	/**
+	 * Method prepareForSimulation()
+	 * @see msi.gama.common.interfaces.IGui#prepareForSimulation()
+	 */
+	@Override
+	public void prepareForSimulation() {}
 }

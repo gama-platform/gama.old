@@ -51,34 +51,22 @@ public class MonitorOutput extends AbstractDisplayOutput {
 		expressionText = getValue() == null ? "" : getValue().toGaml();
 	}
 
-	public MonitorOutput(final String name, final String expr, final boolean openRightNow) {
+	public MonitorOutput(final String name, final String expr) {
 		super(DescriptionFactory.create(IKeyword.MONITOR, IKeyword.VALUE, expr, IKeyword.NAME, name == null ? expr
 			: name));
 		setScope(GAMA.obtainNewScope());
 		setUserCreated(true);
 		setNewExpressionText(expr);
 		if ( getScope().init(this) ) {
-			outputManager.addOutput(this);
-			if ( openRightNow ) {
-				schedule();
-				open();
-			}
+			GAMA.getExperiment().getSimulationOutputs().addOutput(this);
+			resume();
+			open();
 		}
 	}
 
 	private String expressionText = "";
 	private IExpression value;
 	protected Object lastValue = "";
-	private boolean isUserCreated = false;
-
-	@Override
-	public final boolean isUserCreated() {
-		return isUserCreated;
-	}
-
-	public final void setUserCreated(final boolean isUserCreated) {
-		this.isUserCreated = isUserCreated;
-	}
 
 	public Object getLastValue() {
 		return lastValue;
@@ -95,8 +83,8 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	}
 
 	@Override
-	public void step(final IScope scope) {
-		if ( scope.interrupted() ) { return; }
+	public boolean step(final IScope scope) {
+		if ( scope.interrupted() ) { return false; }
 		if ( getValue() != null ) {
 			try {
 				lastValue = getValue().value(scope);
@@ -106,6 +94,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 		} else {
 			lastValue = null;
 		}
+		return true;
 	}
 
 	public String getExpressionText() {
@@ -120,8 +109,7 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	public boolean setNewExpressionText(final String string) {
 		expressionText = string;
 		setValue(GAML.compileExpression(string, getScope().getSimulationScope()));
-		getScope().step(this);
-		return true;
+		return getScope().step(this);
 	}
 
 	public void setNewExpression(final IExpression expr) throws GamaRuntimeException {
@@ -142,18 +130,6 @@ public class MonitorOutput extends AbstractDisplayOutput {
 	public IExpression getValue() {
 		return value;
 	}
-
-	// @Override
-	// public String toGaml() {
-	// final List<MonitorOutput> outputs = (List<MonitorOutput>) outputManager.getMonitors();
-	// final StringBuilder s = new StringBuilder(200);
-	// for ( final MonitorOutput output : outputs ) {
-	// s.append("monitor \"").append(output.getViewName()).append("\" value: ").append(output.expressionText)
-	// .append(" refresh_every: ").append(output.getFacet(IKeyword.REFRESH_EVERY).toString());
-	// s.append("\n");
-	// }
-	// return s.toString();
-	// }
 
 	protected void setValue(final IExpression value) {
 		this.value = value;

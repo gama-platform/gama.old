@@ -41,7 +41,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 		final String s_id = site.getSecondaryId();
 		final String id = site.getId() + (s_id == null ? "" :  s_id);
 		if ( GAMA.getExperiment() != null ) {
-			final IOutputManager manager = GAMA.getExperiment().getOutputManager();
+			final IOutputManager manager = GAMA.getExperiment().getSimulationOutputs();
 			if ( manager != null ) {
 				final IDisplayOutput out = (IDisplayOutput) manager.getOutput(id);
 				setOutput(out);

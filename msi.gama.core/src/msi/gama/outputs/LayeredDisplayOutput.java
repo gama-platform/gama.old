@@ -104,9 +104,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	}
 
 	@Override
-	public void init(final IScope scope) throws GamaRuntimeException {
-		super.init(scope);
-
+	public boolean init(final IScope scope) throws GamaRuntimeException {
+		boolean result = super.init(scope);
+		if ( !result ) { return false; }
 		final IExpression color = getFacet(IKeyword.BACKGROUND);
 		if ( color != null ) {
 			setBackgroundColor(Cast.asColor(getScope(), color.value(getScope())));
@@ -129,9 +129,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		for ( final ILayerStatement layer : getLayers() ) {
 			try {
 				layer.setDisplayOutput(this);
-				if ( !getScope().init(layer) ) { return; }
+				if ( !getScope().init(layer) ) { return false; }
 			} catch (final GamaRuntimeException e) {
 				GAMA.reportError(e);
+				return false;
 			}
 		}
 
@@ -209,13 +210,15 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( !isSwt ) {
 			createSurface(scope.getSimulationScope());
 		}
+		return true;
 	}
 
 	@Override
-	public void step(final IScope scope) throws GamaRuntimeException {
+	public boolean step(final IScope scope) throws GamaRuntimeException {
 		for ( final ILayerStatement layer : getLayers() ) {
-			if ( !getScope().step(layer) ) { return; }
+			if ( !getScope().step(layer) ) { return false; }
 		}
+		return true;
 	}
 
 	@Override
@@ -271,11 +274,12 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		}
 	}
 
-	@Override
-	public void schedule() throws GamaRuntimeException {
-		super.schedule();
-		getScope().step(this);
-	}
+	//
+	// @Override
+	// public void schedule() throws GamaRuntimeException {
+	// super.schedule();
+	// getScope().step(this);
+	// }
 
 	public void setImageFileName(final String fileName) {
 		snapshotFileName = fileName;
@@ -284,6 +288,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	@Override
 	public void dispose() {
 		if ( disposed ) { return; }
+		if ( surface != null ) {
+			surface.setSynchronized(false);
+		}
 		super.dispose();
 		if ( surface != null ) {
 			surface.dispose();
@@ -338,7 +345,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		return this.isSwt;
 	}
 
-	@Override
 	public IDisplaySurface getSurface() {
 		return surface;
 	}
@@ -353,17 +359,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		setLayers((List<AbstractLayerStatement>) commands);
 	}
 
-	@Override
 	public Color getBackgroundColor() {
 		return backgroundColor;
 	}
 
-	@Override
 	public BufferedImage getImage() {
 		return surface.getImage();
 	}
 
-	@Override
 	public void setBackgroundColor(final Color background) {
 		this.backgroundColor = background;
 		if ( surface != null ) {
@@ -389,13 +392,13 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public void resume() {
 		super.resume();
 		surface.setPaused(false);
+		// getScope().step(this);
 	}
 
 	public boolean isOpenGL() {
 		return displayType.equals(OPENGL);
 	}
 
-	@Override
 	public boolean getTesselation() {
 		return tesselation;
 	}
@@ -404,7 +407,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		this.tesselation = tesselation;
 	}
 
-	@Override
 	public boolean getOutput3D() {
 		return output3D;
 	}
@@ -413,7 +415,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		this.output3D = output3D;
 	}
 
-	@Override
 	public ILocation getCameraPos() {
 		return cameraPos;
 	}
@@ -422,7 +423,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		this.cameraPos = cameraPos;
 	}
 
-	@Override
 	public ILocation getCameraLookPos() {
 		return cameraLookPos;
 	}
@@ -431,7 +431,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		this.cameraLookPos = cameraLookPos;
 	}
 
-	@Override
 	public ILocation getCameraUpVector() {
 		return cameraUpVector;
 	}
@@ -440,7 +439,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		this.cameraUpVector = cameraUpVector;
 	}
 
-	@Override
 	public Color getAmbientLightColor() {
 		return ambientLightColor;
 	}
@@ -449,7 +447,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		this.ambientLightColor = ambientLightColor;
 	}
 
-	@Override
 	public boolean getPolygonMode() {
 		return polygonMode;
 	}
@@ -458,7 +455,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		this.polygonMode = polygonMode;
 	}
 
-	@Override
 	public ILocation getOutput3DNbCycles() {
 		return output3DNbCycles;
 	}

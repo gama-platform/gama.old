@@ -671,6 +671,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	@Override
 	public List<IAgent> getAgents() {
+		if ( matrix == null ) { return Collections.EMPTY_LIST; }
 		// Later, do return Arrays.asList(matrix);
 		final List<IAgent> agents = new GamaList<IAgent>();
 		for ( int i = 0; i < matrix.length; i++ ) {
@@ -856,20 +857,20 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 
 		@Override
-		public void step(final IScope scope) throws GamaRuntimeException {
+		public boolean step(final IScope scope) throws GamaRuntimeException {
 			final IExpression ags = getSpecies().getSchedule();
 			if ( ags != null ) {
 				// In case there is a schedule specified, we do the "normal" step
-				super.step(scope);
-				return;
+				return super.step(scope);
 			}
 			final int frequency = scheduleFrequency == null ? 1 : Cast.asInt(scope, scheduleFrequency.value(scope));
 			final int step = scope.getClock().getCycle();
-			if ( frequency == 0 || step % frequency != 0 ) { return; }
+			if ( frequency == 0 || step % frequency != 0 ) { return true; }
 
 			for ( final IShape s : matrix ) {
-				if ( !scope.step((IAgent) s) ) { return; }
+				if ( !scope.step((IAgent) s) ) { return false; }
 			}
+			return true;
 		}
 
 		@Override

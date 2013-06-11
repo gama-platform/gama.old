@@ -244,6 +244,7 @@ public interface IKeyword {
 	public static final String PARENT = "parent";
 	public static final String PATH = "path";
 	public static final String PEERS = "peers";
+	public static final String PERMANENT = "permanent"; // "show" // "front_end" // "presentation" // "
 	public static final String PERTINENCE = "pertinence";
 	public static final String PIE = "pie";
 	public static final String PLACES = "places";

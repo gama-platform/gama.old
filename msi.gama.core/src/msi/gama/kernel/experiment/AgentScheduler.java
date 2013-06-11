@@ -78,7 +78,7 @@ public class AgentScheduler implements IStepable {
 	}
 
 	@Override
-	public void step(final IScope scope) throws GamaRuntimeException {
+	public boolean step(final IScope scope) throws GamaRuntimeException {
 
 		if ( owner != null && alive ) {
 			executeActions(scope, BEGIN);
@@ -88,6 +88,7 @@ public class AgentScheduler implements IStepable {
 				executeActions(scope, ONE_SHOT);
 			}
 		}
+		return alive;
 	}
 
 	public void insertAgentToInit(final IAgent entity, final IScope scope) throws GamaRuntimeException {
@@ -105,7 +106,7 @@ public class AgentScheduler implements IStepable {
 	}
 
 	@Override
-	public void init(final IScope scope) throws GamaRuntimeException {
+	public boolean init(final IScope scope) throws GamaRuntimeException {
 		inInitSequence = true;
 		try {
 			while (!stepablesToInit.isEmpty()) {
@@ -114,13 +115,14 @@ public class AgentScheduler implements IStepable {
 				for ( int i = 0, n = toInit.length; i < n; i++ ) {
 					if ( !scope.init(toInit[i]) ) {
 						inInitSequence = false;
-						return;
+						return false;
 					}
 				}
 			}
 		} finally {
 			inInitSequence = false;
 		}
+		return true;
 	}
 
 	private void executeActions(final IScope scope, final int type) {

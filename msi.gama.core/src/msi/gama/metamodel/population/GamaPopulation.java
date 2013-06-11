@@ -140,10 +140,13 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	}
 
 	@Override
-	public void step(final IScope scope) throws GamaRuntimeException {
+	public boolean step(final IScope scope) throws GamaRuntimeException {
 		final Iterator<IAgent> agentsToSchedule =
 			Iterators.forArray(computeAgentsToSchedule(scope).toArray(new IAgent[0]));
-		while (agentsToSchedule.hasNext() && scope.step(agentsToSchedule.next())) {}
+		while (agentsToSchedule.hasNext()) {
+			if ( !scope.step(agentsToSchedule.next()) ) { return false; }
+		}
+		return true;
 	}
 
 	@Override
@@ -156,8 +159,8 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	}
 
 	@Override
-	public void init(final IScope scope) throws GamaRuntimeException {
-
+	public boolean init(final IScope scope) {
+		return true;
 		// // Do whatever the population has to do at the first step ?
 		// Ideally, the list of agents to init should be there rather than in the scheduler
 	}
@@ -280,9 +283,6 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 			final IAgent a = constr.createOneAgent(this);
 			final int ind = currentAgentIndex++;
 			a.setIndex(ind);
-			// if ( getSpecies().getName().equals("flock") ) {
-			// GuiUtils.debug("Flock created : " + a);
-			// }
 			// Try to grab the location earlier
 			if ( initialValues != null && !initialValues.isEmpty() ) {
 				final Map<Object, Object> init = initialValues.get(i);
@@ -296,13 +296,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 			}
 			list.add(a);
 		}
-		// if ( getSpecies().getName().equals("flock") ) {
-		// GuiUtils.debug("GamaPopulation.createAgents : number of flock to add " + list.size());
-		// }
 		addAll(list);
-		// if ( getSpecies().getName().equals("flock") ) {
-		// GuiUtils.debug("GamaPopulation.createAgents : resulting size " + this.size());
-		// }
 		createVariablesFor(scope, list, initialValues);
 		if ( !isRestored ) {
 			for ( final IAgent a : list ) {

@@ -21,7 +21,7 @@ package msi.gama.kernel.model;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.IExperimentSpecies;
-import msi.gama.outputs.SimulationOutputManager;
+import msi.gama.outputs.AbstractOutputManager;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -154,7 +154,7 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 			if ( s instanceof IExperimentSpecies ) {
 				experiments.add((IExperimentSpecies) s);
 				it.remove();
-			} else if ( s instanceof SimulationOutputManager ) {
+			} else if ( s instanceof AbstractOutputManager ) {
 				forExperiment.add(s);
 				it.remove();
 			}

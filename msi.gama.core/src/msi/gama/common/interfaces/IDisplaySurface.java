@@ -22,7 +22,7 @@ import java.awt.Color;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
 import msi.gama.metamodel.shape.*;
-import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.LayeredDisplayOutput;
 
 /**
  * Written by drogoul Modified on 26 nov. 2009
@@ -96,7 +96,7 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 	boolean resizeImage(int width, int height);
 
-	void outputChanged(final double env_width, final double env_height, final IDisplayOutput output);
+	// void outputChanged(final double env_width, final double env_height, final IDisplayOutput output);
 
 	void zoomIn();
 
@@ -184,7 +184,9 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 	 * @param h
 	 * @param layerDisplayOutput
 	 */
-	void initialize(double w, double h, IDisplayOutput layerDisplayOutput);
+	void initialize(double w, double h, LayeredDisplayOutput layerDisplayOutput);
+
+	public void outputChanged(final double env_width, final double env_height, final LayeredDisplayOutput output);
 
 	/**
 	 * 

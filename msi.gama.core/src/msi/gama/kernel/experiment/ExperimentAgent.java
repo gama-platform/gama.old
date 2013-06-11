@@ -47,19 +47,10 @@ import org.eclipse.core.runtime.Platform;
 		IKeyword.JAVA +
 		" invokes the standard Java generator")),
 
-	// FIXME These variables should be part of the model agent instead
-	@var(name = ExperimentAgent.MACHINE_TIME, type = IType.FLOAT, doc = @doc(value = "Returns the current system time in milliseconds", comment = "The return value is a float number")),
-	@var(name = ExperimentAgent.DURATION, type = IType.STRING, doc = @doc("Returns a string containing the duration, in milliseconds, of the previous simulation cycle")),
-	@var(name = ExperimentAgent.TOTAL_DURATION, type = IType.STRING, doc = @doc("Returns a string containing the total duration, in milliseconds, of the simulation since it has been launched ")),
-	@var(name = ExperimentAgent.AVERAGE_DURATION, type = IType.STRING, doc = @doc("Returns a string containing the average duration, in milliseconds, of a simulation cycle.")),
 	@var(name = ExperimentAgent.WORKSPACE_PATH, type = IType.STRING, constant = true, doc = @doc(value = "Contains the absolute path to the workspace of GAMA", comment = "Always terminated with a trailing separator")),
 	@var(name = ExperimentAgent.PROJECT_PATH, type = IType.STRING, constant = true, doc = @doc(value = "Contains the absolute path to the project in which the current model is located", comment = "Always terminated with a trailing separator")) })
 public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
-	public static final String DURATION = "duration";
-	public static final String MACHINE_TIME = "machine_time";
-	public static final String TOTAL_DURATION = "total_duration";
-	public static final String AVERAGE_DURATION = "average_duration";
 	public static final String MODEL_PATH = "model_path";
 	public static final String WORKSPACE_PATH = "workspace_path";
 	public static final String PROJECT_PATH = "project_path";
@@ -68,7 +59,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	private IScope scope;
 	protected SimulationAgent simulation;
-	// protected AgentScheduler scheduler;
 	final Map<String, Object> extraParametersMap = new LinkedHashMap();
 	protected RandomUtils random;
 	protected boolean isLoading;
@@ -106,8 +96,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	public void closeSimulation() {
 		// We unschedule the simulation if any
-		if ( simulation != null ) {
-			GAMA.controller.scheduler.unschedule(simulation.getScheduler());
+		if ( getSimulation() != null ) {
+			GAMA.controller.scheduler.unschedule(getSimulation().getScheduler());
 		}
 	}
 
@@ -116,8 +106,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if ( dead ) { return; }
 		super.dispose();
 		closeSimulation();
-		if ( simulation != null ) {
-			simulation.dispose();
+		if ( getSimulation() != null ) {
+			getSimulation().dispose();
 		}
 	}
 
@@ -145,10 +135,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		final IPopulation pop = getMicroPopulation(getModel());
 		// 'simulation' is set by a callback call to setSimulation()
 		pop.createAgents(scope, 1, GamaList.with(parameters), false);
-
 		isLoading = false;
-
-		return simulation;
+		return this;
 
 	}
 
@@ -168,7 +156,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 */
 
 	protected void createSimulationPopulation() {
-		SimulationPopulation pop = (SimulationPopulation) getMicroPopulation(getModel());
+		SimulationPopulation pop = getSimulationPopulation();
 		if ( pop != null ) {
 			pop.dispose();
 		}
@@ -176,16 +164,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		pop.initializeFor(scope);
 		attributes.put(getModel().getName(), pop);
 		pop.setHost(this);
-	}
-
-	public void setSimulation(final SimulationAgent sim) {
-		if ( simulation != null && simulation.getScope().interrupted() ) {
-			simulation.dispose();
-		}
-		// else {
-		// GuiUtils.debug("ExperimentAgent.setSimulation : old simulation not disposed");
-		// }
-		simulation = sim;
 	}
 
 	/**
@@ -196,15 +174,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	public IScope getScope() {
 		return scope;
-	}
-
-	/**
-	 * Overrides of GamlAgent
-	 * @see msi.gama.metamodel.agent.GamlAgent#getSimulation()
-	 */
-
-	public SimulationAgent getSimulation() {
-		return simulation;
 	}
 
 	@Override
@@ -234,90 +203,80 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 */
 
 	@getter(ExperimentAgent.MODEL_PATH)
-	public String getModelPath(final IAgent agent) {
-		return agent.getModel().getFolderPath() + "/";
+	public String getModelPath() {
+		return getModel().getFolderPath() + "/";
 	}
 
 	@getter(value = WORKSPACE_PATH, initializer = true)
-	public String getWorkspacePath(final IAgent agent) {
+	public String getWorkspacePath() {
 		final URL url = Platform.getInstanceLocation().getURL();
 		return url.getPath();
 	}
 
 	@getter(PROJECT_PATH)
-	public String getProjectPath(final IAgent agent) {
-		return agent.getModel().getProjectPath() + "/";
-	}
-
-	@getter(DURATION)
-	public String getDuration(final IScope scope, final IAgent agent) {
-		return Long.toString(simulation.getClock().getDuration());
-	}
-
-	@getter(TOTAL_DURATION)
-	public String getTotalDuration(final IScope scope, final IAgent agent) {
-		return Long.toString(simulation.getClock().getTotalDuration());
-	}
-
-	@getter(AVERAGE_DURATION)
-	public String getAverageDuration(final IScope scope, final IAgent agent) {
-		return Double.toString(simulation.getClock().getAverageDuration());
-	}
-
-	@getter(MACHINE_TIME)
-	public Double getMachineTime(final IAgent agent) {
-		return (double) System.currentTimeMillis();
-	}
-
-	@setter(MACHINE_TIME)
-	public void setMachineTime(final IAgent agent, final Double t) throws GamaRuntimeException {
-		// NOTHING
+	public String getProjectPath() {
+		return getModel().getProjectPath() + "/";
 	}
 
 	@getter(value = GAMA._FATAL, initializer = true)
-	public Boolean getFatalErrors(final IAgent agent) {
+	public Boolean getFatalErrors() {
 		return GAMA.REVEAL_ERRORS_IN_EDITOR;
 	}
 
 	@getter(value = GAMA._WARNINGS, initializer = true)
-	public Boolean getWarningsAsErrors(final IAgent agent) {
+	public Boolean getWarningsAsErrors() {
 		return GAMA.TREAT_WARNINGS_AS_ERRORS;
 	}
 
 	@setter(GAMA._WARNINGS)
-	public void setWarningsAsErrors(final IAgent agent, final boolean t) {
+	public void setWarningsAsErrors(final boolean t) {
 		GAMA.TREAT_WARNINGS_AS_ERRORS = t;
 	}
 
 	@getter(value = IKeyword.SEED, initializer = true)
-	public Double getSeed(final IAgent agent) {
+	public Double getSeed() {
 		return (double) GAMA.getRandom().getSeed();
 	}
 
 	@setter(IKeyword.SEED)
-	public void setSeed(final IAgent agent, final Double s) {
+	public void setSeed(final Double s) {
 		GAMA.getRandom().setSeed(s);
 	}
 
 	@getter(value = IKeyword.RNG, initializer = true)
-	public String getRng(final IAgent agent) {
+	public String getRng() {
 		return GAMA.getRandom().getGeneratorName();
 	}
 
 	@setter(IKeyword.RNG)
-	public void setRng(final IAgent agent, final String newRng) {
+	public void setRng(final String newRng) {
 		GAMA.getRandom().setGenerator(newRng);
 	}
 
+	private SimulationPopulation getSimulationPopulation() {
+		return (SimulationPopulation) getMicroPopulation(getModel());
+	}
+
 	@getter(IKeyword.SIMULATION)
-	public IAgent getSimulation(final IAgent agent) {
+	public IAgent getSimulation() {
+		// if ( simulation == null || simulation.getScope().interrupted() ) {
+		// SimulationPopulation pop = getSimulationPopulation();
+		// if ( pop != null ) {
+		// setSimulation(pop.last(scope));
+		// }
+		// }
 		return simulation;
 	}
 
 	@setter(IKeyword.SIMULATION)
-	public void setSimulation(final IAgent agent, final IAgent sim) {
-		// TODO Nothing to do ? The 'simulation' variable is normally initialized automatically whenever a simulation is
-		// created
+	public void setSimulation(final IAgent sim) {
+		if ( sim instanceof SimulationAgent ) {
+			if ( simulation != null && simulation.getScope().interrupted() ) {
+				simulation.dispose();
+			}
+			simulation = (SimulationAgent) sim;
+			simulation.setOutputs(getSpecies().getSimulationOutputs());
+		}
 	}
 
 	/**
@@ -351,9 +310,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 				super.setGlobalVarValue(name, v);
 			} else if ( getSimulation() != null ) {
 				getSimulation().getScope().setGlobalVarValue(name, v);
-			} else if ( ExperimentAgent.this.getSpecies().hasParameter(name) ) {
-				ExperimentAgent.this.getSpecies().setParameterValue(name, v);
-				GuiUtils.updateParameterView();
+			} else if ( getSpecies().hasParameter(name) ) {
+				getSpecies().setParameterValue(name, v);
+				GuiUtils.updateParameterView(getSpecies());
 			} else {
 				extraParametersMap.put(name, v);
 			}
@@ -366,6 +325,12 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			} else {
 				super.setAgentVarValue(a, name, value);
 			}
+		}
+
+		@Override
+		public Object getAgentVarValue(final IAgent a, final String name) {
+			if ( a == ExperimentAgent.this ) { return getGlobalVarValue(name); }
+			return super.getAgentVarValue(a, name);
 		}
 
 	}

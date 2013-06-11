@@ -90,7 +90,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 						@Override
 						public Object run(final IScope scope) {
 							final Object result = command.executeOn(scope);
-							experiment.getOutputManager().forceUpdateOutputs();
+							experiment.getSimulationOutputs().forceUpdateOutputs();
 							return result;
 						}
 
@@ -116,6 +116,10 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 	public boolean addItem(final String object) {
 		createItem(object, true);
 		return true;
+	}
+
+	public IExperimentSpecies getExperiment() {
+		return experiment;
 	}
 
 }

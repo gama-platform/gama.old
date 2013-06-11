@@ -94,17 +94,18 @@ public class TextLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void _step(final IScope scope) {
+	public boolean _step(final IScope scope) {
 		currentText = constantText == null ? Cast.asString(scope, text.value(scope)) : constantText;
 		currentColor = constantColor == null ? Cast.asColor(scope, color.value(scope)) : constantColor;
 		currentFont = constantFont == null ? Cast.asString(scope, font.value(scope)) : constantFont;
 		currentStyle =
 			constantStyle == null ? DrawStatement.CONSTANTS.get(Cast.asString(scope, style.value(scope)))
 				: constantStyle;
+		return true;
 	}
 
 	@Override
-	public void _init(final IScope scope) {
+	public boolean _init(final IScope scope) {
 		if ( text.isConst() && constantText == null ) {
 			constantText = Cast.asString(scope, text.value(scope));
 			currentText = constantText;
@@ -122,6 +123,7 @@ public class TextLayerStatement extends AbstractLayerStatement {
 			constantStyle = DrawStatement.CONSTANTS.get(Cast.asString(scope, style.value(scope)));
 			currentStyle = constantStyle;
 		}
+		return true;
 	}
 
 	public void setTextExpr(final IExpression text) {

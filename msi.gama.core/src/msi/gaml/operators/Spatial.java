@@ -386,17 +386,16 @@ public abstract class Spatial {
 		@operator(IKeyword.MINUS)
 		@doc(special_cases = { "if the right-operand is a point, a geometry or an agent, returns the geometry resulting from the difference between both geometries" }, examples = { "geom1 - geom2 --: a geometry corresponding to difference between geom1 and geom2" })
 		public static IShape minus(final IShape g1, final IShape g2) {
-			if (g1 == null || g2 == null || g1.getInnerGeometry() == null || g2.getInnerGeometry() == null ) { return g1; }
-			Geometry res = difference(g1.getInnerGeometry(),g2.getInnerGeometry());
-			if (res != null)
-				return new GamaShape(res);
+			if ( g1 == null || g2 == null || g1.getInnerGeometry() == null || g2.getInnerGeometry() == null ) { return g1; }
+			Geometry res = difference(g1.getInnerGeometry(), g2.getInnerGeometry());
+			if ( res != null ) { return new GamaShape(res); }
 			return null;
 		}
 
 		@operator(IKeyword.MINUS)
 		@doc(special_cases = { "if the right-operand is a list of points, geometries or agents, returns the geometry resulting from the difference between the left-geometry and all of the right-geometries" }, examples = { "geom1 - [geom2, geom3, geom4] --: a geometry corresponding to geom1 - (geom2 + geom3 + geom4)" })
 		public static IShape minus(final IScope scope, final IShape g1, final IContainer<?, IShape> agents) {
-			if (g1 == null || agents == null || g1.getInnerGeometry() == null || agents.isEmpty(scope) ) { return g1; }
+			if ( g1 == null || agents == null || g1.getInnerGeometry() == null || agents.isEmpty(scope) ) { return g1; }
 			Geometry geom1 = GeometryUtils.factory.createGeometry(g1.getInnerGeometry());
 			for ( final IShape ag : agents ) {
 				if ( ag != null && ag.getInnerGeometry() != null ) {
@@ -404,31 +403,29 @@ public abstract class Spatial {
 					if ( geom1 == null || geom1.isEmpty() ) { return null; }
 				}
 			}
-			if (geom1 == null)
-				return null;
+			if ( geom1 == null ) { return null; }
 			return new GamaShape(geom1);
 		}
-		
-		private static Geometry difference(Geometry g1, Geometry g2) {
-			if (g2 instanceof GeometryCollection) {
+
+		private static Geometry difference(Geometry g1, final Geometry g2) {
+			if ( g2 instanceof GeometryCollection ) {
 				GeometryCollection g2c = (GeometryCollection) g2;
 				int nb = g2c.getNumGeometries();
-				for (int i = 0; i < nb; i++) {
+				for ( int i = 0; i < nb; i++ ) {
 					g1 = difference(g1, g2c.getGeometryN(i));
 					if ( g1 == null || g1.isEmpty() ) { return null; }
 				}
 				return g1;
-			} else {
+			}
+			try {
+				return g1.difference(g2);
+			} catch (AssertionFailedException e) {
 				try {
-					return g1.difference(g2);
-				} catch (AssertionFailedException e) {
-					try {
-						final PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
-						return GeometryPrecisionReducer.reducePointwise(g1, pm).difference(
-								GeometryPrecisionReducer.reducePointwise(g2, pm));
-					} catch (final Exception e1) {
-						return g1.difference(g2.buffer(0.01));
-					}
+					final PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
+					return GeometryPrecisionReducer.reducePointwise(g1, pm).difference(
+						GeometryPrecisionReducer.reducePointwise(g2, pm));
+				} catch (final Exception e1) {
+					return g1.difference(g2.buffer(0.01));
 				}
 			}
 		}
@@ -549,9 +546,6 @@ public abstract class Spatial {
 			}
 			return new GamaShape(visiblePercept);
 		}
-		
-		
-
 
 		@operator("masked_by")
 		@doc(examples = { "perception_geom masked_by obstacle_list --: returns the geometry representing the part of perception_geom visible from the agent position considering the list of obstacles obstacle_list." })
@@ -1492,14 +1486,14 @@ public abstract class Spatial {
 				}
 			}
 			while (distMin <= distance) {
-				IList<IList<IAgent>> fusionL = new GamaList<IList<IAgent>>((Collection) minFusion);
+				IList<IList<IAgent>> fusionL = new GamaList<IList<IAgent>>(minFusion);
 				final IList<IAgent> g1 = fusionL.get(0);
 				final IList<IAgent> g2 = fusionL.get(1);
 				distances.remove(minFusion);
 				fusionL = null;
 				groups.remove(g2);
 				groups.remove(g1);
-				final IList<IAgent> groupeF = new GamaList<IAgent>((Collection) g2);
+				final IList<IAgent> groupeF = new GamaList<IAgent>(g2);
 				groupeF.addAll(g1);
 				for ( final IList<IAgent> groupe : groups ) {
 					final Set<IList<IAgent>> newDistGp = new HashSet<IList<IAgent>>();
@@ -1583,14 +1577,14 @@ public abstract class Spatial {
 				}
 			}
 			while (distMin <= distance) {
-				IList<IList<IAgent>> fusionL = new GamaList<IList<IAgent>>((Collection) minFusion);
+				IList<IList<IAgent>> fusionL = new GamaList<IList<IAgent>>(minFusion);
 				final IList<IAgent> g1 = fusionL.get(0);
 				final IList<IAgent> g2 = fusionL.get(1);
 				distances.remove(minFusion);
 				fusionL = null;
 				groups.remove(g2);
 				groups.remove(g1);
-				final IList<IAgent> groupeF = new GamaList<IAgent>((Collection) g2);
+				final IList<IAgent> groupeF = new GamaList<IAgent>(g2);
 				groupeF.addAll(g1);
 				for ( final IList<IAgent> groupe : groups ) {
 					final Set<IList<IAgent>> newDistGp = new HashSet<IList<IAgent>>();
@@ -1660,21 +1654,22 @@ public abstract class Spatial {
 			final IGraphics graphics = scope.getGraphics();
 			if ( graphics instanceof IGraphics.OpenGL ) {
 				((IGraphics.OpenGL) graphics).drawDEM(demFileName, textureFileName, scope.getSimulationScope()
-					.getEnvelope(),1.0);
+					.getEnvelope(), 1.0);
 			}
 			ILocation location;
 			final IAgent a = scope.getAgentScope();
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			return null;// new GamaShape(scope.getSimulationScope().getInnerGeometry());
 		}
-		
+
 		@operator("dem")
 		@doc(value = "A polygon that equivalent to the surface of the texture", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "", examples = { "dem(dem,texture,z_factor) --: returns a geometry as a rectangle of weight and height equal to the texture." }, see = {})
-		public static IShape dem(final IScope scope, final GamaFile demFileName, final GamaFile textureFileName, final Double z_factor) {
+		public static IShape dem(final IScope scope, final GamaFile demFileName, final GamaFile textureFileName,
+			final Double z_factor) {
 			final IGraphics graphics = scope.getGraphics();
 			if ( graphics instanceof IGraphics.OpenGL ) {
 				((IGraphics.OpenGL) graphics).drawDEM(demFileName, textureFileName, scope.getSimulationScope()
-					.getEnvelope(),z_factor);
+					.getEnvelope(), z_factor);
 			}
 			ILocation location;
 			final IAgent a = scope.getAgentScope();

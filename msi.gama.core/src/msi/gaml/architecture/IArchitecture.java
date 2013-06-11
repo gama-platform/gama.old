@@ -32,7 +32,7 @@ import msi.gaml.statements.IStatement;
  */
 public interface IArchitecture extends ISkill, IStatement {
 
-	public abstract void init(IScope scope) throws GamaRuntimeException;
+	public abstract boolean init(IScope scope) throws GamaRuntimeException;
 
 	public abstract void verifyBehaviors(ISpecies context);
 }

@@ -321,12 +321,14 @@ public abstract class AbstractScope implements IScope {
 	@Override
 	public boolean step(final IStepable agent) {
 		// GuiUtils.debug("AbstractScope.step" + agent);
+		boolean result = false;
 		final boolean isAgent = agent instanceof IAgent;
 		if ( agent == null || interrupted() || isAgent && ((IAgent) agent).dead() ) { return false; }
 		final boolean pushed = isAgent && push((IAgent) agent);
 		try {
-			agent.step(this);
-		} catch (final GamaRuntimeException g) {
+			result = agent.step(this);
+		} catch (final Exception ex) {
+			GamaRuntimeException g = GamaRuntimeException.create(ex);
 			g.addAgent(agent.toString());
 			GAMA.reportError(g);
 			return false;
@@ -335,16 +337,17 @@ public abstract class AbstractScope implements IScope {
 				pop((IAgent) agent);
 			}
 		}
-		return true;
+		return result;
 	}
 
 	@Override
 	public boolean init(final IStepable agent) {
+		boolean result = false;
 		final boolean isAgent = agent instanceof IAgent;
 		if ( agent == null || interrupted() || isAgent && ((IAgent) agent).dead() ) { return false; }
 		final boolean pushed = isAgent && push((IAgent) agent);
 		try {
-			agent.init(this);
+			result = agent.init(this);
 		} catch (final GamaRuntimeException g) {
 			g.addAgent(agent.toString());
 			GAMA.reportError(g);
@@ -354,7 +357,7 @@ public abstract class AbstractScope implements IScope {
 				pop((IAgent) agent);
 			}
 		}
-		return true;
+		return result;
 	}
 
 	/**

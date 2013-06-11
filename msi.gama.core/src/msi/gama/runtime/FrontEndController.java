@@ -62,7 +62,7 @@ public class FrontEndController implements Runnable {
 	protected void processUserCommand(final int command) {
 		switch (command) {
 			case _INIT:
-				// GuiUtils.debug("FrontEndController.processUserCommand _INIT");
+				// Needs to run in the controller thread
 				updateSimulationState(NOTREADY);
 				try {
 					OutputSynchronizer.waitForViewsToBeClosed();
@@ -127,10 +127,6 @@ public class FrontEndController implements Runnable {
 		offer(_STEP);
 	}
 
-	public void userInit() {
-		offer(_INIT);
-	}
-
 	public void userInterrupt() {
 		if ( experiment != null ) {
 			IModel m = experiment.getModel();
@@ -143,8 +139,7 @@ public class FrontEndController implements Runnable {
 	}
 
 	public void userReload() {
-		// TODO Should maybe be done directly (so as to pause immediately)
-
+		// TODO Should maybe be done directly (so as to reload immediately)
 		if ( experiment == null ) { return; }
 		offer(_RELOAD);
 	}
@@ -178,7 +173,6 @@ public class FrontEndController implements Runnable {
 
 	public void closeExperiment(final GamaRuntimeException e) {
 		GuiUtils.errorStatus(e.getMessage());
-		// GuiUtils.runtimeError(e);
 		closeExperiment();
 	}
 
@@ -237,7 +231,7 @@ public class FrontEndController implements Runnable {
 		}
 		experiment = newExperiment;
 		experiment.open();
-		userInit();
+		offer(_INIT);
 	}
 
 	private boolean verifyClose() {

@@ -34,12 +34,10 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaColor;
 import msi.gama.util.file.GamaFile;
 import msi.gama.util.matrix.GamaFloatMatrix;
-import msi.gama.util.matrix.GamaObjectMatrix;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.IType;
-import msi.gaml.types.Types;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 9 nov. 2009
@@ -55,7 +53,7 @@ import msi.gaml.types.Types;
 	@facet(name = IKeyword.SPECIES, type = IType.SPECIES, optional = false),
 	@facet(name = IKeyword.LINES, type = IType.COLOR, optional = true),
 	@facet(name = IKeyword.DEM, type = IType.MATRIX, optional = true),
-	@facet(name = IKeyword.TEXTURE, type = {IType.BOOL, IType.FILE}, optional = true),
+	@facet(name = IKeyword.TEXTURE, type = { IType.BOOL, IType.FILE }, optional = true),
 	@facet(name = IKeyword.TRIANGULATION, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.TEXT, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.Z, type = IType.FLOAT, optional = true),
@@ -88,50 +86,49 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	// BufferedImage supportImage;
 
 	@Override
-	public void _init(final IScope scope) throws GamaRuntimeException {
+	public boolean _init(final IScope scope) throws GamaRuntimeException {
 		lineColor = getFacet(IKeyword.LINES);
 		if ( lineColor != null ) {
 			constantColor = Cast.asColor(scope, lineColor.value(scope));
 			currentColor = constantColor;
 		}
-		
+
 		demGridExp = getFacet(IKeyword.DEM);
-		if (demGridExp != null) {
-			demGridMatrix = GamaFloatMatrix.from( scope, (GamaObjectMatrix) Cast.asMatrix(scope, demGridExp.value(scope))); 
+		if ( demGridExp != null ) {
+			demGridMatrix = GamaFloatMatrix.from(scope, Cast.asMatrix(scope, demGridExp.value(scope)));
 		}
-		
+
 		textureExp = getFacet(IKeyword.TEXTURE);
-		if (textureExp != null) {
-			
+		if ( textureExp != null ) {
+
 			if ( textureExp.getType().equals(Types.get(IType.BOOL)) ) {
-				isTextured = Cast.asBool(scope, textureExp.value(scope));	
+				isTextured = Cast.asBool(scope, textureExp.value(scope));
 			}
-			
+
 			if ( textureExp.getType().equals(Types.get(IType.FILE)) ) {
-				textureFile = (GamaFile) textureExp.value(scope);	
+				textureFile = (GamaFile) textureExp.value(scope);
 			}
-			
-			
+
 		}
-		
+
 		triExp = getFacet(IKeyword.TRIANGULATION);
-		if (triExp != null) {
+		if ( triExp != null ) {
 			isTriangulated = Cast.asBool(scope, triExp.value(scope));
 		}
-		
+
 		textExp = getFacet(IKeyword.TEXT);
-		if (textExp != null) {
+		if ( textExp != null ) {
 			showText = Cast.asBool(scope, textExp.value(scope));
 		}
-		
-		
-		
+
 		final IPopulation gridPop = scope.getAgentScope().getPopulationFor(getName());
 		if ( gridPop == null ) {
 			throw GamaRuntimeException.error("missing environment for output " + getName());
 		} else if ( !gridPop.isGrid() ) { throw GamaRuntimeException.error("not a grid environment for: " + getName()); }
 
 		grid = (IGrid) gridPop.getTopology().getPlaces();
+
+		return true;
 
 		// agents = new HashSet<IAgent>();
 		// agents.addAll(computeAgents());
@@ -164,7 +161,7 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void _step(final IScope sim) throws GamaRuntimeException {
+	public boolean _step(final IScope sim) throws GamaRuntimeException {
 		if ( grid.isHexagon() ) {
 			// synchronized (agents) {
 			// if ( sim.getClock().getCycle() == 0 || agentsHaveChanged() ) {
@@ -174,9 +171,10 @@ public class GridLayerStatement extends AbstractLayerStatement {
 			// agentsForLayer = (HashSet<IAgent>) agents.clone();
 			// }
 		} else {
-			if ( lineColor == null || constantColor != null ) { return; }
+			if ( lineColor == null || constantColor != null ) { return true; }
 			currentColor = Cast.asColor(sim, lineColor.value(sim));
 		}
+		return true;
 	}
 
 	public synchronized Collection<IAgent> getAgentsToDisplay() {
@@ -204,24 +202,24 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	IExpression getAgentsExpr() {
 		return setOfAgents;
 	}
-	
-	public GamaFloatMatrix getGridValueMatrix(){
+
+	public GamaFloatMatrix getGridValueMatrix() {
 		return demGridMatrix;
 	}
-	
-	public Boolean isTextured(){
+
+	public Boolean isTextured() {
 		return isTextured;
 	}
-	
-	public GamaFile textureFile(){
+
+	public GamaFile textureFile() {
 		return textureFile;
 	}
-	
-	public Boolean isTriangulated(){
+
+	public Boolean isTriangulated() {
 		return isTriangulated;
 	}
-	
-	public Boolean isShowText(){
+
+	public Boolean isShowText() {
 		return showText;
 	}
 

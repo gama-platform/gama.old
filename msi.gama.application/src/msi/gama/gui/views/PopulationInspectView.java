@@ -407,7 +407,7 @@ public class PopulationInspectView extends GamaViewPart {
 				final Object o = s.getFirstElement();
 				if ( o instanceof IAgent ) {
 					GuiUtils.setHighlightedAgent((IAgent) o);
-					GAMA.getExperiment().getOutputManager().forceUpdateOutputs();
+					GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
 				}
 			}
 		});

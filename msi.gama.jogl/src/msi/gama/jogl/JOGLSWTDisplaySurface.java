@@ -33,7 +33,7 @@ import msi.gama.jogl.utils.Camera.AbstractCamera;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.*;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
@@ -139,7 +139,7 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 	}
 
 	@Override
-	public void initialize(final double env_width, final double env_height, final IDisplayOutput out) {
+	public void initialize(final double env_width, final double env_height, final LayeredDisplayOutput out) {
 		super.initialize(env_width, env_height, out);
 		agentsMenu = new Menu(this);
 		renderer = new JOGLSWTGLRenderer(this);
@@ -200,9 +200,13 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 	@Override
 	public void setPaused(final boolean flag) {
 		if ( flag == true ) {
-			renderer.animator.stop();
+			if ( renderer.animator.isAnimating() ) {
+				renderer.animator.stop();
+			}
 		} else {
-			renderer.animator.start();
+			if ( !renderer.animator.isAnimating() ) {
+				renderer.animator.start();
+			}
 		}
 		super.setPaused(flag);
 	}
@@ -275,7 +279,7 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 	}
 
 	@Override
-	public void outputChanged(final double env_width, final double env_height, final IDisplayOutput output) {
+	public void outputChanged(final double env_width, final double env_height, final LayeredDisplayOutput output) {
 		setBackgroundColor(output.getBackgroundColor());
 		this.setBackgroundColor(getBgColor());
 		setEnvWidth(env_width);

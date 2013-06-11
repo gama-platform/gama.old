@@ -12,12 +12,12 @@ public class CoolButtonSelectionEvent extends TypedEvent {
 
 	private static final long serialVersionUID = 1L;
 
-	private final int x;
-	private final int y;
+	// private final int x;
+	// private final int y;
 
-	public CoolButtonSelectionEvent(Object source, int x, int y) {
+	public CoolButtonSelectionEvent(final Object source, final int x, final int y) {
 		super(source);
-		this.x = x;
-		this.y = y;
+		// this.x = x;
+		// this.y = y;
 	}
 }

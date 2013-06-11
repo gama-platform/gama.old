@@ -56,7 +56,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	Number minValue, maxValue, stepValue;
 	List amongValue;
 	String varName, title, category, unitLabel;
-	IType type, contentType;
+	IType type = Types.NO_TYPE, contentType = Types.NO_TYPE;
 	boolean isEditable, allowsTooltip, isLabel;
 	boolean canBeNull;
 	final IExpression init;

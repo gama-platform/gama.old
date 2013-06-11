@@ -29,7 +29,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gaml.descriptions.IDescription;
@@ -125,6 +125,9 @@ public class FileOutput extends AbstractOutput {
 
 	@Override
 	public void dispose() {
+		if ( isOpen() ) {
+			close();
+		}
 		writer = null;
 		file = null;
 		super.dispose();
@@ -177,40 +180,44 @@ public class FileOutput extends AbstractOutput {
 	}
 
 	@Override
-	public void init(final IScope scope) throws GamaRuntimeException {
-		super.init(scope);
+	public boolean init(final IScope scope) throws GamaRuntimeException {
+		boolean result = super.init(scope);
+		if ( !result ) { return false; }
 		createType();
 		createFileName(getScope().getSimulationScope().getModel());
 		createRewrite();
 		createHeader();
 		createFooter();
 		createExpression();
+		return true;
 	}
 
 	public FileOutput(final String name, final String expr, final List<String> columns, final IExperimentSpecies exp)
 		throws GamaRuntimeException {
-		// FIXME Created by the batch. Is it still necessary to keep this ?
+		// WARNING Created by the batch. Is it still necessary to keep this ?
+		// TODO Should be deprecated in favor of a regular file output in the permanent
+		// outputs of the experiment.
 		super(DescriptionFactory.create(IKeyword.FILE, IKeyword.DATA, expr, IKeyword.TYPE, IKeyword.CSV, IKeyword.NAME,
 			name == null ? expr : name));
-		prepare(exp);
+		// prepare(exp);
 		expressionText = expr;
 		refreshExpression();
-		this.setPermanent(true);
+		// this.setPermanent(true);
 		this.setRefreshRate(0);
 		this.setLoggedBatchParam(columns);
 		this.writeHeaderAndClose();
 	}
 
-	public void prepare(final IExperimentSpecies exp) throws GamaRuntimeException {
-		// FIXME Verify this scope
-		setScope(GAMA.obtainNewScope());
-		outputManager = exp.getOutputManager();
-		createType();
-		createFileName(exp.getModel());
-		createRewrite();
-		createHeader();
-		createFooter();
-	}
+	// public void prepare(final IExperimentSpecies exp) throws GamaRuntimeException {
+	// // FIXME Verify this scope
+	// setScope(GAMA.obtainNewScope());
+	// outputManager = exp.getOutputManager();
+	// createType();
+	// createFileName(exp.getModel());
+	// createRewrite();
+	// createHeader();
+	// createFooter();
+	// }
 
 	/**
 	 * @throws GamaRuntimeException Creates a file name.
@@ -249,9 +256,10 @@ public class FileOutput extends AbstractOutput {
 	}
 
 	@Override
-	public void step(final IScope scope) {
-		if ( scope.interrupted() ) { return; }
+	public boolean step(final IScope scope) {
+		if ( scope.interrupted() ) { return false; }
 		setLastValue(data.value(scope));
+		return true;
 	}
 
 	@Override
@@ -262,7 +270,7 @@ public class FileOutput extends AbstractOutput {
 	public void doRefreshWriteAndClose(final ParametersSet sol, final Object fitness) throws GamaRuntimeException {
 		setSolution(sol);
 		if ( fitness == null ) {
-			getScope().step(this);
+			if ( !getScope().step(this) ) { return; }
 		} else {
 			setLastValue(fitness);
 		}
@@ -419,9 +427,9 @@ public class FileOutput extends AbstractOutput {
 		}
 	}
 
-	@Override
-	public void setType(final String t) {
-		type = t.equals(IKeyword.CSV) ? CSV : t.equals(IKeyword.XML) ? XML : TEXT;
-	}
+	// @Override
+	// public void setType(final String t) {
+	// type = t.equals(IKeyword.CSV) ? CSV : t.equals(IKeyword.XML) ? XML : TEXT;
+	// }
 
 }

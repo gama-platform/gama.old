@@ -23,7 +23,6 @@ import org.geotools.data.shapefile.ShpFiles;
 import org.geotools.data.shapefile.prj.PrjFileReader;
 import org.geotools.geometry.jts.*;
 import org.geotools.referencing.CRS;
-import org.geotools.referencing.crs.DefaultGeocentricCRS;
 import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.opengis.referencing.*;
 import org.opengis.referencing.crs.*;
@@ -35,11 +34,11 @@ public class GisUtils {
 	static final boolean DEBUG = false; // Change DEBUG = false for release version
 
 	Envelope translationEnvelope;
-	private  static GeometryCoordinateSequenceTransformer transformer;
+	private static GeometryCoordinateSequenceTransformer transformer;
 	private GeometryCoordinateSequenceTransformer inverseTransformer;
 	private CoordinateReferenceSystem crsInit;
 
-	public void init(Envelope bounds) {
+	public void init(final Envelope bounds) {
 		// TODO NECESSARY ?
 		translationEnvelope = new ReferencedEnvelope(bounds, crsInit);
 	}
@@ -47,7 +46,7 @@ public class GisUtils {
 	CoordinateFilter gisToAbsolute = new CoordinateFilter() {
 
 		@Override
-		public void filter(Coordinate coord) {
+		public void filter(final Coordinate coord) {
 			if ( translationEnvelope == null ) { return; }
 			coord.x -= translationEnvelope.getMinX();
 			coord.y = -coord.y + translationEnvelope.getHeight() + translationEnvelope.getMinY();
@@ -57,7 +56,7 @@ public class GisUtils {
 	CoordinateFilter absoluteToGis = new CoordinateFilter() {
 
 		@Override
-		public void filter(Coordinate coord) {
+		public void filter(final Coordinate coord) {
 			if ( translationEnvelope == null ) { return; }
 			coord.x += translationEnvelope.getMinX();
 			coord.y = -coord.y + translationEnvelope.getHeight() + translationEnvelope.getMinY();
@@ -65,7 +64,7 @@ public class GisUtils {
 
 	};
 
-	public void setTransformCRS(MathTransform t) {
+	public void setTransformCRS(final MathTransform t) {
 		if ( t != null ) {
 			transformer = new GeometryCoordinateSequenceTransformer();
 			transformer.setMathTransform(t);
@@ -81,7 +80,7 @@ public class GisUtils {
 		}
 	}
 
-	public Geometry transform(Geometry g) {
+	public Geometry transform(final Geometry g) {
 		Geometry geom = GeometryUtils.factory.createGeometry(g);
 		if ( transformer != null ) {
 			try {
@@ -94,12 +93,12 @@ public class GisUtils {
 		return geom;
 	}
 
-	public Envelope transform(Envelope g) {
+	public Envelope transform(final Envelope g) {
 		if ( transformer == null ) { return g; }
 		return transform(JTS.toGeometry(g)).getEnvelopeInternal();
 	}
 
-	public Geometry inverseTransform(Geometry g) {
+	public Geometry inverseTransform(final Geometry g) {
 		Geometry geom = GeometryUtils.factory.createGeometry(g);
 		geom.apply(absoluteToGis);
 		if ( inverseTransformer != null ) {
@@ -117,7 +116,7 @@ public class GisUtils {
 	}
 
 	public void setTransformCRS(final ShpFiles shpf, final double longitude, final double latitude) throws IOException {
-		//if ( transforms() ) { return; }
+		// if ( transforms() ) { return; }
 		PrjFileReader prjreader = new PrjFileReader(shpf);
 		MathTransform transfCRS = null;
 		try {
@@ -149,16 +148,15 @@ public class GisUtils {
 			setTransformCRS(transfCRS);
 		}
 	}
-	
-	
-	public void setTransformCRS(final double longitude, final double latitude) throws IOException {
+
+	public void setTransformCRS(final double longitude, final double latitude) /* throws IOException */{
 		crsInit = DefaultGeographicCRS.WGS84;
 		MathTransform transfCRS = computeProjection(longitude, latitude);
 		setTransformCRS(transfCRS);
 	}
 
 	public void setTransformCRS(final CoordinateReferenceSystem crsI, final double longitude, final double latitude) {
-		//if ( transforms() ) { return; }
+		// if ( transforms() ) { return; }
 		MathTransform transfCRS = null;
 		crsInit = crsI;
 		ProjectedCRS projectd = CRS.getProjectedCRS(crsInit);
@@ -173,7 +171,7 @@ public class GisUtils {
 	// Begin
 	// -----------------------------------------------------------------------------------
 	public void setTransformCRS(final String coordinateRS, final double longitude, final double latitude) {
-		//if ( transforms() ) { return; }
+		// if ( transforms() ) { return; }
 		MathTransform transfCRS = null;
 		crsInit = null;
 		try {
@@ -194,8 +192,9 @@ public class GisUtils {
 
 	}
 
-	public void setTransformCRS(final String srid, final boolean longitudeFirst, final double longitude,final double latitude) {
-		//if ( transforms() ) { return; }
+	public void setTransformCRS(final String srid, final boolean longitudeFirst, final double longitude,
+		final double latitude) {
+		// if ( transforms() ) { return; }
 		crsInit = null;
 		try {
 			crsInit = CRS.decode("EPSG:" + srid, longitudeFirst);
@@ -207,7 +206,7 @@ public class GisUtils {
 			e2.printStackTrace();
 		}
 	}
-	
+
 	private MathTransform computeProjection(final double longitude, final double latitude) {
 		MathTransform transfCRS = null;
 		System.out.println("NOT PROJECTED");

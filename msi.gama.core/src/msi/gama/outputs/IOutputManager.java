@@ -27,22 +27,13 @@ import msi.gama.common.interfaces.IStepable;
  * @since 14 déc. 2011
  * 
  */
-public interface IOutputManager extends IStepable/* , GamaSelectionListener, GamaSelectionProvider */{
+public interface IOutputManager extends IStepable {
 
-	void scheduleOutput(IOutput abstractOutput);
+	void addOutput(IOutput output);
 
-	// List<? extends IOutput> getMonitors();
-
-	void addOutput(IOutput monitorOutput);
-
-	// void exportOutputsOn(PrintWriter pw);
-
-	void unscheduleOutput(IOutput abstractDisplayOutput);
+	void removeOutput(IOutput output);
 
 	IOutput getOutput(String id);
-
-	// IDisplaySurface getDisplaySurfaceFor(String keyword, IDisplayOutput layerDisplayOutput, double w, double h,
-	// Object ... args);
 
 	void forceUpdateOutputs();
 

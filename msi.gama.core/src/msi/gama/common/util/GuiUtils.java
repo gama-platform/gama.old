@@ -22,7 +22,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserPanelStatement;
@@ -240,9 +240,21 @@ public class GuiUtils {
 		return true;
 	}
 
-	public static void prepareFor(final boolean isGui) {
+	public static void prepareForExperiment(final IExperimentSpecies exp) {
 		if ( gui != null ) {
-			gui.prepareFor(isGui);
+			gui.prepareForExperiment(exp);
+		}
+	}
+
+	public static void prepareForSimulation() {
+		if ( gui != null ) {
+			gui.prepareForSimulation();
+		}
+	}
+
+	public static void cleanAfterExperiment(final IExperimentSpecies exp) {
+		if ( gui != null ) {
+			gui.cleanAfterExperiment(exp);
 		}
 	}
 
@@ -320,8 +332,8 @@ public class GuiUtils {
 	 * @param h
 	 * @return
 	 */
-	public static IDisplaySurface getDisplaySurfaceFor(final String keyword, final IDisplayOutput layerDisplayOutput,
-		final double w, final double h, final Object ... args) {
+	public static IDisplaySurface getDisplaySurfaceFor(final String keyword,
+		final LayeredDisplayOutput layerDisplayOutput, final double w, final double h, final Object ... args) {
 		return gui != null ? gui.getDisplaySurfaceFor(keyword, layerDisplayOutput, w, h, args) : null;
 	}
 
@@ -368,9 +380,9 @@ public class GuiUtils {
 		gui.openEditorAndSelect(eObject);
 	}
 
-	public static void updateParameterView() {
+	public static void updateParameterView(final IExperimentSpecies exp) {
 		if ( gui == null ) { return; }
-		gui.updateParameterView();
+		gui.updateParameterView(exp);
 	}
 
 }

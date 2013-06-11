@@ -20,7 +20,7 @@ package msi.gama.gui.parameters;
 
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.swt.controls.IPopupProvider;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
@@ -37,7 +37,8 @@ import org.eclipse.swt.widgets.*;
 public class FileEditor extends AbstractEditor implements IPopupProvider {
 
 	private Button textBox;
-	private Popup popup;
+
+	// private Popup popup;
 
 	FileEditor(final IParameter param) {
 		super(param);
@@ -72,7 +73,7 @@ public class FileEditor extends AbstractEditor implements IPopupProvider {
 		GridData d = new GridData(SWT.LEFT, SWT.CENTER, false, false);
 		d.heightHint = 20;
 		textBox.setLayoutData(d);
-		popup = new Popup(this, textBox, getLabel());
+		// popup = new Popup(this, textBox, getLabel());
 		return textBox;
 	}
 

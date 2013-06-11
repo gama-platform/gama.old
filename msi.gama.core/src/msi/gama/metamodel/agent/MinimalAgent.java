@@ -258,16 +258,17 @@ public abstract class MinimalAgent implements IAgent {
 	}
 
 	@Override
-	public void init(final IScope scope) throws GamaRuntimeException {
-		getSpecies().getArchitecture().init(scope);
+	public boolean init(final IScope scope) throws GamaRuntimeException {
+		return getSpecies().getArchitecture().init(scope);
 	}
 
 	@Override
-	public void step(final IScope scope) throws GamaRuntimeException {
+	public boolean step(final IScope scope) throws GamaRuntimeException {
 		if ( scope.update(this) ) {
 			Object[] result = new Object[1];
-			scope.execute(getSpecies().getArchitecture(), this, null, result);
+			return scope.execute(getSpecies().getArchitecture(), this, null, result);
 		}
+		return false;
 	}
 
 	@Override

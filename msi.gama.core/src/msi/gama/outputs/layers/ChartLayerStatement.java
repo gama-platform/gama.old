@@ -193,7 +193,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	 * create dataset for box_whisker chart
 	 * @return A sample dataset.
 	 */
-	private BoxAndWhiskerCategoryDataset createWhisker(IScope scope) {
+	private BoxAndWhiskerCategoryDataset createWhisker(final IScope scope) {
 
 		final CategoryPlot plot = (CategoryPlot) chart.getPlot();
 		// final int seriesCount = 1;
@@ -396,7 +396,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void _init(final IScope scope) throws GamaRuntimeException {
+	public boolean _init(final IScope scope) throws GamaRuntimeException {
 		history = new StringBuilder(500);
 		IExpression string1 = getFacet(IKeyword.TYPE);
 		if ( string1 != null ) {
@@ -423,16 +423,17 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		createChart(scope);
 		createData(scope);
 		chart.setNotify(false);
+		return true;
 	}
 
 	@Override
-	public void _step(final IScope scope) throws GamaRuntimeException {
+	public boolean _step(final IScope scope) throws GamaRuntimeException {
 		lastComputeCycle = (long) scope.getClock().getCycle();
 		switch (type) {
 			case XY_CHART:
 			case SERIES_CHART:
 				computeSeries(scope, lastComputeCycle);
-				return;
+				return true;
 		}
 
 		for ( final ChartData d : datas ) {
@@ -463,6 +464,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		}
 		history.deleteCharAt(history.length() - 1);
 		history.append(nl);
+		return true;
 	}
 
 	/**

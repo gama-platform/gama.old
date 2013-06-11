@@ -115,7 +115,7 @@ public class BatchExperiment extends ExperimentSpecies {
 	@Override
 	public void open() {
 		super.open();
-		GuiUtils.showParameterView(this);
+		// GuiUtils.showParameterView(this);
 		GuiUtils.informStatus(" Batch ready ");
 	}
 
@@ -402,16 +402,16 @@ public class BatchExperiment extends ExperimentSpecies {
 		}
 	}
 
-	@Override
-	public void buildOutputs() {
-		super.buildOutputs();
-		if ( fileOutputDescription != null && log == null ) {
-			try {
-				createOutput(fileOutputDescription);
-			} catch (GamaRuntimeException e) {
-				GAMA.reportError(e);
-			}
-		}
-	}
+	// @Override
+	// public void buildOutputs() {
+	// super.buildOutputs();
+	// if ( fileOutputDescription != null && log == null ) {
+	// try {
+	// createOutput(fileOutputDescription);
+	// } catch (GamaRuntimeException e) {
+	// GAMA.reportError(e);
+	// }
+	// }
+	// }
 
 }

@@ -18,25 +18,19 @@
  */
 package msi.gama.util.file;
 
-import java.io.*;
-import java.util.Iterator;
-import java.util.List;
-
+import java.io.File;
+import java.util.*;
 import msi.gama.common.util.GisUtils;
 import msi.gama.metamodel.shape.GamaGisGeometry;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
 import msi.gaml.operators.Files;
 import msi.gaml.types.GamaFileType;
-import org.geotools.data.FeatureSource;
-import org.geotools.data.shapefile.*;
-import org.geotools.feature.*;
-import org.jdom2.Document;
-import org.jdom2.Element;
+import org.geotools.feature.FeatureIterator;
+import org.jdom2.*;
 import org.jdom2.input.SAXBuilder;
-import org.opengis.feature.simple.*;
-import com.vividsolutions.jts.geom.*;
+import org.opengis.feature.simple.SimpleFeature;
+import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Written by drogoul
@@ -122,26 +116,23 @@ public class GamaOsmFile extends GamaFile<Integer, GamaGisGeometry> {
 		final File osmFile = getFile();
 		Envelope env = null;
 		try {
-			 SAXBuilder sxb = new SAXBuilder();
-		      try
-		      {
-		         Document document = sxb.build(osmFile);
-		         List<Element> listBounds = document.getRootElement().getChildren("bounds");
-		         Iterator i = listBounds.iterator();
-		         while(i.hasNext())
-		         {
-		            Element courant = (Element)i.next();
-		            double minlat = Double.valueOf(courant.getAttributeValue("minlat"));
-		            double minlon = Double.valueOf(courant.getAttributeValue("minlon"));
-		            double maxlat = Double.valueOf(courant.getAttributeValue("maxlat"));
-		            double maxlon = Double.valueOf(courant.getAttributeValue("maxlon"));
-		           env = new Envelope(minlon, maxlon, minlat, maxlat);
-		           break;
-		         }
-		        
-		      } catch(Exception e){}
-		      
-			
+			SAXBuilder sxb = new SAXBuilder();
+			try {
+				Document document = sxb.build(osmFile);
+				List<Element> listBounds = document.getRootElement().getChildren("bounds");
+				Iterator i = listBounds.iterator();
+				while (i.hasNext()) {
+					Element courant = (Element) i.next();
+					double minlat = Double.valueOf(courant.getAttributeValue("minlat"));
+					double minlon = Double.valueOf(courant.getAttributeValue("minlon"));
+					double maxlat = Double.valueOf(courant.getAttributeValue("maxlat"));
+					double maxlon = Double.valueOf(courant.getAttributeValue("maxlon"));
+					env = new Envelope(minlon, maxlon, minlat, maxlat);
+					break;
+				}
+
+			} catch (Exception e) {}
+
 			if ( env != null ) {
 				final double latitude = env.centre().y;
 				final double longitude = env.centre().x;
@@ -149,7 +140,7 @@ public class GamaOsmFile extends GamaFile<Integer, GamaGisGeometry> {
 				gis.setTransformCRS(longitude, latitude);
 				env = gis.transform(env);
 			}
-		} catch (final IOException e) {
+		} catch (final Exception e) {
 			throw GamaRuntimeException.create(e);
 		}
 		return env;

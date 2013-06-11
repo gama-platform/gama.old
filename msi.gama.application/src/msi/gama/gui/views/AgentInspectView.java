@@ -71,7 +71,7 @@ public class AgentInspectView extends AttributesEditorsView<IAgent> /* implement
 				} else {
 					GuiUtils.setHighlightedAgent(null);
 				}
-				GAMA.getExperiment().getOutputManager().forceUpdateOutputs();
+				GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
 			}
 
 			@Override

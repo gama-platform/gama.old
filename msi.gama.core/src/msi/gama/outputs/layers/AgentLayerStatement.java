@@ -81,13 +81,11 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void _step(final IScope scope) {
-		// final HashSet<IAgent> agents;
-		// GUI.debug("Computing AgentDisplayLayer " + getName());
+	public boolean _step(final IScope scope) {
 		if ( scope.getClock().getCycle() == 0 || agentsHaveChanged() ) {
 			agentsForLayer = new HashSet(computeAgents(scope));
-			// agentsForLayer = (HashSet<IAgent>) agents.clone();
 		}
+		return true;
 	}
 
 	public boolean agentsHaveChanged() {
@@ -95,9 +93,9 @@ public class AgentLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void _init(final IScope scope) {
+	public boolean _init(final IScope scope) {
 		computeAspectName(scope);
-		// compute(sim, 0);
+		return true;
 	}
 
 	@Override

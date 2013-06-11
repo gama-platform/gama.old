@@ -45,19 +45,19 @@ public class GraphstreamOutput extends AbstractDisplayOutput {
 	}
 
 	@Override
-	public void step(final IScope scope) throws GamaRuntimeException {
+	public boolean step(final IScope scope) throws GamaRuntimeException {
 		// retrieve the graph to be displayed
 		Object tmp = Cast.asGraph(getScope(), graphExpr);
 		if ( tmp != null ) {
 			this.graph = (IGraph) tmp;
 		}
-
+		return true;
 	}
 
 	@Override
-	public void init(final IScope scope) throws GamaRuntimeException {
-		super.init(scope);
-
+	public boolean init(final IScope scope) throws GamaRuntimeException {
+		boolean result = super.init(scope);
+		if ( !result ) { return false; }
 		// retrieve the graph to be displayed
 		Object tmp = Cast.asGraph(getScope(), graphExpr);
 		if ( tmp != null ) {
@@ -65,6 +65,7 @@ public class GraphstreamOutput extends AbstractDisplayOutput {
 		}
 
 		lowquality = Cast.asBool(getScope(), getFacet("lowquality"));
+		return true;
 
 	}
 

@@ -93,7 +93,7 @@ public class AWTDisplaySurfaceMenu {
 				} else {
 					GuiUtils.setHighlightedAgent(a);
 				}
-				GAMA.getExperiment().getOutputManager().forceUpdateOutputs();
+				GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
 			}
 		}
 

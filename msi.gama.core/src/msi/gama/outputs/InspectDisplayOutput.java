@@ -82,16 +82,16 @@ public class InspectDisplayOutput extends MonitorOutput {
 	}
 
 	@Override
-	public void init(final IScope scope) {
+	public boolean init(final IScope scope) {
 		super.init(scope);
 		if ( attributes != null ) {
 			listOfAttributes = Cast.asList(scope, attributes.value(scope));
 		}
 		if ( rootAgent == null || rootAgent.dead() ) {
 			rootAgent = scope.getSimulationScope();
-			GuiUtils.debug("InspectDisplayOutput.init rootAgent = " + rootAgent);
+			// GuiUtils.debug("InspectDisplayOutput.init rootAgent = " + rootAgent);
 		}
-
+		return true;
 	}
 
 	public InspectDisplayOutput(final String name, final short type) {
@@ -114,8 +114,8 @@ public class InspectDisplayOutput extends MonitorOutput {
 			@Override
 			public void process(final IScope scope) {
 				if ( !scope.init(InspectDisplayOutput.this) ) { return; }
-				outputManager.addOutput(InspectDisplayOutput.this);
-				schedule();
+				GAMA.getExperiment().getSimulationOutputs().addOutput(InspectDisplayOutput.this);
+				resume();
 				open();
 				update();
 			}
@@ -124,19 +124,20 @@ public class InspectDisplayOutput extends MonitorOutput {
 	}
 
 	@Override
-	public void step(final IScope scope) {
+	public boolean step(final IScope scope) {
 		if ( target == INSPECT_TABLE ) {
-			if ( rootAgent == null || rootAgent.dead() ) { return; }
+			if ( rootAgent == null || rootAgent.dead() ) { return false; }
 			boolean pushed = scope.push(rootAgent);
 			try {
-				super.step(scope);
+				return super.step(scope);
 			} finally {
 				if ( pushed ) {
 					scope.pop(rootAgent);
 				}
 			}
-			return;
+
 		}
+		return true;
 		// super.step(scope);
 	}
 
@@ -166,11 +167,11 @@ public class InspectDisplayOutput extends MonitorOutput {
 		}
 	}
 
-	@Override
-	public void setType(final String t) {
-		target = types.indexOf(t);
-	}
-
+	// @Override
+	// public void setType(final String t) {
+	// target = types.indexOf(t);
+	// }
+	//
 	@Override
 	public List<IAgent> getLastValue() {
 		if ( target == INSPECT_TABLE ) {

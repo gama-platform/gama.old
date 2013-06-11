@@ -54,12 +54,12 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 	}
 
 	@Override
-	public final void init(final IScope scope) throws GamaRuntimeException {
+	public final boolean init(final IScope scope) {
 		getBox().compute(scope);
-		_init(scope);
+		return _init(scope);
 	}
 
-	protected abstract void _init(IScope scope);
+	protected abstract boolean _init(IScope scope);
 
 	@Override
 	public void setDisplayOutput(final IDisplayOutput out) {
@@ -74,12 +74,12 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 	}
 
 	@Override
-	public final void step(final IScope scope) throws GamaRuntimeException {
+	public final boolean step(final IScope scope) throws GamaRuntimeException {
 		getBox().compute(scope);
-		_step(scope);
+		return _step(scope);
 	}
 
-	protected abstract void _step(IScope scope);
+	protected abstract boolean _step(IScope scope);
 
 	@Override
 	public final Double getTransparency() {

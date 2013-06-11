@@ -30,7 +30,7 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 	protected boolean tooltip;
 	protected boolean label;
 	protected String title;
-	protected IType type;
+	protected final IType type;
 	protected String category;
 	protected String unitLabel;
 

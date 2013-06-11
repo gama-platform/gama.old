@@ -49,9 +49,13 @@ public class GraphicLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	protected void _init(IScope scope) {}
+	protected boolean _init(final IScope scope) {
+		return true;
+	}
 
 	@Override
-	protected void _step(IScope scope) {}
+	protected boolean _step(final IScope scope) {
+		return true;
+	}
 
 }

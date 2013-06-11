@@ -28,7 +28,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.metamodel.shape.*;
-import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
@@ -57,7 +57,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 * @see msi.gama.common.interfaces.IDisplaySurface#initialize(double, double, msi.gama.outputs.IDisplayOutput)
 	 */
 	@Override
-	public void initialize(final double w, final double h, final IDisplayOutput output) {
+	public void initialize(final double w, final double h, final LayeredDisplayOutput output) {
 		outputChanged(w, h, output);
 	}
 
@@ -104,7 +104,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	}
 
 	@Override
-	public void outputChanged(final double env_width, final double env_height, final IDisplayOutput output) {
+	public void outputChanged(final double env_width, final double env_height, final LayeredDisplayOutput output) {
 		widthHeightConstraint = env_height / env_width;
 		envWidth = env_width;
 		envHeight = env_height;

@@ -36,12 +36,10 @@ import msi.gaml.operators.Cast;
 @inside(symbols = IKeyword.OUTPUT)
 public abstract class AbstractOutput extends Symbol implements IOutput {
 
-	protected IOutputManager outputManager;
 	private IScope scope;
 	boolean paused = false;
-	private boolean isPermanent = false;
 	boolean open = false;
-	private int nextRefreshTime;
+	private Integer nextRefreshTime;
 	private int refreshRate;
 
 	public AbstractOutput(final IDescription desc) {
@@ -56,26 +54,33 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		setRefreshRate(1);
 	}
 
+	private boolean isUserCreated = true;
+
 	@Override
-	public void init(final IScope scope) {
+	public final boolean isUserCreated() {
+		return isUserCreated;
+	}
+
+	@Override
+	public final void setUserCreated(final boolean isUserCreated) {
+		this.isUserCreated = isUserCreated;
+	}
+
+	@Override
+	public boolean init(final IScope scope) {
 		setScope(scope.copy());
-		outputManager = GAMA.getExperiment().getOutputManager();
 		final IExpression refresh = getFacet(IKeyword.REFRESH_EVERY);
 		if ( refresh != null ) {
 			setRefreshRate(Cast.asInt(getScope(), refresh.value(getScope())));
 		}
 		setNextTime(getScope().getClock().getCycle());
+		return true;
 	}
 
 	@Override
 	public void close() {
 		pause();
 		setOpen(false);
-	}
-
-	@Override
-	public boolean isClosed() {
-		return !isOpen();
 	}
 
 	@Override
@@ -115,7 +120,7 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 	}
 
 	@Override
-	public abstract void step(IScope scope);
+	public abstract boolean step(IScope scope);
 
 	@Override
 	public abstract void update() throws GamaRuntimeException;
@@ -128,45 +133,26 @@ public abstract class AbstractOutput extends Symbol implements IOutput {
 		paused = suspended;
 	}
 
-	@Override
-	public void schedule() throws GamaRuntimeException {
-		setNextTime(getScope().getClock().getCycle());
-		outputManager.scheduleOutput(this);
-	}
+	//
+	// @Override
+	// public void schedule() throws GamaRuntimeException {
+	// // WARNING Check this change
+	// // setNextTime(getScope().getClock().getCycle());
+	// resume();
+	// }
 
 	private void reschedule() {
 		setNextTime(getScope().getClock().getCycle() + getRefreshRate());
 	}
 
 	@Override
-	public void setNextTime(final int i) {
+	public void setNextTime(final Integer i) {
 		nextRefreshTime = i;
 	}
 
 	@Override
 	public long getNextTime() {
 		return nextRefreshTime;
-	}
-
-	@Override
-	public boolean isPermanent() {
-		return isPermanent;
-	}
-
-	public void setPermanent(final boolean batchOutput) {
-		isPermanent = batchOutput;
-	}
-
-	// @Override
-	// public String toGaml() {
-	// // To redefine for outputs that need to be saved
-	// return null;
-	// }
-
-	@Override
-	public boolean isUserCreated() {
-		// To redefine for outputs that need to be maintained
-		return false;
 	}
 
 	@Override

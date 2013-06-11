@@ -65,11 +65,11 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 		data.horizontalSpan = 2;
 		aux.setLayoutData(data);
 
-		EditorFactory.create(general, "Color:", output.getBackgroundColor(), new EditorListener<Color>() {
+		EditorFactory.create(general, "Color:", getOutput().getBackgroundColor(), new EditorListener<Color>() {
 
 			@Override
 			public void valueModified(final Color newValue) {
-				output.setBackgroundColor(newValue);
+				getOutput().setBackgroundColor(newValue);
 			}
 		});
 		createItem("Navigation", null, general, true);

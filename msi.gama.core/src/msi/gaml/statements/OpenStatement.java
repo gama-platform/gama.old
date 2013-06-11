@@ -49,7 +49,7 @@ import org.eclipse.swt.widgets.Display;
 	@facet(name = IKeyword.TYPE, type = IType.ID, optional = true) }, omissible = IKeyword.FILE)
 public class OpenStatement extends AbstractStatementSequence implements IStatement.WithArgs {
 
-	private Arguments init;
+	// private Arguments init;
 
 	public OpenStatement(final IDescription desc) {
 		super(desc);
@@ -170,7 +170,7 @@ public class OpenStatement extends AbstractStatementSequence implements IStateme
 
 	@Override
 	public void setFormalArgs(final Arguments args) {
-		init = args;
+		// init = args;
 	}
 
 	@Override

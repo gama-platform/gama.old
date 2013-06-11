@@ -30,9 +30,9 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public interface IStepable {
 
-	public void init(IScope scope) throws GamaRuntimeException;
+	public boolean init(IScope scope) throws GamaRuntimeException;
 
-	public void step(IScope scope) throws GamaRuntimeException;
+	public boolean step(IScope scope) throws GamaRuntimeException;
 
 	public void dispose();
 

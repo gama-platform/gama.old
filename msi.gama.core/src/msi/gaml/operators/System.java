@@ -61,11 +61,16 @@ public class System {
 	@doc(value = "returns an evaluation of the expresion (right-hand operand) in the scope the given agent.", special_cases = "if the agent is nil or dead, throws an exception", examples = "agent.location 		--: 	returns the location of the agent")
 	public static Object opGetValue(final IScope scope, final IAgent a, final IExpression s)
 		throws GamaRuntimeException {
-		if ( a == null ) { throw GamaRuntimeException.warning("Cannot evaluate " + s.toGaml() +
-			" as the target agent is null"); }
+		if ( a == null ) {
+			if ( !scope.interrupted() ) { throw GamaRuntimeException.warning("Cannot evaluate " + s.toGaml() +
+				" as the target agent is null"); }
+			return null;
+		}
 		if ( a.dead() ) {
 			// GuiUtils.debug("System.opGetValue");
-			throw GamaRuntimeException.warning("Cannot evaluate " + s.toGaml() + " as the target agent is dead");
+			if ( !scope.interrupted() ) { throw GamaRuntimeException.warning("Cannot evaluate " + s.toGaml() +
+				" as the target agent is dead"); }
+			return null;
 		}
 		return scope.evaluate(s, a);
 	}

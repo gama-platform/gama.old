@@ -49,7 +49,7 @@ public class ContinuousTopology extends AbstractTopology {
 	 * @see msi.gama.interfaces.IValue#stringValue()
 	 */
 	@Override
-	public String stringValue(IScope scope) throws GamaRuntimeException {
+	public String stringValue(final IScope scope) throws GamaRuntimeException {
 		return "Continuous topology in " + environment.toString();
 	}
 
@@ -65,7 +65,7 @@ public class ContinuousTopology extends AbstractTopology {
 	 * @see msi.gama.environment.AbstractTopology#_copy()
 	 */
 	@Override
-	protected ITopology _copy(IScope scope) {
+	protected ITopology _copy(final IScope scope) {
 		return new ContinuousTopology(scope, environment);
 	}
 
@@ -86,9 +86,10 @@ public class ContinuousTopology extends AbstractTopology {
 	}
 
 	@Override
-	public Integer directionInDegreesTo(IScope scope, final IShape g1, final IShape g2) {
+	public Integer directionInDegreesTo(final IScope scope, final IShape g1, final IShape g2) {
 		// TODO Attention : calcul fait uniquement sur les locations. Il conviendrait plutot de
 		// faire une DistanceOp().getNearestPoints()
+		if ( g1 == null || g2 == null ) { return null; }
 		ILocation source = g1.getLocation();
 		ILocation target = g2.getLocation();
 		if ( isTorus() ) {
@@ -114,7 +115,7 @@ public class ContinuousTopology extends AbstractTopology {
 	}
 
 	@Override
-	public Double distanceBetween(IScope scope, final IShape g1, final IShape g2) {
+	public Double distanceBetween(final IScope scope, final IShape g1, final IShape g2) {
 		// if ( !isValidGeometry(g1) ) { return Double.MAX_VALUE; }
 		// TODO is it useful to keep these tests ?
 		// if ( !isValidGeometry(g2) ) { return Double.MAX_VALUE; }
@@ -124,7 +125,7 @@ public class ContinuousTopology extends AbstractTopology {
 	}
 
 	@Override
-	public Double distanceBetween(IScope scope, final ILocation g1, final ILocation g2) {
+	public Double distanceBetween(final IScope scope, final ILocation g1, final ILocation g2) {
 		// if ( !isValidLocation(g1) ) { return Double.MAX_VALUE; }
 		// TODO is it useful to keep these tests ?
 		// if ( !isValidLocation(g2) ) { return Double.MAX_VALUE; }

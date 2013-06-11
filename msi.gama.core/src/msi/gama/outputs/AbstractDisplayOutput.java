@@ -18,11 +18,8 @@
  */
 package msi.gama.outputs;
 
-import java.awt.Color;
-import java.awt.image.BufferedImage;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IGamaView;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
@@ -40,17 +37,22 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 
 	protected boolean disposed = false;
 
+	final Runnable opener = new Runnable() {
+
+		@Override
+		public void run() {
+			IGamaView view = GuiUtils.showView(getViewId(), isUnique() ? null : getName());
+			if ( view == null ) { return; }
+			view.setOutput(AbstractDisplayOutput.this);
+		}
+
+	};
+
 	@Override
 	public void open() {
 		super.open();
-		openView();
+		GuiUtils.run(opener);
 		setRefreshRate(getRefreshRate()); // Workaround for displaying the title
-	}
-
-	protected void openView() {
-		IGamaView view = GuiUtils.showView(getViewId(), isUnique() ? null : getName());
-		if ( view == null ) { return; }
-		view.setOutput(this);
 	}
 
 	@Override
@@ -69,15 +71,10 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	public void dispose() {
 		if ( disposed ) { return; }
 		disposed = true;
+		GuiUtils.closeViewOf(this);
 		if ( getScope() != null ) {
 			GAMA.releaseScope(getScope());
 		}
-	}
-
-	@Override
-	public void close() {
-		super.close();
-		outputManager.unscheduleOutput(this);
 	}
 
 	@Override
@@ -87,7 +84,6 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 
 	@Override
 	public void update() throws GamaRuntimeException {
-
 		GuiUtils.updateViewOf(this);
 	}
 
@@ -105,69 +101,8 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements ID
 	public abstract String getViewId();
 
 	@Override
-	public void setType(final String t) {}
-
-	@Override
-	public BufferedImage getImage() {
-		return null;
-	}
-
-	@Override
-	public IDisplaySurface getSurface() {
-		return null;
-	}
-
-	@Override
-	public Color getBackgroundColor() {
-		return Color.white;
-	}
-
-	@Override
-	public void setBackgroundColor(final Color background) {}
-
-	@Override
 	public String getId() {
 		return isUnique() ? getViewId() : getViewId() + getName();
-	}
-
-	@Override
-	public ILocation getOutput3DNbCycles() {
-		return null;
-	}
-
-	@Override
-	public boolean getPolygonMode() {
-		return false;
-	}
-
-	@Override
-	public Color getAmbientLightColor() {
-		return null;
-	}
-
-	@Override
-	public ILocation getCameraUpVector() {
-		return null;
-	}
-
-	@Override
-	public ILocation getCameraLookPos() {
-		return null;
-	}
-
-	@Override
-	public ILocation getCameraPos() {
-		return null;
-	}
-
-	@Override
-	public boolean getOutput3D() {
-		return false;
-	}
-
-	@Override
-	public boolean getTesselation() {
-		return false;
 	}
 
 }

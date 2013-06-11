@@ -9,7 +9,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.AbstractTopology.RootTopology;
 import msi.gama.metamodel.topology.continuous.AmorphousTopology;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gaml.operators.Cast;
@@ -36,29 +36,20 @@ public class SimulationPopulation extends GamaPopulation {
 		final boolean isRestored) throws GamaRuntimeException {
 		GuiUtils.waitStatus("Initializing simulation");
 		final SimulationAgent world = new SimulationAgent(this);
-		final IAgent a = getHost();
-		if ( a instanceof ExperimentAgent ) {
-			((ExperimentAgent) a).setSimulation(world);
-		}
+		world.setIndex(currentAgentIndex++);
 		add(world);
+		getHost().setSimulation(world);
 		if ( scope.interrupted() ) { return null; }
 		GuiUtils.waitStatus("Instantiating agents");
 		createVariablesFor(world.getScope(), this, initialValues);
 		world.schedule();
-		GAMA.controller.scheduler.schedule(world.getScheduler(), world.getScope());
-		if ( a instanceof ExperimentAgent ) {
-			// TODO Here we probably have a chance to decide what to do with the outputs defined in ExperimentSpecies
-			final IScope simulationScope = world.obtainNewScope();
-			if ( simulationScope != null ) {
-				GAMA.controller.scheduler.schedule(((ExperimentAgent) a).getSpecies().getOutputManager(),
-					simulationScope);
-			} else {
-				GuiUtils.hideView(GuiUtils.PARAMETER_VIEW_ID);
-				GuiUtils.hideMonitorView();
-			}
-		}
 		GuiUtils.informStatus("Simulation Ready");
 		return this;
+	}
+
+	@Override
+	public ExperimentAgent getHost() {
+		return (ExperimentAgent) super.getHost();
 	}
 
 	@Override

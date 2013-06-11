@@ -81,7 +81,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 
 	// FIXME Use GamaImageFile
 	@Override
-	public void _init(final IScope scope) throws GamaRuntimeException {
+	public boolean _init(final IScope scope) throws GamaRuntimeException {
 		if ( getFacet(IKeyword.GIS) != null ) {
 			buildGisLayer(scope);
 		} else {
@@ -116,6 +116,7 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 				}
 			}
 		}
+		return true;
 	}
 
 	public void buildGisLayer(final IScope scope) throws GamaRuntimeException {
@@ -173,11 +174,12 @@ public class ImageLayerStatement extends AbstractLayerStatement {
 	}
 
 	@Override
-	public void _step(final IScope scope) throws GamaRuntimeException {
+	public boolean _step(final IScope scope) throws GamaRuntimeException {
 		if ( gisLayer == null ) {
 			currentImage =
 				constantImage != null ? constantImage : Cast.asString(scope, imageFileExpression.value(scope));
 		}
+		return true;
 	}
 
 	/**

@@ -41,15 +41,22 @@ public class GamaRuntimeException extends RuntimeException {
 	protected int lineNumber;
 	protected int times = 0;
 
-	public static GamaRuntimeException create(Throwable ex) {
+	// Factory methods
+
+	public static GamaRuntimeException create(final Throwable ex) {
+		if ( ex instanceof GamaRuntimeException ) { return create((GamaRuntimeException) ex); }
 		return new GamaRuntimeException(ex);
 	}
 
-	public static GamaRuntimeException error(String s) {
+	public static GamaRuntimeException create(final GamaRuntimeException ex) {
+		return ex;
+	}
+
+	public static GamaRuntimeException error(final String s) {
 		return new GamaRuntimeException(s, false);
 	}
 
-	public static GamaRuntimeException warning(String s) {
+	public static GamaRuntimeException warning(final String s) {
 		return new GamaRuntimeException(s, true);
 	}
 
@@ -126,7 +133,7 @@ public class GamaRuntimeException extends RuntimeException {
 		return message != null ? message : s;
 	}
 
-	public boolean equivalentTo(GamaRuntimeException ex) {
+	public boolean equivalentTo(final GamaRuntimeException ex) {
 		return editorContext == ex.editorContext && getMessage().equals(ex.getMessage()) && getCycle() == ex.getCycle();
 	}
 

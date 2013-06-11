@@ -46,26 +46,13 @@ public interface IOutput extends ISymbol, IStepable {
 
 	public boolean isOpen();
 
-	public boolean isClosed();
+	// public void schedule() throws GamaRuntimeException;
 
-	public boolean isPermanent();
-
-	public void schedule() throws GamaRuntimeException;
-
-	public void setNextTime(int l);
+	public void setNextTime(Integer i);
 
 	public long getNextTime();
 
-	// public String toGaml();
-
 	public boolean isUserCreated();
-
-	public void setType(String type);
-
-	/*
-	 * Called by the scheduler to perform the internal computations
-	 */
-	// public void step(IScope scope) throws GamaRuntimeException;
 
 	/*
 	 * Called by the output thread to perform the actual "update" (of views, files, etc.)
@@ -73,5 +60,7 @@ public interface IOutput extends ISymbol, IStepable {
 	public void update() throws GamaRuntimeException;
 
 	public IScope getScope();
+
+	public void setUserCreated(boolean b);
 
 }

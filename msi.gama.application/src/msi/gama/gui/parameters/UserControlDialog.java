@@ -136,7 +136,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 					@Override
 					public void widgetSelected(final SelectionEvent e) {
 						c.executeOn(scope);
-						GAMA.getExperiment().getOutputManager().forceUpdateOutputs();
+						GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
 					}
 
 				});

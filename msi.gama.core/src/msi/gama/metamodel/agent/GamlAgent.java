@@ -97,8 +97,9 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	 *          override _init_(IScope) instead.
 	 */
 	@Override
-	public void init(final IScope scope) {
+	public boolean init(final IScope scope) {
 		executeCallbackAction(scope, "_init_");
+		return !scope.interrupted();
 	}
 
 	/**
@@ -110,8 +111,9 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	 *          override _step_(IScope) instead.
 	 */
 	@Override
-	public void step(final IScope scope) {
+	public boolean step(final IScope scope) {
 		executeCallbackAction(scope, "_step_");
+		return !scope.interrupted();
 	}
 
 	/**
@@ -145,13 +147,13 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	}
 
 	protected Object stepSubPopulations(final IScope scope) {
-		try {
-			for ( final IPopulation pop : ImmutableList.copyOf(getMicroPopulations()) ) {
-				if ( !scope.step(pop) ) { return null; }
-			}
-		} catch (final GamaRuntimeException g) {
-			GAMA.reportError(g);
+		// try {
+		for ( final IPopulation pop : ImmutableList.copyOf(getMicroPopulations()) ) {
+			if ( !scope.step(pop) ) { return null; }
 		}
+		// } catch (final GamaRuntimeException g) {
+		// GAMA.reportError(g);
+		// }
 		return this;
 	}
 
@@ -668,6 +670,11 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 			// if ( !GamlAgent.this.dead ) {
 			// GamlAgent.this.dispose();
 			// }
+		}
+
+		@Override
+		public String toString() {
+			return "scope of " + root;
 		}
 
 		@Override

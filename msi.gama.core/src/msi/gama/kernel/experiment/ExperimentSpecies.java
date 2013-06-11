@@ -24,7 +24,7 @@ import msi.gama.common.util.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IMacroAgent;
-import msi.gama.outputs.SimulationOutputManager;
+import msi.gama.outputs.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -59,14 +59,14 @@ import msi.gaml.variables.IVariable;
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
 public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies {
 
-	protected SimulationOutputManager output;
+	protected IOutputManager simulationOutputs;
+	protected IOutputManager experimentOutputs;
 	private ItemList parametersEditors;
 	protected final Map<String, IParameter> targetedVars;
 	protected final List<IParameter> systemParameters;
 	protected ExperimentAgent agent;
 	protected final List<IParameter> regularParameters;
 	protected final Scope stack;
-	// protected FrontEndController helper;
 	protected IModel model;
 
 	@Override
@@ -86,9 +86,13 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 
 	@Override
 	public void dispose() {
-		if ( output != null ) {
-			output.dispose(true);
-			output = null;
+		if ( simulationOutputs != null ) {
+			simulationOutputs.dispose();
+			simulationOutputs = null;
+		}
+		if ( experimentOutputs != null ) {
+			experimentOutputs.dispose();
+			experimentOutputs = null;
 		}
 		targetedVars.clear();
 		systemParameters.clear();
@@ -138,8 +142,8 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 	}
 
 	@Override
-	public final SimulationOutputManager getOutputManager() {
-		return output;
+	public final IOutputManager getSimulationOutputs() {
+		return simulationOutputs;
 	}
 
 	@Override
@@ -147,14 +151,28 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 		super.setChildren(children);
 		for ( final ISymbol s : children ) {
 			if ( s instanceof SimulationOutputManager ) {
-				if ( output != null ) {
-					output.setChildren(new GamaList(((SimulationOutputManager) s).getOutputs().values()));
+				if ( simulationOutputs != null ) {
+					((SimulationOutputManager) simulationOutputs).setChildren(new ArrayList(((AbstractOutputManager) s)
+						.getOutputs().values()));
 				} else {
-					output = (SimulationOutputManager) s;
+					simulationOutputs = (SimulationOutputManager) s;
 				}
 			} else if ( s instanceof IParameter.Batch ) {
 				addRegularParameter((IParameter) s);
+			} else if ( s instanceof ExperimentOutputManager ) {
+				if ( experimentOutputs != null ) {
+					((ExperimentOutputManager) experimentOutputs).setChildren(new ArrayList(((AbstractOutputManager) s)
+						.getOutputs().values()));
+				} else {
+					experimentOutputs = (ExperimentOutputManager) s;
+				}
 			}
+		}
+		if ( simulationOutputs == null ) {
+			simulationOutputs = new SimulationOutputManager(null);
+		}
+		if ( experimentOutputs == null ) {
+			experimentOutputs = new ExperimentOutputManager(null);
 		}
 	}
 
@@ -180,54 +198,35 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 
 	@Override
 	public void schedule() {
-		// GuiUtils.debug("GuiExperimentSpecies.schedule");
 		if ( agent == null ) { return; }
-		// The scheduler of the agent is scheduled in the global scheduler
-		GAMA.controller.scheduler.schedule(agent/* .getScheduler() */, agent.getScope());
+		// The agent is scheduled in the global scheduler
+		GAMA.controller.scheduler.schedule(agent, agent.getScope());
 	}
 
 	@Override
 	public void open() {
-		// GuiUtils.debug("GuiExperimentSpecies.open");
 		createAgent();
 		parametersEditors = null;
-		buildOutputs();
+		GuiUtils.prepareForExperiment(this);
 	}
 
 	@Override
 	public void reload() {
-		// GuiUtils.debug("GuiExperimentSpecies.reload");
-		desynchronizeOutputs();
 		agent.reset();
-		buildOutputs();
 		schedule();
 	}
 
 	@Override
 	public void close() {
-		// GuiUtils.debug("GuiExperimentSpecies.close");
 		if ( agent != null ) {
 			agent.dispose();
 			agent = null;
 		}
-		if ( output != null ) {
-			output.dispose(true);
-			output = null;
+		if ( simulationOutputs != null ) {
+			simulationOutputs.dispose();
+			simulationOutputs = null;
 		}
-	}
 
-	@Override
-	public void buildOutputs() {
-		if ( output == null ) {
-			output = new SimulationOutputManager(null);
-		}
-		GuiUtils.waitStatus(" Building outputs ");
-		output.buildOutputs(this);
-	}
-
-	@Override
-	public void desynchronizeOutputs() {
-		output.desynchronizeOutputs();
 	}
 
 	@Override
@@ -321,7 +320,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 	@Override
 	public SimulationAgent getCurrentSimulation() {
 		if ( agent == null ) { return null; }
-		return agent.getSimulation();
+		return (SimulationAgent) agent.getSimulation();
 	}
 
 	@Override
@@ -370,7 +369,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 		public SimulationAgent getSimulationScope() {
 			final ExperimentAgent a = getAgent();
 			if ( a == null ) { return null; }
-			return a.getSimulation();
+			return (SimulationAgent) a.getSimulation();
 		}
 
 		@Override

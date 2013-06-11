@@ -137,7 +137,7 @@ public class AgentsMenu extends ContributionItem {
 			final IAgent a = (IAgent) mi.getData("agent");
 			if ( a != null && !a.dead() ) {
 				GuiUtils.setHighlightedAgent(a);
-				GAMA.getExperiment().getOutputManager().forceUpdateOutputs();
+				GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
 			}
 		}
 	};
@@ -379,7 +379,7 @@ public class AgentsMenu extends ContributionItem {
 		if ( isGlobal ) {
 			speciesItem = new MenuItem(parent, SWT.CASCADE, 0);
 			speciesItem.setText("Explore all agents");
-			MenuItem sepItem = new MenuItem(parent, SWT.SEPARATOR, 1);
+			new MenuItem(parent, SWT.SEPARATOR, 1);
 		} else {
 			speciesItem = new MenuItem(parent, SWT.CASCADE);
 			speciesItem.setText("Species " + population.getName());

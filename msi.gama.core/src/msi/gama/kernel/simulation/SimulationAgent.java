@@ -19,10 +19,12 @@
 package msi.gama.kernel.simulation;
 
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.AgentScheduler;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
+import msi.gama.outputs.IOutputManager;
 import msi.gama.precompiler.GamlAnnotations.action;
 import msi.gama.precompiler.GamlAnnotations.args;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -50,23 +52,45 @@ import com.vividsolutions.jts.geom.Envelope;
 @vars({
 	@var(name = IKeyword.STEP, type = IType.FLOAT, doc = @doc(value = "Represents the value of the interval, in model time, between two simulation cycles", comment = "If not set, its value is equal to 1.0 and, since the default time unit is the second, to 1 second")),
 	@var(name = IKeyword.TIME, type = IType.FLOAT, doc = @doc(value = "Represents the total time passed, in model time, since the beginning of the simulation", comment = "Equal to cycle * step if the user does not arbitrarily initialize it.")),
-	@var(name = SimulationAgent.CYCLE, type = IType.INT, doc = @doc("Returns the current cycle of the simulation")), })
+	@var(name = SimulationAgent.CYCLE, type = IType.INT, doc = @doc("Returns the current cycle of the simulation")),
+	@var(name = SimulationAgent.DURATION, type = IType.STRING, doc = @doc("Returns a string containing the duration, in milliseconds, of the previous simulation cycle")),
+	@var(name = SimulationAgent.TOTAL_DURATION, type = IType.STRING, doc = @doc("Returns a string containing the total duration, in milliseconds, of the simulation since it has been launched ")),
+	@var(name = SimulationAgent.AVERAGE_DURATION, type = IType.STRING, doc = @doc("Returns a string containing the average duration, in milliseconds, of a simulation cycle.")),
+	@var(name = SimulationAgent.MACHINE_TIME, type = IType.FLOAT, doc = @doc(value = "Returns the current system time in milliseconds", comment = "The return value is a float number")), })
 public class SimulationAgent extends GamlAgent {
 
+	public static final String DURATION = "duration";
+	public static final String MACHINE_TIME = "machine_time";
+	public static final String TOTAL_DURATION = "total_duration";
+	public static final String AVERAGE_DURATION = "average_duration";
 	public static final String CYCLE = "cycle";
+
 	final SimulationClock clock;
 	AgentScheduler scheduler;
 	IScope scope;
-	private static int SIM_NUMBER = 0;
-	private int number = 0;
+	IOutputManager outputs;
 
 	public SimulationAgent(final IPopulation pop) throws GamaRuntimeException {
 		super(pop);
-		number = SIM_NUMBER++;
-		setName("Simulation " + number);
 		clock = new SimulationClock();
 		scope = obtainNewScope();
 		scheduler = new AgentScheduler(scope, pop);
+	}
+
+	@Override
+	public void schedule() {
+		super.schedule();
+		GAMA.controller.scheduler.schedule(scheduler, scope);
+		if ( outputs != null ) {
+			final IScope simulationScope = obtainNewScope();
+			if ( simulationScope != null ) {
+				GAMA.controller.scheduler.schedule(outputs, simulationScope);
+			} else {
+				// TODO What does it do here ? Should be elsewhere (but where ?)
+				GuiUtils.hideView(GuiUtils.PARAMETER_VIEW_ID);
+				GuiUtils.hideMonitorView();
+			}
+		}
 	}
 
 	@Override
@@ -83,7 +107,6 @@ public class SimulationAgent extends GamlAgent {
 	@Override
 	public Object _init_(final IScope scope) {
 		// A simulation always runs in its own scope
-		// GuiUtils.debug("SimulationAgent._init_");
 		return super._init_(this.scope);
 	}
 
@@ -109,7 +132,6 @@ public class SimulationAgent extends GamlAgent {
 
 	@Override
 	public void dispose() {
-		// GuiUtils.debug("SimulationAgent.dispose : " + this);
 		if ( dead ) { return; }
 		super.dispose();
 		// We dispose of any scheduler still running
@@ -195,6 +217,31 @@ public class SimulationAgent extends GamlAgent {
 		}
 	}
 
+	@getter(DURATION)
+	public String getDuration() {
+		return Long.toString(getClock().getDuration());
+	}
+
+	@getter(TOTAL_DURATION)
+	public String getTotalDuration() {
+		return Long.toString(getClock().getTotalDuration());
+	}
+
+	@getter(AVERAGE_DURATION)
+	public String getAverageDuration() {
+		return Double.toString(getClock().getAverageDuration());
+	}
+
+	@getter(MACHINE_TIME)
+	public Double getMachineTime() {
+		return (double) System.currentTimeMillis();
+	}
+
+	@setter(MACHINE_TIME)
+	public void setMachineTime(final Double t) throws GamaRuntimeException {
+		// NOTHING
+	}
+
 	@action(name = "pause", doc = @doc("Allows to pause the current simulation **ACTUALLY EXPERIMENT FOR THE MOMENT**. It can be set to continue with the manual intervention of the user."))
 	@args(names = {})
 	public Object pause(final IScope scope) {
@@ -209,9 +256,8 @@ public class SimulationAgent extends GamlAgent {
 		return null;
 	}
 
-	@Override
-	public String toString() {
-		return super.toString() + " (" + number + ")";
+	public void setOutputs(final IOutputManager iOutputManager) {
+		outputs = iOutputManager;
 	}
 
 }

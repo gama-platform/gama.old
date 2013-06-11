@@ -42,11 +42,9 @@ public interface IExperimentSpecies extends ISpecies {
 
 	public abstract IModel getModel();
 
-	public void desynchronizeOutputs();
-
 	public abstract void setModel(final IModel model);
 
-	public abstract IOutputManager getOutputManager();
+	public abstract IOutputManager getSimulationOutputs();
 
 	public abstract boolean isBatch();
 
@@ -85,7 +83,5 @@ public interface IExperimentSpecies extends ISpecies {
 	public abstract SimulationAgent getCurrentSimulation();
 
 	public abstract boolean isLoading();
-
-	public abstract void buildOutputs();
 
 }

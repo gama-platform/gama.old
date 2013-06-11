@@ -94,21 +94,14 @@ public class BinaryOperator extends AbstractNAryOperator {
 		Object leftVal = "(nil)", rightVal = "(nil)";
 		try {
 			leftVal = left().value(scope);
-			// if ( right() instanceof AgentVariableExpression &&
-			// ((AgentVariableExpression) right()).getName().equals("boids_in_flock") ) {
-			// GuiUtils.debug("BinaryOperator.value");
-			// }
 			rightVal = lazy ? right() : right().value(scope);
 
 			final Object result = helper.run(scope, leftVal, rightVal);
 			return result;
-		} catch (final GamaRuntimeException e1) {
+		} catch (final RuntimeException ex) {
+			final GamaRuntimeException e1 = GamaRuntimeException.create(ex);
 			e1.addContext("when applying the " + literalValue() + " operator on " + leftVal + " and " + rightVal);
 			throw e1;
-		} catch (final Exception e) {
-			final GamaRuntimeException ee = GamaRuntimeException.create(e);
-			ee.addContext("when applying the " + literalValue() + " operator on " + leftVal + " and " + rightVal);
-			throw ee;
 		}
 	}
 

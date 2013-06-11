@@ -16,9 +16,10 @@ public class UserOnlyControlArchitecture extends UserControlArchitecture {
 	}
 
 	@Override
-	public void init(final IScope scope) throws GamaRuntimeException {
+	public boolean init(final IScope scope) throws GamaRuntimeException {
 		if ( initPanel != null ) {
 			initPanel.executeOn(scope);
 		}
+		return true;
 	}
 }

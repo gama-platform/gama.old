@@ -86,11 +86,12 @@ public class ReflexArchitecture extends AbstractArchitecture {
 	}
 
 	@Override
-	public void init(final IScope scope) throws GamaRuntimeException {
+	public boolean init(final IScope scope) throws GamaRuntimeException {
 		for ( int i = 0; i < _inits_number; i++ ) {
-			if ( scope.interrupted() ) { return; }
+			if ( scope.interrupted() ) { return false; }
 			_inits.get(i).executeOn(scope);
 		}
+		return true;
 	}
 
 	@Override

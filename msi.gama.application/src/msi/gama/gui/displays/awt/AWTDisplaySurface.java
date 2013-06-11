@@ -27,7 +27,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.metamodel.shape.*;
-import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
@@ -149,7 +149,8 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	}
 
 	@Override
-	public void initialize(final double env_width, final double env_height, final IDisplayOutput layerDisplayOutput) {
+	public void initialize(final double env_width, final double env_height,
+		final LayeredDisplayOutput layerDisplayOutput) {
 		super.initialize(env_width, env_height, layerDisplayOutput);
 		setCursor(createCursor());
 		menuManager = new AWTDisplaySurfaceMenu(this);
@@ -186,7 +187,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	}
 
 	@Override
-	public void outputChanged(final double env_width, final double env_height, final IDisplayOutput output) {
+	public void outputChanged(final double env_width, final double env_height, final LayeredDisplayOutput output) {
 		// GuiUtils.debug("AWTDisplaySurface.outputChanged");
 		setEnvWidth(env_width);
 		setEnvHeight(env_height);

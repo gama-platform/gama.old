@@ -140,7 +140,7 @@ public class UserControlView extends GamaViewPart {
 					@Override
 					public void widgetSelected(final SelectionEvent e) {
 						c.executeOn(scope);
-						GAMA.getExperiment().getOutputManager().forceUpdateOutputs();
+						GAMA.getExperiment().getSimulationOutputs().forceUpdateOutputs();
 					}
 
 				});

@@ -336,11 +336,18 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void prepareFor(final boolean isGui) {
-		if ( isGui ) {
-			updateParameterView();
-			clearErrors();
-			showConsoleView();
+	public void prepareForSimulation() {
+		setStatus(" Building outputs ", IGui.WAIT);
+		hideMonitorView();
+		clearErrors();
+		showConsoleView();
+	}
+
+	@Override
+	public void prepareForExperiment(final IExperimentSpecies exp) {
+		if ( exp.isGui() ) {
+			setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
+			updateParameterView(exp);
 			tell = new Tell();
 			error = new Error();
 			views = new Views();
@@ -496,26 +503,6 @@ public class SwtGui implements IGui {
 		}
 	}
 
-	@Override
-	public void showParameterView(final IExperimentSpecies exp) {
-
-		run(new Runnable() {
-
-			@Override
-			public void run() {
-				try {
-					final ExperimentParametersView view =
-						(ExperimentParametersView) getPage().showView(ExperimentParametersView.ID, null,
-							IWorkbenchPage.VIEW_VISIBLE);
-					view.addItem(exp);
-				} catch (final PartInitException e) {
-					e.printStackTrace();
-				}
-			}
-
-		});
-	}
-
 	private Object internalShowView(final String viewId, final String secondaryId) {
 		final Object[] result = new Object[1];
 		run(new Runnable() {
@@ -538,12 +525,7 @@ public class SwtGui implements IGui {
 		Object o = internalShowView(viewId, secondaryId);
 		if ( o instanceof IWorkbenchPart ) {
 			IPartService ps = (IPartService) ((IWorkbenchPart) o).getSite().getService(IPartService.class);
-
 			ps.addPartListener(SwtGui.getPartListener());
-			// if ( o instanceof GamaSelectionListener ) {
-			// GAMA.getExperiment().getOutputManager().addGamaSelectionListener((GamaSelectionListener) o);
-			//
-			// }
 			if ( o instanceof IGamaView ) { return (IGamaView) o; }
 			o = GamaRuntimeException.error("Impossible to open view " + viewId);
 		}
@@ -582,69 +564,28 @@ public class SwtGui implements IGui {
 
 	public static class GamaPartListener implements IPartListener {
 
+		// TODO implement IPartListener2 to be notified when views are hidden
 		@Override
-		public void partActivated(final IWorkbenchPart partRef) {
-			// GuiUtils.debug("SwtGui.GamaPartListener.partActivated" + partRef);
+		public void partActivated(final IWorkbenchPart partRef) {}
 
-			// ViewSourceProvider state =
-			// (ViewSourceProvider) ((ISourceProviderService) getWindow().getService(
-			// ISourceProviderService.class)).getSourceProvider(ViewSourceProvider.var);
-			// state.changeState();
-
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.IPartListener2#partClosed(org.eclipse.ui.IWorkbenchPartReference)
-		 */
 		@Override
 		public void partClosed(final IWorkbenchPart partRef) {
 			if ( partRef instanceof IGamaView ) {
 				final IExperimentSpecies s = GAMA.getExperiment();
 				if ( s == null ) { return; }
-				final IOutputManager m = s.getOutputManager();
-				if ( m != null ) /* && partRef instanceof GamaSelectionListener ) */{
-					// m.removeGamaSelectionListener((GamaSelectionListener) partRef);
-					m.unscheduleOutput(((IGamaView) partRef).getOutput());
+				final IOutputManager m = s.getSimulationOutputs();
+				if ( m != null ) {
+					m.removeOutput(((IGamaView) partRef).getOutput());
 				}
-
 			}
-
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see
-		 * org.eclipse.ui.IPartListener2#partDeactivated(org.eclipse.ui.IWorkbenchPartReference)
-		 */
 		@Override
-		public void partDeactivated(final IWorkbenchPart partRef) {
-			// TODO Auto-generated method stub
-			// GuiUtils.debug("SwtGui.GamaPartListener.partDeactivated" + partRef);
+		public void partDeactivated(final IWorkbenchPart partRef) {}
 
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.IPartListener2#partOpened(org.eclipse.ui.IWorkbenchPartReference)
-		 */
 		@Override
-		public void partOpened(final IWorkbenchPart partRef) {
-			// TODO Auto-generated method stub
-			// GuiUtils.debug("SwtGui.GamaPartListener.partOpened" + partRef);
+		public void partOpened(final IWorkbenchPart partRef) {}
 
-		}
-
-		// IContextActivation simulationContext;
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.IPartListener#partBroughtToTop(org.eclipse.ui.IWorkbenchPart)
-		 */
 		@Override
 		public void partBroughtToTop(final IWorkbenchPart part) {}
 	}
@@ -847,7 +788,7 @@ public class SwtGui implements IGui {
 	static final Map<String, Class> displayClasses = new HashMap();
 
 	@Override
-	public IDisplaySurface getDisplaySurfaceFor(final String keyword, final IDisplayOutput layerDisplayOutput,
+	public IDisplaySurface getDisplaySurfaceFor(final String keyword, final LayeredDisplayOutput layerDisplayOutput,
 		final double w, final double h, final Object ... args) {
 
 		IDisplaySurface surface = null;
@@ -950,7 +891,8 @@ public class SwtGui implements IGui {
 	public void openEditorAndSelect(final Object eObject) {}
 
 	@Override
-	public void updateParameterView() {
+	public void updateParameterView(final IExperimentSpecies exp) {
+
 		run(new Runnable() {
 
 			@Override
@@ -959,6 +901,9 @@ public class SwtGui implements IGui {
 					final ExperimentParametersView view =
 						(ExperimentParametersView) getPage().showView(ExperimentParametersView.ID, null,
 							IWorkbenchPage.VIEW_VISIBLE);
+					if ( view.getExperiment() != exp ) {
+						view.addItem(exp);
+					}
 					view.updateItemValues();
 				} catch (final PartInitException e) {
 					e.printStackTrace();
@@ -966,7 +911,26 @@ public class SwtGui implements IGui {
 			}
 
 		});
+	}
 
+	@Override
+	public void showParameterView(final IExperimentSpecies exp) {
+
+		run(new Runnable() {
+
+			@Override
+			public void run() {
+				try {
+					final ExperimentParametersView view =
+						(ExperimentParametersView) getPage().showView(ExperimentParametersView.ID, null,
+							IWorkbenchPage.VIEW_VISIBLE);
+					view.addItem(exp);
+				} catch (final PartInitException e) {
+					e.printStackTrace();
+				}
+			}
+
+		});
 	}
 
 	public static Font getLabelfont() {
@@ -1037,6 +1001,7 @@ public class SwtGui implements IGui {
 			public void run() {
 				final IViewReference r = getPage().findViewReference(GuiUtils.AGENT_VIEW_ID, "");
 				if ( r == null ) {
+					if ( a == null ) { return; }
 					try {
 						new InspectDisplayOutput("Agent inspector", InspectDisplayOutput.INSPECT_AGENT).launch();
 					} catch (final GamaRuntimeException g) {
@@ -1048,5 +1013,18 @@ public class SwtGui implements IGui {
 				v.inspectAgent(a);
 			}
 		});
+	}
+
+	/**
+	 * Method cleanAfterExperiment()
+	 * @see msi.gama.common.interfaces.IGui#cleanAfterExperiment(msi.gama.kernel.experiment.IExperimentSpecies)
+	 */
+	@Override
+	public void cleanAfterExperiment(final IExperimentSpecies exp) {
+		setSelectedAgent(null);
+		setHighlightedAgent(null);
+		hideView(GuiUtils.PARAMETER_VIEW_ID);
+		hideMonitorView();
+
 	}
 }

@@ -68,7 +68,7 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 	}
 
 	@Override
-	public void _init(final IScope scope) throws GamaRuntimeException {
+	public boolean _init(final IScope scope) throws GamaRuntimeException {
 		// top level species layer is a direct micro-species of "world_species" for sure
 		if ( hostSpecies == null ) {
 			hostSpecies = scope.getSimulationScope().getSpecies();
@@ -76,20 +76,25 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 
 		species = hostSpecies.getMicroSpecies(getName());
 		if ( species == null ) { throw GamaRuntimeException.error("not a suitable species to display: " + getName()); }
-		super._init(scope);
-
-		for ( final SpeciesLayerStatement microLayer : microSpeciesLayers ) {
-			microLayer.setHostSpecies(species);
-			if ( !scope.init(microLayer) ) { return; }
+		if ( super._init(scope) ) {
+			for ( final SpeciesLayerStatement microLayer : microSpeciesLayers ) {
+				microLayer.setHostSpecies(species);
+				if ( !scope.init(microLayer) ) { return false; }
+			}
 		}
+		return true;
 	}
 
 	@Override
-	public void _step(final IScope scope) throws GamaRuntimeException {
-		super._step(scope);
-		for ( final SpeciesLayerStatement microLayer : microSpeciesLayers ) {
-			if ( !scope.step(microLayer) ) { return; }
+	public boolean _step(final IScope scope) throws GamaRuntimeException {
+		if ( super._step(scope) ) {
+			for ( final SpeciesLayerStatement microLayer : microSpeciesLayers ) {
+				if ( !scope.step(microLayer) ) { return false; }
+			}
+		} else {
+			return false;
 		}
+		return true;
 	}
 
 	@Override

@@ -139,7 +139,7 @@ public class GAMA {
 		if ( controller.experiment == null ) { return null; }
 		final ExperimentAgent a = controller.experiment.getAgent();
 		if ( a == null || a.dead() ) { return controller.experiment.getExperimentScope(); }
-		final SimulationAgent s = a.getSimulation();
+		final SimulationAgent s = (SimulationAgent) a.getSimulation();
 		if ( s == null || s.dead() ) { return a.getScope(); }
 		return s.getScope();
 	}

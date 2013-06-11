@@ -21,7 +21,7 @@ package msi.gama.common.interfaces;
 import java.util.*;
 import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserPanelStatement;
@@ -74,8 +74,6 @@ public interface IGui {
 
 	boolean confirmClose(IExperimentSpecies experiment);
 
-	void prepareFor(boolean isGui);
-
 	void showConsoleView();
 
 	void hideMonitorView();
@@ -102,7 +100,7 @@ public interface IGui {
 
 	void clearErrors();
 
-	IDisplaySurface getDisplaySurfaceFor(String keyword, IDisplayOutput layerDisplayOutput, double w, double h,
+	IDisplaySurface getDisplaySurfaceFor(String keyword, LayeredDisplayOutput layerDisplayOutput, double w, double h,
 		Object ... args);
 
 	Map<String, Object> openUserInputDialog(String title, Map<String, Object> initialValues, Map<String, IType> types);
@@ -119,8 +117,14 @@ public interface IGui {
 
 	void openEditorAndSelect(Object eObject);
 
-	void updateParameterView();
+	void updateParameterView(IExperimentSpecies exp);
 
 	void cycleDisplayViews(Set<String> names);
+
+	void prepareForExperiment(IExperimentSpecies exp);
+
+	void cleanAfterExperiment(IExperimentSpecies exp);
+
+	void prepareForSimulation();
 
 }

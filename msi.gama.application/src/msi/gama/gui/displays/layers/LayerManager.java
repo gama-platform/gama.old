@@ -22,7 +22,6 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.*;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 
 /**
@@ -147,12 +146,14 @@ public class LayerManager implements ILayerManager {
 				pd.setElevation(max_z);
 				pd.drawDisplay(scope, g);
 			}
-		} catch (final GamaRuntimeException e) {
-			// e.addContext("in drawing layer " + dis.getMenuName());
-			// throw e;
-			// Temporarily disabled so that it does not appear on the interface.
-			e.printStackTrace();
-		} finally {
+		} catch (final Exception e) {}
+		// catch (final Exception e) {
+		// // e.addContext("in drawing layer " + dis.getMenuName());
+		// // throw e;
+		// // Temporarily disabled so that it does not appear on the interface.
+		// e.printStackTrace();
+		// }
+		finally {
 			g.endDrawingLayers();
 			GAMA.releaseScope(scope);
 		}

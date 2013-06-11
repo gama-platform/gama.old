@@ -17,10 +17,14 @@ public class UserLastControlArchitecture extends UserControlArchitecture {
 	}
 
 	@Override
-	public void init(final IScope scope) throws GamaRuntimeException {
-		super.init(scope);
-		if ( initPanel != null ) {
-			initPanel.executeOn(scope);
+	public boolean init(final IScope scope) throws GamaRuntimeException {
+		if ( super.init(scope) ) {
+			if ( initPanel != null ) {
+				initPanel.executeOn(scope);
+			}
+		} else {
+			return false;
 		}
+		return true;
 	}
 }
