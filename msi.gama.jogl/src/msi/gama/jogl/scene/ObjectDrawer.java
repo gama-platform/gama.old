@@ -13,6 +13,8 @@ import java.util.*;
 
 import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
+
+import msi.gama.common.util.GuiUtils;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.JTSDrawer;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -499,7 +501,7 @@ public boolean isInitialized() {
 				} else if ( geometry.geometry.getGeometryType() == "Polygon" ) {
 					// The JTS geometry of a sphere is a circle (a polygon)
 					if ( geometry.type.equals("sphere") ) {
-						jtsDrawer.DrawSphere(geometry.agent.getLocation(), geometry.z_layer, geometry.height,
+						jtsDrawer.DrawSphere((Polygon) geometry.geometry, geometry.z_layer, geometry.height,
 							geometry.color, geometry.alpha);
 					} else {
 						if ( geometry.height > 0 ) {
@@ -526,8 +528,9 @@ public boolean isInitialized() {
 							geometry.color, geometry.alpha);
 					}
 				} else if ( geometry.geometry.getGeometryType() == "Point" ) {
+					//FIXME: Should never go here even with a height value as the geometry of a sphere is a polygon...
 					if ( geometry.height > 0 ) {
-						jtsDrawer.DrawSphere(geometry.agent.getLocation(), geometry.z_layer, geometry.height,
+						jtsDrawer.DrawSphere((Polygon) geometry.geometry, geometry.z_layer, geometry.height,
 							geometry.color, geometry.alpha);
 					} else {
 						jtsDrawer.DrawPoint((Point) geometry.geometry, geometry.z_layer, 10,

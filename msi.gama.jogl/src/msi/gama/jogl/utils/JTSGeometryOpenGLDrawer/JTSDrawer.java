@@ -609,10 +609,16 @@ public class JTSDrawer {
 
 	}
 
-	public void DrawSphere(final ILocation location, final double z_layer, final double radius, final Color c,
+	public void DrawSphere(final Polygon p, final double z_layer, final double radius, final Color c,
 		final double alpha) {
 
-		myGl.glTranslated(location.getX(), yFlag * location.getY(), z_layer + location.getZ());
+		// Add z value (Note: getCentroid does not return a z value)
+		double z = 0.0;
+		if ( Double.isNaN(p.getCoordinate().z) == false ) {
+			z = p.getCoordinate().z;
+		}
+
+		myGl.glTranslated(p.getCentroid().getX() , yFlag * p.getCentroid().getY() , z + z_layer );
 		myGl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
 
 		GLUquadric quad = myGlu.gluNewQuadric();
@@ -623,7 +629,7 @@ public class JTSDrawer {
 		final int stacks = 16;
 		myGlu.gluSphere(quad, radius, slices, stacks);
 		myGlu.gluDeleteQuadric(quad);
-		myGl.glTranslated(-location.getX(), -yFlag * location.getY(), -(z_layer + location.getZ()));
+		myGl.glTranslated(-p.getCentroid().getX(), -yFlag * p.getCentroid().getY(), -(z + z_layer));
 
 	}
 
