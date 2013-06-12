@@ -27,7 +27,6 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.path.*;
-import msi.gaml.operators.Maths;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 
@@ -239,14 +238,17 @@ public class GraphTopology extends AbstractTopology {
 	 */
 	@Override
 	public Integer directionInDegreesTo(final IScope scope, final IShape source, final IShape target) {
-		final GamaSpatialPath path = this.pathBetween(scope, source, target);
-		if ( path == null ) { return null; }
-		// LineString ls = (LineString) path.getEdgeList().first().getInnerGeometry();
-		// TODO Check this
-		final double dx = target.getLocation().getX() - source.getLocation().getX();
-		final double dy = target.getLocation().getY() - source.getLocation().getY();
-		final double result = Maths.atan2Opt(dy, dx);
-		return Maths.checkHeading((int) result);
+		// WARNING As it is computed every time the location of an agent is set, and as the source and target in that
+		// case do not correspond to existing nodes, it may be safer (and faster) to call the root topology
+		return root.directionInDegreesTo(scope, source, target);
+		// final GamaSpatialPath path = this.pathBetween(scope, source, target);
+		// if ( path == null ) { return null; }
+		// // LineString ls = (LineString) path.getEdgeList().first().getInnerGeometry();
+		// // TODO Check this
+		// final double dx = target.getLocation().getX() - source.getLocation().getX();
+		// final double dy = target.getLocation().getY() - source.getLocation().getY();
+		// final double result = Maths.atan2Opt(dy, dx);
+		// return Maths.checkHeading((int) result);
 	}
 
 	/**

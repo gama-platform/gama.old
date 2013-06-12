@@ -712,14 +712,17 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		ENVELOPE.init(source.getEnvelope());
 		ENVELOPE.expandBy(exp);
 		// final Iterator<IShape> in_square = allInEnvelope(source, ENVELOPE, f, false);
-		return Ordering.natural().onResultOf(new Function<IShape, Double>() {
+		Ordering<IShape> ordering = Ordering.natural().onResultOf(new Function<IShape, Double>() {
 
 			// TODO Make it a static class
 			@Override
 			public Double apply(final IShape input) {
 				return source.euclidianDistanceTo(input);
 			}
-		}).min(allInEnvelope(source, ENVELOPE, f, false));
+		});
+		Iterator<IShape> shapes = allInEnvelope(source, ENVELOPE, f, false);
+		if ( Iterators.size(shapes) == 0 ) { return null; }
+		return ordering.min(shapes);
 	}
 
 	private Iterable<IShape> inEnvelope(final Envelope env) {

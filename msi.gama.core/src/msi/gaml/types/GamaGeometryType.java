@@ -176,6 +176,9 @@ public class GamaGeometryType extends GamaType<IShape> {
 		final Coordinate coordinates[] =
 			{ location1 == null ? new GamaPoint(0, 0) : (GamaPoint) location1.getLocation(),
 				location2 == null ? new GamaPoint(0, 0) : (GamaPoint) location2.getLocation() };
+		// WARNING Circumvents a bug in JTS 1.13, where a line built between two identical points would return a null
+		// centroid
+		if ( coordinates[0].equals(coordinates[1]) ) { return createPoint((GamaPoint) coordinates[0]); }
 		return new GamaShape(GeometryUtils.factory.createLineString(coordinates));
 	}
 

@@ -150,9 +150,14 @@ public class GamaQuadTree implements ISpatialIndex {
 		}
 
 		public IShape remove(final Coordinate p, final IShape a) {
-			if ( size != 0 && objects.remove(a) ) {
-				size--;
-				return a;
+
+			if ( size != 0 ) {
+				synchronized (objects) {
+					if ( objects.remove(a) ) {
+						size--;
+						return a;
+					}
+				}
 			} else if ( !isLeaf ) {
 				final boolean north = p.y >= miny && p.y < miny + hh / 2;
 				final boolean west = p.x >= minx && p.x < minx + hw / 2;
@@ -167,8 +172,10 @@ public class GamaQuadTree implements ISpatialIndex {
 					split();
 					return add(p, a);
 				}
-				objects.add(a);
-				size++;
+				synchronized (objects) {
+					objects.add(a);
+					size++;
+				}
 				return true;
 			}
 			final boolean north = p.y >= miny && p.y < miny + hh / 2;
@@ -186,9 +193,11 @@ public class GamaQuadTree implements ISpatialIndex {
 		}
 
 		public boolean remove(final Envelope bounds, final IShape a) {
-			if ( size != 0 && objects.remove(a) ) {
-				size--;
-				return true;
+			synchronized (objects) {
+				if ( size != 0 && objects.remove(a) ) {
+					size--;
+					return true;
+				}
 			}
 			return !isLeaf && ne.removeIfPresent(bounds, a) | nw.removeIfPresent(bounds, a) |
 				se.removeIfPresent(bounds, a) | sw.removeIfPresent(bounds, a);
@@ -241,11 +250,12 @@ public class GamaQuadTree implements ISpatialIndex {
 			if ( canSplit && isLeaf && size >= maxCapacity ) {
 				split();
 			}
-
-			if ( isLeaf || env.contains(bounds) ) {
-				objects.add(o);
-				size++;
-				return true;
+			synchronized (objects) {
+				if ( isLeaf || env.contains(bounds) ) {
+					objects.add(o);
+					size++;
+					return true;
+				}
 			}
 			boolean retVal = false;
 
@@ -263,10 +273,10 @@ public class GamaQuadTree implements ISpatialIndex {
 			}
 
 			if ( retVal ) { return true; }
-			final IAgent a = o.getAgent();
-			String name = a != null ? "agent " + a.getName() : "shape";
-			name += " in " + env;
-			System.out.println(name + " is not added to quadtree node; " + bounds);
+			// final IAgent a = o.getAgent();
+			// String name = a != null ? "agent " + a.getName() : "shape";
+			// name += " in " + env;
+			// System.out.println(name + " is not added to quadtree node; " + bounds);
 			return false;
 		}
 
@@ -302,17 +312,17 @@ public class GamaQuadTree implements ISpatialIndex {
 							if ( add(p, entry) ) {
 								// addedNumber++;
 							} else {
-								System.out.println(entry.getName() + " is not re-added to sub-node on splitting");
+								// System.out.println(entry.getName() + " is not re-added to sub-node on splitting");
 							}
 						} else {
 							if ( add(g.getEnvelope(), entry) ) {
 								// addedNumber++;
 							} else {
-								System.out.println(entry.getName() + " is not re-added to sub-node on splitting");
+								// System.out.println(entry.getName() + " is not re-added to sub-node on splitting");
 							}
 						}
 					} else {
-						System.out.println("QuadTree :: split :: Dead agent : " + System.currentTimeMillis());
+						// System.out.println("QuadTree :: split :: Dead agent : " + System.currentTimeMillis());
 						continue;
 					}
 				}
@@ -347,10 +357,12 @@ public class GamaQuadTree implements ISpatialIndex {
 		public void findIntersects(final IShape source, final Envelope r, final IAgentFilter f,
 			final HashSet<IShape> result) {
 			if ( bounds.intersects(r) ) {
-				for ( int i = 0, n = size; i < n; i++ ) {
-					final IShape entry = objects.get(i);
-					if ( (f == null || f.accept(source, entry)) && entry.getEnvelope().intersects(r) ) {
-						result.add(entry);
+				synchronized (objects) {
+					for ( int i = 0, n = size; i < n; i++ ) {
+						final IShape entry = objects.get(i);
+						if ( (f == null || f.accept(source, entry)) && entry.getEnvelope().intersects(r) ) {
+							result.add(entry);
+						}
 					}
 				}
 				if ( !isLeaf ) {

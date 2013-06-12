@@ -137,6 +137,9 @@ public class GamaShape implements IShape /* , IContainer */{
 
 	@Override
 	public void setLocation(final ILocation l) {
+		// if ( Double.isNaN(l.getX()) ) {
+		// GuiUtils.debug("GamaShape.setLocation NAN");
+		// }
 		final ILocation previous = location;
 		location = l;
 		if ( previous != null ) {
@@ -147,6 +150,9 @@ public class GamaShape implements IShape /* , IContainer */{
 				final double dx = location.getX() - previous.getX();
 				final double dy = location.getY() - previous.getY();
 				final double dz = location.getZ() - previous.getZ();
+				// if ( Double.isNaN(dx) ) {
+				// GuiUtils.debug("GamaShape.setLocation");
+				// }
 				geometry.apply(translation.by(dx, dy, dz));
 			}
 			geometry.geometryChanged();
@@ -406,6 +412,9 @@ public class GamaShape implements IShape /* , IContainer */{
 	public void setGeometry(final IShape geom) {
 		if ( geom == null || geom == this ) { return; }
 		location = geom.getLocation();
+		// if ( Double.isNaN(location.getX()) ) {
+		// GuiUtils.debug("GamaShape.setGeometry");
+		// }
 		setGeometry(geom.getInnerGeometry(), false);
 	}
 
@@ -424,12 +433,19 @@ public class GamaShape implements IShape /* , IContainer */{
 	}
 
 	private void computeLocation() {
-		final Coordinate c = getInnerGeometry().getCentroid().getCoordinate();
+		final Point p = getInnerGeometry().getCentroid();
+		final Coordinate c = p.getCoordinate();
 		if ( location == null ) {
 			location = new GamaPoint(c);
 		} else {
 			location.setLocation(c.x, c.y, c.z);
 		}
+		// if ( Double.isNaN(location.getX()) ) {
+		//
+		// Point p2 = getInnerGeometry().getCentroid();
+		// Coordinate c2 = p2.getCoordinate();
+		// GuiUtils.debug("GamaShape.computeLocation" + c2);
+		// }
 	}
 
 	@Override
