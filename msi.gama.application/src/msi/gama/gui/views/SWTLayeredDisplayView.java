@@ -80,7 +80,7 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 	}
 
 	public Composite createSurfaceCompo() {
-		Composite c = new Composite(parent, SWT.EMBEDDED);
+		Composite c = new Composite(parent, SWT.NO_BACKGROUND);
 		c.setLayout(new FillLayout());
 		createSurface(c);
 
@@ -117,8 +117,6 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 		IDisplaySurface s =
 			GuiUtils.getDisplaySurfaceFor("swt", getOutput(), getOutput().getEnvWidth(), getOutput().getEnvHeight(), c,
 				SWT.NO_BACKGROUND);
-		// JOGLSWTDisplaySurface s = new JOGLSWTDisplaySurface(c,SWT.NO_BACKGROUND);
-		s.initialize(getOutput().getEnvWidth(), getOutput().getEnvHeight(), getOutput());
 
 		getOutput().setSurface(s);
 	}

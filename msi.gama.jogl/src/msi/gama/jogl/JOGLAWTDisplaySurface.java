@@ -139,7 +139,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	@Override
 	public void initialize(final double env_width, final double env_height, final LayeredDisplayOutput out) {
-		GuiUtils.debug("JOGLAWTDisplaySurface.initialize");
+		GuiUtils.debug("JOGLAWTDisplaySurface1.1.initialize");
 		super.initialize(env_width, env_height, out);
 		agentsMenu = new PopupMenu();
 		add(agentsMenu);
@@ -313,7 +313,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 				if ( a != null ) {
 					agent = a;
 					followAgent = !followAgent;
-					followAgent(a);
+//						followAgent(a);
 				}
 			}
 
@@ -421,15 +421,26 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		} else {
 			incrementalZoomStep = 0.1f;
 		}
-		renderer.camera.getPosition().setZ(renderer.camera.getPosition().getZ() - incrementalZoomStep);
-		// renderer.camera.getTarget().setZ(renderer.camera.getTarget().getZ() - incrementalZoomStep);
-		renderer.camera.setRadius(renderer.camera.getPosition().getZ() - incrementalZoomStep);
+//		renderer.camera.getPosition().setZ(renderer.camera.getPosition().getZ() - incrementalZoomStep);
+//		// renderer.camera.getTarget().setZ(renderer.camera.getTarget().getZ() - incrementalZoomStep);
+//		renderer.camera.setRadius(renderer.camera.getPosition().getZ() - incrementalZoomStep);
+//		// FIXME Approximate
+//		resizeImage((int) (getWidth() * zoomLevel), (int) (getHeight() * zoomLevel));
+//		// setZoomLevel(zoomLevel + zoomLevel * 0.1);
+//		// updateDisplay();
+//		zoomFit = false;
+		if(!this.switchCamera)
+		{
+		renderer.camera.setRadius(renderer.camera.getRadius()-incrementalZoomStep);
+		renderer.camera.rotation();
+		}
+		else
+		{
+			renderer.camera.setPosition(renderer.camera.getPosition().add(renderer.camera.getForward().scalarMultiply(renderer.camera.getSpeed()*800))); //on recule
+			renderer.camera.setTarget(renderer.camera.getForward().add(renderer.camera.getPosition().getX(), renderer.camera.getPosition().getY(), renderer.camera.getPosition().getZ())); 
+		}
 		setZoomLevel(renderer.camera.getMaxDim() * AbstractCamera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
-		// FIXME Approximate
-		resizeImage((int) (getWidth() * zoomLevel), (int) (getHeight() * zoomLevel));
-		// setZoomLevel(zoomLevel + zoomLevel * 0.1);
-		// updateDisplay();
-		zoomFit = false;
+
 	}
 
 	@Override
@@ -441,14 +452,23 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		} else {
 			incrementalZoomStep = 0.1f;
 		}
-		renderer.camera.getPosition().setZ(renderer.camera.getPosition().getZ() + incrementalZoomStep);
-		// renderer.camera.getTarget().setZ(renderer.camera.getTarget().getZ() + incrementalZoomStep);
+//		renderer.camera.getPosition().setZ(renderer.camera.getPosition().getZ() + incrementalZoomStep);
+//		renderer.camera.getTarget().setZ(renderer.camera.getTarget().getZ() + incrementalZoomStep);
+//		// FIXME Approximate
+//		resizeImage((int) (getWidth() * zoomLevel), (int) (getHeight() * zoomLevel));
+//		// updateDisplay();
+//		zoomFit = false;
+		if(!this.switchCamera)
+		{
+		renderer.camera.setRadius(renderer.camera.getRadius()+incrementalZoomStep);
+		renderer.camera.rotation();
+		}
+		else
+		{
+			renderer.camera.setPosition(renderer.camera.getPosition().subtract(renderer.camera.getForward().scalarMultiply(renderer.camera.getSpeed()*800))); //on recule
+			renderer.camera.setTarget(renderer.camera.getForward().add(renderer.camera.getPosition().getX(), renderer.camera.getPosition().getY(), renderer.camera.getPosition().getZ())); 
+		}
 		setZoomLevel(renderer.camera.getMaxDim() * AbstractCamera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
-		renderer.camera.setRadius(renderer.camera.getPosition().getZ() + incrementalZoomStep);
-		// FIXME Approximate
-		resizeImage((int) (getWidth() * zoomLevel), (int) (getHeight() * zoomLevel));
-		// updateDisplay();
-		zoomFit = false;
 	}
 
 	@Override
@@ -489,9 +509,9 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		// zoomFit();
 		// }
 		// FIXME: need to change the status of the button
-		if ( threeD == true ) {
-			threeD = false;
-		}
+//		if ( threeD == true ) {
+//			threeD = false;
+//		}
 		picking = !picking;
 
 	}
@@ -619,6 +639,11 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		// FIXME: Problem when the geometry is a point how to determine the maxExtent of the shape?
 		final double zPos = env.maxExtent() * 2 + geometry.getLocation().getZ();
 		final double zLPos = -(env.maxExtent() * 2);
+		if(!this.switchCamera)
+		{
+			renderer.camera.setRadius(zPos);
+			renderer.camera.rotation();
+		}
 		System.out.println("xPos:" + xPos + " yPos:" + yPos + " zPos:" + zPos);
 		System.out.println("xLPos:" + xPos + " yLPos:" + yPos + " zLPos:" + zLPos);
 		this.renderer.camera.updatePosition(xPos, yPos, zPos);

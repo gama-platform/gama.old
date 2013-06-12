@@ -98,7 +98,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		final GLCapabilities cap = new GLCapabilities();
 		cap.setStencilBits(8);
 		// Initialize the user camera
-		camera = new Camera(this);
+		camera = new CameraArcBall(this);
 		myGLDrawer = new MyGLToyDrawer();
 		canvas = new GLCanvas(cap);
 		canvas.addGLEventListener(this);
@@ -128,7 +128,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		if(displaySurface.switchCamera)
 			camera = new FreeFlyCamera(this);
 		else
-			camera = new Camera(this);
+			camera = new CameraArcBall(this);
 		
 		canvas.addKeyListener(camera);
 		canvas.addMouseListener(camera);

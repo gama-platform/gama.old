@@ -38,7 +38,7 @@ public class CameraArcBall extends AbstractCamera {
 		
 		_orientation = 1.0;
     	_phi = 90.0;
-        _theta = 0.0;
+        _theta = 360.00;
         _sensivity = 0.4;
 		_keyboardSensivity= 4;
 
@@ -70,10 +70,22 @@ public class CameraArcBall extends AbstractCamera {
 		glu.gluLookAt(this._position.getX(), this._position.getY(), this._position.getZ(), 
 					this._target.getX(), this._target.getY(),this._target.getZ(), 
 					getUpVector().getX(), getUpVector().getY(), getUpVector().getZ());
+		
+		animate();
 	}
 	
 	public void rotation()
 	{
+		if(_phi>180 && _phi <360) 
+    	{
+    		_orientation = -1;		
+    		setUpVector(new GamaPoint(0.0, _orientation,0.0));
+    	}
+		else{
+			_orientation = 1;		
+    		setUpVector(new GamaPoint(0.0, _orientation,0.0));
+		}	
+		
 		if( _theta > 360 ) _theta = 0;
 	    if( _theta < 0 ) _theta = 360;
 
@@ -83,20 +95,26 @@ public class CameraArcBall extends AbstractCamera {
 		double cosAngle = Math.cos(_theta*Math.PI/180.f);
 		double sinAngle = Math.sin(_theta*Math.PI/180.f);
 		
-		_position.x = radius*sinAngle*Math.sin(_phi*Math.PI/180.f);
-		_position.z = radius*cosAngle*Math.sin(_phi*Math.PI/180.f);
-		_position.y = radius*Math.cos(_phi*Math.PI/180.f);
-		
-		if(_phi>180 && _phi <360) 
-    	{
-    		_orientation = -1;		
-    		setUpVector(new GamaPoint(0.0, _orientation,0.0));
-    	}
-		else{
-			_orientation = 1;		
-    		setUpVector(new GamaPoint(0.0, _orientation,0.0));
-		}		
+		_position.x = radius*sinAngle*Math.sin(_phi*Math.PI/180.f)+_target.x;
+		_position.z = radius*cosAngle*Math.sin(_phi*Math.PI/180.f)+_target.z;
+		_position.y = radius*Math.cos(_phi*Math.PI/180.f)+_target.y;	
 	}
+	
+//	public void followAgent(IAgent a) {
+//
+//		ILocation l = a.getGeometry().getLocation();
+//		Envelope env = a.getGeometry().getEnvelope();
+//		
+//		double xPos = l.getX() - myRenderer.displaySurface.getEnvWidth() / 2;
+//		double yPos = -(l.getY() - myRenderer.displaySurface.getEnvHeight() / 2);
+//		
+//		double zPos = env.maxExtent() * 2 + l.getZ();
+//		double zLPos = -(env.maxExtent() * 2);
+//		
+//		updatePosition(xPos, yPos, zPos);
+//		lookPosition(xPos, yPos, zLPos);
+//		
+//	}
 	
 	@Override
 	public void initializeCamera(double envWidth, double envHeight) {
@@ -111,44 +129,33 @@ public class CameraArcBall extends AbstractCamera {
 		}
 
 		radius = getMaxDim() * INIT_Z_FACTOR;
-		
-		if ( isModelCentered ) {
-			_position.x = 0;
-			_target.x = 0;
-			_position.y = 0;
-			_target.y = 0;
-			_position.z = radius;
-			_target.z = 0;
-		} else {
-			_position.x = envWidth / 2;
-			_target.x = envWidth / 2;
-			_position.y = -envWidth / 2;
-			_target.y = -envWidth / 2;
-			_position.z = radius;
-			_target.z = 0;
-		}
+		_target.x = 0;
+		_target.y = 0;
+		_target.z = 0;
+		_phi = 90.0;
+        _theta = 360.00;
+		rotation();	
 	}
 	
 	public void initialize3DCamera(double envWidth, double envHeight) 
-	{		
-		radius = getMaxDim() * INIT_Z_FACTOR;
+	{	
+//		System.out.println("Camera 3D");
+		this.envWidth = envWidth;
+		this.envHeight = envHeight;
 
-		if ( isModelCentered ) {
-			_position.x = 0;
-			_target.x = 0;
-			_position.y = -envHeight  * 1.75+envHeight/2;
-			_target.y = -envHeight * 0.5+envHeight/2;
-			_position.z = radius;
-			_target.z = 0;
+		if ( envWidth > envHeight ) {
+			setMaxDim(envWidth);
+		} else {
+			setMaxDim(envHeight);
 		}
-		else{
-			_position.x = envWidth / 2;
-			_target.x = envWidth / 2;
-			_position.y = -envHeight  * 1.75;
-			_target.y = -envHeight * 0.5;
-			_position.z = getMaxDim();
-			_target.z = 0;
-		}
+
+		radius = getMaxDim() * INIT_Z_FACTOR;
+		_target.x = 0;
+		_target.y = 0;
+		_target.z = 0;
+		_phi = 135.0;
+        _theta = 360.00;
+		rotation();
 	}
 	
 	public double getRadius()
@@ -169,14 +176,118 @@ public class CameraArcBall extends AbstractCamera {
 	public void setUpVector(ILocation upVector) {
 		this.upVector = upVector;
 	}
+	
+	// Move in the XY plan by changing camera pos and look pos.
+	@Override
+	public void moveXYPlan2(double diffx, double diffy, double z, double w, double h) {
+
+		double translationValue = 0;
+
+		if ( Math.abs(diffx) > Math.abs(diffy) ) {// Move X
+
+			translationValue = Math.abs(diffx) * ((z + 1) / w);
+
+			if ( diffx > 0 ) {// move right
+				updatePosition(_position.getX() - translationValue, _position.getY(), _position.getZ());
+				lookPosition(_target.getX() - translationValue, _target.getY(), _target.getZ());
+			} else {// move left
+				updatePosition(_position.getX() + translationValue, _position.getY(), _position.getZ());
+				lookPosition(_target.getX() + translationValue, _target.getY(), _target.getZ());
+			}
+		} else if ( Math.abs(diffx) < Math.abs(diffy) ) { // Move Y
+
+			translationValue = Math.abs(diffy) * ((z + 1) / h);
+
+			if ( diffy > 0 ) {// move down
+				updatePosition(_position.getX(), _position.getY()+ translationValue, _position.getZ());
+				this.lookPosition(_target.getX(), _target.getY() + translationValue, _target.getZ());
+			} else {// move up
+				updatePosition(_position.getX(), _position.getY()- translationValue, _position.getZ());
+				lookPosition(_target.getX(), _target.getY() - translationValue, _target.getZ());
+			}
+		}
+	}
+	
+	@Override
+	public void animate()
+	{
+		double translationValue = 2*(_position.getZ() + 1) / myRenderer.getHeight();
+   	 	if (this.forward) 
+	 	{
+	 		if(shiftKeyDown)
+	 		{				
+	 			_phi -= -_keyboardSensivity*_sensivity; 	 			
+	 			rotation();
+	 		}
+	 		else
+	 		{
+	 			updatePosition(_position.getX(), _position.getY()- translationValue, _position.getZ());
+   	 			lookPosition(_target.getX(), _target.getY() - translationValue, _target.getZ());
+	 			
+	 		}
+	 	}
+	    if (this.backward)
+	    {
+	    	if(shiftKeyDown)
+	 		{				
+	 			_phi -= _keyboardSensivity*_sensivity;   	 			
+	 			rotation();
+	 		}
+	 		else
+	 		{
+	 			updatePosition(_position.getX(), _position.getY()+ translationValue, _position.getZ());
+	 			this.lookPosition(_target.getX(), _target.getY() + translationValue, _target.getZ());
+	    	}
+	    }
+	    if (this.strafeLeft)
+	    {   
+	    	if(shiftKeyDown)
+	 		{
+	 			_theta -= -_keyboardSensivity*_sensivity;					
+	 			rotation();
+	 		}
+	 		else
+	 		{
+	 			updatePosition(_position.getX() + translationValue, _position.getY(), _position.getZ());
+	 			lookPosition(_target.getX() + translationValue, _target.getY(), _target.getZ());
+	 		}
+	    }
+	    if (this.strafeRight)
+	    {
+	    	if(shiftKeyDown)
+	 		{
+	 			_theta -= _keyboardSensivity*_sensivity;					
+	 			rotation();
+	 		}
+	 		else
+	 		{
+	 			updatePosition(_position.getX() - translationValue, _position.getY(), _position.getZ());
+	 			lookPosition(_target.getX() - translationValue, _target.getY(), _target.getZ());
+	 		}
+	    }
+	}
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent arg0) {	
-		if ( arg0.getWheelRotation() < 0 ) {// Move Up
-			myRenderer.displaySurface.zoomIn();
-		} else {// Move down
-			myRenderer.displaySurface.zoomOut();
+		float incrementalZoomStep;
+		// Check if Z is not equal to 0 (avoid being block on z=0)
+		if ( this.radius != 0 ) {
+			incrementalZoomStep = (float)radius / 10;
+		} else 
+		{
+			incrementalZoomStep = 0.1f;
 		}
+		if ( arg0.getWheelRotation() < 0 ) 
+		{// Move Down
+
+			radius -= incrementalZoomStep;
+			rotation();
+		} else {// Move Up
+			radius += incrementalZoomStep;
+			rotation();
+		}
+		myRenderer.displaySurface.setZoomLevel(getMaxDim() * AbstractCamera.INIT_Z_FACTOR / radius);
+//		PrintParam();
 	}
 
 	@Override
@@ -218,12 +329,11 @@ public class CameraArcBall extends AbstractCamera {
 			} else {
 				speed = speed * Math.abs(_position.getZ()) / 4;
 			}
-			// camera.PrintParam();
-			// moveXYPlan(diffx, diffy,speed);
+
 			moveXYPlan2(diffx, diffy, _position.getZ(), this.myRenderer.getWidth(),
 				this.myRenderer.getHeight());
 		}
-		PrintParam();
+//		PrintParam();
 	}
 
 	@Override

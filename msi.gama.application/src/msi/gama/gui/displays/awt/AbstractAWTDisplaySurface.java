@@ -47,7 +47,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	private double envHeight;
 	private IZoomListener zoomListener;
 
-	protected AbstractAWTDisplaySurface() {}
+	protected AbstractAWTDisplaySurface(final Object ... args) {}
 
 	@Override
 	public void initialize(final double env_width, final double env_height, final LayeredDisplayOutput output) {

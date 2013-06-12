@@ -13,8 +13,6 @@ import java.util.*;
 
 import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
-
-import msi.gama.common.util.GuiUtils;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.JTSDrawer;
 import msi.gama.metamodel.shape.GamaPoint;

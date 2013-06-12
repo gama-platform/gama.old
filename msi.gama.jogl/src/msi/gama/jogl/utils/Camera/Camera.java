@@ -283,7 +283,7 @@ public class Camera extends AbstractCamera {
 			_target.z = 0;
 		}
 
-		this.PrintParam();
+//		this.PrintParam();
 	}
 	@Override
 	public void PrintParam() {

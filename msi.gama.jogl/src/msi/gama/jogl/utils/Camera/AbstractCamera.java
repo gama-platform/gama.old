@@ -93,6 +93,16 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 		_target.z= zLPos;
 	}
 	
+	public void setPosition(Vector3D position)
+	{
+		this._position = position;
+	}
+	
+	public void setTarget(Vector3D target)
+	{
+		this._target = target;
+	}
+	
 	public void moveXYPlan(double diffx, double diffy, double speed) {}
 	
 	// Move in the XY plan by changing camera pos and look pos.
@@ -146,6 +156,16 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 	{
 		return _target;
 	}
+	
+    public Vector3D getForward()
+    {
+    	return null;
+    }
+    
+    public double getSpeed()
+    {
+    	return (Double) null;
+    }
 	
 	public double getPitch() {
 		return 0;}
@@ -219,7 +239,7 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 		if ( isMacOS ) {
 			specicalKeyDown = mouseEvent.isMetaDown();
 		} else {
-			specicalKeyDown = mouseEvent.isControlDown();
+			specicalKeyDown = mouseEvent.isShiftDown();
 		}
 		return specicalKeyDown;
 	}
@@ -230,7 +250,7 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 		if ( isMacOS ) {
 			specicalKeyDown = event.isMetaDown();
 		} else {
-			specicalKeyDown = event.isControlDown();
+			specicalKeyDown = event.isShiftDown();
 		}
 		return specicalKeyDown;
 	}
@@ -253,13 +273,7 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 
 	protected boolean isArcBallOn(MouseEvent mouseEvent) {
 		if ( checkCtrlKeyDown(mouseEvent) || myRenderer.displaySurface.arcball == true ) {
-			if ( mouseEvent.isShiftDown() == false ) {
 				return true;
-			}
-
-			else {
-				return false;
-			}
 		} else {
 			return false;
 		}
@@ -387,6 +401,11 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 		System.out.println("xPos:" + _position.x + " yPos:" + _position.y  + " zPos:" + _position.z );
 		System.out.println("xLPos:" + _target.x + " yLPos:" + _target.y + " zLPos:" + _target.z);
 		System.out.println("_phi "+_phi+" _theta "+_theta);
+	}
+
+	public void rotation() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
