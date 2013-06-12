@@ -298,9 +298,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 		final int x = windowPoint.x, y = windowPoint.y;
 
-		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
+		
 		gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, mvmatrix, 0);
 		gl.glGetDoublev(GL.GL_PROJECTION_MATRIX, projmatrix, 0);
+		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
+		
+		System.out.println("viewport" + viewport[0] + viewport[1] + viewport[2] + viewport[3] );
 		/* note viewport[3] is height of window in pixels */
 		realy = viewport[3] - y - 1;
 
@@ -309,13 +312,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		final float z = floatBuffer.get(0);
 
 
-		glu.gluUnProject(x, realy, z, //
-			mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
-		/*
-		 * System.out.println("World coords at z=" + z + "are (" //
-		 * + wcoord[0] + ", " + wcoord[1] + ", " + wcoord[2]
-		 * + ")");
-		 */
+		glu.gluUnProject(x, realy, z, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
+		
+		
+		 System.out.println("Window coords  x:" + windowPoint.x + " y:" + windowPoint.y);
+		 System.out.println("World coords at z=" + z + "are (" + wcoord[0] + ", " + wcoord[1] + ", " + wcoord[2] + ")");
+		 
 
 		gl.glFlush();
 

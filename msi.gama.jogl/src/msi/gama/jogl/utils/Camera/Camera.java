@@ -7,6 +7,7 @@ import static java.awt.event.KeyEvent.VK_LEFT;
 import static java.awt.event.KeyEvent.VK_RIGHT;
 import static java.awt.event.KeyEvent.VK_UP;
 
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -405,6 +406,10 @@ public class Camera extends AbstractCamera {
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
+		
+		//Point windowPressedPoint = new Point(arg0.getX(), arg0.getY());
+		//myRenderer.GetRealWorldPointFromWindowPoint(windowPressedPoint);
+		
 		// Arcball
 
 		if ( isArcBallOn(arg0) && isModelCentered || myRenderer.displaySurface.selectRectangle ) {
@@ -441,6 +446,8 @@ public class Camera extends AbstractCamera {
 
 	@Override
 	public void keyPressed(KeyEvent arg0) {
+		
+		
 		switch (arg0.getKeyCode()) {
 		case VK_LEFT: 
 			strafeLeft = true;

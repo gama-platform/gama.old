@@ -475,9 +475,9 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	@Override
 	public void toggleView() {
-		// threeD = !threeD;
-		// zoomFit();
-		followAgent = !followAgent;
+		threeD = !threeD;
+		zoomFit();
+		//followAgent = !followAgent;
 		updateDisplay();
 	}
 

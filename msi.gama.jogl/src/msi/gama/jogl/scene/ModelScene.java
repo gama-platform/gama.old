@@ -82,6 +82,10 @@ public class ModelScene {
 		if ( drawBounds ) {
 			this.drawEnvironmentBounds(renderer);
 		}
+		//FIXME: Need to understand why I need to set this color (otherwise dem model(or model without any geometries) are blue)
+		else{
+			renderer.gl.glColor3d(1.0, 1.0, 1.0);
+		}
 		geometries.draw(picking);
 		staticObjects.draw(picking);
 		images.draw(picking);
