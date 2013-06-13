@@ -280,10 +280,11 @@ public class Stats {
 		RCaller caller = new RCaller();
 
 		String RPath = Preferences.userRoot().node("gama").get("RScript", null);
-		caller.setRscriptExecutable("\"" + RPath + "\"");
-		if ( java.lang.System.getProperty("os.name").startsWith("Mac") ) {
-			caller.setRscriptExecutable(RPath);
-		}
+		caller.setRscriptExecutable(RPath);
+//		caller.setRscriptExecutable("\"" + RPath + "\"");
+//		if ( java.lang.System.getProperty("os.name").startsWith("Mac") ) {
+//			caller.setRscriptExecutable(RPath);
+//		}
 
 		double[] vectorX = new double[l1.length(scope)];
 		double[] vectorY = new double[l2.length(scope)];
@@ -324,10 +325,11 @@ public class Stats {
 		RCaller caller = new RCaller();
 
 		String RPath = Preferences.userRoot().node("gama").get("RScript", null);
-		caller.setRscriptExecutable("\"" + RPath + "\"");
-		if ( java.lang.System.getProperty("os.name").startsWith("Mac") ) {
-			caller.setRscriptExecutable(RPath);
-		}
+		caller.setRscriptExecutable(RPath);
+//		caller.setRscriptExecutable("\"" + RPath + "\"");
+//		if ( java.lang.System.getProperty("os.name").startsWith("Mac") ) {
+//			caller.setRscriptExecutable(RPath);
+//		}
 
 		double[] data = new double[l.length(scope)];
 		int i = 0;
@@ -351,7 +353,8 @@ public class Stats {
 			RCaller caller = new RCaller();
 
 			String RPath = Preferences.userRoot().node("gama").get("RScript", null);
-			caller.setRscriptExecutable("\"" + RPath + "\"");
+			caller.setRscriptExecutable(RPath);
+			//caller.setRscriptExecutable("\"" + RPath + "\"");
 			// if(java.lang.System.getProperty("os.name").startsWith("Mac"))
 			// {
 			// caller.setRscriptExecutable(RPath);
@@ -380,7 +383,7 @@ public class Stats {
 				R_statements.add(statement);
 				// java.lang.System.out.println(statement);
 				if ( DEBUG ) {
-					GuiUtils.debug("Stats.R_compute_param.statement:" + statement);
+					GuiUtils.debug("Stats.R_compute.statement:" + statement);
 				}
 
 			}
@@ -427,7 +430,8 @@ public class Stats {
 			RCaller caller = new RCaller();
 
 			String RPath = Preferences.userRoot().node("gama").get("RScript", null);
-			caller.setRscriptExecutable("\"" + RPath + "\"");
+			caller.setRscriptExecutable(RPath);
+			//caller.setRscriptExecutable("\"" + RPath + "\"");
 			// if(java.lang.System.getProperty("os.name").startsWith("Mac"))
 			// {
 			// caller.setRscriptExecutable(RPath);
