@@ -144,7 +144,9 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		final Iterator<IAgent> agentsToSchedule =
 			Iterators.forArray(computeAgentsToSchedule(scope).toArray(new IAgent[0]));
 		while (agentsToSchedule.hasNext()) {
-			if ( !scope.step(agentsToSchedule.next()) ) { return false; }
+			if ( !scope.step(agentsToSchedule.next()) ) {
+				continue;
+			}
 		}
 		return true;
 	}

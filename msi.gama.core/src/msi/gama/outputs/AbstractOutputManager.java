@@ -130,12 +130,14 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 							o.update();
 						} catch (RuntimeException e) {
 							GuiUtils.debug("AbstractOutputManager.step " + e.getMessage());
-							return false;
+							continue;
+							// return false;
 						}
 						o.setNextTime(cycle + o.getRefreshRate());
-					} else {
-						return false;
 					}
+					// else {
+					// return false;
+					// }
 				}
 			}
 		}

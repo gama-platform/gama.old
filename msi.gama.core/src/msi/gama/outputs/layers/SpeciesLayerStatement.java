@@ -89,7 +89,8 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 	public boolean _step(final IScope scope) throws GamaRuntimeException {
 		if ( super._step(scope) ) {
 			for ( final SpeciesLayerStatement microLayer : microSpeciesLayers ) {
-				if ( !scope.step(microLayer) ) { return false; }
+				scope.step(microLayer);
+				// if ( !scope.step(microLayer) ) { return false; }
 			}
 		} else {
 			return false;

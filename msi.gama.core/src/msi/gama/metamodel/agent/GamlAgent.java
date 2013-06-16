@@ -149,7 +149,8 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 	protected Object stepSubPopulations(final IScope scope) {
 		// try {
 		for ( final IPopulation pop : ImmutableList.copyOf(getMicroPopulations()) ) {
-			if ( !scope.step(pop) ) { return null; }
+			scope.step(pop);
+			// if ( !scope.step(pop) ) { return null; }
 		}
 		// } catch (final GamaRuntimeException g) {
 		// GAMA.reportError(g);
