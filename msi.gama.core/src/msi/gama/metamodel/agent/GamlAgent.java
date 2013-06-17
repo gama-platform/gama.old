@@ -395,9 +395,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		if ( microSpec == null ) { return; }
 		final IPopulation microPop = GamaPopulation.createPopulation(scope, this, microSpec);
 		attributes.put(microSpec.getName(), microPop);
-		if ( name.equals("space") ) {
-			GuiUtils.debug("GamlAgent.initializeMicroPopulation : " + name);
-		}
+		//GuiUtils.debug("GamlAgent.initializeMicroPopulation : " + this + " : " + name);
 		microPop.initializeFor(scope);
 	}
 
