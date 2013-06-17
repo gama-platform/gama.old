@@ -40,15 +40,15 @@ entities {
 		int nbLanes;
 		int indexDirection; 
 		aspect base { 
-			draw shape color: rgb('black') ;
+			draw geometry: shape color: rgb('black') ;
 		} 
 	}
 	species road_display  {
 		aspect base { 
-			draw shape color: rgb('black') ;
+			draw geometry: shape color: rgb('black') ;
 		} 
 	}
-	species people skills: [driving]{ 
+	species people skills: [driving] { 
 		float speed; 
 		rgb color <- rgb([rnd(255),rnd(255),rnd(255)]) ;
 		point target <- nil ; 
@@ -72,7 +72,7 @@ entities {
 		}
 		reflex EvadeMove when: !(normalMove){
 			set previousLoc <- copy(location);
-			do goto_driving target: targetBis on: the_graph speed: speed ; 
+			do goto_driving target: targetBis on: the_graph speed: speed; 
 			switch location { 
 				match targetBis {
 					set normalMove <- true;
@@ -83,7 +83,7 @@ entities {
 			}
 		}
 		aspect base {
-			draw circle(20) color: color;
+			draw geometry: circle(20) color: color;
 		}
 	}
 } 
