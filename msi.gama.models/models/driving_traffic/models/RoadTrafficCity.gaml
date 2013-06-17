@@ -59,7 +59,7 @@ global {
 	}
 	
 	reflex update_graph{
-		let weights_map type: map <- roadsList as_map [each:: each.coeff_traffic];
+		let weights_map type: map <- roadsList as_map (each:: each.coeff_traffic);
 		set the_graph <- the_graph  with_weights weights_map;
 	}
 	
@@ -92,7 +92,7 @@ entities {
 		action add {
 			set blocked <- false;
 			set the_graph <-  (as_edge_graph(list(road) where (!each.blocked))) with_optimizer_type "Dijkstra";
-			let weights_map type: map <- roadsList as_map [each:: each.coeff_traffic];
+			let weights_map type: map <- roadsList as_map (each:: each.coeff_traffic);
 			set the_graph <- the_graph  with_weights weights_map;
 			
 			set color <- rgb("black");
