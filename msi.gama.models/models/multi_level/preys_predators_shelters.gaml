@@ -149,7 +149,7 @@ environment width: 400 height: 400;
 
 experiment default_experiment type: gui {
 	output {
-		display default_display  {
+		display default_display type: opengl{
 			species prey aspect: default;
 			species predator transparency: 0.5 aspect: default;
 			species shelter transparency: 0.5 aspect: default { 
