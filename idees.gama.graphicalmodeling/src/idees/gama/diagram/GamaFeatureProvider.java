@@ -63,9 +63,9 @@ import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.kernel.model.IModel;
+import msi.gama.outputs.AbstractOutputManager;
 import msi.gama.outputs.IOutput;
 import msi.gama.outputs.LayeredDisplayOutput;
-import msi.gama.outputs.OutputManager;
 import msi.gama.util.GamaList;
 import msi.gaml.architecture.reflex.ReflexStatement;
 import msi.gaml.descriptions.SpeciesDescription;
@@ -334,8 +334,8 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 			 ac.setSize(0, 0);
 			 ac.setTargetContainer(diagram);
 			 PictogramElement targetE = addIfPossible(new AddContext(ac, target));
-			if (xp != null && xp.isGui() && ((OutputManager) xp.getOutputManager()) != null && ((OutputManager) xp.getOutputManager()).getOutputs() != null) {
-				  for (IOutput output : ((OutputManager) xp.getOutputManager()).getOutputs().values()) {
+			if (xp != null && xp.isGui() && xp.getSimulationOutputs() != null) {
+				for (IOutput output : ((AbstractOutputManager)xp.getSimulationOutputs()).getOutputs().values()) {
 					  if (output instanceof LayeredDisplayOutput)
 						  createDisplay((EGUIExperiment) target, targetE, output, diagram);
 				}
