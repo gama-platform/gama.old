@@ -113,7 +113,7 @@ entities {
 					}
 			}
 			
-			if( (target_location.x - location.x) <= speed ) {
+			if( (target_location.x - location.x) <= speed ) { 
 				do die;
 			}
 		}
