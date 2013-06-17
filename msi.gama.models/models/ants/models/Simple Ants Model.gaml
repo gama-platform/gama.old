@@ -95,7 +95,7 @@ experiment Simple type:gui {
 	parameter 'Evaporation Rate:' var: evaporation_rate;
 	parameter 'Diffusion Rate:' var: diffusion_rate;
 	output { 
-		display Ants refresh_every: 2 { 
+		display Ants refresh_every: 2 type: opengl{ 
 			grid ant_grid;
 			species ant aspect: default;
 			text string ( food_remaining ) size: 24.0 position: { 20 , 20 } color: rgb ( 'white' );
