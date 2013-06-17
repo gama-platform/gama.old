@@ -79,7 +79,8 @@ global {
 entities {
 	species base skills: [moving] ;
 	
-	species ball parent: base control: fsm {
+	species ball parent: base control: fsm skills: [moving]  { 
+		
 		//var shape type: geometry <- ball_shape at_location location ;
 		float speed <- ball_speed; 
 		rgb color <- ball_color;
@@ -99,14 +100,12 @@ entities {
 			}
 		}
 		
-		action separation {
-			arg nearby_balls type: list;
-			 
+		action separation (list<ball> nearby_balls) {
 			let repulsive_dx type: float value: 0 ;
 			let repulsive_dy type: float value: 0 ;
-			loop nb over: nearby_balls {
-				let repulsive_distance var: repulsive_distance type: float value: ball_separation - ( location distance_to (ball (nb)).location ) ;
-				let repulsive_direction var: repulsive_direction type: int value: ((ball (nb)).location) towards (location) ;
+			loop nb over: nearby_balls { 
+				let repulsive_distance value: ball_separation - ( location distance_to ( nb).location ) ;
+				let repulsive_direction value: ((nb).location) towards (location) ;
 				set repulsive_dx value: repulsive_dx + (repulsive_distance * (cos (repulsive_direction))) ;
 				set repulsive_dy  value: repulsive_dy + (repulsive_distance * (sin (repulsive_direction))) ;
 			}
@@ -114,24 +113,23 @@ entities {
 		}
 		
 		bool in_bounds (point a_point) {
-			
 			return ( !(a_point.x < xmin) and !(a_point.x > xmax) and !(a_point.y < ymin) and !(a_point.y > ymax) ) ;
 		}
 		 
 		state follow_nearest_ball initial: true {
-			enter {
+			enter {   
 				set color value: ball_color ;
 				set speed value: ball_speed ;
 			}
-			
-			let nearest_free_ball type: ball value: ( ( (list (ball) - self) where ((each.state) = 'follow_nearest_ball') ) closest_to self ) ;
-			if condition: nearest_free_ball != nil {
-				set heading value: self towards (nearest_free_ball) ;
+			list<ball> free_balls <- (list (ball) - self) where ((each.state) = 'follow_nearest_ball') ;
+			ball nearest_free_ball <- free_balls closest_to self;
+			if nearest_free_ball != nil {
+				set heading value: self towards (nearest_free_ball) ; 
 				let step_distance type: float value: speed * step ;
 				let step_x type: float value: step_distance * (cos (heading)) ;
 				let step_y type: float value: step_distance * (sin (heading)) ; 
 				point tmp_location value: location + {step_x, step_y} ;
-				if condition: (self in_bounds (tmp_location) ) {
+				if (self in_bounds (tmp_location) ) {
 					set location value: tmp_location ;
 					do separation (((ball overlapping (shape + ball_separation)) - self));
 				}
@@ -147,15 +145,13 @@ entities {
 				set heading value: rnd(359) ;
 			}
 			
-			let step_distance var: step_distance type: float value: speed * step ;
-			let step_x var: step_x type: float value: step_distance * (cos (heading)) ;
-			let step_y var: step_y type: float value: step_distance * (sin (heading)) ;
-			let tmp_location type: point value: location + {step_x, step_y} ;
+			let step_distance  value: speed * step ;
+			let step_x value: step_distance * (cos (heading)) ;
+			let step_y value: step_distance * (sin (heading)) ;
+			let tmp_location value: location + {step_x, step_y} ;
 			if condition: (self in_bounds (tmp_location)) {
 				set location value: tmp_location ;
-				do separation {
-					arg nearby_balls value: ((ball overlapping (shape + ball_separation)) - self) ;
-				}
+				do separation (nearby_balls: (ball overlapping (shape + ball_separation)) - self);
 			}
 			
 			transition to: follow_nearest_ball when: time > (beginning_chaos_time + time_in_chaos_state) ;
@@ -173,8 +169,8 @@ entities {
 		
 		float speed value: float(group_base_speed) ;
 		float perception_range value: float(base_perception_range + (rnd(5))) ;
-		ball nearest_free_ball value: ( (ball) where ( (each.state = 'follow_nearest_ball') ) ) closest_to self ;
-		group nearest_smaller_group value: ( ( (group as list) - [self] ) where ( (length (each.members)) < (length (members)) ) ) closest_to self ;
+		ball nearest_free_ball value: ( ball where ( (each.state = 'follow_nearest_ball') ) ) closest_to self ;
+		group nearest_smaller_group value: ( ( (group as list) - self ) where ( (length (each.members)) < (length (members)) ) ) closest_to self ;
 		base target value: (self get_nearer_target []) depends_on: [nearest_free_ball, nearest_smaller_group] ;
 		
 		action get_nearer_target type: base {
@@ -430,7 +426,7 @@ entities {
 		aspect default {
 			draw text: 'Number of clouds: ' + (string (length (list(cloud)))) at: {(environment_bounds.x)/2 - 210, (environment_bounds.y)/2} color: rgb('green') size: 40 style: bold;
 		}
-	}
+	} 
 }
 
 environment bounds: environment_bounds ;
