@@ -509,19 +509,18 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 	
     
    	public void initCustom(EWorldAgent eWorld,  PictogramElement worldPE, Diagram diagram) {
-   		ISpecies world = gamaModel.getSpecies("world");
-   		for (IVariable var : world.getVars()) {
+   		for (IVariable var : gamaModel.getVars()) {
    			addVariable(var, eWorld);
    		} 
-	   	 for (ActionStatement action : world.getActions()) {
+	   	 for (ActionStatement action : gamaModel.getActions()) {
 			 if (! built_in_actions.contains(action.getName()))
 				 createAction( eWorld,  worldPE,  action,  diagram);
 		 }
-	   	for (IStatement stat : world.getBehaviors()) {
+	   	for (IStatement stat : gamaModel.getBehaviors()) {
 			 if (stat instanceof ReflexStatement && stat.getName() != null && !stat.getName().isEmpty())
 				 createReflex( eWorld,  worldPE,  (ReflexStatement) stat,  diagram);
 		 }
-   		buildAgent(world, eWorld, worldPE, diagram);
+   		buildAgent(gamaModel, eWorld, worldPE, diagram);
        	
    		   
    		LayoutDiagramFeature.execute(diagram);
