@@ -22,7 +22,7 @@ package msi.gama.common.interfaces;
  * The class IKeyword. Defines most of the keywords used in GAMA and GAML.
  * 
  * @author drogoul
- * @since 13 d�c. 2011
+ * @since 13 dec. 2011
  * 
  */
 public interface IKeyword {
@@ -111,6 +111,7 @@ public interface IKeyword {
 	public static final String ENTER = "enter";
 	public static final String ENTITIES = "entities";
 	public static final String ENVIRONMENT = "environment";
+	public static final String EQUALS = "equals";
 	/*
 	 * Equations
 	 */
@@ -183,6 +184,7 @@ public interface IKeyword {
 	public static final String INTERNAL_FUNCTION = "internal_function";
 	public static final String IS = "is";
 	public static final String ISFOLDER = "is_folder";
+	public static final String ISNOT = "is_not";	
 	public static final String ITEM = "item";
 	public static final String ITS = "its";
 	public static final String FRAGMENT = "fragment";
@@ -258,6 +260,7 @@ public interface IKeyword {
 	public static final String PROPORTION = "proportion";
 	public static final String PUT = "put";
 	public static final String QUADTREE = "quadtree";
+	public static final String RAISES = "raises";
 	public static final String RANDOM_SPECIES_NAME = "random_builder";
 	public static final String RANGE = "range";
 	public static final String REACTIVE_TABU = "reactive_tabu";
@@ -347,6 +350,7 @@ public interface IKeyword {
 	public static final String VERTEX = "vertex";
 	public static final String VIRTUAL = "virtual";
 	public static final String WARNING = "warn";
+	public static final String WARNING_TEST = "warning";
 	public static final String WEIGHT = "weight";
 	public static final String WHEN = "when";
 	public static final String WHISKER = "whisker"; // new type of datachart

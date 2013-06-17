@@ -9,7 +9,7 @@ import msi.gaml.descriptions.IDescription;
 import msi.gaml.statements.AbstractStatementSequence;
 
 @symbol(name = { "setUp" }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
-@inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.SPECIES, ISymbolKind.MODEL })
+@inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT, ISymbolKind.MODEL })
 public class SetUpStatement extends AbstractStatementSequence {
 	public SetUpStatement(final IDescription desc) {
 		super(desc);
