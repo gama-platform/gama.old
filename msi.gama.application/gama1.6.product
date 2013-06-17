@@ -72,6 +72,7 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="com.jogamp.jogl-macosx-universal" fragment="true"/>
       <plugin id="com.jogamp.jogl-windows-amd64" fragment="true"/>
       <plugin id="com.jogamp.jogl-windows-i586" fragment="true"/>
+      <plugin id="irit.gaml.extensions.test"/>
       <plugin id="irit.maelia.gaml.additions"/>
       <plugin id="javax.inject"/>
       <plugin id="javax.servlet"/>
