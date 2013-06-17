@@ -51,7 +51,6 @@ import org.eclipse.swt.widgets.*;
  * @todo Description
  * 
  */
-// TODO Change this to a TabFolder
 public class PopulationInspectView extends GamaViewPart {
 
 	public static final String ID = GuiUtils.TABLE_VIEW_ID;
@@ -258,7 +257,7 @@ public class PopulationInspectView extends GamaViewPart {
 			final String realSpecies = expr.getContentType().getSpeciesName();
 			final ISpecies species = GAMA.getModel().getSpecies(realSpecies);
 			if ( species != null ) {
-				final List<String> names = species.getVarNames();
+				final List<String> names = new GamaList(species.getVarNames());
 				Collections.sort(names);
 				attributesMenu.setItems(names.toArray(new String[0]));
 				for ( int i = 0; i < names.size(); i++ ) {
