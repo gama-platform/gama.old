@@ -86,20 +86,9 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 
 	@Override
 	public void dispose() {
-		if ( simulationOutputs != null ) {
-			simulationOutputs.dispose();
-			simulationOutputs = null;
-		}
-		if ( experimentOutputs != null ) {
-			experimentOutputs.dispose();
-			experimentOutputs = null;
-		}
+		close();
 		targetedVars.clear();
 		systemParameters.clear();
-		if ( agent != null ) {
-			agent.dispose();
-			agent = null;
-		}
 		regularParameters.clear();
 		super.dispose();
 	}
@@ -225,6 +214,10 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 		if ( simulationOutputs != null ) {
 			simulationOutputs.dispose();
 			simulationOutputs = null;
+		}
+		if ( experimentOutputs != null ) {
+			experimentOutputs.dispose();
+			experimentOutputs = null;
 		}
 
 	}
