@@ -69,7 +69,7 @@ public class EventLayer extends AgentLayer {
 		return display;
 	}
 
-	public void setDisplay(IDisplaySurface display) {
+	public void setDisplay(final IDisplaySurface display) {
 		this.display = display;
 	}
 
@@ -82,7 +82,7 @@ public class EventLayer extends AgentLayer {
 		int xc = x - this.getDisplay().getOriginX();
 		int yc = y - this.getDisplay().getOriginY();
 		IList<IAgent> result = new GamaList<IAgent>();
-		final List<ILayer> layers = this.getDisplay().getLayerManager().getLayersIntersecting(xc, yc);
+		final List<ILayer> layers = this.getDisplay().getManager().getLayersIntersecting(xc, yc);
 
 		for ( ILayer layer : layers ) {
 			Set<IAgent> agents = layer.collectAgentsAt(xc, yc, getDisplay());
