@@ -25,7 +25,7 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
 import msi.gama.util.GAML;
-import msi.gaml.compilation.SyntacticElement;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.statements.Facets;
@@ -133,6 +133,7 @@ public class ModelFactory extends SymbolFactory {
 		final List<ISyntacticElement> speciesNodes = new ArrayList();
 		final List<ISyntacticElement> experimentNodes = new ArrayList();
 		final ISyntacticElement globalNodes = new SyntacticElement(GLOBAL, (EObject) null);
+		ErrorCollector collector = new ErrorCollector();
 		final Facets globalFacets = new Facets();
 		final List<ISyntacticElement> otherNodes = new ArrayList();
 		// TODO Verify that it is the right model
@@ -163,6 +164,11 @@ public class ModelFactory extends SymbolFactory {
 					} else if ( se.isExperiment() ) {
 						experimentNodes.add(se);
 					} else {
+						if ( !ENVIRONMENT.equals(se.getKeyword()) ) {
+							collector.add(new GamlCompilationError("This " + se.getKeyword() +
+								" should be declared either in a species or in the global section", null, se
+								.getElement(), true, false));
+						}
 						otherNodes.add(se);
 					}
 				}
@@ -174,7 +180,7 @@ public class ModelFactory extends SymbolFactory {
 
 		final ModelDescription model =
 			new ModelDescription(modelName, null, projectPath, modelPath, lastGlobalNode.getElement(), null,
-				ModelDescription.ROOT, globalFacets);
+				ModelDescription.ROOT, globalFacets, collector);
 		DescriptionFactory.setGamlDescription(source.getElement(), model);
 		// model.setGlobal(true);
 		model.addSpeciesType(model);

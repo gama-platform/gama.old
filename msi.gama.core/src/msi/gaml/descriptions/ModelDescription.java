@@ -47,16 +47,22 @@ public class ModelDescription extends SpeciesDescription {
 	private String modelFolderPath;
 	private String modelProjectPath;
 	private boolean isTorus = false;
-	private final ErrorCollector collect = new ErrorCollector();
+	private final ErrorCollector collect;
 
 	public ModelDescription(final String name, final Class clazz, final String projectPath, final String modelPath,
 		final EObject source, final SpeciesDescription macro, final SpeciesDescription parent, final Facets facets) {
+		this(name, clazz, projectPath, modelPath, source, macro, parent, facets, new ErrorCollector());
+	}
+
+	public ModelDescription(final String name, final Class clazz, final String projectPath, final String modelPath,
+		final EObject source, final SpeciesDescription macro, final SpeciesDescription parent, final Facets facets,
+		final ErrorCollector collector) {
 		super(MODEL, clazz, macro, parent, IChildrenProvider.NONE, source, facets);
 		types =
 			new TypesManager(parent instanceof ModelDescription ? ((ModelDescription) parent).types
 				: Types.builtInTypes);
 		setModelFilePath(projectPath, modelPath);
-		// number = count++;
+		collect = collector;
 	}
 
 	public void setTorus(final boolean b) {
