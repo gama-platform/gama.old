@@ -83,13 +83,13 @@ public class SpeciesLayer extends AgentLayer {
 		if ( !world.dead() ) {
 			final IPopulation microPop = world.getMicroPopulation(species);
 			if ( microPop != null ) {
-				drawPopulation(scope, g, world, (SpeciesLayerStatement) definition, microPop);
+				drawPopulation(scope, g, (SpeciesLayerStatement) definition, microPop);
 			}
 		}
 	}
 
-	private void drawPopulation(final IScope scope, final IGraphics g, final IAgent host,
-		final SpeciesLayerStatement layer, final IPopulation population) throws GamaRuntimeException {
+	private void drawPopulation(final IScope scope, final IGraphics g, final SpeciesLayerStatement layer,
+		final IPopulation population) throws GamaRuntimeException {
 		IAspect aspect = population.getAspect(layer.getAspectName());
 		if ( aspect == null ) {
 			aspect = AspectStatement.DEFAULT_ASPECT;
@@ -99,6 +99,12 @@ public class SpeciesLayer extends AgentLayer {
 
 		// draw the population
 		for ( final IAgent a : population.iterable(scope) ) {
+			if ( a.dead() ) {
+				continue;
+			}
+			// if ( a.dead() ) {
+			// GuiUtils.debug("SpeciesLayer.drawPopulation dead agent :" + a);
+			// }
 			final Rectangle2D r = aspect.draw(scope, a);
 			if ( r != null ) {
 				shapes.put(a, r);
@@ -136,7 +142,7 @@ public class SpeciesLayer extends AgentLayer {
 					microPop = ((IMacroAgent) a).getMicroPopulation(ml.getSpecies());
 
 					if ( microPop != null && microPop.size() > 0 ) {
-						drawPopulation(scope, g, a, ml, microPop);
+						drawPopulation(scope, g, ml, microPop);
 					}
 				} finally {
 					a.releaseLock();
