@@ -98,6 +98,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		// We unschedule the simulation if any
 		if ( getSimulation() != null ) {
 			GAMA.controller.scheduler.unschedule(getSimulation().getScheduler());
+			// TODO Should better be in SimulationOutputManager
+			GuiUtils.cleanAfterSimulation();
 		}
 	}
 

@@ -336,27 +336,6 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void prepareForSimulation() {
-		setStatus(" Building outputs ", IGui.WAIT);
-		hideMonitorView();
-		clearErrors();
-		showConsoleView();
-	}
-
-	@Override
-	public void prepareForExperiment(final IExperimentSpecies exp) {
-		if ( exp.isGui() ) {
-			setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
-			updateParameterView(exp);
-			tell = new Tell();
-			error = new Error();
-			views = new Views();
-		} else {
-			status = null;
-		}
-	}
-
-	@Override
 	public void tell(final String msg) {
 		if ( tell != null ) {
 			tell.setMessage(msg);
@@ -389,8 +368,7 @@ public class SwtGui implements IGui {
 		}
 	}
 
-	@Override
-	public void clearErrors() {
+	private void clearErrors() {
 		final ErrorView v = (ErrorView) getPage().findView(ErrorView.ID);
 		if ( v == null ) { return; }
 		run(new Runnable() {
@@ -1015,16 +993,47 @@ public class SwtGui implements IGui {
 		});
 	}
 
+	@Override
+	public void prepareForSimulation() {
+		setStatus(" Building outputs ", IGui.WAIT);
+		showConsoleView();
+	}
+
+	@Override
+	public void prepareForExperiment(final IExperimentSpecies exp) {
+		if ( exp.isGui() ) {
+			setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
+			updateParameterView(exp);
+			tell = new Tell();
+			error = new Error();
+			views = new Views();
+		} else {
+			status = null;
+		}
+	}
+
 	/**
 	 * Method cleanAfterExperiment()
 	 * @see msi.gama.common.interfaces.IGui#cleanAfterExperiment(msi.gama.kernel.experiment.IExperimentSpecies)
 	 */
 	@Override
 	public void cleanAfterExperiment(final IExperimentSpecies exp) {
-		setSelectedAgent(null);
-		setHighlightedAgent(null);
+		// setSelectedAgent(null);
+		// setHighlightedAgent(null);
 		hideView(GuiUtils.PARAMETER_VIEW_ID);
 		hideMonitorView();
 
+	}
+
+	/**
+	 * Method cleanAfterSimulation()
+	 * @see msi.gama.common.interfaces.IGui#cleanAfterSimulation()
+	 */
+	@Override
+	public void cleanAfterSimulation() {
+		setSelectedAgent(null);
+		setHighlightedAgent(null);
+		clearErrors();
+		hideMonitorView();
 	}
 }

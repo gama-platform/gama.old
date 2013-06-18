@@ -209,11 +209,11 @@ public class HeadlessListener implements IGui {
 	// return new AWTDisplayGraphics(new BufferedImage(1024, 1024, BufferedImage.TYPE_INT_ARGB), width, height);
 	// }
 
-	@Override
-	public void clearErrors() {
-		// TODO Auto-generated method stub
-
-	}
+	// @Override
+	// public void clearErrors() {
+	// // TODO Auto-generated method stub
+	//
+	// }
 
 	@Override
 	public IDisplaySurface getDisplaySurfaceFor(final String keyword, final LayeredDisplayOutput layerDisplayOutput,
@@ -285,4 +285,11 @@ public class HeadlessListener implements IGui {
 	 */
 	@Override
 	public void prepareForSimulation() {}
+
+	/**
+	 * Method cleanAfterSimulation()
+	 * @see msi.gama.common.interfaces.IGui#cleanAfterSimulation()
+	 */
+	@Override
+	public void cleanAfterSimulation() {}
 }

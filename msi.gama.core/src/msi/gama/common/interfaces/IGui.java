@@ -98,7 +98,7 @@ public interface IGui {
 
 	// IGraphics newGraphics(int width, int height);
 
-	void clearErrors();
+	// void clearErrors();
 
 	IDisplaySurface getDisplaySurfaceFor(String keyword, LayeredDisplayOutput layerDisplayOutput, double w, double h,
 		Object ... args);
@@ -126,5 +126,7 @@ public interface IGui {
 	void cleanAfterExperiment(IExperimentSpecies exp);
 
 	void prepareForSimulation();
+
+	void cleanAfterSimulation();
 
 }

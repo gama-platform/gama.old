@@ -258,6 +258,12 @@ public class GuiUtils {
 		}
 	}
 
+	public static void cleanAfterSimulation() {
+		if ( gui != null ) {
+			gui.cleanAfterSimulation();
+		}
+	}
+
 	public static void showConsoleView() {
 		if ( gui != null ) {
 			gui.showConsoleView();
@@ -335,12 +341,6 @@ public class GuiUtils {
 	public static IDisplaySurface getDisplaySurfaceFor(final String keyword,
 		final LayeredDisplayOutput layerDisplayOutput, final double w, final double h, final Object ... args) {
 		return gui != null ? gui.getDisplaySurfaceFor(keyword, layerDisplayOutput, w, h, args) : null;
-	}
-
-	public static void clearErrors() {
-		if ( gui != null ) {
-			gui.clearErrors();
-		}
 	}
 
 	public static Map<String, Object> openUserInputDialog(final String title, final Map<String, Object> initialValues,
