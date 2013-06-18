@@ -24,7 +24,7 @@ global {
 	/*
 	 * The variable that will store the graph
 	 */  
-	graph my_graph;
+	graph my_graph; 
 		 
 	init {
 			  
@@ -37,7 +37,7 @@ global {
 		);	  
 		
 		// print the graph in the console
-		write my_graph;
+		write ""+ my_graph;
 
 	 }
 	 

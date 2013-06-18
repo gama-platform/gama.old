@@ -9,9 +9,9 @@ model generate_graph_wattsstrogatz
   
 global {
 	
-	int net_size <- 250 parameter: 'Number of vertices' category: 'network' ;
-	int net_neighboors <- 4 parameter: 'Number of neighboors' category: 'network' ;
-	float net_prewire <- 0.08 parameter: 'Rewire probability' category: 'network' ;
+	int net_size <- 250;
+	int net_neighboors <- 4;
+	float net_prewire <- 0.08;
 	
 	/*
 	 * The variable that will store the graph
@@ -24,10 +24,8 @@ global {
 				net_neighboors
 		);	  
 	
-	init {
-			
-		write my_graph;
-		
+	init {		
+		write "" + my_graph;		
 	 }
 }
 
@@ -54,13 +52,16 @@ entities {
 		rgb color <- rgb('blue') ; 
 		
 		aspect base {
-			draw shape color: color ;
-			
-		}
-		
+			draw shape color: color ;		
+		}		
 	}
 }
 experiment generate_graph type: gui {
+	
+	parameter 'Number of vertices' var: net_size <- 250 category: 'network' ;
+	parameter 'Number of neighboors' var: net_neighboors <- 4 category: 'network' ;
+	parameter 'Rewire probability'  var: net_prewire <- 0.08 category: 'network' ;
+	
 	output {
 		
 		/*

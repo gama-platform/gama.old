@@ -12,15 +12,12 @@ global {
 	int popsize <- 25 parameter: 'Number of individuals' category: 'network' ;
 	
 	graph net_friendship <- generate_watts_strogatz(humans, friendship, popsize, 0.3, 2);
-	
-	
+		
 	graph net_colleagues <- graph([]);
-	
-	
 		
 	init {
 		
-		write net_friendship ;
+		write "" + net_friendship ;
 	
 		create humans number: 10;
 	}
