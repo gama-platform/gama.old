@@ -1,9 +1,14 @@
 package msi.gaml.operators;
 
 import java.util.*;
+
+import msi.gama.common.util.GuiUtils;
+import msi.gama.metamodel.agent.GamlAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaDynamicLink;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.runtime.IScope;
@@ -204,7 +209,54 @@ public class GraphsGraphstream {
 
 		return loadGraphWithGraphstreamFromGeneratorSource(scope, vertices_specy, edges_specy,
 			new WattsStrogatzGenerator(size, k, p), -1);
-
 	}
 
+	@operator(value = "generate_complete_graph")
+	@doc(value = "returns a fully connected graph.", 
+		comment = "Arguments should include following elements:", 
+		special_cases = {
+		"\"vertices_specy\": the species of vertices",
+		"\"edges_specy\": the species of edges",
+		"\"size\": the graph will contain size nodes.",
+		"\"layoutRadius\": nodes of the graph will be located on a circle with radius layoutRadius and centered in the environment."}, 
+		examples = {
+		"graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph(", "			myVertexSpecy,", "			myEdgeSpecy,",
+		"			10, 25);" }, see = { "generate_barabasi_albert", "generate_watts_strogatz" })
+	public static IGraph generateGraphstreamComplete(final IScope scope, final ISpecies vertices_specy,
+		final ISpecies edges_specy, final Integer size, final double layoutRadius) {
+		
+		IGraph g = loadGraphWithGraphstreamFromGeneratorSource(scope, vertices_specy, edges_specy,
+				new FullGenerator(), size - 1);
+		
+		double THETA = 2 * Math.PI / size;	
+		int i = 0;
+		IList<GamlAgent> listVertex = (IList<GamlAgent>) g.getVertices();
+		ILocation locEnv = scope.getSimulationScope().getGeometry().getLocation();
+		for(GamlAgent e : listVertex){
+			e.setLocation(new GamaPoint(locEnv.getX() + layoutRadius * Math.cos(THETA * i), 
+										locEnv.getY() + layoutRadius * Math.sin(THETA *i),
+										locEnv.getZ()));
+			GuiUtils.informConsole("Graph " + e.getLocation() + " " + i + " THETA " + THETA );
+			i++;				
+		}
+		return g;
+	}
+	
+	@operator(value = "generate_complete_graph")
+	@doc(value = "returns a fully connected graph.", 
+		comment = "Arguments should include following elements:", 
+		special_cases = {
+		"\"vertices_specy\": the species of vertices",
+		"\"edges_specy\": the species of edges",
+		"\"size\": the graph will contain size nodes."}, 
+		examples = {
+		"graph<myVertexSpecy,myEdgeSpecy> myGraph <- generate_complete_graph(", "			myVertexSpecy,", "			myEdgeSpecy,",
+		"			10);" }, see = { "generate_barabasi_albert", "generate_watts_strogatz" })
+	public static IGraph generateGraphstreamComplete(final IScope scope, final ISpecies vertices_specy,
+		final ISpecies edges_specy, final Integer size) {
+		
+		return loadGraphWithGraphstreamFromGeneratorSource(scope, vertices_specy, edges_specy,
+				new FullGenerator(), size - 1);
+	}
+	
 }
