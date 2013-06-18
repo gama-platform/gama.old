@@ -528,7 +528,7 @@ public boolean isInitialized() {
 				} else if ( geometry.geometry.getGeometryType() == "Point" ) {
 					//FIXME: Should never go here even with a height value as the geometry of a sphere is a polygon...
 					if ( geometry.height > 0 ) {
-						jtsDrawer.DrawSphere((Polygon) geometry.geometry, geometry.z_layer, geometry.height,
+						jtsDrawer.DrawSphere((Polygon) geometry.geometry.getEnvelope().buffer(1), geometry.z_layer, geometry.height,
 							geometry.color, geometry.alpha);
 					} else {
 						jtsDrawer.DrawPoint((Point) geometry.geometry, geometry.z_layer, 10,

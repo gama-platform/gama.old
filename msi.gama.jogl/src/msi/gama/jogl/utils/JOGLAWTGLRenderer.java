@@ -92,7 +92,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private final float[] matrix = new float[16];
 
 	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {
-
+		
 		
 		// Enabling the stencil buffer
 		final GLCapabilities cap = new GLCapabilities();
@@ -383,6 +383,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			if ( camera.isModelCentered ) {
 				gl.glTranslated(-env_width / 2, env_height / 2, 0.0f);
 			}
+			gl.glViewport(0, 0, width, height);
 			this.drawPickableObjects();
 		} else {
 			// Display the model center on 0,0,0

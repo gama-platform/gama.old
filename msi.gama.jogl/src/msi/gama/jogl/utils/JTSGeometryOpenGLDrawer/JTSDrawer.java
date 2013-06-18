@@ -6,6 +6,7 @@ import java.util.Iterator;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.*;
 import msi.gama.common.util.GeometryUtils;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.jogl.utils.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.*;
@@ -615,7 +616,7 @@ public class JTSDrawer {
 		// Add z value (Note: getCentroid does not return a z value)
 		double z = 0.0;
 		if ( Double.isNaN(p.getCoordinate().z) == false ) {
-			z = p.getCoordinate().z;
+			z = p.getExteriorRing().getPointN(0).getCoordinate().z;
 		}
 
 		myGl.glTranslated(p.getCentroid().getX() , yFlag * p.getCentroid().getY() , z + z_layer );
