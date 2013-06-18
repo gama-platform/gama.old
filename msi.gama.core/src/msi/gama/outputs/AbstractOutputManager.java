@@ -22,9 +22,6 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 
 	protected final Map<String, IOutput> outputs = new LinkedHashMap<String, IOutput>();
 
-	/**
-	 * @param desc
-	 */
 	public AbstractOutputManager(final IDescription desc) {
 		super(desc);
 	}
@@ -131,13 +128,9 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 						} catch (RuntimeException e) {
 							GuiUtils.debug("AbstractOutputManager.step " + e.getMessage());
 							continue;
-							// return false;
 						}
 						o.setNextTime(cycle + o.getRefreshRate());
 					}
-					// else {
-					// return false;
-					// }
 				}
 			}
 		}

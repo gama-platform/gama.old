@@ -104,7 +104,6 @@ public class GamlModelSpecies extends GamlSpecies implements IModel {
 	@Override
 	public void dispose() {
 		super.dispose();
-		// worldSpecies.dispose();
 		for ( final IExperimentSpecies exp : experiments.values() ) {
 			exp.dispose();
 		}
