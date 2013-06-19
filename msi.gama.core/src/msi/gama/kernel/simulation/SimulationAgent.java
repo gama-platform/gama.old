@@ -99,8 +99,11 @@ public class SimulationAgent extends GamlAgent {
 	public Object _step_(final IScope scope) {
 		clock.beginCycle();
 		// A simulation always runs in its own scope
-		super._step_(this.scope);
-		clock.step();
+		try {
+			super._step_(this.scope);
+		} finally {
+			clock.step();
+		}
 		return this;
 	}
 
