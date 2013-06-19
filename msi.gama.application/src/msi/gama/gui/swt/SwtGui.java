@@ -447,7 +447,8 @@ public class SwtGui implements IGui {
 		e.printStackTrace(pw);
 	}
 
-	private void eraseConsole() {
+	private void eraseConsole(final boolean setToNull) {
+		GuiUtils.debug("SwtGui.eraseConsole");
 		if ( console != null ) {
 			run(new Runnable() {
 
@@ -455,6 +456,9 @@ public class SwtGui implements IGui {
 				public void run() {
 					if ( console != null ) {
 						console.setText("");
+						if ( setToNull ) {
+							console = null;
+						}
 					}
 				}
 			});
@@ -533,7 +537,7 @@ public class SwtGui implements IGui {
 	@Override
 	public void showConsoleView() {
 		console = (ConsoleView) showView(ConsoleView.ID, null);
-		eraseConsole();
+		eraseConsole(false);
 		if ( consoleBuffer.length() > 0 ) {
 			console.append(consoleBuffer.toString());
 			consoleBuffer.setLength(0);
@@ -1035,5 +1039,6 @@ public class SwtGui implements IGui {
 		setHighlightedAgent(null);
 		clearErrors();
 		hideMonitorView();
+		eraseConsole(true);
 	}
 }
