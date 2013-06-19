@@ -177,15 +177,12 @@ public abstract class MinimalAgent implements IAgent {
 		acquireLock();
 		try {
 			dead = true;
-			try {
-				final IPopulation p = getPopulation();
-				if ( p != null ) {
-					p.remove(null, null, this, false);
-				}
-
-			} catch (final GamaRuntimeException e) {
-				GAMA.reportError(e);
+			// GuiUtils.debug("MinimalAgent.dispose " + this);
+			final IPopulation p = getPopulation();
+			if ( p != null ) {
+				p.remove(null, null, this, false);
 			}
+
 			final IShape s = getGeometry();
 			if ( s != null ) {
 				s.dispose();

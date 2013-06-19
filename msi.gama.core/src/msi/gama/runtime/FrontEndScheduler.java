@@ -65,7 +65,7 @@ public class FrontEndScheduler implements Runnable {
 		for ( int i = 0; i < stepables.length; i++ ) {
 			final IScope scope = scopes[i];
 			try {
-				// GuiUtils.debug("FrontEndScheduler.step : stepping " + stepables[i]);
+				GuiUtils.debug("FrontEndScheduler.step : stepping " + stepables[i]);
 				if ( !scope.step(stepables[i]) ) {
 					GuiUtils.debug("FrontEndScheduler.step : removal of " + stepables[i]);
 					toStop.add(stepables[i]);
@@ -74,7 +74,7 @@ public class FrontEndScheduler implements Runnable {
 				if ( scope.interrupted() ) {
 					GuiUtils.debug("Exception in experiment interruption: " + e.getMessage());
 				} else {
-					GAMA.reportError(e);
+					GAMA.reportError(e, true);
 				}
 			}
 		}
@@ -145,7 +145,7 @@ public class FrontEndScheduler implements Runnable {
 			if ( scope != null && scope.interrupted() ) {
 				toStop.add(stepable);
 			} else {
-				throw GamaRuntimeException.create(e);
+				GAMA.reportError(GamaRuntimeException.create(e), true);
 			}
 		}
 

@@ -84,7 +84,7 @@ public class FrontEndController implements Runnable {
 				}
 				break;
 			case _PAUSE:
-				// GuiUtils.debug("FrontEndController.processUserCommand _PAUSE");
+				GuiUtils.debug("FrontEndController.processUserCommand _PAUSE");
 				updateSimulationState(PAUSED);
 				scheduler.pause();
 				break;

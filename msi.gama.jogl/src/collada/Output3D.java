@@ -25,7 +25,7 @@ public class Output3D {
 	// doc = Output3D.createXML();
 	// }
 
-	public Output3D(ILocation nbCycles, JOGLAWTGLRenderer openGLGraphicsGLRender) {
+	public Output3D(final ILocation nbCycles, final JOGLAWTGLRenderer openGLGraphicsGLRender) {
 		doc = Output3D.createXML();
 		nbCycle = (int) nbCycles.getY();
 		// initGLGEModel(myJTSGeometries,openGLGraphicsGLRender);
@@ -34,7 +34,7 @@ public class Output3D {
 		System.out.println("NbCycles to store: " + nbCycle);
 	}
 
-	public void updateOutput3D(JOGLAWTGLRenderer openGLGraphicsGLRender) {
+	public void updateOutput3D(final JOGLAWTGLRenderer openGLGraphicsGLRender) {
 		// TODO
 		int currentClock = GAMA.getClock().getCycle();
 		System.out.println("Nb cycle " + currentClock);
@@ -73,7 +73,7 @@ public class Output3D {
 		}
 	}
 
-	public void initGLGEModel(JOGLAWTGLRenderer openGLGraphicsGLRender) {
+	public void initGLGEModel(final JOGLAWTGLRenderer openGLGraphicsGLRender) {
 
 		Element root = doc.createElement("glge");
 
@@ -169,7 +169,7 @@ public class Output3D {
 		doc.appendChild(root);
 	}
 
-	public Element createMeshElement(GeometryObject myGeom) {
+	public Element createMeshElement(final GeometryObject myGeom) {
 		Geometry geom;
 
 		// <mesh id="cube">
@@ -228,7 +228,7 @@ public class Output3D {
 	}
 
 	// nbVertrices is the number of vertices of both top and bottom faces
-	public static String facesFromVertices3D(int nbVertices) {
+	public static String facesFromVertices3D(final int nbVertices) {
 		String res = "";
 		res += facesFromVertices(0, nbVertices - 1) + ",";
 		res += facesFromVertices(nbVertices, 2 * nbVertices - 1) + ",";
@@ -242,11 +242,11 @@ public class Output3D {
 		return res;
 	}
 
-	public static String facesFromVertices(int nbVertices) {
+	public static String facesFromVertices(final int nbVertices) {
 		return facesFromVertices(0, nbVertices - 1);
 	}
 
-	public static String facesFromVertices(int firstVertex, int lastVertex) {
+	public static String facesFromVertices(final int firstVertex, final int lastVertex) {
 		String res = "";
 		for ( int i = firstVertex + 1; i < lastVertex; i++ ) {
 			res += firstVertex + "," + i + "," + (i + 1) + ",";
@@ -277,7 +277,7 @@ public class Output3D {
 			Files.newFolder(scope, FILE3DFOLDER);
 		} catch (GamaRuntimeException e1) {
 			e1.addContext("Impossible to create folder " + FILE3DFOLDER);
-			GAMA.reportError(e1);
+			GAMA.reportError(e1, false);
 			e1.printStackTrace();
 			return;
 		}

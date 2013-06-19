@@ -69,11 +69,10 @@ public class ReflexArchitecture extends AbstractArchitecture {
 
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
-		// if ( scope.interrupted() ) { return null; }
 		return executeReflexes(scope);
 	}
 
-	protected final Object executeReflexes(final IScope scope) {
+	protected final Object executeReflexes(final IScope scope) throws GamaRuntimeException {
 		if ( _reflexesNumber == 0 ) { return null; }
 		Object result = null;
 		for ( int i = 0; i < _reflexesNumber; i++ ) {

@@ -21,7 +21,7 @@ package msi.gama.metamodel.topology.continuous;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IContainer;
 import msi.gaml.types.GamaGeometryType;
@@ -55,7 +55,7 @@ public class MultipleTopology extends ContinuousTopology {
 	 * @see msi.gama.interfaces.IValue#stringValue()
 	 */
 	@Override
-	public String stringValue(IScope scope) throws GamaRuntimeException {
+	public String stringValue(final IScope scope) throws GamaRuntimeException {
 		return "Multiple topology in " + environment.toString();
 	}
 
@@ -71,14 +71,8 @@ public class MultipleTopology extends ContinuousTopology {
 	 * @see msi.gama.environment.AbstractTopology#_copy()
 	 */
 	@Override
-	protected ITopology _copy(IScope scope) {
-		try {
-			return new MultipleTopology(scope, places/* , isTorus */);
-		} catch (GamaRuntimeException e) {
-			GAMA.reportError(e);
-			e.printStackTrace();
-			return null;
-		}
+	protected ITopology _copy(final IScope scope) {
+		return new MultipleTopology(scope, places/* , isTorus */);
 	}
 
 }

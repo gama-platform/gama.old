@@ -125,7 +125,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 	protected abstract Control getEditorControl();
 
 	public void createComposite(final Composite parent) {
-		// Fixer automatiquement le layout du parent. Ou alors utiliser un nouveau composite.
+		// TODO Fixer automatiquement le layout du parent. Ou alors utiliser un nouveau composite.
 
 		internalModification = true;
 		titleLabel = SwtGui.createLeftLabel(parent, name);
@@ -133,7 +133,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 			setOriginalValue(getParameterValue());
 		} catch (final GamaRuntimeException e1) {
 			e1.addContext("Impossible to obtain the value of " + name);
-			GAMA.reportError(e1);
+			GAMA.reportError(e1, false);
 		}
 		currentValue = getOriginalValue();
 		final Composite comp = new Composite(parent, SWT.NONE);
@@ -150,7 +150,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 					: createCustomParameterControl(comp);
 		} catch (final GamaRuntimeException e1) {
 			e1.addContext("The editor for " + name + " could not be created");
-			GAMA.reportError(e1);
+			GAMA.reportError(e1, false);
 			return;
 		}
 
@@ -193,7 +193,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 				} catch (final GamaRuntimeException e) {
 					e.printStackTrace();
 					e.addContext("Value of " + name + " cannot be modified");
-					GAMA.reportError(GamaRuntimeException.create(e));
+					GAMA.reportError(GamaRuntimeException.create(e), false);
 					return;
 				}
 			}
@@ -302,7 +302,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 			internalModification = false;
 		} catch (final GamaRuntimeException e) {
 			e.addContext("Unable to obtain the value of " + name);
-			GAMA.reportError(e);
+			GAMA.reportError(e, false);
 			return;
 		}
 	}

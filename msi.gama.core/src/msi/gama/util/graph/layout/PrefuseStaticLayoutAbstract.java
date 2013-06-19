@@ -28,7 +28,7 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 
 	private final Logger logger = Logger.getLogger(getClass().getName());
 
-	private void resetThermometer(int nbtuples) {
+	private void resetThermometer(final int nbtuples) {
 		lastNode2measures = null;
 		count_measures = Math.min(Math.max(nbtuples / 20, // ideal: measure 5% of nodes
 			10 // measure at least 10, even if the network is small !
@@ -36,7 +36,7 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 			);
 	}
 
-	private Double insertThermometer(Visualization viz) {
+	private Double insertThermometer(final Visualization viz) {
 
 		try {
 
@@ -88,7 +88,8 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 	 * @param bounds
 	 * @param maxtime
 	 */
-	private void renderLayout(Graph prefuseGraph, Layout prefuseLayout, Rectangle2D bounds, long maxtime) {
+	private void renderLayout(final Graph prefuseGraph, final Layout prefuseLayout, final Rectangle2D bounds,
+		final long maxtime) {
 
 		// configure the layout
 		prefuseLayout.setGroup(PREFUSE_GRAPH);
@@ -179,7 +180,8 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 	 * @param scope
 	 * @param maxtime
 	 */
-	private void renderLayout(Graph prefuseGraph, Layout prefuseLayout, IScope scope, long maxtime) {
+	private void renderLayout(final Graph prefuseGraph, final Layout prefuseLayout, final IScope scope,
+		final long maxtime) {
 
 		Envelope envelope = scope.getSimulationScope().getEnvelope();
 
@@ -217,7 +219,8 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 	}
 
 	@Override
-	public void doLayoutOneShot(IScope scope, GamaGraph<?, ?> graph, long timeout, Map<String, Object> options) {
+	public void doLayoutOneShot(final IScope scope, final GamaGraph<?, ?> graph, final long timeout,
+		final Map<String, Object> options) {
 
 		renderLayout(GraphUtilsPrefuse.getPrefuseGraphFromGamaGraphForVisu(graph), createLayout(timeout, options),
 			scope, timeout);
@@ -232,7 +235,7 @@ public abstract class PrefuseStaticLayoutAbstract implements IStaticLayout {
 			sb.append(uselessOptions);
 			sb.append(" (as a reminder, this layout accepts the following options: ");
 			sb.append(getLayoutOptions()).append(")");
-			GAMA.reportError(GamaRuntimeException.warning(sb.toString()));
+			GAMA.reportError(GamaRuntimeException.warning(sb.toString()), false);
 		}
 	}
 

@@ -56,9 +56,12 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 	}
 
 	public synchronized void addNewError(final GamaRuntimeException ex) {
+		// if ( ex.isReported() ) { return; }
+
 		for ( final GamaRuntimeException e : exceptions ) {
-			if ( e.equivalentTo(ex) ) {
-				e.addAgent(ex.getAgent());
+			// if ( e == ex ) { return; }
+			if ( e.equivalentTo(ex) && e != ex ) {
+				e.addAgents(ex.getAgentsNames());
 				if ( showErrors ) {
 					reset();
 					displayItems();
@@ -66,9 +69,13 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 				return;
 			}
 		}
-		exceptions.add(ex);
-
-		gotoEditor(ex);
+		if ( !exceptions.contains(ex) ) {
+			exceptions.add(ex);
+		}
+		if ( GAMA.REVEAL_ERRORS_IN_EDITOR && !ex.isReported() ) {
+			ex.setReported();
+			gotoEditor(ex);
+		}
 
 		if ( showErrors ) {
 			reset();
@@ -198,7 +205,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 	@Override
 	public String getItemDisplayName(final GamaRuntimeException obj, final String previousName) {
 		final StringBuilder sb = new StringBuilder(300);
-		final String a = obj.getAgent();
+		final String a = obj.getAgentSummary();
 		if ( a != null ) {
 			sb.append(a).append(" at ");
 		}

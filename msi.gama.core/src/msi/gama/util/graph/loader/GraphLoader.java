@@ -16,9 +16,9 @@ import msi.gaml.species.ISpecies;
  */
 public class GraphLoader {
 
-	protected static GamaGraph loadAGraph(IScope scope, ISpecies nodeSpecies, ISpecies edgeSpecies,
-		Map<String, String> nodeGraphAttribute2AgentAttribute, Map<String, String> edgeGraphAttribute2AgentAttribute,
-		IGraphParser parser, String filename) {
+	protected static GamaGraph loadAGraph(final IScope scope, final ISpecies nodeSpecies, final ISpecies edgeSpecies,
+		final Map<String, String> nodeGraphAttribute2AgentAttribute,
+		final Map<String, String> edgeGraphAttribute2AgentAttribute, final IGraphParser parser, final String filename) {
 
 		// locate the file
 		File f = null;
@@ -50,9 +50,9 @@ public class GraphLoader {
 		return list.getGraph();
 	}
 
-	public static GamaGraph loadGraph(IScope scope, String filename, ISpecies nodeSpecies, ISpecies edgeSpecies,
-		Map<String, String> nodeGraphAttribute2AgentAttribute, Map<String, String> edgeGraphAttribute2AgentAttribute,
-		String format) {
+	public static GamaGraph loadGraph(final IScope scope, final String filename, final ISpecies nodeSpecies,
+		final ISpecies edgeSpecies, final Map<String, String> nodeGraphAttribute2AgentAttribute,
+		final Map<String, String> edgeGraphAttribute2AgentAttribute, final String format) {
 
 		// if format is provided, attempt to load using only this format
 		if ( format != null ) { return loadAGraph(scope, nodeSpecies, edgeSpecies, nodeGraphAttribute2AgentAttribute,
@@ -77,12 +77,14 @@ public class GraphLoader {
 					GamaGraph res =
 						loadAGraph(scope, nodeSpecies, edgeSpecies, nodeGraphAttribute2AgentAttribute,
 							edgeGraphAttribute2AgentAttribute, AvailableGraphParsers.getLoader(extension), filename);
-					GAMA.reportError(GamaRuntimeException.error("Automatically detected the type of this graph from file extension ('" + extension +
-						"'). Hope this was the relevant type ?"));
+					GAMA.reportError(GamaRuntimeException
+						.warning("Automatically detected the type of this graph from file extension ('" + extension +
+							"'). Hope this was the relevant type ?"), false);
 					return res;
 				} catch (GamaRuntimeException e) {
-					throw GamaRuntimeException.error("attempted to detect the type of this graph from file extension ('" +
-						extension + "'), but the parsing failed.");
+					e.addContext("attempted to detect the type of this graph from file extension ('" + extension +
+						"'), but the parsing failed.");
+					throw e;
 				}
 			}
 		}
@@ -93,9 +95,10 @@ public class GraphLoader {
 				GamaGraph res =
 					loadAGraph(scope, nodeSpecies, edgeSpecies, nodeGraphAttribute2AgentAttribute,
 						edgeGraphAttribute2AgentAttribute, AvailableGraphParsers.getLoader(loaderName), filename);
-				GAMA.reportError(GamaRuntimeException.error("Automatically detected the type of this graph :'" +
-					loaderName + "'; loaded " + res.vertexSet().size() + " vertices and " + res.edgeSet().size() +
-					" edges. Hope this was the relevant type ?"));
+				GAMA.reportError(
+					GamaRuntimeException.warning("Automatically detected the type of this graph :'" + loaderName +
+						"'; loaded " + res.vertexSet().size() + " vertices and " + res.edgeSet().size() +
+						" edges. Hope this was the relevant type ?"), false);
 				return res;
 			} catch (GamaRuntimeException e) {
 				// don't display errors here (auto detection) GAMA.reportError(new
@@ -105,8 +108,9 @@ public class GraphLoader {
 		}
 
 		// raise an error !
-		throw GamaRuntimeException.error("attempted to detect the type of this graph automatically; no type detected among the supported parsers: " +
-			AvailableGraphParsers.getLoadersForAutoDetection());
+		throw GamaRuntimeException
+			.error("attempted to detect the type of this graph automatically; no type detected among the supported parsers: " +
+				AvailableGraphParsers.getLoadersForAutoDetection());
 
 	}
 }

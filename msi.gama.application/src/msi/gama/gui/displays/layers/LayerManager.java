@@ -20,6 +20,7 @@ package msi.gama.gui.displays.layers;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.*;
 import msi.gama.util.*;
@@ -126,7 +127,8 @@ public class LayerManager implements ILayerManager {
 	public void drawLayersOn(final IGraphics g) {
 		final IScope scope = GAMA.obtainNewScope();
 		// If the experiment is already closed
-		if ( scope == null ) { return; }
+		if ( scope == null || scope.interrupted() ) { return; }
+		//GuiUtils.debug("LayerManager.drawLayersOn");
 		scope.setGraphics(g);
 		try {
 			g.beginDrawingLayers();

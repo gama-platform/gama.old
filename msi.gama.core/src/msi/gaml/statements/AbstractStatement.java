@@ -49,16 +49,11 @@ public abstract class AbstractStatement extends Symbol implements IStatement {
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
 		Object result = null;
-		// if ( scope.interrupted() ) { return result; }
 		try {
 			result = privateExecuteIn(scope);
 		} catch (final GamaRuntimeException e) {
 			e.addContext(this);
-			if ( e.isWarning() ) {
-				GAMA.reportError(e);
-				return null;
-			}
-			throw e;
+			GAMA.reportAndThrowIfNeeded(scope, e, true);
 		}
 		return result;
 	}

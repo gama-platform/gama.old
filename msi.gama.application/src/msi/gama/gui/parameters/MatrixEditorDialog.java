@@ -60,7 +60,7 @@ public class MatrixEditorDialog extends Dialog {
 		GAMA.run(new InScope.Void() {
 
 			@Override
-			public void process(IScope scope) {
+			public void process(final IScope scope) {
 				int index = 0;
 				for ( int i = 0; i < data.getCols(scope); i++ ) {
 					TableColumn column = new TableColumn(table, SWT.CENTER);
@@ -211,7 +211,7 @@ public class MatrixEditorDialog extends Dialog {
 				try {
 					data = getNewMatrix();
 				} catch (GamaRuntimeException e1) {
-					GAMA.reportError(e1);
+					GAMA.reportError(e1, false);
 				}
 			}
 		});
@@ -235,7 +235,7 @@ public class MatrixEditorDialog extends Dialog {
 		final IMatrix m = GAMA.run(new InScope<IMatrix>() {
 
 			@Override
-			public IMatrix run(IScope scope) {
+			public IMatrix run(final IScope scope) {
 				if ( data instanceof GamaIntMatrix ) {
 					return new GamaIntMatrix(scope, cols, rows);
 				} else if ( data instanceof GamaFloatMatrix ) {
@@ -248,7 +248,7 @@ public class MatrixEditorDialog extends Dialog {
 		GAMA.run(new InScope.Void() {
 
 			@Override
-			public void process(IScope scope) {
+			public void process(final IScope scope) {
 				for ( int r = 0; r < rows; r++ ) {
 					for ( int c = 1; c < cols + 1; c++ ) {
 						final TableItem item = table.getItem(r);

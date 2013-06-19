@@ -574,6 +574,9 @@ public class Containers {
 		"[1::2, 3::4, 5::6] collect (each + 2) --: [8,4,6]",
 		"(list(node) collect (node(each).location.x * 2)    --:  [25.65, 158.99, 140.80, 80.11, 125.47, 37.830, 4.62,...]" }, see = { "accumulate" })
 	public static IList collect(final IScope scope, final IContainer original, final IExpression filter) {
-		return new GamaList(Iterables.transform(nullCheck(original).iterable(scope), function(scope, filter)));
+		// GuiUtils.debug("Containers.collect begin for " + scope.getAgentScope());
+		IList list = new GamaList(Iterables.transform(nullCheck(original).iterable(scope), function(scope, filter)));
+		// GuiUtils.debug("Containers.collect end");
+		return list;
 	}
 }

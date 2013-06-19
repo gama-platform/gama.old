@@ -31,7 +31,7 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
@@ -127,13 +127,13 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		}
 
 		for ( final ILayerStatement layer : getLayers() ) {
-			try {
-				layer.setDisplayOutput(this);
-				if ( !getScope().init(layer) ) { return false; }
-			} catch (final GamaRuntimeException e) {
-				GAMA.reportError(e);
-				return false;
-			}
+			// try {
+			layer.setDisplayOutput(this);
+			if ( !getScope().init(layer) ) { return false; }
+			// } catch (final GamaRuntimeException e) {
+			// GAMA.reportError(e, true);
+			// return false;
+			// }
 		}
 
 		// OpenGL parameter initialization
@@ -253,23 +253,17 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			if ( cameraLook != null ) {
 				setCameraLookPos(Cast.asPoint(getScope(), cameraLook.value(getScope())));
 			}
-			// graphics.setCameraLookPosition(getCameraLookPos());
 		}
 
-		// GUI.debug("Updating output " + getName());
-		if ( surface.canBeUpdated() ) {
-			// GUI.debug("Updating the surface of output " + getName());
-			surface.updateDisplay();
-			// Use to define which technique is used in opengl to triangulate polygon
-
-		}
+		GuiUtils.debug("LayeredDisplayOutput.update");
+		surface.updateDisplay();
 
 	}
 
 	@Override
 	public void forceUpdate() throws GamaRuntimeException {
 		// GUI.debug("Updating output " + getName());
-		if ( surface != null && surface.canBeUpdated() ) {
+		if ( surface != null /* && surface.canBeUpdated() */) {
 			// GUI.debug("Updating the surface of output " + getName());
 			surface.forceUpdateDisplay();
 		}

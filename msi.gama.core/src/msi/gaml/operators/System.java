@@ -68,8 +68,10 @@ public class System {
 		}
 		if ( a.dead() ) {
 			// GuiUtils.debug("System.opGetValue");
-			if ( !scope.interrupted() ) { throw GamaRuntimeException.warning("Cannot evaluate " + s.toGaml() +
-				" as the target agent is dead"); }
+			if ( !scope.interrupted() ) {
+				GuiUtils.debug("System.opGetValue error");
+				throw GamaRuntimeException.warning("Cannot evaluate " + s.toGaml() + " as the target agent is dead");
+			}
 			return null;
 		}
 		return scope.evaluate(s, a);

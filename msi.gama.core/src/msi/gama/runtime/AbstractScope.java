@@ -30,6 +30,7 @@ import msi.gaml.types.*;
 // OU QU'UNE ACTION AUSSI ("return"), CALCULER LA VALEUR DE INTERRUPTED AU LIEU DE L'EVALUER TOUT LE TEMPS ICI.
 public abstract class AbstractScope implements IScope {
 
+	private static int ScopeNumber = 0;
 	private final Deque<IAgent> agents = new ArrayDeque();
 	private final Deque<Record> statements = new ArrayDeque();
 	private IGraphics graphics;
@@ -37,6 +38,7 @@ public abstract class AbstractScope implements IScope {
 	private volatile boolean _action_halted, _loop_halted, _agent_halted;
 	protected final IMacroAgent root;
 	private Object each = null;
+	private final int number = ScopeNumber++;
 
 	public AbstractScope(final IMacroAgent root) {
 		this.root = root;
@@ -231,10 +233,9 @@ public abstract class AbstractScope implements IScope {
 			}
 			result[0] = statement.executeOn(this);
 		} catch (final GamaRuntimeException g) {
-			// If an exception occurs, we throw it and return null (could be INTERRUPTED as well)
-			g.addAgent(agent.getName());
-			GAMA.reportError(g);
-			return false;
+			// If an exception occurs, we throw it and return false (could be INTERRUPTED as well)
+			// g.addAgent(agent.getName());
+			GAMA.reportAndThrowIfNeeded(this, g, true);
 		} finally {
 			// Whatever the outcome, we pop the agent from the stack if it has been previously pushed
 			if ( pushed ) {
@@ -308,9 +309,9 @@ public abstract class AbstractScope implements IScope {
 		try {
 			return expr.value(this);
 		} catch (final GamaRuntimeException g) {
-			g.addAgent(agent.toString());
-			GAMA.reportError(g);
-			return false;
+			// g.addAgent(agent.toString());
+			GAMA.reportAndThrowIfNeeded(this, g, true);
+			return null;
 		} finally {
 			if ( pushed ) {
 				pop(agent);
@@ -329,9 +330,10 @@ public abstract class AbstractScope implements IScope {
 			result = agent.step(this);
 		} catch (final Exception ex) {
 			GamaRuntimeException g = GamaRuntimeException.create(ex);
-			g.addAgent(agent.toString());
-			GAMA.reportError(g);
-			return false;
+			// if ( isAgent ) {
+			// g.addAgent(agent.toString());
+			// }
+			GAMA.reportAndThrowIfNeeded(this, g, true);
 		} finally {
 			if ( pushed ) {
 				pop((IAgent) agent);
@@ -349,9 +351,10 @@ public abstract class AbstractScope implements IScope {
 		try {
 			result = agent.init(this);
 		} catch (final GamaRuntimeException g) {
-			g.addAgent(agent.toString());
-			GAMA.reportError(g);
-			return false;
+			// if ( isAgent ) {
+			// g.addAgent(agent.toString());
+			// }
+			GAMA.reportAndThrowIfNeeded(this, g, true);
 		} finally {
 			if ( pushed ) {
 				pop((IAgent) agent);
@@ -576,7 +579,12 @@ public abstract class AbstractScope implements IScope {
 
 	@Override
 	public String getName() {
-		return "Scope of " + root.getName();
+		return "Scope #" + number + " of " + root;
+	}
+
+	@Override
+	public String toString() {
+		return getName();
 	}
 
 	/**

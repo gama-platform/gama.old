@@ -198,8 +198,6 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 	void addShapeFile();
 
-	public ILayerManager getLayerManager();
-
 	/**
 	 * @return IGraphics
 	 */
@@ -216,5 +214,9 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 	public abstract int getDisplayHeight();
 
 	public abstract void setZoomListener(IZoomListener listener);
+
+	//void acquireUpdateLock() throws InterruptedException;
+
+	//void releaseUpdateLock();
 
 }

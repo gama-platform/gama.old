@@ -173,7 +173,7 @@ public class BatchExperiment extends ExperimentSpecies {
 				}
 			} catch (GamaRuntimeException e) {
 				e.addContext("in saving the results of the batch");
-				GAMA.reportError(e);
+				GAMA.reportError(e, true);
 			}
 		}
 		// if ( currentSimulation != null ) {

@@ -75,10 +75,10 @@ public abstract class AbstractSWTDisplaySurface extends Composite implements IDi
 		return origin;
 	}
 
-	@Override
-	public ILayerManager getLayerManager() {
-		return this.manager;
-	}
+	// @Override
+	// public ILayerManager getLayerManager() {
+	// return this.manager;
+	// }
 
 	// @Override
 	// public IGraphics getIGraphics() {
@@ -119,7 +119,7 @@ public abstract class AbstractSWTDisplaySurface extends Composite implements IDi
 			Files.newFolder(scope, snapshotFolder);
 		} catch (GamaRuntimeException e1) {
 			e1.addContext("Impossible to create folder " + snapshotFolder);
-			GAMA.reportError(e1);
+			GAMA.reportError(e1, false);
 			e1.printStackTrace();
 			return;
 		}
@@ -134,7 +134,7 @@ public abstract class AbstractSWTDisplaySurface extends Composite implements IDi
 		} catch (java.io.IOException ex) {
 			GamaRuntimeException e = new GamaRuntimeException(ex);
 			e.addContext("Unable to create output stream for snapshot image");
-			GAMA.reportError(e);
+			GAMA.reportError(e, false);
 		} finally {
 			try {
 				if ( os != null ) {
@@ -143,7 +143,7 @@ public abstract class AbstractSWTDisplaySurface extends Composite implements IDi
 			} catch (Exception ex) {
 				GamaRuntimeException e = new GamaRuntimeException(ex);
 				e.addContext("Unable to close output stream for snapshot image");
-				GAMA.reportError(e);
+				GAMA.reportError(e, false);
 			}
 		}
 	}
@@ -311,7 +311,7 @@ public abstract class AbstractSWTDisplaySurface extends Composite implements IDi
 			EventQueue.invokeLater(displayBlock);
 		}
 		if ( ex[0] != null ) {
-			GAMA.reportError(ex[0]);
+			GAMA.reportError(ex[0], false);
 			ex[0] = null;
 		}
 	}

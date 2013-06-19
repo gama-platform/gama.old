@@ -5,9 +5,7 @@ import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import msi.gama.jogl.scene.GeometryObject;
 import msi.gama.jogl.scene.GeometryObjectSWT;
-import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.JOGLSWTGLRenderer;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.*;
@@ -27,7 +25,7 @@ public class Output3DSWT {
 	// doc = Output3D.createXML();
 	// }
 
-	public Output3DSWT(ILocation nbCycles, JOGLSWTGLRenderer openGLGraphicsGLRender) {
+	public Output3DSWT(final ILocation nbCycles, final JOGLSWTGLRenderer openGLGraphicsGLRender) {
 		doc = Output3D.createXML();
 		nbCycle = (int) nbCycles.getY();
 		// initGLGEModel(myJTSGeometries,openGLGraphicsGLRender);
@@ -36,7 +34,7 @@ public class Output3DSWT {
 		System.out.println("NbCycles to store: " + nbCycle);
 	}
 
-	public void updateOutput3D(JOGLSWTGLRenderer openGLGraphicsGLRender) {
+	public void updateOutput3D(final JOGLSWTGLRenderer openGLGraphicsGLRender) {
 		// TODO
 		int currentClock = GAMA.getClock().getCycle();
 		System.out.println("Nb cycle " + currentClock);
@@ -75,7 +73,7 @@ public class Output3DSWT {
 		}
 	}
 
-	public void initGLGEModel(JOGLSWTGLRenderer openGLGraphicsGLRender) {
+	public void initGLGEModel(final JOGLSWTGLRenderer openGLGraphicsGLRender) {
 
 		Element root = doc.createElement("glge");
 
@@ -136,7 +134,7 @@ public class Output3DSWT {
 				animVec.appendChild(animCurveElt);
 			}
 			sceneElt.appendChild(animVec);
-		} 
+		}
 		sceneElt.appendChild(groupElt);
 
 		// defining the camera
@@ -171,7 +169,7 @@ public class Output3DSWT {
 		doc.appendChild(root);
 	}
 
-	public Element createMeshElement(GeometryObjectSWT myGeom) {
+	public Element createMeshElement(final GeometryObjectSWT myGeom) {
 		Geometry geom;
 
 		// <mesh id="cube">
@@ -230,7 +228,7 @@ public class Output3DSWT {
 	}
 
 	// nbVertrices is the number of vertices of both top and bottom faces
-	public static String facesFromVertices3D(int nbVertices) {
+	public static String facesFromVertices3D(final int nbVertices) {
 		String res = "";
 		res += facesFromVertices(0, nbVertices - 1) + ",";
 		res += facesFromVertices(nbVertices, 2 * nbVertices - 1) + ",";
@@ -244,11 +242,11 @@ public class Output3DSWT {
 		return res;
 	}
 
-	public static String facesFromVertices(int nbVertices) {
+	public static String facesFromVertices(final int nbVertices) {
 		return facesFromVertices(0, nbVertices - 1);
 	}
 
-	public static String facesFromVertices(int firstVertex, int lastVertex) {
+	public static String facesFromVertices(final int firstVertex, final int lastVertex) {
 		String res = "";
 		for ( int i = firstVertex + 1; i < lastVertex; i++ ) {
 			res += firstVertex + "," + i + "," + (i + 1) + ",";
@@ -279,8 +277,7 @@ public class Output3DSWT {
 			Files.newFolder(scope, FILE3DFOLDER);
 		} catch (GamaRuntimeException e1) {
 			e1.addContext("Impossible to create folder " + FILE3DFOLDER);
-			GAMA.reportError(e1);
-			e1.printStackTrace();
+			GAMA.reportError(e1, false);
 			return;
 		}
 		String file3DFile =

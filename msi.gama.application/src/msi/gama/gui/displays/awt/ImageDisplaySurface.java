@@ -71,7 +71,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 			Files.newFolder(scope, snapshotFolder);
 		} catch (final GamaRuntimeException e1) {
 			e1.addContext("Impossible to create folder " + snapshotFolder);
-			GAMA.reportError(e1);
+			GAMA.reportError(e1, false);
 			e1.printStackTrace();
 			return;
 		}
@@ -84,7 +84,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		} catch (final java.io.IOException ex) {
 			final GamaRuntimeException e = GamaRuntimeException.create(ex);
 			e.addContext("Unable to create output stream for snapshot image");
-			GAMA.reportError(e);
+			GAMA.reportError(e, false);
 		} finally {
 			try {
 				if ( os != null ) {
@@ -93,7 +93,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 			} catch (final Exception ex) {
 				final GamaRuntimeException e = GamaRuntimeException.create(ex);
 				e.addContext("Unable to close output stream for snapshot image");
-				GAMA.reportError(e);
+				GAMA.reportError(e, false);
 			}
 		}
 	}
@@ -398,10 +398,11 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	@Override
 	public void addShapeFile() {}
 
-	@Override
-	public ILayerManager getLayerManager() {
-		return manager;
-	}
+	//
+	// @Override
+	// public ILayerManager getLayerManager() {
+	// return manager;
+	// }
 
 	@Override
 	public void addMouseListener(final MouseListener e) {}

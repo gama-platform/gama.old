@@ -20,7 +20,6 @@ package msi.gama.metamodel.agent;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
@@ -395,7 +394,7 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		if ( microSpec == null ) { return; }
 		final IPopulation microPop = GamaPopulation.createPopulation(scope, this, microSpec);
 		attributes.put(microSpec.getName(), microPop);
-		//GuiUtils.debug("GamlAgent.initializeMicroPopulation : " + this + " : " + name);
+		// GuiUtils.debug("GamlAgent.initializeMicroPopulation : " + this + " : " + name);
 		microPop.initializeFor(scope);
 	}
 
@@ -665,15 +664,10 @@ public class GamlAgent extends MinimalAgent implements IMacroAgent {
 		@Override
 		public void setInterrupted(final boolean interrupted) {
 			this.interrupted = true;
-			GuiUtils.debug("GamlAgent.Scope.setInterrupted : " + this);
+			// GuiUtils.debug("GamlAgent.Scope.setInterrupted : " + this);
 			// if ( !GamlAgent.this.dead ) {
 			// GamlAgent.this.dispose();
 			// }
-		}
-
-		@Override
-		public String toString() {
-			return "scope of " + root;
 		}
 
 		@Override

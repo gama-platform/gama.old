@@ -135,7 +135,7 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 				try {
 					new InspectDisplayOutput(species.getHost(), species.getSpecies()).launch();
 				} catch (final GamaRuntimeException ex) {
-					GAMA.reportError(ex);
+					GAMA.reportError(ex, false);
 				}
 				// agentsEditor.updateValue();
 				// getViewer().updateItemNames();

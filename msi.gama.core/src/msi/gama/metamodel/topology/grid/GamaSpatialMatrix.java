@@ -1459,7 +1459,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					neighbours = neighbourhood.getRawNeighboursIncluding(placeIndex, range);
 				} catch (final GamaRuntimeException e) {
 					// We change the neighbourhood to a cached version dynamically
-					GAMA.reportError(e);
+					GAMA.reportError(e, false);
 					useNeighboursCache = true;
 					neighbourhood = null;
 					neighbours = getNeighbourhood().getRawNeighboursIncluding(placeIndex, range);
@@ -1516,7 +1516,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					neighbours = neighbourhood.getRawNeighboursIncluding(placeIndex, range);
 				} catch (final GamaRuntimeException e) {
 					// We change the neighbourhood to a cached version dynamically
-					GAMA.reportError(e);
+					GAMA.reportError(e, false);
 					useNeighboursCache = true;
 					neighbourhood = null;
 					neighbours = getNeighbourhood().getRawNeighboursIncluding(placeIndex, range);

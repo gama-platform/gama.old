@@ -101,6 +101,8 @@ public class BinaryOperator extends AbstractNAryOperator {
 		} catch (final RuntimeException ex) {
 			final GamaRuntimeException e1 = GamaRuntimeException.create(ex);
 			e1.addContext("when applying the " + literalValue() + " operator on " + leftVal + " and " + rightVal);
+			// GAMA.reportAndThrowIfNeeded(e1, true);
+			// return null;
 			throw e1;
 		}
 	}

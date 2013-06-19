@@ -34,12 +34,13 @@ import org.eclipse.emf.ecore.EObject;
 public class GamaRuntimeException extends RuntimeException {
 
 	private final long cycle;
-	private String agent = null;
+	protected final List<String> agentsNames = new ArrayList();
 	private boolean isWarning;
 	protected final List<String> context = new ArrayList();
 	protected EObject editorContext;
 	protected int lineNumber;
-	protected int times = 0;
+	protected int occurences = 0;
+	protected boolean reported = false;
 
 	// Factory methods
 
@@ -93,15 +94,14 @@ public class GamaRuntimeException extends RuntimeException {
 	}
 
 	public void addAgent(final String agent) {
-		times++;
-		if ( times == 1 ) {
-			this.agent = agent;
-			addContext("in agent(s) " + agent);
-		} else {
-			this.agent = String.valueOf(times) + " agents";
-			String oldContext = context.remove(context.size() - 1);
-			String newContext = oldContext + ", " + agent;
-			addContext(newContext);
+		occurences++;
+		if ( agentsNames.contains(agent) ) { return; }
+		agentsNames.add(agent);
+	}
+
+	public void addAgents(final List<String> agents) {
+		for ( String agent : agents ) {
+			addAgent(agent);
 		}
 	}
 
@@ -109,8 +109,12 @@ public class GamaRuntimeException extends RuntimeException {
 		return cycle;
 	}
 
-	public String getAgent() {
-		return agent;
+	public String getAgentSummary() {
+		int size = agentsNames.size();
+		String agents = size == 0 ? "" : size == 1 ? agentsNames.get(0) : String.valueOf(size) + " agents";
+		String occurence =
+			occurences == 0 ? "" : occurences == 1 ? "1 occurence in " : String.valueOf(occurences) + " occurences in ";
+		return occurence + agents;
 	}
 
 	public boolean isWarning() {
@@ -123,7 +127,20 @@ public class GamaRuntimeException extends RuntimeException {
 	}
 
 	public List<String> getContextAsList() {
-		return context;
+		List<String> result = new ArrayList();
+		result.addAll(context);
+		int size = agentsNames.size();
+		if ( size == 0 ) { return result; }
+		if ( size == 1 ) {
+			result.add("in agent " + agentsNames.get(0));
+		} else {
+			String s = "in agents " + agentsNames.get(0);
+			for ( int i = 1; i < agentsNames.size(); i++ ) {
+				s += ", " + agentsNames.get(i);
+			}
+			result.add(s);
+		}
+		return result;
 	}
 
 	@Override
@@ -135,6 +152,21 @@ public class GamaRuntimeException extends RuntimeException {
 
 	public boolean equivalentTo(final GamaRuntimeException ex) {
 		return editorContext == ex.editorContext && getMessage().equals(ex.getMessage()) && getCycle() == ex.getCycle();
+	}
+
+	public void setReported() {
+		reported = true;
+	}
+
+	public boolean isReported() {
+		return reported;
+	}
+
+	/**
+	 * @return
+	 */
+	public List<String> getAgentsNames() {
+		return agentsNames;
 	}
 
 }

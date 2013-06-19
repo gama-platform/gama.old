@@ -57,7 +57,7 @@ public class WarnStatement extends AbstractStatement {
 		String mes = null;
 		if ( agent != null && !agent.dead() ) {
 			mes = Cast.asString(stack, message.value(stack));
-			GAMA.reportError(GamaRuntimeException.warning(mes));
+			GAMA.reportError(GamaRuntimeException.warning(mes), false);
 		}
 		return mes;
 	}

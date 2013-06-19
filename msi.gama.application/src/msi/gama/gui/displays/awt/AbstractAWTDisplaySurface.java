@@ -67,10 +67,11 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		return origin;
 	}
 
-	@Override
-	public ILayerManager getLayerManager() {
-		return this.manager;
-	}
+	//
+	// @Override
+	// public ILayerManager getLayerManager() {
+	// return this.manager;
+	// }
 
 	// @Override
 	// public IGraphics getIGraphics() {
@@ -116,7 +117,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 			Files.newFolder(scope, snapshotFolder);
 		} catch (GamaRuntimeException e1) {
 			e1.addContext("Impossible to create folder " + snapshotFolder);
-			GAMA.reportError(e1);
+			GAMA.reportError(e1, false);
 			e1.printStackTrace();
 			return;
 		}
@@ -131,7 +132,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		} catch (java.io.IOException ex) {
 			GamaRuntimeException e = GamaRuntimeException.create(ex);
 			e.addContext("Unable to create output stream for snapshot image");
-			GAMA.reportError(e);
+			GAMA.reportError(e, false);
 		} finally {
 			try {
 				if ( os != null ) {
@@ -140,7 +141,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 			} catch (Exception ex) {
 				GamaRuntimeException e = GamaRuntimeException.create(ex);
 				e.addContext("Unable to close output stream for snapshot image");
-				GAMA.reportError(e);
+				GAMA.reportError(e, false);
 			}
 		}
 	}
@@ -288,6 +289,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	@Override
 	public void updateDisplay() {
+		GuiUtils.debug("AbstractAWTDisplaySurface.updateDisplay");
 		if ( synchronous && !EventQueue.isDispatchThread() && !GAMA.isPaused() ) {
 			try {
 				EventQueue.invokeAndWait(displayBlock);
@@ -300,7 +302,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 			EventQueue.invokeLater(displayBlock);
 		}
 		if ( ex[0] != null ) {
-			GAMA.reportError(ex[0]);
+			GAMA.reportAndThrowIfNeeded(null, ex[0], false);
 			ex[0] = null;
 		}
 	}

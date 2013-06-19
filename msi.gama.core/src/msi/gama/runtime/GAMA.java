@@ -99,13 +99,31 @@ public class GAMA {
 	 * 
 	 */
 
-	public static void reportError(final GamaRuntimeException g) {
+	public static boolean reportError(final GamaRuntimeException g, final boolean shouldStopSimulation) {
+		// Returns whether or not to continue
 		GuiUtils.runtimeError(g);
-		if ( controller.experiment == null ) { return; }
-		if ( REVEAL_ERRORS_IN_EDITOR ) {
-			if ( TREAT_WARNINGS_AS_ERRORS || !g.isWarning() ) {
-				controller.userPause();
+		if ( controller.experiment == null ) { return false; }
+		boolean isError = !g.isWarning() || TREAT_WARNINGS_AS_ERRORS;
+		boolean shouldStop = isError && shouldStopSimulation && REVEAL_ERRORS_IN_EDITOR;
+		// if ( shouldStop ) {
+		// controller.userPause();
+		// return false;
+		// }
+		return !shouldStop;
+	}
+
+	public static void reportAndThrowIfNeeded(final IScope scope, final GamaRuntimeException g,
+		final boolean shouldStopSimulation) throws GamaRuntimeException {
+		if ( scope != null ) {
+			String name = scope.getAgentScope().getName();
+			if ( !g.getAgentsNames().contains(name) ) {
+				g.addAgent(name);
 			}
+		}
+		boolean shouldStop = !reportError(g, shouldStopSimulation);
+		if ( shouldStop ) {
+			controller.userPause();
+			throw g;
 		}
 	}
 

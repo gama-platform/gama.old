@@ -19,16 +19,13 @@
 package msi.gaml.operators;
 
 import java.util.Random;
-
-import org.apache.commons.math3.util.FastMath;
-
-import com.vividsolutions.jts.geom.Coordinate;
-
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import org.apache.commons.math3.util.FastMath;
+import com.vividsolutions.jts.geom.Coordinate;
 
 /**
  * The Class GamaMath.
@@ -44,56 +41,58 @@ public class Maths {
 		java.lang.System.out.println("floor and ceil -2 " + floor(-2) + " and " + ceil(-2));
 		java.lang.System.out.println("floor and ceil 3 " + floor(3) + " and " + ceil(3));
 		double atan2diff = 0;
-		double atan2diff2= 0;
+		double atan2diff2 = 0;
 		Random rand = new Random();
 		long s1 = 0;
 		long t1 = 0;
 		long t2 = 0;
 		long t3 = 0;
-		for (int i = 0; i < 10000000; i++) {
+		for ( int i = 0; i < 10000000; i++ ) {
 			double x = rand.nextDouble();
 			double y = rand.nextDouble();
-			s1 =  java.lang.System.currentTimeMillis();
+			s1 = java.lang.System.currentTimeMillis();
 			double a1 = Math.atan2(x, y);
 			t1 += java.lang.System.currentTimeMillis() - s1;
-			s1 =  java.lang.System.currentTimeMillis();
+			s1 = java.lang.System.currentTimeMillis();
 			double a2 = FastMath.atan2(x, y);
 			t2 += java.lang.System.currentTimeMillis() - s1;
-			s1 =  java.lang.System.currentTimeMillis();
+			s1 = java.lang.System.currentTimeMillis();
 			double a3 = Maths.atan2Opt2(x, y);
 			t3 += java.lang.System.currentTimeMillis() - s1;
-			
-			atan2diff +=  Math.abs(a1 -a2 );
-			atan2diff2 +=  Math.abs(a1 -a3 );
+
+			atan2diff += Math.abs(a1 - a2);
+			atan2diff2 += Math.abs(a1 - a3);
 		}
-		java.lang.System.out.println("atan2diff : "  + atan2diff + "  atan2diff2 : "  + atan2diff2 + " t1 : "+ t1 + " t2 : " + t2 + " t3 : "+ t3);
-		
+		java.lang.System.out.println("atan2diff : " + atan2diff + "  atan2diff2 : " + atan2diff2 + " t1 : " + t1 +
+			" t2 : " + t2 + " t3 : " + t3);
+
 		long t4 = 0;
 		long t5 = 0;
 		long t6 = 0;
 		double distDiff1 = 0;
 		double distDiff2 = 0;
-		for (int i = 0; i < 1000000; i++) {
+		for ( int i = 0; i < 1000000; i++ ) {
 			double x1 = rand.nextDouble();
 			double y1 = rand.nextDouble();
 			double x2 = rand.nextDouble();
 			double y2 = rand.nextDouble();
-			Coordinate c1= new Coordinate(x1, y1);
-			Coordinate c2= new Coordinate(x2, y2);
-			
-			s1 =  java.lang.System.currentTimeMillis();
+			Coordinate c1 = new Coordinate(x1, y1);
+			Coordinate c2 = new Coordinate(x2, y2);
+
+			s1 = java.lang.System.currentTimeMillis();
 			double a1 = Math.hypot(x2 - x1, y2 - y1);
 			t4 += java.lang.System.currentTimeMillis() - s1;
-			s1 =  java.lang.System.currentTimeMillis();
+			s1 = java.lang.System.currentTimeMillis();
 			double a2 = FastMath.hypot(x2 - x1, y2 - y1);
 			t5 += java.lang.System.currentTimeMillis() - s1;
-			s1 =  java.lang.System.currentTimeMillis();
+			s1 = java.lang.System.currentTimeMillis();
 			double a3 = c1.distance(c2);
 			t6 += java.lang.System.currentTimeMillis() - s1;
-			distDiff1 +=  Math.abs(a1 -a2 );
-			distDiff2 +=  Math.abs(a1 -a3 );
+			distDiff1 += Math.abs(a1 - a2);
+			distDiff2 += Math.abs(a1 - a3);
 		}
-		java.lang.System.out.println("distDiff1 : "  + distDiff1 + "  distDiff2 : "  + distDiff2 + " t4 : "+ t4 + " t5 : " + t5 + " t6 : "+ t6);
+		java.lang.System.out.println("distDiff1 : " + distDiff1 + "  distDiff2 : " + distDiff2 + " t4 : " + t4 +
+			" t5 : " + t5 + " t6 : " + t6);
 		// java.lang.System.out.println("Infinity to int:" + (int) Double.POSITIVE_INFINITY);
 		// java.lang.System.out.println("NaN to int:" + (int) Double.NaN);
 		// GuiUtils.debug("(int) (1.0/0.0):" + (int) (1.0 / 0.0));
@@ -108,8 +107,8 @@ public class Maths {
 
 	@operator(value = { "^", "**" }, can_be_const = true)
 	@doc(value = "the left-hand operand raised to the power of the right-hand operand.", special_cases = {
-		"if the right-hand operand is equal to 0, returns 1",
-		"if it is equal to 1, returns the left-hand operand." }, examples = "", see = { "*", "sqrt" })
+		"if the right-hand operand is equal to 0, returns 1", "if it is equal to 1, returns the left-hand operand." }, examples = "", see = {
+		"*", "sqrt" })
 	public static Integer pow(final Integer a, final Integer b) {
 		return pow(a.doubleValue(), b.doubleValue()).intValue();
 	}
@@ -261,9 +260,8 @@ public class Maths {
 	@operator(value = "ln", can_be_const = true)
 	@doc(value = "returns the natural logarithm (base e) of the operand.", special_cases = "an exception is raised if the operand is less than zero.", examples = "ln(1) 	--:	 0.0", see = "exp")
 	public static Double ln(final Double x) {
-		if ( x <= 0 ) {
-			GAMA.reportError(GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs"));
-			return Double.MAX_VALUE; // A compromise...
+		if ( x <= 0 ) { throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs");
+		// return Double.MAX_VALUE; // A compromise...
 		}
 		return Math.log(x);
 	}
@@ -290,8 +288,8 @@ public class Maths {
 	}
 
 	@operator(value = "round", can_be_const = true)
-	@doc(value = "the rounded value of the operand.", examples = { "round (0.51) 	--:	 1",
-		"round (100.2) 	--: 	 100" }, see = { "int", "with_precision" })
+	@doc(value = "the rounded value of the operand.", examples = { "round (0.51) 	--:	 1", "round (100.2) 	--: 	 100" }, see = {
+		"int", "with_precision" })
 	public static Integer round(final Double v) {
 		int i;
 		if ( v >= 0 ) {
@@ -464,23 +462,21 @@ public class Maths {
 	@operator(value = "with_precision", can_be_const = true)
 	@doc(value = "round off the value of left-hand operand to the precision given by the value of right-hand operand", examples = {
 		"12345.78943 with_precision 2 	--:	 12345.79", "123 with_precision 2 	--:	 123.00" }, see = "round")
-	public static double round(Double v, Integer precision) {
+	public static double round(final Double v, final Integer precision) {
 		long t = TENS[precision]; // contains powers of ten.
 		return (double) (long) (v > 0 ? v * t + 0.5 : v * t - 0.5) / t;
 	}
 
 	@operator(value = "floor", can_be_const = true)
 	@doc(value = "maps the operand to the largest previous following integer.", comment = "More precisely, floor(x) is the largest integer not greater than x.", examples = {
-		"floor(3) 		--:  3.0", "floor(3.5) 	--:  3.0", "floor(-4.7) 	--:  -5.0" }, see = { "ceil",
-		"round" })
+		"floor(3) 		--:  3.0", "floor(3.5) 	--:  3.0", "floor(-4.7) 	--:  -5.0" }, see = { "ceil", "round" })
 	public static final double floor(final double d) {
 		return Math.floor(d);
 	}
 
 	@operator(value = "ceil", can_be_const = true)
 	@doc(value = "maps the operand to the smallest following integer.", comment = "More precisely, ceiling(x) is the smallest integer not less than x.", examples = {
-		"ceil(3) 		--:  4.0", "ceil(3.5) 		--:  4.0", "ceil(-4.7) 	--:  -4.0" }, see = { "floor",
-		"round" })
+		"ceil(3) 		--:  4.0", "ceil(3.5) 		--:  4.0", "ceil(-4.7) 	--:  -4.0" }, see = { "floor", "round" })
 	public static final double ceil(final double d) {
 		return Math.ceil(d);
 	}
@@ -585,93 +581,78 @@ public class Maths {
 
 	@operator(value = "hypot", can_be_const = true)
 	public static double hypot(final double x1, final double x2, final double y1, final double y2) {
-		//return Math.hypot(x2 - x1, y2 - y1); VERY SLOW !
+		// return Math.hypot(x2 - x1, y2 - y1); VERY SLOW !
 		final double dx = x2 - x1;
 		final double dy = y2 - y1;
 		return sqrt(dx * dx + dy * dy);
 	}
 
-	public static double hypot(final double x1, final double x2, final double y1, final double y2,
-		final double z1, final double z2) {
+	public static double hypot(final double x1, final double x2, final double y1, final double y2, final double z1,
+		final double z2) {
 		final double dx = x2 - x1;
 		final double dy = y2 - y1;
 		final double dz = z2 - z1;
 		return sqrt(dx * dx + dy * dy + dz * dz);
 	}
-	
-	  private static final int ATAN2_BITS = 7;
 
-	   private static final int ATAN2_BITS2 = ATAN2_BITS << 1;
-	   private static final int ATAN2_MASK = ~(-1 << ATAN2_BITS2);
-	   private static final int ATAN2_COUNT = ATAN2_MASK + 1;
-	   private static final int ATAN2_DIM = (int) Math.sqrt(ATAN2_COUNT);
+	private static final int ATAN2_BITS = 7;
 
-	   private static final double INV_ATAN2_DIM_MINUS_1 = 1.0f / (ATAN2_DIM - 1);
-	
-	   private static final double[] atan2 = new double[ATAN2_COUNT];
+	private static final int ATAN2_BITS2 = ATAN2_BITS << 1;
+	private static final int ATAN2_MASK = ~(-1 << ATAN2_BITS2);
+	private static final int ATAN2_COUNT = ATAN2_MASK + 1;
+	private static final int ATAN2_DIM = (int) Math.sqrt(ATAN2_COUNT);
 
+	private static final double INV_ATAN2_DIM_MINUS_1 = 1.0f / (ATAN2_DIM - 1);
 
+	private static final double[] atan2 = new double[ATAN2_COUNT];
 
-	   static
-	   {
-	      for (int i = 0; i < ATAN2_DIM; i++)
-	      {
-	         for (int j = 0; j < ATAN2_DIM; j++)
-	         {
-	        	 double x0 = (double) i / ATAN2_DIM;
-	        	 double y0 = (double) j / ATAN2_DIM;
+	static {
+		for ( int i = 0; i < ATAN2_DIM; i++ ) {
+			for ( int j = 0; j < ATAN2_DIM; j++ ) {
+				double x0 = (double) i / ATAN2_DIM;
+				double y0 = (double) j / ATAN2_DIM;
 
-	            atan2[j * ATAN2_DIM + i] = (double) Math.atan2(y0, x0);
-	         }
-	      }
-	   }
-	   public static final double atan2Opt(double y, double x)
-	   {
-		  return  atan2Opt2(y,x) * toDeg;
-	   }
-	 
-	   public static final double atan2Opt2(double y, double x)
-	   {
-	      double add, mul;
+				atan2[j * ATAN2_DIM + i] = Math.atan2(y0, x0);
+			}
+		}
+	}
 
-	      if (x < 0.0f)
-	      {
-	         if (y < 0.0f)
-	         {
-	            x = -x;
-	            y = -y;
+	public static final double atan2Opt(final double y, final double x) {
+		return atan2Opt2(y, x) * toDeg;
+	}
 
-	            mul = 1.0f;
-	         }
-	         else
-	         {
-	            x = -x;
-	            mul = -1.0f;
-	         }
+	public static final double atan2Opt2(double y, double x) {
+		double add, mul;
 
-	         add = -3.141592653f;
-	      }
-	      else
-	      {
-	         if (y < 0.0f)
-	         {
-	            y = -y;
-	            mul = -1.0f;
-	         }
-	         else
-	         {
-	            mul = 1.0f;
-	         }
+		if ( x < 0.0f ) {
+			if ( y < 0.0f ) {
+				x = -x;
+				y = -y;
 
-	         add = 0.0f;
-	      }
+				mul = 1.0f;
+			} else {
+				x = -x;
+				mul = -1.0f;
+			}
 
-	      double invDiv = 1.0f / (((x < y) ? y : x) * INV_ATAN2_DIM_MINUS_1);
+			add = -3.141592653f;
+		} else {
+			if ( y < 0.0f ) {
+				y = -y;
+				mul = -1.0f;
+			} else {
+				mul = 1.0f;
+			}
 
-	      int xi = (int) (x * invDiv);
-	      int yi = (int) (y * invDiv);
+			add = 0.0f;
+		}
 
-	      return (atan2[yi * ATAN2_DIM + xi] + add) * mul;
-	   }
+		double invDiv = 1.0f / ((x < y ? y : x) * INV_ATAN2_DIM_MINUS_1);
+
+		int xi = (int) (x * invDiv);
+		int yi = (int) (y * invDiv);
+
+		return (atan2[yi * ATAN2_DIM + xi] + add) * mul;
+	}
 
 }

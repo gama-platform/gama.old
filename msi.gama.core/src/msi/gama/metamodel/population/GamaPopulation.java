@@ -226,6 +226,11 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	}
 
 	@Override
+	public Iterable<IAgent> iterable(final IScope scope) {
+		return GAML.allLivingAgents(this);
+	}
+
+	@Override
 	public void dispose() {
 		// GuiUtils.debug("GamaPopulation.dispose : " + this);
 		killMembers();

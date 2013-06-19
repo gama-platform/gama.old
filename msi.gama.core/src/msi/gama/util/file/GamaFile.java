@@ -22,12 +22,11 @@ import java.io.File;
 import java.util.Iterator;
 import msi.gama.common.util.StringUtils;
 import msi.gama.metamodel.shape.ILocation;
-import msi.gama.runtime.*;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.types.GamaFileType;
-
 
 /**
  * Written by drogoul Modified on 7 août 2010
@@ -111,12 +110,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 	 */
 	@Override
 	public boolean checkBounds(final K index, final boolean forAdding) {
-		try {
-			getContents(null);
-		} catch (final GamaRuntimeException e) {
-			GAMA.reportError(e);
-			return false;
-		}
+		getContents(null);
 		return buffer.checkBounds(index, forAdding);
 
 	}
@@ -198,12 +192,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 
 	@Override
 	public boolean isEmpty(final IScope scope) {
-		try {
-			getContents(scope);
-		} catch (final GamaRuntimeException e) {
-			GAMA.reportError(e);
-			return true;
-		}
+		getContents(scope);
 		return buffer.isEmpty(scope);
 	}
 
@@ -229,12 +218,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 
 	@Override
 	public Iterator iterator() {
-		try {
-			getContents(null);
-		} catch (final GamaRuntimeException e) {
-			GAMA.reportError(e);
-			return GamaList.EMPTY_LIST.iterator();
-		}
+		getContents(null);
 		return buffer.iterator();
 	}
 
@@ -251,12 +235,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 
 	@Override
 	public int length(final IScope scope) {
-		try {
-			getContents(scope);
-		} catch (final GamaRuntimeException e) {
-			GAMA.reportError(e);
-			return 0;
-		}
+		getContents(scope);
 		return buffer.length(scope);
 	}
 
@@ -316,12 +295,7 @@ public abstract class GamaFile<K, V> implements IGamaFile<K, V> {
 
 	@Override
 	public V any(final IScope scope) {
-		try {
-			getContents(scope);
-		} catch (final GamaRuntimeException e) {
-			GAMA.reportError(e);
-			e.printStackTrace();
-		}
+		getContents(scope);
 		return buffer.any(scope);
 	}
 

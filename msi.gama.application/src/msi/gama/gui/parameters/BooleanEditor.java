@@ -68,6 +68,9 @@ public class BooleanEditor extends AbstractEditor {
 	@Override
 	protected void displayParameterValue() {
 		Boolean b = (Boolean) currentValue;
+		if ( b == null ) {
+			b = false;
+		}
 		button.setText(b ? "true" : "false");
 		button.setSelection(b);
 	}

@@ -38,7 +38,6 @@ import org.jgrapht.*;
 import org.jgrapht.alg.*;
 import org.jgrapht.graph.*;
 
-
 public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	protected final Map<V, _Vertex<E>> vertexMap;
@@ -222,8 +221,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			edge = newEdge(e, v1, v2);
 		} catch (final GamaRuntimeException e1) {
 			e1.addContext("Impossible to create edge from " + StringUtils.toGaml(e) + " in graph " + this);
-			GAMA.reportError(e1);
-			return false;
+			throw e1;
 		}
 		if ( edge == null ) { return false; }
 		edgeMap.put((E) e, edge);
@@ -248,8 +246,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 			vertex = newVertex(v);
 		} catch (final GamaRuntimeException e) {
 			e.addContext("Impossible to create vertex from " + StringUtils.toGaml(v) + " in graph " + this);
-			GAMA.reportError(e);
-			return false;
+			throw e;
 		}
 		if ( vertex == null ) { return false; }
 		vertexMap.put((V) v, vertex);
@@ -630,7 +627,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	@Override
 	public E last(final IScope scope) {
 		// Solution d�bile. On devrait conserver le dernier entr�.
-		return new GamaList<E>((Collection) vertexSet()).last(scope); // Attention a l'ordre
+		return new GamaList<E>(vertexSet()).last(scope); // Attention a l'ordre
 	}
 
 	@Override
@@ -809,7 +806,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 
 	@Override
 	public Iterable<E> iterable(final IScope scope) {
-		return (listValue(scope));
+		return listValue(scope);
 	}
 
 	@Override
