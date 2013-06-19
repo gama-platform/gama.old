@@ -275,4 +275,28 @@ public class GAML {
 		if ( exp == null ) { return null; }
 		return (ExperimentDescription) exp.getDescription();
 	}
+
+	public static class IsLiving implements Predicate<IAgent> {
+
+		/**
+		 * Method apply()
+		 * @see com.google.common.base.Predicate#apply(java.lang.Object)
+		 */
+		@Override
+		public boolean apply(final IAgent input) {
+			return input != null && !input.dead();
+		}
+
+	}
+
+	public static IsLiving isLiving = new IsLiving();
+
+	/**
+	 * @param scope
+	 * @param iterable
+	 * @return
+	 */
+	public static Iterable<IAgent> allLivingAgents(final Iterable<IAgent> iterable) {
+		return Iterables.filter(iterable, isLiving);
+	}
 }
