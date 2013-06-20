@@ -228,8 +228,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 			if(this.displaySurface.rotation){		
 				frame++;
+				gl.glTranslated(env_width/2, -env_height/2, 0);
+				gl.glRotatef(frame, 0, 0, 1);
+				gl.glTranslated(-env_width/2, +env_height/2, 0);
 			}
-			gl.glRotatef(frame, 0, 0, 1);
+			
 			
 			this.drawScene();
 			// this.DrawShapeFile();
