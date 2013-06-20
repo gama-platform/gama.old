@@ -141,6 +141,11 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public void initialize(final double env_width, final double env_height, final LayeredDisplayOutput out) {
 		GuiUtils.debug("JOGLAWTDisplaySurface1.1.initialize");
 		super.initialize(env_width, env_height, out);
+		
+		// Call sun.awt.noerasebackground to reduce the flickering when creating a popup menu,
+		// due to AWT erasing the GLCanvas every time before jogl repaint.
+		System.setProperty("sun.awt.noerasebackground", "true");
+		
 		agentsMenu = new PopupMenu();
 		add(agentsMenu);
 		renderer = new JOGLAWTGLRenderer(this);
@@ -416,11 +421,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public void zoomIn() {
 		float incrementalZoomStep;
 		// Check if Z is not equal to 0 (avoid being block on z=0)
-		if ( renderer.camera.getPosition().getZ() != 0 ) {
-			incrementalZoomStep = (float) renderer.camera.getPosition().getZ() / 10;
-		} else {
-			incrementalZoomStep = 0.1f;
-		}
 //		renderer.camera.getPosition().setZ(renderer.camera.getPosition().getZ() - incrementalZoomStep);
 //		// renderer.camera.getTarget().setZ(renderer.camera.getTarget().getZ() - incrementalZoomStep);
 //		renderer.camera.setRadius(renderer.camera.getPosition().getZ() - incrementalZoomStep);
@@ -431,15 +431,27 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 //		zoomFit = false;
 		if(!this.switchCamera)
 		{
-		renderer.camera.setRadius(renderer.camera.getRadius()-incrementalZoomStep);
-		renderer.camera.rotation();
+			if ( renderer.camera.getPosition().getZ() != 0 ) {
+				incrementalZoomStep = (float) renderer.camera.getRadius() / 10;
+			} else {
+				incrementalZoomStep = 0.1f;
+			}
+			renderer.camera.setRadius(renderer.camera.getRadius()-incrementalZoomStep);
+			renderer.camera.rotation();
+			setZoomLevel(renderer.camera.getMaxDim() * AbstractCamera.INIT_Z_FACTOR / renderer.camera.getRadius());
+
 		}
 		else
 		{
+			if ( renderer.camera.getPosition().getZ() != 0 ) {
+				incrementalZoomStep = (float) renderer.camera.getPosition().getZ() / 10;
+			} else {
+				incrementalZoomStep = 0.1f;
+			}
 			renderer.camera.setPosition(renderer.camera.getPosition().add(renderer.camera.getForward().scalarMultiply(renderer.camera.getSpeed()*800))); //on recule
 			renderer.camera.setTarget(renderer.camera.getForward().add(renderer.camera.getPosition().getX(), renderer.camera.getPosition().getY(), renderer.camera.getPosition().getZ())); 
+			setZoomLevel(renderer.camera.getMaxDim() * AbstractCamera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
 		}
-		setZoomLevel(renderer.camera.getMaxDim() * AbstractCamera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
 
 	}
 
@@ -447,11 +459,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public void zoomOut() {
 		float incrementalZoomStep;
 		// Check if Z is not equal to 0 (avoid being block on z=0)
-		if ( renderer.camera.getPosition().getZ() != 0 ) {
-			incrementalZoomStep = (float) renderer.camera.getPosition().getZ() / 10;
-		} else {
-			incrementalZoomStep = 0.1f;
-		}
 //		renderer.camera.getPosition().setZ(renderer.camera.getPosition().getZ() + incrementalZoomStep);
 //		renderer.camera.getTarget().setZ(renderer.camera.getTarget().getZ() + incrementalZoomStep);
 //		// FIXME Approximate
@@ -460,15 +467,28 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 //		zoomFit = false;
 		if(!this.switchCamera)
 		{
-		renderer.camera.setRadius(renderer.camera.getRadius()+incrementalZoomStep);
-		renderer.camera.rotation();
+			if ( renderer.camera.getPosition().getZ() != 0 ) {
+				incrementalZoomStep = (float) renderer.camera.getRadius() / 10;
+			} else {
+				incrementalZoomStep = 0.1f;
+			}
+			renderer.camera.setRadius(renderer.camera.getRadius()+incrementalZoomStep);
+			renderer.camera.rotation();
+			setZoomLevel(renderer.camera.getMaxDim() * AbstractCamera.INIT_Z_FACTOR / renderer.camera.getRadius());
+
 		}
 		else
 		{
+			if ( renderer.camera.getPosition().getZ() != 0 ) {
+				incrementalZoomStep = (float) renderer.camera.getPosition().getZ() / 10;
+			} else {
+				incrementalZoomStep = 0.1f;
+			}
 			renderer.camera.setPosition(renderer.camera.getPosition().subtract(renderer.camera.getForward().scalarMultiply(renderer.camera.getSpeed()*800))); //on recule
 			renderer.camera.setTarget(renderer.camera.getForward().add(renderer.camera.getPosition().getX(), renderer.camera.getPosition().getY(), renderer.camera.getPosition().getZ())); 
+			setZoomLevel(renderer.camera.getMaxDim() * AbstractCamera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
+
 		}
-		setZoomLevel(renderer.camera.getMaxDim() * AbstractCamera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
 	}
 
 	@Override
@@ -529,6 +549,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	@Override
 	public void toggleSelectRectangle() {
 		selectRectangle = !selectRectangle;
+		zoomFit();
 
 		/*
 		 * if(Arcball == true){

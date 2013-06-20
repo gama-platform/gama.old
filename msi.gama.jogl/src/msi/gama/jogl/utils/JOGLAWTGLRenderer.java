@@ -3,7 +3,14 @@ package msi.gama.jogl.utils;
 import static javax.media.opengl.GL.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.nio.DoubleBuffer;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+import java.util.ArrayList;
+
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
 import msi.gama.jogl.JOGLAWTDisplaySurface;
@@ -20,6 +27,7 @@ import msi.gama.outputs.OutputSynchronizer;
 import utils.GLUtil;
 import com.sun.opengl.util.*;
 import com.sun.opengl.util.texture.*;
+import javax.vecmath.Matrix4f;
 
 public class JOGLAWTGLRenderer implements GLEventListener {
 
@@ -86,11 +94,19 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	// private GLUquadric quadratic; // Used For Our Quadric
 	// hdviet 27/05/2012
 	// add attribute to ArcBall model
-	private final Matrix4f LastRot = new Matrix4f();
-	private final Matrix4f ThisRot = new Matrix4f();
+	private final msi.gama.jogl.utils.Camera.Arcball.Matrix4f LastRot = new msi.gama.jogl.utils.Camera.Arcball.Matrix4f();
+	private final msi.gama.jogl.utils.Camera.Arcball.Matrix4f ThisRot = new msi.gama.jogl.utils.Camera.Arcball.Matrix4f();
 	private final Object matrixLock = new Object();
 	private final float[] matrix = new float[16];
-
+	
+	int[] viewport = new int[4];
+    double mvmatrix[] = new double[16];
+    double projmatrix[] = new double[16];
+    Vector3D worldC = new Vector3D();
+    ArrayList<Integer> arrList = new ArrayList<Integer>();
+//    public Point p = null;
+    
+    
 	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {
 		
 		
@@ -177,8 +193,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		camera.UpdateCamera(gl, glu, width, height);
 		scene = new ModelScene(this);
 		graphicsGLUtils = new MyGraphics(this);
-		// hdviet added 28j/05/2012
-		// Start Of User Initialization
+//		// hdviet added 28j/05/2012
+//		// Start Of User Initialization
 		LastRot.setIdentity(); // Reset Rotation
 		ThisRot.setIdentity(); // Reset Rotation
 		ThisRot.get(matrix);
@@ -211,10 +227,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			height = drawable.getHeight();
 			
 			
-			
+			gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
+	        gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, mvmatrix, 0);
+	        gl.glGetDoublev(GL.GL_PROJECTION_MATRIX, projmatrix, 0);
 
 			// Clear the screen and the depth buffer
-			gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+			gl.glClearDepth(1.0f);
+			gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 			gl.glMatrixMode(GL.GL_PROJECTION);
 			// Reset the view (x, y, z axes back to normal)
@@ -251,19 +270,20 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				// gl.glDisable(GL_DEPTH_TEST); // Turn depth testing off
 			} else {
 				gl.glDisable(GL_BLEND); // Turn blending off
-				gl.glEnable(GL_DEPTH_TEST); // Turn depth testing on
+//				gl.glEnable(GL_DEPTH_TEST);
+				gl.glEnable(GL_STENCIL_TEST);
 			}
 
 			// hdviet added 02/06/2012
 			gl.glPushMatrix();
 			gl.glMultMatrixf(matrix, 0);
-
+			
 			// Use polygon offset for a better edges rendering
 			// (http://www.glprogramming.com/red/chapter06.html#name4)
 			gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
-			gl.glPolygonOffset(1, 1);
+			gl.glPolygonOffset(0, 1);
 
-			//gl.glDisable(GL_DEPTH_TEST);
+//			gl.glDisable(GL_DEPTH_TEST);
 
 			if(this.displaySurface.rotation){		
 				frame++;
@@ -271,6 +291,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			gl.glRotatef(frame, 0, 0, 1);
 			
 			this.drawScene();
+
 
 			// this.DrawShapeFile();
 			// this.DrawCollada();
@@ -289,65 +310,123 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	}
 
 	public Point GetRealWorldPointFromWindowPoint(final Point windowPoint) {
+	    int realy = 0;// GL y coord pos
+	    double[] wcoord = new double[4];// wx, wy, wz;// returned xyz coords
 
-		final int viewport[] = new int[4];
-		final double mvmatrix[] = new double[16];
-		final double projmatrix[] = new double[16];
-		int realy = 0;// GL y coord pos
-		final double wcoord[] = new double[4];// wx, wy, wz;// returned xyz coords
-
-		final int x = windowPoint.x, y = windowPoint.y;
-
+		int x = (int) windowPoint.getX(), y = (int) windowPoint.getY();	
 		
-		gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, mvmatrix, 0);
-		gl.glGetDoublev(GL.GL_PROJECTION_MATRIX, projmatrix, 0);
-		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
+//		System.out.println("viewport " + viewport[0]+"  "+ viewport[1] +"  "+ viewport[2]+"  "+ viewport[3] );
+		/* note viewport[3] is height of window in pixels */		
+		realy = viewport[3] - y;
 		
-		System.out.println("viewport" + viewport[0] + viewport[1] + viewport[2] + viewport[3] );
-		/* note viewport[3] is height of window in pixels */
-		realy = viewport[3] - y - 1;
-
-		final FloatBuffer floatBuffer = FloatBuffer.allocate(1);
-		gl.glReadPixels(x, realy, 1, 1, GL.GL_DEPTH_COMPONENT, GL.GL_FLOAT, floatBuffer);
-		final float z = floatBuffer.get(0);
-
-
-		glu.gluUnProject(x, realy, z, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
+		glu.gluUnProject( (double) x, (double) realy, 0.1, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0 );	
+		Vector3D v1 = new Vector3D(wcoord[0],wcoord[1],wcoord[2]);
+//		System.out.println("World coords at z=0.1 are ( " //
+//              + wcoord[0] + ", " + wcoord[1] + ", " + wcoord[2]
+//              + ")");
 		
+		glu.gluUnProject( (double) x, (double) realy, 0.9, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0 );
+		Vector3D v2 = new Vector3D(wcoord[0],wcoord[1],wcoord[2]);
+//		System.out.println("World coords at z=0.9 are ( " //
+//	              + wcoord[0] + ", " + wcoord[1] + ", " + wcoord[2]
+//	              + ")");
 		
-		 System.out.println("Window coords  x:" + windowPoint.x + " y:" + windowPoint.y);
-		 System.out.println("World coords at z=" + z + "are (" + wcoord[0] + ", " + wcoord[1] + ", " + wcoord[2] + ")");
-		 
+		Vector3D v3 = v2.subtract(v1);
+		v3.normalize();
+		float distance = (float) (camera.getPosition().getZ()/Vector3D.dotProduct(camera.getForward(), v3));
+		worldC = camera.getPosition().add( v3.scalarMultiply( distance ) );
+//		System.out.println("World coords ( " //
+//	              + worldC.x+ ", " + worldC.y+", "+worldC.z+")");
 
-		gl.glFlush();
-
-		final Point realWorldPoint = new Point((int) wcoord[0], (int) wcoord[1]);
+		final Point realWorldPoint = new Point((int) worldC.x, (int) worldC.y);
 		return realWorldPoint;
 	}
 
-	public void DrawROI() {
-
+	public ArrayList<Integer> DrawROI() {
 		if ( camera.enableROIDrawing ) {
+			arrList.clear();
 			Point windowPressedPoint = new Point(camera.lastxPressed, camera.lastyPressed);
 			Point realPressedPoint = GetRealWorldPointFromWindowPoint(windowPressedPoint);
 
 			Point windowmousePositionPoint = new Point(camera.mousePosition.x, camera.mousePosition.y);
 			Point realmousePositionPoint = GetRealWorldPointFromWindowPoint(windowmousePositionPoint);
 
-			System.out.println("From" + realPressedPoint.x + "," + realPressedPoint.y);
-			System.out.println("To" + realmousePositionPoint.x + "," + realmousePositionPoint.y);
-
-			// System.out.println("World coords are (" //+ realPoint.x + ", " + realPoint.y);
+//			System.out.println("From" + realPressedPoint.x + "," + realPressedPoint.y);
+//			System.out.println("To" + realmousePositionPoint.x + "," + realmousePositionPoint.y);
 
 			if ( camera.isModelCentered ) {
 				gl.glTranslated(-env_width / 2, env_height / 2, 0.0f);
 			}
 
-			myGLDrawer.DrawROI(gl, realPressedPoint.x - env_width / 2, -(realPressedPoint.y - env_height / 2),
-				realmousePositionPoint.x - env_width / 2, -(realmousePositionPoint.y - env_height / 2));
+			myGLDrawer.DrawROI(gl, realPressedPoint.x + env_width / 2, -(realPressedPoint.y - env_height / 2),
+				realmousePositionPoint.x + env_width / 2, -(realmousePositionPoint.y - env_height / 2));
+			
+			arrList.add(0, realPressedPoint.x);
+			arrList.add(1, realPressedPoint.y);
+			arrList.add(2, realmousePositionPoint.x);
+			arrList.add(3, realmousePositionPoint.y);
 
 		}
+		
+		return arrList;
 
+	}
+	
+	public void ROIZoom()
+	{
+		int envWidth = (int)Math.abs((arrList.get(0) + env_width / 2)-(arrList.get(2) + env_width / 2));
+		int envHeight = (int) Math.abs((arrList.get(1) - env_height / 2)-(arrList.get(3) - env_height / 2));
+		
+		double maxDim;
+		
+		if(!this.displaySurface.switchCamera)
+		{
+			if ( envWidth > envHeight ) {
+				camera.setRadius(envWidth*1.5);
+			} else {
+				camera.setRadius(envHeight*1.5);
+			}
+			if( arrList.get(0) < arrList.get(2) && arrList.get(1)> arrList.get(3))
+			{
+				camera.setTarget(new Vector3D(worldC.x-envWidth/2,worldC.y+envHeight/2,0.0));
+			}
+			else if(arrList.get(0) < arrList.get(2) && arrList.get(1)< arrList.get(3))
+			{
+				camera.setTarget(new Vector3D(worldC.x-envWidth/2,worldC.y-envHeight/2,0.0));
+			}
+			else if(arrList.get(0) > arrList.get(2) && arrList.get(1)< arrList.get(3))
+			{
+				camera.setTarget(new Vector3D(worldC.x+envWidth/2,worldC.y-envHeight/2,0.0));
+			}
+			else if(arrList.get(0) > arrList.get(2) && arrList.get(1)> arrList.get(3))
+				camera.setTarget(new Vector3D(worldC.x+envWidth/2,worldC.y+envHeight/2,0.0));
+			
+			camera.rotation();
+		}
+		else
+		{
+			if ( envWidth > envHeight ) {
+				maxDim = envWidth*1.5;
+			} else {
+				maxDim = envHeight*1.5;
+			}
+			if( arrList.get(0) < arrList.get(2) && arrList.get(1)> arrList.get(3))
+			{
+				camera.setPosition(new Vector3D(worldC.x-envWidth/2,worldC.y+envHeight/2, maxDim));
+			}
+			else if(arrList.get(0) < arrList.get(2) && arrList.get(1)< arrList.get(3))
+			{
+				camera.setPosition(new Vector3D(worldC.x-envWidth/2,worldC.y-envHeight/2,maxDim));
+			}
+			else if(arrList.get(0) > arrList.get(2) && arrList.get(1)< arrList.get(3))
+			{
+				camera.setPosition(new Vector3D(worldC.x+envWidth/2,worldC.y-envHeight/2,maxDim));
+			}
+			else if(arrList.get(0) > arrList.get(2) && arrList.get(1)> arrList.get(3))
+				camera.setPosition(new Vector3D(worldC.x+envWidth/2,worldC.y+envHeight/2,maxDim));
+
+			camera.vectorsFromAngles();
+		}
 	}
 
 	@Override
@@ -365,10 +444,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glMatrixMode(GL_MODELVIEW);
 		gl.glLoadIdentity(); // reset
 		// perspective view
-		gl.glViewport(10, 10, width - 20, height - 20);
 		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glLoadIdentity();
-		glu.gluPerspective(45.0f, aspect, 0.1f, 100.0f);
+		glu.gluPerspective(45.0f, aspect, 0.1f, 1000.0f);
 		glu.gluLookAt(camera.getPosition().getX(), camera.getPosition().getY(), camera.getPosition().getZ(), camera.getTarget().getX(), 
 				camera.getTarget().getY(), camera.getTarget().getZ(), 0,0,1);
 		arcBall.setBounds(width, height);
@@ -479,6 +557,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public void drawModel(final boolean picking) {
 		scene.draw(this, picking, true, true);
+		
+//		gl.glColor3f(0.0f,0.0f,1.0f); //blue color
+//	    
+//		gl.glPointSize(10.0f);//set point size to 10 pixels
+//	    
+//		gl.glBegin(GL_POINTS); //starts drawing of points
+//		gl.glVertex3f((float)(worldC.x+env_width / 2),(float)(worldC.y-env_height / 2),0.0f);//upper-right corner
+//		gl.glEnd();//end drawing of points
 	}
 
 	/**
@@ -666,6 +752,28 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public void CalculateFrameRate() {
 
+	}
+	
+	private float[] unProject(float winX, float winY, float winZ,
+			Matrix4f modelView, Matrix4f projection,
+            int[] view) 
+	{
+		float[] in = new float[4];
+		Matrix4f m = new Matrix4f();
+		m.mul(modelView, projection);
+		m.invert();
+		in[0] = (winX-(float)view[0])/(float)view[2]*2f-1f;
+		in[1] = (winY-(float)view[1])/(float)view[3]*2f-1f;
+		in[2] = 2f*winZ-1f;
+		in[3] = 1f;
+		
+		float[] out = new float[3];
+		out[0]=m.m00*in[0]+m.m10*in[1]+m.m20*in[2]+m.m30*in[3];
+		out[1]=m.m01*in[0]+m.m11*in[1]+m.m21*in[2]+m.m31*in[3];
+		out[2]=m.m02*in[0]+m.m12*in[1]+m.m22*in[2]+m.m32*in[3];
+		//out[3]=m.m03*in[0]+m.m13*in[1]+m.m23*in[2]+m.m33*in[3];  -- don't need
+		
+		return out;
 	}
 
 }

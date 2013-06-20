@@ -482,7 +482,8 @@ public boolean isInitialized() {
 		}
 
 		@Override
-		protected void _draw(GeometryObject geometry) {
+		protected void _draw(GeometryObject geometry) 
+		{
 			// Rotate angle (in XY plan)
 			if ( geometry.angle != 0 ) {
 				renderer.gl.glTranslated(geometry.geometry.getCentroid().getX(), this.jtsDrawer.yFlag *
@@ -492,6 +493,9 @@ public boolean isInitialized() {
 					geometry.geometry.getCentroid().getY(), 0.0d);
 			}
 			for ( int i = 0; i < geometry.geometry.getNumGeometries(); i++ ) {
+				renderer.gl.glEnable(GL_DEPTH_TEST);
+				renderer.gl.glStencilFunc(GL_GREATER, 1,1);
+//				renderer.gl.glStencilOp(GL_KEEP, GL_ZERO, GL_REPLACE);				
 				if ( geometry.geometry.getGeometryType() == "MultiPolygon" ) {
 					jtsDrawer.DrawMultiPolygon((MultiPolygon) geometry.geometry, geometry.z_layer, geometry.color,
 						geometry.alpha, geometry.fill, geometry.border, geometry.angle, geometry.height,
@@ -507,6 +511,9 @@ public boolean isInitialized() {
 								geometry.alpha, geometry.fill, geometry.height, geometry.angle, true, geometry.border,
 								geometry.rounded);
 						} else {
+							renderer.gl.glStencilFunc(GL_ALWAYS,0 ,1); 
+							renderer.gl.glDisable(GL_DEPTH_TEST);						
+							renderer.gl.glStencilOp(GL_KEEP, GL_ZERO, GL_REPLACE);				
 							jtsDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.z_layer, geometry.color,
 								geometry.alpha, geometry.fill, geometry.border, geometry.isTextured, geometry.angle,
 								true, geometry.rounded);

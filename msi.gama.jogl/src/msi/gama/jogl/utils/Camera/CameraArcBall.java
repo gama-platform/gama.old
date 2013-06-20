@@ -5,6 +5,7 @@ import static java.awt.event.KeyEvent.VK_LEFT;
 import static java.awt.event.KeyEvent.VK_RIGHT;
 import static java.awt.event.KeyEvent.VK_UP;
 
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -16,9 +17,11 @@ import javax.swing.SwingUtilities;
 import com.vividsolutions.jts.geom.Envelope;
 
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
+import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
+import msi.gama.runtime.GAMA;
 
 public class CameraArcBall extends AbstractCamera {
 
@@ -32,9 +35,12 @@ public class CameraArcBall extends AbstractCamera {
 	private double _orientation;
 	
 	public double _sensivity;
+	private Vector3D _forward;
 	
 	public CameraArcBall(JOGLAWTGLRenderer joglawtglRenderer) {
 		super(joglawtglRenderer);
+		
+		_forward = new Vector3D();
 		
 		_orientation = 1.0;
     	_phi = 90.0;
@@ -49,6 +55,8 @@ public class CameraArcBall extends AbstractCamera {
 	public CameraArcBall(double xPos, double yPos, double zPos, double xLPos,
 			double yLPos, double zLPos, JOGLAWTGLRenderer renderer) {
 		super(xPos, yPos, zPos, xLPos, yLPos, zLPos, renderer);
+		_forward = new Vector3D();
+		
 		_position.x= xPos;
 		_position.y= yPos;
 		_position.z= zPos;
@@ -97,7 +105,12 @@ public class CameraArcBall extends AbstractCamera {
 		
 		_position.x = radius*sinAngle*Math.sin(_phi*Math.PI/180.f)+_target.x;
 		_position.z = radius*cosAngle*Math.sin(_phi*Math.PI/180.f)+_target.z;
-		_position.y = radius*Math.cos(_phi*Math.PI/180.f)+_target.y;	
+		_position.y = radius*Math.cos(_phi*Math.PI/180.f)+_target.y;
+		
+	    double r_temp = Math.cos(_phi*Math.PI/180.f);
+	    _forward.z = -Math.sin(_phi*Math.PI/180.f);
+	    _forward.x = r_temp*-Math.cos(_theta*Math.PI/180.f);
+	    _forward.y = r_temp*-Math.sin((_theta*Math.PI)/180.f);
 	}
 	
 //	public void followAgent(IAgent a) {
@@ -266,6 +279,12 @@ public class CameraArcBall extends AbstractCamera {
 	 		}
 	    }
 	}
+	
+    @Override
+    public Vector3D getForward()
+    {
+    	return this._forward;
+    }
 
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent arg0) {	
@@ -293,7 +312,7 @@ public class CameraArcBall extends AbstractCamera {
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
 		
-		if ( isArcBallOn(arg0) && isModelCentered || myRenderer.displaySurface.selectRectangle ) 
+		if ( isArcBallOn(arg0) && isModelCentered) 
 		{
 			//check the difference between the current x and the last x position
 			int horizMovement = arg0.getX()- lastxPressed;
@@ -309,6 +328,13 @@ public class CameraArcBall extends AbstractCamera {
 			_phi -= vertMovement*_sensivity;
 			
 			rotation();
+		}
+		else if(myRenderer.displaySurface.selectRectangle && _phi>85 && _phi<95 && _theta>355 && _theta <365)
+		{
+			mousePosition.x = arg0.getX() ; 
+			mousePosition.y = arg0.getY() ; 
+			enableROIDrawing = true;
+			myRenderer.DrawROI();
 		}
 		else
 		{
@@ -346,14 +372,14 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		if ( isArcBallOn(arg0) && isModelCentered ) {
-			if ( SwingUtilities.isRightMouseButton(arg0) ) {
-				myRenderer.reset();
-			}
-		} else {
-			// myCamera.PrintParam();
-			// System.out.println( "x:" + mouseEvent.getX() + " y:" + mouseEvent.getY());
-		}
+//		if ( isArcBallOn(arg0) && isModelCentered ) {
+//			if ( arg0.getButton() ==3) {
+//				myRenderer.reset();
+//			}
+//		} else {
+//			// myCamera.PrintParam();
+//			// System.out.println( "x:" + mouseEvent.getX() + " y:" + mouseEvent.getY());
+//		}
 	}
 
 	@Override
@@ -368,17 +394,22 @@ public class CameraArcBall extends AbstractCamera {
 		if(myRenderer.displaySurface.picking)
 		{
 			//Activate Picking when press and right click and if in Picking mode
-			if(SwingUtilities.isRightMouseButton(arg0))
+			if(arg0.getButton() ==3)
 				isPickedPressed = true;	
 			
 			mousePosition.x = arg0.getX();
 			mousePosition.y = arg0.getY();
 		}
+		
+		myRenderer.GetRealWorldPointFromWindowPoint(new Point(arg0.getX(),arg0.getY()));
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
-		if ( myRenderer.displaySurface.selectRectangle ) {
+		if ( myRenderer.displaySurface.selectRectangle && _phi>85 && _phi<95 && _theta>355 && _theta <365 && enableROIDrawing==true ) {
+			myRenderer.ROIZoom();
+//			GAMA.getSimulation().getTopology().getAgentClosestTo(source, filter)
+//			GAMA.getSimulation().getTopology().getSpatialIndex().allAtDistance(source, dist, f)
 			enableROIDrawing = false;
 		}
 	}

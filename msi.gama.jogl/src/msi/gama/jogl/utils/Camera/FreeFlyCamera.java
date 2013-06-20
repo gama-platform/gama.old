@@ -5,6 +5,7 @@ import static java.awt.event.KeyEvent.VK_LEFT;
 import static java.awt.event.KeyEvent.VK_RIGHT;
 import static java.awt.event.KeyEvent.VK_UP;
 
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -213,19 +214,32 @@ public class FreeFlyCamera extends AbstractCamera {
     {
     	return this._speed;
     }
+    
+    public void setZPosition(double z)
+    {
+    	this._position.z = z;
+    }
 	
     
 	@Override
-	public void mouseWheelMoved(MouseWheelEvent arg0) {		
+	public void mouseWheelMoved(MouseWheelEvent arg0) {
+		
+		float incrementalZoomStep;
+		// Check if Z is not equal to 0 (avoid being block on z=0)
+		if ( _position.getZ() != 0 ) {
+			incrementalZoomStep = (float) _position.getZ() / 10;
+		} else {
+			incrementalZoomStep = 0.1f;
+		}
 		if(arg0.getWheelRotation() > 0)
 		{
-			_position = _position.subtract(_forward.scalarMultiply(_speed*800)); //on recule
+			_position = _position.subtract(_forward.scalarMultiply(_speed*800+Math.abs(incrementalZoomStep))); //on recule
 			myRenderer.displaySurface.setZoomLevel(myRenderer.camera.getMaxDim() * INIT_Z_FACTOR / _position.getZ());
 			_target = _forward.add(_position.x, _position.y, _position.z); //comme on a bougé, on recalcule la cible fixée par la caméra
 		}
 		else
 		{
-			_position = _position.add(_forward.scalarMultiply(_speed*800)); //on avance
+			_position = _position.add(_forward.scalarMultiply(_speed*800+Math.abs(incrementalZoomStep))); //on avance
 			myRenderer.displaySurface.setZoomLevel(myRenderer.camera.getMaxDim() * INIT_Z_FACTOR / _position.getZ());
 			_target = _forward.add(_position.x, _position.y, _position.z); //comme on a bougé, on recalcule la cible fixée par la caméra
 		}
@@ -233,20 +247,30 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
-		//check the difference between the current x and the last x position
-		int horizMovement = arg0.getX()- lastxPressed;
-		// check the difference between the current y and the last y position
-		int vertMovement = arg0.getY()  - lastyPressed; 
-		
-		// set lastx to the current x position
-		lastxPressed = arg0.getX() ; 
-		// set lastyPressed to the current y position
-		lastyPressed = arg0.getY();
-		
-		_theta -= horizMovement*_sensivity;					
-		_phi -= vertMovement*_sensivity;
-		
-		vectorsFromAngles();
+		if(myRenderer.displaySurface.selectRectangle && _phi>=-89 && _phi<-85)
+		{
+			mousePosition.x = arg0.getX() ; 
+			mousePosition.y = arg0.getY() ; 
+			enableROIDrawing = true;
+			myRenderer.DrawROI();
+		}
+		else
+		{
+			//check the difference between the current x and the last x position
+			int horizMovement = arg0.getX()- lastxPressed;
+			// check the difference between the current y and the last y position
+			int vertMovement = arg0.getY()  - lastyPressed; 
+			
+			// set lastx to the current x position
+			lastxPressed = arg0.getX() ; 
+			// set lastyPressed to the current y position
+			lastyPressed = arg0.getY();
+			
+			_theta -= horizMovement*_sensivity;					
+			_phi -= vertMovement*_sensivity;
+			
+			vectorsFromAngles();
+		}
 	}
 
 	@Override
@@ -259,14 +283,14 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
-		if ( isArcBallOn(arg0) && isModelCentered ) {
-			if ( SwingUtilities.isRightMouseButton(arg0) ) {
-				myRenderer.reset();
-			}
-		} else {
-			// myCamera.PrintParam();
-			// System.out.println( "x:" + mouseEvent.getX() + " y:" + mouseEvent.getY());
-		}
+//		if ( isArcBallOn(arg0) && isModelCentered ) {
+//			if (arg0.getButton() ==3) {
+//				myRenderer.reset();
+//			}
+//		} else {
+//			// myCamera.PrintParam();
+//			// System.out.println( "x:" + mouseEvent.getX() + " y:" + mouseEvent.getY());
+//		}
 	}
 
 	@Override
@@ -281,17 +305,23 @@ public class FreeFlyCamera extends AbstractCamera {
 		if(myRenderer.displaySurface.picking)
 		{
 			//Activate Picking when press and right click and if in Picking mode
-			if(SwingUtilities.isRightMouseButton(arg0))
+			if(arg0.getButton() ==3)
 				isPickedPressed = true;	
 			
 			mousePosition.x = arg0.getX();
 			mousePosition.y = arg0.getY();
 		}
+		
+		myRenderer.GetRealWorldPointFromWindowPoint(new Point(arg0.getX(),arg0.getY()));
+
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
-		if ( myRenderer.displaySurface.selectRectangle ) {
+		if ( myRenderer.displaySurface.selectRectangle && _phi>=-89 && _phi<-85 && enableROIDrawing==true ) {
+			myRenderer.ROIZoom();
+//			GAMA.getSimulation().getTopology().getAgentClosestTo(source, filter)
+//			GAMA.getSimulation().getTopology().getSpatialIndex().allAtDistance(source, dist, f)
 			enableROIDrawing = false;
 		}
 	}
@@ -348,6 +378,7 @@ public class FreeFlyCamera extends AbstractCamera {
 		System.out.println("xPos:" + _position.x + " yPos:" + _position.y  + " zPos:" + _position.z );
 		System.out.println("xLPos:" + _target.x + " yLPos:" + _target.y + " zLPos:" + _target.z);
 		System.out.println("_forwardX:" + _forward.x + " _forwardY:" + _forward.y + " _forwardZ:" + _forward.z);
+		System.out.println("_phi : "+_phi+" _theta : "+_theta);
 
 	}
 	

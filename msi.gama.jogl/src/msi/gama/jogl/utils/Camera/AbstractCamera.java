@@ -38,7 +38,7 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 
 	// picking
 	public boolean isPickedPressed = false;
-	public final Point mousePosition;
+	public Point mousePosition;
 
 	// ROI Drawing
 	public boolean enableROIDrawing = false;
@@ -102,6 +102,10 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 	{
 		this._target = target;
 	}
+	
+    public void setZPosition(double z){}
+    
+  	public void vectorsFromAngles(){}
 	
 	public void moveXYPlan(double diffx, double diffy, double speed) {}
 	
