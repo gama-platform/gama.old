@@ -86,6 +86,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
     double mvmatrix[] = new double[16];
     double projmatrix[] = new double[16];
     Vector3D worldCoordinates = new Vector3D();
+    
+    public boolean stencil = true;
 
     
 	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {	
@@ -210,15 +212,17 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				// gl.glDisable(GL_DEPTH_TEST); // Turn depth testing off
 			} else {
 				gl.glDisable(GL_BLEND); // Turn blending off
-//				gl.glEnable(GL_DEPTH_TEST);
-				gl.glEnable(GL_STENCIL_TEST);
+				if(!stencil)
+					gl.glEnable(GL_DEPTH_TEST);
+				else
+					gl.glEnable(GL_STENCIL_TEST);
 			}
 
 			
 			// Use polygon offset for a better edges rendering
 			// (http://www.glprogramming.com/red/chapter06.html#name4)
 			gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
-			gl.glPolygonOffset(0, 1);
+			gl.glPolygonOffset(1, 1);
 
 //			gl.glDisable(GL_DEPTH_TEST);
 
