@@ -10,6 +10,8 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.jogl.utils.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.*;
+
+import com.sun.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 
@@ -41,6 +43,11 @@ public class JTSDrawer {
 
 	// USe to inverse y composaant
 	public int yFlag;
+	
+	/** The earth texture. */
+	// private Texture earthTexture;
+	public float textureTop, textureBottom, textureLeft, textureRight;
+	public Texture[] textures = new Texture[3];
 
 	public JTSDrawer(final JOGLAWTGLRenderer gLRender) {
 
@@ -256,9 +263,9 @@ public class JTSDrawer {
 		myGl.glEnable(GL.GL_TEXTURE_2D);
 		// Enables this texture's target (e.g., GL_TEXTURE_2D) in the
 		// current GL context's state.
-		myGLRender.textures[2].enable();
+		textures[2].enable();
 		// Binds this texture to the current GL context.
-		myGLRender.textures[2].bind();
+		textures[2].bind();
 
 		/*
 		 * if ( angle != 0 ) {
@@ -287,16 +294,16 @@ public class JTSDrawer {
 	void DrawTexturedQuad(final Polygon p) {
 		myGl.glBegin(GL_QUADS);
 
-		myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureBottom);
+		myGl.glTexCoord2f(textureLeft, textureBottom);
 		myGl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag * p.getExteriorRing().getPointN(0).getY(), 0.0d);
 
-		myGl.glTexCoord2f(myGLRender.textureRight, myGLRender.textureBottom);
+		myGl.glTexCoord2f(textureRight, textureBottom);
 		myGl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag * p.getExteriorRing().getPointN(1).getY(), 0.0d);
 
-		myGl.glTexCoord2f(myGLRender.textureRight, myGLRender.textureTop);
+		myGl.glTexCoord2f(textureRight, textureTop);
 		myGl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag * p.getExteriorRing().getPointN(2).getY(), 0.0d);
 
-		myGl.glTexCoord2f(myGLRender.textureLeft, myGLRender.textureTop);
+		myGl.glTexCoord2f(textureLeft, textureTop);
 		myGl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag * p.getExteriorRing().getPointN(3).getY(), 0.0d);
 
 		myGl.glEnd();

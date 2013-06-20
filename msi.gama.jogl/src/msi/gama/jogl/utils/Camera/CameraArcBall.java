@@ -40,8 +40,7 @@ public class CameraArcBall extends AbstractCamera {
 	public CameraArcBall(JOGLAWTGLRenderer joglawtglRenderer) {
 		super(joglawtglRenderer);
 		
-		_forward = new Vector3D();
-		
+		_forward = new Vector3D();	
 		_orientation = 1.0;
     	_phi = 90.0;
         _theta = 360.00;
@@ -142,8 +141,8 @@ public class CameraArcBall extends AbstractCamera {
 		}
 
 		radius = getMaxDim() * INIT_Z_FACTOR;
-		_target.x = 0;
-		_target.y = 0;
+		_target.x = envWidth/2;
+		_target.y = -envHeight/2;
 		_target.z = 0;
 		_phi = 90.0;
         _theta = 360.00;
@@ -312,7 +311,7 @@ public class CameraArcBall extends AbstractCamera {
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
 		
-		if ( isArcBallOn(arg0) && isModelCentered) 
+		if ( isArcBallOn(arg0)) 
 		{
 			//check the difference between the current x and the last x position
 			int horizMovement = arg0.getX()- lastxPressed;
@@ -329,6 +328,7 @@ public class CameraArcBall extends AbstractCamera {
 			
 			rotation();
 		}
+		//ROI Is enabled only if the view is in a 2D plan.
 		else if(myRenderer.displaySurface.selectRectangle && _phi>85 && _phi<95 && _theta>355 && _theta <365)
 		{
 			mousePosition.x = arg0.getX() ; 

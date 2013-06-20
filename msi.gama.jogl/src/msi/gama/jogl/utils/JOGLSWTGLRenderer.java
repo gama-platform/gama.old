@@ -14,7 +14,7 @@ import msi.gama.jogl.JOGLSWTDisplaySurface;
 import msi.gama.jogl.JOGLSWTDisplaySurface.SelectedAgent;
 import msi.gama.jogl.scene.*;
 import msi.gama.jogl.scene.ObjectDrawerSWT.StringDrawerSWT;
-import msi.gama.jogl.utils.Camera.Camera;
+import msi.gama.jogl.utils.Camera.CameraArcBall;
 import msi.gama.jogl.utils.Camera.Arcball.*;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
 import msi.gama.jogl.utils.dem.DigitalElevationModelDrawerSWT;
@@ -55,7 +55,7 @@ public class JOGLSWTGLRenderer /*implements GLEventListener*/ {
 	public final double env_width;
 	public final double env_height;
 	// Camera
-	public Camera camera;
+	public CameraArcBall camera;
 	public MyGraphicsSWT graphicsGLUtils;
 	// Use to test and display basic opengl shape and primitive
 	public MyGLToyDrawer myGLDrawer;
@@ -660,12 +660,6 @@ public class JOGLSWTGLRenderer /*implements GLEventListener*/ {
 			System.out.println("From" + realPressedPoint.x + "," + realPressedPoint.y);
 			System.out.println("To" + realmousePositionPoint.x + "," + realmousePositionPoint.y);
 
-			// System.out.println("World coords are (" //+ realPoint.x + ", " + realPoint.y);
-
-			if ( camera.isModelCentered ) {
-				gl.glTranslated(-env_width / 2, env_height / 2, 0.0f);
-			}
-
 			myGLDrawer.DrawROI(gl, realPressedPoint.x - env_width / 2, -(realPressedPoint.y - env_height / 2),
 				realmousePositionPoint.x - env_width / 2, -(realmousePositionPoint.y - env_height / 2));
 
@@ -681,16 +675,10 @@ public class JOGLSWTGLRenderer /*implements GLEventListener*/ {
 	
 	public void drawScene() {
 		if ( displaySurface.picking ) {
-			// Display the model center on 0,0,0
-			if ( camera.isModelCentered ) {
-				gl.glTranslated(-env_width / 2, env_height / 2, 0.0f);
-			}
+
 			this.drawPickableObjects();
 		} else {
-			// Display the model center on 0,0,0
-			if ( camera.isModelCentered ) {
-				gl.glTranslated(-env_width / 2, env_height / 2, 0.0f);
-			}
+
 			// FIXME: Need to simplify , give a boolean to DrawModel to know
 			// if it's in Picking mode.
 
@@ -859,18 +847,7 @@ public class JOGLSWTGLRenderer /*implements GLEventListener*/ {
 
 	public void drawPickableObjects() {
 		if ( myListener.beginPicking(gl) ) {
-			// Need to to do a translation before to draw object and retranslate
-			// after.
-			// FIXME: need also to apply the arcball matrix to make it work in
-			// 3D
-			if ( camera.isModelCentered ) {
-				gl.glTranslated(-env_width / 2, env_height / 2, 0.0f);
-				drawModel(true);
-
-				gl.glTranslated(env_width / 2, -env_height / 2, 0.0f);
-			} else {
-				drawModel(true);
-			}
+			drawModel(true);
 			setPickedObjectIndex(myListener.endPicking(gl));
 		}
 

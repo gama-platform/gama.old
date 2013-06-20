@@ -3,12 +3,6 @@ package msi.gama.jogl.utils;
 import static javax.media.opengl.GL.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.DoubleBuffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
 import java.util.ArrayList;
 
 import javax.media.opengl.*;
@@ -16,7 +10,6 @@ import javax.media.opengl.glu.GLU;
 import msi.gama.jogl.JOGLAWTDisplaySurface;
 import msi.gama.jogl.scene.*;
 import msi.gama.jogl.utils.Camera.AbstractCamera;
-import msi.gama.jogl.utils.Camera.Camera;
 import msi.gama.jogl.utils.Camera.FreeFlyCamera;
 import msi.gama.jogl.utils.Camera.CameraArcBall;
 import msi.gama.jogl.utils.Camera.Arcball.*;
@@ -27,18 +20,20 @@ import msi.gama.outputs.OutputSynchronizer;
 import utils.GLUtil;
 import com.sun.opengl.util.*;
 import com.sun.opengl.util.texture.*;
-import javax.vecmath.Matrix4f;
+
 
 public class JOGLAWTGLRenderer implements GLEventListener {
 
+	public GLU glu;
+	public GL gl;
+	
 	// ///Static members//////
 	private static final boolean USE_VERTEX_ARRAY = false;
 	private static final int REFRESH_FPS = 30;
-	public static int CURR_TEXTURE_FILTER = 2; // currently used filter
+	
 	private static boolean BLENDING_ENABLED; // blending on/off
 	private static boolean IS_LIGHT_ON;
-	public GLU glu;
-	public GL gl;
+	
 	public final FPSAnimator animator;
 	private GLContext context;
 	public GLCanvas canvas;
@@ -46,26 +41,25 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private int width, height;
 	public final double env_width;
 	public final double env_height;
+	
 	// Camera
 	public AbstractCamera camera;
 	public MyGraphics graphicsGLUtils;
+	
 	// Use to test and display basic opengl shape and primitive
 	public MyGLToyDrawer myGLDrawer;
-	/** The earth texture. */
-	// private Texture earthTexture;
-	public float textureTop, textureBottom, textureLeft, textureRight;
-	public Texture[] textures = new Texture[3];
-
+	
 	// Lighting
 	private Color ambientLightValue;
 	// Blending
 
 	public JOGLAWTDisplaySurface displaySurface;
 	private ModelScene scene;
+	
 	// Use multiple view port
 	public final boolean multipleViewPort = false;
 	// Display model a a 3D Cube
-	private final boolean threeDCube = false;
+	private final boolean CubeDisplay = false;
 	// Handle Shape file
 	public ShapeFileReader myShapeFileReader;
 	// Arcball
@@ -77,39 +71,24 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private boolean polygonMode = true;
 	// Show JTS (GAMA) triangulation
 	public boolean JTSTriangulation = false;
-	// DEM
-	public DigitalElevationModelDrawer dem;
-	// use to do the triangulation only once per timestep.
-	// private boolean isPolygonTriangulated = false;
+	
+	//ROI Coordionates (x1,y1,x2,y2)
+    ArrayList<Integer> roi_List = new ArrayList<Integer>();
+
 
 	public int pickedObjectIndex = -1;
 	public ISceneObject currentPickedObject;
 	private int antialiasing = GL_NEAREST;
 	
 	public int frame=0;
-
-	// hdviet 27/05/2012
-	// add new listener for ArcBall
-	// public InputHandler arcBallListener;
-	// private GLUquadric quadratic; // Used For Our Quadric
-	// hdviet 27/05/2012
-	// add attribute to ArcBall model
-	private final msi.gama.jogl.utils.Camera.Arcball.Matrix4f LastRot = new msi.gama.jogl.utils.Camera.Arcball.Matrix4f();
-	private final msi.gama.jogl.utils.Camera.Arcball.Matrix4f ThisRot = new msi.gama.jogl.utils.Camera.Arcball.Matrix4f();
-	private final Object matrixLock = new Object();
-	private final float[] matrix = new float[16];
 	
 	int[] viewport = new int[4];
     double mvmatrix[] = new double[16];
     double projmatrix[] = new double[16];
-    Vector3D worldC = new Vector3D();
-    ArrayList<Integer> arrList = new ArrayList<Integer>();
-//    public Point p = null;
+    Vector3D worldCoordinates = new Vector3D();
+
     
-    
-	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {
-		
-		
+	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {	
 		// Enabling the stencil buffer
 		final GLCapabilities cap = new GLCapabilities();
 		cap.setStencilBits(8);
@@ -127,36 +106,10 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		canvas.requestFocusInWindow();
 		animator = new FPSAnimator(canvas, REFRESH_FPS, true);
 		displaySurface = d;
-		dem = new DigitalElevationModelDrawer(this);
 		env_width = d.getEnvWidth();
 		env_height = d.getEnvHeight();
-		
-
 	}
 	
-	public void switchCamera()
-	{
-		canvas.removeKeyListener(camera);
-		canvas.removeMouseListener(camera);
-		canvas.removeMouseMotionListener(camera);
-		canvas.removeMouseWheelListener(camera);
-		
-		if(displaySurface.switchCamera)
-			camera = new FreeFlyCamera(this);
-		else
-			camera = new CameraArcBall(this);
-		
-		canvas.addKeyListener(camera);
-		canvas.addMouseListener(camera);
-		canvas.addMouseMotionListener(camera);
-		canvas.addMouseWheelListener(camera);
-		
-	}
-
-	public void setAntiAliasing(final boolean antialias) {
-		antialiasing = antialias ? GL_LINEAR : GL_NEAREST;
-	}
-
 	@Override
 	public void init(final GLAutoDrawable drawable) {
 		
@@ -166,16 +119,20 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		glu = new GLU();
 		setContext(drawable.getContext());
 		arcBall = new ArcBall(width, height);
+		
 		// Set background color
 		gl.glClearColor(displaySurface.getBgColor().getRed(), displaySurface.getBgColor().getGreen(), displaySurface
 			.getBgColor().getBlue(), 1.0f);
 		// Enable smooth shading, which blends colors nicely, and smoothes out lighting.
 		GLUtil.enableSmooth(gl);
+		
 		// Perspective correction
 		gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		GLUtil.enableDepthTest(gl);
+		
 		// Set up the lighting for Light-1
 		GLUtil.InitializeLighting(gl, glu, width, ambientLightValue);
+		
 		// PolygonMode (Solid or lines)
 		if ( polygonMode ) {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
@@ -190,23 +147,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// problem when true with glutBitmapString
 		JOGLAWTGLRenderer.BLENDING_ENABLED = true;
 		IS_LIGHT_ON = true;
+		
 		camera.UpdateCamera(gl, glu, width, height);
+		
 		scene = new ModelScene(this);
 		graphicsGLUtils = new MyGraphics(this);
-//		// hdviet added 28j/05/2012
-//		// Start Of User Initialization
-		LastRot.setIdentity(); // Reset Rotation
-		ThisRot.setIdentity(); // Reset Rotation
-		ThisRot.get(matrix);
-
-		// FIXME: Need to be place somewhere (triggered by a button in Gama)
-
-		/*
-		 * if(dem !=null){
-		 * GuiUtils.debug("init in joglrender");
-		 * dem.init(gl);
-		 * }
-		 */
 
 		OutputSynchronizer.decInitializingViews(this.displaySurface.getOutputName());
 	}
@@ -214,12 +159,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	@Override
 	public void display(final GLAutoDrawable drawable) {
 		if ( displaySurface.canBeUpdated() ) {
-			// hdviet added 28/05/2012
-			synchronized (matrixLock) {
-				ThisRot.get(matrix);
-			}
 
-			// Get the OpenGL graphics context
 			gl = drawable.getGL();
 			setContext(drawable.getContext());
 
@@ -274,9 +214,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				gl.glEnable(GL_STENCIL_TEST);
 			}
 
-			// hdviet added 02/06/2012
-			gl.glPushMatrix();
-			gl.glMultMatrixf(matrix, 0);
 			
 			// Use polygon offset for a better edges rendering
 			// (http://www.glprogramming.com/red/chapter06.html#name4)
@@ -291,143 +228,18 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			gl.glRotatef(frame, 0, 0, 1);
 			
 			this.drawScene();
-
-
 			// this.DrawShapeFile();
-			// this.DrawCollada();
+			//this.DrawCollada();
 			gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
-
 			gl.glPopMatrix();
 
 			// ROI drawer
 			if ( this.displaySurface.selectRectangle ) {
 				DrawROI();
-			}
-			
-		}
-
-		// this.displaySurface.snapshot();
-	}
-
-	public Point GetRealWorldPointFromWindowPoint(final Point windowPoint) {
-	    int realy = 0;// GL y coord pos
-	    double[] wcoord = new double[4];// wx, wy, wz;// returned xyz coords
-
-		int x = (int) windowPoint.getX(), y = (int) windowPoint.getY();	
-		
-//		System.out.println("viewport " + viewport[0]+"  "+ viewport[1] +"  "+ viewport[2]+"  "+ viewport[3] );
-		/* note viewport[3] is height of window in pixels */		
-		realy = viewport[3] - y;
-		
-		glu.gluUnProject( (double) x, (double) realy, 0.1, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0 );	
-		Vector3D v1 = new Vector3D(wcoord[0],wcoord[1],wcoord[2]);
-//		System.out.println("World coords at z=0.1 are ( " //
-//              + wcoord[0] + ", " + wcoord[1] + ", " + wcoord[2]
-//              + ")");
-		
-		glu.gluUnProject( (double) x, (double) realy, 0.9, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0 );
-		Vector3D v2 = new Vector3D(wcoord[0],wcoord[1],wcoord[2]);
-//		System.out.println("World coords at z=0.9 are ( " //
-//	              + wcoord[0] + ", " + wcoord[1] + ", " + wcoord[2]
-//	              + ")");
-		
-		Vector3D v3 = v2.subtract(v1);
-		v3.normalize();
-		float distance = (float) (camera.getPosition().getZ()/Vector3D.dotProduct(camera.getForward(), v3));
-		worldC = camera.getPosition().add( v3.scalarMultiply( distance ) );
-//		System.out.println("World coords ( " //
-//	              + worldC.x+ ", " + worldC.y+", "+worldC.z+")");
-
-		final Point realWorldPoint = new Point((int) worldC.x, (int) worldC.y);
-		return realWorldPoint;
-	}
-
-	public ArrayList<Integer> DrawROI() {
-		if ( camera.enableROIDrawing ) {
-			arrList.clear();
-			Point windowPressedPoint = new Point(camera.lastxPressed, camera.lastyPressed);
-			Point realPressedPoint = GetRealWorldPointFromWindowPoint(windowPressedPoint);
-
-			Point windowmousePositionPoint = new Point(camera.mousePosition.x, camera.mousePosition.y);
-			Point realmousePositionPoint = GetRealWorldPointFromWindowPoint(windowmousePositionPoint);
-
-//			System.out.println("From" + realPressedPoint.x + "," + realPressedPoint.y);
-//			System.out.println("To" + realmousePositionPoint.x + "," + realmousePositionPoint.y);
-
-			if ( camera.isModelCentered ) {
-				gl.glTranslated(-env_width / 2, env_height / 2, 0.0f);
-			}
-
-			myGLDrawer.DrawROI(gl, realPressedPoint.x + env_width / 2, -(realPressedPoint.y - env_height / 2),
-				realmousePositionPoint.x + env_width / 2, -(realmousePositionPoint.y - env_height / 2));
-			
-			arrList.add(0, realPressedPoint.x);
-			arrList.add(1, realPressedPoint.y);
-			arrList.add(2, realmousePositionPoint.x);
-			arrList.add(3, realmousePositionPoint.y);
-
-		}
-		
-		return arrList;
-
-	}
-	
-	public void ROIZoom()
-	{
-		int envWidth = (int)Math.abs((arrList.get(0) + env_width / 2)-(arrList.get(2) + env_width / 2));
-		int envHeight = (int) Math.abs((arrList.get(1) - env_height / 2)-(arrList.get(3) - env_height / 2));
-		
-		double maxDim;
-		
-		if(!this.displaySurface.switchCamera)
-		{
-			if ( envWidth > envHeight ) {
-				camera.setRadius(envWidth*1.5);
-			} else {
-				camera.setRadius(envHeight*1.5);
-			}
-			if( arrList.get(0) < arrList.get(2) && arrList.get(1)> arrList.get(3))
-			{
-				camera.setTarget(new Vector3D(worldC.x-envWidth/2,worldC.y+envHeight/2,0.0));
-			}
-			else if(arrList.get(0) < arrList.get(2) && arrList.get(1)< arrList.get(3))
-			{
-				camera.setTarget(new Vector3D(worldC.x-envWidth/2,worldC.y-envHeight/2,0.0));
-			}
-			else if(arrList.get(0) > arrList.get(2) && arrList.get(1)< arrList.get(3))
-			{
-				camera.setTarget(new Vector3D(worldC.x+envWidth/2,worldC.y-envHeight/2,0.0));
-			}
-			else if(arrList.get(0) > arrList.get(2) && arrList.get(1)> arrList.get(3))
-				camera.setTarget(new Vector3D(worldC.x+envWidth/2,worldC.y+envHeight/2,0.0));
-			
-			camera.rotation();
-		}
-		else
-		{
-			if ( envWidth > envHeight ) {
-				maxDim = envWidth*1.5;
-			} else {
-				maxDim = envHeight*1.5;
-			}
-			if( arrList.get(0) < arrList.get(2) && arrList.get(1)> arrList.get(3))
-			{
-				camera.setPosition(new Vector3D(worldC.x-envWidth/2,worldC.y+envHeight/2, maxDim));
-			}
-			else if(arrList.get(0) < arrList.get(2) && arrList.get(1)< arrList.get(3))
-			{
-				camera.setPosition(new Vector3D(worldC.x-envWidth/2,worldC.y-envHeight/2,maxDim));
-			}
-			else if(arrList.get(0) > arrList.get(2) && arrList.get(1)< arrList.get(3))
-			{
-				camera.setPosition(new Vector3D(worldC.x+envWidth/2,worldC.y-envHeight/2,maxDim));
-			}
-			else if(arrList.get(0) > arrList.get(2) && arrList.get(1)> arrList.get(3))
-				camera.setPosition(new Vector3D(worldC.x+envWidth/2,worldC.y+envHeight/2,maxDim));
-
-			camera.vectorsFromAngles();
+			}		
 		}
 	}
+
 
 	@Override
 	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int arg3, final int arg4) {
@@ -455,24 +267,25 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	@Override
 	public void displayChanged(final GLAutoDrawable arg0, final boolean arg1, final boolean arg2) {}
 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	/**
+	 * Once the list of JTSGeometries has been created, OpenGL display call this
+	 * method every framerate. FIXME: Need to be optimize with the use of Vertex
+	 * Array or even VBO
+	 * @param picking
+	 * 
+	 */
+	public void drawModel(final boolean picking) {
+		scene.draw(this, picking, true, true);
+	}
+	
 	public void drawScene() {
 		if ( displaySurface.picking ) {
-			// Display the model center on 0,0,0
-			if ( camera.isModelCentered ) {
-				gl.glTranslated(-env_width / 2, env_height / 2, 0.0f);
-			}
 			gl.glViewport(0, 0, width, height);
 			this.drawPickableObjects();
 		} else {
-			// Display the model center on 0,0,0
-			if ( camera.isModelCentered ) {
-				gl.glTranslated(-env_width / 2, env_height / 2, 0.0f);
-			}
-			// FIXME: Need to simplify , give a boolean to DrawModel to know
-			// if it's in Picking mode.
-
-			if ( threeDCube ) {
-				draw3DCube();
+			if ( CubeDisplay ) {
+				drawCubeDisplay((float)env_width);
 
 			} else {
 				if ( !multipleViewPort ) {
@@ -500,12 +313,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 		}
 	}
-
-	private void draw3DCube() {
-		// float envMaxDim = (
-		// displaySurface.openGLGraphics).maxEnvDim;
-		final float envMaxDim = (float) env_width;
-
+	
+	private void drawCubeDisplay(float width) {
+		final float envMaxDim = width;
 		this.drawModel(false);
 		gl.glTranslatef(envMaxDim, 0, 0);
 		gl.glRotatef(90, 0, 1, 0);
@@ -518,81 +328,42 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		this.drawModel(false);
 		gl.glTranslatef(envMaxDim, 0, 0);
 		gl.glRotatef(90, 0, 1, 0);
-
 		gl.glRotatef(-90, 1, 0, 0);
 		gl.glTranslatef(0, envMaxDim, 0);
 		this.drawModel(false);
 		gl.glTranslatef(0, -envMaxDim, 0);
 		gl.glRotatef(90, 1, 0, 0);
-
 		gl.glRotatef(90, 1, 0, 0);
 		gl.glTranslatef(0, 0, envMaxDim);
 		this.drawModel(false);
-
 		gl.glTranslatef(0, 0, -envMaxDim);
 		gl.glRotatef(-90, 1, 0, 0);
-		/*
-		 * gl.glTranslatef(0,(
-		 * displaySurface.openGLGraphics).envWidth,0);
-		 * this.DrawModel(false);
-		 * 
-		 * gl.glTranslatef(0,-(
-		 * displaySurface.openGLGraphics).envWidth,0);
-		 * gl.glRotatef(90, 1, 0, 0);
-		 * 
-		 * gl.glTranslatef(0,-(
-		 * displaySurface.openGLGraphics).envWidth,0);
-		 * gl.glRotatef(90, 1, 0, 0);
-		 * this.DrawModel(false);
-		 */
 	}
 
-	/**
-	 * Once the list of JTSGeometries has been created, OpenGL display call this
-	 * method every framerate. FIXME: Need to be optimize with the use of Vertex
-	 * Array or even VBO
-	 * @param picking
-	 * 
-	 */
 
-	public void drawModel(final boolean picking) {
-		scene.draw(this, picking, true, true);
+	public void switchCamera()
+	{
+		canvas.removeKeyListener(camera);
+		canvas.removeMouseListener(camera);
+		canvas.removeMouseMotionListener(camera);
+		canvas.removeMouseWheelListener(camera);
 		
-//		gl.glColor3f(0.0f,0.0f,1.0f); //blue color
-//	    
-//		gl.glPointSize(10.0f);//set point size to 10 pixels
-//	    
-//		gl.glBegin(GL_POINTS); //starts drawing of points
-//		gl.glVertex3f((float)(worldC.x+env_width / 2),(float)(worldC.y-env_height / 2),0.0f);//upper-right corner
-//		gl.glEnd();//end drawing of points
+		if(displaySurface.switchCamera)
+			camera = new FreeFlyCamera(this);
+		else
+			camera = new CameraArcBall(this);
+		
+		canvas.addKeyListener(camera);
+		canvas.addMouseListener(camera);
+		canvas.addMouseMotionListener(camera);
+		canvas.addMouseWheelListener(camera);
+		
 	}
 
-	/**
-	 * Draw a given shapefile
-	 **/
-	// public void drawShapeFile() {
-	//
-	// if ( !displaySurface.getIGraphics().getCollections().isEmpty() ) {
-	// SimpleFeatureCollection myCollection =
-	// myShapeFileReader.getFeatureCollectionFromShapeFile(myShapeFileReader.store);
-	// displaySurface.getIGraphics().drawCollection();
-	// // Adjust the size of the display surface according to the bound of the shapefile.
-	// displaySurface.setEnvHeight((float) myCollection.getBounds().getHeight());
-	// displaySurface.setEnvWidth((float) myCollection.getBounds().getWidth());
-	// if ( !updateEnvDim ) {
-	// displaySurface.zoomFit();
-	// updateEnvDim = true;
-	// }
-	// }
-	// return;
-	// }
-
-	// public void DrawCollada() {
-	//
-	// ColladaReader myColReader = new ColladaReader();
-	// return;
-	// }
-
+	public void setAntiAliasing(final boolean antialias) {
+		antialiasing = antialias ? GL_LINEAR : GL_NEAREST;
+	}
+	
 	public MyTexture createTexture(final BufferedImage image, final boolean isDynamic) {
 		// Create a OpenGL Texture object from (URL, mipmap, file suffix)
 		// need to have an opengl context valide
@@ -613,57 +384,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		return curTexture;
 	}
 
-	// add function to capture mouse event of ArcBall model
-	public void drag(final Point mousePoint) {
-
-		final Quat4f ThisQuat = new Quat4f();
-
-		arcBall.drag(mousePoint, ThisQuat); // Update End Vector And Get
-											// Rotation As Quaternion
-		synchronized (matrixLock) {
-			ThisRot.setRotation(ThisQuat); // Convert Quaternion Into Matrix3fT
-			ThisRot.mul(ThisRot, LastRot); // Accumulate Last Rotation Into This
-											// One
-		}
-	}
-
-	public void startDrag(final Point mousePoint) {
-		// ArcBall
-		synchronized (matrixLock) {
-			LastRot.set(ThisRot); // Set Last Static Rotation To Last Dynamic
-									// One
-		}
-		arcBall.click(mousePoint); // Update Start Vector And Prepare For
-									// Dragging
-
-	}
-
-	public void reset() {
-		synchronized (matrixLock) {
-			LastRot.setIdentity(); // Reset Rotation
-			ThisRot.setIdentity(); // Reset Rotation
-		}
-	}
 
 	public void drawPickableObjects() {
 		if ( camera.beginPicking(gl) ) {
-			// Need to to do a translation before to draw object and retranslate
-			// after.
-			// FIXME: need also to apply the arcball matrix to make it work in
-			// 3D
-			if ( camera.isModelCentered ) {
-				gl.glTranslated(-env_width / 2, env_height / 2, 0.0f);
-				drawModel(true);
-
-				gl.glTranslated(env_width / 2, -env_height / 2, 0.0f);
-			} else {
-				drawModel(true);
-			}
-			setPickedObjectIndex(camera.endPicking(gl));
+		  drawModel(true);
+		  setPickedObjectIndex(camera.endPicking(gl));
 		}
-
 		drawModel(true);
-
 	}
 
 	public BufferedImage getScreenShot() {
@@ -754,26 +481,110 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	}
 	
-	private float[] unProject(float winX, float winY, float winZ,
-			Matrix4f modelView, Matrix4f projection,
-            int[] view) 
-	{
-		float[] in = new float[4];
-		Matrix4f m = new Matrix4f();
-		m.mul(modelView, projection);
-		m.invert();
-		in[0] = (winX-(float)view[0])/(float)view[2]*2f-1f;
-		in[1] = (winY-(float)view[1])/(float)view[3]*2f-1f;
-		in[2] = 2f*winZ-1f;
-		in[3] = 1f;
+	//////////////////////////ROI HANDLER ////////////////////////////////////
+	public Point GetRealWorldPointFromWindowPoint(final Point windowPoint) {
+	    int realy = 0;// GL y coord pos
+	    double[] wcoord = new double[4];// wx, wy, wz;// returned xyz coords
+
+		int x = (int) windowPoint.getX(), y = (int) windowPoint.getY();	
+			
+		realy = viewport[3] - y;
 		
-		float[] out = new float[3];
-		out[0]=m.m00*in[0]+m.m10*in[1]+m.m20*in[2]+m.m30*in[3];
-		out[1]=m.m01*in[0]+m.m11*in[1]+m.m21*in[2]+m.m31*in[3];
-		out[2]=m.m02*in[0]+m.m12*in[1]+m.m22*in[2]+m.m32*in[3];
-		//out[3]=m.m03*in[0]+m.m13*in[1]+m.m23*in[2]+m.m33*in[3];  -- don't need
+		glu.gluUnProject( (double) x, (double) realy, 0.1, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0 );	
+		Vector3D v1 = new Vector3D(wcoord[0],wcoord[1],wcoord[2]);
+
 		
-		return out;
+		glu.gluUnProject( (double) x, (double) realy, 0.9, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0 );
+		Vector3D v2 = new Vector3D(wcoord[0],wcoord[1],wcoord[2]);
+
+		
+		Vector3D v3 = v2.subtract(v1);
+		v3.normalize();
+		float distance = (float) (camera.getPosition().getZ()/Vector3D.dotProduct(camera.getForward(), v3));
+		worldCoordinates = camera.getPosition().add( v3.scalarMultiply( distance ) );
+
+
+		final Point realWorldPoint = new Point((int) worldCoordinates.x, (int) worldCoordinates.y);
+		return realWorldPoint;
 	}
 
+	public ArrayList<Integer> DrawROI() {
+		if ( camera.enableROIDrawing ) {
+			roi_List.clear();
+			Point windowPressedPoint = new Point(camera.lastxPressed, camera.lastyPressed);
+			Point realPressedPoint = GetRealWorldPointFromWindowPoint(windowPressedPoint);
+
+			Point windowmousePositionPoint = new Point(camera.mousePosition.x, camera.mousePosition.y);
+			Point realmousePositionPoint = GetRealWorldPointFromWindowPoint(windowmousePositionPoint);
+
+			myGLDrawer.DrawROI(gl, realPressedPoint.x, -(realPressedPoint.y),
+				realmousePositionPoint.x, -(realmousePositionPoint.y));
+			
+			roi_List.add(0, realPressedPoint.x);
+			roi_List.add(1, realPressedPoint.y);
+			roi_List.add(2, realmousePositionPoint.x);
+			roi_List.add(3, realmousePositionPoint.y);
+
+		}
+		
+		return roi_List;
+
+	}
+	
+	public void ROIZoom()
+	{
+		int envWidth = (int)Math.abs((roi_List.get(0) + env_width / 2)-(roi_List.get(2) + env_width / 2));
+		int envHeight = (int) Math.abs((roi_List.get(1) - env_height / 2)-(roi_List.get(3) - env_height / 2));
+		
+		double maxDim;
+		
+		if(!this.displaySurface.switchCamera)
+		{
+			if ( envWidth > envHeight ) {
+				camera.setRadius(envWidth*1.5);
+			} else {
+				camera.setRadius(envHeight*1.5);
+			}
+			if( roi_List.get(0) < roi_List.get(2) && roi_List.get(1)> roi_List.get(3))
+			{
+				camera.setTarget(new Vector3D(worldCoordinates.x-envWidth/2,worldCoordinates.y+envHeight/2,0.0));
+			}
+			else if(roi_List.get(0) < roi_List.get(2) && roi_List.get(1)< roi_List.get(3))
+			{
+				camera.setTarget(new Vector3D(worldCoordinates.x-envWidth/2,worldCoordinates.y-envHeight/2,0.0));
+			}
+			else if(roi_List.get(0) > roi_List.get(2) && roi_List.get(1)< roi_List.get(3))
+			{
+				camera.setTarget(new Vector3D(worldCoordinates.x+envWidth/2,worldCoordinates.y-envHeight/2,0.0));
+			}
+			else if(roi_List.get(0) > roi_List.get(2) && roi_List.get(1)> roi_List.get(3))
+				camera.setTarget(new Vector3D(worldCoordinates.x+envWidth/2,worldCoordinates.y+envHeight/2,0.0));
+			
+			camera.rotation();
+		}
+		else
+		{
+			if ( envWidth > envHeight ) {
+				maxDim = envWidth*1.5;
+			} else {
+				maxDim = envHeight*1.5;
+			}
+			if( roi_List.get(0) < roi_List.get(2) && roi_List.get(1)> roi_List.get(3))
+			{
+				camera.setPosition(new Vector3D(worldCoordinates.x-envWidth/2,worldCoordinates.y+envHeight/2, maxDim));
+			}
+			else if(roi_List.get(0) < roi_List.get(2) && roi_List.get(1)< roi_List.get(3))
+			{
+				camera.setPosition(new Vector3D(worldCoordinates.x-envWidth/2,worldCoordinates.y-envHeight/2,maxDim));
+			}
+			else if(roi_List.get(0) > roi_List.get(2) && roi_List.get(1)< roi_List.get(3))
+			{
+				camera.setPosition(new Vector3D(worldCoordinates.x+envWidth/2,worldCoordinates.y-envHeight/2,maxDim));
+			}
+			else if(roi_List.get(0) > roi_List.get(2) && roi_List.get(1)> roi_List.get(3))
+				camera.setPosition(new Vector3D(worldCoordinates.x+envWidth/2,worldCoordinates.y+envHeight/2,maxDim));
+
+			camera.vectorsFromAngles();
+		}
+	}
 }

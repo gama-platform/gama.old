@@ -471,15 +471,10 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 			super.zoomFit();
 			if ( threeD ) {
 				renderer.camera.initialize3DCamera(getEnvWidth(), getEnvHeight());
-				if ( renderer.camera.isModelCentered ) {
-					renderer.reset();
-				}
-
+				renderer.reset();
 			} else {
 				renderer.camera.initializeCamera(getEnvWidth(), getEnvHeight());
-				if ( renderer.camera.isModelCentered ) {
-					renderer.reset();
-				}
+                renderer.reset();
 			}
 		}
 		// updateDisplay();

@@ -153,22 +153,14 @@ public class FreeFlyCamera extends AbstractCamera {
 		} else {
 			maxDim = envHeight;
 		}
-		if ( isModelCentered ) {
-			_position.x = 0;
-			_target.x = 0;
-			_position.y = -envHeight  * 1.5+envHeight/2;
-			_target.y = -envHeight * 0.5+envHeight/2;
-			_position.z = getMaxDim()*0.75;
-			_target.z = 0;
-		}
-		else{
-			_position.x = envWidth / 2;
-			_target.x = envWidth / 2;
-			_position.y = -envHeight  * 1.75;
-			_target.y = -envHeight * 0.5;
-			_position.z = getMaxDim();
-			_target.z = 0;
-		}
+
+		_position.x = envWidth / 2;
+		_target.x = envWidth / 2;
+		_position.y = -envHeight  * 1.75;
+		_target.y = -envHeight * 0.5;
+		_position.z = getMaxDim();
+		_target.z = 0;
+		
 		
 		_phi = -45;
 		_theta = 90;
@@ -182,22 +174,14 @@ public class FreeFlyCamera extends AbstractCamera {
 		} else {
 			maxDim = envHeight;
 		}
-		if ( isModelCentered ) {
-			_position.x = 0;
-			_target.x = 0;
-			_position.y = -envHeight  * 1.75+envHeight/2;
-			_target.y = -envHeight * 0.5+envHeight/2;
-			_position.z = getMaxDim() * INIT_Z_FACTOR;
-			_target.z = 0;
-		}
-		else{
-			_position.x = envWidth / 2;
-			_target.x = envWidth / 2;
-			_position.y = -envHeight  * 1.75;
-			_target.y = -envHeight * 0.5;
-			_position.z = getMaxDim();
-			_target.z = 0;
-		}
+		
+		_position.x = envWidth / 2;
+		_target.x = envWidth / 2;
+		_position.y = -envHeight  * 1.75;
+		_target.y = -envHeight * 0.5;
+		_position.z = getMaxDim();
+		_target.z = 0;
+		
 		_phi = -45;
 		_theta = 90;
 		vectorsFromAngles();		

@@ -28,10 +28,7 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 	
 	
 	protected JOGLAWTGLRenderer myRenderer;
-	
-	// Draw the model on 0,0,0 coordinate
-	public boolean isModelCentered = true;
-	
+		
 	protected boolean isMacOS = false;
 	
 	protected final IntBuffer selectBuffer = BufferUtil.newIntBuffer(1024);// will store information
@@ -171,11 +168,6 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
     	return (Double) null;
     }
 	
-	public double getPitch() {
-		return 0;}
-
-	public double getYaw() {
-		return 0;}
 
 	public void UpdateCamera(GL gl, GLU glu, int width, int height) {}
 
@@ -183,7 +175,6 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 
 	public void initialize3DCamera(double envWidth, double envHeight) {}
 
-	/* --------------------------- */
 
 	/* -------------- Pitch and Yaw commands --------------- */
 
@@ -194,6 +185,12 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 	public void yawRight(double amount) {}
 
 	public void yawLeft(double amount) {}
+	
+	public double getPitch() {
+		return 0;}
+
+	public double getYaw() {
+		return 0;}
 
 	public ILocation getUpVector() {
 		return null;}
@@ -383,9 +380,6 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 
 		return selectedIndex;
 	}
-
-	public void circleCamera(double envWidth, double envHeight, double x,
-			double y, double xlpos, double ylpos) {}
 	
 	public double getMaxDim() {
 		return maxDim;

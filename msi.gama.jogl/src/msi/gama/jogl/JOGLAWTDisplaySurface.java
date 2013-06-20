@@ -159,7 +159,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 		add(renderer.canvas, BorderLayout.CENTER);
 		// openGLGraphicsGLRender.animator.start();
-		// zoomFit();
+		zoomFit();
 		// new way
 		// createIGraphics();
 		this.setVisible(true);
@@ -168,27 +168,10 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 			@Override
 			public void componentResized(final ComponentEvent e) {
-				// GuiUtils.debug("JOGLAWTDisplaySurface.componentResized: " + out.getId());
-				// if ( buffImage == null ) {
-				// // zoomFit();
-				// if ( resizeImage(getWidth(), getHeight()) ) {
-				// centerImage();
-				// }
-				// } else {
-				// if ( isFullImageInPanel() ) {
-				// centerImage();
-				// } else if ( isImageEdgeInPanel() ) {
-				// scaleOrigin();
-				// }
-				// }
-				if ( zoomFit ) {
-					zoomFit();
-				}
 				resizeImage(getWidth(), getHeight());
 				initOutput3D(out.getOutput3D(), out.getOutput3DNbCycles());
 				updateDisplay();
 				previousPanelSize = getSize();
-
 			}
 		});
 		renderer.animator.start();
@@ -198,9 +181,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	protected void createIGraphics() {
 		if ( iGraphics == null ) {
 			iGraphics = new JOGLAWTDisplayGraphics(this, renderer);
-			// openGLGraphicsGLRender = g.getMyGLRender();
-			// add(openGLGraphicsGLRender.canvas, BorderLayout.CENTER);
-			// zoomFit();
 		}
 	}
 
@@ -381,27 +361,11 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	@Override
 	public void paintComponent(final Graphics g) {
 		super.paintComponent(g);
-		// ((Graphics2D) g).drawRenderedImage(buffImage, translation);
-		/*
-		 * The autosave has been move in the penGLUpdateDisplayBlock
-		 * if ( autosave ) {
-		 * snapshot();
-		 * }
-		 */
 		redrawNavigator();
 	}
 
 	@Override
 	public void dispose() {
-		// GuiUtils.debug("JOGLAWTDisplaySurface.dispose: " + getOutputName());
-		// SwingUtilities.invokeLater(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		//
-		// }
-		// });
-		// remove(renderer.canvas);
 		renderer.dispose();
 		if ( manager != null ) {
 			manager.dispose();
@@ -499,18 +463,11 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			super.zoomFit();
 			if ( threeD ) {
 				renderer.camera.initialize3DCamera(getEnvWidth(), getEnvHeight());
-				if ( renderer.camera.isModelCentered ) {
-					renderer.reset();
-				}
-
+				
 			} else {
 				renderer.camera.initializeCamera(getEnvWidth(), getEnvHeight());
-				if ( renderer.camera.isModelCentered ) {
-					renderer.reset();
-				}
 			}
 		}
-		// updateDisplay();
 	}
 
 	@Override
@@ -523,15 +480,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	@Override
 	public void togglePicking() {
-
-		// if ( picking == false && !switchCamera ) {
-		// threeD = false;
-		// zoomFit();
-		// }
-		// FIXME: need to change the status of the button
-//		if ( threeD == true ) {
-//			threeD = false;
-//		}
 		picking = !picking;
 
 	}
@@ -539,23 +487,15 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	@Override
 	public void toggleArcball() {
 		arcball = !arcball;
-		/*
-		 * if(Arcball == true){
-		 * ((JOGLAWTDisplayGraphics)openGLGraphics).graphicsGLUtils.DrawArcBall();
-		 * }
-		 */
 	}
 
 	@Override
 	public void toggleSelectRectangle() {
 		selectRectangle = !selectRectangle;
-		zoomFit();
-
-		/*
-		 * if(Arcball == true){
-		 * ((JOGLAWTDisplayGraphics)openGLGraphics).graphicsGLUtils.DrawArcBall();
-		 * }
-		 */
+		if(selectRectangle){
+			zoomFit();
+		}
+		
 	}
 
 	@Override

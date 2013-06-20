@@ -8,7 +8,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import com.sun.opengl.util.BufferUtil;
-import msi.gama.jogl.utils.Camera.Camera;
+import msi.gama.jogl.utils.Camera.CameraArcBall;
 
 public class MyListenerSWT implements Listener {
 
@@ -16,7 +16,7 @@ public class MyListenerSWT implements Listener {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public Camera myCamera;
+	public CameraArcBall myCamera;
 	private JOGLSWTGLRenderer myRenderer;
 
 	//To handle mouse event	
@@ -35,13 +35,13 @@ public class MyListenerSWT implements Listener {
 	//ROI Drawing
 	public boolean enableROIDrawing=false;
 
-	public MyListenerSWT(Camera camera) {
+	public MyListenerSWT(CameraArcBall camera) {
 		myCamera = camera;
 		detectMacOS();	
 		mousePosition = new Point(0,0);
 	}
 
-	public MyListenerSWT(Camera camera, JOGLSWTGLRenderer renderer){
+	public MyListenerSWT(CameraArcBall camera, JOGLSWTGLRenderer renderer){
 		myCamera = camera;
 		myRenderer = renderer;
 		detectMacOS();
@@ -100,7 +100,7 @@ public class MyListenerSWT implements Listener {
 						if(event.count==1)//single click
 						{	
 							//set the camera to initial position
-							if ( isArcBallOn(event) && myCamera.isModelCentered) {
+							if ( isArcBallOn(event)) {
 								if (event.button== 3) {
 									myRenderer.reset();
 								}
@@ -112,11 +112,11 @@ public class MyListenerSWT implements Listener {
 						}	
 						// Arcball
 
-						if ( isArcBallOn(event) && myCamera.isModelCentered || myRenderer.displaySurface.selectRectangle ) {
+						if ( isArcBallOn(event) || myRenderer.displaySurface.selectRectangle ) {
 							// Arcball is not working with picking.
 							if ( !myRenderer.displaySurface.picking ) {
 								if (event.button==1) {
-									myRenderer.startDrag(new Point(event.x, event.y));
+									//myRenderer.startDrag(new Point(event.x, event.y));
 								}
 							}
 							enableROIDrawing = true;
@@ -146,7 +146,7 @@ public class MyListenerSWT implements Listener {
 				case SWT.MouseMove:
 						if(drag)
 						{
-							if ( isArcBallOn(event) && myCamera.isModelCentered || myRenderer.displaySurface.selectRectangle ) {
+							if ( isArcBallOn(event) || myRenderer.displaySurface.selectRectangle ) {
 								if ( !myRenderer.displaySurface.picking ) {
 									if ( (event.stateMask & SWT.BUTTON1) != 0) {
 										myRenderer.drag(new Point(event.x, event.y));
