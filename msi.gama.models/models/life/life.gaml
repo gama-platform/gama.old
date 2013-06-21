@@ -1,16 +1,18 @@
 model life
 
 global {  
-	int environment_width  <- 200 min: 10 max: 400;
-	int environment_height <- 200 min: 10 max: 400;  
+	int environment_width  <- 200 min: 10 max: 1000;
+	int environment_height <- 200 min: 10 max: 1000;  
 	bool torus_environment <- true;
 	int density  <- 25 min: 1 max: 99; 
-	list living_conditions <- [2,3];  
-	list birth_conditions <- [3]; 
+	list<int> living_conditions <- [2,3];  
+	list<int> birth_conditions <- [3]; 
 	rgb livingcolor <- rgb('white');
 	rgb dyingcolor <- rgb('red'); 
 	rgb emergingcolor  <- rgb('orange');
 	rgb deadcolor <- rgb('black');
+	
+	geometry shape <- rectangle( environment_width,environment_height);
 	
 	init { 
 		do description ;     
@@ -24,21 +26,14 @@ global {
 			do update;
 		}
 	}
-	
-//	reflex main {
-//		ask world.life_cell {  
-//			do evolve ;
-//		}            
-//		ask world.life_cell {
-//			do update;
-//		}   
-//	}
+
 	action description  {
 		write 'Description. The Game of Life is a cellular automaton devised by the British mathematician John Horton Conway in 1970. It is the best-known example of a cellular automaton. The game is a zero-player game, meaning that its evolution is determined by its initial state, requiring no further input from humans. One interacts with the Game of Life by creating an initial configuration and observing how it evolves.  The universe of the Game of Life is an infinite two-dimensional orthogonal grid of square cells, each of which is in one of two possible states, live or dead. Every cell interacts with its eight neighbors, which are the cells that are directly horizontally, vertically, or diagonally adjacent. At each step in time, the following transitions occur: \\n\\t 1.Any live cell with fewer than two live neighbours dies, as if caused by underpopulation. \\n\\t 2.Any live cell with more than three live neighbours dies, as if by overcrowding. \\n\\t 3.Any live cell with two or three live neighbours lives on to the next generation. \\n\\t 4.Any dead cell with exactly three live neighbours becomes a live cell. The initial pattern constitutes the seed of the system. The first(generation) is created by applying the above rules simultaneously to every cell in the seed�births and deaths happen simultaneously, and the discrete moment at which this happens is sometimes called a tick (in other words, each generation is a pure function of the one before). The rules continue to be applied repeatedly to create further generations.' ;
 	} 
 }
 
-environment width: environment_width height: environment_height {
+
+entities {
 	grid life_cell width: environment_width height: environment_height neighbours: 8 torus: torus_environment use_individual_shapes: false use_regular_agents: false frequency: 0 use_neighbours_cache: false {
 		bool new_state;
 		list<life_cell> neighbours <- self neighbours_at 1;
@@ -46,18 +41,18 @@ environment width: environment_width height: environment_height {
 		rgb color <- state ? livingcolor : deadcolor ;  
 		
 		action evolve {
-			let living type: int <- neighbours count each.state ;
+			int living <- neighbours count each.state ;
 			if  state {
-				set new_state <- living in living_conditions ;
-				set color <- new_state ? livingcolor : dyingcolor ;
+				new_state <- living in living_conditions ;
+				color <- new_state ? livingcolor : dyingcolor ;
 			} else {
-					set new_state <- living in birth_conditions ;
-					set color <- new_state ? emergingcolor : deadcolor ;
-				}
+				new_state <- living in birth_conditions ;
+				color <- new_state ? emergingcolor : deadcolor ;
+			}
 		}
 		
 		action update {
-			set state <- new_state;
+			state <- new_state;
 		} 
 	}
 }
@@ -79,6 +74,5 @@ experiment life type: gui{
 		display Life {
 			grid life_cell ;
 		}
-		inspect name: 'Agents' type: agent ;
 	}
 }

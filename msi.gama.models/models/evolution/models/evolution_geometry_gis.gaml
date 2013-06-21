@@ -14,57 +14,53 @@ global {
 	int nb_partners_max min: 1  <- 1;
 	int max_side_size min: 1 <- 5; 
 	int background_size_side min: 20 max: 100 <- 80 ;
-	
+	geometry shape <- envelope(shape_file_name_background);
 	geometry the_background;
 
-	reflex stop when: empty ( people as list ) {
+	reflex stop when: empty ( people ) {
 		do halt;
   	} 
 	init {
-		create background from: shape_file_name_background {
-			set color <- rgb ([ 255 , 240 , 240 ]);
-		}
-		set the_background <- ((first (background as list)).shape).contour;
+		create background from: shape_file_name_background ;
+		the_background <- ((first (background)).shape).contour;
 	}
 }
-environment bounds: shape_file_name_background;
 
 species people topology: topology(shape_file_name_init) {
 	rgb color <- rgb ( [ rnd ( 255 ) , rnd ( 255 ) , rnd ( 255 ) ]);
 	point location_new_Ag <- nil;
 	rgb color_new_Ag <- nil;
 	int nb_last_rep <- 0;
-	geometry new_ag ;
 		
 	reflex evolve {
-		set nb_last_rep <- nb_last_rep + 1;
-		set shape <- shape scaled_by scaling_factor;
-		set shape <- shape rotated_by ((rnd ( 100 * angle_rotation_max))/ 100.0);		
+		nb_last_rep <- nb_last_rep + 1;
+		shape <- shape scaled_by scaling_factor;
+		shape <- shape rotated_by ((rnd ( 100 * angle_rotation_max))/ 100.0);		
 	}
 	
 	reflex move {
-		set location <- location + { speed * ( 1 - rnd ( 2 ) ) , speed * ( 1 - rnd ( 2 ) ) };
-		if ( (shape intersects the_background) or (shape.area > dying_size)) {
+		location <- location + { speed * ( 1 - rnd ( 2 ) ) , speed * ( 1 - rnd ( 2 ) ) };
+		if ( (shape.area > dying_size) or (shape intersects the_background)) {
 			do die; 
 		}
 			
 	}
 	
 	reflex crossover when: ( shape.area > crossover_size ) and ( nb_last_rep > time_wthout_co ) { 
-		let nb_partners type: int <- 0;
-		let list_people type: list of: people <- shuffle ( people as list );
-		loop p over: list_people of_species people {
+		int nb_partners  <- 0;
+		list<people> list_people <- shuffle ( people );
+		loop p over: list_people {
 			if ( p != self ) and ( nb_partners <= nb_partners_max ) and (rnd ( 100 ) < ( crossover_rate * 100 ) ) and ( (p.shape).area > crossover_size ) and ( p . nb_last_rep > time_wthout_co ) and (shape intersects p.shape) {
-				set nb_partners <- nb_partners + 1;
-				set new_ag <- convex_hull (shape inter p.shape);
+				nb_partners <- nb_partners + 1;
+				geometry new_ag <- (shape inter p.shape);
 				if ( new_ag != nil ) and ( new_ag.area > minimum_size ) {
-					set nb_last_rep <- 0;
+					nb_last_rep <- 0;
 					ask p {
-						set nb_last_rep <- 0;
+						nb_last_rep <- 0;
 					}
-					create people number: 1 {
-						set color <- (myself.color + p.color) / 2;
-						set shape <-  myself.new_ag;
+					create people  {
+						color <- (myself.color + p.color) / 2;
+						shape <-  convex_hull(new_ag);
 					}
 				}
 			}
@@ -72,14 +68,14 @@ species people topology: topology(shape_file_name_init) {
 	}
 		
 	aspect geometry {
-		draw geometry:(shape) color: color;
+		draw shape color: color;
 	}
 }
 
 species background {
-	rgb color;
+	rgb color <- rgb ([ 255 , 240 , 240 ]);
 	aspect geometry {
-		draw geometry:(shape) color: color;
+		draw shape color: color;
 	}	
 }
 experiment evolution_geometry type: gui {

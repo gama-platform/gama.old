@@ -1,37 +1,39 @@
 model life
 
 global {  
-	int environment_width  <- 200 min: 10 max: 400;
-	int environment_height <- 200 min: 10 max: 400;  
+	int environment_width  <- 200 min: 10 max: 1000;
+	int environment_height <- 200 min: 10 max: 1000;  
 	bool torus_environment <- true;
 	int density  <- 25 min: 1 max: 99; 
-	list living_conditions <- [2,3];  
-	list birth_conditions <- [3]; 
+	list<int> living_conditions <- [2,3];  
+	list<int> birth_conditions <- [3]; 
 	const black type: rgb init: rgb('black') ;
 	const white type: rgb init: rgb('white') ;
+	geometry shape <- rectangle( environment_width,environment_height);
 	
 	reflex main {
-		ask list (life_cell) {
+		ask life_cell {
 			do evolve;
 		}
-		ask list (life_cell) {
+		ask life_cell {
 			do update;    
 		}
 	} 
 }
-
-environment width: environment_width height: environment_height {
-	grid life_cell width: environment_width height: environment_height neighbours: 8 torus: torus_environment {
+entities {
+	grid life_cell width: environment_width height: environment_height neighbours: 8 frequency: 0 torus: torus_environment use_regular_agents: false use_individual_shapes: false use_neighbours_cache: false {
 		bool new_state;
 		bool state <- (rnd(100)) < density ;
-		rgb color <- state ? black : white update: state ? black : white ;
+		rgb color <- state ? black : white ;
+		list<life_cell> neighbours <- self neighbours_at 1;
 		
 		action evolve {
-			let living type: int <- (self neighbours_at 1) of_species life_cell count each.state ;
-			set new_state <- state ? living in living_conditions : living in birth_conditions ;
+			int living  <- neighbours count each.state ;
+			new_state <- state ? living in living_conditions : living in birth_conditions ;
 		}
 		action update {
-			set state <- new_state; 
+			state <- new_state; 
+			color <- state ? black : white;
 		}	
 	}
 }

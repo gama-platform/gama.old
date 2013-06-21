@@ -23,10 +23,10 @@ global {
 	
 	init {
 		create animal number: numberOfAgents;
-		ask list(sugar_cell) {
-			set maxSugar <- (types at {grid_x,grid_y});
-			set sugar <- maxSugar;
-			set color <- [white,FFFFAA,FFFF55,yellow,dark_yellow] at sugar;
+		ask sugar_cell {
+			maxSugar <- (types at {grid_x,grid_y});
+			sugar <- maxSugar;
+			color <- [white,FFFFAA,FFFF55,yellow,dark_yellow] at sugar;
 		}
 	}
 }
@@ -34,7 +34,7 @@ environment width: 50 height: 50 {
 	grid sugar_cell width: 50 height: 50 neighbours: 4 { 
 		const multiagent type: bool <- false;
 		int maxSugar;
-		int sugar update: min ([maxSugar, sugar + sugarGrowthRate]);
+		int sugar update: sugar + sugarGrowthRate max: maxSugar;
 		rgb color update: [white,FFFFAA,FFFF55,yellow,dark_yellow] at sugar;
 	}
 }
@@ -51,16 +51,16 @@ entities {
 		sugar_cell place <- location as sugar_cell; 
 		
 		reflex basic_move { 
-			set sugar <- sugar + place.sugar;
-			set place.sugar <- 0;
-			let neighbours type: list of: sugar_cell <- topology(sugar_cell) neighbours_of (place::vision) of_species sugar_cell;
-			let poss_targets type: list of: sugar_cell <- (neighbours) where (each.sugar > 0);
-			set place <- empty(poss_targets) ? one_of (neighbours) : one_of (poss_targets);
-			set location <- place.location;
+			sugar <- sugar + place.sugar;
+			place.sugar <- 0;
+			list<sugar_cell> neighbours <- topology(sugar_cell) neighbours_of (place::vision) of_species sugar_cell;
+			list<sugar_cell> poss_targets <- (neighbours) where (each.sugar > 0);
+			place <- empty(poss_targets) ? one_of (neighbours) : one_of (poss_targets);
+			location <- place.location;
 		}
 		reflex end_of_life when: (sugar = 0) or (age = maxAge) {
 			if replace {
-				create animal number: 1;
+				create animal ;
 			}
 			do die;
 		}
@@ -87,14 +87,14 @@ experiment sugarscape type: gui{
 		}
 		display chart refresh_every: 5 {
 			chart name: 'Energy' type: pie background: rgb('lightGray') style: exploded {
-				data "strong" value: (animal as list) count (each.sugar > 8);
-				data "weak" value: (animal as list) count (each.sugar < 9);
+				data "strong" value: (animal as list) count (each.sugar > 8) color: rgb("green");
+				data "weak" value: (animal as list) count (each.sugar < 9) color: rgb("red");
 			}
 		}
 		display chart2 refresh_every: 5 {
 			chart name: 'Energy' type: histogram background: rgb('lightGray') {
-				data "strong" value: (animal as list) count (each.sugar > 8);
-				data "weak" value: (animal as list) count (each.sugar < 9);
+				data "strong" value: (animal as list) count (each.sugar > 8)  color: rgb("green");
+				data "weak" value: (animal as list) count (each.sugar < 9)  color: rgb("red");
 			}
 		}
 	}
