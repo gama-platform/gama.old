@@ -78,7 +78,7 @@ entities {
 							write "Asking " + f + " to release its members";
 							release members as: boids in: world returns: released_coms;
 							set released_boids value: list(released_coms);
-							write released_boids;
+							write name + ": " + released_boids;
 							do die;
 						}
 

@@ -11,14 +11,13 @@ model HowToImportVectorial
 global {
 	// Global variables  related to the Management units	
 	file ManagementUnitShape <- file('../images/ug/UGSelect.shp'); 
-	
+	geometry shape <- envelope(ManagementUnitShape);
 	init {
 		create managementUnit from: ManagementUnitShape.path 
 			with: [MUcode::int(read('Code_UG')), MULabel::string(read('Libelle_UG')), pgeSAGE::string(read('PGE_SAGE'))] ;
     }
 }
 
-environment bounds: ManagementUnitShape.path {}
 
 entities {	
 	species managementUnit{
@@ -27,7 +26,7 @@ entities {
 		string pgeSAGE;
 		
 		aspect basic{
-    		draw shape;
+    		draw shape color: rgb("yellow");
     	}
 	}	
 }
@@ -37,10 +36,8 @@ experiment main type: gui {
 		
 	output {
 		display HowToImportVectorial {
-	   		image name: 'GISBackground' gis: ManagementUnitShape.path color: rgb('blue');
 	   		species managementUnit aspect: basic; 
 		}
-	    inspect name: 'Species' type: species refresh_every: 5;
 	}
 }
 
