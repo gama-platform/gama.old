@@ -46,7 +46,7 @@ entities {
 	species triangle  {
 		rgb color <- rgb(150 +rnd(100),150 + rnd(100),150 + rnd(100));
 		aspect default {
-			draw shape color: color ;
+			draw shape color: color ; 
 		}
 	}
 	species skeleton  {
