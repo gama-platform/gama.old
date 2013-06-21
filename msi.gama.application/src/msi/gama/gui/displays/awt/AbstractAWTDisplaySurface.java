@@ -67,17 +67,6 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		return origin;
 	}
 
-	//
-	// @Override
-	// public ILayerManager getLayerManager() {
-	// return this.manager;
-	// }
-
-	// @Override
-	// public IGraphics getIGraphics() {
-	// return this.iGraphics;
-	// }
-
 	@Override
 	public void setFont(final Font f) {
 		// super.setFont(null);
@@ -168,15 +157,9 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		// GuiUtils.debug("AWTDisplaySurface.removeNotify: FINISHED" + outputName);
 	}
 
-	//
-	// @Override
-	// public void fireSelectionChanged(final Object entity) {
-	// GuiUtils.setSelectedAgent(entity);
-	// }
-
 	protected void scaleOrigin() {
 		setOrigin(origin.x * getWidth() / previousPanelSize.width, origin.y * getHeight() / previousPanelSize.height);
-		paintingNeeded.release();
+		repaint();
 	}
 
 	protected void centerImage() {
@@ -193,17 +176,11 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		return getDisplayHeight();
 	}
 
-	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#getOriginX()
-	 */
 	@Override
 	public int getOriginX() {
 		return origin.x;
 	}
 
-	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#getOriginY()
-	 */
 	@Override
 	public int getOriginY() {
 		return origin.y;
@@ -289,7 +266,8 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	@Override
 	public void updateDisplay() {
-		GuiUtils.debug("AbstractAWTDisplaySurface.updateDisplay");
+		// GuiUtils.debug("AbstractAWTDisplaySurface.updateDisplay");
+		if ( !canBeUpdated() ) { return; }
 		if ( synchronous && !EventQueue.isDispatchThread() && !GAMA.isPaused() ) {
 			try {
 				EventQueue.invokeAndWait(displayBlock);
@@ -310,7 +288,6 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	// Used when the image is resized.
 	public boolean isImageEdgeInPanel() {
 		if ( previousPanelSize == null ) { return false; }
-
 		return origin.x > 0 && origin.x < previousPanelSize.width || origin.y > 0 &&
 			origin.y < previousPanelSize.height;
 	}
@@ -323,6 +300,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	@Override
 	public final boolean resizeImage(final int x, final int y) {
+		GuiUtils.debug("AbstractAWTDisplaySurface.resizeImage " + x + " " + y);
 		canBeUpdated(false);
 		int[] point = computeBoundsFrom(x, y);
 		int imageWidth = Math.max(1, point[0]);

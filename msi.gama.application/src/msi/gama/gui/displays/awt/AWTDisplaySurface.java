@@ -36,29 +36,8 @@ import msi.gaml.compilation.ISymbol;
 @display("java2D")
 public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
-	private Point snapshotDimension;
-	private Point mousePosition;
-	private volatile boolean isPainting;
+	private Point snapshotDimension, mousePosition;
 	protected BufferedImage buffImage;
-	private final Thread animationThread = new Thread(new Runnable() {
-
-		@Override
-		public void run() {
-			boolean doIt = true;
-			while (doIt) {
-				try {
-					paintingNeeded.acquire(paintingNeeded.availablePermits());
-				} catch (final InterruptedException e) {
-					doIt = false;
-				}
-				if ( doIt ) {
-					// GuiUtils.debug("AWTDisplaySurface.animationThread repaint");
-					repaint(true);
-				}
-			}
-		}
-	});
-
 	private AWTDisplaySurfaceMenu menuManager;
 
 	private class DisplayMouseListener extends MouseAdapter {
@@ -76,7 +55,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 				}
 				setOrigin(origin.x + p.x - mousePosition.x, origin.y + p.y - mousePosition.y);
 				mousePosition = p;
-				repaint(true);
+				repaint();
 			}
 		}
 
@@ -120,15 +99,12 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 			@Override
 			public void run() {
-				if ( !canBeUpdated() ) { return; }
+				// if ( !canBeUpdated() ) { return; }
 				canBeUpdated(false);
 				drawDisplaysWithoutRepainting();
-				// GuiUtils
-				// .debug("AWTDisplaySurface.AWTDisplaySurface(...).new Runnable() {...}.run tokens in semaphore : " +
-				// paintingNeeded.availablePermits());
-				paintingNeeded.release();
+				GuiUtils.debug("AWTDisplaySurface.AWTDisplaySurface(...).new Runnable() {...}.run displayBlock");
+				repaint();
 				canBeUpdated(true);
-				Toolkit.getDefaultToolkit().sync();
 			}
 
 		};
@@ -166,6 +142,8 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 			@Override
 			public void componentResized(final ComponentEvent e) {
+				GuiUtils.debug("AWTDisplaySurface.initialize(...).new ComponentAdapter() {...}.componentResized " +
+					e.getComponent().getWidth() + " " + e.getComponent().getHeight());
 				if ( buffImage == null || zoomFit ) {
 					zoomFit();
 				} else {
@@ -175,10 +153,6 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 						scaleOrigin();
 					}
 					updateDisplay();
-					// else {
-					// ((AWTDisplayGraphics) getIGraphics()).getGraphics2D().setClip(getImageClipBounds());
-					// }
-
 				}
 
 				final double newZoom =
@@ -187,8 +161,6 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 				previousPanelSize = getSize();
 			}
 		});
-		animationThread.start();
-		// GuiOutputManager.decInitializingViews(outputName);
 	}
 
 	@Override
@@ -205,15 +177,15 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 			for ( final ISymbol layer : layers ) {
 				manager.addLayer(LayerManager.createLayer((ILayerStatement) layer, env_width, env_height, iGraphics));
 			}
-
 		} else {
 			manager.outputChanged();
 		}
-		paintingNeeded.release();
+		repaint();
 	}
 
 	@Override
 	public int[] computeBoundsFrom(final int vwidth, final int vheight) {
+		GuiUtils.debug("AWTDisplaySurface.computeBoundsFrom " + vwidth + " " + vheight);
 		if ( !manager.stayProportional() ) { return new int[] { vwidth, vheight }; }
 		final int[] dim = new int[2];
 		if ( widthHeightConstraint < 1 ) {
@@ -223,6 +195,8 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 			dim[0] = Math.min(vwidth, (int) (vheight / widthHeightConstraint));
 			dim[1] = Math.min(vheight, (int) (dim[0] * widthHeightConstraint));
 		}
+		// GuiUtils.debug("AWTDisplaySurface.computeBoundsFrom " + vwidth + " " + vheight + " : " + dim[0] + " " +
+		// dim[1]);
 		return dim;
 	}
 
@@ -237,6 +211,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	public void forceUpdateDisplay() {
 		final boolean old = synchronous;
 		setSynchronized(false);
+		canBeUpdated(true);
 		updateDisplay();
 		setSynchronized(old);
 	}
@@ -260,25 +235,9 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	@Override
 	public void dispose() {
-		// GuiUtils.debug("AWTDisplaySurface.dispose: " + outputName);
-		// javax.swing.SwingUtilities.invokeLater(new Runnable() {
-		//
-		// @Override
-		// public void run() {
-		// removeAll();
-		// }
-		// });
-
 		if ( manager != null ) {
 			manager.dispose();
 		}
-
-		animationThread.interrupt();
-		// try {
-		// animationThread.join();
-		// } catch (InterruptedException e) {
-		// e.printStackTrace();
-		// }
 		if ( buffImage != null ) {
 			buffImage.flush();
 		}
@@ -315,7 +274,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 			final int imagePY =
 				c.y < origin.y ? 0 : c.y >= getDisplayHeight() + origin.y ? getDisplayHeight() - 1 : c.y - origin.y;
 			setOrigin(c.x - (int) Math.round(imagePX * factor), c.y - (int) Math.round(imagePY * factor));
-			GuiUtils.debug("AWTDisplaySurface.applyZoom");
+			// GuiUtils.debug("AWTDisplaySurface.applyZoom");
 			updateDisplay();
 		}
 	}
@@ -326,7 +285,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		if ( resizeImage(getWidth(), getHeight()) ) {
 			super.zoomFit();
 			centerImage();
-			GuiUtils.debug("AWTDisplaySurface.zoomFit");
+			// GuiUtils.debug("AWTDisplaySurface.zoomFit");
 			updateDisplay();
 		}
 	}
@@ -387,57 +346,12 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	}
 
 	/**
-	 * This method does nothing for JAVA2D display
+	 * These methods do nothing yet for JAVA2D display
 	 */
 	@Override
-	public void addShapeFile() {
-		// TODO Auto-generated method stub
-	}
+	public void addShapeFile() {}
 
 	@Override
-	public void initOutput3D(final boolean output3d, final ILocation output3dNbCycles) {
-		;
-	}
-
-	@Override
-	public void repaint() {
-		// GuiUtils.debug("AWTDisplaySurface.repaint not transmitted");
-		// super.repaint();
-	}
-
-	public void repaint(final boolean fromInside) {
-		// GuiUtils.debug("AWTDisplaySurface.repaint transmitted from inside");
-		if ( fromInside && !isPainting ) {
-			super.repaint();
-
-		}
-	}
-
-	@Override
-	public void paintChildren(final Graphics g) {
-		// GuiUtils.debug("AWTDisplaySurface.paintChildren");
-		// super.paintChildren(g);
-	}
-
-	@Override
-	public void paintBorder(final Graphics g) {
-		// GuiUtils.debug("AWTDisplaySurface.paintBorder");
-		// super.paintBorder(g);
-	}
-
-	//
-	// @Override
-	// public void update(Graphics g) {
-	// GuiUtils.debug("AWTDisplaySurface.update");
-	// super.update(g);
-	// }
-
-	@Override
-	public void paint(final Graphics g) {
-		// GuiUtils.debug("AWTDisplaySurface.paint");
-		isPainting = true;
-		super.paint(g);
-		isPainting = false;
-	}
+	public void initOutput3D(final boolean output3d, final ILocation output3dNbCycles) {}
 
 }
