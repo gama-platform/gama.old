@@ -33,6 +33,7 @@ import msi.gama.outputs.*;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -117,6 +118,16 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			displayItems();
 
 			surfaceCompo = createSurfaceComposite();
+//			surfaceCompo.addControlListener(new ControlAdapter() {
+//
+//				@Override
+//				public void controlResized(final ControlEvent e) {
+//					GuiUtils
+//						.debug("LayeredDisplayView.ownCreatePartControl(...).new ControlAdapter() {...}.controlResized " +
+//							surfaceCompo.getSize());
+//				}
+//			});
+
 			getOutput().getSurface().setZoomListener(this);
 			((SashForm) parent).setWeights(new int[] { 1, 2 });
 			((SashForm) parent).setMaximizedControl(surfaceCompo);
@@ -432,15 +443,15 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 			@Override
 			public void run() {
-				final IDisplaySurface imageCanvas = getDisplaySurface();
-				while (!imageCanvas.canBeUpdated()) {
+				final IDisplaySurface surface = getDisplaySurface();
+				while (!surface.canBeUpdated()) {
 					try {
 						Thread.sleep(10);
 					} catch (final InterruptedException e) {
 
 					}
 				}
-				imageCanvas.zoomIn();
+				surface.zoomIn();
 
 			}
 		}).start();
