@@ -103,7 +103,7 @@ entities {
 		aspect base {
 			draw circle(10) color: color;
 		}
-	}
+	} 
 }
 
 

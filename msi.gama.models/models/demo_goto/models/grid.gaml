@@ -21,7 +21,7 @@ entities {
 		aspect default { 
 			draw circle(0.5) color: rgb('red');
 		}
-	} 
+	}  
 	
 	  
 	species people skills: [moving] {

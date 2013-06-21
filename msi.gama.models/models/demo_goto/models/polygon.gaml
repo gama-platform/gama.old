@@ -9,6 +9,8 @@ global {
 	file shape_file_in <- file('../includes/gis/squareHole.shp') ;
 	graph the_graph;
 	
+	geometry shape <- envelope(shape_file_in);
+	
 	init {    
 		create object from: shape_file_in ;
 		object the_object <- first(object);
@@ -35,7 +37,6 @@ global {
 		} 
 	}
 }
-environment bounds: shape_file_in ; 
 entities {
 	species object  {
 		aspect default {

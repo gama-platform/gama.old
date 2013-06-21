@@ -4,6 +4,7 @@ global {
 	file shape_file_roads  <- file('../includes/gis/simpleRoad.shp') ;
 	file shape_file_bounds  <- file('../includes/gis/BoundsSimpleRoad.shp') ;
 	
+	geometry shape <- envelope(shape_file_bounds);
 	graph the_graph;
 	
 	init { 
@@ -46,7 +47,6 @@ entities {
 		}
 	}
 }
-environment bounds: shape_file_bounds ;
 
 experiment goto_weighted_network type: gui {
 	output {
