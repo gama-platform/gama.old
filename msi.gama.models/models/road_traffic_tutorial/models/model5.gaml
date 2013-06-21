@@ -4,6 +4,7 @@ global {
 	file shape_file_buildings <- file('../includes/building.shp');
 	file shape_file_roads <- file('../includes/road.shp');
 	file shape_file_bounds <- file('../includes/bounds.shp');
+	geometry shape <- envelope(shape_file_bounds);
 	int nb_people <- 100;
 	int day_time update: time mod 144 ;
 	int min_work_start <- 36;
@@ -18,28 +19,28 @@ global {
 	init {
 		create building from: shape_file_buildings with: [type::string(read ('NATURE'))] {       
 			if type='Industrial' {
-				set color <- rgb('blue') ;
+				color <- rgb('blue') ;
 			}  
 	  	}
 		create road from: shape_file_roads ;
-		let weights_map type: map <- (list (road)) as_map [each:: each.destruction_coeff];
-		set the_graph <- as_edge_graph(list(road))  with_weights weights_map;
+		map<road,float> weights_map <- road as_map (each:: each.destruction_coeff);
+		the_graph <- as_edge_graph(road) with_weights weights_map;
 		
-		let residential_buildings type: list of: building <- list(building) where (each.type='Residential');
-		let industrial_buildings type: list of: building <- (building as list) where (each.type='Industrial') ;
+		list<building> residential_buildings <- building where (each.type='Residential');
+		list<building>  industrial_buildings <- building where (each.type='Industrial') ;
 		create people number: nb_people {
-			set speed <- min_speed + rnd (max_speed - min_speed) ;
-			set start_work <- min_work_start + rnd (max_work_start - min_work_start) ;
-			set end_work <- min_work_end + rnd (max_work_end - min_work_end) ;
-			set living_place <- one_of(residential_buildings) ;
-			set working_place <- one_of(industrial_buildings) ;
-			set location <- any_location_in (living_place);  
+			 speed <- min_speed + rnd (max_speed - min_speed) ;
+			 start_work <- min_work_start + rnd (max_work_start - min_work_start) ;
+			 end_work <- min_work_end + rnd (max_work_end - min_work_end) ;
+			 living_place <- one_of(residential_buildings) ;
+			 working_place <- one_of(industrial_buildings) ;
+			 location <- any_location_in (living_place);  
 		}  
 	}
 	
 	reflex update_graph{
-		let weights_map type: map <- (list (road)) as_map [each:: each.destruction_coeff];
-		set the_graph <- the_graph  with_weights weights_map;
+		map<road,float> weights_map <- road as_map (each:: each.destruction_coeff);
+		the_graph <- as_edge_graph(road) with_weights weights_map;
 	}
 }
 entities {
@@ -47,15 +48,15 @@ entities {
 		string type; 
 		rgb color <- rgb('gray')  ; 
 		aspect base {
-			draw geometry: shape color: color ;
+			draw shape color: color ;
 		}
 	}
 	species road  {
 		float destruction_coeff <- 1.0 ;
 		int colorValue <- int(255*(destruction_coeff - 1)) update: int(255*(destruction_coeff - 1));
-		rgb color <- rgb([min([255, colorValue]),max ([0, 255 - colorValue]),0])  update: rgb([min([255, colorValue]),max ([0, 255 - colorValue]),0]) ;
+		rgb color <- rgb(min([255, colorValue]),max ([0, 255 - colorValue]),0)  update: rgb(min([255, colorValue]),max ([0, 255 - colorValue]),0) ;
 		aspect base {
-			draw geometry: shape color: color ;
+			draw  shape color: color ;
 		}
 	}
 	species people skills: [moving]{
@@ -68,25 +69,25 @@ entities {
 		point the_target <- nil ;
 		
 		reflex time_to_work when: day_time = start_work {
-			set objective <- 'working' ;
-			set the_target <- any_location_in (working_place);
+			 objective <- 'working' ;
+			 the_target <- any_location_in (working_place);
 		}
 		reflex time_to_go_home when: day_time = end_work {
-			set objective <- 'go home' ;
-			set the_target <- any_location_in (living_place); 
+			 objective <- 'go home' ;
+			 the_target <- any_location_in (living_place); 
 		}  
 		reflex move when: the_target != nil {
-			let path_followed type: path <- self goto [target::the_target, on::the_graph, return_path:: true];
-			let segments type: list of: geometry <- path_followed.segments;
+			path path_followed <- self goto [target::the_target, on::the_graph, return_path:: true];
+			list<geometry> segments <- path_followed.segments;
 			loop line over: segments {
-				let dist type: float <- line.perimeter;
-				let ag type: road <- road(path_followed agent_from_geometry line); 
-				ask road(ag) {
-					set destruction_coeff <- destruction_coeff + (destroy * dist / shape.perimeter);
+				float dist <- line.perimeter;
+				road ag <- road(path_followed agent_from_geometry line); 
+				ask ag {
+					destruction_coeff <- destruction_coeff + (destroy * dist / shape.perimeter);
 				}
 			}
 			switch the_target { 
-				match location {set the_target <- nil ;}
+				match location { the_target <- nil ;}
 			}
 		}
 		aspect base {
@@ -94,7 +95,6 @@ entities {
 		}
 	}
 }
-environment bounds: shape_file_bounds ;
 
 experiment road_traffic type: gui {
 	parameter 'Shapefile for the buildings:' var: shape_file_buildings category: 'GIS' ;

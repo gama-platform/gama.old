@@ -42,7 +42,7 @@ global {
 	}
 	
 	reflex update_graph{
-		let weights_map type: map <- (list (road)) as_map [each:: each.destruction_coeff];
+		let weights_map type: map <- (list (road)) as_map (each:: each.destruction_coeff);
 		set the_graph <- the_graph  with_weights weights_map;
 	}
 }

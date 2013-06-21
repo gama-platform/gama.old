@@ -1,4 +1,4 @@
-model circle
+model large_circle_model
 
 
 import "circle.gaml"     
@@ -6,7 +6,7 @@ global {
 	int size_of_agents <- 100;
 } 
 
-experiment circle2 type: gui  {
+experiment main2 type: gui  {
 	parameter 'Number of Agents' var: number_of_agents <- 300;
 	parameter 'Radius of Circle' var: radius_of_circle min: 10 <- 15000; 
 	parameter 'Strength of Repulsion' var: repulsion_strength min: 1 <- 50;

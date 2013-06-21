@@ -1,4 +1,4 @@
-model circle
+model circle_model
 
 global { 
 	int number_of_agents min: 1 <- 50 ;
@@ -22,7 +22,6 @@ entities {
 		const range type: float <- float(range_of_agents); 
 		const speed type: float <- speed_of_agents;   
 		int heading <- rnd(359);
-		geometry shape <- circle (size) simplification (1);
 		
 		reflex go_to_center {
 			heading <- (((self distance_to center) > radius_of_circle) ? self towards center : (self towards center) - 180);
@@ -39,12 +38,12 @@ entities {
 		}
 		
 		aspect default { 
-			draw  shape color: color;
+			draw circle(size)  color: color;
 		}
 	}
 }
 
-experiment circle type: gui {
+experiment main type: gui {
 	parameter 'Number of Agents' var: number_of_agents;
 	parameter 'Radius of Circle' var: radius_of_circle; 
 	parameter 'Strength of Repulsion' var: repulsion_strength;

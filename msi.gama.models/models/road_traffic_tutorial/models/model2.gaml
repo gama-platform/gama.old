@@ -5,18 +5,19 @@ global {
 	file shape_file_buildings <- file('../includes/building.shp');
 	file shape_file_roads <- file('../includes/road.shp');
 	file shape_file_bounds <- file('../includes/bounds.shp');
+	geometry shape <- envelope(shape_file_bounds);
 	int nb_people <- 100;
 	
 	init {
 		create building from: shape_file_buildings with: [type::string(read ('NATURE'))] {
 			if type='Industrial' {
-				set color <- rgb('blue') ;
+				color <- rgb('blue') ;
 			}
 		}
 		create road from: shape_file_roads ;
-		let residential_buildings type: list of: building <- list(building) where (each.type='Residential');
+		list<building> residential_buildings <- building where (each.type='Residential');
 		create people number: nb_people {
-			set location <- any_location_in (one_of (residential_buildings));
+			location <- any_location_in (one_of (residential_buildings));
 		}
 	}
 }
@@ -25,13 +26,13 @@ entities {
 		string type; 
 		rgb color <- rgb('gray')  ;
 		aspect base {
-			draw geometry: shape  color: color ;
+			draw shape  color: color ;
 		}
 	}
 	species road  {
 		rgb color <- rgb('black') ;
 		aspect base {
-			draw geometry: shape color: color ;
+			draw shape color: color ;
 		}
 	}
 	species people {
@@ -41,7 +42,6 @@ entities {
 		}
 	}
 }
-environment bounds: shape_file_bounds ;
 
 experiment road_traffic type: gui {
 	parameter 'Shapefile for the buildings:' var: shape_file_buildings category: 'GIS' ;
