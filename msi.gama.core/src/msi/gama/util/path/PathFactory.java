@@ -4,6 +4,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.continuous.*;
 import msi.gama.metamodel.topology.graph.*;
+import msi.gama.metamodel.topology.grid.GridTopology;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
 import msi.gama.util.graph.IGraph;
@@ -45,6 +46,8 @@ public class PathFactory {
 		if ( g instanceof GraphTopology ) {
 			return (GamaSpatialPath) newInstance(((GraphTopology) g).getPlaces(), nodes);
 		} else if ( g instanceof ContinuousTopology || g instanceof AmorphousTopology ) {
+			return new GamaSpatialPath(null, nodes);
+		} else if ( g instanceof GridTopology  ) {
 			return new GamaSpatialPath(null, nodes);
 		} else {
 			throw GamaRuntimeException.error("Topologies that are not Graph are not yet taken into account");

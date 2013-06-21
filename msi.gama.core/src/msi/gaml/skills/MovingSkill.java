@@ -308,7 +308,7 @@ public class MovingSkill extends GeometricSkill {
 			return null;
 		}
 		IPath path = (GamaPath) agent.getAttribute("current_path");
-		if ( path == null || !path.getTopology().equals(topo) || !path.getEndVertex().equals(goal) ||
+		if ( path == null || (path.getTopology() != null && !path.getTopology().equals(topo)) || !path.getEndVertex().equals(goal) ||
 			!path.getStartVertex().equals(source) ) {
 			path = topo.pathBetween(scope, source, goal);
 		} else {
@@ -585,11 +585,14 @@ public class MovingSkill extends GeometricSkill {
 					indexSegment++;
 				} else {
 					final IShape gl = GamaGeometryType.buildLine(currentLocation, pt);
-					final IAgent a = path.getRealObject(line).getAgent();
+					if (path.getRealObject(line) != null) {
+						final IAgent a = path.getRealObject(line).getAgent();
 
-					if ( a != null ) {
-						agents.put(gl, a);
+						if ( a != null ) {
+							agents.put(gl, a);
+						}
 					}
+					
 					segments.add(gl);
 					currentLocation = pt;
 					distance = 0;

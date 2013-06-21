@@ -337,6 +337,9 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 
 	@Override
 	public ITopology getTopology() {
+		if (graph == null) {
+			return null;
+		}
 		return ((GamaSpatialGraph) graph).getTopology();
 	}
 
