@@ -1,5 +1,5 @@
 model boids 
-global { 
+global torus: torus_environment{ 
 	int number_of_agents <- 100 min: 1 max: 1000000;
 	int number_of_obstacles <- 5 min: 0;
 	float maximal_speed <- 15.0 min: 0.1 max: 15.0;
@@ -26,24 +26,23 @@ global {
 	int xmax <- (width_and_height_of_environment - bounds);     
 	int ymax <- (width_and_height_of_environment - bounds);   
 
+	geometry shape <- square(width_and_height_of_environment);
 	init { 
 		create boids number: number_of_agents { 
 			 location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 };
 		} 
 				 
 		create obstacle number: number_of_obstacles {
-			set location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
+			location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
 		}
 		
 		create  boids_goal number: 1 {
-			set location <- goal;
+			location <- goal;
 		}
 		
 		
 		}	
 }
-	
-environment width: width_and_height_of_environment height: width_and_height_of_environment torus: torus_environment {}
 
 entities {
 	species name: boids_goal skills: [moving] {
@@ -52,7 +51,7 @@ entities {
 		
 		reflex wander {  
 			do  wander amplitude: 45 speed: 20;  
-			set goal <- location;
+			goal <- location;
 		}
 		
 		aspect default {
@@ -67,80 +66,76 @@ entities {
 		int heading max: heading + maximal_turn min: heading - maximal_turn;
 		point velocity <- {0,0};
 		int size <- 5;
-	
-//		list others update: ((boids overlapping (circle (range)))  - self);
-		
-//		point mass_center update:  (length(others) > 0) ? (mean (others collect (each.location)) ) as point : location;
-		
+			
 		reflex separation when: apply_separation {
-			let acc value: {0,0};
+			point acc <- {0,0};
 			loop boid over: (boids overlapping (circle(minimal_distance)))  {
-				set acc <- acc - ((location of boid) - location);
+				acc <- acc - ((location of boid) - location);
 			}  
-			set velocity <- velocity + acc;
+			velocity <- velocity + acc;
 		}
 		
 		reflex alignment when: apply_alignment {
-			let others type: list value: ((boids overlapping (circle (range)))  - self);
+			list<boids> others  <- ((boids overlapping (circle (range)))  - self);
 
-			let acc <- (mean (others collect (each.velocity)) as point) - velocity;
-			set velocity <- velocity + (acc / alignment_factor);
+			point acc <- (mean (others collect (each.velocity)) as point) - velocity;
+			velocity <- velocity + (acc / alignment_factor);
 		}
 		 
 		reflex cohesion when: apply_cohesion {
-			let others type: list value: ((boids overlapping (circle (range)))  - self);
-			let mass_center type: point value:  (length(others) > 0) ? (mean (others collect (each.location)) ) as point : location;
+			list others <- ((boids overlapping (circle (range)))  - self);
+			point mass_center <- (length(others) > 0) ? (mean (others collect (each.location)) ) as point : location;
 
-			let acc value: mass_center - location;
-			set acc value: acc / cohesion_factor;
-			set velocity value: velocity + acc; 
+			point acc <- mass_center - location;
+			acc <- acc / cohesion_factor;
+			velocity <- velocity + acc; 
 		}
 		
 		reflex avoid when: apply_avoid {
 			let acc <- {0,0};
 			let nearby_obstacles <- (obstacle overlapping (circle (range)) );
 			loop obs over: nearby_obstacles {
-				set acc <- acc - ((location of obs) - my (location));
+				acc <- acc - ((location of obs) - my (location));
 			}
-			set velocity <- velocity + acc; 
+			velocity <- velocity + acc; 
 		}
 		
 		action bounding {
 			if  !(torus_environment) {
 				if  (location.x) < xmin {
-					set velocity <- velocity + {bounds,0};
+					velocity <- velocity + {bounds,0};
 				} else if (location.x) > xmax {
-					set velocity <- velocity - {bounds,0};
+					velocity <- velocity - {bounds,0};
 				}
 				
 				if (location.y) < ymin {
-					set velocity <- velocity + {0,bounds};
+					velocity <- velocity + {0,bounds};
 				} else if (location.y) > ymax {
-					set velocity <- velocity - {0,bounds};
+					velocity <- velocity - {0,bounds};
 				}
 				
 			}
 		}
 		
 		reflex follow_goal when: apply_goal {
-			set velocity <- velocity + ((goal - location) / cohesion_factor);
+			velocity <- velocity + ((goal - location) / cohesion_factor);
 		}
 		
 		reflex wind when: apply_wind {
-			set velocity <- velocity + wind_vector;
+			velocity <- velocity + wind_vector;
 		}
 		  
 		action do_move {  
 			if ((velocity.x) as int = 0) and ((velocity.y) as int = 0) {
-				set velocity <- {(rnd(4)) -2, (rnd(4)) - 2};
+				velocity <- {(rnd(4)) -2, (rnd(4)) - 2};
 			}
-			let old_location <- location;
+			point old_location <- copy(location);
 			do goto target: location + velocity;
-			set velocity <- location - old_location;
+			velocity <- location - old_location;
 		}
 		
 		reflex movement {
-			do bounding;
+		//	do bounding;
 			do do_move;
 		}
 		
