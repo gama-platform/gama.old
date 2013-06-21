@@ -9,6 +9,9 @@ global {
 	int food_remaining update: list ( ant_grid ) count ( each . food > 0) <- 10;
 	const center type: point <- { round ( gridsize / 2 ) , round ( gridsize / 2 ) };
 	const types type: matrix of: int <- matrix (image ( '../images/environment75x75_scarce.pgm' )); 
+	
+	geometry shape <- square(gridsize);
+	
 	init {
 		create ant number: ants_number with: [ location :: center ];
 	} 
@@ -42,7 +45,7 @@ global {
 	}
 
 } 
-environment width: gridsize height: gridsize {
+entities {
 	grid ant_grid width: gridsize height: gridsize neighbours: 8 {
 		bool isNestLocation  <- ( self distance_to center ) < 4;
 		bool isFoodLocation <-  types[grid_x , grid_y] = 2;       
@@ -51,8 +54,6 @@ environment width: gridsize height: gridsize {
 		int food <- isFoodLocation ? 5 : 0; 
 		const nest type: int <- int(300 - ( self distance_to center ));
 	}
-}  
-entities {
 	species ant skills: [ moving ] {     
 		rgb color <- rgb('red');
 		ant_grid place function: {ant_grid ( location )};
@@ -63,30 +64,30 @@ entities {
 			do wander amplitude: 120 speed: 1.0;
 		}
 		reflex looking when: ( ! hasFood ) and ( hasRoad ) and ( place . food = 0 ) { 
-			let list_places <- place . neighbours;
-			let goal <- list_places first_with ( each . food > 0 );
+			list<ant_grid> list_places <- place . neighbours;
+			ant_grid goal <- list_places first_with ( each . food > 0 );
 			if goal != nil {
-				set location <- goal.location ; 
+				location <- goal.location ; 
 			} else {
-				let min_nest <- ( list_places min_of ( each . nest ) );
-				set list_places <- list_places sort ( ( each . nest = min_nest ) ? each . road : 0.0 ) ;
-				set location <- point ( last ( list_places ) ) ;
+				int min_nest <- ( list_places min_of ( each . nest ) );
+				list_places <- list_places sort ( ( each . nest = min_nest ) ? each . road : 0.0 ) ;
+				location <- point ( last ( list_places ) ) ;
 			}
 		}
 		reflex taking when: ( ! hasFood ) and ( place . food > 0 ) { 
-			set hasFood <- true ;
-			set place . food <- place . food - 1 ;
+			hasFood <- true ;
+			place . food <- place . food - 1 ;
 		}
 		
 		reflex homing when: ( hasFood ) and ( ! place . isNestLocation ) {
 			do goto target:center  speed:1.0;
 		}
 		reflex dropping when: ( hasFood ) and ( place . isNestLocation ) {
-			set hasFood <- false ;
-			set heading <- heading - 180 ;
+			hasFood <- false ;
+			heading <- heading - 180 ;
 		}
 		aspect name: 'default' {
-			draw shape: circle(2.0) color: color;
+			draw circle(2.0) color: color;
 		}
 		
 	}
@@ -95,19 +96,19 @@ experiment Simple type:gui {
 	parameter 'Evaporation Rate:' var: evaporation_rate;
 	parameter 'Diffusion Rate:' var: diffusion_rate;
 	output { 
-		display Ants refresh_every: 2 type: opengl{ 
+		display Ants refresh_every: 2 { 
 			grid ant_grid;
 			species ant aspect: default;
 			text string ( food_remaining ) size: 24.0 position: { 20 , 20 } color: rgb ( 'white' );
 			event mouse_down action:press;
 			event mouse_up action:release;
 		}  
-	display Ants22 refresh_every: 2 { 
+		display Ants_2 refresh_every: 2 { 
 			grid ant_grid;
 			text string ( food_remaining ) size: 24.0 position: { 20 , 20 } color: rgb ( 'white' );
 			event mouse_down action:press;
 			event mouse_up action:click2;
-		}   
+		}  
 	}
 }
 

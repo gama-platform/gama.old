@@ -6,7 +6,7 @@ global {
 	float diffusion_rate <- 0.5 min: 0.0 max: 1.0 ;
 	bool use_icons <- true ;
 	bool display_state <- true;
-	const gridsize type: int <- 75 ;
+	int gridsize <- 75 ;
 	const center type: point <- { (gridsize / 2),  (gridsize / 2)} ;
 	const types type: file <- (read(image('../images/environment75x75.pgm'))) ;
 	const ant_shape_empty type: string <- '../icons/ant.png' ;
@@ -21,15 +21,16 @@ global {
 	const C005500 type: rgb <- rgb('#005500') ; 
 	const yellow type: rgb <- rgb('yellow') ; 
 	const red type: rgb <- rgb('red') ;  
-	const orange type: rgb <- rgb('orange') ; 
+	const orange type: rgb <- rgb('orange') ;  
 	int food_gathered <- 0 ;
-	
-	init{
+	geometry shape <- square(gridsize);
+	init{ 
 		create ant number: ants_number with: [location::any_location_in (ant_grid(center))] ;
 	}
 
 }
-environment width: gridsize height: gridsize {  
+
+entities {
 	grid ant_grid width: gridsize height: gridsize neighbours: 8 use_regular_agents: false {
 		const neighbours <- self neighbours_at 1 type: list of: ant_grid ;
 		const multiagent type: bool <- true ;
@@ -41,8 +42,6 @@ environment width: gridsize height: gridsize {
 		const nest type: int <- 300 - int(self distance_to center) ;
 		
 	}
-}
-entities {
 	species ant skills: [moving] control: fsm {
 		float speed <- 2.0 ;
 		ant_grid place update: ant_grid (location ); 
@@ -50,22 +49,22 @@ entities {
 		bool hasFood <- false ;
 		signal road value: hasFood ? 240.0 : 0.0 decay: evaporation_rate proportion: diffusion_rate environment: ant_grid ;
 		action pick {
-			set im <- ant_shape_full ;
-			set hasFood <- true ;
-			set place.food <- place.food - 1 ;
+			im <- ant_shape_full ;
+			hasFood <- true ;
+			place.food <- place.food - 1 ;
 		}
 		action drop {
-			set food_gathered <- food_gathered + 1 ;
-			set hasFood <- false ;
-			set heading <- heading - 180 ;
+			food_gathered <- food_gathered + 1 ;
+			hasFood <- false ;
+			heading <- heading - 180 ;
 		}
 		action choose_best_place type: ant_grid {
-			let list_places <- place.neighbours of: ant_grid ;
+			list<ant_grid> list_places <- place.neighbours ;
 			if (list_places count (each.food > 0)) > 0  {
 				return (list_places first_with (each.food > 0)) ;
 			} else {
 					let min_nest  <-  (list_places min_of (each.nest)) ;
-					set list_places <- list_places sort ((each.nest = min_nest) ? each.road :  0.0) ;
+					list_places <- list_places sort ((each.nest = min_nest) ? each.road :  0.0) ;
 					return last(list_places) ;
 				}
 		}
@@ -83,7 +82,7 @@ entities {
 			}
 		}
 		state followingRoad {
-			set location <- (self choose_best_place []) as point ;
+			location <- (self choose_best_place []) as point ;
 			transition to: carryingFood when: place.food > 0 {
 				do pick ;
 			}
@@ -91,12 +90,12 @@ entities {
 		}
 		aspect text {
 			if use_icons {
-				draw  hasFood ? file(ant_shape_full) : file(ant_shape_empty) rotate: heading at: my location size: 16°px ;
+				draw  hasFood ? file(ant_shape_full) : file(ant_shape_empty) rotate: heading at: location size: 5 ;
 			} else {
-					draw circle(1.0) empty: !hasFood color: rgb ('orange') ;
+				draw circle(1.0) empty: !hasFood color: rgb ('orange') ;
 			}
 			if condition: display_state {
-				draw text: state at: location + {-3,1.5} color: white size: 0.8 ;
+				draw state at: location + {-3,1.5} color: white size: 0.8 ;
 			}
 		}
 		aspect default {
@@ -111,12 +110,10 @@ experiment Ant type: gui {
 	parameter 'Use icons for the agents:' var: use_icons category: 'Display' ;
 	parameter 'Display state of agents:' var: display_state category: 'Display' ;
 	output {
-		display Ants refresh_every: 1 type: opengl{
+		display Ants type: opengl{
 			grid ant_grid ;
 			species ant aspect: text ;
 		}
-		inspect name: 'agents' type: agent ;
-		inspect name: 'species' type: species ;
 	}
 }
 

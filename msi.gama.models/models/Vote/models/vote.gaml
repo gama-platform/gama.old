@@ -28,7 +28,7 @@ global {
 	}
 	
 	action creation_candidats {
-			switch distribution_candidats {
+			switch distribution_candidats { 
 				match "Polygone" {
 					list<point> liste_points <- list(nb_candidates points_at 50.0);
 					int cpt <- 0;
