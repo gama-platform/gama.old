@@ -7,22 +7,22 @@ global {
 	graph the_graph;
 	
 	init { 
-		let cpt type: int <- 1;
+		int cpt <- 1;
 		create road from: shape_file_roads;
-		let roadsList type: list of: road <- (road as list) sort_by ((each.location).x);
+		list<road> roadsList <- road sort_by ((each.location).x);
 		ask roadsList {
-			set destruction_coeff <- cpt;
-			set color <- rgb([min([255, int(255*(destruction_coeff/ 4.0))]),max ([0, int(255 - (255*(destruction_coeff/4.0)))]),0]) ;
-			set cpt <- cpt * 2;
+			 destruction_coeff <- cpt;
+			 color <- rgb(min([255, int(255*(destruction_coeff/ 4.0))]),max ([0, int(255 - (255*(destruction_coeff/4.0)))]),0) ;
+			 cpt <- cpt * 2;
 		}
 		
-		let weights_map type: map <- (list (road)) as_map [each:: each.destruction_coeff];
-		set the_graph <- as_edge_graph(list(road))  with_weights weights_map;
+		map<road,float> weights_map <- road as_map (each:: each.destruction_coeff);
+		the_graph <- as_edge_graph(road)  with_weights weights_map;
 		
-		create people number: 1 {
-			set speed <- 2 ; 
-			set location <- first(((first (roadsList)).shape).points); 
-			set target <- last(((last (roadsList)).shape).points); 
+		create people  {
+			 speed <- 2 ; 
+			 location <- first(((first (roadsList)).shape).points); 
+			 target <- last(((last (roadsList)).shape).points); 
 		}
 	}
 }
@@ -31,7 +31,7 @@ entities {
 		float destruction_coeff;
 		rgb color  ;
 		aspect base {
-			draw geometry: shape color: color ;
+			draw shape color: color ;
 		}
 	}
 	species people skills: [moving]{

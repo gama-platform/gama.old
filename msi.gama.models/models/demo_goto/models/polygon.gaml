@@ -11,27 +11,27 @@ global {
 	
 	init {    
 		create object from: shape_file_in ;
-		let the_object type: object <- first(object);
-		let triangles type: container of: geometry <- triangulate(the_object);
+		object the_object <- first(object);
+		list<geometry> triangles <- list(triangulate(the_object));
 		loop trig over: triangles {
 			create triangle {
-				set shape <- trig;
+				shape <- trig;
 			}
 		}
-		let skeletons type: list of: geometry <- list(skeletonize(the_object));
-		let skeletons_split type: list of: geometry <- split_lines(skeletons);
+		list<geometry> skeletons <- list(skeletonize(the_object));
+		list<geometry> skeletons_split  <- split_lines(skeletons);
 		loop sk over: skeletons_split {
 			create skeleton {
-				set shape <- sk;
+				shape <- sk;
 			}
 		}
-		set the_graph <- as_edge_graph(list(skeleton));
-		create goal number: 1 {
-			set location <- any_location_in (one_of(skeleton as list)); 
+		 the_graph <- as_edge_graph(skeleton);
+		create goal  {
+			 location <- any_location_in (one_of(skeleton)); 
 		}
 		create people number: 100 {
-			set target <- one_of (goal as list) ; 
-			set location <- any_location_in (one_of(skeleton as list));
+			 target <- one_of (goal) ; 
+			 location <- any_location_in (one_of(skeleton));
 		} 
 	}
 }
@@ -39,18 +39,18 @@ environment bounds: shape_file_in ;
 entities {
 	species object  {
 		aspect default {
-			draw geometry: shape color: rgb('gray') ;
+			draw shape color: rgb('gray') ;
 		}
 	}
 	species triangle  {
-		rgb color <- rgb([150 +rnd(100),150 + rnd(100),150 + rnd(100)]);
+		rgb color <- rgb(150 +rnd(100),150 + rnd(100),150 + rnd(100));
 		aspect default {
-			draw geometry: shape color: color ;
+			draw shape color: color ;
 		}
 	}
 	species skeleton  {
 		aspect default {
-			draw geometry: shape buffer 0.2 color: rgb('red') ;
+			draw shape + 0.2 color: rgb('red') ;
 		}
 	}
 	species goal {
