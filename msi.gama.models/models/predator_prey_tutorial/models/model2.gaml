@@ -10,33 +10,31 @@ global {
 }
 entities {
 	species prey {
-		const size type: float <- 2.0 ;
-		const color type: rgb <- rgb('blue') ;
-		vegetation_cell myCell <- one_of (vegetation_cell as list) ;
+		const size type: float <- 1.0 ;
+		const color type: rgb <- rgb("blue") ;
+		vegetation_cell myCell <- one_of (vegetation_cell) ;
 		
 		init {
-			set location <- myCell.location;
+			location <- myCell.location;
 		}
 		
 		aspect base {
 			draw circle(size) color: color ;
 		}
 	}
-}
-environment width: 100 height: 100 {
 	grid vegetation_cell width: 50 height: 50 neighbours: 4 {
 		float maxFood <- 1.0 ;
 		float foodProd <- (rnd(1000) / 1000) * 0.01 ;
-		float food <- (rnd(1000) / 1000) update: min([maxFood, food + foodProd]) ;
-		rgb color <- rgb([255 * (1 - food), 255, 255 * (1 - food)]) update: rgb([255 * (1 - food), 255, 255 * (1 - food)]) ;
+		float food <- (rnd(1000) / 1000) max: maxFood update: food + foodProd ;
+		rgb color <- rgb(255 * (1 - food), 255, 255 * (1 - food)) update: rgb(255 * (1 - food), 255, 255 * (1 - food)) ;
 	}
 }
- 
+
 experiment prey_predator type: gui {
-	parameter 'Initial number of preys: ' var: nb_preys_init category: 'Prey' ;
+	parameter "Initial number of preys: " var: nb_preys_init category: "Prey" ;
 	output {
 		display main_display {
-			grid vegetation_cell lines: rgb('black') ;
+			grid vegetation_cell lines: rgb("black") ;
 			species prey aspect: base ;
 		}
 	}

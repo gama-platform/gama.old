@@ -9,7 +9,7 @@ global {
 }
 entities {
 	species prey {
-		const size type: float <- 2.0 ;
+		const size type: float <- 1.0 ;
 		const color type: rgb <- rgb('blue');
 		
 		aspect base {
@@ -17,8 +17,6 @@ entities {
 		}
 	}
 } 
-environment width: 100 height: 100 ;
-
 experiment prey_predator type: gui {
 	parameter 'Initial number of preys: ' var: nb_preys_init category: 'Prey' ;
 	output {
