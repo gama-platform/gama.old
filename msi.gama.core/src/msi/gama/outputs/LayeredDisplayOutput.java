@@ -255,7 +255,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			}
 		}
 
-		GuiUtils.debug("LayeredDisplayOutput.update");
+		// GuiUtils.debug("LayeredDisplayOutput.update");
 		surface.updateDisplay();
 
 	}
