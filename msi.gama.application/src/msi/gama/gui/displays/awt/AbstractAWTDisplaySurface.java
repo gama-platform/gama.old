@@ -268,6 +268,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	public void updateDisplay() {
 		// GuiUtils.debug("AbstractAWTDisplaySurface.updateDisplay");
 		if ( !canBeUpdated() ) { return; }
+		canBeUpdated(false);
 		if ( synchronous && !EventQueue.isDispatchThread() && !GAMA.isPaused() ) {
 			try {
 				EventQueue.invokeAndWait(displayBlock);
@@ -381,6 +382,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	@Override
 	public void zoomFit() {
+		GuiUtils.debug("AbstractAWTDisplaySurface.zoomFit :" + getWidth() + " " + getHeight());
 		setZoomLevel(1d);
 		zoomFit = true;
 	}
