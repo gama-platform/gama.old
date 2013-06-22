@@ -7,30 +7,24 @@
 model RoadTrafficComplex
  
 global {   
-	file shape_file_roads  <- file('../includes/ManhattanRoads.shp') ;
-	file shape_file_bounds <- file('../includes/ManhattanBounds.shp') ;
-	
+	file shape_file_roads  <- file("../includes/ManhattanRoads.shp") ;
+	file shape_file_bounds <- file("../includes/ManhattanBounds.shp") ;
 	int nbGoalsAchived <- 0;
 	graph the_graph;  
-	list roadsList of: road ; 
 	 
 	init {  
-		create road from: shape_file_roads with:[nbLanes::int(read('LANE_NB'))];
-		set roadsList <- road as list;
-		loop rd over: road as list {
-			create road_display {
-				set shape <- rd.shape buffer (2 * rd.nbLanes);
-			}	
-		}
-		set the_graph <-  (as_edge_graph(list(road))) with_optimizer_type "Dijkstra";
+		create road from: shape_file_roads with:[nbLanes::int(read("LANE_NB"))] {
+			geom_visu <- shape + (2 * nbLanes);
+		}	
+		the_graph <-  (as_edge_graph(road)) ;
 		create people number: 300 { 
-			set speed <- 15 ;
-			set target <- any_location_in (one_of(roadsList));
-			set location <- any_location_in (one_of(roadsList));
-			set living_space <-10;
-			set tolerance <- 0.1;
-			set lanes_attribute <- "nbLanes";
-			set obstacle_species <- [species(self)]; 
+			speed <- 15 ;
+			target <- any_location_in (one_of(road));
+			location <- any_location_in (one_of(road));
+			living_space <-10;
+			tolerance <- 0.1;
+			lanes_attribute <- "nbLanes";
+			obstacle_species <- [species(self)]; 
 		}   
 	}
 	
@@ -39,64 +33,60 @@ entities {
 	species road  { 
 		int nbLanes;
 		int indexDirection; 
-		aspect base { 
-			draw geometry: shape color: rgb('black') ;
+		geometry geom_visu;
+		aspect base {    
+			draw geom_visu color: rgb("black") ;
 		} 
 	}
-	species road_display  {
-		aspect base { 
-			draw geometry: shape color: rgb('black') ;
-		} 
-	}
+	
 	species people skills: [driving] { 
 		float speed; 
-		rgb color <- rgb([rnd(255),rnd(255),rnd(255)]) ;
+		rgb color <- rgb(rnd(255),rnd(255),rnd(255)) ;
 		point target <- nil ; 
 		point targetBis <- nil ; 
 		point previousLoc <- nil;
 		bool normalMove <- true;
 		float evadeDist <- 300.0;
 		reflex move when: normalMove{
-			set previousLoc <- copy(location);
+			previousLoc <- copy(location);
 			do goto_driving target: target on: the_graph speed: speed ; 
 			switch location { 
 				match target {
-					set target <- any_location_in (one_of(roadsList));
-					set nbGoalsAchived <- nbGoalsAchived +1;
+					target <- any_location_in (one_of(road));
+					nbGoalsAchived <- nbGoalsAchived +1;
 				}
 				match previousLoc {
-					set targetBis <- last((one_of(roadsList where (each distance_to self < evadeDist)).shape).points);
-					set normalMove <- false;
+					targetBis <- last((one_of(road where (each distance_to self < evadeDist)).shape).points);
+					normalMove <- false;
 				}
 			}
 		}
 		reflex EvadeMove when: !(normalMove){
-			set previousLoc <- copy(location);
+			previousLoc <- copy(location);
 			do goto_driving target: targetBis on: the_graph speed: speed; 
 			switch location { 
 				match targetBis {
-					set normalMove <- true;
+					normalMove <- true;
 				}
 				match previousLoc {
-					set targetBis <- last((one_of(roadsList where (each distance_to self < evadeDist)).shape).points);
+					targetBis <- last((one_of(road where (each distance_to self < evadeDist)).shape).points);
 				}
 			}
 		}
 		aspect base {
-			draw geometry: circle(20) color: color;
+			draw circle(20) color: color;
 		}
 	}
 } 
 environment bounds: shape_file_bounds ;
 
 experiment Complex type: gui {
-	parameter 'Shapefile for the roads:' var: shape_file_roads category: 'GIS' ;
-	parameter 'Shapefile for the bounds:' var: shape_file_bounds category: 'GIS' ;
+	parameter "Shapefile for the roads:" var: shape_file_roads category: "GIS" ;
+	parameter "Shapefile for the bounds:" var: shape_file_bounds category: "GIS" ;
 	
 	output {
 		display city_display refresh_every: 1 {
-			species road_display aspect: base ;
-			//species road aspect: base ;
+			species road aspect: base ;
 			species people aspect: base;
 		}
 		monitor nbGoalsAchived value: nbGoalsAchived refresh_every: 1 ;
