@@ -217,7 +217,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public boolean step(final IScope scope) throws GamaRuntimeException {
 		for ( final ILayerStatement layer : getLayers() ) {
 			getScope().step(layer);
-			// if ( !getScope().step(layer) ) { return false; }
 		}
 		return true;
 	}
