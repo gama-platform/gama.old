@@ -33,7 +33,7 @@ import msi.gama.outputs.*;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -118,15 +118,15 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			displayItems();
 
 			surfaceCompo = createSurfaceComposite();
-//			surfaceCompo.addControlListener(new ControlAdapter() {
-//
-//				@Override
-//				public void controlResized(final ControlEvent e) {
-//					GuiUtils
-//						.debug("LayeredDisplayView.ownCreatePartControl(...).new ControlAdapter() {...}.controlResized " +
-//							surfaceCompo.getSize());
-//				}
-//			});
+			// surfaceCompo.addControlListener(new ControlAdapter() {
+			//
+			// @Override
+			// public void controlResized(final ControlEvent e) {
+			// GuiUtils
+			// .debug("LayeredDisplayView.ownCreatePartControl(...).new ControlAdapter() {...}.controlResized " +
+			// surfaceCompo.getSize());
+			// }
+			// });
 
 			getOutput().getSurface().setZoomListener(this);
 			((SashForm) parent).setWeights(new int[] { 1, 2 });
@@ -715,4 +715,31 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			}).start();
 		}
 	}
+
+	@Override
+	public void fixSize() {
+		// if ( swingCompo.isOpenGL ) { return; }
+		OutputSynchronizer.cleanResize(new Runnable() {
+
+			@Override
+			public void run() {
+				Point p = parent.getSize();
+				final int x = p.x;
+				final int y = p.y;
+				swingCompo.setSize(x, y);
+				// swingCompo.update();
+
+				java.awt.EventQueue.invokeLater(new Runnable() {
+
+					@Override
+					public void run() {
+						getOutput().getSurface().resizeImage(x, y);
+						getOutput().getSurface().updateDisplay();
+					}
+				});
+
+			}
+		});
+
+	};
 }

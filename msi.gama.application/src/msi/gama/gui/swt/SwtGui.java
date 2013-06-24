@@ -566,7 +566,12 @@ public class SwtGui implements IGui {
 		public void partDeactivated(final IWorkbenchPart partRef) {}
 
 		@Override
-		public void partOpened(final IWorkbenchPart partRef) {}
+		public void partOpened(final IWorkbenchPart partRef) {
+			if ( partRef instanceof LayeredDisplayView ) {
+				LayeredDisplayView view = (LayeredDisplayView) partRef;
+				view.fixSize();
+			}
+		}
 
 		@Override
 		public void partBroughtToTop(final IWorkbenchPart part) {}
@@ -1041,4 +1046,5 @@ public class SwtGui implements IGui {
 		hideMonitorView();
 		eraseConsole(true);
 	}
+
 }

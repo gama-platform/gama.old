@@ -55,6 +55,7 @@ public class OutputSynchronizer {
 				Thread.sleep(100);
 			} catch (final InterruptedException e) {}
 		}
+		cleanResize();
 	}
 
 	public static void waitForViewsToBeClosed() {
@@ -66,6 +67,22 @@ public class OutputSynchronizer {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	static List<Runnable> cleanResizers = new ArrayList();
+
+	/**
+	 * @param runnable
+	 */
+	public static void cleanResize(final Runnable runnable) {
+		cleanResizers.add(runnable);
+	}
+
+	public static void cleanResize() {
+		for ( Runnable r : cleanResizers ) {
+			GuiUtils.run(r);
+		}
+		cleanResizers.clear();
 	}
 
 }

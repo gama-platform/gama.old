@@ -5,7 +5,6 @@ import java.awt.geom.*;
 import java.awt.image.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.concurrent.Semaphore;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import msi.gama.common.interfaces.*;
@@ -28,7 +27,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	protected volatile boolean canBeUpdated = true;
 	protected Point origin = new Point(0, 0);
 	protected Dimension previousPanelSize;
-	protected final Semaphore paintingNeeded = new Semaphore(1, true);
+	// protected final Semaphore paintingNeeded = new Semaphore(1, true);
 	private int displayWidth;
 	private int displayHeight;
 	protected SWTNavigationPanel navigator;
@@ -300,8 +299,9 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	}
 
 	@Override
-	public final boolean resizeImage(final int x, final int y) {
-		GuiUtils.debug("AbstractAWTDisplaySurface.resizeImage " + x + " " + y);
+	public boolean resizeImage(final int x, final int y) {
+		// GuiUtils.debug("AbstractAWTDisplaySurface.resizeImage " + x + " " + y + " can be update : " + canBeUpdated);
+		if ( x == displayWidth && y == displayHeight ) { return true; }
 		canBeUpdated(false);
 		int[] point = computeBoundsFrom(x, y);
 		int imageWidth = Math.max(1, point[0]);
@@ -382,9 +382,14 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	@Override
 	public void zoomFit() {
-		GuiUtils.debug("AbstractAWTDisplaySurface.zoomFit :" + getWidth() + " " + getHeight());
 		setZoomLevel(1d);
 		zoomFit = true;
+	}
+
+	@Override
+	public void setSize(final int width, final int height) {
+		GuiUtils.debug("AbstractAWTDisplaySurface.setSize " + width + " " + height);
+		super.setSize(width, height);
 	}
 
 }

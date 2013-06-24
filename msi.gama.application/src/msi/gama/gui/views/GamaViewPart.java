@@ -39,7 +39,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
 		final String s_id = site.getSecondaryId();
-		final String id = site.getId() + (s_id == null ? "" :  s_id);
+		final String id = site.getId() + (s_id == null ? "" : s_id);
 		if ( GAMA.getExperiment() != null ) {
 			final IOutputManager manager = GAMA.getExperiment().getSimulationOutputs();
 			if ( manager != null ) {
@@ -92,5 +92,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 
 	@Override
 	public void setFocus() {}
+
+	public void fixSize() {};
 
 }
