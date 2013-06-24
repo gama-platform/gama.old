@@ -181,7 +181,7 @@ public abstract class EmbeddedSwingComposite extends Composite {
 	};
 
 	protected String outputName;
-	protected boolean isOpenGL;
+	public boolean isOpenGL;
 
 	// private final IDisplayOutput displayOutput = null;
 
