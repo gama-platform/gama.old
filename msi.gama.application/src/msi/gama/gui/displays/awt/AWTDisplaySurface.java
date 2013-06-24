@@ -24,7 +24,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import javax.swing.SwingUtilities;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.*;
+import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
@@ -99,14 +99,11 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 			@Override
 			public void run() {
-				// if ( !canBeUpdated() ) { return; }
 				canBeUpdated(false);
 				drawDisplaysWithoutRepainting();
-				// GuiUtils.debug("AWTDisplaySurface.AWTDisplaySurface(...).new Runnable() {...}.run displayBlock");
 				repaint();
 				canBeUpdated(true);
 			}
-
 		};
 	}
 
@@ -131,7 +128,6 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	public void initialize(final double env_width, final double env_height,
 		final LayeredDisplayOutput layerDisplayOutput) {
 		super.initialize(env_width, env_height, layerDisplayOutput);
-		// GuiUtils.debug("AWTDisplaySurface.initialize");
 		setCursor(createCursor());
 		menuManager = new AWTDisplaySurfaceMenu(this);
 		final DisplayMouseListener d = new DisplayMouseListener();
@@ -142,8 +138,6 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 			@Override
 			public void componentResized(final ComponentEvent e) {
-				GuiUtils.debug("AWTDisplaySurface.initialize(...).new ComponentAdapter() {...}.componentResized " +
-					e.getComponent().getWidth() + " " + e.getComponent().getHeight());
 				if ( buffImage == null || zoomFit ) {
 					zoomFit();
 				} else {
@@ -165,7 +159,6 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	@Override
 	public void outputChanged(final double env_width, final double env_height, final LayeredDisplayOutput output) {
-		// GuiUtils.debug("AWTDisplaySurface.outputChanged");
 		setEnvWidth(env_width);
 		setEnvHeight(env_height);
 		bgColor = output.getBackgroundColor();
@@ -185,7 +178,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	@Override
 	public int[] computeBoundsFrom(final int vwidth, final int vheight) {
-		GuiUtils.debug("AWTDisplaySurface.computeBoundsFrom " + vwidth + " " + vheight);
+		// GuiUtils.debug("AWTDisplaySurface.computeBoundsFrom " + vwidth + " " + vheight);
 		if ( !manager.stayProportional() ) { return new int[] { vwidth, vheight }; }
 		final int[] dim = new int[2];
 		if ( widthHeightConstraint < 1 ) {
@@ -195,8 +188,6 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 			dim[0] = Math.min(vwidth, (int) (vheight / widthHeightConstraint));
 			dim[1] = Math.min(vheight, (int) (dim[0] * widthHeightConstraint));
 		}
-		// GuiUtils.debug("AWTDisplaySurface.computeBoundsFrom " + vwidth + " " + vheight + " : " + dim[0] + " " +
-		// dim[1]);
 		return dim;
 	}
 
@@ -274,7 +265,6 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 			final int imagePY =
 				c.y < origin.y ? 0 : c.y >= getDisplayHeight() + origin.y ? getDisplayHeight() - 1 : c.y - origin.y;
 			setOrigin(c.x - (int) Math.round(imagePX * factor), c.y - (int) Math.round(imagePY * factor));
-			// GuiUtils.debug("AWTDisplaySurface.applyZoom");
 			updateDisplay();
 		}
 	}
@@ -285,7 +275,6 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		if ( resizeImage(getWidth(), getHeight()) ) {
 			super.zoomFit();
 			centerImage();
-			// GuiUtils.debug("AWTDisplaySurface.zoomFit");
 			updateDisplay();
 		}
 	}
