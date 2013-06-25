@@ -418,10 +418,10 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 		final Menu macroMenu = new Menu("Species ");
 		myRenderer.displaySurface.agentsMenu.add(macroMenu);
 		
-		final Menu allMenu = new Menu("All");
+		final Menu allMenu = new Menu("Selected");
 		macroMenu.add(allMenu);
 		
-		final MenuItem inspectItem = new MenuItem("Inspect All");
+		final MenuItem inspectItem = new MenuItem("Inspect Selected");
 		ActionListener menuListener = null;
 		menuListener = new ActionListener() {		
 			
