@@ -282,11 +282,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	 */
 	public void drawModel(final boolean picking) {
 		scene.draw(this, picking, true, true);
-		gl.glPointSize(10);
-		gl.glBegin(GL_POINTS);
-		gl.glColor3f(0.0F,0.0F,1.0F) ;
-		gl.glVertex3d(worldCoordinates.x, worldCoordinates.y, 0.0);
-		gl.glEnd();
+//		gl.glPointSize(10);
+//		gl.glBegin(GL_POINTS);
+//		gl.glColor3f(0.0F,0.0F,1.0F) ;
+//		gl.glVertex3d(worldCoordinates.x, worldCoordinates.y, 0.0);
+//		gl.glEnd();
 	}
 	
 	public void drawScene() {
