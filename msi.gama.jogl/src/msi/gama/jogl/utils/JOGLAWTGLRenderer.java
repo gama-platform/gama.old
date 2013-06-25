@@ -73,7 +73,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public boolean JTSTriangulation = false;
 	
 	//ROI Coordionates (x1,y1,x2,y2)
-    ArrayList<Integer> roi_List = new ArrayList<Integer>();
+    public ArrayList<Integer> roi_List = new ArrayList<Integer>();
 
 
 	public int pickedObjectIndex = -1;
@@ -85,7 +85,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	int[] viewport = new int[4];
     double mvmatrix[] = new double[16];
     double projmatrix[] = new double[16];
-    Vector3D worldCoordinates = new Vector3D();
+    public Vector3D worldCoordinates = new Vector3D();
+    public GamaPoint roiCenter = new GamaPoint(0, 0);
     
     public boolean stencil = false;
 
@@ -281,6 +282,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	 */
 	public void drawModel(final boolean picking) {
 		scene.draw(this, picking, true, true);
+		gl.glPointSize(10);
+		gl.glBegin(GL_POINTS);
+		gl.glColor3f(0.0F,0.0F,1.0F) ;
+		gl.glVertex3d(worldCoordinates.x, worldCoordinates.y, 0.0);
+		gl.glEnd();
 	}
 	
 	public void drawScene() {
@@ -516,7 +522,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		
 		Vector3D v3 = v2.subtract(v1);
 		v3.normalize();
-		float distance = (float) (camera.getPosition().getZ()/Vector3D.dotProduct(camera.getForward(), v3));
+		float distance = (float) (camera.getPosition().getZ()/Vector3D.dotProduct(new Vector3D(0.0,0.0,-1.0), v3));
 		worldCoordinates = camera.getPosition().add( v3.scalarMultiply( distance ) );
 
 
@@ -540,6 +546,56 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			roi_List.add(1, realPressedPoint.y);
 			roi_List.add(2, realmousePositionPoint.x);
 			roi_List.add(3, realmousePositionPoint.y);
+			
+			int roiWidth = (int)Math.abs((roi_List.get(0) + env_width / 2)-(roi_List.get(2) + env_width / 2));
+			int roiHeight = (int) Math.abs((roi_List.get(1) - env_height / 2)-(roi_List.get(3) - env_height / 2));
+			
+			
+			if(!this.displaySurface.switchCamera)
+			{
+				
+				if( roi_List.get(0) < roi_List.get(2) && roi_List.get(1)> roi_List.get(3))
+				{
+					roiCenter.setLocation(worldCoordinates.x-roiWidth/2, worldCoordinates.y+roiHeight/2);
+				}
+				else if(roi_List.get(0) < roi_List.get(2) && roi_List.get(1)< roi_List.get(3))
+				{					
+					roiCenter.setLocation(worldCoordinates.x-roiWidth/2, worldCoordinates.y-roiHeight/2);
+				}
+				else if(roi_List.get(0) > roi_List.get(2) && roi_List.get(1)< roi_List.get(3))
+				{
+					roiCenter.setLocation(worldCoordinates.x+roiWidth/2, worldCoordinates.y-roiHeight/2);
+				}
+				else if(roi_List.get(0) > roi_List.get(2) && roi_List.get(1)> roi_List.get(3))
+				{
+					roiCenter.setLocation(worldCoordinates.x+roiWidth/2, worldCoordinates.y+roiHeight/2);
+				}
+			}
+			else
+			{
+				if(roi_List.get(0) == roi_List.get(2) && roi_List.get(1)== roi_List.get(3))
+				{
+					System.out.println(" passe par le mouse click");
+					roiCenter.setLocation(worldCoordinates.x, worldCoordinates.y);
+
+				}
+				else if( roi_List.get(0) < roi_List.get(2) && roi_List.get(1)> roi_List.get(3))
+				{
+					roiCenter.setLocation(worldCoordinates.x-roiWidth/2, worldCoordinates.y+roiHeight/2);
+				}
+				else if(roi_List.get(0) < roi_List.get(2) && roi_List.get(1)< roi_List.get(3))
+				{
+					roiCenter.setLocation(worldCoordinates.x-roiWidth/2, worldCoordinates.y-roiHeight/2);
+				}
+				else if(roi_List.get(0) > roi_List.get(2) && roi_List.get(1)< roi_List.get(3))
+				{
+					roiCenter.setLocation(worldCoordinates.x+roiWidth/2, worldCoordinates.y-roiHeight/2);
+				}
+				else if(roi_List.get(0) > roi_List.get(2) && roi_List.get(1)> roi_List.get(3))
+				{
+					roiCenter.setLocation(worldCoordinates.x+roiWidth/2, worldCoordinates.y+roiHeight/2);
+				}
+			}
 
 		}
 		
@@ -549,56 +605,32 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	
 	public void ROIZoom()
 	{
-		int envWidth = (int)Math.abs((roi_List.get(0) + env_width / 2)-(roi_List.get(2) + env_width / 2));
-		int envHeight = (int) Math.abs((roi_List.get(1) - env_height / 2)-(roi_List.get(3) - env_height / 2));
+		int roiWidth = (int)Math.abs((roi_List.get(0) + env_width / 2)-(roi_List.get(2) + env_width / 2));
+		int roiHeight = (int) Math.abs((roi_List.get(1) - env_height / 2)-(roi_List.get(3) - env_height / 2));
 		
 		double maxDim;
 		
 		if(!this.displaySurface.switchCamera)
 		{
-			if ( envWidth > envHeight ) {
-				camera.setRadius(envWidth*1.5);
+			if ( roiWidth > roiHeight ) {
+				camera.setRadius(roiWidth*1.5);
 			} else {
-				camera.setRadius(envHeight*1.5);
+				camera.setRadius(roiHeight*1.5);
 			}
-			if( roi_List.get(0) < roi_List.get(2) && roi_List.get(1)> roi_List.get(3))
-			{
-				camera.setTarget(new Vector3D(worldCoordinates.x-envWidth/2,worldCoordinates.y+envHeight/2,0.0));
-			}
-			else if(roi_List.get(0) < roi_List.get(2) && roi_List.get(1)< roi_List.get(3))
-			{
-				camera.setTarget(new Vector3D(worldCoordinates.x-envWidth/2,worldCoordinates.y-envHeight/2,0.0));
-			}
-			else if(roi_List.get(0) > roi_List.get(2) && roi_List.get(1)< roi_List.get(3))
-			{
-				camera.setTarget(new Vector3D(worldCoordinates.x+envWidth/2,worldCoordinates.y-envHeight/2,0.0));
-			}
-			else if(roi_List.get(0) > roi_List.get(2) && roi_List.get(1)> roi_List.get(3))
-				camera.setTarget(new Vector3D(worldCoordinates.x+envWidth/2,worldCoordinates.y+envHeight/2,0.0));
+			
+			camera.setTarget(new Vector3D(roiCenter.x,roiCenter.y,0.0));
 			
 			camera.rotation();
 		}
 		else
 		{
-			if ( envWidth > envHeight ) {
-				maxDim = envWidth*1.5;
+			if ( roiWidth > roiHeight ) {
+				maxDim = roiWidth*1.5;
 			} else {
-				maxDim = envHeight*1.5;
+				maxDim = roiHeight*1.5;
 			}
-			if( roi_List.get(0) < roi_List.get(2) && roi_List.get(1)> roi_List.get(3))
-			{
-				camera.setPosition(new Vector3D(worldCoordinates.x-envWidth/2,worldCoordinates.y+envHeight/2, maxDim));
-			}
-			else if(roi_List.get(0) < roi_List.get(2) && roi_List.get(1)< roi_List.get(3))
-			{
-				camera.setPosition(new Vector3D(worldCoordinates.x-envWidth/2,worldCoordinates.y-envHeight/2,maxDim));
-			}
-			else if(roi_List.get(0) > roi_List.get(2) && roi_List.get(1)< roi_List.get(3))
-			{
-				camera.setPosition(new Vector3D(worldCoordinates.x+envWidth/2,worldCoordinates.y-envHeight/2,maxDim));
-			}
-			else if(roi_List.get(0) > roi_List.get(2) && roi_List.get(1)> roi_List.get(3))
-				camera.setPosition(new Vector3D(worldCoordinates.x+envWidth/2,worldCoordinates.y+envHeight/2,maxDim));
+			
+			camera.setPosition(new Vector3D(roiCenter.x,roiCenter.y, maxDim));
 
 			camera.vectorsFromAngles();
 		}

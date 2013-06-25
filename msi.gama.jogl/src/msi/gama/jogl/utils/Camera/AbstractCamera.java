@@ -1,6 +1,10 @@
 package msi.gama.jogl.utils.Camera;
 
+import java.awt.Menu;
+import java.awt.MenuItem;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -9,12 +13,14 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.nio.IntBuffer;
+import java.util.Iterator;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 
 import com.sun.opengl.util.BufferUtil;
 
+import msi.gama.common.util.GuiUtils;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
 import msi.gama.metamodel.agent.IAgent;
@@ -403,6 +409,39 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 
 	public void rotation() {
 		// TODO Auto-generated method stub
+	}
+	
+	public void buildMenus(final Iterator<IAgent> agents)
+	{
+		myRenderer.displaySurface.agentsMenu.removeAll();
+		
+		final Menu macroMenu = new Menu("Species ");
+		myRenderer.displaySurface.agentsMenu.add(macroMenu);
+		
+		final Menu allMenu = new Menu("All");
+		macroMenu.add(allMenu);
+		
+		final MenuItem inspectItem = new MenuItem("Inspect All");
+		ActionListener menuListener = null;
+		menuListener = new ActionListener() {		
+			
+			
+			@Override
+			public void actionPerformed(final ActionEvent e) {
+				while(agents.hasNext())
+				{
+					IAgent agent = agents.next();
+					GuiUtils.setSelectedAgent(agent);
+				}
+			}
+
+		};
+		inspectItem.addActionListener(menuListener);
+		allMenu.add(inspectItem);
+		
+		
+		
+		myRenderer.displaySurface.agentsMenu.show(myRenderer.displaySurface, this.mousePosition.x, this.mousePosition.y);
 	}
 	
 	public abstract boolean IsViewIn2DPlan();

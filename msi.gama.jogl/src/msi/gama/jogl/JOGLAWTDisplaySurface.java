@@ -53,7 +53,7 @@ import com.vividsolutions.jts.geom.Envelope;
 public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface implements IDisplaySurface.OpenGL {
 
 	private static final long serialVersionUID = 1L;
-	private PopupMenu agentsMenu = new PopupMenu();
+	public PopupMenu agentsMenu = new PopupMenu();
 
 	protected Point mousePosition;
 	private ActionListener menuListener;
@@ -196,7 +196,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		super.setPaused(flag);
 	}
 
-	static class AgentMenuItem extends MenuItem {
+	public static class AgentMenuItem extends MenuItem {
 
 		private final IAgent agent;
 		private final ILayer display;

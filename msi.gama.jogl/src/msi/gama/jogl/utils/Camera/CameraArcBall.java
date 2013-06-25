@@ -5,10 +5,15 @@ import static java.awt.event.KeyEvent.VK_LEFT;
 import static java.awt.event.KeyEvent.VK_RIGHT;
 import static java.awt.event.KeyEvent.VK_UP;
 
+import java.awt.Menu;
+import java.awt.MenuItem;
 import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
+import java.util.Iterator;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
@@ -16,11 +21,17 @@ import javax.swing.SwingUtilities;
 
 import com.vividsolutions.jts.geom.Envelope;
 
+import msi.gama.common.util.GuiUtils;
+import msi.gama.jogl.JOGLAWTDisplaySurface.AgentMenuItem;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.topology.AbstractTopology;
+import msi.gama.metamodel.topology.filter.Different;
+import msi.gama.metamodel.topology.filter.In;
 import msi.gama.runtime.GAMA;
 
 public class CameraArcBall extends AbstractCamera {
@@ -367,7 +378,24 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-//		PrintParam();
+		if ( myRenderer.displaySurface.selectRectangle) 
+		{
+			Point point = myRenderer.GetRealWorldPointFromWindowPoint(new Point(arg0.getX(),arg0.getY()));
+
+			mousePosition.x = arg0.getX() ; 
+			mousePosition.y = arg0.getY() ; 
+			enableROIDrawing = true;
+			myRenderer.DrawROI();
+			myRenderer.roiCenter.setLocation(point.x, point.y);
+			System.out.println("roiCenter x : "+myRenderer.roiCenter.x+" roiCenter y: "+myRenderer.roiCenter.y);
+			System.out.println("roi_List x1 : "+myRenderer.roi_List.get(0)+" roi_List y1: "+myRenderer.roi_List.get(1)+"roi_List x2 : "+myRenderer.roi_List.get(2)+" roi_List y2: "+myRenderer.roi_List.get(3));
+			Iterator<IShape> shapes = GAMA.getSimulation().getTopology().getSpatialIndex().allInEnvelope(new GamaPoint(myRenderer.roiCenter.x,-myRenderer.roiCenter.y), new Envelope(myRenderer.roiCenter.x-4,myRenderer.roiCenter.x+4,-myRenderer.roiCenter.y-4,-myRenderer.roiCenter.y+4),  new Different(), true);
+			final Iterator<IAgent> agents = AbstractTopology.toAgents(shapes);
+			
+			buildMenus(agents);
+			
+			enableROIDrawing = false;
+		}
 	}
 
 	@Override
@@ -407,9 +435,21 @@ public class CameraArcBall extends AbstractCamera {
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		if ( myRenderer.displaySurface.selectRectangle && IsViewIn2DPlan() && enableROIDrawing==true ) {
-			myRenderer.ROIZoom();
-//			GAMA.getSimulation().getTopology().getAgentClosestTo(source, filter)
-//			GAMA.getSimulation().getTopology().getSpatialIndex().allAtDistance(source, dist, f)
+
+			GamaPoint p = new GamaPoint(myRenderer.worldCoordinates.x,-myRenderer.worldCoordinates.y,0.0);
+			if(!arg0.isAltDown())
+			{
+				System.out.println("roiCenter x : "+myRenderer.roiCenter.x+" roiCenter y: "+myRenderer.roiCenter.y);
+				System.out.println("roi_List x1 : "+myRenderer.roi_List.get(0)+" roi_List y1: "+myRenderer.roi_List.get(1)+"roi_List x2 : "+myRenderer.roi_List.get(2)+" roi_List y2: "+myRenderer.roi_List.get(3));
+				Iterator<IShape> shapes = GAMA.getSimulation().getTopology().getSpatialIndex().allInEnvelope(new GamaPoint(myRenderer.roiCenter.x,-myRenderer.roiCenter.y), new Envelope(myRenderer.roi_List.get(0),myRenderer.roi_List.get(2),-myRenderer.roi_List.get(1),-myRenderer.roi_List.get(3)),  new Different(), true);
+				final Iterator<IAgent> agents = AbstractTopology.toAgents(shapes);
+
+				buildMenus(agents);
+			}
+			else
+			{
+				myRenderer.ROIZoom();
+			}
 			enableROIDrawing = false;
 		}
 	}
