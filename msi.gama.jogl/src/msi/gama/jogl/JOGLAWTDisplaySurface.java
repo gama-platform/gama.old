@@ -139,6 +139,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public void initialize(final double env_width, final double env_height, final LayeredDisplayOutput out) {
 		GuiUtils.debug("JOGLAWTDisplaySurface1.1.initialize");
 		super.initialize(env_width, env_height, out);
+		
+		setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 
 		// Call sun.awt.noerasebackground to reduce the flickering when creating a popup menu,
 		// due to AWT erasing the GLCanvas every time before jogl repaint.
@@ -479,6 +481,12 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	@Override
 	public void togglePicking() {
 		picking = !picking;
+		if(!picking){
+			setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		}
+		else{
+			setCursor(new Cursor(Cursor.HAND_CURSOR));
+		}
 
 	}
 
