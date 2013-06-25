@@ -87,7 +87,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
     double projmatrix[] = new double[16];
     Vector3D worldCoordinates = new Vector3D();
     
-    public boolean stencil = true;
+    public boolean stencil = false;
 
     
 	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {	
