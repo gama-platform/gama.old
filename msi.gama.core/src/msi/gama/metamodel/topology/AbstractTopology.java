@@ -527,7 +527,7 @@ public abstract class AbstractTopology implements ITopology {
 
 	}
 
-	protected static Iterator<IAgent> toAgents(final Iterator<IShape> shapes) {
+	public static Iterator<IAgent> toAgents(final Iterator<IShape> shapes) {
 		// GuiUtils.debug("AbstractTopology.toAgents");
 		return Iterators.transform(Iterators.filter(shapes, isAgent), getAgent);
 	}
