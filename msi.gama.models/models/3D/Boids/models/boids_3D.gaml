@@ -316,8 +316,8 @@ experiment start type: gui {
 			species boids_goal  transparency:0.2; 		
 		}
 		
-		display ThirdPersonn  type:opengl camera_pos:{-world.shape.width/2+int(first(boids).location.x),world.shape.height/2-int(first(boids).location.y),250} 
-		camera_look_pos:{-world.shape.width/2+int(first(boids).location.x),world.shape.height/2-(first(boids).location.y),0} {
+		display ThirdPersonn  type:opengl camera_pos:{int(first(boids).location.x),-int(first(boids).location.y),250} 
+		camera_look_pos:{int(first(boids).location.x),-(first(boids).location.y),0} {
 		
 			image name:'background' file:'../images/ocean.jpg' z:0;
 			species obstacle;
@@ -326,7 +326,7 @@ experiment start type: gui {
 		}
 		
 			
-		display FirstPerson  type:opengl ambient_light:100 camera_pos:{-world.shape.width/2+int(first(boids).location.x),world.shape.height/2-int(first(boids).location.y),10} 
+		display FirstPerson  type:opengl ambient_light:100 camera_pos:{int(first(boids).location.x),-int(first(boids).location.y),10} 
 		camera_look_pos:{cos(first(boids).heading)*world.shape.width,-sin(first(boids).heading)*world.shape.height,0} camera_up_vector:{0.0,0.0,1.0} {	
 			image name:'background' file:'../images/ocean.jpg' z:0;
 			species obstacle ;
