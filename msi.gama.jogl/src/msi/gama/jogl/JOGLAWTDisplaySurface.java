@@ -591,19 +591,17 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 		final Envelope env = geometry.getEnvelope();
 
-		final double xPos = geometry.getLocation().getX() - this.getEnvWidth() / 2;
-		final double yPos = -(geometry.getLocation().getY() - this.getEnvHeight() / 2);
+		final double xPos = geometry.getLocation().getX();
+		final double yPos = -(geometry.getLocation().getY());
 
 		// FIXME: Need to compute the depth of the shape to adjust ZPos value.
 		// FIXME: Problem when the geometry is a point how to determine the maxExtent of the shape?
-		final double zPos = env.maxExtent() * 2 + geometry.getLocation().getZ();
+		final double zPos = env.maxExtent() * 2 + geometry.getLocation().getZ() + this.renderer.env_width/100;
 		final double zLPos = -(env.maxExtent() * 2);
 		if ( !this.switchCamera ) {
 			renderer.camera.setRadius(zPos);
 			renderer.camera.rotation();
 		}
-		System.out.println("xPos:" + xPos + " yPos:" + yPos + " zPos:" + zPos);
-		System.out.println("xLPos:" + xPos + " yLPos:" + yPos + " zLPos:" + zLPos);
 		this.renderer.camera.updatePosition(xPos, yPos, zPos);
 		this.renderer.camera.lookPosition(xPos, yPos, zLPos);
 	}
