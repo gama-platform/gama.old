@@ -403,7 +403,8 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 
 	public void rotation() {
 		// TODO Auto-generated method stub
-		
 	}
+	
+	public abstract boolean IsViewIn2DPlan();
 
 }

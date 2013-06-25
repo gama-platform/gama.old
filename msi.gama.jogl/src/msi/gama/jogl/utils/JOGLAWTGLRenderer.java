@@ -87,7 +87,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
     double projmatrix[] = new double[16];
     Vector3D worldCoordinates = new Vector3D();
     
-    public boolean stencil = false;
+    public boolean stencil = true;
 
     
 	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {	
@@ -226,12 +226,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 //			gl.glDisable(GL_DEPTH_TEST);
 
-			if(this.displaySurface.rotation){		
-				frame++;
-				gl.glTranslated(env_width/2, -env_height/2, 0);
-				gl.glRotatef(frame, 0, 0, 1);
-				gl.glTranslated(-env_width/2, +env_height/2, 0);
-			}
+			
+			this.rotateModel();
 			
 			
 			this.drawScene();
@@ -247,6 +243,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		}
 	}
 
+	
 
 	@Override
 	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int arg3, final int arg4) {
@@ -487,6 +484,18 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public void CalculateFrameRate() {
 
 	}
+	
+	//Use when the rotation button is on.
+		public void rotateModel(){
+			if(this.displaySurface.rotation){		
+				frame++;
+			}
+			if(frame != 0){
+			  gl.glTranslated(env_width/2, -env_height/2, 0);
+			  gl.glRotatef(frame, 0, 0, 1);
+			  gl.glTranslated(-env_width/2, +env_height/2, 0);
+			}
+		}
 	
 	//////////////////////////ROI HANDLER ////////////////////////////////////
 	public Point GetRealWorldPointFromWindowPoint(final Point windowPoint) {

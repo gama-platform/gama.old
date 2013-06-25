@@ -231,7 +231,7 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
-		if(myRenderer.displaySurface.selectRectangle && _phi>=-89 && _phi<-85)
+		if(myRenderer.displaySurface.selectRectangle &&  IsViewIn2DPlan())
 		{
 			mousePosition.x = arg0.getX() ; 
 			mousePosition.y = arg0.getY() ; 
@@ -302,7 +302,7 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
-		if ( myRenderer.displaySurface.selectRectangle && _phi>=-89 && _phi<-85 && enableROIDrawing==true ) {
+		if ( myRenderer.displaySurface.selectRectangle &&  IsViewIn2DPlan()  && enableROIDrawing==true ) {
 			myRenderer.ROIZoom();
 //			GAMA.getSimulation().getTopology().getAgentClosestTo(source, filter)
 //			GAMA.getSimulation().getTopology().getSpatialIndex().allAtDistance(source, dist, f)
@@ -364,6 +364,17 @@ public class FreeFlyCamera extends AbstractCamera {
 		System.out.println("_forwardX:" + _forward.x + " _forwardY:" + _forward.y + " _forwardZ:" + _forward.z);
 		System.out.println("_phi : "+_phi+" _theta : "+_theta);
 
+	}
+
+	@Override
+	public boolean IsViewIn2DPlan() {
+		if(_phi>=-89 && _phi<-85){
+			return true;
+		}
+		else{
+			return false;
+		}
+		
 	}
 	
 
