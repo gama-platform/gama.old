@@ -4,7 +4,9 @@ import java.util.Map;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.headless.runtime.HeadlessListener;
+import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.kernel.experiment.ParametersSet;
+import msi.gama.kernel.model.GamlModelSpecies;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.GamlStandaloneSetup;
 import msi.gama.lang.gaml.resource.GamlResource;
@@ -12,6 +14,8 @@ import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamaBundleLoader;
+import msi.gaml.species.ISpecies;
+
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.resource.ResourceSet;
@@ -31,10 +35,22 @@ public class HeadlessSimulationLoader {
 	public static IHeadLessExperiment newHeadlessSimulation(final String fileName) {
 		configureHeadLessSimulation();
 		preloadGAMA();
-		loadModel(fileName);
-		IHeadLessExperiment exp = (IHeadLessExperiment) GAMA.getExperiment();
+		IModel model = loadModel(fileName);
+		IExperimentSpecies tt =  model.getExperiment("preyPred");
+		IHeadLessExperiment exp = (IHeadLessExperiment)model.getExperiment("preyPred");;
+		System.out.println("coucouc " + "  pouet "+ tt.getClass().getName());
+	   	
+	/*	
+   		for (ISpecies sp : ((GamlModelSpecies)model).getExperiments()) {
+   			System.out.println("coucouc " + "  pouet "+ sp.getName());
+   			if (sp instanceof IExperimentSpecies) { 
+   				System.out.println("coucouc " + "  experiment "+ sp.getName());
+   	   			
+   				 exp = (IHeadLessExperiment) sp;
+   			} 
+   		}*/
 		waitLoading(exp);
-		return (IHeadLessExperiment) GAMA.getExperiment();
+		return exp; // (IHeadLessExperiment) GAMA.getExperiment();
 	}
 
 	/**
@@ -68,7 +84,10 @@ public class HeadlessSimulationLoader {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		} while (exp.getCurrentSimulation() != null && exp.isLoading());
+			System.out.println("test " + exp);
+			System.out.println("test2 " + exp.getCurrentSimulation());
+			System.out.println("test2 " + exp.isLoading());
+		} while (/*exp.getCurrentSimulation() != null && */exp.isLoading());
 	}
 
 	private static void configureHeadLessSimulation() {
@@ -89,14 +108,16 @@ public class HeadlessSimulationLoader {
 		System.out.println("GAMA loading complete");
 	}
 
-	private static void loadModel(final String fileName) {
+	private static IModel loadModel(final String fileName) {
 		System.out.println(fileName + " model is loading...");
 
 		IModel lastModel = null;
 		ResourceSet rs = new ResourceSetImpl();
 		GamlResource r = (GamlResource) rs.getResource(URI.createURI("file:///" + fileName), true);
 		try {
-			GamlJavaValidator validator = (GamlJavaValidator) injector.getInstance(EValidator.class);
+		//	GamlJavaValidator validator = new GamlJavaValidator(); //(GamlJavaValidator) injector.getInstance(EValidator.class);
+			
+			GamlJavaValidator validator = (GamlJavaValidator) injector.getInstance(GamlJavaValidator.class);
 			lastModel = validator.build(r);
 			if ( !r.getErrors().isEmpty() ) {
 				lastModel = null;
@@ -114,6 +135,7 @@ public class HeadlessSimulationLoader {
 		// FIXME Experiment default no longer exists. Needs to specify one name
 		GAMA.controller.newExperiment(IKeyword.DEFAULT, lastModel);
 		System.out.println("Experiment created ");
+		return lastModel;
 	}
 
 }
