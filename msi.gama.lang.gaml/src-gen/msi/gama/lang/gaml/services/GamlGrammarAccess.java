@@ -1290,29 +1290,30 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cWarnKeyword_6 = (Keyword)cAlternatives.eContents().get(6);
 		private final Keyword cExceptionKeyword_7 = (Keyword)cAlternatives.eContents().get(7);
 		private final Keyword cSaveKeyword_8 = (Keyword)cAlternatives.eContents().get(8);
-		private final Keyword cDrawKeyword_9 = (Keyword)cAlternatives.eContents().get(9);
-		private final Keyword cDisplay_populationKeyword_10 = (Keyword)cAlternatives.eContents().get(10);
-		private final Keyword cDisplay_gridKeyword_11 = (Keyword)cAlternatives.eContents().get(11);
-		private final Keyword cUsingKeyword_12 = (Keyword)cAlternatives.eContents().get(12);
-		private final Keyword cSwitchKeyword_13 = (Keyword)cAlternatives.eContents().get(13);
-		private final Keyword cPutKeyword_14 = (Keyword)cAlternatives.eContents().get(14);
-		private final Keyword cAddKeyword_15 = (Keyword)cAlternatives.eContents().get(15);
-		private final Keyword cRemoveKeyword_16 = (Keyword)cAlternatives.eContents().get(16);
-		private final Keyword cMatchKeyword_17 = (Keyword)cAlternatives.eContents().get(17);
-		private final Keyword cMatch_betweenKeyword_18 = (Keyword)cAlternatives.eContents().get(18);
-		private final Keyword cMatch_oneKeyword_19 = (Keyword)cAlternatives.eContents().get(19);
-		private final Keyword cTextKeyword_20 = (Keyword)cAlternatives.eContents().get(20);
-		private final Keyword cImageKeyword_21 = (Keyword)cAlternatives.eContents().get(21);
-		private final Keyword cDataKeyword_22 = (Keyword)cAlternatives.eContents().get(22);
-		private final Keyword cChartKeyword_23 = (Keyword)cAlternatives.eContents().get(23);
+		private final Keyword cAssertKeyword_9 = (Keyword)cAlternatives.eContents().get(9);
+		private final Keyword cDrawKeyword_10 = (Keyword)cAlternatives.eContents().get(10);
+		private final Keyword cDisplay_populationKeyword_11 = (Keyword)cAlternatives.eContents().get(11);
+		private final Keyword cDisplay_gridKeyword_12 = (Keyword)cAlternatives.eContents().get(12);
+		private final Keyword cUsingKeyword_13 = (Keyword)cAlternatives.eContents().get(13);
+		private final Keyword cSwitchKeyword_14 = (Keyword)cAlternatives.eContents().get(14);
+		private final Keyword cPutKeyword_15 = (Keyword)cAlternatives.eContents().get(15);
+		private final Keyword cAddKeyword_16 = (Keyword)cAlternatives.eContents().get(16);
+		private final Keyword cRemoveKeyword_17 = (Keyword)cAlternatives.eContents().get(17);
+		private final Keyword cMatchKeyword_18 = (Keyword)cAlternatives.eContents().get(18);
+		private final Keyword cMatch_betweenKeyword_19 = (Keyword)cAlternatives.eContents().get(19);
+		private final Keyword cMatch_oneKeyword_20 = (Keyword)cAlternatives.eContents().get(20);
+		private final Keyword cTextKeyword_21 = (Keyword)cAlternatives.eContents().get(21);
+		private final Keyword cImageKeyword_22 = (Keyword)cAlternatives.eContents().get(22);
+		private final Keyword cDataKeyword_23 = (Keyword)cAlternatives.eContents().get(23);
+		private final Keyword cChartKeyword_24 = (Keyword)cAlternatives.eContents().get(24);
 		
 		//_1Expr_Facets_BlockOrEnd_Key:
-		//	"ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "draw" |
+		//	"ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" | "draw" |
 		//	"display_population" | "display_grid" | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" |
 		//	"match_one" | "text" | "image" | "data" | "chart";
 		public ParserRule getRule() { return rule; }
 
-		//"ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "draw" |
+		//"ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" | "draw" |
 		//"display_population" | "display_grid" | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" |
 		//"match_one" | "text" | "image" | "data" | "chart"
 		public Alternatives getAlternatives() { return cAlternatives; }
@@ -1344,50 +1345,53 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//"save"
 		public Keyword getSaveKeyword_8() { return cSaveKeyword_8; }
 
+		//"assert"
+		public Keyword getAssertKeyword_9() { return cAssertKeyword_9; }
+
 		//"draw"
-		public Keyword getDrawKeyword_9() { return cDrawKeyword_9; }
+		public Keyword getDrawKeyword_10() { return cDrawKeyword_10; }
 
 		//"display_population"
-		public Keyword getDisplay_populationKeyword_10() { return cDisplay_populationKeyword_10; }
+		public Keyword getDisplay_populationKeyword_11() { return cDisplay_populationKeyword_11; }
 
 		//"display_grid"
-		public Keyword getDisplay_gridKeyword_11() { return cDisplay_gridKeyword_11; }
+		public Keyword getDisplay_gridKeyword_12() { return cDisplay_gridKeyword_12; }
 
 		//"using"
-		public Keyword getUsingKeyword_12() { return cUsingKeyword_12; }
+		public Keyword getUsingKeyword_13() { return cUsingKeyword_13; }
 
 		//"switch"
-		public Keyword getSwitchKeyword_13() { return cSwitchKeyword_13; }
+		public Keyword getSwitchKeyword_14() { return cSwitchKeyword_14; }
 
 		//"put"
-		public Keyword getPutKeyword_14() { return cPutKeyword_14; }
+		public Keyword getPutKeyword_15() { return cPutKeyword_15; }
 
 		//"add"
-		public Keyword getAddKeyword_15() { return cAddKeyword_15; }
+		public Keyword getAddKeyword_16() { return cAddKeyword_16; }
 
 		//"remove"
-		public Keyword getRemoveKeyword_16() { return cRemoveKeyword_16; }
+		public Keyword getRemoveKeyword_17() { return cRemoveKeyword_17; }
 
 		//"match"
-		public Keyword getMatchKeyword_17() { return cMatchKeyword_17; }
+		public Keyword getMatchKeyword_18() { return cMatchKeyword_18; }
 
 		//"match_between"
-		public Keyword getMatch_betweenKeyword_18() { return cMatch_betweenKeyword_18; }
+		public Keyword getMatch_betweenKeyword_19() { return cMatch_betweenKeyword_19; }
 
 		//"match_one"
-		public Keyword getMatch_oneKeyword_19() { return cMatch_oneKeyword_19; }
+		public Keyword getMatch_oneKeyword_20() { return cMatch_oneKeyword_20; }
 
 		//"text"
-		public Keyword getTextKeyword_20() { return cTextKeyword_20; }
+		public Keyword getTextKeyword_21() { return cTextKeyword_21; }
 
 		//"image"
-		public Keyword getImageKeyword_21() { return cImageKeyword_21; }
+		public Keyword getImageKeyword_22() { return cImageKeyword_22; }
 
 		//"data"
-		public Keyword getDataKeyword_22() { return cDataKeyword_22; }
+		public Keyword getDataKeyword_23() { return cDataKeyword_23; }
 
 		//"chart"
-		public Keyword getChartKeyword_23() { return cChartKeyword_23; }
+		public Keyword getChartKeyword_24() { return cChartKeyword_24; }
 	}
 
 	public class _DoKeyElements extends AbstractParserRuleElementFinder {
@@ -4180,7 +4184,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//_1Expr_Facets_BlockOrEnd_Key:
-	//	"ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "draw" |
+	//	"ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" | "draw" |
 	//	"display_population" | "display_grid" | "using" | "switch" | "put" | "add" | "remove" | "match" | "match_between" |
 	//	"match_one" | "text" | "image" | "data" | "chart";
 	public _1Expr_Facets_BlockOrEnd_KeyElements get_1Expr_Facets_BlockOrEnd_KeyAccess() {

@@ -545,6 +545,7 @@
       <elements xsi:type="xtext:Keyword" value="warn"/>
       <elements xsi:type="xtext:Keyword" value="exception"/>
       <elements xsi:type="xtext:Keyword" value="save"/>
+      <elements xsi:type="xtext:Keyword" value="assert"/>
       <elements xsi:type="xtext:Keyword" value="draw"/>
       <elements xsi:type="xtext:Keyword" value="display_population"/>
       <elements xsi:type="xtext:Keyword" value="display_grid"/>

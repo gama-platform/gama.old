@@ -91,7 +91,7 @@ _SpeciesKey:
 	"species" | "grid";
 
 _1Expr_Facets_BlockOrEnd_Key:
-	"ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" |
+	"ask" | "release" | "capture" | "create" | "write" | "error" | "warn" | "exception" | "save" | "assert" |
 	"draw" | "display_population" | "display_grid" | "using" | "switch" | "put" | "add" | "remove" |
 	"match" | "match_between" | "match_one" | "text" | "image" | "data" | "chart";
 

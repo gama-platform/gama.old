@@ -31,7 +31,7 @@ import msi.gaml.compilation.GamlCompilationError;
 import msi.gaml.descriptions.ModelDescription;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.emf.common.util.*;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.xtext.resource.*;
@@ -50,7 +50,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	static boolean FORCE_VALIDATION = false;
 	GamlResource currentResource;
 
-	private DiagnosticChain diagnosticsChain;
+	// private DiagnosticChain diagnosticsChain;
 
 	@Check()
 	public synchronized void validate(final Model model) {
@@ -253,59 +253,5 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		}
 		return null;
 	}
-	//
-	// @Override
-	// public void acceptWarning(final String message, final EObject object, final EStructuralFeature feature,
-	// final int index, final String code, final String ... issueData) {
-	// diagnosticsChain.add(createDiagnostic(Severity.WARNING, message, object, feature, index, code, issueData));
-	// }
-	//
-	// @Override
-	// public void acceptInfo(final String message, final EObject object, final EStructuralFeature feature,
-	// final int index, final String code, final String ... issueData) {
-	// diagnosticsChain.add(createDiagnostic(Severity.INFO, message, object, feature, index, code, issueData));
-	// }
-	//
-	// @Override
-	// public void acceptError(final String message, final EObject object, final int offset, final int length,
-	// final String code, final String ... issueData) {
-	// diagnosticsChain.add(createDiagnostic(Severity.ERROR, message, object, offset, length, code, issueData));
-	// }
-	//
-	// @Override
-	// public void acceptWarning(final String message, final EObject object, final int offset, final int length,
-	// final String code, final String ... issueData) {
-	// diagnosticsChain.add(createDiagnostic(Severity.WARNING, message, object, offset, length, code, issueData));
-	// }
-	//
-	// @Override
-	// public void acceptInfo(final String message, final EObject object, final int offset, final int length,
-	// final String code, final String ... issueData) {
-	// diagnosticsChain.add(createDiagnostic(Severity.INFO, message, object, offset, length, code, issueData));
-	// }
-	//
-	// /**
-	// * @param diagnostics
-	// */
-	// public void setDiagnosticsChain(final DiagnosticChain diagnostics) {
-	// diagnosticsChain = diagnostics;
-	// }
-	//
-	// @Override
-	// protected Diagnostic createDiagnostic(final Severity severity, final String message, final EObject object,
-	// final EStructuralFeature feature, final int index, final String code, final String ... issueData) {
-	// final int diagnosticSeverity = toDiagnosticSeverity(severity);
-	// final Diagnostic result =
-	// new FeatureBasedDiagnostic(diagnosticSeverity, message, object, feature, index, CheckType.FAST, code,
-	// issueData);
-	// return result;
-	// }
 
-	// protected Diagnostic createDiagnostic(Severity severity, String message, EObject object, int offset, int length,
-	// String code, String... issueData) {
-	// int diagnosticSeverity = toDiagnosticSeverity(severity);
-	// Diagnostic result = new RangeBasedDiagnostic(diagnosticSeverity, message, object, offset, length,
-	// CheckType.FAST, code, issueData);
-	// return result;
-	// }
 }

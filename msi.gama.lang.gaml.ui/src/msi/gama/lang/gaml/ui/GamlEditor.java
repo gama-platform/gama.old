@@ -221,7 +221,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		}
 	};
 
-	public Menu createExperimentsSubMenu(Button button) {
+	public Menu createExperimentsSubMenu(final Button button) {
 		Menu parent = new Menu(button);
 		Map<URI, List<String>> map = grabProjectModelsAndExperiments();
 		if ( map.isEmpty() ) {
@@ -286,7 +286,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		return map;
 	}
 
-	public static ArrayList<URI> getAllGamaFilesInProject(IProject project, URI without) {
+	public static ArrayList<URI> getAllGamaFilesInProject(final IProject project, final URI without) {
 		ArrayList<URI> allGamaFiles = new ArrayList();
 		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
 		IPath path = project.getLocation();
@@ -294,8 +294,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		return allGamaFiles;
 	}
 
-	private static void recursiveFindGamaFiles(ArrayList<URI> allGamaFiles, IPath path, IWorkspaceRoot myWorkspaceRoot,
-		URI without) {
+	private static void recursiveFindGamaFiles(final ArrayList<URI> allGamaFiles, final IPath path,
+		final IWorkspaceRoot myWorkspaceRoot, final URI without) {
 		IContainer container = myWorkspaceRoot.getContainerForLocation(path);
 
 		try {
@@ -442,7 +442,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 	public static class GamaSourceViewerConfiguration extends XtextSourceViewerConfiguration {
 
 		@Override
-		public ITextHover getTextHover(ISourceViewer sourceViewer, String contentType) {
+		public ITextHover getTextHover(final ISourceViewer sourceViewer, final String contentType) {
 			return super.getTextHover(sourceViewer, contentType);
 		}
 

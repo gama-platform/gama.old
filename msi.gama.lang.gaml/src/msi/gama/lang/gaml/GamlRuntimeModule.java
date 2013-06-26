@@ -54,7 +54,7 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 
 	@Override
 	@SingletonBinding(eager = true)
-	public Class<? extends msi.gama.lang.gaml.validation.GamlJavaValidator> bindGamlJavaValidator() {
+	public Class<? extends GamlJavaValidator> bindGamlJavaValidator() {
 		return GamlJavaValidator.class;
 	}
 
