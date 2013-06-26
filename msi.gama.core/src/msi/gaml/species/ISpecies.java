@@ -132,7 +132,7 @@ public interface ISpecies extends ISymbol, IContainer<Integer, IAgent> {
 	public abstract Collection<UserCommandStatement> getUserCommands();
 
 	// Huynh Quang Nghi 29/01/13
-	public abstract <T> IStatement getStatement(Class<T> clazz, String name);
+	public abstract <T extends IStatement> T getStatement(Class<T> clazz, String name);
 
 	public abstract IStatement.WithArgs getAction(final String name);
 

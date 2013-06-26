@@ -339,15 +339,15 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	 */
 
 	@Override
-	public <T> IStatement getStatement(final Class<T> clazz, final String valueOfFacetName) {
+	public <T extends IStatement> T getStatement(final Class<T> clazz, final String valueOfFacetName) {
 		for ( final IStatement s : behaviors ) {
 			final boolean instance = clazz.isAssignableFrom(s.getClass());
 			if ( instance ) {
-				if ( valueOfFacetName == null ) { return s; }
+				if ( valueOfFacetName == null ) { return (T) s; }
 				final String t = s.getFacet(IKeyword.NAME).literalValue();
 				if ( t != null ) {
 					final boolean named = t.equals(valueOfFacetName);
-					if ( named ) { return s; }
+					if ( named ) { return (T) s; }
 				}
 			}
 		}
