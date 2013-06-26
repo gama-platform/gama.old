@@ -166,7 +166,11 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	private ModelDescription parse(final GamlResource resource, final XtextResourceSet resourceSet) {
 		final Map<URI, ISyntacticElement> models = buildCompleteSyntacticTree(resource, resourceSet);
 		GAML.getExpressionFactory().getParser().reset();
-		final IPath path = new Path(resource.getURI().toPlatformString(false));
+		final IPath path;
+		if(resource.getURI().isPlatform())
+			path = new Path(resource.getURI().toPlatformString(false));
+		else 
+			path = new Path(resource.getURI().path());
 		final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
 		// NullPointerException when accessing a file / project with a space in it !
 		// FIX: see http://trac.rtsys.informatik.uni-kiel.de/trac/kieler/ticket/1065
