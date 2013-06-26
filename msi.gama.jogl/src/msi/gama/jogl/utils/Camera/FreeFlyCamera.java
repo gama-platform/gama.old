@@ -283,8 +283,8 @@ public class FreeFlyCamera extends AbstractCamera {
 			System.out.println("roi_List x1 : "+myRenderer.roi_List.get(0)+" roi_List y1: "+myRenderer.roi_List.get(1)+"roi_List x2 : "+myRenderer.roi_List.get(2)+" roi_List y2: "+myRenderer.roi_List.get(3));
 			Iterator<IShape> shapes = GAMA.getSimulation().getTopology().getSpatialIndex().allInEnvelope(new GamaPoint(myRenderer.roiCenter.x,-myRenderer.roiCenter.y), new Envelope(myRenderer.roiCenter.x-4,myRenderer.roiCenter.x+4,-myRenderer.roiCenter.y-4,-myRenderer.roiCenter.y+4),  new Different(), true);
 			final Iterator<IAgent> agents = AbstractTopology.toAgents(shapes);
-			
-			buildMenus(agents);
+			if(agents.hasNext() != false)
+				buildMenus(agents);
 			
 			enableROIDrawing = false;
 		}
@@ -336,8 +336,8 @@ public class FreeFlyCamera extends AbstractCamera {
 				System.out.println("roi_List x1 : "+myRenderer.roi_List.get(0)+" roi_List y1: "+myRenderer.roi_List.get(1)+"roi_List x2 : "+myRenderer.roi_List.get(2)+" roi_List y2: "+myRenderer.roi_List.get(3));
 				Iterator<IShape> shapes = GAMA.getSimulation().getTopology().getSpatialIndex().allInEnvelope(new GamaPoint(myRenderer.roiCenter.x,-myRenderer.roiCenter.y), new Envelope(myRenderer.roi_List.get(0),myRenderer.roi_List.get(2),-myRenderer.roi_List.get(1),-myRenderer.roi_List.get(3)),  new Different(), true);
 				final Iterator<IAgent> agents = AbstractTopology.toAgents(shapes);
-
-				buildMenus(agents);
+				if(agents.hasNext() != false)
+					buildMenus(agents);
 			}
 			else
 			{

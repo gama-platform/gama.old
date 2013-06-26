@@ -219,8 +219,8 @@ public class CameraArcBall extends AbstractCamera {
 			}
 		} else if ( Math.abs(diffx) < Math.abs(diffy) ) { // Move Y
 
-			translationValue = Math.abs(diffy) * ((z + 1) / h);
-
+			translationValue = Math.abs(diffy) * Math.abs((z + 1) / h);
+			
 			if ( diffy > 0 ) {// move down
 				updatePosition(_position.getX(), _position.getY()+ translationValue, _position.getZ());
 				this.lookPosition(_target.getX(), _target.getY() + translationValue, _target.getZ());
@@ -234,7 +234,7 @@ public class CameraArcBall extends AbstractCamera {
 	@Override
 	public void animate()
 	{
-		double translationValue = 2*(_position.getZ() + 1) / myRenderer.getHeight();
+		double translationValue = 2*(Math.abs(_position.getZ()) + 1) / myRenderer.getHeight();
    	 	if (this.forward) 
 	 	{
 	 		if(shiftKeyDown)
@@ -370,7 +370,7 @@ public class CameraArcBall extends AbstractCamera {
 			moveXYPlan2(diffx, diffy, _position.getZ(), this.myRenderer.getWidth(),
 				this.myRenderer.getHeight());
 		}
-//		PrintParam();
+		PrintParam();
 	}
 
 	@Override
@@ -391,8 +391,8 @@ public class CameraArcBall extends AbstractCamera {
 			System.out.println("roi_List x1 : "+myRenderer.roi_List.get(0)+" roi_List y1: "+myRenderer.roi_List.get(1)+"roi_List x2 : "+myRenderer.roi_List.get(2)+" roi_List y2: "+myRenderer.roi_List.get(3));
 			Iterator<IShape> shapes = GAMA.getSimulation().getTopology().getSpatialIndex().allInEnvelope(new GamaPoint(myRenderer.roiCenter.x,-myRenderer.roiCenter.y), new Envelope(myRenderer.roiCenter.x-4,myRenderer.roiCenter.x+4,-myRenderer.roiCenter.y-4,-myRenderer.roiCenter.y+4),  new Different(), true);
 			final Iterator<IAgent> agents = AbstractTopology.toAgents(shapes);
-			
-			buildMenus(agents);
+			if(agents.hasNext() != false)
+				buildMenus(agents);
 			
 			enableROIDrawing = false;
 		}
@@ -439,12 +439,10 @@ public class CameraArcBall extends AbstractCamera {
 			GamaPoint p = new GamaPoint(myRenderer.worldCoordinates.x,-myRenderer.worldCoordinates.y,0.0);
 			if(!arg0.isAltDown())
 			{
-				System.out.println("roiCenter x : "+myRenderer.roiCenter.x+" roiCenter y: "+myRenderer.roiCenter.y);
-				System.out.println("roi_List x1 : "+myRenderer.roi_List.get(0)+" roi_List y1: "+myRenderer.roi_List.get(1)+"roi_List x2 : "+myRenderer.roi_List.get(2)+" roi_List y2: "+myRenderer.roi_List.get(3));
 				Iterator<IShape> shapes = GAMA.getSimulation().getTopology().getSpatialIndex().allInEnvelope(new GamaPoint(myRenderer.roiCenter.x,-myRenderer.roiCenter.y), new Envelope(myRenderer.roi_List.get(0),myRenderer.roi_List.get(2),-myRenderer.roi_List.get(1),-myRenderer.roi_List.get(3)),  new Different(), true);
 				final Iterator<IAgent> agents = AbstractTopology.toAgents(shapes);
-
-				buildMenus(agents);
+				if(agents.hasNext() != false)
+					buildMenus(agents);
 			}
 			else
 			{

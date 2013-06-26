@@ -498,7 +498,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	@Override
 	public void toggleSelectRectangle() {
 		selectRectangle = !selectRectangle;
-		if ( selectRectangle ) {
+		if ( selectRectangle && !renderer.camera.IsViewIn2DPlan() ) {
 			zoomFit();
 		}
 
