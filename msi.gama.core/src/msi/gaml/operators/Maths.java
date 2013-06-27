@@ -275,6 +275,24 @@ public class Maths {
 		return Math.log(x);
 	}
 
+	@operator(value = "log", can_be_const = true)
+	@doc(value = "returns the logarithm (base 10) of the operand.", special_cases = "an exception is raised if the operand is less than zero.", examples = "log(10) 	--:	 1.0", see = "ln")
+	public static Double log(final Double x) {
+		if ( x <= 0 ) { throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs");
+		// return Double.MAX_VALUE; // A compromise...
+		}
+		return Math.log10(x);
+	}
+
+	@operator(value = "log", can_be_const = true)
+	@doc()
+	public static Double log(final Integer x) {
+		if ( x <= 0 ) { throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs");
+		// return Double.MAX_VALUE; // A compromise...
+		}
+		return Math.log10(x);
+	}
+	
 	@operator(value = "-", can_be_const = true)
 	@doc(special_cases = "when it is used as an unary operator, - returns the opposite or the operand.", examples = "- (-56) 	--:	 56")
 	public static Double negate(final Double x) {
