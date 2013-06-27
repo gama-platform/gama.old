@@ -43,7 +43,7 @@ public class OutputLayerFactory extends StatementFactory {
 	}
 
 	@Override
-	protected void compileFacet(final String tag, final IDescription sd, SymbolProto md) {
+	protected void compileFacet(final String tag, final IDescription sd, final SymbolProto md) {
 		// Special case for the compilation of the "species species: ..." layer, which expects an
 		// expression, contrary to the "species" statement, which expects an ID. The same for
 		// "grid".
@@ -59,7 +59,8 @@ public class OutputLayerFactory extends StatementFactory {
 				if ( sd.getKeyword().equals(GRID_POPULATION) && !target.isGrid() ) {
 					sd.error(s + " is not a grid", IGamlIssue.WRONG_TYPE, ed.getTarget());
 				} else {
-					IExpression expr = msi.gama.util.GAML.getExpressionFactory().createConst(s, Types.get(IType.SPECIES));
+					IExpression expr =
+						msi.gama.util.GAML.getExpressionFactory().createConst(s, Types.get(IType.SPECIES));
 					sd.getFacets().put(SPECIES, expr);
 				}
 			}

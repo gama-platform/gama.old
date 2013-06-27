@@ -90,7 +90,8 @@ public class SpeciesLayer extends AgentLayer {
 
 	private void drawPopulation(final IScope scope, final IGraphics g, final SpeciesLayerStatement layer,
 		final IPopulation population) throws GamaRuntimeException {
-		IAspect aspect = population.getAspect(layer.getAspectName());
+		IAspect aspect = layer.getAspect();
+		// IAspect aspect = population.getAspect(layer.getAspectName());
 		if ( aspect == null ) {
 			aspect = AspectStatement.DEFAULT_ASPECT;
 		}

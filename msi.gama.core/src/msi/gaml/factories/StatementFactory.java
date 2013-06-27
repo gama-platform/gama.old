@@ -332,25 +332,13 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 	private String computeSpecies(final IDescription ce) {
 		// TODO is there a way to extract the species from a constant expression (like
 		// species("ant")) ? cf. Issue 145
-		IType type = null;
 		final Facets ff = ce.getFacets();
-		final IExpression speciesFacet = ff.getExpr(SPECIES, ff.getExpr(AS, ff.getExpr(TARGET)));
-		if ( speciesFacet != null ) {
-			IType t = speciesFacet.getType();
-			if ( t.isSpeciesType() ) {
-				type = t;
-			}
-			if ( t.id() == IType.STRING && speciesFacet.isConst() ) {
-				final String s = speciesFacet.literalValue();
-				if ( ce.getSpeciesDescription(s) != null ) { return s; }
-			} else {
-				t = speciesFacet.getContentType();
-				if ( t.isSpeciesType() ) {
-					type = t;
-				}
-			}
-		}
-		return type == null ? null : type.getSpeciesName();
+		final IExpression facet = ff.getExpr(SPECIES, ff.getExpr(AS, ff.getExpr(TARGET)));
+		if ( facet == null ) { return null; }
+		IType t = facet.getType();
+		if ( t.id() == IType.SPECIES || t.id() == IType.STRING && facet.isConst() ) { return facet.literalValue(); }
+		if ( t.isSpeciesType() ) { return t.getSpeciesName(); }
+		return facet.getContentType().getSpeciesName();
 	}
 
 }

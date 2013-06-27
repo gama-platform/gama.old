@@ -31,8 +31,9 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.IAspect;
+import msi.gaml.statements.*;
 import msi.gaml.types.IType;
 
 /**
@@ -41,7 +42,7 @@ import msi.gaml.types.IType;
  * @todo Description
  * 
  */
-@symbol(name = IKeyword.POPULATION, kind = ISymbolKind.LAYER, with_sequence = true)
+@symbol(name = IKeyword.POPULATION, kind = ISymbolKind.LAYER, with_sequence = true, remote_context = true)
 @inside(symbols = { IKeyword.DISPLAY, IKeyword.POPULATION })
 @facets(value = { @facet(name = IKeyword.POSITION, type = IType.POINT, optional = true),
 	@facet(name = IKeyword.SIZE, type = IType.POINT, optional = true),
@@ -125,6 +126,7 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 
 	@Override
 	public void computeAspectName(final IScope sim) throws GamaRuntimeException {
+		if ( aspect != null ) { return; }
 		super.computeAspectName(sim);
 		aspect = species.getAspect(constantAspectName);
 	}
@@ -145,15 +147,23 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 	public void setChildren(final List<? extends ISymbol> commands) {
 		final List<SpeciesLayerStatement> microL = new GamaList<SpeciesLayerStatement>();
 		final List<GridLayerStatement> gridL = new GamaList<GridLayerStatement>();
+		final List<IStatement> aspectStatements = new GamaList();
 
 		for ( final ISymbol c : commands ) {
 			if ( c instanceof SpeciesLayerStatement ) {
 				microL.add((SpeciesLayerStatement) c);
 			} else if ( c instanceof GridLayerStatement ) {
 				gridL.add((GridLayerStatement) c);
+			} else if ( c instanceof IStatement ) {
+				aspectStatements.add((IStatement) c);
 			}
 		}
-
+		if ( !aspectStatements.isEmpty() ) {
+			constantAspectName = "inline";
+			IDescription d = DescriptionFactory.create(IKeyword.ASPECT, getDescription(), IKeyword.NAME, "inline");
+			aspect = new AspectStatement(d);
+			((AspectStatement) aspect).setChildren(aspectStatements);
+		}
 		setMicroSpeciesLayers(microL);
 		setGridLayers(gridL);
 	}

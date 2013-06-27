@@ -68,7 +68,7 @@ combinations = { @combination({ IKeyword.GEOMETRY, EMPTY, BORDER, ROUNDED, COLOR
 	@combination({ TO, SHAPE, COLOR, SIZE, EMPTY, BORDER, ROUNDED }),
 	@combination({ SHAPE, COLOR, SIZE, EMPTY, BORDER, ROUNDED, ROTATE }),
 	@combination({ TEXT, SIZE, COLOR, AT, ROTATE }), @combination({ IMAGE, SIZE, AT, SCALE, ROTATE, COLOR }) }, omissible = IKeyword.GEOMETRY)
-@inside(symbols = { ASPECT, "graphics" }, kinds = { ISymbolKind.SEQUENCE_STATEMENT })
+@inside(symbols = { ASPECT }, kinds = { ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
 public class DrawStatement extends AbstractStatementSequence {
 
 	static final GamaPoint LOC = new GamaPoint(1.0, 1.0);
