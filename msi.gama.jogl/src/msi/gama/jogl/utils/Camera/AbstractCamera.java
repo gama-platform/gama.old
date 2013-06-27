@@ -64,6 +64,8 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 	public boolean forward, backward, strafeLeft, strafeRight;
 	public boolean ctrlKeyDown = false;
 	public boolean shiftKeyDown = false;
+	
+	public double velocityHoriz, velocityVert = 0;
 
 	
 	public AbstractCamera(JOGLAWTGLRenderer renderer) {
@@ -446,4 +448,5 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 	
 	public abstract boolean IsViewIn2DPlan();
 
+	public void inertia(){}
 }

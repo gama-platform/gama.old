@@ -26,6 +26,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public GLU glu;
 	public GL gl;
+	public GLUT glut;
 	
 	// ///Static members//////
 	private static final boolean USE_VERTEX_ARRAY = false;
@@ -229,6 +230,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 			
 			this.rotateModel();
+			
+			camera.inertia();
 			
 			
 			this.drawScene();

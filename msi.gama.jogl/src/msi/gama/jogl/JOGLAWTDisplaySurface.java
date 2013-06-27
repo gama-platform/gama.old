@@ -459,6 +459,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public void zoomFit() {
 		resizeImage(getWidth(), getHeight());
 		renderer.frame = 0;
+		renderer.camera.velocityHoriz = 0;
+		renderer.camera.velocityVert = 0;
 		if ( renderer != null ) {
 			super.zoomFit();
 			if ( threeD ) {
@@ -474,13 +476,14 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public void toggleView() {
 		threeD = !threeD;
 		zoomFit();
-		// followAgent = !followAgent;
 		updateDisplay();
 	}
 
 	@Override
 	public void togglePicking() {
 		picking = !picking;
+		renderer.camera.velocityHoriz = 0;
+		renderer.camera.velocityVert = 0;
 		if(!picking){
 			setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 		}
@@ -594,7 +597,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	@Override
 	public void focusOn(final IShape geometry, final ILayer display) {
-
+		renderer.camera.velocityHoriz = 0;
+		renderer.camera.velocityVert = 0;
 		// this.openGLGraphicsGLRender.camera.PrintParam();
 
 		final Envelope env = geometry.getEnvelope();

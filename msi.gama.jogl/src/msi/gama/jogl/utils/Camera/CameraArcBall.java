@@ -5,11 +5,7 @@ import static java.awt.event.KeyEvent.VK_LEFT;
 import static java.awt.event.KeyEvent.VK_RIGHT;
 import static java.awt.event.KeyEvent.VK_UP;
 
-import java.awt.Menu;
-import java.awt.MenuItem;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -17,12 +13,13 @@ import java.util.Iterator;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
-import javax.swing.SwingUtilities;
 
-import com.vividsolutions.jts.geom.Envelope;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 
-import msi.gama.common.util.GuiUtils;
-import msi.gama.jogl.JOGLAWTDisplaySurface.AgentMenuItem;
+import msi.gama.jogl.JOGLSWTDisplaySurface.SelectedAgent;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
 import msi.gama.metamodel.agent.IAgent;
@@ -31,8 +28,9 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.AbstractTopology;
 import msi.gama.metamodel.topology.filter.Different;
-import msi.gama.metamodel.topology.filter.In;
 import msi.gama.runtime.GAMA;
+
+import com.vividsolutions.jts.geom.Envelope;
 
 public class CameraArcBall extends AbstractCamera {
 
@@ -47,6 +45,10 @@ public class CameraArcBall extends AbstractCamera {
 	
 	public double _sensivity;
 	private Vector3D _forward;
+	
+	public double horizInertia, vertInertia = 0;
+	
+	public double damping = 0.9;
 	
 	public CameraArcBall(JOGLAWTGLRenderer joglawtglRenderer) {
 		super(joglawtglRenderer);
@@ -324,10 +326,16 @@ public class CameraArcBall extends AbstractCamera {
 		
 		if ( isArcBallOn(arg0)) 
 		{
+					
 			//check the difference between the current x and the last x position
 			int horizMovement = arg0.getX()- lastxPressed;
 			// check the difference between the current y and the last y position
 			int vertMovement = arg0.getY()  - lastyPressed; 
+			
+			horizInertia = arg0.getX()- lastxPressed;
+			vertInertia = arg0.getY()  - lastyPressed; 
+			velocityHoriz+= horizInertia;
+			velocityVert+= vertInertia;
 			
 			// set lastx to the current x position
 			lastxPressed = arg0.getX() ; 
@@ -338,6 +346,9 @@ public class CameraArcBall extends AbstractCamera {
 			_phi -= vertMovement*_sensivity;
 			
 			rotation();
+			
+//			inertia(horizMovement, vertMovement);
+			
 		}
 		//ROI Is enabled only if the view is in a 2D plan.
 		else if(myRenderer.displaySurface.selectRectangle && IsViewIn2DPlan())
@@ -378,6 +389,8 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
+		velocityHoriz = 0;
+		velocityVert = 0;
 		if ( myRenderer.displaySurface.selectRectangle) 
 		{
 			Point point = myRenderer.GetRealWorldPointFromWindowPoint(new Point(arg0.getX(),arg0.getY()));
@@ -415,6 +428,9 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
+		velocityHoriz = 0;
+		velocityVert = 0;
+		
 		lastxPressed = arg0.getX();
 		lastyPressed = arg0.getY();
 		
@@ -434,6 +450,7 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
+		
 		if ( myRenderer.displaySurface.selectRectangle && IsViewIn2DPlan() && enableROIDrawing==true ) {
 
 			GamaPoint p = new GamaPoint(myRenderer.worldCoordinates.x,-myRenderer.worldCoordinates.y,0.0);
@@ -509,4 +526,24 @@ public class CameraArcBall extends AbstractCamera {
 		// TODO Auto-generated method stub
 		
 	}
-}
+	
+	public void inertia()
+	{	
+		velocityHoriz *= damping;
+		velocityVert *= damping;
+		
+		_theta -= velocityHoriz*0.1;					
+		_phi -= velocityVert*0.1;
+		
+		rotation();
+		
+		if(Math.abs(velocityHoriz)<0.01 || Math.abs(velocityVert)<0.01)
+		{
+			velocityHoriz=0;
+			velocityVert=0;
+		}
+		
+						
+	}
+	
+}//End of Class CameraArcBall
