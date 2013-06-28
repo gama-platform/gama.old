@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno�t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoît Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -184,7 +184,8 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 
 	}
 
-	private IExpression action(String name, IExpression callee, EObject args, StatementDescription action) {
+	private IExpression action(final String name, final IExpression callee, final EObject args,
+		final StatementDescription action) {
 		IExpression right = compileArguments(action, args);
 		return factory.createAction(name, context, action, callee, right);
 	}
@@ -282,7 +283,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 
 	// FIXME Possibility to simplify here as we recreate a map that will be later decompiled...
 	// Create Arguments directly ?
-	private IExpression compileArguments(final StatementDescription action, EObject args) {
+	private IExpression compileArguments(final StatementDescription action, final EObject args) {
 		Map<String, IExpressionDescription> descriptions = parseArguments(action, args, context);
 		if ( descriptions == null ) { return null; }
 		final GamaList list = new GamaList();
@@ -345,12 +346,12 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 	GamlSwitch<IExpression> compiler = new GamlSwitch<IExpression>() {
 
 		@Override
-		public IExpression caseSkillRef(SkillRef object) {
+		public IExpression caseSkillRef(final SkillRef object) {
 			return skill(EGaml.getKey.caseSkillRef(object));
 		}
 
 		@Override
-		public IExpression caseActionRef(ActionRef object) {
+		public IExpression caseActionRef(final ActionRef object) {
 			return factory.createConst(EGaml.getKey.caseActionRef(object), Types.get(IType.STRING));
 		}
 
