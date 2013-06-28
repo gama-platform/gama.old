@@ -49,6 +49,7 @@ public class CameraArcBall extends AbstractCamera {
 	public double horizInertia, vertInertia = 0;
 	
 	public double damping = 0.9;
+	public boolean enableInertia;
 	
 	public CameraArcBall(JOGLAWTGLRenderer joglawtglRenderer) {
 		super(joglawtglRenderer);
@@ -164,7 +165,6 @@ public class CameraArcBall extends AbstractCamera {
 	
 	public void initialize3DCamera(double envWidth, double envHeight) 
 	{	
-//		System.out.println("Camera 3D");
 		this.envWidth = envWidth;
 		this.envHeight = envHeight;
 
@@ -324,6 +324,7 @@ public class CameraArcBall extends AbstractCamera {
 	@Override
 	public void mouseDragged(MouseEvent arg0) {
 		
+		enableInertia = false;
 		if ( isArcBallOn(arg0)) 
 		{
 					
@@ -334,8 +335,8 @@ public class CameraArcBall extends AbstractCamera {
 			
 			horizInertia = arg0.getX()- lastxPressed;
 			vertInertia = arg0.getY()  - lastyPressed; 
-			velocityHoriz+= horizInertia;
-			velocityVert+= vertInertia;
+			velocityHoriz= horizInertia;
+			velocityVert= vertInertia;
 			
 			// set lastx to the current x position
 			lastxPressed = arg0.getX() ; 
@@ -346,8 +347,6 @@ public class CameraArcBall extends AbstractCamera {
 			_phi -= vertMovement*_sensivity;
 			
 			rotation();
-			
-//			inertia(horizMovement, vertMovement);
 			
 		}
 		//ROI Is enabled only if the view is in a 2D plan.
@@ -451,6 +450,8 @@ public class CameraArcBall extends AbstractCamera {
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		
+		
+		enableInertia = true;
 		if ( myRenderer.displaySurface.selectRectangle && IsViewIn2DPlan() && enableROIDrawing==true ) {
 
 			GamaPoint p = new GamaPoint(myRenderer.worldCoordinates.x,-myRenderer.worldCoordinates.y,0.0);
@@ -529,18 +530,21 @@ public class CameraArcBall extends AbstractCamera {
 	
 	public void inertia()
 	{	
-		velocityHoriz *= damping;
-		velocityVert *= damping;
-		
-		_theta -= velocityHoriz*0.1;					
-		_phi -= velocityVert*0.1;
-		
-		rotation();
-		
-		if(Math.abs(velocityHoriz)<0.01 || Math.abs(velocityVert)<0.01)
+		if(enableInertia)
 		{
-			velocityHoriz=0;
-			velocityVert=0;
+			velocityHoriz *= damping;
+			velocityVert *= damping;
+			
+			_theta -= velocityHoriz*0.6;					
+			_phi -= velocityVert*0.6;
+			
+			rotation();
+			
+			if(Math.abs(velocityHoriz)<0.01 || Math.abs(velocityVert)<0.01)
+			{
+				velocityHoriz=0;
+				velocityVert=0;
+			}
 		}
 		
 						
