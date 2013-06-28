@@ -219,14 +219,14 @@ Binary returns Expression:
 	Unit
 	(({Binary.left=current} op=(Valid_ID)) right=Unit)*;
 
-	// NEW: Units are now expressed using the "¡" symbol
+	// NEW: Units are now expressed using the "ï¿½" symbol
 Unit returns Expression:
 	Unary
-	(({Unit.left=current} op=('¡')) right=UnitRef)?;
+	(({Unit.left=current} op=('Â°')) right=UnitRef)?;
 
 Unary returns Expression:
 	Access |
-	{Unary} ((op='¡' right=UnitRef) | (op=('-' | '!' | 'my' | 'the' | 'not')
+	{Unary} ((op='Â°' right=UnitRef) | (op=('-' | '!' | 'my' | 'the' | 'not')
 	right=Unary));
 
 Access returns Expression:
