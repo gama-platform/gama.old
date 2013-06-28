@@ -228,6 +228,7 @@ public class HeadlessListener implements IGui {
 			final String pluginClass = e.getAttribute("class");
 			// final Class<IDisplaySurface> displayClass = .
 			final String pluginName = e.getContributor().getName();
+			System.out.println("displays " + pluginKeyword+" " +pluginName);
 			ClassLoader cl = GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
 			try {
 				displayClasses.put(pluginKeyword, cl.loadClass(pluginClass));

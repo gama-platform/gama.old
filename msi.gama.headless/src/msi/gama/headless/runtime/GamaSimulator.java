@@ -11,7 +11,7 @@ import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class GamaSimulator implements ISimulator {
-
+	
 	private int experimentID;
 
 	private int currentStep;
@@ -28,7 +28,8 @@ public class GamaSimulator implements ISimulator {
 	@Override
 	public void nextStep(final int currentStep) {
 		this.currentStep = currentStep;
-		GAMA.controller.userStep();
+		
+		//experiment.getAgent().get //currentStep.//.controller.userStep();
 	}
 
 	@Override
@@ -47,7 +48,7 @@ public class GamaSimulator implements ISimulator {
 
 	@Override
 	public Object getVariableWithName(final String name) {
-		IOutput output = ((AbstractOutputManager) GAMA.getExperiment().getSimulationOutputs()).getOutputWithName(name);
+		IOutput output = ((AbstractOutputManager) experiment.getSimulationOutputs()).getOutputWithName(name);
 
 		if ( output instanceof MonitorOutput ) {
 			return ((MonitorOutput) output).getLastValue();
@@ -95,7 +96,7 @@ public class GamaSimulator implements ISimulator {
 
 	@Override
 	public boolean containVariableWithName(final String name) {
-		IOutput output = ((AbstractOutputManager) GAMA.getExperiment().getSimulationOutputs()).getOutputWithName(name);
+		IOutput output = ((AbstractOutputManager) experiment.getSimulationOutputs()).getOutputWithName(name);
 		return output == null;
 	}
 

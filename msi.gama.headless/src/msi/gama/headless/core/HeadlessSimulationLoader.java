@@ -66,11 +66,14 @@ public class HeadlessSimulationLoader {
 		throws GamaRuntimeException {
 		// FIXME Verify all this.
 		IHeadLessExperiment exp = newHeadlessSimulation(fileName);
+		exp.open();
+		
+		System.out.println("coucoucou  simulation is open.....");
 		for ( Map.Entry<String, Object> entry : params.entrySet() ) {
-			GAMA.getExperiment().setParameterValue(entry.getKey(), entry.getValue());
+			exp.setParameterValue(entry.getKey(), entry.getValue());
 		}
 		// FIXME ???
-		GAMA.getExperiment().schedule();
+		exp.schedule();
 		waitLoading(exp);
 		return exp;
 
@@ -85,7 +88,7 @@ public class HeadlessSimulationLoader {
 				e.printStackTrace();
 			}
 			System.out.println("test " + exp);
-			System.out.println("test2 " + exp.getCurrentSimulation());
+			System.out.println("test2 " + exp.getModel());
 			System.out.println("test2 " + exp.isLoading());
 		} while (/*exp.getCurrentSimulation() != null && */exp.isLoading());
 	}
