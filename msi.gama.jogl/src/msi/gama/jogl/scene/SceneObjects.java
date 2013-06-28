@@ -47,6 +47,7 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 	public void clear(final JOGLAWTGLRenderer renderer) {
 		clearObjects();
 		if ( openGLListIndex != null ) {
+			renderer.getContext().makeCurrent();
 			renderer.gl.glDeleteLists(openGLListIndex, 1);
 			openGLListIndex = null;
 		}
