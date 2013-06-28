@@ -20,11 +20,17 @@ import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.*;
 
+import org.eclipse.swt.graphics.Point;
+
+import msi.gama.jogl.utils.MyGLToyDrawer;
+import msi.gama.metamodel.shape.GamaPoint;
+
 public class GLUtil {
 
 	public static final int fogMode[] = { GL.GL_EXP, GL.GL_EXP2, GL.GL_LINEAR };
 
-	private static float lightDiffusePosition[] = new float[4];
+	private static float light0Position[] = new float[4];
+	private static float light1Position[] = new float[4];
 
 	/**
 	 * 
@@ -496,43 +502,77 @@ public class GLUtil {
 		gl.glMateriali(GL.GL_FRONT, GL.GL_SHININESS, 0);
 
 	}
+	
+	
+	
+	
+	public static void setAmbiantLight(GL gl,Color ambientLightValue){
+		float[] lightAmbientValue =
+			{ (float) ambientLightValue.getRed() / 255, (float) ambientLightValue.getGreen() / 255,
+				(float) ambientLightValue.getBlue() / 255, 1.0f };
+		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);	
+	}
+	
+    public static void setDiffuseLight(GL gl,Color ambientLightValue, GamaPoint pos ){
+    	// Diffuse light 0
+    			float[] light1DiffuseValue = { (float) ambientLightValue.getRed() / 255, (float) ambientLightValue.getGreen() / 255,
+    					(float) ambientLightValue.getBlue() / 255, 1.0f };;
+    			// Diffuse light location xyz (directed light)
+    			float light1Position[] = { (float)pos.getX(), (float)pos.getY(), (float)pos.getZ() };
+    			gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, light1DiffuseValue, 0);
+    			gl.glLightfv(GL.GL_LIGHT1, GL_POSITION, light1Position, 0);
+    }
+    
+    
+    public static void DrawLight0(GL gl, GLU glu,float radius ){
+    	//MyGLToyDrawer.DrawSphere(gl, glu, light1Position[0], light1Position[1], light1Position[2], radius);
+    	//System.out.println("lightpos "+ light1Position[0] + "  "+ light1Position[1] + "  " +  light1Position[2]) ;
+    	//MyGLToyDrawer.DrawSphere(gl, glu, 500, 500, 500, 100);
+    	gl.glTranslatef(light0Position[0] , light0Position[1] , light0Position[2] );
+    	gl.glColor3f(1.0f, 0.0f, 0.0f);
+    	MyGLToyDrawer.Draw3DCube(gl, 10);
+    	gl.glTranslatef(-light0Position[0] , -light0Position[1] , -light0Position[2] );
+    }
+    public static void DrawLight1(GL gl, GLU glu,float radius ){
+    	//MyGLToyDrawer.DrawSphere(gl, glu, light1Position[0], light1Position[1], light1Position[2], radius);
+    	//System.out.println("lightpos "+ light1Position[0] + "  "+ light1Position[1] + "  " +  light1Position[2]) ;
+    	//MyGLToyDrawer.DrawSphere(gl, glu, 500, 500, 500, 100);
+    	gl.glTranslatef(light1Position[0] , light1Position[1] , light1Position[2] );
+    	gl.glColor3f(0.0f, 1.0f, 0.0f);
+    	MyGLToyDrawer.Draw3DCube(gl, 10);
+    	gl.glTranslatef(-light1Position[0] , -light1Position[1] , -light1Position[2] );
+    }
+	public static void InitializeLighting(GL gl, GLU glu, float widthEnv, float heightEnv, Color ambientLightValue, Color diffuseLightValue) {
 
-	public static void InitializeLighting(GL gl, GLU glu, float widthEnv, Color ambientLightValue) {
-
+		//ambient
 		float[] lightAmbientValue =
 			{ (float) ambientLightValue.getRed() / 255, (float) ambientLightValue.getGreen() / 255,
 				(float) ambientLightValue.getBlue() / 255, 1.0f };
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
 
-		// Diffuse light 0
-		float[] lightDiffuseValue0 = { 0.5f, 0.5f, 0.5f, 1.0f };
-		// Diffuse light location xyz (directed light)
-		float lightDiffusePosition0[] = { -widthEnv, 0.5f * widthEnv, 0.5f * widthEnv, 0.0f };
-		gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuseValue0, 0);
-		gl.glLightfv(GL.GL_LIGHT0, GL_POSITION, lightDiffusePosition0, 0);
+		// Diffuse
+		float[] lightDiffuseValue =
+			{ (float) diffuseLightValue.getRed() / 255, (float) diffuseLightValue.getGreen() / 255,
+				(float) diffuseLightValue.getBlue() / 255, 1.0f };
+		float diffuseMean = 0.5f;
+		
+		float[] light0DiffuseValue = { diffuseMean, diffuseMean, diffuseMean, 1.0f };
+		light0Position[0] = widthEnv*2;
+		light0Position[1] = -heightEnv/2;
+		light0Position[2]= 2 * widthEnv;
+		light0Position[3]= 0.0f;
+		gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuseValue, 0);
+		gl.glLightfv(GL.GL_LIGHT0, GL_POSITION, light0Position, 0);
 
-		// Diffuse light 1
-		float diffuseMean = 1f;
-		float[] lightDiffuseValue = { diffuseMean, diffuseMean, diffuseMean, 1.0f };
-		// Diffuse light location xyz (positioned light)
-		// float lightDiffusePosition[] = { 4.0f*widthEnv, 8.0f*widthEnv, widthEnv, 1.0f };
-
-		lightDiffusePosition[0] = 4.0f * widthEnv;
-		lightDiffusePosition[1] = 8.0f * widthEnv;
-		lightDiffusePosition[2] = widthEnv;
-		lightDiffusePosition[3] = 1.0f;
-
-		/*
-		 * lightDiffusePosition[0] = 0.0f;
-		 * lightDiffusePosition[1] = 0.0f;
-		 * lightDiffusePosition[2] = widthEnv/2;
-		 * lightDiffusePosition[3] = 1.0f;
-		 */
-
+		float[] light1DiffuseValue = { diffuseMean, diffuseMean, diffuseMean, 1.0f };
+		light1Position[0] = -widthEnv;
+		light1Position[1] = -heightEnv/2;
+		light1Position[2] = 2 * widthEnv;
+		light1Position[3] = 1.0f;
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuseValue, 0);
-		gl.glLightfv(GL.GL_LIGHT1, GL_POSITION, lightDiffusePosition, 0);
+		gl.glLightfv(GL.GL_LIGHT1, GL_POSITION, light1Position, 0);
 
-		// Specular light 1
+		// Specular
 		float specularMean = 0.1f;
 		float[] lightSpecularValue = { specularMean, specularMean, specularMean, 1f };
 
@@ -566,9 +606,18 @@ public class GLUtil {
 				(float) ambiantLightValue.getBlue() / 255, 1.0f };
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
 	}
+	
+	public static void UpdateDiffuseLight(GL gl, GLU glu, Color diffuseLightValue) {
+
+		float[] lightDiffuseValue =
+			{ (float) diffuseLightValue.getRed() / 255, (float) diffuseLightValue.getGreen() / 255,
+				(float) diffuseLightValue.getBlue() / 255, 1.0f };
+		gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuseValue, 0);
+		gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuseValue, 0);
+	}
 
 	public static void DrawLight(GL gl, GLU glu) {
-		gl.glTranslated(lightDiffusePosition[0], -lightDiffusePosition[1], lightDiffusePosition[2]);
+		gl.glTranslated(light1Position[0], -light1Position[1], light1Position[2]);
 		gl.glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
 		GLUquadric quad = glu.gluNewQuadric();
 		glu.gluQuadricDrawStyle(quad, GLU.GLU_FILL);
@@ -578,7 +627,7 @@ public class GLUtil {
 		final int stacks = 16;
 		glu.gluSphere(quad, 1.0f, slices, stacks);
 		glu.gluDeleteQuadric(quad);
-		gl.glTranslated(-lightDiffusePosition[0], lightDiffusePosition[1], -lightDiffusePosition[2]);
+		gl.glTranslated(-light1Position[0], light1Position[1], -light1Position[2]);
 	}
 
 	public static void InitializeLighting2(GL gl) {

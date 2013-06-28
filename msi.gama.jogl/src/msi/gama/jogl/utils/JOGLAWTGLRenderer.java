@@ -52,6 +52,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	
 	// Lighting
 	private Color ambientLightValue;
+	private Color diffuseLightValue;
 	// Blending
 
 	public JOGLAWTDisplaySurface displaySurface;
@@ -135,7 +136,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		GLUtil.enableDepthTest(gl);
 		
 		// Set up the lighting for Light-1
-		GLUtil.InitializeLighting(gl, glu, width, ambientLightValue);
+		GLUtil.InitializeLighting(gl, glu, (float) displaySurface.getEnvWidth()  , (float) displaySurface.getEnvHeight(), ambientLightValue, diffuseLightValue);
+		
 		
 		// PolygonMode (Solid or lines)
 		if ( polygonMode ) {
@@ -190,6 +192,10 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			} else {
 				gl.glDisable(GL_LIGHTING);
 			}
+			
+			//GLUtil.DrawLight(gl, glu);
+			GLUtil.DrawLight0(gl, glu,100);
+			GLUtil.DrawLight1(gl, glu,100);
 
 			// FIXME: Now the background is not updated but it should to have a night effect.
 			// Set background color
@@ -197,6 +203,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			// ambiantLightValue.floatValue(), 1.0f);
 			// The ambiant_light is always reset in case of dynamic lighting.
 			GLUtil.UpdateAmbiantLight(gl, glu, ambientLightValue);
+			GLUtil.UpdateDiffuseLight(gl, glu, diffuseLightValue);
 
 			// Show triangulated polygon or not (trigger by GAMA)
 			if ( !displaySurface.triangulation ) {
@@ -435,6 +442,10 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public void setAmbientLightValue(final Color ambientLightValue) {
 		this.ambientLightValue = ambientLightValue;
+	}
+	
+	public void setDiffuseLightValue(final Color diffuseLightValue) {
+		this.diffuseLightValue = diffuseLightValue;
 	}
 
 	public boolean setPolygonMode(final boolean polygonMode) {

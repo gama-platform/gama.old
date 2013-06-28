@@ -195,10 +195,7 @@ public class MyGLToyDrawer {
 		gl.glEnd();
 	}
 
-	public void Draw3DCube(GL gl, float size) {
-
-		// ----- Render the Centered Cube -----
-		gl.glColor3f(0.0f, 0.0f, 0.0f); // black
+	public static void  Draw3DCube(GL gl, float size) {
 
 		// Top-face
 		gl.glBegin(GL.GL_LINES);
@@ -302,7 +299,7 @@ public class MyGLToyDrawer {
 		gl.glEnd();
 	}
 
-	public void DrawSphere(GL gl, GLU glu, float x, float y, float z, float radius) {
+	public static void DrawSphere(GL gl, GLU glu, double x, double y, double z, float radius) {
 		// Draw sphere (possible styles: FILL, LINE, POINT).
 		gl.glColor3f(0.3f, 0.5f, 1f);
 		GLUquadric earth = glu.gluNewQuadric();

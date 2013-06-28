@@ -196,7 +196,9 @@ public class JOGLSWTGLRenderer /*implements GLEventListener*/ {
 		gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		GLUtil.enableDepthTest(gl);
 		// Set up the lighting for Light-1
-		GLUtil.InitializeLighting(gl, glu, width, ambientLightValue);
+		
+		//FIXME
+		//GLUtil.InitializeLighting(gl, glu, width, height ambientLightValue);
 		// PolygonMode (Solid or lines)
 		if ( polygonMode ) {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);

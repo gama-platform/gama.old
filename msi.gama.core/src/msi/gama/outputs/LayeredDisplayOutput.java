@@ -56,6 +56,7 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.AMBIENT_LIGHT, type = { IType.INT, IType.COLOR }, optional = true),
+	@facet(name = IKeyword.DIFFUSE_LIGHT, type = { IType.INT, IType.COLOR }, optional = true),
 	@facet(name = IKeyword.CAMERA_POS, type = { IType.POINT, IType.AGENT }, optional = true),
 	@facet(name = IKeyword.CAMERA_LOOK_POS, type = IType.POINT, optional = true),
 	@facet(name = IKeyword.CAMERA_UP_VECTOR, type = IType.POINT, optional = true),
@@ -76,12 +77,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean autosave = false;
 	private boolean output3D = false;
 	private boolean tesselation = true;
-	private Color ambientLightColor = new GamaColor(255, 255, 255);
+	private Color ambientLightColor = new GamaColor(125, 125, 125);
+	private Color diffuseLightColor = new GamaColor(125, 125, 125);
 	// Set it to (-1,-1,-1) to set the camera with the right value if no value defined.
 	private ILocation cameraPos = new GamaPoint(-1, -1, -1);
 	private ILocation cameraLookPos = new GamaPoint(-1, -1, -1);
 	private ILocation cameraUpVector = new GamaPoint(0, 1, 0);
 	private boolean constantAmbientLight = true;
+	private boolean constantDiffuseLight = true;
 	private boolean constantCamera = true;
 	private boolean constantCameraLook = true;
 	private boolean polygonMode = true;
@@ -156,6 +159,24 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				constantAmbientLight = true;
 			} else {
 				constantAmbientLight = false;
+			}
+
+		}
+		
+		final IExpression light2 = getFacet(IKeyword.DIFFUSE_LIGHT);
+		if ( light2 != null ) {
+
+			if ( light2.getType().equals(Types.get(IType.COLOR)) ) {
+				setDiffuseLightColor(Cast.asColor(getScope(), light2.value(getScope())));
+			} else {
+				final int meanValue = Cast.asInt(getScope(), light2.value(getScope()));
+				setDiffuseLightColor(new GamaColor(meanValue, meanValue, meanValue));
+			}
+
+			if ( light2.isConst() ) {
+				constantDiffuseLight = true;
+			} else {
+				constantDiffuseLight = false;
 			}
 
 		}
@@ -235,7 +256,18 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 					setAmbientLightColor(new GamaColor(meanValue, meanValue, meanValue));
 				}
 			}
-			// graphics.setAmbientLightValue((GamaColor) getAmbientLightColor());
+		}
+		
+		if ( !constantDiffuseLight ) {
+			final IExpression light2 = getFacet(IKeyword.DIFFUSE_LIGHT);
+			if ( light2 != null ) {
+				if ( light2.getType().equals(Types.get(IType.COLOR)) ) {
+					setDiffuseLightColor(Cast.asColor(getScope(), light2.value(getScope())));
+				} else {
+					final int meanValue = Cast.asInt(getScope(), light2.value(getScope()));
+					setDiffuseLightColor(new GamaColor(meanValue, meanValue, meanValue));
+				}
+			}
 		}
 
 		// /////////////////// dynamic camera ///////////////////
@@ -439,6 +471,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	private void setAmbientLightColor(final Color ambientLightColor) {
 		this.ambientLightColor = ambientLightColor;
+	}
+	
+	public Color getDiffuseLightColor() {
+		return diffuseLightColor;
+	}
+
+	private void setDiffuseLightColor(final Color diffuseLightColor) {
+		this.diffuseLightColor = diffuseLightColor;
 	}
 
 	public boolean getPolygonMode() {

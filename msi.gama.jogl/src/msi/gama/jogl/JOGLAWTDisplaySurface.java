@@ -152,6 +152,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		// renderer.setPolygonTriangulated(false);
 		renderer.setTessellation(getOutput().getTesselation());
 		renderer.setAmbientLightValue(getOutput().getAmbientLightColor());
+		renderer.setDiffuseLightValue(getOutput().getDiffuseLightColor());
 		renderer.setPolygonMode(getOutput().getPolygonMode());
 		renderer.setCameraPosition(getOutput().getCameraPos());
 		renderer.setCameraLookPosition(getOutput().getCameraLookPos());
