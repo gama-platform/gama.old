@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
+import javax.swing.JLabel;
+
 import msi.gama.jogl.JOGLAWTDisplaySurface;
 import msi.gama.jogl.scene.*;
 import msi.gama.jogl.utils.Camera.AbstractCamera;
@@ -91,6 +93,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
     public GamaPoint roiCenter = new GamaPoint(0, 0);
     
     public boolean stencil = false;
+ 
+    private double startTime = 0;
+	private int frameCount = 0;
+	private double currentTime = 0;
+	private double previousTime = 0;
+	public float fps = 0;
+	public boolean showFPS = true;
 
     
 	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {	
@@ -117,11 +126,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	
 	@Override
 	public void init(final GLAutoDrawable drawable) {
-		
+		startTime = System.currentTimeMillis();
+
 		width = drawable.getWidth();
 		height = drawable.getHeight();
 		gl = drawable.getGL();
 		glu = new GLU();
+		glut = new GLUT();
 		setContext(drawable.getContext());
 		arcBall = new ArcBall(width, height);
 		
@@ -171,7 +182,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 			width = drawable.getWidth();
 			height = drawable.getHeight();
-			
 			
 			gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
 	        gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, mvmatrix, 0);
@@ -240,7 +250,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			
 			camera.inertia();
 			
-			
 			this.drawScene();
 			// this.DrawShapeFile();
 			//this.DrawCollada();
@@ -250,7 +259,16 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			// ROI drawer
 			if ( this.displaySurface.selectRectangle ) {
 				DrawROI();
-			}		
+			}
+			//Show fps for performance mesures
+			
+			if(showFPS)
+			{
+				CalculateFrameRate();
+				gl.glRasterPos2i(-30, 30);
+				gl.glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+				glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, "FPS : "+fps);
+			}
 		}
 	}
 
@@ -502,7 +520,28 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	}
 
 	public void CalculateFrameRate() {
-
+		
+	//  Increase frame count
+	    frameCount ++;
+	 
+	    //  Get the number of milliseconds since display started
+	    currentTime = System.currentTimeMillis()-startTime;
+	 
+	    //  Calculate time passed
+	    int timeInterval = (int) (currentTime - previousTime);
+	    if(timeInterval > 1000)
+	    {
+	        //  calculate the number of frames per second
+	        fps  = frameCount / (timeInterval / 1000.0f);
+	 
+	        //  Set time
+	        previousTime = currentTime;
+	 
+	        //  Reset frame count
+	        frameCount = 0;
+	    }
+//	    System.out.println("fps :"+fps);
+		
 	}
 	
 	//Use when the rotation button is on.

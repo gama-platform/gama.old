@@ -25,6 +25,9 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
+
+import javax.swing.JLabel;
+
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.awt.AbstractAWTDisplaySurface;
@@ -158,6 +161,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		renderer.setCameraLookPosition(getOutput().getCameraLookPos());
 		renderer.setCameraUpVector(getOutput().getCameraUpVector());
 
+		
 		add(renderer.canvas, BorderLayout.CENTER);
 		// openGLGraphicsGLRender.animator.start();
 		zoomFit();
