@@ -33,11 +33,15 @@ public class MDXApp {
 //			 wrapper = (OlapWrapper) connection;
 //			 olapConnection = wrapper.unwrap(OlapConnection.class);	
 			// OlapStatement statement =   olapConnection.createStatement();
-			 MdxConnection mdxConnection = MdxUtils.createConnectionObject("MSAS","localhost","80","olap","sa","tmt");
+			 MdxConnection mdxConnection = MdxUtils.createConnectionObject("MSAS","localhost","80","olap","olapSA","olapSA");
 			 olapConnection = (OlapConnection) mdxConnection.connectMDB();
 //			 OlapStatement statement = (OlapStatement) conn.createStatement();
 //			 System.out.println("OK");
-//			 System.out.println(olapConnection.getCatalog());
+			 System.out.println(olapConnection.getCatalog());
+			 System.out.println("Namelist cube:");
+			 //mdxConnection.prinCubesName(mdxConnection.getCubes(olapConnection));
+
+			 System.out.println();
 			//-------------------------------------------------------------------------------
 //			 CellSet cellSet =
 //					    statement.executeOlapQuery(
@@ -95,7 +99,7 @@ public class MDXApp {
 					 			+ "[Customer].[Company Name].&[Ana Trujillo Emparedados y helados], " 
 					 			+ "[Customer].[Company Name].&[Antonio Moreno Taquería] } } } ON ROWS " 
 					 +"FROM [Northwind Star] ";
-			 
+
 //			 String selectStr=
 //			 "SELECT { [Product].[Product Category].[All].CHILDREN } ON COLUMNS ,"
 //
@@ -109,10 +113,12 @@ public class MDXApp {
 //					 			 +"{ [Measures].[unitprice], [Measures].[Quantity], [Measures].[Price] } ON ROWS  "
 //					 
 //					 			+" FROM [Northwind Star]";
-//
+
+
 			 CellSet cellSet= mdxConnection.select(olapConnection,selectStr);
 			 System.out.println("MDX OK");
-			 
+			 //System.out.println("Meta data"+cellSet.getMetaData().toString());
+			 mdxConnection.getCellSetMetaData(cellSet);
 			 List<CellSetAxis> cellSetAxes = cellSet.getAxes();
 			  // Print headings.
 		        System.out.print("\t\t");
@@ -148,6 +154,7 @@ public class MDXApp {
 //		        	System.out.println();
 //
 //		        }
+		        
 		        System.out.print("\nKiem tra lai2----------------------------------------------------------\n");
 				GamaList<Object> olapResult = mdxConnection.selectMDB(olapConnection,selectStr);
 				mdxConnection.prinColumnsName(olapResult);
