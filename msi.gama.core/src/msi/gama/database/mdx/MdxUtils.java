@@ -88,7 +88,7 @@ public class MdxUtils {
 			GuiUtils.debug("MdxUtils.createConnection:"+mdxConn.toString());
 		}
 		return mdxConn;
-	}
+	} 
 	public static MdxConnection createConnectionObject(String dbtype,String host,String port,
 			String database,String user,String passwd, String catalog ) throws GamaRuntimeException 
 	{

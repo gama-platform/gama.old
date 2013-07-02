@@ -51,7 +51,7 @@ public class MondrianConnection extends MdxConnection {
 	@Override
 	public Connection connectMDB() throws GamaRuntimeException 
 	{
-		OlapWrapper wrapper;
+		OlapWrapper wrapper; 
 		Connection conn;
 		try {
 			if ( vender.equalsIgnoreCase(MONDRIAN) ) {

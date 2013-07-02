@@ -61,5 +61,5 @@ public class MSASConnection extends MdxConnection {
 		}
 		return conn;
 	}
-	
+	 
 }

@@ -42,8 +42,8 @@ import org.olap4j.metadata.Property;
  * Created date: 18-Jan-2013
  * Modified:
  *     03-05-2013: add selectMDB methods
- *        
- * Last Modified: 03-May-2013
+ *         
+ * Last Modified: 02-07-2013
  */
 public abstract class MdxConnection {
 	private static final boolean DEBUG = false; // Change DEBUG = false for release version

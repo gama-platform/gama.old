@@ -68,7 +68,7 @@ public class MondrianXmlaConnection  extends MdxConnection{
 //						+";DataSource=FoodMart"
 //						+";Catalog=FoodMart"
 //						+"Role='Admin'"
-						,userName,password 
+ 						,userName,password 
 					    );
 				wrapper = (OlapWrapper) conn;
 				 olapConnection = wrapper.unwrap(OlapConnection.class);
