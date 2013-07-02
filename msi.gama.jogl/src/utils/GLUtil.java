@@ -524,22 +524,21 @@ public class GLUtil {
     }
     
     
-    public static void DrawLight0(GL gl, GLU glu,float radius ){
-    	//MyGLToyDrawer.DrawSphere(gl, glu, light1Position[0], light1Position[1], light1Position[2], radius);
-    	//System.out.println("lightpos "+ light1Position[0] + "  "+ light1Position[1] + "  " +  light1Position[2]) ;
-    	//MyGLToyDrawer.DrawSphere(gl, glu, 500, 500, 500, 100);
+    public static void DrawDiffuseLights(GL gl, GLU glu,double radius){
+    	DrawLight0(gl,glu,radius);
+    	DrawLight1(gl,glu,radius);
+    }
+    
+    public static void DrawLight0(GL gl, GLU glu,double radius ){    	
     	gl.glTranslatef(light0Position[0] , light0Position[1] , light0Position[2] );
-    	gl.glColor3f(1.0f, 0.0f, 0.0f);
-    	MyGLToyDrawer.Draw3DCube(gl, 10);
+    	gl.glColor3f(1.0f, 1.0f, 0.0f);
+    	MyGLToyDrawer.DrawSphere(gl, glu, radius);
     	gl.glTranslatef(-light0Position[0] , -light0Position[1] , -light0Position[2] );
     }
-    public static void DrawLight1(GL gl, GLU glu,float radius ){
-    	//MyGLToyDrawer.DrawSphere(gl, glu, light1Position[0], light1Position[1], light1Position[2], radius);
-    	//System.out.println("lightpos "+ light1Position[0] + "  "+ light1Position[1] + "  " +  light1Position[2]) ;
-    	//MyGLToyDrawer.DrawSphere(gl, glu, 500, 500, 500, 100);
+    public static void DrawLight1(GL gl, GLU glu,double radius ){
     	gl.glTranslatef(light1Position[0] , light1Position[1] , light1Position[2] );
-    	gl.glColor3f(0.0f, 1.0f, 0.0f);
-    	MyGLToyDrawer.Draw3DCube(gl, 10);
+    	gl.glColor3f(1.0f, 1.0f, 0.0f);
+    	MyGLToyDrawer.DrawSphere(gl, glu, radius);
     	gl.glTranslatef(-light1Position[0] , -light1Position[1] , -light1Position[2] );
     }
 	public static void InitializeLighting(GL gl, GLU glu, float widthEnv, float heightEnv, Color ambientLightValue, Color diffuseLightValue) {

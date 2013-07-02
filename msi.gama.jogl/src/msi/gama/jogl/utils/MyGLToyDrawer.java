@@ -299,9 +299,8 @@ public class MyGLToyDrawer {
 		gl.glEnd();
 	}
 
-	public static void DrawSphere(GL gl, GLU glu, double x, double y, double z, float radius) {
+	public static void DrawSphere(GL gl, GLU glu, double radius) {
 		// Draw sphere (possible styles: FILL, LINE, POINT).
-		gl.glColor3f(0.3f, 0.5f, 1f);
 		GLUquadric earth = glu.gluNewQuadric();
 		glu.gluQuadricDrawStyle(earth, GLU.GLU_FILL);
 		glu.gluQuadricNormals(earth, GLU.GLU_FLAT);

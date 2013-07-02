@@ -99,7 +99,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private double currentTime = 0;
 	private double previousTime = 0;
 	public float fps = 0;
-	public boolean showFPS = true;
+	public boolean showFPS = false;
 
     
 	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {	
@@ -203,9 +203,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				gl.glDisable(GL_LIGHTING);
 			}
 			
-			//GLUtil.DrawLight(gl, glu);
-			GLUtil.DrawLight0(gl, glu,100);
-			GLUtil.DrawLight1(gl, glu,100);
+			//Draw Diffuse light as yellow sphere
+			//GLUtil.DrawDiffuseLights(gl, glu,getMaxEnvDim()/10);
+
 
 			// FIXME: Now the background is not updated but it should to have a night effect.
 			// Set background color
@@ -251,6 +251,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			camera.inertia();
 			
 			this.drawScene();
+			if(showFPS)
+			{
+				CalculateFrameRate();
+				gl.glRasterPos2i(-30, 30);
+				gl.glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+				glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, "FPS : "+fps);
+			}
 			// this.DrawShapeFile();
 			//this.DrawCollada();
 			gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
@@ -262,13 +269,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			}
 			//Show fps for performance mesures
 			
-			if(showFPS)
-			{
-				CalculateFrameRate();
-				gl.glRasterPos2i(-30, 30);
-				gl.glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-				glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, "FPS : "+fps);
-			}
+			
 		}
 	}
 
@@ -540,7 +541,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	        //  Reset frame count
 	        frameCount = 0;
 	    }
-//	    System.out.println("fps :"+fps);
+
 		
 	}
 	
