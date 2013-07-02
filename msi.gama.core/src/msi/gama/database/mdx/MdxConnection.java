@@ -12,12 +12,18 @@ import org.olap4j.Axis;
 import org.olap4j.Cell;
 import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
+import org.olap4j.CellSetAxisMetaData;
+import org.olap4j.CellSetMetaData;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapDatabaseMetaData;
 import org.olap4j.OlapException;
 import org.olap4j.OlapStatement;
 import org.olap4j.Position;
+import org.olap4j.metadata.Cube;
+import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
+import org.olap4j.metadata.NamedList;
+import org.olap4j.metadata.Property;
 
 /*
  * @Author  
@@ -41,9 +47,21 @@ import org.olap4j.metadata.Member;
  */
 public abstract class MdxConnection {
 	private static final boolean DEBUG = false; // Change DEBUG = false for release version
-	public static final String MONDRIAN ="MONDRIAN";
-	public static final String MSAS ="MSAS"; //Micrsoft SQL Server Analysis Services
-	public static final String GEOMETRYTYPE="GEOMETRY";
+	protected static final String MONDRIAN ="mondrian";
+	protected static final String MONDRIANXMLA ="mondrian/xmla";
+	protected static final String MSAS ="msas"; //Micrsoft SQL Server Analysis Services
+	protected static final String MYSQL = "mysql";
+	protected static final String POSTGRES = "postgres";
+	protected static final String POSTGIS = "postgis";
+	protected static final String MSSQL = "sqlserver";
+	protected static final String SQLITE = "sqlite";
+
+	protected static final String GEOMETRYTYPE="GEOMETRY";
+	protected static final String MYSQLDriver = new String("com.mysql.jdbc.Driver");
+	//static final String MSSQLDriver = new String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+	protected static final String MSSQLDriver = new String("net.sourceforge.jtds.jdbc.Driver");
+	protected static final String SQLITEDriver = new String("org.sqlite.JDBC");
+	protected static final String POSTGRESDriver = new String("org.postgresql.Driver");
 		
 	protected String vender="";
 	protected String url="";
@@ -145,7 +163,7 @@ public abstract class MdxConnection {
 			statement = (OlapStatement) connection.createStatement();
 			resultCellSet=statement.executeOlapQuery(selectComm);
 	        statement.close();
-	        connection.close();
+	        //connection.close();
 		}catch (OlapException e){
 			e.printStackTrace();
 			throw GamaRuntimeException.error(e.toString());
@@ -321,6 +339,62 @@ public abstract class MdxConnection {
 	}
 	
 	/*
+	 * Get cubes of OlapConnection
+	 */
+	public NamedList<Cube> getCubes(OlapConnection connection){
+		NamedList<Cube> cubes=null;
+		try {
+			 cubes = connection.getOlapSchema().getCubes();
+			
+		} catch (OlapException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return cubes;
+	}
+
+	public void getCellSetMetaData(CellSet cellSet){
+		CellSetMetaData cellSetMD=null;
+		NamedList<CellSetAxisMetaData> cellSetAxisMD=null;
+		NamedList<Property> properties =null;
+		Cube cube=null;
+		CellSetAxisMetaData filterAxisMD=null;
+		try {
+			cellSetMD= cellSet.getMetaData();
+			cellSetAxisMD=cellSetMD.getAxesMetaData(); //MAP<K,V>
+			properties=cellSetMD.getCellProperties();
+			cube=cellSetMD.getCube();
+			// print 
+			System.out.println("CellSetAxis Meta Data");
+			int m=cellSetAxisMD.size();
+			for (int i=0;i<m;i++){
+				CellSetAxisMetaData cellMD=cellSetAxisMD.get(i);
+				List<Hierarchy> hierarchy =cellMD.getHierarchies();
+				List<Property> property=cellMD.getProperties();
+				System.out.println("Hierarchy");
+				int n=hierarchy.size();
+				for (int j=0;j<n;++j){
+					System.out.print(hierarchy.get(j).getName()+"\t");
+				}
+				System.out.println("\n Properties");
+				n=property.size();
+				for (int j=0;j<n;++j){
+					System.out.print(property.get(j).getName()+"\t");
+				}
+
+				
+			}
+			System.out.println("\n End Cell Set Meta Data ------------");
+			System.out.println("Cell Set Axis Meta Data:"+cellSetAxisMD.iterator().toString());
+			System.out.println("propertis Meta Data:"+properties.iterator().toString());
+			System.out.println("cubes Meta Data:"+cube.toString());
+		} catch (OlapException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/*
 	 *  print all row data
 	 */
 //	public void printOlapResul(GamaList<Object> rowsData){
@@ -377,4 +451,16 @@ public abstract class MdxConnection {
 		
 	}
 	
+	
+	
+	public void prinCubesName(NamedList<Cube> cubes){
+		int m=cubes.size();
+		for (int i=0; i<m; ++ i){
+			List<Cube> cube=(List<Cube>) cubes.get(i);
+			int n=cube.size();
+			System.out.print(cube.get(i).toString()+"\t");
+		}
+		
+	}
+
 }// end class

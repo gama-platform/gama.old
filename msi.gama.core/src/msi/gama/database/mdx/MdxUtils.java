@@ -26,7 +26,9 @@ public class MdxUtils {
 			mdxConn = new MSASConnection(dbtype, host, port, database, user, passwd);
 		}else if ( dbtype.equalsIgnoreCase(MdxConnection.MONDRIAN)) {
 			mdxConn = new MondrianConnection(dbtype, host, port, database, user, passwd);
-		}else {
+		}else if ( dbtype.equalsIgnoreCase(MdxConnection.MONDRIANXMLA)) {
+			mdxConn = new MondrianXmlaConnection(dbtype, host, port, database, user, passwd);
+		}else{
 			throw GamaRuntimeException.error("GAMA does not support: " + dbtype);
 		}
 		if (DEBUG){
@@ -54,7 +56,9 @@ public class MdxUtils {
 			mdxConn = new MSASConnection(dbtype, host, port, database, user, passwd);
 		}else if ( dbtype.equalsIgnoreCase(MdxConnection.MONDRIAN)) {
 			mdxConn = new MondrianConnection(dbtype, host, port, database, user, passwd);
-		}else {
+		}else if ( dbtype.equalsIgnoreCase(MdxConnection.MONDRIANXMLA)) {
+			mdxConn = new MondrianXmlaConnection(dbtype, host, port, database, user, passwd);
+		}else{
 			throw GamaRuntimeException.error("GAMA does not support: " + dbtype);
 		}
 		if (DEBUG){
@@ -75,6 +79,31 @@ public class MdxUtils {
 			mdxConn = new MSASConnection(dbtype, host, port, database, user, passwd);
 		}else if ( dbtype.equalsIgnoreCase(MdxConnection.MONDRIAN)) {
 			mdxConn = new MondrianConnection(dbtype, host, port, database, user, passwd);
+		}else if ( dbtype.equalsIgnoreCase(MdxConnection.MONDRIANXMLA)) {
+			mdxConn = new MondrianXmlaConnection(dbtype, host, port, database, user, passwd);
+		}else  {
+			throw GamaRuntimeException.error("GAMA does not support: " + dbtype);
+		}
+		if (DEBUG){
+			GuiUtils.debug("MdxUtils.createConnection:"+mdxConn.toString());
+		}
+		return mdxConn;
+	}
+	public static MdxConnection createConnectionObject(String dbtype,String host,String port,
+			String database,String user,String passwd, String catalog ) throws GamaRuntimeException 
+	{
+		if (DEBUG){
+			GuiUtils.debug("MdxlUtils.createConnectionObject:"+dbtype+" - "+host+" - "+ port+" - "+database+" - ");
+		}
+		MdxConnection mdxConn;
+		// create connection
+		if ( dbtype.equalsIgnoreCase(MdxConnection.MSAS) ) {
+			
+			mdxConn = new MSASConnection(dbtype, host, port, database, user, passwd);
+		}else if ( dbtype.equalsIgnoreCase(MdxConnection.MONDRIAN)) {
+			mdxConn = new MondrianConnection(dbtype, host, port, database, user, passwd,catalog);
+		}else if ( dbtype.equalsIgnoreCase(MdxConnection.MONDRIANXMLA)) {
+			mdxConn = new MondrianXmlaConnection(dbtype, host, port, database, user, passwd);
 		}else {
 			throw GamaRuntimeException.error("GAMA does not support: " + dbtype);
 		}
