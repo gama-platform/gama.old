@@ -139,7 +139,7 @@ public class MondrianApp {
 		                assert coordList.get(1) == columnPosition.getOrdinal();
 
 		                ++cellOrdinal;
-
+ 
 		                System.out.print('\t');
 		                System.out.print(cell.getFormattedValue());
 		            }

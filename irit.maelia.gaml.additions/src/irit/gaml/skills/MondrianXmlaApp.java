@@ -42,7 +42,7 @@ public class MondrianXmlaApp {
 			 //mdxConnection.prinCubesName(mdxConnection.getCubes(olapConnection));
 
 			 System.out.println();
-
+ 
 			//------------------------------------------------------------------------------------
 //			 String selectStr=
 //					 "select {[Measures].[Unit Sales], [Measures].[Store Cost], [Measures].[Store Sales]} on columns" 
