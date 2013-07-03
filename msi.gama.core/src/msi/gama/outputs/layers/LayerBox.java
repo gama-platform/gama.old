@@ -95,10 +95,10 @@ public class LayerBox implements IDisplayLayerBox {
 		setRefresh(refr);
 	}
 
-	public LayerBox(final Double transp, final Double posx, final Double posy, final Double extx, final Double exty,
+	public LayerBox(final Double transp, final Double posx, final Double posy, final Double posz, final Double extx, final Double exty,
 		final Double elev, final Boolean refr) {
 		setTransparency(transp);
-		setPosition(posx, posy);
+		setPosition(posx, posy, posz);
 		setExtent(extx, exty);
 		setElevation(elev);
 		setRefresh(refr);
@@ -199,12 +199,12 @@ public class LayerBox implements IDisplayLayerBox {
 
 	@Override
 	public void setPosition(final ILocation p) {
-		setPosition(p.getX(), p.getY());
+		setPosition(p.getX(), p.getY(), p.getZ());
 	}
 
 	@Override
-	public void setPosition(final double x, final double y) {
-		currentPosition = constantPosition = new GamaPoint(x, y);
+	public void setPosition(final double x, final double y, final double z) {
+		currentPosition = constantPosition = new GamaPoint(x, y, z);
 		if ( constantExtent != null ) {
 			constantBoundingBox = true;
 			computeBoundingBox();

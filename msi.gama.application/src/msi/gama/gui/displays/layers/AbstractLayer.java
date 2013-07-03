@@ -25,6 +25,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -154,6 +155,10 @@ public abstract class AbstractLayer implements ILayer {
 
 	public void setPosition(final GamaPoint p) {
 		definition.getBox().setPosition(p);
+	}
+	
+	public ILocation getPosition(){
+		return definition.getBox().getPosition();
 	}
 
 	public void setExtent(final GamaPoint p) {

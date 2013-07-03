@@ -53,7 +53,7 @@ public interface IDisplayLayerBox {
 
 	public abstract void setPosition(final ILocation p);
 
-	public abstract void setPosition(final double x, final double y);
+	public abstract void setPosition(final double x, final double y, final double z);
 
 	public abstract void setElevation(final double e);
 

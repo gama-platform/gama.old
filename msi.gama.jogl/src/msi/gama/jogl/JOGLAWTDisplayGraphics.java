@@ -26,6 +26,7 @@ import java.io.IOException;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.awt.AbstractDisplayGraphics;
+import msi.gama.gui.displays.layers.AbstractLayer;
 import msi.gama.jogl.scene.MyTexture;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.shape.*;
@@ -330,7 +331,17 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	@Override
 	public void beginDrawingLayer(final ILayer layer) {
 		super.beginDrawingLayer(layer);
-		this.currentZLayer = (float) (getMaxEnvDim() * layer.getZPosition());
+		
+		//There is two possiblity to set the z layer (use z or postion)
+		
+		
+		this.currentZLayer = (float) (getMaxEnvDim() * ((AbstractLayer)layer).getZPosition());
+		//get the value of the position
+		if(this.currentZLayer == 0){
+			this.currentZLayer = ((AbstractLayer)layer).getPosition().getZ();	
+		}
+
+		System.out.println(this.currentZLayer);
 		final Boolean refresh = layer.isDynamic();
 		currentLayerIsStatic = refresh == null ? false : !refresh;
 

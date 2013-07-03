@@ -542,7 +542,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	        frameCount = 0;
 	    }
 
-		
+		System.out.println(fps);
 	}
 	
 	//Use when the rotation button is on.
