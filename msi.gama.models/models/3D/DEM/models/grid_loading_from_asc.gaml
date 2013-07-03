@@ -19,6 +19,7 @@ entities {
 			color <- colors at int(grid_value);
 		}
 	}
+	
 }
 
 experiment gridloading type: gui{

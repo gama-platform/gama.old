@@ -15,6 +15,8 @@ global {
 	init{
 		create people number:100;
 	}
+	
+	
 }
 
 entities {
@@ -23,6 +25,11 @@ entities {
 			//write " grid_value : " + grid_value;
 			color <- rnd(255);//colors at int(grid_value);
 		}
+		reflex decreaseGridValue{
+			if(grid_value >0){
+			  set grid_value <- grid_value - 1;	
+			} 	
+	    }
 	}
 	
     species people skills: [moving]{  
@@ -46,7 +53,7 @@ entities {
 
 experiment gridloading type: gui {
 	output {
-		display gridTextured type:opengl {
+		display gridTextured type:opengl ambient_light:255{
 			grid cell texture:map_texture triangulation:false;
 			species people aspect:base;
 		}

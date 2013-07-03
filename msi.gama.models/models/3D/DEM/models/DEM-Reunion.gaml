@@ -12,14 +12,23 @@ global{
 		ask cell where (each.grid_value < 0) {
 			grid_value <- 0;
 		}
-		create people number:100{
-			//set shape <- shape add_z 10;
+		ask cell{
+			set grid_value <- grid_value*10;
 		}
+		//create people number:100;
 	}
+	
+	
 }
 
 entities {
-	grid cell file: gridfile;
+	grid cell file: gridfile{
+		reflex decreaseGridValue{
+			if(grid_value >0){
+			  set grid_value <- grid_value - 100;	
+			} 	
+	    }
+	}
 		
 	
 	 species people skills: [moving]{  
@@ -39,15 +48,15 @@ entities {
 experiment display type: gui {
 	output {
 		
-		display ReunionDEM  type: opengl ambient_light:255 {
+		/*display ReunionDEM  type: opengl {
 			graphics GraphicPrimitive {
 				draw dem(dem, dem, 100);
 			}
-		}
+		}*/
 		
-		display ReunionGrid  type: opengl ambient_light:255 {
+		display ReunionGrid  type: opengl  ambient_light:200{
 			grid cell texture:false triangulation: true;
-			species people aspect:base;
+			//species people aspect:base;
 		}
 	}
 }
