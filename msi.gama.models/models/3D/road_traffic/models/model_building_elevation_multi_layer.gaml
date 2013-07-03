@@ -122,6 +122,17 @@ experiment road_traffic type: gui {
 	}
 }
 
+experiment AnimatedView type: gui {
+	output {
+
+	   display animatedView type: opengl ambient_light: 0.1 {
+	   	    species road aspect: base z:0;
+			species building aspect: base position: {0,0,time*2};
+			species people aspect:base position: {0,0,time*4};
+		}
+	} 
+}
+
 
 
 
