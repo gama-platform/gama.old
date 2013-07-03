@@ -256,7 +256,7 @@ entities {
 	
 	species scheduler schedules : shuffle (list(node)) + shuffle (list(edge)) + shuffle (list(macroNode)) + shuffle (list(macroEdge)) + list(macroGraph); 
 }
-experiment generate_graph type: gui {
+experiment MODAVI type: gui {
 	output {	
 		
 		display RealModel  type:opengl ambient_light: 100{
@@ -274,16 +274,23 @@ experiment generate_graph type: gui {
 			species node aspect: real z:0;
 			species node aspect: proxy z:0.3; 
 			species edge aspect: base z:0.3;
-			species node aspect: classGenericColored z:0.6; 
+			species node aspect: classGenericSpatialized z:0.6; 
 			species edge aspect: edgeGenericSpatialized z:0.6;
 			species macroNode aspect:Generic z:0.9;
 			species macroEdge aspect:base z:0.9;	
 		}
 		
-		
-		
-		
+	}		
+}
 
-		
+experiment MODAVI_3D_Animated type: gui {
+	output {			
+		display  AnimatedView type:opengl ambient_light: 100{
+			species node aspect: real z:0;
+			species node aspect: classGenericColored position:{0,0,sin(time)*10}; 
+			species edge aspect: edgeGenericSpatialized position:{0,0,sin(time)*10};
+			species macroNode aspect:Generic position:{0,0,sin(time)*10*2};
+			species macroEdge aspect:base position:{0,0,sin(time)*10*2};	
+		}
 	}		
 }
