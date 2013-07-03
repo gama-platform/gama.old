@@ -5,7 +5,7 @@ import 'bug.gaml'
 
 global{
 	int distance parameter: 'Distance' min: 1 <- 25 category: 'Model';
-	int startAnimation  parameter: 'Start Animation ' min: 1 <- 50 category: 'Animation View';
+	int startAnimation  parameter: 'Start Animation ' min: 1 <- 25 category: 'Animation View';
 	int timeAnim <-0;
 	
 	reflex updateAnimation{
@@ -71,17 +71,17 @@ entities{
    }	
 }
 
-experiment basicGraph type: gui {
+experiment AdvancedView type: gui {
 	output {
 
 	    
-	    /*display graph_plus_bug type:opengl ambient_light:0.2 {
+	    display graph_plus_bug type:opengl ambient_light:0.2 {
 	    	species bug aspect:base;
 	        species node aspect: base z:0 position: {125,0,0};
 	        species edge aspect: base z:0 position: {125,0,0};
 	        species node aspect: dynamic z:0 position: {250,0,0};
 	        species edge aspect: dynamic z:0 position: {250,0,0};
-	    }*/
+	    }
 	    
 	    
 	    //FIXME: When this display is on the shape of the node are modified (z value !=0)
@@ -100,7 +100,7 @@ experiment basicGraph type: gui {
 	} 
 }
 
-experiment ViewAnimation type: gui {
+experiment AnimatedView type: gui {
 	output {
 
 	   display animatedView type: opengl ambient_light: 0.2 {
