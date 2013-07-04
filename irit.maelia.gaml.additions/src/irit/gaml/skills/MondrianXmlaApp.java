@@ -21,7 +21,7 @@ import msi.gama.util.GamaList;
 public class MondrianXmlaApp {
 	public static void main(String [] args) throws Exception{
 		OlapConnection olapConnection;
-			 MdxConnection mdxConnection = MdxUtils.createConnectionObject("MONDRIANXMLA","MySQL","localhost","8080","MondrianFoodMart","FoodMart","root","root");
+			 MdxConnection mdxConnection = MdxUtils.createConnectionObject("MONDRIAN/XMLA","MySQL","localhost","8080","MondrianFoodMart","FoodMart","root","root");
 			 olapConnection = (OlapConnection) mdxConnection.connectMDB();
 			 //olapConnection = (OlapConnection) mdxConnection.connectMDB("MondrianFoodMart");
 			 //olapConnection = (OlapConnection) mdxConnection.connectMDB("MondrianFoodMart","FoodMart");
