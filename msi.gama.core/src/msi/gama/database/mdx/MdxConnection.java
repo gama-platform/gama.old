@@ -49,7 +49,7 @@ public abstract class MdxConnection {
 	private static final boolean DEBUG = false; // Change DEBUG = false for release version
 	protected static final String MONDRIAN ="mondrian";
 	protected static final String MONDRIANXMLA ="mondrian/xmla";
-	protected static final String MSAS ="msas"; //Micrsoft SQL Server Analysis Services
+	protected static final String MSAS ="ssas/xmla"; //Micrsoft SQL Server Analysis Services
 	protected static final String MYSQL = "mysql";
 	protected static final String POSTGRES = "postgres";
 	protected static final String POSTGIS = "postgis";
