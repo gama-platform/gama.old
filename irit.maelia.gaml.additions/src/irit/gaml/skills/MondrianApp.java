@@ -25,14 +25,24 @@ import msi.gama.util.GamaList;
 public class MondrianApp {
 	public static void main(String [] args) throws Exception{
 		OlapConnection olapConnection;			 
-		MdxConnection mdxConnection = MdxUtils.createConnectionObject("MONDRIAN","localhost","3306","foodmart","root","root"
-					 ,"C:\\Program Files\\Apache Software Foundation\\Tomcat 7.0\\webapps\\mondrian\\WEB-INF\\queries\\FoodMart.xml" 
-					 );
+		// Mondrian with MySQL
+//		MdxConnection mdxConnection = MdxUtils.createConnectionObject("MONDRIAN","mysql","localhost","3306","foodmart"
+//					 ,"C:\\Program Files\\Apache Software Foundation\\Tomcat 7.0\\webapps\\mondrian\\WEB-INF\\queries\\FoodMart.xml"
+//					 ,"root","root"
+//					 );
+		// Mondrian with postgreSQL
+		MdxConnection mdxConnection = MdxUtils.createConnectionObject("MONDRIAN","postgres","localhost","5432","foodmart"
+//				 ,"C:\\Program Files\\Apache Software Foundation\\Tomcat 7.0\\webapps\\mondrian\\WEB-INF\\queries\\FoodMart.xml"
+				 ,"FoodMart.xml"
+				 
+				 ,"postgres","tmt"
+				 );
+		
 			 olapConnection = (OlapConnection) mdxConnection.connectMDB();
 			 System.out.println("----Connection:"+olapConnection.toString());
 //		        // Check if it's all groovy
 			 ResultSet databases = olapConnection.getMetaData().getDatabases();
-		     databases.first();
+		      databases.first();
 		     System.out.println("Database: "+
 		                olapConnection.getMetaData().getDriverName()
 		                + " -> "

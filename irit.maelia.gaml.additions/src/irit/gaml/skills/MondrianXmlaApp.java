@@ -21,8 +21,10 @@ import msi.gama.util.GamaList;
 public class MondrianXmlaApp {
 	public static void main(String [] args) throws Exception{
 		OlapConnection olapConnection;
-			 MdxConnection mdxConnection = MdxUtils.createConnectionObject("MONDRIAN/XMLA","localhost","8080","foodmart","root","root");
+			 MdxConnection mdxConnection = MdxUtils.createConnectionObject("MONDRIANXMLA","MySQL","localhost","8080","MondrianFoodMart","FoodMart","root","root");
 			 olapConnection = (OlapConnection) mdxConnection.connectMDB();
+			 //olapConnection = (OlapConnection) mdxConnection.connectMDB("MondrianFoodMart");
+			 //olapConnection = (OlapConnection) mdxConnection.connectMDB("MondrianFoodMart","FoodMart");
 			 System.out.println("----Connection:"+olapConnection.toString());
 //		        // Check if it's all groovy
 			 ResultSet databases = olapConnection.getMetaData().getDatabases();
@@ -33,7 +35,7 @@ public class MondrianXmlaApp {
 		                + databases.getString(1));
 //
 //		        // Done
-//     olapConnection.close();
+//     olapConnection.close(); 
 //			 OlapStatement statement = (OlapStatement) conn.createStatement();
 //			 System.out.println("OK");
 			// olapConnection.setRoleName("Admin");

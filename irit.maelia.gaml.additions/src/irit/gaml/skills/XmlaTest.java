@@ -13,10 +13,14 @@ public class XmlaTest {
 
 public void requete1 (){
 
+//String connectString = "Provider=mondrian;" + 
+//"Jdbc=jdbc:mysql://localhost:3306/foodmart?user=root&password=root;" +
+//"Catalog=file:C:\\Program Files\\Apache Software Foundation\\Tomcat 7.0\\webapps\\mondrian\\WEB-INF\\queries\\FoodMart.xml;"+ 
+//"JdbcDrivers=com.mysql.jdbc.Driver";
 String connectString = "Provider=mondrian;" + 
-"Jdbc=jdbc:mysql://localhost:3306/foodmart?user=root&password=root;" +
+"Jdbc=jdbc:postgresql://localhost:5432/foodmart?user=postgres&password=tmt;" +
 "Catalog=file:C:\\Program Files\\Apache Software Foundation\\Tomcat 7.0\\webapps\\mondrian\\WEB-INF\\queries\\FoodMart.xml;"+ 
-"JdbcDrivers=com.mysql.jdbc.Driver";
+"JdbcDrivers=org.postgresql.Driver";
 System.out.println(connectString);
 Connection connection = null;
 connection = DriverManager.getConnection(connectString, null);
