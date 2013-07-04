@@ -71,7 +71,8 @@ Bundle-ClassPath: guava-14.0.1.jar,
  commons-pool-1.5.4.jar,
  commons-vfs-1.0.jar,
  commons-logging-1.1.1.jar,
- commons-math-1.0.jar
+ commons-math-1.0.jar,
+ commons-collections-3.1.jar
 Bundle-Vendor: MSI
 Export-Package: com.google.common.annotations;version="14.0.1",
  com.google.common.base;version="14.0.1",
