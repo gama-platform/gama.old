@@ -61,5 +61,62 @@ public class MSASConnection extends MdxConnection {
 		}
 		return conn;
 	}
+
+	@Override
+	public Connection connectMDB(String dbName) throws GamaRuntimeException {
+		OlapWrapper wrapper;
+		Connection conn;
+		try {
+			if ( vender.equalsIgnoreCase(MSAS) ) {
+				Class.forName(DRIVER);
+				conn =
+				    DriverManager.getConnection(
+				    		"jdbc:xmla:Server=http://"+ url + ":" + port + "/" + dbName+ "/msmdpump.dll;",userName,password);
+				 wrapper = (OlapWrapper) conn;
+				 olapConnection = wrapper.unwrap(OlapConnection.class);	
+				 //olapConnection.setCatalog(catalog);
+			} else {
+				throw GamaRuntimeException.error("MSASConnection.connectMDB: The " 
+			                                       + vender
+			                                       + " is not supported!");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw GamaRuntimeException.error(e.toString());
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			throw GamaRuntimeException.error(e.toString());
+		}
+		return conn;
+	}
+
+	@Override
+	public Connection connectMDB(String dbName, String catalog)
+			throws GamaRuntimeException {
+		OlapWrapper wrapper;
+		Connection conn;
+		try {
+			if ( vender.equalsIgnoreCase(MSAS) ) {
+				Class.forName(DRIVER);
+				conn =
+				    DriverManager.getConnection(
+				    		"jdbc:xmla:Server=http://"+ url + ":" + port + "/" + dbName+ "/msmdpump.dll;",userName,password);
+				 wrapper = (OlapWrapper) conn;
+				 olapConnection = wrapper.unwrap(OlapConnection.class);	
+				 olapConnection.setCatalog(catalog);
+			} else {
+				throw GamaRuntimeException.error("MSASConnection.connectMDB: The " 
+			                                       + vender
+			                                       + " is not supported!");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw GamaRuntimeException.error(e.toString());
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			throw GamaRuntimeException.error(e.toString());
+		}
+		return conn;
+	}
 	 
 }

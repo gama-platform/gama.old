@@ -64,14 +64,20 @@ public abstract class MdxConnection {
 	protected static final String POSTGRESDriver = new String("org.postgresql.Driver");
 		
 	protected String vender="";
+	protected String dbtype=POSTGRES;	
 	protected String url="";
 	protected String port="";
 	protected String dbName="";
+	protected String catalog="";
 	protected String userName="";
 	protected String password="";
 	
 	protected OlapConnection olapConnection;
 	protected Connection connection;
+
+	public MdxConnection()
+	{
+	}
 	
 	public MdxConnection(String vender)
 	{
@@ -82,8 +88,11 @@ public abstract class MdxConnection {
 		this.vender=venderName;
 		this.dbName=database;
 	}
-	public MdxConnection()
+	public MdxConnection(String venderName,String dbtype,String url)
 	{
+		this.vender=venderName;
+		this.dbtype=dbtype;
+		this.dbName=url;
 	}
 
 	public MdxConnection(String venderName,String url,String port,
@@ -96,6 +105,44 @@ public abstract class MdxConnection {
 		this.userName=userName;
 		this.password=password;	
 	}
+	public MdxConnection(String venderName, String url,String port,
+			String dbName, String catalog, String userName,String password)  
+	{
+		this.vender=venderName;
+		this.url=url;
+		this.port=port;
+		this.dbName=dbName;
+		this.catalog=catalog;
+		this.userName=userName;
+		this.password=password;	
+	}
+	
+	public MdxConnection(String venderName,String dbtype, String url,String port,
+			String dbName, String catalog, String userName,String password)  
+	{
+		this.vender=venderName;
+		this.dbtype=dbtype;
+		this.url=url;
+		this.port=port;
+		this.dbName=dbName;
+		this.catalog=catalog;
+		this.userName=userName;
+		this.password=password;	
+	}
+	
+	/*
+	 * Make a connection to Multidimensional Database Server
+	 */
+	public abstract Connection connectMDB() throws GamaRuntimeException ;
+
+	/*
+	 * Make a connection to Multidimensional Database Server
+	 */
+	public abstract Connection connectMDB(String dbName) throws GamaRuntimeException ;
+	/*
+	 * Make a connection to Multidimensional Database Server
+	 */
+	public abstract Connection connectMDB(String dbName, String catalog) throws GamaRuntimeException ;
 	
 	public void setConnection(){
 		this.connection=connectMDB();
@@ -133,10 +180,6 @@ public abstract class MdxConnection {
 			throw GamaRuntimeException.error(e.toString());
 		}
 	}
-	/*
-	 * Make a connection to Multidimensional Database Server
-	 */
-	public abstract Connection connectMDB() throws GamaRuntimeException ;
 
 	/*
 	 * Select data source with connection was established

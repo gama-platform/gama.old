@@ -7,9 +7,11 @@ import java.sql.SQLException;
 import org.olap4j.OlapConnection;
 import org.olap4j.OlapWrapper;
 
+import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class MondrianXmlaConnection  extends MdxConnection{
+	private static final boolean DEBUG = true; // Change DEBUG = false for release version
 	static final String DRIVER = new String("org.olap4j.driver.xmla.XmlaOlap4jDriver");
 	
 	public MondrianXmlaConnection()
@@ -31,7 +33,18 @@ public class MondrianXmlaConnection  extends MdxConnection{
 	{
 		super(venderName,url,port,dbName,userName,password);	
 	}
+	public MondrianXmlaConnection(String venderName,String url,String port,
+			String dbName, String catalog, String userName,String password)  
+	{
+		super(venderName,url,port,dbName,catalog,userName,password);	
+	}
 	
+
+	public MondrianXmlaConnection(String venderName,String dbtype,String url,String port,
+			String dbName, String catalog, String userName,String password)  
+	{
+		super(venderName,dbtype,url,port,dbName,catalog,userName,password);	
+	}
 
 	@Override
 	public Connection connectMDB() throws GamaRuntimeException 
@@ -41,10 +54,6 @@ public class MondrianXmlaConnection  extends MdxConnection{
 		try {
 			if ( vender.equalsIgnoreCase(MONDRIANXMLA) ) {
 				Class.forName(DRIVER);
-//				conn =
-//					DriverManager.getConnection("jdbc:mondrian:Jdbc=jdbc:odbc:" + url + ":" + port + "/" + dbName,
-//						userName, password);
-
 //				conn =
 //						DriverManager.getConnection("jdbc:xmla:Server=http://" + url + ":" + port + "/" + dbName+"/xmla;"
 //								+"Provider=Mondrian;"
@@ -59,15 +68,90 @@ public class MondrianXmlaConnection  extends MdxConnection{
 //							    ,userName, password
 //							    );
 
+				if (DEBUG){
+					GuiUtils.debug("MondrianXmlaConnection.connectMDB:"+vender+" - "+dbtype+" - "+" - "+url+" - "
+							+ port+" - "+dbName+" - "+catalog+" - "+userName+" - "+password);
+
+				}
+
 				conn =
 				DriverManager.getConnection("jdbc:xmla:Server=http://" + url + ":" + port + "/mondrian/xmla"
 //						+";Cache=org.olap4j.driver.xmla.cache.XmlaOlap4jNamedMemoryCache"
 //						+";Cache.Name=MyNiftyConnection"
 //						+";Cache.Mode=LFU;Cache.Timeout=600;Cache.Size=100"
-//						+";Provider=mondrian"
-//						+";DataSource=FoodMart"
-//						+";Catalog=FoodMart"
+						+";Provider=mondrian"
+						+";DataSource="+dbName
+						+";Catalog="+catalog+";"
 //						+"Role='Admin'"
+ 						,userName,password 
+					    );
+				wrapper = (OlapWrapper) conn;
+				 olapConnection = wrapper.unwrap(OlapConnection.class);
+			} else {
+				throw GamaRuntimeException.error("MondrianConnection.connectMDB: The " 
+			                                       + vender
+			                                       + " is not supported!");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw GamaRuntimeException.error(e.toString());
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			throw GamaRuntimeException.error(e.toString());
+		}
+		if (DEBUG){
+			GuiUtils.debug("MondrianXmlaConnection.connected");
+
+		}
+		return conn;
+
+	}
+
+	@Override
+	public Connection connectMDB(String dbName) throws GamaRuntimeException {
+		OlapWrapper wrapper;
+		Connection conn;
+		try {
+			if ( vender.equalsIgnoreCase(MONDRIANXMLA) ) {
+				Class.forName(DRIVER);
+
+				conn =
+				DriverManager.getConnection("jdbc:xmla:Server=http://" + url + ":" + port + "/mondrian/xmla"
+						+";Provider=mondrian"
+						+";DataSource="+dbName
+ 						,userName,password 
+					    );
+				wrapper = (OlapWrapper) conn;
+				 olapConnection = wrapper.unwrap(OlapConnection.class);
+			} else {
+				throw GamaRuntimeException.error("MondrianConnection.connectMDB: The " 
+			                                       + vender
+			                                       + " is not supported!");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw GamaRuntimeException.error(e.toString());
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			throw GamaRuntimeException.error(e.toString());
+		}
+		return conn;
+	}
+
+	@Override
+	public Connection connectMDB(String dbName, String catalog)
+			throws GamaRuntimeException {
+		OlapWrapper wrapper;
+		Connection conn;
+		try {
+			if ( vender.equalsIgnoreCase(MONDRIANXMLA) ) {
+				Class.forName(DRIVER);
+
+				conn =
+				DriverManager.getConnection("jdbc:xmla:Server=http://" + url + ":" + port + "/mondrian/xmla"
+						+";Provider=mondrian"
+						+";DataSource="+dbName
+						+";Catalog="+catalog
  						,userName,password 
 					    );
 				wrapper = (OlapWrapper) conn;
