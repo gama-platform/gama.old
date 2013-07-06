@@ -462,7 +462,7 @@ public class Graphs {
 	}
 	
 	@operator(value = "path_between", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
-	@doc(value = "A path between a list of two objects in a graph", examples = { "my_graph path_between [ag1:: ag2] --: A path between ag1 and ag2" })
+	@doc(value = "A path between a list of two objects in a graph", examples = { "my_graph path_between (ag1:: ag2) --: A path between ag1 and ag2" })
 	public static IPath path_between(final IScope scope, final GamaGraph graph,
 		final GamaPair sourTarg) throws GamaRuntimeException {
 		return graph.computeShortestPathBetween(sourTarg.key, sourTarg.value);
