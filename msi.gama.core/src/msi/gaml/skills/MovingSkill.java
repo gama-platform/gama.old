@@ -452,9 +452,10 @@ public class MovingSkill extends GeometricSkill {
 			if ( weigths == null ) {
 				weight = computeWeigth(graph, path, line);
 			} else {
-				final Double w = (Double) weigths.get(path.getRealObject(line))/line.getGeometry().getPerimeter();;
+				final Double w = (Double) weigths.get(path.getRealObject(line))/line.getGeometry().getPerimeter();
 				weight = w == null ? computeWeigth(graph, path, line) : w;
 			}
+			
 			for ( int j = indexSegment; j < coords.length; j++ ) {
 				GamaPoint pt = null;
 				if ( i == nb - 1 && j == endIndexSegment ) {
@@ -527,9 +528,6 @@ public class MovingSkill extends GeometricSkill {
 		final GamaMap agents = new GamaMap();
 		for ( int i = index; i < nb; i++ ) {
 			final IShape line = edges.get(i);
-			// The weight computed here is absolutely useless.. since getWeight() returns the
-			// perimeter. // ANSWER : it is necessary because the weight can be different than the
-			// perimeter (see model traffic_tutorial)
 			final GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
 
 			double weight;

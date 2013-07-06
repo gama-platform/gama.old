@@ -154,6 +154,9 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 	protected void buildByEdge(final IContainer vertices) {
 		for ( final Object p : vertices ) {
 			addEdge(p);
+			if (p instanceof IShape) {
+				getEdge(p).setWeight(((IShape) p).getPerimeter());
+			}
 		}
 	}
 

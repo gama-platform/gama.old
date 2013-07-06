@@ -74,9 +74,9 @@ public class _SpatialEdge extends _Edge<IShape> {
 	@Override
 	public double getWeight(final Object storedObject) {
 		double w = super.getWeight(storedObject);
-		if ( storedObject instanceof IShape ) {
+		/*if ( storedObject instanceof IShape ) {
 			w *= ((IShape) storedObject).getInnerGeometry().getLength(); // A voir...
-		}
+		}*/
 		return w;
 	}
 }
