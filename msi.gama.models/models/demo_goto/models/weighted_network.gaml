@@ -17,8 +17,8 @@ global {
 			 cpt <- cpt * 2;
 		}
 		
-		map<road,float> weights_map <- road as_map (each:: each.destruction_coeff);
-		the_graph <- as_edge_graph(road)  with_weights weights_map;
+		map<road,float> weights_map <- road as_map (each:: (each.destruction_coeff * each.shape.perimeter));
+		the_graph <- as_edge_graph(road) with_weights weights_map;
 		
 		create people  {
 			 speed <- 2 ; 
