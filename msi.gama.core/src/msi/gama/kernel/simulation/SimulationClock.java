@@ -240,4 +240,16 @@ public class SimulationClock {
 		}
 	}
 
+	public static class ExperimentClock extends SimulationClock {
+
+		@Override
+		public void beginCycle() {
+			resetDuration();
+			// String info = displayCycles ? "cycle " + getCycle() : Strings.asDate(time, null);
+			// if ( !GAMA.getExperiment().isBatch() ) {
+			// GuiUtils.informStatus(info);
+			// }
+		}
+	}
+
 }

@@ -104,7 +104,7 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 					try {
 						output.open();
 					} catch (RuntimeException e) {
-						GuiUtils.debug("AbstractOutputManager.step " + e.getMessage());
+						GuiUtils.debug("Error in AbstractOutputManager.step " + e.getMessage());
 						return false;
 					}
 				}

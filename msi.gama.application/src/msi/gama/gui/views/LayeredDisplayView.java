@@ -30,6 +30,7 @@ import msi.gama.gui.swt.perspectives.ModelingPerspective;
 import msi.gama.gui.swt.swing.EmbeddedSwingComposite;
 import msi.gama.gui.views.actions.ZoomIndicatorItem;
 import msi.gama.outputs.*;
+import msi.gaml.descriptions.IDescription;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -71,10 +72,11 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	protected Integer[] getToolbarActionsId() {
 
 		// Add the toggle 3D view button for opengl display
-		if ( this.output.getDescription().getFacets().equals("type", "opengl") ) {
+		IDescription description = output.getDescription();
+		if ( description != null && description.getFacets().equals("type", "opengl") ) {
 			return new Integer[] { PAUSE, REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT, SEPARATOR,
-				ZOOM_IN, ZOOM_INDICATOR, ZOOM_OUT, ZOOM_FIT, CAMERA,  FOCUS, SEPARATOR , ARCBALL, SWITCHCAMERA, SEPARATOR, PICKING,
-				SELECT_RECTANGLE, SEPARATOR, TRIANGULATION, SPLITLAYER, ROTATION };
+				ZOOM_IN, ZOOM_INDICATOR, ZOOM_OUT, ZOOM_FIT, CAMERA, FOCUS, SEPARATOR, ARCBALL, SWITCHCAMERA,
+				SEPARATOR, PICKING, SELECT_RECTANGLE, SEPARATOR, TRIANGULATION, SPLITLAYER, ROTATION };
 		} else if ( this.output.getDescription().getFacets().equals("type", "swt") ) { return new Integer[] { PAUSE,
 			REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT, SEPARATOR, ZOOM_IN, ZOOM_INDICATOR, ZOOM_OUT,
 			ZOOM_FIT, FOCUS, SEPARATOR, CAMERA, SEPARATOR, ARCBALL, PICKING, SELECT_RECTANGLE, SHAPEFILE, SEPARATOR,

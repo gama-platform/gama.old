@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -34,7 +34,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.*;
 import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.*;
 import msi.gaml.statements.AbstractStatementSequence;
@@ -149,6 +149,20 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 				if ( getFacet(IKeyword.TIMEXSERIES) != null ) {
 					timeSeriesXData.getDescription().getFacets().get(IKeyword.VALUE)
 						.setExpression(getFacet(IKeyword.TIMEXSERIES));
+				} else {
+					timeSeriesXData.getDescription().getFacets().get(IKeyword.VALUE)
+						.setExpression(new ConstantExpression(null) {
+
+							@Override
+							public Double value(final IScope scope) {
+								return scope.getClock().getTime();
+							}
+
+							@Override
+							public boolean isConst() {
+								return false;
+							}
+						});
 				}
 
 			}

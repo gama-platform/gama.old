@@ -1004,12 +1004,13 @@ public class SwtGui implements IGui {
 	@Override
 	public void prepareForSimulation() {
 		setStatus(" Building outputs ", IGui.WAIT);
-		showConsoleView();
+		// showConsoleView();
 	}
 
 	@Override
 	public void prepareForExperiment(final IExperimentSpecies exp) {
 		if ( exp.isGui() ) {
+			showConsoleView();
 			setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
 			updateParameterView(exp);
 			tell = new Tell();

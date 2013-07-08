@@ -95,6 +95,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 	public void dispose() {
 		parametersEditors = null;
 		if ( agent != null ) {
+			GAMA.releaseScope(agent.getScope());
 			agent.dispose();
 			agent = null;
 		}

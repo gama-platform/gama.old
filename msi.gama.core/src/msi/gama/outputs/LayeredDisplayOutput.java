@@ -63,7 +63,7 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.POLYGONMODE, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL, IType.POINT }, optional = true),
 	@facet(name = IKeyword.OUTPUT3D, type = { IType.BOOL, IType.POINT }, optional = true) }, omissible = IKeyword.NAME)
-@inside(symbols = IKeyword.OUTPUT)
+@inside(symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
 public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	public static final String JAVA2D = "java2D";
@@ -162,7 +162,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			}
 
 		}
-		
+
 		final IExpression light2 = getFacet(IKeyword.DIFFUSE_LIGHT);
 		if ( light2 != null ) {
 
@@ -257,7 +257,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				}
 			}
 		}
-		
+
 		if ( !constantDiffuseLight ) {
 			final IExpression light2 = getFacet(IKeyword.DIFFUSE_LIGHT);
 			if ( light2 != null ) {
@@ -472,7 +472,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private void setAmbientLightColor(final Color ambientLightColor) {
 		this.ambientLightColor = ambientLightColor;
 	}
-	
+
 	public Color getDiffuseLightColor() {
 		return diffuseLightColor;
 	}

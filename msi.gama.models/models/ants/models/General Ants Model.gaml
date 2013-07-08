@@ -231,6 +231,18 @@ experiment Batch type: batch repeat: 2 keep_seed: true until: (food_gathered = f
 	parameter name: 'Evaporation:' var: evaporation_rate among: [0.1, 0.2, 0.5, 0.8, 1.0] unit: 'rate every cycle (1.0 means 100%)';
 	parameter name: 'Diffusion:' var: diffusion_rate min: 0.1 max: 1.0 unit: 'rate every cycle (1.0 means 100%)' step: 0.3;
 	method exhaustive maximize: food_gathered;
+	
+	reflex {
+		write "Running a new simulation " + simulation;
+	}
+	
+	permanent {
+		display Ants background: rgb('white') refresh_every: 1 {
+			chart "Food Gathered" type: series {
+				data "Food" value: food_gathered;
+			}
+		}
+	}
 }
 
 experiment Genetic type: batch repeat: 2 keep_seed: true until: (food_gathered = food_placed) or (time > 400) {

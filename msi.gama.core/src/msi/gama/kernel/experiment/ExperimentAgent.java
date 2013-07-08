@@ -6,6 +6,7 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
+import msi.gama.kernel.simulation.SimulationClock.ExperimentClock;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
@@ -63,7 +64,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	final Map<String, Object> extraParametersMap = new LinkedHashMap();
 	protected RandomUtils random;
 	// protected boolean isLoading;
-	protected SimulationClock clock = new SimulationClock();
+	protected ExperimentClock clock = new ExperimentClock();
 
 	public ExperimentAgent(final IPopulation s) throws GamaRuntimeException {
 		super(s);
@@ -102,7 +103,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		if ( getSimulation() != null ) {
 			GAMA.controller.getScheduler().unschedule(getSimulation().getScheduler());
 			// TODO Should better be in SimulationOutputManager
-			GuiUtils.cleanAfterSimulation();
+			if ( !getSpecies().isBatch() ) {
+				GuiUtils.cleanAfterSimulation();
+			}
 		}
 	}
 
@@ -322,6 +325,20 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		}
 	}
 
+	// TODO A redefinition of this method in GAML will lose all information regarding the clock and the advance of time,
+	// which will have to be done manually (i.e. cycle <- cycle + 1; time <- time + step;)
+	@Override
+	public Object _step_(final IScope scope) {
+		clock.beginCycle();
+		// A simulation always runs in its own scope
+		try {
+			super._step_(this.scope);
+		} finally {
+			clock.step();
+		}
+		return this;
+	}
+
 	/**
 	 * 
 	 * The class ExperimentAgentScope. A "pass through" class used when the simulation is not yet computed and when an
@@ -335,6 +352,11 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * 
 	 */
 	private class ExperimentAgentScope extends Scope {
+
+		@Override
+		public IScope copy() {
+			return new ExperimentAgentScope();
+		}
 
 		@Override
 		public Object getGlobalVarValue(final String name) {

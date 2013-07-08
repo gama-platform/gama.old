@@ -105,35 +105,54 @@ public class BatchAgent extends ExperimentAgent {
 	//
 	// }
 
+	/**
+	 * 
+	 * Method _step_()
+	 * @see msi.gama.metamodel.agent.GamlAgent#_step_(msi.gama.runtime.IScope)
+	 *      This method, called once by the front controller, actually serves as "launching" the batch process (entirely
+	 *      piloted by the exploration algorithm)
+	 */
 	@Override
 	public Object _step_(final IScope scope) {
-		// initRandom();
+		// We run the exloration algorithm (but dont start() it, as the thread is not used)
 		getSpecies().getExplorationAlgorithm().run();
+		// Once the algorithm has finished exploring the solutions, the agent is killed.
+		GuiUtils.informStatus("Batch over. " + runNumber + " runs, " + runNumber * seeds.length + " simulations.");
 		dispose();
 		return this;
 	}
 
 	public Double launchSimulationsWithSolution(final ParametersSet sol) throws GamaRuntimeException {
+		// We first reset the currentSolution and the fitness values
 		currentSolution = sol;
 		fitnessValues.clear();
 		runNumber = runNumber + 1;
+		// The values present in the solution are passed to the parameters of the experiment
 		for ( Map.Entry<String, Object> entry : sol.entrySet() ) {
 			IParameter p = getSpecies().getExplorableParameters().get(entry.getKey());
 			if ( p != null ) {
 				p.setValue(entry.getValue());
 			}
 		}
-
+		// We then run a number of simulations with the same solution
 		for ( repeatIndex = 0; repeatIndex < getSeeds().length; repeatIndex++ ) {
 			setSeed(getSeeds()[repeatIndex]);
 			createSimulation(currentSolution, false);
 			simulation.init(getScope());
 			IScope scope = simulation.getScope();
+			// This inner while loop runs the simulation and controls its execution
 			while (simulation != null && simulation.step(scope) &&
 				!Cast.asBool(scope, scope.evaluate(stopCondition, simulation))) {
 				GuiUtils.informStatus("Run " + runNumber + " | Simulation " + (repeatIndex + 1) + "/" +
 					getSeeds().length + " | Cycle " + simulation.getClock().getCycle());
+				// TODO This is where any update of the outputs of simulations should be introduced
 			}
+			// When a simulation is finished, we give a chance to the outputs of the experiment and the experiment
+			// agent itself to "step" once, effectively emulating what the front scheduler should do. The simulation is
+			// still "alive" at this stage, which allows to retrieve information from it
+			super._step_(getScope());
+			getSpecies().getExperimentOutputs().step(getScope());
+			// We then verify that the front scheduler has not been paused
 			while (GAMA.controller.getScheduler().paused && !dead) {
 				try {
 					Thread.sleep(100);
@@ -141,10 +160,15 @@ public class BatchAgent extends ExperimentAgent {
 					e.printStackTrace();
 				}
 			}
+			// If the agent is dead, we return immediately
 			if ( dead ) { return 0.0; }
+			// We reset the experiment agent to erase traces of the current simulation
 			reset();
+			// We update the parameters
 			GuiUtils.showParameterView(getSpecies());
 		}
+		// We then return the combination (average, min or max) of the different fitness values computed by the
+		// different simulation.
 		short fitnessCombination = getSpecies().getExplorationAlgorithm().getCombination();
 		return fitnessCombination == IExploration.C_MAX ? Collections.max(fitnessValues)
 			: fitnessCombination == IExploration.C_MIN ? Collections.min(fitnessValues) : Statistics

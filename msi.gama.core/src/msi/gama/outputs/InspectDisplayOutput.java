@@ -45,7 +45,7 @@ import msi.gaml.types.IType;
  */
 @SuppressWarnings("unchecked")
 @symbol(name = IKeyword.INSPECT, kind = ISymbolKind.OUTPUT, with_sequence = false)
-@inside(symbols = IKeyword.OUTPUT)
+@inside(symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
 @facets(value = {
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
