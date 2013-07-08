@@ -180,14 +180,14 @@ GamlBinaryExpr returns Expression:
 	GamlUnitExpr
 	(({GamlBinaryExpr.left=current} op=ID) right=GamlUnitExpr)*;
 
-	// NEW: Units can now be expressed using the "¡" symbol (in addition to "#")
+	// NEW: Units can now be expressed using the "Â°" symbol (in addition to "#")
 GamlUnitExpr returns Expression:
 	GamlUnaryExpr
-	(({GamlUnitExpr.left=current} op=('#' | '¡')) right=UnitName)?;
+	(({GamlUnitExpr.left=current} op=('#' | 'Â°')) right=UnitName)?;
 
 GamlUnaryExpr returns Expression:
 	Access |
-	{GamlUnaryExpr} ({GamlUnaryExpr.left=current} (op='¡' right=UnitName) | (op=('-' | '!' | 'my' | 'the' | 'not')
+	{GamlUnaryExpr} ({GamlUnaryExpr.left=current} (op='Â°' right=UnitName) | (op=('-' | '!' | 'my' | 'the' | 'not')
 	right=GamlUnaryExpr));
 	
 		

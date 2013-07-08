@@ -4,9 +4,7 @@ import java.util.Map;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.headless.runtime.HeadlessListener;
-import msi.gama.kernel.experiment.IExperimentSpecies;
-import msi.gama.kernel.experiment.ParametersSet;
-import msi.gama.kernel.model.GamlModelSpecies;
+import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.GamlStandaloneSetup;
 import msi.gama.lang.gaml.resource.GamlResource;
@@ -14,10 +12,7 @@ import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamaBundleLoader;
-import msi.gaml.species.ISpecies;
-
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import com.google.inject.Injector;
@@ -36,19 +31,20 @@ public class HeadlessSimulationLoader {
 		configureHeadLessSimulation();
 		preloadGAMA();
 		IModel model = loadModel(fileName);
-		IExperimentSpecies tt =  model.getExperiment("preyPred");
-		IHeadLessExperiment exp = (IHeadLessExperiment)model.getExperiment("preyPred");;
-		System.out.println("coucouc " + "  pouet "+ tt.getClass().getName());
-	   	
-	/*	
-   		for (ISpecies sp : ((GamlModelSpecies)model).getExperiments()) {
-   			System.out.println("coucouc " + "  pouet "+ sp.getName());
-   			if (sp instanceof IExperimentSpecies) { 
-   				System.out.println("coucouc " + "  experiment "+ sp.getName());
-   	   			
-   				 exp = (IHeadLessExperiment) sp;
-   			} 
-   		}*/
+		IExperimentSpecies tt = model.getExperiment("preyPred");
+		IHeadLessExperiment exp = (IHeadLessExperiment) model.getExperiment("preyPred");;
+		System.out.println("coucouc " + "  pouet " + tt.getClass().getName());
+
+		/*
+		 * for (ISpecies sp : ((GamlModelSpecies)model).getExperiments()) {
+		 * System.out.println("coucouc " + "  pouet "+ sp.getName());
+		 * if (sp instanceof IExperimentSpecies) {
+		 * System.out.println("coucouc " + "  experiment "+ sp.getName());
+		 * 
+		 * exp = (IHeadLessExperiment) sp;
+		 * }
+		 * }
+		 */
 		waitLoading(exp);
 		return exp; // (IHeadLessExperiment) GAMA.getExperiment();
 	}
@@ -67,13 +63,13 @@ public class HeadlessSimulationLoader {
 		// FIXME Verify all this.
 		IHeadLessExperiment exp = newHeadlessSimulation(fileName);
 		exp.open();
-		
+
 		System.out.println("coucoucou  simulation is open.....");
 		for ( Map.Entry<String, Object> entry : params.entrySet() ) {
 			exp.setParameterValue(entry.getKey(), entry.getValue());
 		}
 		// FIXME ???
-		exp.schedule();
+		// exp.schedule();
 		waitLoading(exp);
 		return exp;
 
@@ -89,8 +85,8 @@ public class HeadlessSimulationLoader {
 			}
 			System.out.println("test " + exp);
 			System.out.println("test2 " + exp.getModel());
-			System.out.println("test2 " + exp.isLoading());
-		} while (/*exp.getCurrentSimulation() != null && */exp.isLoading());
+			// System.out.println("test2 " + exp.isLoading());
+		} while (exp.getCurrentSimulation() != null);
 	}
 
 	private static void configureHeadLessSimulation() {
@@ -118,9 +114,10 @@ public class HeadlessSimulationLoader {
 		ResourceSet rs = new ResourceSetImpl();
 		GamlResource r = (GamlResource) rs.getResource(URI.createURI("file:///" + fileName), true);
 		try {
-		//	GamlJavaValidator validator = new GamlJavaValidator(); //(GamlJavaValidator) injector.getInstance(EValidator.class);
-			
-			GamlJavaValidator validator = (GamlJavaValidator) injector.getInstance(GamlJavaValidator.class);
+			// GamlJavaValidator validator = new GamlJavaValidator(); //(GamlJavaValidator)
+			// injector.getInstance(EValidator.class);
+
+			GamlJavaValidator validator = injector.getInstance(GamlJavaValidator.class);
 			lastModel = validator.build(r);
 			if ( !r.getErrors().isEmpty() ) {
 				lastModel = null;

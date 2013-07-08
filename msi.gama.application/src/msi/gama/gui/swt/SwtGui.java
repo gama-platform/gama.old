@@ -448,7 +448,6 @@ public class SwtGui implements IGui {
 	}
 
 	private void eraseConsole(final boolean setToNull) {
-		GuiUtils.debug("SwtGui.eraseConsole");
 		if ( console != null ) {
 			run(new Runnable() {
 
@@ -834,7 +833,7 @@ public class SwtGui implements IGui {
 					part.initFor(scope, panel.getUserCommands(),
 						"[" + scope.getAgentScope().getName() + "] " + panel.getName());
 				}
-				GAMA.controller.scheduler.setUserHold(true);
+				GAMA.controller.getScheduler().setUserHold(true);
 				try {
 					getPage().showView(UserControlView.ID);
 				} catch (final PartInitException e) {
@@ -888,9 +887,9 @@ public class SwtGui implements IGui {
 					final ExperimentParametersView view =
 						(ExperimentParametersView) getPage().showView(ExperimentParametersView.ID, null,
 							IWorkbenchPage.VIEW_VISIBLE);
-					if ( view.getExperiment() != exp ) {
-						view.addItem(exp);
-					}
+					// if ( view.getExperiment() != exp ) {
+					view.addItem(exp);
+					// }
 					view.updateItemValues();
 				} catch (final PartInitException e) {
 					e.printStackTrace();
@@ -1016,6 +1015,7 @@ public class SwtGui implements IGui {
 			tell = new Tell();
 			error = new Error();
 			views = new Views();
+			OutputSynchronizer.waitForViewsToBeClosed();
 		} else {
 			status = null;
 		}

@@ -33,7 +33,7 @@ public class SimulationPopulation extends GamaPopulation {
 
 	@Override
 	public IList<? extends IAgent> createAgents(final IScope scope, final int number, final List<Map> initialValues,
-		final boolean isRestored) throws GamaRuntimeException {
+		final boolean toBeScheduled) throws GamaRuntimeException {
 		GuiUtils.waitStatus("Initializing simulation");
 		final SimulationAgent world = new SimulationAgent(this);
 		world.setIndex(currentAgentIndex++);
@@ -42,7 +42,9 @@ public class SimulationPopulation extends GamaPopulation {
 		if ( scope.interrupted() ) { return null; }
 		GuiUtils.waitStatus("Instantiating agents");
 		createVariablesFor(world.getScope(), this, initialValues);
-		world.schedule();
+		if ( toBeScheduled ) {
+			world.schedule();
+		}
 		GuiUtils.informStatus("Simulation Ready");
 		return this;
 	}

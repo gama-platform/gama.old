@@ -266,8 +266,8 @@ public class GAML {
 	}
 
 	public static ModelDescription getModelContext() {
-		if ( GAMA.controller.experiment == null ) { return null; }
-		return (ModelDescription) GAMA.controller.experiment.getModel().getDescription();
+		if ( GAMA.controller.getExperiment() == null ) { return null; }
+		return (ModelDescription) GAMA.controller.getExperiment().getModel().getDescription();
 	}
 
 	public static ExperimentDescription getExperimentContext() {

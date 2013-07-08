@@ -60,7 +60,7 @@ public class AgentScheduler implements IStepable {
 		// We wait for the scheduler to become "idle" (i.e. when all the interruptions have become
 		// effective) if the global scheduler is not paused.
 		// WARNING: if the scope is not marked as "interrupted", this will result in an endless loop
-		if ( !GAMA.controller.scheduler.paused ) {
+		if ( !GAMA.controller.getScheduler().paused ) {
 			while (alive) {
 				try {
 					//GuiUtils.debug("ExperimentScheduler.dispose: DOING THE LAST STEP(S)");
@@ -174,7 +174,7 @@ public class AgentScheduler implements IStepable {
 	}
 
 	public synchronized void executeOneAction(final GamaHelper action) {
-		if ( GAMA.controller.scheduler.paused || GAMA.controller.scheduler.on_user_hold ) {
+		if ( GAMA.controller.getScheduler().paused || GAMA.controller.getScheduler().on_user_hold ) {
 			action.run(scope);
 		} else {
 			insertOneShotAction(action);

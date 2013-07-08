@@ -106,8 +106,8 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		model.finalizeDescription();
 	}
 
-	public static SpeciesDescription buildSpecies(final SpeciesProto proto, SpeciesDescription macro,
-		SpeciesDescription parent, boolean isGlobal) {
+	public static SpeciesDescription buildSpecies(final SpeciesProto proto, final SpeciesDescription macro,
+		final SpeciesDescription parent, final boolean isGlobal) {
 		Class clazz = proto.clazz;
 		String name = proto.name;
 		IAgentConstructor helper = proto.helper;
@@ -151,7 +151,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		IAgentConstructor helper;
 		String[] skills;
 
-		public SpeciesProto(String name, Class clazz, IAgentConstructor helper, String[] skills) {
+		public SpeciesProto(final String name, final Class clazz, final IAgentConstructor helper, final String[] skills) {
 			this.name = name;
 			this.clazz = clazz;
 			this.helper = helper;
@@ -218,8 +218,9 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			if ( additonal != null ) {
 				keywords.addAll(additonal);
 			}
-			// Special trick and workaround for compiling species rather than variables
+			// Special trick and workaround for compiling species and experiments rather than variables
 			keywords.remove(SPECIES);
+			keywords.remove(EXPERIMENT);
 		}
 
 		SymbolProto md =
@@ -230,14 +231,14 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public void _iterator(final String[] keywords, final Class[] classes, final int[] expectedContentTypes,
 		final Class ret, final boolean c, final int t, final int content, final int index, final GamaHelper helper,
-		GamlElementDocumentation doc) {
+		final GamlElementDocumentation doc) {
 		IExpressionCompiler.ITERATORS.addAll(Arrays.asList(keywords));
 		_operator(keywords, classes, expectedContentTypes, ret, c, t, content, index, helper, doc);
 	}
 
 	public void _operator(final String[] keywords, final Class[] classes, final int[] expectedContentTypes,
 		final Class ret, final boolean c, final int t, final int content, final int index, final GamaHelper helper,
-		GamlElementDocumentation doc) {
+		final GamlElementDocumentation doc) {
 		Signature signature = new Signature(classes);
 		for ( int i = 0; i < keywords.length; i++ ) {
 			String kw = keywords[i];
@@ -337,7 +338,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		add(clazz, desc);
 	}
 
-	public static void initType(final String keyword, IType typeInstance, final int id, final int varKind,
+	public static void initType(final String keyword, final IType typeInstance, final int id, final int varKind,
 		final Class ... wraps) {
 		Types.builtInTypes.initType(keyword, typeInstance, id, varKind, wraps);
 		if ( !VARTYPE2KEYWORDS.containsKey(varKind) ) {
@@ -485,7 +486,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	public static final Set<String> CONSTANTS = new HashSet();
 
-	public static void _constants(String[] ... strings) {
+	public static void _constants(final String[] ... strings) {
 		for ( String[] s : strings ) {
 			for ( String s2 : s ) {
 				CONSTANTS.add(s2);

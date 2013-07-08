@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -61,12 +61,12 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 	}
 
 	@Override
-	public void initializeFor(final BatchExperiment f) throws GamaRuntimeException {
-		super.initializeFor(f);
+	public void initializeFor(final BatchAgent agent) throws GamaRuntimeException {
+		super.initializeFor(agent);
 		GAMA.run(new InScope.Void() {
 
 			@Override
-			public void process(IScope scope) {
+			public void process(final IScope scope) {
 				final IExpression tempend = getFacet(TEMP_END);
 				if ( tempend != null ) {
 					temperatureEnd = Cast.asFloat(scope, tempend.value(scope));
@@ -149,10 +149,9 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 	}
 
 	@Override
-	public void addParametersTo(final BatchExperiment exp) {
-		super.addParametersTo(exp);
-		exp.addMethodParameter(new ParameterAdapter("Final temperature", IExperimentSpecies.BATCH_CATEGORY_NAME,
-			IType.FLOAT) {
+	public void addParametersTo(final List<IParameter.Batch> params, BatchAgent agent) {
+		super.addParametersTo(params, agent);
+		params.add(new ParameterAdapter("Final temperature", IExperimentSpecies.BATCH_CATEGORY_NAME, IType.FLOAT) {
 
 			@Override
 			public Object value() {
@@ -160,8 +159,7 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 			}
 
 		});
-		exp.addMethodParameter(new ParameterAdapter("Initial temperature", IExperimentSpecies.BATCH_CATEGORY_NAME,
-			IType.FLOAT) {
+		params.add(new ParameterAdapter("Initial temperature", IExperimentSpecies.BATCH_CATEGORY_NAME, IType.FLOAT) {
 
 			@Override
 			public Object value() {
@@ -169,8 +167,8 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 			}
 
 		});
-		exp.addMethodParameter(new ParameterAdapter("Coefficient of diminution",
-			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.FLOAT) {
+		params.add(new ParameterAdapter("Coefficient of diminution", IExperimentSpecies.BATCH_CATEGORY_NAME,
+			IType.FLOAT) {
 
 			@Override
 			public Object value() {
@@ -178,7 +176,7 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 			}
 
 		});
-		exp.addMethodParameter(new ParameterAdapter("Number of iterations at constant temperature",
+		params.add(new ParameterAdapter("Number of iterations at constant temperature",
 			IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
 
 			@Override

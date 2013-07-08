@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -43,7 +43,7 @@ import com.vividsolutions.jts.geom.Envelope;
 /**
  * Defines an instance of a model (a simulation). Serves as the support for model species (whose metaclass is
  * GamlModelSpecies)
- * Written by drogoul Modified on 1 dŽc. 2010, May 2013
+ * Written by drogoul Modified on 1 dï¿½c. 2010, May 2013
  * 
  * @todo Description
  * 
@@ -80,15 +80,16 @@ public class SimulationAgent extends GamlAgent {
 	@Override
 	public void schedule() {
 		super.schedule();
-		GAMA.controller.scheduler.schedule(scheduler, scope);
+		GAMA.controller.getScheduler().schedule(scheduler, scope);
 		if ( outputs != null ) {
 			final IScope simulationScope = obtainNewScope();
 			if ( simulationScope != null ) {
-				GAMA.controller.scheduler.schedule(outputs, simulationScope);
+				GAMA.controller.getScheduler().schedule(outputs, simulationScope);
 			} else {
 				// TODO What does it do here ? Should be elsewhere (but where ?)
-				GuiUtils.hideView(GuiUtils.PARAMETER_VIEW_ID);
-				GuiUtils.hideMonitorView();
+				GuiUtils.cleanAfterSimulation();
+				// GuiUtils.hideView(GuiUtils.PARAMETER_VIEW_ID);
+				// GuiUtils.hideMonitorView();
 			}
 		}
 	}

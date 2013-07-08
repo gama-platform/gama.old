@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -50,7 +50,7 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	protected Map<ParametersSet, Double> testedSolutions;
 	protected IExpression fitnessExpression;
 	protected boolean isMaximize;
-	protected BatchExperiment currentExperiment;
+	protected BatchAgent currentExperiment;
 	protected ParametersSet bestSolution;
 	protected Double bestFitness;
 	protected short combination;
@@ -58,8 +58,8 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	protected abstract ParametersSet findBestSolution() throws GamaRuntimeException;
 
 	@Override
-	public void initializeFor(final BatchExperiment f) throws GamaRuntimeException {
-		currentExperiment = f;
+	public void initializeFor(final BatchAgent agent) throws GamaRuntimeException {
+		currentExperiment = agent;
 	}
 
 	protected NumberGenerator<Double> getRandUniform() {
@@ -106,14 +106,18 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	}
 
 	@Override
-	public void addParametersTo(final BatchExperiment exp) {
-		exp.addMethodParameter(new ParameterAdapter("Exploration method", IExperimentSpecies.BATCH_CATEGORY_NAME,
-			IType.STRING) {
+	public void addParametersTo(final List<IParameter.Batch> params, final BatchAgent agent) {
+		params.add(new ParameterAdapter("Exploration method", IExperimentSpecies.BATCH_CATEGORY_NAME, IType.STRING) {
 
 			@Override
 			public Object value() {
 				List<Class> classes = new GamaList(CLASSES);
-				return IKeyword.METHODS[classes.indexOf(ParamSpaceExploAlgorithm.this.getClass())];
+				String name = IKeyword.METHODS[classes.indexOf(ParamSpaceExploAlgorithm.this.getClass())];
+				String fit = "fitness = " + (isMaximize ? " maximize " : " minimize ") + fitnessExpression.toGaml();
+				String sim =
+					(combination == C_MAX ? " max " : combination == C_MIN ? " min " : " average ") + "of " +
+						agent.getSeeds().length + " simulations";
+				return "Method " + name + " | " + fit + " | " + "compute the" + sim + " for each solution";
 			}
 
 		});

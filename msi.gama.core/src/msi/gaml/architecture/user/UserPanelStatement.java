@@ -48,7 +48,7 @@ public class UserPanelStatement extends FsmStateStatement {
 		super.bodyExecution(scope);
 		if ( !userCommands.isEmpty() ) {
 			GuiUtils.openUserControlPanel(scope, this);
-			while (GAMA.controller.scheduler.on_user_hold) {
+			while (GAMA.controller.getScheduler().on_user_hold) {
 				try {
 					Thread.sleep(100);
 				} catch (InterruptedException e) {

@@ -9,8 +9,6 @@ import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.GAMA;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.types.IType;
@@ -38,13 +36,13 @@ public class HeadLessExperiment extends ExperimentSpecies implements IHeadLessEx
 
 	}
 
-	@Override
-	public IList<IParameter> getParametersToDisplay() {
-		IList<IParameter> result = new GamaList();
-		result.addAll(regularParameters);
-		result.addAll(systemParameters);
-		return result;
-	}
+	// @Override
+	// public IList<IParameter> getParametersToDisplay() {
+	// IList<IParameter> result = new GamaList();
+	// result.addAll(targetedVars.values());
+	// // result.addAll(systemParameters);
+	// return result;
+	// }
 
 	// @Override
 	// public void stop() {}
@@ -62,26 +60,32 @@ public class HeadLessExperiment extends ExperimentSpecies implements IHeadLessEx
 		super.setChildren(children);
 		for ( ISymbol s : children ) {
 			if ( s instanceof IParameter ) {
-				addRegularParameter((IParameter) s);
+				IParameter p = (IParameter) s;
+				final String name = p.getName();
+				boolean already = parameters.containsKey(name);
+				if ( !already ) {
+					parameters.put(name, p);
+				}
+				boolean registerParameter = !already;
 			}
 		}
 	}
 
-	@Override
-	public void addRegularParameter(final IParameter p) {
-		if ( registerParameter(p) ) {
-			regularParameters.add(p);
-		}
-	}
+	// @Override
+	// public void addRegularParameter(final IParameter p) {
+	// if ( registerParameter(p) ) {
+	// regularParameters.add(p);
+	// }
+	// }
 
-	@Override
-	public IList<String> getParametersNames() {
-		final GamaList<String> result = new GamaList<String>();
-		for ( final IParameter v : regularParameters ) {
-			result.add(v.getName());
-		}
-		return result;
-	}
+	// @Override
+	// public IList<String> getParametersNames() {
+	// final GamaList<String> result = new GamaList<String>();
+	// for ( final IParameter v : regularParameters ) {
+	// result.add(v.getName());
+	// }
+	// return result;
+	// }
 
 	// @Override
 	// public void userStep() {
@@ -91,17 +95,17 @@ public class HeadLessExperiment extends ExperimentSpecies implements IHeadLessEx
 	//
 	// }
 
-	@Override
-	public void setParameterWithName(final String name, final Object value) throws GamaRuntimeException,
-		InterruptedException {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public Object getParameterWithName(final String name) throws GamaRuntimeException, InterruptedException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	// @Override
+	// public void setParameterWithName(final String name, final Object value) throws GamaRuntimeException,
+	// InterruptedException {
+	// // TODO Auto-generated method stub
+	//
+	// }
+	//
+	// @Override
+	// public Object getParameterWithName(final String name) throws GamaRuntimeException, InterruptedException {
+	// // TODO Auto-generated method stub
+	// return null;
+	// }
 
 }

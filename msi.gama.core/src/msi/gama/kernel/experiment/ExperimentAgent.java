@@ -2,13 +2,14 @@ package msi.gama.kernel.experiment;
 
 import java.net.URL;
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.kernel.simulation.*;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
+import msi.gama.outputs.IOutputManager;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.setter;
@@ -57,16 +58,17 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	private static final IShape SHAPE = GamaGeometryType.createPoint(new GamaPoint(-1, -1));
 
-	private IScope scope;
+	private final IScope scope;
 	protected SimulationAgent simulation;
 	final Map<String, Object> extraParametersMap = new LinkedHashMap();
 	protected RandomUtils random;
-	protected boolean isLoading;
+	// protected boolean isLoading;
 	protected SimulationClock clock = new SimulationClock();
 
 	public ExperimentAgent(final IPopulation s) throws GamaRuntimeException {
 		super(s);
 		super.setGeometry(SHAPE);
+		scope = obtainNewScope();
 		reset();
 	}
 
@@ -79,12 +81,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		// We close any simulation that might be running
 		closeSimulation();
 		// We create a fresh new scope
-		GAMA.releaseScope(scope);
-		scope = obtainNewScope();
+		// GAMA.releaseScope(scope);
+		// scope = obtainNewScope();
 		// We initialize the population that will host the simulation
 		createSimulationPopulation();
 		// We initialize a new random number generator
-		random = new RandomUtils(getSpecies().getCurrentSeed());
+		// random = new RandomUtils(getSpecies().getCurrentSeed());
+		random = new RandomUtils(getSeed());
 	}
 
 	@Override
@@ -97,7 +100,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public void closeSimulation() {
 		// We unschedule the simulation if any
 		if ( getSimulation() != null ) {
-			GAMA.controller.scheduler.unschedule(getSimulation().getScheduler());
+			GAMA.controller.getScheduler().unschedule(getSimulation().getScheduler());
 			// TODO Should better be in SimulationOutputManager
 			GuiUtils.cleanAfterSimulation();
 		}
@@ -107,16 +110,17 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	public void dispose() {
 		if ( dead ) { return; }
 		super.dispose();
+		// GAMA.releaseScope(scope);
 		closeSimulation();
 		if ( getSimulation() != null ) {
 			getSimulation().dispose();
 		}
 	}
 
-	@Override
-	public boolean isLoading() {
-		return isLoading;
-	}
+	// @Override
+	// public boolean isLoading() {
+	// return isLoading;
+	// }
 
 	/**
 	 * Redefinition of the callback method
@@ -129,17 +133,32 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		// We execute any behavior defined in GAML. The simulation is not yet defined (only the 'fake' one).
 		super._init_(scope);
 		// We gather the parameters set in the experiment
-		final ParametersSet parameters = new ParametersSet(getSpecies().getCurrentSolution());
+		// final ParametersSet parameters = new ParametersSet(getSpecies().getCurrentSolution());
 		// Add the ones set during the "fake" simulation episode
-		parameters.putAll(extraParametersMap);
+		// parameters.putAll(extraParametersMap);
 		// This is where the simulation agent is created
-		isLoading = true;
+		// isLoading = true;
+		// final IPopulation pop = getMicroPopulation(getModel());
+		// 'simulation' is set by a callback call to setSimulation()
+		// pop.createAgents(scope, 1, GamaList.with(getParameterValues()), false);
+		// isLoading = false;
+		createSimulation(getParameterValues(), true);
+		return this;
+	}
+
+	public SimulationAgent createSimulation(final ParametersSet parameters, final boolean scheduleIt) {
 		final IPopulation pop = getMicroPopulation(getModel());
 		// 'simulation' is set by a callback call to setSimulation()
-		pop.createAgents(scope, 1, GamaList.with(parameters), false);
-		isLoading = false;
-		return this;
+		ParametersSet ps = getParameterValues();
+		ps.putAll(parameters);
+		return (SimulationAgent) pop.createAgents(scope, 1, GamaList.with(ps), scheduleIt).get(0);
+	}
 
+	public ParametersSet getParameterValues() {
+		Map<String, IParameter> parameters = getSpecies().getParameters();
+		ParametersSet ps = new ParametersSet(parameters, false);
+		ps.putAll(extraParametersMap);
+		return ps;
 	}
 
 	@Override
@@ -151,6 +170,17 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	@Override
 	public RandomUtils getRandomGenerator() {
 		return random == null ? RandomUtils.getDefault() : random;
+	}
+
+	@Override
+	public void schedule() {
+		// The experiment agent is scheduled in the global scheduler
+		IOutputManager outputs = getSpecies().getExperimentOutputs();
+		if ( outputs != null ) {
+			GAMA.controller.getScheduler().schedule(outputs, getScope());
+		}
+		GAMA.controller.getScheduler().schedule(this, getScope());
+
 	}
 
 	/**
@@ -167,11 +197,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		attributes.put(getModel().getName(), pop);
 		pop.setHost(this);
 	}
-
-	/**
-	 * Scope related utilities
-	 * 
-	 */
 
 	@Override
 	public IScope getScope() {
@@ -203,6 +228,22 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 * GAML global variables
 	 * 
 	 */
+
+	public List<? extends IParameter.Batch> getDefaultParameters() {
+		List<ExperimentParameter> params = new ArrayList();
+		final String cat = getExperimentParametersCategory();
+		params.add(new ExperimentParameter(getScope(), getSpecies().getVar(IKeyword.RNG), "Random number generator",
+			cat, RandomUtils.GENERATOR_NAMES, false));
+		params.add(new ExperimentParameter(getScope(), getSpecies().getVar(IKeyword.SEED), "Random seed", cat, null,
+			true));
+
+		return params;
+	}
+
+	protected String getExperimentParametersCategory() {
+		return "Model " + getModel().getName() + ItemList.SEPARATION_CODE + ItemList.INFO_CODE +
+			IExperimentSpecies.SYSTEM_CATEGORY_PREFIX + " '" + getSpecies().getName() + "'";
+	}
 
 	@getter(ExperimentAgent.MODEL_PATH)
 	public String getModelPath() {
@@ -237,22 +278,22 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@getter(value = IKeyword.SEED, initializer = true)
 	public Double getSeed() {
-		return (double) GAMA.getRandom().getSeed();
+		return (double) getRandomGenerator().getSeed();
 	}
 
 	@setter(IKeyword.SEED)
 	public void setSeed(final Double s) {
-		GAMA.getRandom().setSeed(s);
+		getRandomGenerator().setSeed(s);
 	}
 
 	@getter(value = IKeyword.RNG, initializer = true)
 	public String getRng() {
-		return GAMA.getRandom().getGeneratorName();
+		return getRandomGenerator().getGeneratorName();
 	}
 
 	@setter(IKeyword.RNG)
 	public void setRng(final String newRng) {
-		GAMA.getRandom().setGenerator(newRng);
+		getRandomGenerator().setGenerator(newRng);
 	}
 
 	private SimulationPopulation getSimulationPopulation() {
@@ -301,8 +342,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 				return super.getGlobalVarValue(name);
 			} else if ( getSimulation() != null ) {
 				return getSimulation().getScope().getGlobalVarValue(name);
-			} else if ( ExperimentAgent.this.getSpecies().hasParameter(name) ) { return ExperimentAgent.this
-				.getSpecies().getParameterValue(name); }
+			} else if ( getSpecies().hasParameter(name) ) { return getSpecies().getExperimentScope().getGlobalVarValue(
+				name); }
 			return extraParametersMap.get(name);
 		}
 
@@ -313,8 +354,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			} else if ( getSimulation() != null ) {
 				getSimulation().getScope().setGlobalVarValue(name, v);
 			} else if ( getSpecies().hasParameter(name) ) {
-				getSpecies().setParameterValue(name, v);
-				GuiUtils.updateParameterView(getSpecies());
+				getSpecies().getExperimentScope().setGlobalVarValue(name, v);// GuiUtils.updateParameterView(getSpecies());
 			} else {
 				extraParametersMap.put(name, v);
 			}

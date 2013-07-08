@@ -4,7 +4,6 @@ import java.util.concurrent.ArrayBlockingQueue;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.kernel.model.IModel;
-import msi.gama.outputs.OutputSynchronizer;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class FrontEndController implements Runnable {
@@ -13,7 +12,7 @@ public class FrontEndController implements Runnable {
 	public final static String RUNNING = "RUNNING";
 	public final static String NOTREADY = "NOTREADY";
 	public final static String NONE = "NONE";
-	public static final int _INIT = 0;
+	public static final int _OPEN = 0;
 	public static final int _START = 1;
 	public static final int _STEP = 2;
 	public static final int _PAUSE = 3;
@@ -23,11 +22,11 @@ public class FrontEndController implements Runnable {
 	public static final int _NEXT = 7;
 
 	public ISimulationStateProvider state = null;
-	public volatile IExperimentSpecies experiment = null;
+	private volatile IExperimentSpecies experiment = null;
 	protected volatile ArrayBlockingQueue<Integer> commands;
 	public volatile Thread commandThread;
 	protected volatile boolean running = true;
-	public final FrontEndScheduler scheduler;
+	private final FrontEndScheduler scheduler;
 
 	public FrontEndController(final FrontEndScheduler scheduler) {
 		this.scheduler = scheduler;
@@ -38,6 +37,10 @@ public class FrontEndController implements Runnable {
 			commandThread = new Thread(this, "Front end controller");
 			commandThread.start();
 		}
+	}
+
+	public IExperimentSpecies getExperiment() {
+		return experiment;
 	}
 
 	@Override
@@ -61,12 +64,13 @@ public class FrontEndController implements Runnable {
 
 	protected void processUserCommand(final int command) {
 		switch (command) {
-			case _INIT:
+			case _OPEN:
 				// Needs to run in the controller thread
 				updateSimulationState(NOTREADY);
 				try {
-					OutputSynchronizer.waitForViewsToBeClosed();
-					experiment.schedule();
+					experiment.open();
+					// OutputSynchronizer.waitForViewsToBeClosed();
+					// experiment.schedule();
 				} catch (final GamaRuntimeException e) {
 					closeExperiment(e);
 				} finally {
@@ -84,7 +88,7 @@ public class FrontEndController implements Runnable {
 				}
 				break;
 			case _PAUSE:
-				GuiUtils.debug("FrontEndController.processUserCommand _PAUSE");
+				// GuiUtils.debug("FrontEndController.processUserCommand _PAUSE");
 				updateSimulationState(PAUSED);
 				scheduler.pause();
 				break;
@@ -153,7 +157,7 @@ public class FrontEndController implements Runnable {
 			try {
 				updateSimulationState(NOTREADY);
 				GuiUtils.closeDialogs();
-				experiment.close();
+				experiment.dispose();
 				experiment = null;
 			} finally {
 				updateSimulationState(NONE);
@@ -185,9 +189,11 @@ public class FrontEndController implements Runnable {
 	public String getFrontmostSimulationState() {
 		if ( experiment == null ) {
 			return NONE;
-		} else if ( experiment.isLoading() ) {
-			return NOTREADY;
-		} else if ( scheduler.paused ) { return PAUSED; }
+		}
+		// else if ( experiment.isLoading() ) {
+		// return NOTREADY;
+		// }
+		else if ( scheduler.paused ) { return PAUSED; }
 		return RUNNING;
 	}
 
@@ -230,8 +236,8 @@ public class FrontEndController implements Runnable {
 			}
 		}
 		experiment = newExperiment;
-		experiment.open();
-		offer(_INIT);
+		// experiment.open();
+		offer(_OPEN);
 	}
 
 	private boolean verifyClose() {
@@ -244,6 +250,10 @@ public class FrontEndController implements Runnable {
 	public void shutdown() {
 		scheduler.dispose();
 		running = false;
+	}
+
+	public FrontEndScheduler getScheduler() {
+		return scheduler;
 	}
 
 }

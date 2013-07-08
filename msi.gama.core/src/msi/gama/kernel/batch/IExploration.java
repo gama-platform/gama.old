@@ -1,9 +1,10 @@
 /**
- * Created by drogoul, 26 dŽc. 2011
+ * Created by drogoul, 26 dï¿½c. 2011
  * 
  */
 package msi.gama.kernel.batch;
 
+import java.util.List;
 import msi.gama.kernel.experiment.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
@@ -13,20 +14,20 @@ import msi.gaml.expressions.IExpression;
  * The class IExploration.
  * 
  * @author drogoul
- * @since 26 dŽc. 2011
+ * @since 26 dï¿½c. 2011
  * 
  */
 public interface IExploration extends ISymbol, Runnable {
 
 	public final static short C_MAX = 0, C_MIN = 1, C_MEAN = 2;
 
-	public abstract void initializeFor(final BatchExperiment f) throws GamaRuntimeException;
+	public abstract void initializeFor(final BatchAgent agent) throws GamaRuntimeException;
 
 	public abstract String getCombinationName();
 
 	public abstract void start();
 
-	public abstract void addParametersTo(final BatchExperiment exp);
+	public abstract void addParametersTo(final List<IParameter.Batch> exp, BatchAgent agent);
 
 	public abstract Double getBestFitness();
 

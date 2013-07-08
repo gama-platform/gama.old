@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -41,7 +41,7 @@ public class GAMA {
 	public static boolean REVEAL_ERRORS_IN_EDITOR = true;
 	public static boolean TREAT_WARNINGS_AS_ERRORS = false;
 
-	public static FrontEndController controller = new FrontEndController(new FrontEndScheduler());
+	public final static FrontEndController controller = new FrontEndController(new FrontEndScheduler());
 
 	/**
 	 * 
@@ -50,8 +50,8 @@ public class GAMA {
 	 */
 
 	public static SimulationAgent getSimulation() {
-		if ( controller.experiment == null ) { return null; }
-		return controller.experiment.getCurrentSimulation();
+		if ( controller.getExperiment() == null ) { return null; }
+		return controller.getExperiment().getCurrentSimulation();
 	}
 
 	public static List<IPopulation> getModelPopulations() {
@@ -73,7 +73,7 @@ public class GAMA {
 	}
 
 	public static IExperimentSpecies getExperiment() {
-		return controller.experiment;
+		return controller.getExperiment();
 	}
 
 	public static SimulationClock getClock() {
@@ -83,14 +83,14 @@ public class GAMA {
 	}
 
 	public static RandomUtils getRandom() {
-		if ( controller.experiment == null || controller.experiment.getAgent() == null ) { return RandomUtils
+		if ( controller.getExperiment() == null || controller.getExperiment().getAgent() == null ) { return RandomUtils
 			.getDefault(); }
-		return controller.experiment.getAgent().getRandomGenerator();
+		return controller.getExperiment().getAgent().getRandomGenerator();
 	}
 
 	public static IModel getModel() {
-		if ( controller.experiment == null ) { return null; }
-		return controller.experiment.getModel();
+		if ( controller.getExperiment() == null ) { return null; }
+		return controller.getExperiment().getModel();
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class GAMA {
 	public static boolean reportError(final GamaRuntimeException g, final boolean shouldStopSimulation) {
 		// Returns whether or not to continue
 		GuiUtils.runtimeError(g);
-		if ( controller.experiment == null ) { return false; }
+		if ( controller.getExperiment() == null ) { return false; }
 		boolean isError = !g.isWarning() || TREAT_WARNINGS_AS_ERRORS;
 		boolean shouldStop = isError && shouldStopSimulation && REVEAL_ERRORS_IN_EDITOR;
 		// if ( shouldStop ) {
@@ -132,7 +132,7 @@ public class GAMA {
 	}
 
 	public static boolean isPaused() {
-		return controller.scheduler.paused;
+		return controller.getScheduler().paused;
 	}
 
 	/**
@@ -154,9 +154,9 @@ public class GAMA {
 	}
 
 	private static IScope getDefaultScope() {
-		if ( controller.experiment == null ) { return null; }
-		final ExperimentAgent a = controller.experiment.getAgent();
-		if ( a == null || a.dead() ) { return controller.experiment.getExperimentScope(); }
+		if ( controller.getExperiment() == null ) { return null; }
+		final ExperimentAgent a = controller.getExperiment().getAgent();
+		if ( a == null || a.dead() ) { return controller.getExperiment().getExperimentScope(); }
 		final SimulationAgent s = (SimulationAgent) a.getSimulation();
 		if ( s == null || s.dead() ) { return a.getScope(); }
 		return s.getScope();
