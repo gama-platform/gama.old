@@ -8,10 +8,13 @@ import msi.gama.database.mdx.MdxUtils;
 import msi.gama.database.sql.SqlConnection;
 import msi.gama.database.sql.SqlUtils;
 import msi.gama.precompiler.GamlAnnotations.action;
+import msi.gama.precompiler.GamlAnnotations.arg;
 import msi.gama.precompiler.GamlAnnotations.args;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.skill;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaList;
 import msi.gaml.skills.Skill;
 import msi.gaml.types.IType;
 
@@ -87,4 +90,59 @@ public class MDXSkill extends Skill{
 		return true;
 	}
 
+	@action(name = "select", args = {
+			@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters")),
+			@arg(name = "select", type = IType.STRING, optional = false, doc = @doc("select string with question marks")),
+			@arg(name = "values", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question marks")),
+			@arg(name = "transform", type = IType.BOOL, optional = true, doc = @doc("if transform = true then geometry will be tranformed from absolute to gis otherways it will be not transformed. Default value is false "))
+			
+//			@arg(name = "mdx", type = IType.STRING, optional = true, doc = @doc("select string with question marks")),
+//			@arg(name = "onColumns", type = IType.STRING, optional = false, doc = @doc("select string with question marks")),
+//			@arg(name = "onRows", type = IType.LIST, optional = false, doc = @doc("List of values that are used to replace question marks")),
+//			@arg(name = "from", type = IType.LIST, optional = false, doc = @doc("List of values that are used to replace question marks")),
+//			@arg(name = "where", type = IType.LIST, optional = true, doc = @doc("List of values that are used to replace question marks")),
+
+
+		})
+		public GamaList<Object> select_QM(final IScope scope) throws GamaRuntimeException 
+		{
+
+	//------------------------------------------------------------------------------------------
+			java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
+			String selectStr = (String) scope.getArg("select", IType.STRING);
+			GamaList<Object> values =scope.hasArg("values") ? (GamaList<Object>) scope.getArg("values", IType.LIST):null;
+			boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
+
+//			String mdxStr = scope.hasArg("mdx") ? (String) scope.getArg("mdx", IType.STRING):null;
+//			String onRowStr = (String) scope.getArg("onRows", IType.STRING);
+//			String onColumnStr = (String) scope.getArg("onColums", IType.STRING);
+//			String fromStr = (String) scope.getArg("from", IType.STRING);
+//			String whereStr = scope.hasArg("where") ? (String) scope.getArg("where", IType.STRING): null;
+			
+
+			MdxConnection mdxConn;
+			GamaList<Object> repRequest = new GamaList<Object>();
+			try {
+				mdxConn = MdxUtils.createConnectionObject(scope,params);
+				if  (values!=null) { 
+					repRequest = mdxConn.selectMDB(selectStr,values);
+				}else  {      
+					repRequest = mdxConn.selectMDB(selectStr);
+				}
+
+				// Transform GIS to Absolute (Geometry in GAMA)
+//				if ( transform ) {
+//					repRequest= mdxConn.fromGisToAbsolute(scope, repRequest);
+//				} else {
+//					return repRequest;
+//				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+				throw GamaRuntimeException.error("SQLSkill.select_QM: " + e.toString());
+			}
+			
+	//------------------------------------------------------------------------------------------
+			return repRequest;
+		}
 }

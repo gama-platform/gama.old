@@ -32,8 +32,8 @@ public class MondrianApp {
 //					 );
 		// Mondrian with postgreSQL
 		MdxConnection mdxConnection = MdxUtils.createConnectionObject("MONDRIAN","postgres","localhost","5432","foodmart"
-//				 ,"C:\\Program Files\\Apache Software Foundation\\Tomcat 7.0\\webapps\\mondrian\\WEB-INF\\queries\\FoodMart.xml"
-				 ,"FoodMart.xml"
+				 ,"C:\\Program Files\\Apache Software Foundation\\Tomcat 7.0\\webapps\\mondrian\\WEB-INF\\queries\\FoodMart.xml"
+//				 ,"FoodMart.xml"
 				 
 				 ,"postgres","tmt"
 				 );
@@ -77,28 +77,28 @@ public class MondrianApp {
 //					+" from [Sales] "
 //					+" where [Time].[1997]";
 			 
-//			 String selectStr=
-//			  " select {[Measures].[Unit Sales], [Measures].[Store Cost], [Measures].[Store Sales]} ON COLUMNS,"
-//			 +"     Hierarchize(Union(Union(Union({([Promotion Media].[All Media], [Product].[All Products])}, Crossjoin([Promotion Media].[All Media].Children, {[Product].[All Products]})), "
-//			 +"		Crossjoin({[Promotion Media].[Daily Paper, Radio, TV]}, [Product].[All Products].Children)), Crossjoin({[Promotion Media].[Street Handout]}, [Product].[All Products].Children))) ON ROWS "
-//			 +" from [Sales] "
-//			 +" where [Time].[1997] ";
-			
 			 String selectStr=
-			 " select "
-			 +" CrossJoin("
-			 +"   {[Measures].[Unit Sales], [Measures].[Store Sales]},"
-			 +"   {[Time].[1997].[Q2].children}) on columns, "
-			 +" CrossJoin("
-			 +"   CrossJoin("
-			 +"     [Gender].members,"
-			 +"     [Marital Status].members),"
-			 +"  {[Store], [Store].children}) on rows"
-			 +" from [Sales]"
-			 +" where ("
-			 +" [Product].[Food],"
-			 +" [Education Level].[High School Degree],"
-			 +" [Promotions].DefaultMember)";
+			  " select {[Measures].[Unit Sales], [Measures].[Store Cost], [Measures].[Store Sales]} ON COLUMNS,"
+			 +"     Hierarchize(Union(Union(Union({([Promotion Media].[All Media], [Product].[All Products])}, Crossjoin([Promotion Media].[All Media].Children, {[Product].[All Products]})), "
+			 +"		Crossjoin({[Promotion Media].[Daily Paper, Radio, TV]}, [Product].[All Products].Children)), Crossjoin({[Promotion Media].[Street Handout]}, [Product].[All Products].Children))) ON ROWS "
+			 +" from [Sales] "
+			 +" where [Time].[1997] ";
+			
+//			 String selectStr=
+//			 " select "
+//			 +" CrossJoin("
+//			 +"   {[Measures].[Unit Sales], [Measures].[Store Sales]},"
+//			 +"   {[Time].[1997].[Q2].children}) on columns, "
+//			 +" CrossJoin("
+//			 +"   CrossJoin("
+//			 +"     [Gender].members,"
+//			 +"     [Marital Status].members),"
+//			 +"  {[Store], [Store].children}) on rows"
+//			 +" from [Sales]"
+//			 +" where ("
+//			 +" [Product].[Food],"
+//			 +" [Education Level].[High School Degree],"
+//			 +" [Promotions].DefaultMember)";
 
 
 			 

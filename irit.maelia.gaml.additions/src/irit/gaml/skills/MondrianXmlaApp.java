@@ -10,9 +10,13 @@ import org.olap4j.CellSet;
 import org.olap4j.CellSetAxis;
 import org.olap4j.CellSetMetaData;
 import org.olap4j.OlapConnection;
+import org.olap4j.OlapDatabaseMetaData;
 import org.olap4j.Position;
 import org.olap4j.layout.RectangularCellSetFormatter;
+import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Member;
+import org.olap4j.metadata.Schema;
+
 import msi.gama.database.mdx.MdxConnection;
 import msi.gama.database.mdx.MdxUtils;
 import msi.gama.util.GamaList;
@@ -33,6 +37,16 @@ public class MondrianXmlaApp {
 		                olapConnection.getMetaData().getDriverName()
 		                + " -> "
 		                + databases.getString(1));
+
+		     final OlapDatabaseMetaData meta =
+		    		 olapConnection.getMetaData();
+		    		// We can explore the meta data in a tabular form
+		    		final ResultSet catalog = meta.getCatalogs();
+		    		// We can also explore using the object model
+		    		final Schema schema = olapConnection.getOlapSchema();
+		    		for (Cube cube : schema.getCubes()) {
+		    		  System.out.println("cube: "+cube.getName());
+		    		}
 //
 //		        // Done
 //     olapConnection.close(); 
@@ -63,28 +77,28 @@ public class MondrianXmlaApp {
 //					+" from [Sales] "
 //					+" where [Time].[1997]";
 			 
-//			 String selectStr=
-//			  " select {[Measures].[Unit Sales], [Measures].[Store Cost], [Measures].[Store Sales]} ON COLUMNS,"
-//			 +"     Hierarchize(Union(Union(Union({([Promotion Media].[All Media], [Product].[All Products])}, Crossjoin([Promotion Media].[All Media].Children, {[Product].[All Products]})), "
-//			 +"		Crossjoin({[Promotion Media].[Daily Paper, Radio, TV]}, [Product].[All Products].Children)), Crossjoin({[Promotion Media].[Street Handout]}, [Product].[All Products].Children))) ON ROWS "
-//			 +" from [Sales] "
-//			 +" where [Time].[1997] ";
-			
 			 String selectStr=
-			 " select "
-			 +" CrossJoin("
-			 +"   {[Measures].[Unit Sales], [Measures].[Store Sales]},"
-			 +"   {[Time].[1997].[Q2].children}) on columns, "
-			 +" CrossJoin("
-			 +"   CrossJoin("
-			 +"     [Gender].members,"
-			 +"     [Marital Status].members),"
-			 +"  {[Store], [Store].children}) on rows"
-			 +" from [Sales]"
-			 +" where ("
-			 +" [Product].[Food],"
-			 +" [Education Level].[High School Degree],"
-			 +" [Promotions].DefaultMember)";
+			  " select {[Measures].[Unit Sales], [Measures].[Store Cost], [Measures].[Store Sales]} ON COLUMNS,"
+			 +"     Hierarchize(Union(Union(Union({([Promotion Media].[All Media], [Product].[All Products])}, Crossjoin([Promotion Media].[All Media].Children, {[Product].[All Products]})), "
+			 +"		Crossjoin({[Promotion Media].[Daily Paper, Radio, TV]}, [Product].[All Products].Children)), Crossjoin({[Promotion Media].[Street Handout]}, [Product].[All Products].Children))) ON ROWS "
+			 +" from [Sales] "
+			 +" where [Time].[1997] ";
+			
+//			 String selectStr=
+//			 " select "
+//			 +" CrossJoin("
+//			 +"   {[Measures].[Unit Sales], [Measures].[Store Sales]},"
+//			 +"   {[Time].[1997].[Q2].children}) on columns, "
+//			 +" CrossJoin("
+//			 +"   CrossJoin("
+//			 +"     [Gender].members,"
+//			 +"     [Marital Status].members),"
+//			 +"  {[Store], [Store].children}) on rows"
+//			 +" from [Sales]"
+//			 +" where ("
+//			 +" [Product].[Food],"
+//			 +" [Education Level].[High School Degree],"
+//			 +" [Promotions].DefaultMember)";
 
 
 			 
