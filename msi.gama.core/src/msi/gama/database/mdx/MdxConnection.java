@@ -51,7 +51,7 @@ import org.olap4j.metadata.Property;
  * Last Modified: 02-07-2013
  */
 public abstract class MdxConnection {
-	private static final boolean DEBUG = true; // Change DEBUG = false for release version
+	private static final boolean DEBUG = false; // Change DEBUG = false for release version
 	protected static final String MONDRIAN ="mondrian";
 	protected static final String MONDRIANXMLA ="mondrian/xmla";
 	protected static final String MSAS ="ssas/xmla"; //Micrsoft SQL Server Analysis Services

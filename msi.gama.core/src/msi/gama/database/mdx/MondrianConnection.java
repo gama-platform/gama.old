@@ -11,7 +11,7 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class MondrianConnection extends MdxConnection {
-	private static final boolean DEBUG = true; // Change DEBUG = false for release version
+	private static final boolean DEBUG = false; // Change DEBUG = false for release version
 	static final String DRIVER = new String("mondrian.olap4j.MondrianOlap4jDriver");	
 	private static java.util.HashMap<String, String> driverMap = new java.util.HashMap<String, String>();
 	private static java.util.HashMap<String, String> jdbcMap = new java.util.HashMap<String, String>();

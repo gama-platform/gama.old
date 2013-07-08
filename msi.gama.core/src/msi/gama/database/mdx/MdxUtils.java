@@ -7,7 +7,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class MdxUtils {
-	private static final boolean DEBUG=true;
+	private static final boolean DEBUG=false;
 	public static MdxConnection createConnectionObject(final IScope scope,final Map<String, Object> params) throws GamaRuntimeException 
 	{
 		String olaptype = (String) params.get("olaptype");

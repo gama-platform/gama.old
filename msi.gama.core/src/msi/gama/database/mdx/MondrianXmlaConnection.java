@@ -11,7 +11,7 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 public class MondrianXmlaConnection  extends MdxConnection{
-	private static final boolean DEBUG = true; // Change DEBUG = false for release version
+	private static final boolean DEBUG = false; // Change DEBUG = false for release version
 	static final String DRIVER = new String("org.olap4j.driver.xmla.XmlaOlap4jDriver");
 	
 	public MondrianXmlaConnection()

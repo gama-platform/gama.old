@@ -10,6 +10,7 @@ import org.olap4j.OlapConnection;
 import org.olap4j.OlapWrapper;
 
 public class MSASConnection extends MdxConnection {
+	private static final boolean DEBUG = false; // Change DEBUG = false for release version
 	static final String DRIVER = new String("org.olap4j.driver.xmla.XmlaOlap4jDriver");
 
 	public MSASConnection()
