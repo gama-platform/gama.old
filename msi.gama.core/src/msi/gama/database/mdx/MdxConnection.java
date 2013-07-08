@@ -2,9 +2,13 @@ package msi.gama.database.mdx;
 
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.List;
 
+import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 
@@ -19,6 +23,7 @@ import org.olap4j.OlapDatabaseMetaData;
 import org.olap4j.OlapException;
 import org.olap4j.OlapStatement;
 import org.olap4j.Position;
+import org.olap4j.PreparedOlapStatement;
 import org.olap4j.metadata.Cube;
 import org.olap4j.metadata.Hierarchy;
 import org.olap4j.metadata.Member;
@@ -46,7 +51,7 @@ import org.olap4j.metadata.Property;
  * Last Modified: 02-07-2013
  */
 public abstract class MdxConnection {
-	private static final boolean DEBUG = false; // Change DEBUG = false for release version
+	private static final boolean DEBUG = true; // Change DEBUG = false for release version
 	protected static final String MONDRIAN ="mondrian";
 	protected static final String MONDRIANXMLA ="mondrian/xmla";
 	protected static final String MSAS ="ssas/xmla"; //Micrsoft SQL Server Analysis Services
@@ -145,18 +150,76 @@ public abstract class MdxConnection {
 	public abstract Connection connectMDB(String dbName, String catalog) throws GamaRuntimeException ;
 	
 	public void setConnection(){
-		this.connection=connectMDB();
+		this.connection=this.connectMDB();
+		
+	}
+	
+	public void setConnection(Connection conn){
+		this.connection=conn;
 		
 	}
 	public Connection getConnection(){
 		return this.connection;
 	}
+	
 	public boolean isConnected(){
 		if (this.connection!=null){
 			return true;
 		}else {
 			return false;
 		}
+	}
+	
+	public String getVender(){
+		return this.vender;
+	}
+	public String getdbType(){
+		return this.dbtype;
+	}
+	public String getdbName(){
+		return this.dbName;
+	}
+	public String getURL(){
+		return this.url;
+	}
+	public String getport(){
+		return this.port;
+	}
+	public String getCatalog(){
+		return this.catalog;
+	}
+
+	public String getUser(){
+		return this.userName;
+	}
+	public String getPassword(){
+		return this.password;
+	}
+
+	public void setVender(String vender){
+		this.vender=vender;
+	}
+	public void setdbType(String dbType){
+		this.dbtype=dbType;
+	}
+	public void setdbName(String dbName){
+		this.dbName=dbName;
+	}
+	public void setURL(String url){
+		this.url=url;
+	}
+	public void setport(String port){
+		this.port=port;
+	}
+	public void setCatalog(String catalog){
+		this.catalog=catalog;
+	}
+
+	public void setUser(String userName){
+		this.userName=userName;
+	}
+	public void getPassword(String password){
+		this.password=password;
 	}
 	
 	public String getDatabase() throws GamaRuntimeException
@@ -188,9 +251,9 @@ public abstract class MdxConnection {
 	public CellSet select(String selectComm)
 	{
 		CellSet resultCellSet=null;
-		Connection conn=null;
+		OlapConnection conn=null;
 		try {
-			conn = connectMDB();
+			conn = (OlapConnection) connectMDB();
 			resultCellSet = select(conn, selectComm);
 			conn.close();
 		} catch (SQLException e) {
@@ -198,6 +261,23 @@ public abstract class MdxConnection {
 		}
 		return resultCellSet;
 	}
+
+	public CellSet select(String selectComm, GamaList<Object> condition_values )
+	{
+		CellSet resultCellSet=null;
+		OlapConnection oConn=null;
+		try {
+			Connection conn = connectMDB();
+			String mdxStr= parseMdx(conn, selectComm,  condition_values);
+			oConn=	(OlapConnection) connectMDB();
+			resultCellSet = select(oConn, mdxStr);
+			oConn.close();
+		} catch (SQLException e) {
+
+		}
+		return resultCellSet;
+	}
+
 	public CellSet select(Connection connection, String selectComm) throws GamaRuntimeException 
 	{
 		 CellSet resultCellSet=null;
@@ -205,6 +285,7 @@ public abstract class MdxConnection {
 		try {
 			statement = (OlapStatement) connection.createStatement();
 			resultCellSet=statement.executeOlapQuery(selectComm);
+
 	        statement.close();
 	        //connection.close();
 		}catch (OlapException e){
@@ -217,21 +298,50 @@ public abstract class MdxConnection {
 		 return resultCellSet;
 	}
 	
-
 	/*
 	 * Select data source with connection was established
 	 */
+	public GamaList<Object> selectMDB(String selectComm,GamaList<Object> condition_values)  
+	{
+		 CellSet cellSet=select(selectComm, condition_values);
+		 return cellSet2List(cellSet);
+	}
 	public GamaList<Object> selectMDB(String selectComm)  
 	{
 		 CellSet cellSet=select(selectComm);
 		 return cellSet2List(cellSet);
 	}
-
 	public GamaList<Object> selectMDB(Connection connection, String selectComm)  
 	{
 		 CellSet cellSet=select(connection,selectComm);
 		 return cellSet2List(cellSet);
 	}
+
+	public GamaList<Object> selectMDB(String onColumns, String onRows, String from){
+		String mdxStr = "SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " 
+				        + " FROM " + from ;
+		return  selectMDB(mdxStr);
+	}
+	 
+	public GamaList<Object> selectMDB(Connection connection, String onColumns, String onRows, String from){
+		String mdxStr = "SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " 
+				        + " FROM " + from ;
+		return  selectMDB(connection, mdxStr);
+	}
+	
+	public GamaList<Object> selectMDB(String onColumns, String onRows, String from, String where){
+		String mdxStr = "SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " 
+				        + " FROM " + from + " WHERE " + where;
+		return  selectMDB(mdxStr);
+	}
+	
+	public GamaList<Object> selectMDB(Connection connection, String onColumns, String onRows, String from, String where){
+		String mdxStr = "SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " 
+				        + " FROM " + from + " WHERE " + where;
+		return  selectMDB(connection, mdxStr);
+	}
+	
+	
 	/*
 	 *  Format of Olap query result (GamaList<Object>:
 	 *      Result of OLAP query is transformed to Gamalist<Object> with order:
@@ -252,31 +362,6 @@ public abstract class MdxConnection {
 		 return olapResult;
 	}
 	
-	public GamaList<Object> selectMBD(String onColumns, String onRows, String from){
-		String mdxStr = "SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " 
-				        + " FROM " + from ;
-		return  selectMDB(mdxStr);
-	}
-	
-	public GamaList<Object> selectMDB(Connection connection, String onColumns, String onRows, String from){
-		String mdxStr = "SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " 
-				        + " FROM " + from ;
-		return  selectMDB(connection, mdxStr);
-	}
-	
-	public GamaList<Object> selectMDB(String onColumns, String onRows, String from, String where){
-		String mdxStr = "SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " 
-				        + " FROM " + from + " WHERE ( " + where  + " )";
-		return  selectMDB(mdxStr);
-	}
-	
-	public GamaList<Object> selectMDB(Connection connection, String onColumns, String onRows, String from, String where){
-		String mdxStr = "SELECT " + onColumns + " ON COLUMNS, " + onRows + " ON ROWS " 
-				        + " FROM " + from + " WHERE ( " + where  + " )";
-		return  selectMDB(connection, mdxStr);
-	}
-	
-
 	protected GamaList<Object> getColumnsName(CellSet cellSet){
 		GamaList<Object> columnsName = new GamaList<Object>();
 		 List<CellSetAxis> cellSetAxes = cellSet.getAxes();
@@ -506,4 +591,23 @@ public abstract class MdxConnection {
 		
 	}
 
+	public String parseMdx(Connection conn, String queryStr, GamaList<Object> condition_values)
+			throws GamaRuntimeException {
+			
+			int condition_count = condition_values.size();
+				// set value for each condition
+			for ( int i = 0; i < condition_count; i++ ) {
+
+				queryStr=queryStr.replaceFirst("\\?", condition_values.get(i).toString());
+			}
+	
+			if ( DEBUG ) {
+				GuiUtils.debug("Parsed Mdx:" + queryStr);
+			}
+			return queryStr;
+
+	}
+	
+	
+	
 }// end class
