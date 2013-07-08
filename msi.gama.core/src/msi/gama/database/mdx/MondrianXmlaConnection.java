@@ -47,7 +47,7 @@ public class MondrianXmlaConnection  extends MdxConnection{
 	}
 
 	@Override
-	public Connection connectMDB() throws GamaRuntimeException 
+	public OlapConnection connectMDB() throws GamaRuntimeException 
 	{
 		OlapWrapper wrapper;
 		Connection conn;
@@ -103,12 +103,12 @@ public class MondrianXmlaConnection  extends MdxConnection{
 			GuiUtils.debug("MondrianXmlaConnection.connected");
 
 		}
-		return conn;
+		return olapConnection;
 
 	}
 
 	@Override
-	public Connection connectMDB(String dbName) throws GamaRuntimeException {
+	public OlapConnection connectMDB(String dbName) throws GamaRuntimeException {
 		OlapWrapper wrapper;
 		Connection conn;
 		try {
@@ -135,11 +135,11 @@ public class MondrianXmlaConnection  extends MdxConnection{
 			e.printStackTrace();
 			throw GamaRuntimeException.error(e.toString());
 		}
-		return conn;
+		return olapConnection;
 	}
 
 	@Override
-	public Connection connectMDB(String dbName, String catalog)
+	public OlapConnection connectMDB(String dbName, String catalog)
 			throws GamaRuntimeException {
 		OlapWrapper wrapper;
 		Connection conn;
@@ -168,7 +168,7 @@ public class MondrianXmlaConnection  extends MdxConnection{
 			e.printStackTrace();
 			throw GamaRuntimeException.error(e.toString());
 		}
-		return conn;
+		return olapConnection;
 	}
 
 

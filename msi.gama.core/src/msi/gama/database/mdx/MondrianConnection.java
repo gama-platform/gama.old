@@ -69,7 +69,7 @@ public class MondrianConnection extends MdxConnection {
 	}
 
 	@Override
-	public Connection connectMDB() throws GamaRuntimeException 
+	public OlapConnection connectMDB() throws GamaRuntimeException 
 	{
 		OlapWrapper wrapper; 
 		Connection conn;
@@ -107,11 +107,11 @@ public class MondrianConnection extends MdxConnection {
 			e.printStackTrace();
 			throw GamaRuntimeException.error(e.toString());
 		}
-		return conn;
+		return olapConnection;
 	}
 
 	@Override
-	public Connection connectMDB(String dbName) throws GamaRuntimeException {
+	public OlapConnection connectMDB(String dbName) throws GamaRuntimeException {
 		OlapWrapper wrapper; 
 		Connection conn;
 		System.out.println("dbtype:"+ dbtype);
@@ -142,11 +142,11 @@ public class MondrianConnection extends MdxConnection {
 			e.printStackTrace();
 			throw GamaRuntimeException.error(e.toString());
 		}
-		return conn;
+		return olapConnection;
 	}
 
 	@Override
-	public Connection connectMDB(String dbName, String catalog)
+	public OlapConnection connectMDB(String dbName, String catalog)
 			throws GamaRuntimeException {
 		OlapWrapper wrapper; 
 		Connection conn;
@@ -178,7 +178,7 @@ public class MondrianConnection extends MdxConnection {
 			e.printStackTrace();
 			throw GamaRuntimeException.error(e.toString());
 		}
-		return conn;
+		return olapConnection;
 	}
 
 }
