@@ -204,7 +204,10 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 	}
 
 	private boolean isSpeciesName(final String s) {
-		return getContext().getModelDescription().hasSpeciesDescription(s);
+		ModelDescription m = getContext().getModelDescription();
+		SpeciesDescription sd = m.getSpeciesDescription(s);
+		return sd != null && !(sd instanceof ExperimentDescription);
+		// return getContext().getModelDescription().hasSpeciesDescription(s);
 	}
 
 	private boolean isSkillName(final String s) {
