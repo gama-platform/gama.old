@@ -1,9 +1,11 @@
 /**
- * Created by drogoul, 5 fŽvr. 2012
+ * Created by drogoul, 5 fï¿½vr. 2012
  * 
  */
 package msi.gama.lang.gaml.ui.hover;
 
+import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.utils.EGaml;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.VariableExpression;
 import msi.gaml.factories.DescriptionFactory;
@@ -15,9 +17,30 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 	@Override
 	public String getDocumentation(final EObject o) {
 		String comment = super.getDocumentation(o);
-
+		if ( comment == null ) {
+			comment = "";
+		}
 		IGamlDescription description = DescriptionFactory.getGamlDescription(o);
-		if ( description == null ) { return comment + "Not yet documented"; }
+		if ( description == null && o instanceof TypeRef ) {
+			description = DescriptionFactory.getGamlDescription(o.eContainer());
+		}
+		if ( description == null ) {
+			if ( o instanceof Facet ) {
+				String facetName = ((Facet) o).getKey();
+				facetName = facetName.substring(0, facetName.length() - 1);
+				EObject cont = o.eContainer();
+				String key = EGaml.getKeyOf(cont);
+				SymbolProto p = DescriptionFactory.getProto(key);
+				if ( p != null ) {
+					FacetProto f = p.getPossibleFacets().get(facetName);
+					if ( f != null ) { return comment + "Facet " + facetName + " of " + key + "; " +
+						(f.doc == null ? "" : f.doc); }
+				}
+				return comment + "Facet " + ((Facet) o).getKey();
+			}
+
+			return comment + "Not yet documented";
+		}
 
 		// FIXME : Highly experimental right now
 		// Try to grab the comment preceding the referenced object

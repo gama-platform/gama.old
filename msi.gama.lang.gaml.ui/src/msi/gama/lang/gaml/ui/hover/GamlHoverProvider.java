@@ -1,11 +1,12 @@
 /**
- * Created by drogoul, 5 fŽvr. 2012
+ * Created by drogoul, 5 fï¿½vr. 2012
  * 
  */
 package msi.gama.lang.gaml.ui.hover;
 
 import msi.gama.common.util.GuiUtils;
 import msi.gama.lang.gaml.gaml.*;
+import msi.gama.lang.utils.EGaml;
 import msi.gaml.descriptions.IGamlDescription;
 import msi.gaml.factories.DescriptionFactory;
 import org.eclipse.emf.ecore.EObject;
@@ -43,8 +44,7 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 		EObject correct = null;
 
 		@Override
-		protected Pair<EObject, IRegion> getXtextElementAt(final XtextResource resource,
-			final int offset) {
+		protected Pair<EObject, IRegion> getXtextElementAt(final XtextResource resource, final int offset) {
 			// BUGFIX AD 2/4/13 : getXtextElementAt() is called twice, one to compute the region
 			// from the UI thread, one to compute the objects from the hover thread. The offset in
 			// the second call is always false (maybe we should file a bug in XText). The following
@@ -74,12 +74,11 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 					region = locationInFileProvider.getSignificantTextRegion(o);
 				}
 				final IRegion region2 = new Region(region.getOffset(), region.getLength());
-				if ( TextUtilities.overlaps(region2, new Region(offset, 0)) ) { return Tuples
-					.create(o, region2); }
+				/* if ( TextUtilities.overlaps(region2, new Region(offset, 0)) ) */{
+					return Tuples.create(o, region2);
+				}
 			} else {
-				ILeafNode node =
-					NodeModelUtils.findLeafNodeAtOffset(resource.getParseResult().getRootNode(),
-						offset);
+				ILeafNode node = NodeModelUtils.findLeafNodeAtOffset(resource.getParseResult().getRootNode(), offset);
 				if ( node.getGrammarElement() instanceof Keyword ) {
 					IRegion region2 = new Region(node.getOffset(), node.getLength());
 					return Tuples.create(node.getGrammarElement(), region2);
@@ -90,8 +89,8 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 	}
 
 	@Override
-	public IInformationControlCreatorProvider getHoverInfo(EObject first, ITextViewer textViewer,
-		IRegion hoverRegion) {
+	public IInformationControlCreatorProvider getHoverInfo(final EObject first, final ITextViewer textViewer,
+		final IRegion hoverRegion) {
 		if ( first instanceof Keyword ) {
 			GuiUtils.debug("Implement getHoverInfo for keywords");
 
@@ -108,8 +107,9 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 	@Override
 	protected String getFirstLine(final EObject o) {
 		IGamlDescription description = DescriptionFactory.getGamlDescription(o);
-		if ( description == null ) { return super.getFirstLine(o); }
-		String result = "<big><b>" + description.getTitle() + "</b></big>";
+		String result =
+			description == null ? (o instanceof TypeRef ? "type " : "") + EGaml.getKeyOf(o) : description.getTitle();
+		result = "<big><b>" + result + "</b></big>";
 		return result;
 	}
 

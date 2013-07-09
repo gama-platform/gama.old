@@ -33,7 +33,7 @@ public class GamlCompatibilityConverter {
 		if ( m == null ) { throw new NullPointerException("The model of " + root.eResource() +
 			" appears to be null. Please debug to understand the cause."); }
 		ISyntacticElement syntacticContents = new SyntacticElement(MODEL, m);
-		syntacticContents.setFacet(NAME, convExpr(m.getName()));
+		syntacticContents.setFacet(NAME, convertToConstantString(null, m.getName()));
 		convStatements(syntacticContents, EGaml.getStatementsOf(m), errors);
 		return syntacticContents;
 	}
@@ -87,7 +87,7 @@ public class GamlCompatibilityConverter {
 				// Translation of "type var ..." to "let var type: type ..." if we are not in a
 				// top-level statement (i.e. not in the declaration of a species or an experiment)
 				elt.setKeyword(LET);
-				addFacet(elt, TYPE, convExpr(keyword), errors);
+				addFacet(elt, TYPE, convertToConstantString(null, keyword), errors);
 				keyword = LET;
 			} else {
 				// Translation of "type1 ID1 (type2 ID2, type3 ID3) {...}" to
@@ -95,7 +95,7 @@ public class GamlCompatibilityConverter {
 				Block b = def.getBlock();
 				if ( b != null && b.getFunction() == null ) {
 					elt.setKeyword(ACTION);
-					addFacet(elt, TYPE, convExpr(keyword), errors);
+					addFacet(elt, TYPE, convertToConstantString(null, keyword), errors);
 					keyword = ACTION;
 				}
 				convertArgs(def.getArgs(), elt, errors);
@@ -103,7 +103,7 @@ public class GamlCompatibilityConverter {
 		} else if ( stm instanceof S_Do ) {
 			// Translation of "stm ID (ID1: V1, ID2:V2)" to "stm ID with:(ID1: V1, ID2:V2)"
 			Expression e = stm.getExpr();
-			addFacet(elt, ACTION, convExpr(EGaml.getKeyOf(e)), errors);
+			addFacet(elt, ACTION, convertToConstantString(null, EGaml.getKeyOf(e)), errors);
 			if ( e instanceof Function ) {
 				addFacet(elt, INTERNAL_FUNCTION, convExpr(e, errors), errors);
 				Function f = (Function) e;
@@ -165,8 +165,8 @@ public class GamlCompatibilityConverter {
 			// }
 			// We modify the names of experiments so as not to confuse them with species
 			String name = elt.getLabel(NAME);
-			elt.setFacet(TITLE, convExpr("Experiment " + name));
-			elt.setFacet(NAME, convExpr(name));
+			elt.setFacet(TITLE, convertToConstantString(null, "Experiment " + name));
+			elt.setFacet(NAME, convertToConstantString(null, name));
 		} else // TODO Change this by implementing only one class of methods (that delegates to
 				// others)
 		if ( keyword.equals(METHOD) ) {
@@ -197,16 +197,16 @@ public class GamlCompatibilityConverter {
 			if ( second == null ) {
 				String type = EGaml.getKey.caseTypeRef(first);
 				if ( type != null ) {
-					addFacet(elt, OF, convExpr(type), errors);
+					addFacet(elt, OF, convertToConstantString(null, type), errors);
 				}
 			} else {
 				String type = EGaml.getKey.caseTypeRef(second);
 				if ( type != null ) {
-					addFacet(elt, OF, convExpr(type), errors);
+					addFacet(elt, OF, convertToConstantString(null, type), errors);
 					// Translation of "type<i, c> ..." to "type of: c index: i..."
 					type = EGaml.getKey.caseTypeRef(first);
 					if ( type != null ) {
-						addFacet(elt, INDEX, convExpr(type), errors);
+						addFacet(elt, INDEX, convertToConstantString(null, type), errors);
 					}
 				}
 			}
@@ -275,9 +275,9 @@ public class GamlCompatibilityConverter {
 		if ( args != null ) {
 			for ( ArgumentDefinition def : EGaml.getArgsOf(args) ) {
 				ISyntacticElement arg = new SyntacticElement(ARG, def);
-				addFacet(arg, NAME, convExpr(def.getName()), errors);
+				addFacet(arg, NAME, convertToConstantString(null, def.getName()), errors);
 				TypeRef type = (TypeRef) def.getType();
-				addFacet(arg, TYPE, convExpr(EGaml.getKey.caseTypeRef(type)), errors);
+				addFacet(arg, TYPE, convertToConstantString(null, EGaml.getKey.caseTypeRef(type)), errors);
 				convertType(arg, type, errors);
 				Expression e = def.getDefault();
 				if ( e != null ) {
@@ -397,9 +397,7 @@ public class GamlCompatibilityConverter {
 	}
 
 	private static final IExpressionDescription convExpr(final EObject expr, final Set<Diagnostic> errors) {
-		if ( expr != null ) {
-
-		return EcoreBasedExpressionDescription.create(expr, errors); }
+		if ( expr != null ) { return EcoreBasedExpressionDescription.create(expr, errors); }
 		return null;
 	}
 
@@ -407,15 +405,21 @@ public class GamlCompatibilityConverter {
 		final Set<Diagnostic> errors) {
 		if ( facet != null ) {
 			Expression expr = facet.getExpr();
-			if ( expr != null ) { return label ? convExpr(EGaml.getKeyOf(expr)) : convExpr(expr, errors); }
+			if ( expr != null ) { return label ? convertToConstantString(expr, EGaml.getKeyOf(expr)) : convExpr(expr,
+				errors); }
 			String name = facet.getName();
-			if ( name != null ) { return convExpr(name); }
+			// TODO Verify the use of "facet"
+			if ( name != null ) { return convertToConstantString(null, name); }
 		}
 		return null;
 	}
 
-	final static IExpressionDescription convExpr(final String string) {
-		return LabelExpressionDescription.create(string);
+	final static IExpressionDescription convertToConstantString(final EObject target, final String string) {
+		IExpressionDescription ed = LabelExpressionDescription.create(string);
+		if ( target != null ) {
+			DescriptionFactory.setGamlDescription(target, ed.getExpression());
+		}
+		return ed;
 	}
 
 	final static void convStatements(final ISyntacticElement elt, final List<? extends Statement> ss,
@@ -432,7 +436,7 @@ public class GamlCompatibilityConverter {
 		if ( stm == null ) { return null; }
 		// The order below should be important
 		String name = EGaml.getNameOf(stm);
-		if ( name != null ) { return convExpr(name); }
+		if ( name != null ) { return convertToConstantString(null, name); }
 		Expression expr = stm.getExpr();
 		if ( expr != null ) { return convExpr(expr, errors); }
 

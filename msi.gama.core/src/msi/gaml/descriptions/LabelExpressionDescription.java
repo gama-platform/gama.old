@@ -8,7 +8,9 @@ import java.util.*;
 import msi.gama.common.util.StringUtils;
 import msi.gama.runtime.IScope;
 import msi.gaml.expressions.*;
+import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.types.*;
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * The class LabelExpressionDescription.
@@ -103,7 +105,16 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 	}
 
 	@Override
-	public Set<String> getStrings(IDescription context, boolean skills) {
+	public void setTarget(final EObject newTarget) {
+		super.setTarget(newTarget);
+		if ( getExpression() != null ) {
+			DescriptionFactory.setGamlDescription(newTarget, getExpression());
+		}
+
+	}
+
+	@Override
+	public Set<String> getStrings(final IDescription context, final boolean skills) {
 		// Assuming of the form [aaa, bbb]
 		Set<String> result = new HashSet();
 		StringBuilder b = new StringBuilder();
@@ -125,7 +136,7 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 		return result;
 	}
 
-	public static IExpressionDescription create(String s) {
+	public static IExpressionDescription create(final String s) {
 		return new LabelExpressionDescription(s);
 	}
 

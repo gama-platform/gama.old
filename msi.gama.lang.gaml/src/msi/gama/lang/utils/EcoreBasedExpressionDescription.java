@@ -10,6 +10,7 @@ import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gaml.compilation.AbstractGamlAdditions;
 import msi.gaml.descriptions.*;
+import msi.gaml.factories.DescriptionFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.diagnostics.*;
 import org.eclipse.xtext.validation.EObjectDiagnosticImpl;
@@ -33,7 +34,7 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 	}
 
 	@Override
-	public Set<String> getStrings(IDescription context, boolean skills) {
+	public Set<String> getStrings(final IDescription context, final boolean skills) {
 		String type = skills ? "skill" : "attribute";
 		if ( target == null ) { return Collections.EMPTY_SET; }
 		if ( !(target instanceof Array) ) {
@@ -72,43 +73,53 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 	static final GamlSwitch<IExpressionDescription> getExpr = new GamlSwitch() {
 
 		@Override
-		public IExpressionDescription caseIntLiteral(IntLiteral object) {
+		public IExpressionDescription caseIntLiteral(final IntLiteral object) {
+			IExpressionDescription ed = null;
 			try {
-				return ConstantExpressionDescription.create(Integer.parseInt(object.getOp()));
+				ed = ConstantExpressionDescription.create(Integer.parseInt(object.getOp()));
 			} catch (NumberFormatException e) {
 				Diagnostic d =
 					new EObjectDiagnosticImpl(Severity.WARNING, "",
 						"Impossible to parse this int value, automatically set to 0", object, null, 0, null);
 				currentErrors.add(d);
-				return ConstantExpressionDescription.create(0);
+				ed = ConstantExpressionDescription.create(0);
 			}
+			DescriptionFactory.setGamlDescription(object, ed.getExpression());
+			return ed;
 		}
 
 		@Override
-		public IExpressionDescription caseDoubleLiteral(DoubleLiteral object) {
+		public IExpressionDescription caseDoubleLiteral(final DoubleLiteral object) {
+			IExpressionDescription ed = null;
 			try {
-				return ConstantExpressionDescription.create(Double.parseDouble(object.getOp()));
+				ed = ConstantExpressionDescription.create(Double.parseDouble(object.getOp()));
 			} catch (NumberFormatException e) {
 				Diagnostic d =
 					new EObjectDiagnosticImpl(Severity.WARNING, "",
 						"Impossible to parse this float value, automatically set to 0.0", object, null, 0, null);
 				currentErrors.add(d);
-				return ConstantExpressionDescription.create(0d);
+				ed = ConstantExpressionDescription.create(0d);
 			}
+			DescriptionFactory.setGamlDescription(object, ed.getExpression());
+			return ed;
 		}
 
 		@Override
-		public IExpressionDescription caseStringLiteral(StringLiteral object) {
-			return LabelExpressionDescription.create(object.getOp());
+		public IExpressionDescription caseStringLiteral(final StringLiteral object) {
+			IExpressionDescription ed = LabelExpressionDescription.create(object.getOp());
+			DescriptionFactory.setGamlDescription(object, ed.getExpression());
+			return ed;
 		}
 
 		@Override
-		public IExpressionDescription caseBooleanLiteral(BooleanLiteral object) {
-			return ConstantExpressionDescription.create(object.getOp().equals(IKeyword.TRUE));
+		public IExpressionDescription caseBooleanLiteral(final BooleanLiteral object) {
+			IExpressionDescription ed = ConstantExpressionDescription.create(object.getOp().equals(IKeyword.TRUE));
+			DescriptionFactory.setGamlDescription(object, ed.getExpression());
+			return ed;
 		}
 
 		@Override
-		public IExpressionDescription defaultCase(EObject object) {
+		public IExpressionDescription defaultCase(final EObject object) {
 			return new EcoreBasedExpressionDescription(object);
 		}
 
@@ -116,7 +127,7 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 
 	private static Set<Diagnostic> currentErrors;
 
-	public static IExpressionDescription create(EObject expr, Set<Diagnostic> errors) {
+	public static IExpressionDescription create(final EObject expr, final Set<Diagnostic> errors) {
 		currentErrors = errors;
 		IExpressionDescription result = getExpr.doSwitch(expr);
 		currentErrors = null;
