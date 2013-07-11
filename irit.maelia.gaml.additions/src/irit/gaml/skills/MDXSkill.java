@@ -2,6 +2,8 @@ package irit.gaml.skills;
 
 import java.sql.Connection;
 
+import org.olap4j.OlapConnection;
+
 import msi.gama.common.util.GuiUtils;
 import msi.gama.database.mdx.MdxConnection;
 import msi.gama.database.mdx.MdxUtils;
@@ -31,9 +33,11 @@ import msi.gaml.types.IType;
  * 
  * created date: 04-Jul-2013
  * Modified:
-
+ *  08-Jul-2013:
+ *      - correct error on testConnection method
+ *   	- add question mark and values to select method
  *   
- * Last Modified: 29-Apr-2013
+ * Last Modified: 08-Jul-2013
  */
 @skill(name = "MDXSKILL")
 public class MDXSkill extends Skill{
@@ -64,8 +68,8 @@ public class MDXSkill extends Skill{
 	 * 
 	 * @syntax: do action: connectDB {
 	 * arg params value:[
-	 * "olaptype":"MSAS" //"MONDRIAN"/"MONDRIAN/XMLA"
-	 * "dbtype":"SQLSERVER", //MySQL/sqlserver/sqlite
+	 * "olaptype":"SSAS/XMLA" //"MONDRIAN"/"MONDRIAN/XMLA"
+	 * "dbtype":"SQLSERVER", //MySQL/postgres/sqlite
 	 * "url":"host address",
 	 * "port":"port number",
 	 * "database":"database name",
@@ -81,8 +85,9 @@ public class MDXSkill extends Skill{
 		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
 		try {
 			mdxConn = MdxUtils.createConnectionObject(scope, params);
-			Connection conn=mdxConn.connectMDB();
-			conn.close();
+			OlapConnection oConn=mdxConn.connectMDB();
+			oConn.getCatalog();
+			oConn.close();
 		} catch (Exception e) {
 			// throw new GamaRuntimeException("SQLSkill.connectDB: " + e.toString());
 			return false;
@@ -139,7 +144,7 @@ public class MDXSkill extends Skill{
 			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-				throw GamaRuntimeException.error("SQLSkill.select_QM: " + e.toString());
+				throw GamaRuntimeException.error("MDXSkill.select_QM: " + e.toString());
 			}
 			
 	//------------------------------------------------------------------------------------------
