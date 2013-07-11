@@ -112,9 +112,14 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 				canBeUpdated(false);
 				final ModelScene s = renderer.getScene();
 				if ( s != null ) {
+					
 					s.wipe(renderer);
-
+					
+					//FIXME: Why setting this at each run??
 					renderer.setTessellation(getOutput().getTesselation());
+					renderer.setInertia(getOutput().getInertia());
+					
+					
 					renderer.setAmbientLightValue(getOutput().getAmbientLightColor());
 					renderer.setPolygonMode(getOutput().getPolygonMode());
 					renderer.setCameraPosition(getOutput().getCameraPos());
@@ -154,6 +159,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		renderer = new JOGLAWTGLRenderer(this);
 		// renderer.setPolygonTriangulated(false);
 		renderer.setTessellation(getOutput().getTesselation());
+		renderer.setInertia(getOutput().getInertia());
 		renderer.setAmbientLightValue(getOutput().getAmbientLightColor());
 		renderer.setDiffuseLightValue(getOutput().getDiffuseLightColor());
 		renderer.setPolygonMode(getOutput().getPolygonMode());
@@ -664,7 +670,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	@Override
 	public void snapshot() {
 		GAMA.run(new InScope.Void() {
-
 			@Override
 			public void process(final IScope scope) {
 				save(scope, getImage());

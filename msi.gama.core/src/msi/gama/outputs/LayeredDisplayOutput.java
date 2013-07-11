@@ -55,6 +55,7 @@ import com.vividsolutions.jts.geom.Envelope;
 		LayeredDisplayOutput.OPENGL, LayeredDisplayOutput.SWT }, optional = true),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.INERTIA, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.AMBIENT_LIGHT, type = { IType.INT, IType.COLOR }, optional = true),
 	@facet(name = IKeyword.DIFFUSE_LIGHT, type = { IType.INT, IType.COLOR }, optional = true),
 	@facet(name = IKeyword.CAMERA_POS, type = { IType.POINT, IType.AGENT }, optional = true),
@@ -77,6 +78,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean autosave = false;
 	private boolean output3D = false;
 	private boolean tesselation = true;
+	private boolean inertia = false;
 	private Color ambientLightColor = new GamaColor(125, 125, 125);
 	private Color diffuseLightColor = new GamaColor(125, 125, 125);
 	// Set it to (-1,-1,-1) to set the camera with the right value if no value defined.
@@ -143,6 +145,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression tess = getFacet(IKeyword.TESSELATION);
 		if ( tess != null ) {
 			setTesselation(Cast.asBool(getScope(), tess.value(getScope())));
+		}
+		
+		final IExpression inert = getFacet(IKeyword.INERTIA);
+		if ( inert != null ) {
+			setInertia(Cast.asBool(getScope(), inert.value(getScope())));
 		}
 
 		final IExpression light = getFacet(IKeyword.AMBIENT_LIGHT);
@@ -432,7 +439,15 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private void setTesselation(final boolean tesselation) {
 		this.tesselation = tesselation;
 	}
-
+	
+	public boolean getInertia() {
+		return inertia;
+	}
+	
+	private void setInertia(final boolean inertia) {
+		this.inertia = inertia;
+	}
+	
 	public boolean getOutput3D() {
 		return output3D;
 	}

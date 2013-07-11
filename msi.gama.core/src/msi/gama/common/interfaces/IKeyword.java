@@ -179,6 +179,7 @@ public interface IKeyword {
 	public static final String IN = "in";
 	public static final String INCLUDE = "include";
 	public static final String INDEX = "index";
+	public static final String INERTIA = "inertia";
 	public static final String INIT = "init";
 	public static final String INPUT = "input";
 	public static final String INSPECT = "inspect";

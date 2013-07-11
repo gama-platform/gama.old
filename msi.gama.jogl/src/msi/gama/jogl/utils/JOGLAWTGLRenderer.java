@@ -71,6 +71,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	// use glut tesselation or JTS tesselation
 	// (can be set in GAML with the boolean facet "tesselation")
 	private boolean useTessellation = true;
+	private boolean inertia = false;
 	// Display or not the triangle when using triangulation (useTessellation = false)
 	private boolean polygonMode = true;
 	// Show JTS (GAMA) triangulation
@@ -135,6 +136,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		glut = new GLUT();
 		setContext(drawable.getContext());
 		arcBall = new ArcBall(width, height);
+
 		
 		// Set background color
 		gl.glClearColor(displaySurface.getBgColor().getRed(), displaySurface.getBgColor().getGreen(), displaySurface
@@ -171,6 +173,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		graphicsGLUtils = new MyGraphics(this);
 
 		OutputSynchronizer.decInitializingViews(this.displaySurface.getOutputName());
+		
 	}
 
 	@Override
@@ -231,13 +234,15 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				// gl.glDisable(GL_DEPTH_TEST); // Turn depth testing off
 			} else {
 				gl.glDisable(GL_BLEND); // Turn blending off
-				if(!stencil)
-					gl.glEnable(GL_DEPTH_TEST);
-				else
+				if(!stencil){
+					gl.glEnable(GL_DEPTH_TEST);	
+				}
+					
+				else{
 					gl.glEnable(GL_STENCIL_TEST);
+				}
 			}
 
-			
 			// Use polygon offset for a better edges rendering
 			// (http://www.glprogramming.com/red/chapter06.html#name4)
 			gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
@@ -248,7 +253,10 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			
 			this.rotateModel();
 			
-			camera.inertia();
+			
+			if(getInertia()){
+				camera.inertia();
+			}
 			
 			this.drawScene();
 			if(showFPS)
@@ -475,9 +483,18 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		return useTessellation;
 	}
 
-	public boolean setTessellation(final boolean useTessellation) {
-		this.useTessellation = useTessellation;
+	public boolean setTessellation(final boolean tess) {
+		this.useTessellation = tess;
 		return useTessellation;
+	}
+	
+	public boolean setInertia(final boolean iner) {
+		this.inertia = iner;
+		return inertia;
+	}
+	
+	public boolean getInertia() {
+		return inertia;
 	}
 
 	public void setCameraPosition(final ILocation cameraPos) {
