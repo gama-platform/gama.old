@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -186,19 +186,6 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		return null;
 	}
 
-	public void getASCfromImg(final BufferedImage dem) {
-		double value;
-		System.out.println("asc");
-		for ( int i = 0; i < dem.getWidth(); i++ ) {
-			System.out.println();
-			for ( int j = 0; j < dem.getHeight(); j++ ) {
-				value = dem.getRGB(j, i) & 255;
-				System.out.print(value / 6);
-				System.out.print(" ");
-			}
-		}
-	}
-
 	/**
 	 * Method drawImage.
 	 * 
@@ -299,7 +286,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 				(int) ((double) heightOfDisplayInPixels / (double) heightOfEnvironmentInModelUnits * heightInModelUnits);
 		}
 		renderer.getScene().addString(string, curX, -curY, z, size, sizeInModelUnits, currentOffset, currentScale,
-			stringColor, fontName, styleName, angle, getCurrentAlpha());
+			stringColor, fontName, styleName, angle, getCurrentAlpha(),0);
 		return null;
 	}
 
@@ -340,8 +327,6 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		if(this.currentZLayer == 0){
 			this.currentZLayer = ((AbstractLayer)layer).getPosition().getZ();	
 		}
-
-		System.out.println(this.currentZLayer);
 		final Boolean refresh = layer.isDynamic();
 		currentLayerIsStatic = refresh == null ? false : !refresh;
 

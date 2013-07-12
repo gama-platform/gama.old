@@ -676,51 +676,28 @@ public boolean isInitialized() {
 
 		@Override
 		public void draw(StringObject object) {
-			// renderer.gl.glTranslated(object.offset.x, -object.offset.y, object.offset.z);
-			// renderer.gl.glScaled(object.scale.x, object.scale.y, 1);
 			_draw(object);
-			// renderer.gl.glScaled(1 / object.scale.x, 1 / object.scale.y, 1);
-			// renderer.gl.glTranslated(-object.offset.x, object.offset.y, -object.offset.z);
-
 		}
 
 		@Override
 		protected void _draw(StringObject s) {
-
-			// FIXME height ?
-			// renderer.getContext().makeCurrent();
-			// GuiUtils.debug("ObjectDrawer.StringDrawer._draw env size " + renderer.getWidth() + " ;" +
-			// renderer.getHeight());
-
+            if(s.type == 0){
 			TextRenderer r = get(s.font, s.size, s.style);
 			r.setColor(s.color);
 			r.begin3DRendering();
 			float x = (float) ((float) s.x * s.scale.x + s.offset.x);
 			float y = (float) ((float) s.y * s.scale.y - s.offset.y);
-			// GuiUtils.debug("ObjectDrawer.StringDrawer._draw '" + s.string + "' at " + x + " ; " + y + " [original: "
-			// +
-			// s.x + " ; " + s.y + "]" + "[offset: " + s.offset.x + " ; " + s.offset.y + "]");
-			// renderer.gl.glTranslated(s.offset.x, -s.offset.y, s.offset.z);
 			renderer.gl.glPushMatrix();
 			// renderer.gl.glScaled(s.scale.x, s.scale.y, 1);
 			r.draw3D(s.string, x, y, (float) (s.z + s.z_layer),
 				(float) (/* s.scale.y * */renderer.env_height / renderer.getHeight()));
-			// renderer.gl.glScaled(1 / s.scale.x, 1 / s.scale.y, 1);
 			renderer.gl.glPopMatrix();
-			// renderer.gl.glTranslated(-s.offset.x, s.offset.y, -s.offset.z);
 			r.end3DRendering();
-			// r.begin3DRendering();
-			// r.draw3D(s.string, (float) s.x, (float) s.y, (float) (s.z + s.z_layer), s.alpha.floatValue());
-			// r.flush();
-			// r.end3DRendering();
-			// renderer.getContext().release();
-			// renderer.gl.glDisable(GL_BLEND);
-			// renderer.gl.glColor4d(s.color.getRed(), s.color.getGreen(), s.color.getBlue(), 1.0d);
-			// renderer.gl.glRasterPos3d(s.x, s.y, s.z + s.z_layer);
-			// renderer.gl.glScaled(8.0d, 8.0d, 8.0d);
-			// glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, s.string);
-			// renderer.gl.glScaled(0.125d, 0.125d, 0.125d);
-			// renderer.gl.glEnable(GL_BLEND);
+
+            }
+            else{
+            	_drawOld(s);
+            }
 
 		}
 

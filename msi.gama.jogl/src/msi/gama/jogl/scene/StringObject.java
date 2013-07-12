@@ -12,9 +12,11 @@ public class StringObject extends AbstractObject {
 	public Integer size = 12;
 	public Double sizeInModelUnits = 12d;
 	public double x, y, z, z_layer;
+	//Draw using TextRenderer(0) or glutBitmapString(1).
+	public Integer type = 0;
 
 	public StringObject(String string, String font, Integer style, GamaPoint offset, GamaPoint scale, Color color,
-		Integer angle, double x, double y, double z, double z_layer, Double sizeInModelUnits, Integer size, Double alpha) {
+		Integer angle, double x, double y, double z, double z_layer, Double sizeInModelUnits, Integer size, Double alpha, Integer type) {
 		super(color, offset, scale, alpha);
 		this.string = string;
 		if ( font != null ) {
@@ -35,6 +37,9 @@ public class StringObject extends AbstractObject {
 		this.z_layer = z_layer;
 		if ( size != null ) {
 			this.size = size;
+		}
+		if ( type != null ) {
+			this.type = type;
 		}
 	}
 

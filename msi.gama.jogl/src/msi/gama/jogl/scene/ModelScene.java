@@ -77,7 +77,6 @@ public class ModelScene {
 		final boolean drawBounds) {
 		if ( drawAxes ) {
 			this.drawAxes(renderer.gl, renderer.getMaxEnvDim() / 20);
-			drawZValue(-renderer.getMaxEnvDim() / 20, (float) renderer.camera.getPosition().getZ());
 		}
 		if ( drawBounds ) {
 			this.drawEnvironmentBounds(renderer);
@@ -99,9 +98,9 @@ public class ModelScene {
 
 	public void addString(final String string, final double x, final double y, final double z, final Integer size,
 		final Double sizeInModelUnits, final GamaPoint offset, final GamaPoint scale, final Color color,
-		final String font, final Integer style, final Integer angle, final Double alpha) {
+		final String font, final Integer style, final Integer angle, final Double alpha, final Integer type) {
 		strings.add(new StringObject(string, font, style, offset, scale, color, angle, x, y, z, 0, sizeInModelUnits,
-			size, alpha));
+			size, alpha,type));
 	}
 
 	public void addImage(final BufferedImage img, final IAgent agent, final Double x, final Double y, final Double z,
@@ -143,9 +142,9 @@ public class ModelScene {
 
 		gl.glColor4d(0.0d, 0.0d, 0.0d, 1.0d);
 		addString("1:" + String.valueOf(size), size, size, 0.0d, 12, 12d, offset, scale, Color.black, "Helvetica", 0,
-			0, 1d);
+			0, 1d,1);
 		// X Axis
-		addString("x", 1.2f * size, 0.0d, 0.0d, 12, 12d, offset, scale, Color.black, "Helvetica", 0, 0, 1d);
+		addString("x", 1.2f * size, 0.0d, 0.0d, 12, 12d, offset, scale, Color.black, "Helvetica", 0, 0, 1d,1);
 		gl.glBegin(GL.GL_LINES);
 		gl.glColor4d(1.0d, 0, 0, 1.0d);
 		gl.glVertex3d(0, 0, 0);
@@ -157,7 +156,7 @@ public class ModelScene {
 		gl.glVertex3d(1.2d * size, 0.0d, 0.0d);
 		gl.glEnd();
 		// Y Axis
-		addString("y", 0.0d, 1.2f * size, 0.0d, 12, 12d, offset, scale, Color.black, "Helvetica", 0, 0, 1d);
+		addString("y", 0.0d, 1.2f * size, 0.0d, 12, 12d, offset, scale, Color.black, "Helvetica", 0, 0, 1d,1);
 		gl.glBegin(GL.GL_LINES);
 		gl.glColor4d(0, 1.0d, 0, 1.0d);
 		gl.glVertex3d(0, 0, 0);
@@ -170,7 +169,7 @@ public class ModelScene {
 		gl.glEnd();
 		// Z Axis
 		gl.glRasterPos3d(0.0d, 0.0d, 1.2f * size);
-		addString("z", 0.0d, 0.0d, 1.2f * size, 12, 12d, offset, scale, Color.black, "Helvetica", 0, 0, 1d);
+		addString("z", 0.0d, 0.0d, 1.2f * size, 12, 12d, offset, scale, Color.black, "Helvetica", 0, 0, 1d,1);
 		gl.glBegin(GL.GL_LINES);
 		gl.glColor4d(0, 0, 1.0d, 1.0d);
 		gl.glVertex3d(0, 0, 0);
@@ -187,9 +186,9 @@ public class ModelScene {
 	public void drawEnvironmentBounds(final JOGLAWTGLRenderer renderer) {
 		// Draw Width and height value
 		addString(String.valueOf(envWidth), envWidth / 2, envHeight * 0.01d, 0.0d, 12, 12d, offset, scale, Color.black,
-			"Helvetica", 0, 0, 1d);
+			"Helvetica", 0, 0, 1d,1);
 		addString(String.valueOf(envHeight), envWidth * 1.01f, -(envHeight / 2), 0.0d, 12, 12d, offset, scale,
-			Color.black, "Helvetica", 0, 0, 1d);
+			Color.black, "Helvetica", 0, 0, 1d,1);
 
 		// Draw environment rectangle
 		final Geometry g =
@@ -201,7 +200,7 @@ public class ModelScene {
 
 	public void drawZValue(final double pos, final float value) {
 		addString("z:" + String.valueOf(value), pos, pos, 0.0d, 12, 12d, offset, scale, Color.black, "Helvetica", 0, 0,
-			1d);
+			1d,1);
 	}
 
 	public SceneObjects<GeometryObject> getGeometries() {

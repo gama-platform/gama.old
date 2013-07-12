@@ -1,6 +1,7 @@
 package msi.gama.jogl.utils;
 
 import static javax.media.opengl.GL.*;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -101,6 +102,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private double previousTime = 0;
 	public float fps = 0;
 	public boolean showFPS = false;
+	
+	public boolean drawAxes = true;
+	public boolean drawEnvBounds = true;
 
     
 	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {	
@@ -318,12 +322,16 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	 * 
 	 */
 	public void drawModel(final boolean picking) {
-		scene.draw(this, picking, true, true);
-//		gl.glPointSize(10);
-//		gl.glBegin(GL_POINTS);
-//		gl.glColor3f(0.0F,0.0F,1.0F) ;
-//		gl.glVertex3d(worldCoordinates.x, worldCoordinates.y, 0.0);
-//		gl.glEnd();
+		if ( drawAxes ) {
+		  gl.glDisable(GL_BLEND);
+		  gl.glColor4d(0.0d, 0.0d, 0.0d, 1.0d);
+		  gl.glRasterPos3d(-getMaxEnvDim() / 20, -getMaxEnvDim() / 20, 0.0d);
+		  gl.glScaled(8.0d, 8.0d, 8.0d);
+		  glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "z:" + String.valueOf((int)camera.getPosition().getZ()));
+		  gl.glScaled(0.125d, 0.125d, 0.125d);
+		  gl.glEnable(GL_BLEND);
+		}
+		scene.draw(this, picking, drawAxes, drawEnvBounds);
 	}
 	
 	public void drawScene() {
