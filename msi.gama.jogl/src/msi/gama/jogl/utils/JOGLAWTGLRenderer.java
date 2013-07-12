@@ -70,9 +70,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	// Arcball
 	private ArcBall arcBall;
 	// use glut tesselation or JTS tesselation
-	// (can be set in GAML with the boolean facet "tesselation")
+	// facet "tesselation"
 	private boolean useTessellation = true;
+	// facet "inertia"
 	private boolean inertia = false;
+	// facet "drawEnv"
+	private boolean drawEnv = true;
+	
+	public boolean drawAxes = true;
 	// Display or not the triangle when using triangulation (useTessellation = false)
 	private boolean polygonMode = true;
 	// Show JTS (GAMA) triangulation
@@ -103,8 +108,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public float fps = 0;
 	public boolean showFPS = false;
 	
-	public boolean drawAxes = true;
-	public boolean drawEnvBounds = true;
+	
+
 
     
 	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {	
@@ -331,7 +336,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		  gl.glScaled(0.125d, 0.125d, 0.125d);
 		  gl.glEnable(GL_BLEND);
 		}
-		scene.draw(this, picking, drawAxes, drawEnvBounds);
+		scene.draw(this, picking, drawAxes, drawEnv);
 	}
 	
 	public void drawScene() {
@@ -483,26 +488,32 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		this.diffuseLightValue = diffuseLightValue;
 	}
 
-	public boolean setPolygonMode(final boolean polygonMode) {
-		return this.polygonMode = polygonMode;
+	public void setPolygonMode(final boolean polygonMode) {
+		this.polygonMode = polygonMode;
 	}
 
 	public boolean getTessellation() {
 		return useTessellation;
 	}
 
-	public boolean setTessellation(final boolean tess) {
+	public void setTessellation(final boolean tess) {
 		this.useTessellation = tess;
-		return useTessellation;
 	}
 	
-	public boolean setInertia(final boolean iner) {
+	public void setInertia(final boolean iner) {
 		this.inertia = iner;
-		return inertia;
 	}
 	
 	public boolean getInertia() {
 		return inertia;
+	}
+	
+	public void setDrawEnv(final boolean denv) {
+		this.drawEnv = denv;
+	}
+	
+	public boolean getDrawEnv() {
+		return drawEnv;
 	}
 
 	public void setCameraPosition(final ILocation cameraPos) {

@@ -101,6 +101,7 @@ public interface IKeyword {
 	public static final String DO = "do";
 	public static final String DOT = "dot";
 	public static final String DRAW = "draw";
+	public static final String DRAWENV = "draw_env";
 	public static final String DYNAMIC = "dynamic";
 	public static final String EACH = "each";
 	public static final String EDGE = "edge";
