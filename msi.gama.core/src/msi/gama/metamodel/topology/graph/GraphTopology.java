@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -78,6 +78,8 @@ public class GraphTopology extends AbstractTopology {
 			target instanceof ILocation ? getAgentClosestTo((ILocation) target, filter) : getAgentClosestTo(target,
 				filter);
 		if ( edgeS == null || edgeT == null ) { return null; }
+		if (getPlaces().isDirected()) 
+			return pathBetweenCommonDirected(edgeS, edgeT, source, target);
 		return pathBetweenCommon(edgeS, edgeT, source, target);
 
 	}
@@ -85,6 +87,7 @@ public class GraphTopology extends AbstractTopology {
 	public GamaSpatialPath pathBetweenCommon(final IShape edgeS, final IShape edgeT, final IShape source,
 		final IShape target) {
 
+		
 		if ( edgeS == edgeT ) { return PathFactory.newInstance(this, source, target, GamaList.with(edgeS));
 		// return new GamaPath(this, source, target, GamaList.with(edgeS));
 		}
@@ -129,7 +132,30 @@ public class GraphTopology extends AbstractTopology {
 		// return new GamaPath(this, source, target, edges);
 		return PathFactory.newInstance(this, source, target, edges);
 	}
+	
+	public GamaSpatialPath pathBetweenCommonDirected(final IShape edgeS, final IShape edgeT, final IShape source,
+			final IShape target) {
 
+			IShape nodeS = getPlaces().getEdgeTarget(edgeS);
+			IShape nodeT = getPlaces().getEdgeSource(edgeT);
+			IList<IShape> edges;
+			
+			if (nodeS == nodeT) {
+				edges = new GamaList<IShape>();
+				edges.add(edgeS);
+				edges.add(edgeT);
+				return PathFactory.newInstance(this, source, target, edges);
+			}
+			edges = getPlaces().computeBestRouteBetween(nodeS, nodeT);
+			if ( edges.isEmpty() || edges.get(0) == null ) { return null; }
+			
+			edges.add(0, edgeS);
+			edges.add(edges.size(), edgeT);
+			
+			// return new GamaPath(this, source, target, edges);
+			return PathFactory.newInstance(this, source, target, edges);
+		}
+	
 	@Override
 	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target) {
 		IShape edgeS = null, edgeT = null;
@@ -155,6 +181,8 @@ public class GraphTopology extends AbstractTopology {
 				edgeT = getAgentClosestTo(target, filter);
 			}
 		}
+		if (getPlaces().isDirected()) 
+			return pathBetweenCommonDirected(edgeS, edgeT, source, target);
 		return pathBetweenCommon(edgeS, edgeT, source, target);
 	}
 

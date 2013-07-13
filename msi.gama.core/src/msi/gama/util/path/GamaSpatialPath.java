@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -31,8 +31,8 @@ import msi.gaml.operators.Spatial.Punctal;
 import msi.gaml.types.GamaGeometryType;
 import com.vividsolutions.jts.geom.*;
 
-// Si construit ˆ partir d'une liste de points, crŽe la gŽomŽtrie correspondante
-// Si construit ˆ partir d'un graphe spatial, crŽe la gŽomŽtrie ˆ partir des edges passŽs.
+// Si construit ï¿½ partir d'une liste de points, crï¿½e la gï¿½omï¿½trie correspondante
+// Si construit ï¿½ partir d'un graphe spatial, crï¿½e la gï¿½omï¿½trie ï¿½ partir des edges passï¿½s.
 // Si
 
 public class GamaSpatialPath extends GamaPath<IShape, IShape> {
@@ -92,7 +92,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 					Coordinate c0 = geom.getCoordinates()[0];
 					Coordinate c1 = geom.getCoordinates()[geom.getNumPoints() - 1];
 					IShape edge2 = null;
-					if ( pt.distance(c0) > pt.distance(c1) ) {
+					if ( !g.isDirected() && pt.distance(c0) > pt.distance(c1) ) {
 						geom = geom.reverse();
 						edge2 = new GamaShape(geom);
 						pt = c0;
