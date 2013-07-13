@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -45,7 +45,7 @@ public class StatementDescription extends SymbolDescription {
 	private IDescription previousDescription;
 
 	public StatementDescription(final String keyword, final IDescription superDesc, final IChildrenProvider cp,
-		final boolean hasScope, final boolean hasArgs, final EObject source, Facets facets) {
+		final boolean hasScope, final boolean hasArgs, final EObject source, final Facets facets) {
 		super(keyword, superDesc, cp, source, facets);
 		temps = hasScope ? new LinkedHashMap() : null;
 		args = hasArgs ? new LinkedHashMap() : null;
@@ -179,7 +179,8 @@ public class StatementDescription extends SymbolDescription {
 			return ((StatementDescription) getEnclosingDescription()).addTemp(name, type, contentType, keyType);
 		}
 		IVarExpression result =
-			msi.gama.util.GAML.getExpressionFactory().createVar(name, type, contentType, keyType, false, IVarExpression.TEMP, this);
+			msi.gama.util.GAML.getExpressionFactory().createVar(name, type, contentType, keyType, false,
+				IVarExpression.TEMP, this);
 		temps.put(name, result);
 		return result;
 	}
@@ -229,12 +230,13 @@ public class StatementDescription extends SymbolDescription {
 			}
 		}
 		for ( Facet arg : names.entrySet() ) {
+			// A null value indicates a previous compilation error in the arguments
 			if ( arg != null ) {
 				String name = arg.getKey();
 				if ( !allArgs.contains(name) ) {
 					caller.error("Unknown argument " + name + " in call to " + getName(), IGamlIssue.UNKNOWN_ARGUMENT,
 						arg.getValue().getTarget(), new String[] { arg.getKey() });
-				} else {
+				} else if ( arg.getValue() != null && arg.getValue().getExpression() != null ) {
 					IType formalType = args.get(name).getType();
 					IType callerType = arg.getValue().getExpression().getType();
 					if ( formalType != Types.NO_TYPE && !callerType.isTranslatableInto(formalType) ) {
@@ -354,7 +356,7 @@ public class StatementDescription extends SymbolDescription {
 		// return !getKeyword().equals(PRIMITIVE) && getChildren().isEmpty();
 	}
 
-	public void collectChildren(String keyword, Set<StatementDescription> returns) {
+	public void collectChildren(final String keyword, final Set<StatementDescription> returns) {
 		if ( getKeyword().equals(keyword) ) {
 			returns.add(this);
 		} else if ( children != null ) {
@@ -367,7 +369,7 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	@Override
-	public void setEnclosingDescription(IDescription desc) {
+	public void setEnclosingDescription(final IDescription desc) {
 		previousDescription = getEnclosingDescription();
 		super.setEnclosingDescription(desc);
 	}
