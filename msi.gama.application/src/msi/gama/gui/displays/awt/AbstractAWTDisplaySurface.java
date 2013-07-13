@@ -101,6 +101,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	 * @param image
 	 */
 	public void save(final IScope scope, final RenderedImage image) {
+		if ( image == null ) { return; }
 		try {
 			Files.newFolder(scope, snapshotFolder);
 		} catch (GamaRuntimeException e1) {
@@ -388,7 +389,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	@Override
 	public void setSize(final int width, final int height) {
-		GuiUtils.debug("AbstractAWTDisplaySurface.setSize " + width + " " + height);
+		// GuiUtils.debug("AbstractAWTDisplaySurface.setSize " + width + " " + height);
 		super.setSize(width, height);
 	}
 

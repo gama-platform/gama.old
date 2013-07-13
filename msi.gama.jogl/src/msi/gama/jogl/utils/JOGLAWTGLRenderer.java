@@ -1,43 +1,36 @@
 package msi.gama.jogl.utils;
 
 import static javax.media.opengl.GL.*;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
-import javax.swing.JLabel;
-
+import msi.gama.common.util.GuiUtils;
 import msi.gama.jogl.JOGLAWTDisplaySurface;
 import msi.gama.jogl.scene.*;
-import msi.gama.jogl.utils.Camera.AbstractCamera;
-import msi.gama.jogl.utils.Camera.FreeFlyCamera;
-import msi.gama.jogl.utils.Camera.CameraArcBall;
+import msi.gama.jogl.utils.Camera.*;
 import msi.gama.jogl.utils.Camera.Arcball.*;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
-import msi.gama.jogl.utils.dem.DigitalElevationModelDrawer;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.OutputSynchronizer;
 import utils.GLUtil;
 import com.sun.opengl.util.*;
 import com.sun.opengl.util.texture.*;
 
-
 public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public GLU glu;
 	public GL gl;
 	public GLUT glut;
-	
+
 	// ///Static members//////
 	private static final boolean USE_VERTEX_ARRAY = false;
 	private static final int REFRESH_FPS = 30;
-	
+
 	private static boolean BLENDING_ENABLED; // blending on/off
 	private static boolean IS_LIGHT_ON;
-	
+
 	public final FPSAnimator animator;
 	private GLContext context;
 	public GLCanvas canvas;
@@ -45,14 +38,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private int width, height;
 	public final double env_width;
 	public final double env_height;
-	
+
 	// Camera
 	public AbstractCamera camera;
 	public MyGraphics graphicsGLUtils;
-	
+
 	// Use to test and display basic opengl shape and primitive
 	public MyGLToyDrawer myGLDrawer;
-	
+
 	// Lighting
 	private Color ambientLightValue;
 	private Color diffuseLightValue;
@@ -60,7 +53,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public JOGLAWTDisplaySurface displaySurface;
 	private ModelScene scene;
-	
+
 	// Use multiple view port
 	public final boolean multipleViewPort = false;
 	// Display model a a 3D Cube
@@ -76,43 +69,38 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private boolean inertia = false;
 	// facet "drawEnv"
 	private boolean drawEnv = true;
-	
+
 	public boolean drawAxes = true;
 	// Display or not the triangle when using triangulation (useTessellation = false)
 	private boolean polygonMode = true;
 	// Show JTS (GAMA) triangulation
 	public boolean JTSTriangulation = false;
-	
-	//ROI Coordionates (x1,y1,x2,y2)
-    public ArrayList<Integer> roi_List = new ArrayList<Integer>();
 
+	// ROI Coordionates (x1,y1,x2,y2)
+	public ArrayList<Integer> roi_List = new ArrayList<Integer>();
 
 	public int pickedObjectIndex = -1;
 	public ISceneObject currentPickedObject;
 	private int antialiasing = GL_NEAREST;
-	
-	public int frame=0;
-	
+
+	public int frame = 0;
+
 	int[] viewport = new int[4];
-    double mvmatrix[] = new double[16];
-    double projmatrix[] = new double[16];
-    public Vector3D worldCoordinates = new Vector3D();
-    public GamaPoint roiCenter = new GamaPoint(0, 0);
-    
-    public boolean stencil = false;
- 
-    private double startTime = 0;
+	double mvmatrix[] = new double[16];
+	double projmatrix[] = new double[16];
+	public Vector3D worldCoordinates = new Vector3D();
+	public GamaPoint roiCenter = new GamaPoint(0, 0);
+
+	public boolean stencil = false;
+
+	private double startTime = 0;
 	private int frameCount = 0;
 	private double currentTime = 0;
 	private double previousTime = 0;
 	public float fps = 0;
 	public boolean showFPS = false;
-	
-	
 
-
-    
-	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {	
+	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {
 		// Enabling the stencil buffer
 		final GLCapabilities cap = new GLCapabilities();
 		cap.setStencilBits(8);
@@ -133,7 +121,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		env_width = d.getEnvWidth();
 		env_height = d.getEnvHeight();
 	}
-	
+
 	@Override
 	public void init(final GLAutoDrawable drawable) {
 		startTime = System.currentTimeMillis();
@@ -146,21 +134,20 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		setContext(drawable.getContext());
 		arcBall = new ArcBall(width, height);
 
-		
 		// Set background color
 		gl.glClearColor(displaySurface.getBgColor().getRed(), displaySurface.getBgColor().getGreen(), displaySurface
 			.getBgColor().getBlue(), 1.0f);
 		// Enable smooth shading, which blends colors nicely, and smoothes out lighting.
 		GLUtil.enableSmooth(gl);
-		
+
 		// Perspective correction
 		gl.glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 		GLUtil.enableDepthTest(gl);
-		
+
 		// Set up the lighting for Light-1
-		GLUtil.InitializeLighting(gl, glu, (float) displaySurface.getEnvWidth()  , (float) displaySurface.getEnvHeight(), ambientLightValue, diffuseLightValue);
-		
-		
+		GLUtil.InitializeLighting(gl, glu, (float) displaySurface.getEnvWidth(), (float) displaySurface.getEnvHeight(),
+			ambientLightValue, diffuseLightValue);
+
 		// PolygonMode (Solid or lines)
 		if ( polygonMode ) {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
@@ -175,14 +162,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// problem when true with glutBitmapString
 		JOGLAWTGLRenderer.BLENDING_ENABLED = true;
 		IS_LIGHT_ON = true;
-		
+
 		camera.UpdateCamera(gl, glu, width, height);
-		
+
 		scene = new ModelScene(this);
 		graphicsGLUtils = new MyGraphics(this);
 
 		OutputSynchronizer.decInitializingViews(this.displaySurface.getOutputName());
-		
+
 	}
 
 	@Override
@@ -194,10 +181,10 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 			width = drawable.getWidth();
 			height = drawable.getHeight();
-			
+
 			gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
-	        gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, mvmatrix, 0);
-	        gl.glGetDoublev(GL.GL_PROJECTION_MATRIX, projmatrix, 0);
+			gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, mvmatrix, 0);
+			gl.glGetDoublev(GL.GL_PROJECTION_MATRIX, projmatrix, 0);
 
 			// Clear the screen and the depth buffer
 			gl.glClearDepth(1.0f);
@@ -214,10 +201,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			} else {
 				gl.glDisable(GL_LIGHTING);
 			}
-			
-			//Draw Diffuse light as yellow sphere
-			//GLUtil.DrawDiffuseLights(gl, glu,getMaxEnvDim()/10);
 
+			// Draw Diffuse light as yellow sphere
+			// GLUtil.DrawDiffuseLights(gl, glu,getMaxEnvDim()/10);
 
 			// FIXME: Now the background is not updated but it should to have a night effect.
 			// Set background color
@@ -243,11 +229,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				// gl.glDisable(GL_DEPTH_TEST); // Turn depth testing off
 			} else {
 				gl.glDisable(GL_BLEND); // Turn blending off
-				if(!stencil){
-					gl.glEnable(GL_DEPTH_TEST);	
+				if ( !stencil ) {
+					gl.glEnable(GL_DEPTH_TEST);
 				}
-					
-				else{
+
+				else {
 					gl.glEnable(GL_STENCIL_TEST);
 				}
 			}
@@ -257,26 +243,23 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
 			gl.glPolygonOffset(1, 1);
 
-//			gl.glDisable(GL_DEPTH_TEST);
+			// gl.glDisable(GL_DEPTH_TEST);
 
-			
 			this.rotateModel();
-			
-			
-			if(getInertia()){
+
+			if ( getInertia() ) {
 				camera.inertia();
 			}
-			
+
 			this.drawScene();
-			if(showFPS)
-			{
+			if ( showFPS ) {
 				CalculateFrameRate();
 				gl.glRasterPos2i(-30, 30);
 				gl.glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-				glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, "FPS : "+fps);
+				glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, "FPS : " + fps);
 			}
 			// this.DrawShapeFile();
-			//this.DrawCollada();
+			// this.DrawCollada();
 			gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
 			gl.glPopMatrix();
 
@@ -284,13 +267,10 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			if ( this.displaySurface.selectRectangle ) {
 				DrawROI();
 			}
-			//Show fps for performance mesures
-			
-			
+			// Show fps for performance mesures
+
 		}
 	}
-
-	
 
 	@Override
 	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int arg3, final int arg4) {
@@ -310,15 +290,15 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glLoadIdentity();
 		glu.gluPerspective(45.0f, aspect, 0.1f, 1000.0f);
-		glu.gluLookAt(camera.getPosition().getX(), camera.getPosition().getY(), camera.getPosition().getZ(), camera.getTarget().getX(), 
-				camera.getTarget().getY(), camera.getTarget().getZ(), 0,0,1);
+		glu.gluLookAt(camera.getPosition().getX(), camera.getPosition().getY(), camera.getPosition().getZ(), camera
+			.getTarget().getX(), camera.getTarget().getY(), camera.getTarget().getZ(), 0, 0, 1);
 		arcBall.setBounds(width, height);
 	}
 
 	@Override
 	public void displayChanged(final GLAutoDrawable arg0, final boolean arg1, final boolean arg2) {}
 
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	// //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	/**
 	 * Once the list of JTSGeometries has been created, OpenGL display call this
 	 * method every framerate. FIXME: Need to be optimize with the use of Vertex
@@ -328,24 +308,24 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	 */
 	public void drawModel(final boolean picking) {
 		if ( drawAxes ) {
-		  gl.glDisable(GL_BLEND);
-		  gl.glColor4d(0.0d, 0.0d, 0.0d, 1.0d);
-		  gl.glRasterPos3d(-getMaxEnvDim() / 20, -getMaxEnvDim() / 20, 0.0d);
-		  gl.glScaled(8.0d, 8.0d, 8.0d);
-		  glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "z:" + String.valueOf((int)camera.getPosition().getZ()));
-		  gl.glScaled(0.125d, 0.125d, 0.125d);
-		  gl.glEnable(GL_BLEND);
+			gl.glDisable(GL_BLEND);
+			gl.glColor4d(0.0d, 0.0d, 0.0d, 1.0d);
+			gl.glRasterPos3d(-getMaxEnvDim() / 20, -getMaxEnvDim() / 20, 0.0d);
+			gl.glScaled(8.0d, 8.0d, 8.0d);
+			glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "z:" + String.valueOf((int) camera.getPosition().getZ()));
+			gl.glScaled(0.125d, 0.125d, 0.125d);
+			gl.glEnable(GL_BLEND);
 		}
 		scene.draw(this, picking, drawAxes, drawEnv);
 	}
-	
+
 	public void drawScene() {
 		if ( displaySurface.picking ) {
 			gl.glViewport(0, 0, width, height);
 			this.drawPickableObjects();
 		} else {
 			if ( CubeDisplay ) {
-				drawCubeDisplay((float)env_width);
+				drawCubeDisplay((float) env_width);
 
 			} else {
 				if ( !multipleViewPort ) {
@@ -373,8 +353,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 		}
 	}
-	
-	private void drawCubeDisplay(float width) {
+
+	private void drawCubeDisplay(final float width) {
 		final float envMaxDim = width;
 		this.drawModel(false);
 		gl.glTranslatef(envMaxDim, 0, 0);
@@ -400,30 +380,29 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glRotatef(-90, 1, 0, 0);
 	}
 
-
-	public void switchCamera()
-	{
+	public void switchCamera() {
 		canvas.removeKeyListener(camera);
 		canvas.removeMouseListener(camera);
 		canvas.removeMouseMotionListener(camera);
 		canvas.removeMouseWheelListener(camera);
-		
-		if(displaySurface.switchCamera)
+
+		if ( displaySurface.switchCamera ) {
 			camera = new FreeFlyCamera(this);
-		else
+		} else {
 			camera = new CameraArcBall(this);
-		
+		}
+
 		canvas.addKeyListener(camera);
 		canvas.addMouseListener(camera);
 		canvas.addMouseMotionListener(camera);
 		canvas.addMouseWheelListener(camera);
-		
+
 	}
 
 	public void setAntiAliasing(final boolean antialias) {
 		antialiasing = antialias ? GL_LINEAR : GL_NEAREST;
 	}
-	
+
 	public MyTexture createTexture(final BufferedImage image, final boolean isDynamic) {
 		// Create a OpenGL Texture object from (URL, mipmap, file suffix)
 		// need to have an opengl context valide
@@ -444,11 +423,10 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		return curTexture;
 	}
 
-
 	public void drawPickableObjects() {
 		if ( camera.beginPicking(gl) ) {
-		  drawModel(true);
-		  setPickedObjectIndex(camera.endPicking(gl));
+			drawModel(true);
+			setPickedObjectIndex(camera.endPicking(gl));
 		}
 		drawModel(true);
 	}
@@ -456,12 +434,15 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public BufferedImage getScreenShot() {
 		BufferedImage img = null;
 		if ( getContext() != null ) {
-			this.getContext().makeCurrent();
-			img = Screenshot.readToBufferedImage(width, height);
-			this.getContext().release();
+			try {
+				this.getContext().makeCurrent();
+				img = Screenshot.readToBufferedImage(width, height);
+				this.getContext().release();
+			} catch (GLException e) {
+				GuiUtils.debug("Warning: No OpenGL context available");
+			}
 		} else {}
 		return img;
-
 	}
 
 	public int getWidth() {
@@ -483,7 +464,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public void setAmbientLightValue(final Color ambientLightValue) {
 		this.ambientLightValue = ambientLightValue;
 	}
-	
+
 	public void setDiffuseLightValue(final Color diffuseLightValue) {
 		this.diffuseLightValue = diffuseLightValue;
 	}
@@ -499,19 +480,19 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public void setTessellation(final boolean tess) {
 		this.useTessellation = tess;
 	}
-	
+
 	public void setInertia(final boolean iner) {
 		this.inertia = iner;
 	}
-	
+
 	public boolean getInertia() {
 		return inertia;
 	}
-	
+
 	public void setDrawEnv(final boolean denv) {
 		this.drawEnv = denv;
 	}
-	
+
 	public boolean getDrawEnv() {
 		return drawEnv;
 	}
@@ -557,64 +538,60 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	}
 
 	public void CalculateFrameRate() {
-		
-	//  Increase frame count
-	    frameCount ++;
-	 
-	    //  Get the number of milliseconds since display started
-	    currentTime = System.currentTimeMillis()-startTime;
-	 
-	    //  Calculate time passed
-	    int timeInterval = (int) (currentTime - previousTime);
-	    if(timeInterval > 1000)
-	    {
-	        //  calculate the number of frames per second
-	        fps  = frameCount / (timeInterval / 1000.0f);
-	 
-	        //  Set time
-	        previousTime = currentTime;
-	 
-	        //  Reset frame count
-	        frameCount = 0;
-	    }
+
+		// Increase frame count
+		frameCount++;
+
+		// Get the number of milliseconds since display started
+		currentTime = System.currentTimeMillis() - startTime;
+
+		// Calculate time passed
+		int timeInterval = (int) (currentTime - previousTime);
+		if ( timeInterval > 1000 ) {
+			// calculate the number of frames per second
+			fps = frameCount / (timeInterval / 1000.0f);
+
+			// Set time
+			previousTime = currentTime;
+
+			// Reset frame count
+			frameCount = 0;
+		}
 
 		System.out.println(fps);
 	}
-	
-	//Use when the rotation button is on.
-		public void rotateModel(){
-			if(this.displaySurface.rotation){		
-				frame++;
-			}
-			if(frame != 0){
-			  gl.glTranslated(env_width/2, -env_height/2, 0);
-			  gl.glRotatef(frame, 0, 0, 1);
-			  gl.glTranslated(-env_width/2, +env_height/2, 0);
-			}
+
+	// Use when the rotation button is on.
+	public void rotateModel() {
+		if ( this.displaySurface.rotation ) {
+			frame++;
 		}
-	
-	//////////////////////////ROI HANDLER ////////////////////////////////////
+		if ( frame != 0 ) {
+			gl.glTranslated(env_width / 2, -env_height / 2, 0);
+			gl.glRotatef(frame, 0, 0, 1);
+			gl.glTranslated(-env_width / 2, +env_height / 2, 0);
+		}
+	}
+
+	// ////////////////////////ROI HANDLER ////////////////////////////////////
 	public Point GetRealWorldPointFromWindowPoint(final Point windowPoint) {
-	    int realy = 0;// GL y coord pos
-	    double[] wcoord = new double[4];// wx, wy, wz;// returned xyz coords
+		int realy = 0;// GL y coord pos
+		double[] wcoord = new double[4];// wx, wy, wz;// returned xyz coords
 
-		int x = (int) windowPoint.getX(), y = (int) windowPoint.getY();	
-			
+		int x = (int) windowPoint.getX(), y = (int) windowPoint.getY();
+
 		realy = viewport[3] - y;
-		
-		glu.gluUnProject( (double) x, (double) realy, 0.1, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0 );	
-		Vector3D v1 = new Vector3D(wcoord[0],wcoord[1],wcoord[2]);
 
-		
-		glu.gluUnProject( (double) x, (double) realy, 0.9, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0 );
-		Vector3D v2 = new Vector3D(wcoord[0],wcoord[1],wcoord[2]);
+		glu.gluUnProject(x, realy, 0.1, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
+		Vector3D v1 = new Vector3D(wcoord[0], wcoord[1], wcoord[2]);
 
-		
+		glu.gluUnProject(x, realy, 0.9, mvmatrix, 0, projmatrix, 0, viewport, 0, wcoord, 0);
+		Vector3D v2 = new Vector3D(wcoord[0], wcoord[1], wcoord[2]);
+
 		Vector3D v3 = v2.subtract(v1);
 		v3.normalize();
-		float distance = (float) (camera.getPosition().getZ()/Vector3D.dotProduct(new Vector3D(0.0,0.0,-1.0), v3));
-		worldCoordinates = camera.getPosition().add( v3.scalarMultiply( distance ) );
-
+		float distance = (float) (camera.getPosition().getZ() / Vector3D.dotProduct(new Vector3D(0.0, 0.0, -1.0), v3));
+		worldCoordinates = camera.getPosition().add(v3.scalarMultiply(distance));
 
 		final Point realWorldPoint = new Point((int) worldCoordinates.x, (int) worldCoordinates.y);
 		return realWorldPoint;
@@ -629,98 +606,74 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			Point windowmousePositionPoint = new Point(camera.mousePosition.x, camera.mousePosition.y);
 			Point realmousePositionPoint = GetRealWorldPointFromWindowPoint(windowmousePositionPoint);
 
-			myGLDrawer.DrawROI(gl, realPressedPoint.x, -(realPressedPoint.y),
-				realmousePositionPoint.x, -(realmousePositionPoint.y));
-			
+			myGLDrawer.DrawROI(gl, realPressedPoint.x, -realPressedPoint.y, realmousePositionPoint.x,
+				-realmousePositionPoint.y);
+
 			roi_List.add(0, realPressedPoint.x);
 			roi_List.add(1, realPressedPoint.y);
 			roi_List.add(2, realmousePositionPoint.x);
 			roi_List.add(3, realmousePositionPoint.y);
-			
-			int roiWidth = (int)Math.abs((roi_List.get(0) + env_width / 2)-(roi_List.get(2) + env_width / 2));
-			int roiHeight = (int) Math.abs((roi_List.get(1) - env_height / 2)-(roi_List.get(3) - env_height / 2));
-			
-			
-			if(!this.displaySurface.switchCamera)
-			{
-				
-				if( roi_List.get(0) < roi_List.get(2) && roi_List.get(1)> roi_List.get(3))
-				{
-					roiCenter.setLocation(worldCoordinates.x-roiWidth/2, worldCoordinates.y+roiHeight/2);
+
+			int roiWidth = (int) Math.abs(roi_List.get(0) + env_width / 2 - (roi_List.get(2) + env_width / 2));
+			int roiHeight = (int) Math.abs(roi_List.get(1) - env_height / 2 - (roi_List.get(3) - env_height / 2));
+
+			if ( !this.displaySurface.switchCamera ) {
+
+				if ( roi_List.get(0) < roi_List.get(2) && roi_List.get(1) > roi_List.get(3) ) {
+					roiCenter.setLocation(worldCoordinates.x - roiWidth / 2, worldCoordinates.y + roiHeight / 2);
+				} else if ( roi_List.get(0) < roi_List.get(2) && roi_List.get(1) < roi_List.get(3) ) {
+					roiCenter.setLocation(worldCoordinates.x - roiWidth / 2, worldCoordinates.y - roiHeight / 2);
+				} else if ( roi_List.get(0) > roi_List.get(2) && roi_List.get(1) < roi_List.get(3) ) {
+					roiCenter.setLocation(worldCoordinates.x + roiWidth / 2, worldCoordinates.y - roiHeight / 2);
+				} else if ( roi_List.get(0) > roi_List.get(2) && roi_List.get(1) > roi_List.get(3) ) {
+					roiCenter.setLocation(worldCoordinates.x + roiWidth / 2, worldCoordinates.y + roiHeight / 2);
 				}
-				else if(roi_List.get(0) < roi_List.get(2) && roi_List.get(1)< roi_List.get(3))
-				{					
-					roiCenter.setLocation(worldCoordinates.x-roiWidth/2, worldCoordinates.y-roiHeight/2);
-				}
-				else if(roi_List.get(0) > roi_List.get(2) && roi_List.get(1)< roi_List.get(3))
-				{
-					roiCenter.setLocation(worldCoordinates.x+roiWidth/2, worldCoordinates.y-roiHeight/2);
-				}
-				else if(roi_List.get(0) > roi_List.get(2) && roi_List.get(1)> roi_List.get(3))
-				{
-					roiCenter.setLocation(worldCoordinates.x+roiWidth/2, worldCoordinates.y+roiHeight/2);
-				}
-			}
-			else
-			{
-				if(roi_List.get(0) == roi_List.get(2) && roi_List.get(1)== roi_List.get(3))
-				{
+			} else {
+				if ( roi_List.get(0) == roi_List.get(2) && roi_List.get(1) == roi_List.get(3) ) {
 					System.out.println(" passe par le mouse click");
 					roiCenter.setLocation(worldCoordinates.x, worldCoordinates.y);
 
-				}
-				else if( roi_List.get(0) < roi_List.get(2) && roi_List.get(1)> roi_List.get(3))
-				{
-					roiCenter.setLocation(worldCoordinates.x-roiWidth/2, worldCoordinates.y+roiHeight/2);
-				}
-				else if(roi_List.get(0) < roi_List.get(2) && roi_List.get(1)< roi_List.get(3))
-				{
-					roiCenter.setLocation(worldCoordinates.x-roiWidth/2, worldCoordinates.y-roiHeight/2);
-				}
-				else if(roi_List.get(0) > roi_List.get(2) && roi_List.get(1)< roi_List.get(3))
-				{
-					roiCenter.setLocation(worldCoordinates.x+roiWidth/2, worldCoordinates.y-roiHeight/2);
-				}
-				else if(roi_List.get(0) > roi_List.get(2) && roi_List.get(1)> roi_List.get(3))
-				{
-					roiCenter.setLocation(worldCoordinates.x+roiWidth/2, worldCoordinates.y+roiHeight/2);
+				} else if ( roi_List.get(0) < roi_List.get(2) && roi_List.get(1) > roi_List.get(3) ) {
+					roiCenter.setLocation(worldCoordinates.x - roiWidth / 2, worldCoordinates.y + roiHeight / 2);
+				} else if ( roi_List.get(0) < roi_List.get(2) && roi_List.get(1) < roi_List.get(3) ) {
+					roiCenter.setLocation(worldCoordinates.x - roiWidth / 2, worldCoordinates.y - roiHeight / 2);
+				} else if ( roi_List.get(0) > roi_List.get(2) && roi_List.get(1) < roi_List.get(3) ) {
+					roiCenter.setLocation(worldCoordinates.x + roiWidth / 2, worldCoordinates.y - roiHeight / 2);
+				} else if ( roi_List.get(0) > roi_List.get(2) && roi_List.get(1) > roi_List.get(3) ) {
+					roiCenter.setLocation(worldCoordinates.x + roiWidth / 2, worldCoordinates.y + roiHeight / 2);
 				}
 			}
 
 		}
-		
+
 		return roi_List;
 
 	}
-	
-	public void ROIZoom()
-	{
-		int roiWidth = (int)Math.abs((roi_List.get(0) + env_width / 2)-(roi_List.get(2) + env_width / 2));
-		int roiHeight = (int) Math.abs((roi_List.get(1) - env_height / 2)-(roi_List.get(3) - env_height / 2));
-		
+
+	public void ROIZoom() {
+		int roiWidth = (int) Math.abs(roi_List.get(0) + env_width / 2 - (roi_List.get(2) + env_width / 2));
+		int roiHeight = (int) Math.abs(roi_List.get(1) - env_height / 2 - (roi_List.get(3) - env_height / 2));
+
 		double maxDim;
-		
-		if(!this.displaySurface.switchCamera)
-		{
+
+		if ( !this.displaySurface.switchCamera ) {
 			if ( roiWidth > roiHeight ) {
-				camera.setRadius(roiWidth*1.5);
+				camera.setRadius(roiWidth * 1.5);
 			} else {
-				camera.setRadius(roiHeight*1.5);
+				camera.setRadius(roiHeight * 1.5);
 			}
-			
-			camera.setTarget(new Vector3D(roiCenter.x,roiCenter.y,0.0));
-			
+
+			camera.setTarget(new Vector3D(roiCenter.x, roiCenter.y, 0.0));
+
 			camera.rotation();
-		}
-		else
-		{
+		} else {
 			if ( roiWidth > roiHeight ) {
-				maxDim = roiWidth*1.5;
+				maxDim = roiWidth * 1.5;
 			} else {
-				maxDim = roiHeight*1.5;
+				maxDim = roiHeight * 1.5;
 			}
-			
-			camera.setPosition(new Vector3D(roiCenter.x,roiCenter.y, maxDim));
+
+			camera.setPosition(new Vector3D(roiCenter.x, roiCenter.y, maxDim));
 
 			camera.vectorsFromAngles();
 		}
