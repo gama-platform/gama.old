@@ -83,4 +83,10 @@ public class GraphstreamOutput extends AbstractDisplayOutput {
 		return lowquality;
 	}
 
+	@Override
+	public void open() {
+		super.open();
+		update();
+	}
+
 }
