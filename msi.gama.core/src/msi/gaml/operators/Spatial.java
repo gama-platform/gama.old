@@ -328,7 +328,6 @@ public abstract class Spatial {
 
 				geom = geom1.intersection(geom2);
 			} catch (final Exception ex) {
-				ex.printStackTrace();
 				try {
 					final PrecisionModel pm = new PrecisionModel(PrecisionModel.FLOATING_SINGLE);
 					geom =
@@ -729,7 +728,7 @@ public abstract class Spatial {
 		 * 
 		 */
 		@operator("transformed_by")
-		@doc(value = "A geometry resulting from the application of a rotation and a translation (rigth-operand : point {angle(degree), distance} of the left-hand operand (geometry, agent, point)", examples = { "self transformed_by {45, 20} --: returns the geometry resulting from 45¡ rotation and 10m translation of the geometry of the agent applying the operator." }, see = {
+		@doc(value = "A geometry resulting from the application of a rotation and a translation (rigth-operand : point {angle(degree), distance} of the left-hand operand (geometry, agent, point)", examples = { "self transformed_by {45, 20} --: returns the geometry resulting from 45ï¿½ rotation and 10m translation of the geometry of the agent applying the operator." }, see = {
 			"rotated_by", "translated_by" })
 		public static IShape transformed_by(final IScope scope, final IShape g, final GamaPoint p) {
 			if ( g == null ) { return null; }
