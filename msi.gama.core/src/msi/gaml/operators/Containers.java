@@ -244,9 +244,20 @@ public class Containers {
 		" returns a list containining the elements of the left operand minus all the occurences of this object" }, examples = {
 		"[1,2,3,4,5,6] - 2 		--: 	[1,3,4,5,6]", "[1,2,3,4,5,6] - 0 		--:	 	[1,2,3,4,5,6]" })
 	public static IList minus(final IScope scope, final IList l1, final Object object) {
-		final IList result = (IList) nullCheck(l1).listValue(scope).copy(scope);
+		final IList result = (IList) nullCheck(l1).copy(scope);
 		Iterables.removeIf(result, equalTo(object));
 		return result;
+	}
+
+	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@doc(special_cases = { "if the right operand is an agent of the species, " + IKeyword.MINUS +
+		" returns a list containining all the agents of the species minus this agent" }, examples = {
+		"[1,2,3,4,5,6] - 2 		--: 	[1,3,4,5,6]", "[1,2,3,4,5,6] - 0 		--:	 	[1,2,3,4,5,6]" })
+	public static IList minus(final IScope scope, final ISpecies l1, final IAgent object) {
+		return minus(scope, l1.listValue(scope), object);
+		// final IList result = (IList) nullCheck(l1).listValue(scope).copy(scope);
+		// Iterables.removeIf(result, equalTo(object));
+		// return result;
 	}
 
 	// PRENDRE EN COMPTE:
