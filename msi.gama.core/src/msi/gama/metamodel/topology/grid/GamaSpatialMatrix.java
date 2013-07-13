@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -495,14 +495,34 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	@Override
 	public int manhattanDistanceBetween(final IShape g1, final IShape g2) {
-		// TODO ATTENTION ne tient pas compte du voisinage de Moore
+		// New algorithm : we get the cells at the nearest points and compute the distance between their centroids ?
+
 		final Coordinate[] coord = new DistanceOp(g1.getInnerGeometry(), g2.getInnerGeometry()).nearestPoints();
 		final Coordinate p1 = coord[0];
 		final Coordinate p2 = coord[1];
-		// TODO ATTENTION ne tient pas compte de l'inclusion des points dans la matrice
-		final int dx = (int) (Maths.abs(p2.x - p1.x) / cellWidth);
-		final int dy = (int) (Maths.abs(p2.y - p1.y) / cellHeight);
-		return dx + dy;
+		final int dx = (int) (Maths.abs(p2.x - p1.x) / cellWidth) + 1;
+		final int dy = (int) (Maths.abs(p2.y - p1.y) / cellHeight) + 1;
+		if ( usesVN ) {
+			int result = dx + dy;
+			if ( result == 2 ) {
+				double centroid_dx = Maths.abs(g2.getLocation().getX() - g1.getLocation().getX());
+				double centroid_dy = Maths.abs(g2.getLocation().getY() - g1.getLocation().getY());
+				if ( centroid_dx < cellWidth ) {
+					result -= 1;
+				}
+				if ( centroid_dy < cellHeight ) {
+					result -= 1;
+				}
+			}
+			return result;
+		}
+		int result = Math.max(dx, dy);
+		double centroid_dx = Maths.abs(g2.getLocation().getX() - g1.getLocation().getX());
+		double centroid_dy = Maths.abs(g2.getLocation().getY() - g1.getLocation().getY());
+		if ( centroid_dx < cellWidth && centroid_dy < cellHeight ) {
+			result -= 1;
+		}
+		return result;
 	}
 
 	/**
