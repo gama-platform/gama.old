@@ -44,9 +44,9 @@ public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 
 	@Override
 	public ParametersSet findBestSolution() throws GamaRuntimeException {
-		bestFitness = isMaximize() ? Double.MIN_VALUE : Double.MAX_VALUE;
+		setBestFitness(isMaximize() ? Double.MIN_VALUE : Double.MAX_VALUE);
 		testSolutions(new ParametersSet(), 0);
-		return bestSolution;
+		return getBestSolution();
 	}
 
 	private void testSolutions(final ParametersSet sol, final int index) throws GamaRuntimeException {
@@ -58,9 +58,9 @@ public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 				solution.put(var.getName(), val);
 				if ( solution.size() == variables.size() ) {
 					final double fitness = currentExperiment.launchSimulationsWithSolution(solution);
-					if ( isMaximize() && fitness > bestFitness || !isMaximize() && fitness < bestFitness ) {
-						bestFitness = fitness;
-						bestSolution = solution;
+					if ( isMaximize() ? fitness > getBestFitness() : fitness < getBestFitness() ) {
+						setBestFitness(fitness);
+						setBestSolution(solution);
 					}
 				} else {
 					testSolutions(solution, index + 1);
@@ -78,9 +78,9 @@ public class ExhaustiveSearch extends ParamSpaceExploAlgorithm {
 				}
 				if ( solution.size() == variables.size() ) {
 					final double fitness = currentExperiment.launchSimulationsWithSolution(solution);
-					if ( isMaximize() && fitness > bestFitness || !isMaximize() && fitness < bestFitness ) {
-						bestFitness = fitness;
-						bestSolution = solution;
+					if ( isMaximize() ? fitness > getBestFitness() : fitness < getBestFitness() ) {
+						setBestFitness(fitness);
+						setBestSolution(solution);
 					}
 				} else {
 					testSolutions(solution, index + 1);

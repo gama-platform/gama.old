@@ -111,7 +111,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 		testedSolutions = new Hashtable<ParametersSet, Double>();
 		List<Chromosome> population =
 			initPop.initializePop(variables, currentExperiment, populationDim, nbPrelimGenerations, isMaximize());
-		bestFitness = isMaximize() ? Double.MIN_VALUE : Double.MAX_VALUE;
+		setBestFitness(isMaximize() ? Double.MIN_VALUE : Double.MAX_VALUE);
 		int nbGen = 1;
 		while (nbGen <= maxGenerations) {
 			Set<Chromosome> children = new HashSet<Chromosome>();
@@ -138,7 +138,7 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 		}
 		// System.out.println("Best solution : " + bestSolution + "  fitness : "
 		// + bestFitness);
-		return bestSolution;
+		return getBestSolution();
 	}
 
 	private void computePopFitness(final List<Chromosome> population) throws GamaRuntimeException {
@@ -151,10 +151,10 @@ public class GeneticAlgorithm extends ParamSpaceExploAlgorithm {
 			testedSolutions.put(sol, fitness);
 
 			chromosome.setFitness(fitness.doubleValue());
-			if ( isMaximize() && fitness.doubleValue() > bestFitness || !isMaximize() &&
-				fitness.doubleValue() < bestFitness ) {
-				bestFitness = fitness.doubleValue();
-				bestSolution = sol;
+			if ( isMaximize() && fitness.doubleValue() > getBestFitness() || !isMaximize() &&
+				fitness.doubleValue() < getBestFitness() ) {
+				setBestFitness(fitness.doubleValue());
+				setBestSolution(sol);
 			}
 		}
 	}

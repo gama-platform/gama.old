@@ -124,7 +124,7 @@ public class BatchAgent extends ExperimentAgent {
 
 	public Double launchSimulationsWithSolution(final ParametersSet sol) throws GamaRuntimeException {
 		// We first reset the currentSolution and the fitness values
-		currentSolution = sol;
+		currentSolution = new ParametersSet(sol);
 		fitnessValues.clear();
 		runNumber = runNumber + 1;
 		// The values present in the solution are passed to the parameters of the experiment
@@ -208,17 +208,20 @@ public class BatchAgent extends ExperimentAgent {
 
 			@Override
 			public String getUnitLabel() {
-				return "with " +
-					(getSpecies().getExplorationAlgorithm() != null &&
-						getSpecies().getExplorationAlgorithm().getBestSolution() != null ? getSpecies()
-						.getExplorationAlgorithm().getBestSolution().toString() : "{}");
+				IExploration algo = getSpecies().getExplorationAlgorithm();
+				if ( algo == null ) { return ""; }
+				ParametersSet params = algo.getBestSolution();
+				if ( params == null ) { return ""; }
+				return "with " + params;
 			}
 
 			@Override
-			public Object value() {
-				return getSpecies().getExplorationAlgorithm() != null &&
-					getSpecies().getExplorationAlgorithm().getBestFitness() != null ? getSpecies()
-					.getExplorationAlgorithm().getBestFitness().toString() : "-";
+			public String value() {
+				IExploration algo = getSpecies().getExplorationAlgorithm();
+				if ( algo == null ) { return "-"; }
+				Double best = algo.getBestFitness();
+				if ( best == null ) { return "-"; }
+				return best.toString();
 			}
 
 		});
@@ -227,7 +230,8 @@ public class BatchAgent extends ExperimentAgent {
 
 			@Override
 			public String getUnitLabel() {
-				return "with " + (currentSolution != null ? currentSolution.toString() : "");
+				if ( currentSolution == null ) { return ""; }
+				return "with " + currentSolution.toString();
 			}
 
 			@Override

@@ -52,20 +52,20 @@ public class HillClimbing extends LocalSearchAlgorithm {
 
 	@Override
 	public ParametersSet findBestSolution() throws GamaRuntimeException {
-		bestSolution = this.solutionInit;
-		double currentFitness = currentExperiment.launchSimulationsWithSolution(bestSolution);
+		setBestSolution(this.solutionInit);
+		double currentFitness = currentExperiment.launchSimulationsWithSolution(getBestSolution());
 		testedSolutions = new Hashtable<ParametersSet, Double>();
-		testedSolutions.put(bestSolution, new Double(currentFitness));
+		testedSolutions.put(getBestSolution(), new Double(currentFitness));
 		int nbIt = 0;
 
 		final Map<String, Object> endingCritParams = new Hashtable<String, Object>();
 		endingCritParams.put("Iteration", Integer.valueOf(nbIt));
 		while (stoppingCriterion == null || !stoppingCriterion.stopSearchProcess(endingCritParams)) {
-			final List<ParametersSet> neighbors = neighborhood.neighbor(bestSolution);
+			final List<ParametersSet> neighbors = neighborhood.neighbor(getBestSolution());
 			if ( neighbors.isEmpty() ) {
 				break;
 			}
-			bestFitness = currentFitness;
+			setBestFitness(currentFitness);
 			ParametersSet bestNeighbor = null;
 
 			for ( final ParametersSet neighborSol : neighbors ) {
@@ -78,15 +78,15 @@ public class HillClimbing extends LocalSearchAlgorithm {
 				}
 				testedSolutions.put(neighborSol, neighborFitness);
 
-				if ( isMaximize() && neighborFitness.doubleValue() > bestFitness || !isMaximize() &&
-					neighborFitness.doubleValue() < bestFitness ) {
+				if ( isMaximize() && neighborFitness.doubleValue() > getBestFitness() || !isMaximize() &&
+					neighborFitness.doubleValue() < getBestFitness() ) {
 					bestNeighbor = neighborSol;
-					bestFitness = neighborFitness.doubleValue();
+					setBestFitness(neighborFitness.doubleValue());
 				}
 			}
 			if ( bestNeighbor != null ) {
-				bestSolution = bestNeighbor;
-				currentFitness = bestFitness;
+				setBestSolution(bestNeighbor);
+				currentFitness = getBestFitness();
 			} else {
 				break;
 			}
@@ -95,7 +95,7 @@ public class HillClimbing extends LocalSearchAlgorithm {
 		}
 		// System.out.println("Best solution : " + currentSol + "  fitness : "
 		// + currentFitness);
-		return bestSolution;
+		return getBestSolution();
 	}
 
 	@Override

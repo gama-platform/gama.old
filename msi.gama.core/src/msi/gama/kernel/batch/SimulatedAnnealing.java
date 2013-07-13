@@ -93,10 +93,10 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 	@Override
 	public ParametersSet findBestSolution() throws GamaRuntimeException {
 		testedSolutions = new Hashtable<ParametersSet, Double>();
-		bestSolution = new ParametersSet(this.solutionInit);
-		double currentFitness = currentExperiment.launchSimulationsWithSolution(bestSolution);
+		setBestSolution(new ParametersSet(this.solutionInit));
+		double currentFitness = currentExperiment.launchSimulationsWithSolution(getBestSolution());
 		ParametersSet bestSolutionAlgo = this.solutionInit;
-		testedSolutions.put(bestSolution, bestFitness);
+		testedSolutions.put(getBestSolution(), getBestFitness());
 		int nbIt = 0;
 		double temperature = temperatureInit;
 
@@ -132,9 +132,9 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 					bestSolutionAlgo = neighborSol;
 					currentFitness = neighborFitness.doubleValue();
 				}
-				if ( isMaximize() && currentFitness > bestFitness || !isMaximize() && currentFitness < bestFitness ) {
-					bestSolution = new ParametersSet(bestSolutionAlgo);
-					bestFitness = currentFitness;
+				if ( isMaximize() && currentFitness > getBestFitness() || !isMaximize() && currentFitness < getBestFitness() ) {
+					setBestSolution(new ParametersSet(bestSolutionAlgo));
+					setBestFitness(currentFitness);
 				}
 				iter++;
 			}
@@ -145,7 +145,7 @@ public class SimulatedAnnealing extends LocalSearchAlgorithm {
 		// System.out.println("Best solution : " + currentSol + "  fitness : "
 		// + currentFitness);
 
-		return bestSolution;
+		return getBestSolution();
 	}
 
 	@Override

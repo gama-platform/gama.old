@@ -118,14 +118,14 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 		testedSolutions = new Hashtable<ParametersSet, Double>();
 		final List<ParametersSet> tabuList = new ArrayList<ParametersSet>();
 		int tabuListSize = tabuListSizeInit;
-		tabuList.add(bestSolution);
-		double currentFitness = currentExperiment.launchSimulationsWithSolution(bestSolution);
+		tabuList.add(getBestSolution());
+		double currentFitness = currentExperiment.launchSimulationsWithSolution(getBestSolution());
 		double bestFitnessAlgo = currentFitness;
 		ParametersSet bestSolutionAlgo = this.solutionInit;
-		bestSolution = new ParametersSet(bestSolutionAlgo);
-		bestFitness = currentFitness;
+		setBestSolution(new ParametersSet(bestSolutionAlgo));
+		setBestFitness(currentFitness);
 
-		testedSolutions.put(bestSolution, new Double(currentFitness));
+		testedSolutions.put(getBestSolution(), new Double(currentFitness));
 		int nbIt = 0;
 		int nbTestWithoutCollision = 0;
 		int currentCycleSize = 0;
@@ -135,7 +135,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 		endingCritParams.put("Iteration", Integer.valueOf(nbIt));
 		while (!stoppingCriterion.stopSearchProcess(endingCritParams)) {
 			nbTestWithoutCollision++;
-			final List<ParametersSet> neighbors = neighborhood.neighbor(bestSolution);
+			final List<ParametersSet> neighbors = neighborhood.neighbor(getBestSolution());
 			neighbors.removeAll(tabuList);
 			if ( neighbors.isEmpty() ) {
 				break;
@@ -168,9 +168,9 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 					bestNeighbor = neighborSol;
 					bestFitnessAlgo = neighborFitness.doubleValue();
 				}
-				if ( isMaximize() && currentFitness > bestFitness || !isMaximize() && currentFitness < bestFitness ) {
-					bestSolution = new ParametersSet(bestSolutionAlgo);
-					bestFitness = currentFitness;
+				if ( isMaximize() && currentFitness > getBestFitness() || !isMaximize() && currentFitness < getBestFitness() ) {
+					setBestSolution(new ParametersSet(bestSolutionAlgo));
+					setBestFitness(currentFitness);
 				}
 				nbIt++;
 				if ( nbIt > iterMax ) {
@@ -208,9 +208,9 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 					}
 					currentFitness = currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo);
 					testedSolutions.put(bestSolutionAlgo, new Double(currentFitness));
-					if ( isMaximize() && currentFitness > bestFitness || !isMaximize() && currentFitness < bestFitness ) {
-						bestSolution = new ParametersSet(bestSolutionAlgo);
-						bestFitness = currentFitness;
+					if ( isMaximize() && currentFitness > getBestFitness() || !isMaximize() && currentFitness < getBestFitness() ) {
+						setBestSolution(new ParametersSet(bestSolutionAlgo));
+						setBestFitness(currentFitness);
 					}
 					if ( nbIt > iterMax ) {
 						break;
@@ -237,7 +237,7 @@ public class TabuSearchReactive extends LocalSearchAlgorithm {
 		// System.out.println("Best solution : " + currentSol + "  fitness : "
 		// + currentFitness);
 
-		return bestSolution;
+		return getBestSolution();
 	}
 
 	@Override

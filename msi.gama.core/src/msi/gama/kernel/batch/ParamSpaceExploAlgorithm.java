@@ -20,6 +20,7 @@ package msi.gama.kernel.batch;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.*;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.*;
@@ -51,8 +52,8 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	protected IExpression fitnessExpression;
 	protected boolean isMaximize;
 	protected BatchAgent currentExperiment;
-	protected ParametersSet bestSolution;
-	protected Double bestFitness;
+	private ParametersSet bestSolution;
+	private Double bestFitness;
 	protected short combination;
 
 	protected abstract ParametersSet findBestSolution() throws GamaRuntimeException;
@@ -141,5 +142,15 @@ public abstract class ParamSpaceExploAlgorithm extends Symbol implements IExplor
 	@Override
 	public short getCombination() {
 		return combination;
+	}
+
+	protected void setBestSolution(final ParametersSet bestSolution) {
+		//GuiUtils.debug("ParamSpaceExploAlgorithm.setBestSolution : " + bestSolution);
+		this.bestSolution = new ParametersSet(bestSolution);
+	}
+
+	protected void setBestFitness(final Double bestFitness) {
+		//GuiUtils.debug("ParamSpaceExploAlgorithm.setBestFitness : " + bestFitness);
+		this.bestFitness = bestFitness;
 	}
 }

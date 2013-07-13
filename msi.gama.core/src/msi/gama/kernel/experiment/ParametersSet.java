@@ -24,7 +24,7 @@ import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
- * The Class Solution.
+ * The Class ParametersSet.
  */
 public class ParametersSet extends HashMap<String, Object> {
 

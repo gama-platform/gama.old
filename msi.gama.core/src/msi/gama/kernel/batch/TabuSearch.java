@@ -62,8 +62,8 @@ public class TabuSearch extends LocalSearchAlgorithm {
 		tabuList.add(bestSolutionAlgo);
 		double currentFitness = currentExperiment.launchSimulationsWithSolution(bestSolutionAlgo);
 		testedSolutions.put(bestSolutionAlgo, new Double(currentFitness));
-		bestSolution = new ParametersSet(bestSolutionAlgo);
-		bestFitness = currentFitness;
+		setBestSolution(new ParametersSet(bestSolutionAlgo));
+		setBestFitness(currentFitness);
 
 		int nbIt = 0;
 		double bestFitnessAlgo = currentFitness;
@@ -102,9 +102,9 @@ public class TabuSearch extends LocalSearchAlgorithm {
 					bestFitnessAlgo = neighborFitness.doubleValue();
 				}
 
-				if ( isMaximize() && currentFitness > bestFitness || !isMaximize() && currentFitness < bestFitness ) {
-					bestSolution = new ParametersSet(bestSolutionAlgo);
-					bestFitness = currentFitness;
+				if ( isMaximize() && currentFitness > getBestFitness() || !isMaximize() && currentFitness < getBestFitness() ) {
+					setBestSolution(new ParametersSet(bestSolutionAlgo));
+					setBestFitness(currentFitness);
 				}
 				if ( nbIt > iterMax ) {
 					break;
@@ -125,7 +125,7 @@ public class TabuSearch extends LocalSearchAlgorithm {
 		// System.out.println("Best solution : " + currentSol + "  fitness : "
 		// + currentFitness);
 
-		return bestSolution;
+		return getBestSolution();
 	}
 
 	int iterMax = 50;
