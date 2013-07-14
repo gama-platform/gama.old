@@ -307,6 +307,7 @@ public class MovingSkill extends GeometricSkill {
 			// scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
+		
 		IPath path = (GamaPath) agent.getAttribute("current_path");
 		if ( path == null || (path.getTopology() != null && !path.getTopology().equals(topo)) || !path.getEndVertex().equals(goal) ||
 			!path.getStartVertex().equals(source) ) {
@@ -320,7 +321,6 @@ public class MovingSkill extends GeometricSkill {
 				}
 			}
 		}
-
 		if ( path == null ) {
 			// scope.setStatus(ExecutionStatus.failure);
 			return null;
@@ -365,10 +365,12 @@ public class MovingSkill extends GeometricSkill {
 			indexSegment = 0;
 			endIndexSegment = 0;
 			falseTarget = (GamaPoint) path.getEndVertex();
+			
 		} else {
 			if ( path.isVisitor(agent) ) {
 				index = path.indexOf(agent);
 				indexSegment = path.indexSegmentOf(agent);
+
 			} else {
 				path.acceptVisitor(agent);
 				double distanceS = Double.MAX_VALUE;
@@ -444,7 +446,6 @@ public class MovingSkill extends GeometricSkill {
 		final int nb = edges.size();
 		double distance = d;
 		final GamaSpatialGraph graph = (GamaSpatialGraph) path.getGraph();
-
 		for ( int i = index; i < nb; i++ ) {
 			final IShape line = edges.get(i);
 			final Coordinate coords[] = line.getInnerGeometry().getCoordinates();
@@ -465,6 +466,7 @@ public class MovingSkill extends GeometricSkill {
 				}
 				double dist = pt.distance(currentLocation);
 				dist = weight * dist;
+				
 				if ( distance < dist ) {
 					final double ratio = distance / dist;
 					final double newX = currentLocation.x + ratio * (pt.x - currentLocation.x);
@@ -482,10 +484,12 @@ public class MovingSkill extends GeometricSkill {
 				} else {
 					currentLocation = pt;
 					distance = 0;
-					if ( indexSegment < coords.length - 1 ) {
+					if ( indexSegment < coords.length-1) {
 						indexSegment++;
 					} else {
+						if ( index < nb -1) 
 						index++;
+						indexSegment = 1;
 					}
 					break;
 				}
@@ -494,10 +498,12 @@ public class MovingSkill extends GeometricSkill {
 				break;
 			}
 			indexSegment = 1;
-			index++;
+			if ( index < nb -1) 
+				index++;
 		}
 		if ( currentLocation.equals(falseTarget) ) {
 			currentLocation = (GamaPoint) path.getEndVertex();
+			index++;
 		}
 		path.setIndexSegementOf(agent, indexSegment);
 		path.setIndexOf(agent, index);
