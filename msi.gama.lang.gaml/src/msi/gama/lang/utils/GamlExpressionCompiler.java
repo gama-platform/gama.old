@@ -333,6 +333,10 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 				arg = EGaml.getKeyOf(exp.getLeft());
 				ed = EcoreBasedExpressionDescription.create(exp.getRight(), errors);
 			} else if ( completeArgs ) {
+				if ( args != null && action != null && index == args.size() ) {
+					command.error("Wrong number of arguments. Action " + action.getName() + " expects " + args);
+					return argMap;
+				}
 				arg = args == null ? String.valueOf(index++) : args.get(index++);
 				ed = EcoreBasedExpressionDescription.create(exp, errors);
 			}
