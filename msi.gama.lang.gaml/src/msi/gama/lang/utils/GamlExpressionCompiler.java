@@ -618,6 +618,10 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			return null;
 		}
 
+		// if ( s.equals("tototo") ) {
+		// GuiUtils.debug("GamlExpressionCompiler.caseVar");
+		// }
+
 		// HACK
 		if ( s.equals(USER_LOCATION) ) { return factory.createVar(USER_LOCATION, Types.get(IType.POINT),
 			Types.get(IType.FLOAT), Types.get(IType.INT), true, IVarExpression.TEMP, context); }
@@ -649,7 +653,25 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		// }
 
 		temp_sd = context == null ? null : context.getDescriptionDeclaringVar(s);
-		if ( temp_sd != null ) { return temp_sd.getVarExpr(s); }
+		if ( temp_sd != null ) {
+			if ( temp_sd instanceof SpeciesDescription ) {
+				SpeciesDescription remote_sd = context.getSpeciesContext();
+				if ( remote_sd != null ) {
+					SpeciesDescription found_sd = (SpeciesDescription) temp_sd;
+
+					if ( remote_sd != temp_sd && !remote_sd.hasMacroSpecies(found_sd) ) {
+						// GuiUtils.debug("GamlExpressionCompiler.caseVar : var " + s + " used in " + remote_sd +
+						// " declared in " + temp_sd);
+						context.error(
+							"The variable " + s + " is not accessible in this context (" + remote_sd.getName() +
+								"), but in the context of " + found_sd.getName() +
+								". It should be preceded by 'myself.'", IGamlIssue.UNKNOWN_VAR, object, s);
+					}
+				}
+			}
+
+			return temp_sd.getVarExpr(s);
+		}
 		if ( context != null ) {
 
 			// Short circuiting the use of keyword in "draw ..." to ensure backward
@@ -664,8 +686,9 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 				return factory.createConst(s + "__deprecated", Types.get(IType.STRING));
 			}
 
-			context.error("The variable " + s + " has not been defined. Check its name or declare it",
-				IGamlIssue.UNKNOWN_VAR, object, s);
+			context.error("The variable " + s +
+				" is not defined or accessible in this context. Check its name or declare it", IGamlIssue.UNKNOWN_VAR,
+				object, s);
 		}
 		return null;
 
