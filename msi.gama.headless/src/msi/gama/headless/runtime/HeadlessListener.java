@@ -3,6 +3,7 @@ package msi.gama.headless.runtime;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.IExperimentSpecies;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
 import msi.gama.runtime.IScope;
@@ -228,7 +229,7 @@ public class HeadlessListener implements IGui {
 			final String pluginClass = e.getAttribute("class");
 			// final Class<IDisplaySurface> displayClass = .
 			final String pluginName = e.getContributor().getName();
-			System.out.println("displays " + pluginKeyword+" " +pluginName);
+			System.out.println("displays " + pluginKeyword + " " + pluginName);
 			ClassLoader cl = GamaClassLoader.getInstance().addBundle(Platform.getBundle(pluginName));
 			try {
 				displayClasses.put(pluginKeyword, cl.loadClass(pluginClass));
@@ -285,7 +286,7 @@ public class HeadlessListener implements IGui {
 	 * @see msi.gama.common.interfaces.IGui#prepareForSimulation()
 	 */
 	@Override
-	public void prepareForSimulation() {}
+	public void prepareForSimulation(final SimulationAgent agent) {}
 
 	/**
 	 * Method cleanAfterSimulation()

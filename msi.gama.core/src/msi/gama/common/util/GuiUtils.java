@@ -21,6 +21,7 @@ package msi.gama.common.util;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.kernel.experiment.IExperimentSpecies;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
 import msi.gama.runtime.IScope;
@@ -246,9 +247,9 @@ public class GuiUtils {
 		}
 	}
 
-	public static void prepareForSimulation() {
+	public static void prepareForSimulation(final SimulationAgent agent) {
 		if ( gui != null ) {
-			gui.prepareForSimulation();
+			gui.prepareForSimulation(agent);
 		}
 	}
 

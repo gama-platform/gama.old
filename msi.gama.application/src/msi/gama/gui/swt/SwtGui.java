@@ -28,6 +28,7 @@ import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
 import msi.gama.gui.views.*;
 import msi.gama.kernel.experiment.IExperimentSpecies;
+import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
 import msi.gama.runtime.*;
@@ -1002,9 +1003,11 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public void prepareForSimulation() {
+	public void prepareForSimulation(final SimulationAgent agent) {
 		setStatus(" Building outputs ", IGui.WAIT);
-		// showConsoleView();
+		if ( !agent.getExperiment().getSpecies().isBatch() ) {
+			showConsoleView();
+		}
 	}
 
 	@Override
