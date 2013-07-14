@@ -27,12 +27,10 @@ public class GamlResourceDescriptionStrategy extends DefaultResourceDescriptionS
 	 *      org.eclipse.xtext.util.IAcceptor)
 	 */
 
-	static Set<String> composed = new HashSet(Arrays.asList(GLOBAL, SPECIES, ENTITIES, ENVIRONMENT,
-		ACTION));
+	static Set<String> composed = new HashSet(Arrays.asList(GLOBAL, SPECIES, ENTITIES, ENVIRONMENT, ACTION));
 
 	@Override
-	public boolean createEObjectDescriptions(final EObject o,
-		final IAcceptor<IEObjectDescription> acceptor) {
+	public boolean createEObjectDescriptions(final EObject o, final IAcceptor<IEObjectDescription> acceptor) {
 		if ( o instanceof ActionArguments ) {
 			return true;
 		} else if ( o instanceof ArgumentDefinition ) {
@@ -41,7 +39,12 @@ public class GamlResourceDescriptionStrategy extends DefaultResourceDescriptionS
 			Statement stm = (Statement) o;
 			String n = EGaml.getNameOf(stm);
 			if ( n != null ) {
-				super.createEObjectDescriptions(stm, acceptor);
+				try {
+					super.createEObjectDescriptions(stm, acceptor);
+				} catch (IllegalArgumentException e) {
+					// e.printStackTrace();
+					return false;
+				}
 			}
 			return ((Statement) o).getBlock() != null; // composed.contains(EGaml.getKey.caseStatement(stm));
 		}

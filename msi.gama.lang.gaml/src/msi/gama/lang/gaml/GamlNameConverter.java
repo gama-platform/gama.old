@@ -11,17 +11,19 @@ public class GamlNameConverter extends DefaultImpl {
 	@Override
 	public String toString(final QualifiedName qualifiedName) {
 		if ( qualifiedName == null ) { return ""; }
-		if ( qualifiedName.getSegmentCount() == 1 ) { return qualifiedName.getFirstSegment(); }
-		builder.setLength(0);
-		boolean isFirst = true;
-		for ( String segment : qualifiedName.getSegments() ) {
-			if ( !isFirst ) {
-				builder.append(delimiter);
-			}
-			isFirst = false;
-			builder.append(segment);
-		}
-		return builder.toString();
+		//
+		// if ( qualifiedName.getSegmentCount() == 1 ) { return qualifiedName.getFirstSegment(); }
+		// builder.setLength(0);
+		// boolean isFirst = true;
+		// for ( String segment : qualifiedName.getSegments() ) {
+		// if ( !isFirst ) {
+		// builder.append(delimiter);
+		// }
+		// isFirst = false;
+		// builder.append(segment);
+		// }
+		// return builder.toString();
+		return super.toString(qualifiedName);
 	}
 
 	final static String delimiter = ".";
@@ -31,7 +33,10 @@ public class GamlNameConverter extends DefaultImpl {
 	public QualifiedName toQualifiedName(final String qualifiedNameAsString) {
 		// return QualifiedName.create(qualifiedNameAsString);
 		// if ( qualifiedNameAsString == null ) { return QualifiedName.EMPTY; };
-		return QualifiedName.create(qualifiedNameAsString.split(splitter));
+		if ( qualifiedNameAsString == null ) { return QualifiedName.EMPTY; }
+		if ( qualifiedNameAsString.equals("") ) { return QualifiedName.EMPTY; }
+		return super.toQualifiedName(qualifiedNameAsString);
+		// return QualifiedName.create(qualifiedNameAsString.split(splitter));
 	}
 
 }
