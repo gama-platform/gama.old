@@ -74,7 +74,7 @@ entities {
                    "SET age = 30 WHERE id in (100, 101)";       
             }
             write "Select after updated";
-            set listRes value: self select[select:: "select * from registration"];
+            set listRes value: list(self select[select:: "select * from registration"]);
  			do action: write with: [message::listRes];
  		}
         reflex drop {    

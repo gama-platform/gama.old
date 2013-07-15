@@ -13,7 +13,7 @@ global {
 	init { 
 		create cell number: number_of_agents;
 	}  
-} 
+}  
   
 entities { 
 	species cell skills: [moving] {  
@@ -46,7 +46,7 @@ entities {
 experiment main type: gui {
 	parameter 'Number of Agents' var: number_of_agents;
 	parameter 'Radius of Circle' var: radius_of_circle; 
-	parameter 'Strength of Repulsion' var: repulsion_strength;
+	parameter 'Strength of Repulsion' var: repulsion_strength; 
 	parameter 'Dimensions' var: width_and_height_of_environment;
 	parameter 'Range of Agents' var: range_of_agents;
 	parameter 'Speed of Agents' var: speed_of_agents ; 

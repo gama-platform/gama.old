@@ -46,7 +46,7 @@ entities {
 			set group_id <- rnd(number_of_groups - 1);		 // rnd(int) returns a random integer in [0,int]
 			set color <- colors at (group_id);
 			set grid_cell_host <- any(list(grid_cell) where (each.people_hosted = nil));
-			ask grid_cell_host {set people_hosted <- self;}
+			ask grid_cell_host {set people_hosted <- myself;}
 			set location <- grid_cell_host.location;
 		} 
 				
@@ -71,16 +71,16 @@ entities {
 		action move {
 			ask grid_cell_host {set people_hosted <- nil;} 
 			set grid_cell_host <- any(list(grid_cell) where (each.people_hosted = nil));
-			ask grid_cell_host {set people_hosted <- self;}
+			ask grid_cell_host {set people_hosted <- myself;}
 			set location <- grid_cell_host.location;		
 		} 	
 								
 		aspect default { 
-			draw circle(1.0) color: rgb('blue'); 
+			draw circle(0.5) color: rgb('blue'); 
 		}
 		
 		aspect with_group_color { 
-			draw circle(1.0) color: color; 
+			draw circle(0.5) color: color; 
 		}		
 	}
 } 
@@ -104,12 +104,12 @@ experiment schelling type: gui {
 		display Charts {
 			chart name: 'Proportion of happiness' type: pie 
 					background: rgb('lightGray') style: exploded position: {0,0} size: {1.0,0.5}{
-				data 'Unhappy' value: number_of_people - length(list(people) where (each.is_happy = true)) ;
-				data 'Happy' value: length(list(people) where (each.is_happy = true)) ;
+				data 'Unhappy' value: number_of_people - length(list(people) where (each.is_happy = true)) color: rgb("red");
+				data 'Happy' value: length(list(people) where (each.is_happy = true)) color: rgb("green");
 			}
 			chart name: 'Global happiness and similarity' type: series 
 					background: rgb('lightGray') axes: rgb('white') position: {0,0.5} size: {1.0,0.5} {
-				data 'happy' color: rgb('blue') 
+				data 'happy' color: rgb('green') 
 						value:  (number_of_happy_people / number_of_people) * 100 style: spline ;
 				data 'similarity' color: rgb('red') 
 						value: (sum_total_neighbours = 0) ? 0 : 

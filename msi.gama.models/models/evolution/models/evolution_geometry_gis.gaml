@@ -5,14 +5,14 @@ global {
 	file shape_file_name_background  <- file('../gis/background.shp');
 	float dying_size min: 100.0  <-10000.0 ; 
 	float crossover_size min: 100.0  <- 1000.0;
-	float minimum_size min: 100.0 <- 500.0;
+	float minimum_size min: 100.0 <- 500.0; 
 	int time_wthout_co min: 1 <- 7;
 	float speed min: 1.0  <- 10.0; 
 	float crossover_rate min: 0.1  <- 0.95; 
 	float scaling_factor min: 1.001 <- 1.05;
 	float angle_rotation_max min: 0.0 <- 45.0;
 	int nb_partners_max min: 1  <- 1;
-	int max_side_size min: 1 <- 5; 
+	int max_side_size min: 1 <- 5;  
 	int background_size_side min: 20 max: 100 <- 80 ;
 	geometry shape <- envelope(shape_file_name_background);
 	geometry the_background;

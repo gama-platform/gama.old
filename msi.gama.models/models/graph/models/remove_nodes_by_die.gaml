@@ -23,7 +23,7 @@ global {
 	
 	init {
 		
-		write my_graph;
+		write "my_graph : " + my_graph;
 			  
 	 }
 	  
@@ -63,7 +63,6 @@ entities {
 		 */
 		reflex dying when: flip(0.05) {
 			do die;
-			write my_graph;
 		}
 		
 	}

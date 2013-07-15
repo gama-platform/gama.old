@@ -30,11 +30,11 @@ entities {
 		} 
 								
 		aspect default { 
-			draw circle(1.0) color: rgb('blue'); 
+			draw circle(0.5) color: rgb('blue'); 
 		}
 		
 		aspect with_group_color { 
-			draw circle(1.0) color: color; 
+			draw circle(0.5) color: color; 
 		}		
 	}
 } 

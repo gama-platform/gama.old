@@ -17,7 +17,7 @@ entities {
 		rgb color <- rgb('blue');		
 		
 		aspect default { 
-			draw circle(1.0) color: color; 
+			draw circle(0.5) color: color; 
 		}
 	}
 } 

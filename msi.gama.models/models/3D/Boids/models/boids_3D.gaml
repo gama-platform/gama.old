@@ -120,9 +120,7 @@ entities {
 		 
  
 		species boids_delegation parent: boids topology: topology(world.shape)  {
-			
-			// je ne comprends pas pourquoi cette liste peut contenir des agents morts de l'esp�ces "boids_delegation"?
-			list others value: ( (boids_delegation overlapping (shape + range))) - self;
+			list others -> {( (boids_delegation overlapping (shape + range))) - self};
 
 			action compute_mass_center type: point {
 				loop o over: others {
@@ -276,7 +274,7 @@ entities {
 		}
 		
 		aspect image {
-			draw image: images at (rnd(2)) size: boids_size*2 rotate: heading color: rgb('black') ;      
+			draw (images at (rnd(2))) size: boids_size*2 rotate: heading color: rgb('black') ;      
 		}
 		
 		aspect default { 

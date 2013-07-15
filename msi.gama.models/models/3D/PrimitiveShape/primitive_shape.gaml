@@ -119,7 +119,7 @@ entities {
 	species myTexture{
 		
 		aspect image{
-    		draw image: imageRaster size: 2.25;
+    		draw imageRaster size: 2.25;
     	}
 	}
 	

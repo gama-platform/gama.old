@@ -102,7 +102,7 @@ entities {
         }
         
         reflex shallDie when: flip(nu) {
-			create species(self) number: 1 {
+			create species(self) {
 				set myPlace <- myself.myPlace ;
 				set location <- myself.location ; 
 			}

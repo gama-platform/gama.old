@@ -21,7 +21,7 @@ global {
 	
 	init {
 		
-		write my_graph;
+		write "my_graph : " + my_graph;
 		  
 	 }
 }

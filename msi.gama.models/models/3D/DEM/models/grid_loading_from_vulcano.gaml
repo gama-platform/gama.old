@@ -13,7 +13,11 @@ global {
 	geometry shape <- envelope(grid_file);
 	
 	init{
-		create people number:100;
+		create people number:100 {
+			float z <- (cell(location)).grid_value;                 
+            set location <- location add_z z;
+            
+		}
 	}
 	
 	
@@ -23,7 +27,7 @@ entities {
 	grid cell file: grid_file {
 		init {
 			//write " grid_value : " + grid_value;
-			color <- rnd(255);//colors at int(grid_value);
+			color <- colors at int(grid_value);
 		}
 		reflex decreaseGridValue{
 			if(grid_value >0){

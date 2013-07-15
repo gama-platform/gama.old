@@ -33,7 +33,7 @@ entities {
  						params:: PARAMS,
   						select::"SELECT id, first, last, age FROM Registration WHERE id>101 and id<=103"
  			];
-			set listRes value: t; 
+			set listRes value: list(t); 
 			// listRes(0): List of column name
 			// listRes(1): List of column name type 	
 			// listRes(2): List of Record -> List of List type

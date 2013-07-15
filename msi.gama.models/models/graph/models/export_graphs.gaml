@@ -25,7 +25,7 @@ global {
 		);
 		
 		// a simple "write" just writes the content of the graph in the console
-		write my_graph;
+		write "my_graph : " + my_graph;
 		
 		// this exports the save view in a text file
 		save my_graph type: "text" to: "test.txt" rewrite: true;

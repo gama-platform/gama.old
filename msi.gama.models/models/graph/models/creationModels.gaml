@@ -33,22 +33,9 @@ entities {
 		
 		rgb color <- rgb('black') ;  
 		
-		init {
-			write location;
-		}
-		
 		aspect basic { 
 			draw circle(6) color: color ;
-			//write location;
 		} 
-		
-		
-		
-		/*reflex discussFriends {
-			humans afriend <- one_of (net_friendship neighbours_of self);
-			write "" + self + " having a bier with " + afriend;
-		}*/
-		
 	}
 	
 	species friendship  { 

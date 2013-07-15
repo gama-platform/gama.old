@@ -232,7 +232,7 @@ experiment Batch type: batch repeat: 2 keep_seed: true until: (food_gathered = f
 	parameter name: 'Diffusion:' var: diffusion_rate min: 0.1 max: 1.0 unit: 'rate every cycle (1.0 means 100%)' step: 0.3;
 	method exhaustive maximize: food_gathered;
 	
-	reflex {
+	reflex info_sim{
 		write "Running a new simulation " + simulation;
 	}
 	

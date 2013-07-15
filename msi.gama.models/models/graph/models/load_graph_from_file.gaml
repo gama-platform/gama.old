@@ -35,7 +35,7 @@ global {
 		*/	  
 		
 		// print the graph in the console
-		write my_graph;
+		write "my_graph : " + my_graph;
 
 	 }
 	 

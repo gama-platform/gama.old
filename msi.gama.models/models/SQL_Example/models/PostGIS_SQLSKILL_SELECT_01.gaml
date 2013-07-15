@@ -20,7 +20,7 @@ global {
 	init {
 		create species: toto number: 1  
 		{ 
-			create species:locations from: list(self select [params:: PARAMS, select:: LOCATIONS]) with:[ id:: "id_1", custom_name:: "name_1", geo::"geo"]{ set shape value: geo; }
+			create species:locations from: list(self select [params:: PARAMS, select:: LOCATIONS]) with:[ id:: int("id_1"), custom_name:: "name_1", geo::geometry("geo")]{ set shape value: geo; }
 		}
 		 
 	}

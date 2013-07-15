@@ -18,15 +18,8 @@ global {
 	 */  
 	graph<nodeSpecy,edgeSpecy> my_graph <- generate_watts_strogatz(nodeSpecy, edgeSpecy, net_size, net_prewire,net_neighboors);
 			
-	init {
-		
-		 write my_graph;
-		  
-	 }
-	 
 	
 	reflex rewiring{
-			write my_graph;
 			//set my_graph <- rewire_n(my_graph, net_rewire_count);
 			
 	}

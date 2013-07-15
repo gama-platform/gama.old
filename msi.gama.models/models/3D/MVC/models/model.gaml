@@ -32,11 +32,13 @@ entities {
         }
     }
 }
-
-output {
+experiment exp type: gui {
+	output {
     
-    display Model type:opengl ambient_light:100{
-        species bug aspect: base;
-    }
+	    display Model type:opengl ambient_light:100{
+	        species bug aspect: base;
+	    }
+	}
 }
+
 

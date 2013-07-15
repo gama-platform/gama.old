@@ -206,8 +206,8 @@ entities {
 	
 	species macroEdge schedules:[] { 
 		rgb color <- rgb("black");
-		node src;
-		node dest;
+		macroNode src;
+		macroNode dest;
 		list<int> nbAggregatedLinkList size:nbTypeOfClass;
 		
 		aspect base {
@@ -236,8 +236,8 @@ entities {
 		        if(i!=j){
 		            create macroEdge{
 		              nbAggregatedLinkList[h] <- tmp;
-		              set src <- macroNodes at (i);
-				      set dest <- macroNodes at (j);	
+		              set src <- macroNode(macroNodes at (i));
+				      set dest <- macroNode(macroNodes at (j));	
 		            }	  
 		        }      
 		      }

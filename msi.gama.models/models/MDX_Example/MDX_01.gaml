@@ -35,7 +35,7 @@ entities {
 		reflex testConnection{
 			do action: helloWorld;
 			if (self testConnection[ params::SSAS]){
-				let l1 type:List <-list(self select [params:: SSAS
+				let l1 type:list <-list(self select [params:: SSAS
 							, select:: 
 					 "SELECT { [Measures].[Quantity], [Measures].[Price] } ON COLUMNS ,"
 					 			+ " { { { [Time].[Year].[All].CHILDREN } * "
