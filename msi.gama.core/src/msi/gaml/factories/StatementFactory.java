@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -58,9 +58,12 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 
 	@Override
 	protected StatementDescription privateValidate(final IDescription desc) {
-		// GuiUtils.debug("Validating statement " + desc);
-		super.privateValidate(desc);
 		final String kw = desc.getKeyword();
+		// if ( kw.equals(ACTION) ) {
+		// GuiUtils.debug("Validating action " + desc);
+		// }
+		super.privateValidate(desc);
+
 		final StatementDescription cd = (StatementDescription) desc;
 		if ( kw.equals(ARG) || kw.equals(LET) || kw.equals(ACTION) || kw.equals(REFLEX) ) {
 			assertNameIsNotReserved(cd); // Actions, reflexes, states, etc.

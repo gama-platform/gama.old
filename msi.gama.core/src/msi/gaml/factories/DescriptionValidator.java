@@ -56,6 +56,7 @@ public class DescriptionValidator {
 
 	public static void verifyFacetType(final IDescription desc, final String facet, final IExpression expr,
 		final SymbolProto smd, final ModelDescription md, final TypesManager tm) {
+
 		final FacetProto fmd = smd.getPossibleFacets().get(facet);
 		if ( fmd == null ) { return; }
 
@@ -103,8 +104,8 @@ public class DescriptionValidator {
 		final TypesManager tm) {
 		final String tt = expr.literalValue();
 		final IType type = tm.get(tt);
-		if ( type == Types.NO_TYPE && !UNKNOWN.equals(type.toString()) && !IKeyword.SIGNAL.equals(type.toString()) ) {
-			desc.error("Facet '" + facet + "' is expecting a type name. " + type + " is not a type name",
+		if ( type == Types.NO_TYPE && !UNKNOWN.equals(tt) && !IKeyword.SIGNAL.equals(tt) ) {
+			desc.error("Facet '" + facet + "' is expecting a type name. " + tt + " is not a type name",
 				IGamlIssue.NOT_A_TYPE, facet, tt);
 		}
 	}
