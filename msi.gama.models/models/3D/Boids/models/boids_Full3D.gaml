@@ -3,7 +3,7 @@ global {
 	int number_of_agents parameter: 'Number of agents' <- 100 min: 1 max: 1000000;
 	int number_of_obstacles parameter: 'Number of obstacles' <- 0 min: 0;
 	float maximal_speed parameter: 'Maximal speed' <- 15.0 min: 0.1 max: 15.0;
-	int cohesion_factor parameter: 'Cohesion Factor' <- 200;
+	int cohesion_factor parameter: 'Cohesion Factor' <- 200; 
 	int alignment_factor parameter: 'Alignment Factor' <- 100; 
 	float minimal_distance parameter: 'Minimal Distance' <- 10.0; 
 	int maximal_turn parameter: 'Maximal Turn' <- 90 min: 0 max: 359; 
@@ -46,7 +46,7 @@ global {
 environment width: width_and_height_of_environment height: width_and_height_of_environment torus: torus_environment;
 
 entities {
-	species name: boids_goal skills: [moving] {
+	species boids_goal skills: [moving] {
 		const range type: float init: 20.0;
 		const size type: float init: 10.0;
 		
@@ -143,14 +143,14 @@ entities {
 		aspect sphere {
 			draw geometry: geometry (point(self.location)) depth:10;
 		}
-	} 
+	}  
 }
 
 
 experiment boids_3D type: gui {
 	output {
 		display Sky1 type:opengl refresh_every: 1 {
-			image name:'background' file:'../images/ocean.jpg' ;
+			image 'background' file:'../images/ocean.jpg' ;
 			species boids aspect: image transparency: 0.5;
 			species boids_goal;
 		}
