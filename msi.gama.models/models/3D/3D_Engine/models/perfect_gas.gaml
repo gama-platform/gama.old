@@ -92,14 +92,14 @@ entities {
     species floor skills: [physical3D]{
     	
     	aspect default {
-			draw geometry: shape color: rgb("black") empty:true;
+			draw shape color: rgb("black") empty:true;
 		}
     }
     species wall skills: [physical3D]{
     	rgb color;
     	float height;
     	aspect default {
-			draw geometry: shape color: rgb("black") depth:height empty:true;
+			draw shape color: rgb("black") depth:height empty:true;
 		}
     }
  	
@@ -111,14 +111,9 @@ entities {
 		float speed  <- speed_of_agents;  
 		int heading <- rnd(359);
 
-		geometry shape <- circle (10);// buffer(12);
-		
-		aspect default {
-			draw shape color: color depth:1;
-		}
 		
 		aspect sphere{
-			draw geometry: geometry (point(self.location)) color: rgb('blue') depth:radius;
+			draw sphere(radius) color: rgb('blue') ;
 		}
 		
 	}

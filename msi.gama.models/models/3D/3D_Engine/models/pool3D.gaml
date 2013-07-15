@@ -176,13 +176,13 @@ entities {
  
     species floor skills: [physical3D]{
     	aspect default {
-			draw geometry: shape color: rgb([10,114,63]) border:rgb([10,114,63]) ;
+			draw shape color: rgb([10,114,63]) border:rgb([10,114,63]) ;
 		}
     }
     species wall skills: [physical3D]{
     	rgb color;
     	aspect default {
-			draw geometry: shape color: color depth:10;
+			draw shape color: color depth:10;
 		}
     }
  

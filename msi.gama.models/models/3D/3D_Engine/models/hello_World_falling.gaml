@@ -43,7 +43,7 @@ entities {
  
     species floor skills: [physical3D]{    	
     	aspect default {
-			draw geometry: rectangle({width_of_environment,height_of_environment}) color: rgb([10,114,63]);
+			draw rectangle(width_of_environment,height_of_environment) color: rgb([10,114,63]);
 		}
     }
  
@@ -54,15 +54,13 @@ entities {
 		float speed  <- speed_of_agents;  
 		float radius;
 		int heading <- rnd(359);
-
-		//geometry shape <- circle (radius);// buffer(12);
-		
+	
 		aspect default {
 			draw shape color: color depth:1;
 		}
 		
 		aspect sphere{
-			draw geometry: geometry (point(self.location)) color: rgb([24,38,176]) depth:radius;
+			draw sphere(radius) color: rgb([24,38,176]) ;
 		}
 		
 	}

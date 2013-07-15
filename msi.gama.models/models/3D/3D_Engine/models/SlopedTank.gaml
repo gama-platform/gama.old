@@ -119,7 +119,7 @@ entities {
 		}
 		
 		aspect sphere{
-			draw geometry: geometry (point(self.location)) color: rgb('blue') depth:radius;
+			draw circle(radius) color: rgb('blue');
 		}
 		
 	}
