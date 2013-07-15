@@ -21,7 +21,7 @@ entities {
 		reflex testConnection{
 			do action: helloWorld;
 //			if (self testConnection[ params::SSAS]){
-				let l1 type:List <-list(self select [params:: SSAS
+				let l1 type:list <-list(self select [params:: SSAS
 							, select:: 
 					 "SELECT { [Measures].[Quantity], [Measures].[Price] } ON COLUMNS ,"
 					 			+ " { { { [Time].[Year].[All].CHILDREN } * "
@@ -38,7 +38,7 @@ entities {
 //			}
 
 //			if (self testConnection[ params::MONDRIANXMLA]){
-				let l2 type:List <-list(self select [params:: MONDRIANXMLA
+				let l2 type:list <-list(self select [params:: MONDRIANXMLA
 								, select::
 			  " select {[Measures].[Unit Sales], [Measures].[Store Cost], [Measures].[Store Sales]} ON COLUMNS,"
 			 +"     Hierarchize(Union(Union(Union({([Promotion Media].[All Media], [Product].[All Products])}, Crossjoin([Promotion Media].[All Media].Children, {[Product].[All Products]})), "
@@ -54,7 +54,7 @@ entities {
 //			}
 
 // 			if (self testConnection[ params::MONDRIAN]){
-				let l3 type:List <-list(self select [params:: MONDRIAN
+				let l3 type:list <-list(self select [params:: MONDRIAN
 								, select::
 			  " select {[Measures].[Unit Sales], [Measures].[Store Cost], [Measures].[Store Sales]} ON COLUMNS,"
 			 +"     Hierarchize(Union(Union(Union({([Promotion Media].[All Media], [Product].[All Products])}, Crossjoin([Promotion Media].[All Media].Children, {[Product].[All Products]})), "
