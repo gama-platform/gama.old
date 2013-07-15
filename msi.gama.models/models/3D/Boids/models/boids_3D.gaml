@@ -286,9 +286,9 @@ entities {
 		
 		aspect dynamicColor{
 			let hue <- heading/360;
-			let  color <- color hsb_to_rgb ([hue,1.0,1.0]);
+			let  cc <- color hsb_to_rgb ([hue,1.0,1.0]);
 			let geometry1 <- geometry (triangle(20));
-			draw geometry: geometry1    size: 15 rotate: 90 + heading color: color border:color depth:5;
+			draw geometry: geometry1    size: 15 rotate: 90 + heading color: cc border:cc depth:5;
 		}
 	} 
 	
