@@ -50,7 +50,7 @@ public class EditSpeciesFrame extends EditFrame {
 	//Variables
 	int cpt = 1;
 	private Table table_vars;
-	private String[] types_base = {"int", "float", "string", "rgb", "pair", "list", "map", "file", "geometry", "path", "graph"};
+	private String[] types_base = {"int", "float", "string", "bool", "rgb", "pair", "list", "map", "file", "geometry", "path", "graph"};
 	private List<String> types = new GamaList<String>(types_base);
 	
 	//Shapes
