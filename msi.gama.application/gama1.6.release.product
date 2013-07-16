@@ -71,7 +71,6 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="com.jogamp.jogl-macosx-universal" fragment="true"/>
       <plugin id="com.jogamp.jogl-windows-amd64" fragment="true"/>
       <plugin id="com.jogamp.jogl-windows-i586" fragment="true"/>
-      <plugin id="irit.maelia.gaml.additions"/>
       <plugin id="javax.inject"/>
       <plugin id="javax.servlet"/>
       <plugin id="javax.servlet.jsp"/>
@@ -85,25 +84,14 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="msi.gama.processor"/>
       <plugin id="msi.gaml.extensions.fipa"/>
       <plugin id="org.antlr.runtime"/>
-      <plugin id="org.apache.ant"/>
       <plugin id="org.apache.commons.cli"/>
       <plugin id="org.apache.commons.el"/>
       <plugin id="org.apache.commons.lang"/>
       <plugin id="org.apache.commons.logging"/>
-      <plugin id="org.apache.jasper"/>
       <plugin id="org.apache.log4j"/>
       <plugin id="org.apache.lucene"/>
       <plugin id="org.apache.lucene.analysis"/>
       <plugin id="org.apache.lucene.core"/>
-      <plugin id="org.apache.lucene.highlighter"/>
-      <plugin id="org.apache.lucene.memory"/>
-      <plugin id="org.apache.lucene.misc"/>
-      <plugin id="org.apache.lucene.queries"/>
-      <plugin id="org.apache.lucene.snowball"/>
-      <plugin id="org.apache.lucene.spellchecker"/>
-      <plugin id="org.eclipse.ant.core"/>
-      <plugin id="org.eclipse.ant.launching"/>
-      <plugin id="org.eclipse.ant.ui"/>
       <plugin id="org.eclipse.compare"/>
       <plugin id="org.eclipse.compare.core"/>
       <plugin id="org.eclipse.core.commands"/>
@@ -161,30 +149,15 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.equinox.event"/>
       <plugin id="org.eclipse.equinox.frameworkadmin"/>
       <plugin id="org.eclipse.equinox.frameworkadmin.equinox"/>
-      <plugin id="org.eclipse.equinox.http.jetty"/>
-      <plugin id="org.eclipse.equinox.http.servlet"/>
-      <plugin id="org.eclipse.equinox.p2.artifact.repository"/>
       <plugin id="org.eclipse.equinox.p2.core"/>
-      <plugin id="org.eclipse.equinox.p2.director"/>
-      <plugin id="org.eclipse.equinox.p2.director.app"/>
       <plugin id="org.eclipse.equinox.p2.engine"/>
-      <plugin id="org.eclipse.equinox.p2.garbagecollector"/>
-      <plugin id="org.eclipse.equinox.p2.jarprocessor"/>
       <plugin id="org.eclipse.equinox.p2.metadata"/>
       <plugin id="org.eclipse.equinox.p2.metadata.repository"/>
-      <plugin id="org.eclipse.equinox.p2.operations"/>
-      <plugin id="org.eclipse.equinox.p2.publisher"/>
-      <plugin id="org.eclipse.equinox.p2.publisher.eclipse"/>
       <plugin id="org.eclipse.equinox.p2.repository"/>
-      <plugin id="org.eclipse.equinox.p2.repository.tools"/>
-      <plugin id="org.eclipse.equinox.p2.touchpoint.eclipse"/>
-      <plugin id="org.eclipse.equinox.p2.ui"/>
-      <plugin id="org.eclipse.equinox.p2.updatesite"/>
       <plugin id="org.eclipse.equinox.preferences"/>
       <plugin id="org.eclipse.equinox.registry"/>
       <plugin id="org.eclipse.equinox.security"/>
       <plugin id="org.eclipse.equinox.security.macosx" fragment="true"/>
-      <plugin id="org.eclipse.equinox.security.ui"/>
       <plugin id="org.eclipse.equinox.security.win32.x86" fragment="true"/>
       <plugin id="org.eclipse.equinox.security.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.equinox.simpleconfigurator"/>
@@ -211,11 +184,7 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.ltk.ui.refactoring"/>
       <plugin id="org.eclipse.osgi"/>
       <plugin id="org.eclipse.osgi.services"/>
-      <plugin id="org.eclipse.pde.build"/>
-      <plugin id="org.eclipse.pde.core"/>
-      <plugin id="org.eclipse.pde.launching"/>
       <plugin id="org.eclipse.pde.runtime"/>
-      <plugin id="org.eclipse.pde.ui"/>
       <plugin id="org.eclipse.search"/>
       <plugin id="org.eclipse.swt"/>
       <plugin id="org.eclipse.swt.carbon.macosx" fragment="true"/>
@@ -242,11 +211,9 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.ui"/>
       <plugin id="org.eclipse.ui.browser"/>
       <plugin id="org.eclipse.ui.carbon" fragment="true"/>
-      <plugin id="org.eclipse.ui.cheatsheets"/>
       <plugin id="org.eclipse.ui.cocoa" fragment="true"/>
       <plugin id="org.eclipse.ui.console"/>
       <plugin id="org.eclipse.ui.editors"/>
-      <plugin id="org.eclipse.ui.externaltools"/>
       <plugin id="org.eclipse.ui.forms"/>
       <plugin id="org.eclipse.ui.ide"/>
       <plugin id="org.eclipse.ui.ide.application"/>
@@ -266,7 +233,6 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.xtend"/>
       <plugin id="org.eclipse.xtend.lib"/>
       <plugin id="org.eclipse.xtend.typesystem.emf"/>
-      <plugin id="org.eclipse.xtend2.lib"/>
       <plugin id="org.eclipse.xtext"/>
       <plugin id="org.eclipse.xtext.builder"/>
       <plugin id="org.eclipse.xtext.common.types"/>
@@ -284,13 +250,8 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.xtext.xbase.lib"/>
       <plugin id="org.hamcrest.core"/>
       <plugin id="org.junit"/>
-      <plugin id="org.mortbay.jetty.server"/>
-      <plugin id="org.mortbay.jetty.util"/>
-      <plugin id="org.objectweb.asm"/>
       <plugin id="org.polarion.eclipse.team.svn.connector"/>
       <plugin id="org.polarion.eclipse.team.svn.connector.svnkit16"/>
-      <plugin id="org.sat4j.core"/>
-      <plugin id="org.sat4j.pb"/>
       <plugin id="simtools.gaml.extensions.physics"/>
       <plugin id="simtools.gaml.extensions.traffic"/>
       <plugin id="ummisco.gaml.extensions.maths"/>
