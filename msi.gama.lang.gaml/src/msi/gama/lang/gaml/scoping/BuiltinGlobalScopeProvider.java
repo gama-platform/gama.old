@@ -37,7 +37,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 
 		private final Map<QualifiedName, IEObjectDescription> elements;
 
-		protected MapBasedScope(IScope parent, Map<QualifiedName, IEObjectDescription> elements) {
+		protected MapBasedScope(final IScope parent, final Map<QualifiedName, IEObjectDescription> elements) {
 			super(parent, false);
 			this.elements = elements;
 		}
@@ -48,14 +48,14 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		}
 
 		@Override
-		protected Iterable<IEObjectDescription> getLocalElementsByName(QualifiedName name) {
+		protected Iterable<IEObjectDescription> getLocalElementsByName(final QualifiedName name) {
 			IEObjectDescription result = elements.get(name);
 			if ( result == null ) { return Collections.emptyList(); }
 			return Collections.singleton(result);
 		}
 
 		@Override
-		protected boolean isShadowed(IEObjectDescription fromParent) {
+		protected boolean isShadowed(final IEObjectDescription fromParent) {
 			return elements.containsKey(fromParent.getName());
 		}
 	}
@@ -69,6 +69,14 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	private static Map<EClass, Map<QualifiedName, IEObjectDescription>> descriptions = null;
 	private EClass eType, eVar, eSkill, eAction, eUnit;
 
+	Resource createResource(final String uri) {
+		Resource r = rs.getResource(URI.createURI(uri), false);
+		if ( r == null ) {
+			r = rs.createResource(URI.createURI(uri));
+		}
+		return r;
+	}
+
 	void initResources() {
 		eType = GamlPackage.eINSTANCE.getTypeDefinition();
 		eVar = GamlPackage.eINSTANCE.getVarDefinition();
@@ -76,11 +84,11 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		eAction = GamlPackage.eINSTANCE.getActionDefinition();
 		eUnit = GamlPackage.eINSTANCE.getUnitFakeDefinition();
 		resources = new LinkedHashMap();
-		resources.put(eType, rs.createResource(URI.createURI("gama:/types.xmi")));
-		resources.put(eVar, rs.createResource(URI.createURI("gama:/vars.xmi")));
-		resources.put(eSkill, rs.createResource(URI.createURI("gama:/skills.xmi")));
-		resources.put(eUnit, rs.createResource(URI.createURI("gama:/units.xmi")));
-		resources.put(eAction, rs.createResource(URI.createURI("gama:/actions.xmi")));
+		resources.put(eType, createResource("types.xmi"));
+		resources.put(eVar, createResource("vars.xmi"));
+		resources.put(eSkill, createResource("skills.xmi"));
+		resources.put(eUnit, createResource("units.xmi"));
+		resources.put(eAction, createResource("actions.xmi"));
 		descriptions = new HashMap();
 		descriptions.put(eVar, new LinkedHashMap());
 		descriptions.put(eType, new LinkedHashMap());
@@ -89,7 +97,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		descriptions.put(eAction, new LinkedHashMap());
 	}
 
-	static void add(EClass eClass, String t) {
+	static void add(final EClass eClass, final String t) {
 		GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eClass);
 		// TODO Add the fields definition here
 		stub.setName(t);
@@ -107,7 +115,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	/**
 	 * Get the object descriptions for the built-in types.
 	 */
-	public Map<QualifiedName, IEObjectDescription> getEObjectDescriptions(EClass eClass) {
+	public Map<QualifiedName, IEObjectDescription> getEObjectDescriptions(final EClass eClass) {
 		if ( descriptions == null ) {
 			initResources();
 			for ( String t : Types.getTypeNames() ) {
