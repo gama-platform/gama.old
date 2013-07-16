@@ -124,6 +124,40 @@ experiment road_traffic type: gui {
 	}
 }
 
+experiment road_traffic_multi_layer type: gui {
+	parameter 'Shapefile for the buildings:' var: shape_file_buildings category: 'GIS' ;
+	parameter 'Shapefile for the roads:' var: shape_file_roads category: 'GIS' ;
+	parameter 'Shapefile for the bounds:' var: shape_file_bounds category: 'GIS' ;
+	parameter 'Number of people agents' var: nb_people category: 'People' ;
+	parameter 'Earliest hour to start work' var: min_work_start category: 'People' ;
+	parameter 'Latest hour to start work' var: max_work_start category: 'People' ;
+	parameter 'Earliest hour to end work' var: min_work_end category: 'People' ;
+	parameter 'Latest hour to end work' var: max_work_end category: 'People' ;
+	parameter 'minimal speed' var: min_speed category: 'People' ;
+	parameter 'maximal speed' var: max_speed category: 'People' ;
+	parameter 'Value of destruction when a people agent takes a road' var: destroy category: 'Road' ;
+
+	
+	output {
+		display city_display refresh_every: 1 type: opengl ambient_light:0.1{
+			species people aspect: base z:0;
+			species road aspect: base z:0.25;
+			species building aspect:base z:0.5;
+		}
+	}
+}
+
+experiment AnimatedView type: gui {
+	output {
+
+	   display animatedView type: opengl ambient_light: 0.1 {
+	   	    species road aspect: base z:0;
+			species building aspect: base position: {0,0,time*2};
+			species people aspect:base position: {0,0,time*4};
+		}
+	} 
+}
+
 
 
 
