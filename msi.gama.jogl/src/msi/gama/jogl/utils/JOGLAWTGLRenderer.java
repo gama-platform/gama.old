@@ -67,6 +67,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private boolean useTessellation = true;
 	// facet "inertia"
 	private boolean inertia = false;
+	// facet "inertia"
+	private boolean stencil = false;
 	// facet "drawEnv"
 	private boolean drawEnv = true;
 
@@ -91,7 +93,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public Vector3D worldCoordinates = new Vector3D();
 	public GamaPoint roiCenter = new GamaPoint(0, 0);
 
-	public boolean stencil = false;
+
 
 	private double startTime = 0;
 	private int frameCount = 0;
@@ -229,10 +231,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				// gl.glDisable(GL_DEPTH_TEST); // Turn depth testing off
 			} else {
 				gl.glDisable(GL_BLEND); // Turn blending off
-				if ( !stencil ) {
+				if ( !getStencil() ) {
 					gl.glEnable(GL_DEPTH_TEST);
 				}
-
 				else {
 					gl.glEnable(GL_STENCIL_TEST);
 				}
@@ -487,6 +488,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public boolean getInertia() {
 		return inertia;
+	}
+	
+	public void setStencil(final boolean st) {
+		this.stencil = st;
+	}
+
+	public boolean getStencil() {
+		return stencil;
 	}
 
 	public void setDrawEnv(final boolean denv) {

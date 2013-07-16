@@ -56,6 +56,7 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.INERTIA, type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.STENCIL, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.DRAWENV, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.AMBIENT_LIGHT, type = { IType.INT, IType.COLOR }, optional = true),
 	@facet(name = IKeyword.DIFFUSE_LIGHT, type = { IType.INT, IType.COLOR }, optional = true),
@@ -81,6 +82,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean output3D = false;
 	private boolean tesselation = true;
 	private boolean inertia = false;
+	private boolean stencil = false;
 	private boolean drawEnv = true;
 	private Color ambientLightColor = new GamaColor(125, 125, 125);
 	private Color diffuseLightColor = new GamaColor(125, 125, 125);
@@ -153,6 +155,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression inert = getFacet(IKeyword.INERTIA);
 		if ( inert != null ) {
 			setInertia(Cast.asBool(getScope(), inert.value(getScope())));
+		}
+		
+		final IExpression st = getFacet(IKeyword.STENCIL);
+		if ( st != null ) {
+			setStencil(Cast.asBool(getScope(), st.value(getScope())));
 		}
 		
 		final IExpression denv = getFacet(IKeyword.DRAWENV);
@@ -454,6 +461,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	
 	private void setInertia(final boolean inertia) {
 		this.inertia = inertia;
+	}
+	
+	public boolean getStencil() {
+		return stencil;
+	}
+	
+	private void setStencil(final boolean stencil) {
+		this.stencil = stencil;
 	}
 	
 	public boolean getDrawEnv() {
