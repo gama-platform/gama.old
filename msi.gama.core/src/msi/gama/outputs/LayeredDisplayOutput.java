@@ -52,7 +52,7 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { LayeredDisplayOutput.JAVA2D,
-		LayeredDisplayOutput.OPENGL, LayeredDisplayOutput.SWT }, optional = true),
+		LayeredDisplayOutput.OPENGL, LayeredDisplayOutput.THREED,LayeredDisplayOutput.SWT }, optional = true),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.INERTIA, type = IType.BOOL, optional = true),
@@ -70,6 +70,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	public static final String JAVA2D = "java2D";
 	public static final String OPENGL = "opengl";
+	public static final String THREED = "3D";
 	public static final String SWT = "swt";
 
 	private List<AbstractLayerStatement> layers;
@@ -436,7 +437,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	}
 
 	public boolean isOpenGL() {
-		return displayType.equals(OPENGL);
+		return (displayType.equals(OPENGL) || displayType.equals(THREED)) ;
 	}
 
 	public boolean getTesselation() {

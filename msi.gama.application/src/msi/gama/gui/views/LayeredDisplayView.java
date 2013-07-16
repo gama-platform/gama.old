@@ -73,7 +73,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 		// Add the toggle 3D view button for opengl display
 		IDescription description = output.getDescription();
-		if ( description != null && description.getFacets().equals("type", "opengl") ) {
+		if ( description != null && (description.getFacets().equals("type", "opengl") || description.getFacets().equals("type", "3D"))) {
 			return new Integer[] { PAUSE, REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT, SEPARATOR,
 				ZOOM_IN, ZOOM_INDICATOR, ZOOM_OUT, ZOOM_FIT, CAMERA, FOCUS, SEPARATOR, ARCBALL, SWITCHCAMERA,
 				SEPARATOR, PICKING, SELECT_RECTANGLE, SEPARATOR, TRIANGULATION, SPLITLAYER, ROTATION };
