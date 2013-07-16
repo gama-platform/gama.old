@@ -112,7 +112,7 @@ entities {
 
 experiment morpho type: gui {
 	output {
-		display morpho refresh_every: 1 type: opengl tesselation:false ambient_light:0.2 autosave:true{
+		display morpho refresh_every: 1 type: opengl tesselation:false ambient_light:0.2{
 			species section;
 			species riverPlan;
 		}
