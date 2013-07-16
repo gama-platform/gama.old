@@ -5,11 +5,11 @@ global {
 	int height_of_environment parameter: 'Dimensions' init:200  ; 
 	int range_of_agents parameter: 'Range of Agents' min: 1 <- 25 ;
 	float speed_of_agents parameter: 'Speed of Agents' min: 0.1  <- 2.0 ; 
-	int size_of_agents <- 10;
+	int size_of_agents <- 1;
 	Physical3DWorld world2;
 	init {
 
-		create ball number: 2{
+		create ball number: 100{
 			set location <-  {rnd(width_of_environment),rnd(height_of_environment)} add_z 100;
             set radius <-2;
 			set collisionBound <-  ["shape"::"sphere","radius"::radius];
@@ -67,7 +67,7 @@ entities {
 }
 experiment Rain type: gui {
 output {
-	display Rain refresh_every: 1 type:opengl{
+	display Rain  type: opengl {
 		species floor;
 	    species ball aspect:sphere;			
 	}

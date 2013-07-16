@@ -10,7 +10,6 @@ global {
 	float size_of_the_wall <- 10.0;
 	int offset<-10;
 
-
 	Physical3DWorld world2;
 	init {
 	
@@ -118,14 +117,12 @@ entities {
 		
 	}
 }
-experiment pool type: gui {
+experiment perfect_gas type: gui {
 output {
-	display Circle refresh_every: 1 type:opengl      {
-		//image name:'background' file:'../images/billard2.jpg' ;
+	display Cube type:opengl ambient_light:100{
 		species floor transparency:0.5;
 		species wall transparency:0.5;
 	    species ball aspect:sphere;			
-	    
 	}
 }
 }

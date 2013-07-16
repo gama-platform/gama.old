@@ -205,7 +205,7 @@ entities {
 }
 experiment pool type: gui {
 output {
-	display Circle refresh_every: 1 type:opengl tesselation:true ambient_light:0.5{
+	display Circle refresh_every: 1 type:opengl tesselation:true ambient_light:100{
 		//image name:'background' file:'../images/billard2.jpg' ;
 		species floor;
 		species wall;

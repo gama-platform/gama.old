@@ -121,7 +121,7 @@ entities {
 }
 experiment tank type: gui {
 output {
-	display Circle refresh_every: 1 type:opengl ambient_light:0.1{
+	display Circle refresh_every: 1 type:opengl ambient_light:50{
 		species floor;
 		species wall;
 	    species ball aspect:sphere;			
