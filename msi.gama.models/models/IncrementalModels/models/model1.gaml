@@ -1,12 +1,9 @@
 /**
  *  model1
- *  Author: hqnghi
- *  Description: 
+ *  This model illustrates how to create simple agent and make them move in their environment.
  */
 
 model model1
-
-/* Insert your model definition here */
 
 global{
 	geometry shape<-envelope(square(100));

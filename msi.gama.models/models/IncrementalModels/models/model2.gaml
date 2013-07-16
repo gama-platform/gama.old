@@ -1,8 +1,11 @@
 /**
  *  model2
- *  Author: hqnghi
- *  Description: 
- */ model model2 /* Insert your model definition here */ global {
+ *  This model illustrates how to load GIS data (shapefiles) and to read attributes from GIS data
+ */ 
+model model2 
+ 
+ 
+global {
 	file shape_file_buildings <- file('../includes/building.shp');
 	geometry shape <- envelope(shape_file_buildings);
 	init {
@@ -12,11 +15,8 @@
 			} else if type = 'Residential' {
 				mycolor <- rgb('red');
 			}
-
 		}
-
 	}
-
 }
 
 entities {
@@ -27,21 +27,17 @@ entities {
 		aspect asp1 {
 			draw shape color: mycolor;
 			if (company != "") {
-				draw "" + company at: location size: 20 color:rgb('green');
+				draw "" + company at: location size: 20 color:rgb('black');
 			}
-
 		}
-
 	}
-
 }
 
-experiment exp1 type: gui {
+experiment exp2 type: gui {
 	output {
 		display disp1 refresh_every: 1 {
 			species Buildings aspect: asp1;
 		}
-
 	}
 
 }
