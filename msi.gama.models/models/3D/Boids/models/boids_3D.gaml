@@ -1,6 +1,5 @@
 model boids 
 
-
 global { 
 	int number_of_agents parameter: 'Number of agents' <- 100 min: 1 max: 1000000;
 	int number_of_obstacles parameter: 'Number of obstacles' <- 0 min: 0;
@@ -300,8 +299,22 @@ entities {
 }
 
 
-
 experiment start type: gui {
+	output {
+
+
+		display RealBoids  type:opengl ambient_light:255{
+			image name:'background' file:'../images/ocean.jpg' z:0;
+			species boids aspect: image z:0.2 transparency:0.5;
+			species boids_goal z:0.25 transparency:0.2;
+			species obstacle ;
+			species boids  aspect: dynamicColor z:0.19 transparency:0.2 ;
+			species boids_goal  transparency:0.2; 		
+		}
+	}
+}
+
+experiment MultipleView type: gui {
 	output {
 
 
