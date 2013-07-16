@@ -1,7 +1,7 @@
 /**
  *  macro_graph
  *  Author: Arnaud Grignard
- *  Description: Display the number of node according to the class the belong.
+ *  Description: Display the number of node according to the class they belong.
  */
  
  
@@ -21,8 +21,6 @@
 /*  dendrogramme */
 
 model macro_graph
-
-//import "./modavi_output.gaml"
  
 global {
 	
@@ -256,7 +254,20 @@ entities {
 	
 	species scheduler schedules : shuffle (list(node)) + shuffle (list(edge)) + shuffle (list(macroNode)) + shuffle (list(macroEdge)) + list(macroGraph); 
 }
+
+
 experiment MODAVI type: gui {
+	output {			
+		display MODAVI type:opengl ambient_light: 100{
+			species node aspect: classGenericColored; 
+			species edge aspect: edgeGenericSpatialized;
+			species macroNode aspect:Generic position: {0,0,25};
+			species macroEdge aspect:base position: {0,0,25};	
+		}
+	}		
+}
+
+experiment MODAVI_Multiple_View type: gui {
 	output {	
 		
 		display RealModel  type:opengl ambient_light: 100{
@@ -264,10 +275,10 @@ experiment MODAVI type: gui {
 		}
 		
 		display MODAVI type:opengl ambient_light: 100{
-			species node aspect: classGenericColored z:0.0; 
-			species edge aspect: edgeGenericSpatialized z:0.0;
-			species macroNode aspect:Generic z:0.0 position: {125,0.0,0};
-			species macroEdge aspect:base z:0.0 position: {125,0.0,0};	
+			species node aspect: classGenericColored; 
+			species edge aspect: edgeGenericSpatialized;
+			species macroNode aspect:Generic position: {125,0.0,0};
+			species macroEdge aspect:base position: {125,0.0,0};	
 		}
 		
 		display MODAVI_3D type:opengl ambient_light: 100{
