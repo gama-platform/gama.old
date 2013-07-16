@@ -98,6 +98,18 @@ public abstract class AbstractOutputManager extends Symbol implements IOutputMan
 	public boolean init(final IScope scope) {
 		// GuiUtils.debug("AbstractOutputManager.init");
 		for ( final IOutput output : outputs.values() ) {
+			
+			
+			//////////////////////////////////
+			// TODO for instant, fix issue 470, must be replaced by better solution 
+			try {
+				Thread.sleep(200);
+			} catch (InterruptedException e1) {
+				e1.printStackTrace();
+			}
+			//////////////////////////////////
+			
+			
 			if ( scope.init(output) ) {
 				output.resume();
 				if ( scope.step(output) ) {
