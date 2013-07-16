@@ -969,7 +969,7 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "distance_to")
-		@doc()
+		@doc(value = "An Euclidean distance between two points.")
 		// No documentation because it is same same as the previous one (but optimized for points?)
 		public static Double distance_to(final IScope scope, final GamaPoint source, final GamaPoint target) {
 			return scope.getTopology().distanceBetween(scope, source, target);
@@ -984,7 +984,7 @@ public abstract class Spatial {
 		}
 
 		@operator("path_to")
-		@doc()
+		@doc(value = "A shortest path between two points considering the topology of the agent applying the operator.")
 		// No documentation because it is same same as the previous one (but optimized for points?)
 		public static IPath path_to(final IScope scope, final GamaPoint g, final GamaPoint g1)
 			throws GamaRuntimeException {
@@ -1119,7 +1119,7 @@ public abstract class Spatial {
 		}
 
 		@operator("intersects")
-		@doc()
+		@doc(value = "A boolean, equal to true if the geometry (left operand) intersects the point (right operand).")
 		// no documentation because same same as before but optimized for points.
 		public static Boolean intersects(final IShape g1, final GamaPoint p) {
 			if ( g1 == null || p == null ) { return false; }
@@ -1279,7 +1279,10 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "neighbours_at", content_type = IType.AGENT)
-		@doc()
+		@doc(value = "a list, containing all the agents located at a distance inferior or equal to the right-hand operand (point).",
+				comment = "The topology used to compute the neighbourhood  is the one of the left-operand if this one is an agent; otherwise the one of the agent applying the operator.", examples = { "({50, 50} neighbours_at (10)) --: returns all the agents located at a distance lower or equal to 10 to point {50, 50}." }, see = {
+				"neighbours_of", "closest_to", "overlapping", "agents_overlapping", "agents_inside", "agent_closest_to",
+				"at_distance" })
 		// no doc, because same same as before but optimized for "point".
 		public static IList neighbours_at(final IScope scope, final GamaPoint agent, final Double distance)
 			throws GamaRuntimeException {

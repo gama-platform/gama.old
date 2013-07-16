@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -26,7 +26,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.IExpressionCompiler;
 
 /**
- * Written by drogoul Modified on 11 dŽc. 2010
+ * Written by drogoul Modified on 11 dï¿½c. 2010
  * 
  * @todo Description
  * 
@@ -74,7 +74,7 @@ public class Points {
 	}
 
 	@operator(value = IKeyword.DIVIDE, can_be_const = true)
-	@doc()
+	@doc(value = "Returns a point with coordinates divided by the number", examples = "{5, 7.5} / 2.5 --: {2, 3}")
 	public static ILocation divide(final GamaPoint p, final Double d) {
 		if ( p.hasZ ) { return new GamaPoint(p.x / d, p.y / d, p.z / d); }
 		return new GamaPoint(p.x / d, p.y / d);
@@ -89,7 +89,7 @@ public class Points {
 	}
 
 	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
-	@doc()
+	@doc(value = "Returns a point with coordinate multiplied by the number.", examples = "{2, 3} + 2.5 --: {5, 7.5}")
 	public static ILocation multiply(final GamaPoint p1, final Double d) {
 		if ( p1.hasZ ) { return new GamaPoint(p1.x * d, p1.y * d, p1.z * d); }
 		return new GamaPoint(p1.x * d, p1.y * d);
@@ -105,7 +105,7 @@ public class Points {
 
 	// ATTENTION: produit scalaire.
 	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
-	@doc(special_cases = "if both operands are points, returns their scalar product", examples = "{2,5} * {4.5, 5} 	--:  34.0")
+	@doc(value = "Returns the scalar product of two points.", special_cases = "if both operands are points, returns their scalar product", examples = "{2,5} * {4.5, 5} 	--:  34.0")
 	public static Double multiply(final GamaPoint p1, final GamaPoint p) {
 		if ( p1.hasZ && p.hasZ ) { return p1.x * p.x + p1.y * p.y + p1.z * p.z; }
 		return p1.x * p.x + p1.y * p.y;
@@ -119,7 +119,7 @@ public class Points {
 	}
 
 	@operator(value = IKeyword.PLUS, can_be_const = true)
-	@doc(special_cases = "if both operands are points, returns their sum.", examples = "{1, 2} + {4, 5} 	--:	 {5.0;7.0}")
+	@doc(value = "Returns a point with coordinate summing of the two operands.", special_cases = "if both operands are points, returns their sum.", examples = "{1, 2} + {4, 5} 	--:	 {5.0;7.0}")
 	public static ILocation add(final GamaPoint p1, final GamaPoint p) {
 		if ( p1.hasZ && p.hasZ ) { return new GamaPoint(p1.x + p.x, p1.y + p.y, p1.z + p.z); }
 		return new GamaPoint(p1.x + p.x, p1.y + p.y, p1.z);
@@ -140,7 +140,7 @@ public class Points {
 	}
 
 	@operator(value = IKeyword.MINUS, can_be_const = true)
-	@doc(special_cases = "if left-hand operand is a point and the right-hand a number, returns a new point with each coordinate as the difference of the operand coordinate with this number.", examples = "{1, 2} - 4.5 	--:	 {-3.5, -2.5}")
+	@doc(value = "Returns a point with coordinate resulting from the first operand minus the second operand.", special_cases = "if left-hand operand is a point and the right-hand a number, returns a new point with each coordinate as the difference of the operand coordinate with this number.", examples = "{1, 2} - 4.5 	--:	 {-3.5, -2.5}")
 	public static ILocation substract(final GamaPoint p1, final Double p) {
 		if ( p1.hasZ ) { return new GamaPoint(p1.x - p, p1.y - p, p1.z - p); }
 		return new GamaPoint(p1.x - p, p1.y - p);

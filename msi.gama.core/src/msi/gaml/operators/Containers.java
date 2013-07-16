@@ -119,6 +119,8 @@ public class Containers {
 	}
 
 	@operator(value = { "copy_between" /* , "copy" */}, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@doc(value = "Returns a list having elements copied from the first operand (input list). The indexes of copied elements are determined by the second and third operands.",
+			examples = {" copy_between ([4, 1, 6, 9 ,7], 1, 3) --: [1, 6, 9]"})
 	public static IList copy_between(final IList l1, final Integer begin, final Integer end) {
 		final int beginIndex = begin < 0 ? 0 : begin;
 		final int size = nullCheck(l1).size();

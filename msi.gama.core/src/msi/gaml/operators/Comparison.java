@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -37,6 +37,8 @@ public class Comparison {
 	public final static String LTE = "<=";
 
 	@operator(value = "between", can_be_const = true)
+	@doc(value = "returns true the first integer operand is bigger than the second integer operand and smaller than the third integer operand", 
+		examples = "bool e :-- between(5, 1, 10);", see = "")
 	public static Boolean between(final Integer a, final Integer inf, final Integer sup) {
 		if ( inf > sup ) { return false; }
 		return a >= sup ? false : a > inf;
@@ -134,28 +136,28 @@ public class Comparison {
 	}
 
 	@operator(value = LTE, can_be_const = true)
-	@doc(examples = { "3 <= 2.5  --: false" })
+	@doc(value = "true if the left-hand operand is less or equal than the right-hand operand, false otherwise.", examples = { "3 <= 2.5  --: false" })
 	public static Boolean lessOrEqual(final Integer a, final Double b) {
 		if ( a == null || b == null ) { return false; }
 		return a <= b;
 	}
 
 	@operator(value = LTE, can_be_const = true)
-	@doc(examples = { "7.0 <= 7  --: true" })
+	@doc(value = "true if the left-hand operand is less or equal than the right-hand operand, false otherwise.", examples = { "7.0 <= 7  --: true" })
 	public static Boolean lessOrEqual(final Double a, final Integer b) {
 		if ( a == null || b == null ) { return false; }
 		return a <= b;
 	}
 
 	@operator(value = LTE, can_be_const = true)
-	@doc(examples = { "3.5 <= 3.5  --: true" })
+	@doc(value = "true if the left-hand operand is less or equal than the right-hand operand, false otherwise.", examples = { "3.5 <= 3.5  --: true" })
 	public static Boolean lessOrEqual(final Double a, final Double b) {
 		if ( a == null || b == null ) { return false; }
 		return !(a > b);
 	}
 
 	@operator(value = { "=" }, can_be_const = true)
-	@doc(value = "true if both operands are equal, false otherwise", examples = {
+	@doc(value = "returns true if both operands are equal, false otherwise", examples = {
 		"3 = 3    	--: true", "4.5 = 4.7  	--:  false" }, see = { "!=" })
 	public static Boolean equal(final Double a, final Double b) {
 		return a == null ? b == null : IntervalSize.isZeroWidth(a, b);
@@ -163,12 +165,16 @@ public class Comparison {
 	}
 
 	@operator(value = { "=" }, can_be_const = true)
+	@doc(value = "returns true if both operands are equal, false otherwise", examples = {
+			"3 = 3.0    	--: true", "4 = 4.7  	--:  false" }, see = { "!=" })
 	public static Boolean equal(final Integer a, final Double b) {
 		return a == null ? b == null : new Double(a).equals(b);
 		// return !(a < b) && !(a > b);
 	}
 
 	@operator(value = { "=" }, can_be_const = true)
+	@doc(value = "returns true if both operands are equal, false otherwise", examples = {
+			"3.0 = 3    	--: true", "4.7 = 4  	--:  false" }, see = { "!=" })
 	public static Boolean equal(final Double a, final Integer b) {
 		return a == null ? b == null : new Double(b).equals(a);
 		// return !(a < b) && !(a > b);
@@ -184,7 +190,8 @@ public class Comparison {
 	}
 
 	@operator(value = LTE, can_be_const = true)
-	@doc(special_cases = { "if the operands are strings, a lexicographic comparison is performed" }, examples = { "abc <= aeb  --: true" })
+	@doc(value = "A lexicographic comparison of two strings. Returns true if the left-hand operand is smaller than or equal to the right-hand operand, false otherwise.",
+			examples = { "abc <= aeb  --: true" })
 	public static Boolean lessOrEqual(final String a, final String b) {
 		if ( a == null ) { return false; }
 		int i = a.compareTo(b);
@@ -192,8 +199,8 @@ public class Comparison {
 	}
 
 	@operator(value = GTE, can_be_const = true)
-	@doc(special_cases = { "if the operands are strings, a lexicographic comparison is performed" }, examples = {
-		"abc >= aeb  --: false", "abc >= abc  --: true" })
+	@doc(value = "A lexicographic comparison of two strings. Returns true if the left-hand operand is greater than or equal to the right-hand operand, false otherwise.",
+			examples = {"abc >= aeb  --: false", "abc >= abc  --: true" })
 	public static Boolean greaterOrEqual(final String a, final String b) {
 		if ( a == null ) { return false; }
 		int i = a.compareTo(b);
@@ -201,7 +208,8 @@ public class Comparison {
 	}
 
 	@operator(value = LT, can_be_const = true)
-	@doc(special_cases = { "if the operands are strings, a lexicographic comparison is performed" }, examples = { "abc < aeb  --: true" })
+	@doc(value = "A lexicographic comparison of two strings. Returns true if the left-hand operand is smaller than the right-hand operand, false otherwise.",
+			examples = { "abc < aeb  --: true" })
 	public static Boolean less(final String a, final String b) {
 		if ( a == null ) { return false; }
 		int i = a.compareTo(b);
@@ -209,7 +217,8 @@ public class Comparison {
 	}
 
 	@operator(value = GT, can_be_const = true)
-	@doc(special_cases = { "if the operands are strings, a lexicographic comparison is performed" }, examples = { "abc > aeb  --: false" })
+	@doc(value = "A lexicographic comparison of two strings. Returns true if the left-hand operand is greater than the right-hand operand, false otherwise.",
+			examples = { "abc > aeb  --: false" })
 	public static Boolean greater(final String a, final String b) {
 		if ( a == null ) { return false; }
 		int i = a.compareTo(b);
@@ -217,14 +226,14 @@ public class Comparison {
 	}
 
 	@operator(value = { "=" }, can_be_const = true)
-	@doc(comment = "this operator will return true if the two operands are identical (i.e., the same object) or equal. Comparisons between nil values are permitted.", examples = {
+	@doc(value = "Returns true if the two operands are identical (i.e., the same object) or equal. Comparisons between nil values are permitted.", examples = {
 		"3.0 = 3  	--:  true", "[2,3] = [2,3] --: true" })
 	public static Boolean equal(final Object a, final Object b) {
 		return a == null ? b == null : a.equals(b);
 	}
 
 	@operator(value = { "!=", "<>" }, can_be_const = true)
-	@doc(comment = " this operator will return false if the two operands are identical (i.e., the same object) or equal. Comparisons between nil values are permitted.", examples = {
+	@doc(comment = " Returns false if the two operands are identical (i.e., the same object) or equal. Comparisons between nil values are permitted.", examples = {
 		"[2,3] != [2,3] --: false", "[2,4] != [2,3] --: true" })
 	public static Boolean different(final Object a, final Object b) {
 		return a == null ? b != null : !a.equals(b);

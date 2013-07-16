@@ -106,7 +106,7 @@ public class Maths {
 	 */
 
 	@operator(value = { "^", "**" }, can_be_const = true)
-	@doc(value = "the left-hand operand raised to the power of the right-hand operand.", special_cases = {
+	@doc(value = "Returns the value of the left operand raised to the power of the right operand.", special_cases = {
 		"if the right-hand operand is equal to 0, returns 1", "if it is equal to 1, returns the left-hand operand." }, examples = "", see = {
 		"*", "sqrt" })
 	public static Integer pow(final Integer a, final Integer b) {
@@ -114,19 +114,22 @@ public class Maths {
 	}
 
 	@operator(value = { "^", "**" }, can_be_const = true)
-	@doc()
+	@doc( value = "Returns the value of the left operand raised to the power of the right operand.",
+		examples = { " 2 ^ 3 --: 8" })
 	public static Double pow(final Double a, final Integer b) {
 		return pow(a, b.doubleValue());
 	}
 
 	@operator(value = { "^", "**" }, can_be_const = true)
-	@doc(special_cases = "", examples = "")
+	@doc( value = "Returns the value of the left operand raised to the power of the right operand.",
+		examples = { " 2 ^ 3 --: 8" })
 	public static Double pow(final Integer a, final Double b) {
 		return pow(a.doubleValue(), b);
 	}
 
 	@operator(value = { "^", "**" }, can_be_const = true)
-	@doc()
+	@doc( value = "Returns the value of the left operand raised to the power of the right operand.",
+			examples = { " 2 ^ 3 --: 8" })
 	public static Double pow(final Double a, final Double b) {
 		return Math.pow(a, b);
 	}
@@ -140,33 +143,34 @@ public class Maths {
 	}
 
 	@operator(value = "abs", can_be_const = true)
-	@doc()
+	@doc( value = "Returns the absolute value of the operand.", examples = { " abs (-10) --: 10 ", "abs (10) --: 10" })
 	public static Integer abs(final Integer rv) {
 		return (rv ^ rv >> 31) - (rv >> 31);
 	}
 
 	@operator(value = "acos", can_be_const = true)
-	@doc(value = "the arccos of the operand (which has to be expressed in decimal degrees).", examples = "acos (0) 	--: 	90", see = {
+	@doc(value = "the arccos of the operand (which has to be expressed in decimal degrees).", examples = "acos (0) 	--: 	1", see = {
 		"asin", "atan" })
 	public static Double acos(final Double rv) {
 		return Math.acos(rv) * toDeg;
 	}
 
 	@operator(value = "acos", can_be_const = true)
-	@doc()
+	@doc(value = "the arccos of the operand ")
 	public static Double acos(final Integer rv) {
 		return Math.acos(rv) * toDeg;
 	}
 
 	@operator(value = "asin", can_be_const = true)
-	@doc(value = "the arcsin of the operand (which has to be expressed in decimal degrees).", examples = "acos (90) --: 1", see = {
+	@doc(value = "the arcsin of the operand (which has to be expressed in decimal degrees).", examples = "asin (90) --: 1", see = {
 		"acos", "atan" })
 	public static Double asin(final Double rv) {
 		return Math.asin(rv) * toDeg;
 	}
 
 	@operator(value = "asin", can_be_const = true)
-	@doc()
+	@doc(value = "the arcsin of the operand",  examples = "asin (90) --: 1", see = {
+			"acos", "atan" })
 	public static Double asin(final Integer rv) {
 		return Math.asin(rv) * toDeg;
 	}
@@ -179,7 +183,8 @@ public class Maths {
 	}
 
 	@operator(value = "atan", can_be_const = true)
-	@doc()
+	@doc(value = "the arctan of the operand", examples = "atan (45) --: 1", see = {
+			"acos", "asin" })
 	public static Double atan(final Integer rv) {
 		return Math.atan(rv) * toDeg;
 	}
@@ -191,8 +196,9 @@ public class Maths {
 		return Math.tanh(rv);
 	}
 
-	@operator(value = "tanh", can_be_const = true)
-	@doc()
+	@operator(value = "the hyperbolic tangent of the operand ", can_be_const = true)
+	@doc(value = "the hyperbolic tangent of the operand (which has to be expressed in decimal degrees).", examples = {
+			"tanh(0)  	--: 0.0", "tanh(1)  	--: 0.7615941559557649", "tanh(10) 	--: 0.9999999958776927" })
 	public static Double tanh(final Integer rv) {
 		return Math.tanh(rv);
 	}
@@ -206,7 +212,8 @@ public class Maths {
 	}
 
 	@operator(value = "cos", can_be_const = true)
-	@doc()
+	@doc(value = "the cosinus of the operand.", special_cases = "Integers outside the range [0-359] are normalized.", examples = "cos (0) --: 1", see = {
+			"sin", "tan" })
 	public static Double cos(final Integer rv) {
 		double rad = toRad * rv;
 		return Math.cos(rad);
@@ -221,7 +228,8 @@ public class Maths {
 	}
 
 	@operator(value = "sin", can_be_const = true)
-	@doc()
+	@doc(value = "the sinus of the operand (in decimal degrees).", special_cases = "Integers outside the range [0-359] are normalized.", examples = "cos (0) --: 0", see = {
+			"cos", "tan" })
 	public static Double sin(final Integer rv) {
 		double rad = toRad * rv;
 		return Math.sin(rad);
@@ -241,7 +249,7 @@ public class Maths {
 	}
 
 	@operator(value = "exp", can_be_const = true)
-	@doc()
+	@doc(value = "returns Euler's number e raised to the power of the operand.", special_cases = "the operand is casted to a float before being evaluated.", examples = "exp (0) 	--:	 1", see = "ln")
 	public static Double exp(final Integer rv) {
 		return Math.exp(rv.doubleValue());
 	}
@@ -267,7 +275,7 @@ public class Maths {
 	}
 
 	@operator(value = "ln", can_be_const = true)
-	@doc()
+	@doc(value = "returns the natural logarithm (base e) of the operand.", special_cases = "an exception is raised if the operand is less than zero.", examples = "ln(1) 	--:	 0.0", see = "exp")
 	public static Double ln(final Integer x) {
 		if ( x <= 0 ) { throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs");
 		// return Double.MAX_VALUE; // A compromise...
@@ -285,7 +293,7 @@ public class Maths {
 	}
 
 	@operator(value = "log", can_be_const = true)
-	@doc()
+	@doc(value = "returns the logarithm (base 10) of the operand.", special_cases = "an exception is raised if the operand is less than zero.", examples = "log(10) 	--:	 1.0", see = "ln")
 	public static Double log(final Integer x) {
 		if ( x <= 0 ) { throw GamaRuntimeException.warning("The ln operator cannot accept negative or null inputs");
 		// return Double.MAX_VALUE; // A compromise...
@@ -294,19 +302,19 @@ public class Maths {
 	}
 	
 	@operator(value = "-", can_be_const = true)
-	@doc(special_cases = "when it is used as an unary operator, - returns the opposite or the operand.", examples = "- (-56) 	--:	 56")
+	@doc(value = "Returns the opposite or the operand.", examples = "- (-56) 	--:	 56")
 	public static Double negate(final Double x) {
 		return -x;
 	}
 
 	@operator(value = "-", can_be_const = true)
-	@doc()
+	@doc(value = "Returns the opposite or the operand.", examples = "- (-56) 	--:	 56")
 	public static Integer negate(final Integer x) {
 		return -x;
 	}
 
 	@operator(value = "round", can_be_const = true)
-	@doc(value = "the rounded value of the operand.", examples = { "round (0.51) 	--:	 1", "round (100.2) 	--: 	 100" }, see = {
+	@doc(value = "Returns the rounded value of the operand.", examples = { "round (0.51) 	--:	 1", "round (100.2) 	--: 	 100" }, see = {
 		"int", "with_precision" })
 	public static Integer round(final Double v) {
 		int i;
@@ -325,14 +333,14 @@ public class Maths {
 	}
 
 	@operator(value = "sqrt", can_be_const = true)
-	@doc(value = "returns the square root of the operand.", special_cases = "if the operand is negative, an exception is raised", examples = "sqrt(4) 	--:	 2.0")
+	@doc(value = "Returns the square root of the operand.", special_cases = "if the operand is negative, an exception is raised", examples = "sqrt(4) 	--:	 2.0")
 	public static Double sqrt(final Integer v) throws GamaRuntimeException {
 		if ( v < 0 ) { throw GamaRuntimeException.warning("The sqrt operator cannot accept negative inputs"); }
 		return Math.sqrt(v);
 	}
 
 	@operator(value = "sqrt", can_be_const = true)
-	@doc()
+	@doc(value = "Returns the square root of the operand.", special_cases = "if the operand is negative, an exception is raised", examples = "sqrt(4) 	--:	 2.0")
 	public static Double sqrt(final Double v) throws GamaRuntimeException {
 		if ( v < 0 ) { throw GamaRuntimeException.warning("The sqrt operator cannot accept negative inputs"); }
 		return Math.sqrt(v);
@@ -347,60 +355,61 @@ public class Maths {
 	}
 
 	@operator(value = "tan", can_be_const = true)
-	@doc()
+	@doc(value = "the trigonometic tangent of the operand.", special_cases = "the argument is casted to an int before being evaluated. Integers outside the range [0-359] are normalized.", examples = "cos (180) --: 0", see = {
+			"cos", "sin" })
 	public static Double tan(final Integer v) {
 		double rad = toRad * v;
 		return Math.tan(rad);
 	}
 
 	@operator(value = IKeyword.DIVIDE, can_be_const = true)
-	@doc(value = "a float, equal to the division of the left-hand operand by the rigth-hand operand.", special_cases = "if the right-hand operand is equal to zero, raises a \"Division by zero\" exception", examples = "", see = "*")
+	@doc(value = "Returns a float, equal to the division of the left-hand operand by the rigth-hand operand.", special_cases = "if the right-hand operand is equal to zero, raises a \"Division by zero\" exception", examples = "", see = "*")
 	public static Double opDivide(final Integer a, final Integer b) throws GamaRuntimeException {
 		if ( b == 0 ) { throw GamaRuntimeException.error("Division by zero"); }
 		return Double.valueOf(a.doubleValue() / b.doubleValue());
 	}
 
 	@operator(value = IKeyword.DIVIDE, can_be_const = true)
-	@doc(examples = "")
+	@doc(value = "Returns a float, equal to the division of the left-hand operand by the rigth-hand operand.", special_cases = "if the right-hand operand is equal to zero, raises a \"Division by zero\" exception", examples = "", see = "*")
 	public static Double opDivide(final Double a, final Integer b) throws GamaRuntimeException {
 		if ( b == 0 ) { throw GamaRuntimeException.error("Division by zero"); }
 		return a / b.doubleValue();
 	}
 
 	@operator(value = IKeyword.DIVIDE, can_be_const = true)
-	@doc()
+	@doc(value = "Returns a float, equal to the division of the left-hand operand by the rigth-hand operand.", special_cases = "if the right-hand operand is equal to zero, raises a \"Division by zero\" exception", examples = "", see = "*")
 	public static Double opDivide(final Double a, final Double b) throws GamaRuntimeException {
 		if ( b.equals(0.0) ) { throw GamaRuntimeException.error("Division by zero"); }
 		return a / b;
 	}
 
 	@operator(value = IKeyword.DIVIDE, can_be_const = true)
-	@doc()
+	@doc(value = "Returns a float, equal to the division of the left-hand operand by the rigth-hand operand.", special_cases = "if the right-hand operand is equal to zero, raises a \"Division by zero\" exception", examples = "", see = "*")
 	public static Double opDivide(final Integer a, final Double b) throws GamaRuntimeException {
 		if ( b.equals(0.0) ) { throw GamaRuntimeException.error("Division by zero"); }
 		return a.doubleValue() / b.doubleValue();
 	}
 
 	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
-	@doc(value = "the product of the two operands", special_cases = "if both operands are int, returns the product as an int", examples = "", see = "/")
+	@doc(value = "Returns the product of the two operands", special_cases = "if both operands are int, returns the product as an int", examples = "", see = "/")
 	public static Integer opTimes(final Integer a, final Integer b) {
 		return a * b;
 	}
 
 	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
-	@doc(examples = "")
+	@doc(value = "Returns the product of the two operands", examples = "", see = "/")
 	public static Double opTimes(final Double a, final Integer b) {
 		return Double.valueOf(a * b);
 	}
 
 	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
-	@doc()
+	@doc(value = "Returns the product of the two operands", examples = "", see = "/")
 	public static Double opTimes(final Double a, final Double b) {
 		return a * b;
 	}
 
 	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
-	@doc()
+	@doc(value = "Returns the product of the two operands", examples = "", see = "/")
 	public static Double opTimes(final Integer a, final Double b) {
 		return Double.valueOf(a * b);
 	}
@@ -412,19 +421,19 @@ public class Maths {
 	}
 
 	@operator(value = IKeyword.PLUS, can_be_const = true)
-	@doc(examples = "1.0 + 1 --: 2.0")
+	@doc(value = "the sum, union or concatenation of the two operands.", examples = "1.0 + 1 --: 2.0")
 	public static Double opPlus(final Double a, final Integer b) {
 		return a + b;
 	}
 
 	@operator(value = IKeyword.PLUS, can_be_const = true)
-	@doc()
+	@doc(value = "the sum, union or concatenation of the two operands.", examples = "1.0 + 2.5 --: 3.5")
 	public static Double opPlus(final Double a, final Double b) {
 		return a + b;
 	}
 
 	@operator(value = IKeyword.PLUS, can_be_const = true)
-	@doc()
+	@doc(value = "the sum, union or concatenation of the two operands.", examples = "2 + 2.5 --: 4.5")
 	public static Double opPlus(final Integer a, final Double b) {
 		return a + b;
 	}
@@ -436,19 +445,19 @@ public class Maths {
 	}
 
 	@operator(value = IKeyword.MINUS, can_be_const = true)
-	@doc(examples = "1.0 - 1 --: 0.0")
+	@doc(value = "the difference of the two operands", examples = "1.0 - 1 --: 0.0")
 	public static Double opMinus(final Double a, final Integer b) {
 		return a - b;
 	}
 
 	@operator(value = IKeyword.MINUS, can_be_const = true)
-	@doc()
+	@doc(value = "the difference of the two operands", examples = "3.7 - 1.2 --: 2.5")
 	public static Double opMinus(final Double a, final Double b) {
 		return a - b;
 	}
 
 	@operator(value = IKeyword.MINUS, can_be_const = true)
-	@doc()
+	@doc(value = "the difference of the two operands", examples = "3 - 1.2 --: 1.8")
 	public static Double opMinus(final Integer a, final Double b) {
 		return a - b;
 	}
@@ -507,28 +516,28 @@ public class Maths {
 	}
 
 	@operator(value = "div", can_be_const = true)
-	@doc(value = "an int, equal to the truncation of the division of the left-hand operand by the rigth-hand operand.", special_cases = "if the right-hand operand is equal to zero, raises an exception.", examples = "40 div 3 	--:  13", see = "mod")
+	@doc(value = "an int, equal to the truncation of the division of the left-hand operand by the right-hand operand.", special_cases = "if the right-hand operand is equal to zero, raises an exception.", examples = "40 div 3 	--:  13", see = "mod")
 	public static Integer div(final Integer a, final Integer b) throws GamaRuntimeException {
 		if ( b == 0 ) { throw GamaRuntimeException.error("Division by zero"); }
 		return a / b;
 	}
 
 	@operator(value = "div", can_be_const = true)
-	@doc()
+	@doc(value = "an int, equal to the truncation of the division of the left-hand operand by the right-hand operand.", special_cases = "if the right-hand operand is equal to zero, raises an exception.", examples = "40.5 div 3 	--:  13", see = "mod")
 	public static Integer div(final Double a, final Integer b) throws GamaRuntimeException {
 		if ( b == 0 ) { throw GamaRuntimeException.error("Division by zero"); }
 		return (int) (a / b);
 	}
 
 	@operator(value = "div", can_be_const = true)
-	@doc(examples = "40 div 4.1		--:  9")
+	@doc(value = "an int, equal to the truncation of the division of the left-hand operand by the right-hand operand.", special_cases = "if the right-hand operand is equal to zero, raises an exception.", examples = "40 div 4.1		--:  9")
 	public static Integer div(final Integer a, final Double b) throws GamaRuntimeException {
 		if ( b.equals(0.0) ) { throw GamaRuntimeException.error("Division by zero"); }
 		return (int) (a / b);
 	}
 
 	@operator(value = "div", can_be_const = true)
-	@doc()
+	@doc(value = "an int, equal to the truncation of the division of the left-hand operand by the right-hand operand.", special_cases = "if the right-hand operand is equal to zero, raises an exception.", examples = "40.1 div 4.1		--:  9")
 	public static Integer div(final Double a, final Double b) throws GamaRuntimeException {
 		if ( b.equals(0.0) ) { throw GamaRuntimeException.error("Division by zero"); }
 		return (int) (a / b);
@@ -598,6 +607,8 @@ public class Maths {
 	}
 
 	@operator(value = "hypot", can_be_const = true)
+	@doc(value =  "Returns sqrt(x2 +y2) without intermediate overflow or underflow.",
+			special_cases = "If either argument is infinite, then the result is positive infinity. If either argument is NaN and neither argument is infinite, then the result is NaN.")
 	public static double hypot(final double x1, final double x2, final double y1, final double y2) {
 		// return Math.hypot(x2 - x1, y2 - y1); VERY SLOW !
 		final double dx = x2 - x1;

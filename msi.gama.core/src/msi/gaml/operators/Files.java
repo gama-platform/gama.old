@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -165,12 +165,8 @@ public class Files {
 	 * @return
 	 */
 	@operator(value = { READ, "get" })
-	// @doc(
-	// value = "",
-	// comment = "",
-	// special_cases = "",
-	// examples = {""},
-	// see = {""})
+	@doc(value = "Reads an attribute of the agent. The attribute's name is specified by the operand."
+			, examples = { "let agent_name value: read ('name'); --: reads the 'name' variable of agent then assigns the returned value to the 'agent_name' variable. " } )
 	public static Object opRead(final IScope scope, final String s) throws GamaRuntimeException {
 		// First try to read in the temp attributes
 		Map attributes = tempAttributes.peek();
@@ -180,12 +176,8 @@ public class Files {
 	}
 
 	@operator(value = { READ, "get" })
-	// @doc(
-	// value = "",
-	// comment = "",
-	// special_cases = "",
-	// examples = {""},
-	// see = {""})
+	@doc(value = "Reads an attribute of the agent. The attribute's index is specified by the operand."
+		, examples = { "let second_variable value: read (2); --: reads the second variable of agent then assigns the returned value to the 'second_variable' variable. " } )
 	public static Object opRead(final IScope scope, final Integer index) throws GamaRuntimeException {
 		// First try to read in the temp attributes
 		Map attributes = tempAttributes.peek();
@@ -196,12 +188,16 @@ public class Files {
 	}
 
 	@operator(value = "get")
+	@doc(value = "Reads an attribute of the specified agent (left operand). The attribute's name is specified by the right operand."
+		, examples = { "let agent_name value: an_agent read ('name'); --: reads the 'name' variable of agent then assigns the returned value to the 'second_variable' variable. " } )
 	public static Object opRead(final IScope scope, final IAgent g, final String s) throws GamaRuntimeException {
 		if ( g == null ) { return null; }
 		return g.getAttribute(s);
 	}
 
 	@operator(value = "get")
+	@doc(value = "Reads an attribute of the specified geometry (left operand). The attribute's name is specified by the right operand."
+	, examples = { "let geom_area value: a_geometry read ('area'); --: reads the 'area' attribute of the 'a_geometry' geometry then assigns the returned value to the 'geom_area' variable. " } )
 	public static Object opRead(final IScope scope, final IShape g, final String s) throws GamaRuntimeException {
 		if ( g == null ) { return null; }
 		return ((GamaShape) g.getGeometry()).getAttribute(s);
