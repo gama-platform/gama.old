@@ -225,13 +225,14 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 	// Only for create ?
 	private void verifyInits(final StatementDescription cd, final Arguments ca) {
 		final SpeciesDescription sd = cd.getSpeciesDescription(computeSpecies(cd));
-		if ( sd == null ) {
+		final Collection<IDescription> args = cd.getArgs();
+		if ( sd == null && !args.isEmpty() ) {
 			cd.warning(
 				"Impossible to verify the validity of the arguments. Use them at your own risk ! (and don't complain about exceptions)",
 				IGamlIssue.UNKNOWN_ARGUMENT);
 			return;
 		}
-		final Collection<IDescription> args = cd.getArgs();
+
 		for ( final IDescription arg : args ) {
 			final String name = arg.getName();
 			if ( !sd.hasVar(name) ) {
