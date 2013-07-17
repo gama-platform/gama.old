@@ -43,7 +43,7 @@ global {
 	
 	reflex update_graph{
 		map<road,float> weights_map <- road as_map (each:: (each.destruction_coeff * each.shape.perimeter));
-		the_graph <- as_edge_graph(road) with_weights weights_map;
+		the_graph <- the_graph with_weights weights_map;
 	}
 	
 	reflex repair_road when: (time mod repair_time) = 0 {
@@ -62,7 +62,7 @@ entities {
 		}
 	}
 	species road  {
-		float destruction_coeff <- 1.0 ;
+		float destruction_coeff <- 1.0 max:2.0;
 		int colorValue <- int(255*(destruction_coeff - 1)) update: int(255*(destruction_coeff - 1));
 		rgb color <- rgb(min([255, colorValue]),max ([0, 255 - colorValue]),0)  update: rgb(min([255, colorValue]),max ([0, 255 - colorValue]),0) ;
 		aspect base {

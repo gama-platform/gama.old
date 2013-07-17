@@ -46,7 +46,7 @@ entities {
 		}
 	}
 	species road  {
-		float destruction_coeff <- 1 + ((rnd(100))/ 100.0) ;
+		float destruction_coeff <- 1 + ((rnd(100))/ 100.0) max: 2.0;
 		int colorValue <- int(255*(destruction_coeff - 1)) update: int(255*(destruction_coeff - 1));
 		rgb color <- rgb(min([255, colorValue]),max ([0, 255 - colorValue]),0)  update: rgb(min([255, colorValue]),max ([0, 255 - colorValue]),0) ;
 		aspect base {
