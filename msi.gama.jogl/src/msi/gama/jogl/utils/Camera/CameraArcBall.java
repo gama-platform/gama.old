@@ -380,7 +380,7 @@ public class CameraArcBall extends AbstractCamera {
 			moveXYPlan2(diffx, diffy, _position.getZ(), this.myRenderer.getWidth(),
 				this.myRenderer.getHeight());
 		}
-		PrintParam();
+//		PrintParam();
 	}
 
 	@Override
