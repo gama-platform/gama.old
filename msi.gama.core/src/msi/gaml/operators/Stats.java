@@ -270,6 +270,12 @@ public class Stats {
 	}
 
 	@operator(value = "corR", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@doc(value = "returns the Pearson correlation coefficient of two given vectors (right-hand operands) in given variable  (left-hand operand).", special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",     examples = {
+	            "list X <- [2, 3, 1];",
+	            "list Y <- [2, 12, 4];",
+	            "float corResult <- 0.0;",
+	            "corResult <- corR(X, Y);",
+	            "write corResult; // -> 0.755928946018454"})
 	public static Object getCorrelationR(final IScope scope, final IContainer l1,
 		final IContainer l2) throws GamaRuntimeException, RCallerParseException,
 		RCallerExecutionException {
@@ -317,6 +323,12 @@ public class Stats {
 	}
 
 	@operator(value = "meanR", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@doc(value = "returns the mean value of given vector (right-hand operand) in given variable  (left-hand operand).", examples = {
+	            "list X <- [2, 3, 1];",
+	            "list Y <- [2, 12, 4];",
+	            "float meanResult <- 0.0;",
+	            "meanResult <- meanR(X);",
+	            "write meanResult; // -> 2.0"})	
 	public static Object getMeanR(final IScope scope, final IContainer l)
 		throws GamaRuntimeException, RCallerParseException, RCallerExecutionException {
 		if ( l.length(scope) == 0 ) { return Double.valueOf(0d); }
@@ -346,6 +358,15 @@ public class Stats {
 	}
 
 	@operator(value = "R_compute", can_be_const = true, content_type = IType.LIST, index_type = IType.STRING)
+	@doc(value = "returns the value of the last left-hand operand of given R file (right-hand operand) in given vector  (left-hand operand).", examples = {
+            "list result;",
+            "result <- R_compute('C:/YourPath/Correlation.R');",
+            "Correlation.R file:",
+            "x <- c(1, 2, 3)",
+            "y <- c(1, 2, 4)",
+            "result <- cor(x, y)",
+            "Output:",
+            "result::[0.981980506061966]"})
 	public static GamaMap opRFileEvaluate(final IScope scope, final String RFile)
 		throws GamaRuntimeException, RCallerParseException, RCallerExecutionException {
 		try {
@@ -421,6 +442,18 @@ public class Stats {
 	}
 
 	@operator(value = "R_compute_param", can_be_const = true, content_type = IType.LIST, index_type = IType.STRING)
+	@doc(value = "returns the value of the last left-hand operand of given R file (right-hand operand) in given vector  (left-hand operand), R file (first right-hand operand) reads the vector (second right-hand operand) as the parameter vector", examples = {
+	            "list X <- [2, 3, 1];",
+	            "list result;",
+	            "result <- R_compute_param('C:/YourPath/AddParam.R', X);",
+	            "write result at 0;",
+	            "AddParam.R file:",
+	            "v1 <- vectorParam[1]",
+	            "v2<-vectorParam[2]",
+	            "v3<-vectorParam[3]",
+	            "result<-v1+v2+v3",
+	            "Output:",
+	            "result::[10]"})
 	public static GamaMap operateRFileEvaluate(final IScope scope, final String RFile,
 		final IContainer param) throws GamaRuntimeException, RCallerParseException,
 		RCallerExecutionException {
