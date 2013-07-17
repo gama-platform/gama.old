@@ -56,7 +56,7 @@ public class CameraArcBall extends AbstractCamera {
 		
 		_forward = new Vector3D();	
 		_orientation = 1.0;
-    	_phi = 90.0;
+    	_phi = 90.00;
         _theta = 360.00;
         _sensivity = 0.4;
 		_keyboardSensivity= 4;
@@ -97,7 +97,7 @@ public class CameraArcBall extends AbstractCamera {
 	
 	public void rotation()
 	{
-		if(_phi>180 && _phi <360) 
+		if(_phi <360 && _phi>180) 
     	{
     		_orientation = -1;		
     		setUpVector(new GamaPoint(0.0, _orientation,0.0));
@@ -107,11 +107,11 @@ public class CameraArcBall extends AbstractCamera {
     		setUpVector(new GamaPoint(0.0, _orientation,0.0));
 		}	
 		
-		if( _theta > 360 ) _theta = 0;
-	    if( _theta < 0 ) _theta = 360;
+		if( _theta > 360 ) _theta = 0.00000002;
+	    if( _theta < 0 ) _theta = 360.00000002;
 
-	    if( _phi > 360 ) _phi = 0;
-	    if( _phi < 0 ) _phi = 360;
+	    if( _phi > 360 ) _phi = 0.00000002;
+	    if( _phi < 0 ) _phi = 360.00000002;
 		
 		double cosAngle = Math.cos(_theta*Math.PI/180.f);
 		double sinAngle = Math.sin(_theta*Math.PI/180.f);
@@ -380,7 +380,7 @@ public class CameraArcBall extends AbstractCamera {
 			moveXYPlan2(diffx, diffy, _position.getZ(), this.myRenderer.getWidth(),
 				this.myRenderer.getHeight());
 		}
-//		PrintParam();
+		PrintParam();
 	}
 
 	@Override
