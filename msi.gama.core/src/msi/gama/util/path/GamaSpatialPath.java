@@ -79,7 +79,10 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 				IShape secondLine = _edges.get(1).getGeometry();
 				pt = pt0.euclidianDistanceTo(secondLine) > pt1.euclidianDistanceTo(secondLine) ? pt0 : pt1;
 			} else {
-				pt = start.euclidianDistanceTo(pt0) < target.euclidianDistanceTo(pt0) ? pt0 : pt1;
+				final IShape lineEnd = edges.get(edges.size()-1);
+				GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to(((IShape) getEndVertex()).getLocation(), lineEnd);
+				
+				pt = start.euclidianDistanceTo(pt0) < falseTarget.euclidianDistanceTo(pt0) ? pt0 : pt1;
 			}
 			GamaSpatialGraph graph = this.getGraph();
 			if ( graph != null ) {

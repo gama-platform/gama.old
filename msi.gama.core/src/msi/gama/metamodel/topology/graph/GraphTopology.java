@@ -27,6 +27,8 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.path.*;
+import msi.gaml.operators.Spatial.Punctal;
+
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 
@@ -159,8 +161,10 @@ public class GraphTopology extends AbstractTopology {
 	@Override
 	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target) {
 		IShape edgeS = null, edgeT = null;
+		
 		if ( !this.getPlaces().getEdges().isEmpty() ) {
 			if ( this.getPlaces() instanceof GamaSpatialGraph && !((GamaSpatialGraph) this.getPlaces()).isAgentEdge() ) {
+				
 				double distMinT = Double.MAX_VALUE;
 				double distMinS = Double.MAX_VALUE;
 				for ( final IShape shp : this.getPlaces().getEdges() ) {
