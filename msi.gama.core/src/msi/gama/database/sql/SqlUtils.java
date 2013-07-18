@@ -15,7 +15,18 @@ import msi.gaml.types.IType;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
-
+/*
+ * @Author  
+ *     TRUONG Minh Thai
+ *     Fredric AMBLARD
+ *     Benoit GAUDOU
+ *     Christophe Sibertin-BLANC
+ * Created date: 19-Apr-2013
+ * Modified:  
+ *    18-July-2013:  
+ *      Add load extension library for SQLITE case.
+ * Last Modified: 18-July-2013
+*/
 public class SqlUtils {
 	private static boolean DEBUG =false;
 	
@@ -27,6 +38,8 @@ public class SqlUtils {
 		String database = (String) params.get("database");
 		String user = (String) params.get("user");
 		String passwd = (String) params.get("passwd");
+		String extension = (String) params.get("extension");
+		
 		if (DEBUG){
 			GuiUtils.debug("SqlUtils.createConnection:"+dbtype+" - "+host+" - "+ port+" - "+database+" - ");
 		}
@@ -34,15 +47,19 @@ public class SqlUtils {
 		// create connection
 		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
 			String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
-			sqlConn = new SqliteConnection(dbtype, DBRelativeLocation);
+			if (extension!=null){
+				String EXTRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(extension, true);
+				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation,EXTRelativeLocation);
+				
+			}else{
+				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation);
+			}
 		} else if ( dbtype.equalsIgnoreCase(SqlConnection.MSSQL) ) {
-			
 			sqlConn = new MSSQLConnection(dbtype, host, port, database, user, passwd);
 		}else if ( dbtype.equalsIgnoreCase(SqlConnection.MYSQL) ) {
-			
 			sqlConn = new MySqlConnection(dbtype, host, port, database, user, passwd);
 		}else if ( dbtype.equalsIgnoreCase(SqlConnection.POSTGRES) ||
-				   dbtype.equalsIgnoreCase(SqlConnection.POSTGIS)) {
+				   dbtype.equalsIgnoreCase(SqlConnection.POSTGIS)){
 			sqlConn = new PostgresConnection(dbtype, host, port, database, user, passwd);
 		}else {
 			throw GamaRuntimeException.error("GAMA does not support: " + dbtype);
@@ -64,6 +81,8 @@ public class SqlUtils {
 		String database = (String) params.get("database");
 		String user = (String) params.get("user");
 		String passwd = (String) params.get("passwd");
+		String extension = (String) params.get("extension");
+
 		if (DEBUG){
 			GuiUtils.debug("SqlUtils.createConnection:"+dbtype+" - "+host+" - "+ port+" - "+database+" - ");
 		}
@@ -71,7 +90,13 @@ public class SqlUtils {
 		// create connection
 		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
 			String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
-			sqlConn = new SqliteConnection(dbtype, DBRelativeLocation);
+			if (extension!=null){
+				String EXTRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(extension, true);
+				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation,EXTRelativeLocation);
+				
+			}else{
+				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation);
+			}
 		} else if ( dbtype.equalsIgnoreCase(SqlConnection.MSSQL) ) {
 			
 			sqlConn = new MSSQLConnection(dbtype, host, port, database, user, passwd);

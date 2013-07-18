@@ -2,6 +2,9 @@ package msi.gama.database.sql;
 
 import java.sql.*;
 import java.util.*;
+
+import org.sqlite.SQLiteConfig;
+
 import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -9,11 +12,24 @@ import msi.gama.util.GamaList;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.*;
 
+/*
+ * @Author  
+ *     TRUONG Minh Thai
+ *     Fredric AMBLARD
+ *     Benoit GAUDOU
+ *     Christophe Sibertin-BLANC
+ * Created date: 19-Apr-2013
+ * Modified:  
+ *    18-July-2013:  
+ *      Add load extension library for SQLITE case.
+ *      Correct error getColumnTypeName when return null value 
+ * Last Modified: 18-July-2013
+*/
 public class SqliteConnection extends SqlConnection {
 
-	//private static final boolean DEBUG = false; // Change DEBUG = false for release version
+	private static final boolean DEBUG = true; // Change DEBUG = false for release version
 	private static final String WKT2GEO = "GeomFromText";
-
+	//protected String extension=null;
 	public SqliteConnection() {
 		super();
 	}
@@ -30,6 +46,10 @@ public class SqliteConnection extends SqlConnection {
 		super(venderName, database,transformed);
 	}
 
+	public SqliteConnection(String venderName, String database, String extension) {
+		super(venderName, database);
+		this.extension=extension;
+	}
 
 	
 	@Override
@@ -40,7 +60,17 @@ public class SqliteConnection extends SqlConnection {
 		try {
 			if ( vender.equalsIgnoreCase(SQLITE) ) {
 				Class.forName(SQLITEDriver).newInstance();
-				conn = DriverManager.getConnection("jdbc:sqlite:" + dbName);
+				SQLiteConfig config=new SQLiteConfig();
+				config.enableLoadExtension(true);
+				conn = DriverManager.getConnection("jdbc:sqlite:" + dbName,config.toProperties());
+				// load Spatialite extension library
+//				if (extension!=null){
+//					Statement stmt = conn.createStatement();
+//				    stmt.setQueryTimeout(30); // set timeout to 30 sec.
+//					stmt.execute("SELECT load_extension('"+extension+"')");
+//				    String sql = "SELECT InitSpatialMetadata()";
+//				    stmt.execute(sql);
+//				}
 			} else {
 				throw new ClassNotFoundException("SqliteConnection.connectSQL: The " + vender + " is not supported!");
 			}
@@ -152,6 +182,10 @@ public class SqliteConnection extends SqlConnection {
 		int numberOfColumns = rsmd.getColumnCount();
 		GamaList<Object> columnType = new GamaList<Object>();
 		for ( int i = 1; i <= numberOfColumns; i++ ) {
+			if ( DEBUG ) {
+				GuiUtils.debug("SqliteConnection.getColumnTypeName at " +i+":" +rsmd.getColumnTypeName(i).toUpperCase());
+			}
+
 			/*
 			 * for Geometry
 			 * - in MySQL Type: -2/-4 - TypeName: UNKNOWN - size: 2147483647
@@ -199,14 +233,15 @@ public class SqliteConnection extends SqlConnection {
 
 		try {
 			// get column type;
-			Statement st = conn.createStatement();
-			ResultSet rs = st.executeQuery(selectStr);
-			ResultSetMetaData rsmd = rs.getMetaData();
-			GamaList<Object> col_Names = getColumnName(rsmd);
-			GamaList<Object> col_Types = getColumnTypeName(rsmd);
-
+//			Statement st = conn.createStatement();
+//			ResultSet rs = st.executeQuery(selectStr);
+//			ResultSetMetaData rsmd = rs.getMetaData();
+//			GamaList<Object> col_Names = getColumnName(rsmd);
+//			GamaList<Object> col_Types = getColumnTypeName(rsmd);
+			GamaList<Object> col_Types = getColumnTypeName(conn,table_name,cols);
+			
 			if ( DEBUG ) {
-				GuiUtils.debug("list of column Name:" + col_Names);
+				//GuiUtils.debug("list of column Name:" + col_Names);
 				GuiUtils.debug("list of column type:" + col_Types);
 			}
 			// Insert command
@@ -285,7 +320,9 @@ public class SqliteConnection extends SqlConnection {
 			ResultSet rs = st.executeQuery(selectStr);
 			ResultSetMetaData rsmd = rs.getMetaData();
 			GamaList<Object> col_Names = getColumnName(rsmd);
-			GamaList<Object> col_Types = getColumnTypeName(rsmd);
+//			GamaList<Object> col_Types = getColumnTypeName(rsmd);
+			GamaList<Object> col_Types = getColumnTypeName(conn,table_name,col_Names);
+			
 			int col_no = col_Names.size();
 			// Check size of parameters
 			if ( values.size() != col_Names.size() ) { throw new IndexOutOfBoundsException(
@@ -352,4 +389,36 @@ public class SqliteConnection extends SqlConnection {
 
 		return insertStr;
 	}
+	
+	// 18/July/2013
+	private GamaList<Object> getColumnTypeName(Connection conn, String tableName, GamaList<Object> columns) throws SQLException
+	{
+		int numberOfColumns = columns.size();
+		GamaList<Object> columnType = new GamaList<Object>();
+		String sqlStr="PRAGMA table_info("+tableName +");";
+		GamaList<Object> result=selectDB(conn,sqlStr);
+		GamaList<GamaList<Object>>  data=(GamaList<GamaList<Object>>) result.get(2);
+		Statement st = conn.createStatement();
+		ResultSet rs = st.executeQuery(sqlStr);
+		int numRows=data.size();
+		for ( int i = 0; i < numberOfColumns; i++ ) {
+			String colName=((String) columns.get(i)).trim();
+			for (int j=0;j<numRows;++j){
+				GamaList<Object> row = data.get(j);
+				String name=((String) row.get(1)).trim();
+				String type=((String) row.get(2)).trim();
+				if (colName.equalsIgnoreCase(name)){
+					if (type.equalsIgnoreCase(BLOB)){
+						columnType.add(GEOMETRYTYPE);
+					}   
+					else{
+						columnType.add(type);
+					}
+						
+				}
+			}
+		}
+		return columnType;
+	}
+	
 }

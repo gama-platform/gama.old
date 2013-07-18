@@ -21,8 +21,10 @@ import com.vividsolutions.jts.geom.*;
  *      Remove driver msi.gama.ext/sqljdbc4.jar
  *      add driver msi.gama.ext/jtds-1.2.6.jar
  *      Change driver name for MSSQL from com.microsoft.sqlserver.jdbc.SQLServerDriver to net.sourceforge.jtds.jdbc.Driver
- *      
- * Last Modified: 26-Apr-2013
+ *    18-July-2013:  
+ *      Add load extension library for SQLITE case.
+ *       
+ * Last Modified: 18-July-2013
 */
 public abstract class SqlConnection {
 
@@ -37,6 +39,7 @@ public abstract class SqlConnection {
 	public static final String VARCHAR = "VARCHAR";
 	public static final String NVARCHAR = "NVARCHAR";
 	public static final String TEXT = "TEXT";
+	public static final String BLOB ="BLOB";
 
 	static final String MYSQLDriver = new String("com.mysql.jdbc.Driver");
 	//static final String MSSQLDriver = new String("com.microsoft.sqlserver.jdbc.SQLServerDriver");
@@ -44,14 +47,7 @@ public abstract class SqlConnection {
 	static final String SQLITEDriver = new String("org.sqlite.JDBC");
 	static final String POSTGRESDriver = new String("org.postgresql.Driver");
 
-//	static String vender = "";
-//	static String dbtype = "";
-//	static String url = "";
-//	static String port = "";
-//	static String dbName = "";
-//	static String userName = "";
-//	static String password = "";
-//	static Boolean transformed = false;
+
 	protected String vender = "";
 	protected String dbtype = "";
 	protected String url = "";
@@ -60,6 +56,7 @@ public abstract class SqlConnection {
 	protected String userName = "";
 	protected String password = "";
 	protected static Boolean transformed = false;
+	protected String extension=null;
 
 	public SqlConnection(String dbName) {
 		this.dbName = dbName;
@@ -206,6 +203,16 @@ public abstract class SqlConnection {
 		GamaList<GamaList<Object>> repRequest = new GamaList<GamaList<Object>>();
 		try {
 			Statement st = conn.createStatement();
+			//load extension library
+			if (this.dbtype.equalsIgnoreCase(SQLITE)){
+				if (this.extension!=null){
+					st = conn.createStatement();
+				    st.setQueryTimeout(30); // set timeout to 30 sec.
+					st.execute("SELECT load_extension('"+extension+"')");
+				    String sql = "SELECT InitSpatialMetadata()";
+				    st.execute(sql);
+				}
+			}
 			rs = st.executeQuery(selectComm);
 			ResultSetMetaData rsmd = rs.getMetaData();
 			if ( DEBUG ) {
@@ -248,6 +255,17 @@ public abstract class SqlConnection {
 				GuiUtils.debug("Update Command:" + updateComm);
 			}
 			Statement st = conn.createStatement();
+			//load extension library
+			if (this.dbtype.equalsIgnoreCase(SQLITE)){
+				if (this.extension!=null){
+					st = conn.createStatement();
+				    st.setQueryTimeout(30); // set timeout to 30 sec.
+					st.execute("SELECT load_extension('"+extension+"')");
+				    String sql = "SELECT InitSpatialMetadata()";
+				    st.execute(sql);
+				}
+
+			}			
 			n = st.executeUpdate(updateComm);
 			if ( DEBUG ) {
 				GuiUtils.debug("Updated records :" + n);
@@ -290,6 +308,18 @@ public abstract class SqlConnection {
 				GuiUtils.debug("Update Command:" + updateComm);
 			}
 			Statement st = conn.createStatement();
+			
+			//load extension library
+			if (this.dbtype.equalsIgnoreCase(SQLITE)){
+				if (this.extension!=null){
+					st = conn.createStatement();
+				    st.setQueryTimeout(30); // set timeout to 30 sec.
+					st.execute("SELECT load_extension('"+extension+"')");
+				    String sql = "SELECT InitSpatialMetadata()";
+				    st.execute(sql);
+				}
+			}
+			
 			n = st.executeUpdate(updateComm);
 			if ( DEBUG ) {
 				GuiUtils.debug("Updated records :" + n);
@@ -327,102 +357,6 @@ public abstract class SqlConnection {
 		return columnType;
 	}
 
-	// /*
-	// * @Method: read(byte [] b)
-	// * @Description: Convert Binary to Geometry (sqlserver case)
-	// *
-	// * @param byte [] b
-	// *
-	// * @return Geometry
-	// *
-	// * @throws IOException, ParseException
-	// */
-	// public static Geometry read(byte [] b) throws IOException, ParseException
-	// {
-	// WKBReader wkb= new WKBReader();
-	// Geometry geom=wkb.read(b);
-	// return geom;
-	// }
-
-	// /*
-	// * @Method: Binary2Geometry(byte [] geometryAsBytes )
-	// * @description: Convert binary to Geometry
-	// * @param byte []
-	// *
-	// * @return Geometry
-	// *
-	// * @throws ParseException
-	// */
-	// public static Geometry Binary2Geometry(byte [] geometryAsBytes ) throws ParseException
-	// {
-	// byte[] wkb = new byte[geometryAsBytes.length - 4];
-	// System.arraycopy(geometryAsBytes, 4, wkb, 0, wkb.length);
-	// WKBReader wkbReader = new WKBReader();
-	// Geometry geom=wkbReader.read(wkb);
-	// return geom;
-	// }
-
-	// /*
-	// * @Method: InputStream2Geometry(InputStream inputStream)
-	// * @Description: Convert Binary to Geometry (MySQL case)
-	// *
-	// * @param InputStream inputStream
-	// *
-	// * @return Geometry
-	// *
-	// * @throws Exception
-	// */
-	// public static Geometry InputStream2Geometry(InputStream inputStream) throws Exception
-	// {
-	// Geometry dbGeometry = null;
-	// if (inputStream != null)
-	// {
-	// //convert the stream to a byte[] array
-	// //so it can be passed to the WKBReader
-	// byte[] buffer = new byte[255];
-	// int bytesRead = 0;
-	// ByteArrayOutputStream baos = new ByteArrayOutputStream();
-	// while ((bytesRead = inputStream.read(buffer)) != -1) {
-	// baos.write(buffer, 0, bytesRead);
-	// }
-	//
-	// byte[] geometryAsBytes = baos.toByteArray();
-	//
-	// if (geometryAsBytes.length < 5) {
-	// throw new Exception("Invalid geometry inputStream - less than five bytes");
-	// }
-	//
-	// //first four bytes of the geometry are the SRID,
-	// //followed by the actual WKB. Determine the SRID
-	// //here
-	// byte[] sridBytes = new byte[4];
-	// System.arraycopy(geometryAsBytes, 0, sridBytes, 0, 4);
-	// boolean bigEndian = (geometryAsBytes[4] == 0x00);
-	//
-	// int srid = 0;
-	// if (bigEndian) {
-	// for (int i = 0; i < sridBytes.length; i++) {
-	// srid = (srid << 8) + (sridBytes[i] & 0xff);
-	// }
-	// } else {
-	// for (int i = 0; i < sridBytes.length; i++) {
-	// srid += (sridBytes[i] & 0xff) << (8 * i);
-	// }
-	// }
-	//
-	// //use the JTS WKBReader for WKB parsing
-	// WKBReader wkbReader = new WKBReader();
-	//
-	// //copy the byte array, removing the first four
-	// //SRID bytes
-	// byte[] wkb = new byte[geometryAsBytes.length - 4];
-	// System.arraycopy(geometryAsBytes, 4, wkb, 0, wkb.length);
-	// dbGeometry = wkbReader.read(wkb);
-	// dbGeometry.setSRID(srid);
-	// }
-	//
-	// return dbGeometry;
-	// }
 
 	public String getURL() {
 		return url;
@@ -505,7 +439,25 @@ public abstract class SqlConnection {
 		try {
 			// Get Insert command
 			Statement st = conn.createStatement();
-			rec_no = st.executeUpdate(getInsertString(scope, conn, table_name, cols, values));
+			
+			//load extension library
+			if (this.dbtype.equalsIgnoreCase(SQLITE)){
+				if (this.extension!=null){
+					st = conn.createStatement();
+				    st.setQueryTimeout(30); // set timeout to 30 sec.
+					st.execute("SELECT load_extension('"+extension+"')");
+				    String sql = "SELECT InitSpatialMetadata()";
+				    st.execute(sql);
+				}
+
+			}
+			String sqlStr=getInsertString(scope, conn, table_name, cols, values);
+			if ( DEBUG ) {
+				GuiUtils.debug("SQLConnection.insertBD.STR:" + sqlStr);
+			}
+
+			//rec_no = st.executeUpdate(getInsertString(scope, conn, table_name, cols, values));
+			rec_no = st.executeUpdate(sqlStr);
 			if ( DEBUG ) {
 				GuiUtils.debug("SQLConnection.insertBD.rec_no:" + rec_no);
 			}
@@ -584,6 +536,18 @@ public abstract class SqlConnection {
 		try {
 			// Get Insert command
 			Statement st = conn.createStatement();
+			
+			//load extension library
+			if (this.dbtype.equalsIgnoreCase(SQLITE)){
+				if (this.extension!=null){
+					st = conn.createStatement();
+				    st.setQueryTimeout(30); // set timeout to 30 sec.
+					st.execute("SELECT load_extension('"+extension+"')");
+				    String sql = "SELECT InitSpatialMetadata()";
+				    st.execute(sql);
+				}
+			}	
+			
 			rec_no = st.executeUpdate(getInsertString(scope, conn, table_name, values));
 
 			if ( DEBUG ) {
@@ -666,7 +630,20 @@ public abstract class SqlConnection {
 		GamaList<GamaList<Object>> repRequest = new GamaList<GamaList<Object>>();
 		int condition_count = condition_values.size();
 		try {
+			
+			//load extension library
+			if (this.dbtype.equalsIgnoreCase(SQLITE)){
+				if (this.extension!=null){
+					pstmt = conn.prepareStatement("SELECT load_extension('"+extension+"')");
+					pstmt.setQueryTimeout(30); // set timeout to 30 sec.
+					pstmt.executeQuery();
+					pstmt = conn.prepareStatement("SELECT InitSpatialMetadata()");	
+					pstmt.executeQuery();				
+				}
+			}
+			
 			pstmt = conn.prepareStatement(queryStr);
+			
 			// set value for each condition
 			for ( int i = 0; i < condition_count; i++ ) {
 				pstmt.setObject(i + 1, condition_values.get(i));
@@ -770,6 +747,17 @@ public abstract class SqlConnection {
 		int row_count = -1;
 		int condition_count = condition_values.size();
 		try {
+			//load extension library
+			if (this.dbtype.equalsIgnoreCase(SQLITE)){
+				if (this.extension!=null){
+					pstmt = conn.prepareStatement("SELECT load_extension('"+extension+"')");
+					pstmt.setQueryTimeout(30); // set timeout to 30 sec.
+					pstmt.executeQuery();
+					pstmt = conn.prepareStatement("SELECT InitSpatialMetadata()");	
+					pstmt.executeQuery();				
+				}
+			}
+
 			pstmt = conn.prepareStatement(queryStr);
 			// set value for each condition
 			if ( DEBUG ) {
@@ -832,7 +820,7 @@ public abstract class SqlConnection {
 		return row_count;
 	}
 
-	public void setTransformed(Boolean tranformed) {
+	public void setTransformed(boolean tranformed) {
 		SqlConnection.transformed = tranformed;
 	}
 

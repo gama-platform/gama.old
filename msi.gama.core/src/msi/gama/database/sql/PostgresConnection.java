@@ -8,7 +8,17 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.io.*;
-
+/*
+ * @Author  
+ *     TRUONG Minh Thai
+ *     Fredric AMBLARD
+ *     Benoit GAUDOU
+ *     Christophe Sibertin-BLANC
+ * Created date: 19-Apr-2013
+ * Modified:  
+ *   
+ * Last Modified: 18-July-2013
+*/
 public class PostgresConnection extends SqlConnection {
 
 	// private static final boolean DEBUG = false; // Change DEBUG = false for release version
