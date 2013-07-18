@@ -65,12 +65,14 @@ public abstract class SqlConnection {
 	public SqlConnection(String venderName, String database) {
 		this.vender = venderName;
 		this.dbName = database;
+		this.dbtype = venderName;
 	}
 
 	public SqlConnection(String venderName, String database, Boolean transformed) {
 		this.vender = venderName;
 		this.dbName = database;
 		this.transformed = transformed;
+		this.dbtype = venderName;
 	}
 
 	public SqlConnection() {}
