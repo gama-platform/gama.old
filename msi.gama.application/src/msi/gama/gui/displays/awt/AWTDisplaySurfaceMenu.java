@@ -187,7 +187,7 @@ public class AWTDisplaySurfaceMenu {
 		}
 	}
 
-	static class AgentMenuItem extends MenuItem {
+	public static class AgentMenuItem extends MenuItem {
 
 		private final IAgent agent;
 		private final ILayer display;

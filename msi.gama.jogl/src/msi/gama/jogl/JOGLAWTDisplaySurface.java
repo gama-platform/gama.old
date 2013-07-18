@@ -31,6 +31,7 @@ import javax.swing.JLabel;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.awt.AbstractAWTDisplaySurface;
+import msi.gama.gui.displays.awt.AWTDisplaySurfaceMenu.AgentMenuItem;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.jogl.scene.ModelScene;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
@@ -45,6 +46,9 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.species.ISpecies;
+import msi.gaml.statements.IStatement;
+import msi.gaml.statements.UserCommandStatement;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.FileDialog;
@@ -62,6 +66,10 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	private ActionListener menuListener;
 	private ActionListener focusListener;
 	private ActionListener followListener;
+	private ActionListener highlightListener;
+	private ActionListener commandListener;
+	
+
 	private boolean output3D = false;
 	// Environment properties useful to set the camera position.
 
@@ -217,15 +225,35 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 		private final IAgent agent;
 		private final ILayer display;
+		private final IStatement command;
+		private final GamaPoint userLocation;
 
 		AgentMenuItem(final String name, final IAgent agent, final ILayer display) {
 			super(name);
 			this.agent = agent;
 			this.display = display;
+			command = null;
+			userLocation = null;
+		}
+
+		AgentMenuItem(final IAgent agent, final IStatement command, final GamaPoint point) {
+			super(command.getName());
+			this.agent = agent;
+			this.display = null;
+			this.command = command;
+			userLocation = point;
+		}
+
+		ILocation getLocation() {
+			return userLocation;
 		}
 
 		IAgent getAgent() {
 			return agent;
+		}
+
+		IStatement getCommand() {
+			return command;
 		}
 
 		ILayer getDisplay() {
@@ -237,6 +265,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 		IAgent macro;
 		Map<ISpecies, List<SelectedAgent>> micros;
+	
 
 		void buildMenuItems(final Menu parentMenu, final ILayer display) {
 			final Menu macroMenu = new Menu(macro.getName());
@@ -253,6 +282,22 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			MenuItem followItem = new AgentMenuItem("Follow", macro, display);
 			followItem.addActionListener(followListener);
 			macroMenu.add(followItem);
+			
+			final MenuItem highlightItem =
+					new AgentMenuItem(macro == GuiUtils.getHighlightedAgent() ? "Remove highlight" : "Highlight", macro,
+						display);
+				highlightItem.addActionListener(highlightListener);
+				macroMenu.add(highlightItem);
+
+				final Collection<UserCommandStatement> commands = macro.getSpecies().getUserCommands();
+				if ( !commands.isEmpty() ) {
+					macroMenu.addSeparator();
+					for ( final UserCommandStatement c : commands ) {
+						final MenuItem actionItem = new AgentMenuItem(macro, c, null);
+						actionItem.addActionListener(commandListener);
+						macroMenu.add(actionItem);
+					}
+				}
 
 			if ( micros != null && !micros.isEmpty() ) {
 				final Menu microsMenu = new Menu("Micro agents");
