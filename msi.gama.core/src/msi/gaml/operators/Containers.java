@@ -119,8 +119,7 @@ public class Containers {
 	}
 
 	@operator(value = { "copy_between" /* , "copy" */}, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
-	@doc(value = "Returns a list having elements copied from the first operand (input list). The indexes of copied elements are determined by the second and third operands.",
-			examples = {" copy_between ([4, 1, 6, 9 ,7], 1, 3) --: [1, 6, 9]"})
+	@doc(value = "Returns a list having elements copied from the first operand (input list). The indexes of copied elements are determined by the second and third operands.", examples = { " copy_between ([4, 1, 6, 9 ,7], 1, 3) --: [1, 6, 9]" })
 	public static IList copy_between(final IList l1, final Integer begin, final Integer end) {
 		final int beginIndex = begin < 0 ? 0 : begin;
 		final int size = nullCheck(l1).size();
@@ -237,7 +236,7 @@ public class Containers {
 		"[1,2,3,4,5,6] - [0,8] 		--:	 	[1,2,3,4,5,6]" }, see = { "" + IKeyword.PLUS })
 	public static IList minus(final IScope scope, final IContainer source, final IContainer l) {
 		final IList result = (IList) nullCheck(source).listValue(scope).copy(scope);
-		Iterables.removeAll(result, nullCheck(l).listValue(scope));
+		result.removeAll(nullCheck(l).listValue(scope));
 		return result;
 	}
 
@@ -257,9 +256,6 @@ public class Containers {
 		"[1,2,3,4,5,6] - 2 		--: 	[1,3,4,5,6]", "[1,2,3,4,5,6] - 0 		--:	 	[1,2,3,4,5,6]" })
 	public static IList minus(final IScope scope, final ISpecies l1, final IAgent object) {
 		return minus(scope, l1.listValue(scope), object);
-		// final IList result = (IList) nullCheck(l1).listValue(scope).copy(scope);
-		// Iterables.removeIf(result, equalTo(object));
-		// return result;
 	}
 
 	// PRENDRE EN COMPTE:
