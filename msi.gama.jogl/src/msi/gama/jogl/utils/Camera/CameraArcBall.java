@@ -110,8 +110,8 @@ public class CameraArcBall extends AbstractCamera {
 		if( _theta > 360 ) _theta = 0.00000002;
 	    if( _theta < 0 ) _theta = 360.00000002;
 
-	    if( _phi > 360 ) _phi = 0.00000002;
-	    if( _phi < 0 ) _phi = 360.00000002;
+	    if( _phi >= 360 ) _phi = 0.00000002;
+	    if( _phi <= 0 ) _phi = 360.00000002;
 		
 		double cosAngle = Math.cos(_theta*Math.PI/180.f);
 		double sinAngle = Math.sin(_theta*Math.PI/180.f);

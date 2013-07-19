@@ -67,6 +67,8 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 	
 	public double velocityHoriz, velocityVert = 0;
 
+	public int _orientation;
+
 	
 	public AbstractCamera(JOGLAWTGLRenderer renderer) {
 		myRenderer = renderer;

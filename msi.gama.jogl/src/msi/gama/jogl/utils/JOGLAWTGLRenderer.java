@@ -64,7 +64,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private ArcBall arcBall;
 	// use glut tesselation or JTS tesselation
 	// facet "tesselation"
-	private boolean useTessellation = true;
+	private boolean useTessellation = false;
 	// facet "inertia"
 	private boolean inertia = false;
 	// facet "inertia"
@@ -100,7 +100,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private double currentTime = 0;
 	private double previousTime = 0;
 	public float fps = 0;
-	public boolean showFPS = false;
+	public boolean showFPS = true;
 
 	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {
 		// Enabling the stencil buffer
@@ -195,6 +195,22 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			gl.glMatrixMode(GL.GL_PROJECTION);
 			// Reset the view (x, y, z axes back to normal)
 			gl.glLoadIdentity();
+			
+			if(camera._phi <360 && camera._phi>180) 
+	    	{
+				camera._orientation = -1;		
+				camera.setUpVector(new GamaPoint(0.0, camera._orientation,0.0));
+	    	}
+			else{
+				camera._orientation = 1;		
+				camera.setUpVector(new GamaPoint(0.0, camera._orientation,0.0));
+			}	
+			
+			if( camera._theta > 360 ) camera._theta = 0.00000002;
+		    if( camera._theta < 0 ) camera._theta = 360.00000002;
+
+		    if( camera._phi >= 360 ) camera._phi = 0.00000002;
+		    if( camera._phi <= 0 ) camera._phi = 360.00000002;
 
 			camera.UpdateCamera(gl, glu, width, height);
 
@@ -253,12 +269,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			}
 
 			this.drawScene();
-			if ( showFPS ) {
-				CalculateFrameRate();
-				gl.glRasterPos2i(-30, 30);
-				gl.glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-				glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, "FPS : " + fps);
-			}
 			// this.DrawShapeFile();
 			// this.DrawCollada();
 			gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
@@ -268,8 +278,15 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			if ( this.displaySurface.selectRectangle ) {
 				DrawROI();
 			}
-			// Show fps for performance mesures
-
+			
+			//Show fps for performance mesures		
+			if(showFPS)
+			{
+				CalculateFrameRate();
+				gl.glRasterPos2i(-30, 30);
+				gl.glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+				glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, "FPS : "+fps);
+			}
 		}
 	}
 
@@ -567,7 +584,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			frameCount = 0;
 		}
 
-		System.out.println(fps);
+//		System.out.println(fps);
 	}
 
 	// Use when the rotation button is on.
