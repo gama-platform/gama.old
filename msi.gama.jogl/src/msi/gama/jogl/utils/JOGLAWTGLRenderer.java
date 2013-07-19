@@ -64,7 +64,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private ArcBall arcBall;
 	// use glut tesselation or JTS tesselation
 	// facet "tesselation"
-	private boolean useTessellation = false;
+	private boolean useTessellation = true;
 	// facet "inertia"
 	private boolean inertia = false;
 	// facet "inertia"
@@ -100,7 +100,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private double currentTime = 0;
 	private double previousTime = 0;
 	public float fps = 0;
-	public boolean showFPS = true;
+	public boolean showFPS = false;
 
 	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {
 		// Enabling the stencil buffer
