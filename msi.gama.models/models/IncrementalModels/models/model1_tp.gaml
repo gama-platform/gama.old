@@ -8,18 +8,25 @@ model model1
 global{
 	geometry shape<-envelope(square(500));
 	init{
-		create people number:500;
+		create people number:1000;
 	}
 }
 
 species people skills:[moving]{		
-	int size <- 5;
 	float speed <- 5.0 + rnd(5);
+	bool is_infected <- flip(0.01);
 	reflex move{
 		do wander;
 	}
+	reflex infect when: is_infected{
+		ask people at_distance 10 {
+			if flip(0.01) {
+				is_infected <- true;
+			}
+		}
+	}
 	aspect circle{
-		draw circle(size) color:rgb("green");
+		draw circle(5) color:is_infected ? rgb("red") : rgb("green");
 	}
 }
 

@@ -1,6 +1,6 @@
 /**
  *  model5
- *  This model illustrates multi-level
+ *  This model illustrates EDO
  */ 
 model model5 
 
@@ -9,6 +9,9 @@ global {
 	file buildings_shapefile <- file("../includes/building.shp");
 	geometry shape <- envelope(roads_shapefile);
 	graph road_network;
+	float alpha <- 0.1;
+	float beta <- 0.4;
+	
 	init {
 		create roads from: roads_shapefile;
 		road_network <- as_edge_graph(roads);
@@ -49,8 +52,13 @@ species roads {
 	}
 }
 
-species buildings {
+species buildings skills: [EDP]{
 	float height <- 10.0+ rnd(10);
+	int population_init;
+	int nbInhabitants update: length(members);				
+	list<people_in_building> membersS <- [] update: members where (!(each as people_in_building).is_infected);
+	list<people_in_building> membersI <- [] update: members where ((each as people_in_building).is_infected);
+	int nbI update: length(membersI);
 	
 	aspect geom {
 		draw shape color: rgb("gray") depth: height;
@@ -64,7 +72,7 @@ species buildings {
 		if !(empty (entering_people)) {
 			capture entering_people as: people_in_building returns: people_captured;
 			ask people_captured {
-				leaving_time <- time + 50 + rnd(50);
+				leaving_time <- time + 25 + rnd(25);
 			}
  		}
 	}
@@ -74,6 +82,14 @@ species buildings {
 			release leaving_people as: people in: world;
 		}
 	}
+	reflex epidemic {
+		ask (membersI where flip(alpha)) {
+			is_infected <- false;
+		}
+		ask (membersS where flip(beta*nbI/nbInhabitants)) {
+			 is_infected <- true;
+			 }  		
+		}	 
 }
 
 experiment main_experiment type:gui{

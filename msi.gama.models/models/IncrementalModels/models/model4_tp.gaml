@@ -3,7 +3,7 @@
  *  This model illustrates 3D visualization
  */ 
 model model4 
- 
+
 global {
 	file roads_shapefile <- file("../includes/road.shp");
 	file buildings_shapefile <- file("../includes/building.shp");
@@ -12,30 +12,34 @@ global {
 	init {
 		create roads from: roads_shapefile;
 		road_network <- as_edge_graph(roads);
-		create buildings from: buildings_shapefile with: [type:: string(read("NATURE"))] {
-			color <- type="Industrial" ? rgb("blue") : rgb("gray");
-		}
-		create people number:500 {
-			target <- any_location_in(one_of(buildings where (each.type="Industrial" )).shape);
-			list<buildings> residential_bg <- buildings where (each.type="Residential");
-			buildings habitation <- residential_bg with_min_of (length(people inside each)/ each.shape.area);
-			location <- any_location_in(habitation.shape) add_z habitation.height;
+		create buildings from: buildings_shapefile;
+		create people number:1000 {
+			buildings init_place <- one_of(buildings);
+			location <- any_location_in(init_place) add_z init_place.height;
+			target <- any_location_in(one_of(buildings));
 		}
 	}
 }
 
 species people skills:[moving]{		
-	int size <- 5;
 	float speed <- 5.0 + rnd(5);
+	bool is_infected <- flip(0.01);
 	point target;
-	reflex move{
-		do goto target:target on: road_network ;
+	reflex move {
+		do goto target:target on: road_network;
+		if (location = target) {
+			target <- any_location_in(one_of(buildings));
+		}
+	}
+	reflex infect when: is_infected{
+		ask people at_distance 10 {
+			if flip(0.01) {
+				is_infected <- true;
+			}
+		}
 	}
 	aspect circle{
-		draw circle(size) color:rgb("green");
-	}
-	aspect sphere{
-		draw sphere(size) color:rgb("green");
+		draw sphere(5) color:is_infected ? rgb("red") : rgb("green");
 	}
 }
 
@@ -44,22 +48,20 @@ species roads {
 		draw shape color: rgb("black");
 	}
 }
- 
+
 species buildings {
-	string type;
-	rgb color;
-	float height <- 5.0 + rnd(10.0);
+	float height <- 10.0+ rnd(10);
 	aspect geom {
-		draw shape color: color depth: height;
+		draw shape color: rgb("gray") depth: height;
 	}
 }
 
 experiment main_experiment type:gui{
 	output {
-		display map type: opengl ambient_light: 100 {
+		display map type: opengl ambient_light: 150{
 			species roads aspect:geom;
 			species buildings aspect:geom;
-			species people aspect:sphere;			
+			species people aspect:circle;			
 		}
 	}
 }

@@ -10,21 +10,30 @@ global {
 	geometry shape <- envelope(roads_shapefile);
 	init {
 		create roads from: roads_shapefile;
-		create buildings from: buildings_shapefile with: [type:: string(read("NATURE"))] {
-			color <- type="Industrial" ? rgb("blue") : rgb("gray");
+		create buildings from: buildings_shapefile;
+		create people number:1000 {
+			location <- any_location_in(one_of(buildings));
+			target <- any_location_in(one_of(buildings));
 		}
-		create people number:500;
 	}
 }
 
 species people skills:[moving]{		
-	int size <- 5;
 	float speed <- 5.0 + rnd(5);
-	reflex move{
+	bool is_infected <- flip(0.01);
+	point target;
+	reflex move {
 		do wander;
 	}
+	reflex infect when: is_infected{
+		ask people at_distance 10 {
+			if flip(0.01) {
+				is_infected <- true;
+			}
+		}
+	}
 	aspect circle{
-		draw circle(size) color:rgb("green");
+		draw circle(5) color:is_infected ? rgb("red") : rgb("green");
 	}
 }
 
@@ -35,10 +44,8 @@ species roads {
 }
 
 species buildings {
-	string type;
-	rgb color;
 	aspect geom {
-		draw shape color: color;
+		draw shape color: rgb("gray");
 	}
 }
 
