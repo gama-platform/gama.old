@@ -22,12 +22,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.graphstream.algorithm.generator.WattsStrogatzGenerator;
-import org.graphstream.stream.file.FileSource;
 
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
-import msi.gama.metamodel.topology.ITopology;
 import msi.gama.metamodel.topology.graph.*;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph.VertexRelationship;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -465,7 +462,9 @@ public class Graphs {
 	@doc(value = "A path between a list of two objects in a graph", examples = { "my_graph path_between (ag1:: ag2) --: A path between ag1 and ag2" })
 	public static IPath path_between(final IScope scope, final GamaGraph graph,
 		final GamaPair sourTarg) throws GamaRuntimeException {
-		return graph.computeShortestPathBetween(sourTarg.key, sourTarg.value);
+		return Cast.asTopology(scope, graph).pathBetween(scope, (IShape)sourTarg.key, (IShape)sourTarg.value);
+		
+		//return graph.computeShortestPathBetween(sourTarg.key, sourTarg.value);
 		
 	}
 	

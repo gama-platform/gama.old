@@ -291,6 +291,7 @@ public class MovingSkill extends GeometricSkill {
 		@arg(name = "target", type = { IType.AGENT, IType.POINT, IType.GEOMETRY }, optional = false, doc = @doc("the location or entity towards which to move.")),
 		@arg(name = IKeyword.SPEED, type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
 		@arg(name = "on", type = { IType.LIST, IType.AGENT, IType.GRAPH, IType.GEOMETRY }, optional = true, doc = @doc("list, agent, graph, geometry that restrains this move (the agent moves inside this geometry)")),
+		@arg(name = "recompute_path", type = IType.BOOL, optional = true, doc = @doc("if false, the path is not recompute even if the graph is modified (by default: true)")),
 		@arg(name = "return_path", type = IType.BOOL, optional = true, doc = @doc("if true, return the path followed (by default: false)")),
 		@arg(name = "move_weights", type = IType.MAP, optional = true, doc = @doc("Weights used for the moving."))}, doc = @doc(value = "moves the agent towards the target passed in the arguments.", returns = "optional: the path followed by the agent.", examples = { "do goto target: (one_of road).location speed: speed * 2 on: road_network;" }))
 	public IPath primGoto(final IScope scope) throws GamaRuntimeException {
@@ -307,16 +308,18 @@ public class MovingSkill extends GeometricSkill {
 			// scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
-		
+		Boolean recomputePath = (Boolean) scope.getArg("recompute_path", IType.NONE);
+		if (recomputePath == null) {recomputePath = true;}
 		IPath path = (GamaPath) agent.getAttribute("current_path");
 		if ( path == null || (path.getTopology() != null && !path.getTopology().equals(topo)) || !path.getEndVertex().equals(goal) ||
 			!path.getStartVertex().equals(source) ) {
 			path = topo.pathBetween(scope, source, goal);
+			
 		} else {
 
 			if ( topo instanceof GraphTopology ) {
-				if ( ((GraphTopology) topo).getPlaces() != path.getGraph() ||
-					((GraphTopology) topo).getPlaces().getVersion() != path.getGraphVersion() ) {
+				if ( ((GraphTopology) topo).getPlaces() != path.getGraph() || (recomputePath &&
+					((GraphTopology) topo).getPlaces().getVersion() != path.getGraphVersion()) ) {
 					path = topo.pathBetween(scope, source, goal);
 				}
 			}
@@ -325,6 +328,7 @@ public class MovingSkill extends GeometricSkill {
 			// scope.setStatus(ExecutionStatus.failure);
 			return null;
 		}
+		
 		final Boolean returnPath = (Boolean) scope.getArg("return_path", IType.NONE);
 		final GamaMap weigths = (GamaMap) computeMoveWeights(scope);
 		if ( returnPath != null && returnPath ) {

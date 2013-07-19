@@ -27,7 +27,6 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.path.*;
-import msi.gaml.operators.Spatial.Punctal;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
@@ -90,9 +89,9 @@ public class GraphTopology extends AbstractTopology {
 		final IShape target) {
 
 		
-		if ( edgeS == edgeT ) { return PathFactory.newInstance(this, source, target, GamaList.with(edgeS));
+		/*if ( edgeS == edgeT ) { return PathFactory.newInstance(this, source, target, GamaList.with(edgeS));
 		// return new GamaPath(this, source, target, GamaList.with(edgeS));
-		}
+		}*/
 
 		IShape s1 = null;
 		IShape t1 = null;
@@ -117,7 +116,6 @@ public class GraphTopology extends AbstractTopology {
 			nodeS = s2;
 		}
 		final IList<IShape> edges = getPlaces().computeBestRouteBetween(nodeS, nodeT);
-
 		if ( edges.isEmpty() || edges.get(0) == null ) { return null; }
 		final HashSet edgesSetInit = new HashSet(Arrays.asList(edges.get(0).getInnerGeometry().getCoordinates()));
 		final HashSet edgesSetS = new HashSet(Arrays.asList(edgeS.getInnerGeometry().getCoordinates()));
@@ -161,31 +159,48 @@ public class GraphTopology extends AbstractTopology {
 	@Override
 	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target) {
 		IShape edgeS = null, edgeT = null;
-		
-		if ( !this.getPlaces().getEdges().isEmpty() ) {
-			if ( this.getPlaces() instanceof GamaSpatialGraph && !((GamaSpatialGraph) this.getPlaces()).isAgentEdge() ) {
+		ISpatialGraph graph = getPlaces();
+		boolean sourceNode = graph.containsVertex(source);
+		boolean targetNode = graph.containsVertex(target);
+		if (sourceNode && targetNode)
+			return (GamaSpatialPath) graph.computeShortestPathBetween(source, target);
+		if ( !graph.getEdges().isEmpty() ) {
+			if (sourceNode) {
+				Set<IShape> eSs = graph.edgesOf(source);
+				edgeS =  new GamaList<IShape>(eSs).get(0); 
+				
+			} else if (targetNode) {
+				Set<IShape> eSs = graph.edgesOf(target);
+				edgeT =  new GamaList<IShape>(eSs).get(0); 
+			}
+			if ( graph instanceof GamaSpatialGraph && !((GamaSpatialGraph) graph).isAgentEdge() ) {
 				
 				double distMinT = Double.MAX_VALUE;
 				double distMinS = Double.MAX_VALUE;
 				for ( final IShape shp : this.getPlaces().getEdges() ) {
-					final double distS = shp.euclidianDistanceTo(source);
-					final double distT = shp.euclidianDistanceTo(target);
-					if ( distS < distMinS ) {
-						distMinS = distS;
-						edgeS = shp;
+					if (!sourceNode) {
+						final double distS = shp.euclidianDistanceTo(source);
+						if ( distS < distMinS ) {
+							distMinS = distS;
+							edgeS = shp;
+						}
 					}
-					if ( distT < distMinT ) {
-						distMinT = distT;
-						edgeT = shp;
+					if (!targetNode) {	
+						final double distT = shp.euclidianDistanceTo(target);
+						if ( distT < distMinT ) {
+							distMinT = distT;
+							edgeT = shp;
+						}
 					}
 				}
 			} else {
 				final IAgentFilter filter = In.edgesOf(getPlaces());
-				edgeS = getAgentClosestTo(source, filter);
-				edgeT = getAgentClosestTo(target, filter);
+				if (!sourceNode) edgeS = getAgentClosestTo(source, filter);
+				if (!targetNode) edgeT = getAgentClosestTo(target, filter);
 			}
 		}
-		if (getPlaces().isDirected()) 
+		
+		if (graph.isDirected()) 
 			return pathBetweenCommonDirected(edgeS, edgeT, source, target);
 		return pathBetweenCommon(edgeS, edgeT, source, target);
 	}
