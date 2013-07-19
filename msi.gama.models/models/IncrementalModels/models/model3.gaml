@@ -15,7 +15,7 @@
 			if type = 'Industrial' {
 				my_color <- rgb('blue');
 			} else if type = 'Residential' {
-				my_color <- rgb('red');
+				my_color <- rgb('gray');
 			}
 
 		}
@@ -35,9 +35,10 @@ entities {
 	species Buildings {
 		string type;
 		string company;
+		int mydepth <- 10+ rnd(100);
 		rgb my_color;
 		aspect asp1 {
-			draw shape color: my_color;
+			draw shape color: my_color depth: mydepth;
 		}
 	
 	}
@@ -55,7 +56,7 @@ entities {
 		int threshold_time <- 200+rnd(500);
 		int flag_time <- 0;
 		aspect asp1 {
-			draw circle(5) color: my_target.my_color;
+			draw sphere(10) color: my_target.my_color;
 		}
 	
 		action wanna_go_to_work {
@@ -97,7 +98,7 @@ entities {
 
 experiment exp3 type: gui {
 	output {
-		display disp1 refresh_every: 1 {
+		display disp1 type:opengl draw_env:false{
 			species Buildings aspect: asp1;
 			species Roads aspect: normal;
 			species Workers aspect: asp1;

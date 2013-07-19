@@ -4,40 +4,28 @@
  */ 
 model model2 
  
- 
 global {
-	file shape_file_buildings <- file('../includes/building.shp');
-	geometry shape <- envelope(shape_file_buildings);
+	file shapefile <- file('../includes/building.shp');
+	geometry shape <- envelope(shapefile);
 	init {
-		create Buildings from: shape_file_buildings with: [type:: string(read('NATURE')), company::string(read('COMPANY'))] {
-			if type = 'Industrial' {
-				mycolor <- rgb('blue');
-			} else if type = 'Residential' {
-				mycolor <- rgb('red');
-			}
+		create Buildings from: shapefile with: [type:: string(read('NATURE'))] {
+			mycolor <- type='Industrial' ? rgb('blue') : rgb('yellow');
 		}
 	}
 }
 
-entities {
-	species Buildings {
-		string type;
-		string company;
-		rgb mycolor;
-		aspect asp1 {
-			draw shape color: mycolor;
-			if (company != "") {
-				draw "" + company at: location size: 20 color:rgb('black');
-			}
-		}
+species Buildings {
+	string type;
+	rgb mycolor;
+	aspect asp1 {
+		draw shape color: mycolor;
 	}
 }
 
 experiment exp2 type: gui {
 	output {
-		display disp1 refresh_every: 1 {
+		display default_display  {
 			species Buildings aspect: asp1;
 		}
 	}
-
 }

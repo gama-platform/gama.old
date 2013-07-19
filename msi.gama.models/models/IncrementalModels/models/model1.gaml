@@ -8,26 +8,24 @@ model model1
 global{
 	geometry shape<-envelope(square(100));
 	init{
-		create A number:1000;
+		create simple_agent number:100;
 	}
 }
 
-entities{
-	species A{		
-		rgb my_color<-rgb(rnd(255),rnd(255),rnd(255));
-		reflex moving_around{
-			location<- any_point_in(world.shape);
-		}
-		aspect my_aspect{
-			draw circle(1) color:my_color;
-		}
+species simple_agent{		
+	int size <- rnd(5);
+	reflex move{
+		location<- any_point_in(world.shape);
+	}
+	aspect circle{
+		draw circle(size) color:rgb("blue");
 	}
 }
 
 experiment exp1 type:gui{
 	output {
-		display default_display refresh_every:1{
-			species A aspect:my_aspect;			
+		display default_display  {
+			species simple_agent aspect:circle;			
 		}
 	}
 }
