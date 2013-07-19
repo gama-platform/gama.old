@@ -42,7 +42,7 @@ species people skills:[moving]{
 		draw sphere(size) color:rgb("green");
 	}
 	aspect node{
-		draw sphere(size) color:rgb("red");
+		draw sphere(1 + (friendship_graph degree_of (self))) color:rgb("red");
 	}
 }
 
@@ -63,7 +63,7 @@ species buildings {
 
 species friendship_link {	
 	aspect base{
-   	  draw shape + 1 color:rgb("red") border: rgb("red") ;
+   	  draw shape + 0.5 color:rgb("red") border: rgb("red") ;
    	}
 }
 
