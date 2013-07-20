@@ -1,15 +1,15 @@
 /**
- *  model5
+ *  model6
  *  This model illustrates EDO
  */ 
-model model5 
+model model6 
 
 global {
 	file roads_shapefile <- file("../includes/road.shp");
 	file buildings_shapefile <- file("../includes/building.shp");
 	geometry shape <- envelope(roads_shapefile);
 	graph road_network;
-	float alpha <- 0.1;
+	
 	float beta <- 0.4;
 	
 	init {
@@ -52,44 +52,57 @@ species roads {
 	}
 }
 
-species buildings skills: [EDP]{
+species buildings {
 	float height <- 10.0+ rnd(10);
-	int population_init;
+	int nb_I -> {members count (people_in_building(each).is_infected)};
 	int nbInhabitants update: length(members);				
 	list<people_in_building> membersS <- [] update: members where (!(each as people_in_building).is_infected);
 	list<people_in_building> membersI <- [] update: members where ((each as people_in_building).is_infected);
-	int nbI update: length(membersI);
-	
+	float t;    
+	float S update: length(membersS) as float; 
+   	float I update: length(membersI) as float;
+   	float I_to_1 <- 0.0;
+   	float h<-0.1;
+   	
 	aspect geom {
-		draw shape color: rgb("gray") depth: height;
+		draw shape color: empty(members) ? rgb("gray") : (nb_I/length(members) > 0.5 ? rgb("red") : rgb("green")) depth: height;
 	}
 	species people_in_building parent: people schedules: [] {
 		int leaving_time;
 		aspect circle{}
 	}
-	reflex aggregate {
+	reflex let_people_enter {
 		list<people> entering_people <- (people inside self);
 		if !(empty (entering_people)) {
 			capture entering_people as: people_in_building returns: people_captured;
 			ask people_captured {
-				leaving_time <- time + 25 + rnd(25);
+				leaving_time <- time + 50 + rnd(50);
 			}
  		}
 	}
-	reflex disaggregate  {
+	reflex let_people_leave  {
 		list<people_in_building> leaving_people <- (list (members)) where (time >= (people_in_building (each)).leaving_time);
 		if !(empty (leaving_people)) {
 			release leaving_people as: people in: world;
 		}
 	}
-	reflex epidemic {
-		ask (membersI where flip(alpha)) {
-			is_infected <- false;
-		}
-		ask (membersS where flip(beta*nbI/nbInhabitants)) {
-			 is_infected <- true;
-			 }  		
-		}	 
+			
+	equation SIR{ 
+		diff(S,t) = (- beta * S * I / nbInhabitants) ;
+		diff(I,t) = (  beta * S * I / nbInhabitants) ;
+	}
+
+	reflex epidemic when:(S>0 and I>0){ 	
+		float I0 <- I;
+    	solve SIR method: "rk4" step: h { }
+    	I_to_1 <- I_to_1 + (I - I0);
+    	if(I_to_1 > 1) {
+    		ask(membersS){
+    			is_infected <- true;
+    			myself.I_to_1 <- myself.I_to_1 - 1;
+    		}
+    	}
+    }   
 }
 
 experiment main_experiment type:gui{

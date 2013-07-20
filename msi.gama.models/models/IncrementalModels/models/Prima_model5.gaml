@@ -51,15 +51,16 @@ species roads {
 
 species buildings {
 	float height <- 10.0+ rnd(10);
+	int nb_I -> {members count (people_in_building(each).is_infected)};
 	
 	aspect geom {
-		draw shape color: rgb("gray") depth: height;
+		draw shape color: empty(members) ? rgb("gray") : (nb_I/length(members) > 0.5 ? rgb("red") : rgb("green")) depth: height;
 	}
 	species people_in_building parent: people schedules: [] {
 		int leaving_time;
 		aspect circle{}
 	}
-	reflex aggregate {
+	reflex let_people_enter {
 		list<people> entering_people <- (people inside self);
 		if !(empty (entering_people)) {
 			capture entering_people as: people_in_building returns: people_captured;
@@ -68,7 +69,7 @@ species buildings {
 			}
  		}
 	}
-	reflex disaggregate  {
+	reflex let_people_leave  {
 		list<people_in_building> leaving_people <- (list (members)) where (time >= (people_in_building (each)).leaving_time);
 		if !(empty (leaving_people)) {
 			release leaving_people as: people in: world;

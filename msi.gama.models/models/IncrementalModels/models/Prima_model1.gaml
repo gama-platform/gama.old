@@ -3,7 +3,7 @@
  *  This model illustrates how to create simple agent and make them move in their environment.
  */
 
-model model1
+model SI_city
 
 global{
 	geometry shape<-envelope(square(500));
