@@ -60,19 +60,28 @@ species buildings {
 	list<people_in_building> membersI <- [] update: members where ((each as people_in_building).is_infected);
 	int nbI update: length(membersI);
 	
-	/// Problem .... il faudrait faire disparaitre des individus et les reproduire à la sortie...
 	float t;    
 	float S update: length(membersS) as float; 
    	float I update: length(membersI) as float;
+   	float I_to_1 <- 0.0;
    	float h<-0.1;
    			
 	equation SIR{ 
-		diff(S,t) = (- beta * S * I / nbInhabitants) + alpha * I;
-		diff(I,t) = (beta * S * I / nbInhabitants) - alpha * I;
+		diff(S,t) = (- beta * S * I / nbInhabitants) ;
+		diff(I,t) = (  beta * S * I / nbInhabitants) ;
 	}
 
-	reflex ss when:(S>0 and I>0){ 	
+	reflex epidemic when:(S>0 and I>0){ 	
+		float I0 <- I;
     	solve SIR method: "rk4" step: h { }
+    	I_to_1 <- I_to_1 + (I - I0);
+    	if(I_to_1 > 1) {
+    		ask(membersS){
+    			is_infected <- true;
+    			myself.I_to_1 <- myself.I_to_1 - 1;
+    			write " 1 infecte in building";
+    		}
+    	}
     }   
 	///////////////////////
 	
@@ -98,14 +107,6 @@ species buildings {
 			release leaving_people as: people in: world;
 		}
 	}
-	reflex epidemic {
-	//	ask (membersI where flip(alpha)) {
-	//		is_infected <- false;
-	//	}
-	//	ask (membersS where flip(beta*nbI/nbInhabitants)) {
-	//		 is_infected <- true;
-	//		 }  		
-	}	 
 }
 
 experiment main_experiment type:gui{
