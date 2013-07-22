@@ -21,7 +21,7 @@ import com.vividsolutions.jts.io.*;
 */
 public class PostgresConnection extends SqlConnection {
 
-	// private static final boolean DEBUG = false; // Change DEBUG = false for release version
+	private static final boolean DEBUG = false; // Change DEBUG = false for release version
 	private static final String WKT2GEO = "ST_GeomFromText";
 
 	public PostgresConnection() {

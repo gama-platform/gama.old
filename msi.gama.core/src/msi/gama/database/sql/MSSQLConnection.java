@@ -27,7 +27,7 @@ import com.vividsolutions.jts.io.*;
 */
 public class MSSQLConnection extends SqlConnection {
 
-	//private static final boolean DEBUG = false; // Change DEBUG = false for release version
+	private static final boolean DEBUG = false; // Change DEBUG = false for release version
 	private static final String WKT2GEO = "geometry::STGeomFromText";
 
 	public MSSQLConnection() {

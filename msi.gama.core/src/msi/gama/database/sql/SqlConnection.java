@@ -211,8 +211,8 @@ public abstract class SqlConnection {
 					st = conn.createStatement();
 				    st.setQueryTimeout(30); // set timeout to 30 sec.
 					st.execute("SELECT load_extension('"+extension+"')");
-				    String sql = "SELECT InitSpatialMetadata()";
-				    st.execute(sql);
+//				    String sql = "SELECT InitSpatialMetadata()";
+//				    st.execute(sql);
 				}
 			}
 			rs = st.executeQuery(selectComm);
@@ -263,8 +263,8 @@ public abstract class SqlConnection {
 					st = conn.createStatement();
 				    st.setQueryTimeout(30); // set timeout to 30 sec.
 					st.execute("SELECT load_extension('"+extension+"')");
-				    String sql = "SELECT InitSpatialMetadata()";
-				    st.execute(sql);
+//				    String sql = "SELECT InitSpatialMetadata()";
+//				    st.execute(sql);
 				}
 
 			}			
@@ -317,8 +317,8 @@ public abstract class SqlConnection {
 					st = conn.createStatement();
 				    st.setQueryTimeout(30); // set timeout to 30 sec.
 					st.execute("SELECT load_extension('"+extension+"')");
-				    String sql = "SELECT InitSpatialMetadata()";
-				    st.execute(sql);
+//				    String sql = "SELECT InitSpatialMetadata()";
+//				    st.execute(sql);
 				}
 			}
 			
@@ -448,8 +448,8 @@ public abstract class SqlConnection {
 					st = conn.createStatement();
 				    st.setQueryTimeout(30); // set timeout to 30 sec.
 					st.execute("SELECT load_extension('"+extension+"')");
-				    String sql = "SELECT InitSpatialMetadata()";
-				    st.execute(sql);
+//				    String sql = "SELECT InitSpatialMetadata()";
+//				    st.execute(sql);
 				}
 
 			}
@@ -545,8 +545,8 @@ public abstract class SqlConnection {
 					st = conn.createStatement();
 				    st.setQueryTimeout(30); // set timeout to 30 sec.
 					st.execute("SELECT load_extension('"+extension+"')");
-				    String sql = "SELECT InitSpatialMetadata()";
-				    st.execute(sql);
+//				    String sql = "SELECT InitSpatialMetadata()";
+//				    st.execute(sql);
 				}
 			}	
 			
@@ -639,8 +639,8 @@ public abstract class SqlConnection {
 					pstmt = conn.prepareStatement("SELECT load_extension('"+extension+"')");
 					pstmt.setQueryTimeout(30); // set timeout to 30 sec.
 					pstmt.executeQuery();
-					pstmt = conn.prepareStatement("SELECT InitSpatialMetadata()");	
-					pstmt.executeQuery();				
+//					pstmt = conn.prepareStatement("SELECT InitSpatialMetadata()");	
+//					pstmt.executeQuery();				
 				}
 			}
 			
@@ -755,8 +755,8 @@ public abstract class SqlConnection {
 					pstmt = conn.prepareStatement("SELECT load_extension('"+extension+"')");
 					pstmt.setQueryTimeout(30); // set timeout to 30 sec.
 					pstmt.executeQuery();
-					pstmt = conn.prepareStatement("SELECT InitSpatialMetadata()");	
-					pstmt.executeQuery();				
+//					pstmt = conn.prepareStatement("SELECT InitSpatialMetadata()");	
+//					pstmt.executeQuery();				
 				}
 			}
 

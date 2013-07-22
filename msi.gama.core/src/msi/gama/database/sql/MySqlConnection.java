@@ -21,7 +21,7 @@ import com.vividsolutions.jts.io.*;
 */
 public class MySqlConnection extends SqlConnection {
 
-	//private static final boolean DEBUG = false; // Change DEBUG = false for release version
+	private static final boolean DEBUG = false; // Change DEBUG = false for release version
 	private static final String WKT2GEO = "GeomFromText";
 	public MySqlConnection() {
 		super();
