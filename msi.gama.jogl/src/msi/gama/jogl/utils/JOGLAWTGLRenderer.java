@@ -26,7 +26,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	// ///Static members//////
 	private static final boolean USE_VERTEX_ARRAY = false;
-	private static final int REFRESH_FPS = 30;
+	private static final int REFRESH_FPS = 1000;
 
 	private static boolean BLENDING_ENABLED; // blending on/off
 	private static boolean IS_LIGHT_ON;
@@ -100,7 +100,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private double currentTime = 0;
 	private double previousTime = 0;
 	public float fps = 0;
-	public boolean showFPS = false;
+	public boolean showFPS = true;
 
 	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {
 		// Enabling the stencil buffer
@@ -205,12 +205,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				camera._orientation = 1;		
 				camera.setUpVector(new GamaPoint(0.0, camera._orientation,0.0));
 			}	
-			
-			if( camera._theta > 360 ) camera._theta = 0.00000002;
-		    if( camera._theta < 0 ) camera._theta = 360.00000002;
-
-		    if( camera._phi >= 360 ) camera._phi = 0.00000002;
-		    if( camera._phi <= 0 ) camera._phi = 360.00000002;
 
 			camera.UpdateCamera(gl, glu, width, height);
 
