@@ -57,7 +57,7 @@ public abstract class SqlConnection {
 	protected String password = "";
 	protected static Boolean transformed = false;
 	protected String extension=null;
-
+	protected boolean loadExt=false;
 	public SqlConnection(String dbName) {
 		this.dbName = dbName;
 	}
@@ -206,16 +206,18 @@ public abstract class SqlConnection {
 		try {
 			Statement st = conn.createStatement();
 			//load extension library
-			if (this.dbtype.equalsIgnoreCase(SQLITE)){
-				if (this.extension!=null){
-					st = conn.createStatement();
-				    st.setQueryTimeout(30); // set timeout to 30 sec.
-					st.execute("SELECT load_extension('"+extension+"')");
+//			if (this.dbtype.equalsIgnoreCase(SQLITE)){
+//				if (this.extension!=null && !loadExt){
+//					st = conn.createStatement();
+//				    st.setQueryTimeout(30); // set timeout to 30 sec.
+//					st.execute("SELECT load_extension('"+extension+"')");
 //				    String sql = "SELECT InitSpatialMetadata()";
 //				    st.execute(sql);
-				}
-			}
+//				    loadExt=true;
+//				}
+//			}
 			rs = st.executeQuery(selectComm);
+
 			ResultSetMetaData rsmd = rs.getMetaData();
 			if ( DEBUG ) {
 				GuiUtils.debug("MetaData:" + rsmd.toString());
@@ -234,6 +236,11 @@ public abstract class SqlConnection {
 				GuiUtils.debug("list of column type:" + result.get(1));
 				GuiUtils.debug("list of data:" + result.get(2));
 			}
+			
+			st.close();
+//			st=null;
+//			System.gc();
+			
 			rs.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -258,20 +265,25 @@ public abstract class SqlConnection {
 			}
 			Statement st = conn.createStatement();
 			//load extension library
-			if (this.dbtype.equalsIgnoreCase(SQLITE)){
-				if (this.extension!=null){
-					st = conn.createStatement();
-				    st.setQueryTimeout(30); // set timeout to 30 sec.
-					st.execute("SELECT load_extension('"+extension+"')");
+//			if (this.dbtype.equalsIgnoreCase(SQLITE)){
+//				if (this.extension!=null && !loadExt){
+//					st = conn.createStatement();
+//				    st.setQueryTimeout(30); // set timeout to 30 sec.
+//					st.execute("SELECT load_extension('"+extension+"')");
 //				    String sql = "SELECT InitSpatialMetadata()";
 //				    st.execute(sql);
-				}
-
-			}			
+//				    loadExt=true;
+//				}
+//
+//			}			
 			n = st.executeUpdate(updateComm);
 			if ( DEBUG ) {
 				GuiUtils.debug("Updated records :" + n);
 			}
+			
+			st.close();
+//			st=null;
+//			System.gc();
 
 			conn.close();
 		} catch (SQLException e) {
@@ -312,17 +324,22 @@ public abstract class SqlConnection {
 			Statement st = conn.createStatement();
 			
 			//load extension library
-			if (this.dbtype.equalsIgnoreCase(SQLITE)){
-				if (this.extension!=null){
-					st = conn.createStatement();
-				    st.setQueryTimeout(30); // set timeout to 30 sec.
-					st.execute("SELECT load_extension('"+extension+"')");
+//			if (this.dbtype.equalsIgnoreCase(SQLITE)){
+//				if (this.extension!=null && !loadExt){
+//					st = conn.createStatement();
+//				    st.setQueryTimeout(30); // set timeout to 30 sec.
+//					st.execute("SELECT load_extension('"+extension+"')");
 //				    String sql = "SELECT InitSpatialMetadata()";
 //				    st.execute(sql);
-				}
-			}
+//					loadExt=true;
+//				}
+//			}
 			
 			n = st.executeUpdate(updateComm);
+			st.close();
+//			st=null;
+//			System.gc();
+
 			if ( DEBUG ) {
 				GuiUtils.debug("Updated records :" + n);
 			}
@@ -331,6 +348,7 @@ public abstract class SqlConnection {
 			e.printStackTrace();
 			throw GamaRuntimeException.error("SQLConnection.executeUpdateDB: " + e.toString());
 		}
+
 		return n;
 	}
 
@@ -443,16 +461,17 @@ public abstract class SqlConnection {
 			Statement st = conn.createStatement();
 			
 			//load extension library
-			if (this.dbtype.equalsIgnoreCase(SQLITE)){
-				if (this.extension!=null){
-					st = conn.createStatement();
-				    st.setQueryTimeout(30); // set timeout to 30 sec.
-					st.execute("SELECT load_extension('"+extension+"')");
+//			if (this.dbtype.equalsIgnoreCase(SQLITE)){
+//				if (this.extension!=null &&!loadExt){
+//					st = conn.createStatement();
+//				    st.setQueryTimeout(30); // set timeout to 30 sec.
+//					st.execute("SELECT load_extension('"+extension+"')");
 //				    String sql = "SELECT InitSpatialMetadata()";
 //				    st.execute(sql);
-				}
-
-			}
+//				    loadExt=true;
+//				}
+//
+//			}
 			String sqlStr=getInsertString(scope, conn, table_name, cols, values);
 			if ( DEBUG ) {
 				GuiUtils.debug("SQLConnection.insertBD.STR:" + sqlStr);
@@ -460,6 +479,10 @@ public abstract class SqlConnection {
 
 			//rec_no = st.executeUpdate(getInsertString(scope, conn, table_name, cols, values));
 			rec_no = st.executeUpdate(sqlStr);
+			st.close();
+//			st=null;
+//			System.gc();
+
 			if ( DEBUG ) {
 				GuiUtils.debug("SQLConnection.insertBD.rec_no:" + rec_no);
 			}
@@ -540,18 +563,21 @@ public abstract class SqlConnection {
 			Statement st = conn.createStatement();
 			
 			//load extension library
-			if (this.dbtype.equalsIgnoreCase(SQLITE)){
-				if (this.extension!=null){
-					st = conn.createStatement();
-				    st.setQueryTimeout(30); // set timeout to 30 sec.
-					st.execute("SELECT load_extension('"+extension+"')");
+//			if (this.dbtype.equalsIgnoreCase(SQLITE)){
+//				if (this.extension!=null &&!loadExt){
+//					st = conn.createStatement();
+//				    st.setQueryTimeout(30); // set timeout to 30 sec.
+//					st.execute("SELECT load_extension('"+extension+"')");
 //				    String sql = "SELECT InitSpatialMetadata()";
 //				    st.execute(sql);
-				}
-			}	
+//				    loadExt=true;
+//				}
+//			}	
 			
 			rec_no = st.executeUpdate(getInsertString(scope, conn, table_name, values));
-
+			st.close();
+//			st=null;
+//			System.gc();
 			if ( DEBUG ) {
 				GuiUtils.debug("SQLConnection.insertBD.rec_no:" + rec_no);
 			}
@@ -634,15 +660,16 @@ public abstract class SqlConnection {
 		try {
 			
 			//load extension library
-			if (this.dbtype.equalsIgnoreCase(SQLITE)){
-				if (this.extension!=null){
-					pstmt = conn.prepareStatement("SELECT load_extension('"+extension+"')");
-					pstmt.setQueryTimeout(30); // set timeout to 30 sec.
-					pstmt.executeQuery();
+//			if (this.dbtype.equalsIgnoreCase(SQLITE)){
+//				if (this.extension!=null && !loadExt){
+//					pstmt = conn.prepareStatement("SELECT load_extension('"+extension+"')");
+//					pstmt.setQueryTimeout(30); // set timeout to 30 sec.
+//					pstmt.executeQuery();
 //					pstmt = conn.prepareStatement("SELECT InitSpatialMetadata()");	
-//					pstmt.executeQuery();				
-				}
-			}
+//					pstmt.executeQuery();	
+//					loadExt=true;
+//				}
+//			}
 			
 			pstmt = conn.prepareStatement(queryStr);
 			
@@ -651,6 +678,7 @@ public abstract class SqlConnection {
 				pstmt.setObject(i + 1, condition_values.get(i));
 			}
 			rs = pstmt.executeQuery();
+
 			ResultSetMetaData rsmd = rs.getMetaData();
 			if ( DEBUG ) {
 				GuiUtils.debug("MetaData:" + rsmd.toString());
@@ -667,6 +695,12 @@ public abstract class SqlConnection {
 				GuiUtils.debug("list of column type:" + result.get(1));
 				GuiUtils.debug("list of data:" + result.get(2));
 			}
+			
+			pstmt.close();
+//			pstmt=null;
+//			System.gc();
+
+			
 			rs.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -750,15 +784,16 @@ public abstract class SqlConnection {
 		int condition_count = condition_values.size();
 		try {
 			//load extension library
-			if (this.dbtype.equalsIgnoreCase(SQLITE)){
-				if (this.extension!=null){
-					pstmt = conn.prepareStatement("SELECT load_extension('"+extension+"')");
-					pstmt.setQueryTimeout(30); // set timeout to 30 sec.
-					pstmt.executeQuery();
+//			if (this.dbtype.equalsIgnoreCase(SQLITE)){
+//				if (this.extension!=null && !loadExt){
+//					pstmt = conn.prepareStatement("SELECT load_extension('"+extension+"')");
+//					pstmt.setQueryTimeout(30); // set timeout to 30 sec.
+//					pstmt.executeQuery();
 //					pstmt = conn.prepareStatement("SELECT InitSpatialMetadata()");	
-//					pstmt.executeQuery();				
-				}
-			}
+//					pstmt.executeQuery();
+//					loadExt=true;
+//				}
+//			}
 
 			pstmt = conn.prepareStatement(queryStr);
 			// set value for each condition
@@ -771,6 +806,11 @@ public abstract class SqlConnection {
 				pstmt.setObject(i + 1, condition_values.get(i));
 			}
 			row_count = pstmt.executeUpdate();
+			
+			pstmt.close();
+//			pstmt=null;
+//			System.gc();
+
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -920,5 +960,6 @@ public abstract class SqlConnection {
 
 		}
 	}
+	
 
 }// end of class

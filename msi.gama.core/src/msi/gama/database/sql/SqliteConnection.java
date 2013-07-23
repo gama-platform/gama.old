@@ -23,7 +23,11 @@ import com.vividsolutions.jts.io.*;
  *    18-July-2013:  
  *      Add load extension library for SQLITE case.
  *      Correct error getColumnTypeName when return null value 
- * Last Modified: 18-July-2013
+ *    23-July-2013
+ *      Modify connectDB() method: 
+ *        - Add load Extention.
+ *        - Clean memory(garbage collection) after load. 
+ * Last Modified: 23-July-2013
 */
 public class SqliteConnection extends SqlConnection {
 
@@ -64,13 +68,17 @@ public class SqliteConnection extends SqlConnection {
 				config.enableLoadExtension(true);
 				conn = DriverManager.getConnection("jdbc:sqlite:" + dbName,config.toProperties());
 				// load Spatialite extension library
-//				if (extension!=null){
+				if (extension!=null){
 //					Statement stmt = conn.createStatement();
 //				    stmt.setQueryTimeout(30); // set timeout to 30 sec.
 //					stmt.execute("SELECT load_extension('"+extension+"')");
 //				    String sql = "SELECT InitSpatialMetadata()";
 //				    stmt.execute(sql);
-//				}
+//				    stmt.close();
+//				    stmt=null;
+//				    System.gc();
+					load_extension(conn,extension);
+				}
 			} else {
 				throw new ClassNotFoundException("SqliteConnection.connectSQL: The " + vender + " is not supported!");
 			}
@@ -408,7 +416,17 @@ public class SqliteConnection extends SqlConnection {
 				String name=((String) row.get(1)).trim();
 				String type=((String) row.get(2)).trim();
 				if (colName.equalsIgnoreCase(name)){
-					if (type.equalsIgnoreCase(BLOB)){
+					if (type.equalsIgnoreCase(BLOB)
+						||	type.equalsIgnoreCase("GEOMETRY")
+						||	type.equalsIgnoreCase("POINT")
+						||	type.equalsIgnoreCase("LINESTRING")
+						||	type.equalsIgnoreCase("POLYGON")
+						||	type.equalsIgnoreCase("MULTIPOINT")
+						||	type.equalsIgnoreCase("MULTILINESTRING")
+						||	type.equalsIgnoreCase("MULTIPOLYGON")
+						||	type.equalsIgnoreCase("MULTIPOLYGON")
+						||	type.equalsIgnoreCase("GEOMETRYCOLLECTION")
+							){
 						columnType.add(GEOMETRYTYPE);
 					}   
 					else{
@@ -420,5 +438,24 @@ public class SqliteConnection extends SqlConnection {
 		}
 		return columnType;
 	}
+	
+	//23-July-2013
+	protected void load_extension(Connection conn, String extension) throws SQLException{
+		// load Spatialite extension library
+		try{
+			Statement stmt = conn.createStatement();
+		    stmt.setQueryTimeout(30); // set timeout to 30 sec.
+			stmt.execute("SELECT load_extension('"+extension+"')");
+		    //String sql = "SELECT InitSpatialMetadata()";
+		    //stmt.execute(sql);
+		    stmt.close();
+		    //stmt=null;
+		    //System.gc();
+		    loadExt=true;
+		}catch (SQLException e){
+			throw e;
+		}
+	}
+
 	
 }
