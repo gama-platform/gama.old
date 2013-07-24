@@ -258,16 +258,26 @@ public class SqliteConnection extends SqlConnection {
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
 				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
+//					// Transform GAMA GIS TO NORMAL
+//					if ( transformed ) {
+//						WKTReader wkt = new WKTReader();
+//						Geometry geo2 =
+//							scope.getTopology().getGisUtils()
+//								.inverseTransform(wkt.read(values.get(i).toString()));
+//						valueStr = valueStr + WKT2GEO + "('" + geo2.toString() + "')";
+//						
+//					} else {
+//						valueStr = valueStr + WKT2GEO + "('" + values.get(i).toString() + "')";
+//					}
 					// Transform GAMA GIS TO NORMAL
+					WKTReader wkt = new WKTReader();
+					Geometry geo=wkt.read(values.get(i).toString());
+					//System.out.println(geo.toString());
 					if ( transformed ) {
-						WKTReader wkt = new WKTReader();
-						Geometry geo2 =
-							scope.getTopology().getGisUtils()
-								.inverseTransform(wkt.read(values.get(i).toString()));
-						valueStr = valueStr + WKT2GEO + "('" + geo2.toString() + "')";
-					} else {
-						valueStr = valueStr + WKT2GEO + "('" + values.get(i).toString() + "')";
+						geo =scope.getTopology().getGisUtils().inverseTransform(geo);						
 					}
+					//System.out.println(geo.toString());
+					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "')";
 				} else if ( ((String) col_Types.get(i)).equalsIgnoreCase(CHAR) ||
 					((String) col_Types.get(i)).equalsIgnoreCase(VARCHAR) ||
 					((String) col_Types.get(i)).equalsIgnoreCase(NVARCHAR) ||
@@ -296,7 +306,8 @@ public class SqliteConnection extends SqlConnection {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw GamaRuntimeException.error("SqliteConnection.insertBD " + e.toString());
-		} catch (ParseException e) {
+		} 
+		catch (ParseException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw GamaRuntimeException.error("SqliteConnection.insertBD " + e.toString());
@@ -347,16 +358,26 @@ public class SqliteConnection extends SqlConnection {
 			for ( int i = 0; i < col_no; i++ ) {
 				// Value list begin-------------------------------------------
 				if ( ((String) col_Types.get(i)).equalsIgnoreCase(GEOMETRYTYPE) ) { // for GEOMETRY type
+//					// Transform GAMA GIS TO NORMAL
+//					if ( transformed ) {
+//						WKTReader wkt = new WKTReader();
+//						Geometry geo2 =
+//							scope.getTopology().getGisUtils()
+//								.inverseTransform(wkt.read(values.get(i).toString()));
+//						valueStr = valueStr + WKT2GEO + "('" + geo2.toString() + "')";
+//					} else {
+//						valueStr = valueStr + WKT2GEO + "('" + values.get(i).toString() + "')";
+//					}
 					// Transform GAMA GIS TO NORMAL
+					WKTReader wkt = new WKTReader();
+					Geometry geo=wkt.read(values.get(i).toString());
+					//System.out.println(geo.toString());
 					if ( transformed ) {
-						WKTReader wkt = new WKTReader();
-						Geometry geo2 =
-							scope.getTopology().getGisUtils()
-								.inverseTransform(wkt.read(values.get(i).toString()));
-						valueStr = valueStr + WKT2GEO + "('" + geo2.toString() + "')";
-					} else {
-						valueStr = valueStr + WKT2GEO + "('" + values.get(i).toString() + "')";
+						geo =scope.getTopology().getGisUtils().inverseTransform(geo);						
 					}
+					//System.out.println(geo.toString());
+					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "')";
+					
 				} else if ( ((String) col_Types.get(i)).equalsIgnoreCase(CHAR) ||
 					((String) col_Types.get(i)).equalsIgnoreCase(VARCHAR) ||
 					((String) col_Types.get(i)).equalsIgnoreCase(NVARCHAR) ||

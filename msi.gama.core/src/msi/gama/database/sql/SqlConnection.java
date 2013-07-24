@@ -476,7 +476,6 @@ public abstract class SqlConnection {
 			if ( DEBUG ) {
 				GuiUtils.debug("SQLConnection.insertBD.STR:" + sqlStr);
 			}
-
 			//rec_no = st.executeUpdate(getInsertString(scope, conn, table_name, cols, values));
 			rec_no = st.executeUpdate(sqlStr);
 			st.close();
