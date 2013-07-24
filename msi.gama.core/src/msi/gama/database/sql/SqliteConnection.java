@@ -55,6 +55,10 @@ public class SqliteConnection extends SqlConnection {
 		this.extension=extension;
 	}
 
+	public SqliteConnection(String venderName, String database, String extension,Boolean transformed) {
+		super(venderName, database,transformed);
+		this.extension=extension;
+	}
 	
 	@Override
 	public Connection connectDB() throws ClassNotFoundException, InstantiationException, SQLException,

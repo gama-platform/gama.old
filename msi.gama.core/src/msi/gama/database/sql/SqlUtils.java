@@ -92,7 +92,7 @@ public class SqlUtils {
 			String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
 			if (extension!=null){
 				String EXTRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(extension, true);
-				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation,EXTRelativeLocation);
+				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation,EXTRelativeLocation,transform);
 				
 			}else{
 				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation,transform);
