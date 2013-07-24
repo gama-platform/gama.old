@@ -74,7 +74,7 @@ public class SqlUtils {
 	public static SqlConnection createConnectionObject(final IScope scope) throws GamaRuntimeException 
 	{
 		java.util.Map params = (java.util.Map) scope.getArg("params", IType.MAP);
-//		boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
+		boolean transform = scope.hasArg("transform") ? (Boolean) scope.getArg("transform", IType.BOOL) : false;
 		String dbtype = (String) params.get("dbtype");
 		String host = (String) params.get("host");
 		String port = (String) params.get("port");
@@ -95,17 +95,17 @@ public class SqlUtils {
 				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation,EXTRelativeLocation);
 				
 			}else{
-				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation);
+				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation,transform);
 			}
 		} else if ( dbtype.equalsIgnoreCase(SqlConnection.MSSQL) ) {
 			
-			sqlConn = new MSSQLConnection(dbtype, host, port, database, user, passwd);
+			sqlConn = new MSSQLConnection(dbtype, host, port, database, user, passwd,transform);
 		}else if ( dbtype.equalsIgnoreCase(SqlConnection.MYSQL) ) {
 			
-			sqlConn = new MySqlConnection(dbtype, host, port, database, user, passwd);
+			sqlConn = new MySqlConnection(dbtype, host, port, database, user, passwd,transform);
 		}else if ( dbtype.equalsIgnoreCase(SqlConnection.POSTGRES) ||
 				   dbtype.equalsIgnoreCase(SqlConnection.POSTGIS)) {
-			sqlConn = new PostgresConnection(dbtype, host, port, database, user, passwd);
+			sqlConn = new PostgresConnection(dbtype, host, port, database, user, passwd,transform);
 		}else {
 			throw GamaRuntimeException.error("GAMA does not support: " + dbtype);
 		}
