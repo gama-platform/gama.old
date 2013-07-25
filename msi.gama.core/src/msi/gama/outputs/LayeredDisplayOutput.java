@@ -57,6 +57,7 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.INERTIA, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.STENCIL, type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.SHOWFPS, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.DRAWENV, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.AMBIENT_LIGHT, type = { IType.INT, IType.COLOR }, optional = true),
 	@facet(name = IKeyword.DIFFUSE_LIGHT, type = { IType.INT, IType.COLOR }, optional = true),
@@ -83,6 +84,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean tesselation = true;
 	private boolean inertia = false;
 	private boolean stencil = false;
+	private boolean showfps = false;
 	private boolean drawEnv = true;
 	private Color ambientLightColor = new GamaColor(125, 125, 125);
 	private Color diffuseLightColor = new GamaColor(125, 125, 125);
@@ -160,6 +162,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression st = getFacet(IKeyword.STENCIL);
 		if ( st != null ) {
 			setStencil(Cast.asBool(getScope(), st.value(getScope())));
+		}
+		
+		final IExpression fps = getFacet(IKeyword.SHOWFPS);
+		if ( fps != null ) {
+			setShowFPS(Cast.asBool(getScope(), fps.value(getScope())));
 		}
 		
 		final IExpression denv = getFacet(IKeyword.DRAWENV);
@@ -469,6 +476,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	
 	private void setStencil(final boolean stencil) {
 		this.stencil = stencil;
+	}
+	
+	public boolean getShowFPS() {
+		return showfps;
+	}
+	
+	private void setShowFPS(final boolean fps) {
+		this.showfps = fps;
 	}
 	
 	public boolean getDrawEnv() {

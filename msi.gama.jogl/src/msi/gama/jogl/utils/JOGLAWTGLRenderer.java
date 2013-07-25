@@ -72,6 +72,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private boolean stencil = false;
 	// facet "drawEnv"
 	private boolean drawEnv = true;
+	// facet "show_fps"
+	private boolean showFPS = false;
 
 	public boolean drawAxes = true;
 	// Display or not the triangle when using triangulation (useTessellation = false)
@@ -101,7 +103,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private double currentTime = 0;
 	private double previousTime = 0;
 	public float fps = 0;
-	public boolean showFPS = true;
+	
 
 	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {
 		// Enabling the stencil buffer
@@ -265,7 +267,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 			this.drawScene();
 
-			if ( showFPS ) {
+			if ( getShowFPS() ) {
 				CalculateFrameRate();
 				gl.glDisable(GL_BLEND);				
 				gl.glRasterPos3d(-getMaxEnvDim() / 20, getMaxEnvDim() / 10, 0.0d);
@@ -518,6 +520,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public boolean getStencil() {
 		return stencil;
+	}
+	
+	public void setShowFPS(final boolean fps) {
+		this.showFPS = fps;
+	}
+
+	public boolean getShowFPS() {
+		return showFPS;
 	}
 
 	public void setDrawEnv(final boolean denv) {

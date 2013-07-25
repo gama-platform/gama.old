@@ -294,6 +294,7 @@ public interface IKeyword {
 	public static final String SERIES = "series";
 	public static final String SET = "set";
 	public static final String SHAPE = "shape";
+	public static final String SHOWFPS = "show_fps";
 	public static final String SIGNAL = "signal";
 	public static final String SIMULATION = "simulation";
 	public static final String SIZE = "size";

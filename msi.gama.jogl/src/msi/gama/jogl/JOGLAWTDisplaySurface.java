@@ -127,6 +127,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 					renderer.setTessellation(getOutput().getTesselation());
 					renderer.setInertia(getOutput().getInertia());
 					renderer.setStencil(getOutput().getStencil());
+					renderer.setShowFPS(getOutput().getShowFPS());
 					renderer.setDrawEnv(getOutput().getDrawEnv());
 					
 					
@@ -171,6 +172,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		renderer.setTessellation(getOutput().getTesselation());
 		renderer.setInertia(getOutput().getInertia());
 		renderer.setStencil(getOutput().getStencil());
+		renderer.setShowFPS(getOutput().getShowFPS());
 		renderer.setDrawEnv(getOutput().getDrawEnv());
 		renderer.setAmbientLightValue(getOutput().getAmbientLightColor());
 		renderer.setDiffuseLightValue(getOutput().getDiffuseLightColor());

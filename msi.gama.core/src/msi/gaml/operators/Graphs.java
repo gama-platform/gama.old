@@ -425,9 +425,18 @@ public class Graphs {
 		return graph;
 	}
 
+	
+	@operator(value = "add_node")
+	@doc(value = "adds a node in a graph.", comment = ".", examples = "node(0) add_node graph;    --: 	returns the graph with node(0)")
+	public static IGraph addNode(final IShape node, final IGraph g) {
+		g.addVertex(node);
+		g.incVersion();
+		return g;
+	}
+	
 	@operator(value = "remove_node_from")
 	@doc(value = "removes a node from a graph.", comment = "all the edges containing this node are also removed.", examples = "node(0) remove_node_from graphEpidemio;    --: 	returns the graph without node(0)")
-	public static IGraph removeEdgeFrom(final IShape node, final IGraph g) {
+	public static IGraph removeNodeFrom(final IShape node, final IGraph g) {
 		g.removeVertex(node);
 		g.incVersion();
 
