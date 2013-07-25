@@ -266,10 +266,12 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		IAgent macro;
 		Map<ISpecies, List<SelectedAgent>> micros;
 	
+		
 
 		void buildMenuItems(final Menu parentMenu, final ILayer display) {
 			final Menu macroMenu = new Menu(macro.getName());
 			parentMenu.add(macroMenu);
+
 
 			final MenuItem inspectItem = new AgentMenuItem("Inspect", macro, display);
 			inspectItem.addActionListener(menuListener);
@@ -595,6 +597,15 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public void toggleRotation() {
 		rotation = !rotation;
 	}
+	
+	@Override
+	public void toggleCamera() {
+		// TODO Auto-generated method stub
+		switchCamera = !switchCamera;
+		renderer.switchCamera();
+		zoomFit();
+		updateDisplay();
+	}
 
 	/**
 	 * Add a simple feature collection from a .Shp file.
@@ -736,14 +747,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		return bgColor;
 	}
 
-	@Override
-	public void toggleCamera() {
-		// TODO Auto-generated method stub
-		switchCamera = !switchCamera;
-		renderer.switchCamera();
-		zoomFit();
-		updateDisplay();
-	}
+	
 
 	@Override
 	public final boolean resizeImage(final int x, final int y) {

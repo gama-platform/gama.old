@@ -1,6 +1,7 @@
 package msi.gama.jogl.utils;
 
 import static javax.media.opengl.GL.*;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -100,7 +101,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private double currentTime = 0;
 	private double previousTime = 0;
 	public float fps = 0;
-	public boolean showFPS = false;
+	public boolean showFPS = true;
 
 	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {
 		// Enabling the stencil buffer
@@ -263,6 +264,16 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			}
 
 			this.drawScene();
+
+			if ( showFPS ) {
+				CalculateFrameRate();
+				gl.glDisable(GL_BLEND);				
+				gl.glRasterPos3d(-getMaxEnvDim() / 20, getMaxEnvDim() / 10, 0.0d);
+				gl.glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+				glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "FPS: " + (int) fps);
+				gl.glEnable(GL_BLEND);
+			}
+
 			// this.DrawShapeFile();
 			// this.DrawCollada();
 			gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
@@ -578,7 +589,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			frameCount = 0;
 		}
 
-//		System.out.println(fps);
 	}
 
 	// Use when the rotation button is on.
