@@ -75,12 +75,21 @@ public class VertexArrayHandler {
 	private int nbVerticesContours;
 	private FloatBuffer vertexBufferPolyContours;
 	private FloatBuffer colorBufferPolyContours;
+	
+	/* draw Point */
+	private ArrayList<Vector3D> pointTriangles = new ArrayList<Vector3D>();
+	private ArrayList<Color> pointColor = new ArrayList<Color>();
+	private FloatBuffer pointVertexBuffer;
+	private FloatBuffer pointColorBuffer;
+	private IntBuffer pointIndicesBuffer;
+
 
 	/*draw faces*/
 	private int totalNumVertsQuads;
 	private FloatBuffer vertexBufferQuads;
 	private FloatBuffer colorBufferQuads;
 	private ArrayList<double[]> normalArrayFaces = new ArrayList<double[]>();
+	private ArrayList<Float>  alphaFaces = new ArrayList<Float>();
 	private ArrayList <Vertex[]> vertexArrayFaces = new  ArrayList<Vertex[]>();
 	private ArrayList<Color> colorFaces = new ArrayList<Color>();
 	private int nbVerticesFaces;
@@ -97,6 +106,8 @@ public class VertexArrayHandler {
 	private FloatBuffer planBorderColorBuffer;
 	private Color planColor;
 	private Color planBorderColor;
+	
+	private ArrayList<Float>  sphereAlpha = new ArrayList<Float>();
 
 	private int size = 0;
 	
@@ -111,15 +122,10 @@ public class VertexArrayHandler {
 	                                              //    the vertex buffer.
    	
     private int vertexCount, indexCount;  // Number of values stored in the buffers.
-    
-    private boolean dataValid_1, dataValid_2, dataValid = false;  // Set to false when buffer data has to be computed.
-    //   This is checked in the display() method.
-    
+        
     private boolean createIcosphere = false;
 
 	private int nbIndexSphere;
-
-	private Color sphereColorC;
 
 	private int polygonsIndicesBufferID;
 
@@ -156,6 +162,11 @@ public class VertexArrayHandler {
 	private int indicesLines = 0;
 
 	private int linesIndicesBufferID;
+
+	private int pointIndicesBufferID;
+
+	private float planAlpha;
+
     
     static{  // Initialize the data for the icosahedron.
         float t = (float)((Math.sqrt(5) - 1)/2);
@@ -278,10 +289,8 @@ public class VertexArrayHandler {
 					}				
 				}
 				else if ( curGeometry.geometry.getGeometryType() == "Point" ) {
-					System.out.println("draw Point, height : "+curGeometry.height);
 					//FIXME: Should never go here even with a height value as the geometry of a sphere is a polygon...
 					if ( curGeometry.height > 0 ) {
-						System.out.println("draw sphere");
 						if(!createIcosphere)
 						{	
 							makeIcosphere(2);
@@ -290,8 +299,8 @@ public class VertexArrayHandler {
 						buildSphereVertexArray((Polygon) curGeometry.geometry.getEnvelope().buffer(1), curGeometry.z_layer, curGeometry.height,
 								curGeometry.color, curGeometry.alpha);
 					} else {
-//						jtsDrawer.DrawPoint((Point) geometry.geometry, geometry.z_layer, 10,
-//							renderer.getMaxEnvDim() / 1000, geometry.color, geometry.alpha);
+						buildPointVertexArray((Point) curGeometry.geometry, curGeometry.z_layer, 10,
+								myGLRender.getMaxEnvDim() / 1000, curGeometry.color, curGeometry.alpha);
 					}
 				}
 				
@@ -299,6 +308,7 @@ public class VertexArrayHandler {
 			}
 		}
 		
+		fillPointBuffers();
 		fillPolygonBuffers();
 		fillContoursBuffers();
 		fillFacesBuffers();
@@ -309,372 +319,440 @@ public class VertexArrayHandler {
 
 		createVBOs();
 	}
-	
+
 	public void createVBOs()
 	{
 		
-		/* create polygons vertex buffer objects */
-		int[] buffer1 = new int[3];
-        myGl.glGenBuffers(3, buffer1,0);
-        polygonsIndicesBufferID = buffer1[2];
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer1[0]);
-        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
-        		nbVerticesTriangle*3*BufferUtil.SIZEOF_FLOAT, 
-        		vertexBufferTriangle, GL.GL_STATIC_DRAW);
-        myGl.glVertexPointer(3, GL.GL_FLOAT,0, 0);
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer1[1]);
-        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
-        		nbVerticesTriangle*4*BufferUtil.SIZEOF_FLOAT, 
-        		colorBufferTriangle, GL.GL_STATIC_DRAW);
-        myGl.glColorPointer(4, GL.GL_FLOAT,0, 0);
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-        
-        myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, buffer1[2]);
-	    myGl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER,  
-	    		nbVerticesTriangle*BufferUtil.SIZEOF_INT,
-	    		indicesBufferTriangle, GL.GL_STATIC_DRAW);
-	    	
-	    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);		    
-		
-		myGl.glEnableClientState(GL.GL_VERTEX_ARRAY);
-	   	myGl.glEnableClientState(GL.GL_COLOR_ARRAY);  
-	 
-	   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, polygonsIndicesBufferID);
-	   	myGl.glDrawElements(GL.GL_TRIANGLES, nbVerticesTriangle, GL.GL_UNSIGNED_INT, 0);
-	   	
-	   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
-	   	myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-	   	myGl.glDeleteBuffers( 3, buffer1,0 );
-	
-	   	myGl.glDisableClientState(GL.GL_VERTEX_ARRAY);
-	   	myGl.glDisableClientState(GL.GL_COLOR_ARRAY);
-		
-		
-	   	/* create polygons contours vertex buffer objects */
-		int[] buffer2 = new int[3];
-        myGl.glGenBuffers(3, buffer2,0);
-        contoursIndicesBufferID = buffer2[2];
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer2[0]);
-        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
-        		nbVerticesContours*3*BufferUtil.SIZEOF_FLOAT, 
-        		vertexBufferPolyContours, GL.GL_STATIC_DRAW);
-        myGl.glVertexPointer(3, GL.GL_FLOAT,0, 0);
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer2[1]);
-        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
-        		nbVerticesContours*3*BufferUtil.SIZEOF_FLOAT, 
-        		colorBufferPolyContours, GL.GL_STATIC_DRAW);
-        myGl.glColorPointer(3, GL.GL_FLOAT,0, 0);
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-        
-        myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, buffer2[2]);
-	    myGl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER,  
-	    		nbVerticesContours*BufferUtil.SIZEOF_INT,
-	    		IndicesBufferPolyContours, GL.GL_STATIC_DRAW);
-	    	
-	    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+		if(indicesBufferTriangle.hasRemaining())
+		{
+			/* create polygons vertex buffer objects */
+			int[] buffer1 = new int[3];
+		    myGl.glGenBuffers(3, buffer1,0);
+		    polygonsIndicesBufferID = buffer1[2];
+		    
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer1[0]);
+		    myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
+		    		nbVerticesTriangle*3*BufferUtil.SIZEOF_FLOAT, 
+		    		vertexBufferTriangle, GL.GL_STATIC_DRAW);
+		    myGl.glVertexPointer(3, GL.GL_FLOAT,0, 0);
+		    
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+		    
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer1[1]);
+		    myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
+		    		nbVerticesTriangle*4*BufferUtil.SIZEOF_FLOAT, 
+		    		colorBufferTriangle, GL.GL_STATIC_DRAW);
+		    myGl.glColorPointer(4, GL.GL_FLOAT,0, 0);
+		    
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+		    
+		    myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, buffer1[2]);
+		    myGl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER,  
+		    		nbVerticesTriangle*BufferUtil.SIZEOF_INT,
+		    		indicesBufferTriangle, GL.GL_STATIC_DRAW);
+		    	
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);		    
 			
-		myGl.glEnableClientState(GL.GL_VERTEX_ARRAY);
-	   	myGl.glEnableClientState(GL.GL_COLOR_ARRAY);  
-	 
-	   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, contoursIndicesBufferID);
-	   	myGl.glDrawElements(GL.GL_LINES, nbVerticesContours, GL.GL_UNSIGNED_INT, 0);
+			myGl.glEnableClientState(GL.GL_VERTEX_ARRAY);
+		   	myGl.glEnableClientState(GL.GL_COLOR_ARRAY);  
+		 
+		   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, polygonsIndicesBufferID);
+		   	myGl.glDrawElements(GL.GL_TRIANGLES, nbVerticesTriangle, GL.GL_UNSIGNED_INT, 0);
+		   	
+		   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+		   	myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+		   	myGl.glDeleteBuffers( 3, buffer1,0 );
+		
+		   	myGl.glDisableClientState(GL.GL_VERTEX_ARRAY);
+		   	myGl.glDisableClientState(GL.GL_COLOR_ARRAY);
+		}
+		
+		if(IndicesBufferPolyContours.hasRemaining())
+		{
+		   	/* create polygons contours vertex buffer objects */
+			int[] buffer2 = new int[3];
+	        myGl.glGenBuffers(3, buffer2,0);
+	        contoursIndicesBufferID = buffer2[2];
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer2[0]);
+	        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
+	        		nbVerticesContours*3*BufferUtil.SIZEOF_FLOAT, 
+	        		vertexBufferPolyContours, GL.GL_STATIC_DRAW);
+	        myGl.glVertexPointer(3, GL.GL_FLOAT,0, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer2[1]);
+	        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
+	        		nbVerticesContours*3*BufferUtil.SIZEOF_FLOAT, 
+	        		colorBufferPolyContours, GL.GL_STATIC_DRAW);
+	        myGl.glColorPointer(3, GL.GL_FLOAT,0, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, buffer2[2]);
+		    myGl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER,  
+		    		nbVerticesContours*BufferUtil.SIZEOF_INT,
+		    		IndicesBufferPolyContours, GL.GL_STATIC_DRAW);
+		    	
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+				
+			myGl.glEnableClientState(GL.GL_VERTEX_ARRAY);
+		   	myGl.glEnableClientState(GL.GL_COLOR_ARRAY);  
+		 
+		   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, contoursIndicesBufferID);
+		   	myGl.glDrawElements(GL.GL_LINES, nbVerticesContours, GL.GL_UNSIGNED_INT, 0);
+		   	
+		   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+		   	myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+		   	myGl.glDeleteBuffers( 3, buffer2,0 );
+		
+		   	myGl.glDisableClientState(GL.GL_VERTEX_ARRAY);
+		   	myGl.glDisableClientState(GL.GL_COLOR_ARRAY);
+		}
 	   	
-	   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
-	   	myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-	   	myGl.glDeleteBuffers( 3, buffer2,0 );
+		if(facesIndicesBuffer.hasRemaining())
+		{
+		   	/*create polyhedron faces vertex buffer objects */
+		   	int[] buffer4 = new int[4];
+			myGl.glGenBuffers(4, buffer4,0);
+			facesIndicesBufferID = buffer4[3];
+	    
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer4[0]);
+		    myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
+		    		nbVerticesFaces*6*BufferUtil.SIZEOF_FLOAT, 
+		    		vertexBufferQuads, GL.GL_STATIC_DRAW);
+		    myGl.glVertexPointer(3, GL.GL_FLOAT,0, 0);
+		    
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+		    
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer4[1]);
+		    myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
+		    		nbVerticesFaces*6*BufferUtil.SIZEOF_FLOAT, 
+		    		vertexBufferFacesN, GL.GL_STATIC_DRAW);
+		    myGl.glNormalPointer(GL.GL_FLOAT,0, 0);
+		    
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+		    
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer4[2]);
+		    myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
+		    		nbVerticesFaces*7*BufferUtil.SIZEOF_FLOAT, 
+		    		colorBufferQuads, GL.GL_STATIC_DRAW);
+		    myGl.glColorPointer(4, GL.GL_FLOAT,0, 0);
+		    
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+		    
+		    myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, buffer4[3]);
+		    myGl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER,  
+		    		facesIndicesBuffer.capacity()*BufferUtil.SIZEOF_INT,
+		    		facesIndicesBuffer, GL.GL_STATIC_DRAW);
+		    	
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+	 
+	     	myGl.glEnableClientState(GL.GL_VERTEX_ARRAY);
+			myGl.glEnableClientState(GL.GL_NORMAL_ARRAY);
+		   	myGl.glEnableClientState(GL.GL_COLOR_ARRAY);  
+		 
+	 	   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, facesIndicesBufferID);
+	 	   	myGl.glDrawElements(GL.GL_TRIANGLES, facesIndicesBuffer.capacity(), GL.GL_UNSIGNED_INT, 0);
+	 	   	
+	 	   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+	 	   	myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+	 	   	myGl.glDeleteBuffers( 4, buffer4,0 );
 	
-	   	myGl.glDisableClientState(GL.GL_VERTEX_ARRAY);
-	   	myGl.glDisableClientState(GL.GL_COLOR_ARRAY);
-	   	
-	   	
-	   	/*create polyhedron faces vertex buffer objects */
-	   	int[] buffer4 = new int[4];
-		myGl.glGenBuffers(4, buffer4,0);
-		facesIndicesBufferID = buffer4[3];
-    
-	    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer4[0]);
-	    myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
-	    		nbVerticesFaces*6*BufferUtil.SIZEOF_FLOAT, 
-	    		vertexBufferQuads, GL.GL_STATIC_DRAW);
-	    myGl.glVertexPointer(3, GL.GL_FLOAT,0, 0);
-	    
-	    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-	    
-	    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer4[1]);
-	    myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
-	    		nbVerticesFaces*6*BufferUtil.SIZEOF_FLOAT, 
-	    		vertexBufferFacesN, GL.GL_STATIC_DRAW);
-	    myGl.glNormalPointer(GL.GL_FLOAT,0, 0);
-	    
-	    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-	    
-	    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer4[2]);
-	    myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
-	    		nbVerticesFaces*6*BufferUtil.SIZEOF_FLOAT, 
-	    		colorBufferQuads, GL.GL_STATIC_DRAW);
-	    myGl.glColorPointer(3, GL.GL_FLOAT,0, 0);
-	    
-	    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-	    
-	    myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, buffer4[3]);
-	    myGl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER,  
-	    		facesIndicesBuffer.capacity()*BufferUtil.SIZEOF_INT,
-	    		facesIndicesBuffer, GL.GL_STATIC_DRAW);
-	    	
-	    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
- 
-     	myGl.glEnableClientState(GL.GL_VERTEX_ARRAY);
-		myGl.glEnableClientState(GL.GL_NORMAL_ARRAY);
-	   	myGl.glEnableClientState(GL.GL_COLOR_ARRAY);  
-	 
- 	   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, facesIndicesBufferID);
- 	   	myGl.glDrawElements(GL.GL_TRIANGLES, facesIndicesBuffer.capacity(), GL.GL_UNSIGNED_INT, 0);
- 	   	
- 	   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
- 	   	myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
- 	   	myGl.glDeleteBuffers( 4, buffer4,0 );
-
- 	   	myGl.glDisableClientState(GL.GL_VERTEX_ARRAY);
- 	   	myGl.glDisableClientState(GL.GL_NORMAL_ARRAY);
- 	   	myGl.glDisableClientState(GL.GL_COLOR_ARRAY);
+	 	   	myGl.glDisableClientState(GL.GL_VERTEX_ARRAY);
+	 	   	myGl.glDisableClientState(GL.GL_NORMAL_ARRAY);
+	 	   	myGl.glDisableClientState(GL.GL_COLOR_ARRAY);
+		}
  	   	
  	   	
  	   	/* 
  	   	 * create polyhedron faces borders 
  	   	 * */
-		int[] buffer5 = new int[3];
-        myGl.glGenBuffers(3, buffer5,0);
-        facescontoursIndicesBufferID = buffer5[2];
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer5[0]);
-        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
-        		vertexBufferContours.capacity()*BufferUtil.SIZEOF_FLOAT, 
-        		vertexBufferContours, GL.GL_STATIC_DRAW);
-        myGl.glVertexPointer(3, GL.GL_FLOAT,0, 0);
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer5[1]);
-        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
-        		colorBufferContours.capacity()*BufferUtil.SIZEOF_FLOAT, 
-        		colorBufferContours, GL.GL_STATIC_DRAW);
-        myGl.glColorPointer(3, GL.GL_FLOAT,0, 0);
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-        
-        myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, buffer5[2]);
-	    myGl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER,  
-	    		facesContoursIndicesBuffer.capacity()*BufferUtil.SIZEOF_INT,
-	    		facesContoursIndicesBuffer, GL.GL_STATIC_DRAW);
-	    	
-	    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-			
-		myGl.glEnableClientState(GL.GL_VERTEX_ARRAY);
-	   	myGl.glEnableClientState(GL.GL_COLOR_ARRAY);  
-	 
-	   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, facescontoursIndicesBufferID);
-	   	myGl.glDrawElements(GL.GL_LINES, facesContoursIndicesBuffer.capacity(), GL.GL_UNSIGNED_INT, 0);
-	   	
-	   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
-	   	myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-	   	myGl.glDeleteBuffers( 3, buffer5,0 );
-	
-	   	myGl.glDisableClientState(GL.GL_VERTEX_ARRAY);
-	   	myGl.glDisableClientState(GL.GL_COLOR_ARRAY);
+		if(facesContoursIndicesBuffer.hasRemaining())
+		{
+			int[] buffer5 = new int[3];
+	        myGl.glGenBuffers(3, buffer5,0);
+	        facescontoursIndicesBufferID = buffer5[2];
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer5[0]);
+	        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
+	        		vertexBufferContours.capacity()*BufferUtil.SIZEOF_FLOAT, 
+	        		vertexBufferContours, GL.GL_STATIC_DRAW);
+	        myGl.glVertexPointer(3, GL.GL_FLOAT,0, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer5[1]);
+	        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
+	        		colorBufferContours.capacity()*BufferUtil.SIZEOF_FLOAT, 
+	        		colorBufferContours, GL.GL_STATIC_DRAW);
+	        myGl.glColorPointer(3, GL.GL_FLOAT,0, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, buffer5[2]);
+		    myGl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER,  
+		    		facesContoursIndicesBuffer.capacity()*BufferUtil.SIZEOF_INT,
+		    		facesContoursIndicesBuffer, GL.GL_STATIC_DRAW);
+		    	
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+				
+			myGl.glEnableClientState(GL.GL_VERTEX_ARRAY);
+		   	myGl.glEnableClientState(GL.GL_COLOR_ARRAY);  
+		 
+		   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, facescontoursIndicesBufferID);
+		   	myGl.glDrawElements(GL.GL_LINES, facesContoursIndicesBuffer.capacity(), GL.GL_UNSIGNED_INT, 0);
+		   	
+		   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+		   	myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+		   	myGl.glDeleteBuffers( 3, buffer5,0 );
+		
+		   	myGl.glDisableClientState(GL.GL_VERTEX_ARRAY);
+		   	myGl.glDisableClientState(GL.GL_COLOR_ARRAY);
+		}
 		  	
 	   	/* 
 	   	 * create line vertex buffer objects
 	   	 * 
 	   	 * */
-		int[] buffer8 = new int[3];
-        myGl.glGenBuffers(3, buffer8,0);
-        linesIndicesBufferID = buffer8[2];
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer8[0]);
-        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
-        		vertexBufferLine.capacity()*BufferUtil.SIZEOF_FLOAT, 
-        		vertexBufferLine, GL.GL_STATIC_DRAW);
-        myGl.glVertexPointer(3, GL.GL_FLOAT,0, 0);
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer8[1]);
-        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
-        		colorBufferLine.capacity()*BufferUtil.SIZEOF_FLOAT, 
-        		colorBufferLine, GL.GL_STATIC_DRAW);
-        myGl.glColorPointer(3, GL.GL_FLOAT,0, 0);
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-        
-        myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, buffer8[2]);
-	    myGl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER,  
-	    		indicesBufferLine.capacity()*BufferUtil.SIZEOF_INT,
-	    		indicesBufferLine, GL.GL_STATIC_DRAW);
-	    	
-	    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-			
-		myGl.glEnableClientState(GL.GL_VERTEX_ARRAY);
-	   	myGl.glEnableClientState(GL.GL_COLOR_ARRAY);  
-	 
-	   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, linesIndicesBufferID);
-	   	myGl.glDrawElements(GL.GL_LINES, indicesBufferLine.capacity(), GL.GL_UNSIGNED_INT, 0);
-	   	
-	   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
-	   	myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-	   	myGl.glDeleteBuffers( 3, buffer8,0 );
-	
-	   	myGl.glDisableClientState(GL.GL_VERTEX_ARRAY);
-	   	myGl.glDisableClientState(GL.GL_COLOR_ARRAY);
+		if(indicesBufferLine.hasRemaining())
+		{
+			int[] buffer8 = new int[3];
+	        myGl.glGenBuffers(3, buffer8,0);
+	        linesIndicesBufferID = buffer8[2];
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer8[0]);
+	        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
+	        		vertexBufferLine.capacity()*BufferUtil.SIZEOF_FLOAT, 
+	        		vertexBufferLine, GL.GL_STATIC_DRAW);
+	        myGl.glVertexPointer(3, GL.GL_FLOAT,0, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer8[1]);
+	        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
+	        		colorBufferLine.capacity()*BufferUtil.SIZEOF_FLOAT, 
+	        		colorBufferLine, GL.GL_STATIC_DRAW);
+	        myGl.glColorPointer(4, GL.GL_FLOAT,0, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, buffer8[2]);
+		    myGl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER,  
+		    		indicesBufferLine.capacity()*BufferUtil.SIZEOF_INT,
+		    		indicesBufferLine, GL.GL_STATIC_DRAW);
+		    	
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+				
+			myGl.glEnableClientState(GL.GL_VERTEX_ARRAY);
+		   	myGl.glEnableClientState(GL.GL_COLOR_ARRAY);  
+		 
+		   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, linesIndicesBufferID);
+		   	myGl.glDrawElements(GL.GL_LINES, indicesBufferLine.capacity(), GL.GL_UNSIGNED_INT, 0);
+		   	
+		   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+		   	myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+		   	myGl.glDeleteBuffers( 3, buffer8,0 );
+		
+		   	myGl.glDisableClientState(GL.GL_VERTEX_ARRAY);
+		   	myGl.glDisableClientState(GL.GL_COLOR_ARRAY);
+		}
 	   	
 	   	/* 
 	   	 * create plan vertex buffer objects
 	   	 * */
-		int[] buffer6 = new int[3];
-        myGl.glGenBuffers(3, buffer6,0);
-        planIndicesBufferID = buffer6[2];
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer6[0]);
-        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
-        		planVertexBuffer.capacity()*BufferUtil.SIZEOF_FLOAT, 
-        		planVertexBuffer, GL.GL_STATIC_DRAW);
-        myGl.glVertexPointer(3, GL.GL_FLOAT,0, 0);
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer6[1]);
-        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
-        		planColorBuffer.capacity()*BufferUtil.SIZEOF_FLOAT, 
-        		planColorBuffer, GL.GL_STATIC_DRAW);
-        myGl.glColorPointer(3, GL.GL_FLOAT,0, 0);
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-        
-        myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, buffer6[2]);
-	    myGl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER,  
-	    		planIndicesBuffer.capacity()*BufferUtil.SIZEOF_INT,
-	    		planIndicesBuffer, GL.GL_STATIC_DRAW);
-	    	
-	    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-			
-		myGl.glEnableClientState(GL.GL_VERTEX_ARRAY);
-	   	myGl.glEnableClientState(GL.GL_COLOR_ARRAY);  
-	 
-	   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, planIndicesBufferID);
-	   	myGl.glDrawElements(GL.GL_TRIANGLES, planIndicesBuffer.capacity(), GL.GL_UNSIGNED_INT, 0);
-	   	
-	   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
-	   	myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-	   	myGl.glDeleteBuffers( 3, buffer6,0 );
-	
-	   	myGl.glDisableClientState(GL.GL_VERTEX_ARRAY);
-	   	myGl.glDisableClientState(GL.GL_COLOR_ARRAY);
+		if(planIndicesBuffer.hasRemaining())
+		{
+			int[] buffer6 = new int[3];
+	        myGl.glGenBuffers(3, buffer6,0);
+	        planIndicesBufferID = buffer6[2];
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer6[0]);
+	        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
+	        		planVertexBuffer.capacity()*BufferUtil.SIZEOF_FLOAT, 
+	        		planVertexBuffer, GL.GL_STATIC_DRAW);
+	        myGl.glVertexPointer(3, GL.GL_FLOAT,0, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer6[1]);
+	        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
+	        		planColorBuffer.capacity()*BufferUtil.SIZEOF_FLOAT, 
+	        		planColorBuffer, GL.GL_STATIC_DRAW);
+	        myGl.glColorPointer(4, GL.GL_FLOAT,0, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, buffer6[2]);
+		    myGl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER,  
+		    		planIndicesBuffer.capacity()*BufferUtil.SIZEOF_INT,
+		    		planIndicesBuffer, GL.GL_STATIC_DRAW);
+		    	
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+				
+			myGl.glEnableClientState(GL.GL_VERTEX_ARRAY);
+		   	myGl.glEnableClientState(GL.GL_COLOR_ARRAY);  
+		 
+		   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, planIndicesBufferID);
+		   	myGl.glDrawElements(GL.GL_TRIANGLES, planIndicesBuffer.capacity(), GL.GL_UNSIGNED_INT, 0);
+		   	
+		   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+		   	myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+		   	myGl.glDeleteBuffers( 3, buffer6,0 );
+		
+		   	myGl.glDisableClientState(GL.GL_VERTEX_ARRAY);
+		   	myGl.glDisableClientState(GL.GL_COLOR_ARRAY);
+		}
 	   	
 	   	/* 
 	   	 * create plan borders buffer objects
 	   	 * */
-		int[] buffer7 = new int[3];
-        myGl.glGenBuffers(3, buffer7,0);
-        planBorderIndicesBufferID = buffer7[2];
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer7[0]);
-        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
-        		planBorderBuffer.capacity()*BufferUtil.SIZEOF_FLOAT, 
-        		planBorderBuffer, GL.GL_STATIC_DRAW);
-        myGl.glVertexPointer(3, GL.GL_FLOAT,0, 0);
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer7[1]);
-        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
-        		planBorderColorBuffer.capacity()*BufferUtil.SIZEOF_FLOAT, 
-        		planBorderColorBuffer, GL.GL_STATIC_DRAW);
-        myGl.glColorPointer(3, GL.GL_FLOAT,0, 0);
-        
-        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-        
-        myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, buffer7[2]);
-	    myGl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER,  
-	    		planBorderIndicesBuffer.capacity()*BufferUtil.SIZEOF_INT,
-	    		planBorderIndicesBuffer, GL.GL_STATIC_DRAW);
-	    	
-	    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-			
-		myGl.glEnableClientState(GL.GL_VERTEX_ARRAY);
-	   	myGl.glEnableClientState(GL.GL_COLOR_ARRAY);  
-	 
-	   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, planBorderIndicesBufferID);
-	   	myGl.glDrawElements(GL.GL_LINES, planBorderIndicesBuffer.capacity(), GL.GL_UNSIGNED_INT, 0);
+		if(planBorderIndicesBuffer.hasRemaining())
+		{
+			int[] buffer7 = new int[3];
+	        myGl.glGenBuffers(3, buffer7,0);
+	        planBorderIndicesBufferID = buffer7[2];
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer7[0]);
+	        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
+	        		planBorderBuffer.capacity()*BufferUtil.SIZEOF_FLOAT, 
+	        		planBorderBuffer, GL.GL_STATIC_DRAW);
+	        myGl.glVertexPointer(3, GL.GL_FLOAT,0, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer7[1]);
+	        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
+	        		planBorderColorBuffer.capacity()*BufferUtil.SIZEOF_FLOAT, 
+	        		planBorderColorBuffer, GL.GL_STATIC_DRAW);
+	        myGl.glColorPointer(3, GL.GL_FLOAT,0, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, buffer7[2]);
+		    myGl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER,  
+		    		planBorderIndicesBuffer.capacity()*BufferUtil.SIZEOF_INT,
+		    		planBorderIndicesBuffer, GL.GL_STATIC_DRAW);
+		    	
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+				
+			myGl.glEnableClientState(GL.GL_VERTEX_ARRAY);
+		   	myGl.glEnableClientState(GL.GL_COLOR_ARRAY);  
+		 
+		   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, planBorderIndicesBufferID);
+		   	myGl.glDrawElements(GL.GL_LINES, planBorderIndicesBuffer.capacity(), GL.GL_UNSIGNED_INT, 0);
+		   	
+		   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+		   	myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+		   	myGl.glDeleteBuffers( 3, buffer7,0 );
+		
+		   	myGl.glDisableClientState(GL.GL_VERTEX_ARRAY);
+		   	myGl.glDisableClientState(GL.GL_COLOR_ARRAY);
+		}
 	   	
-	   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
-	   	myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-	   	myGl.glDeleteBuffers( 3, buffer7,0 );
-	
-	   	myGl.glDisableClientState(GL.GL_VERTEX_ARRAY);
-	   	myGl.glDisableClientState(GL.GL_COLOR_ARRAY);
+	   	/* 
+	   	 * create point buffer objects
+	   	 * */
+		if(pointIndicesBuffer.hasRemaining())
+		{
+			int[] buffer9 = new int[3];
+	        myGl.glGenBuffers(3, buffer9,0);
+	        pointIndicesBufferID = buffer9[2];
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer9[0]);
+	        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
+	        		pointVertexBuffer.capacity()*BufferUtil.SIZEOF_FLOAT, 
+	        		pointVertexBuffer, GL.GL_STATIC_DRAW);
+	        myGl.glVertexPointer(3, GL.GL_FLOAT,0, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer9[1]);
+	        myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
+	        		pointColorBuffer.capacity()*BufferUtil.SIZEOF_FLOAT, 
+	        		pointColorBuffer, GL.GL_STATIC_DRAW);
+	        myGl.glColorPointer(3, GL.GL_FLOAT,0, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+	        
+	        myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, buffer9[2]);
+		    myGl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER,  
+		    		pointIndicesBuffer.capacity()*BufferUtil.SIZEOF_INT,
+		    		pointIndicesBuffer, GL.GL_STATIC_DRAW);
+		    	
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+				
+			myGl.glEnableClientState(GL.GL_VERTEX_ARRAY);
+		   	myGl.glEnableClientState(GL.GL_COLOR_ARRAY);  
+		 
+		   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, pointIndicesBufferID);
+		   	myGl.glDrawElements(GL.GL_LINES, pointIndicesBuffer.capacity(), GL.GL_UNSIGNED_INT, 0);
+		   	
+		   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+		   	myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+		   	myGl.glDeleteBuffers( 3, buffer9,0 );
+		
+		   	myGl.glDisableClientState(GL.GL_VERTEX_ARRAY);
+		   	myGl.glDisableClientState(GL.GL_COLOR_ARRAY);
+		}
 	   	
 		
 		/* 
 		 * create sphere vertex buffer objects
 		 *  */
-		int[] buffer3 = new int[4];
-		myGl.glGenBuffers(4, buffer3,0);
-		sphereIndicesBufferID = buffer3[3];
-    
-	    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer3[0]);
-	    myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
-	    		spheresVertexBuffer.capacity()*BufferUtil.SIZEOF_FLOAT, 
-	    		spheresVertexBuffer, GL.GL_STATIC_DRAW);
-	    myGl.glVertexPointer(3, GL.GL_FLOAT,0, 0);
+		if(spheresIndicesBuffer.hasRemaining())
+		{
+			int[] buffer3 = new int[4];
+			myGl.glGenBuffers(4, buffer3,0);
+			sphereIndicesBufferID = buffer3[3];
 	    
-	    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-	    
-	    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer3[1]);
-	    myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
-	    		spheresNormalBuffer.capacity()*BufferUtil.SIZEOF_FLOAT, 
-	    		spheresNormalBuffer, GL.GL_STATIC_DRAW);
-	    myGl.glNormalPointer(GL.GL_FLOAT,0, 0);
-	    
-	    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-	    
-	    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer3[2]);
-	    myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
-	    		spheresColorBuffer.capacity()*BufferUtil.SIZEOF_FLOAT, 
-	    		spheresColorBuffer, GL.GL_STATIC_DRAW);
-	    myGl.glColorPointer(3, GL.GL_FLOAT,0, 0);
-	    
-	    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
-	    
-	    myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, buffer3[3]);
-	    myGl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER,  
-	    		spheresIndicesBuffer.capacity()*BufferUtil.SIZEOF_INT,
-	    		spheresIndicesBuffer, GL.GL_STATIC_DRAW);
-	    	
-	    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
- 
-     	myGl.glEnableClientState(GL.GL_VERTEX_ARRAY);
-		myGl.glEnableClientState(GL.GL_NORMAL_ARRAY);
-	   	myGl.glEnableClientState(GL.GL_COLOR_ARRAY);  
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer3[0]);
+		    myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
+		    		spheresVertexBuffer.capacity()*BufferUtil.SIZEOF_FLOAT, 
+		    		spheresVertexBuffer, GL.GL_STATIC_DRAW);
+		    myGl.glVertexPointer(3, GL.GL_FLOAT,0, 0);
+		    
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+		    
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer3[1]);
+		    myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
+		    		spheresNormalBuffer.capacity()*BufferUtil.SIZEOF_FLOAT, 
+		    		spheresNormalBuffer, GL.GL_STATIC_DRAW);
+		    myGl.glNormalPointer(GL.GL_FLOAT,0, 0);
+		    
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+		    
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, buffer3[2]);
+		    myGl.glBufferData(GL.GL_ARRAY_BUFFER, 
+		    		spheresColorBuffer.capacity()*BufferUtil.SIZEOF_FLOAT, 
+		    		spheresColorBuffer, GL.GL_STATIC_DRAW);
+		    myGl.glColorPointer(4, GL.GL_FLOAT,0, 0);
+		    
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+		    
+		    myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, buffer3[3]);
+		    myGl.glBufferData(GL.GL_ELEMENT_ARRAY_BUFFER,  
+		    		spheresIndicesBuffer.capacity()*BufferUtil.SIZEOF_INT,
+		    		spheresIndicesBuffer, GL.GL_STATIC_DRAW);
+		    	
+		    myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
 	 
- 	   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, sphereIndicesBufferID);
- 	   	myGl.glDrawElements(GL.GL_TRIANGLES, spheresIndicesBuffer.capacity(), GL.GL_UNSIGNED_INT, 0);
- 	   	
- 	   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
- 	   	myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
- 	   	myGl.glDeleteBuffers( 4, buffer3,0 );
-
- 	   	myGl.glDisableClientState(GL.GL_VERTEX_ARRAY);
- 	   	myGl.glDisableClientState(GL.GL_NORMAL_ARRAY);
- 	   	myGl.glDisableClientState(GL.GL_COLOR_ARRAY);
+	     	myGl.glEnableClientState(GL.GL_VERTEX_ARRAY);
+			myGl.glEnableClientState(GL.GL_NORMAL_ARRAY);
+		   	myGl.glEnableClientState(GL.GL_COLOR_ARRAY);  
+		 
+	 	   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, sphereIndicesBufferID);
+	 	   	myGl.glDrawElements(GL.GL_TRIANGLES, spheresIndicesBuffer.capacity(), GL.GL_UNSIGNED_INT, 0);
+	 	   	
+	 	   	myGl.glBindBuffer(GL.GL_ELEMENT_ARRAY_BUFFER, 0);
+	 	   	myGl.glBindBuffer(GL.GL_ARRAY_BUFFER, 0);
+	 	   	myGl.glDeleteBuffers( 4, buffer3,0 );
+	
+	 	   	myGl.glDisableClientState(GL.GL_VERTEX_ARRAY);
+	 	   	myGl.glDisableClientState(GL.GL_NORMAL_ARRAY);
+	 	   	myGl.glDisableClientState(GL.GL_COLOR_ARRAY);
+		}
 
 
 	}
@@ -704,29 +782,96 @@ public class VertexArrayHandler {
 
 	}
 	
+	   /**
+	    * Function that build a point vertex buffer
+	    */
+	private void buildPointVertexArray(Point point, double z, int numPoints,
+			double radius, Color color, Double alpha2) 
+	{
+		
+		// FIXME: Does not work for Point.
+		// Add z value
+		if ( Double.isNaN(point.getCoordinate().z) == false ) {
+			z = z + point.getCoordinate().z;
+		}
+
+		double angle;
+		for ( int k = 0; k < numPoints; k++ ) 
+		{
+			angle = k * 2 * Math.PI / numPoints;
+
+			pointTriangles.add(new Vector3D(point.getCoordinate().x + Math.cos(angle) * radius,
+					-1 * point.getCoordinate().y + Math.sin(angle) * radius,
+							z));
+			
+			pointColor.add(color);
+		}
+	}
+	
+	private void fillPointBuffers()
+	{		
+		pointVertexBuffer = BufferUtil.newFloatBuffer(pointTriangles.size()*3);
+		pointColorBuffer = BufferUtil.newFloatBuffer(pointTriangles.size()*3);
+		pointIndicesBuffer = BufferUtil.newIntBuffer(pointTriangles.size());
+		
+		for(int i =0; i <pointTriangles.size(); i++)
+		{
+			pointVertexBuffer.put((float) pointTriangles.get(i).x);
+			pointVertexBuffer.put((float) pointTriangles.get(i).y);
+			pointVertexBuffer.put((float) pointTriangles.get(i).z);	
+			
+			pointColorBuffer.put(pointColor.get(i).getRed()/255);
+			pointColorBuffer.put(pointColor.get(i).getGreen()/255);
+			pointColorBuffer.put(pointColor.get(i).getBlue()/255);
+			
+			pointIndicesBuffer.put(i);
+		}
+		pointVertexBuffer.rewind();
+		pointColorBuffer.rewind();
+		pointIndicesBuffer.rewind();
+	}
+	
+	
 	/**
 	 * 
 	 * Function that create a temporary ArrayList of MyTriangulated objects to be used later by the
 	 * fillVertexArrayTriangle() that will fill a vertex, color and indexes buffers.  
 	 * 
 	 * */
-	public void buildPolygonVertexArray(final Polygon polygon, final double z, final Color c, final double alpha,
+	public void buildPolygonVertexArray(final Polygon polygon, final double z_layer, final Color c, final double alpha,
 			final boolean fill, final boolean isTextured, final Integer angle, boolean drawPolygonContour)
 	{
-
-		MyTriangulatedGeometry curTriangulatedGeometry = new MyTriangulatedGeometry();
-		curTriangulatedGeometry.triangles = GeometryUtils.triangulation(null, polygon); // VERIFY
-																						// NULL
-																						// SCOPE
+		if ( fill == true ) 
+		{
+			MyTriangulatedGeometry curTriangulatedGeometry = new MyTriangulatedGeometry();
+			curTriangulatedGeometry.triangles = GeometryUtils.triangulation(null, polygon); // VERIFY
+																							// NULL
+																							// SCOPE
+			
+			// Add z value
+			double z =0.0;
+			if ( Double.isNaN(polygon.getCoordinate().z) == false ) {
+				z = z + polygon.getCoordinate().z;
+			}
+			
+			if(drawPolygonContour == true)
+				tempArray.add(polygon); //temporary ArrayList to build polygon contours
+			
+			curTriangulatedGeometry.z = z_layer+z;
+			curTriangulatedGeometry.color = c;
+			curTriangulatedGeometry.alpha = alpha;
+			curTriangulatedGeometry.fill = fill;
+			curTriangulatedGeometry.angle = angle;
+			triangulatedGeometries.add(curTriangulatedGeometry);
+			nbVerticesTriangle = nbVerticesTriangle + curTriangulatedGeometry.triangles.size() * 3;
+		}
+		else{
+			tempArray.add(polygon); //temporary ArrayList to only build borders
+		}
 		
-		tempArray.add(polygon); //temporary ArrayList to build polygon contours
-		curTriangulatedGeometry.z = z;
-		curTriangulatedGeometry.color = c;
-		curTriangulatedGeometry.alpha = alpha;
-		curTriangulatedGeometry.fill = fill;
-		curTriangulatedGeometry.angle = angle;
-		triangulatedGeometries.add(curTriangulatedGeometry);
-		nbVerticesTriangle = nbVerticesTriangle + curTriangulatedGeometry.triangles.size() * 3;
+		//FIXME add texture....
+		if(isTextured)
+		{}
 	}
 	
 	public void fillPolygonBuffers() {
@@ -786,6 +931,11 @@ public class VertexArrayHandler {
 		{
 			Polygon curPolygon  = tempArray.get(l);
 			
+			double z =0.0;
+			if ( Double.isNaN(curPolygon.getCoordinate().z) == false ) {
+				z = z + curPolygon.getCoordinate().z;
+			}
+			
 			int curPolyGonNumPoints = curPolygon.getExteriorRing().getNumPoints();
 			
 			totalNbVertPoly += curPolyGonNumPoints*2;
@@ -802,11 +952,11 @@ public class VertexArrayHandler {
 				
 				vertices[0].x = curPolygon.getExteriorRing().getPointN(j).getX();
 				vertices[0].y = -1 * curPolygon.getExteriorRing().getPointN(j).getY();
-				vertices[0].z = z_layer;
+				vertices[0].z = z_layer+z;
 
 				vertices[1].x = curPolygon.getExteriorRing().getPointN(k).getX();
 				vertices[1].y = -1 * curPolygon.getExteriorRing().getPointN(k).getY();
-				vertices[1].z = z_layer;
+				vertices[1].z = z_layer+z;
 
 				vertexArrayContours.add(vertices);		
 			}
@@ -858,7 +1008,6 @@ public class VertexArrayHandler {
 	private void buildPolyhedreVertexArray(Polygon geometry, double z_layer,
 			Color color, Double alpha2, Boolean fill, double height, int angle,
 			boolean b, Color border, boolean rounded) {
-		// TODO Auto-generated method stub
 		
 		buildPolygonVertexArray(geometry, z_layer, color,
 				alpha2, fill, false, angle, true);
@@ -866,7 +1015,7 @@ public class VertexArrayHandler {
 		buildPolygonVertexArray(geometry, z_layer+height, color,
 				alpha2, fill, false, angle, true);
 		buildVertexArrayContours(z_layer+height);
-		buildFacesVertexArray(geometry,color, alpha, fill, border, z_layer, height,
+		buildFacesVertexArray(geometry,color, alpha2, fill, border, z_layer, height,
 				 true);
 			
 	}
@@ -879,7 +1028,12 @@ public class VertexArrayHandler {
 	public void buildFacesVertexArray(Polygon p, Color c, double alpha, boolean fill, Color b, double z_layer, double height,
 			boolean drawPolygonContour) 
 	{
-
+		
+		double z =0.0;
+		if ( Double.isNaN(p.getCoordinate().z) == false ) {
+			z = z + p.getCoordinate().z;
+		}
+		
 		int curPolyGonNumPoints = p.getExteriorRing().getNumPoints();
 
 		totalNumVertsQuads = 4*curPolyGonNumPoints;
@@ -896,23 +1050,24 @@ public class VertexArrayHandler {
 			
 			vertices[0].x = p.getExteriorRing().getPointN(j).getX();
 			vertices[0].y = -1 * p.getExteriorRing().getPointN(j).getY();
-			vertices[0].z = z_layer + height;
+			vertices[0].z = z_layer + height+z;
 
 			vertices[1].x = p.getExteriorRing().getPointN(k).getX();
 			vertices[1].y = -1 * p.getExteriorRing().getPointN(k).getY();
-			vertices[1].z = z_layer + height;
+			vertices[1].z = z_layer + height+z;
 
 			vertices[2].x = p.getExteriorRing().getPointN(k).getX();
 			vertices[2].y = -1 * p.getExteriorRing().getPointN(k).getY();
-			vertices[2].z = z_layer;
+			vertices[2].z = z_layer+z;
 
 			vertices[3].x = p.getExteriorRing().getPointN(j).getX();
 			vertices[3].y = -1 * p.getExteriorRing().getPointN(j).getY();
-			vertices[3].z = z_layer;
+			vertices[3].z = z_layer+z;
 			
 			double[] normal = CalculateNormal(vertices[2], vertices[1], vertices[0]);
 
 
+			alphaFaces.add((float)alpha);
 			colorFaces.add(c);
 			colorBorder.add(b);
 			normalArrayFaces .add(normal);
@@ -925,7 +1080,7 @@ public class VertexArrayHandler {
 	{
 		vertexBufferQuads = BufferUtil.newFloatBuffer(nbVerticesFaces*6);
 		
-		colorBufferQuads = BufferUtil.newFloatBuffer(nbVerticesFaces*6);
+		colorBufferQuads = BufferUtil.newFloatBuffer(nbVerticesFaces*7);
 		
 		vertexBufferFacesN = BufferUtil.newFloatBuffer(nbVerticesFaces*6);
 		
@@ -945,6 +1100,7 @@ public class VertexArrayHandler {
 			colorBufferQuads.put((float)colorFaces.get(i).getRed() / 255);
 			colorBufferQuads.put((float)colorFaces.get(i).getGreen() / 255);
 			colorBufferQuads.put((float)colorFaces.get(i).getBlue() / 255);
+			colorBufferQuads.put(alphaFaces.get(i));
 			
 			vertexBufferQuads.put((float) vertexArrayFaces.get(i)[1].x);
 			vertexBufferQuads.put((float) vertexArrayFaces.get(i)[1].y);
@@ -957,6 +1113,7 @@ public class VertexArrayHandler {
 			colorBufferQuads.put((float)colorFaces.get(i).getRed() / 255);
 			colorBufferQuads.put((float)colorFaces.get(i).getGreen() / 255);
 			colorBufferQuads.put((float)colorFaces.get(i).getBlue() / 255);
+			colorBufferQuads.put(alphaFaces.get(i));
 			
 			vertexBufferQuads.put((float) vertexArrayFaces.get(i)[3].x);
 			vertexBufferQuads.put((float) vertexArrayFaces.get(i)[3].y);
@@ -969,6 +1126,7 @@ public class VertexArrayHandler {
 			colorBufferQuads.put((float)colorFaces.get(i).getRed() / 255);
 			colorBufferQuads.put((float)colorFaces.get(i).getGreen() / 255);
 			colorBufferQuads.put((float)colorFaces.get(i).getBlue() / 255);
+			colorBufferQuads.put(alphaFaces.get(i));
 			
 			vertexBufferQuads.put((float) vertexArrayFaces.get(i)[3].x);
 			vertexBufferQuads.put((float) vertexArrayFaces.get(i)[3].y);
@@ -981,6 +1139,7 @@ public class VertexArrayHandler {
 			colorBufferQuads.put((float)colorFaces.get(i).getRed() / 255);
 			colorBufferQuads.put((float)colorFaces.get(i).getGreen() / 255);
 			colorBufferQuads.put((float)colorFaces.get(i).getBlue() / 255);
+			colorBufferQuads.put(alphaFaces.get(i));
 			
 			vertexBufferQuads.put((float) vertexArrayFaces.get(i)[2].x);
 			vertexBufferQuads.put((float) vertexArrayFaces.get(i)[2].y);
@@ -993,6 +1152,7 @@ public class VertexArrayHandler {
 			colorBufferQuads.put((float)colorFaces.get(i).getRed() / 255);
 			colorBufferQuads.put((float)colorFaces.get(i).getGreen() / 255);
 			colorBufferQuads.put((float)colorFaces.get(i).getBlue() / 255);
+			colorBufferQuads.put(alphaFaces.get(i));
 			
 			vertexBufferQuads.put((float) vertexArrayFaces.get(i)[1].x);
 			vertexBufferQuads.put((float) vertexArrayFaces.get(i)[1].y);
@@ -1005,6 +1165,7 @@ public class VertexArrayHandler {
 			colorBufferQuads.put((float)colorFaces.get(i).getRed() / 255);
 			colorBufferQuads.put((float)colorFaces.get(i).getGreen() / 255);
 			colorBufferQuads.put((float)colorFaces.get(i).getBlue() / 255);
+			colorBufferQuads.put(alphaFaces.get(i));
 		
 		}
 		
@@ -1021,9 +1182,11 @@ public class VertexArrayHandler {
 		
 		normalArrayFaces.clear();
 		colorFaces.clear();
+		alphaFaces.clear();
 		
 		normalArrayFaces = new ArrayList<double[]>();
 		colorFaces = new ArrayList<Color>();
+		alphaFaces = new ArrayList<Float>();
 	}
 	
 	public void fillFacesContoursBuffers()
@@ -1135,12 +1298,13 @@ public class VertexArrayHandler {
 	 * 
 	 * */
 	private void buildPlanVertexArray(LineString l, double z,
-			Color c, Double alpha2, double height, int i, boolean drawPolygonContour) {
+			Color c, double alpha2, double height, int i, boolean drawPolygonContour) {
 		// TODO Auto-generated method stub
 		buildLineStringVertexArray(l, z, c, alpha);
 		buildLineStringVertexArray(l, z + height, c, alpha);
 
 		planColor = c;
+		planAlpha = (float)alpha2;
 		int numPoints = l.getNumPoints();
 
 		// Add z value
@@ -1180,7 +1344,7 @@ public class VertexArrayHandler {
 	
 	private void fillPlanBuffers()
 	{
-		this.planColorBuffer = BufferUtil.newFloatBuffer(nbVerticesPlan*3);
+		this.planColorBuffer = BufferUtil.newFloatBuffer(nbVerticesPlan*4);
 		this.planVertexBuffer = BufferUtil.newFloatBuffer(nbVerticesPlan*3);
 		this.planBorderBuffer = BufferUtil.newFloatBuffer(nbVerticesBorder*3);
 		this.planBorderColorBuffer = BufferUtil.newFloatBuffer(nbVerticesBorder*3);
@@ -1197,6 +1361,7 @@ public class VertexArrayHandler {
 			planColorBuffer.put((float) planColor.getRed());
 			planColorBuffer.put((float) planColor.getGreen());
 			planColorBuffer.put((float) planColor.getBlue());
+			planColorBuffer.put(planAlpha);
 			
 			planIndicesBuffer.put(planIndices);
 			planIndices ++;
@@ -1253,7 +1418,7 @@ public class VertexArrayHandler {
 		nbVerticesLine = nbVerticesLine + line.getNumPoints() * 2;
 	}
 		
-	public void buildMultiLineStringVertexArray(final MultiLineString multiline, final double z, final Color c,
+	public void buildMultiLineStringVertexArray(final MultiLineString multiline, final double z_layer, final Color c,
 			final double alpha2) 
 	{
 
@@ -1265,7 +1430,14 @@ public class VertexArrayHandler {
 
 			MyLine curLine = new MyLine();
 			curLine.line = (LineString) multiline.getGeometryN(i);
-			curLine.z = z;
+			
+			// Add z value
+			double z = 0.0;
+			if ( Double.isNaN(curLine.line.getCoordinate().z) == false ) {
+				z = z + curLine.line.getCoordinate().z;
+			}
+			
+			curLine.z = z_layer+z;
 			curLine.color = c;
 			curLine.alpha = alpha2;
 			lines.add(curLine);
@@ -1277,7 +1449,7 @@ public class VertexArrayHandler {
 	public void fillLineBuffer() {
 
 		vertexBufferLine = BufferUtil.newFloatBuffer(nbVerticesLine * 3 * 2);
-		colorBufferLine = BufferUtil.newFloatBuffer(nbVerticesLine * 3 * 2);
+		colorBufferLine = BufferUtil.newFloatBuffer(nbVerticesLine * 4 * 2);
 		indicesBufferLine = BufferUtil.newIntBuffer(nbVerticesLine * 2);
 
 		Iterator<MyLine> it = lines.iterator();
@@ -1293,6 +1465,7 @@ public class VertexArrayHandler {
 				colorBufferLine.put((float) curLine.color.getRed() / 255);
 				colorBufferLine.put((float) curLine.color.getGreen() / 255);
 				colorBufferLine.put((float) curLine.color.getBlue() / 255);
+				colorBufferLine.put((float) curLine.alpha);
 
 				vertexBufferLine.put((float) curLine.line.getPointN(i + 1).getX());
 				vertexBufferLine.put((float) -curLine.line.getPointN(i + 1).getY());
@@ -1300,6 +1473,7 @@ public class VertexArrayHandler {
 				colorBufferLine.put((float) curLine.color.getRed() / 255);
 				colorBufferLine.put((float) curLine.color.getGreen() / 255);
 				colorBufferLine.put((float) curLine.color.getBlue() / 255);
+				colorBufferLine.put((float) curLine.alpha);
 			}
 			
 			for ( int i = 0; i < (curLine.line.getNumPoints() - 1)*2; i++ ) {
@@ -1348,6 +1522,7 @@ public class VertexArrayHandler {
 	            this.sphereNormals.add((float) (icosphereVertexBuffer.get(i+2)));
 	            
 	            sphereColor.add(c);
+	            sphereAlpha.add((float)(alpha));
 		}
 		
 		for(int i =0; i<icosphereIndexBuffer.capacity();i++)
@@ -1363,7 +1538,7 @@ public class VertexArrayHandler {
 		spheresVertexBuffer = BufferUtil.newFloatBuffer(nbVerticesSphere);
 		spheresNormalBuffer = BufferUtil.newFloatBuffer(nbVerticesSphere);
 		spheresIndicesBuffer = BufferUtil.newIntBuffer(nbIndexSphere);
-		spheresColorBuffer = BufferUtil.newFloatBuffer(nbVerticesSphere);
+		spheresColorBuffer = BufferUtil.newFloatBuffer(nbVerticesSphere*2);
 		
 		for(int i = 0; i<sphereTriangles.size(); i++)
 		{
@@ -1376,6 +1551,7 @@ public class VertexArrayHandler {
 			spheresColorBuffer.put(sphereColor.get(i).getRed()/255);
 			spheresColorBuffer.put(sphereColor.get(i).getGreen()/255);
 			spheresColorBuffer.put(sphereColor.get(i).getBlue()/255);
+			spheresColorBuffer.put(sphereAlpha.get(i));
 		}
 		
 		for(int i = 0; i<sphereIndices.size(); i++)
@@ -1392,7 +1568,9 @@ public class VertexArrayHandler {
 		sphereTriangles.clear();
 		sphereIndices.clear();
 		sphereColor.clear();
+		sphereAlpha.clear();
 		
+		sphereAlpha = new ArrayList<Float>();
 		sphereNormals = new ArrayList<Float>();
 		sphereTriangles = new ArrayList<Float>();
 		sphereIndices = new ArrayList<Integer>();	
