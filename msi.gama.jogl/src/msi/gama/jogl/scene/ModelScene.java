@@ -41,12 +41,12 @@ public class ModelScene {
 	final Double envWidth, envHeight;
 
 	public ModelScene(final JOGLAWTGLRenderer renderer) {
-		geometries = new SceneObjects(new GeometryDrawer(renderer), true);
-		collections = new SceneObjects(new CollectionDrawer(renderer), true);
-		strings = new SceneObjects(new StringDrawer(renderer), !StringDrawer.USE_VERTEX_ARRAYS);
-		images = new SceneObjects(new ImageDrawer(renderer), true);
-		dems = new SceneObjects(new DEMDrawer(renderer), true);
-		staticObjects = new SceneObjects.Static(new GeometryDrawer(renderer), true);
+		geometries = new SceneObjects(new GeometryDrawer(renderer), true, false);
+		collections = new SceneObjects(new CollectionDrawer(renderer), true, false);
+		strings = new SceneObjects(new StringDrawer(renderer), !StringDrawer.USE_VERTEX_ARRAYS, false);
+		images = new SceneObjects(new ImageDrawer(renderer), true, false);
+		dems = new SceneObjects(new DEMDrawer(renderer), true, false);
+		staticObjects = new SceneObjects.Static(new GeometryDrawer(renderer), true, false);
 		envWidth = renderer.env_width;
 		envHeight = renderer.env_height;
 	}
@@ -85,11 +85,11 @@ public class ModelScene {
 		else{
 			renderer.gl.glColor3d(1.0, 1.0, 1.0);
 		}
-		geometries.draw(picking);
-		staticObjects.draw(picking);
-		images.draw(picking);
-		dems.draw(picking);
-		strings.draw(picking);
+		geometries.draw(picking, renderer);
+		staticObjects.draw(picking, renderer);
+		images.draw(picking, renderer);
+		dems.draw(picking, renderer);
+		strings.draw(picking, renderer);
 	}
 
 	public void addCollections(final SimpleFeatureCollection collection, final Color color) {

@@ -285,15 +285,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			if ( this.displaySurface.selectRectangle ) {
 				DrawROI();
 			}
-			
-			//Show fps for performance mesures		
-			if(showFPS)
-			{
-				CalculateFrameRate();
-				gl.glRasterPos2i(-30, 30);
-				gl.glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-				glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, "FPS : "+fps);
-			}
 		}
 	}
 

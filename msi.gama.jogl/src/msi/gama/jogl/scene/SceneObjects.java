@@ -2,14 +2,16 @@ package msi.gama.jogl.scene;
 
 import static javax.media.opengl.GL.GL_COMPILE;
 import java.util.*;
+
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
+import msi.gama.jogl.utils.VertexArrayHandler;
 
 public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 
 	public static class Static<T extends AbstractObject> extends SceneObjects<T> {
 
-		Static(final ObjectDrawer<T> drawer, final boolean asList) {
-			super(drawer, asList);
+		Static(final ObjectDrawer<T> drawer, final boolean asList, final boolean asVBO) {
+			super(drawer, asList, asVBO);
 		}
 
 		@Override
@@ -29,10 +31,13 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 	final List<T> objects = new ArrayList();
 	Integer openGLListIndex;
 	final boolean drawAsList;
+	boolean drawAsVBO;
+	VertexArrayHandler vah = null;
 
-	SceneObjects(final ObjectDrawer<T> drawer, final boolean asList) {
+	SceneObjects(final ObjectDrawer<T> drawer, final boolean asList, final boolean asVBO) {
 		this.drawer = drawer;
 		drawAsList = asList;
+		drawAsVBO = asVBO;
 	}
 
 	@Override
@@ -69,7 +74,7 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 		objects.add(object);
 	}
 
-	public void draw(final boolean picking) {
+	public void draw(final boolean picking, JOGLAWTGLRenderer renderer) {		
 		if ( picking ) {
 			drawer.getGL().glPushMatrix();
 			drawer.getGL().glInitNames();
@@ -89,7 +94,18 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 				drawer.getGL().glEndList();
 			}
 			drawer.getGL().glCallList(openGLListIndex);
-		} else {
+		}else if(drawAsVBO){
+				if(vah == null)
+				{
+					vah= new VertexArrayHandler(renderer.gl, renderer.glu,renderer);
+					vah.buildVertexArray((List<GeometryObject>) objects);
+				}
+				else
+				{
+					vah.createVBOs();
+				}
+			
+		}else {
 			for ( final T object : objects ) {
 				object.draw(drawer, picking);
 			}
