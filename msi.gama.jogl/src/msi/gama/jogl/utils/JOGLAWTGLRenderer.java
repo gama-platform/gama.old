@@ -3,7 +3,9 @@ package msi.gama.jogl.utils;
 import static javax.media.opengl.GL.*;
 
 import java.awt.*;
+import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
+import java.text.AttributedString;
 import java.util.ArrayList;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
@@ -17,6 +19,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.OutputSynchronizer;
 import utils.GLUtil;
 import com.sun.opengl.util.*;
+import com.sun.opengl.util.j2d.Overlay;
 import com.sun.opengl.util.texture.*;
 
 public class JOGLAWTGLRenderer implements GLEventListener {
@@ -102,7 +105,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private int frameCount = 0;
 	private double currentTime = 0;
 	private double previousTime = 0;
-	public float fps = 0;
+	public float fps = 00.00f;
+	
+	private Overlay overlay;
 	
 
 	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {
@@ -131,6 +136,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public void init(final GLAutoDrawable drawable) {
 		startTime = System.currentTimeMillis();
 
+		overlay = new Overlay(drawable);
+		
 		width = drawable.getWidth();
 		height = drawable.getHeight();
 		gl = drawable.getGL();
@@ -264,17 +271,26 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			if ( getInertia() ) {
 				camera.inertia();
 			}
-
-			this.drawScene();
-
 			if ( getShowFPS() ) {
 				CalculateFrameRate();
-				gl.glDisable(GL_BLEND);				
-				gl.glRasterPos3d(-getMaxEnvDim() / 20, getMaxEnvDim() / 10, 0.0d);
-				gl.glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-				glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "FPS: " + (int) fps);
-				gl.glEnable(GL_BLEND);
+				
+				Graphics2D g2d = overlay.createGraphics(); 
+				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+				        RenderingHints.VALUE_ANTIALIAS_ON);
+				g2d.setBackground(canvas.getBackground());
+				g2d.clearRect(0, 0, 100, 50);
+				g2d.setColor(Color.black);
+				Font serifFont = new Font("Serif", Font.PLAIN, 12);
+				AttributedString as = new AttributedString("FPS : "+fps);
+			    as.addAttribute(TextAttribute.FONT, serifFont);
+				g2d.drawString(as.getIterator(), 10, 20);				
+				overlay.markDirty(0, 0, canvas.getWidth(), canvas.getHeight()); 
+				overlay.drawAll(); 
+				g2d.dispose();
 			}
+
+
+			this.drawScene();
 
 			// this.DrawShapeFile();
 			// this.DrawCollada();
