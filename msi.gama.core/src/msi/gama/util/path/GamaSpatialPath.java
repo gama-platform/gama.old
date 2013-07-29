@@ -38,6 +38,7 @@ import com.vividsolutions.jts.geom.*;
 public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 
 	GamaList<IShape> segments;
+	IShape shape = null;
 	Map<IShape, IShape> realObjects; // cle = bout de geometrie
 
 	// WARNING Cant hide an attribute like this !
@@ -88,6 +89,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 			if ( graph != null ) {
 				graphVersion = graph.getVersion();
 			}
+			int cpt = 0;
 			for ( IShape edge : _edges ) {
 				if ( modify_edges ) {
 					IAgent ag = edge.getAgent();
@@ -103,15 +105,25 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 						edge2 = edge;
 						pt = c1;
 					}
+					if (cpt == 0 && ! source.equals(pt)) {
+						GamaPoint falseSource = (GamaPoint) Punctal._closest_point_to(source, edge2);
+						edge2 = GeometryUtils.split_at(edge2, falseSource).get(1);
+					}
+					if ((cpt == _edges.size() - 1) && ! target.equals(edge2.getInnerGeometry().getCoordinates()[geom.getNumPoints() - 1])) {
+						GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to(target, edge2);
+						edge2 = GeometryUtils.split_at(edge2, falseTarget).get(0);
+					}
 					if ( ag != null && graph != null && graph.isAgentEdge() ) {
 						realObjects.put(edge2, ag);
 					} else {
 						realObjects.put(edge2, edge);
 					}
 					segments.add(edge2);
+					
 				} else {
 					segments.add(edge);
 				}
+				cpt++;
 				// segmentsInGraph.put(agents, agents);
 			}
 		}
@@ -354,5 +366,20 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 	@Override
 	public IShape getRealObject(final Object obj) {
 		return realObjects.get(obj);
+	}
+	
+	@Override
+	public IShape getGeometry() {
+		if (shape == null && segments.size() > 0) {
+			final Geometry geoms[] = new Geometry[segments.size()];
+			int cpt = 0;
+			for ( final IShape ent : segments ) {
+				geoms[cpt] = ent.getInnerGeometry();
+				cpt++;
+			}
+			final Geometry geom = GeometryUtils.factory.createGeometryCollection(geoms);
+			shape = new GamaShape(geom.union());
+		}
+		return shape;
 	}
 }

@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -37,13 +37,16 @@ import msi.gaml.types.IType;
  * The class IPath.
  * 
  * @author drogoul
- * @since 14 dŽc. 2011
+ * @since 14 dï¿½c. 2011
  * 
  */
 @vars({ @var(name = IKeyword.TARGET, type = IType.NONE),
 	@var(name = IKeyword.SOURCE, type = IType.NONE),
 	@var(name = IKeyword.GRAPH, type = IType.GRAPH),
+	@var(name = IKeyword.SHAPE, type = IType.GEOMETRY),
 	@var(name = IKeyword.SEGMENTS, type = IType.LIST, of = IType.GEOMETRY),
+	@var(name = "distance", type = IType.FLOAT),
+	@var(name = "weight", type = IType.FLOAT),
 	@var(name = "edges", type = IType.LIST), 
 	@var(name = "vertices", type = IType.LIST)
 	//@var(name = IKeyword.AGENTS, type = IType.LIST, of = IType.AGENT),
@@ -73,9 +76,13 @@ public interface IPath<V,E> extends IValue {// extends IShape {
 	@getter("edges")
 	public abstract IList<E> getEdgeList();
 	
+	@getter("shape")
+	public abstract IShape getGeometry();
+	
 //	@getter(IKeyword.AGENTS)
 //	public abstract List<IShape> getAgentList();
 	
+	@getter("weight")
 	public abstract double getWeight();
 
 	public abstract double getWeight(final IShape line) throws GamaRuntimeException;
@@ -96,6 +103,7 @@ public interface IPath<V,E> extends IValue {// extends IShape {
 
 	public abstract int getLength();
 
+	@getter("distance")
 	public abstract double getDistance(IScope scope);
 
 	public abstract ITopology getTopology();

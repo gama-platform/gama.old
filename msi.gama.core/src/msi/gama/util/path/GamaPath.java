@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -30,8 +30,8 @@ import msi.gama.util.graph.IGraph;
 import msi.gaml.operators.Cast;
 import org.jgrapht.*;
 
-// Si construit ˆ partir d'une liste de points, crŽe la gŽomŽtrie correspondante
-// Si construit ˆ partir d'un graphe spatial, crŽe la gŽomŽtrie ˆ partir des edges passŽs.
+// Si construit ï¿½ partir d'une liste de points, crï¿½e la gï¿½omï¿½trie correspondante
+// Si construit ï¿½ partir d'un graphe spatial, crï¿½e la gï¿½omï¿½trie ï¿½ partir des edges passï¿½s.
 // Si
 
 public class GamaPath<V, E> implements GraphPath<V, E>, IPath<V, E> {
@@ -43,7 +43,7 @@ public class GamaPath<V, E> implements GraphPath<V, E>, IPath<V, E> {
 	IGraph<V, E> graph;
 	int graphVersion;
 
-	// FIXME virer le constructeur par dŽfaut... used for the inheritance...
+	// FIXME virer le constructeur par dï¿½faut... used for the inheritance...
 	public GamaPath() {}
 
 	public GamaPath(final IGraph<V, E> g, final V start, final V target, final IList<E> _edges) {
@@ -232,9 +232,8 @@ public class GamaPath<V, E> implements GraphPath<V, E>, IPath<V, E> {
 	}
 
 	@Override
-	// FIXME est-ce pertinent ?
 	public double getDistance(final IScope scope) {
-		if ( getEdgeList() == null || getEdgeList().isEmpty() ) { return Double.MAX_VALUE; }
+		if ( getEdgeList() == null || getEdgeList().isEmpty() ) { return 0; }
 		return getWeight();
 	}
 
@@ -270,6 +269,11 @@ public class GamaPath<V, E> implements GraphPath<V, E>, IPath<V, E> {
 
 	@Override
 	public IList<IShape> getEdgeGeometry() {
+		return null;
+	}
+
+	@Override
+	public IShape getGeometry() {
 		return null;
 	}
 }

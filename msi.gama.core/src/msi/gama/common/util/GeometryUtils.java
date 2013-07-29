@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -39,7 +39,7 @@ import com.vividsolutions.jts.triangulate.quadedge.LocateFailureException;
  * The class GamaGeometryUtils.
  * 
  * @author drogoul
- * @since 14 dŽc. 2011
+ * @since 14 dï¿½c. 2011
  * 
  */
 public class GeometryUtils {
@@ -619,5 +619,100 @@ public class GeometryUtils {
 			result = boundsEnv;
 		}
 		return result;
+	}
+	
+	public static GamaList<IShape> split_at(final IShape geom, final ILocation pt) {
+		final GamaList<IShape> lines = new GamaList<IShape>();
+		GamaList<Geometry> geoms = null;
+		if ( geom.getInnerGeometry() instanceof LineString ) {
+			final Coordinate[] coords = ((LineString) geom.getInnerGeometry()).getCoordinates();
+			final Point pt1 = GeometryUtils.factory.createPoint(new GamaPoint(pt.getLocation()));
+			final int nb = coords.length;
+			int indexTarget = -1;
+			double distanceT = Double.MAX_VALUE;
+			for ( int i = 0; i < nb - 1; i++ ) {
+				final Coordinate s = coords[i];
+				final Coordinate t = coords[i + 1];
+				final Coordinate[] seg = { s, t };
+				final Geometry segment = GeometryUtils.factory.createLineString(seg);
+				final double distT = segment.distance(pt1);
+				if ( distT < distanceT ) {
+					distanceT = distT;
+					indexTarget = i;
+				}
+			}
+			int nbSp = indexTarget + 2;
+			final Coordinate[] coords1 = new Coordinate[nbSp];
+			for ( int i = 0; i <= indexTarget; i++ ) {
+				coords1[i] = coords[i];
+			}
+			coords1[indexTarget + 1] = new GamaPoint(pt.getLocation());
+
+			nbSp = coords.length - indexTarget;
+			final Coordinate[] coords2 = new Coordinate[nbSp];
+			coords2[0] = new GamaPoint(pt.getLocation());
+			int k = 1;
+			for ( int i = indexTarget + 1; i < coords.length; i++ ) {
+				coords2[k] = coords[i];
+				k++;
+			}
+			final GamaList<Geometry> geoms1 = new GamaList<Geometry>();
+			geoms1.add(GeometryUtils.factory.createLineString(coords1));
+			geoms1.add(GeometryUtils.factory.createLineString(coords2));
+			geoms = geoms1;
+		} else if ( geom.getInnerGeometry() instanceof MultiLineString ) {
+			final Point point = GeometryUtils.factory.createPoint((Coordinate) pt);
+			Geometry geom2 = null;
+			double distMin = Double.MAX_VALUE;
+			final MultiLineString ml = (MultiLineString) geom.getInnerGeometry();
+			for ( int i = 0; i < ml.getNumGeometries(); i++ ) {
+				final double dist = ml.getGeometryN(i).distance(point);
+				if ( dist <= distMin ) {
+					geom2 = ml.getGeometryN(i);
+					distMin = dist;
+				}
+			}
+			final Coordinate[] coords = ((LineString) geom2).getCoordinates();
+			final Point pt1 = GeometryUtils.factory.createPoint(new GamaPoint(pt.getLocation()));
+			final int nb = coords.length;
+			int indexTarget = -1;
+			double distanceT = Double.MAX_VALUE;
+			for ( int i = 0; i < nb - 1; i++ ) {
+				final Coordinate s = coords[i];
+				final Coordinate t = coords[i + 1];
+				final Coordinate[] seg = { s, t };
+				final Geometry segment = GeometryUtils.factory.createLineString(seg);
+				final double distT = segment.distance(pt1);
+				if ( distT < distanceT ) {
+					distanceT = distT;
+					indexTarget = i;
+				}
+			}
+			int nbSp = indexTarget + 2;
+			final Coordinate[] coords1 = new Coordinate[nbSp];
+			for ( int i = 0; i <= indexTarget; i++ ) {
+				coords1[i] = coords[i];
+			}
+			coords1[indexTarget + 1] = new GamaPoint(pt.getLocation());
+
+			nbSp = coords.length - indexTarget;
+			final Coordinate[] coords2 = new Coordinate[nbSp];
+			coords2[0] = new GamaPoint(pt.getLocation());
+			int k = 1;
+			for ( int i = indexTarget + 1; i < coords.length; i++ ) {
+				coords2[k] = coords[i];
+				k++;
+			}
+			final GamaList<Geometry> geoms1 = new GamaList<Geometry>();
+			geoms1.add(GeometryUtils.factory.createLineString(coords1));
+			geoms1.add(GeometryUtils.factory.createLineString(coords2));
+			geoms = geoms1;
+		}
+		if ( geoms != null ) {
+			for ( final Geometry g : geoms ) {
+				lines.add(new GamaShape(g));
+			}
+		}
+		return lines;
 	}
 }
