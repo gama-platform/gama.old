@@ -585,7 +585,7 @@ public class MovingSkill extends GeometricSkill {
 						}
 					}
 					segments.add(gl);
-					currentLocation = pt;
+					currentLocation = pt.copy(scope);
 					distance = distance - dist;
 					if ( i == nb - 1 && j == endIndexSegment ) {
 						break;
@@ -602,7 +602,7 @@ public class MovingSkill extends GeometricSkill {
 					}
 					
 					segments.add(gl);
-					currentLocation = pt;
+					currentLocation = pt.copy(scope);;
 					distance = 0;
 					if ( indexSegment < coords.length - 1 ) {
 						indexSegment++;
