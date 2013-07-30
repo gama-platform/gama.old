@@ -109,7 +109,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 						GamaPoint falseSource = (GamaPoint) Punctal._closest_point_to(source, edge2);
 						edge2 = GeometryUtils.split_at(edge2, falseSource).get(1);
 					}
-					if ((cpt == _edges.size() - 1) && ! target.equals(edge2.getInnerGeometry().getCoordinates()[geom.getNumPoints() - 1])) {
+					if ((cpt == _edges.size() - 1) && ! target.equals(edge2.getInnerGeometry().getCoordinates()[edge2.getInnerGeometry().getNumPoints() - 1])) {
 						GamaPoint falseTarget = (GamaPoint) Punctal._closest_point_to(target, edge2);
 						edge2 = GeometryUtils.split_at(edge2, falseTarget).get(0);
 					}
