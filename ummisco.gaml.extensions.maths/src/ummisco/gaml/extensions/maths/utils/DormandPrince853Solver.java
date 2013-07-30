@@ -70,7 +70,7 @@ public class DormandPrince853Solver extends Solver {
 
 	@Override
 	public void solve(final IScope scope, final SystemOfEquationsStatement eq, final double time_initial,
-		final double time_final, final int cycle_length) {
+		final double time_final, final double cycle_length) {
 		if ( eq instanceof SystemOfEquationsStatement ) {
 			// add all equations externe to have one complete systemofequation
 			//
@@ -110,9 +110,14 @@ public class DormandPrince853Solver extends Solver {
 			// GuiUtils.informConsole(""+y);
 			// double[] y = new double[] { 0.0, 1.0 };
 			try {
+				
+				integrator.integrate(eq, (time_initial)
+						* (step / cycle_length / step), y, time_final
+						* (step / cycle_length / step), y);
+				eq.assignValue(time_final * (step / cycle_length / step), y);
 				// GuiUtils.informConsole("t="+time_initial+" : "+y[0]+"\n");
-				integrator.integrate(eq, time_initial * cycle_length, y, time_final * cycle_length, y);
-				eq.assignValue(time_final * cycle_length, y);
+//				integrator.integrate(eq, time_initial * cycle_length, y, time_final * cycle_length, y);
+//				eq.assignValue(time_final * cycle_length, y);
 				// GuiUtils.informConsole("t"+time_final+"= "+y[0]+"\n");
 			} catch (final Exception ex) {
 				System.out.println(ex);

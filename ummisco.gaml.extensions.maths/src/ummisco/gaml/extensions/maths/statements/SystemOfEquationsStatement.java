@@ -3,6 +3,7 @@ package ummisco.gaml.extensions.maths.statements;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -13,16 +14,23 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.*;
+import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.species.GamlSpecies;
 import msi.gaml.statements.AbstractStatementSequence;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 import org.apache.commons.math3.exception.*;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 
 @symbol(name = IKeyword.EQUATION, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
-@facets(value = { @facet(name = IKeyword.NAME, type = IType.ID /* CHANGE */, optional = false),
-	@facet(name = IKeyword.SIMULTANEOUSLY, type = IType.LIST, optional = true) }, omissible = IKeyword.NAME)
+@facets(value = {
+		@facet(name = IKeyword.NAME, type = IType.ID /* CHANGE */, optional = true),
+		@facet(name = IKeyword.TYPE, type = IType.ID /* CHANGE */, optional = true, values = { "SIR", "SEIR" }, doc = @doc(value = "classical epidemiology model")),
+		@facet(name = "with_vars", type = IType.LIST, optional = true), 		
+		@facet(name = "with_params", type = IType.LIST, optional = true), 		
+		@facet(name = IKeyword.SIMULTANEOUSLY, type = IType.LIST, optional = true) }, omissible = IKeyword.NAME)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
 /**
  * The class SystemOfEquationsStatement. 
@@ -33,7 +41,8 @@ import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
  * @since 26 janv. 2013
  *
  */
-public class SystemOfEquationsStatement extends AbstractStatementSequence implements FirstOrderDifferentialEquations {
+public class SystemOfEquationsStatement extends AbstractStatementSequence
+		implements FirstOrderDifferentialEquations {
 
 	public final IList<SingleEquationStatement> equations = new GamaList<SingleEquationStatement>();
 	public final IList<IVarExpression> variables = new GamaList<IVarExpression>();
@@ -48,7 +57,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 
 	public SystemOfEquationsStatement(final IDescription desc) {
 		super(desc);
-		setName(getLiteral(IKeyword.EQUATION));
+		setName(getLiteral(IKeyword.NAME));
 		simultan = getFacet(IKeyword.SIMULTANEOUSLY);
 
 	}
@@ -60,24 +69,35 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	 */
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
+//		System.out.println("soes " + commands);
+		List cmd=commands;
+		if (getFacet(IKeyword.TYPE)!=null && getFacet(IKeyword.TYPE).literalValue().equals("SIR")) {
+			cmd.clear();
+			
+			cmd=new ClassicalEquations(getDescription()).SIR(getFacet("with_vars"),getFacet("with_params"));
+			// diff(S,t) = (- beta * S * I / N);
+			// diff(I,t) = (beta * S * I / N) - (delta * I);
+			// diff(R,t) = (delta * I);
+		}
+		
+		
 		final List<ISymbol> others = new ArrayList<ISymbol>();
-		for ( final ISymbol s : commands ) {
-			if ( s instanceof SingleEquationStatement ) {
+		for (final Object s : cmd) {
+			if (s instanceof SingleEquationStatement) {
 				equations.add((SingleEquationStatement) s);
 				variables.add(((SingleEquationStatement) s).var);
-				// variables.add(new GamaPair<Object, IVarExpression >("", ((SingleEquationStatement) s).var));
-			} else {
-				others.add(s);
-			}
+				// variables.add(new GamaPair<Object, IVarExpression >("",
+				// ((SingleEquationStatement) s).var));
+			} 
 		}
 
 		super.setChildren(others);
 	}
-
 	// public double[] ydottmp;
 
 	@Override
-	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
+	public Object privateExecuteIn(final IScope scope)
+			throws GamaRuntimeException {
 		// We execute whatever is declared in addition to the equations (could
 		// be initializations,
 		// etc.)
@@ -87,30 +107,34 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		// ydottmp[i]=(Double)v.value(scope);
 		// }
 		// for(IVarExpression v:vars){
-		// variables.add(new GamaPair<IAgent, IVarExpression>(scope.getAgentScope(), v));
+		// variables.add(new GamaPair<IAgent,
+		// IVarExpression>(scope.getAgentScope(), v));
 		// }
-		for ( int i = 0; i < variables.size(); i++ ) {
+		for (int i = 0; i < variables.size(); i++) {
 			equaAgents.add(i, scope.getAgentScope());
 		}
-		if ( simultan != null ) {
+		if (simultan != null) {
 			equations_ext.clear();
 			final Object t = simultan.value(scope);
-			if ( t != null ) {
-				if ( t instanceof GamaList ) {
+			if (t != null) {
+				if (t instanceof GamaList) {
 					final GamaList lst = ((GamaList) t).listValue(scope);
-					for ( int i = 0; i < lst.size(); i++ ) {
+					for (int i = 0; i < lst.size(); i++) {
 						final Object o = lst.get(i);
 
-						if ( o instanceof IAgent ) {
+						if (o instanceof IAgent) {
 							final IAgent remoteAgent = (IAgent) o;
-							if ( !remoteAgent.dead() && !equations_ext.contains(remoteAgent) ) {
+							if (!remoteAgent.dead()
+									&& !equations_ext.contains(remoteAgent)) {
 								equations_ext.add(remoteAgent);
 							}
-						} else if ( o instanceof GamlSpecies ) {
-							final Iterator<IAgent> ia = ((GamlSpecies) o).iterator();
+						} else if (o instanceof GamlSpecies) {
+							final Iterator<IAgent> ia = ((GamlSpecies) o)
+									.iterator();
 							while (ia.hasNext()) {
 								final IAgent remoteAgent = ia.next();
-								if ( !remoteAgent.dead() && !equations_ext.contains(remoteAgent) ) {
+								if (!remoteAgent.dead()
+										&& !equations_ext.contains(remoteAgent)) {
 									equations_ext.add(remoteAgent);
 								}
 							}
@@ -120,7 +144,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 					// if (!equations_ext.containsAll(lst))
 					// equations_ext.addAll(lst);
 				} else {
-					if ( !equations_ext.contains(t) ) {
+					if (!equations_ext.contains(t)) {
 						equations_ext.add((IAgent) t);
 					}
 				}
@@ -130,14 +154,15 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		return super.privateExecuteIn(scope);
 	}
 
-	private void addEquationsExtern(final IAgent remoteAgent, final String eqName) {
-		final SystemOfEquationsStatement ses =
-			(SystemOfEquationsStatement) remoteAgent.getSpecies()
-				.getStatement(SystemOfEquationsStatement.class, eqName);
-		if ( ses != null ) {
+	private void addEquationsExtern(final IAgent remoteAgent,
+			final String eqName) {
+		final SystemOfEquationsStatement ses = (SystemOfEquationsStatement) remoteAgent
+				.getSpecies().getStatement(SystemOfEquationsStatement.class,
+						eqName);
+		if (ses != null) {
 			final int n = equaAgents.size();
 			// System.out.println(equaAgents);
-			for ( int i = 0; i < ses.equations.size(); i++ ) {
+			for (int i = 0; i < ses.equations.size(); i++) {
 				equaAgents.add(n + i, remoteAgent);
 			}
 
@@ -150,11 +175,12 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 
 	}
 
-	private void removeEquationsExtern(final IAgent remoteAgent, final String eqName) {
-		final SystemOfEquationsStatement ses =
-			(SystemOfEquationsStatement) remoteAgent.getSpecies()
-				.getStatement(SystemOfEquationsStatement.class, eqName);
-		if ( ses != null ) {
+	private void removeEquationsExtern(final IAgent remoteAgent,
+			final String eqName) {
+		final SystemOfEquationsStatement ses = (SystemOfEquationsStatement) remoteAgent
+				.getSpecies().getStatement(SystemOfEquationsStatement.class,
+						eqName);
+		if (ses != null) {
 
 			// equaAgents.remove(ses);
 			// if (!equations.containsAll(ses.equations))
@@ -166,12 +192,12 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	}
 
 	public void addExtern(final String eqName) {
-		if ( equations_ext.size() > 0 ) {
+		if (equations_ext.size() > 0) {
 			// System.out.println("ex "+equations_ext);
-			for ( int i = 0, n = equations_ext.size(); i < n; i++ ) {
+			for (int i = 0, n = equations_ext.size(); i < n; i++) {
 				final Object o = equations_ext.get(i);
 				final IAgent remoteAgent = (IAgent) o;
-				if ( !remoteAgent.dead() ) {
+				if (!remoteAgent.dead()) {
 					addEquationsExtern(remoteAgent, eqName);
 				}
 				/*
@@ -190,19 +216,19 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	}
 
 	public void removeExtern(final String eqName) {
-		if ( equations_ext.size() > 0 ) {
-			for ( int i = 0, n = equations_ext.size(); i < n; i++ ) {
+		if (equations_ext.size() > 0) {
+			for (int i = 0, n = equations_ext.size(); i < n; i++) {
 				final Object o = equations_ext.get(i);
-				if ( o instanceof IAgent ) {
+				if (o instanceof IAgent) {
 					final IAgent remoteAgent = (IAgent) o;
-					if ( !remoteAgent.dead() ) {
+					if (!remoteAgent.dead()) {
 						removeEquationsExtern(remoteAgent, eqName);
 					}
-				} else if ( o instanceof GamlSpecies ) {
+				} else if (o instanceof GamlSpecies) {
 					final Iterator<IAgent> ia = ((GamlSpecies) o).iterator();
 					while (ia.hasNext()) {
 						final IAgent remoteAgent = ia.next();
-						if ( !remoteAgent.dead() ) {
+						if (!remoteAgent.dead()) {
 							removeEquationsExtern(remoteAgent, eqName);
 						}
 					}
@@ -225,7 +251,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	 * This method is bound to be called by the integrator of the equations
 	 * system (instantiated in SolveStatement).
 	 * 
-	 * @see org.apache.commons.math3.ode.FirstOrderDifferentialEquations#computeDerivatives(double, double[], double[])
+	 * @see org.apache.commons.math3.ode.FirstOrderDifferentialEquations#computeDerivatives(double,
+	 *      double[], double[])
 	 */
 	// double alpha=0.8;
 	// double beta=0.2;
@@ -233,59 +260,41 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	// double delta=0.85;
 
 	public void assignValue(final double time, final double[] y) {
-		// TODO Should be rewritten in a more correct way (by calling scope.setAgentVarValue(...)
-		for ( int i = 0, n = getDimension(); i < n; i++ ) {
+		// TODO Should be rewritten in a more correct way (by calling
+		// scope.setAgentVarValue(...)
+		for (int i = 0, n = getDimension(); i < n; i++) {
 			final SingleEquationStatement s = equations.get(i);
 			final IVarExpression v = variables.get(i);
 			final Object o = equaAgents.get(i);
 			final IAgent remoteAgent = (IAgent) o;
 			boolean pushed = false;
-			if ( !remoteAgent.dead() ) {
+			if (!remoteAgent.dead()) {
 				pushed = currentScope.push(remoteAgent);
 				try {
 
 					s.var_t.setVal(currentScope, time, false);
 					v.setVal(currentScope, y[i], false);
-				} catch (final Exception ex1) {} finally {
-					if ( pushed ) {
+				} catch (final Exception ex1) {
+				} finally {
+					if (pushed) {
 						currentScope.pop(remoteAgent);
 					}
 				}
 			}
 			/*
-			 * try {
-			 * v.setVal(currentScope, y[i], false);
-			 * } catch (Exception ex) {
-			 * for (int j = 0; j < equations_ext.size(); j++) {
-			 * Object o = equations_ext.get(j);
-			 * if (o instanceof IAgent) {
-			 * final IAgent remoteAgent = (IAgent) o;
-			 * if (!remoteAgent.dead()) {
-			 * currentScope.push(remoteAgent);
-			 * try {
-			 * v.setVal(currentScope, y[i], false);
-			 * } catch (Exception ex1) {
-			 * } finally {
-			 * currentScope.pop(remoteAgent);
-			 * }
-			 * }
-			 * } else if (o instanceof GamlSpecies) {
-			 * Iterator<IAgent> ia = ((GamlSpecies) o).iterator();
-			 * while (ia.hasNext()) {
-			 * final IAgent remoteAgent = (IAgent) ia.next();
-			 * if (!remoteAgent.dead()) {
-			 * currentScope.push(remoteAgent);
-			 * try {
-			 * v.setVal(currentScope, y[i], false);
-			 * } catch (Exception ex1) {
-			 * } finally {
-			 * currentScope.pop(remoteAgent);
-			 * }
-			 * }
-			 * }
-			 * }
-			 * }
-			 * }
+			 * try { v.setVal(currentScope, y[i], false); } catch (Exception ex)
+			 * { for (int j = 0; j < equations_ext.size(); j++) { Object o =
+			 * equations_ext.get(j); if (o instanceof IAgent) { final IAgent
+			 * remoteAgent = (IAgent) o; if (!remoteAgent.dead()) {
+			 * currentScope.push(remoteAgent); try { v.setVal(currentScope,
+			 * y[i], false); } catch (Exception ex1) { } finally {
+			 * currentScope.pop(remoteAgent); } } } else if (o instanceof
+			 * GamlSpecies) { Iterator<IAgent> ia = ((GamlSpecies)
+			 * o).iterator(); while (ia.hasNext()) { final IAgent remoteAgent =
+			 * (IAgent) ia.next(); if (!remoteAgent.dead()) {
+			 * currentScope.push(remoteAgent); try { v.setVal(currentScope,
+			 * y[i], false); } catch (Exception ex1) { } finally {
+			 * currentScope.pop(remoteAgent); } } } } } }
 			 */
 		}
 
@@ -305,8 +314,9 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 	}
 
 	@Override
-	public void computeDerivatives(final double time, final double[] y, final double[] ydot)
-		throws MaxCountExceededException, DimensionMismatchException {
+	public void computeDerivatives(final double time, final double[] y,
+			final double[] ydot) throws MaxCountExceededException,
+			DimensionMismatchException {
 		// and the time ?
 		// we first initialize the vars with the y vector
 		// ydot[0] = y[0] * (alpha - beta * y[1]);
@@ -316,9 +326,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		// v.setVal(currentScope, y[i], false);
 		// }
 		/*
-		 * ydot[0]=-3*y[0];
-		 * ydot[1]=0.0;
-		 * ydot[2]=0.0;
+		 * ydot[0]=-3*y[0]; ydot[1]=0.0; ydot[2]=0.0;
 		 * GuiUtils.informConsole("t"+time+"= "+y[0]+"    "+ydot[0]+"\n");
 		 */
 
@@ -326,7 +334,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		// the ydot vector
 		/*
 		 * the y value is calculed automatically inside integrator's algorithm
-		 * just get y, and assign value to Variables in GAMA, which is use by GAMA modeler
+		 * just get y, and assign value to Variables in GAMA, which is use by
+		 * GAMA modeler
 		 */
 
 		assignValue(time, y);
@@ -337,20 +346,22 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 		 * value
 		 */
 
-		// TODO Should be rewritten in a more correct way : scope.execute(s, agent)...
-		for ( int i = 0, n = getDimension(); i < n; i++ ) {
+		// TODO Should be rewritten in a more correct way : scope.execute(s,
+		// agent)...
+		for (int i = 0, n = getDimension(); i < n; i++) {
 			final SingleEquationStatement s = equations.get(i);
 			// ydot[i] = (Double) s.executeOn(currentScope);// ydottmp[i];
 			boolean pushed = false;
-			if ( equaAgents.size() > 0 ) {
+			if (equaAgents.size() > 0) {
 				pushed = currentScope.push(equaAgents.get(i));
 			}
 			try {
 				ydot[i] = Double.parseDouble("" + s.executeOn(currentScope));
-			} catch (final Exception ex1) {} finally {
+			} catch (final Exception ex1) {
+			} finally {
 
-				if ( equaAgents.size() > 0 ) {
-					if ( pushed ) {
+				if (equaAgents.size() > 0) {
+					if (pushed) {
 						currentScope.pop(equaAgents.get(i));
 					}
 				}

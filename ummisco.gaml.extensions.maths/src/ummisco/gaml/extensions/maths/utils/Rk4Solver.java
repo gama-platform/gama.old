@@ -1,5 +1,6 @@
 package ummisco.gaml.extensions.maths.utils;
 
+import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
@@ -29,16 +30,18 @@ public class Rk4Solver extends Solver {
 		stepHandler = new StepHandler() {
 
 			@Override
-			public void init(final double t0, final double[] y0, final double t) {}
+			public void init(final double t0, final double[] y0, final double t) {
+			}
 
 			@Override
-			public void handleStep(final StepInterpolator interpolator, final boolean isLast) {
+			public void handleStep(final StepInterpolator interpolator,
+					final boolean isLast) {
 				final double time = interpolator.getCurrentTime();
 				final double[] y = interpolator.getInterpolatedState();
 
 				integrated_time.add(time);
 
-				for ( int i = 0; i < integrated_val.size(); i++ ) {
+				for (int i = 0; i < integrated_val.size(); i++) {
 					((GamaList) integrated_val.get(i)).add(y[i]);
 				}
 
@@ -60,33 +63,32 @@ public class Rk4Solver extends Solver {
 	}
 
 	@Override
-	public void solve(final IScope scope, final SystemOfEquationsStatement eq, final double time_initial,
-		final double time_final, final int cycle_length) throws GamaRuntimeException {
+	public void solve(final IScope scope, final SystemOfEquationsStatement eq,
+			final double time_initial, final double time_final,
+			final double cycle_length) throws GamaRuntimeException {
 		// call the integrator.
 		// We need to save the state (previous time the integrator has been
 		// solved, etc.)
 		// GuiUtils.informConsole("it work ");
-		if ( eq instanceof SystemOfEquationsStatement ) {
+		if (eq instanceof SystemOfEquationsStatement) {
 			// add all equations externe to have one complete systemofequation
 			//
 
 			/*
-			 * prepare initial value of variables
-			 * 1. loop through variables expression
-			 * 2. if its equaAgents != null, it mean variable of external equation, set current scope to this agent
-			 * scope
-			 * 3. get value
-			 * 4. return to previous scope
+			 * prepare initial value of variables 1. loop through variables
+			 * expression 2. if its equaAgents != null, it mean variable of
+			 * external equation, set current scope to this agent scope 3. get
+			 * value 4. return to previous scope
 			 */
 
 			integrated_val.clear();
 
 			final double[] y = new double[eq.variables.size()];
 			// System.out.println(eq.variables + " " + eq.currentScope);
-			for ( int i = 0, n = eq.variables.size(); i < n; i++ ) {
+			for (int i = 0, n = eq.variables.size(); i < n; i++) {
 				final IVarExpression v = eq.variables.get(i);
 				boolean pushed = false;
-				if ( eq.equaAgents.size() > 0 ) {
+				if (eq.equaAgents.size() > 0) {
 					pushed = scope.push(eq.equaAgents.get(i));
 				}
 				try {
@@ -94,9 +96,10 @@ public class Rk4Solver extends Solver {
 
 					final GamaList obj = new GamaList();
 					integrated_val.add(obj);
-				} catch (final Exception ex1) {} finally {
-					if ( eq.equaAgents.size() > 0 ) {
-						if ( pushed ) {
+				} catch (final Exception ex1) {
+				} finally {
+					if (eq.equaAgents.size() > 0) {
+						if (pushed) {
 							scope.pop(eq.equaAgents.get(i));
 						}
 					}
@@ -109,11 +112,22 @@ public class Rk4Solver extends Solver {
 			try {
 				// // GuiUtils.informConsole("t="+time_initial+" : "+y[0]+"\n");
 				// eq.integrate_time=new GamaList();
-				integrator.integrate(eq, time_initial * cycle_length, y, time_final * cycle_length, y);
-				eq.assignValue(time_final * cycle_length, y);
+
+				integrator.integrate(eq, (time_initial)
+						* (step / cycle_length / step), y, time_final
+						* (step / cycle_length / step), y);
+				eq.assignValue(time_final * (step / cycle_length / step), y);
+
+				// integrator.integrate(eq, time_initial * cycle_length, y,
+				// time_final * cycle_length, y);
+				// eq.assignValue(time_final * cycle_length, y);
+
 				// scope.setAgentVarValue("myt", eq.integrate_time);
 
-				// GuiUtils.informConsole("t"+time_final+"= "+y[0]+"\n");
+//				GuiUtils.informConsole("step= " + step + " cycle_length="
+//						+ cycle_length + " t0=" + time_initial
+//						* (step / cycle_length / step) + " tf=" + time_final
+//						* (step / cycle_length / step) + " y0=" + y[0]);
 			} catch (final Exception ex) {
 				System.out.println(ex);
 			}

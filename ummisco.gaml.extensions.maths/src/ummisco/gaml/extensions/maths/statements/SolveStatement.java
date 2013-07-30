@@ -2,6 +2,7 @@ package ummisco.gaml.extensions.maths.statements;
 
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -50,7 +51,7 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 	StatementDescription equations;
 	double time_initial = 0, time_final = 1;
 	int discret = 0;
-	int cycle_length = 1;
+	double cycle_length = 1;
 
 	// Have the same organization as in DrawStatement :
 	// The statement contains an abstract subclass called "Solver"; Different
@@ -88,8 +89,28 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 			discret = Integer.parseInt("" + getFacet("discretizing_step").value(scope));
 		}
 
+		
+		String name = "" + getFacet(IKeyword.EQUATION).value(scope);
+		ISpecies context = scope.getAgentScope().getSpecies();
+		SystemOfEquationsStatement s =
+			(SystemOfEquationsStatement) context.getStatement(SystemOfEquationsStatement.class, name);
+
+		if ( s == null ) { return null; }
+		s.currentScope = scope;
+		if ( getFacet("cycle_length") != null ) {
+			cycle_length = Double.parseDouble("" + getFacet("cycle_length").value(scope));
+		}
+		double step=1;
+		if ( getFacet(IKeyword.STEP) != null ) {			
+			step = Double.parseDouble("" + getFacet(IKeyword.STEP).value(scope));
+//			if(cycle_length!=1){
+//				if(cycle_length>step){
+//					step=(step * cycle_length);
+//				}
+//			}
+		}
+//		GuiUtils.informConsole(""+step);
 		if ( method.equals("rk4") ) {
-			double step = Double.parseDouble("" + getFacet(IKeyword.STEP).value(scope));
 			solver = new Rk4Solver(step, integrate_time, integrate_val);
 		} else if ( method.equals("dp853") && getFacet("min_step") != null && getFacet("max_step") != null &&
 			getFacet("scalAbsoluteTolerance") != null && getFacet("scalRelativeTolerance") != null ) {
@@ -102,25 +123,13 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 				new DormandPrince853Solver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
 					integrate_time, integrate_val);
 		}
-		String name = "" + getFacet(IKeyword.EQUATION).value(scope);
-		ISpecies context = scope.getAgentScope().getSpecies();
-		SystemOfEquationsStatement s =
-			(SystemOfEquationsStatement) context.getStatement(SystemOfEquationsStatement.class, name);
-
-		if ( s == null ) { return null; }
-		s.currentScope = scope;
-		if ( getFacet("cycle_length") != null ) {
-			cycle_length = Integer.parseInt("" + getFacet("cycle_length").value(scope));
-		}
+		
+		
+		
 		time_initial = scope.getClock().getCycle();
 		if ( getFacet("time_initial") != null ) {
 			time_initial = Double.parseDouble("" + getFacet("time_initial").value(scope));
 		}
-		time_final = scope.getClock().getCycle() + 1;
-		if ( getFacet("time_final") != null ) {
-			time_final = Double.parseDouble("" + getFacet("time_final").value(scope));
-		}
-
 		time_final = scope.getClock().getCycle() + 1;
 		if ( getFacet("time_final") != null ) {
 			time_final = Double.parseDouble("" + getFacet("time_final").value(scope));

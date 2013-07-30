@@ -13,6 +13,6 @@ public abstract class Solver {
 	// Call the integrator, which should call computeDerivatives on the system
 	// of equations;
 	public abstract void solve(IScope scope, SystemOfEquationsStatement eq,
-			double time_initial, double time_final, int cycle_length);
+			double time_initial, double time_final, double cycle_length);
 
 }
