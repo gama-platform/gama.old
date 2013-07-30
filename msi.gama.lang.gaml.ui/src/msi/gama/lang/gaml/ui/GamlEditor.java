@@ -13,10 +13,12 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.validation.*;
 import msi.gama.runtime.GAMA;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -286,6 +288,21 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		return map;
 	}
 
+	private void gotoEditor(final GamaRuntimeException exception) {
+
+		final EObject o = exception.getEditorContext();
+		if ( o != null && GAMA.REVEAL_ERRORS_IN_EDITOR ) {
+			GuiUtils.asyncRun(new Runnable() {
+
+				@Override
+				public void run() {
+					GuiUtils.openEditorAndSelect(o);
+				}
+			});
+		}
+
+	}
+
 	public static ArrayList<URI> getAllGamaFilesInProject(final IProject project, final URI without) {
 		ArrayList<URI> allGamaFiles = new ArrayList();
 		IWorkspaceRoot myWorkspaceRoot = ResourcesPlugin.getWorkspace().getRoot();
@@ -329,14 +346,21 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 			int i = abbreviatedNamesOfExperiments.indexOf(name);
 			if ( i == -1 ) { return; }
 			name = completeNamesOfExperiments.get(i);
-			IModel model = getDocument().readOnly(new IUnitOfWork<IModel, XtextResource>() {
+			IModel model = null;
+			try {
+				model = getDocument().readOnly(new IUnitOfWork<IModel, XtextResource>() {
 
-				@Override
-				public IModel exec(final XtextResource state) throws Exception {
-					return validator.build((GamlResource) state);
-				}
+					@Override
+					public IModel exec(final XtextResource state) throws Exception {
+						return validator.build((GamlResource) state);
+					}
 
-			});
+				});
+			} catch (GamaRuntimeException e) {
+				gotoEditor(e);
+				GuiUtils.error("Experiment " + name + " cannot be instantiated because of the following error: " +
+					e.getMessage());
+			}
 			if ( model == null ) { return; }
 
 			GAMA.controller.newExperiment(name, model);

@@ -89,9 +89,9 @@ public class SwtGui implements IGui {
 	public static final GridData labelData = new GridData(SWT.END, SWT.CENTER, false, false);
 	private static Logger log;
 	private static Status status = new Status();
-	private Tell tell = null;
-	private Error error = null;
-	private Views views = null;
+	private Tell tell = new Tell();
+	private Error error = new Error();
+	private Views views = new Views();
 	private static ConsoleView console = null;
 	private static final StringBuilder consoleBuffer = new StringBuilder(2000);
 	private static int dialogReturnCode;
