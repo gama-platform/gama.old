@@ -198,6 +198,7 @@ public interface IKeyword {
 	public static final String KEYWORD = "keyword";
 	public static final String KILL = "kill";
 	public static final String LEGEND = "legend";
+	public static final String LEGENDS = "legends";
 	public static final String LET = "let";
 	public static final String LINE = "line";
 	public static final String LINES = "lines";

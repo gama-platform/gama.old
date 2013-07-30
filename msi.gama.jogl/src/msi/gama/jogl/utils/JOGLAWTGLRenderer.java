@@ -3,10 +3,14 @@ package msi.gama.jogl.utils;
 import static javax.media.opengl.GL.*;
 
 import java.awt.*;
+import java.awt.geom.Rectangle2D;
 import java.awt.font.TextAttribute;
 import java.awt.image.BufferedImage;
 import java.text.AttributedString;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.Set;
+
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
 import msi.gama.common.util.GuiUtils;
@@ -15,12 +19,21 @@ import msi.gama.jogl.scene.*;
 import msi.gama.jogl.utils.Camera.*;
 import msi.gama.jogl.utils.Camera.Arcball.*;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
+import msi.gama.kernel.experiment.IExperimentSpecies;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
+import msi.gama.outputs.AbstractOutputManager;
 import msi.gama.outputs.OutputSynchronizer;
+import msi.gama.runtime.GAMA;
+import msi.gama.util.IList;
+import msi.gaml.compilation.ISymbol;
+import msi.gaml.species.ISpecies;
+import msi.gaml.statements.IAspect;
 import utils.GLUtil;
 import com.sun.opengl.util.*;
 import com.sun.opengl.util.j2d.Overlay;
 import com.sun.opengl.util.texture.*;
+
 
 public class JOGLAWTGLRenderer implements GLEventListener {
 
@@ -62,6 +75,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public final boolean multipleViewPort = false;
 	// Display model a a 3D Cube
 	private final boolean CubeDisplay = false;
+	//Display meta model legend
+	private final boolean metaModel = true;
+	
+	private boolean initPositionCanvas = false;
+	private boolean initMetaModel = false;
 	// Handle Shape file
 	public ShapeFileReader myShapeFileReader;
 	// Arcball
@@ -73,6 +91,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private boolean inertia = false;
 	// facet "inertia"
 	private boolean stencil = false;
+	// facet "legends"
+	private boolean legends = false;
 	// facet "drawEnv"
 	private boolean drawEnv = true;
 	// facet "show_fps"
@@ -99,7 +119,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public Vector3D worldCoordinates = new Vector3D();
 	public GamaPoint roiCenter = new GamaPoint(0, 0);
 
-
+    private Overlay overlay;
 
 	private double startTime = 0;
 	private int frameCount = 0;
@@ -107,7 +127,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private double previousTime = 0;
 	public float fps = 00.00f;
 	
-	private Overlay overlay;
+
 	
 
 	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {
@@ -176,11 +196,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		IS_LIGHT_ON = true;
 
 		camera.UpdateCamera(gl, glu, width, height);
-
+		overlay = new Overlay(drawable);
 		scene = new ModelScene(this);
 		graphicsGLUtils = new MyGraphics(this);
 
 		OutputSynchronizer.decInitializingViews(this.displaySurface.getOutputName());
+		
+		
 
 	}
 
@@ -271,6 +293,28 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			if ( getInertia() ) {
 				camera.inertia();
 			}
+
+
+
+			this.drawScene();
+			
+//			byte[] src = new byte[width*height];
+//
+//		    for(int a=0; a<height; a++){
+//		        for(int b=0; b<width; b++){
+//		            src[a*width+b]= 127;
+//		        }
+//		    }
+//		    gl.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+//		    gl.glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+//		    gl.glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+//
+//		    gl.glDrawPixels(width/100, height/100,
+//		            GL.GL_RED, GL.GL_UNSIGNED_BYTE,
+//		            ByteBuffer.wrap(src));
+			
+			
+
 			if ( getShowFPS() ) {
 				CalculateFrameRate();
 				
@@ -293,7 +337,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			this.drawScene();
 
 			// this.DrawShapeFile();
-			// this.DrawCollada();
 			gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
 			gl.glPopMatrix();
 
@@ -301,6 +344,18 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			if ( this.displaySurface.selectRectangle ) {
 				DrawROI();
 			}
+
+			
+			//Show fps for performance mesures		
+			if(showFPS)
+			{
+				CalculateFrameRate();
+				gl.glRasterPos2i(-30, 30);
+				gl.glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+				glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, "FPS : "+fps);
+			}
+
+			
 		}
 	}
 
@@ -350,6 +405,59 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		}
 		scene.draw(this, picking, drawAxes, drawEnv);
 	}
+	
+	public void drawPosition(){
+		if(!initPositionCanvas){
+			this.initPositionCanvas();
+			initPositionCanvas=true;
+		}
+	}
+	
+	public void initPositionCanvas(){
+		Graphics2D gpos = overlay.createGraphics();  
+		gpos.setColor(new Color(0,0,0,25));
+		gpos.setPaint(new Color(0,0,0,25));
+		gpos.fill(new Rectangle2D.Double(0, (int)(canvas.getHeight()*0.95), width, (int)(canvas.getHeight()*0.05)));
+		gpos.setColor(new Color(255,255,255));
+		gpos.drawString("GAMA 	1.6 ©", (int)(canvas.getWidth()*0.01), (int)(canvas.getHeight()*0.98));
+		gpos.drawString("width:" + (int)(this.env_width), (int)(canvas.getWidth()*0.8), (int)(canvas.getHeight()*0.98));
+		gpos.drawString("height:" + (int)(this.env_height), (int)(canvas.getWidth()*0.9), (int)(canvas.getHeight()*0.98));
+		gpos.dispose();
+	}
+	
+	public void drawMetaModel(){
+		Graphics2D g2d = overlay.createGraphics();
+		if(!initMetaModel){
+		g2d.setColor(new Color(0,0,0));	
+		Set<String> species = GAMA.getExperiment().getModel().getAllSpecies().keySet();
+		if (!species.isEmpty()){
+			double curEnt=1;
+			double nbEntities= species.size();
+			for ( final Iterator<String> it = species.iterator(); it.hasNext(); ) {
+				final String s = it.next();
+				if(!(s.equals("multicriteria_analyzer") || s.equals("Physical3DWorld") || s.equals("graph_node") || s.equals("agent") || s.equals("base_edge") || s.equals("cluster_builder") || s.equals("AgentDB") || s.equals("graph_edge") )){
+				g2d.drawString(s, (int)(canvas.getWidth()*0.01), (int)(canvas.getHeight()*(curEnt/nbEntities)));
+				ISpecies curSpec = GAMA.getExperiment().getModel().getSpecies(s);
+				IList aspects = curSpec.getAspectNames();									
+				for ( int i = 0; i < aspects.size(); i++ ){
+					IAspect curApsect = curSpec.getAspect(aspects.get(i).toString());
+					g2d.drawString("	Aspect: " + aspects.get(i).toString(), (int)(canvas.getWidth()*0.01), (int)(canvas.getHeight()*((curEnt+0.5)/nbEntities)));
+					IAgent exp = GAMA.getSimulation();
+					IAgent graphic = exp;
+					graphic.setLocation(new GamaPoint(10,10));
+					Rectangle2D r = curApsect.draw(graphic.getScope(), graphic);
+					if(r!=null){
+						g2d.fill(r);
+					}
+				}
+				curEnt++;
+				}
+			}	
+		}
+		initMetaModel=true;
+		}
+		g2d.dispose();
+	}
 
 	public void drawScene() {
 		if ( displaySurface.picking ) {
@@ -359,30 +467,18 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			if ( CubeDisplay ) {
 				drawCubeDisplay((float) env_width);
 
-			} else {
-				if ( !multipleViewPort ) {
-					gl.glViewport(0, 0, width, height); // Reset The Current Viewport
-					this.drawModel(false);
-				} else {
-					// Set The Viewport To The Top Left
-					gl.glViewport(0, height / 2, width / 2, height / 2);
-					this.drawModel(false);
-
-					// Set The Viewport To The Top Right. It Will Take Up Half The
-					// Screen Width And Height
-					gl.glViewport(width / 2, height / 2, width / 2, height / 2);
-					this.drawModel(false);
-
-					// Set The Viewport To The Bottom Right
-					gl.glViewport(width / 2, 0, width / 2, height / 2);
-					this.drawModel(false);
-
-					// Set The Viewport To The Bottom Left
-					gl.glViewport(0, 0, width / 2, height / 2);
-					this.drawModel(false);
+			} else {	
+				this.drawModel(false);	
+				if(legends){
+					
+					this.drawMetaModel();
+					this.drawPosition();
+					overlay.beginRendering();
+					//overlay.draw(0, (int)(canvas.getHeight()*0.95), width, (int)(canvas.getHeight()*0.05));
+					overlay.drawAll();
+					overlay.endRendering();
 				}
 			}
-
 		}
 	}
 
@@ -527,6 +623,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public boolean getStencil() {
 		return stencil;
+	}
+	
+	public void setLegends(final boolean leg) {
+		this.legends = leg;
+	}
+
+	public boolean getLegends() {
+		return legends;
 	}
 	
 	public void setShowFPS(final boolean fps) {

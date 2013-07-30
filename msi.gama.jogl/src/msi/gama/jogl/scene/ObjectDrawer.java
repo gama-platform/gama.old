@@ -127,6 +127,30 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 		}
 	}
 	
+	
+	/**
+	 * 
+	 * The class ImageDrawer.
+	 * 
+	 * @author griganrd
+	 * @since 30 July 2013
+	 * 
+	 */
+	public static class OverlayDrawer extends ObjectDrawer<OverlayObject> {
+
+		public float textureTop, textureBottom, textureLeft, textureRight;
+
+		public OverlayDrawer(JOGLAWTGLRenderer r) {
+			super(r);
+		}
+
+		@Override
+		protected void _draw(OverlayObject object) {
+			// TODO Auto-generated method stub
+			
+		}
+	}
+	
 	/**
 	 * 
 	 * The class DEMDrawer.
