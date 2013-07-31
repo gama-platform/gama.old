@@ -8,8 +8,10 @@ model matdiffu
 
 /* Insert your model definition here */
 global{
-	int matsize<-50;
+	int matsize<-100;
 	geometry shape<-envelope(square(matsize));
+	matrix mymask<-matrix(file("../images/mask.bmp"));
+	
 	matrix<float> mat<-	matrix([
 //		[0, -1, 0],
 //		[-1, 5, -1],
@@ -31,13 +33,15 @@ global{
 			phero<-255;
 		}
 	}
-//	reflex adding_new when:flip(0.1){
+//	reflex adding_new when:flip(0.05){
 //		ask mycell at {rnd(matsize),rnd(matsize)}{
 //			phero<-255;
 //		}
 //	}
 	reflex do_diffu{
-		diffusion var:phero on:mycell mat_diffu:mat cycle_length:1;
+		
+//		write ""+(mymask);
+		diffusion var:phero on:mycell mat_diffu:mat cycle_length:5 mask:mymask; 
 	}
 }
 

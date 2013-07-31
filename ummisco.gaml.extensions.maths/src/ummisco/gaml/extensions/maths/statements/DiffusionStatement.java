@@ -30,6 +30,7 @@ import ummisco.gaml.extensions.maths.utils.*;
 @facets(value = { @facet(name = "var", type = IType.ID, optional = false),
 		@facet(name = "on", type = IType.ID, optional = false),
 		@facet(name = "mat_diffu", type = IType.MATRIX, optional = false),
+		@facet(name = "mask", type = IType.MATRIX, optional = true),
 		@facet(name = "cycle_length", type = IType.INT, optional = true) }, omissible = IKeyword.EQUATION)
 @symbol(name = { "diffusion" }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 // , with_args = true)
@@ -61,6 +62,15 @@ public class DiffusionStatement extends AbstractStatementSequence {
 		IMatrix mmm = pop.matrixValue(scope);
 		int cols = mmm.getCols(scope);
 		int rows = mmm.getRows(scope);
+		
+
+		IMatrix mask = new GamaFloatMatrix(scope,cols, rows);
+		
+		if (getFacet("mask") != null) {
+			mask = (IMatrix) getFacet("mask").value(scope);
+		}
+		
+		
 		int xcenter = mat_diffu.getCols(scope) / 2;
 		int ycenter = mat_diffu.getRows(scope) / 2;
 		GamaFloatMatrix tmp = new GamaFloatMatrix(scope, cols, rows);
@@ -71,7 +81,7 @@ public class DiffusionStatement extends AbstractStatementSequence {
 				double currentValue = Double.parseDouble(""
 						+ lstAgents[i * rows + j].getAttribute(varName));
 				if (currentValue <= Double.MAX_VALUE
-						&& currentValue >= Double.MIN_VALUE) { 
+						&& currentValue >= - (Double.MAX_VALUE)) { 
 //						&& i >= xcenter
 //						&& j >= ycenter && i < cols - xcenter
 //						&& j < rows - ycenter) {
@@ -86,8 +96,10 @@ public class DiffusionStatement extends AbstractStatementSequence {
 							double currentMatValue = Double.parseDouble(""
 									+ mat_diffu.get(scope, u - i + xcenter, v
 											- j + ycenter));
+							double currentMask=(Double.parseDouble(""+mask.get(scope,i, j))<-1)?0:1;
+//							System.out.println(currentMask);
 							double newValue = tmp.get(scope, u, v)
-									+ currentValue * currentMatValue;
+									+ currentValue * currentMatValue * currentMask;
 							tmp.set(scope, u, v, newValue);
 						}
 					}
@@ -116,6 +128,8 @@ public class DiffusionStatement extends AbstractStatementSequence {
 		String varName = (String) getFacet("var").value(scope);
 		String speciesName = (String) getFacet("on").value(scope);
 		IMatrix mat_diffu = (IMatrix) getFacet("mat_diffu").value(scope);
+		
+		
 
 		for (int time = 0; time < cLen; time++) {
 			doDiffusion(scope, varName, speciesName, mat_diffu);
