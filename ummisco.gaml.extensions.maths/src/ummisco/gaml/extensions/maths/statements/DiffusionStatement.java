@@ -52,13 +52,8 @@ public class DiffusionStatement extends AbstractStatementSequence {
 
 	}
 
-	@Override
-	public Object privateExecuteIn(final IScope scope)
-			throws GamaRuntimeException {
-		// super.privateExecuteIn(scope);
-		String varName = (String) getFacet("var").value(scope);
-		String speciesName = (String) getFacet("on").value(scope);
-		IMatrix mat_diffu = (IMatrix) getFacet("mat_diffu").value(scope);
+	public void doDiffusion(IScope scope, String varName, String speciesName,
+			IMatrix mat_diffu) {
 
 		GridPopulation pop = (GridPopulation) scope.getAgentScope()
 				.getPopulationFor(speciesName);
@@ -69,18 +64,25 @@ public class DiffusionStatement extends AbstractStatementSequence {
 		int xcenter = mat_diffu.getCols(scope) / 2;
 		int ycenter = mat_diffu.getRows(scope) / 2;
 		GamaFloatMatrix tmp = new GamaFloatMatrix(scope, cols, rows);
-		double epsilon=1;
-//		System.out.println(xcenter+" "+ycenter);
+
+		// System.out.println(xcenter+" "+ycenter);
 		for (int i = 0; i < cols; i++) {
 			for (int j = 0; j < rows; j++) {
 				double currentValue = Double.parseDouble(""
 						+ lstAgents[i * rows + j].getAttribute(varName));
-				if (currentValue >= epsilon && i >= xcenter && j >= ycenter && i <= cols - xcenter
-						&& j <= rows - ycenter) {
-					
+				if (currentValue <= Double.MAX_VALUE
+						&& currentValue >= Double.MIN_VALUE) { 
+//						&& i >= xcenter
+//						&& j >= ycenter && i < cols - xcenter
+//						&& j < rows - ycenter) {
+
 					for (int u = i - xcenter; u <= i + xcenter; u++) {
 						for (int v = j - ycenter; v <= j + ycenter; v++) {
-//							System.out.println(u+" "+v+" | "+( u - i + xcenter)+" "+(v - j + ycenter));
+							if(u<0 || v<0 || u>=cols || v>=rows){
+								continue;
+							}
+							// System.out.println(u+" "+v+" | "+( u - i +
+							// xcenter)+" "+(v - j + ycenter));
 							double currentMatValue = Double.parseDouble(""
 									+ mat_diffu.get(scope, u - i + xcenter, v
 											- j + ycenter));
@@ -89,23 +91,40 @@ public class DiffusionStatement extends AbstractStatementSequence {
 							tmp.set(scope, u, v, newValue);
 						}
 					}
-//					System.out.println();
+					// System.out.println();
 				}
 			}
 		}
 
 		for (int i = 0; i < cols; i++) {
 			for (int j = 0; j < rows; j++) {
-				if(tmp.get(scope, i,j)<epsilon){
-					tmp.set(scope, i,j,0);
-				}
-				lstAgents[i * rows + j].setAttribute(varName, tmp.get(scope, i,j));
+				lstAgents[i * rows + j].setAttribute(varName,
+						tmp.get(scope, i, j));
 			}
 		}
-//		if (getFacet("cycle_length") != null) {
-//			cycle_length = Double.parseDouble(""
-//					+ getFacet("cycle_length").value(scope));
-//		}
+
+	}
+
+	@Override
+	public Object privateExecuteIn(final IScope scope)
+			throws GamaRuntimeException {
+		int cLen = 1;
+		if (getFacet("cycle_length") != null) {
+			cLen = Integer.parseInt("" + getFacet("cycle_length").value(scope));
+		}
+
+		String varName = (String) getFacet("var").value(scope);
+		String speciesName = (String) getFacet("on").value(scope);
+		IMatrix mat_diffu = (IMatrix) getFacet("mat_diffu").value(scope);
+
+		for (int time = 0; time < cLen; time++) {
+			doDiffusion(scope, varName, speciesName, mat_diffu);
+		}
+		// super.privateExecuteIn(scope);
+		// if (getFacet("cycle_length") != null) {
+		// cycle_length = Double.parseDouble(""
+		// + getFacet("cycle_length").value(scope));
+		// }
 
 		// System.out.println(tcc);
 		return null;
