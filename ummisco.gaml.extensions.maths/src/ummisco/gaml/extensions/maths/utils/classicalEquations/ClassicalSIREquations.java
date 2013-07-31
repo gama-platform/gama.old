@@ -1,11 +1,10 @@
-package ummisco.gaml.extensions.maths.statements;
+package ummisco.gaml.extensions.maths.utils.classicalEquations;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import msi.gama.common.interfaces.IGamlIssue;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.exceptions.GamaRuntimeException;
+import ummisco.gaml.extensions.maths.statements.SingleEquationStatement;
+
 import msi.gama.util.GAML;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.StatementDescription;
@@ -14,10 +13,10 @@ import msi.gaml.expressions.ListExpression;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
 
-public class ClassicalEquations {
+public class ClassicalSIREquations {
 	private IDescription parentDesc;
 
-	public ClassicalEquations(IDescription p) {
+	public ClassicalSIREquations(IDescription p) {
 		parentDesc = p;
 	}
 
@@ -25,11 +24,11 @@ public class ClassicalEquations {
 		return parentDesc;
 	}
 
-	public List SIR(IExpression with_vars, IExpression with_params) {
+	public List<SingleEquationStatement> SIR(IExpression with_vars, IExpression with_params) {
 		if (with_vars == null || with_params == null) {
 			return null;
 		}
-		ArrayList cmd = new ArrayList();
+		ArrayList<SingleEquationStatement> cmd = new ArrayList<SingleEquationStatement>();
 		IExpression[] v = ((ListExpression) with_vars).getElements();
 		IExpression[] p = ((ListExpression) with_params).getElements();
 
@@ -37,6 +36,9 @@ public class ClassicalEquations {
 				getDescription(), new ChildrenProvider(null), false, false,
 				null, new Facets("keyword", "="));
 
+		// diff(S,t) = (- beta * S * I / N);
+		// diff(I,t) = (beta * S * I / N) - (delta * I);
+		// diff(R,t) = (delta * I);
 		SingleEquationStatement eq1 = new SingleEquationStatement(stm);
 		eq1.function = GAML.getExpressionFactory().createExpr(
 				"diff(" + v[0].literalValue() + "," + v[3].literalValue() + ")", getDescription());

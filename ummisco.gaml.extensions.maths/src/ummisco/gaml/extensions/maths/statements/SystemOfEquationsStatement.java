@@ -24,6 +24,8 @@ import msi.gaml.types.IType;
 import org.apache.commons.math3.exception.*;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 
+import ummisco.gaml.extensions.maths.utils.classicalEquations.ClassicalSIREquations;
+
 @symbol(name = IKeyword.EQUATION, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @facets(value = {
 		@facet(name = IKeyword.NAME, type = IType.ID /* CHANGE */, optional = true),
@@ -70,14 +72,28 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 	@Override
 	public void setChildren(final List<? extends ISymbol> commands) {
 //		System.out.println("soes " + commands);
-		List cmd=commands;
-		if (getFacet(IKeyword.TYPE)!=null && getFacet(IKeyword.TYPE).literalValue().equals("SIR")) {
-			cmd.clear();
-			
-			cmd=new ClassicalEquations(getDescription()).SIR(getFacet("with_vars"),getFacet("with_params"));
-			// diff(S,t) = (- beta * S * I / N);
-			// diff(I,t) = (beta * S * I / N) - (delta * I);
-			// diff(R,t) = (delta * I);
+		List<? extends ISymbol> cmd=commands;
+		if (getFacet(IKeyword.TYPE)!=null){ 
+			if(getFacet(IKeyword.TYPE).literalValue().equals("SIR")) {
+				cmd.clear();
+				
+				cmd=new ClassicalSIREquations(getDescription()).SIR(getFacet("with_vars"),getFacet("with_params"));
+				// diff(S,t) = (- beta * S * I / N);
+				// diff(I,t) = (beta * S * I / N) - (delta * I);
+				// diff(R,t) = (delta * I);
+			} else if(getFacet(IKeyword.TYPE).literalValue().equals("SI")) {
+				GamaRuntimeException.warning( getFacet(IKeyword.TYPE).literalValue().equals("SI") + " is not yet implemented");								
+			} else if(getFacet(IKeyword.TYPE).literalValue().equals("SIS")) {
+				GamaRuntimeException.warning( getFacet(IKeyword.TYPE).literalValue().equals("SI") + " is not yet implemented");				
+			} else if(getFacet(IKeyword.TYPE).literalValue().equals("SIRS")) {
+				GamaRuntimeException.warning( getFacet(IKeyword.TYPE).literalValue().equals("SI") + " is not yet implemented");				
+			} else if(getFacet(IKeyword.TYPE).literalValue().equals("SEIR")) {
+				GamaRuntimeException.warning( getFacet(IKeyword.TYPE).literalValue().equals("SI") + " is not yet implemented");				
+			} else if(getFacet(IKeyword.TYPE).literalValue().equals("LV")) {
+				GamaRuntimeException.warning( getFacet(IKeyword.TYPE).literalValue().equals("SI") + " is not yet implemented");				
+			} else {
+				GamaRuntimeException.error( getFacet(IKeyword.TYPE).literalValue().equals("SI") + " is not a recognized classical equation");
+			}
 		}
 		
 		
