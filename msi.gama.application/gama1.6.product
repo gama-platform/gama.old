@@ -84,6 +84,7 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="msi.gama.models"/>
       <plugin id="msi.gama.processor"/>
       <plugin id="msi.gaml.extensions.fipa"/>
+      <plugin id="nu.psnet.quickimage"/>
       <plugin id="org.antlr.runtime"/>
       <plugin id="org.apache.ant"/>
       <plugin id="org.apache.commons.cli"/>
@@ -287,8 +288,8 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.mortbay.jetty.server"/>
       <plugin id="org.mortbay.jetty.util"/>
       <plugin id="org.objectweb.asm"/>
-      <plugin id="org.polarion.eclipse.team.svn.connector"/>
-      <plugin id="org.polarion.eclipse.team.svn.connector.svnkit16"/>
+      <plugin id="org.polarion.eclipse.team.svn.connector" fragment=""/>
+      <plugin id="org.polarion.eclipse.team.svn.connector.svnkit16" fragment=""/>
       <plugin id="org.sat4j.core"/>
       <plugin id="org.sat4j.pb"/>
       <plugin id="simtools.gaml.extensions.physics"/>

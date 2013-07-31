@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -56,9 +56,6 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 					final Color c =
 						agent.getSpecies().hasVar(IKeyword.COLOR) ? Cast.asColor(scope,
 							agent.getDirectVarValue(scope, IKeyword.COLOR)) : Color.YELLOW;
-					// if ( agent.getSpecies().getName().equals("pedestrian") ) {
-					// GuiUtils.debug("AspectStatement: draw " + agent);
-					// }
 					final IShape ag = agent.getGeometry();
 					final IShape ag2 = (IShape) ag.copy(scope);
 					final Rectangle2D r = g.drawGamaShape(scope, ag2, c, true, Color.black, 0, false);
@@ -68,6 +65,11 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 					agent.releaseLock();
 				}
 			}
+			return null;
+		}
+		
+		@Override
+		public Rectangle2D drawOverlay(final IScope scope, final IAgent agent) throws GamaRuntimeException {
 			return null;
 		}
 
@@ -97,6 +99,29 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 				agent.releaseLock();
 			}
 
+		}
+		return null;
+
+	}
+	
+	@Override
+	public Rectangle2D drawOverlay(final IScope scope, final IAgent agent) throws GamaRuntimeException {
+		if ( agent != null ) {
+			final IGraphics g = scope.getGraphics();
+			if ( g == null ) { return null; }
+			try {
+				agent.acquireLock();
+				if ( agent.dead() ) { return null; }
+				final Color c =
+					agent.getSpecies().hasVar(IKeyword.COLOR) ? Cast.asColor(scope,
+						agent.getDirectVarValue(scope, IKeyword.COLOR)) : Color.YELLOW;
+				final IShape ag = agent.getGeometry();
+				final IShape ag2 = (IShape) ag.copy(scope);
+				final Rectangle2D r = g.drawGamaShapeOverlay(scope, ag2, c, true, Color.black, 0, false);
+				return r;
+			} finally {
+				agent.releaseLock();
+			}
 		}
 		return null;
 

@@ -443,9 +443,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 					IAspect curApsect = curSpec.getAspect(aspects.get(i).toString());
 					g2d.drawString("	Aspect: " + aspects.get(i).toString(), (int)(canvas.getWidth()*0.01), (int)(canvas.getHeight()*((curEnt+0.5)/nbEntities)));
 					IAgent exp = GAMA.getSimulation();
-					IAgent graphic = exp;
-					graphic.setLocation(new GamaPoint(10,10));
-					Rectangle2D r = curApsect.draw(graphic.getScope(), graphic);
+					Rectangle2D r = curApsect.draw(exp.getScope(), exp);
 					if(r!=null){
 						g2d.fill(r);
 					}
