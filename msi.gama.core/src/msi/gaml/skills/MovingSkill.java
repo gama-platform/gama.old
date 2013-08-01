@@ -363,6 +363,7 @@ public class MovingSkill extends GeometricSkill {
 		Integer endIndexSegment = 0;
 		GamaPoint falseTarget = null;
 		final IList<IShape> edges = path.getEdgeGeometry();
+		if (edges.isEmpty()) return null;
 		final int nb = edges.size();
 		if ( path.getGraph() == null && nb == 1 && edges.get(0).getInnerGeometry().getNumPoints() == 2 ) {
 			index = 0;
@@ -437,10 +438,11 @@ public class MovingSkill extends GeometricSkill {
 		return initVals;
 	}
 
-	private IPath moveToNextLocAlongPathSimplified(final IScope scope, final IAgent agent, final IPath path,
+	private void moveToNextLocAlongPathSimplified(final IScope scope, final IAgent agent, final IPath path,
 		final double d, final GamaMap weigths) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		final GamaList indexVals = initMoveAlongPath(agent, path, currentLocation);
+		if (indexVals == null) return;
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);
 		final int endIndexSegment = (Integer) indexVals.get(2);
@@ -514,8 +516,6 @@ public class MovingSkill extends GeometricSkill {
 		path.setIndexOf(agent, index);
 		agent.setLocation(currentLocation);
 		path.setSource(currentLocation.copy(scope));
-
-		return null;
 	}
 
 	protected double computeWeigth(final IGraph graph, final IPath path, final IShape line) {
@@ -530,6 +530,7 @@ public class MovingSkill extends GeometricSkill {
 		final GamaMap weigths) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		final GamaList indexVals = initMoveAlongPath(agent, path, currentLocation);
+		if (indexVals == null) return null;
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);
 		final int endIndexSegment = (Integer) indexVals.get(2);

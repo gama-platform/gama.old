@@ -293,6 +293,7 @@ public class DrivingSkill extends MovingSkill {
 		final String laneAttributes, final GamaList<ISpecies> obsSpecies) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		final GamaList indexVals = initMoveAlongPath(agent, path, currentLocation);
+		if (indexVals == null) return;
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);
 		final int endIndexSegment = (Integer) indexVals.get(2);
@@ -390,6 +391,7 @@ public class DrivingSkill extends MovingSkill {
 		final String laneAttributes, final GamaList<ISpecies> obsSpecies) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		final GamaList indexVals = initMoveAlongPath(agent, path, currentLocation);
+		if (indexVals == null) return null;
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);
 		final int endIndexSegment = (Integer) indexVals.get(2);

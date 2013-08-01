@@ -62,8 +62,8 @@ entities {
 		float size;
 		path path_to_follow;
 		init {
-			the_target <- {80,50};
-			location <- {60,50};
+			the_target <- {90,50};
+			location <- {10,50};
 		}
 		
 		reflex movement when: location != the_target{
