@@ -457,7 +457,8 @@ public class MovingSkill extends GeometricSkill {
 			if ( weigths == null ) {
 				weight = computeWeigth(graph, path, line);
 			} else {
-				final Double w = (Double) weigths.get(path.getRealObject(line))/line.getGeometry().getPerimeter();
+				IShape realShape = path.getRealObject(line);
+				final Double w = realShape == null ? null : (Double) weigths.get(realShape)/realShape.getGeometry().getPerimeter();
 				weight = w == null ? computeWeigth(graph, path, line) : w;
 			}
 			
@@ -518,7 +519,11 @@ public class MovingSkill extends GeometricSkill {
 	}
 
 	protected double computeWeigth(final IGraph graph, final IPath path, final IShape line) {
-		return graph == null ? 1 : graph.getEdgeWeight(path.getRealObject(line)) / line.getGeometry().getPerimeter();
+		if (graph == null) {
+			return 1.0;
+		}
+		IShape realShape = path.getRealObject(line);
+		return realShape == null ? 1 : graph.getEdgeWeight(realShape) / realShape.getGeometry().getPerimeter();
 	}
 
 	private IPath moveToNextLocAlongPath(final IScope scope, final IAgent agent, final IPath path, final double d,
@@ -544,7 +549,8 @@ public class MovingSkill extends GeometricSkill {
 			if ( weigths == null ) {
 				weight = computeWeigth(graph, path, line);
 			} else {
-				final Double w = (Double) weigths.get(path.getRealObject(line))/line.getGeometry().getPerimeter();
+				IShape realShape = path.getRealObject(line);
+				final Double w = realShape == null ? null : (Double) weigths.get(realShape)/realShape.getGeometry().getPerimeter();
 				weight = w == null ? computeWeigth(graph, path, line) : w;
 			}
 			final Coordinate coords[] = line.getInnerGeometry().getCoordinates();

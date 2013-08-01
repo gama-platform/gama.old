@@ -7,7 +7,7 @@
 model simplemodel
 
 global {
-	file road_file <- file("../includes/roads.shp");
+	file road_file <- file("../includes/gis/roads.shp");
 	geometry shape <- envelope(road_file);
 	graph the_graph; 
 	

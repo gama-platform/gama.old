@@ -314,9 +314,11 @@ public class DrivingSkill extends MovingSkill {
 			if ( weigths == null ) {
 				weight = computeWeigth(graph, path, line);
 			} else {
-				final Double w = (Double) weigths.get(path.getRealObject(line));
+				IShape realShape = path.getRealObject(line);
+				final Double w = realShape == null ? null : (Double) weigths.get(realShape)/realShape.getGeometry().getPerimeter();
 				weight = w == null ? computeWeigth(graph, path, line) : w;
 			}
+		
 			//
 			for ( int j = indexSegment; j < coords.length; j++ ) {
 				// pt is the next target
@@ -409,7 +411,8 @@ public class DrivingSkill extends MovingSkill {
 			if ( weigths == null ) {
 				weight = computeWeigth(graph, path, line);
 			} else {
-				final Double w = (Double) weigths.get(path.getRealObject(line));
+				IShape realShape = path.getRealObject(line);
+				final Double w = realShape == null ? null : (Double) weigths.get(realShape)/realShape.getGeometry().getPerimeter();
 				weight = w == null ? computeWeigth(graph, path, line) : w;
 			}
 			final Coordinate coords[] = line.getInnerGeometry().getCoordinates();
