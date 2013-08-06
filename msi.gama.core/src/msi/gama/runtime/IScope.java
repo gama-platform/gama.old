@@ -236,4 +236,9 @@ public interface IScope {
 	 */
 	public abstract boolean update(IAgent agent);
 
+	/**
+	 * @return the current statement or null if none
+	 */
+	public abstract IStatement getStatement();
+
 }

@@ -39,6 +39,7 @@ public abstract class AbstractScope implements IScope {
 	protected final IMacroAgent root;
 	private Object each = null;
 	private final int number = ScopeNumber++;
+	private IStatement currentStatement;
 
 	public AbstractScope(final IMacroAgent root) {
 		this.root = root;
@@ -156,6 +157,7 @@ public abstract class AbstractScope implements IScope {
 		each = null;
 		graphics = null;
 		topology = null;
+		currentStatement = null;
 	}
 
 	/**
@@ -177,6 +179,7 @@ public abstract class AbstractScope implements IScope {
 	 */
 	@Override
 	public void push(final IStatement statement) {
+		currentStatement = statement;
 		statements.push(new Record(statements.peek()));
 	}
 
@@ -212,6 +215,11 @@ public abstract class AbstractScope implements IScope {
 	@Override
 	public void pop(final IStatement statement) {
 		statements.pop();
+	}
+
+	@Override
+	public IStatement getStatement() {
+		return currentStatement;
 	}
 
 	/**
