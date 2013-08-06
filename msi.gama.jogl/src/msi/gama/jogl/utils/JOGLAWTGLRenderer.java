@@ -275,8 +275,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				gl.glDisable(GL_BLEND); // Turn blending off
 				if ( !getStencil() ) {
 					gl.glEnable(GL_DEPTH_TEST);
-				}
-				else {
+				} else {
 					gl.glEnable(GL_STENCIL_TEST);
 				}
 			}
@@ -613,7 +612,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public boolean getInertia() {
 		return inertia;
 	}
-	
+
 	public void setStencil(final boolean st) {
 		this.stencil = st;
 	}

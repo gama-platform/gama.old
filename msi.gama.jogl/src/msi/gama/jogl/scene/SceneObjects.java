@@ -54,6 +54,7 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 		if ( openGLListIndex != null ) {
 			renderer.getContext().makeCurrent();
 			renderer.gl.glDeleteLists(openGLListIndex, 1);
+			// renderer.getContext().release();
 			openGLListIndex = null;
 		}
 	}
@@ -86,6 +87,7 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 			drawer.getGL().glPopMatrix();
 		} else if ( drawAsList ) {
 			if ( openGLListIndex == null ) {
+
 				openGLListIndex = drawer.getGL().glGenLists(1);
 				drawer.getGL().glNewList(openGLListIndex, GL_COMPILE);
 				for ( final T object : objects ) {
