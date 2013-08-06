@@ -325,19 +325,32 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		}
 	}
 
-	// TODO A redefinition of this method in GAML will lose all information regarding the clock and the advance of time,
-	// which will have to be done manually (i.e. cycle <- cycle + 1; time <- time + step;)
 	@Override
-	public Object _step_(final IScope scope) {
+	public boolean step(final IScope scope) {
 		clock.beginCycle();
+		boolean result;
 		// A simulation always runs in its own scope
 		try {
-			super._step_(this.scope);
+			result = super.step(this.scope);
 		} finally {
 			clock.step();
 		}
-		return this;
+		return result;
 	}
+
+	// TODO A redefinition of this method in GAML will lose all information regarding the clock and the advance of time,
+	// which will have to be done manually (i.e. cycle <- cycle + 1; time <- time + step;)
+	// @Override
+	// public Object _step_(final IScope scope) {
+	// clock.beginCycle();
+	// // A simulation always runs in its own scope
+	// try {
+	// super._step_(this.scope);
+	// } finally {
+	// clock.step();
+	// }
+	// return this;
+	// }
 
 	/**
 	 * 
