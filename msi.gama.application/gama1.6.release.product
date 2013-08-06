@@ -20,7 +20,7 @@ Visit http://code.google.com/p/gama-platform/
    </configIni>
 
    <launcherArgs>
-      <programArgs>-nl ${target.nl} -data @noDefault -clean -consoleLog</programArgs>
+      <programArgs>-nl ${target.nl} -data @noDefault -clean</programArgs>
       <vmArgs>-Xms256m -Xmx2048m
 -Xmn128m
 -Xss2m
@@ -51,6 +51,7 @@ Visit http://code.google.com/p/gama-platform/
             winLargeLow="/msi.gama.application/icons/launcher_icons/icon-48x48x8b.bmp"/>
       </win>
    </launcher>
+
 
    <vm>
       <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</linux>
