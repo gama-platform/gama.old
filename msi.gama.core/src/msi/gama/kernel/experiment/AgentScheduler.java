@@ -2,7 +2,6 @@ package msi.gama.kernel.experiment;
 
 import java.util.*;
 import msi.gama.common.interfaces.IStepable;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -63,7 +62,7 @@ public class AgentScheduler implements IStepable {
 		if ( !GAMA.controller.getScheduler().paused ) {
 			while (alive) {
 				try {
-					//GuiUtils.debug("ExperimentScheduler.dispose: DOING THE LAST STEP(S)");
+					// GuiUtils.debug("ExperimentScheduler.dispose: DOING THE LAST STEP(S)");
 					// Give it a chance to cleanup before being disposed
 					step(scope);
 					Thread.sleep(100);
@@ -114,10 +113,11 @@ public class AgentScheduler implements IStepable {
 				final IStepable[] toInit = stepablesToInit.toArray(new IStepable[stepablesToInit.size()]);
 				stepablesToInit.clear();
 				for ( int i = 0, n = toInit.length; i < n; i++ ) {
-					if ( !scope.init(toInit[i]) ) {
-						inInitSequence = false;
-						return false;
-					}
+					scope.init(toInit[i]);
+					// if ( !scope.init(toInit[i]) ) {
+					// inInitSequence = false;
+					// return false;
+					// }
 				}
 			}
 		} finally {
