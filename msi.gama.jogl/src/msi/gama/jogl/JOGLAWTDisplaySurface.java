@@ -25,9 +25,6 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
-
-import javax.swing.JLabel;
-
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.awt.AbstractAWTDisplaySurface;
@@ -117,21 +114,20 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			@Override
 			public void run() {
 				// if ( !canBeUpdated() ) { return; }
-				canBeUpdated(false);
+				// canBeUpdated(false);
 				final ModelScene s = renderer.getScene();
 				if ( s != null ) {
-					
+					// GuiUtils.debug("JOGLAWTDisplaySurface displayBlock.run " + getName());
 					s.wipe(renderer);
-					
-					//FIXME: Why setting this at each run??
+
+					// FIXME: Why setting this at each run??
 					renderer.setTessellation(getOutput().getTesselation());
 					renderer.setInertia(getOutput().getInertia());
 					renderer.setStencil(getOutput().getStencil());
 					renderer.setStencil(getOutput().getLegends());
 					renderer.setShowFPS(getOutput().getShowFPS());
 					renderer.setDrawEnv(getOutput().getDrawEnv());
-					
-					
+
 					renderer.setAmbientLightValue(getOutput().getAmbientLightColor());
 					renderer.setPolygonMode(getOutput().getPolygonMode());
 					renderer.setCameraPosition(getOutput().getCameraPos());
@@ -159,7 +155,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public void initialize(final double env_width, final double env_height, final LayeredDisplayOutput out) {
 		GuiUtils.debug("JOGLAWTDisplaySurface1.1.initialize");
 		super.initialize(env_width, env_height, out);
-		
+
 		setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 
 		// Call sun.awt.noerasebackground to reduce the flickering when creating a popup menu,
@@ -183,7 +179,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		renderer.setCameraLookPosition(getOutput().getCameraLookPos());
 		renderer.setCameraUpVector(getOutput().getCameraUpVector());
 
-		
 		add(renderer.canvas, BorderLayout.CENTER);
 		// openGLGraphicsGLRender.animator.start();
 		zoomFit();
@@ -420,14 +415,14 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	public void drawDisplaysWithoutRepainting() {
 		if ( iGraphics == null ) { return; }
-		ex[0] = null;
+		// ex[0] = null;
 		manager.drawLayersOn(iGraphics);
 	}
 
 	@Override
 	public void paintComponent(final Graphics g) {
 		super.paintComponent(g);
-		redrawNavigator();
+		// redrawNavigator();
 	}
 
 	@Override
@@ -550,10 +545,9 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		picking = !picking;
 		renderer.camera.velocityHoriz = 0;
 		renderer.camera.velocityVert = 0;
-		if(!picking){
+		if ( !picking ) {
 			setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
-		}
-		else{
+		} else {
 			setCursor(new Cursor(Cursor.HAND_CURSOR));
 		}
 
@@ -679,11 +673,11 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		final Envelope env = geometry.getEnvelope();
 
 		final double xPos = geometry.getLocation().getX();
-		final double yPos = -(geometry.getLocation().getY());
+		final double yPos = -geometry.getLocation().getY();
 
 		// FIXME: Need to compute the depth of the shape to adjust ZPos value.
 		// FIXME: Problem when the geometry is a point how to determine the maxExtent of the shape?
-		final double zPos = env.maxExtent() * 2 + geometry.getLocation().getZ() + this.renderer.env_width/100;
+		final double zPos = env.maxExtent() * 2 + geometry.getLocation().getZ() + this.renderer.env_width / 100;
 		final double zLPos = -(env.maxExtent() * 2);
 		if ( !this.switchCamera ) {
 			renderer.camera.setRadius(zPos);
@@ -734,6 +728,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	@Override
 	public void snapshot() {
 		GAMA.run(new InScope.Void() {
+
 			@Override
 			public void process(final IScope scope) {
 				save(scope, getImage());

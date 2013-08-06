@@ -209,7 +209,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	public void drawDisplaysWithoutRepainting() {
 		if ( iGraphics == null ) { return; }
-		ex[0] = null;
+		// ex[0] = null;
 		iGraphics.fillBackground(bgColor, 1);
 		manager.drawLayersOn(iGraphics);
 	}

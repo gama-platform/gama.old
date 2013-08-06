@@ -40,7 +40,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	protected final AffineTransform translation = new AffineTransform();
 	protected boolean synchronous = false;
 	protected Color bgColor = Color.black;
-	protected final GamaRuntimeException[] ex = new GamaRuntimeException[] { null };
+	// protected final GamaRuntimeException[] ex = new GamaRuntimeException[] { null };
 	protected Runnable displayBlock;
 	private double envWidth;
 	private double envHeight;
@@ -51,6 +51,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	@Override
 	public void initialize(final double env_width, final double env_height, final LayeredDisplayOutput output) {
 		setOutput(output);
+		setName(output.getName());
 		setOpaque(true);
 		setDoubleBuffered(false);
 		this.setLayout(new BorderLayout());
@@ -264,26 +265,63 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		});
 	}
 
-	@Override
-	public void updateDisplay() {
-		// GuiUtils.debug("AbstractAWTDisplaySurface.updateDisplay");
-		if ( !canBeUpdated() ) { return; }
+	protected void runDisplay(final boolean sync) {
 		canBeUpdated(false);
-		if ( synchronous && !EventQueue.isDispatchThread() && !GAMA.isPaused() ) {
+
+		// SwingWorker sw = new SwingWorker<Void, Void>() {
+		//
+		// @Override
+		// protected Void doInBackground() throws Exception {
+		// displayBlock.run();
+		// return null;
+		// }
+		//
+		// @Override
+		// public void done() {
+		// canBeUpdated(true);
+		// }
+		//
+		// };
+		// sw.run();
+
+		Runnable r = new Runnable() {
+
+			@Override
+			public void run() {
+				displayBlock.run();
+				canBeUpdated(true);
+			}
+		};
+		if ( sync ) {
 			try {
-				EventQueue.invokeAndWait(displayBlock);
+				EventQueue.invokeAndWait(r);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
 				e.printStackTrace();
 			}
 		} else {
-			EventQueue.invokeLater(displayBlock);
+			EventQueue.invokeLater(r);
 		}
-		if ( ex[0] != null ) {
-			GAMA.reportAndThrowIfNeeded(null, ex[0], false);
-			ex[0] = null;
+	}
+
+	@Override
+	public void updateDisplay() {
+		if ( !canBeUpdated() ) { return; }
+		if ( GAMA.isPaused() || EventQueue.isDispatchThread() ) {
+			runDisplay(false);
+			return;
 		}
+		if ( synchronous ) {
+			runDisplay(true);
+
+		} else {
+			runDisplay(false);
+		}
+		// if ( ex[0] != null ) {
+		// GAMA.reportAndThrowIfNeeded(null, ex[0], false);
+		// ex[0] = null;
+		// }
 	}
 
 	// Used when the image is resized.
