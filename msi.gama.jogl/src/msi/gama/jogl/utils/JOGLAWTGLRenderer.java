@@ -458,8 +458,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	}
 
 	public void drawScene() {
+		gl.glViewport(0, 0, width, height);
 		if ( displaySurface.picking ) {
-			gl.glViewport(0, 0, width, height);
 			this.drawPickableObjects();
 		} else {
 			if ( CubeDisplay ) {
@@ -467,8 +467,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 			} else {	
 				this.drawModel(false);	
-				if(legends){
-					
+				if(legends){	
 					this.drawMetaModel();
 					this.drawPosition();
 					overlay.beginRendering();
