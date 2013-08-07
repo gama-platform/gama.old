@@ -4,7 +4,6 @@
  */
 package msi.gaml.operators;
 
-import msi.gama.precompiler.IUnits;
 import org.joda.time.*;
 import org.joda.time.chrono.*;
 import org.joda.time.field.PreciseDurationField;

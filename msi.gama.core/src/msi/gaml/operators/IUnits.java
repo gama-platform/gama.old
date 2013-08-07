@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -16,7 +16,7 @@
  * - Edouard Amouroux, UMI 209 UMMISCO, IRD/UPMC (C++ initial porting), 2007-2008
  * - Chu Thanh Quang, UMI 209 UMMISCO, IRD/UPMC (OpenMap integration), 2007-2008
  */
-package msi.gama.precompiler;
+package msi.gaml.operators;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -82,22 +82,22 @@ public class IUnits {
 	 * Time conversions
 	 */
 	/** The Constant s. */
-	public final static double sec = 1, second = sec, seconds = sec;
+	public final static double sec = 1, second = sec, seconds = sec, s = sec;
 
 	/** The Constant mn. */
-	public final static double minute = 60 * sec, minutes = minute;
+	public final static double minute = 60 * sec, minutes = minute, mn = minute;
 
 	/** The Constant h. */
 	public final static double h = 60 * minute, hour = h, hours = h;
 
 	/** The Constant d. */
-	public final static double day = 24 * h, days = day;
+	public final static double day = 24 * h, days = day, d = day;
 
 	/** The Constant month. */
 	public final static double month = 30 * day, months = month;
 
 	/** The Constant y. */
-	public final static double year = 12 * month, years = year;
+	public final static double year = 12 * month, years = year, y = year;
 
 	/** The Constant msec. */
 	public final static double msec = sec / 1000, millisecond = msec, milliseconds = msec;
