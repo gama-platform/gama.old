@@ -113,13 +113,13 @@ public class BatchAgent extends ExperimentAgent {
 	 *      piloted by the exploration algorithm)
 	 */
 	@Override
-	public Object _step_(final IScope scope) {
+	public boolean step(final IScope scope) {
 		// We run the exloration algorithm (but dont start() it, as the thread is not used)
 		getSpecies().getExplorationAlgorithm().run();
 		// Once the algorithm has finished exploring the solutions, the agent is killed.
 		GuiUtils.informStatus("Batch over. " + runNumber + " runs, " + runNumber * seeds.length + " simulations.");
 		dispose();
-		return this;
+		return true;
 	}
 
 	public Double launchSimulationsWithSolution(final ParametersSet sol) throws GamaRuntimeException {
@@ -150,7 +150,7 @@ public class BatchAgent extends ExperimentAgent {
 			// When a simulation is finished, we give a chance to the outputs of the experiment and the experiment
 			// agent itself to "step" once, effectively emulating what the front scheduler should do. The simulation is
 			// still "alive" at this stage, which allows to retrieve information from it
-			super._step_(getScope());
+			super.step(getScope());
 			getSpecies().getExperimentOutputs().step(getScope());
 			// We then verify that the front scheduler has not been paused
 			while (GAMA.controller.getScheduler().paused && !dead) {
