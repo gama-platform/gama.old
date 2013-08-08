@@ -249,7 +249,7 @@ public class SimulationAgent extends GamlAgent {
 	@action(name = "pause", doc = @doc("Allows to pause the current simulation **ACTUALLY EXPERIMENT FOR THE MOMENT**. It can be set to continue with the manual intervention of the user."))
 	@args(names = {})
 	public Object pause(final IScope scope) {
-		GAMA.controller.userPause();
+		GAMA.controller.directPause();
 		return null;
 	}
 

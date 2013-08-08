@@ -126,6 +126,10 @@ public class FrontEndController implements Runnable {
 		offer(_PAUSE);
 	}
 
+	public void directPause() {
+		processUserCommand(_PAUSE);
+	}
+
 	public void userStep() {
 		if ( experiment == null ) { return; }
 		offer(_STEP);
