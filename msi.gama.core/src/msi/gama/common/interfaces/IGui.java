@@ -77,7 +77,7 @@ public interface IGui {
 
 	void showConsoleView();
 
-	void hideMonitorView();
+	// void hideMonitorView();
 
 	void setWorkbenchWindowTitle(String string);
 

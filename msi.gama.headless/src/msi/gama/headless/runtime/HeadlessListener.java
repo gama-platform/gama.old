@@ -152,12 +152,6 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public void hideMonitorView() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public void setWorkbenchWindowTitle(final String string) {
 		// TODO Auto-generated method stub
 

@@ -526,12 +526,27 @@ public class SwtGui implements IGui {
 		return partListener;
 	}
 
-	@Override
 	public void hideMonitorView() {
 		final MonitorView m = (MonitorView) hideView(MonitorView.ID);
 		if ( m != null ) {
 			m.reset();
 		}
+	}
+
+	public void resetMonitorView() {
+		run(new Runnable() {
+
+			@Override
+			public void run() {
+				final IWorkbenchPage activePage = getPage();
+				if ( activePage == null ) { return; } // Closing the workbench
+				final IWorkbenchPart part = activePage.findView(MonitorView.ID);
+				if ( part != null && part instanceof MonitorView && activePage.isPartVisible(part) ) {
+					((MonitorView) part).reset();
+				}
+			}
+		});
+
 	}
 
 	@Override
@@ -1005,7 +1020,10 @@ public class SwtGui implements IGui {
 	@Override
 	public void prepareForSimulation(final SimulationAgent agent) {
 		setStatus(" Building outputs ", IGui.WAIT);
+		clearErrors();
 		if ( !agent.getExperiment().getSpecies().isBatch() ) {
+
+			resetMonitorView();
 			showConsoleView();
 		}
 	}
@@ -1013,7 +1031,7 @@ public class SwtGui implements IGui {
 	@Override
 	public void prepareForExperiment(final IExperimentSpecies exp) {
 		if ( exp.isGui() ) {
-			showConsoleView();
+			// showConsoleView();
 			setWorkbenchWindowTitle(exp.getName() + " - " + exp.getModel().getFilePath());
 			updateParameterView(exp);
 			tell = new Tell();
@@ -1035,7 +1053,7 @@ public class SwtGui implements IGui {
 		// setHighlightedAgent(null);
 		hideView(GuiUtils.PARAMETER_VIEW_ID);
 		hideMonitorView();
-
+		eraseConsole(true);
 	}
 
 	/**
@@ -1046,9 +1064,10 @@ public class SwtGui implements IGui {
 	public void cleanAfterSimulation() {
 		setSelectedAgent(null);
 		setHighlightedAgent(null);
-		clearErrors();
-		hideMonitorView();
-		eraseConsole(true);
+		// clearErrors();
+		// hideMonitorView();
+		// eraseConsole(true);
+
 	}
 
 }

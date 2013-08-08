@@ -271,13 +271,13 @@ public class GuiUtils {
 		}
 	}
 
-	public static void hideMonitorView() {
-
-		if ( gui != null ) {
-			gui.hideMonitorView();
-		}
-
-	}
+	// public static void hideMonitorView() {
+	//
+	// if ( gui != null ) {
+	// gui.hideMonitorView();
+	// }
+	//
+	// }
 
 	public static void setWorkbenchWindowTitle(final String string) {
 		if ( gui != null ) {
