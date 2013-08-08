@@ -239,20 +239,22 @@ public class SimulationClock {
 	}
 
 	public String getInfo() {
-		String info = displayCycles ? "cycle " + getCycle() : Strings.asDate(time, null);
+		int cycle = getCycle();
+		String info =
+			displayCycles ? "" + cycle + (cycle == 1 ? " cycle " : " cycles ") + "elapsed" : Strings.asDate(time, null);
 		return info;
 	}
 
 	public static class ExperimentClock extends SimulationClock {
-//
-//		@Override
-//		public void beginCycle() {
-//			resetDuration();
-//			// String info = displayCycles ? "cycle " + getCycle() : Strings.asDate(time, null);
-//			// if ( !GAMA.getExperiment().isBatch() ) {
-//			// GuiUtils.informStatus(info);
-//			// }
-//		}
+		//
+		// @Override
+		// public void beginCycle() {
+		// resetDuration();
+		// // String info = displayCycles ? "cycle " + getCycle() : Strings.asDate(time, null);
+		// // if ( !GAMA.getExperiment().isBatch() ) {
+		// // GuiUtils.informStatus(info);
+		// // }
+		// }
 	}
 
 }
