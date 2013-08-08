@@ -52,7 +52,7 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { LayeredDisplayOutput.JAVA2D,
-		LayeredDisplayOutput.OPENGL, LayeredDisplayOutput.THREED,LayeredDisplayOutput.SWT }, optional = true),
+		LayeredDisplayOutput.OPENGL, LayeredDisplayOutput.THREED, LayeredDisplayOutput.SWT }, optional = true),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.INERTIA, type = IType.BOOL, optional = true),
@@ -155,27 +155,27 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( tess != null ) {
 			setTesselation(Cast.asBool(getScope(), tess.value(getScope())));
 		}
-		
+
 		final IExpression inert = getFacet(IKeyword.INERTIA);
 		if ( inert != null ) {
 			setInertia(Cast.asBool(getScope(), inert.value(getScope())));
 		}
-		
+
 		final IExpression st = getFacet(IKeyword.STENCIL);
 		if ( st != null ) {
 			setStencil(Cast.asBool(getScope(), st.value(getScope())));
 		}
-		
+
 		final IExpression l = getFacet(IKeyword.LEGENDS);
 		if ( l != null ) {
 			setLegends(Cast.asBool(getScope(), l.value(getScope())));
 		}
-		
+
 		final IExpression fps = getFacet(IKeyword.SHOWFPS);
 		if ( fps != null ) {
 			setShowFPS(Cast.asBool(getScope(), fps.value(getScope())));
 		}
-		
+
 		final IExpression denv = getFacet(IKeyword.DRAWENV);
 		if ( denv != null ) {
 			setDrawEnv(Cast.asBool(getScope(), denv.value(getScope())));
@@ -458,7 +458,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	}
 
 	public boolean isOpenGL() {
-		return (displayType.equals(OPENGL) || displayType.equals(THREED)) ;
+		return displayType.equals(OPENGL) || displayType.equals(THREED);
 	}
 
 	public boolean getTesselation() {
@@ -468,47 +468,47 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private void setTesselation(final boolean tesselation) {
 		this.tesselation = tesselation;
 	}
-	
+
 	public boolean getInertia() {
 		return inertia;
 	}
-	
+
 	private void setInertia(final boolean inertia) {
 		this.inertia = inertia;
 	}
-	
+
 	public boolean getStencil() {
 		return stencil;
 	}
-	
+
 	private void setStencil(final boolean stencil) {
 		this.stencil = stencil;
 	}
-	
+
 	public boolean getLegends() {
 		return legends;
 	}
-	
+
 	private void setLegends(final boolean leg) {
 		this.legends = leg;
 	}
-	
+
 	public boolean getShowFPS() {
 		return showfps;
 	}
-	
+
 	private void setShowFPS(final boolean fps) {
 		this.showfps = fps;
 	}
-	
+
 	public boolean getDrawEnv() {
 		return drawEnv;
 	}
-	
+
 	private void setDrawEnv(final boolean drawEnv) {
 		this.drawEnv = drawEnv;
 	}
-	
+
 	public boolean getOutput3D() {
 		return output3D;
 	}

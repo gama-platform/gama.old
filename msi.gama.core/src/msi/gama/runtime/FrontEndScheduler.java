@@ -129,6 +129,9 @@ public class FrontEndScheduler implements Runnable {
 	}
 
 	public void schedule(final IStepable stepable, final IScope scope) {
+		if ( toStep.containsKey(stepable) ) {
+			toStep.remove(stepable);
+		}
 		toStep.put(stepable, scope);
 		// We first init the stepable before it is scheduled
 		// GuiUtils.debug("FrontEndScheduler.schedule " + stepable);

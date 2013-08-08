@@ -18,8 +18,6 @@
  */
 package msi.gama.kernel.simulation;
 
-import msi.gama.common.util.GuiUtils;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Strings;
 
@@ -234,22 +232,27 @@ public class SimulationClock {
 
 	public void beginCycle() {
 		resetDuration();
+		// String info = displayCycles ? "cycle " + getCycle() : Strings.asDate(time, null);
+		// if ( !GAMA.getExperiment().isBatch() ) {
+		// GuiUtils.informStatus(info);
+		// }
+	}
+
+	public String getInfo() {
 		String info = displayCycles ? "cycle " + getCycle() : Strings.asDate(time, null);
-		if ( !GAMA.getExperiment().isBatch() ) {
-			GuiUtils.informStatus(info);
-		}
+		return info;
 	}
 
 	public static class ExperimentClock extends SimulationClock {
-
-		@Override
-		public void beginCycle() {
-			resetDuration();
-			// String info = displayCycles ? "cycle " + getCycle() : Strings.asDate(time, null);
-			// if ( !GAMA.getExperiment().isBatch() ) {
-			// GuiUtils.informStatus(info);
-			// }
-		}
+//
+//		@Override
+//		public void beginCycle() {
+//			resetDuration();
+//			// String info = displayCycles ? "cycle " + getCycle() : Strings.asDate(time, null);
+//			// if ( !GAMA.getExperiment().isBatch() ) {
+//			// GuiUtils.informStatus(info);
+//			// }
+//		}
 	}
 
 }

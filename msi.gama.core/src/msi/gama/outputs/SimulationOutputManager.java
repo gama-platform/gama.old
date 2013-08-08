@@ -24,7 +24,7 @@ import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gaml.descriptions.IDescription;
 
 /**
@@ -44,6 +44,15 @@ public class SimulationOutputManager extends AbstractOutputManager {
 	public boolean init(final IScope scope) {
 		GuiUtils.prepareForSimulation((SimulationAgent) scope.getSimulationScope());
 		return super.init(scope);
+	}
+
+	@Override
+	public boolean step(final IScope scope) {
+		boolean result = super.step(scope);
+		if ( !GAMA.getExperiment().isBatch() ) {
+			GuiUtils.informStatus(scope.getClock().getInfo());
+		}
+		return result;
 	}
 
 }
