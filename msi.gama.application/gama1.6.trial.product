@@ -4,7 +4,7 @@
 <product name="Gama 1.6" uid="msi.gama.application.product" id="msi.gama.application.product" application="msi.gama.application.GamaApplication" version="1.6.0" useFeatures="false" includeLaunchers="true">
 
    <aboutInfo>
-      <image path="/msi.gama.application/icons/launcher_icons/icon205.png"/>
+      <image path="/msi.gama.application/icons/launcher_icons/icon-128x128x32b.gif"/>
       <text>
          GAMA - V1.6
 Generic Agent-based Modelling Architecture
@@ -30,7 +30,7 @@ Visit http://code.google.com/p/gama-platform/
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts</vmArgsMac>
    </launcherArgs>
 
-   <windowImages i16="/msi.gama.application/icons/launcher_icons/icon16.png" i32="/msi.gama.application/icons/launcher_icons/icon32.png" i48="/msi.gama.application/icons/launcher_icons/icon48.png" i64="/msi.gama.application/icons/launcher_icons/icon64.png" i128="/msi.gama.application/icons/launcher_icons/icon128.png"/>
+   <windowImages i16="/msi.gama.application/icons/launcher_icons/alt_window_16.gif" i32="/msi.gama.application/icons/launcher_icons/alt_window_32.gif" i48="/msi.gama.application/icons/launcher_icons/icon-48x48x32b.gif" i64="/msi.gama.application/icons/launcher_icons/icon-64x64x32b.gif" i128="/msi.gama.application/icons/launcher_icons/icon-128x128x32b.gif"/>
 
    <splash
       location="msi.gama.application"
@@ -38,11 +38,10 @@ Visit http://code.google.com/p/gama-platform/
       startupMessageRect="25,360,643,20"
       startupForegroundColor="8BA6D3" />
    <launcher name="Gama">
-      <linux icon="/msi.gama.application/icons/launcher_icons/icon.xpm"/>
+      <linux icon="/msi.gama.application/icons/launcher_icons/icon-32x32x32b.xpm"/>
       <macosx icon="/msi.gama.application/icons/launcher_icons/icon.icns"/>
       <solaris/>
-      <win useIco="true">
-         <ico path="/msi.gama.application/icons/launcher_icons/icon.ico"/>
+      <win useIco="false">
          <bmp
             winSmallHigh="/msi.gama.application/icons/launcher_icons/icon-16x16x32b.bmp"
             winSmallLow="/msi.gama.application/icons/launcher_icons/icon-16x16x8b.bmp"
@@ -53,10 +52,8 @@ Visit http://code.google.com/p/gama-platform/
       </win>
    </launcher>
 
-
    <vm>
       <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</linux>
-      <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</macos>
    </vm>
 
    <license>
@@ -91,9 +88,6 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.apache.commons.lang"/>
       <plugin id="org.apache.commons.logging"/>
       <plugin id="org.apache.log4j"/>
-      <plugin id="org.apache.lucene"/>
-      <plugin id="org.apache.lucene.analysis"/>
-      <plugin id="org.apache.lucene.core"/>
       <plugin id="org.eclipse.compare"/>
       <plugin id="org.eclipse.compare.core"/>
       <plugin id="org.eclipse.core.commands"/>
@@ -102,7 +96,6 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.core.databinding.observable"/>
       <plugin id="org.eclipse.core.databinding.property"/>
       <plugin id="org.eclipse.core.expressions"/>
-      <plugin id="org.eclipse.core.externaltools"/>
       <plugin id="org.eclipse.core.filebuffers"/>
       <plugin id="org.eclipse.core.filesystem"/>
       <plugin id="org.eclipse.core.filesystem.aix.ppc" fragment="true"/>
@@ -166,8 +159,6 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.equinox.simpleconfigurator.manipulator"/>
       <plugin id="org.eclipse.equinox.util"/>
       <plugin id="org.eclipse.help"/>
-      <plugin id="org.eclipse.help.base"/>
-      <plugin id="org.eclipse.help.ui"/>
       <plugin id="org.eclipse.jdt.compiler.apt" fragment="true"/>
       <plugin id="org.eclipse.jdt.compiler.tool" fragment="true"/>
       <plugin id="org.eclipse.jdt.core"/>

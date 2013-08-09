@@ -190,7 +190,7 @@
          </property>
          <property
                name="aboutImage"
-               value="icons/launcher_icons/icon-128x128x32b.gif">
+               value="icons/launcher_icons/icon205.png">
          </property>
          <property
                name="aboutText"
@@ -198,7 +198,7 @@
          </property>
          <property
                name="windowImages"
-               value="icons/launcher_icons/alt_window_16.gif,icons/launcher_icons/alt_window_32.gif,icons/launcher_icons/icon-48x48x32b.gif,icons/launcher_icons/icon-64x64x32b.gif,icons/launcher_icons/icon-128x128x32b.gif">
+               value="icons/launcher_icons/icon16.png,icons/launcher_icons/icon32.png,icons/launcher_icons/icon48.png,icons/launcher_icons/icon64.png,icons/launcher_icons/icon128.png">
          </property>
          <property
                name="startupForegroundColor"
