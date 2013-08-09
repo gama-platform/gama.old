@@ -104,6 +104,11 @@ public class Message implements IValue {
 		setConversation(conversation);
 	}
 
+	@Override
+	public Message clone(){
+		return new Message(getSender(), getReceivers(), getContent(), getPerformative(), getConversation());
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 

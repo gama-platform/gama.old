@@ -103,7 +103,7 @@ public class MessageBroker {
 	 */
 	public void scheduleForDelivery(final Message m) {
 		for ( IAgent a : m.getReceivers() ) {
-			scheduleForDelivery(m, a);
+			scheduleForDelivery(m.clone(), a);
 		}
 	}
 
