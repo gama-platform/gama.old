@@ -257,6 +257,7 @@ public class OsmReader {
 			List<OsmRoadAgent> road_in = new GamaList<OsmRoadAgent>();
 			road_in.add(road);
 			values.put("roads_in", road_in);
+			
 			agentsCreated.addAll(createNodes(scope, nodePop,gisUtils, ptFinal, values));
 		}
 		return new GamaList();
@@ -267,7 +268,9 @@ public class OsmReader {
 		if (pt != null) {
 			values.put("shape", new GamaShape(gisUtils.transform(pt.getInnerGeometry())));
 			initialValues.add(values);
-			return nodePop.createAgents(scope, 1, initialValues, false);
+			List ags = nodePop.createAgents(scope, 1, initialValues, false);
+			nodes_created.put(pt, (OsmNodeAgent) ags.get(0));
+			return ags;
 		}
 		return new GamaList();
 	}
