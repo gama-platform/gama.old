@@ -2,6 +2,7 @@ package idees.gama.io;
 
 import idees.gama.agents.OsmNodeAgent;
 import idees.gama.agents.OsmRoadAgent;
+import idees.gama.agents.OsmTrafficSignalAgent;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,6 +45,7 @@ public class OsmReader {
 	  List<Way> ways;
 	  List<Relation> relations;
 	  Set<Long> intersectionNodes;
+	  Map<GamaPoint,OsmTrafficSignalAgent> signals;
 	  Map<GamaPoint,OsmNodeAgent> nodes_created;
 	  
 	  public OsmReader() {
@@ -52,6 +54,7 @@ public class OsmReader {
 		  nodes = new GamaList<Node>();
 		  intersectionNodes = new HashSet<Long>();
 		  nodes_created = new GamaMap<GamaPoint, OsmNodeAgent>();
+		  signals = new GamaMap<GamaPoint, OsmTrafficSignalAgent>();
 		 // relations = new GamaList<Relation>(); Not used for the moment...
 	  } 
 		
@@ -226,10 +229,13 @@ public class OsmReader {
 		GamaPoint pt = null;
 		pt = nodesPt.get(node.getId());
 		if (pt != null) {
-			values.put("shape", new GamaShape(gisUtils.transform(pt.getInnerGeometry())));
-				 initialValues.add(values);
-				 return signalPop.createAgents(scope, 1, initialValues, false);
-			}
+			GamaShape ptT = new GamaShape(gisUtils.transform(pt.getInnerGeometry()));
+			values.put("shape", ptT);
+			initialValues.add(values);
+			List ags = signalPop.createAgents(scope, 1, initialValues, false);
+			signals.put((GamaPoint) ptT.getLocation(), (OsmTrafficSignalAgent) ags.get(0));
+			return ags;
+		}
 		return new GamaList();
 	 }
 	 
@@ -267,6 +273,8 @@ public class OsmReader {
 		List<Map> initialValues = new GamaList<Map>();	
 		if (pt != null) {
 			values.put("shape", new GamaShape(gisUtils.transform(pt.getInnerGeometry())));
+			if (signals.containsKey(pt))
+				values.put("signal", signals.get(pt));
 			initialValues.add(values);
 			List ags = nodePop.createAgents(scope, 1, initialValues, false);
 			nodes_created.put(pt, (OsmNodeAgent) ags.get(0));
@@ -327,7 +335,7 @@ public class OsmReader {
 					values.put(key, tg.getValue());
 			     }
 				 if (signalPop != null && values.containsKey("highway")) {
-			        
+					intersectionNodes.add(node.getId());
 			        createdAgents.addAll(createSignal(scope, signalPop,gisUtils, node,values));
 				 }
 			 }

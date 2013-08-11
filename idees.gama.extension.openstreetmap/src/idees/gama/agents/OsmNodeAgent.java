@@ -8,7 +8,7 @@ import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gaml.types.IType;
 
 @species(name = "osm_node")
-@vars({ @var(name = "roads_in", type = IType.LIST, of = IType.AGENT), @var(name = "roads_out", type = IType.LIST, of = IType.AGENT), @var(name = "signals_per_roads", type = IType.MAP)})
+@vars({ @var(name = "roads_in", type = IType.LIST, of = IType.AGENT), @var(name = "roads_out", type = IType.LIST, of = IType.AGENT), @var(name = "signal", type = IType.AGENT)})
 public class OsmNodeAgent extends GamlAgent{
 
 	public OsmNodeAgent(IPopulation s) {
