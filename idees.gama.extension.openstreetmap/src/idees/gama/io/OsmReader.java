@@ -272,7 +272,7 @@ public class OsmReader {
 	 public List createNodes(IScope scope, IPopulation nodePop,GisUtils gisUtils, GamaPoint pt,Map values) {
 		List<Map> initialValues = new GamaList<Map>();	
 		if (pt != null) {
-			values.put("shape", new GamaShape(gisUtils.transform(pt.getInnerGeometry())));
+			values.put("shape", pt.getGeometry());
 			if (signals.containsKey(pt))
 				values.put("signal", signals.get(pt));
 			initialValues.add(values);
