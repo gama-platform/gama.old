@@ -21,12 +21,14 @@ import msi.gaml.species.ISpecies;
 import msi.gaml.types.IType;
 
 @skill(name = "osm") 
-public class OsmSkills extends Skill {
+public class OsmSkill extends Skill {
 	
 	@action(name = "load_osm", args = {
 			@arg(name = "file", type = IType.FILE, optional = false, doc = @doc("file to load")) , 
 			@arg(name = "road_species", type = IType.SPECIES, optional = true, doc = @doc("the species of the road agent")),
+			@arg(name = "node_species", type = IType.SPECIES, optional = true, doc = @doc("the species of the node agent")),
 			@arg(name = "building_species", type = IType.SPECIES, optional = true, doc = @doc("the species of the building agent")),
+			@arg(name = "signal_species", type = IType.SPECIES, optional = true, doc = @doc("the species of the traffic signal agent")),
 			@arg(name = "split_lines", type = IType.BOOL, optional = true, doc = @doc("if false, the lines are not split at intersections")) }, 
 			doc = @doc(value = "load a OSM file and create the corresponding agents", returns = "list of created agents",examples = { "list<agent> <- load_osm(my_osm_file);" }))
 	public List<IAgent> loadOSMFile(final IScope scope) throws GamaRuntimeException {
@@ -40,12 +42,24 @@ public class OsmSkills extends Skill {
 		final IAgent executor = scope.getAgentScope();
 		
 		final ISpecies roadSpecies = (ISpecies) scope.getArg("road_species", IType.SPECIES);
-		final ISpecies rs = roadSpecies != null ? roadSpecies : scope.getModel().getSpecies("osm_road");
-		IPopulation roadPop = executor.getPopulationFor(rs);
+		//final ISpecies rs = roadSpecies != null ? roadSpecies : scope.getModel().getSpecies("osm_road");
+		IPopulation roadPop = roadSpecies != null ? executor.getPopulationFor(roadSpecies) : null;
+		
+		IPopulation nodePop = null;
+		if (roadPop != null) {
+			final ISpecies nodeSpecies = (ISpecies) scope.getArg("node_species", IType.SPECIES);
+			nodePop = nodeSpecies != null ? executor.getPopulationFor(nodeSpecies) : null;
+		}
+		
 		
 		final ISpecies buildingSpecies = (ISpecies) scope.getArg("building_species", IType.SPECIES);
-		final ISpecies bs = buildingSpecies != null ? buildingSpecies : scope.getModel().getSpecies("osm_building");
-		IPopulation buildingPop = executor.getPopulationFor(bs);
+		//final ISpecies bs = buildingSpecies != null ? buildingSpecies : scope.getModel().getSpecies("osm_building");
+		//IPopulation buildingPop = executor.getPopulationFor(bs);
+		IPopulation buildingPop = buildingSpecies != null ? executor.getPopulationFor(buildingSpecies) : null;
+		
+		final ISpecies signalSpecies = (ISpecies) scope.getArg("signal_species", IType.SPECIES);
+		IPopulation signalPop = signalSpecies != null ? executor.getPopulationFor(signalSpecies) : null;
+		
 		Boolean splitLines = true;
 		if (scope.hasArg("split_lines")) {
 			splitLines = (Boolean) scope.getArg("split_lines", IType.BOOL);
@@ -53,7 +67,7 @@ public class OsmSkills extends Skill {
 		try {
 			OsmReader reader = new OsmReader();
 			reader.loadFile(file.getFile(),splitLines);
-			createdAgents = reader.buildAgents(scope, roadPop,buildingPop,splitLines);
+			createdAgents = reader.buildAgents(scope, roadPop,buildingPop,signalPop,nodePop,splitLines);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

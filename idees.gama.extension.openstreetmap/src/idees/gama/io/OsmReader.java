@@ -1,8 +1,12 @@
 package idees.gama.io;
 
+import idees.gama.agents.OsmNodeAgent;
+import idees.gama.agents.OsmRoadAgent;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -35,15 +39,19 @@ import msi.gaml.types.GamaGeometryType;
 
 public class OsmReader {
 
-	  Map<Long, GamaPoint> nodes;
+	  Map<Long, GamaPoint> nodesPt;
+	  List<Node> nodes;
 	  List<Way> ways;
 	  List<Relation> relations;
 	  Set<Long> intersectionNodes;
+	  Map<GamaPoint,OsmNodeAgent> nodes_created;
 	  
 	  public OsmReader() {
 		  ways = new GamaList<Way>();
-		  nodes = new GamaMap<Long, GamaPoint>();
+		  nodesPt = new GamaMap<Long, GamaPoint>();
+		  nodes = new GamaList<Node>();
 		  intersectionNodes = new HashSet<Long>();
+		  nodes_created = new GamaMap<GamaPoint, OsmNodeAgent>();
 		 // relations = new GamaList<Relation>(); Not used for the moment...
 	  } 
 		
@@ -56,7 +64,8 @@ public class OsmReader {
 			    	
 			        if (entity instanceof Node) {
 			        	Node node = (Node) entity;
-			        	nodes.put(node.getId(), new GamaPoint(node.getLongitude(), node.getLatitude())) ;
+			        	nodes.add(node);
+			        	nodesPt.put(node.getId(), new GamaPoint(node.getLongitude(), node.getLatitude())) ;
 			        } else if (entity instanceof Way) {
 			        	if (splitLines) {
 			        		if (toConsider((Way)entity,usedNodes, intersectionNodes))
@@ -142,7 +151,7 @@ public class OsmReader {
 		List<Map> initialValues = new GamaList<Map>();
 			
 		for (WayNode node : way.getWayNodes()) {
-			 points.add(nodes.get(node.getNodeId()));
+			 points.add(nodesPt.get(node.getNodeId()));
 		}
 		IShape geom = GamaGeometryType.buildPolygon(points);
 		if (geom != null) {
@@ -153,29 +162,124 @@ public class OsmReader {
 		return new GamaList();
 	 }
 	 
-	 public List createRoad(IScope scope, IPopulation roadPop,GisUtils gisUtils, Way way,Map values) {
+	 public List createRoad(IScope scope, IPopulation roadPop,IPopulation nodePop, GisUtils gisUtils, Way way,Map values) {
 		List<IShape> points = new GamaList<IShape>();
-		List<Map> initialValues = new GamaList<Map>();
+		return createRoad(scope, roadPop,nodePop, gisUtils, points,values);
+	 }
+	 
+	 public List createRoad(IScope scope, IPopulation roadPop,IPopulation nodePop, GisUtils gisUtils, List<IShape> points,Map values) {
+		List agents = new GamaList();
+		Boolean oneWay = (Boolean) values.get("oneway");
+		if (oneWay != null && oneWay) {
+			List<Map> initialValues = new GamaList<Map>();
+			IShape geom = GamaGeometryType.buildPolyline(points);
+			if (geom != null) {
+				GamaShape shape = new GamaShape(gisUtils.transform(geom.getInnerGeometry()));
+				values.put("shape", shape);
+				initialValues.add(values);
+				agents.addAll(roadPop.createAgents(scope, 1, initialValues, false));
+				if (nodePop != null)
+					createNodes(scope,nodePop,gisUtils, shape.getPoints().first(scope), shape.getPoints().last(scope), (OsmRoadAgent) agents.get(0));
 				
-		for (WayNode node : way.getWayNodes()) {
-			 points.add(nodes.get(node.getNodeId()));
+			}
+		} else {
+			IShape geom1 = GamaGeometryType.buildPolyline(points);
+			GamaList<IShape> points2 = new GamaList<IShape>(points);
+			Collections.reverse(points2);
+			IShape geom2 = GamaGeometryType.buildPolyline(points2);
+			if (geom1 != null) {
+				List<Map> initialValues = new GamaList<Map>();
+				Map valuesAg = new GamaMap();
+				for (Object val : values.keySet()) {
+					valuesAg.put(val, values.get(val));
+				}
+				valuesAg.put("name", valuesAg.get("name") + "-Dir");
+				GamaShape shape = new GamaShape(gisUtils.transform(geom1.getInnerGeometry()));
+				valuesAg.put("shape", shape);
+				initialValues.add(valuesAg);
+				agents.addAll(roadPop.createAgents(scope, 1, initialValues, false));
+				if (nodePop != null)
+					createNodes(scope,nodePop,gisUtils, shape.getPoints().first(scope), shape.getPoints().last(scope), (OsmRoadAgent) agents.get(0));
+				
+			}
+			if (geom2 != null) {
+				List<Map> initialValues = new GamaList<Map>();
+				Map valuesAg = new GamaMap();
+				for (Object val : values.keySet()) {
+					valuesAg.put(val, values.get(val));
+				}
+				valuesAg.put("name", valuesAg.get("name") + "-Rev");
+				GamaShape shape = new GamaShape(gisUtils.transform(geom2.getInnerGeometry()));
+				valuesAg.put("shape", shape);
+				initialValues.add(valuesAg);
+				agents.addAll(roadPop.createAgents(scope, 1, initialValues, false));
+				if (nodePop != null)
+					createNodes(scope,nodePop,gisUtils, shape.getPoints().first(scope), shape.getPoints().last(scope), (OsmRoadAgent) agents.get(0));
+			}
 		}
-		IShape geom = GamaGeometryType.buildPolyline(points);
-		if (geom != null) {
-			values.put("shape", new GamaShape(gisUtils.transform(geom.getInnerGeometry())));
+		return agents;
+	 }
+		 
+	 
+	 public List createSignal(IScope scope, IPopulation signalPop,GisUtils gisUtils, Node node,Map values) {
+		List<Map> initialValues = new GamaList<Map>();
+		GamaPoint pt = null;
+		pt = nodesPt.get(node.getId());
+		if (pt != null) {
+			values.put("shape", new GamaShape(gisUtils.transform(pt.getInnerGeometry())));
 				 initialValues.add(values);
-				 return roadPop.createAgents(scope, 1, initialValues, false);
+				 return signalPop.createAgents(scope, 1, initialValues, false);
 			}
 		return new GamaList();
 	 }
 	 
-	 public List createSplitRoad(IScope scope, IPopulation roadPop,GisUtils gisUtils, Way way,Map values,Set<Long> intersectionNodes) {
+	 public List createNodes(IScope scope, IPopulation nodePop,GisUtils gisUtils, GamaPoint ptInit, GamaPoint ptFinal, OsmRoadAgent road) {
+		List agentsCreated = new GamaList();
+		if (nodes_created.containsKey(ptInit)) {
+			OsmNodeAgent na = nodes_created.get(ptInit);
+			GamaList road_out = (GamaList) na.getAttribute("roads_out");
+			road_out.add(road);
+			na.setAttribute("roads_out", road_out);
+		} else {
+			Map values = new GamaMap();
+			List<OsmRoadAgent> road_out = new GamaList<OsmRoadAgent>();
+			road_out.add(road);
+			values.put("roads_out", road_out);
+			agentsCreated.addAll(createNodes(scope, nodePop,gisUtils, ptInit, values));
+		}
+		if (nodes_created.containsKey(ptFinal)) {
+			OsmNodeAgent na = nodes_created.get(ptFinal);
+			GamaList road_in = (GamaList) na.getAttribute("roads_in");
+			road_in.add(road);
+			na.setAttribute("roads_in", road_in);
+		} else {
+			Map values = new GamaMap();
+			List<OsmRoadAgent> road_in = new GamaList<OsmRoadAgent>();
+			road_in.add(road);
+			values.put("roads_in", road_in);
+			agentsCreated.addAll(createNodes(scope, nodePop,gisUtils, ptFinal, values));
+		}
+		return new GamaList();
+	}
+	 
+	 public List createNodes(IScope scope, IPopulation nodePop,GisUtils gisUtils, GamaPoint pt,Map values) {
+		List<Map> initialValues = new GamaList<Map>();	
+		if (pt != null) {
+			values.put("shape", new GamaShape(gisUtils.transform(pt.getInnerGeometry())));
+			initialValues.add(values);
+			return nodePop.createAgents(scope, 1, initialValues, false);
+		}
+		return new GamaList();
+	}
+	 
+	 public List createSplitRoad(IScope scope, IPopulation roadPop,IPopulation nodePop,GisUtils gisUtils, Way way,Map values,Set<Long> intersectionNodes) {
 		List<List<IShape>> pointsList = new GamaList<List<IShape>>();
 		List<Map> initialValues = new GamaList<Map>();
 		List<IShape> points = new GamaList<IShape>();
+		List agents_created = new GamaList();
 		for (WayNode node : way.getWayNodes()) {
 			Long id = node.getNodeId();
-			GamaPoint pt = nodes.get(id);
+			GamaPoint pt = nodesPt.get(id);
 			points.add(pt);
 			if (intersectionNodes.contains(id)) {
 				if (points.size() > 1)
@@ -188,28 +292,23 @@ public class OsmReader {
 		int cpt = 1;
 		boolean one = (pointsList.size() == 1);
 		for (List<IShape> pts: pointsList) {
-			IShape geom = GamaGeometryType.buildPolyline(pts);
-			if (geom != null) {
-				if (one) {
-					values.put("shape", new GamaShape(gisUtils.transform(geom.getInnerGeometry())));
-					initialValues.add(values);
-				} else {
-					Map valuesAg = new GamaMap();
-					for (Object val : values.keySet()) {
-						valuesAg.put(val, values.get(val));
-					}
-					valuesAg.put("name", valuesAg.get("name") + "-" + cpt);
-					valuesAg.put("shape", new GamaShape(gisUtils.transform(geom.getInnerGeometry())));
-					initialValues.add(valuesAg);
-					cpt++;
+			if (one) {
+				agents_created.addAll(createRoad(scope, roadPop,nodePop, gisUtils, pts,values));
+			} else {
+				Map valuesAg = new GamaMap();
+				for (Object val : values.keySet()) {
+					valuesAg.put(val, values.get(val));
 				}
+				valuesAg.put("name", valuesAg.get("name") + "-" + cpt);
+				agents_created.addAll(createRoad(scope, roadPop,nodePop, gisUtils, pts,valuesAg));
+				cpt++;
 			}
 		}
-		return roadPop.createAgents(scope, initialValues.size(), initialValues, false);
+		return agents_created; 
 		
 	}
 		 
-	 public List<IAgent> buildAgents(IScope scope, IPopulation roadPop, IPopulation buildingPop, boolean splitLines){
+	 public List<IAgent> buildAgents(IScope scope, IPopulation roadPop, IPopulation buildingPop, IPopulation signalPop,IPopulation nodePop,boolean splitLines){
 		 List<IAgent> createdAgents = new GamaList<IAgent>();
 		 GisUtils gisUtils = scope.getTopology().getGisUtils();
 		 List<String> boolAtt =  new GamaList<String>();
@@ -217,6 +316,19 @@ public class OsmReader {
 		 boolAtt.add("motorroad");
 		 boolAtt.add("wall");
 		 boolAtt.add("bridge");
+		 if (signalPop != null) {
+			 for (Node node : nodes) {
+				 Map values = new GamaMap();
+				 for (Tag tg : node.getTags()) {
+					String key = tg.getKey();
+					values.put(key, tg.getValue());
+			     }
+				 if (signalPop != null && values.containsKey("highway")) {
+			        
+			        createdAgents.addAll(createSignal(scope, signalPop,gisUtils, node,values));
+				 }
+			 }
+		 }
 		 
 		 for (Way way : ways) {
 			 Map values = new GamaMap();
@@ -233,13 +345,15 @@ public class OsmReader {
 			boolean isRoad = values.containsKey("highway");
 			boolean isBuilding = values.containsKey("building");
 			
-			if (isBuilding) {
+			if (isBuilding && buildingPop != null) {
 				 createdAgents.addAll(createBuilding(scope, buildingPop,gisUtils, way,values));
 			} else if (isRoad) {
-				if (!splitLines) {
-					 createdAgents.addAll(createRoad(scope, roadPop,gisUtils, way,values));
-				} else {
-					 createdAgents.addAll(createSplitRoad(scope, roadPop,gisUtils, way,values,intersectionNodes));
+				if (roadPop != null &&  way.getWayNodes().size() > 1) {
+					if (!splitLines) {
+						createdAgents.addAll(createRoad(scope, roadPop,nodePop,gisUtils, way,values));
+					} else {
+						createdAgents.addAll(createSplitRoad(scope, roadPop,nodePop,gisUtils, way,values,intersectionNodes));
+					}
 				}
 			}
 			

@@ -9,7 +9,7 @@ import msi.gaml.types.IType;
 
 
 @species(name = "osm_road")
-@vars({ @var(name = "highway", type = IType.STRING), @var(name = "lanes", type = IType.INT), 
+@vars({ @var(name = "highway", type = IType.STRING), @var(name = "lanes", type = IType.INT),
 	@var(name = "motorroad", type = IType.BOOL), @var(name = "oneway", type = IType.BOOL),@var(name = "maxspeed", type = IType.FLOAT)})
 public class OsmRoadAgent extends GamlAgent{
 
