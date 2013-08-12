@@ -7,12 +7,12 @@ global {
 	float speed_of_agents parameter: 'Speed of Agents' min: 0.1  <- 2.0 ; 
 	int size_of_agents <- 10;
 	rgb colorwood <- rgb([178,112,62]);
-	Physical3DWorld world2;
+	my_world world2;
 	init {
 		//White ball
 		create ball
 		{
-			set location<-{width_of_environment/2,4*height_of_environment/5} add_z 5.0;
+			set location<-{width_of_environment/2,4*height_of_environment/5, 5.0} ;
 			set mass <- 3.0;
 			set velocity <- list([0.0, -1000.0, 0.0]);
 			set collisionBound <-  ["shape"::"sphere","radius"::5];
@@ -21,11 +21,11 @@ global {
 		
 		let i <- 0;
 		let deltaI <-0;
-		let initX <- 75;
+		let initX <- 75; 
 		let initY <- height_of_environment/8;
 		create ball number:15{
 			
-			set location<- {initX + (i - deltaI) * 10,initY} add_z 5.0;
+			set location<- {initX + (i - deltaI) * 10,initY, 5.0} ;
 			set heading<-90;
 			set speed<-0;
 			set mass <- 3.0;
@@ -41,7 +41,7 @@ global {
 			}
 			if(i=5){
 				set initX <- initX + 5;
-				set initY <- initY + 9;
+				set initY <- initY + 9; 
 				set deltaI <- 5; 
 			}
 			if(i=9){
@@ -112,7 +112,7 @@ global {
 		}
 		
 		create floor 
-		{
+		{ 
 			set location <- {width_of_environment-6,3*height_of_environment/4-3,0};
 			set shape <- rectangle({12,height_of_environment/2 -18});
 			set collisionBound <-  ["shape"::"floor","x"::6, "y":: height_of_environment/4-9, "z"::0];
@@ -157,10 +157,10 @@ global {
 			
 		}
 				
-		create Physical3DWorld {
+		create my_world {
 			set gravity <-true;
 		}
-		set world2 <- first(Physical3DWorld as list);
+		set world2 <- first(my_world as list);
 		ask world2 {set registeredAgents <-  (ball as list) + (floor as list) + (wall as list);}
 		
 	}
@@ -168,11 +168,13 @@ global {
 			ask world2 {do computeForces timeStep : 1;}
 		} 
 			
-} 
+}  
 
 environment width: width_of_environment height: height_of_environment; 
 
 entities {
+	
+	species my_world parent: Physical3DWorld{}
  
     species floor skills: [physical3D]{
     	aspect default {
@@ -207,8 +209,8 @@ experiment pool type: gui {
 output {
 	display Circle refresh_every: 1 type:opengl tesselation:true ambient_light:100{
 		//image name:'background' file:'../images/billard2.jpg' ;
-		species floor;
-		species wall;
+		species floor aspect: default;
+		species wall aspect: default;
 	    species ball aspect:sphere;			
 	    
 	}
