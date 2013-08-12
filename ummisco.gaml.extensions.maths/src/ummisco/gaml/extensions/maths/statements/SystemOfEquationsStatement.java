@@ -14,22 +14,23 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.StatementDescription;
 import msi.gaml.expressions.*;
-import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.species.GamlSpecies;
 import msi.gaml.statements.AbstractStatementSequence;
-import msi.gaml.statements.Facets;
 import msi.gaml.types.IType;
 import org.apache.commons.math3.exception.*;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 
+import ummisco.gaml.extensions.maths.utils.classicalEquations.ClassicalSEIREquations;
+import ummisco.gaml.extensions.maths.utils.classicalEquations.ClassicalSIEquations;
 import ummisco.gaml.extensions.maths.utils.classicalEquations.ClassicalSIREquations;
+import ummisco.gaml.extensions.maths.utils.classicalEquations.ClassicalSIRSEquations;
+import ummisco.gaml.extensions.maths.utils.classicalEquations.ClassicalSISEquations;
 
 @symbol(name = IKeyword.EQUATION, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @facets(value = {
 		@facet(name = IKeyword.NAME, type = IType.ID /* CHANGE */, optional = true),
-		@facet(name = IKeyword.TYPE, type = IType.ID /* CHANGE */, optional = true, values = { "SIR", "SEIR" }, doc = @doc(value = "classical epidemiology model")),
+		@facet(name = IKeyword.TYPE, type = IType.ID /* CHANGE */, optional = true, values = { "SI", "SIS", "SIR", "SIRS", "SEIR", "LV" }, doc = @doc(value = "classical models (epidemiology or population dynamic)")),
 		@facet(name = "with_vars", type = IType.LIST, optional = true), 		
 		@facet(name = "with_params", type = IType.LIST, optional = true), 		
 		@facet(name = IKeyword.SIMULTANEOUSLY, type = IType.LIST, optional = true) }, omissible = IKeyword.NAME)
@@ -76,21 +77,21 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 		if (getFacet(IKeyword.TYPE)!=null){ 
 			if(getFacet(IKeyword.TYPE).literalValue().equals("SIR")) {
 				cmd.clear();
-				
 				cmd=new ClassicalSIREquations(getDescription()).SIR(getFacet("with_vars"),getFacet("with_params"));
-				// diff(S,t) = (- beta * S * I / N);
-				// diff(I,t) = (beta * S * I / N) - (delta * I);
-				// diff(R,t) = (delta * I);
 			} else if(getFacet(IKeyword.TYPE).literalValue().equals("SI")) {
-				GamaRuntimeException.warning( getFacet(IKeyword.TYPE).literalValue().equals("SI") + " is not yet implemented");								
+				cmd.clear();
+				cmd=new ClassicalSIEquations(getDescription()).SI(getFacet("with_vars"),getFacet("with_params"));
 			} else if(getFacet(IKeyword.TYPE).literalValue().equals("SIS")) {
-				GamaRuntimeException.warning( getFacet(IKeyword.TYPE).literalValue().equals("SI") + " is not yet implemented");				
+				cmd.clear();
+				cmd=new ClassicalSISEquations(getDescription()).SIS(getFacet("with_vars"),getFacet("with_params"));
 			} else if(getFacet(IKeyword.TYPE).literalValue().equals("SIRS")) {
-				GamaRuntimeException.warning( getFacet(IKeyword.TYPE).literalValue().equals("SI") + " is not yet implemented");				
+				cmd.clear();
+				cmd=new ClassicalSIRSEquations(getDescription()).SIRS(getFacet("with_vars"),getFacet("with_params"));
 			} else if(getFacet(IKeyword.TYPE).literalValue().equals("SEIR")) {
-				GamaRuntimeException.warning( getFacet(IKeyword.TYPE).literalValue().equals("SI") + " is not yet implemented");				
+				cmd.clear();
+				cmd=new ClassicalSEIREquations(getDescription()).SEIR(getFacet("with_vars"),getFacet("with_params"));
 			} else if(getFacet(IKeyword.TYPE).literalValue().equals("LV")) {
-				GamaRuntimeException.warning( getFacet(IKeyword.TYPE).literalValue().equals("SI") + " is not yet implemented");				
+				GamaRuntimeException.warning( getFacet(IKeyword.TYPE).literalValue().equals("LV") + " is not yet implemented");				
 			} else {
 				GamaRuntimeException.error( getFacet(IKeyword.TYPE).literalValue().equals("SI") + " is not a recognized classical equation");
 			}

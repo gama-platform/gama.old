@@ -13,18 +13,18 @@ import msi.gaml.expressions.ListExpression;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
 
-//SIR equation is defined by 
-// diff(S,t) = (- beta * S * I / N);
-// diff(I,t) = (beta * S * I / N) - (gamma * I);
-// diff(R,t) = (gamma * I);
+//SIRS (with demography) equation is defined by 
+// diff(S,t) = mu * N + omega * R + - beta * S * I / N - mu * S ;
+// diff(I,t) = beta * S * I / N - gamma * I - mu * I ;
+// diff(R,t) = gamma * I - omega * R - mu * R ;
 //
 //It is called using
-//equation eqSIR type: SIR with_vars: [S,I,R,t] with_params: [N,beta,gamma]
+//equation eqSIRS type: SIRS with_vars: [S,I,R,t] with_params: [N,beta,gamma,omega,mu]
 
-public class ClassicalSIREquations {
+public class ClassicalSEIREquations {
 	private IDescription parentDesc;
 
-	public ClassicalSIREquations(IDescription p) {
+	public ClassicalSEIREquations(IDescription p) {
 		parentDesc = p;
 	}
 
@@ -32,7 +32,7 @@ public class ClassicalSIREquations {
 		return parentDesc;
 	}
 
-	public List<SingleEquationStatement> SIR(IExpression with_vars, IExpression with_params) {
+	public List<SingleEquationStatement> SEIR(IExpression with_vars, IExpression with_params) {
 		if (with_vars == null || with_params == null) {
 			return null;
 		}
@@ -44,13 +44,22 @@ public class ClassicalSIREquations {
 				getDescription(), new ChildrenProvider(null), false, false,
 				null, new Facets("keyword", "="));
 
+		// diff(S,t) = mu * N + omega * R + - beta * S * I / N - mu * S ;
+		// diff(I,t) = beta * S * I / N - gamma * I - mu * I ;
+		// diff(R,t) = gamma * I - omega * R - mu * R ;
+		//
+		//equation eqSIRS type: SIRS with_vars: [S,I,R,t] with_params: [N,beta,gamma,omega,mu]		
+		
 		SingleEquationStatement eq1 = new SingleEquationStatement(stm);
 		eq1.function = GAML.getExpressionFactory().createExpr(
 				"diff(" + v[0].literalValue() + "," + v[3].literalValue() + ")", getDescription());
 		eq1.expression = GAML.getExpressionFactory().createExpr(
+				"( " + p[4].literalValue() + " * " + p[0].literalValue() + " ) + " +
+				"( " + p[3].literalValue() + " * " + v[2].literalValue() + " ) + " + 
 				"(- " + p[1].literalValue() + " * " + v[0].literalValue()
-						+ " * " + v[1].literalValue() + " / "
-						+ p[0].literalValue() + ")", getDescription());
+						+ " * " + v[1].literalValue() + " / " + p[0].literalValue() + ") + " +
+				"(- " + p[4].literalValue() + " * " + v[0].literalValue() + " )", 
+				getDescription());
 		eq1.etablishVar();
 		cmd.add(eq1);
 
@@ -59,8 +68,9 @@ public class ClassicalSIREquations {
 				"diff(" + v[1].literalValue() + "," + v[3].literalValue() + ")", getDescription());
 		eq2.expression = GAML.getExpressionFactory().createExpr(
 				"(" + p[1].literalValue() + " * " + v[0].literalValue() + " * "
-						+ v[1].literalValue() + " / " + p[0].literalValue()
-						+ ") - ("+p[2].literalValue()+" * " + v[1].literalValue() + ")",
+						+ v[1].literalValue() + " / " + p[0].literalValue() + ") + " + 
+				"( - " + p[2].literalValue() + " * " + v[1].literalValue() + ")" +
+				"( - " + p[4].literalValue() + " * " + v[1].literalValue() + ")",
 				getDescription());
 		eq2.etablishVar();
 		cmd.add(eq2);
@@ -69,7 +79,10 @@ public class ClassicalSIREquations {
 		eq3.function = GAML.getExpressionFactory().createExpr(
 				"diff(" + v[2].literalValue() + "," + v[3].literalValue() + ")", getDescription());
 		eq3.expression = GAML.getExpressionFactory().createExpr(
-				"("+p[2].literalValue()+" * " + v[1].literalValue() + ")", getDescription());
+				"("   + p[2].literalValue() + " * " + v[1].literalValue() + ")" +
+				"(- " + p[3].literalValue() + " * " + v[2].literalValue() + ")" +
+				"(- " + p[4].literalValue() + " * " + v[2].literalValue() + " )", 
+		getDescription());
 		eq3.etablishVar();
 		cmd.add(eq3);
 		return cmd;

@@ -14,12 +14,12 @@ import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
 
 
-// SI equation is defined by 
-// diff(S,t) = -beta * S * I / N + nu * I;
-// diff(I,t) = beta * S * I / N - nu * I;
+// SIS equation is defined by 
+// diff(S,t) = -beta * S * I / N + gamma * I;
+// diff(I,t) = beta * S * I / N - gamma * I;
 //
 // It is called using
-// equation eqSIS type: SIS with_vars: [S,I,t] with_params: [N,beta,nu]
+// equation eqSIS type: SIS with_vars: [S,I,t] with_params: [N,beta,gamma]
 
 public class ClassicalSISEquations {
 	private IDescription parentDesc;
@@ -32,7 +32,7 @@ public class ClassicalSISEquations {
 		return parentDesc;
 	}
 
-	public List<SingleEquationStatement> SIR(IExpression with_vars, IExpression with_params) {
+	public List<SingleEquationStatement> SIS(IExpression with_vars, IExpression with_params) {
 		if (with_vars == null || with_params == null) {
 			return null;
 		}

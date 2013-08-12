@@ -32,7 +32,7 @@ public class ClassicalSIEquations {
 		return parentDesc;
 	}
 
-	public List<SingleEquationStatement> SIR(IExpression with_vars, IExpression with_params) {
+	public List<SingleEquationStatement> SI(IExpression with_vars, IExpression with_params) {
 		if (with_vars == null || with_params == null) {
 			return null;
 		}
