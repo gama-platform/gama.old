@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -23,6 +23,7 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.util.prefs.*;
+import msi.gama.gui.swt.SwtGui;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -45,6 +46,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	private static final String keyWorkspaceRootDir = "wsRootDir";
 	private static final String keyRememberWorkspace = "wsRemember";
 	private static final String keyLastUsedWorkspaces = "wsLastUsedWorkspaces";
+	private static final Image image = SwtGui.getImageDescriptor("icons/launcher_icons/icon205.png").createImage();
 
 	/*
 	 * This are our preferences we will be using as the IPreferenceStore is not available yet
@@ -77,10 +79,10 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	 * @param switchWorkspace true if we're using this dialog as a switch workspace dialog
 	 * @param wizardImage Image to show
 	 */
-	public PickWorkspaceDialog(final Image wizardImage) {
+	public PickWorkspaceDialog() {
 		super(Display.getDefault().getActiveShell());
-		if ( wizardImage != null ) {
-			setTitleImage(wizardImage);
+		if ( image != null ) {
+			setTitleImage(image);
 		}
 	}
 
@@ -562,7 +564,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		return selectedWorkspaceRootLocation;
 	}
 
-	private void setSelectedWorkspaceRootLocation(String selectedWorkspaceRootLocation) {
+	private void setSelectedWorkspaceRootLocation(final String selectedWorkspaceRootLocation) {
 		this.selectedWorkspaceRootLocation = selectedWorkspaceRootLocation;
 	}
 

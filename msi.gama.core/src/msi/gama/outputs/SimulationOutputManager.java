@@ -20,7 +20,6 @@ package msi.gama.outputs;
 
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
@@ -42,7 +41,8 @@ public class SimulationOutputManager extends AbstractOutputManager {
 
 	@Override
 	public boolean init(final IScope scope) {
-		GuiUtils.prepareForSimulation((SimulationAgent) scope.getSimulationScope());
+		// GuiUtils.prepareForSimulation((SimulationAgent) scope.getSimulationScope());
+		GuiUtils.waitStatus(" Building outputs ");
 		return super.init(scope);
 	}
 

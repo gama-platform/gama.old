@@ -80,6 +80,9 @@ public class SimulationAgent extends GamlAgent {
 	@Override
 	public void schedule() {
 		super.schedule();
+		// Necessary to put it here as the output manager is initialized *after* the agent, meaning it will remove
+		// everything in the errors/console view that is being written by the init of the simulation
+		GuiUtils.prepareForSimulation(this);
 		GAMA.controller.getScheduler().schedule(scheduler, scope);
 		if ( outputs != null ) {
 			final IScope simulationScope = obtainNewScope();

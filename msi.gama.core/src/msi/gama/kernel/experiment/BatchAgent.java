@@ -107,8 +107,8 @@ public class BatchAgent extends ExperimentAgent {
 
 	/**
 	 * 
-	 * Method _step_()
-	 * @see msi.gama.metamodel.agent.GamlAgent#_step_(msi.gama.runtime.IScope)
+	 * Method step()
+	 * @see msi.gama.metamodel.agent.GamlAgent#step(msi.gama.runtime.IScope)
 	 *      This method, called once by the front controller, actually serves as "launching" the batch process (entirely
 	 *      piloted by the exploration algorithm)
 	 */

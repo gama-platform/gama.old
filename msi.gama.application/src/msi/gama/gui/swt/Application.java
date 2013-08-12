@@ -59,8 +59,7 @@ public class Application implements IApplication {
 		}
 		/* If we don't remember the workspace, show the dialog */
 		if ( !remember ) {
-			PickWorkspaceDialog pwd =
-				new PickWorkspaceDialog(SwtGui.getImageDescriptor("icons/launcher_icons/icon205.png").createImage());
+			PickWorkspaceDialog pwd = new PickWorkspaceDialog();
 			int pick = pwd.open();
 			/* If the user cancelled, we can't do anything as we need a workspace */
 			if ( pick == Window.CANCEL && pwd.getSelectedWorkspaceLocation() == null ) {

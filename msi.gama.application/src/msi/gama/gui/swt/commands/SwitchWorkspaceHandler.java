@@ -18,28 +18,18 @@
  */
 package msi.gama.gui.swt.commands;
 
-import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.dialogs.PickWorkspaceDialog;
 import org.eclipse.core.commands.*;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.PlatformUI;
 
 public class SwitchWorkspaceHandler extends AbstractHandler {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-
-		ImageDescriptor imgDesc = SwtGui.getImageDescriptor("icons/launcher_icons/icon205.png");
-		Image myImage = imgDesc.createImage();
-		PickWorkspaceDialog pwd = new PickWorkspaceDialog(myImage);
-		int pick = pwd.open();
-		if ( pick == Window.CANCEL ) { return null; }
-
-		/* Restart client */
-		PlatformUI.getWorkbench().restart();
-
+		if ( new PickWorkspaceDialog().open() != Window.CANCEL ) {
+			PlatformUI.getWorkbench().restart();
+		}
 		return null;
 	}
 

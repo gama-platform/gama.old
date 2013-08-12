@@ -352,9 +352,9 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void runtimeError(final GamaRuntimeException g) {
-		if ( g != null ) {
-			g.printStackTrace();
-		}
+		// if ( g != null ) {
+		// g.printStackTrace();
+		// }
 		if ( ErrorView.showErrors ) {
 			final ErrorView v = (ErrorView) showView(ErrorView.ID, null);
 			if ( v != null ) {
@@ -1019,7 +1019,6 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void prepareForSimulation(final SimulationAgent agent) {
-		setStatus(" Building outputs ", IGui.WAIT);
 		clearErrors();
 		if ( !agent.getExperiment().getSpecies().isBatch() ) {
 
