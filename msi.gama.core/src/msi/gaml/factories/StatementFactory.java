@@ -92,14 +92,14 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 		} else if ( kw.equals(MIGRATE) ) {
 			assertMicroSpeciesIsVisible(cd, TARGET);
 		} else if ( kw.equals(CREATE) ) {
-			final String s = cd.getFacets().getLabel(SPECIES);
-			final SpeciesDescription species = cd.getSpeciesDescription(s);
+			SpeciesDescription species = computeSpecies(cd);
+			assertSpeciesIsOkForCreation(cd, species);
 			// FIXME Not the right place to do it.
 			if ( species != null ) {
 				if ( species.isAbstract() ) {
-					cd.error("Species " + s + " is abstract and cannot be instantiated");
+					cd.error("Species " + species.getName() + " is abstract and cannot be instantiated");
 				} else if ( species.isMirror() ) {
-					cd.error("Species " + s + " is a mirror and cannot be instantiated");
+					cd.error("Species " + species.getName() + " is a mirror and cannot be instantiated");
 				}
 			}
 		}

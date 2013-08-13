@@ -754,4 +754,15 @@ public class SpeciesDescription extends TypeDescription {
 		return sd.hasMacroSpecies(found_sd);
 	}
 
+	/**
+	 * @param macro
+	 * @return
+	 */
+	public boolean hasParent(final SpeciesDescription p) {
+		SpeciesDescription sd = getParent();
+		if ( sd == null ) { return false; }
+		if ( sd.equals(p) ) { return true; }
+		return sd.hasMacroSpecies(p);
+	}
+
 }

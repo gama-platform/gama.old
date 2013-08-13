@@ -351,4 +351,25 @@ public class DescriptionValidator {
 
 	}
 
+	public static void assertSpeciesIsOkForCreation(final IDescription cd, final SpeciesDescription species) {
+		if ( species != null ) {
+			if ( species.isAbstract() ) {
+				cd.error("Species " + species.getName() + " is abstract and cannot be instantiated",
+					IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
+			} else if ( species.isMirror() ) {
+				cd.error("Species " + species.getName() + " is a mirror and cannot be instantiated",
+					IGamlIssue.WRONG_TYPE, IKeyword.SPECIES);
+			}
+			SpeciesDescription callerSpecies = cd.getSpeciesContext();
+			SpeciesDescription macro = species.getMacroSpecies();
+			if ( callerSpecies != macro && !callerSpecies.hasMacroSpecies(macro) && !callerSpecies.hasParent(macro) ) {
+				cd.error("No instance of " + macro.getName() + " available for creating instances of " +
+					species.getName());
+			}
+
+		} else {
+			cd.error("Species cannot be determined");
+		}
+
+	}
 }
