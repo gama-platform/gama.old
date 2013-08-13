@@ -76,88 +76,75 @@ public class Points {
 	@operator(value = IKeyword.DIVIDE, can_be_const = true)
 	@doc(value = "Returns a point with coordinates divided by the number", examples = "{5, 7.5} / 2.5 --: {2, 3}")
 	public static ILocation divide(final GamaPoint p, final Double d) {
-		if ( p.hasZ ) { return new GamaPoint(p.x / d, p.y / d, p.z / d); }
-		return new GamaPoint(p.x / d, p.y / d);
+		return new GamaPoint(p.x / d, p.y / d, p.z / d);
 	}
 
 	@operator(value = IKeyword.DIVIDE, can_be_const = true)
 	@doc(special_cases = "if the left-hand operator is a point and the right-hand a number, returns a point with coordinates divided by the number", examples = "{2,5} / 4	--:  {0.5;1.25}")
 	public static ILocation divide(final GamaPoint p, final Integer d) {
-		if ( p.hasZ ) { return new GamaPoint(p.x / d.doubleValue(), p.y / d.doubleValue(), p.z /
-			d.doubleValue()); }
-		return new GamaPoint(p.x / d.doubleValue(), p.y / d.doubleValue());
+		return new GamaPoint(p.x / d.doubleValue(), p.y / d.doubleValue(), p.z /d.doubleValue()); 
 	}
 
 	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
 	@doc(value = "Returns a point with coordinate multiplied by the number.", examples = "{2, 3} + 2.5 --: {5, 7.5}")
 	public static ILocation multiply(final GamaPoint p1, final Double d) {
-		if ( p1.hasZ ) { return new GamaPoint(p1.x * d, p1.y * d, p1.z * d); }
-		return new GamaPoint(p1.x * d, p1.y * d);
+		return new GamaPoint(p1.x * d, p1.y * d, p1.z * d);
 	}
 
 	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
 	@doc(special_cases = "if the left-hand operator is a point and the right-hand a number, returns a point with coordinates multiplied by the number", examples = "{2,5} * 4 	--: {8.0; 20.0}")
 	public static ILocation multiply(final GamaPoint p1, final Integer d) {
-		if ( p1.hasZ ) { return new GamaPoint(p1.x * d.doubleValue(), p1.y * d.doubleValue(), p1.z /
-			d.doubleValue()); }
-		return new GamaPoint(p1.x * d.doubleValue(), p1.y * d.doubleValue());
+		return new GamaPoint(p1.x * d.doubleValue(), p1.y * d.doubleValue(), p1.z /d.doubleValue());
 	}
 
 	// ATTENTION: produit scalaire.
 	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
 	@doc(value = "Returns the scalar product of two points.", special_cases = "if both operands are points, returns their scalar product", examples = "{2,5} * {4.5, 5} 	--:  34.0")
 	public static Double multiply(final GamaPoint p1, final GamaPoint p) {
-		if ( p1.hasZ && p.hasZ ) { return p1.x * p.x + p1.y * p.y + p1.z * p.z; }
-		return p1.x * p.x + p1.y * p.y;
+		return p1.x * p.x + p1.y * p.y + p1.z * p.z;
+
 	}
 
 	@operator(value = "norm", can_be_const = true)
 	@doc(value = "the norm of the vector with the coordinnates of the point operand.", examples = "norm({3,4})   --:	  5.0")
 	public static Double norm(final GamaPoint p) throws GamaRuntimeException {
-		if ( p.hasZ ) { return Maths.sqrt(p.x * p.x + p.y * p.y + p.z * p.z); }
-		return Maths.sqrt(p.x * p.x + p.y * p.y);
+		return Maths.sqrt(p.x * p.x + p.y * p.y + p.z * p.z);
 	}
 
 	@operator(value = IKeyword.PLUS, can_be_const = true)
 	@doc(value = "Returns a point with coordinate summing of the two operands.", special_cases = "if both operands are points, returns their sum.", examples = "{1, 2} + {4, 5} 	--:	 {5.0;7.0}")
 	public static ILocation add(final GamaPoint p1, final GamaPoint p) {
-		if ( p1.hasZ && p.hasZ ) { return new GamaPoint(p1.x + p.x, p1.y + p.y, p1.z + p.z); }
-		return new GamaPoint(p1.x + p.x, p1.y + p.y, p1.z);
+		return new GamaPoint(p1.x + p.x, p1.y + p.y, p1.z + p.z);
 	}
 
 	@operator(value = IKeyword.PLUS, can_be_const = true)
 	@doc(special_cases = "if left-hand operand is a point and the right-hand a number, returns a new point with each coordinate as the sum of the operand coordinate with this number.", examples = "{1, 2} + 4.5 	--:	 {5.5, 6.5}")
 	public static ILocation add(final GamaPoint p1, final Double p) {
-		if ( p1.hasZ ) { return new GamaPoint(p1.x + p, p1.y + p, p1.z + p); }
-		return new GamaPoint(p1.x + p, p1.y + p);
+		return new GamaPoint(p1.x + p, p1.y + p, p1.z + p);
 	}
 
 	@operator(value = IKeyword.PLUS, can_be_const = true)
 	@doc(examples = "{1, 2} + 4 	--:	 {5.0;6.0}")
 	public static ILocation add(final GamaPoint p1, final Integer p) {
-		if ( p1.hasZ ) { return new GamaPoint(p1.x + p, p1.y + p, p1.z + p); }
-		return new GamaPoint(p1.x + p, p1.y + p);
+		return new GamaPoint(p1.x + p, p1.y + p, p1.z + p);
 	}
 
 	@operator(value = IKeyword.MINUS, can_be_const = true)
 	@doc(value = "Returns a point with coordinate resulting from the first operand minus the second operand.", special_cases = "if left-hand operand is a point and the right-hand a number, returns a new point with each coordinate as the difference of the operand coordinate with this number.", examples = "{1, 2} - 4.5 	--:	 {-3.5, -2.5}")
 	public static ILocation substract(final GamaPoint p1, final Double p) {
-		if ( p1.hasZ ) { return new GamaPoint(p1.x - p, p1.y - p, p1.z - p); }
-		return new GamaPoint(p1.x - p, p1.y - p);
+		return new GamaPoint(p1.x - p, p1.y - p, p1.z - p);
 	}
 
 	@operator(value = IKeyword.MINUS, can_be_const = true)
 	@doc(special_cases = "if both operands are points, returns their difference.", examples = "{1, 2} - {4, 5} 	--:	 {-3.0;-3.0}")
 	public static ILocation substract(final GamaPoint p1, final GamaPoint p) {
-		if ( p1.hasZ && p.hasZ ) { return new GamaPoint(p1.x - p.x, p1.y - p.y, p1.z - p.z); }
-		return new GamaPoint(p1.x - p.x, p1.y - p.y, p1.z);
+		return new GamaPoint(p1.x - p.x, p1.y - p.y, p1.z - p.z);
 	}
 
 	@operator(value = IKeyword.MINUS, can_be_const = true)
 	@doc(examples = "{1, 2} - 4 	--:	 {-3.0;-2.0}")
 	public static ILocation substract(final GamaPoint p1, final Integer p) {
-		if ( p1.hasZ ) { return new GamaPoint(p1.x - p, p1.y - p, p1.z - p); }
-		return new GamaPoint(p1.x - p, p1.y - p);
+		return new GamaPoint(p1.x - p, p1.y - p, p1.z - p);
 	}
 
 }

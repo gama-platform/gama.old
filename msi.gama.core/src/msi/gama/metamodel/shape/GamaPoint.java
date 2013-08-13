@@ -34,38 +34,26 @@ import com.vividsolutions.jts.geom.*;
 
 public class GamaPoint extends Coordinate implements ILocation {
 
-	public boolean hasZ;
-
+	
 	public GamaPoint(final double xx, final double yy) {
 		x = xx;
 		y = yy;
-		// 12/08/13 AD: Change 0.0d to Double.NaN to fix Issue 483
-		z = Double.NaN;
-		hasZ = false;
+		z = 0.0d;
 	}
 
 	public GamaPoint(final double xx, final double yy, final double zz) {
 		x = xx;
 		y = yy;
-		hasZ = !Double.isNaN(zz);
-		if ( hasZ ) {
-			z = zz;
-		} else {
-			// 11/04/13 Added to make sure the z ordinate is set to 0
-			// 12/08/13 AD: Change 0.0d to Double.NaN to fix Issue 483
-			z = Double.NaN;
-		}
+		z = zz;
 	}
 
 	public GamaPoint(final Coordinate coord) {
 		x = coord.x;
 		y = coord.y;
-		hasZ = !Double.isNaN(coord.z);
-		if ( hasZ ) {
+		if ( !Double.isNaN(coord.z) ) {
 			z = coord.z;
 		} else {
-			// 12/08/13 AD: Change 0.0d to Double.NaN to fix Issue 483
-			z = Double.NaN;
+			z = 0.0d;
 		}
 	}
 
@@ -73,13 +61,10 @@ public class GamaPoint extends Coordinate implements ILocation {
 		x = point.getX();
 		y = point.getY();
 		final double zz = point.getZ();
-		hasZ = !Double.isNaN(zz);
-
-		if ( hasZ ) {
+		if ( !Double.isNaN(zz)) {
 			z = zz;
 		} else {
-			// 12/08/13 AD: Change 0.0d to Double.NaN to fix Issue 483
-			z = Double.NaN;
+			z = 0.0d;
 		}
 
 	}
@@ -116,22 +101,17 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public void setLocation(final double xx, final double yy) {
 		x = xx;
 		y = yy;
-		// 12/08/13 AD: Added z= Double.NaN to fix Issue 483
-		z = Double.NaN;
-		hasZ = false;
+		z = 0.0d;
 	}
 
 	@Override
 	public void setLocation(final double xx, final double yy, final double zz) {
 		x = xx;
 		y = yy;
-		hasZ = !Double.isNaN(zz);
-		if ( hasZ ) {
+		if ( !Double.isNaN(zz) ) {
 			z = zz;
 		} else {
-			// 11/04/13 Added to make sure the z ordinate is set to 0
-			// 12/08/13 AD: Change 0.0d to Double.NaN to fix Issue 483
-			z = Double.NaN;
+			z = 0.0d;
 		}
 	}
 
@@ -147,25 +127,21 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public void setZ(final double zz) {
-		hasZ = !Double.isNaN(zz);
-		if ( hasZ ) {
+		if ( !Double.isNaN(zz) ) {
 			z = zz;
 		} else {
-			// 12/08/13 AD: Change 0.0d to Double.NaN to fix Issue 483
-			z = Double.NaN;
+			z = 0.0d;
 		}
 	}
 
 	@Override
 	public String toString() {
-		if ( hasZ ) { return "location[" + x + ";" + y + ";" + z + "]"; }
-		return "location[" + x + ";" + y + "]";
+		return "location[" + x + ";" + y + ";" + z + "]";
 	}
 
 	@Override
 	public String toGaml() {
-		final String zStr = hasZ ? "," + z : "";
-		return "{" + x + "," + y + zStr + "}";
+		return "{" + x + "," + y + "," + z + "}";
 	}
 
 	@Override
@@ -175,8 +151,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public String stringValue(final IScope scope) {
-		final String zStr = hasZ ? "," + z : "";
-		return "{" + x + "," + y + zStr + "}";
+		return "{" + x + "," + y + "," + z + "}";
 	}
 
 	// @Override
@@ -188,11 +163,10 @@ public class GamaPoint extends Coordinate implements ILocation {
 	public void add(final ILocation loc) {
 		x = x + loc.getX();
 		y = y + loc.getY();
-		if ( hasZ ) {
-			final double zz = loc.getZ();
-			if ( !Double.isNaN(zz) ) {
-				z = z + zz;
-			}
+		
+		final double zz = loc.getZ();
+		if ( !Double.isNaN(zz) ) {
+			z = z + zz;
 		}
 	}
 
@@ -239,7 +213,7 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public boolean equals(final Object o) {
-		if ( o instanceof GamaPoint ) { return hasZ ? equals3D((GamaPoint) o) : equals2D((GamaPoint) o); }
+		if ( o instanceof GamaPoint ) { return equals3D((GamaPoint) o); }
 		return false;
 	}
 
@@ -263,9 +237,8 @@ public class GamaPoint extends Coordinate implements ILocation {
 
 	@Override
 	public double euclidianDistanceTo(final ILocation p) {
-		if ( hasZ && ((GamaPoint) p).hasZ ) { return Maths.hypot(x, p.getX(), y, p.getY(), z, p.getZ()); }
-		// return Maths.hypot(x, p.getX(), y, p.getY()); VERY SLOW !
-		return this.distance(p.toCoordinate());
+		//FIXME: Need to check the cost of checking if z and p.getZ() are equal to Zero so that we can use this.distance(p.toCoordinate());
+		return Maths.hypot(x, p.getX(), y, p.getY(), z, p.getZ());
 	}
 
 	/**
