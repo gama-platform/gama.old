@@ -31,6 +31,7 @@ import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
+import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
@@ -137,10 +138,10 @@ public class PopulationInspectView extends GamaViewPart {
 				selectedColumns.get(name).addAll(names);
 			} else if ( getOutput().getValue() != null ) {
 				final IExpression expr = getOutput().getValue();
-				final String realSpecies = expr.getContentType().getSpeciesName();
-				final ISpecies species = GAMA.getModel().getSpecies(realSpecies);
-				if ( species == null ) { return; }
-				selectedColumns.get(name).addAll(species.getVarNames());
+				final SpeciesDescription realSpecies = expr.getContentType().getSpecies();
+				// final ISpecies species = GAMA.getModel().getSpecies(realSpecies);
+				if ( realSpecies == null ) { return; }
+				selectedColumns.get(name).addAll(realSpecies.getVarNames());
 				selectedColumns.get(name).removeAll(DONT_INSPECT);
 			}
 			Collections.sort(selectedColumns.get(name));
@@ -254,10 +255,10 @@ public class PopulationInspectView extends GamaViewPart {
 		attributesMenu.setToolTipText(tooltipText);
 		final IExpression expr = getOutput().getValue();
 		if ( expr != null ) {
-			final String realSpecies = expr.getContentType().getSpeciesName();
-			final ISpecies species = GAMA.getModel().getSpecies(realSpecies);
-			if ( species != null ) {
-				final List<String> names = new GamaList(species.getVarNames());
+			final SpeciesDescription realSpecies = expr.getContentType().getSpecies();
+			// final ISpecies species = GAMA.getModel().getSpecies(realSpecies);
+			if ( realSpecies != null ) {
+				final List<String> names = new GamaList(realSpecies.getVarNames());
 				Collections.sort(names);
 				attributesMenu.setItems(names.toArray(new String[0]));
 				for ( int i = 0; i < names.size(); i++ ) {

@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -35,7 +35,7 @@ public class TypesManager {
 	private final Map<Class, IType> classToIType = new LinkedHashMap(/* Types.CLASS2ITYPE */);
 	private final TypeTree<IType> hierarchy = new TypeTree();
 
-	public TypesManager(TypesManager parent) {
+	public TypesManager(final TypesManager parent) {
 		this.parent = parent;
 		// current_index = parent == null ? msi.gaml.types.IType.SPECIES_TYPES : parent.current_index;
 	}
@@ -49,7 +49,9 @@ public class TypesManager {
 				species.error("Species " + name + " already declared. Species name must be unique",
 					IGamlIssue.DUPLICATE_NAME, species.getUnderlyingElement(null), name);
 			}
-			return addType(new GamaAgentType(name, ++CURRENT_INDEX, species.getJavaBase()), species.getJavaBase());
+			return addType(
+				new GamaAgentType((SpeciesDescription) species, species.getName(), ++CURRENT_INDEX,
+					species.getJavaBase()), species.getJavaBase());
 		}
 		return get(IKeyword.AGENT);
 	}
@@ -63,7 +65,7 @@ public class TypesManager {
 		return addType(typeInstance, wraps);
 	}
 
-	private IType addType(IType t, Class ... wraps) {
+	private IType addType(final IType t, final Class ... wraps) {
 		idToIType.put(t.id(), t);
 		stringToIType.put(t.toString(), t);
 		// Hack to allow types to be declared with their id as string
@@ -88,7 +90,7 @@ public class TypesManager {
 		buildHierarchy(hierarchy.setRoot(Types.NO_TYPE));
 	}
 
-	public TypeDescription getSpecies(String name) {
+	public TypeDescription getSpecies(final String name) {
 		if ( name == null ) { return null; }
 		TypeDescription td = modelSpecies.get(name);
 		if ( td == null ) {
@@ -97,7 +99,7 @@ public class TypesManager {
 		return td;
 	}
 
-	public boolean containsSpecies(String name) {
+	public boolean containsSpecies(final String name) {
 		if ( modelSpecies.containsKey(name) ) { return true; }
 		if ( parent != null ) { return parent.containsSpecies(name); }
 		return false;
@@ -163,7 +165,7 @@ public class TypesManager {
 		}
 	}
 
-	private Set<IType> getDirectSubTypes(IType t) {
+	private Set<IType> getDirectSubTypes(final IType t) {
 		if ( t == null ) { return Collections.EMPTY_SET; }
 		Set<IType> types = new LinkedHashSet();
 		for ( IType st : getAllTypes() ) {
@@ -174,7 +176,7 @@ public class TypesManager {
 		return types;
 	}
 
-	private void buildHierarchy(TypeNode<IType> currentNode) {
+	private void buildHierarchy(final TypeNode<IType> currentNode) {
 		Set<IType> subs = getDirectSubTypes(currentNode.getData());
 		// GuiUtils.debug("Sub types of " + currentNode.getData() + " = " + subs);
 		if ( !subs.isEmpty() ) {
@@ -197,7 +199,7 @@ public class TypesManager {
 		return new TypeTree(createSpeciesNodesFrom(hierarchy.find(get(msi.gaml.types.IType.AGENT))));
 	}
 
-	private TypeNode<SpeciesDescription> createSpeciesNodesFrom(TypeNode<IType> type) {
+	private TypeNode<SpeciesDescription> createSpeciesNodesFrom(final TypeNode<IType> type) {
 		TypeNode<SpeciesDescription> node = new TypeNode(getSpecies(type.getData().getSpeciesName()));
 		for ( TypeNode<IType> t : type.getChildren() ) {
 			node.addChild(createSpeciesNodesFrom(t));

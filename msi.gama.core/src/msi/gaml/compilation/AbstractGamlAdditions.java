@@ -77,28 +77,27 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		SpeciesProto ap = tempSpecies.remove(AGENT);
 		// "agent" has no super-species yet
 		SpeciesDescription agent = buildSpecies(ap, null, null, false);
+		((GamaGenericAgentType) Types.builtInTypes.get(IKeyword.AGENT)).setSpecies(agent);
 
-		// We then build "simulation", sub-species of "agent"
+		// We then build "model", sub-species of "agent"
 		SpeciesProto wp = tempSpecies.remove(MODEL);
 		ModelDescription model = (ModelDescription) buildSpecies(wp, null, agent, true);
 
-		// We close the first loop by putting agent "inside" simulation
+		// We close the first loop by putting agent "inside" model
 		agent.setEnclosingDescription(model);
 		model.addChild(agent);
+		// // We create the type "agent"
+		// initType("agent", new GamaGenericAgentType(), 11, 104, IA);
 
 		// We create "experiment" as the root of all experiments, sub-species of "agent"
 		SpeciesProto ep = tempSpecies.remove(EXPERIMENT);
 		SpeciesDescription experiment = buildSpecies(ep, null, agent, false);
 		model.addSpeciesType(experiment);
 
-		// // We then build "simulation", sub-species of "agent" and micro-species of "experiment"
-		// SpeciesProto wp = tempSpecies.remove(SIMULATION);
-		// SpeciesDescription world = buildSpecies(wp, experimentator, agent, true);
-
-		// We now can attach "simulation" as a micro-species of "experiment"
+		// We now can attach "model" as a micro-species of "experiment"
 		model.setEnclosingDescription(experiment);
 
-		// We then create all other built-in species and attach them to "simulation"
+		// We then create all other built-in species and attach them to "model"
 		for ( SpeciesProto proto : tempSpecies.values() ) {
 			model.addChild(buildSpecies(proto, model, agent, false));
 		}
@@ -163,7 +162,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 
 	protected void _type(final String keyword, final IType typeInstance, final int id, final int varKind,
 		final Class ... wraps) {
-		AbstractGamlAdditions.initType(keyword, typeInstance, id, varKind, wraps);
+		initType(keyword, typeInstance, id, varKind, wraps);
 	}
 
 	protected void _skill(final String name, final Class clazz, final ISkillConstructor helper,

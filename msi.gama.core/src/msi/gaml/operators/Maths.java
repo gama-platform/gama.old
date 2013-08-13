@@ -20,6 +20,7 @@ package msi.gaml.operators;
 
 import java.util.Random;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.runtime.IScope;
@@ -93,6 +94,35 @@ public class Maths {
 		}
 		java.lang.System.out.println("distDiff1 : " + distDiff1 + "  distDiff2 : " + distDiff2 + " t4 : " + t4 +
 			" t5 : " + t5 + " t6 : " + t6);
+
+		long t7 = 0;
+		long t8 = 0;
+		distDiff1 = 0;
+
+		for ( int i = 0; i < 1000000; i++ ) {
+			double a1, a2;
+			double x1 = rand.nextDouble();
+			double x2 = rand.nextDouble();
+			double y1 = rand.nextDouble();
+			double y2 = rand.nextDouble();
+			double z1 = 0.0;
+			double z2 = 0.0;
+			GamaPoint c2 = new GamaPoint(x2, y2, z2);
+
+			s1 = java.lang.System.currentTimeMillis();
+			if ( z1 == 0d && c2.getZ() == 0d ) {
+				a1 = hypot(x1, x2, y1, y2);
+			} else {
+				a1 = hypot(x1, x2, y1, y2, z1, z2);
+			}
+			t7 += java.lang.System.currentTimeMillis() - s1;
+			s1 = java.lang.System.currentTimeMillis();
+			a2 = hypot(x1, x2, y1, y2, z1, c2.getZ());
+			t8 += java.lang.System.currentTimeMillis() - s1;
+			distDiff1 += Math.abs(a1 - a2);
+		}
+		java.lang.System.out.println("with 0.0 check : " + t7 + "  with direct 3 parameters call : " + t8 +
+			" distance : " + distDiff1);
 		// java.lang.System.out.println("Infinity to int:" + (int) Double.POSITIVE_INFINITY);
 		// java.lang.System.out.println("NaN to int:" + (int) Double.NaN);
 		// GuiUtils.debug("(int) (1.0/0.0):" + (int) (1.0 / 0.0));
@@ -114,22 +144,19 @@ public class Maths {
 	}
 
 	@operator(value = { "^", "**" }, can_be_const = true)
-	@doc( value = "Returns the value of the left operand raised to the power of the right operand.",
-		examples = { " 2 ^ 3 --: 8" })
+	@doc(value = "Returns the value of the left operand raised to the power of the right operand.", examples = { " 2 ^ 3 --: 8" })
 	public static Double pow(final Double a, final Integer b) {
 		return pow(a, b.doubleValue());
 	}
 
 	@operator(value = { "^", "**" }, can_be_const = true)
-	@doc( value = "Returns the value of the left operand raised to the power of the right operand.",
-		examples = { " 2 ^ 3 --: 8" })
+	@doc(value = "Returns the value of the left operand raised to the power of the right operand.", examples = { " 2 ^ 3 --: 8" })
 	public static Double pow(final Integer a, final Double b) {
 		return pow(a.doubleValue(), b);
 	}
 
 	@operator(value = { "^", "**" }, can_be_const = true)
-	@doc( value = "Returns the value of the left operand raised to the power of the right operand.",
-			examples = { " 2 ^ 3 --: 8" })
+	@doc(value = "Returns the value of the left operand raised to the power of the right operand.", examples = { " 2 ^ 3 --: 8" })
 	public static Double pow(final Double a, final Double b) {
 		return Math.pow(a, b);
 	}
@@ -143,7 +170,7 @@ public class Maths {
 	}
 
 	@operator(value = "abs", can_be_const = true)
-	@doc( value = "Returns the absolute value of the operand.", examples = { " abs (-10) --: 10 ", "abs (10) --: 10" })
+	@doc(value = "Returns the absolute value of the operand.", examples = { " abs (-10) --: 10 ", "abs (10) --: 10" })
 	public static Integer abs(final Integer rv) {
 		return (rv ^ rv >> 31) - (rv >> 31);
 	}
@@ -169,8 +196,7 @@ public class Maths {
 	}
 
 	@operator(value = "asin", can_be_const = true)
-	@doc(value = "the arcsin of the operand",  examples = "asin (90) --: 1", see = {
-			"acos", "atan" })
+	@doc(value = "the arcsin of the operand", examples = "asin (90) --: 1", see = { "acos", "atan" })
 	public static Double asin(final Integer rv) {
 		return Math.asin(rv) * toDeg;
 	}
@@ -183,8 +209,7 @@ public class Maths {
 	}
 
 	@operator(value = "atan", can_be_const = true)
-	@doc(value = "the arctan of the operand", examples = "atan (45) --: 1", see = {
-			"acos", "asin" })
+	@doc(value = "the arctan of the operand", examples = "atan (45) --: 1", see = { "acos", "asin" })
 	public static Double atan(final Integer rv) {
 		return Math.atan(rv) * toDeg;
 	}
@@ -198,7 +223,7 @@ public class Maths {
 
 	@operator(value = "the hyperbolic tangent of the operand ", can_be_const = true)
 	@doc(value = "the hyperbolic tangent of the operand (which has to be expressed in decimal degrees).", examples = {
-			"tanh(0)  	--: 0.0", "tanh(1)  	--: 0.7615941559557649", "tanh(10) 	--: 0.9999999958776927" })
+		"tanh(0)  	--: 0.0", "tanh(1)  	--: 0.7615941559557649", "tanh(10) 	--: 0.9999999958776927" })
 	public static Double tanh(final Integer rv) {
 		return Math.tanh(rv);
 	}
@@ -213,7 +238,7 @@ public class Maths {
 
 	@operator(value = "cos", can_be_const = true)
 	@doc(value = "the cosinus of the operand.", special_cases = "Integers outside the range [0-359] are normalized.", examples = "cos (0) --: 1", see = {
-			"sin", "tan" })
+		"sin", "tan" })
 	public static Double cos(final Integer rv) {
 		double rad = toRad * rv;
 		return Math.cos(rad);
@@ -229,7 +254,7 @@ public class Maths {
 
 	@operator(value = "sin", can_be_const = true)
 	@doc(value = "the sinus of the operand (in decimal degrees).", special_cases = "Integers outside the range [0-359] are normalized.", examples = "cos (0) --: 0", see = {
-			"cos", "tan" })
+		"cos", "tan" })
 	public static Double sin(final Integer rv) {
 		double rad = toRad * rv;
 		return Math.sin(rad);
@@ -300,7 +325,7 @@ public class Maths {
 		}
 		return Math.log10(x);
 	}
-	
+
 	@operator(value = "-", can_be_const = true)
 	@doc(value = "Returns the opposite or the operand.", examples = "- (-56) 	--:	 56")
 	public static Double negate(final Double x) {
@@ -314,8 +339,8 @@ public class Maths {
 	}
 
 	@operator(value = "round", can_be_const = true)
-	@doc(value = "Returns the rounded value of the operand.", examples = { "round (0.51) 	--:	 1", "round (100.2) 	--: 	 100" }, see = {
-		"int", "with_precision" })
+	@doc(value = "Returns the rounded value of the operand.", examples = { "round (0.51) 	--:	 1",
+		"round (100.2) 	--: 	 100" }, see = { "int", "with_precision" })
 	public static Integer round(final Double v) {
 		int i;
 		if ( v >= 0 ) {
@@ -356,7 +381,7 @@ public class Maths {
 
 	@operator(value = "tan", can_be_const = true)
 	@doc(value = "the trigonometic tangent of the operand.", special_cases = "the argument is casted to an int before being evaluated. Integers outside the range [0-359] are normalized.", examples = "cos (180) --: 0", see = {
-			"cos", "sin" })
+		"cos", "sin" })
 	public static Double tan(final Integer v) {
 		double rad = toRad * v;
 		return Math.tan(rad);
@@ -607,8 +632,7 @@ public class Maths {
 	}
 
 	@operator(value = "hypot", can_be_const = true)
-	@doc(value =  "Returns sqrt(x2 +y2) without intermediate overflow or underflow.",
-			special_cases = "If either argument is infinite, then the result is positive infinity. If either argument is NaN and neither argument is infinite, then the result is NaN.")
+	@doc(value = "Returns sqrt(x2 +y2) without intermediate overflow or underflow.", special_cases = "If either argument is infinite, then the result is positive infinity. If either argument is NaN and neither argument is infinite, then the result is NaN.")
 	public static double hypot(final double x1, final double x2, final double y1, final double y2) {
 		// return Math.hypot(x2 - x1, y2 - y1); VERY SLOW !
 		final double dx = x2 - x1;

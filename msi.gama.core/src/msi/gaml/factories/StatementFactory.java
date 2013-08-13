@@ -117,14 +117,14 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 		}
 		IDescription previousEnclosingDescription = null;
 		if ( desc.getMeta().isRemoteContext() ) {
-			final String actualSpecies = computeSpecies(desc);
+			final SpeciesDescription actualSpecies = computeSpecies(desc);
 			if ( actualSpecies != null ) {
 				final SpeciesDescription s = desc.getSpeciesContext();
 				if ( s != null ) {
 					final IType t = s.getType();
 					desc.addTemp(MYSELF, t, Types.NO_TYPE, Types.NO_TYPE);
 					previousEnclosingDescription = desc.getEnclosingDescription();
-					desc.setEnclosingDescription(desc.getSpeciesDescription(actualSpecies));
+					desc.setEnclosingDescription(actualSpecies);
 
 					// FIXME ===> Model Description is lost if we are dealing with a built-in species !
 				}
@@ -139,11 +139,11 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 	@Override
 	protected List<ISymbol> privateCompileChildren(final IDescription desc) {
 		if ( desc.getMeta().isRemoteContext() ) {
-			final String actualSpecies = computeSpecies(desc);
+			final SpeciesDescription actualSpecies = computeSpecies(desc);
 			if ( actualSpecies != null ) {
 				final IType t = desc.getSpeciesContext().getType();
 				desc.addTemp(MYSELF, t, Types.NO_TYPE, Types.NO_TYPE);
-				desc.setEnclosingDescription(desc.getSpeciesDescription(actualSpecies));
+				desc.setEnclosingDescription(actualSpecies);
 			}
 		}
 		return super.privateCompileChildren(desc);
@@ -224,7 +224,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 
 	// Only for create ?
 	private void verifyInits(final StatementDescription cd, final Arguments ca) {
-		final SpeciesDescription sd = cd.getSpeciesDescription(computeSpecies(cd));
+		final SpeciesDescription sd = computeSpecies(cd);
 		final Collection<IDescription> args = cd.getArgs();
 		if ( sd == null && !args.isEmpty() ) {
 			cd.warning(
@@ -333,16 +333,24 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 		}
 	}
 
-	private String computeSpecies(final IDescription ce) {
+	private SpeciesDescription computeSpecies(final IDescription ce) {
 		// TODO is there a way to extract the species from a constant expression (like
 		// species("ant")) ? cf. Issue 145
 		final Facets ff = ce.getFacets();
 		final IExpression facet = ff.getExpr(SPECIES, ff.getExpr(AS, ff.getExpr(TARGET)));
 		if ( facet == null ) { return null; }
 		IType t = facet.getType();
-		if ( t.id() == IType.SPECIES || t.id() == IType.STRING && facet.isConst() ) { return facet.literalValue(); }
-		if ( t.isSpeciesType() ) { return t.getSpeciesName(); }
-		return facet.getContentType().getSpeciesName();
+		SpeciesDescription result = null;
+		if ( t.id() == IType.SPECIES && facet instanceof SpeciesConstantExpression ) {
+			result = ce.getSpeciesDescription(facet.literalValue());
+		} else if ( t.id() == IType.STRING && facet.isConst() ) {
+			result = ce.getSpeciesDescription(facet.literalValue());
+		} else if ( t.isSpeciesType() ) {
+			result = t.getSpecies();
+		} else {
+			result = facet.getContentType().getSpecies();
+		}
+		// GuiUtils.debug("StatementFactory.computeSpecies : " + result);
+		return result;
 	}
-
 }

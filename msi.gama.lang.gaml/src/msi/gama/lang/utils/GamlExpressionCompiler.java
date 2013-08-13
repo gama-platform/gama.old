@@ -24,7 +24,7 @@ import java.io.*;
 import java.text.*;
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
-import msi.gama.common.util.*;
+import msi.gama.common.util.StringUtils;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.gaml.util.GamlSwitch;
 import msi.gama.lang.gaml.resource.GamlResource;
@@ -116,7 +116,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			if ( desc != null ) {
 				// We are in a remote context, so 'my' refers to the calling agent
 				IExpression myself = desc.getVarExpr(MYSELF);
-				IDescription species = getSpeciesContext(myself.getType().getSpeciesName());
+				IDescription species = myself.getType().getSpecies();
 				IExpression var = species.getVarExpr(EGaml.getKeyOf(e));
 				return factory.createOperator(_DOT, desc, myself, var);
 			}
@@ -154,7 +154,8 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		}
 
 		// we verify and compile apart the calls to actions as operators
-		TypeDescription sd = getContext().getSpeciesDescription(left.getType().getSpeciesName());
+		// TypeDescription sd = getContext().getSpeciesDescription(left.getType().getSpeciesName());
+		TypeDescription sd = left.getType().getSpecies();
 		if ( sd != null ) {
 			StatementDescription action = sd.getAction(op);
 			if ( action != null ) {
@@ -222,12 +223,13 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		IExpression owner = compile(leftExpr);
 		if ( owner == null ) { return null; }
 		IType type = owner.getType();
-		TypeDescription species = getSpeciesContext(type.getSpeciesName());
+		TypeDescription species = type.getSpecies();
 		if ( species == null ) {
 			// It can only be a variable as 'actions' are not defined on simple objects
 			String var = EGaml.getKeyOf(fieldExpr);
 			TypeFieldExpression expr = (TypeFieldExpression) type.getGetter(var);
 			if ( expr == null ) {
+				species = type.getSpecies();
 				context.error("Field " + var + " unknown for type " + type, IGamlIssue.UNKNOWN_FIELD, leftExpr, var,
 					type.toString());
 				return null;
@@ -659,7 +661,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 				if ( remote_sd != null ) {
 					SpeciesDescription found_sd = (SpeciesDescription) temp_sd;
 
-					if ( remote_sd != temp_sd && !remote_sd.hasMacroSpecies(found_sd) ) {
+					if ( remote_sd != temp_sd && !remote_sd.isBuiltIn() && !remote_sd.hasMacroSpecies(found_sd) ) {
 						// GuiUtils.debug("GamlExpressionCompiler.caseVar : var " + s + " used in " + remote_sd +
 						// " declared in " + temp_sd);
 						context.error(
@@ -748,7 +750,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		long end = System.nanoTime();
 		double ms = (end - begin) / 1000000d;
 		count += end - begin;
-		GuiUtils.debug("   -> compilation of " + string + " in " + ms + " ms (Total: " + count / 1000000d + ")");
+		// GuiUtils.debug("   -> compilation of " + string + " in " + ms + " ms (Total: " + count / 1000000d + ")");
 		if ( result instanceof TerminalExpression ) {
 			cache.put(string, result);
 		}
