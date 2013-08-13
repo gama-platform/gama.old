@@ -13,7 +13,6 @@ import msi.gaml.expressions.ListExpression;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
 
-
 // SIS equation is defined by 
 // diff(S,t) = -beta * S * I / N + gamma * I;
 // diff(I,t) = beta * S * I / N - gamma * I;
@@ -32,7 +31,8 @@ public class ClassicalSISEquations {
 		return parentDesc;
 	}
 
-	public List<SingleEquationStatement> SIS(IExpression with_vars, IExpression with_params) {
+	public List<SingleEquationStatement> SIS(IExpression with_vars,
+			IExpression with_params) {
 		if (with_vars == null || with_params == null) {
 			return null;
 		}
@@ -45,23 +45,29 @@ public class ClassicalSISEquations {
 				null, new Facets("keyword", "="));
 
 		SingleEquationStatement eq1 = new SingleEquationStatement(stm);
-		eq1.function = GAML.getExpressionFactory().createExpr(
-				"diff(" + v[0].literalValue() + "," + v[2].literalValue() + ")", getDescription());
+		eq1.function = GAML.getExpressionFactory()
+				.createExpr(
+						"diff(" + v[0].literalValue() + ","
+								+ v[2].literalValue() + ")", getDescription());
 		eq1.expression = GAML.getExpressionFactory().createExpr(
 				"(- " + p[1].literalValue() + " * " + v[0].literalValue()
 						+ " * " + v[1].literalValue() + " / "
-						+ p[0].literalValue() + ") + (" + p[2].literalValue() + " * " + v[1].literalValue()
-						, getDescription());
+						+ p[0].literalValue() + ") + (" + p[2].literalValue()
+						+ " * " + v[1].literalValue() + ")", getDescription());
 		eq1.etablishVar();
 		cmd.add(eq1);
 
 		SingleEquationStatement eq2 = new SingleEquationStatement(stm);
-		eq2.function = GAML.getExpressionFactory().createExpr(
-				"diff(" + v[1].literalValue() + "," + v[2].literalValue() + ")", getDescription());
+		eq2.function = GAML.getExpressionFactory()
+				.createExpr(
+						"diff(" + v[1].literalValue() + ","
+								+ v[2].literalValue() + ")", getDescription());
 		eq2.expression = GAML.getExpressionFactory().createExpr(
 				"( " + p[1].literalValue() + " * " + v[0].literalValue()
 						+ " * " + v[1].literalValue() + " / "
-						+ p[0].literalValue() + ") + ( - " + p[2].literalValue() + " * " + v[1].literalValue(), getDescription());
+						+ p[0].literalValue() + ") + ( - "
+						+ p[2].literalValue() + " * " + v[1].literalValue()
+						+ ")", getDescription());
 		eq2.etablishVar();
 		cmd.add(eq2);
 
