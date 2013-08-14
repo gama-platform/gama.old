@@ -138,8 +138,12 @@ public class BatchAgent extends ExperimentAgent {
 		for ( repeatIndex = 0; repeatIndex < getSeeds().length; repeatIndex++ ) {
 			setSeed(getSeeds()[repeatIndex]);
 			createSimulation(currentSolution, false);
-			simulation.init(getScope());
+			// We manually init the scheduler of the simulation (so as to enable recursive inits for sub-agents)
+			GuiUtils.prepareForSimulation(simulation);
 			IScope scope = simulation.getScope();
+			simulation.getScheduler().insertAgentToInit(simulation, scope);
+			simulation.getScheduler().init(scope);
+
 			// This inner while loop runs the simulation and controls its execution
 			while (simulation != null && simulation.step(scope) &&
 				!Cast.asBool(scope, scope.evaluate(stopCondition, simulation))) {
