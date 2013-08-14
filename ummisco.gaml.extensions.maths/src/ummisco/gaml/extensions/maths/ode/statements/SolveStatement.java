@@ -1,8 +1,7 @@
-package ummisco.gaml.extensions.maths.statements;
+package ummisco.gaml.extensions.maths.ode.statements;
 
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -18,7 +17,9 @@ import msi.gaml.expressions.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
-import ummisco.gaml.extensions.maths.utils.*;
+import ummisco.gaml.extensions.maths.ode.utils.solver.DormandPrince853Solver;
+import ummisco.gaml.extensions.maths.ode.utils.solver.Rk4Solver;
+import ummisco.gaml.extensions.maths.ode.utils.solver.Solver;
 
 @facets(value = {
 	@facet(name = IKeyword.EQUATION, type = IType.STRING, optional = false),

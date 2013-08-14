@@ -1,6 +1,5 @@
-package ummisco.gaml.extensions.maths.utils;
+package ummisco.gaml.extensions.maths.ode.utils.solver;
 
-import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
@@ -8,7 +7,7 @@ import msi.gaml.expressions.IVarExpression;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
 import org.apache.commons.math3.ode.sampling.*;
-import ummisco.gaml.extensions.maths.statements.SystemOfEquationsStatement;
+import ummisco.gaml.extensions.maths.ode.statements.SystemOfEquationsStatement;
 
 public class Rk4Solver extends Solver {
 

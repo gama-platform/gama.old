@@ -1,9 +1,9 @@
-package ummisco.gaml.extensions.maths.utils.classicalEquations;
+package ummisco.gaml.extensions.maths.ode.utils.classicalEquations.populationDynamics;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import ummisco.gaml.extensions.maths.statements.SingleEquationStatement;
+import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement;
 
 import msi.gama.util.GAML;
 import msi.gaml.descriptions.IDescription;
@@ -15,16 +15,21 @@ import msi.gaml.statements.Facets;
 
 
 // SI equation is defined by 
-// diff(S,t) = -beta * S * I / N ;
-// diff(I,t) = beta * S * I / N ;
+// diff(x,t) =   x * (alpha - beta * y)  ;
+// diff(y,t) = - y * (delta - gamma * x) ;
 //
 // It is called using
-// equation eqSI type: SI with_vars: [S,I,t] with_params: [N,beta] {}
+// equation eqLV type: LV vars: [x,y,t] params: [alpha,beta,delta,gamma] {}
 
-public class ClassicalSIEquations {
+// alpha, prey reproduction rate without predators
+// beta, preys mortality rate due to predators
+// delta, predators mortality rate without preys
+// gamma, predators reproduction rate depending on the number of preys eaten 
+
+public class ClassicalLVEquations {
 	private IDescription parentDesc;
 
-	public ClassicalSIEquations(IDescription p) {
+	public ClassicalLVEquations(IDescription p) {
 		parentDesc = p;
 	}
 
@@ -32,7 +37,7 @@ public class ClassicalSIEquations {
 		return parentDesc;
 	}
 
-	public List<SingleEquationStatement> SI(IExpression with_vars, IExpression with_params) {
+	public List<SingleEquationStatement> LV(IExpression with_vars, IExpression with_params) {
 		if (with_vars == null || with_params == null) {
 			return null;
 		}
@@ -43,14 +48,14 @@ public class ClassicalSIEquations {
 		StatementDescription stm = new StatementDescription("=",
 				getDescription(), new ChildrenProvider(null), false, false,
 				null, new Facets("keyword", "="));
-
+		
 		SingleEquationStatement eq1 = new SingleEquationStatement(stm);
 		eq1.function = GAML.getExpressionFactory().createExpr(
 				"diff(" + v[0].literalValue() + "," + v[2].literalValue() + ")", getDescription());
 		eq1.expression = GAML.getExpressionFactory().createExpr(
-				"(- " + p[1].literalValue() + " * " + v[0].literalValue()
-						+ " * " + v[1].literalValue() + " / "
-						+ p[0].literalValue() + ")", getDescription());
+				v[0].literalValue() + " * " + 
+				" ( " + p[0].literalValue() + " - " + 
+						p[1].literalValue() + " * " + v[1].literalValue() + ")", getDescription());
 		eq1.etablishVar();
 		cmd.add(eq1);
 
@@ -58,9 +63,9 @@ public class ClassicalSIEquations {
 		eq2.function = GAML.getExpressionFactory().createExpr(
 				"diff(" + v[1].literalValue() + "," + v[2].literalValue() + ")", getDescription());
 		eq2.expression = GAML.getExpressionFactory().createExpr(
-				"( " + p[1].literalValue() + " * " + v[0].literalValue()
-						+ " * " + v[1].literalValue() + " / "
-						+ p[0].literalValue() + ")", getDescription());
+				"- " + v[1].literalValue() + " * " + 
+				" ( " + p[2].literalValue() + " - " + 
+						p[3].literalValue() + " * " + v[0].literalValue() + ")", getDescription());
 		eq2.etablishVar();
 		cmd.add(eq2);
 

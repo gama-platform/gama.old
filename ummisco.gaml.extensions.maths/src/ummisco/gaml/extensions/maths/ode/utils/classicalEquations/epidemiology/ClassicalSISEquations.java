@@ -1,9 +1,9 @@
-package ummisco.gaml.extensions.maths.utils.classicalEquations;
+package ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import ummisco.gaml.extensions.maths.statements.SingleEquationStatement;
+import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement;
 
 import msi.gama.util.GAML;
 import msi.gaml.descriptions.IDescription;
@@ -18,7 +18,7 @@ import msi.gaml.statements.Facets;
 // diff(I,t) = beta * S * I / N - gamma * I;
 //
 // It is called using
-// equation eqSIS type: SIS with_vars: [S,I,t] with_params: [N,beta,gamma]
+// equation eqSIS type: SIS vars: [S,I,t] params: [N,beta,gamma]
 
 public class ClassicalSISEquations {
 	private IDescription parentDesc;

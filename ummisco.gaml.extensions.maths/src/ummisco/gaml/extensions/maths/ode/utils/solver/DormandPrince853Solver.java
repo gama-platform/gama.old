@@ -1,4 +1,4 @@
-package ummisco.gaml.extensions.maths.utils;
+package ummisco.gaml.extensions.maths.ode.utils.solver;
 
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaList;
@@ -6,7 +6,7 @@ import msi.gaml.expressions.IVarExpression;
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator;
 import org.apache.commons.math3.ode.sampling.*;
-import ummisco.gaml.extensions.maths.statements.SystemOfEquationsStatement;
+import ummisco.gaml.extensions.maths.ode.statements.SystemOfEquationsStatement;
 
 public class DormandPrince853Solver extends Solver {
 

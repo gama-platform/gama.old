@@ -1,8 +1,9 @@
-package ummisco.gaml.extensions.maths.statements;
+package ummisco.gaml.extensions.maths.ode.statements;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -21,19 +22,27 @@ import msi.gaml.types.IType;
 import org.apache.commons.math3.exception.*;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 
-import ummisco.gaml.extensions.maths.utils.classicalEquations.ClassicalSEIREquations;
-import ummisco.gaml.extensions.maths.utils.classicalEquations.ClassicalSIEquations;
-import ummisco.gaml.extensions.maths.utils.classicalEquations.ClassicalSIREquations;
-import ummisco.gaml.extensions.maths.utils.classicalEquations.ClassicalSIRSEquations;
-import ummisco.gaml.extensions.maths.utils.classicalEquations.ClassicalSISEquations;
+import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.ClassicalSEIREquations;
+import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.ClassicalSIEquations;
+import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.ClassicalSIREquations;
+import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.ClassicalSIRSEquations;
+import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.ClassicalSISEquations;
+import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.populationDynamics.ClassicalLVEquations;
 
 @symbol(name = IKeyword.EQUATION, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @facets(value = {
-		@facet(name = IKeyword.NAME, type = IType.ID /* CHANGE */, optional = true),
-		@facet(name = IKeyword.TYPE, type = IType.ID /* CHANGE */, optional = true, values = { "SI", "SIS", "SIR", "SIRS", "SEIR", "LV" }, doc = @doc(value = "classical models (epidemiology or population dynamic)")),
-		@facet(name = "with_vars", type = IType.LIST, optional = true), 		
-		@facet(name = "with_params", type = IType.LIST, optional = true), 		
-		@facet(name = IKeyword.SIMULTANEOUSLY, type = IType.LIST, optional = true) }, omissible = IKeyword.NAME)
+		@facet(name = IKeyword.NAME, type = IType.ID /* CHANGE */, optional = false),
+		@facet(name = IKeyword.TYPE, type = IType.ID /* CHANGE */, optional = true, 
+			values = { "SI", "SIS", "SIR", "SIRS", "SEIR", "LV" }, 
+			doc = @doc(value = "classical models (epidemiology or population dynamic)")),
+		@facet(name = IKeyword.VARS, type = IType.LIST, optional = true), 		
+		@facet(name = IKeyword.PARAMS, type = IType.LIST, optional = true), 		
+		@facet(name = IKeyword.SIMULTANEOUSLY, type = IType.LIST, optional = true) }, 
+		combinations = { 
+			@combination({ IKeyword.NAME }),
+			@combination({ IKeyword.NAME, IKeyword.TYPE, IKeyword.VARS, IKeyword.PARAMS }), 
+			@combination({ IKeyword.NAME, IKeyword.SIMULTANEOUSLY })},
+		omissible = IKeyword.NAME)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
 /**
  * The class SystemOfEquationsStatement. 
@@ -77,21 +86,22 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 		if (getFacet(IKeyword.TYPE)!=null){ 
 			if(getFacet(IKeyword.TYPE).literalValue().equals("SIR")) {
 				cmd.clear();
-				cmd=new ClassicalSIREquations(getDescription()).SIR(getFacet("with_vars"),getFacet("with_params"));
+				cmd=new ClassicalSIREquations(getDescription()).SIR(getFacet(IKeyword.VARS),getFacet(IKeyword.PARAMS));
 			} else if(getFacet(IKeyword.TYPE).literalValue().equals("SI")) {
 				cmd.clear();
-				cmd=new ClassicalSIEquations(getDescription()).SI(getFacet("with_vars"),getFacet("with_params"));
+				cmd=new ClassicalSIEquations(getDescription()).SI(getFacet(IKeyword.VARS),getFacet(IKeyword.PARAMS));
 			} else if(getFacet(IKeyword.TYPE).literalValue().equals("SIS")) {
 				cmd.clear();
-				cmd=new ClassicalSISEquations(getDescription()).SIS(getFacet("with_vars"),getFacet("with_params"));
+				cmd=new ClassicalSISEquations(getDescription()).SIS(getFacet(IKeyword.VARS),getFacet(IKeyword.PARAMS));
 			} else if(getFacet(IKeyword.TYPE).literalValue().equals("SIRS")) {
 				cmd.clear();
-				cmd=new ClassicalSIRSEquations(getDescription()).SIRS(getFacet("with_vars"),getFacet("with_params"));
+				cmd=new ClassicalSIRSEquations(getDescription()).SIRS(getFacet(IKeyword.VARS),getFacet(IKeyword.PARAMS));
 			} else if(getFacet(IKeyword.TYPE).literalValue().equals("SEIR")) {
 				cmd.clear();
-				cmd=new ClassicalSEIREquations(getDescription()).SEIR(getFacet("with_vars"),getFacet("with_params"));
+				cmd=new ClassicalSEIREquations(getDescription()).SEIR(getFacet(IKeyword.VARS),getFacet(IKeyword.PARAMS));
 			} else if(getFacet(IKeyword.TYPE).literalValue().equals("LV")) {
-				GamaRuntimeException.warning( getFacet(IKeyword.TYPE).literalValue().equals("LV") + " is not yet implemented");				
+				cmd.clear();
+				cmd=new ClassicalLVEquations(getDescription()).LV(getFacet(IKeyword.VARS),getFacet(IKeyword.PARAMS));
 			} else {
 				GamaRuntimeException.error( getFacet(IKeyword.TYPE).literalValue().equals("SI") + " is not a recognized classical equation");
 			}

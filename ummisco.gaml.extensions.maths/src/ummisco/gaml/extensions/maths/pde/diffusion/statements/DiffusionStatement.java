@@ -1,31 +1,20 @@
-package ummisco.gaml.extensions.maths.statements;
+package ummisco.gaml.extensions.maths.pde.diffusion.statements;
 
-import java.util.Iterator;
-import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.topology.grid.GamaSpatialMatrix.GridPopulation;
-import msi.gama.precompiler.GamlAnnotations.combination;
-import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.GamaList;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.descriptions.*;
-import msi.gaml.expressions.*;
-import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
-import ummisco.gaml.extensions.maths.utils.*;
 
 @facets(value = { @facet(name = "var", type = IType.ID, optional = false),
 		@facet(name = "on", type = IType.ID, optional = false),
@@ -64,7 +53,7 @@ public class DiffusionStatement extends AbstractStatementSequence {
 		int rows = mmm.getRows(scope);
 		
 
-		IMatrix mask = new GamaFloatMatrix(scope,cols, rows);
+		IMatrix<Double> mask = new GamaFloatMatrix(scope,cols, rows);
 		
 		if (getFacet("mask") != null) {
 			mask = (IMatrix) getFacet("mask").value(scope);

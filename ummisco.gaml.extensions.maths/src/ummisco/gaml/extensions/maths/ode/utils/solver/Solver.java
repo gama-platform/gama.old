@@ -1,8 +1,7 @@
-package ummisco.gaml.extensions.maths.utils;
+package ummisco.gaml.extensions.maths.ode.utils.solver;
 
-import ummisco.gaml.extensions.maths.statements.SystemOfEquationsStatement;
+import ummisco.gaml.extensions.maths.ode.statements.SystemOfEquationsStatement;
 import msi.gama.runtime.IScope;
-import msi.gama.util.GamaList;
 
 public abstract class Solver {
 

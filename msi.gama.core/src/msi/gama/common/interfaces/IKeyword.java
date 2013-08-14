@@ -247,6 +247,7 @@ public interface IKeyword {
 	public static final String OVER = "over";
 	public static final String PARAM = "param";
 	public static final String PARAMETER = "parameter";
+	public static final String PARAMS = "params";	
 	public static final String PARENT = "parent";
 	public static final String PATH = "path";
 	public static final String PEERS = "peers";
@@ -352,6 +353,7 @@ public interface IKeyword {
 	public static final String VALUES = "values";
 	public static final String VAR = "var";
 	public static final String VARIATION = "variation";
+	public static final String VARS = "vars";	
 	public static final String VERSION = "version";
 	public static final String VERTEX = "vertex";
 	public static final String VIRTUAL = "virtual";
