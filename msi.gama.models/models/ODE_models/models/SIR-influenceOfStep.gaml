@@ -9,9 +9,9 @@ model si
 global { 
 	float beta <- 0.8 parameter: 'Beta (S->I)'; 	// The parameter Beta
 	float delta <- 0.01 parameter: 'Delta (I->R)'; // The parameter Delta
-	float s1<-1;
-	float s2<-10;
-	float s3<-100;
+	float s1<-1.0;
+	float s2<-10.0;
+	float s3<-100.0;
 	init {
 		create my_SIR_maths with: [h::1,mycycle::s1];
 		create my_SIR_maths with: [h::0.1,mycycle::s2];
@@ -48,7 +48,7 @@ entities {
 		} 
   
 //		equation_SIR var:[]; 
-				solve SIR method: "rk4" step: h cycle_length:mycycle{}
+		solve SIR method: "rk4" step: h cycle_length:mycycle {}
                 
 //    	solve SIR method: "rk4" step: h cycle_length:mycycle discretizing_step: 10 integrated_times: dT integrated_values: [dS, dI, dR] { }       
 	}
