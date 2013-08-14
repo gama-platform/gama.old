@@ -68,9 +68,8 @@ public class Stats {
 		"if it is a matrix of int, float or object, max returns the maximum of all the numerical elements (thus all elements for integer and float matrices)",
 		"if it is a matrix of geometry, max returns the maximum of the list of the geometries",
 		"if it is a matrix of another type, max returns the maximum of the elements transformed into float" }, see = { "min" }, examples = {
-		"max ([100, 23.2, 34.5]) 			--: 	100.0",
-		"max([{1.0;3.0},{3.0;5.0},{9.0;1.0},{7.0;8.0}]) 	--:  {9.0;1.0}" })
-	public static Object max(IScope scope, final IContainer l) {
+		"max ([100, 23.2, 34.5]) 			--: 	100.0", "max([{1.0;3.0},{3.0;5.0},{9.0;1.0},{7.0;8.0}]) 	--:  {9.0;1.0}" })
+	public static Object max(final IScope scope, final IContainer l) {
 		Number maxNum = null;
 		ILocation maxPoint = null;
 		for ( Object o : l ) {
@@ -102,7 +101,7 @@ public class Stats {
 		"if it is a matrix of int, float or object, min returns the minimum of all the numerical elements (thus all elements for integer and float matrices)",
 		"if it is a matrix of geometry, min returns the minimum of the list of the geometries",
 		"if it is a matrix of another type, min returns the minimum of the elements transformed into float" }, see = { "max" }, examples = { "min ([100, 23.2, 34.5]) 	--: 	23.2" })
-	public static Object min(IScope scope, final IContainer l) {
+	public static Object min(final IScope scope, final IContainer l) {
 		Number minNum = null;
 		ILocation minPoint = null;
 		for ( Object o : l ) {
@@ -134,7 +133,7 @@ public class Stats {
 		"if it is a matrix of int, float or object, mul returns the product of all the numerical elements (thus all elements for integer and float matrices)",
 		"if it is a matrix of geometry, mul returns the product of the list of the geometries",
 		"if it is a matrix of other types: mul transforms all elements into float and multiplies them", }, see = { "sum" }, examples = { "mul ([100, 23.2, 34.5]) 	--:		80040.0" })
-	public static Object product(IScope scope, final IContainer l) {
+	public static Object product(final IScope scope, final IContainer l) {
 		DataSet x = new DataSet();
 		DataSet y = null, z = null;
 		for ( Object o : l ) {
@@ -150,6 +149,10 @@ public class Stats {
 			} else {
 				x.addValue(Cast.asFloat(scope, o));
 			}
+		}
+		if ( x.getSize() == 0 ) {
+			if ( y == null ) { return 0.0; }
+			return new GamaPoint(0, 0, 0);
 		}
 		if ( y == null ) { return x.getProduct(); }
 		return new GamaPoint(x.getProduct(), y.getProduct(), z.getProduct());
@@ -167,9 +170,8 @@ public class Stats {
 		"if it is a matrix of int, float or object, sum returns the sum of all the numerical elements (i.e. all elements for integer and float matrices)",
 		"if it is a matrix of geometry, sum returns the sum of the list of the geometries",
 		"if it is a matrix of other types: sum transforms all elements into float and sums them", }, see = { "mul" }, examples = {
-		"sum ([12,10, 3]) 	--: 	25.0",
-		"sum([{1.0;3.0},{3.0;5.0},{9.0;1.0},{7.0;8.0}])		--: {20.0;17.0} " })
-	public static Object sum(IScope scope, final IContainer l) {
+		"sum ([12,10, 3]) 	--: 	25.0", "sum([{1.0;3.0},{3.0;5.0},{9.0;1.0},{7.0;8.0}])		--: {20.0;17.0} " })
+	public static Object sum(final IScope scope, final IContainer l) {
 		DataSet x = new DataSet();
 		DataSet y = null, z = null;
 		for ( Object o : l ) {
@@ -186,6 +188,11 @@ public class Stats {
 				x.addValue(Cast.asFloat(scope, o));
 			}
 		}
+		if ( x.getSize() == 0 ) {
+			// y should ALWAYS be null in that case...
+			if ( y == null ) { return 0.0; }
+			return new GamaPoint(0, 0, 0);
+		}
 		if ( y == null ) { return x.getAggregate(); }
 		return new GamaPoint(x.getAggregate(), y.getAggregate(), z.getAggregate());
 	}
@@ -193,8 +200,7 @@ public class Stats {
 	@operator(value = "mean", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, expected_content_type = {
 		IType.INT, IType.FLOAT, IType.POINT })
 	@doc(value = "the mean of all the elements of the operand", comment = "the elements of the operand are summed (see sum for more details about the sum of container elements ) and then the sum value is divided by the number of elements.", special_cases = { "if the container contains points, the result will be a point" }, examples = { "mean ([4.5, 3.5, 5.5, 7.0]) --: 5.125 " }, see = { "sum" })
-	public static Object getMean(final IScope scope, final IContainer l)
-		throws GamaRuntimeException {
+	public static Object getMean(final IScope scope, final IContainer l) throws GamaRuntimeException {
 		if ( l.length(scope) == 0 ) { return Double.valueOf(0d); }
 		Object s = sum(scope, l);
 		if ( s instanceof Number ) { return ((Number) s).doubleValue() / l.length(scope); }
@@ -253,8 +259,8 @@ public class Stats {
 
 	@operator(value = { "frequency_of" }, content_type = IType.INT, iterator = true)
 	@doc(value = "Returns a map with keys equal to the application of the right-hand argument (like collect) and values equal to the frequency of this key (i.e. how many times it has been obtained)", comment = "", examples = { "[ag1, ag2, ag3, ag4] frequency_of each.size 	--:   will return the different sizes as keys and the number of agents of this size as values" }, see = "as_map")
-	public static GamaMap frequencyOf(final IScope scope, final IContainer original,
-		final IExpression filter) throws GamaRuntimeException {
+	public static GamaMap frequencyOf(final IScope scope, final IContainer original, final IExpression filter)
+		throws GamaRuntimeException {
 		if ( original == null ) { return new GamaMap(); }
 		final GamaMap result = new GamaMap();
 		for ( Object each : original.iterable(scope) ) {
@@ -270,15 +276,11 @@ public class Stats {
 	}
 
 	@operator(value = "corR", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE)
-	@doc(value = "returns the Pearson correlation coefficient of two given vectors (right-hand operands) in given variable  (left-hand operand).", special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0",     examples = {
-	            "list X <- [2, 3, 1];",
-	            "list Y <- [2, 12, 4];",
-	            "float corResult <- 0.0;",
-	            "corResult <- corR(X, Y);",
-	            "write corResult; // -> 0.755928946018454"})
-	public static Object getCorrelationR(final IScope scope, final IContainer l1,
-		final IContainer l2) throws GamaRuntimeException, RCallerParseException,
-		RCallerExecutionException {
+	@doc(value = "returns the Pearson correlation coefficient of two given vectors (right-hand operands) in given variable  (left-hand operand).", special_cases = "if the lengths of two vectors in the right-hand aren't equal, returns 0", examples = {
+		"list X <- [2, 3, 1];", "list Y <- [2, 12, 4];", "float corResult <- 0.0;", "corResult <- corR(X, Y);",
+		"write corResult; // -> 0.755928946018454" })
+	public static Object getCorrelationR(final IScope scope, final IContainer l1, final IContainer l2)
+		throws GamaRuntimeException, RCallerParseException, RCallerExecutionException {
 		if ( l1.length(scope) == 0 || l2.length(scope) == 0 ) { return Double.valueOf(0d); }
 
 		if ( l1.length(scope) != l2.length(scope) ) { return Double.valueOf(0d); }
@@ -287,10 +289,10 @@ public class Stats {
 
 		String RPath = Preferences.userRoot().node("gama").get("RScript", null);
 		caller.setRscriptExecutable(RPath);
-//		caller.setRscriptExecutable("\"" + RPath + "\"");
-//		if ( java.lang.System.getProperty("os.name").startsWith("Mac") ) {
-//			caller.setRscriptExecutable(RPath);
-//		}
+		// caller.setRscriptExecutable("\"" + RPath + "\"");
+		// if ( java.lang.System.getProperty("os.name").startsWith("Mac") ) {
+		// caller.setRscriptExecutable(RPath);
+		// }
 
 		double[] vectorX = new double[l1.length(scope)];
 		double[] vectorY = new double[l2.length(scope)];
@@ -324,13 +326,10 @@ public class Stats {
 
 	@operator(value = "meanR", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "returns the mean value of given vector (right-hand operand) in given variable  (left-hand operand).", examples = {
-	            "list X <- [2, 3, 1];",
-	            "list Y <- [2, 12, 4];",
-	            "float meanResult <- 0.0;",
-	            "meanResult <- meanR(X);",
-	            "write meanResult; // -> 2.0"})	
-	public static Object getMeanR(final IScope scope, final IContainer l)
-		throws GamaRuntimeException, RCallerParseException, RCallerExecutionException {
+		"list X <- [2, 3, 1];", "list Y <- [2, 12, 4];", "float meanResult <- 0.0;", "meanResult <- meanR(X);",
+		"write meanResult; // -> 2.0" })
+	public static Object getMeanR(final IScope scope, final IContainer l) throws GamaRuntimeException,
+		RCallerParseException, RCallerExecutionException {
 		if ( l.length(scope) == 0 ) { return Double.valueOf(0d); }
 
 		double[] results;
@@ -338,10 +337,10 @@ public class Stats {
 
 		String RPath = Preferences.userRoot().node("gama").get("RScript", null);
 		caller.setRscriptExecutable(RPath);
-//		caller.setRscriptExecutable("\"" + RPath + "\"");
-//		if ( java.lang.System.getProperty("os.name").startsWith("Mac") ) {
-//			caller.setRscriptExecutable(RPath);
-//		}
+		// caller.setRscriptExecutable("\"" + RPath + "\"");
+		// if ( java.lang.System.getProperty("os.name").startsWith("Mac") ) {
+		// caller.setRscriptExecutable(RPath);
+		// }
 
 		double[] data = new double[l.length(scope)];
 		int i = 0;
@@ -359,23 +358,17 @@ public class Stats {
 
 	@operator(value = "R_compute", can_be_const = true, content_type = IType.LIST, index_type = IType.STRING)
 	@doc(value = "returns the value of the last left-hand operand of given R file (right-hand operand) in given vector  (left-hand operand).", examples = {
-            "list result;",
-            "result <- R_compute('C:/YourPath/Correlation.R');",
-            "Correlation.R file:",
-            "x <- c(1, 2, 3)",
-            "y <- c(1, 2, 4)",
-            "result <- cor(x, y)",
-            "Output:",
-            "result::[0.981980506061966]"})
-	public static GamaMap opRFileEvaluate(final IScope scope, final String RFile)
-		throws GamaRuntimeException, RCallerParseException, RCallerExecutionException {
+		"list result;", "result <- R_compute('C:/YourPath/Correlation.R');", "Correlation.R file:", "x <- c(1, 2, 3)",
+		"y <- c(1, 2, 4)", "result <- cor(x, y)", "Output:", "result::[0.981980506061966]" })
+	public static GamaMap opRFileEvaluate(final IScope scope, final String RFile) throws GamaRuntimeException,
+		RCallerParseException, RCallerExecutionException {
 		try {
 			// Call R
 			RCaller caller = new RCaller();
 
 			String RPath = Preferences.userRoot().node("gama").get("RScript", null);
 			caller.setRscriptExecutable(RPath);
-			//caller.setRscriptExecutable("\"" + RPath + "\"");
+			// caller.setRscriptExecutable("\"" + RPath + "\"");
 			// if(java.lang.System.getProperty("os.name").startsWith("Mac"))
 			// {
 			// caller.setRscriptExecutable(RPath);
@@ -385,8 +378,7 @@ public class Stats {
 			GamaList R_statements = new GamaList<String>();
 
 			// tmthai.begin----------------------------------------------------------------------------
-			String fullPath =
-				scope.getSimulationScope().getModel().getRelativeFilePath(RFile, true);
+			String fullPath = scope.getSimulationScope().getModel().getRelativeFilePath(RFile, true);
 			if ( DEBUG ) {
 				GuiUtils.debug("Stats.R_compute.RScript:" + RPath);
 				GuiUtils.debug("Stats.R_compute.RFile:" + RFile);
@@ -415,8 +407,7 @@ public class Stats {
 
 			GamaMap<String, IList> result = new GamaMap();
 
-			String var =
-				computeVariable(R_statements.get(R_statements.length(scope) - 1).toString());
+			String var = computeVariable(R_statements.get(R_statements.length(scope) - 1).toString());
 			caller.runAndReturnResult(var);
 			for ( String name : caller.getParser().getNames() ) {
 				Object[] results = null;
@@ -425,8 +416,8 @@ public class Stats {
 				// java.lang.System.out.println(results[i]);
 				// }
 				if ( DEBUG ) {
-					GuiUtils.debug("Stats.R_compute_param.caller.Name: '" + name + "' length: " +
-						results.length + " - Value: " + results.toString());
+					GuiUtils.debug("Stats.R_compute_param.caller.Name: '" + name + "' length: " + results.length +
+						" - Value: " + results.toString());
 				}
 				result.put(name, new GamaList(results));
 			}
@@ -443,20 +434,11 @@ public class Stats {
 
 	@operator(value = "R_compute_param", can_be_const = true, content_type = IType.LIST, index_type = IType.STRING)
 	@doc(value = "returns the value of the last left-hand operand of given R file (right-hand operand) in given vector  (left-hand operand), R file (first right-hand operand) reads the vector (second right-hand operand) as the parameter vector", examples = {
-	            "list X <- [2, 3, 1];",
-	            "list result;",
-	            "result <- R_compute_param('C:/YourPath/AddParam.R', X);",
-	            "write result at 0;",
-	            "AddParam.R file:",
-	            "v1 <- vectorParam[1]",
-	            "v2<-vectorParam[2]",
-	            "v3<-vectorParam[3]",
-	            "result<-v1+v2+v3",
-	            "Output:",
-	            "result::[10]"})
-	public static GamaMap operateRFileEvaluate(final IScope scope, final String RFile,
-		final IContainer param) throws GamaRuntimeException, RCallerParseException,
-		RCallerExecutionException {
+		"list X <- [2, 3, 1];", "list result;", "result <- R_compute_param('C:/YourPath/AddParam.R', X);",
+		"write result at 0;", "AddParam.R file:", "v1 <- vectorParam[1]", "v2<-vectorParam[2]", "v3<-vectorParam[3]",
+		"result<-v1+v2+v3", "Output:", "result::[10]" })
+	public static GamaMap operateRFileEvaluate(final IScope scope, final String RFile, final IContainer param)
+		throws GamaRuntimeException, RCallerParseException, RCallerExecutionException {
 		if ( param.length(scope) == 0 ) { throw GamaRuntimeException.error("Missing Parameter Exception"); }
 		try {
 			// Call R
@@ -464,7 +446,7 @@ public class Stats {
 
 			String RPath = Preferences.userRoot().node("gama").get("RScript", null);
 			caller.setRscriptExecutable(RPath);
-			//caller.setRscriptExecutable("\"" + RPath + "\"");
+			// caller.setRscriptExecutable("\"" + RPath + "\"");
 			// if(java.lang.System.getProperty("os.name").startsWith("Mac"))
 			// {
 			// caller.setRscriptExecutable(RPath);
@@ -485,8 +467,7 @@ public class Stats {
 			GamaList R_statements = new GamaList<String>();
 
 			// tmthai.begin----------------------------------------------------------------------------
-			String fullPath =
-				scope.getSimulationScope().getModel().getRelativeFilePath(RFile, true);
+			String fullPath = scope.getSimulationScope().getModel().getRelativeFilePath(RFile, true);
 			if ( DEBUG ) {
 				GuiUtils.debug("Stats.R_compute_param.RScript:" + RPath);
 				GuiUtils.debug("Stats.R_compute_param.Param:" + vectorParam.toString());
@@ -512,15 +493,13 @@ public class Stats {
 
 			GamaMap<String, IList> result = new GamaMap();
 
-			String var =
-				computeVariable(R_statements.get(R_statements.length(scope) - 1).toString());
+			String var = computeVariable(R_statements.get(R_statements.length(scope) - 1).toString());
 			caller.runAndReturnResult(var);
 
 			// DEBUG:
 			// java.lang.System.out.println("Name: '" + R_statements.length(scope) + "'");
 			if ( DEBUG ) {
-				GuiUtils.debug("Stats.R_compute_param.R_statements.length: '" +
-					R_statements.length(scope) + "'");
+				GuiUtils.debug("Stats.R_compute_param.R_statements.length: '" + R_statements.length(scope) + "'");
 			}
 
 			for ( String name : caller.getParser().getNames() ) {
@@ -528,8 +507,8 @@ public class Stats {
 				results = caller.getParser().getAsStringArray(name);
 				// java.lang.System.out.println("Name: '" + name + "'");
 				if ( DEBUG ) {
-					GuiUtils.debug("Stats.R_compute_param.caller.Name: '" + name + "' length: " +
-						results.length + " - Value: " + results.toString());
+					GuiUtils.debug("Stats.R_compute_param.caller.Name: '" + name + "' length: " + results.length +
+						" - Value: " + results.toString());
 				}
 
 				// for (int i = 0; i < results.length; i++) {
