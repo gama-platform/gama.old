@@ -1,10 +1,10 @@
 /**
- *  Equations_Predefined.gaml
+ *  all_predefined_equations.gaml
  *  Author: Benoit Gaudou
  *  Description: Presentation of all the predefined equation systems.
  *  Comparaison with hand-written systems to test them.
  */
-model EDO_predefined
+model all_predefined_equations
 
 global {
 	float mu <- 0.02;
@@ -13,6 +13,7 @@ global {
 	float beta0 <- 1884.95;
 	float beta1 <- 0.255;
 	float hKR4 <- 0.01;
+	
 	init {
 		create preSI  with: [h::0.1,N::500,I::1.0];
 		create userSI with: [h::0.1,N::500,I::1.0];

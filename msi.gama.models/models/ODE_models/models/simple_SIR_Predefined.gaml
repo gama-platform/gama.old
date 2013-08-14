@@ -26,7 +26,7 @@ entities {
    		
    		float h <- 0.01;
 
-		// Followinf predefined equation system is equivalent to following system:
+		// Following predefined equation system is equivalent to following system:
 		//		equation SIR_classic{
 		//			diff(S,t) = (- beta * S * I / N);
 		//			diff(I,t) = (beta * S * I / N) - (gamma * I);

@@ -17,12 +17,12 @@ global {
 	float yInit <- 2.0 min: 0.0;
 	
 	init{
-		create my_maths number:1 with:[x::xInit, y::yInit];
+		create LV_agt number:1 with:[x::xInit, y::yInit];
 	}
 }
 
 entities {
-	species my_maths {
+	species LV_agt {
 	    float t;  
 		float x ;
 		float y ;
@@ -40,14 +40,14 @@ experiment maths type: gui {
 	output { 
 		display LV refresh_every: 1 {
 			chart "SIR" type: series background: rgb('white') {
-				data 'x' value: first(my_maths).x color: rgb('green') ;				
-				data 'y' value: first(my_maths).y color: rgb('red') ;
+				data 'x' value: first(LV_agt).x color: rgb('green') ;				
+				data 'y' value: first(LV_agt).y color: rgb('red') ;
 			}
 		}
 		display LVphase refresh_every: 1 {			
 			chart "SIR" type: xy background: rgb('white') {
-				data 'x' value: first(my_maths).x color: rgb('green') ;				
-				data 'y' value: first(my_maths).y color: rgb('red') ;
+				data 'x' value: first(LV_agt).x color: rgb('green') ;				
+				data 'y' value: first(LV_agt).y color: rgb('red') ;
 			}
 		}			
 	}

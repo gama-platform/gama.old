@@ -1,68 +1,76 @@
 /**
- *  sis
- *  Author: 
+ *  SIR_switch.gaml
+ *  Author: tri and nghi
  *  Description: A compartmental SI model 
  */
-model si
+model SIR_switch
 
 global {
-	int initial_S <- 495 parameter: 'Number of Susceptible'; // The number of susceptible
-	int initial_I <- 5 parameter: 'Number of Infected'; // The number of infected
-	int initial_R <- 0 parameter: 'Number of Removed'; // The number of removed 
-	int number_Hosts <- initial_S + initial_I + initial_R; // Total number of individuals
-	int switch_threshold <- 120 parameter: 'Switch models at'; // threshold for switching models
-	SIR_model current_model; // serves as an interface, it is transparent to user if model is maths or IBM
-	float beta <- 0.1 parameter: 'Beta (S->I)'; // The parameter Beta
-	float delta <- 0.01 parameter: 'Delta (I->R)'; // The parameter Delta
-	float beta_maths;
-	bool local_infection <- true parameter: 'Is the infection is computed locally?';
-	int gridSize <- 1; //size of the grid
-	int neighbours_range <- 2 min: 1 max: 5 parameter: 'Size of the neighbours';
-	float neighbourhoodSize <- 1.0; // average size of the neighbourhood (in number of cells)	
-	bool randomWalk <- true parameter: 'Random Walk'; // 1: agents new positions are determined according to a random walk process, 
+	// Parameters
+	int initial_S <- 495 ; // The number of susceptible
+	int initial_I <- 5   ; // The number of infected
+	int initial_R <- 0   ; // The number of removed 
+
+	float beta <- 0.1   ; // The parameter Beta
+	float delta <- 0.01 ; // The parameter Delta	
+	
+	int switch_threshold <- 120 ; // threshold for switching models
+	bool local_infection <- true ;
+	int neighbours_range <- 2 ;
+	bool local_random_walk <- true ; 
+	// true: agents new positions are determined according to a random walk process, 
 	// new position is in the neighbourhood;
-	// 0: agents new position is selected randomly anywhere in the grid.
+	// false: agents new position is selected randomly anywhere in the grid.
+	
+	
+	// Global variables
+	int grid_size <- 50;
+	int number_Hosts <- initial_S + initial_I + initial_R; // Total number of individuals
+	SIR_model current_model; // serves as an interface, it is transparent to user if model is maths or IBM
+
+	float beta_maths;
+	int gridSize <- 1; //size of the grid
+	float neighbourhoodSize <- 1.0; // average size of the neighbourhood (in number of cells)	
 	float adjust <- 0.721; // to adjust math model to ABM when using random walk
 	bool computeInfectionFromS <- bool(initial_S < initial_I); // if true, use the S list to compute infections. If false, use I list.
 	// the purpose is to minimize the number of evaluation by using the smallest list.
-	float R0;
+	
 	init {
 		create new_scheduler;
 		/* determine the size of the neighbourhood and the average count of hosts neighbours */
-		set gridSize <- list(sir_grid) count (each);
-		let nbCells type: int <- 0;
-		loop cell over: list(sir_grid) {
-			set nbCells <- nbCells + (cell.neighbours count (each));
+		gridSize <- sir_grid count (each);
+		int nbCells <- 0;
+		
+		loop cell over: sir_grid {
+			nbCells <- nbCells + (cell.neighbours count (each));
 		}
 
-		set neighbourhoodSize <- nbCells / gridSize + 1; // +1 to count itself in the neighbourhood;
-		set beta_maths <- beta * neighbourhoodSize * number_Hosts / gridSize * adjust;
-		do write message: 'Switch will happen at population sizes around ' + string(switch_threshold);
-		set R0 <- beta / delta;
-		do write message: 'Basic Reproduction Number: ' + string(R0) + '\n';
+		neighbourhoodSize <- nbCells / gridSize + 1; // +1 to count itself in the neighbourhood;
+		beta_maths <- beta * neighbourhoodSize * number_Hosts / gridSize * adjust;
+		
+		write 'Switch will happen at population sizes around ' +switch_threshold;
+		write 'Basic Reproduction Number (R0): ' + string(beta / delta) + '\n';
+		
 		create switch_model {
-			set threshold_to_IBM <- switch_threshold;
-			set threshold_to_Maths <- switch_threshold;
+			threshold_to_IBM <- switch_threshold;
+			threshold_to_Maths <- switch_threshold;
 		}
 
 		if (first(switch_model).start_with_IBM) {
-		//		do write message: 'Starting with IBM model';
-			create IBM_model {
-			}
-
-			set current_model <- first(IBM_model);
+		//		write 'Starting with IBM model';
+			create IBM_model;
+			current_model <- first(IBM_model);
 		} else {
-		//		do write message: 'Starting with Maths model';
-			create Math_model {
-			}
-
-			set current_model <- first(Math_model);
+		//		write 'Starting with Maths model';
+			create Math_model;
+			current_model <- first(Math_model);
 		}
 
 		current_model.S <- initial_S;
 		current_model.I <- initial_I;
 		current_model.R <- initial_R;
 		current_model.N <- number_Hosts;
+		
 		ask current_model {
 			do initialize;
 		}
@@ -83,15 +91,15 @@ global {
 	 * computing infection from I has a complexity of I*ngb.
 	 * this reflex determine which method has the lowest cost.
 	 * */
-		set computeInfectionFromS <- bool((Host as list) count (each.is_susceptible) < (Host as list) count (each.is_infected));
+		computeInfectionFromS <- bool((Host as list) count (each.is_susceptible) < (Host as list) count (each.is_infected));
 	}
 
 }
 
-environment width: 50 height: 50 {
-	grid sir_grid width: 50 height: 50 {
+environment width: grid_size height: grid_size {
+	grid sir_grid width: grid_size height: grid_size {
 		rgb color <- rgb('black');
-		list neighbours of: sir_grid <- (self neighbours_at neighbours_range) of_species sir_grid;
+		list<sir_grid> neighbours <- (self neighbours_at neighbours_range) of_species sir_grid;
 	}
 
 }
@@ -105,12 +113,12 @@ entities {
 		int threshold_to_Maths <- 50; // threshold under which the model swith to Maths model 
 		bool start_with_IBM function: { (initial_S < threshold_to_IBM or initial_I < threshold_to_IBM) };
 
-		//		task switch_to_IBM weight:1 when: (current_model.model_type = 'Maths'){
+		// task switch_to_IBM weight:1 when: (current_model.model_type = 'Maths'){
 		reflex switch_to_IBM when: (current_model.model_type = 'Maths') {
 			if (current_model.S < threshold_to_IBM or current_model.I < threshold_to_IBM) {
-				do write message: 'Switch to IBM model at cycle ' + string(cycle);
+				write 'Switch to IBM model at cycle ' + string(cycle);
 				create IBM_model {
-				//				do write message: 'current_model.S: ' + string(current_model.S);
+				//	do write message: 'current_model.S: ' + string(current_model.S);
 					self.S <- current_model.S;
 					self.I <- current_model.I;
 					self.R <- current_model.R;
@@ -122,7 +130,7 @@ entities {
 					do remove_model;
 				}
 
-				set current_model <- first(IBM_model);
+				current_model <- first(IBM_model);
 			}
 
 		}
@@ -130,7 +138,7 @@ entities {
 		reflex switch_to_Maths when: (current_model.model_type = 'IBM') {
 		//			do write message: 'now is IBM';
 			if (current_model.S > threshold_to_Maths and current_model.I > threshold_to_Maths) {
-				do write message: 'Switch to Maths model at cycle ' + string(cycle);
+				write 'Switch to Maths model at cycle ' + cycle;
 				create Math_model {
 					self.S <- current_model.S;
 					self.I <- current_model.I;
@@ -143,7 +151,7 @@ entities {
 					do remove_model;
 				}
 
-				set current_model <- first(Math_model);
+				current_model <- first(Math_model);
 			}
 
 		}
@@ -156,39 +164,40 @@ entities {
 		float R;
 		int N;
 		string model_type <- 'none';
+		
 		action remove_model {
 		//		do write message: 'removing model';
 			do die;
 		}
 
-		action initialize {
-		}
+		action initialize ;
 
 	}
 
 	species IBM_model schedules: [] parent: SIR_model {
 		string model_type <- 'IBM';
+		
 		action initialize {
-			do write message: 'Initializing IBM model with S=' + string(round(S)) + ', I=' + string(round(I)) + ', R=' + string(round(R)) + '\n';
+			write 'Initializing IBM model with S=' + round(S) + ', I=' + round(I) + ', R=' + round(R) + '\n';
 			create Host number: round(S) {
-				set is_susceptible <- true;
-				set is_infected <- false;
-				set is_immune <- false;
-				set color <- rgb('green');
+				is_susceptible <- true;
+				is_infected <- false;
+				is_immune <- false;
+				color <- rgb('green');
 			}
 
 			create Host number: round(I) {
-				set is_susceptible <- false;
-				set is_infected <- true;
-				set is_immune <- false;
-				set color <- rgb('red');
+				is_susceptible <- false;
+				is_infected <- true;
+				is_immune <- false;
+				color <- rgb('red');
 			}
 
 			create Host number: round(R) {
-				set is_susceptible <- false;
-				set is_infected <- false;
-				set is_immune <- true;
-				set color <- rgb('yellow');
+				is_susceptible <- false;
+				is_infected <- false;
+				is_immune <- true;
+				color <- rgb('yellow');
 			}
 			//force evaluation at first step;
 			do count;
@@ -199,9 +208,9 @@ entities {
 		}
 
 		action count {
-			set S <- Host count (each.is_susceptible);
-			set I <- Host count (each.is_infected);
-			set R <- Host count (each.is_immune);
+			S <- Host count (each.is_susceptible);
+			I <- Host count (each.is_infected);
+			R <- Host count (each.is_immune);
 		}
 
 		action remove_model {
@@ -217,8 +226,9 @@ entities {
 	species Math_model schedules: [] parent: SIR_model {
 		string model_type <- 'Maths';
 		float t;
+		
 		action initialize {
-			do write message: 'Initializing Maths model with S=' + string(S) + ', I=' + string(I) + ', R=' + string(R) + '\n';
+			write 'Initializing Maths model with S=' + S + ', I=' + I + ', R=' + R + '\n';
 		}
 
 		equation SIR {
@@ -227,9 +237,7 @@ entities {
 			diff(R, t) = (delta * I);
 		}
 
-		solve SIR method: "rk4" step: 0.01 {
-		}
-
+		solve SIR method: "rk4" step: 0.01 ;
 	}
 
 	species Host schedules: [] skills: [moving] {
@@ -238,27 +246,29 @@ entities {
 		bool is_immune <- false;
 		rgb color <- rgb('green');
 		sir_grid myPlace;
+		
 		/* next function computes the number of neighbours of the agent */
 		int ngb_number function: {
-		//        						((myPlace.neighbours + myPlace) collect (each.agents)) of_species Host count(each)-1// -1 is because the agent counts itself
-		((self) neighbours_at (2)) of_species Host count (each) - 1 };
+			//    ((myPlace.neighbours + myPlace) collect (each.agents)) of_species Host count(each)-1// -1 is because the agent counts itself
+			((self) neighbours_at (2)) of_species Host count (each) - 1 };
+		
 		init {
-			set myPlace <- one_of(sir_grid as list);
-			set location <- myPlace.location;
+			myPlace <- one_of(sir_grid as list);
+			location <- myPlace.location;
 		}
 
 		reflex basic_move {
-			if (!randomWalk) {
+			if (!local_random_walk) {
 			/* random walk among neighbours */
-				set myPlace <- one_of(myPlace.neighbours);
-				set location <- myPlace.location;
+				myPlace <- one_of(myPlace.neighbours);
+				location <- myPlace.location;
 				//				do wander amplitude:800;
 				//				set myPlace <- first(sir_grid overlapping (self)) ;      		
 
 			} else {
 			/* move agent to a random place anywhere in the grid */
-				set myPlace <- any(sir_grid);
-				set location <- myPlace.location;
+				myPlace <- any(sir_grid);
+				location <- myPlace.location;
 			}
 
 		}
@@ -279,23 +289,20 @@ entities {
 			loop hst over: ((self) neighbours_at (2)) of_species Host {
 				if (Host(hst).is_susceptible) {
 					if (flip(beta)) {
-						set hst.is_susceptible <- false;
-						set hst.is_infected <- true;
-						set hst.is_immune <- false;
-						set hst.color <- rgb('red');
+						hst.is_susceptible <- false;
+						hst.is_infected <- true;
+						hst.is_immune <- false;
+						hst.color <- rgb('red');
 					}
-
 				}
-
 			}
-
 		}
 
 		reflex become_immune when: (is_infected and flip(delta)) {
-			set is_susceptible value: false;
-			set is_infected value: false;
-			set is_immune value: true;
-			set color value: rgb('yellow');
+			is_susceptible <- false;
+			is_infected <- false;
+			is_immune <- true;
+			color <- rgb('yellow');
 		}
 
 		//        reflex shallDie when: flip(nu) {
@@ -312,19 +319,22 @@ entities {
 	}
 
 	species my_SIR_maths {
-		float alpha <- 0.01 min: 0.0 max: 1.0;
-		float beta1 <- 0.1 min: 0.0 max: 1000.0;
-		int N <- 500 min: 1 max: 3000;
-		int iInit <- 1;
 		float t;
 		float I <- float(iInit);
 		float S <- N - I;
 		float R <- 0.0;
+				
+		float alpha <- 0.01 min: 0.0 max: 1.0;
+		float beta1 <- 0.1 min: 0.0 max: 1000.0;
+		int N <- 500 min: 1 max: 3000;
+		int iInit <- 1;
+
 		equation SIR {
 			diff(S, t) = (-beta1 * S * I / N);
 			diff(I, t) = (beta1 * S * I / N) - (alpha * I);
 			diff(R, t) = (alpha * I);
 		}
+		
 		solve SIR method:"rk4" step:0.01;
 
 	}
@@ -332,6 +342,20 @@ entities {
 }
 
 experiment mysimulation type: gui {
+	parameter 'Number of Susceptible' type: int var: initial_S <- 495 category: "Initial population"; 
+	parameter 'Number of Infected'    type: int var: initial_I <- 5   category: "Initial population";
+	parameter 'Number of Removed'     type: int var: initial_R <- 0   category: "Initial population";
+
+	parameter 'Beta (S->I)'  type: float var: beta <- 1.0   category: "Parameters";
+	parameter 'Delta (I->R)' type: float var: delta <- 0.01 category: "Parameters";	
+	
+	parameter 'Is the infection is computed locally?' type: bool var: local_infection <- true category: "Infection";
+	parameter 'Size of the neighbours' type: int var: neighbours_range <- 2 min:1 max: 5 category: "Infection";
+
+	parameter 'Local Random Walk' type: bool var: local_random_walk <- true category: "Agents";	
+	
+	parameter 'Switch models at' type: int var: switch_threshold <- 120 category: "Model";
+	
 	output {
 		display 'sir display' {
 			grid sir_grid lines: rgb("black");

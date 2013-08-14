@@ -46,30 +46,30 @@ experiment maths type: gui {
 	output { 
 		display LV refresh_every: 1 {
 			chart "LV_h1" type: series background: rgb('white') position: {0,0} size:{1,0.33} {
-				data 'x' value: first(agt_LV where [each.h = 1]).x color: rgb('green') ;				
-				data 'y' value: first(agt_LV where [each.h = 1]).y color: rgb('red') ;
+				data 'x' value: first(agt_LV where (each.h = 1)).x color: rgb('green') ;				
+				data 'y' value: first(agt_LV where (each.h = 1)).y color: rgb('red') ;
 			}
 			chart "LV_h0.1" type: series background: rgb('white') position: {0,0.33} size:{1,0.33} {
-				data 'x' value: first(agt_LV where [each.h = 0.1]).x color: rgb('green') ;				
-				data 'y' value: first(agt_LV where [each.h = 0.1]).y color: rgb('red') ;
+				data 'x' value: first(agt_LV where (each.h = 0.1)).x color: rgb('green') ;				
+				data 'y' value: first(agt_LV where (each.h = 0.1)).y color: rgb('red') ;
 			}
 			chart "LV_h0.01" type: series background: rgb('white') position: {0,0.66} size:{1,0.33} {
-				data 'x' value: first(agt_LV where [each.h = 0.01]).x color: rgb('green') ;				
-				data 'y' value: first(agt_LV where [each.h = 0.01]).y color: rgb('red') ;
+				data 'x' value: first(agt_LV where (each.h = 0.01)).x color: rgb('green') ;				
+				data 'y' value: first(agt_LV where (each.h = 0.01)).y color: rgb('red') ;
 			}			
 		}
 		display LVphase refresh_every: 1 {			
 			chart "LV_h1" type: xy background: rgb('white') position: {0,0} size:{0.33,1} {
-				data 'x' value: first(agt_LV where [each.h = 1]).x color: rgb('green') ;				
-				data 'y' value: first(agt_LV where [each.h = 1]).y color: rgb('red') ;
+				data 'x' value: first(agt_LV where (each.h = 1)).x color: rgb('green') ;				
+				data 'y' value: first(agt_LV where (each.h = 1)).y color: rgb('red') ;
 			}
 			chart "LV_h0.1" type: xy background: rgb('white') position: {0.33,0} size:{0.33,1} {
-				data 'x' value: first(agt_LV where [each.h = 0.1]).x color: rgb('green') ;				
-				data 'y' value: first(agt_LV where [each.h = 0.1]).y color: rgb('red') ;
+				data 'x' value: first(agt_LV where (each.h = 0.1)).x color: rgb('green') ;				
+				data 'y' value: first(agt_LV where (each.h = 0.1)).y color: rgb('red') ;
 			}
 			chart "LV_h0.01" type: xy background: rgb('white') position: {0.66,0} size:{0.33,1} {
-				data 'x' value: first(agt_LV where [each.h = 0.01]).x color: rgb('green') ;				
-				data 'y' value: first(agt_LV where [each.h = 0.01]).y color: rgb('red') ;
+				data 'x' value: first(agt_LV where (each.h = 0.01)).x color: rgb('green') ;				
+				data 'y' value: first(agt_LV where (each.h = 0.01)).y color: rgb('red') ;
 			}	
 		}			
 	}
