@@ -20,6 +20,7 @@ package msi.gama.kernel.batch;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -70,6 +71,7 @@ public class TabuSearch extends LocalSearchAlgorithm {
 		final Map<String, Object> endingCritParams = new Hashtable<String, Object>();
 		endingCritParams.put("Iteration", Integer.valueOf(nbIt));
 		while (!stoppingCriterion.stopSearchProcess(endingCritParams)) {
+			GuiUtils.debug("TabuSearch.findBestSolution while stoppingCriterion " + endingCritParams);
 			final List<ParametersSet> neighbors = neighborhood.neighbor(bestSolutionAlgo);
 			neighbors.removeAll(tabuList);
 			if ( neighbors.isEmpty() ) {
@@ -86,6 +88,7 @@ public class TabuSearch extends LocalSearchAlgorithm {
 			ParametersSet bestNeighbor = null;
 
 			for ( final ParametersSet neighborSol : neighbors ) {
+				GuiUtils.debug("TabuSearch.findBestSolution for parametersSet " + neighborSol);
 				if ( neighborSol == null ) {
 					continue;
 				}
@@ -93,16 +96,22 @@ public class TabuSearch extends LocalSearchAlgorithm {
 				if ( neighborFitness == null ) {
 					neighborFitness = Double.valueOf(currentExperiment.launchSimulationsWithSolution(neighborSol));
 					nbIt++;
+				} else {
+					continue;
 				}
 				testedSolutions.put(neighborSol, neighborFitness);
 
-				if ( isMaximize() && neighborFitness.doubleValue() > bestFitnessAlgo || !isMaximize() &&
-					neighborFitness.doubleValue() < bestFitnessAlgo ) {
+				GuiUtils.debug("TabuSearch.findBestSolution neighbourFitness = " + neighborFitness.doubleValue() +
+					" bestFitnessAlgo = " + bestFitnessAlgo + " bestFitness = " + getBestFitness() +
+					" current fitness = " + currentFitness);
+				boolean neighFitnessGreaterThanBest = neighborFitness.doubleValue() > bestFitnessAlgo;
+				if ( isMaximize() && neighFitnessGreaterThanBest || !isMaximize() && !neighFitnessGreaterThanBest ) {
 					bestNeighbor = neighborSol;
 					bestFitnessAlgo = neighborFitness.doubleValue();
 				}
+				boolean curFitnessGreaterThanBest = currentFitness > getBestFitness();
 
-				if ( isMaximize() && currentFitness > getBestFitness() || !isMaximize() && currentFitness < getBestFitness() ) {
+				if ( isMaximize() && curFitnessGreaterThanBest || !isMaximize() && !curFitnessGreaterThanBest ) {
 					setBestSolution(new ParametersSet(bestSolutionAlgo));
 					setBestFitness(currentFitness);
 				}
@@ -145,7 +154,7 @@ public class TabuSearch extends LocalSearchAlgorithm {
 	}
 
 	@Override
-	public void addParametersTo(final List<IParameter.Batch> params, BatchAgent agent) {
+	public void addParametersTo(final List<IParameter.Batch> params, final BatchAgent agent) {
 		super.addParametersTo(params, agent);
 		params.add(new ParameterAdapter("Tabu list size", IExperimentSpecies.BATCH_CATEGORY_NAME, IType.INT) {
 
