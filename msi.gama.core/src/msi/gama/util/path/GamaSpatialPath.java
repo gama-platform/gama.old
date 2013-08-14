@@ -37,7 +37,7 @@ import com.vividsolutions.jts.geom.*;
 
 public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 
-	GamaList<IShape> segments;
+	GamaList<GamaShape> segments;
 	IShape shape = null;
 	Map<IShape, IShape> realObjects; // cle = bout de geometrie
 
@@ -65,7 +65,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 		source = start;
 		this.target = target;
 		this.graph = g;
-		this.segments = new GamaList<IShape>();
+		this.segments = new GamaList<GamaShape>();
 
 		realObjects = new HashMap<IShape, IShape>();
 		graphVersion = 0;
@@ -114,14 +114,14 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 						edge2 = GeometryUtils.split_at(edge2, falseTarget).get(0);
 					}
 					if ( ag != null && graph != null && graph.isAgentEdge() ) {
-						realObjects.put(edge2, ag);
+						realObjects.put(edge2.getGeometry(), ag);
 					} else {
-						realObjects.put(edge2, edge);
+						realObjects.put(edge2.getGeometry(), edge);
 					}
-					segments.add(edge2);
+					segments.add((GamaShape) edge2.getGeometry());
 					
 				} else {
-					segments.add(edge);
+					segments.add((GamaShape) edge.getGeometry());
 				}
 				cpt++;
 				// segmentsInGraph.put(agents, agents);
@@ -138,12 +138,12 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 			source = nodes.get(0);
 			target = nodes.get(nodes.size() - 1);
 		}
-		segments = new GamaList<IShape>();
+		segments = new GamaList<GamaShape>();
 		realObjects = new GamaMap<IShape, IShape>();
 		graph = g;
 
 		for ( int i = 0, n = nodes.size(); i < n - 1; i++ ) {
-			segments.add(GamaGeometryType.buildLine(nodes.get(i).getLocation(), nodes.get(i + 1).getLocation()));
+			segments.add((GamaShape) GamaGeometryType.buildLine(nodes.get(i).getLocation(), nodes.get(i + 1).getLocation()));
 			IAgent ag = nodes.get(i).getAgent();
 			if ( ag != null ) {
 				// MODIF: put?
@@ -162,7 +162,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 
 	@Override
 	public GamaSpatialPath copy(final IScope scope) {
-		return new GamaSpatialPath(getGraph(), source, target, segments);
+		return new GamaSpatialPath(getGraph(), source, target, edges);
 	}
 
 	@Override
@@ -181,7 +181,7 @@ public class GamaSpatialPath extends GamaPath<IShape, IShape> {
 	// }
 
 	@Override
-	public IList<IShape> getEdgeGeometry() {
+	public IList getEdgeGeometry() {
 		// GamaList<IShape> ags = new GamaList<IShape>();
 		// ags.addAll(new HashSet<IShape>(realObjects.values()));
 		// return ags;

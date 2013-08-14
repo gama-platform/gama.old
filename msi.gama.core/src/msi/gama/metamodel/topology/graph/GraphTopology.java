@@ -70,6 +70,7 @@ public class GraphTopology extends AbstractTopology {
 		ISpatialGraph graph = getPlaces();
 		boolean sourceNode = graph.containsVertex(source);
 		boolean targetNode = graph.containsVertex(target);
+		boolean isDirected = graph.isDirected();
 		if (sourceNode && targetNode)
 			return (GamaSpatialPath) graph.computeShortestPathBetween(source, target);
 		
@@ -77,14 +78,15 @@ public class GraphTopology extends AbstractTopology {
 		
 		final IAgentFilter filter = In.edgesOf(getPlaces());
 
-		if (!sourceNode)
-			edgeS =
-				source instanceof ILocation ? getAgentClosestTo((ILocation) source, filter) : getAgentClosestTo(source,
+			if (!sourceNode)
+				edgeS =
+					source instanceof ILocation ? getAgentClosestTo((ILocation) source, filter) : getAgentClosestTo(source,
+						filter);
+			if (!targetNode)
+			edgeT =
+				target instanceof ILocation ? getAgentClosestTo((ILocation) target, filter) : getAgentClosestTo(target,
 					filter);
-		if (!targetNode)
-		edgeT =
-			target instanceof ILocation ? getAgentClosestTo((ILocation) target, filter) : getAgentClosestTo(target,
-				filter);
+		
 		if ( (edgeS == null && !sourceNode) || (edgeT == null && !targetNode) ) { return null; }
 		if (getPlaces().isDirected()) 
 			return pathBetweenCommonDirected(edgeS, edgeT, source, target,sourceNode,targetNode);
@@ -154,12 +156,20 @@ public class GraphTopology extends AbstractTopology {
 	
 	public GamaSpatialPath pathBetweenCommonDirected(final IShape edgeS, final IShape edgeT, final IShape source,
 			final IShape target, boolean sourceNode,boolean targetNode) {
-
-			IShape nodeS = sourceNode ? source : getPlaces().getEdgeTarget(edgeS);
-			IShape nodeT = targetNode ? target : getPlaces().getEdgeSource(edgeT);
-			IList<IShape> edges;
+		IList<IShape> edges;
+		
+		if (edgeS == edgeT) {
+			GamaPoint ptS = new GamaPoint(edgeS.getInnerGeometry().getCoordinates()[0]);
+			if (source.euclidianDistanceTo(ptS) < target.euclidianDistanceTo(ptS)) {
+				edges = new GamaList<IShape>();
+				edges.add(edgeS);
+				return PathFactory.newInstance(this, source, target, edges);
+			}
+		}
+		IShape nodeS = sourceNode ? source : getPlaces().getEdgeTarget(edgeS);
+		IShape nodeT = targetNode ? target : getPlaces().getEdgeSource(edgeT);
 			
-			if (nodeS == nodeT) {
+		if (nodeS == nodeT) {
 				edges = new GamaList<IShape>();
 				edges.add(edgeS);
 				edges.add(edgeT);
