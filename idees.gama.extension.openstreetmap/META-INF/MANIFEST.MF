@@ -48,7 +48,10 @@ Bundle-ClassPath: .,
  lib/stax2-api-3.1.1.jar,
  lib/woodstox-core-lgpl-4.1.4.jar,
  lib/xercesImpl-2.9.1.jar,
- lib/xz-1.0.jar
+ lib/xz-1.0.jar,
+ lib/jgrapht-jdk1.6.jar,
+ lib/jts-1.13.jar
 Export-Package: idees.gama.agents,
  idees.gama.io,
  idees.gama.skills
+Import-Package: com.vividsolutions.jts.geom

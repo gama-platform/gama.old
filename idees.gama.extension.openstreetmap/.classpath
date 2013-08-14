@@ -50,6 +50,5 @@
 	<classpathentry exported="true" kind="lib" path="lib/woodstox-core-lgpl-4.1.4.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xercesImpl-2.9.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/xz-1.0.jar"/>
-	<classpathentry kind="lib" path="/msi.gama.ext/jts-1.13.jar" sourcepath="/msi.gama.ext/sources/jts-1-13.zip"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

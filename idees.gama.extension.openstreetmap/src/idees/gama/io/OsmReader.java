@@ -125,12 +125,16 @@ public class OsmReader {
 		 for (Tag tg : way.getTags()) {
 				String key = tg.getKey();
 				if (key.equals("highway")) {
-					for (WayNode node : way.getWayNodes()) {
+					List<WayNode> nodes = way.getWayNodes();
+					for (WayNode node : nodes) {
 						 long id = node.getNodeId();
 						 if (usedNodes.contains(id)) 
 							 intersectionNodes.add(id);
 						 else
 							 usedNodes.add(id);						
+					}
+					if (nodes.size() > 2 && nodes.get(0) == nodes.get(nodes.size() -1)) {
+						intersectionNodes.add( nodes.get((int)(nodes.size() / 2)).getNodeId());
 					}
 					return true;
 				} else if (key.equals("building")) {
