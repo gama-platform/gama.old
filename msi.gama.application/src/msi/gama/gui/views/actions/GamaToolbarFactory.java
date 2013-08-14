@@ -40,8 +40,8 @@ public class GamaToolbarFactory implements IGamaViewActions {
 				return new LayersItem(view);
 			case REFRESH:
 				return new FrequencyItem(view);
-				// case SAVE:
-				// return new SaveItem(view);
+			case SAVE:
+				return new SaveItem(view);
 			case REVERT:
 				return new RevertItem(view);
 			case PAUSE:

@@ -18,6 +18,7 @@
  */
 package msi.gama.gui.views;
 
+import java.io.*;
 import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
@@ -33,7 +34,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.expressions.IExpression;
-import msi.gaml.operators.Cast;
+import msi.gaml.operators.*;
 import msi.gaml.species.ISpecies;
 import msi.gaml.types.*;
 import msi.gaml.variables.IVariable;
@@ -45,6 +46,7 @@ import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
+import au.com.bytecode.opencsv.CSVWriter;
 
 /**
  * Written by drogoul Modified on 18 mai 2011
@@ -54,10 +56,11 @@ import org.eclipse.swt.widgets.*;
  */
 public class PopulationInspectView extends GamaViewPart {
 
+	protected static String exportFolder = "exports";
 	public static final String ID = GuiUtils.TABLE_VIEW_ID;
 	public static final String CUSTOM = "custom";
-	public static final List<String> DONT_INSPECT = Arrays.asList(IKeyword.PEERS, IKeyword.MEMBERS, IKeyword.AGENTS);
-	// final IScope scope = GAMA.obtainNewScope();
+	public static final List<String> DONT_INSPECT_BY_DEFAULT = Arrays.asList(IKeyword.PEERS, IKeyword.MEMBERS,
+		IKeyword.AGENTS, IKeyword.SHAPE, IKeyword.HOST);
 	boolean locked;
 	TableViewer viewer;
 	org.eclipse.swt.widgets.List /* speciesMenu, */attributesMenu;
@@ -142,7 +145,7 @@ public class PopulationInspectView extends GamaViewPart {
 				// final ISpecies species = GAMA.getModel().getSpecies(realSpecies);
 				if ( realSpecies == null ) { return; }
 				selectedColumns.get(name).addAll(realSpecies.getVarNames());
-				selectedColumns.get(name).removeAll(DONT_INSPECT);
+				selectedColumns.get(name).removeAll(DONT_INSPECT_BY_DEFAULT);
 			}
 			Collections.sort(selectedColumns.get(name));
 			if ( selectedColumns.get(name).remove(IKeyword.NAME) ) {
@@ -476,18 +479,20 @@ public class PopulationInspectView extends GamaViewPart {
 		selection.remove(IKeyword.NAME);
 		selection.add(0, IKeyword.NAME);
 		for ( final String title : selection ) {
-			final TableViewerColumn col = createTableViewerColumn(title, 100, 0);
-			col.setLabelProvider(new ColumnLabelProvider() {
-
-				@Override
-				public String getText(final Object element) {
-					final IAgent agent = (IAgent) element;
-					if ( agent.dead() && !title.equals(IKeyword.NAME) ) { return "N/A"; }
-					return Cast.toGaml(getOutput().getScope().getAgentVarValue(agent, title));
-				}
-			});
+			createTableViewerColumn(title, 100, 0);
 		}
+	}
 
+	private ColumnLabelProvider getColumnLabelProvider(final String title) {
+		return new ColumnLabelProvider() {
+
+			@Override
+			public String getText(final Object element) {
+				final IAgent agent = (IAgent) element;
+				if ( agent.dead() && !title.equals(IKeyword.NAME) ) { return "N/A"; }
+				return Cast.toGaml(getOutput().getScope().getAgentVarValue(agent, title));
+			}
+		};
 	}
 
 	private SelectionAdapter getSelectionAdapter(final TableColumn column, final String name) {
@@ -516,6 +521,7 @@ public class PopulationInspectView extends GamaViewPart {
 		column.setResizable(true);
 		column.setMoveable(true);
 		column.addSelectionListener(getSelectionAdapter(column, title));
+		viewerColumn.setLabelProvider(getColumnLabelProvider(title));
 		return viewerColumn;
 	}
 
@@ -531,7 +537,7 @@ public class PopulationInspectView extends GamaViewPart {
 	@Override
 	protected Integer[] getToolbarActionsId() {
 		// TODO Need to be usable (not the case now)
-		return new Integer[] { PAUSE, REFRESH };
+		return new Integer[] { PAUSE, REFRESH, SAVE };
 	}
 
 	public class AgentComparator extends ViewerComparator implements Comparator {
@@ -704,10 +710,57 @@ public class PopulationInspectView extends GamaViewPart {
 		}
 	}
 
-	// @Override
-	// public void dispose() {
-	// //GAMA.releaseScope(scope);
-	// super.dispose();
-	// }
+	/**
+	 * 
+	 */
+	public void saveAsCSV() {
+		try {
+			Files.newFolder(output.getScope(), exportFolder);
+		} catch (GamaRuntimeException e1) {
+			e1.addContext("Impossible to create folder " + exportFolder);
+			GAMA.reportError(e1, false);
+			e1.printStackTrace();
+			return;
+		}
+
+		String exportFileName =
+			GAMA.getModel().getRelativeFilePath(
+				exportFolder + "/" + currentTab.getText() + "_population" + output.getScope().getClock().getCycle() +
+					".csv", false);
+		File file = new File(exportFileName);
+		FileWriter fileWriter = null;
+		try {
+			file.createNewFile();
+			fileWriter = new FileWriter(file, false);
+		} catch (final IOException e) {
+			throw GamaRuntimeException.create(e);
+		}
+		Table table = viewer.getTable();
+		TableColumn[] columns = table.getColumns();
+
+		CSVWriter writer = new CSVWriter(fileWriter);
+
+		List<String[]> contents = new ArrayList();
+		String[] headers = new String[columns.length];
+		int columnIndex = 0;
+		for ( TableColumn column : columns ) {
+			headers[columnIndex++] = column.getText();
+		}
+		contents.add(headers);
+		TableItem[] items = table.getItems();
+		for ( TableItem item : items ) {
+			String[] row = new String[columns.length];
+			for ( int i = 0; i < columns.length; i++ ) {
+				row[i] = item.getText(i);
+			}
+			contents.add(row);
+		}
+		writer.writeAll(contents);
+		try {
+			writer.close();
+		} catch (IOException e) {
+			throw GamaRuntimeException.create(e);
+		}
+	}
 
 }

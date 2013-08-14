@@ -72,9 +72,11 @@ Bundle-ClassPath: guava-14.0.1.jar,
  commons-vfs-1.0.jar,
  commons-logging-1.1.1.jar,
  commons-math-1.0.jar,
- commons-collections-3.1.jar
+ commons-collections-3.1.jar,
+ opencsv-2.3.jar
 Bundle-Vendor: MSI
-Export-Package: com.google.common.annotations;version="14.0.1",
+Export-Package: au.com.bytecode.opencsv,
+ com.google.common.annotations;version="14.0.1",
  com.google.common.base;version="14.0.1",
  com.google.common.cache;version="14.0.1",
  com.google.common.collect;version="14.0.1",
