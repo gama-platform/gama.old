@@ -49,6 +49,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 
 		@Override
 		protected Iterable<IEObjectDescription> getLocalElementsByName(final QualifiedName name) {
+			if ( elements == null || name == null ) { return Collections.emptyList(); }
 			IEObjectDescription result = elements.get(name);
 			if ( result == null ) { return Collections.emptyList(); }
 			return Collections.singleton(result);
@@ -67,7 +68,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 
 	private static Map<EClass, Resource> resources;
 	private static Map<EClass, Map<QualifiedName, IEObjectDescription>> descriptions = null;
-	private EClass eType, eVar, eSkill, eAction, eUnit;
+	private EClass eType, eVar, eSkill, eAction, eUnit, eEquation;
 
 	Resource createResource(final String uri) {
 		Resource r = rs.getResource(URI.createURI(uri), false);
@@ -83,18 +84,21 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		eSkill = GamlPackage.eINSTANCE.getSkillFakeDefinition();
 		eAction = GamlPackage.eINSTANCE.getActionDefinition();
 		eUnit = GamlPackage.eINSTANCE.getUnitFakeDefinition();
+		eEquation = GamlPackage.eINSTANCE.getEquationDefinition();
 		resources = new LinkedHashMap();
 		resources.put(eType, createResource("types.xmi"));
 		resources.put(eVar, createResource("vars.xmi"));
 		resources.put(eSkill, createResource("skills.xmi"));
 		resources.put(eUnit, createResource("units.xmi"));
 		resources.put(eAction, createResource("actions.xmi"));
+		resources.put(eEquation, createResource("equations.xmi"));
 		descriptions = new HashMap();
 		descriptions.put(eVar, new LinkedHashMap());
 		descriptions.put(eType, new LinkedHashMap());
 		descriptions.put(eSkill, new LinkedHashMap());
 		descriptions.put(eUnit, new LinkedHashMap());
 		descriptions.put(eAction, new LinkedHashMap());
+		descriptions.put(eEquation, new LinkedHashMap());
 	}
 
 	static void add(final EClass eClass, final String t) {
@@ -163,7 +167,11 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	@Override
 	public IScope getScope(final Resource context, final EReference reference,
 		final Predicate<IEObjectDescription> filter) {
-		return new MapBasedScope(uriScopeProvider.getScope(context, reference, filter),
-			getEObjectDescriptions(reference.getEReferenceType()));
+		EClass eclass = reference.getEReferenceType();
+		Map<QualifiedName, IEObjectDescription> descriptions = getEObjectDescriptions(eclass);
+		if ( descriptions == null ) {
+			descriptions = Collections.EMPTY_MAP;
+		}
+		return new MapBasedScope(uriScopeProvider.getScope(context, reference, filter), descriptions);
 	}
 }
