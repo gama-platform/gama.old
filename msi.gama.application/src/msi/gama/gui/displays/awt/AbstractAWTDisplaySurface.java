@@ -217,7 +217,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	public void setQualityRendering(final boolean quality) {
 		if ( iGraphics == null ) { return; }
 		iGraphics.setQualityRendering(quality);
-		if ( isPaused() ) {
+		if ( isPaused() || GAMA.isPaused() ) {
 			updateDisplay();
 		}
 	}

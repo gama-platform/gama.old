@@ -26,7 +26,7 @@ import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.layers.ILayerStatement;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.swt.widgets.Composite;
 
@@ -70,6 +70,10 @@ public abstract class AbstractLayer implements ILayer {
 		return order.compareTo(o.getOrder());
 	}
 
+	private boolean isPaused(final IDisplaySurface container) {
+		return container.isPaused() || GAMA.isPaused();
+	}
+
 	public void fillComposite(final Composite compo, final IDisplaySurface container) {
 
 		EditorFactory.create(compo, "Visible:", container.getManager().isEnabled(this), new EditorListener<Boolean>() {
@@ -78,7 +82,7 @@ public abstract class AbstractLayer implements ILayer {
 			public void valueModified(final Boolean newValue) {
 
 				container.getManager().enableLayer(AbstractLayer.this, newValue);
-				if ( container.isPaused() ) {
+				if ( isPaused(container) ) {
 					container.forceUpdateDisplay();
 				}
 			}
@@ -89,7 +93,7 @@ public abstract class AbstractLayer implements ILayer {
 				@Override
 				public void valueModified(final Double newValue) {
 					setOpacity(1d - newValue);
-					if ( container.isPaused() ) {
+					if ( isPaused(container) ) {
 						container.forceUpdateDisplay();
 					}
 				}
@@ -100,7 +104,7 @@ public abstract class AbstractLayer implements ILayer {
 			@Override
 			public void valueModified(final GamaPoint newValue) {
 				setPosition(newValue);
-				if ( container.isPaused() ) {
+				if ( isPaused(container) ) {
 					container.forceUpdateDisplay();
 				}
 			}
@@ -111,7 +115,7 @@ public abstract class AbstractLayer implements ILayer {
 			@Override
 			public void valueModified(final GamaPoint newValue) {
 				setExtent(newValue);
-				if ( container.isPaused() ) {
+				if ( isPaused(container) ) {
 					container.forceUpdateDisplay();
 				}
 			}
@@ -123,7 +127,7 @@ public abstract class AbstractLayer implements ILayer {
 				@Override
 				public void valueModified(final Double newValue) {
 					setElevation(newValue);
-					if ( container.isPaused() ) {
+					if ( isPaused(container) ) {
 						container.forceUpdateDisplay();
 					}
 				}
