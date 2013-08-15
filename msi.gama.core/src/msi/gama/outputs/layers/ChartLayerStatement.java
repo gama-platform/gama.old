@@ -172,8 +172,14 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			}
 		}
 
-		domainAxis.setLabelFont(new Font("SansSerif", Font.PLAIN, 10));
+		domainAxis.setLabelFont(new Font("SansSerif", Font.BOLD, 10));
 		domainAxis.setLabel(datas.get(0).getName());
+		if ( datas.size() == 2 ) {
+			final NumberAxis yAxis = (NumberAxis) plot.getRangeAxis();
+			yAxis.setLabelFont(new Font("SansSerif", Font.BOLD, 10));
+			yAxis.setLabel(datas.get(1).getName());
+			chart.removeLegend();
+		}
 		final LegendTitle ll = chart.getLegend();
 		if ( ll != null ) {
 			ll.setItemFont(new Font("SansSerif", Font.PLAIN, 10));
@@ -327,43 +333,47 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		switch (type) {
 			case SERIES_CHART: {
 				chart =
-					ChartFactory.createXYLineChart("", "time", "", null, PlotOrientation.VERTICAL, true, false, false);
+					ChartFactory.createXYLineChart(getName(), "time", "", null, PlotOrientation.VERTICAL, true, false,
+						false);
 				break;
 			}
 			case PIE_CHART: {
 				if ( style.equals(IKeyword.THREE_D) ) {
-					chart = ChartFactory.createPieChart3D("", null, false, true, false);
+					chart = ChartFactory.createPieChart3D(getName(), null, false, true, false);
 				} else if ( style.equals(IKeyword.RING) ) {
-					chart = ChartFactory.createRingChart("", null, false, true, false);
+					chart = ChartFactory.createRingChart(getName(), null, false, true, false);
 				} else if ( style.equals(IKeyword.EXPLODED) ) {
-					chart = ChartFactory.createPieChart("", null, false, true, false);
+					chart = ChartFactory.createPieChart(getName(), null, false, true, false);
 					exploded = true;
 				} else {
-					chart = ChartFactory.createPieChart("", null, false, true, false);
+					chart = ChartFactory.createPieChart(getName(), null, false, true, false);
 				}
 				break;
 			}
 			case HISTOGRAM_CHART: {
 				if ( style.equals(IKeyword.THREE_D) ) {
 					chart =
-						ChartFactory
-							.createBarChart3D("", null, null, null, PlotOrientation.VERTICAL, true, true, false);
+						ChartFactory.createBarChart3D(getName(), null, null, null, PlotOrientation.VERTICAL, true,
+							true, false);
 				} else if ( style.equals(IKeyword.STACK) ) {
 					chart =
-						ChartFactory.createStackedBarChart("", null, null, null, PlotOrientation.VERTICAL, true, true,
-							false);
+						ChartFactory.createStackedBarChart(getName(), null, null, null, PlotOrientation.VERTICAL, true,
+							true, false);
 				} else {
 					chart =
-						ChartFactory.createBarChart("", null, null, null, PlotOrientation.VERTICAL, true, true, false);
+						ChartFactory.createBarChart(getName(), null, null, null, PlotOrientation.VERTICAL, true, true,
+							false);
 				}
 				break;
 			}
 			case XY_CHART:
-				chart = ChartFactory.createXYLineChart("", "", "", null, PlotOrientation.VERTICAL, true, false, false);
+				chart =
+					ChartFactory.createXYLineChart(getName(), "", "", null, PlotOrientation.VERTICAL, true, false,
+						false);
 				break;
 			case BOX_WHISKER_CHART: {
 				chart =
-					ChartFactory.createBoxAndWhiskerChart("Box and Whisker Chart", "Time", "Value",
+					ChartFactory.createBoxAndWhiskerChart(getName(), "Time", "Value",
 						(BoxAndWhiskerCategoryDataset) dataset, true);
 				chart.setBackgroundPaint(new Color(249, 231, 236));
 
@@ -371,6 +381,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 			}
 		}
 		Plot plot = chart.getPlot();
+		chart.getTitle().setFont(new Font("SansSerif", Font.BOLD, 12));
 		if ( backgroundColor == null ) {
 			plot.setBackgroundPaint(null);
 			chart.setBackgroundPaint(null);

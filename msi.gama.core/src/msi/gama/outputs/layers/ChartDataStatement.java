@@ -42,7 +42,7 @@ import org.jfree.chart.renderer.xy.*;
 @facets(value = {
 	@facet(name = IKeyword.VALUE, type = { IType.FLOAT, IType.LIST }, optional = false),
 	@facet(name = IKeyword.NAME, type = IType.ID, optional = true),
-	@facet(name = IKeyword.LEGEND, type = IType.STRING, optional = true),
+	@facet(name = IKeyword.LEGEND, type = IType.LABEL, optional = true),
 	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.LINE, IKeyword.WHISKER, IKeyword.AREA,
 		IKeyword.BAR, IKeyword.DOT, IKeyword.STEP, IKeyword.SPLINE, IKeyword.STACK, IKeyword.THREE_D, IKeyword.RING,
