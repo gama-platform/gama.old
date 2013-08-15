@@ -88,7 +88,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		createSimulationPopulation();
 		// We initialize a new random number generator
 		// random = new RandomUtils(getSpecies().getCurrentSeed());
-		random = new RandomUtils(getSeed());
+		random = new RandomUtils(getSeed(), getRng());
 	}
 
 	@Override
@@ -239,7 +239,6 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			cat, RandomUtils.GENERATOR_NAMES, false));
 		params.add(new ExperimentParameter(getScope(), getSpecies().getVar(IKeyword.SEED), "Random seed", cat, null,
 			true));
-
 		return params;
 	}
 
@@ -289,13 +288,14 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		getRandomGenerator().setSeed(s);
 	}
 
-	@getter(value = IKeyword.RNG, initializer = true)
+	@getter(value = IKeyword.RNG)
 	public String getRng() {
 		return getRandomGenerator().getGeneratorName();
 	}
 
 	@setter(IKeyword.RNG)
 	public void setRng(final String newRng) {
+		//GuiUtils.debug("ExperimentAgent.setRng" + newRng);
 		getRandomGenerator().setGenerator(newRng);
 	}
 
@@ -384,7 +384,10 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 		@Override
 		public void setGlobalVarValue(final String name, final Object v) {
-			if ( ExperimentAgent.this.hasAttribute(name) ) {
+//			if ( name.equals(IKeyword.SEED) ) {
+//				GuiUtils.debug("ExperimentAgent.ExperimentAgentScope.setGlobalVarValue");
+//			}
+			if ( getSpecies().hasVar(name) ) {
 				super.setGlobalVarValue(name, v);
 			} else if ( getSimulation() != null ) {
 				getSimulation().getScope().setGlobalVarValue(name, v);
