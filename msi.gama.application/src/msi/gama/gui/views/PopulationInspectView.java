@@ -148,9 +148,9 @@ public class PopulationInspectView extends GamaViewPart {
 				selectedColumns.get(name).removeAll(DONT_INSPECT_BY_DEFAULT);
 			}
 			Collections.sort(selectedColumns.get(name));
-			if ( selectedColumns.get(name).remove(IKeyword.NAME) ) {
-				selectedColumns.get(name).add(0, IKeyword.NAME);
-			}
+			selectedColumns.get(name).remove("id");
+			selectedColumns.get(name).add(0, "id");
+
 		}
 		changePartName(name);
 
@@ -476,8 +476,8 @@ public class PopulationInspectView extends GamaViewPart {
 
 	private void createColumns() {
 		final List<String> selection = new GamaList(attributesMenu.getSelection());
-		selection.remove(IKeyword.NAME);
-		selection.add(0, IKeyword.NAME);
+		selection.remove("id");
+		selection.add(0, "id");
 		for ( final String title : selection ) {
 			createTableViewerColumn(title, 100, 0);
 		}
@@ -489,7 +489,8 @@ public class PopulationInspectView extends GamaViewPart {
 			@Override
 			public String getText(final Object element) {
 				final IAgent agent = (IAgent) element;
-				if ( agent.dead() && !title.equals(IKeyword.NAME) ) { return "N/A"; }
+				if ( agent.dead() && !title.equals("id") ) { return "N/A"; }
+				if ( title.equals("id") ) { return String.valueOf(agent.getIndex()); }
 				return Cast.toGaml(getOutput().getScope().getAgentVarValue(agent, title));
 			}
 		};
@@ -504,7 +505,7 @@ public class PopulationInspectView extends GamaViewPart {
 				final int dir = comparator.getDirection();
 				viewer.getTable().setSortDirection(dir);
 				viewer.getTable().setSortColumn(column);
-				if ( GAMA.controller.getScheduler().paused || getOutput().isPaused() ) {
+				if ( GAMA.isPaused() || getOutput().isPaused() ) {
 					provider.sortElements();
 				}
 				viewer.refresh();
@@ -572,7 +573,7 @@ public class PopulationInspectView extends GamaViewPart {
 			final IAgent p2 = (IAgent) e2;
 			final IScope scope = getOutput().getScope();
 			int rc = 0;
-			if ( attribute == null ) {
+			if ( attribute == null || attribute.equals("id") ) {
 				rc = p1.compareTo(p2);
 			} else {
 				try {
