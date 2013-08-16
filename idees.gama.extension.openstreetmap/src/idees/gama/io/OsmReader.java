@@ -2,7 +2,6 @@ package idees.gama.io;
 
 import idees.gama.agents.OsmNodeAgent;
 import idees.gama.agents.OsmRoadAgent;
-import idees.gama.agents.OsmTrafficSignalAgent;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,7 +44,7 @@ public class OsmReader {
 	  List<Way> ways;
 	  List<Relation> relations;
 	  Set<Long> intersectionNodes;
-	  Map<GamaPoint,OsmTrafficSignalAgent> signals;
+	  Map<GamaPoint,Map> signals;
 	  Map<GamaPoint,OsmNodeAgent> nodes_created;
 	  
 	  public OsmReader() {
@@ -54,7 +53,7 @@ public class OsmReader {
 		  nodes = new GamaList<Node>();
 		  intersectionNodes = new HashSet<Long>();
 		  nodes_created = new GamaMap<GamaPoint, OsmNodeAgent>();
-		  signals = new GamaMap<GamaPoint, OsmTrafficSignalAgent>();
+		  signals = new GamaMap<GamaPoint, Map>();
 		 // relations = new GamaList<Relation>(); Not used for the moment...
 	  } 
 		
@@ -206,7 +205,7 @@ public class OsmReader {
 				initialValues.add(valuesAg);
 				agents.addAll(roadPop.createAgents(scope, 1, initialValues, false));
 				if (nodePop != null)
-					createNodes(scope,nodePop,gisUtils, shape.getPoints().first(scope), shape.getPoints().last(scope), (OsmRoadAgent) agents.get(0));
+					createNodes(scope,nodePop,gisUtils, shape.getPoints().first(scope), shape.getPoints().last(scope), (OsmRoadAgent) agents.get(agents.size() -1));
 				
 			}
 			if (geom2 != null) {
@@ -221,32 +220,27 @@ public class OsmReader {
 				initialValues.add(valuesAg);
 				agents.addAll(roadPop.createAgents(scope, 1, initialValues, false));
 				if (nodePop != null)
-					createNodes(scope,nodePop,gisUtils, shape.getPoints().first(scope), shape.getPoints().last(scope), (OsmRoadAgent) agents.get(0));
+					createNodes(scope,nodePop,gisUtils, shape.getPoints().first(scope), shape.getPoints().last(scope), (OsmRoadAgent) agents.get(agents.size() -1));
 			}
 		}
 		return agents;
 	 }
 		 
 	 
-	 public List createSignal(IScope scope, IPopulation signalPop,GisUtils gisUtils, Node node,Map values) {
-		List<Map> initialValues = new GamaList<Map>();
+	 public void createSignal(IScope scope, GisUtils gisUtils, Node node,Map values) {
 		GamaPoint pt = null;
 		pt = nodesPt.get(node.getId());
 		if (pt != null) {
 			GamaShape ptT = new GamaShape(gisUtils.transform(pt.getInnerGeometry()));
-			values.put("shape", ptT);
-			initialValues.add(values);
-			List ags = signalPop.createAgents(scope, 1, initialValues, false);
-			signals.put((GamaPoint) ptT.getLocation(), (OsmTrafficSignalAgent) ags.get(0));
-			return ags;
+			signals.put((GamaPoint) ptT.getLocation(), values);
 		}
-		return new GamaList();
 	 }
 	 
 	 public List createNodes(IScope scope, IPopulation nodePop,GisUtils gisUtils, GamaPoint ptInit, GamaPoint ptFinal, OsmRoadAgent road) {
 		List agentsCreated = new GamaList();
 		if (nodes_created.containsKey(ptInit)) {
 			OsmNodeAgent na = nodes_created.get(ptInit);
+			road.setAttribute("source_node", na);
 			GamaList road_out = (GamaList) na.getAttribute("roads_out");
 			road_out.add(road);
 			na.setAttribute("roads_out", road_out);
@@ -255,11 +249,14 @@ public class OsmReader {
 			List<OsmRoadAgent> road_out = new GamaList<OsmRoadAgent>();
 			road_out.add(road);
 			values.put("roads_out", road_out);
-			agentsCreated.addAll(createNodes(scope, nodePop,gisUtils, ptInit, values));
+			IAgent nodeSource = (IAgent) createNodes(scope, nodePop,gisUtils, ptInit, values).get(0);
+			road.setAttribute("source_node", nodeSource);
+			agentsCreated.add(nodeSource);
 		}
 		if (nodes_created.containsKey(ptFinal)) {
 			OsmNodeAgent na = nodes_created.get(ptFinal);
 			GamaList road_in = (GamaList) na.getAttribute("roads_in");
+			road.setAttribute("target_node", na);
 			road_in.add(road);
 			na.setAttribute("roads_in", road_in);
 		} else {
@@ -267,8 +264,10 @@ public class OsmReader {
 			List<OsmRoadAgent> road_in = new GamaList<OsmRoadAgent>();
 			road_in.add(road);
 			values.put("roads_in", road_in);
+			IAgent nodeTarget = (IAgent) createNodes(scope, nodePop,gisUtils, ptFinal, values).get(0);
+			road.setAttribute("target_node", nodeTarget);
+			agentsCreated.add(nodeTarget);
 			
-			agentsCreated.addAll(createNodes(scope, nodePop,gisUtils, ptFinal, values));
 		}
 		return new GamaList();
 	}
@@ -277,14 +276,19 @@ public class OsmReader {
 		List<Map> initialValues = new GamaList<Map>();	
 		if (pt != null) {
 			values.put("shape", pt.getGeometry());
-			if (signals.containsKey(pt))
-				values.put("signal", signals.get(pt));
+			
+			if (signals.containsKey(pt)) {
+				Map signal = signals.get(pt);
+				for (Object si : signal.keySet()) {
+					values.put(si, signal.get(si) );
+				}
+			}
 			initialValues.add(values);
 			List ags = nodePop.createAgents(scope, 1, initialValues, false);
 			nodes_created.put(pt, (OsmNodeAgent) ags.get(0));
 			return ags;
 		}
-		return new GamaList();
+		return new GamaList(); 
 	}
 	 
 	 public List createSplitRoad(IScope scope, IPopulation roadPop,IPopulation nodePop,GisUtils gisUtils, Way way,Map values,Set<Long> intersectionNodes) {
@@ -323,7 +327,7 @@ public class OsmReader {
 		
 	}
 		 
-	 public List<IAgent> buildAgents(IScope scope, IPopulation roadPop, IPopulation buildingPop, IPopulation signalPop,IPopulation nodePop,boolean splitLines){
+	 public List<IAgent> buildAgents(IScope scope, IPopulation roadPop, IPopulation buildingPop, IPopulation nodePop,boolean splitLines){
 		 List<IAgent> createdAgents = new GamaList<IAgent>();
 		 GisUtils gisUtils = scope.getTopology().getGisUtils();
 		 List<String> boolAtt =  new GamaList<String>();
@@ -331,17 +335,15 @@ public class OsmReader {
 		 boolAtt.add("motorroad");
 		 boolAtt.add("wall");
 		 boolAtt.add("bridge");
-		 if (signalPop != null) {
-			 for (Node node : nodes) {
-				 Map values = new GamaMap();
-				 for (Tag tg : node.getTags()) {
-					String key = tg.getKey();
-					values.put(key, tg.getValue());
-			     }
-				 if (signalPop != null && values.containsKey("highway")) {
-					intersectionNodes.add(node.getId());
-			        createdAgents.addAll(createSignal(scope, signalPop,gisUtils, node,values));
-				 }
+		 for (Node node : nodes) {
+			Map values = new GamaMap();
+			for (Tag tg : node.getTags()) {
+				String key = tg.getKey();
+				values.put(key, tg.getValue());
+			}
+			if (values.containsKey("highway")) {
+				intersectionNodes.add(node.getId());
+			    createSignal(scope, gisUtils, node,values);
 			 }
 		 }
 		 

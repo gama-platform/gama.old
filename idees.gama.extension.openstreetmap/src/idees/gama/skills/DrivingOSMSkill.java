@@ -94,13 +94,11 @@ public class DrivingOSMSkill extends MovingSkill {
 		@arg(name = "path", type = IType.PATH, optional = true, doc = @doc("a path to be followed.")),
 		@arg(name = "target", type = IType.POINT, optional = true, doc = @doc("the target to reach")),
 		@arg(name = IKeyword.SPEED, type = IType.FLOAT, optional = true, doc = @doc("the speed to use for this move (replaces the current value of speed)")),
-		@arg(name = "time", type = IType.FLOAT, optional = true, doc = @doc("time to travel")),
-		@arg(name = "move_weights", type = IType.MAP, optional = true, doc = @doc("Weigths used for the moving."))}, 
+		@arg(name = "time", type = IType.FLOAT, optional = true, doc = @doc("time to travel"))}, 
 		doc = @doc(value = "moves the agent towards along the path passed in the arguments while considering the other agents in the network (only for graph topology)", returns = "the remaining time", examples = { "do osm_follow path: the_path on: road_network;" }))
 	public Double primOSMFollow(final IScope scope) throws GamaRuntimeException {
 		final IAgent agent = getCurrentAgent(scope);
 		final double security_distance = getSecurityDistance(agent);
-		final GamaMap weigths = (GamaMap) computeMoveWeights(scope);
 		final Double s = scope.hasArg(IKeyword.SPEED) ? scope.getFloatArg(IKeyword.SPEED) : getSpeed(agent);
 		final Double t = scope.hasArg("time") ? scope.getFloatArg("time") : 1.0;
 		
@@ -115,7 +113,11 @@ public class DrivingOSMSkill extends MovingSkill {
 		final GamaPoint target = scope.hasArg("target") ? (GamaPoint) scope.getArg("target", IType.NONE) : null;
 		final GamaPath path = scope.hasArg("path") ? (GamaPath) scope.getArg("path", IType.NONE) : null;
 		if ( path != null && !path.getEdgeList().isEmpty() ) {
-			return t * moveToNextLocAlongPathOSM(scope, agent, path, target, maxDist, weigths, security_distance, currentLane, currentRoad);		
+			double tps = t * moveToNextLocAlongPathOSM(scope, agent, path, target, maxDist, security_distance, currentLane, currentRoad);	
+			if (tps < 1.0)
+				agent.setAttribute(REAL_SPEED, this.getRealSpeed(agent) / ((1 - tps)));
+			
+			return tps;
 		}
 		return 0.0;
 	}
@@ -141,12 +143,14 @@ public class DrivingOSMSkill extends MovingSkill {
 	private double avoidCollision(final IScope scope, final IAgent agent, final double distance,
 			final double security_distance, final GamaPoint currentLocation, final GamaPoint target,
 			final int lane, final IAgent currentRoad) {
-		
 			IList agents = (IList) ((GamaList) currentRoad.getAttribute("agents_on")).get(lane);
 			if (agents.size() < 2)
 				return distance;
+			
 			double distanceMax = distance + security_distance +  getVehiculeLength(agent);
+			
 			List<IAgent> agsFiltered = new GamaList(agent.getTopology().getNeighboursOf(agent.getLocation(), distanceMax, In.list(scope, agents)));
+			
 			if (agsFiltered.isEmpty())
 				return distance;
 			
@@ -162,12 +166,16 @@ public class DrivingOSMSkill extends MovingSkill {
 					nextAgent = ag;
 				}
 			}
+			
 			if (nextAgent == null)
 				return distance;
+			
 			double realDist = Math.min(distance, minDiff - security_distance - 0.5 * getVehiculeLength(agent) - 0.5 * getVehiculeLength(nextAgent) );
+			
 			return Math.max(0.0,realDist );
 		}
 	
+
 	private GamaPoint computeRealTarget( final IAgent agent, 
 		final double security_distance, final GamaPoint currentLocation, final GamaPoint target,
 		final int lane, final IAgent currentRoad) {
@@ -208,7 +216,7 @@ public class DrivingOSMSkill extends MovingSkill {
 		return target;
 	}
 
-	private double moveToNextLocAlongPathOSM(final IScope scope, final IAgent agent, final IPath path, final GamaPoint target, final double _distance, final GamaMap weigths, final double security_distance,final int currentLane, final  IAgent currentRoad) {
+	private double moveToNextLocAlongPathOSM(final IScope scope, final IAgent agent, final IPath path, final GamaPoint target, final double _distance, final double security_distance,final int currentLane, final  IAgent currentRoad) {
 		
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		GamaPoint falseTarget = target == null ? new GamaPoint(currentRoad.getInnerGeometry().getCoordinates()[currentRoad.getInnerGeometry().getCoordinates().length]) : target;
@@ -230,17 +238,10 @@ public class DrivingOSMSkill extends MovingSkill {
 		}
 		double distance = _distance;
 		final GamaGraph graph = (GamaGraph) path.getGraph();
-		double weight = 1.0;
 		double realDistance = 0;
 		final IShape line = currentRoad.getGeometry();
 		final Coordinate coords[] = line.getInnerGeometry().getCoordinates(); 
-		if ( weigths == null ) {
-			weight = computeWeigth(graph, path, line);
-		} else {
-			IShape realShape = path.getRealObject(line);
-			final Double w = realShape == null ? null : (Double) weigths.get(realShape)/realShape.getGeometry().getPerimeter();
-			weight = w == null ? computeWeigth(graph, path, line) : w;
-		}
+		
 		
 		for ( int j = indexSegment; j <= endIndexSegment; j++ ) {
 			GamaPoint pt = null;
@@ -251,8 +252,7 @@ public class DrivingOSMSkill extends MovingSkill {
 			}
 		//	System.out.println("j : " + j + " endIndexSegment : " + endIndexSegment + " pt : " + pt);
 			
-			double distReal = pt.euclidianDistanceTo(currentLocation);
-			double dist = weight * distReal;
+			double dist = pt.euclidianDistanceTo(currentLocation);
 			
 			distance =
 					avoidCollision(scope, agent, distance, security_distance, currentLocation, falseTarget, currentLane, currentRoad);
@@ -268,7 +268,7 @@ public class DrivingOSMSkill extends MovingSkill {
 			} else {
 				currentLocation = pt;
 				distance = distance - dist;
-				realDistance += distReal; 
+				realDistance += dist; 
 				if (j == endIndexSegment ) {
 					break;
 				}
@@ -278,7 +278,7 @@ public class DrivingOSMSkill extends MovingSkill {
 		//path.setIndexSegementOf(agent, indexSegment);
 		agent.setLocation(currentLocation);
 		path.setSource(currentLocation.copy(scope));
-		agent.setAttribute(REAL_SPEED, realDistance/scope.getClock().getStep());
+		agent.setAttribute(REAL_SPEED, realDistance / scope.getClock().getStep());
 		setDistanceToGoal(agent, currentLocation.euclidianDistanceTo(falseTarget));
 		//System.out.println("_distance : " + _distance);
 		//System.out.println("distance : " + distance);

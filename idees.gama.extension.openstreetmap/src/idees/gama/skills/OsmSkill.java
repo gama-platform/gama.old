@@ -28,7 +28,6 @@ public class OsmSkill extends Skill {
 			@arg(name = "road_species", type = IType.SPECIES, optional = true, doc = @doc("the species of the road agent")),
 			@arg(name = "node_species", type = IType.SPECIES, optional = true, doc = @doc("the species of the node agent")),
 			@arg(name = "building_species", type = IType.SPECIES, optional = true, doc = @doc("the species of the building agent")),
-			@arg(name = "signal_species", type = IType.SPECIES, optional = true, doc = @doc("the species of the traffic signal agent")),
 			@arg(name = "split_lines", type = IType.BOOL, optional = true, doc = @doc("if false, the lines are not split at intersections")) }, 
 			doc = @doc(value = "load a OSM file and create the corresponding agents", returns = "list of created agents",examples = { "list<agent> <- load_osm(my_osm_file);" }))
 	public List<IAgent> loadOSMFile(final IScope scope) throws GamaRuntimeException {
@@ -57,9 +56,6 @@ public class OsmSkill extends Skill {
 		//IPopulation buildingPop = executor.getPopulationFor(bs);
 		IPopulation buildingPop = buildingSpecies != null ? executor.getPopulationFor(buildingSpecies) : null;
 		
-		final ISpecies signalSpecies = (ISpecies) scope.getArg("signal_species", IType.SPECIES);
-		IPopulation signalPop = signalSpecies != null ? executor.getPopulationFor(signalSpecies) : null;
-		
 		Boolean splitLines = true;
 		if (scope.hasArg("split_lines")) {
 			splitLines = (Boolean) scope.getArg("split_lines", IType.BOOL);
@@ -67,7 +63,7 @@ public class OsmSkill extends Skill {
 		try {
 			OsmReader reader = new OsmReader();
 			reader.loadFile(file.getFile(),splitLines);
-			createdAgents = reader.buildAgents(scope, roadPop,buildingPop,signalPop,nodePop,splitLines);
+			createdAgents = reader.buildAgents(scope, roadPop,buildingPop,nodePop,splitLines);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
