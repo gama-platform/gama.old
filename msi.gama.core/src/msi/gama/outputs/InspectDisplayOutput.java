@@ -108,6 +108,15 @@ public class InspectDisplayOutput extends MonitorOutput {
 		this.rootAgent = rootAgent;
 	}
 
+	public InspectDisplayOutput(final IMacroAgent agent, final IContainer<?, IAgent> agents) {
+		// Opens a table inspector on the agents of this container
+		this(DescriptionFactory
+			.validate(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(), IKeyword.NAME, "custom" +
+				count++, IKeyword.VALUE, agents.toGaml(), IKeyword.TYPE, types.get(INSPECT_TABLE))));
+		lastValue = agents;
+		this.rootAgent = agent;
+	}
+
 	public void launch() throws GamaRuntimeException {
 		GAMA.run(new InScope.Void() {
 
