@@ -61,7 +61,6 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 	}
 
 	public static IGraph from(final IScope scope, final Map<?, ?> obj, final boolean spatial) {
-		System.out.println("obj : " + obj);
 		IGraph result =
 			spatial ? new GamaSpatialGraph(new GamaList(), false, false, null, null, scope)
 				: new GamaGraph(new GamaList(), false, false, null, null, scope);
