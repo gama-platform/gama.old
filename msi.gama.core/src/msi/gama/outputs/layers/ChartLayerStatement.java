@@ -43,6 +43,7 @@ import org.jfree.chart.*;
 import org.jfree.chart.axis.*;
 import org.jfree.chart.labels.StandardPieSectionLabelGenerator;
 import org.jfree.chart.plot.*;
+import org.jfree.chart.renderer.category.BarRenderer;
 import org.jfree.chart.renderer.xy.XYItemRenderer;
 import org.jfree.chart.title.LegendTitle;
 import org.jfree.data.category.DefaultCategoryDataset;
@@ -70,6 +71,7 @@ import org.jfree.ui.RectangleInsets;
 		IKeyword.PIE, IKeyword.BOX_WHISKER }, optional = true),
 	@facet(name = IKeyword.STYLE, type = IType.ID, values = { IKeyword.EXPLODED, IKeyword.THREE_D, IKeyword.STACK,
 		IKeyword.BAR }, optional = true), @facet(name = IKeyword.TRANSPARENCY, type = IType.FLOAT, optional = true),
+	@facet(name = IKeyword.GAP, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.FONT, type = IType.ID, optional = true),
 	@facet(name = IKeyword.COLOR, type = IType.COLOR, optional = true),
@@ -311,22 +313,32 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 	private void createBars(final IScope scope) {
 		final CategoryPlot plot = (CategoryPlot) chart.getPlot();
+		int i = 0;
 		dataset = new DefaultCategoryDataset();
 		for ( final ChartData e : datas ) {
 			String legend = e.getName();
-			((DefaultCategoryDataset) dataset).addValue(0, legend, legend);
+			((DefaultCategoryDataset) dataset).addValue(0d, legend, new Integer(0)/* , legend */);
 			history.append(legend);
 			history.append(',');
 		}
 		history.deleteCharAt(history.length() - 1);
 		history.append(nl);
 		plot.setDataset((DefaultCategoryDataset) dataset);
+		for ( final ChartData e : datas ) {
+			plot.getRenderer().setSeriesPaint(i++, e.getColor());
+			// ((BarRenderer) plot.getRenderer(i++)).setBaseFillPaint(e.getColor());
+		}
 		chart.removeLegend();
 		final CategoryAxis axis = plot.getDomainAxis();
 		// ((BarRenderer3D) plot.getRenderer()).setItemMargin(0.1);
-		axis.setCategoryMargin(0.1);
-		axis.setUpperMargin(0.05);
-		axis.setLowerMargin(0.05);
+		Double gap = Cast.asFloat(scope, getFacetValue(scope, IKeyword.GAP, 0.01));
+		// ((BarRenderer) plot.getRenderer()).setItemMargin(gap);
+		((BarRenderer) plot.getRenderer()).setMaximumBarWidth(1 - gap);
+		// ((BarRenderer) plot.getRenderer()).set
+		// ((XYBarRenderer) plot.getRenderer()).setMargin(gap);
+		axis.setCategoryMargin(gap);
+		axis.setUpperMargin(gap);
+		axis.setLowerMargin(gap);
 	}
 
 	private void createChart(final IScope scope) {
@@ -480,7 +492,10 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 					break;
 				}
 				case HISTOGRAM_CHART: {
-					((DefaultCategoryDataset) dataset).setValue(n, s, s);
+					// GuiUtils.debug("ChartLayerStatement._step row " + ((DefaultCategoryDataset)
+					// dataset).getRowCount() +
+					// " col " + ((DefaultCategoryDataset) dataset).getColumnCount());
+					((DefaultCategoryDataset) dataset).setValue(n, s, new Integer(0)/* , s */);
 					break;
 				}
 			}

@@ -151,6 +151,7 @@ public interface IKeyword {
 	public static final String FROM = "from";
 	public static final String FSM = "fsm";
 	public static final String FUNCTION = "function";
+	public static final String GAP = "gap";
 	// public static final String GAML = "gaml";
 	public static final String GENETIC = "genetic";
 	public static final String GIS = "gis";
@@ -187,7 +188,7 @@ public interface IKeyword {
 	public static final String INTERNAL_FUNCTION = "internal_function";
 	public static final String IS = "is";
 	public static final String ISFOLDER = "is_folder";
-	public static final String ISNOT = "is_not";	
+	public static final String ISNOT = "is_not";
 	public static final String ITEM = "item";
 	public static final String ITS = "its";
 	public static final String FRAGMENT = "fragment";
@@ -247,7 +248,7 @@ public interface IKeyword {
 	public static final String OVER = "over";
 	public static final String PARAM = "param";
 	public static final String PARAMETER = "parameter";
-	public static final String PARAMS = "params";	
+	public static final String PARAMS = "params";
 	public static final String PARENT = "parent";
 	public static final String PATH = "path";
 	public static final String PEERS = "peers";
@@ -353,7 +354,7 @@ public interface IKeyword {
 	public static final String VALUES = "values";
 	public static final String VAR = "var";
 	public static final String VARIATION = "variation";
-	public static final String VARS = "vars";	
+	public static final String VARS = "vars";
 	public static final String VERSION = "version";
 	public static final String VERTEX = "vertex";
 	public static final String VIRTUAL = "virtual";
