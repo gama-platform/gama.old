@@ -384,9 +384,9 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 		@Override
 		public void setGlobalVarValue(final String name, final Object v) {
-//			if ( name.equals(IKeyword.SEED) ) {
-//				GuiUtils.debug("ExperimentAgent.ExperimentAgentScope.setGlobalVarValue");
-//			}
+			// if ( name.equals(IKeyword.SEED) ) {
+			// GuiUtils.debug("ExperimentAgent.ExperimentAgentScope.setGlobalVarValue");
+			// }
 			if ( getSpecies().hasVar(name) ) {
 				super.setGlobalVarValue(name, v);
 			} else if ( getSimulation() != null ) {
