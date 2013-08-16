@@ -345,7 +345,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		int[] point = computeBoundsFrom(x, y);
 		int imageWidth = Math.max(1, point[0]);
 		int imageHeight = Math.max(1, point[1]);
-		if ( imageWidth <= MAX_SIZE && imageHeight <= MAX_SIZE ) {
+		if ( imageWidth <= getWidth() * 10 && imageHeight <= getHeight() * 10 ) {
 			createNewImage(imageWidth, imageHeight);
 			createIGraphics();
 			redrawNavigator();

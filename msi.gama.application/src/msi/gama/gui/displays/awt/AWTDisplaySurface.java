@@ -182,11 +182,11 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		if ( !manager.stayProportional() ) { return new int[] { vwidth, vheight }; }
 		final int[] dim = new int[2];
 		if ( widthHeightConstraint < 1 ) {
-			dim[1] = Math.min(vheight, (int) (vwidth * widthHeightConstraint));
-			dim[0] = Math.min(vwidth, (int) (dim[1] / widthHeightConstraint));
+			dim[1] = Math.min(vheight, (int) Math.round(vwidth * widthHeightConstraint));
+			dim[0] = Math.min(vwidth, (int) Math.round(dim[1] / widthHeightConstraint));
 		} else {
-			dim[0] = Math.min(vwidth, (int) (vheight / widthHeightConstraint));
-			dim[1] = Math.min(vheight, (int) (dim[0] * widthHeightConstraint));
+			dim[0] = Math.min(vwidth, (int) Math.round(vheight / widthHeightConstraint));
+			dim[1] = Math.min(vheight, (int) Math.round(dim[0] * widthHeightConstraint));
 		}
 		return dim;
 	}
@@ -250,6 +250,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	@Override
 	public void zoomOut() {
+		if ( zoomLevel < 0.02 ) { return; }
 		mousePosition = new Point(origin.x + getDisplayWidth() / 2, origin.y + getDisplayHeight() / 2);;
 		applyZoom(1.0 - zoomIncrement, mousePosition);
 
@@ -259,7 +260,12 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		if ( resizeImage(Math.max(1, (int) Math.round(getDisplayWidth() * factor)),
 			Math.max(1, (int) Math.round(getDisplayHeight() * factor))) ) {
 			zoomFit = false;
-			setZoomLevel(zoomLevel * factor);
+			if ( widthHeightConstraint < 1 ) {
+				setZoomLevel(getDisplayWidth() / (double) getWidth());
+			} else {
+				setZoomLevel(getDisplayHeight() / (double) getHeight());
+			}
+			// setZoomLevel(zoomLevel * factor);
 			final int imagePX =
 				c.x < origin.x ? 0 : c.x >= getDisplayWidth() + origin.x ? getDisplayWidth() - 1 : c.x - origin.x;
 			final int imagePY =
