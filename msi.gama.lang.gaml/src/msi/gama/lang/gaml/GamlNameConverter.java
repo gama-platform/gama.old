@@ -6,7 +6,7 @@ import org.eclipse.xtext.naming.*;
 
 public class GamlNameConverter extends DefaultImpl {
 
-	final static StringBuilder builder = new StringBuilder();
+	// final static StringBuilder builder = new StringBuilder();
 
 	@Override
 	public String toString(final QualifiedName qualifiedName) {
