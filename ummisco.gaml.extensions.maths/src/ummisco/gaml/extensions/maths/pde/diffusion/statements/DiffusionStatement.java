@@ -59,43 +59,83 @@ public class DiffusionStatement extends AbstractStatementSequence {
 			mask = (IMatrix) getFacet("mask").value(scope);
 		}
 		
+
+		int kRows=mat_diffu.getCols(scope);
+		int kCols=mat_diffu.getRows(scope);
 		
-		int xcenter = mat_diffu.getCols(scope) / 2;
-		int ycenter = mat_diffu.getRows(scope) / 2;
+		int kCenterX = kRows / 2;
+		int kCenterY = kCols / 2;
 		GamaFloatMatrix tmp = new GamaFloatMatrix(scope, cols, rows);
 
 		// System.out.println(xcenter+" "+ycenter);
-		for (int i = 0; i < cols; i++) {
-			for (int j = 0; j < rows; j++) {
-				double currentValue = Double.parseDouble(""
-						+ lstAgents[i * rows + j].getAttribute(varName));
-				if (currentValue <= Double.MAX_VALUE
-						&& currentValue >= - (Double.MAX_VALUE)) { 
-//						&& i >= xcenter
-//						&& j >= ycenter && i < cols - xcenter
-//						&& j < rows - ycenter) {
+		// find center position of kernel (half of kernel size)
+		float sum=0;
+		int mm=0, nn=0, ii=0, jj=0;
 
-					for (int u = i - xcenter; u <= i + xcenter; u++) {
-						for (int v = j - ycenter; v <= j + ycenter; v++) {
-							if(u<0 || v<0 || u>=cols || v>=rows){
-								continue;
-							}
-							// System.out.println(u+" "+v+" | "+( u - i +
-							// xcenter)+" "+(v - j + ycenter));
-							double currentMatValue = Double.parseDouble(""
-									+ mat_diffu.get(scope, u - i + xcenter, v
-											- j + ycenter));
-							double currentMask=(Double.parseDouble(""+mask.get(scope,i, j))<-1)?0:1;
-//							System.out.println(currentMask);
-							double newValue = tmp.get(scope, u, v)
-									+ currentValue * currentMatValue * currentMask;
-							tmp.set(scope, u, v, newValue);
-						}
-					}
-					// System.out.println();
-				}
-			}
+		for(int i=0; i < rows; ++i)              // rows
+		{
+		    for(int j=0; j < cols; ++j)          // columns
+		    {
+		        sum = 0;                     // init to 0 before sum
+
+		        for(int m=0; m < kRows; ++m)     // kernel rows
+		        {
+		            mm = kRows - 1 - m;      // row index of flipped kernel
+
+		            for(int n=0; n < kCols; ++n) // kernel columns
+		            {
+		                nn = kCols - 1 - n;  // column index of flipped kernel
+
+		                // index of input signal, used for checking boundary
+		                ii = i + (m - kCenterY);
+		                jj = j + (n - kCenterX);
+
+		                // ignore input samples which are out of bound
+		                if( ii >= 0 && ii < rows && jj >= 0 && jj < cols ){
+//		                out[i][j] = out[i][j] + in[ii][jj] * kernel[mm][nn];
+		                	double inValue=Double.parseDouble(""+lstAgents[ii * rows + jj].getAttribute(varName));
+		                	double currentValue=Double.parseDouble(""+tmp.get(scope, i,j));
+		                	double currentMatValue=Double.parseDouble(""+mat_diffu.get(scope, mm,nn));
+		                	double newValue=currentValue+ inValue * currentMatValue;
+		                	tmp.set(scope, i, j, newValue);
+		                }
+		            }
+		        }
+		    }
 		}
+
+//		for (int i = 0; i < cols; i++) {
+//			for (int j = 0; j < rows; j++) {
+//				double currentValue = Double.parseDouble(""
+//						+ lstAgents[i * rows + j].getAttribute(varName));
+//				if (currentValue <= Double.MAX_VALUE
+//						&& currentValue >= - (Double.MAX_VALUE)) { 
+////						&& i >= xcenter
+////						&& j >= ycenter && i < cols - xcenter
+////						&& j < rows - ycenter) {
+//
+//					for (int u = i - xcenter; u <= i + xcenter; u++) {
+//						for (int v = j - ycenter; v <= j + ycenter; v++) {
+//							if(u<0 || v<0 || u>=cols || v>=rows){
+//								continue;
+//							}
+//							// System.out.println(u+" "+v+" | "+( u - i +
+//							// xcenter)+" "+(v - j + ycenter));
+//							double currentMatValue = Double.parseDouble(""
+//									+ mat_diffu.get(scope, u - i + xcenter, v
+//											- j + ycenter));
+//							double currentMask=(Double.parseDouble(""+mask.get(scope,i, j))<-1)?0:1;
+////							System.out.println(currentMask);
+//							double newValue = tmp.get(scope, u, v)
+//									+ currentValue * currentMatValue * currentMask;
+//							tmp.set(scope, u, v, newValue);
+//						}
+//					}
+//					// System.out.println();
+//				}
+//			}
+//		}
+
 
 		for (int i = 0; i < cols; i++) {
 			for (int j = 0; j < rows; j++) {
