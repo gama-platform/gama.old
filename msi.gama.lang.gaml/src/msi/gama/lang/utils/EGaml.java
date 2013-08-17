@@ -1,5 +1,5 @@
 /**
- * Created by drogoul, 7 fŽvr. 2012
+ * Created by drogoul, 7 fï¿½vr. 2012
  * 
  */
 package msi.gama.lang.utils;
@@ -18,7 +18,7 @@ import org.eclipse.xtext.resource.IResourceServiceProvider;
  * The class EGaml. A bunch of utilities to work with the various GAML statements and expressions.
  * 
  * @author drogoul
- * @since 7 fŽvr. 2012
+ * @since 7 fï¿½vr. 2012
  * 
  */
 public class EGaml {
@@ -149,17 +149,17 @@ public class EGaml {
 		return Collections.EMPTY_LIST;
 	}
 
-	public static List<? extends Statement> getStatementsOf(Block block) {
+	public static List<? extends Statement> getStatementsOf(final Block block) {
 		if ( ((BlockImpl) block).eIsSet(GamlPackage.BLOCK__STATEMENTS) ) { return block.getStatements(); }
 		return Collections.EMPTY_LIST;
 	}
 
-	public static List<? extends Statement> getStatementsOf(Model block) {
+	public static List<? extends Statement> getStatementsOf(final Model block) {
 		if ( ((ModelImpl) block).eIsSet(GamlPackage.MODEL__STATEMENTS) ) { return block.getStatements(); }
 		return Collections.EMPTY_LIST;
 	}
 
-	public static List<? extends Statement> getEquationsOf(S_Equations stm) {
+	public static List<? extends Statement> getEquationsOf(final S_Equations stm) {
 		if ( ((S_EquationsImpl) stm).eIsSet(GamlPackage.SEQUATIONS__EQUATIONS) ) { return stm.getEquations(); }
 		return Collections.EMPTY_LIST;
 	}
@@ -172,7 +172,7 @@ public class EGaml {
 		return (GamlFactory) GamlPackage.eINSTANCE.getEFactoryInstance();
 	}
 
-	final static StringBuilder serializer = new StringBuilder(100);
+	// final static StringBuilder serializer = new StringBuilder(100);
 
 	public static String toString(final EObject expr) {
 		if ( expr == null ) { return null; }
@@ -181,84 +181,85 @@ public class EGaml {
 		} else if ( expr instanceof Facet ) { return ((Facet) expr).getName(); }
 
 		if ( !(expr instanceof Expression) ) { return expr.toString(); }
+		StringBuilder serializer = new StringBuilder(100);
 		serializer.setLength(0);
-		serialize((Expression) expr);
+		serialize(serializer, (Expression) expr);
 		return serializer.toString();
 	}
 
-	private static void serialize(final Expression expr) {
+	private static void serialize(final StringBuilder serializer, final Expression expr) {
 		if ( expr == null ) {
 			return;
 		} else if ( expr instanceof If ) {
 			serializer.append("(");
-			serialize(expr.getLeft());
+			serialize(serializer, expr.getLeft());
 			serializer.append(")").append(expr.getOp()).append("(");
-			serialize(expr.getRight());
+			serialize(serializer, expr.getRight());
 			serializer.append(")").append(":");
-			serialize(((If) expr).getIfFalse());
+			serialize(serializer, ((If) expr).getIfFalse());
 		} else if ( expr instanceof StringLiteral ) {
 			serializer.append(((StringLiteral) expr).getOp());
 		} else if ( expr instanceof TerminalExpression ) {
 			serializer.append(((TerminalExpression) expr).getOp());
 		} else if ( expr instanceof Point ) {
 			serializer.append("{").append("(");
-			serialize(expr.getLeft());
+			serialize(serializer, expr.getLeft());
 			serializer.append(")").append(expr.getOp()).append("(");
-			serialize(expr.getRight());
+			serialize(serializer, expr.getRight());
 			serializer.append(")");
 			if ( ((Point) expr).getZ() != null ) {
 				serializer.append(',').append("(");
-				serialize(((Point) expr).getZ());
+				serialize(serializer, ((Point) expr).getZ());
 				serializer.append(")");
 			}
 			serializer.append("}");
 		} else if ( expr instanceof Array ) {
-			array(((Array) expr).getExprs().getExprs(), false);
+			array(serializer, ((Array) expr).getExprs().getExprs(), false);
 		} else if ( expr instanceof VariableRef || expr instanceof TypeRef || expr instanceof SkillRef ||
 			expr instanceof ActionRef || expr instanceof UnitName ) {
 			serializer.append(getKeyOf(expr));
 		} else if ( expr instanceof Unary ) {
 			serializer.append(expr.getOp()).append("(");
-			serialize(expr.getRight());
+			serialize(serializer, expr.getRight());
 			serializer.append(")");
 		} else if ( expr instanceof Function ) {
-			function((Function) expr);
+			function(serializer, (Function) expr);
 		}
 		// else if ( expr instanceof FunctionRef ) {
 		// function((FunctionRef) expr);
 		// }
 		else {
 			serializer.append("(");
-			serialize(expr.getLeft());
+			serialize(serializer, expr.getLeft());
 			serializer.append(")").append(expr.getOp()).append("(");
-			serialize(expr.getRight());
+			serialize(serializer, expr.getRight());
 			serializer.append(")");
 		}
 	}
 
-	private static void function(final Function expr) {
+	private static void function(final StringBuilder serializer, final Function expr) {
 		List<Expression> args = getExprsOf(expr.getArgs());
 		// String opName = EGaml.getKeyOf(expr.getLeft());
 		String opName = expr.getOp();
 		if ( args.size() == 1 ) {
 			serializer.append(opName).append("(");
-			serialize(args.get(0));
+			serialize(serializer, args.get(0));
 			serializer.append(")");
 		} else if ( args.size() == 2 ) {
 			serializer.append("(");
-			serialize(args.get(0));
+			serialize(serializer, args.get(0));
 			serializer.append(")").append(opName).append("(");
-			serialize(args.get(1));
+			serialize(serializer, args.get(1));
 			serializer.append(")");
 		} else {
 			serializer.append(opName);
 			serializer.append("(");
-			array(args, true);
+			array(serializer, args, true);
 			serializer.append(")");
 		}
 	}
 
-	private static void array(final List<Expression> args, final boolean arguments) {
+	private static void array(final StringBuilder serializer, final List<Expression> args, final boolean arguments) {
 		// if arguments is true, parses the list to transform it into a map of args
 		// (starting at 1); Experimental right now
 		// serializer.append("[");
@@ -268,7 +269,7 @@ public class EGaml {
 			if ( arguments ) {
 				serializer.append("arg").append(i).append("::");
 			}
-			serialize(e);
+			serialize(serializer, e);
 			if ( i < size - 1 ) {
 				serializer.append(",");
 			}
