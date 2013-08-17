@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -30,7 +30,7 @@ import org.apache.commons.lang.StringEscapeUtils;
  * The class StringUtils.
  * 
  * @author drogoul
- * @since 13 dŽc. 2011
+ * @since 13 dï¿½c. 2011
  * 
  */
 public class StringUtils {
@@ -78,6 +78,7 @@ public class StringUtils {
 	 */
 	static public String unescapeJava(final String str) {
 		if ( str == null ) { return null; }
+		StringBuilder writer = new StringBuilder(str.length());
 		unescapeJava(writer, str);
 		String result = writer.toString();
 		writer.setLength(0);
@@ -85,8 +86,8 @@ public class StringUtils {
 
 	}
 
-	private static final StringBuilder writer = new StringBuilder();
-	private static final StringBuilder unicode = new StringBuilder(4);
+	// private static final StringBuilder writer = new StringBuilder();
+	// private static final StringBuilder unicode = new StringBuilder(4);
 
 	/**
 	 * Unescape java.
@@ -94,7 +95,7 @@ public class StringUtils {
 	 * @param out the out
 	 * @param str the str
 	 */
-	static private void unescapeJava(StringBuilder writer, final String str) {
+	static private void unescapeJava(final StringBuilder writer, final String str) {
 		if ( str == null ) { return; }
 		final int sz = str.length();
 
@@ -105,6 +106,7 @@ public class StringUtils {
 			if ( inUnicode ) {
 				// if in unicode, then we're reading unicode
 				// values in somehow
+				StringBuilder unicode = new StringBuilder(4);
 				unicode.append(ch);
 				if ( unicode.length() == 4 ) {
 					// digits
