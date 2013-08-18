@@ -27,9 +27,9 @@ import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.displays.awt.AbstractAWTDisplaySurface;
-import msi.gama.gui.displays.awt.AWTDisplaySurfaceMenu.AgentMenuItem;
+import msi.gama.gui.displays.awt.*;
 import msi.gama.gui.displays.layers.LayerManager;
+import msi.gama.jogl.JOGLSWTDisplaySurface.AgentMenuItem;
 import msi.gama.jogl.scene.ModelScene;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.Camera.AbstractCamera;
@@ -43,9 +43,7 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.IStatement;
 import msi.gaml.statements.UserCommandStatement;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.FileDialog;
@@ -60,12 +58,11 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public PopupMenu agentsMenu = new PopupMenu();
 
 	protected Point mousePosition;
-	private ActionListener menuListener;
+	// private ActionListener menuListener;
 	private ActionListener focusListener;
 	private ActionListener followListener;
-	private ActionListener highlightListener;
-	private ActionListener commandListener;
-	
+	// private ActionListener highlightListener;
+	// private ActionListener commandListener;
 
 	private boolean output3D = false;
 	// Environment properties useful to set the camera position.
@@ -222,85 +219,82 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		super.setPaused(flag);
 	}
 
-	public static class AgentMenuItem extends MenuItem {
-
-		private final IAgent agent;
-		private final ILayer display;
-		private final IStatement command;
-		private final GamaPoint userLocation;
-
-		AgentMenuItem(final String name, final IAgent agent, final ILayer display) {
-			super(name);
-			this.agent = agent;
-			this.display = display;
-			command = null;
-			userLocation = null;
-		}
-
-		AgentMenuItem(final IAgent agent, final IStatement command, final GamaPoint point) {
-			super(command.getName());
-			this.agent = agent;
-			this.display = null;
-			this.command = command;
-			userLocation = point;
-		}
-
-		ILocation getLocation() {
-			return userLocation;
-		}
-
-		IAgent getAgent() {
-			return agent;
-		}
-
-		IStatement getCommand() {
-			return command;
-		}
-
-		ILayer getDisplay() {
-			return display;
-		}
-	}
+	// public static class AgentMenuItem extends MenuItem {
+	//
+	// private final IAgent agent;
+	// private final ILayer display;
+	// private final IStatement command;
+	// private final GamaPoint userLocation;
+	//
+	// AgentMenuItem(final String name, final IAgent agent, final ILayer display) {
+	// super(name);
+	// this.agent = agent;
+	// this.display = display;
+	// command = null;
+	// userLocation = null;
+	// }
+	//
+	// AgentMenuItem(final IAgent agent, final IStatement command, final GamaPoint point) {
+	// super(command.getName());
+	// this.agent = agent;
+	// this.display = null;
+	// this.command = command;
+	// userLocation = point;
+	// }
+	//
+	// ILocation getLocation() {
+	// return userLocation;
+	// }
+	//
+	// IAgent getAgent() {
+	// return agent;
+	// }
+	//
+	// IStatement getCommand() {
+	// return command;
+	// }
+	//
+	// ILayer getDisplay() {
+	// return display;
+	// }
+	// }
 
 	public class SelectedAgent {
 
 		IAgent macro;
 		Map<ISpecies, List<SelectedAgent>> micros;
-	
-		
 
 		void buildMenuItems(final Menu parentMenu, final ILayer display) {
 			final Menu macroMenu = new Menu(macro.getName());
 			parentMenu.add(macroMenu);
 
-
-			final MenuItem inspectItem = new AgentMenuItem("Inspect", macro, display);
-			inspectItem.addActionListener(menuListener);
+			final MenuItem inspectItem = new AWTDisplaySurfaceMenu.AgentMenuItem("Inspect", macro, display);
+			inspectItem.addActionListener(AWTDisplaySurfaceMenu.menuListener);
 			macroMenu.add(inspectItem);
 
-			final MenuItem focusItem = new AgentMenuItem("Focus", macro, display);
+			final MenuItem focusItem = new AWTDisplaySurfaceMenu.AgentMenuItem("Focus", macro, display);
 			focusItem.addActionListener(focusListener);
 			macroMenu.add(focusItem);
 
-			MenuItem followItem = new AgentMenuItem("Follow", macro, display);
+			MenuItem followItem = new AWTDisplaySurfaceMenu.AgentMenuItem("Follow", macro, display);
 			followItem.addActionListener(followListener);
 			macroMenu.add(followItem);
-			
-			final MenuItem highlightItem =
-					new AgentMenuItem(macro == GuiUtils.getHighlightedAgent() ? "Remove highlight" : "Highlight", macro,
-						display);
-				highlightItem.addActionListener(highlightListener);
-				macroMenu.add(highlightItem);
 
-				final Collection<UserCommandStatement> commands = macro.getSpecies().getUserCommands();
-				if ( !commands.isEmpty() ) {
-					macroMenu.addSeparator();
-					for ( final UserCommandStatement c : commands ) {
-						final MenuItem actionItem = new AgentMenuItem(macro, c, null);
-						actionItem.addActionListener(commandListener);
-						macroMenu.add(actionItem);
-					}
+			final MenuItem highlightItem =
+				new AWTDisplaySurfaceMenu.AgentMenuItem(macro == GuiUtils.getHighlightedAgent() ? "Remove highlight"
+					: "Highlight", macro, display);
+			highlightItem.addActionListener(AWTDisplaySurfaceMenu.highlightListener);
+			macroMenu.add(highlightItem);
+
+			final Collection<UserCommandStatement> commands = macro.getSpecies().getUserCommands();
+			if ( !commands.isEmpty() ) {
+				macroMenu.addSeparator();
+				for ( final UserCommandStatement c : commands ) {
+					final MenuItem actionItem = new AWTDisplaySurfaceMenu.AgentMenuItem(macro, c, null);
+					actionItem.addActionListener(AWTDisplaySurfaceMenu.commandListener);
+					macroMenu.add(actionItem);
 				}
+			}
 
 			if ( micros != null && !micros.isEmpty() ) {
 				final Menu microsMenu = new Menu("Micro agents");
@@ -326,24 +320,24 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		setEnvWidth(env_width);
 		setEnvHeight(env_height);
 		widthHeightConstraint = env_height / env_width;
-		menuListener = new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				final AgentMenuItem source = (AgentMenuItem) e.getSource();
-				final IAgent a = source.getAgent();
-				if ( a != null ) {
-					GuiUtils.setSelectedAgent(a);
-				}
-			}
-
-		};
+		// menuListener = new ActionListener() {
+		//
+		// @Override
+		// public void actionPerformed(final ActionEvent e) {
+		// final AgentMenuItem source = (AgentMenuItem) e.getSource();
+		// final IAgent a = source.getAgent();
+		// if ( a != null ) {
+		// GuiUtils.setSelectedAgent(a);
+		// }
+		// }
+		//
+		// };
 
 		focusListener = new ActionListener() {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				final AgentMenuItem source = (AgentMenuItem) e.getSource();
+				final AWTDisplaySurfaceMenu.AgentMenuItem source = (AWTDisplaySurfaceMenu.AgentMenuItem) e.getSource();
 				final IAgent a = source.getAgent();
 				if ( a != null ) {
 					focusOn(a.getGeometry(), source.getDisplay());
@@ -597,7 +591,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public void toggleRotation() {
 		rotation = !rotation;
 	}
-	
+
 	@Override
 	public void toggleCamera() {
 		// TODO Auto-generated method stub
@@ -747,8 +741,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public Color getBgColor() {
 		return bgColor;
 	}
-
-	
 
 	@Override
 	public final boolean resizeImage(final int x, final int y) {

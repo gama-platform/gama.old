@@ -55,7 +55,7 @@ public class AWTDisplaySurfaceMenu {
 		agentsMenu.show((Component) surface, mousex, mousey);
 	}
 
-	private final ActionListener menuListener = new ActionListener() {
+	public final static ActionListener menuListener = new ActionListener() {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
@@ -81,7 +81,7 @@ public class AWTDisplaySurfaceMenu {
 
 	};
 
-	private final ActionListener highlightListener = new ActionListener() {
+	public static final ActionListener highlightListener = new ActionListener() {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
@@ -99,7 +99,7 @@ public class AWTDisplaySurfaceMenu {
 
 	};
 
-	private static ActionListener commandListener = new ActionListener() {
+	public static ActionListener commandListener = new ActionListener() {
 
 		@Override
 		public void actionPerformed(final ActionEvent e) {
@@ -194,7 +194,7 @@ public class AWTDisplaySurfaceMenu {
 		private final IStatement command;
 		private final GamaPoint userLocation;
 
-		AgentMenuItem(final String name, final IAgent agent, final ILayer display) {
+		public AgentMenuItem(final String name, final IAgent agent, final ILayer display) {
 			super(name);
 			this.agent = agent;
 			this.display = display;
@@ -202,7 +202,7 @@ public class AWTDisplaySurfaceMenu {
 			userLocation = null;
 		}
 
-		AgentMenuItem(final IAgent agent, final IStatement command, final GamaPoint point) {
+		public AgentMenuItem(final IAgent agent, final IStatement command, final GamaPoint point) {
 			super(command.getName());
 			this.agent = agent;
 			this.display = null;
@@ -214,7 +214,7 @@ public class AWTDisplaySurfaceMenu {
 			return userLocation;
 		}
 
-		IAgent getAgent() {
+		public IAgent getAgent() {
 			return agent;
 		}
 
@@ -222,7 +222,7 @@ public class AWTDisplaySurfaceMenu {
 			return command;
 		}
 
-		ILayer getDisplay() {
+		public ILayer getDisplay() {
 			return display;
 		}
 	}
