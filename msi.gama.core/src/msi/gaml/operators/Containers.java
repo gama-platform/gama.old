@@ -367,7 +367,7 @@ public class Containers {
 		return result;
 	}
 
-	@operator(value = { "last_with" }, type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true)
+	@operator(value = { "last_with" }, type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true, expected_content_type = IType.BOOL)
 	@doc(value = "the last element of the left-hand operand that makes the right-hand operand evaluate to true.", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", special_cases = { "if the left-hand operand is nil, last_with throws an error. If there is no element that satisfies the condition, it returns nil" }, examples = {
 		"[1,2,3,4,5,6,7,8] last_with (each > 3) 					--: 	8",
 		"g2 last_with (length(g2 out_edges_of each) = 0 ) 			--: 	node11",
@@ -378,7 +378,7 @@ public class Containers {
 		return size(it) == 0 ? null : getLast(it);
 	}
 
-	@operator(value = { "first_with" }, type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true)
+	@operator(value = { "first_with" }, type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true, expected_content_type = IType.BOOL)
 	@doc(value = "the first element of the left-hand operand that makes the right-hand operand evaluate to true.", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", special_cases = { "if the left-hand operand is nil, first_with throws an error. If there is no element that satisfies the condition, it returns nil" }, examples = {
 		"[1,2,3,4,5,6,7,8] first_with (each > 3) 						--: 	4",
 		"g2 first_with (length(g2 out_edges_of each) = 0) 				--: 	node9",
@@ -492,7 +492,7 @@ public class Containers {
 	// return result;
 	// }
 
-	@operator(value = { "where", "select" }, content_type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true)
+	@operator(value = { "where", "select" }, content_type = ITypeProvider.FIRST_CONTENT_TYPE, iterator = true, expected_content_type = IType.BOOL)
 	@doc(value = "a list containing all the elements of the left-hand operand that make the right-hand operand evaluate to true. ", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the right-hand operand elements. ", special_cases = { "if the left-hand operand is a list nil, where returns a new empty list" }, examples = {
 		"[1,2,3,4,5,6,7,8] where (each > 3) 						--: 	[4, 5, 6, 7, 8] ",
 		"g2 where (length(g2 out_edges_of each) = 0 ) 				--: 	[node9, node7, node10, node8, node11]",
@@ -543,7 +543,7 @@ public class Containers {
 		return new GamaList(Iterators.toArray(it, Object.class));
 	}
 
-	@operator(value = { "count" }, iterator = true)
+	@operator(value = { "count" }, iterator = true, expected_content_type = IType.BOOL)
 	@doc(value = "returns an int, equal to the number of elements of the left-hand operand that make the right-hand operand evaluate to true.", comment = "in the right-hand operand, the keyword each can be used to represent, in turn, each of the elements.", special_cases = { "if the left-hand operand is nil, count throws an error" }, examples = {
 		"[1,2,3,4,5,6,7,8] count (each > 3) 					--: 	5",
 		"g2 count (length(g2 out_edges_of each) = 0  ) 			--: 	5	// Number of nodes of graph g2 without any out edge",
@@ -559,7 +559,7 @@ public class Containers {
 		return new GamaMap(Maps.uniqueIndex(nullCheck(original).iterable(scope), function(scope, keyProvider)));
 	}
 
-	@operator(value = { "as_map" }, iterator = true, content_type = ITypeProvider.SECOND_CONTENT_TYPE, index_type = ITypeProvider.SECOND_KEY_TYPE)
+	@operator(value = { "as_map" }, iterator = true, content_type = ITypeProvider.SECOND_CONTENT_TYPE, index_type = ITypeProvider.SECOND_KEY_TYPE, expected_content_type = IType.PAIR)
 	@doc(value = "produces a new map from the evaluation of the right-hand operand for each element of the left-hand operand", comment = "the right-hand operand should be a pair", special_cases = { "if the left-hand operand is nil, as_map throws an error." }, examples = {
 		"[1,2,3,4,5,6,7,8] as_map (each::(each * 2) 	--: 	[1::2, 2::4, 3::6, 4::8, 5::10, 6::12, 7::14, 8::16]",
 		"[1::2,3::4,5::6] as_map (each::(each * 2))		--: 	[2::4, 4::8, 6::12] " }, see = {})
