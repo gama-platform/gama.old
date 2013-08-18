@@ -132,8 +132,10 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 					renderer.setPolygonMode(getOutput().getPolygonMode());
 					renderer.setCameraPosition(getOutput().getCameraPos());
 					renderer.setCameraLookPosition(getOutput().getCameraLookPos());
-					renderer.setCameraUpVector(getOutput().getCameraUpVector());
-
+					if(renderer.camera._phi <360 && renderer.camera._phi>180)
+						renderer.setCameraUpVector( new GamaPoint(0, -1, 0));
+					else
+						renderer.setCameraUpVector(getOutput().getCameraUpVector());
 					if ( autosave ) {
 						snapshot();
 					}

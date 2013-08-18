@@ -227,16 +227,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			gl.glMatrixMode(GL.GL_PROJECTION);
 			// Reset the view (x, y, z axes back to normal)
 			gl.glLoadIdentity();
-			
-			if(camera._phi <360 && camera._phi>180) 
-	    	{
-				camera._orientation = -1;		
-				camera.setUpVector(new GamaPoint(0.0, camera._orientation,0.0));
-	    	}
-			else{
-				camera._orientation = 1;		
-				camera.setUpVector(new GamaPoint(0.0, camera._orientation,0.0));
-			}	
 
 			camera.UpdateCamera(gl, glu, width, height);
 
@@ -377,7 +367,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glLoadIdentity();
 		glu.gluPerspective(45.0f, aspect, 0.1f, 1000.0f);
 		glu.gluLookAt(camera.getPosition().getX(), camera.getPosition().getY(), camera.getPosition().getZ(), camera
-			.getTarget().getX(), camera.getTarget().getY(), camera.getTarget().getZ(), 0, 0, 1);
+			.getTarget().getX(), camera.getTarget().getY(), camera.getTarget().getZ(), camera.getUpVector().getX(), camera.getUpVector().getY(), camera.getUpVector().getZ());
 		arcBall.setBounds(width, height);
 	}
 
