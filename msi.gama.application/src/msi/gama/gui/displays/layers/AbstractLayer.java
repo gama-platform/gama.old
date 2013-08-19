@@ -19,13 +19,12 @@
 package msi.gama.gui.displays.layers;
 
 import java.awt.Point;
-import java.awt.geom.Rectangle2D;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.outputs.layers.ILayerStatement;
+import msi.gama.outputs.layers.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.swt.widgets.Composite;
@@ -145,7 +144,7 @@ public abstract class AbstractLayer implements ILayer {
 			definition.getBox().compute(scope);
 			// definition.step(scope);
 			g.setOpacity(definition.getTransparency());
-			setPositionAndSize(definition.getBoundingBox(), g);
+			setPositionAndSize(definition.getBox(), g);
 		}
 		g.beginDrawingLayer(this);
 		privateDrawDisplay(scope, g);
@@ -188,27 +187,52 @@ public abstract class AbstractLayer implements ILayer {
 	 * @param boundingBox
 	 * @param g
 	 */
-	private void setPositionAndSize(final Rectangle2D.Double boundingBox, final IGraphics g) {
+	private void setPositionAndSize(final IDisplayLayerBox box, final IGraphics g) {
 		// Voir comment conserver cette information
-		final int widthOfDisplayInPixels = g.getDisplayWidthInPixels();
-		final int heighOfDisplayInPixels = g.getDisplayHeightInPixels();
-		final double x =
-			(Math.signum(boundingBox.x) < 0 ? widthOfDisplayInPixels : 0) +
-				(Math.abs(boundingBox.x) <= 1 ? widthOfDisplayInPixels * boundingBox.x : g
-					.getxRatioBetweenPixelsAndModelUnits() * boundingBox.x);
-		final double y =
-			(Math.signum(boundingBox.y) < 0 ? heighOfDisplayInPixels : 0) +
-				(Math.abs(boundingBox.y) <= 1 ? heighOfDisplayInPixels * boundingBox.y : g
-					.getyRatioBetweenPixelsAndModelUnits() * boundingBox.y);
-		final double width =
-			boundingBox.width <= 1 ? widthOfDisplayInPixels * boundingBox.width : g
-				.getxRatioBetweenPixelsAndModelUnits() * boundingBox.width;
-		final double height =
-			boundingBox.height <= 1 ? heighOfDisplayInPixels * boundingBox.height : g
-				.getyRatioBetweenPixelsAndModelUnits() * boundingBox.height;
-		sizeInPixels.setLocation(width, height);
+		final int displayPixelWidth = g.getDisplayWidthInPixels();
+		final int displayPixelHeight = g.getDisplayHeightInPixels();
+
+		// Computation of x
+		final double x = box.getPosition().getX();
+		double relative_x = 0;
+		if ( box.isAbsoluteX() ) {
+			relative_x = x * g.getxRatioBetweenPixelsAndModelUnits();
+		} else {
+			relative_x = Math.abs(x) <= 1 ? displayPixelWidth * x : g.getxRatioBetweenPixelsAndModelUnits() * x;
+		}
+		final double absolute_x = Math.signum(x) < 0 ? displayPixelWidth + relative_x : relative_x;
+
+		// Computation of y
+		final double y = box.getPosition().getY();
+		double relative_y = 0;
+		if ( box.isAbsoluteY() ) {
+			relative_y = y * g.getyRatioBetweenPixelsAndModelUnits();
+		} else {
+			relative_y = Math.abs(y) <= 1 ? displayPixelHeight * y : g.getyRatioBetweenPixelsAndModelUnits() * y;
+		}
+		final double absolute_y = Math.signum(y) < 0 ? displayPixelHeight + relative_y : relative_y;
+
+		// Computation of width
+		double absolute_width = 0;
+		final double width = box.getExtent().getX();
+		if ( box.isAbsoluteWidth() ) {
+			absolute_width = width * g.getxRatioBetweenPixelsAndModelUnits();
+		} else {
+			absolute_width =
+				Math.abs(width) <= 1 ? displayPixelWidth * width : g.getxRatioBetweenPixelsAndModelUnits() * width;
+		}
+		// Computation of height
+		double absolute_height = 0;
+		final double height = box.getExtent().getY();
+		if ( box.isAbsoluteHeight() ) {
+			absolute_height = height * g.getyRatioBetweenPixelsAndModelUnits();
+		} else {
+			absolute_height =
+				Math.abs(height) <= 1 ? displayPixelHeight * height : g.getyRatioBetweenPixelsAndModelUnits() * height;
+		}
+		sizeInPixels.setLocation(absolute_width, absolute_height);
 		// GuiUtils.debug("AbstractLayer.setSize : " + sizeInPixels);
-		positionInPixels.setLocation(x, y);
+		positionInPixels.setLocation(absolute_x, absolute_y);
 		// GuiUtils.debug("AbstractLayer.setPosition : " + positionInPixels);
 	}
 
