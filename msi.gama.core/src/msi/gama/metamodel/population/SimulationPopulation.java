@@ -12,6 +12,7 @@ import msi.gama.metamodel.topology.continuous.AmorphousTopology;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.IList;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 
@@ -64,7 +65,8 @@ public class SimulationPopulation extends GamaPopulation {
 	}
 
 	public void setTopology(final IScope scope, final IShape gisShape, final IShape shape) {
-		final boolean torus = Cast.asBool(scope, species.getFacet(IKeyword.TORUS));
+		IExpression expr = species.getFacet(IKeyword.TORUS);
+		final boolean torus = expr == null ? false : Cast.as(expr.value(scope), Boolean.class);
 		topology = new RootTopology(scope, gisShape, shape, torus);
 	}
 
