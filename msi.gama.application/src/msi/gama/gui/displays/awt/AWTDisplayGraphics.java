@@ -24,6 +24,7 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
@@ -209,16 +210,13 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	@Override
 	public Rectangle2D drawGamaShape(final IScope scope, final IShape geometry, final Color color, final boolean fill,
 		final Color border, final Integer angle, final boolean rounded) {
-		Geometry geom = null;
 		if ( geometry == null ) { return null; }
 		final ITopology topo = scope.getTopology();
+		Geometry geom = geometry.getInnerGeometry();
 		// Necessary to check in case the scope has been erased (in cases of reload)
 		if ( topo != null && topo.isTorus() ) {
-			geom = topo.returnToroidalGeom(geometry.getInnerGeometry());
-		} else {
-			geom = geometry.getInnerGeometry();
+			geom = topo.returnToroidalGeom(geom);
 		}
-		final boolean f = geom instanceof LineString || geom instanceof MultiLineString ? false : fill;
 		final Shape s = sw.toShape(geom);
 		try {
 			final Rectangle2D r = s.getBounds2D();
@@ -227,7 +225,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 				renderer.rotate(Maths.toRad * angle, r.getX() + r.getWidth() / 2, r.getY() + r.getHeight() / 2);
 			}
 			renderer.setColor(highlight ? highlightColor : color);
-			if ( f ) {
+			if ( geom instanceof Lineal || geom instanceof Puntal ? false : fill ) {
 				renderer.fill(s);
 				renderer.setColor(highlight ? highlightColor : border);
 			}
@@ -299,17 +297,18 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	public void endDrawingLayers() {}
 
 	@Override
-	//Not yet implemented in JAVA2D
-	public Rectangle2D drawStringOverlay(String string, Color stringColor, ILocation locationInModelUnits,
-		Double heightInModelUnits, String fontName, Integer styleName, Integer angle, Double z) {
+	// Not yet implemented in JAVA2D
+	public Rectangle2D drawStringOverlay(final String string, final Color stringColor,
+		final ILocation locationInModelUnits, final Double heightInModelUnits, final String fontName,
+		final Integer styleName, final Integer angle, final Double z) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	//Not yet implemented in JAVA2D
-	public Rectangle2D drawGamaShapeOverlay(IScope scope, IShape geometry, Color color, boolean fill, Color border,
-		Integer angle, boolean rounded) {
+	// Not yet implemented in JAVA2D
+	public Rectangle2D drawGamaShapeOverlay(final IScope scope, final IShape geometry, final Color color,
+		final boolean fill, final Color border, final Integer angle, final boolean rounded) {
 		// TODO Auto-generated method stub
 		return null;
 	}

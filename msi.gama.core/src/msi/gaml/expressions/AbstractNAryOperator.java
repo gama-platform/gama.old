@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -29,6 +29,15 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 
 	protected IExpression[] exprs;
 	protected GamlElementDocumentation doc;
+
+	@Override
+	public boolean containsAny(final Class<? extends IExpression> clazz) {
+		if ( super.containsAny(clazz) ) { return true; }
+		for ( IExpression expr : exprs ) {
+			if ( expr.containsAny(clazz) ) { return true; }
+		}
+		return false;
+	}
 
 	@Override
 	public String toString() {
@@ -79,8 +88,8 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 		IType type = getType();
 		sb.append(type.toString());
 		if ( type.hasContents() ) {
-			sb.append("&lt;").append(getKeyType().toString()).append(",")
-				.append(getContentType().toString()).append("&gt;");
+			sb.append("&lt;").append(getKeyType().toString()).append(",").append(getContentType().toString())
+				.append("&gt;");
 		}
 		return sb.toString();
 	}
@@ -96,7 +105,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	}
 
 	@Override
-	public void setDoc(GamlElementDocumentation doc) {
+	public void setDoc(final GamlElementDocumentation doc) {
 		this.doc = doc;
 	}
 }

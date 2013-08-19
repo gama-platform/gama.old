@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -21,7 +21,6 @@ package msi.gama.outputs.layers;
 import java.awt.geom.Rectangle2D;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.*;
-import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.expressions.*;
 import msi.gaml.operators.Cast;
@@ -40,6 +39,11 @@ public class LayerBox implements IDisplayLayerBox {
 	IExpression elevation = new ConstantExpression(0d);
 	IExpression refresh = new ConstantExpression(true);
 
+	boolean isAbsoluteWidth = false;
+	boolean isAbsoluteHeight = false;
+	boolean isAbsoluteX = false;
+	boolean isAbsoluteY = false;
+
 	Double currentTransparency;
 	ILocation currentPosition;
 	ILocation currentExtent;
@@ -57,52 +61,32 @@ public class LayerBox implements IDisplayLayerBox {
 
 	public LayerBox(final IExpression transp, final IExpression pos, final IExpression ext, final IExpression elev,
 		final IExpression refr) throws GamaRuntimeException {
-		if ( transp != null ) {
-			transparency = transp;
-		}
-		if ( pos != null ) {
-			position = pos;
-		}
-		if ( ext != null ) {
-			extent = ext;
-		}
-		if ( elev != null ) {
-			elevation = elev;
-		}
-
-		if ( refr != null ) {
-			refresh = refr;
-		}
-		GAMA.run(new InScope.Void() {
-
-			@Override
-			public void process(IScope scope) {
-				setTransparency(scope, transparency);
-				setPosition(scope, position);
-				setExtent(scope, extent);
-				setElevation(scope, elevation);
-				setRefresh(scope, refr);
-			}
-		});
+		IScope scope = GAMA.obtainNewScope();
+		setTransparency(scope, transp);
+		setPosition(scope, pos);
+		setExtent(scope, ext);
+		setElevation(scope, elev);
+		setRefresh(scope, refr);
 
 	}
 
-	public LayerBox(final Double transp, final GamaPoint pos, final GamaPoint ext, final Double elev, final Boolean refr) {
-		setTransparency(transp);
-		setPosition(pos);
-		setExtent(ext);
-		setElevation(elev);
-		setRefresh(refr);
-	}
+	// public LayerBox(final Double transp, final GamaPoint pos, final GamaPoint ext, final Double elev, final Boolean
+	// refr) {
+	// setTransparency(transp);
+	// setPosition(pos);
+	// setExtent(ext);
+	// setElevation(elev);
+	// setRefresh(refr);
+	// }
 
-	public LayerBox(final Double transp, final Double posx, final Double posy, final Double posz, final Double extx, final Double exty,
-		final Double elev, final Boolean refr) {
-		setTransparency(transp);
-		setPosition(posx, posy, posz);
-		setExtent(extx, exty);
-		setElevation(elev);
-		setRefresh(refr);
-	}
+	// public LayerBox(final Double transp, final Double posx, final Double posy, final Double posz, final Double extx,
+	// final Double exty, final Double elev, final Boolean refr) {
+	// setTransparency(transp);
+	// setPosition(posx, posy, posz);
+	// setExtent(extx, exty);
+	// setElevation(elev);
+	// setRefresh(refr);
+	// }
 
 	@Override
 	public void compute(final IScope scope) throws GamaRuntimeException {
@@ -128,7 +112,7 @@ public class LayerBox implements IDisplayLayerBox {
 	}
 
 	@Override
-	public void setTransparency(IScope scope, final IExpression t) throws GamaRuntimeException {
+	public void setTransparency(final IScope scope, final IExpression t) throws GamaRuntimeException {
 		if ( t != null ) {
 			transparency = t;
 			if ( t.isConst() ) {
@@ -141,6 +125,10 @@ public class LayerBox implements IDisplayLayerBox {
 	public void setPosition(final IScope scope, final IExpression p) throws GamaRuntimeException {
 		if ( p != null ) {
 			position = p;
+			if ( p instanceof BinaryOperator ) {
+				isAbsoluteX = ((BinaryOperator) p).left().containsAny(PixelUnitExpression.class);
+				isAbsoluteY = ((BinaryOperator) p).right().containsAny(PixelUnitExpression.class);
+			}
 			if ( p.isConst() ) {
 				setPosition(Cast.asPoint(scope, position.value(scope)));
 			}
@@ -151,6 +139,10 @@ public class LayerBox implements IDisplayLayerBox {
 	public void setExtent(final IScope scope, final IExpression e) throws GamaRuntimeException {
 		if ( e != null ) {
 			extent = e;
+			if ( e instanceof BinaryOperator ) {
+				isAbsoluteWidth = ((BinaryOperator) e).left().containsAny(PixelUnitExpression.class);
+				isAbsoluteHeight = ((BinaryOperator) e).right().containsAny(PixelUnitExpression.class);
+			}
 			if ( e.isConst() ) {
 				setExtent(Cast.asPoint(scope, extent.value(scope)));
 			}
@@ -168,7 +160,7 @@ public class LayerBox implements IDisplayLayerBox {
 	}
 
 	@Override
-	public void setRefresh(final IScope scope, IExpression r) throws GamaRuntimeException {
+	public void setRefresh(final IScope scope, final IExpression r) throws GamaRuntimeException {
 		if ( r != null ) {
 			refresh = r;
 			if ( r.isConst() ) {
@@ -217,7 +209,7 @@ public class LayerBox implements IDisplayLayerBox {
 	}
 
 	@Override
-	public void setRefresh(Boolean r) {
+	public void setRefresh(final Boolean r) {
 		currentRefresh = constantRefresh = r;
 
 	}
@@ -256,6 +248,42 @@ public class LayerBox implements IDisplayLayerBox {
 		currentBoundingBox.setRect(currentPosition.getX(), currentPosition.getY(), Math.abs(currentExtent.getX()),
 			Math.abs(currentExtent.getY()));
 		return currentBoundingBox;
+	}
+
+	/**
+	 * Method isAbsoluteWidth()
+	 * @see msi.gama.outputs.layers.IDisplayLayerBox#isAbsoluteWidth()
+	 */
+	@Override
+	public boolean isAbsoluteWidth() {
+		return isAbsoluteWidth;
+	}
+
+	/**
+	 * Method isAbsoluteHeight()
+	 * @see msi.gama.outputs.layers.IDisplayLayerBox#isAbsoluteHeight()
+	 */
+	@Override
+	public boolean isAbsoluteHeight() {
+		return isAbsoluteHeight;
+	}
+
+	/**
+	 * Method isAbsoluteX()
+	 * @see msi.gama.outputs.layers.IDisplayLayerBox#isAbsoluteX()
+	 */
+	@Override
+	public boolean isAbsoluteX() {
+		return isAbsoluteX;
+	}
+
+	/**
+	 * Method isAbsoluteY()
+	 * @see msi.gama.outputs.layers.IDisplayLayerBox#isAbsoluteY()
+	 */
+	@Override
+	public boolean isAbsoluteY() {
+		return isAbsoluteY;
 	}
 
 }

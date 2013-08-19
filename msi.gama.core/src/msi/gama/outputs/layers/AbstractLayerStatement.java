@@ -18,7 +18,6 @@
  */
 package msi.gama.outputs.layers;
 
-import java.awt.geom.Rectangle2D;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.outputs.IDisplayOutput;
@@ -94,11 +93,6 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 	@Override
 	public final Boolean getRefresh() {
 		return getBox().getRefresh();
-	}
-
-	@Override
-	public Rectangle2D.Double getBoundingBox() {
-		return getBox().getBoundingBox();
 	}
 
 	@Override

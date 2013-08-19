@@ -18,7 +18,6 @@
  */
 package msi.gama.outputs.layers;
 
-import java.awt.geom.Rectangle2D;
 import msi.gama.common.interfaces.*;
 import msi.gama.outputs.IDisplayOutput;
 
@@ -50,8 +49,6 @@ public interface ILayerStatement extends INamed, IStepable {
 	public abstract Double getElevation();
 
 	public abstract Boolean getRefresh();
-
-	public abstract Rectangle2D.Double getBoundingBox();
 
 	public abstract IDisplayLayerBox getBox();
 
