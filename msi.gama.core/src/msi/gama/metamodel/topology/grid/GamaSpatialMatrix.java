@@ -119,9 +119,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		final boolean indiv, final boolean useNeighboursCache) throws GamaRuntimeException {
 		super(scope, 100, 100);
 		// GuiUtils.debug("GamaSpatialMatrix.GamaSpatialMatrix create new");
-		numRows = gfile.getNbRows();
-		numCols = gfile.getNbCols();
-		environmentFrame = gfile.getGeometry();
+		numRows = gfile.getNbRows(scope);
+		numCols = gfile.getNbCols(scope);
+		environmentFrame = gfile.getGeometry(scope);
 		bounds = environmentFrame.getEnvelope();
 		cellWidth = bounds.getWidth() / numCols;
 		cellHeight = bounds.getHeight() / numRows;
