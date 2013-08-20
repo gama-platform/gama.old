@@ -30,8 +30,7 @@ public class NewMonitorItem extends GamaViewItem {
 	@Override
 	protected IContributionItem createItem() {
 		IAction action =
-			new GamaAction("Add a monitor", IAction.AS_PUSH_BUTTON,
-				getImageDescriptor("icons/button_add_monitor.png")) {
+			new GamaAction("Add a monitor", IAction.AS_PUSH_BUTTON, getImageDescriptor("icons/menu_add_monitor.png")) {
 
 				@Override
 				public void run() {
