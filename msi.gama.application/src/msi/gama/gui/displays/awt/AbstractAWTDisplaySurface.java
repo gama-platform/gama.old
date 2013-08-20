@@ -9,7 +9,6 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.views.SWTNavigationPanel;
 import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -30,7 +29,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	// protected final Semaphore paintingNeeded = new Semaphore(1, true);
 	private int displayWidth;
 	private int displayHeight;
-	protected SWTNavigationPanel navigator;
+	// protected SWTNavigationPanel navigator;
 	protected boolean autosave = false;
 	protected double widthHeightConstraint = 1.0;
 	protected double zoomIncrement = 0.1;
@@ -203,9 +202,9 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	 */
 	@Override
 	public void setNavigator(final Object nav) {
-		if ( nav instanceof SWTNavigationPanel ) {
-			navigator = (SWTNavigationPanel) nav;
-		}
+		// if ( nav instanceof SWTNavigationPanel ) {
+		// navigator = (SWTNavigationPanel) nav;
+		// }
 	}
 
 	@Override
@@ -250,20 +249,20 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	public void setOrigin(final int x, final int y) {
 		this.origin = new Point(x, y);
 		translation.setToTranslation(origin.x, origin.y);
-		redrawNavigator();
+		// redrawNavigator();
 	}
 
-	protected void redrawNavigator() {
-		if ( !navigationImageEnabled ) { return; }
-		GuiUtils.run(new Runnable() {
-
-			@Override
-			public void run() {
-				if ( navigator == null || navigator.isDisposed() ) { return; }
-				navigator.redraw();
-			}
-		});
-	}
+	// protected void redrawNavigator() {
+	// if ( !navigationImageEnabled ) { return; }
+	// GuiUtils.run(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// if ( navigator == null || navigator.isDisposed() ) { return; }
+	// navigator.redraw();
+	// }
+	// });
+	// }
 
 	protected void runDisplay(final boolean sync) {
 		canBeUpdated(false);
@@ -348,7 +347,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		if ( imageWidth <= getWidth() * 10 && imageHeight <= getHeight() * 10 ) {
 			createNewImage(imageWidth, imageHeight);
 			createIGraphics();
-			redrawNavigator();
+			// redrawNavigator();
 			canBeUpdated(true);
 			return true;
 		}

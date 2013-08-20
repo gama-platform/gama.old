@@ -44,7 +44,6 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	public static final String ID = GuiUtils.LAYER_VIEW_ID;
 
 	protected Composite surfaceCompo;
-	protected Composite general;
 	private EmbeddedSwingComposite swingCompo;
 	protected IPerspectiveListener perspectiveListener;
 	protected Control aux;
@@ -73,7 +72,8 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 		// Add the toggle 3D view button for opengl display
 		IDescription description = output.getDescription();
-		if ( description != null && (description.getFacets().equals("type", "opengl") || description.getFacets().equals("type", "3D"))) {
+		if ( description != null &&
+			(description.getFacets().equals("type", "opengl") || description.getFacets().equals("type", "3D")) ) {
 			return new Integer[] { PAUSE, REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT, SEPARATOR,
 				ZOOM_IN, ZOOM_INDICATOR, ZOOM_OUT, ZOOM_FIT, CAMERA, FOCUS, SEPARATOR, ARCBALL, SWITCHCAMERA,
 				SEPARATOR, PICKING, SELECT_RECTANGLE, SEPARATOR, TRIANGULATION, SPLITLAYER, ROTATION };
@@ -94,20 +94,20 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		super.ownCreatePartControl(c);
 		parent = new SashForm(c, SWT.HORIZONTAL | SWT.SMOOTH);
 		createViewer();
-		general = new Composite(getViewer(), SWT.None);
+		Composite general = new Composite(getViewer(), SWT.None);
 		GridLayout layout = new GridLayout(2, false);
 
 		general.setLayout(layout);
 
 		// If not type swt, then create embedded swing component
 		if ( !getOutput().isSWT() ) {
-			aux = new SWTNavigationPanel(general, SWT.None, getOutput().getSurface());
-			data = new GridData(SWT.CENTER, SWT.FILL, true, true);
-			data.minimumHeight = 200;
-			data.heightHint = 200;
-			data.widthHint = 200;
-			data.horizontalSpan = 2;
-			aux.setLayoutData(data);
+			// aux = new SWTNavigationPanel(general, SWT.None, getOutput().getSurface());
+			// data = new GridData(SWT.CENTER, SWT.FILL, true, true);
+			// data.minimumHeight = 200;
+			// data.heightHint = 200;
+			// data.widthHint = 200;
+			// data.horizontalSpan = 2;
+			// aux.setLayoutData(data);
 
 			EditorFactory.create(general, "Color:", getOutput().getBackgroundColor(), new EditorListener<Color>() {
 
@@ -116,7 +116,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 					getOutput().setBackgroundColor(newValue);
 				}
 			});
-			createItem("Navigation", null, general, true);
+			createItem("Background", null, general, true);
 			displayItems();
 
 			surfaceCompo = createSurfaceComposite();

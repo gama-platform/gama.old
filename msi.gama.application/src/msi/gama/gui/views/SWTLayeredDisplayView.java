@@ -1,17 +1,15 @@
 package msi.gama.gui.views;
 
-import java.awt.Color;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.perspectives.ModelingPerspective;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
 
+// FIXME Broken class
 public class SWTLayeredDisplayView extends LayeredDisplayView {
 
 	public static final String ID = GuiUtils.SWT_LAYER_VIEW_ID;
@@ -57,26 +55,26 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 		// }
 		// });
 
-		aux = new SWTNavigationPanel(general, SWT.None, getOutput().getSurface());
-		data = new GridData(SWT.CENTER, SWT.FILL, true, true);
-		data.minimumHeight = 200;
-		data.heightHint = 200;
-		data.widthHint = 200;
-		data.horizontalSpan = 2;
-		aux.setLayoutData(data);
-
-		EditorFactory.create(general, "Color:", getOutput().getBackgroundColor(), new EditorListener<Color>() {
-
-			@Override
-			public void valueModified(final Color newValue) {
-				getOutput().setBackgroundColor(newValue);
-			}
-		});
-		createItem("Navigation", null, general, true);
-		displayItems();
-		getOutput().getSurface().setZoomListener(this);
-		((SashForm) parent).setWeights(new int[] { 1, 2 });
-		((SashForm) parent).setMaximizedControl(surfaceCompo);
+		// aux = new SWTNavigationPanel(general, SWT.None, getOutput().getSurface());
+		// data = new GridData(SWT.CENTER, SWT.FILL, true, true);
+		// data.minimumHeight = 200;
+		// data.heightHint = 200;
+		// data.widthHint = 200;
+		// data.horizontalSpan = 2;
+		// aux.setLayoutData(data);
+		//
+		// EditorFactory.create(general, "Color:", getOutput().getBackgroundColor(), new EditorListener<Color>() {
+		//
+		// @Override
+		// public void valueModified(final Color newValue) {
+		// getOutput().setBackgroundColor(newValue);
+		// }
+		// });
+		// createItem("Navigation", null, general, true);
+		// displayItems();
+		// getOutput().getSurface().setZoomListener(this);
+		// ((SashForm) parent).setWeights(new int[] { 1, 2 });
+		// ((SashForm) parent).setMaximizedControl(surfaceCompo);
 	}
 
 	public Composite createSurfaceCompo() {

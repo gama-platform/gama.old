@@ -425,8 +425,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		if ( manager != null ) {
 			manager.dispose();
 		}
-		if ( navigator == null || navigator.isDisposed() ) { return; }
-		navigator.dispose();
+		// if ( navigator == null || navigator.isDisposed() ) { return; }
+		// navigator.dispose();
 
 	}
 
