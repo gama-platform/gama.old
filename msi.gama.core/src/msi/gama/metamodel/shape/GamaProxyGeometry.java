@@ -196,7 +196,7 @@ public abstract class GamaProxyGeometry implements IShape {
 		final double dx = getLocation().getX() - getReferenceGeometry().getLocation().getX();
 		final double dy = getLocation().getY() - getReferenceGeometry().getLocation().getY();
 		final double dz = getLocation().getZ() - getReferenceGeometry().getLocation().getZ();
-		copy.apply(GamaShape.translation.by(dx, dy, dz));
+		copy.apply(new GamaShape.Translation(dx, dy, dz));
 		copy.geometryChanged();
 		return copy;
 	}

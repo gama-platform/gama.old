@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -35,7 +35,7 @@ import com.vividsolutions.jts.geom.util.AffineTransformation;
 import com.vividsolutions.jts.operation.distance.IndexedFacetDistance;
 
 /**
- * Written by drogoul Modified on 25 aožt 2010
+ * Written by drogoul Modified on 25 aoï¿½t 2010
  * 
  * 
  * 
@@ -153,7 +153,10 @@ public class GamaShape implements IShape /* , IContainer */{
 				// if ( Double.isNaN(dx) ) {
 				// GuiUtils.debug("GamaShape.setLocation");
 				// }
-				geometry.apply(translation.by(dx, dy, dz));
+				geometry.apply(new Translation(dx, dy, dz));
+				// Changed to avoid side effects when computing displacements & display at a given location at the same
+				// time.
+				// geometry.apply(translation.by(dx, dy, dz));
 			}
 			geometry.geometryChanged();
 		}
@@ -177,7 +180,7 @@ public class GamaShape implements IShape /* , IContainer */{
 		return new GamaShape(newGeom);
 	}
 
-	public static Translation translation = new Translation();
+	// public static Translation translation = new Translation(0, 0, 0);
 	public static Modification modification = new Modification();
 	public static Rotation rotation = new Rotation();
 	public static Scaling scaling = new Scaling();
@@ -186,34 +189,20 @@ public class GamaShape implements IShape /* , IContainer */{
 
 		double dx, dy, dz;
 
+		Translation(final double x, final double y, final double z) {
+			dx = x;
+			dy = y;
+			dz = z;
+		}
+
 		/**
 		 * @see com.vividsolutions.jts.geom.CoordinateFilter#filter(com.vividsolutions.jts.geom.Coordinate)
 		 */
 		@Override
-		public void filter(final Coordinate coord) {
+		public synchronized void filter(final Coordinate coord) {
 			coord.x += dx;
 			coord.y += dy;
 			coord.z += dz;
-		}
-
-		/**
-		 * @param dx
-		 * @param dy
-		 * @param dz
-		 * @return
-		 */
-		public Translation by(final double dx, final double dy, final double dz) {
-			this.dx = dx;
-			this.dy = dy;
-			this.dz = dz;
-			return this;
-		}
-
-		public Translation by(final ILocation translation) {
-			this.dx = translation.getX();
-			this.dy = translation.getY();
-			this.dz = translation.getZ();
-			return this;
 		}
 
 	}
