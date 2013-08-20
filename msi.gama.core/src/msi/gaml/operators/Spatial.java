@@ -1233,7 +1233,7 @@ public abstract class Spatial {
 			final Coordinate[] cp = new DistanceOp(geom.getInnerGeometry(), pt.getInnerGeometry()).nearestPoints();
 			return new GamaPoint(cp[0]);
 		}
-		
+
 		@operator("angle_between")
 		@doc(value = "the angle between vector P0P1 and P0P2", examples = { "angle_between({5,5},{10,5},{5,10}) --: 90°" })
 		public static Integer angleInDegreesBetween(final GamaPoint p0, final GamaPoint p1, final GamaPoint p2) {
@@ -1241,13 +1241,13 @@ public abstract class Spatial {
 			final double Ya = p1.y - p0.y;
 			final double Xb = p2.x - p0.x;
 			final double Yb = p2.y - p0.y;
-			
+
 			final double Na = Maths.sqrt(Xa * Xa + Ya * Ya);
 			final double Nb = Maths.sqrt(Xb * Xb + Yb * Yb);
-			final double C = (Xa*Xb+Ya*Yb)/(Na*Nb);
-			final double S = (Xa*Yb-Ya*Xb);
-			final double result = (S > 0) ? Maths.acos(C) : -1 * Maths.acos(C);
-			return Maths.checkHeading((int) result );
+			final double C = (Xa * Xb + Ya * Yb) / (Na * Nb);
+			final double S = Xa * Yb - Ya * Xb;
+			final double result = S > 0 ? Maths.acos(C) : -1 * Maths.acos(C);
+			return Maths.checkHeading((int) result);
 		}
 
 	}
@@ -1295,10 +1295,9 @@ public abstract class Spatial {
 		}
 
 		@operator(value = "neighbours_at", content_type = IType.AGENT)
-		@doc(value = "a list, containing all the agents located at a distance inferior or equal to the right-hand operand (point).",
-				comment = "The topology used to compute the neighbourhood  is the one of the left-operand if this one is an agent; otherwise the one of the agent applying the operator.", examples = { "({50, 50} neighbours_at (10)) --: returns all the agents located at a distance lower or equal to 10 to point {50, 50}." }, see = {
-				"neighbours_of", "closest_to", "overlapping", "agents_overlapping", "agents_inside", "agent_closest_to",
-				"at_distance" })
+		@doc(value = "a list, containing all the agents located at a distance inferior or equal to the right-hand operand (point).", comment = "The topology used to compute the neighbourhood  is the one of the left-operand if this one is an agent; otherwise the one of the agent applying the operator.", examples = { "({50, 50} neighbours_at (10)) --: returns all the agents located at a distance lower or equal to 10 to point {50, 50}." }, see = {
+			"neighbours_of", "closest_to", "overlapping", "agents_overlapping", "agents_inside", "agent_closest_to",
+			"at_distance" })
 		// no doc, because same same as before but optimized for "point".
 		public static IList neighbours_at(final IScope scope, final GamaPoint agent, final Double distance)
 			throws GamaRuntimeException {
