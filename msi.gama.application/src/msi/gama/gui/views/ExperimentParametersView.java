@@ -74,10 +74,15 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 	@Override
 	public void displayItems() {
 		super.displayItems();
+		final Collection<UserCommandStatement> userCommands = experiment.getUserCommands();
 		for ( final Control c : commands.getChildren() ) {
 			c.dispose();
 		}
-		final Collection<UserCommandStatement> userCommands = experiment.getUserCommands();
+		if ( userCommands.isEmpty() ) {
+			commands.setVisible(false);
+			return;
+		}
+		commands.setVisible(true);
 		for ( final IStatement command : userCommands ) {
 			final Button b = new Button(commands, SWT.PUSH);
 			b.setText(command.getName());
