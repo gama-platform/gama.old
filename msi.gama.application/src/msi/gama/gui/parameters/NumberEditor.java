@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -135,10 +135,10 @@ public abstract class NumberEditor extends AbstractEditor {
 		ToolBar comp = new ToolBar(compo, SWT.HORIZONTAL);
 		minus = new ToolItem(comp, SWT.PUSH);
 		minus.setText("");
-		minus.setImage(SwtGui.collapse);
+		minus.setImage(SwtGui.minus);
 		plus = new ToolItem(comp, SWT.PUSH);
 		plus.setText("");
-		plus.setImage(SwtGui.expand);
+		plus.setImage(SwtGui.plus);
 
 		comp.addFocusListener(expression);
 
