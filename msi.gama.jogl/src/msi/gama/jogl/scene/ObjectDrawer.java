@@ -43,6 +43,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 		renderer.gl.glPushMatrix();
 		renderer.gl.glTranslated(object.offset.x, -object.offset.y, object.offset.z);
 		renderer.gl.glScaled(object.scale.x, object.scale.y, 1);
+		renderer.gl.glPolygonOffset(object.layerId, 1);
 		_draw(object);
 		renderer.gl.glPopMatrix();
 	}

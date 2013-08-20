@@ -30,7 +30,7 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	public GeometryObject(Geometry geometry, IAgent agent, double z_layer, int layerId, Color color, Double alpha,
 		Boolean fill, Color border, Boolean isTextured, int angle, double height, GamaPoint offset, GamaPoint scale,
 		boolean rounded, String type) {
-		super(color, offset, scale, alpha);
+		super(color, offset, scale, alpha,layerId);
 		this.geometry = geometry;
 		this.agent = agent;
 		this.z_layer = z_layer;

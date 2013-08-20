@@ -19,7 +19,7 @@ public class ImageObject extends AbstractObject {
 
 	public ImageObject(BufferedImage image, IAgent agent, double x, double y, double z, Double alpha, double width,
 		double height, Integer angle, GamaPoint offset, GamaPoint scale, boolean isDynamic, MyTexture texture) {
-		super(null, offset, scale, alpha);
+		super(null, offset, scale, alpha,0);
 		this.image = image;
 		this.agent = agent;
 		this.x = x;
