@@ -195,135 +195,135 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	@Override
 	public void display(final GLAutoDrawable drawable) {
-		if ( displaySurface.canBeUpdated() ) {
+		// if ( displaySurface.canBeUpdated() ) {
 
-			gl = drawable.getGL();
-			setContext(drawable.getContext());
+		gl = drawable.getGL();
+		setContext(drawable.getContext());
 
-			width = drawable.getWidth();
-			height = drawable.getHeight();
+		width = drawable.getWidth();
+		height = drawable.getHeight();
 
-			gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
-			gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, mvmatrix, 0);
-			gl.glGetDoublev(GL.GL_PROJECTION_MATRIX, projmatrix, 0);
+		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
+		gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, mvmatrix, 0);
+		gl.glGetDoublev(GL.GL_PROJECTION_MATRIX, projmatrix, 0);
 
-			// Clear the screen and the depth buffer
-			gl.glClearDepth(1.0f);
-			gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+		// Clear the screen and the depth buffer
+		gl.glClearDepth(1.0f);
+		gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-			gl.glMatrixMode(GL.GL_PROJECTION);
-			// Reset the view (x, y, z axes back to normal)
-			gl.glLoadIdentity();
+		gl.glMatrixMode(GL.GL_PROJECTION);
+		// Reset the view (x, y, z axes back to normal)
+		gl.glLoadIdentity();
 
-			camera.UpdateCamera(gl, glu, width, height);
+		camera.UpdateCamera(gl, glu, width, height);
 
-			if ( IS_LIGHT_ON ) {
-				gl.glEnable(GL_LIGHTING);
-			} else {
-				gl.glDisable(GL_LIGHTING);
-			}
-
-			// Draw Diffuse light as yellow sphere
-			// GLUtil.DrawDiffuseLights(gl, glu,getMaxEnvDim()/10);
-
-			// FIXME: Now the background is not updated but it should to have a night effect.
-			// Set background color
-			// gl.glClearColor(ambiantLightValue.floatValue(), ambiantLightValue.floatValue(),
-			// ambiantLightValue.floatValue(), 1.0f);
-			// The ambiant_light is always reset in case of dynamic lighting.
-			GLUtil.UpdateAmbiantLight(gl, glu, ambientLightValue);
-			GLUtil.UpdateDiffuseLight(gl, glu, diffuseLightValue);
-
-			// Show triangulated polygon or not (trigger by GAMA)
-			if ( !displaySurface.triangulation ) {
-				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
-			} else {
-				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
-			}
-
-			// Blending control
-			if ( BLENDING_ENABLED ) {
-				gl.glEnable(GL_BLEND); // Turn blending on
-				// FIXME: This has been comment (09/12 r4989) to have the depth testing when image
-				// are drawn but need to know why it was initially disabled?
-				// Imply strange rendering when using picture (e.g boids)
-				// gl.glDisable(GL_DEPTH_TEST); // Turn depth testing off
-			} else {
-				gl.glDisable(GL_BLEND); // Turn blending off
-				if ( !getStencil() ) {
-					gl.glEnable(GL_DEPTH_TEST);
-				} else {
-					gl.glEnable(GL_STENCIL_TEST);
-				}
-			}
-
-			// Use polygon offset for a better edges rendering
-			// (http://www.glprogramming.com/red/chapter06.html#name4)
-			gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
-			gl.glPolygonOffset(1, 1);
-
-			// gl.glDisable(GL_DEPTH_TEST);
-
-			this.rotateModel();
-
-			if ( getInertia() ) {
-				camera.inertia();
-			}
-
-			this.drawScene();
-
-			// byte[] src = new byte[width*height];
-			//
-			// for(int a=0; a<height; a++){
-			// for(int b=0; b<width; b++){
-			// src[a*width+b]= 127;
-			// }
-			// }
-			// gl.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-			// gl.glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
-			// gl.glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
-			//
-			// gl.glDrawPixels(width/100, height/100,
-			// GL.GL_RED, GL.GL_UNSIGNED_BYTE,
-			// ByteBuffer.wrap(src));
-
-			if ( getShowFPS() ) {
-				CalculateFrameRate();
-
-				Graphics2D g2d = overlay.createGraphics();
-				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-				g2d.setBackground(canvas.getBackground());
-				g2d.clearRect(0, 0, 100, 50);
-				g2d.setColor(Color.black);
-				Font serifFont = new Font("Serif", Font.PLAIN, 12);
-				AttributedString as = new AttributedString("FPS : " + fps);
-				as.addAttribute(TextAttribute.FONT, serifFont);
-				g2d.drawString(as.getIterator(), 10, 20);
-				overlay.markDirty(0, 0, canvas.getWidth(), canvas.getHeight());
-				overlay.drawAll();
-				g2d.dispose();
-			}
-
-			this.drawScene();
-
-			// this.DrawShapeFile();
-			gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
-			gl.glPopMatrix();
-
-			// ROI drawer
-			if ( this.displaySurface.selectRectangle ) {
-				DrawROI();
-			}
-
-			// Show fps for performance mesures
-			if ( showFPS ) {
-				CalculateFrameRate();
-				gl.glRasterPos2i(-30, 30);
-				gl.glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-				glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, "FPS : " + fps);
-			}
-
+		if ( IS_LIGHT_ON ) {
+			gl.glEnable(GL_LIGHTING);
+		} else {
+			gl.glDisable(GL_LIGHTING);
 		}
+
+		// Draw Diffuse light as yellow sphere
+		// GLUtil.DrawDiffuseLights(gl, glu,getMaxEnvDim()/10);
+
+		// FIXME: Now the background is not updated but it should to have a night effect.
+		// Set background color
+		// gl.glClearColor(ambiantLightValue.floatValue(), ambiantLightValue.floatValue(),
+		// ambiantLightValue.floatValue(), 1.0f);
+		// The ambiant_light is always reset in case of dynamic lighting.
+		GLUtil.UpdateAmbiantLight(gl, glu, ambientLightValue);
+		GLUtil.UpdateDiffuseLight(gl, glu, diffuseLightValue);
+
+		// Show triangulated polygon or not (trigger by GAMA)
+		if ( !displaySurface.triangulation ) {
+			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+		} else {
+			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
+		}
+
+		// Blending control
+		if ( BLENDING_ENABLED ) {
+			gl.glEnable(GL_BLEND); // Turn blending on
+			// FIXME: This has been comment (09/12 r4989) to have the depth testing when image
+			// are drawn but need to know why it was initially disabled?
+			// Imply strange rendering when using picture (e.g boids)
+			// gl.glDisable(GL_DEPTH_TEST); // Turn depth testing off
+		} else {
+			gl.glDisable(GL_BLEND); // Turn blending off
+			if ( !getStencil() ) {
+				gl.glEnable(GL_DEPTH_TEST);
+			} else {
+				gl.glEnable(GL_STENCIL_TEST);
+			}
+		}
+
+		// Use polygon offset for a better edges rendering
+		// (http://www.glprogramming.com/red/chapter06.html#name4)
+		gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
+		gl.glPolygonOffset(1, 1);
+
+		// gl.glDisable(GL_DEPTH_TEST);
+
+		this.rotateModel();
+
+		if ( getInertia() ) {
+			camera.inertia();
+		}
+
+		this.drawScene();
+
+		// byte[] src = new byte[width*height];
+		//
+		// for(int a=0; a<height; a++){
+		// for(int b=0; b<width; b++){
+		// src[a*width+b]= 127;
+		// }
+		// }
+		// gl.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+		// gl.glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+		// gl.glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+		//
+		// gl.glDrawPixels(width/100, height/100,
+		// GL.GL_RED, GL.GL_UNSIGNED_BYTE,
+		// ByteBuffer.wrap(src));
+
+		if ( getShowFPS() ) {
+			CalculateFrameRate();
+
+			Graphics2D g2d = overlay.createGraphics();
+			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+			g2d.setBackground(canvas.getBackground());
+			g2d.clearRect(0, 0, 100, 50);
+			g2d.setColor(Color.black);
+			Font serifFont = new Font("Serif", Font.PLAIN, 12);
+			AttributedString as = new AttributedString("FPS : " + fps);
+			as.addAttribute(TextAttribute.FONT, serifFont);
+			g2d.drawString(as.getIterator(), 10, 20);
+			overlay.markDirty(0, 0, canvas.getWidth(), canvas.getHeight());
+			overlay.drawAll();
+			g2d.dispose();
+		}
+
+		this.drawScene();
+
+		// this.DrawShapeFile();
+		gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
+		gl.glPopMatrix();
+
+		// ROI drawer
+		if ( this.displaySurface.selectRectangle ) {
+			DrawROI();
+		}
+
+		// Show fps for performance mesures
+		if ( showFPS ) {
+			CalculateFrameRate();
+			gl.glRasterPos2i(-30, 30);
+			gl.glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+			glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, "FPS : " + fps);
+		}
+
+		// }
 	}
 
 	@Override
