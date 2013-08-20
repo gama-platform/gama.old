@@ -18,7 +18,6 @@
  */
 package msi.gama.outputs.layers;
 
-import java.awt.geom.Rectangle2D;
 import msi.gama.metamodel.shape.ILocation;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -61,7 +60,7 @@ public interface IDisplayLayerBox {
 
 	public abstract Double getTransparency();
 
-	public abstract Rectangle2D.Double getBoundingBox();
+	// public abstract Rectangle2D.Double getBoundingBox();
 
 	public abstract ILocation getPosition();
 

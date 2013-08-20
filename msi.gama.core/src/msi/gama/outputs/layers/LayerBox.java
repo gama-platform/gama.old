@@ -18,7 +18,6 @@
  */
 package msi.gama.outputs.layers;
 
-import java.awt.geom.Rectangle2D;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -44,7 +43,7 @@ public class LayerBox implements IDisplayLayerBox {
 	boolean isAbsoluteX = false;
 	boolean isAbsoluteY = false;
 
-	Double currentTransparency;
+	Double currentTransparency = 0d;
 	ILocation currentPosition;
 	ILocation currentExtent;
 	Double currentElevation;
@@ -56,17 +55,17 @@ public class LayerBox implements IDisplayLayerBox {
 	Double constantElevation = null;
 	Boolean constantRefresh = null;
 
-	Rectangle2D.Double currentBoundingBox = new Rectangle2D.Double();
+	// Rectangle2D.Double currentBoundingBox = new Rectangle2D.Double();
 	boolean constantBoundingBox = false;
 
 	public LayerBox(final IExpression transp, final IExpression pos, final IExpression ext, final IExpression elev,
 		final IExpression refr) throws GamaRuntimeException {
 		IScope scope = GAMA.obtainNewScope();
-		setTransparency(scope, transp);
-		setPosition(scope, pos);
-		setExtent(scope, ext);
-		setElevation(scope, elev);
-		setRefresh(scope, refr);
+		setTransparency(scope, transp == null ? transparency : transp);
+		setPosition(scope, pos == null ? position : pos);
+		setExtent(scope, ext == null ? extent : ext);
+		setElevation(scope, elev == null ? elevation : elev);
+		setRefresh(scope, refr == null ? refresh : refr);
 
 	}
 
@@ -98,9 +97,9 @@ public class LayerBox implements IDisplayLayerBox {
 				currentPosition =
 					constantPosition == null ? Cast.asPoint(scope, position.value(scope)) : constantPosition;
 				currentExtent = constantExtent == null ? Cast.asPoint(scope, extent.value(scope)) : constantExtent;
-				if ( currentPosition != null && currentExtent != null ) {
-					computeBoundingBox();
-				}
+				// if ( currentPosition != null && currentExtent != null ) {
+				// computeBoundingBox();
+				// }
 				currentElevation =
 					constantElevation == null ? Cast.asFloat(scope, elevation.value(scope)) : constantElevation;
 				currentRefresh = constantRefresh == null ? Cast.asBool(scope, refresh.value(scope)) : constantRefresh;
@@ -185,7 +184,7 @@ public class LayerBox implements IDisplayLayerBox {
 		currentExtent = constantExtent = new GamaPoint(width, height);
 		if ( constantPosition != null ) {
 			constantBoundingBox = true;
-			computeBoundingBox();
+			// computeBoundingBox();
 		}
 	}
 
@@ -199,7 +198,7 @@ public class LayerBox implements IDisplayLayerBox {
 		currentPosition = constantPosition = new GamaPoint(x, y, z);
 		if ( constantExtent != null ) {
 			constantBoundingBox = true;
-			computeBoundingBox();
+			// computeBoundingBox();
 		}
 	}
 
@@ -219,10 +218,10 @@ public class LayerBox implements IDisplayLayerBox {
 		return currentTransparency;
 	}
 
-	@Override
-	public Rectangle2D.Double getBoundingBox() {
-		return currentBoundingBox;
-	}
+	// @Override
+	// public Rectangle2D.Double getBoundingBox() {
+	// return currentBoundingBox;
+	// }
 
 	@Override
 	public ILocation getPosition() {
@@ -244,11 +243,11 @@ public class LayerBox implements IDisplayLayerBox {
 		return currentRefresh;
 	}
 
-	private Rectangle2D.Double computeBoundingBox() {
-		currentBoundingBox.setRect(currentPosition.getX(), currentPosition.getY(), Math.abs(currentExtent.getX()),
-			Math.abs(currentExtent.getY()));
-		return currentBoundingBox;
-	}
+	// private Rectangle2D.Double computeBoundingBox() {
+	// currentBoundingBox.setRect(currentPosition.getX(), currentPosition.getY(), Math.abs(currentExtent.getX()),
+	// Math.abs(currentExtent.getY()));
+	// return currentBoundingBox;
+	// }
 
 	/**
 	 * Method isAbsoluteWidth()
