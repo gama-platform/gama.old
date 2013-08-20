@@ -58,11 +58,7 @@ public class AspectStatement extends AbstractStatementSequence {
 						agent.getSpecies().hasVar(IKeyword.COLOR) ? Cast.asColor(scope,
 							agent.getDirectVarValue(scope, IKeyword.COLOR)) : Color.YELLOW;
 					final IShape ag = agent.getGeometry();
-					final IShape ag2 = (IShape) ag.copy(scope);
-					IAgent ag3 = scope.getAgentScope();
-					if ( !ag3.equals(agent) ) {
-						GuiUtils.debug("AspectStatement not the right agent");
-					}
+					 final IShape ag2 = (IShape) ag.copy(scope);
 					final Rectangle2D r = g.drawGamaShape(scope, ag2, c, true, Color.black, 0, false);
 					return r;
 				} finally {
