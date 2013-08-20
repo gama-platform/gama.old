@@ -103,8 +103,12 @@ public class SwtGui implements IGui {
 	public static Image experimentMenuImage = AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID,
 		"/icons/menu_run.png").createImage();
 	public static Image noExperimentImage = getImageDescriptor("/icons/menu_experiment_error.png").createImage();
-	public static Image expand = getImageDescriptor("/icons/small_button_plus.png").createImage();
-	public static Image collapse = getImageDescriptor("/icons/small_button_minus.png").createImage();
+	public static Image plus = getImageDescriptor("/icons/small_button_plus.png").createImage();
+	public static Image minus = getImageDescriptor("/icons/small_button_minus.png").createImage();
+	// public static Image expand = getImageDescriptor("/icons/control.png").createImage();
+	// public static Image collapse = getImageDescriptor("/icons/control-270.png").createImage();
+	public static Image expand = getImageDescriptor("/icons/bullet_toggle_plus.png").createImage();
+	public static Image collapse = getImageDescriptor("/icons/bullet_toggle_minus.png").createImage();
 	public static Image thumb = getImageDescriptor("/icons/knobNormal.png").createImage();
 	public static Image thumb_over = getImageDescriptor("/icons/knobHover.png").createImage();
 	public static Image thumb_blue = getImageDescriptor("/icons/knobNormal_blue.png").createImage();
