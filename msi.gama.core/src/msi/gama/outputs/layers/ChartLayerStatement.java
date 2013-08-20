@@ -23,6 +23,7 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.outputs.layers.ChartDataStatement.ChartData;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -115,7 +116,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 	private final Map<String, Integer> expressions_index = new HashMap();
 	private Dataset dataset;
 	private boolean exploded;
-	String xAxisName = "time";
+	static String xAxisName = "'time'";
 	List<ChartData> datas;
 	final Map<String, Double> lastValues;
 	Long lastComputeCycle;
@@ -147,7 +148,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 
 				timeSeriesXData =
 					(ChartDataStatement) DescriptionFactory.compile(DescriptionFactory.create(IKeyword.DATA,
-						description, IKeyword.LEGEND, IKeyword.TIME, IKeyword.VALUE, IKeyword.TIME));
+						description, IKeyword.LEGEND, xAxisName, IKeyword.VALUE, IKeyword.TIME));
 				if ( getFacet(IKeyword.TIMEXSERIES) != null ) {
 					timeSeriesXData.getDescription().getFacets().get(IKeyword.VALUE)
 						.setExpression(getFacet(IKeyword.TIMEXSERIES));
