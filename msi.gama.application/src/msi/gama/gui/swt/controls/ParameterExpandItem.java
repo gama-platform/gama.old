@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -54,10 +54,10 @@ public class ParameterExpandItem extends Item {
 
 	private static int imageHeight = 10, imageWidth = 10;
 	boolean isPaused;
-	private static final int TEXT_INSET = 4;
-	private static final int SEPARATION = 4;
-	private static final int BORDER = 1;
-	static final int CHEVRON_SIZE = 20;
+	private static final int TEXT_INSET = 1;
+	private static final int SEPARATION = 3;
+	private static final int BORDER = 2;
+	static final int CHEVRON_SIZE = 16;
 
 	/**
 	 * Constructs a new instance of this class given its parent and a style value describing its
@@ -145,14 +145,10 @@ public class ParameterExpandItem extends Item {
 		if ( parent == null ) { return; }
 		int headerHeight = parent.bandHeight;
 		Display display = getDisplay();
-		gc.setForeground(display.getSystemColor(SWT.COLOR_TITLE_BACKGROUND_GRADIENT));
+		gc.setForeground(display.getSystemColor(SWT.COLOR_DARK_GRAY));
 		gc.drawRoundRectangle(x, y, width - 1, headerHeight + (expanded ? height - 1 : 0), 6, 6);
-		// if ( expanded ) {
-		gc.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
-		gc.fillRoundRectangle(x + 1, y + 1, width - 2, headerHeight - 2, 6, 6);
-		// }
 		int drawX = x;
-		int imageY = y + (headerHeight - imageHeight) / 2;
+		int imageY = y + 1 + (headerHeight - imageHeight) / 2;
 		if ( getImage() != null ) {
 			drawX += ParameterExpandItem.TEXT_INSET;
 			gc.drawImage(getImage(), drawX, imageY);
@@ -161,12 +157,12 @@ public class ParameterExpandItem extends Item {
 		int endX = x + width;
 		if ( parent.isClosable ) {
 			endX -= ParameterExpandItem.TEXT_INSET + imageWidth;
-			gc.drawImage(SwtGui.close, endX, imageY);
+			gc.drawImage(SwtGui.close, endX, imageY + 2);
 		}
 		if ( parent.isPausable ) {
 			Image image = isPaused ? SwtGui.play : SwtGui.pause;
 			endX -= ParameterExpandItem.SEPARATION + imageWidth;
-			gc.drawImage(image, endX, imageY);
+			gc.drawImage(image, endX, imageY + 2);
 		}
 		if ( getText().length() > 0 ) {
 			String title, other = null;
@@ -181,7 +177,9 @@ public class ParameterExpandItem extends Item {
 			drawX += ParameterExpandItem.SEPARATION;
 			Point size = gc.stringExtent(title);
 			gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GRAY));
+			// gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_WHITE));
 			gc.drawString(title, drawX, y + (headerHeight - size.y) / 2, true);
+			// gc.setFont(SwtGui.getUnitFont());
 			if ( other != null ) {
 				int j = other.indexOf(ItemList.ERROR_CODE);
 				int k = other.indexOf(ItemList.INFO_CODE);
@@ -198,7 +196,7 @@ public class ParameterExpandItem extends Item {
 				} else {
 					gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 				}
-				gc.setFont(SwtGui.getLabelfont());
+				gc.setFont(SwtGui.getUnitFont());
 				drawX += size.x + SEPARATION;
 				size = gc.stringExtent(other);
 				gc.setClipping(drawX, y, endX - drawX, headerHeight);
