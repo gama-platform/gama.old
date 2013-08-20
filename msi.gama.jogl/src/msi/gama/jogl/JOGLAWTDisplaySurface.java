@@ -29,7 +29,6 @@ import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.awt.*;
 import msi.gama.gui.displays.layers.LayerManager;
-import msi.gama.jogl.JOGLSWTDisplaySurface.AgentMenuItem;
 import msi.gama.jogl.scene.ModelScene;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.Camera.AbstractCamera;
@@ -61,8 +60,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	// private ActionListener menuListener;
 	private ActionListener focusListener;
 	private ActionListener followListener;
-	// private ActionListener highlightListener;
-	// private ActionListener commandListener;
 
 	private boolean output3D = false;
 	// Environment properties useful to set the camera position.
@@ -129,10 +126,11 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 					renderer.setPolygonMode(getOutput().getPolygonMode());
 					renderer.setCameraPosition(getOutput().getCameraPos());
 					renderer.setCameraLookPosition(getOutput().getCameraLookPos());
-					if(renderer.camera._phi <360 && renderer.camera._phi>180)
-						renderer.setCameraUpVector( new GamaPoint(0, -1, 0));
-					else
+					if ( renderer.camera._phi < 360 && renderer.camera._phi > 180 ) {
+						renderer.setCameraUpVector(new GamaPoint(0, -1, 0));
+					} else {
 						renderer.setCameraUpVector(getOutput().getCameraUpVector());
+					}
 					if ( autosave ) {
 						snapshot();
 					}
@@ -350,7 +348,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				AgentMenuItem source = (AgentMenuItem) e.getSource();
+				AWTDisplaySurfaceMenu.AgentMenuItem source = (AWTDisplaySurfaceMenu.AgentMenuItem) e.getSource();
 				IAgent a = source.getAgent();
 				if ( a != null ) {
 					agent = a;
