@@ -70,11 +70,10 @@ import msi.gama.util.GamaList;
 import msi.gaml.architecture.reflex.ReflexStatement;
 import msi.gaml.descriptions.SpeciesDescription;
 import msi.gaml.skills.ISkill;
-import msi.gaml.skills.Skill;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.ActionStatement;
 import msi.gaml.statements.AspectStatement;
-import msi.gaml.statements.IAspect;
+import msi.gaml.statements.IExecutable;
 import msi.gaml.statements.IStatement;
 import msi.gaml.variables.IVariable;
 import msi.gaml.variables.Variable;
@@ -298,7 +297,7 @@ public class GamaFeatureProvider extends DefaultFeatureProvider {
 			 if (stat instanceof ReflexStatement)
 				 createReflex( target,  targetE,  (ReflexStatement) stat,  diagram);
 		 }
-		 for (IAspect asp : species.getAspects()) {
+		 for (IExecutable asp : species.getAspects()) {
 			 if (asp instanceof AspectStatement)
 				 createAspect( target,  targetE,  (AspectStatement) asp,  diagram);
 		 }
