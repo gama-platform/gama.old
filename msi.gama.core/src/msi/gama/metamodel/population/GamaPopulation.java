@@ -39,7 +39,7 @@ import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.IAspect;
+import msi.gaml.statements.IExecutable;
 import msi.gaml.types.GamaTopologyType;
 import msi.gaml.variables.IVariable;
 import com.google.common.collect.Iterators;
@@ -355,7 +355,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	}
 
 	@Override
-	public IAspect getAspect(final String default1) {
+	public IExecutable getAspect(final String default1) {
 		return species.getAspect(default1);
 	}
 
@@ -408,7 +408,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 			final IExpression spec = species.getFacet(IKeyword.EDGE_SPECIES);
 			final String edgeName = spec == null ? "base_edge" : spec.literalValue();
 			final ISpecies edgeSpecies = scope.getSimulationScope().getModel().getSpecies(edgeName);
-			// TODO Specifier directed quelque part dans l'espèce
+			// TODO Specifier directed quelque part dans l'espÔøΩce
 			final GamaSpatialGraph g =
 				new GamaSpatialGraph(GamaList.EMPTY_LIST, false, false, new AbstractGraphNodeAgent.NodeRelation(),
 					edgeSpecies, scope);

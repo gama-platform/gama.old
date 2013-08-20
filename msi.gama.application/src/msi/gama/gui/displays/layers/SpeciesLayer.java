@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -90,7 +90,7 @@ public class SpeciesLayer extends AgentLayer {
 
 	private void drawPopulation(final IScope scope, final IGraphics g, final SpeciesLayerStatement layer,
 		final IPopulation population) throws GamaRuntimeException {
-		IAspect aspect = layer.getAspect();
+		IExecutable aspect = layer.getAspect();
 		// IAspect aspect = population.getAspect(layer.getAspectName());
 		if ( aspect == null ) {
 			aspect = AspectStatement.DEFAULT_ASPECT;
@@ -106,7 +106,10 @@ public class SpeciesLayer extends AgentLayer {
 			// if ( a.dead() ) {
 			// GuiUtils.debug("SpeciesLayer.drawPopulation dead agent :" + a);
 			// }
-			final Rectangle2D r = aspect.draw(scope, a);
+			Object[] result = new Object[1];
+			scope.execute(aspect, a, null, result);
+			final Rectangle2D r = (Rectangle2D) result[0];
+			// aspect.draw(scope, a);
 			if ( r != null ) {
 				shapes.put(a, r);
 			}

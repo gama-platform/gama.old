@@ -228,7 +228,7 @@ public abstract class AbstractScope implements IScope {
 	 * @see msi.gama.runtime.IScope#execute(msi.gaml.statements.IStatement, msi.gama.metamodel.agent.IAgent)
 	 */
 	@Override
-	public boolean execute(final IStatement statement, final IAgent agent, final Arguments args, final Object[] result) {
+	public boolean execute(final IExecutable statement, final IAgent agent, final Arguments args, final Object[] result) {
 		// If the statement or the agent is null, we act as if the scope had been marked as INTERRUPTED
 		if ( statement == null || agent == null || interrupted() || agent.dead() ) { return false; }
 		// We then try to push the agent on the stack

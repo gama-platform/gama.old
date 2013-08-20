@@ -77,7 +77,7 @@ public interface IScope {
 	 * @return
 	 * @throws GamaRuntimeException
 	 */
-	public abstract boolean execute(final IStatement statement, final IAgent agent, final Arguments args,
+	public abstract boolean execute(final IExecutable executable, final IAgent agent, final Arguments args,
 		Object[] result);
 
 	/**

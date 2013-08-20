@@ -38,12 +38,13 @@ import msi.gaml.types.IType;
 @symbol(name = { IKeyword.ASPECT }, kind = ISymbolKind.BEHAVIOR, with_sequence = true, unique_name = true)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
 @facets(value = { @facet(name = IKeyword.NAME, type = IType.ID, optional = true) }, omissible = IKeyword.NAME)
-public class AspectStatement extends AbstractStatementSequence implements IAspect {
+public class AspectStatement extends AbstractStatementSequence {
 
-	public static IAspect DEFAULT_ASPECT = new IAspect() {
+	public static IExecutable DEFAULT_ASPECT = new IExecutable() {
 
 		@Override
-		public Rectangle2D draw(final IScope scope, final IAgent agent) throws GamaRuntimeException {
+		public Rectangle2D executeOn(final IScope scope) throws GamaRuntimeException {
+			IAgent agent = scope.getAgentScope();
 			if ( agent != null ) {
 				final IGraphics g = scope.getGraphics();
 				if ( g == null ) { return null; }
@@ -58,6 +59,10 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 							agent.getDirectVarValue(scope, IKeyword.COLOR)) : Color.YELLOW;
 					final IShape ag = agent.getGeometry();
 					final IShape ag2 = (IShape) ag.copy(scope);
+					IAgent ag3 = scope.getAgentScope();
+					if ( !ag3.equals(agent) ) {
+						GuiUtils.debug("AspectStatement not the right agent");
+					}
 					final Rectangle2D r = g.drawGamaShape(scope, ag2, c, true, Color.black, 0, false);
 					return r;
 				} finally {
@@ -67,11 +72,11 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 			}
 			return null;
 		}
-		
-		@Override
-		public Rectangle2D drawOverlay(final IScope scope, final IAgent agent) throws GamaRuntimeException {
-			return null;
-		}
+
+		// @Override
+		// public Rectangle2D drawOverlay(final IScope scope, final IAgent agent) throws GamaRuntimeException {
+		// return null;
+		// }
 
 	};
 
@@ -81,7 +86,9 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 	}
 
 	@Override
-	public Rectangle2D draw(final IScope scope, final IAgent agent) throws GamaRuntimeException {
+	// public Rectangle2D draw(final IScope scope, final IAgent agent) throws GamaRuntimeException {
+	public Rectangle2D executeOn(final IScope scope) {
+		IAgent agent = scope.getAgentScope();
 		if ( agent != null ) {
 			final IGraphics g = scope.getGraphics();
 			if ( g == null ) { return null; }
@@ -91,9 +98,11 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 				if ( agent == GuiUtils.getHighlightedAgent() ) {
 					g.beginHighlight();
 				}
-				Object[] result = new Object[1];
-				if ( scope.execute(this, agent, null, result) && result[0] instanceof Rectangle2D ) { return (Rectangle2D) result[0]; }
-				return null;
+				return (Rectangle2D) super.executeOn(scope);
+				// Object[] result = new Object[1];
+				// if ( scope.execute(this, agent, null, result) && result[0] instanceof Rectangle2D ) { return
+				// (Rectangle2D) result[0]; }
+				// return null;
 			} finally {
 				g.endHighlight();
 				agent.releaseLock();
@@ -103,29 +112,29 @@ public class AspectStatement extends AbstractStatementSequence implements IAspec
 		return null;
 
 	}
-	
-	@Override
-	public Rectangle2D drawOverlay(final IScope scope, final IAgent agent) throws GamaRuntimeException {
-		if ( agent != null ) {
-			final IGraphics g = scope.getGraphics();
-			if ( g == null ) { return null; }
-			try {
-				agent.acquireLock();
-				if ( agent.dead() ) { return null; }
-				final Color c =
-					agent.getSpecies().hasVar(IKeyword.COLOR) ? Cast.asColor(scope,
-						agent.getDirectVarValue(scope, IKeyword.COLOR)) : Color.YELLOW;
-				final IShape ag = agent.getGeometry();
-				final IShape ag2 = (IShape) ag.copy(scope);
-				final Rectangle2D r = g.drawGamaShapeOverlay(scope, ag2, c, true, Color.black, 0, false);
-				return r;
-			} finally {
-				agent.releaseLock();
-			}
-		}
-		return null;
 
-	}
+	// @Override
+	// public Rectangle2D drawOverlay(final IScope scope, final IAgent agent) throws GamaRuntimeException {
+	// if ( agent != null ) {
+	// final IGraphics g = scope.getGraphics();
+	// if ( g == null ) { return null; }
+	// try {
+	// agent.acquireLock();
+	// if ( agent.dead() ) { return null; }
+	// final Color c =
+	// agent.getSpecies().hasVar(IKeyword.COLOR) ? Cast.asColor(scope,
+	// agent.getDirectVarValue(scope, IKeyword.COLOR)) : Color.YELLOW;
+	// final IShape ag = agent.getGeometry();
+	// final IShape ag2 = (IShape) ag.copy(scope);
+	// final Rectangle2D r = g.drawGamaShapeOverlay(scope, ag2, c, true, Color.black, 0, false);
+	// return r;
+	// } finally {
+	// agent.releaseLock();
+	// }
+	// }
+	// return null;
+	//
+	// }
 
 	@Override
 	public Rectangle2D privateExecuteIn(final IScope stack) throws GamaRuntimeException {

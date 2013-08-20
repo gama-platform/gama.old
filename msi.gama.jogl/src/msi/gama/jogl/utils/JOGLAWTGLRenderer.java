@@ -1,16 +1,12 @@
 package msi.gama.jogl.utils;
 
 import static javax.media.opengl.GL.*;
-
 import java.awt.*;
-import java.awt.geom.Rectangle2D;
 import java.awt.font.TextAttribute;
+import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.text.AttributedString;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Set;
-
+import java.util.*;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
 import msi.gama.common.util.GuiUtils;
@@ -19,21 +15,17 @@ import msi.gama.jogl.scene.*;
 import msi.gama.jogl.utils.Camera.*;
 import msi.gama.jogl.utils.Camera.Arcball.*;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
-import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
-import msi.gama.outputs.AbstractOutputManager;
 import msi.gama.outputs.OutputSynchronizer;
 import msi.gama.runtime.GAMA;
 import msi.gama.util.IList;
-import msi.gaml.compilation.ISymbol;
 import msi.gaml.species.ISpecies;
-import msi.gaml.statements.IAspect;
+import msi.gaml.statements.IExecutable;
 import utils.GLUtil;
 import com.sun.opengl.util.*;
 import com.sun.opengl.util.j2d.Overlay;
 import com.sun.opengl.util.texture.*;
-
 
 public class JOGLAWTGLRenderer implements GLEventListener {
 
@@ -75,9 +67,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public final boolean multipleViewPort = false;
 	// Display model a a 3D Cube
 	private final boolean CubeDisplay = false;
-	//Display meta model legend
+	// Display meta model legend
 	private final boolean metaModel = true;
-	
+
 	private boolean initPositionCanvas = false;
 	private boolean initMetaModel = false;
 	// Handle Shape file
@@ -119,16 +111,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public Vector3D worldCoordinates = new Vector3D();
 	public GamaPoint roiCenter = new GamaPoint(0, 0);
 
-    private Overlay overlay;
+	private Overlay overlay;
 
 	private double startTime = 0;
 	private int frameCount = 0;
 	private double currentTime = 0;
 	private double previousTime = 0;
 	public float fps = 00.00f;
-	
-
-	
 
 	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {
 		// Enabling the stencil buffer
@@ -157,7 +146,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		startTime = System.currentTimeMillis();
 
 		overlay = new Overlay(drawable);
-		
+
 		width = drawable.getWidth();
 		height = drawable.getHeight();
 		gl = drawable.getGL();
@@ -201,8 +190,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		graphicsGLUtils = new MyGraphics(this);
 
 		OutputSynchronizer.decInitializingViews(this.displaySurface.getOutputName());
-		
-		
 
 	}
 
@@ -283,45 +270,39 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				camera.inertia();
 			}
 
-
-
 			this.drawScene();
-			
-//			byte[] src = new byte[width*height];
-//
-//		    for(int a=0; a<height; a++){
-//		        for(int b=0; b<width; b++){
-//		            src[a*width+b]= 127;
-//		        }
-//		    }
-//		    gl.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-//		    gl.glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
-//		    gl.glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
-//
-//		    gl.glDrawPixels(width/100, height/100,
-//		            GL.GL_RED, GL.GL_UNSIGNED_BYTE,
-//		            ByteBuffer.wrap(src));
-			
-			
+
+			// byte[] src = new byte[width*height];
+			//
+			// for(int a=0; a<height; a++){
+			// for(int b=0; b<width; b++){
+			// src[a*width+b]= 127;
+			// }
+			// }
+			// gl.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+			// gl.glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
+			// gl.glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
+			//
+			// gl.glDrawPixels(width/100, height/100,
+			// GL.GL_RED, GL.GL_UNSIGNED_BYTE,
+			// ByteBuffer.wrap(src));
 
 			if ( getShowFPS() ) {
 				CalculateFrameRate();
-				
-				Graphics2D g2d = overlay.createGraphics(); 
-				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-				        RenderingHints.VALUE_ANTIALIAS_ON);
+
+				Graphics2D g2d = overlay.createGraphics();
+				g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 				g2d.setBackground(canvas.getBackground());
 				g2d.clearRect(0, 0, 100, 50);
 				g2d.setColor(Color.black);
 				Font serifFont = new Font("Serif", Font.PLAIN, 12);
-				AttributedString as = new AttributedString("FPS : "+fps);
-			    as.addAttribute(TextAttribute.FONT, serifFont);
-				g2d.drawString(as.getIterator(), 10, 20);				
-				overlay.markDirty(0, 0, canvas.getWidth(), canvas.getHeight()); 
-				overlay.drawAll(); 
+				AttributedString as = new AttributedString("FPS : " + fps);
+				as.addAttribute(TextAttribute.FONT, serifFont);
+				g2d.drawString(as.getIterator(), 10, 20);
+				overlay.markDirty(0, 0, canvas.getWidth(), canvas.getHeight());
+				overlay.drawAll();
 				g2d.dispose();
 			}
-
 
 			this.drawScene();
 
@@ -334,17 +315,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				DrawROI();
 			}
 
-			
-			//Show fps for performance mesures		
-			if(showFPS)
-			{
+			// Show fps for performance mesures
+			if ( showFPS ) {
 				CalculateFrameRate();
 				gl.glRasterPos2i(-30, 30);
 				gl.glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-				glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, "FPS : "+fps);
+				glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, "FPS : " + fps);
 			}
 
-			
 		}
 	}
 
@@ -367,7 +345,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glLoadIdentity();
 		glu.gluPerspective(45.0f, aspect, 0.1f, 1000.0f);
 		glu.gluLookAt(camera.getPosition().getX(), camera.getPosition().getY(), camera.getPosition().getZ(), camera
-			.getTarget().getX(), camera.getTarget().getY(), camera.getTarget().getZ(), camera.getUpVector().getX(), camera.getUpVector().getY(), camera.getUpVector().getZ());
+			.getTarget().getX(), camera.getTarget().getY(), camera.getTarget().getZ(), camera.getUpVector().getX(),
+			camera.getUpVector().getY(), camera.getUpVector().getZ());
 		arcBall.setBounds(width, height);
 	}
 
@@ -394,54 +373,63 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		}
 		scene.draw(this, picking, drawAxes, drawEnv);
 	}
-	
-	public void drawPosition(){
-		if(!initPositionCanvas){
+
+	public void drawPosition() {
+		if ( !initPositionCanvas ) {
 			this.initPositionCanvas();
-			initPositionCanvas=true;
+			initPositionCanvas = true;
 		}
 	}
-	
-	public void initPositionCanvas(){
-		Graphics2D gpos = overlay.createGraphics();  
-		gpos.setColor(new Color(0,0,0,25));
-		gpos.setPaint(new Color(0,0,0,25));
-		gpos.fill(new Rectangle2D.Double(0, (int)(canvas.getHeight()*0.95), width, (int)(canvas.getHeight()*0.05)));
-		gpos.setColor(new Color(255,255,255));
-		gpos.drawString("GAMA 	1.6 ©", (int)(canvas.getWidth()*0.01), (int)(canvas.getHeight()*0.98));
-		gpos.drawString("width:" + (int)(this.env_width), (int)(canvas.getWidth()*0.8), (int)(canvas.getHeight()*0.98));
-		gpos.drawString("height:" + (int)(this.env_height), (int)(canvas.getWidth()*0.9), (int)(canvas.getHeight()*0.98));
+
+	public void initPositionCanvas() {
+		Graphics2D gpos = overlay.createGraphics();
+		gpos.setColor(new Color(0, 0, 0, 25));
+		gpos.setPaint(new Color(0, 0, 0, 25));
+		gpos.fill(new Rectangle2D.Double(0, (int) (canvas.getHeight() * 0.95), width, (int) (canvas.getHeight() * 0.05)));
+		gpos.setColor(new Color(255, 255, 255));
+		gpos.drawString("GAMA 	1.6 ©", (int) (canvas.getWidth() * 0.01), (int) (canvas.getHeight() * 0.98));
+		gpos.drawString("width:" + (int) this.env_width, (int) (canvas.getWidth() * 0.8),
+			(int) (canvas.getHeight() * 0.98));
+		gpos.drawString("height:" + (int) this.env_height, (int) (canvas.getWidth() * 0.9),
+			(int) (canvas.getHeight() * 0.98));
 		gpos.dispose();
 	}
-	
-	public void drawMetaModel(){
+
+	public void drawMetaModel() {
 		Graphics2D g2d = overlay.createGraphics();
-		if(!initMetaModel){
-		g2d.setColor(new Color(0,0,0));	
-		Set<String> species = GAMA.getExperiment().getModel().getAllSpecies().keySet();
-		if (!species.isEmpty()){
-			double curEnt=1;
-			double nbEntities= species.size();
-			for ( final Iterator<String> it = species.iterator(); it.hasNext(); ) {
-				final String s = it.next();
-				if(!(s.equals("multicriteria_analyzer") || s.equals("Physical3DWorld") || s.equals("graph_node") || s.equals("agent") || s.equals("base_edge") || s.equals("cluster_builder") || s.equals("AgentDB") || s.equals("graph_edge") )){
-				g2d.drawString(s, (int)(canvas.getWidth()*0.01), (int)(canvas.getHeight()*(curEnt/nbEntities)));
-				ISpecies curSpec = GAMA.getExperiment().getModel().getSpecies(s);
-				IList aspects = curSpec.getAspectNames();									
-				for ( int i = 0; i < aspects.size(); i++ ){
-					IAspect curApsect = curSpec.getAspect(aspects.get(i).toString());
-					g2d.drawString("	Aspect: " + aspects.get(i).toString(), (int)(canvas.getWidth()*0.01), (int)(canvas.getHeight()*((curEnt+0.5)/nbEntities)));
-					IAgent exp = GAMA.getSimulation();
-					Rectangle2D r = curApsect.draw(exp.getScope(), exp);
-					if(r!=null){
-						g2d.fill(r);
+		if ( !initMetaModel ) {
+			g2d.setColor(new Color(0, 0, 0));
+			Set<String> species = GAMA.getExperiment().getModel().getAllSpecies().keySet();
+			if ( !species.isEmpty() ) {
+				double curEnt = 1;
+				double nbEntities = species.size();
+				for ( final Iterator<String> it = species.iterator(); it.hasNext(); ) {
+					final String s = it.next();
+					if ( !(s.equals("multicriteria_analyzer") || s.equals("Physical3DWorld") ||
+						s.equals("graph_node") || s.equals("agent") || s.equals("base_edge") ||
+						s.equals("cluster_builder") || s.equals("AgentDB") || s.equals("graph_edge")) ) {
+						g2d.drawString(s, (int) (canvas.getWidth() * 0.01),
+							(int) (canvas.getHeight() * (curEnt / nbEntities)));
+						ISpecies curSpec = GAMA.getExperiment().getModel().getSpecies(s);
+						IList aspects = curSpec.getAspectNames();
+						for ( int i = 0; i < aspects.size(); i++ ) {
+							IExecutable curAspect = curSpec.getAspect(aspects.get(i).toString());
+							g2d.drawString("	Aspect: " + aspects.get(i).toString(), (int) (canvas.getWidth() * 0.01),
+								(int) (canvas.getHeight() * ((curEnt + 0.5) / nbEntities)));
+							IAgent exp = GAMA.getSimulation();
+							Object[] result = new Object[1];
+							exp.getScope().execute(curAspect, exp, null, result);
+							// curApsect.draw(exp.getScope(), exp);
+							Rectangle2D r = (Rectangle2D) result[0];
+							if ( r != null ) {
+								g2d.fill(r);
+							}
+						}
+						curEnt++;
 					}
 				}
-				curEnt++;
-				}
-			}	
-		}
-		initMetaModel=true;
+			}
+			initMetaModel = true;
 		}
 		g2d.dispose();
 	}
@@ -454,13 +442,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			if ( CubeDisplay ) {
 				drawCubeDisplay((float) env_width);
 
-			} else {	
-				this.drawModel(false);	
-				if(legends){	
+			} else {
+				this.drawModel(false);
+				if ( legends ) {
 					this.drawMetaModel();
 					this.drawPosition();
 					overlay.beginRendering();
-					//overlay.draw(0, (int)(canvas.getHeight()*0.95), width, (int)(canvas.getHeight()*0.05));
+					// overlay.draw(0, (int)(canvas.getHeight()*0.95), width, (int)(canvas.getHeight()*0.05));
 					overlay.drawAll();
 					overlay.endRendering();
 				}
@@ -610,7 +598,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public boolean getStencil() {
 		return stencil;
 	}
-	
+
 	public void setLegends(final boolean leg) {
 		this.legends = leg;
 	}
@@ -618,7 +606,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public boolean getLegends() {
 		return legends;
 	}
-	
+
 	public void setShowFPS(final boolean fps) {
 		this.showFPS = fps;
 	}

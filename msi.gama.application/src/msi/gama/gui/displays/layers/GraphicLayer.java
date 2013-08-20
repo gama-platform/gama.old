@@ -12,8 +12,9 @@ public class GraphicLayer extends AbstractLayer {
 	}
 
 	@Override
-	protected void privateDrawDisplay(IScope scope, final IGraphics g) throws GamaRuntimeException {
-		((GraphicLayerStatement) definition).getAspect().draw(scope, scope.getSimulationScope());
+	protected void privateDrawDisplay(final IScope scope, final IGraphics g) throws GamaRuntimeException {
+		Object[] result = new Object[1];
+		scope.execute(((GraphicLayerStatement) definition).getAspect(), scope.getSimulationScope(), null, result);
 	}
 
 	@Override
