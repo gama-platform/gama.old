@@ -30,6 +30,7 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.util.graph.IGraph;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
 import org.uncommons.maths.statistics.DataSet;
@@ -196,6 +197,13 @@ public class Stats {
 		if ( y == null ) { return x.getAggregate(); }
 		return new GamaPoint(x.getAggregate(), y.getAggregate(), z.getAggregate());
 	}
+
+	@operator(value = "sum", can_be_const = true, type = IType.GRAPH)
+		public static double sum(final IScope scope, final IGraph g) {
+			if (g == null)
+				return 0.0;
+			return g.computeTotalWeight();
+		}
 
 	@operator(value = "mean", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, expected_content_type = {
 		IType.INT, IType.FLOAT, IType.POINT })

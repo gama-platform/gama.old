@@ -821,6 +821,18 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		}
 		return result;
 	}
+	
+	@Override
+	public double computeTotalWeight() {
+		double result = 0;
+		for ( final Object o : edgeSet() ) {
+			result += getEdgeWeight(o);
+		}
+		for ( final Object o : vertexSet() ) {
+			result += getEdgeWeight(o);
+		}
+		return result;
+	}
 
 	public void reInitPathFinder() {
 		optimizer = null;

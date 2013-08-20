@@ -98,5 +98,7 @@ public interface IGraph<V, E> extends IContainer<V, E>, WeightedGraph<V, E>, Dir
 	public abstract IList<E> computeBestRouteBetween(final V source, final V target);
 
 	public double computeWeight(final IPath<V, E> gamaPath);
+	
+	public double computeTotalWeight();
 
 }
