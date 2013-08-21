@@ -111,10 +111,10 @@ public class ModelScene {
 			size, alpha, type));
 	}
 
-	public void addImage(final BufferedImage img, final IAgent agent, final Double x, final Double y, final Double z,
+	public void addImage(final BufferedImage img, final IAgent agent, final double z_layer, final int currentLayerId, final Double x, final Double y, final Double z,
 		final Double width, final Double height, final Integer angle, final GamaPoint offset, final GamaPoint scale,
 		final boolean isDynamic, final Double alpha, final MyTexture texture) {
-		images.add(new ImageObject(img, agent, x, y, Double.isNaN(z) ? 0 : z, alpha, width, height, angle == null ? 0
+		images.add(new ImageObject(img, agent,z_layer, currentLayerId, x, y, Double.isNaN(z) ? 0 : z, alpha, width, height, angle == null ? 0
 			: angle, offset, scale, isDynamic, texture));
 		if ( texture != null ) {
 			textures.put(img, texture);

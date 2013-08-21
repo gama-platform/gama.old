@@ -17,7 +17,7 @@ public class StringObject extends AbstractObject {
 
 	public StringObject(String string, String font, Integer style, GamaPoint offset, GamaPoint scale, Color color,
 		Integer angle, double x, double y, double z, double z_layer, Double sizeInModelUnits, Integer size, Double alpha, Integer type) {
-		super(color, offset, scale, alpha,0);
+		super(color, offset, scale, alpha);
 		this.string = string;
 		if ( font != null ) {
 			this.font = font;

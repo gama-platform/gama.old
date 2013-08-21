@@ -26,7 +26,7 @@ public class DEMObject extends AbstractObject {
 	
 	public DEMObject(double[] dem, BufferedImage texture,BufferedImage demImg,Envelope env, boolean isTextured, boolean isTriangulated,boolean isShowText,  
 			boolean fromImage, Double z_factor, Color c, GamaPoint o, GamaPoint s, Double a, int cellSize) {
-		super(c, o, s, a,0);
+		super(c, o, s, a);
 		this.dem = dem;
 		this.texture = texture;
 		this.demImg = demImg;

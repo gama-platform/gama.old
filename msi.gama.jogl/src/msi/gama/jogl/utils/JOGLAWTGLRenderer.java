@@ -178,6 +178,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// Blending control
 		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 		gl.glEnable(GL_BLEND);
+		
+		
+		
 		// gl.glDisable(GL_DEPTH_TEST);
 		// FIXME : should be turn on only if need (if we draw image)
 		// problem when true with glutBitmapString

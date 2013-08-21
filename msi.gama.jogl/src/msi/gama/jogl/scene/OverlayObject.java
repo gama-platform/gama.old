@@ -19,7 +19,7 @@ public class OverlayObject extends AbstractObject {
 
 	public OverlayObject(BufferedImage image, IAgent agent, double x, double y, double z, Double alpha, double width,
 		double height, Integer angle, GamaPoint offset, GamaPoint scale, boolean isDynamic, MyTexture texture) {
-		super(null, offset, scale, alpha,0);
+		super(null, offset, scale, alpha);
 		this.image = image;
 		this.agent = agent;
 		this.x = x;

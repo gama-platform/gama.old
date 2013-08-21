@@ -26,12 +26,19 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	public int pickingIndex = index++;
 	public boolean picked = false;
 	private Color previousColor = null;
+	
 
-	public GeometryObject(final Geometry geometry, final IAgent agent, final double z_layer, final int layerId,
-		final Color color, final Double alpha, final Boolean fill, final Color border, final Boolean isTextured,
-		final int angle, final double height, final GamaPoint offset, final GamaPoint scale, final boolean rounded,
-		final String type) {
-		super(color, offset, scale, alpha, layerId);
+
+	public GeometryObject(Geometry geometry, IAgent agent, double z_layer, int layerId, Color color, Double alpha,
+		Boolean fill, Color border, Boolean isTextured, int angle, double height, GamaPoint offset, GamaPoint scale,
+		boolean rounded, String type) {
+	    super(color, offset, scale, alpha);
+	    /*The z_fight value must be a unique value so the solution has been to make the hypothesis that
+    	a layer has less than 1 000 000 agent to make a unique z-fighting value per agent.*/
+	    if((agent !=null && (agent.getLocation().getZ() == 0 ) && (height == 0 ))){
+	    	setZ_fighting_id((double) (layerId *1000000 + agent.getIndex()));
+	    }
+
 		this.geometry = geometry;
 		this.agent = agent;
 		this.z_layer = z_layer;

@@ -8,7 +8,7 @@ public class CollectionObject extends AbstractObject {
 	public SimpleFeatureCollection collection;
 
 	public CollectionObject(SimpleFeatureCollection collection, Color color) {
-		super(color, null, null, null,0);
+		super(color, null, null, null);
 		this.collection = collection;
 	}
 

@@ -17,9 +17,12 @@ public class ImageObject extends AbstractObject {
 	public boolean isDynamic;
 	public MyTexture texture;
 
-	public ImageObject(BufferedImage image, IAgent agent, double x, double y, double z, Double alpha, double width,
+	public ImageObject(BufferedImage image, IAgent agent, double z_layer, int layerId, double x, double y, double z, Double alpha, double width,
 		double height, Integer angle, GamaPoint offset, GamaPoint scale, boolean isDynamic, MyTexture texture) {
-		super(null, offset, scale, alpha,0);
+		super(null, offset, scale, alpha);
+		if((agent !=null && (agent.getLocation().getZ() == 0 ) && (height == 0 ))){
+	    	setZ_fighting_id((double) (layerId *1000000 + agent.getIndex()));
+	    }
 		this.image = image;
 		this.agent = agent;
 		this.x = x;

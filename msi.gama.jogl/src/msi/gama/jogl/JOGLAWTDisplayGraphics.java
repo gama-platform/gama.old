@@ -251,7 +251,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			texture = renderer.createTexture(img, isDynamic);
 		}
 
-		renderer.getScene().addImage(img, scope == null ? null : scope.getAgentScope(), curX, curY, z, curWidth,
+		renderer.getScene().addImage(img, scope == null ? null : scope.getAgentScope(), currentZLayer, currentLayerId, curX, curY, z, curWidth,
 			curHeight, angle, currentOffset, currentScale, isDynamic, getCurrentAlpha(), texture);
 
 		if ( gridColor != null ) {

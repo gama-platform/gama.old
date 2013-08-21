@@ -8,10 +8,10 @@ public abstract class AbstractObject implements ISceneObject {
 	public Color color;
 	public GamaPoint offset = new GamaPoint(0, 0, 0);
 	public GamaPoint scale = new GamaPoint(1, 1, 1);
-	public int layerId = 0;
+	private Double z_fighting_id = 0.0;
 	public Double alpha = 1d;
 
-	public AbstractObject(Color c, GamaPoint o, GamaPoint s, Double a, int l) {
+	public AbstractObject(Color c, GamaPoint o, GamaPoint s, Double a) {
 		color = c;
 		if ( o != null ) {
 			offset = o;
@@ -22,7 +22,6 @@ public abstract class AbstractObject implements ISceneObject {
 		if ( a != null ) {
 			alpha = a;
 		}
-		layerId = l;
 	}
 
 	@Override
@@ -32,5 +31,13 @@ public abstract class AbstractObject implements ISceneObject {
 
 	@Override
 	public void unpick() {}
+	
+	public Double getZ_fighting_id() {
+		return z_fighting_id;
+	}
+
+	public void setZ_fighting_id(Double z_fighting_id) {
+		this.z_fighting_id = z_fighting_id;
+	}
 
 }
