@@ -229,7 +229,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	@Override
 	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final ILocation locationInModelUnits,
 		final ILocation sizeInModelUnits, final Color gridColor, final Integer angle, final Double z,
-		final boolean isDynamic) {
+		final boolean isDynamic, final String name) {
 		double curX, curY;
 		if ( locationInModelUnits == null ) {
 			curX = 0d;
@@ -252,7 +252,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		}
 
 		renderer.getScene().addImage(img, scope == null ? null : scope.getAgentScope(), currentZLayer, currentLayerId, curX, curY, z, curWidth,
-			curHeight, angle, currentOffset, currentScale, isDynamic, getCurrentAlpha(), texture);
+			curHeight, angle, currentOffset, currentScale, isDynamic, getCurrentAlpha(), texture, name);
 
 		if ( gridColor != null ) {
 			drawGridLine(img, gridColor);
@@ -281,7 +281,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		final BufferedImage im =
 		// ImageUtils.toCompatibleImage(chart.createBufferedImage(widthOfLayerInPixels, heightOfLayerInPixels));
 			chart.createBufferedImage(widthOfLayerInPixels, heightOfLayerInPixels);
-		return drawImage(scope, im, new GamaPoint(0, 0), null, null, 0, z, true);
+		return drawImage(scope, im, new GamaPoint(0, 0), null, null, 0, z, true, "chart");
 	}
 
 	/**

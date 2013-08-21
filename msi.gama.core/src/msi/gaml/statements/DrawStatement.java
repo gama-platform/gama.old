@@ -346,12 +346,12 @@ public class DrawStatement extends AbstractStatementSequence {
 
 				final Rectangle2D result =
 					g.drawImage(scope, workImage, new GamaPoint(x, y), new GamaPoint(displayWidth, displayHeight),
-						null, getRotation(scope), agent.getLocation().getZ(), false);
+						null, getRotation(scope), agent.getLocation().getZ(), false,null);
 				workImage.flush();
 				return result;
 			}
 			return g.drawImage(scope, img, new GamaPoint(x, y), new GamaPoint(displayWidth, displayHeight), null,
-				getRotation(scope), agent.getLocation().getZ(), false);
+				getRotation(scope), agent.getLocation().getZ(), false, null);
 		}
 
 	}

@@ -108,13 +108,13 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 		final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
 		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final Color gridColor,
 		final Integer angle, final Double z, final boolean isDynamic, final int cellSize) {
-		return drawImage(scope, img, locationInModelUnits, sizeInModelUnits, gridColor, angle, z, isDynamic);
+		return drawImage(scope, img, locationInModelUnits, sizeInModelUnits, gridColor, angle, z, isDynamic, "grid");
 	}
 
 	@Override
 	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final ILocation locationInModelUnits,
 		final ILocation sizeInModelUnits, final Color gridColor, final Integer angle, final Double z,
-		final boolean isDynamic) {
+		final boolean isDynamic, final String name) {
 		final AffineTransform saved = renderer.getTransform();
 		int curX, curY;
 		if ( locationInModelUnits == null ) {
@@ -154,7 +154,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	@Override
 	public Rectangle2D drawChart(final IScope scope, final JFreeChart chart, final Double z) {
 		final BufferedImage im = chart.createBufferedImage(widthOfLayerInPixels, heightOfLayerInPixels);
-		return drawImage(scope, im, new GamaPoint(0, 0), null, null, 0, z, true);
+		return drawImage(scope, im, new GamaPoint(0, 0), null, null, 0, z, true, "");
 	}
 
 	/**

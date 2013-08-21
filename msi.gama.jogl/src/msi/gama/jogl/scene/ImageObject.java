@@ -1,10 +1,12 @@
 package msi.gama.jogl.scene;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.awt.image.BufferedImage;
 
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 
 public class ImageObject extends AbstractObject {
@@ -20,11 +22,12 @@ public class ImageObject extends AbstractObject {
 	public Integer angle = 0;
 	public boolean isDynamic;
 	public MyTexture texture;
+	public String name;
 
 	
 
 	public ImageObject(BufferedImage image, IAgent agent, double z_layer, int layerId, double x, double y, double z, Double alpha, double width,
-		double height, Integer angle, GamaPoint offset, GamaPoint scale, boolean isDynamic, MyTexture texture) {
+		double height, Integer angle, GamaPoint offset, GamaPoint scale, boolean isDynamic, MyTexture texture, String name) {
 		super(null, offset, scale, alpha);
     	setZ_fighting_id((double) (layerId));
 		if((agent !=null && (agent.getLocation().getZ() == 0 ) && (height == 0 ))){
@@ -42,6 +45,7 @@ public class ImageObject extends AbstractObject {
 		this.isDynamic = isDynamic;
 		this.texture = texture;
 		this.layerId = layerId;
+		this.name = name;
 	}
 	
 	@Override
@@ -72,7 +76,15 @@ public class ImageObject extends AbstractObject {
 					renderer.setPicking(false);
 					pick();
 					renderer.currentPickedObject = this;
-					renderer.displaySurface.selectAgents(0, 0, agent, layerId - 1);
+					//The picked image is the grid
+					if(this.name != null){
+						Point pickedPoint = renderer.GetRealWorldPointFromWindowPoint(new Point(renderer.camera.lastxPressed,renderer.camera.lastyPressed));
+						IAgent ag = agent.getPopulationFor(this.name).getAgent(new GamaPoint(pickedPoint.x,-pickedPoint.y));
+						renderer.displaySurface.selectAgents(0, 0, ag, layerId - 1);
+					}
+					else{
+						renderer.displaySurface.selectAgents(0, 0, agent, layerId - 1);	
+					}
 				}
 			}
 			super.draw(drawer, picking);

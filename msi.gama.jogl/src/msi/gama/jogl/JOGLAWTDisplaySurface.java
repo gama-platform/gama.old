@@ -392,7 +392,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		final SelectedAgent sa = new SelectedAgent();
 		sa.macro = agent;
 		sa.buildMenuItems(m, manager.getItems().get(layerId));
-
 		agentsMenu.add(m);
 		agentsMenu.show(this, renderer.camera.mousePosition.x, renderer.camera.mousePosition.y);
 

@@ -50,7 +50,7 @@ public interface IGraphics {
 
 	public abstract Rectangle2D drawImage(final IScope scope, final BufferedImage img,
 		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, Color gridColor, final Integer angle,
-		Double z, boolean isDynamic);
+		Double z, boolean isDynamic, String name);
 
 	public abstract Rectangle2D drawString(final String string, final Color stringColor,
 		ILocation locationInModelUnits, Double heightInModelUnits, String fontName, Integer styleName,
