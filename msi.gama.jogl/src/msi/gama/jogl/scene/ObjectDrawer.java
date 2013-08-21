@@ -525,17 +525,17 @@ public boolean isInitialized() {
 //					renderer.gl.glStencilOp(GL_KEEP, GL_ZERO, GL_REPLACE);	
 				}
 				if ( geometry.geometry.getGeometryType() == "MultiPolygon" ) {
-					jtsDrawer.DrawMultiPolygon((MultiPolygon) geometry.geometry, geometry.z_layer, geometry.color,
+					jtsDrawer.DrawMultiPolygon((MultiPolygon) geometry.geometry, geometry.z_layer, geometry.getColor(),
 						geometry.alpha, geometry.fill, geometry.border, geometry.angle, geometry.height,
 						geometry.rounded);
 				} else if ( geometry.geometry.getGeometryType() == "Polygon" ) {
 					// The JTS geometry of a sphere is a circle (a polygon)
 					if ( geometry.type.equals("sphere") ) {
 						jtsDrawer.DrawSphere((Polygon) geometry.geometry, geometry.z_layer, geometry.height,
-							geometry.color, geometry.alpha);
+							geometry.getColor(), geometry.alpha);
 					} else {
 						if ( geometry.height > 0 ) {
-							jtsDrawer.DrawPolyhedre((Polygon) geometry.geometry, geometry.z_layer, geometry.color,
+							jtsDrawer.DrawPolyhedre((Polygon) geometry.geometry, geometry.z_layer, geometry.getColor(),
 								geometry.alpha, geometry.fill, geometry.height, geometry.angle, true, geometry.border,
 								geometry.rounded);
 						} else {
@@ -544,7 +544,7 @@ public boolean isInitialized() {
 								renderer.gl.glDisable(GL_DEPTH_TEST);						
 								renderer.gl.glStencilOp(GL_KEEP, GL_ZERO, GL_REPLACE);
 							}
-							jtsDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.z_layer, geometry.color,
+							jtsDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.z_layer, geometry.getColor(),
 								geometry.alpha, geometry.fill, geometry.border, geometry.isTextured, geometry.angle,
 								true, geometry.rounded);
 						}
@@ -552,24 +552,24 @@ public boolean isInitialized() {
 				} else if ( geometry.geometry.getGeometryType() == "MultiLineString" ) {
 
 					jtsDrawer.DrawMultiLineString((MultiLineString) geometry.geometry, geometry.z_layer,
-						geometry.color, geometry.alpha, geometry.height);
+						geometry.getColor(), geometry.alpha, geometry.height);
 				} else if ( geometry.geometry.getGeometryType() == "LineString" ) {
 
 					if ( geometry.height > 0 ) {
-						jtsDrawer.DrawPlan((LineString) geometry.geometry, geometry.z_layer, geometry.color,
+						jtsDrawer.DrawPlan((LineString) geometry.geometry, geometry.z_layer, geometry.getColor(),
 							geometry.alpha, geometry.height, 0, true);
 					} else {
 						jtsDrawer.DrawLineString((LineString) geometry.geometry, geometry.z_layer, 1.2f,
-							geometry.color, geometry.alpha);
+							geometry.getColor(), geometry.alpha);
 					}
 				} else if ( geometry.geometry.getGeometryType() == "Point" ) {
 					//FIXME: Should never go here even with a height value as the geometry of a sphere is a polygon...
 					if ( geometry.height > 0 ) {
 						jtsDrawer.DrawSphere((Polygon) geometry.geometry.getEnvelope().buffer(1), geometry.z_layer, geometry.height,
-							geometry.color, geometry.alpha);
+							geometry.getColor(), geometry.alpha);
 					} else {
 						jtsDrawer.DrawPoint((Point) geometry.geometry, geometry.z_layer, 10,
-							renderer.getMaxEnvDim() / 1000, geometry.color, geometry.alpha);
+							renderer.getMaxEnvDim() / 1000, geometry.getColor(), geometry.alpha);
 					}
 				}
 			}
@@ -616,17 +616,17 @@ public boolean isInitialized() {
 				SimpleFeature feature = iterator.next();
 				Geometry sourceGeometry = (Geometry) feature.getDefaultGeometry();
 				if ( sourceGeometry.getGeometryType() == "MultiPolygon" ) {
-					jtsDrawer.DrawMultiPolygon((MultiPolygon) sourceGeometry, 0.0d, collection.color, 1.0d, true, null,
+					jtsDrawer.DrawMultiPolygon((MultiPolygon) sourceGeometry, 0.0d, collection.getColor(), 1.0d, true, null,
 						0, 0.0d, false);
 				} else if ( sourceGeometry.getGeometryType() == "Polygon" ) {
-					jtsDrawer.DrawPolygon((Polygon) sourceGeometry, 0.0d, collection.color, 1.0d, true, null, false, 0,
+					jtsDrawer.DrawPolygon((Polygon) sourceGeometry, 0.0d, collection.getColor(), 1.0d, true, null, false, 0,
 						true, false);
 				} else if ( sourceGeometry.getGeometryType() == "MultiLineString" ) {
-					jtsDrawer.DrawMultiLineString((MultiLineString) sourceGeometry, 0.0d, collection.color, 1.0d, 0.0d);
+					jtsDrawer.DrawMultiLineString((MultiLineString) sourceGeometry, 0.0d, collection.getColor(), 1.0d, 0.0d);
 				} else if ( sourceGeometry.getGeometryType() == "LineString" ) {
-					jtsDrawer.DrawLineString((LineString) sourceGeometry, 0.0d, 1.0d, collection.color, 1.0d);
+					jtsDrawer.DrawLineString((LineString) sourceGeometry, 0.0d, 1.0d, collection.getColor(), 1.0d);
 				} else if ( sourceGeometry.getGeometryType() == "Point" ) {
-					jtsDrawer.DrawPoint((Point) sourceGeometry, 0.0d, 10, 10, collection.color, 1.0d);
+					jtsDrawer.DrawPoint((Point) sourceGeometry, 0.0d, 10, 10, collection.getColor(), 1.0d);
 				}
 			}
 			renderer.gl.glPopMatrix();
@@ -690,7 +690,7 @@ public boolean isInitialized() {
 
 		protected void _drawOld(StringObject s) {
 			renderer.gl.glDisable(GL_BLEND);
-			renderer.gl.glColor4d(s.color.getRed(), s.color.getGreen(), s.color.getBlue(), 1.0d);
+			renderer.gl.glColor4d(s.getColor().getRed(), s.getColor().getGreen(), s.getColor().getBlue(), 1.0d);
 			renderer.gl.glRasterPos3d(s.x, s.y, s.z + s.z_layer);
 			renderer.gl.glScaled(8.0d, 8.0d, 8.0d);
 			glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, s.string);
@@ -708,7 +708,7 @@ public boolean isInitialized() {
 		protected void _draw(StringObject s) {
             if(s.type == 0){
 			TextRenderer r = get(s.font, s.size, s.style);
-			r.setColor(s.color);
+			r.setColor(s.getColor());
 			r.begin3DRendering();
 			float x = (float) ((float) s.x * s.scale.x + s.offset.x);
 			float y = (float) ((float) s.y * s.scale.y - s.offset.y);

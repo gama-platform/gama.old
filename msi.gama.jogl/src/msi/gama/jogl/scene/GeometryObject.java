@@ -1,6 +1,7 @@
 package msi.gama.jogl.scene;
 
 import java.awt.Color;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -25,8 +26,8 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	public boolean rounded;
 	public int pickingIndex = index++;
 	public boolean picked = false;
-	private Color previousColor = null;
-	
+
+	// private Color previousColor = null;
 
 
 	public GeometryObject(Geometry geometry, IAgent agent, double z_layer, int layerId, Color color, Double alpha,
@@ -66,29 +67,44 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 
 	@Override
 	public void unpick() {
-		// picked = false;
-		color = previousColor;
+		picked = false;
+		//GuiUtils.debug("GeometryObject.unpick " + pickingIndex);
+		// setColor(previousColor);
 	}
 
 	public void pick() {
-		// picked = true;
-		previousColor = color;
-		color = pickedColor;
+		picked = true;
+		// GuiUtils.debug("GeometryObject.pick " + pickingIndex);
+
+		// previousColor = getColor();
+		// setColor(pickedColor);
+	}
+
+	@Override
+	public Color getColor() {
+		if ( picked ) {
+			// GuiUtils.debug("GeometryObject.getColor pickedColor for " + pickingIndex);
+			return pickedColor;
+		}
+		return super.getColor();
 	}
 
 	@Override
 	public void draw(final ObjectDrawer drawer, final boolean picking) {
+		// GuiUtils.debug("GeometryObject.draw " + pickingIndex + "with picked = " + picked);
 		if ( picking ) {
 			JOGLAWTGLRenderer renderer = drawer.renderer;
 			renderer.gl.glPushMatrix();
 			renderer.gl.glLoadName(pickingIndex);
 			if ( renderer.pickedObjectIndex == pickingIndex ) {
-				renderer.setPickedObjectIndex(-1);
+				//
+				// renderer.setPickedObjectIndex(-1);
 				if ( agent != null /* && !picked */) {
+					renderer.setPicking(false);
 					pick();
-					if ( renderer.currentPickedObject != null ) {
-						renderer.currentPickedObject.unpick();
-					}
+					// if ( renderer.currentPickedObject != null ) {
+					// renderer.currentPickedObject.unpick();
+					// }
 					renderer.currentPickedObject = this;
 					renderer.displaySurface.selectAgents(0, 0, agent, layerId - 1);
 					// unpick();

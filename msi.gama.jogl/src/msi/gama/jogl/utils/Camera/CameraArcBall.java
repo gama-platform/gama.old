@@ -404,20 +404,20 @@ public class CameraArcBall extends AbstractCamera {
 		lastyPressed = arg0.getY();
 
 		// Picking mode
-		if ( myRenderer.displaySurface.picking ) {
-			// Activate Picking when press and right click and if in Picking mode
-			if ( arg0.getButton() == 3 ) {
-				isPickedPressed = true;
-			} else {
-				if ( myRenderer.currentPickedObject != null ) {
-					myRenderer.currentPickedObject.unpick();
-				}
-				myRenderer.pickedObjectIndex = -1;
-			}
+		// if ( myRenderer.displaySurface.picking ) {
+		// Activate Picking when press and right click and if in Picking mode
+		if ( arg0.getButton() == 3 ) {
+			isPickedPressed = true;
+			myRenderer.setPicking(true);
+			// myRenderer.drawPickableObjects();
+		} else {
+			myRenderer.setPicking(false);
+			// }
 
-			mousePosition.x = arg0.getX();
-			mousePosition.y = arg0.getY();
 		}
+
+		mousePosition.x = arg0.getX();
+		mousePosition.y = arg0.getY();
 
 		myRenderer.GetRealWorldPointFromWindowPoint(new Point(arg0.getX(), arg0.getY()));
 	}

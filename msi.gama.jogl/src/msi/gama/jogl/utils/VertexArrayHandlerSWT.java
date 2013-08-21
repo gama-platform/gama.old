@@ -68,22 +68,22 @@ public class VertexArrayHandlerSWT {
 
 				if ( curGeometry.geometry.getGeometryType() == "MultiPolygon" ) {
 					buildMultiPolygonVertexArray((MultiPolygon) curGeometry.geometry, curGeometry.z_layer,
-						curGeometry.color, curGeometry.alpha, curGeometry.fill, curGeometry.angle, curGeometry.height);
+						curGeometry.getColor(), curGeometry.alpha, curGeometry.fill, curGeometry.angle, curGeometry.height);
 				}
 
 				else if ( curGeometry.geometry.getGeometryType() == "Polygon" ) {
-					buildPolygonVertexArray((Polygon) curGeometry.geometry, curGeometry.z_layer, curGeometry.color,
+					buildPolygonVertexArray((Polygon) curGeometry.geometry, curGeometry.z_layer, curGeometry.getColor(),
 						curGeometry.alpha, curGeometry.fill, curGeometry.isTextured, curGeometry.angle);
 				}
 
 				else if ( curGeometry.geometry.getGeometryType() == "MultiLineString" ) {
 					buildMultiLineStringVertexArray((MultiLineString) curGeometry.geometry, curGeometry.z_layer,
-						curGeometry.color, curGeometry.alpha);
+						curGeometry.getColor(), curGeometry.alpha);
 				}
 
 				else if ( curGeometry.geometry.getGeometryType() == "LineString" ) {
 					buildLineStringVertexArray((LineString) curGeometry.geometry, curGeometry.z_layer,
-						curGeometry.color, curGeometry.alpha);
+						curGeometry.getColor(), curGeometry.alpha);
 
 				}
 			}

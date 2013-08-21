@@ -95,6 +95,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private boolean polygonMode = true;
 	// Show JTS (GAMA) triangulation
 	public boolean JTSTriangulation = false;
+	// is in picking mode ?
+	private boolean picking = false;
 
 	// ROI Coordionates (x1,y1,x2,y2)
 	public ArrayList<Integer> roi_List = new ArrayList<Integer>();
@@ -178,9 +180,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// Blending control
 		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 		gl.glEnable(GL_BLEND);
-		
-		
-		
 		// gl.glDisable(GL_DEPTH_TEST);
 		// FIXME : should be turn on only if need (if we draw image)
 		// problem when true with glutBitmapString
@@ -364,7 +363,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	 * @param picking
 	 * 
 	 */
-	public void drawModel(final boolean picking) {
+	public void drawModel() {
 		if ( drawAxes ) {
 			gl.glDisable(GL_BLEND);
 			gl.glColor4d(0.0d, 0.0d, 0.0d, 1.0d);
@@ -374,7 +373,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			gl.glScaled(0.125d, 0.125d, 0.125d);
 			gl.glEnable(GL_BLEND);
 		}
-		scene.draw(this, picking, drawAxes, drawEnv);
+		scene.draw(this, isPicking() || currentPickedObject != null, drawAxes, drawEnv);
 	}
 
 	public void drawPosition() {
@@ -439,14 +438,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public void drawScene() {
 		gl.glViewport(0, 0, width, height);
-		if ( displaySurface.picking ) {
+		if ( isPicking() ) {
 			this.drawPickableObjects();
 		} else {
 			if ( CubeDisplay ) {
 				drawCubeDisplay((float) env_width);
 
 			} else {
-				this.drawModel(false);
+				this.drawModel();
 				if ( legends ) {
 					this.drawMetaModel();
 					this.drawPosition();
@@ -461,26 +460,26 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	private void drawCubeDisplay(final float width) {
 		final float envMaxDim = width;
-		this.drawModel(false);
+		this.drawModel();
 		gl.glTranslatef(envMaxDim, 0, 0);
 		gl.glRotatef(90, 0, 1, 0);
-		this.drawModel(false);
+		this.drawModel();
 		gl.glTranslatef(envMaxDim, 0, 0);
 		gl.glRotatef(90, 0, 1, 0);
-		this.drawModel(false);
+		this.drawModel();
 		gl.glTranslatef(envMaxDim, 0, 0);
 		gl.glRotatef(90, 0, 1, 0);
-		this.drawModel(false);
+		this.drawModel();
 		gl.glTranslatef(envMaxDim, 0, 0);
 		gl.glRotatef(90, 0, 1, 0);
 		gl.glRotatef(-90, 1, 0, 0);
 		gl.glTranslatef(0, envMaxDim, 0);
-		this.drawModel(false);
+		this.drawModel();
 		gl.glTranslatef(0, -envMaxDim, 0);
 		gl.glRotatef(90, 1, 0, 0);
 		gl.glRotatef(90, 1, 0, 0);
 		gl.glTranslatef(0, 0, envMaxDim);
-		this.drawModel(false);
+		this.drawModel();
 		gl.glTranslatef(0, 0, -envMaxDim);
 		gl.glRotatef(-90, 1, 0, 0);
 	}
@@ -530,10 +529,10 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public void drawPickableObjects() {
 		if ( camera.beginPicking(gl) ) {
-			drawModel(true);
+			drawModel();
 			setPickedObjectIndex(camera.endPicking(gl));
 		}
-		drawModel(true);
+		drawModel();
 	}
 
 	public BufferedImage getScreenShot() {
@@ -650,6 +649,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public void setPickedObjectIndex(final int pickedObjectIndex) {
 		this.pickedObjectIndex = pickedObjectIndex;
+		if ( pickedObjectIndex == -1 ) {
+			setPicking(false);
+		}
 	}
 
 	public void cleanListsAndVertices() {
@@ -805,5 +807,21 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 			camera.vectorsFromAngles();
 		}
+	}
+
+	public void setPicking(final boolean value) {
+		picking = value;
+		//GuiUtils.debug("JOGLAWTDisplaySurface.setPicking " + value);
+		if ( !value ) {
+			if ( currentPickedObject != null ) {
+				currentPickedObject.unpick();
+				currentPickedObject = null;
+			}
+			pickedObjectIndex = -1;
+		}
+	}
+
+	public boolean isPicking() {
+		return picking;
 	}
 }

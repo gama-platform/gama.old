@@ -5,14 +5,14 @@ import msi.gama.metamodel.shape.GamaPoint;
 
 public abstract class AbstractObject implements ISceneObject {
 
-	public Color color;
+	private Color color;
 	public GamaPoint offset = new GamaPoint(0, 0, 0);
 	public GamaPoint scale = new GamaPoint(1, 1, 1);
 	private Double z_fighting_id = 0.0;
 	public Double alpha = 1d;
 
 	public AbstractObject(Color c, GamaPoint o, GamaPoint s, Double a) {
-		color = c;
+		setColor(c);
 		if ( o != null ) {
 			offset = o;
 		}
@@ -25,7 +25,7 @@ public abstract class AbstractObject implements ISceneObject {
 	}
 
 	@Override
-	public void draw(ObjectDrawer drawer, boolean picking) {
+	public void draw(final ObjectDrawer drawer, final boolean picking) {
 		drawer.draw(this);
 	}
 
@@ -38,6 +38,15 @@ public abstract class AbstractObject implements ISceneObject {
 
 	public void setZ_fighting_id(Double z_fighting_id) {
 		this.z_fighting_id = z_fighting_id;
+	}
+
+	@Override
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(final Color color) {
+		this.color = color;
 	}
 
 }

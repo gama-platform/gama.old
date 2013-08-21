@@ -245,7 +245,7 @@ public class VertexArrayHandler {
 			for ( int i = 0; i < curGeometry.geometry.getNumGeometries(); i++ ) {
 
 				if ( curGeometry.geometry.getGeometryType() == "MultiPolygon" ) {
-					buildMultiPolygonVertexArray((MultiPolygon) curGeometry.geometry, curGeometry.z_layer, curGeometry.color, curGeometry.alpha,
+					buildMultiPolygonVertexArray((MultiPolygon) curGeometry.geometry, curGeometry.z_layer, curGeometry.getColor(), curGeometry.alpha,
 							curGeometry.fill, curGeometry.border, curGeometry.angle, curGeometry.height, curGeometry.rounded);
 				}
 
@@ -256,18 +256,18 @@ public class VertexArrayHandler {
 							makeIcosphere(2);
 							createIcosphere = true;
 						}
-						buildSphereVertexArray((Polygon) curGeometry.geometry, curGeometry.z_layer, curGeometry.height, curGeometry.color,
+						buildSphereVertexArray((Polygon) curGeometry.geometry, curGeometry.z_layer, curGeometry.height, curGeometry.getColor(),
 						curGeometry.alpha);
 					}else{
 					if(curGeometry.height > 0 )
 					{
-						buildPolyhedreVertexArray((Polygon) curGeometry.geometry, curGeometry.z_layer, curGeometry.color,
+						buildPolyhedreVertexArray((Polygon) curGeometry.geometry, curGeometry.z_layer, curGeometry.getColor(),
 								curGeometry.alpha, curGeometry.fill, curGeometry.height, curGeometry.angle, true, curGeometry.border,
 								curGeometry.rounded);
 					}
 					else
 					{
-					buildPolygonVertexArray((Polygon) curGeometry.geometry, curGeometry.z_layer, curGeometry.color,
+					buildPolygonVertexArray((Polygon) curGeometry.geometry, curGeometry.z_layer, curGeometry.getColor(),
 						curGeometry.alpha, curGeometry.fill, curGeometry.isTextured, curGeometry.angle, true);
 					buildVertexArrayContours(curGeometry.z_layer);
 					}
@@ -276,16 +276,16 @@ public class VertexArrayHandler {
 
 				else if ( curGeometry.geometry.getGeometryType() == "MultiLineString" ) {
 					buildMultiLineStringVertexArray((MultiLineString) curGeometry.geometry, curGeometry.z_layer,
-						curGeometry.color, curGeometry.alpha);
+						curGeometry.getColor(), curGeometry.alpha);
 				}
 
 				else if ( curGeometry.geometry.getGeometryType() == "LineString" ) {
 					if ( curGeometry.height > 0 ) {
-						buildPlanVertexArray((LineString) curGeometry.geometry, curGeometry.z_layer, curGeometry.color,
+						buildPlanVertexArray((LineString) curGeometry.geometry, curGeometry.z_layer, curGeometry.getColor(),
 								curGeometry.alpha, curGeometry.height, 0, true);
 					} else {
 						buildLineStringVertexArray((LineString) curGeometry.geometry, curGeometry.z_layer,
-								curGeometry.color, curGeometry.alpha);
+								curGeometry.getColor(), curGeometry.alpha);
 					}				
 				}
 				else if ( curGeometry.geometry.getGeometryType() == "Point" ) {
@@ -297,10 +297,10 @@ public class VertexArrayHandler {
 							createIcosphere = true;
 						}
 						buildSphereVertexArray((Polygon) curGeometry.geometry.getEnvelope().buffer(1), curGeometry.z_layer, curGeometry.height,
-								curGeometry.color, curGeometry.alpha);
+								curGeometry.getColor(), curGeometry.alpha);
 					} else {
 						buildPointVertexArray((Point) curGeometry.geometry, curGeometry.z_layer, 10,
-								myGLRender.getMaxEnvDim() / 1000, curGeometry.color, curGeometry.alpha);
+								myGLRender.getMaxEnvDim() / 1000, curGeometry.getColor(), curGeometry.alpha);
 					}
 				}
 				

@@ -68,7 +68,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public boolean threeD = false; // true; //false;
 
 	// Use to toggle the Picking mode
-	public boolean picking = false;
+	// private boolean picking = false;
 
 	// Use to toggle the Arcball view
 	public boolean arcball = false;
@@ -536,15 +536,14 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	@Override
 	public void togglePicking() {
-		picking = !picking;
+		renderer.setPicking(!renderer.isPicking());
 		renderer.camera.velocityHoriz = 0;
 		renderer.camera.velocityVert = 0;
-		if ( !picking ) {
+		if ( !renderer.isPicking() ) {
 			setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 		} else {
 			setCursor(new Cursor(Cursor.HAND_CURSOR));
 		}
-
 	}
 
 	@Override

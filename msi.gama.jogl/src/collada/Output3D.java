@@ -109,9 +109,9 @@ public class Output3D {
 			materialElt.setAttribute("id", materialID);
 			materialElt.setAttribute("name", materialID);
 			materialElt.setAttribute("specular", "0.5");
-			materialElt.setAttribute("colorR", "" + myGeom.color.getRed() / 255);
-			materialElt.setAttribute("colorG", "" + myGeom.color.getGreen() / 255);
-			materialElt.setAttribute("colorB", "" + myGeom.color.getBlue() / 255);
+			materialElt.setAttribute("colorR", "" + myGeom.getColor().getRed() / 255);
+			materialElt.setAttribute("colorG", "" + myGeom.getColor().getGreen() / 255);
+			materialElt.setAttribute("colorB", "" + myGeom.getColor().getBlue() / 255);
 			// materialElt.setAttribute("animation", "#"+animationID);
 			root.appendChild(materialElt);
 
