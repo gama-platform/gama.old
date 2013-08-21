@@ -533,10 +533,10 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 	/**
 	 * This method does nothing for Graphstream display
 	 */
-	@Override
-	public void togglePicking() {
-		System.out.println("toggle picking is only available for Opengl Display");
-	}
+	// @Override
+	// public void togglePicking() {
+	// System.out.println("toggle picking is only available for Opengl Display");
+	// }
 
 	/**
 	 * This method does nothing for Graphstream display
@@ -570,7 +570,7 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 		System.out.println("toggleSplitLayer tool is only available for Opengl Display");
 
 	}
-	
+
 	/**
 	 * This method does nothing for Graphstream display
 	 */
@@ -590,10 +590,10 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 	}
 
 	@Override
-	public void newZoomLevel(double zoomLevel) {}
+	public void newZoomLevel(final double zoomLevel) {}
 
 	@Override
-	public void setIndicator(ZoomIndicatorItem indicator) {}
+	public void setIndicator(final ZoomIndicatorItem indicator) {}
 
 	@Override
 	public void toggleCamera() {

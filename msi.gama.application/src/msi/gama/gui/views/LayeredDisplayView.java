@@ -76,11 +76,11 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			(description.getFacets().equals("type", "opengl") || description.getFacets().equals("type", "3D")) ) {
 			return new Integer[] { PAUSE, REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT, SEPARATOR,
 				ZOOM_IN, ZOOM_INDICATOR, ZOOM_OUT, ZOOM_FIT, CAMERA, FOCUS, SEPARATOR, ARCBALL, SWITCHCAMERA,
-				SEPARATOR, PICKING, SELECT_RECTANGLE, SEPARATOR, TRIANGULATION, SPLITLAYER, ROTATION };
+				SEPARATOR, /* PICKING, */SELECT_RECTANGLE, SEPARATOR, TRIANGULATION, SPLITLAYER, ROTATION };
 		} else if ( this.output.getDescription().getFacets().equals("type", "swt") ) { return new Integer[] { PAUSE,
 			REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT, SEPARATOR, ZOOM_IN, ZOOM_INDICATOR, ZOOM_OUT,
-			ZOOM_FIT, FOCUS, SEPARATOR, CAMERA, SEPARATOR, ARCBALL, PICKING, SELECT_RECTANGLE, SHAPEFILE, SEPARATOR,
-			TRIANGULATION, SPLITLAYER, ROTATION, SWITCHCAMERA }; }
+			ZOOM_FIT, FOCUS, SEPARATOR, CAMERA, SEPARATOR, ARCBALL,/* PICKING, */SELECT_RECTANGLE, SHAPEFILE,
+			SEPARATOR, TRIANGULATION, SPLITLAYER, ROTATION, SWITCHCAMERA }; }
 		return new Integer[] { PAUSE, REFRESH, SYNCHRONIZE, SEPARATOR, LAYERS, RENDERING, SNAPSHOT, SEPARATOR, ZOOM_IN,
 			ZOOM_INDICATOR, ZOOM_OUT, ZOOM_FIT, FOCUS, SEPARATOR, HIGHLIGHT_COLOR };
 	}
@@ -502,27 +502,27 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		}
 	}
 
-	@Override
-	public void togglePicking() {
-		if ( getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
-			new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					final IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
-					while (!surface.canBeUpdated()) {
-						try {
-							Thread.sleep(10);
-						} catch (final InterruptedException e) {
-
-						}
-					}
-					surface.togglePicking();
-
-				}
-			}).start();
-		}
-	}
+	// @Override
+	// public void togglePicking() {
+	// if ( getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
+	// new Thread(new Runnable() {
+	//
+	// @Override
+	// public void run() {
+	// final IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
+	// while (!surface.canBeUpdated()) {
+	// try {
+	// Thread.sleep(10);
+	// } catch (final InterruptedException e) {
+	//
+	// }
+	// }
+	// surface.togglePicking();
+	//
+	// }
+	// }).start();
+	// }
+	// }
 
 	@Override
 	public void toggleArcball() {

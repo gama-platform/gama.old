@@ -26,7 +26,7 @@ public interface IViewWithZoom extends IZoomListener {
 	/**
 	 * Switch between Picking or rendering only mode.
 	 */
-	public void togglePicking();
+	// public void togglePicking();
 
 	/**
 	 * Activate the arcball View
@@ -47,14 +47,14 @@ public interface IViewWithZoom extends IZoomListener {
 	 * Split species layer in 3D
 	 */
 	public void toggleSplitLayer();
-	
+
 	/**
 	 * Rotate the mode l around z axes
 	 */
 	public void toggleRotation();
-	
+
 	/*
-	 *  Switch between ArcBall and FreeFly Cameras
+	 * Switch between ArcBall and FreeFly Cameras
 	 */
 	public void toggleCamera();
 

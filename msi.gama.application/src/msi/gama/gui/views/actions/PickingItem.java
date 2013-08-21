@@ -37,7 +37,7 @@ public class PickingItem extends GamaViewItem {
 				public void run() {
 					IViewWithZoom view = (IViewWithZoom) getView();
 					if ( view == null ) { return; }
-					view.togglePicking();
+					// view.togglePicking();
 				}
 			};
 		return new ActionContributionItem(action);
