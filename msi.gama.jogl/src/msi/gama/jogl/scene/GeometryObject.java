@@ -27,10 +27,11 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	public boolean picked = false;
 	private Color previousColor = null;
 
-	public GeometryObject(Geometry geometry, IAgent agent, double z_layer, int layerId, Color color, Double alpha,
-		Boolean fill, Color border, Boolean isTextured, int angle, double height, GamaPoint offset, GamaPoint scale,
-		boolean rounded, String type) {
-		super(color, offset, scale, alpha,layerId);
+	public GeometryObject(final Geometry geometry, final IAgent agent, final double z_layer, final int layerId,
+		final Color color, final Double alpha, final Boolean fill, final Color border, final Boolean isTextured,
+		final int angle, final double height, final GamaPoint offset, final GamaPoint scale, final boolean rounded,
+		final String type) {
+		super(color, offset, scale, alpha, layerId);
 		this.geometry = geometry;
 		this.agent = agent;
 		this.z_layer = z_layer;
@@ -58,30 +59,32 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 
 	@Override
 	public void unpick() {
-		picked = false;
+		// picked = false;
 		color = previousColor;
 	}
 
 	public void pick() {
-		picked = true;
+		// picked = true;
 		previousColor = color;
 		color = pickedColor;
 	}
 
 	@Override
-	public void draw(ObjectDrawer drawer, boolean picking) {
+	public void draw(final ObjectDrawer drawer, final boolean picking) {
 		if ( picking ) {
 			JOGLAWTGLRenderer renderer = drawer.renderer;
 			renderer.gl.glPushMatrix();
 			renderer.gl.glLoadName(pickingIndex);
 			if ( renderer.pickedObjectIndex == pickingIndex ) {
-				if ( agent != null && !picked ) {
+				renderer.setPickedObjectIndex(-1);
+				if ( agent != null /* && !picked */) {
 					pick();
 					if ( renderer.currentPickedObject != null ) {
 						renderer.currentPickedObject.unpick();
 					}
 					renderer.currentPickedObject = this;
 					renderer.displaySurface.selectAgents(0, 0, agent, layerId - 1);
+					// unpick();
 				}
 			}
 			super.draw(drawer, picking);
