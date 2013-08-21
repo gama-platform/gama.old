@@ -22,6 +22,7 @@ import java.awt.*;
 import java.awt.Menu;
 import java.awt.MenuItem;
 import java.awt.event.*;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
@@ -449,7 +450,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		// zoomFit = false;
 		if ( !this.switchCamera ) {
 			if ( renderer.camera.getPosition().getZ() != 0 ) {
-				incrementalZoomStep = (float) renderer.camera.getRadius() / 10;
+				incrementalZoomStep = (float) renderer.camera.getRadius().doubleValue() / 10;
 			} else {
 				incrementalZoomStep = 0.1f;
 			}
@@ -485,7 +486,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		// zoomFit = false;
 		if ( !this.switchCamera ) {
 			if ( renderer.camera.getPosition().getZ() != 0 ) {
-				incrementalZoomStep = (float) renderer.camera.getRadius() / 10;
+				incrementalZoomStep = (float) renderer.camera.getRadius().doubleValue() / 10;
 			} else {
 				incrementalZoomStep = 0.1f;
 			}
@@ -744,6 +745,19 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		super.resizeImage(x, y);
 		setSize(x, y);
 		return true;
+	}
+
+	/**
+	 * Method getModelCoordinates()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinates()
+	 */
+	@Override
+	public GamaPoint getModelCoordinates() {
+		Point mp = renderer.camera.mousePosition;
+		if ( mp == null ) { return null; }
+		Point2D.Double p = renderer.getRealWorldPointFromWindowPoint(renderer.camera.mousePosition);
+		if ( p == null ) { return null; }
+		return new GamaPoint(p.x, -p.y);
 	}
 
 }

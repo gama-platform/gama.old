@@ -26,11 +26,14 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.layers.AbstractLayer;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.controls.Overlay;
 import msi.gama.gui.swt.perspectives.ModelingPerspective;
 import msi.gama.gui.swt.swing.EmbeddedSwingComposite;
 import msi.gama.gui.views.actions.ZoomIndicatorItem;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.*;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.operators.Maths;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -48,6 +51,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	protected IPerspectiveListener perspectiveListener;
 	protected Control aux;
 	protected GridData data;
+	protected Overlay overlay;
 
 	protected ZoomIndicatorItem zoomIndicator;
 
@@ -57,6 +61,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	public void init(final IViewSite site) throws PartInitException {
 		super.init(site);
 		setPartName(output.getViewName());
+
 	}
 
 	// @Override
@@ -129,7 +134,8 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			// surfaceCompo.getSize());
 			// }
 			// });
-
+			overlay = new Overlay(this);
+			overlay.display();
 			getOutput().getSurface().setZoomListener(this);
 			((SashForm) parent).setWeights(new int[] { 1, 2 });
 			((SashForm) parent).setMaximizedControl(surfaceCompo);
@@ -156,7 +162,15 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			}
 
 			@Override
-			public void mouseExited(final java.awt.event.MouseEvent e) {}
+			public void mouseExited(final java.awt.event.MouseEvent e) {
+				// GuiUtils.asyncRun(new Runnable() {
+				//
+				// @Override
+				// public void run() {
+				// overlay.hide();
+				// }
+				// });
+			}
 
 			@Override
 			public void mouseEntered(final java.awt.event.MouseEvent e) {
@@ -166,6 +180,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 					@Override
 					public void run() {
 						swingCompo.forceFocus();
+						// overlay.display();
 					}
 				});
 			}
@@ -183,6 +198,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 					@Override
 					public void run() {
 						swingCompo.forceFocus();
+						// overlay.display();
 					}
 				});
 			}
@@ -672,6 +688,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		// FIXME Remove the listeners
 		surfaceCompo.dispose();
 		// SwtGui.getPage().removePartListener(partListener);
+		overlay.close();
 		super.dispose();
 		// GuiUtils.debug("LayeredDisplayView.dispose: DISPOSED " + getOutput().getName());
 
@@ -743,5 +760,19 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			}
 		});
 
+	}
+
+	public String getOverlayText() {
+		IDisplaySurface surface = getOutput().getSurface();
+		// double height = surface.getEnvHeight();
+		// double width = surface.getEnvWidth();
+		GamaPoint point = surface.getModelCoordinates();
+		String x = point == null ? "N/A" : String.valueOf(Maths.opTruncate(point.x, 2));
+		String y = point == null ? "N/A" : String.valueOf(Maths.opTruncate(point.y, 2));
+		return "x = " + x + "; y = " + y;
 	};
+
+	public Composite getComponent() {
+		return surfaceCompo;
+	}
 }

@@ -34,6 +34,7 @@ public class Popup {
 	static {
 		popup.setLayout(new FillLayout());
 		popupText.setForeground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		// popup.setAlpha(200);
 	}
 
 	private final MouseTrackListener mtl = new MouseTrackListener() {

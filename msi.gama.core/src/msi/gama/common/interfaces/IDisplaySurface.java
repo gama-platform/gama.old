@@ -215,8 +215,10 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 	public abstract void setZoomListener(IZoomListener listener);
 
-	//void acquireUpdateLock() throws InterruptedException;
+	public GamaPoint getModelCoordinates();
 
-	//void releaseUpdateLock();
+	// void acquireUpdateLock() throws InterruptedException;
+
+	// void releaseUpdateLock();
 
 }

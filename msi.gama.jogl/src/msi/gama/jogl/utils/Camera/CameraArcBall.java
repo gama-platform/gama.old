@@ -171,7 +171,7 @@ public class CameraArcBall extends AbstractCamera {
 	}
 
 	@Override
-	public double getRadius() {
+	public Double getRadius() {
 		return this.radius;
 	}
 
@@ -347,14 +347,11 @@ public class CameraArcBall extends AbstractCamera {
 	}
 
 	@Override
-	public void mouseMoved(final MouseEvent arg0) {}
-
-	@Override
 	public void mouseClicked(final MouseEvent arg0) {
 		velocityHoriz = 0;
 		velocityVert = 0;
 		if ( myRenderer.displaySurface.selectRectangle ) {
-			Point point = myRenderer.GetRealWorldPointFromWindowPoint(new Point(arg0.getX(), arg0.getY()));
+			Point point = myRenderer.getIntWorldPointFromWindowPoint(new Point(arg0.getX(), arg0.getY()));
 
 			mousePosition.x = arg0.getX();
 			mousePosition.y = arg0.getY();
@@ -419,7 +416,7 @@ public class CameraArcBall extends AbstractCamera {
 		mousePosition.x = arg0.getX();
 		mousePosition.y = arg0.getY();
 
-		myRenderer.GetRealWorldPointFromWindowPoint(new Point(arg0.getX(), arg0.getY()));
+		myRenderer.getIntWorldPointFromWindowPoint(new Point(arg0.getX(), arg0.getY()));
 	}
 
 	@Override

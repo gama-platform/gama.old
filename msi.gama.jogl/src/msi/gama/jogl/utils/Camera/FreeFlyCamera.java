@@ -175,7 +175,7 @@ public class FreeFlyCamera extends AbstractCamera {
 	}
 
 	@Override
-	public double getSpeed() {
+	public Double getSpeed() {
 		return this._speed;
 	}
 
@@ -235,12 +235,9 @@ public class FreeFlyCamera extends AbstractCamera {
 	}
 
 	@Override
-	public void mouseMoved(final MouseEvent arg0) {}
-
-	@Override
 	public void mouseClicked(final MouseEvent arg0) {
 		if ( myRenderer.displaySurface.selectRectangle ) {
-			Point point = myRenderer.GetRealWorldPointFromWindowPoint(new Point(arg0.getX(), arg0.getY()));
+			Point point = myRenderer.getIntWorldPointFromWindowPoint(new Point(arg0.getX(), arg0.getY()));
 
 			mousePosition.x = arg0.getX();
 			mousePosition.y = arg0.getY();
@@ -304,7 +301,7 @@ public class FreeFlyCamera extends AbstractCamera {
 		mousePosition.x = arg0.getX();
 		mousePosition.y = arg0.getY();
 
-		myRenderer.GetRealWorldPointFromWindowPoint(new Point(arg0.getX(), arg0.getY()));
+		myRenderer.getIntWorldPointFromWindowPoint(new Point(arg0.getX(), arg0.getY()));
 
 	}
 

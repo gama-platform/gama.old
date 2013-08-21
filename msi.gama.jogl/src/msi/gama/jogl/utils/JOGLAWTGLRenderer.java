@@ -3,7 +3,7 @@ package msi.gama.jogl.utils;
 import static javax.media.opengl.GL.*;
 import java.awt.*;
 import java.awt.font.TextAttribute;
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import java.text.AttributedString;
 import java.util.*;
@@ -704,7 +704,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	}
 
 	// ////////////////////////ROI HANDLER ////////////////////////////////////
-	public Point GetRealWorldPointFromWindowPoint(final Point windowPoint) {
+	public Point2D.Double getRealWorldPointFromWindowPoint(final Point windowPoint) {
+		if ( glu == null ) { return null; }
 		int realy = 0;// GL y coord pos
 		double[] wcoord = new double[4];// wx, wy, wz;// returned xyz coords
 
@@ -723,18 +724,23 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		float distance = (float) (camera.getPosition().getZ() / Vector3D.dotProduct(new Vector3D(0.0, 0.0, -1.0), v3));
 		worldCoordinates = camera.getPosition().add(v3.scalarMultiply(distance));
 
-		final Point realWorldPoint = new Point((int) worldCoordinates.x, (int) worldCoordinates.y);
+		final Point2D.Double realWorldPoint = new Point2D.Double(worldCoordinates.x, worldCoordinates.y);
 		return realWorldPoint;
+	}
+
+	public Point getIntWorldPointFromWindowPoint(final Point windowPoint) {
+		Point2D.Double p = getRealWorldPointFromWindowPoint(windowPoint);
+		return new Point((int) p.x, (int) p.y);
 	}
 
 	public ArrayList<Integer> DrawROI() {
 		if ( camera.enableROIDrawing ) {
 			roi_List.clear();
 			Point windowPressedPoint = new Point(camera.lastxPressed, camera.lastyPressed);
-			Point realPressedPoint = GetRealWorldPointFromWindowPoint(windowPressedPoint);
+			Point realPressedPoint = getIntWorldPointFromWindowPoint(windowPressedPoint);
 
 			Point windowmousePositionPoint = new Point(camera.mousePosition.x, camera.mousePosition.y);
-			Point realmousePositionPoint = GetRealWorldPointFromWindowPoint(windowmousePositionPoint);
+			Point realmousePositionPoint = getIntWorldPointFromWindowPoint(windowmousePositionPoint);
 
 			myGLDrawer.DrawROI(gl, realPressedPoint.x, -realPressedPoint.y, realmousePositionPoint.x,
 				-realmousePositionPoint.y);
@@ -811,7 +817,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public void setPicking(final boolean value) {
 		picking = value;
-		//GuiUtils.debug("JOGLAWTDisplaySurface.setPicking " + value);
+		// GuiUtils.debug("JOGLAWTDisplaySurface.setPicking " + value);
 		if ( !value ) {
 			if ( currentPickedObject != null ) {
 				currentPickedObject.unpick();

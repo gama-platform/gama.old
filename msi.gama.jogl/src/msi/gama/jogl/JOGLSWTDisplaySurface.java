@@ -474,7 +474,7 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 				renderer.reset();
 			} else {
 				renderer.camera.initializeCamera(getEnvWidth(), getEnvHeight());
-                renderer.reset();
+				renderer.reset();
 			}
 		}
 		// updateDisplay();
@@ -678,6 +678,15 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 	public void toggleCamera() {
 		// TODO Auto-generated method stub
 
+	}
+
+	/**
+	 * Method getModelCoordinates()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#getModelCoordinates()
+	 */
+	@Override
+	public GamaPoint getModelCoordinates() {
+		return null;
 	}
 
 }

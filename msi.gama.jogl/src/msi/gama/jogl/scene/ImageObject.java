@@ -1,17 +1,14 @@
 package msi.gama.jogl.scene;
 
-import java.awt.Color;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.GamaPoint;
 
 public class ImageObject extends AbstractObject {
 
-    public BufferedImage image;
+	public BufferedImage image;
 	public IAgent agent;
 	public int layerId;
 	public double x;
@@ -24,16 +21,16 @@ public class ImageObject extends AbstractObject {
 	public MyTexture texture;
 	public String name;
 
-	
-
-	public ImageObject(BufferedImage image, IAgent agent, double z_layer, int layerId, double x, double y, double z, Double alpha, double width,
-		double height, Integer angle, GamaPoint offset, GamaPoint scale, boolean isDynamic, MyTexture texture, String name) {
+	public ImageObject(final BufferedImage image, final IAgent agent, final double z_layer, final int layerId,
+		final double x, final double y, final double z, final Double alpha, final double width, final double height,
+		final Integer angle, final GamaPoint offset, final GamaPoint scale, final boolean isDynamic,
+		final MyTexture texture, final String name) {
 		super(null, offset, scale, alpha);
-    	setZ_fighting_id((double) (layerId));
-		if((agent !=null && (agent.getLocation().getZ() == 0 ) && (height == 0 ))){
+		setZ_fighting_id((double) layerId);
+		if ( agent != null && agent.getLocation().getZ() == 0 && height == 0 ) {
 			System.out.println("image" + layerId);
-	    	setZ_fighting_id((double) (layerId *1000000 + agent.getIndex()));
-	    }
+			setZ_fighting_id((double) (layerId * 1000000 + agent.getIndex()));
+		}
 		this.image = image;
 		this.agent = agent;
 		this.x = x;
@@ -47,24 +44,22 @@ public class ImageObject extends AbstractObject {
 		this.layerId = layerId;
 		this.name = name;
 	}
-	
+
 	@Override
 	public void unpick() {
 		picked = false;
 	}
-	
+
 	public void pick() {
 		picked = true;
 	}
 
 	@Override
 	public Color getColor() {
-		if ( picked ) {
-			return pickedColor;
-		}
+		if ( picked ) { return pickedColor; }
 		return super.getColor();
 	}
-	
+
 	@Override
 	public void draw(final ObjectDrawer drawer, final boolean picking) {
 		if ( picking ) {
@@ -76,14 +71,16 @@ public class ImageObject extends AbstractObject {
 					renderer.setPicking(false);
 					pick();
 					renderer.currentPickedObject = this;
-					//The picked image is the grid
-					if(this.name != null){
-						Point pickedPoint = renderer.GetRealWorldPointFromWindowPoint(new Point(renderer.camera.lastxPressed,renderer.camera.lastyPressed));
-						IAgent ag = agent.getPopulationFor(this.name).getAgent(new GamaPoint(pickedPoint.x,-pickedPoint.y));
+					// The picked image is the grid
+					if ( this.name != null ) {
+						Point pickedPoint =
+							renderer.getIntWorldPointFromWindowPoint(new Point(renderer.camera.lastxPressed,
+								renderer.camera.lastyPressed));
+						IAgent ag =
+							agent.getPopulationFor(this.name).getAgent(new GamaPoint(pickedPoint.x, -pickedPoint.y));
 						renderer.displaySurface.selectAgents(0, 0, ag, layerId - 1);
-					}
-					else{
-						renderer.displaySurface.selectAgents(0, 0, agent, layerId - 1);	
+					} else {
+						renderer.displaySurface.selectAgents(0, 0, agent, layerId - 1);
 					}
 				}
 			}

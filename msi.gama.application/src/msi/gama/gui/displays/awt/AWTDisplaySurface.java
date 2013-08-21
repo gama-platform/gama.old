@@ -199,6 +199,16 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	}
 
 	@Override
+	public GamaPoint getModelCoordinates() {
+		if ( mousePosition == null ) { return null; }
+		final int xc = mousePosition.x - origin.x;
+		final int yc = mousePosition.y - origin.y;
+		List<ILayer> layers = manager.getLayersIntersecting(xc, yc);
+		if ( layers.isEmpty() ) { return null; }
+		return layers.get(0).getModelCoordinatesFrom(xc, yc, this);
+	}
+
+	@Override
 	public void forceUpdateDisplay() {
 		final boolean old = synchronous;
 		setSynchronized(false);

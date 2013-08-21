@@ -1,42 +1,24 @@
 package msi.gama.jogl.utils.Camera;
 
-import java.awt.Menu;
-import java.awt.MenuItem;
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.MouseMotionListener;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
+import java.awt.*;
+import java.awt.event.*;
 import java.nio.IntBuffer;
 import java.util.Iterator;
-
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
-
-import com.sun.opengl.util.BufferUtil;
-
 import msi.gama.common.util.GuiUtils;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.ILocation;
+import com.sun.opengl.util.BufferUtil;
 
+public abstract class AbstractCamera implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
 
-
-
-public abstract class AbstractCamera implements KeyListener, MouseListener, 
-							MouseMotionListener, MouseWheelListener{
-	
-	
 	protected JOGLAWTGLRenderer myRenderer;
-		
+
 	protected boolean isMacOS = false;
-	
+
 	protected final IntBuffer selectBuffer = BufferUtil.newIntBuffer(1024);// will store information
 
 	// picking
@@ -45,79 +27,75 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 
 	// ROI Drawing
 	public boolean enableROIDrawing = false;
-	
+
 	protected double maxDim;
-	
+
 	// To handle mouse event
 	public int lastxPressed;
 	public int lastyPressed;
-	
+
 	protected Vector3D _position;
 	protected Vector3D _target;
-	
+
 	public double _theta;
 	public double _phi;
-	
+
 	public final static double INIT_Z_FACTOR = 1.5;
 	public double _keyboardSensivity;
-	
+
 	public boolean forward, backward, strafeLeft, strafeRight;
 	public boolean ctrlKeyDown = false;
 	public boolean shiftKeyDown = false;
-	
+
 	public double velocityHoriz, velocityVert = 0;
 
 	public int _orientation;
 
-	
-	public AbstractCamera(JOGLAWTGLRenderer renderer) {
+	public AbstractCamera(final JOGLAWTGLRenderer renderer) {
 		myRenderer = renderer;
-		
-    	_position = new Vector3D();
-    	_target = new Vector3D();
-		
+
+		_position = new Vector3D();
+		_target = new Vector3D();
+
 		detectMacOS();
 		mousePosition = new Point(0, 0);
 	}
-	
-	public AbstractCamera(double xPos, double yPos, double zPos,
-				double xLPos, double yLPos, double zLPos,JOGLAWTGLRenderer renderer) {
+
+	public AbstractCamera(final double xPos, final double yPos, final double zPos, final double xLPos,
+		final double yLPos, final double zLPos, final JOGLAWTGLRenderer renderer) {
 		myRenderer = renderer;
 		detectMacOS();
 		mousePosition = new Point(0, 0);
 	}
-	
-	public void updatePosition(double xPos, double yPos, double zPos) {
-		_position.x= xPos;
-		_position.y= yPos;
-		_position.z= zPos;
+
+	public void updatePosition(final double xPos, final double yPos, final double zPos) {
+		_position.x = xPos;
+		_position.y = yPos;
+		_position.z = zPos;
 	}
 
-
-	public void lookPosition(double xLPos, double yLPos, double zLPos) {
-		_target.x= xLPos;
-		_target.y= yLPos;
-		_target.z= zLPos;
+	public void lookPosition(final double xLPos, final double yLPos, final double zLPos) {
+		_target.x = xLPos;
+		_target.y = yLPos;
+		_target.z = zLPos;
 	}
-	
-	public void setPosition(Vector3D position)
-	{
+
+	public void setPosition(final Vector3D position) {
 		this._position = position;
 	}
-	
-	public void setTarget(Vector3D target)
-	{
+
+	public void setTarget(final Vector3D target) {
 		this._target = target;
 	}
-	
-    public void setZPosition(double z){}
-    
-  	public void vectorsFromAngles(){}
-	
-	public void moveXYPlan(double diffx, double diffy, double speed) {}
-	
+
+	public void setZPosition(final double z) {}
+
+	public void vectorsFromAngles() {}
+
+	public void moveXYPlan(final double diffx, final double diffy, final double speed) {}
+
 	// Move in the XY plan by changing camera pos and look pos.
-	public void moveXYPlan2(double diffx, double diffy, double z, double w, double h) {
+	public void moveXYPlan2(final double diffx, final double diffy, final double z, final double w, final double h) {
 
 		double translationValue = 0;
 
@@ -137,115 +115,114 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 			translationValue = Math.abs(diffy) * ((z + 1) / h);
 
 			if ( diffy > 0 ) {// move down
-				updatePosition(_position.getX(), _position.getY()+ translationValue, _position.getZ());
+				updatePosition(_position.getX(), _position.getY() + translationValue, _position.getZ());
 				this.lookPosition(_target.getX(), _target.getY() + translationValue, _target.getZ());
 			} else {// move up
-				updatePosition(_position.getX(), _position.getY()- translationValue, _position.getZ());
+				updatePosition(_position.getX(), _position.getY() - translationValue, _position.getZ());
 				lookPosition(_target.getX(), _target.getY() - translationValue, _target.getZ());
 			}
 		}
 	}
-	
-	public void moveForward(double magnitude) {}
-	
-	public void strafeLeft(double magnitude) {}
-	
-	public void strafeRight(double magnitude) {}
-	
-	public void look(double distanceAway) {}
-	
-	public void animate(){}
+
+	public void moveForward(final double magnitude) {}
+
+	public void strafeLeft(final double magnitude) {}
+
+	public void strafeRight(final double magnitude) {}
+
+	public void look(final double distanceAway) {}
+
+	public void animate() {}
 
 	/* -------Get commands--------- */
 
-	public Vector3D getPosition()
-	{
+	public Vector3D getPosition() {
 		return _position;
 	}
-	
-	public Vector3D getTarget()
-	{
+
+	public Vector3D getTarget() {
 		return _target;
 	}
-	
-    public Vector3D getForward()
-    {
-    	return null;
-    }
-    
-    public double getSpeed()
-    {
-    	return (Double) null;
-    }
-	
 
-	public void UpdateCamera(GL gl, GLU glu, int width, int height) {}
+	public Vector3D getForward() {
+		return null;
+	}
 
-	public void initializeCamera(double envWidth, double envHeight) {}
+	public Double getSpeed() {
+		return null;
+	}
 
-	public void initialize3DCamera(double envWidth, double envHeight) {}
+	public void UpdateCamera(final GL gl, final GLU glu, final int width, final int height) {}
 
+	public void initializeCamera(final double envWidth, final double envHeight) {}
+
+	public void initialize3DCamera(final double envWidth, final double envHeight) {}
 
 	/* -------------- Pitch and Yaw commands --------------- */
 
-	public void pitchUp(double amount) {}
+	public void pitchUp(final double amount) {}
 
-	public void pitchDown(double amount) {}
+	public void pitchDown(final double amount) {}
 
-	public void yawRight(double amount) {}
+	public void yawRight(final double amount) {}
 
-	public void yawLeft(double amount) {}
-	
+	public void yawLeft(final double amount) {}
+
 	public double getPitch() {
-		return 0;}
+		return 0;
+	}
 
 	public double getYaw() {
-		return 0;}
+		return 0;
+	}
 
 	public ILocation getUpVector() {
-		return null;}
+		return null;
+	}
 
-	public void setUpVector(ILocation upVector) {}
-	
-	
+	public void setUpVector(final ILocation upVector) {}
+
 	/*---------------------------------------*/
 	/*------------------ Events controls ---------------------*/
-	
-	@Override
-	public void mouseWheelMoved(MouseWheelEvent arg0) {}
 
 	@Override
-	public void mouseDragged(MouseEvent arg0) {}
+	public void mouseWheelMoved(final MouseWheelEvent arg0) {}
 
 	@Override
-	public void mouseMoved(MouseEvent arg0) {}
+	public void mouseDragged(final MouseEvent arg0) {}
 
 	@Override
-	public void mouseClicked(MouseEvent arg0) {}
+	public void mouseMoved(final MouseEvent arg0) {
+		mousePosition.x = arg0.getX();
+		mousePosition.y = arg0.getY();
+	}
 
 	@Override
-	public void mouseEntered(MouseEvent arg0) {}
+	public void mouseClicked(final MouseEvent arg0) {}
 
 	@Override
-	public void mouseExited(MouseEvent arg0) {}
+	public void mouseEntered(final MouseEvent arg0) {}
 
 	@Override
-	public void mousePressed(MouseEvent arg0) {}
+	public void mouseExited(final MouseEvent arg0) {}
 
 	@Override
-	public void mouseReleased(MouseEvent arg0) {}
+	public void mousePressed(final MouseEvent arg0) {}
 
 	@Override
-	public void keyPressed(KeyEvent arg0) {}
+	public void mouseReleased(final MouseEvent arg0) {}
 
 	@Override
-	public void keyReleased(KeyEvent arg0) {}
+	public void keyPressed(final KeyEvent arg0) {}
 
 	@Override
-	public void keyTyped(KeyEvent arg0) {}
-	
+	public void keyReleased(final KeyEvent arg0) {}
+
+	@Override
+	public void keyTyped(final KeyEvent arg0) {}
+
 	// add for check Meta Button pressed in MAC Os or Ctrl in Window OS
-	protected boolean checkCtrlKeyDown(MouseEvent mouseEvent) {
+	protected boolean checkCtrlKeyDown(final MouseEvent mouseEvent) {
 		boolean specicalKeyDown = false;
 		if ( isMacOS ) {
 			specicalKeyDown = mouseEvent.isMetaDown();
@@ -254,9 +231,9 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 		}
 		return specicalKeyDown;
 	}
-	
+
 	// add for check Meta Button pressed in MAC Os or Ctrl in Window OS
-	protected boolean checkCtrlKeyDown(KeyEvent event) {
+	protected boolean checkCtrlKeyDown(final KeyEvent event) {
 		boolean specicalKeyDown = false;
 		if ( isMacOS ) {
 			specicalKeyDown = event.isMetaDown();
@@ -265,12 +242,12 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 		}
 		return specicalKeyDown;
 	}
-	
-	protected boolean checkShiftKeyDown(KeyEvent event) {
+
+	protected boolean checkShiftKeyDown(final KeyEvent event) {
 		return event.isShiftDown();
 	}
-	
-	protected boolean checkShiftKeyDown(MouseEvent event) {
+
+	protected boolean checkShiftKeyDown(final MouseEvent event) {
 		return event.isShiftDown();
 	}
 
@@ -282,14 +259,14 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 		return isMacOS;
 	}
 
-	protected boolean isArcBallOn(MouseEvent mouseEvent) {
+	protected boolean isArcBallOn(final MouseEvent mouseEvent) {
 		if ( checkCtrlKeyDown(mouseEvent) || myRenderer.displaySurface.arcball == true ) {
-				return true;
+			return true;
 		} else {
 			return false;
 		}
 	}
-	
+
 	// Picking method
 	// //////////////////////////////////////////////////////////////////////////////////////
 	/**
@@ -390,50 +367,49 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 
 		return selectedIndex;
 	}
-	
+
 	public double getMaxDim() {
 		return maxDim;
 	}
-	
-	public void setMaxDim(double maxDim) {
+
+	public void setMaxDim(final double maxDim) {
 		this.maxDim = maxDim;
 	}
 
-	public void followAgent(IAgent a) {}
-	
-	public double getRadius(){return (Double) null;}
-	
-	public void setRadius(double r){}
-	
+	public void followAgent(final IAgent a) {}
+
+	public Double getRadius() {
+		return null;
+	}
+
+	public void setRadius(final double r) {}
+
 	public void PrintParam() {
-		System.out.println("xPos:" + _position.x + " yPos:" + _position.y  + " zPos:" + _position.z );
+		System.out.println("xPos:" + _position.x + " yPos:" + _position.y + " zPos:" + _position.z);
 		System.out.println("xLPos:" + _target.x + " yLPos:" + _target.y + " zLPos:" + _target.z);
-		System.out.println("_phi "+_phi+" _theta "+_theta);
+		System.out.println("_phi " + _phi + " _theta " + _theta);
 	}
 
 	public void rotation() {
 		// TODO Auto-generated method stub
 	}
-	
-	public void buildMenus(final Iterator<IAgent> agents)
-	{
+
+	public void buildMenus(final Iterator<IAgent> agents) {
 		myRenderer.displaySurface.agentsMenu.removeAll();
-		
+
 		final Menu macroMenu = new Menu("Species ");
 		myRenderer.displaySurface.agentsMenu.add(macroMenu);
-		
+
 		final Menu allMenu = new Menu("Selected");
 		macroMenu.add(allMenu);
-		
+
 		final MenuItem inspectItem = new MenuItem("Inspect Selected");
 		ActionListener menuListener = null;
-		menuListener = new ActionListener() {		
-			
-			
+		menuListener = new ActionListener() {
+
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				while(agents.hasNext())
-				{
+				while (agents.hasNext()) {
 					IAgent agent = agents.next();
 					GuiUtils.setSelectedAgent(agent);
 				}
@@ -442,13 +418,12 @@ public abstract class AbstractCamera implements KeyListener, MouseListener,
 		};
 		inspectItem.addActionListener(menuListener);
 		allMenu.add(inspectItem);
-		
-		
-		
-		myRenderer.displaySurface.agentsMenu.show(myRenderer.displaySurface, this.mousePosition.x, this.mousePosition.y);
+
+		myRenderer.displaySurface.agentsMenu
+			.show(myRenderer.displaySurface, this.mousePosition.x, this.mousePosition.y);
 	}
-	
+
 	public abstract boolean IsViewIn2DPlan();
 
-	public void inertia(){}
+	public void inertia() {}
 }
