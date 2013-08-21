@@ -20,17 +20,13 @@ public class Output3D {
 	Document doc;
 	// int lastCycleStored;
 	int nbCycle;
-
-	// public Output3D() {
-	// doc = Output3D.createXML();
-	// }
+	boolean initialized;
 
 	public Output3D(final ILocation nbCycles, final JOGLAWTGLRenderer openGLGraphicsGLRender) {
 		doc = Output3D.createXML();
 		nbCycle = (int) nbCycles.getY();
-		// initGLGEModel(myJTSGeometries,openGLGraphicsGLRender);
-		// writeXML();
-
+		initialized = false;
+		
 		System.out.println("NbCycles to store: " + nbCycle);
 	}
 
@@ -38,8 +34,9 @@ public class Output3D {
 		// TODO
 		int currentClock = GAMA.getClock().getCycle();
 		System.out.println("Nb cycle " + currentClock);
-		if ( currentClock == 0 ) {
+		if ( ! initialized ) {
 			initGLGEModel(openGLGraphicsGLRender);
+			initialized = true;
 		}
 
 		// Update of the animations
@@ -142,9 +139,14 @@ public class Output3D {
 		cameraGroupElt.setAttribute("id", "cameraOffset");
 		Element cameraElt = doc.createElement("camera");
 		cameraElt.setAttribute("id", "maincamera");
-		cameraElt.setAttribute("loc_x", "" + openGLGraphicsGLRender.camera.getPosition().getX());
-		cameraElt.setAttribute("loc_y", "" + openGLGraphicsGLRender.camera.getPosition().getY());
-		cameraElt.setAttribute("loc_z", "" + openGLGraphicsGLRender.camera.getPosition().getZ());
+		// TODO
+		// The camera should be computed from the OpenGL camera position (see 3 lines comment below)	
+		cameraElt.setAttribute("loc_x", "0");
+		cameraElt.setAttribute("loc_y", "2000");
+		cameraElt.setAttribute("loc_z", "0");		
+		// cameraElt.setAttribute("loc_x", "" + openGLGraphicsGLRender.camera.getPosition().getX());
+		// cameraElt.setAttribute("loc_y", "" + openGLGraphicsGLRender.camera.getPosition().getY());
+		// cameraElt.setAttribute("loc_z", "" + openGLGraphicsGLRender.camera.getPosition().getZ());
 		cameraElt.setAttribute("rot_order", "ROT_XZY");
 		cameraElt.setAttribute("xtype", "C_ORTHO");
 		cameraElt.setAttribute("rot_x", "0");
@@ -243,7 +245,7 @@ public class Output3D {
 	}
 
 	public static String facesFromVertices(final int nbVertices) {
-		return facesFromVertices(0, nbVertices - 1);
+		return (nbVertices >= 3 ) ? facesFromVertices(0, nbVertices - 1) : "";
 	}
 
 	public static String facesFromVertices(final int firstVertex, final int lastVertex) {
