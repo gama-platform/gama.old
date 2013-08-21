@@ -88,6 +88,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		final ITopology topo = scope.getTopology();
 		if ( topo != null && topo.isTorus() ) {
 			geom = topo.returnToroidalGeom(geometry.getInnerGeometry());
+			geom = scope.getSimulationScope().getInnerGeometry().intersection(geom);
 		} else {
 			geom = geometry.getInnerGeometry();
 		}
