@@ -689,4 +689,13 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 		return null;
 	}
 
+	/**
+	 * Method isSynchronized()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#isSynchronized()
+	 */
+	@Override
+	public boolean isSynchronized() {
+		return false;
+	}
+
 }

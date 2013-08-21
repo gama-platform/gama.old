@@ -18,7 +18,7 @@ public class SWTLayeredDisplayView extends LayeredDisplayView {
 	public void ownCreatePartControl(final Composite c) {
 		super.ownCreatePartControl(c);
 
-		surfaceCompo = createSurfaceCompo();
+		// surfaceCompo = createSurfaceCompo();
 
 		//
 		// surfaceCompo = new Composite(parent, SWT.NO_BACKGROUND);

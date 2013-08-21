@@ -15,7 +15,7 @@ public interface IGamaViewActions {
 
 	public final static int PAUSE = 0;
 	public final static int REFRESH = 1;
-	public final static int SNAPSHOT = 2;
+	public final static int SNAP = 2;
 	public final static int ZOOM_IN = 3;
 	public final static int ZOOM_OUT = 4;
 	public final static int ZOOM_FIT = 5;
@@ -24,8 +24,8 @@ public interface IGamaViewActions {
 	public final static int LAYERS = 8;
 	public final static int SAVE = 9;
 	public final static int REVERT = 10;
-	public final static int SEPARATOR = 11;
-	public final static int SYNCHRONIZE = 12;
+	public final static int SEP = 11;
+	public final static int SYNC = 12;
 	public final static int RENDERING = 13;
 	public final static int HIGHLIGHT_COLOR = 14;
 	public final static int CAMERA = 15;
@@ -35,7 +35,7 @@ public interface IGamaViewActions {
 	public final static int SELECT_RECTANGLE = 19;
 	public final static int TRIANGULATION = 20;
 	public final static int SPLITLAYER = 21;
-	public final static int ZOOM_INDICATOR = 22;
+	public final static int ZOOM_LEVEL = 22;
 	public final static int ROTATION = 23;
 	public final static int SWITCHCAMERA = 24;
 }

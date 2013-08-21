@@ -20,13 +20,13 @@ public class GamaToolbarFactory implements IGamaViewActions {
 
 	private static IContributionItem createContributionItem(final GamaViewPart view, final int code) {
 		switch (code) {
-			case SEPARATOR:
+			case SEP:
 				return new Separator();
-			case SNAPSHOT:
+			case SNAP:
 				return new SnapshotItem(view);
 			case ZOOM_IN:
 				return new ZoomInItem(view);
-			case ZOOM_INDICATOR:
+			case ZOOM_LEVEL:
 				return new ZoomIndicatorItem(view);
 			case ZOOM_OUT:
 				return new ZoomOutItem(view);
@@ -46,7 +46,7 @@ public class GamaToolbarFactory implements IGamaViewActions {
 				return new RevertItem(view);
 			case PAUSE:
 				return new PauseItem(view);
-			case SYNCHRONIZE:
+			case SYNC:
 				return new SynchronizeItem(view);
 			case RENDERING:
 				return new RenderingItem(view);

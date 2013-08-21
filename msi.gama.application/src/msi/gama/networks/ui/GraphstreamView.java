@@ -4,7 +4,6 @@ import java.awt.Frame;
 import java.util.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.views.*;
-import msi.gama.gui.views.actions.ZoomIndicatorItem;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.util.graph.*;
 import org.apache.log4j.Logger;
@@ -178,11 +177,11 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 	@Override
 	protected Integer[] getToolbarActionsId() {
 		// TODO
-		return new Integer[] { PAUSE, REFRESH, SYNCHRONIZE,
+		return new Integer[] { PAUSE, REFRESH, SYNC,
 			// SEPARATOR,
 			// SEPARATOR,
 			// TODO implement SNAPSHOT,
-			SEPARATOR, ZOOM_IN, ZOOM_OUT, ZOOM_FIT };
+			SEP, ZOOM_IN, ZOOM_OUT, ZOOM_FIT };
 
 	}
 
@@ -591,9 +590,6 @@ public class GraphstreamView extends GamaViewPart implements IViewWithZoom {
 
 	@Override
 	public void newZoomLevel(final double zoomLevel) {}
-
-	@Override
-	public void setIndicator(final ZoomIndicatorItem indicator) {}
 
 	@Override
 	public void toggleCamera() {

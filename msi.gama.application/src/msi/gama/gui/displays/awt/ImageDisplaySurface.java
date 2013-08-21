@@ -443,4 +443,13 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public GamaPoint getModelCoordinates() {
 		return null;
 	}
+
+	/**
+	 * Method isSynchronized()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#isSynchronized()
+	 */
+	@Override
+	public boolean isSynchronized() {
+		return false;
+	}
 }

@@ -62,7 +62,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> {
 	 */
 	@Override
 	protected Integer[] getToolbarActionsId() {
-		return new Integer[] { PAUSE, REFRESH, SEPARATOR, NEW_MONITOR };
+		return new Integer[] { PAUSE, REFRESH, SEP, NEW_MONITOR };
 	}
 
 	@Override

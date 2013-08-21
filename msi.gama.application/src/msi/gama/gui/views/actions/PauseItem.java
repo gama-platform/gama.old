@@ -4,7 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
-import msi.gama.gui.views.GamaViewPart;
+import msi.gama.gui.views.*;
 import msi.gama.outputs.IOutput;
 import org.eclipse.jface.action.*;
 
@@ -49,12 +49,18 @@ public class PauseItem extends GamaViewItem {
 					out.resume();
 					setToolTipText("Pause " + out.getName());
 					setImageDescriptor(PauseItem.this.getImageDescriptor("icons/button_pause.png"));
+					if ( view instanceof LayeredDisplayView ) {
+						((LayeredDisplayView) view).pauseChanged();
+					}
 				}
 
 				void pause(final IOutput out) {
 					out.pause();
 					setToolTipText("Resume " + out.getName());
 					setImageDescriptor(PauseItem.this.getImageDescriptor("icons/button_play.png"));
+					if ( view instanceof LayeredDisplayView ) {
+						((LayeredDisplayView) view).pauseChanged();
+					}
 				}
 			};
 

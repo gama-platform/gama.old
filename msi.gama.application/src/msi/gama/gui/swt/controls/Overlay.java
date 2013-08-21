@@ -21,7 +21,7 @@ import org.eclipse.swt.widgets.*;
  */
 public class Overlay {
 
-	private final Shell popup = new Shell(SwtGui.getDisplay(), SWT.ON_TOP | SWT.NO_TRIM);
+	private final Shell popup = new Shell(SwtGui.getDisplay(), SWT.MODELESS | SWT.ON_TOP | SWT.NO_TRIM);
 	private final Label popupText = new Label(popup, SWT.NONE);
 	private final Listener hide = new Listener() {
 
@@ -30,7 +30,6 @@ public class Overlay {
 			hide();
 		}
 	};
-
 	private final Listener resize = new Listener() {
 
 		@Override
@@ -38,73 +37,30 @@ public class Overlay {
 			resize();
 		}
 	};
+	private final MouseMoveListener move = new MouseMoveListener() {
 
-	{
+		@Override
+		public void mouseMove(final MouseEvent e) {
+			display();
+		}
+	};
+
+	private final LayeredDisplayView view;
+
+	public Overlay(final LayeredDisplayView view) {
 		popup.setLayout(new FillLayout());
 		popup.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 		popupText.setForeground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		popup.setAlpha(140);
-	}
-
-	class MouseListener implements MouseTrackListener, MouseMoveListener {
-
-		@Override
-		public void mouseEnter(final MouseEvent e) {
-			display();
-			isVisible = true;
-		}
-
-		@Override
-		public void mouseExit(final MouseEvent e) {
-			// hide();
-			// isVisible = false;
-		}
-
-		@Override
-		public void mouseHover(final MouseEvent e) {
-			display();
-			isVisible = true;
-		}
-
-		/**
-		 * Method mouseMove()
-		 * @see org.eclipse.swt.events.MouseMoveListener#mouseMove(org.eclipse.swt.events.MouseEvent)
-		 */
-		@Override
-		public void mouseMove(final MouseEvent e) {
-			display();
-			isVisible = true;
-		}
-
-	};
-
-	private boolean isVisible;
-	private final LayeredDisplayView view;
-
-	/*
-	 * 
-	 */
-	public Overlay(final LayeredDisplayView view) {
+		popup.layout();
 		this.view = view;
-		MouseListener ml = new MouseListener();
 		Composite c = view.getComponent();
-		c.addMouseTrackListener(ml);
-		c.addMouseMoveListener(ml);
-		// final Shell parent = provider.getControllingShell();
+		c.addMouseMoveListener(move);
 		c.addListener(SWT.Move, resize);
 		c.addListener(SWT.Resize, resize);
 		c.addListener(SWT.Close, hide);
-		c.addListener(SWT.Deactivate, hide);
+		// c.addListener(SWT.Deactivate, hide);
 		c.addListener(SWT.Hide, hide);
-		// for ( final Widget c : controls ) {
-		// if ( c == null ) {
-		// continue;
-		// }
-		// final TypedListener typedListener = new TypedListener(mtl);
-		// c.addListener(SWT.MouseEnter, typedListener);
-		// c.addListener(SWT.MouseExit, typedListener);
-		// c.addListener(SWT.MouseHover, typedListener);
-		// }
 	}
 
 	public void display() {
@@ -120,41 +76,16 @@ public class Overlay {
 			hide();
 			return;
 		}
-
-		// We set the background of the popup by asking the provider
-		// popupText.setBackground(provider.getPopupBackground());
-
-		// We fix the max. width to 400
-		// final int maxPopupWidth = 400;
-
-		// We compute the width of the text (+ 5 pixels to accomodate for the border)
-		// final GC gc = new GC(popupText);
-		// final int textWidth = gc.textExtent(s).x + 5;
-		// gc.dispose();
-		// GuiUtils.debug("Popup.display: textWidth = " + textWidth);
-		// We grab the location of the popup on the display
-
 		// We set the text of the popup
 		popupText.setText(s);
-
-		// We ask the popup to compute its actual size given the width and to display itself
-		// final Point newPopupSize = popup.computeSize(popupWidth, SWT.DEFAULT);
-		// popup.setSize(newPopupSize);
-		// resize();
-		popup.layout();
 		popup.setVisible(true);
-		// popup.open();
 	}
 
 	public void resize() {
-		final Point point = view.getComponent().toDisplay(view.getComponent().getLocation());
-		final Point size = view.getComponent().getSize();
-		popup.setLocation(point.x, point.y + size.y - 16);
-		popup.setSize(popup.computeSize(size.x, 16));
-	}
-
-	public boolean isVisible() {
-		return isVisible;
+		popup.setLocation(view.getOverlayPosition());
+		final Point size = view.getOverlaySize();
+		popup.setSize(popup.computeSize(size.x, size.y));
+		popup.setVisible(true);
 	}
 
 	public void hide() {
@@ -163,11 +94,7 @@ public class Overlay {
 		}
 	}
 
-	/**
-	 * 
-	 */
 	public void close() {
-		isVisible = false;
 		popup.dispose();
 	}
 }

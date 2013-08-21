@@ -1,7 +1,6 @@
 package msi.gama.gui.views;
 
 import msi.gama.common.interfaces.IDisplaySurface.IZoomListener;
-import msi.gama.gui.views.actions.ZoomIndicatorItem;
 
 /**
  * A view that may be zoomed.
@@ -72,6 +71,6 @@ public interface IViewWithZoom extends IZoomListener {
 	 */
 	public void addShapeFile();
 
-	public void setIndicator(ZoomIndicatorItem indicator);
+	// public void setIndicator(ZoomIndicatorItem indicator);
 
 }

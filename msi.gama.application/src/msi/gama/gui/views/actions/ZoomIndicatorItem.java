@@ -4,7 +4,6 @@
  */
 package msi.gama.gui.views.actions;
 
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.views.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
@@ -27,15 +26,20 @@ public class ZoomIndicatorItem extends GamaViewItem {
 	ZoomIndicatorItem(final GamaViewPart view) {
 		super(view);
 		if ( !(view instanceof IViewWithZoom) ) { throw new IllegalArgumentException(); }
-		((IViewWithZoom) view).setIndicator(this);
+		// ((IViewWithZoom) view).setIndicator(this);
 	}
 
-	public void setText(String s) {
-		//GuiUtils.debug("ZoomIndicatorItem.setText " + s);
+	public void setText(final String s) {
+		// GuiUtils.debug("ZoomIndicatorItem.setText " + s);
 		if ( text != null && !text.isDisposed() ) {
 			text.setText(s);
 			text.redraw();
 		}
+	}
+
+	public String getText() {
+		if ( text == null || text.isDisposed() ) { return "N/A"; }
+		return text.getText();
 	}
 
 	/**
@@ -46,7 +50,7 @@ public class ZoomIndicatorItem extends GamaViewItem {
 		return new ControlContribution("zoom.indicator") {
 
 			@Override
-			protected Control createControl(Composite parent) {
+			protected Control createControl(final Composite parent) {
 				text = new Button(parent, SWT.FLAT | SWT.CENTER | SWT.NONE);
 				text.setText("100%");
 				// text.setEditable(false);

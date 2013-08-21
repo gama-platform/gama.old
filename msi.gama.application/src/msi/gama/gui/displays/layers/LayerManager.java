@@ -20,7 +20,6 @@ package msi.gama.gui.displays.layers;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.*;
 import msi.gama.util.*;
@@ -38,7 +37,7 @@ public class LayerManager implements ILayerManager {
 	private final IList<ILayer> enabledLayers = new GamaList();
 	private final IList<ILayer> disabledLayers = new GamaList();
 	private final IDisplaySurface surface;
-	private final PauseLayer pd = new PauseLayer();
+	// private final PauseLayer pd = new PauseLayer();
 	private int count = 0;
 
 	public LayerManager(final IDisplaySurface surface) {
@@ -53,7 +52,7 @@ public class LayerManager implements ILayerManager {
 		for ( final ILayer d : disabledLayers ) {
 			d.dispose();
 		}
-		pd.dispose();
+		// pd.dispose();
 		enabledLayers.clear();
 		disabledLayers.clear();
 	}
@@ -128,7 +127,7 @@ public class LayerManager implements ILayerManager {
 		final IScope scope = GAMA.obtainNewScope();
 		// If the experiment is already closed
 		if ( scope == null || scope.interrupted() ) { return; }
-		//GuiUtils.debug("LayerManager.drawLayersOn");
+		// GuiUtils.debug("LayerManager.drawLayersOn");
 		scope.setGraphics(g);
 		try {
 			g.beginDrawingLayers();
@@ -145,8 +144,8 @@ public class LayerManager implements ILayerManager {
 						max_z = z;
 					}
 				}
-				pd.setElevation(max_z);
-				pd.drawDisplay(scope, g);
+				// pd.setElevation(max_z);
+				// pd.drawDisplay(scope, g);
 			}
 		} catch (final Exception e) {}
 		// catch (final Exception e) {

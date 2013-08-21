@@ -217,6 +217,8 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 	public GamaPoint getModelCoordinates();
 
+	public boolean isSynchronized();
+
 	// void acquireUpdateLock() throws InterruptedException;
 
 	// void releaseUpdateLock();

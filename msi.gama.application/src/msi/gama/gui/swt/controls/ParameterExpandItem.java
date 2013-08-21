@@ -146,6 +146,8 @@ public class ParameterExpandItem extends Item {
 		int headerHeight = parent.bandHeight;
 		Display display = getDisplay();
 		gc.setForeground(display.getSystemColor(SWT.COLOR_DARK_GRAY));
+		gc.setBackground(display.getSystemColor(SWT.COLOR_WHITE));
+		gc.fillRoundRectangle(x, y, width - 1, headerHeight + (expanded ? height - 1 : 0), 6, 6);
 		gc.drawRoundRectangle(x, y, width - 1, headerHeight + (expanded ? height - 1 : 0), 6, 6);
 		int drawX = x;
 		int imageY = y + 1 + (headerHeight - imageHeight) / 2;

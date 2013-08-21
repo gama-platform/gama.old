@@ -26,10 +26,8 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	protected volatile boolean canBeUpdated = true;
 	protected Point origin = new Point(0, 0);
 	protected Dimension previousPanelSize;
-	// protected final Semaphore paintingNeeded = new Semaphore(1, true);
 	private int displayWidth;
 	private int displayHeight;
-	// protected SWTNavigationPanel navigator;
 	protected boolean autosave = false;
 	protected double widthHeightConstraint = 1.0;
 	protected double zoomIncrement = 0.1;
@@ -39,7 +37,6 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	protected final AffineTransform translation = new AffineTransform();
 	protected boolean synchronous = false;
 	protected Color bgColor = Color.black;
-	// protected final GamaRuntimeException[] ex = new GamaRuntimeException[] { null };
 	protected Runnable displayBlock;
 	private double envWidth;
 	private double envHeight;
@@ -224,6 +221,10 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	@Override
 	public void setSynchronized(final boolean checked) {
 		synchronous = checked;
+	}
+
+	public boolean isSynchronized() {
+		return synchronous;
 	}
 
 	@Override
