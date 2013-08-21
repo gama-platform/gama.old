@@ -9,9 +9,6 @@ import com.vividsolutions.jts.geom.Geometry;
 
 public class GeometryObject extends AbstractObject implements Cloneable {
 
-	static int index = 0;
-	static Color pickedColor = Color.red;
-
 	public Geometry geometry;
 	public IAgent agent;
 	public double z_layer;
@@ -24,12 +21,7 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	public double height;
 	public double altitude;
 	public boolean rounded;
-	public int pickingIndex = index++;
-	public boolean picked = false;
-
-	// private Color previousColor = null;
-
-
+	
 	public GeometryObject(Geometry geometry, IAgent agent, double z_layer, int layerId, Color color, Double alpha,
 		Boolean fill, Color border, Boolean isTextured, int angle, double height, GamaPoint offset, GamaPoint scale,
 		boolean rounded, String type) {
@@ -39,7 +31,6 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	    if((agent !=null && (agent.getLocation().getZ() == 0 ) && (height == 0 ))){
 	    	setZ_fighting_id((double) (layerId *1000000 + agent.getIndex()));
 	    }
-
 		this.geometry = geometry;
 		this.agent = agent;
 		this.z_layer = z_layer;
@@ -68,22 +59,15 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	@Override
 	public void unpick() {
 		picked = false;
-		//GuiUtils.debug("GeometryObject.unpick " + pickingIndex);
-		// setColor(previousColor);
 	}
 
 	public void pick() {
 		picked = true;
-		// GuiUtils.debug("GeometryObject.pick " + pickingIndex);
-
-		// previousColor = getColor();
-		// setColor(pickedColor);
 	}
 
 	@Override
 	public Color getColor() {
 		if ( picked ) {
-			// GuiUtils.debug("GeometryObject.getColor pickedColor for " + pickingIndex);
 			return pickedColor;
 		}
 		return super.getColor();
@@ -91,23 +75,16 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 
 	@Override
 	public void draw(final ObjectDrawer drawer, final boolean picking) {
-		// GuiUtils.debug("GeometryObject.draw " + pickingIndex + "with picked = " + picked);
 		if ( picking ) {
 			JOGLAWTGLRenderer renderer = drawer.renderer;
 			renderer.gl.glPushMatrix();
 			renderer.gl.glLoadName(pickingIndex);
 			if ( renderer.pickedObjectIndex == pickingIndex ) {
-				//
-				// renderer.setPickedObjectIndex(-1);
 				if ( agent != null /* && !picked */) {
 					renderer.setPicking(false);
 					pick();
-					// if ( renderer.currentPickedObject != null ) {
-					// renderer.currentPickedObject.unpick();
-					// }
 					renderer.currentPickedObject = this;
 					renderer.displaySurface.selectAgents(0, 0, agent, layerId - 1);
-					// unpick();
 				}
 			}
 			super.draw(drawer, picking);
@@ -116,5 +93,4 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 			super.draw(drawer, picking);
 		}
 	}
-
 }

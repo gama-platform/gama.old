@@ -670,7 +670,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 		// FIXME: Need to compute the depth of the shape to adjust ZPos value.
 		// FIXME: Problem when the geometry is a point how to determine the maxExtent of the shape?
-		final double zPos = env.maxExtent() * 2 + geometry.getLocation().getZ() + this.renderer.env_width / 100;
+		// FIXME: Problem when an agent is placed on a layer with a z_value how to get this z_layer value to offset it?
+		final double zPos = env.maxExtent() * 2 + geometry.getLocation().getZ() + this.renderer.env_width / 100 ;
 		final double zLPos = -(env.maxExtent() * 2);
 		if ( !this.switchCamera ) {
 			renderer.camera.setRadius(zPos);

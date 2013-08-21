@@ -5,11 +5,16 @@ import msi.gama.metamodel.shape.GamaPoint;
 
 public abstract class AbstractObject implements ISceneObject {
 
+	static int index = 0;
+	static Color pickedColor = Color.red;
+	
 	private Color color;
 	public GamaPoint offset = new GamaPoint(0, 0, 0);
 	public GamaPoint scale = new GamaPoint(1, 1, 1);
 	private Double z_fighting_id = 0.0;
 	public Double alpha = 1d;
+	public int pickingIndex = index++;
+	public boolean picked = false;
 
 	public AbstractObject(Color c, GamaPoint o, GamaPoint s, Double a) {
 		setColor(c);

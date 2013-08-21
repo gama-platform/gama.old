@@ -77,6 +77,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			t.bind();
 			// Reset opengl color. Set the transparency of the image to
 			// 1 (opaque).
+
 			renderer.gl.glColor4d(1.0d, 1.0d, 1.0d, img.alpha);
 			TextureCoords textureCoords;
 			textureCoords = t.getImageTexCoords();
