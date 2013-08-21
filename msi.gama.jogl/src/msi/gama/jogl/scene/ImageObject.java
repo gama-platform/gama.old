@@ -26,11 +26,7 @@ public class ImageObject extends AbstractObject {
 		final Integer angle, final GamaPoint offset, final GamaPoint scale, final boolean isDynamic,
 		final MyTexture texture, final String name) {
 		super(null, offset, scale, alpha);
-		setZ_fighting_id((double) layerId);
-		if ( agent != null && agent.getLocation().getZ() == 0 && height == 0 ) {
-			System.out.println("image" + layerId);
-			setZ_fighting_id((double) (layerId * 1000000 + agent.getIndex()));
-		}
+        setZ_fighting_id((double) (layerId));
 		this.image = image;
 		this.agent = agent;
 		this.x = x;
@@ -67,14 +63,14 @@ public class ImageObject extends AbstractObject {
 			renderer.gl.glPushMatrix();
 			renderer.gl.glLoadName(pickingIndex);
 			if ( renderer.pickedObjectIndex == pickingIndex ) {
-				if ( agent != null /* && !picked */) {
+				if ( agent != null ) {
 					renderer.setPicking(false);
 					pick();
 					renderer.currentPickedObject = this;
 					// The picked image is the grid
 					if ( this.name != null ) {
 						Point pickedPoint =
-							renderer.getIntWorldPointFromWindowPoint(new Point(renderer.camera.lastxPressed,
+							renderer.GetRealWorldPointFromWindowPoint(new Point(renderer.camera.lastxPressed,
 								renderer.camera.lastyPressed));
 						IAgent ag =
 							agent.getPopulationFor(this.name).getAgent(new GamaPoint(pickedPoint.x, -pickedPoint.y));

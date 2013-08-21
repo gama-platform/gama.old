@@ -15,8 +15,10 @@ public abstract class AbstractObject implements ISceneObject {
 	public Double alpha = 1d;
 	public int pickingIndex = index++;
 	public boolean picked = false;
+	//used to determine how to enable the polygon offset
+	public boolean fill = true;
 
-	public AbstractObject(Color c, GamaPoint o, GamaPoint s, Double a) {
+	public AbstractObject(Color c, GamaPoint o, GamaPoint s, Double a ){
 		setColor(c);
 		if ( o != null ) {
 			offset = o;

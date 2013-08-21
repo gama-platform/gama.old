@@ -266,28 +266,7 @@ public class JTSDrawer {
 		textures[2].enable();
 		// Binds this texture to the current GL context.
 		textures[2].bind();
-
-		/*
-		 * if ( angle != 0 ) {
-		 * myGl.glTranslatef((double) p.getCentroid().getX(), yFlag *
-		 * (double) p.getCentroid().getY(), 0.0d);
-		 * // FIXME:Check counterwise or not, and do we rotate around the
-		 * // center or around a point.
-		 * myGl.glRotatef(-angle, 0.0d, 0.0d, 1.0d);
-		 * myGl.glTranslatef(-(double) p.getCentroid().getX(), +(double) p.getCentroid().getY(),
-		 * 0.0d);
-		 * 
-		 * DrawTexturedQuad(p);
-		 * 
-		 * myGl.glTranslatef((double) p.getCentroid().getX(), -(double) p.getCentroid().getY(), 0.0d);
-		 * myGl.glRotatef(angle, 0.0d, 0.0d, 1.0d);
-		 * myGl.glTranslatef(-(double) p.getCentroid().getX(), -yFlag *
-		 * (double) p.getCentroid().getY(), 0.0d);
-		 * } else {
-		 */
 		DrawTexturedQuad(p);
-		// }
-
 		myGl.glDisable(GL.GL_TEXTURE_2D);
 	}
 
@@ -343,7 +322,6 @@ public class JTSDrawer {
 	public void DrawPolyhedre(final Polygon p, final double z, final Color c, final double alpha, final boolean fill,
 		final double height, final Integer angle, final boolean drawPolygonContour, final Color border,
 		final boolean rounded) {
-
 		DrawPolygon(p, z, c, alpha, fill, border, false, angle, drawPolygonContour, rounded);
 		DrawPolygon(p, z + height, c, alpha, fill, border, false, angle, drawPolygonContour, rounded);
 		// FIXME : Will be wrong if angle =!0

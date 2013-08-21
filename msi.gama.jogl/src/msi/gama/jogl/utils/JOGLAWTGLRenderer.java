@@ -67,11 +67,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public final boolean multipleViewPort = false;
 	// Display model a a 3D Cube
 	private final boolean CubeDisplay = false;
-	// Display meta model legend
-	private final boolean metaModel = true;
-
-	private boolean initPositionCanvas = false;
-	private boolean initMetaModel = false;
 	// Handle Shape file
 	public ShapeFileReader myShapeFileReader;
 	// Arcball
@@ -113,8 +108,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public Vector3D worldCoordinates = new Vector3D();
 	public GamaPoint roiCenter = new GamaPoint(0, 0);
 
-	private Overlay overlay;
-
 	private double startTime = 0;
 	private int frameCount = 0;
 	private double currentTime = 0;
@@ -146,8 +139,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	@Override
 	public void init(final GLAutoDrawable drawable) {
 		startTime = System.currentTimeMillis();
-
-		overlay = new Overlay(drawable);
 
 		width = drawable.getWidth();
 		height = drawable.getHeight();
@@ -187,7 +178,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		IS_LIGHT_ON = true;
 
 		camera.UpdateCamera(gl, glu, width, height);
-		overlay = new Overlay(drawable);
 		scene = new ModelScene(this);
 		graphicsGLUtils = new MyGraphics(this);
 
@@ -244,12 +234,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		}
 
 		// Blending control
-		if ( BLENDING_ENABLED ) {
+		/*if ( BLENDING_ENABLED ) {
 			gl.glEnable(GL_BLEND); // Turn blending on
-			// FIXME: This has been comment (09/12 r4989) to have the depth testing when image
-			// are drawn but need to know why it was initially disabled?
-			// Imply strange rendering when using picture (e.g boids)
-			// gl.glDisable(GL_DEPTH_TEST); // Turn depth testing off
 		} else {
 			gl.glDisable(GL_BLEND); // Turn blending off
 			if ( !getStencil() ) {
@@ -257,7 +243,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			} else {
 				gl.glEnable(GL_STENCIL_TEST);
 			}
-		}
+		}*/
 
 		// Use polygon offset for a better edges rendering
 		// (http://www.glprogramming.com/red/chapter06.html#name4)
@@ -273,43 +259,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		}
 
 		this.drawScene();
-
-		// byte[] src = new byte[width*height];
-		//
-		// for(int a=0; a<height; a++){
-		// for(int b=0; b<width; b++){
-		// src[a*width+b]= 127;
-		// }
-		// }
-		// gl.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-		// gl.glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0);
-		// gl.glPixelStorei(GL_UNPACK_SKIP_ROWS, 0);
-		//
-		// gl.glDrawPixels(width/100, height/100,
-		// GL.GL_RED, GL.GL_UNSIGNED_BYTE,
-		// ByteBuffer.wrap(src));
-
-		if ( getShowFPS() ) {
-			CalculateFrameRate();
-
-			Graphics2D g2d = overlay.createGraphics();
-			g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-			g2d.setBackground(canvas.getBackground());
-			g2d.clearRect(0, 0, 100, 50);
-			g2d.setColor(Color.black);
-			Font serifFont = new Font("Serif", Font.PLAIN, 12);
-			AttributedString as = new AttributedString("FPS : " + fps);
-			as.addAttribute(TextAttribute.FONT, serifFont);
-			g2d.drawString(as.getIterator(), 10, 20);
-			overlay.markDirty(0, 0, canvas.getWidth(), canvas.getHeight());
-			overlay.drawAll();
-			g2d.dispose();
-		}
-
-		this.drawScene();
-
+	
 		// this.DrawShapeFile();
-		gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
+		//gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
 		gl.glPopMatrix();
 
 		// ROI drawer
@@ -345,7 +297,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// perspective view
 		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glLoadIdentity();
-		glu.gluPerspective(45.0f, aspect, 0.1f, 1000.0f);
+		glu.gluPerspective(45.0f, aspect, 0.1f,camera.getMaxDim() * 100);
 		glu.gluLookAt(camera.getPosition().getX(), camera.getPosition().getY(), camera.getPosition().getZ(), camera
 			.getTarget().getX(), camera.getTarget().getY(), camera.getTarget().getZ(), camera.getUpVector().getX(),
 			camera.getUpVector().getY(), camera.getUpVector().getZ());
@@ -376,65 +328,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		scene.draw(this, isPicking() || currentPickedObject != null, drawAxes, drawEnv);
 	}
 
-	public void drawPosition() {
-		if ( !initPositionCanvas ) {
-			this.initPositionCanvas();
-			initPositionCanvas = true;
-		}
-	}
-
-	public void initPositionCanvas() {
-		Graphics2D gpos = overlay.createGraphics();
-		gpos.setColor(new Color(0, 0, 0, 25));
-		gpos.setPaint(new Color(0, 0, 0, 25));
-		gpos.fill(new Rectangle2D.Double(0, (int) (canvas.getHeight() * 0.95), width, (int) (canvas.getHeight() * 0.05)));
-		gpos.setColor(new Color(255, 255, 255));
-		gpos.drawString("GAMA 	1.6 ©", (int) (canvas.getWidth() * 0.01), (int) (canvas.getHeight() * 0.98));
-		gpos.drawString("width:" + (int) this.env_width, (int) (canvas.getWidth() * 0.8),
-			(int) (canvas.getHeight() * 0.98));
-		gpos.drawString("height:" + (int) this.env_height, (int) (canvas.getWidth() * 0.9),
-			(int) (canvas.getHeight() * 0.98));
-		gpos.dispose();
-	}
-
-	public void drawMetaModel() {
-		Graphics2D g2d = overlay.createGraphics();
-		if ( !initMetaModel ) {
-			g2d.setColor(new Color(0, 0, 0));
-			Set<String> species = GAMA.getExperiment().getModel().getAllSpecies().keySet();
-			if ( !species.isEmpty() ) {
-				double curEnt = 1;
-				double nbEntities = species.size();
-				for ( final Iterator<String> it = species.iterator(); it.hasNext(); ) {
-					final String s = it.next();
-					if ( !(s.equals("multicriteria_analyzer") || s.equals("Physical3DWorld") ||
-						s.equals("graph_node") || s.equals("agent") || s.equals("base_edge") ||
-						s.equals("cluster_builder") || s.equals("AgentDB") || s.equals("graph_edge")) ) {
-						g2d.drawString(s, (int) (canvas.getWidth() * 0.01),
-							(int) (canvas.getHeight() * (curEnt / nbEntities)));
-						ISpecies curSpec = GAMA.getExperiment().getModel().getSpecies(s);
-						IList aspects = curSpec.getAspectNames();
-						for ( int i = 0; i < aspects.size(); i++ ) {
-							IExecutable curAspect = curSpec.getAspect(aspects.get(i).toString());
-							g2d.drawString("	Aspect: " + aspects.get(i).toString(), (int) (canvas.getWidth() * 0.01),
-								(int) (canvas.getHeight() * ((curEnt + 0.5) / nbEntities)));
-							IAgent exp = GAMA.getSimulation();
-							Object[] result = new Object[1];
-							exp.getScope().execute(curAspect, exp, null, result);
-							// curApsect.draw(exp.getScope(), exp);
-							Rectangle2D r = (Rectangle2D) result[0];
-							if ( r != null ) {
-								g2d.fill(r);
-							}
-						}
-						curEnt++;
-					}
-				}
-			}
-			initMetaModel = true;
-		}
-		g2d.dispose();
-	}
 
 	public void drawScene() {
 		gl.glViewport(0, 0, width, height);
@@ -446,14 +339,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 			} else {
 				this.drawModel();
-				if ( legends ) {
-					this.drawMetaModel();
-					this.drawPosition();
-					overlay.beginRendering();
-					// overlay.draw(0, (int)(canvas.getHeight()*0.95), width, (int)(canvas.getHeight()*0.05));
-					overlay.drawAll();
-					overlay.endRendering();
-				}
 			}
 		}
 	}

@@ -115,7 +115,7 @@ public class FreeFlyCamera extends AbstractCamera {
 		}
 		float aspect = (float) width / height;
 
-		glu.gluPerspective(45.0f, aspect, 0.1f, maxDim * 10);
+		glu.gluPerspective(45.0f, aspect, 0.1f, getMaxDim() * 100);
 
 		glu.gluLookAt(_position.x, _position.y, _position.z, _target.x, _target.y, _target.z, 0.0f, 0.0f, 1.0f);
 		animate();

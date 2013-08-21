@@ -43,7 +43,8 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 		renderer.gl.glPushMatrix();
 		renderer.gl.glTranslated(object.offset.x, -object.offset.y, object.offset.z);
 		renderer.gl.glScaled(object.scale.x, object.scale.y, 1);
-		renderer.gl.glPolygonOffset((object.getZ_fighting_id()).floatValue(), 1);
+		//renderer.gl.glPolygonOffset(0,-(object.getZ_fighting_id()).floatValue());
+		renderer.gl.glPolygonOffset(1,-object.getZ_fighting_id().floatValue());
 		_draw(object);
 		renderer.gl.glPopMatrix();
 	}
@@ -75,9 +76,6 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			Texture t = curTexture.texture;
 			t.enable();
 			t.bind();
-			// Reset opengl color. Set the transparency of the image to
-			// 1 (opaque).
-
 			renderer.gl.glColor4d(1.0d, 1.0d, 1.0d, img.alpha);
 			TextureCoords textureCoords;
 			textureCoords = t.getImageTexCoords();
@@ -523,7 +521,6 @@ public boolean isInitialized() {
 				{
 					renderer.gl.glEnable(GL_DEPTH_TEST);
 					renderer.gl.glStencilFunc(GL_GREATER, 1,1);
-//					renderer.gl.glStencilOp(GL_KEEP, GL_ZERO, GL_REPLACE);	
 				}
 				if ( geometry.geometry.getGeometryType() == "MultiPolygon" ) {
 					jtsDrawer.DrawMultiPolygon((MultiPolygon) geometry.geometry, geometry.z_layer, geometry.getColor(),

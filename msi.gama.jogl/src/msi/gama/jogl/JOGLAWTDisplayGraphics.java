@@ -151,7 +151,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 				GamaGeometryType.buildLine(new GamaPoint(stepX, 0), new GamaPoint(stepX, image.getWidth()))
 					.getInnerGeometry();
 			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
-				currentOffset, currentScale, false, "grid", currentLayerIsStatic, getCurrentAlpha());
+				currentOffset, currentScale, false, "gridLine", currentLayerIsStatic, getCurrentAlpha());
 		}
 
 		for ( int i = 0; i <= image.getHeight(); i++ ) {
@@ -160,7 +160,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 				GamaGeometryType.buildLine(new GamaPoint(0, stepY), new GamaPoint(image.getHeight(), stepY))
 					.getInnerGeometry();
 			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
-				currentOffset, currentScale, false, "grid", currentLayerIsStatic, getCurrentAlpha());
+				currentOffset, currentScale, false, "gridLine", currentLayerIsStatic, getCurrentAlpha());
 		}
 	}
 
