@@ -88,6 +88,12 @@ public class JTSDrawer {
 		}
 	}
 
+	
+	 public void DrawPolygonMain(final Polygon p, final double z_layer, final Color c, final double alpha,
+				final boolean fill, final Color border, final boolean isTextured, final Integer angle,
+				final boolean drawPolygonContour, final boolean rounded) {
+		 
+	 }
 	public void DrawPolygon(final Polygon p, final double z_layer, final Color c, final double alpha,
 		final boolean fill, final Color border, final boolean isTextured, final Integer angle,
 		final boolean drawPolygonContour, final boolean rounded) {

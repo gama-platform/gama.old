@@ -58,6 +58,7 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.INERTIA, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.STENCIL, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.LEGENDS, type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.ZFIGHTING, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.SHOWFPS, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.DRAWENV, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.AMBIENT_LIGHT, type = { IType.INT, IType.COLOR }, optional = true),
@@ -86,6 +87,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean inertia = false;
 	private boolean stencil = false;
 	private boolean legends = false;
+	private boolean z_fighting = true;
 	private boolean showfps = false;
 	private boolean drawEnv = true;
 	private Color ambientLightColor = new GamaColor(125, 125, 125);
@@ -169,6 +171,11 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression l = getFacet(IKeyword.LEGENDS);
 		if ( l != null ) {
 			setLegends(Cast.asBool(getScope(), l.value(getScope())));
+		}
+		
+		final IExpression z = getFacet(IKeyword.ZFIGHTING);
+		if ( z != null ) {
+			setZFighting(Cast.asBool(getScope(), z.value(getScope())));
 		}
 
 		final IExpression fps = getFacet(IKeyword.SHOWFPS);
@@ -491,6 +498,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	private void setLegends(final boolean leg) {
 		this.legends = leg;
+	}
+	
+	public boolean getZFighting() {
+		return z_fighting;
+	}
+
+	private void setZFighting(final boolean z) {
+		this.z_fighting = z;
 	}
 
 	public boolean getShowFPS() {

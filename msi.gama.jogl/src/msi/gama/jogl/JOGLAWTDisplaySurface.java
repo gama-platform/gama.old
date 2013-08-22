@@ -168,6 +168,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		renderer.setInertia(getOutput().getInertia());
 		renderer.setStencil(getOutput().getStencil());
 		renderer.setLegends(getOutput().getLegends());
+		renderer.setZFighting(getOutput().getZFighting());
 		renderer.setShowFPS(getOutput().getShowFPS());
 		renderer.setDrawEnv(getOutput().getDrawEnv());
 		renderer.setAmbientLightValue(getOutput().getAmbientLightColor());

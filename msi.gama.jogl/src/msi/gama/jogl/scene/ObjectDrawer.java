@@ -40,7 +40,9 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 		renderer.gl.glPushMatrix();
 		renderer.gl.glTranslated(object.offset.x, -object.offset.y, object.offset.z);
 		renderer.gl.glScaled(object.scale.x, object.scale.y, 1);
-		SetPolygonOffset(object);
+		if (renderer.getZFighting()){
+			SetPolygonOffset(object);
+		}
 		_draw(object);
 		renderer.gl.glPopMatrix();
 	}
@@ -54,7 +56,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 		else{
 			renderer.gl.glDisable(GL.GL_POLYGON_OFFSET_LINE);
 			renderer.gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
-			renderer.gl.glPolygonOffset(1,(float) (-object.getZ_fighting_id().floatValue()*renderer.getMaxEnvDim()));	
+			renderer.gl.glPolygonOffset(1,(float) (-object.getZ_fighting_id().floatValue()));	
 		}
 	}
 	protected abstract void _draw(T object);

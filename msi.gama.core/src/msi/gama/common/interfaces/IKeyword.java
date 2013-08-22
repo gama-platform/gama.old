@@ -375,6 +375,7 @@ public interface IKeyword {
 	public static final String XY = "xy";
 	public static final String Y = "y";
 	public static final String Z = "z";
+	public static final String ZFIGHTING = "z_fighting";
 	public static final String[] METHODS = { GENETIC, ANNEALING, HILL_CLIMBING, TABU, REACTIVE_TABU, EXHAUSTIVE };
 	public static final String[] EVENT_TYPE = { OTHER_EVENTS, MOUSE_DOWN };
 	public static final String USER_INIT = "user_init";
