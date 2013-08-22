@@ -21,8 +21,9 @@ import org.eclipse.swt.widgets.*;
  */
 public class Overlay {
 
-	private final Shell popup = new Shell(SwtGui.getDisplay(), SWT.MODELESS | SWT.ON_TOP | SWT.NO_TRIM);
-	private final Label popupText = new Label(popup, SWT.NONE);
+	private final Shell popup;
+	private final Label popupText;
+	private boolean isHidden = false;
 	private final Listener hide = new Listener() {
 
 		@Override
@@ -48,8 +49,10 @@ public class Overlay {
 	private final LayeredDisplayView view;
 
 	public Overlay(final LayeredDisplayView view) {
+		popup = new Shell(SwtGui.getDisplay().getActiveShell(), SWT.TOOL | SWT.NO_TRIM);
 		popup.setLayout(new FillLayout());
 		popup.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		popupText = new Label(popup, SWT.NONE);
 		popupText.setForeground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		popup.setAlpha(140);
 		popup.layout();
@@ -64,6 +67,7 @@ public class Overlay {
 	}
 
 	public void display() {
+		if ( isHidden ) { return; }
 		// We first verify that the popup is still ok
 		final Shell c = view.getSite().getShell();
 		if ( c == null || c.isDisposed() ) {
@@ -82,6 +86,7 @@ public class Overlay {
 	}
 
 	public void resize() {
+		if ( isHidden ) { return; }
 		popup.setLocation(view.getOverlayPosition());
 		final Point size = view.getOverlaySize();
 		popup.setSize(popup.computeSize(size.x, size.y));
@@ -96,5 +101,19 @@ public class Overlay {
 
 	public void close() {
 		popup.dispose();
+	}
+
+	public boolean isHidden() {
+		return isHidden;
+	}
+
+	public void setHidden(final boolean hidden) {
+		isHidden = hidden;
+		if ( isHidden ) {
+			hide();
+		} else {
+			resize();
+			display();
+		}
 	}
 }

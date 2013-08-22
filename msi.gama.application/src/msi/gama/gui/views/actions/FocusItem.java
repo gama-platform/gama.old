@@ -51,7 +51,8 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 	@Override
 	protected IContributionItem createItem() {
 		final IAction action =
-			new GamaAction("Focus on...", IAction.AS_DROP_DOWN_MENU, getImageDescriptor("icons/button_focus.png")) {
+			new GamaAction("Browse through all displayed agents", IAction.AS_DROP_DOWN_MENU,
+				getImageDescriptor("/icons/display_species.png")) {
 
 				@Override
 				public void run() {}
@@ -85,37 +86,6 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 	public Menu getMenu(final Menu parent) {
 		return null;
 	}
-
-	SelectionAdapter adapter = new SelectionAdapter() {
-
-		@Override
-		public void widgetSelected(final SelectionEvent e) {
-			final MenuItem mi = (MenuItem) e.widget;
-			final IAgent a = (IAgent) mi.getData("agent");
-			final ILayer d = (ILayer) mi.getData("display");
-			final IDisplaySurface s = (IDisplaySurface) mi.getData("surface");
-			if ( a != null && !a.dead() ) {
-				new Thread(new Runnable() {
-
-					@Override
-					public void run() {
-						while (!s.canBeUpdated()) {
-							try {
-								Thread.sleep(10);
-							} catch (final InterruptedException e) {
-
-							}
-						}
-						if ( !a.dead() ) {
-							s.focusOn(a.getGeometry(), d);
-						}
-
-					}
-				}).start();
-
-			}
-		}
-	};
 
 	private class FocusOnSelection extends SelectionAdapter {
 
@@ -155,6 +125,38 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 
 	}
 
+	private class FollowSelection extends SelectionAdapter {
+
+		ILayer display;
+		IDisplaySurface surface;
+
+		FollowSelection(final ILayer display, final IDisplaySurface surface) {
+			this.display = display;
+			this.surface = surface;
+		}
+
+		@Override
+		public void widgetSelected(final SelectionEvent e) {
+			final MenuItem mi = (MenuItem) e.widget;
+			final IAgent a = (IAgent) mi.getData("agent");
+			if ( a != null && !a.dead() ) {
+				new Thread(new Runnable() {
+
+					@Override
+					public void run() {
+
+						if ( !a.dead() ) {
+							surface.followAgent(a);
+						}
+
+					}
+				}).start();
+
+			}
+		}
+
+	}
+
 	@Override
 	public boolean isDynamic() {
 		return true;
@@ -164,36 +166,31 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 	public void fill(final Menu menu, final int index) {
 		final LayeredDisplayView view = (LayeredDisplayView) SwtGui.getPage().getActivePart();
 		final IDisplaySurface displaySurface = view.getDisplaySurface();
-		for ( final ILayer item : view.getDisplayManager().getItems() ) {
-			final FocusOnSelection adapter = new FocusOnSelection(item, displaySurface);
-			if ( item instanceof SpeciesLayer ) {
-				final SpeciesLayer display = (SpeciesLayer) item;
-				final MenuItem displayMenu = new MenuItem(menu, SWT.CASCADE);
-				displayMenu.setText(display.getType() + ": " + display.getName());
-				displayMenu.setImage(images.get(display.getClass()));
-				AgentsMenu.createSpeciesSubMenu(displayMenu,
-					GAMA.getSimulation().getMicroPopulation(display.getName()), adapter);
-			} else if ( item instanceof AgentLayer ) {
-				final AgentLayer display = (AgentLayer) item;
-				final MenuItem displayMenu = new MenuItem(menu, SWT.CASCADE);
-				displayMenu.setText(display.getType() + ": " + display.getName());
-				displayMenu.setImage(images.get(display.getClass()));
-				final Menu agentsMenu = new Menu(displayMenu);
-				for ( final IAgent agent : display.getAgentsForMenu() ) {
-					final MenuItem agentItem = new MenuItem(agentsMenu, SWT.PUSH);
-					agentItem.setData("agent", agent);
-					agentItem.setText(agent.getName());
-					agentItem.addSelectionListener(adapter);
-				}
-				displayMenu.setMenu(agentsMenu);
-			} else if ( item instanceof GridLayer ) {
-				final GridLayer display = (GridLayer) item;
-				final MenuItem displayMenu = new MenuItem(menu, SWT.CASCADE);
-				displayMenu.setText("Grid layer: " + display.getName());
-				displayMenu.setImage(images.get(display.getClass()));
-				AgentsMenu.createSpeciesSubMenu(displayMenu,
-					GAMA.getSimulation().getMicroPopulation(display.getName()), adapter);
+		for ( final ILayer layer : view.getDisplayManager().getItems() ) {
+			boolean isSpeciesLayer = layer instanceof SpeciesLayer || layer instanceof GridLayer;
+			boolean isAgentLayer = isSpeciesLayer || layer instanceof AgentLayer;
+			if ( !isAgentLayer ) {
+				continue;
 			}
+			final MenuItem layerMenu = new MenuItem(menu, SWT.CASCADE);
+			layerMenu.setText(layer.getType() + ": " + layer.getName());
+			layerMenu.setImage(images.get(layer.getClass()));
+			final FocusOnSelection adapter = new FocusOnSelection(layer, displaySurface);
+			AgentsMenu.MenuAction focus = new AgentsMenu.MenuAction(adapter, SwtGui.focusImage, "Focus on");
+			Collection<IAgent> pop = null;
+			if ( isSpeciesLayer ) {
+				pop = GAMA.getSimulation().getMicroPopulation(layer.getName());
+			} else {
+				pop = ((AgentLayer) layer).getAgentsForMenu();
+			}
+			if ( view.getOutput().isOpenGL() ) {
+				AgentsMenu.MenuAction follow =
+					new AgentsMenu.MenuAction(new FollowSelection(layer, displaySurface), SwtGui.followImage, "Follow");
+				AgentsMenu.fillPopulationSubMenu(layerMenu, pop, focus, follow);
+			} else {
+				AgentsMenu.fillPopulationSubMenu(layerMenu, pop, focus);
+			}
+
 		}
 	}
 }

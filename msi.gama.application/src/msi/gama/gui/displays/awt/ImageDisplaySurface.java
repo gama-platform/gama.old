@@ -27,6 +27,7 @@ import javax.imageio.ImageIO;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.layers.LayerManager;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.ILayerStatement;
@@ -452,4 +453,11 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public boolean isSynchronized() {
 		return false;
 	}
+
+	/**
+	 * Method followAgent()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#followAgent(msi.gama.metamodel.agent.IAgent)
+	 */
+	@Override
+	public void followAgent(final IAgent a) {}
 }

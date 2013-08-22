@@ -76,14 +76,14 @@ public class ImageLayer extends AbstractLayer {
 	}
 
 	@Override
-	public void privateDrawDisplay(IScope scope, final IGraphics dg) {
+	public void privateDrawDisplay(final IScope scope, final IGraphics dg) {
 		buildImage();
 		if ( image == null ) { return; }
 		dg.drawImage(scope, image, null, null, null, null, 0.0, false, null);
 	}
 
 	@Override
-	protected String getType() {
+	public String getType() {
 		return "Image layer";
 	}
 

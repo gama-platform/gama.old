@@ -70,6 +70,8 @@ public class GamaToolbarFactory implements IGamaViewActions {
 				return new RotationItem(view);
 			case SWITCHCAMERA:
 				return new SwitchCameraItem(view);
+			case OVERLAY:
+				return new OverlayItem(view);
 
 		}
 		return null;

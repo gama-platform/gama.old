@@ -18,7 +18,7 @@ public class GraphicLayer extends AbstractLayer {
 	}
 
 	@Override
-	protected String getType() {
+	public String getType() {
 		return IKeyword.GRAPHICS;
 	}
 

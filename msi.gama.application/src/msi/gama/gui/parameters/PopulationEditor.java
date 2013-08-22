@@ -18,6 +18,7 @@
  */
 package msi.gama.gui.parameters;
 
+import java.util.Collection;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.IParameter;
@@ -73,18 +74,8 @@ public class PopulationEditor extends AbstractEditor {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				if ( currentValue instanceof IPopulation ) {
-					IPopulation a = (IPopulation) currentValue;
-					new InspectDisplayOutput(a.getHost(), a.getSpecies()).launch();
-				} else if ( currentValue instanceof IContainer ) {
-					IContainer<?, IAgent> a = (IContainer) currentValue;
-					IPopulation pop = null;
-					for ( IAgent agent : a ) {
-						pop = agent.getPopulation();
-					}
-					if ( pop != null ) {
-						new InspectDisplayOutput(pop.getHost(), a).launch();
-					}
+				if ( currentValue instanceof Collection ) {
+					InspectDisplayOutput.browse((Collection) currentValue);
 				}
 			}
 		});

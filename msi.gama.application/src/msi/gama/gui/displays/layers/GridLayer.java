@@ -163,7 +163,7 @@ public class GridLayer extends ImageLayer {
 	}
 
 	@Override
-	protected String getType() {
+	public String getType() {
 		return "Grid layer";
 	}
 

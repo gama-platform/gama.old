@@ -60,10 +60,11 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	protected Integer[] getToolbarActionsId() {
 		IDescription description = output.getDescription();
 		if ( description.getFacets().equals("type", "opengl") || description.getFacets().equals("type", "3D") ) { return new Integer[] {
-			PAUSE, REFRESH, SYNC, SEP, LAYERS, RENDERING, SNAP, SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT, CAMERA, FOCUS, SEP,
-			ARCBALL, SWITCHCAMERA, SEP, SELECT_RECTANGLE, SEP, TRIANGULATION, SPLITLAYER, ROTATION }; }
-		return new Integer[] { PAUSE, REFRESH, SYNC, SEP, LAYERS, RENDERING, SNAP, SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT,
-			FOCUS, SEP, HIGHLIGHT_COLOR };
+			PAUSE, REFRESH, SYNC, SEP, LAYERS, OVERLAY, SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT, SEP, FOCUS, SELECT_RECTANGLE,
+			SEP, CAMERA, ARCBALL, SWITCHCAMERA, SEP, TRIANGULATION, SPLITLAYER, ROTATION, SEP, HIGHLIGHT_COLOR,
+			RENDERING, SNAP }; }
+		return new Integer[] { PAUSE, REFRESH, SYNC, SEP, LAYERS, OVERLAY, SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT, SEP,
+			FOCUS, SEP, HIGHLIGHT_COLOR, RENDERING, SNAP };
 	}
 
 	public ILayerManager getDisplayManager() {
@@ -564,5 +565,12 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 	public void pauseChanged() {
 		overlay.display();
+	}
+
+	/**
+	 * 
+	 */
+	public void toogleOverlay() {
+		overlay.setHidden(!overlay.isHidden());
 	}
 }

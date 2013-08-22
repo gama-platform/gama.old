@@ -95,6 +95,8 @@ public class SwtGui implements IGui {
 	private static ConsoleView console = null;
 	private static final StringBuilder consoleBuffer = new StringBuilder(2000);
 	private static int dialogReturnCode;
+	public static Image followImage = getImageDescriptor("/icons/layer-shape-curve.png").createImage();
+	public static Image focusImage = getImageDescriptor("/icons/arrow-in.png").createImage();
 	public static Image speciesImage = getImageDescriptor("/icons/display_species.png").createImage();
 	public static Image agentImage = getImageDescriptor("/icons/display_agents.png").createImage();
 	public static Image gridImage = getImageDescriptor("/icons/display_grid.png").createImage();

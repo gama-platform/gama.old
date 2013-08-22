@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -52,35 +52,38 @@ public class AgentsMenu extends ContributionItem {
 		return string;
 	}
 
-	static MenuItem cascadingAgentMenuItem(final Menu parent, final IAgent agent) {
+	static MenuItem cascadingAgentMenuItem(final Menu parent, final IAgent agent, final MenuAction ... actions) {
 		MenuItem result = new MenuItem(parent, SWT.CASCADE);
 		result.setText(agent.getName());
 		result.setImage(SwtGui.agentImage);
 		Menu agentMenu = new Menu(result);
 		result.setMenu(agentMenu);
-		createMenuForAgent(agentMenu, agent, false);
+		createMenuForAgent(agentMenu, agent, false, actions);
 		return result;
 	}
 
 	static MenuItem actionAgentMenuItem(final Menu parent, final IAgent agent, final SelectionListener listener,
 		final Image image, final String prefix) {
 		MenuItem result = new MenuItem(parent, SWT.PUSH);
-		result.setText(prefix + " " + agent.getName());
+		result.setText(prefix /* + " " + agent.getName() */);
 		result.addSelectionListener(listener);
 		result.setImage(image);
 		result.setData("agent", agent);
 		return result;
 	}
 
-	static MenuItem browsePopulationMenuItem(final Menu parent, final IPopulation pop, final Image image) {
+	static MenuItem browsePopulationMenuItem(final Menu parent, final Collection<IAgent> pop, final Image image) {
 		MenuItem result = new MenuItem(parent, SWT.PUSH);
-		result.setText("Browse " + pop.getName() + " population...");
+		if ( pop instanceof IPopulation ) {
+			result.setText("Browse " + ((IPopulation) pop).getName() + " population...");
+		} else {
+			result.setText("Browse agents...");
+		}
 		result.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				// TODO Change this to a factory method, as multiple outputs may be created for one view !
-				new InspectDisplayOutput(pop.getHost(), pop.getSpecies()).launch();
+				InspectDisplayOutput.browse(pop);
 			}
 
 		});
@@ -100,9 +103,9 @@ public class AgentsMenu extends ContributionItem {
 	}
 
 	static MenuItem actionAgentMenuItem(final Menu parent, final IAgent agent, final IStatement command,
-		final GamaPoint point) {
+		final GamaPoint point, final String prefix) {
 		MenuItem result = new MenuItem(parent, SWT.PUSH);
-		result.setText(command.getName());
+		result.setText(prefix + " " + command.getName());
 		result.setImage(SwtGui.action);
 		result.addSelectionListener(runner);
 		result.setData("agent", agent);
@@ -179,7 +182,23 @@ public class AgentsMenu extends ContributionItem {
 		return true;
 	}
 
-	public static void createMenuForAgent(final Menu menu, final IAgent agent, final boolean topLevel) {
+	public static class MenuAction {
+
+		SelectionListener listener;
+		Image image;
+		String text;
+
+		public MenuAction(final SelectionListener listener, final Image image, final String text) {
+			super();
+			this.listener = listener;
+			this.image = image;
+			this.text = text;
+		}
+
+	}
+
+	public static void createMenuForAgent(final Menu menu, final IAgent agent, final boolean topLevel,
+		final MenuAction ... actions) {
 		separate(menu, "Actions");
 		if ( topLevel ) {
 			browsePopulationMenuItem(menu, agent.getPopulation(), SwtGui.gridImage);
@@ -188,10 +207,16 @@ public class AgentsMenu extends ContributionItem {
 		if ( !topLevel ) {
 			actionAgentMenuItem(menu, agent, highlighter, SwtGui.highlight, "Highlight");
 		}
+		if ( actions != null ) {
+			for ( MenuAction ma : actions ) {
+				actionAgentMenuItem(menu, agent, ma.listener, ma.image, ma.text);
+			}
+		}
 		final Collection<UserCommandStatement> commands = agent.getSpecies().getUserCommands();
 		if ( !commands.isEmpty() ) {
+			separate(menu);
 			for ( final UserCommandStatement c : commands ) {
-				actionAgentMenuItem(menu, agent, c, null);
+				actionAgentMenuItem(menu, agent, c, null, "Apply");
 			}
 		}
 		if ( agent instanceof IMacroAgent ) {
@@ -246,46 +271,54 @@ public class AgentsMenu extends ContributionItem {
 		}
 	}
 
-	private static void fillPopulationSubMenu(final Menu menu, final IPopulation species) {
+	private static void fillPopulationSubMenu(final Menu menu, final Collection<IAgent> species,
+		final MenuAction ... actions) {
 		separate(menu, "Actions");
 		browsePopulationMenuItem(menu, species, SwtGui.gridImage);
-		final IAgent[] agents = species.toArray(new IAgent[0]);
-		final int size = agents.length;
+
+		final List<IAgent> agents = new ArrayList(species);
+		final int size = agents.size();
 		if ( size != 0 ) {
 			separate(menu);
 			separate(menu, "Agents");
 		}
 		if ( size < 100 ) {
 			for ( final IAgent agent : agents ) {
-				cascadingAgentMenuItem(menu, agent);
+				cascadingAgentMenuItem(menu, agent, actions);
 			}
 		} else {
 			final int nb = size / 100;
 			for ( int i = 0; i < nb; i++ ) {
 				final MenuItem rangeItem = new MenuItem(menu, SWT.CASCADE);
+				final Menu rangeMenu = new Menu(rangeItem);
+				rangeItem.setMenu(rangeMenu);
 				final int begin = i * 100;
 				final int end = Math.min((i + 1) * 100, size);
-				rangeItem.setText("From " + begin + " to " + (end - 1));
+				rangeItem.setText("Id " + begin + " to " + (end - 1));
 				rangeItem.setImage(SwtGui.speciesImage);
-				final Menu rangeMenu = new Menu(rangeItem);
-				for ( int j = begin; j < end; j++ ) {
-					cascadingAgentMenuItem(rangeMenu, agents[j]);
-				}
-				rangeItem.setMenu(rangeMenu);
+				rangeMenu.addListener(SWT.Show, new Listener() {
+
+					@Override
+					public void handleEvent(final Event event) {
+						for ( int j = begin; j < end; j++ ) {
+							cascadingAgentMenuItem(rangeMenu, agents.get(j), actions);
+						}
+					}
+				});
 			}
 		}
 	}
 
-	// TODO adapt this to multi-scale organization!!!
-	public static Menu createSpeciesSubMenu(final Control parent, final IPopulation species,
-		final SelectionListener select) {
+	public static Menu fillPopulationSubMenu(final MenuItem parent, final Collection<IAgent> species,
+		final MenuAction ... actions) {
 		final Menu agentsMenu = new Menu(parent);
-		fillAgentsMenu(agentsMenu, species, select);
+		fillPopulationSubMenu(agentsMenu, species, actions);
 		parent.setMenu(agentsMenu);
 		return agentsMenu;
 	}
 
-	public static Menu createSpeciesSubMenu(final MenuItem parent, final IPopulation species,
+	// TODO adapt this to multi-scale organization!!!
+	public static Menu createSpeciesSubMenu(final Control parent, final IPopulation species,
 		final SelectionListener select) {
 		final Menu agentsMenu = new Menu(parent);
 		fillAgentsMenu(agentsMenu, species, select);
@@ -367,8 +400,7 @@ public class AgentsMenu extends ContributionItem {
 
 					@Override
 					public void widgetSelected(final SelectionEvent e) {
-						// TODO Change this to a factory method, as multiple outputs may be created for one view !
-						new InspectDisplayOutput(pop.getHost(), pop.getSpecies()).launch();
+						InspectDisplayOutput.browse(pop.getHost(), pop.getSpecies());
 					}
 
 				});
@@ -418,6 +450,5 @@ public class AgentsMenu extends ContributionItem {
 	@Override
 	public void fill(final Menu parent, final int index) {
 		createMenuForAgent(parent, GAMA.getSimulation(), true);
-		// fill(parent, inspector);
 	}
 }

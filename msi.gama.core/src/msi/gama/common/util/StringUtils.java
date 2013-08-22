@@ -23,6 +23,7 @@ import java.util.*;
 import java.util.regex.*;
 import msi.gama.common.interfaces.IValue;
 import msi.gama.metamodel.population.IPopulation;
+import msi.gama.util.GamaList;
 import msi.gaml.expressions.IExpression;
 import org.apache.commons.lang.StringEscapeUtils;
 
@@ -205,6 +206,7 @@ public class StringUtils {
 		if ( val instanceof IValue ) { return ((IValue) val).toGaml(); }
 		if ( val instanceof String ) { return toGamlString((String) val); }
 		if ( val instanceof Double ) { return DEFAULT_DECIMAL_FORMAT.format(val); }
+		if ( val instanceof Collection ) { return new GamaList((Collection) val).toGaml(); }
 		return String.valueOf(val);
 	}
 

@@ -22,6 +22,7 @@ import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.*;
+import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -71,6 +72,37 @@ public class InspectDisplayOutput extends MonitorOutput {
 	private List<String> listOfAttributes;
 	IMacroAgent rootAgent;
 
+	public static void browse(final Collection<IAgent> agents) {
+		IPopulation pop = null;
+		if ( agents instanceof IPopulation ) {
+			pop = (IPopulation) agents;
+			browse(pop.getHost(), pop.getSpecies());
+		} else {
+			for ( IAgent agent : agents ) {
+				IPopulation agentPop = agent.getPopulation();
+				if ( pop == null ) {
+					pop = agentPop;
+				} else if ( agentPop != pop ) {
+					pop = null;
+					break;
+				}
+			}
+			browse(pop == null ? GAMA.getSimulation() : pop.getHost(), agents);
+		}
+	}
+
+	public static void browse(final IMacroAgent root, final Collection<IAgent> agents) {
+		new InspectDisplayOutput(root, agents).launch();
+	}
+
+	public static void browse(final IMacroAgent root, final ISpecies species) {
+		new InspectDisplayOutput(root, species).launch();
+	}
+
+	public static void browse(final IMacroAgent root, final IExpression expr) {
+		new InspectDisplayOutput(root, expr).launch();
+	}
+
 	public InspectDisplayOutput(final IDescription desc) {
 		super(desc);
 		final String type = getLiteral(IKeyword.TYPE);
@@ -100,7 +132,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 			(type != INSPECT_SPECIES && type != INSPECT_TABLE ? count++ : ""), IKeyword.TYPE, types.get(type)));
 	}
 
-	public InspectDisplayOutput(final IMacroAgent rootAgent, final ISpecies species) {
+	private InspectDisplayOutput(final IMacroAgent rootAgent, final ISpecies species) {
 		// Opens a table inspector on the agents of this species
 		this(DescriptionFactory.validate(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(),
 			IKeyword.NAME, species == null ? "custom" + count++ : species.getName(), IKeyword.VALUE, species == null
@@ -108,12 +140,21 @@ public class InspectDisplayOutput extends MonitorOutput {
 		this.rootAgent = rootAgent;
 	}
 
-	public InspectDisplayOutput(final IMacroAgent agent, final IContainer<?, IAgent> agents) {
+	private InspectDisplayOutput(final IMacroAgent agent, final Collection<IAgent> agents) {
 		// Opens a table inspector on the agents of this container
-		this(DescriptionFactory
-			.validate(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(), IKeyword.NAME, "custom" +
-				count++, IKeyword.VALUE, agents.toGaml(), IKeyword.TYPE, types.get(INSPECT_TABLE))));
+		this(DescriptionFactory.validate(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(),
+			IKeyword.NAME, "custom" + count++, IKeyword.VALUE, Cast.toGaml(agents), IKeyword.TYPE,
+			types.get(INSPECT_TABLE))));
 		lastValue = agents;
+		this.rootAgent = agent;
+	}
+
+	private InspectDisplayOutput(final IMacroAgent agent, final IExpression agents) {
+		// Opens a table inspector on the agents of this container
+		this(DescriptionFactory.validate(DescriptionFactory.create(IKeyword.INSPECT, GAML.getExperimentContext(),
+			IKeyword.NAME, "custom" + count++, IKeyword.VALUE, Cast.toGaml(agents), IKeyword.TYPE,
+			types.get(INSPECT_TABLE))));
+		// lastValue = agents;
 		this.rootAgent = agent;
 	}
 
@@ -126,6 +167,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 				GAMA.getExperiment().getSimulationOutputs().addOutput(InspectDisplayOutput.this);
 				resume();
 				open();
+				step(scope);
 				update();
 			}
 		});

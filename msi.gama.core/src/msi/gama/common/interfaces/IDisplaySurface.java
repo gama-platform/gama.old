@@ -21,6 +21,7 @@ package msi.gama.common.interfaces;
 import java.awt.Color;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
 
@@ -218,6 +219,8 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 	public GamaPoint getModelCoordinates();
 
 	public boolean isSynchronized();
+
+	void followAgent(IAgent a);
 
 	// void acquireUpdateLock() throws InterruptedException;
 

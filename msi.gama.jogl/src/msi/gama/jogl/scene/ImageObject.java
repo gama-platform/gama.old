@@ -26,7 +26,7 @@ public class ImageObject extends AbstractObject {
 		final Integer angle, final GamaPoint offset, final GamaPoint scale, final boolean isDynamic,
 		final MyTexture texture, final String name) {
 		super(null, offset, scale, alpha);
-        setZ_fighting_id((double) (layerId));
+		setZ_fighting_id((double) layerId);
 		this.image = image;
 		this.agent = agent;
 		this.x = x;
@@ -70,7 +70,7 @@ public class ImageObject extends AbstractObject {
 					// The picked image is the grid
 					if ( this.name != null ) {
 						Point pickedPoint =
-							renderer.GetRealWorldPointFromWindowPoint(new Point(renderer.camera.lastxPressed,
+							renderer.getIntWorldPointFromWindowPoint(new Point(renderer.camera.lastxPressed,
 								renderer.camera.lastyPressed));
 						IAgent ag =
 							agent.getPopulationFor(this.name).getAgent(new GamaPoint(pickedPoint.x, -pickedPoint.y));

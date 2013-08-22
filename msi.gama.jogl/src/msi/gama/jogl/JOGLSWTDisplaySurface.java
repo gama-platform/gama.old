@@ -698,4 +698,11 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 		return false;
 	}
 
+	/**
+	 * Method followAgent()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#followAgent(msi.gama.metamodel.agent.IAgent)
+	 */
+	@Override
+	public void followAgent(final IAgent a) {}
+
 }

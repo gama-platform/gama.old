@@ -276,7 +276,8 @@ public abstract class AbstractLayer implements ILayer {
 		return getType() + ItemList.SEPARATION_CODE + getName();
 	}
 
-	protected abstract String getType();
+	@Override
+	public abstract String getType();
 
 	@Override
 	public final String getName() {

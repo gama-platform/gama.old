@@ -14,12 +14,12 @@ import org.eclipse.jface.action.*;
  * @since 19 janv. 2012
  * 
  */
-public class LayersItem extends GamaViewItem {
+public class OverlayItem extends GamaViewItem {
 
 	/**
 	 * @param view
 	 */
-	LayersItem(final GamaViewPart view) {
+	OverlayItem(final GamaViewPart view) {
 		super(view);
 		if ( !(view instanceof LayeredDisplayView) ) { throw new IllegalArgumentException(); }
 	}
@@ -30,12 +30,12 @@ public class LayersItem extends GamaViewItem {
 	@Override
 	protected IContributionItem createItem() {
 		IAction action =
-			new GamaAction("Open/Close layers controls", IAction.AS_PUSH_BUTTON,
-				getImageDescriptor("icons/application-sidebar-list.png")) {
+			new GamaAction("Show/Hide overlay", IAction.AS_PUSH_BUTTON,
+				getImageDescriptor("icons/application--overlay.png")) {
 
 				@Override
 				public void run() {
-					((LayeredDisplayView) getView()).toggleControls();
+					((LayeredDisplayView) getView()).toogleOverlay();
 				}
 			};
 		return new ActionContributionItem(action);
