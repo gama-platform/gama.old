@@ -69,7 +69,7 @@ public abstract class AbstractLayer implements ILayer {
 		return order.compareTo(o.getOrder());
 	}
 
-	private boolean isPaused(final IDisplaySurface container) {
+	protected boolean isPaused(final IDisplaySurface container) {
 		return container.isPaused() || GAMA.isPaused();
 	}
 

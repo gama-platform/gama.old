@@ -122,6 +122,7 @@ public class SpeciesLayerStatement extends AgentLayerStatement {
 	@Override
 	public void setAspect(final String currentAspect) {
 		super.setAspect(currentAspect);
+		aspect = species.getAspect(constantAspectName);
 	}
 
 	@Override

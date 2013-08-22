@@ -55,10 +55,13 @@ public class ChartLayer extends AbstractLayer {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
+				// FIXME Editor not working for the moment
 				SWTChartEditor editor = new SWTChartEditor(SwtGui.getDisplay(), getChart());
 				// TODO Revoir cet �diteur, tr�s laid !
 				editor.open();
-				container.forceUpdateDisplay();
+				if ( isPaused(container) ) {
+					container.forceUpdateDisplay();
+				}
 			}
 
 		});

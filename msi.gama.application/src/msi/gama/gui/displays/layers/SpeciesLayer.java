@@ -51,7 +51,9 @@ public class SpeciesLayer extends AgentLayer {
 				@Override
 				public void valueModified(final String newValue) {
 					changeAspect(newValue);
-					container.forceUpdateDisplay();
+					if ( isPaused(container) ) {
+						container.forceUpdateDisplay();
+					}
 				}
 			});
 	}

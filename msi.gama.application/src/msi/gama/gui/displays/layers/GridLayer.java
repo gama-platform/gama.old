@@ -70,7 +70,9 @@ public class GridLayer extends ImageLayer {
 			@Override
 			public void valueModified(final Boolean newValue) throws GamaRuntimeException {
 				turnGridOn = newValue;
-				container.forceUpdateDisplay();
+				if ( isPaused(container) ) {
+					container.forceUpdateDisplay();
+				}
 			}
 		});
 	}

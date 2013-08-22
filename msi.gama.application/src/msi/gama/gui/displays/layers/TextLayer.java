@@ -48,7 +48,9 @@ public class TextLayer extends AbstractLayer {
 				@Override
 				public void valueModified(final IExpression newValue) {
 					((TextLayerStatement) definition).setTextExpr(newValue);
-					container.forceUpdateDisplay();
+					if ( isPaused(container) ) {
+						container.forceUpdateDisplay();
+					}
 				}
 			}, Types.get(IType.STRING));
 		EditorFactory.create(compo, "Color:", ((TextLayerStatement) definition).getColor(),
@@ -57,7 +59,9 @@ public class TextLayer extends AbstractLayer {
 				@Override
 				public void valueModified(final Color newValue) {
 					((TextLayerStatement) definition).setColor(newValue);
-					container.forceUpdateDisplay();
+					if ( isPaused(container) ) {
+						container.forceUpdateDisplay();
+					}
 				}
 			});
 		EditorFactory.create(compo, "Font:", ((TextLayerStatement) definition).getFontName(), true,
@@ -66,7 +70,9 @@ public class TextLayer extends AbstractLayer {
 				@Override
 				public void valueModified(final String newValue) {
 					((TextLayerStatement) definition).setFont(newValue);
-					container.forceUpdateDisplay();
+					if ( isPaused(container) ) {
+						container.forceUpdateDisplay();
+					}
 				}
 			});
 	}

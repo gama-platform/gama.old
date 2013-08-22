@@ -69,6 +69,9 @@ public class ImageLayer extends AbstractLayer {
 					@Override
 					public void valueModified(final String newValue) {
 						((ImageLayerStatement) definition).setImageFileName(newValue);
+						if ( isPaused(container) ) {
+							container.forceUpdateDisplay();
+						}
 					}
 
 				});
