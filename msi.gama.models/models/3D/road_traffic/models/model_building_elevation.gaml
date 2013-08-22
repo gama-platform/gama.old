@@ -94,7 +94,7 @@ experiment road_traffic type: gui {
 	parameter 'maximal speed' var: max_speed category: 'People' ;
 	
 	output {
-		display city_display refresh_every: 1 {
+		display city_display type:opengl ambient_light:100{
 			species building aspect: base ;
 			species road aspect: base ;
 			species people aspect: base ;
@@ -115,18 +115,20 @@ experiment road_traffic_multi_layer type: gui {
 	parameter 'maximal speed' var: max_speed category: 'People' ;
 	
 	output {
-		display city_display refresh_every: 1 type: opengl ambient_light:0.1{
-			species people aspect: base z:0;
-			species road aspect: base z:0.25;
-			species building aspect:base z:0.5;
+		display city_display type:opengl ambient_light:100{
+			species road aspect: base z:0;
+			species building aspect:base z:0.1;
+			species people aspect: base z:0.2;
+			
 		}
+
 	}
 }
 
 experiment AnimatedView type: gui {
 	output {
 
-	   display animatedView type: opengl ambient_light: 0.1 {
+	   display animatedView type: opengl ambient_light: 100 {
 	   	    species road aspect: base z:0;
 			species building aspect: base position: {0,0,time*2};
 			species people aspect:base position: {0,0,time*4};
