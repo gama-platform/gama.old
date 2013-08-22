@@ -20,7 +20,6 @@ global {
 	init {    	
 		//Initialize the value of each cell
 	 	ask cell as list {		
-		 // set color <-   rgb ([0.0,0.0,cellValue]) ;
 		  set color <- hsb(0.66,(cellValue/255),1.0);
 	      set elevation <-((cellValue/100)^2);
 		}  
@@ -41,12 +40,11 @@ environment bounds: {width,height} {
 
 		aspect base {
 			draw shape color: rgb('white'); 
-			draw text: string(cellValue) size: 1 color: rgb('black');
+			draw text: string(cellValue)  size:0.5 color: rgb('black');
 		}
 		
 		aspect colored {
-			draw shape color: color;
-			
+			draw shape color: color;	
 		}
 		
 		aspect square{
@@ -54,8 +52,7 @@ environment bounds: {width,height} {
 			draw shape color: color  border:color;		
 		}
 			
-		aspect box{
-			//FIXME: z:elevation change the z cellValue of the shape it should not.			
+		aspect box{			
 			draw shape color: color  depth:elevation border:color;		
 		}
 		
@@ -84,19 +81,13 @@ entities {
 
 experiment AugmentedGrid type:gui {
 	output {
-		/*display Grid {
-			grid cell ;
-		}*/
-		
-		display AugmentedDisplay  type:opengl ambient_light:100 polygonmode:true{	
-		    species cell aspect: base  refresh:false position: {0,0};
-		    species cell aspect: square  refresh:true position: {width*1.1,0};	
-			species cell aspect: circle  refresh:true position: {width*2.3,0};
-			species cell aspect: cylinder  refresh:true position: {width*3.5,0};
-		}
-		
+	
 		display Circle type:opengl ambient_light:100 polygonmode:true{		
 			species cell aspect: circle  refresh:true position: {0,0};
+		}
+		
+		display Cylinder type:opengl ambient_light:100 polygonmode:true{		
+			species cell aspect: cylinder  refresh:true position: {0,0};
 		}
 		
 		display Sphere type:opengl   ambient_light:100 polygonmode:true{		
@@ -105,10 +96,6 @@ experiment AugmentedGrid type:gui {
 		
 		display Square  type:opengl ambient_light:100 polygonmode:true{		
 			species cell aspect: square  refresh:true position: {0,0};
-		}
-		
-		display Cylinder type:opengl ambient_light:100 polygonmode:true{		
-			species cell aspect: cylinder  refresh:true position: {0,0};
 		}
 		
 		display Box  type:opengl ambient_light:100 polygonmode:true{		
