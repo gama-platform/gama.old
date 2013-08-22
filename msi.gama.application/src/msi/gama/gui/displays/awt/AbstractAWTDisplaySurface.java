@@ -1,8 +1,8 @@
 package msi.gama.gui.displays.awt;
 
 import java.awt.*;
-import java.awt.geom.*;
-import java.awt.image.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.RenderedImage;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import javax.imageio.ImageIO;
@@ -132,19 +132,19 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		}
 	}
 
-	protected Cursor createCursor() {
-		Image im = new BufferedImage((int) SELECTION_SIZE + 4, (int) SELECTION_SIZE + 4, BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g = (Graphics2D) im.getGraphics();
-		g.setColor(Color.black);
-		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		g.setStroke(new BasicStroke(3.0f));
-		g.draw(new Rectangle2D.Double(2, 2, SELECTION_SIZE, SELECTION_SIZE));
-		g.dispose();
-		Cursor c =
-			getToolkit().createCustomCursor(im, new Point((int) (SELECTION_SIZE / 2), (int) SELECTION_SIZE / 2),
-				"CIRCLE");
-		return c;
-	}
+	// protected Cursor createCursor() {
+	// Image im = new BufferedImage((int) SELECTION_SIZE + 4, (int) SELECTION_SIZE + 4, BufferedImage.TYPE_INT_ARGB);
+	// Graphics2D g = (Graphics2D) im.getGraphics();
+	// g.setColor(Color.black);
+	// g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+	// g.setStroke(new BasicStroke(3.0f));
+	// g.draw(new Rectangle2D.Double(2, 2, SELECTION_SIZE, SELECTION_SIZE));
+	// g.dispose();
+	// Cursor c =
+	// getToolkit().createCustomCursor(im, new Point((int) (SELECTION_SIZE / 2), (int) SELECTION_SIZE / 2),
+	// "CIRCLE");
+	// return c;
+	// }
 
 	@Override
 	public void removeNotify() {
@@ -223,6 +223,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		synchronous = checked;
 	}
 
+	@Override
 	public boolean isSynchronized() {
 		return synchronous;
 	}

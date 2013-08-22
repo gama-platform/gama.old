@@ -82,7 +82,7 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 		public void newZoomLevel(double zoomLevel);
 	}
 
-	public static final double SELECTION_SIZE = 20; // pixels
+	public static final double SELECTION_SIZE = 5; // pixels
 	public static final int MAX_SIZE = Integer.MAX_VALUE; // pixels
 
 	BufferedImage getImage();

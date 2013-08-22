@@ -129,7 +129,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	public void initialize(final double env_width, final double env_height,
 		final LayeredDisplayOutput layerDisplayOutput) {
 		super.initialize(env_width, env_height, layerDisplayOutput);
-		setCursor(createCursor());
+		// setCursor(createCursor());
 		menuManager = new AWTDisplaySurfaceMenu(this);
 		final DisplayMouseListener d = new DisplayMouseListener();
 		addMouseListener(d);
