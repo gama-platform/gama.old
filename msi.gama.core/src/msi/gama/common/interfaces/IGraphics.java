@@ -56,15 +56,9 @@ public interface IGraphics {
 		ILocation locationInModelUnits, Double heightInModelUnits, String fontName, Integer styleName,
 		final Integer angle, final Double z);
 	
-	public abstract Rectangle2D drawStringOverlay(final String string, final Color stringColor,
-			ILocation locationInModelUnits, Double heightInModelUnits, String fontName, Integer styleName,
-			final Integer angle, final Double z);
-
 	public abstract Rectangle2D drawGamaShape(final IScope scope, final IShape geometry, final Color color,
 		final boolean fill, final Color border, final Integer angle, final boolean rounded);
 	
-	public abstract Rectangle2D drawGamaShapeOverlay(final IScope scope, final IShape geometry, final Color color,
-			final boolean fill, final Color border, final Integer angle, final boolean rounded);
 
 	public abstract Rectangle2D drawChart(final IScope scope, JFreeChart chart, Double z);
 

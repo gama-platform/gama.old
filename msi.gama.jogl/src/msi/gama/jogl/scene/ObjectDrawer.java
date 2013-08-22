@@ -31,11 +31,8 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 	final JOGLAWTGLRenderer renderer;
 	final GLUT glut = new GLUT();
 
-	// final GL gl;
-
 	public ObjectDrawer(JOGLAWTGLRenderer r) {
 		renderer = r;
-		// gl = r.gl;
 	}
 
 	// Better to subclass _draw than this one
@@ -43,13 +40,119 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 		renderer.gl.glPushMatrix();
 		renderer.gl.glTranslated(object.offset.x, -object.offset.y, object.offset.z);
 		renderer.gl.glScaled(object.scale.x, object.scale.y, 1);
-		//renderer.gl.glPolygonOffset(0,-(object.getZ_fighting_id()).floatValue());
-		renderer.gl.glPolygonOffset(1,-object.getZ_fighting_id().floatValue());
+		SetPolygonOffset(object);
 		_draw(object);
 		renderer.gl.glPopMatrix();
 	}
 
+	void SetPolygonOffset(T object){
+		if(!object.fill){
+			renderer.gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
+			renderer.gl.glEnable(GL.GL_POLYGON_OFFSET_LINE);
+			renderer.gl.glPolygonOffset(0.5f,-object.getZ_fighting_id().floatValue());
+		}
+		else{
+			renderer.gl.glDisable(GL.GL_POLYGON_OFFSET_LINE);
+			renderer.gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
+			renderer.gl.glPolygonOffset(1,-object.getZ_fighting_id().floatValue());	
+		}
+	}
 	protected abstract void _draw(T object);
+	
+	/**
+	 * 
+	 * The class GeometryDrawer.
+	 * 
+	 * @author drogoul
+	 * @since 4 mai 2013
+	 * 
+	 */
+	public static class GeometryDrawer extends ObjectDrawer<GeometryObject> {
+
+		JTSDrawer jtsDrawer;
+
+		public GeometryDrawer(JOGLAWTGLRenderer r) {
+			super(r);
+			jtsDrawer = new JTSDrawer(r);
+		}
+
+		@Override
+		protected void _draw(GeometryObject geometry) 
+		{
+			// Rotate angle (in XY plan)
+			if ( geometry.angle != 0 ) {
+				renderer.gl.glTranslated(geometry.geometry.getCentroid().getX(), this.jtsDrawer.yFlag *
+					geometry.geometry.getCentroid().getY(), 0.0d);
+				renderer.gl.glRotated(-geometry.angle, 0.0d, 0.0d, 1.0d);
+				renderer.gl.glTranslated(-geometry.geometry.getCentroid().getX(), -this.jtsDrawer.yFlag *
+					geometry.geometry.getCentroid().getY(), 0.0d);
+			}
+			for ( int i = 0; i < geometry.geometry.getNumGeometries(); i++ ) {
+				if(renderer.getStencil())
+				{
+					renderer.gl.glEnable(GL_DEPTH_TEST);
+					renderer.gl.glStencilFunc(GL_GREATER, 1,1);
+				}
+				if ( geometry.geometry.getGeometryType() == "MultiPolygon" ) {
+					jtsDrawer.DrawMultiPolygon((MultiPolygon) geometry.geometry, geometry.z_layer, geometry.getColor(),
+						geometry.alpha, geometry.fill, geometry.border, geometry.angle, geometry.height,
+						geometry.rounded);
+				} else if ( geometry.geometry.getGeometryType() == "Polygon" ) {
+					// The JTS geometry of a sphere is a circle (a polygon)
+					if ( geometry.type.equals("sphere") ) {
+						jtsDrawer.DrawSphere((Polygon) geometry.geometry, geometry.z_layer, geometry.height,
+							geometry.getColor(), geometry.alpha);
+					} else {
+						if ( geometry.height > 0 ) {
+							jtsDrawer.DrawPolyhedre((Polygon) geometry.geometry, geometry.z_layer, geometry.getColor(),
+								geometry.alpha, geometry.fill, geometry.height, geometry.angle, true, geometry.border,
+								geometry.rounded);
+						} else {
+							if(renderer.getStencil()){
+								renderer.gl.glStencilFunc(GL_ALWAYS,0 ,1); 
+								renderer.gl.glDisable(GL_DEPTH_TEST);						
+								renderer.gl.glStencilOp(GL_KEEP, GL_ZERO, GL_REPLACE);
+							}
+							jtsDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.z_layer, geometry.getColor(),
+								geometry.alpha, geometry.fill, geometry.border, geometry.isTextured, geometry.angle,
+								true, geometry.rounded);
+						}
+					}
+				} else if ( geometry.geometry.getGeometryType() == "MultiLineString" ) {
+
+					jtsDrawer.DrawMultiLineString((MultiLineString) geometry.geometry, geometry.z_layer,
+						geometry.getColor(), geometry.alpha, geometry.height);
+				} else if ( geometry.geometry.getGeometryType() == "LineString" ) {
+
+					if ( geometry.height > 0 ) {
+						jtsDrawer.DrawPlan((LineString) geometry.geometry, geometry.z_layer, geometry.getColor(),
+							geometry.alpha, geometry.height, 0, true);
+					} else {
+						jtsDrawer.DrawLineString((LineString) geometry.geometry, geometry.z_layer, 1.2f,
+							geometry.getColor(), geometry.alpha);
+					}
+				} else if ( geometry.geometry.getGeometryType() == "Point" ) {
+					//FIXME: Should never go here even with a height value as the geometry of a sphere is a polygon...
+					if ( geometry.height > 0 ) {
+						jtsDrawer.DrawSphere((Polygon) geometry.geometry.getEnvelope().buffer(1), geometry.z_layer, geometry.height,
+							geometry.getColor(), geometry.alpha);
+					} else {
+						jtsDrawer.DrawPoint((Point) geometry.geometry, geometry.z_layer, 10,
+							renderer.getMaxEnvDim() / 1000, geometry.getColor(), geometry.alpha);
+					}
+				}
+			}
+			// Rotate angle (in XY plan)
+			if ( geometry.angle != 0 ) {
+				renderer.gl.glTranslated(geometry.geometry.getCentroid().getX(), this.jtsDrawer.yFlag *
+					geometry.geometry.getCentroid().getY(), 0.0d);
+				renderer.gl.glRotated(geometry.angle, 0.0d, 0.0d, 1.0d);
+				renderer.gl.glTranslated(-geometry.geometry.getCentroid().getX(), -this.jtsDrawer.yFlag *
+					geometry.geometry.getCentroid().getY(), 0.0d);
+
+			}
+		}
+	}
 
 	/**
 	 * 
@@ -126,31 +229,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			renderer.gl.glDisable(GL_TEXTURE_2D);
 		}
 	}
-	
-	
-	/**
-	 * 
-	 * The class ImageDrawer.
-	 * 
-	 * @author griganrd
-	 * @since 30 July 2013
-	 * 
-	 */
-	public static class OverlayDrawer extends ObjectDrawer<OverlayObject> {
-
-		public float textureTop, textureBottom, textureLeft, textureRight;
-
-		public OverlayDrawer(JOGLAWTGLRenderer r) {
-			super(r);
-		}
-
-		@Override
-		protected void _draw(OverlayObject object) {
-			// TODO Auto-generated method stub
-			
-		}
-	}
-	
+		
 	/**
 	 * 
 	 * The class DEMDrawer.
@@ -488,100 +567,7 @@ public boolean isInitialized() {
 	
 	
 
-	/**
-	 * 
-	 * The class GeometryDrawer.
-	 * 
-	 * @author drogoul
-	 * @since 4 mai 2013
-	 * 
-	 */
-	public static class GeometryDrawer extends ObjectDrawer<GeometryObject> {
 
-		JTSDrawer jtsDrawer;
-
-		public GeometryDrawer(JOGLAWTGLRenderer r) {
-			super(r);
-			jtsDrawer = new JTSDrawer(r);
-		}
-
-		@Override
-		protected void _draw(GeometryObject geometry) 
-		{
-			// Rotate angle (in XY plan)
-			if ( geometry.angle != 0 ) {
-				renderer.gl.glTranslated(geometry.geometry.getCentroid().getX(), this.jtsDrawer.yFlag *
-					geometry.geometry.getCentroid().getY(), 0.0d);
-				renderer.gl.glRotated(-geometry.angle, 0.0d, 0.0d, 1.0d);
-				renderer.gl.glTranslated(-geometry.geometry.getCentroid().getX(), -this.jtsDrawer.yFlag *
-					geometry.geometry.getCentroid().getY(), 0.0d);
-			}
-			for ( int i = 0; i < geometry.geometry.getNumGeometries(); i++ ) {
-				if(renderer.getStencil())
-				{
-					renderer.gl.glEnable(GL_DEPTH_TEST);
-					renderer.gl.glStencilFunc(GL_GREATER, 1,1);
-				}
-				if ( geometry.geometry.getGeometryType() == "MultiPolygon" ) {
-					jtsDrawer.DrawMultiPolygon((MultiPolygon) geometry.geometry, geometry.z_layer, geometry.getColor(),
-						geometry.alpha, geometry.fill, geometry.border, geometry.angle, geometry.height,
-						geometry.rounded);
-				} else if ( geometry.geometry.getGeometryType() == "Polygon" ) {
-					// The JTS geometry of a sphere is a circle (a polygon)
-					if ( geometry.type.equals("sphere") ) {
-						jtsDrawer.DrawSphere((Polygon) geometry.geometry, geometry.z_layer, geometry.height,
-							geometry.getColor(), geometry.alpha);
-					} else {
-						if ( geometry.height > 0 ) {
-							jtsDrawer.DrawPolyhedre((Polygon) geometry.geometry, geometry.z_layer, geometry.getColor(),
-								geometry.alpha, geometry.fill, geometry.height, geometry.angle, true, geometry.border,
-								geometry.rounded);
-						} else {
-							if(renderer.getStencil()){
-								renderer.gl.glStencilFunc(GL_ALWAYS,0 ,1); 
-								renderer.gl.glDisable(GL_DEPTH_TEST);						
-								renderer.gl.glStencilOp(GL_KEEP, GL_ZERO, GL_REPLACE);
-							}
-							jtsDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.z_layer, geometry.getColor(),
-								geometry.alpha, geometry.fill, geometry.border, geometry.isTextured, geometry.angle,
-								true, geometry.rounded);
-						}
-					}
-				} else if ( geometry.geometry.getGeometryType() == "MultiLineString" ) {
-
-					jtsDrawer.DrawMultiLineString((MultiLineString) geometry.geometry, geometry.z_layer,
-						geometry.getColor(), geometry.alpha, geometry.height);
-				} else if ( geometry.geometry.getGeometryType() == "LineString" ) {
-
-					if ( geometry.height > 0 ) {
-						jtsDrawer.DrawPlan((LineString) geometry.geometry, geometry.z_layer, geometry.getColor(),
-							geometry.alpha, geometry.height, 0, true);
-					} else {
-						jtsDrawer.DrawLineString((LineString) geometry.geometry, geometry.z_layer, 1.2f,
-							geometry.getColor(), geometry.alpha);
-					}
-				} else if ( geometry.geometry.getGeometryType() == "Point" ) {
-					//FIXME: Should never go here even with a height value as the geometry of a sphere is a polygon...
-					if ( geometry.height > 0 ) {
-						jtsDrawer.DrawSphere((Polygon) geometry.geometry.getEnvelope().buffer(1), geometry.z_layer, geometry.height,
-							geometry.getColor(), geometry.alpha);
-					} else {
-						jtsDrawer.DrawPoint((Point) geometry.geometry, geometry.z_layer, 10,
-							renderer.getMaxEnvDim() / 1000, geometry.getColor(), geometry.alpha);
-					}
-				}
-			}
-			// Rotate angle (in XY plan)
-			if ( geometry.angle != 0 ) {
-				renderer.gl.glTranslated(geometry.geometry.getCentroid().getX(), this.jtsDrawer.yFlag *
-					geometry.geometry.getCentroid().getY(), 0.0d);
-				renderer.gl.glRotated(geometry.angle, 0.0d, 0.0d, 1.0d);
-				renderer.gl.glTranslated(-geometry.geometry.getCentroid().getX(), -this.jtsDrawer.yFlag *
-					geometry.geometry.getCentroid().getY(), 0.0d);
-
-			}
-		}
-	}
 
 	/**
 	 * 

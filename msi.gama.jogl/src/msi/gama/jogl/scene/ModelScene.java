@@ -10,7 +10,6 @@ import msi.gama.jogl.scene.ObjectDrawer.DEMDrawer;
 import msi.gama.jogl.scene.ObjectDrawer.GeometryDrawer;
 import msi.gama.jogl.scene.ObjectDrawer.ImageDrawer;
 import msi.gama.jogl.scene.ObjectDrawer.StringDrawer;
-import msi.gama.jogl.scene.ObjectDrawer.OverlayDrawer;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -29,7 +28,6 @@ import com.vividsolutions.jts.geom.*;
  */
 public class ModelScene {
 
-	private final SceneObjects<OverlayObject> overlays;
 	private final SceneObjects<GeometryObject> geometries;
 	private final SceneObjects<GeometryObject> staticObjects;
 	private final SceneObjects<ImageObject> images;
@@ -49,7 +47,6 @@ public class ModelScene {
 		images = new SceneObjects(new ImageDrawer(renderer), true, false);
 		dems = new SceneObjects(new DEMDrawer(renderer), true, false);
 		staticObjects = new SceneObjects.Static(new GeometryDrawer(renderer), true, false);
-		overlays = new SceneObjects(new OverlayDrawer(renderer), true, false);
 		envWidth = renderer.env_width;
 		envHeight = renderer.env_height;
 	}
@@ -63,7 +60,6 @@ public class ModelScene {
 		images.clear(renderer);
 		dems.clear(renderer);
 		strings.clear(renderer);
-		overlays.clear(renderer);
 		for ( final Iterator<BufferedImage> it = textures.keySet().iterator(); it.hasNext(); ) {
 			final BufferedImage im = it.next();
 			// FIXME: if an image is not declared as dynamic, it will be kept in memory (even if it is not used)
@@ -96,8 +92,6 @@ public class ModelScene {
 		images.draw(picking, renderer);
 		dems.draw(picking, renderer);
 		strings.draw(picking, renderer);
-		overlays.draw(picking, renderer);
-		// renderer.getContext().release();
 	}
 
 	public void addCollections(final SimpleFeatureCollection collection, final Color color) {
@@ -121,16 +115,6 @@ public class ModelScene {
 		}
 	}
 	
-	public void addOverlay(final BufferedImage img, final IAgent agent, final Double x, final Double y, final Double z,
-			final Double width, final Double height, final Integer angle, final GamaPoint offset, final GamaPoint scale,
-			final boolean isDynamic, final Double alpha, final MyTexture texture) {
-			overlays.add(new OverlayObject(img, agent, x, y, Double.isNaN(z) ? 0 : z, alpha, width, height, angle == null ? 0
-				: angle, offset, scale, isDynamic, texture));
-			if ( texture != null ) {
-				textures.put(img, texture);
-			}
-		}
-
 	public void addDEM(final double[] dem, final BufferedImage texture, final BufferedImage demImg,
 		final boolean isTextured, final boolean isTriangulated, final boolean isShowText, final boolean fromImage,
 		final Envelope env, final Double z_factor, final Double alpha, final GamaPoint offset, final GamaPoint scale,

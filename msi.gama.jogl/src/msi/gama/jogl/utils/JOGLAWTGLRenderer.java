@@ -73,7 +73,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	// facet "legends"
 	private boolean legends = false;
 	// facet "drawEnv"
-	private boolean drawEnv = true;
+	private boolean drawEnv = false;
 	// facet "show_fps"
 	private boolean showFPS = false;
 

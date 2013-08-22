@@ -109,43 +109,35 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		return rect;
 	}
 	
-	/**
-	 * Method drawGeometry. Add a given JTS Geometry in the list of all the
-	 * existing geometry that will be displayed by openGl.
-	 */
-	@Override
-	public Rectangle2D drawGamaShapeOverlay(final IScope scope, final IShape geometry, final Color c, final boolean fill,
-		final Color border, final Integer angle, final boolean rounded) {
-		Geometry geom = null;
-		if ( geometry == null ) { return null; }
-		final ITopology topo = scope.getTopology();
-		if ( topo != null && topo.isTorus() ) {
-			geom = topo.returnToroidalGeom(geometry.getInnerGeometry());
-		} else {
-			geom = geometry.getInnerGeometry();
-		}
-		final Color color = highlight ? highlightColor : c;
-		Double depth = 0d;
-		String type = "none";
-		// Add a geometry with a depth and type coming from Attributes
-		if ( geometry.hasAttribute("depth") ) {
-			depth = Cast.asFloat(scope, geometry.getAttribute("depth"));
-			type = "JTS";
-		}
-		if ( geometry.hasAttribute("type") ) {
-			type = Cast.asString(scope, geometry.getAttribute("type"));
-		}
-		renderer.getScene().addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color, fill,
-			border, false, angle, depth.floatValue(), currentOffset, currentScale, rounded, type, currentLayerIsStatic,
-			getCurrentAlpha());
-		return rect;
-	}
+
 
 	// FIXME: Won't work for a rectangle grid inverse buildline height on x and with width on y
 	public void drawGridLine(final BufferedImage image, final Color lineColor) {
 		double stepX, stepY;
 
 		for ( int i = 0; i <= image.getWidth(); i++ ) {
+			stepX = i / (double) image.getWidth() * image.getWidth();
+			final Geometry g =
+				GamaGeometryType.buildLine(new GamaPoint(stepX, 0), new GamaPoint(stepX, image.getHeight()))
+					.getInnerGeometry();
+			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
+				currentOffset, currentScale, false, "gridLine", currentLayerIsStatic, getCurrentAlpha());
+		}
+
+		for ( int i = 0; i <= image.getHeight(); i++ ) {
+			stepY = i / (double) image.getHeight() * image.getHeight();;
+			final Geometry g =
+				GamaGeometryType.buildLine(new GamaPoint(0, stepY), new GamaPoint(image.getWidth(), stepY))
+					.getInnerGeometry();
+			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
+				currentOffset, currentScale, false, "gridLine", currentLayerIsStatic, getCurrentAlpha());
+		}
+	}
+	
+	public void drawGridLineNew(final BufferedImage image, final Color lineColor) {
+		double stepX, stepY;
+
+		/*for ( int i = 0; i <= image.getWidth(); i++ ) {
 			stepX = i / (double) image.getWidth() * image.getWidth();
 			final Geometry g =
 				GamaGeometryType.buildLine(new GamaPoint(stepX, 0), new GamaPoint(stepX, image.getWidth()))
@@ -155,12 +147,24 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		}
 
 		for ( int i = 0; i <= image.getHeight(); i++ ) {
-			stepY = i / (double) image.getHeight() * image.getHeight();;
+			stepY = i / (double) image.getHeight() * image.getHeight();
 			final Geometry g =
 				GamaGeometryType.buildLine(new GamaPoint(0, stepY), new GamaPoint(image.getHeight(), stepY))
 					.getInnerGeometry();
 			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
 				currentOffset, currentScale, false, "gridLine", currentLayerIsStatic, getCurrentAlpha());
+		}*/
+		
+		for( int i = 0; i <= image.getWidth(); i++ ) {
+			for ( int j = 0; j <= image.getHeight(); j++ ) {
+				stepX = i / (double) image.getWidth() * image.getWidth();
+				stepY = j / (double) image.getHeight() * image.getHeight();
+				final Geometry g =
+						GamaGeometryType.buildRectangle(1, 1, new GamaPoint(stepX,stepY)).getInnerGeometry();
+				renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true,
+						lineColor, false, 0, 0, currentOffset, currentScale, false, "gridLine", currentLayerIsStatic,
+						getCurrentAlpha());
+			}
 		}
 	}
 
@@ -323,45 +327,6 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		return null;
 	}
 	
-	
-	/**
-	 * Method drawString.
-	 * 
-	 * @param string
-	 *            String
-	 * @param stringColor
-	 *            Color
-	 * @param angle
-	 *            Integer
-	 */
-	@Override
-	public Rectangle2D drawStringOverlay(final String string, final Color stringColor, final ILocation locationInModelUnits,
-		final Double heightInModelUnits, final String fontName, final Integer styleName, final Integer angle,
-		final Double z) {
-		double curX, curY;
-		if ( locationInModelUnits == null ) {
-			curX = 0d;
-			curY = 0d;
-		} else {
-			curX = locationInModelUnits.getX();
-			curY = locationInModelUnits.getY();
-		}
-		Integer size;
-		Double sizeInModelUnits;
-		if ( heightInModelUnits == null ) {
-			size = heightOfLayerInPixels;
-			sizeInModelUnits =
-				heightOfDisplayInPixels / (double) heightOfEnvironmentInModelUnits * heightOfLayerInPixels;
-		} else {
-			sizeInModelUnits = heightInModelUnits;
-			size =
-				(int) ((double) heightOfDisplayInPixels / (double) heightOfEnvironmentInModelUnits * heightInModelUnits);
-		}
-		renderer.getScene().addString(string, curX, -curY, z, size, sizeInModelUnits, currentOffset, currentScale,
-			stringColor, fontName, styleName, angle, getCurrentAlpha(),0);
-		return null;
-	}
-
 	@Override
 	public void fillBackground(final Color bgColor, final double opacity) {
 		setOpacity(opacity);

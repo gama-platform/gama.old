@@ -296,21 +296,4 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	@Override
 	public void endDrawingLayers() {}
 
-	@Override
-	// Not yet implemented in JAVA2D
-	public Rectangle2D drawStringOverlay(final String string, final Color stringColor,
-		final ILocation locationInModelUnits, final Double heightInModelUnits, final String fontName,
-		final Integer styleName, final Integer angle, final Double z) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	// Not yet implemented in JAVA2D
-	public Rectangle2D drawGamaShapeOverlay(final IScope scope, final IShape geometry, final Color color,
-		final boolean fill, final Color border, final Integer angle, final boolean rounded) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

@@ -339,21 +339,4 @@ public class JOGLSWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	public void endDrawingLayers() {
 		renderer.getScene().lockStaticObjects();
 	}
-
-	@Override
-	public Rectangle2D drawStringOverlay(String string, Color stringColor,
-			ILocation locationInModelUnits, Double heightInModelUnits,
-			String fontName, Integer styleName, Integer angle, Double z) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Rectangle2D drawGamaShapeOverlay(IScope scope, IShape geometry,
-			Color color, boolean fill, Color border, Integer angle,
-			boolean rounded) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }
