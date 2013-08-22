@@ -54,7 +54,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 		else{
 			renderer.gl.glDisable(GL.GL_POLYGON_OFFSET_LINE);
 			renderer.gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
-			renderer.gl.glPolygonOffset(1,-object.getZ_fighting_id().floatValue());	
+			renderer.gl.glPolygonOffset(1,(float) (-object.getZ_fighting_id().floatValue()*renderer.getMaxEnvDim()));	
 		}
 	}
 	protected abstract void _draw(T object);

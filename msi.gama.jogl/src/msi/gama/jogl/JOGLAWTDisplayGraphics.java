@@ -136,29 +136,11 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	
 	public void drawGridLineNew(final BufferedImage image, final Color lineColor) {
 		double stepX, stepY;
-
-		/*for ( int i = 0; i <= image.getWidth(); i++ ) {
-			stepX = i / (double) image.getWidth() * image.getWidth();
-			final Geometry g =
-				GamaGeometryType.buildLine(new GamaPoint(stepX, 0), new GamaPoint(stepX, image.getWidth()))
-					.getInnerGeometry();
-			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
-				currentOffset, currentScale, false, "gridLine", currentLayerIsStatic, getCurrentAlpha());
-		}
-
-		for ( int i = 0; i <= image.getHeight(); i++ ) {
-			stepY = i / (double) image.getHeight() * image.getHeight();
-			final Geometry g =
-				GamaGeometryType.buildLine(new GamaPoint(0, stepY), new GamaPoint(image.getHeight(), stepY))
-					.getInnerGeometry();
-			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
-				currentOffset, currentScale, false, "gridLine", currentLayerIsStatic, getCurrentAlpha());
-		}*/
 		
 		for( int i = 0; i <= image.getWidth(); i++ ) {
 			for ( int j = 0; j <= image.getHeight(); j++ ) {
-				stepX = i / (double) image.getWidth() * image.getWidth();
-				stepY = j / (double) image.getHeight() * image.getHeight();
+				stepX = (i+0.5) / (double) image.getWidth() * image.getWidth();
+				stepY = (j+0.5) / (double) image.getHeight() * image.getHeight();
 				final Geometry g =
 						GamaGeometryType.buildRectangle(1, 1, new GamaPoint(stepX,stepY)).getInnerGeometry();
 				renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true,

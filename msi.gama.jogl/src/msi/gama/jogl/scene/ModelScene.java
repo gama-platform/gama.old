@@ -199,7 +199,7 @@ public class ModelScene {
 			GamaGeometryType.buildRectangle(envWidth, envHeight, new GamaPoint(envWidth / 2, envHeight / 2))
 				.getInnerGeometry();
 		final Color c = new Color(225, 225, 225);
-		addGeometry(g, null, 0, 0, c, false, c, false, 0, 0, offset, scale, true, "", false, 1d);
+		addGeometry(g, null, 0, 0, c, false, c, false, 0, 0, offset, scale, true, "env", false, 1d);
 	}
 
 	public void drawZValue(final double pos, final float value) {
