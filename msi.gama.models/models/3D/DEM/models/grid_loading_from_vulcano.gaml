@@ -16,7 +16,6 @@ global {
 		create people number:100 {
 			float z <- (cell(location)).grid_value;                 
             set location <- location add_z z;
-            
 		}
 	}
 	
@@ -26,12 +25,11 @@ global {
 entities {
 	grid cell file: grid_file {
 		init {
-			//write " grid_value : " + grid_value;
 			color <- colors at int(grid_value);
 		}
 		reflex decreaseGridValue{
 			if(grid_value >0){
-			  set grid_value <- grid_value - 1;	
+			  set grid_value <- grid_value - 0.01;	
 			} 	
 	    }
 	}
@@ -57,12 +55,12 @@ entities {
 
 experiment gridloading type: gui {
 	output {
-		display gridTextured type:opengl ambient_light:255{
+		display gridTextured type:opengl ambient_light:100{
 			grid cell texture:map_texture triangulation:false;
 			species people aspect:base;
 		}
 				
-		display grid_3D type:opengl ambient_light:255{
+		display grid_3D type:opengl ambient_light:100{
 			grid cell texture:map_texture text:false triangulation:true;
 			species people aspect:base;
 		}
