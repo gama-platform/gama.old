@@ -236,9 +236,6 @@ public class LayerManager implements ILayerManager {
 			case ILayerStatement.GRAPHICS: {
 				return new GraphicLayer(layer);
 			}
-			case ILayerStatement.LEGENDS: {
-				return new LegendLayer(layer);
-			}
 			default:
 				return null;
 		}

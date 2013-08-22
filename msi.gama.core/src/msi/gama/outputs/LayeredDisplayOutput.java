@@ -57,7 +57,6 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.INERTIA, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.STENCIL, type = IType.BOOL, optional = true),
-	@facet(name = IKeyword.LEGENDS, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.ZFIGHTING, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.SHOWFPS, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.DRAWENV, type = IType.BOOL, optional = true),
@@ -86,7 +85,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean tesselation = true;
 	private boolean inertia = false;
 	private boolean stencil = false;
-	private boolean legends = false;
 	private boolean z_fighting = true;
 	private boolean showfps = false;
 	private boolean drawEnv = true;
@@ -168,11 +166,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			setStencil(Cast.asBool(getScope(), st.value(getScope())));
 		}
 
-		final IExpression l = getFacet(IKeyword.LEGENDS);
-		if ( l != null ) {
-			setLegends(Cast.asBool(getScope(), l.value(getScope())));
-		}
-		
 		final IExpression z = getFacet(IKeyword.ZFIGHTING);
 		if ( z != null ) {
 			setZFighting(Cast.asBool(getScope(), z.value(getScope())));
@@ -490,14 +483,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	private void setStencil(final boolean stencil) {
 		this.stencil = stencil;
-	}
-
-	public boolean getLegends() {
-		return legends;
-	}
-
-	private void setLegends(final boolean leg) {
-		this.legends = leg;
 	}
 	
 	public boolean getZFighting() {

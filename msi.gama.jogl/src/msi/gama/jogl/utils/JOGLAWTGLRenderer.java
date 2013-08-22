@@ -70,8 +70,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private boolean inertia = false;
 	// facet "inertia"
 	private boolean stencil = false;
-	// facet "legends"
-	private boolean legends = false;
 	// facet "drawEnv"
 	private boolean drawEnv = false;
 	// facet "show_fps"
@@ -479,14 +477,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public boolean getStencil() {
 		return stencil;
-	}
-
-	public void setLegends(final boolean leg) {
-		this.legends = leg;
-	}
-
-	public boolean getLegends() {
-		return legends;
 	}
 	
 	public void setZFighting(final boolean z) {
