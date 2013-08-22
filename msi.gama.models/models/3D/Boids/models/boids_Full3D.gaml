@@ -2,6 +2,7 @@ model boids_3D
 global { 
 	int number_of_agents parameter: 'Number of agents' <- 100 min: 1 max: 1000000;
 	int number_of_obstacles parameter: 'Number of obstacles' <- 0 min: 0;
+	int boids_size parameter: 'Boids size' <- 10 min: 1;
 	float maximal_speed parameter: 'Maximal speed' <- 15.0 min: 0.1 max: 15.0;
 	int cohesion_factor parameter: 'Cohesion Factor' <- 100; 
 	int alignment_factor parameter: 'Alignment Factor' <- 100; 
@@ -117,16 +118,26 @@ entities {
 		aspect sphere {
 			draw sphere(10) color: rgb("green");
 		}
+		
+		aspect image {
+			draw (images at (rnd(2))) size: boids_size*2 rotate: heading color: rgb('black') ;      
+		}
+				
+		user_command "ZAA" action: do_move;
 	}  
 }
 
 
 experiment boids_3D type: gui {
+	
+	
 	output {
+		
 		display Sky1 type:opengl refresh_every: 1 {
 			image 'background' file:'../images/ocean.jpg' ;
-			species boids aspect: sphere;
-			species boids_goal;
+			species boids aspect: image;
+			//species boids aspect: sphere z:0.05;
+			species boids_goal;	
 		}
 		
 

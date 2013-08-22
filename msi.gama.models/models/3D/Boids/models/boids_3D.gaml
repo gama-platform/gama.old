@@ -2,8 +2,8 @@ model boids
 
 global { 
 	int number_of_agents parameter: 'Number of agents' <- 100 min: 1 max: 1000000;
-	int number_of_obstacles parameter: 'Number of obstacles' <- 0 min: 0;
-	int boids_size parameter: 'Boids size' <- 10 min: 1;
+	int number_of_obstacles parameter: 'Number of obstacles' <- 4 min: 0;
+	int boids_size parameter: 'Boids size' <- 20 min: 1;
 	float maximal_speed parameter: 'Maximal speed' <- 15.0 min: 0.1 max: 15.0;
 	int cohesion_factor parameter: 'Cohesion Factor' <- 200;
 	int alignment_factor parameter: 'Alignment Factor' <- 100; 
@@ -272,28 +272,26 @@ entities {
 			do do_move;
 		}
 		
+		aspect basic{
+			draw triangle(boids_size) color:rgb('black');
+		}
 		aspect image {
-			draw (images at (rnd(2))) size: boids_size*2 rotate: heading color: rgb('black') ;      
+			draw (images at (rnd(2))) size: boids_size rotate: heading color: rgb('black') ;     
 		}
-		
-		aspect default { 
-			draw triangle(boids_size) rotate: 90 + heading color: rgb('yellow') ;
-		}
-
-		
+				
 		aspect dynamicColor{
 			let hue <- heading/360;
-			let  cc <- color hsb_to_rgb ([hue,1.0,1.0]);
-			let geometry1 <- geometry (triangle(20));
-			draw geometry: geometry1    size: 15 rotate: 90 + heading color: cc border:cc depth:5;
+			let cc <- color hsb_to_rgb ([hue,1.0,1.0]);
+			draw triangle(20) size: 15 rotate: 90 + heading color: cc border:cc depth:5;
+			draw text: name;
 		}
 	} 
 	
 	species obstacle skills: [moving] {
 		float speed <- 0.1;
-		 
+			 
 		aspect default {
-			draw triangle(20) color: rgb('yellow');
+			draw triangle(20) color: rgb('yellow') depth:5;
 		}
 	}
 }
@@ -301,15 +299,12 @@ entities {
 
 experiment start type: gui {
 	output {
-
-
-		display RealBoids  type:opengl ambient_light:255{
-			image name:'background' file:'../images/ocean.jpg' z:0;
-			species boids aspect: image z:0.2 transparency:0.5;
-			species boids_goal z:0.25 transparency:0.2;
-			species obstacle ;
-			species boids  aspect: dynamicColor z:0.19 transparency:0.2 ;
-			species boids_goal  transparency:0.2; 		
+		display RealBoids  type:opengl ambient_light:255 z_fighting:false{
+			image name:'background' file:'../images/ocean.jpg';
+			species boids aspect: basic z:0.1 transparency:0.5;
+			species boids aspect: basic z:0.1 transparency:0.5;
+			species boids_goal z:0.1 transparency:0.2;
+			species obstacle z:0.1; 		
 		}
 	}
 }
@@ -318,12 +313,12 @@ experiment MultipleView type: gui {
 	output {
 
 
-		display RealBoids  type:opengl ambient_light:255{
+		display RealBoids   type:opengl ambient_light:255 {
 			image name:'background' file:'../images/ocean.jpg' z:0;
 			species boids aspect: image z:0.2 transparency:0.5;
 			species boids_goal z:0.25 transparency:0.2;
 			species obstacle ;
-			species boids  aspect: dynamicColor z:0.19 transparency:0.2 ;
+			species boids  aspect: dynamicColor z:0.2 transparency:0.2 ;
 			species boids_goal  transparency:0.2; 		
 		}
 		
