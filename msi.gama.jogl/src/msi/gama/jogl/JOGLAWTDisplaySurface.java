@@ -218,53 +218,23 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		super.setPaused(flag);
 	}
 
-	// public static class AgentMenuItem extends MenuItem {
-	//
-	// private final IAgent agent;
-	// private final ILayer display;
-	// private final IStatement command;
-	// private final GamaPoint userLocation;
-	//
-	// AgentMenuItem(final String name, final IAgent agent, final ILayer display) {
-	// super(name);
-	// this.agent = agent;
-	// this.display = display;
-	// command = null;
-	// userLocation = null;
-	// }
-	//
-	// AgentMenuItem(final IAgent agent, final IStatement command, final GamaPoint point) {
-	// super(command.getName());
-	// this.agent = agent;
-	// this.display = null;
-	// this.command = command;
-	// userLocation = point;
-	// }
-	//
-	// ILocation getLocation() {
-	// return userLocation;
-	// }
-	//
-	// IAgent getAgent() {
-	// return agent;
-	// }
-	//
-	// IStatement getCommand() {
-	// return command;
-	// }
-	//
-	// ILayer getDisplay() {
-	// return display;
-	// }
-	// }
-
 	public class SelectedAgent {
 
-		IAgent macro;
+		private final IAgent macro;
+		private final String name;
 		Map<ISpecies, List<SelectedAgent>> micros;
 
+		SelectedAgent(final IAgent agent) {
+			this(agent, agent.getName());
+		}
+
+		SelectedAgent(final IAgent agent, final String title) {
+			macro = agent;
+			name = title;
+		}
+
 		void buildMenuItems(final Menu parentMenu, final ILayer display) {
-			final Menu macroMenu = new Menu(macro.getName());
+			final Menu macroMenu = new Menu(name);
 			parentMenu.add(macroMenu);
 
 			final MenuItem inspectItem = new AWTDisplaySurfaceMenu.AgentMenuItem("Inspect", macro, display);
@@ -295,20 +265,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 				}
 			}
 
-			if ( micros != null && !micros.isEmpty() ) {
-				final Menu microsMenu = new Menu("Micro agents");
-				macroMenu.add(microsMenu);
-
-				Menu microSpecMenu;
-				for ( final ISpecies microSpec : micros.keySet() ) {
-					microSpecMenu = new Menu("Species " + microSpec.getName());
-					microsMenu.add(microSpecMenu);
-
-					for ( final SelectedAgent micro : micros.get(microSpec) ) {
-						micro.buildMenuItems(microSpecMenu, display);
-					}
-				}
-			}
 		}
 	}
 
@@ -384,16 +340,17 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		return dim;
 	}
 
-	public void selectAgents(final int x, final int y, final IAgent agent, final int layerId) {
-
+	public void selectAgents(final IAgent agent, final int layerId) {
 		agentsMenu.removeAll();
-		agentsMenu.setLabel("Layers");
-
-		final java.awt.Menu m = new java.awt.Menu(manager.getItems().get(layerId).getName());
-		final SelectedAgent sa = new SelectedAgent();
-		sa.macro = agent;
-		sa.buildMenuItems(m, manager.getItems().get(layerId));
-		agentsMenu.add(m);
+		// Adding the world
+		SelectedAgent sa = new SelectedAgent(GAMA.getSimulation(), "World agent");
+		sa.buildMenuItems(agentsMenu, null);
+		// Adding the agent
+		if ( agent != null ) {
+			agentsMenu.addSeparator();
+			sa = new SelectedAgent(agent);
+			sa.buildMenuItems(agentsMenu, manager.getItems().get(layerId));
+		}
 		agentsMenu.show(this, renderer.camera.mousePosition.x, renderer.camera.mousePosition.y);
 
 	}
@@ -671,7 +628,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		// FIXME: Need to compute the depth of the shape to adjust ZPos value.
 		// FIXME: Problem when the geometry is a point how to determine the maxExtent of the shape?
 		// FIXME: Problem when an agent is placed on a layer with a z_value how to get this z_layer value to offset it?
-		final double zPos = env.maxExtent() * 2 + geometry.getLocation().getZ() + this.renderer.env_width / 100 ;
+		final double zPos = env.maxExtent() * 2 + geometry.getLocation().getZ() + this.renderer.env_width / 100;
 		final double zLPos = -(env.maxExtent() * 2);
 		if ( !this.switchCamera ) {
 			renderer.camera.setRadius(zPos);
@@ -681,6 +638,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		this.renderer.camera.lookPosition(xPos, yPos, zLPos);
 	}
 
+	@Override
 	public void followAgent(final IAgent a) {
 
 		new Thread(new Runnable() {

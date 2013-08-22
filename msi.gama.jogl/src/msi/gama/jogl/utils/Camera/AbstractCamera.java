@@ -362,7 +362,7 @@ public abstract class AbstractCamera implements KeyListener, MouseListener, Mous
 			}
 			// end of searching
 		} else {
-			selectedIndex = -1;// return -1 of there was no hits
+			selectedIndex = -2;// return -2 of there was no hits
 		}
 
 		return selectedIndex;

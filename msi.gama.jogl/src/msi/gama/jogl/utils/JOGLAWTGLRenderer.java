@@ -2,11 +2,9 @@ package msi.gama.jogl.utils;
 
 import static javax.media.opengl.GL.*;
 import java.awt.*;
-import java.awt.font.TextAttribute;
-import java.awt.geom.*;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.text.AttributedString;
-import java.util.*;
+import java.util.ArrayList;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
 import msi.gama.common.util.GuiUtils;
@@ -15,16 +13,10 @@ import msi.gama.jogl.scene.*;
 import msi.gama.jogl.utils.Camera.*;
 import msi.gama.jogl.utils.Camera.Arcball.*;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.OutputSynchronizer;
-import msi.gama.runtime.GAMA;
-import msi.gama.util.IList;
-import msi.gaml.species.ISpecies;
-import msi.gaml.statements.IExecutable;
 import utils.GLUtil;
 import com.sun.opengl.util.*;
-import com.sun.opengl.util.j2d.Overlay;
 import com.sun.opengl.util.texture.*;
 
 public class JOGLAWTGLRenderer implements GLEventListener {
@@ -234,16 +226,18 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		}
 
 		// Blending control
-		/*if ( BLENDING_ENABLED ) {
-			gl.glEnable(GL_BLEND); // Turn blending on
-		} else {
-			gl.glDisable(GL_BLEND); // Turn blending off
-			if ( !getStencil() ) {
-				gl.glEnable(GL_DEPTH_TEST);
-			} else {
-				gl.glEnable(GL_STENCIL_TEST);
-			}
-		}*/
+		/*
+		 * if ( BLENDING_ENABLED ) {
+		 * gl.glEnable(GL_BLEND); // Turn blending on
+		 * } else {
+		 * gl.glDisable(GL_BLEND); // Turn blending off
+		 * if ( !getStencil() ) {
+		 * gl.glEnable(GL_DEPTH_TEST);
+		 * } else {
+		 * gl.glEnable(GL_STENCIL_TEST);
+		 * }
+		 * }
+		 */
 
 		// Use polygon offset for a better edges rendering
 		// (http://www.glprogramming.com/red/chapter06.html#name4)
@@ -259,9 +253,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		}
 
 		this.drawScene();
-	
+
 		// this.DrawShapeFile();
-		//gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
+		// gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
 		gl.glPopMatrix();
 
 		// ROI drawer
@@ -297,7 +291,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// perspective view
 		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glLoadIdentity();
-		glu.gluPerspective(45.0f, aspect, 0.1f,camera.getMaxDim() * 100);
+		glu.gluPerspective(45.0f, aspect, 0.1f, camera.getMaxDim() * 100);
 		glu.gluLookAt(camera.getPosition().getX(), camera.getPosition().getY(), camera.getPosition().getZ(), camera
 			.getTarget().getX(), camera.getTarget().getY(), camera.getTarget().getZ(), camera.getUpVector().getX(),
 			camera.getUpVector().getY(), camera.getUpVector().getZ());
@@ -327,7 +321,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		}
 		scene.draw(this, isPicking() || currentPickedObject != null, drawAxes, drawEnv);
 	}
-
 
 	public void drawScene() {
 		gl.glViewport(0, 0, width, height);
@@ -535,6 +528,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public void setPickedObjectIndex(final int pickedObjectIndex) {
 		this.pickedObjectIndex = pickedObjectIndex;
 		if ( pickedObjectIndex == -1 ) {
+			setPicking(false);
+		} else if ( pickedObjectIndex == -2 ) {
+			displaySurface.selectAgents(null, 0);
 			setPicking(false);
 		}
 	}

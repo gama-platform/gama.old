@@ -74,9 +74,9 @@ public class ImageObject extends AbstractObject {
 								renderer.camera.lastyPressed));
 						IAgent ag =
 							agent.getPopulationFor(this.name).getAgent(new GamaPoint(pickedPoint.x, -pickedPoint.y));
-						renderer.displaySurface.selectAgents(0, 0, ag, layerId - 1);
+						renderer.displaySurface.selectAgents(ag, layerId - 1);
 					} else {
-						renderer.displaySurface.selectAgents(0, 0, agent, layerId - 1);
+						renderer.displaySurface.selectAgents(agent, layerId - 1);
 					}
 				}
 			}
