@@ -12,9 +12,10 @@ global {
 	rgb global_color;
 	int maxSize;
 	
+	file imageRaster <- file('images/Gama.png') ;
+	
 	list blueCombination <- [([0,113,188]),([68,199,244]),([157,220,249]),([212,239,252])];
 	list blueNeutral <- [([0,107,145]),([211,198,173]),([241,223,183])];
-	
 	list ColorList <- [blueCombination,blueNeutral];
 	
 	init { 
@@ -26,9 +27,8 @@ global {
 		create mySquare number:number_of_agents{
 			set self.width <- rnd(maxSize)+1;
 			set self.height <-rnd(maxSize)+1;		
-			set color <- rgb((ColorList[1])[rnd(2)]);
+			set color <- rgb((ColorList[0])[rnd(2)]);
 		}
-
 	}  
 } 
  
@@ -58,13 +58,14 @@ entities {
 			draw rectangle({self.width, self.height}) color: color rounded:true ; 
 		}
 	}	
-
+	
 
 }
 experiment display  type: gui {
 	output {
-		display Poincare refresh_every: 1   type:opengl  ambient_light:50 polygonmode:true{
-			species mySquare aspect:RoundCorner;					
+		display Poincare refresh_every: 1  type:opengl ambient_light:50 {
+			image imageRaster.path ;
+			species mySquare aspect:RoundCorner z:0.0;										
 		}
 	}
 }
