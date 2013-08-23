@@ -35,7 +35,6 @@ environment bounds: {width,height} {
 			set cellValue <- rnd(255);	
 			set color <- hsb(0.66,(cellValue/255),1.0);
 			set elevation <-((cellValue/100)^2);
-			write "" + cellValue;
 		}
 
 		aspect base {
@@ -81,7 +80,6 @@ entities {
 
 experiment AugmentedGrid type:gui {
 	output {
-	
 		display Circle type:opengl ambient_light:100 polygonmode:true{		
 			species cell aspect: circle  refresh:true position: {0,0};
 		}
