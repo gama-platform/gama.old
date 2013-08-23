@@ -160,16 +160,16 @@ public class ModelScene {
 		gl.glVertex3d(1.0d * size, 0.0d, 0.0d);
 		gl.glEnd();
 		// Y Axis
-		addString("y", 0.0d, 1.2f * size, 0.0d, 12, 12d, offset, scale, Color.black, "Helvetica", 0, 0, 1d, 1);
+		addString("y", 0.0d, -1.2f * size, 0.0d, 12, 12d, offset, scale, Color.black, "Helvetica", 0, 0, 1d, 1);
 		gl.glBegin(GL.GL_LINES);
 		gl.glColor4d(0, 1.0d, 0, 1.0d);
 		gl.glVertex3d(0, 0, 0);
-		gl.glVertex3d(0, size, 0);
+		gl.glVertex3d(0, -size, 0);
 		gl.glEnd();
 		gl.glBegin(GL_TRIANGLES);
-		gl.glVertex3d(-0.1d * size, 0.8d * size, 0.0d);
-		gl.glVertex3d(0.1d * size, 0.8d * size, 0.0d);
-		gl.glVertex3d(0.0d, 1.0f * size, 0.0d);
+		gl.glVertex3d(-0.1d * size, -0.8d * size, 0.0d);
+		gl.glVertex3d(0.1d * size, -0.8d * size, 0.0d);
+		gl.glVertex3d(0.0d, -1.0f * size, 0.0d);
 		gl.glEnd();
 		// Z Axis
 		gl.glRasterPos3d(0.0d, 0.0d, 1.2f * size);

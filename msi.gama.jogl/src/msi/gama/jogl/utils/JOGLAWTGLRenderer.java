@@ -270,8 +270,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			gl.glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
 			glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, "FPS : " + fps);
 		}
-
-		// }
 	}
 
 	@Override
