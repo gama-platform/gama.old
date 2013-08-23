@@ -12,7 +12,8 @@ global {
 
 	Physical3DWorld world2;
 	init {
-	
+	    
+	    
 		create ball number: 1000{
 			set radius <-2;
 			set location <-  {offset + rnd(width_of_environment-offset*2), offset + rnd(height_of_environment- offset*2)} add_z  (offset + rnd(width_of_environment-offset*2));
@@ -72,10 +73,12 @@ global {
 		
 		
 		create Physical3DWorld {
-			set gravity <- true;
+			set gravity <- false;
 		}
 		set world2 <- first(Physical3DWorld as list);
 		ask world2 {set registeredAgents <-  (ball as list) + (floor as list) + (wall as list);}
+		
+	
 		
 	}
 		reflex computeForces  {
