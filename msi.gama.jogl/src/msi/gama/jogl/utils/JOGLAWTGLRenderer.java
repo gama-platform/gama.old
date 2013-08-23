@@ -75,7 +75,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	// facet "show_fps"
 	private boolean showFPS = false;
 	// facet "z_fighting"
-	private boolean z_fighting = true;
+	private boolean z_fighting = false;
 
 	public boolean drawAxes = true;
 	// Display or not the triangle when using triangulation (useTessellation = false)
@@ -226,23 +226,23 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		}
 
 		// Blending control
-		/*
-		 * if ( BLENDING_ENABLED ) {
-		 * gl.glEnable(GL_BLEND); // Turn blending on
-		 * } else {
-		 * gl.glDisable(GL_BLEND); // Turn blending off
-		 * if ( !getStencil() ) {
-		 * gl.glEnable(GL_DEPTH_TEST);
-		 * } else {
-		 * gl.glEnable(GL_STENCIL_TEST);
-		 * }
-		 * }
-		 */
+		
+		  if ( BLENDING_ENABLED ) {
+		  gl.glEnable(GL_BLEND); // Turn blending on
+		  } else {
+		  gl.glDisable(GL_BLEND); // Turn blending off
+		  if ( !getStencil() ) {
+		  gl.glEnable(GL_DEPTH_TEST);
+		  } else {
+		  gl.glEnable(GL_STENCIL_TEST);
+		  }
+		  }
+		 
 
 		// Use polygon offset for a better edges rendering
 		// (http://www.glprogramming.com/red/chapter06.html#name4)
-		gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
-		gl.glPolygonOffset(1, 1);
+		//gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
+		//gl.glPolygonOffset(1, 1);
 
 		// gl.glDisable(GL_DEPTH_TEST);
 
@@ -255,7 +255,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		this.drawScene();
 
 		// this.DrawShapeFile();
-		// gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
+		gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
 		gl.glPopMatrix();
 
 		// ROI drawer
@@ -310,15 +310,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	 * 
 	 */
 	public void drawModel() {
-		if ( drawAxes ) {
-			gl.glDisable(GL_BLEND);
-			gl.glColor4d(0.0d, 0.0d, 0.0d, 1.0d);
-			gl.glRasterPos3d(-getMaxEnvDim() / 20, -getMaxEnvDim() / 20, 0.0d);
-			gl.glScaled(8.0d, 8.0d, 8.0d);
-			glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "z:" + String.valueOf((int) camera.getPosition().getZ()));
-			gl.glScaled(0.125d, 0.125d, 0.125d);
-			gl.glEnable(GL_BLEND);
-		}
 		scene.draw(this, isPicking() || currentPickedObject != null, drawAxes, drawEnv);
 	}
 
@@ -360,6 +351,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		this.drawModel();
 		gl.glTranslatef(0, 0, -envMaxDim);
 		gl.glRotatef(-90, 1, 0, 0);
+		
 	}
 
 	public void switchCamera() {

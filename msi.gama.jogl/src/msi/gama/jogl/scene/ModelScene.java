@@ -155,9 +155,9 @@ public class ModelScene {
 		gl.glVertex3d(size, 0, 0);
 		gl.glEnd();
 		gl.glBegin(GL_TRIANGLES);
-		gl.glVertex3d(1.0d * size, 0.1d * size, 0.0d);
-		gl.glVertex3d(1.0d * size, -0.1d * size, 0.0d);
-		gl.glVertex3d(1.2d * size, 0.0d, 0.0d);
+		gl.glVertex3d(0.8d * size, 0.1d * size, 0.0d);
+		gl.glVertex3d(0.8d * size, -0.1d * size, 0.0d);
+		gl.glVertex3d(1.0d * size, 0.0d, 0.0d);
 		gl.glEnd();
 		// Y Axis
 		addString("y", 0.0d, 1.2f * size, 0.0d, 12, 12d, offset, scale, Color.black, "Helvetica", 0, 0, 1d, 1);
@@ -167,9 +167,9 @@ public class ModelScene {
 		gl.glVertex3d(0, size, 0);
 		gl.glEnd();
 		gl.glBegin(GL_TRIANGLES);
-		gl.glVertex3d(-0.05d * size, 1.0d * size, 0.0d);
-		gl.glVertex3d(0.05d * size, 1.0d * size, 0.0d);
-		gl.glVertex3d(0.0d, 1.1f * size, 0.0d);
+		gl.glVertex3d(-0.1d * size, 0.8d * size, 0.0d);
+		gl.glVertex3d(0.1d * size, 0.8d * size, 0.0d);
+		gl.glVertex3d(0.0d, 1.0f * size, 0.0d);
 		gl.glEnd();
 		// Z Axis
 		gl.glRasterPos3d(0.0d, 0.0d, 1.2f * size);
@@ -180,19 +180,19 @@ public class ModelScene {
 		gl.glVertex3d(0, 0, size);
 		gl.glEnd();
 		gl.glBegin(GL_TRIANGLES);
-		gl.glVertex3d(0.0d, 0.05d * size, 1.0d * size);
-		gl.glVertex3d(0.0d, -0.05d * size, 1.0d * size);
-		gl.glVertex3d(0.0d, 0.0d, 1.1f * size);
+		gl.glVertex3d(0.0d, 0.1d * size, 0.8d * size);
+		gl.glVertex3d(0.0d, -0.1d * size, 0.8d * size);
+		gl.glVertex3d(0.0d, 0.0d, 1.0f * size);
 		gl.glEnd();
 
 	}
 
 	public void drawEnvironmentBounds(final JOGLAWTGLRenderer renderer) {
 		// Draw Width and height value
-		addString(String.valueOf(envWidth), envWidth / 2, envHeight * 0.01d, 0.0d, 12, 12d, offset, scale, Color.black,
+		/*addString(String.valueOf(envWidth), envWidth / 2, envHeight * 0.01d, 0.0d, 12, 12d, offset, scale, Color.black,
 			"Helvetica", 0, 0, 1d, 1);
 		addString(String.valueOf(envHeight), envWidth * 1.01f, -(envHeight / 2), 0.0d, 12, 12d, offset, scale,
-			Color.black, "Helvetica", 0, 0, 1d, 1);
+			Color.black, "Helvetica", 0, 0, 1d, 1);*/
 
 		// Draw environment rectangle
 		final Geometry g =

@@ -704,7 +704,6 @@ public boolean isInitialized() {
 				(float) (/* s.scale.y * */renderer.env_height / renderer.getHeight()));
 			renderer.gl.glPopMatrix();
 			r.end3DRendering();
-
             }
             else{
             	_drawOld(s);

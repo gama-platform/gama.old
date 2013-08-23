@@ -338,9 +338,6 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	public void beginDrawingLayer(final ILayer layer) {
 		super.beginDrawingLayer(layer);
 		
-		//There is two possiblity to set the z layer (use z or postion)
-		
-		
 		this.currentZLayer = (float) (getMaxEnvDim() * ((AbstractLayer)layer).getZPosition());
 		//get the value of the position
 		if(this.currentZLayer == 0){

@@ -321,7 +321,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			for ( final ISymbol layer : layers ) {
 				// IDisplay d =
 				manager.addLayer(LayerManager.createLayer((ILayerStatement) layer, env_width, env_height, iGraphics));
-				// d.initMenuItems(this);
 			}
 
 		} else {
