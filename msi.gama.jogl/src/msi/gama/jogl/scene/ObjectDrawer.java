@@ -606,7 +606,7 @@ public boolean isInitialized() {
 					jtsDrawer.DrawMultiPolygon((MultiPolygon) sourceGeometry, collection.getColor(), 1.0d, true, null,
 						0, 0.0d, false);
 				} else if ( sourceGeometry.getGeometryType() == "Polygon" ) {
-					jtsDrawer.DrawPolygon((Polygon) sourceGeometry, collection.getColor(), 1.0d, true, null, false, 0,
+					jtsDrawer.DrawPolygon((Polygon) sourceGeometry, 	collection.getColor(), 1.0d, true, null, false, 0,
 						true, false);
 				} else if ( sourceGeometry.getGeometryType() == "MultiLineString" ) {
 					jtsDrawer.DrawMultiLineString((MultiLineString) sourceGeometry, 0.0d, collection.getColor(), 1.0d, 0.0d);

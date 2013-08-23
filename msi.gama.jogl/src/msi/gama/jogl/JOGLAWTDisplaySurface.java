@@ -41,6 +41,7 @@ import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
+import msi.gama.util.IList;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.UserCommandStatement;
@@ -349,6 +350,23 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			sa = new SelectedAgent(agent);
 			sa.buildMenuItems(agentsMenu, manager.getItems().get(layerId));
 		}
+		agentsMenu.show(this, renderer.camera.mousePosition.x, renderer.camera.mousePosition.y);
+
+	}
+	
+	public void selectSeveralAgents(final Iterator<IAgent> agents, final int layerId) {
+		agentsMenu.removeAll();
+		// Adding the world
+		SelectedAgent sa = new SelectedAgent(GAMA.getSimulation(), "World agent");
+		sa.buildMenuItems(agentsMenu, null);
+		while (agents.hasNext()){
+			IAgent a = agents.next();
+			if ( a != null ) {
+				agentsMenu.addSeparator();
+				sa = new SelectedAgent(a);
+				sa.buildMenuItems(agentsMenu, manager.getItems().get(layerId));
+			}
+	    }
 		agentsMenu.show(this, renderer.camera.mousePosition.x, renderer.camera.mousePosition.y);
 
 	}

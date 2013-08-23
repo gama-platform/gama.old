@@ -244,10 +244,10 @@ public class FreeFlyCamera extends AbstractCamera {
 			enableROIDrawing = true;
 			myRenderer.DrawROI();
 			myRenderer.roiCenter.setLocation(point.x, point.y);
-			System.out.println("roiCenter x : " + myRenderer.roiCenter.x + " roiCenter y: " + myRenderer.roiCenter.y);
+			/*System.out.println("roiCenter x : " + myRenderer.roiCenter.x + " roiCenter y: " + myRenderer.roiCenter.y);
 			System.out.println("roi_List x1 : " + myRenderer.roi_List.get(0) + " roi_List y1: " +
 				myRenderer.roi_List.get(1) + "roi_List x2 : " + myRenderer.roi_List.get(2) + " roi_List y2: " +
-				myRenderer.roi_List.get(3));
+				myRenderer.roi_List.get(3));*/
 			Iterator<IShape> shapes =
 				GAMA.getSimulation()
 					.getTopology()
