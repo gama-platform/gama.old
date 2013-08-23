@@ -35,18 +35,13 @@ import com.vividsolutions.jts.geom.Coordinate;
 public class Physical3DWorldAgent extends GamlAgent {
 
 	public final static String REGISTERED_AGENTS = "registeredAgents";
-	// private GamaPoint gravity = new GamaPoint(0, 10);
 	private IList<IAgent> registeredAgents = null;
-	Boolean gravity;
 	private final HashMap<IAgent, RigidBody> registeredMap = new HashMap<IAgent, RigidBody>();
 	private final PhysicsWorldJBullet world;
 
 	public Physical3DWorldAgent(final IPopulation s) throws GamaRuntimeException {
 		super(s);
-		// FIXME: Does not work
-		// gravity = this.getGravity();
-		gravity = true;
-		world = new PhysicsWorldJBullet(gravity);
+		world = new PhysicsWorldJBullet(true);
 	}
 
 	@getter("registeredAgents")
@@ -75,6 +70,13 @@ public class Physical3DWorldAgent extends GamlAgent {
 	@setter("gravity")
 	public void setGravity(final Boolean gravity) {
 		this.setAttribute("gravity", gravity);
+		if(gravity){
+			world.dynamicsWorld.setGravity(new Vector3f(0.0f,0.0f,-9.81f));
+		}
+		else{
+			world.dynamicsWorld.setGravity(new Vector3f(0.0f,0.0f,0.0f));
+		}
+		
 	}
 
 	public void registerAgent(final IAgent _agent) {
