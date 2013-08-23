@@ -13,12 +13,14 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.descriptions.*;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 
 @facets(value = { @facet(name = "var", type = IType.ID, optional = false),
 		@facet(name = "on", type = IType.ID, optional = false),
 		@facet(name = "mat_diffu", type = IType.MATRIX, optional = false),
+		@facet(name = "method", type = IType.ID, optional = true, values={"convolution","dot_product"}),
 		@facet(name = "mask", type = IType.MATRIX, optional = true),
 		@facet(name = "cycle_length", type = IType.INT, optional = true) }, omissible = IKeyword.EQUATION)
 @symbol(name = { "diffusion" }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
@@ -41,9 +43,10 @@ public class DiffusionStatement extends AbstractStatementSequence {
 		// Based on the facets, choose a solver and init it;
 
 	}
+	
 
-	public void doDiffusion(IScope scope, String varName, String speciesName,
-			IMatrix mat_diffu) {
+	public void doDiffusion2(IScope scope, String varName, String speciesName,
+			 double[][] mat_diffu, double[][] mask) {
 
 		GridPopulation pop = (GridPopulation) scope.getAgentScope()
 				.getPopulationFor(speciesName);
@@ -53,35 +56,109 @@ public class DiffusionStatement extends AbstractStatementSequence {
 		int rows = mmm.getRows(scope);
 		
 
-		IMatrix<Double> mask = new GamaFloatMatrix(scope,cols, rows);
+//		IMatrix<Double> mask = new GamaFloatMatrix(scope,cols, rows);
 		
-		if (getFacet("mask") != null) {
-			mask = (IMatrix) getFacet("mask").value(scope);
-		}
+//		if (getFacet("mask") != null) {
+//			mask = (IMatrix) getFacet("mask").value(scope);
+//		}
 		
 
-		int kRows=mat_diffu.getCols(scope);
-		int kCols=mat_diffu.getRows(scope);
+		int kRows=mat_diffu.length;
+		int kCols=mat_diffu[0].length;
+
 		
-		int kCenterX = kRows / 2;
-		int kCenterY = kCols / 2;
-		GamaFloatMatrix tmp = new GamaFloatMatrix(scope, cols, rows);
+		int xcenter = kRows / 2;
+		int ycenter = kCols / 2;
+//		GamaFloatMatrix tmp = new GamaFloatMatrix(scope, cols, rows);
+		double[][] tmp=new double[cols][rows];
 
 		// System.out.println(xcenter+" "+ycenter);
 		// find center position of kernel (half of kernel size)
-		float sum=0;
+		
+
+
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				double currentValue = Double.parseDouble(""
+						+ lstAgents[i * rows + j].getAttribute(varName));
+//				if (currentValue <= Double.MAX_VALUE
+//						&& currentValue >= - (Double.MAX_VALUE)) 
+//				{ 
+//						&& i >= xcenter
+//						&& j >= ycenter && i < cols - xcenter
+//						&& j < rows - ycenter) {
+
+					for (int u = i - xcenter; u <= i + xcenter; u++) {
+						for (int v = j - ycenter; v <= j + ycenter; v++) {
+							if(u<0 || v<0 || u>=cols || v>=rows){
+								continue;
+							}
+							// System.out.println(u+" "+v+" | "+( u - i +
+							// xcenter)+" "+(v - j + ycenter));
+							double currentMatValue = 
+									+ mat_diffu[u - i + xcenter][v
+											- j + ycenter];
+		                	double currentMask=(mask!=null)?((mask[i][j]<-1)?0:1):1;
+
+//							System.out.println(currentMask);
+							tmp[u][v] = tmp[u][v]
+									+ currentValue * currentMatValue * currentMask;
+							
+						}
+//					}
+					// System.out.println();
+				}
+			}
+		}
+
+
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
+				lstAgents[i * rows + j].setAttribute(varName,
+						tmp[i][j]);
+			}
+		}
+
+	}
+
+
+	public void doDiffusion1(IScope scope, String varName, String speciesName,
+			double[][]  mat_diffu, double[][] mask) {
+
+		GridPopulation pop = (GridPopulation) scope.getAgentScope()
+				.getPopulationFor(speciesName);
+//		System.out.println(pop.getTopology().isTorus());
+		IAgent[] lstAgents = pop.toArray();
+		IMatrix mmm = pop.matrixValue(scope);
+		int cols = mmm.getCols(scope);
+		int rows = mmm.getRows(scope);
+		
+
+
+		int kRows=mat_diffu.length;
+		int kCols=mat_diffu[0].length;
+//		double[][] mat_diffu=translateMatrix(scope, mat_diffusion);
+		
+
+		
+		int kCenterX = kRows / 2;
+		int kCenterY = kCols / 2;
+//		GamaFloatMatrix tmp = new GamaFloatMatrix(scope, cols, rows);
+		double[][] tmp=new double[cols][rows];
+		// System.out.println(xcenter+" "+ycenter);
+		// find center position of kernel (half of kernel size)
+//		float sum=0;
 		int mm=0, nn=0, ii=0, jj=0;
 
 		for(int i=0; i < rows; ++i)              // rows
 		{
 		    for(int j=0; j < cols; ++j)          // columns
 		    {
-		        sum = 0;                     // init to 0 before sum
-
+        	
+//		        sum = 0;                     // init to 0 before sum
 		        for(int m=0; m < kRows; ++m)     // kernel rows
 		        {
 		            mm = kRows - 1 - m;      // row index of flipped kernel
-
 		            for(int n=0; n < kCols; ++n) // kernel columns
 		            {
 		                nn = kCols - 1 - n;  // column index of flipped kernel
@@ -94,58 +171,40 @@ public class DiffusionStatement extends AbstractStatementSequence {
 		                if( ii >= 0 && ii < rows && jj >= 0 && jj < cols ){
 //		                out[i][j] = out[i][j] + in[ii][jj] * kernel[mm][nn];
 		                	double inValue=Double.parseDouble(""+lstAgents[ii * rows + jj].getAttribute(varName));
-		                	double currentValue=Double.parseDouble(""+tmp.get(scope, i,j));
-		                	double currentMatValue=Double.parseDouble(""+mat_diffu.get(scope, mm,nn));
-		                	double newValue=currentValue+ inValue * currentMatValue;
-		                	tmp.set(scope, i, j, newValue);
+		                	
+		                	double currentMask=(mask!=null)?((mask[i][j]<-1)?0:1):1;
+		                	double currentMatValue=mat_diffu[mm][nn];
+		                	tmp[i][j]=	tmp[i][j]+ inValue * currentMatValue * currentMask;
+		                	
 		                }
 		            }
 		        }
 		    }
 		}
 
-//		for (int i = 0; i < cols; i++) {
-//			for (int j = 0; j < rows; j++) {
-//				double currentValue = Double.parseDouble(""
-//						+ lstAgents[i * rows + j].getAttribute(varName));
-//				if (currentValue <= Double.MAX_VALUE
-//						&& currentValue >= - (Double.MAX_VALUE)) { 
-////						&& i >= xcenter
-////						&& j >= ycenter && i < cols - xcenter
-////						&& j < rows - ycenter) {
-//
-//					for (int u = i - xcenter; u <= i + xcenter; u++) {
-//						for (int v = j - ycenter; v <= j + ycenter; v++) {
-//							if(u<0 || v<0 || u>=cols || v>=rows){
-//								continue;
-//							}
-//							// System.out.println(u+" "+v+" | "+( u - i +
-//							// xcenter)+" "+(v - j + ycenter));
-//							double currentMatValue = Double.parseDouble(""
-//									+ mat_diffu.get(scope, u - i + xcenter, v
-//											- j + ycenter));
-//							double currentMask=(Double.parseDouble(""+mask.get(scope,i, j))<-1)?0:1;
-////							System.out.println(currentMask);
-//							double newValue = tmp.get(scope, u, v)
-//									+ currentValue * currentMatValue * currentMask;
-//							tmp.set(scope, u, v, newValue);
-//						}
-//					}
-//					// System.out.println();
-//				}
-//			}
-//		}
 
 
-		for (int i = 0; i < cols; i++) {
-			for (int j = 0; j < rows; j++) {
+		for (int i = 0; i < rows; i++) {
+			for (int j = 0; j < cols; j++) {
 				lstAgents[i * rows + j].setAttribute(varName,
-						tmp.get(scope, i, j));
+						tmp[i][j]);
 			}
 		}
 
 	}
 
+	public double[][] translateMatrix(IScope scope, IMatrix mm){
+		int rows=mm.getRows(scope);
+		int cols=mm.getCols(scope);
+		double[][] res=new double[rows][cols];
+		for(int i=0; i<rows; i++) {
+			for(int j=0; j<cols; j++) {
+				res[i][j]=Double.parseDouble(""+mm.get(scope, i, j));
+			}
+		}
+		return res;
+	}
+	
 	@Override
 	public Object privateExecuteIn(final IScope scope)
 			throws GamaRuntimeException {
@@ -156,12 +215,30 @@ public class DiffusionStatement extends AbstractStatementSequence {
 
 		String varName = (String) getFacet("var").value(scope);
 		String speciesName = (String) getFacet("on").value(scope);
-		IMatrix mat_diffu = (IMatrix) getFacet("mat_diffu").value(scope);
+//		IMatrix mat_diffu = (IMatrix) getFacet("mat_diffu").value(scope);
+		double[][] mat_diffu=translateMatrix(scope, (IMatrix) getFacet("mat_diffu").value(scope));
+
+		double[][] mask=null;
+		
+		if (getFacet("mask") != null) {
+			mask= translateMatrix(scope, (IMatrix) getFacet("mask").value(scope));
+			
+			
+		}
 		
 		
+		IExpression method_diffu=getFacet("method");
+		if(method_diffu!=null){
+			if(method_diffu.value(scope).equals("dot_product")){
+				for (int time = 0; time < cLen; time++) {
+					doDiffusion2(scope, varName, speciesName, mat_diffu, mask);
+				}
+				return null;
+			}
+		}
 
 		for (int time = 0; time < cLen; time++) {
-			doDiffusion(scope, varName, speciesName, mat_diffu);
+			doDiffusion1(scope, varName, speciesName, mat_diffu, mask);
 		}
 		// super.privateExecuteIn(scope);
 		// if (getFacet("cycle_length") != null) {
