@@ -1,6 +1,7 @@
 package msi.gama.jogl.utils;
 
 import static javax.media.opengl.GL.*;
+
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -264,11 +265,15 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		}
 
 		// Show fps for performance mesures
-		if ( showFPS ) {
-			CalculateFrameRate();
-			gl.glRasterPos2i(-30, 30);
-			gl.glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
-			glut.glutBitmapString(GLUT.BITMAP_HELVETICA_18, "FPS : " + fps);
+		if ( this.getShowFPS() ) {
+			CalculateFrameRate();			
+			gl.glDisable(GL_BLEND);
+			gl.glColor4d(0.0, 0.0, 0.0, 1.0d);
+			gl.glRasterPos3d(-30, 30, 0);
+			gl.glScaled(8.0d, 8.0d, 8.0d);
+			glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10,  "fps : " + fps);
+			gl.glScaled(0.125d, 0.125d, 0.125d);
+			gl.glEnable(GL_BLEND);
 		}
 	}
 
