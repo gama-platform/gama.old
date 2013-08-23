@@ -350,6 +350,9 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public void mouseClicked(final MouseEvent arg0) {
+		if(arg0.getClickCount() > 1){
+			myRenderer.displaySurface.zoomFit();
+		}
 		velocityHoriz = 0;
 		velocityVert = 0;
 
