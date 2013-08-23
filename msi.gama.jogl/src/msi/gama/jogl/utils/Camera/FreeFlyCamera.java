@@ -211,7 +211,7 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	@Override
 	public void mouseDragged(final MouseEvent arg0) {
-		if ( myRenderer.displaySurface.selectRectangle && IsViewIn2DPlan() ) {
+		if ( (arg0.isShiftDown() || arg0.isAltDown()) && IsViewIn2DPlan()) {
 			mousePosition.x = arg0.getX();
 			mousePosition.y = arg0.getY();
 			enableROIDrawing = true;
@@ -236,7 +236,7 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	@Override
 	public void mouseClicked(final MouseEvent arg0) {
-		if ( myRenderer.displaySurface.selectRectangle ) {
+		if ( (arg0.isShiftDown() || arg0.isAltDown())) {
 			Point point = myRenderer.getIntWorldPointFromWindowPoint(new Point(arg0.getX(), arg0.getY()));
 
 			mousePosition.x = arg0.getX();
@@ -244,22 +244,6 @@ public class FreeFlyCamera extends AbstractCamera {
 			enableROIDrawing = true;
 			myRenderer.DrawROI();
 			myRenderer.roiCenter.setLocation(point.x, point.y);
-			/*System.out.println("roiCenter x : " + myRenderer.roiCenter.x + " roiCenter y: " + myRenderer.roiCenter.y);
-			System.out.println("roi_List x1 : " + myRenderer.roi_List.get(0) + " roi_List y1: " +
-				myRenderer.roi_List.get(1) + "roi_List x2 : " + myRenderer.roi_List.get(2) + " roi_List y2: " +
-				myRenderer.roi_List.get(3));*/
-			Iterator<IShape> shapes =
-				GAMA.getSimulation()
-					.getTopology()
-					.getSpatialIndex()
-					.allInEnvelope(
-						new GamaPoint(myRenderer.roiCenter.x, -myRenderer.roiCenter.y),
-						new Envelope(myRenderer.roiCenter.x - 4, myRenderer.roiCenter.x + 4,
-							-myRenderer.roiCenter.y - 4, -myRenderer.roiCenter.y + 4), new Different(), true);
-			final Iterator<IAgent> agents = AbstractTopology.toAgents(shapes);
-			if ( agents.hasNext() != false ) {
-				buildMenus(agents);
-			}
 
 			enableROIDrawing = false;
 		}
@@ -307,15 +291,10 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	@Override
 	public void mouseReleased(final MouseEvent arg0) {
-		if ( myRenderer.displaySurface.selectRectangle && IsViewIn2DPlan() && enableROIDrawing == true ) {
-
+		
+		if ((arg0.isShiftDown() || arg0.isAltDown()) && IsViewIn2DPlan() && enableROIDrawing == true){
 			GamaPoint p = new GamaPoint(myRenderer.worldCoordinates.x, -myRenderer.worldCoordinates.y, 0.0);
-			if ( !arg0.isAltDown() ) {
-				System.out.println("roiCenter x : " + myRenderer.roiCenter.x + " roiCenter y: " +
-					myRenderer.roiCenter.y);
-				System.out.println("roi_List x1 : " + myRenderer.roi_List.get(0) + " roi_List y1: " +
-					myRenderer.roi_List.get(1) + "roi_List x2 : " + myRenderer.roi_List.get(2) + " roi_List y2: " +
-					myRenderer.roi_List.get(3));
+			if ( arg0.isAltDown() ) {
 				Iterator<IShape> shapes =
 					GAMA.getSimulation()
 						.getTopology()
@@ -325,10 +304,9 @@ public class FreeFlyCamera extends AbstractCamera {
 							new Envelope(myRenderer.roi_List.get(0), myRenderer.roi_List.get(2), -myRenderer.roi_List
 								.get(1), -myRenderer.roi_List.get(3)), new Different(), true);
 				final Iterator<IAgent> agents = AbstractTopology.toAgents(shapes);
-				if ( agents.hasNext() != false ) {
-					buildMenus(agents);
-				}
-			} else {
+				myRenderer.displaySurface.selectSeveralAgents(agents, 0);				
+			} 
+			if(arg0.isShiftDown()){	
 				myRenderer.ROIZoom();
 			}
 			enableROIDrawing = false;

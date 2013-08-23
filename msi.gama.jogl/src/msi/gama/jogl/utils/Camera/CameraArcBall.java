@@ -370,14 +370,7 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public void mouseEntered(final MouseEvent arg0) {
-		// if ( isArcBallOn(arg0) && isModelCentered ) {
-		// if ( arg0.getButton() ==3) {
-		// myRenderer.reset();
-		// }
-		// } else {
-		// // myCamera.PrintParam();
-		// // System.out.println( "x:" + mouseEvent.getX() + " y:" + mouseEvent.getY());
-		// }
+
 	}
 
 	@Override
@@ -430,7 +423,6 @@ public class CameraArcBall extends AbstractCamera {
 				final Iterator<IAgent> agents = AbstractTopology.toAgents(shapes);
 				
 				myRenderer.displaySurface.selectSeveralAgents(agents, 0);
-					//buildMenus(agents);
 				
 			} 
 			if(arg0.isShiftDown()){	
