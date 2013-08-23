@@ -10,6 +10,7 @@ public class ImageObject extends AbstractObject {
 
 	public BufferedImage image;
 	public IAgent agent;
+	public double z_layer;
 	public int layerId;
 	public double x;
 	public double y;
@@ -29,6 +30,7 @@ public class ImageObject extends AbstractObject {
 		setZ_fighting_id((double) layerId);
 		this.image = image;
 		this.agent = agent;
+		this.z_layer = z_layer;
 		this.x = x;
 		this.y = y;
 		this.z = z;

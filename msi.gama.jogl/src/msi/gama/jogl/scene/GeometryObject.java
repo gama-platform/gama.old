@@ -27,7 +27,10 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	    if (type.compareTo("gridLine") == 0){
 	    	this.fill = false;
 	    }
-
+	    
+	    if (type.compareTo("env") == 0){
+	    	setZ_fighting_id(0.1);
+	    }
 	    /*The z_fight value must be a unique value so the solution has been to make the hypothesis that
     	a layer has less than 1 000 000 agent to make a unique z-fighting value per agent.*/
 	    if((agent !=null && (agent.getLocation().getZ() == 0 ) && (height == 0 ))){

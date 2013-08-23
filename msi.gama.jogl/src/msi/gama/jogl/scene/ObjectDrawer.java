@@ -96,7 +96,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 					renderer.gl.glStencilFunc(GL_GREATER, 1,1);
 				}
 				if ( geometry.geometry.getGeometryType() == "MultiPolygon" ) {
-					jtsDrawer.DrawMultiPolygon((MultiPolygon) geometry.geometry, geometry.z_layer, geometry.getColor(),
+					jtsDrawer.DrawMultiPolygon((MultiPolygon) geometry.geometry, geometry.getColor(),
 						geometry.alpha, geometry.fill, geometry.border, geometry.angle, geometry.height,
 						geometry.rounded);
 				} else if ( geometry.geometry.getGeometryType() == "Polygon" ) {
@@ -106,7 +106,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 							geometry.getColor(), geometry.alpha);
 					} else {
 						if ( geometry.height > 0 ) {
-							jtsDrawer.DrawPolyhedre((Polygon) geometry.geometry, geometry.z_layer, geometry.getColor(),
+							jtsDrawer.DrawPolyhedre((Polygon) geometry.geometry, geometry.getColor(),
 								geometry.alpha, geometry.fill, geometry.height, geometry.angle, true, geometry.border,
 								geometry.rounded);
 						} else {
@@ -115,7 +115,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 								renderer.gl.glDisable(GL_DEPTH_TEST);						
 								renderer.gl.glStencilOp(GL_KEEP, GL_ZERO, GL_REPLACE);
 							}
-							jtsDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.z_layer, geometry.getColor(),
+							jtsDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.getColor(),
 								geometry.alpha, geometry.fill, geometry.border, geometry.isTextured, geometry.angle,
 								true, geometry.rounded);
 						}
@@ -174,6 +174,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 
 		@Override
 		protected void _draw(ImageObject img) {
+
 			MyTexture curTexture = renderer.getScene().getTextures().get(img.image);
 			if ( curTexture == null ) { return; }
 			// Enable the texture
@@ -602,10 +603,10 @@ public boolean isInitialized() {
 				SimpleFeature feature = iterator.next();
 				Geometry sourceGeometry = (Geometry) feature.getDefaultGeometry();
 				if ( sourceGeometry.getGeometryType() == "MultiPolygon" ) {
-					jtsDrawer.DrawMultiPolygon((MultiPolygon) sourceGeometry, 0.0d, collection.getColor(), 1.0d, true, null,
+					jtsDrawer.DrawMultiPolygon((MultiPolygon) sourceGeometry, collection.getColor(), 1.0d, true, null,
 						0, 0.0d, false);
 				} else if ( sourceGeometry.getGeometryType() == "Polygon" ) {
-					jtsDrawer.DrawPolygon((Polygon) sourceGeometry, 0.0d, collection.getColor(), 1.0d, true, null, false, 0,
+					jtsDrawer.DrawPolygon((Polygon) sourceGeometry, collection.getColor(), 1.0d, true, null, false, 0,
 						true, false);
 				} else if ( sourceGeometry.getGeometryType() == "MultiLineString" ) {
 					jtsDrawer.DrawMultiLineString((MultiLineString) sourceGeometry, 0.0d, collection.getColor(), 1.0d, 0.0d);
@@ -635,20 +636,7 @@ public boolean isInitialized() {
 		static final boolean USE_VERTEX_ARRAYS = false;
 		Map<String, Map<Integer, Map<Integer, TextRenderer>>> cache = new LinkedHashMap();
 
-		// static String[] fonts = { "Helvetica", "Geneva", "Times", "Courier", "Arial", "Gill Sans", "Sans Serif" };
-		// static int[] sizes = { 8, 10, 12, 14, 16, 20, 24, 36, 48, 60, 72 };
-		// static int[] styles = { Font.PLAIN, Font.BOLD, Font.ITALIC };
-		// static {
-		// for ( String f : fonts ) {
-		// for ( int s : sizes ) {
-		// for ( int t : styles ) {
-		// get(f, s, t);
-		// }
-		//
-		// }
-		// }
-		// }
-
+		
 		TextRenderer get(String font, int size, int style) {
 			Map<Integer, Map<Integer, TextRenderer>> map1 = cache.get(font);
 			if ( map1 == null ) {

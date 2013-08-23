@@ -77,7 +77,7 @@ public class ModelScene {
 		final boolean drawBounds) {
 		// renderer.getContext().makeCurrent();
 		if ( drawAxes ) {
-			this.drawAxes(renderer.gl, renderer.getMaxEnvDim() / 20);
+			this.drawAxes(renderer.gl, renderer.getMaxEnvDim() / 10);
 		}
 		if ( drawBounds ) {
 			this.drawEnvironmentBounds(renderer);

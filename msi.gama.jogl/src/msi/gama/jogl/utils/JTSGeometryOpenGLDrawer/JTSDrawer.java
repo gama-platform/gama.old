@@ -71,7 +71,7 @@ public class JTSDrawer {
 
 	}
 
-	public void DrawMultiPolygon(final MultiPolygon polygons, final double z_layer, final Color c, final double alpha,
+	public void DrawMultiPolygon(final MultiPolygon polygons,final Color c, final double alpha,
 		final boolean fill, final Color border, final Integer angle, final double height, final boolean rounded) {
 
 		numGeometries = polygons.getNumGeometries();
@@ -81,9 +81,9 @@ public class JTSDrawer {
 			curPolygon = (Polygon) polygons.getGeometryN(i);
 
 			if ( height > 0 ) {
-				DrawPolyhedre(curPolygon, z_layer, c, alpha, fill, height, angle, false, border, rounded);
+				DrawPolyhedre(curPolygon, c, alpha, fill, height, angle, false, border, rounded);
 			} else {
-				DrawPolygon(curPolygon, z_layer, c, alpha, fill, border, false, angle, true, rounded);
+				DrawPolygon(curPolygon, c, alpha, fill, border, false, angle, true, rounded);
 			}
 		}
 	}
@@ -94,14 +94,9 @@ public class JTSDrawer {
 				final boolean drawPolygonContour, final boolean rounded) {
 		 
 	 }
-	public void DrawPolygon(final Polygon p, final double z_layer, final Color c, final double alpha,
+	public void DrawPolygon(final Polygon p, final Color c, final double alpha,
 		final boolean fill, final Color border, final boolean isTextured, final Integer angle,
 		final boolean drawPolygonContour, final boolean rounded) {
-
-		// Set z_layer
-		if ( z_layer != 0 ) {
-			myGl.glTranslated(0.0d, 0.0d, z_layer);
-		}
 
 		myGl.glNormal3d(0.0d, 0.0d, 1.0d);
 
@@ -147,11 +142,6 @@ public class JTSDrawer {
 		if ( isTextured ) {
 			DrawTexturedPolygon(p, angle);
 		}
-
-		if ( z_layer != 0 ) {
-			myGl.glTranslated(0.0d, 0.0d, -z_layer);
-		}
-
 	}
 
 	void DrawTesselatedPolygon(final Polygon p) {
@@ -325,13 +315,15 @@ public class JTSDrawer {
 		}
 	}
 
-	public void DrawPolyhedre(final Polygon p, final double z, final Color c, final double alpha, final boolean fill,
+	public void DrawPolyhedre(final Polygon p, final Color c, final double alpha, final boolean fill,
 		final double height, final Integer angle, final boolean drawPolygonContour, final Color border,
 		final boolean rounded) {
-		DrawPolygon(p, z, c, alpha, fill, border, false, angle, drawPolygonContour, rounded);
-		DrawPolygon(p, z + height, c, alpha, fill, border, false, angle, drawPolygonContour, rounded);
+		DrawPolygon(p, c, alpha, fill, border, false, angle, drawPolygonContour, rounded);
+		myGl.glTranslated(0, 0, height);
+		DrawPolygon(p, c, alpha, fill, border, false, angle, drawPolygonContour, rounded);
+		myGl.glTranslated(0, 0, -height);
 		// FIXME : Will be wrong if angle =!0
-		DrawFaces(p, c, alpha, fill, border, z, height, drawPolygonContour, false);
+		DrawFaces(p, c, alpha, fill, border, height, drawPolygonContour, false);
 
 	}
 
@@ -345,11 +337,9 @@ public class JTSDrawer {
 	 * @param height
 	 *            : height of the polygon
 	 */
-	public void DrawFaces(Polygon p, Color c, double alpha, boolean fill, Color b, double z_layer, double height,
+	public void DrawFaces(Polygon p, Color c, double alpha, boolean fill, Color b, double height,
 		boolean drawPolygonContour, boolean drawNormal) {
 
-		// Set z_layer
-		myGl.glTranslated(0.0d, 0.0d, z_layer);
 
 		myGl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
 		double elevation = 0.0d;
@@ -437,7 +427,7 @@ public class JTSDrawer {
 			}
 		}
 
-		myGl.glTranslated(0.0d, 0.0d, (float) -z_layer);
+
 
 	}
 
