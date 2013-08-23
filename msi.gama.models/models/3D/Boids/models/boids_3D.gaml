@@ -276,7 +276,7 @@ entities {
 			draw triangle(boids_size) color:rgb('black');
 		}
 		aspect image {
-			draw (images at (rnd(2))) size: boids_size rotate: heading color: rgb('black') ;     
+			draw (images at (rnd(2))) size: boids_size rotate: heading color: rgb('black') ;			    
 		}
 				
 		aspect dynamicColor{
@@ -288,8 +288,7 @@ entities {
 	} 
 	
 	species obstacle skills: [moving] {
-		float speed <- 0.1;
-			 
+		float speed <- 0.1;	 
 		aspect default {
 			draw triangle(20) color: rgb('yellow') depth:5;
 		}
@@ -301,8 +300,8 @@ experiment start type: gui {
 	output {
 		display RealBoids  type:opengl ambient_light:255 z_fighting:false{
 			image name:'background' file:'../images/ocean.jpg';
-			species boids aspect: basic z:0.1 transparency:0.5;
-			species boids aspect: basic z:0.1 transparency:0.5;
+			species boids aspect: dynamicColor z:0.1 transparency:0.5;
+			species boids aspect: image z:0.11 transparency:0.5;
 			species boids_goal z:0.1 transparency:0.2;
 			species obstacle z:0.1; 		
 		}
@@ -315,10 +314,10 @@ experiment MultipleView type: gui {
 
 		display RealBoids   type:opengl ambient_light:255 {
 			image name:'background' file:'../images/ocean.jpg' z:0;
-			species boids aspect: image z:0.2 transparency:0.5;
+			species boids aspect: image z:0.25 transparency:0.5;
 			species boids_goal z:0.25 transparency:0.2;
 			species obstacle ;
-			species boids  aspect: dynamicColor z:0.2 transparency:0.2 ;
+			species boids  aspect: dynamicColor z:0.24 transparency:0.2 ;
 			species boids_goal  transparency:0.2; 		
 		}
 		
