@@ -85,7 +85,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean tesselation = true;
 	private boolean inertia = false;
 	private boolean stencil = false;
-	private boolean z_fighting = true;
+	private boolean z_fighting = false;
 	private boolean showfps = false;
 	private boolean drawEnv = true;
 	private Color ambientLightColor = new GamaColor(125, 125, 125);
