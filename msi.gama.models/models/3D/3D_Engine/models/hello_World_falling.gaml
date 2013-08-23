@@ -27,6 +27,7 @@ global {
 		create Physical3DWorld{
 		  set world2 <- first(Physical3DWorld as list);
 		  ask world2 {set registeredAgents <-  (ball as list) + (floor as list);}	
+		  set world2.gravity <- true;
 		}
 		
 		
@@ -65,7 +66,7 @@ entities {
 		
 	}
 }
-experiment Rain type: gui {
+experiment Hello_World_Falling type: gui {
 output {
 	display Rain  type: opengl {
 		species floor;

@@ -70,6 +70,7 @@ global {
 		create Physical3DWorld;
 		set world2 <- first(Physical3DWorld as list);
 		ask world2 {set registeredAgents <-   (ball as list) + (floor as list) + (wall as list);}
+		set world2.gravity <- true;
 		
 	}
 		reflex computeForces  {
