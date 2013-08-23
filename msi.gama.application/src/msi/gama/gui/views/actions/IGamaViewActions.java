@@ -39,4 +39,5 @@ public interface IGamaViewActions {
 	public final static int ROTATION = 23;
 	public final static int SWITCHCAMERA = 24;
 	public final static int OVERLAY = 25;
+	public final static int OPENGL = 26;
 }

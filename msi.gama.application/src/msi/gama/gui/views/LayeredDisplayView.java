@@ -63,8 +63,8 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	protected Integer[] getToolbarActionsId() {
 		IDescription description = output.getDescription();
 		if ( description.getFacets().equals("type", "opengl") || description.getFacets().equals("type", "3D") ) { return new Integer[] {
-			PAUSE, REFRESH, SYNC, SEP, LAYERS, OVERLAY, SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT, SEP, FOCUS, SEP, CAMERA, ARCBALL, SWITCHCAMERA, SEP, TRIANGULATION, SPLITLAYER, ROTATION, SEP, HIGHLIGHT_COLOR,
-			RENDERING, SNAP }; }
+			PAUSE, REFRESH, SYNC, SEP, LAYERS, OVERLAY, SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT, SEP, FOCUS, SEP, OPENGL, SEP,
+			HIGHLIGHT_COLOR, RENDERING, SNAP }; }
 		return new Integer[] { PAUSE, REFRESH, SYNC, SEP, LAYERS, OVERLAY, SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT, SEP,
 			FOCUS, SEP, HIGHLIGHT_COLOR, RENDERING, SNAP };
 	}
@@ -124,7 +124,9 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 			@Override
 			public void run() {
-				surfaceComposite.forceFocus();
+				if ( surfaceComposite.getDisplay() != null ) {
+					surfaceComposite.setFocus();
+				}
 			}
 		};
 

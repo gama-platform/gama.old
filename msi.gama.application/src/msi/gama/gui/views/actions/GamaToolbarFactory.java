@@ -54,14 +54,8 @@ public class GamaToolbarFactory implements IGamaViewActions {
 				return new HighlightColorItem(view);
 			case CAMERA:
 				return new CameraItem(view);
-				// case PICKING:
-				// return new PickingItem(view);
-			case SHAPEFILE:
-				return new ShapeFileItem(view);
 			case ARCBALL:
 				return new ArcBallItem(view);
-			case SELECT_RECTANGLE:
-				return new SelectRectangleItem(view);
 			case TRIANGULATION:
 				return new TriangulationItem(view);
 			case SPLITLAYER:
@@ -72,6 +66,8 @@ public class GamaToolbarFactory implements IGamaViewActions {
 				return new SwitchCameraItem(view);
 			case OVERLAY:
 				return new OverlayItem(view);
+			case OPENGL:
+				return new OpenGLItem(view);
 
 		}
 		return null;

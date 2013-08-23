@@ -30,7 +30,7 @@ public class RenderingItem extends GamaViewItem {
 	 */
 	@Override
 	protected IContributionItem createItem() {
-		IAction action = new Action("Turn anti-aliasing on and off", IAction.AS_CHECK_BOX) {
+		IAction action = new Action("Toggle antialiasing", IAction.AS_CHECK_BOX) {
 
 			@Override
 			public void run() {

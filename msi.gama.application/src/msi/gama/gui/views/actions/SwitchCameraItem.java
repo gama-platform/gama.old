@@ -1,9 +1,8 @@
 package msi.gama.gui.views.actions;
 
-
 /**
  * Created by drogoul, 19 janv. 2012
- *
+ * 
  */
 
 import msi.gama.gui.views.*;
@@ -11,10 +10,10 @@ import org.eclipse.jface.action.*;
 
 /**
  * The class SnapshotItem.
- *
+ * 
  * @author drogoul
  * @since 19 janv. 2012
- *
+ * 
  */
 public class SwitchCameraItem extends GamaViewItem {
 
@@ -32,7 +31,7 @@ public class SwitchCameraItem extends GamaViewItem {
 	@Override
 	protected IContributionItem createItem() {
 		IAction action =
-			new GamaAction("Switch camera between Arcball and FreeFly", IAction.AS_CHECK_BOX,
+			new GamaAction("Switch camera", "Switch camera between Arcball and FreeFly", IAction.AS_CHECK_BOX,
 				getImageDescriptor("icons/switch_camera_button.png")) {
 
 				@Override

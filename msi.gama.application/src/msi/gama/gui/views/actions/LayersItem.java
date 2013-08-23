@@ -30,7 +30,7 @@ public class LayersItem extends GamaViewItem {
 	@Override
 	protected IContributionItem createItem() {
 		IAction action =
-			new GamaAction("Open/Close layers controls", IAction.AS_PUSH_BUTTON,
+			new GamaAction("Toggle side panel", "Open/Close layers controls", IAction.AS_PUSH_BUTTON,
 				getImageDescriptor("icons/application-sidebar-list.png")) {
 
 				@Override

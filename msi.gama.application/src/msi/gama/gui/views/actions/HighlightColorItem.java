@@ -68,7 +68,7 @@ public class HighlightColorItem extends GamaViewItem {
 	protected IContributionItem createItem() {
 
 		action =
-			new GamaAction("Choose the color for highlighting agents", IAction.AS_PUSH_BUTTON,
+			new GamaAction("Highlight color", "Choose the color for highlighting agents", IAction.AS_PUSH_BUTTON,
 				ImageDescriptor.createFromImage(getImage())) {
 
 				@Override

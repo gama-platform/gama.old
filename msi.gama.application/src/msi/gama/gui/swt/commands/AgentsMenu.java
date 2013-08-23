@@ -41,11 +41,11 @@ import org.eclipse.swt.widgets.*;
 
 public class AgentsMenu extends ContributionItem {
 
-	static MenuItem separate(final Menu parent) {
+	public static MenuItem separate(final Menu parent) {
 		return new MenuItem(parent, SWT.SEPARATOR);
 	}
 
-	static MenuItem separate(final Menu parent, final String s) {
+	public static MenuItem separate(final Menu parent, final String s) {
 		MenuItem string = new MenuItem(parent, SWT.PUSH);
 		string.setEnabled(false);
 		string.setText(s);
@@ -287,13 +287,16 @@ public class AgentsMenu extends ContributionItem {
 				cascadingAgentMenuItem(menu, agent, actions);
 			}
 		} else {
-			final int nb = size / 100;
+			final int nb = size / 100 + 1;
 			for ( int i = 0; i < nb; i++ ) {
+				final int begin = i * 100;
+				final int end = Math.min((i + 1) * 100, size);
+				if ( begin >= end ) {
+					break;
+				}
 				final MenuItem rangeItem = new MenuItem(menu, SWT.CASCADE);
 				final Menu rangeMenu = new Menu(rangeItem);
 				rangeItem.setMenu(rangeMenu);
-				final int begin = i * 100;
-				final int end = Math.min((i + 1) * 100, size);
 				rangeItem.setText("Id " + begin + " to " + (end - 1));
 				rangeItem.setImage(SwtGui.speciesImage);
 				rangeMenu.addListener(SWT.Show, new Listener() {
@@ -431,11 +434,14 @@ public class AgentsMenu extends ContributionItem {
 				populateAgent(speciesMenu, a, listener);
 			}
 		} else {
-			final int nb = size / 100;
+			final int nb = size / 100 + 1;
 			for ( int i = 0; i < nb; i++ ) {
-				final MenuItem rangeItem = new MenuItem(speciesMenu, SWT.CASCADE);
 				final int begin = i * 100;
 				final int end = Math.min((i + 1) * 100, size);
+				if ( begin >= end ) {
+					break;
+				}
+				final MenuItem rangeItem = new MenuItem(speciesMenu, SWT.CASCADE);
 				rangeItem.setText("From " + begin + " to " + (end - 1));
 				final Menu rangeMenu = new Menu(rangeItem);
 				for ( int j = begin; j < end; j++ ) {

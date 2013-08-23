@@ -426,10 +426,4 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		zoomFit = true;
 	}
 
-	@Override
-	public void setSize(final int width, final int height) {
-		// GuiUtils.debug("AbstractAWTDisplaySurface.setSize " + width + " " + height);
-		super.setSize(width, height);
-	}
-
 }

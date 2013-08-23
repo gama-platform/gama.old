@@ -33,16 +33,16 @@ public class RefreshItem extends GamaViewItem {
 	@Override
 	protected IContributionItem createItem() {
 		IAction action =
-			new GamaAction("Change view refresh rate", IAction.AS_PUSH_BUTTON,
+			new GamaAction("Refresh rate", "Change view refresh rate", IAction.AS_PUSH_BUTTON,
 				getImageDescriptor("icons/button_refresh.png")) {
 
 				@Override
 				public void run() {
 					IOutput output = view.getOutput();
 					final InputDialog dlg =
-						new InputDialog(Display.getCurrent().getActiveShell(), output.getName() +
-							" refresh rate", "Number of steps between each refresh of " +
-							output.getName(), String.valueOf(output.getRefreshRate()), null);
+						new InputDialog(Display.getCurrent().getActiveShell(), output.getName() + " refresh rate",
+							"Number of steps between each refresh of " + output.getName(), String.valueOf(output
+								.getRefreshRate()), null);
 					if ( dlg.open() == Window.OK ) {
 						output.setRefreshRate(Integer.valueOf(dlg.getValue()));
 					}

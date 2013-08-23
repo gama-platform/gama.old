@@ -21,7 +21,7 @@ public class SynchronizeItem extends GamaViewItem {
 	 */
 	SynchronizeItem(final GamaViewPart view) {
 		super(view);
-		
+
 		if ( !(view instanceof IViewWithZoom) ) { throw new IllegalArgumentException(); }
 
 	}
@@ -32,12 +32,12 @@ public class SynchronizeItem extends GamaViewItem {
 	@Override
 	protected IContributionItem createItem() {
 		final IAction action =
-			new GamaAction("Synchronize " + view.getTitle() + " and the execution of the model",
-				IAction.AS_CHECK_BOX, getImageDescriptor("icons/button_sync.png")) {
+			new GamaAction("Synchronize with simulation", "Synchronize " + view.getTitle() +
+				" and the execution of the model", IAction.AS_CHECK_BOX, getImageDescriptor("icons/button_sync.png")) {
 
 				@Override
 				public void run() {
-					((IViewWithZoom)view).setSynchronized(isChecked());
+					((IViewWithZoom) view).setSynchronized(isChecked());
 				}
 
 			};

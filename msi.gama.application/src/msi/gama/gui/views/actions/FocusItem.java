@@ -51,7 +51,7 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 	@Override
 	protected IContributionItem createItem() {
 		final IAction action =
-			new GamaAction("Browse through all displayed agents", IAction.AS_DROP_DOWN_MENU,
+			new GamaAction("Browse displayed agents", "Browse through all displayed agents", IAction.AS_DROP_DOWN_MENU,
 				getImageDescriptor("/icons/display_species.png")) {
 
 				@Override

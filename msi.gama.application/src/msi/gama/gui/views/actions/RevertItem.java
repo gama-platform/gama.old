@@ -31,8 +31,8 @@ public class RevertItem extends GamaViewItem {
 	@Override
 	protected IContributionItem createItem() {
 		IAction action =
-			new GamaAction("Revert parameters to their initial values", IAction.AS_PUSH_BUTTON,
-				getImageDescriptor("icons/button_undo.png")) {
+			new GamaAction("Revert parameter values", "Revert parameters to their initial values",
+				IAction.AS_PUSH_BUTTON, getImageDescriptor("icons/button_undo.png")) {
 
 				@Override
 				public void run() {

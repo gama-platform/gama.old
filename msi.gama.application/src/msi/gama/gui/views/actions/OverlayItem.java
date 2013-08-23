@@ -30,7 +30,7 @@ public class OverlayItem extends GamaViewItem {
 	@Override
 	protected IContributionItem createItem() {
 		IAction action =
-			new GamaAction("Show/Hide overlay", IAction.AS_PUSH_BUTTON,
+			new GamaAction("Toggle bottom overlay", "Show/Hide overlay", IAction.AS_PUSH_BUTTON,
 				getImageDescriptor("icons/application--overlay.png")) {
 
 				@Override

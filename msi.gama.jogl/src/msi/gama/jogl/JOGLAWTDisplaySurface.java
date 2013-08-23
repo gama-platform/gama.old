@@ -42,7 +42,6 @@ import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
-import msi.gama.util.IList;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.UserCommandStatement;
@@ -152,7 +151,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	@Override
 	public void initialize(final double env_width, final double env_height, final LayeredDisplayOutput out) {
-		GuiUtils.debug("JOGLAWTDisplaySurface1.1.initialize");
 		super.initialize(env_width, env_height, out);
 
 		setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -177,7 +175,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		renderer.setCameraPosition(getOutput().getCameraPos());
 		renderer.setCameraLookPosition(getOutput().getCameraLookPos());
 		renderer.setCameraUpVector(getOutput().getCameraUpVector());
-
+		GuiUtils.debug("JOGLAWTDisplaySurface.initialize : jogl canvas added; self size = " + getSize());
 		add(renderer.canvas, BorderLayout.CENTER);
 		// openGLGraphicsGLRender.animator.start();
 		zoomFit();
@@ -189,7 +187,10 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 			@Override
 			public void componentResized(final ComponentEvent e) {
-				resizeImage(getWidth(), getHeight());
+				// resizeImage(getWidth(), getHeight());
+				if ( renderer != null && renderer.canvas != null ) {
+					renderer.canvas.setSize(getWidth(), getHeight());
+				}
 				initOutput3D(out.getOutput3D(), out.getOutput3DNbCycles());
 				updateDisplay();
 				previousPanelSize = getSize();
@@ -354,20 +355,20 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		agentsMenu.show(this, renderer.camera.mousePosition.x, renderer.camera.mousePosition.y);
 
 	}
-	
+
 	public void selectSeveralAgents(final Iterator<IAgent> agents, final int layerId) {
 		agentsMenu.removeAll();
 		// Adding the world
 		SelectedAgent sa = new SelectedAgent(GAMA.getSimulation(), "World agent");
 		sa.buildMenuItems(agentsMenu, null);
-		while (agents.hasNext()){
+		while (agents.hasNext()) {
 			IAgent a = agents.next();
 			if ( a != null ) {
 				agentsMenu.addSeparator();
 				sa = new SelectedAgent(a);
 				sa.buildMenuItems(agentsMenu, manager.getItems().get(layerId));
 			}
-	    }
+		}
 		agentsMenu.show(this, renderer.camera.mousePosition.x, renderer.camera.mousePosition.y);
 
 	}
@@ -385,12 +386,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		if ( iGraphics == null ) { return; }
 		// ex[0] = null;
 		manager.drawLayersOn(iGraphics);
-	}
-
-	@Override
-	public void paintComponent(final Graphics g) {
-		super.paintComponent(g);
-		// redrawNavigator();
 	}
 
 	@Override

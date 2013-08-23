@@ -30,14 +30,14 @@ public class SaveItem extends GamaViewItem {
 	 */
 	@Override
 	protected IContributionItem createItem() {
-		IAction action =
-			new Action("Save the current selection of agents and attributes into a TSV file", IAction.AS_PUSH_BUTTON) {
+		IAction action = new Action("Save as CSV", IAction.AS_PUSH_BUTTON) {
 
-				@Override
-				public void run() {
-					((PopulationInspectView) getView()).saveAsCSV();
-				}
-			};
+			@Override
+			public void run() {
+				((PopulationInspectView) getView()).saveAsCSV();
+			}
+		};
+		action.setToolTipText("Save the current selection of agents and attributes into a CSV file");
 		action.setImageDescriptor(getImageDescriptor("icons/button_save.png"));
 		return new ActionContributionItem(action);
 	}

@@ -30,7 +30,7 @@ public class PauseItem extends GamaViewItem {
 	@Override
 	protected IContributionItem createItem() {
 		IAction action =
-			new GamaAction("Pause " + view.getTitle(), IAction.AS_PUSH_BUTTON,
+			new GamaAction("Pause", "Pause " + view.getTitle(), IAction.AS_PUSH_BUTTON,
 				getImageDescriptor("icons/button_pause.png")) {
 
 				@Override

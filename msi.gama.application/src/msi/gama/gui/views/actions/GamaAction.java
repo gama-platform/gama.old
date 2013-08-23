@@ -16,9 +16,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
  */
 public abstract class GamaAction extends Action {
 
-	public GamaAction(final String text, final int style, final ImageDescriptor image) {
-		super("", style);
-		setToolTipText(text);
+	public GamaAction(final String title, final String tooltip, final int style, final ImageDescriptor image) {
+		super(title, style);
+		setToolTipText(tooltip);
 		setImageDescriptor(image);
 	}
 

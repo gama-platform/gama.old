@@ -30,7 +30,7 @@ public class TriangulationItem extends GamaViewItem {
 	@Override
 	protected IContributionItem createItem() {
 		IAction action =
-			new GamaAction("Triangle view: Show triangulated shape", IAction.AS_CHECK_BOX,
+			new GamaAction("Apply triangulation", "Triangle view: Show triangulated shape", IAction.AS_CHECK_BOX,
 				getImageDescriptor("icons/button_triangulation.png")) {
 
 				@Override

@@ -227,23 +227,22 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		}
 
 		// Blending control
-		
-		  if ( BLENDING_ENABLED ) {
-		  gl.glEnable(GL_BLEND); // Turn blending on
-		  } else {
-		  gl.glDisable(GL_BLEND); // Turn blending off
-		  if ( !getStencil() ) {
-		  gl.glEnable(GL_DEPTH_TEST);
-		  } else {
-		  gl.glEnable(GL_STENCIL_TEST);
-		  }
-		  }
-		 
+
+		if ( BLENDING_ENABLED ) {
+			gl.glEnable(GL_BLEND); // Turn blending on
+		} else {
+			gl.glDisable(GL_BLEND); // Turn blending off
+			if ( !getStencil() ) {
+				gl.glEnable(GL_DEPTH_TEST);
+			} else {
+				gl.glEnable(GL_STENCIL_TEST);
+			}
+		}
 
 		// Use polygon offset for a better edges rendering
 		// (http://www.glprogramming.com/red/chapter06.html#name4)
-		//gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
-		//gl.glPolygonOffset(1, 1);
+		// gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
+		// gl.glPolygonOffset(1, 1);
 
 		// gl.glDisable(GL_DEPTH_TEST);
 
@@ -295,9 +294,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glLoadIdentity();
 		glu.gluPerspective(45.0f, aspect, 0.1f, camera.getMaxDim() * 100);
-		glu.gluLookAt(camera.getPosition().getX(), camera.getPosition().getY(), camera.getPosition().getZ(), camera
-			.getTarget().getX(), camera.getTarget().getY(), camera.getTarget().getZ(), camera.getUpVector().getX(),
-			camera.getUpVector().getY(), camera.getUpVector().getZ());
+		if ( camera != null ) {
+			glu.gluLookAt(camera.getPosition().getX(), camera.getPosition().getY(), camera.getPosition().getZ(), camera
+				.getTarget().getX(), camera.getTarget().getY(), camera.getTarget().getZ(), camera.getUpVector().getX(),
+				camera.getUpVector().getY(), camera.getUpVector().getZ());
+		}
 		arcBall.setBounds(width, height);
 	}
 
@@ -354,7 +355,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		this.drawModel();
 		gl.glTranslatef(0, 0, -envMaxDim);
 		gl.glRotatef(-90, 1, 0, 0);
-		
+
 	}
 
 	public void switchCamera() {
@@ -473,7 +474,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public boolean getStencil() {
 		return stencil;
 	}
-	
+
 	public void setZFighting(final boolean z) {
 		this.z_fighting = z;
 	}
