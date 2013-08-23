@@ -236,6 +236,9 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	@Override
 	public void mouseClicked(final MouseEvent arg0) {
+		if(arg0.getClickCount() > 1){
+			myRenderer.displaySurface.zoomFit();
+		}
 		if ( (arg0.isShiftDown() || arg0.isAltDown())) {
 			Point point = myRenderer.getIntWorldPointFromWindowPoint(new Point(arg0.getX(), arg0.getY()));
 
