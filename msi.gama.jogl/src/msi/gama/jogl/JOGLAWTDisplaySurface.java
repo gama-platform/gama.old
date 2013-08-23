@@ -33,6 +33,7 @@ import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.jogl.scene.ModelScene;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.Camera.AbstractCamera;
+import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -710,6 +711,11 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		renderer.canvas.addMouseListener(e);
 	}
 
+	@Override
+	public synchronized void addMouseMotionListener(final MouseMotionListener e) {
+		renderer.canvas.addMouseMotionListener(e);
+	}
+
 	public Color getBgColor() {
 		return bgColor;
 	}
@@ -732,6 +738,17 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		Point2D.Double p = renderer.getRealWorldPointFromWindowPoint(renderer.camera.mousePosition);
 		if ( p == null ) { return null; }
 		return new GamaPoint(p.x, -p.y);
+	}
+
+	/**
+	 * Method getCameraPosition()
+	 * @see msi.gama.common.interfaces.IDisplaySurface.OpenGL#getCameraPosition()
+	 */
+	@Override
+	public double[] getCameraPosition() {
+		if ( renderer == null && renderer.camera == null ) { return new double[] { 0, 0, 0 }; }
+		Vector3D v = renderer.camera.getPosition();
+		return new double[] { v.x, v.y, v.z };
 	}
 
 }

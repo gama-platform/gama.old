@@ -705,4 +705,13 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 	@Override
 	public void followAgent(final IAgent a) {}
 
+	/**
+	 * Method getCameraPosition()
+	 * @see msi.gama.common.interfaces.IDisplaySurface.OpenGL#getCameraPosition()
+	 */
+	@Override
+	public double[] getCameraPosition() {
+		return null;
+	}
+
 }

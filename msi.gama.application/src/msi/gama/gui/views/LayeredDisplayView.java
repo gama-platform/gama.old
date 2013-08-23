@@ -26,7 +26,7 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.layers.AbstractLayer;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.swt.controls.Overlay;
+import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.swt.perspectives.ModelingPerspective;
 import msi.gama.gui.swt.swing.EmbeddedSwingComposite;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -35,18 +35,21 @@ import msi.gaml.descriptions.IDescription;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.*;
 
 public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements IViewWithZoom {
 
 	public static final String ID = GuiUtils.LAYER_VIEW_ID;
 	private EmbeddedSwingComposite surfaceComposite;
+	private Composite leftComposite;
 	protected IPerspectiveListener perspectiveListener;
 	protected GridData data;
-	protected Overlay overlay;
+	protected DisplayOverlay overlay;
+	protected LayersOverlay layersOverlay;
 	protected int zoomLevel;
 
 	@Override
@@ -73,30 +76,46 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	@Override
 	public void ownCreatePartControl(final Composite c) {
 		super.ownCreatePartControl(c);
-		parent = new SashForm(c, SWT.HORIZONTAL | SWT.SMOOTH);
+		parent = new SashForm(c, SWT.SMOOTH | SWT.HORIZONTAL);
+		leftComposite = new Composite(parent, SWT.NONE);
+		createSurfaceComposite();
+		Composite trueParent = parent;
+		layersOverlay = new LayersOverlay(this);
+		parent = layersOverlay.getPopup();
 		createViewer();
+		getViewer().addControlListener(new ControlAdapter() {
+
+			@Override
+			public void controlResized(final ControlEvent e) {
+				layersOverlay.resize();
+			}
+
+		});
+		getViewer().setLayoutData(null);
+		getViewer().setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		getViewer().setBackgroundMode(SWT.INHERIT_NONE);
+		parent = trueParent;
 		Composite general = new Composite(getViewer(), SWT.None);
 		GridLayout layout = new GridLayout(2, false);
 
 		general.setLayout(layout);
 
-		if ( !getOutput().isSWT() ) {
-			EditorFactory.create(general, "Color:", getOutput().getBackgroundColor(), new EditorListener<Color>() {
+		EditorFactory.create(general, "Color:", getOutput().getBackgroundColor(), new EditorListener<Color>() {
 
-				@Override
-				public void valueModified(final Color newValue) {
-					getOutput().setBackgroundColor(newValue);
-				}
-			});
-			createItem("Background", null, general, true);
-			displayItems();
-			createSurfaceComposite();
-			overlay = new Overlay(this);
-			overlay.display();
-			getOutput().getSurface().setZoomListener(this);
-			((SashForm) parent).setWeights(new int[] { 1, 2 });
-			((SashForm) parent).setMaximizedControl(surfaceComposite);
-		}
+			@Override
+			public void valueModified(final Color newValue) {
+				getOutput().setBackgroundColor(newValue);
+			}
+		});
+		createItem("Background", null, general, true);
+		displayItems();
+
+		overlay = new DisplayOverlay(this);
+		// overlay.display();
+		// layersOverlay.display();
+		getOutput().getSurface().setZoomListener(this);
+		((SashForm) parent).setWeights(new int[] { 1, 2 });
+		((SashForm) parent).setMaximizedControl(surfaceComposite);
 
 	}
 
@@ -106,6 +125,14 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			@Override
 			public void run() {
 				surfaceComposite.forceFocus();
+			}
+		};
+
+		final Runnable displayOverlay = new Runnable() {
+
+			@Override
+			public void run() {
+				overlay.display();
 			}
 		};
 		final java.awt.event.MouseListener mlAwt = new java.awt.event.MouseAdapter() {
@@ -125,9 +152,13 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 			@Override
 			public void mouseMoved(final java.awt.event.MouseEvent e) {
-				GuiUtils.asyncRun(forceFocus);
+				GuiUtils.asyncRun(displayOverlay);
 			}
 
+			@Override
+			public void mouseDragged(final java.awt.event.MouseEvent e) {
+				GuiUtils.asyncRun(displayOverlay);
+			}
 		};
 
 		OutputSynchronizer.incInitializingViews(getOutput().getName()); // incremented in the SWT thread
@@ -139,11 +170,20 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 				outputName = getOutput().getName();
 				isOpenGL = getOutput().isOpenGL();
 				final JComponent frameAwt = (JComponent) getOutput().getSurface();
-				getFrame().addMouseListener(mlAwt);
-				getFrame().addMouseMotionListener(mlAwt2);
+				frameAwt.addMouseListener(mlAwt);
+				frameAwt.addMouseMotionListener(mlAwt2);
 				return frameAwt;
 			}
 		};
+
+		surfaceComposite.addMouseTrackListener(new MouseTrackAdapter() {
+
+			@Override
+			public void mouseEnter(final MouseEvent e) {
+				surfaceComposite.setFocus();
+			}
+
+		});
 
 		perspectiveListener = new IPerspectiveListener() {
 
@@ -203,8 +243,16 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	}
 
 	public void toggleControls() {
-		((SashForm) parent).setMaximizedControl(((SashForm) parent).getMaximizedControl() == null ? surfaceComposite
-			: null);
+		// Control c = ((SashForm) parent).getMaximizedControl();
+		// if ( c == null ) {
+		// The order is important
+		layersOverlay.toggle();
+		// ((SashForm) parent).setMaximizedControl(surfaceComposite);
+		// } else {
+		// ((SashForm) parent).setMaximizedControl(null);
+		// layersOverlay.toggle();
+		// }
+
 	}
 
 	@Override
@@ -454,6 +502,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		// FIXME Remove the listeners
 		surfaceComposite.dispose();
 		overlay.close();
+		layersOverlay.close();
 		super.dispose();
 	}
 
@@ -520,19 +569,19 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 			}
 		});
+		overlay.toggle();
 
 	}
 
 	public Point getOverlayPosition() {
 		Point p = surfaceComposite.toDisplay(surfaceComposite.getLocation());
 		// FIXME Workaround for the bug when displaying the sash view.
-		SashForm sash = (SashForm) parent;
-		Control c = sash.getMaximizedControl();
-		if ( c == null ) {
-			Control left = sash.getTabList()[0];
-			int width = left.getSize().x + 3;
-			p = new Point(p.x - width, p.y);
-		}
+		// SashForm sash = (SashForm) parent;
+		// Control c = sash.getMaximizedControl();
+		// if ( c == null ) {
+		// int width = leftComposite.getSize().x + 3;
+		// p = new Point(p.x - width, p.y);
+		// }
 		Point s = surfaceComposite.getSize();
 		int x = p.x;
 		int y = p.y + s.y - 16;
@@ -548,14 +597,29 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		IDisplaySurface surface = getOutput().getSurface();
 		boolean paused = surface.isPaused();
 		boolean synced = surface.isSynchronized();
+		boolean openGL = getOutput().isOpenGL();
+		double cx = 0, cy = 0, cz = 0;
+		if ( openGL ) {
+			IDisplaySurface.OpenGL ds = (IDisplaySurface.OpenGL) surface;
+			double[] cpos = ds.getCameraPosition();
+			cx = cpos[0];
+			cy = -cpos[1];
+			cz = cpos[2];
+		}
 		// double height = surface.getEnvHeight();
 		// double width = surface.getEnvWidth();
 
 		GamaPoint point = surface.getModelCoordinates();
 		String x = point == null ? "N/A" : String.format("%8.2f", point.x);
 		String y = point == null ? "N/A" : String.format("%8.2f", point.y);
-		return String.format("X:%10s | Y:%10s | Zoom:%10d%%" + (paused ? " | Paused" : "") +
-			(synced ? " | Synchronized" : ""), x, y, zoomLevel);
+		Object[] objects = null;
+		if ( !openGL ) {
+			objects = new Object[] { x, y, zoomLevel };
+		} else {
+			objects = new Object[] { x, y, zoomLevel, cx, cy, cz };
+		}
+		return String.format("X%10s | Y%10s | Zoom%10d%%" + (paused ? " | Paused" : "") +
+			(synced ? " | Synchronized" : "") + (openGL ? " | Camera [%.2f;%.2f;%.2f]" : ""), objects);
 	};
 
 	public Composite getComponent() {
@@ -566,10 +630,17 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		overlay.display();
 	}
 
-	/**
-	 * 
-	 */
 	public void toogleOverlay() {
-		overlay.setHidden(!overlay.isHidden());
+		overlay.toggle();
 	}
+
+	public Point getLayersOverlayPosition() {
+		return surfaceComposite.toDisplay(surfaceComposite.getLocation());
+	}
+
+	public Point getLayersOverlaySize() {
+		Point s = surfaceComposite.getSize();
+		return new Point(s.x / 3, s.y - 16);
+	}
+
 }

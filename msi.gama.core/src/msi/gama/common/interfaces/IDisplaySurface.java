@@ -75,6 +75,11 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 		void toggleCamera();
 
+		/**
+		 * @return the position of the camera
+		 */
+		double[] getCameraPosition();
+
 	}
 
 	public interface IZoomListener {
