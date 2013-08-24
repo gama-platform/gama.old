@@ -21,8 +21,8 @@ public class DisplayOverlay extends AbstractOverlay {
 
 	public DisplayOverlay(final LayeredDisplayView view) {
 		super(view);
-		getPopup().setCapture(false);
-		getPopup().setEnabled(false);
+		// getPopup().setCapture(false);
+		// getPopup().setEnabled(false);
 	}
 
 	@Override
@@ -39,7 +39,9 @@ public class DisplayOverlay extends AbstractOverlay {
 
 	@Override
 	protected void populateControl() {
-		getControl().setText(getView().getOverlayText());
+		if ( !getControl().isDisposed() ) {
+			getControl().setText(getView().getOverlayText());
+		}
 	}
 
 	@Override

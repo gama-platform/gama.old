@@ -119,14 +119,15 @@ public class LayersOverlay extends AbstractOverlay {
 	@Override
 	public void display() {
 		if ( isHidden() ) { return; }
-		// We first verify that the popup is still ok
 		super.display();
+		if ( nonTransparentShell.isDisposed() ) { return; }
 		nonTransparentShell.setVisible(true);
 	}
 
 	@Override
 	public void relocate() {
 		super.relocate();
+		if ( nonTransparentShell.isDisposed() ) { return; }
 		nonTransparentShell.setLocation(super.getPopup().getLocation());
 	}
 
@@ -134,6 +135,7 @@ public class LayersOverlay extends AbstractOverlay {
 	public void resize() {
 		// if ( isHidden() ) { return; }
 		super.resize();
+		if ( super.getPopup().isDisposed() ) { return; }
 		// nonTransparentShell.setLocation(super.getPopup().getLocation());
 		nonTransparentShell.setSize(nonTransparentShell.computeSize(customWidth == null ? SWT.DEFAULT : customWidth,
 			SWT.DEFAULT));

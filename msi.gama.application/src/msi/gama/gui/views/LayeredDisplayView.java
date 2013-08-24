@@ -28,7 +28,7 @@ import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.swt.perspectives.ModelingPerspective;
-import msi.gama.gui.swt.swing.EmbeddedSwingComposite;
+import msi.gama.gui.swt.swing.experimental.core.SwingControl;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.*;
 import msi.gaml.descriptions.IDescription;
@@ -44,7 +44,7 @@ import org.eclipse.ui.*;
 public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements IViewWithZoom {
 
 	public static final String ID = GuiUtils.LAYER_VIEW_ID;
-	private EmbeddedSwingComposite surfaceComposite;
+	private SwingControl surfaceComposite;
 	private Composite leftComposite;
 	protected IPerspectiveListener perspectiveListener;
 	protected GridData data;
@@ -124,7 +124,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 			@Override
 			public void run() {
-				if ( surfaceComposite.getDisplay() != null ) {
+				if ( surfaceComposite.getDisplay() != null && !surfaceComposite.isFocusControl() ) {
 					surfaceComposite.setFocus();
 				}
 			}
@@ -137,6 +137,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 				overlay.display();
 			}
 		};
+		// TODO Temporarily disabled
 		final java.awt.event.MouseListener mlAwt = new java.awt.event.MouseAdapter() {
 
 			@Override
@@ -163,26 +164,56 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			}
 		};
 
+		final boolean isOpenGL = getOutput().isOpenGL();
+		final String outputName = getOutput().getName();
+
 		OutputSynchronizer.incInitializingViews(getOutput().getName()); // incremented in the SWT thread
 		final int flags = Platform.getOS().equals(Platform.OS_MACOSX) ? SWT.NO_REDRAW_RESIZE : SWT.NONE;
-		surfaceComposite = new EmbeddedSwingComposite(parent, flags) {
+		surfaceComposite = new SwingControl(parent, flags) {
 
 			@Override
 			protected JComponent createSwingComponent() {
-				outputName = getOutput().getName();
-				isOpenGL = getOutput().isOpenGL();
+
 				final JComponent frameAwt = (JComponent) getOutput().getSurface();
+				// TODO Temporarily disabled
 				frameAwt.addMouseListener(mlAwt);
 				frameAwt.addMouseMotionListener(mlAwt2);
 				return frameAwt;
 			}
+
+			@Override
+			public Composite getLayoutAncestor() {
+
+				// TODO CHECK THIS
+				return null;
+			}
+
+			@Override
+			public boolean isSwtTabOrderExtended() {
+				return false;
+			}
+
+			@Override
+			public boolean isAWTPermanentFocusLossForced() {
+				return true;
+			}
+
+			@Override
+			public void afterComponentCreatedSWTThread() {
+				if ( !isOpenGL ) {
+					// Deferred to the OpenGL renderer to signify its initialization
+					// see JOGLAWTGLRendered.init()
+					OutputSynchronizer.decInitializingViews(outputName);
+				}
+			}
 		};
 
+		// TODO Temporarily disabled
 		surfaceComposite.addMouseTrackListener(new MouseTrackAdapter() {
 
 			@Override
 			public void mouseEnter(final MouseEvent e) {
-				surfaceComposite.setFocus();
+				GuiUtils.asyncRun(forceFocus);
 			}
 
 		});
@@ -209,11 +240,11 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 				}
 			}
 		};
-		SwtGui.getWindow().addPerspectiveListener(perspectiveListener);
-		if ( Platform.getOS().equals(Platform.OS_MACOSX) ) {
-			surfaceComposite.setRedraw(false);
-		}
-		surfaceComposite.populate();
+		// SwtGui.getWindow().addPerspectiveListener(perspectiveListener);
+		// if ( Platform.getOS().equals(Platform.OS_MACOSX) ) {
+		// surfaceComposite.setRedraw(false);
+		// }
+		// surfaceComposite.populate();
 		return surfaceComposite;
 	}
 
@@ -572,7 +603,11 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			}
 		});
 		overlay.toggle();
+	}
 
+	@Override
+	public void setFocus() {
+		surfaceComposite.setFocus();
 	}
 
 	public Point getOverlayPosition() {

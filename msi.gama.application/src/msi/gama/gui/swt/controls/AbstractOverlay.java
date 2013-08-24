@@ -51,11 +51,15 @@ public abstract class AbstractOverlay {
 		IPartService ps = (IPartService) ((IWorkbenchPart) view).getSite().getService(IPartService.class);
 		ps.addPartListener(new IPartListener2() {
 
+			int i;
+
 			@Override
 			public void partActivated(final IWorkbenchPartReference partRef) {
 				IWorkbenchPart part = partRef.getPart(false);
 				if ( view.equals(part) ) {
 					display();
+					// GuiUtils.debug("AbstractOverlay.AbstractOverlay(...).new IPartListener2() {...}.partActivated " +
+					// part.getTitle());
 				}
 			}
 
@@ -80,6 +84,8 @@ public abstract class AbstractOverlay {
 			public void partHidden(final IWorkbenchPartReference partRef) {
 				IWorkbenchPart part = partRef.getPart(false);
 				if ( view.equals(part) ) {
+					// GuiUtils.debug("AbstractOverlay.AbstractOverlay(...).new IPartListener2() {...}.partHidden " +
+					// part.getTitle());
 					hide();
 				}
 			}
@@ -88,6 +94,8 @@ public abstract class AbstractOverlay {
 			public void partVisible(final IWorkbenchPartReference partRef) {
 				IWorkbenchPart part = partRef.getPart(false);
 				if ( view.equals(part) ) {
+					// GuiUtils.debug("AbstractOverlay.AbstractOverlay(...).new IPartListener2() {...}.partVisible " +
+					// part.getTitle());
 					display();
 				}
 			}
@@ -133,25 +141,26 @@ public abstract class AbstractOverlay {
 
 	public void display() {
 		if ( isHidden ) { return; }
+		if ( popup.isDisposed() ) { return; }
 		// We first verify that the popup is still ok
-		final Shell c = view.getSite().getShell();
-		if ( c == null || c.isDisposed() ) {
-			hide();
-			return;
-		}
 		populateControl();
 		popup.setVisible(true);
+		// popup.set
 	}
 
 	public void relocate() {
 		// if ( isHidden ) { return; }
-		popup.setLocation(getLocation());
+		if ( !popup.isDisposed() ) {
+			popup.setLocation(getLocation());
+		}
 	}
 
 	public void resize() {
 		// if ( isHidden ) { return; }
-		final Point size = getSize();
-		popup.setSize(popup.computeSize(size.x, size.y));
+		if ( !popup.isDisposed() ) {
+			final Point size = getSize();
+			popup.setSize(popup.computeSize(size.x, size.y));
+		}
 	}
 
 	public void hide() {
