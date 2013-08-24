@@ -229,7 +229,7 @@ public class JOGLSWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	@Override
 	public Rectangle2D drawString(final String string, final Color stringColor, final ILocation locationInModelUnits,
 		final Double heightInModelUnits, final String fontName, final Integer styleName, final Integer angle,
-		final Double z) {
+		final Double z,final Boolean bitmap) {
 		double curX, curY;
 		if ( locationInModelUnits == null ) {
 			curX = 0d;

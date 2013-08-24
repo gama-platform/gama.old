@@ -84,7 +84,7 @@ public class TextLayer extends AbstractLayer {
 		Color color = model.getColor();
 		String f = model.getFontName();
 		Integer s = model.getStyle();
-		g.drawString(text, color, null, null, f, s, null, 0.0);
+		g.drawString(text, color, null, null, f, s, null, 0.0,true);
 	}
 
 	@Override

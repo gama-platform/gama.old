@@ -53,6 +53,7 @@ public interface IKeyword {
 	public final static String BATCH = "batch";
 	public static final String BEHAVIOR = "behavior";
 	public static final String BEHAVIORS = "behaviors";
+	public static final String BITMAP = "bitmap";
 	public static final String BOUNDS = "bounds";
 	public static final String BREAK = "break";
 	public static final String BRIGHTER = "brighter";

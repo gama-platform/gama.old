@@ -662,17 +662,6 @@ public boolean isInitialized() {
 			super(r);
 		}
 
-		protected void _drawOld(StringObject s) {
-			renderer.gl.glDisable(GL_BLEND);
-			renderer.gl.glColor4d(s.getColor().getRed(), s.getColor().getGreen(), s.getColor().getBlue(), 1.0d);
-			renderer.gl.glRasterPos3d(s.x, s.y, s.z + s.z_layer);
-			renderer.gl.glScaled(8.0d, 8.0d, 8.0d);
-			glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, s.string);
-			renderer.gl.glScaled(0.125d, 0.125d, 0.125d);
-			renderer.gl.glEnable(GL_BLEND);
-
-		}
-
 		@Override
 		public void draw(StringObject object) {
 			_draw(object);
@@ -680,8 +669,9 @@ public boolean isInitialized() {
 
 		@Override
 		protected void _draw(StringObject s) {
-            if(s.type == 0){
+            if(s.bitmap == true){
 			TextRenderer r = get(s.font, s.size, s.style);
+			System.out.println("r" + s.getColor().getRed() + "g" + s.getColor().getGreen() + "b" + s.getColor().getBlue());
 			r.setColor(s.getColor());
 			r.begin3DRendering();
 			float x = (float) ((float) s.x * s.scale.x + s.offset.x);
@@ -694,7 +684,11 @@ public boolean isInitialized() {
 			r.end3DRendering();
             }
             else{
-            	_drawOld(s);
+            	renderer.gl.glDisable(GL_BLEND);
+    			renderer.gl.glColor4d(s.getColor().getRed()/255, s.getColor().getGreen()/255, s.getColor().getBlue()/255, 1.0d);
+    			renderer.gl.glRasterPos3d(s.x, s.y, s.z + s.z_layer);
+    			glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, s.string);	
+    			renderer.gl.glEnable(GL_BLEND);
             }
 
 		}

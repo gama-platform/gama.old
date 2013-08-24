@@ -60,6 +60,7 @@ import msi.gaml.types.*;
 	@facet(name = SCALE, type = IType.FLOAT, optional = true),
 	@facet(name = ROTATE, type = IType.INT, optional = true),
 	@facet(name = FONT, type = IType.STRING, optional = true),
+	@facet(name = BITMAP, type = IType.BOOL, optional = true),
 	@facet(name = DEPTH, type = IType.FLOAT, optional = true),
 	@facet(name = STYLE, type = IType.ID, values = { "plain", "bold", "italic" }, optional = true) },
 
@@ -363,6 +364,8 @@ public class DrawStatement extends AbstractStatementSequence {
 		private final String constFont;
 		private final IExpression style;
 		private final Integer constStyle;
+		private final IExpression bitmap;
+		private final Boolean constBitmap;
 
 		private TextExecuter(final IDescription desc) throws GamaRuntimeException {
 			super(desc);
@@ -375,6 +378,8 @@ public class DrawStatement extends AbstractStatementSequence {
 			constStyle =
 				style == null ? Font.PLAIN : style.isConst() ? CONSTANTS.get(Cast.asString(scope, style.value(scope)))
 					: null;
+			bitmap = getFacet(BITMAP);		
+			constBitmap = bitmap != null && bitmap.isConst() ? Cast.asBool(scope, bitmap.value(scope)) : null;
 			GAMA.releaseScope(scope);
 
 		}
@@ -386,9 +391,9 @@ public class DrawStatement extends AbstractStatementSequence {
 			if ( info == null || info.length() == 0 ) { return null; }
 			final String fName = constFont == null ? Cast.asString(scope, font.value(scope)) : constFont;
 			final int fStyle = constStyle == null ? CONSTANTS.get(style.value(scope)) : constStyle;
-
+            final Boolean fBitmap = constBitmap == null ? true : constBitmap;
 			return g.drawString(info, getColor(scope), getLocation(scope), getSize(scope).getY(), fName, fStyle,
-				getRotation(scope), agent.getLocation().getZ());
+				getRotation(scope), agent.getLocation().getZ(),fBitmap);
 
 		}
 	}

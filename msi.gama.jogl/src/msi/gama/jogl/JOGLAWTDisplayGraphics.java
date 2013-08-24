@@ -284,7 +284,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	@Override
 	public Rectangle2D drawString(final String string, final Color stringColor, final ILocation locationInModelUnits,
 		final Double heightInModelUnits, final String fontName, final Integer styleName, final Integer angle,
-		final Double z) {
+		final Double z,final Boolean bitmap) {
 		double curX, curY;
 		if ( locationInModelUnits == null ) {
 			curX = 0d;
@@ -305,7 +305,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 				(int) ((double) heightOfDisplayInPixels / (double) heightOfEnvironmentInModelUnits * heightInModelUnits);
 		}
 		renderer.getScene().addString(string, curX, -curY, z, size, sizeInModelUnits, currentOffset, currentScale,
-			stringColor, fontName, styleName, angle, getCurrentAlpha(),0);
+			stringColor, fontName, styleName, angle, getCurrentAlpha(),bitmap);
 		return null;
 	}
 	
