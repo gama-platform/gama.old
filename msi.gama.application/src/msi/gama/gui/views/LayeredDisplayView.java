@@ -50,7 +50,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	protected GridData data;
 	protected DisplayOverlay overlay;
 	protected LayersOverlay layersOverlay;
-	protected int zoomLevel;
+	protected int zoomLevel = 100;
 
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
