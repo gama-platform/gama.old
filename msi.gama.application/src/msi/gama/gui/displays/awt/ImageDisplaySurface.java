@@ -460,4 +460,13 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	 */
 	@Override
 	public void followAgent(final IAgent a) {}
+
+	/**
+	 * Method getZoomLevel()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#getZoomLevel()
+	 */
+	@Override
+	public double getZoomLevel() {
+		return 1.0;
+	}
 }

@@ -1,7 +1,6 @@
 package msi.gama.jogl.utils;
 
 import static javax.media.opengl.GL.*;
-
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -112,6 +111,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		final GLCapabilities cap = new GLCapabilities();
 		cap.setStencilBits(8);
 		// Initialize the user camera
+		displaySurface = d;
+		env_width = d.getEnvWidth();
+		env_height = d.getEnvHeight();
 		camera = new CameraArcBall(this);
 		myGLDrawer = new MyGLToyDrawer();
 		canvas = new GLCanvas(cap);
@@ -124,9 +126,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		canvas.setFocusable(true); // To receive key event
 		canvas.requestFocusInWindow();
 		animator = new FPSAnimator(canvas, REFRESH_FPS, true);
-		displaySurface = d;
-		env_width = d.getEnvWidth();
-		env_height = d.getEnvHeight();
+		// displaySurface = d;
+		// env_width = d.getEnvWidth();
+		// env_height = d.getEnvHeight();
 	}
 
 	@Override
@@ -265,12 +267,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 		// Show fps for performance mesures
 		if ( this.getShowFPS() ) {
-			CalculateFrameRate();			
+			CalculateFrameRate();
 			gl.glDisable(GL_BLEND);
 			gl.glColor4d(0.0, 0.0, 0.0, 1.0d);
 			gl.glRasterPos3d(-30, 30, 0);
 			gl.glScaled(8.0d, 8.0d, 8.0d);
-			glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10,  "fps : " + fps);
+			glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "fps : " + fps);
 			gl.glScaled(0.125d, 0.125d, 0.125d);
 			gl.glEnable(GL_BLEND);
 		}

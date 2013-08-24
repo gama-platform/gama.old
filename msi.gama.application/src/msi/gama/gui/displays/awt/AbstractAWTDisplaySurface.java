@@ -31,7 +31,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	protected boolean autosave = false;
 	protected double widthHeightConstraint = 1.0;
 	protected double zoomIncrement = 0.1;
-	protected double zoomLevel;
+	protected Double zoomLevel = null;
 	protected boolean zoomFit = true;
 	protected boolean navigationImageEnabled = true;
 	protected final AffineTransform translation = new AffineTransform();
@@ -414,6 +414,19 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 			zoomListener.newZoomLevel(zoomLevel);
 		}
 	}
+
+	@Override
+	public double getZoomLevel() {
+		if ( zoomLevel == null ) {
+			zoomLevel = computeInitialZoomLevel();
+		}
+		return zoomLevel;
+	}
+
+	/**
+	 * @return
+	 */
+	protected abstract Double computeInitialZoomLevel();
 
 	@Override
 	public void setZoomListener(final IZoomListener listener) {

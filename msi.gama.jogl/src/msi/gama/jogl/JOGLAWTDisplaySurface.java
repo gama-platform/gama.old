@@ -703,7 +703,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 	@Override
 	public synchronized void addMouseListener(final MouseListener e) {
-		renderer.canvas.addMouseListener(e);
+		// renderer.canvas.addMouseListener(e);
 	}
 
 	@Override
@@ -744,6 +744,16 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		if ( renderer == null && renderer.camera == null ) { return new double[] { 0, 0, 0 }; }
 		Vector3D v = renderer.camera.getPosition();
 		return new double[] { v.x, v.y, v.z };
+	}
+
+	/**
+	 * Method computeInitialZoomLevel()
+	 * @see msi.gama.gui.displays.awt.AbstractAWTDisplaySurface#computeInitialZoomLevel()
+	 */
+	@Override
+	protected Double computeInitialZoomLevel() {
+		if ( renderer == null && renderer.camera == null ) { return 1.0; }
+		return renderer.camera.getZoomLevel();
 	}
 
 }

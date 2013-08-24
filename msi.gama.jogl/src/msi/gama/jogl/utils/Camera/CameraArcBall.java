@@ -285,8 +285,13 @@ public class CameraArcBall extends AbstractCamera {
 			radius += incrementalZoomStep;
 			rotation();
 		}
-		myRenderer.displaySurface.setZoomLevel(getMaxDim() * AbstractCamera.INIT_Z_FACTOR / radius);
+		myRenderer.displaySurface.setZoomLevel(getZoomLevel());
 		// PrintParam();
+	}
+
+	@Override
+	public Double getZoomLevel() {
+		return getMaxDim() * INIT_Z_FACTOR / radius;
 	}
 
 	@Override
@@ -317,8 +322,8 @@ public class CameraArcBall extends AbstractCamera {
 
 		}
 		// ROI Is enabled only if the view is in a 2D plan.
-		//else if ( myRenderer.displaySurface.selectRectangle && IsViewIn2DPlan() ) {
-		else if((arg0.isShiftDown() || arg0.isAltDown()) && IsViewIn2DPlan()){
+		// else if ( myRenderer.displaySurface.selectRectangle && IsViewIn2DPlan() ) {
+		else if ( (arg0.isShiftDown() || arg0.isAltDown()) && IsViewIn2DPlan() ) {
 			myRenderer.displaySurface.selectRectangle = true;
 			mousePosition.x = arg0.getX();
 			mousePosition.y = arg0.getY();
@@ -350,15 +355,15 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public void mouseClicked(final MouseEvent arg0) {
-		if(arg0.getClickCount() > 1){
+		if ( arg0.getClickCount() > 1 ) {
 			myRenderer.displaySurface.zoomFit();
 		}
 		velocityHoriz = 0;
 		velocityVert = 0;
 
-		if((arg0.isShiftDown() || arg0.isAltDown())){
+		if ( arg0.isShiftDown() || arg0.isAltDown() ) {
 			myRenderer.displaySurface.selectRectangle = true;
-		
+
 			Point point = myRenderer.getIntWorldPointFromWindowPoint(new Point(arg0.getX(), arg0.getY()));
 
 			mousePosition.x = arg0.getX();
@@ -410,8 +415,7 @@ public class CameraArcBall extends AbstractCamera {
 	public void mouseReleased(final MouseEvent arg0) {
 
 		enableInertia = true;
-		if ((arg0.isShiftDown() || arg0.isAltDown()) && IsViewIn2DPlan() && enableROIDrawing == true){
-			
+		if ( (arg0.isShiftDown() || arg0.isAltDown()) && IsViewIn2DPlan() && enableROIDrawing == true ) {
 
 			GamaPoint p = new GamaPoint(myRenderer.worldCoordinates.x, -myRenderer.worldCoordinates.y, 0.0);
 			if ( arg0.isAltDown() ) {
@@ -424,11 +428,11 @@ public class CameraArcBall extends AbstractCamera {
 							new Envelope(myRenderer.roi_List.get(0), myRenderer.roi_List.get(2), -myRenderer.roi_List
 								.get(1), -myRenderer.roi_List.get(3)), new Different(), true);
 				final Iterator<IAgent> agents = AbstractTopology.toAgents(shapes);
-				
+
 				myRenderer.displaySurface.selectSeveralAgents(agents, 0);
-				
-			} 
-			if(arg0.isShiftDown()){	
+
+			}
+			if ( arg0.isShiftDown() ) {
 				myRenderer.ROIZoom();
 			}
 			enableROIDrawing = false;

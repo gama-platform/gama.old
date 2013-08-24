@@ -50,7 +50,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	protected GridData data;
 	protected DisplayOverlay overlay;
 	protected LayersOverlay layersOverlay;
-	protected int zoomLevel = 100;
+	protected Integer zoomLevel = null;
 
 	@Override
 	public void init(final IViewSite site) throws PartInitException {
@@ -558,6 +558,16 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 	}
 
+	/*
+	 * Between 0 and 100;
+	 */
+	public int getZoomLevel() {
+		if ( zoomLevel == null && getOutput().getSurface() != null ) {
+			zoomLevel = (int) getOutput().getSurface().getZoomLevel() * 100;
+		}
+		return zoomLevel;
+	}
+
 	@Override
 	public void toggleCamera() {
 		// TODO Auto-generated method stub
@@ -651,9 +661,9 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		String y = point == null ? "N/A" : String.format("%8.2f", point.y);
 		Object[] objects = null;
 		if ( !openGL ) {
-			objects = new Object[] { x, y, zoomLevel };
+			objects = new Object[] { x, y, getZoomLevel() };
 		} else {
-			objects = new Object[] { x, y, zoomLevel, cx, cy, cz };
+			objects = new Object[] { x, y, getZoomLevel(), cx, cy, cz };
 		}
 		return String.format("X%10s | Y%10s | Zoom%10d%%" + (paused ? " | Paused" : "") +
 			(synced ? " | Synchronized" : "") + (openGL ? " | Camera [%.2f;%.2f;%.2f]" : ""), objects);

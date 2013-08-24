@@ -227,6 +227,11 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 	void followAgent(IAgent a);
 
+	/**
+	 * @return the current zoom level (between 0 and 1).
+	 */
+	double getZoomLevel();
+
 	// void acquireUpdateLock() throws InterruptedException;
 
 	// void releaseUpdateLock();

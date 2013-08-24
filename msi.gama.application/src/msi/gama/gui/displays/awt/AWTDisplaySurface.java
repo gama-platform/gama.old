@@ -261,7 +261,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	@Override
 	public void zoomOut() {
-		if ( zoomLevel < 0.02 ) { return; }
+		if ( getZoomLevel() < 0.02 ) { return; }
 		mousePosition = new Point(origin.x + getDisplayWidth() / 2, origin.y + getDisplayHeight() / 2);;
 		applyZoom(1.0 - zoomIncrement, mousePosition);
 
@@ -366,5 +366,14 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	 */
 	@Override
 	public void followAgent(final IAgent a) {}
+
+	/**
+	 * Method computeInitialZoomLevel()
+	 * @see msi.gama.gui.displays.awt.AbstractAWTDisplaySurface#computeInitialZoomLevel()
+	 */
+	@Override
+	protected Double computeInitialZoomLevel() {
+		return 1.0;
+	}
 
 }

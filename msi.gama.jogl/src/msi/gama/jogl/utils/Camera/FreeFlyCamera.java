@@ -197,21 +197,26 @@ public class FreeFlyCamera extends AbstractCamera {
 		if ( arg0.getWheelRotation() > 0 ) {
 			_position = _position.subtract(_forward.scalarMultiply(_speed * 800 + Math.abs(incrementalZoomStep))); // on
 																													// recule
-			myRenderer.displaySurface.setZoomLevel(myRenderer.camera.getMaxDim() * INIT_Z_FACTOR / _position.getZ());
+			myRenderer.displaySurface.setZoomLevel(getZoomLevel());
 			_target = _forward.add(_position.x, _position.y, _position.z); // comme on a boug�, on recalcule la cible
 																			// fix�e par la cam�ra
 		} else {
 			_position = _position.add(_forward.scalarMultiply(_speed * 800 + Math.abs(incrementalZoomStep))); // on
 																												// avance
-			myRenderer.displaySurface.setZoomLevel(myRenderer.camera.getMaxDim() * INIT_Z_FACTOR / _position.getZ());
+			myRenderer.displaySurface.setZoomLevel(getZoomLevel());
 			_target = _forward.add(_position.x, _position.y, _position.z); // comme on a boug�, on recalcule la cible
 																			// fix�e par la cam�ra
 		}
 	}
 
 	@Override
+	public Double getZoomLevel() {
+		return getMaxDim() * INIT_Z_FACTOR / _position.getZ();
+	}
+
+	@Override
 	public void mouseDragged(final MouseEvent arg0) {
-		if ( (arg0.isShiftDown() || arg0.isAltDown()) && IsViewIn2DPlan()) {
+		if ( (arg0.isShiftDown() || arg0.isAltDown()) && IsViewIn2DPlan() ) {
 			mousePosition.x = arg0.getX();
 			mousePosition.y = arg0.getY();
 			enableROIDrawing = true;
@@ -236,10 +241,10 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	@Override
 	public void mouseClicked(final MouseEvent arg0) {
-		if(arg0.getClickCount() > 1){
+		if ( arg0.getClickCount() > 1 ) {
 			myRenderer.displaySurface.zoomFit();
 		}
-		if ( (arg0.isShiftDown() || arg0.isAltDown())) {
+		if ( arg0.isShiftDown() || arg0.isAltDown() ) {
 			Point point = myRenderer.getIntWorldPointFromWindowPoint(new Point(arg0.getX(), arg0.getY()));
 
 			mousePosition.x = arg0.getX();
@@ -294,8 +299,8 @@ public class FreeFlyCamera extends AbstractCamera {
 
 	@Override
 	public void mouseReleased(final MouseEvent arg0) {
-		
-		if ((arg0.isShiftDown() || arg0.isAltDown()) && IsViewIn2DPlan() && enableROIDrawing == true){
+
+		if ( (arg0.isShiftDown() || arg0.isAltDown()) && IsViewIn2DPlan() && enableROIDrawing == true ) {
 			GamaPoint p = new GamaPoint(myRenderer.worldCoordinates.x, -myRenderer.worldCoordinates.y, 0.0);
 			if ( arg0.isAltDown() ) {
 				Iterator<IShape> shapes =
@@ -307,9 +312,9 @@ public class FreeFlyCamera extends AbstractCamera {
 							new Envelope(myRenderer.roi_List.get(0), myRenderer.roi_List.get(2), -myRenderer.roi_List
 								.get(1), -myRenderer.roi_List.get(3)), new Different(), true);
 				final Iterator<IAgent> agents = AbstractTopology.toAgents(shapes);
-				myRenderer.displaySurface.selectSeveralAgents(agents, 0);				
-			} 
-			if(arg0.isShiftDown()){	
+				myRenderer.displaySurface.selectSeveralAgents(agents, 0);
+			}
+			if ( arg0.isShiftDown() ) {
 				myRenderer.ROIZoom();
 			}
 			enableROIDrawing = false;
