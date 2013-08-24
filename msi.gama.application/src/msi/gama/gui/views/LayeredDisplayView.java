@@ -138,19 +138,19 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			}
 		};
 		// TODO Temporarily disabled
-		final java.awt.event.MouseListener mlAwt = new java.awt.event.MouseAdapter() {
-
-			@Override
-			public void mousePressed(final java.awt.event.MouseEvent e) {
-				GuiUtils.asyncRun(forceFocus);
-			}
-
-			@Override
-			public void mouseEntered(final java.awt.event.MouseEvent e) {
-				GuiUtils.asyncRun(forceFocus);
-			}
-
-		};
+		// final java.awt.event.MouseListener mlAwt = new java.awt.event.MouseAdapter() {
+		//
+		// @Override
+		// public void mousePressed(final java.awt.event.MouseEvent e) {
+		// GuiUtils.asyncRun(forceFocus);
+		// }
+		//
+		// @Override
+		// public void mouseEntered(final java.awt.event.MouseEvent e) {
+		// GuiUtils.asyncRun(forceFocus);
+		// }
+		//
+		// };
 		final java.awt.event.MouseMotionListener mlAwt2 = new java.awt.event.MouseMotionAdapter() {
 
 			@Override
@@ -176,7 +176,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 				final JComponent frameAwt = (JComponent) getOutput().getSurface();
 				// TODO Temporarily disabled
-				frameAwt.addMouseListener(mlAwt);
+				// frameAwt.addMouseListener(mlAwt);
 				frameAwt.addMouseMotionListener(mlAwt2);
 				return frameAwt;
 			}
