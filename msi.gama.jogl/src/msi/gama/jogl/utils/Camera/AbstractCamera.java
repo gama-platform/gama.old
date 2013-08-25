@@ -260,9 +260,13 @@ public abstract class AbstractCamera implements KeyListener, MouseListener, Mous
 	}
 
 	protected boolean isArcBallOn(final MouseEvent mouseEvent) {
+		if ( checkCtrlKeyDown(mouseEvent) && myRenderer.displaySurface.arcball == true ) {
+			return false;
+		} 
 		if ( checkCtrlKeyDown(mouseEvent) || myRenderer.displaySurface.arcball == true ) {
-			return true;
-		} else {
+			return true;	
+	    } 
+		else {
 			return false;
 		}
 	}
