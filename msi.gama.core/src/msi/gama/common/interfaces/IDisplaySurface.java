@@ -49,6 +49,11 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 		 * Activate arcball view (Only with Opengl view)
 		 */
 		void toggleArcball();
+		
+		/**
+		 * Activate inertia mode (Only with Opengl view)
+		 */
+		void toggleInertia();
 
 		/**
 		 * Activate select rectangle tool (Only with Opengl view)

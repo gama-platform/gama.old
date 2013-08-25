@@ -723,4 +723,10 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 		return 1.0;
 	}
 
+	@Override
+	public void toggleInertia() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

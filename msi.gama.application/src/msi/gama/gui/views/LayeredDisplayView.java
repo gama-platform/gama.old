@@ -407,6 +407,28 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			}).start();
 		}
 	}
+	
+	@Override
+	public void toggleInertia() {
+		if ( getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
+			new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					final IDisplaySurface.OpenGL surface = (OpenGL) getDisplaySurface();
+					while (!surface.canBeUpdated()) {
+						try {
+							Thread.sleep(10);
+						} catch (final InterruptedException e) {
+
+						}
+					}
+					surface.toggleInertia();
+
+				}
+			}).start();
+		}
+	}
 
 	@Override
 	public void toggleSelectRectangle() {

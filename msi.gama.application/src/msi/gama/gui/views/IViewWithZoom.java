@@ -31,6 +31,11 @@ public interface IViewWithZoom extends IZoomListener {
 	 * Activate the arcball View
 	 */
 	public void toggleArcball();
+	
+	/**
+	 * Activate the inertia mode
+	 */
+	public void toggleInertia();
 
 	/**
 	 * Activate the select rectangle View

@@ -21,8 +21,8 @@ public class OpenGLItem extends GamaViewItem implements IMenuCreator {
 
 	private Menu menu;
 	boolean arcBall = true;
-	boolean rotated, splitted, triangulated, dragable;
-	GamaViewItem camera, split, rotation, triangle,drag;
+	boolean rotated, splitted, triangulated, dragable, inertiable;
+	GamaViewItem camera, split, rotation, triangle,drag,inertia;
 
 	OpenGLItem(final GamaViewPart view) {
 		super(view);
@@ -31,6 +31,7 @@ public class OpenGLItem extends GamaViewItem implements IMenuCreator {
 		rotation = new RotationItem(view);
 		triangle = new TriangulationItem(view);
 		drag = new ArcBallItem(view);
+		inertia = new InertiaItem(view);
 	}
 
 	/**
@@ -88,6 +89,7 @@ public class OpenGLItem extends GamaViewItem implements IMenuCreator {
 		split.fill(menu, 3);
 		triangle.fill(menu, 4);
 		drag.fill(menu,5);
+		inertia.fill(menu,6);
 		
 
 		MenuItem camera = menu.getItem(0);
@@ -165,6 +167,29 @@ public class OpenGLItem extends GamaViewItem implements IMenuCreator {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				dragable = !dragable;
+			}
+
+		});
+		
+		MenuItem inertia = menu.getItem(6);
+		if ( inertiable ) {
+			inertia.setText("Desactivate Inertia mode");
+			
+		} else {
+			inertia.setText("Inertia mode");
+		}
+		if(arcBall){
+			inertia.setEnabled(true);
+		}
+		else{
+			inertia.setEnabled(false);
+		}
+		
+		inertia.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				inertiable = !inertiable;
 			}
 
 		});

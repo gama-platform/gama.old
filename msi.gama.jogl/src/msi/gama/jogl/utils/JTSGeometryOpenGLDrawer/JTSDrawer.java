@@ -305,9 +305,9 @@ public class JTSDrawer {
 
 		// Draw Exterior ring
 		//myGl.glLineWidth(1.0f);
-		if(myGLRender.JTSTriangulation = false	){
+		//if(!myGLRender.triangulation){
 			myGl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_LINE);	
-		}
+	//	}
 		
 		//myGl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
 		//myGl.glEnable(GL.GL_POLYGON_OFFSET_LINE);
@@ -331,7 +331,7 @@ public class JTSDrawer {
 		//myGl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_FILL);
 		//myGl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
 		myGl.glDisable(GL.GL_POLYGON_OFFSET_LINE);
-		if(myGLRender.JTSTriangulation = false){
+		if(!myGLRender.triangulation){
 			myGl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_FILL);	
 		}
 		

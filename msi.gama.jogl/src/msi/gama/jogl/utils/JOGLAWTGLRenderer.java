@@ -67,7 +67,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	// facet "tesselation"
 	private boolean useTessellation = true;
 	// facet "inertia"
-	private boolean inertia = false;
+	public boolean inertia = false;
 	// facet "inertia"
 	private boolean stencil = false;
 	// facet "drawEnv"
@@ -76,6 +76,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private boolean showFPS = false;
 	// facet "z_fighting"
 	private boolean z_fighting = false;
+	
+	public boolean triangulation = false;
 
 	public boolean drawAxes = true;
 	// Display or not the triangle when using triangulation (useTessellation = false)
@@ -221,8 +223,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		GLUtil.UpdateAmbiantLight(gl, glu, ambientLightValue);
 		GLUtil.UpdateDiffuseLight(gl, glu, diffuseLightValue);
 
-		// Show triangulated polygon or not (trigger by GAMA)
-		if ( !displaySurface.triangulation ) {
+		// Show triangulated polygon or not (trigger by GAMA)	
+		if ( !triangulation ) {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
 		} else {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
@@ -275,6 +277,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "fps : " + fps);
 			gl.glScaled(0.125d, 0.125d, 0.125d);
 			gl.glEnable(GL_BLEND);
+		}
+		
+		// Show triangulated polygon or not (trigger by GAMA)	
+		if ( !triangulation ) {
+			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+		} else {
+			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
 		}
 	}
 
