@@ -21,8 +21,8 @@ public class OpenGLItem extends GamaViewItem implements IMenuCreator {
 
 	private Menu menu;
 	boolean arcBall = true;
-	boolean rotated, splitted, triangulated;
-	GamaViewItem camera, split, rotation, triangle;
+	boolean rotated, splitted, triangulated, dragable;
+	GamaViewItem camera, split, rotation, triangle,drag;
 
 	OpenGLItem(final GamaViewPart view) {
 		super(view);
@@ -30,6 +30,7 @@ public class OpenGLItem extends GamaViewItem implements IMenuCreator {
 		split = new SplitLayerItem(view);
 		rotation = new RotationItem(view);
 		triangle = new TriangulationItem(view);
+		drag = new ArcBallItem(view);
 	}
 
 	/**
@@ -86,6 +87,8 @@ public class OpenGLItem extends GamaViewItem implements IMenuCreator {
 		rotation.fill(menu, 2);
 		split.fill(menu, 3);
 		triangle.fill(menu, 4);
+		drag.fill(menu,5);
+		
 
 		MenuItem camera = menu.getItem(0);
 		if ( arcBall ) {
@@ -140,6 +143,28 @@ public class OpenGLItem extends GamaViewItem implements IMenuCreator {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				triangulated = !triangulated;
+			}
+
+		});
+		MenuItem drag = menu.getItem(5);
+		if ( dragable ) {
+			drag.setText("Desactivate Arcball drag");
+			
+		} else {
+			drag.setText("Arcball drag");
+		}
+		if(arcBall){
+			drag.setEnabled(true);
+		}
+		else{
+			drag.setEnabled(false);
+		}
+		
+		drag.addSelectionListener(new SelectionAdapter() {
+
+			@Override
+			public void widgetSelected(final SelectionEvent e) {
+				dragable = !dragable;
 			}
 
 		});
