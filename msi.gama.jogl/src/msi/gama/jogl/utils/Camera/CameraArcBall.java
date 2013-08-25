@@ -196,7 +196,6 @@ public class CameraArcBall extends AbstractCamera {
 
 		double translationValue = 0;
 
-		if ( Math.abs(diffx) > Math.abs(diffy) ) {// Move X
 
 			translationValue = Math.abs(diffx) * ((z + 1) / w);
 
@@ -207,7 +206,6 @@ public class CameraArcBall extends AbstractCamera {
 				updatePosition(_position.getX() + translationValue, _position.getY(), _position.getZ());
 				lookPosition(_target.getX() + translationValue, _target.getY(), _target.getZ());
 			}
-		} else if ( Math.abs(diffx) < Math.abs(diffy) ) { // Move Y
 
 			translationValue = Math.abs(diffy) * Math.abs((z + 1) / h);
 
@@ -218,7 +216,7 @@ public class CameraArcBall extends AbstractCamera {
 				updatePosition(_position.getX(), _position.getY() - translationValue, _position.getZ());
 				lookPosition(_target.getX(), _target.getY() - translationValue, _target.getZ());
 			}
-		}
+		
 	}
 
 	@Override
