@@ -18,20 +18,33 @@
  */
 package msi.gama.gui.displays.awt;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import javax.swing.SwingUtilities;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IGraphics;
+import msi.gama.common.interfaces.ILayer;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.precompiler.GamlAnnotations.display;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gaml.compilation.ISymbol;
 
 @display("java2D")
@@ -374,6 +387,34 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	@Override
 	protected Double computeInitialZoomLevel() {
 		return 1.0;
+	}
+
+	@Override
+	public void setSize(int x, int y) {
+		GuiUtils.debug("Set size called with " + x + " " + y);
+		super.setSize(x, y);
+	}
+
+	@Override
+	public void setSize(Dimension d) {
+		GuiUtils.debug("Set size called with " + d);
+		super.setSize(d);
+	}
+
+	@Override
+	public void setBounds(int arg0, int arg1, int arg2, int arg3) {
+		GuiUtils.debug("Set bounds called with " + arg2 + " " + arg3);
+		if ( arg2 == 0 && arg3 == 0 )
+			return;
+		super.setBounds(arg0, arg1, arg2, arg3);
+	}
+
+	@Override
+	public void setBounds(Rectangle r) {
+		GuiUtils.debug("Set bounds called with " + r);
+		if ( r.width < 1 && r.height < 1 )
+			return;
+		super.setBounds(r);
 	}
 
 }

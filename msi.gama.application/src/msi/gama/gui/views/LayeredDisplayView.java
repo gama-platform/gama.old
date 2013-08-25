@@ -20,26 +20,39 @@ package msi.gama.gui.views;
 
 import java.awt.Color;
 import javax.swing.JComponent;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.EditorListener;
+import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IDisplaySurface.OpenGL;
+import msi.gama.common.interfaces.ILayer;
+import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.layers.AbstractLayer;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.swt.controls.DisplayOverlay;
+import msi.gama.gui.swt.controls.LayersOverlay;
 import msi.gama.gui.swt.perspectives.ModelingPerspective;
 import msi.gama.gui.swt.swing.experimental.core.SwingControl;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.outputs.*;
+import msi.gama.outputs.LayeredDisplayOutput;
+import msi.gama.outputs.OutputSynchronizer;
 import msi.gaml.descriptions.IDescription;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 
 public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements IViewWithZoom {
 
@@ -178,6 +191,8 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 				// TODO Temporarily disabled
 				// frameAwt.addMouseListener(mlAwt);
 				frameAwt.addMouseMotionListener(mlAwt2);
+				// setCleanResizeEnabled(true);
+				// frameAwt.setSize(width, height)
 				return frameAwt;
 			}
 
@@ -199,7 +214,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			}
 
 			@Override
-			public void afterComponentCreatedSWTThread() {
+			public void afterComponentCreatedAWTThread() {
 				if ( !isOpenGL ) {
 					// Deferred to the OpenGL renderer to signify its initialization
 					// see JOGLAWTGLRendered.init()
@@ -615,19 +630,39 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 	@Override
 	public void fixSize() {
+		// OutputSynchronizer.cleanResize(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// Point p = parent.getSize();
+		// final int x = p.x;
+		// final int y = p.y;
+		// surfaceComposite.getFrame().setBounds(0, 0, x, y);
+		// getOutput().getSurface().resizeImage(x, y);
+		// getOutput().getSurface().setSize(x, y);
+		// getOutput().getSurface().updateDisplay();
+		// }
+		// });
+
+		// AD: Reworked to address Issue 535. It seems necessary to read the size of the composite inside an SWT thread
+		// and run the sizing inside an AWT thread
 		OutputSynchronizer.cleanResize(new Runnable() {
 
 			@Override
 			public void run() {
+
+				// surfaceComposite.setSize(x, y);
 				Point p = parent.getSize();
 				final int x = p.x;
 				final int y = p.y;
-				surfaceComposite.setSize(x, y);
 				java.awt.EventQueue.invokeLater(new Runnable() {
 
 					@Override
 					public void run() {
+
+						surfaceComposite.getFrame().setBounds(0, 0, x, y);
 						getOutput().getSurface().resizeImage(x, y);
+						getOutput().getSurface().setSize(x, y);
 						getOutput().getSurface().updateDisplay();
 					}
 				});

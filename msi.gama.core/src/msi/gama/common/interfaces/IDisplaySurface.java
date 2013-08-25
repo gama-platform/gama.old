@@ -21,8 +21,11 @@ package msi.gama.common.interfaces;
 import java.awt.Color;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
+
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.outputs.LayeredDisplayOutput;
 
 /**
@@ -107,7 +110,8 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 	boolean resizeImage(int width, int height);
 
-	// void outputChanged(final double env_width, final double env_height, final IDisplayOutput output);
+	// void outputChanged(final double env_width, final double env_height, final
+	// IDisplayOutput output);
 
 	void zoomIn();
 
@@ -171,19 +175,24 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 	/**
 	 * Sets the origin (top left corner) of the image in the panel
+	 * 
 	 * @param i
 	 * @param j
 	 */
 	void setOrigin(int i, int j);
 
 	/**
-	 * Returns the x coordinate of the origin (top left corner of the image in the panel)
+	 * Returns the x coordinate of the origin (top left corner of the image in
+	 * the panel)
+	 * 
 	 * @return
 	 */
 	int getOriginX();
 
 	/**
-	 * Returns the y coordinate of the origin (top left corner of the image in the panel)
+	 * Returns the y coordinate of the origin (top left corner of the image in
+	 * the panel)
+	 * 
 	 * @return
 	 */
 
@@ -191,13 +200,15 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 
 	/**
 	 * Post-constructor that initializes the surface
+	 * 
 	 * @param w
 	 * @param h
 	 * @param layerDisplayOutput
 	 */
 	void initialize(double w, double h, LayeredDisplayOutput layerDisplayOutput);
 
-	public void outputChanged(final double env_width, final double env_height, final LayeredDisplayOutput output);
+	public void outputChanged(final double env_width, final double env_height,
+			final LayeredDisplayOutput output);
 
 	/**
 	 * 
@@ -236,6 +247,8 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 	 * @return the current zoom level (between 0 and 1).
 	 */
 	double getZoomLevel();
+
+	void setSize(int x, int y);
 
 	// void acquireUpdateLock() throws InterruptedException;
 
