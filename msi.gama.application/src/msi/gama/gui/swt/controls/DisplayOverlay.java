@@ -28,6 +28,7 @@ public class DisplayOverlay extends AbstractOverlay {
 	@Override
 	protected Label createControl() {
 		Label l = new Label(getPopup(), SWT.None);
+		l.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 		l.setForeground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		return l;
 	}
