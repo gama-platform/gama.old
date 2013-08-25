@@ -227,7 +227,7 @@ public abstract class AbstractCamera implements KeyListener, MouseListener, Mous
 		if ( isMacOS ) {
 			specicalKeyDown = mouseEvent.isMetaDown();
 		} else {
-			specicalKeyDown = mouseEvent.isShiftDown();
+			specicalKeyDown = mouseEvent.isControlDown();
 		}
 		return specicalKeyDown;
 	}
@@ -238,7 +238,7 @@ public abstract class AbstractCamera implements KeyListener, MouseListener, Mous
 		if ( isMacOS ) {
 			specicalKeyDown = event.isMetaDown();
 		} else {
-			specicalKeyDown = event.isShiftDown();
+			specicalKeyDown = event.isControlDown();
 		}
 		return specicalKeyDown;
 	}
