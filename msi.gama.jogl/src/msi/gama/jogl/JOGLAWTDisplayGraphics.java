@@ -105,51 +105,53 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		}
 		renderer.getScene().addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color, fill,
 			border, false, angle, depth.floatValue(), currentOffset, currentScale, rounded, type, currentLayerIsStatic,
-			getCurrentAlpha());
+			getCurrentAlpha(), scope.getAgentScope().getPopulation().getName());
 		return rect;
 	}
 	
-
-
-	// FIXME: Won't work for a rectangle grid inverse buildline height on x and with width on y
-	public void drawGridLine(final BufferedImage image, final Color lineColor) {
-		double stepX, stepY;
-
-		for ( int i = 0; i <= image.getWidth(); i++ ) {
-			stepX = i / (double) image.getWidth() * image.getWidth();
-			final Geometry g =
-				GamaGeometryType.buildLine(new GamaPoint(stepX, 0), new GamaPoint(stepX, image.getHeight()))
-					.getInnerGeometry();
-			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
-				currentOffset, currentScale, false, "gridLine", currentLayerIsStatic, getCurrentAlpha());
+	/**
+	 * Method drawImage.
+	 * 
+	 * @param img
+	 *            Image
+	 * @param angle
+	 *            Integer
+	 */
+	@Override
+	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final ILocation locationInModelUnits,
+		final ILocation sizeInModelUnits, final Color gridColor, final Integer angle, final Double z,
+		final boolean isDynamic, final String name) {
+		double curX, curY;
+		if ( locationInModelUnits == null ) {
+			curX = 0d;
+			curY = 0d;
+		} else {
+			curX = locationInModelUnits.getX();
+			curY = locationInModelUnits.getY();
+		}
+		double curWidth, curHeight;
+		if ( sizeInModelUnits == null ) {
+			curWidth = wFromPixelsToModelUnits(widthOfLayerInPixels);
+			curHeight = hFromPixelsToModelUnits(heightOfLayerInPixels);
+		} else {
+			curWidth = sizeInModelUnits.getX();
+			curHeight = sizeInModelUnits.getY();
+		}
+		MyTexture texture = null;
+		if ( !renderer.getScene().getTextures().containsKey(img) ) {
+			texture = renderer.createTexture(img, isDynamic);
 		}
 
-		for ( int i = 0; i <= image.getHeight(); i++ ) {
-			stepY = i / (double) image.getHeight() * image.getHeight();;
-			final Geometry g =
-				GamaGeometryType.buildLine(new GamaPoint(0, stepY), new GamaPoint(image.getWidth(), stepY))
-					.getInnerGeometry();
-			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
-				currentOffset, currentScale, false, "gridLine", currentLayerIsStatic, getCurrentAlpha());
+		renderer.getScene().addImage(img, scope == null ? null : scope.getAgentScope(), currentZLayer , currentLayerId, curX, curY, z, curWidth,
+			curHeight, angle, currentOffset, currentScale, isDynamic, getCurrentAlpha(), texture, name);
+
+		if ( gridColor != null ) {
+			drawGridLine(img, gridColor, name);
 		}
+
+		return rect;
 	}
 	
-	public void drawGridLineNew(final BufferedImage image, final Color lineColor) {
-		double stepX, stepY;
-		
-		for( int i = 0; i <= image.getWidth(); i++ ) {
-			for ( int j = 0; j <= image.getHeight(); j++ ) {
-				stepX = (i+0.5) / (double) image.getWidth() * image.getWidth();
-				stepY = (j+0.5) / (double) image.getHeight() * image.getHeight();
-				final Geometry g =
-						GamaGeometryType.buildRectangle(1, 1, new GamaPoint(stepX,stepY)).getInnerGeometry();
-				renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true,
-						lineColor, false, 0, 0, currentOffset, currentScale, false, "gridLine", currentLayerIsStatic,
-						getCurrentAlpha());
-			}
-		}
-	}
-
 	@Override
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
 		final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
@@ -157,11 +159,50 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		final Integer angle, final Double z, final boolean isDynamic, final int cellSize) {
 		// FIXME : need to chek the drawGridLIne method
 		if ( gridColor != null ) {
-			drawGridLine(img, gridColor);
+			drawGridLine(img, gridColor, scope.getAgentScope().getPopulation().getName());
 		}
 		return drawDEM2(gridValueMatrix, img, isTextured, isTriangulated, isShowText, scope.getSimulationScope()
 			.getEnvelope(), 1.0, getCurrentAlpha(), currentOffset, currentScale, cellSize);
 	}
+	
+	// FIXME: Won't work for a rectangle grid inverse buildline height on x and with width on y
+		public void drawGridLineOld(final BufferedImage image, final Color lineColor) {
+			double stepX, stepY;
+
+			for ( int i = 0; i <= image.getWidth(); i++ ) {
+				stepX = i / (double) image.getWidth() * image.getWidth();
+				final Geometry g =
+					GamaGeometryType.buildLine(new GamaPoint(stepX, 0), new GamaPoint(stepX, image.getHeight()))
+						.getInnerGeometry();
+				renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
+					currentOffset, currentScale, false, "gridLine", currentLayerIsStatic, getCurrentAlpha(),"cell");
+			}
+
+			for ( int i = 0; i <= image.getHeight(); i++ ) {
+				stepY = i / (double) image.getHeight() * image.getHeight();;
+				final Geometry g =
+					GamaGeometryType.buildLine(new GamaPoint(0, stepY), new GamaPoint(image.getWidth(), stepY))
+						.getInnerGeometry();
+				renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
+					currentOffset, currentScale, false, "gridLine", currentLayerIsStatic, getCurrentAlpha(),"cell");
+			}
+		}
+		
+		public void drawGridLine(final BufferedImage image, final Color lineColor, final String popName) {
+			double stepX, stepY;
+			
+			for( int i = 0; i < image.getWidth(); i++ ) {
+				for ( int j = 0; j < image.getHeight(); j++ ) {
+					stepX = (i+0.5) / (double) image.getWidth() * image.getWidth();
+					stepY = (j+0.5) / (double) image.getHeight() * image.getHeight();
+					final Geometry g =
+							GamaGeometryType.buildRectangle(1, 1, new GamaPoint(stepX,stepY)).getInnerGeometry();
+					renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, false,
+							lineColor, false, 0, 0, currentOffset, currentScale, false, "gridLine", currentLayerIsStatic,
+							getCurrentAlpha(),popName);
+				}
+			}
+		}
 
 	// Build a grid with a dem corresponding to the value in gridValue and textured by texture
 	public Rectangle2D drawDEM2(final double[] dem, final BufferedImage texture, final boolean isTextured,
@@ -205,48 +246,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		return null;
 	}
 
-	/**
-	 * Method drawImage.
-	 * 
-	 * @param img
-	 *            Image
-	 * @param angle
-	 *            Integer
-	 */
-	@Override
-	public Rectangle2D drawImage(final IScope scope, final BufferedImage img, final ILocation locationInModelUnits,
-		final ILocation sizeInModelUnits, final Color gridColor, final Integer angle, final Double z,
-		final boolean isDynamic, final String name) {
-		double curX, curY;
-		if ( locationInModelUnits == null ) {
-			curX = 0d;
-			curY = 0d;
-		} else {
-			curX = locationInModelUnits.getX();
-			curY = locationInModelUnits.getY();
-		}
-		double curWidth, curHeight;
-		if ( sizeInModelUnits == null ) {
-			curWidth = wFromPixelsToModelUnits(widthOfLayerInPixels);
-			curHeight = hFromPixelsToModelUnits(heightOfLayerInPixels);
-		} else {
-			curWidth = sizeInModelUnits.getX();
-			curHeight = sizeInModelUnits.getY();
-		}
-		MyTexture texture = null;
-		if ( !renderer.getScene().getTextures().containsKey(img) ) {
-			texture = renderer.createTexture(img, isDynamic);
-		}
-
-		renderer.getScene().addImage(img, scope == null ? null : scope.getAgentScope(), currentZLayer, currentLayerId, curX, curY, z, curWidth,
-			curHeight, angle, currentOffset, currentScale, isDynamic, getCurrentAlpha(), texture, name);
-
-		if ( gridColor != null ) {
-			drawGridLine(img, gridColor);
-		}
-
-		return rect;
-	}
+	
 
 	private BufferedImage FlipRightSideLeftImage(BufferedImage img) {
 		final java.awt.geom.AffineTransform tx = java.awt.geom.AffineTransform.getScaleInstance(-1, 1);

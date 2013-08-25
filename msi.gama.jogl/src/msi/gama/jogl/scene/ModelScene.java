@@ -80,7 +80,7 @@ public class ModelScene {
 			this.drawAxes(renderer.gl, renderer.getMaxEnvDim() / 10);
 		}
 		if ( drawBounds ) {
-			this.drawEnvironmentBounds(renderer);
+			//this.drawEnvironmentBounds(renderer);
 		}
 		// FIXME: Need to understand why I need to set this color (otherwise dem model(or model without any geometries)
 		// are blue)
@@ -126,10 +126,10 @@ public class ModelScene {
 	public void addGeometry(final Geometry geometry, final IAgent agent, final double z_layer,
 		final int currentLayerId, final Color color, final boolean fill, final Color border, final boolean isTextured,
 		final Integer angle, final double height, final GamaPoint offSet, final GamaPoint scale,
-		final boolean roundCorner, final String type, final boolean currentLayerIsStatic, final double alpha) {
+		final boolean roundCorner, final String type, final boolean currentLayerIsStatic, final double alpha, final String popName) {
 		final GeometryObject curJTSGeometry =
 			new GeometryObject(geometry, agent, z_layer, currentLayerId, color, alpha, fill, border, isTextured,
-				angle == null ? 0 : angle, height, offSet, scale, roundCorner, type);
+				angle == null ? 0 : angle, height, offSet, scale, roundCorner, type, popName);
 		if ( currentLayerIsStatic ) {
 			if ( !staticObjectsAreLocked ) {
 				staticObjects.add(curJTSGeometry);
@@ -199,7 +199,7 @@ public class ModelScene {
 			GamaGeometryType.buildRectangle(envWidth, envHeight, new GamaPoint(envWidth / 2, envHeight / 2))
 				.getInnerGeometry();
 		final Color c = new Color(225, 225, 225);
-		addGeometry(g, null, 0, 0, c, false, c, false, 0, 0, offset, scale, true, "env", false, 1d);
+		addGeometry(g, null, 0, 0, c, false, c, false, 0, 0, offset, scale, false, "env", false, 1d, "environment");
 	}
 
 	public void drawZValue(final double pos, final float value) {

@@ -1,9 +1,13 @@
 package msi.gama.jogl.scene;
 
 import java.awt.Color;
+import java.awt.Point;
+
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.runtime.GAMA;
+
 import com.vividsolutions.jts.geom.Geometry;
 
 public class GeometryObject extends AbstractObject implements Cloneable {
@@ -19,13 +23,15 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	public double height;
 	public double altitude;
 	public boolean rounded;
+	public String populationName;
 	
 	public GeometryObject(Geometry geometry, IAgent agent, double z_layer, int layerId, Color color, Double alpha,
 		Boolean fill, Color border, Boolean isTextured, int angle, double height, GamaPoint offset, GamaPoint scale,
-		boolean rounded, String type) {
+		boolean rounded, String type, String populationName) {
 	    super(color, offset, scale, alpha);
 	    if (type.compareTo("gridLine") == 0){
 	    	this.fill = false;
+	    	setZ_fighting_id((double) layerId);
 	    }
 	    
 	    if (type.compareTo("env") == 0){
@@ -50,6 +56,7 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 		this.height = height;
 		this.altitude = 0.0f;
 		this.rounded = rounded;
+		this.populationName= populationName;
 	}
 
 	@Override
@@ -90,6 +97,17 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 					pick();
 					renderer.currentPickedObject = this;
 					renderer.displaySurface.selectAgents(agent, layerId - 1);
+				}
+				else{
+					System.out.println("ca pique sur" + this.type + this.populationName);
+					renderer.setPicking(false);
+					pick();
+					renderer.currentPickedObject = this;
+					Point pickedPoint =
+							renderer.getIntWorldPointFromWindowPoint(new Point(renderer.camera.lastxPressed,
+								renderer.camera.lastyPressed));
+						IAgent ag = GAMA.getSimulation().getAgent().getPopulationFor( this.populationName).getAgent(new GamaPoint(pickedPoint.x, -pickedPoint.y));
+						renderer.displaySurface.selectAgents(ag, layerId - 1);
 				}
 			}
 			super.draw(drawer, picking);

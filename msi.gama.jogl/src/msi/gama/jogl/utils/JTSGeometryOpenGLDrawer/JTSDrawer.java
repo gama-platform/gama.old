@@ -72,7 +72,7 @@ public class JTSDrawer {
 	}
 
 	public void DrawMultiPolygon(final MultiPolygon polygons,final Color c, final double alpha,
-		final boolean fill, final Color border, final Integer angle, final double height, final boolean rounded) {
+		final boolean fill, final Color border, final Integer angle, final double height, final boolean rounded, final double z_fighting_value) {
 
 		numGeometries = polygons.getNumGeometries();
 
@@ -81,9 +81,9 @@ public class JTSDrawer {
 			curPolygon = (Polygon) polygons.getGeometryN(i);
 
 			if ( height > 0 ) {
-				DrawPolyhedre(curPolygon, c, alpha, fill, height, angle, false, border, rounded);
+				DrawPolyhedre(curPolygon, c, alpha, fill, height, angle, false, border, rounded, z_fighting_value);
 			} else {
-				DrawPolygon(curPolygon, c, alpha, fill, border, false, angle, true, rounded);
+				DrawPolygon(curPolygon, c, alpha, fill, border, false, angle, true, rounded, z_fighting_value);
 			}
 		}
 	}
@@ -96,7 +96,7 @@ public class JTSDrawer {
 	 }
 	public void DrawPolygon(final Polygon p, final Color c, final double alpha,
 		final boolean fill, final Color border, final boolean isTextured, final Integer angle,
-		final boolean drawPolygonContour, final boolean rounded) {
+		final boolean drawPolygonContour, final boolean rounded, final double z_fighting_value) {
 
 		myGl.glNormal3d(0.0d, 0.0d, 1.0d);
 
@@ -114,7 +114,7 @@ public class JTSDrawer {
 				if ( myGLRender.getTessellation() ) {
 					DrawTesselatedPolygon(p);
 					if ( drawPolygonContour == true ) {
-						DrawPolygonContour(p, border);
+						DrawPolygonContour(p, border, z_fighting_value);
 					}
 				}
 				// use JTS triangulation on simplified geometry (DouglasPeucker)
@@ -123,18 +123,35 @@ public class JTSDrawer {
 					DrawTriangulatedPolygon(p, myGLRender.JTSTriangulation);
 					myGl.glColor4d(0.0d, 0.0d, 0.0d, alpha);
 					if ( drawPolygonContour == true ) {
-						DrawPolygonContour(p, border);
+						DrawPolygonContour(p, border,z_fighting_value);
 					}
 				}
 			}
 		}
 		// fill = false. Draw only the contour of the polygon.
 		else {
-			// if no border has been define draw empty shape with their original color
-			if ( border.equals(Color.black) ) {
-				DrawPolygonContour(p, c);
-			} else {
-				DrawPolygonContour(p, border);
+			boolean testZFight = false;
+			if(!testZFight){
+				
+				// if no border has been define draw empty shape with their original color
+				if ( border.equals(Color.black) ) {
+					DrawPolygonContour(p, c,z_fighting_value);
+				} else {
+					DrawPolygonContour(p, border,z_fighting_value);
+				}
+			}
+			else{
+				/*myGl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_LINE);	
+				myGl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
+				myGl.glEnable(GL.GL_POLYGON_OFFSET_LINE);			
+				myGl.glPolygonOffset(0.0f,100);*/
+				myGl.glBegin(GL.GL_QUADS);
+				myGl.glVertex3d(p.getExteriorRing().getCoordinateN(0).x, -p.getExteriorRing().getCoordinateN(0).y, p.getExteriorRing().getCoordinateN(0).z);
+				myGl.glVertex3d(p.getExteriorRing().getCoordinateN(1).x, -p.getExteriorRing().getCoordinateN(1).y, p.getExteriorRing().getCoordinateN(1).z);
+				myGl.glVertex3d(p.getExteriorRing().getCoordinateN(2).x, -p.getExteriorRing().getCoordinateN(2).y, p.getExteriorRing().getCoordinateN(2).z);
+				myGl.glVertex3d(p.getExteriorRing().getCoordinateN(3).x, -p.getExteriorRing().getCoordinateN(3).y, p.getExteriorRing().getCoordinateN(3).z);
+				myGl.glEnd();
+				//myGl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_FILL);
 			}
 		}
 
@@ -284,25 +301,33 @@ public class JTSDrawer {
 		myGl.glEnd();
 	}
 
-	public void DrawPolygonContour(final Polygon p, final Color border) {
+	public void DrawPolygonContour(final Polygon p, final Color border, final double z_fighting_value) {
 
 		// Draw Exterior ring
-		myGl.glLineWidth(1.0f);
-
-		myGl.glBegin(GL.GL_LINES);
+		//myGl.glLineWidth(1.0f);
+		myGl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_LINE);
+		//myGl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
+		//myGl.glEnable(GL.GL_POLYGON_OFFSET_LINE);
+	    //myGl.glPolygonOffset(0.0f,(float) (z_fighting_value-0.1f));
+		//myGl.glPolygonOffset(0.0f,10.0f);
+		myGl.glBegin(GL.GL_POLYGON);
 		myGl.glColor4d((double) border.getRed() / 255, (double) border.getGreen() / 255,
 			(double) border.getBlue() / 255, 1.0d);
 		p.getExteriorRing().apply(visitor);
 		myGl.glEnd();
 
-		// Draw Interior ring
-		for ( int i = 0; i < p.getNumInteriorRing(); i++ ) {
-			myGl.glBegin(GL.GL_LINES);
-			myGl.glColor4d((double) border.getRed() / 255, (double) border.getGreen() / 255,
-				(double) border.getBlue() / 255, 1.0d);
-			p.getInteriorRingN(i).apply(visitor);
-			myGl.glEnd();
+		if(p.getNumInteriorRing() >0){
+			// Draw Interior ring
+			for ( int i = 0; i < p.getNumInteriorRing(); i++ ) {
+				myGl.glBegin(GL.GL_POLYGON);
+				p.getInteriorRingN(i).apply(visitor);
+				myGl.glEnd();
+			}
 		}
+		
+		//myGl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+		//myGl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
+		myGl.glDisable(GL.GL_POLYGON_OFFSET_LINE);
 	}
 
 	void SetLine(final Point src, final Point dest, final double z, final boolean hasZValue) {
@@ -317,10 +342,10 @@ public class JTSDrawer {
 
 	public void DrawPolyhedre(final Polygon p, final Color c, final double alpha, final boolean fill,
 		final double height, final Integer angle, final boolean drawPolygonContour, final Color border,
-		final boolean rounded) {
-		DrawPolygon(p, c, alpha, fill, border, false, angle, drawPolygonContour, rounded);
+		final boolean rounded, final Double z_fighting_value) {
+		DrawPolygon(p, c, alpha, fill, border, false, angle, drawPolygonContour, rounded,z_fighting_value);
 		myGl.glTranslated(0, 0, height);
-		DrawPolygon(p, c, alpha, fill, border, false, angle, drawPolygonContour, rounded);
+		DrawPolygon(p, c, alpha, fill, border, false, angle, drawPolygonContour, rounded,z_fighting_value);
 		myGl.glTranslated(0, 0, -height);
 		// FIXME : Will be wrong if angle =!0
 		DrawFaces(p, c, alpha, fill, border, height, drawPolygonContour, false);

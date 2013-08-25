@@ -49,14 +49,18 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 
 	void SetPolygonOffset(T object){
 		if(!object.fill){
+			renderer.gl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_LINE);		
 			renderer.gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
 			renderer.gl.glEnable(GL.GL_POLYGON_OFFSET_LINE);
-			renderer.gl.glPolygonOffset(0.5f,-object.getZ_fighting_id().floatValue());
+			renderer.gl.glPolygonOffset(0.0f,-(object.getZ_fighting_id().floatValue()+0.1f));
+			//System.out.println("non fill " + -(object.getZ_fighting_id().floatValue()+0.1f));
 		}
 		else{
+			renderer.gl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_FILL);	
 			renderer.gl.glDisable(GL.GL_POLYGON_OFFSET_LINE);
 			renderer.gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
-			renderer.gl.glPolygonOffset(1,(float) (-object.getZ_fighting_id().floatValue()));	
+			renderer.gl.glPolygonOffset(1,(float) -(object.getZ_fighting_id().floatValue()));
+			//System.out.println("fill " + -object.getZ_fighting_id().floatValue());
 		}
 	}
 	protected abstract void _draw(T object);
@@ -98,7 +102,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 				if ( geometry.geometry.getGeometryType() == "MultiPolygon" ) {
 					jtsDrawer.DrawMultiPolygon((MultiPolygon) geometry.geometry, geometry.getColor(),
 						geometry.alpha, geometry.fill, geometry.border, geometry.angle, geometry.height,
-						geometry.rounded);
+						geometry.rounded, geometry.getZ_fighting_id());
 				} else if ( geometry.geometry.getGeometryType() == "Polygon" ) {
 					// The JTS geometry of a sphere is a circle (a polygon)
 					if ( geometry.type.equals("sphere") ) {
@@ -108,7 +112,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 						if ( geometry.height > 0 ) {
 							jtsDrawer.DrawPolyhedre((Polygon) geometry.geometry, geometry.getColor(),
 								geometry.alpha, geometry.fill, geometry.height, geometry.angle, true, geometry.border,
-								geometry.rounded);
+								geometry.rounded,geometry.getZ_fighting_id());
 						} else {
 							if(renderer.getStencil()){
 								renderer.gl.glStencilFunc(GL_ALWAYS,0 ,1); 
@@ -117,7 +121,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 							}
 							jtsDrawer.DrawPolygon((Polygon) geometry.geometry, geometry.getColor(),
 								geometry.alpha, geometry.fill, geometry.border, geometry.isTextured, geometry.angle,
-								true, geometry.rounded);
+								true, geometry.rounded,geometry.getZ_fighting_id());
 						}
 					}
 				} else if ( geometry.geometry.getGeometryType() == "MultiLineString" ) {
@@ -604,10 +608,10 @@ public boolean isInitialized() {
 				Geometry sourceGeometry = (Geometry) feature.getDefaultGeometry();
 				if ( sourceGeometry.getGeometryType() == "MultiPolygon" ) {
 					jtsDrawer.DrawMultiPolygon((MultiPolygon) sourceGeometry, collection.getColor(), 1.0d, true, null,
-						0, 0.0d, false);
+						0, 0.0d, false,0.0);
 				} else if ( sourceGeometry.getGeometryType() == "Polygon" ) {
 					jtsDrawer.DrawPolygon((Polygon) sourceGeometry, 	collection.getColor(), 1.0d, true, null, false, 0,
-						true, false);
+						true, false,0.0);
 				} else if ( sourceGeometry.getGeometryType() == "MultiLineString" ) {
 					jtsDrawer.DrawMultiLineString((MultiLineString) sourceGeometry, 0.0d, collection.getColor(), 1.0d, 0.0d);
 				} else if ( sourceGeometry.getGeometryType() == "LineString" ) {
@@ -671,7 +675,6 @@ public boolean isInitialized() {
 		protected void _draw(StringObject s) {
             if(s.bitmap == true){
 			TextRenderer r = get(s.font, s.size, s.style);
-			System.out.println("r" + s.getColor().getRed() + "g" + s.getColor().getGreen() + "b" + s.getColor().getBlue());
 			r.setColor(s.getColor());
 			r.begin3DRendering();
 			float x = (float) ((float) s.x * s.scale.x + s.offset.x);
