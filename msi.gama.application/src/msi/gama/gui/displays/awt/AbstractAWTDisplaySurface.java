@@ -1,27 +1,16 @@
 package msi.gama.gui.displays.awt;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
-import java.io.DataOutputStream;
-import java.io.FileOutputStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
-import msi.gama.common.interfaces.IDisplaySurface;
-import msi.gama.common.interfaces.IGraphics;
-import msi.gama.common.interfaces.ILayerManager;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.outputs.IDisplayOutput;
-import msi.gama.outputs.LayeredDisplayOutput;
-import msi.gama.outputs.OutputSynchronizer;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
+import msi.gama.outputs.*;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Files;
 
@@ -358,7 +347,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		int imageWidth = Math.max(1, point[0]);
 		int imageHeight = Math.max(1, point[1]);
 		// TODO Verify that the test on size is correct for Java2D and OpenGL.
-		
+
 		if ( getWidth() > 0 && getHeight() > 0 && imageWidth <= getWidth() * 10 && imageHeight <= getHeight() * 10 ) {
 			createNewImage(imageWidth, imageHeight);
 			createIGraphics();
