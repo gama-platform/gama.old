@@ -99,7 +99,6 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 					renderer.displaySurface.selectAgents(agent, layerId - 1);
 				}
 				else{
-					System.out.println("ca pique sur" + this.type + this.populationName);
 					renderer.setPicking(false);
 					pick();
 					renderer.currentPickedObject = this;

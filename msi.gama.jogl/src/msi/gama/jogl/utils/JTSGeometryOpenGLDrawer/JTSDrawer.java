@@ -305,7 +305,10 @@ public class JTSDrawer {
 
 		// Draw Exterior ring
 		//myGl.glLineWidth(1.0f);
-		myGl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_LINE);
+		if(myGLRender.JTSTriangulation = false	){
+			myGl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_LINE);	
+		}
+		
 		//myGl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
 		//myGl.glEnable(GL.GL_POLYGON_OFFSET_LINE);
 	    //myGl.glPolygonOffset(0.0f,(float) (z_fighting_value-0.1f));
@@ -328,6 +331,10 @@ public class JTSDrawer {
 		//myGl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_FILL);
 		//myGl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
 		myGl.glDisable(GL.GL_POLYGON_OFFSET_LINE);
+		if(myGLRender.JTSTriangulation = false){
+			myGl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_FILL);	
+		}
+		
 	}
 
 	void SetLine(final Point src, final Point dest, final double z, final boolean hasZValue) {

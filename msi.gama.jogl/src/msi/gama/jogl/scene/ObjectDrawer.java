@@ -56,11 +56,13 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			//System.out.println("non fill " + -(object.getZ_fighting_id().floatValue()+0.1f));
 		}
 		else{
+			if (renderer.JTSTriangulation = false){
 			renderer.gl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_FILL);	
 			renderer.gl.glDisable(GL.GL_POLYGON_OFFSET_LINE);
 			renderer.gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
 			renderer.gl.glPolygonOffset(1,(float) -(object.getZ_fighting_id().floatValue()));
 			//System.out.println("fill " + -object.getZ_fighting_id().floatValue());
+			}
 		}
 	}
 	protected abstract void _draw(T object);
