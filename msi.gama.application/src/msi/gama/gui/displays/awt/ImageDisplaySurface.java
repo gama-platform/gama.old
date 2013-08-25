@@ -18,31 +18,21 @@
  */
 package msi.gama.gui.displays.awt;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.Image;
+import java.awt.*;
 import java.awt.event.MouseListener;
-import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
-import java.io.DataOutputStream;
-import java.io.FileOutputStream;
+import java.awt.image.*;
+import java.io.*;
 import java.util.List;
 import javax.imageio.ImageIO;
-import msi.gama.common.interfaces.IDisplaySurface;
-import msi.gama.common.interfaces.IGraphics;
-import msi.gama.common.interfaces.ILayer;
-import msi.gama.common.interfaces.ILayerManager;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.precompiler.GamlAnnotations.display;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.operators.Files;
@@ -480,9 +470,12 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		return 1.0;
 	}
 
+	/**
+	 * Method setSize()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#setSize(int, int)
+	 */
 	@Override
-	public void setSize(int x, int y) {
-		// TODO Auto-generated method stub
-
+	public void setSize(final int x, final int y) {
+		resizeImage(x, y);
 	}
 }
