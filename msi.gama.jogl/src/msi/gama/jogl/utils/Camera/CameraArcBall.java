@@ -321,6 +321,7 @@ public class CameraArcBall extends AbstractCamera {
 		}
 		// ROI Is enabled only if the view is in a 2D plan.
 		// else if ( myRenderer.displaySurface.selectRectangle && IsViewIn2DPlan() ) {
+		
 		else if ( (arg0.isShiftDown() || arg0.isAltDown()) && IsViewIn2DPlan() ) {
 			myRenderer.displaySurface.selectRectangle = true;
 			mousePosition.x = arg0.getX();
@@ -413,7 +414,7 @@ public class CameraArcBall extends AbstractCamera {
 	public void mouseReleased(final MouseEvent arg0) {
 
 		enableInertia = true;
-		if ( (arg0.isShiftDown() || arg0.isAltDown()) && IsViewIn2DPlan() && enableROIDrawing == true ) {
+		if ( IsViewIn2DPlan() && enableROIDrawing == true ) {
 
 			GamaPoint p = new GamaPoint(myRenderer.worldCoordinates.x, -myRenderer.worldCoordinates.y, 0.0);
 			if ( arg0.isAltDown() ) {
