@@ -686,10 +686,12 @@ public boolean isInitialized() {
             }
             else{
             	renderer.gl.glDisable(GL_BLEND);
-    			renderer.gl.glColor4d(s.getColor().getRed()/255, s.getColor().getGreen()/255, s.getColor().getBlue()/255, 1.0d);
+            	renderer.gl.glDisable(GL_LIGHTING);
+    			renderer.gl.glColor3d(s.getColor().getRed()/255, s.getColor().getGreen()/255, s.getColor().getBlue()/255);
     			renderer.gl.glRasterPos3d(s.x, s.y, s.z + s.z_layer);
     			glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, s.string);	
     			renderer.gl.glEnable(GL_BLEND);
+    			renderer.gl.glEnable(GL_LIGHTING);
             }
 
 		}
