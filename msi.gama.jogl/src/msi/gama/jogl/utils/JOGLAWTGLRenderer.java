@@ -146,8 +146,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		arcBall = new ArcBall(width, height);
 
 		// Set background color
-		gl.glClearColor(displaySurface.getBgColor().getRed(), displaySurface.getBgColor().getGreen(), displaySurface
-			.getBgColor().getBlue(), 1.0f);
+
+		gl.glClearColor((float)displaySurface.getBgColor().getRed()/255.0f, (float)displaySurface.getBgColor().getGreen()/255.0f, (float)displaySurface
+			.getBgColor().getBlue()/255.0f, 1.0f);
 		// Enable smooth shading, which blends colors nicely, and smoothes out lighting.
 		GLUtil.enableSmooth(gl);
 
