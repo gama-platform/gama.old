@@ -20,6 +20,7 @@ global {
 environment width: width_and_height_of_environment height: width_and_height_of_environment;  
  
   
+  
 entities { 
 	species cells skills: [moving] {  
 		rgb color;
@@ -49,10 +50,4 @@ experiment display  type: gui {
 	}
 }
 
-experiment display_with_Inertia  type: gui {
-	output {
-		display WanderingSphere type:opengl ambient_light:100 background: rgb('white') z_fighting:false show_fps:true inertia:true{
-			species cells;
-		}
-	}
-}
+
