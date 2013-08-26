@@ -10,7 +10,10 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
 /**
- * The class Popup.
+ * The class AbstractOverlay
+ * 
+ * 26 Aug: took the decision to hide the overlays when the view is detached, as to avoid nasty problems of z-position,
+ * non-existing Move and Resize events, etc. on detached views. This is a workaround for Issue 548.
  * 
  * @author drogoul
  * @since 19 aug. 2013
@@ -51,15 +54,11 @@ public abstract class AbstractOverlay {
 		IPartService ps = (IPartService) ((IWorkbenchPart) view).getSite().getService(IPartService.class);
 		ps.addPartListener(new IPartListener2() {
 
-			int i;
-
 			@Override
 			public void partActivated(final IWorkbenchPartReference partRef) {
 				IWorkbenchPart part = partRef.getPart(false);
 				if ( view.equals(part) ) {
 					display();
-					// GuiUtils.debug("AbstractOverlay.AbstractOverlay(...).new IPartListener2() {...}.partActivated " +
-					// part.getTitle());
 				}
 			}
 
@@ -84,8 +83,6 @@ public abstract class AbstractOverlay {
 			public void partHidden(final IWorkbenchPartReference partRef) {
 				IWorkbenchPart part = partRef.getPart(false);
 				if ( view.equals(part) ) {
-					// GuiUtils.debug("AbstractOverlay.AbstractOverlay(...).new IPartListener2() {...}.partHidden " +
-					// part.getTitle());
 					hide();
 				}
 			}
@@ -103,8 +100,9 @@ public abstract class AbstractOverlay {
 			@Override
 			public void partInputChanged(final IWorkbenchPartReference partRef) {}
 		});
-		Composite c = view.getComponent();
-		popup = new Shell(c.getShell(), SWT.TOOL | SWT.NO_TRIM);
+
+		final Composite c = view.getComponent();
+		popup = new Shell(view.getSite().getShell(), SWT.TOOL | SWT.NO_TRIM | SWT.NO_FOCUS);
 		popup.setLayout(new FillLayout());
 		popup.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 		control = createControl();
@@ -131,6 +129,18 @@ public abstract class AbstractOverlay {
 		return control;
 	}
 
+	// private void reparentWithShell(final Shell shell) {
+	// if ( popup.isReparentable() ) {
+	// Shell oldShell = (Shell) popup.getParent();
+	// oldShell.removeListener(SWT.Resize, resize);
+	// oldShell.removeListener(SWT.Move, resize);
+	// popup.setParent(shell);
+	// shell.addListener(SWT.Resize, resize);
+	// shell.addListener(SWT.Move, resize);
+	// }
+	//
+	// }
+
 	public Shell getPopup() {
 		return popup;
 	}
@@ -140,9 +150,13 @@ public abstract class AbstractOverlay {
 	}
 
 	public void display() {
-		if ( isHidden ) { return; }
-		if ( popup.isDisposed() ) { return; }
+		if ( isHidden() ) { return; }
 		// We first verify that the popup is still ok
+		if ( popup.isDisposed() ) { return; }
+		// We then verify that the shell has not changed (i.e. the view has not been reparented)
+		// if ( !view.getSite().getShell().equals(popup.getParent()) ) {
+		// reparentWithShell(view.getSite().getShell());
+		// }
 		populateControl();
 		popup.setVisible(true);
 		// popup.set
@@ -176,7 +190,11 @@ public abstract class AbstractOverlay {
 	}
 
 	protected boolean isHidden() {
-		return isHidden;
+		return isHidden || viewIsDetached();
+	}
+
+	private boolean viewIsDetached() {
+		return view.getSite().getShell().getText().isEmpty();
 	}
 
 	public final void toggle() {
