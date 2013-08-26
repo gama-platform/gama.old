@@ -225,11 +225,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		GLUtil.UpdateDiffuseLight(gl, glu, diffuseLightValue);
 
 		// Show triangulated polygon or not (trigger by GAMA)	
-		if ( !triangulation ) {
+		/*if ( !triangulation ) {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
 		} else {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
-		}
+		}*/
 
 		// Blending control
 
@@ -254,7 +254,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		this.rotateModel();
 
 		if ( getInertia() ) {
-			camera.inertia();
+			camera.arcBallInertia();
+			camera.moveInertia();
 		}
 
 		this.drawScene();

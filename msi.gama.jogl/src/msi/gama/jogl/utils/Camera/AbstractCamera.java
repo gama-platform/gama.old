@@ -429,7 +429,8 @@ public abstract class AbstractCamera implements KeyListener, MouseListener, Mous
 
 	public abstract boolean IsViewIn2DPlan();
 
-	public void inertia() {}
+	public void arcBallInertia() {}
+	public void moveInertia() {}
 
 	/**
 	 * @return

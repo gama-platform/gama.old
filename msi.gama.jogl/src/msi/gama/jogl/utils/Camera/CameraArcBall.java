@@ -30,8 +30,12 @@ public class CameraArcBall extends AbstractCamera {
 
 	public double horizInertia, vertInertia = 0;
 
+	//inertia parameter
 	public double damping = 0.9;
-	public boolean enableInertia;
+	public double amplitude = 0.3;
+	public boolean enableInertia = false;
+	public boolean arcBallInertia = false;
+	public boolean moveInertia = false;
 
 	public CameraArcBall(final JOGLAWTGLRenderer joglawtglRenderer) {
 		super(joglawtglRenderer);
@@ -296,33 +300,34 @@ public class CameraArcBall extends AbstractCamera {
 	public void mouseDragged(final MouseEvent arg0) {
 
 		enableInertia = false;
-		if ( isArcBallOn(arg0) ) {
+		
+		// check the difference between the current x and the last x position
+		int horizMovement = arg0.getX() - lastxPressed;
+		// check the difference between the current y and the last y position
+		int vertMovement = arg0.getY() - lastyPressed;
 
-			// check the difference between the current x and the last x position
-			int horizMovement = arg0.getX() - lastxPressed;
-			// check the difference between the current y and the last y position
-			int vertMovement = arg0.getY() - lastyPressed;
+		horizInertia = arg0.getX() - lastxPressed;
+		vertInertia = arg0.getY() - lastyPressed;
+		velocityHoriz = horizInertia;
+		velocityVert = vertInertia;
 
-			horizInertia = arg0.getX() - lastxPressed;
-			vertInertia = arg0.getY() - lastyPressed;
-			velocityHoriz = horizInertia;
-			velocityVert = vertInertia;
-
-			// set lastx to the current x position
-			lastxPressed = arg0.getX();
-			// set lastyPressed to the current y position
-			lastyPressed = arg0.getY();
-
+		// set lastx to the current x position
+		lastxPressed = arg0.getX();
+		// set lastyPressed to the current y position
+		lastyPressed = arg0.getY();
+		if ( isArcBallOn(arg0) ) {	
 			_theta -= horizMovement * _sensivity;
 			_phi -= vertMovement * _sensivity;
-
 			rotation();
-
+			arcBallInertia =true;
+		}
+		else{
+			moveInertia = true;
 		}
 		// ROI Is enabled only if the view is in a 2D plan.
 		// else if ( myRenderer.displaySurface.selectRectangle && IsViewIn2DPlan() ) {
 		
-		else if ( (arg0.isShiftDown() || arg0.isAltDown()) && IsViewIn2DPlan() ) {
+		if ( (arg0.isShiftDown() || arg0.isAltDown()) && IsViewIn2DPlan() ) {
 			myRenderer.displaySurface.selectRectangle = true;
 			mousePosition.x = arg0.getX();
 			mousePosition.y = arg0.getY();
@@ -498,22 +503,45 @@ public class CameraArcBall extends AbstractCamera {
 	}
 
 	@Override
-	public void inertia() {
+	public void arcBallInertia() {
 		if ( enableInertia ) {
-			velocityHoriz *= damping;
-			velocityVert *= damping;
-
-			_theta -= velocityHoriz * 0.6;
-			_phi -= velocityVert * 0.6;
-
-			rotation();
-
-			if ( Math.abs(velocityHoriz) < 0.01 || Math.abs(velocityVert) < 0.01 ) {
-				velocityHoriz = 0;
-				velocityVert = 0;
+			if(arcBallInertia){
+				velocityHoriz *= damping;
+				velocityVert *= damping;
+	
+				_theta -= velocityHoriz * amplitude;
+				_phi -= velocityVert * amplitude;
+	
+				rotation();
+	
+	
+				if ( Math.abs(velocityHoriz) < 0.01 || Math.abs(velocityVert) < 0.01 ) {
+					velocityHoriz = 0;
+					velocityVert = 0;
+					enableInertia=false;
+					arcBallInertia=false;
+				}
 			}
 		}
-
+	}
+	
+	@Override
+	public void moveInertia() {
+		if ( enableInertia ) {
+			if(moveInertia){	
+				velocityHoriz *= damping;
+				velocityVert *= damping;
+	
+				moveXYPlan2(velocityHoriz, velocityVert, _position.getZ(), this.myRenderer.getWidth(), this.myRenderer.getHeight());
+	
+				if ( Math.abs(velocityHoriz) < 0.01 || Math.abs(velocityVert) < 0.01 ) {
+					velocityHoriz = 0;
+					velocityVert = 0;
+					enableInertia=false;
+					moveInertia=false;
+				}
+			}
+		}
 	}
 
 }// End of Class CameraArcBall
