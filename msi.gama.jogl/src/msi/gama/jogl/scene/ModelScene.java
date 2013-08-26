@@ -80,7 +80,7 @@ public class ModelScene {
 			this.drawAxes(renderer.gl, renderer.getMaxEnvDim() / 10);
 		}
 		if ( drawBounds ) {
-			//this.drawEnvironmentBounds(renderer);
+			this.drawEnvironmentBounds(renderer);
 		}
 		// FIXME: Need to understand why I need to set this color (otherwise dem model(or model without any geometries)
 		// are blue)
@@ -188,12 +188,6 @@ public class ModelScene {
 	}
 
 	public void drawEnvironmentBounds(final JOGLAWTGLRenderer renderer) {
-		// Draw Width and height value
-		/*addString(String.valueOf(envWidth), envWidth / 2, envHeight * 0.01d, 0.0d, 12, 12d, offset, scale, Color.black,
-			"Helvetica", 0, 0, 1d, 1);
-		addString(String.valueOf(envHeight), envWidth * 1.01f, -(envHeight / 2), 0.0d, 12, 12d, offset, scale,
-			Color.black, "Helvetica", 0, 0, 1d, 1);*/
-
 		// Draw environment rectangle
 		final Geometry g =
 			GamaGeometryType.buildRectangle(envWidth, envHeight, new GamaPoint(envWidth / 2, envHeight / 2))
