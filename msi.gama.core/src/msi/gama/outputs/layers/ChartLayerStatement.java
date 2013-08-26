@@ -23,7 +23,6 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.outputs.layers.ChartDataStatement.ChartData;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
@@ -312,34 +311,40 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 		plot.setInteriorGap(0);
 	}
 
+	class CustomRenderer extends BarRenderer {
+
+		public CustomRenderer() {}
+
+		@Override
+		public Paint getItemPaint(final int row, final int column) {
+			return datas.get(column).getColor();
+		}
+	}
+
 	private void createBars(final IScope scope) {
 		final CategoryPlot plot = (CategoryPlot) chart.getPlot();
-		int i = 0;
+		BarRenderer renderer = new CustomRenderer();
+		plot.setRenderer(renderer);
 		dataset = new DefaultCategoryDataset();
 		for ( final ChartData e : datas ) {
 			String legend = e.getName();
-			((DefaultCategoryDataset) dataset).addValue(0d, legend, new Integer(0)/* , legend */);
+			((DefaultCategoryDataset) dataset).setValue(0d, new Integer(0), legend/* , legend */);
 			history.append(legend);
 			history.append(',');
 		}
 		history.deleteCharAt(history.length() - 1);
 		history.append(nl);
 		plot.setDataset((DefaultCategoryDataset) dataset);
-		for ( final ChartData e : datas ) {
-			plot.getRenderer().setSeriesPaint(i++, e.getColor());
-			// ((BarRenderer) plot.getRenderer(i++)).setBaseFillPaint(e.getColor());
-		}
+
 		chart.removeLegend();
 		final CategoryAxis axis = plot.getDomainAxis();
-		// ((BarRenderer3D) plot.getRenderer()).setItemMargin(0.1);
 		Double gap = Cast.asFloat(scope, getFacetValue(scope, IKeyword.GAP, 0.01));
 		// ((BarRenderer) plot.getRenderer()).setItemMargin(gap);
-		((BarRenderer) plot.getRenderer()).setMaximumBarWidth(1 - gap);
-		// ((BarRenderer) plot.getRenderer()).set
-		// ((XYBarRenderer) plot.getRenderer()).setMargin(gap);
+		renderer.setMaximumBarWidth(1 - gap);
 		axis.setCategoryMargin(gap);
 		axis.setUpperMargin(gap);
 		axis.setLowerMargin(gap);
+
 	}
 
 	private void createChart(final IScope scope) {
@@ -496,7 +501,7 @@ public class ChartLayerStatement extends AbstractLayerStatement {
 					// GuiUtils.debug("ChartLayerStatement._step row " + ((DefaultCategoryDataset)
 					// dataset).getRowCount() +
 					// " col " + ((DefaultCategoryDataset) dataset).getColumnCount());
-					((DefaultCategoryDataset) dataset).setValue(n, s, new Integer(0)/* , s */);
+					((DefaultCategoryDataset) dataset).setValue(n, new Integer(0), s/* , s */);
 					break;
 				}
 			}
