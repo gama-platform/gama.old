@@ -55,13 +55,10 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			renderer.gl.glPolygonOffset(0.0f,-(object.getZ_fighting_id().floatValue()+0.1f));
 		}
 		else{
-			System.out.println("triangulation" + renderer.triangulation);
-			if (!renderer.triangulation){
 			renderer.gl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_FILL);	
 			renderer.gl.glDisable(GL.GL_POLYGON_OFFSET_LINE);
 			renderer.gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
 			renderer.gl.glPolygonOffset(1,(float) -(object.getZ_fighting_id().floatValue()));
-			}
 		}
 	}
 	protected abstract void _draw(T object);
@@ -127,24 +124,24 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 					}
 				} else if ( geometry.geometry.getGeometryType() == "MultiLineString" ) {
 
-					jtsDrawer.DrawMultiLineString((MultiLineString) geometry.geometry, geometry.z_layer,
+					jtsDrawer.DrawMultiLineString((MultiLineString) geometry.geometry, 0,
 						geometry.getColor(), geometry.alpha, geometry.height);
 				} else if ( geometry.geometry.getGeometryType() == "LineString" ) {
 
 					if ( geometry.height > 0 ) {
-						jtsDrawer.DrawPlan((LineString) geometry.geometry, geometry.z_layer, geometry.getColor(),
+						jtsDrawer.DrawPlan((LineString) geometry.geometry, 0, geometry.getColor(),
 							geometry.alpha, geometry.height, 0, true);
 					} else {
-						jtsDrawer.DrawLineString((LineString) geometry.geometry, geometry.z_layer, 1.2f,
+						jtsDrawer.DrawLineString((LineString) geometry.geometry, 0, 1.2f,
 							geometry.getColor(), geometry.alpha);
 					}
 				} else if ( geometry.geometry.getGeometryType() == "Point" ) {
 					//FIXME: Should never go here even with a height value as the geometry of a sphere is a polygon...
 					if ( geometry.height > 0 ) {
-						jtsDrawer.DrawSphere((Polygon) geometry.geometry.getEnvelope().buffer(1), geometry.z_layer, geometry.height,
+						jtsDrawer.DrawSphere((Polygon) geometry.geometry.getEnvelope().buffer(1), 0, geometry.height,
 							geometry.getColor(), geometry.alpha);
 					} else {
-						jtsDrawer.DrawPoint((Point) geometry.geometry, geometry.z_layer, 10,
+						jtsDrawer.DrawPoint((Point) geometry.geometry, 0, 10,
 							renderer.getMaxEnvDim() / 1000, geometry.getColor(), geometry.alpha);
 					}
 				}
