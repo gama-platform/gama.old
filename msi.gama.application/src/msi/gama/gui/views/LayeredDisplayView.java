@@ -255,11 +255,11 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 				}
 			}
 		};
-		// SwtGui.getWindow().addPerspectiveListener(perspectiveListener);
-		// if ( Platform.getOS().equals(Platform.OS_MACOSX) ) {
-		// surfaceComposite.setRedraw(false);
-		// }
-		// surfaceComposite.populate();
+		SwtGui.getWindow().addPerspectiveListener(perspectiveListener);
+		if ( Platform.getOS().equals(Platform.OS_MACOSX) ) {
+		  surfaceComposite.setRedraw(false);
+		}
+		//surfaceComposite.populate();
 		return surfaceComposite;
 	}
 

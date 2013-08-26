@@ -185,8 +185,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	@Override
 	public void display(final GLAutoDrawable drawable) {
-		// if ( displaySurface.canBeUpdated() ) {
 
+     if (!displaySurface.isPaused()){ 
 		gl = drawable.getGL();
 		setContext(drawable.getContext());
 
@@ -286,6 +286,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		} else {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
 		}
+	  }
 	}
 
 	@Override
