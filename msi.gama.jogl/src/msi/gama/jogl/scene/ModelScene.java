@@ -76,10 +76,10 @@ public class ModelScene {
 	public void draw(final JOGLAWTGLRenderer renderer, final boolean picking, final boolean drawAxes,
 		final boolean drawBounds) {
 		// renderer.getContext().makeCurrent();
-		if ( drawAxes ) {
+		if ( drawBounds ) {
 			this.drawAxes(renderer.gl, renderer.getMaxEnvDim() / 10);
 		}
-		if ( drawBounds ) {
+		if ( true ) {
 			this.drawEnvironmentBounds(renderer);
 		}
 		// FIXME: Need to understand why I need to set this color (otherwise dem model(or model without any geometries)
