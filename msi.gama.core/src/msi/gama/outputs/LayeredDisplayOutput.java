@@ -55,7 +55,6 @@ import com.vividsolutions.jts.geom.Envelope;
 		LayeredDisplayOutput.OPENGL, LayeredDisplayOutput.THREED, LayeredDisplayOutput.SWT }, optional = true),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true),
-	@facet(name = IKeyword.INERTIA, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.STENCIL, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.ZFIGHTING, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.SHOWFPS, type = IType.BOOL, optional = true),
@@ -83,7 +82,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean autosave = false;
 	private boolean output3D = false;
 	private boolean tesselation = true;
-	private boolean inertia = false;
 	private boolean stencil = false;
 	private boolean z_fighting = false;
 	private boolean showfps = false;
@@ -154,11 +152,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression tess = getFacet(IKeyword.TESSELATION);
 		if ( tess != null ) {
 			setTesselation(Cast.asBool(getScope(), tess.value(getScope())));
-		}
-
-		final IExpression inert = getFacet(IKeyword.INERTIA);
-		if ( inert != null ) {
-			setInertia(Cast.asBool(getScope(), inert.value(getScope())));
 		}
 
 		final IExpression st = getFacet(IKeyword.STENCIL);
@@ -467,14 +460,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	private void setTesselation(final boolean tesselation) {
 		this.tesselation = tesselation;
-	}
-
-	public boolean getInertia() {
-		return inertia;
-	}
-
-	private void setInertia(final boolean inertia) {
-		this.inertia = inertia;
 	}
 
 	public boolean getStencil() {

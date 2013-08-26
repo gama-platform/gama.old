@@ -115,7 +115,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 					// FIXME: Why setting this at each run??
 					renderer.setTessellation(getOutput().getTesselation());
-					renderer.setInertia(getOutput().getInertia());
 					renderer.setStencil(getOutput().getStencil());
 					renderer.setShowFPS(getOutput().getShowFPS());
 					renderer.setDrawEnv(getOutput().getDrawEnv());
@@ -161,7 +160,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		renderer = new JOGLAWTGLRenderer(this);
 		// renderer.setPolygonTriangulated(false);
 		renderer.setTessellation(getOutput().getTesselation());
-		renderer.setInertia(getOutput().getInertia());
 		renderer.setStencil(getOutput().getStencil());
 		renderer.setZFighting(getOutput().getZFighting());
 		renderer.setShowFPS(getOutput().getShowFPS());
