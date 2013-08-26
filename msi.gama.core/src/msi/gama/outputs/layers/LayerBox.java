@@ -38,10 +38,10 @@ public class LayerBox implements IDisplayLayerBox {
 	IExpression elevation = new ConstantExpression(0d);
 	IExpression refresh = new ConstantExpression(true);
 
-	boolean isAbsoluteWidth = false;
-	boolean isAbsoluteHeight = false;
-	boolean isAbsoluteX = false;
-	boolean isAbsoluteY = false;
+	// boolean isAbsoluteWidth = false;
+	// boolean isAbsoluteHeight = false;
+	// boolean isAbsoluteX = false;
+	// boolean isAbsoluteY = false;
 
 	Double currentTransparency = 0d;
 	ILocation currentPosition;
@@ -124,10 +124,10 @@ public class LayerBox implements IDisplayLayerBox {
 	public void setPosition(final IScope scope, final IExpression p) throws GamaRuntimeException {
 		if ( p != null ) {
 			position = p;
-			if ( p instanceof BinaryOperator ) {
-				isAbsoluteX = ((BinaryOperator) p).left().containsAny(PixelUnitExpression.class);
-				isAbsoluteY = ((BinaryOperator) p).right().containsAny(PixelUnitExpression.class);
-			}
+			// if ( p instanceof BinaryOperator ) {
+			// isAbsoluteX = ((BinaryOperator) p).left().containsAny(PixelUnitExpression.class);
+			// isAbsoluteY = ((BinaryOperator) p).right().containsAny(PixelUnitExpression.class);
+			// }
 			if ( p.isConst() ) {
 				setPosition(Cast.asPoint(scope, position.value(scope)));
 			}
@@ -138,10 +138,12 @@ public class LayerBox implements IDisplayLayerBox {
 	public void setExtent(final IScope scope, final IExpression e) throws GamaRuntimeException {
 		if ( e != null ) {
 			extent = e;
-			if ( e instanceof BinaryOperator ) {
-				isAbsoluteWidth = ((BinaryOperator) e).left().containsAny(PixelUnitExpression.class);
-				isAbsoluteHeight = ((BinaryOperator) e).right().containsAny(PixelUnitExpression.class);
-			}
+			// if ( e instanceof BinaryOperator ) {
+			// isAbsoluteWidth = ((BinaryOperator) e).left().containsAny(PixelUnitExpression.class);
+			// isAbsoluteHeight = ((BinaryOperator) e).right().containsAny(PixelUnitExpression.class);
+			// } else {
+			// isAbsoluteHeight = e.containsAny(PixelUnitExpression.class);
+			// }
 			if ( e.isConst() ) {
 				setExtent(Cast.asPoint(scope, extent.value(scope)));
 			}
@@ -255,7 +257,7 @@ public class LayerBox implements IDisplayLayerBox {
 	 */
 	@Override
 	public boolean isAbsoluteWidth() {
-		return isAbsoluteWidth;
+		return false; /* isAbsoluteWidth; */
 	}
 
 	/**
@@ -264,7 +266,7 @@ public class LayerBox implements IDisplayLayerBox {
 	 */
 	@Override
 	public boolean isAbsoluteHeight() {
-		return isAbsoluteHeight;
+		return false; /* isAbsoluteHeight; */
 	}
 
 	/**
@@ -273,7 +275,7 @@ public class LayerBox implements IDisplayLayerBox {
 	 */
 	@Override
 	public boolean isAbsoluteX() {
-		return isAbsoluteX;
+		return false; /* isAbsoluteX; */
 	}
 
 	/**
@@ -282,7 +284,7 @@ public class LayerBox implements IDisplayLayerBox {
 	 */
 	@Override
 	public boolean isAbsoluteY() {
-		return isAbsoluteY;
+		return false; /* isAbsoluteY; */
 	}
 
 }

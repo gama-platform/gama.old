@@ -58,7 +58,10 @@ public class GamlExpressionFactory implements IExpressionFactory {
 	@Override
 	public IExpression createUnitExpr(final String unit, final IDescription context) {
 		// FIXME Special cases (to be automated later)
-		if ( unit.equals("pixels") || unit.equals("px") ) { return new PixelUnitExpression(); }
+		if ( unit.equals("pixels") || unit.equals("px") ) {
+			// AD: See in the callers to this method the hack to address Issue 387.
+			return new PixelUnitExpression();
+		}
 		if ( unit.equals("display_width") ) { return new DisplayWidthUnitExpression(); }
 		if ( unit.equals("display_height") ) { return new DisplayHeightUnitExpression(); }
 		return createConst(IUnits.UNITS.get(unit), Types.get(IType.FLOAT));
