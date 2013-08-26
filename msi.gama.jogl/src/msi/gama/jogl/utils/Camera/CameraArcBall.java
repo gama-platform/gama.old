@@ -301,38 +301,50 @@ public class CameraArcBall extends AbstractCamera {
 
 		enableInertia = false;
 		
-		// check the difference between the current x and the last x position
-		int horizMovement = arg0.getX() - lastxPressed;
-		// check the difference between the current y and the last y position
-		int vertMovement = arg0.getY() - lastyPressed;
-
-		horizInertia = arg0.getX() - lastxPressed;
-		vertInertia = arg0.getY() - lastyPressed;
-		velocityHoriz = horizInertia;
-		velocityVert = vertInertia;
-
-		// set lastx to the current x position
-		lastxPressed = arg0.getX();
-		// set lastyPressed to the current y position
-		lastyPressed = arg0.getY();
-		if ( isArcBallOn(arg0) ) {	
-			_theta -= horizMovement * _sensivity;
-			_phi -= vertMovement * _sensivity;
-			rotation();
+		if ( isArcBallOn(arg0) ) {
 			arcBallInertia =true;
 		}
 		else{
+			horizInertia = arg0.getX() - lastxPressed;
+            vertInertia = arg0.getY() - lastyPressed;
+            velocityHoriz = horizInertia;
+            velocityVert = vertInertia;
 			moveInertia = true;
 		}
-		// ROI Is enabled only if the view is in a 2D plan.
-		// else if ( myRenderer.displaySurface.selectRectangle && IsViewIn2DPlan() ) {
-		
-		if ( (arg0.isShiftDown() || arg0.isAltDown()) && IsViewIn2DPlan() ) {
-			myRenderer.displaySurface.selectRectangle = true;
-			mousePosition.x = arg0.getX();
-			mousePosition.y = arg0.getY();
-			enableROIDrawing = true;
-			myRenderer.DrawROI();
+        
+        if ( isArcBallOn(arg0) ) {
+
+                // check the difference between the current x and the last x position
+                int horizMovement = arg0.getX() - lastxPressed;
+                // check the difference between the current y and the last y position
+                int vertMovement = arg0.getY() - lastyPressed;
+
+                horizInertia = arg0.getX() - lastxPressed;
+                vertInertia = arg0.getY() - lastyPressed;
+                velocityHoriz = horizInertia;
+                velocityVert = vertInertia;
+
+                // set lastx to the current x position
+                lastxPressed = arg0.getX();
+                // set lastyPressed to the current y position
+                lastyPressed = arg0.getY();
+
+                _theta -= horizMovement * _sensivity;
+                _phi -= vertMovement * _sensivity;
+
+                rotation();
+
+        }
+        // ROI Is enabled only if the view is in a 2D plan.
+        // else if ( myRenderer.displaySurface.selectRectangle && IsViewIn2DPlan() ) {
+       
+        else if ( (arg0.isShiftDown() || arg0.isAltDown()) && IsViewIn2DPlan() ) {
+                myRenderer.displaySurface.selectRectangle = true;
+                mousePosition.x = arg0.getX();
+                mousePosition.y = arg0.getY();
+                enableROIDrawing = true;
+                myRenderer.DrawROI();
+
 		} else {
 			// check the difference between the current x and the last x position
 			int diffx = arg0.getX() - lastxPressed;
