@@ -112,7 +112,7 @@ public class DiffusionStatement extends AbstractStatementSequence {
 						else if (u < 0 || v < 0 || u >= cols || v >= rows) {
 							continue;
 						}
-						System.out.println(um + " " + vm +" | "+u+" "+v);
+//						System.out.println(um + " " + vm +" | "+u+" "+v);
 						// System.out.println(currentMask);
 						tmp[u][v] = tmp[u][v] + currentValue
 								* mat_diffu[um][vm] * currentMask;
@@ -120,7 +120,7 @@ public class DiffusionStatement extends AbstractStatementSequence {
 					}
 					um++;
 					// }
-					 System.out.println();
+//					 System.out.println();
 				}
 			}
 		}
