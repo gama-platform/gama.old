@@ -23,11 +23,12 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	protected final Integer widthOfEnvironmentInModelUnits;
 	protected final Integer heightOfEnvironmentInModelUnits;
 
-	public AbstractDisplayGraphics(IDisplaySurface surface) {
+	public AbstractDisplayGraphics(final IDisplaySurface surface) {
 		widthOfEnvironmentInModelUnits = (int) surface.getEnvWidth();
 		heightOfEnvironmentInModelUnits = (int) surface.getEnvHeight();
 		widthOfDisplayInPixels = surface.getDisplayWidth();
 		heightOfDisplayInPixels = surface.getDisplayHeight();
+		setQualityRendering(surface.getQualityRendering());
 	}
 
 	@Override
@@ -71,36 +72,36 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 		return currentAlpha;
 	}
 
-	protected final int xFromModelUnitsToPixels(double mu) {
+	protected final int xFromModelUnitsToPixels(final double mu) {
 		return xOffsetInPixels + (int) (xRatioBetweenPixelsAndModelUnits * mu /* + 0.5 */);
 	}
 
-	protected final int yFromModelUnitsToPixels(double mu) {
+	protected final int yFromModelUnitsToPixels(final double mu) {
 		return yOffsetInPixels + (int) (yRatioBetweenPixelsAndModelUnits * mu /* + 0.5 */);
 	}
 
-	protected final int wFromModelUnitsToPixels(double mu) {
+	protected final int wFromModelUnitsToPixels(final double mu) {
 		return (int) (xRatioBetweenPixelsAndModelUnits * mu /* +0.5 */);
 	}
 
-	protected final int hFromModelUnitsToPixels(double mu) {
+	protected final int hFromModelUnitsToPixels(final double mu) {
 		return (int) (yRatioBetweenPixelsAndModelUnits * mu /* + 0.5 */);
 	}
 
-	protected double wFromPixelsToModelUnits(int px) {
+	protected double wFromPixelsToModelUnits(final int px) {
 		return px / xRatioBetweenPixelsAndModelUnits;
 	}
 
-	protected double hFromPixelsToModelUnits(int px) {
+	protected double hFromPixelsToModelUnits(final int px) {
 		return px / yRatioBetweenPixelsAndModelUnits;
 	}
 
-	protected double xFromPixelsToModelUnits(int px) {
+	protected double xFromPixelsToModelUnits(final int px) {
 		double mu = (px - xOffsetInPixels) / xRatioBetweenPixelsAndModelUnits;
 		return mu;
 	}
 
-	protected double yFromPixelsToModelUnits(int px) {
+	protected double yFromPixelsToModelUnits(final int px) {
 		double mu = (px - yOffsetInPixels) / yRatioBetweenPixelsAndModelUnits;
 		return mu;
 	}
@@ -129,7 +130,7 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	public void beginDrawingLayers() {}
 
 	@Override
-	public void beginDrawingLayer(ILayer layer) {
+	public void beginDrawingLayer(final ILayer layer) {
 		xOffsetInPixels = layer.getPositionInPixels().x;
 		yOffsetInPixels = layer.getPositionInPixels().y;
 		widthOfLayerInPixels = layer.getSizeInPixels().x;
@@ -139,7 +140,7 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	}
 
 	@Override
-	public void endDrawingLayer(ILayer layer) {
+	public void endDrawingLayer(final ILayer layer) {
 		xOffsetInPixels = null;
 		yOffsetInPixels = null;
 		widthOfLayerInPixels = null;

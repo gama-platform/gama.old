@@ -18,33 +18,20 @@
  */
 package msi.gama.gui.displays.awt;
 
-import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.util.List;
 import javax.swing.SwingUtilities;
-import msi.gama.common.interfaces.IGraphics;
-import msi.gama.common.interfaces.ILayer;
-import msi.gama.common.util.GuiUtils;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.precompiler.GamlAnnotations.display;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
+import msi.gama.runtime.*;
 import msi.gaml.compilation.ISymbol;
 
 @display("java2D")
@@ -123,7 +110,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	@Override
 	protected void createIGraphics() {
-		iGraphics = new AWTDisplayGraphics(this, (Graphics2D) buffImage.getGraphics());
+		iGraphics = new AWTDisplayGraphics(this, buffImage.createGraphics());
 	}
 
 	@Override
@@ -142,7 +129,6 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	public void initialize(final double env_width, final double env_height,
 		final LayeredDisplayOutput layerDisplayOutput) {
 		super.initialize(env_width, env_height, layerDisplayOutput);
-		// setCursor(createCursor());
 		menuManager = new AWTDisplaySurfaceMenu(this);
 		final DisplayMouseListener d = new DisplayMouseListener();
 		addMouseListener(d);
@@ -390,30 +376,28 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	}
 
 	@Override
-	public void setSize(int x, int y) {
-		GuiUtils.debug("Set size called with " + x + " " + y);
+	public void setSize(final int x, final int y) {
+		// GuiUtils.debug("Set size called with " + x + " " + y);
 		super.setSize(x, y);
 	}
 
 	@Override
-	public void setSize(Dimension d) {
-		GuiUtils.debug("Set size called with " + d);
+	public void setSize(final Dimension d) {
+		// GuiUtils.debug("Set size called with " + d);
 		super.setSize(d);
 	}
 
 	@Override
-	public void setBounds(int arg0, int arg1, int arg2, int arg3) {
-		GuiUtils.debug("Set bounds called with " + arg2 + " " + arg3);
-		if ( arg2 == 0 && arg3 == 0 )
-			return;
+	public void setBounds(final int arg0, final int arg1, final int arg2, final int arg3) {
+		// GuiUtils.debug("Set bounds called with " + arg2 + " " + arg3);
+		if ( arg2 == 0 && arg3 == 0 ) { return; }
 		super.setBounds(arg0, arg1, arg2, arg3);
 	}
 
 	@Override
-	public void setBounds(Rectangle r) {
-		GuiUtils.debug("Set bounds called with " + r);
-		if ( r.width < 1 && r.height < 1 )
-			return;
+	public void setBounds(final Rectangle r) {
+		// GuiUtils.debug("Set bounds called with " + r);
+		if ( r.width < 1 && r.height < 1 ) { return; }
 		super.setBounds(r);
 	}
 

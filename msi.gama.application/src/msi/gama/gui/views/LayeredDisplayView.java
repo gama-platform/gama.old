@@ -20,39 +20,25 @@ package msi.gama.gui.views;
 
 import java.awt.Color;
 import javax.swing.JComponent;
-import msi.gama.common.interfaces.EditorListener;
-import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.interfaces.IDisplaySurface.OpenGL;
-import msi.gama.common.interfaces.ILayer;
-import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.layers.AbstractLayer;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.swt.controls.DisplayOverlay;
-import msi.gama.gui.swt.controls.LayersOverlay;
+import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.swt.perspectives.ModelingPerspective;
 import msi.gama.gui.swt.swing.experimental.core.SwingControl;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.outputs.LayeredDisplayOutput;
-import msi.gama.outputs.OutputSynchronizer;
+import msi.gama.outputs.*;
 import msi.gaml.descriptions.IDescription;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseTrackAdapter;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveListener;
-import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.*;
 
 public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements IViewWithZoom {
 
@@ -122,10 +108,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		});
 		createItem("Background", null, general, true);
 		displayItems();
-
 		overlay = new DisplayOverlay(this);
-		// overlay.display();
-		// layersOverlay.display();
 		getOutput().getSurface().setZoomListener(this);
 		((SashForm) parent).setWeights(new int[] { 1, 2 });
 		((SashForm) parent).setMaximizedControl(surfaceComposite);
@@ -181,8 +164,8 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		final String outputName = getOutput().getName();
 
 		OutputSynchronizer.incInitializingViews(getOutput().getName()); // incremented in the SWT thread
-		final int flags = Platform.getOS().equals(Platform.OS_MACOSX) ? SWT.NO_REDRAW_RESIZE : SWT.NONE;
-		surfaceComposite = new SwingControl(parent, flags) {
+		// final int flags = Platform.getOS().equals(Platform.OS_MACOSX) ? SWT.NO_REDRAW_RESIZE : SWT.NONE;
+		surfaceComposite = new SwingControl(parent, SWT.NONE) {
 
 			@Override
 			protected JComponent createSwingComponent() {
@@ -248,18 +231,22 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 						previousState = getOutput().getSurface().isPaused();
 						getOutput().getSurface().setPaused(true);
 					}
+					overlay.hide();
+					layersOverlay.hide();
 				} else {
 					if ( getOutput() != null && getOutput().getSurface() != null ) {
 						getOutput().getSurface().setPaused(previousState);
 					}
+					overlay.display();
+					layersOverlay.display();
 				}
 			}
 		};
 		SwtGui.getWindow().addPerspectiveListener(perspectiveListener);
-		if ( Platform.getOS().equals(Platform.OS_MACOSX) ) {
-		  surfaceComposite.setRedraw(false);
-		}
-		//surfaceComposite.populate();
+		// if ( Platform.getOS().equals(Platform.OS_MACOSX) ) {
+		// surfaceComposite.setRedraw(false);
+		// }
+		// surfaceComposite.populate();
 		return surfaceComposite;
 	}
 
@@ -422,7 +409,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			}).start();
 		}
 	}
-	
+
 	@Override
 	public void toggleInertia() {
 		if ( getDisplaySurface() instanceof IDisplaySurface.OpenGL ) {
@@ -669,7 +656,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 			}
 		});
-		overlay.toggle();
+		// overlay.toggle();
 	}
 
 	@Override
@@ -679,13 +666,6 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 	public Point getOverlayPosition() {
 		Point p = surfaceComposite.toDisplay(surfaceComposite.getLocation());
-		// FIXME Workaround for the bug when displaying the sash view.
-		// SashForm sash = (SashForm) parent;
-		// Control c = sash.getMaximizedControl();
-		// if ( c == null ) {
-		// int width = leftComposite.getSize().x + 3;
-		// p = new Point(p.x - width, p.y);
-		// }
 		Point s = surfaceComposite.getSize();
 		int x = p.x;
 		int y = p.y + s.y - 16;
@@ -710,9 +690,6 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			cy = -cpos[1];
 			cz = cpos[2];
 		}
-		// double height = surface.getEnvHeight();
-		// double width = surface.getEnvWidth();
-
 		GamaPoint point = surface.getModelCoordinates();
 		String x = point == null ? "N/A" : String.format("%8.2f", point.x);
 		String y = point == null ? "N/A" : String.format("%8.2f", point.y);

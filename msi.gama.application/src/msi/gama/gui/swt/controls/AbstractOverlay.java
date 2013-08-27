@@ -74,7 +74,12 @@ public abstract class AbstractOverlay {
 			}
 
 			@Override
-			public void partDeactivated(final IWorkbenchPartReference partRef) {}
+			public void partDeactivated(final IWorkbenchPartReference partRef) {
+				// IWorkbenchPart part = partRef.getPart(false);
+				// if ( view.equals(part) ) {
+				// hide();
+				// }
+			}
 
 			@Override
 			public void partOpened(final IWorkbenchPartReference partRef) {}
@@ -91,8 +96,6 @@ public abstract class AbstractOverlay {
 			public void partVisible(final IWorkbenchPartReference partRef) {
 				IWorkbenchPart part = partRef.getPart(false);
 				if ( view.equals(part) ) {
-					// GuiUtils.debug("AbstractOverlay.AbstractOverlay(...).new IPartListener2() {...}.partVisible " +
-					// part.getTitle());
 					display();
 				}
 			}
@@ -102,7 +105,7 @@ public abstract class AbstractOverlay {
 		});
 
 		final Composite c = view.getComponent();
-		popup = new Shell(view.getSite().getShell(), SWT.TOOL | SWT.NO_TRIM | SWT.NO_FOCUS);
+		popup = new Shell(c.getShell(), SWT.NO_TRIM | SWT.NO_FOCUS);
 		popup.setLayout(new FillLayout());
 		popup.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 		control = createControl();
@@ -115,6 +118,7 @@ public abstract class AbstractOverlay {
 		c.addListener(SWT.Close, hide);
 		// c.addListener(SWT.Deactivate, hide);
 		c.addListener(SWT.Hide, hide);
+
 	}
 
 	protected abstract Control createControl();
@@ -157,19 +161,25 @@ public abstract class AbstractOverlay {
 		// if ( !view.getSite().getShell().equals(popup.getParent()) ) {
 		// reparentWithShell(view.getSite().getShell());
 		// }
+		// if ( viewIsDetached() ) {
+		// relocate();
+		// resize();
+		// }
 		populateControl();
 		popup.setVisible(true);
 		// popup.set
 	}
 
 	public void relocate() {
-		// if ( isHidden ) { return; }
+		// Relocation is done even if the view is set to be hidden as display() will not change the location
+		// if (isHidden())
 		if ( !popup.isDisposed() ) {
 			popup.setLocation(getLocation());
 		}
 	}
 
 	public void resize() {
+		// Resizing is done even if the overlay is set to be hidden as display() will not change the size
 		// if ( isHidden ) { return; }
 		if ( !popup.isDisposed() ) {
 			final Point size = getSize();
@@ -190,11 +200,18 @@ public abstract class AbstractOverlay {
 	}
 
 	protected boolean isHidden() {
+		// AD: Temporary fix for Issue 548. When a view is detached, the overlays are not displayed
 		return isHidden || viewIsDetached();
 	}
 
 	private boolean viewIsDetached() {
-		return view.getSite().getShell().getText().isEmpty();
+		// Uses the trick from http://eclipsesource.com/blogs/2010/06/23/tip-how-to-detect-that-a-view-was-detached/
+		IWorkbenchPartSite site = view.getSite();
+		if ( site == null ) { return false; }
+		Shell shell = site.getShell();
+		if ( shell == null ) { return false; }
+		String text = shell.getText();
+		return text == null || text.isEmpty();
 	}
 
 	public final void toggle() {
@@ -205,7 +222,8 @@ public abstract class AbstractOverlay {
 		isHidden = hidden;
 		if ( isHidden ) {
 			hide();
-		} else {
+		} else if ( !viewIsDetached() ) {
+			// No need to compute these if the view is detached
 			relocate();
 			resize();
 			display();

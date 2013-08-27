@@ -76,7 +76,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public boolean arcball = false;
 
 	// Use to toggle the selectRectangle tool
-	public boolean selectRectangle = false;	
+	public boolean selectRectangle = false;
 
 	// Use to toggle the SplitLayer view
 	public boolean splitLayer = false;
@@ -514,7 +514,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	public void toggleArcball() {
 		arcball = !arcball;
 	}
-	
+
 	@Override
 	public void toggleInertia() {
 		renderer.inertia = !renderer.inertia;

@@ -24,7 +24,6 @@ import java.awt.*;
 import java.awt.geom.*;
 import java.awt.image.BufferedImage;
 import msi.gama.common.interfaces.IDisplaySurface;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
 import msi.gama.runtime.IScope;
@@ -84,7 +83,9 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 
 	@Override
 	public void setQualityRendering(final boolean quality) {
-		renderer.setRenderingHints(quality ? QUALITY_RENDERING : SPEED_RENDERING);
+		if ( renderer != null ) {
+			renderer.setRenderingHints(quality ? QUALITY_RENDERING : SPEED_RENDERING);
+		}
 	}
 
 	@Override
@@ -167,7 +168,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	@Override
 	public Rectangle2D drawString(final String string, final Color stringColor, final ILocation locationInModelUnits,
 		final java.lang.Double heightInModelUnits, final String fontName, final Integer styleName, final Integer angle,
-		final Double z,final Boolean bitmap) {
+		final Double z, final Boolean bitmap) {
 		renderer.setColor(highlight ? highlightColor : stringColor);
 		int curX, curY;
 		if ( locationInModelUnits == null ) {

@@ -76,7 +76,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private boolean showFPS = false;
 	// facet "z_fighting"
 	private boolean z_fighting = false;
-	
+
 	public boolean triangulation = false;
 
 	public boolean drawAxes = true;
@@ -92,7 +92,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public int pickedObjectIndex = -1;
 	public ISceneObject currentPickedObject;
-	private int antialiasing = GL_NEAREST;
+	// private int antialiasing = GL_NEAREST;
 
 	public int frame = 0;
 
@@ -147,8 +147,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 		// Set background color
 
-		gl.glClearColor((float)displaySurface.getBgColor().getRed()/255.0f, (float)displaySurface.getBgColor().getGreen()/255.0f, (float)displaySurface
-			.getBgColor().getBlue()/255.0f, 1.0f);
+		gl.glClearColor(displaySurface.getBgColor().getRed() / 255.0f, displaySurface.getBgColor().getGreen() / 255.0f,
+			displaySurface.getBgColor().getBlue() / 255.0f, 1.0f);
 		// Enable smooth shading, which blends colors nicely, and smoothes out lighting.
 		GLUtil.enableSmooth(gl);
 
@@ -186,108 +186,110 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	@Override
 	public void display(final GLAutoDrawable drawable) {
 
-     if (!displaySurface.isPaused()){ 
-		gl = drawable.getGL();
-		setContext(drawable.getContext());
+		if ( !displaySurface.isPaused() ) {
+			gl = drawable.getGL();
+			setContext(drawable.getContext());
 
-		width = drawable.getWidth();
-		height = drawable.getHeight();
+			width = drawable.getWidth();
+			height = drawable.getHeight();
 
-		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
-		gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, mvmatrix, 0);
-		gl.glGetDoublev(GL.GL_PROJECTION_MATRIX, projmatrix, 0);
+			gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
+			gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, mvmatrix, 0);
+			gl.glGetDoublev(GL.GL_PROJECTION_MATRIX, projmatrix, 0);
 
-		// Clear the screen and the depth buffer
-		gl.glClearDepth(1.0f);
-		gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+			// Clear the screen and the depth buffer
+			gl.glClearDepth(1.0f);
+			gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		gl.glMatrixMode(GL.GL_PROJECTION);
-		// Reset the view (x, y, z axes back to normal)
-		gl.glLoadIdentity();
+			gl.glMatrixMode(GL.GL_PROJECTION);
+			// Reset the view (x, y, z axes back to normal)
+			gl.glLoadIdentity();
 
-		camera.UpdateCamera(gl, glu, width, height);
+			camera.UpdateCamera(gl, glu, width, height);
 
-		if ( IS_LIGHT_ON ) {
-			gl.glEnable(GL_LIGHTING);
-		} else {
-			gl.glDisable(GL_LIGHTING);
-		}
-
-		// Draw Diffuse light as yellow sphere
-		// GLUtil.DrawDiffuseLights(gl, glu,getMaxEnvDim()/10);
-
-		// FIXME: Now the background is not updated but it should to have a night effect.
-		// Set background color
-		// gl.glClearColor(ambiantLightValue.floatValue(), ambiantLightValue.floatValue(),
-		// ambiantLightValue.floatValue(), 1.0f);
-		// The ambiant_light is always reset in case of dynamic lighting.
-		GLUtil.UpdateAmbiantLight(gl, glu, ambientLightValue);
-		GLUtil.UpdateDiffuseLight(gl, glu, diffuseLightValue);
-
-		// Show triangulated polygon or not (trigger by GAMA)	
-		/*if ( !triangulation ) {
-			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
-		} else {
-			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
-		}*/
-
-		// Blending control
-
-		if ( BLENDING_ENABLED ) {
-			gl.glEnable(GL_BLEND); // Turn blending on
-		} else {
-			gl.glDisable(GL_BLEND); // Turn blending off
-			if ( !getStencil() ) {
-				gl.glEnable(GL_DEPTH_TEST);
+			if ( IS_LIGHT_ON ) {
+				gl.glEnable(GL_LIGHTING);
 			} else {
-				gl.glEnable(GL_STENCIL_TEST);
+				gl.glDisable(GL_LIGHTING);
+			}
+
+			// Draw Diffuse light as yellow sphere
+			// GLUtil.DrawDiffuseLights(gl, glu,getMaxEnvDim()/10);
+
+			// FIXME: Now the background is not updated but it should to have a night effect.
+			// Set background color
+			// gl.glClearColor(ambiantLightValue.floatValue(), ambiantLightValue.floatValue(),
+			// ambiantLightValue.floatValue(), 1.0f);
+			// The ambiant_light is always reset in case of dynamic lighting.
+			GLUtil.UpdateAmbiantLight(gl, glu, ambientLightValue);
+			GLUtil.UpdateDiffuseLight(gl, glu, diffuseLightValue);
+
+			// Show triangulated polygon or not (trigger by GAMA)
+			/*
+			 * if ( !triangulation ) {
+			 * gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+			 * } else {
+			 * gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
+			 * }
+			 */
+
+			// Blending control
+
+			if ( BLENDING_ENABLED ) {
+				gl.glEnable(GL_BLEND); // Turn blending on
+			} else {
+				gl.glDisable(GL_BLEND); // Turn blending off
+				if ( !getStencil() ) {
+					gl.glEnable(GL_DEPTH_TEST);
+				} else {
+					gl.glEnable(GL_STENCIL_TEST);
+				}
+			}
+
+			// Use polygon offset for a better edges rendering
+			// (http://www.glprogramming.com/red/chapter06.html#name4)
+			// gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
+			// gl.glPolygonOffset(1, 1);
+
+			// gl.glDisable(GL_DEPTH_TEST);
+
+			this.rotateModel();
+
+			if ( getInertia() ) {
+				camera.arcBallInertia();
+				camera.moveInertia();
+			}
+
+			this.drawScene();
+
+			// this.DrawShapeFile();
+			gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
+			gl.glPopMatrix();
+
+			// ROI drawer
+			if ( this.displaySurface.selectRectangle ) {
+				DrawROI();
+			}
+
+			// Show fps for performance mesures
+			if ( this.getShowFPS() ) {
+				CalculateFrameRate();
+				gl.glDisable(GL_BLEND);
+				gl.glColor4d(0.0, 0.0, 0.0, 1.0d);
+				gl.glRasterPos3d(-30, 30, 0);
+				gl.glScaled(8.0d, 8.0d, 8.0d);
+				glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "fps : " + fps);
+				gl.glScaled(0.125d, 0.125d, 0.125d);
+				gl.glEnable(GL_BLEND);
+			}
+
+			// Show triangulated polygon or not (trigger by GAMA)
+			if ( !triangulation ) {
+				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+			} else {
+				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
 			}
 		}
-
-		// Use polygon offset for a better edges rendering
-		// (http://www.glprogramming.com/red/chapter06.html#name4)
-		// gl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
-		// gl.glPolygonOffset(1, 1);
-
-		// gl.glDisable(GL_DEPTH_TEST);
-
-		this.rotateModel();
-
-		if ( getInertia() ) {
-			camera.arcBallInertia();
-			camera.moveInertia();
-		}
-
-		this.drawScene();
-
-		// this.DrawShapeFile();
-		gl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
-		gl.glPopMatrix();
-
-		// ROI drawer
-		if ( this.displaySurface.selectRectangle ) {
-			DrawROI();
-		}
-
-		// Show fps for performance mesures
-		if ( this.getShowFPS() ) {
-			CalculateFrameRate();
-			gl.glDisable(GL_BLEND);
-			gl.glColor4d(0.0, 0.0, 0.0, 1.0d);
-			gl.glRasterPos3d(-30, 30, 0);
-			gl.glScaled(8.0d, 8.0d, 8.0d);
-			glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "fps : " + fps);
-			gl.glScaled(0.125d, 0.125d, 0.125d);
-			gl.glEnable(GL_BLEND);
-		}
-		
-		// Show triangulated polygon or not (trigger by GAMA)	
-		if ( !triangulation ) {
-			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
-		} else {
-			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
-		}
-	  }
 	}
 
 	@Override
@@ -391,8 +393,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	}
 
+	int minAntiAliasing = GL_NEAREST; /* GL_NEAREST_MIPMAP_NEAREST; */
+	int magAntiAliasing = GL_NEAREST;
+
 	public void setAntiAliasing(final boolean antialias) {
-		antialiasing = antialias ? GL_LINEAR : GL_NEAREST;
+		// antialiasing = antialias ? GL_LINEAR : GL_NEAREST;
+		minAntiAliasing = antialias ? GL_LINEAR : GL_NEAREST; /* GL_LINEAR_MIPMAP_LINEAR : GL_NEAREST_MIPMAP_NEAREST; */
+		magAntiAliasing = antialias ? GL_LINEAR : GL_NEAREST;
 	}
 
 	public MyTexture createTexture(final BufferedImage image, final boolean isDynamic) {
@@ -401,12 +408,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		this.getContext().makeCurrent();
 		Texture texture;
 		try {
-			texture = TextureIO.newTexture(image, false);
+			texture = TextureIO.newTexture(image, false /* true for mipmapping */);
 		} catch (final GLException e) {
 			return null;
 		}
-		texture.setTexParameteri(GL_TEXTURE_MIN_FILTER, antialiasing);
-		texture.setTexParameteri(GL_TEXTURE_MAG_FILTER, antialiasing);
+		texture.setTexParameteri(GL_TEXTURE_MIN_FILTER, minAntiAliasing);
+		texture.setTexParameteri(GL_TEXTURE_MAG_FILTER, magAntiAliasing);
 		final MyTexture curTexture = new MyTexture();
 		curTexture.texture = texture;
 		curTexture.isDynamic = isDynamic;

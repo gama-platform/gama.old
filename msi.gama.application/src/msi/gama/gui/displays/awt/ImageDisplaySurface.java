@@ -478,4 +478,13 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public void setSize(final int x, final int y) {
 		resizeImage(x, y);
 	}
+
+	/**
+	 * Method getQualityRendering()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#getQualityRendering()
+	 */
+	@Override
+	public boolean getQualityRendering() {
+		return true;
+	}
 }

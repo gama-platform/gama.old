@@ -726,7 +726,16 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 	@Override
 	public void toggleInertia() {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	/**
+	 * Method getQualityRendering()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#getQualityRendering()
+	 */
+	@Override
+	public boolean getQualityRendering() {
+		return false;
 	}
 
 }

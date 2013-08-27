@@ -36,6 +36,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	protected boolean navigationImageEnabled = true;
 	protected final AffineTransform translation = new AffineTransform();
 	protected boolean synchronous = false;
+	protected boolean qualityRendering = false;
 	protected Color bgColor = Color.black;
 	protected Runnable displayBlock;
 	private double envWidth;
@@ -211,11 +212,17 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	@Override
 	public void setQualityRendering(final boolean quality) {
+		qualityRendering = quality;
 		if ( iGraphics == null ) { return; }
 		iGraphics.setQualityRendering(quality);
 		if ( isPaused() || GAMA.isPaused() ) {
 			updateDisplay();
 		}
+	}
+
+	@Override
+	public boolean getQualityRendering() {
+		return qualityRendering;
 	}
 
 	@Override
@@ -266,43 +273,27 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	// });
 	// }
 
+	private final Runnable displayRunnable = new Runnable() {
+
+		@Override
+		public void run() {
+			displayBlock.run();
+			canBeUpdated(true);
+		}
+	};
+
 	protected void runDisplay(final boolean sync) {
 		canBeUpdated(false);
-
-		// SwingWorker sw = new SwingWorker<Void, Void>() {
-		//
-		// @Override
-		// protected Void doInBackground() throws Exception {
-		// displayBlock.run();
-		// return null;
-		// }
-		//
-		// @Override
-		// public void done() {
-		// canBeUpdated(true);
-		// }
-		//
-		// };
-		// sw.run();
-
-		Runnable r = new Runnable() {
-
-			@Override
-			public void run() {
-				displayBlock.run();
-				canBeUpdated(true);
-			}
-		};
 		if ( sync ) {
 			try {
-				EventQueue.invokeAndWait(r);
+				EventQueue.invokeAndWait(displayRunnable);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			} catch (InvocationTargetException e) {
 				e.printStackTrace();
 			}
 		} else {
-			EventQueue.invokeLater(r);
+			EventQueue.invokeLater(displayRunnable);
 		}
 	}
 
@@ -313,16 +304,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 			runDisplay(false);
 			return;
 		}
-		if ( synchronous ) {
-			runDisplay(true);
-
-		} else {
-			runDisplay(false);
-		}
-		// if ( ex[0] != null ) {
-		// GAMA.reportAndThrowIfNeeded(null, ex[0], false);
-		// ex[0] = null;
-		// }
+		runDisplay(synchronous);
 	}
 
 	// Used when the image is resized.

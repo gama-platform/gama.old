@@ -108,7 +108,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			getCurrentAlpha(), scope.getAgentScope().getPopulation().getName());
 		return rect;
 	}
-	
+
 	/**
 	 * Method drawImage.
 	 * 
@@ -142,8 +142,9 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			texture = renderer.createTexture(img, isDynamic);
 		}
 
-		renderer.getScene().addImage(img, scope == null ? null : scope.getAgentScope(), currentZLayer , currentLayerId, curX, curY, z, curWidth,
-			curHeight, angle, currentOffset, currentScale, isDynamic, getCurrentAlpha(), texture, name);
+		renderer.getScene().addImage(img, scope == null ? null : scope.getAgentScope(), currentZLayer, currentLayerId,
+			curX, curY, z, curWidth, curHeight, angle, currentOffset, currentScale, isDynamic, getCurrentAlpha(),
+			texture, name);
 
 		if ( gridColor != null ) {
 			drawGridLine(img, gridColor, name);
@@ -151,7 +152,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 		return rect;
 	}
-	
+
 	@Override
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
 		final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
@@ -164,45 +165,45 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		return drawDEM2(gridValueMatrix, img, isTextured, isTriangulated, isShowText, scope.getSimulationScope()
 			.getEnvelope(), 1.0, getCurrentAlpha(), currentOffset, currentScale, cellSize);
 	}
-	
+
 	// FIXME: Won't work for a rectangle grid inverse buildline height on x and with width on y
-		public void drawGridLineOld(final BufferedImage image, final Color lineColor) {
-			double stepX, stepY;
+	public void drawGridLineOld(final BufferedImage image, final Color lineColor) {
+		double stepX, stepY;
 
-			for ( int i = 0; i <= image.getWidth(); i++ ) {
-				stepX = i / (double) image.getWidth() * image.getWidth();
-				final Geometry g =
-					GamaGeometryType.buildLine(new GamaPoint(stepX, 0), new GamaPoint(stepX, image.getHeight()))
-						.getInnerGeometry();
-				renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
-					currentOffset, currentScale, false, "gridLine", currentLayerIsStatic, getCurrentAlpha(),"cell");
-			}
+		for ( int i = 0; i <= image.getWidth(); i++ ) {
+			stepX = i / (double) image.getWidth() * image.getWidth();
+			final Geometry g =
+				GamaGeometryType.buildLine(new GamaPoint(stepX, 0), new GamaPoint(stepX, image.getHeight()))
+					.getInnerGeometry();
+			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
+				currentOffset, currentScale, false, "gridLine", currentLayerIsStatic, getCurrentAlpha(), "cell");
+		}
 
-			for ( int i = 0; i <= image.getHeight(); i++ ) {
-				stepY = i / (double) image.getHeight() * image.getHeight();;
+		for ( int i = 0; i <= image.getHeight(); i++ ) {
+			stepY = i / (double) image.getHeight() * image.getHeight();;
+			final Geometry g =
+				GamaGeometryType.buildLine(new GamaPoint(0, stepY), new GamaPoint(image.getWidth(), stepY))
+					.getInnerGeometry();
+			renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
+				currentOffset, currentScale, false, "gridLine", currentLayerIsStatic, getCurrentAlpha(), "cell");
+		}
+	}
+
+	public void drawGridLine(final BufferedImage image, final Color lineColor, final String popName) {
+		double stepX, stepY;
+
+		for ( int i = 0; i < image.getWidth(); i++ ) {
+			for ( int j = 0; j < image.getHeight(); j++ ) {
+				stepX = (i + 0.5) / image.getWidth() * image.getWidth();
+				stepY = (j + 0.5) / image.getHeight() * image.getHeight();
 				final Geometry g =
-					GamaGeometryType.buildLine(new GamaPoint(0, stepY), new GamaPoint(image.getWidth(), stepY))
-						.getInnerGeometry();
-				renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, true, null, false, 0, 0,
-					currentOffset, currentScale, false, "gridLine", currentLayerIsStatic, getCurrentAlpha(),"cell");
+					GamaGeometryType.buildRectangle(1, 1, new GamaPoint(stepX, stepY)).getInnerGeometry();
+				renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, false, lineColor,
+					false, 0, 0, currentOffset, currentScale, false, "gridLine", currentLayerIsStatic,
+					getCurrentAlpha(), popName);
 			}
 		}
-		
-		public void drawGridLine(final BufferedImage image, final Color lineColor, final String popName) {
-			double stepX, stepY;
-			
-			for( int i = 0; i < image.getWidth(); i++ ) {
-				for ( int j = 0; j < image.getHeight(); j++ ) {
-					stepX = (i+0.5) / (double) image.getWidth() * image.getWidth();
-					stepY = (j+0.5) / (double) image.getHeight() * image.getHeight();
-					final Geometry g =
-							GamaGeometryType.buildRectangle(1, 1, new GamaPoint(stepX,stepY)).getInnerGeometry();
-					renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, false,
-							lineColor, false, 0, 0, currentOffset, currentScale, false, "gridLine", currentLayerIsStatic,
-							getCurrentAlpha(),popName);
-				}
-			}
-		}
+	}
 
 	// Build a grid with a dem corresponding to the value in gridValue and textured by texture
 	public Rectangle2D drawDEM2(final double[] dem, final BufferedImage texture, final boolean isTextured,
@@ -246,8 +247,6 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		return null;
 	}
 
-	
-
 	private BufferedImage FlipRightSideLeftImage(BufferedImage img) {
 		final java.awt.geom.AffineTransform tx = java.awt.geom.AffineTransform.getScaleInstance(-1, 1);
 		tx.translate(-img.getWidth(null), 0);
@@ -284,7 +283,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	@Override
 	public Rectangle2D drawString(final String string, final Color stringColor, final ILocation locationInModelUnits,
 		final Double heightInModelUnits, final String fontName, final Integer styleName, final Integer angle,
-		final Double z,final Boolean bitmap) {
+		final Double z, final Boolean bitmap) {
 		double curX, curY;
 		if ( locationInModelUnits == null ) {
 			curX = 0d;
@@ -305,10 +304,10 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 				(int) ((double) heightOfDisplayInPixels / (double) heightOfEnvironmentInModelUnits * heightInModelUnits);
 		}
 		renderer.getScene().addString(string, curX, -curY, z, size, sizeInModelUnits, currentOffset, currentScale,
-			stringColor, fontName, styleName, angle, getCurrentAlpha(),bitmap);
+			stringColor, fontName, styleName, angle, getCurrentAlpha(), bitmap);
 		return null;
 	}
-	
+
 	@Override
 	public void fillBackground(final Color bgColor, final double opacity) {
 		setOpacity(opacity);
@@ -325,7 +324,9 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 	@Override
 	public void setQualityRendering(final boolean quality) {
-		renderer.setAntiAliasing(quality);
+		if ( renderer != null ) {
+			renderer.setAntiAliasing(quality);
+		}
 	}
 
 	/**
@@ -337,11 +338,11 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	@Override
 	public void beginDrawingLayer(final ILayer layer) {
 		super.beginDrawingLayer(layer);
-		
-		this.currentZLayer = (float) (getMaxEnvDim() * ((AbstractLayer)layer).getZPosition());
-		//get the value of the position
-		if(this.currentZLayer == 0){
-			this.currentZLayer = ((AbstractLayer)layer).getPosition().getZ();	
+
+		this.currentZLayer = (float) (getMaxEnvDim() * ((AbstractLayer) layer).getZPosition());
+		// get the value of the position
+		if ( this.currentZLayer == 0 ) {
+			this.currentZLayer = ((AbstractLayer) layer).getPosition().getZ();
 		}
 		final Boolean refresh = layer.isDynamic();
 		currentLayerIsStatic = refresh == null ? false : !refresh;
