@@ -10,6 +10,7 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
 import msi.gama.metamodel.agent.IAgent;
+import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.ILocation;
 import com.sun.opengl.util.BufferUtil;
 
@@ -36,6 +37,8 @@ public abstract class AbstractCamera implements KeyListener, MouseListener, Mous
 
 	protected Vector3D _position;
 	protected Vector3D _target;
+	
+	protected ILocation upVector;
 
 	public double _theta;
 	public double _phi;
@@ -50,6 +53,7 @@ public abstract class AbstractCamera implements KeyListener, MouseListener, Mous
 	public double velocityHoriz, velocityVert = 0;
 
 	public int _orientation;
+	public Point point1 = new Point(0,0);
 
 	public AbstractCamera(final JOGLAWTGLRenderer renderer) {
 		myRenderer = renderer;
@@ -59,6 +63,7 @@ public abstract class AbstractCamera implements KeyListener, MouseListener, Mous
 
 		detectMacOS();
 		mousePosition = new Point(0, 0);
+		setUpVector(new GamaPoint(0.0, 1.0, 0.0));
 	}
 
 	public AbstractCamera(final double xPos, final double yPos, final double zPos, final double xLPos,
@@ -66,6 +71,7 @@ public abstract class AbstractCamera implements KeyListener, MouseListener, Mous
 		myRenderer = renderer;
 		detectMacOS();
 		mousePosition = new Point(0, 0);
+		setUpVector(new GamaPoint(0.0, 1.0, 0.0));
 	}
 
 	public void updatePosition(final double xPos, final double yPos, final double zPos) {
@@ -86,6 +92,15 @@ public abstract class AbstractCamera implements KeyListener, MouseListener, Mous
 
 	public void setTarget(final Vector3D target) {
 		this._target = target;
+	}
+	
+
+	public ILocation getUpVector() {
+		return upVector;
+	}
+
+	public void setUpVector(final ILocation upVector) {
+		this.upVector = upVector;
 	}
 
 	public void setZPosition(final double z) {}
@@ -175,12 +190,6 @@ public abstract class AbstractCamera implements KeyListener, MouseListener, Mous
 	public double getYaw() {
 		return 0;
 	}
-
-	public ILocation getUpVector() {
-		return null;
-	}
-
-	public void setUpVector(final ILocation upVector) {}
 
 	/*---------------------------------------*/
 	/*------------------ Events controls ---------------------*/

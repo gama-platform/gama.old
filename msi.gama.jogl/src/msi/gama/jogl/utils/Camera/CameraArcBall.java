@@ -22,7 +22,6 @@ public class CameraArcBall extends AbstractCamera {
 
 	private double radius;
 
-	private ILocation upVector;
 	private double _orientation;
 
 	public double _sensivity;
@@ -47,7 +46,6 @@ public class CameraArcBall extends AbstractCamera {
 		_sensivity = 0.4;
 		_keyboardSensivity = 4;
 
-		setUpVector(new GamaPoint(0.0, 1.0, 0.0));
 		rotation();
 	}
 
@@ -182,16 +180,6 @@ public class CameraArcBall extends AbstractCamera {
 	@Override
 	public void setRadius(final double r) {
 		this.radius = r;
-	}
-
-	@Override
-	public ILocation getUpVector() {
-		return upVector;
-	}
-
-	@Override
-	public void setUpVector(final ILocation upVector) {
-		this.upVector = upVector;
 	}
 
 	// Move in the XY plan by changing camera pos and look pos.
