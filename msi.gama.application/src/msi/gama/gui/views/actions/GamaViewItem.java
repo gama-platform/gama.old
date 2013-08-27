@@ -6,9 +6,13 @@ package msi.gama.gui.views.actions;
 
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.views.GamaViewPart;
-import org.eclipse.jface.action.*;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IViewSite;
 
 /**
@@ -51,7 +55,7 @@ public abstract class GamaViewItem implements IContributionItem {
 		if ( disposed ) { return; }
 		try {
 			item.dispose();
-		} catch (org.eclipse.swt.SWTException e) {
+		} catch (Exception e) {
 			// e.printStackTrace();
 		} finally {
 			disposed = true;
