@@ -139,7 +139,13 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		}
 		MyTexture texture = null;
 		if ( !renderer.getScene().getTextures().containsKey(img) ) {
-			texture = renderer.createTexture(img, isDynamic);
+			if(scope == null){
+				texture = renderer.createTexture(img, isDynamic,0);
+			}
+			else{
+				texture = renderer.createTexture(img, isDynamic,scope.getAgentScope().getIndex());
+			}
+			
 		}
 
 		renderer.getScene().addImage(img, scope == null ? null : scope.getAgentScope(), currentZLayer, currentLayerId,
@@ -211,7 +217,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		final Double alpha, final GamaPoint offset, final GamaPoint scale, final int cellSize) {
 		MyTexture _texture = null;
 		if ( !renderer.getScene().getTextures().containsKey(texture) ) {
-			_texture = renderer.createTexture(texture, false);
+			_texture = renderer.createTexture(texture, false,0);
 		}
 		renderer.getScene().addDEM(dem, texture, null, isTextured, isTriangulated, isShowText, false, env, z_factor,
 			alpha, offset, scale, cellSize);
@@ -238,7 +244,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		texture = FlipRightSideLeftImage(texture);
 		MyTexture _texture = null;
 		if ( !renderer.getScene().getTextures().containsKey(texture) ) {
-			_texture = renderer.createTexture(texture, false);
+			_texture = renderer.createTexture(texture, false,0);
 		}
 
 		// getASCfromImg(dem);

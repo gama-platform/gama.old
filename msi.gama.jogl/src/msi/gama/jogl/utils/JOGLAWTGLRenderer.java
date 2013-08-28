@@ -235,8 +235,10 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 			// Blending control
 
+
 			if ( BLENDING_ENABLED ) {
 				gl.glEnable(GL_BLEND); // Turn blending on
+
 			} else {
 				gl.glDisable(GL_BLEND); // Turn blending off
 				if ( !getStencil() ) {
@@ -310,11 +312,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glLoadIdentity();
 		glu.gluPerspective(45.0f, aspect, 0.1f, camera.getMaxDim() * 100);
-		if ( camera != null ) {
+		/*if ( camera != null ) {
 			glu.gluLookAt(camera.getPosition().getX(), camera.getPosition().getY(), camera.getPosition().getZ(), camera
 				.getTarget().getX(), camera.getTarget().getY(), camera.getTarget().getZ(), camera.getUpVector().getX(),
 				camera.getUpVector().getY(), camera.getUpVector().getZ());
-		}
+		}*/
 		arcBall.setBounds(width, height);
 	}
 
@@ -330,7 +332,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	 * 
 	 */
 	public void drawModel() {
-		scene.draw(this, isPicking() || currentPickedObject != null, drawAxes, drawEnv);
+		scene.draw(this, isPicking() || currentPickedObject != null, drawEnv);
 	}
 
 	public void drawScene() {
@@ -402,7 +404,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		magAntiAliasing = antialias ? GL_LINEAR : GL_NEAREST;
 	}
 
-	public MyTexture createTexture(final BufferedImage image, final boolean isDynamic) {
+	public MyTexture createTexture(final BufferedImage image, final boolean isDynamic, int index) {
 		// Create a OpenGL Texture object from (URL, mipmap, file suffix)
 		// need to have an opengl context valide
 		this.getContext().makeCurrent();
@@ -412,6 +414,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		} catch (final GLException e) {
 			return null;
 		}
+        //FIXME:need to see the effect of this bending
+		gl.glBindTexture(GL.GL_TEXTURE_2D, index);
 		texture.setTexParameteri(GL_TEXTURE_MIN_FILTER, minAntiAliasing);
 		texture.setTexParameteri(GL_TEXTURE_MAG_FILTER, magAntiAliasing);
 		final MyTexture curTexture = new MyTexture();

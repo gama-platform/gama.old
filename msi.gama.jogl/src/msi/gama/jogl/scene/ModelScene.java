@@ -73,20 +73,14 @@ public class ModelScene {
 
 	}
 
-	public void draw(final JOGLAWTGLRenderer renderer, final boolean picking, final boolean drawAxes,
-		final boolean drawBounds) {
-		// renderer.getContext().makeCurrent();
-		if ( drawBounds ) {
+	public void draw(final JOGLAWTGLRenderer renderer, final boolean picking, final boolean drawEnv) {
+
+		if ( drawEnv ) {
 			this.drawAxes(renderer.gl, renderer.getMaxEnvDim() / 10);
 		}
-		if ( true ) {
-			this.drawEnvironmentBounds(renderer);
-		}
-		// FIXME: Need to understand why I need to set this color (otherwise dem model(or model without any geometries)
-		// are blue)
-		else {
-			renderer.gl.glColor3d(1.0, 1.0, 1.0);
-		}
+		
+		this.drawEnvironmentBounds(renderer,drawEnv);
+	
 		geometries.draw(picking, renderer);
 		staticObjects.draw(picking, renderer);
 		images.draw(picking, renderer);
@@ -187,11 +181,18 @@ public class ModelScene {
 
 	}
 
-	public void drawEnvironmentBounds(final JOGLAWTGLRenderer renderer) {
+	public void drawEnvironmentBounds(final JOGLAWTGLRenderer renderer, boolean drawEnv) {
 		// Draw environment rectangle
-		final Geometry g =
+		final Geometry g;
+		if(drawEnv){
+		 g =
 			GamaGeometryType.buildRectangle(envWidth, envHeight, new GamaPoint(envWidth / 2, envHeight / 2))
 				.getInnerGeometry();
+		}
+		else{//FIXME: don't know why but if this geometry is not added then the color behave randomly
+			g = GamaGeometryType.buildRectangle(0, 0, new GamaPoint(0, 0))
+			.getInnerGeometry();
+		}
 		final Color c = new Color(225, 225, 225);
 		addGeometry(g, null, 0, 0, c, false, c, false, 0, 0, offset, scale, false, "env", false, 1d, "environment");
 	}
