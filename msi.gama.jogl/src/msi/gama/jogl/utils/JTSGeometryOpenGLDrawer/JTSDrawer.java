@@ -309,8 +309,8 @@ public class JTSDrawer {
 			//	}
 				
 				//myGl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
-				//myGl.glEnable(GL.GL_POLYGON_OFFSET_LINE);
-			    //myGl.glPolygonOffset(0.0f,(float) (z_fighting_value-0.1f));
+				myGl.glEnable(GL.GL_POLYGON_OFFSET_LINE);
+			    myGl.glPolygonOffset(0.0f,-(float) (z_fighting_value*1.1));
 				//myGl.glPolygonOffset(0.0f,10.0f);
 				myGl.glBegin(GL.GL_POLYGON);
 				myGl.glColor4d((double) border.getRed() / 255, (double) border.getGreen() / 255,
