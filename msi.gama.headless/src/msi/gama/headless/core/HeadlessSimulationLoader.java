@@ -27,12 +27,16 @@ public class HeadlessSimulationLoader {
 	 * @return the loaded experiment
 	 * @throws InterruptedException
 	 */
-	public static IHeadLessExperiment newHeadlessSimulation(final String fileName) {
+	public static ExperimentSpecies newHeadlessSimulation(final String fileName) {
 		configureHeadLessSimulation();
 		preloadGAMA();
 		IModel model = loadModel(fileName);
 		IExperimentSpecies tt = model.getExperiment("preyPred");
-		IHeadLessExperiment exp = (IHeadLessExperiment) model.getExperiment("preyPred");;
+		
+		//IHeadLessExperiment exp = (IHeadLessExperiment) model.getExperiment("preyPred");;
+		ExperimentSpecies exp = (ExperimentSpecies) model.getExperiment("preyPred");;
+		
+		HeadLessExperiment hexp=new HeadLessExperiment(exp);
 		System.out.println("coucouc " + "  pouet " + tt.getClass().getName());
 
 		/*
@@ -58,10 +62,10 @@ public class HeadlessSimulationLoader {
 	 * @throws GamaRuntimeException
 	 * @throws InterruptedException
 	 */
-	public static IHeadLessExperiment newHeadlessSimulation(final String fileName, final ParametersSet params)
+	public static ExperimentSpecies newHeadlessSimulation(final String fileName, final ParametersSet params)
 		throws GamaRuntimeException {
 		// FIXME Verify all this.
-		IHeadLessExperiment exp = newHeadlessSimulation(fileName);
+		ExperimentSpecies exp = newHeadlessSimulation(fileName);
 		exp.open();
 
 		System.out.println("coucoucou  simulation is open.....");
@@ -75,7 +79,7 @@ public class HeadlessSimulationLoader {
 
 	}
 
-	private static void waitLoading(final IHeadLessExperiment exp) {
+	private static void waitLoading(final ExperimentSpecies exp) {
 		System.out.println("Simulation loading...");
 		do {
 			try {
@@ -83,10 +87,10 @@ public class HeadlessSimulationLoader {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			System.out.println("test " + exp);
-			System.out.println("test2 " + exp.getModel());
+			//System.out.println("test " + exp);
+			//System.out.println("test2 " + exp.getModel());
 			// System.out.println("test2 " + exp.isLoading());
-		} while (exp.getCurrentSimulation() != null);
+		} while (exp.getCurrentSimulation() != null && false);
 	}
 
 	private static void configureHeadLessSimulation() {
@@ -133,7 +137,7 @@ public class HeadlessSimulationLoader {
 			// fireBuildEnded(m, lastModel);
 		}
 		// FIXME Experiment default no longer exists. Needs to specify one name
-		GAMA.controller.newExperiment(IKeyword.DEFAULT, lastModel);
+		GAMA.controller.newExperiment("preyPred", lastModel);
 		System.out.println("Experiment created ");
 		return lastModel;
 	}

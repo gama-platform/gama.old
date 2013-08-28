@@ -5,6 +5,7 @@ import java.io.*;
 import javax.imageio.ImageIO;
 import msi.gama.headless.common.*;
 import msi.gama.headless.core.*;
+import msi.gama.kernel.experiment.ExperimentSpecies;
 import msi.gama.kernel.experiment.ParametersSet;
 import msi.gama.outputs.*;
 import msi.gama.runtime.GAMA;
@@ -18,7 +19,7 @@ public class GamaSimulator implements ISimulator {
 	private final ParametersSet params;
 	private String fileName;
 	private double seed;
-	private IHeadLessExperiment experiment;
+	private ExperimentSpecies experiment;
 
 	public GamaSimulator() {
 		this.seed = Math.random();
@@ -28,7 +29,11 @@ public class GamaSimulator implements ISimulator {
 	@Override
 	public void nextStep(final int currentStep) {
 		this.currentStep = currentStep;
+		//experiment.getSchedule().
+		GAMA.controller.getScheduler().step();
+		System.out.println(" Step " + currentStep);
 		
+		//		GAMA.controller.getScheduler().step();
 		//experiment.getAgent().get //currentStep.//.controller.userStep();
 	}
 

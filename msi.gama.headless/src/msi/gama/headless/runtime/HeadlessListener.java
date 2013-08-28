@@ -2,6 +2,8 @@ package msi.gama.headless.runtime;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
@@ -15,6 +17,16 @@ import org.eclipse.core.runtime.*;
 
 public class HeadlessListener implements IGui {
 
+	
+	static {
+		System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n\n\n\nConfiguring user interface access through SWT");
+		if(GuiUtils.isInHeadLessMode())
+			{
+				System.out.println("Configuring Headless Mode");
+				GuiUtils.setSwtGui(new HeadlessListener());
+			}
+		
+	}
 	@Override
 	public Map<String, Object> openUserInputDialog(final String title, final Map<String, Object> initialValues,
 		final Map<String, IType> types) {
