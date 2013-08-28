@@ -663,7 +663,7 @@ public class JOGLSWTGLRenderer /*implements GLEventListener*/ {
 			System.out.println("To" + realmousePositionPoint.x + "," + realmousePositionPoint.y);
 
 			myGLDrawer.DrawROI(gl, realPressedPoint.x - env_width / 2, -(realPressedPoint.y - env_height / 2),
-				realmousePositionPoint.x - env_width / 2, -(realmousePositionPoint.y - env_height / 2));
+				realmousePositionPoint.x - env_width / 2, -(realmousePositionPoint.y - env_height / 2),true,1);
 
 		}
 	}

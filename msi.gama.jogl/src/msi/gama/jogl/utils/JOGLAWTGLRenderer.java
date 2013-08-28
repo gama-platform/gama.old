@@ -277,7 +277,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 			// ROI drawer
 			if ( this.displaySurface.selectRectangle ) {
-				DrawROI();
+			  DrawROI();
 			}
 
 			// Show fps for performance mesures
@@ -647,7 +647,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			Point realmousePositionPoint = getIntWorldPointFromWindowPoint(windowmousePositionPoint);
 
 			myGLDrawer.DrawROI(gl, realPressedPoint.x, -realPressedPoint.y, realmousePositionPoint.x,
-				-realmousePositionPoint.y);
+				-realmousePositionPoint.y,this.getZFighting(),this.getMaxEnvDim());
 
 			roi_List.add(0, realPressedPoint.x);
 			roi_List.add(1, realPressedPoint.y);
@@ -670,7 +670,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				}
 			} else {
 				if ( roi_List.get(0) == roi_List.get(2) && roi_List.get(1) == roi_List.get(3) ) {
-					System.out.println(" passe par le mouse click");
 					roiCenter.setLocation(worldCoordinates.x, worldCoordinates.y);
 
 				} else if ( roi_List.get(0) < roi_List.get(2) && roi_List.get(1) > roi_List.get(3) ) {

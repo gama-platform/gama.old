@@ -311,23 +311,49 @@ public class MyGLToyDrawer {
 		glu.gluDeleteQuadric(earth);
 	}
 
-	public void DrawROI(GL gl, double x1, double y1, double x2, double y2) {
+	public void DrawROI(GL gl, double x1, double y1, double x2, double y2, boolean z_fighting, double maxEnvDim) {
 
-		gl.glBegin(GL.GL_LINES);
+		
+		if(z_fighting){
+			gl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_LINE);
+			gl.glEnable(GL.GL_POLYGON_OFFSET_LINE);
+			//Draw on top of everything
+		    gl.glPolygonOffset(0.0f,(float) -maxEnvDim);
+			gl.glBegin(GL.GL_POLYGON);
 
-		gl.glVertex3d(x1, -y1, 0.0f);
-		gl.glVertex3d(x2, -y1, 0.0f);
+			gl.glVertex3d(x1, -y1, 0.0f);
+			gl.glVertex3d(x2, -y1, 0.0f);
 
-		gl.glVertex3d(x2, -y1, 0.0f);
-		gl.glVertex3d(x2, -y2, 0.0f);
+			gl.glVertex3d(x2, -y1, 0.0f);
+			gl.glVertex3d(x2, -y2, 0.0f);
 
-		gl.glVertex3d(x2, -y2, 0.0f);
-		gl.glVertex3d(x1, -y2, 0.0f);
+			gl.glVertex3d(x2, -y2, 0.0f);
+			gl.glVertex3d(x1, -y2, 0.0f);
 
-		gl.glVertex3d(x1, -y2, 0.0f);
-		gl.glVertex3d(x1, -y1, 0.0f);
+			gl.glVertex3d(x1, -y2, 0.0f);
+			gl.glVertex3d(x1, -y1, 0.0f);
+			gl.glEnd();	
+			gl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+		}
+		else{
+			gl.glBegin(GL.GL_LINES);
+			
+			gl.glVertex3d(x1, -y1, 0.0f);
+			gl.glVertex3d(x2, -y1, 0.0f);
 
-		gl.glEnd();
+			gl.glVertex3d(x2, -y1, 0.0f);
+			gl.glVertex3d(x2, -y2, 0.0f);
+
+			gl.glVertex3d(x2, -y2, 0.0f);
+			gl.glVertex3d(x1, -y2, 0.0f);
+
+			gl.glVertex3d(x1, -y2, 0.0f);
+			gl.glVertex3d(x1, -y1, 0.0f);
+			gl.glEnd();	
+		}
+		
+		
+		
 
 	}
 
