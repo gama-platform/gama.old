@@ -7,10 +7,18 @@ package msi.gama.gui.swt.controls;
 import msi.gama.gui.swt.SwtGui;
 import org.apache.commons.lang.WordUtils;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackListener;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TypedListener;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * The class Popup.
@@ -21,7 +29,7 @@ import org.eclipse.swt.widgets.*;
  */
 public class Popup {
 
-	private static final Shell popup = new Shell(SwtGui.getDisplay(), SWT.ON_TOP);
+	private static final Shell popup = new Shell(SwtGui.getDisplay(), SWT.ON_TOP | SWT.NO_TRIM);
 	private static final Label popupText = new Label(popup, SWT.NONE);
 	private static final Listener hide = new Listener() {
 
