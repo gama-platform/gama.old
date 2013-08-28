@@ -20,25 +20,38 @@ package msi.gama.gui.views;
 
 import java.awt.Color;
 import javax.swing.JComponent;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.EditorListener;
+import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.common.interfaces.IDisplaySurface.OpenGL;
+import msi.gama.common.interfaces.ILayer;
+import msi.gama.common.interfaces.ILayerManager;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.layers.AbstractLayer;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.swt.controls.*;
+import msi.gama.gui.swt.controls.DisplayOverlay;
+import msi.gama.gui.swt.controls.LayersOverlay;
 import msi.gama.gui.swt.perspectives.ModelingPerspective;
 import msi.gama.gui.swt.swing.experimental.core.SwingControl;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.outputs.*;
+import msi.gama.outputs.LayeredDisplayOutput;
+import msi.gama.outputs.OutputSynchronizer;
 import msi.gaml.descriptions.IDescription;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.ControlAdapter;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.*;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.PartInitException;
 
 public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements IViewWithZoom {
 
@@ -130,7 +143,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 			@Override
 			public void run() {
-				overlay.display();
+				overlay.update();
 			}
 		};
 		// TODO Temporarily disabled
@@ -237,8 +250,8 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 					if ( getOutput() != null && getOutput().getSurface() != null ) {
 						getOutput().getSurface().setPaused(previousState);
 					}
-					overlay.display();
-					layersOverlay.display();
+					overlay.update();
+					layersOverlay.update();
 				}
 			}
 		};
@@ -528,7 +541,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	@Override
 	public void setSynchronized(final boolean synchro) {
 		getDisplaySurface().setSynchronized(synchro);
-		overlay.display();
+		overlay.update();
 	}
 
 	@Override
@@ -576,7 +589,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			@Override
 			public void run() {
 				// zoomIndicator.setText(String.valueOf(zoom) + "%");
-				overlay.display();
+				overlay.update();
 			}
 		});
 
@@ -699,8 +712,9 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		} else {
 			objects = new Object[] { x, y, getZoomLevel(), cx, cy, cz };
 		}
-		return String.format("X%10s | Y%10s | Zoom%10d%%" + (paused ? " | Paused" : "") +
-			(synced ? " | Synchronized" : "") + (openGL ? " | Camera [%.2f;%.2f;%.2f]" : ""), objects);
+		return String.format("Display " + getOutput().getName() + " | X%10s | Y%10s | Zoom%10d%%" +
+			(paused ? " | Paused" : "") + (synced ? " | Synchronized" : "") +
+			(openGL ? " | Camera [%.2f;%.2f;%.2f]" : ""), objects);
 	};
 
 	public Composite getComponent() {
@@ -708,7 +722,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	}
 
 	public void pauseChanged() {
-		overlay.display();
+		overlay.update();
 	}
 
 	public void toogleOverlay() {

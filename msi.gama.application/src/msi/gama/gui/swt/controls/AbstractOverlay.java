@@ -1,13 +1,21 @@
 package msi.gama.gui.swt.controls;
 
+import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.views.LayeredDisplayView;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchPartSite;
 
 /**
  * The class AbstractOverlay
@@ -25,99 +33,158 @@ public abstract class AbstractOverlay {
 	private final Control control;
 	private boolean isHidden = true;
 	private final LayeredDisplayView view;
-	private final Listener hide = new Listener() {
+
+	// ACTIONS ON THE POPUP
+
+	Runnable doHide = new Runnable() {
 
 		@Override
-		public void handleEvent(final Event event) {
+		public void run() {
 			hide();
 		}
 	};
-	private final Listener resize = new Listener() {
+
+	Runnable doDisplay = new Runnable() {
 
 		@Override
-		public void handleEvent(final Event event) {
-			relocate();
-			resize();
-		}
-	};
-	private final MouseMoveListener move = new MouseMoveListener() {
-
-		@Override
-		public void mouseMove(final MouseEvent e) {
+		public void run() {
 			display();
 		}
 	};
 
+	Runnable doResize = new Runnable() {
+
+		@Override
+		public void run() {
+			relocate();
+			resize();
+		}
+	};
+
+	protected void run(Runnable r) {
+		GuiUtils.run(r);
+	}
+
+	// PART LISTENER
+
+	private final IPartListener2 pl2 = new IPartListener2() {
+
+		@Override
+		public void partActivated(final IWorkbenchPartReference partRef) {
+
+			IWorkbenchPart part = partRef.getPart(false);
+			if ( view.equals(part) ) {
+				// GuiUtils.debug("Part " + partRef.getTitle() + " activated -> should display overlay");
+				run(doDisplay);
+			}
+			// else run(doHide)
+			;
+		}
+
+		@Override
+		public void partBroughtToTop(final IWorkbenchPartReference partRef) {
+			// GuiUtils.debug("Part " + partRef.getTitle() + " brought to top -> nothing");
+		}
+
+		@Override
+		public void partClosed(final IWorkbenchPartReference partRef) {
+			IWorkbenchPart part = partRef.getPart(false);
+			if ( view.equals(part) ) {
+				// GuiUtils.debug("Part " + partRef.getTitle() + " closed -> should close overlay");
+				close();
+			}
+		}
+
+		@Override
+		public void partDeactivated(final IWorkbenchPartReference partRef) {
+			IWorkbenchPart part = partRef.getPart(false);
+			if ( view.equals(part) && !view.getComponent().isVisible() ) {
+				// GuiUtils.debug(view.getPartName() +
+				// " disactivated && component is not visible -> should hide overlay");
+				run(doHide);
+			}
+		}
+
+		@Override
+		public void partOpened(final IWorkbenchPartReference partRef) {}
+
+		@Override
+		public void partHidden(final IWorkbenchPartReference partRef) {
+			IWorkbenchPart part = partRef.getPart(false);
+			if ( view.equals(part) ) {
+				// GuiUtils.debug("Part " + partRef.getTitle() + " hidden -> should hide overlay");
+				run(doHide);
+			}
+		}
+
+		@Override
+		public void partVisible(final IWorkbenchPartReference partRef) {
+			IWorkbenchPart part = partRef.getPart(false);
+			if ( view.equals(part) ) {
+				// GuiUtils.debug("Part " + partRef.getTitle() + " visible -> should display overlay");
+				run(doDisplay);
+			}
+			// else {
+			// run(doHide);
+			// }
+		}
+
+		@Override
+		public void partInputChanged(final IWorkbenchPartReference partRef) {}
+	};
+
 	public AbstractOverlay(final LayeredDisplayView view) {
 		this.view = view;
-
 		IPartService ps = (IPartService) ((IWorkbenchPart) view).getSite().getService(IPartService.class);
-		ps.addPartListener(new IPartListener2() {
-
-			@Override
-			public void partActivated(final IWorkbenchPartReference partRef) {
-				IWorkbenchPart part = partRef.getPart(false);
-				if ( view.equals(part) ) {
-					display();
-				}
-			}
-
-			@Override
-			public void partBroughtToTop(final IWorkbenchPartReference partRef) {}
-
-			@Override
-			public void partClosed(final IWorkbenchPartReference partRef) {
-				IWorkbenchPart part = partRef.getPart(false);
-				if ( view.equals(part) ) {
-					close();
-				}
-			}
-
-			@Override
-			public void partDeactivated(final IWorkbenchPartReference partRef) {
-				// IWorkbenchPart part = partRef.getPart(false);
-				// if ( view.equals(part) ) {
-				// hide();
-				// }
-			}
-
-			@Override
-			public void partOpened(final IWorkbenchPartReference partRef) {}
-
-			@Override
-			public void partHidden(final IWorkbenchPartReference partRef) {
-				IWorkbenchPart part = partRef.getPart(false);
-				if ( view.equals(part) ) {
-					hide();
-				}
-			}
-
-			@Override
-			public void partVisible(final IWorkbenchPartReference partRef) {
-				IWorkbenchPart part = partRef.getPart(false);
-				if ( view.equals(part) ) {
-					display();
-				}
-			}
-
-			@Override
-			public void partInputChanged(final IWorkbenchPartReference partRef) {}
-		});
-
+		ps.addPartListener(pl2);
 		final Composite c = view.getComponent();
-		popup = new Shell(c.getShell(), SWT.NO_TRIM | SWT.NO_FOCUS);
+		popup = new Shell(view.getSite().getShell(), SWT.TOOL | SWT.NO_TRIM | SWT.NO_FOCUS);
 		popup.setLayout(new FillLayout());
 		popup.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 		control = createControl();
 		control.setLayoutData(null);
 		popup.setAlpha(140);
 		popup.layout();
-		c.addMouseMoveListener(move);
-		c.addListener(SWT.Move, resize);
-		c.addListener(SWT.Resize, resize);
-		c.addListener(SWT.Close, hide);
-		// c.addListener(SWT.Deactivate, hide);
-		c.addListener(SWT.Hide, hide);
+		// c.addListener(SWT.Move, new Listener() {
+		//
+		// @Override
+		// public void handleEvent(final Event event) {
+		// GuiUtils.debug(view.getPartName() + " == surface moved -> should move overlay");
+		// run(doResize);
+		// }
+		// });
+		c.addListener(SWT.Resize, new Listener() {
+
+			@Override
+			public void handleEvent(final Event event) {
+				GuiUtils.debug(view.getPartName() + " == surface resized -> should resize overlay");
+				run(doResize);
+			}
+		});
+		c.addListener(SWT.Close, new Listener() {
+
+			@Override
+			public void handleEvent(final Event event) {
+				GuiUtils.debug(view.getPartName() + " == surface closed -> should hide overlay");
+				run(doHide);
+			}
+		});
+		// c.addListener(SWT.Deactivate, new Listener() {
+		//
+		// @Override
+		// public void handleEvent(final Event event) {
+		// GuiUtils.debug(view.getPartName() + " == surface closed -> should hide overlay");
+		// run(doHide);
+		// }
+		// });
+		// c.addListener(SWT.Hide, new Listener() {
+		//
+		// @Override
+		// public void handleEvent(final Event event) {
+		// GuiUtils.debug(view.getPartName() + " == surface hidden -> should hide overlay");
+		// run(doHide);
+		// }
+		// });
 
 	}
 
@@ -133,18 +200,6 @@ public abstract class AbstractOverlay {
 		return control;
 	}
 
-	// private void reparentWithShell(final Shell shell) {
-	// if ( popup.isReparentable() ) {
-	// Shell oldShell = (Shell) popup.getParent();
-	// oldShell.removeListener(SWT.Resize, resize);
-	// oldShell.removeListener(SWT.Move, resize);
-	// popup.setParent(shell);
-	// shell.addListener(SWT.Resize, resize);
-	// shell.addListener(SWT.Move, resize);
-	// }
-	//
-	// }
-
 	public Shell getPopup() {
 		return popup;
 	}
@@ -153,34 +208,33 @@ public abstract class AbstractOverlay {
 		return view;
 	}
 
+	public void update() {
+		if ( isHidden() ) { return; }
+		if ( popup.isDisposed() ) { return; }
+		populateControl();
+	}
+
 	public void display() {
 		if ( isHidden() ) { return; }
 		// We first verify that the popup is still ok
 		if ( popup.isDisposed() ) { return; }
-		// We then verify that the shell has not changed (i.e. the view has not been reparented)
-		// if ( !view.getSite().getShell().equals(popup.getParent()) ) {
-		// reparentWithShell(view.getSite().getShell());
-		// }
-		// if ( viewIsDetached() ) {
-		// relocate();
-		// resize();
-		// }
-		populateControl();
-		popup.setVisible(true);
-		// popup.set
+		update();
+		relocate();
+		resize();
+		if ( !popup.isVisible() )
+			popup.setVisible(true);
 	}
 
 	public void relocate() {
-		// Relocation is done even if the view is set to be hidden as display() will not change the location
-		// if (isHidden())
+		if ( isHidden() )
+			return;
 		if ( !popup.isDisposed() ) {
 			popup.setLocation(getLocation());
 		}
 	}
 
 	public void resize() {
-		// Resizing is done even if the overlay is set to be hidden as display() will not change the size
-		// if ( isHidden ) { return; }
+		if ( isHidden() ) { return; }
 		if ( !popup.isDisposed() ) {
 			final Point size = getSize();
 			popup.setSize(popup.computeSize(size.x, size.y));
@@ -188,14 +242,22 @@ public abstract class AbstractOverlay {
 	}
 
 	public void hide() {
-		if ( !popup.isDisposed() ) {
+		if ( !popup.isDisposed() && popup.isVisible() ) {
+			// GuiUtils.debug("set visible(false) sent to popup of " + getClass().getSimpleName());
+			popup.setSize(0, 0);
+			popup.update();
 			popup.setVisible(false);
+			// GuiUtils.debug("Is the popup visible ? " + popup.isVisible());
 		}
 	}
 
 	public void close() {
 		if ( !popup.isDisposed() ) {
+			IPartService ps = (IPartService) ((IWorkbenchPart) view).getSite().getService(IPartService.class);
+			ps.removePartListener(pl2);
+			// Remove other listeners too ?
 			popup.dispose();
+
 		}
 	}
 
@@ -224,8 +286,8 @@ public abstract class AbstractOverlay {
 			hide();
 		} else if ( !viewIsDetached() ) {
 			// No need to compute these if the view is detached
-			relocate();
-			resize();
+			// relocate();
+			// resize();
 			display();
 		}
 	}
