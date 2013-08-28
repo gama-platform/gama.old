@@ -37,7 +37,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.text.JTextComponent;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.swing.experimental.internal.CleanResizeListener;
-import msi.gama.gui.swt.swing.experimental.internal.ComponentDebugging;
 import msi.gama.gui.swt.swing.experimental.internal.FocusHandler;
 import msi.gama.gui.swt.swing.experimental.internal.GlobalFocusHandler;
 import msi.gama.gui.swt.swing.experimental.internal.Platform;
@@ -282,8 +281,8 @@ public abstract class SwingControl extends Composite {
 
 		frame = SWT_AWT.new_Frame(borderlessChild);
 
-		if ( verboseSizeLayout )
-			ComponentDebugging.addComponentSizeDebugListeners(frame);
+		// if ( verboseSizeLayout )
+		// ComponentDebugging.addComponentSizeDebugListeners(frame);
 
 		initializeFocusManagement();
 		initKeystrokeManagement();
