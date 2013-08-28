@@ -362,11 +362,22 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			surface.outputChanged(w, h, this);
 			return;
 		}
-		surface = GuiUtils.getDisplaySurfaceFor(displayType, this, w, h);
-		surface.setSnapshotFileName(getName() + "_snapshot");
-		surface.setAutoSave(autosave, (int) imageDimension.getX(), (int) imageDimension.getY());
-
-		// Use only for opengl
+		if ( !GuiUtils.isInHeadLessMode())
+		{
+			surface = GuiUtils.getDisplaySurfaceFor(displayType, this, w, h);
+			surface.setSnapshotFileName(getName() + "_snapshot");
+			surface.setAutoSave(autosave, (int) imageDimension.getX(), (int) imageDimension.getY());
+		}
+		{
+			surface = GuiUtils.getDisplaySurfaceFor(displayType, this, w, h);
+			
+		//	ImageDisplaySurface
+		//	tmp = 
+		//	surface = new ImageDis
+		//	System.out.println("headless mode ");
+		}
+		
+	// Use only for opengl
 		// if ( surface.getIGraphics() instanceof IGraphics.OpenGL ) {
 		// IGraphics.OpenGL graphics = (IGraphics.OpenGL) surface.getIGraphics();
 		// surface.initOutput3D(output3D, output3DNbCycles);
@@ -446,7 +457,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	@Override
 	public void resume() {
 		super.resume();
-		surface.setPaused(false);
+					surface.setPaused(false);
 		// getScope().step(this);
 	}
 
