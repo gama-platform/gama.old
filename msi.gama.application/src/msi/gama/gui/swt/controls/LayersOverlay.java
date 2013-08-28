@@ -72,7 +72,7 @@ public class LayersOverlay extends AbstractOverlay {
 		}
 	};
 
-	Shell nonTransparentShell;
+	Shell innerShell;
 	Point customLocation;
 	Integer customWidth;
 
@@ -85,18 +85,10 @@ public class LayersOverlay extends AbstractOverlay {
 		super.getPopup().addListener(SWT.MouseHover, l);
 		super.getPopup().addListener(SWT.MouseEnter, l);
 		super.getPopup().addListener(SWT.MouseExit, l);
-		nonTransparentShell = new Shell(super.getPopup(), SWT.TOOL | SWT.NO_TRIM);
-		nonTransparentShell.setLayout(new FillLayout());
-		nonTransparentShell.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		innerShell = new Shell(super.getPopup(), SWT.NO_TRIM);
+		innerShell.setLayout(new FillLayout());
+		innerShell.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 	}
-
-	@Override
-	protected Control createControl() {
-		return getView().getComponent();
-	}
-
-	@Override
-	protected void populateControl() {}
 
 	@Override
 	protected Point getLocation() {
@@ -113,34 +105,48 @@ public class LayersOverlay extends AbstractOverlay {
 
 	@Override
 	public Shell getPopup() {
-		return nonTransparentShell;
+		return innerShell;
 	}
 
 	@Override
 	public void display() {
 		if ( isHidden() ) { return; }
 		super.display();
-		if ( nonTransparentShell.isDisposed() ) { return; }
-		nonTransparentShell.setVisible(true);
+		if ( innerShell.isDisposed() ) { return; }
+		innerShell.setVisible(true);
 	}
 
 	@Override
 	public void relocate() {
+		if ( isHidden() ) { return; }
+		if ( innerShell.isDisposed() ) { return; }
 		super.relocate();
-		if ( nonTransparentShell.isDisposed() ) { return; }
-		nonTransparentShell.setLocation(super.getPopup().getLocation());
+		innerShell.setLocation(super.getPopup().getLocation());
+	}
+
+	public void resizeInnerShell() {
+		innerShell.setSize(innerShell.computeSize(getSize().x, SWT.DEFAULT));
 	}
 
 	@Override
 	public void resize() {
-		// if ( isHidden() ) { return; }
-		super.resize();
+		// fail fast
+		if ( isHidden() ) { return; }
 		if ( super.getPopup().isDisposed() ) { return; }
-		// nonTransparentShell.setLocation(super.getPopup().getLocation());
-		nonTransparentShell.setSize(nonTransparentShell.computeSize(customWidth == null ? SWT.DEFAULT : customWidth,
-			SWT.DEFAULT));
-		// nonTransparentShell.pack();
-		super.getPopup().setSize(nonTransparentShell.getSize().x, super.getPopup().getSize().y);
+		// We gather the size imposed by the view, if any
+		Point size = getSize();
+		// We then ask the control to compute its ideal size
+		final Point controlSize = innerShell.computeSize(customWidth == null ? SWT.DEFAULT : customWidth, SWT.DEFAULT);
+		int w = Math.max(size.x, controlSize.x);
+		int h = controlSize.y;
+		if ( customLocation == null ) {
+			Point componentSize = getView().getComponent().getSize();
+			// AD we dont want the overlay to be wider than the view if the overlay is linked with it
+			w = Math.min(w, componentSize.x);
+			h = Math.min(h, componentSize.y);
+		}
+		innerShell.setSize(innerShell.computeSize(w, h));
+		super.getPopup().setSize(w, size.y);
 	}
 
 	protected void changeLocationTo(final int x, final int y) {
@@ -163,16 +169,17 @@ public class LayersOverlay extends AbstractOverlay {
 	@Override
 	public void hide() {
 		super.hide();
-		if ( !nonTransparentShell.isDisposed() ) {
-			nonTransparentShell.setVisible(false);
+		if ( !innerShell.isDisposed() ) {
+			innerShell.setVisible(false);
 		}
 	}
 
 	@Override
 	public void close() {
 		super.close();
-		if ( !nonTransparentShell.isDisposed() ) {
-			nonTransparentShell.dispose();
+		if ( !innerShell.isDisposed() ) {
+			innerShell.dispose();
 		}
 	}
+
 }

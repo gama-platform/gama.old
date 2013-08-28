@@ -4,18 +4,11 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.views.LayeredDisplayView;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IPartListener2;
-import org.eclipse.ui.IPartService;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartReference;
-import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
 
 /**
  * The class AbstractOverlay
@@ -30,9 +23,10 @@ import org.eclipse.ui.IWorkbenchPartSite;
 public abstract class AbstractOverlay {
 
 	private final Shell popup;
-	private final Control control;
+	// private final Control control;
 	private boolean isHidden = true;
 	private final LayeredDisplayView view;
+	private final Shell parentShell;
 
 	// ACTIONS ON THE POPUP
 
@@ -61,7 +55,7 @@ public abstract class AbstractOverlay {
 		}
 	};
 
-	protected void run(Runnable r) {
+	protected void run(final Runnable r) {
 		GuiUtils.run(r);
 	}
 
@@ -133,72 +127,98 @@ public abstract class AbstractOverlay {
 		public void partInputChanged(final IWorkbenchPartReference partRef) {}
 	};
 
+	OverlayListener listener = new OverlayListener();
+
+	class OverlayListener implements ShellListener, ControlListener {
+
+		/**
+		 * Method controlMoved()
+		 * @see org.eclipse.swt.events.ControlListener#controlMoved(org.eclipse.swt.events.ControlEvent)
+		 */
+		@Override
+		public void controlMoved(final ControlEvent e) {
+			relocate();
+			resize();
+		}
+
+		/**
+		 * Method controlResized()
+		 * @see org.eclipse.swt.events.ControlListener#controlResized(org.eclipse.swt.events.ControlEvent)
+		 */
+		@Override
+		public void controlResized(final ControlEvent e) {
+			relocate();
+			resize();
+		}
+
+		/**
+		 * Method shellActivated()
+		 * @see org.eclipse.swt.events.ShellListener#shellActivated(org.eclipse.swt.events.ShellEvent)
+		 */
+		@Override
+		public void shellActivated(final ShellEvent e) {}
+
+		/**
+		 * Method shellClosed()
+		 * @see org.eclipse.swt.events.ShellListener#shellClosed(org.eclipse.swt.events.ShellEvent)
+		 */
+		@Override
+		public void shellClosed(final ShellEvent e) {
+			close();
+		}
+
+		/**
+		 * Method shellDeactivated()
+		 * @see org.eclipse.swt.events.ShellListener#shellDeactivated(org.eclipse.swt.events.ShellEvent)
+		 */
+		@Override
+		public void shellDeactivated(final ShellEvent e) {}
+
+		/**
+		 * Method shellDeiconified()
+		 * @see org.eclipse.swt.events.ShellListener#shellDeiconified(org.eclipse.swt.events.ShellEvent)
+		 */
+		@Override
+		public void shellDeiconified(final ShellEvent e) {}
+
+		/**
+		 * Method shellIconified()
+		 * @see org.eclipse.swt.events.ShellListener#shellIconified(org.eclipse.swt.events.ShellEvent)
+		 */
+		@Override
+		public void shellIconified(final ShellEvent e) {}
+	}
+
 	public AbstractOverlay(final LayeredDisplayView view) {
 		this.view = view;
 		IPartService ps = (IPartService) ((IWorkbenchPart) view).getSite().getService(IPartService.class);
 		ps.addPartListener(pl2);
 		final Composite c = view.getComponent();
-		popup = new Shell(view.getSite().getShell(), SWT.TOOL | SWT.NO_TRIM | SWT.NO_FOCUS);
+		parentShell = c.getShell();
+		popup = new Shell(parentShell, SWT.NO_TRIM | SWT.NO_FOCUS);
 		popup.setLayout(new FillLayout());
 		popup.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK));
-		control = createControl();
-		control.setLayoutData(null);
+		createPopupControl();
+		// Control control = createControl();
+		// control.setLayoutData(null);
 		popup.setAlpha(140);
 		popup.layout();
-		// c.addListener(SWT.Move, new Listener() {
-		//
-		// @Override
-		// public void handleEvent(final Event event) {
-		// GuiUtils.debug(view.getPartName() + " == surface moved -> should move overlay");
-		// run(doResize);
-		// }
-		// });
-		c.addListener(SWT.Resize, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				GuiUtils.debug(view.getPartName() + " == surface resized -> should resize overlay");
-				run(doResize);
-			}
-		});
-		c.addListener(SWT.Close, new Listener() {
-
-			@Override
-			public void handleEvent(final Event event) {
-				GuiUtils.debug(view.getPartName() + " == surface closed -> should hide overlay");
-				run(doHide);
-			}
-		});
-		// c.addListener(SWT.Deactivate, new Listener() {
-		//
-		// @Override
-		// public void handleEvent(final Event event) {
-		// GuiUtils.debug(view.getPartName() + " == surface closed -> should hide overlay");
-		// run(doHide);
-		// }
-		// });
-		// c.addListener(SWT.Hide, new Listener() {
-		//
-		// @Override
-		// public void handleEvent(final Event event) {
-		// GuiUtils.debug(view.getPartName() + " == surface hidden -> should hide overlay");
-		// run(doHide);
-		// }
-		// });
-
+		parentShell.addShellListener(listener);
+		parentShell.addControlListener(listener);
+		c.addControlListener(listener);
 	}
 
-	protected abstract Control createControl();
+	protected void createPopupControl() {};
 
-	protected abstract void populateControl();
+	// protected abstract void populateControl();
 
 	protected abstract Point getLocation();
 
 	protected abstract Point getSize();
 
-	protected Control getControl() {
-		return control;
-	}
+	// protected Control getControl() {
+	// return control;
+	// }
 
 	public Shell getPopup() {
 		return popup;
@@ -208,11 +228,7 @@ public abstract class AbstractOverlay {
 		return view;
 	}
 
-	public void update() {
-		if ( isHidden() ) { return; }
-		if ( popup.isDisposed() ) { return; }
-		populateControl();
-	}
+	public void update() {}
 
 	public void display() {
 		if ( isHidden() ) { return; }
@@ -221,13 +237,13 @@ public abstract class AbstractOverlay {
 		update();
 		relocate();
 		resize();
-		if ( !popup.isVisible() )
+		if ( !popup.isVisible() ) {
 			popup.setVisible(true);
+		}
 	}
 
 	public void relocate() {
-		if ( isHidden() )
-			return;
+		if ( isHidden() ) { return; }
 		if ( !popup.isDisposed() ) {
 			popup.setLocation(getLocation());
 		}
@@ -253,11 +269,19 @@ public abstract class AbstractOverlay {
 
 	public void close() {
 		if ( !popup.isDisposed() ) {
+			Composite c = view.getComponent();
+			if ( c != null && !c.isDisposed() ) {
+				c.removeControlListener(listener);
+			}
 			IPartService ps = (IPartService) ((IWorkbenchPart) view).getSite().getService(IPartService.class);
-			ps.removePartListener(pl2);
-			// Remove other listeners too ?
+			if ( ps != null ) {
+				ps.removePartListener(pl2);
+			}
+			if ( !parentShell.isDisposed() ) {
+				parentShell.removeControlListener(listener);
+				parentShell.removeShellListener(listener);
+			}
 			popup.dispose();
-
 		}
 	}
 

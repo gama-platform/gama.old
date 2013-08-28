@@ -19,27 +19,24 @@ import org.eclipse.swt.widgets.Label;
  */
 public class DisplayOverlay extends AbstractOverlay {
 
+	Label text;
+
 	public DisplayOverlay(final LayeredDisplayView view) {
 		super(view);
 	}
 
 	@Override
-	protected Label createControl() {
-		Label l = new Label(getPopup(), SWT.None);
-		l.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK));
-		l.setForeground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-		return l;
+	protected void createPopupControl() {
+		text = new Label(getPopup(), SWT.None);
+		text.setLayoutData(null);
+		text.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		text.setForeground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 	}
 
 	@Override
-	protected Label getControl() {
-		return (Label) super.getControl();
-	}
-
-	@Override
-	protected void populateControl() {
-		if ( !getControl().isDisposed() ) {
-			getControl().setText(getView().getOverlayText());
+	public void update() {
+		if ( !text.isDisposed() ) {
+			text.setText(getView().getOverlayText());
 		}
 	}
 
