@@ -107,6 +107,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private double currentTime = 0;
 	private double previousTime = 0;
 	public float fps = 00.00f;
+	
+	public boolean autoSwapBuffers = false;
+	public boolean disableManualBufferSwapping;
 
 	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {
 		// Enabling the stencil buffer
@@ -119,6 +122,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		camera = new CameraArcBall(this);
 		myGLDrawer = new MyGLToyDrawer();
 		canvas = new GLCanvas(cap);
+		//use for color picking 
+		canvas.setAutoSwapBufferMode(autoSwapBuffers);
 		canvas.addGLEventListener(this);
 		canvas.addKeyListener(camera);
 		canvas.addMouseListener(camera);
@@ -292,6 +297,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				gl.glEnable(GL_BLEND);
 			}
 
+			if (!autoSwapBuffers) {
+			    if (disableManualBufferSwapping) {
+			        disableManualBufferSwapping = false;
+			    } else {
+			    	canvas.swapBuffers();
+			    }
+			}
 			
 		}
 	}
