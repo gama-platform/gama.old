@@ -1,7 +1,11 @@
 package msi.gama.jogl.scene;
 
 import static javax.media.opengl.GL.GL_COMPILE;
+
+import java.nio.FloatBuffer;
 import java.util.*;
+
+import javax.media.opengl.GL;
 
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.VertexArrayHandler;
@@ -75,16 +79,36 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 		objects.add(object);
 	}
 
-	public void draw(final boolean picking, JOGLAWTGLRenderer renderer) {		
+	public void draw(final boolean picking, JOGLAWTGLRenderer renderer) {
+		
+		boolean colorPicking = false;
 		if ( picking ) {
-			drawer.getGL().glPushMatrix();
-			drawer.getGL().glInitNames();
-			drawer.getGL().glPushName(0);
-			for ( final T object : objects ) {
-				object.draw(drawer, picking);
+			if(colorPicking){
+				drawer.getGL().glDisable(GL.GL_DITHER);
+				drawer.getGL().glColor3f(1.0f,0,0);
+	            for ( final T object : objects ) {
+					object.draw(drawer, picking);
+				}
+	            drawer.getGL().glEnable(GL.GL_DITHER);
+	            
+	            int viewport[] = new int[4];
+	            drawer.getGL().glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
+
+	            FloatBuffer floatBuffer = FloatBuffer.allocate(4);
+	            drawer.getGL().glReadPixels(drawer.renderer.camera.lastxPressed,viewport[3]-drawer.renderer.camera.lastyPressed,1,1,
+	            drawer.getGL().GL_RGBA,drawer.getGL().GL_FLOAT,floatBuffer);
+                //System.out.println("color picked" +  "r" + floatBuffer.get(0) +"g" + floatBuffer.get(1) + "b" + floatBuffer.get(2));    
 			}
-			drawer.getGL().glPopName();
-			drawer.getGL().glPopMatrix();
+			else{
+				drawer.getGL().glPushMatrix();
+				drawer.getGL().glInitNames();
+				drawer.getGL().glPushName(0);
+				for ( final T object : objects ) {
+					object.draw(drawer, picking);
+				}
+				drawer.getGL().glPopName();
+				drawer.getGL().glPopMatrix();
+			}
 		} else if ( drawAsList ) {
 			if ( openGLListIndex == null ) {
 
