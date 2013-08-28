@@ -605,8 +605,9 @@ public class ParameterExpandBar extends Composite implements IPopupProvider {
 
 			Event ev = new Event();
 			ev.item = getFocusItem();
-			notifyListeners(getFocusItem().expanded ? SWT.Collapse : SWT.Expand, ev);
+			boolean wasExpanded = getFocusItem().expanded;
 			getFocusItem().expanded = !getFocusItem().expanded;
+			notifyListeners(wasExpanded ? SWT.Collapse : SWT.Expand, ev);
 			showItem(getFocusItem());
 		}
 	}
