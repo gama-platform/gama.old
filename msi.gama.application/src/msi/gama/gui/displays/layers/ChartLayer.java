@@ -20,14 +20,15 @@ package msi.gama.gui.displays.layers;
 
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.controls.SWTChartEditor;
 import msi.gama.outputs.layers.*;
 import msi.gama.runtime.IScope;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.jfree.chart.JFreeChart;
-import org.jfree.experimental.chart.swt.editor.SWTChartEditor;
 
 /**
  * Written by drogoul Modified on 1 avr. 2010
@@ -48,7 +49,7 @@ public class ChartLayer extends AbstractLayer {
 	@Override
 	public void fillComposite(final Composite compo, final IDisplaySurface container) {
 		super.fillComposite(compo, container);
-		Button b = new Button(compo, SWT.PUSH);
+		final Button b = new Button(compo, SWT.PUSH);
 		b.setText("Properties");
 		b.setLayoutData(new GridData(SWT.END, SWT.FILL, false, false));
 		b.addSelectionListener(new SelectionAdapter() {
@@ -56,7 +57,9 @@ public class ChartLayer extends AbstractLayer {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				// FIXME Editor not working for the moment
-				SWTChartEditor editor = new SWTChartEditor(SwtGui.getDisplay(), getChart());
+				Point p = b.toDisplay(b.getLocation());
+				p.y = p.y + 30;
+				SWTChartEditor editor = new SWTChartEditor(SwtGui.getDisplay(), getChart(), p);
 				// TODO Revoir cet �diteur, tr�s laid !
 				editor.open();
 				if ( isPaused(container) ) {
@@ -65,10 +68,11 @@ public class ChartLayer extends AbstractLayer {
 			}
 
 		});
-		b = new Button(compo, SWT.PUSH);
-		b.setText("Save...");
-		b.setLayoutData(new GridData(SWT.END, SWT.FILL, false, false));
-		b.addSelectionListener(new SelectionAdapter() {
+		final Button save = new Button(compo, SWT.PUSH);
+		save.setText("Save...");
+		save.setLayoutData(new GridData(SWT.END, SWT.FILL, false, false));
+		save.setToolTipText("Save the chart data as a CSV file");
+		save.addSelectionListener(new SelectionAdapter() {
 
 			@Override
 			public void widgetSelected(final SelectionEvent e) {

@@ -931,3 +931,4 @@ Export-Package: au.com.bytecode.opencsv,
  weka.gui.visualize.plugins
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.swt;bundle-version="3.7.2"
