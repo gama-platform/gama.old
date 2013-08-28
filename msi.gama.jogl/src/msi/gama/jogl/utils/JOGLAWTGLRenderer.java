@@ -254,6 +254,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			// gl.glPolygonOffset(1, 1);
 
 			// gl.glDisable(GL_DEPTH_TEST);
+			
+			// Show triangulated polygon or not (trigger by GAMA)
+			if ( !triangulation ) {
+			  gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+			} else {
+			  gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
+			}
 
 			this.rotateModel();
 
@@ -285,12 +292,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				gl.glEnable(GL_BLEND);
 			}
 
-			// Show triangulated polygon or not (trigger by GAMA)
-			if ( !triangulation ) {
-				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
-			} else {
-				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
-			}
+			
 		}
 	}
 

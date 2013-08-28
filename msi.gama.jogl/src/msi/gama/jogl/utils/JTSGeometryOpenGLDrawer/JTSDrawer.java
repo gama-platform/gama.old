@@ -303,38 +303,53 @@ public class JTSDrawer {
 
 	public void DrawPolygonContour(final Polygon p, final Color border, final double z_fighting_value) {
 
-		// Draw Exterior ring
-		//myGl.glLineWidth(1.0f);
-		//if(!myGLRender.triangulation){
+        //FIXME: when rendering witjh this method the triangulation does nto work anymore
+		if(myGLRender.getZFighting()){
 			myGl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_LINE);	
-	//	}
-		
-		//myGl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
-		//myGl.glEnable(GL.GL_POLYGON_OFFSET_LINE);
-	    //myGl.glPolygonOffset(0.0f,(float) (z_fighting_value-0.1f));
-		//myGl.glPolygonOffset(0.0f,10.0f);
-		myGl.glBegin(GL.GL_POLYGON);
-		myGl.glColor4d((double) border.getRed() / 255, (double) border.getGreen() / 255,
-			(double) border.getBlue() / 255, 1.0d);
-		p.getExteriorRing().apply(visitor);
-		myGl.glEnd();
-
-		if(p.getNumInteriorRing() >0){
-			// Draw Interior ring
-			for ( int i = 0; i < p.getNumInteriorRing(); i++ ) {
+			//	}
+				
+				//myGl.glDisable(GL.GL_POLYGON_OFFSET_FILL);
+				//myGl.glEnable(GL.GL_POLYGON_OFFSET_LINE);
+			    //myGl.glPolygonOffset(0.0f,(float) (z_fighting_value-0.1f));
+				//myGl.glPolygonOffset(0.0f,10.0f);
 				myGl.glBegin(GL.GL_POLYGON);
-				p.getInteriorRingN(i).apply(visitor);
+				myGl.glColor4d((double) border.getRed() / 255, (double) border.getGreen() / 255,
+					(double) border.getBlue() / 255, 1.0d);
+				p.getExteriorRing().apply(visitor);
 				myGl.glEnd();
+
+				if(p.getNumInteriorRing() >0){
+					// Draw Interior ring
+					for ( int i = 0; i < p.getNumInteriorRing(); i++ ) {
+						myGl.glBegin(GL.GL_POLYGON);
+						p.getInteriorRingN(i).apply(visitor);
+						myGl.glEnd();
+					}
+				}
+				
+				//myGl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+				//myGl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
+				myGl.glDisable(GL.GL_POLYGON_OFFSET_LINE);
+				if(!myGLRender.triangulation){
+					myGl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_FILL);	
+				}
+		}
+		else{
+			myGl.glBegin(GL.GL_LINES);
+			myGl.glColor4d((double) border.getRed() / 255, (double) border.getGreen() / 255,
+				(double) border.getBlue() / 255, 1.0d);
+			p.getExteriorRing().apply(visitor);
+			myGl.glEnd();
+
+			if(p.getNumInteriorRing() >0){
+				// Draw Interior ring
+				for ( int i = 0; i < p.getNumInteriorRing(); i++ ) {
+					myGl.glBegin(GL.GL_LINES);
+					p.getInteriorRingN(i).apply(visitor);
+					myGl.glEnd();
+				}
 			}
-		}
-		
-		//myGl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_FILL);
-		//myGl.glEnable(GL.GL_POLYGON_OFFSET_FILL);
-		myGl.glDisable(GL.GL_POLYGON_OFFSET_LINE);
-		if(!myGLRender.triangulation){
-			myGl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_FILL);	
-		}
-		
+		}		
 	}
 
 	void SetLine(final Point src, final Point dest, final double z, final boolean hasZValue) {
