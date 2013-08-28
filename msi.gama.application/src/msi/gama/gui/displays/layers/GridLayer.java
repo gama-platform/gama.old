@@ -116,7 +116,7 @@ public class GridLayer extends ImageLayer {
 
 			isTriangulated = g.isTriangulated();
 			isShowText = g.isShowText();
-			drawAsDEM = true;
+			drawAsDEM = g.isDrawnAsDem();
 		}
 	}
 

@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Benoît Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - BenoÔøΩt Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -55,6 +55,7 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.DEM, type = IType.MATRIX, optional = true),
 	@facet(name = IKeyword.TEXTURE, type = { IType.BOOL, IType.FILE }, optional = true),
 	@facet(name = IKeyword.TRIANGULATION, type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.DRAWASDEM, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.TEXT, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.Z, type = IType.FLOAT, optional = true),
 	@facet(name = IKeyword.REFRESH, type = IType.BOOL, optional = true) }, omissible = IKeyword.SPECIES)
@@ -70,11 +71,13 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	IExpression demGridExp;
 	IExpression textureExp;
 	IExpression triExp;
+	IExpression demExp;
 	IExpression textExp;
 	GamaFloatMatrix demGridMatrix;
 	Boolean isTextured = true;
 	GamaFile textureFile = null;
 	Boolean isTriangulated = false;
+	Boolean isDrawnAsDEM= true;
 	Boolean showText = false;
 	GamaColor currentColor, constantColor;
 	int cellSize;
@@ -114,6 +117,11 @@ public class GridLayerStatement extends AbstractLayerStatement {
 		triExp = getFacet(IKeyword.TRIANGULATION);
 		if ( triExp != null ) {
 			isTriangulated = Cast.asBool(scope, triExp.value(scope));
+		}
+		
+		demExp = getFacet(IKeyword.DRAWASDEM);
+		if ( demExp != null ) {
+			isDrawnAsDEM = Cast.asBool(scope, demExp.value(scope));
 		}
 
 		textExp = getFacet(IKeyword.TEXT);
@@ -183,7 +191,7 @@ public class GridLayerStatement extends AbstractLayerStatement {
 
 	public List<? extends IAgent> computeAgents() throws GamaRuntimeException {
 		// Attention ! Si setOfAgents contient un seul agent, ce sont ses
-		// composants qui vont être affichés.
+		// composants qui vont ÔøΩtre affichÔøΩs.
 		return grid.getAgents();
 	}
 
@@ -217,6 +225,10 @@ public class GridLayerStatement extends AbstractLayerStatement {
 
 	public Boolean isTriangulated() {
 		return isTriangulated;
+	}
+	
+	public Boolean isDrawnAsDem() {
+		return isDrawnAsDEM;
 	}
 
 	public Boolean isShowText() {
