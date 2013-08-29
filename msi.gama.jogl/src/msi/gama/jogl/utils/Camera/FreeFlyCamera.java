@@ -301,7 +301,6 @@ public class FreeFlyCamera extends AbstractCamera {
 	public void mouseReleased(final MouseEvent arg0) {
 
 		if ( (arg0.isShiftDown() || arg0.isAltDown()) && IsViewIn2DPlan() && enableROIDrawing == true ) {
-			GamaPoint p = new GamaPoint(myRenderer.worldCoordinates.x, -myRenderer.worldCoordinates.y, 0.0);
 			if ( arg0.isAltDown() ) {
 				Iterator<IShape> shapes =
 					GAMA.getSimulation()

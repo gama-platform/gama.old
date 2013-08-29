@@ -264,8 +264,9 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		// sa.buildMenuItems(agentsMenu, manager.getItems().get(layerId));
 		// }
 		// }
-		menuManager.buildMenu(false, renderer.camera.mousePosition.x, renderer.camera.mousePosition.y,
-			new GamaList(agents));
+
+		menuManager.buildMenu(false, renderer.camera.mousePosition.x, renderer.camera.mousePosition.y, new GamaList(
+			agents));
 
 	}
 
