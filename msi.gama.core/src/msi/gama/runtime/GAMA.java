@@ -42,6 +42,7 @@ public class GAMA {
 	public static boolean TREAT_WARNINGS_AS_ERRORS = false;
 
 	public final static FrontEndController controller = new FrontEndController(new FrontEndScheduler());
+	public static final int NUMBER_OF_AGENTS_IN_MENUS = 50;
 
 	/**
 	 * 
