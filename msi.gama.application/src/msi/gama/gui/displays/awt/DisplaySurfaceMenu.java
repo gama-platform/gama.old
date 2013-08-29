@@ -24,8 +24,7 @@ public class DisplaySurfaceMenu {
 
 	org.eclipse.swt.widgets.Menu menu;
 
-	public void buildMenu(final int mousex, final int mousey, final int x, final int y,
-		final List<ILayer> displays) {
+	public void buildMenu(final int mousex, final int mousey, final int x, final int y, final List<ILayer> displays) {
 		if ( displays.isEmpty() ) { return; }
 		if ( menu != null && !menu.isDisposed() ) {
 			menu.dispose();
@@ -46,11 +45,10 @@ public class DisplaySurfaceMenu {
 	}
 
 	public void buildMenu(final int mousex, final int mousey, final IAgent agent) {
-		buildMenu(false, mousex, mousey, Collections.singleton(agent));
+		buildMenu(false, mousex, mousey, agent == null ? Collections.EMPTY_LIST : Collections.singleton(agent));
 	}
 
-	public void buildMenu(final boolean byLayer, final int mousex, final int mousey,
-		final Collection<IAgent> agents) {
+	public void buildMenu(final boolean byLayer, final int mousex, final int mousey, final Collection<IAgent> agents) {
 		GuiUtils.run(new Runnable() {
 
 			@Override
