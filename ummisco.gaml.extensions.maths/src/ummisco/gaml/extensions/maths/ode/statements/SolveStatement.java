@@ -104,13 +104,8 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 		double step=1;
 		if ( getFacet(IKeyword.STEP) != null ) {			
 			step = Double.parseDouble("" + getFacet(IKeyword.STEP).value(scope));
-//			if(cycle_length!=1){
-//				if(cycle_length>step){
-//					step=(step * cycle_length);
-//				}
-//			}
 		}
-//		GuiUtils.informConsole(""+step);
+
 		if ( method.equals("rk4") ) {
 			solver = new Rk4Solver(step, integrate_time, integrate_val);
 		} else if ( method.equals("dp853") && getFacet("min_step") != null && getFacet("max_step") != null &&
@@ -143,8 +138,6 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 		decreaseDiscretTime(integrate_time, integrate_val, discret);
 
 		if ( getFacet("integrated_times") != null ) {
-			// scope.setAgentVarValue(getFacet("integrated_times").literalValue(),
-			// integrate_time);
 
 			((VariableExpression) getFacet("integrated_times")).setVal(scope, integrate_time, false);
 		}
@@ -156,7 +149,7 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 				((VariableExpression) exp[i]).setVal(scope, integrate_val.get(i), false);
 			}
 		}
-		// System.out.println(tcc);
+
 		return null;
 	}
 

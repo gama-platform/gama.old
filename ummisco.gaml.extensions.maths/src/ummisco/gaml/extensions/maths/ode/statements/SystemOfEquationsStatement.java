@@ -120,23 +120,15 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 
 		super.setChildren(others);
 	}
-	// public double[] ydottmp;
 
+	
 	@Override
 	public Object privateExecuteIn(final IScope scope)
 			throws GamaRuntimeException {
 		// We execute whatever is declared in addition to the equations (could
 		// be initializations,
 		// etc.)
-		// GuiUtils.informConsole("it works");
-		// for ( int i = 0, n = getDimension(); i < n; i++ ) {
-		// IVarExpression v = variables.get(i);
-		// ydottmp[i]=(Double)v.value(scope);
-		// }
-		// for(IVarExpression v:vars){
-		// variables.add(new GamaPair<IAgent,
-		// IVarExpression>(scope.getAgentScope(), v));
-		// }
+		
 		for (int i = 0; i < variables.size(); i++) {
 			equaAgents.add(i, scope.getAgentScope());
 		}
@@ -168,8 +160,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 						}
 					}
 
-					// if (!equations_ext.containsAll(lst))
-					// equations_ext.addAll(lst);
+
 				} else {
 					if (!equations_ext.contains(t)) {
 						equations_ext.add((IAgent) t);
@@ -188,16 +179,15 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 						eqName);
 		if (ses != null) {
 			final int n = equaAgents.size();
-			// System.out.println(equaAgents);
+
 			for (int i = 0; i < ses.equations.size(); i++) {
 				equaAgents.add(n + i, remoteAgent);
 			}
 
-			// if (!equations.containsAll(ses.equations))
 			equations.addAll(ses.equations);
-			// if (!variables.containsAll(ses.variables))
+
 			variables.addAll(ses.variables);
-			// System.out.println(equaAgents+"\n eq "+equations+"\n var "+variables+"\n");
+
 		}
 
 	}
@@ -209,10 +199,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 						eqName);
 		if (ses != null) {
 
-			// equaAgents.remove(ses);
-			// if (!equations.containsAll(ses.equations))
 			equations.removeAll(ses.equations);
-			// if (!variables.containsAll(ses.variables))
+
 			variables.removeAll(ses.variables);
 		}
 
@@ -220,22 +208,14 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 
 	public void addExtern(final String eqName) {
 		if (equations_ext.size() > 0) {
-			// System.out.println("ex "+equations_ext);
+
 			for (int i = 0, n = equations_ext.size(); i < n; i++) {
 				final Object o = equations_ext.get(i);
 				final IAgent remoteAgent = (IAgent) o;
 				if (!remoteAgent.dead()) {
 					addEquationsExtern(remoteAgent, eqName);
 				}
-				/*
-				 * if (o instanceof IAgent) { final IAgent remoteAgent =
-				 * (IAgent) o; if (!remoteAgent.dead()) {
-				 * addEquationsExtern(remoteAgent); } } else if (o instanceof
-				 * GamlSpecies) { Iterator<IAgent> ia = ((GamlSpecies)
-				 * o).iterator(); while (ia.hasNext()) { final IAgent
-				 * remoteAgent = (IAgent) ia.next(); if (!remoteAgent.dead()) {
-				 * addEquationsExtern(remoteAgent); } } }
-				 */
+				
 			}
 
 		}
@@ -265,15 +245,6 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 		}
 	}
 
-	//
-	// public void setIntegratedTimes(GamaList gl){
-	// integrated_times=gl;
-	// }
-	//
-	// public GamaList getIntegratedTimes(){
-	// return integrated_times;
-	// }
-
 	/**
 	 * This method is bound to be called by the integrator of the equations
 	 * system (instantiated in SolveStatement).
@@ -281,10 +252,6 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 	 * @see org.apache.commons.math3.ode.FirstOrderDifferentialEquations#computeDerivatives(double,
 	 *      double[], double[])
 	 */
-	// double alpha=0.8;
-	// double beta=0.2;
-	// double gamma=0.2;
-	// double delta=0.85;
 
 	public void assignValue(final double time, final double[] y) {
 		// TODO Should be rewritten in a more correct way (by calling
@@ -308,57 +275,14 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 					}
 				}
 			}
-			/*
-			 * try { v.setVal(currentScope, y[i], false); } catch (Exception ex)
-			 * { for (int j = 0; j < equations_ext.size(); j++) { Object o =
-			 * equations_ext.get(j); if (o instanceof IAgent) { final IAgent
-			 * remoteAgent = (IAgent) o; if (!remoteAgent.dead()) {
-			 * currentScope.push(remoteAgent); try { v.setVal(currentScope,
-			 * y[i], false); } catch (Exception ex1) { } finally {
-			 * currentScope.pop(remoteAgent); } } } else if (o instanceof
-			 * GamlSpecies) { Iterator<IAgent> ia = ((GamlSpecies)
-			 * o).iterator(); while (ia.hasNext()) { final IAgent remoteAgent =
-			 * (IAgent) ia.next(); if (!remoteAgent.dead()) {
-			 * currentScope.push(remoteAgent); try { v.setVal(currentScope,
-			 * y[i], false); } catch (Exception ex1) { } finally {
-			 * currentScope.pop(remoteAgent); } } } } } }
-			 */
+			
 		}
-
-		// for (int i = 0, n = getDimension(); i < n; i++) {
-		// SingleEquationStatement s = equations.get(i);
-		// // ydot[i] = (Double) s.executeOn(currentScope);// ydottmp[i];
-		// if (equaAgents.size() > 0)
-		// currentScope.push(equaAgents.get(i));
-		// try {
-		// s.var_t.setVal(currentScope, time, false);
-		// } catch (Exception ex1) {
-		// } finally {
-		// if (equaAgents.size() > 0)
-		// currentScope.pop(equaAgents.get(i));
-		// }
-		// }
 	}
 
 	@Override
 	public void computeDerivatives(final double time, final double[] y,
 			final double[] ydot) throws MaxCountExceededException,
 			DimensionMismatchException {
-		// and the time ?
-		// we first initialize the vars with the y vector
-		// ydot[0] = y[0] * (alpha - beta * y[1]);
-		// ydot[1] =- y[1] * (delta - gamma * y[0]);
-		// for ( int i = 0, n = getDimension(); i < n; i++ ) {
-		// IVarExpression v = variables.get(i);
-		// v.setVal(currentScope, y[i], false);
-		// }
-		/*
-		 * ydot[0]=-3*y[0]; ydot[1]=0.0; ydot[2]=0.0;
-		 * GuiUtils.informConsole("t"+time+"= "+y[0]+"    "+ydot[0]+"\n");
-		 */
-
-		// then we ask the equation(s) to compute and we store their results in
-		// the ydot vector
 		/*
 		 * the y value is calculed automatically inside integrator's algorithm
 		 * just get y, and assign value to Variables in GAMA, which is use by
@@ -377,7 +301,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 		// agent)...
 		for (int i = 0, n = getDimension(); i < n; i++) {
 			final SingleEquationStatement s = equations.get(i);
-			// ydot[i] = (Double) s.executeOn(currentScope);// ydottmp[i];
+
 			boolean pushed = false;
 			if (equaAgents.size() > 0) {
 				pushed = currentScope.push(equaAgents.get(i));
@@ -394,10 +318,6 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 				}
 			}
 		}
-
-		// GuiUtils.informConsole("t"+time+"= "+y[0]+"    "+ydot[0]+"\n");
-		// // finally, we update the value of the variables
-		// GuiUtils.informConsole("soe "+ydot[0]+" "+ydot[1]);
 
 	}
 

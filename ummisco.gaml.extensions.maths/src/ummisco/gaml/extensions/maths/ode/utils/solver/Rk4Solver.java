@@ -44,7 +44,6 @@ public class Rk4Solver extends Solver {
 					((GamaList) integrated_val.get(i)).add(y[i]);
 				}
 
-				// GuiUtils.informConsole("time="+time);
 			}
 		};
 		integrator.addStepHandler(stepHandler);
@@ -55,7 +54,6 @@ public class Rk4Solver extends Solver {
 		// This class has access to the facets of the statement
 		// ie. getFacet(...)
 		//
-		// Just a trial
 		step = S;
 		integrator = new ClassicalRungeKuttaIntegrator(step);
 
@@ -83,7 +81,7 @@ public class Rk4Solver extends Solver {
 			integrated_val.clear();
 
 			final double[] y = new double[eq.variables.size()];
-			// System.out.println(eq.variables + " " + eq.currentScope);
+
 			for (int i = 0, n = eq.variables.size(); i < n; i++) {
 				final IVarExpression v = eq.variables.get(i);
 				boolean pushed = false;
@@ -106,32 +104,17 @@ public class Rk4Solver extends Solver {
 
 			}
 
-			// GuiUtils.informConsole(""+y);
-			// double[] y = new double[] { 0.0, 1.0 };
 			try {
-				// // GuiUtils.informConsole("t="+time_initial+" : "+y[0]+"\n");
-				// eq.integrate_time=new GamaList();
 
 				integrator.integrate(eq, (time_initial)
 						* (step / cycle_length / step), y, time_final
 						* (step / cycle_length / step), y);
 				eq.assignValue(time_final * (step / cycle_length / step), y);
 
-				// integrator.integrate(eq, time_initial * cycle_length, y,
-				// time_final * cycle_length, y);
-				// eq.assignValue(time_final * cycle_length, y);
-
-				// scope.setAgentVarValue("myt", eq.integrate_time);
-
-//				GuiUtils.informConsole("step= " + step + " cycle_length="
-//						+ cycle_length + " t0=" + time_initial
-//						* (step / cycle_length / step) + " tf=" + time_final
-//						* (step / cycle_length / step) + " y0=" + y[0]);
 			} catch (final Exception ex) {
 				System.out.println(ex);
 			}
 
-			// remove external equations
 		}
 
 	}

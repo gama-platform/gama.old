@@ -66,14 +66,12 @@ public class SingleEquationStatement extends AbstractStatement {
 	protected Double privateExecuteIn(final IScope scope)
 			throws GamaRuntimeException {
 		Double result = (Double) expression.value(scope);
-		// GuiUtils.informConsole("sdsd "+expression);
+
 		return result;
 	}
 
 	@Override
 	public Object executeOn(final IScope scope) throws GamaRuntimeException {
-		// GuiUtils.informConsole("exp <<"+expression.value(scope)+">>");
-
 		return expression.value(scope);// super.executeOn(scope);
 	}
 
