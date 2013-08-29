@@ -70,7 +70,6 @@ public class SwtGui implements IGui {
 	private IAgent highlightedAgent;
 
 	static {
-		//System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n\n\n\nConfiguring user interface access through SWT");
 		if(!GuiUtils.isInHeadLessMode())
 			{
 				System.out.println("Configuring user interface access through SWT");
