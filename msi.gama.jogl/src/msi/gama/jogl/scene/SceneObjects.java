@@ -152,7 +152,7 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 				}
 				else
 				{
-					vah.loadCollada();
+					//vah.loadCollada();
 //					vah.createVBOs();
 				}
 			
