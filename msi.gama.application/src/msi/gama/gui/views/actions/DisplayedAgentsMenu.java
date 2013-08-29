@@ -180,7 +180,9 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 			new AgentsMenu.MenuAction(new FollowSelection(displaySurface), SwtGui.followImage, "Follow");
 		if ( withWorld ) {
 			AgentsMenu.cascadingAgentMenuItem(menu, GAMA.getSimulation(), "World", GAMA.NUMBER_OF_AGENTS_IN_MENUS);
-			AgentsMenu.separate(menu);
+			if ( filteredList != null && !filteredList.isEmpty() ) {
+				AgentsMenu.separate(menu);
+			}
 			if ( byLayer ) {
 				AgentsMenu.separate(menu, "Layers");
 			}
