@@ -1,17 +1,14 @@
 package msi.gama.jogl.utils.Camera;
 
-import java.awt.*;
+import java.awt.Point;
 import java.awt.event.*;
 import java.nio.IntBuffer;
-import java.util.Iterator;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.ILocation;
+import msi.gama.metamodel.shape.*;
 import com.sun.opengl.util.BufferUtil;
 
 public abstract class AbstractCamera implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
@@ -37,7 +34,7 @@ public abstract class AbstractCamera implements KeyListener, MouseListener, Mous
 
 	protected Vector3D _position;
 	protected Vector3D _target;
-	
+
 	protected ILocation upVector;
 
 	public double _theta;
@@ -53,7 +50,7 @@ public abstract class AbstractCamera implements KeyListener, MouseListener, Mous
 	public double velocityHoriz, velocityVert = 0;
 
 	public int _orientation;
-	public Point point1 = new Point(0,0);
+	public Point point1 = new Point(0, 0);
 
 	public AbstractCamera(final JOGLAWTGLRenderer renderer) {
 		myRenderer = renderer;
@@ -93,7 +90,6 @@ public abstract class AbstractCamera implements KeyListener, MouseListener, Mous
 	public void setTarget(final Vector3D target) {
 		this._target = target;
 	}
-	
 
 	public ILocation getUpVector() {
 		return upVector;
@@ -269,13 +265,10 @@ public abstract class AbstractCamera implements KeyListener, MouseListener, Mous
 	}
 
 	protected boolean isArcBallOn(final MouseEvent mouseEvent) {
-		if ( checkCtrlKeyDown(mouseEvent) && myRenderer.displaySurface.arcball == true ) {
-			return false;
-		} 
+		if ( checkCtrlKeyDown(mouseEvent) && myRenderer.displaySurface.arcball == true ) { return false; }
 		if ( checkCtrlKeyDown(mouseEvent) || myRenderer.displaySurface.arcball == true ) {
-			return true;	
-	    } 
-		else {
+			return true;
+		} else {
 			return false;
 		}
 	}
@@ -407,38 +400,10 @@ public abstract class AbstractCamera implements KeyListener, MouseListener, Mous
 		// TODO Auto-generated method stub
 	}
 
-	public void buildMenus(final Iterator<IAgent> agents) {
-		myRenderer.displaySurface.agentsMenu.removeAll();
-
-		final Menu macroMenu = new Menu("Species ");
-		myRenderer.displaySurface.agentsMenu.add(macroMenu);
-
-		final Menu allMenu = new Menu("Selected");
-		macroMenu.add(allMenu);
-
-		final MenuItem inspectItem = new MenuItem("Inspect Selected");
-		ActionListener menuListener = null;
-		menuListener = new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				while (agents.hasNext()) {
-					IAgent agent = agents.next();
-					GuiUtils.setSelectedAgent(agent);
-				}
-			}
-
-		};
-		inspectItem.addActionListener(menuListener);
-		allMenu.add(inspectItem);
-
-		myRenderer.displaySurface.agentsMenu
-			.show(myRenderer.displaySurface, this.mousePosition.x, this.mousePosition.y);
-	}
-
 	public abstract boolean IsViewIn2DPlan();
 
 	public void arcBallInertia() {}
+
 	public void moveInertia() {}
 
 	/**

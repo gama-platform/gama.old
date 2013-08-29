@@ -23,6 +23,7 @@ import javax.swing.JComponent;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.interfaces.IDisplaySurface.OpenGL;
 import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.displays.awt.DisplaySurfaceMenu;
 import msi.gama.gui.displays.layers.AbstractLayer;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.SwtGui;
@@ -223,6 +224,9 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			}
 
 		});
+
+		// FIXME Hack to create a menu displayable on SWT
+		new DisplaySurfaceMenu(getOutput().getSurface(), surfaceComposite, this);
 
 		perspectiveListener = new IPerspectiveListener() {
 

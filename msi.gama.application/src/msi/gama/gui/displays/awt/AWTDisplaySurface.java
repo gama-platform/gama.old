@@ -24,7 +24,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 import javax.swing.SwingUtilities;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.ImageUtils;
+import msi.gama.common.util.*;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -39,7 +39,6 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 
 	private Point snapshotDimension, mousePosition;
 	protected BufferedImage buffImage;
-	private AWTDisplaySurfaceMenu menuManager;
 
 	private class DisplayMouseListener extends MouseAdapter {
 
@@ -129,7 +128,7 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	public void initialize(final double env_width, final double env_height,
 		final LayeredDisplayOutput layerDisplayOutput) {
 		super.initialize(env_width, env_height, layerDisplayOutput);
-		menuManager = new AWTDisplaySurfaceMenu(this);
+		// menuManager = new AWTDisplaySurfaceMenu(this);
 		final DisplayMouseListener d = new DisplayMouseListener();
 		addMouseListener(d);
 		addMouseMotionListener(d);
@@ -195,7 +194,14 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		final int xc = mousex - origin.x;
 		final int yc = mousey - origin.y;
 		final List<ILayer> displays = manager.getLayersIntersecting(xc, yc);
-		menuManager.selectAgents(mousex, mousey, xc, yc, displays);
+
+		GuiUtils.run(new Runnable() {
+
+			@Override
+			public void run() {
+				menuManager.buildMenu(mousex, mousey, xc, yc, displays);
+			}
+		});
 	}
 
 	@Override

@@ -415,4 +415,10 @@ public abstract class AbstractSWTDisplaySurface extends Composite implements IDi
 		setZoomLevel(1d);
 		zoomFit = true;
 	}
+
+	/**
+	 * Method setSWTMenuManager()
+	 * @see msi.gama.common.interfaces.IDisplaySurface#setSWTMenuManager(msi.gama.gui.displays.awt.AWTDisplaySurfaceMenu)
+	 */
+	public void setSWTMenuManager(final DisplaySurfaceMenu manager) {}
 }

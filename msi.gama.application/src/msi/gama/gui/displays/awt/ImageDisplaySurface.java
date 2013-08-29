@@ -487,4 +487,5 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public boolean getQualityRendering() {
 		return true;
 	}
+
 }

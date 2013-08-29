@@ -33,7 +33,7 @@ public class GamaToolbarFactory implements IGamaViewActions {
 			case ZOOM_FIT:
 				return new ZoomFitItem(view);
 			case FOCUS:
-				return new FocusItem(view);
+				return new DisplayedAgentsMenu(view);
 			case NEW_MONITOR:
 				return new NewMonitorItem(view);
 			case LAYERS:

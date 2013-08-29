@@ -25,9 +25,10 @@ import org.eclipse.swt.widgets.*;
  * @since 19 janv. 2012
  * 
  */
-public class FocusItem extends GamaViewItem implements IMenuCreator {
+public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 
 	private static Map<Class, Image> images = new HashMap();
+	// private final Collection<IAgent> filteredList;
 
 	static {
 		images.put(GridLayer.class, SwtGui.getImageDescriptor("/icons/display_grid.png").createImage());
@@ -38,11 +39,10 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 		images.put(ChartLayer.class, SwtGui.getImageDescriptor("/icons/display_chart.png").createImage());
 	}
 
-	private Menu menu;
-
-	FocusItem(final GamaViewPart view) {
+	public DisplayedAgentsMenu(final GamaViewPart view) {
 		super(view);
-		if ( !(view instanceof LayeredDisplayView) ) { throw new IllegalArgumentException(); }
+		// if ( !(view instanceof LayeredDisplayView) ) { throw new IllegalArgumentException(); }
+		// filteredList = null;
 	}
 
 	/**
@@ -71,11 +71,17 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 	 */
 	@Override
 	public Menu getMenu(final Control parent) {
-		if ( menu != null ) {
-			menu.dispose();
-		}
-		menu = new Menu(parent);
+		// Dispose ?
+		Menu menu = new Menu(parent);
 		fill(menu, -1);
+		return menu;
+	}
+
+	public Menu getMenu(final Control parent, final boolean withWorld, final boolean byLayer, final int limit,
+		final Collection<IAgent> filteredList) {
+		// Dispose ?
+		Menu menu = new Menu(parent);
+		fill(menu, -1, withWorld, byLayer, limit, filteredList);
 		return menu;
 	}
 
@@ -84,7 +90,8 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 	 */
 	@Override
 	public Menu getMenu(final Menu parent) {
-		return null;
+		fill(parent, -1);
+		return parent;
 	}
 
 	private class FocusOnSelection extends SelectionAdapter {
@@ -127,11 +134,9 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 
 	private class FollowSelection extends SelectionAdapter {
 
-		ILayer display;
 		IDisplaySurface surface;
 
-		FollowSelection(final ILayer display, final IDisplaySurface surface) {
-			this.display = display;
+		FollowSelection(final IDisplaySurface surface) {
 			this.surface = surface;
 		}
 
@@ -164,33 +169,75 @@ public class FocusItem extends GamaViewItem implements IMenuCreator {
 
 	@Override
 	public void fill(final Menu menu, final int index) {
+		fill(menu, index, false, true, 30, Collections.EMPTY_LIST);
+	}
+
+	public void fill(final Menu menu, final int index, final boolean withWorld, final boolean byLayer, final int limit,
+		final Collection<IAgent> filteredList) {
 		final LayeredDisplayView view = (LayeredDisplayView) SwtGui.getPage().getActivePart();
 		final IDisplaySurface displaySurface = view.getDisplaySurface();
-		for ( final ILayer layer : view.getDisplayManager().getItems() ) {
-			boolean isSpeciesLayer = layer instanceof SpeciesLayer || layer instanceof GridLayer;
-			boolean isAgentLayer = isSpeciesLayer || layer instanceof AgentLayer;
-			if ( !isAgentLayer ) {
-				continue;
+		AgentsMenu.MenuAction follow =
+			new AgentsMenu.MenuAction(new FollowSelection(displaySurface), SwtGui.followImage, "Follow");
+		if ( withWorld ) {
+			AgentsMenu.cascadingAgentMenuItem(menu, GAMA.getSimulation(), "World", GAMA.NUMBER_OF_AGENTS_IN_MENUS);
+			AgentsMenu.separate(menu);
+			if ( byLayer ) {
+				AgentsMenu.separate(menu, "Layers");
 			}
-			final MenuItem layerMenu = new MenuItem(menu, SWT.CASCADE);
-			layerMenu.setText(layer.getType() + ": " + layer.getName());
-			layerMenu.setImage(images.get(layer.getClass()));
-			final FocusOnSelection adapter = new FocusOnSelection(layer, displaySurface);
+		}
+		if ( !byLayer ) {
+			// If the list is null or empty, no need to display anything more
+			if ( filteredList == null || filteredList.isEmpty() ) { return; }
+			// If only the world is selected, no need to display anything more
+			if ( filteredList.size() == 1 && filteredList.contains(GAMA.getSimulation()) ) { return; }
+			final FocusOnSelection adapter = new FocusOnSelection(null, displaySurface);
 			AgentsMenu.MenuAction focus = new AgentsMenu.MenuAction(adapter, SwtGui.focusImage, "Focus on");
-			Collection<IAgent> pop = null;
-			if ( isSpeciesLayer ) {
-				pop = GAMA.getSimulation().getMicroPopulation(layer.getName());
-			} else {
-				pop = ((AgentLayer) layer).getAgentsForMenu();
-			}
 			if ( view.getOutput().isOpenGL() ) {
-				AgentsMenu.MenuAction follow =
-					new AgentsMenu.MenuAction(new FollowSelection(layer, displaySurface), SwtGui.followImage, "Follow");
-				AgentsMenu.fillPopulationSubMenu(layerMenu, pop, focus, follow);
+				AgentsMenu.fillPopulationSubMenu(menu, filteredList, limit, focus, follow);
 			} else {
-				AgentsMenu.fillPopulationSubMenu(layerMenu, pop, focus);
+				AgentsMenu.fillPopulationSubMenu(menu, filteredList, limit, focus);
 			}
+		} else {
+			for ( final ILayer layer : view.getDisplayManager().getItems() ) {
+				final FocusOnSelection adapter = new FocusOnSelection(layer, displaySurface);
+				AgentsMenu.MenuAction focus = new AgentsMenu.MenuAction(adapter, SwtGui.focusImage, "Focus on");
+				boolean isSpeciesLayer = layer instanceof SpeciesLayer || layer instanceof GridLayer;
+				boolean isAgentLayer = isSpeciesLayer || layer instanceof AgentLayer;
+				if ( !isAgentLayer ) {
+					continue;
+				}
+				Collection<IAgent> pop = null;
+				if ( isSpeciesLayer ) {
+					pop = GAMA.getSimulation().getMicroPopulation(layer.getName());
+				} else {
+					pop = ((AgentLayer) layer).getAgentsForMenu();
+				}
+				pop = new ArrayList(pop);
+				if ( pop.isEmpty() ) {
+					continue;
+				}
+				String layerName = layer.getType() + ": " + layer.getName();
 
+				if ( view.getOutput().isOpenGL() ) {
+					fill(menu, images.get(layer.getClass()), layerName, pop, filteredList, focus, follow);
+				} else {
+					fill(menu, images.get(layer.getClass()), layerName, pop, filteredList, focus);
+				}
+
+			}
 		}
 	}
+
+	void fill(final Menu menu, final Image image, final String layerName, final Collection<IAgent> pop,
+		final Collection<IAgent> filteredList, final AgentsMenu.MenuAction ... actions) {
+		final MenuItem layerMenu = new MenuItem(menu, SWT.CASCADE);
+		layerMenu.setText(layerName);
+		layerMenu.setImage(image);
+		if ( filteredList != null ) {
+			pop.retainAll(filteredList);
+		}
+		AgentsMenu.fillPopulationSubMenu(layerMenu, pop, GAMA.NUMBER_OF_AGENTS_IN_MENUS, actions);
+
+	}
+
 }

@@ -19,8 +19,6 @@
 package msi.gama.jogl;
 
 import java.awt.*;
-import java.awt.Menu;
-import java.awt.MenuItem;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
@@ -28,7 +26,7 @@ import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.displays.awt.*;
+import msi.gama.gui.displays.awt.AbstractAWTDisplaySurface;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.jogl.scene.ModelScene;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
@@ -42,9 +40,8 @@ import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
+import msi.gama.util.GamaList;
 import msi.gaml.compilation.ISymbol;
-import msi.gaml.species.ISpecies;
-import msi.gaml.statements.UserCommandStatement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.swt.widgets.FileDialog;
@@ -56,12 +53,8 @@ import com.vividsolutions.jts.geom.Envelope;
 public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface implements IDisplaySurface.OpenGL {
 
 	private static final long serialVersionUID = 1L;
-	public PopupMenu agentsMenu = new PopupMenu();
 
 	protected Point mousePosition;
-	// private ActionListener menuListener;
-	private ActionListener focusListener;
-	private ActionListener followListener;
 
 	private boolean output3D = false;
 	// Environment properties useful to set the camera position.
@@ -154,9 +147,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		// Call sun.awt.noerasebackground to reduce the flickering when creating a popup menu,
 		// due to AWT erasing the GLCanvas every time before jogl repaint.
 		System.setProperty("sun.awt.noerasebackground", "true");
-
-		agentsMenu = new PopupMenu();
-		add(agentsMenu);
 		renderer = new JOGLAWTGLRenderer(this);
 		// renderer.setPolygonTriangulated(false);
 		renderer.setTessellation(getOutput().getTesselation());
@@ -215,56 +205,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		super.setPaused(flag);
 	}
 
-	public class SelectedAgent {
-
-		private final IAgent macro;
-		private final String name;
-		Map<ISpecies, List<SelectedAgent>> micros;
-
-		SelectedAgent(final IAgent agent) {
-			this(agent, agent.getName());
-		}
-
-		SelectedAgent(final IAgent agent, final String title) {
-			macro = agent;
-			name = title;
-		}
-
-		void buildMenuItems(final Menu parentMenu, final ILayer display) {
-			final Menu macroMenu = new Menu(name);
-			parentMenu.add(macroMenu);
-
-			final MenuItem inspectItem = new AWTDisplaySurfaceMenu.AgentMenuItem("Inspect", macro, display);
-			inspectItem.addActionListener(AWTDisplaySurfaceMenu.menuListener);
-			macroMenu.add(inspectItem);
-
-			final MenuItem focusItem = new AWTDisplaySurfaceMenu.AgentMenuItem("Focus", macro, display);
-			focusItem.addActionListener(focusListener);
-			macroMenu.add(focusItem);
-
-			MenuItem followItem = new AWTDisplaySurfaceMenu.AgentMenuItem("Follow", macro, display);
-			followItem.addActionListener(followListener);
-			macroMenu.add(followItem);
-
-			final MenuItem highlightItem =
-				new AWTDisplaySurfaceMenu.AgentMenuItem(macro == GuiUtils.getHighlightedAgent() ? "Remove highlight"
-					: "Highlight", macro, display);
-			highlightItem.addActionListener(AWTDisplaySurfaceMenu.highlightListener);
-			macroMenu.add(highlightItem);
-
-			final Collection<UserCommandStatement> commands = macro.getSpecies().getUserCommands();
-			if ( !commands.isEmpty() ) {
-				macroMenu.addSeparator();
-				for ( final UserCommandStatement c : commands ) {
-					final MenuItem actionItem = new AWTDisplaySurfaceMenu.AgentMenuItem(macro, c, null);
-					actionItem.addActionListener(AWTDisplaySurfaceMenu.commandListener);
-					macroMenu.add(actionItem);
-				}
-			}
-
-		}
-	}
-
 	@Override
 	public void outputChanged(final double env_width, final double env_height, final LayeredDisplayOutput output) {
 		setBackgroundColor(output.getBackgroundColor());
@@ -272,46 +212,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		setEnvWidth(env_width);
 		setEnvHeight(env_height);
 		widthHeightConstraint = env_height / env_width;
-		// menuListener = new ActionListener() {
-		//
-		// @Override
-		// public void actionPerformed(final ActionEvent e) {
-		// final AgentMenuItem source = (AgentMenuItem) e.getSource();
-		// final IAgent a = source.getAgent();
-		// if ( a != null ) {
-		// GuiUtils.setSelectedAgent(a);
-		// }
-		// }
-		//
-		// };
-
-		focusListener = new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				final AWTDisplaySurfaceMenu.AgentMenuItem source = (AWTDisplaySurfaceMenu.AgentMenuItem) e.getSource();
-				final IAgent a = source.getAgent();
-				if ( a != null ) {
-					focusOn(a.getGeometry(), source.getDisplay());
-				}
-			}
-
-		};
-
-		followListener = new ActionListener() {
-
-			@Override
-			public void actionPerformed(final ActionEvent e) {
-				AWTDisplaySurfaceMenu.AgentMenuItem source = (AWTDisplaySurfaceMenu.AgentMenuItem) e.getSource();
-				IAgent a = source.getAgent();
-				if ( a != null ) {
-					agent = a;
-					followAgent = !followAgent;
-					// followAgent(a);
-				}
-			}
-
-		};
 
 		if ( manager == null ) {
 			manager = new LayerManager(this);
@@ -337,34 +237,35 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	}
 
 	public void selectAgents(final IAgent agent, final int layerId) {
-		agentsMenu.removeAll();
+		// agentsMenu.removeAll();
 		// Adding the world
-		SelectedAgent sa = new SelectedAgent(GAMA.getSimulation(), "World agent");
-		sa.buildMenuItems(agentsMenu, null);
+		// SelectedAgent sa = new SelectedAgent(GAMA.getSimulation(), "World agent");
+		// sa.buildMenuItems(agentsMenu, null);
 		// Adding the agent
-		if ( agent != null ) {
-			agentsMenu.addSeparator();
-			sa = new SelectedAgent(agent);
-			sa.buildMenuItems(agentsMenu, manager.getItems().get(layerId));
-		}
-		agentsMenu.show(this, renderer.camera.mousePosition.x, renderer.camera.mousePosition.y);
+		// if ( agent != null ) {
+		// agentsMenu.addSeparator();
+		// sa = new SelectedAgent(agent);
+		// sa.buildMenuItems(agentsMenu, manager.getItems().get(layerId));
+		// }
+		menuManager.buildMenu(renderer.camera.mousePosition.x, renderer.camera.mousePosition.y, agent);
 
 	}
 
 	public void selectSeveralAgents(final Iterator<IAgent> agents, final int layerId) {
-		agentsMenu.removeAll();
-		// Adding the world
-		SelectedAgent sa = new SelectedAgent(GAMA.getSimulation(), "World agent");
-		sa.buildMenuItems(agentsMenu, null);
-		while (agents.hasNext()) {
-			IAgent a = agents.next();
-			if ( a != null ) {
-				agentsMenu.addSeparator();
-				sa = new SelectedAgent(a);
-				sa.buildMenuItems(agentsMenu, manager.getItems().get(layerId));
-			}
-		}
-		agentsMenu.show(this, renderer.camera.mousePosition.x, renderer.camera.mousePosition.y);
+		// agentsMenu.removeAll();
+		// // Adding the world
+		// SelectedAgent sa = new SelectedAgent(GAMA.getSimulation(), "World agent");
+		// sa.buildMenuItems(agentsMenu, null);
+		// while (agents.hasNext()) {
+		// IAgent a = agents.next();
+		// if ( a != null ) {
+		// agentsMenu.addSeparator();
+		// sa = new SelectedAgent(a);
+		// sa.buildMenuItems(agentsMenu, manager.getItems().get(layerId));
+		// }
+		// }
+		menuManager.buildMenu(false, renderer.camera.mousePosition.x, renderer.camera.mousePosition.y,
+			new GamaList(agents));
 
 	}
 

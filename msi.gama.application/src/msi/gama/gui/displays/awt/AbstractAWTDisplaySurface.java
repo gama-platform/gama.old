@@ -42,6 +42,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	private double envWidth;
 	private double envHeight;
 	private IZoomListener zoomListener;
+	protected DisplaySurfaceMenu menuManager;
 
 	protected AbstractAWTDisplaySurface(final Object ... args) {}
 
@@ -53,6 +54,11 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		setDoubleBuffered(false);
 		this.setLayout(new BorderLayout());
 		outputChanged(env_width, env_height, output);
+	}
+
+	// FIXME Ugly code. The hack must be better written
+	public void setSWTMenuManager(final Object manager) {
+		menuManager = (DisplaySurfaceMenu) manager;
 	}
 
 	@Override
