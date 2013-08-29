@@ -95,7 +95,8 @@ public class Reader {
 		int expId=Integer.valueOf(e.getAttribute("id"));
 		int max=Integer.valueOf(e.getAttribute("finalstep"));
 		String sourcePath=e.getAttribute("sourcePath");
-		String driver=e.getAttribute("driver");
+		//String driver= "msi.gama.headless.runtime.GamaSimulator"; //e.getAttribute("driver");
+		String experimentName=e.getAttribute("experiment");
 		if(sourcePath.charAt(0)!='/')
 		{
 			File ff=( new File(fileName));
@@ -111,7 +112,7 @@ public class Reader {
 			
 		}
 		
-		Simulation res=new Simulation(expId, sourcePath, driver, max);
+		Simulation res=new Simulation(expId, sourcePath, experimentName, max);
 		this.readParameter(res, e);
 		this.readOutput(res, e);
 		return res;

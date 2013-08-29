@@ -19,7 +19,6 @@ public class HeadlessListener implements IGui {
 
 	
 	static {
-		System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n\n\n\nConfiguring user interface access through SWT");
 		if(GuiUtils.isInHeadLessMode())
 			{
 				System.out.println("Configuring Headless Mode");

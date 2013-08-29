@@ -9,6 +9,7 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.GamlStandaloneSetup;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.validation.GamlJavaValidator;
+import msi.gama.outputs.IOutputManager;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamaBundleLoader;
@@ -27,17 +28,17 @@ public class HeadlessSimulationLoader {
 	 * @return the loaded experiment
 	 * @throws InterruptedException
 	 */
-	public static ExperimentSpecies newHeadlessSimulation(final String fileName) {
+	public static ExperimentSpecies newHeadlessSimulation(final String fileName, final String expName) {
 		configureHeadLessSimulation();
 		preloadGAMA();
 		IModel model = loadModel(fileName);
-		IExperimentSpecies tt = model.getExperiment("preyPred");
+		IExperimentSpecies tt = model.getExperiment(expName);
 		
 		//IHeadLessExperiment exp = (IHeadLessExperiment) model.getExperiment("preyPred");;
-		ExperimentSpecies exp = (ExperimentSpecies) model.getExperiment("preyPred");;
+		ExperimentSpecies exp = (ExperimentSpecies) model.getExperiment(expName);
 		
 		HeadLessExperiment hexp=new HeadLessExperiment(exp);
-		System.out.println("coucouc " + "  pouet " + tt.getClass().getName());
+		//System.out.println("coucouc " + "  pouet " + tt.getClass().getName());
 
 		/*
 		 * for (ISpecies sp : ((GamlModelSpecies)model).getExperiments()) {
@@ -62,19 +63,26 @@ public class HeadlessSimulationLoader {
 	 * @throws GamaRuntimeException
 	 * @throws InterruptedException
 	 */
-	public static ExperimentSpecies newHeadlessSimulation(final String fileName, final ParametersSet params)
+	public static ExperimentSpecies newHeadlessSimulation(final String fileName, final String expName, final ParametersSet params)
 		throws GamaRuntimeException {
 		// FIXME Verify all this.
-		ExperimentSpecies exp = newHeadlessSimulation(fileName);
-		exp.open();
+		ExperimentSpecies exp = newHeadlessSimulation(fileName,expName);
+		
+//		exp.;
 
-		System.out.println("coucoucou  simulation is open.....");
 		for ( Map.Entry<String, Object> entry : params.entrySet() ) {
 			exp.setParameterValue(entry.getKey(), entry.getValue());
 		}
 		// FIXME ???
-		// exp.schedule();
+		 //exp.;
+		exp.open();
+//		IOutputManager outputs = exp.getExperimentOutputs();
+//		if ( outputs != null ) {
+//			GAMA.controller.getScheduler().schedule(outputs, exp.getExperimentScope());
+//		}
+		
 		waitLoading(exp);
+		
 		return exp;
 
 	}
@@ -87,9 +95,6 @@ public class HeadlessSimulationLoader {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-			//System.out.println("test " + exp);
-			//System.out.println("test2 " + exp.getModel());
-			// System.out.println("test2 " + exp.isLoading());
 		} while (exp.getCurrentSimulation() != null && false);
 	}
 

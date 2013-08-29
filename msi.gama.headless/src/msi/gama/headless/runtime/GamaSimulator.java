@@ -18,6 +18,7 @@ public class GamaSimulator implements ISimulator {
 	private int currentStep;
 	private final ParametersSet params;
 	private String fileName;
+	private String experimentName;
 	private double seed;
 	private ExperimentSpecies experiment;
 
@@ -31,7 +32,7 @@ public class GamaSimulator implements ISimulator {
 		this.currentStep = currentStep;
 		//experiment.getSchedule().
 		GAMA.controller.getScheduler().step();
-		System.out.println(" Step " + currentStep);
+		//System.out.println(" Step " + currentStep);
 		
 		//		GAMA.controller.getScheduler().step();
 		//experiment.getAgent().get //currentStep.//.controller.userStep();
@@ -106,9 +107,10 @@ public class GamaSimulator implements ISimulator {
 	}
 
 	@Override
-	public void load(final String var, final int exp) {
+	public void load(final String var, final int exp, final String expName) {
 		this.fileName = var;
 		this.experimentID = exp;
+		this.experimentName = expName;
 
 	}
 
@@ -125,7 +127,7 @@ public class GamaSimulator implements ISimulator {
 	@Override
 	public void initialize() {
 		try {
-			experiment = HeadlessSimulationLoader.newHeadlessSimulation(this.fileName, this.params);
+			experiment = HeadlessSimulationLoader.newHeadlessSimulation(this.fileName, this.experimentName,this.params);
 		} catch (GamaRuntimeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

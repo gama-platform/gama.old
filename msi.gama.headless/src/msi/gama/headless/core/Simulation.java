@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.Vector;
 
 import msi.gama.headless.common.ISimulator;
+import msi.gama.headless.runtime.GamaSimulator;
 import msi.gama.headless.xml.Writer;
 
 
@@ -19,7 +20,8 @@ public class Simulation  {
 	private Vector<Output> outputs;
 	private Writer outputFile;
 	private String sourcePath;
-	private String driver;
+	//private String driver;
+	private String experimentName;
 
 	/**
 	 * simulator to be loaded
@@ -52,12 +54,13 @@ public class Simulation  {
 		this.outputs.add(p);
 	}
 
-	public Simulation(int expId, String sourcePath, String driver, int max)
+	public Simulation(int expId, String sourcePath,String exp, int max)
 	{
 		this.experimentID=expId;
 		this.sourcePath=sourcePath;
-		this.driver=driver;
+	//	this.driver=driver;
 		this.maxStep=max;
+		this.experimentName = exp;
 		initialize();
 	}
 	
@@ -89,15 +92,15 @@ public class Simulation  {
 
 	public void load() throws InstantiationException, IllegalAccessException, ClassNotFoundException
 	{
-		this.model=(ISimulator)(Class.forName(this.driver)).newInstance();
-		this.model.load(this.sourcePath, this.experimentID);
-
+		this.model=new GamaSimulator(); //(ISimulator)(Class.forName(this.driver)).newInstance();
+		this.model.load(this.sourcePath, this.experimentID, this.experimentName);
 	}
 	
 	public void setup()
 	{
 		this.step=0;
 		//this.model.setup();
+		//this.model.
 	}
 	
 	public void play()
