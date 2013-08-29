@@ -165,7 +165,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 		super.setChildren(children);
 		// We first verify if we are in a batch -- or normal -- situation
 		for ( final ISymbol s : children ) {
-			if ( s instanceof IExploration && (s.hasFacet(IKeyword.MAXIMIZE) || s.hasFacet(IKeyword.MINIMIZE)) ) {
+			if ( s instanceof IExploration /* && (s.hasFacet(IKeyword.MAXIMIZE) || s.hasFacet(IKeyword.MINIMIZE)) */) {
 				exploration = (IExploration) s;
 				break;
 			}

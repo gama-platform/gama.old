@@ -145,8 +145,11 @@ public class BatchAgent extends ExperimentAgent {
 			simulation.getScheduler().init(scope);
 
 			// This inner while loop runs the simulation and controls its execution
-			while (simulation != null && simulation.step(scope) &&
-				!Cast.asBool(scope, scope.evaluate(stopCondition, simulation))) {
+			while (simulation != null && simulation.step(scope)) {
+				boolean mustStop = !Cast.asBool(scope, scope.evaluate(stopCondition, simulation));
+				if ( mustStop ) {
+					break;
+				}
 				GuiUtils.informStatus("Run " + runNumber + " | Simulation " + (repeatIndex + 1) + "/" +
 					getSeeds().length + " | Cycle " + simulation.getClock().getCycle());
 				// TODO This is where any update of the outputs of simulations should be introduced
