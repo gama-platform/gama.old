@@ -39,6 +39,7 @@ public class ModelScene {
 	final GamaPoint scale = new GamaPoint(1, 1, 1);
 	boolean staticObjectsAreLocked;
 	final Double envWidth, envHeight;
+	private boolean envGeometryInitialized = false;
 
 	public ModelScene(final JOGLAWTGLRenderer renderer) {
 		geometries = new SceneObjects(new GeometryDrawer(renderer), true, false);
@@ -80,7 +81,6 @@ public class ModelScene {
 		}
 		
 		this.drawEnvironmentBounds(renderer,drawEnv);
-	
 		geometries.draw(picking, renderer);
 		staticObjects.draw(picking, renderer);
 		images.draw(picking, renderer);
@@ -194,7 +194,10 @@ public class ModelScene {
 			.getInnerGeometry();
 		}
 		final Color c = new Color(225, 225, 225);
-		addGeometry(g, null, 0, 0, c, false, c, false, 0, 0, offset, scale, false, "env", false, 1d, "environment");
+		if(!envGeometryInitialized){
+	 	  addGeometry(g, null, 0, 0, c, false, c, false, 0, 0, offset, scale, false, "env", false, 1d, "environment");
+	 	 envGeometryInitialized = true;
+		}
 	}
 
 	public void drawZValue(final double pos, final float value) {
