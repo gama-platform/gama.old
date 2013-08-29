@@ -34,7 +34,7 @@ import msi.gaml.types.IType;
  * represented by an instance of IGui, which must be initialize when the UI plugin launches.
  * 
  * @author drogoul
- * @since 18 d�c. 2011
+ * @since 18 dec. 2011
  * 
  */
 public class GuiUtils {
@@ -306,11 +306,16 @@ public class GuiUtils {
 			gui.openModelingPerspective();
 		}
 	}
-
+	
 	public static boolean isSimulationPerspective() {
 		return gui == null ? false : gui.isSimulationPerspective();
 	}
 
+	public static IGui getGui()
+	{
+		return gui;
+	}
+	
 	public static void togglePerspective() {
 		if ( gui != null ) {
 			gui.togglePerspective();
