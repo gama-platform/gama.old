@@ -70,8 +70,14 @@ public class SwtGui implements IGui {
 	private IAgent highlightedAgent;
 
 	static {
-		System.out.println("Configuring user interface access through SWT");
-		GuiUtils.setSwtGui(new SwtGui());
+		//System.out.println("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX\n\n\n\nConfiguring user interface access through SWT");
+		if(!GuiUtils.isInHeadLessMode())
+			{
+				System.out.println("Configuring user interface access through SWT");
+				GuiUtils.setSwtGui(new SwtGui());
+			}
+		else
+			System.out.println("Configuring HEADLESS MODE");
 	}
 
 	protected SwtGui() {}
@@ -85,6 +91,7 @@ public class SwtGui implements IGui {
 	private static Font labelFont;
 	public static final String PERSPECTIVE_MODELING_ID = "msi.gama.application.perspectives.ModelingPerspective";
 	public static final String PERSPECTIVE_SIMULATION_ID = "msi.gama.application.perspectives.SimulationPerspective";
+	public static final String PERSPECTIVE_HPC_ID = "msi.gama.hpc.HPCPerspectiveFactory";
 	private static Font unitFont;
 	public static final GridData labelData = new GridData(SWT.END, SWT.CENTER, false, false);
 	private static Logger log;
@@ -696,7 +703,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public final boolean openModelingPerspective() {
-		return openPerspective(PERSPECTIVE_MODELING_ID);
+		return openPerspective(PERSPECTIVE_MODELING_ID); 
 	}
 
 	public final boolean openPerspective(final String perspectiveId) {
@@ -731,7 +738,6 @@ public class SwtGui implements IGui {
 
 	public final String getActivePerspectiveName() {
 		return getActivePerspective().getId();
-
 	}
 
 	static final Map<String, Class> perspectiveClasses = new HashMap();
@@ -762,8 +768,36 @@ public class SwtGui implements IGui {
 
 	@Override
 	public final boolean openSimulationPerspective() {
-		// boolean toto = openPerspective(GuiUtils.HPC_PERSPECTIVE_ID );
 		return openPerspective(PERSPECTIVE_SIMULATION_ID);
+	}
+	
+	public final boolean openBatchPerspective() {
+		return openPerspective(PERSPECTIVE_HPC_ID);
+	}
+	
+	 String currentPerspectiveId = null; 
+	
+	public final boolean changePerspective()
+	{
+		System.out.println("change perspective " + this.currentPerspectiveId);
+		if(currentPerspectiveId==PERSPECTIVE_SIMULATION_ID)
+		{
+			this.currentPerspectiveId = PERSPECTIVE_HPC_ID;
+			return openPerspective(PERSPECTIVE_HPC_ID);
+		}
+		else
+		{
+			if( currentPerspectiveId==PERSPECTIVE_MODELING_ID)
+			{
+				this.currentPerspectiveId = PERSPECTIVE_SIMULATION_ID;
+				return openPerspective(PERSPECTIVE_SIMULATION_ID);
+			}
+			else
+			{
+				this.currentPerspectiveId = PERSPECTIVE_MODELING_ID;
+				return openPerspective(PERSPECTIVE_MODELING_ID);
+			}
+		}
 	}
 
 	@Override

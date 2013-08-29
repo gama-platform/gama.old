@@ -44,7 +44,7 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	private double widthHeightConstraint = 1.0;
 	private BufferedImage buffImage = null;
 	private Graphics2D g2 = null;
-	private int width, height;
+	private int width = 500, height= 500;
 	private IGraphics displayGraphics;
 	protected Color bgColor = Color.black;
 	ILayerManager manager;
@@ -52,7 +52,10 @@ public class ImageDisplaySurface implements IDisplaySurface {
 	public static String snapshotFolder = "/tmp/";
 	public double envWidth, envHeight;
 
-	public ImageDisplaySurface(final Object ... args) {}
+	public ImageDisplaySurface() {
+	}
+	public ImageDisplaySurface(final Object ... args) {
+	}
 
 	/**
 	 * @see msi.gama.common.interfaces.IDisplaySurface#initialize(double, double, msi.gama.outputs.IDisplayOutput)
@@ -166,6 +169,13 @@ public class ImageDisplaySurface implements IDisplaySurface {
 		manager.drawLayersOn(displayGraphics);
 	}
 
+	/*public void drawDisplaysWithoutRepainting() {
+		if ( iGraphics == null ) { return; }
+		ex[0] = null;
+		iGraphics.fillBackground(bgColor, 1);
+		manager.drawLayersOn(iGraphics);
+	}*/
+	
 	private void createBuffImage() {
 		buffImage = ImageUtils.createCompatibleImage(width, height);
 		g2 = (Graphics2D) buffImage.getGraphics();
@@ -425,12 +435,12 @@ public class ImageDisplaySurface implements IDisplaySurface {
 
 	@Override
 	public int getDisplayWidth() {
-		return 0;
+		return this.getImageWidth();
 	}
 
 	@Override
 	public int getDisplayHeight() {
-		return 0;
+		return this.getHeight();
 	}
 
 	@Override
