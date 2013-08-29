@@ -53,6 +53,7 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getS_AssignmentAccess().getAlternatives(), "rule__S_Assignment__Alternatives");
 					put(grammarAccess.getS_SetAccess().getAlternatives_1(), "rule__S_Set__Alternatives_1");
 					put(grammarAccess.getS_SetAccess().getAlternatives_3(), "rule__S_Set__Alternatives_3");
+					put(grammarAccess.getS_EquationsAccess().getAlternatives_3(), "rule__S_Equations__Alternatives_3");
 					put(grammarAccess.getS_SolveAccess().getAlternatives_4(), "rule__S_Solve__Alternatives_4");
 					put(grammarAccess.get_SpeciesKeyAccess().getAlternatives(), "rule___SpeciesKey__Alternatives");
 					put(grammarAccess.get_1Expr_Facets_BlockOrEnd_KeyAccess().getAlternatives(), "rule___1Expr_Facets_BlockOrEnd_Key__Alternatives");
@@ -114,7 +115,8 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getS_DirectAssignmentAccess().getGroup_0(), "rule__S_DirectAssignment__Group_0__0");
 					put(grammarAccess.getS_SetAccess().getGroup(), "rule__S_Set__Group__0");
 					put(grammarAccess.getS_EquationsAccess().getGroup(), "rule__S_Equations__Group__0");
-					put(grammarAccess.getS_EquationsAccess().getGroup_4(), "rule__S_Equations__Group_4__0");
+					put(grammarAccess.getS_EquationsAccess().getGroup_3_0(), "rule__S_Equations__Group_3_0__0");
+					put(grammarAccess.getS_EquationsAccess().getGroup_3_0_1(), "rule__S_Equations__Group_3_0_1__0");
 					put(grammarAccess.getS_EquationAccess().getGroup(), "rule__S_Equation__Group__0");
 					put(grammarAccess.getS_SolveAccess().getGroup(), "rule__S_Solve__Group__0");
 					put(grammarAccess.get_AssignmentKeyAccess().getGroup_2(), "rule___AssignmentKey__Group_2__0");
@@ -277,7 +279,7 @@ public class GamlParser extends AbstractContentAssistParser {
 					put(grammarAccess.getS_EquationsAccess().getKeyAssignment_0(), "rule__S_Equations__KeyAssignment_0");
 					put(grammarAccess.getS_EquationsAccess().getNameAssignment_1(), "rule__S_Equations__NameAssignment_1");
 					put(grammarAccess.getS_EquationsAccess().getFacetsAssignment_2(), "rule__S_Equations__FacetsAssignment_2");
-					put(grammarAccess.getS_EquationsAccess().getEquationsAssignment_4_0(), "rule__S_Equations__EquationsAssignment_4_0");
+					put(grammarAccess.getS_EquationsAccess().getEquationsAssignment_3_0_1_0(), "rule__S_Equations__EquationsAssignment_3_0_1_0");
 					put(grammarAccess.getS_EquationAccess().getExprAssignment_0(), "rule__S_Equation__ExprAssignment_0");
 					put(grammarAccess.getS_EquationAccess().getKeyAssignment_1(), "rule__S_Equation__KeyAssignment_1");
 					put(grammarAccess.getS_EquationAccess().getValueAssignment_2(), "rule__S_Equation__ValueAssignment_2");

@@ -70,7 +70,7 @@ S_Set:
 	key="set" (firstFacet="var:" | "name:")? expr=Expression ("value:" | "<-") value=Expression ";";
 
 S_Equations:
-	key=_EquationsKey name=Valid_ID (facets+=Facet)* '{' (equations+=S_Equation ';')* '}';
+	key=_EquationsKey name=Valid_ID (facets+=Facet)* ('{' (equations+=S_Equation ';')* '}' | ';');
 
 S_Equation returns S_Assignment:
 	expr=Function key="=" value=Expression;

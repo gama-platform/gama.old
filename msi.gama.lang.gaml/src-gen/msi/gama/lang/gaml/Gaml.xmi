@@ -459,14 +459,19 @@
       <elements xsi:type="xtext:Assignment" cardinality="*" feature="facets" operator="+=">
         <terminal xsi:type="xtext:RuleCall" rule="//@rules.33"/>
       </elements>
-      <elements xsi:type="xtext:Keyword" value="{"/>
-      <elements xsi:type="xtext:Group" cardinality="*">
-        <elements xsi:type="xtext:Assignment" feature="equations" operator="+=">
-          <terminal xsi:type="xtext:RuleCall" rule="//@rules.20"/>
+      <elements xsi:type="xtext:Alternatives">
+        <elements xsi:type="xtext:Group">
+          <elements xsi:type="xtext:Keyword" value="{"/>
+          <elements xsi:type="xtext:Group" cardinality="*">
+            <elements xsi:type="xtext:Assignment" feature="equations" operator="+=">
+              <terminal xsi:type="xtext:RuleCall" rule="//@rules.20"/>
+            </elements>
+            <elements xsi:type="xtext:Keyword" value=";"/>
+          </elements>
+          <elements xsi:type="xtext:Keyword" value="}"/>
         </elements>
         <elements xsi:type="xtext:Keyword" value=";"/>
       </elements>
-      <elements xsi:type="xtext:Keyword" value="}"/>
     </alternatives>
   </rules>
   <rules xsi:type="xtext:ParserRule" name="S_Equation">
@@ -1104,7 +1109,7 @@
             </type>
           </elements>
           <elements xsi:type="xtext:Assignment" feature="op" operator="=">
-            <terminal xsi:type="xtext:Keyword" value="&#xb0;"/>
+            <terminal xsi:type="xtext:Keyword" value="&#xc2;&#xb0;"/>
           </elements>
         </elements>
         <elements xsi:type="xtext:Assignment" feature="right" operator="=">
@@ -1128,7 +1133,7 @@
         <elements xsi:type="xtext:Alternatives">
           <elements xsi:type="xtext:Group">
             <elements xsi:type="xtext:Assignment" feature="op" operator="=">
-              <terminal xsi:type="xtext:Keyword" value="&#xb0;"/>
+              <terminal xsi:type="xtext:Keyword" value="&#xc2;&#xb0;"/>
             </elements>
             <elements xsi:type="xtext:Assignment" feature="right" operator="=">
               <terminal xsi:type="xtext:RuleCall" rule="//@rules.66"/>

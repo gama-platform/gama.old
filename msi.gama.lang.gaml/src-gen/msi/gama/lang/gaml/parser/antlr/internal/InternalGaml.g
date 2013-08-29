@@ -2089,14 +2089,14 @@ ruleS_Equations returns [EObject current=null]
 	    }
 
 )
-)*	otherlv_3='{' 
+)*((	otherlv_3='{' 
     {
-    	newLeafNode(otherlv_3, grammarAccess.getS_EquationsAccess().getLeftCurlyBracketKeyword_3());
+    	newLeafNode(otherlv_3, grammarAccess.getS_EquationsAccess().getLeftCurlyBracketKeyword_3_0_0());
     }
 ((
 (
 		{ 
-	        newCompositeNode(grammarAccess.getS_EquationsAccess().getEquationsS_EquationParserRuleCall_4_0_0()); 
+	        newCompositeNode(grammarAccess.getS_EquationsAccess().getEquationsS_EquationParserRuleCall_3_0_1_0_0()); 
 	    }
 		lv_equations_4_0=ruleS_Equation		{
 	        if ($current==null) {
@@ -2113,13 +2113,18 @@ ruleS_Equations returns [EObject current=null]
 )
 )	otherlv_5=';' 
     {
-    	newLeafNode(otherlv_5, grammarAccess.getS_EquationsAccess().getSemicolonKeyword_4_1());
+    	newLeafNode(otherlv_5, grammarAccess.getS_EquationsAccess().getSemicolonKeyword_3_0_1_1());
     }
 )*	otherlv_6='}' 
     {
-    	newLeafNode(otherlv_6, grammarAccess.getS_EquationsAccess().getRightCurlyBracketKeyword_5());
+    	newLeafNode(otherlv_6, grammarAccess.getS_EquationsAccess().getRightCurlyBracketKeyword_3_0_2());
     }
 )
+    |	otherlv_7=';' 
+    {
+    	newLeafNode(otherlv_7, grammarAccess.getS_EquationsAccess().getSemicolonKeyword_3_1());
+    }
+))
 ;
 
 
@@ -4743,16 +4748,16 @@ ruleUnit returns [EObject current=null]
     }
 )(
 (
-		lv_op_2_0=	'\u00B0' 
+		lv_op_2_0=	'\u00C2\u00B0' 
     {
-        newLeafNode(lv_op_2_0, grammarAccess.getUnitAccess().getOpDegreeSignKeyword_1_0_1_0());
+        newLeafNode(lv_op_2_0, grammarAccess.getUnitAccess().getOpLatinCapitalLetterAWithCircumflexDegreeSignKeyword_1_0_1_0());
     }
  
 	    {
 	        if ($current==null) {
 	            $current = createModelElement(grammarAccess.getUnitRule());
 	        }
-       		setWithLastConsumed($current, "op", lv_op_2_0, "\u00B0");
+       		setWithLastConsumed($current, "op", lv_op_2_0, "\u00C2\u00B0");
 	    }
 
 )
@@ -4813,16 +4818,16 @@ ruleUnary returns [EObject current=null]
     }
 )(((
 (
-		lv_op_2_0=	'\u00B0' 
+		lv_op_2_0=	'\u00C2\u00B0' 
     {
-        newLeafNode(lv_op_2_0, grammarAccess.getUnaryAccess().getOpDegreeSignKeyword_1_1_0_0_0());
+        newLeafNode(lv_op_2_0, grammarAccess.getUnaryAccess().getOpLatinCapitalLetterAWithCircumflexDegreeSignKeyword_1_1_0_0_0());
     }
  
 	    {
 	        if ($current==null) {
 	            $current = createModelElement(grammarAccess.getUnaryRule());
 	        }
-       		setWithLastConsumed($current, "op", lv_op_2_0, "\u00B0");
+       		setWithLastConsumed($current, "op", lv_op_2_0, "\u00C2\u00B0");
 	    }
 
 )

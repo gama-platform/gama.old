@@ -1656,7 +1656,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     ((op='¡' right=UnitRef) | ((op='-' | op='!' | op='my' | op='the' | op='not') right=Unary))
+	 *     ((op='Â°' right=UnitRef) | ((op='-' | op='!' | op='my' | op='the' | op='not') right=Unary))
 	 */
 	protected void sequence_Unary(EObject context, Unary semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -1690,7 +1690,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 	
 	/**
 	 * Constraint:
-	 *     (left=Unit_Unit_1_0_0 op='¡' right=UnitRef)
+	 *     (left=Unit_Unit_1_0_0 op='Â°' right=UnitRef)
 	 */
 	protected void sequence_Unit(EObject context, Unit semanticObject) {
 		if(errorAcceptor != null) {
@@ -1704,7 +1704,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
 		feeder.accept(grammarAccess.getUnitAccess().getUnitLeftAction_1_0_0(), semanticObject.getLeft());
-		feeder.accept(grammarAccess.getUnitAccess().getOpDegreeSignKeyword_1_0_1_0(), semanticObject.getOp());
+		feeder.accept(grammarAccess.getUnitAccess().getOpLatinCapitalLetterAWithCircumflexDegreeSignKeyword_1_0_1_0(), semanticObject.getOp());
 		feeder.accept(grammarAccess.getUnitAccess().getRightUnitRefParserRuleCall_1_1_0(), semanticObject.getRight());
 		feeder.finish();
 	}

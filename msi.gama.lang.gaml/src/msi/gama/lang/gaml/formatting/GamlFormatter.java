@@ -18,10 +18,14 @@
  */
 package msi.gama.lang.gaml.formatting;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
+
 import msi.gama.lang.gaml.services.GamlGrammarAccess;
+
 import org.eclipse.xtext.Keyword;
-import org.eclipse.xtext.formatting.impl.*;
+import org.eclipse.xtext.formatting.impl.AbstractDeclarativeFormatter;
+import org.eclipse.xtext.formatting.impl.FormattingConfig;
 
 /**
  * This class contains custom formatting description.
@@ -107,12 +111,17 @@ public class GamlFormatter extends AbstractDeclarativeFormatter {
 		c.setIndentationDecrement()
 			.before(g.getBlockAccess().getRightCurlyBracketKeyword_2_0_0_1());
 		// Equation blocks are defined differently (of course ! It would be too simple...)
-		c.setLinewrap().after(g.getS_EquationsAccess().getLeftCurlyBracketKeyword_3());
-		c.setIndentationIncrement().after(g.getS_EquationsAccess().getLeftCurlyBracketKeyword_3());
-		c.setLinewrap(2).after(g.getS_EquationsAccess().getRightCurlyBracketKeyword_5());
-		c.setLinewrap(1).before(g.getS_EquationsAccess().getRightCurlyBracketKeyword_5());
+		c.setLinewrap().after(
+				g.getS_EquationsAccess().getLeftCurlyBracketKeyword_3_0_0());
+		c.setIndentationIncrement().after(
+				g.getS_EquationsAccess().getLeftCurlyBracketKeyword_3_0_0());
+		c.setLinewrap(2).after(
+				g.getS_EquationsAccess().getRightCurlyBracketKeyword_3_0_2());
+		c.setLinewrap(1).before(
+				g.getS_EquationsAccess().getRightCurlyBracketKeyword_3_0_2());
 		c.setIndentationDecrement()
-			.before(g.getS_EquationsAccess().getRightCurlyBracketKeyword_5());
+.before(
+				g.getS_EquationsAccess().getRightCurlyBracketKeyword_3_0_2());
 		// Else blocks should not be separated from their if
 		c.setNoLinewrap().before(g.getS_IfAccess().getElseKeyword_4_0());
 
