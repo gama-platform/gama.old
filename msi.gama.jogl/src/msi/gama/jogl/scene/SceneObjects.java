@@ -86,7 +86,7 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 
 	public void draw(final boolean picking, JOGLAWTGLRenderer renderer) {
 		
-		boolean colorPicking = true;
+		boolean colorPicking = false;
 		if ( picking ) {
 			if(colorPicking){
 				drawer.getGL().glDisable(GL.GL_DITHER);
