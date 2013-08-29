@@ -3,10 +3,14 @@ package msi.gama.jogl.scene;
 import static javax.media.opengl.GL.GL_COMPILE;
 
 import java.awt.Color;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
 import java.util.*;
 
 import javax.media.opengl.GL;
+
+import com.sun.opengl.util.BufferUtil;
 
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.VertexArrayHandler;
@@ -82,26 +86,25 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 
 	public void draw(final boolean picking, JOGLAWTGLRenderer renderer) {
 		
-		boolean colorPicking = false;
+		boolean colorPicking = true;
 		if ( picking ) {
 			if(colorPicking){
-				/*drawer.getGL().glDisable(GL.GL_DITHER);
+				drawer.getGL().glDisable(GL.GL_DITHER);
 				drawer.getGL().glDisable(GL.GL_LIGHTING);
 				drawer.getGL().glDisable(GL.GL_TEXTURE);
-				drawer.getGL().glColor3f(1.0f,0,0);*/
+				/*drawer.getGL().glColor3f(1.0f,0,0);*/
 				//http://elect86.wordpress.com/2013/02/04/jogl-color-picking/
-	
 				drawer.getGL().glDrawBuffer(GL.GL_BACK);
 		
 	            for ( final T object : objects ) {
-	            	//System.out.println("object.index" + object.index);
+	            	System.out.println("object.index " + object.index);
 	            	Color index = new Color(object.index);
 	            	drawer.getGL().glColor3f(index.getRed() / 255.0f, index.getGreen() / 255.0f, index.getBlue() / 255.0f);
+	            	System.out.println("index getRed : "+index.getRed() / 255.0f+
+	            			" index getGreen : "+index.getGreen() / 255.0f+
+	            			"index getBlue : "+index.getBlue() / 255.0f);
 					object.draw(drawer, picking);
 				}
-	           /* drawer.getGL().glEnable(GL.GL_DITHER);
-	            drawer.getGL().glEnable(GL.GL_LIGHTING);
-				drawer.getGL().glEnable(GL.GL_TEXTURE);*/
 	            
 	            int viewport[] = new int[4];
 	            drawer.getGL().glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
@@ -109,7 +112,13 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 	            FloatBuffer pixels = FloatBuffer.allocate(4);
 	            drawer.getGL().glReadBuffer(GL.GL_BACK);
 	            drawer.getGL().glReadPixels(drawer.renderer.camera.lastxPressed,viewport[3]-drawer.renderer.camera.lastyPressed,1,1,
-	            drawer.getGL().GL_RGBA,drawer.getGL().GL_FLOAT,pixels);
+	            GL.GL_RGBA,GL.GL_FLOAT,pixels);
+	            
+		        drawer.getGL().glEnable(GL.GL_DITHER);
+	            drawer.getGL().glEnable(GL.GL_LIGHTING);
+				drawer.getGL().glEnable(GL.GL_TEXTURE);
+	            
+	            
 	            
 	            Color index = new Color(pixels.get(0), pixels.get(1), pixels.get(2));	    
 	            System.out.println("index returned " + index.toString());
@@ -143,7 +152,8 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 				}
 				else
 				{
-					vah.createVBOs();
+					vah.loadCollada();
+//					vah.createVBOs();
 				}
 			
 		}else {
