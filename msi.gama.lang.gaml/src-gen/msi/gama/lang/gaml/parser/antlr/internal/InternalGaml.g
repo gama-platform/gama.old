@@ -4748,16 +4748,16 @@ ruleUnit returns [EObject current=null]
     }
 )(
 (
-		lv_op_2_0=	'\u00C2\u00B0' 
+		lv_op_2_0=	'\u00B0' 
     {
-        newLeafNode(lv_op_2_0, grammarAccess.getUnitAccess().getOpLatinCapitalLetterAWithCircumflexDegreeSignKeyword_1_0_1_0());
+        newLeafNode(lv_op_2_0, grammarAccess.getUnitAccess().getOpDegreeSignKeyword_1_0_1_0());
     }
  
 	    {
 	        if ($current==null) {
 	            $current = createModelElement(grammarAccess.getUnitRule());
 	        }
-       		setWithLastConsumed($current, "op", lv_op_2_0, "\u00C2\u00B0");
+       		setWithLastConsumed($current, "op", lv_op_2_0, "\u00B0");
 	    }
 
 )
@@ -4818,16 +4818,16 @@ ruleUnary returns [EObject current=null]
     }
 )(((
 (
-		lv_op_2_0=	'\u00C2\u00B0' 
+		lv_op_2_0=	'\u00B0' 
     {
-        newLeafNode(lv_op_2_0, grammarAccess.getUnaryAccess().getOpLatinCapitalLetterAWithCircumflexDegreeSignKeyword_1_1_0_0_0());
+        newLeafNode(lv_op_2_0, grammarAccess.getUnaryAccess().getOpDegreeSignKeyword_1_1_0_0_0());
     }
  
 	    {
 	        if ($current==null) {
 	            $current = createModelElement(grammarAccess.getUnaryRule());
 	        }
-       		setWithLastConsumed($current, "op", lv_op_2_0, "\u00C2\u00B0");
+       		setWithLastConsumed($current, "op", lv_op_2_0, "\u00B0");
 	    }
 
 )

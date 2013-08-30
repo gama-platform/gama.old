@@ -291,7 +291,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 	private void gotoEditor(final GamaRuntimeException exception) {
 
 		final EObject o = exception.getEditorContext();
-		if ( o != null && GAMA.REVEAL_ERRORS_IN_EDITOR ) {
+		if ( o != null ) {
 			GuiUtils.asyncRun(new Runnable() {
 
 				@Override

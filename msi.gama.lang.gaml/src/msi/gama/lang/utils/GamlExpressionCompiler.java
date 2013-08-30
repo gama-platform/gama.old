@@ -451,7 +451,13 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		public IExpression caseUnit(final Unit object) {
 			// We simply return a multiplication, since the right member (the "unit") will be
 			// translated into its float value
+
+			// AD: Hack to address Issue 387. If the unit is a pixel, we add +1 to the whole expression.
+			IExpression right = compile(object.getRight());
 			IExpression result = binary("*", object.getLeft(), object.getRight());
+			if ( result != null && ((BinaryOperator) result).right() instanceof PixelUnitExpression ) {
+				result = factory.createOperator("+", context, factory.createConst(1, Types.get(IType.INT)), result);
+			}
 			return result;
 		}
 

@@ -1704,7 +1704,7 @@ public abstract class AbstractGamlSemanticSequencer extends AbstractDelegatingSe
 		INodesForEObjectProvider nodes = createNodeProvider(semanticObject);
 		SequenceFeeder feeder = createSequencerFeeder(semanticObject, nodes);
 		feeder.accept(grammarAccess.getUnitAccess().getUnitLeftAction_1_0_0(), semanticObject.getLeft());
-		feeder.accept(grammarAccess.getUnitAccess().getOpLatinCapitalLetterAWithCircumflexDegreeSignKeyword_1_0_1_0(), semanticObject.getOp());
+		feeder.accept(grammarAccess.getUnitAccess().getOpDegreeSignKeyword_1_0_1_0(), semanticObject.getOp());
 		feeder.accept(grammarAccess.getUnitAccess().getRightUnitRefParserRuleCall_1_1_0(), semanticObject.getRight());
 		feeder.finish();
 	}

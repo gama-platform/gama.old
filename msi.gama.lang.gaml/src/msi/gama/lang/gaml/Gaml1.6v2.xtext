@@ -219,7 +219,7 @@ Binary returns Expression:
 	Unit
 	(({Binary.left=current} op=(Valid_ID)) right=Unit)*;
 
-	// NEW: Units are now expressed using the "�" symbol
+	// NEW: Units are now expressed using the "°" symbol
 Unit returns Expression:
 	Unary
 	(({Unit.left=current} op=('°')) right=UnitRef)?;

@@ -22,7 +22,7 @@ import java.util.HashMap;
 @SuppressWarnings("all")
 public class InternalGamlParser extends AbstractInternalAntlrParser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_ID", "RULE_STRING", "RULE_INTEGER", "RULE_DOUBLE", "RULE_COLOR", "RULE_BOOLEAN", "RULE_KEYWORD", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'model'", "'<-'", "'import'", "';'", "'action:'", "'loop'", "'if'", "'condition:'", "'else'", "'return'", "'value:'", "'name:'", "'experiment'", "'when:'", "'('", "')'", "'action'", "'set'", "'var:'", "'{'", "'}'", "'='", "'equation:'", "'equation'", "'solve'", "'species'", "'grid'", "'ask'", "'release'", "'capture'", "'create'", "'write'", "'error'", "'warn'", "'exception'", "'save'", "'assert'", "'draw'", "'display_population'", "'display_grid'", "'using'", "'switch'", "'put'", "'add'", "'remove'", "'match'", "'match_between'", "'match_one'", "'text'", "'image'", "'data'", "'chart'", "'do'", "'var'", "'const'", "'let'", "'arg'", "'init'", "'reflex'", "'<<'", "'>'", "','", "':'", "'returns:'", "'as:'", "'parent:'", "'of:'", "'species:'", "'type:'", "'data:'", "'const:'", "'topology:'", "'item:'", "'init:'", "'message:'", "'control:'", "'environment:'", "'text:'", "'image:'", "'using:'", "'function:'", "'->'", "'::'", "'?'", "'or'", "'and'", "'!='", "'>='", "'<='", "'<'", "'+'", "'-'", "'*'", "'/'", "'^'", "'\\u00C2\\u00B0'", "'!'", "'my'", "'the'", "'not'", "'['", "']'", "'.'", "'**unit*'", "'**type*'", "'**action*'", "'**skill*'", "'**var*'", "'**equation*'"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_ID", "RULE_STRING", "RULE_INTEGER", "RULE_DOUBLE", "RULE_COLOR", "RULE_BOOLEAN", "RULE_KEYWORD", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'model'", "'<-'", "'import'", "';'", "'action:'", "'loop'", "'if'", "'condition:'", "'else'", "'return'", "'value:'", "'name:'", "'experiment'", "'when:'", "'('", "')'", "'action'", "'set'", "'var:'", "'{'", "'}'", "'='", "'equation:'", "'equation'", "'solve'", "'species'", "'grid'", "'ask'", "'release'", "'capture'", "'create'", "'write'", "'error'", "'warn'", "'exception'", "'save'", "'assert'", "'draw'", "'display_population'", "'display_grid'", "'using'", "'switch'", "'put'", "'add'", "'remove'", "'match'", "'match_between'", "'match_one'", "'text'", "'image'", "'data'", "'chart'", "'do'", "'var'", "'const'", "'let'", "'arg'", "'init'", "'reflex'", "'<<'", "'>'", "','", "':'", "'returns:'", "'as:'", "'parent:'", "'of:'", "'species:'", "'type:'", "'data:'", "'const:'", "'topology:'", "'item:'", "'init:'", "'message:'", "'control:'", "'environment:'", "'text:'", "'image:'", "'using:'", "'function:'", "'->'", "'::'", "'?'", "'or'", "'and'", "'!='", "'>='", "'<='", "'<'", "'+'", "'-'", "'*'", "'/'", "'^'", "'\\u00B0'", "'!'", "'my'", "'the'", "'not'", "'['", "']'", "'.'", "'**unit*'", "'**type*'", "'**action*'", "'**skill*'", "'**var*'", "'**equation*'"
     };
     public static final int RULE_ID=4;
     public static final int T__29=29;
@@ -13517,7 +13517,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleUnit"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4730:1: ruleUnit returns [EObject current=null] : (this_Unary_0= ruleUnary ( ( () ( (lv_op_2_0= '\\u00C2\\u00B0' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )? ) ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4730:1: ruleUnit returns [EObject current=null] : (this_Unary_0= ruleUnary ( ( () ( (lv_op_2_0= '\\u00B0' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )? ) ;
     public final EObject ruleUnit() throws RecognitionException {
         EObject current = null;
 
@@ -13530,11 +13530,11 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4733:28: ( (this_Unary_0= ruleUnary ( ( () ( (lv_op_2_0= '\\u00C2\\u00B0' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )? ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4734:1: (this_Unary_0= ruleUnary ( ( () ( (lv_op_2_0= '\\u00C2\\u00B0' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )? )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4733:28: ( (this_Unary_0= ruleUnary ( ( () ( (lv_op_2_0= '\\u00B0' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )? ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4734:1: (this_Unary_0= ruleUnary ( ( () ( (lv_op_2_0= '\\u00B0' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )? )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4734:1: (this_Unary_0= ruleUnary ( ( () ( (lv_op_2_0= '\\u00C2\\u00B0' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )? )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4735:5: this_Unary_0= ruleUnary ( ( () ( (lv_op_2_0= '\\u00C2\\u00B0' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )?
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4734:1: (this_Unary_0= ruleUnary ( ( () ( (lv_op_2_0= '\\u00B0' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )? )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4735:5: this_Unary_0= ruleUnary ( ( () ( (lv_op_2_0= '\\u00B0' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )?
             {
             if ( state.backtracking==0 ) {
                
@@ -13552,7 +13552,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                       afterParserOrEnumRuleCall();
                   
             }
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4743:1: ( ( () ( (lv_op_2_0= '\\u00C2\\u00B0' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )?
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4743:1: ( ( () ( (lv_op_2_0= '\\u00B0' ) ) ) ( (lv_right_3_0= ruleUnitRef ) ) )?
             int alt86=2;
             int LA86_0 = input.LA(1);
 
@@ -13561,10 +13561,10 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
             }
             switch (alt86) {
                 case 1 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4743:2: ( () ( (lv_op_2_0= '\\u00C2\\u00B0' ) ) ) ( (lv_right_3_0= ruleUnitRef ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4743:2: ( () ( (lv_op_2_0= '\\u00B0' ) ) ) ( (lv_right_3_0= ruleUnitRef ) )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4743:2: ( () ( (lv_op_2_0= '\\u00C2\\u00B0' ) ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4743:3: () ( (lv_op_2_0= '\\u00C2\\u00B0' ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4743:2: ( () ( (lv_op_2_0= '\\u00B0' ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4743:3: () ( (lv_op_2_0= '\\u00B0' ) )
                     {
                     // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4743:3: ()
                     // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4744:5: 
@@ -13579,16 +13579,16 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4749:2: ( (lv_op_2_0= '\\u00C2\\u00B0' ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4750:1: (lv_op_2_0= '\\u00C2\\u00B0' )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4749:2: ( (lv_op_2_0= '\\u00B0' ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4750:1: (lv_op_2_0= '\\u00B0' )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4750:1: (lv_op_2_0= '\\u00C2\\u00B0' )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4751:3: lv_op_2_0= '\\u00C2\\u00B0'
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4750:1: (lv_op_2_0= '\\u00B0' )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4751:3: lv_op_2_0= '\\u00B0'
                     {
                     lv_op_2_0=(Token)match(input,110,FOLLOW_110_in_ruleUnit10634); if (state.failed) return current;
                     if ( state.backtracking==0 ) {
 
-                              newLeafNode(lv_op_2_0, grammarAccess.getUnitAccess().getOpLatinCapitalLetterAWithCircumflexDegreeSignKeyword_1_0_1_0());
+                              newLeafNode(lv_op_2_0, grammarAccess.getUnitAccess().getOpDegreeSignKeyword_1_0_1_0());
                           
                     }
                     if ( state.backtracking==0 ) {
@@ -13596,7 +13596,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                       	        if (current==null) {
                       	            current = createModelElement(grammarAccess.getUnitRule());
                       	        }
-                             		setWithLastConsumed(current, "op", lv_op_2_0, "\u00C2\u00B0");
+                             		setWithLastConsumed(current, "op", lv_op_2_0, "\u00B0");
                       	    
                     }
 
@@ -13712,7 +13712,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleUnary"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4799:1: ruleUnary returns [EObject current=null] : (this_Access_0= ruleAccess | ( () ( ( ( (lv_op_2_0= '\\u00C2\\u00B0' ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) ) ) ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4799:1: ruleUnary returns [EObject current=null] : (this_Access_0= ruleAccess | ( () ( ( ( (lv_op_2_0= '\\u00B0' ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) ) ) ;
     public final EObject ruleUnary() throws RecognitionException {
         EObject current = null;
 
@@ -13732,10 +13732,10 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4802:28: ( (this_Access_0= ruleAccess | ( () ( ( ( (lv_op_2_0= '\\u00C2\\u00B0' ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) ) ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4803:1: (this_Access_0= ruleAccess | ( () ( ( ( (lv_op_2_0= '\\u00C2\\u00B0' ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4802:28: ( (this_Access_0= ruleAccess | ( () ( ( ( (lv_op_2_0= '\\u00B0' ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) ) ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4803:1: (this_Access_0= ruleAccess | ( () ( ( ( (lv_op_2_0= '\\u00B0' ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) ) )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4803:1: (this_Access_0= ruleAccess | ( () ( ( ( (lv_op_2_0= '\\u00C2\\u00B0' ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4803:1: (this_Access_0= ruleAccess | ( () ( ( ( (lv_op_2_0= '\\u00B0' ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) ) )
             int alt89=2;
             int LA89_0 = input.LA(1);
 
@@ -13776,10 +13776,10 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4813:6: ( () ( ( ( (lv_op_2_0= '\\u00C2\\u00B0' ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4813:6: ( () ( ( ( (lv_op_2_0= '\\u00B0' ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) )
                     {
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4813:6: ( () ( ( ( (lv_op_2_0= '\\u00C2\\u00B0' ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) )
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4813:7: () ( ( ( (lv_op_2_0= '\\u00C2\\u00B0' ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4813:6: ( () ( ( ( (lv_op_2_0= '\\u00B0' ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4813:7: () ( ( ( (lv_op_2_0= '\\u00B0' ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) )
                     {
                     // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4813:7: ()
                     // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4814:5: 
@@ -13794,7 +13794,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
                     }
 
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4819:2: ( ( ( (lv_op_2_0= '\\u00C2\\u00B0' ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) )
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4819:2: ( ( ( (lv_op_2_0= '\\u00B0' ) ) ( (lv_right_3_0= ruleUnitRef ) ) ) | ( ( ( (lv_op_4_1= '-' | lv_op_4_2= '!' | lv_op_4_3= 'my' | lv_op_4_4= 'the' | lv_op_4_5= 'not' ) ) ) ( (lv_right_5_0= ruleUnary ) ) ) )
                     int alt88=2;
                     int LA88_0 = input.LA(1);
 
@@ -13813,21 +13813,21 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     }
                     switch (alt88) {
                         case 1 :
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4819:3: ( ( (lv_op_2_0= '\\u00C2\\u00B0' ) ) ( (lv_right_3_0= ruleUnitRef ) ) )
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4819:3: ( ( (lv_op_2_0= '\\u00B0' ) ) ( (lv_right_3_0= ruleUnitRef ) ) )
                             {
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4819:3: ( ( (lv_op_2_0= '\\u00C2\\u00B0' ) ) ( (lv_right_3_0= ruleUnitRef ) ) )
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4819:4: ( (lv_op_2_0= '\\u00C2\\u00B0' ) ) ( (lv_right_3_0= ruleUnitRef ) )
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4819:3: ( ( (lv_op_2_0= '\\u00B0' ) ) ( (lv_right_3_0= ruleUnitRef ) ) )
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4819:4: ( (lv_op_2_0= '\\u00B0' ) ) ( (lv_right_3_0= ruleUnitRef ) )
                             {
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4819:4: ( (lv_op_2_0= '\\u00C2\\u00B0' ) )
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4820:1: (lv_op_2_0= '\\u00C2\\u00B0' )
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4819:4: ( (lv_op_2_0= '\\u00B0' ) )
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4820:1: (lv_op_2_0= '\\u00B0' )
                             {
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4820:1: (lv_op_2_0= '\\u00C2\\u00B0' )
-                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4821:3: lv_op_2_0= '\\u00C2\\u00B0'
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4820:1: (lv_op_2_0= '\\u00B0' )
+                            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:4821:3: lv_op_2_0= '\\u00B0'
                             {
                             lv_op_2_0=(Token)match(input,110,FOLLOW_110_in_ruleUnary10799); if (state.failed) return current;
                             if ( state.backtracking==0 ) {
 
-                                      newLeafNode(lv_op_2_0, grammarAccess.getUnaryAccess().getOpLatinCapitalLetterAWithCircumflexDegreeSignKeyword_1_1_0_0_0());
+                                      newLeafNode(lv_op_2_0, grammarAccess.getUnaryAccess().getOpDegreeSignKeyword_1_1_0_0_0());
                                   
                             }
                             if ( state.backtracking==0 ) {
@@ -13835,7 +13835,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                               	        if (current==null) {
                               	            current = createModelElement(grammarAccess.getUnaryRule());
                               	        }
-                                     		setWithLastConsumed(current, "op", lv_op_2_0, "\u00C2\u00B0");
+                                     		setWithLastConsumed(current, "op", lv_op_2_0, "\u00B0");
                               	    
                             }
 
@@ -19842,8 +19842,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     static final String DFA5_acceptS =
         "\3\uffff\1\1\3\uffff\1\1\4\uffff\1\1\1\2\103\uffff";
     static final String DFA5_specialS =
-        "\1\0\1\1\1\2\1\uffff\1\3\1\4\1\5\1\uffff\1\6\1\7\1\10\1\11\105"+
-        "\uffff}>";
+        "\1\0\1\1\1\2\1\uffff\1\3\1\4\1\5\1\uffff\1\6\1\7\1\10\1\11\105\uffff}>";
     static final String[] DFA5_transitionS = {
             "\1\6\6\15\10\uffff\1\15\1\14\1\15\2\uffff\3\15\1\3\2\15\1\uffff"+
             "\1\7\3\15\3\uffff\2\15\1\1\1\2\32\15\1\10\1\11\1\12\1\13\1\4"+
@@ -20162,14 +20161,14 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
         "\1\13\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27"+
         "\1\30\1\31\1\32\1\33\1\34\55\uffff}>";
     static final String[] DFA4_transitionS = {
-            "\1\44\1\76\1\73\1\74\1\75\1\77\1\100\10\uffff\1\72\1\uffff"+
-            "\1\115\2\uffff\1\113\1\60\1\45\1\uffff\1\56\1\101\2\uffff\1"+
-            "\112\1\47\1\103\3\uffff\1\43\1\114\1\1\1\2\1\12\1\13\1\14\1"+
-            "\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1"+
-            "\31\1\32\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\3\1\6\1\7"+
-            "\1\10\1\11\1\4\1\5\4\uffff\1\46\1\50\1\51\1\52\1\53\1\54\1\55"+
-            "\1\57\1\61\1\62\1\63\1\64\1\65\1\66\1\67\1\70\1\71\13\uffff"+
-            "\1\105\3\uffff\1\104\1\106\1\107\1\110\1\111\1\102",
+            "\1\44\1\76\1\73\1\74\1\75\1\77\1\100\10\uffff\1\72\1\uffff\1"+
+            "\115\2\uffff\1\113\1\60\1\45\1\uffff\1\56\1\101\2\uffff\1\112"+
+            "\1\47\1\103\3\uffff\1\43\1\114\1\1\1\2\1\12\1\13\1\14\1\15\1"+
+            "\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1"+
+            "\32\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\3\1\6\1\7\1\10"+
+            "\1\11\1\4\1\5\4\uffff\1\46\1\50\1\51\1\52\1\53\1\54\1\55\1\57"+
+            "\1\61\1\62\1\63\1\64\1\65\1\66\1\67\1\70\1\71\13\uffff\1\105"+
+            "\3\uffff\1\104\1\106\1\107\1\110\1\111\1\102",
             "",
             "",
             "\1\uffff",
@@ -21016,21 +21015,21 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     static final String DFA70_acceptS =
         "\112\uffff\1\2\7\uffff\1\1";
     static final String DFA70_specialS =
-        "\1\uffff\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1"+
-        "\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30"+
-        "\1\31\1\32\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45"+
-        "\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62"+
-        "\1\63\1\64\1\65\1\66\1\67\1\70\1\71\1\72\1\73\1\74\1\75\1\76\1\77"+
-        "\1\100\1\101\1\102\1\103\1\104\1\105\1\106\1\107\1\110\11\uffff}>";
+        "\1\uffff\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1\14"+
+        "\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31"+
+        "\1\32\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46"+
+        "\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62\1\63"+
+        "\1\64\1\65\1\66\1\67\1\70\1\71\1\72\1\73\1\74\1\75\1\76\1\77\1\100"+
+        "\1\101\1\102\1\103\1\104\1\105\1\106\1\107\1\110\11\uffff}>";
     static final String[] DFA70_transitionS = {
-            "\1\44\1\76\1\73\1\74\1\75\1\77\1\100\10\uffff\1\72\2\112\2"+
-            "\uffff\1\112\1\60\1\45\1\112\1\56\1\101\1\uffff\2\112\1\47\1"+
-            "\103\1\112\2\uffff\1\43\1\112\1\1\1\2\1\12\1\13\1\14\1\15\1"+
-            "\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1"+
-            "\32\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\3\1\6\1\7\1\10"+
-            "\1\11\1\4\1\5\4\uffff\1\46\1\50\1\51\1\52\1\53\1\54\1\55\1\57"+
-            "\1\61\1\62\1\63\1\64\1\65\1\66\1\67\1\70\1\71\13\uffff\1\105"+
-            "\3\uffff\1\104\1\106\1\107\1\110\1\111\1\102",
+            "\1\44\1\76\1\73\1\74\1\75\1\77\1\100\10\uffff\1\72\2\112\2\uffff"+
+            "\1\112\1\60\1\45\1\112\1\56\1\101\1\uffff\2\112\1\47\1\103\1"+
+            "\112\2\uffff\1\43\1\112\1\1\1\2\1\12\1\13\1\14\1\15\1\16\1\17"+
+            "\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\33"+
+            "\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\3\1\6\1\7\1\10\1\11\1"+
+            "\4\1\5\4\uffff\1\46\1\50\1\51\1\52\1\53\1\54\1\55\1\57\1\61"+
+            "\1\62\1\63\1\64\1\65\1\66\1\67\1\70\1\71\13\uffff\1\105\3\uffff"+
+            "\1\104\1\106\1\107\1\110\1\111\1\102",
             "\1\uffff",
             "\1\uffff",
             "\1\uffff",
@@ -22265,14 +22264,14 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     static final String DFA71_acceptS =
         "\45\uffff\26\1\17\uffff\1\2";
     static final String DFA71_specialS =
-        "\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1\14\1\15"+
-        "\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32"+
+        "\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1\14\1\15\1"+
+        "\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32"+
         "\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\26\uffff\1\45"+
         "\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61\1\62"+
         "\1\63\1\uffff}>";
     static final String[] DFA71_transitionS = {
-            "\1\44\1\76\1\73\1\74\1\75\1\77\1\100\10\uffff\1\72\5\uffff"+
-            "\1\60\1\45\1\uffff\1\56\1\101\3\uffff\1\47\1\103\3\uffff\1\43"+
+            "\1\44\1\76\1\73\1\74\1\75\1\77\1\100\10\uffff\1\72\5\uffff\1"+
+            "\60\1\45\1\uffff\1\56\1\101\3\uffff\1\47\1\103\3\uffff\1\43"+
             "\1\uffff\1\1\1\2\1\12\1\13\1\14\1\15\1\16\1\17\1\20\1\21\1\22"+
             "\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\33\1\34\1\35\1\36"+
             "\1\37\1\40\1\41\1\42\1\3\1\6\1\7\1\10\1\11\1\4\1\5\4\uffff\1"+
@@ -23332,9 +23331,9 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     static final String DFA74_acceptS =
         "\45\uffff\26\1\1\2\1\1";
     static final String DFA74_specialS =
-        "\1\41\1\44\1\5\1\27\1\40\1\24\1\14\1\3\1\7\1\42\1\36\1\6\1\1\1"+
-        "\15\1\31\1\37\1\34\1\10\1\12\1\23\1\26\1\43\1\2\1\13\1\20\1\25\1"+
-        "\32\1\21\1\17\1\4\1\35\1\30\1\22\1\16\1\11\1\33\1\0\30\uffff}>";
+        "\1\41\1\44\1\5\1\27\1\40\1\24\1\14\1\3\1\7\1\42\1\36\1\6\1\1\1\15"+
+        "\1\31\1\37\1\34\1\10\1\12\1\23\1\26\1\43\1\2\1\13\1\20\1\25\1\32"+
+        "\1\21\1\17\1\4\1\35\1\30\1\22\1\16\1\11\1\33\1\0\30\uffff}>";
     static final String[] DFA74_transitionS = {
             "\1\44\6\73\10\uffff\1\72\5\uffff\1\60\1\45\1\uffff\1\56\1\73"+
             "\3\uffff\1\47\1\73\3\uffff\1\43\1\uffff\1\1\1\2\1\12\1\13\1"+
@@ -24203,193 +24202,193 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     static final String DFA95_specialS =
         "\102\uffff}>";
     static final String[] DFA95_transitionS = {
-            "\1\2\6\1\22\uffff\1\3\4\uffff\1\5\3\uffff\1\2\1\uffff\42\2"+
-            "\51\uffff\1\4",
+            "\1\2\6\1\22\uffff\1\3\4\uffff\1\5\3\uffff\1\2\1\uffff\42\2\51"+
+            "\uffff\1\4",
             "",
             "",
-            "\1\77\6\101\10\uffff\1\33\5\uffff\1\21\1\6\1\uffff\1\17\1"+
-            "\101\1\100\2\uffff\1\10\1\101\3\uffff\1\76\1\uffff\1\34\1\35"+
-            "\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60"+
-            "\1\61\1\62\1\63\1\64\1\65\1\66\1\67\1\70\1\71\1\72\1\73\1\74"+
-            "\1\75\1\36\1\41\1\42\1\43\1\44\1\37\1\40\4\uffff\1\7\1\11\1"+
-            "\12\1\13\1\14\1\15\1\16\1\20\1\22\1\23\1\24\1\25\1\26\1\27\1"+
-            "\30\1\31\1\32\13\uffff\1\101\3\uffff\6\101",
+            "\1\77\6\101\10\uffff\1\33\5\uffff\1\21\1\6\1\uffff\1\17\1\101"+
+            "\1\100\2\uffff\1\10\1\101\3\uffff\1\76\1\uffff\1\34\1\35\1\45"+
+            "\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\1\60\1\61"+
+            "\1\62\1\63\1\64\1\65\1\66\1\67\1\70\1\71\1\72\1\73\1\74\1\75"+
+            "\1\36\1\41\1\42\1\43\1\44\1\37\1\40\4\uffff\1\7\1\11\1\12\1"+
+            "\13\1\14\1\15\1\16\1\20\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1"+
+            "\31\1\32\13\uffff\1\101\3\uffff\6\101",
             "",
             "",
-            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff"+
-            "\2\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13"+
-            "\uffff\1\100\3\uffff\6\100",
-            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff"+
-            "\2\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13"+
-            "\uffff\1\100\3\uffff\6\100",
-            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff"+
-            "\2\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13"+
-            "\uffff\1\100\3\uffff\6\100",
-            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff"+
-            "\2\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13"+
-            "\uffff\1\100\3\uffff\6\100",
-            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff"+
-            "\2\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13"+
-            "\uffff\1\100\3\uffff\6\100",
-            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff"+
-            "\2\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13"+
-            "\uffff\1\100\3\uffff\6\100",
-            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff"+
-            "\2\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13"+
-            "\uffff\1\100\3\uffff\6\100",
-            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff"+
-            "\2\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13"+
-            "\uffff\1\100\3\uffff\6\100",
-            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff"+
-            "\2\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13"+
-            "\uffff\1\100\3\uffff\6\100",
-            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff"+
-            "\2\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13"+
-            "\uffff\1\100\3\uffff\6\100",
-            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff"+
-            "\2\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13"+
-            "\uffff\1\100\3\uffff\6\100",
-            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff"+
-            "\2\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13"+
-            "\uffff\1\100\3\uffff\6\100",
-            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff"+
-            "\2\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13"+
-            "\uffff\1\100\3\uffff\6\100",
-            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff"+
-            "\2\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13"+
-            "\uffff\1\100\3\uffff\6\100",
-            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff"+
-            "\2\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13"+
-            "\uffff\1\100\3\uffff\6\100",
-            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff"+
-            "\2\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13"+
-            "\uffff\1\100\3\uffff\6\100",
-            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff"+
-            "\2\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13"+
-            "\uffff\1\100\3\uffff\6\100",
-            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff"+
-            "\2\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13"+
-            "\uffff\1\100\3\uffff\6\100",
-            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff"+
-            "\2\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13"+
-            "\uffff\1\100\3\uffff\6\100",
-            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff"+
-            "\2\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13"+
-            "\uffff\1\100\3\uffff\6\100",
-            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff"+
-            "\2\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13"+
-            "\uffff\1\100\3\uffff\6\100",
-            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff"+
-            "\2\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13"+
-            "\uffff\1\100\3\uffff\6\100",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
-            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff"+
-            "\42\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1"+
-            "\uffff\1\101",
+            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff\2"+
+            "\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13\uffff"+
+            "\1\100\3\uffff\6\100",
+            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff\2"+
+            "\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13\uffff"+
+            "\1\100\3\uffff\6\100",
+            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff\2"+
+            "\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13\uffff"+
+            "\1\100\3\uffff\6\100",
+            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff\2"+
+            "\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13\uffff"+
+            "\1\100\3\uffff\6\100",
+            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff\2"+
+            "\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13\uffff"+
+            "\1\100\3\uffff\6\100",
+            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff\2"+
+            "\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13\uffff"+
+            "\1\100\3\uffff\6\100",
+            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff\2"+
+            "\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13\uffff"+
+            "\1\100\3\uffff\6\100",
+            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff\2"+
+            "\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13\uffff"+
+            "\1\100\3\uffff\6\100",
+            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff\2"+
+            "\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13\uffff"+
+            "\1\100\3\uffff\6\100",
+            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff\2"+
+            "\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13\uffff"+
+            "\1\100\3\uffff\6\100",
+            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff\2"+
+            "\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13\uffff"+
+            "\1\100\3\uffff\6\100",
+            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff\2"+
+            "\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13\uffff"+
+            "\1\100\3\uffff\6\100",
+            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff\2"+
+            "\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13\uffff"+
+            "\1\100\3\uffff\6\100",
+            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff\2"+
+            "\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13\uffff"+
+            "\1\100\3\uffff\6\100",
+            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff\2"+
+            "\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13\uffff"+
+            "\1\100\3\uffff\6\100",
+            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff\2"+
+            "\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13\uffff"+
+            "\1\100\3\uffff\6\100",
+            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff\2"+
+            "\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13\uffff"+
+            "\1\100\3\uffff\6\100",
+            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff\2"+
+            "\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13\uffff"+
+            "\1\100\3\uffff\6\100",
+            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff\2"+
+            "\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13\uffff"+
+            "\1\100\3\uffff\6\100",
+            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff\2"+
+            "\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13\uffff"+
+            "\1\100\3\uffff\6\100",
+            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff\2"+
+            "\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13\uffff"+
+            "\1\100\3\uffff\6\100",
+            "\7\100\10\uffff\1\100\5\uffff\2\100\1\uffff\2\100\3\uffff\2"+
+            "\100\3\uffff\1\100\1\uffff\42\100\3\uffff\1\101\21\100\13\uffff"+
+            "\1\100\3\uffff\6\100",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
+            "\1\101\30\uffff\2\101\5\uffff\1\101\1\uffff\1\101\1\uffff\42"+
+            "\101\1\uffff\2\101\1\100\23\uffff\16\101\4\uffff\1\101\1\uffff"+
+            "\1\101",
             "",
             ""
     };
@@ -24797,9 +24796,9 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
     static final String DFA107_specialS =
         "\1\0\5\uffff\1\1\13\uffff}>";
     static final String[] DFA107_transitionS = {
-            "\1\6\12\uffff\1\15\4\uffff\1\14\5\uffff\1\15\1\3\3\uffff\1"+
-            "\7\1\uffff\1\15\6\uffff\1\1\1\2\32\uffff\1\10\1\11\1\12\1\13"+
-            "\1\4\1\5\4\uffff\1\15\53\uffff\1\15",
+            "\1\6\12\uffff\1\15\4\uffff\1\14\5\uffff\1\15\1\3\3\uffff\1\7"+
+            "\1\uffff\1\15\6\uffff\1\1\1\2\32\uffff\1\10\1\11\1\12\1\13\1"+
+            "\4\1\5\4\uffff\1\15\53\uffff\1\15",
             "",
             "",
             "",
