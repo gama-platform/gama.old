@@ -110,6 +110,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	
 	public boolean autoSwapBuffers = false;
 	public boolean disableManualBufferSwapping;
+	public boolean colorPicking = false;
 
 	public JOGLAWTGLRenderer(final JOGLAWTDisplaySurface d) {
 		// Enabling the stencil buffer
@@ -387,7 +388,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		this.drawModel();
 		gl.glTranslatef(0, 0, -envMaxDim);
 		gl.glRotatef(-90, 1, 0, 0);
-
 	}
 
 	public void switchCamera() {

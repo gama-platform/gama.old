@@ -86,9 +86,9 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 
 	public void draw(final boolean picking, JOGLAWTGLRenderer renderer) {
 		
-		boolean colorPicking = false;
+		
 		if ( picking ) {
-			if(colorPicking){
+			if(renderer.colorPicking){
 				drawer.getGL().glDisable(GL.GL_DITHER);
 				drawer.getGL().glDisable(GL.GL_LIGHTING);
 				drawer.getGL().glDisable(GL.GL_TEXTURE);
@@ -122,6 +122,7 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 	            
 	            Color index = new Color(pixels.get(0), pixels.get(1), pixels.get(2));	    
 	            System.out.println("index returned " + index.toString());
+	            renderer.colorPicking=false;
 			}
 			else{
 				drawer.getGL().glPushMatrix();

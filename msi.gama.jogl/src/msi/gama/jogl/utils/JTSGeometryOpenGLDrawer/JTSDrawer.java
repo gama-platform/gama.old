@@ -48,6 +48,8 @@ public class JTSDrawer {
 	// private Texture earthTexture;
 	public float textureTop, textureBottom, textureLeft, textureRight;
 	public Texture[] textures = new Texture[3];
+	
+	public boolean colorpicking = false;
 
 	public JTSDrawer(final JOGLAWTGLRenderer gLRender) {
 
@@ -102,7 +104,9 @@ public class JTSDrawer {
 
 		if ( fill == true ) {
 
+		if(!colorpicking){
 			myGl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
+		}
 
 			// FIXME:This does not draw the whole. p.getInteriorRingN(n)
 			numExtPoints = p.getExteriorRing().getNumPoints();
@@ -313,8 +317,10 @@ public class JTSDrawer {
 			    myGl.glPolygonOffset(0.0f,-(float) (z_fighting_value*1.1));
 				//myGl.glPolygonOffset(0.0f,10.0f);
 				myGl.glBegin(GL.GL_POLYGON);
+				if(!colorpicking){
 				myGl.glColor4d((double) border.getRed() / 255, (double) border.getGreen() / 255,
 					(double) border.getBlue() / 255, 1.0d);
+				}
 				p.getExteriorRing().apply(visitor);
 				myGl.glEnd();
 
@@ -336,8 +342,10 @@ public class JTSDrawer {
 		}
 		else{
 			myGl.glBegin(GL.GL_LINES);
+			if(!colorpicking){
 			myGl.glColor4d((double) border.getRed() / 255, (double) border.getGreen() / 255,
 				(double) border.getBlue() / 255, 1.0d);
+			}
 			p.getExteriorRing().apply(visitor);
 			myGl.glEnd();
 
@@ -387,8 +395,10 @@ public class JTSDrawer {
 	public void DrawFaces(Polygon p, Color c, double alpha, boolean fill, Color b, double height,
 		boolean drawPolygonContour, boolean drawNormal) {
 
-
-		myGl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
+        if(!colorpicking){
+        	myGl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
+        }
+		
 		double elevation = 0.0d;
 
 		if ( Double.isNaN(p.getExteriorRing().getPointN(0).getCoordinate().z) == false ) {
@@ -442,8 +452,11 @@ public class JTSDrawer {
 
 			if ( drawPolygonContour == true || fill == false ) {
 
-				myGl.glColor4d((double) b.getRed() / 255, (double) b.getGreen() / 255, (double) b.getBlue() / 255,
-					alpha);
+				if(!colorpicking){
+					myGl.glColor4d((double) b.getRed() / 255, (double) b.getGreen() / 255, (double) b.getBlue() / 255,
+							alpha);	
+				}
+				
 
 				myGl.glBegin(GL.GL_LINES);
 
@@ -461,8 +474,11 @@ public class JTSDrawer {
 
 				myGl.glEnd();
 
-				myGl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
-					alpha);
+				if(!colorpicking){
+					myGl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255,
+							alpha);	
+				}
+				
 			}
 
 			if ( drawNormal == true ) {
@@ -485,7 +501,10 @@ public class JTSDrawer {
 		numGeometries = lines.getNumGeometries();
 
 		// FIXME: Why setting the color here?
-		myGl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
+		if(!colorpicking){
+			myGl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);	
+		}
+		
 
 		// for each line of a multiline, get each point coordinates.
 		for ( int i = 0; i < numGeometries; i++ ) {
@@ -503,7 +522,10 @@ public class JTSDrawer {
 	public void DrawLineString(final LineString line, final double z, final double size, final Color c,
 		final double alpha) {
 
-		myGl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
+		if(!colorpicking){
+			myGl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
+		}
+		
 
 		int numPoints = line.getNumPoints();
 
@@ -567,7 +589,10 @@ public class JTSDrawer {
 		}
 
 		if ( drawPolygonContour == true ) {
-			myGl.glColor4d(0.0d, 0.0d, 0.0d, alpha);
+			if(!colorpicking){
+				myGl.glColor4d(0.0d, 0.0d, 0.0d, alpha);	
+			}
+			
 			for ( int j = 0; j < numPoints - 1; j++ ) {
 				myGl.glBegin(GL.GL_LINES);
 				myGl.glVertex3d(l.getPointN(j).getX(), yFlag * l.getPointN(j).getY(), z);
@@ -584,14 +609,18 @@ public class JTSDrawer {
 
 				myGl.glEnd();
 			}
-			myGl.glColor4d(c.getRed() / 255.0, c.getGreen() / 255.0, c.getBlue() / 255.0, alpha);
+			if(!colorpicking){
+				myGl.glColor4d(c.getRed() / 255.0, c.getGreen() / 255.0, c.getBlue() / 255.0, alpha);
+			}
+			
 		}
 	}
 
 	public void DrawPoint(final Point point, double z, final int numPoints, final double radius, final Color c,
 		final double alpha) {
-
-		myGl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
+		if(!colorpicking){
+		  myGl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
+		}
 
 		myGlu.gluTessBeginPolygon(tobj, null);
 		myGlu.gluTessBeginContour(tobj);
@@ -620,7 +649,9 @@ public class JTSDrawer {
 
 		// Add a line around the circle
 		// FIXME/ Check the cost of this line
+		if(!colorpicking){
 		myGl.glColor4d(0.0d, 0.0d, 0.0d, alpha);
+		}
 		myGl.glLineWidth(1.1f);
 		myGl.glBegin(GL.GL_LINES);
 		double xBegin, xEnd, yBegin, yEnd;
@@ -638,7 +669,7 @@ public class JTSDrawer {
 
 	}
 
-	public void DrawSphere(final Polygon p, final double z_layer, final double radius, final Color c,
+	public void DrawSphere(final Polygon p, final double radius, final Color c,
 		final double alpha) {
 
 		// Add z value (Note: getCentroid does not return a z value)
@@ -647,9 +678,11 @@ public class JTSDrawer {
 			z = p.getExteriorRing().getPointN(0).getCoordinate().z;
 		}
 
-		myGl.glTranslated(p.getCentroid().getX() , yFlag * p.getCentroid().getY() , z + z_layer );
-		myGl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
-
+		myGl.glTranslated(p.getCentroid().getX() , yFlag * p.getCentroid().getY() , z );
+		if(!colorpicking){
+		  myGl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
+		}
+		
 		GLUquadric quad = myGlu.gluNewQuadric();
 		myGlu.gluQuadricDrawStyle(quad, GLU.GLU_FILL);
 		myGlu.gluQuadricNormals(quad, GLU.GLU_FLAT);
@@ -658,7 +691,7 @@ public class JTSDrawer {
 		final int stacks = 16;
 		myGlu.gluSphere(quad, radius, slices, stacks);
 		myGlu.gluDeleteQuadric(quad);
-		myGl.glTranslated(-p.getCentroid().getX(), -yFlag * p.getCentroid().getY(), -(z + z_layer));
+		myGl.glTranslated(-p.getCentroid().getX(), -yFlag * p.getCentroid().getY(), -z);
 
 	}
 

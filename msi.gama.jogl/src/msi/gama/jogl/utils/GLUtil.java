@@ -453,11 +453,6 @@ public class GLUtil {
         gl.glShadeModel(GL.GL_FLAT);
     }
 
-    public static void enableBlend(GL gl) {
-        gl.glEnable(GL.GL_BLEND);
-        gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
-    }
-
     public static void enableColorMaterial(GL gl) {
         gl.glEnable(GL.GL_COLOR_MATERIAL);
         gl.glColorMaterial(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE);

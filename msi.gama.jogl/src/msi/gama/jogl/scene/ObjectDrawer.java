@@ -104,7 +104,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 				} else if ( geometry.geometry.getGeometryType() == "Polygon" ) {
 					// The JTS geometry of a sphere is a circle (a polygon)
 					if ( geometry.type.equals("sphere") ) {
-						jtsDrawer.DrawSphere((Polygon) geometry.geometry, geometry.z_layer, geometry.height,
+						jtsDrawer.DrawSphere((Polygon) geometry.geometry, geometry.height,
 							geometry.getColor(), geometry.alpha);
 					} else {
 						if ( geometry.height > 0 ) {
@@ -138,7 +138,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 				} else if ( geometry.geometry.getGeometryType() == "Point" ) {
 					//FIXME: Should never go here even with a height value as the geometry of a sphere is a polygon...
 					if ( geometry.height > 0 ) {
-						jtsDrawer.DrawSphere((Polygon) geometry.geometry.getEnvelope().buffer(1), 0, geometry.height,
+						jtsDrawer.DrawSphere((Polygon) geometry.geometry.getEnvelope().buffer(1), geometry.height,
 							geometry.getColor(), geometry.alpha);
 					} else {
 						jtsDrawer.DrawPoint((Point) geometry.geometry, 0, 10,
