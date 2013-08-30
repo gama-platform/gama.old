@@ -1,5 +1,16 @@
-model pool
+model Perfect_Gas
 
+
+/**
+ *  Perfect_Gas
+ * 
+ *  Author: Arnaud Grignard
+ * 
+ *  Description: Ball are evolving in a cube and the gravity is null
+ *
+ */
+ 
+ 
 global {
 	
 	int width_of_environment parameter: 'Dimensions' init:200 ; 

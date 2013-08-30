@@ -1,4 +1,13 @@
-model pool
+model pool3D
+
+
+/**
+ *  pool3D
+ * 
+ *  Author: Arnaud Grignard
+ * 
+ *
+ */
 
 global {
 	int width_of_environment parameter: 'Dimensions' init:200 ; 
@@ -208,7 +217,7 @@ entities {
 }
 experiment pool type: gui {
 output {
-	display Circle refresh_every: 1 type:opengl tesselation:true ambient_light:100{
+	display Circle refresh_every: 1 type:opengl tesselation:true ambient_light:100 background:rgb('black'){
 		//image name:'background' file:'../images/billard2.jpg' ;
 		species floor aspect: default;
 		species wall aspect: default;
