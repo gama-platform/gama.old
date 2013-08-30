@@ -1,25 +1,35 @@
-model tank
+model Tank
+
+/**
+ *  Tank
+ * 
+ *  Author: Arnaud Grignard
+ * 
+ *  Description: Ball are falling in a Tank with a floor and 4 walls.
+ * 
+ *  Floor is a simple rectangle with a null mass.
+ *  Wall is a rectangle draw with a depth equal to its height with a null mass.
+ *  Ball is a sphere with a given mass.
+ * 
+ *
+ */
 
 global {
-	int width_of_environment parameter: 'Dimensions' init:200 ; 
-	int height_of_environment parameter: 'Dimensions' init:200  ; 
-	int range_of_agents parameter: 'Range of Agents' min: 1 <- 25 ;
-	float speed_of_agents parameter: 'Speed of Agents' min: 0.1  <- 2.0 ; 
-	int size_of_agents <- 10;
-	int nb_balls <- 1000;
+	int width_of_environment parameter: 'Dimensions' init:100 ; 
+	int height_of_environment parameter: 'Dimensions' init:100  ; 
+
+    int nb_balls parameter: 'Number of Agents' min: 1  <- 500 ; 
+	int size_of_agents parameter: 'Size of Agents' min: 1 <- 1;	
+	int wall_height parameter: 'Wall height' min: 1  <- 25 ; 
+
 	Physical3DWorld world2;
 	init {
 		create ball number: nb_balls{
-			set location <-  {rnd(width_of_environment),rnd(height_of_environment),(rnd(10) + 100)};
-			set heading<-0;
-			set speed<-1;
-			set density <- 3.0;
-			set velocity <- list([0.0, 0.0, 0.0]);
-			set radius <- 2;
+			set location <-  {rnd(width_of_environment-size_of_agents),rnd(height_of_environment-size_of_agents),rnd(height_of_environment-size_of_agents)};
+			set radius <- size_of_agents;
 			set collisionBound <-  ["shape"::"sphere","radius"::radius];
 		}
-		create floor 
-		{
+		create floor {
 			set location <- {width_of_environment/2,height_of_environment/2,0};
 			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2 , "y":: height_of_environment/2, "z"::0];
 			set shape <- rectangle({width_of_environment,height_of_environment});
@@ -29,44 +39,32 @@ global {
 		create wall{
 			set location <- {width_of_environment/2,height_of_environment,0};
 			set shape <- rectangle({width_of_environment,2});
-			set _z <- 50;
-			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2, "y":: 1, "z"::_z];
+			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2, "y":: 1, "z"::wall_height];
 			set mass <-0.0;
-			set color <- rgb('red');
 		}
 		//upper wall
 		create wall{
 			set location <- {width_of_environment/2,0,0};
 			set shape <- rectangle({width_of_environment,2});
-			set _z <- 50;
-			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2, "y":: 1, "z"::_z];
+			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2, "y":: 1, "z"::wall_height];
 			set mass <-0.0;
-			set color <- rgb('red');
-			
 		}
 		//left wall
 		create wall{
 			set location <- {0,height_of_environment/2,0};
 			set shape <- rectangle({2,height_of_environment});
-			set _z <- 50;
-			set collisionBound <-  ["shape"::"floor","x"::1, "y":: height_of_environment/2, "z"::_z];
-			set mass <-0.0;
-			set color <- rgb('red');
-			
+			set collisionBound <-  ["shape"::"floor","x"::1, "y":: height_of_environment/2, "z"::wall_height];
+			set mass <-0.0;			
 		}
 		//right wall
 		create wall{
 			set location <- {width_of_environment,height_of_environment/2,0};
-			set _z <- 50;
 			set shape <- rectangle({2,height_of_environment});
-			set collisionBound <-  ["shape"::"floor","x"::1, "y":: height_of_environment/2, "z"::_z];
-			set mass <-0.0;
-			set color <- rgb('red');
-			
+			set collisionBound <-  ["shape"::"floor","x"::1, "y":: height_of_environment/2, "z"::wall_height];
+			set mass <-0.0;			
 		}
 		
-		
-		
+
 		create Physical3DWorld;
 		set world2 <- first(Physical3DWorld as list);
 		ask world2 {set registeredAgents <-   (ball as list) + (floor as list) + (wall as list);}
@@ -79,55 +77,35 @@ global {
 			
 } 
 
-environment width: width_of_environment*2 height: height_of_environment*2; 
+//environment width: width_of_environment height: height_of_environment; 
 
 entities {
  
-    species floor skills: [physical3D]{
-    	//geometry shape <- rectangle({width_of_environment,width_of_environment});
-    	
+    species floor skills: [physical3D]{    	
     	aspect default {
-			draw geometry: shape color: rgb('green');
+			draw geometry: shape color: rgb(60,60,60);
 		}
     }
     species wall skills: [physical3D]{
     	rgb color;
-    	float _z;
     	aspect default {
-			draw geometry: shape color: color depth:50;
+			draw geometry: shape color: rgb(40,40,40) depth:wall_height;
 		}
     }
- 
-	
 	species ball skills: [physical3D] {  
-		rgb color;
-		int size  <- size_of_agents;
-		int range  <- range_of_agents; 
-		float speed  <- speed_of_agents;  
-		int heading <- rnd(359);
-
-		float radius;
-		
-		geometry shape <- circle (10);// buffer(12);
-		
-		aspect default {
-			draw shape color: color depth:1;
+ 		float radius;		
+		aspect default{
+			draw sphere(radius) color: rgb(4,158,189);
 		}
-		
-		aspect sphere{
-			draw sphere(radius) color: rgb('blue');
-		}
-		
 	}
 }
 experiment tank type: gui {
-output {
-	display Circle refresh_every: 1 type:opengl ambient_light:50{
-		species floor;
-		species wall;
-	    species ball aspect:sphere;			
-	    
+	output {
+		display Circle refresh_every: 1 type:opengl ambient_light:100 background:rgb(230,230,230){
+			species floor;
+			species wall;
+	    	species ball;			    
+		}
 	}
-}
 }
 
