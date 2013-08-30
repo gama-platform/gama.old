@@ -138,9 +138,6 @@ public class ModelScene {
 	public void drawAxes(final GL gl, final double size) {
 		// FIXME Should be put in the static list (get the list from the id of staticObjects)
 
-		gl.glColor4d(0.0d, 0.0d, 0.0d, 1.0d);
-		addString("1:" + String.valueOf(size), size, size, 0.0d, 12, 12d, offset, scale, Color.black, "Helvetica", 0,
-			0, 1d, false);
 		// X Axis
 		addString("x", 1.2f * size, 0.0d, 0.0d, 12, 12d, offset, scale, Color.black, "Helvetica", 0, 0, 1d, false);
 		gl.glBegin(GL.GL_LINES);
