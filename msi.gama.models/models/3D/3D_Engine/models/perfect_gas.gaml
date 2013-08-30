@@ -115,14 +115,14 @@ entities {
 
 		
 		aspect sphere{
-			draw sphere(radius) color: rgb('blue') ;
+			draw sphere(radius) color: rgb(135,201,255) ;
 		}
 		
 	}
 }
 experiment perfect_gas type: gui {
 output {
-	display Cube type:opengl ambient_light:100{
+	display Cube type:opengl ambient_light:100 background:rgb(20,79,127){
 		species floor transparency:0.5;
 		species wall transparency:0.5;
 	    species ball aspect:sphere;			
