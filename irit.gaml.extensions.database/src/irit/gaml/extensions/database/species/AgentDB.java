@@ -25,11 +25,12 @@ import msi.gaml.types.IType;
  * Benoit GAUDOU
  * 
  * species: The AgentDB is defined in this class. AgentDB supports the action
- * - isConnected: return true/false
- * - close: close current connection
- * - connect: make a connection to DBMS.
+ * - isConnected: returns true/false
+ * - testConnection: tests the connection
+ * - close: closes the current connection
+ * - connect: makes a connection to DBMS.
  * - select: executeQuery to select data from DBMS via current connection.
- * - executeUpdate: run executeUpdate to update/insert/delete/drop/create data on DBMS via current
+ * - executeUpdate: runs executeUpdate to update/insert/delete/drop/create data on DBMS via current
  * connection.
  * 
  * created date: 22-Feb-2012
@@ -64,7 +65,7 @@ public class AgentDB extends GamlAgent {
 	private Connection conn = null;
 	private SqlConnection sqlConn =null;
 	private boolean isConnection = false;
-	private java.util.Map params = null;
+	private java.util.Map<String,String> params = null;
 	// private Statement stat;
 	static final boolean DEBUG = false; // Change DEBUG = false for release version
 
@@ -74,9 +75,7 @@ public class AgentDB extends GamlAgent {
 
 	@action(name = "isConnected")
 	public boolean isConnected(final IScope scope) throws GamaRuntimeException {
-
 		return isConnection;
-
 	}
 
 	@action(name = "close")
@@ -121,7 +120,7 @@ public class AgentDB extends GamlAgent {
 	 * }
 	 */
 	@action(name = "connect", args = {
-		@arg(name = "param", type = IType.LIST, optional = false, doc = @doc(value = "Param: a list of records and metadata"))
+			@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters"))
 	})
 	public Object connectDB(final IScope scope) throws GamaRuntimeException 
 	{
@@ -169,37 +168,40 @@ public class AgentDB extends GamlAgent {
 // Edit 29/April/2013
 //------------------------------------------------------------------------------------		
 
-		params = (java.util.Map) scope.getArg("params", IType.MAP);
-
-		String dbtype = (String) params.get("dbtype");
-		String host = (String) params.get("host");
-		String port = (String) params.get("port");
-		String database = (String) params.get("database");
-		String user = (String) params.get("user");
-		String passwd = (String) params.get("passwd");
-//		SqlConnection sqlConn;
+		params = (java.util.Map<String,String>) scope.getArg("params", IType.MAP);
 		
-	if ( isConnection ) { 
-		throw GamaRuntimeException.error("AgentDB.connection error: a connection is already opened");
-	}
-	try {
-		sqlConn = SqlUtils.createConnectionObject(scope);
-		conn = sqlConn.connectDB();
-		isConnection = true;
-	} catch (SQLException e) {
-		e.printStackTrace();
-		throw GamaRuntimeException.error("AgentDB.connect:" + e.toString());
-	} catch (ClassNotFoundException e) {
-		e.printStackTrace();
-		throw GamaRuntimeException.error("AgentDB.connect:" + e.toString());
-	} catch (InstantiationException e) {
-		e.printStackTrace();
-		throw GamaRuntimeException.error("AgentDB.connect:" + e.toString());
-	} catch (IllegalAccessException e) {
-		e.printStackTrace();
-		throw GamaRuntimeException.error("AgentDB.connect:" + e.toString());
-	}
-	return null;
+		String dbtype = (String) params.get("dbtype");
+//		String host = (String) params.get("host");
+//		String port = (String) params.get("port");
+//		String database = (String) params.get("database");
+//		String user = (String) params.get("user");
+//		String passwd = (String) params.get("passwd");
+
+		//		SqlConnection sqlConn;
+		if("sqlite".equals(dbtype)){
+			throw GamaRuntimeException.error("AgentDB.connection to SQLite error: an AgentDB agent cannot connect to SQLite DBMS (cf. documentation for further info).");
+		}
+		if ( isConnection ) { 
+			throw GamaRuntimeException.error("AgentDB.connection error: a connection is already opened");
+		}
+		try {
+			sqlConn = SqlUtils.createConnectionObject(scope);
+			conn = sqlConn.connectDB();
+			isConnection = true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			throw GamaRuntimeException.error("AgentDB.connect:" + e.toString());
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			throw GamaRuntimeException.error("AgentDB.connect:" + e.toString());
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+			throw GamaRuntimeException.error("AgentDB.connect:" + e.toString());
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+			throw GamaRuntimeException.error("AgentDB.connect:" + e.toString());
+		}
+		return null;
 //----------------------------------------------------------------------------------------------------------
 	}
 
@@ -218,7 +220,7 @@ public class AgentDB extends GamlAgent {
 	 * }
 	 */
 	@action(name = "testConnection", args = {
-			@arg(name = "param", type = IType.LIST, optional = false, doc = @doc(value = "Param: a list of records and metadata"))
+			@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters"))
 	})
 	public boolean testConnection(final IScope scope) throws GamaRuntimeException 
 	{
@@ -407,11 +409,20 @@ public class AgentDB extends GamlAgent {
 	}
 
 	@action(name = "setParameter", args = {
-			@arg(name = "param", type = IType.LIST, optional = false, doc = @doc(value = "Param: a list of records and metadata"))
+			@arg(name = "params", type = IType.MAP, optional = false, doc = @doc("Connection parameters"))
 	})
 	public Object setParameter(final IScope scope) throws GamaRuntimeException {
-		Connection conn;
-		params = (java.util.Map) scope.getArg("params", IType.MAP);
+		params = (java.util.Map<String,String>) scope.getArg("params", IType.MAP);
+		
+		if(isConnection){
+			try {
+				conn.close();
+				isConnection = false;
+			} catch (SQLException e) {
+				// e.printStackTrace();
+				throw GamaRuntimeException.error("AgentDB.close error:" + e.toString());
+			}			
+		}
 		return null;
 	}
 
