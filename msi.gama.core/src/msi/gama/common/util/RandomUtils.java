@@ -265,7 +265,7 @@ public class RandomUtils implements SeedGenerator {
 	 * @param newSeed the new seed
 	 */
 	public void setSeed(final Long newSeed) {
-		GuiUtils.debug("New seed for RandomAgent: " + newSeed);
+		// GuiUtils.debug("New seed for RandomAgent: " + newSeed);
 		// final Long oldSeed = seed;
 		seed = newSeed == null || newSeed.equals(0L) ? seed : newSeed;
 		// if ( seed == null || !seed.equals(oldSeed) ) {
@@ -288,7 +288,7 @@ public class RandomUtils implements SeedGenerator {
 	 * @param newGen the new generator
 	 */
 	public void setGenerator(final String newGen) {
-		GuiUtils.debug("RandomUtils.setGenerator " + newGen);
+		// GuiUtils.debug("RandomUtils.setGenerator " + newGen);
 		// if ( newGen == null || generatorName.equals(newGen) ) { return; }
 		generatorName = newGen;
 		initGenerator();

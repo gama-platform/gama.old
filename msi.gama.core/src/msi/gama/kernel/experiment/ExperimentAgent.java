@@ -290,7 +290,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@setter(IKeyword.SEED)
 	public void setSeed(final Double s) {
-		GuiUtils.debug("ExperimentAgent.setSeed " + s);
+		// GuiUtils.debug("ExperimentAgent.setSeed " + s);
 		getRandomGenerator().setSeed(s);
 	}
 
