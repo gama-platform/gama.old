@@ -20,6 +20,7 @@ package msi.gama.gui.swt.commands;
 
 import java.util.*;
 import java.util.List;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.SwtGui;
@@ -465,6 +466,6 @@ public class AgentsMenu extends ContributionItem {
 
 	@Override
 	public void fill(final Menu parent, final int index) {
-		createMenuForAgent(parent, GAMA.getSimulation(), true, GAMA.NUMBER_OF_AGENTS_IN_MENUS);
+		createMenuForAgent(parent, GAMA.getSimulation(), true, GamaPreferences.CORE_MENU_SIZE.getValue());
 	}
 }

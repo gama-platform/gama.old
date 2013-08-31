@@ -5,6 +5,7 @@
 package msi.gama.gui.views.actions;
 
 import java.util.*;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.displays.layers.*;
 import msi.gama.gui.swt.SwtGui;
@@ -179,7 +180,8 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 		AgentsMenu.MenuAction follow =
 			new AgentsMenu.MenuAction(new FollowSelection(displaySurface), SwtGui.followImage, "Follow");
 		if ( withWorld ) {
-			AgentsMenu.cascadingAgentMenuItem(menu, GAMA.getSimulation(), "World", GAMA.NUMBER_OF_AGENTS_IN_MENUS);
+			AgentsMenu.cascadingAgentMenuItem(menu, GAMA.getSimulation(), "World",
+				GamaPreferences.CORE_MENU_SIZE.getValue());
 			if ( filteredList != null && !filteredList.isEmpty() ) {
 				AgentsMenu.separate(menu);
 			}
@@ -238,7 +240,7 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 		if ( filteredList != null ) {
 			pop.retainAll(filteredList);
 		}
-		AgentsMenu.fillPopulationSubMenu(layerMenu, pop, GAMA.NUMBER_OF_AGENTS_IN_MENUS, actions);
+		AgentsMenu.fillPopulationSubMenu(layerMenu, pop, GamaPreferences.CORE_MENU_SIZE.getValue(), actions);
 
 	}
 

@@ -20,11 +20,11 @@ package msi.gama.gui.views;
 
 import java.util.*;
 import java.util.List;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.SWT;
@@ -36,11 +36,13 @@ import org.eclipse.swt.widgets.*;
 public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 
 	public static String ID = GuiUtils.ERROR_VIEW_ID;
-
+	int numberOfDisplayedErrors = GamaPreferences.CORE_ERRORS_NUMBER.getValue();
+	boolean mostRecentFirst = GamaPreferences.CORE_RECENT.getValue();
 	private final ArrayList<GamaRuntimeException> exceptions = new ArrayList();
-	static private int numberOfDisplayedErrors = 10;
-	static private boolean mostRecentFirst = true;
-	static public boolean showErrors = true;
+
+	// static public int numberOfDisplayedErrors = 10;
+	// static public boolean mostRecentFirst = true;
+	// static public boolean showErrors = true;
 
 	// ParameterExpandItem parametersItem;
 
@@ -62,7 +64,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 			// if ( e == ex ) { return; }
 			if ( e.equivalentTo(ex) && e != ex ) {
 				e.addAgents(ex.getAgentsNames());
-				if ( showErrors ) {
+				if ( GamaPreferences.CORE_SHOW_ERRORS.getValue() ) {
 					reset();
 					displayItems();
 				}
@@ -73,12 +75,12 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 			ex.printStackTrace();
 			exceptions.add(ex);
 		}
-		if ( GAMA.REVEAL_ERRORS_IN_EDITOR && !ex.isReported() ) {
+		if ( GamaPreferences.CORE_REVEAL_AND_STOP.getValue() && !ex.isReported() ) {
 			ex.setReported();
 			gotoEditor(ex);
 		}
 
-		if ( showErrors ) {
+		if ( GamaPreferences.CORE_SHOW_ERRORS.getValue() ) {
 			reset();
 			displayItems();
 		}
@@ -142,7 +144,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 	private void gotoEditor(final GamaRuntimeException exception) {
 
 		final EObject o = exception.getEditorContext();
-		if ( o != null && GAMA.REVEAL_ERRORS_IN_EDITOR ) {
+		if ( o != null && GamaPreferences.CORE_REVEAL_AND_STOP.getValue() ) {
 			GuiUtils.asyncRun(new Runnable() {
 
 				@Override

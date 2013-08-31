@@ -125,6 +125,9 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	}
 
 	protected Composite createSurfaceComposite() {
+
+		// TODO do a test to know whether or not we are in a "simple" chart environment ?
+
 		final Runnable forceFocus = new Runnable() {
 
 			@Override

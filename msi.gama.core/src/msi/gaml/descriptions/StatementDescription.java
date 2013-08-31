@@ -192,6 +192,7 @@ public class StatementDescription extends SymbolDescription {
 	}
 
 	public void verifyArgs(final IDescription caller, final Arguments names) {
+		// GuiUtils.debug(this.toString() + " called by " + caller + " with " + names);
 		// if ( args == null ) { return; }
 		Set<String> allArgs = args == null ? Collections.EMPTY_SET : args.keySet();
 		if ( caller.getKeyword().equals(DO) ) {
@@ -214,21 +215,27 @@ public class StatementDescription extends SymbolDescription {
 
 		for ( IDescription c : args.values() ) {
 			String n = c.getName();
-			if ( !c.getFacets().containsKey(DEFAULT) ) {
-				// GuiUtils.debug("Mandatory arg: " + n);
+			Facets argFacets = c.getFacets();
+			if ( argFacets.containsKey(DEFAULT) ) {
+				continue;
+			}
+			if ( c.getFacets().containsKey(OPTIONAL) && c.getFacets().get(OPTIONAL).equalsString(FALSE) ) {
+				// GuiUtils.debug("arg found for " + this + ": " + n + " with optional=" + c.getFacets().get(OPTIONAL));
 				mandatoryArgs.add(n);
 			}
 		}
 		// If one is missing in the arguments passed, we raise an error
 		// (except for primitives for the moment)
-		if ( !getKeyword().equals(PRIMITIVE) ) {
-			for ( String arg : mandatoryArgs ) {
-				if ( !names.containsKey(arg) ) {
-					caller.error("Missing argument " + arg + " in call to " + getName() + ". Arguments passed are : " +
-						names, IGamlIssue.MISSING_ARGUMENT, caller.getUnderlyingElement(null), new String[] { arg });
-				}
+		// if ( !getKeyword().equals(PRIMITIVE) ) {
+		// AD: Change in the policy regarding primitives; if it is not stated, the arguments are now considered as
+		// optional.
+		for ( String arg : mandatoryArgs ) {
+			if ( !names.containsKey(arg) ) {
+				caller.error("Missing argument " + arg + " in call to " + getName() + ". Arguments passed are : " +
+					names, IGamlIssue.MISSING_ARGUMENT, caller.getUnderlyingElement(null), new String[] { arg });
 			}
 		}
+		// }
 		for ( Facet arg : names.entrySet() ) {
 			// A null value indicates a previous compilation error in the arguments
 			if ( arg != null ) {
@@ -261,7 +268,6 @@ public class StatementDescription extends SymbolDescription {
 			// error("Unknown action " + actionName, ACTION);
 			return;
 		}
-
 		executer.verifyArgs(this, args);
 	}
 

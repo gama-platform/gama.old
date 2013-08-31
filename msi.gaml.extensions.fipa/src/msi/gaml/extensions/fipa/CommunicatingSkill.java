@@ -88,7 +88,7 @@ public class CommunicatingSkill extends Skill {
 	 * @throws GamlException the gaml exception
 	 */
 	@action(name = "send", args = {
-		@arg(name = MessageType.MESSAGE_STR, type = IType.STRING, optional = false, doc = @doc("to be described")),
+		@arg(name = MessageType.MESSAGE_STR, type = IType.STRING, optional = true, doc = @doc("to be described")),
 		@arg(name = "receivers", type = IType.LIST, optional = false, doc = @doc("to be described")),
 		@arg(name = "content", type = IType.LIST, optional = false, doc = @doc("to be described")),
 		@arg(name = "performative", type = IType.STRING, optional = true, doc = @doc("to be described")),

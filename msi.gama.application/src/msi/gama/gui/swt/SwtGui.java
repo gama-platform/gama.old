@@ -21,6 +21,7 @@ package msi.gama.gui.swt;
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.*;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
@@ -72,9 +73,9 @@ public class SwtGui implements IGui {
 	static {
 		if(!GuiUtils.isInHeadLessMode())
 			{
-				System.out.println("Configuring user interface access through SWT");
-				GuiUtils.setSwtGui(new SwtGui());
-			}
+		System.out.println("Configuring user interface access through SWT");
+		GuiUtils.setSwtGui(new SwtGui());
+	}
 		else
 			System.out.println("Configuring HEADLESS MODE");
 	}
@@ -367,7 +368,7 @@ public class SwtGui implements IGui {
 		// if ( g != null ) {
 		// g.printStackTrace();
 		// }
-		if ( ErrorView.showErrors ) {
+		if ( GamaPreferences.CORE_SHOW_ERRORS.getValue() ) {
 			final ErrorView v = (ErrorView) showView(ErrorView.ID, null);
 			if ( v != null ) {
 				GuiUtils.asyncRun(new Runnable() {
@@ -702,7 +703,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public final boolean openModelingPerspective() {
-		return openPerspective(PERSPECTIVE_MODELING_ID); 
+		return openPerspective(PERSPECTIVE_MODELING_ID);
 	}
 
 	public final boolean openPerspective(final String perspectiveId) {
@@ -737,6 +738,7 @@ public class SwtGui implements IGui {
 
 	public final String getActivePerspectiveName() {
 		return getActivePerspective().getId();
+
 	}
 
 	static final Map<String, Class> perspectiveClasses = new HashMap();
@@ -769,7 +771,7 @@ public class SwtGui implements IGui {
 	public final boolean openSimulationPerspective() {
 		return openPerspective(PERSPECTIVE_SIMULATION_ID);
 	}
-	
+
 	public final boolean openBatchPerspective() {
 		return openPerspective(PERSPECTIVE_HPC_ID);
 	}

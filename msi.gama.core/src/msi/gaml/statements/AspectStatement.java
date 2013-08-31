@@ -20,10 +20,11 @@ package msi.gaml.statements;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -33,7 +34,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 @symbol(name = { IKeyword.ASPECT }, kind = ISymbolKind.BEHAVIOR, with_sequence = true, unique_name = true)
 @inside(kinds = { ISymbolKind.SPECIES, ISymbolKind.MODEL })
@@ -56,9 +57,29 @@ public class AspectStatement extends AbstractStatementSequence {
 					}
 					final Color c =
 						agent.getSpecies().hasVar(IKeyword.COLOR) ? Cast.asColor(scope,
-							agent.getDirectVarValue(scope, IKeyword.COLOR)) : Color.YELLOW;
-					final IShape ag = agent.getGeometry();
-					 final IShape ag2 = (IShape) ag.copy(scope);
+							agent.getDirectVarValue(scope, IKeyword.COLOR)) : GamaPreferences.CORE_COLOR
+							.getValue();
+					IShape ag = agent.getGeometry();
+					String defaultShape = GamaPreferences.CORE_SHAPE.getValue();
+					if ( !defaultShape.equals("shape") ) {
+						// Optimize this
+						Double defaultSize = GamaPreferences.CORE_SIZE.getValue();
+						ILocation point = agent.getLocation();
+						if ( defaultShape.equals("circle") ) {
+							ag = GamaGeometryType.buildCircle(defaultSize, point);
+						} else if ( defaultShape.equals("square") ) {
+							ag = GamaGeometryType.buildSquare(defaultSize, point);
+						} else if ( defaultShape.equals("triangle") ) {
+							ag = GamaGeometryType.buildTriangle(defaultSize, point);
+						} else if ( defaultShape.equals("sphere") ) {
+							ag = GamaGeometryType.buildSphere(defaultSize, point);
+						} else if ( defaultShape.equals("cube") ) {
+							ag = GamaGeometryType.buildCube(defaultSize, point);
+						} else if ( defaultShape.equals("point") ) {
+							ag = GamaGeometryType.createPoint(point);
+						}
+					}
+					final IShape ag2 = (IShape) ag.copy(scope);
 					final Rectangle2D r = g.drawGamaShape(scope, ag2, c, true, Color.black, 0, false);
 					return r;
 				} finally {

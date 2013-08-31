@@ -399,8 +399,9 @@ public final class GamlAnnotations {
 		 * Optional.
 		 * 
 		 * @return whether this argument is optional or not
+		 * @change AD 31/08/13 : the default is now true.
 		 */
-		boolean optional() default false;
+		boolean optional() default true;
 
 		/**
 		 * Doc.

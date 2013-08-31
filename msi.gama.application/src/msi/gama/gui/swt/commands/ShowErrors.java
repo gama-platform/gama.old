@@ -1,6 +1,7 @@
 package msi.gama.gui.swt.commands;
 
 import java.util.Map;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.views.ErrorView;
 import org.eclipse.core.commands.*;
@@ -14,12 +15,11 @@ public class ShowErrors extends AbstractHandler implements IElementUpdater {
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		ErrorView.showErrors = !ErrorView.showErrors;
+		GamaPreferences.CORE_SHOW_ERRORS.set(!GamaPreferences.CORE_SHOW_ERRORS.getValue());
 		ICommandService service =
-			(ICommandService) HandlerUtil.getActiveWorkbenchWindowChecked(event).getService(
-				ICommandService.class);
+			(ICommandService) HandlerUtil.getActiveWorkbenchWindowChecked(event).getService(ICommandService.class);
 		service.refreshElements(event.getCommand().getId(), null);
-		if ( ErrorView.showErrors ) {
+		if ( GamaPreferences.CORE_SHOW_ERRORS.getValue() ) {
 			GuiUtils.showView(ErrorView.ID, null);
 		} else {
 			GuiUtils.hideView(ErrorView.ID);
@@ -28,8 +28,8 @@ public class ShowErrors extends AbstractHandler implements IElementUpdater {
 	}
 
 	@Override
-	public void updateElement(UIElement element, Map parameters) {
-		element.setChecked(ErrorView.showErrors);
+	public void updateElement(final UIElement element, final Map parameters) {
+		element.setChecked(GamaPreferences.CORE_SHOW_ERRORS.getValue());
 	}
 
 }

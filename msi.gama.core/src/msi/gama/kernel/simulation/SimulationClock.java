@@ -200,7 +200,9 @@ public class SimulationClock {
 	public void waitDelay() {
 		if ( delay == 1d ) { return; }
 		try {
-			Thread.sleep((long) (1000 - delay * 1000));
+			long max = (long) (1000 - delay * 1000);
+			if ( duration >= max ) { return; }
+			Thread.sleep((max - duration));
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}

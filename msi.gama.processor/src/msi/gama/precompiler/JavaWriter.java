@@ -17,8 +17,8 @@ public class JavaWriter {
 	public final static String FACTORY_PREFIX = "]";
 	public final static String VAR_PREFIX = "%";
 	public final static String DOC_PREFIX = "@";
-	public final static String DOC_SEP = "¤";
-	public final static String DOC_REGEX = "\\¤";
+	public final static String DOC_SEP = "ï¿½";
+	public final static String DOC_REGEX = "\\ï¿½";
 	public final static String SEP = "$";
 	static String ln = "\n";
 	static String tab = "\t";
@@ -54,8 +54,8 @@ public class JavaWriter {
 	// Keeps track of the current index of the documentation in the GamlDocumentation.contents list
 	int docCount = 0;
 
-	public String write(final String packageName, final GamlProperties props, StringBuilder classBuilder,
-		StringBuilder docBuilder) {
+	public String write(final String packageName, final GamlProperties props, final StringBuilder classBuilder,
+		final StringBuilder docBuilder) {
 		writeHeader(classBuilder, packageName);
 		writeDocHeader(docBuilder, packageName);
 
@@ -182,7 +182,8 @@ public class JavaWriter {
 		sb.append(");");
 	}
 
-	protected void writeVarAddition(final StringBuilder sb, StringBuilder docBuilder, final String var, final String doc) {
+	protected void writeVarAddition(final StringBuilder sb, final StringBuilder docBuilder, final String var,
+		final String doc) {
 		String[] segments = var.split("\\$");
 		String type = segments[0];
 		String contentType = segments[1];
@@ -246,7 +247,7 @@ public class JavaWriter {
 		sb.append(");");
 	}
 
-	protected void writeSymbolAddition(final StringBuilder sb, StringBuilder docBuilder, final String s,
+	protected void writeSymbolAddition(final StringBuilder sb, final StringBuilder docBuilder, final String s,
 		final String doc) {
 		String[] segments = s.split("\\$");
 		String kind = segments[0];
@@ -339,7 +340,7 @@ public class JavaWriter {
 		}
 	}
 
-	protected void writeType(final StringBuilder sb, StringBuilder docBuilder, final String s, final String doc) {
+	protected void writeType(final StringBuilder sb, final StringBuilder docBuilder, final String s, final String doc) {
 		String[] segments = s.split("\\$");
 		String keyword = segments[0];
 		String id = segments[1];
@@ -355,7 +356,7 @@ public class JavaWriter {
 		sb.append(");");
 	}
 
-	protected void writeOperatorAddition(final StringBuilder sb, StringBuilder docBuilder, final String s,
+	protected void writeOperatorAddition(final StringBuilder sb, final StringBuilder docBuilder, final String s,
 		final String doc) {
 		String[] segments = s.split("\\$");
 		int arg_number = Integer.decode(segments[0]);
@@ -420,7 +421,7 @@ public class JavaWriter {
 	final static List<String> ss1 = Arrays.asList("const", "true", "false", "name", "type");
 	final static List<String> ss2 = Arrays.asList("CONST", "TRUE", "FALSE", "NAME", "TYPE");
 
-	protected void writeSpecies(final StringBuilder sb, StringBuilder docBuilder, final String s, final String doc) {
+	protected void writeSpecies(final StringBuilder sb, final StringBuilder docBuilder, final String s, final String doc) {
 		String[] segments = s.split("\\$");
 		String name = segments[0];
 		String clazz = segments[1];
@@ -433,7 +434,7 @@ public class JavaWriter {
 		sb.append(");");
 	}
 
-	protected void writeActionAddition(final StringBuilder sb, StringBuilder docBuilder, final String s,
+	protected void writeActionAddition(final StringBuilder sb, final StringBuilder docBuilder, final String s,
 		final String doc) {
 		String[] segments = s.split("\\$");
 		String method = segments[0];
@@ -450,13 +451,16 @@ public class JavaWriter {
 				args += ",";
 			}
 			// picking name
-			args += "desc(ARG,NAME," + toJavaString(segments[pointer++]) + ')';
+			args += "desc(ARG,NAME," + toJavaString(segments[pointer++]);
 			// skipping type
 			pointer++;
-			// skipping optional
-			pointer++;
+			// not skipping optional
+			String optional = toJavaString(segments[pointer++]);
+			args += ", \"optional\", " + optional;
+			// pointer++;
 			// skipping doc
 			pointer++;
+			args += ')';
 		}
 		args += "))";
 		String desc =
@@ -469,7 +473,7 @@ public class JavaWriter {
 			"} },", desc, ");"));
 	}
 
-	protected void writeSkill(final StringBuilder sb, StringBuilder docBuilder, final String s, final String doc) {
+	protected void writeSkill(final StringBuilder sb, final StringBuilder docBuilder, final String s, final String doc) {
 		String[] segments = s.split("\\$");
 		String name = segments[0];
 		String clazz = segments[1];
@@ -481,7 +485,7 @@ public class JavaWriter {
 		sb.append(");");
 	}
 
-	protected void writeDisplay(final StringBuilder sb, StringBuilder docBuilder, final String s, final String doc) {
+	protected void writeDisplay(final StringBuilder sb, final StringBuilder docBuilder, final String s, final String doc) {
 		String[] segments = s.split("\\$");
 		String name = segments[0];
 		String clazz = segments[1];
@@ -525,7 +529,7 @@ public class JavaWriter {
 		sb.append(ln);
 	}
 
-	protected int addDoc(StringBuilder sb, String doc) {
+	protected int addDoc(final StringBuilder sb, final String doc) {
 		// doc already formatted as a java array of strings
 		sb.append("contents.add(").append(doc).append(");");
 		sb.append(ln);

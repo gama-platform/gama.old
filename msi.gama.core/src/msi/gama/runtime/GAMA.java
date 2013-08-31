@@ -19,6 +19,7 @@
 package msi.gama.runtime;
 
 import java.util.*;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.*;
 import msi.gama.kernel.experiment.*;
 import msi.gama.kernel.model.IModel;
@@ -36,13 +37,10 @@ import com.google.common.collect.Lists;
 public class GAMA {
 
 	public final static String VERSION = "GAMA 1.6";
-	public static final String _FATAL = "fatal";
+	// public static final String _FATAL = "fatal";
 	public static final String _WARNINGS = "warnings";
-	public static boolean REVEAL_ERRORS_IN_EDITOR = true;
-	public static boolean TREAT_WARNINGS_AS_ERRORS = false;
 
 	public final static FrontEndController controller = new FrontEndController(new FrontEndScheduler());
-	public static final int NUMBER_OF_AGENTS_IN_MENUS = 50;
 
 	/**
 	 * 
@@ -104,8 +102,8 @@ public class GAMA {
 		// Returns whether or not to continue
 		GuiUtils.runtimeError(g);
 		if ( controller.getExperiment() == null ) { return false; }
-		boolean isError = !g.isWarning() || TREAT_WARNINGS_AS_ERRORS;
-		boolean shouldStop = isError && shouldStopSimulation && REVEAL_ERRORS_IN_EDITOR;
+		boolean isError = !g.isWarning() || controller.getExperiment().getAgent().getWarningsAsErrors();
+		boolean shouldStop = isError && shouldStopSimulation && GamaPreferences.CORE_REVEAL_AND_STOP.getValue();
 		// if ( shouldStop ) {
 		// controller.userPause();
 		// return false;

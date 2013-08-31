@@ -19,6 +19,7 @@
 package msi.gama.common.util;
 
 import java.util.*;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import org.uncommons.maths.binary.BinaryUtils;
 import org.uncommons.maths.random.*;
@@ -28,14 +29,19 @@ public class RandomUtils implements SeedGenerator {
 	/** The seed. */
 	private Long seed = null;
 
-	public static RandomUtils defaultRandom = new RandomUtils((Long) null);
+	private static RandomUtils defaultRandom = null;
 
 	public static RandomUtils getDefault() {
+		if ( defaultRandom == null ) {
+			Double doubleSeed =
+				GamaPreferences.CORE_SEED_DEFINED.getValue() ? GamaPreferences.CORE_SEED.getValue() : (Double) null;
+			defaultRandom = new RandomUtils(doubleSeed == null ? null : doubleSeed.longValue());
+		}
 		return defaultRandom;
 	}
 
 	/** The generator name. */
-	private String generatorName = IKeyword.XOR;
+	private String generatorName = GamaPreferences.CORE_RNG.getValue();
 
 	/** The generator. */
 	private Random generator;
@@ -54,14 +60,11 @@ public class RandomUtils implements SeedGenerator {
 		uniform = createUniform(0., 1.);
 	}
 
-	public static final List<String> GENERATOR_NAMES = Arrays.asList(IKeyword.CELLULAR, IKeyword.XOR, IKeyword.JAVA,
-		IKeyword.MERSENNE);
-
 	/**
 	 * Inits the generator.
 	 */
 	private void initGenerator() {
-//		GuiUtils.debug("RandomUtils.initGenerator: " + generatorName);
+		// GuiUtils.debug("RandomUtils.initGenerator: " + generatorName);
 		try {
 			if ( generatorName.equals(IKeyword.CELLULAR) ) {
 				generator = createCAGenerator();
@@ -262,7 +265,7 @@ public class RandomUtils implements SeedGenerator {
 	 * @param newSeed the new seed
 	 */
 	public void setSeed(final Long newSeed) {
-		//GuiUtils.debug("New seed for RandomAgent: " + newSeed);
+		GuiUtils.debug("New seed for RandomAgent: " + newSeed);
 		// final Long oldSeed = seed;
 		seed = newSeed == null || newSeed.equals(0L) ? seed : newSeed;
 		// if ( seed == null || !seed.equals(oldSeed) ) {
@@ -285,6 +288,7 @@ public class RandomUtils implements SeedGenerator {
 	 * @param newGen the new generator
 	 */
 	public void setGenerator(final String newGen) {
+		GuiUtils.debug("RandomUtils.setGenerator " + newGen);
 		// if ( newGen == null || generatorName.equals(newGen) ) { return; }
 		generatorName = newGen;
 		initGenerator();
@@ -292,12 +296,21 @@ public class RandomUtils implements SeedGenerator {
 	}
 
 	public long getSeed() {
-		if ( seed == null ) { return BinaryUtils.convertBytesToLong(DefaultSeedGenerator.getInstance().generateSeed(8),
-			0); }
+		if ( seed == null ) {
+			Double s = GamaPreferences.CORE_SEED.getValue();
+			if ( s == null ) {
+				seed = BinaryUtils.convertBytesToLong(DefaultSeedGenerator.getInstance().generateSeed(8), 0);
+			} else {
+				seed = Math.round(s);
+			}
+		}
 		return seed;
 	}
 
 	public String getGeneratorName() {
+		if ( generatorName == null ) {
+			generatorName = GamaPreferences.CORE_RNG.getValue();
+		}
 		return generatorName;
 	}
 

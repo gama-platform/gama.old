@@ -2,6 +2,7 @@ package msi.gama.kernel.experiment;
 
 import java.net.URL;
 import java.util.*;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.kernel.model.IModel;
@@ -34,12 +35,11 @@ import org.eclipse.core.runtime.Platform;
 @species(name = IKeyword.EXPERIMENT)
 @vars({
 	@var(name = IKeyword.SIMULATION, type = IType.AGENT, doc = @doc(value = "contains a reference to the current simulation being run by this experiment", comment = "will be nil if no simulation have been created. In case several simulations are launched, contains a reference to the latest one")),
-	@var(name = GAMA._FATAL, type = IType.BOOL),
-	@var(name = GAMA._WARNINGS, type = IType.BOOL, init = "false"),
+	// @var(name = GAMA._FATAL, type = IType.BOOL),
+	@var(name = GAMA._WARNINGS, type = IType.BOOL),
 	@var(name = ExperimentAgent.MODEL_PATH, type = IType.STRING, constant = true, doc = @doc(value = "Contains the absolute path to the folder in which the current model is located", comment = "Always terminated with a trailing separator")),
 	@var(name = IKeyword.SEED, type = IType.FLOAT, doc = @doc(value = "The seed of the random number generator", comment = "Each time it is set, the random number generator is reinitialized")),
-
-	@var(name = IKeyword.RNG, type = IType.STRING, init = "'" + IKeyword.MERSENNE + "'", doc = @doc("The random number generator to use for this simulation. Four different ones are at the disposal of the modeler: " +
+	@var(name = IKeyword.RNG, type = IType.STRING, doc = @doc("The random number generator to use for this simulation. Four different ones are at the disposal of the modeler: " +
 		IKeyword.MERSENNE +
 		" represents the default generator, based on the Mersenne-Twister algorithm. Very reliable; " +
 		IKeyword.CELLULAR +
@@ -65,6 +65,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	protected RandomUtils random;
 	// protected boolean isLoading;
 	protected ExperimentClock clock = new ExperimentClock();
+	// protected boolean revealAndStop = GamaPreferences.CORE_REVEAL_AND_STOP.getValue();
+	protected boolean warningsAsErrors = GamaPreferences.CORE_WARNINGS.getValue();
 
 	public ExperimentAgent(final IPopulation s) throws GamaRuntimeException {
 		super(s);
@@ -236,7 +238,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		List<ExperimentParameter> params = new ArrayList();
 		final String cat = getExperimentParametersCategory();
 		params.add(new ExperimentParameter(getScope(), getSpecies().getVar(IKeyword.RNG), "Random number generator",
-			cat, RandomUtils.GENERATOR_NAMES, false));
+			cat, GamaPreferences.GENERATOR_NAMES, false));
 		params.add(new ExperimentParameter(getScope(), getSpecies().getVar(IKeyword.SEED), "Random seed", cat, null,
 			true));
 		return params;
@@ -263,39 +265,43 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		return getModel().getProjectPath() + "/";
 	}
 
-	@getter(value = GAMA._FATAL, initializer = true)
-	public Boolean getFatalErrors() {
-		return GAMA.REVEAL_ERRORS_IN_EDITOR;
-	}
+	// @getter(value = GAMA._FATAL, initializer = true)
+	// public Boolean getFatalErrors() {
+	// return revealAndStop;
+	// }
 
+	@Override
 	@getter(value = GAMA._WARNINGS, initializer = true)
 	public Boolean getWarningsAsErrors() {
-		return GAMA.TREAT_WARNINGS_AS_ERRORS;
+		return warningsAsErrors;
 	}
 
 	@setter(GAMA._WARNINGS)
 	public void setWarningsAsErrors(final boolean t) {
-		GAMA.TREAT_WARNINGS_AS_ERRORS = t;
+		warningsAsErrors = t;
 	}
 
 	@getter(value = IKeyword.SEED, initializer = true)
 	public Double getSeed() {
-		return (double) getRandomGenerator().getSeed();
+		Long l = getRandomGenerator().getSeed();
+		if ( l == null ) { return null; }
+		return l.doubleValue();
 	}
 
 	@setter(IKeyword.SEED)
 	public void setSeed(final Double s) {
+		GuiUtils.debug("ExperimentAgent.setSeed " + s);
 		getRandomGenerator().setSeed(s);
 	}
 
-	@getter(value = IKeyword.RNG)
+	@getter(value = IKeyword.RNG, initializer = true)
 	public String getRng() {
 		return getRandomGenerator().getGeneratorName();
 	}
 
 	@setter(IKeyword.RNG)
 	public void setRng(final String newRng) {
-		//GuiUtils.debug("ExperimentAgent.setRng" + newRng);
+		// GuiUtils.debug("ExperimentAgent.setRng" + newRng);
 		getRandomGenerator().setGenerator(newRng);
 	}
 

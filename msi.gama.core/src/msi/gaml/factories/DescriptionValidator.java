@@ -344,9 +344,10 @@ public class DescriptionValidator {
 		final String action = desc.getFacets().getLabel(facet);
 		final SpeciesDescription sd = desc.getSpeciesContext();
 		if ( sd == null ) { return; }
+		// TODO What about actions defined in a macro species (not the global one, which is filtered before) ?
 		if ( !sd.hasAction(action) ) {
-			// desc.error("Action " + action + " does not exist in " + sd.getName(),
-			// IGamlIssue.UNKNOWN_ACTION, facet, action, sd.getName());
+			desc.error("Action " + action + " does not exist in " + sd.getName(), IGamlIssue.UNKNOWN_ACTION, facet,
+				action, sd.getName());
 		}
 
 	}

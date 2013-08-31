@@ -12,4 +12,9 @@ public interface IExperimentAgent extends IAgent {
 
 	public abstract void closeSimulation();
 
+	/**
+	 * @return
+	 */
+	public abstract Boolean getWarningsAsErrors();
+
 }

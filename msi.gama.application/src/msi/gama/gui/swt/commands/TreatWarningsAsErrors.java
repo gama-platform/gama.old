@@ -1,7 +1,7 @@
 package msi.gama.gui.swt.commands;
 
 import java.util.Map;
-import msi.gama.runtime.GAMA;
+import msi.gama.common.GamaPreferences;
 import org.eclipse.core.commands.*;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionException;
@@ -13,17 +13,16 @@ public class TreatWarningsAsErrors extends AbstractHandler implements IElementUp
 
 	@Override
 	public Object execute(final ExecutionEvent event) throws ExecutionException {
-		GAMA.TREAT_WARNINGS_AS_ERRORS = !GAMA.TREAT_WARNINGS_AS_ERRORS;
+		GamaPreferences.CORE_WARNINGS.set(!GamaPreferences.CORE_WARNINGS.getValue());
 		ICommandService service =
-			(ICommandService) HandlerUtil.getActiveWorkbenchWindowChecked(event).getService(
-				ICommandService.class);
+			(ICommandService) HandlerUtil.getActiveWorkbenchWindowChecked(event).getService(ICommandService.class);
 		service.refreshElements(event.getCommand().getId(), null);
 		return null;
 	}
 
 	@Override
-	public void updateElement(UIElement element, Map parameters) {
-		element.setChecked(GAMA.TREAT_WARNINGS_AS_ERRORS);
+	public void updateElement(final UIElement element, final Map parameters) {
+		element.setChecked(GamaPreferences.CORE_WARNINGS.getValue());
 	}
 
 }

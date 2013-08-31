@@ -128,7 +128,7 @@ public class GamaRuntimeException extends RuntimeException {
 	}
 
 	public boolean isWarning() {
-		return isWarning && !GAMA.TREAT_WARNINGS_AS_ERRORS;
+		return isWarning;
 	}
 
 	public static long computeCycle() {
