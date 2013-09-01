@@ -178,7 +178,7 @@ public class AgentDB extends GamlAgent {
 //		String passwd = (String) params.get("passwd");
 
 		//		SqlConnection sqlConn;
-		if("sqlite".equals(dbtype)){
+		if(dbtype.equalsIgnoreCase(SqlConnection.SQLITE)){
 			throw GamaRuntimeException.error("AgentDB.connection to SQLite error: an AgentDB agent cannot connect to SQLite DBMS (cf. documentation for further info).");
 		}
 		if ( isConnection ) { 
