@@ -199,7 +199,9 @@ public class SymbolDescription implements IDescription {
 	@Override
 	public ModelDescription getModelDescription() {
 		if ( enclosing == null ) { return null; }
-		return enclosing.getModelDescription();
+		ModelDescription result = enclosing.getModelDescription();
+		if ( result != null && result.isBuiltIn() && !this.isBuiltIn() ) { return null; }
+		return result;
 	}
 
 	// To add children from outside
