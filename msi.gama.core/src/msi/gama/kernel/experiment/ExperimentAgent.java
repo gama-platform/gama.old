@@ -395,7 +395,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 			// }
 			if ( getSpecies().hasVar(name) ) {
 				super.setGlobalVarValue(name, v);
-			} else if ( getSimulation() != null ) {
+			} else if ( getSimulation() != null && getSimulation().getSpecies().hasVar(name) ) {
 				getSimulation().getScope().setGlobalVarValue(name, v);
 			} else if ( getSpecies().hasParameter(name) ) {
 				getSpecies().getExperimentScope().setGlobalVarValue(name, v);// GuiUtils.updateParameterView(getSpecies());
