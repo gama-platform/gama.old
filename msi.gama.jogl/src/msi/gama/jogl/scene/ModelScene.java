@@ -56,6 +56,7 @@ public class ModelScene {
 	 * Called every new iteration when updateDisplay() is called on the surface
 	 */
 	public void wipe(final JOGLAWTGLRenderer renderer) {
+		envGeometryInitialized =false;
 		geometries.clear(renderer);
 		collections.clear(renderer);
 		images.clear(renderer);
