@@ -133,7 +133,7 @@ entities {
 }
 experiment perfect_gas type: gui {
 output {
-	display Cube type:opengl ambient_light:100 background:rgb(20,79,127){
+	display Cube type:opengl ambient_light:100 background:rgb(20,79,127) draw_env:false{
 		species floor transparency:0.5;
 		species wall transparency:0.5;
 	    species ball aspect:sphere;			
