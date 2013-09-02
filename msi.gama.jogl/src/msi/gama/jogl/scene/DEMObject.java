@@ -12,7 +12,7 @@ import msi.gama.util.matrix.GamaFloatMatrix;
 public class DEMObject extends AbstractObject {
 
 	public double[] dem;
-	public BufferedImage texture;
+	public BufferedImage demTexture;
 	public BufferedImage demImg;
 	public boolean isTextured;
 	public boolean isTriangulated;
@@ -21,14 +21,15 @@ public class DEMObject extends AbstractObject {
 	public Envelope envelope;
 	public int cellSize;
 	public Double z_factor;
+	public MyTexture texture;
 	
 	
 	
-	public DEMObject(double[] dem, BufferedImage texture,BufferedImage demImg,Envelope env, boolean isTextured, boolean isTriangulated,boolean isShowText,  
-			boolean fromImage, Double z_factor, Color c, GamaPoint o, GamaPoint s, Double a, int cellSize) {
+	public DEMObject(double[] dem, BufferedImage demTexture,BufferedImage demImg,Envelope env, boolean isTextured, boolean isTriangulated,boolean isShowText,  
+			boolean fromImage, Double z_factor, Color c, GamaPoint o, GamaPoint s, Double a, int cellSize,final MyTexture texture) {
 		super(c, o, s, a);
 		this.dem = dem;
-		this.texture = texture;
+		this.demTexture = demTexture;
 		this.demImg = demImg;
 		this.isTextured = isTextured;
 		this.isTriangulated = isTriangulated;
@@ -37,5 +38,6 @@ public class DEMObject extends AbstractObject {
 		this.envelope=env;
 		this.z_factor = z_factor;
 		this.cellSize = cellSize;
+		this.texture= texture;
 	}
 }

@@ -24,6 +24,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.*;
 import java.io.IOException;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.awt.AbstractDisplayGraphics;
 import msi.gama.gui.displays.layers.AbstractLayer;
@@ -80,29 +81,29 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	 * existing geometry that will be displayed by openGl.
 	 */
 	@Override
-	public Rectangle2D drawGamaShape(final IScope scope, final IShape geometry, final Color c, final boolean fill,
+	public Rectangle2D drawGamaShape(final IScope scope, final IShape shape, final Color c, final boolean fill,
 		final Color border, final Integer angle, final boolean rounded) {
 
 		Geometry geom = null;
-		if ( geometry == null ) { return null; }
+		if ( shape == null ) { return null; }
 		final ITopology topo = scope.getTopology();
 		if ( topo != null && topo.isTorus() ) {
-			geom = topo.returnToroidalGeom(geometry.getInnerGeometry());
+			geom = topo.returnToroidalGeom(shape.getInnerGeometry());
 			geom = scope.getSimulationScope().getInnerGeometry().intersection(geom);
 		} else {
-			geom = geometry.getInnerGeometry();
+			geom = shape.getInnerGeometry();
 		}
 		final Color color = highlight ? highlightColor : c;
 		Double depth = 0d;
 		String type = "none";
 		// Add a geometry with a depth and type coming from Attributes
-		if ( geometry.hasAttribute("depth") ) {
-			depth = Cast.asFloat(scope, geometry.getAttribute("depth"));
+		if ( shape.hasAttribute("depth") ) {
+			depth = Cast.asFloat(scope, shape.getAttribute("depth"));
 			type = "JTS";
 		}
-		if ( geometry.hasAttribute("type") ) {
-			type = Cast.asString(scope, geometry.getAttribute("type"));
-		}
+		if ( shape.hasAttribute("type") ) {
+			type = Cast.asString(scope, shape.getAttribute("type"));
+		}	
 		renderer.getScene().addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color, fill,
 			border, false, angle, depth.floatValue(), currentOffset, currentScale, rounded, type, currentLayerIsStatic,
 			getCurrentAlpha(), scope.getAgentScope().getPopulation().getName());
@@ -144,10 +145,8 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			}
 			else{
 				texture = renderer.createTexture(img, isDynamic,scope.getAgentScope().getIndex());
-			}
-			
+			}	
 		}
-
 		renderer.getScene().addImage(img, scope == null ? null : scope.getAgentScope(), currentZLayer, currentLayerId,
 			curX, curY, z, curWidth, curHeight, angle, currentOffset, currentScale, isDynamic, getCurrentAlpha(),
 			texture, name);
@@ -155,7 +154,6 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		if ( gridColor != null ) {
 			drawGridLine(img, gridColor, name);
 		}
-
 		return rect;
 	}
 
@@ -164,12 +162,27 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
 		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final Color gridColor,
 		final Integer angle, final Double z, final boolean isDynamic, final int cellSize) {
-		// FIXME : need to chek the drawGridLIne method
+				
+		MyTexture texture = null;
+		if ( !renderer.getScene().getTextures().containsKey(img) ) {
+			if(scope == null){
+				texture = renderer.createTexture(img, isDynamic,0);
+			}
+			else{
+				texture = renderer.createTexture(img, isDynamic,scope.getAgentScope().getIndex());
+			}	
+		}
+				
+		renderer.getScene().addDEM(gridValueMatrix, img, null, isTextured, isTriangulated, isShowText, false,
+				scope.getSimulationScope()
+				.getEnvelope(), 1.0,
+				getCurrentAlpha(), currentOffset, currentScale, cellSize, texture);
+				
 		if ( gridColor != null ) {
 			drawGridLine(img, gridColor, scope.getAgentScope().getPopulation().getName());
 		}
-		return drawDEM2(gridValueMatrix, img, isTextured, isTriangulated, isShowText, scope.getSimulationScope()
-			.getEnvelope(), 1.0, getCurrentAlpha(), currentOffset, currentScale, cellSize);
+		
+		return rect;
 	}
 
 	// FIXME: Won't work for a rectangle grid inverse buildline height on x and with width on y
@@ -211,19 +224,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		}
 	}
 
-	// Build a grid with a dem corresponding to the value in gridValue and textured by texture
-	public Rectangle2D drawDEM2(final double[] dem, final BufferedImage texture, final boolean isTextured,
-		final boolean isTriangulated, final boolean isShowText, final Envelope env, final Double z_factor,
-		final Double alpha, final GamaPoint offset, final GamaPoint scale, final int cellSize) {
-		MyTexture _texture = null;
-		if ( !renderer.getScene().getTextures().containsKey(texture) ) {
-			_texture = renderer.createTexture(texture, false,0);
-		}
-		renderer.getScene().addDEM(dem, texture, null, isTextured, isTriangulated, isShowText, false, env, z_factor,
-			alpha, offset, scale, cellSize);
-		return null;
-	}
-
+	
 	// Build a dem from a dem.png and a texture.png (used when using the operator dem)
 	@Override
 	public Rectangle2D drawDEM(final GamaFile demFileName, final GamaFile textureFileName, final Envelope env,
@@ -249,7 +250,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 		// getASCfromImg(dem);
 		// FIXME: alpha,scale,offset not taken in account when using the operator dem
-		renderer.getScene().addDEM(null, texture, dem, false, false, false, true, env, z_factor, null, null, null, 1);
+		renderer.getScene().addDEM(null, texture, dem, false, false, false, true, env, z_factor, null, null, null, 1,null);
 		return null;
 	}
 

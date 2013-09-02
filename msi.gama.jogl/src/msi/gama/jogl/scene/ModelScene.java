@@ -5,6 +5,8 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import javax.media.opengl.GL;
+
+import msi.gama.common.util.GuiUtils;
 import msi.gama.jogl.scene.ObjectDrawer.CollectionDrawer;
 import msi.gama.jogl.scene.ObjectDrawer.DEMDrawer;
 import msi.gama.jogl.scene.ObjectDrawer.GeometryDrawer;
@@ -13,6 +15,8 @@ import msi.gama.jogl.scene.ObjectDrawer.StringDrawer;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.metamodel.shape.IShape;
+import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaGeometryType;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import com.vividsolutions.jts.geom.*;
@@ -110,18 +114,22 @@ public class ModelScene {
 		}
 	}
 	
-	public void addDEM(final double[] dem, final BufferedImage texture, final BufferedImage demImg,
+	public void addDEM(final double[] dem, final BufferedImage demTexture, final BufferedImage demImg,
 		final boolean isTextured, final boolean isTriangulated, final boolean isShowText, final boolean fromImage,
 		final Envelope env, final Double z_factor, final Double alpha, final GamaPoint offset, final GamaPoint scale,
-		final int cellSize) {
-		dems.add(new DEMObject(dem, texture, demImg, env, isTextured, isTriangulated, isShowText, fromImage, z_factor,
-			null, offset, scale, alpha, cellSize));
+		final int cellSize,final MyTexture texture) {
+		dems.add(new DEMObject(dem, demTexture, demImg, env, isTextured, isTriangulated, isShowText, fromImage, z_factor,
+			null, offset, scale, alpha, cellSize,texture));
+		if ( texture != null ) {
+			textures.put(demTexture, texture);
+		}
 	}
 
 	public void addGeometry(final Geometry geometry, final IAgent agent, final double z_layer,
 		final int currentLayerId, final Color color, final boolean fill, final Color border, final boolean isTextured,
 		final Integer angle, final double height, final GamaPoint offSet, final GamaPoint scale,
 		final boolean roundCorner, final String type, final boolean currentLayerIsStatic, final double alpha, final String popName) {
+		
 		final GeometryObject curJTSGeometry =
 			new GeometryObject(geometry, agent, z_layer, currentLayerId, color, alpha, fill, border, isTextured,
 				angle == null ? 0 : angle, height, offSet, scale, roundCorner, type, popName);

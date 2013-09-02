@@ -13,6 +13,8 @@ import java.util.*;
 
 import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
+
+import msi.gama.common.util.GuiUtils;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.JTSDrawer;
 import msi.gama.metamodel.shape.GamaPoint;
@@ -103,6 +105,11 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 						geometry.rounded, geometry.getZ_fighting_id());
 				} else if ( geometry.geometry.getGeometryType() == "Polygon" ) {
 					// The JTS geometry of a sphere is a circle (a polygon)
+					/*GuiUtils.debug(" exterior ring x: " + ((Polygon)geometry.geometry).getExteriorRing().getCoordinateN(0).x);
+					GuiUtils.debug(" exterior ring y: " + ((Polygon)geometry.geometry).getExteriorRing().getCoordinateN(0).y);
+					GuiUtils.debug(" exterior ring z: " + ((Polygon)geometry.geometry).getExteriorRing().getCoordinateN(0).z);
+					GuiUtils.debug(" agent: " + geometry.agent.getLocation());
+					GuiUtils.debug(" centroid: " + geometry.geometry.getCentroid().getCoordinate().z);*/
 					if ( geometry.type.equals("sphere") ) {
 						jtsDrawer.DrawSphere((Polygon) geometry.geometry, geometry.height,
 							geometry.getColor(), geometry.alpha);
@@ -197,6 +204,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 				// around the center or around a point.
 				renderer.gl.glRotated(-img.angle, 0.0d, 0.0d, 1.0d);
 				renderer.gl.glTranslated(-(img.x + img.width / 2), +(img.y + img.height / 2), 0.0d);
+			}
 
 				renderer.gl.glBegin(GL_QUADS);
 				// bottom-left of the texture and quad
@@ -212,25 +220,13 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 				renderer.gl.glTexCoord2f(textureLeft, textureTop);
 				renderer.gl.glVertex3d(img.x, -img.y, img.z);
 				renderer.gl.glEnd();
+				
+			if ( img.angle != 0 ) {	
 				renderer.gl.glTranslated(img.x + img.width / 2, -(img.y + img.height / 2), 0.0d);
 				renderer.gl.glRotated(img.angle, 0.0d, 0.0d, 1.0d);
 				renderer.gl.glTranslated(-(img.x + img.width / 2), +(img.y + img.height / 2), 0.0d);
-			} else {
-				renderer.gl.glBegin(GL_QUADS);
-				// bottom-left of the texture and quad
-				renderer.gl.glTexCoord2f(textureLeft, textureBottom);
-				renderer.gl.glVertex3d(img.x, -(img.y + img.height), img.z);
-				// bottom-right of the texture and quad
-				renderer.gl.glTexCoord2f(textureRight, textureBottom);
-				renderer.gl.glVertex3d(img.x + img.width, -(img.y + img.height), img.z);
-				// top-right of the texture and quad
-				renderer.gl.glTexCoord2f(textureRight, textureTop);
-				renderer.gl.glVertex3d(img.x + img.width, -img.y, img.z);
-				// top-left of the texture and quad
-				renderer.gl.glTexCoord2f(textureLeft, textureTop);
-				renderer.gl.glVertex3d(img.x, -img.y, img.z);
-				renderer.gl.glEnd();
 			}
+
 			renderer.gl.glDisable(GL_TEXTURE_2D);
 		}
 	}
@@ -250,66 +246,12 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 		public DEMDrawer(JOGLAWTGLRenderer r) {
 			super(r);
 		}
-		
-		public Texture loadTexture(String fileName) {
-			Texture text = null;
-			try {
-				if ( renderer.getContext() != null ) {
-					renderer.getContext().makeCurrent();
-					text = TextureIO.newTexture(new File(fileName), false);
-					text.setTexParameteri(GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
-					text.setTexParameteri(GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
-				} else {
-					throw GamaRuntimeException.error("(DEM) JOGLRenderer context is null");
-				}
-			} catch (Exception e) {
-				System.out.println(e.getMessage());
-				System.out.println("Error loading texture " + fileName);
-			}
-			return text;
-		}
-		
-		
-		private BufferedImage FlipUpSideDownImage(BufferedImage img){
-				java.awt.geom.AffineTransform tx = java.awt.geom.AffineTransform.getScaleInstance(1, -1);
-				tx.translate(0, -img.getHeight(null));
-				AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-				img = op.filter(img, null);
-				return img;
-			
-		}
-		
-		private BufferedImage FlipRightSideLeftImage(BufferedImage img){
-			java.awt.geom.AffineTransform tx = java.awt.geom.AffineTransform.getScaleInstance(-1, 1);
-			tx.translate(-img.getWidth(null), 0);
-			AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
-			img = op.filter(img, null);
-			return img;
-		
-	    }
-		
-		private double GetMaxValue(double[] gridValue){
-			double maxValue = 0.0;
-			if(gridValue == null){
-				return maxValue;
-			}
-			for(int i= 0; i< gridValue.length;i++){
-				if(gridValue[i] > maxValue){
-					maxValue = gridValue[i];
-				}
-			}
-			return maxValue;
-		}
-		
-		/*private void PrintParam(){
-			System.out.println()
-		}*/
-		
+
 		@Override
 		protected void _draw(DEMObject demObj) {
 			
 			
-			if(!demObj.fromImage){
+		if(!demObj.fromImage){
 			//Get Environment Properties
 			double envWidth = demObj.envelope.getWidth()/demObj.cellSize;
 			double envHeight = demObj.envelope.getHeight()/demObj.cellSize;
@@ -317,8 +259,8 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
             double envHeightStep = 1/ envHeight;
 			
 			//Get Texture Properties
-			double textureWidth = demObj.texture.getWidth();
-			double textureHeight = demObj.texture.getHeight();	
+			double textureWidth = demObj.demTexture.getWidth();
+			double textureHeight = demObj.demTexture.getHeight();	
 			double textureWidthInEnvironment = envWidth/textureWidth;
 			double textureHeightInEnvironment = envHeight/textureHeight;
 			
@@ -330,16 +272,21 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 			double x1,x2,y1,y2;
 			Double zValue=0.0;
 			double stepX, stepY;
-
-
+			
+			
+			
+			MyTexture curTexture = renderer.getScene().getTextures().get(demObj.demTexture);
+			if ( curTexture == null ) { return; }
+			// Enable the texture
+			renderer.gl.glEnable(GL_TEXTURE_2D);
+			Texture t = curTexture.texture;
+			t.enable();
+			t.bind();
+			renderer.gl.glColor4d(1.0d, 1.0d, 1.0d, demObj.alpha);
 			//Draw Grid with square 
 			// if texture draw with color coming from the texture and z according to gridvalue
 			// else draw the grid with color according the gridValue in gray value
-
 			if ( !isInitialized() && demObj.isTextured) {
-				renderer.gl.glNormal3d(0, 0, 1);
-				renderer.gl.glColor4d(1.0d, 1.0d, 1.0d, demObj.alpha);
-				renderer.gl.glEnable(GL.GL_TEXTURE_2D);
 				setInitialized(true);
 			}
 			if(!demObj.isTriangulated){
@@ -474,20 +421,70 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 				}		
 				renderer.gl.glEnable(GL_BLEND);
 			}
+			renderer.gl.glDisable(GL_TEXTURE_2D);
 			}
 			else{
 				drawFromPNG(demObj);
 			}
+		    
 		}
 
 			
+		public Texture loadTexture(String fileName) {
+			Texture text = null;
+			try {
+				if ( renderer.getContext() != null ) {
+					renderer.getContext().makeCurrent();
+					text = TextureIO.newTexture(new File(fileName), false);
+					text.setTexParameteri(GL.GL_TEXTURE_MAG_FILTER, GL.GL_NEAREST);
+					text.setTexParameteri(GL.GL_TEXTURE_MIN_FILTER, GL.GL_NEAREST);
+				} else {
+					throw GamaRuntimeException.error("(DEM) JOGLRenderer context is null");
+				}
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+				System.out.println("Error loading texture " + fileName);
+			}
+			return text;
+		}
+		
+		
+		private BufferedImage FlipUpSideDownImage(BufferedImage img){
+				java.awt.geom.AffineTransform tx = java.awt.geom.AffineTransform.getScaleInstance(1, -1);
+				tx.translate(0, -img.getHeight(null));
+				AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+				img = op.filter(img, null);
+				return img;
 			
+		}
+		
+		private BufferedImage FlipRightSideLeftImage(BufferedImage img){
+			java.awt.geom.AffineTransform tx = java.awt.geom.AffineTransform.getScaleInstance(-1, 1);
+			tx.translate(-img.getWidth(null), 0);
+			AffineTransformOp op = new AffineTransformOp(tx, AffineTransformOp.TYPE_NEAREST_NEIGHBOR);
+			img = op.filter(img, null);
+			return img;
+		
+	    }
+		
+		private double GetMaxValue(double[] gridValue){
+			double maxValue = 0.0;
+			if(gridValue == null){
+				return maxValue;
+			}
+			for(int i= 0; i< gridValue.length;i++){
+				if(gridValue[i] > maxValue){
+					maxValue = gridValue[i];
+				}
+			}
+			return maxValue;
+		}
 			
             protected void drawFromPNG(DEMObject demObj) {
                 
                 if ( !isInitialized() ) {
                         renderer.gl.glEnable(GL.GL_TEXTURE_2D);
-                    loadTexture(demObj.texture.toString());
+                        loadTexture(demObj.demTexture.toString());
                         setInitialized(true);
                 }
 
@@ -598,12 +595,12 @@ public boolean isInitialized() {
 			renderer.gl.glPushMatrix();
 			renderer.gl.glTranslated(-collection.collection.getBounds().centre().x, -collection.collection.getBounds()
 				.centre().y, 0.0d);
-			// Iterate throught all the collection
 			SimpleFeatureIterator iterator = collection.collection.features();
-			// Color color= Color.red;
 			while (iterator.hasNext()) {
 				SimpleFeature feature = iterator.next();
 				Geometry sourceGeometry = (Geometry) feature.getDefaultGeometry();
+				
+				
 				if ( sourceGeometry.getGeometryType() == "MultiPolygon" ) {
 					jtsDrawer.DrawMultiPolygon((MultiPolygon) sourceGeometry, collection.getColor(), 1.0d, true, null,
 						0, 0.0d, false,0.0);
