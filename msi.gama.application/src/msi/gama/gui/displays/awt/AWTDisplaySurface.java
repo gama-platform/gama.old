@@ -253,11 +253,6 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	}
 
 	@Override
-	public BufferedImage getImage() {
-		return buffImage;
-	}
-
-	@Override
 	public void zoomIn() {
 		mousePosition = new Point(origin.x + getDisplayWidth() / 2, origin.y + getDisplayHeight() / 2);
 		applyZoom(1.0 + zoomIncrement, mousePosition);
@@ -338,12 +333,13 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	 */
 	@Override
 	public void snapshot() {
+		if ( snapshotDimension.x == -1 && snapshotDimension.y == -1 ) {
+			super.snapshot();
+			return;
+		}
 		final IScope scope = GAMA.obtainNewScope();
 		try {
-			if ( snapshotDimension.x == -1 && snapshotDimension.y == -1 ) {
-				save(scope, buffImage);
-				return;
-			}
+
 			final BufferedImage newImage = ImageUtils.createCompatibleImage(snapshotDimension.x, snapshotDimension.y);
 			final IGraphics tempGraphics = new AWTDisplayGraphics(this, (Graphics2D) newImage.getGraphics());
 			tempGraphics.fillBackground(bgColor, 1);

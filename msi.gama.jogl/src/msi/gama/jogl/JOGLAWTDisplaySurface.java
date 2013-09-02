@@ -21,7 +21,6 @@ package msi.gama.jogl;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
@@ -38,8 +37,7 @@ import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.precompiler.GamlAnnotations.display;
-import msi.gama.runtime.*;
-import msi.gama.runtime.GAMA.InScope;
+import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaList;
 import msi.gaml.compilation.ISymbol;
 import org.eclipse.swt.SWT;
@@ -294,12 +292,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		// if ( navigator == null || navigator.isDisposed() ) { return; }
 		// navigator.dispose();
 
-	}
-
-	@Override
-	public BufferedImage getImage() {
-		final BufferedImage buffImage = renderer.getScreenShot();
-		return buffImage;
 	}
 
 	@Override
@@ -589,18 +581,6 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			// (new Output3D()).to3DGLGEModel(((JOGLAWTDisplayGraphics) openGLGraphics).myJTSGeometries,
 			// openGLGraphicsGLRender);
 		}
-	}
-
-	@Override
-	public void snapshot() {
-		GAMA.run(new InScope.Void() {
-
-			@Override
-			public void process(final IScope scope) {
-				save(scope, getImage());
-			}
-		});
-
 	}
 
 	@Override

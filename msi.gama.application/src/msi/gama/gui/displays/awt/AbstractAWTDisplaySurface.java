@@ -2,7 +2,7 @@ package msi.gama.gui.displays.awt;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
-import java.awt.image.RenderedImage;
+import java.awt.image.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import javax.imageio.ImageIO;
@@ -11,6 +11,7 @@ import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.outputs.*;
 import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.operators.Files;
 
@@ -99,12 +100,24 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		bgColor = c;
 	}
 
+	@Override
+	public void snapshot() {
+		GAMA.run(new InScope.Void() {
+
+			@Override
+			public void process(final IScope scope) {
+				save(scope, getImage());
+			}
+		});
+
+	}
+
 	/**
 	 * Save this surface into an image passed as a parameter
 	 * @param scope
 	 * @param image
 	 */
-	public void save(final IScope scope, final RenderedImage image) {
+	public final void save(final IScope scope, final RenderedImage image) {
 		if ( image == null ) { return; }
 		try {
 			Files.newFolder(scope, snapshotFolder);
@@ -138,20 +151,6 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 			}
 		}
 	}
-
-	// protected Cursor createCursor() {
-	// Image im = new BufferedImage((int) SELECTION_SIZE + 4, (int) SELECTION_SIZE + 4, BufferedImage.TYPE_INT_ARGB);
-	// Graphics2D g = (Graphics2D) im.getGraphics();
-	// g.setColor(Color.black);
-	// g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-	// g.setStroke(new BasicStroke(3.0f));
-	// g.draw(new Rectangle2D.Double(2, 2, SELECTION_SIZE, SELECTION_SIZE));
-	// g.dispose();
-	// Cursor c =
-	// getToolkit().createCustomCursor(im, new Point((int) (SELECTION_SIZE / 2), (int) SELECTION_SIZE / 2),
-	// "CIRCLE");
-	// return c;
-	// }
 
 	@Override
 	public void removeNotify() {
@@ -214,6 +213,22 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	@Override
 	public void setSnapshotFileName(final String file) {
 		snapshotFileName = file;
+	}
+
+	@Override
+	public BufferedImage getImage() {
+		Robot screenRobot;
+		try {
+			screenRobot = new Robot();
+		} catch (AWTException e) {
+			e.printStackTrace();
+			return null;
+		}
+		Rectangle rectangle = new Rectangle(this.getLocationOnScreen(), this.getSize());
+		final BufferedImage buffImage = screenRobot.createScreenCapture(rectangle);
+
+		// = renderer.getScreenShot();
+		return buffImage;
 	}
 
 	@Override
