@@ -32,7 +32,7 @@ public class SimulationSpeedContributionItem extends SpeedContributionItem {
 
 			@Override
 			public String getToolTipText(final double value) {
-				return "Delay " + Maths.opTruncate((1000 - 1000 * value) / 1000, 2) + " s";
+				return "Minimum duration of a cycle " + Maths.opTruncate((1000 - 1000 * value) / 1000, 3) + " s";
 			}
 
 		}, SwtGui.thumb, SwtGui.thumb_over, SwtGui.COLOR_OK);

@@ -363,7 +363,10 @@ public class DescriptionValidator {
 			}
 			SpeciesDescription callerSpecies = cd.getSpeciesContext();
 			SpeciesDescription macro = species.getMacroSpecies();
-			if ( callerSpecies != macro && !callerSpecies.hasMacroSpecies(macro) && !callerSpecies.hasParent(macro) ) {
+			if ( macro == null ) {
+				cd.error("The macro-species of " + species + " cannot be determined");
+			} else if ( callerSpecies != macro && !callerSpecies.hasMacroSpecies(macro) &&
+				!callerSpecies.hasParent(macro) ) {
 				cd.error("No instance of " + macro.getName() + " available for creating instances of " +
 					species.getName());
 			}

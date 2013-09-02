@@ -109,11 +109,6 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 					return "" + species.size() + " living agents";
 				}
 
-				@Override
-				public boolean allowsTooltip() {
-					return false;
-				}
-
 			});
 		editors.add(agentsEditor);
 		final Label label = agentsEditor.getUnitLabel();
@@ -160,15 +155,10 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 					return true;
 				}
 
-				@Override
-				public boolean isLabel() {
-					return true;
-				}
-
-				@Override
-				public boolean allowsTooltip() {
-					return false;
-				}
+				// @Override
+				// public boolean isLabel() {
+				// return true;
+				// }
 
 				@Override
 				public List getAmongValue() {
@@ -190,15 +180,10 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 				return true;
 			}
 
-			@Override
-			public boolean isLabel() {
-				return true;
-			}
-
-			@Override
-			public boolean allowsTooltip() {
-				return false;
-			}
+			// @Override
+			// public boolean isLabel() {
+			// return true;
+			// }
 
 			@Override
 			public List getAmongValue() {
@@ -220,15 +205,10 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 					return true;
 				}
 
-				@Override
-				public boolean isLabel() {
-					return true;
-				}
-
-				@Override
-				public boolean allowsTooltip() {
-					return false;
-				}
+				// @Override
+				// public boolean isLabel() {
+				// return true;
+				// }
 
 				@Override
 				public List getAmongValue() {

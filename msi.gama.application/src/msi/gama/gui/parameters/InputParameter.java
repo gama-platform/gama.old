@@ -22,37 +22,34 @@ import java.util.List;
 import msi.gama.kernel.experiment.ParameterAdapter;
 import msi.gaml.types.*;
 
-class InputParameter extends ParameterAdapter {
+public class InputParameter extends ParameterAdapter {
 
 	private Object value;
-	private List among;
-	private Number min, max/* , step */;
+	private final List among;
+	private Number min, max;
 
 	InputParameter(final String name, final Object value) {
-		super(name, Types.get(value == null ? Object.class : value.getClass()).id());
-		this.value = value;
+		this(name, value, Types.get(value == null ? Object.class : value.getClass()));
 	}
 
-	InputParameter(final String name, final Object value, final IType type) {
+	public InputParameter(final String name, final Object value, final IType type) {
+		this(name, value, type, null);
+	}
+
+	public InputParameter(final String name, final Object value, final IType type, final List among) {
 		super(name, type.id());
 		this.value = value;
-	}
-
-	InputParameter(final String name, final Object value, final List among) {
-		this(name, value);
 		this.among = among;
 	}
 
-	InputParameter(final String name, final Object value, final Number min, final Number max, final Number step) {
+	InputParameter(final String name, final Object value, final Number min, final Number max) {
 		this(name, value);
 		this.min = min;
 		this.max = max;
-		// this.step = step;
 	}
 
-	InputParameter(final String name, final String unit, final Object value, final Number min, final Number max,
-		final Number step) {
-		this(name, value, min, max, step);
+	InputParameter(final String name, final String unit, final Object value, final Number min, final Number max) {
+		this(name, value, min, max);
 		unitLabel = unit;
 	}
 

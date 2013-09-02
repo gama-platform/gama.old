@@ -40,7 +40,7 @@ public class IntEditor extends NumberEditor {
 
 	IntEditor(final Composite parent, final String title, final String unit, final Integer value, final Integer min,
 		final Integer max, final Integer step, final EditorListener<Integer> whenModified, final boolean canBeNull) {
-		super(new InputParameter(title, unit, value, min, max, step), whenModified, canBeNull);
+		super(new InputParameter(title, unit, value, min, max), whenModified, canBeNull);
 		createComposite(parent);
 	}
 

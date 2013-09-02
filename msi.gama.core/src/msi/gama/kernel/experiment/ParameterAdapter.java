@@ -70,15 +70,11 @@ public abstract class ParameterAdapter implements IParameter.Batch {
 		return false;
 	}
 
-	@Override
-	public boolean allowsTooltip() {
-		return true;
-	}
-
-	@Override
-	public boolean isLabel() {
-		return false;
-	}
+	//
+	// @Override
+	// public boolean isLabel() {
+	// return false;
+	// }
 
 	@Override
 	public boolean canBeExplored() {

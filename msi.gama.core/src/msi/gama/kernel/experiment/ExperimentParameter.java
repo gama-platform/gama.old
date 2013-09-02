@@ -57,7 +57,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 	private List amongValue;
 	String varName, title, category, unitLabel;
 	IType type = Types.NO_TYPE, contentType = Types.NO_TYPE;
-	boolean isEditable, allowsTooltip, isLabel;
+	boolean isEditable/* , isLabel */;
 	boolean canBeNull;
 	final IExpression init, among, min, max, step;
 
@@ -88,8 +88,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 
 		// setValue(init == null ? UNDEFINED : init.value(GAMA.getDefaultScope()));
 		isEditable = true;
-		isLabel = false; // ??
-		allowsTooltip = true; // ??
+		// isLabel = false; // ??
 	}
 
 	public ExperimentParameter(final IScope scope, final IParameter p) {
@@ -137,8 +136,7 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		setType(p.getType());
 		setValue(p.getInitialValue(scope));
 		setEditable(p.isEditable());
-		isLabel = p.isLabel();
-		allowsTooltip = p.allowsTooltip();
+		// isLabel = p.isLabel();
 	}
 
 	@Override
@@ -158,15 +156,10 @@ public class ExperimentParameter extends Symbol implements IParameter.Batch {
 		return isEditable;
 	}
 
-	@Override
-	public boolean allowsTooltip() {
-		return allowsTooltip;
-	}
-
-	@Override
-	public boolean isLabel() {
-		return isLabel;
-	}
+	// @Override
+	// public boolean isLabel() {
+	// return isLabel;
+	// }
 
 	@Override
 	public void setEditable(final boolean editable) {

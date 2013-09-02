@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry exported="true" kind="lib" path="opal-0.9.5.2.jar" sourcepath="sources/opal-0.9.5.2.zip"/>
 	<classpathentry exported="true" kind="lib" path="commons-collections-3.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="commons-math-1.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="commons-logging-1.1.1.jar"/>

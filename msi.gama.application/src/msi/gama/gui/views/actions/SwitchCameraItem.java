@@ -31,7 +31,7 @@ public class SwitchCameraItem extends GamaViewItem {
 	@Override
 	protected IContributionItem createItem() {
 		IAction action =
-			new GamaAction("Switch camera", "Switch camera between Arcball and FreeFly", IAction.AS_CHECK_BOX,
+			new GamaAction("Switch camera", "Switch camera between Arcball and FreeFly", IAction.AS_PUSH_BUTTON,
 				getImageDescriptor("icons/switch_camera_button.png")) {
 
 				@Override

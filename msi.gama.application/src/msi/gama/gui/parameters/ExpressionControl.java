@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -35,13 +35,11 @@ import org.eclipse.swt.widgets.*;
 public class ExpressionControl implements IPopupProvider, SelectionListener, ModifyListener, FocusListener {
 
 	private final Text text;
-	private final Popup popup;
+	private Popup popup = null;
 	private final AbstractEditor editor;
 	private Color background;
 	Object currentValue;
 	private Exception currentException;
-
-	// IType expectedType;
 
 	public ExpressionControl(final Composite comp, final AbstractEditor ed) {
 		editor = ed;
@@ -51,15 +49,23 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 		text.addModifyListener(this);
 		text.addFocusListener(this);
 		text.addSelectionListener(this);
-		popup = new Popup(this, editor.getLabel(), text);
+	}
 
+	public Popup getPopup() {
+		boolean withPopup = editor.acceptPopup();
+		if ( popup == null && withPopup ) {
+			popup = new Popup(this, editor.getLabel(), text);
+		}
+		return popup;
 	}
 
 	@Override
 	public void modifyText(final ModifyEvent event) {
 		if ( editor.internalModification ) { return; }
 		modifyValue();
-		popup.display();
+		if ( getPopup() != null ) {
+			getPopup().display();
+		}
 	}
 
 	private void modifyNoPopup() {
@@ -141,7 +147,7 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 	@Override
 	public void focusGained(final FocusEvent e) {
 		computeValue();
-		// popup.display();
+		getPopup();
 	}
 
 	@Override

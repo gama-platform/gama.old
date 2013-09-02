@@ -55,7 +55,6 @@ public class GuiUtils {
 	public static final String HPC_PERSPECTIVE_ID = "msi.gama.hpc.HPCPerspectiveFactory";
 
 	public static final String GL_VIEW_ID = "msi.gama.jogl.GLView";
-	public static final int[] defaultHighlight = new int[] { 0, 200, 200 };
 	private static boolean headlessMode = false;
 
 	public static boolean isInHeadLessMode() {
@@ -306,16 +305,15 @@ public class GuiUtils {
 			gui.openModelingPerspective();
 		}
 	}
-	
+
 	public static boolean isSimulationPerspective() {
 		return gui == null ? false : gui.isSimulationPerspective();
 	}
 
-	public static IGui getGui()
-	{
+	public static IGui getGui() {
 		return gui;
 	}
-	
+
 	public static void togglePerspective() {
 		if ( gui != null ) {
 			gui.togglePerspective();

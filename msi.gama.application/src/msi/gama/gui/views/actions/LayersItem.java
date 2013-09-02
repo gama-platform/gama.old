@@ -31,7 +31,7 @@ public class LayersItem extends GamaViewItem {
 	protected IContributionItem createItem() {
 		IAction action =
 			new GamaAction("Toggle side panel", "Open/Close layers controls", IAction.AS_PUSH_BUTTON,
-				getImageDescriptor("icons/application-sidebar-list.png")) {
+				getImageDescriptor("icons/application-dock-180.png")) {
 
 				@Override
 				public void run() {

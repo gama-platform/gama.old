@@ -30,8 +30,8 @@ public class ArcBallItem extends GamaViewItem {
 	@Override
 	protected IContributionItem createItem() {
 		IAction action =
-			new GamaAction("Switch to ArcBall view", "Arcball view: Drag to orbit. Shift = Pan ", IAction.AS_CHECK_BOX,
-				getImageDescriptor("icons/drag_arcball.png")) {
+			new GamaAction("Switch to ArcBall view", "Arcball view: Drag to orbit. Shift = Pan ",
+				IAction.AS_PUSH_BUTTON, getImageDescriptor("icons/drag_arcball.png")) {
 
 				@Override
 				public void run() {

@@ -40,7 +40,7 @@ public class AgentEditor extends AbstractEditor {
 	String species;
 
 	AgentEditor(final IParameter param) {
-		super(param);
+		this(null, param);
 	}
 
 	AgentEditor(final IAgent agent, final IParameter param) {

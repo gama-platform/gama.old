@@ -4,6 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IDisplaySurface;
 import msi.gama.gui.views.*;
 import org.eclipse.jface.action.*;
@@ -42,6 +43,7 @@ public class RenderingItem extends GamaViewItem {
 			.setToolTipText("Antialiasing of images is turned off by default, but you can choose to turn it on using this button");
 		// action.setChecked(true);
 		action.setImageDescriptor(getImageDescriptor("icons/button_rendering.png"));
+		action.setChecked(GamaPreferences.CORE_ANTIALIAS.getValue());
 		return new ActionContributionItem(action);
 	}
 }

@@ -489,7 +489,7 @@ public class CoolSlider extends Composite implements IPopupProvider {
 			(getClientArea().height - thumb.getBounds().height);
 	}
 
-	private void updatePostionListeners(final double perc) {
+	private void updatePositionListeners(final double perc) {
 		if ( previousPosition != -1 && perc != previousPosition ) {
 			synchronized (positionChangedListeners) {
 				final Iterator<IPositionChangeListener> iter = positionChangedListeners.iterator();
@@ -550,7 +550,7 @@ public class CoolSlider extends Composite implements IPopupProvider {
 						(getClientArea().width - thumb.getBounds().width);
 			}
 			updateTooltipMoving(percentage);
-			updatePostionListeners(percentage);
+			updatePositionListeners(percentage);
 			previousPosition = percentage;
 		}
 	}
@@ -614,7 +614,7 @@ public class CoolSlider extends Composite implements IPopupProvider {
 						(getClientArea().height - thumb.getBounds().height);
 			}
 			updateTooltipMoving(percentage);
-			updatePostionListeners(percentage);
+			updatePositionListeners(percentage);
 			previousPosition = percentage;
 		}
 	}

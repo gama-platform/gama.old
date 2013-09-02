@@ -21,6 +21,7 @@ package msi.gama.outputs;
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.List;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -76,7 +77,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public static final String SWT = "swt";
 
 	private List<AbstractLayerStatement> layers;
-	private Color backgroundColor;
+	private Color backgroundColor = GamaPreferences.CORE_BACKGROUND.getValue();
 	protected IDisplaySurface surface;
 	String snapshotFileName;
 	private boolean autosave = false;
@@ -97,7 +98,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean constantCamera = true;
 	private boolean constantCameraLook = true;
 	private boolean polygonMode = true;
-	private String displayType = JAVA2D;
+	private String displayType = GamaPreferences.CORE_DISPLAY.getValue().equalsIgnoreCase(JAVA2D) ? JAVA2D : OPENGL;
 	private ILocation imageDimension = new GamaPoint(-1, -1);
 	private ILocation output3DNbCycles = new GamaPoint(0, 0);
 	private boolean isSwt = false;
@@ -122,10 +123,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression color = getFacet(IKeyword.BACKGROUND);
 		if ( color != null ) {
 			setBackgroundColor(Cast.asColor(getScope(), color.value(getScope())));
-		} else {
-			if ( getBackgroundColor() == null ) {
-				setBackgroundColor(Cast.asColor(getScope(), "white"));
-			}
 		}
 
 		final IExpression auto = getFacet(IKeyword.AUTOSAVE);
@@ -362,22 +359,21 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			surface.outputChanged(w, h, this);
 			return;
 		}
-		if ( !GuiUtils.isInHeadLessMode())
-		{
+		if ( !GuiUtils.isInHeadLessMode() ) {
 			surface = GuiUtils.getDisplaySurfaceFor(displayType, this, w, h);
 			surface.setSnapshotFileName(getName() + "_snapshot");
 			surface.setAutoSave(autosave, (int) imageDimension.getX(), (int) imageDimension.getY());
 		}
 		{
 			surface = GuiUtils.getDisplaySurfaceFor(displayType, this, w, h);
-			
-		//	ImageDisplaySurface
-		//	tmp = 
-		//	surface = new ImageDis
-		//	System.out.println("headless mode ");
+
+			// ImageDisplaySurface
+			// tmp =
+			// surface = new ImageDis
+			// System.out.println("headless mode ");
 		}
-		
-	// Use only for opengl
+
+		// Use only for opengl
 		// if ( surface.getIGraphics() instanceof IGraphics.OpenGL ) {
 		// IGraphics.OpenGL graphics = (IGraphics.OpenGL) surface.getIGraphics();
 		// surface.initOutput3D(output3D, output3DNbCycles);
@@ -457,7 +453,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	@Override
 	public void resume() {
 		super.resume();
-					surface.setPaused(false);
+		surface.setPaused(false);
 		// getScope().step(this);
 	}
 
@@ -480,7 +476,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private void setStencil(final boolean stencil) {
 		this.stencil = stencil;
 	}
-	
+
 	public boolean getZFighting() {
 		return z_fighting;
 	}

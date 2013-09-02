@@ -7,8 +7,8 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -17,7 +17,7 @@ import msi.gaml.operators.Files;
 public abstract class AbstractAWTDisplaySurface extends JPanel implements IDisplaySurface {
 
 	private IDisplayOutput output;
-	protected int[] highlightColor = GuiUtils.defaultHighlight;
+	protected Color highlightColor = GamaPreferences.CORE_HIGHLIGHT.getValue();
 	protected IGraphics iGraphics;
 	protected String snapshotFileName;
 	protected static String snapshotFolder = "snapshots";
@@ -192,12 +192,12 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 
 	@Override
 	public int[] getHighlightColor() {
-		return highlightColor;
+		return new int[] { highlightColor.getRed(), highlightColor.getGreen(), highlightColor.getBlue() };
 	}
 
 	@Override
 	public void setHighlightColor(final int[] rgb) {
-		highlightColor = rgb;
+		highlightColor = new Color(rgb[0], rgb[1], rgb[2]);
 		iGraphics.setHighlightColor(rgb);
 	}
 

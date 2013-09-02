@@ -30,8 +30,7 @@ public class InertiaItem extends GamaViewItem {
 	@Override
 	protected IContributionItem createItem() {
 		IAction action =
-			new GamaAction("Activate inertia mode", "", IAction.AS_CHECK_BOX,
-				getImageDescriptor("icons/inertia.png")) {
+			new GamaAction("Activate inertia mode", "", IAction.AS_PUSH_BUTTON, getImageDescriptor("icons/inertia.png")) {
 
 				@Override
 				public void run() {

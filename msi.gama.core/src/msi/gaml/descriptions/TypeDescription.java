@@ -2,7 +2,6 @@ package msi.gaml.descriptions;
 
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.util.*;
 import msi.gaml.compilation.AbstractGamlAdditions;
@@ -17,7 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * The class TypeDescription.
  * 
  * @author drogoul
- * @since 23 fŽvr. 2013
+ * @since 23 fï¿½vr. 2013
  * 
  */
 public class TypeDescription extends SymbolDescription {
@@ -88,9 +87,6 @@ public class TypeDescription extends SymbolDescription {
 	}
 
 	protected void addAction(final StatementDescription redeclaredAction) {
-		if ( redeclaredAction.getName().equals("related_to") ) {
-			GuiUtils.debug("TypeDescription.addAction related_to");
-		}
 
 		// TODO VERIFIER LES PARENTS RESPECTIFS ET COMPRENDRE POURQUOI ERREUR SUR L'AJOUT D'ACTIONS ABSTRAITES
 		final String actionName = redeclaredAction.getName();

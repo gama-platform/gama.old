@@ -235,6 +235,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 */
 
 	public List<? extends IParameter.Batch> getDefaultParameters() {
+		if ( !GamaPreferences.CORE_RND_EDITABLE.getValue() ) { return Collections.EMPTY_LIST; }
 		List<ExperimentParameter> params = new ArrayList();
 		final String cat = getExperimentParametersCategory();
 		params.add(new ExperimentParameter(getScope(), getSpecies().getVar(IKeyword.RNG), "Random number generator",

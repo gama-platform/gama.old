@@ -330,15 +330,10 @@ public class Variable extends Symbol implements IVariable {
 		return true;
 	}
 
-	@Override
-	public boolean isLabel() {
-		return false;
-	}
-
-	@Override
-	public boolean allowsTooltip() {
-		return true;
-	}
+	// @Override
+	// public boolean isLabel() {
+	// return false;
+	// }
 
 	public ISkill getgSkill() {
 		return gSkill;

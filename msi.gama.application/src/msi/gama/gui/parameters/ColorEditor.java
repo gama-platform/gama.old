@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -19,7 +19,6 @@
 package msi.gama.gui.parameters;
 
 import msi.gama.common.interfaces.EditorListener;
-import msi.gama.common.util.StringUtils;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.GamaColor;
@@ -27,13 +26,13 @@ import msi.gaml.types.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class ColorEditor extends AbstractEditor implements DisposeListener {
 
 	private Button edit;
-	private ExpressionControl expression;
+
+	// private ExpressionControl expression;
 
 	ColorEditor(final IParameter param) {
 		super(param);
@@ -75,39 +74,41 @@ public class ColorEditor extends AbstractEditor implements DisposeListener {
 
 	@Override
 	public Control createCustomParameterControl(final Composite compo) {
-		Composite comp = new Composite(compo, SWT.None);
-		comp.setLayoutData(getParameterGridData());
-		final GridLayout layout = new GridLayout(2, false);
-		layout.verticalSpacing = 0;
-		layout.marginHeight = 1;
-		layout.marginWidth = 1;
-		comp.setLayout(layout);
-		expression = new ExpressionControl(comp, this);
-		edit = new Button(comp, SWT.FLAT);
-		edit.setText("Edit");
-		edit.setAlignment(SWT.CENTER);
+		// Composite comp = new Composite(compo, SWT.None);
+		// comp.setLayoutData(getParameterGridData());
+		// final GridLayout layout = new GridLayout(2, false);
+		// layout.verticalSpacing = 0;
+		// layout.marginHeight = 1;
+		// layout.marginWidth = 1;
+		// comp.setLayout(layout);
+		// expression = new ExpressionControl(comp, this);
+		edit = new Button(compo, SWT.FLAT);
+		// edit.setText("Edit");
+		// edit.setAlignment(SWT.CENTER);
 
-		GridData d = new GridData(SWT.LEFT, SWT.CENTER, false, false);
-		edit.setLayoutData(d);
+		// GridData d = new GridData(SWT.LEFT, SWT.CENTER, false, false);
+		// edit.setLayoutData(d);
 		edit.addDisposeListener(this);
 		edit.addSelectionListener(this);
-		return expression.getControl();
+		return edit;
+		// return expression.getControl();
 	}
 
 	@Override
 	protected void displayParameterValue() {
 		internalModification = true;
-		expression.getControl().setText(StringUtils.toGaml(currentValue));
-		GamaColor c = currentValue == null ? GamaColor.getInt(0) : (GamaColor) currentValue;
+		// expression.getControl().setText(StringUtils.toGaml(currentValue));
+		java.awt.Color c = currentValue == null ? GamaColor.getInt(0) : (java.awt.Color) currentValue;
 		Color color = new Color(Display.getDefault(), c.getRed(), c.getGreen(), c.getBlue());
 		Image oldImage = edit.getImage();
-		Image image = new Image(Display.getDefault(), 16, 16);
+		Image image = new Image(Display.getDefault(), 32, 16);
 		GC gc = new GC(image);
 		gc.setBackground(color);
-		gc.fillRectangle(0, 0, 16, 16);
+		gc.fillRectangle(0, 2, 32, 14);
 		gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
-		gc.drawRectangle(0, 0, 15, 15);
+		gc.drawRectangle(0, 2, 31, 13);
 		gc.dispose();
+		edit.setText("(r:" + c.getRed() + ",g:" + c.getGreen() + ",b:" + c.getBlue() + ")");
 		edit.setImage(image);
 		if ( oldImage != null && !oldImage.isDisposed() ) {
 			oldImage.dispose();
@@ -118,8 +119,9 @@ public class ColorEditor extends AbstractEditor implements DisposeListener {
 
 	@Override
 	public Control getEditorControl() {
-		if ( expression == null ) { return null; }
-		return expression.getControl();
+		return edit;
+		// if ( expression == null ) { return null; }
+		// return expression.getControl();
 	}
 
 	@Override

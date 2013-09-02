@@ -233,6 +233,9 @@ public class ParameterExpandItem extends Item {
 			gc.setFont(SwtGui.getExpandfont());
 			width += gc.stringExtent(getText()).x;
 		}
+		if ( control != null ) {
+			width += control.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+		}
 		return width;
 	}
 

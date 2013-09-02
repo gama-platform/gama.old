@@ -121,11 +121,6 @@ public abstract class NumberEditor extends AbstractEditor {
 	protected abstract void checkButtons();
 
 	@Override
-	public boolean acceptTooltip() {
-		return false;
-	}
-
-	@Override
 	public Control getEditorControl() {
 		if ( expression == null ) { return null; }
 		return expression.getControl();

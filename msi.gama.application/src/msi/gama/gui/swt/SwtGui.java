@@ -71,13 +71,12 @@ public class SwtGui implements IGui {
 	private IAgent highlightedAgent;
 
 	static {
-		if(!GuiUtils.isInHeadLessMode())
-			{
-		System.out.println("Configuring user interface access through SWT");
-		GuiUtils.setSwtGui(new SwtGui());
-	}
-		else
+		if ( !GuiUtils.isInHeadLessMode() ) {
+			System.out.println("Configuring user interface access through SWT");
+			GuiUtils.setSwtGui(new SwtGui());
+		} else {
 			System.out.println("Configuring HEADLESS MODE");
+		}
 	}
 
 	protected SwtGui() {}
@@ -775,26 +774,19 @@ public class SwtGui implements IGui {
 	public final boolean openBatchPerspective() {
 		return openPerspective(PERSPECTIVE_HPC_ID);
 	}
-	
-	 String currentPerspectiveId = null; 
-	
-	public final boolean changePerspective()
-	{
+
+	String currentPerspectiveId = null;
+
+	public final boolean changePerspective() {
 		System.out.println("change perspective " + this.currentPerspectiveId);
-		if(currentPerspectiveId==PERSPECTIVE_SIMULATION_ID)
-		{
+		if ( currentPerspectiveId == PERSPECTIVE_SIMULATION_ID ) {
 			this.currentPerspectiveId = PERSPECTIVE_HPC_ID;
 			return openPerspective(PERSPECTIVE_HPC_ID);
-		}
-		else
-		{
-			if( currentPerspectiveId==PERSPECTIVE_MODELING_ID)
-			{
+		} else {
+			if ( currentPerspectiveId == PERSPECTIVE_MODELING_ID ) {
 				this.currentPerspectiveId = PERSPECTIVE_SIMULATION_ID;
 				return openPerspective(PERSPECTIVE_SIMULATION_ID);
-			}
-			else
-			{
+			} else {
 				this.currentPerspectiveId = PERSPECTIVE_MODELING_ID;
 				return openPerspective(PERSPECTIVE_MODELING_ID);
 			}
@@ -940,6 +932,7 @@ public class SwtGui implements IGui {
 
 			@Override
 			public void run() {
+				if ( exp.getParametersEditors() == null ) { return; }
 				try {
 					final ExperimentParametersView view =
 						(ExperimentParametersView) getPage().showView(ExperimentParametersView.ID, null,
@@ -963,6 +956,7 @@ public class SwtGui implements IGui {
 
 			@Override
 			public void run() {
+				if ( exp.getParametersEditors() == null ) { return; }
 				try {
 					final ExperimentParametersView view =
 						(ExperimentParametersView) getPage().showView(ExperimentParametersView.ID, null,

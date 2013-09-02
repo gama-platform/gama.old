@@ -4,7 +4,6 @@
  */
 package msi.gama.gui.views.actions;
 
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.views.*;
 import org.eclipse.jface.action.*;
@@ -36,9 +35,7 @@ public class HighlightColorItem extends GamaViewItem {
 
 	protected Image getImage() {
 		int[] components = ((LayeredDisplayView) view).getDisplaySurface().getHighlightColor();
-		if ( components == null ) {
-			components = GuiUtils.defaultHighlight;
-		}
+
 		rgb = new RGB(components[0], components[1], components[2]);
 		if ( image == null ) {
 			image = SwtGui.getImageDescriptor("/icons/button_focus.png").createImage();

@@ -21,7 +21,7 @@ package msi.gama.gui.parameters;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.kernel.experiment.IParameter;
+import msi.gama.kernel.experiment.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;
@@ -35,15 +35,14 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-public abstract class AbstractEditor implements SelectionListener, ModifyListener, EditorListener,
-/* MouseTrackListener, */Comparable<AbstractEditor>, IParameterEditor {
+public abstract class AbstractEditor implements SelectionListener, ModifyListener, Comparable<AbstractEditor>,
+	IParameterEditor {
 
 	public static final Color normal_bg = Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
 	public static final Color changed_bg = Display.getDefault().getSystemColor(SWT.COLOR_INFO_BACKGROUND);
 	private static int ORDER;
-	private final int order;
+	private final Integer order = ORDER++;
 	private final IAgent agent;
-	protected String[] stringTab = null;
 	private final String name;
 	protected Label titleLabel = null;
 	private Label unitLabel = null;
@@ -57,19 +56,41 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 	protected Number maxValue;
 	private Combo combo;
 	private CLabel fixedValue;
-	protected EditorToolTip tooltip;
 	protected volatile boolean internalModification;
 	private final EditorListener listener;
+	private boolean acceptPopup = true;
 
 	public AbstractEditor(final IParameter variable) {
 		this(null, variable, null);
 	}
 
-	@Override
-	public void valueModified(final Object newValue) throws GamaRuntimeException {
+	public AbstractEditor(final IParameter variable, final EditorListener l) {
+		this(null, variable, l);
+	}
+
+	public AbstractEditor(final IAgent a, final IParameter variable) {
+		this(a, variable, null);
+	}
+
+	public AbstractEditor(final IAgent a, final IParameter variable, final EditorListener l) {
+		param = variable;
+		agent = a;
+		isCombo = param.getAmongValue() != null;
+		isEditable = param.isEditable();
+		hasUnit = param.getUnitLabel() != null;
+		name = param.getTitle();
+		minValue = param.getMinValue();
+		maxValue = param.getMaxValue();
+		listener = l;
+	}
+
+	private final void valueModified(final Object newValue) throws GamaRuntimeException {
 		IAgent a = agent;
 		if ( a == null ) {
-			a = GAMA.getExperiment().getAgent();
+			IExperimentSpecies exp = GAMA.getExperiment();
+			if ( exp != null ) {
+				a = exp.getAgent();
+			}
 			param.setValue(newValue);
 		}
 		if ( a != null /* && a.getSpecies().hasVar(param.getName()) */) {
@@ -82,35 +103,14 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 		return Types.NO_TYPE;
 	}
 
-	public AbstractEditor(final IParameter variable, final EditorListener l) {
-		this(null, variable, l);
-	}
-
 	// In case the editor allows to edit the expression, should it be evaluated ?
 	public boolean evaluateExpression() {
 		return true;
 	}
 
-	public AbstractEditor(final IAgent a, final IParameter variable, final EditorListener l) {
-		order = ORDER++;
-		param = variable;
-		agent = a;
-		isCombo = param.getAmongValue() != null;
-		isEditable = param.isEditable();
-		hasUnit = param.getUnitLabel() != null;
-		name = param.getTitle();
-		minValue = param.getMinValue();
-		maxValue = param.getMaxValue();
-		listener = l != null ? l : this;
-	}
-
-	public Integer getOrder() {
-		return order;
-	}
-
 	@Override
 	public int compareTo(final AbstractEditor e) {
-		return getOrder().compareTo(e.getOrder());
+		return order.compareTo(e.order);
 	}
 
 	public Label getLabel() {
@@ -169,7 +169,7 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 		internalModification = false;
 	}
 
-	protected Object getParameterValue() throws GamaRuntimeException {
+	private Object getParameterValue() throws GamaRuntimeException {
 		return GAMA.run(new InScope() {
 
 			@Override
@@ -182,13 +182,17 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 	}
 
 	protected void setParameterValue(final Object val) {
-		if ( listener == null ) { return; }
+		// if ( listener == null ) { return; }
 		GuiUtils.run(new Runnable() {
 
 			@Override
 			public void run() {
 				try {
-					listener.valueModified(val);
+					if ( listener == null ) {
+						valueModified(val);
+					} else {
+						listener.valueModified(val);
+					}
 				} catch (final GamaRuntimeException e) {
 					e.printStackTrace();
 					e.addContext("Value of " + name + " cannot be modified");
@@ -201,8 +205,8 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 
 	protected GridData getParameterGridData() {
 		final GridData d = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		d.minimumWidth = 100;
-		d.widthHint = 300; // SWT.DEFAULT
+		d.minimumWidth = 50;
+		d.widthHint = 100; // SWT.DEFAULT
 		return d;
 	}
 
@@ -219,11 +223,11 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 		possibleValues = new GamaList(param.getAmongValue());
 		final String[] valuesAsString = new String[possibleValues.size()];
 		for ( int i = 0; i < possibleValues.size(); i++ ) {
-			if ( param.isLabel() ) {
-				valuesAsString[i] = possibleValues.get(i).toString();
-			} else {
-				valuesAsString[i] = StringUtils.toGaml(possibleValues.get(i));
-			}
+			// if ( param.isLabel() ) {
+			// valuesAsString[i] = possibleValues.get(i).toString();
+			// } else {
+			valuesAsString[i] = StringUtils.toGaml(possibleValues.get(i));
+			// }
 		}
 		combo = new Combo(composite, SWT.READ_ONLY | SWT.DROP_DOWN);
 		combo.setItems(valuesAsString);
@@ -245,7 +249,6 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 		return isValueDifferent(getOriginalValue());
 	}
 
-	@Override
 	public boolean isValueDifferent(final Object newVal) {
 		return newVal == null ? currentValue != null : !newVal.equals(currentValue);
 	}
@@ -259,12 +262,6 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 	public IParameter getParam() {
 		return param;
 	}
-
-	// public final void setTooltip(final String s) {
-	// if ( tooltip != null ) {
-	// tooltip.setText(s.trim());
-	// }
-	// }
 
 	protected String getTooltipText() {
 		String s = "name: " + param.getName() + "\n" + "type: " + getExpectedType().toString();
@@ -328,10 +325,6 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 		});
 	}
 
-	protected boolean acceptTooltip() {
-		return param.allowsTooltip();
-	}
-
 	@Override
 	public void modifyText(final ModifyEvent e) {}
 
@@ -351,6 +344,14 @@ public abstract class AbstractEditor implements SelectionListener, ModifyListene
 
 	protected void setOriginalValue(final Object originalValue) {
 		this.originalValue = originalValue;
+	}
+
+	public boolean acceptPopup() {
+		return acceptPopup;
+	}
+
+	public void acceptPopup(final boolean accept) {
+		acceptPopup = accept;
 	}
 
 }

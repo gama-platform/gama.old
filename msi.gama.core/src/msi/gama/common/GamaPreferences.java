@@ -4,11 +4,12 @@ import java.awt.Color;
 import java.util.*;
 import java.util.prefs.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.experiment.IParameter;
 import msi.gama.runtime.*;
+import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.IType;
-import org.eclipse.swt.graphics.RGB;
+import msi.gaml.types.*;
 
 /**
  * Class GamaPreferencesView.
@@ -21,6 +22,18 @@ public class GamaPreferences {
 
 	public static final String GENERAL = "General";
 	public static final String DISPLAY = "Display";
+	public static final String NOGROUP = "NOGROUP";
+	private static Preferences store = Preferences.userRoot().node("gama");
+	private static Map<String, Entry> prefs = new LinkedHashMap();
+	private static List<String> storeKeys;
+
+	static {
+		try {
+			storeKeys = new GamaList(store.keys());
+		} catch (BackingStoreException e) {
+			e.printStackTrace();
+		}
+	}
 
 	public static <T> Entry<T> create(final String key, final T value) {
 		return create(key, value, IType.STRING);
@@ -31,19 +44,23 @@ public class GamaPreferences {
 	}
 
 	public static <T> Entry<T> create(final String key, final String title, final T value, final int type) {
-		return new Entry(key).named(title).in(GENERAL).init(value).typed(type);
+		Entry e = new Entry(key).named(title).in(GENERAL).init(value).typed(type);
+		register(e);
+		return e;
 	}
 
-	public static class Entry<T> {
+	public static class Entry<T> implements IParameter {
 
 		String key, title, tab, group;
 		T value, initial;
-		int type;
+		IType type;
 		List<T> values;
 		Number min, max;
 		String activates;
 
 		private Entry(final String key) {
+			tab = GENERAL;
+			group = NOGROUP;
 			this.key = key;
 		}
 
@@ -89,7 +106,7 @@ public class GamaPreferences {
 		}
 
 		public Entry typed(final int type) {
-			this.type = type;
+			this.type = Types.get(type);
 			return this;
 		}
 
@@ -100,6 +117,102 @@ public class GamaPreferences {
 
 		public T getValue() {
 			return value;
+		}
+
+		@Override
+		public IType getType() {
+			return type;
+		}
+
+		@Override
+		public String getTitle() {
+			return title;
+		}
+
+		public String getKey() {
+			return key;
+		}
+
+		public List<T> getValues() {
+			return values;
+		}
+
+		@Override
+		public String getName() {
+			return key;
+		}
+
+		@Override
+		public String getCategory() {
+			return group;
+		}
+
+		@Override
+		public String getUnitLabel() {
+			return null;
+		}
+
+		@Override
+		public void setUnitLabel(final String label) {}
+
+		@Override
+		public Integer getDefinitionOrder() {
+			return 0;
+		}
+
+		@Override
+		public void setValue(final Object value) {
+			this.value = (T) value;
+		}
+
+		@Override
+		public Object value(final IScope scope) throws GamaRuntimeException {
+			return value;
+		}
+
+		@Override
+		public IType getContentType() {
+			return Types.NO_TYPE;
+		}
+
+		@Override
+		public String toGaml() {
+			return Cast.toGaml(value);
+		}
+
+		@Override
+		public Object getInitialValue(final IScope scope) {
+			return initial;
+		}
+
+		@Override
+		public Number getMinValue() {
+			return min;
+		}
+
+		@Override
+		public Number getMaxValue() {
+			return max;
+		}
+
+		@Override
+		public List getAmongValue() {
+			return values;
+		}
+
+		@Override
+		public boolean isEditable() {
+			return true;
+		}
+
+		// @Override
+		// public boolean isLabel() {
+		// return false;
+		// }
+
+		@Override
+		public Number getStepValue() {
+			return null;
 		}
 
 	}
@@ -116,7 +229,7 @@ public class GamaPreferences {
 	public static final Entry<String> CORE_RNG = create("core.rng", "Random number generator", IKeyword.MERSENNE,
 		IType.STRING).among(GENERATOR_NAMES).in(GENERAL).group("Random Number Generation");
 	public static final Entry<Boolean> CORE_SEED_DEFINED = create("core.seed_defined", "Define a default seed", false,
-		IType.BOOL).activates("core.seed");
+		IType.BOOL).activates("core.seed").in(GENERAL).group("Random Number Generation");
 	public static final Entry<Double> CORE_SEED = create("core.seed", "Default seed value", 0d, IType.FLOAT)
 		.in(GENERAL).group("Random Number Generation");
 	public static final Entry<Boolean> CORE_RND_EDITABLE = create("core.define_rng",
@@ -135,316 +248,164 @@ public class GamaPreferences {
 		IType.BOOL).in(GENERAL).group("Simulation errors");
 	public static final Entry<Boolean> CORE_SHOW_ERRORS = create("core.display_errors", "Display errors", true,
 		IType.BOOL).in(GENERAL).group("Simulation errors");
+	public static final Entry<Double> CORE_DELAY_STEP = create("core.delay_step",
+		"Default step for delay slider (in sec.)", 0.01, IType.FLOAT).in(GENERAL).group("Runtime");
 
 	// DISPLAY
-	public static final Entry<String> CORE_DISPLAY = create("core.display", "Default display method", "Java 2D",
-		IType.STRING).among("Java 2D", "OpenGL").in(DISPLAY).group("Properties");
+	public static final Entry<String> CORE_DISPLAY = create("core.display", "Default display method", "Java2D",
+		IType.STRING).among("Java2D", "OpenGL").in(DISPLAY).group("Properties");
 	public static final Entry<Boolean> CORE_SYNC = create("core.sync",
 		"Synchronize displays with simulations by default", false, IType.BOOL).in(DISPLAY).group("Properties");
 	public static final Entry<Boolean> CORE_OVERLAY = create("core.overlay", "Show display overlays by default", false,
 		IType.BOOL).in(DISPLAY).group("Properties");
 	public static final Entry<Boolean> CORE_ANTIALIAS = create("core.antialias", "Apply antialiasing by default",
 		false, IType.BOOL).in(DISPLAY).group("Properties");
+	public static final Entry<Color> CORE_BACKGROUND = create("core.background", "Default background color",
+		Color.white, IType.COLOR).in(DISPLAY).group("Properties");
+	public static final Entry<Color> CORE_HIGHLIGHT = create("core.highlight", "Default highlight color",
+		new Color(0, 200, 200), IType.COLOR).in(DISPLAY).group("Properties");
 	public static final Entry<String> CORE_SHAPE = create("core.shape", "Defaut shape to use for agents", "shape",
-		IType.STRING).among("circle", "square", "triangle", "point", "cube", "sphere").in(DISPLAY)
+		IType.STRING).among("shape", "circle", "square", "triangle", "point", "cube", "sphere").in(DISPLAY)
 		.group("Default aspect");
 	public static final Entry<Double> CORE_SIZE = create("core.size", "Default size to use for agents", 1.0,
 		IType.FLOAT).between(0.01, null).in(DISPLAY).group("Default aspect");
 	public static final Entry<Color> CORE_COLOR = create("core.color", "Default color to use for agents", Color.yellow,
 		IType.COLOR).in(DISPLAY).group("Default aspect");
 
-	private static Preferences storedPreferences = Preferences.userRoot().node("gama");
-
-	private static List<String> storedKeys;
-	private static Map<String, Object> preferences = new HashMap();
-
-	static {
+	private static void register(final Entry gp) {
+		IScope scope = GAMA.obtainNewScope();
+		prefs.put(gp.getKey(), gp);
+		String key = gp.key;
+		Object value = gp.value;
+		switch (gp.type.id()) {
+			case IType.INT:
+				if ( storeKeys.contains(key) ) {
+					gp.setValue(store.getInt(key, Cast.as(value, Integer.class)));
+				} else {
+					store.putInt(key, Cast.as(value, Integer.class));
+				}
+				break;
+			case IType.FLOAT:
+				if ( storeKeys.contains(key) ) {
+					gp.setValue(store.getDouble(key, Cast.as(value, Double.class)));
+				} else {
+					store.putDouble(key, Cast.as(value, Double.class));
+				}
+				break;
+			case IType.BOOL:
+				value = Cast.asBool(scope, value);
+				if ( storeKeys.contains(key) ) {
+					gp.setValue(store.getBoolean(key, Cast.as(value, Boolean.class)));
+				} else {
+					store.putBoolean(key, Cast.as(value, Boolean.class));
+				}
+				break;
+			case IType.STRING:
+				if ( storeKeys.contains(key) ) {
+					gp.setValue(store.get(key, Cast.as(value, String.class)));
+				} else {
+					store.put(key, (String) value);
+				}
+				break;
+			case IType.COLOR:
+				// Stores the preference as an int but create a color
+				if ( storeKeys.contains(key) ) {
+					gp.setValue(GamaColor.getInt(store.getInt(key, Cast.as(value, Integer.class))));
+				} else {
+					store.putInt(key, Cast.as(value, Integer.class));
+				}
+				break;
+			default:
+				if ( storeKeys.contains(key) ) {
+					gp.setValue(store.get(key, Cast.as(value, String.class)));
+				} else {
+					store.put(key, Cast.as(value, String.class));
+				}
+		}
+		if ( scope != null ) {
+			GAMA.releaseScope(scope);
+		}
 		try {
-			storedKeys = new GamaList(storedPreferences.keys());
+			store.flush();
 		} catch (BackingStoreException e) {
 			e.printStackTrace();
 		}
 	}
 
-	// 1. Methods to create a preference
-	public static void register(final String propertyKey, final IType type, final Object defaultValue) {
-		IScope scope = GAMA.obtainNewScope();
-		Object value = defaultValue;
-		if ( storedKeys.contains(propertyKey) && value == null ) {
-			switch (type.id()) {
-				case IType.INT:
-					value = storedPreferences.getInt(propertyKey, Cast.asInt(scope, defaultValue));
-					break;
-				case IType.FLOAT:
-					value = storedPreferences.getDouble(propertyKey, Cast.asFloat(scope, defaultValue));
-					break;
-				case IType.BOOL:
-					value = storedPreferences.getBoolean(propertyKey, Cast.asBool(scope, defaultValue));
-					break;
-				case IType.STRING:
-					value = storedPreferences.get(propertyKey, Cast.asString(scope, defaultValue));
-					break;
-				case IType.COLOR:
-					// Stores the preference as an int
-					int code = storedPreferences.getInt(propertyKey, Cast.asInt(scope, defaultValue));
-					GamaColor gc = GamaColor.getInt(code);
-					value = new RGB(gc.getRed(), gc.getGreen(), gc.getBlue());
-					break;
-				default:
-					value = storedPreferences.get(propertyKey, Cast.asString(scope, defaultValue));
+	private static void writeToStore(final Entry gp) {
+		String key = gp.key;
+		Object value = gp.value;
+		switch (gp.type.id()) {
+			case IType.INT:
+				store.putInt(key, (Integer) value);
+				break;
+			case IType.FLOAT:
+				store.putDouble(key, (Double) value);
+				break;
+			case IType.BOOL:
+				store.putBoolean(key, (Boolean) value);
+				break;
+			case IType.STRING:
+				store.put(key, (String) value);
+				break;
+			case IType.COLOR:
+				// Stores the preference as an int but create a color
+				int code = ((Color) value).getRGB();
+				store.putInt(key, code);
+				break;
+			default:
+				store.put(key, (String) value);
+		}
+	}
+
+	public static Map<String, Map<String, List<Entry>>> organizePrefs() {
+		Map<String, Map<String, List<Entry>>> result = new LinkedHashMap();
+		for ( Entry e : prefs.values() ) {
+			String tab = e.tab;
+			Map<String, List<Entry>> groups = result.get(tab);
+			if ( groups == null ) {
+				groups = new LinkedHashMap();
+				result.put(tab, groups);
 			}
-		} else {
-			switch (type.id()) {
-				case IType.INT:
-					value = Cast.asInt(scope, defaultValue);
-					storedPreferences.putInt(propertyKey, (Integer) value);
-					break;
-				case IType.FLOAT:
-					value = Cast.asFloat(scope, defaultValue);
-					storedPreferences.putDouble(propertyKey, (Double) value);
-					break;
-				case IType.BOOL:
-					value = Cast.asBool(scope, defaultValue);
-					storedPreferences.putBoolean(propertyKey, (Boolean) value);
-					break;
-				case IType.STRING:
-					value = Cast.asString(scope, defaultValue);
-					storedPreferences.put(propertyKey, (String) value);
-					break;
-				case IType.COLOR:
-					// Stores the preference as an int
-					int code = Cast.asInt(scope, defaultValue);
-					storedPreferences.putInt(propertyKey, code);
-					GamaColor gc = GamaColor.getInt(code);
-					value = new RGB(gc.getRed(), gc.getGreen(), gc.getBlue());
-					break;
-				default:
-					value = Cast.asString(scope, defaultValue);
-					storedPreferences.put(propertyKey, (String) value);
+			String group = e.group;
+			List<Entry> in_group = groups.get(group);
+			if ( in_group == null ) {
+				in_group = new ArrayList();
+				groups.put(group, in_group);
 			}
+			in_group.add(e);
+		}
+		return result;
+	}
+
+	public static void setNewPreferences(final Map<String, Object> modelValues) {
+		for ( String name : modelValues.keySet() ) {
+			Entry e = prefs.get(name);
+			if ( e == null ) {
+				continue;
+			}
+			e.set(modelValues.get(name));
+			writeToStore(e);
 			try {
-				storedPreferences.flush();
-			} catch (BackingStoreException e) {
-				e.printStackTrace();
+				store.flush();
+			} catch (BackingStoreException ex) {
+				ex.printStackTrace();
 			}
 		}
-		if ( value != null ) {
-			preferences.put(propertyKey, value);
+	}
+
+	/**
+	 * 
+	 */
+	public static void revertToDefaultValues(final Map<String, Object> modelValues) {
+		for ( String name : modelValues.keySet() ) {
+			Entry e = prefs.get(name);
+			if ( e == null ) {
+				continue;
+			}
+			modelValues.put(name, e.initial);
 		}
+
 	}
 
-	public static void register(final String propertyKey, final IType type) {
-		register(propertyKey, type, type.getDefault());
-	}
-
-	// public static void main(final String[] args) {
-	//
-	// try {
-	// System.out.println(Arrays.toString(storedPreferences.keys()));
-	// // System.out.println(storedPreferences.);
-	// } catch (BackingStoreException e1) {
-	// e1.printStackTrace();
-	// }
-	//
-	// Locale.setDefault(Locale.ENGLISH);
-	//
-	// final Display display = new Display();
-	// final Shell shell = new Shell(display);
-	// shell.setText("PreferenceWindow snippet");
-	// shell.setLayout(new FillLayout(SWT.VERTICAL));
-	//
-	// final Button button1 = new Button(shell, SWT.PUSH);
-	// button1.setText("Open preference window");
-	//
-	// final Map<String, Object> data = fillData();
-	//
-	// button1.addSelectionListener(new SelectionAdapter() {
-	//
-	// /**
-	// * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-	// */
-	// @Override
-	// public void widgetSelected(final SelectionEvent e) {
-	// final PreferenceWindow window = PreferenceWindow.create(shell, data);
-	//
-	// createDocumentTab(window);
-	// createInfoTab(window);
-	// createTerminalTab(window);
-	// createPrinterTab(window);
-	// createSystemTab(window);
-	//
-	// window.setSelectedTab(2);
-	//
-	// window.open();
-	// System.out.println(window.getValues());
-	// }
-	// });
-	//
-	// shell.pack();
-	// shell.open();
-	// SWTGraphicUtil.centerShell(shell);
-	//
-	// while (!shell.isDisposed()) {
-	// if ( !display.readAndDispatch() ) {
-	// display.sleep();
-	// }
-	// }
-	//
-	// display.dispose();
-	// }
-	//
-	// private static Map<String, Object> fillData() {
-	// final Map<String, Object> data = new HashMap<String, Object>();
-	// data.put("text", "A string");
-	// data.put("int", new Integer(42));
-	// data.put("float", "123.43");
-	// data.put("url", "http://www.google.fr/");
-	// data.put("password", "password");
-	// data.put("directory", "");
-	// data.put("file", "");
-	// data.put("textarea", "long long\nlong long\nlong long\ntext...");
-	// data.put("comboReadOnly", "Value 1");
-	// data.put("combo", "Other Value");
-	//
-	// data.put("cb1", new Boolean(true));
-	// // cb2 is not initialized
-	// data.put("slider", new Integer(40));
-	// data.put("spinner", new Integer(30));
-	// data.put("color", new RGB(120, 15, 30));
-	// // font is not initialized
-	//
-	// data.put("radio", "Radio button 3");
-	// data.put("cb3", new Boolean(true));
-	//
-	// // cb4 to cb14 are not initialised
-	//
-	// data.put("cacheSizeUnit", "Megabytes");
-	// data.put("openMode", "Double click");
-	//
-	// return data;
-	// }
-	//
-	// protected static void createDocumentTab(final PreferenceWindow window) {
-	// final PWTab documentTab = window.addTab(Display.getDefault().getSystemImage(SWT.ICON_CANCEL), "Document");
-	//
-	// documentTab.add(new PWLabel("Let's start with Text, Separator, Combo and button")).//
-	// add(new PWStringText("String :", "text").setAlignment(GridData.FILL)).//
-	// add(new PWIntegerText("Integer :", "int"));
-	// documentTab.add(new PWFloatText("Float :", "float"));
-	// documentTab.add(new PWURLText("URL :", "url"));
-	// documentTab.add(new PWPasswordText("Password :", "password"));
-	// documentTab.add(new PWDirectoryChooser("Directory :", "directory"));
-	// documentTab.add(new PWFileChooser("File :", "file"));
-	// documentTab.add(new PWTextarea("Textarea :", "textarea"));
-	//
-	// documentTab.add(new PWSeparator());
-	//
-	// documentTab.add(new PWCombo("Combo (read-only):", "comboReadOnly", "Value 1", "Value 2", "Value 3"));
-	// documentTab.add(new PWCombo("Combo (editable):", "combo", true, "Value 1", "Value 2", "Value 3"));
-	//
-	// documentTab.add(new PWSeparator("Titled separator"));
-	// documentTab.add(new PWButton("First button", new SelectionAdapter() {
-	//
-	// /**
-	// * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-	// */
-	// @Override
-	// public void widgetSelected(final SelectionEvent e) {
-	// Dialog.inform("Hi", "You pressed the first button");
-	// }
-	//
-	// }).setAlignment(GridData.END));
-	// }
-	//
-	// protected static void createInfoTab(final PreferenceWindow window) {
-	// final PWTab infoTab = window.addTab(Display.getDefault().getSystemImage(SWT.ICON_ERROR), "Info");
-	//
-	// infoTab.add(new PWLabel("Checkboxes, Slider,Spinner, Color chooser, Font chooser"));
-	// infoTab.add(new PWCheckbox("Checkbox 1", "cb1"));
-	// infoTab.add(new PWCheckbox("Checkbox 2", "cb2"));
-	//
-	// infoTab.add(new PWSeparator());
-	//
-	// infoTab.add(new PWScale("Slider : ", "slider", 0, 100, 10));
-	// infoTab.add(new PWSpinner("Spinner :", "spinner", 0, 100));
-	//
-	// infoTab.add(new PWSeparator());
-	//
-	// infoTab.add(new PWColorChooser("Color :", "color"));
-	// infoTab.add(new PWFontChooser("Font :", "font"));
-	//
-	// }
-	//
-	// protected static void createTerminalTab(final PreferenceWindow window) {
-	// final PWTab terminalTab = window.addTab(Display.getDefault().getSystemImage(SWT.ICON_INFORMATION), "Terminal");
-	//
-	// terminalTab.add(new PWLabel("Group, radio, indentation and group of buttons in a row"));
-	//
-	// final PWGroup group = new PWGroup("Group of buttons");
-	// group.add(new PWRadio("Radio buttons:", "radio", "Radio button 1", "Radio button 2", "Radio button 3"));
-	// terminalTab.add(group);
-	//
-	// terminalTab.add(new PWCheckbox("Checkbox 3 (indented)", "cb3").setIndent(30).setWidth(200));
-	//
-	// terminalTab.add(new PWRow().//
-	// add(new PWButton("First button", new SelectionAdapter() {})).//
-	// add(new PWButton("Second button", new SelectionAdapter() {})).//
-	// add(new PWButton("Third button", new SelectionAdapter() {})));
-	//
-	// }
-	//
-	// protected static void createPrinterTab(final PreferenceWindow window) {
-	// final PWTab printerTab = window.addTab(Display.getDefault().getSystemImage(SWT.ICON_QUESTION), "Printer");
-	//
-	// printerTab.add(new PWLabel("Play <i>with</i> <b>checkboxes</b>"));
-	//
-	// final PWGroup group = new PWGroup(false);
-	// group.add(new PWRow().add(new PWCheckbox("First choice", "cb4")).add(new PWCheckbox("Second choice", "cb5")));
-	// group.add(new PWRow().add(new PWCheckbox("Third choice", "cb6")).add(new PWCheckbox("Fourth choice", "cb7")));
-	// group.add(new PWRow().add(new PWCheckbox("Fifth choice", "cb8")).add(new PWCheckbox("Sixth choice", "cb9")));
-	// group.add(new PWRow().add(new PWCheckbox("Seventh choice", "cb10"))
-	// .add(new PWCheckbox("Eighth choice", "cb11")));
-	// printerTab.add(group);
-	//
-	// printerTab.add(new PWRow().//
-	// add(new PWCheckbox("Automatically check for new versions", "cb12").setWidth(300)).//
-	// add(new PWButton("Check for updates...", new SelectionAdapter() {}).setWidth(250)
-	// .setAlignment(GridData.END)));
-	//
-	// printerTab.add(new PWSeparator());
-	//
-	// final PWGroup group2 = new PWGroup(false);
-	// group2.add(new PWRow().add(new PWLabel("Aligned checkbox")).add(new PWCheckbox("Bla bla bla 1", "cb13")));
-	// group2.add(new PWRow().add(new PWLabel("")).add(new PWCheckbox("Bla bla bla 2", "cb14")));
-	// printerTab.add(group2);
-	// }
-	//
-	// protected static void createSystemTab(final PreferenceWindow window) {
-	// final PWTab systemTab = window.addTab(Display.getDefault().getSystemImage(SWT.ICON_SEARCH), "System");
-	//
-	// systemTab.add(new PWLabel("Rows..."));
-	//
-	// systemTab.add(new PWRow().add(new PWCombo("Cache size", "cacheSize", true, "128", "256", "512", "1024")).//
-	// add(new PWCombo(null, "cacheSizeUnit", "Bytes", "Kilobytes", "Megabytes")));
-	//
-	// systemTab.add(new PWRow().//
-	// add(new PWCombo("Display:", "display", "10", "20", "30", "40", "50")).//
-	// add(new PWLabel("per page")));
-	//
-	// systemTab.add(new PWSeparator());
-	//
-	// systemTab.add(new PWLabel("Enabled/disabled..."));
-	//
-	// systemTab.add(new PWCheckbox("Show information", "show").setWidth(150));
-	// systemTab.add(new PWGroup("Open Mode")
-	// .setEnabler(new EnabledIfTrue("show"))
-	// .//
-	// add(new PWRadio(null, "openMode", "Double click", "Single click"))
-	// .//
-	// add(new PWCheckbox("Select on hover", "selectonhover").setIndent(10).setWidth(200)
-	// .setEnabler(new EnabledIfEquals("openMode", "Single click"))).//
-	// add(new PWCheckbox("Open when using arrow keys", "openarrow").setIndent(10).setWidth(200)
-	// .setEnabler(new EnabledIfEquals("openMode", "Single click"))));
-	// }
-	//
 }

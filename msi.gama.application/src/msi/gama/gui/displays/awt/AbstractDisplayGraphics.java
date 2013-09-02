@@ -2,14 +2,13 @@ package msi.gama.gui.displays.awt;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import com.vividsolutions.jts.index.quadtree.IntervalSize;
 
 public abstract class AbstractDisplayGraphics implements IGraphics {
 
-	protected Color highlightColor = new Color(GuiUtils.defaultHighlight[0], GuiUtils.defaultHighlight[1],
-		GuiUtils.defaultHighlight[2]);
+	protected Color highlightColor = GamaPreferences.CORE_HIGHLIGHT.getValue();
 	protected final Rectangle2D rect = new Rectangle2D.Double(0, 0, 1, 1);
 	protected double currentAlpha = 1;
 	protected Integer widthOfLayerInPixels;

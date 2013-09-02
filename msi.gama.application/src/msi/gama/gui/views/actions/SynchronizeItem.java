@@ -4,6 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
+import msi.gama.common.GamaPreferences;
 import msi.gama.gui.views.*;
 import org.eclipse.jface.action.*;
 
@@ -41,7 +42,7 @@ public class SynchronizeItem extends GamaViewItem {
 				}
 
 			};
-
+		action.setChecked(GamaPreferences.CORE_SYNC.getValue());
 		return new ActionContributionItem(action);
 	}
 

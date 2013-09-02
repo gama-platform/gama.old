@@ -20,6 +20,7 @@ package msi.gama.gui.views;
 
 import java.awt.Color;
 import javax.swing.JComponent;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.interfaces.IDisplaySurface.OpenGL;
 import msi.gama.common.util.GuiUtils;
@@ -122,6 +123,8 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 		});
 
+		setSynchronized(GamaPreferences.CORE_SYNC.getValue());
+		getOutput().getSurface().setQualityRendering(GamaPreferences.CORE_SYNC.getValue());
 	}
 
 	protected Composite createSurfaceComposite() {
@@ -205,7 +208,14 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 			@Override
 			public boolean isAWTPermanentFocusLossForced() {
-				return true;
+				return false;
+			}
+
+			@Override
+			public void afterComponentCreatedSWTThread() {
+				if ( GamaPreferences.CORE_OVERLAY.getValue() ) {
+					overlay.toggle();
+				}
 			}
 
 			@Override

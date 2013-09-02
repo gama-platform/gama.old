@@ -30,7 +30,7 @@ public class RotationItem extends GamaViewItem {
 	@Override
 	protected IContributionItem createItem() {
 		IAction action =
-			new GamaAction("Apply rotation", "Rotation view ", IAction.AS_CHECK_BOX,
+			new GamaAction("Apply rotation", "Rotation view ", IAction.AS_PUSH_BUTTON,
 				getImageDescriptor("icons/button_rotation.png")) {
 
 				@Override

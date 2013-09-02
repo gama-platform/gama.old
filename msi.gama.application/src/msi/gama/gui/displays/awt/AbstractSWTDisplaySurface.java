@@ -27,7 +27,7 @@ public abstract class AbstractSWTDisplaySurface extends Composite implements IDi
 	}
 
 	private IDisplayOutput output;
-	protected int[] highlightColor = GuiUtils.defaultHighlight;
+	protected int[] highlightColor = new int[] { 0, 200, 200 };
 	protected IGraphics iGraphics;
 	protected String snapshotFileName;
 	protected static String snapshotFolder = "snapshots";

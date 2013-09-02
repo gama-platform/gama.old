@@ -63,10 +63,6 @@ public interface IParameter {
 
 	public abstract boolean isEditable();
 
-	public abstract boolean isLabel();
-
-	public abstract boolean allowsTooltip();
-
 	public abstract Number getStepValue();
 
 	public interface Batch extends IParameter {

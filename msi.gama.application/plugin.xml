@@ -518,8 +518,15 @@
                id="msi.gama.application.common"
                label="Common controls">
             <command
+                  commandId="msi.gama.application.preferences"
+                  icon="icons/application-form.png"
+                  label="Preferences"
+                  style="push"
+                  tooltip="Open preferences">
+            </command>
+            <command
                   commandId="msi.gama.application.commands.SwitchPerspective"
-                  icon="icons/button_switch.png"
+                  icon="icons/applications.png"
                   label="Switch Perspective"
                   style="push">
                <visibleWhen
@@ -1030,6 +1037,10 @@
             class="msi.gama.gui.swt.commands.ShowErrors"
             commandId="msi.gama.application.ShowErrors">
       </handler>
+      <handler
+            class="msi.gama.gui.swt.commands.PreferencesHandler"
+            commandId="msi.gama.application.preferences">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.services">
@@ -1361,6 +1372,10 @@
       <command
             id="msi.gama.application.ShowErrors"
             name="Display errors and warnings">
+      </command>
+      <command
+            id="msi.gama.application.preferences"
+            name="Preferences">
       </command>
    </extension>
  <extension

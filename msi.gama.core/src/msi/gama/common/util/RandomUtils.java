@@ -308,9 +308,6 @@ public class RandomUtils implements SeedGenerator {
 	}
 
 	public String getGeneratorName() {
-		if ( generatorName == null ) {
-			generatorName = GamaPreferences.CORE_RNG.getValue();
-		}
 		return generatorName;
 	}
 

@@ -30,7 +30,7 @@ public class SplitLayerItem extends GamaViewItem {
 	@Override
 	protected IContributionItem createItem() {
 		IAction action =
-			new GamaAction("Apply splitting", "Split layers in 3D", IAction.AS_CHECK_BOX,
+			new GamaAction("Apply splitting", "Split layers in 3D", IAction.AS_PUSH_BUTTON,
 				getImageDescriptor("icons/split_layer_button.png")) {
 
 				@Override

@@ -231,25 +231,6 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 		log = new FileOutput(output.getLiteral(IKeyword.TO), dataString, new ArrayList(parameters.keySet()), this);
 	}
 
-	// @Override
-	// public ParametersSet getCurrentSolution() throws GamaRuntimeException {
-	// return new ParametersSet(parameters, false);
-	// }
-
-	// @Override
-	// public Double getCurrentSeed() {
-	// final Object o = getParameter(IKeyword.SEED).getInitialValue(stack);
-	// if ( o == null ) { return null; }
-	// if ( o instanceof Number ) { return ((Number) o).doubleValue(); }
-	// return null;
-	// }
-
-	// @Override
-	// protected void schedule() {
-	// if ( agent == null ) { return; }
-	//
-	// }
-
 	@Override
 	public void open() {
 		createAgent();
@@ -274,6 +255,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 
 	@Override
 	public ItemList getParametersEditors() {
+		if ( parameters.isEmpty() && explorableParameters.isEmpty() ) { return null; }
 		if ( parametersEditors == null ) {
 			Collection<IParameter> params = new ArrayList(getParameters().values());
 			params.addAll(explorableParameters.values());
@@ -341,21 +323,6 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 			getName()); }
 		return v;
 	}
-
-	// public void addRegularParameter(final IParameter p) {
-	// if ( registerParameter(p) ) {
-	// regularParameters.add(p);
-	// }
-	// }
-
-	// @Override
-	// public IList<String> getParametersNames() {
-	// final GamaList<String> result = new GamaList<String>();
-	// for ( final IParameter v : regularParameters ) {
-	// result.add(v.getName());
-	// }
-	// return result;
-	// }
 
 	@Override
 	public Map<String, IParameter> getParameters() {
@@ -457,17 +424,10 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 	}
 
 	public void addExplorableParameter(final IParameter.Batch p) {
-		// if ( registerParameter(p) ) {
 		p.setCategory(EXPLORABLE_CATEGORY_NAME);
 		p.setUnitLabel(null);
 		explorableParameters.put(p.getName(), p);
-		// }
 	}
-
-	/**
-	 * @param p
-	 * @return
-	 */
 
 	@Override
 	public Map<String, IParameter.Batch> getExplorableParameters() {

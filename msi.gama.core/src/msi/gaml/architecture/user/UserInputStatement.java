@@ -140,15 +140,10 @@ public class UserInputStatement extends AbstractPlaceHolderStatement implements 
 		return true;
 	}
 
-	@Override
-	public boolean isLabel() {
-		return false;
-	}
-
-	@Override
-	public boolean allowsTooltip() {
-		return true;
-	}
+	// @Override
+	// public boolean isLabel() {
+	// return false;
+	// }
 
 	@Override
 	public Number getStepValue() {

@@ -97,6 +97,11 @@ public class ParameterExpandBar extends Composite implements IPopupProvider {
 	 * @see Widget#checkSubclass
 	 * @see Widget#getStyle
 	 */
+
+	public ParameterExpandBar(final Composite parent, final int style) {
+		this(parent, style, false, false, null);
+	}
+
 	public ParameterExpandBar(final Composite parent, final int style, final boolean isClosable,
 		final boolean isPausable, final ItemList underlyingObjects) {
 		super(parent, checkStyle(style));
@@ -261,7 +266,9 @@ public class ParameterExpandBar extends Composite implements IPopupProvider {
 		System.arraycopy(items, index + 1, items, index, --itemCount - index);
 		items[itemCount] = null;
 		// item.redraw();
-		underlyingObjects.removeItem(item.getData());
+		if ( underlyingObjects != null ) {
+			underlyingObjects.removeItem(item.getData());
+		}
 		layoutItems(index, true);
 		if ( this.isDisposed() ) { return; }
 		this.redraw();
@@ -402,6 +409,7 @@ public class ParameterExpandBar extends Composite implements IPopupProvider {
 	}
 
 	public void updateItemNames() {
+		if ( underlyingObjects == null ) { return; }
 		for ( int i = 0; i < itemCount; i++ ) {
 			items[i].setText(underlyingObjects.getItemDisplayName(items[i].getData(), items[i].getText()));
 		}
@@ -567,10 +575,14 @@ public class ParameterExpandBar extends Composite implements IPopupProvider {
 			}
 			if ( isPausable && item.pauseRequested(x, y) ) {
 				if ( item.isPaused ) {
-					underlyingObjects.resumeItem(item.getData());
+					if ( underlyingObjects != null ) {
+						underlyingObjects.resumeItem(item.getData());
+					}
 					item.isPaused = false;
 				} else {
-					underlyingObjects.pauseItem(item.getData());
+					if ( underlyingObjects != null ) {
+						underlyingObjects.pauseItem(item.getData());
+					}
 					item.isPaused = true;
 				}
 				showItem(item);
@@ -650,7 +662,7 @@ public class ParameterExpandBar extends Composite implements IPopupProvider {
 
 	void setFocusItem(final ParameterExpandItem focusItem) {
 		this.focusItem = focusItem;
-		if ( focusItem != null ) {
+		if ( focusItem != null && underlyingObjects != null ) {
 			underlyingObjects.focusItem(focusItem.getData());
 		}
 	}
