@@ -364,7 +364,9 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 			surface.setSnapshotFileName(getName() + "_snapshot");
 			surface.setAutoSave(autosave, (int) imageDimension.getX(), (int) imageDimension.getY());
 		}
-		{
+		// AD: Fix for a bug introduced the "headless" things. I dont understand why we need to separate the two cases,
+		// but at least only one surface is created...
+		else {
 			surface = GuiUtils.getDisplaySurfaceFor(displayType, this, w, h);
 
 			// ImageDisplaySurface
