@@ -4,8 +4,7 @@ global {
     
     
     file shape_file_river <- file('../includes/Mekong_River/majortribdskratie.shp') parameter: 'Shapefile for the rivers:' category: 'GIS' ;
-	
-    file mntImageRaster <- file('../includes/Mekong_River/DEM_VMD_rgb_100.png') ;
+	file mntImageRaster <- file('../includes/Mekong_River/DEM_VMD_rgb_100.png') ;
     int nb_rows <- 100;
     int nb_lines <- 100;
 	

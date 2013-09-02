@@ -5,7 +5,7 @@
 model Graphic_primitive
 
 global{
-	file dem parameter: 'DEM' <- file('../includes/DEM-Vulcano/DEM_50.png');
+	file dem parameter: 'DEM' <- file('../includes/DEM-Vulcano/DEM.png');
 	file texture parameter: 'Texture' <- file('../includes/DEM-Vulcano/Texture.png');
 }
 

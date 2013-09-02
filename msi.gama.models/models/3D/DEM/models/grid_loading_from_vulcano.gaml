@@ -59,16 +59,18 @@ experiment gridloading type: gui {
 			grid cell texture:map_texture triangulation:false;
 			species people aspect:base;
 		}
+		
+		display gridNonTextured type:opengl ambient_light:100{
+			grid cell;
+			species people aspect:base;
+		}
 				
 		display gridTexturedTriangulated type:opengl ambient_light:100{
 			grid cell texture:map_texture text:false triangulation:true;
 			species people aspect:base;
 		}
 		
-		display gridNonTextured type:opengl ambient_light:100{
-			grid cell;
-			species people aspect:base;
-		}
+		
 		
 	}
 }
