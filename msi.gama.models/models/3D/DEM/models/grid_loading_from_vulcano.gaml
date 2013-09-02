@@ -1,7 +1,10 @@
 /**
  *  gridloading
  *  Author: arnaudgrignard
- *  Description: 
+ *  Description: This create a DEM representation from an .asc file
+ *  Cells are created with the parameter file:grid_file that will initialize the z value of each cell
+ *  
+ * 
  */
 
 model gridloading
@@ -18,8 +21,6 @@ global {
             set location <- location add_z z;
 		}
 	}
-	
-	
 }
 
 entities {
@@ -40,7 +41,6 @@ entities {
             do wander;
             float z <- (cell(location)).grid_value;                 
             set location <- location add_z z;
-            //write "location" + self.location + "z" + z;
         }
         
         aspect base{
@@ -55,13 +55,18 @@ entities {
 
 experiment gridloading type: gui {
 	output {
-		display gridTextured type:opengl ambient_light:100{
+		display gridTextured type:opengl ambient_light:255{
 			grid cell texture:map_texture triangulation:false;
 			species people aspect:base;
 		}
 				
-		display grid_3D type:opengl ambient_light:100{
+		display gridTexturedTriangulated type:opengl ambient_light:100{
 			grid cell texture:map_texture text:false triangulation:true;
+			species people aspect:base;
+		}
+		
+		display gridNonTextured type:opengl ambient_light:100{
+			grid cell;
 			species people aspect:base;
 		}
 		

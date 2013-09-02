@@ -1,5 +1,6 @@
 /**
  *  Author: Arnaud Grignard
+ *  Digital Model Elevation representation of Vulcano.
  */
 model Graphic_primitive
 
@@ -10,15 +11,15 @@ global{
 
 environment width:100 height:100;
 
-experiment display type: gui {
+experiment DEM type: gui {
 	output {
-		display Vulcano  type: opengl ambient_light:255 {
+		display VulcanoTextured  type: opengl ambient_light:255 draw_env:false{
 			graphics GraphicPrimitive {
 				draw dem(dem, texture,0.1);
 			}
 		}
 		
-		display VulcanoDEM  type: opengl ambient_light:255 {
+		display VulcanoDEM  type: opengl ambient_light:255 draw_env:false{
 			graphics GraphicPrimitive {
 				draw dem(dem, dem,0.1);
 			}
