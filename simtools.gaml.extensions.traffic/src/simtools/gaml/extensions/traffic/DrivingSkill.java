@@ -249,9 +249,11 @@ public class DrivingSkill extends MovingSkill {
 		// Geometry frontRectangle = basicLine.buffer(tolerance, 3, /**TODO To be modified, to find
 		// the right constant name**/2);
 		// PreparedPolygon fr2 = new PreparedPolygon((Polygonal) frontRectangle);
+		
 		while (neighbours.hasNext()) {
 			final IAgent ia = neighbours.next();
-			if ( !obsSpecies.contains(ia.getSpecies()) ) {
+			
+			if (ia.getLocation().equals(agent.getLocation()) || !obsSpecies.contains(ia.getSpecies()) ) {
 				continue;
 			}
 			// if(fr2.intersects(ia.getLocation().getInnerGeometry())){
@@ -339,6 +341,7 @@ public class DrivingSkill extends MovingSkill {
 				distance =
 					avoidCollision(scope, agent, distance, livingSpace, tolerance, currentLocation, pt, nbLanes,
 						obsSpecies);
+				
 				// that's the real distance to move
 				// Agent moves
 				if ( distance == 0 ) {
