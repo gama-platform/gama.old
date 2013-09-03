@@ -29,7 +29,7 @@ public class MSSQLConnection extends SqlConnection {
 
 	private static final boolean DEBUG = false; // Change DEBUG = false for release version
 	private static final String WKT2GEO = "geometry::STGeomFromText";
-
+	private static final String SRID="0";           //must solve later
 	public MSSQLConnection() {
 		super();
 	}
@@ -265,7 +265,7 @@ public class MSSQLConnection extends SqlConnection {
 						geo =scope.getTopology().getGisUtils().inverseTransform(geo);						
 					}
 					//System.out.println(geo.toString());
-					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "')";
+					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "', "+SRID+")";
 					
 				} else if ( ((String) col_Types.get(i)).equalsIgnoreCase(CHAR) ||
 					((String) col_Types.get(i)).equalsIgnoreCase(VARCHAR) ||
@@ -354,7 +354,7 @@ public class MSSQLConnection extends SqlConnection {
 						geo =scope.getTopology().getGisUtils().inverseTransform(geo);						
 					}
 					//System.out.println(geo.toString());
-					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "')";
+					valueStr = valueStr + WKT2GEO + "('" + geo.toString() + "', "+SRID+")";
 
 				} else if ( ((String) col_Types.get(i)).equalsIgnoreCase(CHAR) ||
 					((String) col_Types.get(i)).equalsIgnoreCase(VARCHAR) ||
