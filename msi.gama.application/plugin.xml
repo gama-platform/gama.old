@@ -997,11 +997,9 @@
             class="msi.gama.gui.swt.commands.CancelRun"
             commandId="msi.gama.application.commands.Cancel">
          <activeWhen>
-            <and>
-               <reference
-                     definitionId="isInSimulationPerspective">
-               </reference>
-            </and>
+            <reference
+                  definitionId="isInSimulationPerspective">
+            </reference>
          </activeWhen>
       </handler>
       <handler
@@ -1040,6 +1038,15 @@
       <handler
             class="msi.gama.gui.swt.commands.PreferencesHandler"
             commandId="msi.gama.application.preferences">
+      </handler>
+      <handler
+            class="msi.gama.gui.swt.commands.ResetSimulationPerspective"
+            commandId="org.eclipse.ui.window.resetPerspective">
+         <activeWhen>
+            <reference
+                  definitionId="isInSimulationPerspective">
+            </reference>
+         </activeWhen>
       </handler>
    </extension>
    <extension
