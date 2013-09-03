@@ -1645,9 +1645,11 @@ public abstract class Spatial {
 	public static abstract class ThreeD {
 
 		@operator(value = { "add_z" })
-		@doc(value = "add_z", comment = "Return a geometry with a z value"
+		@doc(deprecated = "use set location instead",value = "add_z", comment = "Return a geometry with a z value"
 			+ "The add_z operator set the z value of the whole shape."
 			+ "For each point of the cell the same z value is set.", examples = { "set shape <- shape add_z rnd(100);" }, see = { "add_z_pt" })
+
+		@Deprecated
 		public static IShape add_z(final IShape g, final Double z) {
 			final Coordinate[] coordinates = g.getInnerGeometry().getCoordinates();
 			((GamaPoint) g.getLocation()).z = z;
