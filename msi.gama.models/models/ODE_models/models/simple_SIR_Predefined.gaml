@@ -34,7 +34,7 @@ entities {
 		//		}
 		
 		// Parameters must follow exact order S, I, R, t  and N,beta,gamma		
-		equation eqSIR type:SIR vars: [S,I,R,t] params: [N,beta,gamma]{}
+		equation eqSIR type:SIR vars: [S,I,R,t] params: [N,beta,gamma] ;
 
 		solve eqSIR method:rk4 step:h;
 	}

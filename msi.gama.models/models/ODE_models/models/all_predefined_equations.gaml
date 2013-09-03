@@ -45,7 +45,7 @@ entities {
    		float beta<-0.4;
 
 		// must be followed with exact order S, I, t  and N,beta
-		equation eqSI type: SI vars: [S,I,t] params: [N,beta] {}
+		equation eqSI type: SI vars: [S,I,t] params: [N,beta] ;
 
 		solve eqSI method:rk4 step:h;
 	}
@@ -77,7 +77,7 @@ entities {
    		float gamma<-0.01;    		
 
 		// must be followed with exact order S, I, t  and N,beta
-		equation eqSIS type: SIS vars: [S,I,t] params: [N,beta,gamma] {}
+		equation eqSIS type: SIS vars: [S,I,t] params: [N,beta,gamma] ;
 
 		solve eqSIS method:rk4 step:h;
 	}
@@ -111,7 +111,7 @@ entities {
    		float gamma<-0.01; 
 
 		// must be followed with exact order S, I, R, t  and N,beta,delta
-		equation eqSIR type:SIR vars:[S,I,R,t] params:[N,beta,gamma]{}
+		equation eqSIR type:SIR vars:[S,I,R,t] params:[N,beta,gamma] ;
 
 		solve eqSIR method:rk4 step:h;
 	}
@@ -149,7 +149,7 @@ entities {
    		float mu <- 0.01;
 
 		// must be followed with exact order S, I, R, t  and N,beta,delta
-		equation eqSIRS type: SIRS vars: [S,I,R,t] params: [N,beta,gamma,omega,mu]{}
+		equation eqSIRS type: SIRS vars: [S,I,R,t] params: [N,beta,gamma,omega,mu] ;
 
 		solve eqSIRS method:rk4 step:h;
 	}
@@ -190,7 +190,7 @@ entities {
    		float mu <- 0.01;
 
 		// must be followed with exact order S, E, I, R, t  and N,beta,gamma,sigma,mu
-		equation eqSEIR type: SEIR vars: [S,E,I,R,t] params: [N,beta,gamma,sigma,mu] {}		
+		equation eqSEIR type: SEIR vars: [S,E,I,R,t] params: [N,beta,gamma,sigma,mu] ;
 
 		solve eqSEIR method:rk4 step:h;
 	}
@@ -230,7 +230,7 @@ entities {
 		float delta <- 0.85;
 
 		// must be followed with exact order x, y, t  and  alpha,beta,delta,gamma
-		equation eqLV type: LV vars: [x,y,t] params: [alpha,beta,delta,gamma] {}
+		equation eqLV type: LV vars: [x,y,t] params: [alpha,beta,delta,gamma] ;
 
 		solve eqLV method:rk4 step:h;
 	}
