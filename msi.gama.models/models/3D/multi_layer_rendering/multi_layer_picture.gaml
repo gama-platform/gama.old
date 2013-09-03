@@ -8,14 +8,12 @@ global {
 
 	init { 			
 		 loop fileName over: folder {	 	
-		 	if(string(fileName) contains '.png' or string(fileName) contains '.jpg'){
-		 			
+		 	if(string(fileName) contains '.png' or string(fileName) contains '.jpg'){ 			
 			 	create ImageAgent{
-			      //set location <-{layerSize/2,layerSize/2};
 				  set location <-{0,0};
 				  set image<-file(folder.path+"/"+fileName);
 				  set label<-fileName;
-				  set shape <- shape add_z(layerSize*nb_layer);			
+				  set location <- {location.x,location.y,layerSize*nb_layer};
 			    }
 			    set nb_layer <- nb_layer+1;	
 		 	} 	

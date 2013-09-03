@@ -30,7 +30,7 @@ global {
 			set location <-{0,0};
 			set image<-images at nb_layer;
 			set label<-labels at nb_layer;
-			set shape <- shape add_z(layerSize*nb_layer);
+			set location <-{location.x,location.y,layerSize*nb_layer};
 			set nb_layer <- nb_layer+1;			
 		}
 		

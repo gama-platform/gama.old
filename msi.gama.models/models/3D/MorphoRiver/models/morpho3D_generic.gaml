@@ -33,8 +33,8 @@ global {
 		}
 		
 		create riverPlan{
-			set location <- {width_of_environment/2,height_of_environment/2};	
-			set river_plan <- rectangle({width_of_environment,height_of_environment}) add_z -1000; 
+			set location <- {width_of_environment/2,height_of_environment/2,-1000};	
+			set river_plan <- rectangle({width_of_environment,height_of_environment}) ; 
 		}
 	
 	}
@@ -102,7 +102,8 @@ entities {
 		reflex update{
 			//set location <- {width_of_environment/2,height_of_environment/2,  rnd(meanDepth/4)}; 
 			
-			set river_plan <- rectangle({width_of_environment,height_of_environment}) add_z -rnd(meanDepth/4); 
+			set river_plan <- rectangle({width_of_environment,height_of_environment});
+			set location <-{location.x,location.y,-rnd(meanDepth/4)}; 
 		}
 		aspect default { 
 			draw geometry: river_plan color: rgb('blue') empty:isEmpty;

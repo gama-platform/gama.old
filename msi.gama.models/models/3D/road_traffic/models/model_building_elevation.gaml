@@ -21,6 +21,9 @@ global {
 				color <- rgb('blue') ;
 			} 
 			set height <-10 + rnd(90);
+			//set location <- location add_z 100;
+			set location <- {location.x,location.y, 100};
+			
 		}
 		create road from: shape_file_roads ;
 		the_graph <- as_edge_graph(list(road));
@@ -42,6 +45,7 @@ entities {
 		string type; 
 		rgb color <- rgb('gray')  ;
 		int height;
+
 		aspect base {
 			draw shape color: color depth: height ;
 		}

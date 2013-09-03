@@ -27,7 +27,7 @@ global {
 	    
 		create ball number: 1000{
 			set radius <-2;
-			set location <-  {offset + rnd(width_of_environment-offset*2), offset + rnd(height_of_environment- offset*2)} add_z  (offset + rnd(width_of_environment-offset*2));
+			set location <-  {offset + rnd(width_of_environment-offset*2), offset + rnd(height_of_environment- offset*2),offset + rnd(width_of_environment-offset*2)};
 			set mass <-0.001;
 			set collisionBound <-  ["shape"::"sphere","radius"::radius];
 		}

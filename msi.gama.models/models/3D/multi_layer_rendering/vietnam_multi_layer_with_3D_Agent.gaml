@@ -30,19 +30,17 @@ global {
 			set location <-{layerSize/2,layerSize/2};
 			set image<-images at nb_layer;
 			set label<-labels at nb_layer;
-			set shape <- shape add_z(layerSize*nb_layer);
+			set location <- {location.x,location.y,layerSize*nb_layer};
+	
 			
 			create 	ThreeDAgent number: 10 {
 				add self to:myself.my3DAgents;
 				set parent<-myself;
-				set shape <- shape add_z (layerSize*nb_layer);
+				set location <- {location.x,location.y,layerSize*nb_layer};
 			}
 			
 			set nb_layer <- nb_layer+1;			
-		}
-		
-		
-			
+		}		
 	}  
 } 
  

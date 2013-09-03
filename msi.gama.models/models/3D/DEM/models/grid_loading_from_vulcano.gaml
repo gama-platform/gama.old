@@ -18,7 +18,7 @@ global {
 	init{
 		create people number:100 {
 			float z <- (cell(location)).grid_value;                 
-            set location <- location add_z z;
+            set location <- {location.x,location.y,z};
 		}
 	}
 }
@@ -40,7 +40,7 @@ entities {
         reflex move{
             do wander;
             float z <- (cell(location)).grid_value;                 
-            set location <- location add_z z;
+            set location <- {location.x,location.y,z};
         }
         
         aspect base{
