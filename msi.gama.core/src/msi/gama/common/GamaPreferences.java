@@ -22,12 +22,15 @@ public class GamaPreferences {
 
 	public static final String GENERAL = "General";
 	public static final String DISPLAY = "Display";
-	public static final String NOGROUP = "NOGROUP";
+	public static final String CODE = "Code";
+	public static final String EDITOR = "Editor";
+	public static final String WORKSPACE = "Workspace";
 	private static Preferences store = Preferences.userRoot().node("gama");
 	private static Map<String, Entry> prefs = new LinkedHashMap();
 	private static List<String> storeKeys;
 
 	static {
+
 		try {
 			storeKeys = new GamaList(store.keys());
 		} catch (BackingStoreException e) {
@@ -60,7 +63,6 @@ public class GamaPreferences {
 
 		private Entry(final String key) {
 			tab = GENERAL;
-			group = NOGROUP;
 			this.key = key;
 		}
 

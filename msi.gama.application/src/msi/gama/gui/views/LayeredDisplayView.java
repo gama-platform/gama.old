@@ -166,6 +166,16 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 			@Override
 			public void mouseMoved(final java.awt.event.MouseEvent e) {
+				GuiUtils.run(new Runnable() {
+
+					@Override
+					public void run() {
+						if ( surfaceComposite.getDisplay() != null && !surfaceComposite.isFocusControl() ) {
+							GuiUtils
+								.debug("LayeredDisplayView.createSurfaceComposite().new MouseMotionAdapter() {...}.mouseMoved : the surface composite does not have the focus");
+						}
+					}
+				});
 				GuiUtils.asyncRun(displayOverlay);
 			}
 
@@ -208,7 +218,12 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 			@Override
 			public boolean isAWTPermanentFocusLossForced() {
-				return false;
+				return true;
+			}
+
+			@Override
+			public boolean setFocus() {
+				return super.setFocus();
 			}
 
 			@Override
