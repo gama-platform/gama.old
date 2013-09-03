@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -23,7 +23,7 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.ui.*;
 import org.eclipse.ui.internal.WorkbenchWindow;
 
-public class ActionWiper implements IStartup, IPerspectiveListener/* , IPartListener */{
+public class ActionWiper extends PerspectiveAdapter implements IStartup/* , IPartListener */{
 
 	// private static final String[] ACTIONS_2_WIPE = new String[] { "org.eclipse.ui.edit.text.actionSet.presentation",
 	// "org.eclipse.jdt.ui.edit.text.java.toggleMarkOccurrences", "org.eclipse.cdt.ui.text.c.actionSet.presentation",
@@ -105,7 +105,12 @@ public class ActionWiper implements IStartup, IPerspectiveListener/* , IPartList
 	}
 
 	@Override
-	public void perspectiveChanged(final IWorkbenchPage p, final IPerspectiveDescriptor d, final String c) {}
+	public void perspectiveChanged(final IWorkbenchPage p, final IPerspectiveDescriptor d, final String c) {
+		if ( c.equals(IWorkbenchPage.CHANGE_RESET_COMPLETE) ) {
+			//GuiUtils.debug("ActionWiper.perspectiveChanged : Complete");
+			perspectiveActivated(p, d);
+		}
+	}
 
 	// @Override
 	// public void partBroughtToTop(final IWorkbenchPart part) {}
