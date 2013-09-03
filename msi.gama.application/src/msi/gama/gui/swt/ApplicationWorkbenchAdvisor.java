@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -34,8 +34,6 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
 
 public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
-
-	private static final String PERSPECTIVE_MODELING_ID = "msi.gama.application.perspectives.ModelingPerspective";
 
 	@Override
 	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(final IWorkbenchWindowConfigurer configurer) {
@@ -74,7 +72,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
 	@Override
 	public String getInitialWindowPerspectiveId() {
-		return PERSPECTIVE_MODELING_ID;
+		return ModelingPerspective.ID;
 	}
 
 	/**
@@ -83,34 +81,6 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 	 */
 	@Override
 	public boolean preShutdown() {
-
-		// /* Save workspace before closing the application */
-		// final MultiStatus status = new MultiStatus(IGui.PLUGIN_ID, 0, "Saving Workspace....",
-		// null);
-		// IRunnableWithProgress runnable = new IRunnableWithProgress() {
-		//
-		// @Override
-		// public void run(final IProgressMonitor monitor) {
-		// try {
-		// IWorkspace ws = ResourcesPlugin.getWorkspace();
-		// status.merge(ws.save(true, monitor));
-		// } catch (CoreException e) {
-		// status.merge(e.getStatus());
-		// }
-		// }
-		// };
-		// try {
-		// new ProgressMonitorDialog(null).run(false, false, runnable);
-		// } catch (InvocationTargetException e) {
-		// e.printStackTrace();
-		// } catch (InterruptedException e) {
-		// e.printStackTrace();
-		// }
-		// if ( !status.isOK() ) {
-		// ErrorDialog.openError(Display.getDefault().getActiveShell(), "Error...",
-		// "Error while saving workspace", status);
-		// }
-		/* Close the current experiment */
 		try {
 			GAMA.controller.shutdown();
 		} catch (Exception e) {
