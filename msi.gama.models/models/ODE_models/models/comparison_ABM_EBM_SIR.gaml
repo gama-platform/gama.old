@@ -129,7 +129,7 @@ entities {
 		float S ; 
 		float R ; 
 	
-		equation eqSIR type:SIR vars: [S,I,R,t] params: [N,beta,gamma]{}
+		equation eqSIR type:SIR vars: [S,I,R,t] params: [N,beta,gamma] ;
 
 		solve eqSIR method:rk4 step:0.5 cycle_length: 2;	
 	}
