@@ -286,7 +286,6 @@ public class DrawStatement extends AbstractStatementSequence {
 		Rectangle2D executeOn(final IScope scope, final IGraphics gr) throws GamaRuntimeException {
 			final IShape g1 = Cast.asGeometry(scope, item.value(scope));
 			if ( g1 == null ) {
-				// GuiUtils.debug("DrawStatement.ShapeExecuter.executeOn : null shape");
 				return null;
 			}
 			final IShape g2 = Spatial.Transformations.at_location(scope, g1, getLocation(scope, g1));

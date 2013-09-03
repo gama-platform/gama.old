@@ -1666,7 +1666,7 @@ public abstract class Spatial {
 		}
 
 		@operator("dem")
-		@doc(value = "A polygon that equivalent to the surface of the texture", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "", examples = { "dem(dem,texture) --: returns a geometry as a rectangle of weight and height equal to the texture." }, see = {})
+		@doc(value = "A polygon that is equivalent to the surface of the texture", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "", examples = { "dem(dem,texture) --: returns a geometry as a rectangle of weight and height equal to the texture." }, see = {})
 		public static IShape dem(final IScope scope, final GamaFile demFileName, final GamaFile textureFileName) {
 			final IGraphics graphics = scope.getGraphics();
 			if ( graphics instanceof IGraphics.OpenGL ) {
