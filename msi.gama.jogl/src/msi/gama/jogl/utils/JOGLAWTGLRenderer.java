@@ -7,7 +7,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.jogl.JOGLAWTDisplaySurface;
 import msi.gama.jogl.scene.*;
 import msi.gama.jogl.utils.Camera.*;
@@ -107,7 +106,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private double currentTime = 0;
 	private double previousTime = 0;
 	public float fps = 00.00f;
-	
+
 	public boolean autoSwapBuffers = false;
 	public boolean disableManualBufferSwapping;
 	public boolean colorPicking = false;
@@ -123,7 +122,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		camera = new CameraArcBall(this);
 		myGLDrawer = new MyGLToyDrawer();
 		canvas = new GLCanvas(cap);
-		//use for color picking 
+		// use for color picking
 		canvas.setAutoSwapBufferMode(autoSwapBuffers);
 		canvas.addGLEventListener(this);
 		canvas.addKeyListener(camera);
@@ -241,7 +240,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 			// Blending control
 
-
 			if ( BLENDING_ENABLED ) {
 				gl.glEnable(GL_BLEND); // Turn blending on
 
@@ -260,12 +258,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			// gl.glPolygonOffset(1, 1);
 
 			// gl.glDisable(GL_DEPTH_TEST);
-			
+
 			// Show triangulated polygon or not (trigger by GAMA)
 			if ( !triangulation ) {
-			  gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
 			} else {
-			  gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
+				gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
 			}
 
 			this.rotateModel();
@@ -283,7 +281,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 			// ROI drawer
 			if ( this.displaySurface.selectRectangle ) {
-			  DrawROI();
+				DrawROI();
 			}
 
 			// Show fps for performance mesures
@@ -298,14 +296,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				gl.glEnable(GL_BLEND);
 			}
 
-			if (!autoSwapBuffers) {
-			    if (disableManualBufferSwapping) {
-			        disableManualBufferSwapping = false;
-			    } else {
-			    	canvas.swapBuffers();
-			    }
+			if ( !autoSwapBuffers ) {
+				if ( disableManualBufferSwapping ) {
+					disableManualBufferSwapping = false;
+				} else {
+					canvas.swapBuffers();
+				}
 			}
-			
+
 		}
 	}
 
@@ -327,11 +325,13 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glLoadIdentity();
 		glu.gluPerspective(45.0f, aspect, 0.1f, camera.getMaxDim() * 100);
-		/*if ( camera != null ) {
-			glu.gluLookAt(camera.getPosition().getX(), camera.getPosition().getY(), camera.getPosition().getZ(), camera
-				.getTarget().getX(), camera.getTarget().getY(), camera.getTarget().getZ(), camera.getUpVector().getX(),
-				camera.getUpVector().getY(), camera.getUpVector().getZ());
-		}*/
+		/*
+		 * if ( camera != null ) {
+		 * glu.gluLookAt(camera.getPosition().getX(), camera.getPosition().getY(), camera.getPosition().getZ(), camera
+		 * .getTarget().getX(), camera.getTarget().getY(), camera.getTarget().getZ(), camera.getUpVector().getX(),
+		 * camera.getUpVector().getY(), camera.getUpVector().getZ());
+		 * }
+		 */
 		arcBall.setBounds(width, height);
 	}
 
@@ -418,7 +418,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		magAntiAliasing = antialias ? GL_LINEAR : GL_NEAREST;
 	}
 
-	public MyTexture createTexture(final BufferedImage image, final boolean isDynamic, int index) {
+	public MyTexture createTexture(final BufferedImage image, final boolean isDynamic, final int index) {
 		// Create a OpenGL Texture object from (URL, mipmap, file suffix)
 		// need to have an opengl context valide
 		this.getContext().makeCurrent();
@@ -428,7 +428,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		} catch (final GLException e) {
 			return null;
 		}
-        //FIXME:need to see the effect of this bending
+		// FIXME:need to see the effect of this bending
 		gl.glBindTexture(GL.GL_TEXTURE_2D, index);
 		texture.setTexParameteri(GL_TEXTURE_MIN_FILTER, minAntiAliasing);
 		texture.setTexParameteri(GL_TEXTURE_MAG_FILTER, magAntiAliasing);
@@ -446,20 +446,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			setPickedObjectIndex(camera.endPicking(gl));
 		}
 		drawModel();
-	}
-
-	public BufferedImage getScreenShot() {
-		BufferedImage img = null;
-		if ( getContext() != null ) {
-			try {
-				this.getContext().makeCurrent();
-				img = Screenshot.readToBufferedImage(width, height);
-				this.getContext().release();
-			} catch (GLException e) {
-				GuiUtils.debug("Warning: No OpenGL context available");
-			}
-		} else {}
-		return img;
 	}
 
 	public int getWidth() {
@@ -659,7 +645,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			Point realmousePositionPoint = getIntWorldPointFromWindowPoint(windowmousePositionPoint);
 
 			myGLDrawer.DrawROI(gl, realPressedPoint.x, -realPressedPoint.y, realmousePositionPoint.x,
-				-realmousePositionPoint.y,this.getZFighting(),this.getMaxEnvDim());
+				-realmousePositionPoint.y, this.getZFighting(), this.getMaxEnvDim());
 
 			roi_List.add(0, realPressedPoint.x);
 			roi_List.add(1, realPressedPoint.y);
