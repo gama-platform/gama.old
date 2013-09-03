@@ -109,7 +109,7 @@ public class Files {
 	public static IGamaFile gridFile(final IScope scope, final String s) throws GamaRuntimeException {
 		return new GamaGridFile(scope, s);
 	}
-	
+
 	@operator(value = OSM, can_be_const = true, index_type = IType.INT)
 	@doc(value = "opens a file that a is a kind of osmfile.", comment = "The file should have a gridfile extension, cf. file type definition for supported file extensions.", special_cases = "If the specified string does not refer to an existing gridfile file, an exception is risen.", examples = {
 		"file fileT <- gridfile(\"../includes/testProperties.asc\");",
@@ -165,8 +165,7 @@ public class Files {
 	 * @return
 	 */
 	@operator(value = { READ, "get" })
-	@doc(value = "Reads an attribute of the agent. The attribute's name is specified by the operand."
-			, examples = { "let agent_name value: read ('name'); --: reads the 'name' variable of agent then assigns the returned value to the 'agent_name' variable. " } )
+	@doc(value = "Reads an attribute of the agent. The attribute's name is specified by the operand.", examples = { "let agent_name value: read ('name'); --: reads the 'name' variable of agent then assigns the returned value to the 'agent_name' variable. " })
 	public static Object opRead(final IScope scope, final String s) throws GamaRuntimeException {
 		// First try to read in the temp attributes
 		Map attributes = tempAttributes.peek();
@@ -176,8 +175,7 @@ public class Files {
 	}
 
 	@operator(value = { READ, "get" })
-	@doc(value = "Reads an attribute of the agent. The attribute's index is specified by the operand."
-		, examples = { "let second_variable value: read (2); --: reads the second variable of agent then assigns the returned value to the 'second_variable' variable. " } )
+	@doc(value = "Reads an attribute of the agent. The attribute's index is specified by the operand.", examples = { "let second_variable value: read (2); --: reads the second variable of agent then assigns the returned value to the 'second_variable' variable. " })
 	public static Object opRead(final IScope scope, final Integer index) throws GamaRuntimeException {
 		// First try to read in the temp attributes
 		Map attributes = tempAttributes.peek();
@@ -188,16 +186,14 @@ public class Files {
 	}
 
 	@operator(value = "get")
-	@doc(value = "Reads an attribute of the specified agent (left operand). The attribute's name is specified by the right operand."
-		, examples = { "let agent_name value: an_agent read ('name'); --: reads the 'name' variable of agent then assigns the returned value to the 'second_variable' variable. " } )
+	@doc(value = "Reads an attribute of the specified agent (left operand). The attribute's name is specified by the right operand.", examples = { "let agent_name value: an_agent get ('name'); --: reads the 'name' variable of agent then assigns the returned value to the 'second_variable' variable. " })
 	public static Object opRead(final IScope scope, final IAgent g, final String s) throws GamaRuntimeException {
 		if ( g == null ) { return null; }
 		return g.getAttribute(s);
 	}
 
 	@operator(value = "get")
-	@doc(value = "Reads an attribute of the specified geometry (left operand). The attribute's name is specified by the right operand."
-	, examples = { "let geom_area value: a_geometry read ('area'); --: reads the 'area' attribute of the 'a_geometry' geometry then assigns the returned value to the 'geom_area' variable. " } )
+	@doc(value = "Reads an attribute of the specified geometry (left operand). The attribute's name is specified by the right operand.", examples = { "let geom_area value: a_geometry get ('area'); --: reads the 'area' attribute of the 'a_geometry' geometry then assigns the returned value to the 'geom_area' variable. " })
 	public static Object opRead(final IScope scope, final IShape g, final String s) throws GamaRuntimeException {
 		if ( g == null ) { return null; }
 		return ((GamaShape) g.getGeometry()).getAttribute(s);
