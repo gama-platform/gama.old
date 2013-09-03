@@ -84,7 +84,9 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	@Override
 	public void setPaused(final boolean flag) {
 		paused = flag;
-		updateDisplay();
+		if ( !paused ) {
+			updateDisplay();
+		}
 	}
 
 	public String getOutputName() {
