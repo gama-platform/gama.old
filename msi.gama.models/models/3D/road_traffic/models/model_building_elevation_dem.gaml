@@ -23,7 +23,7 @@ global {
 			if type='Industrial' {
 				color <- rgb(100,100,100)  ;
 			} 
-			float z <- (cell(location)).grid_value;          
+			float z <- (cell(location)).grid_value;        
             set location <- {location.x,location.y,z}; 
 			set height <-10;
 		}
@@ -38,6 +38,7 @@ global {
 			 end_work <- min_work_end + rnd (max_work_end - min_work_end) ;
 			 living_place <- one_of(residential_buildings) ;
 			 working_place <- one_of(industrial_buildings) ;
+             set location <- {location.x,location.y,(cell(location)).grid_value};
 		}
 	}
 }
@@ -50,9 +51,11 @@ entities {
 		string type; 
 		rgb color <- rgb(0,113,188)  ;
 		int height;
+		
 		aspect base {
 			draw shape color: color depth: height border:rgb('black') ;
 		}
+		
 	}
 	species road  {
 		rgb color <- rgb('black') ;
@@ -85,7 +88,7 @@ entities {
 			}
 		}
 		aspect base {
-			draw circle(5) color: hsb(0,rnd(100)/100,1.0);
+			draw sphere(5) color: hsb(0,rnd(100)/100,1.0);
 		}
 	}
 }
@@ -103,9 +106,11 @@ experiment road_traffic_dem type: gui {
 	parameter 'maximal speed' var: max_speed category: 'People' ;
 	
 	output {
-		display city_display type:opengl ambient_light:100 {
+		display city_display type:opengl ambient_light:100 z_fighting:true{
 	        grid cell  texture:map_texture triangulation:true;
+	        species road aspect:base;
 			species building aspect: base ;
+			species people aspect:base;
 		}
 	}
 }
