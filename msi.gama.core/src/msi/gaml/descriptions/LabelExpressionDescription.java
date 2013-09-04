@@ -75,6 +75,12 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 	}
 
 	@Override
+	public IExpressionDescription cleanCopy() {
+		// TODO Check that it does not cause any problem
+		return this;
+	}
+
+	@Override
 	public IExpressionDescription compileAsLabel() {
 		return this;
 	}

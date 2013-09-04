@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -24,7 +24,7 @@ import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 
 /**
- * Written by drogoul Modified on 27 aožt 2010
+ * Written by drogoul Modified on 27 aoï¿½t 2010
  * 
  * Represents a Map of Facet objects. From there, text, tokens and values of facets can be
  * retrieved.
@@ -62,6 +62,13 @@ public class Facets {
 			IExpressionDescription old = this.value;
 			this.value = value;
 			return old;
+		}
+
+		/**
+		 * @return
+		 */
+		public Facet cleanCopy() {
+			return new Facet(key, value.cleanCopy());
 		}
 	}
 
@@ -237,6 +244,20 @@ public class Facets {
 
 	public void clear() {
 		facets = new Facet[0];
+	}
+
+	/**
+	 * @return
+	 */
+	public Facets cleanCopy() {
+		Facets result = new Facets();
+		result.facets = new Facet[facets.length];
+		for ( int i = 0; i < facets.length; i++ ) {
+			if ( facets[i] != null ) {
+				result.facets[i] = facets[i].cleanCopy();
+			}
+		}
+		return result;
 	}
 
 }

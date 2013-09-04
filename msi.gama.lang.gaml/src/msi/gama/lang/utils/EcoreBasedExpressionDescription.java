@@ -29,6 +29,11 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 	}
 
 	@Override
+	public IExpressionDescription cleanCopy() {
+		return new EcoreBasedExpressionDescription(target);
+	}
+
+	@Override
 	public String toString() {
 		return expression == null ? EGaml.toString(target) : super.toString();
 	}

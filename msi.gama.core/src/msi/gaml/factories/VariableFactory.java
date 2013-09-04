@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -46,12 +46,11 @@ public class VariableFactory extends SymbolFactory {
 	}
 
 	@Override
-	protected IDescription buildDescription(final ISyntacticElement source, final IChildrenProvider cp,
-		final IDescription superDesc, final SymbolProto md) {
-		final Facets facets = source.getFacets();
+	protected IDescription buildDescription(final ISyntacticElement source, final Facets facets,
+		final IChildrenProvider cp, final IDescription superDesc, final SymbolProto md) {
 		final String keyword = source.getKeyword();
 		if ( keyword.equals(SIGNAL) ) {
-			buildSignalDescription(source, keyword, superDesc);
+			buildSignalDescription(source, facets, keyword, superDesc);
 		} else if ( keyword.equals(PARAMETER) ) {
 			// We copy the relevant facets from the targeted var of the parameter
 			final String varName = facets.getLabel(VAR);
@@ -72,9 +71,8 @@ public class VariableFactory extends SymbolFactory {
 		return new VariableDescription(keyword, superDesc, cp, source.getElement(), facets);
 	}
 
-	private void buildSignalDescription(final ISyntacticElement source, final String keyword,
+	private void buildSignalDescription(final ISyntacticElement source, final Facets facets, final String keyword,
 		final IDescription superDesc) {
-		final Facets facets = source.getFacets();
 		final String name = facets.getLabel(NAME);
 		final String env = facets.getLabel(ENVIRONMENT);
 		if ( env == null ) {

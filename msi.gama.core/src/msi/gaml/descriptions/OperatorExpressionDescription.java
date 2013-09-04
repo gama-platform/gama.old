@@ -10,7 +10,7 @@ public class OperatorExpressionDescription extends BasicExpressionDescription {
 	String operator;
 	IExpressionDescription[] args;
 
-	public OperatorExpressionDescription(String operator, IExpressionDescription ... exprs) {
+	public OperatorExpressionDescription(final String operator, final IExpressionDescription ... exprs) {
 		super((EObject) null);
 		for ( int i = 0; i < exprs.length; i++ ) {
 			if ( exprs[i].getTarget() != null ) {
@@ -21,6 +21,16 @@ public class OperatorExpressionDescription extends BasicExpressionDescription {
 		}
 		args = exprs;
 		this.operator = operator;
+	}
+
+	@Override
+	public IExpressionDescription cleanCopy() {
+		IExpressionDescription[] exprs = new IExpressionDescription[args.length];
+		for ( int i = 0; i < args.length; i++ ) {
+			exprs[i] = args[i].cleanCopy();
+		}
+		OperatorExpressionDescription result = new OperatorExpressionDescription(operator, exprs);
+		return result;
 	}
 
 	@Override
@@ -37,7 +47,7 @@ public class OperatorExpressionDescription extends BasicExpressionDescription {
 	}
 
 	@Override
-	public IExpression compile(IDescription context) {
+	public IExpression compile(final IDescription context) {
 		if ( expression == null ) {
 			IExpression[] exprs = new IExpression[args.length];
 			for ( int i = 0; i < exprs.length; i++ ) {
@@ -46,9 +56,8 @@ public class OperatorExpressionDescription extends BasicExpressionDescription {
 			expression = GAML.getExpressionFactory().createOperator(operator, context, exprs);
 			if ( expression == null ) {
 				// If no operator has been found, we throw an exception
-				context.error("Operator " + operator + " does not exist", IGamlIssue.UNKNOWN_UNARY,
-					getTarget() == null ? context.getUnderlyingElement(null) : getTarget(),
-					operator);
+				context.error("Operator " + operator + " does not exist", IGamlIssue.UNKNOWN_UNARY, getTarget() == null
+					? context.getUnderlyingElement(null) : getTarget(), operator);
 
 			}
 		}

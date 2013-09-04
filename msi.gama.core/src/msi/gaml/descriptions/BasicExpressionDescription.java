@@ -124,4 +124,11 @@ public class BasicExpressionDescription implements IExpressionDescription {
 		return Collections.EMPTY_SET;
 	}
 
+	@Override
+	public IExpressionDescription cleanCopy() {
+		IExpressionDescription result = new BasicExpressionDescription(expression);
+		result.setTarget(target);
+		return result;
+	}
+
 }

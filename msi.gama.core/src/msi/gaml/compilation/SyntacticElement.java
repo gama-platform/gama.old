@@ -1,5 +1,5 @@
 /**
- * Created by drogoul, 5 fŽvr. 2012
+ * Created by drogoul, 5 fï¿½vr. 2012
  * 
  */
 package msi.gaml.compilation;
@@ -15,7 +15,7 @@ import org.eclipse.emf.ecore.EObject;
  * The class SyntacticElement.
  * 
  * @author drogoul
- * @since 5 fŽvr. 2012
+ * @since 5 fï¿½vr. 2012
  * 
  */
 public class SyntacticElement implements ISyntacticElement {
@@ -33,7 +33,7 @@ public class SyntacticElement implements ISyntacticElement {
 		this(keyword, new Facets(), statement);
 	}
 
-	public SyntacticElement(final String keyword, final Facets facets, final EObject statement) {
+	private SyntacticElement(final String keyword, final Facets facets, final EObject statement) {
 		this.facets = facets;
 		setKeyword(keyword);
 		this.element = statement;
@@ -78,13 +78,13 @@ public class SyntacticElement implements ISyntacticElement {
 	}
 
 	@Override
-	public IExpressionDescription getFacet(final String name) {
-		return facets.get(name);
+	public boolean hasFacet(final String name) {
+		return facets.containsKey(name);
 	}
 
 	@Override
 	public Facets getFacets() {
-		return facets;
+		return facets.cleanCopy();
 	}
 
 	@Override
@@ -130,7 +130,7 @@ public class SyntacticElement implements ISyntacticElement {
 
 	@Override
 	public String getLabel(final String name) {
-		IExpressionDescription s = getFacet(name);
+		IExpressionDescription s = facets.get(name);
 		if ( s == null ) { return null; }
 		return s.toString();
 	}

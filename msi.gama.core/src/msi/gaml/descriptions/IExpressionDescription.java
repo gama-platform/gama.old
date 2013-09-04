@@ -37,4 +37,6 @@ public interface IExpressionDescription {
 
 	public Set<String> getStrings(IDescription context, boolean skills);
 
+	public abstract IExpressionDescription cleanCopy();
+
 }

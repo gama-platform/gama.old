@@ -21,6 +21,7 @@ package msi.gaml.factories;
 import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
@@ -134,7 +135,7 @@ public class ModelFactory extends SymbolFactory {
 	public ModelDescription assemble(final String projectPath, final String modelPath,
 		final List<ISyntacticElement> models) {
 		// GuiUtils.debug("ModelFactory.assemble BEGIN " + modelPath);
-		final List<ISyntacticElement> speciesNodes = new ArrayList();
+		final Map<String, ISyntacticElement> speciesNodes = new LinkedHashMap();
 		final List<ISyntacticElement> experimentNodes = new ArrayList();
 		final ISyntacticElement globalNodes = new SyntacticElement(GLOBAL, (EObject) null);
 		ErrorCollector collector = new ErrorCollector();
@@ -152,7 +153,9 @@ public class ModelFactory extends SymbolFactory {
 						globalFacets.putAll(se.getFacets());
 						for ( final ISyntacticElement ge : se.getChildren() ) {
 							if ( ge.isSpecies() ) {
-								speciesNodes.add(ge);
+								GuiUtils.debug("ModelFactory.assemble: adding species node " + ge.getName() +
+									" to model");
+								speciesNodes.put(ge.getName(), ge);
 							} else if ( ge.isExperiment() ) {
 								experimentNodes.add(ge);
 							} else {
@@ -164,7 +167,8 @@ public class ModelFactory extends SymbolFactory {
 						}
 
 					} else if ( se.isSpecies() ) {
-						speciesNodes.add(se);
+						GuiUtils.debug("ModelFactory.assemble: adding species node " + se.getName() + " to model");
+						speciesNodes.put(se.getName(), se);
 					} else if ( se.isExperiment() ) {
 						experimentNodes.add(se);
 					} else {
@@ -190,7 +194,7 @@ public class ModelFactory extends SymbolFactory {
 		model.addSpeciesType(model);
 
 		// recursively add user-defined species to world and down on to the hierarchy
-		for ( final ISyntacticElement speciesNode : speciesNodes ) {
+		for ( final ISyntacticElement speciesNode : speciesNodes.values() ) {
 			addMicroSpecies(model, speciesNode);
 		}
 		for ( final ISyntacticElement experimentNode : experimentNodes ) {
@@ -198,7 +202,7 @@ public class ModelFactory extends SymbolFactory {
 		}
 
 		// Parent the species and the experiments of the model (all are now known).
-		for ( final ISyntacticElement speciesNode : speciesNodes ) {
+		for ( final ISyntacticElement speciesNode : speciesNodes.values() ) {
 			parentSpecies(model, speciesNode, model);
 		}
 
@@ -210,7 +214,7 @@ public class ModelFactory extends SymbolFactory {
 
 		// Make species and experiments recursively create their attributes, actions....
 		complementSpecies(model, globalNodes);
-		for ( final ISyntacticElement speciesNode : speciesNodes ) {
+		for ( final ISyntacticElement speciesNode : speciesNodes.values() ) {
 			complementSpecies(model.getMicroSpecies(speciesNode.getName()), speciesNode);
 		}
 		for ( final ISyntacticElement experimentNode : experimentNodes ) {
@@ -289,11 +293,12 @@ public class ModelFactory extends SymbolFactory {
 
 	private boolean translateEnvironment(final SpeciesDescription world, final ISyntacticElement e) {
 		final boolean environmentDefined = true;
+		Facets facets = e.getFacets();
 		final ISyntacticElement shape = new SyntacticElement(GEOMETRY, new Facets(NAME, SHAPE));
-		IExpressionDescription bounds = e.getFacet(BOUNDS);
+		IExpressionDescription bounds = facets.get(BOUNDS);
 		if ( bounds == null ) {
-			final IExpressionDescription width = e.getFacet(WIDTH);
-			final IExpressionDescription height = e.getFacet(HEIGHT);
+			final IExpressionDescription width = facets.get(WIDTH);
+			final IExpressionDescription height = facets.get(HEIGHT);
 			if ( width != null && height != null ) {
 				bounds = new OperatorExpressionDescription(IExpressionCompiler.INTERNAL_POINT, width, height);
 			} else {
@@ -302,14 +307,14 @@ public class ModelFactory extends SymbolFactory {
 		}
 		bounds = new OperatorExpressionDescription("envelope", bounds);
 		shape.setFacet(INIT, bounds);
-		final IExpressionDescription depends = e.getFacet(DEPENDS_ON);
+		final IExpressionDescription depends = facets.get(DEPENDS_ON);
 		if ( depends != null ) {
 			shape.setFacet(DEPENDS_ON, depends);
 		}
 		final VariableDescription vd = (VariableDescription) create(shape, world);
 		world.addChild(vd);
 		world.resortVarName(vd);
-		final IExpressionDescription ed = e.getFacet(TORUS);
+		final IExpressionDescription ed = facets.get(TORUS);
 		// TODO Is the call to compilation correct at that point ?
 		if ( ed != null ) {
 			world.getFacets().put(TORUS, ed.compile(world));

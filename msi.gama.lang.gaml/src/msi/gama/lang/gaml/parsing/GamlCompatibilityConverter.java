@@ -228,7 +228,7 @@ public class GamlCompatibilityConverter {
 
 	private static void addFacet(final ISyntacticElement e, final String key, final IExpressionDescription expr,
 		final Set<Diagnostic> errors) {
-		if ( e.getFacet(key) != null ) {
+		if ( e.hasFacet(key) ) {
 			addWarning("Double definition of facet " + key + ". Only the last one will be considered", e.getElement(),
 				errors);
 		}
@@ -372,7 +372,7 @@ public class GamlCompatibilityConverter {
 		} else {
 			def = DescriptionFactory.getOmissibleFacetForSymbol(keyword);
 		}
-		if ( def != null && !def.isEmpty() && elt.getFacet(def) == null ) {
+		if ( def != null && !def.isEmpty() && !elt.hasFacet(def) ) {
 			IExpressionDescription ed = findExpr(stm, errors);
 			if ( ed != null ) {
 				elt.setFacet(def, ed);

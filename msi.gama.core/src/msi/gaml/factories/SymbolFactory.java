@@ -21,10 +21,8 @@ package msi.gaml.factories;
 import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
-import msi.gama.runtime.GAMA;
 import msi.gama.util.GAML;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.*;
@@ -44,7 +42,7 @@ import msi.gaml.types.TypesManager;
 public class SymbolFactory {
 
 	protected final Set<Integer> kindsHandled;
-	
+
 	public SymbolFactory(final List<Integer> handles) {
 		kindsHandled = new HashSet(handles);
 	}
@@ -76,8 +74,9 @@ public class SymbolFactory {
 
 	private final IDescription createDescriptionInternal(final ISyntacticElement source, final IDescription superDesc,
 		final IChildrenProvider cp, final SymbolProto md) {
-		md.verifyFacets(source, source.getFacets(), superDesc);
-		final IDescription desc = buildDescription(source, cp, superDesc, md);
+		Facets facets = source.getFacets();
+		md.verifyFacets(source, facets, superDesc);
+		final IDescription desc = buildDescription(source, facets, cp, superDesc, md);
 		if ( desc == null ) { return null; }
 		DescriptionFactory.setGamlDescription(source.getElement(), desc);
 		return desc;
@@ -102,14 +101,14 @@ public class SymbolFactory {
 		for ( final ISyntacticElement e : source.getChildren() ) {
 			children.add(create(e, superDesc));
 		}
-		final IDescription desc = buildDescription(source, new ChildrenProvider(children), superDesc, md);
+		final IDescription desc = buildDescription(source, facets, new ChildrenProvider(children), superDesc, md);
 		DescriptionFactory.setGamlDescription(source.getElement(), desc);
 		return desc;
 	}
 
-	protected IDescription buildDescription(final ISyntacticElement source, final IChildrenProvider cp,
-		final IDescription superDesc, final SymbolProto md) {
-		return new SymbolDescription(source.getKeyword(), superDesc, cp, source.getElement(), source.getFacets());
+	protected IDescription buildDescription(final ISyntacticElement source, final Facets facets,
+		final IChildrenProvider cp, final IDescription superDesc, final SymbolProto md) {
+		return new SymbolDescription(source.getKeyword(), superDesc, cp, source.getElement(), facets);
 	}
 
 	final ISymbol compile(final IDescription desc) {
@@ -132,7 +131,7 @@ public class SymbolFactory {
 		if ( smd == null ) { return null; }
 		ModelDescription md = desc.getModelDescription();
 		if ( md == null ) {
-			md = (ModelDescription) GAML.getModelContext();
+			md = GAML.getModelContext();
 			if ( md == null ) { return null; }
 		}
 		final TypesManager tm = md.getTypesManager();
@@ -189,15 +188,16 @@ public class SymbolFactory {
 			if ( f != null && !f.getKey().equals(WITH) ) {
 				compileFacet(f.getKey(), desc, md);
 			}
-		/*	if ( f != null && f.getKey().equals(MULTICORE) ) {
-				//compileFacet(f.getKey(), desc, md);
-				System.out.println("Multi-core!!!!!!!!");
-				multicore = true;
-			}
-			*/
+			/*
+			 * if ( f != null && f.getKey().equals(MULTICORE) ) {
+			 * //compileFacet(f.getKey(), desc, md);
+			 * System.out.println("Multi-core!!!!!!!!");
+			 * multicore = true;
+			 * }
+			 */
 		}
-		
-		ISymbol cs =  md.getConstructor().create(desc);
+
+		ISymbol cs = md.getConstructor().create(desc);
 		if ( cs == null ) { return null; }
 		if ( md.hasArgs() ) {
 			((IStatement.WithArgs) cs).setFormalArgs(privateCompileArgs((StatementDescription) desc));

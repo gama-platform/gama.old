@@ -47,13 +47,13 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 	}
 
 	@Override
-	protected StatementDescription buildDescription(final ISyntacticElement source, final IChildrenProvider cp,
-		final IDescription enclosing, final SymbolProto proto) {
+	protected StatementDescription buildDescription(final ISyntacticElement source, final Facets facets,
+		final IChildrenProvider cp, final IDescription enclosing, final SymbolProto proto) {
 		final String s = source.getKeyword();
 		if ( s.equals(PRIMITIVE) ) { return new PrimitiveDescription(source.getKeyword(), enclosing, cp,
-			proto.hasScope(), proto.hasArgs(), source.getElement(), source.getFacets()); }
+			proto.hasScope(), proto.hasArgs(), source.getElement(), facets); }
 		return new StatementDescription(source.getKeyword(), enclosing, cp, proto.hasScope(), proto.hasArgs(),
-			source.getElement(), source.getFacets());
+			source.getElement(), facets);
 	}
 
 	@Override

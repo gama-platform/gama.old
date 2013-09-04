@@ -36,7 +36,7 @@ public class StringBasedExpressionDescription extends BasicExpressionDescription
 	}
 
 	@Override
-	public Set<String> getStrings(IDescription context, boolean skills) {
+	public Set<String> getStrings(final IDescription context, final boolean skills) {
 		// Assuming of the form [aaa, bbb]
 		Set<String> result = new HashSet();
 		StringBuilder b = new StringBuilder();
@@ -58,7 +58,12 @@ public class StringBasedExpressionDescription extends BasicExpressionDescription
 		return result;
 	}
 
-	public static IExpressionDescription create(String string) {
+	@Override
+	public IExpressionDescription cleanCopy() {
+		return new StringBasedExpressionDescription(string);
+	}
+
+	public static IExpressionDescription create(final String string) {
 		if ( string == null ) { return null; }
 		String s = string.trim();
 		if ( s.equals(IKeyword.NULL) ) { return ConstantExpressionDescription.create((Object) null); }

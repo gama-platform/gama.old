@@ -126,7 +126,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		final LinkedHashSet<GamlResource> newResources = new LinkedHashSet<GamlResource>();
 		// Forcing the resource set to reload the primary resource, even though it has been
 		// passed, in order to be sure that all resources will belong to the same resource set.
-		final GamlResource first = resource; // (GamlResource) resourceSet.getResource(resource.getURI(), true);
+		final GamlResource first = (GamlResource) resourceSet.getResource(resource.getURI(), true);
 
 		newResources.add(first);
 		while (!newResources.isEmpty()) {

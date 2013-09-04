@@ -23,6 +23,11 @@ public class StringListExpressionDescription extends BasicExpressionDescription 
 		strings = exp;
 	}
 
+	@Override
+	public IExpressionDescription cleanCopy() {
+		return new StringListExpressionDescription(strings);
+	}
+
 	public StringListExpressionDescription(final String ... exp) {
 		super((EObject) null);
 		strings = Arrays.asList(exp);
@@ -34,7 +39,7 @@ public class StringListExpressionDescription extends BasicExpressionDescription 
 	}
 
 	@Override
-	public Set<String> getStrings(IDescription context, boolean skills) {
+	public Set<String> getStrings(final IDescription context, final boolean skills) {
 		return new HashSet(strings);
 	}
 
