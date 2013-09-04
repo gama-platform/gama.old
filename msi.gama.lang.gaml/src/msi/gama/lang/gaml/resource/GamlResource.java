@@ -5,10 +5,10 @@
 package msi.gama.lang.gaml.resource;
 
 import java.util.*;
-import msi.gama.common.interfaces.ISyntacticElement;
 import msi.gama.lang.gaml.parsing.*;
 import msi.gama.lang.gaml.parsing.GamlSyntacticParser.GamlParseResult;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
+import msi.gaml.compilation.SyntacticElement;
 import msi.gaml.descriptions.*;
 import msi.gaml.factories.DescriptionFactory;
 import org.eclipse.emf.ecore.EObject;
@@ -79,11 +79,11 @@ public class GamlResource extends LazyLinkingResource {
 		super.unload(oldRootObject);
 	}
 
-	public ISyntacticElement getSyntacticContents() {
+	public SyntacticElement getSyntacticContents() {
 		GamlParseResult parseResult = getParseResult();
 		if ( parseResult == null ) { // Should not happen, but in case...
 			Set<org.eclipse.xtext.diagnostics.Diagnostic> errors = new LinkedHashSet();
-			ISyntacticElement result = GamlCompatibilityConverter.buildSyntacticContents(getContents().get(0), errors);
+			SyntacticElement result = GamlCompatibilityConverter.buildSyntacticContents(getContents().get(0), errors);
 			getWarnings().addAll(errors);
 			return result;
 		}

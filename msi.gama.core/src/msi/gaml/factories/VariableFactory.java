@@ -46,7 +46,7 @@ public class VariableFactory extends SymbolFactory {
 	}
 
 	@Override
-	protected IDescription buildDescription(final ISyntacticElement source, final Facets facets,
+	protected IDescription buildDescription(final SyntacticElement source, final Facets facets,
 		final IChildrenProvider cp, final IDescription superDesc, final SymbolProto md) {
 		final String keyword = source.getKeyword();
 		if ( keyword.equals(SIGNAL) ) {
@@ -71,7 +71,7 @@ public class VariableFactory extends SymbolFactory {
 		return new VariableDescription(keyword, superDesc, cp, source.getElement(), facets);
 	}
 
-	private void buildSignalDescription(final ISyntacticElement source, final Facets facets, final String keyword,
+	private void buildSignalDescription(final SyntacticElement source, final Facets facets, final String keyword,
 		final IDescription superDesc) {
 		final String name = facets.getLabel(NAME);
 		final String env = facets.getLabel(ENVIRONMENT);

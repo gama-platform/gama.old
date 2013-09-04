@@ -1,12 +1,13 @@
 /**
- * Created by drogoul, 5 f�vr. 2012
+ * Created by drogoul, 5 févr. 2012
  * 
  */
 package msi.gaml.compilation;
 
 import java.util.*;
-import msi.gama.common.interfaces.*;
-import msi.gaml.descriptions.IExpressionDescription;
+import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.StringUtils;
+import msi.gaml.descriptions.*;
 import msi.gaml.statements.*;
 import msi.gaml.statements.Facets.Facet;
 import org.eclipse.emf.ecore.EObject;
@@ -18,10 +19,14 @@ import org.eclipse.emf.ecore.EObject;
  * @since 5 f�vr. 2012
  * 
  */
-public class SyntacticElement implements ISyntacticElement {
+public class SyntacticElement {
 
-	private final Facets facets;
-	List<ISyntacticElement> children;
+	public static final int IS_GLOBAL = 0;
+	public static final int IS_SPECIES = 1;
+	public static final int IS_EXPERIMENT = 2;
+
+	private final Map<String, IExpressionDescription> facets = new HashMap();
+	List<SyntacticElement> children;
 	final EObject element;
 	int category = -1;
 
@@ -34,19 +39,22 @@ public class SyntacticElement implements ISyntacticElement {
 	}
 
 	private SyntacticElement(final String keyword, final Facets facets, final EObject statement) {
-		this.facets = facets;
+		for ( Facet f : facets.entrySet() ) {
+			if ( f != null ) {
+				this.facets.put(f.getKey(), f.getValue()/* .cleanCopy() */);
+			}
+		}
+		// this.facets = facets;
 		setKeyword(keyword);
 		this.element = statement;
 	}
 
-	@Override
 	public void setCategory(final int cat) {
 		category = cat;
 	}
 
-	@Override
 	public void setKeyword(final String name) {
-		facets.putAsLabel(IKeyword.KEYWORD, name);
+		facets.put(IKeyword.KEYWORD, LabelExpressionDescription.create(name));
 	}
 
 	public void dump() {
@@ -56,52 +64,57 @@ public class SyntacticElement implements ISyntacticElement {
 	}
 
 	private void dump(final StringBuilder sb) {
-		sb.append(facets.getLabel(IKeyword.KEYWORD)).append(" ");
-		for ( Facet f : facets.entrySet() ) {
+		sb.append(StringUtils.toJavaString(facets.get(IKeyword.KEYWORD).toString())).append(" ");
+		for ( Map.Entry<String, IExpressionDescription> f : facets.entrySet() ) {
 			sb.append(f.getKey()).append(": ").append(f.getValue()).append(" ");
 		}
 		sb.append("\n");
 		if ( !getChildren().isEmpty() ) {
 			sb.append('[');
 		}
-		for ( ISyntacticElement elt : getChildren() ) {
-			((SyntacticElement) elt).dump(sb);
+		for ( SyntacticElement elt : getChildren() ) {
+			elt.dump(sb);
 		}
 		if ( !getChildren().isEmpty() ) {
 			sb.append(']');
 		}
 	}
 
-	@Override
 	public String getKeyword() {
-		return facets.getLabel(IKeyword.KEYWORD);
+		return StringUtils.toJavaString(facets.get(IKeyword.KEYWORD).toString());
 	}
 
-	@Override
 	public boolean hasFacet(final String name) {
 		return facets.containsKey(name);
 	}
 
-	@Override
-	public Facets getFacets() {
-		return facets.cleanCopy();
+	public IExpressionDescription getFacet(final String name) {
+		return facets.get(name);
 	}
 
-	@Override
+	public Facets copyFacets() {
+		Facets ff = new Facets();
+		for ( Map.Entry<String, IExpressionDescription> f : facets.entrySet() ) {
+			ff.put(f.getKey(), f.getValue().cleanCopy());
+
+			// (f.getKey()).append(": ").append(f.getValue()).append(" ");
+		}
+		// return facets.cleanCopy();
+		return ff;
+	}
+
 	public void setFacet(final String string, final IExpressionDescription expr) {
 		facets.put(string, expr);
 	}
 
-	@Override
-	public List<ISyntacticElement> getChildren() {
+	public List<SyntacticElement> getChildren() {
 		return children == null ? Collections.EMPTY_LIST : children;
 	}
 
-	@Override
-	public List<ISyntacticElement> getSpeciesChildren() {
+	public List<SyntacticElement> getSpeciesChildren() {
 		if ( !isSpecies() && !isGlobal() || children == null ) { return Collections.EMPTY_LIST; }
-		List<ISyntacticElement> result = new ArrayList();
-		for ( ISyntacticElement e : getChildren() ) {
+		List<SyntacticElement> result = new ArrayList();
+		for ( SyntacticElement e : getChildren() ) {
 			if ( e.isSpecies() || e.isExperiment() ) {
 				result.add(e);
 			}
@@ -109,18 +122,15 @@ public class SyntacticElement implements ISyntacticElement {
 		return result;
 	}
 
-	@Override
 	public String getName() {
 		return getLabel(IKeyword.NAME);
 	}
 
-	@Override
 	public EObject getElement() {
 		return element;
 	}
 
-	@Override
-	public void addChild(final ISyntacticElement e) {
+	public void addChild(final SyntacticElement e) {
 		if ( e == null ) { return; }
 		if ( children == null ) {
 			children = new ArrayList();
@@ -128,29 +138,24 @@ public class SyntacticElement implements ISyntacticElement {
 		children.add(e);
 	}
 
-	@Override
 	public String getLabel(final String name) {
 		IExpressionDescription s = facets.get(name);
 		if ( s == null ) { return null; }
 		return s.toString();
 	}
 
-	@Override
 	public boolean isSynthetic() {
 		return element == null;
 	}
 
-	@Override
 	public boolean isSpecies() {
 		return category == IS_SPECIES;
 	}
 
-	@Override
 	public boolean isGlobal() {
 		return category == IS_GLOBAL;
 	}
 
-	@Override
 	public boolean isExperiment() {
 		return category == IS_EXPERIMENT;
 	}

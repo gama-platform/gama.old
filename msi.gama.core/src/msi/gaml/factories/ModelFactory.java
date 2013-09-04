@@ -21,7 +21,6 @@ package msi.gaml.factories;
 import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
@@ -45,18 +44,18 @@ public class ModelFactory extends SymbolFactory {
 		super(handles);
 	}
 
-	private void addMicroSpecies(final SpeciesDescription macro, final ISyntacticElement micro) {
+	private void addMicroSpecies(final SpeciesDescription macro, final SyntacticElement micro) {
 		// Create the species description without any children
 		final SpeciesDescription mDesc = (SpeciesDescription) create(micro, macro, IChildrenProvider.NONE);
 		// Add it to its macro-species
 		macro.addChild(mDesc);
 		// Recursively create each micro-species of the newly added micro-species
-		for ( final ISyntacticElement speciesNode : micro.getSpeciesChildren() ) {
+		for ( final SyntacticElement speciesNode : micro.getSpeciesChildren() ) {
 			addMicroSpecies(mDesc, speciesNode);
 		}
 	}
 
-	private void addExperiment(final ModelDescription model, final ISyntacticElement experiment) {
+	private void addExperiment(final ModelDescription model, final SyntacticElement experiment) {
 		// Create the experiment description
 		IDescription desc = create(experiment, model, IChildrenProvider.NONE);
 		if ( !(desc instanceof ExperimentDescription) ) {
@@ -73,12 +72,12 @@ public class ModelFactory extends SymbolFactory {
 	 * @param macro the macro-species
 	 * @param micro the structure of micro-species
 	 */
-	private void complementSpecies(final SpeciesDescription species, final ISyntacticElement node) {
+	private void complementSpecies(final SpeciesDescription species, final SyntacticElement node) {
 		if ( species == null ) { return; }
 		species.copyJavaAdditions();
 		// GuiUtils.debug("++++++ Building variables & behaviors of " + species.getName());
-		final List<ISyntacticElement> subspecies = new ArrayList();
-		for ( final ISyntacticElement child : node.getChildren() ) {
+		final List<SyntacticElement> subspecies = new ArrayList();
+		for ( final SyntacticElement child : node.getChildren() ) {
 			if ( !child.isExperiment() && !child.isSpecies() ) {
 				final IDescription childDesc = create(child, species);
 				if ( childDesc != null ) {
@@ -89,7 +88,7 @@ public class ModelFactory extends SymbolFactory {
 			}
 		}
 		// recursively complement micro-species
-		for ( final ISyntacticElement e : subspecies ) {
+		for ( final SyntacticElement e : subspecies ) {
 			final SpeciesDescription sd = species.getMicroSpecies(e.getName());
 			if ( sd != null ) {
 				complementSpecies(sd, e);
@@ -98,7 +97,7 @@ public class ModelFactory extends SymbolFactory {
 
 	}
 
-	private void parentSpecies(final SpeciesDescription macro, final ISyntacticElement micro,
+	private void parentSpecies(final SpeciesDescription macro, final SyntacticElement micro,
 		final ModelDescription model) {
 		// Gather the previously created species
 		final SpeciesDescription mDesc = macro.getMicroSpecies(micro.getName());
@@ -110,12 +109,12 @@ public class ModelFactory extends SymbolFactory {
 		}
 		final SpeciesDescription parent = model.getSpeciesDescription(p);
 		mDesc.setParent(parent);
-		for ( final ISyntacticElement speciesNode : micro.getSpeciesChildren() ) {
+		for ( final SyntacticElement speciesNode : micro.getSpeciesChildren() ) {
 			parentSpecies(mDesc, speciesNode, model);
 		}
 	}
 
-	private void parentExperiment(final ModelDescription macro, final ISyntacticElement micro,
+	private void parentExperiment(final ModelDescription macro, final SyntacticElement micro,
 		final ModelDescription model) {
 		// Gather the previously created species
 		final SpeciesDescription mDesc = macro.getExperiment(micro.getName());
@@ -127,34 +126,31 @@ public class ModelFactory extends SymbolFactory {
 			parent = (SpeciesDescription) ModelDescription.ROOT.getTypesManager().getSpecies(IKeyword.EXPERIMENT);
 		}
 		mDesc.setParent(parent);
-		// for ( ISyntacticElement speciesNode : micro.getSpeciesChildren() ) {
+		// for ( SyntacticElement speciesNode : micro.getSpeciesChildren() ) {
 		// parentSpecies(mDesc, speciesNode, model);
 		// }
 	}
 
 	public ModelDescription assemble(final String projectPath, final String modelPath,
-		final List<ISyntacticElement> models) {
+		final List<SyntacticElement> models) {
 		// GuiUtils.debug("ModelFactory.assemble BEGIN " + modelPath);
-		final Map<String, ISyntacticElement> speciesNodes = new LinkedHashMap();
-		final List<ISyntacticElement> experimentNodes = new ArrayList();
-		final ISyntacticElement globalNodes = new SyntacticElement(GLOBAL, (EObject) null);
+		final Map<String, SyntacticElement> speciesNodes = new LinkedHashMap();
+		final List<SyntacticElement> experimentNodes = new ArrayList();
+		final SyntacticElement globalNodes = new SyntacticElement(GLOBAL, (EObject) null);
 		ErrorCollector collector = new ErrorCollector();
 		final Facets globalFacets = new Facets();
-		final List<ISyntacticElement> otherNodes = new ArrayList();
-		// TODO Verify that it is the right model
-		final ISyntacticElement source = models.get(0);
-		ISyntacticElement lastGlobalNode = source;
+		final List<SyntacticElement> otherNodes = new ArrayList();
+		final SyntacticElement source = models.get(0);
+		SyntacticElement lastGlobalNode = source;
 		for ( int n = models.size(), i = n - 1; i >= 0; i-- ) {
-			final ISyntacticElement e = models.get(i);
+			final SyntacticElement e = models.get(i);
 			if ( e != null ) {
-				for ( final ISyntacticElement se : e.getChildren() ) {
+				for ( final SyntacticElement se : e.getChildren() ) {
 					if ( se.isGlobal() ) {
 						// We build the facets resulting from the different arguments
-						globalFacets.putAll(se.getFacets());
-						for ( final ISyntacticElement ge : se.getChildren() ) {
+						globalFacets.putAll(se.copyFacets());
+						for ( final SyntacticElement ge : se.getChildren() ) {
 							if ( ge.isSpecies() ) {
-								GuiUtils.debug("ModelFactory.assemble: adding species node " + ge.getName() +
-									" to model");
 								speciesNodes.put(ge.getName(), ge);
 							} else if ( ge.isExperiment() ) {
 								experimentNodes.add(ge);
@@ -167,7 +163,6 @@ public class ModelFactory extends SymbolFactory {
 						}
 
 					} else if ( se.isSpecies() ) {
-						GuiUtils.debug("ModelFactory.assemble: adding species node " + se.getName() + " to model");
 						speciesNodes.put(se.getName(), se);
 					} else if ( se.isExperiment() ) {
 						experimentNodes.add(se);
@@ -194,19 +189,19 @@ public class ModelFactory extends SymbolFactory {
 		model.addSpeciesType(model);
 
 		// recursively add user-defined species to world and down on to the hierarchy
-		for ( final ISyntacticElement speciesNode : speciesNodes.values() ) {
+		for ( final SyntacticElement speciesNode : speciesNodes.values() ) {
 			addMicroSpecies(model, speciesNode);
 		}
-		for ( final ISyntacticElement experimentNode : experimentNodes ) {
+		for ( final SyntacticElement experimentNode : experimentNodes ) {
 			addExperiment(model, experimentNode);
 		}
 
 		// Parent the species and the experiments of the model (all are now known).
-		for ( final ISyntacticElement speciesNode : speciesNodes.values() ) {
+		for ( final SyntacticElement speciesNode : speciesNodes.values() ) {
 			parentSpecies(model, speciesNode, model);
 		}
 
-		for ( final ISyntacticElement experimentNode : experimentNodes ) {
+		for ( final SyntacticElement experimentNode : experimentNodes ) {
 			parentExperiment(model, experimentNode, model);
 		}
 		// Initialize the hierarchy of types
@@ -214,10 +209,10 @@ public class ModelFactory extends SymbolFactory {
 
 		// Make species and experiments recursively create their attributes, actions....
 		complementSpecies(model, globalNodes);
-		for ( final ISyntacticElement speciesNode : speciesNodes.values() ) {
+		for ( final SyntacticElement speciesNode : speciesNodes.values() ) {
 			complementSpecies(model.getMicroSpecies(speciesNode.getName()), speciesNode);
 		}
-		for ( final ISyntacticElement experimentNode : experimentNodes ) {
+		for ( final SyntacticElement experimentNode : experimentNodes ) {
 			complementSpecies(model.getExperiment(experimentNode.getName()), experimentNode);
 		}
 
@@ -255,7 +250,7 @@ public class ModelFactory extends SymbolFactory {
 
 		// Parse the other definitions (output, environment, ...)
 		boolean environmentDefined = false;
-		for ( final ISyntacticElement e : otherNodes ) {
+		for ( final SyntacticElement e : otherNodes ) {
 			// COMPATIBILITY to remove the environment and put its definition in the world
 			if ( ENVIRONMENT.equals(e.getKeyword()) ) {
 				environmentDefined = translateEnvironment(model, e);
@@ -272,7 +267,7 @@ public class ModelFactory extends SymbolFactory {
 			if ( !vd.getFacets().containsKey(INIT) ) {
 				final Facets f = new Facets(NAME, SHAPE);
 				f.put(INIT, GAML.getExpressionFactory().createOperator("envelope", model, new ConstantExpression(100)));
-				final ISyntacticElement shape = new SyntacticElement(IKeyword.GEOMETRY, f);
+				final SyntacticElement shape = new SyntacticElement(IKeyword.GEOMETRY, f);
 				vd = (VariableDescription) create(shape, model);
 				model.addChild(vd);
 				model.resortVarName(vd);
@@ -291,14 +286,13 @@ public class ModelFactory extends SymbolFactory {
 
 	}
 
-	private boolean translateEnvironment(final SpeciesDescription world, final ISyntacticElement e) {
+	private boolean translateEnvironment(final SpeciesDescription world, final SyntacticElement e) {
 		final boolean environmentDefined = true;
-		Facets facets = e.getFacets();
-		final ISyntacticElement shape = new SyntacticElement(GEOMETRY, new Facets(NAME, SHAPE));
-		IExpressionDescription bounds = facets.get(BOUNDS);
+		final SyntacticElement shape = new SyntacticElement(GEOMETRY, new Facets(NAME, SHAPE));
+		IExpressionDescription bounds = e.getFacet(BOUNDS);
 		if ( bounds == null ) {
-			final IExpressionDescription width = facets.get(WIDTH);
-			final IExpressionDescription height = facets.get(HEIGHT);
+			final IExpressionDescription width = e.getFacet(WIDTH);
+			final IExpressionDescription height = e.getFacet(HEIGHT);
 			if ( width != null && height != null ) {
 				bounds = new OperatorExpressionDescription(IExpressionCompiler.INTERNAL_POINT, width, height);
 			} else {
@@ -307,14 +301,14 @@ public class ModelFactory extends SymbolFactory {
 		}
 		bounds = new OperatorExpressionDescription("envelope", bounds);
 		shape.setFacet(INIT, bounds);
-		final IExpressionDescription depends = facets.get(DEPENDS_ON);
+		final IExpressionDescription depends = e.getFacet(DEPENDS_ON);
 		if ( depends != null ) {
 			shape.setFacet(DEPENDS_ON, depends);
 		}
 		final VariableDescription vd = (VariableDescription) create(shape, world);
 		world.addChild(vd);
 		world.resortVarName(vd);
-		final IExpressionDescription ed = facets.get(TORUS);
+		final IExpressionDescription ed = e.getFacet(TORUS);
 		// TODO Is the call to compilation correct at that point ?
 		if ( ed != null ) {
 			world.getFacets().put(TORUS, ed.compile(world));

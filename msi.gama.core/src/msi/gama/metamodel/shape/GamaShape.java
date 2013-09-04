@@ -202,7 +202,11 @@ public class GamaShape implements IShape /* , IContainer */{
 		public synchronized void filter(final Coordinate coord) {
 			coord.x += dx;
 			coord.y += dy;
-			coord.z += dz;
+			if ( Double.isNaN(coord.z) ) {
+				coord.z = dz;
+			} else {
+				coord.z += dz;
+			}
 		}
 
 	}
@@ -245,8 +249,8 @@ public class GamaShape implements IShape /* , IContainer */{
 
 	public static class Operations {
 
-		final static GamaPoint currentPoint = new GamaPoint(0d, 0d);
-		final static Point point = GeometryUtils.factory.createPoint(new Coordinate(0, 0));
+		final static GamaPoint currentPoint = new GamaPoint(0d, 0d, 0d);
+		final static Point point = GeometryUtils.factory.createPoint(new Coordinate(0, 0, 0));
 		public final static PointPairDistance ppd = new PointPairDistance();
 		final static PointLocator pl = new PointLocator();
 
@@ -424,32 +428,31 @@ public class GamaShape implements IShape /* , IContainer */{
 	private void computeLocation() {
 		Geometry g = getInnerGeometry();
 		final Point p = getInnerGeometry().getCentroid();
-		
 
-         final Coordinate c = p.getCoordinate();
-         if ( isPoint() ) {
-                 c.z = g.getCoordinate().z;
-         } else {
-                 c.z = computeAverageZOrdinate(g);
-         }
-         if ( location == null ) {
-                 location = new GamaPoint(c);
-         } else {
-                 location.setLocation(c.x, c.y, c.z);
-         }	
+		final Coordinate c = p.getCoordinate();
+		if ( isPoint() ) {
+			c.z = g.getCoordinate().z;
+		} else {
+			c.z = computeAverageZOrdinate(g);
+		}
+		if ( location == null ) {
+			location = new GamaPoint(c);
+		} else {
+			location.setLocation(c.x, c.y, c.z);
+		}
 	}
-	
+
 	private double computeAverageZOrdinate(final Geometry g) {
-        double z = 0d;
-        Coordinate[] coords = g.getCoordinates();
-        for ( Coordinate c : coords ) {
-                if ( c.z == Double.NaN ) {
-                        continue;
-                }
-                z += c.z;
-        }
-        return z / coords.length;
-    }
+		double z = 0d;
+		Coordinate[] coords = g.getCoordinates();
+		for ( Coordinate c : coords ) {
+			if ( c.z == Double.NaN ) {
+				continue;
+			}
+			z += c.z;
+		}
+		return z / coords.length;
+	}
 
 	@Override
 	public void dispose() {

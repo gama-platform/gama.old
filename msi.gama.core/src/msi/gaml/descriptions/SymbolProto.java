@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -22,7 +22,7 @@ import static msi.gama.common.interfaces.IKeyword.DO;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gaml.compilation.ISymbolConstructor;
+import msi.gaml.compilation.*;
 import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.factories.*;
 import msi.gaml.statements.*;
@@ -151,7 +151,7 @@ public class SymbolProto {
 		return mandatoryFacets;
 	}
 
-	public void verifyMandatoryFacets(final ISyntacticElement e, final Facets facets, final IDescription context) {
+	public void verifyMandatoryFacets(final SyntacticElement e, final Facets facets, final IDescription context) {
 		for ( String s : mandatoryFacets ) {
 			if ( !facets.containsKey(s) ) {
 				context.error("Missing facet " + s, IGamlIssue.MISSING_FACET, e.getElement(), s);
@@ -159,7 +159,7 @@ public class SymbolProto {
 		}
 	}
 
-	public void verifyFacetsValidity(final ISyntacticElement e, final Facets facets, final IDescription context) {
+	public void verifyFacetsValidity(final SyntacticElement e, final Facets facets, final IDescription context) {
 		if ( context == null ) { return; }
 		// Special case for "do", which can accept (at parsing time) any facet
 		if ( e.getKeyword().equals(DO) ) { return; }
@@ -175,7 +175,7 @@ public class SymbolProto {
 		return bestSuitable;
 	}
 
-	public void verifyFacetsCombinations(final ISyntacticElement e, final Facets facets, final IDescription context) {
+	public void verifyFacetsCombinations(final SyntacticElement e, final Facets facets, final IDescription context) {
 		if ( getPossibleCombinations().length > 0 ) {
 			// System.out.println("before\n");
 			// String needFacets="";
@@ -219,7 +219,7 @@ public class SymbolProto {
 		return contextKinds[upper.getKind()] || contextKeywords.contains(upper.getKeyword());
 	}
 
-	public void verifyFacetsIds(final ISyntacticElement e, final Facets facets, final IDescription context) {
+	public void verifyFacetsIds(final SyntacticElement e, final Facets facets, final IDescription context) {
 		for ( Facet facet : facets.entrySet() ) {
 			if ( facet == null ) {
 				continue;
@@ -260,7 +260,7 @@ public class SymbolProto {
 		}
 	}
 
-	public void verifyFacets(final ISyntacticElement e, final Facets facets, final IDescription context) {
+	public void verifyFacets(final SyntacticElement e, final Facets facets, final IDescription context) {
 		verifyMandatoryFacets(e, facets, context);
 		verifyFacetsValidity(e, facets, context);
 		verifyFacetsCombinations(e, facets, context);
@@ -301,7 +301,7 @@ public class SymbolProto {
 				sb.append(" among: ").append(Arrays.toString(f.values));
 			}
 			if ( f.doc != null && f.doc.length() > 0 ) {
-				sb.append(" doc: ").append(f.doc.split("¤")[0]);
+				sb.append(" doc: ").append(f.doc.split("ï¿½")[0]);
 			}
 			sb.append("</li>");
 		}

@@ -1,8 +1,8 @@
 package msi.gama.lang.gaml.parsing;
 
 import java.util.*;
-import msi.gama.common.interfaces.ISyntacticElement;
 import msi.gama.lang.gaml.parser.antlr.GamlParser;
+import msi.gaml.compilation.SyntacticElement;
 import org.antlr.runtime.CharStream;
 import org.eclipse.xtext.diagnostics.Diagnostic;
 import org.eclipse.xtext.nodemodel.impl.NodeModelBuilder;
@@ -14,10 +14,10 @@ public class GamlSyntacticParser extends GamlParser {
 	// A "wrapped" parse result which contains both the result of the parsing and the syntactic elements needed by GAML
 	public static class GamlParseResult extends ParseResult {
 
-		final ISyntacticElement element;
+		final SyntacticElement element;
 		final Set<Diagnostic> errors = new HashSet();
 
-		public GamlParseResult(IParseResult result) {
+		public GamlParseResult(final IParseResult result) {
 			super(result.getRootASTElement(), result.getRootNode(), result.hasSyntaxErrors());
 			if ( !result.hasSyntaxErrors() ) {
 				element = GamlCompatibilityConverter.buildSyntacticContents(getRootASTElement(), errors);
@@ -26,7 +26,7 @@ public class GamlSyntacticParser extends GamlParser {
 			}
 		}
 
-		public ISyntacticElement getSyntacticContents() {
+		public SyntacticElement getSyntacticContents() {
 			return element;
 		}
 
@@ -37,14 +37,14 @@ public class GamlSyntacticParser extends GamlParser {
 	}
 
 	@Override
-	protected IParseResult doParse(String ruleName, CharStream in, NodeModelBuilder nodeModelBuilder,
-		int initialLookAhead) {
+	protected IParseResult doParse(final String ruleName, final CharStream in, final NodeModelBuilder nodeModelBuilder,
+		final int initialLookAhead) {
 		IParseResult result = super.doParse(ruleName, in, nodeModelBuilder, initialLookAhead);
 		return new GamlParseResult(result);
 	}
 
 	@Override
-	protected IParseResult doReparse(IParseResult previousParseResult, ReplaceRegion replaceRegion) {
+	protected IParseResult doReparse(final IParseResult previousParseResult, final ReplaceRegion replaceRegion) {
 		IParseResult result = super.doReparse(previousParseResult, replaceRegion);
 		return new GamlParseResult(result);
 	}

@@ -84,7 +84,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean output3D = false;
 	private boolean tesselation = true;
 	private boolean stencil = false;
-	private boolean z_fighting = false;
+	private boolean z_fighting = GamaPreferences.CORE_Z_FIGHTING.getValue();
 	private boolean showfps = false;
 	private boolean drawEnv = true;
 	private Color ambientLightColor = new GamaColor(125, 125, 125);

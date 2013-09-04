@@ -6,7 +6,7 @@ package msi.gama.lang.gaml.ui;
 
 import java.util.*;
 import java.util.List;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IGui;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.kernel.model.IModel;
@@ -14,6 +14,7 @@ import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.validation.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gaml.compilation.SyntacticElement;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
@@ -271,8 +272,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 					// GuiUtils.debug("GamlEditor.fillCombo().new Void() {...}.process : " + uri);
 					GamlResource xr = (GamlResource) rs.getResource(uri, true);
 					if ( xr.getErrors().isEmpty() ) {
-						ISyntacticElement el = xr.getSyntacticContents();
-						for ( ISyntacticElement ch : el.getChildren() ) {
+						SyntacticElement el = xr.getSyntacticContents();
+						for ( SyntacticElement ch : el.getChildren() ) {
 							if ( ch.isExperiment() ) {
 								if ( !map.containsKey(uri) ) {
 									map.put(uri, new ArrayList());

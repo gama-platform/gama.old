@@ -273,6 +273,8 @@ public class GamaPreferences {
 		IType.FLOAT).between(0.01, null).in(DISPLAY).group("Default aspect");
 	public static final Entry<Color> CORE_COLOR = create("core.color", "Default color to use for agents", Color.yellow,
 		IType.COLOR).in(DISPLAY).group("Default aspect");
+	public static final Entry<Boolean> CORE_Z_FIGHTING = create("core.z_fighting", "Use z-fighting by default", true,
+		IType.BOOL).in(DISPLAY).group("OpenGL");
 
 	private static void register(final Entry gp) {
 		IScope scope = GAMA.obtainNewScope();

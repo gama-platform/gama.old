@@ -173,9 +173,9 @@ public class Facets {
 		return f.getExpression();
 	}
 
-	public IExpressionDescription put(final String key, final String desc) {
-		return put(key, StringBasedExpressionDescription.create(desc));
-	}
+	// public IExpressionDescription put(final String key, final String desc) {
+	// return put(key, StringBasedExpressionDescription.create(desc));
+	// }
 
 	public IExpressionDescription putAsLabel(final String key, final String desc) {
 		return put(key, LabelExpressionDescription.create(desc));

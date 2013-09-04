@@ -20,14 +20,14 @@ package msi.gama.lang.gaml.validation;
 
 import static msi.gaml.factories.DescriptionFactory.getModelFactory;
 import java.util.*;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.utils.GamlExpressionCompiler;
 import msi.gama.util.GAML;
-import msi.gaml.compilation.GamlCompilationError;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.ModelDescription;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -119,9 +119,9 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		return null;
 	}
 
-	public Map<URI, ISyntacticElement> buildCompleteSyntacticTree(final GamlResource resource,
+	public Map<URI, SyntacticElement> buildCompleteSyntacticTree(final GamlResource resource,
 		final ResourceSet resourceSet) {
-		final Map<URI, ISyntacticElement> models = new LinkedHashMap();
+		final Map<URI, SyntacticElement> models = new LinkedHashMap();
 		final LinkedHashSet<GamlResource> totalResources = new LinkedHashSet<GamlResource>();
 		final LinkedHashSet<GamlResource> newResources = new LinkedHashSet<GamlResource>();
 		// Forcing the resource set to reload the primary resource, even though it has been
@@ -164,7 +164,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
 	@SuppressWarnings("restriction")
 	private ModelDescription parse(final GamlResource resource, final XtextResourceSet resourceSet) {
-		final Map<URI, ISyntacticElement> models = buildCompleteSyntacticTree(resource, resourceSet);
+		final Map<URI, SyntacticElement> models = buildCompleteSyntacticTree(resource, resourceSet);
 		GAML.getExpressionFactory().getParser().reset();
 		final IPath path;
 		if ( resource.getURI().isPlatform() ) {
