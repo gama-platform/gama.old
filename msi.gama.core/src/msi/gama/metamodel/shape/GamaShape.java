@@ -422,20 +422,34 @@ public class GamaShape implements IShape /* , IContainer */{
 	}
 
 	private void computeLocation() {
+		Geometry g = getInnerGeometry();
 		final Point p = getInnerGeometry().getCentroid();
-		final Coordinate c = p.getCoordinate();
-		if ( location == null ) {
-			location = new GamaPoint(c);
-		} else {
-			location.setLocation(c.x, c.y, c.z);
-		}
-		// if ( Double.isNaN(location.getX()) ) {
-		//
-		// Point p2 = getInnerGeometry().getCentroid();
-		// Coordinate c2 = p2.getCoordinate();
-		// GuiUtils.debug("GamaShape.computeLocation" + c2);
-		// }
+		
+
+         final Coordinate c = p.getCoordinate();
+         if ( isPoint() ) {
+                 c.z = g.getCoordinate().z;
+         } else {
+                 c.z = computeAverageZOrdinate(g);
+         }
+         if ( location == null ) {
+                 location = new GamaPoint(c);
+         } else {
+                 location.setLocation(c.x, c.y, c.z);
+         }	
 	}
+	
+	private double computeAverageZOrdinate(final Geometry g) {
+        double z = 0d;
+        Coordinate[] coords = g.getCoordinates();
+        for ( Coordinate c : coords ) {
+                if ( c.z == Double.NaN ) {
+                        continue;
+                }
+                z += c.z;
+        }
+        return z / coords.length;
+    }
 
 	@Override
 	public void dispose() {
