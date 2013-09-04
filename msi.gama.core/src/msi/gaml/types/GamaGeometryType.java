@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -28,11 +28,16 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.descriptions.ModelDescription;
+import msi.gaml.operators.Spatial.Operators;
 import msi.gaml.species.ISpecies;
 import com.vividsolutions.jts.geom.*;
+import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
+import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
+import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
+import com.vividsolutions.jts.util.AssertionFailedException;
 
 /**
- * Written by drogoul Modified on 1 aožt 2010
+ * Written by drogoul Modified on 1 aoï¿½t 2010
  * 
  * @todo Description
  * 
@@ -57,7 +62,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 			return geometriesToGeometry(scope, (IContainer) obj);
 		}
 
-		// Faire ici tous les casts nŽcessaires pour construire des gŽomŽtries (liste, string, etc.)
+		// Faire ici tous les casts nï¿½cessaires pour construire des gï¿½omï¿½tries (liste, string, etc.)
 		return null;
 	}
 
@@ -313,11 +318,13 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return g;
 	}
 
+	
 	public static GamaShape geometriesToGeometry(final IScope scope, final IContainer<?, ? extends IShape> ags)
 		throws GamaRuntimeException {
 		if ( ags == null || ags.isEmpty(scope) ) { return null; }
 		final Geometry geoms[] = new Geometry[ags.length(scope)];
 		int cpt = 0;
+		boolean is_polygon = true;
 		for ( final Object ent : ags.iterable(scope) ) {
 			if ( ent == null ) {
 				continue;
@@ -325,12 +332,33 @@ public class GamaGeometryType extends GamaType<IShape> {
 			if ( !(ent instanceof IShape) ) { throw GamaRuntimeException
 				.error("Cannot cast to geometry a container of " +
 					((ModelDescription) scope.getModel().getDescription()).getTypesManager().get(ent.getClass())); }
-			geoms[cpt] = ((IShape) ent).getInnerGeometry();
+			Geometry geom = ((IShape) ent).getInnerGeometry();
+			geoms[cpt] = geom;
+			if (is_polygon && ! (geom instanceof Polygon)) 
+				is_polygon = false;
 			cpt++;
 		}
-		final Geometry geom = GeometryUtils.factory.createGeometryCollection(geoms);
-		geom.union();
-		if ( geom.isValid() && !geom.isEmpty() ) { return new GamaShape(geom); }
+		
+		try {
+			if (is_polygon) {
+				Geometry geom  = CascadedPolygonUnion.union(new GamaList(geoms));
+				if (geom != null && !geom.isEmpty() ) { return new GamaShape(geom); }
+			}
+			else {
+				Geometry geom = GeometryUtils.factory.createGeometryCollection(geoms);
+				geom.union();
+				if (geom != null && !geom.isEmpty() ) { return new GamaShape(geom); }
+			}
+		} catch (AssertionFailedException e) {
+			Geometry gs[] = new Geometry[geoms.length];
+			int i = 0;
+			for (Geometry g : geoms) {
+				gs[i] = g.buffer(0.0);
+				i ++;
+			}
+			Geometry geom  = CascadedPolygonUnion.union(new GamaList(gs));
+			if (geom != null && !geom.isEmpty() ) { return new GamaShape(geom); }
+		}
 		return null;
 	}
 
