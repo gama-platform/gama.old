@@ -68,6 +68,8 @@ public class GamaToolbarFactory implements IGamaViewActions {
 				return new OverlayItem(view);
 			case OPENGL:
 				return new OpenGLItem(view);
+			case CLEAR:
+				return new ClearItem(view);
 
 		}
 		return null;
