@@ -265,9 +265,9 @@ public class RandomUtils implements SeedGenerator {
 	 * @param newSeed the new seed
 	 */
 	public void setSeed(final Long newSeed) {
-		// GuiUtils.debug("New seed for RandomAgent: " + newSeed);
+		GuiUtils.debug("New seed for RandomAgent: " + newSeed);
 		// final Long oldSeed = seed;
-		seed = newSeed == null || newSeed.equals(0L) ? seed : newSeed;
+		seed = newSeed;
 		// if ( seed == null || !seed.equals(oldSeed) ) {
 		initGenerator();
 		initDefaultDistributions();
@@ -297,7 +297,8 @@ public class RandomUtils implements SeedGenerator {
 
 	public long getSeed() {
 		if ( seed == null ) {
-			Double s = GamaPreferences.CORE_SEED.getValue();
+			Double s =
+				GamaPreferences.CORE_SEED_DEFINED.getValue() ? GamaPreferences.CORE_SEED.getValue() : (Double) null;
 			if ( s == null ) {
 				seed = BinaryUtils.convertBytesToLong(DefaultSeedGenerator.getInstance().generateSeed(8), 0);
 			} else {

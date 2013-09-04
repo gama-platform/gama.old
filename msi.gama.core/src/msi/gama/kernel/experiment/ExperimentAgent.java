@@ -63,6 +63,8 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	protected SimulationAgent simulation;
 	final Map<String, Object> extraParametersMap = new LinkedHashMap();
 	protected RandomUtils random;
+	protected Double seed = GamaPreferences.CORE_SEED_DEFINED.getValue() ? GamaPreferences.CORE_SEED.getValue()
+		: (Double) null;
 	// protected boolean isLoading;
 	protected ExperimentClock clock = new ExperimentClock();
 	// protected boolean revealAndStop = GamaPreferences.CORE_REVEAL_AND_STOP.getValue();
@@ -90,7 +92,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		createSimulationPopulation();
 		// We initialize a new random number generator
 		// random = new RandomUtils(getSpecies().getCurrentSeed());
-		random = new RandomUtils(getSeed(), getRng());
+		random = new RandomUtils(seed, getRng());
 	}
 
 	@Override
@@ -284,15 +286,13 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@getter(value = IKeyword.SEED, initializer = true)
 	public Double getSeed() {
-		Long l = getRandomGenerator().getSeed();
-		if ( l == null ) { return null; }
-		return l.doubleValue();
+		return seed == null ? 0d : seed;
 	}
 
 	@setter(IKeyword.SEED)
 	public void setSeed(final Double s) {
-		// GuiUtils.debug("ExperimentAgent.setSeed " + s);
-		getRandomGenerator().setSeed(s);
+		seed = s == 0d ? null : s;
+		getRandomGenerator().setSeed(seed);
 	}
 
 	@getter(value = IKeyword.RNG, initializer = true)
