@@ -94,9 +94,9 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 				drawer.getGL().glDisable(GL.GL_TEXTURE);
 				/*drawer.getGL().glColor3f(1.0f,0,0);*/
 				//http://elect86.wordpress.com/2013/02/04/jogl-color-picking/
-				drawer.getGL().glDrawBuffer(GL.GL_BACK);
+				//drawer.getGL().glDrawBuffer(GL.GL_BACK);
 		
-	            for ( final T object : objects ) {
+	            /*for ( final T object : objects ) {
 	            	System.out.println("object.index " + object.index);
 	            	Color index = new Color(object.index);
 	            	drawer.getGL().glColor3f(index.getRed() / 255.0f, index.getGreen() / 255.0f, index.getBlue() / 255.0f);
@@ -104,13 +104,13 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 	            			" index getGreen : "+index.getGreen() / 255.0f+
 	            			"index getBlue : "+index.getBlue() / 255.0f);
 					object.draw(drawer, picking);
-				}
+				}*/
 	            
 	            int viewport[] = new int[4];
 	            drawer.getGL().glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
 
 	            FloatBuffer pixels = FloatBuffer.allocate(4);
-	            drawer.getGL().glReadBuffer(GL.GL_BACK);
+	            //drawer.getGL().glReadBuffer(GL.GL_BACK);
 	            drawer.getGL().glReadPixels(drawer.renderer.camera.lastxPressed,viewport[3]-drawer.renderer.camera.lastyPressed,1,1,
 	            GL.GL_RGBA,GL.GL_FLOAT,pixels);
 	            
@@ -121,8 +121,8 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 	            
 	            
 	            Color index = new Color(pixels.get(0), pixels.get(1), pixels.get(2));	    
-	            System.out.println("index returned " + index.toString());
-	            renderer.colorPicking=false;
+	            System.out.println("color picked " + index.toString());
+	            //renderer.colorPicking=false;
 			}
 			else{
 				drawer.getGL().glPushMatrix();

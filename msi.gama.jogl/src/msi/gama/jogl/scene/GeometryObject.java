@@ -98,16 +98,6 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 					renderer.currentPickedObject = this;
 					renderer.displaySurface.selectAgents(agent, layerId - 1);
 				}
-				else{
-					renderer.setPicking(false);
-					pick();
-					renderer.currentPickedObject = this;
-					Point pickedPoint =
-							renderer.getIntWorldPointFromWindowPoint(new Point(renderer.camera.lastxPressed,
-								renderer.camera.lastyPressed));
-						IAgent ag = GAMA.getSimulation().getAgent().getPopulationFor( this.populationName).getAgent(new GamaPoint(pickedPoint.x, -pickedPoint.y));
-						renderer.displaySurface.selectAgents(ag, layerId - 1);
-				}
 			}
 			super.draw(drawer, picking);
 			renderer.gl.glPopMatrix();

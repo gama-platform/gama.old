@@ -161,7 +161,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
 		final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
 		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final Color gridColor,
-		final Integer angle, final Double z, final boolean isDynamic, final int cellSize) {
+		final Integer angle, final Double z, final boolean isDynamic, final int cellSize,final String name) {
 				
 		MyTexture texture = null;
 		if ( !renderer.getScene().getTextures().containsKey(img) ) {
@@ -173,10 +173,10 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 			}	
 		}
 				
-		renderer.getScene().addDEM(gridValueMatrix, img, null, isTextured, isTriangulated, isShowText, false,
+		renderer.getScene().addDEM(gridValueMatrix, img, null, scope == null ? null : scope.getAgentScope(), isTextured, isTriangulated, isShowText, false,
 				scope.getSimulationScope()
 				.getEnvelope(), 1.0,
-				getCurrentAlpha(), currentOffset, currentScale, cellSize, texture);
+				getCurrentAlpha(), currentOffset, currentScale, cellSize, texture,name,currentLayerId);
 				
 		if ( gridColor != null ) {
 			drawGridLine(img, gridColor, scope.getAgentScope().getPopulation().getName());
@@ -250,7 +250,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 		// getASCfromImg(dem);
 		// FIXME: alpha,scale,offset not taken in account when using the operator dem
-		renderer.getScene().addDEM(null, texture, dem, false, false, false, true, env, z_factor, null, null, null, 1,null);
+		renderer.getScene().addDEM(null, texture, dem, null, false, false, false, true, env, z_factor, null, null, null, 1,null,null,0);
 		return null;
 	}
 

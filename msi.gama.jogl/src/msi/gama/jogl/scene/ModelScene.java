@@ -16,6 +16,7 @@ import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.metamodel.shape.IShape;
+import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaGeometryType;
 import org.geotools.data.simple.SimpleFeatureCollection;
@@ -114,12 +115,12 @@ public class ModelScene {
 		}
 	}
 	
-	public void addDEM(final double[] dem, final BufferedImage demTexture, final BufferedImage demImg,
+	public void addDEM(final double[] dem, final BufferedImage demTexture, final BufferedImage demImg,final IAgent agent,
 		final boolean isTextured, final boolean isTriangulated, final boolean isShowText, final boolean fromImage,
 		final Envelope env, final Double z_factor, final Double alpha, final GamaPoint offset, final GamaPoint scale,
-		final int cellSize,final MyTexture texture) {
-		dems.add(new DEMObject(dem, demTexture, demImg, env, isTextured, isTriangulated, isShowText, fromImage, z_factor,
-			null, offset, scale, alpha, cellSize,texture));
+		final int cellSize,final MyTexture texture,final String name, final int currentLayerId) {
+		dems.add(new DEMObject(dem, demTexture, demImg, agent, env, isTextured, isTriangulated, isShowText, fromImage, z_factor,
+			null, offset, scale, alpha, cellSize,texture,name,currentLayerId));
 		if ( texture != null ) {
 			textures.put(demTexture, texture);
 		}
@@ -201,7 +202,7 @@ public class ModelScene {
 		}
 		final Color c = new Color(225, 225, 225);
 		if(!envGeometryInitialized){
-	 	  addGeometry(g, null, 0, 0, c, false, c, false, 0, 0, offset, scale, false, "env", false, 1d, "environment");
+	 	  addGeometry(g, GAMA.getSimulation().getAgent(), 0, 0, c, false, c, false, 0, 0, offset, scale, false, "env", false, 1d, "environment");
 	 	 envGeometryInitialized = true;
 		}
 	}

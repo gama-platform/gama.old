@@ -142,10 +142,10 @@ public class GridLayer extends ImageLayer {
 					e.printStackTrace();
 				}
 				dg.drawGrid(scope, texture, gridValueMatrix, isTextured, isTriangulated, isShowText, null, null,
-					lineColor, null, 0.0, true, cellSize);
+					lineColor, null, 0.0, true, cellSize,this.getName());
 			} else {
 				dg.drawGrid(scope, image, gridValueMatrix, isTextured, isTriangulated, isShowText, null, null,
-					lineColor, null, 0.0, true, cellSize);
+					lineColor, null, 0.0, true, cellSize,this.getName());
 			}
 
 		} else {

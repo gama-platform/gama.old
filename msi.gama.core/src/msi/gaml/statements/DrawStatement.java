@@ -25,6 +25,7 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.combination;

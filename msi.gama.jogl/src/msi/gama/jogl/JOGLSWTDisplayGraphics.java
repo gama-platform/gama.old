@@ -326,7 +326,7 @@ public class JOGLSWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
 		final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
 		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final Color gridColor,
-		final Integer angle, final Double z, final boolean isDynamic, final int cellSize) {
+		final Integer angle, final Double z, final boolean isDynamic, final int cellSize, final String name) {
 		// TODO Auto-generated method stub
 		return null;
 	}
