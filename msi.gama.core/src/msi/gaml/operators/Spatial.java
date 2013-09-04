@@ -1651,11 +1651,13 @@ public abstract class Spatial {
 
 		@Deprecated
 		public static IShape add_z(final IShape g, final Double z) {
-			final Coordinate[] coordinates = g.getInnerGeometry().getCoordinates();
+			GamaPoint p = new GamaPoint(g.getLocation().getX(),g.getLocation().getY(),z);
+			g.setLocation(p);
+			/*final Coordinate[] coordinates = g.getInnerGeometry().getCoordinates();
 			((GamaPoint) g.getLocation()).z = z;
 			for ( int i = 0; i < coordinates.length; i++ ) {
 				coordinates[i].z = z;
-			}
+			}*/
 			return g;
 		}
 
