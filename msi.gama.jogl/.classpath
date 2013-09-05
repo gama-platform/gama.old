@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry excluding="msi/gama/jogl/GLView.java" kind="src" path="src"/>
+	<classpathentry excluding="msi/gama/jogl/GLView.java|msi/gama/jogl/JOGLSWTDisplayGraphics.java|msi/gama/jogl/JOGLSWTDisplaySurface.java|msi/gama/jogl/utils/JOGLSWTGLRenderer.java|msi/gama/jogl/utils/MyGraphicsSWT.java|msi/gama/jogl/utils/MyListenerSWT.java|msi/gama/jogl/utils/VertexArrayHandlerSWT.java|msi/gama/jogl/utils/BasicOpenGlDrawerSWT.java|msi/gama/jogl/utils/JTSGeometryOpenGLDrawer/JTSDrawerSWT.java|msi/gama/jogl/utils/Refresher.java|msi/gama/jogl/utils/dem/DigitalElevationModelDrawerSWT.java|msi/gama/jogl/scene/GeometryObjectSWT.java|msi/gama/jogl/scene/ImageObjectSWT.java|msi/gama/jogl/scene/ModelSceneSWT.java|msi/gama/jogl/scene/ObjectDrawerSWT.java|msi/gama/jogl/scene/SceneObjectsSWT.java|msi/gama/jogl/scene/AbstractObjectSWT.java|msi/gama/jogl/scene/CollectionObjectSWT.java|msi/gama/jogl/scene/ISceneObjectSWT.java|msi/gama/jogl/scene/StringObjectSWT.java|collada/Output3DSWT.java" kind="src" path="src"/>
 	<classpathentry kind="src" path="gaml">
 		<attributes>
 			<attribute name="optional" value="true"/>

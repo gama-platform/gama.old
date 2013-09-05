@@ -29,7 +29,7 @@ import msi.gama.gui.displays.awt.AbstractSWTDisplaySurface;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.jogl.scene.ModelSceneSWT;
 import msi.gama.jogl.utils.JOGLSWTGLRenderer;
-import msi.gama.jogl.utils.Camera.AbstractCamera;
+import msi.gama.jogl.utils.Camera.ICamera;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -438,7 +438,7 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 		}
 		renderer.camera.getPosition().setZ(renderer.camera.getPosition().getZ() - incrementalZoomStep);
 		renderer.camera.getTarget().setZ(renderer.camera.getTarget().getZ() - incrementalZoomStep);
-		setZoomLevel(renderer.camera.getMaxDim() * AbstractCamera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
+		setZoomLevel(renderer.camera.getMaxDim() * ICamera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
 		// FIXME Approximate
 		resizeImage((int) (getWidth() * zoomLevel), (int) (getHeight() * zoomLevel));
 		// setZoomLevel(zoomLevel + zoomLevel * 0.1);
@@ -457,7 +457,7 @@ public final class JOGLSWTDisplaySurface extends AbstractSWTDisplaySurface imple
 		}
 		renderer.camera.getPosition().setZ(renderer.camera.getPosition().getZ() + incrementalZoomStep);
 		renderer.camera.getTarget().setZ(renderer.camera.getTarget().getZ() + incrementalZoomStep);
-		setZoomLevel(renderer.camera.getMaxDim() * AbstractCamera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
+		setZoomLevel(renderer.camera.getMaxDim() * ICamera.INIT_Z_FACTOR / renderer.camera.getPosition().getZ());
 		// FIXME Approximate
 		resizeImage((int) (getWidth() * zoomLevel), (int) (getHeight() * zoomLevel));
 		// updateDisplay();

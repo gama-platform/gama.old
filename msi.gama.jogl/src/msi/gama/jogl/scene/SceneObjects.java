@@ -111,7 +111,7 @@ public class SceneObjects<T extends AbstractObject> implements Iterable<T> {
 
 	            FloatBuffer pixels = FloatBuffer.allocate(4);
 	            //drawer.getGL().glReadBuffer(GL.GL_BACK);
-	            drawer.getGL().glReadPixels(drawer.renderer.camera.lastxPressed,viewport[3]-drawer.renderer.camera.lastyPressed,1,1,
+	            drawer.getGL().glReadPixels(drawer.renderer.camera.getLastxPressed(),viewport[3]-drawer.renderer.camera.getLastyPressed(),1,1,
 	            GL.GL_RGBA,GL.GL_FLOAT,pixels);
 	            
 		        drawer.getGL().glEnable(GL.GL_DITHER);

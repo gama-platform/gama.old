@@ -12,7 +12,7 @@ import javax.media.opengl.glu.GLU;
 import msi.gama.jogl.JOGLAWTDisplaySurface;
 import msi.gama.jogl.scene.*;
 import msi.gama.jogl.utils.Camera.*;
-import msi.gama.jogl.utils.Camera.Arcball.*;
+import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.OutputSynchronizer;
@@ -42,7 +42,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public final double env_height;
 
 	// Camera
-	public AbstractCamera camera;
+	public ICamera camera;
 	public MyGraphics graphicsGLUtils;
 
 	// Use to test and display basic opengl shape and primitive
@@ -62,13 +62,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private final boolean CubeDisplay = false;
 	// Handle Shape file
 	public ShapeFileReader myShapeFileReader;
-	// Arcball
-	private ArcBall arcBall;
 	// use glut tesselation or JTS tesselation
 	// facet "tesselation"
 	private boolean useTessellation = true;
 	// facet "inertia"
-	public boolean inertia = false;
+	private boolean inertia = false;
 	// facet "inertia"
 	private boolean stencil = false;
 	// facet "drawEnv"
@@ -150,7 +148,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		glu = new GLU();
 		glut = new GLUT();
 		setContext(drawable.getContext());
-		arcBall = new ArcBall(width, height);
 
 		// Set background color
 
@@ -182,7 +179,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		JOGLAWTGLRenderer.BLENDING_ENABLED = true;
 		IS_LIGHT_ON = true;
 
-		camera.UpdateCamera(gl, glu, width, height);
+		camera.updateCamera(gl, glu, width, height);
 		scene = new ModelScene(this);
 		graphicsGLUtils = new MyGraphics(this);
 
@@ -212,7 +209,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			// Reset the view (x, y, z axes back to normal)
 			gl.glLoadIdentity();
 
-			camera.UpdateCamera(gl, glu, width, height);
+			camera.updateCamera(gl, glu, width, height);
 
 			if ( IS_LIGHT_ON ) {
 				gl.glEnable(GL_LIGHTING);
@@ -271,8 +268,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			this.rotateModel();
 
 			if ( getInertia() ) {
-				camera.arcBallInertia();
-				camera.moveInertia();
+				camera.doInertia();
 			}
 
 			this.drawScene();
@@ -305,10 +301,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 					canvas.swapBuffers();
 				}
 			}
+
 		}
 	}
-	
-
 
 	@Override
 	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int arg3, final int arg4) {
@@ -335,7 +330,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		 * camera.getUpVector().getY(), camera.getUpVector().getZ());
 		 * }
 		 */
-		arcBall.setBounds(width, height);
+
 	}
 
 	@Override
@@ -542,7 +537,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	}
 
 	public void setCameraUpVector(final ILocation upVector) {
-		camera.setUpVector(upVector);
+		camera.upPosition(upVector.getX(), upVector.getY(), upVector.getZ());
 	}
 
 	public double getMaxEnvDim() {
@@ -678,12 +673,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	}
 
 	public ArrayList<Integer> DrawROI() {
-		if ( camera.enableROIDrawing ) {
+		if ( camera.isEnableROIDrawing() ) {
 			roi_List.clear();
-			Point windowPressedPoint = new Point(camera.lastxPressed, camera.lastyPressed);
+			Point windowPressedPoint = new Point(camera.getLastxPressed(), camera.getLastyPressed());
 			Point realPressedPoint = getIntWorldPointFromWindowPoint(windowPressedPoint);
 
-			Point windowmousePositionPoint = new Point(camera.mousePosition.x, camera.mousePosition.y);
+			Point windowmousePositionPoint = new Point(camera.getMousePosition().x, camera.getMousePosition().y);
 			Point realmousePositionPoint = getIntWorldPointFromWindowPoint(windowmousePositionPoint);
 
 			myGLDrawer.DrawROI(gl, realPressedPoint.x, -realPressedPoint.y, realmousePositionPoint.x,
@@ -732,30 +727,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public void ROIZoom() {
 		int roiWidth = (int) Math.abs(roi_List.get(0) + env_width / 2 - (roi_List.get(2) + env_width / 2));
 		int roiHeight = (int) Math.abs(roi_List.get(1) - env_height / 2 - (roi_List.get(3) - env_height / 2));
-
-		double maxDim;
-
-		if ( !this.displaySurface.switchCamera ) {
-			if ( roiWidth > roiHeight ) {
-				camera.setRadius(roiWidth * 1.5);
-			} else {
-				camera.setRadius(roiHeight * 1.5);
-			}
-
-			camera.setTarget(new Vector3D(roiCenter.x, roiCenter.y, 0.0));
-
-			camera.rotation();
-		} else {
-			if ( roiWidth > roiHeight ) {
-				maxDim = roiWidth * 1.5;
-			} else {
-				maxDim = roiHeight * 1.5;
-			}
-
-			camera.setPosition(new Vector3D(roiCenter.x, roiCenter.y, maxDim));
-
-			camera.vectorsFromAngles();
-		}
+		camera.zoomROI(roiCenter.x, roiCenter.y, roiWidth, roiHeight);
 	}
 
 	public void setPicking(final boolean value) {

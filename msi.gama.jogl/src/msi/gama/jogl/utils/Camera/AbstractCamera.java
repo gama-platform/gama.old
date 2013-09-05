@@ -1,209 +1,128 @@
 package msi.gama.jogl.utils.Camera;
 
+import static java.awt.event.KeyEvent.*;
 import java.awt.Point;
 import java.awt.event.*;
 import java.nio.IntBuffer;
+import java.util.Iterator;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.topology.AbstractTopology;
+import msi.gama.metamodel.topology.filter.Different;
+import msi.gama.runtime.GAMA;
 import com.sun.opengl.util.BufferUtil;
+import com.vividsolutions.jts.geom.Envelope;
 
-public abstract class AbstractCamera implements KeyListener, MouseListener, MouseMotionListener, MouseWheelListener {
+public abstract class AbstractCamera implements ICamera {
 
-	protected JOGLAWTGLRenderer myRenderer;
+	protected static final double factor = Math.PI / 180d;
 
+	private JOGLAWTGLRenderer renderer;
 	protected boolean isMacOS = false;
-
 	protected final IntBuffer selectBuffer = BufferUtil.newIntBuffer(1024);// will store information
 
 	// picking
-	public boolean isPickedPressed = false;
-	public Point mousePosition;
+	private boolean isPickedPressed = false;
+	private Point mousePosition;
 
 	// ROI Drawing
-	public boolean enableROIDrawing = false;
+	private boolean enableROIDrawing = false;
 
 	protected double maxDim;
 
 	// To handle mouse event
-	public int lastxPressed;
-	public int lastyPressed;
+	private int lastxPressed;
+	private int lastyPressed;
 
-	protected Vector3D _position;
-	protected Vector3D _target;
+	protected final Vector3D position = new Vector3D();
+	protected final Vector3D target = new Vector3D();
+	protected final Vector3D forward = new Vector3D();
+	protected final Vector3D upVector = new Vector3D();
 
-	protected ILocation upVector;
+	protected double theta;
+	protected double phi;
 
-	public double _theta;
-	public double _phi;
+	private final double _keyboardSensivity = 4.0;
+	private final double _sensivity = 0.4;
 
-	public final static double INIT_Z_FACTOR = 1.5;
-	public double _keyboardSensivity;
-
-	public boolean forward, backward, strafeLeft, strafeRight;
-	public boolean ctrlKeyDown = false;
-	public boolean shiftKeyDown = false;
-
-	public double velocityHoriz, velocityVert = 0;
-
-	public int _orientation;
-	public Point point1 = new Point(0, 0);
+	private boolean goesForward;
+	private boolean goesBackward;
+	private boolean strafeLeft;
+	private boolean strafeRight;
+	private final boolean ctrlKeyDown = false;
+	private boolean shiftKeyDown = false;
 
 	public AbstractCamera(final JOGLAWTGLRenderer renderer) {
-		myRenderer = renderer;
-
-		_position = new Vector3D();
-		_target = new Vector3D();
+		this.setRenderer(renderer);
 
 		detectMacOS();
-		mousePosition = new Point(0, 0);
-		setUpVector(new GamaPoint(0.0, 1.0, 0.0));
+		setMousePosition(new Point(0, 0));
+		upPosition(0.0, 1.0, 0.0);
 	}
 
 	public AbstractCamera(final double xPos, final double yPos, final double zPos, final double xLPos,
 		final double yLPos, final double zLPos, final JOGLAWTGLRenderer renderer) {
-		myRenderer = renderer;
+		setRenderer(renderer);
 		detectMacOS();
-		mousePosition = new Point(0, 0);
-		setUpVector(new GamaPoint(0.0, 1.0, 0.0));
+		setMousePosition(new Point(0, 0));
+		upPosition(0.0, 1.0, 0.0);
 	}
 
+	@Override
+	public void resetCamera(final double envWidth, final double envHeight, final boolean threeD) {
+		setMaxDim(envWidth > envHeight ? envWidth : envHeight);
+	}
+
+	@Override
+	public final void updateCamera(final GL gl, final GLU glu, final int width, final int height) {
+		float aspect = (float) width / (height == 0 ? 1 : height);
+		glu.gluPerspective(45.0f, aspect, 0.1f, getMaxDim() * 100);
+		makeGluLookAt(glu);
+		animate();
+	}
+
+	protected abstract void animate();
+
+	protected abstract void makeGluLookAt(GLU glu);
+
+	@Override
 	public void updatePosition(final double xPos, final double yPos, final double zPos) {
-		_position.x = xPos;
-		_position.y = yPos;
-		_position.z = zPos;
+		position.set(xPos, yPos, zPos);
 	}
 
+	@Override
 	public void lookPosition(final double xLPos, final double yLPos, final double zLPos) {
-		_target.x = xLPos;
-		_target.y = yLPos;
-		_target.z = zLPos;
+		target.set(xLPos, yLPos, zLPos);
 	}
 
-	public void setPosition(final Vector3D position) {
-		this._position = position;
+	@Override
+	public void upPosition(final double xPos, final double yPos, final double zPos) {
+		upVector.set(xPos, yPos, zPos);
 	}
-
-	public void setTarget(final Vector3D target) {
-		this._target = target;
-	}
-
-	public ILocation getUpVector() {
-		return upVector;
-	}
-
-	public void setUpVector(final ILocation upVector) {
-		this.upVector = upVector;
-	}
-
-	public void setZPosition(final double z) {}
-
-	public void vectorsFromAngles() {}
-
-	public void moveXYPlan(final double diffx, final double diffy, final double speed) {}
-
-	// Move in the XY plan by changing camera pos and look pos.
-	public void moveXYPlan2(final double diffx, final double diffy, final double z, final double w, final double h) {
-
-		double translationValue = 0;
-
-		if ( Math.abs(diffx) > Math.abs(diffy) ) {// Move X
-
-			translationValue = Math.abs(diffx) * ((z + 1) / w);
-
-			if ( diffx > 0 ) {// move right
-				updatePosition(_position.getX() - translationValue, _position.getY(), _position.getZ());
-				lookPosition(_target.getX() - translationValue, _target.getY(), _target.getZ());
-			} else {// move left
-				updatePosition(_position.getX() + translationValue, _position.getY(), _position.getZ());
-				lookPosition(_target.getX() + translationValue, _target.getY(), _target.getZ());
-			}
-		} else if ( Math.abs(diffx) < Math.abs(diffy) ) { // Move Y
-
-			translationValue = Math.abs(diffy) * ((z + 1) / h);
-
-			if ( diffy > 0 ) {// move down
-				updatePosition(_position.getX(), _position.getY() + translationValue, _position.getZ());
-				this.lookPosition(_target.getX(), _target.getY() + translationValue, _target.getZ());
-			} else {// move up
-				updatePosition(_position.getX(), _position.getY() - translationValue, _position.getZ());
-				lookPosition(_target.getX(), _target.getY() - translationValue, _target.getZ());
-			}
-		}
-	}
-
-	public void moveForward(final double magnitude) {}
-
-	public void strafeLeft(final double magnitude) {}
-
-	public void strafeRight(final double magnitude) {}
-
-	public void look(final double distanceAway) {}
-
-	public void animate() {}
 
 	/* -------Get commands--------- */
 
+	@Override
 	public Vector3D getPosition() {
-		return _position;
+		return position;
 	}
 
-	public Vector3D getTarget() {
-		return _target;
-	}
-
-	public Vector3D getForward() {
-		return null;
-	}
-
-	public Double getSpeed() {
-		return null;
-	}
-
-	public void UpdateCamera(final GL gl, final GLU glu, final int width, final int height) {}
-
-	public void initializeCamera(final double envWidth, final double envHeight) {}
-
-	public void initialize3DCamera(final double envWidth, final double envHeight) {}
-
-	/* -------------- Pitch and Yaw commands --------------- */
-
-	public void pitchUp(final double amount) {}
-
-	public void pitchDown(final double amount) {}
-
-	public void yawRight(final double amount) {}
-
-	public void yawLeft(final double amount) {}
-
-	public double getPitch() {
-		return 0;
-	}
-
-	public double getYaw() {
-		return 0;
-	}
-
-	/*---------------------------------------*/
 	/*------------------ Events controls ---------------------*/
 
 	@Override
-	public void mouseWheelMoved(final MouseWheelEvent arg0) {}
-
-	@Override
-	public void mouseDragged(final MouseEvent arg0) {}
-
-	@Override
-	public void mouseMoved(final MouseEvent arg0) {
-		mousePosition.x = arg0.getX();
-		mousePosition.y = arg0.getY();
+	public void mouseWheelMoved(final MouseWheelEvent arg0) {
+		zoom(arg0.getWheelRotation() < 0);
 	}
 
 	@Override
-	public void mouseClicked(final MouseEvent arg0) {}
+	public void mouseMoved(final MouseEvent arg0) {
+		getMousePosition().x = arg0.getX();
+		getMousePosition().y = arg0.getY();
+	}
 
 	@Override
 	public void mouseEntered(final MouseEvent arg0) {}
@@ -212,16 +131,111 @@ public abstract class AbstractCamera implements KeyListener, MouseListener, Mous
 	public void mouseExited(final MouseEvent arg0) {}
 
 	@Override
-	public void mousePressed(final MouseEvent arg0) {}
+	public void mousePressed(final MouseEvent arg0) {
+		setLastxPressed(arg0.getX());
+		setLastyPressed(arg0.getY());
+
+		// Picking mode
+		// if ( myRenderer.displaySurface.picking ) {
+		// Activate Picking when press and right click and if in Picking mode
+		if ( arg0.getButton() == 3 ) {
+			this.isPickedPressed = true;
+			getRenderer().setPicking(true);
+			// myRenderer.drawPickableObjects();
+		} else {
+			getRenderer().setPicking(false);
+			// }
+
+		}
+
+		getMousePosition().x = arg0.getX();
+		getMousePosition().y = arg0.getY();
+		// getRenderer().getIntWorldPointFromWindowPoint(new Point(arg0.getX(), arg0.getY()));
+
+	}
 
 	@Override
-	public void mouseReleased(final MouseEvent arg0) {}
+	public void mouseReleased(final MouseEvent arg0) {
+		if ( canSelectOnRelease(arg0) && isViewIn2DPlan() && isEnableROIDrawing() ) {
+			if ( arg0.isAltDown() ) {
+				Iterator<IShape> shapes =
+					GAMA.getSimulation()
+						.getTopology()
+						.getSpatialIndex()
+						.allInEnvelope(
+							new GamaPoint(getRenderer().roiCenter.x, -getRenderer().roiCenter.y),
+							new Envelope(getRenderer().roi_List.get(0), getRenderer().roi_List.get(2),
+								-getRenderer().roi_List.get(1), -getRenderer().roi_List.get(3)), new Different(), true);
+				final Iterator<IAgent> agents = AbstractTopology.toAgents(shapes);
+				getRenderer().displaySurface.selectSeveralAgents(agents, 0);
+			}
+			if ( arg0.isShiftDown() ) {
+				getRenderer().ROIZoom();
+			}
+			setEnableROIDrawing(false);
+		}
+	}
+
+	protected abstract boolean canSelectOnRelease(MouseEvent arg0);
 
 	@Override
-	public void keyPressed(final KeyEvent arg0) {}
+	public void mouseClicked(final MouseEvent arg0) {
+		if ( arg0.getClickCount() > 1 ) {
+			getRenderer().displaySurface.zoomFit();
+		}
+		if ( arg0.isShiftDown() || arg0.isAltDown() ) {
+			getRenderer().displaySurface.selectRectangle = true;
+			Point point = getRenderer().getIntWorldPointFromWindowPoint(new Point(arg0.getX(), arg0.getY()));
+
+			getMousePosition().x = arg0.getX();
+			getMousePosition().y = arg0.getY();
+			setEnableROIDrawing(true);
+			getRenderer().DrawROI();
+			getRenderer().roiCenter.setLocation(point.x, point.y);
+
+			setEnableROIDrawing(false);
+		}
+	}
 
 	@Override
-	public void keyReleased(final KeyEvent arg0) {}
+	public final void keyPressed(final KeyEvent arg0) {
+		switch (arg0.getKeyCode()) {
+			case VK_LEFT:
+				this.strafeLeft = true;
+				this.shiftKeyDown = checkShiftKeyDown(arg0);
+				break;
+			case VK_RIGHT:
+				this.strafeRight = true;
+				this.shiftKeyDown = checkShiftKeyDown(arg0);
+				break;
+			case VK_UP:
+				this.goesForward = true;
+				this.shiftKeyDown = checkShiftKeyDown(arg0);
+				break;
+			case VK_DOWN:
+				this.goesBackward = true;
+				this.shiftKeyDown = checkShiftKeyDown(arg0);
+				break;
+		}
+	}
+
+	@Override
+	public final void keyReleased(final KeyEvent arg0) {
+		switch (arg0.getKeyCode()) {
+			case VK_LEFT: // player turns left (scene rotates right)
+				this.strafeLeft = false;
+				break;
+			case VK_RIGHT: // player turns right (scene rotates left)
+				this.strafeRight = false;
+				break;
+			case VK_UP:
+				this.goesForward = false;
+				break;
+			case VK_DOWN:
+				this.goesBackward = false;
+				break;
+		}
+	}
 
 	@Override
 	public void keyTyped(final KeyEvent arg0) {}
@@ -265,12 +279,9 @@ public abstract class AbstractCamera implements KeyListener, MouseListener, Mous
 	}
 
 	protected boolean isArcBallOn(final MouseEvent mouseEvent) {
-		if ( checkCtrlKeyDown(mouseEvent) && myRenderer.displaySurface.arcball == true ) { return false; }
-		if ( checkCtrlKeyDown(mouseEvent) || myRenderer.displaySurface.arcball == true ) {
-			return true;
-		} else {
-			return false;
-		}
+		if ( checkCtrlKeyDown(mouseEvent) && getRenderer().displaySurface.arcball == true ) { return false; }
+		if ( checkCtrlKeyDown(mouseEvent) || getRenderer().displaySurface.arcball == true ) { return true; }
+		return false;
 	}
 
 	// Picking method
@@ -281,6 +292,7 @@ public abstract class AbstractCamera implements KeyListener, MouseListener, Mous
 	 * object by using gluPickMatrix() method
 	 * @return if returned value is true that mean the picking is enabled
 	 */
+	@Override
 	public boolean beginPicking(final GL gl) {
 		if ( !isPickedPressed ) { return false; }
 		GLU glu = new GLU();
@@ -320,9 +332,9 @@ public abstract class AbstractCamera implements KeyListener, MouseListener, Mous
 		 * The second parameter provides for the conversion between the two systems, i.e. it
 		 * transforms the origin from the upper left corner, into the bottom left corner
 		 */
-		glu.gluPickMatrix(mousePosition.x, height - mousePosition.y, 4, 4, viewport, 0);
+		glu.gluPickMatrix(getMousePosition().x, height - getMousePosition().y, 4, 4, viewport, 0);
 
-		this.UpdateCamera(gl, glu, width, height);
+		this.updateCamera(gl, glu, width, height);
 		// FIXME: Comment GL_MODELVIEW to debug3D picking (redraw the model when clicking)
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 		// 4. After this pass you must draw Objects
@@ -335,9 +347,10 @@ public abstract class AbstractCamera implements KeyListener, MouseListener, Mous
 	 * After drawing we have to calculate which object was nearest screen and return its index
 	 * @return name of selected object
 	 */
+	@Override
 	public int endPicking(final GL gl) {
 		if ( !isPickedPressed ) { return -1; }
-		isPickedPressed = false;// no further iterations
+		this.isPickedPressed = false;// no further iterations
 		int selectedIndex;
 
 		// 5. When you back to Render mode gl.glRenderMode() methods return number of hits
@@ -374,40 +387,110 @@ public abstract class AbstractCamera implements KeyListener, MouseListener, Mous
 		return selectedIndex;
 	}
 
+	@Override
 	public double getMaxDim() {
 		return maxDim;
 	}
 
-	public void setMaxDim(final double maxDim) {
+	protected void setMaxDim(final double maxDim) {
 		this.maxDim = maxDim;
 	}
 
-	public void followAgent(final IAgent a) {}
-
-	public Double getRadius() {
-		return null;
+	protected void dump() {
+		System.out.println("xPos:" + position.x + " yPos:" + position.y + " zPos:" + position.z);
+		System.out.println("xLPos:" + target.x + " yLPos:" + target.y + " zLPos:" + target.z);
+		System.out.println("_phi " + phi + " _theta " + theta);
 	}
 
-	public void setRadius(final double r) {}
-
-	public void PrintParam() {
-		System.out.println("xPos:" + _position.x + " yPos:" + _position.y + " zPos:" + _position.z);
-		System.out.println("xLPos:" + _target.x + " yLPos:" + _target.y + " zLPos:" + _target.z);
-		System.out.println("_phi " + _phi + " _theta " + _theta);
+	@Override
+	public void doInertia() {
+		// Nothing to do by default
 	}
 
-	public void rotation() {
-		// TODO Auto-generated method stub
+	@Override
+	public Point getMousePosition() {
+		return mousePosition;
 	}
 
-	public abstract boolean IsViewIn2DPlan();
+	protected void setMousePosition(final Point mousePosition) {
+		this.mousePosition = mousePosition;
+	}
 
-	public void arcBallInertia() {}
+	@Override
+	public boolean isEnableROIDrawing() {
+		return enableROIDrawing;
+	}
 
-	public void moveInertia() {}
+	protected void setEnableROIDrawing(final boolean enableROIDrawing) {
+		this.enableROIDrawing = enableROIDrawing;
+	}
 
-	/**
-	 * @return
-	 */
-	public abstract Double getZoomLevel();
+	@Override
+	public int getLastxPressed() {
+		return lastxPressed;
+	}
+
+	protected void setLastxPressed(final int lastxPressed) {
+		this.lastxPressed = lastxPressed;
+	}
+
+	@Override
+	public int getLastyPressed() {
+		return lastyPressed;
+	}
+
+	protected void setLastyPressed(final int lastyPressed) {
+		this.lastyPressed = lastyPressed;
+	}
+
+	protected double get_keyboardSensivity() {
+		return _keyboardSensivity;
+	}
+
+	protected double get_sensivity() {
+		return _sensivity;
+	}
+
+	protected boolean isCtrlKeyDown() {
+		return ctrlKeyDown;
+	}
+
+	protected boolean isShiftKeyDown() {
+		return shiftKeyDown;
+	}
+
+	protected boolean isForward() {
+		return goesForward;
+	}
+
+	protected boolean isBackward() {
+		return goesBackward;
+	}
+
+	protected boolean isStrafeLeft() {
+		return strafeLeft;
+	}
+
+	protected boolean isStrafeRight() {
+		return strafeRight;
+	}
+
+	@Override
+	public void zeroVelocity() {
+		// Nothing to do by default
+	}
+
+	protected JOGLAWTGLRenderer getRenderer() {
+		return renderer;
+	}
+
+	protected void setRenderer(final JOGLAWTGLRenderer renderer) {
+		this.renderer = renderer;
+	}
+
+	@Override
+	public double getPhi() {
+		return phi;
+	}
+
 }

@@ -4,11 +4,10 @@ import java.awt.Point;
 import java.nio.IntBuffer;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import com.sun.opengl.util.BufferUtil;
 import msi.gama.jogl.utils.Camera.CameraArcBall;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.*;
+import com.sun.opengl.util.BufferUtil;
 
 public class MyListenerSWT implements Listener {
 
@@ -19,62 +18,60 @@ public class MyListenerSWT implements Listener {
 	public CameraArcBall myCamera;
 	private JOGLSWTGLRenderer myRenderer;
 
-	//To handle mouse event	
+	// To handle mouse event
 	int lastxPressed;
 	int lastyPressed;
-	
+
 	private boolean isMacOS = false;
-	
+
 	public boolean drag = false;
-	
-	//picking
+
+	// picking
 	public boolean isPickedPressed = false;
 	public final Point mousePosition;
 	private final IntBuffer selectBuffer = BufferUtil.newIntBuffer(1024);// will store information
-	
-	//ROI Drawing
-	public boolean enableROIDrawing=false;
 
-	public MyListenerSWT(CameraArcBall camera) {
+	// ROI Drawing
+	public boolean enableROIDrawing = false;
+
+	public MyListenerSWT(final CameraArcBall camera) {
 		myCamera = camera;
-		detectMacOS();	
-		mousePosition = new Point(0,0);
+		detectMacOS();
+		mousePosition = new Point(0, 0);
 	}
 
-	public MyListenerSWT(CameraArcBall camera, JOGLSWTGLRenderer renderer){
+	public MyListenerSWT(final CameraArcBall camera, final JOGLSWTGLRenderer renderer) {
 		myCamera = camera;
 		myRenderer = renderer;
 		detectMacOS();
-		mousePosition = new Point(0,0);
+		mousePosition = new Point(0, 0);
 	}
-	
+
 	@Override
-	public void handleEvent(Event event) {
+	public void handleEvent(final Event event) {
 		// TODO Auto-generated method stub
-				switch (event.type) 
-				{
-				case SWT.KeyDown:
-					switch(event.keyCode)
-					{
-					case SWT.ARROW_LEFT: 
-						myCamera.strafeLeft(0.1);
-						myCamera.look(10);
+		switch (event.type) {
+			case SWT.KeyDown:
+				switch (event.keyCode) {
+					case SWT.ARROW_LEFT:
+						// myCamera.strafeLeft(0.1);
+						// myCamera.look(10);
 						break;
-					case SWT.ARROW_RIGHT: 
-						myCamera.strafeRight(0.1);
-						myCamera.look(10);
+					case SWT.ARROW_RIGHT:
+						// myCamera.strafeRight(0.1);
+						// myCamera.look(10);
 						break;
 					case SWT.ARROW_UP:
-						myCamera.moveForward(0.1);
-						myCamera.look(10);
+						// myCamera.moveForward(0.1);
+						// myCamera.look(10);
 						break;
 					case SWT.ARROW_DOWN:
-						myCamera.moveForward(-0.1);
-						myCamera.look(10);
+						// myCamera.moveForward(-0.1);
+						// myCamera.look(10);
 						break;
-					case 'q': 
+					case 'q':
 						break;
-					case 'd': 
+					case 'd':
 						break;
 					case 'z':
 						break;
@@ -92,140 +89,137 @@ public class MyListenerSWT implements Listener {
 						break;
 					case 'H':
 						break;
-					}
-					break;
-				case SWT.MouseDown:
-						drag = true;
-						//count number of click on mouse
-						if(event.count==1)//single click
-						{	
-							//set the camera to initial position
-							if ( isArcBallOn(event)) {
-								if (event.button== 3) {
-									myRenderer.reset();
-								}
-							} else {
-								// myCamera.PrintParam();
-								// System.out.println( "x:" + mouseEvent.getX() + " y:" + mouseEvent.getY());
-							}
-							
-						}	
-						// Arcball
-
-						if ( isArcBallOn(event) || myRenderer.displaySurface.selectRectangle ) {
-							// Arcball is not working with picking.
-							if ( !myRenderer.displaySurface.picking ) {
-								if (event.button==1) {
-									//myRenderer.startDrag(new Point(event.x, event.y));
-								}
-							}
-							enableROIDrawing = true;
+				}
+				break;
+			case SWT.MouseDown:
+				drag = true;
+				// count number of click on mouse
+				if ( event.count == 1 )// single click
+				{
+					// set the camera to initial position
+					if ( isArcBallOn(event) ) {
+						if ( event.button == 3 ) {
+							myRenderer.reset();
 						}
+					} else {
+						// myCamera.PrintParam();
+						// System.out.println( "x:" + mouseEvent.getX() + " y:" + mouseEvent.getY());
+					}
 
+				}
+				// Arcball
+
+				if ( isArcBallOn(event) || myRenderer.displaySurface.selectRectangle ) {
+					// Arcball is not working with picking.
+					if ( !myRenderer.displaySurface.picking ) {
+						if ( event.button == 1 ) {
+							// myRenderer.startDrag(new Point(event.x, event.y));
+						}
+					}
+					enableROIDrawing = true;
+				}
+
+				lastxPressed = event.x;
+				lastyPressed = event.y;
+
+				// Picking mode
+				if ( myRenderer.displaySurface.picking ) {
+					// Activate Picking when press and right click and if in Picking mode
+					if ( event.button == 3 ) {
+						isPickedPressed = true;
+					}
+					mousePosition.x = event.x;
+					mousePosition.y = event.y;
+
+				}
+
+				break;
+			case SWT.MouseUp:
+				drag = false;
+				if ( myRenderer.displaySurface.selectRectangle ) {
+					enableROIDrawing = false;
+				}
+				break;
+			case SWT.MouseMove:
+				if ( drag ) {
+					if ( isArcBallOn(event) || myRenderer.displaySurface.selectRectangle ) {
+						if ( !myRenderer.displaySurface.picking ) {
+							if ( (event.stateMask & SWT.BUTTON1) != 0 ) {
+								myRenderer.drag(new Point(event.x, event.y));
+								mousePosition.x = event.x;
+								mousePosition.y = event.y;
+							}
+						}
+					} else {
+						// check the difference between the current x and the last x position
+						int diffx = event.x - lastxPressed;
+						// check the difference between the current y and the last y position
+						int diffy = event.y - lastyPressed;
+						// set lastx to the current x position
 						lastxPressed = event.x;
+						// set lastyPressed to the current y position
 						lastyPressed = event.y;
 
-						// Picking mode
-						if ( myRenderer.displaySurface.picking ) {
-							// Activate Picking when press and right click and if in Picking mode
-							if (event.button==3) {
-								isPickedPressed = true;
-							}
-							mousePosition.x = event.x;
-							mousePosition.y = event.y;
+						double speed = 0.035;
 
+						// Decrease the speed of the translation if z is negative.
+						if ( myCamera.getPosition().getZ() < 0 ) {
+							speed = speed / Math.abs(myCamera.getPosition().getZ()) * 2;
+						} else {
+							speed = speed * Math.abs(myCamera.getPosition().getZ()) / 4;
 						}
-							
-					break;
-				case SWT.MouseUp:
-					drag = false;
-					if ( myRenderer.displaySurface.selectRectangle ) {
-						enableROIDrawing = false;
+						// camera.PrintParam();
+						// myCamera.moveXYPlan(diffx, diffy,speed);
+						myCamera.moveXYPlan2(diffx, diffy, myCamera.getPosition().getZ(), this.myRenderer.getWidth(),
+							this.myRenderer.getHeight());
 					}
-					break;
-				case SWT.MouseMove:
-						if(drag)
-						{
-							if ( isArcBallOn(event) || myRenderer.displaySurface.selectRectangle ) {
-								if ( !myRenderer.displaySurface.picking ) {
-									if ( (event.stateMask & SWT.BUTTON1) != 0) {
-										myRenderer.drag(new Point(event.x, event.y));
-										mousePosition.x = event.x;
-										mousePosition.y = event.y;
-									}
-								}
-							} else {
-								// check the difference between the current x and the last x position
-								int diffx = event.x - lastxPressed;
-								// check the difference between the current y and the last y position
-								int diffy = event.y - lastyPressed;
-								// set lastx to the current x position
-								lastxPressed = event.x;
-								// set lastyPressed to the current y position
-								lastyPressed = event.y;
+				}
+				break;
+			case SWT.MouseVerticalWheel:
+				if ( event.count > 0 ) {
+					myRenderer.displaySurface.zoomIn();
+				} else {
+					myRenderer.displaySurface.zoomOut();
+				}
+				break;
+		}
 
-								double speed = 0.035;
-
-								// Decrease the speed of the translation if z is negative.
-								if ( myCamera.getPosition().getZ() < 0 ) {
-									speed = speed / Math.abs(myCamera.getPosition().getZ()) * 2;
-								} else {
-									speed = speed * Math.abs(myCamera.getPosition().getZ()) / 4;
-								}
-								// camera.PrintParam();
-								// myCamera.moveXYPlan(diffx, diffy,speed);
-								myCamera.moveXYPlan2(diffx, diffy, myCamera.getPosition().getZ(), this.myRenderer.getWidth(),
-									this.myRenderer.getHeight());
-							}
-						}
-					break;
-				case SWT.MouseVerticalWheel:
-						if(event.count>0)
-						{
-							myRenderer.displaySurface.zoomIn();		
-						}
-						else{
-							myRenderer.displaySurface.zoomOut();		
-						}
-					break;
-				}	
-		
 	}
-	
+
 	// add for check Meta Button pressed in MAC Os or Ctrl in Window OS
-	private boolean checkCtrlKeyDown(Event e){
+	private boolean checkCtrlKeyDown(final Event e) {
 		boolean specicalKeyDown = false;
-		if(isMacOS)
+		if ( isMacOS ) {
 			specicalKeyDown = (e.stateMask & SWT.ALT) != 0;
-		else
+		} else {
 			specicalKeyDown = (e.stateMask & SWT.CTRL) != 0;
+		}
 		return specicalKeyDown;
 	}
-	
-	private boolean detectMacOS(){
+
+	private boolean detectMacOS() {
 		String os = System.getProperty("os.name");
-		if("Mac OS X".equals(os)){
+		if ( "Mac OS X".equals(os) ) {
 			isMacOS = true;
 		}
 		return isMacOS;
 	}
-	
-	private boolean isArcBallOn(Event e){
-		
-		if(checkCtrlKeyDown(e) || myRenderer.displaySurface.arcball ==true){
-			if((e.stateMask & SWT.SHIFT) == 0){
+
+	private boolean isArcBallOn(final Event e) {
+
+		if ( checkCtrlKeyDown(e) || myRenderer.displaySurface.arcball == true ) {
+			if ( (e.stateMask & SWT.SHIFT) == 0 ) {
 				return true;
 			}
-			
-			else{
+
+			else {
 				return false;
 			}
-		}
-		else{
+		} else {
 			return false;
 		}
 	}
-	
+
 	// Picking method
 	// //////////////////////////////////////////////////////////////////////////////////////
 	/**
@@ -275,7 +269,7 @@ public class MyListenerSWT implements Listener {
 		 */
 		glu.gluPickMatrix(mousePosition.x, height - mousePosition.y, 4, 4, viewport, 0);
 
-		this.myCamera.UpdateCamera(gl, glu, width, height);
+		this.myCamera.updateCamera(gl, glu, width, height);
 		// FIXME: Comment GL_MODELVIEW to debug3D picking (redraw the model when clicking)
 		gl.glMatrixMode(GL.GL_MODELVIEW);
 		// 4. After this pass you must draw Objects

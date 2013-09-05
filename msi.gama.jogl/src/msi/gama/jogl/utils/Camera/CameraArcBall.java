@@ -1,118 +1,57 @@
 package msi.gama.jogl.utils.Camera;
 
-import static java.awt.event.KeyEvent.*;
-import java.awt.Point;
-import java.awt.event.*;
-import java.util.Iterator;
-import javax.media.opengl.GL;
+import java.awt.event.MouseEvent;
 import javax.media.opengl.glu.GLU;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
-import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
-import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
-import msi.gama.metamodel.topology.AbstractTopology;
-import msi.gama.metamodel.topology.filter.Different;
-import msi.gama.runtime.GAMA;
-import com.vividsolutions.jts.geom.Envelope;
 
 public class CameraArcBall extends AbstractCamera {
 
-	private double envWidth;
-	private double envHeight;
-
 	private double radius;
+	private double horizInertia;
+	private double vertInertia = 0;
 
-	private double _orientation;
-
-	public double _sensivity;
-	private final Vector3D _forward;
-
-	public double horizInertia, vertInertia = 0;
+	private double velocityHoriz;
+	private double velocityVert = 0;
 
 	// inertia parameter
-	public double damping = 0.9;
-	public double amplitude = 0.3;
-	public boolean enableInertia = false;
-	public boolean arcBallInertia = false;
-	public boolean moveInertia = false;
+	private final double damping = 0.9;
+	private final double amplitude = 0.3;
+	private boolean enableInertia = false;
+	private boolean arcBallInertia = false;
+	private boolean moveInertia = false;
 
 	public CameraArcBall(final JOGLAWTGLRenderer joglawtglRenderer) {
 		super(joglawtglRenderer);
-
-		_forward = new Vector3D();
-		_orientation = 1.0;
-		_phi = 90.00;
-		_theta = 360.00;
-		_sensivity = 0.4;
-		_keyboardSensivity = 4;
-
-		rotation();
+		phi = 90.00;
+		theta = 360.00;
+		update();
 	}
 
 	public CameraArcBall(final double xPos, final double yPos, final double zPos, final double xLPos,
 		final double yLPos, final double zLPos, final JOGLAWTGLRenderer renderer) {
 		super(xPos, yPos, zPos, xLPos, yLPos, zLPos, renderer);
-		_forward = new Vector3D();
-
-		_position.x = xPos;
-		_position.y = yPos;
-		_position.z = zPos;
-
-		_target.x = xLPos;
-		_target.y = yLPos;
-		_target.z = zLPos;
+		position.set(xPos, yPos, zPos);
+		target.set(xLPos, yLPos, zLPos);
 	}
 
 	@Override
-	public void UpdateCamera(final GL gl, final GLU glu, final int width, int height) {
-
-		if ( height == 0 ) {
-			height = 1; // prevent divide by zero
-		}
-		float aspect = (float) width / height;
-		// FIXME: need to see the influence of the different parameter.
-		glu.gluPerspective(45.0f, aspect, 0.1f, getMaxDim() * 100);
-		glu.gluLookAt(this._position.getX(), this._position.getY(), this._position.getZ(), this._target.getX(),
-			this._target.getY(), this._target.getZ(), getUpVector().getX(), getUpVector().getY(), getUpVector().getZ());
-
-		animate();
+	protected void makeGluLookAt(final GLU glu) {
+		glu.gluLookAt(position.x, position.y, position.z, target.x, target.y, target.z, upVector.getX(),
+			upVector.getY(), upVector.getZ());
 	}
 
-	@Override
-	public void rotation() {
-		if ( _phi < 360 && _phi > 180 ) {
-			_orientation = -1;
-			setUpVector(new GamaPoint(0.0, _orientation, 0.0));
-		} else {
-			_orientation = 1;
-			setUpVector(new GamaPoint(0.0, _orientation, 0.0));
-		}
-
-		if ( _theta > 360 ) {
-			_theta = 0.00000002;
-		}
-		if ( _theta < 0 ) {
-			_theta = 360.00000002;
-		}
-
-		if ( _phi >= 360 ) {
-			_phi = 0.00000002;
-		}
-		if ( _phi <= 0 ) {
-			_phi = 360.00000002;
-		}
-
-		double cosAngle = Math.cos(_theta * Math.PI / 180.f);
-		double sinAngle = Math.sin(_theta * Math.PI / 180.f);
-
-		_position.x = radius * sinAngle * Math.sin(_phi * Math.PI / 180.f) + _target.x;
-		_position.z = radius * cosAngle * Math.sin(_phi * Math.PI / 180.f) + _target.z;
-		_position.y = radius * Math.cos(_phi * Math.PI / 180.f) + _target.y;
-
-		double r_temp = Math.cos(_phi * Math.PI / 180.f);
-		_forward.z = -Math.sin(_phi * Math.PI / 180.f);
-		_forward.x = r_temp * -Math.cos(_theta * Math.PI / 180.f);
-		_forward.y = r_temp * -Math.sin(_theta * Math.PI / 180.f);
+	protected void update() {
+		upPosition(0.0, phi < 360 && phi > 180 ? -1 : 1, 0.0);
+		theta = theta > 360 ? 0.00000002 : theta < 0 ? 360.00000002 : theta;
+		phi = phi >= 360 ? 0.00000002 : phi <= 0 ? 360.00000002 : phi;
+		double factorT = theta * factor;
+		double factorP = phi * factor;
+		double cosT = Math.cos(factorT);
+		double sinT = Math.sin(factorT);
+		double cosP = Math.cos(factorP);
+		double sinP = Math.sin(factorP);
+		position.set(radius * sinT * sinP + target.x, radius * cosP + target.y, radius * cosT * sinP + target.z);
+		forward.set(cosP * -cosT, cosP * -sinT, -sinP);
 	}
 
 	// public void followAgent(IAgent a) {
@@ -132,167 +71,123 @@ public class CameraArcBall extends AbstractCamera {
 	// }
 
 	@Override
-	public void initializeCamera(final double envWidth, final double envHeight) {
-
-		this.envWidth = envWidth;
-		this.envHeight = envHeight;
-
-		if ( envWidth > envHeight ) {
-			setMaxDim(envWidth);
-		} else {
-			setMaxDim(envHeight);
-		}
-
+	public void resetCamera(final double envWidth, final double envHeight, final boolean threeD) {
+		super.resetCamera(envWidth, envHeight, threeD);
 		radius = getMaxDim() * INIT_Z_FACTOR;
-		_target.x = envWidth / 2;
-		_target.y = -envHeight / 2;
-		_target.z = 0;
-		_phi = 90.0;
-		_theta = 360.00;
-		rotation();
-	}
-
-	@Override
-	public void initialize3DCamera(final double envWidth, final double envHeight) {
-		this.envWidth = envWidth;
-		this.envHeight = envHeight;
-
-		if ( envWidth > envHeight ) {
-			setMaxDim(envWidth);
-		} else {
-			setMaxDim(envHeight);
-		}
-
-		radius = getMaxDim() * INIT_Z_FACTOR;
-		_target.x = envWidth / 2;
-		_target.y = -envHeight / 2;
-		_target.z = 0;
-		_phi = 135.0;
-		_theta = 360.00;
-		rotation();
-	}
-
-	@Override
-	public Double getRadius() {
-		return this.radius;
-	}
-
-	@Override
-	public void setRadius(final double r) {
-		this.radius = r;
+		target.set(envWidth / 2, -envHeight / 2, 0);
+		phi = threeD ? 135.0 : 90.0;
+		theta = 360.00;
+		update();
 	}
 
 	// Move in the XY plan by changing camera pos and look pos.
-	@Override
-	public void moveXYPlan2(final double diffx, final double diffy, final double z, final double w, final double h) {
+	private void moveXYPlan2(final double diffx, final double diffy, final double z, final double w, final double h) {
 
 		double translationValue = 0;
 
 		translationValue = Math.abs(diffx) * ((z + 1) / w);
 
 		if ( diffx > 0 ) {// move right
-			updatePosition(_position.getX() - translationValue, _position.getY(), _position.getZ());
-			lookPosition(_target.getX() - translationValue, _target.getY(), _target.getZ());
+			updatePosition(position.x - translationValue, position.y, position.z);
+			lookPosition(target.x - translationValue, target.y, target.z);
 		} else {// move left
-			updatePosition(_position.getX() + translationValue, _position.getY(), _position.getZ());
-			lookPosition(_target.getX() + translationValue, _target.getY(), _target.getZ());
+			updatePosition(position.x + translationValue, position.y, position.z);
+			lookPosition(target.x + translationValue, target.y, target.z);
 		}
 
 		translationValue = Math.abs(diffy) * Math.abs((z + 1) / h);
 
 		if ( diffy > 0 ) {// move down
-			updatePosition(_position.getX(), _position.getY() + translationValue, _position.getZ());
-			this.lookPosition(_target.getX(), _target.getY() + translationValue, _target.getZ());
+			updatePosition(position.x, position.y + translationValue, position.z);
+			lookPosition(target.x, target.y + translationValue, target.z);
 		} else {// move up
-			updatePosition(_position.getX(), _position.getY() - translationValue, _position.getZ());
-			lookPosition(_target.getX(), _target.getY() - translationValue, _target.getZ());
+			updatePosition(position.x, position.y - translationValue, position.z);
+			lookPosition(target.x, target.y - translationValue, target.z);
 		}
 
 	}
 
 	@Override
-	public void animate() {
-		double translationValue = 2 * (Math.abs(_position.getZ()) + 1) / myRenderer.getHeight();
-		if ( this.forward ) {
-			if ( shiftKeyDown ) {
-				_phi -= -_keyboardSensivity * _sensivity;
-				rotation();
+	protected void animate() {
+		double translation = 2 * (Math.abs(position.z) + 1) / getRenderer().getHeight();
+		if ( isForward() ) {
+			if ( isShiftKeyDown() ) {
+				phi = phi - -get_keyboardSensivity() * get_sensivity();
+				update();
 			} else {
-				updatePosition(_position.getX(), _position.getY() - translationValue, _position.getZ());
-				lookPosition(_target.getX(), _target.getY() - translationValue, _target.getZ());
+				updatePosition(position.x, position.y - translation, position.z);
+				lookPosition(target.x, target.y - translation, target.z);
 
 			}
 		}
-		if ( this.backward ) {
-			if ( shiftKeyDown ) {
-				_phi -= _keyboardSensivity * _sensivity;
-				rotation();
+		if ( isBackward() ) {
+			if ( isShiftKeyDown() ) {
+				phi = phi - get_keyboardSensivity() * get_sensivity();
+				update();
 			} else {
-				updatePosition(_position.getX(), _position.getY() + translationValue, _position.getZ());
-				this.lookPosition(_target.getX(), _target.getY() + translationValue, _target.getZ());
+				updatePosition(position.x, position.y + translation, position.z);
+				lookPosition(target.x, target.y + translation, target.z);
 			}
 		}
-		if ( this.strafeLeft ) {
-			if ( shiftKeyDown ) {
-				_theta -= -_keyboardSensivity * _sensivity;
-				rotation();
+		if ( isStrafeLeft() ) {
+			if ( isShiftKeyDown() ) {
+				theta = theta - -get_keyboardSensivity() * get_sensivity();
+				update();
 			} else {
-				updatePosition(_position.getX() + translationValue, _position.getY(), _position.getZ());
-				lookPosition(_target.getX() + translationValue, _target.getY(), _target.getZ());
+				updatePosition(position.x + translation, position.y, position.z);
+				lookPosition(target.x + translation, target.y, target.z);
 			}
 		}
-		if ( this.strafeRight ) {
-			if ( shiftKeyDown ) {
-				_theta -= _keyboardSensivity * _sensivity;
-				rotation();
+		if ( isStrafeRight() ) {
+			if ( isShiftKeyDown() ) {
+				theta = theta - get_keyboardSensivity() * get_sensivity();
+				update();
 			} else {
-				updatePosition(_position.getX() - translationValue, _position.getY(), _position.getZ());
-				lookPosition(_target.getX() - translationValue, _target.getY(), _target.getZ());
+				updatePosition(position.x - translation, position.y, position.z);
+				lookPosition(target.x - translation, target.y, target.z);
 			}
 		}
 	}
 
 	@Override
-	public Vector3D getForward() {
-		return this._forward;
-	}
-
-	@Override
-	public void mouseWheelMoved(final MouseWheelEvent arg0) {
-		float incrementalZoomStep;
-		// Check if Z is not equal to 0 (avoid being block on z=0)
-		if ( this.radius != 0 ) {
-			incrementalZoomStep = (float) radius / 10;
-		} else {
-			incrementalZoomStep = 0.1f;
-		}
-		if ( arg0.getWheelRotation() < 0 ) {// Move Down
-
-			radius -= incrementalZoomStep;
-			rotation();
-		} else {// Move Up
-			radius += incrementalZoomStep;
-			rotation();
-		}
-		myRenderer.displaySurface.setZoomLevel(getZoomLevel());
-		// PrintParam();
-	}
-
-	@Override
-	public Double getZoomLevel() {
+	public Double zoomLevel() {
 		return getMaxDim() * INIT_Z_FACTOR / radius;
 	}
 
 	@Override
+	public void zoom(final boolean in) {
+		float step = radius != 0 ? (float) ((Double) radius).doubleValue() / 10 : 0.1f;
+		radius = radius + (in ? -step : step);
+		getRenderer().displaySurface.setZoomLevel(zoomLevel());
+		update();
+	}
+
+	@Override
+	public void zoomROI(final double centerX, final double centerY, final int width, final int height) {
+		radius = 1.5 * (width > height ? width : height);
+		target.set(centerX, centerY, 0.0);
+		update();
+	}
+
+	@Override
+	public void zoomFocus(final double centerX, final double centerY, final double centerZ, final double extent) {
+		velocityHoriz = 0;
+		velocityVert = 0;
+		final double zPos = extent * 2 + centerZ + getRenderer().env_width / 100;
+		radius = zPos;
+		update();
+		updatePosition(centerX, centerY, zPos);
+		lookPosition(centerX, centerY, -(extent * 2));
+	}
+
+	@Override
 	public void mouseDragged(final MouseEvent arg0) {
-
 		enableInertia = false;
-
 		if ( isArcBallOn(arg0) ) {
 			arcBallInertia = true;
 		} else {
-			horizInertia = arg0.getX() - lastxPressed;
-			vertInertia = arg0.getY() - lastyPressed;
+			horizInertia = arg0.getX() - getLastxPressed();
+			vertInertia = arg0.getY() - getLastyPressed();
 			velocityHoriz = horizInertia;
 			velocityVert = vertInertia;
 			moveInertia = true;
@@ -301,215 +196,97 @@ public class CameraArcBall extends AbstractCamera {
 		if ( isArcBallOn(arg0) ) {
 
 			// check the difference between the current x and the last x position
-			int horizMovement = arg0.getX() - lastxPressed;
+			int horizMovement = arg0.getX() - getLastxPressed();
 			// check the difference between the current y and the last y position
-			int vertMovement = arg0.getY() - lastyPressed;
+			int vertMovement = arg0.getY() - getLastyPressed();
 
-			horizInertia = arg0.getX() - lastxPressed;
-			vertInertia = arg0.getY() - lastyPressed;
+			horizInertia = arg0.getX() - getLastxPressed();
+			vertInertia = arg0.getY() - getLastyPressed();
 			velocityHoriz = horizInertia;
 			velocityVert = vertInertia;
 
 			// set lastx to the current x position
-			lastxPressed = arg0.getX();
+			setLastxPressed(arg0.getX());
 			// set lastyPressed to the current y position
-			lastyPressed = arg0.getY();
+			setLastyPressed(arg0.getY());
 
-			_theta -= horizMovement * _sensivity;
-			_phi -= vertMovement * _sensivity;
+			theta = theta - horizMovement * get_sensivity();
+			phi = phi - vertMovement * get_sensivity();
 
-			rotation();
+			update();
 
 		}
 		// ROI Is enabled only if the view is in a 2D plan.
 		// else if ( myRenderer.displaySurface.selectRectangle && IsViewIn2DPlan() ) {
 
-		else if ( (arg0.isShiftDown() || arg0.isAltDown()) && IsViewIn2DPlan() ) {
-			myRenderer.displaySurface.selectRectangle = true;
-			mousePosition.x = arg0.getX();
-			mousePosition.y = arg0.getY();
-			enableROIDrawing = true;
-			myRenderer.DrawROI();
+		else if ( (arg0.isShiftDown() || arg0.isAltDown()) && isViewIn2DPlan() ) {
+			getRenderer().displaySurface.selectRectangle = true;
+			getMousePosition().x = arg0.getX();
+			getMousePosition().y = arg0.getY();
+			setEnableROIDrawing(true);
+			getRenderer().DrawROI();
 
 		} else {
 			// check the difference between the current x and the last x position
-			int diffx = arg0.getX() - lastxPressed;
+			int diffx = arg0.getX() - getLastxPressed();
 			// check the difference between the current y and the last y position
-			int diffy = arg0.getY() - lastyPressed;
+			int diffy = arg0.getY() - getLastyPressed();
 			// set lastx to the current x position
-			lastxPressed = arg0.getX();
+			setLastxPressed(arg0.getX());
 			// set lastyPressed to the current y position
-			lastyPressed = arg0.getY();
+			setLastyPressed(arg0.getY());
 
 			double speed = 0.035;
 
 			// Decrease the speed of the translation if z is negative.
-			if ( _position.getZ() < 0 ) {
-				speed = speed / Math.abs(_position.getZ()) * 2;
+			if ( position.z < 0 ) {
+				speed = speed / Math.abs(position.z) * 2;
 			} else {
-				speed = speed * Math.abs(_position.getZ()) / 4;
+				speed = speed * position.z / 4;
 			}
 
-			moveXYPlan2(diffx, diffy, _position.getZ(), this.myRenderer.getWidth(), this.myRenderer.getHeight());
+			moveXYPlan2(diffx, diffy, position.z, getRenderer().getWidth(), getRenderer().getHeight());
 		}
 		// PrintParam();
 	}
 
 	@Override
 	public void mouseClicked(final MouseEvent arg0) {
-		if ( arg0.getClickCount() > 1 ) {
-			myRenderer.displaySurface.zoomFit();
-		}
-		velocityHoriz = 0;
-		velocityVert = 0;
-
-		if ( arg0.isShiftDown() || arg0.isAltDown() ) {
-			myRenderer.displaySurface.selectRectangle = true;
-
-			Point point = myRenderer.getIntWorldPointFromWindowPoint(new Point(arg0.getX(), arg0.getY()));
-
-			mousePosition.x = arg0.getX();
-			mousePosition.y = arg0.getY();
-			enableROIDrawing = true;
-			myRenderer.DrawROI();
-			myRenderer.roiCenter.setLocation(point.x, point.y);
-
-			enableROIDrawing = false;
-		}
+		zeroVelocity();
+		super.mouseClicked(arg0);
 	}
-
-	@Override
-	public void mouseEntered(final MouseEvent arg0) {
-
-	}
-
-	@Override
-	public void mouseExited(final MouseEvent arg0) {}
 
 	@Override
 	public void mousePressed(final MouseEvent arg0) {
-		velocityHoriz = 0;
-		velocityVert = 0;
+		zeroVelocity();
+		super.mousePressed(arg0);
+	}
 
-		lastxPressed = arg0.getX();
-		lastyPressed = arg0.getY();
-
-		// Picking mode
-		// if ( myRenderer.displaySurface.picking ) {
-		// Activate Picking when press and right click and if in Picking mode
-		if ( arg0.getButton() == 3 ) {
-			isPickedPressed = true;
-			myRenderer.setPicking(true);
-			// myRenderer.drawPickableObjects();
-		} else {
-			myRenderer.setPicking(false);
-			// }
-
-		}
-
-		mousePosition.x = arg0.getX();
-		mousePosition.y = arg0.getY();
-
-		myRenderer.getIntWorldPointFromWindowPoint(new Point(arg0.getX(), arg0.getY()));
+	@Override
+	protected boolean canSelectOnRelease(final MouseEvent arg0) {
+		return true;
 	}
 
 	@Override
 	public void mouseReleased(final MouseEvent arg0) {
-
 		enableInertia = true;
-		if ( IsViewIn2DPlan() && enableROIDrawing == true ) {
-			if ( arg0.isAltDown() ) {
-				Iterator<IShape> shapes =
-					GAMA.getSimulation()
-						.getTopology()
-						.getSpatialIndex()
-						.allInEnvelope(
-							new GamaPoint(myRenderer.roiCenter.x, -myRenderer.roiCenter.y),
-							new Envelope(myRenderer.roi_List.get(0), myRenderer.roi_List.get(2), -myRenderer.roi_List
-								.get(1), -myRenderer.roi_List.get(3)), new Different(), true);
-				final Iterator<IAgent> agents = AbstractTopology.toAgents(shapes);
-
-				myRenderer.displaySurface.selectSeveralAgents(agents, 0);
-
-			}
-			if ( arg0.isShiftDown() ) {
-				myRenderer.ROIZoom();
-			}
-			enableROIDrawing = false;
-		}
+		super.mouseReleased(arg0);
 	}
 
 	@Override
-	public void keyPressed(final KeyEvent arg0) {
-		switch (arg0.getKeyCode()) {
-			case VK_LEFT:
-				strafeLeft = true;
-				shiftKeyDown = checkShiftKeyDown(arg0);
-				break;
-			case VK_RIGHT:
-				strafeRight = true;
-				shiftKeyDown = checkShiftKeyDown(arg0);
-				break;
-			case VK_UP:
-				forward = true;
-				shiftKeyDown = checkShiftKeyDown(arg0);
-				break;
-			case VK_DOWN:
-				backward = true;
-				shiftKeyDown = checkShiftKeyDown(arg0);
-				break;
-		}
+	public boolean isViewIn2DPlan() {
+		return phi > 85 && phi < 95 && theta > 355 && theta < 365;
 	}
 
 	@Override
-	public void keyReleased(final KeyEvent arg0) {
-		switch (arg0.getKeyCode()) {
-			case VK_LEFT: // player turns left (scene rotates right)
-				strafeLeft = false;
-				break;
-			case VK_RIGHT: // player turns right (scene rotates left)
-				strafeRight = false;
-				break;
-			case VK_UP:
-				forward = false;
-				break;
-			case VK_DOWN:
-				backward = false;
-				break;
-		}
-	}
-
-	@Override
-	public void keyTyped(final KeyEvent arg0) {}
-
-	@Override
-	public double getMaxDim() {
-		return maxDim;
-	}
-
-	@Override
-	public boolean IsViewIn2DPlan() {
-		if ( _phi > 85 && _phi < 95 && _theta > 355 && _theta < 365 ) {
-			return true;
-		} else {
-			return false;
-		}
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void arcBallInertia() {
+	public void doInertia() {
 		if ( enableInertia ) {
 			if ( arcBallInertia ) {
-				velocityHoriz *= damping;
-				velocityVert *= damping;
-
-				_theta -= velocityHoriz * amplitude;
-				_phi -= velocityVert * amplitude;
-
-				rotation();
-
+				velocityHoriz = velocityHoriz * damping;
+				velocityVert = velocityVert * damping;
+				theta = theta - velocityHoriz * amplitude;
+				phi = phi - velocityVert * amplitude;
+				update();
 				if ( Math.abs(velocityHoriz) < 0.01 || Math.abs(velocityVert) < 0.01 ) {
 					velocityHoriz = 0;
 					velocityVert = 0;
@@ -517,18 +294,12 @@ public class CameraArcBall extends AbstractCamera {
 					arcBallInertia = false;
 				}
 			}
-		}
-	}
-
-	@Override
-	public void moveInertia() {
-		if ( enableInertia ) {
 			if ( moveInertia ) {
-				velocityHoriz *= damping;
-				velocityVert *= damping;
+				velocityHoriz = velocityHoriz * damping;
+				velocityVert = velocityVert * damping;
 
-				moveXYPlan2(velocityHoriz, velocityVert, _position.getZ(), this.myRenderer.getWidth(),
-					this.myRenderer.getHeight());
+				moveXYPlan2(velocityHoriz, velocityVert, position.z, getRenderer().getWidth(), getRenderer()
+					.getHeight());
 
 				if ( Math.abs(velocityHoriz) < 0.01 || Math.abs(velocityVert) < 0.01 ) {
 					velocityHoriz = 0;
@@ -537,7 +308,14 @@ public class CameraArcBall extends AbstractCamera {
 					moveInertia = false;
 				}
 			}
+
 		}
+	}
+
+	@Override
+	public void zeroVelocity() {
+		velocityHoriz = 0;
+		velocityVert = 0;
 	}
 
 }// End of Class CameraArcBall

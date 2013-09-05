@@ -1,14 +1,15 @@
 package msi.gama.jogl.utils.Camera.Arcball;
+
 /*
  * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
+ * contributor license agreements. See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
  * The ASF licenses this file to You under the Apache License, Version 2.0
  * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
+ * the License. You may obtain a copy of the License at
+ * 
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * 
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -149,8 +150,8 @@ public class Vector3D implements Serializable {
 	 * @param u3
 	 *            third base (unscaled) vector
 	 */
-	public Vector3D(final double a1, final Vector3D u1, final double a2,
-			final Vector3D u2, final double a3, final Vector3D u3) {
+	public Vector3D(final double a1, final Vector3D u1, final double a2, final Vector3D u2, final double a3,
+		final Vector3D u3) {
 		this.x = a1 * u1.x + a2 * u2.x + a3 * u3.x;
 		this.y = a1 * u1.y + a2 * u2.y + a3 * u3.y;
 		this.z = a1 * u1.z + a2 * u2.z + a3 * u3.z;
@@ -178,9 +179,8 @@ public class Vector3D implements Serializable {
 	 * @param u4
 	 *            fourth base (unscaled) vector
 	 */
-	public Vector3D(final double a1, final Vector3D u1, final double a2,
-			final Vector3D u2, final double a3, final Vector3D u3, final double a4,
-			final Vector3D u4) {
+	public Vector3D(final double a1, final Vector3D u1, final double a2, final Vector3D u2, final double a3,
+		final Vector3D u3, final double a4, final Vector3D u4) {
 		this.x = a1 * u1.x + a2 * u2.x + a3 * u3.x + a4 * u4.x;
 		this.y = a1 * u1.y + a2 * u2.y + a3 * u3.y + a4 * u4.y;
 		this.z = a1 * u1.z + a2 * u2.z + a3 * u3.z + a4 * u4.z;
@@ -215,14 +215,14 @@ public class Vector3D implements Serializable {
 	public double getZ() {
 		return z;
 	}
-	
+
 	/**
 	 * Get the abscissa of the vector.
 	 * 
 	 * @return abscissa of the vector
 	 * @see #Vector3D(double, double, double)
 	 */
-	public void setX(double vx) {
+	public void setX(final double vx) {
 		this.x = vx;
 	}
 
@@ -232,7 +232,7 @@ public class Vector3D implements Serializable {
 	 * @return ordinate of the vector
 	 * @see #Vector3D(double, double, double)
 	 */
-	public void setY(double vy) {
+	public void setY(final double vy) {
 		this.y = vy;
 	}
 
@@ -242,7 +242,7 @@ public class Vector3D implements Serializable {
 	 * @return height of the vector
 	 * @see #Vector3D(double, double, double)
 	 */
-	public void setZ(double vz) {
+	public void setZ(final double vz) {
 		this.z = vz;
 	}
 
@@ -285,7 +285,21 @@ public class Vector3D implements Serializable {
 	public Vector3D add(final Vector3D v) {
 		return new Vector3D(x + v.x, y + v.y, z + v.z);
 	}
-	
+
+	public Vector3D set(final Vector3D v) {
+		x = v.x;
+		y = v.y;
+		z = v.z;
+		return this;
+	}
+
+	public Vector3D set(final double vx, final double vy, final double vz) {
+		x = vx;
+		y = vy;
+		z = vz;
+		return this;
+	}
+
 	/**
 	 * Add a vector to the instance.
 	 * 
@@ -293,7 +307,7 @@ public class Vector3D implements Serializable {
 	 *            vector to add
 	 * @return a new vector
 	 */
-	public Vector3D add(double vx, double vy, double vz) {
+	public Vector3D add(final double vx, final double vy, final double vz) {
 		return new Vector3D(x + vx, y + vy, z + vz);
 	}
 
@@ -309,8 +323,6 @@ public class Vector3D implements Serializable {
 	public Vector3D add(final double factor, final Vector3D v) {
 		return new Vector3D(x + factor * v.x, y + factor * v.y, z + factor * v.z);
 	}
-	
-	
 
 	/**
 	 * Subtract a vector from the instance.
@@ -335,8 +347,8 @@ public class Vector3D implements Serializable {
 	public Vector3D subtract(final double factor, final Vector3D v) {
 		return new Vector3D(x - factor * v.x, y - factor * v.y, z - factor * v.z);
 	}
-	
-	public Vector3D subtract(double vx, double vy, double vz) {
+
+	public Vector3D subtract(final double vx, final double vy, final double vz) {
 		return new Vector3D(x - vx, y - vy, z - vz);
 	}
 
@@ -349,20 +361,16 @@ public class Vector3D implements Serializable {
 	 */
 	public Vector3D normalize() {
 		final double s = getNorm();
-		if (s == 0) {
-			throw new ArithmeticException("cannot normalize a zero norm vector");
-		}
+		if ( s == 0 ) { throw new ArithmeticException("cannot normalize a zero norm vector"); }
 		return scalarMultiply(1 / s);
 	}
 
 	/**
 	 * Get a vector orthogonal to the instance.
 	 * <p>
-	 * There are an infinite number of normalized vectors orthogonal to the
-	 * instance. This method picks up one of them almost arbitrarily. It is
-	 * useful when one needs to compute a reference frame with one of the axes
-	 * in a predefined direction. The following example shows how to build a
-	 * frame having the k axis aligned with the known vector u :
+	 * There are an infinite number of normalized vectors orthogonal to the instance. This method picks up one of them
+	 * almost arbitrarily. It is useful when one needs to compute a reference frame with one of the axes in a predefined
+	 * direction. The following example shows how to build a frame having the k axis aligned with the known vector u :
 	 * 
 	 * <pre>
 	 * &lt;code&gt;
@@ -381,14 +389,12 @@ public class Vector3D implements Serializable {
 	public Vector3D orthogonal() {
 
 		final double threshold = 0.6 * getNorm();
-		if (threshold == 0) {
-			throw new ArithmeticException("null norm");
-		}
+		if ( threshold == 0 ) { throw new ArithmeticException("null norm"); }
 
-		if ((x >= -threshold) && (x <= threshold)) {
+		if ( x >= -threshold && x <= threshold ) {
 			final double inverse = 1 / Math.sqrt(y * y + z * z);
 			return new Vector3D(0, inverse * z, -inverse * y);
-		} else if ((y >= -threshold) && (y <= threshold)) {
+		} else if ( y >= -threshold && y <= threshold ) {
 			final double inverse = 1 / Math.sqrt(x * x + z * z);
 			return new Vector3D(-inverse * z, 0, inverse * x);
 		}
@@ -400,10 +406,9 @@ public class Vector3D implements Serializable {
 	/**
 	 * Compute the angular separation between two vectors.
 	 * <p>
-	 * This method computes the angular separation between two vectors using the
-	 * dot product for well separated vectors and the cross product for almost
-	 * aligned vectors. This allow to have a good accuracy in all cases, even
-	 * for vectors very close to each other.
+	 * This method computes the angular separation between two vectors using the dot product for well separated vectors
+	 * and the cross product for almost aligned vectors. This allow to have a good accuracy in all cases, even for
+	 * vectors very close to each other.
 	 * </p>
 	 * 
 	 * @param v1
@@ -417,18 +422,14 @@ public class Vector3D implements Serializable {
 	public static double angle(final Vector3D v1, final Vector3D v2) {
 
 		final double normProduct = v1.getNorm() * v2.getNorm();
-		if (normProduct == 0) {
-			throw new ArithmeticException("null norm");
-		}
+		if ( normProduct == 0 ) { throw new ArithmeticException("null norm"); }
 
 		final double dot = dotProduct(v1, v2);
 		final double threshold = normProduct * 0.9999;
-		if ((dot < -threshold) || (dot > threshold)) {
+		if ( dot < -threshold || dot > threshold ) {
 			// the vectors are almost aligned, compute using the sine
 			final Vector3D v3 = crossProduct(v1, v2);
-			if (dot >= 0) {
-				return Math.asin(v3.getNorm() / normProduct);
-			}
+			if ( dot >= 0 ) { return Math.asin(v3.getNorm() / normProduct); }
 			return Math.PI - Math.asin(v3.getNorm() / normProduct);
 		}
 
@@ -480,8 +481,7 @@ public class Vector3D implements Serializable {
 	 * @return the cross product v1 ^ v2 as a new Vector
 	 */
 	public static Vector3D crossProduct(final Vector3D v1, final Vector3D v2) {
-		return new Vector3D(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x
-				* v2.y - v1.y * v2.x);
+		return new Vector3D(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x);
 	}
 
 	/** Abscissa. */
