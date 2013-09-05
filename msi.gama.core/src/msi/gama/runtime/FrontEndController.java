@@ -69,10 +69,8 @@ public class FrontEndController implements Runnable {
 				updateSimulationState(NOTREADY);
 				try {
 					experiment.open();
-					// OutputSynchronizer.waitForViewsToBeClosed();
-					// experiment.schedule();
-				} catch (final GamaRuntimeException e) {
-					GuiUtils.debug("Error while opening the experiment: " + e.getMessage());
+				} catch (final Exception e) {
+					GuiUtils.debug("Error when opening the experiment: " + e.getMessage());
 					closeExperiment(e);
 				} finally {
 					updateSimulationState();
@@ -180,7 +178,7 @@ public class FrontEndController implements Runnable {
 		}
 	}
 
-	public void closeExperiment(final GamaRuntimeException e) {
+	public void closeExperiment(final Exception e) {
 		GuiUtils.errorStatus(e.getMessage());
 		closeExperiment();
 	}
