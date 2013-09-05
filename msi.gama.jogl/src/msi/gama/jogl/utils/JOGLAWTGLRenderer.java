@@ -657,7 +657,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		return WindowPoint;
 	}
 	
-	public double GetWidthOnScreen(){
+	public double GetEnvWidthOnScreen(){
 		Point realWorld = new Point(0,0);
 		Point2D.Double WindowPoint = getWindowPointPointFromRealWorld(realWorld);
 		
@@ -667,7 +667,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		return WindowPoint2.x - WindowPoint.x;
 	}
 	
-	public double GetHeightOnScreen(){
+	public double GetEnvHeightOnScreen(){
 		Point realWorld = new Point(0,0);
 		Point2D.Double WindowPoint = getWindowPointPointFromRealWorld(realWorld);
 		
