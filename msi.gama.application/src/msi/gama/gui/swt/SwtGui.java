@@ -1055,11 +1055,13 @@ public class SwtGui implements IGui {
 	@Override
 	public void prepareForSimulation(final SimulationAgent agent) {
 		clearErrors();
-		showConsoleView();
 		if ( !agent.getExperiment().getSpecies().isBatch() ) {
-
+			showConsoleView();
 			resetMonitorView();
-
+		} else {
+			if ( console == null ) {
+				showConsoleView();
+			}
 		}
 	}
 
