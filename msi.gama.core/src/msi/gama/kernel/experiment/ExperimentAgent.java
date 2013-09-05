@@ -237,7 +237,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	 */
 
 	public List<? extends IParameter.Batch> getDefaultParameters() {
-		if ( !GamaPreferences.CORE_RND_EDITABLE.getValue() ) { return Collections.EMPTY_LIST; }
+		if ( !GamaPreferences.CORE_RND_EDITABLE.getValue() ) { return new ArrayList(); }
 		List<ExperimentParameter> params = new ArrayList();
 		final String cat = getExperimentParametersCategory();
 		params.add(new ExperimentParameter(getScope(), getSpecies().getVar(IKeyword.RNG), "Random number generator",
@@ -286,12 +286,18 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@getter(value = IKeyword.SEED, initializer = true)
 	public Double getSeed() {
-		return seed == null ? 0d : seed;
+		return seed == null ? Double.valueOf(0d) : seed;
 	}
 
 	@setter(IKeyword.SEED)
 	public void setSeed(final Double s) {
-		seed = s == 0d ? null : s;
+		if ( s == null ) {
+			seed = null;
+		} else if ( s.doubleValue() == 0d ) {
+			seed = null;
+		} else {
+			seed = s;
+		}
 		getRandomGenerator().setSeed(seed);
 	}
 
