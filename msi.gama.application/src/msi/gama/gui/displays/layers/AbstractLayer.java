@@ -263,6 +263,16 @@ public abstract class AbstractLayer implements ILayer {
 		return new GamaPoint(xInModel, yInModel);
 	}
 
+	@Override
+	public Point getScreenCoordinatesFrom(final double x, final double y, final IDisplaySurface g) {
+		final double xFactor = x / g.getEnvWidth();
+		final double yFactor = y / g.getEnvHeight();
+		final int xOnDisplay = (int) (xFactor * sizeInPixels.x);
+		final int yOnDisplay = (int) (yFactor * sizeInPixels.y);
+		return new Point(xOnDisplay, yOnDisplay);
+
+	}
+
 	protected abstract void privateDrawDisplay(IScope scope, final IGraphics g) throws GamaRuntimeException;
 
 	@Override

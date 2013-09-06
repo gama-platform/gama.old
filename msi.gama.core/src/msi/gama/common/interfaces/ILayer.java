@@ -41,6 +41,8 @@ public interface ILayer extends INamed, Comparable<ILayer> {
 
 	GamaPoint getModelCoordinatesFrom(int x, int y, IDisplaySurface g);
 
+	Point getScreenCoordinatesFrom(double x, double y, IDisplaySurface g);
+
 	public boolean containsScreenPoint(final int x, final int y);
 
 	void dispose();

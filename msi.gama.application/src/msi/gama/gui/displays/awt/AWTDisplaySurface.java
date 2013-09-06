@@ -33,6 +33,7 @@ import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.precompiler.GamlAnnotations.display;
 import msi.gama.runtime.*;
 import msi.gaml.compilation.ISymbol;
+import com.vividsolutions.jts.geom.Envelope;
 
 @display("java2D")
 public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
@@ -296,24 +297,18 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 	@Override
 	public void focusOn(final IShape geometry, final ILayer display) {
 		// FIXME TO BE ENTIRELY REDEFINED
-		// Envelope env = geometry.getEnvelope();
-		// double minX = env.getMinX();
-		// double minY = env.getMinY();
-		// double maxX = env.getMaxX();
-		// double maxY = env.getMaxY();
-		//
-		// int leftX = display.getPosition().x + (int) (display.getXScale() * minX + 0.5);
-		// int leftY = display.getPosition().y + (int) (display.getYScale() * minY + 0.5);
-		// int rightX = display.getPosition().x + (int) (display.getXScale() * maxX + 0.5);
-		// int rightY = display.getPosition().y + (int) (display.getYScale() * maxY + 0.5);
-		// Rectangle envelop = new Rectangle(leftX + origin.x, leftY + origin.y, rightX - leftX, rightY - leftY);
-		// double xScale = (double) getWidth() / (rightX - leftX);
-		// double yScale = (double) getHeight() / (rightY - leftY);
-		// double zoomFactor = Math.min(xScale, yScale);
-		// if ( bWidth * zoomFactor > MAX_SIZE ) {
-		// zoomFactor = (double) MAX_SIZE / bWidth;
-		// }
-		// setZoom(zoomFactor, new Point((int) envelop.getCenterX(), (int) envelop.getCenterY()));
+		Envelope env = geometry.getEnvelope();
+		Point pmin = display.getScreenCoordinatesFrom(env.getMinX(), env.getMinY(), this);
+		Point pmax = display.getScreenCoordinatesFrom(env.getMaxX(), env.getMaxY(), this);
+
+		Rectangle envelop = new Rectangle(pmin.x + origin.x, pmin.y + origin.y, pmax.x - pmin.x, pmax.y - pmin.y);
+		double xScale = (double) getWidth() / envelop.width;
+		double yScale = (double) getHeight() / envelop.height;
+		double zoomFactor = Math.min(xScale, yScale);
+		if ( zoomFactor > 10 ) {
+			zoomFactor = 10;
+		}
+		applyZoom(zoomFactor, new Point((int) envelop.getCenterX(), (int) envelop.getCenterY()));
 	}
 
 	/**
