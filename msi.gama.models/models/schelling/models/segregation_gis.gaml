@@ -29,9 +29,9 @@ entities {
 		
 		const size type: float <- 2.0;  
 		const color type: rgb <- colors at (rnd (number_of_groups - 1)); 
-		const red type: int <- color as list at 0; 
-		const green type: int <- color as list at 1;  
-		const blue type: int <- color as list at 2; 
+		const red type: int <- (color as list) at 0; 
+		const green type: int <- (color as list) at 1;  
+		const blue type: int <- (color as list) at 2;  
 		space current_building <- nil;
 		list<people> my_neighbours -> {people at_distance neighbours_distance}; 
 
@@ -86,7 +86,7 @@ experiment schelling type: gui {
 			species people  aspect: simple;
 		}
 		display Charts {
-			chart name: "Proportion of happiness" type: pie background: rgb("lightGray") style: exploded position: {0,0} size: {1.0,0.5}{
+			chart name: "Proportion of happiness" type: histogram background: rgb("lightGray") gap:0.05 position: {0,0} size: {1.0,0.5}{
 				data "Unhappy" value: number_of_people - sum_happy_people color: rgb("green");
 				data "Happy" value: sum_happy_people color: rgb("yellow") ;
 			}
