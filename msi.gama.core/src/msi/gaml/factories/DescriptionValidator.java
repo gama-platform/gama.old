@@ -209,13 +209,25 @@ public class DescriptionValidator {
 			cd.error("The expression " + cd.getFacets().getLabel(VAR) + " is not a reference to a variable ", VAR);
 		} else {
 			final IExpression value = cd.getFacets().getExpr(VALUE);
-			if ( value != null && value.getType() != Types.NO_TYPE &&
-				!value.getType().isTranslatableInto(expr.getType()) ) {
-				cd.warning("Variable " + expr.toGaml() + " of type " + expr.getType() +
-					" is assigned a value of type " + value.getType().toString() +
-					", which will be automatically casted.", IGamlIssue.SHOULD_CAST, IKeyword.VALUE, expr.getType()
-					.toString());
+			if ( value != null ) {
+				IType tv = value.getType();
+				if ( tv != Types.NO_TYPE ) {
+					IType te = expr.getType();
+					if ( !tv.isTranslatableInto(te) ) {
+						cd.warning("Variable " + expr.toGaml() + " of type " + te + " is assigned a value of type " +
+							tv + ", which will be casted to " + te, IGamlIssue.SHOULD_CAST, IKeyword.VALUE, expr
+							.getType().toString());
+					} else if ( tv.id() == IType.FLOAT && te.id() == IType.INT || te.id() == IType.FLOAT &&
+						tv.id() == IType.INT ) {
+						// AD: 6/9/13 special case for int and float (see Issue 590)
+						cd.warning("Variable " + expr.toGaml() + " of type " + te + " is assigned a value of type " +
+							tv + ", which will be casted to " + te, IGamlIssue.SHOULD_CAST, IKeyword.VALUE, expr
+							.getType().toString());
+
+					}
+				}
 			}
+
 			// AD 19/1/13: test of the constants
 			if ( ((IVarExpression) expr).isNotModifiable() ) {
 				cd.error("The variable " + expr.toGaml() +
