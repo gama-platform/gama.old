@@ -84,7 +84,7 @@ entities {
 		 
 		reflex cohesion when: apply_cohesion {
 			list others <- ((boids overlapping (circle (range)))  - self);
-			point mass_center <- (length(others) > 0) ? (mean (others collect (each.location)) ) as point : location;
+			point mass_center <- (length(others) > 0) ? ((mean (others collect (each.location)) ) as point) : location;
 
 			point acc <- mass_center - location;
 			acc <- acc / cohesion_factor;
@@ -126,7 +126,7 @@ entities {
 		}
 		  
 		action do_move {  
-			if ((velocity.x) as int = 0) and ((velocity.y) as int = 0) {
+			if (((velocity.x) as int) = 0) and (((velocity.y) as int) = 0) {
 				velocity <- {(rnd(4)) -2, (rnd(4)) - 2};
 			}
 			point old_location <- copy(location);
