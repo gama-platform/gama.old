@@ -102,7 +102,7 @@ entities {
 		}
 		  
 		action do_move {  
-			if ((velocity.x) as int = 0) and ((velocity.y) as int = 0) and ((velocity.z) as int = 0) {
+			if (((velocity.x) as int) = 0) and (((velocity.y) as int) = 0) and (((velocity.z) as int) = 0) {
 				velocity <- {(rnd(4)) -2, (rnd(4)) - 2,  ((rnd(4)) - 2)} ; 
 			}
 			point old_location <- location;
