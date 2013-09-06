@@ -1464,7 +1464,7 @@ public abstract class Spatial {
 	public static abstract class Statistics {
 
 		@operator(value = { "simple_clustering_by_distance","simple_clustering_by_envelope_distance" }, content_type = IType.LIST)
-		@doc(value = "A list of agent groups clustered by distance considering a distance min between two groups.", examples = { "[ag1, ag2, ag3, ag4, ag5] simpleClusteringByDistance 20.0 --: for example, can return [[ag1, ag3], [ag2], [ag4, ag5]]" }, see = { "simple_clustering_by_envelope_distance" })
+		@doc(value = "A list of agent groups clustered by distance considering a distance min between two groups.", examples = { "[ag1, ag2, ag3, ag4, ag5] simpleClusteringByDistance 20.0 --: for example, can return [[ag1, ag3], [ag2], [ag4, ag5]]" }, see = { "hierarchical_clustering" })
 		public static IList<IList<IAgent>> simpleClusteringByDistance(final IScope scope, final IContainer<?, IAgent> agents, final Double distance) {
 			final IList<IList<IAgent>> groups = new GamaList<IList<IAgent>>();
 			In filter = In.list(scope,agents);
@@ -1491,11 +1491,11 @@ public abstract class Spatial {
 		}
 		
 		@operator(value = { "hierarchical_clustering" }, content_type = IType.LIST)
-		@doc(value = "A list of agent groups clustered by distance considering a distance min between two groups.", comment = "use of hierarchical clustering with Minimum for linkage criterion between two groups of agents.", examples = { "[ag1, ag2, ag3, ag4, ag5] hierarchical_clustering 20.0 --: for example, can return [ag1::ag3, ag2, (ag4::ag5)::ag6]" }, see = { "simple_clustering_by_envelope_distance", "simple_clustering_by_distance" })
+		@doc(value = "A tree (list of list) contained groups of agents clustered by distance considering a distance min between two groups.", comment = "use of hierarchical clustering with Minimum for linkage criterion between two groups of agents.", examples = { "[ag1, ag2, ag3, ag4, ag5] hierarchical_clustering 20.0 --: for example, can return [[ag1,ag3], [ag2], [[ag4,ag5],ag6]" }, see = {"simple_clustering_by_distance" })
 		public static IList simple_clustering_by_distance(final IScope scope, final IContainer<?, IAgent> agents,
 			final Double distance) {
 			final int nb = agents.length(scope);
-			final IList<IList<IAgent>> groups = new GamaList<IList<IAgent>>();
+			final IList<IList> groups = new GamaList<IList>();
 			 
 			if ( nb == 0 ) {
 				// scope.setStatus(ExecutionStatus.failure);
@@ -1503,11 +1503,11 @@ public abstract class Spatial {
 			}
 			double distMin = Double.MAX_VALUE;
 			
-			Set<IList<IAgent>> minFusion = null;
+			Set<IList> minFusion = null;
 
-			final Map<Set<IList<IAgent>>, Double> distances = new HashMap<Set<IList<IAgent>>, Double>();
+			final Map<Set<IList>, Double> distances = new HashMap<Set<IList>, Double>();
 			for ( final IAgent ag : agents.iterable(scope) ) {
-				final IList<IAgent> group = new GamaList<IAgent>();
+				final IList group = new GamaList<IAgent>();
 				group.add(ag);
 				groups.add(group);
 			}
@@ -1515,14 +1515,14 @@ public abstract class Spatial {
 			if ( nb == 1 ) { return groups; }
 			// BY GEOMETRIES
 			for ( int i = 0; i < nb - 1; i++ ) {
-				final IList<IAgent> g1 = groups.get(i);
+				final IList g1 = groups.get(i);
 				for ( int j = i + 1; j < nb; j++ ) {
-					final IList<IAgent> g2 = groups.get(j);
-					final Set<IList<IAgent>> distGp = new HashSet<IList<IAgent>>();
+					final IList g2 = groups.get(j);
+					final Set<IList> distGp = new HashSet<IList>();
 					distGp.add(g1);
 					distGp.add(g2);
-					final IAgent a = g1.get(0);
-					final IAgent b = g2.get(0);
+					final IAgent a = (IAgent) g1.get(0);
+					final IAgent b = (IAgent) g2.get(0);
 					final Double dist = scope.getTopology().distanceBetween(scope, a, b);
 					if ( dist < distance ) {
 						distances.put(distGp, dist);
@@ -1534,17 +1534,20 @@ public abstract class Spatial {
 				}
 			}
 			while (distMin <= distance) {
-				IList<IList<IAgent>> fusionL = new GamaList<IList<IAgent>>(minFusion);
+				IList<IList> fusionL = new GamaList<IList>(minFusion);
 				final IList<IAgent> g1 = fusionL.get(0);
 				final IList<IAgent> g2 = fusionL.get(1);
 				distances.remove(minFusion);
 				fusionL = null;
 				groups.remove(g2);
 				groups.remove(g1);
-				final IList<IAgent> groupeF = new GamaList<IAgent>(g2);
-				groupeF.addAll(g1);
-				for ( final IList<IAgent> groupe : groups ) {
-					final Set<IList<IAgent>> newDistGp = new HashSet<IList<IAgent>>();
+				IList groupeF = new GamaList();
+				if (g2.size() == 1) {groupeF.add(g2.get(0));}
+				else {groupeF.add(g2);}
+				if (g1.size() == 1) {groupeF.add(g1.get(0));}
+				else {groupeF.add(g1);}
+				for ( final IList groupe : groups ) {
+					final Set<IList> newDistGp = new HashSet<IList>();
 					newDistGp.add(groupe);
 					newDistGp.add(g1);
 					double dist1 = Double.MAX_VALUE;
@@ -1569,7 +1572,7 @@ public abstract class Spatial {
 
 				distMin = Double.MAX_VALUE;
 				minFusion = null;
-				for ( final Set<IList<IAgent>> distGp : distances.keySet() ) {
+				for ( final Set<IList> distGp : distances.keySet() ) {
 					final double dist = distances.get(distGp).doubleValue();
 					if ( dist < distMin ) {
 						minFusion = distGp;
