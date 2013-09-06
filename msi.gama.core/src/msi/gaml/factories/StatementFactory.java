@@ -94,14 +94,8 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 		} else if ( kw.equals(CREATE) ) {
 			SpeciesDescription species = computeSpecies(cd);
 			assertSpeciesIsOkForCreation(cd, species);
-			// FIXME Not the right place to do it.
-			if ( species != null ) {
-				if ( species.isAbstract() ) {
-					cd.error("Species " + species.getName() + " is abstract and cannot be instantiated");
-				} else if ( species.isMirror() ) {
-					cd.error("Species " + species.getName() + " is a mirror and cannot be instantiated");
-				}
-			}
+		} else if ( kw.equals(SWITCH) ) {
+			assertSwitchAndMatchesDoMatch(cd, cd.getModelDescription().getTypesManager());
 		}
 		return cd;
 	}

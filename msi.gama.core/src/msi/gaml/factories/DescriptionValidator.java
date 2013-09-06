@@ -11,6 +11,8 @@ import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 
 /**
  * The class DescriptionValidator.
@@ -62,13 +64,13 @@ public class DescriptionValidator {
 
 		// We have a multi-valued facet
 		if ( fmd.values.length > 0 ) {
-			verifyFacetIsInValues(desc, facet, expr, fmd.values);
+			assertFacetIsInValues(desc, facet, expr, fmd.values);
 			return;
 		}
 		// The facet is supposed to be a type (IType.TYPE_ID)
 		for ( final int s : fmd.types ) {
 			if ( s == IType.TYPE_ID ) {
-				verifyFacetIsAType(desc, facet, expr, tm);
+				assertFacetIsAType(desc, facet, expr, tm);
 				return;
 			}
 		}
@@ -100,7 +102,47 @@ public class DescriptionValidator {
 
 	}
 
-	public static void verifyFacetIsAType(final IDescription desc, final String facet, final IExpression expr,
+	public static Predicate allMatches = new Predicate<IDescription>() {
+
+		@Override
+		public boolean apply(final IDescription input) {
+			return input.getKeyword().equals(MATCH);
+		}
+	};
+
+	public static void assertSwitchAndMatchesDoMatch(final IDescription desc, final TypesManager tm) {
+		// FIXME This assertion only verifies the case of "match" (not match_one or match_between)
+		List<IDescription> children = desc.getChildren();
+		Iterable<IDescription> matches = Iterables.filter(children, allMatches);
+		IExpression switchValue = desc.getFacets().getExpr(VALUE);
+		if ( switchValue == null ) { return; }
+		IType switchType = switchValue.getType();
+		if ( switchType.equals(Types.NO_TYPE) ) { return; }
+		for ( IDescription match : matches ) {
+			IExpression value = match.getFacets().getExpr(VALUE);
+			if ( value == null ) {
+				continue;
+			}
+			IType matchType = value.getType();
+			// AD : special case introduced for ints and floats (a warning is emitted
+			if ( Types.intFloatCase(matchType, switchType) ) {
+				match.warning("The value " + value.toGaml() + " of type " + matchType +
+					" is compared to a value of type " + switchType + ", which will never match ",
+					IGamlIssue.SHOULD_CAST, IKeyword.VALUE, switchType.toString());
+				continue;
+			}
+
+			if ( matchType.isTranslatableInto(switchType) ) {
+				continue;
+			}
+			match
+				.warning("The value " + value.toGaml() + " of type " + matchType + " is compared to a value of type " +
+					switchType + ", which will never match ", IGamlIssue.SHOULD_CAST, IKeyword.VALUE,
+					switchType.toString());
+		}
+	}
+
+	public static void assertFacetIsAType(final IDescription desc, final String facet, final IExpression expr,
 		final TypesManager tm) {
 		final String tt = expr.literalValue();
 		final IType type = tm.get(tt);
@@ -110,7 +152,7 @@ public class DescriptionValidator {
 		}
 	}
 
-	public static void verifyFacetIsInValues(final IDescription desc, final String facet, final IExpression expr,
+	public static void assertFacetIsInValues(final IDescription desc, final String facet, final IExpression expr,
 		final String[] values) {
 		final String s = expr.literalValue();
 		boolean compatible = false;
@@ -217,8 +259,7 @@ public class DescriptionValidator {
 						cd.warning("Variable " + expr.toGaml() + " of type " + te + " is assigned a value of type " +
 							tv + ", which will be casted to " + te, IGamlIssue.SHOULD_CAST, IKeyword.VALUE, expr
 							.getType().toString());
-					} else if ( tv.id() == IType.FLOAT && te.id() == IType.INT || te.id() == IType.FLOAT &&
-						tv.id() == IType.INT ) {
+					} else if ( Types.intFloatCase(tv, te) ) {
 						// AD: 6/9/13 special case for int and float (see Issue 590)
 						cd.warning("Variable " + expr.toGaml() + " of type " + te + " is assigned a value of type " +
 							tv + ", which will be casted to " + te, IGamlIssue.SHOULD_CAST, IKeyword.VALUE, expr
