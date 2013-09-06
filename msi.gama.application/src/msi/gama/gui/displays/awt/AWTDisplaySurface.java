@@ -237,7 +237,6 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		if ( autosave ) {
 			snapshot();
 		}
-		// redrawNavigator();
 	}
 
 	@Override
@@ -248,8 +247,6 @@ public final class AWTDisplaySurface extends AbstractAWTDisplaySurface {
 		if ( buffImage != null ) {
 			buffImage.flush();
 		}
-		// if ( navigator == null || navigator.isDisposed() ) { return; }
-		// navigator.dispose();
 	}
 
 	@Override
