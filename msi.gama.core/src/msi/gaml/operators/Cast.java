@@ -61,6 +61,12 @@ public class Cast {
 		return result;
 	}
 
+	@operator(value = { "containing" }, type = ITypeProvider.FIRST_TYPE, content_type = ITypeProvider.SECOND_TYPE)
+	@doc(value = "Internal use only. Allows to cast the contents type of containers")
+	public static Object containing(final IScope scope, final Object a, final IExpression b) {
+		return a;
+	}
+
 	@operator(value = { IKeyword.IS })
 	@doc(value = "returns true if the left operand is of the right operand type, false otherwise", examples = {
 		"0 is int 		--: 	true", "an_agent is node 	--: 	true", "1 is float 		--: 	false" })
@@ -78,8 +84,7 @@ public class Cast {
 	}
 
 	@operator(value = IKeyword.IS_SKILL)
-	@doc(value = "returns true if the right operand is a skill name", examples = {
-			"is_skill 'moving' 		--: 	true" })
+	@doc(value = "returns true if the right operand is a skill name", examples = { "is_skill 'moving' 		--: 	true" })
 	public static Boolean isSkill(final IScope scope, final Object a, final String skill) {
 		if ( !(a instanceof IAgent) ) { return false; }
 		final ISpecies s = ((IAgent) a).getSpecies();
@@ -181,8 +186,7 @@ public class Cast {
 	}
 
 	@operator(value = IKeyword.AS_SKILL, type = ITypeProvider.FIRST_TYPE)
-	@doc(value = "casting an object (left-operand) to an agent if the left-operand is an agent having skill specified by the right-operand.",
-			special_cases = "if the object can not be viewed as an agent having skill specified by the right-operand, then a GamaRuntimeException is thrown.")
+	@doc(value = "casting an object (left-operand) to an agent if the left-operand is an agent having skill specified by the right-operand.", special_cases = "if the object can not be viewed as an agent having skill specified by the right-operand, then a GamaRuntimeException is thrown.")
 	public static IAgent asSkill(final IScope scope, final Object val, final String skill) {
 		if ( isSkill(scope, val, skill) ) { return (IAgent) val; }
 		throw GamaRuntimeException.error("Cast exception: " + val + " can not be viewed as a " + skill);

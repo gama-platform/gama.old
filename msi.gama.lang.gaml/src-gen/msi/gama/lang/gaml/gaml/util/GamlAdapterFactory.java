@@ -298,6 +298,11 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
         return createIfAdapter();
       }
       @Override
+      public Adapter caseCast(Cast object)
+      {
+        return createCastAdapter();
+      }
+      @Override
       public Adapter caseBinary(Binary object)
       {
         return createBinaryAdapter();
@@ -1075,6 +1080,21 @@ public class GamlAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createIfAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link msi.gama.lang.gaml.gaml.Cast <em>Cast</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see msi.gama.lang.gaml.gaml.Cast
+   * @generated
+   */
+  public Adapter createCastAdapter()
   {
     return null;
   }

@@ -16,6 +16,7 @@ import msi.gama.lang.gaml.gaml.Array;
 import msi.gama.lang.gaml.gaml.Binary;
 import msi.gama.lang.gaml.gaml.Block;
 import msi.gama.lang.gaml.gaml.BooleanLiteral;
+import msi.gama.lang.gaml.gaml.Cast;
 import msi.gama.lang.gaml.gaml.ColorLiteral;
 import msi.gama.lang.gaml.gaml.Dot;
 import msi.gama.lang.gaml.gaml.DoubleLiteral;
@@ -394,6 +395,13 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * @generated
    */
   private EClass ifEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass castEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -1333,6 +1341,16 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  public EClass getCast()
+  {
+    return castEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public EClass getBinary()
   {
     return binaryEClass;
@@ -1815,6 +1833,8 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     ifEClass = createEClass(IF);
     createEReference(ifEClass, IF__IF_FALSE);
 
+    castEClass = createEClass(CAST);
+
     binaryEClass = createEClass(BINARY);
 
     unitEClass = createEClass(UNIT);
@@ -1942,6 +1962,7 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
     s_VarEClass.getESuperTypes().add(this.getS_Definition());
     pairEClass.getESuperTypes().add(this.getExpression());
     ifEClass.getESuperTypes().add(this.getExpression());
+    castEClass.getESuperTypes().add(this.getExpression());
     binaryEClass.getESuperTypes().add(this.getExpression());
     unitEClass.getESuperTypes().add(this.getExpression());
     unaryEClass.getESuperTypes().add(this.getExpression());
@@ -2080,6 +2101,8 @@ public class GamlPackageImpl extends EPackageImpl implements GamlPackage
 
     initEClass(ifEClass, If.class, "If", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getIf_IfFalse(), this.getExpression(), null, "ifFalse", null, 0, 1, If.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(castEClass, Cast.class, "Cast", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
     initEClass(binaryEClass, Binary.class, "Binary", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

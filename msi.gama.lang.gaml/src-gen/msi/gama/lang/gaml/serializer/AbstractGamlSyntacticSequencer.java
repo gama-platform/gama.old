@@ -63,7 +63,7 @@ public abstract class AbstractGamlSyntacticSequencer extends AbstractSyntacticSe
 	
 	/**
 	 * Syntax:
-	 *     '<-' | 'value:'
+	 *     'value:' | '<-'
 	 */
 	protected void emit_S_Set_LessThanSignHyphenMinusKeyword_3_1_or_ValueKeyword_3_0(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);

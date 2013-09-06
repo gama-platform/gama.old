@@ -197,4 +197,13 @@ public class GamlExpressionFactory implements IExpressionFactory {
 		return parser;
 	}
 
+	/**
+	 * Method createCastingExpression()
+	 * @see msi.gaml.expressions.IExpressionFactory#createCastingExpression(msi.gaml.types.IType)
+	 */
+	@Override
+	public IExpression createCastingExpression(final IType type) {
+		return new CastingExpression(type);
+	}
+
 }

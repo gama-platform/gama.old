@@ -116,6 +116,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="ifFalse" eType="#//Expression"
         containment="true"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Cast" eSuperTypes="#//Expression"/>
   <eClassifiers xsi:type="ecore:EClass" name="Binary" eSuperTypes="#//Expression"/>
   <eClassifiers xsi:type="ecore:EClass" name="Unit" eSuperTypes="#//Expression"/>
   <eClassifiers xsi:type="ecore:EClass" name="Unary" eSuperTypes="#//Expression"/>

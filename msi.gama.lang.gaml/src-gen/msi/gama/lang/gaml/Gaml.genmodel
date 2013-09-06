@@ -100,6 +100,7 @@
     <genClasses ecoreClass="Gaml.ecore#//If">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//If/ifFalse"/>
     </genClasses>
+    <genClasses ecoreClass="Gaml.ecore#//Cast"/>
     <genClasses ecoreClass="Gaml.ecore#//Binary"/>
     <genClasses ecoreClass="Gaml.ecore#//Unit"/>
     <genClasses ecoreClass="Gaml.ecore#//Unary"/>

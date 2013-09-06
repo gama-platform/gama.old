@@ -2390,6 +2390,52 @@ public interface GamlPackage extends EPackage
   int IF_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 1;
 
   /**
+   * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.CastImpl <em>Cast</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see msi.gama.lang.gaml.gaml.impl.CastImpl
+   * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getCast()
+   * @generated
+   */
+  int CAST = 44;
+
+  /**
+   * The feature id for the '<em><b>Left</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CAST__LEFT = EXPRESSION__LEFT;
+
+  /**
+   * The feature id for the '<em><b>Op</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CAST__OP = EXPRESSION__OP;
+
+  /**
+   * The feature id for the '<em><b>Right</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CAST__RIGHT = EXPRESSION__RIGHT;
+
+  /**
+   * The number of structural features of the '<em>Cast</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CAST_FEATURE_COUNT = EXPRESSION_FEATURE_COUNT + 0;
+
+  /**
    * The meta object id for the '{@link msi.gama.lang.gaml.gaml.impl.BinaryImpl <em>Binary</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2397,7 +2443,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getBinary()
    * @generated
    */
-  int BINARY = 44;
+  int BINARY = 45;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -2443,7 +2489,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getUnit()
    * @generated
    */
-  int UNIT = 45;
+  int UNIT = 46;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -2489,7 +2535,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getUnary()
    * @generated
    */
-  int UNARY = 46;
+  int UNARY = 47;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -2535,7 +2581,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getAccess()
    * @generated
    */
-  int ACCESS = 47;
+  int ACCESS = 48;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -2590,7 +2636,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getDot()
    * @generated
    */
-  int DOT = 48;
+  int DOT = 49;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -2636,7 +2682,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getArray()
    * @generated
    */
-  int ARRAY = 49;
+  int ARRAY = 50;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -2691,7 +2737,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getPoint()
    * @generated
    */
-  int POINT = 50;
+  int POINT = 51;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -2746,7 +2792,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getFunction()
    * @generated
    */
-  int FUNCTION = 51;
+  int FUNCTION = 52;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -2819,7 +2865,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getParameter()
    * @generated
    */
-  int PARAMETER = 52;
+  int PARAMETER = 53;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -2874,7 +2920,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getUnitName()
    * @generated
    */
-  int UNIT_NAME = 53;
+  int UNIT_NAME = 54;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -2929,7 +2975,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getTypeRef()
    * @generated
    */
-  int TYPE_REF = 54;
+  int TYPE_REF = 55;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3002,7 +3048,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getSkillRef()
    * @generated
    */
-  int SKILL_REF = 55;
+  int SKILL_REF = 56;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3057,7 +3103,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getActionRef()
    * @generated
    */
-  int ACTION_REF = 56;
+  int ACTION_REF = 57;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3112,7 +3158,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getEquationRef()
    * @generated
    */
-  int EQUATION_REF = 57;
+  int EQUATION_REF = 58;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3167,7 +3213,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getIntLiteral()
    * @generated
    */
-  int INT_LITERAL = 58;
+  int INT_LITERAL = 59;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3213,7 +3259,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getDoubleLiteral()
    * @generated
    */
-  int DOUBLE_LITERAL = 59;
+  int DOUBLE_LITERAL = 60;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3259,7 +3305,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getColorLiteral()
    * @generated
    */
-  int COLOR_LITERAL = 60;
+  int COLOR_LITERAL = 61;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3305,7 +3351,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getStringLiteral()
    * @generated
    */
-  int STRING_LITERAL = 61;
+  int STRING_LITERAL = 62;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3351,7 +3397,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getBooleanLiteral()
    * @generated
    */
-  int BOOLEAN_LITERAL = 62;
+  int BOOLEAN_LITERAL = 63;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -3397,7 +3443,7 @@ public interface GamlPackage extends EPackage
    * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getReservedLiteral()
    * @generated
    */
-  int RESERVED_LITERAL = 63;
+  int RESERVED_LITERAL = 64;
 
   /**
    * The feature id for the '<em><b>Left</b></em>' containment reference.
@@ -4194,6 +4240,16 @@ public interface GamlPackage extends EPackage
    * @generated
    */
   EReference getIf_IfFalse();
+
+  /**
+   * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.Cast <em>Cast</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Cast</em>'.
+   * @see msi.gama.lang.gaml.gaml.Cast
+   * @generated
+   */
+  EClass getCast();
 
   /**
    * Returns the meta object for class '{@link msi.gama.lang.gaml.gaml.Binary <em>Binary</em>}'.
@@ -5243,6 +5299,16 @@ public interface GamlPackage extends EPackage
      * @generated
      */
     EReference IF__IF_FALSE = eINSTANCE.getIf_IfFalse();
+
+    /**
+     * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.CastImpl <em>Cast</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see msi.gama.lang.gaml.gaml.impl.CastImpl
+     * @see msi.gama.lang.gaml.gaml.impl.GamlPackageImpl#getCast()
+     * @generated
+     */
+    EClass CAST = eINSTANCE.getCast();
 
     /**
      * The meta object literal for the '{@link msi.gama.lang.gaml.gaml.impl.BinaryImpl <em>Binary</em>}' class.

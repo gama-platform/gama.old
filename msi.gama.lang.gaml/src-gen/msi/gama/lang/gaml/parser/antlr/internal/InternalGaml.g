@@ -4280,11 +4280,11 @@ ruleAnd returns [EObject current=null]
     @after { leaveRule(); }:
 (
     { 
-        newCompositeNode(grammarAccess.getAndAccess().getComparisonParserRuleCall_0()); 
+        newCompositeNode(grammarAccess.getAndAccess().getCastParserRuleCall_0()); 
     }
-    this_Comparison_0=ruleComparison
+    this_Cast_0=ruleCast
     { 
-        $current = $this_Comparison_0.current; 
+        $current = $this_Cast_0.current; 
         afterParserOrEnumRuleCall();
     }
 ((
@@ -4311,9 +4311,9 @@ ruleAnd returns [EObject current=null]
 )(
 (
 		{ 
-	        newCompositeNode(grammarAccess.getAndAccess().getRightComparisonParserRuleCall_1_2_0()); 
+	        newCompositeNode(grammarAccess.getAndAccess().getRightCastParserRuleCall_1_2_0()); 
 	    }
-		lv_right_3_0=ruleComparison		{
+		lv_right_3_0=ruleCast		{
 	        if ($current==null) {
 	            $current = createModelElementForParent(grammarAccess.getAndRule());
 	        }
@@ -4321,12 +4321,81 @@ ruleAnd returns [EObject current=null]
        			$current, 
        			"right",
         		lv_right_3_0, 
-        		"Comparison");
+        		"Cast");
 	        afterParserOrEnumRuleCall();
 	    }
 
 )
 ))*)
+;
+
+
+
+
+
+// Entry rule entryRuleCast
+entryRuleCast returns [EObject current=null] 
+	:
+	{ newCompositeNode(grammarAccess.getCastRule()); }
+	 iv_ruleCast=ruleCast 
+	 { $current=$iv_ruleCast.current; } 
+	 EOF 
+;
+
+// Rule Cast
+ruleCast returns [EObject current=null] 
+    @init { enterRule(); 
+    }
+    @after { leaveRule(); }:
+(
+    { 
+        newCompositeNode(grammarAccess.getCastAccess().getComparisonParserRuleCall_0()); 
+    }
+    this_Comparison_0=ruleComparison
+    { 
+        $current = $this_Comparison_0.current; 
+        afterParserOrEnumRuleCall();
+    }
+(((
+    {
+        $current = forceCreateModelElementAndSet(
+            grammarAccess.getCastAccess().getCastLeftAction_1_0_0(),
+            $current);
+    }
+)(
+(
+		lv_op_2_0=	'as' 
+    {
+        newLeafNode(lv_op_2_0, grammarAccess.getCastAccess().getOpAsKeyword_1_0_1_0());
+    }
+ 
+	    {
+	        if ($current==null) {
+	            $current = createModelElement(grammarAccess.getCastRule());
+	        }
+       		setWithLastConsumed($current, "op", lv_op_2_0, "as");
+	    }
+
+)
+))(
+(
+		{ 
+	        newCompositeNode(grammarAccess.getCastAccess().getRightTypeRefParserRuleCall_1_1_0()); 
+	    }
+		lv_right_3_0=ruleTypeRef		{
+	        if ($current==null) {
+	            $current = createModelElementForParent(grammarAccess.getCastRule());
+	        }
+       		set(
+       			$current, 
+       			"right",
+        		lv_right_3_0, 
+        		"TypeRef");
+	        afterParserOrEnumRuleCall();
+	    }
+
+)
+))?)
 ;
 
 

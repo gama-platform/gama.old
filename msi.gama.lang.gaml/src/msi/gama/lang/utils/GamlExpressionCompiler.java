@@ -137,8 +137,11 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			String type = EGaml.getKeyOf(e2);
 			if ( isSpeciesName(type) ) { return factory.createOperator(op, context, left, species(type)); }
 			if ( isSkillName(type) ) { return factory.createOperator(AS_SKILL, context, left, skill(type)); }
-			// allows expression such as 'agent as dead'. Should we allow them ?
-			return factory.createOperator(type, context, left);
+			if ( isTypeName(type) ) { return factory.createOperator(type, context, left); }
+			getContext().error(
+				"'as' must be followed by a type, species or skill name. " + type + " is neither of these.",
+				IGamlIssue.NOT_A_TYPE, e2, type);
+			return null;
 		}
 		// if the operator is "is", the right-hand expression should be a type
 		if ( IS.equals(op) ) {
@@ -355,6 +358,33 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 	GamlSwitch<IExpression> compiler = new GamlSwitch<IExpression>() {
 
 		@Override
+		public IExpression caseCast(final Cast object) {
+			Expression type = object.getRight();
+			IExpression simpleType = binary(AS, compile(object.getLeft()), type);
+			if ( simpleType == null ) { return null; }
+			if ( type instanceof TypeRef ) {
+				Expression first = ((TypeRef) type).getFirst();
+				Expression second = ((TypeRef) type).getSecond();
+				// No content type, we return the simple expression
+				if ( first == null ) { return simpleType; }
+				// We compute the content type
+				String contentType;
+				Expression contentTypeExpression = second == null ? first : second;
+				contentType = EGaml.getKeyOf(contentTypeExpression);
+				if ( contentType == null || !isTypeName(contentType) ) {
+					getContext().error(
+						"A type can only contain another type, species or skill name. " + contentType +
+							" is neither of these.", IGamlIssue.NOT_A_TYPE, contentTypeExpression, contentType);
+					return simpleType;
+				}
+				return factory.createOperator("containing", context, simpleType,
+					factory.createCastingExpression(context.getModelDescription().getTypeNamed(contentType)));
+			}
+			getContext().error(EGaml.toString(type) + " is not a type name. ", IGamlIssue.NOT_A_TYPE, type);
+			return null;
+		}
+
+		@Override
 		public IExpression caseSkillRef(final SkillRef object) {
 			return skill(EGaml.getKey.caseSkillRef(object));
 		}
@@ -382,7 +412,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		public IExpression caseTypeRef(final TypeRef object) {
 			String s = EGaml.getKeyOf(object);
 			if ( s == null ) {
-				// we delegate to the referenced GamlVarRef
+				// we delegate to the referenced TypeDefinition
 				return caseTypeDefinition(object.getRef());
 			}
 			return caseVar(s, object);

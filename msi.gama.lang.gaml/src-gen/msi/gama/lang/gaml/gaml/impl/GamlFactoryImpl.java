@@ -111,6 +111,7 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.SVAR: return createS_Var();
       case GamlPackage.PAIR: return createPair();
       case GamlPackage.IF: return createIf();
+      case GamlPackage.CAST: return createCast();
       case GamlPackage.BINARY: return createBinary();
       case GamlPackage.UNIT: return createUnit();
       case GamlPackage.UNARY: return createUnary();
@@ -618,6 +619,17 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     IfImpl if_ = new IfImpl();
     return if_;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Cast createCast()
+  {
+    CastImpl cast = new CastImpl();
+    return cast;
   }
 
   /**

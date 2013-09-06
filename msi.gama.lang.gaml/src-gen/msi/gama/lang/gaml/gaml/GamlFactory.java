@@ -422,6 +422,15 @@ public interface GamlFactory extends EFactory
   If createIf();
 
   /**
+   * Returns a new object of class '<em>Cast</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Cast</em>'.
+   * @generated
+   */
+  Cast createCast();
+
+  /**
    * Returns a new object of class '<em>Binary</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

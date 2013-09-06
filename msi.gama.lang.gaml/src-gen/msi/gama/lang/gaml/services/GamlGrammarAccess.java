@@ -2331,25 +2331,25 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	public class AndElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "And");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final RuleCall cComparisonParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
+		private final RuleCall cCastParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
 		private final Action cExpressionLeftAction_1_0 = (Action)cGroup_1.eContents().get(0);
 		private final Assignment cOpAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final Keyword cOpAndKeyword_1_1_0 = (Keyword)cOpAssignment_1_1.eContents().get(0);
 		private final Assignment cRightAssignment_1_2 = (Assignment)cGroup_1.eContents().get(2);
-		private final RuleCall cRightComparisonParserRuleCall_1_2_0 = (RuleCall)cRightAssignment_1_2.eContents().get(0);
+		private final RuleCall cRightCastParserRuleCall_1_2_0 = (RuleCall)cRightAssignment_1_2.eContents().get(0);
 		
 		//And returns Expression:
-		//	Comparison ({Expression.left=current} op="and" right=Comparison)*;
+		//	Cast ({Expression.left=current} op="and" right=Cast)*;
 		public ParserRule getRule() { return rule; }
 
-		//Comparison ({Expression.left=current} op="and" right=Comparison)*
+		//Cast ({Expression.left=current} op="and" right=Cast)*
 		public Group getGroup() { return cGroup; }
 
-		//Comparison
-		public RuleCall getComparisonParserRuleCall_0() { return cComparisonParserRuleCall_0; }
+		//Cast
+		public RuleCall getCastParserRuleCall_0() { return cCastParserRuleCall_0; }
 
-		//({Expression.left=current} op="and" right=Comparison)*
+		//({Expression.left=current} op="and" right=Cast)*
 		public Group getGroup_1() { return cGroup_1; }
 
 		//{Expression.left=current}
@@ -2361,11 +2361,55 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		//"and"
 		public Keyword getOpAndKeyword_1_1_0() { return cOpAndKeyword_1_1_0; }
 
-		//right=Comparison
+		//right=Cast
 		public Assignment getRightAssignment_1_2() { return cRightAssignment_1_2; }
 
+		//Cast
+		public RuleCall getRightCastParserRuleCall_1_2_0() { return cRightCastParserRuleCall_1_2_0; }
+	}
+
+	public class CastElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "Cast");
+		private final Group cGroup = (Group)rule.eContents().get(1);
+		private final RuleCall cComparisonParserRuleCall_0 = (RuleCall)cGroup.eContents().get(0);
+		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
+		private final Group cGroup_1_0 = (Group)cGroup_1.eContents().get(0);
+		private final Action cCastLeftAction_1_0_0 = (Action)cGroup_1_0.eContents().get(0);
+		private final Assignment cOpAssignment_1_0_1 = (Assignment)cGroup_1_0.eContents().get(1);
+		private final Keyword cOpAsKeyword_1_0_1_0 = (Keyword)cOpAssignment_1_0_1.eContents().get(0);
+		private final Assignment cRightAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cRightTypeRefParserRuleCall_1_1_0 = (RuleCall)cRightAssignment_1_1.eContents().get(0);
+		
+		//Cast returns Expression:
+		//	Comparison (({Cast.left=current} op="as") right=TypeRef)?;
+		public ParserRule getRule() { return rule; }
+
+		//Comparison (({Cast.left=current} op="as") right=TypeRef)?
+		public Group getGroup() { return cGroup; }
+
 		//Comparison
-		public RuleCall getRightComparisonParserRuleCall_1_2_0() { return cRightComparisonParserRuleCall_1_2_0; }
+		public RuleCall getComparisonParserRuleCall_0() { return cComparisonParserRuleCall_0; }
+
+		//(({Cast.left=current} op="as") right=TypeRef)?
+		public Group getGroup_1() { return cGroup_1; }
+
+		//{Cast.left=current} op="as"
+		public Group getGroup_1_0() { return cGroup_1_0; }
+
+		//{Cast.left=current}
+		public Action getCastLeftAction_1_0_0() { return cCastLeftAction_1_0_0; }
+
+		//op="as"
+		public Assignment getOpAssignment_1_0_1() { return cOpAssignment_1_0_1; }
+
+		//"as"
+		public Keyword getOpAsKeyword_1_0_1_0() { return cOpAsKeyword_1_0_1_0; }
+
+		//right=TypeRef
+		public Assignment getRightAssignment_1_1() { return cRightAssignment_1_1; }
+
+		//TypeRef
+		public RuleCall getRightTypeRefParserRuleCall_1_1_0() { return cRightTypeRefParserRuleCall_1_1_0; }
 	}
 
 	public class ComparisonElements extends AbstractParserRuleElementFinder {
@@ -3859,6 +3903,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	private IfElements pIf;
 	private OrElements pOr;
 	private AndElements pAnd;
+	private CastElements pCast;
 	private ComparisonElements pComparison;
 	private AdditionElements pAddition;
 	private MultiplicationElements pMultiplication;
@@ -4467,13 +4512,23 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//And returns Expression:
-	//	Comparison ({Expression.left=current} op="and" right=Comparison)*;
+	//	Cast ({Expression.left=current} op="and" right=Cast)*;
 	public AndElements getAndAccess() {
 		return (pAnd != null) ? pAnd : (pAnd = new AndElements());
 	}
 	
 	public ParserRule getAndRule() {
 		return getAndAccess().getRule();
+	}
+
+	//Cast returns Expression:
+	//	Comparison (({Cast.left=current} op="as") right=TypeRef)?;
+	public CastElements getCastAccess() {
+		return (pCast != null) ? pCast : (pCast = new CastElements());
+	}
+	
+	public ParserRule getCastRule() {
+		return getCastAccess().getRule();
 	}
 
 	//Comparison returns Expression:
