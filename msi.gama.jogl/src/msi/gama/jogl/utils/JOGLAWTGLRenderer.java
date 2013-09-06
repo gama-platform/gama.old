@@ -150,8 +150,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 		// Set background color
 
-		gl.glClearColor(displaySurface.getBgColor().getRed() / 255.0f, displaySurface.getBgColor().getGreen() / 255.0f,
-			displaySurface.getBgColor().getBlue() / 255.0f, 1.0f);
+		setBackground(displaySurface.getBackgroundColor());
 		// Enable smooth shading, which blends colors nicely, and smoothes out lighting.
 		GLUtil.enableSmooth(gl);
 
@@ -186,6 +185,16 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	}
 
+	private Color background = Color.white;
+
+	public void setBackground(final Color c) {
+		background = c;
+		canvas.setBackground(c);
+		// gl.glClearDepth(1.0);
+		// gl.glClearColor(c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0f);
+		// gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	}
+
 	@Override
 	public void display(final GLAutoDrawable drawable) {
 
@@ -202,6 +211,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 			// Clear the screen and the depth buffer
 			gl.glClearDepth(1.0f);
+			gl.glClearColor(background.getRed() / 255.0f, background.getGreen() / 255.0f,
+				background.getBlue() / 255.0f, 1.0f);
 			gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 			gl.glMatrixMode(GL.GL_PROJECTION);

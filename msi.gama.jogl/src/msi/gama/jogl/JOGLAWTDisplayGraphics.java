@@ -73,6 +73,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	public JOGLAWTDisplayGraphics(final JOGLAWTDisplaySurface surface, final JOGLAWTGLRenderer r) {
 		super(surface);
 		renderer = r;
+		fillBackground(surface.getBackgroundColor(), 1);
 	}
 
 	/**
@@ -313,6 +314,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 
 	@Override
 	public void fillBackground(final Color bgColor, final double opacity) {
+		renderer.setBackground(bgColor);
 		setOpacity(opacity);
 	}
 

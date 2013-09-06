@@ -205,7 +205,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	@Override
 	public void outputChanged(final double env_width, final double env_height, final LayeredDisplayOutput output) {
 		setBackgroundColor(output.getBackgroundColor());
-		this.setBackground(getBgColor());
+		this.setBackground(getBackgroundColor());
 		setEnvWidth(env_width);
 		setEnvHeight(env_height);
 		widthHeightConstraint = env_height / env_width;
@@ -475,7 +475,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		renderer.canvas.addMouseMotionListener(e);
 	}
 
-	public Color getBgColor() {
+	public Color getBackgroundColor() {
 		return bgColor;
 	}
 
@@ -530,4 +530,11 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		return (int) (super.getDisplayWidth() * getZoomLevel());
 	}
 
+	@Override
+	public void setBackgroundColor(final Color c) {
+		super.setBackgroundColor(c);
+		if ( iGraphics != null ) {
+			iGraphics.fillBackground(bgColor, 1);
+		}
+	}
 }
