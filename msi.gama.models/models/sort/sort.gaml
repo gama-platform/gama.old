@@ -1,15 +1,17 @@
   model sort
 
 global {
-
-	rgb black <- rgb("black")  ;
-	const colors type: list <- ["yellow","red", "orange", "blue", "green","cyan", "gray","pink","magenta"] ;
+	// Parameters
 	int number_of_different_colors <- 4 max: 9 ;
 	int density_percent <- 30 min: 0 max: 99 ;
 	int number_of_objects_in_history <- 3 min: 0 ;
 	int number_of_objects_around  <- 5 min: 0 max: 8;
 	int width_and_height_of_grid <- 100 max: 400 min: 20 ;
 	int ants <- 100 min: 1 ;
+
+	rgb black <- rgb("black")  ;	
+	const colors type: list <- ["yellow","red", "orange", "blue", "green","cyan", "gray","pink","magenta"] ;
+	
 	action description {
 		write "\n Description. \n This model is loosely based on the behavior of ants sorting different elements in their nest. \n A of mobile agents - the ants - is placed on a grid. The grid itself contains cells of different colors. Each step, the agents move randomly. If they enter a colored cell, they pick this color if its density in the neighbourhood is less than *number_of_objects_around*. If they have picked a color, they drop it on a black cell if they have encountered at least *number_of_objects_in_history* cells with the same color.\n After a while, colors begin to be aggregated. " ;	
 	}  

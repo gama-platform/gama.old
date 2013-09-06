@@ -7,6 +7,8 @@
 model vote
 
 global {
+	geometry shape <- rectangle({200, 200});
+	
 	int nb_electors <- 1500;
 	int nb_candidates <- 7;
 	int poids_candidats <- 50;
@@ -21,45 +23,46 @@ global {
 	int compteur_groupe_max <- 5;
 	int compteur_groupe <- compteur_groupe_max;
 	float entropie;
-	list candidats_en_course of: candidat;
+	list<candidat> candidats_en_course ;
+	
 	init {
 		create electeur number: nb_electors;
 		do creation_candidats;
 	}
 	
 	action creation_candidats {
-			switch distribution_candidats { 
-				match "Polygone" {
-					list<point> liste_points <- list(nb_candidates points_at 50.0);
-					int cpt <- 0;
-					create candidat number: nb_candidates{
-						 couleur <- rgb (rnd(255), rnd(255), rnd(255)); 
-						 location <- liste_points at cpt;
-						 cpt <- cpt + 1; 
-					}
-				}
-				match "Ligne" {
-					int cpt  <- 0;
-					create candidat number: nb_candidates{
-						couleur <- rgb ([rnd(255), rnd(255), rnd(255)]); 
-						float x_cord  <- 200 * cpt / nb_candidates;
-						float y_cord <- 100;
-						location <- {x_cord, y_cord};
-						cpt <- cpt + 1;
-					}
-				}
-				match "Diagonale" {
-					int cpt <- 0;
-					create candidat number: nb_candidates{
-						couleur <- rgb ([rnd(255), rnd(255), rnd(255)]); 
-						float x_cord <- 200 * cpt / nb_candidates;
-						float y_cord <- x_cord;
-						location <- {x_cord, y_cord};
-						cpt <- cpt + 1;
-					}
+		switch distribution_candidats { 
+			match "Polygone" {
+				list<point> liste_points <- list(nb_candidates points_at 50.0);
+				int cpt <- 0;
+				create candidat number: nb_candidates{
+					 couleur <- rgb (rnd(255), rnd(255), rnd(255)); 
+					 location <- liste_points at cpt;
+					 cpt <- cpt + 1; 
 				}
 			}
-			candidats_en_course <- list(copy(candidat));	
+			match "Ligne" {
+				int cpt  <- 0;
+				create candidat number: nb_candidates{
+					couleur <- rgb ([rnd(255), rnd(255), rnd(255)]); 
+					float x_cord  <- 200 * cpt / nb_candidates;
+					float y_cord <- 100;
+					location <- {x_cord, y_cord};
+					cpt <- cpt + 1;
+				}
+			}
+			match "Diagonale" {
+				int cpt <- 0;
+				create candidat number: nb_candidates{
+					couleur <- rgb ([rnd(255), rnd(255), rnd(255)]); 
+					float x_cord <- 200 * cpt / nb_candidates;
+					float y_cord <- x_cord;
+					location <- {x_cord, y_cord};
+					cpt <- cpt + 1;
+				}
+			}
+		}
+		candidats_en_course <- list(copy(candidat));	
 	}
 	
 	reflex dynamique {
@@ -97,8 +100,8 @@ global {
 		candidat finaliste2 <- (candidats_en_course - finaliste1) with_max_of (each.pourcentage_vote);
 		ask (candidats_en_course) {
 			if (self != finaliste1 and self != finaliste2) {
-				set actif <- false;
-				set pourcentage_vote <- 0;
+				actif <- false;
+				pourcentage_vote <- 0;
 				remove self from: candidats_en_course;
 			}
 		}	
@@ -114,14 +117,14 @@ global {
 	reflex creation_groupe when: (strategie_candidats in ["Groupe", "Aleatoire"]) {
 		 if (compteur_groupe = compteur_groupe_max) {
 		 	ask groupe_electeurs as list {
-		 	do die;
+		 		do die;
 		 	}
 			list<list> groupes<- [];
 			geometry geoms <- union(electeur collect ((each.shape) buffer map(["distance"::float(seuil_attraction_electeurs) , "quadrantSegments"::4, "endCapStyle"::1])));
 			loop geom over: geoms.geometries { 
 				if (geom != nil and !empty(geom.points)) {
 					geom <- geom simplification 0.1;
-					list els  <- (electeur inside geom); 
+					list<electeur> els  <- (electeur inside geom); 
 					add els to: groupes;
 				}
 			}
@@ -134,8 +137,8 @@ global {
 			 	}
 			 }	 
 		}
-		 compteur_groupe <- compteur_groupe - 1;
-		 if (compteur_groupe = 0) { compteur_groupe <- compteur_groupe_max;}	
+		compteur_groupe <- compteur_groupe - 1;
+		if (compteur_groupe = 0) { compteur_groupe <- compteur_groupe_max;}	
 	}
 	
 	reflex calcule_entropie {
@@ -288,8 +291,6 @@ entities {
 		
 	}
 }
-
-environment bounds: {200, 200};
 
 experiment vote type: gui {
 	/** Insert here the definition of the input and output of the model */

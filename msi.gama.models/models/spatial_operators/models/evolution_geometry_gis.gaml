@@ -1,8 +1,9 @@
 model evolution_geometry
 
 global {
+	// Parameters
 	file shape_file_name_init  <- file('../gis/init.shp') ;
-	file shape_file_name_background  <- file('../gis/background.shp');
+	file shape_file_name_background  <- file('../gis/background.shp');		
 	float dying_size min: 100.0  <-10000.0 ; 
 	float crossover_size min: 100.0  <- 1000.0;
 	float minimum_size min: 100.0 <- 500.0; 
@@ -14,7 +15,10 @@ global {
 	int nb_partners_max min: 1  <- 1;
 	int max_side_size min: 1 <- 5;  
 	int background_size_side min: 20 max: 100 <- 80 ;
+	
+	// Environment
 	geometry shape <- envelope(shape_file_name_background);
+
 	geometry the_background;
 
 	reflex stop when: empty ( people ) {
@@ -78,6 +82,7 @@ species background {
 		draw shape color: color;
 	}	
 }
+
 experiment evolution_geometry type: gui {
 	parameter 'Path of shapefile to load for the initial agent:' var: shape_file_name_init  category: 'GIS specific' ;
 	parameter 'Path of shapefile to load for the background:' var: shape_file_name_background category: 'GIS specific';
@@ -92,6 +97,7 @@ experiment evolution_geometry type: gui {
 	parameter 'Max number of possible partners for crossing-overs (per step)' var:nb_partners_max category: 'Population' ;
 	parameter 'Size max of the initiale side of an agent:' var:max_side_size category: 'Population'; 
 	parameter 'Size background side:' var: background_size_side category: 'Population' ;
+
 	output {
 		display space_display refresh_every: 1{
 			species background aspect: geometry;

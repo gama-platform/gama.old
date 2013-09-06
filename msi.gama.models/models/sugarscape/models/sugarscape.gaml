@@ -2,6 +2,7 @@ model sugarscape
 
   
 global {
+	// Parameters 
 	int sugarGrowthRate <- 1;
 	int minDeathAge <- 60;
 	int maxDeathAge <- 100;
@@ -10,7 +11,11 @@ global {
 	int minInitialSugar <- 5;
 	float maxRange <- 6.0;
 	bool replace <- true;
-	int numberOfAgents <- 400;
+	int numberOfAgents <- 400;	
+	
+	// Environment
+	geometry shape <- rectangle(50, 50);
+		
 	const types type: file <- file('../images/sugarscape.pgm');
 	const red type: rgb <- rgb('red');
 	const white type: rgb <- rgb('white');
@@ -30,15 +35,15 @@ global {
 		}
 	}
 }
-environment width: 50 height: 50 {
+
+entities {
 	grid sugar_cell width: 50 height: 50 neighbours: 4 { 
 		const multiagent type: bool <- false;
 		int maxSugar;
 		int sugar update: sugar + sugarGrowthRate max: maxSugar;
 		rgb color update: [white,FFFFAA,FFFF55,yellow,dark_yellow] at sugar;
-	}
-}
-entities {
+	}	
+	
 	species animal {
 		const color type: rgb <- red;
 		const speed type: float <- 1.0;
