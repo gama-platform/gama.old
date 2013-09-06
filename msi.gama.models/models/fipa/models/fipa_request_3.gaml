@@ -4,7 +4,7 @@ global {
 	Participant p;
 	
 	init {
-		create Initiator returns: as;
+		create Initiator returns: is;
 		create Participant returns: ps;
 		
 		set p <- ps at 0;
