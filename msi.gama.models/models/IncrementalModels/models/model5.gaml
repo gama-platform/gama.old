@@ -37,10 +37,10 @@ global {
 	init {
 
 		/* determine the size of the neighbourhood and the average count of hosts neighbours */
-		set gridSize <- list(sir_grid) count(each);
+		set gridSize <- length(sir_grid) ;
 		let nbCells type: int <- 0;
 		loop cell over: list(sir_grid){
-			set nbCells <- nbCells + (cell.neighbours count(each));
+			set nbCells <- nbCells + length(cell.neighbours);
 		}
 		set neighbourhoodSize <- nbCells / gridSize+1; // +1 to count itself in the neighbourhood;
 		set beta_maths <- beta *neighbourhoodSize*number_Hosts/gridSize*adjust;
@@ -108,9 +108,9 @@ entities {
         sir_grid myPlace;
         /* next function computes the number of neighbours of the agent */
         int ngb_number  function:{    		
-//        						((myPlace.neighbours + myPlace) collect (each.agents)) of_species Host count(each)-1// -1 is because the agent counts itself
-												((self) neighbours_at (2)) of_species Host count(each)-1
-        						};
+//        	((myPlace.neighbours + myPlace) collect (each.agents)) of_species Host count(each)-1// -1 is because the agent counts itself
+			length(((self) neighbours_at (2)) of_species Host)-1
+        };
         
         init {
         	set myPlace <- one_of (sir_grid as list);

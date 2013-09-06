@@ -1,7 +1,14 @@
 model balls_groups_clouds
 
 global { 
+	// Parameters
+	bool create_group <- true; 
+	bool create_cloud <- false; 
+	
+	// Environment
 	point environment_bounds <- {500, 500}; 
+	geometry shape <- rectangle(environment_bounds) ;		
+	
 	int inner_bounds_x <- (int((environment_bounds.x) / 20))  ;
 	int inner_bounds_y <- (int((environment_bounds.y) / 20))  ;
 	int xmin <- inner_bounds_x ;
@@ -17,8 +24,6 @@ global {
 	int ball_number <- 200 min: 2 max: 1000;  
 	geometry ball_shape <- circle (ball_size) ;
 	float ball_separation <- 6 * ball_size; 
-	bool create_group parameter: 'Create groups?' <- true; 
-	bool create_cloud parameter: 'Create clouds?' <- false; 
 	int group_creation_distance <- int(ball_separation + 1);
 	int min_group_member <- 3;
 	int group_base_speed <- (int(ball_speed * 1.5));
@@ -40,15 +45,15 @@ global {
 	}
 	
 	reflex create_groups when: ( create_group and ((time mod creation_frequency) = 0) ) {
-		let free_balls type: list of: ball value: (ball as list) where ((each.state) = 'follow_nearest_ball') ;
-		
-		if condition: (length (free_balls)) > 1 {
-			let satisfying_ball_groups type: list of: list value: (free_balls simple_clustering_by_envelope_distance group_creation_distance) where ( (length (each)) > min_group_member ) ;
+		list<ball> free_balls <- ball where ((each.state) = 'follow_nearest_ball') ;
+
+		if (length (free_balls) > 1) {
+			list<list> satisfying_ball_groups <- (free_balls simple_clustering_by_distance group_creation_distance) where ( (length (each)) > min_group_member ) ;
 			
 			loop one_group over: satisfying_ball_groups {
 				create group number: 1 returns: new_groups;
 				
-				ask target: (new_groups at 0) as: group {
+				ask (new_groups at 0) as: group {
 					capture target: one_group as: ball_in_group; 
 				}
 			}
@@ -56,11 +61,11 @@ global {
 	}
 	
 	reflex create_clouds when: (create_cloud and ((time mod creation_frequency) = 0) ) {
-		let candidate_groups type: list value: list(group) where (length(each.members) > (0.05 * ball_number) );
-		let satisfying_groups type: list of: list value: (candidate_groups simple_clustering_by_envelope_distance cloud_creation_distance) where (length(each) >= min_cloud_member);
+		list<group> candidate_groups <- group where (length(each.members) > (0.05 * ball_number) );
+		list<list> satisfying_groups <- (candidate_groups simple_clustering_by_distance cloud_creation_distance) where (length(each) >= min_cloud_member);
 		loop one_cloud over: satisfying_groups {
 			create cloud returns: rets;			
-			let newCloud type: cloud value: rets at 0; 
+			cloud newCloud <- rets at 0; 
 			ask newCloud as: cloud {
 				capture one_cloud as: group_delegation;
 			}
@@ -71,7 +76,7 @@ global {
 				}
 			} 
 			
-			set newCloud.color value: ((group_delegation(one_of(newCloud.members))).color).darker;
+			newCloud.color <- ((group_delegation(one_of(newCloud.members))).color).darker;
 		}
 	}
 }
@@ -81,35 +86,34 @@ entities {
 	
 	species ball parent: base control: fsm skills: [moving]  { 
 		
-		//var shape type: geometry <- ball_shape at_location location ;
 		float speed <- ball_speed; 
 		rgb color <- ball_color;
 		int beginning_chaos_time; 
 		int time_in_chaos_state;
 		
 		init {
-			let continue_loop type: bool value: true ; 
+			bool continue_loop <- true ; 
 			loop while: continue_loop {
-				let tmp_location type: point value: {(rnd (xmax - xmin)) + xmin, (rnd (ymax - ymin)) + ymin} ;
-				let potential_geom type: geometry value: ball_shape at_location tmp_location ; 
+				point tmp_location <- {(rnd (xmax - xmin)) + xmin, (rnd (ymax - ymin)) + ymin} ;
+				geometry potential_geom <- ball_shape at_location tmp_location ; 
 				
 				if ( empty ( ball where  ( each intersects potential_geom ) ) )  {
-					set location value: tmp_location ;
-					set continue_loop value: false ;
+					location <- tmp_location ;
+					continue_loop <- false ;
 				}
 			}
 		}
 		
 		action separation (list<ball> nearby_balls) {
-			let repulsive_dx type: float value: 0 ;
-			let repulsive_dy type: float value: 0 ;
+			float repulsive_dx <- 0 ;
+			float repulsive_dy <- 0 ;
 			loop nb over: nearby_balls { 
-				let repulsive_distance value: ball_separation - ( location distance_to ( nb).location ) ;
-				let repulsive_direction value: ((nb).location) towards (location) ;
-				set repulsive_dx value: repulsive_dx + (repulsive_distance * (cos (repulsive_direction))) ;
-				set repulsive_dy  value: repulsive_dy + (repulsive_distance * (sin (repulsive_direction))) ;
+				float repulsive_distance <- ball_separation - ( location distance_to ( nb).location ) ;
+				int repulsive_direction <- ((nb).location) towards (location) ;
+				repulsive_dx <- repulsive_dx + (repulsive_distance * (cos (repulsive_direction))) ;
+				repulsive_dy <- repulsive_dy + (repulsive_distance * (sin (repulsive_direction))) ;
 			}
-			set location value: location + {repulsive_dx, repulsive_dy} ;
+			location <- location + {repulsive_dx, repulsive_dy} ;
 		}
 		
 		bool in_bounds (point a_point) {
@@ -118,19 +122,19 @@ entities {
 		 
 		state follow_nearest_ball initial: true {
 			enter {   
-				set color value: ball_color ;
-				set speed value: ball_speed ;
+				color <- ball_color ;
+				speed <- ball_speed ;
 			}
 			list<ball> free_balls <- (list (ball) - self) where ((each.state) = 'follow_nearest_ball') ;
 			ball nearest_free_ball <- free_balls closest_to self;
 			if nearest_free_ball != nil {
-				set heading value: self towards (nearest_free_ball) ; 
-				let step_distance type: float value: speed * step ;
-				let step_x type: float value: step_distance * (cos (heading)) ;
-				let step_y type: float value: step_distance * (sin (heading)) ; 
-				point tmp_location value: location + {step_x, step_y} ;
+				heading <- self towards (nearest_free_ball) ; 
+				float step_distance <- speed * step ;
+				float step_x <- step_distance * (cos (heading)) ;
+				float step_y <- step_distance * (sin (heading)) ; 
+				point tmp_location <- location + {step_x, step_y} ;
 				if (self in_bounds (tmp_location) ) {
-					set location value: tmp_location ;
+					location <- tmp_location ;
 					do separation (((ball overlapping (shape + ball_separation)) - self));
 				}
 			}
@@ -138,19 +142,19 @@ entities {
 		
 		state chaos {
 			enter {
-				set beginning_chaos_time value: time ;
-				set time_in_chaos_state value: 10 + (rnd(10)) ;
-				set color value: chaos_ball_color ;
-				set speed value: chaos_ball_speed ;
-				set heading value: rnd(359) ;
+				beginning_chaos_time <- time ;
+				time_in_chaos_state <- 10 + (rnd(10)) ;
+				color <- chaos_ball_color ;
+				speed <- chaos_ball_speed ;
+				heading <- rnd(359) ;
 			}
 			
-			let step_distance  value: speed * step ;
-			let step_x value: step_distance * (cos (heading)) ;
-			let step_y value: step_distance * (sin (heading)) ;
-			let tmp_location value: location + {step_x, step_y} ;
-			if condition: (self in_bounds (tmp_location)) {
-				set location value: tmp_location ;
+			float step_distance <- speed * step ;
+			float step_x <- step_distance * (cos (heading)) ;
+			float step_y <- step_distance * (sin (heading)) ;
+			point tmp_location <- location + {step_x, step_y} ;
+			if (self in_bounds (tmp_location)) {
+				location <- tmp_location ;
 				do separation (nearby_balls: (ball overlapping (shape + ball_separation)) - self);
 			}
 			
@@ -167,19 +171,19 @@ entities {
 		
 		geometry shape <- polygon (ball_in_group) buffer  10 ;
 		
-		float speed value: float(group_base_speed) ;
-		float perception_range value: float(base_perception_range + (rnd(5))) ;
-		ball nearest_free_ball value: ( ball where ( (each.state = 'follow_nearest_ball') ) ) closest_to self ;
-		group nearest_smaller_group value: ( ( (group as list) - self ) where ( (length (each.members)) < (length (members)) ) ) closest_to self ;
-		base target value: (self get_nearer_target []) depends_on: [nearest_free_ball, nearest_smaller_group] ;
+		float speed <- float(group_base_speed) ;
+		float perception_range <- float(base_perception_range + (rnd(5))) ;
+		ball nearest_free_ball <- ( ball where ( (each.state = 'follow_nearest_ball') ) ) closest_to self ;
+		group nearest_smaller_group <- ( ( (group as list) - self ) where ( (length (each.members)) < (length (members)) ) ) closest_to self ;
+		base target <- (self get_nearer_target []) depends_on: [nearest_free_ball, nearest_smaller_group] ;
 		
-		action get_nearer_target type: base {
-			if condition: (nearest_free_ball = nil) and (nearest_smaller_group = nil) {
+		base get_nearer_target {
+			if  (nearest_free_ball = nil) and (nearest_smaller_group = nil) {
 				return nil ;
 			}
 			
-			let distance_to_ball type: float value: (nearest_free_ball != nil) ? (self distance_to nearest_free_ball) : MAX_DISTANCE ;
-			let distance_to_group type: float value: (nearest_smaller_group != nil) ? (self distance_to nearest_smaller_group) : MAX_DISTANCE ;
+			float distance_to_ball <- (nearest_free_ball != nil) ? (self distance_to nearest_free_ball) : MAX_DISTANCE ;
+			float distance_to_group <- (nearest_smaller_group != nil) ? (self distance_to nearest_smaller_group) : MAX_DISTANCE ;
 			if (distance_to_ball < distance_to_group) {
 				return nearest_free_ball ;
 			}
@@ -189,23 +193,23 @@ entities {
 		
 		action separate_components {
 			loop com over: (list (ball_in_group)) {
-				let nearby_balls type: list of: ball_in_group value:  ((ball_in_group overlapping (com.shape + ball_separation)) - com) where (each in members) ;
-				let repulsive_dx type: float value: 0 ;
-				let repulsive_dy type: float value: 0 ;
+				list<ball_in_group> nearby_balls <-  ((ball_in_group overlapping (com.shape + ball_separation)) - com) where (each in members) ;
+				float repulsive_dx <- 0.0 ;
+				float repulsive_dy <- 0.0 ;
 				loop nb over: nearby_balls { 
-					let repulsive_distance type: float value: ball_separation - ( (ball_in_group (com)).location distance_to nb.location ) ;
-					let repulsive_direction type: int value: (nb.location) direction_to ((ball_in_group (com)).location) ;
-					set repulsive_dx value: repulsive_dx + (repulsive_distance * (cos (repulsive_direction))) ;
-					set repulsive_dy value: repulsive_dy + (repulsive_distance * (sin (repulsive_direction))) ;
+					float repulsive_distance <- ball_separation - ( (ball_in_group (com)).location distance_to nb.location ) ;
+					int repulsive_direction <- (nb.location) direction_to ((ball_in_group (com)).location) ;
+					repulsive_dx <- repulsive_dx + (repulsive_distance * (cos (repulsive_direction))) ;
+					repulsive_dy <- repulsive_dy + (repulsive_distance * (sin (repulsive_direction))) ;
 				}
 				
-				set (ball_in_group (com)).location value: (ball_in_group (com)).location + {repulsive_dx, repulsive_dy} ;
+				(ball_in_group (com)).location <- (ball_in_group (com)).location + {repulsive_dx, repulsive_dy} ;
 			}
 		}
 		
 		species ball_in_group parent: ball topology: topology((world).shape)  {
 			
-			float my_age <- 1.0 value: my_age + 0.01;
+			float my_age <- 1.0 update: my_age + 0.01;
 			 
 			state follow_nearest_ball initial: true { }
 			
@@ -217,15 +221,14 @@ entities {
 		}
 		
 		reflex capture_nearby_free_balls when: (time mod update_frequency) = 0 {
-			let nearby_free_balls type: list value: (ball overlapping (shape + perception_range)) where (each.state = 'follow_nearest_ball');
+			list<ball> nearby_free_balls <- (ball overlapping (shape + perception_range)) where (each.state = 'follow_nearest_ball');
 			if !(empty (nearby_free_balls)) {
 				capture nearby_free_balls as: ball_in_group;
 			}
 		}
 		
 		action disaggregate {
-			let released_coms type: list of: ball_in_group value: (list (ball_in_group)) ;
-			release  released_coms as: ball in: world {
+			release list(ball_in_group) as: ball in: world {
 				set state value: 'chaos' ;
 			}
 			
@@ -234,15 +237,15 @@ entities {
 		
 		reflex merge_nearby_groups when: (time mod merge_frequency) = 0 {
 			if ( (target != nil) and ((species_of (target)) = group) ) {
-				let nearby_groups type: list of: group value: (group overlapping (shape + perception_range)) - self ;
+				list<group> nearby_groups <- (group overlapping (shape + perception_range)) - self ;
 				
 				if target in nearby_groups {
 					if (rnd(10)) < (merge_possibility * 10) {
-						let target_coms var: target_coms type: list of: ball_in_group value: target.members ;
-						let released_balls type: list of: ball value: [];
+						list<ball_in_group> target_coms <- target.members ;
+						list<ball> released_balls <- [];
 						ask target {
 							release target_coms as: ball in: world returns: released_coms;
-							set released_balls value: list(released_coms);
+							released_balls <- list(released_coms);
 							do die ;
 						}
 						capture released_balls as: ball_in_group; 
@@ -253,54 +256,54 @@ entities {
 		}
 		
 		reflex chase_target when: (target != nil) {
-			let direction_to_nearest_ball type: int value: (self towards (target)) ;
-			let step_distance type: float value: speed * step ;
-			let dx type: float value: step_distance * (cos (direction_to_nearest_ball)) ;
-			let dy type: float value: step_distance * (sin (direction_to_nearest_ball)) ;
-			let envelope type: geometry value: shape.envelope ;
-			let topleft_point type: point value: (envelope.points) at 0 ;
-			let bottomright_point type: point value: (envelope.points) at 0 ;
+			int direction_to_nearest_ball <- (self towards (target)) ;
+			float step_distance <- speed * step ;
+			float dx <- step_distance * (cos (direction_to_nearest_ball)) ;
+			float dy <- step_distance * (sin (direction_to_nearest_ball)) ;
+			geometry envelope <- shape.envelope ;
+			point topleft_point <- (envelope.points) at 0 ;
+			point bottomright_point <- (envelope.points) at 0 ;
 			
 			loop p over: envelope.points {
-				if condition: ( (p.x <= topleft_point.x) and (p.y <= topleft_point.y) ) {
-					set topleft_point value: p ;
+				if ( (p.x <= topleft_point.x) and (p.y <= topleft_point.y) ) {
+					topleft_point <- p ;
 				}
 				
-				if condition: ( (p.x >= bottomright_point.x) and (p.y >= bottomright_point.y) ) {
-					set bottomright_point value: p ;
+				if ( (p.x >= bottomright_point.x) and (p.y >= bottomright_point.y) ) {
+					bottomright_point <- p ;
 				}
 			}
 			
-			if condition: ( (dx + topleft_point.x) < 0 ) {
-				let tmp_dx value: dx + topleft_point.x ;
-				set dx value: dx - tmp_dx ;
+			if ( (dx + topleft_point.x) < 0 ) {
+				float tmp_dx <- dx + topleft_point.x ;
+				dx <- dx - tmp_dx ;
 			} else {
-				if condition: (dx + bottomright_point.x) > (environment_bounds.x) {
-					let tmp_dx value: (dx + bottomright_point.x) - environment_bounds.x ;
-					set dx value: dx - tmp_dx ;
+				if (dx + bottomright_point.x) > (environment_bounds.x) {
+					float tmp_dx <- (dx + bottomright_point.x) - environment_bounds.x ;
+					dx <- dx - tmp_dx ;
 				}
 			}
 			
-			if  (dy + topleft_point.y) < 0 {
-				let tmp_dy value: dy + topleft_point.y ;
-				set dy value: dy - tmp_dy ;
+			if (dy + topleft_point.y) < 0 {
+				float tmp_dy <- dy + topleft_point.y ;
+				dy <- dy - tmp_dy ;
 			} else {
-				if condition: (dy + topleft_point.y) > (environment_bounds.y) {
-					let tmp_dy value: (dy + bottomright_point.y) - (environment_bounds.y) ;
-					set dy value: dy - tmp_dy ;
+				if (dy + topleft_point.y) > (environment_bounds.y) {
+					float tmp_dy <- (dy + bottomright_point.y) - (environment_bounds.y) ;
+					dy <- dy - tmp_dy ;
 				}
 			}
 			
 			loop com over: (list (ball_in_group)) {
-				set (ball_in_group (com)).location value: (ball_in_group (com)).location + {dx, dy} ;
+				(ball_in_group (com)).location <- (ball_in_group (com)).location + {dx, dy} ;
 			}
 			
-			set shape value:  convex_hull((polygon ((list (ball_in_group)) collect (ball_in_group (each)).location)) + 2.0) ;
+			shape <- convex_hull((polygon ((list (ball_in_group)) collect (ball_in_group (each)).location)) + 2.0) ;
 		}
 		
 		reflex self_disaggregate {
-			if condition: ( ( length (members) ) > ( 0.8 * (ball_number) ) ) {
-				do action: disaggregate ;
+			if ( ( length (members) ) > ( 0.8 * (ball_number) ) ) {
+				do disaggregate ;
 			}
 		}
 		
@@ -310,11 +313,11 @@ entities {
 	}
 	
 	species cloud parent: base {
-		geometry shape value: convex_hull(polygon(members collect (((group_delegation(each)).shape).location)));
+		geometry shape <- convex_hull(polygon(members collect (((group_delegation(each)).shape).location)));
 		rgb color;
 				
 		species group_delegation parent: group topology: (topology(world.shape)) {
-			geometry shape value: convex_hull( (polygon ( (list (ball_in_cloud)) collect (each.location) )) ) buffer  10 ;
+			geometry shape <- convex_hull( (polygon ( (list (ball_in_cloud)) collect (each.location) )) ) buffer  10 ;
 
 			reflex capture_nearby_free_balls when: (time mod update_frequency) = 0 {
 			}
@@ -342,9 +345,9 @@ entities {
 			species ball_in_cloud parent: ball_in_group topology: (world.shape) as topology control: fsm {
 				
 				action move2 (float with_heading, float with_speed) {
-					let dx type: float value: cos(with_heading) * with_speed;
-					let dy type: float value: sin(with_heading) * with_speed;
-					set location value: { ( (location.x) + dx ), ( (location.y) + dy )};
+					float dx <- cos(with_heading) * with_speed;
+					float dy <- sin(with_heading) * with_speed;
+					location <- { ( (location.x) + dx ), ( (location.y) + dy )};
 				}
 				
 				aspect default {}				
@@ -355,11 +358,11 @@ entities {
 
 		reflex chase_group {
 			if ( (target_group = nil) or (dead(target_group)) ) {
-				set target_group value: one_of(group);
+				target_group <- one_of(group);
 			}
 			
 			if (target_group != nil) {
-				let direction_target type: float value: self towards(target_group);
+				float direction_target <- self towards(target_group);
 				
 				loop m over: members {
 					ask m as group_delegation {
@@ -411,7 +414,7 @@ entities {
 		}
 	 	 
 		aspect default {
-			draw geometry: shape color: color  empty: true;
+			draw shape color: color empty: true;
 			draw text: name + ' with ' + (string(length(members))) + ' groups.' size: 15 color: color style: bold at: {location.x - 65, location.y};
 		}
 	}
@@ -429,9 +432,10 @@ entities {
 	} 
 }
 
-environment bounds: environment_bounds ;
-
 experiment default_experiment2 type: gui {
+	parameter 'Create groups?' var: create_group <- true;
+	parameter 'Create clouds?' var: create_cloud <- false;
+		
 	output {
 		display name: 'Standard display' {
 			species ball aspect: default transparency: 0.5 ;

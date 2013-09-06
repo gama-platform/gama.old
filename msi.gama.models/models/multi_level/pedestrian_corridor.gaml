@@ -2,7 +2,7 @@ model pedestrian_corridor
 
 
 
-global {
+global {	
 	bool capture_pedestrians <- false parameter: 'Capture pedestrians?';
 	
 	int environment_size init: 2000;
@@ -31,43 +31,31 @@ global {
 	int new_pedestian_generate_frequency <- 1;
 	int new_pedestrian_y_distance <- int(environment_size / new_pedestrian_rate);
 	
-	list pedestrians of: pedestrian <- [] value: list(pedestrian); 
+	list<pedestrian> pedestrians <- [] value: list(pedestrian); 
 	float start_time <- machine_time;
+	
 	init {
 		create corridor number: 1;
 		 
 		create corridor_wall number: 2 returns: corridor_walls; 
-		set (corridor_walls at 0).shape value: corridor_wall_0_shape;
-		set (corridor_walls at 1).shape value: corridor_wall_1_shape;
+		(corridor_walls at 0).shape <- corridor_wall_0_shape;
+		(corridor_walls at 1).shape <- corridor_wall_1_shape;
 		
 	}
 	
 	reflex generate_pedestrians when: ((time mod new_pedestian_generate_frequency) = 0) {
 		create pedestrian number: new_pedestrian_rate returns: new_pedestrians; 
 		
-		let loop_times type: int value: 0;
+		int loop_times <- 0;
 		loop p over: new_pedestrians {
-			let y_coor value: rnd (new_pedestrian_y_distance);
-			ask target: p as: pedestrian {
-				do action: init_location {
-					arg loc value: { 0, (loop_times * new_pedestrian_y_distance) + y_coor };
-				}			
+			int y_coor <- rnd (new_pedestrian_y_distance);
+			ask p as: pedestrian {
+				do init_location loc: { 0, (loop_times * new_pedestrian_y_distance) + y_coor };
 			}
-			set loop_times value: loop_times + 1;
+			loop_times <- loop_times + 1;
 		}
 	}
-	
-	/*
-	reflex halt {
-		if condition: (time = 1250) {
-			do action: write {
-				arg name: message value: 'Simulation halted at time = 1250';
-			}
 
-			do action: halt;
-		}
-	}
-	*/
 } 
 
 environment bounds: environment_bounds;
@@ -83,34 +71,25 @@ entities {
 		action init_location {
 			arg name: loc type: point;
 			
-			set location value: loc;
-			set initial_location value: loc;
-			set target_location value: {environment_size, loc.y};
-			set heading value: (self) towards (target_location);
+			location <- loc;
+			initial_location <- loc;
+			target_location <- {environment_size, loc.y};
+			heading <- (self) towards (target_location);
 		}
 		
 		reflex move_left {
-			let update_heading type: int value: (self) towards (target_location);
+			int update_heading <- (self) towards (target_location);
 			
-			let current_location type: point value: location;
+			point current_location <- location;
 			
-			do action: move {
-				arg name: heading value: update_heading;
-			} 
+			do move heading: update_heading ;
 			
-//			if condition: (heading = update_heading + 180) {
 			if (current_location = location) { // hack
 				if ( (location.y <= corridor_wall_height) or (location.y >= environment_size - corridor_wall_height) ) {
-					do move {
-						arg name: heading value: self towards {(environment_size / 2) - (corridor_width / 2), environment_size / 2};
-					} 
-					
-
+					do move heading: self towards {(environment_size / 2) - (corridor_width / 2), environment_size / 2}; 
 				} else {
-						do move {
-							arg name: heading value: self towards {environment_size / 2, environment_size / 2};
-						} 
-					}
+					do move heading: self towards {environment_size / 2, environment_size / 2}; 
+				}
 			}
 			
 			if( (target_location.x - location.x) <= speed ) { 
@@ -138,22 +117,22 @@ entities {
 		
 		
 		reflex aggregate when: capture_pedestrians {
-			let tobe_captured_pedestrians type: list value: (pedestrian overlapping shape);
+			list<pedestrian> tobe_captured_pedestrians <- (pedestrian overlapping shape);
 			
 			if !(empty (tobe_captured_pedestrians)) {
 				capture tobe_captured_pedestrians as: captured_pedestrian returns: cps;
 				
 				loop cp over: cps {
-					set cp.released_time value: time + (int ( corridor_width - ( (((cp).location).x) - ((environment_size / 2) - (corridor_width / 2)) ) ) / pedestrian_speed) ;
+					cp.released_time <- time + (int ( corridor_width - ( (((cp).location).x) - ((environment_size / 2) - (corridor_width / 2)) ) ) / pedestrian_speed) ;
 				}
 			}
 		}
 		
 		reflex disaggregate  {
-			let tobe_released_pedestrians type: list value: (list (members)) where (time >= (captured_pedestrian (each)).released_time);
+			list tobe_released_pedestrians <- (list (members)) where (time >= (captured_pedestrian (each)).released_time);
 			if !(empty (tobe_released_pedestrians)) {
 				release tobe_released_pedestrians as: pedestrian in: world {
-					set location value: {((environment_size / 2) + (corridor_width / 2)) + (2 * pedestrian_size), (location).y};
+					location <- {((environment_size / 2) + (corridor_width / 2)) + (2 * pedestrian_size), (location).y};
 				}
 			}
 		}
@@ -186,7 +165,7 @@ entities {
 		corridor_wall target;
 		
 		init {
-			set location value: target.location;
+			location <- target.location;
 		}
 		
 		aspect my_aspect { 

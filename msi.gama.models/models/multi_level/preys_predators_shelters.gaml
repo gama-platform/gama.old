@@ -30,8 +30,8 @@ global {
 		create prey number: number_of_prey;
 		create predator number: number_of_predator; 
 		create shelter number: number_of_shelter returns: shelters;
-		set (shelters at 0).shape value: shelter_shape at_location {150, 250};
-		set (shelters at 1).shape value: shelter_shape at_location {350, 250};
+		(shelters at 0).shape <- shelter_shape at_location {150, 250};
+		(shelters at 1).shape <- shelter_shape at_location {350, 250};
 	}
 }
 
@@ -39,15 +39,15 @@ entities {
 	species prey skills: [moving] control: fsm {
 		geometry shape <- square (prey_size);
 		rgb color <- prey_color;
-		list nearby_predators value: (agents_overlapping (shape + prey_perception)) of_species predator;
-		int invisible_time min: 1 init: int(time);
+		list nearby_predators <- (agents_overlapping (shape + prey_perception)) of_species predator;
+		int invisible_time min: 1 <- int(time);
 
 		shelter nearest_shelter;		
 
 		state move_around initial: true {
 			enter {
-				set speed value: prey_speed;
-				set color value: prey_color;
+				speed <- prey_speed;
+				color <- prey_color;
 			}
 			do wander; 
 			transition to: flee_predator when: !(empty (nearby_predators)); 
@@ -56,8 +56,8 @@ entities {
 		
 		state flee_predator {
 			enter {
-				set color value: prey_flee_color;
-				set nearest_shelter value: first ( (list (shelter)) sort_by ( each distance_to (self)) );
+				color <- prey_flee_color;
+				nearest_shelter <- first ( (list (shelter)) sort_by ( each distance_to (self)) );
 			}
 			if !(empty (nearby_predators)) { do move heading: (self) towards (nearest_shelter) speed: prey_speed;}
 			transition to: move_around when: (empty (nearby_predators));
@@ -65,10 +65,10 @@ entities {
 		
 		state invisible {
 			enter {
-				set speed value: prey_invisible_speed;
-				set color value: prey_invisible_color;
-				set invisible_time value: time;
-				set heading value: rnd (359) ;
+				speed <- prey_invisible_speed;
+				color <- prey_invisible_color;
+				invisible_time <- time;
+				heading <- rnd (359) ;
 			}
 			do move; 
 			transition to: move_around when: ( (time - invisible_time) > prey_invisible_max_time );
@@ -102,7 +102,7 @@ entities {
 	
 	species shelter skills: [moving]  frequency: 2 {
 		geometry shape <- (square (50.0)) at_location {250, 250};
-		list chased_preys of: prey value: (list (prey)) where ( (each.shape intersects shape) and (each.state = 'flee_predator') );
+		list<prey> chased_preys <- (prey) where ( (each.shape intersects shape) and (each.state = 'flee_predator') );
 		
 		reflex move_around {
 			//do wander speed: shelter_speed; 
@@ -110,17 +110,17 @@ entities {
 		 
 		reflex capture_chased_preys when: !(empty (chased_preys)) { 
 			capture chased_preys as: prey_in_shelter {
-				set state value: 'in_shelter'; 
-				set shape value: ( triangle (4.0) ) at_location location;
+				state <- 'in_shelter'; 
+				shape <- ( triangle (4.0) ) at_location location;
 			}
 		}
 		
 		reflex release_member_preys {
-			let to_be_released type: list of: prey_in_shelter value: (list (prey_in_shelter)) where ( (time - each.in_shelter_time) > prey_in_shelter_max_time );
+			list<prey_in_shelter> to_be_released <- (prey_in_shelter) where ( (time - each.in_shelter_time) > prey_in_shelter_max_time );
 			 
 			release to_be_released in: world as: prey { 
-				set state value: 'invisible';
-				set shape value:  at_location (square (prey_size), self.location);   
+				state <- 'invisible';
+				shape <-  at_location (square (prey_size), self.location);   
 			}
 		} 
 		

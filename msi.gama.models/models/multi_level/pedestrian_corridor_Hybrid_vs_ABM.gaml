@@ -3,6 +3,7 @@ model pedestrian_corridor_Hybrid_vs_ABM
 global {
 	int environment_width <- 200 const: true;
 	int environment_height <- 200 const: true;
+	geometry shape <- rectangle(environment_width, environment_height);	
 	
 	rgb pedestrian_green <- rgb ('green');
 	rgb pedestrian_red <- rgb ('red');
@@ -31,54 +32,39 @@ global {
 		create corridor number: 2 returns: new_corridors;
 		
 		ask (new_corridors at 0) {
-			do init_corridor {
-				arg name: corridor_shape value: corridor_shape_0;
-				arg name: is_hybrid value: false;
-			}
+			do init_corridor corridor_shape: corridor_shape_0 is_hybrid: false;
 		}
 
 		ask (new_corridors at 1) {
-			do init_corridor {
-				arg name: corridor_shape value: corridor_shape_1;
-				arg name: is_hybrid value: true;
-			}
+			do init_corridor corridor_shape: corridor_shape_1 is_hybrid: true; 
 		}
 	}
 
-	reflex generate_pedestrians when: ( (time mod new_pedestian_generate_frequency) = 0 ) { // and (time < 4){
+	reflex generate_pedestrians when: ( (time mod new_pedestian_generate_frequency) = 0 ) { 
 		create pedestrian number: 2 returns: new_pedestrians {
 			if ( (time mod (red_pedestrian_frequency * new_pedestian_generate_frequency) ) = 0 ) {
-				set color value: pedestrian_red;
-
+				color <- pedestrian_red;
 			}
 			else {
-				set color value: pedestrian_green;
+				color <- pedestrian_green;
 			}				
 		}
 		
 		ask (new_pedestrians at 0) {
-			do init_location {
-				arg name: loc value: pedestrian_source_0;
-			}
+			do init_location loc: pedestrian_source_0;
 		}
 		
 		ask (new_pedestrians at 1) {
-			do init_location {
-				arg name: loc value: pedestrian_source_1;
-			}
+			do init_location loc: pedestrian_source_1;
 		}
 	}	
 }
 
 entities {
 	species pedestrian skills: [moving] {
-//		var shape type: geometry init: copy (pedestrian_shape);
-		geometry shape init: circle(pedestrian_size);
+		geometry shape <- circle(pedestrian_size);
 		rgb color;
 		corridor last_corridor;
-
-//		int heading;
-//		var speed type: float init: pedestrian_speed;
 		
 		point target_location;
 		float outgoing_density;
@@ -86,15 +72,13 @@ entities {
 		action init_location {
 			arg loc type: point;
 			
-			set location value: loc;
-			set target_location value: {environment_width, location.y};
-			set heading value: (self) towards (target_location);
+			location <- loc;
+			target_location <- {environment_width, location.y};
+			heading <- (self) towards (target_location);
 		}
 		
 		reflex move_left {
-			do action: move {
-				arg name: heading value: (self) towards (target_location);
-			} 
+			do action: move heading: (self) towards (target_location); 
 			
 			if ( (target_location.x - location.x) <= speed ) {
 				do die;
@@ -113,17 +97,17 @@ entities {
 			arg corridor_shape type: geometry;
 			arg is_hybrid type: bool;
 			
-			set shape value: corridor_shape;
-			set capture_pedestrians value: is_hybrid;
+			shape <- corridor_shape;
+			capture_pedestrians <- is_hybrid;
 		}
 
-		float max_speed value: pedestrian_speed; // Vmax (formula 5) MAKE IT BE PARAMETER 
+		float max_speed <- pedestrian_speed; // Vmax (formula 5) MAKE IT BE PARAMETER 
 		float macro_length min: 0.0 <- float(corridor_width); // the length of macro_patch
 		
 		float incoming_density; // Pr (formula 5)
 		float incoming_average_speed;
 		
-		float Pr value: incoming_density;
+		float Pr <- incoming_density;
 		float Pl <- 0.0 const: true; // formula 5
 		float Pmax <- 1.0; // the maximum number of micro-agents can enter macro-agent at the same time
 		
@@ -139,85 +123,82 @@ entities {
 		
 		
 		reflex aggregate when: capture_pedestrians {
-//			let tobe_captured_pedestrians type: list value: (pedestrian overlapping shape) where (each.last_corridor != self);
-			let tobe_captured_pedestrians type: list value: (pedestrian overlapping shape) where ( (each.last_corridor != self) and ((each.location).x < (self.location).x) ) ; // BUG
+			list<pedestrian> tobe_captured_pedestrians <- (pedestrian overlapping shape) where ( (each.last_corridor != self) and ((each.location).x < (self.location).x) ) ; // BUG
 			
 			if !(empty (tobe_captured_pedestrians)) {
 				capture tobe_captured_pedestrians as: captured_pedestrian returns: cps { 
-					set last_corridor value: myself;
+					last_corridor <- myself;
 				}
 				
 				if !(empty (cps)) {
 					
-					let average_speed type: float value: 0;
+					float average_speed <- 0.0;
 					loop micro_a over: cps {
-						set average_speed value: average_speed + (micro_a.speed);
+						average_speed <- average_speed + (micro_a.speed);
 					}
 					
-					set incoming_average_speed value: average_speed / (length (cps));
-					set incoming_density value: (length (cps)) / average_speed;
+					incoming_average_speed <- average_speed / (length (cps));
+					incoming_density <- (length (cps)) / average_speed;
 					
-					set Pr value: incoming_density;
+					Pr <- incoming_density;
 					
-					let group_outgoing_time type: float value: time + (corridor_width / (incoming_average_speed) ); 
+					float group_outgoing_time <- time + (corridor_width / (incoming_average_speed) ); 
 					
-					let bound1 type: float value:  ( (max_speed * ( (1 - (2 * Pl) / Pmax ) ) ) * group_outgoing_time ); //
-					let bound2 type: float value: ( (max_speed * ( (1 - (2 * Pr) / Pmax ) ) ) * group_outgoing_time ); //
+					float bound1 <- ( (max_speed * ( (1 - (2 * Pl) / Pmax ) ) ) * group_outgoing_time ); //
+					float bound2 <- ( (max_speed * ( (1 - (2 * Pr) / Pmax ) ) ) * group_outgoing_time ); //
 					
-					let pedestrian_outgoing_density type: float value: 0;
-					if condition: (macro_length <= bound1 ) {
-						set pedestrian_outgoing_density value: Pl;
+					float pedestrian_outgoing_density <- 0;
+					if (macro_length <= bound1 ) {
+						pedestrian_outgoing_density <- Pl;
 						
 					}
 					else {
 						
-						if condition: ( (macro_length > bound1) and (macro_length < bound2) ) {
-							set pedestrian_outgoing_density value: (Pmax * max_speed) / ( (2 * max_speed) + Pmax );
+						if ( (macro_length > bound1) and (macro_length < bound2) ) {
+							pedestrian_outgoing_density <- (Pmax * max_speed) / ( (2 * max_speed) + Pmax );
 							
 						}
 						else {
-							if condition: (macro_length > bound2) {
-								set pedestrian_outgoing_density value: Pr;
+							if (macro_length > bound2) {
+								pedestrian_outgoing_density <- Pr;
 							}	
 						} 
 					}
 					
-					let outgoing_speed type: float value: max_speed * ( 1 - (pedestrian_outgoing_density / Pmax));
-					let released_number type: float value: pedestrian_outgoing_density * outgoing_speed;
+					float outgoing_speed <- max_speed * ( 1 - (pedestrian_outgoing_density / Pmax));
+					float released_number <- pedestrian_outgoing_density * outgoing_speed;
 					
-					
-					let pedestrian_k type: int value: 0;					
+					int pedestrian_k <- 0;					
 					
 					loop cp over: cps {
 						
-						if condition: ( (pedestrian_k = 0) or (released_number = 0)) {
-							set cp.released_time value: group_outgoing_time;
+						if ( (pedestrian_k = 0) or (released_number = 0)) {
+							cp.released_time <- group_outgoing_time;
 						}
 						else {
-//								set cp.released_time value: group_outgoing_time + ( pedestrian_k gamma released_number ); // gamma(k, lamda) : lamda == released_number
-							set cp.released_time value: group_outgoing_time + ( TGauss([pedestrian_k, released_number]) ); // gamma(k, lamda) : lamda == released_number
+							cp.released_time <- group_outgoing_time + ( TGauss([pedestrian_k, released_number]) ); // gamma(k, lamda) : lamda == released_number
 						}
 						
-						set cp.outgoing_density value: pedestrian_outgoing_density;
-						set pedestrian_k value: pedestrian_k + 1;
+						cp.outgoing_density <- pedestrian_outgoing_density;
+						pedestrian_k <- pedestrian_k + 1;
 					}
  				}
 			}
 		}
 		
 		reflex disaggregate  {
-			let tobe_released_pedestrians type: list value: (list (members)) where (time >= (captured_pedestrian (each)).released_time);
+			list tobe_released_pedestrians <- members where (time >= (captured_pedestrian (each)).released_time);
 			
 			if !(empty (tobe_released_pedestrians)) {
 				
 				release tobe_released_pedestrians as: pedestrian in: world returns: released_pedestrians;
 				
 				loop rp over: released_pedestrians {
-					let outgoing_speed type: float value: max_speed * ( 1 - ((pedestrian (rp)).outgoing_density / Pmax));
-					let sigma value: outgoing_speed / 10;
+					float outgoing_speed <- max_speed * ( 1 - ((pedestrian (rp)).outgoing_density / Pmax));
+					float sigma <- outgoing_speed / 10;
 					
-					set (pedestrian (rp)).speed value: outgoing_speed + ( gauss({0, sigma}));
-					set (pedestrian (rp)).location value: {((environment_width / 2) + (corridor_width / 2)), ((corridor_shape_1).location).y};
+					(pedestrian (rp)).speed <- outgoing_speed + ( gauss({0, sigma}));
+					(pedestrian (rp)).location <- {((environment_width / 2) + (corridor_width / 2)), ((corridor_shape_1).location).y};
 				}
 			}
 		}
@@ -238,24 +219,8 @@ entities {
 				draw text: 'Agent-Based Model (ABM)' color: rgb('blue') size: 7 at: {(target.location).x - 40, (target.location).y - 10};
 			}
 		}
-
-//		aspect default {
-//			if condition: target.capture_pedestrians {
-//				draw text: 'Captured pedestrians: ' + (string (length (target.members))) color: rgb ('blue') size: 7 at: {(target.location).x - 48, (target.location).y};
-//				draw text: 'Green: ' + (length ( (target.members) where ((pedestrian (each)).color = (pedestrian_green)))) color: rgb ('green') size: 7 at: {(target.location).x - 40, (target.location).y + 10};
-//				draw text: 'Red: ' + (length ( (target.members) where ((pedestrian (each)).color = (pedestrian_red)))) color: rgb ('red') size: 7 at: {(target.location).x - 40, (target.location).y + 20};
-//			}
-//			else {
-//				let intersecting_pedestrians type: list of: pedestrian value: (list (pedestrian)) overlapping target;
-//				draw text: 'Intersecting pedestrians: ' + (length (intersecting_pedestrians)) color: rgb ('blue') size: 7 at: {(target.location).x - 48, (target.location).y + 10};
-//				draw text: 'Green: ' + (length ( intersecting_pedestrians where (each.color = pedestrian_green)) ) color: rgb ('green') size: 7 at: {(target.location).x - 40, (target.location).y + 20};
-//				draw text: 'Red: ' + (length ( intersecting_pedestrians where (each.color = pedestrian_red)) ) color: rgb ('red') size: 7 at: {(target.location).x - 40, (target.location).y + 30};
-//			}
-//		}
 	}
 }
-
-environment width: environment_width height: environment_height;
 
 experiment default_experiment type: gui {
 	output {

@@ -32,7 +32,7 @@ entities {
 			diff(y,t) = - y * (delta - gamma * x);
         }
                 
-        solve lotka_volterra method: "rk4" step:0.01 ;        
+        solve lotka_volterra method: "rk4" step:0.01 cycle_length:100;        
 	}
 }
 

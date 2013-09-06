@@ -24,7 +24,7 @@ entities {
    		float beta <- 0.4;
    		float gamma <- 0.01; 
    		
-   		float h <- 0.01;
+   		float h <- 0.1;
 
 		// Following predefined equation system is equivalent to following system:
 		//		equation SIR_classic{
@@ -36,7 +36,7 @@ entities {
 		// Parameters must follow exact order S, I, R, t  and N,beta,gamma		
 		equation eqSIR type:SIR vars: [S,I,R,t] params: [N,beta,gamma] ;
 
-		solve eqSIR method:rk4 step:h;
+		solve eqSIR method:rk4 step:h cycle_length:1/h;
 	}
 }
 

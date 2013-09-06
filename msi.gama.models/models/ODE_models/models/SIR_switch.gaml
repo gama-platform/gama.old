@@ -38,11 +38,11 @@ global {
 	init {
 		create new_scheduler;
 		/* determine the size of the neighbourhood and the average count of hosts neighbours */
-		gridSize <- sir_grid count (each);
+		gridSize <- length(sir_grid);
 		int nbCells <- 0;
 		
 		loop cell over: sir_grid {
-			nbCells <- nbCells + (cell.neighbours count (each));
+			nbCells <- nbCells + length(cell.neighbours);
 		}
 
 		neighbourhoodSize <- nbCells / gridSize + 1; // +1 to count itself in the neighbourhood;
@@ -249,8 +249,8 @@ entities {
 		
 		/* next function computes the number of neighbours of the agent */
 		int ngb_number function: {
-			//    ((myPlace.neighbours + myPlace) collect (each.agents)) of_species Host count(each)-1// -1 is because the agent counts itself
-			((self) neighbours_at (2)) of_species Host count (each) - 1 };
+			length(((self) neighbours_at (2)) of_species Host) - 1 // -1 is because the agent counts itself
+		};
 		
 		init {
 			myPlace <- one_of(sir_grid as list);
