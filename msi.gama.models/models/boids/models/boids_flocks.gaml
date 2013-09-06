@@ -73,17 +73,14 @@ entities {
 				if (f != self and (shape intersects f.shape)) {
 					geometry new_shape <- convex_hull(polygon(shape.points + f.shape.points));
 					if empty(obstacle overlapping new_shape) {
-						let released_boids type: list of: boids value: [];
+						let released_boids type: list< boids> value: [];
 						ask f {
-							write "Asking " + f + " to release its members";
 							release members as: boids in: world returns: released_coms;
 							set released_boids value: list(released_coms);
-							write name + ": " + released_boids;
 							do die;
 						}
 
 						if (!empty(released_boids)) {
-							write "Capturing " + released_boids + " in " + self;
 							capture released_boids as: boids_in_flock;
 						}
 
