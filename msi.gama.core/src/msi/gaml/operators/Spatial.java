@@ -1463,7 +1463,7 @@ public abstract class Spatial {
 
 	public static abstract class Statistics {
 
-		@operator(value = { "simple_clustering_by_distance" }, content_type = IType.LIST)
+		@operator(value = { "simple_clustering_by_distance","simple_clustering_by_envelope_distance" }, content_type = IType.LIST)
 		@doc(value = "A list of agent groups clustered by distance considering a distance min between two groups.", examples = { "[ag1, ag2, ag3, ag4, ag5] simpleClusteringByDistance 20.0 --: for example, can return [[ag1, ag3], [ag2], [ag4, ag5]]" }, see = { "simple_clustering_by_envelope_distance" })
 		public static IList<IList<IAgent>> simpleClusteringByDistance(final IScope scope, final IContainer<?, IAgent> agents, final Double distance) {
 			final IList<IList<IAgent>> groups = new GamaList<IList<IAgent>>();
