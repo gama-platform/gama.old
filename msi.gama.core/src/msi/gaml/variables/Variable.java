@@ -314,7 +314,7 @@ public class Variable extends Symbol implements IVariable {
 				return null;
 			}
 		}
-		return null;
+		return value(scope);
 	}
 
 	@Override

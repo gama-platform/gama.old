@@ -4,8 +4,7 @@ import static javax.media.opengl.GL.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
-import java.nio.DoubleBuffer;
-import java.nio.IntBuffer;
+import java.nio.*;
 import java.util.ArrayList;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
@@ -632,7 +631,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		Point2D.Double p = getRealWorldPointFromWindowPoint(windowPoint);
 		return new Point((int) p.x, (int) p.y);
 	}
-	
+
 	public Point2D.Double getWindowPointPointFromRealWorld(final Point realWorldPoint) {
 		if ( glu == null ) { return null; }
 
@@ -648,27 +647,27 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		DoubleBuffer winPos = DoubleBuffer.allocate(3);
 		glu.gluProject(realWorldPoint.x, realWorldPoint.y, 0, model, proj, view, winPos);
 
-		final Point2D.Double WindowPoint = new Point2D.Double(winPos.get(), viewport[3]-winPos.get());
+		final Point2D.Double WindowPoint = new Point2D.Double(winPos.get(), viewport[3] - winPos.get());
 		return WindowPoint;
 	}
-	
-	public double GetEnvWidthOnScreen(){
-		Point realWorld = new Point(0,0);
+
+	public double GetEnvWidthOnScreen() {
+		Point realWorld = new Point(0, 0);
 		Point2D.Double WindowPoint = getWindowPointPointFromRealWorld(realWorld);
-		
-		Point realWorld2 = new Point((int)this.env_width,-(int)this.env_height);
+
+		Point realWorld2 = new Point((int) this.env_width, -(int) this.env_height);
 		Point2D.Double WindowPoint2 = getWindowPointPointFromRealWorld(realWorld2);
-		
+		if ( WindowPoint2 == null || WindowPoint == null ) { return 0.0; }
 		return WindowPoint2.x - WindowPoint.x;
 	}
-	
-	public double GetEnvHeightOnScreen(){
-		Point realWorld = new Point(0,0);
+
+	public double GetEnvHeightOnScreen() {
+		Point realWorld = new Point(0, 0);
 		Point2D.Double WindowPoint = getWindowPointPointFromRealWorld(realWorld);
-		
-		Point realWorld2 = new Point((int)this.env_width,-(int)this.env_height);
+
+		Point realWorld2 = new Point((int) this.env_width, -(int) this.env_height);
 		Point2D.Double WindowPoint2 = getWindowPointPointFromRealWorld(realWorld2);
-		
+
 		return WindowPoint2.y - WindowPoint.y;
 	}
 

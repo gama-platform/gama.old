@@ -258,7 +258,9 @@ public class GamaPreferences {
 		IType.STRING).among("Java2D", "OpenGL").in(DISPLAY).group("Properties");
 	public static final Entry<Boolean> CORE_SYNC = create("core.sync",
 		"Synchronize displays with simulations by default", false, IType.BOOL).in(DISPLAY).group("Properties");
-	public static final Entry<Boolean> CORE_OVERLAY = create("core.overlay", "Show display overlays by default", false,
+	public static final Entry<Boolean> CORE_OVERLAY = create("core.overlay", "Show display overlay by default", false,
+		IType.BOOL).in(DISPLAY).group("Properties");
+	public static final Entry<Boolean> CORE_SCALE = create("core.scale", "Show scale bar in overlay by default", false,
 		IType.BOOL).in(DISPLAY).group("Properties");
 	public static final Entry<Boolean> CORE_ANTIALIAS = create("core.antialias", "Apply antialiasing by default",
 		false, IType.BOOL).in(DISPLAY).group("Properties");

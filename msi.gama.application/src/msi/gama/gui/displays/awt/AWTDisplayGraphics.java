@@ -77,7 +77,6 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	public AWTDisplayGraphics(final IDisplaySurface surface, final Graphics2D g2) {
 		super(surface);
 		renderer = g2;
-		// setQualityRendering(true); // Turned on by default
 		renderer.setFont(defaultFont);
 	}
 
@@ -108,7 +107,7 @@ public class AWTDisplayGraphics extends AbstractDisplayGraphics implements Point
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
 		final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
 		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final Color gridColor,
-		final Integer angle, final Double z, final boolean isDynamic, final int cellSize, String name) {
+		final Integer angle, final Double z, final boolean isDynamic, final int cellSize, final String name) {
 		return drawImage(scope, img, locationInModelUnits, sizeInModelUnits, gridColor, angle, z, isDynamic, "grid");
 	}
 

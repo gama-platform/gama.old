@@ -21,15 +21,17 @@ public class LayersOverlay extends AbstractOverlay {
 	Listener l = new Listener() {
 
 		Point origin;
-		boolean moving;
+		boolean moving, sizing;
 
 		private void checkAction(final int x, final int y) {
 			int w = LayersOverlay.super.getPopup().getSize().x;
 			if ( x < w && w - x < 20 ) {
 				moving = false;
+				sizing = true;
 				LayersOverlay.super.getPopup().setCursor(size);
 			} else {
 				moving = true;
+				sizing = false;
 				LayersOverlay.super.getPopup().setCursor(move);
 			}
 		}
@@ -39,34 +41,36 @@ public class LayersOverlay extends AbstractOverlay {
 			switch (e.type) {
 				case SWT.MouseEnter:
 					LayersOverlay.super.getPopup().setActive();
-					// LayersOverlay.super.getPopup().setActive();
 					break;
 				case SWT.MouseExit:
 					// LayersOverlay.super.getPopup().setDragDetect(false);
 					break;
 				case SWT.MouseDown:
-					origin = new Point(e.x, e.y);
-					checkAction(e.x, e.y);
+					// origin = new Point(e.x, e.y);
+					// checkAction(e.x, e.y);
 					break;
 				case SWT.MouseUp:
-					origin = null;
+					// origin = null;
+					// if ( !sizing ) {// FIXME PROBLEM !!
+					toggle();
+					// }
 					break;
 				case SWT.MouseHover:
-					checkAction(e.x, e.y);
+					// checkAction(e.x, e.y);
 					break;
 				case SWT.MouseDoubleClick:
-					reset();
+					// reset();
 					break;
 				case SWT.MouseMove:
-					if ( origin == null ) {
-						checkAction(e.x, e.y);
-					} else if ( moving ) {
-						Point p = SwtGui.getDisplay().map(LayersOverlay.super.getPopup(), null, e.x, e.y);
-						changeLocationTo(p.x - origin.x, p.y - origin.y);
-					} else if ( !moving ) {
-						Point p = SwtGui.getDisplay().map(LayersOverlay.super.getPopup(), null, e.x, e.y);
-						changeWidthTo(p.x - LayersOverlay.super.getPopup().getLocation().x);
-					}
+					// if ( origin == null ) {
+					// checkAction(e.x, e.y);
+					// } else if ( moving ) {
+					// Point p = SwtGui.getDisplay().map(LayersOverlay.super.getPopup(), null, e.x, e.y);
+					// changeLocationTo(p.x - origin.x, p.y - origin.y);
+					// } else if ( sizing ) {
+					// Point p = SwtGui.getDisplay().map(LayersOverlay.super.getPopup(), null, e.x, e.y);
+					// changeWidthTo(p.x - LayersOverlay.super.getPopup().getLocation().x);
+					// }
 					break;
 			}
 		}
@@ -92,13 +96,18 @@ public class LayersOverlay extends AbstractOverlay {
 
 	@Override
 	protected Point getLocation() {
-		if ( customLocation == null ) { return getView().getLayersOverlayPosition(); }
+		if ( customLocation == null ) {
+			Composite surfaceComposite = getView().getComponent();
+			return surfaceComposite.toDisplay(surfaceComposite.getLocation());
+		}
 		return customLocation;
 	}
 
 	@Override
 	protected Point getSize() {
-		Point p = getView().getLayersOverlaySize();
+		Composite surfaceComposite = getView().getComponent();
+		Point s = surfaceComposite.getSize();
+		Point p = new Point(s.x / 3, s.y - 32);
 		if ( customWidth == null ) { return p; }
 		return new Point(customWidth, p.y);
 	}
@@ -147,6 +156,16 @@ public class LayersOverlay extends AbstractOverlay {
 		}
 		innerShell.setSize(innerShell.computeSize(w, h));
 		super.getPopup().setSize(w, size.y);
+	}
+
+	@Override
+	public void appear() {
+		Composite surfaceComposite = getView().getComponent();
+		Point loc = surfaceComposite.toDisplay(surfaceComposite.getLocation());
+		Point s = surfaceComposite.getSize();
+		Point p = new Point(10, s.y);
+		slidingShell.setBounds(loc.x, loc.y, p.x, p.y);
+		super.appear();
 	}
 
 	protected void changeLocationTo(final int x, final int y) {

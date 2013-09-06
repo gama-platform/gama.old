@@ -64,10 +64,8 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	protected Integer[] getToolbarActionsId() {
 		IDescription description = output.getDescription();
 		if ( description.getFacets().equals("type", "opengl") || description.getFacets().equals("type", "3D") ) { return new Integer[] {
-			PAUSE, REFRESH, SYNC, SEP, LAYERS, OVERLAY, SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT, SEP, FOCUS, SEP, OPENGL, SEP,
-			HIGHLIGHT_COLOR, RENDERING, SNAP }; }
-		return new Integer[] { PAUSE, REFRESH, SYNC, SEP, LAYERS, OVERLAY, SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT, SEP,
-			FOCUS, SEP, HIGHLIGHT_COLOR, RENDERING, SNAP };
+			PAUSE, REFRESH, SYNC, SNAP, SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT, SEP, FOCUS, OPENGL }; }
+		return new Integer[] { PAUSE, REFRESH, SYNC, SNAP, SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT, SEP, FOCUS };
 	}
 
 	public ILayerManager getDisplayManager() {
@@ -93,14 +91,41 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 		general.setLayout(layout);
 
-		EditorFactory.create(general, "Color:", getOutput().getBackgroundColor(), new EditorListener<Color>() {
+		EditorFactory.create(general, "Background", getOutput().getBackgroundColor(), new EditorListener<Color>() {
 
 			@Override
 			public void valueModified(final Color newValue) {
 				getOutput().setBackgroundColor(newValue);
 			}
 		});
-		createItem("Background", null, general, true);
+
+		EditorFactory.create(general, "Highlight", GamaPreferences.CORE_HIGHLIGHT.getValue(),
+			new EditorListener<Color>() {
+
+				@Override
+				public void valueModified(final Color c) {
+					getOutput().getSurface().setHighlightColor(new int[] { c.getRed(), c.getGreen(), c.getBlue() });
+				}
+			});
+
+		EditorFactory.create(general, "Antialiasing", GamaPreferences.CORE_ANTIALIAS.getValue(),
+			new EditorListener<Boolean>() {
+
+				@Override
+				public void valueModified(final Boolean newValue) {
+					getOutput().getSurface().setQualityRendering(newValue);
+				}
+			});
+		EditorFactory.create(general, "Scale bar", GamaPreferences.CORE_SCALE.getValue(),
+			new EditorListener<Boolean>() {
+
+				@Override
+				public void valueModified(final Boolean newValue) {
+					overlay.displayScale(newValue);
+
+				}
+			});
+		createItem("Properties", null, general, true);
 		displayItems();
 		overlay = new DisplayOverlay(this);
 		getOutput().getSurface().setZoomListener(this);
@@ -244,6 +269,23 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		};
 
 		// TODO Temporarily disabled
+		surfaceComposite.addMouseMoveListener(new MouseMoveListener() {
+
+			@Override
+			public void mouseMove(final MouseEvent e) {
+				if ( surfaceComposite.getBounds().height - e.y < 10 ) {
+					if ( !overlay.getPopup().isVisible() ) { // TODO Maybe useless
+						overlay.appear();
+					}
+				} else if ( e.x < 10 ) {
+					if ( !layersOverlay.getPopup().isVisible() ) {
+						layersOverlay.appear();
+					}
+				}
+			}
+
+		});
+
 		surfaceComposite.addMouseTrackListener(new MouseTrackAdapter() {
 
 			@Override
@@ -322,16 +364,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	}
 
 	public void toggleControls() {
-		// Control c = ((SashForm) parent).getMaximizedControl();
-		// if ( c == null ) {
-		// The order is important
 		layersOverlay.toggle();
-		// ((SashForm) parent).setMaximizedControl(surfaceComposite);
-		// } else {
-		// ((SashForm) parent).setMaximizedControl(null);
-		// layersOverlay.toggle();
-		// }
-
 	}
 
 	@Override
@@ -708,19 +741,6 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		surfaceComposite.setFocus();
 	}
 
-	public Point getOverlayPosition() {
-		Point p = surfaceComposite.toDisplay(surfaceComposite.getLocation());
-		Point s = surfaceComposite.getSize();
-		int x = p.x;
-		int y = p.y + s.y - 16;
-		return new Point(x, y);
-	}
-
-	public Point getOverlaySize() {
-		Point s = surfaceComposite.getSize();
-		return new Point(s.x, 16);
-	}
-
 	public String getOverlayText() {
 		IDisplaySurface surface = getOutput().getSurface();
 		boolean paused = surface.isPaused();
@@ -759,13 +779,10 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		overlay.toggle();
 	}
 
-	public Point getLayersOverlayPosition() {
-		return surfaceComposite.toDisplay(surfaceComposite.getLocation());
-	}
-
-	public Point getLayersOverlaySize() {
-		Point s = surfaceComposite.getSize();
-		return new Point(s.x / 3, s.y - 16);
+	public double getValueOfOnePixelInModelUnits() {
+		int displayWidth = getOutput().getSurface().getDisplayWidth();
+		double envWidth = getOutput().getSurface().getEnvWidth();
+		return envWidth / displayWidth;
 	}
 
 }

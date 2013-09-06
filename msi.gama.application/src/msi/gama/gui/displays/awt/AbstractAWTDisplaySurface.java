@@ -37,7 +37,7 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 	protected boolean navigationImageEnabled = true;
 	protected final AffineTransform translation = new AffineTransform();
 	protected boolean synchronous = false;
-	protected boolean qualityRendering = false;
+	protected boolean qualityRendering = GamaPreferences.CORE_ANTIALIAS.getValue();
 	protected Color bgColor = Color.black;
 	protected Runnable displayBlock;
 	private double envWidth;

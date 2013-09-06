@@ -21,7 +21,7 @@ public class SnapshotItem extends GamaViewItem {
 	 */
 	SnapshotItem(final GamaViewPart view) {
 		super(view);
-		
+
 		if ( !(view instanceof IViewWithZoom) ) { throw new IllegalArgumentException(); }
 	}
 
@@ -37,7 +37,7 @@ public class SnapshotItem extends GamaViewItem {
 				((IViewWithZoom) getView()).snapshot();
 			}
 		};
-		action.setImageDescriptor(getImageDescriptor("icons/button_snapshot.png"));
+		action.setImageDescriptor(getImageDescriptor("icons/button_save.png"));
 		return new ActionContributionItem(action);
 	}
 }

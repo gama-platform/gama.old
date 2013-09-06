@@ -5,7 +5,7 @@ import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.views.LayeredDisplayView;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
@@ -22,11 +22,14 @@ import org.eclipse.ui.*;
  */
 public abstract class AbstractOverlay {
 
+	public static Color BLACK = SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK);
+	public static Color WHITE = SwtGui.getDisplay().getSystemColor(SWT.COLOR_WHITE);
+
 	private final Shell popup;
-	// private final Control control;
 	private boolean isHidden = true;
 	private final LayeredDisplayView view;
 	private final Shell parentShell;
+	protected final Shell slidingShell;
 
 	// ACTIONS ON THE POPUP
 
@@ -128,6 +131,14 @@ public abstract class AbstractOverlay {
 	};
 
 	OverlayListener listener = new OverlayListener();
+	protected final MouseListener toggleListener = new MouseAdapter() {
+
+		@Override
+		public void mouseUp(final MouseEvent e) {
+			toggle();
+		}
+
+	};
 
 	class OverlayListener implements ShellListener, ControlListener {
 
@@ -196,8 +207,52 @@ public abstract class AbstractOverlay {
 		final Composite c = view.getComponent();
 		parentShell = c.getShell();
 		popup = new Shell(parentShell, SWT.NO_TRIM | SWT.NO_FOCUS);
-		popup.setLayout(new FillLayout());
-		popup.setBackground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		slidingShell = new Shell(parentShell, SWT.NO_TRIM);
+		slidingShell.setBackground(BLACK);
+		slidingShell.setAlpha(40);
+		slidingShell.addMouseTrackListener(new MouseTrackAdapter() {
+
+			@Override
+			public void mouseHover(final MouseEvent e) {
+				slidingShell.setVisible(false);
+				toggle();
+			}
+
+			@Override
+			public void mouseExit(final MouseEvent e) {
+				slidingShell.setVisible(false);
+			}
+
+		});
+
+		slidingShell.addMouseListener(new MouseAdapter() {
+
+			@Override
+			public void mouseDown(final MouseEvent e) {
+				slidingShell.setVisible(false);
+				toggle();
+			}
+
+			@Override
+			public void mouseDoubleClick(final MouseEvent e) {
+				slidingShell.setVisible(false);
+			}
+
+		});
+		slidingShell.addFocusListener(new FocusAdapter() {
+
+			@Override
+			public void focusLost(final FocusEvent e) {
+				slidingShell.setVisible(false);
+			}
+
+		});
+		popup.setAlpha(140);
+		FillLayout layout = new FillLayout();
+		layout.type = SWT.VERTICAL;
+		layout.spacing = 10;
+		popup.setLayout(layout);
+		popup.setBackground(BLACK);
 		createPopupControl();
 		// Control control = createControl();
 		// control.setLayoutData(null);
@@ -206,19 +261,19 @@ public abstract class AbstractOverlay {
 		parentShell.addShellListener(listener);
 		parentShell.addControlListener(listener);
 		c.addControlListener(listener);
+		// popup.addMouseListener(toggleListener);
+	}
+
+	public void appear() {
+		slidingShell.setVisible(true);
+		slidingShell.setActive();
 	}
 
 	protected void createPopupControl() {};
 
-	// protected abstract void populateControl();
-
 	protected abstract Point getLocation();
 
 	protected abstract Point getSize();
-
-	// protected Control getControl() {
-	// return control;
-	// }
 
 	public Shell getPopup() {
 		return popup;
@@ -260,6 +315,7 @@ public abstract class AbstractOverlay {
 	public void hide() {
 		if ( !popup.isDisposed() && popup.isVisible() ) {
 			// GuiUtils.debug("set visible(false) sent to popup of " + getClass().getSimpleName());
+			// slide(false);
 			popup.setSize(0, 0);
 			popup.update();
 			popup.setVisible(false);
@@ -314,6 +370,46 @@ public abstract class AbstractOverlay {
 			// resize();
 			display();
 		}
+	}
+
+	/**
+	 * allows the window to be animated.
+	 * 
+	 * @param reverse
+	 *            if false, it goes right->left. if true, it goes left->right
+	 */
+	public void slide(final boolean reverse) {
+		slide(reverse, 0);
+	}
+
+	/**
+	 * allows the window to be animated.
+	 * 
+	 * @param reverse
+	 *            if false, it goes right->left. if true, it goes left->right
+	 * @param speed
+	 *            how much time to wait between "frames" in the sliding animation.
+	 */
+	public void slide(final boolean reverse, final int speed) {
+		final int rate = 4;
+		final int direction = reverse ? rate : -rate;
+
+		run(new Runnable() {
+
+			@Override
+			public void run() {
+				for ( int i = 0; i <= popup.getBounds().width / rate; i++ ) {
+					popup.setBounds(popup.getLocation().x, popup.getLocation().y, popup.getBounds().width + direction,
+						popup.getBounds().height);
+					if ( speed > 0 ) {
+						try {
+							Thread.sleep(speed);
+						} catch (InterruptedException e) {}
+					}
+					update();
+				}
+			}
+		});
 	}
 
 }

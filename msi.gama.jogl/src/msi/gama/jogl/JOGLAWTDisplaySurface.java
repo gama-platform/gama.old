@@ -144,6 +144,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 		// due to AWT erasing the GLCanvas every time before jogl repaint.
 		System.setProperty("sun.awt.noerasebackground", "true");
 		renderer = new JOGLAWTGLRenderer(this);
+		renderer.setAntiAliasing(getQualityRendering());
 		// renderer.setPolygonTriangulated(false);
 		renderer.setTessellation(getOutput().getTesselation());
 		renderer.setStencil(getOutput().getStencil());
@@ -233,41 +234,13 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	}
 
 	public void selectAgents(final IAgent agent, final int layerId) {
-		// agentsMenu.removeAll();
-		// Adding the world
-		// SelectedAgent sa = new SelectedAgent(GAMA.getSimulation(), "World agent");
-		// sa.buildMenuItems(agentsMenu, null);
-		// Adding the agent
-		// if ( agent != null ) {
-		// agentsMenu.addSeparator();
-		// sa = new SelectedAgent(agent);
-		// sa.buildMenuItems(agentsMenu, manager.getItems().get(layerId));
-		// }
 		menuManager.buildMenu(renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y, agent);
 
 	}
 
 	public void selectSeveralAgents(final Iterator<IAgent> agents, final int layerId) {
-		// agentsMenu.removeAll();
-		// // Adding the world
-		// SelectedAgent sa = new SelectedAgent(GAMA.getSimulation(), "World agent");
-		// sa.buildMenuItems(agentsMenu, null);
-		// while (agents.hasNext()) {
-		// IAgent a = agents.next();
-		// if ( a != null ) {
-		// agentsMenu.addSeparator();
-		// sa = new SelectedAgent(a);
-		// sa.buildMenuItems(agentsMenu, manager.getItems().get(layerId));
-		// }
-		// }
-
 		menuManager.buildMenu(false, renderer.camera.getMousePosition().x, renderer.camera.getMousePosition().y,
 			new GamaList(agents));
-
-	}
-
-	public void showAgentMonitor(final IAgent agent) {
-
 	}
 
 	@Override
@@ -509,6 +482,11 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	@Override
 	public final boolean resizeImage(final int x, final int y) {
 		super.resizeImage(x, y);
+		// int[] point = computeBoundsFrom(x, y);
+		// int imageWidth = Math.max(1, point[0]);
+		// int imageHeight = Math.max(1, point[1]);
+		// this.createNewImage(imageWidth, imageHeight);
+		// createIGraphics();
 		setSize(x, y);
 		return true;
 	}
@@ -545,6 +523,11 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	protected Double computeInitialZoomLevel() {
 		if ( renderer == null && renderer.camera == null ) { return 1.0; }
 		return renderer.camera.zoomLevel();
+	}
+
+	@Override
+	public int getDisplayWidth() {
+		return (int) (super.getDisplayWidth() * getZoomLevel());
 	}
 
 }

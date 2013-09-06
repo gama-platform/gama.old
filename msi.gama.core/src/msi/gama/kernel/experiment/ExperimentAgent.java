@@ -65,6 +65,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 	protected RandomUtils random;
 	protected Double seed = GamaPreferences.CORE_SEED_DEFINED.getValue() ? GamaPreferences.CORE_SEED.getValue()
 		: (Double) null;
+	protected String rng = GamaPreferences.CORE_RNG.getValue();
 	// protected boolean isLoading;
 	protected ExperimentClock clock = new ExperimentClock();
 	// protected boolean revealAndStop = GamaPreferences.CORE_REVEAL_AND_STOP.getValue();
@@ -92,7 +93,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 		createSimulationPopulation();
 		// We initialize a new random number generator
 		// random = new RandomUtils(getSpecies().getCurrentSeed());
-		random = new RandomUtils(seed, getRng());
+		random = new RandomUtils(seed, rng);
 	}
 
 	@Override
@@ -303,11 +304,12 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	@getter(value = IKeyword.RNG, initializer = true)
 	public String getRng() {
-		return getRandomGenerator().getGeneratorName();
+		return rng;
 	}
 
 	@setter(IKeyword.RNG)
 	public void setRng(final String newRng) {
+		rng = newRng;
 		// GuiUtils.debug("ExperimentAgent.setRng" + newRng);
 		getRandomGenerator().setGenerator(newRng);
 	}

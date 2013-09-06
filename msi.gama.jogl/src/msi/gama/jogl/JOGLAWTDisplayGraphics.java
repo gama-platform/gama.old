@@ -24,7 +24,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.*;
 import java.io.IOException;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.awt.AbstractDisplayGraphics;
 import msi.gama.gui.displays.layers.AbstractLayer;
@@ -103,7 +102,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		}
 		if ( shape.hasAttribute("type") ) {
 			type = Cast.asString(scope, shape.getAttribute("type"));
-		}	
+		}
 		renderer.getScene().addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color, fill,
 			border, false, angle, depth.floatValue(), currentOffset, currentScale, rounded, type, currentLayerIsStatic,
 			getCurrentAlpha(), scope.getAgentScope().getPopulation().getName());
@@ -140,12 +139,11 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		}
 		MyTexture texture = null;
 		if ( !renderer.getScene().getTextures().containsKey(img) ) {
-			if(scope == null){
-				texture = renderer.createTexture(img, isDynamic,0);
+			if ( scope == null ) {
+				texture = renderer.createTexture(img, isDynamic, 0);
+			} else {
+				texture = renderer.createTexture(img, isDynamic, scope.getAgentScope().getIndex());
 			}
-			else{
-				texture = renderer.createTexture(img, isDynamic,scope.getAgentScope().getIndex());
-			}	
 		}
 		renderer.getScene().addImage(img, scope == null ? null : scope.getAgentScope(), currentZLayer, currentLayerId,
 			curX, curY, z, curWidth, curHeight, angle, currentOffset, currentScale, isDynamic, getCurrentAlpha(),
@@ -161,27 +159,25 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
 		final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
 		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final Color gridColor,
-		final Integer angle, final Double z, final boolean isDynamic, final int cellSize,final String name) {
-				
+		final Integer angle, final Double z, final boolean isDynamic, final int cellSize, final String name) {
+
 		MyTexture texture = null;
 		if ( !renderer.getScene().getTextures().containsKey(img) ) {
-			if(scope == null){
-				texture = renderer.createTexture(img, isDynamic,0);
+			if ( scope == null ) {
+				texture = renderer.createTexture(img, isDynamic, 0);
+			} else {
+				texture = renderer.createTexture(img, isDynamic, scope.getAgentScope().getIndex());
 			}
-			else{
-				texture = renderer.createTexture(img, isDynamic,scope.getAgentScope().getIndex());
-			}	
 		}
-				
-		renderer.getScene().addDEM(gridValueMatrix, img, null, scope == null ? null : scope.getAgentScope(), isTextured, isTriangulated, isShowText, false,
-				scope.getSimulationScope()
-				.getEnvelope(), 1.0,
-				getCurrentAlpha(), currentOffset, currentScale, cellSize, texture,name,currentLayerId);
-				
+
+		renderer.getScene().addDEM(gridValueMatrix, img, null, scope == null ? null : scope.getAgentScope(),
+			isTextured, isTriangulated, isShowText, false, scope.getSimulationScope().getEnvelope(), 1.0,
+			getCurrentAlpha(), currentOffset, currentScale, cellSize, texture, name, currentLayerId);
+
 		if ( gridColor != null ) {
 			drawGridLine(img, gridColor, scope.getAgentScope().getPopulation().getName());
 		}
-		
+
 		return rect;
 	}
 
@@ -224,7 +220,6 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		}
 	}
 
-	
 	// Build a dem from a dem.png and a texture.png (used when using the operator dem)
 	@Override
 	public Rectangle2D drawDEM(final GamaFile demFileName, final GamaFile textureFileName, final Envelope env,
@@ -245,12 +240,13 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		texture = FlipRightSideLeftImage(texture);
 		MyTexture _texture = null;
 		if ( !renderer.getScene().getTextures().containsKey(texture) ) {
-			_texture = renderer.createTexture(texture, false,0);
+			_texture = renderer.createTexture(texture, false, 0);
 		}
 
 		// getASCfromImg(dem);
 		// FIXME: alpha,scale,offset not taken in account when using the operator dem
-		renderer.getScene().addDEM(null, texture, dem, null, false, false, false, true, env, z_factor, null, null, null, 1,null,null,0);
+		renderer.getScene().addDEM(null, texture, dem, null, false, false, false, true, env, z_factor, null, null,
+			null, 1, null, null, 0);
 		return null;
 	}
 

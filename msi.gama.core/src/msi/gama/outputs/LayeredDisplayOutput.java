@@ -27,6 +27,7 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.layers.*;
+import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -58,6 +59,7 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.STENCIL, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.ZFIGHTING, type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.SCALE, type = { IType.BOOL, IType.FLOAT }, optional = true, doc = @doc("Allows to display a scale bar in the overlay. Accepts true/false or an unit name")),
 	@facet(name = IKeyword.SHOWFPS, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.DRAWENV, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.AMBIENT_LIGHT, type = { IType.INT, IType.COLOR }, optional = true),
@@ -85,6 +87,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean tesselation = true;
 	private boolean stencil = false;
 	private boolean z_fighting = GamaPreferences.CORE_Z_FIGHTING.getValue();
+	private boolean displayScale = GamaPreferences.CORE_SCALE.getValue();
 	private boolean showfps = false;
 	private boolean drawEnv = true;
 	private Color ambientLightColor = new GamaColor(125, 125, 125);
@@ -159,6 +162,15 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		final IExpression z = getFacet(IKeyword.ZFIGHTING);
 		if ( z != null ) {
 			setZFighting(Cast.asBool(getScope(), z.value(getScope())));
+		}
+
+		final IExpression scale = getFacet(IKeyword.SCALE);
+		if ( scale != null ) {
+			if ( scale.getType().equals(Types.get(IType.BOOL)) ) {
+				displayScale = Cast.asBool(getScope(), scale.value(getScope()));
+			} else {
+				displayScale = true;
+			}
 		}
 
 		final IExpression fps = getFacet(IKeyword.SHOWFPS);
@@ -335,6 +347,10 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	public void setImageFileName(final String fileName) {
 		snapshotFileName = fileName;
+	}
+
+	public boolean shouldDisplayScale() {
+		return displayScale;
 	}
 
 	@Override
