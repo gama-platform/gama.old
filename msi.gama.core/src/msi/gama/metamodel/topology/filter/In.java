@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -27,6 +27,7 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
+import com.google.common.collect.ImmutableList;
 
 public abstract class In implements IAgentFilter {
 
@@ -174,7 +175,9 @@ public abstract class In implements IAgentFilter {
 		 */
 		@Override
 		public Collection<? extends IShape> getShapes(final IScope scope) {
-			return (Collection<? extends IShape>) pop.iterable(scope);
+			Iterable iterable = pop.iterable(scope);
+			if ( iterable instanceof Collection ) { return (Collection<? extends IShape>) iterable; }
+			return ImmutableList.copyOf(iterable);
 		}
 
 		@Override
