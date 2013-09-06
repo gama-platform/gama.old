@@ -21,7 +21,6 @@ package msi.gama.gui.views;
 import java.io.*;
 import java.util.*;
 import java.util.List;
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
@@ -431,8 +430,7 @@ public class PopulationInspectView extends GamaViewPart {
 				if ( agent != null ) {
 					manager.removeAll();
 					manager.update(true);
-					AgentsMenu.createMenuForAgent(viewer.getControl().getMenu(), agent, false,
-						GamaPreferences.CORE_MENU_SIZE.getValue());
+					AgentsMenu.createMenuForAgent(viewer.getControl().getMenu(), agent, false);
 				}
 			}
 		});

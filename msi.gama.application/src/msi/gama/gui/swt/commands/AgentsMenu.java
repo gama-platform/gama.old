@@ -53,19 +53,18 @@ public class AgentsMenu extends ContributionItem {
 		return string;
 	}
 
-	public static MenuItem cascadingAgentMenuItem(final Menu parent, final IAgent agent, final int limit,
-		final MenuAction ... actions) {
-		return cascadingAgentMenuItem(parent, agent, agent.getName(), limit, actions);
+	public static MenuItem cascadingAgentMenuItem(final Menu parent, final IAgent agent, final MenuAction ... actions) {
+		return cascadingAgentMenuItem(parent, agent, agent.getName(), actions);
 	}
 
 	public static MenuItem cascadingAgentMenuItem(final Menu parent, final IAgent agent, final String title,
-		final int limit, final MenuAction ... actions) {
+		final MenuAction ... actions) {
 		MenuItem result = new MenuItem(parent, SWT.CASCADE);
 		result.setText(title);
 		result.setImage(SwtGui.agentImage);
 		Menu agentMenu = new Menu(result);
 		result.setMenu(agentMenu);
-		createMenuForAgent(agentMenu, agent, false, limit, actions);
+		createMenuForAgent(agentMenu, agent, false, actions);
 		return result;
 	}
 
@@ -99,13 +98,13 @@ public class AgentsMenu extends ContributionItem {
 	}
 
 	static MenuItem cascadingPopulationMenuItem(final Menu parent, final IAgent agent, final IPopulation population,
-		final Image image, final int limit) {
+		final Image image) {
 		MenuItem result = new MenuItem(parent, SWT.CASCADE);
 		result.setText("Population of " + population.getName());
 		result.setImage(image);
 		Menu agentsMenu = new Menu(result);
 		result.setMenu(agentsMenu);
-		fillPopulationSubMenu(agentsMenu, population, limit);
+		fillPopulationSubMenu(agentsMenu, population);
 		return result;
 	}
 
@@ -204,7 +203,7 @@ public class AgentsMenu extends ContributionItem {
 
 	}
 
-	public static void createMenuForAgent(final Menu menu, final IAgent agent, final boolean topLevel, final int limit,
+	public static void createMenuForAgent(final Menu menu, final IAgent agent, final boolean topLevel,
 		final MenuAction ... actions) {
 		separate(menu, "Actions");
 		if ( topLevel ) {
@@ -233,7 +232,7 @@ public class AgentsMenu extends ContributionItem {
 				separate(menu, "Micro-populations");
 				for ( final IPopulation pop : macro.getMicroPopulations() ) {
 					if ( !pop.isEmpty() ) {
-						cascadingPopulationMenuItem(menu, agent, pop, SwtGui.speciesImage, limit);
+						cascadingPopulationMenuItem(menu, agent, pop, SwtGui.speciesImage);
 					}
 				}
 			}
@@ -278,10 +277,10 @@ public class AgentsMenu extends ContributionItem {
 		}
 	}
 
-	public static void fillPopulationSubMenu(final Menu menu, final Collection<IAgent> species, final int limit,
+	public static void fillPopulationSubMenu(final Menu menu, final Collection<IAgent> species,
 		final MenuAction ... actions) {
-		int subMenuSize = limit;
-		if ( limit < 2 ) {
+		int subMenuSize = GamaPreferences.CORE_MENU_SIZE.getValue();
+		if ( subMenuSize < 2 ) {
 			subMenuSize = 2;
 		}
 		separate(menu, "Actions");
@@ -295,7 +294,7 @@ public class AgentsMenu extends ContributionItem {
 		}
 		if ( size < subMenuSize ) {
 			for ( final IAgent agent : agents ) {
-				cascadingAgentMenuItem(menu, agent, limit, actions);
+				cascadingAgentMenuItem(menu, agent, actions);
 			}
 		} else {
 			final int nb = size / subMenuSize + 1;
@@ -315,7 +314,7 @@ public class AgentsMenu extends ContributionItem {
 					@Override
 					public void handleEvent(final Event event) {
 						for ( int j = begin; j < end; j++ ) {
-							cascadingAgentMenuItem(rangeMenu, agents.get(j), limit, actions);
+							cascadingAgentMenuItem(rangeMenu, agents.get(j), actions);
 						}
 					}
 				});
@@ -323,10 +322,10 @@ public class AgentsMenu extends ContributionItem {
 		}
 	}
 
-	public static Menu fillPopulationSubMenu(final MenuItem parent, final Collection<IAgent> species, final int limit,
+	public static Menu fillPopulationSubMenu(final MenuItem parent, final Collection<IAgent> species,
 		final MenuAction ... actions) {
 		final Menu agentsMenu = new Menu(parent);
-		fillPopulationSubMenu(agentsMenu, species, limit, actions);
+		fillPopulationSubMenu(agentsMenu, species, actions);
 		parent.setMenu(agentsMenu);
 		return agentsMenu;
 	}
@@ -466,6 +465,6 @@ public class AgentsMenu extends ContributionItem {
 
 	@Override
 	public void fill(final Menu parent, final int index) {
-		createMenuForAgent(parent, GAMA.getSimulation(), true, GamaPreferences.CORE_MENU_SIZE.getValue());
+		createMenuForAgent(parent, GAMA.getSimulation(), true);
 	}
 }

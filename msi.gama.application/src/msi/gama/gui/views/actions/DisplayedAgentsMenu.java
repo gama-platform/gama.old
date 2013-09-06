@@ -5,7 +5,6 @@
 package msi.gama.gui.views.actions;
 
 import java.util.*;
-import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.displays.layers.*;
 import msi.gama.gui.swt.SwtGui;
@@ -78,11 +77,11 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 		return menu;
 	}
 
-	public Menu getMenu(final Control parent, final boolean withWorld, final boolean byLayer, final int limit,
+	public Menu getMenu(final Control parent, final boolean withWorld, final boolean byLayer,
 		final Collection<IAgent> filteredList) {
 		// Dispose ?
 		Menu menu = new Menu(parent);
-		fill(menu, -1, withWorld, byLayer, limit, filteredList);
+		fill(menu, -1, withWorld, byLayer, filteredList);
 		return menu;
 	}
 
@@ -170,18 +169,17 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 
 	@Override
 	public void fill(final Menu menu, final int index) {
-		fill(menu, index, false, true, 30, Collections.EMPTY_LIST);
+		fill(menu, index, false, true, null);
 	}
 
-	public void fill(final Menu menu, final int index, final boolean withWorld, final boolean byLayer, final int limit,
+	public void fill(final Menu menu, final int index, final boolean withWorld, final boolean byLayer,
 		final Collection<IAgent> filteredList) {
 		final LayeredDisplayView view = (LayeredDisplayView) SwtGui.getPage().getActivePart();
 		final IDisplaySurface displaySurface = view.getDisplaySurface();
 		AgentsMenu.MenuAction follow =
 			new AgentsMenu.MenuAction(new FollowSelection(displaySurface), SwtGui.followImage, "Follow");
 		if ( withWorld ) {
-			AgentsMenu.cascadingAgentMenuItem(menu, GAMA.getSimulation(), "World",
-				GamaPreferences.CORE_MENU_SIZE.getValue());
+			AgentsMenu.cascadingAgentMenuItem(menu, GAMA.getSimulation(), "World");
 			if ( filteredList != null && !filteredList.isEmpty() ) {
 				AgentsMenu.separate(menu);
 			}
@@ -197,9 +195,9 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 			final FocusOnSelection adapter = new FocusOnSelection(null, displaySurface);
 			AgentsMenu.MenuAction focus = new AgentsMenu.MenuAction(adapter, SwtGui.focusImage, "Focus on");
 			if ( view.getOutput().isOpenGL() ) {
-				AgentsMenu.fillPopulationSubMenu(menu, filteredList, limit, focus, follow);
+				AgentsMenu.fillPopulationSubMenu(menu, filteredList, focus, follow);
 			} else {
-				AgentsMenu.fillPopulationSubMenu(menu, filteredList, limit, focus);
+				AgentsMenu.fillPopulationSubMenu(menu, filteredList, focus);
 			}
 		} else {
 			for ( final ILayer layer : view.getDisplayManager().getItems() ) {
@@ -234,13 +232,15 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 
 	void fill(final Menu menu, final Image image, final String layerName, final Collection<IAgent> pop,
 		final Collection<IAgent> filteredList, final AgentsMenu.MenuAction ... actions) {
-		final MenuItem layerMenu = new MenuItem(menu, SWT.CASCADE);
-		layerMenu.setText(layerName);
-		layerMenu.setImage(image);
 		if ( filteredList != null ) {
 			pop.retainAll(filteredList);
 		}
-		AgentsMenu.fillPopulationSubMenu(layerMenu, pop, GamaPreferences.CORE_MENU_SIZE.getValue(), actions);
+		if ( pop.isEmpty() ) { return; }
+		final MenuItem layerMenu = new MenuItem(menu, SWT.CASCADE);
+		layerMenu.setText(layerName);
+		layerMenu.setImage(image);
+
+		AgentsMenu.fillPopulationSubMenu(layerMenu, pop, actions);
 
 	}
 

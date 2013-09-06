@@ -56,7 +56,7 @@ public class DisplaySurfaceMenu {
 				if ( menu != null && !menu.isDisposed() ) {
 					menu.dispose();
 				}
-				menu = menuBuilder.getMenu(swtControl, true, byLayer, 20, agents);
+				menu = menuBuilder.getMenu(swtControl, true, byLayer, agents);
 				menu.setLocation(swtControl.toDisplay(mousex, mousey));
 				menu.setVisible(true);
 			}
