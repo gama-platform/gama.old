@@ -128,7 +128,7 @@ entities {
 					} 
 				}
 				 
-				return (length(others) > 0) ? (mean (others collect (each.location)) ) as point : location;
+				return (length(others) > 0) ? ((mean (others collect (each.location)) ) as point) : location;
 			}
 
 			reflex separation when: apply_separation {
@@ -203,10 +203,10 @@ entities {
 		
 		list others update: ((boids overlapping (circle (range)))  - self);
 		
-		point mass_center update:  (length(others) > 0) ? (mean (others collect (each.location)) ) as point : location;
+		point mass_center update:  (length(others) > 0) ? ((mean (others collect (each.location)) ) as point) : location;
 		
 		reflex separation when: apply_separation {
-			let acc value: {0,0};
+			let acc value: {0,0}; 
 			loop boid over: (boids overlapping (circle(minimal_distance)))  {
 				set acc <- acc - ((location of boid) - location);
 			}  
@@ -259,7 +259,7 @@ entities {
 		}
 		  
 		action do_move {  
-			if ((velocity.x) as int = 0) and ((velocity.y) as int = 0) {
+			if (((velocity.x) as int) = 0) and (((velocity.y) as int) = 0) {
 				set velocity <- {(rnd(4)) -2, (rnd(4)) - 2};
 			}
 			let old_location <- location;
