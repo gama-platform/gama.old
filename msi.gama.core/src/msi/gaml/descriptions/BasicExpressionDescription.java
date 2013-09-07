@@ -58,6 +58,7 @@ public class BasicExpressionDescription implements IExpressionDescription {
 	@Override
 	public void dispose() {
 		expression = null;
+		target = null;
 	}
 
 	@Override

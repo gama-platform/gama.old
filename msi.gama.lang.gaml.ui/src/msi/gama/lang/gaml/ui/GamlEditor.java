@@ -24,6 +24,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
@@ -50,12 +51,12 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		.createImage();
 	public static Image reload = AbstractUIPlugin.imageDescriptorFromPlugin(IGui.PLUGIN_ID, "/icons/menu_reload.png")
 		.createImage();
-	public static final Color COLOR_TEXT = Display.getDefault().getSystemColor(SWT.COLOR_WHITE);
+	public static final Color COLOR_TEXT = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
 	private static final int INITIAL_BUTTONS = 20;
 	private static Font labelFont;
-	Composite toolbar, top, parent;
+	Composite toolbar, parent, indicator;
 	Button[] buttons = new Button[INITIAL_BUTTONS];
-	Label status;
+	CLabel status;
 	Button menu;
 	List<String> completeNamesOfExperiments = new ArrayList();
 	List<String> abbreviatedNamesOfExperiments = new ArrayList();
@@ -101,10 +102,10 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 			buttons = null;
 		}
 
-		if ( top != null && !top.isDisposed() ) {
-			top.dispose();
-			top = null;
-		}
+		// if ( top != null && !top.isDisposed() ) {
+		// top.dispose();
+		// top = null;
+		// }
 		if ( toolbar != null && !toolbar.isDisposed() ) {
 			toolbar.dispose();
 			toolbar = null;
@@ -126,44 +127,55 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		layout.marginHeight = 0;
 		parent.setLayout(layout);
 
-		top = new Composite(parent, SWT.None);
+		toolbar = new Composite(parent, SWT.NONE);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, false);
-		top.setLayoutData(data);
-		layout = new GridLayout(2, false);
-		layout.horizontalSpacing = 0;
-		layout.verticalSpacing = 0;
-		layout.marginWidth = 10;
-		layout.marginHeight = 5;
-		top.setLayout(layout);
-
-		toolbar = new Composite(top, SWT.None);
-		data = new GridData(SWT.FILL, SWT.FILL, true, true);
-		data.heightHint = 15;
+		data.heightHint = 26;
+		data.horizontalIndent = 10;
 		toolbar.setLayoutData(data);
 		layout = new GridLayout(INITIAL_BUTTONS + 2, false);
-		layout.horizontalSpacing = 0;
+		layout.horizontalSpacing = 2;
 		layout.verticalSpacing = 0;
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
-
 		toolbar.setLayout(layout);
 
-		status = new Label(toolbar, SWT.NONE);
-		data = new GridData(SWT.FILL, SWT.CENTER, true, true);
+		indicator = new Composite(parent, SWT.None);
+		data = new GridData(SWT.FILL, SWT.FILL, true, false);
+		data.heightHint = 8;
+		indicator.setLayoutData(data);
+		FillLayout layout2 = new FillLayout();
+		layout2.marginWidth = 12;
+		layout2.marginHeight = 0;
+		indicator.setLayout(layout2);
+
+		// Composite top = new Composite(parent, SWT.None);
+		// data = new GridData(SWT.FILL, SWT.FILL, true, false);
+		// top.setLayoutData(data);
+		// layout = new GridLayout(1, false);
+		//
+		// layout.horizontalSpacing = 0;
+		// layout.verticalSpacing = 0;
+		// layout.marginWidth = 0;
+		// layout.marginHeight = 0;
+		// top.setLayout(layout);
+
+		status = new CLabel(toolbar, SWT.NONE);
+		status.setFont(labelFont);
+		data = new GridData(SWT.FILL, SWT.CENTER, false, false);
 		data.minimumHeight = SWT.DEFAULT;
 		status.setLayoutData(data);
 		status.setForeground(COLOR_TEXT);
 
 		for ( int i = 0; i < INITIAL_BUTTONS; i++ ) {
 			buttons[i] = new Button(toolbar, SWT.PUSH);
-			data = new GridData(SWT.LEFT, SWT.FILL, false, true);
+			data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
 			buttons[i].setLayoutData(data);
 			buttons[i].setText("Experiment " + i);
 			buttons[i].addSelectionListener(listener);
 			hideButton(buttons[i]);
 		}
 		menu = new Button(toolbar, SWT.PUSH);
-		data = new GridData(SWT.LEFT, SWT.FILL, false, true);
+		data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
 		menu.setLayoutData(data);
 		menu.setText("Other...");
 		menu.setToolTipText("Experiments defined in other models of the project");
@@ -192,8 +204,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 			@Override
 			public void process(final XtextResource state) throws Exception {
-
-				((GamlResource) state).setListener(GamlEditor.this);
+				if ( state != null ) {
+					((GamlResource) state).setListener(GamlEditor.this);
+				}
 
 			}
 		});
@@ -383,9 +396,11 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 	}
 
 	private void setStatus(final Color c, final String text) {
-		top.setBackground(c);
-		status.setBackground(c);
-		toolbar.setBackground(c);
+		// this.getOverviewRuler().getControl().setBackground(c);
+		// this.getVerticalRuler().getControl().setBackground(c);
+		indicator.setBackground(c);
+		// status.setBackground(c);
+		// toolbar.setBackground(c);
 		status.setText(text);
 	}
 

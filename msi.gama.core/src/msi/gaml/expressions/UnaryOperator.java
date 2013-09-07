@@ -44,11 +44,6 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		return canBeConst && child.isConst();
 	}
 
-	@Override
-	public boolean containsAny(final Class<? extends IExpression> clazz) {
-		return super.containsAny(clazz) || child.containsAny(clazz);
-	}
-
 	public UnaryOperator(final IType rt, final GamaHelper exec, final boolean canBeConst, final int tProv,
 		final int ctProv, final int iProv, final int[] expectedContentType, final boolean lazy) {
 		type = rt;

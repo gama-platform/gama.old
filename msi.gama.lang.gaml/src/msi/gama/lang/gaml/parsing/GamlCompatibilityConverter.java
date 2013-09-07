@@ -415,7 +415,7 @@ public class GamlCompatibilityConverter {
 	final static IExpressionDescription convertToConstantString(final EObject target, final String string) {
 		IExpressionDescription ed = LabelExpressionDescription.create(string);
 		if ( target != null ) {
-			DescriptionFactory.setGamlDescription(target, ed.getExpression());
+			DescriptionFactory.setGamlDocumentation(target, ed.getExpression());
 		}
 		return ed;
 	}

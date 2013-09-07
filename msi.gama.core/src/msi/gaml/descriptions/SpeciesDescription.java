@@ -41,7 +41,6 @@ public class SpeciesDescription extends TypeDescription {
 	protected final Map<Class, ISkill> skills = new HashMap();
 	protected IArchitecture control;
 	private Map<String, SpeciesDescription> microSpecies;
-	// protected SpeciesDescription macroSpecies;
 	private IAgentConstructor agentConstructor;
 
 	// private final boolean isGlobal = false;
@@ -463,7 +462,9 @@ public class SpeciesDescription extends TypeDescription {
 	public Set<String> getSkillsNames() {
 		final Set<String> names = new LinkedHashSet();
 		for ( final ISkill skill : skills.values() ) {
-			names.add(AbstractGamlAdditions.getSkillNameFor(skill.getClass()));
+			if ( skill != null ) {
+				names.add(AbstractGamlAdditions.getSkillNameFor(skill.getClass()));
+			}
 		}
 		if ( getParent() != null ) {
 			names.addAll(getParent().getSkillsNames());

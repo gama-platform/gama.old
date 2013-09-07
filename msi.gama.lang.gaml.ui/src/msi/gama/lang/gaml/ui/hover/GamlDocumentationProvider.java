@@ -7,8 +7,8 @@ package msi.gama.lang.gaml.ui.hover;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.utils.EGaml;
 import msi.gaml.descriptions.*;
-import msi.gaml.expressions.VariableExpression;
-import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.factories.*;
+import msi.gaml.factories.DescriptionFactory.Documentation;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.documentation.impl.MultiLineCommentDocumentationProvider;
 
@@ -20,9 +20,19 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 		if ( comment == null ) {
 			comment = "";
 		}
-		IGamlDescription description = DescriptionFactory.getGamlDescription(o);
+		if ( o instanceof VariableRef ) {
+			comment = super.getDocumentation(((VariableRef) o).getRef());
+		} else if ( o instanceof ActionRef ) {
+			comment = super.getDocumentation(((ActionRef) o).getRef());
+		}
+		if ( comment == null ) {
+			comment = "";
+		} else {
+			comment += "<br/>";
+		}
+		Documentation description = DescriptionFactory.getGamlDocumentation(o);
 		if ( description == null && o instanceof TypeRef ) {
-			description = DescriptionFactory.getGamlDescription(o.eContainer());
+			description = DescriptionFactory.getGamlDocumentation(o.eContainer());
 		}
 		if ( description == null ) {
 			if ( o instanceof Facet ) {
@@ -46,25 +56,20 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 		// Try to grab the comment preceding the referenced object
 		// Only computed as a proof of concept for variables in species.
 
-		if ( description instanceof VariableExpression ) {
-			VariableExpression v = (VariableExpression) description;
-			String name = v.getName();
-			IDescription sd = v.getDefinitionDescription();
-			if ( sd instanceof SpeciesDescription ) {
-				VariableDescription vd = ((SpeciesDescription) sd).getVariable(name);
-				if ( vd != null ) {
-					EObject ref = vd.getUnderlyingElement(null);
-					if ( ref != null ) {
-						comment = super.getDocumentation(ref);
-					}
-				}
-			}
-		}
-		if ( comment == null ) {
-			comment = "";
-		} else {
-			comment += "<br/>";
-		}
+		// if ( description instanceof VariableExpression ) {
+		// VariableExpression v = (VariableExpression) description;
+		// String name = v.getName();
+		// IDescription sd = v.getDefinitionDescription();
+		// if ( sd instanceof SpeciesDescription ) {
+		// VariableDescription vd = ((SpeciesDescription) sd).getVariable(name);
+		// if ( vd != null ) {
+		// EObject ref = vd.getUnderlyingElement(null);
+		// if ( ref != null ) {
+		// comment = super.getDocumentation(ref);
+		// }
+		// }
+		// }
+		// }
 
 		return comment + description.getDocumentation();
 	}

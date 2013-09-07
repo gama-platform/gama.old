@@ -21,8 +21,8 @@ package msi.gama.lang.gaml.ui.labeling;
 import java.util.regex.*;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.utils.EGaml;
-import msi.gaml.descriptions.IGamlDescription;
-import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.factories.*;
+import msi.gaml.factories.DescriptionFactory.Documentation;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider;
 import org.eclipse.xtext.naming.*;
@@ -96,7 +96,7 @@ public class GamlLabelProvider extends DefaultEObjectLabelProvider {
 			text = key + " " + qn.toString();
 		}
 
-		IGamlDescription ed = DescriptionFactory.getGamlDescription(ele);
+		Documentation ed = DescriptionFactory.getGamlDocumentation(ele);
 		if ( ed != null ) {
 			text += " [" + removeTags(ed.getTitle()) + "]";
 		}

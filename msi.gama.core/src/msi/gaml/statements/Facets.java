@@ -260,4 +260,16 @@ public class Facets {
 		return result;
 	}
 
+	/**
+	 * 
+	 */
+	public void dispose() {
+		for ( int i = 0; i < facets.length; i++ ) {
+			if ( facets[i] != null ) {
+				facets[i].value.dispose();
+			}
+		}
+
+	}
+
 }

@@ -18,10 +18,14 @@ public interface IErrorCollector {
 
 	public abstract void add(final GamlCompilationError error);
 
-	public abstract List<GamlCompilationError> getErrors();
+	public abstract List<GamlCompilationError> get();
 
-	public abstract List<GamlCompilationError> getWarnings();
+	// public abstract List<GamlCompilationError> getErrors();
+	//
+	// public abstract List<GamlCompilationError> getWarnings();
+	//
+	// public abstract List<GamlCompilationError> getInfos();
 
-	public abstract List<GamlCompilationError> getInfos();
+	public abstract boolean hasErrors();
 
 }

@@ -59,7 +59,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 	 * available. Otherwise, only simple expressions (that contain constants) can be parsed.
 	 */
 	private IDescription context;
-
+	private static boolean synthetic;
 	private final IExpressionFactory factory;
 
 	static {
@@ -74,6 +74,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 	public void reset() {
 		world = null;
 		each_expr = null;
+		synthetic = false;
 	}
 
 	@Override
@@ -81,9 +82,14 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		if ( s.isConstant() ) { return s.getExpression(); }
 		EObject e = getEObjectOf(s);
 		IDescription previous = setContext(parsingContext);
-		IExpression result = compile(e);
-		setContext(previous);
-		return result;
+		try {
+			IExpression result = compile(e);
+			return result;
+		} finally {
+			setContext(previous);
+			synthetic = false;
+		}
+
 	}
 
 	private IExpression compile(final EObject s) {
@@ -93,7 +99,9 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			return null;
 		}
 		IExpression expr = compiler.doSwitch(s);
-		DescriptionFactory.setGamlDescription(s, expr);
+		if ( !synthetic ) {
+			DescriptionFactory.setGamlDocumentation(s, expr);
+		}
 		return expr;
 	}
 
@@ -238,7 +246,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 				return null;
 			}
 			expr = (TypeFieldExpression) expr.copy().init(var, context, owner);
-			DescriptionFactory.setGamlDescription(fieldExpr, expr);
+			DescriptionFactory.setGamlDocumentation(fieldExpr, expr);
 			return expr;
 		}
 		// We are now dealing with an agent. In that case, it can be either an attribute or an
@@ -250,7 +258,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 				context.error("Unknown variable :" + var + " in " + species.getName(), IGamlIssue.UNKNOWN_VAR,
 					leftExpr, var, species.getName());
 			}
-			DescriptionFactory.setGamlDescription(fieldExpr, expr);
+			DescriptionFactory.setGamlDocumentation(fieldExpr, expr);
 			return factory.createOperator(_DOT, context, owner, expr);
 		} else if ( fieldExpr instanceof Function ) {
 			String name = EGaml.getKeyOf(fieldExpr);
@@ -259,7 +267,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 				ExpressionList list = ((Function) fieldExpr).getArgs();
 				IExpression call =
 					action(name, owner, list == null ? ((Function) fieldExpr).getParameters() : list, action);
-				DescriptionFactory.setGamlDescription(fieldExpr, call); // ??
+				DescriptionFactory.setGamlDocumentation(fieldExpr, call); // ??
 				return call;
 			}
 		}
@@ -641,7 +649,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 
 		@Override
 		public IExpression defaultCase(final EObject object) {
-			if ( getContext().getErrors().isEmpty() ) {
+			if ( getContext().hasErrors() ) {
 				// In order to avoid too many "useless errors"
 				getContext().error("Cannot compile: " + object, IGamlIssue.GENERAL, object);
 			}
@@ -751,12 +759,11 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 	private static EObject getEObjectOf(final IExpressionDescription s) {
 		EObject o = s.getTarget();
 		if ( o == null && s instanceof StringBasedExpressionDescription ) {
+			synthetic = true;
 			o = getEObjectOf(s.toString());
 		}
 		return o;
 	}
-
-	private static long count = 0;
 
 	private static Map<String, EObject> cache = new LinkedHashMap();
 
@@ -783,9 +790,9 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 			Resource.Diagnostic d = resource.getErrors().get(0);
 			throw GamaRuntimeException.error(d.getMessage());
 		}
-		long end = System.nanoTime();
-		double ms = (end - begin) / 1000000d;
-		count += end - begin;
+		// long end = System.nanoTime();
+		// double ms = (end - begin) / 1000000d;
+		// count += end - begin;
 		// GuiUtils.debug("   -> compilation of " + string + " in " + ms + " ms (Total: " + count / 1000000d + ")");
 		if ( result instanceof TerminalExpression ) {
 			cache.put(string, result);

@@ -24,8 +24,8 @@ import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.ui.labeling.GamlLabelProvider;
 import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import msi.gama.precompiler.GamlProperties;
-import msi.gaml.descriptions.IGamlDescription;
-import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.factories.*;
+import msi.gaml.factories.DescriptionFactory.Documentation;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
@@ -95,10 +95,10 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 		final String methodName = "complete_" + calledRule.getName();
 		GuiUtils.debug("GamlProposalProvider.completeRuleCall " + methodName);
 		EObject e = contentAssistContext.getCurrentModel();
-		IGamlDescription g = DescriptionFactory.getGamlDescription(e);
+		Documentation g = DescriptionFactory.getGamlDocumentation(e);
 		GuiUtils.debug("GamlProposalProvider.completeAssignment: description under edition : " + g);
 		e = contentAssistContext.getPreviousModel();
-		g = DescriptionFactory.getGamlDescription(e);
+		g = DescriptionFactory.getGamlDocumentation(e);
 		GuiUtils.debug("GamlProposalProvider.completeAssignment : previous description " + g);
 		// invokeMethod(methodName, acceptor, contentAssistContext.getCurrentModel(), ruleCall, contentAssistContext);
 	}
@@ -112,10 +112,10 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 				Strings.toFirstUpper(assignment.getFeature());
 		GuiUtils.debug("GamlProposalProvider.completeAssignment " + methodName);
 		EObject e = contentAssistContext.getCurrentModel();
-		IGamlDescription g = DescriptionFactory.getGamlDescription(e);
+		Documentation g = DescriptionFactory.getGamlDocumentation(e);
 		GuiUtils.debug("GamlProposalProvider.completeAssignment: description under edition : " + g);
 		e = contentAssistContext.getPreviousModel();
-		g = DescriptionFactory.getGamlDescription(e);
+		g = DescriptionFactory.getGamlDocumentation(e);
 		GuiUtils.debug("GamlProposalProvider.completeAssignment : previous description " + g);
 
 		// invokeMethod(methodName, acceptor, contentAssistContext.getCurrentModel(), assignment, contentAssistContext);

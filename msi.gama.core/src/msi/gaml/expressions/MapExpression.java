@@ -57,18 +57,6 @@ public class MapExpression extends AbstractExpression {
 	}
 
 	@Override
-	public boolean containsAny(final Class<? extends IExpression> clazz) {
-		if ( super.containsAny(clazz) ) { return true; }
-		for ( IExpression expr : keys ) {
-			if ( expr.containsAny(clazz) ) { return true; }
-		}
-		for ( IExpression expr : vals ) {
-			if ( expr.containsAny(clazz) ) { return true; }
-		}
-		return false;
-	}
-
-	@Override
 	public IExpression resolveAgainst(final IScope scope) {
 		GamaMap result = new GamaMap(keys.length);
 		for ( int i = 0; i < keys.length; i++ ) {

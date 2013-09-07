@@ -55,54 +55,32 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	@Check()
 	public synchronized void validate(final Model model) {
 		try {
-
-			// GuiUtils.debug("GamlJavaValidator processing " + model.eResource().getURI().lastSegment() + "...");
 			final GamlResource r = (GamlResource) model.eResource();
 			currentResource = r;
 			ModelDescription result = null;
 			if ( FORCE_VALIDATION || r.getErrors().isEmpty() ) {
-				result = validate(r);
+				final long begin = System.nanoTime();
+				final XtextResourceSet resourceSet = (XtextResourceSet) r.getResourceSet();
+				result = parse(r, resourceSet);
+				if ( r.getErrors().isEmpty() ) {
+					result = getModelFactory().validate(result);
+				}
+				GuiUtils.debug("=> " + result + " in " + (System.nanoTime() - begin) / 1000000d + " ms.");
 			}
-			final boolean hasError = result == null || !result.getErrors().isEmpty();
 			if ( result != null ) {
-				for ( final GamlCompilationError warning : result.getWarnings() ) {
-					add(warning);
+				final boolean hasError = result.hasErrors();
+				for ( final GamlCompilationError error : result.getErrors() ) {
+					add(error);
 				}
-				for ( final GamlCompilationError info : result.getInfos() ) {
-					add(info);
-				}
-				if ( hasError ) {
-					for ( final GamlCompilationError error : result.getErrors() ) {
-						add(error);
-					}
-					r.setModelDescription(true, result);
-				} else {
-					r.setModelDescription(false, result);
-				}
+				r.updateWith(hasError, hasError ? Collections.EMPTY_SET : result.getExperimentNames());
+				// AD 7/9/2013: Addition of a force disposal to get rid of the description
+				result.dispose();
 			} else {
-				r.setModelDescription(true, null);
+				r.updateWith(true, Collections.EMPTY_SET);
 			}
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
-	}
-
-	private static long timeInValidation = 0;
-
-	public ModelDescription validate(final GamlResource r) {
-		// this.listVisibleResourcesFromMe();
-		final long begin = System.nanoTime();
-		final XtextResourceSet resourceSet = (XtextResourceSet) r.getResourceSet();
-		ModelDescription description = parse(r, resourceSet);
-		if ( r.getErrors().isEmpty() ) {
-			// cleanResourceSet(resourceSet, false);
-			description = getModelFactory().validate(description);
-		}
-		final long end = System.nanoTime();
-		timeInValidation += end - begin;
-		final double ms = (end - begin) / 1000000d;
-		GuiUtils.debug("=> " + description + " in " + ms + " ms (total: " + timeInValidation / 1000000d + ")");
-		return description;
 	}
 
 	public ModelDescription validateForContentAssist(final GamlResource r) {
@@ -152,12 +130,17 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		for ( final Import imp : model.getImports() ) {
 			final String importUri = imp.getImportURI();
 			final URI iu = URI.createURI(importUri).resolve(resource.getURI());
-			final GamlResource ir = (GamlResource) resourceSet.getResource(iu, true);
+			try {
+				final GamlResource ir = (GamlResource) resourceSet.getResource(iu, true);
+				imports.add(ir);
+			} catch (Exception e) {
+				GuiUtils.debug("Error in validation: XText cannot load " + iu);
+			}
 			// if ( !ir.getErrors().isEmpty() ) {
 			// resource.error("Imported file " + ir.getURI().lastSegment() + " has errors. Fix them first.",
 			// new SyntacticElement(IKeyword.INCLUDE, imp), true);
 			// }
-			imports.add(ir);
+
 		}
 		return imports;
 	}

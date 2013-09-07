@@ -86,7 +86,10 @@ public class ModelDescription extends SpeciesDescription {
 		titledExperiments.clear();
 		output = null;
 		types.dispose();
+		// AD 7/9/2013 Added disposal of errors
+		collect.clear();
 		super.dispose();
+
 		// isDisposed = true;
 	}
 

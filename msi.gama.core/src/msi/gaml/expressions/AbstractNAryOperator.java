@@ -31,15 +31,6 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	protected GamlElementDocumentation doc;
 
 	@Override
-	public boolean containsAny(final Class<? extends IExpression> clazz) {
-		if ( super.containsAny(clazz) ) { return true; }
-		for ( IExpression expr : exprs ) {
-			if ( expr.containsAny(clazz) ) { return true; }
-		}
-		return false;
-	}
-
-	@Override
 	public String toString() {
 		String result = literalValue() + "(";
 		if ( exprs != null ) {

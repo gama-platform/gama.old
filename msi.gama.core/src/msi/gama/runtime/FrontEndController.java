@@ -137,7 +137,8 @@ public class FrontEndController implements Runnable {
 	public void userInterrupt() {
 		if ( experiment != null ) {
 			IModel m = experiment.getModel();
-			closeExperiment(GamaRuntimeException.warning("Interrupted by user"));
+			GuiUtils.neutralStatus("No simulation running");
+			closeExperiment(/* GamaRuntimeException.warning("Interrupted by user") */);
 			if ( m != null ) {
 				m.dispose();
 			}

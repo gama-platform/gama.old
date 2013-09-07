@@ -23,14 +23,14 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 
 	static Map<String, StringConstantExpression> cache = new HashMap();
 
-	StringConstantExpression get(final String s) {
-		StringConstantExpression sc = cache.get(s);
-		if ( sc == null ) {
-			sc = new StringConstantExpression(s);
-			cache.put(s, sc);
-		}
-		return sc;
-	}
+	// StringConstantExpression get(final String s) {
+	// StringConstantExpression sc = cache.get(s);
+	// if ( sc == null ) {
+	// sc = new StringConstantExpression(s);
+	// cache.put(s, sc);
+	// }
+	// return sc;
+	// }
 
 	class StringConstantExpression extends AbstractExpression {
 
@@ -92,7 +92,10 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 
 	@Override
 	public IExpression getExpression() {
-		return expression == null ? get(value) : expression;
+		if ( expression == null ) {
+			expression = new StringConstantExpression(value);
+		}
+		return expression;
 	}
 
 	@Override
@@ -114,7 +117,7 @@ public class LabelExpressionDescription extends BasicExpressionDescription {
 	public void setTarget(final EObject newTarget) {
 		super.setTarget(newTarget);
 		if ( getExpression() != null ) {
-			DescriptionFactory.setGamlDescription(newTarget, getExpression());
+			DescriptionFactory.setGamlDocumentation(newTarget, getExpression());
 		}
 
 	}

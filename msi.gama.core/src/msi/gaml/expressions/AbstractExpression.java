@@ -47,11 +47,6 @@ public abstract class AbstractExpression implements IExpression {
 		return name;
 	}
 
-	@Override
-	public boolean containsAny(final Class<? extends IExpression> clazz) {
-		return clazz.isAssignableFrom(getClass());
-	}
-
 	public void setName(final String s) {
 		name = s;
 	}
@@ -74,8 +69,9 @@ public abstract class AbstractExpression implements IExpression {
 	}
 
 	protected String typeToString() {
-		String t = type.toString();
-		if ( type.hasContents() ) {
+		IType tt = getType();
+		String t = tt.toString();
+		if ( tt.hasContents() ) {
 			t += "&lt;" + getKeyType().toString() + ", " + getContentType().toString() + "&gt;";
 		}
 		return t;

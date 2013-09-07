@@ -20,7 +20,7 @@ package msi.gaml.factories;
 
 import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
@@ -184,7 +184,7 @@ public class ModelFactory extends SymbolFactory {
 		final ModelDescription model =
 			new ModelDescription(modelName, null, projectPath, modelPath, lastGlobalNode.getElement(), null,
 				ModelDescription.ROOT, globalFacets, collector);
-		DescriptionFactory.setGamlDescription(source.getElement(), model);
+
 		// model.setGlobal(true);
 		model.addSpeciesType(model);
 
@@ -281,7 +281,7 @@ public class ModelFactory extends SymbolFactory {
 		// model.addChild(desc);
 		// }
 		// }
-
+		DescriptionFactory.document(model);
 		return model;
 
 	}

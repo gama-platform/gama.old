@@ -7,8 +7,8 @@ package msi.gama.lang.gaml.ui.hover;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.utils.EGaml;
-import msi.gaml.descriptions.IGamlDescription;
-import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.factories.*;
+import msi.gaml.factories.DescriptionFactory.Documentation;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.text.*;
 import org.eclipse.xtext.Keyword;
@@ -106,10 +106,10 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 
 	@Override
 	protected String getFirstLine(final EObject o) {
-		IGamlDescription description = DescriptionFactory.getGamlDescription(o);
+		Documentation description = DescriptionFactory.getGamlDocumentation(o);
 		String result =
 			description == null ? (o instanceof TypeRef ? "type " : "") + EGaml.getKeyOf(o) : description.getTitle();
-		result = "<big><b>" + result + "</b></big>";
+		result = "<b>" + result + "</b>";
 		return result;
 	}
 

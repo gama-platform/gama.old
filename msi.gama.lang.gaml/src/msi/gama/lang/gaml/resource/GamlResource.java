@@ -9,8 +9,8 @@ import msi.gama.lang.gaml.parsing.*;
 import msi.gama.lang.gaml.parsing.GamlSyntacticParser.GamlParseResult;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
 import msi.gaml.compilation.SyntacticElement;
-import msi.gaml.descriptions.*;
-import msi.gaml.factories.DescriptionFactory;
+import msi.gaml.factories.*;
+import msi.gaml.factories.DescriptionFactory.Documentation;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.linking.lazy.LazyLinkingResource;
 
@@ -41,10 +41,9 @@ public class GamlResource extends LazyLinkingResource {
 		return (GamlParseResult) super.getParseResult();
 	}
 
-	public void setModelDescription(final boolean withErrors, final ModelDescription model) {
+	public void updateWith(final boolean withErrors, final Set<String> experiments) {
 		if ( listener != null ) {
-			Set<String> exp = model == null ? Collections.EMPTY_SET : model.getExperimentTitles();
-			listener.validationEnded(exp, withErrors);
+			listener.validationEnded(experiments, withErrors);
 		}
 	}
 
@@ -62,9 +61,9 @@ public class GamlResource extends LazyLinkingResource {
 
 	@Override
 	protected void unload(final EObject oldRootObject) {
-		IGamlDescription desc = DescriptionFactory.getGamlDescription(oldRootObject);
+		Documentation desc = DescriptionFactory.getGamlDocumentation(oldRootObject);
 		if ( desc != null ) {
-			desc.dispose();
+			// desc.dispose();
 			oldRootObject.eAdapters().remove(desc);
 		}
 		// if ( oldRootObject != null ) {

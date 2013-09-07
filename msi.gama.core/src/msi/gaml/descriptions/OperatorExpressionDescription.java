@@ -47,6 +47,14 @@ public class OperatorExpressionDescription extends BasicExpressionDescription {
 	}
 
 	@Override
+	public void dispose() {
+		for ( IExpressionDescription arg : args ) {
+			arg.dispose();
+		}
+		super.dispose();
+	}
+
+	@Override
 	public IExpression compile(final IDescription context) {
 		if ( expression == null ) {
 			IExpression[] exprs = new IExpression[args.length];

@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -46,6 +46,7 @@ public class GamlSemanticHighlightingCalculator extends GamlSwitch implements IS
 
 	@Override
 	public void provideHighlightingFor(final XtextResource resource, final IHighlightedPositionAcceptor a) {
+		if ( resource == null ) { return; }
 		acceptor = a;
 		TreeIterator<EObject> root = resource.getAllContents();
 		while (root.hasNext()) {
@@ -55,26 +56,26 @@ public class GamlSemanticHighlightingCalculator extends GamlSwitch implements IS
 	}
 
 	@Override
-	public Object caseStatement(Statement object) {
+	public Object caseStatement(final Statement object) {
 		setStyle(object, VARDEF_ID, EGaml.getNameOf(object));
 		setStyle(object, FACET_ID, object.getFirstFacet());
 		return setStyle(object, KEYWORD_ID, object.getKey());
 	}
 
 	@Override
-	public Object caseS_DirectAssignment(S_DirectAssignment obj) {
+	public Object caseS_DirectAssignment(final S_DirectAssignment obj) {
 		return setStyle(obj, ASSIGN_ID, obj.getKey());
 	}
 
 	@Override
-	public Object caseS_Assignment(S_Assignment obj) {
+	public Object caseS_Assignment(final S_Assignment obj) {
 		String s = obj.getKey();
 		if ( "=".equals(s) ) { return setStyle(obj, ASSIGN_ID, s); }
 		return false;
 	}
 
 	@Override
-	public Object caseFacet(Facet object) {
+	public Object caseFacet(final Facet object) {
 		String key = object.getKey();
 		if ( ASSIGNMENTS.contains(key) ) {
 			setStyle(object, ASSIGN_ID, 0);
@@ -90,7 +91,7 @@ public class GamlSemanticHighlightingCalculator extends GamlSwitch implements IS
 	}
 
 	@Override
-	public Object caseTerminalExpression(TerminalExpression object) {
+	public Object caseTerminalExpression(final TerminalExpression object) {
 		if ( !(object instanceof StringLiteral) ) {
 			setStyle(object, NUMBER_ID, 0);
 		}
@@ -98,47 +99,47 @@ public class GamlSemanticHighlightingCalculator extends GamlSwitch implements IS
 	}
 
 	@Override
-	public Object caseReservedLiteral(ReservedLiteral object) {
+	public Object caseReservedLiteral(final ReservedLiteral object) {
 		return setStyle(object, RESERVED_ID, 0);
 	}
 
 	@Override
-	public Object caseBinary(Binary object) {
+	public Object caseBinary(final Binary object) {
 		return setStyle(object, OPERATOR_ID, EGaml.getKeyOf(object));
 	}
 
 	@Override
-	public Object caseFunction(Function object) {
+	public Object caseFunction(final Function object) {
 		return setStyle(object, OPERATOR_ID, EGaml.getKeyOf(object));
 	}
 
 	@Override
-	public Object caseArgumentPair(ArgumentPair object) {
+	public Object caseArgumentPair(final ArgumentPair object) {
 		return setStyle(object, VARIABLE_ID, object.getOp());
 	}
 
 	@Override
-	public Object caseVariableRef(VariableRef object) {
+	public Object caseVariableRef(final VariableRef object) {
 		return setStyle(VARIABLE_ID, NodeModelUtils.getNode(object));
 	}
 
 	@Override
-	public Object caseUnitName(UnitName object) {
+	public Object caseUnitName(final UnitName object) {
 		return setStyle(object, UNIT_ID, 0);
 	}
 
 	@Override
-	public Object caseTypeRef(TypeRef object) {
+	public Object caseTypeRef(final TypeRef object) {
 		return setStyle(TYPE_ID, NodeModelUtils.getNode(object));
 	}
 
 	@Override
-	public Object caseParameter(Parameter object) {
+	public Object caseParameter(final Parameter object) {
 		return setStyle(object, VARIABLE_ID, object.getBuiltInFacetKey());
 	}
 
 	@Override
-	public Object caseArgumentDefinition(ArgumentDefinition object) {
+	public Object caseArgumentDefinition(final ArgumentDefinition object) {
 		return setStyle(object, VARDEF_ID, object.getName());
 	}
 

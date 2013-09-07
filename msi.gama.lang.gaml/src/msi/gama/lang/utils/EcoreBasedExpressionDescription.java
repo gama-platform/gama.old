@@ -89,7 +89,7 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 				currentErrors.add(d);
 				ed = ConstantExpressionDescription.create(0);
 			}
-			DescriptionFactory.setGamlDescription(object, ed.getExpression());
+			DescriptionFactory.setGamlDocumentation(object, ed.getExpression());
 			return ed;
 		}
 
@@ -105,21 +105,21 @@ public class EcoreBasedExpressionDescription extends BasicExpressionDescription 
 				currentErrors.add(d);
 				ed = ConstantExpressionDescription.create(0d);
 			}
-			DescriptionFactory.setGamlDescription(object, ed.getExpression());
+			DescriptionFactory.setGamlDocumentation(object, ed.getExpression());
 			return ed;
 		}
 
 		@Override
 		public IExpressionDescription caseStringLiteral(final StringLiteral object) {
 			IExpressionDescription ed = LabelExpressionDescription.create(object.getOp());
-			DescriptionFactory.setGamlDescription(object, ed.getExpression());
+			DescriptionFactory.setGamlDocumentation(object, ed.getExpression());
 			return ed;
 		}
 
 		@Override
 		public IExpressionDescription caseBooleanLiteral(final BooleanLiteral object) {
 			IExpressionDescription ed = ConstantExpressionDescription.create(object.getOp().equals(IKeyword.TRUE));
-			DescriptionFactory.setGamlDescription(object, ed.getExpression());
+			DescriptionFactory.setGamlDocumentation(object, ed.getExpression());
 			return ed;
 		}
 

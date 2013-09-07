@@ -88,11 +88,33 @@ public class GuiUtils {
 		GuiUtils.gui = gui;
 	}
 
+	public static void waitStatus(final String string) {
+		if ( gui != null ) {
+			gui.setStatus(string, IGui.WAIT);
+		}
+	}
+
+	public static void informStatus(final String string) {
+		if ( gui != null ) {
+			gui.setStatus(string, IGui.INFORM);
+		} else {
+			System.out.println(string);
+		}
+	}
+
 	public static void errorStatus(final String error) {
 		if ( gui != null ) {
 			gui.setStatus(error, IGui.ERROR);
 		} else {
 			System.out.println("Status:" + error);
+		}
+	}
+
+	public static void neutralStatus(final String message) {
+		if ( gui != null ) {
+			gui.setStatus(message, IGui.NEUTRAL);
+		} else {
+			System.out.println("Status:" + message);
 		}
 	}
 
@@ -123,12 +145,6 @@ public class GuiUtils {
 		}
 	}
 
-	public static void waitStatus(final String string) {
-		if ( gui != null ) {
-			gui.setStatus(string, IGui.WAIT);
-		}
-	}
-
 	public static void error(final String error) {
 		if ( gui != null ) {
 			gui.error(error);
@@ -142,14 +158,6 @@ public class GuiUtils {
 			gui.tell(message);
 		} else {
 			System.out.println(message);
-		}
-	}
-
-	public static void informStatus(final String string) {
-		if ( gui != null ) {
-			gui.setStatus(string, IGui.INFORM);
-		} else {
-			System.out.println(string);
 		}
 	}
 

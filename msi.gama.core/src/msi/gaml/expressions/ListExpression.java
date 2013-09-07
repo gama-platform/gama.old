@@ -40,17 +40,10 @@ public class ListExpression extends AbstractExpression {
 		int n = this.elements.length;
 		values = new Object[n];
 		setName(elements.toString());
+		keyType = Types.get(IType.INT);
+		type = Types.get(IType.LIST);
 		contentType = findCommonType(elements, _type);
 		isConst();
-	}
-
-	@Override
-	public boolean containsAny(final Class<? extends IExpression> clazz) {
-		if ( super.containsAny(clazz) ) { return true; }
-		for ( IExpression expr : elements ) {
-			if ( expr.containsAny(clazz) ) { return true; }
-		}
-		return false;
 	}
 
 	public IExpression[] getElements() {
@@ -105,13 +98,8 @@ public class ListExpression extends AbstractExpression {
 	}
 
 	@Override
-	public IType getType() {
-		return Types.get(IType.LIST);
-	}
-
-	@Override
 	public IType getKeyType() {
-		return Types.get(IType.INT);
+		return keyType;
 	}
 
 	@Override

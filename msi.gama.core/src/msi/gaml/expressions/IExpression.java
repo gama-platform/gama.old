@@ -62,6 +62,4 @@ public interface IExpression extends IGamlDescription {
 
 	public abstract boolean shouldBeParenthesized();
 
-	public abstract boolean containsAny(Class<? extends IExpression> clazz);
-
 }

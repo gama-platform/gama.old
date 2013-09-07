@@ -27,7 +27,7 @@ import msi.gama.util.GAML;
 import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.statements.Facets;
-import org.eclipse.emf.common.notify.Adapter;
+import org.eclipse.emf.common.notify.*;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -37,6 +37,45 @@ import org.eclipse.emf.ecore.EObject;
  * 
  */
 public class DescriptionFactory {
+
+	public static class Documentation implements Adapter.Internal {
+
+		final String doc;
+		final String title;
+
+		Documentation(final IGamlDescription desc) {
+			doc = desc.getDocumentation();
+			title = desc.getTitle();
+		}
+
+		public String getDocumentation() {
+			return doc;
+		}
+
+		public String getTitle() {
+			return title;
+		}
+
+		@Override
+		public void notifyChanged(final Notification notification) {}
+
+		@Override
+		public Notifier getTarget() {
+			return null;
+		}
+
+		@Override
+		public void setTarget(final Notifier newTarget) {}
+
+		@Override
+		public boolean isAdapterForType(final Object type) {
+			return false;
+		}
+
+		@Override
+		public void unsetTarget(final Notifier oldTarget) {}
+
+	}
 
 	static Map<Integer, SymbolFactory> FACTORIES = new HashMap();
 
@@ -94,45 +133,63 @@ public class DescriptionFactory {
 	}
 
 	public static void addSpeciesNameAsType(final String name) {
-		// if ( name.equals(IKeyword.EXPERIMENT) ) {
-		// GuiUtils.debug("DescriptionFactory.addSpeciesNameAsType");
-		// }
 		if ( !name.equals(AGENT) && !name.equals(IKeyword.EXPERIMENT) ) {
 			KEYWORDS_PROTOS.put(name, KEYWORDS_PROTOS.get(AGENT));
 		}
 	}
 
-	public static void setGamlDescription(final EObject object, final IGamlDescription description) {
+	public static void setGamlDocumentation(final EObject object, final IGamlDescription description) {
 		if ( description == null || object == null ) { return; }
-		final IGamlDescription existing = getGamlDescription(object, description.getClass());
+		Documentation existing = getGamlDocumentation(object);
 		if ( existing != null ) {
 			object.eAdapters().remove(existing);
 		}
-		object.eAdapters().add(description);
+		object.eAdapters().add(new Documentation(description));
+		//
+		// final IGamlDescription existing = getGamlDescription(object, description.getClass());
+
 	}
 
-	public static <T> T getGamlDescription(final EObject object, final Class<T> preciseClass) {
+	// To be called once the validation has been done
+	public static void document(final IDescription desc) {
+		setGamlDocumentation(desc.getUnderlyingElement(null), desc);
+		for ( IDescription d : desc.getChildren() ) {
+			document(d);
+		}
+	}
+
+	public static Documentation getGamlDocumentation(final EObject object) {
 		if ( object == null ) { return null; }
 		for ( int i = 0, n = object.eAdapters().size(); i < n; i++ ) {
 			final Adapter a = object.eAdapters().get(i);
-			if ( preciseClass.isAssignableFrom(a.getClass()) ) { return (T) a; }
+			if ( a.getClass() == Documentation.class ) { return (Documentation) a; }
 
 		}
 		return null;
 	}
 
-	public static IGamlDescription getGamlDescription(final EObject object) {
-		if ( object == null ) { return null; }
-		for ( final Adapter o : object.eAdapters() ) {
-			if ( o instanceof IGamlDescription ) { return (IGamlDescription) o; }
-		}
-		return null;
-	}
+	// public static <T> T getGamlDescription(final EObject object, final Class<T> preciseClass) {
+	// if ( object == null ) { return null; }
+	// for ( int i = 0, n = object.eAdapters().size(); i < n; i++ ) {
+	// final Adapter a = object.eAdapters().get(i);
+	// if ( preciseClass.isAssignableFrom(a.getClass()) ) { return (T) a; }
+	//
+	// }
+	// return null;
+	// }
 
-	public static void unsetGamlDescription(final EObject object, final IGamlDescription description) {
-		if ( object == null ) { return; }
-		object.eAdapters().remove(description);
-	}
+	// public static IGamlDescription getGamlDescription(final EObject object) {
+	// if ( object == null ) { return null; }
+	// for ( final Adapter o : object.eAdapters() ) {
+	// if ( o instanceof IGamlDescription ) { return (IGamlDescription) o; }
+	// }
+	// return null;
+	// }
+
+	// public static void unsetGamlDescription(final EObject object, final IGamlDescription description) {
+	// if ( object == null ) { return; }
+	// object.eAdapters().remove(description);
+	// }
 
 	// -----
 

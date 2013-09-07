@@ -60,9 +60,9 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		compo.setLayout(layout);
 		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
 		data.widthHint = 300;
-		label = new Label(compo, SWT.CENTER);
+		label = new Label(compo, SWT.LEFT);
 		label.setLayoutData(data);
-		label.setBackground(SwtGui.COLOR_OK);
+		label.setBackground(SwtGui.COLOR_NEUTRAL);
 		label.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		label.setText("No simulation running");
 		label.addMouseListener(new MouseAdapter() {
@@ -118,7 +118,8 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	 */
 	@Override
 	public Color getPopupBackground() {
-		return status == IGui.ERROR ? SwtGui.COLOR_ERROR : status == IGui.WAIT ? SwtGui.COLOR_WARNING : SwtGui.COLOR_OK;
+		return status == IGui.ERROR ? SwtGui.COLOR_ERROR : status == IGui.WAIT ? SwtGui.COLOR_WARNING
+			: status == IGui.NEUTRAL ? SwtGui.COLOR_NEUTRAL : SwtGui.COLOR_OK;
 	}
 
 	@Override

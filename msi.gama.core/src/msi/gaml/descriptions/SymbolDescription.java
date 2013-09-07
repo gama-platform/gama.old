@@ -181,8 +181,8 @@ public class SymbolDescription implements IDescription {
 		// with the IDescription and the ISymbol...
 		// TODO A cleaner solution, at the expense of memory, would be to have a generic Facets<T> type, with two
 		// subtypes: Facets<IExpressionDescription> and Facets<IExpression>
-		// facets.dispose();
-		// facets.clear();
+		facets.dispose();
+		facets.clear();
 		if ( children != null ) {
 			for ( IDescription c : children ) {
 				c.dispose();
@@ -190,9 +190,9 @@ public class SymbolDescription implements IDescription {
 			children.clear();
 		}
 		enclosing = null;
-		if ( element != null ) {
-			DescriptionFactory.unsetGamlDescription(element, this);
-		}
+		// if ( element != null ) {
+		// DescriptionFactory.unsetGamlDescription(element, this);
+		// }
 		// isDisposed = true;
 	}
 
@@ -385,24 +385,32 @@ public class SymbolDescription implements IDescription {
 	}
 
 	@Override
-	public List<GamlCompilationError> getErrors() {
+	public boolean hasErrors() {
 		IErrorCollector c = getErrorCollector();
-		if ( c == null ) { return Collections.EMPTY_LIST; }
-		return c.getErrors();
+		if ( c == null ) { return false; }
+		return c.hasErrors();
 	}
 
 	@Override
-	public List<GamlCompilationError> getWarnings() {
+	public List<GamlCompilationError> getErrors() {
 		IErrorCollector c = getErrorCollector();
 		if ( c == null ) { return Collections.EMPTY_LIST; }
-		return c.getWarnings();
+		return c.get();
 	}
 
-	public List<GamlCompilationError> getInfos() {
-		IErrorCollector c = getErrorCollector();
-		if ( c == null ) { return Collections.EMPTY_LIST; }
-		return c.getInfos();
-	}
+	//
+	// @Override
+	// public List<GamlCompilationError> getWarnings() {
+	// IErrorCollector c = getErrorCollector();
+	// if ( c == null ) { return Collections.EMPTY_LIST; }
+	// return c.getWarnings();
+	// }
+	//
+	// public List<GamlCompilationError> getInfos() {
+	// IErrorCollector c = getErrorCollector();
+	// if ( c == null ) { return Collections.EMPTY_LIST; }
+	// return c.getInfos();
+	// }
 
 	@Override
 	public IErrorCollector getErrorCollector() {

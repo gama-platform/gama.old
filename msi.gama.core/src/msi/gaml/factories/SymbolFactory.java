@@ -78,7 +78,7 @@ public class SymbolFactory {
 		md.verifyFacets(source, facets, superDesc);
 		final IDescription desc = buildDescription(source, facets, cp, superDesc, md);
 		if ( desc == null ) { return null; }
-		DescriptionFactory.setGamlDescription(source.getElement(), desc);
+		// DescriptionFactory.setGamlDescription(source.getElement(), desc);
 		return desc;
 	}
 
@@ -102,7 +102,7 @@ public class SymbolFactory {
 			children.add(create(e, superDesc));
 		}
 		final IDescription desc = buildDescription(source, facets, new ChildrenProvider(children), superDesc, md);
-		DescriptionFactory.setGamlDescription(source.getElement(), desc);
+		// DescriptionFactory.setGamlDescription(source.getElement(), desc);
 		return desc;
 	}
 
