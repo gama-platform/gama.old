@@ -39,7 +39,7 @@ entities {
 	species prey skills: [moving] control: fsm {
 		geometry shape <- square (prey_size);
 		rgb color <- prey_color;
-		list nearby_predators <- (agents_overlapping (shape + prey_perception)) of_species predator;
+		list nearby_predators update: (agents_overlapping (shape + prey_perception)) of_species predator depends_on: shape;
 		int invisible_time min: 1 <- int(time);
 
 		shelter nearest_shelter;		
@@ -50,6 +50,7 @@ entities {
 				color <- prey_color;
 			}
 			do wander; 
+			
 			transition to: flee_predator when: !(empty (nearby_predators)); 
 		}
 		
@@ -60,6 +61,7 @@ entities {
 				nearest_shelter <- first ( (list (shelter)) sort_by ( each distance_to (self)) );
 			}
 			if !(empty (nearby_predators)) { do move heading: (self) towards (nearest_shelter) speed: prey_speed;}
+			
 			transition to: move_around when: (empty (nearby_predators));
 		}
 		
@@ -81,7 +83,7 @@ entities {
 	
 	species predator skills: [moving] schedules: shuffle (list (predator)) {
 		geometry shape <- square (predator_size);
-		prey target_prey value: self choose_target_prey [];
+		prey target_prey update: self choose_target_prey [];
 		
 		action choose_target_prey type: prey {
 			if ( (target_prey = nil) or (dead (target_prey) ) ) {
@@ -102,7 +104,7 @@ entities {
 	
 	species shelter skills: [moving]  frequency: 2 {
 		geometry shape <- (square (50.0)) at_location {250, 250};
-		list<prey> chased_preys <- (prey) where ( (each.shape intersects shape) and (each.state = 'flee_predator') );
+		list<prey> chased_preys update: (prey) where ( (each.shape intersects shape) and (each.state = 'flee_predator') );
 		
 		reflex move_around {
 			//do wander speed: shelter_speed; 

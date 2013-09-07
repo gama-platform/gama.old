@@ -51,10 +51,10 @@ global {
 			list<list> satisfying_ball_groups <- (free_balls simple_clustering_by_distance group_creation_distance) where ( (length (each)) > min_group_member ) ;
 			
 			loop one_group over: satisfying_ball_groups {
-				create group number: 1 returns: new_groups;
+				create group returns: new_groups;
 				
 				ask (new_groups at 0) as: group {
-					capture target: one_group as: ball_in_group; 
+					capture one_group as: ball_in_group; 
 				}
 			}
 		}
@@ -84,7 +84,7 @@ global {
 entities {
 	species base skills: [moving] ;
 	
-	species ball parent: base control: fsm skills: [moving]  { 
+	species ball parent: base control: fsm  { 
 		
 		float speed <- ball_speed; 
 		rgb color <- ball_color;
@@ -171,11 +171,11 @@ entities {
 		
 		geometry shape <- polygon (ball_in_group) buffer  10 ;
 		
-		float speed <- float(group_base_speed) ;
-		float perception_range <- float(base_perception_range + (rnd(5))) ;
-		ball nearest_free_ball <- ( ball where ( (each.state = 'follow_nearest_ball') ) ) closest_to self ;
-		group nearest_smaller_group <- ( ( (group as list) - self ) where ( (length (each.members)) < (length (members)) ) ) closest_to self ;
-		base target <- (self get_nearer_target []) depends_on: [nearest_free_ball, nearest_smaller_group] ;
+		float speed update: float(group_base_speed) ;
+		float perception_range update: float(base_perception_range + (rnd(5))) ;
+		ball nearest_free_ball update: ( ball where ( (each.state = 'follow_nearest_ball') ) ) closest_to self ;
+		group nearest_smaller_group update: ( ( (group as list) - self ) where ( (length (each.members)) < (length (members)) ) ) closest_to self ;
+		base target update: (self get_nearer_target []) depends_on: [nearest_free_ball, nearest_smaller_group] ;
 		
 		base get_nearer_target {
 			if  (nearest_free_ball = nil) and (nearest_smaller_group = nil) {
@@ -228,7 +228,7 @@ entities {
 		}
 		
 		action disaggregate {
-			release list(ball_in_group) as: ball in: world {
+			release members as: ball in: world {
 				set state value: 'chaos' ;
 			}
 			
@@ -313,11 +313,11 @@ entities {
 	}
 	
 	species cloud parent: base {
-		geometry shape <- convex_hull(polygon(members collect (((group_delegation(each)).shape).location)));
+		geometry shape update: convex_hull(polygon(members collect (((group_delegation(each)).shape).location)));
 		rgb color;
 				
 		species group_delegation parent: group topology: (topology(world.shape)) {
-			geometry shape <- convex_hull( (polygon ( (list (ball_in_cloud)) collect (each.location) )) ) buffer  10 ;
+			geometry shape update: convex_hull( (polygon ( (list (ball_in_cloud)) collect (each.location) )) ) buffer  10 ;
 
 			reflex capture_nearby_free_balls when: (time mod update_frequency) = 0 {
 			}
@@ -432,7 +432,7 @@ entities {
 	} 
 }
 
-experiment default_experiment2 type: gui {
+experiment group_experiment type: gui {
 	parameter 'Create groups?' var: create_group <- true;
 	parameter 'Create clouds?' var: create_cloud <- false;
 		
@@ -460,15 +460,6 @@ experiment default_experiment2 type: gui {
 			species group;
 			species group_agents_viewer;
 		}
-		
-		display name: 'Cloud display' {
-			species cloud;
-			species cloud_agents_viewer;
-		}
-		
-		monitor groups value: list (group);
-		monitor length_groups value: length (list (group));
-		monitor length_clouds value: length(list(cloud));
 	}
-
 }
+
