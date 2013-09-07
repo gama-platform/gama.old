@@ -519,32 +519,39 @@
                label="Common controls">
             <command
                   commandId="msi.gama.application.preferences"
-                  icon="icons/application-form.png"
+                  icon="icons/application_form.png"
                   label="Preferences"
                   style="push"
                   tooltip="Open preferences">
             </command>
             <command
-                  commandId="msi.gama.application.commands.SwitchPerspective"
-                  icon="icons/applications.png"
-                  label="Switch Perspective"
-                  style="push">
+                  commandId="msi.gama.application.goto.modeling"
+                  icon="icons/application_edit.png"
+                  label="Modeling perspective"
+                  style="push"
+                  tooltip="Open modeling perspective">
                <visibleWhen
                      checkEnabled="false">
-                  <with
-                        variable="activeWorkbenchWindow.activePerspective">
-                     <or>
-                        <equals
-                              value="msi.gama.application.perspectives.ModelingPerspective">
-                        </equals>
-                        <equals
-                              value="msi.gama.application.perspectives.HeadlessPerspective">
-                        </equals>
-                        <equals
-                              value="msi.gama.application.perspectives.SimulationPerspective">
-                        </equals>
-                     </or>
-                  </with>
+                  <not>
+                     <reference
+                           definitionId="isInModelingPerspective">
+                     </reference>
+                  </not>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="msi.gama.application.goto.simulation"
+                  icon="icons/application_start.png"
+                  label="Simulation perspective"
+                  style="push"
+                  tooltip="Open simulation perspective">
+               <visibleWhen
+                     checkEnabled="false">
+                  <not>
+                     <reference
+                           definitionId="isInSimulationPerspective">
+                     </reference>
+                  </not>
                </visibleWhen>
             </command>
             <control
@@ -1062,6 +1069,14 @@
             </or>
          </activeWhen>
       </handler>
+      <handler
+            class="msi.gama.gui.swt.commands.SwitchToModeling"
+            commandId="msi.gama.application.goto.modeling">
+      </handler>
+      <handler
+            class="msi.gama.gui.swt.commands.SwitchToSimulation"
+            commandId="msi.gama.application.goto.simulation">
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.services">
@@ -1397,6 +1412,14 @@
       <command
             id="msi.gama.application.preferences"
             name="Preferences">
+      </command>
+      <command
+            id="msi.gama.application.goto.modeling"
+            name="Switch to modeling perspective">
+      </command>
+      <command
+            id="msi.gama.application.goto.simulation"
+            name="Switch to simulation perspective">
       </command>
    </extension>
  <extension
