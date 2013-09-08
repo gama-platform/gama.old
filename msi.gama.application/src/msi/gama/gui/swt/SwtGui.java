@@ -59,7 +59,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public class SwtGui implements IGui {
 
 	/**
-	 * Returns an image descriptor for the image file at the given plug-in relative path
+	 * Returns an image descriptor for the image file in the global plug-in
 	 * 
 	 * @param path the path
 	 * @return the image descriptor
@@ -138,6 +138,8 @@ public class SwtGui implements IGui {
 	public static Image magnifier = getImageDescriptor("/icons/button_focus.png").createImage();
 	public static Image highlight = getImageDescriptor("/icons/selection-blue.png").createImage();
 	public static Image action = getImageDescriptor("/icons/action_run.png").createImage();
+	public static ImageDescriptor overlay_ok_descriptor = getImageDescriptor("icons/bullet_tick.png");
+	public static Image overlay_ok = overlay_ok_descriptor.createImage();
 
 	public static Label createLeftLabel(final Composite parent, final String title) {
 		final Label label = new Label(parent, SWT.NONE);

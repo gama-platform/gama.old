@@ -27,8 +27,6 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 
 	private static String decoratorId = "msi.gama.light.decorator";
 
-	private static ImageDescriptor id = SwtGui.getImageDescriptor("icons/bullet_tick.png");
-
 	private IResourceChangeListener listener = null;
 
 	private boolean useJDT;
@@ -83,8 +81,7 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 
 		int severity = -1;
 		try {
-			severity =
-				resource.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
+			severity = resource.findMaxProblemSeverity(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
@@ -98,9 +95,8 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 			overlay = getErrorImageDescriptor();
 		} else if ( severity == IMarker.SEVERITY_WARNING ) {
 			overlay = getWarningImageDescriptor();
-		} else if ( resource instanceof IProject || resource instanceof IFolder ||
-			resource.getName().endsWith("gaml") ) {
-			overlay = id;
+		} else if ( resource instanceof IProject || resource instanceof IFolder || resource.getName().endsWith("gaml") ) {
+			overlay = SwtGui.overlay_ok_descriptor;
 		}
 
 		decoration.addOverlay(overlay, IDecoration.BOTTOM_LEFT);
@@ -121,8 +117,7 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 
 	private ImageDescriptor getErrorImageDescriptor() {
 		ImageDescriptor result =
-			PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_DEC_FIELD_ERROR);
+			PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_ERROR);
 		// TODO: remove workaround see https://bugs.eclipse.org/bugs/show_bug.cgi?id=304397
 		return result != null ? result : JFaceResources.getImageRegistry().getDescriptor(
 			"org.eclipse.jface.fieldassist.IMG_DEC_FIELD_ERROR");
@@ -130,8 +125,7 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 
 	private ImageDescriptor getWarningImageDescriptor() {
 		ImageDescriptor result =
-			PlatformUI.getWorkbench().getSharedImages()
-				.getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
+			PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_DEC_FIELD_WARNING);
 		// TODO: remove workaround see https://bugs.eclipse.org/bugs/show_bug.cgi?id=304397
 		return result != null ? result : JFaceResources.getImageRegistry().getDescriptor(
 			"org.eclipse.jface.fieldassist.IMG_DEC_FIELD_WARNING");

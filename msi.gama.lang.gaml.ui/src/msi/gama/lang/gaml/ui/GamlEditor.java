@@ -59,7 +59,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 	CLabel status;
 	Button menu;
 	List<String> completeNamesOfExperiments = new ArrayList();
-	List<String> abbreviatedNamesOfExperiments = new ArrayList();
+	List<String> abbreviations = new ArrayList();
 	boolean wasOK = true, inited = false;
 
 	@Inject
@@ -147,17 +147,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		layout2.marginWidth = 12;
 		layout2.marginHeight = 0;
 		indicator.setLayout(layout2);
-
-		// Composite top = new Composite(parent, SWT.None);
-		// data = new GridData(SWT.FILL, SWT.FILL, true, false);
-		// top.setLayoutData(data);
-		// layout = new GridLayout(1, false);
-		//
-		// layout.horizontalSpacing = 0;
-		// layout.verticalSpacing = 0;
-		// layout.marginWidth = 0;
-		// layout.marginHeight = 0;
-		// top.setLayout(layout);
 
 		status = new CLabel(toolbar, SWT.NONE);
 		status.setFont(labelFont);
@@ -357,7 +346,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		public void widgetSelected(final SelectionEvent evt) {
 			GamlEditor.this.performSave(true, null);
 			String name = ((Button) evt.widget).getText();
-			int i = abbreviatedNamesOfExperiments.indexOf(name);
+			int i = abbreviations.indexOf(name);
 			if ( i == -1 ) { return; }
 			name = completeNamesOfExperiments.get(i);
 			IModel model = null;
@@ -395,7 +384,9 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		b.setVisible(false);
 	}
 
-	private void setStatus(final Color c, final String text) {
+	private void setStatus(final String text, final boolean ok) {
+		Color c = ok ? abbreviations.size() == 0 ? SwtGui.COLOR_WARNING : SwtGui.COLOR_OK : SwtGui.COLOR_ERROR;
+		// this.setTitleImage(SwtGui.overlay_ok);
 		// this.getOverviewRuler().getControl().setBackground(c);
 		// this.getVerticalRuler().getControl().setBackground(c);
 		indicator.setBackground(c);
@@ -417,18 +408,18 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 					}
 				}
 				if ( ok ) {
-					int size = abbreviatedNamesOfExperiments.size();
+					int size = abbreviations.size();
 					if ( size == 0 ) {
-						setStatus(SwtGui.COLOR_WARNING, "Model is functional, but no experiments have been defined.");
+						setStatus("Model is functional, but no experiments have been defined.", ok);
 					} else {
-						setStatus(SwtGui.COLOR_OK, size == 1 ? "Run experiment:" : "Choose an experiment:");
+						setStatus(size == 1 ? "Run experiment:" : "Choose an experiment:", ok);
 					}
 					int i = 0;
-					for ( String e : abbreviatedNamesOfExperiments ) {
+					for ( String e : abbreviations ) {
 						enableButton(i++, e);
 					}
 				} else {
-					setStatus(SwtGui.COLOR_ERROR, "Error(s) detected. Impossible to run any experiment");
+					setStatus("Error(s) detected. Impossible to run any experiment", ok);
 				}
 
 				toolbar.layout(true);
@@ -451,23 +442,23 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 	private void buildAbbreviations() {
 		// Very simple method used here
 		int size = completeNamesOfExperiments.size();
-		abbreviatedNamesOfExperiments.clear();
+		abbreviations.clear();
 		if ( size > 6 ) {
 			// We remove "Experiment".
 			for ( String s : completeNamesOfExperiments ) {
 				int i = s.indexOf(' ');
 				if ( i != -1 ) {
-					abbreviatedNamesOfExperiments.add(s.substring(i));
+					abbreviations.add(s.substring(i));
 				}
 			}
 		} else if ( size > 4 ) {
 			// We replace "Experiment" by "Exp."
 			for ( String s : completeNamesOfExperiments ) {
-				abbreviatedNamesOfExperiments.add(s.replaceFirst("Experiment ", "Exp."));
+				abbreviations.add(s.replaceFirst("Experiment ", "Exp."));
 			}
 		} else {
 			// We copy the names as it is
-			abbreviatedNamesOfExperiments.addAll(completeNamesOfExperiments);
+			abbreviations.addAll(completeNamesOfExperiments);
 		}
 	}
 
