@@ -41,8 +41,6 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 
 	public DisplayedAgentsMenu(final GamaViewPart view) {
 		super(view);
-		// if ( !(view instanceof LayeredDisplayView) ) { throw new IllegalArgumentException(); }
-		// filteredList = null;
 	}
 
 	/**
@@ -174,7 +172,7 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 
 	public void fill(final Menu menu, final int index, final boolean withWorld, final boolean byLayer,
 		final Collection<IAgent> filteredList) {
-		final LayeredDisplayView view = (LayeredDisplayView) SwtGui.getPage().getActivePart();
+		final LayeredDisplayView view = (LayeredDisplayView) this.view;
 		final IDisplaySurface displaySurface = view.getDisplaySurface();
 		AgentsMenu.MenuAction follow =
 			new AgentsMenu.MenuAction(new FollowSelection(displaySurface), SwtGui.followImage, "Follow");
