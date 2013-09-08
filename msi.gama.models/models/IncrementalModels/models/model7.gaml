@@ -223,9 +223,9 @@ entities {
 			meanI<-mean(Buildings collect each.I);
 			meanR<-mean(Buildings collect each.R);
 			
-			globalS<-(Workers as list) count (each.is_susceptible);
-			globalI<-(Workers as list) count (each.is_infected);
-			globalR<-(Workers as list) count (each.is_immune);
+			globalS<-(Workers as list) count (each.is_susceptible) as float;
+			globalI<-(Workers as list) count (each.is_infected) as float;
+			globalR<-(Workers as list) count (each.is_immune) as float;
 		}
 	}
 }

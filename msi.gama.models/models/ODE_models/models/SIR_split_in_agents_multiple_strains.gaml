@@ -22,23 +22,23 @@ global {
 	
 	init {
 		create S_agt {
-			Ssize <- number_S;
+			Ssize <- float(number_S);
 		}
 
 		create I_agt number : strain_number {
-			Isize <- number_I;
+			Isize <- float(number_I);
 			self.beta <- _beta; 
 			self.delta <- _delta; 
 		}
 
 		create R_agt {
-			Rsize <- number_R;
+			Rsize <- float(number_R);
 		}
 
 		create my_SIR_maths {
-			self.Sm <- number_S;
-			self.Im <- number_I * strain_number;
-			self.Rm <- number_R;
+			self.Sm <- float(number_S);
+			self.Im <- float(number_I) * strain_number;
+			self.Rm <- float(number_R);
 		}
 
 		write 'Basic Reproduction Number (R0): ' + string(_beta * number_S / (_delta));

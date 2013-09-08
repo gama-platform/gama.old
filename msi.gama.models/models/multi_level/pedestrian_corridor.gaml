@@ -106,7 +106,7 @@ entities {
 		geometry shape <- corridor_shape;
 		
 		species captured_pedestrian parent: pedestrian schedules: [] {
-			int released_time;
+			float released_time;
 			
 			aspect my_aspect { }
 		}
@@ -123,7 +123,7 @@ entities {
 				capture tobe_captured_pedestrians as: captured_pedestrian returns: cps;
 				
 				loop cp over: cps {
-					cp.released_time <- time + (int ( corridor_width - ( (((cp).location).x) - ((environment_size / 2) - (corridor_width / 2)) ) ) / pedestrian_speed) ;
+					cp.released_time <- time + ( ( corridor_width - ( (((cp).location).x) - ((environment_size / 2) - (corridor_width / 2)) ) ) / pedestrian_speed) ;
 				}
 			}
 		}

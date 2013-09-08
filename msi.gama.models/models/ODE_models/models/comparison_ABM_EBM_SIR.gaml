@@ -42,9 +42,9 @@ global {
 		}
 		
 		create node number: 1 {
-			S <- number_S;
-			I <- number_I;
-			R <- number_R;	
+			S <- float(number_S);
+			I <- float(number_I);
+			R <- float(number_R);	
 		}
 
 		write 'Basic Reproduction Number: ' + string(beta / (gamma + nu));
@@ -83,7 +83,7 @@ entities {
         }
         
         reflex become_infected when: is_susceptible {
-        	float rate <- 0;
+        	float rate <- 0.0;
         	if(local_infection) {
         		int nb_hosts <- 0;
         		int nb_hosts_infected <- 0;

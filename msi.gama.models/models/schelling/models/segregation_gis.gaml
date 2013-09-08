@@ -12,7 +12,7 @@ global {
 	action initialize_people { 
 		create space from: shape_file_name with: [surface :: float(read("AREA"))];
 		all_places  <- shuffle(space);
-		number_of_people <- density_of_people * sum (all_places collect ((each as space).capacity)); 
+		number_of_people <- int( density_of_people * sum (all_places collect ((each as space).capacity))); 
 		create people number: number_of_people;  
 		ask people as list {  
 			do move_to_new_place;      

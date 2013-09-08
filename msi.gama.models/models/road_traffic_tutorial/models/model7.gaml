@@ -49,7 +49,7 @@ global {
 	reflex repair_road when: (time mod repair_time) = 0 {
 		let the_road_to_repair type: road value: (road as list) with_max_of (each.destruction_coeff) ;
 		ask the_road_to_repair {
-			set destruction_coeff value: 1 ;
+			set destruction_coeff value: 1.0 ;
 		}
 	}
 }

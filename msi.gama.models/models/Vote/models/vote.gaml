@@ -46,7 +46,7 @@ global {
 				create candidat number: nb_candidates{
 					couleur <- rgb ([rnd(255), rnd(255), rnd(255)]); 
 					float x_cord  <- 200 * cpt / nb_candidates;
-					float y_cord <- 100;
+					float y_cord <- 100.0;
 					location <- {x_cord, y_cord};
 					cpt <- cpt + 1;
 				}
@@ -101,7 +101,7 @@ global {
 		ask (candidats_en_course) {
 			if (self != finaliste1 and self != finaliste2) {
 				actif <- false;
-				pourcentage_vote <- 0;
+				pourcentage_vote <- 0.0;
 				remove self from: candidats_en_course;
 			}
 		}	
@@ -142,7 +142,7 @@ global {
 	}
 	
 	reflex calcule_entropie {
-		entropie <- 0;
+		entropie <- 0.0;
 		float abst <- (nb_electors - sum (candidats_en_course  collect (length(each.mes_electeurs)))) / nb_electors;
 		if (abst > 0) {
 			entropie <- entropie - (abst * ln(abst));

@@ -76,7 +76,7 @@ species buildings {
 		if !(empty (entering_people)) {
 			capture entering_people as: people_in_building returns: people_captured;
 			ask people_captured {
-				leaving_time <- time + 50 + rnd(50);
+				leaving_time <- int(time + 50 + rnd(50));
 			}
  		}
 	}

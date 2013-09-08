@@ -12,7 +12,7 @@ global {
 		create road from: shape_file_roads;
 		list<road> roadsList <- road sort_by ((each.location).x);
 		ask roadsList {
-			 destruction_coeff <- cpt;
+			 destruction_coeff <- float(cpt);
 			 color <- rgb(min([255, int(255*(destruction_coeff/ 4.0))]),max ([0, int(255 - (255*(destruction_coeff/4.0)))]),0) ;
 			 cpt <- cpt * 2;
 		}
@@ -21,7 +21,7 @@ global {
 		the_graph <- as_edge_graph(road) with_weights weights_map;
 		
 		create people  {
-			 speed <- 2 ; 
+			 speed <- 2.0 ; 
 			 location <- first(((first (roadsList)).shape).points); 
 			 target <- last(((last (roadsList)).shape).points); 
 		}

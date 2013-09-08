@@ -105,8 +105,8 @@ entities {
 		}
 		
 		action separation (list<ball> nearby_balls) {
-			float repulsive_dx <- 0 ;
-			float repulsive_dy <- 0 ;
+			float repulsive_dx <- 0.0 ;
+			float repulsive_dy <- 0.0 ;
 			loop nb over: nearby_balls { 
 				float repulsive_distance <- ball_separation - ( location distance_to ( nb).location ) ;
 				int repulsive_direction <- ((nb).location) towards (location) ;
@@ -142,7 +142,7 @@ entities {
 		
 		state chaos {
 			enter {
-				beginning_chaos_time <- time ;
+				beginning_chaos_time <- int(time) ;
 				time_in_chaos_state <- 10 + (rnd(10)) ;
 				color <- chaos_ball_color ;
 				speed <- chaos_ball_speed ;
@@ -362,7 +362,7 @@ entities {
 			}
 			
 			if (target_group != nil) {
-				float direction_target <- self towards(target_group);
+				int direction_target <- self towards(target_group);
 				
 				loop m over: members {
 					ask m as group_delegation {

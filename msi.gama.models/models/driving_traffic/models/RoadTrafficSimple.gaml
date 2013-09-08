@@ -24,7 +24,7 @@ global {
 	reflex createPeople when: time mod 20 = 0 and time < 400{
 		roadsList <- (road as list);  
 		create people number: 1 { 
-			speed <-  (2 + 2 * length(people as list)) ;
+			speed <-  (2.0 + 2 * length(people as list)) ;
 			currentRoad <- first (roadsList);
 			source <- first((currentRoad.shape).points);
 			location <- source; 

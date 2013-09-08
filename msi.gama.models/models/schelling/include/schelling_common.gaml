@@ -30,7 +30,7 @@ global {
 	init { 
 		do description;
 		do initialize_places;
-		number_of_people <- length (all_places) * density_of_people;
+		number_of_people <- int( length (all_places) * density_of_people);
 		do initialize_people;
 	}
 

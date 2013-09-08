@@ -23,23 +23,23 @@ global {
 
 	init {
 		create S_agt {
-			Ssize <- number_S ;
+			Ssize <- float(number_S) ;
 			self.beta <- myself.beta ;
 		}
 		create I_agt {
-			Isize <- number_I ;
+			Isize <- float(number_I) ;
 			self.beta <- myself.beta ;
 			self.delta <- myself.delta ;
 		}
 		create R_agt {
-			Rsize <- number_R ;
+			Rsize <- float(number_R) ;
 			self.delta <- myself.delta ;
 		}
 		        
 		create SIR_agt {
-			self.Sm <- number_S ;
-			self.Im <- number_I ;
-			self.Rm <- number_R ;
+			self.Sm <- float(number_S) ;
+			self.Im <- float(number_I) ;
+			self.Rm <- float(number_R) ;
 			
 			self.beta <- myself.beta ;
 			self.delta <- myself.delta ;

@@ -59,7 +59,7 @@ entities {
         }
         
         reflex become_infected when: is_susceptible {
-        	float rate <- 0;
+        	float rate <- 0.0;
         	if(local_infection) {
         		int nb_hosts <- 0;
         		int nb_hosts_infected <- 0;

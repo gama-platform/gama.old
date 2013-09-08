@@ -33,14 +33,14 @@ global {
 		//people with information about the traffic
 		create people {
 			color <- rgb("blue");
-			size <- 2;
+			size <- 2.0;
 			roads_knowledge <- road as_map (each:: each.shape.perimeter * (each.slow ? slow_coeff : 1.0));
 		}
 		
 		//people without information about the traffic
 		create people {
 			color <- rgb("yellow");
-			size <- 1;
+			size <- 1.0;
 			roads_knowledge <- road as_map (each:: each.shape.perimeter);
 		}
 	}

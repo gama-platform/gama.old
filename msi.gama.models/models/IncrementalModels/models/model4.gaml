@@ -31,7 +31,7 @@ species people skills: [moving]{
 	float size ;
 	float z;
 	action updateSize {
-		size <- 10*friendship_graph degree_of (self);
+		size <- 10 * friendship_graph degree_of (self) as float;
 	}
 	reflex movement {
 		if (location distance_to target < 5.0) {
@@ -47,9 +47,9 @@ species people skills: [moving]{
 	//FIXME: Not clean
 	aspect friendship{
 		int degree <- (friendship_graph degree_of (self));
-		set z<- rnd(1000);		
-		set location <- {rnd(1000),rnd(1000),z};
-		set shape <- sphere(degree);
+		z<- rnd(1000) as float;		
+		location <- {rnd(1000),rnd(1000),z};
+		shape <- sphere(degree);
 		draw shape color:my_color;
 	}
 }

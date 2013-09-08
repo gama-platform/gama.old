@@ -18,10 +18,10 @@ global {
 		}	
 		the_graph <-  (as_edge_graph(road)) ;
 		create people number: 300 { 
-			speed <- 15 ;
+			speed <- 15.0 ;
 			target <- any_location_in (one_of(road));
 			location <- any_location_in (one_of(road));
-			living_space <-10;
+			living_space <- 10.0;
 			tolerance <- 0.1;
 			lanes_attribute <- "nbLanes";
 			obstacle_species <- [species(self)]; 

@@ -33,7 +33,7 @@ global {
 		}
 		the_graph <-  (as_edge_graph(road));
 		create people number: nb_people { 
-			living_space <-3;
+			living_space <- 3.0;
 			tolerance <- 0.1;
 			lanes_attribute <- "nbLanes";
 			obstacle_species <- [species(self)]; 

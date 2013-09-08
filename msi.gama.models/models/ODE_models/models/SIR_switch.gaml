@@ -66,9 +66,9 @@ global {
 			current_model <- first(Math_model);
 		}
 
-		current_model.S <- initial_S;
-		current_model.I <- initial_I;
-		current_model.R <- initial_R;
+		current_model.S <- float(initial_S);
+		current_model.I <- float(initial_I);
+		current_model.R <- float(initial_R);
 		current_model.N <- number_Hosts;
 		
 		ask current_model {
@@ -76,9 +76,9 @@ global {
 		}
 
 		create my_SIR_maths {
-			self.S <- myself.initial_S;
-			self.I <- myself.initial_I;
-			self.R <- myself.initial_R;
+			self.S <- float(myself.initial_S);
+			self.I <- float(myself.initial_I);
+			self.R <- float(myself.initial_R);
 			self.N <- number_Hosts;
 			self.beta1 <- beta * neighbourhoodSize * (N / gridSize)* adjust;
 			self.alpha <- delta;
@@ -208,9 +208,9 @@ entities {
 		}
 
 		action count {
-			S <- Host count (each.is_susceptible);
-			I <- Host count (each.is_infected);
-			R <- Host count (each.is_immune);
+			S <- float(Host count (each.is_susceptible));
+			I <- float(Host count (each.is_infected));
+			R <- float(Host count (each.is_immune));
 		}
 
 		action remove_model {

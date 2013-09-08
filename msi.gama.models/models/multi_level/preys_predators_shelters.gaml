@@ -69,7 +69,7 @@ entities {
 			enter {
 				speed <- prey_invisible_speed;
 				color <- prey_invisible_color;
-				invisible_time <- time;
+				invisible_time <- int(time);
 				heading <- rnd (359) ;
 			}
 			do move; 

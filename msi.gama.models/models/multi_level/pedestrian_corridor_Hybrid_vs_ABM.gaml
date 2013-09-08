@@ -112,7 +112,7 @@ entities {
 		float Pmax <- 1.0; // the maximum number of micro-agents can enter macro-agent at the same time
 		
 		species captured_pedestrian parent: pedestrian schedules: [] {
-			int released_time;  
+			float released_time;  
 			
 			aspect default { }
 		}
@@ -147,7 +147,7 @@ entities {
 					float bound1 <- ( (max_speed * ( (1 - (2 * Pl) / Pmax ) ) ) * group_outgoing_time ); //
 					float bound2 <- ( (max_speed * ( (1 - (2 * Pr) / Pmax ) ) ) * group_outgoing_time ); //
 					
-					float pedestrian_outgoing_density <- 0;
+					float pedestrian_outgoing_density <- 0.0;
 					if (macro_length <= bound1 ) {
 						pedestrian_outgoing_density <- Pl;
 						
