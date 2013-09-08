@@ -124,8 +124,8 @@ public class FreeFlyCamera extends AbstractCamera {
 	@Override
 	public void setRegionOfInterest(final Point origin, final Point end, final Vector3D worldCoordinates) {
 		region[0] = origin.x;
-		region[1] = end.y;
-		region[2] = origin.x;
+		region[1] = origin.y;
+		region[2] = end.x;
 		region[3] = end.y;
 		int roiWidth = Math.abs(end.x - origin.x);
 		int roiHeight = Math.abs(end.y - origin.y);

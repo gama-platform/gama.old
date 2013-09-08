@@ -543,7 +543,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	}
 
 	public void setCameraUpVector(final ILocation upVector) {
-		camera.upPosition(upVector.getX(), upVector.getY(), upVector.getZ());
+		if ( camera.getPhi() < 360 && camera.getPhi() > 180 ) {
+			camera.upPosition(0, -1, 0);
+		} else {
+			camera.upPosition(upVector.getX(), upVector.getY(), upVector.getZ());
+		}
 	}
 
 	public double getMaxEnvDim() {

@@ -95,11 +95,8 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 			// Remove all the already existing entity in openGLGraphics and redraw the existing ones.
 			@Override
 			public void run() {
-				// if ( !canBeUpdated() ) { return; }
-				// canBeUpdated(false);
 				final ModelScene s = renderer.getScene();
 				if ( s != null ) {
-					// GuiUtils.debug("JOGLAWTDisplaySurface displayBlock.run " + getName());
 					s.wipe(renderer);
 
 					// FIXME: Why setting this at each run??
@@ -107,16 +104,11 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 					renderer.setStencil(getOutput().getStencil());
 					renderer.setShowFPS(getOutput().getShowFPS());
 					renderer.setDrawEnv(getOutput().getDrawEnv());
-
 					renderer.setAmbientLightValue(getOutput().getAmbientLightColor());
 					renderer.setPolygonMode(getOutput().getPolygonMode());
 					renderer.setCameraPosition(getOutput().getCameraPos());
 					renderer.setCameraLookPosition(getOutput().getCameraLookPos());
-					if ( renderer.camera.getPhi() < 360 && renderer.camera.getPhi() > 180 ) {
-						renderer.setCameraUpVector(new GamaPoint(0, -1, 0));
-					} else {
-						renderer.setCameraUpVector(getOutput().getCameraUpVector());
-					}
+					renderer.setCameraUpVector(getOutput().getCameraUpVector());
 					if ( autosave ) {
 						snapshot();
 					}
