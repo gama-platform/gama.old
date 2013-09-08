@@ -27,7 +27,6 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.factories.*;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
-import org.eclipse.emf.common.notify.*;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -43,7 +42,6 @@ public class SymbolDescription implements IDescription {
 	protected IDescription enclosing;
 	protected String originName;
 	protected final List<IDescription> children;
-	// private final SymbolProto meta;
 	protected final String keyword;
 	protected boolean isDisposed = false;
 
@@ -56,7 +54,6 @@ public class SymbolDescription implements IDescription {
 		if ( superDesc != null ) {
 			originName = superDesc.getName();
 		}
-		// meta = DescriptionFactory.getProto(keyword);
 		setEnclosingDescription(superDesc);
 		if ( getMeta().hasSequence() ) {
 			this.children = new ArrayList();
@@ -175,14 +172,8 @@ public class SymbolDescription implements IDescription {
 
 	@Override
 	public void dispose() {
-		if ( /* isDisposed || */isBuiltIn() ) { return; }
-		// FIXME / TODO Verify that not disposing the previous expressions does not lead to runtime errors, as the
-		// expressions will still be available, after a validation, in the ISyntacticStatement, which shares the facets
-		// with the IDescription and the ISymbol...
-		// TODO A cleaner solution, at the expense of memory, would be to have a generic Facets<T> type, with two
-		// subtypes: Facets<IExpressionDescription> and Facets<IExpression>
+		if ( isBuiltIn() ) { return; }
 		facets.dispose();
-		facets.clear();
 		if ( children != null ) {
 			for ( IDescription c : children ) {
 				c.dispose();
@@ -190,10 +181,6 @@ public class SymbolDescription implements IDescription {
 			children.clear();
 		}
 		enclosing = null;
-		// if ( element != null ) {
-		// DescriptionFactory.unsetGamlDescription(element, this);
-		// }
-		// isDisposed = true;
 	}
 
 	@Override
@@ -339,40 +326,40 @@ public class SymbolDescription implements IDescription {
 		return null;
 	}
 
-	/**
-	 * @see org.eclipse.emf.common.notify.Adapter#notifyChanged(org.eclipse.emf.common.notify.Notification)
-	 */
-	@Override
-	public void notifyChanged(final Notification notification) {
-		// Nothing to do yet
-	}
-
-	/**
-	 * @see org.eclipse.emf.common.notify.Adapter#getTarget()
-	 */
-	@Override
-	public Notifier getTarget() {
-		return element;
-	}
-
-	/**
-	 * @see org.eclipse.emf.common.notify.Adapter#setTarget(org.eclipse.emf.common.notify.Notifier)
-	 */
-	@Override
-	public void setTarget(final Notifier newTarget) {}
-
-	/**
-	 * @see org.eclipse.emf.common.notify.Adapter#isAdapterForType(java.lang.Object)
-	 */
-	@Override
-	public boolean isAdapterForType(final Object type) {
-		return false;
-	}
-
-	@Override
-	public void unsetTarget(final Notifier object) {
-
-	}
+	// /**
+	// * @see org.eclipse.emf.common.notify.Adapter#notifyChanged(org.eclipse.emf.common.notify.Notification)
+	// */
+	// @Override
+	// public void notifyChanged(final Notification notification) {
+	// // Nothing to do yet
+	// }
+	//
+	// /**
+	// * @see org.eclipse.emf.common.notify.Adapter#getTarget()
+	// */
+	// @Override
+	// public Notifier getTarget() {
+	// return element;
+	// }
+	//
+	// /**
+	// * @see org.eclipse.emf.common.notify.Adapter#setTarget(org.eclipse.emf.common.notify.Notifier)
+	// */
+	// @Override
+	// public void setTarget(final Notifier newTarget) {}
+	//
+	// /**
+	// * @see org.eclipse.emf.common.notify.Adapter#isAdapterForType(java.lang.Object)
+	// */
+	// @Override
+	// public boolean isAdapterForType(final Object type) {
+	// return false;
+	// }
+	//
+	// @Override
+	// public void unsetTarget(final Notifier object) {
+	//
+	// }
 
 	@Override
 	public String getTitle() {

@@ -27,7 +27,6 @@ import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.path.*;
-
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 
@@ -71,51 +70,54 @@ public class GraphTopology extends AbstractTopology {
 		boolean sourceNode = graph.containsVertex(source);
 		boolean targetNode = graph.containsVertex(target);
 		boolean isDirected = graph.isDirected();
-		if (sourceNode && targetNode)
-			return (GamaSpatialPath) graph.computeShortestPathBetween(source, target);
-		
+		if ( sourceNode && targetNode ) { return (GamaSpatialPath) graph.computeShortestPathBetween(source, target); }
+
 		IShape edgeS = null, edgeT = null;
-		
+
 		final IAgentFilter filter = In.edgesOf(getPlaces());
 
-			if (!sourceNode)
-				edgeS =
-					source instanceof ILocation ? getAgentClosestTo((ILocation) source, filter) : getAgentClosestTo(source,
-						filter);
-			if (!targetNode)
+		if ( !sourceNode ) {
+			edgeS =
+				source instanceof ILocation ? getAgentClosestTo((ILocation) source, filter) : getAgentClosestTo(source,
+					filter);
+		}
+		if ( !targetNode ) {
 			edgeT =
 				target instanceof ILocation ? getAgentClosestTo((ILocation) target, filter) : getAgentClosestTo(target,
 					filter);
-		
-		if ( (edgeS == null && !sourceNode) || (edgeT == null && !targetNode) ) { return null; }
-		if (getPlaces().isDirected()) 
-			return pathBetweenCommonDirected(edgeS, edgeT, source, target,sourceNode,targetNode);
-		return pathBetweenCommon(edgeS, edgeT, source, target,sourceNode,targetNode);
+		}
+
+		if ( edgeS == null && !sourceNode || edgeT == null && !targetNode ) { return null; }
+		if ( getPlaces().isDirected() ) { return pathBetweenCommonDirected(edgeS, edgeT, source, target, sourceNode,
+			targetNode); }
+		return pathBetweenCommon(edgeS, edgeT, source, target, sourceNode, targetNode);
 
 	}
 
 	public GamaSpatialPath pathBetweenCommon(final IShape edgeS, final IShape edgeT, final IShape source,
-		final IShape target, boolean sourceNode,boolean targetNode) {
-		/*if ( edgeS == edgeT ) { return PathFactory.newInstance(this, source, target, GamaList.with(edgeS));
-		// return new GamaPath(this, source, target, GamaList.with(edgeS));
-		}*/
+		final IShape target, final boolean sourceNode, final boolean targetNode) {
+		/*
+		 * if ( edgeS == edgeT ) { return PathFactory.newInstance(this, source, target, GamaList.with(edgeS));
+		 * // return new GamaPath(this, source, target, GamaList.with(edgeS));
+		 * }
+		 */
 
 		IShape nodeS = source;
 		IShape nodeT = target;
-		
-		if (!targetNode) {
+
+		if ( !targetNode ) {
 			IShape t1 = null;
 			IShape t2 = null;
 			t1 = getPlaces().getEdgeSource(edgeT);
 			t2 = getPlaces().getEdgeTarget(edgeT);
-			if ( t1 == null || t2 == null) { return null; }
+			if ( t1 == null || t2 == null ) { return null; }
 			nodeT = t1;
 			if ( t1.getLocation().euclidianDistanceTo(target.getLocation()) > t2.getLocation().euclidianDistanceTo(
 				target.getLocation()) ) {
 				nodeT = t2;
 			}
 		}
-		if (!sourceNode) {
+		if ( !sourceNode ) {
 			IShape s1 = null;
 			IShape s2 = null;
 			s1 = getPlaces().getEdgeSource(edgeS);
@@ -129,38 +131,37 @@ public class GraphTopology extends AbstractTopology {
 				nodeS = s2;
 			}
 		}
-		
-		
+
 		final IList<IShape> edges = getPlaces().computeBestRouteBetween(nodeS, nodeT);
 		if ( edges.isEmpty() || edges.get(0) == null ) { return null; }
-		if (!sourceNode) {
+		if ( !sourceNode ) {
 			final HashSet edgesSetInit = new HashSet(Arrays.asList(edges.get(0).getInnerGeometry().getCoordinates()));
 			final HashSet edgesSetS = new HashSet(Arrays.asList(edgeS.getInnerGeometry().getCoordinates()));
 			if ( !edgesSetS.equals(edgesSetInit) ) {
 				edges.add(0, edgeS);
 			}
 		}
-		if (!targetNode) {
+		if ( !targetNode ) {
 			final HashSet edgesSetEnd =
-					new HashSet(Arrays.asList(edges.get(edges.size() - 1).getInnerGeometry().getCoordinates()));
-				final HashSet edgesSetT = new HashSet(Arrays.asList(edgeT.getInnerGeometry().getCoordinates()));
+				new HashSet(Arrays.asList(edges.get(edges.size() - 1).getInnerGeometry().getCoordinates()));
+			final HashSet edgesSetT = new HashSet(Arrays.asList(edgeT.getInnerGeometry().getCoordinates()));
 
-				if ( !edgesSetT.equals(edgesSetEnd) ) {
-					edges.add(edgeT);
-				}
+			if ( !edgesSetT.equals(edgesSetEnd) ) {
+				edges.add(edgeT);
+			}
 		}
-		
+
 		// return new GamaPath(this, source, target, edges);
 		return PathFactory.newInstance(this, source, target, edges);
 	}
-	
+
 	public GamaSpatialPath pathBetweenCommonDirected(final IShape edgeS, final IShape edgeT, final IShape source,
-			final IShape target, boolean sourceNode,boolean targetNode) {
+		final IShape target, final boolean sourceNode, final boolean targetNode) {
 		IList<IShape> edges;
-		
-		if (edgeS == edgeT) {
+
+		if ( edgeS == edgeT ) {
 			GamaPoint ptS = new GamaPoint(edgeS.getInnerGeometry().getCoordinates()[0]);
-			if (source.euclidianDistanceTo(ptS) < target.euclidianDistanceTo(ptS)) {
+			if ( source.euclidianDistanceTo(ptS) < target.euclidianDistanceTo(ptS) ) {
 				edges = new GamaList<IShape>();
 				edges.add(edgeS);
 				return PathFactory.newInstance(this, source, target, edges);
@@ -168,48 +169,49 @@ public class GraphTopology extends AbstractTopology {
 		}
 		IShape nodeS = sourceNode ? source : getPlaces().getEdgeTarget(edgeS);
 		IShape nodeT = targetNode ? target : getPlaces().getEdgeSource(edgeT);
-			
-		if (nodeS == nodeT) {
-				edges = new GamaList<IShape>();
-				edges.add(edgeS);
-				edges.add(edgeT);
-				return PathFactory.newInstance(this, source, target, edges);
-			}
-			edges = getPlaces().computeBestRouteBetween(nodeS, nodeT);
-			if ( edges.isEmpty() || edges.get(0) == null ) { return null; }
-			
-			if (!sourceNode)
-				edges.add(0, edgeS);
-			if (!targetNode)
-				edges.add(edges.size(), edgeT);
-			
-			// return new GamaPath(this, source, target, edges);
+
+		if ( nodeS == nodeT ) {
+			edges = new GamaList<IShape>();
+			edges.add(edgeS);
+			edges.add(edgeT);
 			return PathFactory.newInstance(this, source, target, edges);
 		}
-	
+		edges = getPlaces().computeBestRouteBetween(nodeS, nodeT);
+		if ( edges.isEmpty() || edges.get(0) == null ) { return null; }
+
+		if ( !sourceNode ) {
+			edges.add(0, edgeS);
+		}
+		if ( !targetNode ) {
+			edges.add(edges.size(), edgeT);
+		}
+
+		// return new GamaPath(this, source, target, edges);
+		return PathFactory.newInstance(this, source, target, edges);
+	}
+
 	@Override
 	public GamaSpatialPath pathBetween(final IScope scope, final ILocation source, final ILocation target) {
 		IShape edgeS = null, edgeT = null;
 		ISpatialGraph graph = getPlaces();
 		boolean sourceNode = graph.containsVertex(source);
 		boolean targetNode = graph.containsVertex(target);
-		if (sourceNode && targetNode)
-			return (GamaSpatialPath) graph.computeShortestPathBetween(source, target);
-		
+		if ( sourceNode && targetNode ) { return (GamaSpatialPath) graph.computeShortestPathBetween(source, target); }
+
 		if ( !graph.getEdges().isEmpty() ) {
 			if ( graph instanceof GamaSpatialGraph && !((GamaSpatialGraph) graph).isAgentEdge() ) {
-				
+
 				double distMinT = Double.MAX_VALUE;
 				double distMinS = Double.MAX_VALUE;
 				for ( final IShape shp : this.getPlaces().getEdges() ) {
-					if (!sourceNode) {
+					if ( !sourceNode ) {
 						final double distS = shp.euclidianDistanceTo(source);
 						if ( distS < distMinS ) {
 							distMinS = distS;
 							edgeS = shp;
 						}
 					}
-					if (!targetNode) {	
+					if ( !targetNode ) {
 						final double distT = shp.euclidianDistanceTo(target);
 						if ( distT < distMinT ) {
 							distMinT = distT;
@@ -219,13 +221,17 @@ public class GraphTopology extends AbstractTopology {
 				}
 			} else {
 				final IAgentFilter filter = In.edgesOf(getPlaces());
-				if (!sourceNode) edgeS = getAgentClosestTo(source, filter);
-				if (!targetNode) edgeT = getAgentClosestTo(target, filter);
+				if ( !sourceNode ) {
+					edgeS = getAgentClosestTo(source, filter);
+				}
+				if ( !targetNode ) {
+					edgeT = getAgentClosestTo(target, filter);
+				}
 			}
 		}
-		
-		if (graph.isDirected()) 
-			return pathBetweenCommonDirected(edgeS, edgeT, source, target, sourceNode, targetNode);
+
+		if ( graph.isDirected() ) { return pathBetweenCommonDirected(edgeS, edgeT, source, target, sourceNode,
+			targetNode); }
 		return pathBetweenCommon(edgeS, edgeT, source, target, sourceNode, targetNode);
 	}
 
@@ -339,7 +345,7 @@ public class GraphTopology extends AbstractTopology {
 
 	@Override
 	public boolean isTorus() {
-		// TODO Auto-generated method stub
+		// TODO Why is it the case ?
 		return false;
 	}
 }

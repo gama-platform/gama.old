@@ -26,7 +26,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.factories.IChildrenProvider;
 import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
-import org.eclipse.emf.common.notify.*;
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -102,20 +101,20 @@ public class ModelDescription extends SpeciesDescription {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.emf.common.notify.Adapter#notifyChanged(org.eclipse.emf.common.notify.Notification)
-	 */
-	@Override
-	public void notifyChanged(final Notification notification) {}
-
-	@Override
-	public void unsetTarget(final Notifier object) {
-		// Normally sent when the EObject is destroyed or no longer accepts the current description
-		// as an adapter. In that case, whe should dispose the model description (the underlying
-		// model has changed or been garbaged)
-		// GuiUtils.debug("Removing: " + this + " from its EObject " + object);
-		this.dispose();
-	}
+	// /**
+	// * @see org.eclipse.emf.common.notify.Adapter#notifyChanged(org.eclipse.emf.common.notify.Notification)
+	// */
+	// @Override
+	// public void notifyChanged(final Notification notification) {}
+	//
+	// @Override
+	// public void unsetTarget(final Notifier object) {
+	// // Normally sent when the EObject is destroyed or no longer accepts the current description
+	// // as an adapter. In that case, whe should dispose the model description (the underlying
+	// // model has changed or been garbaged)
+	// // GuiUtils.debug("Removing: " + this + " from its EObject " + object);
+	// this.dispose();
+	// }
 
 	/**
 	 * Gets the model file name.

@@ -136,10 +136,9 @@ public class SymbolFactory {
 		}
 		final TypesManager tm = md.getTypesManager();
 		DescriptionValidator.assertDescriptionIsInsideTheRightSuperDescription(smd, desc);
-		final Facets rawFacets = desc.getFacets();
 		// Validation of the facets (through their compilation)
 
-		for ( final Facet f : rawFacets.entrySet() ) {
+		for ( final Facet f : desc.getFacets().entrySet() ) {
 			if ( f == null ) {
 				continue;
 			}
@@ -155,7 +154,6 @@ public class SymbolFactory {
 			}
 			DescriptionValidator.verifyFacetType(desc, facetName, expr, smd, md, tm);
 		}
-		// verifyFacetsType(desc, rawFacets);
 		if ( smd.hasSequence() && !desc.getKeyword().equals(PRIMITIVE) ) {
 			if ( smd.isRemoteContext() ) {
 				desc.copyTempsAbove();
@@ -180,23 +178,13 @@ public class SymbolFactory {
 	}
 
 	final ISymbol privateCompile(final IDescription desc) {
-		boolean multicore = false;
 		final SymbolProto md = desc.getMeta();
 		if ( md == null ) { return null; }
-		final Facets rawFacets = desc.getFacets();
-		for ( final Facet f : rawFacets.entrySet() ) {
+		for ( final Facet f : desc.getFacets().entrySet() ) {
 			if ( f != null && !f.getKey().equals(WITH) ) {
 				compileFacet(f.getKey(), desc, md);
 			}
-			/*
-			 * if ( f != null && f.getKey().equals(MULTICORE) ) {
-			 * //compileFacet(f.getKey(), desc, md);
-			 * System.out.println("Multi-core!!!!!!!!");
-			 * multicore = true;
-			 * }
-			 */
 		}
-
 		ISymbol cs = md.getConstructor().create(desc);
 		if ( cs == null ) { return null; }
 		if ( md.hasArgs() ) {

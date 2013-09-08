@@ -237,8 +237,6 @@ public class SpeciesDescription extends TypeDescription {
 		return behaviors != null && behaviors.containsKey(a);
 	}
 
-	// FAIRE UN FIX POUR CREER AUTOMATIQUEMENT L'ACTION CORRESPONDANTE
-
 	private void addAspect(final StatementDescription ce) {
 		String aspectName = ce.getName();
 		if ( aspectName == null ) {
@@ -722,7 +720,7 @@ public class SpeciesDescription extends TypeDescription {
 
 	@Override
 	public Class getJavaBase() {
-		// HACK Remove at some point in the future
+		// FIXME HACK Remove at some point in the future
 		if ( isGrid() ) {
 			if ( !facets.containsKey("use_regular_agents") || TRUE.equals(facets.getLabel("use_regular_agents")) ) {
 				javaBase = GamlAgent.class;

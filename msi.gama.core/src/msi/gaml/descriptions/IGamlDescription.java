@@ -5,7 +5,6 @@
 package msi.gaml.descriptions;
 
 import msi.gama.common.interfaces.ITyped;
-import org.eclipse.emf.common.notify.Adapter;
 
 /**
  * The class IGamlDescription.
@@ -14,7 +13,7 @@ import org.eclipse.emf.common.notify.Adapter;
  * @since 27 avr. 2012
  * 
  */
-public interface IGamlDescription extends Adapter.Internal, ITyped {
+public interface IGamlDescription extends /* Adapter.Internal, */ITyped {
 
 	public void dispose();
 

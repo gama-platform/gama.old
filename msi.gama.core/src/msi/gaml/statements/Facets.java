@@ -269,7 +269,7 @@ public class Facets {
 				facets[i].value.dispose();
 			}
 		}
-
+		clear();
 	}
 
 }

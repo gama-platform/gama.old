@@ -21,7 +21,6 @@ package msi.gaml.expressions;
 import java.util.*;
 import msi.gama.runtime.IScope;
 import msi.gaml.types.*;
-import org.eclipse.emf.common.notify.*;
 
 /**
  * Abstract class that defines the structure of all expression classes.
@@ -85,26 +84,27 @@ public abstract class AbstractExpression implements IExpression {
 	@Override
 	public void dispose() {}
 
-	@Override
-	public void notifyChanged(final Notification notification) {}
-
-	@Override
-	public Notifier getTarget() {
-		return null;
-	}
-
-	@Override
-	public void setTarget(final Notifier newTarget) {}
-
-	@Override
-	public boolean isAdapterForType(final Object type) {
-		return false;
-	}
-
-	@Override
-	public void unsetTarget(final Notifier object) {
-
-	}
+	//
+	// @Override
+	// public void notifyChanged(final Notification notification) {}
+	//
+	// @Override
+	// public Notifier getTarget() {
+	// return null;
+	// }
+	//
+	// @Override
+	// public void setTarget(final Notifier newTarget) {}
+	//
+	// @Override
+	// public boolean isAdapterForType(final Object type) {
+	// return false;
+	// }
+	//
+	// @Override
+	// public void unsetTarget(final Notifier object) {
+	//
+	// }
 
 	@Override
 	public IExpression resolveAgainst(final IScope scope) {
