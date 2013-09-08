@@ -5,8 +5,6 @@ import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.*;
 import javax.media.opengl.GL;
-
-import msi.gama.common.util.GuiUtils;
 import msi.gama.jogl.scene.ObjectDrawer.CollectionDrawer;
 import msi.gama.jogl.scene.ObjectDrawer.DEMDrawer;
 import msi.gama.jogl.scene.ObjectDrawer.GeometryDrawer;
@@ -15,9 +13,7 @@ import msi.gama.jogl.scene.ObjectDrawer.StringDrawer;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.metamodel.shape.IShape;
 import msi.gama.runtime.GAMA;
-import msi.gaml.operators.Cast;
 import msi.gaml.types.GamaGeometryType;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import com.vividsolutions.jts.geom.*;
@@ -43,7 +39,7 @@ public class ModelScene {
 	final GamaPoint offset = new GamaPoint(0, 0, 0);
 	final GamaPoint scale = new GamaPoint(1, 1, 1);
 	boolean staticObjectsAreLocked;
-	final Double envWidth, envHeight;
+	// final Double envWidth, envHeight;
 	private boolean envGeometryInitialized = false;
 
 	public ModelScene(final JOGLAWTGLRenderer renderer) {
@@ -53,15 +49,15 @@ public class ModelScene {
 		images = new SceneObjects(new ImageDrawer(renderer), true, false);
 		dems = new SceneObjects(new DEMDrawer(renderer), true, false);
 		staticObjects = new SceneObjects.Static(new GeometryDrawer(renderer), true, false);
-		envWidth = renderer.env_width;
-		envHeight = renderer.env_height;
+		// envWidth = renderer.env_width;
+		// envHeight = renderer.env_height;
 	}
 
 	/**
 	 * Called every new iteration when updateDisplay() is called on the surface
 	 */
 	public void wipe(final JOGLAWTGLRenderer renderer) {
-		envGeometryInitialized =false;
+		envGeometryInitialized = false;
 		geometries.clear(renderer);
 		collections.clear(renderer);
 		images.clear(renderer);
@@ -85,8 +81,8 @@ public class ModelScene {
 		if ( drawEnv ) {
 			this.drawAxes(renderer.gl, renderer.getMaxEnvDim() / 10);
 		}
-		
-		this.drawEnvironmentBounds(renderer,drawEnv);
+
+		this.drawEnvironmentBounds(renderer, drawEnv);
 		geometries.draw(picking, renderer);
 		staticObjects.draw(picking, renderer);
 		images.draw(picking, renderer);
@@ -105,22 +101,23 @@ public class ModelScene {
 			size, alpha, bitmap));
 	}
 
-	public void addImage(final BufferedImage img, final IAgent agent, final double z_layer, final int currentLayerId, final Double x, final Double y, final Double z,
-		final Double width, final Double height, final Integer angle, final GamaPoint offset, final GamaPoint scale,
-		final boolean isDynamic, final Double alpha, final MyTexture texture, final String name) {
-		images.add(new ImageObject(img, agent,z_layer, currentLayerId, x, y, Double.isNaN(z) ? 0 : z, alpha, width, height, angle == null ? 0
-			: angle, offset, scale, isDynamic, texture, name));
+	public void addImage(final BufferedImage img, final IAgent agent, final double z_layer, final int currentLayerId,
+		final Double x, final Double y, final Double z, final Double width, final Double height, final Integer angle,
+		final GamaPoint offset, final GamaPoint scale, final boolean isDynamic, final Double alpha,
+		final MyTexture texture, final String name) {
+		images.add(new ImageObject(img, agent, z_layer, currentLayerId, x, y, Double.isNaN(z) ? 0 : z, alpha, width,
+			height, angle == null ? 0 : angle, offset, scale, isDynamic, texture, name));
 		if ( texture != null ) {
 			textures.put(img, texture);
 		}
 	}
-	
-	public void addDEM(final double[] dem, final BufferedImage demTexture, final BufferedImage demImg,final IAgent agent,
-		final boolean isTextured, final boolean isTriangulated, final boolean isShowText, final boolean fromImage,
-		final Envelope env, final Double z_factor, final Double alpha, final GamaPoint offset, final GamaPoint scale,
-		final int cellSize,final MyTexture texture,final String name, final int currentLayerId) {
-		dems.add(new DEMObject(dem, demTexture, demImg, agent, env, isTextured, isTriangulated, isShowText, fromImage, z_factor,
-			null, offset, scale, alpha, cellSize,texture,name,currentLayerId));
+
+	public void addDEM(final double[] dem, final BufferedImage demTexture, final BufferedImage demImg,
+		final IAgent agent, final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
+		final boolean fromImage, final Envelope env, final Double z_factor, final Double alpha, final GamaPoint offset,
+		final GamaPoint scale, final int cellSize, final MyTexture texture, final String name, final int currentLayerId) {
+		dems.add(new DEMObject(dem, demTexture, demImg, agent, env, isTextured, isTriangulated, isShowText, fromImage,
+			z_factor, null, offset, scale, alpha, cellSize, texture, name, currentLayerId));
 		if ( texture != null ) {
 			textures.put(demTexture, texture);
 		}
@@ -129,8 +126,9 @@ public class ModelScene {
 	public void addGeometry(final Geometry geometry, final IAgent agent, final double z_layer,
 		final int currentLayerId, final Color color, final boolean fill, final Color border, final boolean isTextured,
 		final Integer angle, final double height, final GamaPoint offSet, final GamaPoint scale,
-		final boolean roundCorner, final String type, final boolean currentLayerIsStatic, final double alpha, final String popName) {
-		
+		final boolean roundCorner, final String type, final boolean currentLayerIsStatic, final double alpha,
+		final String popName) {
+
 		final GeometryObject curJTSGeometry =
 			new GeometryObject(geometry, agent, z_layer, currentLayerId, color, alpha, fill, border, isTextured,
 				angle == null ? 0 : angle, height, offSet, scale, roundCorner, type, popName);
@@ -142,8 +140,6 @@ public class ModelScene {
 			geometries.add(curJTSGeometry);
 		}
 	}
-	
-
 
 	public void drawAxes(final GL gl, final double size) {
 		// FIXME Should be put in the static list (get the list from the id of staticObjects)
@@ -188,22 +184,23 @@ public class ModelScene {
 
 	}
 
-	public void drawEnvironmentBounds(final JOGLAWTGLRenderer renderer, boolean drawEnv) {
+	public void drawEnvironmentBounds(final JOGLAWTGLRenderer renderer, final boolean drawEnv) {
 		// Draw environment rectangle
 		final Geometry g;
-		if(drawEnv){
-		 g =
-			GamaGeometryType.buildRectangle(envWidth, envHeight, new GamaPoint(envWidth / 2, envHeight / 2))
-				.getInnerGeometry();
-		}
-		else{//FIXME: don't know why but if this geometry is not added then the color behave randomly
-			g = GamaGeometryType.buildRectangle(0, 0, new GamaPoint(0, 0))
-			.getInnerGeometry();
+		if ( drawEnv ) {
+			double envWidth = renderer.displaySurface.getEnvWidth();
+			double envHeight = renderer.displaySurface.getEnvHeight();
+			g =
+				GamaGeometryType.buildRectangle(envWidth, envHeight, new GamaPoint(envWidth / 2, envHeight / 2))
+					.getInnerGeometry();
+		} else {// FIXME: don't know why but if this geometry is not added then the color behave randomly
+			g = GamaGeometryType.buildRectangle(0, 0, new GamaPoint(0, 0)).getInnerGeometry();
 		}
 		final Color c = new Color(225, 225, 225);
-		if(!envGeometryInitialized){
-	 	  addGeometry(g, GAMA.getSimulation().getAgent(), 0, 0, c, false, c, false, 0, 0, offset, scale, false, "env", false, 1d, "environment");
-	 	 envGeometryInitialized = true;
+		if ( !envGeometryInitialized ) {
+			addGeometry(g, GAMA.getSimulation().getAgent(), 0, 0, c, false, c, false, 0, 0, offset, scale, false,
+				"env", false, 1d, "environment");
+			envGeometryInitialized = true;
 		}
 	}
 

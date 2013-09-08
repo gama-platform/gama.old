@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.awt.event.MouseEvent;
 import javax.media.opengl.glu.GLU;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
-import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
 
 public class CameraArcBall extends AbstractCamera {
 
@@ -174,7 +173,7 @@ public class CameraArcBall extends AbstractCamera {
 	}
 
 	@Override
-	public void setRegionOfInterest(final Point origin, final Point end, final Vector3D worldCoordinates) {
+	public void setRegionOfInterest(final Point origin, final Point end) {
 		region[0] = origin.x;
 		region[1] = origin.y;
 		region[2] = end.x;
@@ -182,22 +181,21 @@ public class CameraArcBall extends AbstractCamera {
 		int roiWidth = Math.abs(end.x - origin.x);
 		int roiHeight = Math.abs(end.y - origin.y);
 		if ( region[0] < region[2] && region[1] > region[3] ) {
-			getRoiCenter().setLocation(worldCoordinates.x - roiWidth / 2, worldCoordinates.y + roiHeight / 2);
+			getRoiCenter().setLocation(end.x - roiWidth / 2, end.y + roiHeight / 2);
 		} else if ( region[0] < region[2] && region[1] < region[3] ) {
-			getRoiCenter().setLocation(worldCoordinates.x - roiWidth / 2, worldCoordinates.y - roiHeight / 2);
+			getRoiCenter().setLocation(end.x - roiWidth / 2, end.y - roiHeight / 2);
 		} else if ( region[0] > region[2] && region[1] < region[3] ) {
-			getRoiCenter().setLocation(worldCoordinates.x + roiWidth / 2, worldCoordinates.y - roiHeight / 2);
+			getRoiCenter().setLocation(end.x + roiWidth / 2, end.y - roiHeight / 2);
 		} else if ( region[0] > region[2] && region[1] > region[3] ) {
-			getRoiCenter().setLocation(worldCoordinates.x + roiWidth / 2, worldCoordinates.y + roiHeight / 2);
+			getRoiCenter().setLocation(end.x + roiWidth / 2, end.y + roiHeight / 2);
 		}
-
 	}
 
 	@Override
 	public void zoomFocus(final double centerX, final double centerY, final double centerZ, final double extent) {
 		velocityHoriz = 0;
 		velocityVert = 0;
-		final double zPos = extent * 2 + centerZ + getRenderer().env_width / 100;
+		final double zPos = extent * 2 + centerZ + getRenderer().getMaxEnvDim() / 100;
 		radius = zPos;
 		update();
 		updatePosition(centerX, centerY, zPos);

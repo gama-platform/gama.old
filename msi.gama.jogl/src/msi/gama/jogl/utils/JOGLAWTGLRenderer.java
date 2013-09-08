@@ -25,7 +25,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public GLUT glut;
 
 	// ///Static members//////
-	private static final boolean USE_VERTEX_ARRAY = false;
+	// private static final boolean USE_VERTEX_ARRAY = false;
 	private static final int REFRESH_FPS = 30;
 
 	private static boolean BLENDING_ENABLED; // blending on/off
@@ -36,15 +36,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public GLCanvas canvas;
 
 	private int width, height;
-	public final double env_width;
-	public final double env_height;
 
 	// Camera
 	public ICamera camera;
-	public MyGraphics graphicsGLUtils;
-
-	// Use to test and display basic opengl shape and primitive
-	public MyGLToyDrawer myGLDrawer;
 
 	// Lighting
 	private Color ambientLightValue;
@@ -86,15 +80,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public int pickedObjectIndex = -1;
 	public ISceneObject currentPickedObject;
-	// private int antialiasing = GL_NEAREST;
 
 	public int frame = 0;
 
 	int[] viewport = new int[4];
 	double mvmatrix[] = new double[16];
 	double projmatrix[] = new double[16];
-	public Vector3D worldCoordinates = new Vector3D();
-	// public GamaPoint roiCenter = new GamaPoint(0, 0);
 
 	private double startTime = 0;
 	private int frameCount = 0;
@@ -112,10 +103,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		cap.setStencilBits(8);
 		// Initialize the user camera
 		displaySurface = d;
-		env_width = d.getEnvWidth();
-		env_height = d.getEnvHeight();
 		camera = new CameraArcBall(this);
-		myGLDrawer = new MyGLToyDrawer();
 		canvas = new GLCanvas(cap);
 		// use for color picking
 		canvas.setAutoSwapBufferMode(autoSwapBuffers);
@@ -128,15 +116,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		canvas.setFocusable(true); // To receive key event
 		canvas.requestFocusInWindow();
 		animator = new FPSAnimator(canvas, REFRESH_FPS, true);
-		// displaySurface = d;
-		// env_width = d.getEnvWidth();
-		// env_height = d.getEnvHeight();
+
 	}
 
 	@Override
 	public void init(final GLAutoDrawable drawable) {
 		startTime = System.currentTimeMillis();
-
 		width = drawable.getWidth();
 		height = drawable.getHeight();
 		gl = drawable.getGL();
@@ -170,12 +155,11 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// gl.glDisable(GL_DEPTH_TEST);
 		// FIXME : should be turn on only if need (if we draw image)
 		// problem when true with glutBitmapString
-		JOGLAWTGLRenderer.BLENDING_ENABLED = true;
+		BLENDING_ENABLED = true;
 		IS_LIGHT_ON = true;
 
 		camera.updateCamera(gl, glu, width, height);
 		scene = new ModelScene(this);
-		graphicsGLUtils = new MyGraphics(this);
 
 		OutputSynchronizer.decInitializingViews(this.displaySurface.getOutputName());
 
@@ -186,9 +170,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	public void setBackground(final Color c) {
 		background = c;
 		canvas.setBackground(c);
-		// gl.glClearDepth(1.0);
-		// gl.glClearColor(c.getRed() / 255.0f, c.getGreen() / 255.0f, c.getBlue() / 255.0f, 1.0f);
-		// gl.glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
 	@Override
@@ -197,10 +178,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		if ( !displaySurface.isPaused() ) {
 			gl = drawable.getGL();
 			setContext(drawable.getContext());
-
-			width = drawable.getWidth();
-			height = drawable.getHeight();
-
 			gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
 			gl.glGetDoublev(GL.GL_MODELVIEW_MATRIX, mvmatrix, 0);
 			gl.glGetDoublev(GL.GL_PROJECTION_MATRIX, projmatrix, 0);
@@ -312,31 +289,24 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	}
 
 	@Override
-	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int arg3, final int arg4) {
+	public void reshape(final GLAutoDrawable drawable, final int arg1, final int arg2, final int width, final int height) {
 		// Get the OpenGL graphics context
 		gl = drawable.getGL();
-		if ( height == 0 ) {
-			height = 1; // prevent divide by zero
-		}
-		final float aspect = (float) width / height;
+		this.width = width;
+		this.height = height == 0 ? 1 : height;
+
+		// final float aspect = (float) width / height;
 		// Set the viewport (display area) to cover the entire window
 		gl.glViewport(0, 0, width, height);
-		// Enable the model view - any new transformations will affect the
-		// model-view matrix
+		// Enable the model view - any new transformations will affect the model-view matrix
 		gl.glMatrixMode(GL_MODELVIEW);
 		gl.glLoadIdentity(); // reset
 		// perspective view
 		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glLoadIdentity();
-		glu.gluPerspective(45.0f, aspect, 0.1f, getMaxEnvDim() * 100);
-		/*
-		 * if ( camera != null ) {
-		 * glu.gluLookAt(camera.getPosition().getX(), camera.getPosition().getY(), camera.getPosition().getZ(), camera
-		 * .getTarget().getX(), camera.getTarget().getY(), camera.getTarget().getZ(), camera.getUpVector().getX(),
-		 * camera.getUpVector().getY(), camera.getUpVector().getZ());
-		 * }
-		 */
-
+		// glu.gluPerspective(45.0f, aspect, 0.1f, getMaxEnvDim() * 100);
+		// FIXME Update camera as well ??
+		camera.updateCamera(gl, glu, width, height);
 	}
 
 	@Override
@@ -355,12 +325,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	}
 
 	public void drawScene() {
-		gl.glViewport(0, 0, width, height);
+		// gl.glViewport(0, 0, width, height);
 		if ( isPicking() ) {
 			this.drawPickableObjects();
 		} else {
 			if ( CubeDisplay ) {
-				drawCubeDisplay((float) env_width);
+				drawCubeDisplay((float) displaySurface.getEnvWidth());
 
 			} else {
 				this.drawModel();
@@ -551,6 +521,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	}
 
 	public double getMaxEnvDim() {
+		double env_width = displaySurface.getEnvWidth();
+		double env_height = displaySurface.getEnvHeight();
 		return env_width > env_height ? env_width : env_height;
 	}
 
@@ -564,11 +536,12 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		}
 	}
 
-	public void cleanListsAndVertices() {
-		if ( USE_VERTEX_ARRAY ) {
-			graphicsGLUtils.vertexArrayHandler.DeleteVertexArray();
-		}
-	}
+	//
+	// public void cleanListsAndVertices() {
+	// if ( USE_VERTEX_ARRAY ) {
+	// graphicsGLUtils.vertexArrayHandler.DeleteVertexArray();
+	// }
+	// }
 
 	public ModelScene getScene() {
 		return scene;
@@ -607,6 +580,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 			frame++;
 		}
 		if ( frame != 0 ) {
+			double env_width = displaySurface.getEnvWidth();
+			double env_height = displaySurface.getEnvHeight();
 			gl.glTranslated(env_width / 2, -env_height / 2, 0);
 			gl.glRotatef(frame, 0, 0, 1);
 			gl.glTranslated(-env_width / 2, +env_height / 2, 0);
@@ -632,7 +607,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		Vector3D v3 = v2.subtract(v1);
 		v3.normalize();
 		float distance = (float) (camera.getPosition().getZ() / Vector3D.dotProduct(new Vector3D(0.0, 0.0, -1.0), v3));
-		worldCoordinates = camera.getPosition().add(v3.scalarMultiply(distance));
+		Vector3D worldCoordinates = camera.getPosition().add(v3.scalarMultiply(distance));
 
 		final Point2D.Double realWorldPoint = new Point2D.Double(worldCoordinates.x, worldCoordinates.y);
 		return realWorldPoint;
@@ -666,7 +641,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		Point realWorld = new Point(0, 0);
 		Point2D.Double WindowPoint = getWindowPointPointFromRealWorld(realWorld);
 
-		Point realWorld2 = new Point((int) this.env_width, -(int) this.env_height);
+		Point realWorld2 = new Point((int) displaySurface.getEnvWidth(), -(int) displaySurface.getEnvHeight());
 		Point2D.Double WindowPoint2 = getWindowPointPointFromRealWorld(realWorld2);
 		if ( WindowPoint2 == null || WindowPoint == null ) { return 0.0; }
 		return WindowPoint2.x - WindowPoint.x;
@@ -676,7 +651,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		Point realWorld = new Point(0, 0);
 		Point2D.Double WindowPoint = getWindowPointPointFromRealWorld(realWorld);
 
-		Point realWorld2 = new Point((int) this.env_width, -(int) this.env_height);
+		Point realWorld2 = new Point((int) displaySurface.getEnvWidth(), -(int) displaySurface.getEnvHeight());
 		Point2D.Double WindowPoint2 = getWindowPointPointFromRealWorld(realWorld2);
 
 		return WindowPoint2.y - WindowPoint.y;
@@ -686,9 +661,9 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		if ( camera.isEnableROIDrawing() ) {
 			Point realPressedPoint = getIntWorldPointFromWindowPoint(camera.getLastMousePressedPosition());
 			Point realMousePositionPoint = getIntWorldPointFromWindowPoint(camera.getMousePosition());
-			myGLDrawer.DrawROI(gl, realPressedPoint.x, -realPressedPoint.y, realMousePositionPoint.x,
-				-realMousePositionPoint.y, this.getZFighting(), this.getMaxEnvDim());
-			camera.setRegionOfInterest(realPressedPoint, realMousePositionPoint, worldCoordinates);
+			drawROI(gl, realPressedPoint.x, -realPressedPoint.y, realMousePositionPoint.x, -realMousePositionPoint.y,
+				this.getZFighting(), this.getMaxEnvDim());
+			camera.setRegionOfInterest(realPressedPoint, realMousePositionPoint);
 		}
 
 	}
@@ -707,5 +682,47 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public boolean isPicking() {
 		return picking;
+	}
+
+	private void drawROI(final GL gl, final double x1, final double y1, final double x2, final double y2,
+		final boolean z_fighting, final double maxEnvDim) {
+
+		if ( z_fighting ) {
+			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
+			gl.glEnable(GL.GL_POLYGON_OFFSET_LINE);
+			// Draw on top of everything
+			gl.glPolygonOffset(0.0f, (float) -maxEnvDim);
+			gl.glBegin(GL.GL_POLYGON);
+
+			gl.glVertex3d(x1, -y1, 0.0f);
+			gl.glVertex3d(x2, -y1, 0.0f);
+
+			gl.glVertex3d(x2, -y1, 0.0f);
+			gl.glVertex3d(x2, -y2, 0.0f);
+
+			gl.glVertex3d(x2, -y2, 0.0f);
+			gl.glVertex3d(x1, -y2, 0.0f);
+
+			gl.glVertex3d(x1, -y2, 0.0f);
+			gl.glVertex3d(x1, -y1, 0.0f);
+			gl.glEnd();
+			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+		} else {
+			gl.glBegin(GL.GL_LINES);
+
+			gl.glVertex3d(x1, -y1, 0.0f);
+			gl.glVertex3d(x2, -y1, 0.0f);
+
+			gl.glVertex3d(x2, -y1, 0.0f);
+			gl.glVertex3d(x2, -y2, 0.0f);
+
+			gl.glVertex3d(x2, -y2, 0.0f);
+			gl.glVertex3d(x1, -y2, 0.0f);
+
+			gl.glVertex3d(x1, -y2, 0.0f);
+			gl.glVertex3d(x1, -y1, 0.0f);
+			gl.glEnd();
+		}
+
 	}
 }

@@ -55,7 +55,7 @@ public interface ICamera extends KeyListener, MouseListener, MouseMotionListener
 
 	public abstract void zoom(boolean in);
 
-	public abstract void setRegionOfInterest(Point origin, Point end, Vector3D worldCoordinates);
+	public abstract void setRegionOfInterest(Point origin, Point end);
 
 	// Mouse
 
