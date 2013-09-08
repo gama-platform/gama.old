@@ -11,7 +11,6 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.matrix.GamaFloatMatrix;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
@@ -19,15 +18,14 @@ import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 
 @facets(value = {
-		@facet(name = "var", type = IType.ID, optional = false),
-		@facet(name = "on", type = IType.ID, optional = false),
+		@facet(name = IKeyword.VAR, type = IType.ID, optional = false),
+		@facet(name = IKeyword.ON, type = IType.ID, optional = false),
 		@facet(name = "mat_diffu", type = IType.MATRIX, optional = false),
-		@facet(name = "method", type = IType.ID, optional = true, values = {
+		@facet(name = IKeyword.METHOD, type = IType.ID, optional = true, values = {
 				"convolution", "dot_product" }),
-		@facet(name = "mask", type = IType.MATRIX, optional = true),
-		@facet(name = "cycle_length", type = IType.INT, optional = true) }, omissible = IKeyword.EQUATION)
+		@facet(name = IKeyword.MASK, type = IType.MATRIX, optional = true),
+		@facet(name = IKeyword.CYCLE_LENGTH, type = IType.INT, optional = true) }, omissible = IKeyword.VAR)
 @symbol(name = { "diffusion" }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
-// , with_args = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SINGLE_STATEMENT,
 		ISymbolKind.SPECIES, ISymbolKind.MODEL })
 public class DiffusionStatement extends AbstractStatementSequence {
@@ -147,11 +145,9 @@ public class DiffusionStatement extends AbstractStatementSequence {
 
 		int kRows = mat_diffu.length;
 		int kCols = mat_diffu[0].length;
-		// double[][] mat_diffu=translateMatrix(scope, mat_diffusion);
 
 		int kCenterX = kRows / 2;
 		int kCenterY = kCols / 2;
-		// GamaFloatMatrix tmp = new GamaFloatMatrix(scope, cols, rows);
 		double[][] tmp = new double[rows][cols];
 		// System.out.println(xcenter+" "+ycenter);
 		// find center position of kernel (half of kernel size)
@@ -234,25 +230,24 @@ public class DiffusionStatement extends AbstractStatementSequence {
 	public Object privateExecuteIn(final IScope scope)
 			throws GamaRuntimeException {
 		int cLen = 1;
-		if (getFacet("cycle_length") != null) {
-			cLen = Integer.parseInt("" + getFacet("cycle_length").value(scope));
+		if (getFacet(IKeyword.CYCLE_LENGTH) != null) {
+			cLen = Integer.parseInt("" + getFacet(IKeyword.CYCLE_LENGTH).value(scope));
 		}
 
-		String varName = (String) getFacet("var").value(scope);
-		String speciesName = (String) getFacet("on").value(scope);
-		// IMatrix mat_diffu = (IMatrix) getFacet("mat_diffu").value(scope);
+		String varName = (String) getFacet(IKeyword.VAR).value(scope);
+		String speciesName = (String) getFacet(IKeyword.ON).value(scope);
 		double[][] mat_diffu = translateMatrix(scope,
 				(IMatrix) getFacet("mat_diffu").value(scope));
 
 		double[][] mask = null;
 
-		if (getFacet("mask") != null) {
+		if (getFacet(IKeyword.MASK) != null) {
 			mask = translateMatrix(scope,
-					(IMatrix) getFacet("mask").value(scope));
+					(IMatrix) getFacet(IKeyword.MASK).value(scope));
 
 		}
 
-		IExpression method_diffu = getFacet("method");
+		IExpression method_diffu = getFacet(IKeyword.METHOD);
 		if (method_diffu != null) {
 			if (method_diffu.value(scope).equals("dot_product")) {
 				for (int time = 0; time < cLen; time++) {
@@ -265,13 +260,7 @@ public class DiffusionStatement extends AbstractStatementSequence {
 		for (int time = 0; time < cLen; time++) {
 			doDiffusion1(scope, varName, speciesName, mat_diffu, mask);
 		}
-		// super.privateExecuteIn(scope);
-		// if (getFacet("cycle_length") != null) {
-		// cycle_length = Double.parseDouble(""
-		// + getFacet("cycle_length").value(scope));
-		// }
 
-		// System.out.println(tcc);
 		return null;
 	}
 }
