@@ -20,7 +20,7 @@ package msi.gaml.factories;
 
 import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
-import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.interfaces.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
@@ -131,6 +131,18 @@ public class ModelFactory extends SymbolFactory {
 		// }
 	}
 
+	public void addSpeciesNode(final SyntacticElement element, final Map<String, SyntacticElement> speciesNodes,
+		final ErrorCollector collector) {
+		String name = element.getName();
+		if ( speciesNodes.containsKey(name) ) {
+			collector.add(new GamlCompilationError("Species " + name + " is declared twice",
+				IGamlIssue.DUPLICATE_DEFINITION, element.getElement(), false, false));
+			collector.add(new GamlCompilationError("Species " + name + " is declared twice",
+				IGamlIssue.DUPLICATE_DEFINITION, speciesNodes.get(name).getElement(), false, false));
+		}
+		speciesNodes.put(element.getName(), element);
+	}
+
 	public ModelDescription assemble(final String projectPath, final String modelPath,
 		final List<SyntacticElement> models) {
 		// GuiUtils.debug("ModelFactory.assemble BEGIN " + modelPath);
@@ -151,19 +163,19 @@ public class ModelFactory extends SymbolFactory {
 						globalFacets.putAll(se.copyFacets());
 						for ( final SyntacticElement ge : se.getChildren() ) {
 							if ( ge.isSpecies() ) {
-								speciesNodes.put(ge.getName(), ge);
+								addSpeciesNode(ge, speciesNodes, collector);
 							} else if ( ge.isExperiment() ) {
 								experimentNodes.add(ge);
 							} else {
-								if ( i == 0 ) {
-									lastGlobalNode = ge;
-								}
+								// if ( i == 0 ) {
+								lastGlobalNode = ge;
+								// }
 								globalNodes.addChild(ge);
 							}
 						}
 
 					} else if ( se.isSpecies() ) {
-						speciesNodes.put(se.getName(), se);
+						addSpeciesNode(se, speciesNodes, collector);
 					} else if ( se.isExperiment() ) {
 						experimentNodes.add(se);
 					} else {
