@@ -51,23 +51,19 @@ public interface ICamera extends KeyListener, MouseListener, MouseMotionListener
 
 	public abstract Double zoomLevel();
 
-	public abstract void zoomROI(double centerX, double centerY, final int width, final int height);
-
 	public abstract void zoomFocus(double centerX, double centerY, double centerZ, double extent);
 
 	public abstract void zoom(boolean in);
+
+	public abstract void setRegionOfInterest(Point origin, Point end, Vector3D worldCoordinates);
 
 	// Mouse
 
 	public abstract Point getMousePosition();
 
-	public abstract int getLastxPressed();
-
-	public abstract int getLastyPressed();
+	public abstract Point getLastMousePressedPosition();
 
 	// Properties
-
-	public abstract double getMaxDim();
 
 	public abstract double getPhi();
 

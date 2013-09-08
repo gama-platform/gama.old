@@ -1,16 +1,11 @@
 package msi.gama.jogl.scene;
 
-import java.awt.Color;
-import java.awt.Point;
-
+import java.awt.*;
 import java.awt.image.BufferedImage;
-
-import com.vividsolutions.jts.geom.Envelope;
-
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
-import msi.gama.util.matrix.GamaFloatMatrix;
+import com.vividsolutions.jts.geom.Envelope;
 
 public class DEMObject extends AbstractObject {
 
@@ -28,11 +23,12 @@ public class DEMObject extends AbstractObject {
 	public MyTexture texture;
 	public String name;
 	public int layerId;
-	
-	
-	
-	public DEMObject(double[] dem, BufferedImage demTexture,BufferedImage demImg,final IAgent agent,Envelope env, boolean isTextured, boolean isTriangulated,boolean isShowText,  
-			boolean fromImage, Double z_factor, Color c, GamaPoint o, GamaPoint s, Double a, int cellSize,final MyTexture texture, final String name, final int layerId) {
+
+	public DEMObject(final double[] dem, final BufferedImage demTexture, final BufferedImage demImg,
+		final IAgent agent, final Envelope env, final boolean isTextured, final boolean isTriangulated,
+		final boolean isShowText, final boolean fromImage, final Double z_factor, final Color c, final GamaPoint o,
+		final GamaPoint s, final Double a, final int cellSize, final MyTexture texture, final String name,
+		final int layerId) {
 		super(c, o, s, a);
 		this.dem = dem;
 		this.demTexture = demTexture;
@@ -42,14 +38,14 @@ public class DEMObject extends AbstractObject {
 		this.isTriangulated = isTriangulated;
 		this.isShowText = isShowText;
 		this.fromImage = fromImage;
-		this.envelope=env;
+		this.envelope = env;
 		this.z_factor = z_factor;
 		this.cellSize = cellSize;
-		this.texture= texture;
+		this.texture = texture;
 		this.name = name;
-		this.layerId= layerId;
+		this.layerId = layerId;
 	}
-	
+
 	@Override
 	public void unpick() {
 		picked = false;
@@ -79,14 +75,14 @@ public class DEMObject extends AbstractObject {
 					// The picked image is the grid
 					if ( this.name != null ) {
 						Point pickedPoint =
-							renderer.getIntWorldPointFromWindowPoint(new Point(renderer.camera.getLastxPressed(),
-								renderer.camera.getLastyPressed()));
+							renderer.getIntWorldPointFromWindowPoint(new Point(renderer.camera
+								.getLastMousePressedPosition().x, renderer.camera.getLastMousePressedPosition().y));
 						IAgent ag =
 							agent.getPopulationFor(this.name).getAgent(new GamaPoint(pickedPoint.x, -pickedPoint.y));
-						if(ag!=null){
+						if ( ag != null ) {
 							renderer.displaySurface.selectAgents(ag, layerId - 1);
 						}
-						
+
 					} else {
 						renderer.displaySurface.selectAgents(agent, layerId - 1);
 					}

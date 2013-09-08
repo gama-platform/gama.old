@@ -1,8 +1,10 @@
 package msi.gama.jogl.utils.Camera;
 
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import javax.media.opengl.glu.GLU;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
+import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
 
 public class CameraArcBall extends AbstractCamera {
 
@@ -163,10 +165,32 @@ public class CameraArcBall extends AbstractCamera {
 	}
 
 	@Override
-	public void zoomROI(final double centerX, final double centerY, final int width, final int height) {
+	protected void zoomRoi() {
+		int width = Math.abs(region[0] - region[2]);
+		int height = Math.abs(region[1] - region[3]);
 		radius = 1.5 * (width > height ? width : height);
-		target.set(centerX, centerY, 0.0);
+		target.set(getRoiCenter().x, getRoiCenter().y, 0.0);
 		update();
+	}
+
+	@Override
+	public void setRegionOfInterest(final Point origin, final Point end, final Vector3D worldCoordinates) {
+		region[0] = origin.x;
+		region[1] = end.y;
+		region[2] = origin.x;
+		region[3] = end.y;
+		int roiWidth = Math.abs(end.x - origin.x);
+		int roiHeight = Math.abs(end.y - origin.y);
+		if ( region[0] < region[2] && region[1] > region[3] ) {
+			getRoiCenter().setLocation(worldCoordinates.x - roiWidth / 2, worldCoordinates.y + roiHeight / 2);
+		} else if ( region[0] < region[2] && region[1] < region[3] ) {
+			getRoiCenter().setLocation(worldCoordinates.x - roiWidth / 2, worldCoordinates.y - roiHeight / 2);
+		} else if ( region[0] > region[2] && region[1] < region[3] ) {
+			getRoiCenter().setLocation(worldCoordinates.x + roiWidth / 2, worldCoordinates.y - roiHeight / 2);
+		} else if ( region[0] > region[2] && region[1] > region[3] ) {
+			getRoiCenter().setLocation(worldCoordinates.x + roiWidth / 2, worldCoordinates.y + roiHeight / 2);
+		}
+
 	}
 
 	@Override
@@ -182,12 +206,13 @@ public class CameraArcBall extends AbstractCamera {
 
 	@Override
 	public void mouseDragged(final MouseEvent arg0) {
+		Point newPoint = arg0.getPoint();
 		enableInertia = false;
 		if ( isArcBallOn(arg0) ) {
 			arcBallInertia = true;
 		} else {
-			horizInertia = arg0.getX() - getLastxPressed();
-			vertInertia = arg0.getY() - getLastyPressed();
+			horizInertia = newPoint.x - lastMousePressedPosition.x;
+			vertInertia = newPoint.y - lastMousePressedPosition.y;
 			velocityHoriz = horizInertia;
 			velocityVert = vertInertia;
 			moveInertia = true;
@@ -196,20 +221,15 @@ public class CameraArcBall extends AbstractCamera {
 		if ( isArcBallOn(arg0) ) {
 
 			// check the difference between the current x and the last x position
-			int horizMovement = arg0.getX() - getLastxPressed();
+			int horizMovement = arg0.getX() - lastMousePressedPosition.x;
 			// check the difference between the current y and the last y position
-			int vertMovement = arg0.getY() - getLastyPressed();
+			int vertMovement = arg0.getY() - lastMousePressedPosition.y;
 
-			horizInertia = arg0.getX() - getLastxPressed();
-			vertInertia = arg0.getY() - getLastyPressed();
+			horizInertia = newPoint.x - lastMousePressedPosition.x;
+			vertInertia = newPoint.y - lastMousePressedPosition.y;
 			velocityHoriz = horizInertia;
 			velocityVert = vertInertia;
-
-			// set lastx to the current x position
-			setLastxPressed(arg0.getX());
-			// set lastyPressed to the current y position
-			setLastyPressed(arg0.getY());
-
+			lastMousePressedPosition = newPoint;
 			theta = theta - horizMovement * get_sensivity();
 			phi = phi - vertMovement * get_sensivity();
 
@@ -224,17 +244,14 @@ public class CameraArcBall extends AbstractCamera {
 			getMousePosition().x = arg0.getX();
 			getMousePosition().y = arg0.getY();
 			setEnableROIDrawing(true);
-			getRenderer().DrawROI();
+			getRenderer().drawROI();
 
 		} else {
 			// check the difference between the current x and the last x position
-			int diffx = arg0.getX() - getLastxPressed();
+			int diffx = newPoint.x - lastMousePressedPosition.x;
 			// check the difference between the current y and the last y position
-			int diffy = arg0.getY() - getLastyPressed();
-			// set lastx to the current x position
-			setLastxPressed(arg0.getX());
-			// set lastyPressed to the current y position
-			setLastyPressed(arg0.getY());
+			int diffy = newPoint.y - lastMousePressedPosition.y;
+			lastMousePressedPosition = newPoint;
 
 			double speed = 0.035;
 

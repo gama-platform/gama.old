@@ -5,7 +5,6 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.nio.*;
-import java.util.ArrayList;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
 import msi.gama.jogl.JOGLAWTDisplaySurface;
@@ -85,9 +84,6 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	// is in picking mode ?
 	private boolean picking = false;
 
-	// ROI Coordionates (x1,y1,x2,y2)
-	public ArrayList<Integer> roi_List = new ArrayList<Integer>();
-
 	public int pickedObjectIndex = -1;
 	public ISceneObject currentPickedObject;
 	// private int antialiasing = GL_NEAREST;
@@ -98,7 +94,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	double mvmatrix[] = new double[16];
 	double projmatrix[] = new double[16];
 	public Vector3D worldCoordinates = new Vector3D();
-	public GamaPoint roiCenter = new GamaPoint(0, 0);
+	// public GamaPoint roiCenter = new GamaPoint(0, 0);
 
 	private double startTime = 0;
 	private int frameCount = 0;
@@ -289,7 +285,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 			// ROI drawer
 			if ( this.displaySurface.selectRectangle ) {
-				DrawROI();
+				drawROI();
 			}
 
 			// Show fps for performance mesures
@@ -332,7 +328,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		// perspective view
 		gl.glMatrixMode(GL.GL_PROJECTION);
 		gl.glLoadIdentity();
-		glu.gluPerspective(45.0f, aspect, 0.1f, camera.getMaxDim() * 100);
+		glu.gluPerspective(45.0f, aspect, 0.1f, getMaxEnvDim() * 100);
 		/*
 		 * if ( camera != null ) {
 		 * glu.gluLookAt(camera.getPosition().getX(), camera.getPosition().getY(), camera.getPosition().getZ(), camera
@@ -682,62 +678,15 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 		return WindowPoint2.y - WindowPoint.y;
 	}
 
-	public ArrayList<Integer> DrawROI() {
+	public void drawROI() {
 		if ( camera.isEnableROIDrawing() ) {
-			roi_List.clear();
-			Point windowPressedPoint = new Point(camera.getLastxPressed(), camera.getLastyPressed());
-			Point realPressedPoint = getIntWorldPointFromWindowPoint(windowPressedPoint);
-
-			Point windowmousePositionPoint = new Point(camera.getMousePosition().x, camera.getMousePosition().y);
-			Point realmousePositionPoint = getIntWorldPointFromWindowPoint(windowmousePositionPoint);
-
-			myGLDrawer.DrawROI(gl, realPressedPoint.x, -realPressedPoint.y, realmousePositionPoint.x,
-				-realmousePositionPoint.y, this.getZFighting(), this.getMaxEnvDim());
-
-			roi_List.add(0, realPressedPoint.x);
-			roi_List.add(1, realPressedPoint.y);
-			roi_List.add(2, realmousePositionPoint.x);
-			roi_List.add(3, realmousePositionPoint.y);
-
-			int roiWidth = (int) Math.abs(roi_List.get(0) + env_width / 2 - (roi_List.get(2) + env_width / 2));
-			int roiHeight = (int) Math.abs(roi_List.get(1) - env_height / 2 - (roi_List.get(3) - env_height / 2));
-
-			if ( !this.displaySurface.switchCamera ) {
-
-				if ( roi_List.get(0) < roi_List.get(2) && roi_List.get(1) > roi_List.get(3) ) {
-					roiCenter.setLocation(worldCoordinates.x - roiWidth / 2, worldCoordinates.y + roiHeight / 2);
-				} else if ( roi_List.get(0) < roi_List.get(2) && roi_List.get(1) < roi_List.get(3) ) {
-					roiCenter.setLocation(worldCoordinates.x - roiWidth / 2, worldCoordinates.y - roiHeight / 2);
-				} else if ( roi_List.get(0) > roi_List.get(2) && roi_List.get(1) < roi_List.get(3) ) {
-					roiCenter.setLocation(worldCoordinates.x + roiWidth / 2, worldCoordinates.y - roiHeight / 2);
-				} else if ( roi_List.get(0) > roi_List.get(2) && roi_List.get(1) > roi_List.get(3) ) {
-					roiCenter.setLocation(worldCoordinates.x + roiWidth / 2, worldCoordinates.y + roiHeight / 2);
-				}
-			} else {
-				if ( roi_List.get(0) == roi_List.get(2) && roi_List.get(1) == roi_List.get(3) ) {
-					roiCenter.setLocation(worldCoordinates.x, worldCoordinates.y);
-
-				} else if ( roi_List.get(0) < roi_List.get(2) && roi_List.get(1) > roi_List.get(3) ) {
-					roiCenter.setLocation(worldCoordinates.x - roiWidth / 2, worldCoordinates.y + roiHeight / 2);
-				} else if ( roi_List.get(0) < roi_List.get(2) && roi_List.get(1) < roi_List.get(3) ) {
-					roiCenter.setLocation(worldCoordinates.x - roiWidth / 2, worldCoordinates.y - roiHeight / 2);
-				} else if ( roi_List.get(0) > roi_List.get(2) && roi_List.get(1) < roi_List.get(3) ) {
-					roiCenter.setLocation(worldCoordinates.x + roiWidth / 2, worldCoordinates.y - roiHeight / 2);
-				} else if ( roi_List.get(0) > roi_List.get(2) && roi_List.get(1) > roi_List.get(3) ) {
-					roiCenter.setLocation(worldCoordinates.x + roiWidth / 2, worldCoordinates.y + roiHeight / 2);
-				}
-			}
-
+			Point realPressedPoint = getIntWorldPointFromWindowPoint(camera.getLastMousePressedPosition());
+			Point realMousePositionPoint = getIntWorldPointFromWindowPoint(camera.getMousePosition());
+			myGLDrawer.DrawROI(gl, realPressedPoint.x, -realPressedPoint.y, realMousePositionPoint.x,
+				-realMousePositionPoint.y, this.getZFighting(), this.getMaxEnvDim());
+			camera.setRegionOfInterest(realPressedPoint, realMousePositionPoint, worldCoordinates);
 		}
 
-		return roi_List;
-
-	}
-
-	public void ROIZoom() {
-		int roiWidth = (int) Math.abs(roi_List.get(0) + env_width / 2 - (roi_List.get(2) + env_width / 2));
-		int roiHeight = (int) Math.abs(roi_List.get(1) - env_height / 2 - (roi_List.get(3) - env_height / 2));
-		camera.zoomROI(roiCenter.x, roiCenter.y, roiWidth, roiHeight);
 	}
 
 	public void setPicking(final boolean value) {

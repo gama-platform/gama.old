@@ -48,12 +48,6 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 	@Override
 	public abstract void endHighlight();
 
-	//
-	// @Override
-	// public int[] getHighlightColor() {
-	// return highlightColor;
-	// }
-
 	@Override
 	public void setQualityRendering(final boolean quality) {}
 

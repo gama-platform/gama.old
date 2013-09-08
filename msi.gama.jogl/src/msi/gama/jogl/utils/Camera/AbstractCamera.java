@@ -28,15 +28,15 @@ public abstract class AbstractCamera implements ICamera {
 	// picking
 	private boolean isPickedPressed = false;
 	private Point mousePosition;
+	protected Point lastMousePressedPosition;
 
 	// ROI Drawing
 	private boolean enableROIDrawing = false;
+	private final Point roiCenter = new Point(0, 0);
 
 	protected double maxDim;
 
 	// To handle mouse event
-	private int lastxPressed;
-	private int lastyPressed;
 
 	protected final Vector3D position = new Vector3D();
 	protected final Vector3D target = new Vector3D();
@@ -55,6 +55,9 @@ public abstract class AbstractCamera implements ICamera {
 	private boolean strafeRight;
 	private final boolean ctrlKeyDown = false;
 	private boolean shiftKeyDown = false;
+
+	// ROI Coordionates (x1,y1,x2,y2)
+	protected int[] region = new int[4];
 
 	public AbstractCamera(final JOGLAWTGLRenderer renderer) {
 		this.setRenderer(renderer);
@@ -132,8 +135,7 @@ public abstract class AbstractCamera implements ICamera {
 
 	@Override
 	public void mousePressed(final MouseEvent arg0) {
-		setLastxPressed(arg0.getX());
-		setLastyPressed(arg0.getY());
+		lastMousePressedPosition = arg0.getPoint();
 
 		// Picking mode
 		// if ( myRenderer.displaySurface.picking ) {
@@ -162,19 +164,19 @@ public abstract class AbstractCamera implements ICamera {
 					GAMA.getSimulation()
 						.getTopology()
 						.getSpatialIndex()
-						.allInEnvelope(
-							new GamaPoint(getRenderer().roiCenter.x, -getRenderer().roiCenter.y),
-							new Envelope(getRenderer().roi_List.get(0), getRenderer().roi_List.get(2),
-								-getRenderer().roi_List.get(1), -getRenderer().roi_List.get(3)), new Different(), true);
+						.allInEnvelope(new GamaPoint(getRoiCenter().x, -getRoiCenter().y),
+							new Envelope(region[0], region[2], region[1], region[3]), new Different(), true);
 				final Iterator<IAgent> agents = AbstractTopology.toAgents(shapes);
 				getRenderer().displaySurface.selectSeveralAgents(agents, 0);
 			}
 			if ( arg0.isShiftDown() ) {
-				getRenderer().ROIZoom();
+				zoomRoi();
 			}
 			setEnableROIDrawing(false);
 		}
 	}
+
+	protected abstract void zoomRoi();
 
 	protected abstract boolean canSelectOnRelease(MouseEvent arg0);
 
@@ -185,13 +187,12 @@ public abstract class AbstractCamera implements ICamera {
 		}
 		if ( arg0.isShiftDown() || arg0.isAltDown() ) {
 			getRenderer().displaySurface.selectRectangle = true;
-			Point point = getRenderer().getIntWorldPointFromWindowPoint(new Point(arg0.getX(), arg0.getY()));
-
+			// Point point = getRenderer().getIntWorldPointFromWindowPoint(new Point(arg0.getX(), arg0.getY()));
 			getMousePosition().x = arg0.getX();
 			getMousePosition().y = arg0.getY();
 			setEnableROIDrawing(true);
-			getRenderer().DrawROI();
-			getRenderer().roiCenter.setLocation(point.x, point.y);
+			getRenderer().drawROI();
+			// getRoiCenter().setLocation(point.x, point.y);
 
 			setEnableROIDrawing(false);
 		}
@@ -387,8 +388,7 @@ public abstract class AbstractCamera implements ICamera {
 		return selectedIndex;
 	}
 
-	@Override
-	public double getMaxDim() {
+	protected double getMaxDim() {
 		return maxDim;
 	}
 
@@ -426,21 +426,8 @@ public abstract class AbstractCamera implements ICamera {
 	}
 
 	@Override
-	public int getLastxPressed() {
-		return lastxPressed;
-	}
-
-	protected void setLastxPressed(final int lastxPressed) {
-		this.lastxPressed = lastxPressed;
-	}
-
-	@Override
-	public int getLastyPressed() {
-		return lastyPressed;
-	}
-
-	protected void setLastyPressed(final int lastyPressed) {
-		this.lastyPressed = lastyPressed;
+	public Point getLastMousePressedPosition() {
+		return lastMousePressedPosition;
 	}
 
 	protected double get_keyboardSensivity() {
@@ -491,6 +478,10 @@ public abstract class AbstractCamera implements ICamera {
 	@Override
 	public double getPhi() {
 		return phi;
+	}
+
+	protected Point getRoiCenter() {
+		return roiCenter;
 	}
 
 }

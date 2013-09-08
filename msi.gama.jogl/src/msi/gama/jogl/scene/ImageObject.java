@@ -72,8 +72,7 @@ public class ImageObject extends AbstractObject {
 					// The picked image is the grid
 					if ( this.name != null ) {
 						Point pickedPoint =
-							renderer.getIntWorldPointFromWindowPoint(new Point(renderer.camera.getLastxPressed(),
-								renderer.camera.getLastyPressed()));
+							renderer.getIntWorldPointFromWindowPoint(renderer.camera.getLastMousePressedPosition());
 						IAgent ag =
 							agent.getPopulationFor(this.name).getAgent(new GamaPoint(pickedPoint.x, -pickedPoint.y));
 						renderer.displaySurface.selectAgents(ag, layerId - 1);

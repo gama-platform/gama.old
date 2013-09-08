@@ -1,5 +1,6 @@
 package msi.gama.jogl.utils.Camera;
 
+import java.awt.Point;
 import java.awt.event.MouseEvent;
 import javax.media.opengl.glu.GLU;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
@@ -112,10 +113,35 @@ public class FreeFlyCamera extends AbstractCamera {
 	}
 
 	@Override
-	public void zoomROI(final double centerX, final double centerY, final int width, final int height) {
+	protected void zoomRoi() {
+		int width = Math.abs(region[0] - region[2]);
+		int height = Math.abs(region[1] - region[3]);
 		double maxDim = width > height ? width : height;
-		updatePosition(centerX, centerY, maxDim * 1.5);
+		updatePosition(getRoiCenter().x, getRoiCenter().y, maxDim * 1.5);
 		update();
+	}
+
+	@Override
+	public void setRegionOfInterest(final Point origin, final Point end, final Vector3D worldCoordinates) {
+		region[0] = origin.x;
+		region[1] = end.y;
+		region[2] = origin.x;
+		region[3] = end.y;
+		int roiWidth = Math.abs(end.x - origin.x);
+		int roiHeight = Math.abs(end.y - origin.y);
+		if ( region[0] == region[2] && region[1] == region[3] ) {
+			getRoiCenter().setLocation(worldCoordinates.x, worldCoordinates.y);
+
+		} else if ( region[0] < region[2] && region[1] > region[3] ) {
+			getRoiCenter().setLocation(worldCoordinates.x - roiWidth / 2, worldCoordinates.y + roiHeight / 2);
+		} else if ( region[0] < region[2] && region[1] < region[3] ) {
+			getRoiCenter().setLocation(worldCoordinates.x - roiWidth / 2, worldCoordinates.y - roiHeight / 2);
+		} else if ( region[0] > region[2] && region[1] < region[3] ) {
+			getRoiCenter().setLocation(worldCoordinates.x + roiWidth / 2, worldCoordinates.y - roiHeight / 2);
+		} else if ( region[0] > region[2] && region[1] > region[3] ) {
+			getRoiCenter().setLocation(worldCoordinates.x + roiWidth / 2, worldCoordinates.y + roiHeight / 2);
+		}
+
 	}
 
 	@Override
@@ -130,12 +156,11 @@ public class FreeFlyCamera extends AbstractCamera {
 			getMousePosition().x = arg0.getX();
 			getMousePosition().y = arg0.getY();
 			setEnableROIDrawing(true);
-			getRenderer().DrawROI();
+			getRenderer().drawROI();
 		} else {
-			int horizMovement = arg0.getX() - getLastxPressed();
-			int vertMovement = arg0.getY() - getLastyPressed();
-			setLastxPressed(arg0.getX());
-			setLastyPressed(arg0.getY());
+			int horizMovement = arg0.getX() - getLastMousePressedPosition().x;
+			int vertMovement = arg0.getY() - getLastMousePressedPosition().y;
+			lastMousePressedPosition = arg0.getPoint();
 			this.theta = theta - horizMovement * get_sensivity();
 			this.phi = phi - vertMovement * get_sensivity();
 			update();
