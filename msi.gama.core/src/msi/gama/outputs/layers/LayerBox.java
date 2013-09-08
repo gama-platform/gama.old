@@ -251,40 +251,4 @@ public class LayerBox implements IDisplayLayerBox {
 	// return currentBoundingBox;
 	// }
 
-	/**
-	 * Method isAbsoluteWidth()
-	 * @see msi.gama.outputs.layers.IDisplayLayerBox#isAbsoluteWidth()
-	 */
-	@Override
-	public boolean isAbsoluteWidth() {
-		return false; /* isAbsoluteWidth; */
-	}
-
-	/**
-	 * Method isAbsoluteHeight()
-	 * @see msi.gama.outputs.layers.IDisplayLayerBox#isAbsoluteHeight()
-	 */
-	@Override
-	public boolean isAbsoluteHeight() {
-		return false; /* isAbsoluteHeight; */
-	}
-
-	/**
-	 * Method isAbsoluteX()
-	 * @see msi.gama.outputs.layers.IDisplayLayerBox#isAbsoluteX()
-	 */
-	@Override
-	public boolean isAbsoluteX() {
-		return false; /* isAbsoluteX; */
-	}
-
-	/**
-	 * Method isAbsoluteY()
-	 * @see msi.gama.outputs.layers.IDisplayLayerBox#isAbsoluteY()
-	 */
-	@Override
-	public boolean isAbsoluteY() {
-		return false; /* isAbsoluteY; */
-	}
-
 }

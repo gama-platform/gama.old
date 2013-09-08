@@ -27,6 +27,8 @@ public abstract class AbstractDisplayGraphics implements IGraphics {
 		heightOfEnvironmentInModelUnits = (int) surface.getEnvHeight();
 		widthOfDisplayInPixels = surface.getDisplayWidth();
 		heightOfDisplayInPixels = surface.getDisplayHeight();
+		xRatioBetweenPixelsAndModelUnits = (double) widthOfDisplayInPixels / (double) widthOfEnvironmentInModelUnits;
+		yRatioBetweenPixelsAndModelUnits = (double) heightOfDisplayInPixels / (double) heightOfEnvironmentInModelUnits;
 		setQualityRendering(surface.getQualityRendering());
 	}
 

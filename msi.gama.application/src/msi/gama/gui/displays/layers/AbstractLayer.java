@@ -21,6 +21,7 @@ package msi.gama.gui.displays.layers;
 import java.awt.Point;
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -142,7 +143,6 @@ public abstract class AbstractLayer implements ILayer {
 		// if ( scope.interrupted() ) { return; }
 		if ( definition != null ) {
 			definition.getBox().compute(scope);
-			// definition.step(scope);
 			g.setOpacity(definition.getTransparency());
 			setPositionAndSize(definition.getBox(), g);
 		}
@@ -189,47 +189,26 @@ public abstract class AbstractLayer implements ILayer {
 	 */
 	private void setPositionAndSize(final IDisplayLayerBox box, final IGraphics g) {
 		// Voir comment conserver cette information
-		final int displayPixelWidth = g.getDisplayWidthInPixels();
-		final int displayPixelHeight = g.getDisplayHeightInPixels();
+		final int pixelWidth = g.getDisplayWidthInPixels();
+		final int pixelHeight = g.getDisplayHeightInPixels();
 
+		ILocation point = box.getPosition();
 		// Computation of x
-		final double x = box.getPosition().getX();
-		double relative_x = 0;
-		if ( box.isAbsoluteX() ) {
-			relative_x = x * g.getxRatioBetweenPixelsAndModelUnits();
-		} else {
-			relative_x = Math.abs(x) <= 1 ? displayPixelWidth * x : g.getxRatioBetweenPixelsAndModelUnits() * x;
-		}
-		final double absolute_x = Math.signum(x) < 0 ? displayPixelWidth + relative_x : relative_x;
-
+		final double x = point.getX();
+		double relative_x = Math.abs(x) <= 1 ? pixelWidth * x : g.getxRatioBetweenPixelsAndModelUnits() * x;
+		final double absolute_x = Math.signum(x) < 0 ? pixelWidth + relative_x : relative_x;
 		// Computation of y
-		final double y = box.getPosition().getY();
-		double relative_y = 0;
-		if ( box.isAbsoluteY() ) {
-			relative_y = y * g.getyRatioBetweenPixelsAndModelUnits();
-		} else {
-			relative_y = Math.abs(y) <= 1 ? displayPixelHeight * y : g.getyRatioBetweenPixelsAndModelUnits() * y;
-		}
-		final double absolute_y = Math.signum(y) < 0 ? displayPixelHeight + relative_y : relative_y;
+		final double y = point.getY();
+		double relative_y = Math.abs(y) <= 1 ? pixelHeight * y : g.getyRatioBetweenPixelsAndModelUnits() * y;
+		final double absolute_y = Math.signum(y) < 0 ? pixelHeight + relative_y : relative_y;
 
+		point = box.getExtent();
 		// Computation of width
-		double absolute_width = 0;
-		final double width = box.getExtent().getX();
-		if ( box.isAbsoluteWidth() ) {
-			absolute_width = width * g.getxRatioBetweenPixelsAndModelUnits();
-		} else {
-			absolute_width =
-				Math.abs(width) <= 1 ? displayPixelWidth * width : g.getxRatioBetweenPixelsAndModelUnits() * width;
-		}
+		final double w = point.getX();
+		double absolute_width = Math.abs(w) <= 1 ? pixelWidth * w : g.getxRatioBetweenPixelsAndModelUnits() * w;
 		// Computation of height
-		double absolute_height = 0;
-		final double height = box.getExtent().getY();
-		if ( box.isAbsoluteHeight() ) {
-			absolute_height = height * g.getyRatioBetweenPixelsAndModelUnits();
-		} else {
-			absolute_height =
-				Math.abs(height) <= 1 ? displayPixelHeight * height : g.getyRatioBetweenPixelsAndModelUnits() * height;
-		}
+		final double h = point.getY();
+		double absolute_height = Math.abs(h) <= 1 ? pixelHeight * h : g.getyRatioBetweenPixelsAndModelUnits() * h;
 		sizeInPixels.setLocation(absolute_width, absolute_height);
 		// GuiUtils.debug("AbstractLayer.setSize : " + sizeInPixels);
 		positionInPixels.setLocation(absolute_x, absolute_y);

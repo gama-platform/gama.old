@@ -70,12 +70,4 @@ public interface IDisplayLayerBox {
 
 	public abstract Boolean getRefresh();
 
-	public abstract boolean isAbsoluteWidth();
-
-	public abstract boolean isAbsoluteHeight();
-
-	public abstract boolean isAbsoluteX();
-
-	public abstract boolean isAbsoluteY();
-
 }
