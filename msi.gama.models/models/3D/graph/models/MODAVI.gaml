@@ -1,28 +1,39 @@
 /**
- *  macro_graph
+ *  modavi
  *  Author: Arnaud Grignard
- *  Description: Display the number of node according to the class they belong.
+ *  Description: Multi-scale Online Data Analysis and Visualization Interaction
+ *  Fromm a reference model with node of a given class and spatial graph is created 
+ *  (or a barabasi graph if spatialGraph is set to false) in the advanced view to 
+ *  represent the interaction in the reference model.
+ *  An abstract view/controller is created to summarize the interaction in the advanced view
+ *  in a macro graph. An action is defined for each macroNode and macroEdge to control the 
+ *  reference model.
  */
 
 
-model macro_graph
+model modavi
  
 global {
 	
 	graph my_graph ;
 	
 	int nbAgent parameter: 'Number of Agents' min: 1 <- 500 category: 'Model';
-	int nbTypeOfClass parameter: "Type of class" min:1 <-1 category: 'Model';
 	int nbValuePerClass parameter: 'Number of value per class' min: 1 max:100 <- 15 category: 'Model';
+	bool spatialGraph parameter: 'Spatial Graph' <- true category: 'Model';
+	float distance parameter: 'Distance' min: 1.0<- 10.0 category: 'Model';
 	int threshold parameter: 'Threshold' min: 0 <- 0 category: 'Model';
-	int m_barabasi parameter: 'Edges density' min: 1 <- 2 category: 'Model';
+
 		
-	int nodeSize parameter: 'Node size' min: 1 <- 2 category: 'Aspect';
+	int nodeSize parameter: 'Node size' min: 1 <- 1 category: 'Aspect';
 	int macroNodeSize parameter: 'Macro Node size' min: 1 <- 2 category: 'Aspect';
 	
+	int nbTypeOfClass <-1;
+	
 	int zoomFactor <- nbTypeOfClass;
+
 			
     list<matrix> interactionMatrix size:nbTypeOfClass;	
+    int nbEdgeMax;
     
     reflex updateInteractionMatrix{
     	ask edge{
@@ -34,13 +45,30 @@ global {
 			}
 		}
 	}
+	
+	reflex computeNbEdgeMax{
+		nbEdgeMax <-1;
+		ask macroEdge{
+			if(nbAggregatedLinkList[0] > nbEdgeMax){
+				nbEdgeMax <-nbAggregatedLinkList[0];
+			}	
+		}
+	}
 
 	
 	init {
 		
 		do InitInteractionMatrix;
-
-        my_graph <- generate_barabasi_albert(node,edge,nbAgent,m_barabasi);
+		
+		if(spatialGraph){
+			create node number:nbAgent;
+			my_graph <- as_distance_graph(node, map(["distance"::distance, "species"::edge]));
+			
+		}
+        else{
+          my_graph <- generate_barabasi_albert(node,edge,nbAgent,2);	
+        }
+        
 
 		ask node as list{
 			loop i from:0 to:nbTypeOfClass-1{
@@ -85,7 +113,7 @@ entities {
 		}
  		
 		aspect real {			 
-			draw sphere(nodeSize) color: rgb('white');
+			draw sphere(nodeSize) color: rgb(colorList[0]);
 		} 
 								
 		aspect coloredByClass{
@@ -158,7 +186,7 @@ entities {
 	         }
 		}
 		
-		user_command "Remove micro node" action: removeMicroNode;
+		user_command "Remove all micro node" action: removeMicroNode;
 	}
 	
 	
@@ -171,7 +199,7 @@ entities {
 		aspect base {
 			loop i from:0 to: nbTypeOfClass-1{
 				if(nbAggregatedLinkList[i]>threshold){
-				draw geometry: (line([src.posVector[i],dest.posVector[i]]) buffer ((nbAggregatedLinkList[i]^2.5)/(nbAgent*zoomFactor))) color: rgb(125,125,125) border:rgb(125,125,125); 	
+				draw geometry: (line([src.posVector[i],dest.posVector[i]]) buffer ((nbAggregatedLinkList[i])/((length(edge)))*nbEdgeMax)) color: rgb(125,125,125) border:rgb(125,125,125); 	
 				}
 			}
 		}
@@ -184,7 +212,7 @@ entities {
 	         }
 		}
 		
-		user_command "Remove micro edge" action: removeMicroEdge;	
+		user_command "Remove all micro edge" action: removeMicroEdge;	
 	}
 	
 	species macroGraph {
@@ -240,7 +268,7 @@ experiment MODAVI type: gui {
 			
 			graphics AbstractView{
 				draw rectangle(100,100) at: {250,150,0} empty:true color:rgb('black');
-				draw text:"Abstract view and Controller" at:{250,210,0} size:5 color: rgb('black') bitmap:false;
+				draw text:"Abstract view/controller" at:{250,210,0} size:5 color: rgb('black') bitmap:false;
 			}
 			species macroNode aspect:Generic position: {200,100,0};
 			species macroEdge aspect:base position: {200,100,0};	
