@@ -36,12 +36,10 @@ global torus: torus_environment{
 			location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
 		}
 		
-		create  boids_goal number: 1 {
+		create  boids_goal {
 			location <- goal;
-		}
-		
-		
 		}	
+	}	
 }
 
 entities {
@@ -135,7 +133,6 @@ entities {
 		}
 		
 		reflex movement {
-		//	do bounding;
 			do do_move;
 		}
 		
@@ -192,7 +189,6 @@ experiment Boids type: gui {
 	parameter 'Direction of the wind' var: wind_vector ;  
 	
 	output {
-		inspect 'Inspector' type: agent;
 		display Sky refresh_every: 1 {
 			image 'background' file:'../images/sky.jpg';
 			species boids aspect: image;
