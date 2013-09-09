@@ -42,13 +42,6 @@ entities {
         }
     }
 }
-experiment exp type: gui {
-	output {
-     display bug_display type:opengl ambient_light:0.2{
-        species bug aspect: base;
-        species bug aspect: attribute position: {125,0,0};
-    }
-	}
-}
+
 
 
