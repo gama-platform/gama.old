@@ -2,9 +2,11 @@ model graph3D
 
 /**
  *  graph3D
+ * 
  *  Author: Arnaud Grignard
- *  Description: Create and update a 3D Graph
-
+ * 
+ *  Description: Create and update a 3D Graph. Each node is represented by a sphere 
+ *  with a size and a color that evolves according to its degree.
  */   
 
 global {
