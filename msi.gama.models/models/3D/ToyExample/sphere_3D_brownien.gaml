@@ -1,9 +1,9 @@
 model brownianSphere   
 
 global {
-	int number_of_agents parameter: 'Number of Agents' min: 1 <- 1000 ;
+	int number_of_agents parameter: 'Number of Agents' min: 1 <- 1000 category: 'Initialization';
+	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 1000 category: 'Initialization';  
 	int radius parameter: 'Radius' min: 10 <- 10 ;
-	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 1000 ;  
 	bool wander3D <- true parameter: 'Wander 3D';
 	bool sphere <- true parameter: 'sphere';
 	
