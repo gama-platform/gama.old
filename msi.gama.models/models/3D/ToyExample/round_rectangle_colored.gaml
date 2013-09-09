@@ -25,8 +25,8 @@ global {
 		set maxSize<- 10;
 		
 		create mySquare number:number_of_agents{
-			set self.width <- rnd(maxSize)+1;
-			set self.height <-rnd(maxSize)+1;		
+			set self.width <- float(rnd(maxSize)+1);
+			set self.height <-float(rnd(maxSize)+1);		
 			set color <- rgb((ColorList[0])[rnd(2)]);
 		}
 	}  
@@ -38,22 +38,17 @@ environment width: width_and_height_of_environment height: width_and_height_of_e
 entities { 
 	
 	species mySquare{
-		//const color type: rgb <- [255, 131,0] as rgb;
+
 		float width ;
 		float height;
 		rgb color;	
 		
 		reflex updateShape{
-			set self.width <- rnd(maxSize);
-			set self.height <-rnd(maxSize);
+			set self.width <- float(rnd(maxSize));
+			set self.height <-float(rnd(maxSize));
 			set color <- rgb (blueCombination[rnd(3)]);
 			
 		}
-		
-		/*reflex UpdateHSBColor{
-			set color <- color hsb_to_rgb ([(width*height)/(maxSize*maxSize),1.0,1.0]);
-		}*/
-
 		aspect RoundCorner {
 			draw rectangle({self.width, self.height}) color: color rounded:true ; 
 		}

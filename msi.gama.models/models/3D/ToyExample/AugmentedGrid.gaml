@@ -26,7 +26,7 @@ global {
 	} 
 }
 environment bounds: {width,height} { 
-	grid cell width: width height: height neighbours: 4 torus: false {
+	grid cell width: width height: height neighbours: 4 {
 
 	    int cellValue <- rnd(255);
 		float elevation;
