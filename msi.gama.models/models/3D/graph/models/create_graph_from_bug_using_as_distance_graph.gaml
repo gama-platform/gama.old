@@ -1,4 +1,12 @@
-model Graph
+model SpatialGraph
+
+/**
+ *  SpatialGraph
+ *  Author: Arnaud Grignard
+ *  Description: From the reference model "bug.gaml" a spatial graph is created. 
+ *  We create a species node that mirrors the species bug and then a spatial graph is creating 
+ *  using as_distance_graph operator. 
+ */
 
 import 'bug.gaml'
 global { 
@@ -15,19 +23,20 @@ global {
 species node mirrors: list(bug) {
 	point location <- target.location update: target.location;
 	aspect base {
-		draw sphere(1) color: rgb('green'); 
+		draw sphere(1.1) color: rgb('green'); 
 	}
 }
 
 species edge {
 	aspect base {
-		draw shape color: rgb('blue');
+		draw shape color: rgb('green');
 	}
 }
 
-experiment basicGraph type: gui {
+experiment spatialGraph type: gui {
 	output {	
-	 display graph_view type: opengl ambient_light: 0.2 {
+	 display graph_view type: opengl {
+	 	    species bug aspect:base;
 			species node aspect: base;
 			species edge aspect: base;
 		}
