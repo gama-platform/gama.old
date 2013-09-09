@@ -8,6 +8,7 @@ model primitive_shape
 
 global {
 	int number_of_agents parameter: 'Number of Agents' min: 1 <- 100 ;
+	int elevation parameter: 'Elevation' min: 0 <- 0 ;
 	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 100 ;
 	rgb global_color;
 	int maxSize;
@@ -50,7 +51,7 @@ entities {
 			
 		}
 		aspect RoundCorner {
-			draw rectangle({self.width, self.height}) color: color rounded:true ; 
+			draw rectangle({self.width, self.height}) color: color rounded:true depth:elevation; 
 		}
 	}	
 	
