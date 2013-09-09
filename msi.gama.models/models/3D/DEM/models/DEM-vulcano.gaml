@@ -7,9 +7,8 @@ model Graphic_primitive
 global{
 	file dem parameter: 'DEM' <- file('../includes/DEM-Vulcano/DEM.png');
 	file texture parameter: 'Texture' <- file('../includes/DEM-Vulcano/Texture.png');
+	geometry shape <- rectangle(100,100);
 }
-
-environment width:100 height:100;
 
 experiment DEM type: gui {
 	output {

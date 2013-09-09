@@ -14,7 +14,6 @@ global {
 	file map_texture parameter: 'Texture' <- file('../includes/DEM-vulcano/Texture.png');
 	map colors <- map([0:: rgb([240,240,255]),1:: rgb([210,233,254]), 2:: rgb([199,223,244]),3:: rgb([146,197,234]),4:: rgb([125,152,187]),5:: rgb([91,117,167]),6:: rgb([42,69,122])]);
 	geometry shape <- envelope(grid_file);
-
 }
 
 entities {
@@ -24,7 +23,7 @@ entities {
 		}
 		reflex decreaseGridValue{
 			if(grid_value >0){
-			  set grid_value <- grid_value - 0.01;	
+			  grid_value <- grid_value - 0.01;	
 			} 	
 	    }
 	}

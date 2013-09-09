@@ -1,5 +1,5 @@
 model boids_3D 
-global { 
+global torus: torus_environment{ 
 	int number_of_agents parameter: 'Number of agents' <- 100 min: 1 max: 1000000;
 	int number_of_obstacles parameter: 'Number of obstacles' <- 0 min: 0;
 	int boids_size parameter: 'Boids size' <- 50 min: 1;
@@ -20,7 +20,7 @@ global {
 	int goal_duration <- 30 value: (goal_duration - 1); 
 	point goal <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 ,(rnd(z_max - 2) + 1)}; 
 	list images of: file <- [file('../images/bird1.png'),file('../images/bird2.png'),file('../images/bird3.png')]; 
-	
+	geometry shape <- square(width_and_height_of_environment);
 	init {
 		create boids number: number_of_agents { 
 			location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 , (rnd(z_max - 2) + 1)};
@@ -31,8 +31,6 @@ global {
 		}
 	}
 }
-
-environment width: width_and_height_of_environment height: width_and_height_of_environment torus: torus_environment;
 
 entities {
 	species boids_goal skills: [moving] {

@@ -1,6 +1,6 @@
 model boids 
 
-global { 
+global torus: torus_environment{ 
 	int number_of_agents parameter: 'Number of agents' <- 100 min: 1 max: 1000000;
 	int number_of_obstacles parameter: 'Number of obstacles' <- 4 min: 0;
 	int boids_size parameter: 'Boids size' <- 20 min: 1;
@@ -27,6 +27,7 @@ global {
 	int ymin <- bounds;  
 	int xmax <- (width_and_height_of_environment - bounds);    
 	int ymax <- (width_and_height_of_environment - bounds);   
+	geometry shape <- square(width_and_height_of_environment);
 
 
 	// flock's parameter 
@@ -36,28 +37,25 @@ global {
 	
 	init {
 		create boids number: number_of_agents { 
-			set location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 };
+			location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 };
 		} 
 		 
 		create obstacle number: number_of_obstacles {
-			set location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
+			location <- {rnd (width_and_height_of_environment - 2) + 1, rnd (width_and_height_of_environment -2) + 1 }; 
 		}
 		
 		create  boids_goal number: 1 {
-			set location <- goal;
+			location <- goal;
 		}
 	}
 	
 		
 	 reflex create_flocks {
 	 	if create_flock {
-	 		let free_boids type: list of: boids value: list (boids); 
 	 		let potentialBoidsNeighboursMap type: map value: ([] as map);
 	 		
-	 		loop one_boids over: free_boids {
-	 			let free_neighbours 
-	 				type: list of: boids 
-	 				value: ( ( list ((agents_overlapping (one_boids.shape + (float (two_boids_distance)))) ) of_species boids) );
+	 		loop one_boids over: boids {
+	 			list<boids> free_neighbours <- boids overlapping (one_boids.shape + (float (two_boids_distance)));
 	 			remove one_boids from: free_neighbours;  
 
 	 			if !(empty (free_neighbours)) {
@@ -65,9 +63,9 @@ global {
 	 			} 
 	 		}
 	 		
-	 		let sorted_free_boids type: list of: boids value: (potentialBoidsNeighboursMap.keys) sort_by (length (list (potentialBoidsNeighboursMap at (boids (each)))));
+	 		list<boids> sorted_free_boids <- (potentialBoidsNeighboursMap.keys) sort_by (length (list (potentialBoidsNeighboursMap at (boids (each)))));
 	 		loop one_boids over: sorted_free_boids {
-	 			let one_boids_neighbours type: list of: boids value: list(potentialBoidsNeighboursMap at one_boids);
+	 			list<boids> one_boids_neighbours <- list(potentialBoidsNeighboursMap at one_boids);
 	 			
 	 			if  (one_boids_neighbours != nil) {
 	 				loop one_neighbour over: one_boids_neighbours {
@@ -76,13 +74,13 @@ global {
 	 			}
 	 		}
 	 		
-		 	let boids_neighbours type: list of: boids value: (potentialBoidsNeighboursMap.keys);
+		 	list<boids> boids_neighbours <- (potentialBoidsNeighboursMap.keys);
 		 	loop one_key over: boids_neighbours {
 		 		put (remove_duplicates ((list (potentialBoidsNeighboursMap at (one_key))) + one_key)) at: one_key in: potentialBoidsNeighboursMap;
 		 	}
 		 	
 		 	loop one_key over: (potentialBoidsNeighboursMap.keys) {
-		 		let micro_agents type: list of: boids value: list(potentialBoidsNeighboursMap at one_key);
+		 		list<boids> micro_agents <- list(potentialBoidsNeighboursMap at one_key);
 		 			
 		 		if ( (length (micro_agents)) > 1 ) {
 		 			create flock number: 1 with: [ color::rgb([rnd (255), rnd (255), rnd (255)]) ] { 
@@ -94,16 +92,14 @@ global {
 	}  
 }
 
-environment width: width_and_height_of_environment height: width_and_height_of_environment torus: torus_environment;
-
 entities {
 	species name: boids_goal skills: [moving] {
 		const range type: float init: 20.0;
 		const size type: float init: 10.0;
 		
 		reflex wander { 
-			do  wander amplitude: 45 speed: 20;  
-			set goal value: location;
+			do wander amplitude: 45 speed: 20;  
+			goal <- location;
 		}
 		
 		aspect default {
@@ -113,13 +109,13 @@ entities {
 	} 
 	
 	species flock  {
-		var cohesionIndex type: float init: two_boids_distance value: (two_boids_distance + (length (members)));
-		var color type: rgb init: rgb ([64, 64, 64]);
-	 	var shape type: geometry value: !(empty (members)) ? ( (polygon (members collect (boids_delegation (each)).location )) + 2.0 ) : ( polygon ([ {rnd (width_and_height_of_environment), rnd (width_and_height_of_environment)} ]) );
+		float cohesionIndex <- two_boids_distance update: (two_boids_distance + (length (members)));
+		rgb color <- rgb ([64, 64, 64]);
+	 	geometry shape update: !(empty (members)) ? ( (polygon (members collect (boids_delegation (each)).location )) + 2.0 ) : ( polygon ([ {rnd (width_and_height_of_environment), rnd (width_and_height_of_environment)} ]) );
 		 
  
 		species boids_delegation parent: boids topology: topology(world.shape)  {
-			list others -> {( (boids_delegation overlapping (shape + range))) - self};
+			list<boids> others -> {( (boids_delegation overlapping (shape + range))) - self};
 
 			action compute_mass_center type: point {
 				loop o over: others {
@@ -138,9 +134,9 @@ entities {
 			}
 			
 			reflex cohesion when: apply_cohesion {
-				let acc value: ((self compute_mass_center []) as point) - location;
-				set acc value: acc / cohesion_factor;
-				set velocity value: velocity + acc;
+				point acc <- ((self compute_mass_center []) as point) - location;
+				acc <- acc / cohesion_factor;
+				velocity <- velocity + acc;
 			}
 			
 			reflex avoid when: apply_avoid {
@@ -148,12 +144,12 @@ entities {
 		}
 		
 		reflex capture_release_boids {
-			 let removed_components type: list of: boids_delegation value: (list (boids_delegation)) where ((each distance_to location) > cohesionIndex );
+			 list<boids_delegation> removed_components <- boids_delegation where ((each distance_to location) > cohesionIndex );
 			 if !(empty (removed_components)) {
 			 	release removed_components;
 			 }
 			 
-			 let added_components type: list of: boids value: (list (boids)) where ((each distance_to location) < cohesionIndex );
+			 list<boids> added_components <- boids where ((each distance_to location) < cohesionIndex );
 			 if !(empty (added_components)) {
 			 	capture added_components as: boids_delegation;
 			 }
@@ -165,14 +161,14 @@ entities {
 		}
 		
 		reflex merge_nearby_flocks {
-			let nearby_flocks type: list of: flock value: (flock overlapping (shape +  merging_distance));
+			list<flock> nearby_flocks<- (flock overlapping (shape +  merging_distance));
 			if !(empty (nearby_flocks)) {
-			 	set nearby_flocks <- nearby_flocks sort_by (length (each.members));
+			 	nearby_flocks <- nearby_flocks sort_by (length (each.members));
 			 	let largest_flock <- nearby_flocks at ((length (nearby_flocks)) - 1);
 			 	 
 			 	remove largest_flock from: nearby_flocks;
 			 	 
-			 	let added_components type: list of: boids value: [];
+			 	list<boids> added_components <- [];
 			 	loop one_flock over: nearby_flocks {
 			 		release one_flock.members returns: released_boids; 
 			 		
@@ -190,7 +186,7 @@ entities {
 		}
 		
 		aspect default {
-			draw geometry: shape color: color;
+			draw shape color: color;
 		}
 	}
 	
@@ -201,70 +197,70 @@ entities {
 		point velocity <- {0,0};
 		int size <- 5;
 		
-		list others update: ((boids overlapping (circle (range)))  - self);
+		list<boids> others update: ((boids overlapping (circle (range)))  - self);
 		
 		point mass_center update:  (length(others) > 0) ? ((mean (others collect (each.location)) ) as point) : location;
 		
 		reflex separation when: apply_separation {
-			let acc value: {0,0}; 
+			point acc <- {0,0}; 
 			loop boid over: (boids overlapping (circle(minimal_distance)))  {
-				set acc <- acc - ((location of boid) - location);
+				acc <- acc - ((location of boid) - location);
 			}  
-			set velocity <- velocity + acc;
+			velocity <- velocity + acc;
 		}
 		
 		reflex alignment when: apply_alignment {
-			let acc <- (mean (others collect (each.velocity)) as point) - velocity;
-			set velocity <- velocity + (acc / alignment_factor);
+			point acc <- (mean (others collect (each.velocity)) as point) - velocity;
+			velocity <- velocity + (acc / alignment_factor);
 		}
 		 
 		reflex cohesion when: apply_cohesion {
-			let acc value: mass_center - location;
-			set acc value: acc / cohesion_factor;
-			set velocity value: velocity + acc; 
+			point acc <- mass_center - location;
+			acc <- acc / cohesion_factor;
+			velocity <- velocity + acc; 
 		}
 		
 		reflex avoid when: apply_avoid {
 			let acc <- {0,0};
 			let nearby_obstacles <- (obstacle overlapping (circle (range)) );
 			loop obs over: nearby_obstacles {
-				set acc <- acc - ((location of obs) - my (location));
+				acc <- acc - ((location of obs) - my (location));
 			}
-			set velocity <- velocity + acc; 
+			velocity <- velocity + acc; 
 		}
 		
 		action bounding {
 			if  !(torus_environment) {
 				if  (location.x) < xmin {
-					set velocity <- velocity + {bounds,0};
+					velocity <- velocity + {bounds,0};
 				} else if (location.x) > xmax {
-					set velocity <- velocity - {bounds,0};
+					velocity <- velocity - {bounds,0};
 				}
 				
 				if (location.y) < ymin {
-					set velocity <- velocity + {0,bounds};
+					velocity <- velocity + {0,bounds};
 				} else if (location.y) > ymax {
-					set velocity <- velocity - {0,bounds};
+					velocity <- velocity - {0,bounds};
 				}
 				
 			}
 		}
 		
 		reflex follow_goal when: apply_goal {
-			set velocity <- velocity + ((goal - location) / cohesion_factor);
+			velocity <- velocity + ((goal - location) / cohesion_factor);
 		}
 		
 		reflex wind when: apply_wind {
-			set velocity <- velocity + wind_vector;
+			velocity <- velocity + wind_vector;
 		}
 		  
 		action do_move {  
 			if (((velocity.x) as int) = 0) and (((velocity.y) as int) = 0) {
-				set velocity <- {(rnd(4)) -2, (rnd(4)) - 2};
+				velocity <- {(rnd(4)) -2, (rnd(4)) - 2};
 			}
-			let old_location <- location;
+			point old_location <- location;
 			do goto target: location + velocity;
-			set velocity <- location - old_location;
+			velocity <- location - old_location;
 		}
 		
 		reflex movement {
@@ -280,10 +276,10 @@ entities {
 		}
 				
 		aspect dynamicColor{
-			let hue <- heading/360;
-			let cc <- color hsb_to_rgb ([hue,1.0,1.0]);
+			float hue <- heading/360;
+			rgb cc <- color hsb_to_rgb ([hue,1.0,1.0]);
 			draw triangle(20) size: 15 rotate: 90 + heading color: cc border:cc depth:5;
-			draw text: name;
+			draw name;
 		}
 	} 
 	

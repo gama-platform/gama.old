@@ -18,7 +18,7 @@ global {
 	init{
 		create people number:100 {
 			float z <- (cell(location)).grid_value;                 
-            set location <- {location.x,location.y,z};
+            location <- {location.x,location.y,z};
 		}
 	}
 }
@@ -30,7 +30,7 @@ entities {
 		}
 		reflex decreaseGridValue{
 			if(grid_value >0){
-			  set grid_value <- grid_value - 0.01;	
+			  grid_value <- grid_value - 0.01;	
 			} 	
 	    }
 	}
@@ -40,15 +40,14 @@ entities {
         reflex move{
             do wander;
             float z <- (cell(location)).grid_value;                 
-            set location <- {location.x,location.y,z};
+            location <- {location.x,location.y,z};
         }
         
         aspect base{
-        	let heading1 <-rnd(360);
-        	let hue <- heading1/360;
-			let  color <- color hsb_to_rgb ([hue,1.0,1.0]);
-        	let geometry1 <- geometry (triangle(1));
-			draw geometry: geometry1    size: 1 rotate: heading1 color: color border:color depth:0.5;
+        	int heading1 <-rnd(360);
+        	float hue <- heading1/360;
+			rgb  color <- color hsb_to_rgb ([hue,1.0,1.0]);
+        	draw triangle(1)  size: 1 rotate: heading1 color: color border:color depth:0.5;
         }
     }
 }
@@ -69,8 +68,5 @@ experiment gridloading type: gui {
 			grid cell texture:map_texture text:false triangulation:true;
 			species people aspect:base;
 		}
-		
-		
-		
 	}
 }

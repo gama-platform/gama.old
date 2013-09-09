@@ -7,7 +7,7 @@ model FallingHelloWorld
  * 
  *  Description: This is a hello world model that introduces the physics engine.
  *  This model define two species floor and ball with the "physical3D" skills
- *  that simply floor on a floor when strating the simulation. 
+ *  that simply floor on a floor when starting the simulation. 
  * 
  *  Floor is a simple rectangle with a null mass
  *  Ball is a sphere with a given mass
@@ -23,27 +23,28 @@ global {
 	int ball_radius parameter: 'Ball radius' min:1 <- 25  category: 'Model'; 
 	
 	file imageRaster <- file('./../images/wood-floor.jpg') ;
-
+	geometry shape <- square(environment_size);
+	
 	Physical3DWorld world2;
 	init {
 		create ball number: number_of_ball{
-			set location <-  {rnd(environment_size),rnd(environment_size),rnd(environment_size)};
-            set radius <-float(rnd(ball_radius)+1);
-			set collisionBound <-  ["shape"::"sphere","radius"::radius];
-			set mass <-1.0;
+			location <-  {rnd(environment_size),rnd(environment_size),rnd(environment_size)};
+            radius <-float(rnd(ball_radius)+1);
+			collisionBound <-  ["shape"::"sphere","radius"::radius];
+			mass <-1.0;
 		}
 		
 		create floor {
-			set location <- {environment_size/2,environment_size/2,0};
-			set collisionBound <-  ["shape"::"floor","x"::environment_size/2, "y":: environment_size/2, "z"::0];
-			set mass <-0.0;
+			location <- {environment_size/2,environment_size/2,0};
+			collisionBound <-  ["shape"::"floor","x"::environment_size/2, "y":: environment_size/2, "z"::0];
+			mass <-0.0;
 		}
 
 		
 		create Physical3DWorld{
-		  set world2 <- first(Physical3DWorld as list);
-		  ask world2 {set registeredAgents <-  (ball as list) + (floor as list);}	
-		  set world2.gravity <- true;
+		  world2 <- first(Physical3DWorld as list);
+		  ask world2 {registeredAgents <-  (ball as list) + (floor as list);}	
+		  world2.gravity <- true;
 		}
 	}
 	
@@ -51,11 +52,7 @@ global {
 	  ask world2 {do computeForces timeStep : 0.0005;}
 	} 			
 } 
-
-environment width: environment_size height: environment_size; 
-
 entities {
- 
     species floor skills: [physical3D]{    	
 		aspect image{
 			draw imageRaster size: environment_size;
@@ -72,11 +69,11 @@ entities {
 	}
 }
 experiment Falling_Hello_world type: gui {
-output {
-	display Rain  type: opengl background:rgb(0,58,64) draw_env:false{
-		species floor aspect:image;
-	    species ball aspect:sphere;			
+	output {
+		display Rain  type: opengl background:rgb(0,58,64) draw_env:false{
+			species floor aspect:image;
+		    species ball aspect:sphere;			
+		}
 	}
-}
 }
 

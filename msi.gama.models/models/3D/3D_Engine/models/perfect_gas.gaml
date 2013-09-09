@@ -20,90 +20,85 @@ global {
 	int size_of_agents <- 10;
 	float size_of_the_wall <- 10.0;
 	int offset<-10;
+	geometry shape <- rectangle(width_of_environment, height_of_environment);
 
 	Physical3DWorld world2;
 	init {
-	    
-	    
 		create ball number: 1000{
-			set radius <-2;
-			set location <-  {offset + rnd(width_of_environment-offset*2), offset + rnd(height_of_environment- offset*2),offset + rnd(width_of_environment-offset*2)};
-			set mass <-0.001;
-			set collisionBound <-  ["shape"::"sphere","radius"::radius];
+			radius <-2;
+			location <-  {offset+ rnd(width_of_environment-offset*2), offset+ rnd(height_of_environment- offset*2),offset+ rnd(width_of_environment-offset*2)};
+			mass <-0.001;
+			collisionBound <-  ["shape"::"sphere","radius"::radius];
 		}
 		
 		create floor 
 		{   
-			set location <- {width_of_environment/2,height_of_environment/2,0};
-			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2 , "y":: height_of_environment/2, "z"::size_of_the_wall];
-			set shape <- rectangle({width_of_environment,height_of_environment});
-			set mass <-0.0;
+			location <- {width_of_environment/2,height_of_environment/2,0};
+			collisionBound <-  ["shape"::"floor","x"::width_of_environment/2 , "y":: height_of_environment/2, "z"::size_of_the_wall];
+			shape <- rectangle(width_of_environment,height_of_environment);
+			mass <-0.0;
 		}
 		
 		//Sky
 		create floor{
-			set location <- {width_of_environment/2,height_of_environment/2,width_of_environment};
-			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2 , "y":: height_of_environment/2, "z"::size_of_the_wall];
-			set shape <- rectangle({width_of_environment,height_of_environment});
-			set mass <-0.0;
+			location <- {width_of_environment/2,height_of_environment/2,width_of_environment};
+			collisionBound <-  ["shape"::"floor","x"::width_of_environment/2 , "y":: height_of_environment/2, "z"::size_of_the_wall];
+			shape <- rectangle(width_of_environment,height_of_environment);
+			mass <-0.0;
 		}
 
 		//down wall
 		create wall{
-			set location <- {width_of_environment/2,height_of_environment,0};
-			set height <- float(width_of_environment);
-			set shape <- rectangle({width_of_environment,2});
-			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2, "y":: size_of_the_wall, "z"::height];
-			set mass <-0.0;
+			location <- {width_of_environment/2,height_of_environment,0};
+			height <- float(width_of_environment);
+			shape <- rectangle(width_of_environment,2);
+			collisionBound <-  ["shape"::"floor","x"::width_of_environment/2, "y":: size_of_the_wall, "z"::height];
+			mass <-0.0;
 		}
 		//upper wall
 		create wall{
-			set location <- {width_of_environment/2,0,0};
-			set height <- float(width_of_environment);
-			set shape <- rectangle({width_of_environment,2});
-			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2, "y":: size_of_the_wall, "z"::height];
-			set mass <-0.0;
+			location <- {width_of_environment/2,0,0};
+			height <- float(width_of_environment);
+			shape <- rectangle(width_of_environment,2);
+			collisionBound <-  ["shape"::"floor","x"::width_of_environment/2, "y":: size_of_the_wall, "z"::height];
+			mass <-0.0;
 		}
 		//left wall
 		create wall{
-			set location <- {0,height_of_environment/2,0};
-			set height <- float(width_of_environment);
-			set shape <- rectangle({2,height_of_environment});
-			set collisionBound <-  ["shape"::"floor","x"::size_of_the_wall, "y":: height_of_environment/2, "z"::height];
-			set mass <-0.0;			
+			location <- {0,height_of_environment/2,0};
+			height <- float(width_of_environment);
+			shape <- rectangle(2,height_of_environment);
+			collisionBound <-  ["shape"::"floor","x"::size_of_the_wall, "y":: height_of_environment/2, "z"::height];
+			mass <-0.0;			
 		}
 		//right wall
 		create wall{
-			set location <- {width_of_environment,height_of_environment/2,0};
-			set height <- float(width_of_environment);
-			set shape <- rectangle({2,height_of_environment});
-			set collisionBound <-  ["shape"::"floor","x"::size_of_the_wall, "y":: height_of_environment/2, "z"::height];
-			set mass <-0.0;
+			location <- {width_of_environment,height_of_environment/2,0};
+			height <- float(width_of_environment);
+			shape <- rectangle(2,height_of_environment);
+			collisionBound <-  ["shape"::"floor","x"::size_of_the_wall, "y":: height_of_environment/2, "z"::height];
+			mass <-0.0;
 			
 		}
 		
 		
 		create Physical3DWorld {
-			set gravity <- false;
+			gravity <- false;
 		}
-		set world2 <- first(Physical3DWorld as list);
-		ask world2 {set registeredAgents <-  (ball as list) + (floor as list) + (wall as list);}
-		
-	
+		world2 <- first(Physical3DWorld as list);
+		ask world2 {registeredAgents <-  (ball as list) + (floor as list) + (wall as list);}
 		
 	}
-		reflex computeForces  {
-			ask world2 {do computeForces timeStep : 0.1;}
-		} 
+	reflex computeForces  {
+		ask world2 {do computeForces timeStep : 0.1;}
+	} 
 			
 } 
 
-environment width: width_of_environment height: height_of_environment; 
 
 entities {
  
     species floor skills: [physical3D]{
-    	
     	aspect default {
 			draw shape color: rgb("black") empty:true;
 		}
@@ -124,7 +119,6 @@ entities {
 		float speed  <- speed_of_agents;  
 		int heading <- rnd(359);
 
-		
 		aspect sphere{
 			draw sphere(radius) color: rgb(135,201,255) ;
 		}
