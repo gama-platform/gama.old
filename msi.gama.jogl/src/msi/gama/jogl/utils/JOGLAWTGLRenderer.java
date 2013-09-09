@@ -270,7 +270,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 				CalculateFrameRate();
 				gl.glDisable(GL_BLEND);
 				gl.glColor4d(0.0, 0.0, 0.0, 1.0d);
-				gl.glRasterPos3d(-30, 30, 0);
+				gl.glRasterPos3d(-this.getWidth()/10, this.getHeight()/10, 0);
 				gl.glScaled(8.0d, 8.0d, 8.0d);
 				glut.glutBitmapString(GLUT.BITMAP_TIMES_ROMAN_10, "fps : " + fps);
 				gl.glScaled(0.125d, 0.125d, 0.125d);
