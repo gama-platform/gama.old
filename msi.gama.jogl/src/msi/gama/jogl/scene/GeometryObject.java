@@ -21,7 +21,6 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 	public Boolean isTextured;
 	public int angle;
 	public double height;
-	public double altitude;
 	public boolean rounded;
 	public String populationName;
 	
@@ -54,7 +53,6 @@ public class GeometryObject extends AbstractObject implements Cloneable {
 		this.isTextured = false;
 		this.angle = angle;
 		this.height = height;
-		this.altitude = 0.0f;
 		this.rounded = rounded;
 		this.populationName= populationName;
 	}
