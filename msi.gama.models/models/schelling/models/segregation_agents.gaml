@@ -20,7 +20,7 @@ global {
  
 }
 entities {
-	grid space width: dimensions height: dimensions neighbours: 8 torus: false {
+	grid space width: dimensions height: dimensions neighbours: 8{
 		const color type: rgb <- black;
 	}
 

@@ -134,7 +134,7 @@ global skills: [moving] control: fsm {
 		list<geometry> shapes <- file("something.shp") as list;
 
 		// If we suppose val1, val2, etc. are defined in the shape file
-		float max <- min(shapes collect int(each["val1"]));
+		float max <- min(shapes collect float(each["val1"]));
 
 		//To allow for an easier access in case the modeler only uses agents, agents' attributes can "pass through" towards their shape's attributes 
 		//(in case the same attribute has not been defined in the agent, of course)

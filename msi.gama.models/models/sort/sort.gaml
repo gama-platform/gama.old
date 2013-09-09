@@ -1,6 +1,6 @@
   model sort
 
-global {
+global torus: true {
 	// Parameters
 	int number_of_different_colors <- 4 max: 9 ;
 	int density_percent <- 30 min: 0 max: 99 ;
@@ -47,11 +47,11 @@ entities {
 			}
 		}
 		aspect default {
-			draw circle(2) empty: false color: color ;
+			draw circle(1) empty: false color: color ;
 		}
 	}
 
-	grid ant_grid width: width_and_height_of_grid height: width_and_height_of_grid neighbours: 8 torus: true {
+	grid ant_grid width: width_and_height_of_grid height: width_and_height_of_grid neighbours: 8 {
 		rgb color <- (rnd(100)) < density_percent ? (colors at rnd(number_of_different_colors - 1)) as rgb : world.black ;
 		list<ant_grid> neighbours -> {self neighbours_at 1};   
 	} 
@@ -69,8 +69,8 @@ experiment sort type: gui{
 	
 	output {
 		display grille refresh_every: 1  {
-			grid ant_grid size: {0.8,0.8} position: {0.1,0.1} ;
-			species ant transparency: 0.2 size: {0.8,0.8} position: {0.1,0.1};
+			grid ant_grid ;
+			species ant transparency: 0.2 ;
 		}
 	}
 }

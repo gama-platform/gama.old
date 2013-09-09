@@ -1,6 +1,6 @@
 model life
 
-global {  
+global torus: torus_environment {  
 	int environment_width  <- 200 min: 10 max: 1000;
 	int environment_height <- 200 min: 10 max: 1000;  
 	bool torus_environment <- true;
@@ -21,7 +21,7 @@ global {
 	} 
 }
 entities {
-	grid life_cell width: environment_width height: environment_height neighbours: 8 frequency: 0 torus: torus_environment use_regular_agents: false use_individual_shapes: false use_neighbours_cache: false {
+	grid life_cell width: environment_width height: environment_height neighbours: 8 frequency: 0  use_regular_agents: false use_individual_shapes: false use_neighbours_cache: false {
 		bool new_state;
 		bool state <- (rnd(100)) < density ;
 		rgb color <- state ? black : white ;

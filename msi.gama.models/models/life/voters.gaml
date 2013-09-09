@@ -1,6 +1,6 @@
 model voters
 
-global {  
+global torus: torus {  
 	int width  <- 200 min: 10 max: 1000;
 	int height <- 200 min: 10 max: 1000;  
 	bool torus <- true;
@@ -14,7 +14,7 @@ global {
 
 
 entities {
-	grid life_grid width: width height: height neighbours: 8 torus: torus use_individual_shapes: false use_regular_agents: false {
+	grid life_grid width: width height: height neighbours: 8 use_individual_shapes: false use_regular_agents: false {
 		int living <- (self neighbours_at 1) count (each.state) update: (self neighbours_at 1) count (each.state);
 		bool state <- (rnd(100)) < density update: (living = 4) ? (random_choice ? flip(0.5) : state): ((living > 4) ? true : false) ;
 		rgb color <-  state ? livingcolor : deadcolor update: state ? livingcolor : deadcolor ;  

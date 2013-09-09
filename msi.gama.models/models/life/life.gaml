@@ -35,7 +35,7 @@ global torus: torus_environment {
 }
 
 entities {
-	grid life_cell width: environment_width height: environment_height neighbours: 8 torus: torus_environment use_individual_shapes: false use_regular_agents: false frequency: 0
+	grid life_cell width: environment_width height: environment_height neighbours: 8  use_individual_shapes: false use_regular_agents: false frequency: 0
 	use_neighbours_cache: false {
 		bool new_state;
 		list<life_cell> neighbours <- self neighbours_at 1;

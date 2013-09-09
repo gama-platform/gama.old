@@ -1,7 +1,7 @@
 model segregation
 
 import "../include/schelling_common.gaml"
-global {
+global torus: true{
 	list<space> free_places <- [] ;
 	list<space> all_places <- [] ;
 	list<space> all_people <- [];
@@ -31,7 +31,7 @@ global {
 }
 
 entities {
-	grid space parent: base width: dimensions height: dimensions neighbours: 8 torus: true {
+	grid space parent: base width: dimensions height: dimensions neighbours: 8  {
 		rgb color <- black;
 		list<space> my_neighbours <- self neighbours_at neighbours_distance;
 		action migrate {
