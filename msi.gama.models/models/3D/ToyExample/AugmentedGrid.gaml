@@ -14,13 +14,15 @@ model AugmentedGrid
 
 global {
 
-	int width parameter : "width" min 1<- 6;
-	int height parameter : "height" min 1 <-6;
+	int width parameter : "width" min 1<- 6 category: 'Initialization';
+	int height parameter : "height" min 1 <-6 category: 'Initialization';
+	
+	float hue parameter: 'Hue (between 0.0 and 1.0)' min: 0.0 max:1.0 <- 0.66 ;
 	
 	init {    	
 		//Initialize the value of each cell
 	 	ask cell as list {		
-		  set color <- hsb(0.66,(cellValue/255),1.0);
+		  set color <- hsb(hue,(cellValue/255),1.0);
 	      set elevation <-((cellValue/100)^2);
 		}  
 	} 
@@ -33,7 +35,7 @@ environment bounds: {width,height} {
 	
 		reflex changeCellValue{
 			set cellValue <- rnd(255);	
-			set color <- hsb(0.66,(cellValue/255),1.0);
+			set color <- hsb(hue,(cellValue/255),1.0);
 			set elevation <-((cellValue/100)^2);
 		}
 
@@ -46,8 +48,7 @@ environment bounds: {width,height} {
 			draw shape color: color;	
 		}
 		
-		aspect square{
-			//FIXME: z:elevation change the z cellValue of the shape it should not.			
+		aspect square{		
 			draw shape color: color  border:color;		
 		}
 			
@@ -99,5 +100,10 @@ experiment AugmentedGrid type:gui {
 		display Box  type:opengl ambient_light:100 polygonmode:true{		
 			species cell aspect: box  refresh:true position: {0,0};
 		}
+		
+		display hsb  type:opengl ambient_light:100 polygonmode:true{		
+			species cell aspect: hsbElevation  refresh:true position: {0,0};
+		}
+
 	}
 }
