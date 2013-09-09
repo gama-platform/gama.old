@@ -8,19 +8,16 @@ global {
 	bool sphere <- true parameter: 'sphere';
 	
 	list blueCombination <- [([0,113,188]),([68,199,244]),([157,220,249]),([212,239,252])];
-
+	geometry shape <- square(width_and_height_of_environment);
+	
 	init { 
 		create cells number: number_of_agents { 
-			set location <- {rnd(width_and_height_of_environment), rnd(width_and_height_of_environment), rnd(width_and_height_of_environment)};
-			set color <- rgb((blueCombination)[rnd(3)]);
+			location <- {rnd(width_and_height_of_environment), rnd(width_and_height_of_environment), rnd(width_and_height_of_environment)};
+			color <- rgb((blueCombination)[rnd(3)]);
 		} 
 	}  
 } 
-  
-environment width: width_and_height_of_environment height: width_and_height_of_environment;  
- 
-  
-  
+    
 entities { 
 	species cells skills: [moving] {  
 		rgb color;

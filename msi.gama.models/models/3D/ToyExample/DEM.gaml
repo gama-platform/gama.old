@@ -6,9 +6,8 @@ model Graphic_primitive
 global{
 	file dem parameter: 'DEM' <- file('includes/DEM/DEM.png');
     file texture parameter: 'Texture' <- file('includes/DEM/Texture.png');
+    geometry shape <- square(500);
 }
-
-environment width:500 height:500;
 
 experiment display type: gui {
 	output {

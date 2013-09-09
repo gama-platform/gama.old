@@ -23,7 +23,7 @@ global {
 		}
 
 		create road from: shape_file_roads;
-		the_graph <- as_edge_graph(list(road));
+		the_graph <- as_edge_graph(road);
 		list<building> residential_buildings <- building where (each.type = 'Residential');
 		list<building> industrial_buildings <- building where (each.type = 'Industrial');
 		create people number: nb_people {
@@ -33,6 +33,7 @@ global {
 			living_place <- one_of(residential_buildings);
 			working_place <- one_of(industrial_buildings);
 			location <- any_location_in(living_place);
+			location <- {location.x, location.y,living_place.height };
 		}
 
 	}
@@ -81,6 +82,7 @@ entities {
 			switch the_target {
 				match location {
 					the_target <- nil;
+					location <- {location.x, location.y,objectif  = 'go home' ?  living_place.height : working_place.height};
 				}
 
 			}

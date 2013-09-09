@@ -15,6 +15,7 @@ global {
 	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 500 ;  
 	float distance <-100.0;
 	int degreeMax <-1;
+	geometry shape <- square(width_and_height_of_environment);
 
 	init { 
 		create node number: number_of_agents { 
@@ -33,8 +34,6 @@ global {
 	}
 } 
   
-environment width: width_and_height_of_environment height: width_and_height_of_environment;  
- 
 entities { 
 	species node parent: graph_node edge_species:edge skills: [moving]{  
 		int degree;		

@@ -10,18 +10,17 @@ global {
 	int size_of_agents <- 30;
 	const center type: point <- {width_and_height_of_environment/2,width_and_height_of_environment/2};
     list blueCombination <- [([0,113,188]),([68,199,244]),([157,220,249]),([212,239,252])];
+    geometry shape <- square(width_and_height_of_environment);
 	init { 
 		create cells number: number_of_agents { 
-			set location <- {rnd(width_and_height_of_environment), rnd(width_and_height_of_environment)};
-			set color <- rgb((blueCombination)[rnd(3)]);
+			location <- {rnd(width_and_height_of_environment), rnd(width_and_height_of_environment)};
+			color <- rgb((blueCombination)[rnd(3)]);
 		}
 
 	}  
 } 
 
 
-environment width: width_and_height_of_environment height: width_and_height_of_environment;  
- 
   
 entities { 
 	species cells skills: [moving] {  
@@ -33,15 +32,15 @@ entities {
 		int z <- rnd(100);
 		
 		reflex go_to_center {
-			set heading <- (((self distance_to center) > radius_of_circle) ? self towards center : (self towards center) - 180);
+			heading <- (((self distance_to center) > radius_of_circle) ? self towards center : (self towards center) - 180);
 			do move speed: speed; 
 		}
 		
 		reflex flee_others {
-			let close type: cells <- one_of ( ( (self neighbours_at range) of_species cells) sort_by (self distance_to each) );
+			cells close <- one_of ( ( (self neighbours_at range) of_species cells) sort_by (self distance_to each) );
 			if close != nil {
-				set heading <- (self towards close) - 180;
-				let dist <- self distance_to close;
+				heading <- (self towards close) - 180;
+				float dist <- self distance_to close;
 				do move speed: dist / repulsion_strength heading: heading;
 			}
 		}

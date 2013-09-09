@@ -12,62 +12,58 @@ global {
 	rgb global_color;
 	
 	file imageRaster <- file('images/Gama.png') ;
+	geometry shape <- rectangle(width_and_height_of_environment,width_and_height_of_environment/2);
 
 	init { 
 		
-		set global_color <- rgb("yellow");//global_color hsb_to_rgb ([0.25,1.0,1.0]);
+		global_color <- rgb("yellow");//global_color hsb_to_rgb ([0.25,1.0,1.0]);
 		
 		//2D Primitive Shape
 		create myPoint number: 1{
-			set location <- {2,2};
+			location <- {2,2};
 		}
 		create myLine number: 1 {
-			set location <- {6,2}; 
+			location <- {6,2}; 
 		}
 		
 		create myMultiLine number: 1 {
-			set location <- {10,2}; 
+			location <- {10,2}; 
 		}
 		
 		create mySquare number:1 {
-			set location <- {14,2};
+			location <- {14,2};
 		}
 		
 		create myPolygon number:1 {
-			set location <- {18,2};
+			location <- {18,2};
 		}
 		
 		create myTexture number:1 {
-			set location <- {22,2};
+			location <- {22,2};
 		}
 		
 		
 		//3D primitive shape
 		create mySphere number:1{
-			set location <- {2,6};
+			location <- {2,6};
 		}
 		create myPlan number:1 {
-			set location <- {6,6};
+			location <- {6,6};
 		}
 		
 		create myMultiPlan number:1 {
-			set location <- {10,6};
+			location <- {10,6};
 		}
 		
 		create myCube number: number_of_agents { 
-			set location <- {14,6};
+			location <- {14,6};
 		}
 		
 		create myPolyhedron number: number_of_agents { 
-			set location <- {18,6};
+			location <- {18,6};
 		}  
 	}  
 } 
- 
- 
-environment width: width_and_height_of_environment height: width_and_height_of_environment/2;  
- 
- 
  
 entities { 
 	
@@ -85,7 +81,7 @@ entities {
 		geometry shape <- line ([{5,3},{7,1}]) ;		
 		aspect Flat {
 			draw shape color: global_color  ;
-			draw text: "Line" size: 1 color: rgb('black'); 
+			draw "Line" size: 1 color: rgb('black'); 
 		}
 	}
 	
@@ -94,7 +90,7 @@ entities {
 		geometry shape <- polyline([{9,3},{9,2},{11,2},{11,1}]) ;		
 		aspect Flat {
 			draw shape color: global_color  ;
-			draw text: "Multiline" size: 1 color: rgb('black'); 
+			draw "Multiline" size: 1 color: rgb('black'); 
 		}
 	}
 		
@@ -103,7 +99,7 @@ entities {
 		geometry shape <- rectangle({2, 2})  ;		
 		aspect Flat {
 			draw shape color: global_color  ;
-			draw text: "Square" size: 1 color: rgb('black'); 
+			draw "Square" size: 1 color: rgb('black'); 
 		}
 	}	
 		
@@ -112,7 +108,7 @@ entities {
 		geometry shape <- polygon([{17,1.5}, {17.5,1}, {18.5,1}, {19,1.5},{19,2.5},{18.5,3},{17.5,3},{17,2.5}]) ;		
 		aspect Flat {
 			draw shape color: global_color  ;
-			draw text: "Polygon" size: 1 color: rgb('black');
+			draw "Polygon" size: 1 color: rgb('black');
 		}
 	}
 	
@@ -129,7 +125,7 @@ entities {
 		geometry shape <- geometry (point([location.x,location.y]));
 		aspect Volume {	
 			draw shape  color: global_color depth:0.1;
-			draw text: "Sphere" size: 1 color: rgb('black');
+			draw "Sphere" size: 1 color: rgb('black');
 		}		
 	}
 	
@@ -138,7 +134,7 @@ entities {
 		geometry shape <- geometry (line ([{5,7.5},{7,5.5}]));		
 		aspect Volume {
 			draw shape  color: global_color depth:2 ;
-			draw text: "Plan" size: 1 color: rgb('black');
+			draw "Plan" size: 1 color: rgb('black');
 		}
 	}
 	
@@ -156,7 +152,7 @@ entities {
 		geometry shape <- square(2);
 		aspect Volume {
 			draw shape color: global_color depth:2 border: rgb('blue');
-			draw text: "Cube" size: 1 color: rgb('black');
+			draw "Cube" size: 1 color: rgb('black');
 		}
 	}
 	
@@ -166,7 +162,7 @@ entities {
 		geometry shape <- polygon([{17,5.5}, {17.5,5}, {18.5,5}, {19,5.5},{19,6.5},{18.5,7},{17.5,7},{17,6.5}]);
 		aspect Volume {
 			draw shape color: global_color depth:2;
-			draw text: "Polyhedron" size: 1 color: rgb('black');
+			draw "Polyhedron" size: 1 color: rgb('black');
 		}
 	}
 	

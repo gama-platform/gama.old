@@ -19,7 +19,7 @@ global{
 	
 	reflex updateAnimation{
 		if(time>startAnimation){
-			set timeAnim <-int(time-startAnimation);
+			timeAnim <-int(time-startAnimation);
 		}
 	}	
 }
@@ -52,10 +52,10 @@ entities{
    	 }
    	
    	 aspect dynamic{
-   	   set shape <- geometry (line ([{self.source.location.x,self.source.location.y,self.source.location.z},{self.target.location.x,self.target.location.y,self.target.location.z}]));	
-   	   float val <- 255.0 *  (shape.perimeter / distance);
-   	   set  color <- color hsb_to_rgb ([val,1.0,1.0]);
-   	   draw shape + 0.1 color:color border: color ;
+   	    shape <- line ([{self.source.location.x,self.source.location.y,self.source.location.z},{self.target.location.x,self.target.location.y,self.target.location.z}]);	
+   	    float val <- 255.0 *  (shape.perimeter / distance);
+   	    color <- color hsb_to_rgb ([val,1.0,1.0]);
+   	    draw shape + 0.1 color:color border: color ;
    	 }
    }	
 }

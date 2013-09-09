@@ -23,33 +23,32 @@ global {
 	
 	bool isEmpty parameter: "empty"  <-false category : 'Display';
 
+	geometry shape <- rectangle(width_of_environment, height_of_environment);
 
 	init { 
 		let i <- 1;
 		create section number: nbSection { 
-			set location <- {width_of_environment/2, height_of_environment*(i/nbSection)};
+			location <- {width_of_environment/2, height_of_environment*(i/nbSection)};
 			do initZSection;
-			set i <-i+1;	
+			i <-i+1;	
 		}
 		
 		create riverPlan{
-			set location <- {width_of_environment/2,height_of_environment/2,-1000};	
-			set river_plan <- rectangle({width_of_environment,height_of_environment}) ; 
+			location <- {width_of_environment/2,height_of_environment/2,-1000};	
+			river_plan <- rectangle({width_of_environment,height_of_environment}) ; 
 		}
 	
 	}
 	
 	reflex increaseDepth{
-		set meanDepth <- meanDepth + 100;	
+		meanDepth <- meanDepth + 100;	
 	}
 	
 	reflex increaseNoise{
-		set noise <- noise + 1;
+		noise <- noise + 1;
 	}  
 	  
 } 
- 
-environment width: width_of_environment height: height_of_environment;  
  
   
 entities { 
@@ -62,28 +61,26 @@ entities {
 		
 		action initZSection{
 			
-			let zPoints type:list  of:point <- [];
-			let zPoints2 type:list  of:point <- [];
+			list<point> zPoints <- [];
+			list<point> zPoints2 <- [];
 			
 			loop i from: 0 to: nbPointOnSection {
 				
-				let z1_noise <-   (-rnd(noise));
-				let z2_noise <-   (-rnd(noise));         
-                let tmpzPoint type:  point<- {(i/nbPointOnSection)*width_of_environment,location.y} add_z ((cos((i/nbPointOnSection)*180+90)*meanDepth)+z1_noise);
+				int z1_noise <-   (-rnd(noise));
+				int z2_noise <-   (-rnd(noise));         
+                point tmpzPoint <- {(i/nbPointOnSection)*width_of_environment,location.y} add_z ((cos((i/nbPointOnSection)*180+90)*meanDepth)+z1_noise);
                 
-                let tmpzPoint2 type:  point<- {(i/nbPointOnSection)*width_of_environment,location.y+lenghtSection} add_z ((cos((i/nbPointOnSection)*180+90)*meanDepth)+z2_noise);
+                point tmpzPoint2 <- {(i/nbPointOnSection)*width_of_environment,location.y+lenghtSection} add_z ((cos((i/nbPointOnSection)*180+90)*meanDepth)+z2_noise);
                 
                 add tmpzPoint to: zPoints;
                 add tmpzPoint2 to: zPoints2;
                
             }
-                        
-     
-            set zSection <- polyline(zPoints);
-            set zSection2 <- polyline(zPoints2);
-            let list_tmp type: list of: point <- list(reverse(zSection2.points));
+            zSection <- polyline(zPoints);
+            zSection2 <- polyline(zPoints2);
+            list<point> list_tmp  <- list(reverse(zSection2.points));
 
-            set river_channel <- polygon( zSection.points + list_tmp);
+            river_channel <- polygon( zSection.points + list_tmp);
 		}
 		
 		reflex update {
@@ -91,7 +88,7 @@ entities {
 		}
 			 
 		aspect default { 
-			draw geometry: river_channel color: rgb('blue') empty:isEmpty;
+			draw river_channel color: rgb('blue') empty:isEmpty;
 		}
 	}
 	
@@ -100,13 +97,11 @@ entities {
 		geometry river_plan;
 		
 		reflex update{
-			//set location <- {width_of_environment/2,height_of_environment/2,  rnd(meanDepth/4)}; 
-			
-			set river_plan <- rectangle({width_of_environment,height_of_environment});
-			set location <-{location.x,location.y,-rnd(meanDepth/4)}; 
+			river_plan <- rectangle({width_of_environment,height_of_environment});
+			location <-{location.x,location.y,-rnd(meanDepth/4)}; 
 		}
 		aspect default { 
-			draw geometry: river_plan color: rgb('blue') empty:isEmpty;
+			draw river_plan color: rgb('blue') empty:isEmpty;
 		}
 	}
 }

@@ -18,7 +18,7 @@ model FallingHelloWorld
 global {
 	int environment_size <- 500; 
  
-	
+	 
 	int number_of_ball parameter: 'Number of ball' min:1 <- 100  category: 'Model'; 
 	int ball_radius parameter: 'Ball radius' min:1 <- 25  category: 'Model'; 
 	
