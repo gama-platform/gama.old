@@ -88,8 +88,8 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean stencil = false;
 	private boolean z_fighting = GamaPreferences.CORE_Z_FIGHTING.getValue();
 	private boolean displayScale = GamaPreferences.CORE_SCALE.getValue();
-	private boolean showfps = false;
-	private boolean drawEnv = true;
+	private boolean showfps = GamaPreferences.CORE_SHOW_FPS.getValue();
+	private boolean drawEnv = GamaPreferences.CORE_DRAW_ENV.getValue();
 	private Color ambientLightColor = new GamaColor(125, 125, 125);
 	private Color diffuseLightColor = new GamaColor(125, 125, 125);
 	// Set it to (-1,-1,-1) to set the camera with the right value if no value defined.
