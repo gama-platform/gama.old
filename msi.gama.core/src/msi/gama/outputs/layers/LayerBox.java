@@ -178,12 +178,12 @@ public class LayerBox implements IDisplayLayerBox {
 
 	@Override
 	public void setExtent(final ILocation p) {
-		setExtent(p.getX(), p.getY());
+		setExtent(p.getX(), p.getY(),p.getZ());
 	}
 
 	@Override
-	public void setExtent(final double width, final double height) {
-		currentExtent = constantExtent = new GamaPoint(width, height);
+	public void setExtent(final double width, final double height, final double depth) {
+		currentExtent = constantExtent = new GamaPoint(width, height,depth);
 		if ( constantPosition != null ) {
 			constantBoundingBox = true;
 			// computeBoundingBox();

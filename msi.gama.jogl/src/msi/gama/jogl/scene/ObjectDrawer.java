@@ -29,7 +29,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 	void draw(final T object) {
 		renderer.gl.glPushMatrix();
 		renderer.gl.glTranslated(object.offset.x, -object.offset.y, object.offset.z);
-		renderer.gl.glScaled(object.scale.x, object.scale.y, 1);
+		renderer.gl.glScaled(object.scale.getX(), object.scale.getY(), object.scale.getZ());
 		if ( renderer.getZFighting() ) {
 			SetPolygonOffset(object);
 		}

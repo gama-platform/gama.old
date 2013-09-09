@@ -48,7 +48,7 @@ public interface IDisplayLayerBox {
 
 	public abstract void setExtent(final ILocation p);
 
-	public abstract void setExtent(final double width, final double height);
+	public abstract void setExtent(final double width, final double height, final double depth);
 
 	public abstract void setPosition(final ILocation p);
 

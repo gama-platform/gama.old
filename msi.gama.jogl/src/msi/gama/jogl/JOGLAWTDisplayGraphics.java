@@ -24,6 +24,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.*;
 import java.io.IOException;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.awt.AbstractDisplayGraphics;
 import msi.gama.gui.displays.layers.AbstractLayer;
@@ -349,6 +350,16 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		if ( this.currentZLayer == 0 ) {
 			this.currentZLayer = ((AbstractLayer) layer).getPosition().getZ();
 		}
+		
+		//get the value of the z scale if positive otherwise set it to 1.
+		float z_scale;
+		if(((AbstractLayer) layer).getExtent().getZ() > 0){
+			z_scale = (float) ((AbstractLayer) layer).getExtent().getZ();
+		}
+		else{
+			z_scale = 1;
+		}
+		
 		final Boolean refresh = layer.isDynamic();
 		currentLayerIsStatic = refresh == null ? false : !refresh;
 
@@ -361,9 +372,9 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 				currentZLayer);
 		currentScale =
 			new GamaPoint(widthOfLayerInPixels / (double) widthOfDisplayInPixels, heightOfLayerInPixels /
-				(double) heightOfDisplayInPixels, 1);
-		// GuiUtils.debug("JOGLAWTDisplayGraphics.beginDrawingLayer currentScale: " + currentScale);
-		// GuiUtils.debug("JOGLAWTDisplayGraphics.beginDrawingLayer currentOffset: " + currentOffset);
+				(double) heightOfDisplayInPixels, z_scale);
+		//GuiUtils.debug("JOGLAWTDisplayGraphics.beginDrawingLayer currentScale: " + currentScale);
+		//GuiUtils.debug("JOGLAWTDisplayGraphics.beginDrawingLayer currentOffset: " + currentOffset);
 	}
 
 	private double getMaxEnvDim() {
