@@ -1,87 +1,75 @@
 model StupidModel8
-
-global {
-    int numberBugs <- 100;
+global torus: true{
+	int numberBugs <- 100;
     float globalMaxConsumption <- 1.0;
     float globalMaxFoodProdRate <- 0.01;
     
-    init {
-        create bug number: numberBugs;
-    }
-    reflex shouldHalt when: !(empty (list(bug) where (each.size > 10))) {
+	init {
+		create bug number: numberBugs {
+			my_place <- one_of(cell);
+			location <- my_place.location;
+		}
+	}
+	reflex write_results {
+		save [cycle,bug min_of each.size, mean (bug collect each.size),bug max_of each.size] type: "csv" to: "result.csv";
+	}
+	reflex stop_simulation when: (bug first_with (each.size >= 100)) != nil {
         do halt;
     }
 }
 
-environment width: 100 height: 100 {
-    grid stupid_cell width: 100 height: 100 torus: false neighbours: 4 { 
-        rgb color <- rgb('black');
-        float maxFoodProdRate <- 0.01;
-        float foodProd <- (rnd(1000) / 1000) * 0.01;
-        float food <- 0.0 update: food + foodProd;
-    }
+grid cell width: 100 height: 100 neighbours: 4 {
+	list<cell> neighbours4 <- self neighbours_at 4;
+	float maxFoodProdRate <- globalMaxFoodProdRate;
+	float foodProd <- (rnd(1000) / 1000) * maxFoodProdRate;
+	float food <- 0.0 update: food + foodProd;
 }
 
-entities {
-    species bug {
-        float size <- 1.0;
-        rgb color <- rgb ([255, 255, 255]) update: rgb ([255, 255/size, 255/size]);
-        float maxConsumption <- 1.0;
-        stupid_cell myPlace <- (location as stupid_cell); 
-
-        reflex basic_move {
-            let destination type: stupid_cell <- one_of ((myPlace neighbours_at 4) where empty(agents overlapping each));
-            if (destination != nil) {
-                 set myPlace <- destination;
-                 set location <- myPlace.location;                                                
-            }
-        }
-        reflex grow {
-            let transfer <- min ([maxConsumption, myPlace.food]);
-            set size <- size + transfer;
-            set myPlace.food <- myPlace.food - transfer;
-        }
-        //reflex askToHalt when: (size>=100) {
-        //    ask world_species {
-        //        do halt;
-        //    }
-        //}
-        aspect basic {
-            draw circle(size) color: color;
-        }
-    }
-}
+species bug {
+	cell my_place;
+	float size <- 1.0;
+	float maxConsumption <- globalMaxConsumption;
+	reflex basic_move {
+		cell destination <- shuffle(my_place.neighbours4) first_with empty(each.agents);
+		if (destination != nil) {
+			my_place <- destination;
+			location <- destination.location;
+		}
+	}
+	reflex grow {
+		float transfer <- min([my_place.food,maxConsumption]);
+		size <- size + transfer;
+		my_place.food <- my_place.food - transfer;
+	}
+	aspect basic {
+		float val <- 255 * (1 - min([1.0,size/10.0]));
+		draw circle(0.5) color: rgb(255,val,val);
+	}
+} 
 
 experiment stupidModel type: gui {
-    parameter 'numberBugs' var: numberBugs;
-    parameter 'globalMaxConsumption' var: globalMaxConsumption;
-    parameter 'globalMaxFoodProdRate' var: globalMaxFoodProdRate;	
-    
-	output {
-	    display stupid_display {
-	        grid stupid_cell;
-	        species bug aspect: basic;
-	    }
-	    inspect Species type: species refresh_every: 5;
-	    
-	    display histogram_display {
-	        chart 'Size distribution' type: histogram background: rgb('lightGray') {
-	            data name: "[0;10]" value: (bug as list) count (each.size < 10);
-	            data name: "[10;20]" value: (bug as list) count ((each.size > 10) and (each.size < 20));
-	            data name: "[20;30]" value: (bug as list) count ((each.size > 20) and (each.size < 30));
-	            data name: "[30;40]" value: (bug as list) count ((each.size > 30) and (each.size < 40));
-	            data name: "[40;50]" value: (bug as list) count ((each.size > 40) and (each.size < 50));
-	            data name: "[50;60]" value: (bug as list) count ((each.size > 50) and (each.size < 60));
-	            data name: "[60;70]" value: (bug as list) count ((each.size > 60) and (each.size < 70));
-	            data name: "[70;80]" value: (bug as list) count ((each.size > 70) and (each.size < 80));
-	            data name: "[80;90]" value: (bug as list) count ((each.size > 80) and (each.size < 90));
-	            data name: "[90;100]" value: (bug as list) count ((each.size > 90) and (each.size < 100));
+	parameter "numberBugs" var: numberBugs;
+ 	parameter "globalMaxConsumption" var: globalMaxConsumption;
+  	parameter "globalMaxFoodProdRate" var: globalMaxFoodProdRate;	
+  	output {
+		display stupid_display {
+			grid cell;
+			species bug aspect: basic;
+		}
+		display histogram_display {
+	        chart "Size distribution" type: histogram {
+	            data "[0;10]" value: bug count (each.size < 10) color: rgb("red");
+	            data "[10;20]" value: bug count ((each.size > 10) and (each.size < 20)) color: rgb("red");
+	            data "[20;30]" value: bug count ((each.size > 20) and (each.size < 30)) color: rgb("red");
+	            data "[30;40]" value: bug count ((each.size > 30) and (each.size < 40)) color: rgb("red");
+	            data "[40;50]" value: bug count ((each.size > 40) and (each.size < 50)) color: rgb("red");
+	            data "[50;60]" value: bug count ((each.size > 50) and (each.size < 60)) color: rgb("red");
+	            data "[60;70]" value: bug count ((each.size > 60) and (each.size < 70)) color: rgb("red");
+	            data "[70;80]" value: bug count ((each.size > 70) and (each.size < 80)) color: rgb("red");
+	            data "[80;90]" value: bug count ((each.size > 80) and (each.size < 90)) color: rgb("red");
+	            data "[90;100]" value: bug count (each.size > 90) color: rgb("red");
 	        }
 	    }
-	    file stupid_results type: text data: 'cycle: ' + (time as string) 
-	         + '; minSize: ' + (((bug as list) min_of each.size) as string)
-	         + '; maxSize: ' + (((bug as list) max_of each.size) as string)
-	         + '; mean: ' + (((sum ((bug as list) collect ((each as bug).size))) / (length((bug as list)))) as string);
 	}
 }
 

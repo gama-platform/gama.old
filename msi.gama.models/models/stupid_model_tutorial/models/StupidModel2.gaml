@@ -1,45 +1,42 @@
 model StupidModel2
 
-global {
-    init {
-        create bug number: 100;
-    }
+global torus: true{
+	init {
+		create bug number: 100 {
+			my_place <- one_of(cell);
+			location <- my_place.location;
+		}
+	}
+}
+ 
+grid cell width: 100 height: 100 neighbours: 4 {
+	list<cell> neighbours4 <- self neighbours_at 4;
 }
 
-environment width: 100 height: 100 {
-    grid stupid_cell width: 100 height: 100 torus: false neighbours: 4 { 
-        rgb color <- rgb('black');
-    }
-}
-
-entities {
-    species bug {
-        float size <- 1.0;
-        rgb color <- rgb ([255, 255, 255]) update: rgb ([255, 255/size, 255/size]);
-        
-        reflex basic_move {
-            let place type: stupid_cell <- (location as stupid_cell);
-            let destination type: stupid_cell <- one_of ((place neighbours_at 4) where empty(agents overlapping each));
-            if (destination != nil) {
-                set location <- destination.location;
-            }
-        }
-                
-        reflex grow {
-            set size <- (size + 0.1);
-        }
-        
-        aspect basic {
-            draw circle(size) color: color;
-        }
-    }
+species bug {
+	cell my_place;
+	float size <- 1.0;
+	reflex basic_move {
+		cell destination <- shuffle(my_place.neighbours4) first_with empty(each.agents);
+		if (destination != nil) {
+			my_place <- destination;
+			location <- destination.location;
+		}
+	}
+	reflex grow {
+		 size <- size + 0.1;
+	}
+	aspect basic {
+		float val <- 255 * (1 - min([1.0,size/10.0]));
+		draw circle(0.5) color: rgb(255,val,val);
+	}
 }
 
 experiment stupidModel type: gui {
 	output {
-	    display stupid_display {
-	        grid stupid_cell;
-	        species bug aspect: basic;
-	    }
+		display stupid_display {
+			grid cell;
+			species bug aspect: basic;
+		}
 	}
 }
