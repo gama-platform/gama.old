@@ -2,12 +2,13 @@
  *  modavi
  *  Author: Arnaud Grignard
  *  Description: Multi-scale Online Data Analysis and Visualization Interaction
- *  Fromm a reference model with node of a given class and spatial graph is created 
+ * 
+ *  From a reference model with node of a given class, a spatial graph is created 
  *  (or a barabasi graph if spatialGraph is set to false) in the advanced view to 
  *  represent the interaction in the reference model.
  *  An abstract view/controller is created to summarize the interaction in the advanced view
- *  in a macro graph. An action is defined for each macroNode and macroEdge to control the 
- *  reference model.
+ *  in a macro graph and control the reference model by defining an action (user_command) 
+ *  for each macroNode and macroEdge.
  */
 
 
