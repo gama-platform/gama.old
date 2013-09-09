@@ -4,6 +4,8 @@ import static javax.media.opengl.GL.*;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.*;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.TessellCallBack;
+import msi.gama.metamodel.shape.GamaPoint;
+
 import com.sun.opengl.util.GLUT;
 import com.vividsolutions.jts.geom.*;
 
@@ -55,11 +57,12 @@ public class MyGraphics {
 		glut.glutSolidTorus(innerRadius, outterRadius, sides, rings);
 	}
 
-	public void DrawArcBall() {
+	public void DrawArcBall(int size, GamaPoint pos) {
 
+		gl.glTranslated(pos.x, -pos.y, pos.z);
 		// DrawXYZAxis(1.0d);
-		double innerRadius = 0.075d;
-		double outterRadius = 1.0d;
+		double innerRadius = 0.02d*size;
+		double outterRadius = 1.0d*size;
 		gl.glColor3d(0.0d, 0.0d, 1.0d);
 		DrawTorus(innerRadius, outterRadius, 100, 100);
 
@@ -71,6 +74,7 @@ public class MyGraphics {
 		gl.glRotated(90, 1.0d, 0.0d, 0.0d);
 		gl.glColor3d(0.0d, 1.0d, 0.0d);
 		DrawTorus(innerRadius, outterRadius, 100, 100);
+		gl.glTranslated(-pos.x, pos.y, -pos.z);
 	}
 
 	// ////////////////////////////////////// Rectangle with curved corner ////////////////////////////
