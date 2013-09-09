@@ -14,7 +14,7 @@ global {
 }
 
 entities {
-	grid cell width: 100 height: 100 neighbours: 4 torus: false {
+	grid cell width: 100 height: 100 neighbours: 4 {
 		rgb color <- rgb('white');
 	} 
 	species goal {

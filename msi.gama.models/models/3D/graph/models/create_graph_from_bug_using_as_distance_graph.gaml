@@ -1,31 +1,28 @@
 model Graph
 
 import 'bug.gaml'
-global {
+global { 
 	graph myGraph;
 	float distance parameter: 'Distance' min: 1.0 <- 10.0 category: 'Model';
 	reflex updateGraph {
-		ask edge as list {
+		ask edge {
 			do die;
 		}
-		set myGraph <- as_distance_graph(list(node), map(["distance"::distance, "species"::edge]));
+		myGraph <- as_distance_graph(node, map(["distance"::distance, "species"::edge]));
 	}
 }
 
-entities {
-	species node mirrors: list(bug) {
-		point location <- target.location value: target.location;
-		aspect base {
-			draw sphere(1) color: rgb('green');
-		}
+species node mirrors: list(bug) {
+	point location <- target.location update: target.location;
+	aspect base {
+		draw sphere(1) color: rgb('green'); 
 	}
+}
 
-	species edge {
-		aspect base {
-			draw shape color: rgb('blue');
-		}
+species edge {
+	aspect base {
+		draw shape color: rgb('blue');
 	}
-
 }
 
 experiment basicGraph type: gui {
