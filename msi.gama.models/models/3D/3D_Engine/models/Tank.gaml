@@ -26,7 +26,7 @@ global {
 	init {
 		create ball number: nb_balls{
 			set location <-  {rnd(width_of_environment-size_of_agents),rnd(height_of_environment-size_of_agents),rnd(height_of_environment-size_of_agents)};
-			set radius <- size_of_agents;
+			set radius <- float(size_of_agents);
 			set collisionBound <-  ["shape"::"sphere","radius"::radius];
 		}
 		create floor {

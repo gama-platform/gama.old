@@ -51,7 +51,7 @@ global {
 		//down wall
 		create wall{
 			set location <- {width_of_environment/2,height_of_environment,0};
-			set height <- width_of_environment;
+			set height <- float(width_of_environment);
 			set shape <- rectangle({width_of_environment,2});
 			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2, "y":: size_of_the_wall, "z"::height];
 			set mass <-0.0;
@@ -59,7 +59,7 @@ global {
 		//upper wall
 		create wall{
 			set location <- {width_of_environment/2,0,0};
-			set height <- width_of_environment;
+			set height <- float(width_of_environment);
 			set shape <- rectangle({width_of_environment,2});
 			set collisionBound <-  ["shape"::"floor","x"::width_of_environment/2, "y":: size_of_the_wall, "z"::height];
 			set mass <-0.0;
@@ -67,7 +67,7 @@ global {
 		//left wall
 		create wall{
 			set location <- {0,height_of_environment/2,0};
-			set height <- width_of_environment;
+			set height <- float(width_of_environment);
 			set shape <- rectangle({2,height_of_environment});
 			set collisionBound <-  ["shape"::"floor","x"::size_of_the_wall, "y":: height_of_environment/2, "z"::height];
 			set mass <-0.0;			
@@ -75,7 +75,7 @@ global {
 		//right wall
 		create wall{
 			set location <- {width_of_environment,height_of_environment/2,0};
-			set height <- width_of_environment;
+			set height <- float(width_of_environment);
 			set shape <- rectangle({2,height_of_environment});
 			set collisionBound <-  ["shape"::"floor","x"::size_of_the_wall, "y":: height_of_environment/2, "z"::height];
 			set mass <-0.0;

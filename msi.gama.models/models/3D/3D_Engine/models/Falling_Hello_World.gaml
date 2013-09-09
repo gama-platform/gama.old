@@ -28,7 +28,7 @@ global {
 	init {
 		create ball number: number_of_ball{
 			set location <-  {rnd(environment_size),rnd(environment_size),rnd(environment_size)};
-            set radius <-rnd(ball_radius)+1;
+            set radius <-float(rnd(ball_radius)+1);
 			set collisionBound <-  ["shape"::"sphere","radius"::radius];
 			set mass <-1.0;
 		}

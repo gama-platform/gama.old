@@ -37,7 +37,7 @@ global {
 			
 			set location<- {initX + (i - deltaI) * 10,initY, 5.0} ;
 			set heading<-90;
-			set speed<-0;
+			set speed<-0.0;
 			set mass <- 3.0;
 			set collisionBound <-  ["shape"::"sphere","radius"::5];
 			set i <- i+1;
