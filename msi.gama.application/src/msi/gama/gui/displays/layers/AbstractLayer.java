@@ -167,6 +167,10 @@ public abstract class AbstractLayer implements ILayer {
 	public void setExtent(final GamaPoint p) {
 		definition.getBox().setExtent(p);
 	}
+	
+	public ILocation getExtent() {
+		return definition.getBox().getExtent();
+	}
 
 	@Override
 	public void setElevation(final Double elevation) {
