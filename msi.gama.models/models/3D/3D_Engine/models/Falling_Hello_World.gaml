@@ -73,7 +73,7 @@ entities {
 }
 experiment Falling_Hello_world type: gui {
 output {
-	display Rain  type: opengl background:rgb(0,58,64){
+	display Rain  type: opengl background:rgb(0,58,64) draw_env:false{
 		species floor aspect:image;
 	    species ball aspect:sphere;			
 	}

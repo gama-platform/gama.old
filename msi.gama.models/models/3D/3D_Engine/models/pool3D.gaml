@@ -10,10 +10,9 @@ model pool3D
  */
 
 global {
-	int width_of_environment parameter: 'Dimensions' init:200 ; 
-	int height_of_environment parameter: 'Dimensions' init:300  ; 
-	int range_of_agents parameter: 'Range of Agents' min: 1 <- 25 ;
-	float speed_of_agents parameter: 'Speed of Agents' min: 0.1  <- 2.0 ; 
+	int width_of_environment <- 200 ; 
+	int height_of_environment <-300  ; 
+	float speed_of_agents <- 2.0 ; 
 	int size_of_agents <- 10;
 	rgb colorwood <- rgb([178,112,62]);
 	my_world world2;
@@ -201,7 +200,6 @@ entities {
 	species ball skills: [physical3D] {  
 		rgb color;
 		int size  <- size_of_agents;
-		int range  <- range_of_agents; 
 		float speed  <- speed_of_agents;  
 		int heading <- rnd(359);
 		
@@ -217,8 +215,7 @@ entities {
 }
 experiment pool type: gui {
 output {
-	display Circle refresh_every: 1 type:opengl tesselation:true ambient_light:100 background:rgb('black'){
-		//image name:'background' file:'../images/billard2.jpg' ;
+	display Circle refresh_every: 1 type:opengl tesselation:true ambient_light:100 background:rgb('black') draw_env:false{
 		species floor aspect: default;
 		species wall aspect: default;
 	    species ball aspect:sphere;			
