@@ -171,10 +171,20 @@ entities {
 		aspect base {
 			loop i from:0 to: nbTypeOfClass-1{
 				if(nbAggregatedLinkList[i]>threshold){
-				draw geometry: (line([src.posVector[i],dest.posVector[i]]) buffer ((nbAggregatedLinkList[i]^2.5)/(nbAgent*zoomFactor))) color: [125,125,125] as rgb border:[125,125,125] as rgb; 	
+				draw geometry: (line([src.posVector[i],dest.posVector[i]]) buffer ((nbAggregatedLinkList[i]^2.5)/(nbAgent*zoomFactor))) color: rgb(125,125,125) border:rgb(125,125,125); 	
 				}
 			}
-		}	
+		}
+		
+		action removeMicroEdge{
+			ask edge as list{
+				  if	((self.src.classVector[0] =  myself.src.class) and (self.dest.classVector[0] =  myself.dest.class)) {
+				      do die;
+				  }	 
+	         }
+		}
+		
+		user_command "Remove micro edge" action: removeMicroEdge;	
 	}
 	
 	species macroGraph {
@@ -214,12 +224,12 @@ entities {
 
 experiment MODAVI type: gui {
 	output {			
-		display MODAVI type:opengl ambient_light: 100  draw_env:false{
+		display MODAVI type:opengl ambient_light: 100  draw_env:false z_fighting:false{
 			graphics ReferenceModel{
 				draw rectangle(100,100) at: {150,50,0} empty:true color:rgb('black');
 				draw text:"Reference model" at:{200,50,0} size:5 color: rgb('black') bitmap:false;
 			}
-			species node aspect: real z:0 position: {100,0.0,0};
+			species node aspect: real z:0 position: {100,0,0} ;
 			
 			graphics View1{
 				draw rectangle(100,100) at: {50,150,0} empty:true color:rgb('black');
