@@ -165,7 +165,7 @@ public abstract class AbstractCamera implements ICamera {
 						.getTopology()
 						.getSpatialIndex()
 						.allInEnvelope(new GamaPoint(getRoiCenter().x, -getRoiCenter().y),
-							new Envelope(region[0], region[2], region[1], region[3]), new Different(), true);
+							new Envelope(region[0], -region[2], region[1], -region[3]), new Different(), true);
 				final Iterator<IAgent> agents = AbstractTopology.toAgents(shapes);
 				getRenderer().displaySurface.selectSeveralAgents(agents, 0);
 			}
