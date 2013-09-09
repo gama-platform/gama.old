@@ -3,22 +3,25 @@ model Graph
 
 global {
 	graph myGraph;
-	float distance parameter: 'Distance' min: 1.0 <- 10.0 category: 'Model';
+	float distance min: 1.0 <- 10.0;
 	
 	init{
 		create node number:500;
 	}
 	
-	reflex updateGraph {
-		ask edge as list {
+	reflex updateGraph when: cycle = 1{
+		ask edge  {
 			do die;
 		}
-		set myGraph <- as_distance_graph(list(node), map(["distance"::distance, "species"::edge]));
+		myGraph <- as_distance_graph(node, map(["distance"::distance, "species"::edge]));
 	}	
 }
 
 entities {
-	species node  {
+	species node skills:[moving] {
+		reflex move {
+			do wander;
+		}
 		aspect base {
 			draw sphere(1) color: rgb('green');
 		}
@@ -32,6 +35,7 @@ entities {
 }
 
 experiment basicGraph type: gui {
+	parameter 'Distance' var: distance category: 'Model';
 	output {			
 	    display graph_view type: opengl ambient_light: 0.2 {
 			species node aspect: base;
