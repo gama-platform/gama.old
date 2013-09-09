@@ -33,6 +33,7 @@ import msi.gama.util.graph.GraphEvent.GraphEventType;
 import msi.gama.util.matrix.IMatrix;
 import msi.gama.util.path.*;
 import msi.gaml.operators.Cast;
+import msi.gaml.operators.Spatial.Creation;
 import msi.gaml.species.ISpecies;
 import org.jgrapht.*;
 import org.jgrapht.alg.*;
@@ -197,6 +198,7 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 		final IList initVal = new GamaList();
 		map.put(IKeyword.SOURCE, v1);
 		map.put(IKeyword.TARGET, v2);
+		map.put(IKeyword.SHAPE, Creation.link(scope, new GamaPair(v1, v2)));
 		initVal.add(map);
 		return generateEdgeAgent(initVal);
 	}
