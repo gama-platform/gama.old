@@ -1,6 +1,8 @@
 /**
  *  modavi
+ * 
  *  Author: Arnaud Grignard
+ * 
  *  Description: Multi-scale Online Data Analysis and Visualization Interaction
  * 
  *  From a reference model with node of a given class, a spatial graph is created 
