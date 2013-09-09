@@ -134,7 +134,6 @@ experiment road_traffic_multi_layer type: gui {
 			species building aspect: base z: 0.1;
 			species people aspect: base z: 0.2;
 		}
-
 	}
 
 }
@@ -146,7 +145,5 @@ experiment AnimatedView type: gui {
 			species building aspect: base position: { 0, 0, time * 2 };
 			species people aspect: base position: { 0, 0, time * 4 };
 		}
-
 	}
-
 }
