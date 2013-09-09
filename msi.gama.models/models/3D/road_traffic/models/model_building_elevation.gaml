@@ -20,7 +20,6 @@ global {
 				color <- rgb('blue');
 			}
 			height <- 10 + rnd(90);
-			location <- { location.x, location.y, 100 };
 		}
 
 		create road from: shape_file_roads;
