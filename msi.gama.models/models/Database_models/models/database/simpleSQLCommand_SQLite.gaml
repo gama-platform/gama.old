@@ -8,7 +8,7 @@
  * 	    - Delete data
  *      - Drop table 
  * 
- *  Note: the file emptyFile.db is only ... an exmpty file.
+ *  Note: the file emptyFile.db is only ... an empty file.
  */
 
 model SQLite_selectNUpdate
@@ -17,7 +17,7 @@ global {
 	map<string,string> PARAMS <- ['dbtype'::'sqlite','database'::'../../includes/emptyFile.db'];
 	
 	init {
-		create species: DB_Accessor number: 1 ;
+		create DB_Accessor ;
 		
 		// Test of the connection to the database
 		if( first(DB_Accessor) testConnection[ params::PARAMS] = false){

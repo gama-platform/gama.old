@@ -23,7 +23,7 @@ global {
     			FROM meteo_table GROUP BY `idPointgrille`";
 
 	init {
-		create species: DB_accessor number: 1 ;
+		create DB_accessor ;
 		
 		ask DB_accessor {
         	do executeUpdate params: PARAMS
@@ -36,7 +36,7 @@ global {
 		
 		create idPoint 
 			from: list(first(DB_accessor) select [params:: PARAMS, select:: SQLquery_idPoint]) 
-			with:[ name::"idPointgrille", RRmm:: "RR", Tmin:: "Tmin", Tmax::"Tmax", Rglot::"Rglot", ETPmm::"ETPmm"]; 
+			with:[ name::"idPointgrille", RRmm:: float("RR"), Tmin:: float("Tmin"), Tmax::float("Tmax"), Rglot::float("Rglot"), ETPmm::float("ETPmm")]; 
 	}
 	
 	reflex endSimu when: (cycle = 10) {
@@ -62,7 +62,7 @@ entities {
 		float valRnd;
 		
 		reflex compute_new_random_value {
-			valRnd <- rnd(RRmm + Tmin + Tmax + Rglot + ETPmm);
+			valRnd <- float(rnd(RRmm + Tmin + Tmax + Rglot + ETPmm));
 		}
 		reflex store_valRnd {
 			write " " + self + " inserts value " + valRnd;
@@ -80,7 +80,7 @@ entities {
 		
 		init {	
 			// Test of the connection to the database
-			if( self testConnection[ params::PARAMS] = false){ 
+			if( not (self testConnection[ params::PARAMS])){ 
 				write "Connection impossible";
 				ask(world) {do halt;}
 			} else {

@@ -5,17 +5,17 @@
 
 model agent2DB_MSSQL 
   
-global { 
+global {  
 	file buildingsShp <- file('../../includes/building.shp');
 	file boundsShp <- file('../../includes/bounds.shp');
-
+	geometry shape <- envelope(boundsShp);
 	map<string,string> PARAMS <- ['host'::'127.0.0.1','dbtype'::'sqlserver','database'::'spatial_DB','port'::'1433','user'::'sa','passwd'::'tmt'];
 
 	init {
 		create buildings from: buildingsShp with: [type::string(read ('NATURE'))];
 		create bounds from: boundsShp;
 		
-		create species: DB_Accessor number: 1  
+		create DB_Accessor 
 		{ 			
 			do executeUpdate params: PARAMS updateComm: "DELETE FROM buildings";	
 			do executeUpdate params: PARAMS updateComm: "DELETE FROM bounds";
@@ -23,8 +23,6 @@ global {
 		write "Click on <<Step>> button to save data of agents to DB";		 
 	}
 }   
-
-environment bounds: boundsShp ;
 
 entities {   
 	species DB_Accessor skills: [SQLSKILL] ;   

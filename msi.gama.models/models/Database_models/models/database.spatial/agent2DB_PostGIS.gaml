@@ -15,14 +15,15 @@ model agent2DB_MySQL
 global { 
 	file buildingsShp <- file('../../includes/building.shp');
 	file boundsShp <- file('../../includes/bounds.shp');
-
+	geometry shape <- envelope(boundsShp);
+	
 	map<string,string> PARAMS <-  ['host'::'localhost','dbtype'::'Postgres','database'::'spatial_db','port'::'5433','user'::'postgres','passwd'::'tmt'];
 
 	init {
 		create buildings from: buildingsShp with: [type::string(read ('NATURE'))];
 		create bounds from: boundsShp;
 		
-		create species: DB_Accessor number: 1  
+		create DB_Accessor
 		{ 			
 			do executeUpdate params: PARAMS updateComm: "DELETE FROM buildings";	
 			do executeUpdate params: PARAMS updateComm: "DELETE FROM bounds";
@@ -31,13 +32,11 @@ global {
 	}
 }   
 
-environment bounds: boundsShp ;
-
 entities {   
 	species DB_Accessor skills: [SQLSKILL] ;   
 	species bounds {
 		reflex printdata{
-			 write ' name : ' + (name) ;
+			 write " name : " + (name) ;
 		}
 		
 		reflex savetosql{  // save data into MySQL
@@ -55,7 +54,7 @@ entities {
 		string type;
 		
 		reflex printdata{
-			 write ' name : ' + (name) + '; type: ' + (type) + "shape:" + shape;
+			write " name : " + (name) + "; type: " + (type) + "shape:" + shape;
 		}
 		
 		reflex savetosql{  // save data into SQLite

@@ -14,7 +14,7 @@ global {
 	map<string,string> SQLITE <- 		['dbtype'::'sqlite','database'::'../../includes/meteo.db'];
 	
 	init {
-		create species: DB_connection_tester number: 1;
+		create DB_connection_tester ;
 	}
 }
 

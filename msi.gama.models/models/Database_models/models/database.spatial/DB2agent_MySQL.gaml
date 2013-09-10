@@ -22,16 +22,16 @@ global {
 									'passwd'::'root'];
 	
 	string QUERY <- "SELECT name, type, geom FROM buildings ;";
-				  	
+	geometry shape <- envelope(BOUNDS);		  	
+	 	
 	init {
 		create DB_accessor {
 			create buildings from: list(self select [params:: PARAMS, select:: QUERY]) 
-							 with:[ 'name'::"name",'type'::"type", 'shape':: "geom"];
+							 with:[ 'name'::"name",'type'::"type", 'shape':: geometry("geom")];
 		 }
 	}
 }
 
-environment bounds: BOUNDS;
 
 entities {
 	species DB_accessor skills: [SQLSKILL];

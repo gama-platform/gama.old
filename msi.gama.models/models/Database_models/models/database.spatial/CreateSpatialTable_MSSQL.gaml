@@ -10,8 +10,8 @@ model CreateBuildingTable_MSSQL
 global {
 			map<string,string> PARAMS <- ['host'::'127.0.0.1','dbtype'::'sqlserver','database'::'','port'::'1433','user'::'sa','passwd'::'tmt'];
 	init {
-		create species: toto number: 1;
-		ask toto {
+		create dummy;
+		ask dummy {
 			if (self testConnection[ params::PARAMS]){
 				
  			    do executeUpdate    params:PARAMS updateComm: "CREATE DATABASE spatial_DB"; 
@@ -39,7 +39,7 @@ global {
 	}
 }
 entities {
-	species toto skills: [ SQLSKILL ] {
+	species dummy skills: [ SQLSKILL ] {
 
 	}
 }      

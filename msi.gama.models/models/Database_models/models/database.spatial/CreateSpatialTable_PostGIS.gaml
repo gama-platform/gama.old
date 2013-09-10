@@ -11,8 +11,8 @@ global {
 	map<string,string> PARAMS <-  ['host'::'localhost','dbtype'::'Postgres','database'::'','port'::'5433','user'::'postgres','passwd'::'tmt'];
 
 	init {
-		create species: toto number: 1;
-		ask toto {
+		create dummy ;
+		ask dummy {
 			if (self testConnection[ params::PARAMS]){
 				
  			    do executeUpdate    params:PARAMS updateComm: "CREATE DATABASE spatial_db with TEMPLATE = template_postgis;"; 
@@ -40,7 +40,7 @@ global {
 	}
 }
 entities {
-	species toto skills: [ SQLSKILL ] {
+	species dummy skills: [ SQLSKILL ] {
 
 	}
 }      

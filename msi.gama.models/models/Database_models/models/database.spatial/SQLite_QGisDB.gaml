@@ -18,16 +18,16 @@ model Sqlite_QGis
  
   
 global { 
-	map BOUNDS <- ['dbtype'::'sqlite','database'::'../includes/bph.db'
+	map BOUNDS <- ["dbtype"::"sqlite","database"::"../includes/bph.db"
 								,"select"::	"select geometry  from vnm_adm2 where (id_1=3291 or id_1=3289);" //Bac trung bo and DBSCL
-								,'srid'::'4326'							
+								,"srid"::"4326"							
 							  ]; 
-	map PARAMS <- ['dbtype'::'sqlite','database'::'../includes/bph.db','extension'::'../includes/lib/libspatialite.3.dylib'];
+	map PARAMS <- ["dbtype"::"sqlite","database"::"../includes/bph.db","extension"::"../includes/lib/libspatialite.3.dylib"];
 	string LOCATIONS <- "select ID_2, varname_2,  geometry  from vnm_adm2 where id_1=3291 or id_1=3289;";
 	init {
-		create species: toto number: 1  
+		create dummy 
 		{ 			
-			create species:locations from: list(self select [params:: PARAMS, select:: LOCATIONS]) with:[ id:: "id_2", name:: "varname_2",shape::"geometry"]
+			create locations from: list(self select [params:: PARAMS, select:: LOCATIONS]) with:[ id:: int("id_2"), name:: "varname_2",shape::geometry("geometry")]
 			{
 				//put statements here; 
 			}
@@ -39,7 +39,7 @@ global {
 }   
 environment bounds: BOUNDS ;
 entities {   
-	species toto skills: [SQLSKILL]
+	species dummy skills: [SQLSKILL]
 	 {  
 		//Nothing
 	 }   
@@ -47,10 +47,10 @@ entities {
 	species locations {
 		int id ;
 		string name;
-		rgb color <- rgb([rnd(255),rnd(255),0]);
+		rgb color <- rgb(rnd(255),rnd(255),0);
 		geometry geom;
 		reflex printdata{
-			 write ' id : ' + id + '; name: ' + name;
+			 write " id : " + id + "; name: " + name;
 		}
 		
 	}
@@ -60,7 +60,7 @@ experiment default_expr type: gui {
 	output {
 		
 		display GlobalView {
-			species locations transparency: 0 ;
+			species locations ;
 		}
 	}
 }

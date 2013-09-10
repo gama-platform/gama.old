@@ -15,7 +15,8 @@ model agent2DB_MySQL
 global { 
 	file buildingsShp <- file('../../includes/building.shp');
 	file boundsShp <- file('../../includes/bounds.shp');
-
+	geometry shape <- envelope(boundsShp);
+	
 	map<string,string> PARAMS 
 				<- ['host'::'localhost','dbtype'::'MySQL','database'::'spatial_DB','port'::'8889','user'::'root','passwd'::'root'];
 
@@ -23,7 +24,7 @@ global {
 		create buildings from: buildingsShp with: [type::string(read ('NATURE'))];
 		create bounds from: boundsShp;
 		
-		create species: DB_Accessor number: 1  
+		create DB_Accessor number: 1  
 		{ 			
 			do executeUpdate params: PARAMS updateComm: "DELETE FROM buildings";	
 			do executeUpdate params: PARAMS updateComm: "DELETE FROM bounds";
@@ -31,8 +32,6 @@ global {
 		write "Click on <<Step>> button to save data of agents to DB";		 
 	}
 }   
-
-environment bounds: boundsShp ;
 
 entities {   
 	species DB_Accessor skills: [SQLSKILL] ;   

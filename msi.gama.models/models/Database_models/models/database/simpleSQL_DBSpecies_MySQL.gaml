@@ -27,7 +27,7 @@ global {
 				<- ['host'::'localhost','dbtype'::'MySQL','database'::'meteo_DB','port'::'8889','user'::'root','passwd'::'root'];
 	
 	init {
-		create species: DB_Accessor number: 1 {
+		create DB_Accessor number: 1 {
 			if( self testConnection(params::PARAMS) = false){
 				write "Impossible connection";
 			} else {
