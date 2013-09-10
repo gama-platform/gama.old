@@ -1,5 +1,6 @@
 package ummisco.gaml.extensions.maths.ode.utils.solver;
 
+import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
@@ -94,6 +95,7 @@ public class Rk4Solver extends Solver {
 					final GamaList obj = new GamaList();
 					integrated_val.add(obj);
 				} catch (final Exception ex1) {
+					GuiUtils.debug(ex1.getMessage());
 				} finally {
 					if (eq.equaAgents.size() > 0) {
 						if (pushed) {

@@ -2,6 +2,7 @@ package ummisco.gaml.extensions.maths.ode.statements;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -269,6 +270,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 					s.var_t.setVal(currentScope, time, false);
 					v.setVal(currentScope, y[i], false);
 				} catch (final Exception ex1) {
+					GuiUtils.debug(ex1.getMessage());
 				} finally {
 					if (pushed) {
 						currentScope.pop(remoteAgent);
