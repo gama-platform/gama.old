@@ -195,10 +195,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 					@Override
 					public void run() {
-						if ( surfaceComposite.getDisplay() != null && !surfaceComposite.isFocusControl() ) {
-							GuiUtils
-								.debug("LayeredDisplayView.createSurfaceComposite().new MouseMotionAdapter() {...}.mouseMoved : the surface composite does not have the focus");
-						}
+						monitorMouseMove(e.getPoint().x, e.getPoint().y);
 					}
 				});
 				GuiUtils.asyncRun(displayOverlay);
@@ -247,11 +244,6 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			}
 
 			@Override
-			public boolean setFocus() {
-				return super.setFocus();
-			}
-
-			@Override
 			public void afterComponentCreatedSWTThread() {
 				if ( GamaPreferences.CORE_OVERLAY.getValue() ) {
 					overlay.toggle();
@@ -273,15 +265,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 			@Override
 			public void mouseMove(final MouseEvent e) {
-				if ( surfaceComposite.getBounds().height - e.y < 10 ) {
-					if ( !overlay.getPopup().isVisible() ) { // TODO Maybe useless
-						overlay.appear();
-					}
-				} else if ( e.x < 10 ) {
-					if ( !layersOverlay.getPopup().isVisible() ) {
-						layersOverlay.appear();
-					}
-				}
+				monitorMouseMove(e.x, e.y);
 			}
 
 		});
@@ -334,6 +318,20 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		// }
 		// surfaceComposite.populate();
 		return surfaceComposite;
+	}
+
+	protected void monitorMouseMove(final int x, final int y) {
+
+		if ( surfaceComposite.getBounds().height - y < 10 ) {
+			if ( !overlay.getPopup().isVisible() ) { // TODO Maybe useless
+				overlay.appear();
+			}
+		} else if ( x < 10 ) {
+			if ( !layersOverlay.getPopup().isVisible() ) {
+				layersOverlay.appear();
+			}
+		}
+
 	}
 
 	@Override
