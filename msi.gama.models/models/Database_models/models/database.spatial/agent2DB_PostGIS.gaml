@@ -16,7 +16,7 @@ global {
 	file buildingsShp <- file('../../includes/building.shp');
 	file boundsShp <- file('../../includes/bounds.shp');
 	geometry shape <- envelope(boundsShp);
-	
+	 
 	map<string,string> PARAMS <-  ['host'::'localhost','dbtype'::'Postgres','database'::'spatial_db','port'::'5433','user'::'postgres','passwd'::'tmt'];
 
 	init {
