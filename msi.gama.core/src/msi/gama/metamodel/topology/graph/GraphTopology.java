@@ -69,7 +69,6 @@ public class GraphTopology extends AbstractTopology {
 		ISpatialGraph graph = getPlaces();
 		boolean sourceNode = graph.containsVertex(source);
 		boolean targetNode = graph.containsVertex(target);
-		boolean isDirected = graph.isDirected();
 		if ( sourceNode && targetNode ) { return (GamaSpatialPath) graph.computeShortestPathBetween(source, target); }
 
 		IShape edgeS = null, edgeT = null;
