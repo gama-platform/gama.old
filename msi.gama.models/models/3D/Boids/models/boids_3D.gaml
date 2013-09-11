@@ -296,10 +296,10 @@ experiment start type: gui {
 	output {
 		display RealBoids  type:opengl ambient_light:255 z_fighting:false{
 			image name:'background' file:'../images/ocean.jpg';
-			species boids aspect: dynamicColor z:0.1 transparency:0.5;
-			species boids aspect: image z:0.11 transparency:0.5;
-			species boids_goal z:0.1 transparency:0.2;
-			species obstacle z:0.1; 		
+			species boids aspect: dynamicColor transparency:0.5 position:{0,0,0.1};
+			species boids aspect: image transparency:0.5 position:{0,0,0.11};
+			species boids_goal transparency:0.2 position:{0,0,0.1};
+			species obstacle position:{0,0,0.1}; 		
 		}
 	}
 }
@@ -310,17 +310,17 @@ experiment MultipleView type: gui {
 
 		display RealBoids   type:opengl ambient_light:255 {
 			image name:'background' file:'../images/ocean.jpg' z:0;
-			species boids aspect: image z:0.25 transparency:0.5;
-			species boids_goal z:0.25 transparency:0.2;
+			species boids aspect: image  transparency:0.5 position:{0,0,0.25};
+			species boids_goal transparency:0.2 position:{0,0,0.25};
 			species obstacle ;
-			species boids  aspect: dynamicColor z:0.24 transparency:0.2 ;
+			species boids  aspect: dynamicColor transparency:0.2 position:{0,0,0.24};
 			species boids_goal  transparency:0.2; 		
 		}
 		
 		display ThirdPersonn  type:opengl camera_pos:{int(first(boids).location.x),-int(first(boids).location.y),250} 
 		camera_look_pos:{int(first(boids).location.x),-(first(boids).location.y),0} {
 		
-			image name:'background' file:'../images/ocean.jpg' z:0;
+			image name:'background' file:'../images/ocean.jpg';
 			species obstacle;
 			species boids  aspect: dynamicColor transparency:0.2 ;
 			species boids_goal  transparency:0.2; 		
@@ -329,10 +329,10 @@ experiment MultipleView type: gui {
 			
 		display FirstPerson  type:opengl ambient_light:100 camera_pos:{int(first(boids).location.x),-int(first(boids).location.y),10} 
 		camera_look_pos:{cos(first(boids).heading)*world.shape.width,-sin(first(boids).heading)*world.shape.height,0} camera_up_vector:{0.0,0.0,1.0} {	
-			image name:'background' file:'../images/ocean.jpg' z:0;
+			image name:'background' file:'../images/ocean.jpg';
 			species obstacle ;
-			species boids  aspect: dynamicColor z:0.0 transparency:0.2 ;
-			species boids_goal  transparency:0.0; 		
+			species boids  aspect: dynamicColor transparency:0.2 ;
+			species boids_goal  transparency:0.2; 		
 		}
 	}
 }
