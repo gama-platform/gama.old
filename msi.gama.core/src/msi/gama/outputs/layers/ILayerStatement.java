@@ -56,7 +56,7 @@ public interface ILayerStatement extends INamed, IStepable {
 
 	public abstract void setRefresh(Boolean refresh);
 
-	public abstract void setOpacity(Double opacity);
+	public abstract void setTransparency(Double opacity);
 
 	public abstract void setDisplayOutput(IDisplayOutput output);
 

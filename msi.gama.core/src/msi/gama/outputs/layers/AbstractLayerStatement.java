@@ -113,8 +113,8 @@ public abstract class AbstractLayerStatement extends Symbol implements ILayerSta
 	}
 
 	@Override
-	public void setOpacity(final Double opacity) {
-		getBox().setTransparency(opacity);
+	public void setTransparency(final Double transparency) {
+		getBox().setTransparency(transparency);
 	}
 
 	//

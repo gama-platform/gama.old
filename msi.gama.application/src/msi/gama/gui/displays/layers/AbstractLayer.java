@@ -86,12 +86,12 @@ public abstract class AbstractLayer implements ILayer {
 				}
 			}
 		});
-		EditorFactory.create(compo, "Opacity:", definition.getTransparency(), 0.0, 1.0, 0.1, false,
+		EditorFactory.create(compo, "Transparency:", definition.getTransparency(), 0.0, 1.0, 0.1, false,
 			new EditorListener<Double>() {
 
 				@Override
 				public void valueModified(final Double newValue) {
-					setOpacity(1d - newValue);
+					setTransparency(newValue);
 					if ( isPaused(container) ) {
 						container.forceUpdateDisplay();
 					}
@@ -151,8 +151,8 @@ public abstract class AbstractLayer implements ILayer {
 	}
 
 	@Override
-	public void setOpacity(final Double opacity) {
-		definition.setOpacity(opacity);
+	public void setTransparency(final Double transparency) {
+		definition.setTransparency(transparency);
 	}
 
 	public void setPosition(final GamaPoint p) {
