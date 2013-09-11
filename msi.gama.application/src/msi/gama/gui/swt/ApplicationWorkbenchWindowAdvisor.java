@@ -114,6 +114,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 			final MenuManager menuManager = ((WorkbenchWindow) window).getMenuManager();
 			// Removing "Window"
 			menuManager.remove("window");
+			menuManager.remove("navigate");
 			// Setting the views and perspective submenu
 			final MenuManager views = (MenuManager) menuManager.find("viewMenu");
 			MenuManager viewMenu = new MenuManager("Open View");

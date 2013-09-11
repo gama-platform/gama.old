@@ -328,6 +328,12 @@
          <hiddenToolBarItem
                id="org.eclipse.ui.edit.text.gotoPreviousAnnotation">
          </hiddenToolBarItem>
+         <perspectiveShortcut
+               id="msi.gama.application.perspectives.ModelingPerspective">
+         </perspectiveShortcut>
+         <perspectiveShortcut
+               id="msi.gama.application.perspectives.SimulationPerspective">
+         </perspectiveShortcut>
       </perspectiveExtension>
     </extension>
    <extension
@@ -467,6 +473,36 @@
                   name="msi.gama.application.separator4"
                   visible="true">
             </separator>
+            <command
+                  commandId="msi.gama.application.goto.modeling"
+                  icon="icons/application_edit.png"
+                  label="Modeling Perspective"
+                  style="push"
+                  tooltip="Open modeling perspective">
+               <visibleWhen
+                     checkEnabled="false">
+                  <not>
+                     <reference
+                           definitionId="isInModelingPerspective">
+                     </reference>
+                  </not>
+               </visibleWhen>
+            </command>
+            <command
+                  commandId="msi.gama.application.goto.simulation"
+                  icon="icons/application_start.png"
+                  label="Simulation perspective"
+                  style="push"
+                  tooltip="Open simulation perspective">
+               <visibleWhen
+                     checkEnabled="false">
+                  <not>
+                     <reference
+                           definitionId="isInSimulationPerspective">
+                     </reference>
+                  </not>
+               </visibleWhen>
+            </command>
             <command
                   commandId="org.eclipse.ui.window.resetPerspective"
                   label="Reset Perspective..."
@@ -748,6 +784,13 @@
          <command
                commandId="org.eclipse.ui.file.switchWorkspace"
                style="push">
+         </command>
+      </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.search.menu?after=dialogGroup">
+         <command
+               commandId="org.eclipse.xtext.ui.shared.OpenXtextElementCommand"
+               label="Models Elements...">
          </command>
       </menuContribution>
    </extension>
@@ -1611,5 +1654,21 @@
          <path
                name="gaml">
          </path>
+      </extension>
+      <extension
+            point="org.eclipse.ui.actionSets">
+         <actionSet
+               id="trial"
+               label="label"
+               visible="true">
+            <action
+                  class="msi.gama.gui.swt.commands.DelegateForAllElements"
+                  id="msi.gama.application.action1"
+                  label="All Elements…"
+                  menubarPath="org.eclipse.search.menu/extraSearchGroup"
+                  style="push"
+                  tooltip="Search for any element defined in the GAML models present in the workspace">
+            </action>
+         </actionSet>
       </extension>
 </plugin>
