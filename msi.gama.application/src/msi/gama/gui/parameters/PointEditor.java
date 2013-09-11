@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -34,7 +34,7 @@ import org.eclipse.swt.widgets.*;
 
 public class PointEditor extends AbstractEditor implements VerifyListener {
 
-	private Text xText, yText;
+	private Text xText, yText, zText;
 	private Composite pointEditor;
 
 	PointEditor(final IParameter param) {
@@ -62,13 +62,13 @@ public class PointEditor extends AbstractEditor implements VerifyListener {
 		final GridData pointEditorGridData = new GridData(GridData.FILL, GridData.CENTER, true, false);
 		pointEditorGridData.widthHint = 100;
 		pointEditor.setLayoutData(pointEditorGridData);
-		final GridLayout pointEditorLayout = new GridLayout(2, true);
+		final GridLayout pointEditorLayout = new GridLayout(3, true);
 		pointEditorLayout.horizontalSpacing = 10;
 		pointEditorLayout.verticalSpacing = 0;
 		pointEditorLayout.marginHeight = 0;
 		pointEditorLayout.marginWidth = 0;
 		pointEditor.setLayout(pointEditorLayout);
-
+		// x
 		final Composite xComposite = new Composite(pointEditor, SWT.NONE);
 		final GridLayout subCompositeLayout = new GridLayout(2, false);
 		subCompositeLayout.marginHeight = 0;
@@ -80,9 +80,10 @@ public class PointEditor extends AbstractEditor implements VerifyListener {
 		xLabel.setText("x");
 		xText = new Text(xComposite, SWT.BORDER);
 		final GridData textGridData = new GridData(GridData.FILL, GridData.CENTER, true, false);
-		textGridData.widthHint = 40;
+		textGridData.widthHint = 30;
 		xText.setLayoutData(textGridData);
 		xText.setBackground(normal_bg);
+		// y
 		final Composite yComposite = new Composite(pointEditor, SWT.NONE);
 		yComposite.setLayout(subCompositeLayout);
 		yComposite.setLayoutData(subCompositeGridData);
@@ -91,6 +92,17 @@ public class PointEditor extends AbstractEditor implements VerifyListener {
 		yText = new Text(yComposite, SWT.BORDER);
 		yText.setLayoutData(textGridData);
 		yText.setBackground(normal_bg);
+		// z
+		final Composite zComposite = new Composite(pointEditor, SWT.NONE);
+		zComposite.setLayout(subCompositeLayout);
+		zComposite.setLayoutData(subCompositeGridData);
+		final Label zLabel = new Label(zComposite, SWT.NONE);
+		zLabel.setText("z");
+		zText = new Text(zComposite, SWT.BORDER);
+		zText.setLayoutData(textGridData);
+		zText.setBackground(normal_bg);
+		displayParameterValue();
+		// all
 		displayParameterValue();
 		// xText.addMouseTrackListener(this);
 		// yText.addMouseTrackListener(this);
@@ -98,6 +110,8 @@ public class PointEditor extends AbstractEditor implements VerifyListener {
 		xText.addVerifyListener(this);
 		yText.addModifyListener(this);
 		yText.addVerifyListener(this);
+		zText.addModifyListener(this);
+		zText.addVerifyListener(this);
 		return pointEditor;
 	}
 
@@ -114,6 +128,7 @@ public class PointEditor extends AbstractEditor implements VerifyListener {
 		GamaPoint p = (GamaPoint) currentValue;
 		xText.setText(currentValue == null ? "0" : StringUtils.toGaml(p.getX()));
 		yText.setText(currentValue == null ? "0" : StringUtils.toGaml(p.getY()));
+		zText.setText(currentValue == null ? "0" : StringUtils.toGaml(p.getZ()));
 	}
 
 	@Override
@@ -122,8 +137,9 @@ public class PointEditor extends AbstractEditor implements VerifyListener {
 		GAMA.run(new InScope.Void() {
 
 			@Override
-			public void process(IScope scope) {
-				modifyValue(new GamaPoint(Cast.asFloat(scope, xText.getText()), Cast.asFloat(scope, yText.getText())));
+			public void process(final IScope scope) {
+				modifyValue(new GamaPoint(Cast.asFloat(scope, xText.getText()), Cast.asFloat(scope, yText.getText()),
+					Cast.asFloat(scope, zText.getText())));
 			}
 		});
 

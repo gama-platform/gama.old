@@ -33,38 +33,32 @@ import msi.gaml.operators.Cast;
 public class LayerBox implements IDisplayLayerBox {
 
 	IExpression transparency = new ConstantExpression(0d);
-	IExpression position = new ConstantExpression(new GamaPoint(0, 0));
-	IExpression extent = new ConstantExpression(new GamaPoint(1, 1));
-	IExpression elevation = new ConstantExpression(0d);
+	IExpression position = new ConstantExpression(new GamaPoint(0, 0, 0));
+	IExpression size = new ConstantExpression(new GamaPoint(1, 1, 1));
 	IExpression refresh = new ConstantExpression(true);
-
-	// boolean isAbsoluteWidth = false;
-	// boolean isAbsoluteHeight = false;
-	// boolean isAbsoluteX = false;
-	// boolean isAbsoluteY = false;
 
 	Double currentTransparency = 0d;
 	ILocation currentPosition;
-	ILocation currentExtent;
-	Double currentElevation;
+	ILocation currentSize;
+	// Double currentElevation;
 	Boolean currentRefresh;
 
 	ILocation constantPosition = null;
-	ILocation constantExtent = null;
+	ILocation constantSize = null;
 	Double constantTransparency = null;
-	Double constantElevation = null;
+	// Double constantElevation = null;
 	Boolean constantRefresh = null;
 
 	// Rectangle2D.Double currentBoundingBox = new Rectangle2D.Double();
 	boolean constantBoundingBox = false;
 
-	public LayerBox(final IExpression transp, final IExpression pos, final IExpression ext, final IExpression elev,
-		final IExpression refr) throws GamaRuntimeException {
+	public LayerBox(final IExpression transp, final IExpression pos, final IExpression ext, final IExpression refr)
+		throws GamaRuntimeException {
 		IScope scope = GAMA.obtainNewScope();
 		setTransparency(scope, transp == null ? transparency : transp);
 		setPosition(scope, pos == null ? position : pos);
-		setExtent(scope, ext == null ? extent : ext);
-		setElevation(scope, elev == null ? elevation : elev);
+		setSize(scope, ext == null ? size : ext);
+		// setElevation(scope, elev == null ? elevation : elev);
 		setRefresh(scope, refr == null ? refresh : refr);
 
 	}
@@ -96,12 +90,12 @@ public class LayerBox implements IDisplayLayerBox {
 			if ( !constantBoundingBox ) {
 				currentPosition =
 					constantPosition == null ? Cast.asPoint(scope, position.value(scope)) : constantPosition;
-				currentExtent = constantExtent == null ? Cast.asPoint(scope, extent.value(scope)) : constantExtent;
+				currentSize = constantSize == null ? Cast.asPoint(scope, size.value(scope)) : constantSize;
 				// if ( currentPosition != null && currentExtent != null ) {
 				// computeBoundingBox();
 				// }
-				currentElevation =
-					constantElevation == null ? Cast.asFloat(scope, elevation.value(scope)) : constantElevation;
+				// currentElevation =
+				// constantElevation == null ? Cast.asFloat(scope, elevation.value(scope)) : constantElevation;
 				currentRefresh = constantRefresh == null ? Cast.asBool(scope, refresh.value(scope)) : constantRefresh;
 			}
 		} catch (Exception e) {
@@ -135,9 +129,9 @@ public class LayerBox implements IDisplayLayerBox {
 	}
 
 	@Override
-	public void setExtent(final IScope scope, final IExpression e) throws GamaRuntimeException {
+	public void setSize(final IScope scope, final IExpression e) throws GamaRuntimeException {
 		if ( e != null ) {
-			extent = e;
+			size = e;
 			// if ( e instanceof BinaryOperator ) {
 			// isAbsoluteWidth = ((BinaryOperator) e).left().containsAny(PixelUnitExpression.class);
 			// isAbsoluteHeight = ((BinaryOperator) e).right().containsAny(PixelUnitExpression.class);
@@ -145,20 +139,20 @@ public class LayerBox implements IDisplayLayerBox {
 			// isAbsoluteHeight = e.containsAny(PixelUnitExpression.class);
 			// }
 			if ( e.isConst() ) {
-				setExtent(Cast.asPoint(scope, extent.value(scope)));
+				setSize(Cast.asPoint(scope, size.value(scope)));
 			}
 		}
 	}
 
-	@Override
-	public void setElevation(final IScope scope, final IExpression e) throws GamaRuntimeException {
-		if ( e != null ) {
-			elevation = e;
-			if ( e.isConst() ) {
-				setElevation(Cast.asFloat(scope, e.value(scope)));
-			}
-		}
-	}
+	// @Override
+	// public void setElevation(final IScope scope, final IExpression e) throws GamaRuntimeException {
+	// if ( e != null ) {
+	// elevation = e;
+	// if ( e.isConst() ) {
+	// setElevation(Cast.asFloat(scope, e.value(scope)));
+	// }
+	// }
+	// }
 
 	@Override
 	public void setRefresh(final IScope scope, final IExpression r) throws GamaRuntimeException {
@@ -177,13 +171,13 @@ public class LayerBox implements IDisplayLayerBox {
 	}
 
 	@Override
-	public void setExtent(final ILocation p) {
-		setExtent(p.getX(), p.getY(),p.getZ());
+	public void setSize(final ILocation p) {
+		setSize(p.getX(), p.getY(), p.getZ());
 	}
 
 	@Override
-	public void setExtent(final double width, final double height, final double depth) {
-		currentExtent = constantExtent = new GamaPoint(width, height,depth);
+	public void setSize(final double width, final double height, final double depth) {
+		currentSize = constantSize = new GamaPoint(width, height, depth);
 		if ( constantPosition != null ) {
 			constantBoundingBox = true;
 			// computeBoundingBox();
@@ -198,16 +192,16 @@ public class LayerBox implements IDisplayLayerBox {
 	@Override
 	public void setPosition(final double x, final double y, final double z) {
 		currentPosition = constantPosition = new GamaPoint(x, y, z);
-		if ( constantExtent != null ) {
+		if ( constantSize != null ) {
 			constantBoundingBox = true;
 			// computeBoundingBox();
 		}
 	}
 
-	@Override
-	public void setElevation(final double e) {
-		currentElevation = constantElevation = e;
-	}
+	// @Override
+	// public void setElevation(final double e) {
+	// currentElevation = constantElevation = e;
+	// }
 
 	@Override
 	public void setRefresh(final Boolean r) {
@@ -231,14 +225,15 @@ public class LayerBox implements IDisplayLayerBox {
 	}
 
 	@Override
-	public ILocation getExtent() {
-		return currentExtent;
+	public ILocation getSize() {
+		return currentSize;
 	}
 
-	@Override
-	public final Double getElevation() {
-		return currentElevation;
-	}
+	//
+	// @Override
+	// public final Double getElevation() {
+	// return currentElevation;
+	// }
 
 	@Override
 	public Boolean getRefresh() {

@@ -46,13 +46,13 @@ public interface ILayerStatement extends INamed, IStepable {
 
 	public abstract Double getTransparency();
 
-	public abstract Double getElevation();
+	// public abstract Double getElevation();
 
 	public abstract Boolean getRefresh();
 
 	public abstract IDisplayLayerBox getBox();
 
-	public abstract void setElevation(Double elevation);
+	// public abstract void setElevation(Double elevation);
 
 	public abstract void setRefresh(Boolean refresh);
 

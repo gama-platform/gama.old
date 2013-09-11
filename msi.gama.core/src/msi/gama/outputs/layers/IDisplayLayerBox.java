@@ -38,23 +38,23 @@ public interface IDisplayLayerBox {
 
 	public abstract void setPosition(final IScope sim, final IExpression p) throws GamaRuntimeException;
 
-	public abstract void setExtent(final IScope sim, final IExpression e) throws GamaRuntimeException;
+	public abstract void setSize(final IScope sim, final IExpression e) throws GamaRuntimeException;
 
-	public abstract void setElevation(final IScope sim, final IExpression e) throws GamaRuntimeException;
+	// public abstract void setElevation(final IScope sim, final IExpression e) throws GamaRuntimeException;
 
 	public abstract void setRefresh(final IScope sim, final IExpression r) throws GamaRuntimeException;
 
 	public abstract void setTransparency(final double f);
 
-	public abstract void setExtent(final ILocation p);
+	public abstract void setSize(final ILocation p);
 
-	public abstract void setExtent(final double width, final double height, final double depth);
+	public abstract void setSize(final double width, final double height, final double depth);
 
 	public abstract void setPosition(final ILocation p);
 
 	public abstract void setPosition(final double x, final double y, final double z);
 
-	public abstract void setElevation(final double e);
+	// public abstract void setElevation(final double e);
 
 	public abstract void setRefresh(final Boolean r);
 
@@ -64,9 +64,9 @@ public interface IDisplayLayerBox {
 
 	public abstract ILocation getPosition();
 
-	public abstract ILocation getExtent();
+	public abstract ILocation getSize();
 
-	public abstract Double getElevation();
+	// public abstract Double getElevation();
 
 	public abstract Boolean getRefresh();
 

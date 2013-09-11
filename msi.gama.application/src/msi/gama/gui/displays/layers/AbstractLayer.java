@@ -21,7 +21,6 @@ package msi.gama.gui.displays.layers;
 import java.awt.Point;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
@@ -110,7 +109,7 @@ public abstract class AbstractLayer implements ILayer {
 			}
 
 		});
-		EditorFactory.create(compo, "Extent:", definition.getBox().getExtent(), new EditorListener<GamaPoint>() {
+		EditorFactory.create(compo, "Size:", definition.getBox().getSize(), new EditorListener<GamaPoint>() {
 
 			@Override
 			public void valueModified(final GamaPoint newValue) {
@@ -121,18 +120,18 @@ public abstract class AbstractLayer implements ILayer {
 			}
 
 		});
-		EditorFactory.create(compo, "Elevation:", definition.getElevation(), 0.0, 1.0, 0.1, false,
-			new EditorListener<Double>() {
-
-				@Override
-				public void valueModified(final Double newValue) {
-					setElevation(newValue);
-					if ( isPaused(container) ) {
-						container.forceUpdateDisplay();
-					}
-				}
-
-			});
+		// EditorFactory.create(compo, "Elevation:", definition.getElevation(), 0.0, 1.0, 0.1, false,
+		// new EditorListener<Double>() {
+		//
+		// @Override
+		// public void valueModified(final Double newValue) {
+		// setElevation(newValue);
+		// if ( isPaused(container) ) {
+		// container.forceUpdateDisplay();
+		// }
+		// }
+		//
+		// });
 	}
 
 	@Override
@@ -165,21 +164,22 @@ public abstract class AbstractLayer implements ILayer {
 	}
 
 	public void setExtent(final GamaPoint p) {
-		definition.getBox().setExtent(p);
+		definition.getBox().setSize(p);
 	}
-	
+
 	public ILocation getExtent() {
-		return definition.getBox().getExtent();
+		return definition.getBox().getSize();
 	}
 
 	@Override
 	public void setElevation(final Double elevation) {
-		definition.setElevation(elevation);
+		ILocation original = definition.getBox().getPosition();
+		definition.getBox().setPosition(original.getX(), original.getY(), elevation);
 	}
 
 	@Override
 	public double getZPosition() {
-		return definition.getElevation();
+		return definition.getBox().getPosition().getZ();
 	}
 
 	@Override
@@ -206,7 +206,7 @@ public abstract class AbstractLayer implements ILayer {
 		double relative_y = Math.abs(y) <= 1 ? pixelHeight * y : g.getyRatioBetweenPixelsAndModelUnits() * y;
 		final double absolute_y = Math.signum(y) < 0 ? pixelHeight + relative_y : relative_y;
 
-		point = box.getExtent();
+		point = box.getSize();
 		// Computation of width
 		final double w = point.getX();
 		double absolute_width = Math.abs(w) <= 1 ? pixelWidth * w : g.getxRatioBetweenPixelsAndModelUnits() * w;
