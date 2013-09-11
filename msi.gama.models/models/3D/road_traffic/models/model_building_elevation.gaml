@@ -133,8 +133,8 @@ experiment road_traffic_multi_layer type: gui {
 	output {
 		display city_display type: opengl ambient_light: 100 {
 			species road aspect: base z: 0;
-			species building aspect: base z: 0.1;
-			species people aspect: base z: 0.2;
+			species building aspect: base position:{0,0,0.25};
+			species people aspect: base position:{0,0,0.5};
 		}
 	}
 
@@ -143,9 +143,9 @@ experiment road_traffic_multi_layer type: gui {
 experiment AnimatedView type: gui {
 	output {
 		display animatedView type: opengl ambient_light: 100 {
-			species road aspect: base z: 0;
-			species building aspect: base position: { 0, 0, time * 2 };
-			species people aspect: base position: { 0, 0, time * 4 };
+			species road aspect: base;
+			species building aspect: base position: { 0, 0, (time * 2)/1000 };
+			species people aspect: base position: { 0, 0, (time * 4)/1000 };
 		}
 	}
 }
