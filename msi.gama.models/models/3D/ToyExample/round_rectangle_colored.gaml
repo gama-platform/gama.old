@@ -61,7 +61,7 @@ experiment display  type: gui {
 	output {
 		display Poincare refresh_every: 1  type:opengl ambient_light:50 {
 			image imageRaster.path ;
-			species mySquare aspect:RoundCorner z:0.0;										
+			species mySquare aspect:RoundCorner;										
 		}
 	}
 }

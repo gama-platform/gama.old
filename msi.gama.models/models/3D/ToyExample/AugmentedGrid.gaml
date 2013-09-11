@@ -2,14 +2,11 @@ model AugmentedGrid
 
 /**
  *  AugmentedGrid
+ * 
  *  Author: Arnaud Grignard
- *  Description: Initialize a grid with a random value between 0 and 255
- *  In TextDisplay only the value of the cell is displayed as a text
- *  In AugmentedDisplay the value of the cell is displayed:
- * 		1: Circle with a radius equal to the cellValue
- * 		2: Blue colored square
- *      3: Elevation + blue color
- * 		4: Elevation + hsb color
+ * 
+ *  Description: Initialize a grid with a random value between 0 and 255 and display using different aspects.
+
  */
 global {
 	int width parameter : "width" min 1 <- 6 category: 'Initialization';
@@ -17,7 +14,6 @@ global {
 	float hue parameter: 'Hue (between 0.0 and 1.0)' min: 0.0 max: 1.0 <- 0.66;
 	geometry shape <- rectangle(width, height);
 	init {
-	//Initialize the value of each cell
 		ask cell as list {
 			color <- hsb(hue, (cellValue / 255), 1.0);
 			elevation <- ((cellValue / 100) ^ 2);
@@ -73,30 +69,28 @@ grid cell width: width height: height neighbours: 4 {
 
 experiment AugmentedGrid type: gui {
 	output {
-		display Circle type: opengl ambient_light: 100 polygonmode: true {
-			species cell aspect: circle refresh: true position: { 0, 0 };
+		display Circle type: opengl{
+			species cell aspect: circle;
 		}
 
-		display Cylinder type: opengl ambient_light: 100 polygonmode: true {
-			species cell aspect: cylinder refresh: true position: { 0, 0 };
+		display Cylinder type: opengl{
+			species cell aspect: cylinder;
 		}
 
-		display Sphere type: opengl ambient_light: 100 polygonmode: true {
-			species cell aspect: sphere refresh: true position: { 0, 0 };
+		display Sphere type: opengl{
+			species cell aspect: sphere;
 		}
 
-		display Square type: opengl ambient_light: 100 polygonmode: true {
-			species cell aspect: square refresh: true position: { 0, 0 };
+		display Square type: opengl{
+			species cell aspect: square;
 		}
 
-		display Box type: opengl ambient_light: 100 polygonmode: true {
-			species cell aspect: box refresh: true position: { 0, 0 };
+		display Box type: opengl{
+			species cell aspect: box;
 		}
 
-		display hsb type: opengl ambient_light: 100 polygonmode: true {
-			species cell aspect: hsbElevation refresh: true position: { 0, 0 };
+		display hsb type: opengl{
+			species cell aspect: hsbElevation;
 		}
-
 	}
-
 }
