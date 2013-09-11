@@ -64,10 +64,10 @@ experiment AdvancedView type: gui {
 	output {	    
 	    display graph_plus_bug_layered type: opengl ambient_light: 0.2 {
 			species bug aspect: base;
-			species node aspect: base z: 0.2;
-			species edge aspect: base z: 0.2;
-			species node aspect: dynamic z:0.4;
-			species edge aspect: dynamic z:0.4; 		
+			species node aspect: base position:{0,0,0.2};
+			species edge aspect: base position:{0,0,0.2};
+			species node aspect: dynamic position:{0,0,0.4};
+			species edge aspect: dynamic position:{0,0,0.4}; 		
 		}
 	} 
 }
@@ -76,8 +76,8 @@ experiment AnimatedView type: gui {
 	output {
 	   display animatedView type: opengl ambient_light: 0.2 {
 			species bug aspect: base;
-			species node aspect: dynamic position: {timeAnim,0,timeAnim};
-			species edge aspect: dynamic position: {timeAnim,0,timeAnim}; 		
+			species node aspect: dynamic position: {timeAnim,0,timeAnim/100};
+			species edge aspect: dynamic position: {timeAnim,0,timeAnim/100}; 		
 		}
 	} 
 }
