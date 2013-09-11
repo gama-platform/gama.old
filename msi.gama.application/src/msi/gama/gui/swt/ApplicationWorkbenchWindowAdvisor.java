@@ -24,6 +24,7 @@ import msi.gama.util.GamaList;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.ui.*;
+import org.eclipse.ui.actions.ContributionItemFactory;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.internal.*;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
@@ -111,7 +112,18 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 
 		if ( window instanceof WorkbenchWindow ) {
 			final MenuManager menuManager = ((WorkbenchWindow) window).getMenuManager();
-
+			// Removing "Window"
+			menuManager.remove("window");
+			// Setting the views and perspective submenu
+			final MenuManager views = (MenuManager) menuManager.find("viewMenu");
+			MenuManager viewMenu = new MenuManager("Open View");
+			IContributionItem viewList = ContributionItemFactory.VIEWS_SHORTLIST.create(window);
+			viewMenu.add(viewList);
+			views.add(viewMenu);
+			IContributionItem perspList = ContributionItemFactory.PERSPECTIVES_SHORTLIST.create(window);
+			MenuManager perspMenu = new MenuManager("Open Perspective");
+			perspMenu.add(perspList);
+			views.add(perspMenu);
 			// Finding the original "Switch Workspace ... " item
 			final MenuManager item = (MenuManager) menuManager.find("file");
 			final ActionContributionItem ws = (ActionContributionItem) item.find("openWorkspace");
