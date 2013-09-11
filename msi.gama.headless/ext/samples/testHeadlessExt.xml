@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Simulation id="2" driver="msi.gama.headless.runtime.GamaSimulator" sourcePath="./testHeadless/models/simple_SIR.gaml" finalstep="10" experiment="maths">
+  <Parameters>
+  </Parameters>
+  <Outputs>
+  </Outputs>
+</Simulation>
