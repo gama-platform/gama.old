@@ -1,10 +1,11 @@
 /**
  *  gridloading
- *  Author: arnaudgrignard
+ * 
+ *  Author: Arnaud Grignard
+ * 
  *  Description: This create a DEM representation from an .asc file
  *  Cells are created with the parameter file:grid_file that will initialize the z value of each cell
  *  
- * 
  */
 
 model gridloading
