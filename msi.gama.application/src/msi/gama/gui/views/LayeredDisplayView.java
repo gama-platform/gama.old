@@ -246,7 +246,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 			@Override
 			public void afterComponentCreatedSWTThread() {
 				if ( GamaPreferences.CORE_OVERLAY.getValue() ) {
-					overlay.toggle();
+					overlay.setHidden(false);
 				}
 			}
 
@@ -359,10 +359,6 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 	public IDisplaySurface getDisplaySurface() {
 		return getOutput().getSurface();
-	}
-
-	public void toggleControls() {
-		layersOverlay.toggle();
 	}
 
 	@Override
@@ -771,10 +767,6 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 	public void pauseChanged() {
 		overlay.update();
-	}
-
-	public void toogleOverlay() {
-		overlay.toggle();
 	}
 
 	public double getValueOfOnePixelInModelUnits() {

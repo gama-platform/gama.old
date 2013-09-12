@@ -52,7 +52,7 @@ public class LayersOverlay extends AbstractOverlay {
 				case SWT.MouseUp:
 					// origin = null;
 					// if ( !sizing ) {// FIXME PROBLEM !!
-					toggle();
+					setHidden(true);
 					// }
 					break;
 				case SWT.MouseHover:

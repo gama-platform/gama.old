@@ -135,7 +135,7 @@ public abstract class AbstractOverlay {
 
 		@Override
 		public void mouseUp(final MouseEvent e) {
-			toggle();
+			setHidden(true);
 		}
 
 	};
@@ -215,7 +215,7 @@ public abstract class AbstractOverlay {
 			@Override
 			public void mouseHover(final MouseEvent e) {
 				slidingShell.setVisible(false);
-				toggle();
+				setHidden(false);
 			}
 
 			@Override
@@ -228,9 +228,15 @@ public abstract class AbstractOverlay {
 		slidingShell.addMouseListener(new MouseAdapter() {
 
 			@Override
-			public void mouseDown(final MouseEvent e) {
+			public void mouseUp(final MouseEvent e) {
 				slidingShell.setVisible(false);
-				toggle();
+				setHidden(false);
+			}
+
+			@Override
+			public void mouseDown(final MouseEvent e) {
+				// slidingShell.setVisible(false);
+				// toggle();
 			}
 
 			@Override
@@ -360,7 +366,7 @@ public abstract class AbstractOverlay {
 		setHidden(!isHidden);
 	}
 
-	protected final void setHidden(final boolean hidden) {
+	public final void setHidden(final boolean hidden) {
 		isHidden = hidden;
 		if ( isHidden ) {
 			hide();
