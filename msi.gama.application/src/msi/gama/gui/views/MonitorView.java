@@ -180,7 +180,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> {
 	}
 
 	public static void createNewMonitor() {
-		new MonitorOutput("monitor" + count++, null);
+		new MonitorOutput("monitor" + count++, "");
 	}
 
 	@Override
