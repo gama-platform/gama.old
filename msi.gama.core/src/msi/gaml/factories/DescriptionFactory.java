@@ -195,7 +195,7 @@ public class DescriptionFactory {
 
 	public synchronized static IDescription create(final SymbolFactory factory, final String keyword,
 		final IDescription superDesc, final IChildrenProvider children, final Facets facets) {
-		final IDescription result = factory.create(new SyntacticElement(keyword, facets), superDesc, children);
+		final IDescription result = factory.create(SyntacticFactory.create(keyword, facets), superDesc, children);
 		// factory.validate(result);
 		return result;
 	}

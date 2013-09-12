@@ -4,6 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
+import msi.gama.gui.swt.GamaIcons;
 import msi.gama.gui.views.*;
 import org.eclipse.jface.action.*;
 
@@ -29,19 +30,17 @@ public class ZoomOutItem extends GamaViewItem {
 	 */
 	@Override
 	protected IContributionItem createItem() {
-		IAction action =
-			new GamaAction("Zoom out", "Zoom out", IAction.AS_PUSH_BUTTON,
-				getImageDescriptor("icons/button_zoomout.png")) {
+		IAction action = new GamaAction("Zoom out", "Zoom out", IAction.AS_PUSH_BUTTON, GamaIcons.action_zoomout) {
 
-				@Override
-				public void run() {
+			@Override
+			public void run() {
 
-					IViewWithZoom view = (IViewWithZoom) getView();
-					if ( view == null ) { return; }
-					view.zoomOut();
+				IViewWithZoom view = (IViewWithZoom) getView();
+				if ( view == null ) { return; }
+				view.zoomOut();
 
-				}
-			};
+			}
+		};
 		return new ActionContributionItem(action);
 	}
 }

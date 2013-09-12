@@ -4,7 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.views.GamaViewPart;
 import msi.gama.outputs.IDisplayOutput;
@@ -53,7 +53,7 @@ public class FrequencyItem extends GamaViewItem implements IToolTipProvider,
 	protected IContributionItem createItem() {
 		IContributionItem item =
 			new SpeedContributionItem("Adjust update frequency", getInit(), this, this,
-				SwtGui.thumb_blue, SwtGui.thumb_over_blue, thumbColor);
+				GamaIcons.button_thumb_blue, GamaIcons.button_thumb_blue_over, thumbColor);
 		return item;
 	}
 

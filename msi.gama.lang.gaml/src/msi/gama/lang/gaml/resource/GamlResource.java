@@ -8,7 +8,7 @@ import java.util.*;
 import msi.gama.lang.gaml.parsing.*;
 import msi.gama.lang.gaml.parsing.GamlSyntacticParser.GamlParseResult;
 import msi.gama.lang.gaml.validation.IGamlBuilderListener;
-import msi.gaml.compilation.SyntacticElement;
+import msi.gaml.compilation.ISyntacticElement;
 import msi.gaml.factories.*;
 import msi.gaml.factories.DescriptionFactory.Documentation;
 import org.eclipse.emf.ecore.EObject;
@@ -78,11 +78,11 @@ public class GamlResource extends LazyLinkingResource {
 		super.unload(oldRootObject);
 	}
 
-	public SyntacticElement getSyntacticContents() {
+	public ISyntacticElement getSyntacticContents() {
 		GamlParseResult parseResult = getParseResult();
 		if ( parseResult == null ) { // Should not happen, but in case...
 			Set<org.eclipse.xtext.diagnostics.Diagnostic> errors = new LinkedHashSet();
-			SyntacticElement result = GamlCompatibilityConverter.buildSyntacticContents(getContents().get(0), errors);
+			ISyntacticElement result = GamlCompatibilityConverter.buildSyntacticContents(getContents().get(0), errors);
 			getWarnings().addAll(errors);
 			return result;
 		}

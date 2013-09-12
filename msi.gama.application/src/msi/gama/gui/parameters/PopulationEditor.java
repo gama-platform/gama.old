@@ -20,7 +20,7 @@ package msi.gama.gui.parameters;
 
 import java.util.Collection;
 import msi.gama.common.interfaces.EditorListener;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.GamaIcons;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -79,7 +79,7 @@ public class PopulationEditor extends AbstractEditor {
 				}
 			}
 		});
-		populationInspector.setImage(SwtGui.gridImage);
+		populationInspector.setImage(GamaIcons.action_browse);
 		populationInspector.setText("Browse");
 		return populationDisplayer;
 	}

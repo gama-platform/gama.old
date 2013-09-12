@@ -4,6 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
+import msi.gama.gui.swt.GamaIcons;
 import msi.gama.gui.views.*;
 import org.eclipse.jface.action.*;
 
@@ -30,8 +31,7 @@ public class NewMonitorItem extends GamaViewItem {
 	@Override
 	protected IContributionItem createItem() {
 		IAction action =
-			new GamaAction("Add new monitor", "Add a monitor", IAction.AS_PUSH_BUTTON,
-				getImageDescriptor("icons/menu_add_monitor.png")) {
+			new GamaAction("Add new monitor", "Add a monitor", IAction.AS_PUSH_BUTTON, GamaIcons.menu_add_monitor) {
 
 				@Override
 				public void run() {

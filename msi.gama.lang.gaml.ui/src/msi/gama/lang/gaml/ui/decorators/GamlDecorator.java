@@ -12,7 +12,7 @@ package msi.gama.lang.gaml.ui.decorators;
  * 
  */
 
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.GamaIcons;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.*;
@@ -96,7 +96,7 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 		} else if ( severity == IMarker.SEVERITY_WARNING ) {
 			overlay = getWarningImageDescriptor();
 		} else if ( resource instanceof IProject || resource instanceof IFolder || resource.getName().endsWith("gaml") ) {
-			overlay = SwtGui.overlay_ok_descriptor;
+			overlay = GamaIcons.overlay_ok_desc;
 		}
 
 		decoration.addOverlay(overlay, IDecoration.BOTTOM_LEFT);

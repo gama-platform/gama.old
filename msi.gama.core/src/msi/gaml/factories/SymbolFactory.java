@@ -56,13 +56,13 @@ public class SymbolFactory {
 	 * possibly null -- list of children. In this method, the children of the source element are not
 	 * considered, so if "children" is null or empty, the description is created without children.
 	 */
-	final IDescription create(final SyntacticElement source, final IDescription superDesc, final IChildrenProvider cp) {
+	final IDescription create(final ISyntacticElement source, final IDescription superDesc, final IChildrenProvider cp) {
 		final SymbolProto md = getProto(superDesc, source);
 		if ( md == null ) { return null; }
 		return md.getFactory().createDescriptionInternal(source, superDesc, cp, md);
 	}
 
-	private SymbolProto getProto(final IDescription superDesc, final SyntacticElement source) {
+	private SymbolProto getProto(final IDescription superDesc, final ISyntacticElement source) {
 		final String keyword = source.getKeyword();
 		final SymbolProto sp = DescriptionFactory.getProto(keyword);
 		if ( sp == null ) {
@@ -72,7 +72,7 @@ public class SymbolFactory {
 		return sp;
 	}
 
-	private final IDescription createDescriptionInternal(final SyntacticElement source, final IDescription superDesc,
+	private final IDescription createDescriptionInternal(final ISyntacticElement source, final IDescription superDesc,
 		final IChildrenProvider cp, final SymbolProto md) {
 		Facets facets = source.copyFacets();
 		md.verifyFacets(source, facets, superDesc);
@@ -86,19 +86,19 @@ public class SymbolFactory {
 	 * Creates a semantic tree based on a source element and a super-description. The
 	 * children of the source element are used as a basis for building, recursively, the tree.
 	 */
-	final IDescription create(final SyntacticElement source, final IDescription superDesc) {
+	final IDescription create(final ISyntacticElement source, final IDescription superDesc) {
 		if ( source == null ) { return null; }
 		final SymbolProto md = getProto(superDesc, source);
 		if ( md == null ) { return null; }
 		return md.getFactory().createDescriptionRecursivelyInternal(source, superDesc, md);
 	}
 
-	private final IDescription createDescriptionRecursivelyInternal(final SyntacticElement source,
+	private final IDescription createDescriptionRecursivelyInternal(final ISyntacticElement source,
 		final IDescription superDesc, final SymbolProto md) {
 		final Facets facets = source.copyFacets();
 		md.verifyFacets(source, facets, superDesc);
 		final List<IDescription> children = new ArrayList();
-		for ( final SyntacticElement e : source.getChildren() ) {
+		for ( final ISyntacticElement e : source.getChildren() ) {
 			children.add(create(e, superDesc));
 		}
 		final IDescription desc = buildDescription(source, facets, new ChildrenProvider(children), superDesc, md);
@@ -106,7 +106,7 @@ public class SymbolFactory {
 		return desc;
 	}
 
-	protected IDescription buildDescription(final SyntacticElement source, final Facets facets,
+	protected IDescription buildDescription(final ISyntacticElement source, final Facets facets,
 		final IChildrenProvider cp, final IDescription superDesc, final SymbolProto md) {
 		return new SymbolDescription(source.getKeyword(), superDesc, cp, source.getElement(), facets);
 	}

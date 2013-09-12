@@ -23,11 +23,10 @@ import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.util.prefs.*;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.GamaIcons;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
@@ -46,7 +45,6 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	private static final String keyWorkspaceRootDir = "wsRootDir";
 	private static final String keyRememberWorkspace = "wsRemember";
 	private static final String keyLastUsedWorkspaces = "wsLastUsedWorkspaces";
-	private static final Image image = SwtGui.getImageDescriptor("icons/launcher_icons/icon205.png").createImage();
 
 	/*
 	 * This are our preferences we will be using as the IPreferenceStore is not available yet
@@ -81,8 +79,8 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	 */
 	public PickWorkspaceDialog() {
 		super(Display.getDefault().getActiveShell());
-		if ( image != null ) {
-			setTitleImage(image);
+		if ( GamaIcons.icon_gama != null ) {
+			setTitleImage(GamaIcons.icon_gama);
 		}
 	}
 

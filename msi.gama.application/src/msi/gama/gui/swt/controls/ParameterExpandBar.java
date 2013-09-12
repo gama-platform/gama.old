@@ -19,7 +19,7 @@
 package msi.gama.gui.swt.controls;
 
 import msi.gama.common.interfaces.ItemList;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
@@ -478,7 +478,7 @@ public class ParameterExpandBar extends Composite implements IPopupProvider {
 	void showItem(final ParameterExpandItem item) {
 		Control control = item.control;
 		if ( control != null && !control.isDisposed() ) {
-			item.setImage(item.expanded ? SwtGui.collapse : SwtGui.expand);
+			item.setImage(item.expanded ? GamaIcons.button_collapse : GamaIcons.button_expand);
 			control.setVisible(item.expanded);
 		}
 		item.redraw();

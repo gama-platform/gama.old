@@ -11,7 +11,7 @@ import msi.gama.common.GamaPreferences.Entry;
 import msi.gama.common.interfaces.IParameterEditor;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.controls.*;
 import msi.gama.kernel.experiment.*;
 import msi.gama.runtime.IScope;
@@ -19,7 +19,6 @@ import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
@@ -36,7 +35,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 
 	Map<String, IPreferenceNode> preferencePages = new LinkedHashMap();
 	static Map<String, String> preferenceNames = new LinkedHashMap();
-	static Map<String, Image> tabImages = new LinkedHashMap();
+
 	static GamaPreferencesView instance;
 
 	public static void show() {
@@ -50,12 +49,6 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		preferenceNames.put("msi.gama.lang.gaml.Gaml.coloring", "Code");
 		preferenceNames.put("org.eclipse.ui.preferencePages.GeneralTextEditor", "Editor");
 		preferenceNames.put("org.eclipse.ui.preferencePages.Workspace", "Workspace");
-
-		tabImages.put(GamaPreferences.GENERAL, SwtGui.getImageDescriptor("/icons/prefs.general.png").createImage());
-		tabImages.put(GamaPreferences.DISPLAY, SwtGui.getImageDescriptor("/icons/prefs.display.png").createImage());
-		tabImages.put(GamaPreferences.CODE, SwtGui.getImageDescriptor("/icons/prefs.code.png").createImage());
-		tabImages.put(GamaPreferences.EDITOR, SwtGui.getImageDescriptor("/icons/prefs.editors.png").createImage());
-		tabImages.put(GamaPreferences.WORKSPACE, SwtGui.getImageDescriptor("/icons/prefs.startup.png").createImage());
 
 	}
 
@@ -102,7 +95,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		for ( String tabName : prefs.keySet() ) {
 			CTabItem item = new CTabItem(tabFolder, SWT.None);
 			item.setText(tabName);
-			item.setImage(tabImages.get(tabName));
+			item.setImage(GamaIcons.prefs_images.get(tabName));
 			item.setShowClose(false);
 			buildContentsFor(item, prefs.get(tabName));
 		}
@@ -153,7 +146,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 			buildGroupContents(compo, entries.get(groupName));
 			item.setControl(compo);
 			item.setHeight(compo.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-			item.setImage(SwtGui.action);
+			item.setImage(GamaIcons.menu_action);
 			item.setExpanded(true);
 
 		}

@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -23,7 +23,7 @@ import java.util.List;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.outputs.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -88,7 +88,7 @@ public class DynamicAgentInspectView extends AgentInspectView {
 		layout.verticalSpacing = 5;
 		searchComposite.setLayout(layout);
 		final Label lock = new Label(searchComposite, SWT.NONE);
-		lock.setImage(SwtGui.lock);
+		lock.setImage(GamaIcons.button_small_lock);
 		lock.setToolTipText("Lock the current expression results (the list of agents will not be changed)");
 
 		final ExpressionEditor ed =
@@ -114,7 +114,7 @@ public class DynamicAgentInspectView extends AgentInspectView {
 			@Override
 			public void mouseDown(final MouseEvent e) {
 				locked = !locked;
-				lock.setImage(locked ? SwtGui.unlock : SwtGui.lock);
+				lock.setImage(locked ? GamaIcons.button_small_unlock : GamaIcons.button_small_lock);
 				ed.getEditor().setEnabled(!locked);
 			}
 

@@ -4,15 +4,9 @@
  */
 package msi.gama.gui.views.actions;
 
-import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.views.GamaViewPart;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.CoolBar;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.jface.action.*;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.IViewSite;
 
 /**
@@ -39,10 +33,6 @@ public abstract class GamaViewItem implements IContributionItem {
 
 	GamaViewPart getView() {
 		return view;
-	}
-
-	protected ImageDescriptor getImageDescriptor(final String id) {
-		return SwtGui.getImageDescriptor(id);
 	}
 
 	protected abstract IContributionItem createItem();

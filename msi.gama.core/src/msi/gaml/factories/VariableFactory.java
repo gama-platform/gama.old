@@ -25,7 +25,7 @@ import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
-import msi.gaml.compilation.SyntacticElement;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.*;
@@ -46,7 +46,7 @@ public class VariableFactory extends SymbolFactory {
 	}
 
 	@Override
-	protected IDescription buildDescription(final SyntacticElement source, final Facets facets,
+	protected IDescription buildDescription(final ISyntacticElement source, final Facets facets,
 		final IChildrenProvider cp, final IDescription superDesc, final SymbolProto md) {
 		final String keyword = source.getKeyword();
 		if ( keyword.equals(SIGNAL) ) {
@@ -71,7 +71,7 @@ public class VariableFactory extends SymbolFactory {
 		return new VariableDescription(keyword, superDesc, cp, source.getElement(), facets);
 	}
 
-	private void buildSignalDescription(final SyntacticElement source, final Facets facets, final String keyword,
+	private void buildSignalDescription(final ISyntacticElement source, final Facets facets, final String keyword,
 		final IDescription superDesc) {
 		final String name = facets.getLabel(NAME);
 		final String env = facets.getLabel(ENVIRONMENT);
@@ -85,7 +85,7 @@ public class VariableFactory extends SymbolFactory {
 		}
 		final String value = name + " < 0.1 ? 0.0 :" + name + " * ( 1 - " + decay + ")";
 		final VariableDescription vd =
-			(VariableDescription) create(new SyntacticElement(IKeyword.FLOAT, new Facets(NAME, name, TYPE,
+			(VariableDescription) create(SyntacticFactory.create(IKeyword.FLOAT, new Facets(NAME, name, TYPE,
 				IKeyword.FLOAT, UPDATE, value, MIN, "0.0")), superDesc, null);
 		final SpeciesDescription environment = superDesc.getSpeciesDescription(env);
 		if ( environment == null || !environment.isGrid() ) {

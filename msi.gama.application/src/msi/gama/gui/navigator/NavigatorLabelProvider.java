@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -19,8 +19,7 @@
 package msi.gama.gui.navigator;
 
 import java.util.Hashtable;
-import msi.gama.gui.swt.SwtGui;
-import org.eclipse.jface.resource.ImageDescriptor;
+import msi.gama.gui.swt.GamaIcons;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.program.Program;
@@ -35,12 +34,12 @@ public class NavigatorLabelProvider extends LabelProvider implements IDescriptio
 
 	@Override
 	public String getText(final Object element) {
-		if ( element instanceof UserProjectsFolder ) { return ((UserProjectsFolder) element)
-			.getName() + " ( " + ((UserProjectsFolder) element).getChildren().length + " )"; }
-		if ( element instanceof ModelsLibraryFolder ) { return ((ModelsLibraryFolder) element)
-			.getName() + " ( " + ((ModelsLibraryFolder) element).getChildren().length + " )"; }
-		if ( element instanceof VirtualSharedModelsFolder ) { return ((VirtualSharedModelsFolder) element)
-			.getName() + " ( " + ((VirtualSharedModelsFolder) element).getChildren().length + " )"; }
+		if ( element instanceof UserProjectsFolder ) { return ((UserProjectsFolder) element).getName() + " ( " +
+			((UserProjectsFolder) element).getChildren().length + " )"; }
+		if ( element instanceof ModelsLibraryFolder ) { return ((ModelsLibraryFolder) element).getName() + " ( " +
+			((ModelsLibraryFolder) element).getChildren().length + " )"; }
+		if ( element instanceof VirtualSharedModelsFolder ) { return ((VirtualSharedModelsFolder) element).getName() +
+			" ( " + ((VirtualSharedModelsFolder) element).getChildren().length + " )"; }
 		if ( element instanceof FileBean ) {
 			String name = ((FileBean) element).toString();
 			return name.substring(0, name.lastIndexOf("."));
@@ -57,19 +56,14 @@ public class NavigatorLabelProvider extends LabelProvider implements IDescriptio
 		Image image = null;
 
 		if ( element instanceof VirtualSharedModelsFolder ) {
-			ImageDescriptor desc = SwtGui.getImageDescriptor("/icons/folder_library.png");
-			image = desc.createImage();
+			image = GamaIcons.icon_virtual_folder;
 		} else if ( element instanceof UserProjectsFolder ) {
-			ImageDescriptor desc = SwtGui.getImageDescriptor("/icons/folder_workspace.png");
-			image = desc.createImage();
+			image = GamaIcons.icon_user_folder;
 		} else if ( element instanceof ModelsLibraryFolder ) {
-			ImageDescriptor desc = SwtGui.getImageDescriptor("/icons/folder_samples.png");
-			image = desc.createImage();
+			image = GamaIcons.icon_builtin_folder;
 		} else if ( element instanceof FileBean ) {
 			if ( ((FileBean) element).hasChildren() ) {
-				image =
-					PlatformUI.getWorkbench().getSharedImages()
-						.getImage(ISharedImages.IMG_OBJ_FOLDER);
+				image = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 			} else {
 				FileBean file = (FileBean) element;
 				String nameString = file.toString();
@@ -86,9 +80,7 @@ public class NavigatorLabelProvider extends LabelProvider implements IDescriptio
 					}
 				}
 				if ( image == null ) {
-					image =
-						PlatformUI.getWorkbench().getSharedImages()
-							.getImage(ISharedImages.IMG_OBJ_FILE);
+					image = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
 				}
 			}
 		} else {

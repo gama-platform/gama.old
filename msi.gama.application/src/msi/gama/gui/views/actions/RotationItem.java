@@ -4,6 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
+import msi.gama.gui.swt.GamaIcons;
 import msi.gama.gui.views.*;
 import org.eclipse.jface.action.*;
 
@@ -30,8 +31,7 @@ public class RotationItem extends GamaViewItem {
 	@Override
 	protected IContributionItem createItem() {
 		IAction action =
-			new GamaAction("Apply rotation", "Rotation view ", IAction.AS_PUSH_BUTTON,
-				getImageDescriptor("icons/button_rotation.png")) {
+			new GamaAction("Apply rotation", "Rotation view ", IAction.AS_PUSH_BUTTON, GamaIcons.action_rotation) {
 
 				@Override
 				public void run() {

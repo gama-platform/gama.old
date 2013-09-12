@@ -4,7 +4,7 @@
  */
 package msi.gama.gui.swt.controls;
 
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.*;
 import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Maths;
 
@@ -35,7 +35,7 @@ public class SimulationSpeedContributionItem extends SpeedContributionItem {
 				return "Minimum duration of a cycle " + Maths.opTruncate((1000 - 1000 * value) / 1000, 3) + " s";
 			}
 
-		}, SwtGui.thumb, SwtGui.thumb_over, SwtGui.COLOR_OK);
+		}, GamaIcons.button_thumb_green, GamaIcons.button_thumb_green_over, SwtGui.COLOR_OK);
 	}
 
 	/**

@@ -4,6 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
+import msi.gama.gui.swt.GamaIcons;
 import msi.gama.gui.views.*;
 import org.eclipse.jface.action.*;
 
@@ -31,7 +32,7 @@ public class ArcBallItem extends GamaViewItem {
 	protected IContributionItem createItem() {
 		IAction action =
 			new GamaAction("Switch to ArcBall view", "Arcball view: Drag to orbit. Shift = Pan ",
-				IAction.AS_PUSH_BUTTON, getImageDescriptor("icons/drag_arcball.png")) {
+				IAction.AS_PUSH_BUTTON, GamaIcons.action_drag) {
 
 				@Override
 				public void run() {

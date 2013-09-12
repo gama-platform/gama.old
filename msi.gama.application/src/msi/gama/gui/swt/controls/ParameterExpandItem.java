@@ -19,7 +19,7 @@
 package msi.gama.gui.swt.controls;
 
 import msi.gama.common.interfaces.ItemList;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
@@ -159,10 +159,10 @@ public class ParameterExpandItem extends Item {
 		int endX = x + width;
 		if ( parent.isClosable ) {
 			endX -= ParameterExpandItem.TEXT_INSET + imageWidth;
-			gc.drawImage(SwtGui.close, endX, imageY + 2);
+			gc.drawImage(GamaIcons.button_small_close, endX, imageY + 2);
 		}
 		if ( parent.isPausable ) {
-			Image image = isPaused ? SwtGui.play : SwtGui.pause;
+			Image image = isPaused ? GamaIcons.button_small_play : GamaIcons.button_small_pause;
 			endX -= ParameterExpandItem.SEPARATION + imageWidth;
 			gc.drawImage(image, endX, imageY + 2);
 		}

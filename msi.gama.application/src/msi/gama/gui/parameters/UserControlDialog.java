@@ -7,7 +7,7 @@ package msi.gama.gui.parameters;
 import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.dialogs.AbstractDetailsDialog;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
@@ -102,7 +102,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 		detailsButton =
 			createButton(parent, IDialogConstants.DETAILS_ID, "Inspect " + scope.getAgentScope().getName() + "...",
 				false);
-		detailsButton.setImage(SwtGui.agentImage);
+		detailsButton.setImage(GamaIcons.menu_agent);
 
 	}
 

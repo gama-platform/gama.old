@@ -4,6 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
+import msi.gama.gui.swt.GamaIcons;
 import msi.gama.gui.views.*;
 import org.eclipse.jface.action.*;
 
@@ -37,7 +38,7 @@ public class SnapshotItem extends GamaViewItem {
 				((IViewWithZoom) getView()).snapshot();
 			}
 		};
-		action.setImageDescriptor(getImageDescriptor("icons/button_save.png"));
+		action.setImageDescriptor(GamaIcons.action_snapshot);
 		return new ActionContributionItem(action);
 	}
 }

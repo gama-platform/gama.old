@@ -20,7 +20,7 @@ package msi.gama.gui.parameters;
 
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
@@ -85,13 +85,13 @@ public class AgentEditor extends AbstractEditor {
 				}
 			}
 		});
-		agentInspector.setImage(SwtGui.magnifier);
+		agentInspector.setImage(GamaIcons.action_inspect);
 		agentInspector.setText("Inspect");
 
 		agentChooser = new Button(comp, SWT.FLAT | SWT.PUSH);
 		agentChooser.setAlignment(SWT.CENTER);
 		agentChooser.addSelectionListener(this);
-		agentChooser.setImage(SwtGui.editImage);
+		agentChooser.setImage(GamaIcons.button_edit);
 		agentChooser.setText("Change...");
 
 		GridData d = new GridData(SWT.LEFT, SWT.CENTER, false, false);

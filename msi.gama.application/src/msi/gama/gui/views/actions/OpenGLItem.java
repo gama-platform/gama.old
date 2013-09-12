@@ -4,6 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
+import msi.gama.gui.swt.GamaIcons;
 import msi.gama.gui.views.GamaViewPart;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
@@ -22,7 +23,7 @@ public class OpenGLItem extends GamaViewItem implements IMenuCreator {
 	private Menu menu;
 	boolean arcBall = true;
 	boolean rotated, splitted, triangulated, dragable, inertiable;
-	GamaViewItem camera, split, rotation, triangle,drag,inertia;
+	GamaViewItem camera, split, rotation, triangle, drag, inertia;
 
 	OpenGLItem(final GamaViewPart view) {
 		super(view);
@@ -40,8 +41,7 @@ public class OpenGLItem extends GamaViewItem implements IMenuCreator {
 	@Override
 	protected IContributionItem createItem() {
 		final IAction action =
-			new GamaAction("3D options", "3D options", IAction.AS_DROP_DOWN_MENU,
-				getImageDescriptor("icons/button_arcball.png")) {
+			new GamaAction("3D options", "3D options", IAction.AS_DROP_DOWN_MENU, GamaIcons.menu_open_gl) {
 
 				@Override
 				public void run() {}
@@ -88,9 +88,8 @@ public class OpenGLItem extends GamaViewItem implements IMenuCreator {
 		rotation.fill(menu, 2);
 		split.fill(menu, 3);
 		triangle.fill(menu, 4);
-		drag.fill(menu,5);
-		inertia.fill(menu,6);
-		
+		drag.fill(menu, 5);
+		inertia.fill(menu, 6);
 
 		MenuItem camera = menu.getItem(0);
 		if ( arcBall ) {
@@ -151,17 +150,16 @@ public class OpenGLItem extends GamaViewItem implements IMenuCreator {
 		MenuItem drag = menu.getItem(5);
 		if ( dragable ) {
 			drag.setText("Desactivate Arcball drag");
-			
+
 		} else {
 			drag.setText("Arcball drag");
 		}
-		if(arcBall){
+		if ( arcBall ) {
 			drag.setEnabled(true);
-		}
-		else{
+		} else {
 			drag.setEnabled(false);
 		}
-		
+
 		drag.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -170,21 +168,20 @@ public class OpenGLItem extends GamaViewItem implements IMenuCreator {
 			}
 
 		});
-		
+
 		MenuItem inertia = menu.getItem(6);
 		if ( inertiable ) {
 			inertia.setText("Desactivate Inertia mode");
-			
+
 		} else {
 			inertia.setText("Inertia mode");
 		}
-		if(arcBall){
+		if ( arcBall ) {
 			inertia.setEnabled(true);
-		}
-		else{
+		} else {
 			inertia.setEnabled(false);
 		}
-		
+
 		inertia.addSelectionListener(new SelectionAdapter() {
 
 			@Override

@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -20,7 +20,7 @@ package msi.gama.gui.parameters;
 
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.common.util.StringUtils;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.GamaIcons;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.GamaList;
@@ -70,7 +70,7 @@ public class ListEditor extends AbstractEditor {
 		listAdd = new Button(comp, SWT.FLAT);
 		listAdd.setAlignment(SWT.CENTER);
 		listAdd.addSelectionListener(this);
-		listAdd.setImage(SwtGui.editImage);
+		listAdd.setImage(GamaIcons.button_edit);
 		listAdd.setText("Edit");
 
 		GridData d = new GridData(SWT.LEFT, SWT.CENTER, false, false);

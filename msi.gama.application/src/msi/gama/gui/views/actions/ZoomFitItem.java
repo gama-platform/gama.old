@@ -4,6 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
+import msi.gama.gui.swt.GamaIcons;
 import msi.gama.gui.views.*;
 import org.eclipse.jface.action.*;
 
@@ -30,8 +31,7 @@ public class ZoomFitItem extends GamaViewItem {
 	@Override
 	protected IContributionItem createItem() {
 		IAction action =
-			new GamaAction("Zoom fit", "Zoom to fit view", IAction.AS_PUSH_BUTTON,
-				getImageDescriptor("icons/button_zoomfit.png")) {
+			new GamaAction("Zoom fit", "Zoom to fit view", IAction.AS_PUSH_BUTTON, GamaIcons.action_zoomfit) {
 
 				@Override
 				public void run() {

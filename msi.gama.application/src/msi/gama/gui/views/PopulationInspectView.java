@@ -24,7 +24,7 @@ import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.*;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
@@ -192,7 +192,7 @@ public class PopulationInspectView extends GamaViewPart {
 		layout.verticalSpacing = 5;
 		expressionComposite.setLayout(layout);
 		final Label lock = new Label(expressionComposite, SWT.NONE);
-		lock.setImage(SwtGui.lock);
+		lock.setImage(GamaIcons.button_small_lock);
 		lock.setToolTipText("Lock the current expression results (the list of agents will not be changed)");
 
 		customEditor =
@@ -222,7 +222,7 @@ public class PopulationInspectView extends GamaViewPart {
 			@Override
 			public void mouseDown(final MouseEvent e) {
 				locked = !locked;
-				lock.setImage(locked ? SwtGui.unlock : SwtGui.lock);
+				lock.setImage(locked ? GamaIcons.button_small_unlock : GamaIcons.button_small_lock);
 				customEditor.getEditor().setEnabled(!locked);
 			}
 
@@ -280,7 +280,7 @@ public class PopulationInspectView extends GamaViewPart {
 	private void createTab(final String s) {
 		final CTabItem item = new CTabItem(tabFolder, SWT.CLOSE);
 		item.setText(s);
-		item.setImage(SwtGui.speciesImage);
+		item.setImage(GamaIcons.menu_population);
 		item.setShowClose(true);
 	}
 

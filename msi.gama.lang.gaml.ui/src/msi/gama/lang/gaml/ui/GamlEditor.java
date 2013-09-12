@@ -8,13 +8,13 @@ import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.*;
 import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.validation.*;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.compilation.SyntacticElement;
+import msi.gaml.compilation.ISyntacticElement;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.Path;
@@ -239,7 +239,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 			MenuItem modelItem = new MenuItem(parent, SWT.CASCADE);
 
 			modelItem.setText("Model " + URI.decode(uri.lastSegment()));
-			modelItem.setImage(SwtGui.getEclipseIcon(ISharedImages.IMG_OBJ_FILE));
+			modelItem.setImage(GamaIcons.getEclipseIcon(ISharedImages.IMG_OBJ_FILE));
 			Menu expMenu = new Menu(modelItem);
 			modelItem.setMenu(expMenu);
 			List<String> expNames = map.get(uri);
@@ -248,7 +248,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 				expItem.setText(name);
 				expItem.setData("uri", uri);
 				expItem.setData("exp", name);
-				expItem.setImage(SwtGui.panel_continue);
+				expItem.setImage(GamaIcons.panel_continue);
 				expItem.addSelectionListener(adapter);
 			}
 		}
@@ -274,8 +274,8 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 					// GuiUtils.debug("GamlEditor.fillCombo().new Void() {...}.process : " + uri);
 					GamlResource xr = (GamlResource) rs.getResource(uri, true);
 					if ( xr.getErrors().isEmpty() ) {
-						SyntacticElement el = xr.getSyntacticContents();
-						for ( SyntacticElement ch : el.getChildren() ) {
+						ISyntacticElement el = xr.getSyntacticContents();
+						for ( ISyntacticElement ch : el.getChildren() ) {
 							if ( ch.isExperiment() ) {
 								if ( !map.containsKey(uri) ) {
 									map.put(uri, new ArrayList());

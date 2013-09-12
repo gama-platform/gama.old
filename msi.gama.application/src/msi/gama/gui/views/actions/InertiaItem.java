@@ -4,6 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
+import msi.gama.gui.swt.GamaIcons;
 import msi.gama.gui.views.*;
 import org.eclipse.jface.action.*;
 
@@ -29,16 +30,15 @@ public class InertiaItem extends GamaViewItem {
 	 */
 	@Override
 	protected IContributionItem createItem() {
-		IAction action =
-			new GamaAction("Activate inertia mode", "", IAction.AS_PUSH_BUTTON, getImageDescriptor("icons/inertia.png")) {
+		IAction action = new GamaAction("Activate inertia mode", "", IAction.AS_PUSH_BUTTON, GamaIcons.action_inertia) {
 
-				@Override
-				public void run() {
-					IViewWithZoom view = (IViewWithZoom) getView();
-					if ( view == null ) { return; }
-					view.toggleInertia();
-				}
-			};
+			@Override
+			public void run() {
+				IViewWithZoom view = (IViewWithZoom) getView();
+				if ( view == null ) { return; }
+				view.toggleInertia();
+			}
+		};
 		return new ActionContributionItem(action);
 	}
 }

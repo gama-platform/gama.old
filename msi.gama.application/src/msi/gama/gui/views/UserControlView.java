@@ -4,7 +4,7 @@ import java.util.List;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.*;
 import msi.gama.outputs.IDisplayOutput;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -83,7 +83,7 @@ public class UserControlView extends GamaViewPart {
 		title.setFont(SwtGui.getBigfont());
 		Button inspect = new Button(buttons, SWT.PUSH);
 		inspect.setText("Inspect");
-		inspect.setImage(SwtGui.panel_inspect);
+		inspect.setImage(GamaIcons.panel_inspect);
 		inspect.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -94,7 +94,7 @@ public class UserControlView extends GamaViewPart {
 		});
 		Button cont = new Button(buttons, SWT.PUSH);
 		cont.setText("Continue");
-		cont.setImage(SwtGui.panel_continue);
+		cont.setImage(GamaIcons.panel_continue);
 		cont.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -131,7 +131,7 @@ public class UserControlView extends GamaViewPart {
 				int nbCol = inputs.size() > 0 ? 1 : 3;
 				Button b = new Button(commandComposite, SWT.PUSH);
 				b.setText(c.getName());
-				b.setImage(SwtGui.panel_action);
+				b.setImage(GamaIcons.panel_action);
 				b.setEnabled(((UserCommandStatement) c).isEnabled(scope));
 				GridData gd = new GridData(SWT.LEFT, SWT.TOP, true, true, nbCol, nbLines);
 				b.setLayoutData(gd);

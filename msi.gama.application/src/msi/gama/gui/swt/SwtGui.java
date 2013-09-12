@@ -41,14 +41,12 @@ import org.apache.log4j.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Written by drogoul Modified on 6 mai 2011
@@ -57,16 +55,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * 
  */
 public class SwtGui implements IGui {
-
-	/**
-	 * Returns an image descriptor for the image file in the global plug-in
-	 * 
-	 * @param path the path
-	 * @return the image descriptor
-	 */
-	public static ImageDescriptor getImageDescriptor(final String path) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID, path);
-	}
 
 	private IAgent highlightedAgent;
 
@@ -102,44 +90,6 @@ public class SwtGui implements IGui {
 	private static ConsoleView console = null;
 	private static final StringBuilder consoleBuffer = new StringBuilder(2000);
 	private static int dialogReturnCode;
-	public static Image followImage = getImageDescriptor("/icons/layer-shape-curve.png").createImage();
-	public static Image focusImage = getImageDescriptor("/icons/arrow-in.png").createImage();
-	public static Image speciesImage = getImageDescriptor("/icons/display_species.png").createImage();
-	public static Image agentImage = getImageDescriptor("/icons/display_agents.png").createImage();
-	public static Image gridImage = getImageDescriptor("/icons/display_grid.png").createImage();
-	public static Image tableImage = getImageDescriptor("/icons/table.png").createImage();
-	public static Image editImage = getImageDescriptor("/icons/button_edit.png").createImage();
-	public static Image experimentMenuImage = AbstractUIPlugin.imageDescriptorFromPlugin(PLUGIN_ID,
-		"/icons/menu_run.png").createImage();
-	public static Image noExperimentImage = getImageDescriptor("/icons/menu_experiment_error.png").createImage();
-	public static Image plus = getImageDescriptor("/icons/small_button_plus.png").createImage();
-	public static Image minus = getImageDescriptor("/icons/small_button_minus.png").createImage();
-	// public static Image expand = getImageDescriptor("/icons/control.png").createImage();
-	// public static Image collapse = getImageDescriptor("/icons/control-270.png").createImage();
-	public static Image expand = getImageDescriptor("/icons/bullet_toggle_plus.png").createImage();
-	public static Image collapse = getImageDescriptor("/icons/bullet_toggle_minus.png").createImage();
-	public static Image thumb = getImageDescriptor("/icons/knobNormal.png").createImage();
-	public static Image thumb_over = getImageDescriptor("/icons/knobHover.png").createImage();
-	public static Image thumb_blue = getImageDescriptor("/icons/knobNormal_blue.png").createImage();
-	public static Image thumb_over_blue = getImageDescriptor("/icons/knobHover_blue.png").createImage();
-	public static Image line = getImageDescriptor("/icons/trackFill.png").createImage();
-	public static Image line_left = getImageDescriptor("/icons/trackCapLeft.png").createImage();
-	public static Image line_right = getImageDescriptor("/icons/trackCapRight.png").createImage();
-	public static Image close = getImageDescriptor("/icons/small_button_close.png").createImage();
-	public static Image pause = getImageDescriptor("/icons/small_button_pause.png").createImage();
-	public static Image play = getImageDescriptor("/icons/small_button_play.png").createImage();
-	public static Image lock = getImageDescriptor("/icons/small_button_lock.png").createImage();
-	public static Image unlock = getImageDescriptor("/icons/small_button_unlock.png").createImage();
-	public static Image panel_action = getImageDescriptor("/icons/panel_action.png").createImage();
-	public static Image panel_locate = getImageDescriptor("/icons/panel_locate.png").createImage();
-	public static Image panel_continue = getImageDescriptor("/icons/panel_continue.png").createImage();
-	public static Image panel_goto = getImageDescriptor("/icons/panel_goto.png").createImage();
-	public static Image panel_inspect = getImageDescriptor("/icons/display_agents.png").createImage();
-	public static Image magnifier = getImageDescriptor("/icons/button_focus.png").createImage();
-	public static Image highlight = getImageDescriptor("/icons/selection-blue.png").createImage();
-	public static Image action = getImageDescriptor("/icons/action_run.png").createImage();
-	public static ImageDescriptor overlay_ok_descriptor = getImageDescriptor("icons/bullet_tick.png");
-	public static Image overlay_ok = overlay_ok_descriptor.createImage();
 
 	public static Label createLeftLabel(final Composite parent, final String title) {
 		final Label label = new Label(parent, SWT.NONE);
@@ -147,14 +97,6 @@ public class SwtGui implements IGui {
 		label.setFont(getLabelfont());
 		label.setText(title);
 		return label;
-	}
-
-	/*
-	 * Use "ISharedImages.field"
-	 */
-	public static Image getEclipseIcon(final String icon) {
-
-		return PlatformUI.getWorkbench().getSharedImages().getImage(icon);
 	}
 
 	private class Views {

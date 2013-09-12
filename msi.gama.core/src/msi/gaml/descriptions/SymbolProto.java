@@ -151,7 +151,7 @@ public class SymbolProto {
 		return mandatoryFacets;
 	}
 
-	public void verifyMandatoryFacets(final SyntacticElement e, final Facets facets, final IDescription context) {
+	public void verifyMandatoryFacets(final ISyntacticElement e, final Facets facets, final IDescription context) {
 		for ( String s : mandatoryFacets ) {
 			if ( !facets.containsKey(s) ) {
 				context.error("Missing facet " + s, IGamlIssue.MISSING_FACET, e.getElement(), s);
@@ -159,7 +159,7 @@ public class SymbolProto {
 		}
 	}
 
-	public void verifyFacetsValidity(final SyntacticElement e, final Facets facets, final IDescription context) {
+	public void verifyFacetsValidity(final ISyntacticElement e, final Facets facets, final IDescription context) {
 		if ( context == null ) { return; }
 		// Special case for "do", which can accept (at parsing time) any facet
 		if ( e.getKeyword().equals(DO) ) { return; }
@@ -175,7 +175,7 @@ public class SymbolProto {
 		return bestSuitable;
 	}
 
-	public void verifyFacetsCombinations(final SyntacticElement e, final Facets facets, final IDescription context) {
+	public void verifyFacetsCombinations(final ISyntacticElement e, final Facets facets, final IDescription context) {
 		if ( getPossibleCombinations().length > 0 ) {
 			// System.out.println("before\n");
 			// String needFacets="";
@@ -219,7 +219,7 @@ public class SymbolProto {
 		return contextKinds[upper.getKind()] || contextKeywords.contains(upper.getKeyword());
 	}
 
-	public void verifyFacetsIds(final SyntacticElement e, final Facets facets, final IDescription context) {
+	public void verifyFacetsIds(final ISyntacticElement e, final Facets facets, final IDescription context) {
 		for ( Facet facet : facets.entrySet() ) {
 			if ( facet == null ) {
 				continue;
@@ -260,7 +260,7 @@ public class SymbolProto {
 		}
 	}
 
-	public void verifyFacets(final SyntacticElement e, final Facets facets, final IDescription context) {
+	public void verifyFacets(final ISyntacticElement e, final Facets facets, final IDescription context) {
 		verifyMandatoryFacets(e, facets, context);
 		verifyFacetsValidity(e, facets, context);
 		verifyFacetsCombinations(e, facets, context);

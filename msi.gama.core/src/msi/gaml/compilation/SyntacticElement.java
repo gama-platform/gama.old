@@ -19,44 +19,42 @@ import org.eclipse.emf.ecore.EObject;
  * @since 5 f�vr. 2012
  * 
  */
-public class SyntacticElement {
-
-	public static final int IS_GLOBAL = 0;
-	public static final int IS_SPECIES = 1;
-	public static final int IS_EXPERIMENT = 2;
+public class SyntacticElement implements ISyntacticElement {
 
 	private final Map<String, IExpressionDescription> facets = new HashMap();
-	List<SyntacticElement> children;
+	private String name;
+	List<ISyntacticElement> children;
 	final EObject element;
 	int category = -1;
 
-	public SyntacticElement(final String keyword, final Facets facets) {
-		this(keyword, facets, null);
-	}
-
-	public SyntacticElement(final String keyword, final EObject statement) {
-		this(keyword, new Facets(), statement);
-	}
-
-	private SyntacticElement(final String keyword, final Facets facets, final EObject statement) {
-		for ( Facet f : facets.entrySet() ) {
-			if ( f != null ) {
-				this.facets.put(f.getKey(), f.getValue()/* .cleanCopy() */);
+	SyntacticElement(final String keyword, final Facets facets, final EObject statement) {
+		if ( facets != null ) {
+			for ( Facet f : facets.entrySet() ) {
+				if ( f != null ) {
+					this.facets.put(f.getKey(), f.getValue()/* .cleanCopy() */);
+				}
 			}
 		}
-		// this.facets = facets;
+		// setName(getName());
 		setKeyword(keyword);
 		this.element = statement;
 	}
 
+	private void setName(final String name) {
+		this.name = name;
+	}
+
+	@Override
 	public void setCategory(final int cat) {
 		category = cat;
 	}
 
+	@Override
 	public void setKeyword(final String name) {
 		facets.put(IKeyword.KEYWORD, LabelExpressionDescription.create(name));
 	}
 
+	@Override
 	public void dump() {
 		StringBuilder sb = new StringBuilder(256);
 		dump(sb);
@@ -80,18 +78,22 @@ public class SyntacticElement {
 		}
 	}
 
+	@Override
 	public String getKeyword() {
 		return StringUtils.toJavaString(facets.get(IKeyword.KEYWORD).toString());
 	}
 
+	@Override
 	public boolean hasFacet(final String name) {
 		return facets.containsKey(name);
 	}
 
+	@Override
 	public IExpressionDescription getFacet(final String name) {
 		return facets.get(name);
 	}
 
+	@Override
 	public Facets copyFacets() {
 		Facets ff = new Facets();
 		for ( Map.Entry<String, IExpressionDescription> f : facets.entrySet() ) {
@@ -103,14 +105,17 @@ public class SyntacticElement {
 		return ff;
 	}
 
+	@Override
 	public void setFacet(final String string, final IExpressionDescription expr) {
 		facets.put(string, expr);
 	}
 
+	@Override
 	public List<SyntacticElement> getChildren() {
 		return children == null ? Collections.EMPTY_LIST : children;
 	}
 
+	@Override
 	public List<SyntacticElement> getSpeciesChildren() {
 		if ( !isSpecies() && !isGlobal() || children == null ) { return Collections.EMPTY_LIST; }
 		List<SyntacticElement> result = new ArrayList();
@@ -122,15 +127,19 @@ public class SyntacticElement {
 		return result;
 	}
 
+	@Override
 	public String getName() {
+		// return name;//
 		return getLabel(IKeyword.NAME);
 	}
 
+	@Override
 	public EObject getElement() {
 		return element;
 	}
 
-	public void addChild(final SyntacticElement e) {
+	@Override
+	public void addChild(final ISyntacticElement e) {
 		if ( e == null ) { return; }
 		if ( children == null ) {
 			children = new ArrayList();
@@ -138,26 +147,44 @@ public class SyntacticElement {
 		children.add(e);
 	}
 
+	@Override
 	public String getLabel(final String name) {
 		IExpressionDescription s = facets.get(name);
 		if ( s == null ) { return null; }
 		return s.toString();
 	}
 
+	@Override
 	public boolean isSynthetic() {
 		return element == null;
 	}
 
+	@Override
 	public boolean isSpecies() {
 		return category == IS_SPECIES;
 	}
 
+	@Override
 	public boolean isGlobal() {
 		return category == IS_GLOBAL;
 	}
 
+	@Override
 	public boolean isExperiment() {
 		return category == IS_EXPERIMENT;
+	}
+
+	/**
+	 * A method to know wheter an EObject is "contained" in this element or not. It is contained if:
+	 * 
+	 * 1) The EObject of this element is equal to the parameter, or
+	 * 2) One of its facets IExpressionDescription EObject is equal to or is a container of the parameter, or
+	 * 3)
+	 * @param object
+	 * @return
+	 */
+	public boolean contains(final EObject object) {
+		return false;
 	}
 
 }

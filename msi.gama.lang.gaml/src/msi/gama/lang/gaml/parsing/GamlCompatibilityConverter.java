@@ -5,7 +5,7 @@ import java.util.*;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.utils.*;
 import msi.gama.precompiler.ISymbolKind;
-import msi.gaml.compilation.SyntacticElement;
+import msi.gaml.compilation.*;
 import msi.gaml.descriptions.*;
 import msi.gaml.factories.DescriptionFactory;
 import org.eclipse.emf.common.util.TreeIterator;
@@ -27,11 +27,11 @@ public class GamlCompatibilityConverter {
 	static final List<Integer> STATEMENTS_WITH_ATTRIBUTES = Arrays.asList(ISymbolKind.SPECIES, ISymbolKind.EXPERIMENT,
 		ISymbolKind.OUTPUT, ISymbolKind.MODEL);
 
-	public static SyntacticElement buildSyntacticContents(final EObject root, final Set<Diagnostic> errors) {
+	public static ISyntacticElement buildSyntacticContents(final EObject root, final Set<Diagnostic> errors) {
 		Model m = (Model) root;
 		if ( m == null ) { throw new NullPointerException("The model of " + root.eResource() +
 			" appears to be null. Please debug to understand the cause."); }
-		SyntacticElement syntacticContents = new SyntacticElement(MODEL, m);
+		ISyntacticElement syntacticContents = SyntacticFactory.create(MODEL, m);
 		syntacticContents.setFacet(NAME, convertToConstantString(null, m.getName()));
 		convStatements(syntacticContents, EGaml.getStatementsOf(m), errors);
 		return syntacticContents;
@@ -49,7 +49,7 @@ public class GamlCompatibilityConverter {
 		errors.add(d);
 	}
 
-	private static final SyntacticElement convStatement(final SyntacticElement upper, final Statement stm,
+	private static final ISyntacticElement convStatement(final ISyntacticElement upper, final Statement stm,
 		final Set<Diagnostic> errors) {
 		// We catch its keyword
 		String keyword = EGaml.getKey.caseStatement(stm);
@@ -62,18 +62,20 @@ public class GamlCompatibilityConverter {
 		} else {
 			keyword = convertKeyword(keyword, upper.getKeyword());
 		}
-		final SyntacticElement elt = new SyntacticElement(keyword, stm);
+		final ISyntacticElement elt = SyntacticFactory.create(keyword, stm);
 		/**
 		 * Some syntactic rewritings to remove ambiguities inherent to the grammar of GAML and
 		 * translate the new compact syntax into the legacy facet-based one
+		 * 
+		 * if ( stm instanceof S_Species ) {
+		 * elt.setCategory(ISyntacticElement.IS_SPECIES);
+		 * } else if ( keyword.equals(GLOBAL) ) {
+		 * elt.setCategory(ISyntacticElement.IS_GLOBAL);
+		 * } else if ( stm instanceof S_Experiment ) {
+		 * elt.setCategory(ISyntacticElement.IS_EXPERIMENT);
+		 * } else
 		 */
-		if ( stm instanceof S_Species ) {
-			elt.setCategory(SyntacticElement.IS_SPECIES);
-		} else if ( keyword.equals(GLOBAL) ) {
-			elt.setCategory(SyntacticElement.IS_GLOBAL);
-		} else if ( stm instanceof S_Experiment ) {
-			elt.setCategory(SyntacticElement.IS_EXPERIMENT);
-		} else if ( keyword.equals(ENVIRONMENT) ) {
+		if ( keyword.equals(ENVIRONMENT) ) {
 			convertBlock(stm, upper, errors);
 		} else if ( stm instanceof S_Assignment ) {
 			keyword = convertAssignment((S_Assignment) stm, keyword, elt, stm.getExpr(), errors);
@@ -187,7 +189,7 @@ public class GamlCompatibilityConverter {
 		return elt;
 	}
 
-	private static void convertType(final SyntacticElement elt, final TypeRef t, final Set<Diagnostic> errors) {
+	private static void convertType(final ISyntacticElement elt, final TypeRef t, final Set<Diagnostic> errors) {
 		if ( t != null ) {
 			TypeRef first = (TypeRef) t.getFirst();
 			if ( first == null ) { return; }
@@ -212,7 +214,7 @@ public class GamlCompatibilityConverter {
 		}
 	}
 
-	private static void convertBlock(final Statement stm, final SyntacticElement elt, final Set<Diagnostic> errors) {
+	private static void convertBlock(final Statement stm, final ISyntacticElement elt, final Set<Diagnostic> errors) {
 		Block block = stm.getBlock();
 		if ( block != null ) {
 			Expression function = block.getFunction();
@@ -225,7 +227,7 @@ public class GamlCompatibilityConverter {
 		}
 	}
 
-	private static void addFacet(final SyntacticElement e, final String key, final IExpressionDescription expr,
+	private static void addFacet(final ISyntacticElement e, final String key, final IExpressionDescription expr,
 		final Set<Diagnostic> errors) {
 		if ( e.hasFacet(key) ) {
 			addWarning("Double definition of facet " + key + ". Only the last one will be considered", e.getElement(),
@@ -234,7 +236,7 @@ public class GamlCompatibilityConverter {
 		e.setFacet(key, expr);
 	}
 
-	private static void assignDependencies(final Statement stm, final String keyword, final SyntacticElement elt,
+	private static void assignDependencies(final Statement stm, final String keyword, final ISyntacticElement elt,
 		final Set<Diagnostic> errors) {
 		// COMPATIBILITY with the definition of environment
 		if ( !SymbolProto.nonTypeStatements.contains(keyword) ) {
@@ -256,10 +258,10 @@ public class GamlCompatibilityConverter {
 		}
 	}
 
-	private static void convElse(final S_If stm, final SyntacticElement elt, final Set<Diagnostic> errors) {
+	private static void convElse(final S_If stm, final ISyntacticElement elt, final Set<Diagnostic> errors) {
 		EObject elseBlock = stm.getElse();
 		if ( elseBlock != null ) {
-			SyntacticElement elseElt = new SyntacticElement(ELSE, elseBlock);
+			ISyntacticElement elseElt = SyntacticFactory.create(ELSE, elseBlock);
 			if ( elseBlock instanceof Statement ) {
 				elseElt.addChild(convStatement(elt, (Statement) elseBlock, errors));
 			} else {
@@ -269,10 +271,11 @@ public class GamlCompatibilityConverter {
 		}
 	}
 
-	private static void convertArgs(final ActionArguments args, final SyntacticElement elt, final Set<Diagnostic> errors) {
+	private static void convertArgs(final ActionArguments args, final ISyntacticElement elt,
+		final Set<Diagnostic> errors) {
 		if ( args != null ) {
 			for ( ArgumentDefinition def : EGaml.getArgsOf(args) ) {
-				SyntacticElement arg = new SyntacticElement(ARG, def);
+				ISyntacticElement arg = SyntacticFactory.create(ARG, def);
 				addFacet(arg, NAME, convertToConstantString(null, def.getName()), errors);
 				TypeRef type = (TypeRef) def.getType();
 				addFacet(arg, TYPE, convertToConstantString(null, EGaml.getKey.caseTypeRef(type)), errors);
@@ -286,7 +289,7 @@ public class GamlCompatibilityConverter {
 		}
 	}
 
-	private static String convertAssignment(final S_Assignment stm, String keyword, final SyntacticElement elt,
+	private static String convertAssignment(final S_Assignment stm, String keyword, final ISyntacticElement elt,
 		final Expression expr, final Set<Diagnostic> errors) {
 		IExpressionDescription value = convExpr(stm.getValue(), errors);
 		if ( keyword.equals("<-") || keyword.equals(SET) ) {
@@ -338,7 +341,7 @@ public class GamlCompatibilityConverter {
 		return keyword;
 	}
 
-	private static void convertFacets(final Statement stm, final String keyword, final SyntacticElement elt,
+	private static void convertFacets(final Statement stm, final String keyword, final ISyntacticElement elt,
 		final Set<Diagnostic> errors) {
 		SymbolProto p = DescriptionFactory.getProto(keyword);
 		for ( Facet f : EGaml.getFacetsOf(stm) ) {
@@ -420,10 +423,10 @@ public class GamlCompatibilityConverter {
 		return ed;
 	}
 
-	final static void convStatements(final SyntacticElement elt, final List<? extends Statement> ss,
+	final static void convStatements(final ISyntacticElement elt, final List<? extends Statement> ss,
 		final Set<Diagnostic> errors) {
 		for ( final Statement stm : ss ) {
-			SyntacticElement child = convStatement(elt, stm, errors);
+			ISyntacticElement child = convStatement(elt, stm, errors);
 			if ( child != null ) {
 				elt.addChild(child);
 			}

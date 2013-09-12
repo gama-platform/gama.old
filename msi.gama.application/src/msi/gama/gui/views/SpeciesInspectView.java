@@ -23,7 +23,7 @@ import java.util.List;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
-import msi.gama.gui.swt.SwtGui;
+import msi.gama.gui.swt.GamaIcons;
 import msi.gama.kernel.experiment.ParameterAdapter;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.outputs.*;
@@ -115,7 +115,7 @@ public class SpeciesInspectView extends ExpandableItemsView<IPopulation> {
 		final Composite p = label.getParent();
 		label.dispose();
 		final Button button = new Button(p, SWT.FLAT | SWT.PUSH);
-		button.setImage(SwtGui.gridImage);
+		button.setImage(GamaIcons.action_browse);
 		button.setText("Inspect");
 		button.setToolTipText("Open an inspector for the population of this species");
 		button.addSelectionListener(new SelectionAdapter() {

@@ -39,7 +39,7 @@
             allowMultiple="true"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.AgentInspectView"
-            icon="icons/display_agents.png"
+            icon="icons/user_magnify.png"
             id="msi.gama.application.view.AgentInspectView"
             name="Agent Inspector">
       </view>
@@ -110,7 +110,7 @@
             class="msi.gama.gui.navigator.GamaNavigator"
             icon="platform:/plugin/msi.gama.application/icons/view_navigator.png"
             id="msi.gama.gui.view.GamaNavigator"
-            name="GamaNavigator"
+            name="Gama Projects"
             restorable="true">
       </view>
       <view
@@ -202,15 +202,15 @@
          </property>
          <property
                name="startupForegroundColor"
-               value="8BA6D3">
+               value="5376A1">
          </property>
          <property
                name="startupMessageRect"
-               value="25,360,643,20">
+               value="71,170,250,16">
          </property>
          <property
                name="startupProgressRect"
-               value="25,380,643,20">
+               value="71,338,558,10">
          </property>
       </product>
    </extension>
@@ -642,13 +642,6 @@
             </command>
          </toolbar>
        </menuContribution>
-      <menuContribution
-            locationURI="menu:msi.gama.application.commands.ShowGrids">
-         <dynamic
-               class="msi.gama.gui.swt.commands.ContributionItem"
-               id="msi.gama.application.dynamic">
-         </dynamic>
-      </menuContribution>
       <menuContribution
             allPopups="true"
             locationURI="popup:msi.gama.gui.view.GamaNavigator?after=group.new">

@@ -5,6 +5,7 @@ package msi.gama.gui.views.actions;
  * 
  */
 
+import msi.gama.gui.swt.GamaIcons;
 import msi.gama.gui.views.*;
 import org.eclipse.jface.action.*;
 
@@ -32,7 +33,7 @@ public class SwitchCameraItem extends GamaViewItem {
 	protected IContributionItem createItem() {
 		IAction action =
 			new GamaAction("Switch camera", "Switch camera between Arcball and FreeFly", IAction.AS_PUSH_BUTTON,
-				getImageDescriptor("icons/switch_camera_button.png")) {
+				GamaIcons.action_switch) {
 
 				@Override
 				public void run() {

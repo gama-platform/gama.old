@@ -209,8 +209,13 @@ public class CameraArcBall extends AbstractCamera {
 		if ( isArcBallOn(arg0) ) {
 			arcBallInertia = true;
 		} else {
-			horizInertia = newPoint.x - lastMousePressedPosition.x;
-			vertInertia = newPoint.y - lastMousePressedPosition.y;
+			if ( lastMousePressedPosition == null ) {
+				horizInertia = 0;
+				vertInertia = 0;
+			} else {
+				horizInertia = newPoint.x - lastMousePressedPosition.x;
+				vertInertia = newPoint.y - lastMousePressedPosition.y;
+			}
 			velocityHoriz = horizInertia;
 			velocityVert = vertInertia;
 			moveInertia = true;
