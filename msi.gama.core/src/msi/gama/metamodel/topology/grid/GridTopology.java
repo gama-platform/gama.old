@@ -27,8 +27,10 @@ import msi.gama.metamodel.topology.*;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaList;
 import msi.gama.util.file.GamaGridFile;
 import msi.gama.util.path.GamaSpatialPath;
+import msi.gaml.types.GamaGeometryType;
 
 public class GridTopology extends AbstractTopology {
 
@@ -202,18 +204,29 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	@Override
-	public Iterator<IAgent> getNeighboursOf(final IShape source, final Double distance, final IAgentFilter filter)
-		throws GamaRuntimeException {
-		// GuiUtils.debug("GridTopology.getNeighboursOf");
-		return getPlaces().getNeighboursOf(scope, this, source, distance); // AgentFilter ?
+	public Iterator<IAgent> getNeighboursOf(final IScope scope, final IShape source, final Double distance,
+		final IAgentFilter filter) throws GamaRuntimeException {
+		// We compute the neighbouring cells of the "source" shape
+		Iterator<IAgent> placesConcerned = getPlaces().getNeighboursOf(scope, source, distance, filter);
+		// If we only accept cells from this topology, no need to look for other agents
+		if ( filter.filterSpecies(getPlaces().getCellSpecies()) ) { return placesConcerned; }
+		// Otherwise, we return all the agents that intersect the geometry formed by the shapes of the cells (incl. the
+		// cells themselves) and that are accepted by the filter
+		return getAgentsIn(GamaGeometryType.geometriesToGeometry(scope, new GamaList(placesConcerned)), filter, false);
+
 	}
 
-	@Override
-	public Iterator<IAgent> getNeighboursOf(final ILocation source, final Double distance, final IAgentFilter filter)
-		throws GamaRuntimeException {
-		// GuiUtils.debug("GridTopology.getNeighboursOf");
-		return getPlaces().getNeighboursOf(scope, this, source, distance); // AgentFilter ?
-	}
+	// @Override
+	// public Iterator<IAgent> getNeighboursOf(final ILocation source, final Double distance, final IAgentFilter filter)
+	// throws GamaRuntimeException {
+	// // We compute the neighbouring cells of the "source" location
+	// Iterator<IAgent> placesConcerned = getPlaces().getNeighboursOf(scope, source, distance, filter);
+	// // If we only accept cells from this topology, no need to look for other agents
+	// if ( filter.filterSpecies(getPlaces().getCellSpecies()) ) { return placesConcerned; }
+	// // Otherwise, we return all the agents that intersect the geometry formed by the shapes of the cells (incl. the
+	// // cells themselves) and that are accepted by the filter
+	// return getAgentsIn(GamaGeometryType.geometriesToGeometry(scope, new GamaList(placesConcerned)), filter, false);
+	// }
 
 	@Override
 	public void dispose() {

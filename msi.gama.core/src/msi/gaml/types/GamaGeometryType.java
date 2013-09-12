@@ -28,12 +28,9 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.descriptions.ModelDescription;
-import msi.gaml.operators.Spatial.Operators;
 import msi.gaml.species.ISpecies;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.operation.union.CascadedPolygonUnion;
-import com.vividsolutions.jts.precision.GeometryPrecisionReducer;
-import com.vividsolutions.jts.simplify.TopologyPreservingSimplifier;
 import com.vividsolutions.jts.util.AssertionFailedException;
 
 /**
@@ -318,7 +315,6 @@ public class GamaGeometryType extends GamaType<IShape> {
 		return g;
 	}
 
-	
 	public static GamaShape geometriesToGeometry(final IScope scope, final IContainer<?, ? extends IShape> ags)
 		throws GamaRuntimeException {
 		if ( ags == null || ags.isEmpty(scope) ) { return null; }
@@ -334,30 +330,30 @@ public class GamaGeometryType extends GamaType<IShape> {
 					((ModelDescription) scope.getModel().getDescription()).getTypesManager().get(ent.getClass())); }
 			Geometry geom = ((IShape) ent).getInnerGeometry();
 			geoms[cpt] = geom;
-			if (is_polygon && ! (geom instanceof Polygon)) 
+			if ( is_polygon && !(geom instanceof Polygon) ) {
 				is_polygon = false;
+			}
 			cpt++;
 		}
-		
+
 		try {
-			if (is_polygon) {
-				Geometry geom  = CascadedPolygonUnion.union(new GamaList(geoms));
-				if (geom != null && !geom.isEmpty() ) { return new GamaShape(geom); }
-			}
-			else {
+			if ( is_polygon ) {
+				Geometry geom = CascadedPolygonUnion.union(new GamaList(geoms));
+				if ( geom != null && !geom.isEmpty() ) { return new GamaShape(geom); }
+			} else {
 				Geometry geom = GeometryUtils.factory.createGeometryCollection(geoms);
 				geom.union();
-				if (geom != null && !geom.isEmpty() ) { return new GamaShape(geom); }
+				if ( geom != null && !geom.isEmpty() ) { return new GamaShape(geom); }
 			}
 		} catch (AssertionFailedException e) {
 			Geometry gs[] = new Geometry[geoms.length];
 			int i = 0;
-			for (Geometry g : geoms) {
+			for ( Geometry g : geoms ) {
 				gs[i] = g.buffer(0.0);
-				i ++;
+				i++;
 			}
-			Geometry geom  = CascadedPolygonUnion.union(new GamaList(gs));
-			if (geom != null && !geom.isEmpty() ) { return new GamaShape(geom); }
+			Geometry geom = CascadedPolygonUnion.union(new GamaList(gs));
+			if ( geom != null && !geom.isEmpty() ) { return new GamaShape(geom); }
 		}
 		return null;
 	}

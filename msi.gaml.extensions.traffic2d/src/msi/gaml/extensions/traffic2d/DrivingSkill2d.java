@@ -202,7 +202,7 @@ public class DrivingSkill2d extends MovingSkill {
 		// System.out.println("Max distance: " + maxDist);
 		/* obstacle agents */
 		final Iterator<IAgent> neighbours =
-			agent.getTopology().getNeighboursOf(currentLocation, maxDist + consideringRange, Different.with());
+			agent.getTopology().getNeighboursOf(scope, currentLocation, maxDist + consideringRange, Different.with());
 		final GamaList<IAgent> obstacleAgents = new GamaList<IAgent>();
 		while (neighbours.hasNext()) {
 			final IAgent ia = neighbours.next();
@@ -409,7 +409,7 @@ public class DrivingSkill2d extends MovingSkill {
 		// System.out.println("Max distance: " + maxDist);
 		/* obstacle agents */
 		final Iterator<IAgent> neighbours =
-			agent.getTopology().getNeighboursOf(currentLocation, maxDist + consideringRange, Different.with());
+			agent.getTopology().getNeighboursOf(scope, currentLocation, maxDist + consideringRange, Different.with());
 		final GamaList<IAgent> obstacleAgents = new GamaList<IAgent>();
 		while (neighbours.hasNext()) {
 			final IAgent ia = neighbours.next();

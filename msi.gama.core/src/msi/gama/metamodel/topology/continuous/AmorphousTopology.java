@@ -123,8 +123,8 @@ public class AmorphousTopology implements ITopology {
 	 *      msi.gama.environment.IAgentFilter)
 	 */
 	@Override
-	public Iterator<IAgent> getNeighboursOf(final IShape source, final Double distance, final IAgentFilter filter)
-		throws GamaRuntimeException {
+	public Iterator<IAgent> getNeighboursOf(final IScope scope, final IShape source, final Double distance,
+		final IAgentFilter filter) throws GamaRuntimeException {
 		return Iterators.emptyIterator();
 	}
 
@@ -263,7 +263,6 @@ public class AmorphousTopology implements ITopology {
 		final double result = Maths.atan2Opt(dy, dx);
 		return Maths.checkHeading((int) result);
 	}
-	
 
 	/**
 	 * @see msi.gama.metamodel.topology.ITopology#getAgentClosestTo(msi.gama.metamodel.shape.ILocation,
@@ -278,11 +277,12 @@ public class AmorphousTopology implements ITopology {
 	 * @see msi.gama.metamodel.topology.ITopology#getNeighboursOf(msi.gama.metamodel.shape.ILocation, java.lang.Double,
 	 *      msi.gama.metamodel.topology.filter.IAgentFilter)
 	 */
-	@Override
-	public Iterator<IAgent> getNeighboursOf(final ILocation source, final Double distance, final IAgentFilter filter)
-		throws GamaRuntimeException {
-		return Iterators.emptyIterator();
-	}
+	// @Override
+	// protected Iterator<IAgent> getNeighboursOf(final ILocation source, final Double distance, final IAgentFilter
+	// filter)
+	// throws GamaRuntimeException {
+	// return Iterators.emptyIterator();
+	// }
 
 	/**
 	 * @see msi.gama.metamodel.topology.ITopology#pathBetween(msi.gama.metamodel.shape.ILocation,

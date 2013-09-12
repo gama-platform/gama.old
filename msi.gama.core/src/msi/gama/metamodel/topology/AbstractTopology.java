@@ -431,8 +431,9 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	@Override
-	public Iterator<IAgent> getNeighboursOf(final IShape source, final Double distance, final IAgentFilter filter)
-		throws GamaRuntimeException {
+	public Iterator<IAgent> getNeighboursOf(final IScope scope, final IShape source, final Double distance,
+		final IAgentFilter filter) throws GamaRuntimeException {
+		if ( source.isPoint() ) { return getNeighboursOf(source.getLocation(), distance, filter); }
 		// GuiUtils.debug("AbstractTopology.getNeighboursOf");
 		if ( !isTorus() ) {
 			final Iterator<IShape> shapes = getSpatialIndex().allAtDistance(source, distance, filter);
@@ -455,8 +456,7 @@ public abstract class AbstractTopology implements ITopology {
 
 	}
 
-	@Override
-	public Iterator<IAgent> getNeighboursOf(final ILocation source, final Double distance, final IAgentFilter filter)
+	protected Iterator<IAgent> getNeighboursOf(final ILocation source, final Double distance, final IAgentFilter filter)
 		throws GamaRuntimeException {
 		// GuiUtils.debug("AbstractTopology.getNeighboursOf");
 		if ( !isTorus() ) {

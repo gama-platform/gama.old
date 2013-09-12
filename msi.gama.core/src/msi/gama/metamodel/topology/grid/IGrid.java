@@ -9,10 +9,12 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.*;
+import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.IMatrix;
 import msi.gama.util.path.GamaSpatialPath;
+import msi.gaml.species.ISpecies;
 
 /**
  * Interface IGrid.
@@ -40,18 +42,19 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex {
 	public abstract GamaSpatialPath computeShortestPathBetween(final IScope scope, final IShape source,
 		final IShape target, final ITopology topo) throws GamaRuntimeException;
 
-	public abstract Iterator<IAgent> getNeighboursOf(final IScope scope, final ITopology t, final ILocation shape,
-		final Double distance);
+	// public abstract Iterator<IAgent> getNeighboursOf(final IScope scope, final ILocation shape, final Double
+	// distance,
+	// IAgentFilter filter);
 
-	public abstract Iterator<IAgent> getNeighboursOf(final IScope scope, final ITopology t, final IShape shape,
-		final Double distance);
+	public abstract Iterator<IAgent> getNeighboursOf(final IScope scope, final IShape shape, final Double distance,
+		IAgentFilter filter);
 
 	public abstract int manhattanDistanceBetween(final IShape g1, final IShape g2);
 
 	public abstract IShape getPlaceAt(final ILocation c);
 
 	public abstract int[] getDisplayData();
-	
+
 	public abstract double[] getGridValue();
 
 	public abstract boolean isTorus();
@@ -72,5 +75,10 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex {
 	 * @return
 	 */
 	public abstract boolean usesNeighboursCache();
+
+	/**
+	 * @return
+	 */
+	public abstract ISpecies getCellSpecies();
 
 }

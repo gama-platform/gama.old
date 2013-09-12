@@ -1260,7 +1260,7 @@ public abstract class Spatial {
 		public static IList neighbours_of(final IScope scope, final ITopology t, final IAgent agent)
 			throws GamaRuntimeException {
 			if ( agent == null ) { return GamaList.EMPTY_LIST; }
-			return new GamaList(t.getNeighboursOf(agent, 1.0, Different.with()));
+			return new GamaList(t.getNeighboursOf(scope, agent, 1.0, Different.with()));
 		}
 
 		@operator(value = "neighbours_of", content_type = IType.AGENT)
@@ -1275,9 +1275,10 @@ public abstract class Spatial {
 			final Object d = pair.value;
 			if ( !(d instanceof Number) ) { throw GamaRuntimeException
 				.error("The operator neighbours_of expects a pair agent::float as its right member"); }
-			if ( a instanceof ILocation ) { return new GamaList(t.getNeighboursOf((ILocation) a,
-				Cast.asFloat(scope, d), Different.with())); }
-			return new GamaList(t.getNeighboursOf((IShape) a, Cast.asFloat(scope, d), Different.with()));
+			// if ( a instanceof IShape ) {
+			return new GamaList(t.getNeighboursOf(scope, (IShape) a, Cast.asFloat(scope, d), Different.with()));
+			// }
+			// return new GamaList(t.getNeighboursOf(scope, (IShape) a, Cast.asFloat(scope, d), Different.with()));
 		}
 
 		@operator(value = "neighbours_at", content_type = ITypeProvider.FIRST_TYPE)
@@ -1291,7 +1292,7 @@ public abstract class Spatial {
 			final ITopology t = scope.getTopology();
 			final IAgentFilter filter =
 				agent instanceof IAgent ? In.population(((IAgent) agent).getPopulation()) : Different.with();
-			return new GamaList(t.getNeighboursOf(agent, distance, filter));
+			return new GamaList(t.getNeighboursOf(scope, agent, distance, filter));
 		}
 
 		@operator(value = "neighbours_at", content_type = IType.AGENT)
@@ -1302,7 +1303,7 @@ public abstract class Spatial {
 		public static IList neighbours_at(final IScope scope, final GamaPoint agent, final Double distance)
 			throws GamaRuntimeException {
 			if ( agent == null ) { return GamaList.EMPTY_LIST; }
-			return new GamaList(scope.getTopology().getNeighboursOf(agent, distance, Different.with()));
+			return new GamaList(scope.getTopology().getNeighboursOf(scope, agent, distance, Different.with()));
 		}
 
 		@operator(value = "at_distance", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
@@ -1313,11 +1314,13 @@ public abstract class Spatial {
 			if ( list.isEmpty() ) { return GamaList.EMPTY_LIST; }
 			final IAgent agent = scope.getAgentScope();
 			final ITopology t = scope.getTopology();
-			if ( agent.isPoint() ) { return new GamaList(t.getNeighboursOf(agent.getLocation(), distance,
-				In.list(scope, list))); }
-			if ( t.isTorus() ) { return new GamaList(t.getNeighboursOf(agent, distance, In.list(scope, list))); }
-			return new GamaList(
-				t.getAgentsIn(Transformations.enlarged_by(agent, distance), In.list(scope, list), false));
+			// if ( agent.isPoint() ) { return new GamaList(t.getNeighboursOf(agent.getLocation(), distance,
+			// In.list(scope, list))); }
+			// if ( t.isTorus() ) {
+			return new GamaList(t.getNeighboursOf(scope, agent, distance, In.list(scope, list)));
+			// }
+			// return new GamaList(
+			// t.getAgentsIn(Transformations.enlarged_by(agent, distance), In.list(scope, list), false));
 		}
 
 		@operator(value = "at_distance", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
@@ -1329,10 +1332,13 @@ public abstract class Spatial {
 			final ITopology t = scope.getTopology();
 			final IPopulation pop = agent.getPopulationFor(species);
 			if ( pop == null ) { return GamaList.EMPTY_LIST; }
-			if ( agent.isPoint() ) { return new GamaList(t.getNeighboursOf(agent.getLocation(), distance,
-				In.population(pop))); }
-			if ( t.isTorus() ) { return new GamaList(t.getNeighboursOf(agent, distance, In.population(pop))); }
-			return new GamaList(t.getAgentsIn(Transformations.enlarged_by(agent, distance), In.population(pop), false));
+			// if ( agent.isPoint() ) { return new GamaList(t.getNeighboursOf(agent.getLocation(), distance,
+			// In.population(pop))); }
+			// if ( t.isTorus() ) {
+			return new GamaList(t.getNeighboursOf(scope, agent, distance, In.population(pop)));
+			// }
+			// return new GamaList(t.getAgentsIn(Transformations.enlarged_by(agent, distance), In.population(pop),
+			// false));
 		}
 
 		@operator(value = { "inside" }, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
@@ -1446,13 +1452,14 @@ public abstract class Spatial {
 		public static IList agents_at_distance(final IScope scope, final Double distance) {
 			final IAgent agent = scope.getAgentScope();
 			Iterator<IAgent> result;
-			if ( agent.isPoint() ) {
-				result = scope.getTopology().getNeighboursOf(agent.getLocation(), distance, Different.with());
-			} else {
-				result =
-					scope.getTopology().getAgentsIn(Transformations.enlarged_by(agent, distance), Different.with(),
-						false);
-			}
+			// if ( agent.isPoint() ) {
+			// result = scope.getTopology().getNeighboursOf(agent.getLocation(), distance, Different.with());
+			// } else {
+			result = scope.getTopology().getNeighboursOf(scope, agent, distance, Different.with());
+			// result =
+			// scope.getTopology().getAgentsIn(Transformations.enlarged_by(agent, distance), Different.with(),
+			// false);
+			// }
 			return new GamaList(result);
 		}
 
@@ -1479,7 +1486,7 @@ public abstract class Spatial {
 			final Double distance, final Set<IAgent> clusteredCells, final IAgent currentAg) {
 			IList<IAgent> group = new GamaList<IAgent>();
 			IList<IAgent> ags =
-				new GamaList<IAgent>(currentAg.getTopology().getNeighboursOf(currentAg, distance, filter));
+				new GamaList<IAgent>(currentAg.getTopology().getNeighboursOf(scope, currentAg, distance, filter));
 			clusteredCells.add(currentAg);
 			group.add(currentAg);
 			for ( IAgent ag : ags ) {

@@ -239,7 +239,7 @@ public class DrivingSkill extends MovingSkill {
 		// Collision avoiding
 		// 1. Determines the agents located on a dist radius circle from the current location
 		final Iterator<IAgent> neighbours =
-			scope.getTopology().getNeighboursOf(currentLocation, distance + livingSpace, Different.with());
+			scope.getTopology().getNeighboursOf(scope, currentLocation, distance + livingSpace, Different.with());
 		// 2. Selects the agents before the agent on the segment
 		final double newX = currentLocation.x + 0.01 * (target.x - currentLocation.x);
 		final double newY = currentLocation.y + 0.01 * (target.y - currentLocation.y);
@@ -249,11 +249,11 @@ public class DrivingSkill extends MovingSkill {
 		// Geometry frontRectangle = basicLine.buffer(tolerance, 3, /**TODO To be modified, to find
 		// the right constant name**/2);
 		// PreparedPolygon fr2 = new PreparedPolygon((Polygonal) frontRectangle);
-		
+
 		while (neighbours.hasNext()) {
 			final IAgent ia = neighbours.next();
-			
-			if (ia.getLocation().equals(agent.getLocation()) || !obsSpecies.contains(ia.getSpecies()) ) {
+
+			if ( ia.getLocation().equals(agent.getLocation()) || !obsSpecies.contains(ia.getSpecies()) ) {
 				continue;
 			}
 			// if(fr2.intersects(ia.getLocation().getInnerGeometry())){
@@ -263,7 +263,7 @@ public class DrivingSkill extends MovingSkill {
 				currentDistance -= livingSpace;
 				// currentDistance = currentLocation.euclidianDistanceTo(ia) - livingSpace;
 				final Iterator<IAgent> ns =
-					scope.getTopology().getNeighboursOf(ia, livingSpace / 2.0, Different.with());
+					scope.getTopology().getNeighboursOf(scope, ia, livingSpace / 2.0, Different.with());
 				int nbAg = 1;
 				while (ns.hasNext()) {
 					final IAgent ag = ns.next();
@@ -295,7 +295,7 @@ public class DrivingSkill extends MovingSkill {
 		final String laneAttributes, final GamaList<ISpecies> obsSpecies) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		final GamaList indexVals = initMoveAlongPath(agent, path, currentLocation);
-		if (indexVals == null) return;
+		if ( indexVals == null ) { return; }
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);
 		final int endIndexSegment = (Integer) indexVals.get(2);
@@ -318,10 +318,11 @@ public class DrivingSkill extends MovingSkill {
 				weight = computeWeigth(graph, path, line);
 			} else {
 				IShape realShape = path.getRealObject(line);
-				final Double w = realShape == null ? null : (Double) weigths.get(realShape)/realShape.getGeometry().getPerimeter();
+				final Double w =
+					realShape == null ? null : (Double) weigths.get(realShape) / realShape.getGeometry().getPerimeter();
 				weight = w == null ? computeWeigth(graph, path, line) : w;
 			}
-		
+
 			//
 			for ( int j = indexSegment; j < coords.length; j++ ) {
 				// pt is the next target
@@ -341,7 +342,7 @@ public class DrivingSkill extends MovingSkill {
 				distance =
 					avoidCollision(scope, agent, distance, livingSpace, tolerance, currentLocation, pt, nbLanes,
 						obsSpecies);
-				
+
 				// that's the real distance to move
 				// Agent moves
 				if ( distance == 0 ) {
@@ -394,7 +395,7 @@ public class DrivingSkill extends MovingSkill {
 		final String laneAttributes, final GamaList<ISpecies> obsSpecies) {
 		GamaPoint currentLocation = (GamaPoint) agent.getLocation().copy(scope);
 		final GamaList indexVals = initMoveAlongPath(agent, path, currentLocation);
-		if (indexVals == null) return null;
+		if ( indexVals == null ) { return null; }
 		int index = (Integer) indexVals.get(0);
 		int indexSegment = (Integer) indexVals.get(1);
 		final int endIndexSegment = (Integer) indexVals.get(2);
@@ -417,7 +418,8 @@ public class DrivingSkill extends MovingSkill {
 				weight = computeWeigth(graph, path, line);
 			} else {
 				IShape realShape = path.getRealObject(line);
-				final Double w = realShape == null ? null : (Double) weigths.get(realShape)/realShape.getGeometry().getPerimeter();
+				final Double w =
+					realShape == null ? null : (Double) weigths.get(realShape) / realShape.getGeometry().getPerimeter();
 				weight = w == null ? computeWeigth(graph, path, line) : w;
 			}
 			final Coordinate coords[] = line.getInnerGeometry().getCoordinates();

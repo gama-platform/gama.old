@@ -26,7 +26,7 @@ import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.metamodel.topology.filter.*;
+import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
@@ -74,7 +74,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	int firstCell, lastCell;
 	UnmodifiableIterator<? extends IShape> iterator = null;
 	private ISpecies cellSpecies;
-	private IAgentFilter cellFilter;
+	// private IAgentFilter cellFilter;
 
 	GamaMap hexAgentToLoc = null;
 
@@ -535,16 +535,21 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	 * @return
 	 */
 	@Override
-	public Iterator<IAgent> getNeighboursOf(final IScope scope, final ITopology t, final IShape shape,
-		final Double distance) {
-		// GuiUtils.debug("GamaSpatialMatrix.getNeighboursOf");
+	public Iterator<IAgent> getNeighboursOf(final IScope scope, final IShape shape, final Double distance,
+		final IAgentFilter filter) {
+
+		// If the shape is a point or if it is a cell of this matrix, we run the method with an ILocation instead
 		if ( shape.isPoint() || shape.getAgent() != null && shape.getAgent().getSpecies() == cellSpecies ) { return getNeighboursOf(
-			scope, t, shape.getLocation(), distance); }
+			scope, shape.getLocation(), distance, filter); }
+
+		// We compute all the cells covered by the shape (we know that it is not a cell of the matrix) -- no filter used
+		// here, as we must take all the cells into account
 		final Iterator<? extends IAgent> coveredPlaces =
-			(Iterator<? extends IAgent>) (!cellFilter.filterSpecies(cellSpecies) ? Iterators.emptyIterator()
-				: allInEnvelope(shape, shape.getEnvelope(), cellFilter, true));
+			(Iterator<? extends IAgent>) allInEnvelope(shape, shape.getEnvelope(), null, true);
 		final Set<IAgent> placesToRemove = Sets.newHashSet(coveredPlaces);
-		final Iterator<? extends IAgent> allPlaces =
+
+		// We now compute all the cells that are at "distance" away from these covered cells
+		final Iterator<IAgent> allPlaces =
 			Iterators.concat(Iterators.transform(coveredPlaces, new Function<IAgent, Iterator<IAgent>>() {
 
 				@Override
@@ -553,15 +558,41 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 						.getNeighboursIn(getPlaceIndexAt(input.getLocation()), distance.intValue());
 				}
 			}));
-		// TODO Is it really efficient ? Isntit possible to use iterators all over the place ?
-		final Set<IAgent> result = Sets.difference(Sets.newHashSet(allPlaces), placesToRemove);
-		return result.iterator();
+
+		// And we filter these cells by removing those that are in the "interior cells" (which are not part of the
+		// neighbourood) and that are not accepted by the IAgentFilter. A special case is made if the filter is only
+		// accepting cells of this matrix : in that case, we simply remove the "interior cells" from the iterator and
+		// we return it;
+
+		if ( filter != null && filter.filterSpecies(cellSpecies) ) {
+			Iterators.removeAll(allPlaces, placesToRemove);
+			return allPlaces;
+		}
+
+		return Iterators.filter(allPlaces, new Predicate<IAgent>() {
+
+			// TODO Make it a static class ?
+			@Override
+			public boolean apply(final IAgent input) {
+				return (filter == null || filter.accept(shape, input)) && !placesToRemove.contains(input);
+			}
+		});
+
 	}
 
-	@Override
-	public Iterator<IAgent> getNeighboursOf(final IScope scope, final ITopology t, final ILocation shape,
-		final Double distance) {
-		return getNeighbourhood().getNeighboursIn(getPlaceIndexAt(shape), distance.intValue());
+	protected Iterator<IAgent> getNeighboursOf(final IScope scope, final ILocation shape, final Double distance,
+		final IAgentFilter filter) {
+		Iterator<IAgent> allPlaces = getNeighbourhood().getNeighboursIn(getPlaceIndexAt(shape), distance.intValue());
+		if ( filter != null && filter.filterSpecies(cellSpecies) ) { return allPlaces; }
+
+		return Iterators.filter(allPlaces, new Predicate<IAgent>() {
+
+			// TODO Make it a static class ?
+			@Override
+			public boolean apply(final IAgent input) {
+				return filter == null || filter.accept(shape, input);
+			}
+		});
 	}
 
 	@Override
@@ -576,7 +607,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		int cpt = 0;
 		dists.put(startAg, Integer.valueOf(cpt));
 		final int max = this.numCols * this.numRows;
-		List<IAgent> neighb = getNeighs(scope, startAg, dists, topo, new GamaList<IAgent>());
+		List<IAgent> neighb = getNeighs(scope, startAg, dists, new GamaList<IAgent>());
 		while (true) {
 			cpt++;
 			final HashSet<IAgent> neighb2 = new HashSet<IAgent>();
@@ -588,7 +619,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					IAgent agDes = ag;
 					while (cpt > 0) {
 						cpt--;
-						agDes = getNeighDesc(scope, agDes, dists, topo, cpt);
+						agDes = getNeighDesc(scope, agDes, dists, cpt);
 						pts.add(agDes.getLocation());
 					}
 					final IList<IShape> nodes = new GamaList<IShape>();
@@ -598,7 +629,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					// return new GamaPath(topo, nodes);
 					return PathFactory.newInstance(topo, nodes);
 				}
-				neighb2.addAll(getNeighs(scope, ag, dists, topo, neighb));
+				neighb2.addAll(getNeighs(scope, ag, dists, neighb));
 			}
 			neighb = new GamaList<IAgent>(neighb2);
 			if ( cpt > max ) { return null; }
@@ -615,9 +646,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	 * @param matrix representing the background geometry
 	 * @return the "valid" neighborhood of the current position (Van Neuman)
 	 */
-	private List<IAgent> getNeighs(final IScope scope, final IAgent agent, final GamaMap dists, final ITopology t,
+	private List<IAgent> getNeighs(final IScope scope, final IAgent agent, final GamaMap dists,
 		final List<IAgent> currentList) throws GamaRuntimeException {
-		final Iterator<IAgent> agents = getNeighboursOf(scope, t, agent.getLocation(), 1.0);
+		final Iterator<IAgent> agents = getNeighboursOf(scope, agent.getLocation(), 1.0, null);
 		final List<IAgent> neighs = new GamaList<IAgent>();
 		while (agents.hasNext()) {
 			final IAgent ag = agents.next();
@@ -640,9 +671,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	 * @return the next position of the shortest path
 	 * @return
 	 */
-	private IAgent getNeighDesc(final IScope scope, final IAgent agent, final GamaMap dists, final ITopology t,
-		final int cpt) throws GamaRuntimeException {
-		final List<IAgent> agents = new GamaList(getNeighboursOf(scope, t, agent.getLocation(), 1.0));
+	private IAgent getNeighDesc(final IScope scope, final IAgent agent, final GamaMap dists, final int cpt)
+		throws GamaRuntimeException {
+		final List<IAgent> agents = new GamaList(getNeighboursOf(scope, agent.getLocation(), 1.0, null));
 		Collections.shuffle(agents);
 		for ( final IAgent ag : agents ) {
 			if ( dists.contains(scope, ag) && dists.get(ag).equals(Integer.valueOf(cpt)) ) { return ag; }
@@ -681,7 +712,12 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	@Override
 	public void setCellSpecies(final IPopulation pop) {
 		cellSpecies = pop.getSpecies();
-		cellFilter = In.population(pop);
+		// cellFilter = In.population(pop);
+	}
+
+	@Override
+	public ISpecies getCellSpecies() {
+		return cellSpecies;
 	}
 
 	@Override
@@ -769,7 +805,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public Iterator<IShape> allInEnvelope(final IShape source, final Envelope env, final IAgentFilter f,
 		final boolean covered) {
 		// GuiUtils.debug("GamaSpatialMatrix.allInEnvelope");
-		if ( !f.filterSpecies(cellSpecies) ) { return Iterators.emptyIterator(); }
+		// if ( !f.filterSpecies(cellSpecies) ) { return Iterators.emptyIterator(); }
 
 		return Iterables.filter(inEnvelope(env), new Predicate<IShape>() {
 
@@ -777,7 +813,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			public boolean apply(final IShape input) {
 				if ( input.getAgent() == null ) { return false; }
 				final Envelope e = input.getEnvelope();
-				return f.accept(source, input) && (covered && env.covers(e) || !covered && env.intersects(e));
+				return (f == null || f.accept(source, input)) &&
+					(covered && env.covers(e) || !covered && env.intersects(e));
 			}
 		}).iterator();
 	}
