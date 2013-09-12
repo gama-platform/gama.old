@@ -19,9 +19,6 @@
 package msi.gaml.operators;
 
 import java.util.*;
-
-import org.eclipse.core.runtime.dynamichelpers.IFilter;
-
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.*;
 import msi.gama.metamodel.agent.IAgent;
@@ -731,7 +728,7 @@ public abstract class Spatial {
 		 * 
 		 */
 		@operator("transformed_by")
-		@doc(value = "A geometry resulting from the application of a rotation and a translation (rigth-operand : point {angle(degree), distance} of the left-hand operand (geometry, agent, point)", examples = { "self transformed_by {45, 20} --: returns the geometry resulting from 45� rotation and 10m translation of the geometry of the agent applying the operator." }, see = {
+		@doc(value = "A geometry resulting from the application of a rotation and a translation (rigth-operand : point {angle(degree), distance} of the left-hand operand (geometry, agent, point)", examples = { "self transformed_by {45, 20} --: returns the geometry resulting from 45 degrees rotation and 10m translation of the geometry of the agent applying the operator." }, see = {
 			"rotated_by", "translated_by" })
 		public static IShape transformed_by(final IScope scope, final IShape g, final GamaPoint p) {
 			if ( g == null ) { return null; }
@@ -1463,46 +1460,49 @@ public abstract class Spatial {
 
 	public static abstract class Statistics {
 
-		@operator(value = { "simple_clustering_by_distance","simple_clustering_by_envelope_distance" }, content_type = IType.LIST)
+		@operator(value = { "simple_clustering_by_distance", "simple_clustering_by_envelope_distance" }, content_type = IType.LIST)
 		@doc(value = "A list of agent groups clustered by distance considering a distance min between two groups.", examples = { "[ag1, ag2, ag3, ag4, ag5] simpleClusteringByDistance 20.0 --: for example, can return [[ag1, ag3], [ag2], [ag4, ag5]]" }, see = { "hierarchical_clustering" })
-		public static IList<IList<IAgent>> simpleClusteringByDistance(final IScope scope, final IContainer<?, IAgent> agents, final Double distance) {
+		public static IList<IList<IAgent>> simpleClusteringByDistance(final IScope scope,
+			final IContainer<?, IAgent> agents, final Double distance) {
 			final IList<IList<IAgent>> groups = new GamaList<IList<IAgent>>();
-			In filter = In.list(scope,agents);
+			In filter = In.list(scope, agents);
 			Set<IAgent> clusteredCells = new HashSet<IAgent>();
 			for ( final IAgent ag : agents ) {
-				if (!clusteredCells.contains(ag) && filter.getShapes(scope).contains(ag)) {
-					groups.add(simpleClusteringByDistanceRec(scope,filter,distance,clusteredCells, ag)); 
+				if ( !clusteredCells.contains(ag) && filter.getShapes(scope).contains(ag) ) {
+					groups.add(simpleClusteringByDistanceRec(scope, filter, distance, clusteredCells, ag));
 				}
 			}
 			return groups;
 		}
-		
-		public static IList<IAgent> simpleClusteringByDistanceRec(final IScope scope, In filter, final Double distance, Set<IAgent> clusteredCells, final IAgent currentAg) {
+
+		public static IList<IAgent> simpleClusteringByDistanceRec(final IScope scope, final In filter,
+			final Double distance, final Set<IAgent> clusteredCells, final IAgent currentAg) {
 			IList<IAgent> group = new GamaList<IAgent>();
-			IList<IAgent> ags = new GamaList<IAgent>(currentAg.getTopology().getNeighboursOf(currentAg, distance, filter));
+			IList<IAgent> ags =
+				new GamaList<IAgent>(currentAg.getTopology().getNeighboursOf(currentAg, distance, filter));
 			clusteredCells.add(currentAg);
 			group.add(currentAg);
-			for (IAgent ag : ags) {
-				if (!clusteredCells.contains(ag)&& filter.getShapes(scope).contains(ag)) {
-					group.addAll(simpleClusteringByDistanceRec(scope,filter,distance,clusteredCells, ag));
+			for ( IAgent ag : ags ) {
+				if ( !clusteredCells.contains(ag) && filter.getShapes(scope).contains(ag) ) {
+					group.addAll(simpleClusteringByDistanceRec(scope, filter, distance, clusteredCells, ag));
 				}
 			}
 			return group;
 		}
-		
+
 		@operator(value = { "hierarchical_clustering" }, content_type = IType.LIST)
-		@doc(value = "A tree (list of list) contained groups of agents clustered by distance considering a distance min between two groups.", comment = "use of hierarchical clustering with Minimum for linkage criterion between two groups of agents.", examples = { "[ag1, ag2, ag3, ag4, ag5] hierarchical_clustering 20.0 --: for example, can return [[ag1,ag3], [ag2], [[ag4,ag5],ag6]" }, see = {"simple_clustering_by_distance" })
+		@doc(value = "A tree (list of list) contained groups of agents clustered by distance considering a distance min between two groups.", comment = "use of hierarchical clustering with Minimum for linkage criterion between two groups of agents.", examples = { "[ag1, ag2, ag3, ag4, ag5] hierarchical_clustering 20.0 --: for example, can return [[ag1,ag3], [ag2], [[ag4,ag5],ag6]" }, see = { "simple_clustering_by_distance" })
 		public static IList simple_clustering_by_distance(final IScope scope, final IContainer<?, IAgent> agents,
 			final Double distance) {
 			final int nb = agents.length(scope);
 			final IList<IList> groups = new GamaList<IList>();
-			 
+
 			if ( nb == 0 ) {
 				// scope.setStatus(ExecutionStatus.failure);
 				return groups;
 			}
 			double distMin = Double.MAX_VALUE;
-			
+
 			Set<IList> minFusion = null;
 
 			final Map<Set<IList>, Double> distances = new HashMap<Set<IList>, Double>();
@@ -1542,10 +1542,16 @@ public abstract class Spatial {
 				groups.remove(g2);
 				groups.remove(g1);
 				IList groupeF = new GamaList();
-				if (g2.size() == 1) {groupeF.add(g2.get(0));}
-				else {groupeF.add(g2);}
-				if (g1.size() == 1) {groupeF.add(g1.get(0));}
-				else {groupeF.add(g1);}
+				if ( g2.size() == 1 ) {
+					groupeF.add(g2.get(0));
+				} else {
+					groupeF.add(g2);
+				}
+				if ( g1.size() == 1 ) {
+					groupeF.add(g1.get(0));
+				} else {
+					groupeF.add(g1);
+				}
 				for ( final IList groupe : groups ) {
 					final Set<IList> newDistGp = new HashSet<IList>();
 					newDistGp.add(groupe);
@@ -1587,19 +1593,20 @@ public abstract class Spatial {
 	public static abstract class ThreeD {
 
 		@operator(value = { "add_z" })
-		@doc(deprecated = "use set location instead",value = "add_z", comment = "Return a geometry with a z value"
+		@doc(deprecated = "use set location instead", value = "add_z", comment = "Return a geometry with a z value"
 			+ "The add_z operator set the z value of the whole shape."
 			+ "For each point of the cell the same z value is set.", examples = { "set shape <- shape add_z rnd(100);" }, see = { "add_z_pt" })
-
 		@Deprecated
 		public static IShape add_z(final IShape g, final Double z) {
-			GamaPoint p = new GamaPoint(g.getLocation().getX(),g.getLocation().getY(),z);
+			GamaPoint p = new GamaPoint(g.getLocation().getX(), g.getLocation().getY(), z);
 			g.setLocation(p);
-			/*final Coordinate[] coordinates = g.getInnerGeometry().getCoordinates();
-			((GamaPoint) g.getLocation()).z = z;
-			for ( int i = 0; i < coordinates.length; i++ ) {
-				coordinates[i].z = z;
-			}*/
+			/*
+			 * final Coordinate[] coordinates = g.getInnerGeometry().getCoordinates();
+			 * ((GamaPoint) g.getLocation()).z = z;
+			 * for ( int i = 0; i < coordinates.length; i++ ) {
+			 * coordinates[i].z = z;
+			 * }
+			 */
 			return g;
 		}
 
