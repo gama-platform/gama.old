@@ -41,7 +41,7 @@ public class GamaBundleLoader {
 		Types.init();
 
 		long end = System.currentTimeMillis();
-		GuiUtils.debug("All GAML additions " + " loaded in " + (end - start) + " ms.");
+		GuiUtils.debug(">> GAMA total load time " + (end - start) + " ms.");
 	}
 
 	public static void preBuild(final String s) {
@@ -50,8 +50,9 @@ public class GamaBundleLoader {
 			IGamlAdditions add = (IGamlAdditions) Platform.getBundle(s).loadClass(ADDITIONS).newInstance();
 			add.initialize();
 			long end = System.currentTimeMillis();
-			GuiUtils.debug("GAML plugin " + s + " scanned in " + (end - start) + " ms.");
+			GuiUtils.debug(">> GAMA bundle loaded in " + (end - start) + "ms: \t" + s);
 		} catch (Exception e1) {
+			System.err.println(">> GAMA bundle " + s + " could not be loaded: " + e1.getMessage());
 			e1.printStackTrace();
 		}
 	}
