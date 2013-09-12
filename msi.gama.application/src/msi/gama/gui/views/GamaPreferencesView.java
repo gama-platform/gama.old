@@ -65,6 +65,8 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		gridLayout.horizontalSpacing = gridLayout.verticalSpacing = 5;
 		shell.setLayout(gridLayout);
 		PreferenceManager preferenceManager = PlatformUI.getWorkbench().getPreferenceManager();
+
+		// We clean the default preference manager to remove useless preferences
 		for ( Object elem : preferenceManager.getElements(PreferenceManager.POST_ORDER) ) {
 			if ( elem instanceof IPreferenceNode ) {
 				String id = ((IPreferenceNode) elem).getId();
@@ -159,7 +161,10 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 
 				@Override
 				public void setValue(final Object value) {
-					modelValues.put(e.getKey(), value);
+					if ( e.acceptChange(value) ) {
+						modelValues.put(e.getKey(), value);
+					}
+
 				}
 
 				@Override

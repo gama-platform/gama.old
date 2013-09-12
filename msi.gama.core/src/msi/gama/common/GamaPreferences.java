@@ -52,6 +52,18 @@ public class GamaPreferences {
 		return e;
 	}
 
+	public static interface IPreferenceChange<T> {
+
+		/**
+		 * A change listener, that receives the valueChange() message before the preference is assigned a new value,
+		 * with this value in parameter. Returning true will enable the change, returning false will veto it. Only one
+		 * change listener can be registered for a preference.
+		 * @param newValue, the new value set to this preference
+		 * @return true or false, wheter or not the change is accepted by the listener.
+		 */
+		public boolean valueChange(T newValue);
+	}
+
 	public static class Entry<T> implements IParameter {
 
 		String key, title, tab, group;
@@ -60,6 +72,7 @@ public class GamaPreferences {
 		List<T> values;
 		Number min, max;
 		String activates;
+		IPreferenceChange<T> onChange;
 
 		private Entry(final String key) {
 			tab = GENERAL;
@@ -167,6 +180,11 @@ public class GamaPreferences {
 			this.value = (T) value;
 		}
 
+		public Entry onChange(final IPreferenceChange<T> r) {
+			onChange = r;
+			return this;
+		}
+
 		@Override
 		public Object value(final IScope scope) throws GamaRuntimeException {
 			return value;
@@ -215,6 +233,15 @@ public class GamaPreferences {
 		@Override
 		public Number getStepValue() {
 			return null;
+		}
+
+		/**
+		 * If the value is modified in the view, this method is called. Should return true to accept the change, false
+		 * otherwise
+		 */
+		public boolean acceptChange(final T newValue) {
+			if ( onChange != null ) { return onChange.valueChange(newValue); }
+			return true;
 		}
 
 	}
@@ -277,10 +304,10 @@ public class GamaPreferences {
 		IType.COLOR).in(DISPLAY).group("Default aspect");
 	public static final Entry<Boolean> CORE_Z_FIGHTING = create("core.z_fighting", "Use z-fighting by default", true,
 		IType.BOOL).in(DISPLAY).group("OpenGL");
-	public static final Entry<Boolean> CORE_DRAW_ENV = create("core.draw_env", "Draw environment and 3D axes by default", true,
-		IType.BOOL).in(DISPLAY).group("OpenGL");
-	public static final Entry<Boolean> CORE_SHOW_FPS = create("core.show_fps", "Show fps by default", false,
-			IType.BOOL).in(DISPLAY).group("OpenGL");
+	public static final Entry<Boolean> CORE_DRAW_ENV = create("core.draw_env",
+		"Draw environment and 3D axes by default", true, IType.BOOL).in(DISPLAY).group("OpenGL");
+	public static final Entry<Boolean> CORE_SHOW_FPS =
+		create("core.show_fps", "Show fps by default", false, IType.BOOL).in(DISPLAY).group("OpenGL");
 
 	private static void register(final Entry gp) {
 		IScope scope = GAMA.obtainNewScope();

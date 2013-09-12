@@ -33,8 +33,10 @@ import org.eclipse.xtext.resource.ILocationInFileProvider;
 import org.eclipse.xtext.resource.containers.IAllContainersState;
 import org.eclipse.xtext.service.SingletonBinding;
 import org.eclipse.xtext.ui.editor.*;
+import org.eclipse.xtext.ui.editor.actions.IActionContributor;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
+import org.eclipse.xtext.ui.editor.preferences.IPreferenceStoreInitializer;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.*;
 import org.eclipse.xtext.ui.resource.*;
 import com.google.inject.*;
@@ -143,6 +145,15 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 	@Override
 	public Class<? extends IHyperlinkDetector> bindIHyperlinkDetector() {
 		return GamlHyperlinkDetector.class;
+	}
+
+	@Override
+	public void configureMarkOccurrencesAction(final Binder binder) {
+		binder.bind(IActionContributor.class).annotatedWith(Names.named("markOccurrences"))
+			.to(GamlMarkOccurrenceActionContributor.class);
+		binder.bind(IPreferenceStoreInitializer.class)
+			.annotatedWith(Names.named("GamlMarkOccurrenceActionContributor")) //$NON-NLS-1$
+			.to(GamlMarkOccurrenceActionContributor.class);
 	}
 
 }
