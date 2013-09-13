@@ -40,6 +40,7 @@ public class SymbolProto {
 	public static Set<String> nonTypeStatements = new HashSet();
 
 	private final ISymbolConstructor constructor;
+	private final IDescriptionValidator validator;
 	private final int kind;
 	private final boolean hasSequence;
 	private final boolean hasArgs;
@@ -69,8 +70,9 @@ public class SymbolProto {
 		final boolean doesNotHaveScope, final Map<String, FacetProto> possibleFacets, final String omissible,
 		final String[][] possibleCombinations, final Set<String> contextKeywords, final Set<Integer> contextKinds,
 		final boolean isRemoteContext, final boolean isUniqueInContext, final boolean nameUniqueInContext,
-		final ISymbolConstructor constr) {
+		final ISymbolConstructor constr, final IDescriptionValidator validator) {
 		factory = DescriptionFactory.getFactory(kind);
+		this.validator = validator;
 		constructor = constr;
 		this.isRemoteContext = isRemoteContext;
 		this.hasSequence = hasSequence;
@@ -96,6 +98,12 @@ public class SymbolProto {
 		Arrays.fill(this.contextKinds, false);
 		for ( Integer i : contextKinds ) {
 			this.contextKinds[i] = true;
+		}
+	}
+
+	public void validate(final IDescription desc) {
+		if ( validator != null ) {
+			validator.validate(desc);
 		}
 	}
 

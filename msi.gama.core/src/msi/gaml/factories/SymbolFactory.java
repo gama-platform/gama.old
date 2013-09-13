@@ -123,7 +123,9 @@ public class SymbolFactory {
 				desc.getUnderlyingElement(null), desc.getKeyword());
 			return null;
 		}
-		return sp.getFactory().privateValidate(desc);
+		IDescription result = sp.getFactory().privateValidate(desc);
+		sp.validate(result);
+		return result;
 	}
 
 	protected IDescription privateValidate(final IDescription desc) {

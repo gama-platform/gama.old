@@ -47,25 +47,19 @@ import msi.gaml.types.IType;
 @SuppressWarnings("unchecked")
 @symbol(name = IKeyword.INSPECT, kind = ISymbolKind.OUTPUT, with_sequence = false)
 @inside(symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
-@facets(value = {
-	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
+@facets(value = { @facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.VALUE, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.ATTRIBUTES, type = IType.LIST, optional = true),
-	@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.AGENT, IKeyword.SPECIES, IKeyword.DYNAMIC,
-		IKeyword.TABLE }, optional = false) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.AGENT, IKeyword.TABLE }, optional = false) }, omissible = IKeyword.NAME)
 public class InspectDisplayOutput extends MonitorOutput {
 
 	public static final short INSPECT_AGENT = 0;
-	@Deprecated
-	public static final short INSPECT_DYNAMIC = 2;
-	@Deprecated
-	public static final short INSPECT_SPECIES = 1;
 	public static final short INSPECT_TABLE = 3;
 
 	static int count = 0;
 
-	static final List<String> types = Arrays.asList(IKeyword.AGENT, IKeyword.SPECIES, IKeyword.DYNAMIC, IKeyword.TABLE);
+	static final List<String> types = Arrays.asList(IKeyword.AGENT, IKeyword.TABLE);
 
 	int target;
 	IExpression attributes;
@@ -107,9 +101,6 @@ public class InspectDisplayOutput extends MonitorOutput {
 		super(desc);
 		final String type = getLiteral(IKeyword.TYPE);
 		target = types.indexOf(type);
-		if ( target == INSPECT_SPECIES || target == INSPECT_DYNAMIC ) {
-			target = INSPECT_TABLE;
-		}
 		attributes = getFacet(IKeyword.ATTRIBUTES);
 	}
 
@@ -128,8 +119,8 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	public InspectDisplayOutput(final String name, final short type) {
 		// Opens directly an inspector
-		this(DescriptionFactory.create(IKeyword.INSPECT, IKeyword.NAME, name +
-			(type != INSPECT_SPECIES && type != INSPECT_TABLE ? count++ : ""), IKeyword.TYPE, types.get(type)));
+		this(DescriptionFactory.create(IKeyword.INSPECT, IKeyword.NAME, name + (type != INSPECT_TABLE ? count++ : ""),
+			IKeyword.TYPE, types.get(type)));
 	}
 
 	private InspectDisplayOutput(final IMacroAgent rootAgent, final ISpecies species) {

@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -40,7 +40,7 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 	}
 
 	@Override
-	protected void fillBuffer(IScope scope) throws GamaRuntimeException {
+	protected void fillBuffer(final IScope scope) throws GamaRuntimeException {
 		if ( buffer != null ) { return; }
 		buffer = isPgmFile() ? matrixValueFromPgm(scope, null) : matrixValueFromImage(scope, null);
 	}
@@ -64,7 +64,7 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 	}
 
 	@Override
-	protected IGamaFile _copy(IScope scope) {
+	protected IGamaFile _copy(final IScope scope) {
 		return null;
 	}
 
@@ -80,7 +80,7 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 		return (IMatrix) buffer;
 	}
 
-	private void loadImage(IScope scope) {
+	private void loadImage(final IScope scope) {
 		if ( image == null ) {
 			try {
 				image = ImageUtils.getInstance().getImageFromFile(path);
@@ -90,23 +90,23 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 		}
 	}
 
-	public BufferedImage getImage(IScope scope) {
+	public BufferedImage getImage(final IScope scope) {
 		loadImage(scope);
 		return image;
 	}
 
-	public int getWidth(IScope scope) {
+	public int getWidth(final IScope scope) {
 		loadImage(scope);
 		return image.getWidth();
 	}
 
-	public int getHeight(IScope scope) {
+	public int getHeight(final IScope scope) {
 		loadImage(scope);
 		return image.getHeight();
 
 	}
 
-	private IMatrix matrixValueFromImage(IScope scope, final ILocation preferredSize) throws GamaRuntimeException {
+	private IMatrix matrixValueFromImage(final IScope scope, final ILocation preferredSize) throws GamaRuntimeException {
 		loadImage(scope);
 		int xSize, ySize;
 		if ( preferredSize == null ) {
@@ -121,7 +121,7 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 			g.dispose();
 			image = resultingImage;
 		}
-		final IMatrix matrix = new GamaIntMatrix(scope, xSize, ySize);
+		final IMatrix matrix = new GamaIntMatrix(xSize, ySize);
 		for ( int i = 0; i < xSize; i++ ) {
 			for ( int j = 0; j < ySize; j++ ) {
 				matrix.set(scope, i, j, image.getRGB(i, j));
@@ -130,7 +130,7 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 		return matrix;
 	}
 
-	private IMatrix matrixValueFromPgm(IScope scope, final GamaPoint preferredSize) throws GamaRuntimeException {
+	private IMatrix matrixValueFromPgm(final IScope scope, final GamaPoint preferredSize) throws GamaRuntimeException {
 		// TODO PreferredSize is not respected here
 		BufferedReader in = null;
 		try {
@@ -154,7 +154,7 @@ public class GamaImageFile extends GamaFile<GamaPoint, Integer> {
 			in.close();
 			str = buf.toString();
 			tok = new StringTokenizer(str);
-			final IMatrix matrix = new GamaIntMatrix(scope, xSize, ySize);
+			final IMatrix matrix = new GamaIntMatrix(xSize, ySize);
 			for ( int i = 0; i < xSize; i++ ) {
 				for ( int j = 0; j < ySize; j++ ) {
 					matrix.set(scope, j, i, Integer.valueOf(tok.nextToken()));

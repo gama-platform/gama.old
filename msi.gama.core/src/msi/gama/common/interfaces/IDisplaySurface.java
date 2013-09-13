@@ -148,7 +148,7 @@ public interface IDisplaySurface /* extends IPerspectiveListener, IPartListener 
 	 * @param swtNavigationPanel
 	 *            FIXME Create an interface for the navigqtion panel
 	 */
-	void setNavigator(Object swtNavigationPanel);
+	// void setNavigator(Object swtNavigationPanel);
 
 	/**
 	 * @return the width of the panel

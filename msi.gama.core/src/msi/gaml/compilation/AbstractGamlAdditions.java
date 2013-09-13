@@ -2,9 +2,10 @@ package msi.gaml.compilation;
 
 import static msi.gama.common.interfaces.IKeyword.*;
 import static msi.gaml.expressions.IExpressionCompiler.OPERATORS;
+import java.lang.reflect.Field;
 import java.util.*;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.JavaUtils;
+import msi.gama.common.util.*;
 import msi.gama.precompiler.*;
 import msi.gama.util.*;
 import msi.gaml.descriptions.*;
@@ -222,9 +223,32 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			keywords.remove(EXPERIMENT);
 		}
 
+		IDescriptionValidator validator = null;
+		try {
+			Field field = c.getField("VALIDATOR");
+			if ( field != null ) {
+				Class<IDescriptionValidator> clazz = (Class<IDescriptionValidator>) field.get(null);
+				validator = clazz.newInstance();
+			}
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			// e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		}
+
+		if ( validator != null ) {
+			GuiUtils.debug("## Individual validator found for " + c.getSimpleName());
+		}
+
 		SymbolProto md =
 			new SymbolProto(sequence, args, sKind, !scope, facets, omissible, combinations, contextKeywords,
-				contextKinds, remote, unique, name_unique, sc);
+				contextKinds, remote, unique, name_unique, sc, validator);
 		DescriptionFactory.addProto(md, keywords);
 	}
 

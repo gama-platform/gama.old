@@ -93,7 +93,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public GamaSpatialMatrix(final IScope scope, final IShape environment, final Integer cols, final Integer rows,
 		final boolean isTorus, final boolean usesVN, final boolean indiv, final boolean useNeighboursCache)
 		throws GamaRuntimeException {
-		super(scope, cols, rows);
+		super(cols, rows);
 		// GuiUtils.debug("GamaSpatialMatrix.GamaSpatialMatrix create new");
 		environmentFrame = environment.getGeometry();
 		bounds = environmentFrame.getEnvelope();
@@ -117,7 +117,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	public GamaSpatialMatrix(final IScope scope, final GamaGridFile gfile, final boolean isTorus, final boolean usesVN,
 		final boolean indiv, final boolean useNeighboursCache) throws GamaRuntimeException {
-		super(scope, 100, 100);
+		super(100, 100);
 		// GuiUtils.debug("GamaSpatialMatrix.GamaSpatialMatrix create new");
 		numRows = gfile.getNbRows(scope);
 		numCols = gfile.getNbCols(scope);
@@ -152,7 +152,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public GamaSpatialMatrix(final IScope scope, final IShape environment, final Integer cols, final Integer rows,
 		final boolean isTorus, final boolean usesVN, final boolean isHexagon, final boolean indiv,
 		final boolean useNeighboursCache) {
-		super(scope, cols, rows);
+		super(cols, rows);
 		// GuiUtils.debug("GamaSpatialMatrix.GamaSpatialMatrix create new");
 		environmentFrame = environment.getGeometry();
 		bounds = environmentFrame.getEnvelope();

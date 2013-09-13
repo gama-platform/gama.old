@@ -42,19 +42,15 @@ public class GuiUtils {
 	static IGui gui;
 
 	public static final String MONITOR_VIEW_ID = "msi.gama.application.view.MonitorView";
-	public static final String SPECIES_VIEW_ID = "msi.gama.application.view.SpeciesInspectView";
 	public static final String AGENT_VIEW_ID = "msi.gama.application.view.AgentInspectView";
-	public static final String DYNAMIC_VIEW_ID = "msi.gama.application.view.DynamicAgentInspectView";
 	public static final String TABLE_VIEW_ID = "msi.gama.application.view.TableAgentInspectView";
 	public static final String LAYER_VIEW_ID = "msi.gama.application.view.LayeredDisplayView";
-	public static final String SWT_LAYER_VIEW_ID = "msi.gama.application.view.SWTLayeredDisplayView";
 	public static final String ERROR_VIEW_ID = "msi.gama.application.view.ErrorView";
 	public static final String PARAMETER_VIEW_ID = "msi.gama.application.view.ParameterView";
 
 	public static final String GRAPHSTREAM_VIEW_ID = "msi.gama.networks.ui.GraphstreamView";
 	public static final String HPC_PERSPECTIVE_ID = "msi.gama.hpc.HPCPerspectiveFactory";
 
-	public static final String GL_VIEW_ID = "msi.gama.jogl.GLView";
 	private static boolean headlessMode = false;
 
 	public static boolean isInHeadLessMode() {

@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -29,13 +29,12 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gama.util.matrix.*;
 
-@type(name = IKeyword.MATRIX, id = IType.MATRIX, wraps = { IMatrix.class, GamaIntMatrix.class,
-	GamaFloatMatrix.class, GamaObjectMatrix.class }, kind = ISymbolKind.Variable.CONTAINER)
+@type(name = IKeyword.MATRIX, id = IType.MATRIX, wraps = { IMatrix.class, GamaIntMatrix.class, GamaFloatMatrix.class,
+	GamaObjectMatrix.class }, kind = ISymbolKind.Variable.CONTAINER)
 public class GamaMatrixType extends GamaContainerType<IMatrix> {
 
 	@Override
-	public IMatrix cast(final IScope scope, final Object obj, final Object param)
-		throws GamaRuntimeException {
+	public IMatrix cast(final IScope scope, final Object obj, final Object param) throws GamaRuntimeException {
 		if ( obj == null ) { return null; }
 		if ( param == null || !(param instanceof ILocation) ) {
 			if ( obj instanceof IContainer ) { return ((IContainer) obj).matrixValue(scope, null); }
@@ -43,22 +42,20 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 			return with(scope, obj);
 		}
 
-		if ( ((GamaPoint) param).getX() <= 0 || ((GamaPoint) param).getY() < 0 ) { throw GamaRuntimeException.error("Dimensions of a matrix should be positive."); }
+		if ( ((GamaPoint) param).getX() <= 0 || ((GamaPoint) param).getY() < 0 ) { throw GamaRuntimeException
+			.error("Dimensions of a matrix should be positive."); }
 
-		if ( obj instanceof IContainer ) { return ((IContainer) obj).matrixValue(scope,
-			(GamaPoint) param); }
+		if ( obj instanceof IContainer ) { return ((IContainer) obj).matrixValue(scope, (GamaPoint) param); }
 		if ( obj instanceof String ) { return from(scope, (String) obj, (GamaPoint) param); }
-		if ( obj instanceof Double ) { return with(scope, ((Double) obj).doubleValue(),
-			(GamaPoint) param); }
-		if ( obj instanceof Integer ) { return with(scope, ((Integer) obj).intValue(),
-			(GamaPoint) param); }
+		if ( obj instanceof Double ) { return with(scope, ((Double) obj).doubleValue(), (GamaPoint) param); }
+		if ( obj instanceof Integer ) { return with(scope, ((Integer) obj).intValue(), (GamaPoint) param); }
 		return with(scope, obj);
 	}
 
 	// Simplified pattern : only ';', ',', tab and white space are accepted
 	public static Pattern csvPattern = Pattern.compile(";|,|\t|\\s");
 
-	public static IMatrix from(IScope scope, final String string, final ILocation preferredSize)
+	public static IMatrix from(final IScope scope, final String string, final ILocation preferredSize)
 		throws GamaRuntimeException {
 
 		try {
@@ -87,7 +84,7 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 				lineSize = Math.min((int) preferredSize.getY(), allLines.size());
 				columnSize = Math.min((int) preferredSize.getX(), columns);
 			}
-			final IMatrix matrix = new GamaObjectMatrix(scope, columnSize, lineSize);
+			final IMatrix matrix = new GamaObjectMatrix(columnSize, lineSize);
 			for ( int i = 0; i < lineSize; i++ ) {
 				splitStr = allLines.get(i);
 				for ( int j = 0; j < splitStr.length; j++ ) {
@@ -101,29 +98,26 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 		}
 	}
 
-	public static IMatrix with(IScope scope, final Object val) throws GamaRuntimeException {
-		final IMatrix matrix = new GamaObjectMatrix(scope, 1, 1);
+	public static IMatrix with(final IScope scope, final Object val) throws GamaRuntimeException {
+		final IMatrix matrix = new GamaObjectMatrix(1, 1);
 		matrix.set(scope, 0, 0, val);
 		return matrix;
 	}
 
-	public static IMatrix with(IScope scope, final Object val, final GamaPoint p)
-		throws GamaRuntimeException {
-		final IMatrix matrix = new GamaObjectMatrix(scope, (int) p.x, (int) p.y);
+	public static IMatrix with(final IScope scope, final Object val, final GamaPoint p) throws GamaRuntimeException {
+		final IMatrix matrix = new GamaObjectMatrix((int) p.x, (int) p.y);
 		matrix.set(scope, 0, 0, val);
 		return matrix;
 	}
 
-	public static IMatrix with(IScope scope, final int val, final GamaPoint p)
-		throws GamaRuntimeException {
-		final IMatrix matrix = new GamaIntMatrix(scope, (int) p.x, (int) p.y);
+	public static IMatrix with(final IScope scope, final int val, final GamaPoint p) throws GamaRuntimeException {
+		final IMatrix matrix = new GamaIntMatrix((int) p.x, (int) p.y);
 		((GamaIntMatrix) matrix).fillWith(val);
 		return matrix;
 	}
 
-	public static IMatrix with(IScope scope, final double val, final GamaPoint p)
-		throws GamaRuntimeException {
-		final IMatrix matrix = new GamaFloatMatrix(scope, (int) p.x, (int) p.y);
+	public static IMatrix with(final IScope scope, final double val, final GamaPoint p) throws GamaRuntimeException {
+		final IMatrix matrix = new GamaFloatMatrix((int) p.x, (int) p.y);
 		((GamaFloatMatrix) matrix)._putAll(scope, val, null);
 		return matrix;
 	}

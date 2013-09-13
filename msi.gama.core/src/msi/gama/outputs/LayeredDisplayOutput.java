@@ -54,7 +54,7 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { LayeredDisplayOutput.JAVA2D,
-		LayeredDisplayOutput.OPENGL, LayeredDisplayOutput.THREED, LayeredDisplayOutput.SWT }, optional = true),
+		LayeredDisplayOutput.OPENGL, LayeredDisplayOutput.THREED }, optional = true),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.STENCIL, type = IType.BOOL, optional = true),
@@ -76,7 +76,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	public static final String JAVA2D = "java2D";
 	public static final String OPENGL = "opengl";
 	public static final String THREED = "3D";
-	public static final String SWT = "swt";
+	// public static final String SWT = "swt";
 
 	private List<AbstractLayerStatement> layers;
 	private Color backgroundColor = GamaPreferences.CORE_BACKGROUND.getValue();
@@ -104,7 +104,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private String displayType = GamaPreferences.CORE_DISPLAY.getValue().equalsIgnoreCase(JAVA2D) ? JAVA2D : OPENGL;
 	private ILocation imageDimension = new GamaPoint(-1, -1);
 	private ILocation output3DNbCycles = new GamaPoint(0, 0);
-	private boolean isSwt = false;
 	private double envWidth;
 	private double envHeight;
 
@@ -113,7 +112,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 		if ( hasFacet(IKeyword.TYPE) ) {
 			displayType = getLiteral(IKeyword.TYPE);
-			isSwt = displayType.equals(SWT);
 		}
 		layers = new GamaList<AbstractLayerStatement>();
 
@@ -266,9 +264,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		Envelope env = scope.getSimulationScope().getEnvelope();
 		this.envWidth = env.getWidth();
 		this.envHeight = env.getHeight();
-		if ( !isSwt ) {
-			createSurface(scope.getSimulationScope());
-		}
+		createSurface(scope.getSimulationScope());
 		return true;
 	}
 
@@ -418,11 +414,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	@Override
 	public String getViewId() {
-		return isSwt ? GuiUtils.SWT_LAYER_VIEW_ID : GuiUtils.LAYER_VIEW_ID;
-	}
-
-	public boolean isSWT() {
-		return this.isSwt;
+		return GuiUtils.LAYER_VIEW_ID;
 	}
 
 	public IDisplaySurface getSurface() {
