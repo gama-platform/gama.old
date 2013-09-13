@@ -127,7 +127,6 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		cellHeight = bounds.getHeight() / numRows;
 		precision = bounds.getWidth() / 1000;
 		final int size = gfile.length(scope);
-		gridValue = new double[size];
 		createMatrix(size);
 		supportImagePixels = new int[size];
 		referenceShape = GamaGeometryType.buildRectangle(cellWidth, cellHeight, new GamaPoint(0, 0));
@@ -177,6 +176,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	private void createMatrix(final int size) {
 		matrix = new IShape[size];
+		gridValue = new double[size];
 	}
 
 	private void createHexagons(final boolean partialCells) {
