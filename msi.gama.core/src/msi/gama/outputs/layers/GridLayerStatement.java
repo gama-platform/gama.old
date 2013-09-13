@@ -77,7 +77,7 @@ public class GridLayerStatement extends AbstractLayerStatement {
 	Boolean isTextured = true;
 	GamaFile textureFile = null;
 	Boolean isTriangulated = false;
-	Boolean isDrawnAsDEM= true;
+	Boolean isDrawnAsDEM= false;
 	Boolean showText = false;
 	GamaColor currentColor, constantColor;
 	int cellSize;
