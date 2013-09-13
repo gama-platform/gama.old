@@ -17,6 +17,7 @@ import msi.gama.util.*;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
+import msi.gaml.operators.Cast;
 import msi.gaml.species.GamlSpecies;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
@@ -309,7 +310,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 				pushed = currentScope.push(equaAgents.get(i));
 			}
 			try {
-				ydot[i] = Double.parseDouble("" + s.executeOn(currentScope));
+				ydot[i] = Cast.asFloat(currentScope, s.executeOn(currentScope));
 			} catch (final Exception ex1) {
 			} finally {
 

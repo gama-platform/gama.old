@@ -14,6 +14,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
+import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
@@ -87,7 +88,7 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 		GamaList integrate_val = new GamaList();
 
 		if ( getFacet("discretizing_step") != null ) {
-			discret = Integer.parseInt("" + getFacet("discretizing_step").value(scope));
+			discret = Cast.asInt(scope, getFacet("discretizing_step").value(scope));
 		}
 
 		
@@ -99,21 +100,21 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 		if ( s == null ) { return null; }
 		s.currentScope = scope;
 		if ( getFacet("cycle_length") != null ) {
-			cycle_length = Double.parseDouble("" + getFacet("cycle_length").value(scope));
+			cycle_length = Cast.asFloat(scope, getFacet("cycle_length").value(scope));
 		}
 		double step=1;
 		if ( getFacet(IKeyword.STEP) != null ) {			
-			step = Double.parseDouble("" + getFacet(IKeyword.STEP).value(scope));
+			step = Cast.asFloat(scope, getFacet(IKeyword.STEP).value(scope));
 		}
 
 		if ( method.equals("rk4") ) {
 			solver = new Rk4Solver(step, integrate_time, integrate_val);
 		} else if ( method.equals("dp853") && getFacet("min_step") != null && getFacet("max_step") != null &&
 			getFacet("scalAbsoluteTolerance") != null && getFacet("scalRelativeTolerance") != null ) {
-			double minStep = Double.parseDouble("" + getFacet("min_step").value(scope));
-			double maxStep = Double.parseDouble("" + getFacet("max_step").value(scope));
-			double scalAbsoluteTolerance = Double.parseDouble("" + getFacet("scalAbsoluteTolerance").value(scope));
-			double scalRelativeTolerance = Double.parseDouble("" + getFacet("scalRelativeTolerance").value(scope));
+			double minStep = Cast.asFloat(scope, getFacet("min_step").value(scope));
+			double maxStep = Cast.asFloat(scope, getFacet("max_step").value(scope));
+			double scalAbsoluteTolerance = Cast.asFloat(scope, getFacet("scalAbsoluteTolerance").value(scope));
+			double scalRelativeTolerance = Cast.asFloat(scope, getFacet("scalRelativeTolerance").value(scope));
 
 			solver =
 				new DormandPrince853Solver(minStep, maxStep, scalAbsoluteTolerance, scalRelativeTolerance,
@@ -124,11 +125,11 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 		
 		time_initial = scope.getClock().getCycle();
 		if ( getFacet("time_initial") != null ) {
-			time_initial = Double.parseDouble("" + getFacet("time_initial").value(scope));
+			time_initial = Cast.asFloat(scope, getFacet("time_initial").value(scope));
 		}
 		time_final = scope.getClock().getCycle() + 1;
 		if ( getFacet("time_final") != null ) {
-			time_final = Double.parseDouble("" + getFacet("time_final").value(scope));
+			time_final = Cast.asFloat(scope, getFacet("time_final").value(scope));
 		}
 
 		s.addExtern(getFacet(IKeyword.EQUATION).literalValue());

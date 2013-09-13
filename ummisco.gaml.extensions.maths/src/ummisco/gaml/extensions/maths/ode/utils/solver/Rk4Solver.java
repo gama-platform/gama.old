@@ -5,6 +5,8 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gaml.expressions.IVarExpression;
+import msi.gaml.operators.Cast;
+
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
 import org.apache.commons.math3.ode.sampling.*;
@@ -90,7 +92,7 @@ public class Rk4Solver extends Solver {
 					pushed = scope.push(eq.equaAgents.get(i));
 				}
 				try {
-					y[i] = Double.parseDouble("" + v.value(scope));
+					y[i] = Cast.asFloat(scope, v.value(scope));
 
 					final GamaList obj = new GamaList();
 					integrated_val.add(obj);
