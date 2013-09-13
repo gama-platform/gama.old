@@ -1,6 +1,6 @@
 model tutorial_gis_city_traffic
 
-import "model1.gaml"
+import "model0.gaml"
 
 global {
 	init {
