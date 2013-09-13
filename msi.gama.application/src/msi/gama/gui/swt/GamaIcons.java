@@ -21,7 +21,40 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * @since 12 sept. 2013
  * 
  */
-public class GamaIcons {
+public class GamaIcons implements IGamaIcons {
+
+	static String DEFAULT_PATH = "/icons/";
+
+	static Map<String, GamaIcon> icons = new HashMap();
+
+	static class GamaIcon {
+
+		static Map<String, Image> cache = new HashMap();
+
+		String code;
+		String path;
+		ImageDescriptor descriptor;
+
+		ImageDescriptor getImageDescriptor() {
+			if ( descriptor == null ) {
+				descriptor = getDescriptor(path);
+			}
+			return descriptor;
+		}
+
+		Image getImage() {
+			Image image = cache.get(code);
+			if ( image == null ) {
+				image = getImageDescriptor().createImage();
+				cache.put(code, image);
+			}
+			return image;
+		}
+	}
+
+	private static void declareIcons() {
+
+	}
 
 	public static Map<Class, Image> layer_images = new HashMap();
 	public static Map<String, Image> prefs_images = new LinkedHashMap();
@@ -117,7 +150,7 @@ public class GamaIcons {
 	 * @return the image descriptor
 	 */
 	public static ImageDescriptor getDescriptor(final String path) {
-		ImageDescriptor desc = AbstractUIPlugin.imageDescriptorFromPlugin(IGui.PLUGIN_ID, "/icons/" + path);
+		ImageDescriptor desc = AbstractUIPlugin.imageDescriptorFromPlugin(IGui.PLUGIN_ID, DEFAULT_PATH + path);
 		if ( desc == null ) {
 			GuiUtils.debug("ERROR: Cannot find icon " + path);
 			return getEclipseIconDescriptor(ISharedImages.IMG_OBJS_ERROR_TSK);

@@ -202,16 +202,6 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 		iGraphics.setHighlightColor(rgb);
 	}
 
-	/**
-	 * @see msi.gama.common.interfaces.IDisplaySurface#setNavigator(java.lang.Object)
-	 */
-	@Override
-	public void setNavigator(final Object nav) {
-		// if ( nav instanceof SWTNavigationPanel ) {
-		// navigator = (SWTNavigationPanel) nav;
-		// }
-	}
-
 	@Override
 	public void setSnapshotFileName(final String file) {
 		snapshotFileName = file;

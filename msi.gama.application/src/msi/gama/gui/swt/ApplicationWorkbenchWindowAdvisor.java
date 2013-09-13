@@ -93,6 +93,9 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 
 	@Override
 	public void postWindowOpen() {
+
+		// Removing unwanted wizards
+
 		final AbstractExtensionWizardRegistry wizardRegistry =
 			(AbstractExtensionWizardRegistry) PlatformUI.getWorkbench().getNewWizardRegistry();
 		final IWizardCategory[] categories =
@@ -106,7 +109,7 @@ public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor
 			}
 		}
 
-		// Menu manager
+		// Removing unwanted menus and menu items, moving around some menu items
 
 		final IWorkbenchWindow window = Workbench.getInstance().getActiveWorkbenchWindow();
 

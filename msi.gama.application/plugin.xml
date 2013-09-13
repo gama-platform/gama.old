@@ -46,14 +46,6 @@
       <view
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
-            class="msi.gama.gui.views.SpeciesInspectView"
-            icon="icons/display_species.png"
-            id="msi.gama.application.view.SpeciesInspectView"
-            name="Species">
-      </view>
-      <view
-            allowMultiple="false"
-            category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.MonitorView"
             icon="icons/view_monitors.png"
             id="msi.gama.application.view.MonitorView"
@@ -70,15 +62,6 @@
             restorable="false">
       </view>
       <view
-            allowMultiple="true"
-            category="msi.gama.gui.category.gama"
-            class="msi.gama.gui.views.SWTLayeredDisplayView"
-            icon="icons/view_layers.png"
-            id="msi.gama.application.view.SWTLayeredDisplayView"
-            name="DisplaySWT"
-            restorable="false">
-      </view>
-      <view
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.ExperimentParametersView"
@@ -86,14 +69,6 @@
             id="msi.gama.application.view.ParameterView"
             name="Parameters"
             restorable="true">
-      </view>
-      <view
-            allowMultiple="true"
-            category="msi.gama.gui.category.gama"
-            class="msi.gama.gui.views.DynamicAgentInspectView"
-            icon="icons/display_agents.png"
-            id="msi.gama.application.view.DynamicAgentInspectView"
-            name="Agent Dynamic Inspector">
       </view>
       <view
             allowMultiple="false"
@@ -719,13 +694,6 @@
             </visibleWhen>
          </command>
          <command
-               commandId="msi.gama.application.commands.OpenBrowser"
-               icon="platform:/plugin/msi.gama.application/icons/navigator/documentation.png"
-               label="Open documentation"
-               mnemonic="O"
-               style="push">
-         </command>
-         <command
                commandId="org.eclipse.ui.edit.text.openLocalFile"
                icon="platform:/plugin/msi.gama.application/icons/navigator/open_file.png"
                label="Open File..."
@@ -1028,14 +996,6 @@
       <handler
             class="msi.gama.gui.swt.commands.InspectAgentHandler"
             commandId="msi.gama.application.commands.InspectAgent">
-      </handler>
-      <handler
-            class="msi.gama.gui.swt.commands.InspectSpeciesHandler"
-            commandId="msi.gama.application.commands.InspectSpecies">
-      </handler>
-      <handler
-            class="msi.gama.gui.swt.commands.RunModel"
-            commandId="msi.gama.application.commands.RunModel">
       </handler>
       <handler
             class="msi.gama.gui.swt.commands.ErrorsPauseAndEdit"
@@ -1343,39 +1303,6 @@
             name="Show Agent Inspector">
       </command>
       <command
-            id="msi.gama.application.commands.InspectSpecies"
-            name="Show Species Inspector">
-      </command>
-      <command
-            id="msi.gama.application.view.Title"
-            name="Title of the active part">
-      </command>
-     <command
-            defaultHandler="msi.gama.gui.swt.commands.InspectDynamicAgentHandler"
-            id="msi.gama.application.commands.InspectDynamicAgent"
-            name="Show dynamic agent inspector">
-      </command>
-      <command
-            defaultHandler="msi.gama.gui.swt.commands.CollapseAll"
-            id="msi.gama.application.command.CollapseAll"
-            name="Collapse all">
-      </command>
-      <command
-            defaultHandler="msi.gama.gui.swt.commands.ExpandAll"
-            id="msi.gama.application.command.ExpandAll"
-            name="Expand all">
-      </command>
-      <command
-            defaultHandler="msi.gama.gui.swt.commands.CloseAll"
-            id="msi.gama.application.command.CloseAll"
-            name="Close all">
-      </command>
-      <command
-            defaultHandler="msi.gama.gui.navigator.commands.OpenBrowserHandler"
-            id="msi.gama.application.commands.OpenBrowser"
-            name="Open Html Browser">
-      </command>
-      <command
             defaultHandler="msi.gama.gui.navigator.commands.AskSvnGamaAccess"
             id="msi.gama.application.commands.AskSvnGamaAccess"
             name="Ask an access to Gama Svn">
@@ -1448,24 +1375,7 @@
             name="GAML Source"
             priority="high">
       </content-type>
-   </extension>
-      <extension
-         point="org.eclipse.ui.importWizards">
-      <category
-            id="msi.gama.gui.wizards.importWizards.GAMA"
-            name="GAMA">
-      </category>
-      <wizard
-            category="msi.gama.gui.wizards.importWizards.GAMA"
-            class="msi.gama.gui.wizards.imports.ImportWizard"
-            icon="platform:/plugin/msi.gama.application/icons/wizards/file.png"
-            id="msi.gama.gui.wizards.importWizards.ImportWizard"
-            name="Import File">
-         <description>
-            Import a file from the local file system into the workspace.
-         </description>
-      </wizard>
-   </extension>   <extension
+   </extension> <extension
          point="org.eclipse.ui.newWizards">
       <category
             id="msi.gama.gui.wizards.GAMA"
@@ -1474,15 +1384,15 @@
       <wizard
             category="msi.gama.gui.wizards.GAMA"
             class="msi.gama.gui.wizards.files.NewFileWizard"
-            icon="icons/wizards/file.png"
-            id="msi.gama.gui.wizards.wizards.SampleNewWizard"
+            icon="icons/navigator/new.png"
+            id="msi.gama.gui.wizards.NewFileWizard"
             name="Model file"
             project="false">
       </wizard>
       <wizard
             category="msi.gama.gui.wizards.GAMA"
             class="msi.gama.gui.wizards.projects.NewProjectWizard"
-            icon="icons/folder-horizontal-open.png"
+            icon="icons/folder_workspace.png"
             id="msi.gama.gui.wizards.newProjectWizard"
             name="Gama Project"
             project="true">

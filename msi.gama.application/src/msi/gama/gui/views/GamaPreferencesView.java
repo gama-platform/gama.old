@@ -185,14 +185,15 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		Composite group1 = new Composite(shell, SWT.BORDER);
 		group1.setLayout(new FillLayout());
 		final GridData gridDataGroup1 = new GridData(GridData.BEGINNING, GridData.END, true, false);
-		gridDataGroup1.widthHint = 200;
+		gridDataGroup1.widthHint = 300;
 		group1.setLayoutData(gridDataGroup1);
 
-		final Button buttonRevert = new Button(group1, SWT.PUSH);
-		buttonRevert.setText("Default");
+		final Button buttonRevert = new Button(group1, SWT.PUSH | SWT.FLAT);
+		buttonRevert.setText("Revert to defaults");
+		buttonRevert.setImage(GamaIcons.action_view_revert.createImage());
 		buttonRevert.setToolTipText("Restore default values for all preferences");
 
-		final Button buttonAdvanced = new Button(group1, SWT.PUSH);
+		final Button buttonAdvanced = new Button(group1, SWT.PUSH | SWT.FLAT);
 		buttonAdvanced.setText("Advanced...");
 		buttonAdvanced.setToolTipText("Access to advanced preferences");
 
