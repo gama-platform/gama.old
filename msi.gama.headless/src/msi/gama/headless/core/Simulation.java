@@ -110,7 +110,8 @@ public class Simulation  {
 			this.outputFile.writeSimulationHeader(this);
 		System.out.print("Simulation is running...");
 		long startdate = Calendar.getInstance().getTimeInMillis();
-		int affDelay = maxStep/100;
+		// int affDelay = maxStep/100;
+		int affDelay = maxStep < 100 ? 1 : maxStep /100;
 		for(;step<maxStep;step++)
 		{
 			if(step%affDelay == 0)

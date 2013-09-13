@@ -7,6 +7,8 @@
 model simple_ODE_SIR
 
 global {
+	int Num_N <- 1500 min: 1 max: 10000  parameter: 'Initial number of S: ' category: 'SIR' ;
+
 	init{
 		create agent_with_SIR_dynamic number:1;
 	}
@@ -14,7 +16,7 @@ global {
 
 entities {
 	species agent_with_SIR_dynamic {
-		int N <- 1500 ;
+		int N <- Num_N ;
 		int iInit <- 1;		
 
 	    float t;  
@@ -37,6 +39,11 @@ entities {
 	}
 }
 
+experiment maths_headless type: gui {
+   output {
+   }
+}
+
 experiment maths type: gui {
 	output { 
 		display display_charts refresh_every: 1 {
@@ -46,5 +53,7 @@ experiment maths type: gui {
 				data 'R' value: first(list(agent_with_SIR_dynamic)).R color: rgb('blue') ;
 			}
 		}
+		monitor number_of_S value: first(list(agent_with_SIR_dynamic)).S refresh_every: 1 ;
+
 	}
 }
