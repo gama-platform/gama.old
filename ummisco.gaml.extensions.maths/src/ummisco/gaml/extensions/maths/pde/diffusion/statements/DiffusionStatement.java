@@ -1,6 +1,8 @@
 package ummisco.gaml.extensions.maths.pde.diffusion.statements;
 
 import java.util.Arrays;
+
+import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -13,15 +15,19 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.matrix.IMatrix;
 import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IExpressionDescription;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
 
 @facets(value = { @facet(name = IKeyword.VAR, type = IType.ID, optional = false),
 	@facet(name = IKeyword.ON, type = IType.ID, optional = false),
-	@facet(name = "mat_diffu", type = IType.MATRIX, optional = false),
+	@facet(name = "mat_diffu", type = IType.MATRIX, optional = true),
 	@facet(name = IKeyword.METHOD, type = IType.ID, optional = true, values = { "convolution", "dot_product" }),
 	@facet(name = IKeyword.MASK, type = IType.MATRIX, optional = true),
+	@facet(name = "proportion", type = IType.FLOAT, optional = true),
+	@facet(name = "radius", type = IType.INT, optional = true),
 	@facet(name = IKeyword.CYCLE_LENGTH, type = IType.INT, optional = true) }, omissible = IKeyword.VAR)
 @symbol(name = { "diffusion" }, kind = ISymbolKind.SEQUENCE_STATEMENT, with_sequence = true)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SINGLE_STATEMENT, ISymbolKind.SPECIES, ISymbolKind.MODEL })
@@ -33,10 +39,27 @@ public class DiffusionStatement extends AbstractStatementSequence {
 
 		@Override
 		public void validate(final IDescription desc) {
-			System.err.println("DiffusionValidator.validate " + desc);
+			IExpression  spec=desc.getFacets().getExpr("on");
+			if(!desc.getSpeciesDescription(spec.getName()).isGrid()) {
+				desc.error("Diffusion can execute only on Grid",IGamlIssue.GENERAL);
+			}
+			
+			IExpressionDescription mat_diffu=desc.getFacets().get("mat_diffu");
+			IExpressionDescription propor=desc.getFacets().get("proportion");
+			IExpressionDescription radius=desc.getFacets().get("radius");
+			if(propor != null && mat_diffu != null) {
+				desc.error("\"mat_diffu:\" and \"proportion:\" can not be use at same time",IGamlIssue.GENERAL);				
+			}
+			
+			if(radius != null && propor == null) {
+				desc.error("\"radius:\" can be use only with \"proportion:\"",IGamlIssue.GENERAL);
+			}
+			
+//			System.err.println("DiffusionValidator.validate " + desc);
 
 		}
 	}
+	
 
 	private boolean is_torus = false;
 	private String var_diffu = "";
@@ -51,6 +74,7 @@ public class DiffusionStatement extends AbstractStatementSequence {
 		super(desc);
 		method_diffu = getLiteral(IKeyword.METHOD, "convolution").equals("convolution");
 		species_diffu = getLiteral(IKeyword.ON);
+		 
 	}
 
 	public void doDiffusion2(final IScope scope) {
@@ -103,8 +127,19 @@ public class DiffusionStatement extends AbstractStatementSequence {
 	int nbRows, nbCols;
 
 	public void initDiffusion(final IScope scope, final IPopulation pop) {
-
+		if(getFacet("proportion")!=null) {
+			double init_proportion=Cast.asFloat(scope, getFacet("proportion").value(scope));
+			int radius=1;
+			if(getFacet("radius")!=null) {
+				radius=Cast.asInt(scope, getFacet("radius").value(scope));				
+			}
+			mat_diffu=new double[radius * 2 + 1][radius * 2 + 1];
+			for(int i=0; i<=radius * 2; i++) {				
+				Arrays.fill(mat_diffu[i], init_proportion);
+			}
+		}
 		Arrays.fill(output, 0d);
+	
 
 		for ( int i = 0; i < input.length; i++ ) {
 			input[i] = Cast.asFloat(scope, pop.get(scope, i).getDirectVarValue(scope, var_diffu));
