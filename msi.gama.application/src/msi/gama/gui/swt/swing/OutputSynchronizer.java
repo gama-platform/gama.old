@@ -2,6 +2,7 @@ package msi.gama.gui.swt.swing;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
 import org.eclipse.ui.IWorkbenchPage;
 
@@ -86,6 +87,9 @@ public class OutputSynchronizer {
 
 	public static void cleanResize() {
 		final List<String> names = new ArrayList(viewsScheduledToBeActivated);
+		if ( !GamaPreferences.CORE_DISPLAY_ORDER.getValue() ) {
+			Collections.reverse(names);
+		}
 		viewsScheduledToBeActivated.clear();
 		for ( String name : names ) {
 			GuiUtils.debug("Activating :" + name);

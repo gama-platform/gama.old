@@ -308,6 +308,8 @@ public class GamaPreferences {
 		"Draw environment and 3D axes by default", true, IType.BOOL).in(DISPLAY).group("OpenGL");
 	public static final Entry<Boolean> CORE_SHOW_FPS =
 		create("core.show_fps", "Show fps by default", false, IType.BOOL).in(DISPLAY).group("OpenGL");
+	public static final Entry<Boolean> CORE_DISPLAY_ORDER = create("core.display_order",
+		"Stack displays on screen in the order of their definition", true, IType.BOOL).in(DISPLAY).group("Properties");;
 
 	private static void register(final Entry gp) {
 		IScope scope = GAMA.obtainNewScope();
