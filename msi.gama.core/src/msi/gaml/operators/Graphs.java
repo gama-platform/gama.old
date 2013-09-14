@@ -307,7 +307,7 @@ public class Graphs {
 	public static IGraph spatialFromEdges(final IScope scope, final GamaMap edges) {
 		// Edges are represented by pairs of vertex::vertex
 		
-		return GamaGraphType.from(scope, edges, true);
+		return GamaGraphType.from(scope, edges);
 	}
 
 	// @operator(value = "graph_from_vertices")
@@ -323,7 +323,7 @@ public class Graphs {
 		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelation(tolerance),
 			null, scope);
 	}
-
+ 
 	public static IGraph spatialLineIntersection(final IScope scope, final IContainer vertices) {
 		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelationLine(), null,
 			scope);

@@ -21,6 +21,7 @@ package msi.gaml.types;
 import java.util.Map;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.topology.graph.GamaSpatialGraph;
+import msi.gama.metamodel.topology.graph.ISpatialGraph;
 import msi.gama.precompiler.GamlAnnotations.type;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
@@ -39,31 +40,31 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 		return staticCast(scope, obj, param);
 	}
 
-	public static IGraph staticCast(final IScope scope, final Object obj, final Object param) {
+	public static ISpatialGraph staticCast(final IScope scope, final Object obj, final Object param) {
 		// param = true : spatial.
 
 		if ( obj == null ) { return null; }
-		if ( obj instanceof IGraph ) { return (IGraph) obj; }
+		if ( obj instanceof ISpatialGraph ) { return (ISpatialGraph) obj; }
 		boolean spatial = param != null && Cast.asBool(scope, param);
 
-		if ( obj instanceof IList ) { return from(scope, (IList) obj, spatial); }
+		if ( obj instanceof IList ) { return from(scope, (IList) obj)/*, spatial)*/; }
 		// List of agents, geometries...
 
 		if ( obj instanceof VariableExpression ) { // this may be a variable ?
 			// in this case, attempt to decode it !
-			return (IGraph) ((VariableExpression) obj).value(scope);
+			return (ISpatialGraph) ((VariableExpression) obj).value(scope);
 		}
 
-		if ( obj instanceof Map ) { return from(scope, (Map) obj, spatial); }
+		if ( obj instanceof Map ) { return from(scope, (Map) obj/*, spatial*/); }
 		// TODO Matrix, Pair ?
 
 		return null;
 	}
 
-	public static IGraph from(final IScope scope, final Map<?, ?> obj, final boolean spatial) {
-		IGraph result =
-			spatial ? new GamaSpatialGraph(new GamaList(), false, false, null, null, scope)
-				: new GamaGraph(new GamaList(), false, false, null, null, scope);
+	public static ISpatialGraph from(final IScope scope, final Map<?, ?> obj/*, final boolean spatial*/) {
+		ISpatialGraph result = new GamaSpatialGraph(new GamaList(), false, false, null, null, scope);
+			//spatial ? new GamaSpatialGraph(new GamaList(), false, false, null, null, scope)
+			//	: new GamaGraph(new GamaList(), false, false, null, null, scope);
 		GamaPair p = new GamaPair(null, null);
 		for ( Map.Entry<?, ?> k : obj.entrySet() ) {
 			p.key = k.getKey();
@@ -73,9 +74,9 @@ public class GamaGraphType extends GamaContainerType<IGraph> {
 		return result;
 	}
 
-	public static IGraph from(final IScope scope, final IList obj, final boolean spatial) {
-		return spatial ? new GamaSpatialGraph(obj, false, false, null, null, scope)
-			: new GamaGraph(obj, false, false, null, null, scope);
+	public static ISpatialGraph from(final IScope scope, final IList obj/*, final boolean spatial*/) {
+		return/* spatial ? */new GamaSpatialGraph(obj, false, false, null, null, scope);
+		//	: new GamaGraph(obj, false, false, null, null, scope);
 	}
 
 	public static IGraph asDirectedGraph(final IGraph source) {
