@@ -18,7 +18,6 @@ import java.util.List;
 import javax.swing.*;
 import javax.swing.text.JTextComponent;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.swt.swing.experimental.internal.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.events.*;

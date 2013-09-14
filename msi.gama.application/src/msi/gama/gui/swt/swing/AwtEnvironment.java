@@ -18,7 +18,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.List;
 import javax.swing.*;
-import msi.gama.gui.swt.swing.experimental.internal.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
 import org.eclipse.swt.graphics.*;
