@@ -1,7 +1,6 @@
 package msi.gama.headless.core;
 
 import java.util.Map;
-import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.headless.runtime.HeadlessListener;
 import msi.gama.kernel.experiment.*;
@@ -9,12 +8,11 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.lang.gaml.GamlStandaloneSetup;
 import msi.gama.lang.gaml.resource.GamlResource;
 import msi.gama.lang.gaml.validation.GamlJavaValidator;
-import msi.gama.outputs.IOutputManager;
 import msi.gama.runtime.GAMA;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamaBundleLoader;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.*;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import com.google.inject.Injector;
 
@@ -33,12 +31,12 @@ public class HeadlessSimulationLoader {
 		preloadGAMA();
 		IModel model = loadModel(fileName);
 		IExperimentSpecies tt = model.getExperiment(expName);
-		
-		//IHeadLessExperiment exp = (IHeadLessExperiment) model.getExperiment("preyPred");;
+
+		// IHeadLessExperiment exp = (IHeadLessExperiment) model.getExperiment("preyPred");;
 		ExperimentSpecies exp = (ExperimentSpecies) model.getExperiment(expName);
-		
-		HeadLessExperiment hexp=new HeadLessExperiment(exp);
-		//System.out.println("coucouc " + "  pouet " + tt.getClass().getName());
+
+		HeadLessExperiment hexp = new HeadLessExperiment(exp);
+		// System.out.println("coucouc " + "  pouet " + tt.getClass().getName());
 
 		/*
 		 * for (ISpecies sp : ((GamlModelSpecies)model).getExperiments()) {
@@ -63,26 +61,26 @@ public class HeadlessSimulationLoader {
 	 * @throws GamaRuntimeException
 	 * @throws InterruptedException
 	 */
-	public static ExperimentSpecies newHeadlessSimulation(final String fileName, final String expName, final ParametersSet params)
-		throws GamaRuntimeException {
+	public static ExperimentSpecies newHeadlessSimulation(final String fileName, final String expName,
+		final ParametersSet params) throws GamaRuntimeException {
 		// FIXME Verify all this.
-		ExperimentSpecies exp = newHeadlessSimulation(fileName,expName);
-		
-//		exp.;
+		ExperimentSpecies exp = newHeadlessSimulation(fileName, expName);
+
+		// exp.;
 
 		for ( Map.Entry<String, Object> entry : params.entrySet() ) {
 			exp.setParameterValue(entry.getKey(), entry.getValue());
 		}
 		// FIXME ???
-		 //exp.;
+		// exp.;
 		exp.open();
-//		IOutputManager outputs = exp.getExperimentOutputs();
-//		if ( outputs != null ) {
-//			GAMA.controller.getScheduler().schedule(outputs, exp.getExperimentScope());
-//		}
-		
+		// IOutputManager outputs = exp.getExperimentOutputs();
+		// if ( outputs != null ) {
+		// GAMA.controller.getScheduler().schedule(outputs, exp.getExperimentScope());
+		// }
+
 		waitLoading(exp);
-		
+
 		return exp;
 
 	}
@@ -122,28 +120,33 @@ public class HeadlessSimulationLoader {
 		IModel lastModel = null;
 		ResourceSet rs = new ResourceSetImpl();
 		GamlResource r = (GamlResource) rs.getResource(URI.createURI("file:///" + fileName), true);
-		try {
-			// GamlJavaValidator validator = new GamlJavaValidator(); //(GamlJavaValidator)
-			// injector.getInstance(EValidator.class);
+		if ( r != null && r.getErrors().isEmpty() ) {
+			try {
 
-			GamlJavaValidator validator = injector.getInstance(GamlJavaValidator.class);
-			lastModel = validator.build(r);
-			if ( !r.getErrors().isEmpty() ) {
-				lastModel = null;
-				// System.out.println("End compilation of " + m.getName());
+				GamlJavaValidator validator = injector.getInstance(GamlJavaValidator.class);
+				lastModel = validator.build(r);
+				if ( !r.getErrors().isEmpty() ) {
+					lastModel = null;
+					System.out.println("GAMA cannot build model " + fileName);
+					for ( Resource.Diagnostic d : r.getErrors() ) {
+						System.out.println(">> Error " + d.getMessage());
+					}
+				}
+
+			} catch (GamaRuntimeException e1) {
+				System.out.println("Exception during compilation:" + e1.getMessage());
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				// collectErrors(collect);
+				// fireBuildEnded(m, lastModel);
 			}
-
-		} catch (GamaRuntimeException e1) {
-			System.out.println("Exception during compilation:" + e1.getMessage());
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			// collectErrors(collect);
-			// fireBuildEnded(m, lastModel);
+			// FIXME Experiment default no longer exists. Needs to specify one name
+			GAMA.controller.newExperiment("preyPred", lastModel);
+			System.out.println("Experiment created ");
+		} else {
+			System.out.println("Xtext cannot parse model " + fileName);
 		}
-		// FIXME Experiment default no longer exists. Needs to specify one name
-		GAMA.controller.newExperiment("preyPred", lastModel);
-		System.out.println("Experiment created ");
 		return lastModel;
 	}
 
