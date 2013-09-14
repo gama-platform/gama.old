@@ -131,4 +131,6 @@ public interface IGui {
 
 	void cleanAfterSimulation();
 
+	void waitForViewsToBeInitialized();
+
 }

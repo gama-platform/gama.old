@@ -23,7 +23,7 @@ import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.outputs.OutputSynchronizer;
+import msi.gama.gui.swt.swing.experimental.core.OutputSynchronizer;
 import msi.gaml.operators.Maths;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;

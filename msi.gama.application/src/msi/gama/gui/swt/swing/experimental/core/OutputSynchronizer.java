@@ -1,21 +1,15 @@
-package msi.gama.outputs;
+package msi.gama.gui.swt.swing.experimental.core;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import msi.gama.common.util.GuiUtils;
 
 public class OutputSynchronizer {
 
 	// TODO Rewrite this with locks / semaphores
 
-	private static volatile AtomicInteger NumberOpeningViews = new AtomicInteger(
-			0);
-	private static volatile AtomicInteger NumberClosingViews = new AtomicInteger(
-			0);
+	private static volatile AtomicInteger NumberOpeningViews = new AtomicInteger(0);
+	private static volatile AtomicInteger NumberClosingViews = new AtomicInteger(0);
 
 	static Set<String> viewsScheduledToOpen = new LinkedHashSet();
 	static Set<String> viewsScheduledToClose = new LinkedHashSet();
@@ -44,25 +38,23 @@ public class OutputSynchronizer {
 
 	public static void decInitializingViews(final String view) {
 		// GuiUtils.debug("GuiOutputManager.decInitializingViews: " + view);
-		viewsScheduledToOpen.remove(view);
+		// viewsScheduledToOpen.remove(view);
 		NumberOpeningViews.decrementAndGet();
 	}
 
 	public static void waitForViewsToBeInitialized() {
 		while (getNumberOfViewsWaitingToOpen() > 0) {
 			try {
-				GuiUtils.waitStatus("Initializing "
-						+ getNumberOfViewsWaitingToOpen() + " display(s)");
-				if (getNumberOfViewsWaitingToOpen() > 0) {
+				GuiUtils.waitStatus("Initializing " + getNumberOfViewsWaitingToOpen() + " display(s)");
+				if ( getNumberOfViewsWaitingToOpen() > 0 ) {
 					// Workaround for OpenGL views. Necessary to "show" the view
-					// even briefly so that OpenGL can call  the init() method of the renderer
-					final List<String> names = new ArrayList(
-							viewsScheduledToOpen);
+					// even briefly so that OpenGL can call the init() method of the renderer
+					final List<String> names = new ArrayList(viewsScheduledToOpen);
+					// Collections.reverse(names);
 					GuiUtils.showView(GuiUtils.LAYER_VIEW_ID, names.get(0));
 				}
 				Thread.sleep(100);
-			} catch (final InterruptedException e) {
-			}
+			} catch (final InterruptedException e) {}
 		}
 		cleanResize();
 	}
@@ -88,10 +80,12 @@ public class OutputSynchronizer {
 	}
 
 	public static void cleanResize() {
-		for (Runnable r : cleanResizers) {
+		for ( Runnable r : cleanResizers ) {
 			GuiUtils.run(r);
 		}
 		cleanResizers.clear();
+		GuiUtils.showView(GuiUtils.LAYER_VIEW_ID, new ArrayList<String>(viewsScheduledToOpen).get(0));
+		viewsScheduledToOpen.clear();
 	}
 
 }

@@ -30,7 +30,7 @@ import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.swt.controls.*;
 import msi.gama.gui.swt.perspectives.ModelingPerspective;
-import msi.gama.gui.swt.swing.experimental.core.SwingControl;
+import msi.gama.gui.swt.swing.experimental.core.*;
 import msi.gama.metamodel.shape.GamaPoint;
 import msi.gama.outputs.*;
 import msi.gaml.descriptions.IDescription;

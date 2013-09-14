@@ -393,4 +393,9 @@ public class GuiUtils {
 		gui.updateParameterView(exp);
 	}
 
+	public static void waitForViewsToBeInitialized() {
+		if ( gui == null ) { return; }
+		gui.waitForViewsToBeInitialized();
+	}
+
 }
