@@ -36,8 +36,10 @@ public class GamaToolbarFactory implements IGamaViewActions {
 				return new DisplayedAgentsMenu(view);
 			case NEW_MONITOR:
 				return new NewMonitorItem(view);
-				// case LAYERS:
-				// return new LayersItem(view);
+			case OVERLAY:
+				return new OverlayItem(view);
+			case SIDEBAR:
+				return new SideBarItem(view);
 			case REFRESH:
 				return new FrequencyItem(view);
 			case SAVE:

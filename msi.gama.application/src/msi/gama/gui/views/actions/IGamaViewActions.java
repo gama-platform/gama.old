@@ -42,4 +42,5 @@ public interface IGamaViewActions {
 	public final static int OPENGL = 26;
 	public final static int INERTIA = 27;
 	public final static int CLEAR = 28;
+	public final static int SIDEBAR = 29;
 }

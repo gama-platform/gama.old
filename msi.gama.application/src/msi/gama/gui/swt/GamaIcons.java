@@ -59,6 +59,9 @@ public class GamaIcons implements IGamaIcons {
 	public static Map<Class, Image> layer_images = new HashMap();
 	public static Map<String, Image> prefs_images = new LinkedHashMap();
 
+	public static ImageDescriptor action_overlay = getDescriptor("display.overlay.png");
+	public static ImageDescriptor action_sidebar = getDescriptor("display.sidebar.png");
+
 	public static final ImageDescriptor action_drag = getDescriptor("blender_drag.png");
 	public static final ImageDescriptor action_camera = getDescriptor("blender_camera.png");
 	public static final ImageDescriptor action_erase = getDescriptor("button_clear.png");

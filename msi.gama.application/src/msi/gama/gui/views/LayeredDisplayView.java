@@ -36,7 +36,6 @@ import msi.gama.outputs.*;
 import msi.gaml.descriptions.IDescription;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -64,8 +63,9 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	protected Integer[] getToolbarActionsId() {
 		IDescription description = output.getDescription();
 		if ( description.getFacets().equals("type", "opengl") || description.getFacets().equals("type", "3D") ) { return new Integer[] {
-			PAUSE, REFRESH, SYNC, SNAP, SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT, SEP, FOCUS, OPENGL }; }
-		return new Integer[] { PAUSE, REFRESH, SYNC, SNAP, SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT, SEP, FOCUS };
+			PAUSE, REFRESH, SYNC, SNAP, SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT, SEP, FOCUS, OPENGL, SEP, SIDEBAR, OVERLAY }; }
+		return new Integer[] { PAUSE, REFRESH, SYNC, SNAP, SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT, SEP, FOCUS, SEP, SIDEBAR,
+			OVERLAY };
 	}
 
 	public ILayerManager getDisplayManager() {
@@ -152,6 +152,11 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		getOutput().getSurface().setQualityRendering(GamaPreferences.CORE_SYNC.getValue());
 	}
 
+	@Override
+	public void setFocus() {
+
+	}
+
 	protected Composite createSurfaceComposite() {
 
 		// TODO do a test to know whether or not we are in a "simple" chart environment ?
@@ -191,13 +196,13 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 			@Override
 			public void mouseMoved(final java.awt.event.MouseEvent e) {
-				GuiUtils.run(new Runnable() {
-
-					@Override
-					public void run() {
-						monitorMouseMove(e.getPoint().x, e.getPoint().y);
-					}
-				});
+				// GuiUtils.run(new Runnable() {
+				//
+				// @Override
+				// public void run() {
+				// monitorMouseMove(e.getPoint().x, e.getPoint().y);
+				// }
+				// });
 				GuiUtils.asyncRun(displayOverlay);
 			}
 
@@ -240,7 +245,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 
 			@Override
 			public boolean isAWTPermanentFocusLossForced() {
-				return true;
+				return false;
 			}
 
 			@Override
@@ -261,23 +266,23 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		};
 
 		// TODO Temporarily disabled
-		surfaceComposite.addMouseMoveListener(new MouseMoveListener() {
-
-			@Override
-			public void mouseMove(final MouseEvent e) {
-				monitorMouseMove(e.x, e.y);
-			}
-
-		});
-
-		surfaceComposite.addMouseTrackListener(new MouseTrackAdapter() {
-
-			@Override
-			public void mouseEnter(final MouseEvent e) {
-				GuiUtils.asyncRun(forceFocus);
-			}
-
-		});
+		// surfaceComposite.addMouseMoveListener(new MouseMoveListener() {
+		//
+		// @Override
+		// public void mouseMove(final MouseEvent e) {
+		// monitorMouseMove(e.x, e.y);
+		// }
+		//
+		// });
+		//
+		// surfaceComposite.addMouseTrackListener(new MouseTrackAdapter() {
+		//
+		// @Override
+		// public void mouseEnter(final MouseEvent e) {
+		// forceFocus.run();
+		// }
+		//
+		// });
 
 		// FIXME Hack to create a menu displayable on SWT
 		new DisplaySurfaceMenu(getOutput().getSurface(), surfaceComposite, this);
@@ -730,11 +735,6 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		// overlay.toggle();
 	}
 
-	@Override
-	public void setFocus() {
-		surfaceComposite.setFocus();
-	}
-
 	public String getOverlayText() {
 		IDisplaySurface surface = getOutput().getSurface();
 		boolean paused = surface.isPaused();
@@ -773,6 +773,20 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 		int displayWidth = getOutput().getSurface().getDisplayWidth();
 		double envWidth = getOutput().getSurface().getEnvWidth();
 		return envWidth / displayWidth;
+	}
+
+	/**
+	 * 
+	 */
+	public void toggleSideBar() {
+		this.layersOverlay.toggle();
+	}
+
+	/**
+	 * 
+	 */
+	public void toggleOverlay() {
+		this.overlay.toggle();
 	}
 
 }
