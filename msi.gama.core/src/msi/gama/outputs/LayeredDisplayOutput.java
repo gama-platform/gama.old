@@ -36,8 +36,8 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
-import msi.gaml.compilation.ISymbol;
-import msi.gaml.descriptions.IDescription;
+import msi.gaml.compilation.*;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.types.*;
@@ -72,6 +72,55 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.OUTPUT3D, type = { IType.BOOL, IType.POINT }, optional = true) }, omissible = IKeyword.NAME)
 @inside(symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
 public class LayeredDisplayOutput extends AbstractDisplayOutput {
+
+	public static final Class VALIDATOR = InfoValidator.class;
+
+	public static class InfoValidator implements IDescriptionValidator {
+
+		/**
+		 * Method validate()
+		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
+		 */
+		@Override
+		public void validate(final IDescription d) {
+			IExpressionDescription auto = d.getFacets().get(IKeyword.AUTOSAVE);
+			if ( auto != null && auto.getExpression().isConst() &&
+				auto.getExpression().literalValue().equals(IKeyword.TRUE) ) {
+				d.info(
+					"With autosave enabled, GAMA must remain the frontmost window and the display must not be covered or obscured by other windows",
+					IGamlIssue.GENERAL, auto.getTarget(), IKeyword.AUTOSAVE);
+			}
+			// Are we in OpenGL world ?
+			IExpressionDescription type = d.getFacets().get(IKeyword.TYPE);
+			Boolean isOpenGLDefault = GamaPreferences.CORE_DISPLAY.getValue().equals("OpenGL");
+			Boolean isOpenGLWanted =
+				type == null ? isOpenGLDefault : type.getExpression().literalValue()
+					.equals(LayeredDisplayOutput.OPENGL);
+
+			if ( !isOpenGLWanted ) { return; }
+
+			// Do we display a grid ?
+
+			Boolean gridDisplayed = false;
+			for ( IDescription desc : d.getChildren() ) {
+				if ( desc.getKeyword().equals(IKeyword.GRID_POPULATION) ) {
+					gridDisplayed = true;
+					break;
+				}
+			}
+			if ( !gridDisplayed ) { return; }
+			IExpressionDescription zfight = d.getFacets().get(IKeyword.ZFIGHTING);
+			Boolean zFightDefault = GamaPreferences.CORE_Z_FIGHTING.getValue();
+			Boolean zFightWanted =
+				zfight == null ? zFightDefault : zfight.getExpression().literalValue().equals(IKeyword.TRUE);
+			if ( zFightWanted ) {
+				String prefs = zFightDefault ? "(enabled by default in the Preferences)" : "";
+				d.info("z_fighting " + prefs +
+					" improves the rendering, but disables the selection of a single cell in a grid layer",
+					IGamlIssue.GENERAL, zfight == null ? null : zfight.getTarget(), IKeyword.AUTOSAVE);
+			}
+		}
+	}
 
 	public static final String JAVA2D = "java2D";
 	public static final String OPENGL = "opengl";
