@@ -76,8 +76,8 @@ public class ModelFactory extends SymbolFactory {
 		if ( species == null ) { return; }
 		species.copyJavaAdditions();
 		// GuiUtils.debug("++++++ Building variables & behaviors of " + species.getName());
-		final List<SyntacticElement> subspecies = new ArrayList();
-		for ( final SyntacticElement child : node.getChildren() ) {
+		final List<ISyntacticElement> subspecies = new ArrayList();
+		for ( final ISyntacticElement child : node.getChildren() ) {
 			if ( !child.isExperiment() && !child.isSpecies() ) {
 				final IDescription childDesc = create(child, species);
 				if ( childDesc != null ) {
@@ -131,7 +131,7 @@ public class ModelFactory extends SymbolFactory {
 		// }
 	}
 
-	public void addSpeciesNode(final SyntacticElement element, final Map<String, SyntacticElement> speciesNodes,
+	public void addSpeciesNode(final ISyntacticElement element, final Map<String, ISyntacticElement> speciesNodes,
 		final ErrorCollector collector) {
 		String name = element.getName();
 		if ( speciesNodes.containsKey(name) ) {
@@ -144,24 +144,24 @@ public class ModelFactory extends SymbolFactory {
 	}
 
 	public ModelDescription assemble(final String projectPath, final String modelPath,
-		final List<SyntacticElement> models) {
+		final List<ISyntacticElement> models) {
 		// GuiUtils.debug("ModelFactory.assemble BEGIN " + modelPath);
-		final Map<String, SyntacticElement> speciesNodes = new LinkedHashMap();
-		final List<SyntacticElement> experimentNodes = new ArrayList();
+		final Map<String, ISyntacticElement> speciesNodes = new LinkedHashMap();
+		final List<ISyntacticElement> experimentNodes = new ArrayList();
 		final ISyntacticElement globalNodes = SyntacticFactory.create(GLOBAL, (EObject) null);
 		ErrorCollector collector = new ErrorCollector();
 		final Facets globalFacets = new Facets();
-		final List<SyntacticElement> otherNodes = new ArrayList();
+		final List<ISyntacticElement> otherNodes = new ArrayList();
 		final ISyntacticElement source = models.get(0);
 		ISyntacticElement lastGlobalNode = source;
 		for ( int n = models.size(), i = n - 1; i >= 0; i-- ) {
 			final ISyntacticElement e = models.get(i);
 			if ( e != null ) {
-				for ( final SyntacticElement se : e.getChildren() ) {
+				for ( final ISyntacticElement se : e.getChildren() ) {
 					if ( se.isGlobal() ) {
 						// We build the facets resulting from the different arguments
 						globalFacets.putAll(se.copyFacets());
-						for ( final SyntacticElement ge : se.getChildren() ) {
+						for ( final ISyntacticElement ge : se.getChildren() ) {
 							if ( ge.isSpecies() ) {
 								addSpeciesNode(ge, speciesNodes, collector);
 							} else if ( ge.isExperiment() ) {

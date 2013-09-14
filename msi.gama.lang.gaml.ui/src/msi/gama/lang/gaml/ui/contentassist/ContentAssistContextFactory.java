@@ -37,7 +37,7 @@ public class ContentAssistContextFactory extends StatefulFactory {
 	}
 
 	Map<AbstractElement, Integer> recurse = new LinkedHashMap();
-	boolean stop = true;
+	boolean stop = false;
 
 	/**
 	 * Workaround for a bug manifesting itself as an infinite recursion over an AlternativesImpl element.

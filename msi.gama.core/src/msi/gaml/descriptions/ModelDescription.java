@@ -42,9 +42,9 @@ public class ModelDescription extends SpeciesDescription {
 	private final Map<String, ExperimentDescription> titledExperiments = new LinkedHashMap();
 	private IDescription output;
 	final TypesManager types;
-	private String modelFilePath;
-	private String modelFolderPath;
-	private String modelProjectPath;
+	private final String modelFilePath;
+	private final String modelFolderPath;
+	private final String modelProjectPath;
 	private boolean isTorus = false;
 	private final ErrorCollector collect;
 
@@ -60,8 +60,12 @@ public class ModelDescription extends SpeciesDescription {
 		types =
 			new TypesManager(parent instanceof ModelDescription ? ((ModelDescription) parent).types
 				: Types.builtInTypes);
-		setModelFilePath(projectPath, modelPath);
+		modelFilePath = modelPath;
+		modelFolderPath = new File(modelPath).getParent();
+		modelProjectPath = projectPath;
 		collect = collector;
+		System.out.println("Model description created with file path " + modelFilePath + "; project path " +
+			modelProjectPath);
 	}
 
 	public void setTorus(final boolean b) {
@@ -101,21 +105,6 @@ public class ModelDescription extends SpeciesDescription {
 		}
 	}
 
-	// /**
-	// * @see org.eclipse.emf.common.notify.Adapter#notifyChanged(org.eclipse.emf.common.notify.Notification)
-	// */
-	// @Override
-	// public void notifyChanged(final Notification notification) {}
-	//
-	// @Override
-	// public void unsetTarget(final Notifier object) {
-	// // Normally sent when the EObject is destroyed or no longer accepts the current description
-	// // as an adapter. In that case, whe should dispose the model description (the underlying
-	// // model has changed or been garbaged)
-	// // GuiUtils.debug("Removing: " + this + " from its EObject " + object);
-	// this.dispose();
-	// }
-
 	/**
 	 * Gets the model file name.
 	 * 
@@ -133,12 +122,6 @@ public class ModelDescription extends SpeciesDescription {
 		return modelProjectPath;
 	}
 
-	public void setModelFilePath(final String projectPath, final String filePath) {
-		modelFilePath = filePath;
-		modelFolderPath = new File(filePath).getParent();
-		modelProjectPath = projectPath;
-	}
-
 	/**
 	 * Create types from the species descriptions
 	 */
@@ -147,7 +130,6 @@ public class ModelDescription extends SpeciesDescription {
 	}
 
 	public void addSpeciesType(final TypeDescription species) {
-		// GuiUtils.debug("ModelDescription.addSpeciesType " + species.getName() + " in " + getName());
 		types.addSpeciesType(species);
 	}
 

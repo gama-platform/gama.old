@@ -70,8 +70,8 @@ public class SyntacticElement implements ISyntacticElement {
 		if ( !getChildren().isEmpty() ) {
 			sb.append('[');
 		}
-		for ( SyntacticElement elt : getChildren() ) {
-			elt.dump(sb);
+		for ( ISyntacticElement elt : getChildren() ) {
+			((SyntacticElement) elt).dump(sb);
 		}
 		if ( !getChildren().isEmpty() ) {
 			sb.append(']');
@@ -111,15 +111,15 @@ public class SyntacticElement implements ISyntacticElement {
 	}
 
 	@Override
-	public List<SyntacticElement> getChildren() {
+	public List<ISyntacticElement> getChildren() {
 		return children == null ? Collections.EMPTY_LIST : children;
 	}
 
 	@Override
-	public List<SyntacticElement> getSpeciesChildren() {
+	public List<ISyntacticElement> getSpeciesChildren() {
 		if ( !isSpecies() && !isGlobal() || children == null ) { return Collections.EMPTY_LIST; }
-		List<SyntacticElement> result = new ArrayList();
-		for ( SyntacticElement e : getChildren() ) {
+		List<ISyntacticElement> result = new ArrayList();
+		for ( ISyntacticElement e : getChildren() ) {
 			if ( e.isSpecies() || e.isExperiment() ) {
 				result.add(e);
 			}

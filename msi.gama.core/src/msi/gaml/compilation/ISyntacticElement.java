@@ -38,9 +38,9 @@ public interface ISyntacticElement {
 
 	public abstract void setFacet(final String string, final IExpressionDescription expr);
 
-	public abstract List<SyntacticElement> getChildren();
+	public abstract List<ISyntacticElement> getChildren();
 
-	public abstract List<SyntacticElement> getSpeciesChildren();
+	public abstract List<ISyntacticElement> getSpeciesChildren();
 
 	public abstract String getName();
 
