@@ -9,7 +9,7 @@ import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
-import msi.gama.gui.swt.swing.experimental.core.OutputSynchronizer;
+import msi.gama.gui.swt.swing.OutputSynchronizer;
 import msi.gama.outputs.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.GAMA.InScope;

@@ -9,7 +9,7 @@
  *     SAS Institute Inc. - initial API and implementation
  *     ILOG S.A. - initial API and implementation
  *******************************************************************************/
-package msi.gama.gui.swt.swing.experimental.internal;
+package msi.gama.gui.swt.swing;
 
 import java.awt.AWTKeyStroke;
 import java.awt.Component;
@@ -27,8 +27,7 @@ import java.util.Set;
 import javax.swing.text.Caret;
 import javax.swing.text.JTextComponent;
 
-import msi.gama.gui.swt.swing.experimental.core.SwingControl;
-import msi.gama.gui.swt.swing.experimental.core.ThreadingHandler;
+import msi.gama.gui.swt.swing.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;

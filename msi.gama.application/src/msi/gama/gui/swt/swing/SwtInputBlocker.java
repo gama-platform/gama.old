@@ -9,11 +9,10 @@
  *     SAS Institute Inc. - initial API and implementation
  *     ILOG S.A. - initial API and implementation
  *******************************************************************************/
-package msi.gama.gui.swt.swing.experimental.internal;
+package msi.gama.gui.swt.swing;
 
 import java.util.Stack;
 
-import msi.gama.gui.swt.swing.experimental.core.ThreadingHandler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;

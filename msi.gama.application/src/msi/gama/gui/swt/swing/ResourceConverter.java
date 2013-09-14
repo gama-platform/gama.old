@@ -9,7 +9,7 @@
  *     SAS Institute Inc. - initial API and implementation
  *     ILOG S.A. - initial API and implementation
  *******************************************************************************/
-package msi.gama.gui.swt.swing.experimental.core;
+package msi.gama.gui.swt.swing;
 
 import java.awt.Toolkit;
 

@@ -9,7 +9,7 @@
  *     SAS Institute Inc. - initial API and implementation
  *     ILOG S.A. - initial API and implementation
  *******************************************************************************/
-package msi.gama.gui.swt.swing.experimental.internal;
+package msi.gama.gui.swt.swing;
 
 import java.awt.AWTEvent;
 import java.awt.Component;
@@ -27,8 +27,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
-import msi.gama.gui.swt.swing.experimental.core.SwingControl;
-import msi.gama.gui.swt.swing.experimental.core.ThreadingHandler;
+import msi.gama.gui.swt.swing.*;
 import org.eclipse.swt.widgets.Display;
 
 /**

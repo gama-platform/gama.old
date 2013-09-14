@@ -1,4 +1,4 @@
-package msi.gama.gui.swt.swing.experimental.internal;
+package msi.gama.gui.swt.swing;
 
 import java.awt.Component;
 import java.awt.EventQueue;
@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import msi.gama.gui.swt.swing.experimental.core.SwingControl;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;

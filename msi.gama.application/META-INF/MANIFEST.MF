@@ -39,5 +39,5 @@ Export-Package: msi.gama.gui.displays.awt,
  msi.gama.gui.parameters,
  msi.gama.gui.swt,
  msi.gama.gui.swt.perspectives,
- msi.gama.gui.swt.swing.experimental.core,
+ msi.gama.gui.swt.swing,
  msi.gama.gui.views

@@ -27,7 +27,7 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
-import msi.gama.gui.swt.swing.experimental.core.OutputSynchronizer;
+import msi.gama.gui.swt.swing.OutputSynchronizer;
 import msi.gama.gui.views.*;
 import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.kernel.simulation.SimulationAgent;

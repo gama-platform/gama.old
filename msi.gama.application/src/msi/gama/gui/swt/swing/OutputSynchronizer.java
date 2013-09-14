@@ -1,4 +1,4 @@
-package msi.gama.gui.swt.swing.experimental.core;
+package msi.gama.gui.swt.swing;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
