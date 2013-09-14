@@ -1475,7 +1475,7 @@ public abstract class Spatial {
 			In filter = In.list(scope, agents);
 			Set<IAgent> clusteredCells = new HashSet<IAgent>();
 			for ( final IAgent ag : agents ) {
-				if ( !clusteredCells.contains(ag) && filter.getShapes(scope).contains(ag) ) {
+				if ( !clusteredCells.contains(ag)) {
 					groups.add(simpleClusteringByDistanceRec(scope, filter, distance, clusteredCells, ag));
 				}
 			}
@@ -1483,15 +1483,15 @@ public abstract class Spatial {
 		}
 
 		public static IList<IAgent> simpleClusteringByDistanceRec(final IScope scope, final In filter,
-			final Double distance, final Set<IAgent> clusteredCells, final IAgent currentAg) {
+			final Double distance, final Set<IAgent> clusteredAgs, final IAgent currentAg) {
 			IList<IAgent> group = new GamaList<IAgent>();
 			IList<IAgent> ags =
 				new GamaList<IAgent>(currentAg.getTopology().getNeighboursOf(scope, currentAg, distance, filter));
-			clusteredCells.add(currentAg);
+			clusteredAgs.add(currentAg);
 			group.add(currentAg);
 			for ( IAgent ag : ags ) {
-				if ( !clusteredCells.contains(ag) && filter.getShapes(scope).contains(ag) ) {
-					group.addAll(simpleClusteringByDistanceRec(scope, filter, distance, clusteredCells, ag));
+				if ( !clusteredAgs.contains(ag)) {
+					group.addAll(simpleClusteringByDistanceRec(scope, filter, distance, clusteredAgs, ag));
 				}
 			}
 			return group;
@@ -1499,7 +1499,7 @@ public abstract class Spatial {
 
 		@operator(value = { "hierarchical_clustering" }, content_type = IType.LIST)
 		@doc(value = "A tree (list of list) contained groups of agents clustered by distance considering a distance min between two groups.", comment = "use of hierarchical clustering with Minimum for linkage criterion between two groups of agents.", examples = { "[ag1, ag2, ag3, ag4, ag5] hierarchical_clustering 20.0 --: for example, can return [[ag1,ag3], [ag2], [[ag4,ag5],ag6]" }, see = { "simple_clustering_by_distance" })
-		public static IList simple_clustering_by_distance(final IScope scope, final IContainer<?, IAgent> agents,
+		public static IList hierarchicalClusteringe(final IScope scope, final IContainer<?, IAgent> agents,
 			final Double distance) {
 			final int nb = agents.length(scope);
 			final IList<IList> groups = new GamaList<IList>();
