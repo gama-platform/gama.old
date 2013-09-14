@@ -121,12 +121,14 @@ public class GuiUtils {
 	public static void setViewRateOf(final IDisplayOutput abstractDisplayOutput, final int refresh) {}
 
 	/**
+	 * 
+	 * See IWorkbenchConstant.VIEW_XXX for the code
 	 * @param viewId
 	 * @param string
 	 * @return
 	 */
-	public static IGamaView showView(final String viewId, final String name) {
-		if ( gui != null ) { return gui.showView(viewId, name); }
+	public static IGamaView showView(final String viewId, final String name, final int code) {
+		if ( gui != null ) { return gui.showView(viewId, name, code); }
 		return null;
 	}
 

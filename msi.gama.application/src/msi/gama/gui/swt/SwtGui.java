@@ -314,7 +314,7 @@ public class SwtGui implements IGui {
 		// g.printStackTrace();
 		// }
 		if ( GamaPreferences.CORE_SHOW_ERRORS.getValue() ) {
-			final ErrorView v = (ErrorView) showView(ErrorView.ID, null);
+			final ErrorView v = (ErrorView) showView(ErrorView.ID, null, IWorkbenchPage.VIEW_VISIBLE);
 			if ( v != null ) {
 				GuiUtils.asyncRun(new Runnable() {
 
@@ -443,14 +443,14 @@ public class SwtGui implements IGui {
 		}
 	}
 
-	private Object internalShowView(final String viewId, final String secondaryId) {
+	private Object internalShowView(final String viewId, final String secondaryId, final int code) {
 		final Object[] result = new Object[1];
 		run(new Runnable() {
 
 			@Override
 			public void run() {
 				try {
-					result[0] = getPage().showView(viewId, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
+					result[0] = getPage().showView(viewId, secondaryId, code);
 				} catch (final PartInitException e) {
 					result[0] = e;
 				}
@@ -460,9 +460,9 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
-	public IGamaView showView(final String viewId, final String secondaryId) {
+	public IGamaView showView(final String viewId, final String secondaryId, final int code) {
 
-		Object o = internalShowView(viewId, secondaryId);
+		Object o = internalShowView(viewId, secondaryId, code);
 		if ( o instanceof IWorkbenchPart ) {
 			IPartService ps = (IPartService) ((IWorkbenchPart) o).getSite().getService(IPartService.class);
 			ps.addPartListener(SwtGui.getPartListener());
@@ -509,7 +509,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void showConsoleView() {
-		console = (ConsoleView) showView(ConsoleView.ID, null);
+		console = (ConsoleView) showView(ConsoleView.ID, null, IWorkbenchPage.VIEW_VISIBLE);
 		eraseConsole(false);
 		if ( consoleBuffer.length() > 0 ) {
 			console.append(consoleBuffer.toString());
@@ -992,7 +992,8 @@ public class SwtGui implements IGui {
 						GAMA.reportError(g, false);
 					}
 				}
-				AgentInspectView v = (AgentInspectView) showView(GuiUtils.AGENT_VIEW_ID, null);
+				AgentInspectView v =
+					(AgentInspectView) showView(GuiUtils.AGENT_VIEW_ID, null, IWorkbenchPage.VIEW_VISIBLE);
 				v.inspectAgent(a);
 			}
 		});

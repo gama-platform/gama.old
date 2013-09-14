@@ -29,8 +29,7 @@ import msi.gaml.descriptions.IDescription;
  * 
  * @author drogoul
  */
-public abstract class AbstractDisplayOutput extends AbstractOutput implements
-		IDisplayOutput {
+public abstract class AbstractDisplayOutput extends AbstractOutput implements IDisplayOutput {
 
 	public AbstractDisplayOutput(final IDescription desc) {
 		super(desc);
@@ -42,11 +41,8 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements
 
 		@Override
 		public void run() {
-			IGamaView view = GuiUtils.showView(getViewId(), isUnique() ? null
-					: getName());
-			if (view == null) {
-				return;
-			}
+			IGamaView view = GuiUtils.showView(getViewId(), isUnique() ? null : getName(), 3); // IWorkbenchPage.VIEW_CREATE
+			if ( view == null ) { return; }
 			view.setOutput(AbstractDisplayOutput.this);
 		}
 
@@ -61,9 +57,7 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements
 
 	@Override
 	public void resume() {
-		if (!paused) {
-			return;
-		}
+		if ( !paused ) { return; }
 		super.resume();
 	}
 
@@ -75,12 +69,10 @@ public abstract class AbstractDisplayOutput extends AbstractOutput implements
 
 	@Override
 	public void dispose() {
-		if (disposed) {
-			return;
-		}
+		if ( disposed ) { return; }
 		disposed = true;
 		GuiUtils.closeViewOf(this);
-		if (getScope() != null) {
+		if ( getScope() != null ) {
 			GAMA.releaseScope(getScope());
 		}
 	}

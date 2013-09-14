@@ -52,7 +52,7 @@ public interface IGui {
 
 	void raise(Throwable ex);
 
-	IGamaView showView(String viewId, String name);
+	IGamaView showView(String viewId, String name, int code);
 
 	void tell(String message);
 

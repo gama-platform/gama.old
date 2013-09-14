@@ -217,11 +217,14 @@ public abstract class AbstractAWTDisplaySurface extends JPanel implements IDispl
 			e.printStackTrace();
 			return null;
 		}
-		Rectangle rectangle = new Rectangle(this.getLocationOnScreen(), this.getSize());
-		final BufferedImage buffImage = screenRobot.createScreenCapture(rectangle);
-
+		if ( isDisplayable() && isShowing() ) {
+			Rectangle rectangle = new Rectangle(this.getLocationOnScreen(), this.getSize());
+			final BufferedImage buffImage = screenRobot.createScreenCapture(rectangle);
+			return buffImage;
+		}
+		return null;
 		// = renderer.getScreenShot();
-		return buffImage;
+
 	}
 
 	@Override

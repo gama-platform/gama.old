@@ -77,7 +77,7 @@ public class HeadlessListener implements IGui {
 	}
 
 	@Override
-	public IGamaView showView(final String viewId, final String name) {
+	public IGamaView showView(final String viewId, final String name, final int code) {
 		// TODO Auto-generated method stub
 		return null;
 	}

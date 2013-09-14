@@ -4,6 +4,7 @@
  */
 package msi.gama.gui.swt.controls;
 
+import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.SwtGui;
 import msi.gama.gui.views.LayeredDisplayView;
 import org.eclipse.swt.SWT;
@@ -96,7 +97,12 @@ public class DisplayOverlay extends AbstractOverlay {
 	@Override
 	public void update() {
 		if ( !text.isDisposed() ) {
-			text.setText(getView().getOverlayText());
+			try {
+				text.setText(getView().getOverlayText());
+			} catch (Exception e) {
+				GuiUtils.debug("Error in updating overlay: " + e.getMessage());
+				text.setText("Not initialized yet");
+			}
 		}
 		if ( !scalebar.isDisposed() ) {
 			scalebar.redraw();

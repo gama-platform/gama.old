@@ -7,6 +7,7 @@ import msi.gama.gui.views.ErrorView;
 import org.eclipse.core.commands.*;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.commands.*;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.menus.UIElement;
@@ -20,7 +21,7 @@ public class ShowErrors extends AbstractHandler implements IElementUpdater {
 			(ICommandService) HandlerUtil.getActiveWorkbenchWindowChecked(event).getService(ICommandService.class);
 		service.refreshElements(event.getCommand().getId(), null);
 		if ( GamaPreferences.CORE_SHOW_ERRORS.getValue() ) {
-			GuiUtils.showView(ErrorView.ID, null);
+			GuiUtils.showView(ErrorView.ID, null, IWorkbenchPage.VIEW_VISIBLE);
 		} else {
 			GuiUtils.hideView(ErrorView.ID);
 		}
