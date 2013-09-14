@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import java.nio.*;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.GLU;
-import msi.gama.gui.swt.swing.experimental.core.OutputSynchronizer;
+import msi.gama.gui.swt.swing.OutputSynchronizer;
 import msi.gama.jogl.JOGLAWTDisplaySurface;
 import msi.gama.jogl.scene.*;
 import msi.gama.jogl.utils.Camera.*;
