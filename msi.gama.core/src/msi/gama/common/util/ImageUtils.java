@@ -160,9 +160,10 @@ public class ImageUtils {
 
 	public static BufferedImage toCompatibleImage(final BufferedImage image) {
 		// obtain the current system graphical settings
-		final GraphicsConfiguration gfx_config =
-			GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice().getDefaultConfiguration();
-
+        GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+        if ( ge.isHeadlessInstance() ) { return image; }
+        final GraphicsConfiguration gfx_config = ge.getDefaultScreenDevice().getDefaultConfiguration();
+		
 		/*
 		 * if image is already compatible and optimized for current system settings, simply return
 		 * it
