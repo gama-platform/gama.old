@@ -128,6 +128,7 @@ public class GamaSimulator implements ISimulator {
 	public void initialize() {
 		try {
 			experiment = HeadlessSimulationLoader.newHeadlessSimulation(this.fileName, this.experimentName,this.params);
+			GAMA.controller.setExperiment(experiment);
 		} catch (GamaRuntimeException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

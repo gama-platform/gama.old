@@ -7,6 +7,7 @@ import java.util.Vector;
 import msi.gama.headless.common.ISimulator;
 import msi.gama.headless.runtime.GamaSimulator;
 import msi.gama.headless.xml.Writer;
+import msi.gama.runtime.GAMA;
 
 
 public class Simulation  {
@@ -66,18 +67,18 @@ public class Simulation  {
 	
 	public void loadAndBuild() throws InstantiationException, IllegalAccessException, ClassNotFoundException 
 	{
+		
 		this.load();
 		this.listenedVariable=new String[outputs.size()];
 		this.listenedVariableFrameRate=new Integer[outputs.size()];
 		this.results=new Object[outputs.size()];
-		System.out.println("out "+outputs.size());
-		System.out.println("input "+parameters.size());
+	
 		
 		for(int i=0; i<parameters.size();i++)
 		{
 			Parameter temp=parameters.get(i);
 			this.model.setParameterWithName(temp.getName(), temp.getValue());
-			System.out.println("initialisation variable : "+ temp.getName()+" "+temp.getValue());
+			System.out.println("parameter setup : "+ temp.getName()+" "+temp.getValue());
 		}
 		for(int i=0; i<outputs.size();i++)
 		{
@@ -92,6 +93,7 @@ public class Simulation  {
 
 	public void load() throws InstantiationException, IllegalAccessException, ClassNotFoundException
 	{
+		System.setProperty("user.dir",this.sourcePath);
 		this.model=new GamaSimulator(); //(ISimulator)(Class.forName(this.driver)).newInstance();
 		this.model.load(this.sourcePath, this.experimentID, this.experimentName);
 	}
@@ -106,6 +108,7 @@ public class Simulation  {
 	public void play()
 	{
 		this.model.initialize();
+		GAMA.getExperiment();
 		if(this.outputFile!=null)
 			this.outputFile.writeSimulationHeader(this);
 		System.out.print("Simulation is running...");

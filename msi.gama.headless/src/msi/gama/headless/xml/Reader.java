@@ -66,8 +66,6 @@ public class Reader {
 
 				//get the Employee object
 				Parameter e = this.readParameter(el);
-				System.out.println("lecture du parametre "+ e.getName()+" "+e.getValue());
-
 				//add it to list
 				s.addParameter(e);
 			}
@@ -101,14 +99,9 @@ public class Reader {
 		{
 			File ff=( new File(fileName));
 			String prt;
-			try {
-				prt = ff.getCanonicalPath();
-				String pr = prt.substring(0, (int)(prt.length()- ff.getName().length()));
-					sourcePath = pr+sourcePath;
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			} 
+			prt = ff.getPath();
+			String pr = prt.substring(0, (int)(prt.length()- ff.getName().length()));
+				sourcePath = pr+sourcePath; 
 			
 		}
 		
