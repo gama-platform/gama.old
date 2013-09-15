@@ -42,6 +42,16 @@ public class FrontEndController implements Runnable {
 	public IExperimentSpecies getExperiment() {
 		return experiment;
 	}
+	
+	/**
+	 * addon Nico. A new architecture of frontend is need. Comming soon...
+	 * @param exp
+	 */
+	
+	public void setExperiment(IExperimentSpecies exp) {
+		experiment=exp;
+	}
+	
 
 	@Override
 	public void run() {
