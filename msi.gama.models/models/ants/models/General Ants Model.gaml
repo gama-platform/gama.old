@@ -146,7 +146,7 @@ experiment callback type: gui parent: Complete { //Inherits from experiment "com
 
 }
 
-experiment displays type: gui {
+experiment Displays type: gui {
 	point quadrant_size <- { 0.5, 0.5 };
 	float font_size {
 		12 °px
@@ -176,7 +176,7 @@ experiment displays type: gui {
 			species ant position: { 0.5, 0 } size: quadrant_size aspect: info;
 
 			//Third quadrant
-			quadtree qt position: { 0, 0.5 } size: quadrant_size;
+			quadtree 'qt' position: { 0, 0.5 } size: quadrant_size;
 			text "position {0,0.5} size {0.5, 0.5}: quadtree and ants" size: font_size position: { 0.01, 0.53 } color: rgb("blue") font: "Helvetica" style: bold;
 			species ant position: { 0, 0.5 } size: quadrant_size aspect: default;
 
@@ -257,7 +257,7 @@ experiment name: 'Show Quadtree' type: gui {
 	output {
 		monitor name: 'Food gathered' value: food_gathered;
 		display QuadTree {
-			quadtree qt;
+			quadtree 'qt';
 		}
 
 		display Ants background: rgb('white') refresh_every: 1 {

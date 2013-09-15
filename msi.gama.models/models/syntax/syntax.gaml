@@ -340,7 +340,7 @@ experiment exp1 type: gui {
 		display Display type: opengl {
 		// Layers include a new keyword, "graphics", that allows to draw arbitrary shapes using the syntax found in the aspects of species
 		// The same capability will be soon added to species/agents layers (in order to define on-the-fly aspects without changing the species itself)
-			graphics G {
+			graphics 'G' {
 				draw sphere(10) at: { 50, 50 };
 				if (true) {
 					draw "true";

@@ -57,7 +57,7 @@ entities {
 	
 
 }
-experiment display  type: gui {
+experiment Display  type: gui {
 	output {
 		display Poincare refresh_every: 1  type:opengl ambient_light:50 {
 			image imageRaster.path ;

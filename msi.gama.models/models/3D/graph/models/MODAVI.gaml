@@ -256,20 +256,20 @@ entities {
 experiment MODAVI type: gui {
 	output {			
 		display MODAVI type:opengl ambient_light: 100  draw_env:false {
-			graphics ReferenceModel{
+			graphics 'ReferenceModel'{
 				draw rectangle(100,100) at: {150,50,0} rounded:true color:rgb(230,230,230);
 				draw text:"Reference model" at:{200,50,0} size:5 color: rgb('black') bitmap:false;
 			}
 			species node aspect: real position:{100,0,0.01} ;
 			
-			graphics View1{
+			graphics 'View1'{
 				draw rectangle(100,100) at: {50,150,0} rounded:true color:rgb(230,230,230);
 				draw text:"Advanced view" at:{50,210,0} size:5 color: rgb('black') bitmap:false;
 			}
 			species node aspect: coloredByClass position: {0,100,0.02};
 			species edge aspect: edgeGenericSpatialized position: {0,100,0.02};
 			
-			graphics AbstractView{
+			graphics 'AbstractView'{
 				draw rectangle(100,100) at: {250,150,0}  rounded:true color:rgb(230,230,230);
 				draw text:"Abstract view/controller" at:{250,210,0} size:5 color: rgb('black') bitmap:false;
 			}

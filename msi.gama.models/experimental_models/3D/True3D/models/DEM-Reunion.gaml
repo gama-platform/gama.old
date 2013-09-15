@@ -45,7 +45,7 @@ entities {
         }
     }
 }
-experiment display type: gui {
+experiment Display type: gui {
 	output {
 		
 		/*display ReunionDEM  type: opengl {

@@ -13,13 +13,13 @@ global{
 experiment DEM type: gui {
 	output {
 		display VulcanoTextured  type: opengl ambient_light:255 draw_env:false{
-			graphics GraphicPrimitive {
+			graphics 'GraphicPrimitive' {
 				draw dem(dem, texture,0.1);
 			}
 		}
 		
 		display VulcanoDEM  type: opengl ambient_light:255 draw_env:false{
-			graphics GraphicPrimitive {
+			graphics 'GraphicPrimitive' {
 				draw dem(dem, dem,0.1);
 			}
 		}

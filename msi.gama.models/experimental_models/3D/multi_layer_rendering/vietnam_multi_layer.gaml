@@ -51,7 +51,7 @@ entities {
 	  }
 	}
 }
-experiment display  type: gui {
+experiment Display  type: gui {
 	parameter 'Image 1:' var: image1 category: 'Raster' ;
 	parameter 'Image 2:' var: image2 category: 'Raster' ;
 	parameter 'Image 3:' var: image3 category: 'Raster' ;

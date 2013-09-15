@@ -117,7 +117,7 @@ environment bounds: shape_file_commune{
 	}
 }
 
-experiment display  type: gui {
+experiment Display  type: gui {
 	
 	output {
 	display city_display type: opengl refresh_every: 1 {

@@ -17,10 +17,10 @@ entities {
 	
 
 }
-experiment display  type: gui {
+experiment Display  type: gui {
 	output {
 		display Dislay refresh_every: 1   type:opengl ambient_light:100 draw_env:false{
-			graphics GraphicPrimitive{
+			graphics 'GraphicPrimitive'{
 				//2D PRIMITIVE
 
 				draw line ([{0,0},{10,10}]) at: {0,0,0} color:rgb('orange');

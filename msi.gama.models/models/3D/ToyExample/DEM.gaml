@@ -9,10 +9,10 @@ global{
     geometry shape <- square(500);
 }
 
-experiment display type: gui {
+experiment Display type: gui {
 	output {
 		display DEM  type: opengl ambient_light:255 {
-			graphics GraphicPrimitive {
+			graphics 'GraphicPrimitive' {
 				draw dem(dem, texture);
 			}
 		}

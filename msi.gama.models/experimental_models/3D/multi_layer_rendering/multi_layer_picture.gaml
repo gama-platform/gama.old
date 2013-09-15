@@ -41,7 +41,7 @@ entities {
 	  }
 	}
 }
-experiment display  type: gui {
+experiment Display  type: gui {
 	parameter 'Folder:' var:folder   category:'Folder';
 	
 	output {

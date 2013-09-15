@@ -39,7 +39,7 @@ entities {
 	}
 	
 }
-experiment display  type: gui {
+experiment Display  type: gui {
 	output {
 		display WanderingSphere type:opengl ambient_light:100 background: rgb('white') show_fps:true{
 			species cells;
