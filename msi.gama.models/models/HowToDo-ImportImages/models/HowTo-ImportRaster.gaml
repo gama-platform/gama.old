@@ -78,6 +78,5 @@ experiment main type: gui {
 	       image name: 'Background' file: mntImageRaster.path;
 	       species izard aspect: image; 
 	    }   
-	    inspect name: 'Species' type: species refresh_every: 5;
 	}	
 }

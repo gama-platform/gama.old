@@ -113,7 +113,6 @@ experiment main type: gui {
 	 		species river aspect: basic;
 	 		species izard aspect: image;  
 		}
-	    inspect name: 'Species' type: species refresh_every: 5;
 	}
 }
 
