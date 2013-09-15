@@ -49,7 +49,7 @@ public class SimulationOutputManager extends AbstractOutputManager {
 	@Override
 	public boolean step(final IScope scope) {
 		boolean result = super.step(scope);
-		if ( !GAMA.getExperiment().isBatch() ) {
+		if ( !GuiUtils.isInHeadLessMode()&& !GAMA.getExperiment().isBatch() ) {
 			GuiUtils.informStatus(scope.getClock().getInfo());
 		}
 		return result;

@@ -184,7 +184,6 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 				autosave = Cast.asBool(getScope(), auto.value(getScope()));
 			}
 		}
-
 		for ( final ILayerStatement layer : getLayers() ) {
 			// try {
 			layer.setDisplayOutput(this);
