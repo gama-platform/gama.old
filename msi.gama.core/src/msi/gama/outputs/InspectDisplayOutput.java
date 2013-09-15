@@ -59,8 +59,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	static int count = 0;
 
-	static final List<String> types = Arrays.asList(IKeyword.AGENT, IKeyword.TABLE);
-
+	static final List<String> types = Arrays.asList(IKeyword.AGENT, null, null, IKeyword.TABLE);
 	int target;
 	IExpression attributes;
 	private List<String> listOfAttributes;
