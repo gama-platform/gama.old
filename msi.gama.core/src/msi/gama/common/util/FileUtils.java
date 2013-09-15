@@ -1,5 +1,5 @@
 /**
- * Created by drogoul, 20 dŽc. 2011
+ * Created by drogoul, 20 dï¿½c. 2011
  * 
  */
 package msi.gama.common.util;
@@ -11,7 +11,7 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  * The class FileUtils.
  * 
  * @author drogoul
- * @since 20 dŽc. 2011
+ * @since 20 dï¿½c. 2011
  * 
  */
 public class FileUtils {
@@ -90,7 +90,14 @@ public class FileUtils {
 			file = new File(baseDirectory + File.separatorChar + filePath);
 			if ( file.exists() || !mustExist ) {
 				try {
-					return file.getCanonicalPath();
+					// We have to try if the test is necessary.
+					
+					if(GuiUtils.isInHeadLessMode())
+					  return file.getAbsolutePath() ; 
+					else
+					  return file.getCanonicalPath();
+					
+					
 				} catch (final IOException e) {
 					e.printStackTrace();
 					return file.getAbsolutePath();
