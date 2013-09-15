@@ -270,4 +270,17 @@ public class FrontEndController implements Runnable {
 		return scheduler;
 	}
 
+    public void newHeadlessExperiment(final IExperimentSpecies newExperiment) {
+        if ( newExperiment == null ) {
+                System.out.println("No experiment available.");
+                return;
+        }
+        experiment = newExperiment;
+        try {
+                experiment.open();
+        } catch (final Exception e) {
+                System.out.println("Error when opening the experiment: " + e.getMessage());
+        }
+    }	
+	
 }
