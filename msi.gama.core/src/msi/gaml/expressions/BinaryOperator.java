@@ -58,7 +58,8 @@ public class BinaryOperator extends AbstractNAryOperator {
 	}
 
 	public BinaryOperator(final IType ret, final GamaHelper exec, final boolean canBeConst, final int tProv,
-		final int ctProv, final int iProv, final boolean lazy, final int[] expectedContentType) {
+		final int ctProv, final int iProv, final boolean lazy, final int[] expectedContentType,
+		final Signature signature) {
 		this.lazy = lazy;
 		this.canBeConst = canBeConst;
 		type = ret;
@@ -67,6 +68,7 @@ public class BinaryOperator extends AbstractNAryOperator {
 		contentTypeProvider = ctProv;
 		keyTypeProvider = iProv;
 		this.expectedContentType = expectedContentType;
+		this.signature = signature;
 	}
 
 	@Override
@@ -173,7 +175,7 @@ public class BinaryOperator extends AbstractNAryOperator {
 	public BinaryOperator copy() {
 		final BinaryOperator copy =
 			new BinaryOperator(type, helper, canBeConst, typeProvider, contentTypeProvider, keyTypeProvider, lazy,
-				expectedContentType);
+				expectedContentType, signature);
 		copy.doc = doc;
 		return copy;
 	}
@@ -190,8 +192,9 @@ public class BinaryOperator extends AbstractNAryOperator {
 	public static class BinaryVarOperator extends BinaryOperator implements IVarExpression {
 
 		public BinaryVarOperator(final IType ret, final GamaHelper exec, final boolean canBeConst, final int type,
-			final int contentType, final int keyType, final boolean lazy, final int[] expectedContentType) {
-			super(ret, exec, canBeConst, type, contentType, keyType, lazy, expectedContentType);
+			final int contentType, final int keyType, final boolean lazy, final int[] expectedContentType,
+			final Signature signature) {
+			super(ret, exec, canBeConst, type, contentType, keyType, lazy, expectedContentType, signature);
 		}
 
 		@Override
@@ -233,7 +236,7 @@ public class BinaryOperator extends AbstractNAryOperator {
 		public BinaryVarOperator copy() {
 			final BinaryVarOperator copy =
 				new BinaryVarOperator(type, helper, canBeConst, typeProvider, contentTypeProvider, keyTypeProvider,
-					lazy, expectedContentType);
+					lazy, expectedContentType, signature);
 			copy.doc = doc;
 			return copy;
 		}

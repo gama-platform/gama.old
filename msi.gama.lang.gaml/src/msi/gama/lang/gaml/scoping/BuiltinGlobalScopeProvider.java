@@ -6,9 +6,11 @@ import java.util.*;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.utils.EGaml;
 import msi.gaml.compilation.AbstractGamlAdditions;
-import msi.gaml.expressions.IExpressionCompiler;
+import msi.gaml.expressions.*;
+import msi.gaml.factories.*;
+import msi.gaml.factories.DescriptionFactory.Documentation;
 import msi.gaml.operators.IUnits;
-import msi.gaml.types.Types;
+import msi.gaml.types.*;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.*;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -126,6 +128,21 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		// }
 	}
 
+	static void add(final EClass eClass, final String t, final IOperator o) {
+		GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eClass);
+		// TODO Add the fields definition here
+		stub.setName(t);
+		resources.get(eClass).getContents().add(stub);
+		Documentation d = DescriptionFactory.getGamlDocumentation(o);
+		Map<String, String> doc = new HashMap();
+		doc.put("doc", d.getDocumentation());
+		doc.put("title", d.getTitle());
+		doc.put("type", "operator");
+		IEObjectDescription e = EObjectDescription.create(t, stub, doc);
+		IEObjectDescription previous = descriptions.get(eClass).put(e.getName(), e);
+
+	}
+
 	/**
 	 * Get the object descriptions for the built-in types.
 	 */
@@ -169,8 +186,8 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 				add(eAction, t);
 				add(eVar, t);
 			}
-			for ( String t : IExpressionCompiler.OPERATORS.keySet() ) {
-				add(eAction, t);
+			for ( Map.Entry<String, Map<Signature, IOperator>> t : IExpressionCompiler.OPERATORS.entrySet() ) {
+				add(eAction, t.getKey(), new ArrayList<IOperator>(t.getValue().values()).get(0));
 			}
 		}
 	}

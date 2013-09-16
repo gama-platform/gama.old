@@ -92,9 +92,9 @@ public class JOGLSWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		// GamaPoint offset = new GamaPoint(xOffsetInPixels, yOffsetInPixels);
 
 		// Add a geometry with a depth and type coming from Attributes
-		if ( geometry.getAttribute("depth") != null && geometry.getAttribute("type") != null ) {
-			final Double depth = (Double) geometry.getAttribute("depth");
-			final String type = (String) geometry.getAttribute("type");
+		if ( geometry.getAttribute(IShape.DEPTH_ATTRIBUTE) != null && geometry.getAttribute(IShape.TYPE_ATTRIBUTE) != null ) {
+			final Double depth = (Double) geometry.getAttribute(IShape.DEPTH_ATTRIBUTE);
+			final String type = (String) geometry.getAttribute(IShape.TYPE_ATTRIBUTE);
 			renderer.getScene().addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color, fill,
 				border, false, angle, depth.floatValue(), currentOffset, currentScale, rounded, type,
 				currentLayerIsStatic, getCurrentAlpha());

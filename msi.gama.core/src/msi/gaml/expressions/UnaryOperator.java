@@ -38,6 +38,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	private final int[] expectedContentType;
 	protected GamlElementDocumentation doc;
 	private final boolean lazy;
+	private final Signature signature;
 
 	@Override
 	public boolean isConst() {
@@ -45,7 +46,8 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	}
 
 	public UnaryOperator(final IType rt, final GamaHelper exec, final boolean canBeConst, final int tProv,
-		final int ctProv, final int iProv, final int[] expectedContentType, final boolean lazy) {
+		final int ctProv, final int iProv, final int[] expectedContentType, final boolean lazy,
+		final Signature signature) {
 		type = rt;
 		helper = exec;
 		this.canBeConst = canBeConst;
@@ -54,6 +56,8 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 		contentTypeProvider = ctProv;
 		keyTypeProvider = iProv;
 		this.expectedContentType = expectedContentType;
+		this.signature = signature;
+
 	}
 
 	@Override
@@ -77,7 +81,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	public UnaryOperator copy() {
 		final UnaryOperator copy =
 			new UnaryOperator(type, helper, canBeConst, typeProvider, contentTypeProvider, keyTypeProvider,
-				expectedContentType, lazy);
+				expectedContentType, lazy, signature);
 		copy.setName(getName());
 		// FIXME: Why contentType is initialized ?
 		// copy.contentType = contentType;
@@ -99,7 +103,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	public String getTitle() {
 		final StringBuilder sb = new StringBuilder(50);
 		sb.append("operator <b>").append(getName()).append("</b> (");
-		sb.append(child == null ? "nil" : child.getType());
+		sb.append(child == null ? signature : child.getType());
 		sb.append(") returns ");
 		sb.append(typeToString());
 		return sb.toString();

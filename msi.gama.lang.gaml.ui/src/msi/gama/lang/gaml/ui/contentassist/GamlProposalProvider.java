@@ -23,15 +23,20 @@ import msi.gama.lang.gaml.ui.labeling.GamlLabelProvider;
 import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import msi.gama.precompiler.GamlProperties;
 import msi.gaml.compilation.AbstractGamlAdditions;
-import msi.gaml.expressions.IExpressionCompiler;
 import msi.gaml.operators.IUnits;
 import msi.gaml.types.Types;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.text.*;
+import org.eclipse.jface.text.contentassist.*;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.xtext.naming.IQualifiedNameConverter;
+import org.eclipse.xtext.resource.IEObjectDescription;
 import org.eclipse.xtext.ui.IImageHelper;
 import org.eclipse.xtext.ui.editor.contentassist.*;
+import com.google.common.base.Function;
 import com.google.inject.Inject;
 
 /**
@@ -56,6 +61,77 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	private static Image skillImage = ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_skills.png")
 		.createImage();
 
+	class GamlProposalCreator extends DefaultProposalCreator {
+
+		/**
+		 * @param contentAssistContext
+		 * @param ruleName
+		 * @param qualifiedNameConverter
+		 */
+		public GamlProposalCreator(final ContentAssistContext contentAssistContext, final String ruleName,
+			final IQualifiedNameConverter qualifiedNameConverter) {
+			super(contentAssistContext, ruleName, qualifiedNameConverter);
+		}
+
+		@Override
+		public ICompletionProposal apply(final IEObjectDescription candidate) {
+			ConfigurableCompletionProposal cp = (ConfigurableCompletionProposal) super.apply(candidate);
+			String doc = candidate.getUserData("doc");
+			if ( cp != null ) {
+				if ( doc != null ) {
+					String title = candidate.getUserData("title");
+					cp.setAdditionalProposalInfo("<b>" + title + "</b><p/><p>" + doc + "</p>");
+
+				}
+				String type = candidate.getUserData("type");
+				if ( type != null ) {
+					if ( type.equals("operator") ) {
+						cp.setDisplayString(cp.getDisplayString().concat(" (Built-in operator) "));
+						cp.setImage(actionImage);
+					}
+				}
+			}
+			return cp;
+		}
+
+	};
+
+	class GamlCompletionProposal extends ConfigurableCompletionProposal {
+
+		/**
+		 * @param replacementString
+		 * @param replacementOffset
+		 * @param replacementLength
+		 * @param cursorPosition
+		 * @param image
+		 * @param displayString
+		 * @param contextInformation
+		 * @param additionalProposalInfo
+		 */
+		public GamlCompletionProposal(final String replacementString, final int replacementOffset,
+			final int replacementLength, final int cursorPosition, final Image image, final StyledString displayString,
+			final IContextInformation contextInformation, final String additionalProposalInfo) {
+			super(replacementString, replacementOffset, replacementLength, cursorPosition, image, displayString,
+				contextInformation, additionalProposalInfo);
+		}
+
+		@Override
+		public IInformationControlCreator getInformationControlCreator() {
+			return new IInformationControlCreator() {
+
+				@Override
+				public IInformationControl createInformationControl(final Shell parent) {
+					IInformationControl control = new DefaultInformationControl(parent, true);
+					return control;
+
+				}
+			};
+		}
+
+	}
+
+	private DefaultProposalCreator creator;
+
 	static class BuiltInProposal {
 
 		String name;
@@ -68,6 +144,21 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 			this.title = title;
 			this.image = image;
 		}
+	}
+
+	@Override
+	protected String getDisplayString(final EObject element, String qualifiedNameAsString, final String shortName) {
+		if ( qualifiedNameAsString == null ) {
+			qualifiedNameAsString = shortName;
+		}
+		if ( qualifiedNameAsString == null ) {
+			if ( element != null ) {
+				qualifiedNameAsString = provider.getText(element);
+			} else {
+				return null;
+			}
+		}
+		return qualifiedNameAsString;
 	}
 
 	static final List<BuiltInProposal> proposals = new ArrayList();
@@ -83,19 +174,21 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 
 	@Override
 	public void createProposals(final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
-		// final GamlResource r = (GamlResource) context.getCurrentModel().eResource();
-		// validator.validate(r);
-		// WARNING Asynchronous : r.getResourceServiceProvider().getResourceValidator().validate(r, CheckMode.FAST_ONLY,
-		// null);
-		// GuiUtils.debug("GamlProposalProvider.createProposals : building proposals");
-		// final ICompletionProposalAcceptor nullSafe = new NullSafeCompletionProposalAcceptor(acceptor);
-		// final IFollowElementAcceptor selector = createSelector(context, nullSafe);
-		// for ( final AbstractElement element : context.getFirstSetGrammarElements() ) {
-		// selector.accept(element);
-		// }
 		addBuiltInElements(context, acceptor);
 		super.createProposals(context, acceptor);
 
+	}
+
+	/**
+	 * @see org.eclipse.xtext.ui.editor.contentassist.AbstractContentProposalProvider#doCreateProposal(java.lang.String,
+	 *      org.eclipse.jface.viewers.StyledString, org.eclipse.swt.graphics.Image, int,
+	 *      org.eclipse.xtext.ui.editor.contentassist.ContentAssistContext)
+	 */
+	@Override
+	protected ConfigurableCompletionProposal doCreateProposal(final String proposal, final StyledString displayString,
+		final Image image, final int priority, final ContentAssistContext context) {
+		ConfigurableCompletionProposal cp = super.doCreateProposal(proposal, displayString, image, priority, context);
+		return cp;
 	}
 
 	/**
@@ -146,11 +239,11 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 				BuiltInProposal cp = new BuiltInProposal(t, new StyledString(t + " (Built-in action)"), actionImage);
 				proposals.add(cp);
 			}
-			for ( String t : IExpressionCompiler.OPERATORS.keySet() ) {
-
-				BuiltInProposal cp = new BuiltInProposal(t, new StyledString(t + " (Built-in operator)"), actionImage);
-				proposals.add(cp);
-			}
+			// for ( String t : IExpressionCompiler.OPERATORS.keySet() ) {
+			//
+			// BuiltInProposal cp = new BuiltInProposal(t, new StyledString(t + " (Built-in operator)"), actionImage);
+			// proposals.add(cp);
+			// }
 		}
 		for ( BuiltInProposal bi : proposals ) {
 			ICompletionProposal cp =
@@ -162,6 +255,23 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 			}
 		}
 
+	}
+
+	/**
+	 * @see org.eclipse.xtext.ui.editor.contentassist.AbstractContentProposalProvider#doCreateProposal(java.lang.String,
+	 *      org.eclipse.jface.viewers.StyledString, org.eclipse.swt.graphics.Image, int, int)
+	 */
+	@Override
+	protected ConfigurableCompletionProposal doCreateProposal(final String proposal, final StyledString displayString,
+		final Image image, final int replacementOffset, final int replacementLength) {
+		return new GamlCompletionProposal(proposal, replacementOffset, replacementLength, proposal.length(), image,
+			displayString, null, null);
+	}
+
+	@Override
+	protected Function<IEObjectDescription, ICompletionProposal> getProposalFactory(final String ruleName,
+		final ContentAssistContext contentAssistContext) {
+		return new GamlProposalCreator(contentAssistContext, ruleName, getQualifiedNameConverter());
 	}
 	// @Override
 	// public void completeKeyword(final Keyword keyword, final ContentAssistContext contentAssistContext,
@@ -910,5 +1020,7 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	// }
 	//
 	// }
+
+	// INTRODUCE THE FILTERING ON THE "FAKE" ELEMENTS SO THAT WE CAN GRAB THEIR DOCUMENTATION, IMAGE, NAME, TYPE, etc.
 
 }

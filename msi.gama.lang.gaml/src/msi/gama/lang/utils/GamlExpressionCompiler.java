@@ -649,7 +649,7 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 
 		@Override
 		public IExpression defaultCase(final EObject object) {
-			if ( getContext().hasErrors() ) {
+			if ( !getContext().hasErrors() ) {
 				// In order to avoid too many "useless errors"
 				getContext().error("Cannot compile: " + object, IGamlIssue.GENERAL, object);
 			}

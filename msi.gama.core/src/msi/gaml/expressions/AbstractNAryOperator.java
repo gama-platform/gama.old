@@ -19,7 +19,7 @@
 package msi.gaml.expressions;
 
 import msi.gaml.compilation.GamlElementDocumentation;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 /**
  * AbstractBinaryOperator
@@ -29,6 +29,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 
 	protected IExpression[] exprs;
 	protected GamlElementDocumentation doc;
+	protected Signature signature;
 
 	@Override
 	public String toString() {
@@ -74,6 +75,8 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 				sb.append(',');
 			}
 			sb.setLength(sb.length() - 1);
+		} else if ( signature != null ) {
+			sb.append("Argument types: " + signature.toString());
 		}
 		sb.append(") returns ");
 		IType type = getType();

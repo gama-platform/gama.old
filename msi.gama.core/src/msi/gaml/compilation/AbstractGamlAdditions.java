@@ -276,21 +276,21 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 				if ( classes.length == 1 ) { // unary
 					exp =
 						new UnaryOperator(rt, helper, c, t, content, index, expectedContentTypes,
-							IExpression.class.equals(classes[0]));
+							IExpression.class.equals(classes[0]), signature);
 				} else if ( classes.length == 2 ) { // binary
 					if ( kw.equals(OF) || kw.equals(_DOT) ) {
 						exp =
 							new BinaryVarOperator(rt, helper, c, t, content, index,
-								IExpression.class.equals(classes[1]), expectedContentTypes);
+								IExpression.class.equals(classes[1]), expectedContentTypes, signature);
 					} else {
 						exp =
 							new BinaryOperator(rt, helper, c, t, content, index, IExpression.class.equals(classes[1]),
-								expectedContentTypes);
+								expectedContentTypes, signature);
 					}
 				} else {
 					exp =
 						new NAryOperator(rt, helper, c, t, content, index, IExpression.class.equals(classes[1]),
-							expectedContentTypes);
+							expectedContentTypes, signature);
 					// FIXME The lazy attribute is completely wrong here
 				}
 				// FIXME Need to create an operator description or prototype rather than copying

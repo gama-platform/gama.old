@@ -62,8 +62,9 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	@Override
 	protected Integer[] getToolbarActionsId() {
 		IDescription description = output.getDescription();
-		if ( description.getFacets().equals("type", "opengl") || description.getFacets().equals("type", "3D") ) { return new Integer[] {
-			PAUSE, REFRESH, SYNC, SNAP, SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT, SEP, FOCUS, OPENGL, SEP, SIDEBAR, OVERLAY }; }
+		if ( description.getFacets().equals(IKeyword.TYPE, "opengl") ||
+			description.getFacets().equals(IKeyword.TYPE, "3D") ) { return new Integer[] { PAUSE, REFRESH, SYNC, SNAP,
+			SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT, SEP, FOCUS, OPENGL, SEP, SIDEBAR, OVERLAY }; }
 		return new Integer[] { PAUSE, REFRESH, SYNC, SNAP, SEP, ZOOM_IN, ZOOM_FIT, ZOOM_OUT, SEP, FOCUS, SEP, SIDEBAR,
 			OVERLAY };
 	}

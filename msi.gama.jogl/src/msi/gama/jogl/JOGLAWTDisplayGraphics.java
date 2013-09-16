@@ -24,7 +24,6 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.*;
 import java.io.IOException;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.common.util.ImageUtils;
 import msi.gama.gui.displays.awt.AbstractDisplayGraphics;
 import msi.gama.gui.displays.layers.AbstractLayer;
@@ -98,12 +97,12 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		Double depth = 0d;
 		String type = "none";
 		// Add a geometry with a depth and type coming from Attributes
-		if ( shape.hasAttribute("depth") ) {
-			depth = Cast.asFloat(scope, shape.getAttribute("depth"));
+		if ( shape.hasAttribute(IShape.DEPTH_ATTRIBUTE) ) {
+			depth = Cast.asFloat(scope, shape.getAttribute(IShape.DEPTH_ATTRIBUTE));
 			type = "JTS";
 		}
-		if ( shape.hasAttribute("type") ) {
-			type = Cast.asString(scope, shape.getAttribute("type"));
+		if ( shape.hasAttribute(IShape.TYPE_ATTRIBUTE) ) {
+			type = Cast.asString(scope, shape.getAttribute(IShape.TYPE_ATTRIBUTE));
 		}
 		renderer.getScene().addGeometry(geom, scope.getAgentScope(), currentZLayer, currentLayerId, color, fill,
 			border, false, angle, depth.floatValue(), currentOffset, currentScale, rounded, type, currentLayerIsStatic,
@@ -350,16 +349,15 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		if ( this.currentZLayer == 0 ) {
 			this.currentZLayer = ((AbstractLayer) layer).getPosition().getZ();
 		}
-		
-		//get the value of the z scale if positive otherwise set it to 1.
+
+		// get the value of the z scale if positive otherwise set it to 1.
 		float z_scale;
-		if(((AbstractLayer) layer).getExtent().getZ() > 0){
+		if ( ((AbstractLayer) layer).getExtent().getZ() > 0 ) {
 			z_scale = (float) ((AbstractLayer) layer).getExtent().getZ();
-		}
-		else{
+		} else {
 			z_scale = 1;
 		}
-		
+
 		final Boolean refresh = layer.isDynamic();
 		currentLayerIsStatic = refresh == null ? false : !refresh;
 
@@ -373,8 +371,8 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 		currentScale =
 			new GamaPoint(widthOfLayerInPixels / (double) widthOfDisplayInPixels, heightOfLayerInPixels /
 				(double) heightOfDisplayInPixels, z_scale);
-		//GuiUtils.debug("JOGLAWTDisplayGraphics.beginDrawingLayer currentScale: " + currentScale);
-		//GuiUtils.debug("JOGLAWTDisplayGraphics.beginDrawingLayer currentOffset: " + currentOffset);
+		// GuiUtils.debug("JOGLAWTDisplayGraphics.beginDrawingLayer currentScale: " + currentScale);
+		// GuiUtils.debug("JOGLAWTDisplayGraphics.beginDrawingLayer currentOffset: " + currentOffset);
 	}
 
 	private double getMaxEnvDim() {

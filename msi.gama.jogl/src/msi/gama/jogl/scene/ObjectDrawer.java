@@ -101,7 +101,7 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 					 * GuiUtils.debug(" agent: " + geometry.agent.getLocation());
 					 * GuiUtils.debug(" centroid: " + geometry.geometry.getCentroid().getCoordinate().z);
 					 */
-					if ( geometry.type.equals("sphere") ) {
+					if ( geometry.type != null && geometry.type.equals("sphere") ) {
 						jtsDrawer.DrawSphere((Polygon) geometry.geometry, geometry.height, geometry.getColor(),
 							geometry.alpha);
 					} else {

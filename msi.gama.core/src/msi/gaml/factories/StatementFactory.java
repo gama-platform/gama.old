@@ -152,7 +152,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 
 	@Override
 	protected Arguments privateCompileArgs(final StatementDescription cd) {
-		List<String> typeNames = cd.getModelDescription().getTypesManager().getTypeNames();
+
 		final Arguments ca = new Arguments();
 		final String keyword = cd.getKeyword();
 		final boolean isCalling = keyword.equals(CREATE) || keyword.equals(DO) || keyword.equals(PRIMITIVE);
@@ -173,6 +173,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 			}
 			ca.put(name, e);
 			if ( !isCalling ) {
+				List<String> typeNames = cd.getModelDescription().getTypesManager().getTypeNames();
 				// Special case for the calls (create, do, but also primitives) as the "arguments"
 				// passed should not be part of the context
 				String typeName = argFacets.getLabel(TYPE);

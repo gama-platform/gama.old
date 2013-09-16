@@ -140,8 +140,12 @@ public class DescriptionFactory {
 		if ( existing != null ) {
 			object.eAdapters().remove(existing);
 		}
-		object.eAdapters().add(new Documentation(description));
+		object.eAdapters().add(getGamlDocumentation(description));
 
+	}
+
+	public static Documentation getGamlDocumentation(final IGamlDescription o) {
+		return new Documentation(o);
 	}
 
 	// To be called once the validation has been done

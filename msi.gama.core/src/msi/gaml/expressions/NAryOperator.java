@@ -3,13 +3,14 @@ package msi.gaml.expressions;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.compilation.GamaHelper;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 public class NAryOperator extends BinaryOperator {
 
 	public NAryOperator(final IType ret, final GamaHelper exec, final boolean canBeConst, final int tProv,
-		final int ctProv, final int iProv, final boolean lazy, int[] expectedContentType) {
-		super(ret, exec, canBeConst, tProv, ctProv, iProv, lazy, expectedContentType);
+		final int ctProv, final int iProv, final boolean lazy, final int[] expectedContentType,
+		final Signature signature) {
+		super(ret, exec, canBeConst, tProv, ctProv, iProv, lazy, expectedContentType, signature);
 	}
 
 	@Override
@@ -50,7 +51,7 @@ public class NAryOperator extends BinaryOperator {
 		// FIXME Use prototypes not copies like this...
 		NAryOperator copy =
 			new NAryOperator(type, helper, canBeConst, typeProvider, contentTypeProvider, keyTypeProvider, lazy,
-				expectedContentType);
+				expectedContentType, signature);
 		copy.doc = doc;
 		return copy;
 	}
