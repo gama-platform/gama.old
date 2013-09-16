@@ -13,6 +13,8 @@ package msi.gama.gui.swt;
  */
 public interface IGamaIcons {
 
+	// EXTERNALIZE : FINISH THIS WORK !
+
 	// Views
 
 	public static final String VIEW_DISPLAY = "view.display";
@@ -107,9 +109,7 @@ public interface IGamaIcons {
 	public static final String PANEL_ACTION = MENU_RUN_ACTION;
 	public static final String PANEL_GOTO = "panel.goto";
 
-	// EXTERNALIZE
-
-	// Preferences tabs. 32x32
+	// Preferences tabs. 24x24
 
 	public static final String PREFS_GENERAL = "prefs.general";
 	public static final String PREFS_DISPLAY = "prefs.display";
@@ -117,6 +117,7 @@ public interface IGamaIcons {
 	public static final String PREFS_CODE = "prefs.code";
 	public static final String PREFS_WORKSPACE = "prefs.workspace";
 	public static final String PREFS_OTHER = "prefs.other";
+	public static final String PREFS_LIBS = "prefs.libraries";
 
 	// Folders 16x16
 

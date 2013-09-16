@@ -132,6 +132,7 @@ public class GamaIcons implements IGamaIcons {
 		prefs_images.put(GamaPreferences.CODE, getDescriptor("prefs.code.png").createImage());
 		prefs_images.put(GamaPreferences.EDITOR, getDescriptor("prefs.editors.png").createImage());
 		prefs_images.put(GamaPreferences.WORKSPACE, getDescriptor("prefs.startup.png").createImage());
+		prefs_images.put(GamaPreferences.LIBRARIES, getDescriptor("prefs.libraries.png").createImage());
 
 	}
 

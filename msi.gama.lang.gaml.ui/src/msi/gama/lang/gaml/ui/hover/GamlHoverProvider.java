@@ -60,7 +60,7 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 			}
 			// /BUGFIX
 			if ( o != null ) {
-				GuiUtils.debug("Object under hover:" + o.toString());
+				// GuiUtils.debug("Object under hover:" + o.toString());
 				if ( o instanceof ActionRef ) {
 					EObject container = o.eContainer();
 					// GuiUtils.debug("Found " + ((ActionRef) o).getRef().getName());
@@ -86,6 +86,18 @@ public class GamlHoverProvider extends DefaultEObjectHoverProvider {
 			}
 			return null;
 		}
+
+		@Override
+		public Object getHoverInfo(final EObject first, final ITextViewer textViewer, final IRegion hoverRegion) {
+			return super.getHoverInfo(first, textViewer, hoverRegion);
+		}
+
+		@Override
+		public IInformationControlCreator getHoverControlCreator() {
+			IInformationControlCreator c = super.getHoverControlCreator();
+			return c;
+		}
+
 	}
 
 	@Override

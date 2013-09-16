@@ -17,8 +17,8 @@ public class JavaWriter {
 	public final static String FACTORY_PREFIX = "]";
 	public final static String VAR_PREFIX = "%";
 	public final static String DOC_PREFIX = "@";
-	public final static String DOC_SEP = "�";
-	public final static String DOC_REGEX = "\\�";
+	public final static String DOC_SEP = "€";
+	public final static String DOC_REGEX = "\\€";
 	public final static String SEP = "$";
 	static String ln = "\n";
 	static String tab = "\t";
