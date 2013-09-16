@@ -835,6 +835,45 @@ public final class GamlAnnotations {
 		 * @return An array of String representing cross-references to other elements in GAML
 		 */
 		String[] see() default {};
+		
+		/**
+		 * usages.
+		 * 
+		 * @return An array of usages representing possible usage of the element in GAML
+		 */
+		usages[] usages() default {};
 	}
+
+	/**
+	 * 
+	 * The class usages. This should replace special_cases and examples, to unify the doc for 
+	 * operators, statements and others.
+	 * 
+	 * @author Benoit Gaudou
+	 * @since 19 juin 2013
+	 * 
+	 */
+
+	@Retention(RetentionPolicy.SOURCE)
+	// @Target({ ElementType.TYPE, ElementType.METHOD })
+	@Inherited
+	public static @interface usages {
+
+		/**
+		 * Value.
+		 * 
+		 * @return a String representing one usage of the keyword 
+		 */
+		String value() default "";
+
+		/**
+		 * Examples
+		 * 
+		 * @return An array of String representing some examples or use-cases about how to use this
+		 *         element, related to the particular usage above
+		 */
+		String[] examples() default {};
+
+		}
 
 }

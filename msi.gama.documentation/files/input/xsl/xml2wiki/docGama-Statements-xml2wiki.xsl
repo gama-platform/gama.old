@@ -55,25 +55,31 @@ statement_keyword1 expression1 attribute2: expression2... {
   * <xsl:value-of select="@name"/>
   			</xsl:otherwise>
   		</xsl:choose>
-  		<xsl:if test="@omissible = 'true'"> (omissible) </xsl:if>
+  		<xsl:if test="@omissible = 'true'"> (omissible) </xsl:if>: <xsl:value-of select="documentation/result"/> 
 		</xsl:for-each>
 	</xsl:template>
 
- 	<xsl:template name="buildDefinition"> 
+ <xsl:template name="buildDefinition"> 
  	<xsl:if test="documentation[text()]"> 
  	
 == Definition == 
 
 <xsl:value-of select="documentation/result"/>
 
-<xsl:if test="documentation/examples[node()]">
+== Usages ==
+<xsl:for-each select="documentation/usages/usage">
+  * <xsl:value-of select="@descUsageElt"/> 
+
+<xsl:if test="examples[node()]">
+
 {{{
-<xsl:for-each select="documentation/examples/example" >
+<xsl:for-each select="examples/example" >
 <xsl:if test="@code != ''"><xsl:value-of select="@code"/><xsl:text>
 </xsl:text>
 </xsl:if>
 </xsl:for-each>}}} 
 </xsl:if>
+</xsl:for-each>
 
 </xsl:if>
 

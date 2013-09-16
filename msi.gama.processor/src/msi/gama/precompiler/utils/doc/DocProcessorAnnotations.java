@@ -11,6 +11,7 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
+import msi.gama.precompiler.GamlAnnotations.usages;
 
 import org.w3c.dom.Document;
 
@@ -107,6 +108,34 @@ public class DocProcessorAnnotations {
 				seeAlsoElt.appendChild(seesElt);
 			}
 			if(docAnnot.see().length != 0) {docElt.appendChild(seeAlsoElt);}
+			
+			// Parse: usages
+			// FIXME: should replace specialCases & examples
+			org.w3c.dom.Element usagesElt;
+			if(docElt.getElementsByTagName("usages").getLength() != 0){
+				usagesElt = (org.w3c.dom.Element) docElt.getElementsByTagName("usages").item(0);				
+			} else {
+				usagesElt = doc.createElement("usages");
+			}	
+			for ( usages usage : docAnnot.usages() ) {
+				org.w3c.dom.Element usageElt = doc.createElement("usage");			
+				usageElt.setAttribute("descUsageElt", usage.value());
+
+				org.w3c.dom.Element examplesUsageElt = doc.createElement("examples");			
+				for ( String example : usage.examples() ) { 
+					org.w3c.dom.Element exampleElt = doc.createElement("example");
+					exampleElt.setAttribute("code", example);
+					examplesUsageElt.appendChild(exampleElt);
+				}
+				usageElt.appendChild(examplesUsageElt);
+				usagesElt.appendChild(usageElt);
+			}
+			if(docAnnot.usages().length != 0) {docElt.appendChild(usagesElt);}	
+			
+//			public static @interface usages {
+//				String value() default "";
+//				String[] examples() default {};}
+			
 		}
 		return docElt;
 	}
@@ -177,7 +206,6 @@ public class DocProcessorAnnotations {
 		return facetsElt;
 	}
 	
-	
 	public static org.w3c.dom.Element getInsideElt(inside insideAnnot, Document doc){
 		if(insideAnnot == null){
 			return null;
@@ -204,4 +232,6 @@ public class DocProcessorAnnotations {
 		
 		return insideElt;
 	}
+
+
 }

@@ -8,7 +8,7 @@ import msi.gama.doc.util.WikiCleaner;
 
 public class MainBeforePython {
 
-	private static final boolean ONLINE = false;
+	private static final boolean ONLINE = true;
 	/**
 	 * @param args
 	 * @throws Exception 
@@ -26,13 +26,13 @@ public class MainBeforePython {
 				SVNUtils.checkoutSVNGamaDoc();	
 				System.out.println("Checkout Wiki Files from GAMA SVN................DONE");	
 			} else {
-				System.out.println("NO WHECKOUT DONE");
+				System.out.println("NO CHECKOUT DONE");
 			}
 			System.out.print("Select and clean some wiki files.................");
 			WikiCleaner.selectWikiFiles();
 			System.out.println("DONE");			
 		} catch(SVNException e){
-			System.out.println("ERROR: Impossible to connect to the SVN repository.");
+			System.out.println("ERROR: Impossible connection to the SVN repository.");
 		}	
 		
 		System.out.println("");
