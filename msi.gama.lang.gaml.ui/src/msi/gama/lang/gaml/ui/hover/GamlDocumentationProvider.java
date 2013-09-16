@@ -52,25 +52,6 @@ public class GamlDocumentationProvider extends MultiLineCommentDocumentationProv
 			return comment + "Not yet documented";
 		}
 
-		// FIXME : Highly experimental right now
-		// Try to grab the comment preceding the referenced object
-		// Only computed as a proof of concept for variables in species.
-
-		// if ( description instanceof VariableExpression ) {
-		// VariableExpression v = (VariableExpression) description;
-		// String name = v.getName();
-		// IDescription sd = v.getDefinitionDescription();
-		// if ( sd instanceof SpeciesDescription ) {
-		// VariableDescription vd = ((SpeciesDescription) sd).getVariable(name);
-		// if ( vd != null ) {
-		// EObject ref = vd.getUnderlyingElement(null);
-		// if ( ref != null ) {
-		// comment = super.getDocumentation(ref);
-		// }
-		// }
-		// }
-		// }
-
 		return comment + description.getDocumentation();
 	}
 }

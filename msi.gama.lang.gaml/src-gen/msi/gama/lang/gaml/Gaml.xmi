@@ -789,10 +789,10 @@
     </type>
     <alternatives xsi:type="xtext:Alternatives">
       <elements xsi:type="xtext:Keyword" value="as:"/>
-      <elements xsi:type="xtext:Keyword" value="parent:"/>
       <elements xsi:type="xtext:Keyword" value="of:"/>
-      <elements xsi:type="xtext:Keyword" value="species:"/>
       <elements xsi:type="xtext:Keyword" value="type:"/>
+      <elements xsi:type="xtext:Keyword" value="parent:"/>
+      <elements xsi:type="xtext:Keyword" value="species:"/>
     </alternatives>
   </rules>
   <rules xsi:type="xtext:ParserRule" name="SpecialFacetKey">

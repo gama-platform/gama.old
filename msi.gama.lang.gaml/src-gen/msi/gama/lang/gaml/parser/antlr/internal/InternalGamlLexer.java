@@ -1598,10 +1598,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__84;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:80:7: ( 'parent:' )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:80:9: 'parent:'
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:80:7: ( 'of:' )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:80:9: 'of:'
             {
-            match("parent:"); 
+            match("of:"); 
 
 
             }
@@ -1619,10 +1619,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__85;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:81:7: ( 'of:' )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:81:9: 'of:'
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:81:7: ( 'type:' )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:81:9: 'type:'
             {
-            match("of:"); 
+            match("type:"); 
 
 
             }
@@ -1640,10 +1640,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__86;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:82:7: ( 'species:' )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:82:9: 'species:'
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:82:7: ( 'parent:' )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:82:9: 'parent:'
             {
-            match("species:"); 
+            match("parent:"); 
 
 
             }
@@ -1661,10 +1661,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__87;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:83:7: ( 'type:' )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:83:9: 'type:'
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:83:7: ( 'species:' )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:83:9: 'species:'
             {
-            match("type:"); 
+            match("species:"); 
 
 
             }
@@ -4626,17 +4626,17 @@ public class InternalGamlLexer extends Lexer {
         "\131\1\135\1\147\1\141\1\uffff\1\143\1\173\1\174\1\144\1\145\1\146"+
         "\1\153\1\154\1\155\1\171\1\165\1\uffff\1\170\1\172\1\175\4\uffff"+
         "\1\150\2\uffff\1\7\5\uffff\1\105\1\134\50\uffff\1\71\13\uffff\1"+
-        "\107\1\132\2\uffff\1\156\1\157\1\160\1\161\1\162\1\163\11\uffff"+
+        "\106\1\132\2\uffff\1\156\1\157\1\160\1\161\1\162\1\163\11\uffff"+
         "\1\34\1\uffff\1\52\1\uffff\1\75\1\133\1\uffff\1\74\23\uffff\1\125"+
         "\1\72\1\uffff\1\152\1\164\4\uffff\1\22\13\uffff\1\51\4\uffff\1\151"+
         "\12\uffff\1\116\1\76\1\115\3\uffff\1\6\6\uffff\1\11\13\uffff\1\14"+
         "\1\16\1\uffff\1\42\3\uffff\1\44\2\uffff\1\46\1\112\1\61\1\33\3\uffff"+
-        "\1\122\1\57\1\111\1\uffff\1\166\3\uffff\1\1\1\uffff\1\54\3\uffff"+
+        "\1\122\1\57\1\107\1\uffff\1\166\3\uffff\1\1\1\uffff\1\54\3\uffff"+
         "\1\123\1\60\4\uffff\1\113\1\73\3\uffff\1\62\3\uffff\1\41\1\70\5"+
         "\uffff\1\13\1\40\1\31\4\uffff\1\124\1\47\7\uffff\1\3\1\5\1\21\1"+
         "\45\1\63\3\uffff\1\37\5\uffff\1\12\1\uffff\1\53\1\77\1\uffff\1\50"+
-        "\2\uffff\1\106\5\uffff\1\117\1\uffff\1\120\1\36\4\uffff\1\104\1"+
-        "\35\1\110\1\32\1\uffff\1\27\11\uffff\1\26\1\30\3\uffff\1\64\1\114"+
+        "\2\uffff\1\110\5\uffff\1\117\1\uffff\1\120\1\36\4\uffff\1\104\1"+
+        "\35\1\111\1\32\1\uffff\1\27\11\uffff\1\26\1\30\3\uffff\1\64\1\114"+
         "\1\67\1\126\1\uffff\1\56\1\10\1\uffff\1\43\4\uffff\1\15\4\uffff"+
         "\1\121\4\uffff\1\66\1\55\5\uffff\1\65";
     static final String DFA27_specialS =

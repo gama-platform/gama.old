@@ -1186,10 +1186,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__64;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:60:7: ( 'parent:' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:60:9: 'parent:'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:60:7: ( 'of:' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:60:9: 'of:'
             {
-            match("parent:"); 
+            match("of:"); 
 
 
             }
@@ -1207,10 +1207,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__65;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:61:7: ( 'of:' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:61:9: 'of:'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:61:7: ( 'type:' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:61:9: 'type:'
             {
-            match("of:"); 
+            match("type:"); 
 
 
             }
@@ -1228,10 +1228,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__66;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:62:7: ( 'species:' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:62:9: 'species:'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:62:7: ( 'parent:' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:62:9: 'parent:'
             {
-            match("species:"); 
+            match("parent:"); 
 
 
             }
@@ -1249,10 +1249,10 @@ public class InternalGamlLexer extends Lexer {
         try {
             int _type = T__67;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:63:7: ( 'type:' )
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:63:9: 'type:'
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:63:7: ( 'species:' )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:63:9: 'species:'
             {
-            match("type:"); 
+            match("species:"); 
 
 
             }
@@ -4625,17 +4625,17 @@ public class InternalGamlLexer extends Lexer {
         "\1\110\1\155\1\111\1\uffff\1\112\1\173\1\174\1\113\1\114\1\124\1"+
         "\125\1\126\1\127\1\130\1\132\1\131\1\133\1\134\2\uffff\1\156\1\162"+
         "\1\163\1\171\1\165\1\uffff\1\170\1\172\1\175\16\uffff\1\3\6\uffff"+
-        "\1\61\1\161\32\uffff\1\116\12\uffff\1\144\6\uffff\1\63\1\157\1\135"+
+        "\1\61\1\161\32\uffff\1\116\12\uffff\1\144\6\uffff\1\62\1\157\1\135"+
         "\1\136\1\137\1\140\1\141\1\142\16\uffff\1\151\5\uffff\1\13\1\uffff"+
         "\1\31\1\uffff\1\53\1\160\1\5\1\50\22\uffff\1\30\10\uffff\1\117\6"+
         "\uffff\1\52\2\uffff\1\120\1\164\10\uffff\1\123\2\uffff\1\23\1\uffff"+
         "\1\25\1\66\1\40\5\uffff\1\12\14\uffff\1\21\1\67\7\uffff\1\77\1\36"+
-        "\1\65\1\uffff\1\166\2\uffff\1\73\1\54\1\72\1\uffff\1\143\1\57\3"+
+        "\1\63\1\uffff\1\166\2\uffff\1\73\1\54\1\72\1\uffff\1\143\1\57\3"+
         "\uffff\1\20\2\uffff\1\47\1\uffff\1\2\6\uffff\1\7\7\uffff\1\41\1"+
         "\70\1\51\2\uffff\1\17\1\101\1\26\2\uffff\1\33\2\uffff\1\121\1\uffff"+
         "\1\100\1\37\10\uffff\1\27\1\uffff\1\4\1\150\1\24\1\42\2\uffff\1"+
-        "\32\1\55\1\uffff\1\146\1\uffff\1\16\2\uffff\1\62\4\uffff\1\122\6"+
-        "\uffff\1\64\1\11\1\uffff\1\153\1\uffff\1\14\1\60\1\15\1\75\3\uffff"+
+        "\32\1\55\1\uffff\1\146\1\uffff\1\16\2\uffff\1\64\4\uffff\1\122\6"+
+        "\uffff\1\65\1\11\1\uffff\1\153\1\uffff\1\14\1\60\1\15\1\75\3\uffff"+
         "\1\74\3\uffff\1\152\1\1\5\uffff\1\43\3\uffff\1\71\1\46\1\154\1\22"+
         "\4\uffff\1\145\1\uffff\1\35\1\147\4\uffff\1\76\4\uffff\1\45\2\uffff"+
         "\1\34\4\uffff\1\44";

@@ -1912,32 +1912,32 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "TypeFacetKey");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Keyword cAsKeyword_0 = (Keyword)cAlternatives.eContents().get(0);
-		private final Keyword cParentKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
-		private final Keyword cOfKeyword_2 = (Keyword)cAlternatives.eContents().get(2);
-		private final Keyword cSpeciesKeyword_3 = (Keyword)cAlternatives.eContents().get(3);
-		private final Keyword cTypeKeyword_4 = (Keyword)cAlternatives.eContents().get(4);
+		private final Keyword cOfKeyword_1 = (Keyword)cAlternatives.eContents().get(1);
+		private final Keyword cTypeKeyword_2 = (Keyword)cAlternatives.eContents().get(2);
+		private final Keyword cParentKeyword_3 = (Keyword)cAlternatives.eContents().get(3);
+		private final Keyword cSpeciesKeyword_4 = (Keyword)cAlternatives.eContents().get(4);
 		
 		//TypeFacetKey:
-		//	"as:" | "parent:" | "of:" | "species:" | "type:";
+		//	"as:" | "of:" | "type:" | "parent:" | "species:";
 		public ParserRule getRule() { return rule; }
 
-		//"as:" | "parent:" | "of:" | "species:" | "type:"
+		//"as:" | "of:" | "type:" | "parent:" | "species:"
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//"as:"
 		public Keyword getAsKeyword_0() { return cAsKeyword_0; }
 
-		//"parent:"
-		public Keyword getParentKeyword_1() { return cParentKeyword_1; }
-
 		//"of:"
-		public Keyword getOfKeyword_2() { return cOfKeyword_2; }
-
-		//"species:"
-		public Keyword getSpeciesKeyword_3() { return cSpeciesKeyword_3; }
+		public Keyword getOfKeyword_1() { return cOfKeyword_1; }
 
 		//"type:"
-		public Keyword getTypeKeyword_4() { return cTypeKeyword_4; }
+		public Keyword getTypeKeyword_2() { return cTypeKeyword_2; }
+
+		//"parent:"
+		public Keyword getParentKeyword_3() { return cParentKeyword_3; }
+
+		//"species:"
+		public Keyword getSpeciesKeyword_4() { return cSpeciesKeyword_4; }
 	}
 
 	public class SpecialFacetKeyElements extends AbstractParserRuleElementFinder {
@@ -3721,10 +3721,10 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cTypeFakeDefinitionParserRuleCall_1 = (RuleCall)cAlternatives.eContents().get(1);
 		
 		//TypeDefinition:
-		//	S_Species | TypeFakeDefinition;
+		//	S_Species / *| S_Experiment |* / | TypeFakeDefinition;
 		public ParserRule getRule() { return rule; }
 
-		//S_Species | TypeFakeDefinition
+		//S_Species / *| S_Experiment |* / | TypeFakeDefinition
 		public Alternatives getAlternatives() { return cAlternatives; }
 
 		//S_Species
@@ -4670,7 +4670,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//TypeFacetKey:
-	//	"as:" | "parent:" | "of:" | "species:" | "type:";
+	//	"as:" | "of:" | "type:" | "parent:" | "species:";
 	public TypeFacetKeyElements getTypeFacetKeyAccess() {
 		return (pTypeFacetKey != null) ? pTypeFacetKey : (pTypeFacetKey = new TypeFacetKeyElements());
 	}
@@ -5079,7 +5079,7 @@ public class GamlGrammarAccess extends AbstractGrammarElementFinder {
 	}
 
 	//TypeDefinition:
-	//	S_Species | TypeFakeDefinition;
+	//	S_Species / *| S_Experiment |* / | TypeFakeDefinition;
 	public TypeDefinitionElements getTypeDefinitionAccess() {
 		return (pTypeDefinition != null) ? pTypeDefinition : (pTypeDefinition = new TypeDefinitionElements());
 	}

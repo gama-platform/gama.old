@@ -65,7 +65,12 @@ public class GamlQualifiedNameProvider extends DefaultDeclarativeQualifiedNamePr
 		return converter.toQualifiedName(name);
 	}
 
+	QualifiedName qualifiedName(final S_Experiment s) {
+		return converter.toQualifiedName(s.getName());
+	}
+
 	QualifiedName qualifiedName(final S_Definition s) {
+		if ( IKeyword.PARAMETER.equals(EGaml.getKeyOf(s)) ) { return null; }
 		return converter.toQualifiedName(s.getName());
 	}
 

@@ -3686,35 +3686,35 @@ rule__TypeFacetKey__Alternatives
 )
 
     |(
-{ before(grammarAccess.getTypeFacetKeyAccess().getParentKeyword_1()); }
-
-	'parent:' 
-
-{ after(grammarAccess.getTypeFacetKeyAccess().getParentKeyword_1()); }
-)
-
-    |(
-{ before(grammarAccess.getTypeFacetKeyAccess().getOfKeyword_2()); }
+{ before(grammarAccess.getTypeFacetKeyAccess().getOfKeyword_1()); }
 
 	'of:' 
 
-{ after(grammarAccess.getTypeFacetKeyAccess().getOfKeyword_2()); }
+{ after(grammarAccess.getTypeFacetKeyAccess().getOfKeyword_1()); }
 )
 
     |(
-{ before(grammarAccess.getTypeFacetKeyAccess().getSpeciesKeyword_3()); }
-
-	'species:' 
-
-{ after(grammarAccess.getTypeFacetKeyAccess().getSpeciesKeyword_3()); }
-)
-
-    |(
-{ before(grammarAccess.getTypeFacetKeyAccess().getTypeKeyword_4()); }
+{ before(grammarAccess.getTypeFacetKeyAccess().getTypeKeyword_2()); }
 
 	'type:' 
 
-{ after(grammarAccess.getTypeFacetKeyAccess().getTypeKeyword_4()); }
+{ after(grammarAccess.getTypeFacetKeyAccess().getTypeKeyword_2()); }
+)
+
+    |(
+{ before(grammarAccess.getTypeFacetKeyAccess().getParentKeyword_3()); }
+
+	'parent:' 
+
+{ after(grammarAccess.getTypeFacetKeyAccess().getParentKeyword_3()); }
+)
+
+    |(
+{ before(grammarAccess.getTypeFacetKeyAccess().getSpeciesKeyword_4()); }
+
+	'species:' 
+
+{ after(grammarAccess.getTypeFacetKeyAccess().getSpeciesKeyword_4()); }
 )
 
 ;

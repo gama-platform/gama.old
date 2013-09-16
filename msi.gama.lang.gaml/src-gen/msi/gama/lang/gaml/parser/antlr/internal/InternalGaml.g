@@ -3570,31 +3570,31 @@ ruleTypeFacetKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleTo
     }
 
     |
-	kw='parent:' 
-    {
-        $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getTypeFacetKeyAccess().getParentKeyword_1()); 
-    }
-
-    |
 	kw='of:' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getTypeFacetKeyAccess().getOfKeyword_2()); 
-    }
-
-    |
-	kw='species:' 
-    {
-        $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getTypeFacetKeyAccess().getSpeciesKeyword_3()); 
+        newLeafNode(kw, grammarAccess.getTypeFacetKeyAccess().getOfKeyword_1()); 
     }
 
     |
 	kw='type:' 
     {
         $current.merge(kw);
-        newLeafNode(kw, grammarAccess.getTypeFacetKeyAccess().getTypeKeyword_4()); 
+        newLeafNode(kw, grammarAccess.getTypeFacetKeyAccess().getTypeKeyword_2()); 
+    }
+
+    |
+	kw='parent:' 
+    {
+        $current.merge(kw);
+        newLeafNode(kw, grammarAccess.getTypeFacetKeyAccess().getParentKeyword_3()); 
+    }
+
+    |
+	kw='species:' 
+    {
+        $current.merge(kw);
+        newLeafNode(kw, grammarAccess.getTypeFacetKeyAccess().getSpeciesKeyword_4()); 
     }
 )
     ;

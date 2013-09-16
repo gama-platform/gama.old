@@ -22,7 +22,7 @@ import java.util.HashMap;
 @SuppressWarnings("all")
 public class InternalGamlParser extends AbstractInternalAntlrParser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_ID", "RULE_STRING", "RULE_INTEGER", "RULE_DOUBLE", "RULE_COLOR", "RULE_BOOLEAN", "RULE_KEYWORD", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'model'", "'<-'", "'import'", "';'", "'action:'", "'loop'", "'if'", "'condition:'", "'else'", "'return'", "'value:'", "'name:'", "'experiment'", "'when:'", "'('", "')'", "'action'", "'set'", "'{'", "'}'", "'='", "'equation:'", "'display'", "'equation'", "'solve'", "'species'", "'grid'", "'ask'", "'release'", "'capture'", "'create'", "'write'", "'error'", "'warn'", "'exception'", "'save'", "'assert'", "'draw'", "'using'", "'switch'", "'put'", "'add'", "'remove'", "'match'", "'match_between'", "'match_one'", "'text'", "'image'", "'data'", "'chart'", "'agents'", "'graphics'", "'display_population'", "'display_grid'", "'quadtree'", "'event'", "'do'", "'var'", "'const'", "'let'", "'arg'", "'init'", "'reflex'", "'<<'", "'>'", "','", "':'", "'returns:'", "'as:'", "'parent:'", "'of:'", "'species:'", "'type:'", "'data:'", "'const:'", "'topology:'", "'item:'", "'init:'", "'message:'", "'control:'", "'environment:'", "'text:'", "'image:'", "'using:'", "'var:'", "'function:'", "'->'", "'::'", "'?'", "'or'", "'and'", "'as'", "'!='", "'>='", "'<='", "'<'", "'+'", "'-'", "'*'", "'/'", "'^'", "'\\u00B0'", "'!'", "'my'", "'the'", "'not'", "'['", "']'", "'.'", "'**unit*'", "'**type*'", "'**action*'", "'**skill*'", "'**var*'", "'**equation*'"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_ID", "RULE_STRING", "RULE_INTEGER", "RULE_DOUBLE", "RULE_COLOR", "RULE_BOOLEAN", "RULE_KEYWORD", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'model'", "'<-'", "'import'", "';'", "'action:'", "'loop'", "'if'", "'condition:'", "'else'", "'return'", "'value:'", "'name:'", "'experiment'", "'when:'", "'('", "')'", "'action'", "'set'", "'{'", "'}'", "'='", "'equation:'", "'display'", "'equation'", "'solve'", "'species'", "'grid'", "'ask'", "'release'", "'capture'", "'create'", "'write'", "'error'", "'warn'", "'exception'", "'save'", "'assert'", "'draw'", "'using'", "'switch'", "'put'", "'add'", "'remove'", "'match'", "'match_between'", "'match_one'", "'text'", "'image'", "'data'", "'chart'", "'agents'", "'graphics'", "'display_population'", "'display_grid'", "'quadtree'", "'event'", "'do'", "'var'", "'const'", "'let'", "'arg'", "'init'", "'reflex'", "'<<'", "'>'", "','", "':'", "'returns:'", "'as:'", "'of:'", "'type:'", "'parent:'", "'species:'", "'data:'", "'const:'", "'topology:'", "'item:'", "'init:'", "'message:'", "'control:'", "'environment:'", "'text:'", "'image:'", "'using:'", "'var:'", "'function:'", "'->'", "'::'", "'?'", "'or'", "'and'", "'as'", "'!='", "'>='", "'<='", "'<'", "'+'", "'-'", "'*'", "'/'", "'^'", "'\\u00B0'", "'!'", "'my'", "'the'", "'not'", "'['", "']'", "'.'", "'**unit*'", "'**type*'", "'**action*'", "'**skill*'", "'**var*'", "'**equation*'"
     };
     public static final int RULE_ID=4;
     public static final int T__29=29;
@@ -10265,7 +10265,7 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleTypeFacetKey"
-    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3561:1: ruleTypeFacetKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'as:' | kw= 'parent:' | kw= 'of:' | kw= 'species:' | kw= 'type:' ) ;
+    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3561:1: ruleTypeFacetKey returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()] : (kw= 'as:' | kw= 'of:' | kw= 'type:' | kw= 'parent:' | kw= 'species:' ) ;
     public final AntlrDatatypeRuleToken ruleTypeFacetKey() throws RecognitionException {
         AntlrDatatypeRuleToken current = new AntlrDatatypeRuleToken();
 
@@ -10274,10 +10274,10 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
          enterRule(); 
             
         try {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3564:28: ( (kw= 'as:' | kw= 'parent:' | kw= 'of:' | kw= 'species:' | kw= 'type:' ) )
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3565:1: (kw= 'as:' | kw= 'parent:' | kw= 'of:' | kw= 'species:' | kw= 'type:' )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3564:28: ( (kw= 'as:' | kw= 'of:' | kw= 'type:' | kw= 'parent:' | kw= 'species:' ) )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3565:1: (kw= 'as:' | kw= 'of:' | kw= 'type:' | kw= 'parent:' | kw= 'species:' )
             {
-            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3565:1: (kw= 'as:' | kw= 'parent:' | kw= 'of:' | kw= 'species:' | kw= 'type:' )
+            // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3565:1: (kw= 'as:' | kw= 'of:' | kw= 'type:' | kw= 'parent:' | kw= 'species:' )
             int alt71=5;
             switch ( input.LA(1) ) {
             case 83:
@@ -10328,52 +10328,52 @@ public class InternalGamlParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 2 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3573:2: kw= 'parent:'
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3573:2: kw= 'of:'
                     {
                     kw=(Token)match(input,84,FOLLOW_84_in_ruleTypeFacetKey7895); if (state.failed) return current;
                     if ( state.backtracking==0 ) {
 
                               current.merge(kw);
-                              newLeafNode(kw, grammarAccess.getTypeFacetKeyAccess().getParentKeyword_1()); 
+                              newLeafNode(kw, grammarAccess.getTypeFacetKeyAccess().getOfKeyword_1()); 
                           
                     }
 
                     }
                     break;
                 case 3 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3580:2: kw= 'of:'
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3580:2: kw= 'type:'
                     {
                     kw=(Token)match(input,85,FOLLOW_85_in_ruleTypeFacetKey7914); if (state.failed) return current;
                     if ( state.backtracking==0 ) {
 
                               current.merge(kw);
-                              newLeafNode(kw, grammarAccess.getTypeFacetKeyAccess().getOfKeyword_2()); 
+                              newLeafNode(kw, grammarAccess.getTypeFacetKeyAccess().getTypeKeyword_2()); 
                           
                     }
 
                     }
                     break;
                 case 4 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3587:2: kw= 'species:'
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3587:2: kw= 'parent:'
                     {
                     kw=(Token)match(input,86,FOLLOW_86_in_ruleTypeFacetKey7933); if (state.failed) return current;
                     if ( state.backtracking==0 ) {
 
                               current.merge(kw);
-                              newLeafNode(kw, grammarAccess.getTypeFacetKeyAccess().getSpeciesKeyword_3()); 
+                              newLeafNode(kw, grammarAccess.getTypeFacetKeyAccess().getParentKeyword_3()); 
                           
                     }
 
                     }
                     break;
                 case 5 :
-                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3594:2: kw= 'type:'
+                    // ../msi.gama.lang.gaml/src-gen/msi/gama/lang/gaml/parser/antlr/internal/InternalGaml.g:3594:2: kw= 'species:'
                     {
                     kw=(Token)match(input,87,FOLLOW_87_in_ruleTypeFacetKey7952); if (state.failed) return current;
                     if ( state.backtracking==0 ) {
 
                               current.merge(kw);
-                              newLeafNode(kw, grammarAccess.getTypeFacetKeyAccess().getTypeKeyword_4()); 
+                              newLeafNode(kw, grammarAccess.getTypeFacetKeyAccess().getSpeciesKeyword_4()); 
                           
                     }
 

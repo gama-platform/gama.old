@@ -23,7 +23,7 @@ import java.util.HashMap;
 @SuppressWarnings("all")
 public class InternalGamlParser extends AbstractInternalContentAssistParser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_STRING", "RULE_ID", "RULE_INTEGER", "RULE_DOUBLE", "RULE_COLOR", "RULE_BOOLEAN", "RULE_KEYWORD", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'equation'", "'solve'", "'do'", "'action:'", "'var:'", "';'", "'value:'", "'<-'", "'species'", "'grid'", "'ask'", "'release'", "'capture'", "'create'", "'write'", "'error'", "'warn'", "'exception'", "'save'", "'assert'", "'draw'", "'using'", "'switch'", "'put'", "'add'", "'remove'", "'match'", "'match_between'", "'match_one'", "'text'", "'image'", "'data'", "'chart'", "'agents'", "'graphics'", "'display_population'", "'display_grid'", "'quadtree'", "'event'", "'var'", "'const'", "'let'", "'arg'", "'init'", "'reflex'", "'<<'", "'name:'", "'returns:'", "'as:'", "'parent:'", "'of:'", "'species:'", "'type:'", "'data:'", "'when:'", "'const:'", "'topology:'", "'item:'", "'init:'", "'message:'", "'control:'", "'environment:'", "'text:'", "'image:'", "'using:'", "'!='", "'='", "'>='", "'<='", "'<'", "'>'", "'+'", "'-'", "'*'", "'/'", "'^'", "'!'", "'my'", "'the'", "'not'", "'model'", "'import'", "'else'", "'('", "')'", "'{'", "'}'", "','", "':'", "'::'", "']'", "'['", "'**unit*'", "'**type*'", "'**action*'", "'**skill*'", "'**var*'", "'**equation*'", "'loop'", "'if'", "'condition:'", "'return'", "'experiment'", "'action'", "'set'", "'equation:'", "'display'", "'function:'", "'->'", "'?'", "'or'", "'and'", "'as'", "'\\u00B0'", "'.'"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "RULE_STRING", "RULE_ID", "RULE_INTEGER", "RULE_DOUBLE", "RULE_COLOR", "RULE_BOOLEAN", "RULE_KEYWORD", "RULE_ML_COMMENT", "RULE_SL_COMMENT", "RULE_WS", "RULE_ANY_OTHER", "'equation'", "'solve'", "'do'", "'action:'", "'var:'", "';'", "'value:'", "'<-'", "'species'", "'grid'", "'ask'", "'release'", "'capture'", "'create'", "'write'", "'error'", "'warn'", "'exception'", "'save'", "'assert'", "'draw'", "'using'", "'switch'", "'put'", "'add'", "'remove'", "'match'", "'match_between'", "'match_one'", "'text'", "'image'", "'data'", "'chart'", "'agents'", "'graphics'", "'display_population'", "'display_grid'", "'quadtree'", "'event'", "'var'", "'const'", "'let'", "'arg'", "'init'", "'reflex'", "'<<'", "'name:'", "'returns:'", "'as:'", "'of:'", "'type:'", "'parent:'", "'species:'", "'data:'", "'when:'", "'const:'", "'topology:'", "'item:'", "'init:'", "'message:'", "'control:'", "'environment:'", "'text:'", "'image:'", "'using:'", "'!='", "'='", "'>='", "'<='", "'<'", "'>'", "'+'", "'-'", "'*'", "'/'", "'^'", "'!'", "'my'", "'the'", "'not'", "'model'", "'import'", "'else'", "'('", "')'", "'{'", "'}'", "','", "':'", "'::'", "']'", "'['", "'**unit*'", "'**type*'", "'**action*'", "'**skill*'", "'**var*'", "'**equation*'", "'loop'", "'if'", "'condition:'", "'return'", "'experiment'", "'action'", "'set'", "'equation:'", "'display'", "'function:'", "'->'", "'?'", "'or'", "'and'", "'as'", "'\\u00B0'", "'.'"
     };
     public static final int RULE_ID=5;
     public static final int T__29=29;
@@ -11763,13 +11763,13 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
 
 
     // $ANTLR start "rule__TypeFacetKey__Alternatives"
-    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3675:1: rule__TypeFacetKey__Alternatives : ( ( 'as:' ) | ( 'parent:' ) | ( 'of:' ) | ( 'species:' ) | ( 'type:' ) );
+    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3675:1: rule__TypeFacetKey__Alternatives : ( ( 'as:' ) | ( 'of:' ) | ( 'type:' ) | ( 'parent:' ) | ( 'species:' ) );
     public final void rule__TypeFacetKey__Alternatives() throws RecognitionException {
 
         		int stackSize = keepStackSize();
             
         try {
-            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3679:1: ( ( 'as:' ) | ( 'parent:' ) | ( 'of:' ) | ( 'species:' ) | ( 'type:' ) )
+            // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3679:1: ( ( 'as:' ) | ( 'of:' ) | ( 'type:' ) | ( 'parent:' ) | ( 'species:' ) )
             int alt31=5;
             switch ( input.LA(1) ) {
             case 63:
@@ -11826,17 +11826,17 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 2 :
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3688:6: ( 'parent:' )
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3688:6: ( 'of:' )
                     {
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3688:6: ( 'parent:' )
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3689:1: 'parent:'
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3688:6: ( 'of:' )
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3689:1: 'of:'
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getTypeFacetKeyAccess().getParentKeyword_1()); 
+                       before(grammarAccess.getTypeFacetKeyAccess().getOfKeyword_1()); 
                     }
                     match(input,64,FOLLOW_64_in_rule__TypeFacetKey__Alternatives8033); if (state.failed) return ;
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getTypeFacetKeyAccess().getParentKeyword_1()); 
+                       after(grammarAccess.getTypeFacetKeyAccess().getOfKeyword_1()); 
                     }
 
                     }
@@ -11845,17 +11845,17 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 3 :
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3696:6: ( 'of:' )
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3696:6: ( 'type:' )
                     {
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3696:6: ( 'of:' )
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3697:1: 'of:'
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3696:6: ( 'type:' )
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3697:1: 'type:'
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getTypeFacetKeyAccess().getOfKeyword_2()); 
+                       before(grammarAccess.getTypeFacetKeyAccess().getTypeKeyword_2()); 
                     }
                     match(input,65,FOLLOW_65_in_rule__TypeFacetKey__Alternatives8053); if (state.failed) return ;
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getTypeFacetKeyAccess().getOfKeyword_2()); 
+                       after(grammarAccess.getTypeFacetKeyAccess().getTypeKeyword_2()); 
                     }
 
                     }
@@ -11864,17 +11864,17 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 4 :
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3704:6: ( 'species:' )
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3704:6: ( 'parent:' )
                     {
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3704:6: ( 'species:' )
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3705:1: 'species:'
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3704:6: ( 'parent:' )
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3705:1: 'parent:'
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getTypeFacetKeyAccess().getSpeciesKeyword_3()); 
+                       before(grammarAccess.getTypeFacetKeyAccess().getParentKeyword_3()); 
                     }
                     match(input,66,FOLLOW_66_in_rule__TypeFacetKey__Alternatives8073); if (state.failed) return ;
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getTypeFacetKeyAccess().getSpeciesKeyword_3()); 
+                       after(grammarAccess.getTypeFacetKeyAccess().getParentKeyword_3()); 
                     }
 
                     }
@@ -11883,17 +11883,17 @@ public class InternalGamlParser extends AbstractInternalContentAssistParser {
                     }
                     break;
                 case 5 :
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3712:6: ( 'type:' )
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3712:6: ( 'species:' )
                     {
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3712:6: ( 'type:' )
-                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3713:1: 'type:'
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3712:6: ( 'species:' )
+                    // ../msi.gama.lang.gaml.ui/src-gen/msi/gama/lang/gaml/ui/contentassist/antlr/internal/InternalGaml.g:3713:1: 'species:'
                     {
                     if ( state.backtracking==0 ) {
-                       before(grammarAccess.getTypeFacetKeyAccess().getTypeKeyword_4()); 
+                       before(grammarAccess.getTypeFacetKeyAccess().getSpeciesKeyword_4()); 
                     }
                     match(input,67,FOLLOW_67_in_rule__TypeFacetKey__Alternatives8093); if (state.failed) return ;
                     if ( state.backtracking==0 ) {
-                       after(grammarAccess.getTypeFacetKeyAccess().getTypeKeyword_4()); 
+                       after(grammarAccess.getTypeFacetKeyAccess().getSpeciesKeyword_4()); 
                     }
 
                     }

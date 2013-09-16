@@ -145,7 +145,7 @@ Facet:
 	DefinitionFacet | FunctionFacet | ClassicFacet | TypeFacet | VarFacet | ActionFacet;
 
 FirstFacetKey:
-	DefinitionFacetKey | TypeFacetKey | SpecialFacetKey | VarFacetKey | ActionFacetKey | ClassicFacetKey ;
+	DefinitionFacetKey | TypeFacetKey  | SpecialFacetKey | VarFacetKey | ActionFacetKey | ClassicFacetKey ;
 	
 ClassicFacetKey: (ID ':');
 
@@ -153,7 +153,8 @@ DefinitionFacetKey:
 	"name:" | "returns:" ; /*| "var:" */
 
 TypeFacetKey:
-	"as:" | "parent:" | "of:" | "species:" | "type:";
+	"as:" | "of:" | "type:" | 'parent:' | 'species:';
+
 
 SpecialFacetKey:
 	'data:' | 'when:' | "const:" | "value:" | "topology:" | "item:" | "init:" | "message:" | "control:" |
@@ -198,7 +199,7 @@ Expression:
 	ArgumentPair | Pair;
 
 ArgumentPair:
-	=> (op=(Valid_ID) '::' | op=(DefinitionFacetKey | TypeFacetKey | SpecialFacetKey | ActionFacetKey | VarFacetKey) ':')? right=If;
+	=> (op=(Valid_ID) '::' | op=(DefinitionFacetKey | TypeFacetKey  | SpecialFacetKey | ActionFacetKey | VarFacetKey) ':')? right=If;
 
 
 Pair returns Expression:
@@ -284,7 +285,7 @@ AbstractRef returns Expression:
 Function returns Expression:
 	{Function} action=ActionRef '(' (parameters=Parameters | args=ExpressionList) ')';
 Parameter returns Expression:
-	{Parameter} ((builtInFacetKey=(DefinitionFacetKey | TypeFacetKey | SpecialFacetKey | ActionFacetKey | VarFacetKey)) |
+	{Parameter} ((builtInFacetKey=(DefinitionFacetKey | TypeFacetKey  | SpecialFacetKey | ActionFacetKey | VarFacetKey)) |
 	(left=VariableRef ':')) right=Expression;
 
 ExpressionList:
@@ -301,6 +302,7 @@ VariableRef:
 
 TypeRef returns Expression:
 	{TypeRef} ref=[TypeDefinition|ID] ('<' first=TypeRef ("," second=TypeRef)? =>'>')?;
+	
 
 SkillRef returns Expression:
 	{SkillRef} ref=[SkillFakeDefinition|ID];
@@ -318,7 +320,8 @@ EquationDefinition:
 	S_Equations | EquationFakeDefinition;
 
 TypeDefinition:
-	S_Species | TypeFakeDefinition;
+	S_Species /*| S_Experiment |*/| TypeFakeDefinition;
+	
 
 VarDefinition:
 	=>S_Declaration | (Model | ArgumentDefinition | DefinitionFacet | VarFakeDefinition);
