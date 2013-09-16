@@ -19,18 +19,31 @@
 package msi.gaml.operators;
 
 import java.io.File;
-import java.util.*;
+import java.util.Deque;
+import java.util.LinkedList;
+import java.util.Map;
+
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.*;
+import msi.gama.metamodel.shape.GamaShape;
+import msi.gama.metamodel.shape.IShape;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.ITypeProvider;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.file.*;
-import msi.gaml.types.*;
+import msi.gama.util.file.GamaFolderFile;
+import msi.gama.util.file.GamaGridFile;
+import msi.gama.util.file.GamaImageFile;
+import msi.gama.util.file.GamaOsmFile;
+import msi.gama.util.file.GamaPropertyFile;
+import msi.gama.util.file.GamaShapeFile;
+import msi.gama.util.file.GamaTextFile;
+import msi.gama.util.file.IGamaFile;
+import msi.gaml.types.GamaFileType;
+import msi.gaml.types.IType;
 
 /**
  * Written by drogoul Modified on 20 dec. 2010
@@ -66,7 +79,8 @@ public class Files {
 		if ( GamaFileType.isGrid(s) ) { return gridFile(scope, s); }
 		if ( GamaFileType.isOsm(s) ) { return osmFile(scope, s); }
 		if ( new File(s).isDirectory() ) { return folderFile(scope, s); }
-		throw GamaRuntimeException.error("Unknown file type: " + s);
+		return new GamaPreferences.GenericFile(s);
+		// throw GamaRuntimeException.error("Unknown file type: " + s);
 	}
 
 	@operator(value = IMAGE, can_be_const = true, index_type = IType.POINT)

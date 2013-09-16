@@ -1,15 +1,28 @@
 package msi.gama.common;
 
 import java.awt.Color;
-import java.util.*;
-import java.util.prefs.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.experiment.IParameter;
-import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaColor;
+import msi.gama.util.GamaList;
+import msi.gama.util.file.GamaFile;
+import msi.gama.util.file.IGamaFile;
 import msi.gaml.operators.Cast;
-import msi.gaml.types.*;
+import msi.gaml.types.IType;
+import msi.gaml.types.Types;
+
+import com.vividsolutions.jts.geom.Envelope;
 
 /**
  * Class GamaPreferencesView.
@@ -62,6 +75,46 @@ public class GamaPreferences {
 		 * @return true or false, wheter or not the change is accepted by the listener.
 		 */
 		public boolean valueChange(T newValue);
+	}
+	
+	public static class GenericFile extends GamaFile{
+
+		public GenericFile(String pathName)
+				throws GamaRuntimeException {
+			super(null, pathName);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		public Envelope computeEnvelope(IScope scope) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		protected void fillBuffer(IScope scope) throws GamaRuntimeException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		protected void flushBuffer() throws GamaRuntimeException {
+			// TODO Auto-generated method stub
+			
+		}
+
+		@Override
+		protected IGamaFile _copy(IScope scope) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public String getKeyword() {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
 	}
 
 	public static class Entry<T> implements IParameter {
@@ -279,8 +332,11 @@ public class GamaPreferences {
 		IType.BOOL).in(GENERAL).group("Simulation errors");
 	public static final Entry<Double> CORE_DELAY_STEP = create("core.delay_step",
 			"Default step for delay slider (in sec.)", 0.01, IType.FLOAT).in(GENERAL).group("Runtime");
-	public static final Entry<String> LIB_SPATIALITE  = create("core.lib_spatialite",
-			"path for lib spatialite", "", IType.STRING).in(GENERAL).group("Runtime");
+	public static final Entry<String> LIB_SPATIALITE = create(
+			"core.lib_spatialite", "Path to the 'Spatialite' library",
+			new GenericFile(""),
+			IType.FILE)
+			.in(GENERAL).group("Runtime");
 
 	// DISPLAY
 	public static final Entry<String> CORE_DISPLAY = create("core.display", "Default display method", "Java2D",
@@ -348,6 +404,13 @@ public class GamaPreferences {
 					store.put(key, (String) value);
 				}
 				break;
+		case IType.FILE:
+			if (storeKeys.contains(key)) {
+				gp.setValue(new GenericFile(store.get(key, "")));
+			} else {
+				store.put(key, (String) value);
+			}
+			break;
 			case IType.COLOR:
 				// Stores the preference as an int but create a color
 				if ( storeKeys.contains(key) ) {
@@ -389,6 +452,9 @@ public class GamaPreferences {
 			case IType.STRING:
 				store.put(key, (String) value);
 				break;
+		case IType.FILE:
+			store.put(key, ((GamaFile) value).getPath());
+			break;
 			case IType.COLOR:
 				// Stores the preference as an int but create a color
 				int code = ((Color) value).getRGB();
