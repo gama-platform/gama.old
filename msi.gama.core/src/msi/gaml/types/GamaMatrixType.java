@@ -19,6 +19,7 @@
 package msi.gaml.types;
 
 import java.io.*;
+import java.util.List;
 import java.util.regex.Pattern;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.metamodel.shape.*;
@@ -96,6 +97,31 @@ public class GamaMatrixType extends GamaContainerType<IMatrix> {
 			ex.printStackTrace();
 			return null;
 		}
+	}
+
+	public static IMatrix from(final IScope scope, final List<String[]> allLines, final ILocation preferredSize) {
+		int columns = 0;
+		for ( String[] strings : allLines ) {
+			if ( strings.length > columns ) {
+				columns = strings.length;
+			}
+		}
+		int columnSize, lineSize;
+		if ( preferredSize == null ) {
+			lineSize = allLines.size();
+			columnSize = columns;
+		} else {
+			lineSize = Math.min((int) preferredSize.getY(), allLines.size());
+			columnSize = Math.min((int) preferredSize.getX(), columns);
+		}
+		final IMatrix matrix = new GamaObjectMatrix(columnSize, lineSize);
+		for ( int i = 0; i < lineSize; i++ ) {
+			String[] splitStr = allLines.get(i);
+			for ( int j = 0; j < splitStr.length; j++ ) {
+				matrix.set(scope, j, i, splitStr[j]);
+			}
+		}
+		return matrix;
 	}
 
 	public static IMatrix with(final IScope scope, final Object val) throws GamaRuntimeException {

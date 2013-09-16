@@ -19,31 +19,19 @@
 package msi.gaml.operators;
 
 import java.io.File;
-import java.util.Deque;
-import java.util.LinkedList;
-import java.util.Map;
-
+import java.util.*;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.metamodel.shape.GamaShape;
-import msi.gama.metamodel.shape.IShape;
+import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
-import msi.gama.precompiler.ITypeProvider;
+import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.file.GamaFolderFile;
-import msi.gama.util.file.GamaGridFile;
-import msi.gama.util.file.GamaImageFile;
-import msi.gama.util.file.GamaOsmFile;
-import msi.gama.util.file.GamaPropertyFile;
-import msi.gama.util.file.GamaShapeFile;
-import msi.gama.util.file.GamaTextFile;
-import msi.gama.util.file.IGamaFile;
-import msi.gaml.types.GamaFileType;
-import msi.gaml.types.IType;
+import msi.gama.util.file.*;
+import msi.gaml.types.*;
 
 /**
  * Written by drogoul Modified on 20 dec. 2010
@@ -97,6 +85,18 @@ public class Files {
 		"image", "shapefile" })
 	public static IGamaFile textFile(final IScope scope, final String s) throws GamaRuntimeException {
 		return new GamaTextFile(scope, s);
+	}
+
+	@operator(value = "as_csv", can_be_const = true, index_type = IType.INT)
+	@doc(value = "allows to specify the character to use as a separator for a CSV format and returns the file. Yields an error if the file is not a text file", examples = "let fileT type: file value: text(\"../includes/Stupid_Cell.csv\") as_csv ';';")
+	public static IGamaFile as_csv(final IScope scope, final IGamaFile file, final String s)
+		throws GamaRuntimeException {
+		if ( !(file instanceof GamaTextFile) ) { throw GamaRuntimeException
+			.warning("The 'as_csv' operator can only be applied to text files"); }
+		if ( s == null || s.isEmpty() ) { throw GamaRuntimeException
+			.warning("The 'as_csv' operator expects a non-empty string as its right operand"); }
+		((GamaTextFile) file).setCsvSeparators(s);
+		return file;
 	}
 
 	@operator(value = PROPERTIES, can_be_const = true, index_type = IType.STRING)
