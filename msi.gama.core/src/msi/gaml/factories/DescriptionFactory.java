@@ -21,7 +21,6 @@ package msi.gaml.factories;
 import static msi.gama.common.interfaces.IKeyword.AGENT;
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.ISymbolKind;
 import msi.gama.util.GAML;
 import msi.gaml.compilation.*;
@@ -116,9 +115,6 @@ public class DescriptionFactory {
 	}
 
 	public static void addNewTypeName(final String s, final int kind) {
-		if ( s.equals(IKeyword.EXPERIMENT) ) {
-			GuiUtils.debug("DescriptionFactory.addNewTypeName");
-		}
 		if ( KEYWORDS_PROTOS.containsKey(s) ) { return; }
 		final SymbolProto p = KINDS_PROTOS.get(kind);
 		if ( p != null ) {
