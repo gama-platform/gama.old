@@ -47,27 +47,26 @@ import com.vividsolutions.jts.geom.Envelope;
  * 
  * @author drogoul
  */
-// FIXME: Why this is not define in gaml/statement
 @symbol(name = { IKeyword.DISPLAY }, kind = ISymbolKind.OUTPUT, with_sequence = true)
 @facets(value = {
-	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true),
+	@facet(name = IKeyword.BACKGROUND, type = IType.COLOR, optional = true, doc = @doc("Allows to fill the background of the display with a specific color")),
 	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.TYPE, type = IType.LABEL, values = { LayeredDisplayOutput.JAVA2D,
-		LayeredDisplayOutput.OPENGL, LayeredDisplayOutput.THREED }, optional = true),
-	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
-	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true),
-	@facet(name = IKeyword.STENCIL, type = IType.BOOL, optional = true),
-	@facet(name = IKeyword.ZFIGHTING, type = IType.BOOL, optional = true),
+		LayeredDisplayOutput.OPENGL, LayeredDisplayOutput.THREED }, optional = true, doc = @doc("Allows to use either Java2D (for planar models) or OpenGL (for 3D models) as the rendering subsystem")),
+	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true, doc = @doc("Allows to refresh the display every n time steps (default is 1)")),
+	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true, doc = @doc("")),
+	@facet(name = IKeyword.STENCIL, type = IType.BOOL, optional = true, doc = @doc("")),
+	@facet(name = IKeyword.ZFIGHTING, type = IType.BOOL, optional = true, doc = @doc("Allows to alleviate a problem where agents at the same z would overlap each other in random ways")),
 	@facet(name = IKeyword.SCALE, type = { IType.BOOL, IType.FLOAT }, optional = true, doc = @doc("Allows to display a scale bar in the overlay. Accepts true/false or an unit name")),
-	@facet(name = IKeyword.SHOWFPS, type = IType.BOOL, optional = true),
-	@facet(name = IKeyword.DRAWENV, type = IType.BOOL, optional = true),
+	@facet(name = IKeyword.SHOWFPS, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the drawing of the number of frames per second")),
+	@facet(name = IKeyword.DRAWENV, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the drawing of the world shape and the ordinate axes. Default can be configured in Preferences")),
 	@facet(name = IKeyword.AMBIENT_LIGHT, type = { IType.INT, IType.COLOR }, optional = true),
 	@facet(name = IKeyword.DIFFUSE_LIGHT, type = { IType.INT, IType.COLOR }, optional = true),
 	@facet(name = IKeyword.CAMERA_POS, type = { IType.POINT, IType.AGENT }, optional = true),
 	@facet(name = IKeyword.CAMERA_LOOK_POS, type = IType.POINT, optional = true),
 	@facet(name = IKeyword.CAMERA_UP_VECTOR, type = IType.POINT, optional = true),
 	@facet(name = IKeyword.POLYGONMODE, type = IType.BOOL, optional = true),
-	@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL, IType.POINT }, optional = true),
+	@facet(name = IKeyword.AUTOSAVE, type = { IType.BOOL, IType.POINT }, optional = true, doc = @doc("Allows to save this display on disk. A value of true/false will save it at a resolution of 500x500. A point can be passed to personalize these dimensions")),
 	@facet(name = IKeyword.OUTPUT3D, type = { IType.BOOL, IType.POINT }, optional = true) }, omissible = IKeyword.NAME)
 @inside(symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
 public class LayeredDisplayOutput extends AbstractDisplayOutput {
