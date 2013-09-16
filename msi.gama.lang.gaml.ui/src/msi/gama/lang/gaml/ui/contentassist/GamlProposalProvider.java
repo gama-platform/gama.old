@@ -18,12 +18,17 @@
  */
 package msi.gama.lang.gaml.ui.contentassist;
 
-import java.util.Set;
-import msi.gama.common.util.GuiUtils;
+import java.util.*;
 import msi.gama.lang.gaml.ui.labeling.GamlLabelProvider;
 import msi.gama.lang.gaml.validation.GamlJavaValidator;
 import msi.gama.precompiler.GamlProperties;
+import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.expressions.IExpressionCompiler;
+import msi.gaml.operators.IUnits;
+import msi.gaml.types.Types;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.text.contentassist.ICompletionProposal;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.xtext.ui.IImageHelper;
 import org.eclipse.xtext.ui.editor.contentassist.*;
@@ -46,6 +51,26 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 		.createImage();
 	private static Image varImage = ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_var.png")
 		.createImage();
+	private static Image actionImage = ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_action.png")
+		.createImage();
+	private static Image skillImage = ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_skills.png")
+		.createImage();
+
+	static class BuiltInProposal {
+
+		String name;
+		StyledString title;
+		Image image;
+
+		public BuiltInProposal(final String name, final StyledString title, final Image image) {
+			super();
+			this.name = name;
+			this.title = title;
+			this.image = image;
+		}
+	}
+
+	static final List<BuiltInProposal> proposals = new ArrayList();
 
 	@Inject
 	GamlLabelProvider provider;
@@ -62,15 +87,82 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 		// validator.validate(r);
 		// WARNING Asynchronous : r.getResourceServiceProvider().getResourceValidator().validate(r, CheckMode.FAST_ONLY,
 		// null);
-		GuiUtils.debug("GamlProposalProvider.createProposals : building proposals");
+		// GuiUtils.debug("GamlProposalProvider.createProposals : building proposals");
 		// final ICompletionProposalAcceptor nullSafe = new NullSafeCompletionProposalAcceptor(acceptor);
 		// final IFollowElementAcceptor selector = createSelector(context, nullSafe);
 		// for ( final AbstractElement element : context.getFirstSetGrammarElements() ) {
 		// selector.accept(element);
 		// }
+		addBuiltInElements(context, acceptor);
 		super.createProposals(context, acceptor);
+
 	}
 
+	/**
+	 * @param context
+	 * @param acceptor
+	 * 
+	 *            TODO Filter the proposals (passing an argument ?) depending on the context in the dispatcher (see
+	 *            commented methods below).
+	 *            TODO Build this list at once instead of recomputing it everytime (might be done in a dedicated data
+	 *            structure somewhere) and separate it by types (vars, units, etc.)
+	 */
+	private void addBuiltInElements(final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {
+		if ( proposals.isEmpty() ) {
+			for ( String t : Types.getTypeNames() ) {
+				Image image = imageHelper.getImage(provider.typeImage(t));
+				if ( image == null ) {
+					image = image = imageHelper.getImage(provider.typeImage("gaml_facet.png"));
+				}
+				BuiltInProposal cp = new BuiltInProposal(t, new StyledString(t + " (Built-in type)"), image);
+				proposals.add(cp);
+			}
+
+			for ( String t : AbstractGamlAdditions.CONSTANTS ) {
+				BuiltInProposal cp = new BuiltInProposal(t, new StyledString(t + " (Built-in constant)"), null);
+				proposals.add(cp);
+			}
+			for ( String t : IUnits.UNITS.keySet() ) {
+
+				BuiltInProposal cp = new BuiltInProposal(t, new StyledString(t + " (Built-in unit)"), null);
+				proposals.add(cp);
+			}
+			for ( String t : AbstractGamlAdditions.getAllFields() ) {
+
+				BuiltInProposal cp = new BuiltInProposal(t, new StyledString(t + " (Built-in field)"), varImage);
+			}
+			for ( String t : AbstractGamlAdditions.getAllVars() ) {
+
+				BuiltInProposal cp = new BuiltInProposal(t, new StyledString(t + " (Built-in variable)"), varImage);
+				proposals.add(cp);
+			}
+			for ( String t : AbstractGamlAdditions.getAllSkills() ) {
+
+				BuiltInProposal cp = new BuiltInProposal(t, new StyledString(t + ": (Built-in facet)"), skillImage);
+				proposals.add(cp);
+			}
+			for ( String t : AbstractGamlAdditions.getAllActions() ) {
+
+				BuiltInProposal cp = new BuiltInProposal(t, new StyledString(t + " (Built-in action)"), actionImage);
+				proposals.add(cp);
+			}
+			for ( String t : IExpressionCompiler.OPERATORS.keySet() ) {
+
+				BuiltInProposal cp = new BuiltInProposal(t, new StyledString(t + " (Built-in operator)"), actionImage);
+				proposals.add(cp);
+			}
+		}
+		for ( BuiltInProposal bi : proposals ) {
+			ICompletionProposal cp =
+				createCompletionProposal(bi.name, bi.title, bi.image, 1000, context.getPrefix(), context);
+			if ( cp == null ) {
+				// GuiUtils.debug("GamlProposalProvider.addBuiltInElements null for " + t);
+			} else {
+				acceptor.accept(cp);
+			}
+		}
+
+	}
 	// @Override
 	// public void completeKeyword(final Keyword keyword, final ContentAssistContext contentAssistContext,
 	// final ICompletionProposalAcceptor acceptor) {

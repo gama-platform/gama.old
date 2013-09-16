@@ -40,7 +40,7 @@ public class ContentAssistContextFactory extends StatefulFactory {
 	boolean stop = false;
 
 	/**
-	 * Workaround for a bug manifesting itself as an infinite recursion over an AlternativesImpl element.
+	 * AD 08/13 : Workaround for a bug manifesting itself as an infinite recursion over an AlternativesImpl element.
 	 * The choice here is to allow for 10 occurences of the element to be computed and then fall back to the caller.
 	 */
 	@Override
