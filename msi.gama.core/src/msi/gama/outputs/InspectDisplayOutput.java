@@ -47,11 +47,13 @@ import msi.gaml.types.IType;
 @SuppressWarnings("unchecked")
 @symbol(name = IKeyword.INSPECT, kind = ISymbolKind.OUTPUT, with_sequence = false)
 @inside(symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
-@facets(value = { @facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
+@facets(value = {
+	@facet(name = IKeyword.NAME, type = IType.LABEL, optional = false),
 	@facet(name = IKeyword.REFRESH_EVERY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.VALUE, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.ATTRIBUTES, type = IType.LIST, optional = true),
-	@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.AGENT, IKeyword.TABLE }, optional = false) }, omissible = IKeyword.NAME)
+	@facet(name = IKeyword.TYPE, type = IType.ID, values = { IKeyword.AGENT, IKeyword.SPECIES, IKeyword.POPULATION,
+		IKeyword.TABLE }, optional = false) }, omissible = IKeyword.NAME)
 public class InspectDisplayOutput extends MonitorOutput {
 
 	public static final short INSPECT_AGENT = 0;
@@ -59,8 +61,9 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	static int count = 0;
 
-	static final List<String> types = Arrays.asList(IKeyword.AGENT, null, null, IKeyword.TABLE);
-	int target;
+	static final List<String> types = Arrays.asList(IKeyword.AGENT, IKeyword.DYNAMIC, IKeyword.SPECIES, IKeyword.TABLE);
+
+	String type;
 	IExpression attributes;
 	private List<String> listOfAttributes;
 	IMacroAgent rootAgent;
@@ -98,8 +101,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	public InspectDisplayOutput(final IDescription desc) {
 		super(desc);
-		final String type = getLiteral(IKeyword.TYPE);
-		target = types.indexOf(type);
+		type = getLiteral(IKeyword.TYPE);
 		attributes = getFacet(IKeyword.ATTRIBUTES);
 	}
 
@@ -166,7 +168,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	@Override
 	public boolean step(final IScope scope) {
-		if ( target == INSPECT_TABLE ) {
+		if ( IKeyword.TABLE.equals(type) ) {
 			if ( rootAgent == null || rootAgent.dead() ) { return false; }
 			boolean pushed = scope.push(rootAgent);
 			try {
@@ -184,7 +186,7 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	@Override
 	public boolean isUnique() {
-		return /* target != INSPECT_DYNAMIC && */target != INSPECT_TABLE;
+		return /* target != INSPECT_DYNAMIC && */!type.equals(IKeyword.TABLE);
 	}
 
 	@Override
@@ -194,28 +196,16 @@ public class InspectDisplayOutput extends MonitorOutput {
 
 	@Override
 	public String getViewId() {
-		switch (target) {
-		// case INSPECT_DYNAMIC:
-		// return GuiUtils.DYNAMIC_VIEW_ID;
-			case INSPECT_AGENT:
-				return GuiUtils.AGENT_VIEW_ID;
-				// case INSPECT_SPECIES:
-				// return GuiUtils.SPECIES_VIEW_ID;
-			case INSPECT_TABLE:
-				return GuiUtils.TABLE_VIEW_ID;
-			default:
-				return GuiUtils.AGENT_VIEW_ID;
-		}
+
+		if ( IKeyword.TABLE.equals(type) ) { return GuiUtils.TABLE_VIEW_ID; }
+		return GuiUtils.AGENT_VIEW_ID;
+
 	}
 
-	// @Override
-	// public void setType(final String t) {
-	// target = types.indexOf(t);
-	// }
 	//
 	@Override
 	public List<IAgent> getLastValue() {
-		if ( target == INSPECT_TABLE ) {
+		if ( IKeyword.TABLE.equals(type) ) {
 			if ( rootAgent == null || rootAgent.dead() ) { return Collections.EMPTY_LIST; }
 		}
 		if ( lastValue instanceof IAgent ) { return GamaList.with(lastValue); }

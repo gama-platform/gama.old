@@ -47,6 +47,14 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//S_Equations/equations"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//S_Solve"/>
+    <genClasses ecoreClass="Gaml.ecore#//S_Display">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//S_Display/name"/>
+    </genClasses>
+    <genClasses ecoreClass="Gaml.ecore#//Block">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Block/statements"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Block/function"/>
+    </genClasses>
+    <genClasses ecoreClass="Gaml.ecore#//speciesOrGridDisplayStatement"/>
     <genClasses ecoreClass="Gaml.ecore#//Parameters">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Parameters/params"/>
     </genClasses>
@@ -60,10 +68,6 @@
     <genClasses ecoreClass="Gaml.ecore#//Facet">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//Facet/key"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Facet/expr"/>
-    </genClasses>
-    <genClasses ecoreClass="Gaml.ecore#//Block">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Block/function"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Block/statements"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//Expression">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//Expression/left"/>
@@ -92,6 +96,7 @@
     <genClasses ecoreClass="Gaml.ecore#//EquationFakeDefinition"/>
     <genClasses ecoreClass="Gaml.ecore#//TerminalExpression"/>
     <genClasses ecoreClass="Gaml.ecore#//StringEvaluator">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Gaml.ecore#//StringEvaluator/toto"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Gaml.ecore#//StringEvaluator/expr"/>
     </genClasses>
     <genClasses ecoreClass="Gaml.ecore#//S_Action"/>

@@ -145,8 +145,6 @@ public class DescriptionFactory {
 			object.eAdapters().remove(existing);
 		}
 		object.eAdapters().add(new Documentation(description));
-		//
-		// final IGamlDescription existing = getGamlDescription(object, description.getClass());
 
 	}
 
@@ -168,44 +166,15 @@ public class DescriptionFactory {
 		return null;
 	}
 
-	// public static <T> T getGamlDescription(final EObject object, final Class<T> preciseClass) {
-	// if ( object == null ) { return null; }
-	// for ( int i = 0, n = object.eAdapters().size(); i < n; i++ ) {
-	// final Adapter a = object.eAdapters().get(i);
-	// if ( preciseClass.isAssignableFrom(a.getClass()) ) { return (T) a; }
-	//
-	// }
-	// return null;
-	// }
-
-	// public static IGamlDescription getGamlDescription(final EObject object) {
-	// if ( object == null ) { return null; }
-	// for ( final Adapter o : object.eAdapters() ) {
-	// if ( o instanceof IGamlDescription ) { return (IGamlDescription) o; }
-	// }
-	// return null;
-	// }
-
-	// public static void unsetGamlDescription(final EObject object, final IGamlDescription description) {
-	// if ( object == null ) { return; }
-	// object.eAdapters().remove(description);
-	// }
-
-	// -----
-
 	public synchronized static IDescription create(final SymbolFactory factory, final String keyword,
 		final IDescription superDesc, final IChildrenProvider children, final Facets facets) {
-		final IDescription result = factory.create(SyntacticFactory.create(keyword, facets), superDesc, children);
+		// TODO Verify this
+		final IDescription result =
+			factory.create(SyntacticFactory.create(keyword, facets, !children.getChildren().isEmpty()), superDesc,
+				children);
 		// factory.validate(result);
 		return result;
 	}
-
-	// public synchronized static IDescription create(final String keyword, final IDescription superDesc,
-	// final IChildrenProvider children, final EObject element, final Facets facets) {
-	// final IDescription result =
-	// getFactory(keyword).create(new SyntacticElement(keyword, facets, element), superDesc, children);
-	// return result;
-	// }
 
 	public synchronized static IDescription create(final String keyword, final IDescription superDesc,
 		final IChildrenProvider children, final Facets facets) {

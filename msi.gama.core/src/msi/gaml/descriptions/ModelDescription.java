@@ -64,8 +64,8 @@ public class ModelDescription extends SpeciesDescription {
 		modelFolderPath = new File(modelPath).getParent();
 		modelProjectPath = projectPath;
 		collect = collector;
-		System.out.println("Model description created with file path " + modelFilePath + "; project path " +
-			modelProjectPath);
+		// System.out.println("Model description created with file path " + modelFilePath + "; project path " +
+		// modelProjectPath);
 	}
 
 	public void setTorus(final boolean b) {

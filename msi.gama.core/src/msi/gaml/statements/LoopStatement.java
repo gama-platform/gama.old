@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -40,17 +40,17 @@ import msi.gaml.types.IType;
 @facets(value = { @facet(name = IKeyword.FROM, type = IType.INT, optional = true),
 	@facet(name = IKeyword.TO, type = IType.INT, optional = true),
 	@facet(name = IKeyword.STEP, type = IType.INT, optional = true),
-	@facet(name = IKeyword.VAR, type = IType.NEW_TEMP_ID, optional = true),
+	@facet(name = IKeyword.NAME, type = IType.NEW_TEMP_ID, optional = true),
 	@facet(name = IKeyword.OVER, type = { IType.CONTAINER, IType.POINT }, optional = true),
 	@facet(name = IKeyword.WHILE, type = IType.BOOL, optional = true),
 	@facet(name = IKeyword.TIMES, type = IType.INT, optional = true) },
 
 combinations = {
 
-@combination({ IKeyword.FROM, IKeyword.TO, IKeyword.VAR, IKeyword.STEP }),
-	@combination({ IKeyword.FROM, IKeyword.TO, IKeyword.VAR }), @combination({ IKeyword.OVER, IKeyword.VAR }),
-	@combination({ IKeyword.OVER, IKeyword.VAR, IKeyword.STEP }), @combination({ IKeyword.TIMES }),
-	@combination({ IKeyword.WHILE }) }, omissible = IKeyword.VAR)
+@combination({ IKeyword.FROM, IKeyword.TO, IKeyword.NAME, IKeyword.STEP }),
+	@combination({ IKeyword.FROM, IKeyword.TO, IKeyword.NAME }), @combination({ IKeyword.OVER, IKeyword.NAME }),
+	@combination({ IKeyword.OVER, IKeyword.NAME, IKeyword.STEP }), @combination({ IKeyword.TIMES }),
+	@combination({ IKeyword.WHILE }) }, omissible = IKeyword.NAME)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT, ISymbolKind.LAYER })
 public class LoopStatement extends AbstractStatementSequence {
 
@@ -63,7 +63,7 @@ public class LoopStatement extends AbstractStatementSequence {
 		final boolean isList = getFacet(IKeyword.OVER) != null;
 		final boolean isPoint = isList && getFacet(IKeyword.OVER).getType().id() == IType.POINT;
 		final boolean isBounded = getFacet(IKeyword.FROM) != null && getFacet(IKeyword.TO) != null;
-		varName = getLiteral(IKeyword.VAR);
+		varName = getLiteral(IKeyword.NAME);
 		executer =
 			isWhile ? new While() : isList ? isPoint ? new Interval() : new Over() : isBounded ? new Bounded()
 				: new Times();

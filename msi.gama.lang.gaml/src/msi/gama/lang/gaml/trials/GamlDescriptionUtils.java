@@ -4,8 +4,7 @@
  */
 package msi.gama.lang.gaml.trials;
 
-import java.util.Set;
-import msi.gama.common.util.GuiUtils;
+import java.util.*;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.xtext.resource.*;
 
@@ -21,9 +20,9 @@ public class GamlDescriptionUtils extends DescriptionUtils {
 
 	@Override
 	public Set<URI> collectOutgoingReferences(final IResourceDescription description) {
-		Set<URI> uris = super.collectOutgoingReferences(description);
-		GuiUtils.debug("Outgoing references of " + description.getURI().lastSegment() + ": " + uris);
+		Set<URI> uris = new HashSet(super.collectOutgoingReferences(description));
+		// uris.addAll(((GamlResourceDescription) description).getImports());
+		// GuiUtils.debug("Outgoing references of " + description.getURI().lastSegment() + ": " + uris);
 		return uris;
 	}
-
 }

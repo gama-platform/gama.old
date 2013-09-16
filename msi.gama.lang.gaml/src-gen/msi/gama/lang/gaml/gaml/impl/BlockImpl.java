@@ -33,8 +33,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link msi.gama.lang.gaml.gaml.impl.BlockImpl#getFunction <em>Function</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.BlockImpl#getStatements <em>Statements</em>}</li>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.BlockImpl#getFunction <em>Function</em>}</li>
  * </ul>
  * </p>
  *
@@ -42,16 +42,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public class BlockImpl extends MinimalEObjectImpl.Container implements Block
 {
-  /**
-   * The cached value of the '{@link #getFunction() <em>Function</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getFunction()
-   * @generated
-   * @ordered
-   */
-  protected Expression function;
-
   /**
    * The cached value of the '{@link #getStatements() <em>Statements</em>}' containment reference list.
    * <!-- begin-user-doc -->
@@ -61,6 +51,16 @@ public class BlockImpl extends MinimalEObjectImpl.Container implements Block
    * @ordered
    */
   protected EList<Statement> statements;
+
+  /**
+   * The cached value of the '{@link #getFunction() <em>Function</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getFunction()
+   * @generated
+   * @ordered
+   */
+  protected Expression function;
 
   /**
    * <!-- begin-user-doc -->
@@ -81,6 +81,20 @@ public class BlockImpl extends MinimalEObjectImpl.Container implements Block
   protected EClass eStaticClass()
   {
     return GamlPackage.Literals.BLOCK;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public EList<Statement> getStatements()
+  {
+    if (statements == null)
+    {
+      statements = new EObjectContainmentEList<Statement>(Statement.class, this, GamlPackage.BLOCK__STATEMENTS);
+    }
+    return statements;
   }
 
   /**
@@ -136,29 +150,15 @@ public class BlockImpl extends MinimalEObjectImpl.Container implements Block
    * <!-- end-user-doc -->
    * @generated
    */
-  public EList<Statement> getStatements()
-  {
-    if (statements == null)
-    {
-      statements = new EObjectContainmentEList<Statement>(Statement.class, this, GamlPackage.BLOCK__STATEMENTS);
-    }
-    return statements;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
   @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
     {
-      case GamlPackage.BLOCK__FUNCTION:
-        return basicSetFunction(null, msgs);
       case GamlPackage.BLOCK__STATEMENTS:
         return ((InternalEList<?>)getStatements()).basicRemove(otherEnd, msgs);
+      case GamlPackage.BLOCK__FUNCTION:
+        return basicSetFunction(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -173,10 +173,10 @@ public class BlockImpl extends MinimalEObjectImpl.Container implements Block
   {
     switch (featureID)
     {
-      case GamlPackage.BLOCK__FUNCTION:
-        return getFunction();
       case GamlPackage.BLOCK__STATEMENTS:
         return getStatements();
+      case GamlPackage.BLOCK__FUNCTION:
+        return getFunction();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -192,12 +192,12 @@ public class BlockImpl extends MinimalEObjectImpl.Container implements Block
   {
     switch (featureID)
     {
-      case GamlPackage.BLOCK__FUNCTION:
-        setFunction((Expression)newValue);
-        return;
       case GamlPackage.BLOCK__STATEMENTS:
         getStatements().clear();
         getStatements().addAll((Collection<? extends Statement>)newValue);
+        return;
+      case GamlPackage.BLOCK__FUNCTION:
+        setFunction((Expression)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -213,11 +213,11 @@ public class BlockImpl extends MinimalEObjectImpl.Container implements Block
   {
     switch (featureID)
     {
-      case GamlPackage.BLOCK__FUNCTION:
-        setFunction((Expression)null);
-        return;
       case GamlPackage.BLOCK__STATEMENTS:
         getStatements().clear();
+        return;
+      case GamlPackage.BLOCK__FUNCTION:
+        setFunction((Expression)null);
         return;
     }
     super.eUnset(featureID);
@@ -233,10 +233,10 @@ public class BlockImpl extends MinimalEObjectImpl.Container implements Block
   {
     switch (featureID)
     {
-      case GamlPackage.BLOCK__FUNCTION:
-        return function != null;
       case GamlPackage.BLOCK__STATEMENTS:
         return statements != null && !statements.isEmpty();
+      case GamlPackage.BLOCK__FUNCTION:
+        return function != null;
     }
     return super.eIsSet(featureID);
   }

@@ -42,16 +42,6 @@ public class FrontEndController implements Runnable {
 	public IExperimentSpecies getExperiment() {
 		return experiment;
 	}
-	
-	/**
-	 * addon Nico. A new architecture of frontend is need. Comming soon...
-	 * @param exp
-	 */
-	
-	public void setExperiment(IExperimentSpecies exp) {
-		experiment=exp;
-	}
-	
 
 	@Override
 	public void run() {
@@ -227,10 +217,24 @@ public class FrontEndController implements Runnable {
 		updateSimulationState(getFrontmostSimulationState());
 	}
 
+	public void newHeadlessExperiment(final IExperimentSpecies newExperiment) {
+		if ( newExperiment == null ) {
+			System.out.println("No experiment available.");
+			return;
+		}
+		experiment = newExperiment;
+		try {
+			experiment.open();
+		} catch (final Exception e) {
+			System.out.println("Error when opening the experiment: " + e.getMessage());
+		}
+	}
+
 	public void newExperiment(final String id, final IModel model) {
 		final IExperimentSpecies newExperiment = model.getExperiment(id);
 		if ( newExperiment == null ) { return; }
 		GuiUtils.openSimulationPerspective();
+		// FIXME Useless
 		if ( newExperiment == experiment && experiment != null ) {
 			userReload();
 			return;
@@ -270,17 +274,4 @@ public class FrontEndController implements Runnable {
 		return scheduler;
 	}
 
-    public void newHeadlessExperiment(final IExperimentSpecies newExperiment) {
-        if ( newExperiment == null ) {
-                System.out.println("No experiment available.");
-                return;
-        }
-        experiment = newExperiment;
-        try {
-                experiment.open();
-        } catch (final Exception e) {
-                System.out.println("Error when opening the experiment: " + e.getMessage());
-        }
-    }	
-	
 }

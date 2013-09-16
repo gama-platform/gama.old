@@ -14,14 +14,14 @@ import org.eclipse.emf.ecore.EObject;
  * @since 9 sept. 2013
  * 
  */
-public class ExperimentSyntacticElement extends SyntacticElement {
+public class SyntacticGlobalElement extends SyntacticComposedElement {
 
 	/**
 	 * @param keyword
 	 * @param facets
 	 * @param statement
 	 */
-	ExperimentSyntacticElement(final String keyword, final Facets facets, final EObject statement) {
+	SyntacticGlobalElement(final String keyword, final Facets facets, final EObject statement) {
 		super(keyword, facets, statement);
 	}
 
@@ -32,11 +32,11 @@ public class ExperimentSyntacticElement extends SyntacticElement {
 
 	@Override
 	public boolean isGlobal() {
-		return false;
+		return true;
 	}
 
 	@Override
 	public boolean isExperiment() {
-		return true;
+		return false;
 	}
 }

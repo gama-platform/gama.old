@@ -50,8 +50,10 @@ public class ModelFactory extends SymbolFactory {
 		// Add it to its macro-species
 		macro.addChild(mDesc);
 		// Recursively create each micro-species of the newly added micro-species
-		for ( final ISyntacticElement speciesNode : micro.getSpeciesChildren() ) {
-			addMicroSpecies(mDesc, speciesNode);
+		for ( final ISyntacticElement speciesNode : micro.getChildren() ) {
+			if ( speciesNode.isSpecies() || speciesNode.isExperiment() ) {
+				addMicroSpecies(mDesc, speciesNode);
+			}
 		}
 	}
 
@@ -109,8 +111,10 @@ public class ModelFactory extends SymbolFactory {
 		}
 		final SpeciesDescription parent = model.getSpeciesDescription(p);
 		mDesc.setParent(parent);
-		for ( final ISyntacticElement speciesNode : micro.getSpeciesChildren() ) {
-			parentSpecies(mDesc, speciesNode, model);
+		for ( final ISyntacticElement speciesNode : micro.getChildren() ) {
+			if ( speciesNode.isSpecies() || speciesNode.isExperiment() ) {
+				parentSpecies(mDesc, speciesNode, model);
+			}
 		}
 	}
 
@@ -148,7 +152,7 @@ public class ModelFactory extends SymbolFactory {
 		// GuiUtils.debug("ModelFactory.assemble BEGIN " + modelPath);
 		final Map<String, ISyntacticElement> speciesNodes = new LinkedHashMap();
 		final List<ISyntacticElement> experimentNodes = new ArrayList();
-		final ISyntacticElement globalNodes = SyntacticFactory.create(GLOBAL, (EObject) null);
+		final ISyntacticElement globalNodes = SyntacticFactory.create(GLOBAL, (EObject) null, true);
 		ErrorCollector collector = new ErrorCollector();
 		final Facets globalFacets = new Facets();
 		final List<ISyntacticElement> otherNodes = new ArrayList();
@@ -190,7 +194,7 @@ public class ModelFactory extends SymbolFactory {
 			}
 		}
 
-		final String modelName = source.getLabel(NAME).replace(' ', '_') + "_model";
+		final String modelName = source.getName().replace(' ', '_') + "_model";
 		globalFacets.putAsLabel(NAME, modelName);
 
 		final ModelDescription model =
@@ -279,7 +283,7 @@ public class ModelFactory extends SymbolFactory {
 			if ( !vd.getFacets().containsKey(INIT) ) {
 				final Facets f = new Facets(NAME, SHAPE);
 				f.put(INIT, GAML.getExpressionFactory().createOperator("envelope", model, new ConstantExpression(100)));
-				final ISyntacticElement shape = SyntacticFactory.create(IKeyword.GEOMETRY, f);
+				final ISyntacticElement shape = SyntacticFactory.create(IKeyword.GEOMETRY, f, false);
 				vd = (VariableDescription) create(shape, model);
 				model.addChild(vd);
 				model.resortVarName(vd);
@@ -300,11 +304,11 @@ public class ModelFactory extends SymbolFactory {
 
 	private boolean translateEnvironment(final SpeciesDescription world, final ISyntacticElement e) {
 		final boolean environmentDefined = true;
-		final ISyntacticElement shape = SyntacticFactory.create(GEOMETRY, new Facets(NAME, SHAPE));
-		IExpressionDescription bounds = e.getFacet(BOUNDS);
+		final ISyntacticElement shape = SyntacticFactory.create(GEOMETRY, new Facets(NAME, SHAPE), false);
+		IExpressionDescription bounds = e.getExpressionAt(BOUNDS);
 		if ( bounds == null ) {
-			final IExpressionDescription width = e.getFacet(WIDTH);
-			final IExpressionDescription height = e.getFacet(HEIGHT);
+			final IExpressionDescription width = e.getExpressionAt(WIDTH);
+			final IExpressionDescription height = e.getExpressionAt(HEIGHT);
 			if ( width != null && height != null ) {
 				bounds = new OperatorExpressionDescription(IExpressionCompiler.INTERNAL_POINT, width, height);
 			} else {
@@ -313,14 +317,14 @@ public class ModelFactory extends SymbolFactory {
 		}
 		bounds = new OperatorExpressionDescription("envelope", bounds);
 		shape.setFacet(INIT, bounds);
-		final IExpressionDescription depends = e.getFacet(DEPENDS_ON);
+		final IExpressionDescription depends = e.getExpressionAt(DEPENDS_ON);
 		if ( depends != null ) {
 			shape.setFacet(DEPENDS_ON, depends);
 		}
 		final VariableDescription vd = (VariableDescription) create(shape, world);
 		world.addChild(vd);
 		world.resortVarName(vd);
-		final IExpressionDescription ed = e.getFacet(TORUS);
+		final IExpressionDescription ed = e.getExpressionAt(TORUS);
 		// TODO Is the call to compilation correct at that point ?
 		if ( ed != null ) {
 			world.getFacets().put(TORUS, ed.compile(world));

@@ -188,6 +188,33 @@ public interface GamlFactory extends EFactory
   S_Solve createS_Solve();
 
   /**
+   * Returns a new object of class '<em>SDisplay</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>SDisplay</em>'.
+   * @generated
+   */
+  S_Display createS_Display();
+
+  /**
+   * Returns a new object of class '<em>Block</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Block</em>'.
+   * @generated
+   */
+  Block createBlock();
+
+  /**
+   * Returns a new object of class '<em>species Or Grid Display Statement</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>species Or Grid Display Statement</em>'.
+   * @generated
+   */
+  speciesOrGridDisplayStatement createspeciesOrGridDisplayStatement();
+
+  /**
    * Returns a new object of class '<em>Parameters</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -222,15 +249,6 @@ public interface GamlFactory extends EFactory
    * @generated
    */
   Facet createFacet();
-
-  /**
-   * Returns a new object of class '<em>Block</em>'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return a new object of class '<em>Block</em>'.
-   * @generated
-   */
-  Block createBlock();
 
   /**
    * Returns a new object of class '<em>Expression</em>'.

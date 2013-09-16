@@ -14,20 +14,20 @@ import org.eclipse.emf.ecore.EObject;
  * @since 9 sept. 2013
  * 
  */
-public class SpeciesSyntacticElement extends SyntacticElement {
+public class SyntacticExperimentElement extends SyntacticComposedElement {
 
 	/**
 	 * @param keyword
 	 * @param facets
 	 * @param statement
 	 */
-	SpeciesSyntacticElement(final String keyword, final Facets facets, final EObject statement) {
+	SyntacticExperimentElement(final String keyword, final Facets facets, final EObject statement) {
 		super(keyword, facets, statement);
 	}
 
 	@Override
 	public boolean isSpecies() {
-		return true;
+		return false;
 	}
 
 	@Override
@@ -37,7 +37,6 @@ public class SpeciesSyntacticElement extends SyntacticElement {
 
 	@Override
 	public boolean isExperiment() {
-		return false;
+		return true;
 	}
-
 }

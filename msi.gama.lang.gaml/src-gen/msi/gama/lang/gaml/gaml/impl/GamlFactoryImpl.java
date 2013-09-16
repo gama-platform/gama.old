@@ -85,11 +85,13 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
       case GamlPackage.SSET: return createS_Set();
       case GamlPackage.SEQUATIONS: return createS_Equations();
       case GamlPackage.SSOLVE: return createS_Solve();
+      case GamlPackage.SDISPLAY: return createS_Display();
+      case GamlPackage.BLOCK: return createBlock();
+      case GamlPackage.SPECIES_OR_GRID_DISPLAY_STATEMENT: return createspeciesOrGridDisplayStatement();
       case GamlPackage.PARAMETERS: return createParameters();
       case GamlPackage.ACTION_ARGUMENTS: return createActionArguments();
       case GamlPackage.ARGUMENT_DEFINITION: return createArgumentDefinition();
       case GamlPackage.FACET: return createFacet();
-      case GamlPackage.BLOCK: return createBlock();
       case GamlPackage.EXPRESSION: return createExpression();
       case GamlPackage.ARGUMENT_PAIR: return createArgumentPair();
       case GamlPackage.EXPRESSION_LIST: return createExpressionList();
@@ -340,6 +342,39 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
    * <!-- end-user-doc -->
    * @generated
    */
+  public S_Display createS_Display()
+  {
+    S_DisplayImpl s_Display = new S_DisplayImpl();
+    return s_Display;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public Block createBlock()
+  {
+    BlockImpl block = new BlockImpl();
+    return block;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public speciesOrGridDisplayStatement createspeciesOrGridDisplayStatement()
+  {
+    speciesOrGridDisplayStatementImpl speciesOrGridDisplayStatement = new speciesOrGridDisplayStatementImpl();
+    return speciesOrGridDisplayStatement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   public Parameters createParameters()
   {
     ParametersImpl parameters = new ParametersImpl();
@@ -377,17 +412,6 @@ public class GamlFactoryImpl extends EFactoryImpl implements GamlFactory
   {
     FacetImpl facet = new FacetImpl();
     return facet;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public Block createBlock()
-  {
-    BlockImpl block = new BlockImpl();
-    return block;
   }
 
   /**

@@ -164,7 +164,7 @@ public class ExperimentAgent extends GamlAgent implements IExperimentAgent {
 
 	public ParametersSet getParameterValues() {
 		Map<String, IParameter> parameters = getSpecies().getParameters();
-		ParametersSet ps = new ParametersSet(parameters, false);
+		ParametersSet ps = new ParametersSet(scope, parameters, false);
 		ps.putAll(extraParametersMap);
 		return ps;
 	}

@@ -38,10 +38,10 @@ import msi.gaml.types.IType;
  * 
  */
 
-@facets(value = { @facet(name = IKeyword.VAR, type = IType.NONE, optional = true),
-	@facet(name = IKeyword.NAME, type = IType.NONE, optional = true),
+@facets(value = { /* @facet(name = IKeyword.VAR, type = IType.NONE, optional = true), */
+@facet(name = IKeyword.NAME, type = IType.NONE, optional = false),
 	@facet(name = IKeyword.VALUE, type = { IType.NONE }, optional = false) }, combinations = {
-	@combination({ IKeyword.VAR, IKeyword.VALUE }), @combination({ IKeyword.NAME, IKeyword.VALUE }) }, omissible = IKeyword.VAR)
+/* @combination({ IKeyword.VAR, IKeyword.VALUE }), */@combination({ IKeyword.NAME, IKeyword.VALUE }) }, omissible = IKeyword.NAME)
 @symbol(name = { IKeyword.SET }, kind = ISymbolKind.SINGLE_STATEMENT, with_sequence = false)
 @inside(kinds = { ISymbolKind.BEHAVIOR, ISymbolKind.SEQUENCE_STATEMENT }, symbols = IKeyword.CHART)
 public class SetStatement extends AbstractStatement {
@@ -52,7 +52,7 @@ public class SetStatement extends AbstractStatement {
 	public SetStatement(final IDescription desc) {
 		super(desc);
 		value = getFacet(IKeyword.VALUE);
-		varExpr = (IVarExpression) getFacet(IKeyword.VAR, getFacet(IKeyword.NAME));
+		varExpr = (IVarExpression) getFacet(IKeyword.NAME);
 		setName(IKeyword.SET + getVarName());
 	}
 

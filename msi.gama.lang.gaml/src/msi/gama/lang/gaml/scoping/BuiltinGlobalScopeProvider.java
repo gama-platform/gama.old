@@ -61,16 +61,19 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		}
 	}
 
-	@Inject
-	private XtextResourceSet rs;
+	static SynchronizedXtextResourceSet rs = new SynchronizedXtextResourceSet();
+
+	// @Inject
+	// private XtextResourceSet rs;
+
 	@Inject
 	private ImportUriGlobalScopeProvider uriScopeProvider;
 
 	private static Map<EClass, Resource> resources;
 	private static Map<EClass, Map<QualifiedName, IEObjectDescription>> descriptions = null;
-	private EClass eType, eVar, eSkill, eAction, eUnit, eEquation;
+	private static EClass eType, eVar, eSkill, eAction, eUnit, eEquation;
 
-	Resource createResource(final String uri) {
+	static Resource createResource(final String uri) {
 		Resource r = rs.getResource(URI.createURI(uri), false);
 		if ( r == null ) {
 			r = rs.createResource(URI.createURI(uri));
@@ -78,7 +81,7 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		return r;
 	}
 
-	void initResources() {
+	static void initResources() {
 		eType = GamlPackage.eINSTANCE.getTypeDefinition();
 		eVar = GamlPackage.eINSTANCE.getVarDefinition();
 		eSkill = GamlPackage.eINSTANCE.getSkillFakeDefinition();
@@ -101,6 +104,13 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		descriptions.put(eEquation, new LinkedHashMap());
 	}
 
+	public static boolean contains(final QualifiedName name) {
+		for ( Map<QualifiedName, IEObjectDescription> map : descriptions.values() ) {
+			if ( map.containsKey(name) ) { return true; }
+		}
+		return false;
+	}
+
 	static void add(final EClass eClass, final String t) {
 		GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eClass);
 		// TODO Add the fields definition here
@@ -120,6 +130,11 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 	 * Get the object descriptions for the built-in types.
 	 */
 	public Map<QualifiedName, IEObjectDescription> getEObjectDescriptions(final EClass eClass) {
+		createDescriptions();
+		return descriptions.get(eClass);
+	}
+
+	public static void createDescriptions() {
 		if ( descriptions == null ) {
 			initResources();
 			for ( String t : Types.getTypeNames() ) {
@@ -158,7 +173,10 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 				add(eAction, t);
 			}
 		}
-		return descriptions.get(eClass);
+	}
+
+	static {
+		createDescriptions();
 	}
 
 	/**

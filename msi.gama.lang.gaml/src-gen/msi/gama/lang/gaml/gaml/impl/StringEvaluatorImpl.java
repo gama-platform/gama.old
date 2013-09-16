@@ -24,6 +24,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <p>
  * The following features are implemented:
  * <ul>
+ *   <li>{@link msi.gama.lang.gaml.gaml.impl.StringEvaluatorImpl#getToto <em>Toto</em>}</li>
  *   <li>{@link msi.gama.lang.gaml.gaml.impl.StringEvaluatorImpl#getExpr <em>Expr</em>}</li>
  * </ul>
  * </p>
@@ -32,6 +33,26 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  */
 public class StringEvaluatorImpl extends ModelImpl implements StringEvaluator
 {
+  /**
+   * The default value of the '{@link #getToto() <em>Toto</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getToto()
+   * @generated
+   * @ordered
+   */
+  protected static final String TOTO_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getToto() <em>Toto</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getToto()
+   * @generated
+   * @ordered
+   */
+  protected String toto = TOTO_EDEFAULT;
+
   /**
    * The cached value of the '{@link #getExpr() <em>Expr</em>}' containment reference.
    * <!-- begin-user-doc -->
@@ -61,6 +82,29 @@ public class StringEvaluatorImpl extends ModelImpl implements StringEvaluator
   protected EClass eStaticClass()
   {
     return GamlPackage.Literals.STRING_EVALUATOR;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public String getToto()
+  {
+    return toto;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public void setToto(String newToto)
+  {
+    String oldToto = toto;
+    toto = newToto;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, GamlPackage.STRING_EVALUATOR__TOTO, oldToto, toto));
   }
 
   /**
@@ -137,6 +181,8 @@ public class StringEvaluatorImpl extends ModelImpl implements StringEvaluator
   {
     switch (featureID)
     {
+      case GamlPackage.STRING_EVALUATOR__TOTO:
+        return getToto();
       case GamlPackage.STRING_EVALUATOR__EXPR:
         return getExpr();
     }
@@ -153,6 +199,9 @@ public class StringEvaluatorImpl extends ModelImpl implements StringEvaluator
   {
     switch (featureID)
     {
+      case GamlPackage.STRING_EVALUATOR__TOTO:
+        setToto((String)newValue);
+        return;
       case GamlPackage.STRING_EVALUATOR__EXPR:
         setExpr((Expression)newValue);
         return;
@@ -170,6 +219,9 @@ public class StringEvaluatorImpl extends ModelImpl implements StringEvaluator
   {
     switch (featureID)
     {
+      case GamlPackage.STRING_EVALUATOR__TOTO:
+        setToto(TOTO_EDEFAULT);
+        return;
       case GamlPackage.STRING_EVALUATOR__EXPR:
         setExpr((Expression)null);
         return;
@@ -187,10 +239,29 @@ public class StringEvaluatorImpl extends ModelImpl implements StringEvaluator
   {
     switch (featureID)
     {
+      case GamlPackage.STRING_EVALUATOR__TOTO:
+        return TOTO_EDEFAULT == null ? toto != null : !TOTO_EDEFAULT.equals(toto);
       case GamlPackage.STRING_EVALUATOR__EXPR:
         return expr != null;
     }
     return super.eIsSet(featureID);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String toString()
+  {
+    if (eIsProxy()) return super.toString();
+
+    StringBuffer result = new StringBuffer(super.toString());
+    result.append(" (toto: ");
+    result.append(toto);
+    result.append(')');
+    return result.toString();
   }
 
 } //StringEvaluatorImpl

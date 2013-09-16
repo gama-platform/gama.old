@@ -120,7 +120,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 	@Override
 	public void createPartControl(final Composite parent) {
 		this.parent = parent;
-		GridLayout layout = new GridLayout(1, true);
+		GridLayout layout = new GridLayout(2, false);
 		layout.horizontalSpacing = 0;
 		layout.verticalSpacing = 0;
 		layout.marginWidth = 0;
@@ -139,8 +139,17 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		layout.marginHeight = 0;
 		toolbar.setLayout(layout);
 
+		Composite others = new Composite(parent, SWT.None);
+		data = new GridData(SWT.RIGHT, SWT.FILL, false, false);
+		data.heightHint = 26;
+		// data.horizontalIndent = 10;
+		others.setLayoutData(data);
+		layout = new GridLayout(2, false);
+		others.setLayout(layout);
+
 		indicator = new Composite(parent, SWT.None);
 		data = new GridData(SWT.FILL, SWT.FILL, true, false);
+		data.horizontalSpan = 2;
 		data.heightHint = 8;
 		indicator.setLayoutData(data);
 		FillLayout layout2 = new FillLayout();
@@ -163,7 +172,11 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 			buttons[i].addSelectionListener(listener);
 			hideButton(buttons[i]);
 		}
-		menu = new Button(toolbar, SWT.PUSH);
+		Label toto = new Label(others, SWT.None);
+		toto.setText("In project: ");
+		data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
+		toto.setLayoutData(data);
+		menu = new Button(others, SWT.DROP_DOWN | SWT.DOWN);
 		data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
 		menu.setLayoutData(data);
 		menu.setText("Other...");
@@ -186,6 +199,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 		// Asking the editor to fill the rest
 		Composite parent2 = new Composite(parent, SWT.BORDER);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		data.horizontalSpan = 2;
 		parent2.setLayoutData(data);
 		parent2.setLayout(new FillLayout());
 		super.createPartControl(parent2);
@@ -386,12 +400,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 	private void setStatus(final String text, final boolean ok) {
 		Color c = ok ? abbreviations.size() == 0 ? SwtGui.COLOR_WARNING : SwtGui.COLOR_OK : SwtGui.COLOR_ERROR;
-		// this.setTitleImage(SwtGui.overlay_ok);
-		// this.getOverviewRuler().getControl().setBackground(c);
-		// this.getVerticalRuler().getControl().setBackground(c);
 		indicator.setBackground(c);
-		// status.setBackground(c);
-		// toolbar.setBackground(c);
 		status.setText(text);
 	}
 
@@ -477,10 +486,6 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 			return super.getTextHover(sourceViewer, contentType);
 		}
 
-	}
-
-	public GamlJavaValidator getValidator() {
-		return validator;
 	}
 
 }

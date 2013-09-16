@@ -4,9 +4,11 @@
  */
 package msi.gama.lang.gaml.ui;
 
-import org.eclipse.xtext.builder.nature.NatureAddingEditorCallback;
+import java.util.*;
+import msi.gama.lang.gaml.trials.GamlDescriptionUtils;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.xtext.resource.*;
-import org.eclipse.xtext.ui.editor.XtextEditor;
+import org.eclipse.xtext.ui.editor.*;
 import org.eclipse.xtext.ui.editor.validation.*;
 import org.eclipse.xtext.ui.validation.MarkerTypeProvider;
 import org.eclipse.xtext.validation.*;
@@ -20,7 +22,7 @@ import com.google.inject.Inject;
  * 
  */
 
-public class GamlEditorCallback extends NatureAddingEditorCallback {
+public class GamlEditorCallback extends /* NatureAddingEditorCallback */AbstractDirtyStateAwareEditorCallback {
 
 	@Inject
 	private IResourceValidator resourceValidator;
@@ -31,14 +33,17 @@ public class GamlEditorCallback extends NatureAddingEditorCallback {
 	@Inject
 	private MarkerTypeProvider markerTypeProvider;
 
-	@Inject
-	private DescriptionUtils descriptionUtils;
+	private final DescriptionUtils descriptionUtils = new GamlDescriptionUtils();
 
 	@Inject
 	IResourceDescriptions index;
 
+	@Inject
+	private DirtyStateEditorSupport editorSupport;
+
 	@Override
-	public void afterCreatePartControl(XtextEditor editor) {
+	public void afterCreatePartControl(final XtextEditor editor) {
+
 		super.afterCreatePartControl(editor);
 		if ( editor.isEditable() ) {
 			ValidationJob validationJob = newValidationJob(editor);
@@ -48,7 +53,7 @@ public class GamlEditorCallback extends NatureAddingEditorCallback {
 		// getDocument().addModelListener(new IXtextModelListener() {
 		//
 		// @Override
-		// public void modelChanged(XtextResource resource) {
+		// public void modelChanged(final XtextResource resource) {
 		// GuiUtils.debug("    >>>>model changed: " + resource.getURI().lastSegment());
 		// Set<URI> uris = findDependentResources(resource);
 		// GuiUtils.debug("    >>>>affected: " + uris);
@@ -65,17 +70,17 @@ public class GamlEditorCallback extends NatureAddingEditorCallback {
 		// super.afterCreatePartControl(editor);
 	}
 
-	// private Set<URI> findDependentResources(XtextResource resource) {
-	// URI uri = resource.getURI();
-	// Set<URI> result = new LinkedHashSet();
-	// for ( IResourceDescription rd : index.getAllResourceDescriptions() ) {
-	// Set<URI> uris = descriptionUtils.collectOutgoingReferences(rd);
-	// if ( uris.contains(uri) ) {
-	// result.add(rd.getURI());
-	// }
-	// }
-	// return result;
-	// }
+	private Set<URI> findDependentResources(final XtextResource resource) {
+		URI uri = resource.getURI();
+		Set<URI> result = new LinkedHashSet();
+		for ( IResourceDescription rd : index.getAllResourceDescriptions() ) {
+			Set<URI> uris = descriptionUtils.collectOutgoingReferences(rd);
+			if ( uris.contains(uri) ) {
+				result.add(rd.getURI());
+			}
+		}
+		return result;
+	}
 
 	// @Override
 	// public void afterSave(XtextEditor editor) {
@@ -90,11 +95,11 @@ public class GamlEditorCallback extends NatureAddingEditorCallback {
 	// // super.afterSave(editor);
 	// }
 
-	private ValidationJob newValidationJob(XtextEditor editor) {
+	private ValidationJob newValidationJob(final XtextEditor editor) {
 		MarkerIssueProcessor markerIssueProcessor =
 			new MarkerIssueProcessor(editor.getResource(), markerCreator, markerTypeProvider);
 		ValidationJob validationJob =
-			new ValidationJob(resourceValidator, editor.getDocument(), markerIssueProcessor, CheckMode.NORMAL_AND_FAST);
+			new ValidationJob(resourceValidator, editor.getDocument(), markerIssueProcessor, CheckMode.FAST_ONLY);
 		return validationJob;
 	}
 

@@ -129,6 +129,7 @@ public class EGaml {
 
 	public static String getNameOf(final Statement s) {
 		if ( s instanceof GamlDefinition ) { return ((GamlDefinition) s).getName(); }
+		if ( s instanceof S_Display ) { return ((S_Display) s).getName(); }
 		return null;
 	}
 
@@ -147,6 +148,19 @@ public class EGaml {
 	public static List<Facet> getFacetsOf(final Statement s) {
 		if ( ((StatementImpl) s).eIsSet(GamlPackage.STATEMENT__FACETS) ) { return s.getFacets(); }
 		return Collections.EMPTY_LIST;
+	}
+
+	public static boolean hasChildren(final EObject obj) {
+		if ( obj == null ) { return false; }
+		if ( obj instanceof S_Equations ) { return ((S_EquationsImpl) obj).eIsSet(GamlPackage.SEQUATIONS__EQUATIONS); }
+		if ( obj instanceof Block ) { return ((BlockImpl) obj).eIsSet(GamlPackage.BLOCK__STATEMENTS); }
+		if ( obj instanceof Model ) { return ((ModelImpl) obj).eIsSet(GamlPackage.MODEL__STATEMENTS); }
+		if ( obj instanceof Statement ) {
+			boolean hasBlock = ((StatementImpl) obj).eIsSet(GamlPackage.STATEMENT__BLOCK);
+			if ( hasBlock ) { return true; }
+			if ( obj instanceof S_If ) { return ((S_IfImpl) obj).eIsSet(GamlPackage.SIF__ELSE); }
+		}
+		return false;
 	}
 
 	public static List<? extends Statement> getStatementsOf(final Block block) {

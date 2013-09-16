@@ -48,7 +48,9 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
 	// AD 22/1/13 : set to false to avoid lags in compilation.
 	static boolean FORCE_VALIDATION = false;
-	GamlResource currentResource;
+
+	// AD 15/9/13 : suppression of currentResource to avoid threading problems between validators
+	// GamlResource currentResource;
 
 	// private DiagnosticChain diagnosticsChain;
 
@@ -56,7 +58,15 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 	public synchronized void validate(final Model model) {
 		try {
 			final GamlResource r = (GamlResource) model.eResource();
-			currentResource = r;
+			Map<Object, Object> context = getContext();
+			// AD 15/9/13 Addition of a check in the current context to verify if this validator (or any other) is not
+			// already validating the resource
+			// if ( context.containsKey(r) ) {
+			// // r is already validated
+			// return;
+			// }
+			// context.put(r, this);
+			// currentResource = r;
 			ModelDescription result = null;
 			if ( FORCE_VALIDATION || r.getErrors().isEmpty() ) {
 				final long begin = System.nanoTime();
@@ -152,18 +162,18 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		IPath path;
 		boolean isFile = false;
 
-		System.out.println("URI :  " + resource.getURI());
+		// System.out.println("URI :  " + resource.getURI());
 
 		if ( resource.getURI().isPlatform() ) {
 			path = new Path(resource.getURI().toPlatformString(false));
-			System.out.println("Was platform : " + path);
+			// System.out.println("Was platform : " + path);
 		} else if ( resource.getURI().isFile() ) {
 			isFile = true;
 			path = new Path(resource.getURI().toFileString());
-			System.out.println("Was file : " + path);
+			// System.out.println("Was file : " + path);
 		} else {
 			path = new Path(resource.getURI().path());
-			System.out.println("Was nothing : " + path);
+			// System.out.println("Was nothing : " + path);
 		}
 
 		String modelPath, projectPath;
@@ -172,11 +182,11 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
 			// path = path.removeLastSegments(1);
 
-			System.out.println("The path to the model : " + path);
+			// System.out.println("The path to the model : " + path);
 
 			modelPath = path.toOSString();
 
-			System.out.println("The OS string of the path to the model : " + modelPath);
+			// System.out.println("The OS string of the path to the model : " + modelPath);
 			projectPath = modelPath;
 
 		} else {
@@ -186,7 +196,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			// This is a workaround, not very elegant, but it works.
 			IPath fullPath = file.getLocation();
 
-			System.out.println("The 1st location of the IFile : " + fullPath);
+			// System.out.println("The 1st location of the IFile : " + fullPath);
 
 			if ( fullPath == null && file instanceof org.eclipse.core.internal.resources.Resource ) {
 				final org.eclipse.core.internal.resources.Resource r =
@@ -194,11 +204,11 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 				fullPath = r.getLocalManager().locationFor(r);
 			}
 
-			System.out.println("The 2nd location of the IFile : " + fullPath);
+			// System.out.println("The 2nd location of the IFile : " + fullPath);
 
 			modelPath = fullPath == null ? "" : fullPath.toOSString();
 
-			System.out.println("The model path : " + modelPath);
+			// System.out.println("The model path : " + modelPath);
 
 			fullPath = file.getProject().getLocation();
 			if ( fullPath == null && file.getProject() instanceof org.eclipse.core.internal.resources.Resource ) {
@@ -209,7 +219,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
 			projectPath = fullPath == null ? "" : fullPath.toOSString();
 
-			System.out.println("The project path : " + projectPath);
+			// System.out.println("The project path : " + projectPath);
 		}
 
 		return getModelFactory().assemble(projectPath, modelPath, new ArrayList(models.values()));
@@ -226,9 +236,9 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		}
 	}
 
-	public GamlResource getCurrentRessource() {
-		return currentResource;
-	}
+	// public GamlResource getCurrentRessource() {
+	// return currentResource;
+	// }
 
 	public void add(final GamlCompilationError e) {
 		final EObject object = e.getStatement();
@@ -236,18 +246,24 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			GuiUtils.debug("*** Internal compilation problem : " + e.toString());
 			return;
 		}
-		if ( object.eResource() == null ) { return; }
-		if ( object.eResource() != getCurrentRessource() ) {
+		if ( object.eResource() == null ) { throw new RuntimeException(
+			"Error detected in a syntethic object. Please debug to understand the cause"); }
+		boolean isCurrentResource = true;
+		try {
+			checkIsFromCurrentlyCheckedResource(object);
+		} catch (IllegalArgumentException ex) {
+			isCurrentResource = false;
+		}
+		if ( !isCurrentResource ) {
 			if ( !e.isWarning() && !e.isInfo() ) {
 				final EObject imp = findImport(object.eResource().getURI());
 				if ( imp != null ) {
-					error("Error detected in imported file: " + e.toString(), imp,
+					importedError("Error detected in imported file " + ": " + e.toString(), imp,
 						GamlPackage.Literals.IMPORT__IMPORT_URI, IGamlIssue.IMPORT_ERROR, object.eResource().getURI()
 							.toString());
 				} else {
-					error(
-						"Errors detected in indirectly imported file " + object.eResource().getURI() + ": " +
-							e.toString(), getCurrentObject(), GamlPackage.Literals.GAML_DEFINITION__NAME,
+					importedError("Errors detected in indirectly imported file " + object.eResource().getURI() + ": " +
+						e.toString(), getCurrentObject(), GamlPackage.Literals.GAML_DEFINITION__NAME,
 						IGamlIssue.IMPORT_ERROR, object.eResource().getURI().toString());
 				}
 			}
@@ -268,6 +284,27 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		}
 	}
 
+	/**
+	 * @param string
+	 * @param currentObject
+	 * @param gamlDefinitionName
+	 * @param importError
+	 * @param string2
+	 */
+	private void importedError(final String string, final EObject currentObject, final EAttribute gamlDefinitionName,
+		final String importError, final String uri) {
+		Map<Object, Object> context = getContext();
+		if ( context.containsKey(currentObject) ) {
+			Set<String> importsWithErrors = (Set<String>) context.get(currentObject);
+			if ( importsWithErrors.contains(uri) ) { return; }
+		} else {
+			Set<String> importsWithErrors = new HashSet();
+			importsWithErrors.add(uri);
+			context.put(currentObject, importsWithErrors);
+			error(string, currentObject, gamlDefinitionName, importError, uri);
+		}
+	}
+
 	private EObject findImport(final URI uri) {
 		Model m;
 		try {
@@ -276,7 +313,7 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			return null;
 		}
 		for ( final Import imp : m.getImports() ) {
-			final URI iu = URI.createURI(imp.getImportURI()).resolve(getCurrentRessource().getURI());
+			final URI iu = URI.createURI(imp.getImportURI()).resolve(m.eResource().getURI());
 			if ( uri.equals(iu) ) { return imp; }
 		}
 		return null;

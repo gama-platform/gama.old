@@ -86,7 +86,7 @@ public class VariableFactory extends SymbolFactory {
 		final String value = name + " < 0.1 ? 0.0 :" + name + " * ( 1 - " + decay + ")";
 		final VariableDescription vd =
 			(VariableDescription) create(SyntacticFactory.create(IKeyword.FLOAT, new Facets(NAME, name, TYPE,
-				IKeyword.FLOAT, UPDATE, value, MIN, "0.0")), superDesc, null);
+				IKeyword.FLOAT, UPDATE, value, MIN, "0.0"), false), superDesc, null);
 		final SpeciesDescription environment = superDesc.getSpeciesDescription(env);
 		if ( environment == null || !environment.isGrid() ) {
 			superDesc.error("Environment " + env + " of signal " + name + " cannot be determined.",

@@ -24,7 +24,6 @@ import java.util.List;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.layers.*;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -312,7 +311,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		Envelope env = scope.getSimulationScope().getEnvelope();
 		this.envWidth = env.getWidth();
 		this.envHeight = env.getHeight();
-		createSurface(scope.getSimulationScope());
+		createSurface(env);
 		return true;
 	}
 
@@ -411,41 +410,17 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		getLayers().clear();
 	}
 
-	protected void createSurface(final IAgent sim) {
-		final Envelope env = sim.getEnvelope();
-		final double w = env.getWidth();
-		final double h = env.getHeight();
+	protected void createSurface(final Envelope env) {
 		if ( surface != null ) {
-			surface.outputChanged(w, h, this);
+			surface.outputChanged(envWidth, envHeight, this);
 			return;
 		}
+		surface = GuiUtils.getDisplaySurfaceFor(displayType, this, envWidth, envHeight);
 		if ( !GuiUtils.isInHeadLessMode() ) {
-			surface = GuiUtils.getDisplaySurfaceFor(displayType, this, w, h);
+			// FIXME These lines do nothing...
 			surface.setSnapshotFileName(getName() + "_snapshot");
 			surface.setAutoSave(autosave, (int) imageDimension.getX(), (int) imageDimension.getY());
 		}
-		// AD: Fix for a bug introduced the "headless" things. I dont understand why we need to separate the two cases,
-		// but at least only one surface is created...
-		else {
-			surface = GuiUtils.getDisplaySurfaceFor(displayType, this, w, h);
-
-			// ImageDisplaySurface
-			// tmp =
-			// surface = new ImageDis
-			// System.out.println("headless mode ");
-		}
-
-		// Use only for opengl
-		// if ( surface.getIGraphics() instanceof IGraphics.OpenGL ) {
-		// IGraphics.OpenGL graphics = (IGraphics.OpenGL) surface.getIGraphics();
-		// surface.initOutput3D(output3D, output3DNbCycles);
-		// graphics.useTesselation(tesselation);
-		// graphics.setAmbientLightValue((GamaColor) ambientLightColor);
-		// graphics.setPolygonMode(polygonmode);
-		// graphics.setCameraPosition(cameraPos);
-		// graphics.setCameraLookPosition(cameraLookPos);
-		// graphics.setCameraUpVector(cameraUpVector);
-		// }
 	}
 
 	public void setSurface(final IDisplaySurface sur) {

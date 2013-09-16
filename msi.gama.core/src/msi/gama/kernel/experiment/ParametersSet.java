@@ -28,20 +28,16 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
  */
 public class ParametersSet extends HashMap<String, Object> {
 
-	public ParametersSet(final Map<String, IParameter> variables, final boolean reinit) throws GamaRuntimeException {
-		GAMA.run(new InScope.Void() {
+	public ParametersSet(final IScope scope, final Map<String, IParameter> variables, final boolean reinit)
+		throws GamaRuntimeException {
 
-			@Override
-			public void process(final IScope scope) {
-				for ( final String var : variables.keySet() ) {
-					final IParameter varBat = variables.get(var);
-					if ( reinit && varBat instanceof IParameter.Batch ) {
-						((IParameter.Batch) varBat).reinitRandomly();
-					}
-					put(var, varBat.value(scope));
-				}
+		for ( final String var : variables.keySet() ) {
+			final IParameter varBat = variables.get(var);
+			if ( reinit && varBat instanceof IParameter.Batch ) {
+				((IParameter.Batch) varBat).reinitRandomly();
 			}
-		});
+			put(var, varBat.value(scope));
+		}
 
 	}
 

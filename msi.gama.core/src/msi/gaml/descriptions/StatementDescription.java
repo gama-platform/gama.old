@@ -135,7 +135,7 @@ public class StatementDescription extends SymbolDescription {
 	public IVarExpression addNewTempIfNecessary(final String facetName, final IType type, final IType contentType,
 		final IType keyType) {
 		String varName = facets.getLabel(facetName);
-		if ( facetName.equals(VAR) ) {
+		if ( getKeyword().equals(LOOP) && facetName.equals(NAME) ) {
 			// Case of loops
 			return (IVarExpression) addTemp(varName, type, contentType, keyType);
 		}

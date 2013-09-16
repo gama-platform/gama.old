@@ -17,21 +17,23 @@ import org.eclipse.emf.ecore.EObject;
  */
 public class SyntacticFactory {
 
-	public static ISyntacticElement create(final String keyword, final EObject statement) {
-		return create(keyword, null, statement);
+	public static ISyntacticElement create(final String keyword, final EObject statement, final boolean withChildren) {
+		return create(keyword, null, statement, withChildren);
 	}
 
-	public static ISyntacticElement create(final String keyword, final Facets facets) {
-		return create(keyword, facets, null);
+	public static ISyntacticElement create(final String keyword, final Facets facets, final boolean withChildren) {
+		return create(keyword, facets, null, withChildren);
 	}
 
-	public static ISyntacticElement create(final String keyword, final Facets facets, final EObject statement) {
+	public static ISyntacticElement create(final String keyword, final Facets facets, final EObject statement,
+		final boolean withChildren) {
 		if ( keyword.equals(GLOBAL) ) {
-			return new GlobalSyntacticElement(keyword, facets, statement);
+			return new SyntacticGlobalElement(keyword, facets, statement);
 		} else if ( keyword.equals(SPECIES) || keyword.equals(GRID) ) {
-			return new SpeciesSyntacticElement(keyword, facets, statement);
-		} else if ( keyword.equals(EXPERIMENT) ) { return new ExperimentSyntacticElement(keyword, facets, statement); }
-		return new SyntacticElement(keyword, facets, statement);
+			return new SyntacticSpeciesElement(keyword, facets, statement);
+		} else if ( keyword.equals(EXPERIMENT) ) { return new SyntacticExperimentElement(keyword, facets, statement); }
+		if ( !withChildren ) { return new SyntacticSingleElement(keyword, facets, statement); }
+		return new SyntacticComposedElement(keyword, facets, statement);
 	}
 }
 

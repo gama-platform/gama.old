@@ -31,7 +31,7 @@ public class GamlCompatibilityConverter {
 		Model m = (Model) root;
 		if ( m == null ) { throw new NullPointerException("The model of " + root.eResource() +
 			" appears to be null. Please debug to understand the cause."); }
-		ISyntacticElement syntacticContents = SyntacticFactory.create(MODEL, m);
+		ISyntacticElement syntacticContents = SyntacticFactory.create(MODEL, m, EGaml.hasChildren(m));
 		syntacticContents.setFacet(NAME, convertToConstantString(null, m.getName()));
 		convStatements(syntacticContents, EGaml.getStatementsOf(m), errors);
 		return syntacticContents;
@@ -62,7 +62,7 @@ public class GamlCompatibilityConverter {
 		} else {
 			keyword = convertKeyword(keyword, upper.getKeyword());
 		}
-		final ISyntacticElement elt = SyntacticFactory.create(keyword, stm);
+		final ISyntacticElement elt = SyntacticFactory.create(keyword, stm, EGaml.hasChildren(stm));
 		/**
 		 * Some syntactic rewritings to remove ambiguities inherent to the grammar of GAML and
 		 * translate the new compact syntax into the legacy facet-based one
@@ -140,16 +140,16 @@ public class GamlCompatibilityConverter {
 		if ( stm instanceof S_Var && (keyword.equals(CONST) || keyword.equals(VAR)) ) {
 			// We modify the "var", "const" declarations in order to replace the
 			// keyword by the type
-			String type = elt.getLabel(TYPE);
+			IExpressionDescription type = elt.getExpressionAt(TYPE);
 			if ( type == null ) {
 				addWarning("Facet 'type' is missing, set by default to 'unknown'", stm, errors);
 				elt.setKeyword(UNKNOWN);
 			} else {
-				elt.setKeyword(type);
+				elt.setKeyword(type.toString());
 			}
 			if ( keyword.equals(CONST) ) {
-				String constant = elt.getLabel(CONST);
-				if ( constant != null && constant.equals(FALSE) ) {
+				IExpressionDescription constant = elt.getExpressionAt(CONST);
+				if ( constant != null && constant.toString().equals(FALSE) ) {
 					addWarning("Is this variable constant or not ?", stm, errors);
 				}
 				elt.setFacet(CONST, ConstantExpressionDescription.create(true));
@@ -165,7 +165,7 @@ public class GamlCompatibilityConverter {
 			// elt.setKeyword(type);
 			// }
 			// We modify the names of experiments so as not to confuse them with species
-			String name = elt.getLabel(NAME);
+			String name = elt.getName();
 			elt.setFacet(TITLE, convertToConstantString(null, "Experiment " + name));
 			elt.setFacet(NAME, convertToConstantString(null, name));
 		} else // TODO Change this by implementing only one class of methods (that delegates to
@@ -173,7 +173,7 @@ public class GamlCompatibilityConverter {
 		if ( keyword.equals(METHOD) ) {
 			// We apply some conversion for methods (to get the name instead of the "method"
 			// keyword)
-			String type = elt.getLabel(NAME);
+			String type = elt.getName();
 			if ( type != null ) {
 				elt.setKeyword(type);
 			}
@@ -245,9 +245,9 @@ public class GamlCompatibilityConverter {
 				elt.setFacet(DEPENDS_ON, new StringListExpressionDescription(s));
 			}
 			if ( !(stm instanceof S_Var) ) {
-				String type = elt.getLabel(TYPE);
+				IExpressionDescription type = elt.getExpressionAt(TYPE);
 				if ( type != null ) {
-					if ( type.equals(keyword) ) {
+					if ( type.toString().equals(keyword) ) {
 						addWarning("Duplicate declaration of type", stm, errors);
 					} else {
 						addWarning("Conflicting declaration of type (" + type + " and " + keyword +
@@ -261,7 +261,7 @@ public class GamlCompatibilityConverter {
 	private static void convElse(final S_If stm, final ISyntacticElement elt, final Set<Diagnostic> errors) {
 		EObject elseBlock = stm.getElse();
 		if ( elseBlock != null ) {
-			ISyntacticElement elseElt = SyntacticFactory.create(ELSE, elseBlock);
+			ISyntacticElement elseElt = SyntacticFactory.create(ELSE, elseBlock, EGaml.hasChildren(elseBlock));
 			if ( elseBlock instanceof Statement ) {
 				elseElt.addChild(convStatement(elt, (Statement) elseBlock, errors));
 			} else {
@@ -275,7 +275,7 @@ public class GamlCompatibilityConverter {
 		final Set<Diagnostic> errors) {
 		if ( args != null ) {
 			for ( ArgumentDefinition def : EGaml.getArgsOf(args) ) {
-				ISyntacticElement arg = SyntacticFactory.create(ARG, def);
+				ISyntacticElement arg = SyntacticFactory.create(ARG, def, false);
 				addFacet(arg, NAME, convertToConstantString(null, def.getName()), errors);
 				TypeRef type = (TypeRef) def.getType();
 				addFacet(arg, TYPE, convertToConstantString(null, EGaml.getKey.caseTypeRef(type)), errors);
