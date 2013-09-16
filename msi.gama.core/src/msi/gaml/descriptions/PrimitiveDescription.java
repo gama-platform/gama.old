@@ -12,8 +12,8 @@ public class PrimitiveDescription extends StatementDescription {
 
 	// TODO Voir si on ne peut pas simplifier un peu l'instatiation et la copie
 
-	public PrimitiveDescription(String keyword, IDescription superDesc, IChildrenProvider cp, boolean hasScope,
-		boolean hasArgs, EObject source, Facets facets) {
+	public PrimitiveDescription(final String keyword, final IDescription superDesc, final IChildrenProvider cp,
+		final boolean hasScope, final boolean hasArgs, final EObject source, final Facets facets) {
 		super(keyword, superDesc, cp, hasScope, hasArgs, source, facets);
 	}
 

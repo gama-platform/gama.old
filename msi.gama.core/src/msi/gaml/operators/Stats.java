@@ -199,11 +199,10 @@ public class Stats {
 	}
 
 	@operator(value = "sum", can_be_const = true, type = IType.GRAPH)
-		public static double sum(final IScope scope, final IGraph g) {
-			if (g == null)
-				return 0.0;
-			return g.computeTotalWeight();
-		}
+	public static double sum(final IScope scope, final IGraph g) {
+		if ( g == null ) { return 0.0; }
+		return g.computeTotalWeight();
+	}
 
 	@operator(value = "mean", can_be_const = true, type = ITypeProvider.FIRST_CONTENT_TYPE, expected_content_type = {
 		IType.INT, IType.FLOAT, IType.POINT })
@@ -265,19 +264,19 @@ public class Stats {
 		return d.getMeanDeviation();
 	}
 
-	@operator(value = { "frequency_of" }, content_type = IType.INT, iterator = true)
+	@operator(value = { "frequency_of" }, iterator = true, index_type = ITypeProvider.SECOND_CONTENT_TYPE, content_type = IType.INT)
 	@doc(value = "Returns a map with keys equal to the application of the right-hand argument (like collect) and values equal to the frequency of this key (i.e. how many times it has been obtained)", comment = "", examples = { "[ag1, ag2, ag3, ag4] frequency_of each.size 	--:   will return the different sizes as keys and the number of agents of this size as values" }, see = "as_map")
 	public static GamaMap frequencyOf(final IScope scope, final IContainer original, final IExpression filter)
 		throws GamaRuntimeException {
 		if ( original == null ) { return new GamaMap(); }
-		final GamaMap result = new GamaMap();
+		final GamaMap<Object, Integer> result = new GamaMap();
 		for ( Object each : original.iterable(scope) ) {
 			scope.setEach(each);
 			Object key = filter.value(scope);
 			if ( !result.containsKey(key) ) {
 				result.put(key, 1);
 			} else {
-				result.put(key, (Integer) result.get(key) + 1);
+				result.put(key, result.get(key) + 1);
 			}
 		}
 		return result;

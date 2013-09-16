@@ -309,7 +309,7 @@ public class SymbolProto {
 				sb.append(" among: ").append(Arrays.toString(f.values));
 			}
 			if ( f.doc != null && f.doc.length() > 0 ) {
-				sb.append(" doc: ").append(f.doc.split("�")[0]);
+				sb.append(" - ").append(f.doc);
 			}
 			sb.append("</li>");
 		}

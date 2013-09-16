@@ -1,7 +1,5 @@
 package msi.gaml.compilation;
 
-import msi.gama.common.util.GuiUtils;
-
 /**
  * 
  * The class GamlElementDocumentation. Represents the Java view of annotation @doc
@@ -20,6 +18,8 @@ public class GamlElementDocumentation {
 	String[] special_cases;
 	String[] examples;
 	String[] see;
+
+	static boolean hasWarnedOnce = false;
 
 	public GamlElementDocumentation(final String[] array) {
 		if ( !(array == null || array.length == 0) ) {
@@ -46,7 +46,17 @@ public class GamlElementDocumentation {
 					see[i] = array[index++];
 				}
 			} catch (final Exception e) {
-				GuiUtils.debug("WARNING :: GamlElementDocumentation: " + e.toString());
+				if ( !hasWarnedOnce ) {
+					hasWarnedOnce = true;
+					System.err.println("***");
+					System.err.println("***");
+					System.err.println("***");
+					System.err
+						.println("*** WARNING :: The annotations are not in sync with the code. Clean the projects and relaunch GAMA.");
+					System.err.println("***");
+					System.err.println("***");
+					System.err.println("***");
+				}
 			}
 		}
 	}

@@ -87,7 +87,7 @@ public class PopulationInspectView extends GamaViewPart {
 		viewer.refresh();
 	}
 
-	private int computeSize() {
+	private int computeCustomSize() {
 		int size;
 		final IExpression expr = getOutput().getValue();
 		if ( expr != null ) {
@@ -159,11 +159,11 @@ public class PopulationInspectView extends GamaViewPart {
 	private void changePartName(final String name) {
 		if ( name == null ) { return; }
 		this.setContentDescription(StringUtils.capitalize(name) + " population in macro-agent " +
-			getOutput().getRootAgent().getName() + "; size: " + computeSize() + " agents");
+			getOutput().getRootAgent().getName());
 		if ( name.equals(CUSTOM) ) {
-			setPartName("Custom population browser");
+			setPartName("Custom population");
 		} else {
-			setPartName("Population browser on " + name);
+			setPartName("Population of " + name);
 		}
 	}
 
@@ -235,7 +235,7 @@ public class PopulationInspectView extends GamaViewPart {
 
 		@Override
 		public void widgetSelected(final SelectionEvent e) {
-			selectedColumns.put(currentTab.getText(), Arrays.asList(attributesMenu.getSelection()));
+			selectedColumns.put(getTabText(currentTab), Arrays.asList(attributesMenu.getSelection()));
 			recreateViewer();
 			update(getOutput());
 		}
@@ -243,7 +243,7 @@ public class PopulationInspectView extends GamaViewPart {
 	};
 
 	private void fillAttributeMenu() {
-		final String speciesName = currentTab.getText();
+		final String speciesName = getTabText(currentTab);
 		attributesMenu.removeAll();
 		attributesMenu.setVisible(false);
 		attributesLabel.setVisible(false);
@@ -277,11 +277,18 @@ public class PopulationInspectView extends GamaViewPart {
 		}
 	}
 
-	private void createTab(final String s) {
+	private void createTab(final String s, final int size) {
 		final CTabItem item = new CTabItem(tabFolder, SWT.CLOSE);
-		item.setText(s);
+		refreshTabName(s, size, item);
 		item.setImage(GamaIcons.menu_population);
 		item.setShowClose(true);
+	}
+
+	private void refreshTabName(final String s, final int size, final CTabItem t) {
+		CTabItem item = t == null ? getItem(s) : t;
+		if ( item != null ) {
+			item.setText(s + " (" + size + ")");
+		}
 	}
 
 	@Override
@@ -293,12 +300,13 @@ public class PopulationInspectView extends GamaViewPart {
 		tabFolder.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 		final Iterable<ISpecies> populations = getOutput().getRootAgent().getSpecies().getMicroSpecies();
 		final List<String> names = new ArrayList();
+		final List<Integer> sizes = new ArrayList();
 		for ( final ISpecies pop : populations ) {
 			names.add(pop.getName());
 		}
 		names.add(CUSTOM);
 		for ( final String s : names ) {
-			createTab(s);
+			createTab(s, 0);
 		}
 		// Adds a composite to the tab
 
@@ -316,7 +324,7 @@ public class PopulationInspectView extends GamaViewPart {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				currentTab = (CTabItem) e.item;
-				final String name = currentTab.getText();
+				final String name = getTabText(currentTab);
 				currentTab.setControl(view);
 				setSpeciesName(name, true);
 				fillAttributeMenu();
@@ -452,9 +460,13 @@ public class PopulationInspectView extends GamaViewPart {
 		parent.layout(true);
 	}
 
+	private String getTabText(final CTabItem i) {
+		return StringUtils.clean(StringUtils.split(i.getText(), '(')[0]);
+	}
+
 	private CTabItem getItem(final String s) {
 		for ( CTabItem i : tabFolder.getItems() ) {
-			if ( i.getText().equals(s) ) { return i; }
+			if ( getTabText(i).equals(s) ) { return i; }
 		}
 		return null;
 	}
@@ -468,10 +480,13 @@ public class PopulationInspectView extends GamaViewPart {
 				}
 			} else {
 				if ( item == null ) {
-					createTab(p.getName());
+					createTab(p.getName(), p.size());
+				} else {
+					refreshTabName(p.getName(), p.size(), item);
 				}
 			}
 		}
+		refreshTabName(CUSTOM, computeCustomSize(), null);
 	}
 
 	private void createColumns() {
@@ -726,7 +741,7 @@ public class PopulationInspectView extends GamaViewPart {
 
 		String exportFileName =
 			GAMA.getModel().getRelativeFilePath(
-				exportFolder + "/" + currentTab.getText() + "_population" + output.getScope().getClock().getCycle() +
+				exportFolder + "/" + getTabText(currentTab) + "_population" + output.getScope().getClock().getCycle() +
 					".csv", false);
 		File file = new File(exportFileName);
 		FileWriter fileWriter = null;

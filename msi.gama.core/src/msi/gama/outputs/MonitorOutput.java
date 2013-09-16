@@ -45,6 +45,8 @@ import msi.gaml.types.IType;
 @inside(symbols = { IKeyword.OUTPUT, IKeyword.PERMANENT })
 public class MonitorOutput extends AbstractDisplayOutput {
 
+	//
+
 	public MonitorOutput(final IDescription desc) {
 		super(desc);
 		setValue(getFacet(IKeyword.VALUE));

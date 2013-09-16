@@ -345,8 +345,14 @@ public class Containers {
 		"[1::2, 3::4, 5::6] group_by (each > 4) 	--: 	[false::[2, 4], true::[6]]" }, see = { "first_with", "last_with",
 		"where" })
 	public static GamaMap group_by(final IScope scope, final IContainer original, final IExpression filter) {
-		return new GamaMap(FluentIterable.from(nullCheck(original).iterable(scope)).index(function(scope, filter))
-			.asMap());
+		// AD: 16/9/13 Bugfix where the lists created could not be used in further computations
+		ImmutableMap<Object, List> m =
+			FluentIterable.from(nullCheck(original).iterable(scope)).index(function(scope, filter)).asMap();
+		GamaMap result = new GamaMap();
+		for ( Map.Entry<Object, List> entry : m.entrySet() ) {
+			result.put(entry.getKey(), new GamaList(entry.getValue()));
+		}
+		return result;
 	}
 
 	// FIXME: I DO NOT UNDERSTAND THIS METHOD ! WHAT IS IT SUPPOSED TO DO ?
