@@ -25,7 +25,6 @@ import java.awt.image.BufferedImage;
 import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.combination;
@@ -173,9 +172,9 @@ public class DrawStatement extends AbstractStatementSequence {
 					newExpr = GAML.getExpressionFactory().createOperator("file", desc, exp);
 				}
 			}
-//			if ( newExpr == null ) {
-//				newExpr = exp;
-//			}
+			// if ( newExpr == null ) {
+			// newExpr = exp;
+			// }
 			// if ( newExpr != null ) {
 			desc.getFacets().put(IKeyword.GEOMETRY, newExpr);
 			// } else {
@@ -286,12 +285,10 @@ public class DrawStatement extends AbstractStatementSequence {
 		@Override
 		Rectangle2D executeOn(final IScope scope, final IGraphics gr) throws GamaRuntimeException {
 			final IShape g1 = Cast.asGeometry(scope, item.value(scope));
-			if ( g1 == null ) {
-				return null;
-			}
+			if ( g1 == null ) { return null; }
 			final IShape g2 = Spatial.Transformations.at_location(scope, g1, getLocation(scope, g1));
 			if ( depth != null ) {
-				g2.setAttribute("depth", depth.value(scope));
+				g2.setAttribute(IShape.DEPTH_ATTRIBUTE, depth.value(scope));
 			}
 			return gr.drawGamaShape(scope, g2, getColor(scope), !getEmpty(scope), getBorder(scope), getRotation(scope),
 				getRounded(scope));
@@ -347,7 +344,7 @@ public class DrawStatement extends AbstractStatementSequence {
 
 				final Rectangle2D result =
 					g.drawImage(scope, workImage, new GamaPoint(x, y), new GamaPoint(displayWidth, displayHeight),
-						null, getRotation(scope), agent.getLocation().getZ(), false,null);
+						null, getRotation(scope), agent.getLocation().getZ(), false, null);
 				workImage.flush();
 				return result;
 			}
@@ -378,7 +375,7 @@ public class DrawStatement extends AbstractStatementSequence {
 			constStyle =
 				style == null ? Font.PLAIN : style.isConst() ? CONSTANTS.get(Cast.asString(scope, style.value(scope)))
 					: null;
-			bitmap = getFacet(BITMAP);		
+			bitmap = getFacet(BITMAP);
 			constBitmap = bitmap != null && bitmap.isConst() ? Cast.asBool(scope, bitmap.value(scope)) : null;
 			GAMA.releaseScope(scope);
 
@@ -391,9 +388,9 @@ public class DrawStatement extends AbstractStatementSequence {
 			if ( info == null || info.length() == 0 ) { return null; }
 			final String fName = constFont == null ? Cast.asString(scope, font.value(scope)) : constFont;
 			final int fStyle = constStyle == null ? CONSTANTS.get(style.value(scope)) : constStyle;
-            final Boolean fBitmap = constBitmap == null ? true : constBitmap;
+			final Boolean fBitmap = constBitmap == null ? true : constBitmap;
 			return g.drawString(info, getColor(scope), getLocation(scope), getSize(scope).getY(), fName, fStyle,
-				getRotation(scope), agent.getLocation().getZ(),fBitmap);
+				getRotation(scope), agent.getLocation().getZ(), fBitmap);
 
 		}
 	}
