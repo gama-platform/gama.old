@@ -22,6 +22,8 @@ package msi.gaml.operators;
 
 import java.io.*;
 import java.util.prefs.Preferences;
+
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -30,6 +32,7 @@ import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
+import msi.gama.util.file.IGamaFile;
 import msi.gama.util.graph.IGraph;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.types.IType;
@@ -294,7 +297,7 @@ public class Stats {
 
 		RCaller caller = new RCaller();
 
-		String RPath = Preferences.userRoot().node("gama").get("RScript", null);
+		String RPath = ((IGamaFile)GamaPreferences.LIB_R.value(scope)).getPath();
 		caller.setRscriptExecutable(RPath);
 		// caller.setRscriptExecutable("\"" + RPath + "\"");
 		// if ( java.lang.System.getProperty("os.name").startsWith("Mac") ) {
@@ -342,7 +345,7 @@ public class Stats {
 		double[] results;
 		RCaller caller = new RCaller();
 
-		String RPath = Preferences.userRoot().node("gama").get("RScript", null);
+		String RPath = ((IGamaFile)GamaPreferences.LIB_R.value(scope)).getPath();
 		caller.setRscriptExecutable(RPath);
 		// caller.setRscriptExecutable("\"" + RPath + "\"");
 		// if ( java.lang.System.getProperty("os.name").startsWith("Mac") ) {
@@ -373,7 +376,7 @@ public class Stats {
 			// Call R
 			RCaller caller = new RCaller();
 
-			String RPath = Preferences.userRoot().node("gama").get("RScript", null);
+			String RPath = ((IGamaFile)GamaPreferences.LIB_R.value(scope)).getPath();
 			caller.setRscriptExecutable(RPath);
 			// caller.setRscriptExecutable("\"" + RPath + "\"");
 			// if(java.lang.System.getProperty("os.name").startsWith("Mac"))
@@ -451,7 +454,7 @@ public class Stats {
 			// Call R
 			RCaller caller = new RCaller();
 
-			String RPath = Preferences.userRoot().node("gama").get("RScript", null);
+			String RPath = ((IGamaFile)GamaPreferences.LIB_R.value(scope)).getPath();
 			caller.setRscriptExecutable(RPath);
 			// caller.setRscriptExecutable("\"" + RPath + "\"");
 			// if(java.lang.System.getProperty("os.name").startsWith("Mac"))
