@@ -27,6 +27,7 @@ public class GamaPreferences {
 	public static final String CODE = "Code";
 	public static final String EDITOR = "Editor";
 	public static final String WORKSPACE = "Workspace";
+	public static final String LIBRARIES = "Libraries";
 	private static Preferences store = Preferences.userRoot().node("gama");
 	private static Map<String, Entry> prefs = new LinkedHashMap();
 	private static List<String> storeKeys;
@@ -320,8 +321,6 @@ public class GamaPreferences {
 		IType.BOOL).in(GENERAL).group("Simulation errors");
 	public static final Entry<Double> CORE_DELAY_STEP = create("core.delay_step",
 		"Default step for delay slider (in sec.)", 0.01, IType.FLOAT).in(GENERAL).group("Runtime");
-	public static final Entry<String> LIB_SPATIALITE = create("core.lib_spatialite",
-		"Path to the 'Spatialite' library", new GenericFile(""), IType.FILE).in(GENERAL).group("Runtime");
 
 	// DISPLAY
 	public static final Entry<String> CORE_DISPLAY = create("core.display", "Default display method", "Java2D",
@@ -353,6 +352,28 @@ public class GamaPreferences {
 		create("core.show_fps", "Show fps by default", false, IType.BOOL).in(DISPLAY).group("OpenGL");
 	public static final Entry<Boolean> CORE_DISPLAY_ORDER = create("core.display_order",
 		"Stack displays on screen in the order of their definition", true, IType.BOOL).in(DISPLAY).group("Properties");;
+
+	// LIBRARIES
+
+	public static final Entry<String> LIB_SPATIALITE = create("core.lib_spatialite", "Path to the Spatialite library",
+		new GenericFile("Please select the path"), IType.FILE).in(LIBRARIES).group(
+		"Spatialite (http://www.gaia-gis.it/gaia-sins/)");
+	public static final Entry<String> LIB_R = create("core.lib_r", "Path to the RScript library",
+		new GenericFile(getDefaultRPath()), IType.FILE).in(LIBRARIES).group("R (http://www.r-project.org)");
+
+	private static String getDefaultRPath() {
+		String os = System.getProperty("os.name");
+		String osbit = System.getProperty("os.arch");
+		if ( os.startsWith("Mac") ) {
+			if ( osbit.endsWith("64") ) { return "/Library/Frameworks/R.framework/Versions/2.15/Resources/bin/exec/x86_64/RScript"; }
+			return "/Library/Frameworks/R.framework/Versions/2.15/Resources/bin/exec/i386/RScript";
+		} else if ( os.startsWith("Linux") ) { return "usr/bin/RScript"; }
+		if ( os.startsWith("Windows") ) {
+			if ( osbit.endsWith("64") ) { return "C:\\Program Files\\R\\R-2.15.1\\bin\\x64\\Rscript.exe"; }
+			return "C:\\Program Files\\R\\R-2.15.1\\bin\\Rscript.exe";
+		}
+		return "";
+	}
 
 	private static void register(final Entry gp) {
 		IScope scope = GAMA.obtainNewScope();
