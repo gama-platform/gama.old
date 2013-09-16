@@ -5,11 +5,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
 
+import msi.gama.common.GamaPreferences;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.database.sql.SqlConnection;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
+import msi.gama.util.file.IGamaFile;
 import msi.gaml.types.IType;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -47,13 +49,21 @@ public class SqlUtils {
 		// create connection
 		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
 			String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
-			if (extension!=null){
-				String EXTRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(extension, true);
+//			if (extension!=null){
+//				String EXTRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(extension, true);
+//				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation,EXTRelativeLocation);
+//				
+//			}else{
+//				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation);
+//			}
+			String EXTRelativeLocation=((IGamaFile) GamaPreferences.LIB_SPATIALITE.value(scope)).getPath();
+			//GuiUtils.debug("SqlUtils.createConnection.libPath.before:"+EXTRelativeLocation);
+			if (!EXTRelativeLocation.equalsIgnoreCase("") && (EXTRelativeLocation!=null)){
 				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation,EXTRelativeLocation);
 				
 			}else{
 				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation);
-			}
+			}			
 		} else if ( dbtype.equalsIgnoreCase(SqlConnection.MSSQL) ) {
 			sqlConn = new MSSQLConnection(dbtype, host, port, database, user, passwd);
 		}else if ( dbtype.equalsIgnoreCase(SqlConnection.MYSQL) ) {
@@ -90,13 +100,22 @@ public class SqlUtils {
 		// create connection
 		if ( dbtype.equalsIgnoreCase(SqlConnection.SQLITE) ) {
 			String DBRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(database, true);
-			if (extension!=null){
-				String EXTRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(extension, true);
-				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation,EXTRelativeLocation,transform);
-				
-			}else{
-				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation,transform);
-			}
+//			if (extension!=null){
+//				String EXTRelativeLocation = scope.getSimulationScope().getModel().getRelativeFilePath(extension, true);
+//				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation,EXTRelativeLocation,transform);
+//				
+//			}else{
+//				sqlConn = new SqliteConnection(dbtype, DBRelativeLocation,transform);
+//			}
+		//Get libspatialite path
+			String EXTRelativeLocation=((IGamaFile) GamaPreferences.LIB_SPATIALITE.value(scope)).getPath();
+			//GuiUtils.debug("SqlUtils.createConnection.libPath.before:"+EXTRelativeLocation);
+		if (!EXTRelativeLocation.equalsIgnoreCase("") && (EXTRelativeLocation!=null)){
+			sqlConn = new SqliteConnection(dbtype, DBRelativeLocation,EXTRelativeLocation,transform);
+			
+		}else{
+			sqlConn = new SqliteConnection(dbtype, DBRelativeLocation,transform);
+		}
 		} else if ( dbtype.equalsIgnoreCase(SqlConnection.MSSQL) ) {
 			
 			sqlConn = new MSSQLConnection(dbtype, host, port, database, user, passwd,transform);
