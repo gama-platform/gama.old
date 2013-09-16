@@ -152,6 +152,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 
 	@Override
 	protected Arguments privateCompileArgs(final StatementDescription cd) {
+		List<String> typeNames = cd.getModelDescription().getTypesManager().getTypeNames();
 		final Arguments ca = new Arguments();
 		final String keyword = cd.getKeyword();
 		final boolean isCalling = keyword.equals(CREATE) || keyword.equals(DO) || keyword.equals(PRIMITIVE);
@@ -176,7 +177,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 				// passed should not be part of the context
 				String typeName = argFacets.getLabel(TYPE);
 				// FIXME Should not be necessary anymore as it should be eliminated by the parser
-				if ( !isCalling && !cd.getModelDescription().getTypesManager().getTypeNames().contains(typeName) ) {
+				if ( !isCalling && !typeNames.contains(typeName) ) {
 					cd.error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, TYPE);
 				}
 				IType type = sd.getTypeNamed(typeName);
@@ -185,8 +186,7 @@ public class StatementFactory extends SymbolFactory implements IKeyword {
 				}
 				typeName = argFacets.getLabel(OF);
 				// FIXME Should not be necessary anymore as it should be eliminated by the parser
-				if ( typeName != null && !isCalling &&
-					!cd.getModelDescription().getTypesManager().getTypeNames().contains(typeName) ) {
+				if ( typeName != null && !isCalling && !typeNames.contains(typeName) ) {
 					cd.error(typeName + " is not a type name.", IGamlIssue.NOT_A_TYPE, OF);
 				}
 				IType contents = sd.getTypeNamed(typeName);

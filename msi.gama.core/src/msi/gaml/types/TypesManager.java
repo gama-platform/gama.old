@@ -21,6 +21,7 @@ package msi.gaml.types;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gaml.descriptions.*;
+import msi.gaml.operators.Strings;
 
 public class TypesManager {
 
@@ -107,7 +108,11 @@ public class TypesManager {
 
 	public List<String> getTypeNames() {
 		List<String> result = parent == null ? new ArrayList() : parent.getTypeNames();
-		result.addAll(stringToIType.keySet());
+		for ( String s : stringToIType.keySet() ) {
+			if ( !Strings.isGamaNumber(s) ) {
+				result.add(s);
+			}
+		}
 		return result;
 	}
 
