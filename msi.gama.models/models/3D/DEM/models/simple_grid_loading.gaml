@@ -34,30 +34,30 @@ entities {
 experiment gridloading type: gui {
 	output {
 						
-		display gridNonTextured type:opengl ambient_light:100{
-			grid cell;
+		display gridNonTextured type:opengl ambient_light:100 {
+			grid cell draw_as_dem:true;
 		}
 		
 		display gridTextured type:opengl ambient_light:255{
-			grid cell texture:map_texture triangulation:false;
+			grid cell texture:map_texture triangulation:false draw_as_dem:true;
 		}
 		
 		display gridTextureWithText type:opengl{
-			grid cell text:true;
+			grid cell text:true draw_as_dem:true;
 		}
 		
 		display gridNonTexturedWithDEMValue type:opengl{
-			grid cell texture:false;
+			grid cell texture:false draw_as_dem:true;
 		}
 		
 		display gridTriangulatedWithGridColor type:opengl{
-			grid cell triangulation:true;
+			grid cell triangulation:true draw_as_dem:true;
 		}
 		display gridTriangulatedWithTexture type:opengl{
-			grid cell texture:map_texture triangulation:true;
+			grid cell texture:map_texture triangulation:true draw_as_dem:true;
 		}
 		display classic type:opengl{
-			grid cell draw_as_dem:false;
+			grid cell;
 	    }
 		
 	}

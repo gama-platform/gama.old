@@ -56,7 +56,7 @@ entities {
 experiment gridloading type: gui {
 	output {
 		display gridTextured type:opengl ambient_light:255{
-			grid cell texture:map_texture triangulation:false;
+			grid cell texture:map_texture triangulation:false draw_as_dem:true;
 			species people aspect:base;
 		}
 		
@@ -66,7 +66,7 @@ experiment gridloading type: gui {
 		}
 				
 		display gridTexturedTriangulated type:opengl ambient_light:100{
-			grid cell texture:map_texture text:false triangulation:true;
+			grid cell texture:map_texture text:false triangulation:true draw_as_dem:true;
 			species people aspect:base;
 		}
 	}
