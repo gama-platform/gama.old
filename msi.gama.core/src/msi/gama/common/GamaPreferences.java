@@ -278,7 +278,9 @@ public class GamaPreferences {
 	public static final Entry<Boolean> CORE_SHOW_ERRORS = create("core.display_errors", "Display errors", true,
 		IType.BOOL).in(GENERAL).group("Simulation errors");
 	public static final Entry<Double> CORE_DELAY_STEP = create("core.delay_step",
-		"Default step for delay slider (in sec.)", 0.01, IType.FLOAT).in(GENERAL).group("Runtime");
+			"Default step for delay slider (in sec.)", 0.01, IType.FLOAT).in(GENERAL).group("Runtime");
+	public static final Entry<String> LIB_SPATIALITE  = create("core.lib_spatialite",
+			"path for lib spatialite", "", IType.STRING).in(GENERAL).group("Runtime");
 
 	// DISPLAY
 	public static final Entry<String> CORE_DISPLAY = create("core.display", "Default display method", "Java2D",
