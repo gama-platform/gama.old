@@ -43,7 +43,7 @@ entities {
 experiment diffusion type: gui {
 	output {
 		display a type: opengl {
-			grid cells triangulation: true;
+			grid cells draw_as_dem: true triangulation: true;
 		}
 	}
 }

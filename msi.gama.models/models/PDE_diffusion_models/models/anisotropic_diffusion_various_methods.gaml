@@ -52,10 +52,10 @@ entities {
 experiment diffusion type: gui {
 	output {
 		display dot type: opengl {
-			grid cells_dot triangulation: true;
+			grid cells_dot draw_as_dem: true triangulation: true;
 		}
 		display convol type: opengl {
-			grid cells_convol triangulation: true;
+			grid cells_convol draw_as_dem: true triangulation: true;
 		}
 	}
 }
