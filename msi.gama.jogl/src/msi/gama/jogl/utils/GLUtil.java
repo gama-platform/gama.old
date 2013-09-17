@@ -20,10 +20,6 @@ import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.*;
 
-import org.eclipse.swt.graphics.Point;
-
-import utils.Wector;
-
 import msi.gama.metamodel.shape.GamaPoint;
 
 public class GLUtil {
@@ -691,62 +687,9 @@ public class GLUtil {
 
 	}
 
-	public static void drawVec(GL gl, Wector point, Wector direction) {
-		GLU glu = new GLU();
-		GLUquadric quadric = glu.gluNewQuadric();
-		gl.glColor3f(1, 1, 1);
-		gl.glPushMatrix();
-		double theta = Math.asin(direction.z / direction.dlugosc()) * (180 / Math.PI);
-		double phi = Math.acos(direction.x / direction.dlugosc()) * (180 / Math.PI);
 
-		gl.glTranslated(point.x, point.y, point.z);
-		if ( Math.signum(direction.y) > 0 ) {
-			gl.glRotated(phi - 180, 0, 0, 1);
-		} else {
-			gl.glRotated(180 - phi, 0, 0, 1);
-		}
 
-		gl.glRotated(theta - 90, 0, 1, 0);
 
-		gl.glPushMatrix();
-		gl.glTranslated(0, 0, direction.dlugosc());
-		glu.gluCylinder(quadric, .2, 0, .5, 30, 30);
-		gl.glPopMatrix();
-		gl.glPushMatrix();
-		glu.gluCylinder(quadric, .1, .1, direction.dlugosc(), 10, 10);
-		gl.glPopMatrix();
-
-		gl.glPopMatrix();
-
-	}
-
-	public static void drawVec(GL gl, Wector direction) {
-		GLU glu = new GLU();
-		GLUquadric quadric = glu.gluNewQuadric();
-		// gl.glColor3f(1, 1, 1);
-		gl.glPushMatrix();
-		double theta = Math.asin(direction.z / direction.dlugosc()) * (180 / Math.PI);
-		double phi = Math.acos(direction.x / direction.dlugosc()) * (180 / Math.PI);
-
-		if ( Math.signum(direction.y) > 0 ) {
-			gl.glRotated(phi - 180, 0, 0, 1);
-		} else {
-			gl.glRotated(180 - phi, 0, 0, 1);
-		}
-
-		gl.glRotated(theta - 90, 0, 1, 0);
-
-		gl.glPushMatrix();
-		gl.glTranslated(0, 0, direction.dlugosc() / 100.0 + 1);
-		glu.gluCylinder(quadric, .2, 0, .5, 30, 30);
-		gl.glPopMatrix();
-		gl.glPushMatrix();
-		glu.gluCylinder(quadric, .1, .1, direction.dlugosc() / 100.0 + 1, 10, 10);
-		gl.glPopMatrix();
-
-		gl.glPopMatrix();
-		// System.out.println("VEC:"+direction+" Theta:"+theta+"  Phi:"+phi);
-	}
 
 	public static void drawCircle(GL gl, double size, int n_vertexs) {
 		if ( n_vertexs < 3 ) {
