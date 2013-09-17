@@ -22,7 +22,7 @@ species foyer {
 	batiment lieu_travail;
 	
 	aspect revenu {
-		int val <- 255 * (revenu / 3000);
+		float val <- 255 * (revenu / 3000);
 		draw circle(5) color: rgb(255 - val, val, 0);
 	}
 }

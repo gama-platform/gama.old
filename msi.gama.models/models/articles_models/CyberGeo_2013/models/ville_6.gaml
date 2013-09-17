@@ -11,8 +11,7 @@ global {
 	init {
 		create batiment from: shape_file_batiments with: [type:: string(read("NATURE"))]{
 			float z <- (cell(location)).grid_value;   
-			write z;       
-            set shape <- shape add_z (z);
+			shape <- shape add_z (z);
 		}
 		create route from: shape_file_routes;
 		create foyer number: 500;
@@ -54,7 +53,7 @@ species foyer {
 		do emmenager;
 	}
 	aspect revenu {
-		int val <- 255 * (revenu / 3000);
+		float val <- 255 * (revenu / 3000);
 		draw sphere(5) color: rgb(255 - val, val, 0);
 	}
 }
