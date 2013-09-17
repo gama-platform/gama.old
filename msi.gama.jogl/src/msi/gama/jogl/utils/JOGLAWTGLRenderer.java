@@ -15,7 +15,6 @@ import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.GAMA;
-import utils.GLUtil;
 import com.sun.opengl.util.*;
 import com.sun.opengl.util.texture.*;
 
