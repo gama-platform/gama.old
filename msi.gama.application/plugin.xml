@@ -1545,14 +1545,6 @@
          </implementation>
       </extension>
       <extension
-            point="org.eclipse.ui.preferencePages">
-         <page
-               class="msi.gama.gui.swt.preferencepage.RScriptPreferencePage"
-               id="msi.gama.application.RScriptPrferencePage"
-               name="Config RScript&apos;s path">
-         </page>
-      </extension>
-      <extension
             point="gaml.grammar.addition">
          <path
                name="gaml">
