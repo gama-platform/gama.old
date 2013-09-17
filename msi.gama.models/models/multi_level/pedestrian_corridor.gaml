@@ -7,6 +7,7 @@ global {
 	
 	int environment_size init: 2000;
 	point environment_bounds init: {environment_size, environment_size} ;
+	geometry shape <- rectangle(environment_bounds) ;		
 	
 	float pedestrian_size init: 1.0;
 	geometry pedestrian_shape <- circle (pedestrian_size);
@@ -57,8 +58,6 @@ global {
 	}
 
 } 
-
-environment bounds: environment_bounds;
 
 entities {
 	species pedestrian skills: [moving] topology: ( topology (shape - (corridor_wall_0_shape + corridor_wall_1_shape)) ) /*schedules: shuffle (list (pedestrian)*/ {

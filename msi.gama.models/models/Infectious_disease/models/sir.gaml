@@ -44,7 +44,7 @@ global {
 
 
 entities {
-	grid sir_grid width: 50 height: 50 {
+	grid sir_grid width: 50 height: 50 use_individual_shapes: false use_regular_agents: false frequency: 0{
 		rgb color <- rgb("black");
 		list<sir_grid> neighbours <- (self neighbours_at neighbours_size) ;       
     }

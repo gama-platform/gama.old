@@ -17,6 +17,7 @@ global {
 	float predator_size <- 4.0;
 	float predator_speed <- 1.0;
 	int number_of_predator min: 1 max: 100 init: 30; 
+	geometry shape <- square(400);
 	
 	rgb predator_in_shelter_color <- rgb ('yellow') const: true;
 	 
@@ -147,7 +148,6 @@ entities {
 
 }
 
-environment width: 400 height: 400;
 
 experiment default_experiment type: gui {
 	output {
