@@ -193,18 +193,18 @@ experiment Display  type: gui {
 			species myPolyhedron aspect:Volume ;
 				
 			
-			species myPoint aspect:Flat z:0.5;
-			species myLine aspect:Flat z:0.5;
-			species myMultiLine aspect:Flat z:0.5;
-			species mySquare aspect:Flat z:0.5;
-			species myPolygon aspect:Flat z:0.5;
-			species myTexture aspect:image z:0.5;
+			species myPoint aspect:Flat position:{0,0,0.5};
+			species myLine aspect:Flat position:{0,0,0.5};
+			species myMultiLine aspect:Flat position:{0,0,0.5};
+			species mySquare aspect:Flat position:{0,0,0.5};
+			species myPolygon aspect:Flat position:{0,0,0.5} transparency:0.5;
+			species myTexture aspect:image position:{0,0,0.5};
 			
-			species mySphere aspect:Volume z:0.5;
-			species myPlan aspect:Volume z:0.5;
-			species myMultiPlan aspect:Volume z:0.5;
-			species myCube aspect:Volume z:0.5; 
-			species myPolyhedron aspect:Volume z:0.5;
+			species mySphere aspect:Volume position:{0,0,0.5};
+			species myPlan aspect:Volume position:{0,0,0.5};
+			species myMultiPlan aspect:Volume position:{0,0,0.5};
+			species myCube aspect:Volume position:{0,0,0.5}; 
+			species myPolyhedron aspect:Volume position:{0,0,0.5};
 						
 		}
 	}
