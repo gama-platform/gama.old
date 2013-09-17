@@ -36,7 +36,7 @@ global {
 	reflex stop_simulation when: (nb_preys = 0) or (nb_predators = 0) {
 		do halt ;
 	} 
-	reflex save_result {
+	reflex save_result when: (nb_preys > 0) and (nb_predators > 0){
 		save ("cycle: "+ time + "; nbPreys: " + nb_preys
 						          + "; minEnergyPreys: " + ((prey as list) min_of each.energy)
 								    + "; maxSizePreys: " + ((prey as list) max_of each.energy) 
