@@ -16,7 +16,6 @@ global {
  	graph my_graph <- generate_complete_graph(nodeSpecy,edgeSpecy,net_size,radius);
 }
 
-environment width: 50 height: 50 {}
 
 entities {
 	/*

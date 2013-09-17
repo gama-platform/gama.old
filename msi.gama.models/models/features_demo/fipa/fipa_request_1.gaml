@@ -45,6 +45,5 @@ entities {
 	}
 }
 
-environment width: 100 height: 100;
 
 experiment test type: gui {}

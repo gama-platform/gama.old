@@ -24,8 +24,6 @@ global {
 
 }	 
 
-environment;
-
 entities {
 
 	/*

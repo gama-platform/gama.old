@@ -46,7 +46,9 @@ entities {
 		float size ;
 		action updateSize {
 			path friendship_path <- friendship_graph path_between(self:: target); 
-			size <-max([2,length( friendship_path.edges)]) as float;
+			if (friendship_path != nil) {
+				size <-max([2,length( friendship_path.edges)]) as float;
+			}
 		}
 		reflex movement {
 			if (location distance_to target < 5.0) {

@@ -47,8 +47,6 @@ entities {
 	}
 }
 
-environment;
-
 experiment load_graph type: gui {
 	
 	output {
