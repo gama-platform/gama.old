@@ -514,9 +514,13 @@ public class GamaGraph<V, E> implements IGraph<V, E> {
 				return new GamaList<E>((Iterable) p1.getPathEdgeList(target));
 			case 3:
 				// FIXME : ToCheck.....
+				try {
 				final DijkstraShortestPath<GamaShape, GamaShape> p2 =
 					new DijkstraShortestPath(getProxyGraph(), source, target);
 				return new GamaList<E>(p2.getPathEdgeList());
+				} catch (IllegalArgumentException e) {
+					return new GamaList<E>();
+				}
 		}
 		return new GamaList<E>();
 
