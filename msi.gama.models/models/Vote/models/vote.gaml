@@ -1,7 +1,7 @@
 /**
  *  vote
  *  Author: MAPS TEAM (Frederic Amblard, Thomas Louail, Romain Reulier, Paul Salze et Patrick Taillandier)
- *  Description: 
+ *  Description: Modeling of an election
  */
 
 model vote
@@ -11,50 +11,50 @@ global {
 	
 	int nb_electors <- 1500;
 	int nb_candidates <- 7;
-	int poids_candidats <- 50;
-	int seuil_attraction_candidats <- 80;
-	int seuil_repulsion_candidats <- 200;
-	int seuil_attraction_electeurs <- 20;
+	int weight_candidates <- 50;
+	int threshold_attraction_candidates <- 80;
+	int threshold_repulsion_candidates <- 200;
+	int threshold_attraction_electors <- 20;
 	
-	float distance_parcourue <- 7.0;
-	string distribution_electeurs <- "Uniforme" among: ["Uniforme", "Normale"];
-	string distribution_candidats <- "Polygone" among: ["Aleatoire", "Polygone", "Ligne", "Diagonale"];
-	string strategie_candidats <- "Fixe" among: ["Fixe", "Faire les marches", "Distinction", "Groupe", "Se rapprocher du meilleur","Aleatoire" ];
-	int compteur_groupe_max <- 5;
-	int compteur_groupe <- compteur_groupe_max;
-	float entropie;
-	list<candidat> candidats_en_course ;
+	float distance_traveled <- 7.0;
+	string distribution_electors <- "Uniform" among: ["Uniform", "Normal"];
+	string distribution_candidates <- "Polygon" among: ["Random", "Polygon", "Line", "Diagonal"];
+	string strategy_candidates <- "No strategy" among: ["No strategy", "Search electors", "Distinction", "Group", "Go closer to the best","Random" ];
+	int cpt_Group_max <- 5;
+	int cpt_Group <- cpt_Group_max;
+	float entropy;
+	list<candidate> active_candidates ;
 	
 	init {
-		create electeur number: nb_electors;
-		do creation_candidats;
+		create elector number: nb_electors;
+		do creation_candidates;
 	}
 	
-	action creation_candidats {
-		switch distribution_candidats { 
-			match "Polygone" {
+	action creation_candidates {
+		switch distribution_candidates { 
+			match "Polygon" {
 				list<point> liste_points <- list(nb_candidates points_at 50.0);
 				int cpt <- 0;
-				create candidat number: nb_candidates{
-					 couleur <- rgb (rnd(255), rnd(255), rnd(255)); 
+				create candidate number: nb_candidates{
+					 color <- rgb (rnd(255), rnd(255), rnd(255)); 
 					 location <- liste_points at cpt;
 					 cpt <- cpt + 1; 
 				}
 			}
-			match "Ligne" {
+			match "Line" {
 				int cpt  <- 0;
-				create candidat number: nb_candidates{
-					couleur <- rgb ([rnd(255), rnd(255), rnd(255)]); 
+				create candidate number: nb_candidates{
+					color <- rgb ([rnd(255), rnd(255), rnd(255)]); 
 					float x_cord  <- 200 * cpt / nb_candidates;
 					float y_cord <- 100.0;
 					location <- {x_cord, y_cord};
 					cpt <- cpt + 1;
 				}
 			}
-			match "Diagonale" {
+			match "Diagonal" {
 				int cpt <- 0;
-				create candidat number: nb_candidates{
-					couleur <- rgb ([rnd(255), rnd(255), rnd(255)]); 
+				create candidate number: nb_candidates{
+					color <- rgb ([rnd(255), rnd(255), rnd(255)]); 
 					float x_cord <- 200 * cpt / nb_candidates;
 					float y_cord <- x_cord;
 					location <- {x_cord, y_cord};
@@ -62,150 +62,150 @@ global {
 				}
 			}
 		}
-		candidats_en_course <- list(copy(candidat));	
+		active_candidates <- list(copy(candidate));	
 	}
 	
 	reflex dynamique {
-		ask electeur {
-			do deplacement;
+		ask elector {
+			do moving;
 		}
-		ask candidats_en_course{
-			do deplacement;
-			mes_electeurs <- [];
+		ask active_candidates{
+			do moving;
+			my_electors <- [];
 		}
-		ask electeur {
-			do definition_candidat;
+		ask elector {
+			do definition_candidate;
 		}
 		int nb_electors_max <- 0;
-		candidat candidat_elu <- nil; 
-		ask candidats_en_course{ 
-			int nb_el <- length(mes_electeurs) ;
-			pourcentage_vote <- (nb_el/nb_electors * 100) with_precision 2;
+		candidate candidat_elected <- nil; 
+		ask active_candidates{ 
+			int nb_el <- length(my_electors) ;
+			percentage_vote <- (nb_el/nb_electors * 100) with_precision 2;
 			if (nb_el > nb_electors_max) {
 				nb_electors_max <- nb_el;
-			 	candidat_elu <- self;
+			 	candidat_elected <- self;
 			}
 		}
-		ask candidat {
-			est_elu <- false; 
+		ask candidate {
+			is_elected <- false; 
 		}
-		ask candidat_elu {
-			est_elu <- true; 
+		ask candidat_elected {
+			is_elected <- true; 
 		}
 	}
 	
 	reflex second_tour when: time = 52 {
-		do tell message: "le second tour va commercer !!!"; 
-		candidat finaliste1 <- candidats_en_course with_max_of (each.pourcentage_vote);
-		candidat finaliste2 <- (candidats_en_course - finaliste1) with_max_of (each.pourcentage_vote);
-		ask (candidats_en_course) {
-			if (self != finaliste1 and self != finaliste2) {
-				actif <- false;
-				pourcentage_vote <- 0.0;
-				remove self from: candidats_en_course;
+		do tell message: "The second turn begins !!!"; 
+		candidate finalist1 <- active_candidates with_max_of (each.percentage_vote);
+		candidate finalist2 <- (active_candidates - finalist1) with_max_of (each.percentage_vote);
+		ask (active_candidates) {
+			if (self != finalist1 and self != finalist2) {
+				active <- false;
+				percentage_vote <- 0.0;
+				remove self from: active_candidates;
 			}
 		}	
 		
 	}
 	
 	reflex resultats_finaux when: time = 72 {
-		candidat elu <- candidats_en_course with_max_of (each.pourcentage_vote);
-		do tell message: "The winner is " + elu.name; 
+		candidate elected <- active_candidates with_max_of (each.percentage_vote);
+		do tell message: "The winner is " + elected.name; 
 		do halt;
 	}
 	
-	reflex creation_groupe when: (strategie_candidats in ["Groupe", "Aleatoire"]) {
-		 if (compteur_groupe = compteur_groupe_max) {
-		 	ask groupe_electeurs as list {
+	reflex creation_Group when: (strategy_candidates in ["Group", "Random"]) {
+		 if (cpt_Group = cpt_Group_max) {
+		 	ask Group_electors as list {
 		 		do die;
 		 	}
-			list<list> groupes<- [];
-			geometry geoms <- union(electeur collect ((each.shape) buffer map(["distance"::float(seuil_attraction_electeurs) , "quadrantSegments"::4, "endCapStyle"::1])));
+			list<list> Groups<- [];
+			geometry geoms <- union(elector collect ((each.shape) buffer map(["distance"::float(threshold_attraction_electors) , "quadrantSegments"::4, "endCapStyle"::1])));
 			loop geom over: geoms.geometries { 
 				if (geom != nil and !empty(geom.points)) {
 					geom <- geom simplification 0.1;
-					list<electeur> els  <- (electeur inside geom); 
-					add els to: groupes;
+					list<elector> els  <- (elector inside geom); 
+					add els to: Groups;
 				}
 			}
 			
-			loop gp over: groupes {
-			 	create groupe_electeurs {
+			loop gp over: Groups {
+			 	create Group_electors {
 					 effectif <- length(gp);
-			 		 electeurs_dans_groupe <- gp;
-			 		 location <- mean(electeurs_dans_groupe collect (each.location)) ;
+			 		 electors_dans_Group <- gp;
+			 		 location <- mean(electors_dans_Group collect (each.location)) ;
 			 	}
 			 }	 
 		}
-		compteur_groupe <- compteur_groupe - 1;
-		if (compteur_groupe = 0) { compteur_groupe <- compteur_groupe_max;}	
+		cpt_Group <- cpt_Group - 1;
+		if (cpt_Group = 0) { cpt_Group <- cpt_Group_max;}	
 	}
 	
-	reflex calcule_entropie {
-		entropie <- 0.0;
-		float abst <- (nb_electors - sum (candidats_en_course  collect (length(each.mes_electeurs)))) / nb_electors;
+	reflex calcule_entropy {
+		entropy <- 0.0;
+		float abst <- (nb_electors - sum (active_candidates  collect (length(each.my_electors)))) / nb_electors;
 		if (abst > 0) {
-			entropie <- entropie - (abst * ln(abst));
+			entropy <- entropy - (abst * ln(abst));
 		}
-		ask candidats_en_course {
-			float p <- length(mes_electeurs) / nb_electors;
+		ask active_candidates {
+			float p <- length(my_electors) / nb_electors;
 			if (p > 0) {
-				entropie <- entropie - (p * ln(p));
+				entropy <- entropy - (p * ln(p));
 			}
 		}
-		entropie <- entropie / ln (length(candidats_en_course) + 1);
+		entropy <- entropy / ln (length(active_candidates) + 1);
 	}
 }
 
 
 entities {
 	
-	species groupe_electeurs {
+	species Group_electors {
 		int effectif <- 0;
-		list<electeur> electeurs_dans_groupe ;
+		list<elector> electors_dans_Group ;
 		aspect default {
 			draw square(2) color: rgb("orange");
 		} 
 		
 	}
 	
-	species electeur skills: [moving]{
+	species elector skills: [moving]{
 		
 		init {
-			if (distribution_electeurs = "Normale") {
+			if (distribution_electors = "Normal") {
 				float x_cord <- max([0.0, min([200.0, gauss ({100, 35})])]);
 				float y_cord <- max([0.0, min([200.0, gauss ({100, 35})])]);
 				location <- {x_cord, y_cord};
 			}
 		}
-		rgb couleur <- rgb('white');
-		candidat mon_candidat;  
+		rgb color <- rgb('white');
+		candidate my_candidate;  
 		
-		aspect default {
-			draw triangle(2) color: couleur ;
+		aspect base {
+			draw triangle(2) color: color ;
 		} 
-		action definition_candidat {
-			mon_candidat <- candidats_en_course with_min_of (self distance_to each);
-			mon_candidat <- (self distance_to mon_candidat < seuil_attraction_candidats) ? mon_candidat : nil;
-			if (mon_candidat != nil) {
-				add self to: mon_candidat.mes_electeurs; 
-				couleur <- mon_candidat.couleur;
+		action definition_candidate {
+			my_candidate <- active_candidates with_min_of (self distance_to each);
+			my_candidate <- (self distance_to my_candidate < threshold_attraction_candidates) ? my_candidate : nil;
+			if (my_candidate != nil) {
+				add self to: my_candidate.my_electors; 
+				color <- my_candidate.color;
 			}
 		}
-		action deplacement {
-			if ( rnd(100) > (poids_candidats)) {
-				electeur mon_electeur <- shuffle(electeur) first_with ((self distance_to each) < seuil_attraction_electeurs);
-				if (mon_electeur != nil) {
-					do goto target:mon_electeur speed: distance_parcourue;
+		action moving {
+			if ( rnd(100) > (weight_candidates)) {
+				elector my_elector <- shuffle(elector) first_with ((self distance_to each) < threshold_attraction_electors);
+				if (my_elector != nil) {
+					do goto target:my_elector speed: distance_traveled;
 				} 
 			} else {
-				candidat le_candidat <- one_of(candidat) ;
-				if (le_candidat != nil) {
-					float dist <- self distance_to le_candidat;
-					if dist < seuil_attraction_candidats {
-						do goto target: le_candidat speed: distance_parcourue;
-					} else if dist > seuil_repulsion_candidats {
-						do goto target: point(location + location - le_candidat.location) speed: distance_parcourue;
+				candidate the_candidate <- one_of(candidate) ;
+				if (the_candidate != nil) {
+					float dist <- self distance_to the_candidate;
+					if dist < threshold_attraction_candidates {
+						do goto target: the_candidate speed: distance_traveled;
+					} else if dist > threshold_repulsion_candidates {
+						do goto target: point(location + location - the_candidate.location) speed: distance_traveled;
 					}	
 				}
 			}
@@ -214,78 +214,78 @@ entities {
 		
 	}
 	
-	species candidat skills:[moving]{
-		rgb couleur <- rgb([100 + rnd(155),100 + rnd(155),100 + rnd(155)]);
-		bool actif <- true;
-		float pourcentage_vote; 
-		list mes_electeurs of: electeur;
-		bool est_elu <- false;
+	species candidate skills:[moving]{
+		rgb color <- rgb([100 + rnd(155),100 + rnd(155),100 + rnd(155)]);
+		bool active <- true;
+		float percentage_vote; 
+		list my_electors of: elector;
+		bool is_elected <- false;
 		aspect default {
-			draw circle(3) color: couleur;
+			draw circle(3) color: color;
 		} 
-		aspect dynamique {
-			if (actif) {
-				float rayon  <- 1 + (pourcentage_vote / 4.0);
-				if (est_elu) {
-					draw square( rayon *1.5) color: rgb("red"); 
-					draw circle(rayon) color: couleur;
+		aspect dynamic {
+			if (active) {
+				float radius  <- 1 + (percentage_vote / 4.0);
+				if (is_elected) {
+					draw square( radius *1.5) color: rgb("red"); 
+					draw circle(radius) color: color;
 				} else {
-					draw circle(rayon) color: couleur;
+					draw circle(radius) color: color;
 				}
-				draw string(pourcentage_vote) size: 5 color: rgb("white");
+				draw string(percentage_vote) size: 5 color: rgb("white");
 			}
 		}
 		
-		action deplacement {
-			switch strategie_candidats {
-				match "Fixe" {}
-				match "Faire les marches" {do strategie_1;}
-				match "Distinction" {do strategie_2;}
-				match "Groupe" {do strategie_3;}
-				match "Se rapprocher du meilleur" {do strategie_4;}
-				match "Aleatoire" { 
+		action moving {
+			switch strategy_candidates {
+				match "No strategy" {}
+				match "Search electors" {do strategy_1;}
+				match "Distinction" {do strategy_2;}
+				match "Group" {do strategy_3;}
+				match "Go closer to the best" {do strategy_4;}
+				match "Random" { 
 					switch (rnd(4)) {
 						match 0 {}
-						match 1 {do strategie_1;}	
-						match 2 {do strategie_2;}	
-						match 3 {do strategie_3;}	
-						match 4 {do strategie_4;}		
+						match 1 {do strategy_1;}	
+						match 2 {do strategy_2;}	
+						match 3 {do strategy_3;}	
+						match 4 {do strategy_4;}		
 					}
 				}
 			}
 		}
 		
-		action strategie_1 {
-			//se rapprocher des votants
-			electeur mon_electeur <- shuffle(electeur) first_with ((self distance_to each) < seuil_attraction_electeurs);
-			if (mon_electeur != nil) {
-				do goto target:mon_electeur speed: distance_parcourue;
+		action strategy_1 {
+			//go closer to electors
+			elector my_elector <- shuffle(elector) first_with ((self distance_to each) < threshold_attraction_electors);
+			if (my_elector != nil) {
+				do goto target:my_elector speed: distance_traveled;
 			} 
 		}
 		
-		action strategie_2 {
-			//s'eloigner des autres candidats
-			list<candidat> cands <- list(copy(candidat));
+		action strategy_2 {
+			//go in opposite directions to other candidates
+			list<candidate> cands <- list(copy(candidate));
 			remove self from: cands;
-			candidat le_candidat <- one_of(cands) ;
-			if (le_candidat != nil) {
-				do goto target: point(location + location - le_candidat.location) speed: distance_parcourue;	
+			candidate the_candidate <- one_of(cands) ;
+			if (the_candidate != nil) {
+				do goto target: point(location + location - the_candidate.location) speed: distance_traveled;	
 			}
 		}
 		
-		action strategie_3 {
-			//s'approcher d'un groupe
-			groupe_electeurs mon_groupe  <- (groupe_electeurs where ((self distance_to each) < seuil_attraction_electeurs)) with_max_of (each.effectif);
-			if (mon_groupe != nil) {
-				do goto target:mon_groupe speed: distance_parcourue;
+		action strategy_3 {
+			//go closer to a group of electors
+			Group_electors mon_Group  <- (Group_electors where ((self distance_to each) < threshold_attraction_electors)) with_max_of (each.effectif);
+			if (mon_Group != nil) {
+				do goto target:mon_Group speed: distance_traveled;
 			} 
 		}
 		
-		action strategie_4 {
-			//s'approcher du candidat qui a le plus de voix
-			candidat le_candidat <- candidat with_max_of (pourcentage_vote) ;
-			if (le_candidat != nil) {
-				do goto target:le_candidat speed: distance_parcourue;	
+		action strategy_4 {
+			//go toward the candidate with max of votes
+			candidate the_candidate <- candidate with_max_of (percentage_vote) ;
+			if (the_candidate != nil) {
+				do goto target:the_candidate speed: distance_traveled;	
 			}
 		}
 		
@@ -294,41 +294,40 @@ entities {
 
 experiment vote type: gui {
 	/** Insert here the definition of the input and output of the model */
-	parameter "Nombre d'electeurs : " var: nb_electors category: "Electeur";
-	parameter "Vitesse de deplacement des electeurs vers un autre electeur : " var: distance_parcourue category: "Electeur";
-	parameter "Distance d'attraction entre electeurs : " var: seuil_attraction_electeurs category: "Electeur";
-	parameter "Nombre de candidats : " var: nb_candidates category: "Candidat";
-	parameter "Distance d'attraction des candidats sur les electeurs : " var: seuil_attraction_candidats category: "Electeur";
+	parameter "Number of electors : " var: nb_electors category: "elector";
+	parameter "Moving speed of electors toward another electors : " var: distance_traveled category: "elector";
+	parameter "Attraction distance between electors : " var: threshold_attraction_electors category: "elector";
+	parameter "Number of candidates : " var: nb_candidates category: "Candidate";
+	parameter "Attraction distance between candidates and electors : " var: threshold_attraction_candidates category: "elector";
 	
-	parameter "Distance de respulsion des candidats sur les electeurs : " var: seuil_repulsion_candidats category: "Electeur";
-	parameter "Poids des candidats : " var: poids_candidats category: "Candidat";
+	parameter "Repulsion distance between candidates : " var: threshold_repulsion_candidates category: "elector";
+	parameter "weight of candidates : " var: weight_candidates category: "Candidate";
 	
-	parameter "Type de distribution des electeurs : " var: distribution_electeurs category: "Electeur";
-	parameter "Type de distribution des candidats : " var: distribution_candidats category: "Candidat";
-	parameter "Strategie des candidats : " var: strategie_candidats category: "Candidat";
+	parameter "Distribution type of electors : " var: distribution_electors category: "elector";
+	parameter "Distribution type of  candidates : " var: distribution_candidates category: "Candidate";
+	parameter "Strategy of candidates : " var: strategy_candidates category: "Candidate";
 	
 	output {
-		display main background: rgb("black") {
-			species electeur aspect: default;
-			
-			species candidat aspect: dynamique;
-			species groupe_electeurs;
+		display main background: rgb("black") { 
+			species elector aspect: base;
+			species candidate aspect: dynamic;
+			species Group_electors;
 			
 		}
 		display votants {
-			chart "Repartition des votants" type: pie background: rgb('white')  {
-			 	loop cand over: candidat {
-			 		data legend: cand.name value:cand.pourcentage_vote color: cand.couleur ;
+			chart "Distribution of electors" type: pie background: rgb('white')  {
+			 	loop cand over: candidate {
+			 		data legend: cand.name value:cand.percentage_vote color: cand.color ;
 			 	}	
 			}
 			
 			}
 		display indicateurs {
-			chart "Entropie de Shannon" type: series background: rgb('white') size: {1,0.5} position: {0, 0} {
-				data "entropie" value: entropie color: rgb('blue') ;
+			chart "Shannon Entropy" type: series background: rgb('white') size: {1,0.5} position: {0, 0} {
+				data "entropy" value: entropy color: rgb('blue') ;
 			}
-			chart "Richesse du debat public" type: series background: rgb('white') size: {1,0.5} position: {0, 0.5} {
-				data "taux_couverture_espace" value: (union(candidat collect (each.shape buffer seuil_attraction_candidats)) intersection world.shape).area / 40000 color: rgb('blue') ;
+			chart "Opinion distribution" type: series background: rgb('white') size: {1,0.5} position: {0, 0.5} {
+				data "Space area covered" value: (union(candidate collect (each.shape buffer threshold_attraction_candidates)) intersection world.shape).area / 40000 color: rgb('blue') ;
 			}
 		}
 	}

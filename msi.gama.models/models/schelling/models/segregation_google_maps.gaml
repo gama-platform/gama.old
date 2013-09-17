@@ -28,7 +28,7 @@ global {
 	}  
 }
 environment width: dimensions height: dimensions {
-	grid space width: dimensions height: dimensions neighbours: 8  ; 
+	grid space width: dimensions height: dimensions neighbours: 8 use_individual_shapes: false use_regular_agents: false frequency: 0 ; 
 } 
 entities { 
 	species people parent: base  {

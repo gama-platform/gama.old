@@ -9,7 +9,7 @@ global {
 	int maxMetabolism <- 3;
 	int maxInitialSugar <- 25 ;
 	int minInitialSugar <- 5;
-	float maxRange <- 6.0;
+	int maxRange <- 6;
 	bool replace <- true;
 	int numberOfAgents <- 400;	
 	
@@ -37,11 +37,17 @@ global {
 }
 
 entities {
-	grid sugar_cell width: 50 height: 50 neighbours: 4 { 
+	grid sugar_cell width: 50 height: 50 neighbours: 4 use_individual_shapes: false use_regular_agents: false{ 
 		const multiagent type: bool <- false;
 		int maxSugar;
 		int sugar update: sugar + sugarGrowthRate max: maxSugar;
 		rgb color update: [white,FFFFAA,FFFF55,yellow,dark_yellow] at sugar;
+		map<int,list<sugar_cell>> neighbours;
+		init {
+			loop i from: 1 to: maxRange {
+				put (self neighbours_at i) at: i in: neighbours; 
+			}
+		}
 	}	
 	
 	species animal {
@@ -58,7 +64,7 @@ entities {
 		reflex basic_move { 
 			sugar <- sugar + place.sugar;
 			place.sugar <- 0;
-			list<sugar_cell> neighbours <- topology(sugar_cell) neighbours_of (place::vision) of_species sugar_cell;
+			list<sugar_cell> neighbours <- place.neighbours at vision;
 			list<sugar_cell> poss_targets <- (neighbours) where (each.sugar > 0);
 			place <- empty(poss_targets) ? one_of (neighbours) : one_of (poss_targets);
 			location <- place.location;
@@ -81,7 +87,7 @@ experiment sugarscape type: gui{
 	parameter 'Maximum metabolism:' var: maxMetabolism <- 3 category: 'Agents';
 	parameter 'Maximum initial sugar per cell:'  var: maxInitialSugar <- 25 category: 'Environment';
 	parameter 'Minimum initial sugar per cell:' var: minInitialSugar <- 5 category: 'Environment';
-	parameter 'Maximum range of vision:' var: maxRange <- 6.0 category: 'Agents';
+	parameter 'Maximum range of vision:' var: maxRange <- 6 category: 'Agents';
 	parameter 'Replace dead agents ?' var: replace <- true category: 'Agents';
 	parameter 'Number of agents:' var: numberOfAgents <- 400 category: 'Agents';
 	

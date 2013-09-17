@@ -1,4 +1,4 @@
-model evolution_geometry
+model example_spatial_operators
 
 global {
 	// Parameters
@@ -83,7 +83,7 @@ species background {
 	}	
 }
 
-experiment evolution_geometry type: gui {
+experiment example_spatial_operators type: gui {
 	parameter 'Path of shapefile to load for the initial agent:' var: shape_file_name_init  category: 'GIS specific' ;
 	parameter 'Path of shapefile to load for the background:' var: shape_file_name_background category: 'GIS specific';
 	parameter 'Size (area) from which an agent dies:' var: dying_size min: 100.0  category: 'Population'; 

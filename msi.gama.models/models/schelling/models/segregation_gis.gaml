@@ -14,10 +14,9 @@ global {
 		all_places  <- shuffle(space);
 		number_of_people <- int( density_of_people * sum (all_places collect ((each as space).capacity))); 
 		create people number: number_of_people;  
-		ask people as list {  
+		ask people  {  
 			do move_to_new_place;      
 		}   
-		all_people <- people as list;  
 	}      
 	
 	action initialize_places {}   
@@ -50,14 +49,14 @@ entities {
 			do move_to_new_place;
 		}
 		aspect simple {
-			draw circle(5);
+			draw circle(5) color: color;
 		}
 	}
 	species space {	
 		list<people> insiders <- [];
 		rgb color <- rgb(255, 255, 255); 
 		float surface;
-		int capacity  <- 1 + int(surface / square_meters_per_people);    
+		int capacity  <- 1 + int(surface / square_meters_per_people);  
 		action accept {
 			arg one_people type: people;
 			add one_people to: insiders of self;
@@ -74,14 +73,14 @@ entities {
 		}
 		aspect gis {
 			rgb color <- empty(insiders) ? rgb("white") : rgb( [mean (insiders collect each.red), mean (insiders collect each.green), mean (insiders collect each.blue)]);
-			draw shape color: color depth: length(insiders) * 10 border: rgb("black");
+			draw shape color: color border: rgb("black");
 		} 
 	}
 }
 
 experiment schelling type: gui {	
 	output {
-		display Town_display refresh_every: 1 {
+		display Town_display  {
 			species space aspect: gis;
 			species people  aspect: simple;
 		}

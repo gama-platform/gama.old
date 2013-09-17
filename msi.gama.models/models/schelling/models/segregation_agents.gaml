@@ -8,37 +8,36 @@ global {
 	geometry shape <- square(dimensions);
 	
 	action initialize_people { 
-		create people number: number_of_people;      
-		all_people <- people as list;  
+		create people number: number_of_people; 
 	} 
 	action initialize_places { 
 		all_places <- shuffle (space);
 		free_places <- all_places;  
 	} 
-	
-	
- 
 }
 entities {
-	grid space width: dimensions height: dimensions neighbours: 8{
+	grid space width: dimensions height: dimensions neighbours: 8 use_regular_agents: false frequency: 0{
 		const color type: rgb <- black;
 	}
 
 	species people parent: base  {
 		const color type: rgb <- colors at (rnd (number_of_groups - 1));
-		list<people> my_neighbours -> {(self neighbours_at neighbours_distance) of_species people} ;
+		list<people> my_neighbours -> {people at_distance neighbours_distance} ;
+		space my_place;
 		init {
-			location <- (one_of(free_places)).location; 
-			remove location as space from: free_places;
+			my_place <- one_of(free_places);
+			location <- my_place.location; 
+			remove my_place from: free_places;
 		} 
 		reflex migrate when: !is_happy {
-			add location as space to: free_places;
-			location <- any(free_places).location;
-			remove location as space from: free_places;
+			add my_place to: free_places;
+			my_place <- one_of(free_places);
+			location <- my_place.location; 
+			remove my_place from: free_places;
 		}
 		
 		aspect default{ 
-			draw circle (1.0) color: color; 
+			draw circle (0.5) color: color; 
 		}
 	}
 }
