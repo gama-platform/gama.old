@@ -309,7 +309,7 @@ experiment MultipleView type: gui {
 
 
 		display RealBoids   type:opengl ambient_light:255 {
-			image name:'background' file:'../images/ocean.jpg' z:0;
+			image name:'background' file:'../images/ocean.jpg';
 			species boids aspect: image  transparency:0.5 position:{0,0,0.25};
 			species boids_goal transparency:0.2 position:{0,0,0.25};
 			species obstacle ;

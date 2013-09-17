@@ -133,7 +133,6 @@ experiment boids_3D type: gui {
 		display Sky1 type:opengl refresh_every: 1 z_fighting:false{
 			image 'background' file:'../images/ocean.jpg' ;
 			species boids aspect: image;
-			//species boids aspect: sphere z:0.05;
 			species boids_goal;	
 		}
 		
