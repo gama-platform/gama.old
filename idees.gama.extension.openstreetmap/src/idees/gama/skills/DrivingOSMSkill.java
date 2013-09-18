@@ -149,7 +149,7 @@ public class DrivingOSMSkill extends MovingSkill {
 			
 			double distanceMax = distance + security_distance +  getVehiculeLength(agent);
 			
-			List<IAgent> agsFiltered = new GamaList(agent.getTopology().getNeighboursOf(agent.getLocation(), distanceMax, In.list(scope, agents)));
+			List<IAgent> agsFiltered = new GamaList(agent.getTopology().getNeighboursOf(scope,agent.getLocation(), distanceMax, In.list(scope, agents)));
 			
 			if (agsFiltered.isEmpty())
 				return distance;
