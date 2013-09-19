@@ -159,10 +159,10 @@ public class ParameterExpandItem extends Item {
 		int endX = x + width;
 		if ( parent.isClosable ) {
 			endX -= ParameterExpandItem.TEXT_INSET + imageWidth;
-			gc.drawImage(GamaIcons.button_small_close, endX, imageY + 2);
+			gc.drawImage(IGamaIcons.SMALL_CLOSE.image(), endX, imageY + 2);
 		}
 		if ( parent.isPausable ) {
-			Image image = isPaused ? GamaIcons.button_small_play : GamaIcons.button_small_pause;
+			Image image = isPaused ? IGamaIcons.SMALL_RESUME.image() : IGamaIcons.SMALL_PAUSE.image();
 			endX -= ParameterExpandItem.SEPARATION + imageWidth;
 			gc.drawImage(image, endX, imageY + 2);
 		}

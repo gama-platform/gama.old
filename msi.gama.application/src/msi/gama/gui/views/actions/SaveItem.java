@@ -4,7 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
-import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.views.*;
 import org.eclipse.jface.action.*;
 
@@ -39,7 +39,7 @@ public class SaveItem extends GamaViewItem {
 			}
 		};
 		action.setToolTipText("Save the current selection of agents and attributes into a CSV file");
-		action.setImageDescriptor(GamaIcons.action_view_save);
+		action.setImageDescriptor(IGamaIcons.ACTION_SAVE.descriptor());
 		return new ActionContributionItem(action);
 	}
 }

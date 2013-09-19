@@ -4,7 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
-import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.views.*;
 import msi.gama.outputs.IOutput;
 import org.eclipse.jface.action.*;
@@ -31,7 +31,8 @@ public class PauseItem extends GamaViewItem {
 	@Override
 	protected IContributionItem createItem() {
 		IAction action =
-			new GamaAction("Pause", "Pause " + view.getTitle(), IAction.AS_CHECK_BOX, GamaIcons.action_view_pause) {
+			new GamaAction("Pause", "Pause " + view.getTitle(), IAction.AS_CHECK_BOX,
+				IGamaIcons.DISPLAY_TOOLBAR_PAUSE.descriptor()) {
 
 				@Override
 				public void run() {

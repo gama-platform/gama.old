@@ -18,8 +18,7 @@ import org.eclipse.swt.graphics.*;
  * @since 19 janv. 2012
  * 
  */
-public class FrequencyItem extends GamaViewItem implements IToolTipProvider,
-	IPositionChangeListener {
+public class FrequencyItem extends GamaViewItem implements IToolTipProvider, IPositionChangeListener {
 
 	private static Color thumbColor = new Color(SwtGui.getDisplay(), new RGB(87, 141, 225));
 
@@ -53,7 +52,7 @@ public class FrequencyItem extends GamaViewItem implements IToolTipProvider,
 	protected IContributionItem createItem() {
 		IContributionItem item =
 			new SpeedContributionItem("Adjust update frequency", getInit(), this, this,
-				GamaIcons.button_thumb_blue, GamaIcons.button_thumb_blue_over, thumbColor);
+				IGamaIcons.DISPLAY_TOOLBAR_KNOB.image(), IGamaIcons.DISPLAY_TOOLBAR_KNOB.image(), thumbColor);
 		return item;
 	}
 

@@ -102,7 +102,7 @@ public class UserControlDialog extends AbstractDetailsDialog {
 		detailsButton =
 			createButton(parent, IDialogConstants.DETAILS_ID, "Inspect " + scope.getAgentScope().getName() + "...",
 				false);
-		detailsButton.setImage(GamaIcons.menu_agent);
+		detailsButton.setImage(IGamaIcons.MENU_INSPECT.image());
 
 	}
 

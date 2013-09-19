@@ -4,7 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
-import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.views.*;
 import org.eclipse.jface.action.*;
 
@@ -30,7 +30,8 @@ public class SideBarItem extends GamaViewItem {
 	@Override
 	protected IContributionItem createItem() {
 		IAction action =
-			new GamaAction("Sidebar", "Show/hide side bar ", IAction.AS_PUSH_BUTTON, GamaIcons.action_sidebar) {
+			new GamaAction("Sidebar", "Show/hide side bar ", IAction.AS_PUSH_BUTTON,
+				IGamaIcons.DISPLAY_TOOLBAR_SIDEBAR.descriptor()) {
 
 				@Override
 				public void run() {

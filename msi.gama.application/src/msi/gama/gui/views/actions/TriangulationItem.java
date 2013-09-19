@@ -4,7 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
-import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.views.*;
 import org.eclipse.jface.action.*;
 
@@ -32,7 +32,7 @@ public class TriangulationItem extends GamaViewItem {
 	protected IContributionItem createItem() {
 		IAction action =
 			new GamaAction("Apply triangulation", "Triangle view: Show triangulated shape", IAction.AS_CHECK_BOX,
-				GamaIcons.action_triangulate) {
+				IGamaIcons.DISPLAY_TOOLBAR_TRIANGULATE.descriptor()) {
 
 				@Override
 				public void run() {

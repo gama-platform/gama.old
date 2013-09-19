@@ -23,7 +23,7 @@ import java.util.List;
 import msi.gama.common.GamaPreferences;
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.*;
 import msi.gama.metamodel.population.IPopulation;
@@ -61,7 +61,7 @@ public class AgentsMenu extends ContributionItem {
 		final MenuAction ... actions) {
 		MenuItem result = new MenuItem(parent, SWT.CASCADE);
 		result.setText(title);
-		result.setImage(GamaIcons.menu_agent);
+		result.setImage(IGamaIcons.MENU_AGENT.image());
 		Menu agentMenu = new Menu(result);
 		result.setMenu(agentMenu);
 		createMenuForAgent(agentMenu, agent, false, actions);
@@ -112,7 +112,7 @@ public class AgentsMenu extends ContributionItem {
 		final GamaPoint point, final String prefix) {
 		MenuItem result = new MenuItem(parent, SWT.PUSH);
 		result.setText(prefix + " " + command.getName());
-		result.setImage(GamaIcons.menu_action);
+		result.setImage(IGamaIcons.MENU_RUN_ACTION.image());
 		result.addSelectionListener(runner);
 		result.setData("agent", agent);
 		result.setData("location", point);
@@ -207,11 +207,11 @@ public class AgentsMenu extends ContributionItem {
 		final MenuAction ... actions) {
 		separate(menu, "Actions");
 		if ( topLevel ) {
-			browsePopulationMenuItem(menu, agent.getPopulation(), GamaIcons.action_browse);
+			browsePopulationMenuItem(menu, agent.getPopulation(), IGamaIcons.MENU_BROWSE.image());
 		}
-		actionAgentMenuItem(menu, agent, inspector, GamaIcons.action_inspect, "Inspect");
+		actionAgentMenuItem(menu, agent, inspector, IGamaIcons.MENU_INSPECT.image(), "Inspect");
 		if ( !topLevel ) {
-			actionAgentMenuItem(menu, agent, highlighter, GamaIcons.action_highlight, "Highlight");
+			actionAgentMenuItem(menu, agent, highlighter, IGamaIcons.MENU_HIGHLIGHT.image(), "Highlight");
 		}
 		if ( actions != null ) {
 			for ( MenuAction ma : actions ) {
@@ -232,7 +232,7 @@ public class AgentsMenu extends ContributionItem {
 				separate(menu, "Micro-populations");
 				for ( final IPopulation pop : macro.getMicroPopulations() ) {
 					if ( !pop.isEmpty() ) {
-						cascadingPopulationMenuItem(menu, agent, pop, GamaIcons.menu_population);
+						cascadingPopulationMenuItem(menu, agent, pop, IGamaIcons.MENU_POPULATION.image());
 					}
 				}
 			}
@@ -254,7 +254,7 @@ public class AgentsMenu extends ContributionItem {
 				agentItem.setData("agent", agent);
 				agentItem.setText(agent.getName());
 				agentItem.addSelectionListener(listener);
-				agentItem.setImage(GamaIcons.menu_agent);
+				agentItem.setImage(IGamaIcons.MENU_AGENT.image());
 			}
 		} else {
 			final int nb = size / 100;
@@ -270,7 +270,7 @@ public class AgentsMenu extends ContributionItem {
 					agentItem.setData("agent", agent);
 					agentItem.setText(agent.getName());
 					agentItem.addSelectionListener(listener);
-					agentItem.setImage(GamaIcons.menu_agent);
+					agentItem.setImage(IGamaIcons.MENU_AGENT.image());
 				}
 				rangeItem.setMenu(rangeMenu);
 			}
@@ -284,7 +284,7 @@ public class AgentsMenu extends ContributionItem {
 			subMenuSize = 2;
 		}
 		separate(menu, "Actions");
-		browsePopulationMenuItem(menu, species, GamaIcons.action_browse);
+		browsePopulationMenuItem(menu, species, IGamaIcons.MENU_BROWSE.image());
 
 		final List<IAgent> agents = new ArrayList(species);
 		final int size = agents.size();
@@ -308,7 +308,7 @@ public class AgentsMenu extends ContributionItem {
 				final Menu rangeMenu = new Menu(rangeItem);
 				rangeItem.setMenu(rangeMenu);
 				rangeItem.setText("" + begin + " to " + (end - 1));
-				rangeItem.setImage(GamaIcons.menu_population);
+				rangeItem.setImage(IGamaIcons.MENU_POPULATION.image());
 				rangeMenu.addListener(SWT.Show, new Listener() {
 
 					@Override
@@ -367,7 +367,7 @@ public class AgentsMenu extends ContributionItem {
 		agentItem.setData("agent", agent);
 		agentItem.setText(agent.getName());
 		agentItem.addSelectionListener(listener);
-		agentItem.setImage(GamaIcons.menu_agent);
+		agentItem.setImage(IGamaIcons.MENU_AGENT.image());
 
 		populateComponents(parent, agent, listener);
 	}
@@ -377,13 +377,13 @@ public class AgentsMenu extends ContributionItem {
 			final MenuItem agentItem = new MenuItem(parent, SWT.PUSH);
 			agentItem.setData("agent", agent);
 			agentItem.setText(agent.getName());
-			agentItem.setImage(GamaIcons.menu_agent);
+			agentItem.setImage(IGamaIcons.MENU_AGENT.image());
 			agentItem.addSelectionListener(listener);
 		} else {
 			final MenuItem agentItem = new MenuItem(parent, SWT.CASCADE);
 			agentItem.setData("agent", agent);
 			agentItem.setText(agent.getName() + " (macro)");
-			agentItem.setImage(GamaIcons.menu_agent); // TODO a suitable icon for macro-agent?
+			agentItem.setImage(IGamaIcons.MENU_AGENT.image()); // TODO a suitable icon for macro-agent?
 
 			final Menu agentMenu = new Menu(agentItem);
 			agentItem.setMenu(agentMenu);
@@ -408,7 +408,7 @@ public class AgentsMenu extends ContributionItem {
 			for ( final IPopulation pop : populations ) {
 				MenuItem popItem = new MenuItem(parent, SWT.PUSH, 0);
 				popItem.setText("Browse population of " + pop.getName());
-				popItem.setImage(GamaIcons.action_browse);
+				popItem.setImage(IGamaIcons.MENU_BROWSE.image());
 				popItem.addSelectionListener(new SelectionAdapter() {
 
 					@Override
@@ -431,7 +431,7 @@ public class AgentsMenu extends ContributionItem {
 		}
 
 		speciesItem.setData("agent", population);
-		speciesItem.setImage(GamaIcons.menu_population);
+		speciesItem.setImage(IGamaIcons.MENU_POPULATION.image());
 
 		final Menu speciesMenu = new Menu(speciesItem);
 		speciesItem.setMenu(speciesMenu);

@@ -478,7 +478,7 @@ public class ParameterExpandBar extends Composite implements IPopupProvider {
 	void showItem(final ParameterExpandItem item) {
 		Control control = item.control;
 		if ( control != null && !control.isDisposed() ) {
-			item.setImage(item.expanded ? GamaIcons.button_collapse : GamaIcons.button_expand);
+			item.setImage(item.expanded ? IGamaIcons.SMALL_COLLAPSE.image() : IGamaIcons.SMALL_EXPAND.image());
 			control.setVisible(item.expanded);
 		}
 		item.redraw();

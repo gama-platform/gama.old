@@ -19,6 +19,7 @@ import org.eclipse.jface.preference.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.*;
 import org.eclipse.swt.events.*;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.PlatformUI;
@@ -35,6 +36,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 
 	Map<String, IPreferenceNode> preferencePages = new LinkedHashMap();
 	static Map<String, String> preferenceNames = new LinkedHashMap();
+	public static Map<String, Image> prefs_images = new LinkedHashMap();
 
 	static GamaPreferencesView instance;
 
@@ -49,6 +51,12 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		preferenceNames.put("msi.gama.lang.gaml.Gaml.coloring", "Code");
 		preferenceNames.put("org.eclipse.ui.preferencePages.GeneralTextEditor", "Editor");
 		preferenceNames.put("org.eclipse.ui.preferencePages.Workspace", "Workspace");
+		prefs_images.put(GamaPreferences.GENERAL, IGamaIcons.PREFS_GENERAL.image());
+		prefs_images.put(GamaPreferences.DISPLAY, IGamaIcons.PREFS_DISPLAY.image());
+		prefs_images.put(GamaPreferences.CODE, IGamaIcons.PREFS_CODE.image());
+		prefs_images.put(GamaPreferences.EDITOR, IGamaIcons.PREFS_EDITOR.image());
+		prefs_images.put(GamaPreferences.WORKSPACE, IGamaIcons.PREFS_WORKSPACE.image());
+		prefs_images.put(GamaPreferences.LIBRARIES, IGamaIcons.PREFS_LIBS.image());
 
 	}
 
@@ -97,7 +105,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 		for ( String tabName : prefs.keySet() ) {
 			CTabItem item = new CTabItem(tabFolder, SWT.None);
 			item.setText(tabName);
-			item.setImage(GamaIcons.prefs_images.get(tabName));
+			item.setImage(prefs_images.get(tabName));
 			item.setShowClose(false);
 			buildContentsFor(item, prefs.get(tabName));
 		}
@@ -148,7 +156,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 			buildGroupContents(compo, entries.get(groupName));
 			item.setControl(compo);
 			item.setHeight(compo.computeSize(SWT.DEFAULT, SWT.DEFAULT).y);
-			item.setImage(GamaIcons.menu_action);
+			// item.setImage(GamaIcons.menu_action);
 			item.setExpanded(true);
 
 		}
@@ -190,7 +198,7 @@ public class GamaPreferencesView /* implements IWorkbenchPreferenceContainer, IP
 
 		final Button buttonRevert = new Button(group1, SWT.PUSH | SWT.FLAT);
 		buttonRevert.setText("Revert to defaults");
-		buttonRevert.setImage(GamaIcons.action_view_revert.createImage());
+		buttonRevert.setImage(IGamaIcons.ACTION_REVERT.image());
 		buttonRevert.setToolTipText("Restore default values for all preferences");
 
 		final Button buttonAdvanced = new Button(group1, SWT.PUSH | SWT.FLAT);

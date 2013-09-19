@@ -4,7 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
-import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.views.*;
 import org.eclipse.jface.action.*;
 
@@ -31,7 +31,8 @@ public class SplitLayerItem extends GamaViewItem {
 	@Override
 	protected IContributionItem createItem() {
 		IAction action =
-			new GamaAction("Apply splitting", "Split layers in 3D", IAction.AS_PUSH_BUTTON, GamaIcons.action_split) {
+			new GamaAction("Apply splitting", "Split layers in 3D", IAction.AS_PUSH_BUTTON,
+				IGamaIcons.DISPLAY_TOOLBAR_SPLIT.descriptor()) {
 
 				@Override
 				public void run() {

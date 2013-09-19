@@ -258,7 +258,7 @@ public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 				expItem.setText(name);
 				expItem.setData("uri", uri);
 				expItem.setData("exp", name);
-				expItem.setImage(GamaIcons.panel_continue);
+				expItem.setImage(IGamaIcons.PANEL_CONTINUE.image());
 				expItem.addSelectionListener(adapter);
 			}
 		}

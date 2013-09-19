@@ -20,7 +20,7 @@ package msi.gama.gui.parameters;
 
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.common.util.StringUtils;
-import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.util.GamaList;
@@ -70,7 +70,7 @@ public class ListEditor extends AbstractEditor {
 		listAdd = new Button(comp, SWT.FLAT);
 		listAdd.setAlignment(SWT.CENTER);
 		listAdd.addSelectionListener(this);
-		listAdd.setImage(GamaIcons.button_edit);
+		listAdd.setImage(IGamaIcons.BUTTON_EDIT.image());
 		listAdd.setText("Edit");
 
 		GridData d = new GridData(SWT.LEFT, SWT.CENTER, false, false);

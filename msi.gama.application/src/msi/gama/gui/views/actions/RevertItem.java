@@ -4,7 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
-import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.views.GamaViewPart;
 import msi.gama.kernel.experiment.EditorsList;
 import msi.gama.runtime.GAMA;
@@ -33,7 +33,7 @@ public class RevertItem extends GamaViewItem {
 	protected IContributionItem createItem() {
 		IAction action =
 			new GamaAction("Revert parameter values", "Revert parameters to their initial values",
-				IAction.AS_PUSH_BUTTON, GamaIcons.action_view_revert) {
+				IAction.AS_PUSH_BUTTON, IGamaIcons.ACTION_REVERT.descriptor()) {
 
 				@Override
 				public void run() {

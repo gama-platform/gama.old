@@ -7,7 +7,7 @@ package msi.gama.gui.views.actions;
 import java.util.*;
 import msi.gama.common.interfaces.*;
 import msi.gama.gui.displays.layers.*;
-import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.swt.commands.AgentsMenu;
 import msi.gama.gui.views.*;
 import msi.gama.metamodel.agent.IAgent;
@@ -29,6 +29,18 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 
 	// private final Collection<IAgent> filteredList;
 
+	public static Map<Class, Image> layer_images = new HashMap();
+
+	static {
+		layer_images.put(GridLayer.class, IGamaIcons.LAYER_GRID.image());
+		layer_images.put(AgentLayer.class, IGamaIcons.LAYER_AGENTS.image());
+		layer_images.put(ImageLayer.class, IGamaIcons.LAYER_IMAGE.image());
+		layer_images.put(TextLayer.class, IGamaIcons.LAYER_TEXT.image());
+		layer_images.put(SpeciesLayer.class, IGamaIcons.LAYER_SPECIES.image());
+		layer_images.put(ChartLayer.class, IGamaIcons.LAYER_CHART.image());
+		layer_images.put(GraphicLayer.class, IGamaIcons.LAYER_GRAPHICS.image());
+	}
+
 	public DisplayedAgentsMenu(final GamaViewPart view) {
 		super(view);
 	}
@@ -40,7 +52,7 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 	protected IContributionItem createItem() {
 		final IAction action =
 			new GamaAction("Browse displayed agents", "Browse through all displayed agents", IAction.AS_DROP_DOWN_MENU,
-				GamaIcons.menu_population_desc) {
+				IGamaIcons.MENU_POPULATION.descriptor()) {
 
 				@Override
 				public void run() {}
@@ -165,7 +177,7 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 		final LayeredDisplayView view = (LayeredDisplayView) this.view;
 		final IDisplaySurface displaySurface = view.getDisplaySurface();
 		AgentsMenu.MenuAction follow =
-			new AgentsMenu.MenuAction(new FollowSelection(displaySurface), GamaIcons.action_follow, "Follow");
+			new AgentsMenu.MenuAction(new FollowSelection(displaySurface), IGamaIcons.MENU_FOLLOW.image(), "Follow");
 		if ( withWorld ) {
 			AgentsMenu.cascadingAgentMenuItem(menu, GAMA.getSimulation(), "World");
 			if ( filteredList != null && !filteredList.isEmpty() ) {
@@ -181,7 +193,7 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 			// If only the world is selected, no need to display anything more
 			if ( filteredList.size() == 1 && filteredList.contains(GAMA.getSimulation()) ) { return; }
 			final FocusOnSelection adapter = new FocusOnSelection(null, displaySurface);
-			AgentsMenu.MenuAction focus = new AgentsMenu.MenuAction(adapter, GamaIcons.action_focus, "Focus on");
+			AgentsMenu.MenuAction focus = new AgentsMenu.MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus on");
 			if ( view.getOutput().isOpenGL() ) {
 				AgentsMenu.fillPopulationSubMenu(menu, filteredList, focus, follow);
 			} else {
@@ -190,7 +202,8 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 		} else {
 			for ( final ILayer layer : view.getDisplayManager().getItems() ) {
 				final FocusOnSelection adapter = new FocusOnSelection(layer, displaySurface);
-				AgentsMenu.MenuAction focus = new AgentsMenu.MenuAction(adapter, GamaIcons.action_focus, "Focus on");
+				AgentsMenu.MenuAction focus =
+					new AgentsMenu.MenuAction(adapter, IGamaIcons.MENU_FOCUS.image(), "Focus on");
 				boolean isSpeciesLayer = layer instanceof SpeciesLayer || layer instanceof GridLayer;
 				boolean isAgentLayer = isSpeciesLayer || layer instanceof AgentLayer;
 				if ( !isAgentLayer ) {
@@ -209,10 +222,9 @@ public class DisplayedAgentsMenu extends GamaViewItem implements IMenuCreator {
 				String layerName = layer.getType() + ": " + layer.getName();
 
 				if ( view.getOutput().isOpenGL() ) {
-					fill(menu, GamaIcons.layer_images.get(layer.getClass()), layerName, pop, filteredList, focus,
-						follow);
+					fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, focus, follow);
 				} else {
-					fill(menu, GamaIcons.layer_images.get(layer.getClass()), layerName, pop, filteredList, focus);
+					fill(menu, layer_images.get(layer.getClass()), layerName, pop, filteredList, focus);
 				}
 
 			}

@@ -4,6 +4,8 @@
  */
 package msi.gama.gui.swt;
 
+import msi.gama.gui.swt.GamaIcons.GamaIcon;
+
 /**
  * Class IGamaIcons.
  * 
@@ -17,146 +19,148 @@ public interface IGamaIcons {
 
 	// Perspectives
 
-	public static final String PERSPECTIVE_MODELING = "perspective.modeling";
-	public static final String PERSPECTIVE_SIMULATION = "perspective.simulation";
+	public static final GamaIcon PERSPECTIVE_MODELING = GamaIcons.create("perspective.modeling");
+	public static final GamaIcon PERSPECTIVE_SIMULATION = GamaIcons.create("perspective.simulation");
 
 	// Views
 
-	public static final String VIEW_DISPLAY = "view.display";
-	public static final String VIEW_BROWSER = "view.browser";
-	public static final String VIEW_INSPECTOR = "view.inspector";
-	public static final String VIEW_NAVIGATOR = "view.navigator";
-	public static final String VIEW_PARAMETERS = "view.parameters";
-	public static final String VIEW_CONSOLE = "view.console";
-	public static final String VIEW_MONITORS = "view.monitors";
-	public static final String VIEW_PANEL = "view.panel";
-	public static final String VIEW_ERRORS = "view.errors";
-	public static final String VIEW_PREFERENCES = "view.preferences";
-	public static final String VIEW_REPOSITORIES = "view.repositories";
+	public static final GamaIcon VIEW_DISPLAY = GamaIcons.create("view.display");
+	public static final GamaIcon VIEW_BROWSER = GamaIcons.create("view.browser");
+	public static final GamaIcon VIEW_INSPECTOR = GamaIcons.create("view.inspector");
+	public static final GamaIcon VIEW_NAVIGATOR = GamaIcons.create("view.navigator");
+	public static final GamaIcon VIEW_PARAMETERS = GamaIcons.create("view.parameters");
+	public static final GamaIcon VIEW_CONSOLE = GamaIcons.create("view.console");
+	public static final GamaIcon VIEW_MONITORS = GamaIcons.create("view.monitors");
+	public static final GamaIcon VIEW_PANEL = GamaIcons.create("view.panel");
+	public static final GamaIcon VIEW_ERRORS = GamaIcons.create("view.errors");
+	public static final GamaIcon VIEW_PREFERENCES = GamaIcons.create("view.preferences");
+	public static final GamaIcon VIEW_REPOSITORIES = GamaIcons.create("view.repositories");
 
 	// Display toolbar
 
-	public static final String DISPLAY_TOOLBAR_PAUSE = "display.pause";
-	public static final String DISPLAY_TOOLBAR_KNOB = "display.knob";
-	public static final String DISPLAY_TOOLBAR_SLIDER = "display.slider";
-	public static final String DISPLAY_TOOLBAR_SYNC = "display.sync";
-	public static final String DISPLAY_TOOLBAR_SNAPSHOT = "display.snapshot";
-	public static final String DISPLAY_TOOLBAR_ZOOMIN = "display.zoomin";
-	public static final String DISPLAY_TOOLBAR_ZOOMOUT = "display.zoomout";
-	public static final String DISPLAY_TOOLBAR_ZOOMFIT = "display.zoomfit";
-	public static final String DISPLAY_TOOLBAR_AGENTS = "display.agents";
-	public static final String DISPLAY_TOOLBAR_OPENGL = "display.opengl";
-	public static final String DISPLAY_TOOLBAR_CAMERA = "display.camera";
-	public static final String DISPLAY_TOOLBAR_ROTATE = "display.rotate";
-	public static final String DISPLAY_TOOLBAR_SPLIT = "display.split";
-	public static final String DISPLAY_TOOLBAR_TRIANGULATE = "display.triangulate";
-	public static final String DISPLAY_TOOLBAR_DRAG = "display.drag";
-	public static final String DISPLAY_TOOLBAR_INERTIA = "display.inertia";
-	public static final String DISPLAY_TOOLBAR_OVERLAY = "display.overlay";
-	public static final String DISPLAY_TOOLBAR_SIDEBAR = "display.sidebar";
+	public static final GamaIcon DISPLAY_TOOLBAR_PAUSE = GamaIcons.create("display.pause");
+	public static final GamaIcon DISPLAY_TOOLBAR_KNOB = GamaIcons.create("display.knob");
+	public static final GamaIcon DISPLAY_TOOLBAR_SLIDER = GamaIcons.create("display.slider");
+	public static final GamaIcon DISPLAY_TOOLBAR_SYNC = GamaIcons.create("display.sync");
+	public static final GamaIcon DISPLAY_TOOLBAR_SNAPSHOT = GamaIcons.create("display.snapshot");
+	public static final GamaIcon DISPLAY_TOOLBAR_ZOOMIN = GamaIcons.create("display.zoomin");
+	public static final GamaIcon DISPLAY_TOOLBAR_ZOOMOUT = GamaIcons.create("display.zoomout");
+	public static final GamaIcon DISPLAY_TOOLBAR_ZOOMFIT = GamaIcons.create("display.zoomfit");
+	public static final GamaIcon DISPLAY_TOOLBAR_AGENTS = GamaIcons.create("display.agents");
+	public static final GamaIcon DISPLAY_TOOLBAR_OPENGL = GamaIcons.create("display.opengl");
+	public static final GamaIcon DISPLAY_TOOLBAR_CAMERA = GamaIcons.create("display.camera");
+	public static final GamaIcon DISPLAY_TOOLBAR_ROTATE = GamaIcons.create("display.rotate");
+	public static final GamaIcon DISPLAY_TOOLBAR_SPLIT = GamaIcons.create("display.split");
+	public static final GamaIcon DISPLAY_TOOLBAR_TRIANGULATE = GamaIcons.create("display.triangulate");
+	public static final GamaIcon DISPLAY_TOOLBAR_DRAG = GamaIcons.create("display.drag");
+	public static final GamaIcon DISPLAY_TOOLBAR_INERTIA = GamaIcons.create("display.inertia");
+	public static final GamaIcon DISPLAY_TOOLBAR_OVERLAY = GamaIcons.create("display.overlay");
+	public static final GamaIcon DISPLAY_TOOLBAR_SIDEBAR = GamaIcons.create("display.sidebar");
 
 	// Menus
 
-	public static final String MENU_BROWSE = VIEW_BROWSER;
-	public static final String MENU_POPULATION = DISPLAY_TOOLBAR_AGENTS;
-	public static final String MENU_AGENT = "menu.agent";
-	public static final String MENU_INSPECT = VIEW_INSPECTOR;
-	public static final String MENU_HIGHLIGHT = "menu.highlight";
-	public static final String MENU_FOCUS = "menu.focus";
-	public static final String MENU_FOLLOW = "menu.follow";
-	public static final String MENU_PREFERENCES = "menu.preferences";
-	public static final String MENU_PARAMETERS = VIEW_PARAMETERS;
-	public static final String MENU_CONSOLE = VIEW_CONSOLE;
-	public static final String MENU_ADD_MONITOR = "menu.monitor";
-	public static final String MENU_MODELING_PERSPECTIVE = "menu.modeling";
-	public static final String MENU_SIMULATION_PERSPECTIVE = "menu.simulation";
-	public static final String MENU_RUN_ACTION = "menu.action";
-	public static final String MENU_RUN = "menu.run";
-	public static final String MENU_PAUSE = "menu.pause";
-	public static final String MENU_STEP = "menu.step";
-	public static final String MENU_RELOAD = "menu.reload";
-	public static final String MENU_ERROR_STOP = "toolbar.stop";
-	public static final String MENU_ERROR_WARNING = "menu.warning";
-	public static final String MENU_ERROR_DISPLAY = "menu.show";
+	public static final GamaIcon MENU_BROWSE = VIEW_BROWSER;
+	public static final GamaIcon MENU_POPULATION = DISPLAY_TOOLBAR_AGENTS;
+	public static final GamaIcon MENU_AGENT = GamaIcons.create("menu.agent");
+	public static final GamaIcon MENU_INSPECT = VIEW_INSPECTOR;
+	public static final GamaIcon MENU_HIGHLIGHT = GamaIcons.create("menu.highlight");
+	public static final GamaIcon MENU_FOCUS = GamaIcons.create("menu.focus");
+	public static final GamaIcon MENU_FOLLOW = GamaIcons.create("menu.follow");
+	public static final GamaIcon MENU_PREFERENCES = GamaIcons.create("menu.preferences");
+	public static final GamaIcon MENU_PARAMETERS = VIEW_PARAMETERS;
+	public static final GamaIcon MENU_CONSOLE = VIEW_CONSOLE;
+	public static final GamaIcon MENU_ADD_MONITOR = GamaIcons.create("menu.monitor");
+	public static final GamaIcon MENU_MODELING_PERSPECTIVE = GamaIcons.create("menu.modeling");
+	public static final GamaIcon MENU_SIMULATION_PERSPECTIVE = GamaIcons.create("menu.simulation");
+	public static final GamaIcon MENU_RUN_ACTION = GamaIcons.create("menu.action");
+	public static final GamaIcon MENU_RUN = GamaIcons.create("menu.run");
+	public static final GamaIcon MENU_PAUSE = GamaIcons.create("menu.pause");
+	public static final GamaIcon MENU_STEP = GamaIcons.create("menu.step");
+	public static final GamaIcon MENU_RELOAD = GamaIcons.create("menu.reload");
+	public static final GamaIcon MENU_ERROR_STOP = GamaIcons.create("toolbar.stop");
+	public static final GamaIcon MENU_ERROR_WARNING = GamaIcons.create("menu.warning");
+	public static final GamaIcon MENU_ERROR_DISPLAY = GamaIcons.create("menu.show");
 
 	// Layers
 
-	public static final String LAYER_GRID = "layer.grid";
-	public static final String LAYER_SPECIES = "layer.species";
-	public static final String LAYER_AGENTS = "layer.agents";
-	public static final String LAYER_GRAPHICS = "layer.graphics";
-	public static final String LAYER_TEXT = "layer.text";
-	public static final String LAYER_IMAGE = "layer.image";
-	public static final String LAYER_SHAPEFILE = "layer.shapefile";
-	public static final String LAYER_CHART = "layer.chart";
+	public static final GamaIcon LAYER_GRID = GamaIcons.create("layer.grid");
+	public static final GamaIcon LAYER_SPECIES = GamaIcons.create("layer.species");
+	public static final GamaIcon LAYER_AGENTS = GamaIcons.create("layer.agents");
+	public static final GamaIcon LAYER_GRAPHICS = GamaIcons.create("layer.graphics");
+	public static final GamaIcon LAYER_TEXT = GamaIcons.create("layer.text");
+	public static final GamaIcon LAYER_IMAGE = GamaIcons.create("layer.image");
+	public static final GamaIcon LAYER_SHAPEFILE = GamaIcons.create("layer.shapefile");
+	public static final GamaIcon LAYER_CHART = GamaIcons.create("layer.chart");
 
 	// Actions
 
-	public static final String ACTION_PAUSE = DISPLAY_TOOLBAR_PAUSE;
-	public static final String ACTION_REVERT = "action.revert";
-	public static final String ACTION_SAVE = "action.save";
-	public static final String ACTION_CLEAR = "action.clear";
-	public static final String ACTION_ADD_MONITOR = MENU_ADD_MONITOR;
+	public static final GamaIcon ACTION_PAUSE = DISPLAY_TOOLBAR_PAUSE;
+	public static final GamaIcon ACTION_REVERT = GamaIcons.create("action.revert");
+	public static final GamaIcon ACTION_SAVE = GamaIcons.create("action.save");
+	public static final GamaIcon ACTION_CLEAR = GamaIcons.create("action.clear");
+	public static final GamaIcon ACTION_ADD_MONITOR = MENU_ADD_MONITOR;
 
 	// General toolbar
 
-	public static final String TOOLBAR_PREFERENCES = MENU_PREFERENCES;
-	public static final String TOOLBAR_MODELING_PERSPECTIVE = MENU_MODELING_PERSPECTIVE;
-	public static final String TOOLBAR_SIMULATION_PERSPECTIVE = MENU_SIMULATION_PERSPECTIVE;
-	public static final String TOOLBAR_RUN = MENU_RUN;
-	public static final String TOOLBAR_PAUSE = MENU_PAUSE;
-	public static final String TOOLBAR_STEP = MENU_STEP;
-	public static final String TOOLBAR_RELOAD = MENU_RELOAD;
-	public static final String TOOLBAR_STOP = MENU_ERROR_STOP;
-	public static final String TOOLBAR_KNOB = "toolbar.knob";
-	public static final String TOOLBAR_SLIDER = "toolbar.slider";
+	public static final GamaIcon TOOLBAR_PREFERENCES = MENU_PREFERENCES;
+	public static final GamaIcon TOOLBAR_MODELING_PERSPECTIVE = MENU_MODELING_PERSPECTIVE;
+	public static final GamaIcon TOOLBAR_SIMULATION_PERSPECTIVE = MENU_SIMULATION_PERSPECTIVE;
+	public static final GamaIcon TOOLBAR_RUN = MENU_RUN;
+	public static final GamaIcon TOOLBAR_PAUSE = MENU_PAUSE;
+	public static final GamaIcon TOOLBAR_STEP = MENU_STEP;
+	public static final GamaIcon TOOLBAR_RELOAD = MENU_RELOAD;
+	public static final GamaIcon TOOLBAR_STOP = MENU_ERROR_STOP;
+	public static final GamaIcon TOOLBAR_KNOB = GamaIcons.create("toolbar.knob");
+	public static final GamaIcon TOOLBAR_SLIDER = GamaIcons.create("toolbar.slider");
 
 	// User Panels
 
-	public static final String PANEL_CONTINUE = "panel.continue";
-	public static final String PANEL_INSPECT = MENU_INSPECT;
-	public static final String PANEL_LOCATE = "panel.locate";
-	public static final String PANEL_ACTION = MENU_RUN_ACTION;
-	public static final String PANEL_GOTO = "panel.goto";
+	public static final GamaIcon PANEL_CONTINUE = GamaIcons.create("panel.continue");
+	public static final GamaIcon PANEL_INSPECT = MENU_INSPECT;
+	public static final GamaIcon PANEL_LOCATE = GamaIcons.create("panel.locate");
+	public static final GamaIcon PANEL_ACTION = MENU_RUN_ACTION;
+	public static final GamaIcon PANEL_GOTO = GamaIcons.create("panel.goto");
 
 	// Preferences tabs. 24x24
 
-	public static final String PREFS_GENERAL = "prefs.general";
-	public static final String PREFS_DISPLAY = "prefs.display";
-	public static final String PREFS_EDITOR = "prefs.editor";
-	public static final String PREFS_CODE = "prefs.code";
-	public static final String PREFS_WORKSPACE = "prefs.workspace";
-	public static final String PREFS_OTHER = "prefs.other";
-	public static final String PREFS_LIBS = "prefs.libraries";
+	public static final GamaIcon PREFS_GENERAL = GamaIcons.create("prefs.general");
+	public static final GamaIcon PREFS_DISPLAY = GamaIcons.create("prefs.display");
+	public static final GamaIcon PREFS_EDITOR = GamaIcons.create("prefs.editor");
+	public static final GamaIcon PREFS_CODE = GamaIcons.create("prefs.code");
+	public static final GamaIcon PREFS_WORKSPACE = GamaIcons.create("prefs.workspace");
+	public static final GamaIcon PREFS_OTHER = GamaIcons.create("prefs.other");
+	public static final GamaIcon PREFS_LIBS = GamaIcons.create("prefs.libraries");
 
 	// Folders 16x16
 
-	public static final String FOLDER_SHARED = "folder.shared";
-	public static final String FOLDER_BUILTIN = "folder.builtin";
-	public static final String FOLDER_USER = "folder.user";
+	public static final GamaIcon FOLDER_SHARED = GamaIcons.create("folder.shared");
+	public static final GamaIcon FOLDER_BUILTIN = GamaIcons.create("folder.builtin");
+	public static final GamaIcon FOLDER_USER = GamaIcons.create("folder.user");
 
 	// Buttons 16x16
 
-	public static final String BUTTON_EDIT = "button.edit";
-	public static final String BUTTON_INSPECT = MENU_INSPECT;
-	public static final String BUTTON_BROWSE = MENU_BROWSE;
+	public static final GamaIcon BUTTON_EDIT = GamaIcons.create("button.edit");
+	public static final GamaIcon BUTTON_INSPECT = MENU_INSPECT;
+	public static final GamaIcon BUTTON_BROWSE = MENU_BROWSE;
 
 	// Small Icons
 
-	public static final String SMALL_LOCK = "small.lock";
-	public static final String SMALL_UNLOCK = "small.unlock";
-	public static final String SMALL_PLUS = "small.plus";
-	public static final String SMALL_MINUS = "small.minus";
-	public static final String SMALL_EXPAND = "small.expand";
-	public static final String SMALL_COLLAPSE = "small.collapse";
-	public static final String SMALL_PAUSE = "small.pause";
-	public static final String SMALL_RESUME = "small.resume";
-	public static final String SMALL_CLOSE = "small.close";
+	public static final GamaIcon SMALL_LOCK = GamaIcons.create("small.lock");
+	public static final GamaIcon SMALL_UNLOCK = GamaIcons.create("small.unlock");
+	public static final GamaIcon SMALL_PLUS = GamaIcons.create("small.plus");
+	public static final GamaIcon SMALL_MINUS = GamaIcons.create("small.minus");
+	public static final GamaIcon SMALL_EXPAND = GamaIcons.create("small.expand");
+	public static final GamaIcon SMALL_COLLAPSE = GamaIcons.create("small.collapse");
+	public static final GamaIcon SMALL_PAUSE = GamaIcons.create("small.pause");
+	public static final GamaIcon SMALL_RESUME = GamaIcons.create("small.resume");
+	public static final GamaIcon SMALL_CLOSE = GamaIcons.create("small.close");
 
 	// Overlays
 
-	public static final String OVERLAY_OK = "overlay.ok";
+	public static final GamaIcon OVERLAY_OK = GamaIcons.create("overlay.ok");
 
 	// Wizard
+
+	public static final GamaIcon GAMA_ICON = GamaIcons.create("launcher_icons/icon205");
 
 }

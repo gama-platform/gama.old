@@ -4,7 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
-import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.views.*;
 import org.eclipse.jface.action.*;
 
@@ -30,17 +30,18 @@ public class ZoomInItem extends GamaViewItem {
 	 */
 	@Override
 	protected IContributionItem createItem() {
-		IAction action = new GamaAction("Zoom in", "Zoom in", IAction.AS_PUSH_BUTTON, GamaIcons.action_zoomin) {
+		IAction action =
+			new GamaAction("Zoom in", "Zoom in", IAction.AS_PUSH_BUTTON, IGamaIcons.DISPLAY_TOOLBAR_ZOOMIN.descriptor()) {
 
-			@Override
-			public void run() {
+				@Override
+				public void run() {
 
-				IViewWithZoom view = (IViewWithZoom) getView();
-				if ( view == null ) { return; }
-				view.zoomIn();
+					IViewWithZoom view = (IViewWithZoom) getView();
+					if ( view == null ) { return; }
+					view.zoomIn();
 
-			}
-		};
+				}
+			};
 		return new ActionContributionItem(action);
 	}
 }

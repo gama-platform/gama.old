@@ -20,7 +20,7 @@ package msi.gama.gui.parameters;
 
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.common.util.StringUtils;
-import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -130,10 +130,10 @@ public abstract class NumberEditor extends AbstractEditor {
 		ToolBar comp = new ToolBar(compo, SWT.HORIZONTAL);
 		minus = new ToolItem(comp, SWT.PUSH);
 		minus.setText("");
-		minus.setImage(GamaIcons.button_minus);
+		minus.setImage(IGamaIcons.SMALL_MINUS.image());
 		plus = new ToolItem(comp, SWT.PUSH);
 		plus.setText("");
-		plus.setImage(GamaIcons.button_plus);
+		plus.setImage(IGamaIcons.SMALL_PLUS.image());
 
 		comp.addFocusListener(expression);
 

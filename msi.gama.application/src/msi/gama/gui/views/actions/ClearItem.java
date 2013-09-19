@@ -4,7 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
-import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.views.*;
 import org.eclipse.jface.action.*;
 
@@ -29,16 +29,17 @@ public class ClearItem extends GamaViewItem {
 	 */
 	@Override
 	protected IContributionItem createItem() {
-		IAction action = new GamaAction("Clear", "Clear the console ", IAction.AS_PUSH_BUTTON, GamaIcons.action_erase) {
+		IAction action =
+			new GamaAction("Clear", "Clear the console ", IAction.AS_PUSH_BUTTON, IGamaIcons.ACTION_CLEAR.descriptor()) {
 
-			@Override
-			public void run() {
-				if ( view instanceof ConsoleView ) {
-					((ConsoleView) view).setText("");
+				@Override
+				public void run() {
+					if ( view instanceof ConsoleView ) {
+						((ConsoleView) view).setText("");
+					}
 				}
-			}
 
-		};
+			};
 
 		return new ActionContributionItem(action);
 	}

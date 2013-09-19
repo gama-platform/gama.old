@@ -19,7 +19,7 @@
 package msi.gama.gui.navigator;
 
 import java.util.Hashtable;
-import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaIcons;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.program.Program;
@@ -56,11 +56,11 @@ public class NavigatorLabelProvider extends LabelProvider implements IDescriptio
 		Image image = null;
 
 		if ( element instanceof VirtualSharedModelsFolder ) {
-			image = GamaIcons.icon_virtual_folder;
+			image = IGamaIcons.FOLDER_SHARED.image();
 		} else if ( element instanceof UserProjectsFolder ) {
-			image = GamaIcons.icon_user_folder;
+			image = IGamaIcons.FOLDER_USER.image();
 		} else if ( element instanceof ModelsLibraryFolder ) {
-			image = GamaIcons.icon_builtin_folder;
+			image = IGamaIcons.FOLDER_BUILTIN.image();
 		} else if ( element instanceof FileBean ) {
 			if ( ((FileBean) element).hasChildren() ) {
 				image = PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);

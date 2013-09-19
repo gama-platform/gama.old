@@ -83,7 +83,7 @@ public class UserControlView extends GamaViewPart {
 		title.setFont(SwtGui.getBigfont());
 		Button inspect = new Button(buttons, SWT.PUSH);
 		inspect.setText("Inspect");
-		inspect.setImage(GamaIcons.panel_inspect);
+		inspect.setImage(IGamaIcons.PANEL_INSPECT.image());
 		inspect.addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -94,7 +94,7 @@ public class UserControlView extends GamaViewPart {
 		});
 		Button cont = new Button(buttons, SWT.PUSH);
 		cont.setText("Continue");
-		cont.setImage(GamaIcons.panel_continue);
+		cont.setImage(IGamaIcons.PANEL_CONTINUE.image());
 		cont.addSelectionListener(new SelectionListener() {
 
 			@Override
@@ -131,7 +131,7 @@ public class UserControlView extends GamaViewPart {
 				int nbCol = inputs.size() > 0 ? 1 : 3;
 				Button b = new Button(commandComposite, SWT.PUSH);
 				b.setText(c.getName());
-				b.setImage(GamaIcons.panel_action);
+				b.setImage(IGamaIcons.PANEL_ACTION.image());
 				b.setEnabled(((UserCommandStatement) c).isEnabled(scope));
 				GridData gd = new GridData(SWT.LEFT, SWT.TOP, true, true, nbCol, nbLines);
 				b.setLayoutData(gd);

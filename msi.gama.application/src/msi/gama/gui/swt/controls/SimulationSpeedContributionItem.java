@@ -35,7 +35,7 @@ public class SimulationSpeedContributionItem extends SpeedContributionItem {
 				return "Minimum duration of a cycle " + Maths.opTruncate((1000 - 1000 * value) / 1000, 3) + " s";
 			}
 
-		}, GamaIcons.button_thumb_green, GamaIcons.button_thumb_green_over, SwtGui.COLOR_OK);
+		}, IGamaIcons.TOOLBAR_KNOB.image(), IGamaIcons.TOOLBAR_KNOB.image(), SwtGui.COLOR_OK);
 	}
 
 	/**

@@ -4,7 +4,7 @@
  */
 package msi.gama.lang.gaml.ui;
 
-import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaIcons;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.viewers.*;
@@ -24,7 +24,7 @@ public class GamlEditorTickUpdater extends XtextEditorErrorTickUpdater {
 	protected void updateEditorImage(final XtextEditor editor) {
 		Severity severity = getSeverity(editor);
 		if ( severity == null || severity == Severity.INFO ) {
-			ImageDescriptor descriptor = GamaIcons.overlay_ok_desc;
+			ImageDescriptor descriptor = IGamaIcons.OVERLAY_OK.descriptor();
 			DecorationOverlayIcon decorationOverlayIcon =
 				new DecorationOverlayIcon(editor.getDefaultImage(), descriptor, IDecoration.BOTTOM_LEFT);
 			scheduleUpdateEditor(decorationOverlayIcon);

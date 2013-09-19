@@ -4,7 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
-import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.views.*;
 import org.eclipse.jface.action.*;
 
@@ -38,7 +38,7 @@ public class SnapshotItem extends GamaViewItem {
 				((IViewWithZoom) getView()).snapshot();
 			}
 		};
-		action.setImageDescriptor(GamaIcons.action_snapshot);
+		action.setImageDescriptor(IGamaIcons.DISPLAY_TOOLBAR_SNAPSHOT.descriptor());
 		return new ActionContributionItem(action);
 	}
 }

@@ -192,7 +192,7 @@ public class PopulationInspectView extends GamaViewPart {
 		layout.verticalSpacing = 5;
 		expressionComposite.setLayout(layout);
 		final Label lock = new Label(expressionComposite, SWT.NONE);
-		lock.setImage(GamaIcons.button_small_lock);
+		lock.setImage(IGamaIcons.SMALL_LOCK.image());
 		lock.setToolTipText("Lock the current expression results (the list of agents will not be changed)");
 
 		customEditor =
@@ -222,7 +222,7 @@ public class PopulationInspectView extends GamaViewPart {
 			@Override
 			public void mouseDown(final MouseEvent e) {
 				locked = !locked;
-				lock.setImage(locked ? GamaIcons.button_small_unlock : GamaIcons.button_small_lock);
+				lock.setImage(locked ? IGamaIcons.SMALL_UNLOCK.image() : IGamaIcons.SMALL_LOCK.image());
 				customEditor.getEditor().setEnabled(!locked);
 			}
 
@@ -280,7 +280,7 @@ public class PopulationInspectView extends GamaViewPart {
 	private void createTab(final String s, final int size) {
 		final CTabItem item = new CTabItem(tabFolder, SWT.CLOSE);
 		refreshTabName(s, size, item);
-		item.setImage(GamaIcons.menu_population);
+		item.setImage(IGamaIcons.MENU_POPULATION.image());
 		item.setShowClose(true);
 	}
 

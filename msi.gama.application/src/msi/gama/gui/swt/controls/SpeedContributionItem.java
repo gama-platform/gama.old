@@ -18,7 +18,7 @@
  */
 package msi.gama.gui.swt.controls;
 
-import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaIcons;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
@@ -36,9 +36,8 @@ public class SpeedContributionItem extends WorkbenchWindowControlContribution {
 	private final IPositionChangeListener listener;
 	private final IToolTipProvider tip;
 
-	public SpeedContributionItem(final String toolTip, final double init,
-		final IPositionChangeListener listener, final IToolTipProvider tip, final Image thumb,
-		final Image over, final Color popupColor) {
+	public SpeedContributionItem(final String toolTip, final double init, final IPositionChangeListener listener,
+		final IToolTipProvider tip, final Image thumb, final Image over, final Color popupColor) {
 		thumb_image = thumb;
 		thumb_image_hover = over;
 		this.popupColor = popupColor;
@@ -65,9 +64,9 @@ public class SpeedContributionItem extends WorkbenchWindowControlContribution {
 		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
 		data.widthHint = size;
 		final CoolSlider l =
-			new CoolSlider(composite, SWT.HORIZONTAL | CoolSlider.SMOOTH_STYLE, GamaIcons.slider_left,
-				GamaIcons.slider_line, thumb_image, thumb_image, thumb_image_hover, GamaIcons.slider_line,
-				GamaIcons.slider_right);
+			new CoolSlider(composite, SWT.HORIZONTAL | CoolSlider.SMOOTH_STYLE, IGamaIcons.TOOLBAR_SLIDER.image(),
+				IGamaIcons.TOOLBAR_SLIDER.image(), thumb_image, thumb_image, thumb_image_hover,
+				IGamaIcons.TOOLBAR_SLIDER.image(), IGamaIcons.TOOLBAR_SLIDER.image());
 		l.setTooltipInterperter(tip);
 		l.setLayoutData(data);
 		l.setSize(size, 16);

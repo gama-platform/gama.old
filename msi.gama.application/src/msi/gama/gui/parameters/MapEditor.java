@@ -21,7 +21,7 @@ package msi.gama.gui.parameters;
 import java.util.Map;
 import msi.gama.common.interfaces.EditorListener;
 import msi.gama.common.util.StringUtils;
-import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.kernel.experiment.IParameter;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.runtime.*;
@@ -68,7 +68,7 @@ public class MapEditor extends AbstractEditor {
 		comp.setLayout(layout);
 		expression = new ExpressionControl(comp, this);
 		mapAdd = new Button(comp, SWT.NONE);
-		mapAdd.setImage(GamaIcons.button_edit);
+		mapAdd.setImage(IGamaIcons.BUTTON_EDIT.image());
 		mapAdd.setText("Edit");
 		mapAdd.setAlignment(SWT.LEFT);
 		mapAdd.addSelectionListener(this);
@@ -82,7 +82,7 @@ public class MapEditor extends AbstractEditor {
 		GAMA.run(new InScope.Void() {
 
 			@Override
-			public void process(IScope scope) {
+			public void process(final IScope scope) {
 				MapEditorDialog mapParameterDialog =
 					new MapEditorDialog(scope, Display.getCurrent().getActiveShell(), (GamaMap) currentValue);
 				if ( mapParameterDialog.open() == IDialogConstants.OK_ID ) {

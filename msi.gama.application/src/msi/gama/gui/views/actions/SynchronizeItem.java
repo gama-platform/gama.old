@@ -5,7 +5,7 @@
 package msi.gama.gui.views.actions;
 
 import msi.gama.common.GamaPreferences;
-import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.views.*;
 import org.eclipse.jface.action.*;
 
@@ -35,7 +35,7 @@ public class SynchronizeItem extends GamaViewItem {
 	protected IContributionItem createItem() {
 		final IAction action =
 			new GamaAction("Synchronize with simulation", "Synchronize " + view.getTitle() +
-				" and the execution of the model", IAction.AS_CHECK_BOX, GamaIcons.action_sync) {
+				" and the execution of the model", IAction.AS_CHECK_BOX, IGamaIcons.DISPLAY_TOOLBAR_SYNC.descriptor()) {
 
 				@Override
 				public void run() {

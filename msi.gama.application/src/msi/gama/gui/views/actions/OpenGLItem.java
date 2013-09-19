@@ -4,7 +4,7 @@
  */
 package msi.gama.gui.views.actions;
 
-import msi.gama.gui.swt.GamaIcons;
+import msi.gama.gui.swt.IGamaIcons;
 import msi.gama.gui.views.GamaViewPart;
 import org.eclipse.jface.action.*;
 import org.eclipse.swt.SWT;
@@ -41,7 +41,8 @@ public class OpenGLItem extends GamaViewItem implements IMenuCreator {
 	@Override
 	protected IContributionItem createItem() {
 		final IAction action =
-			new GamaAction("3D options", "3D options", IAction.AS_DROP_DOWN_MENU, GamaIcons.menu_open_gl) {
+			new GamaAction("3D options", "3D options", IAction.AS_DROP_DOWN_MENU,
+				IGamaIcons.DISPLAY_TOOLBAR_OPENGL.descriptor()) {
 
 				@Override
 				public void run() {}
