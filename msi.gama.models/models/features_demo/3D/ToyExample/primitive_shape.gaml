@@ -175,10 +175,8 @@ entities {
 }
 experiment Display  type: gui {
 	output {
-		display Display  type:opengl ambient_light:100{//camera_pos:{100*cos(time),100*sin(time),100}{
-			
-			//image name: 'Background' file: imageRaster.path;
-			
+		display Display  type:opengl ambient_light:100{
+						
 			species myPoint aspect:Flat ;
 			species myLine aspect:Flat ;
 			species myMultiLine aspect:Flat;
