@@ -15,6 +15,11 @@ public interface IGamaIcons {
 
 	// EXTERNALIZE : FINISH THIS WORK !
 
+	// Perspectives
+
+	public static final String PERSPECTIVE_MODELING = "perspective.modeling";
+	public static final String PERSPECTIVE_SIMULATION = "perspective.simulation";
+
 	// Views
 
 	public static final String VIEW_DISPLAY = "view.display";
@@ -26,6 +31,8 @@ public interface IGamaIcons {
 	public static final String VIEW_MONITORS = "view.monitors";
 	public static final String VIEW_PANEL = "view.panel";
 	public static final String VIEW_ERRORS = "view.errors";
+	public static final String VIEW_PREFERENCES = "view.preferences";
+	public static final String VIEW_REPOSITORIES = "view.repositories";
 
 	// Display toolbar
 
@@ -45,6 +52,8 @@ public interface IGamaIcons {
 	public static final String DISPLAY_TOOLBAR_TRIANGULATE = "display.triangulate";
 	public static final String DISPLAY_TOOLBAR_DRAG = "display.drag";
 	public static final String DISPLAY_TOOLBAR_INERTIA = "display.inertia";
+	public static final String DISPLAY_TOOLBAR_OVERLAY = "display.overlay";
+	public static final String DISPLAY_TOOLBAR_SIDEBAR = "display.sidebar";
 
 	// Menus
 
@@ -66,7 +75,7 @@ public interface IGamaIcons {
 	public static final String MENU_PAUSE = "menu.pause";
 	public static final String MENU_STEP = "menu.step";
 	public static final String MENU_RELOAD = "menu.reload";
-	public static final String MENU_ERROR_STOP = "menu.stop";
+	public static final String MENU_ERROR_STOP = "toolbar.stop";
 	public static final String MENU_ERROR_WARNING = "menu.warning";
 	public static final String MENU_ERROR_DISPLAY = "menu.show";
 
@@ -83,6 +92,7 @@ public interface IGamaIcons {
 
 	// Actions
 
+	public static final String ACTION_PAUSE = DISPLAY_TOOLBAR_PAUSE;
 	public static final String ACTION_REVERT = "action.revert";
 	public static final String ACTION_SAVE = "action.save";
 	public static final String ACTION_CLEAR = "action.clear";
@@ -97,7 +107,7 @@ public interface IGamaIcons {
 	public static final String TOOLBAR_PAUSE = MENU_PAUSE;
 	public static final String TOOLBAR_STEP = MENU_STEP;
 	public static final String TOOLBAR_RELOAD = MENU_RELOAD;
-	public static final String TOOLBAR_STOP = "toolbar.stop";
+	public static final String TOOLBAR_STOP = MENU_ERROR_STOP;
 	public static final String TOOLBAR_KNOB = "toolbar.knob";
 	public static final String TOOLBAR_SLIDER = "toolbar.slider";
 

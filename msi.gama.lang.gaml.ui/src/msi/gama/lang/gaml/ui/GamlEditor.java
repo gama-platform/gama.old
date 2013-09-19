@@ -6,7 +6,6 @@ package msi.gama.lang.gaml.ui;
 
 import java.util.*;
 import java.util.List;
-import msi.gama.common.interfaces.IGui;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.*;
 import msi.gama.kernel.model.IModel;
@@ -30,7 +29,6 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.ui.editor.*;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
@@ -47,10 +45,8 @@ import com.google.inject.Inject;
 public class GamlEditor extends XtextEditor implements IGamlBuilderListener {
 
 	// Copied from SwtGui. See how to factorize this.
-	public static Image run = AbstractUIPlugin.imageDescriptorFromPlugin(IGui.PLUGIN_ID, "/icons/menu_play.png")
-		.createImage();
-	public static Image reload = AbstractUIPlugin.imageDescriptorFromPlugin(IGui.PLUGIN_ID, "/icons/menu_reload.png")
-		.createImage();
+	// public static Image run = GamaIcons.action_run;
+
 	public static final Color COLOR_TEXT = Display.getDefault().getSystemColor(SWT.COLOR_BLACK);
 	private static final int INITIAL_BUTTONS = 20;
 	private static Font labelFont;

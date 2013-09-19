@@ -11,7 +11,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.ConsoleView"
-            icon="icons/view_console.png"
+            icon="icons/view.console.png"
             id="msi.gama.application.view.ConsoleView"
             name="Console"
             restorable="true">
@@ -21,7 +21,7 @@
             allowMultiple="true"
            category="msi.gama.gui.category.gama"
             class="msi.gama.networks.ui.GraphstreamView"
-            icon="icons/view_console.png"
+            icon="icons/view.console.png"
             id="msi.gama.networks.ui.GraphstreamView"
             name="Graphstream"
             restorable="true">
@@ -31,7 +31,7 @@
             allowMultiple="true"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.PopulationInspectView"
-            icon="icons/display_grid.png"
+            icon="icons/view.browser.png"
             id="msi.gama.application.view.TableAgentInspectView"
             name="Populations Browser">
       </view>
@@ -39,7 +39,7 @@
             allowMultiple="true"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.AgentInspectView"
-            icon="icons/user_magnify.png"
+            icon="icons/view.inspector.png"
             id="msi.gama.application.view.AgentInspectView"
             name="Agent Inspector">
       </view>
@@ -47,7 +47,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.MonitorView"
-            icon="icons/view_monitors.png"
+            icon="icons/view.monitors.png"
             id="msi.gama.application.view.MonitorView"
             name="Monitors"
             restorable="false">
@@ -56,7 +56,7 @@
             allowMultiple="true"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.LayeredDisplayView"
-            icon="icons/view_layers.png"
+            icon="icons/view.display.png"
             id="msi.gama.application.view.LayeredDisplayView"
             name="Display"
             restorable="false">
@@ -65,7 +65,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.ExperimentParametersView"
-            icon="icons/view_parameters.png"
+            icon="icons/view.parameters.png"
             id="msi.gama.application.view.ParameterView"
             name="Parameters"
             restorable="true">
@@ -74,7 +74,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.ErrorView"
-            icon="icons/view_errors.png"
+            icon="icons/view.errors.png"
             id="msi.gama.application.view.ErrorView"
             name="Errors"
             restorable="true">
@@ -83,7 +83,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.navigator.GamaNavigator"
-            icon="platform:/plugin/msi.gama.application/icons/view_navigator.png"
+            icon="icons/view.navigator.png"
             id="msi.gama.gui.view.GamaNavigator"
             name="Gama Projects"
             restorable="true">
@@ -92,7 +92,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="org.eclipse.team.svn.ui.repository.RepositoriesView"
-            icon="platform:/plugin/msi.gama.application/icons/view_repositories.gif"
+            icon="icons/view.repositories.gif"
             id="org.eclipse.team.svn.ui.repository.RepositoriesView"
             name="Repositories"
             restorable="true">
@@ -101,7 +101,7 @@
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.UserControlView"
             fastViewWidthRatio="0.2"
-            icon="icons/panel_icon.png"
+            icon="icons/view.panel.png"
             id="msi.gama.views.userControlView"
             name="User Control"
             restorable="true">
@@ -110,7 +110,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.HeadlessParam"
-            icon="icons/view_monitors.png"
+            icon="icons/view.monitors.png"
             id="msi.gama.application.view.HeadlessParam"
             name="HeadlessParam"
             restorable="true">
@@ -119,7 +119,7 @@
             allowMultiple="false"
             category="msi.gama.gui.category.gama"
             class="msi.gama.gui.views.HeadlessChart"
-            icon="icons/view_monitors.png"
+            icon="icons/view.monitors.png"
             id="msi.gama.hpc.gui.HeadlessChart"
             name="HeadlessChart"
             restorable="true">
@@ -140,11 +140,13 @@
          point="org.eclipse.ui.perspectives">
       <perspective
             class="msi.gama.gui.swt.perspectives.ModelingPerspective"
+            icon="icons/perspective.modeling.png"
             id="msi.gama.application.perspectives.ModelingPerspective"
             name="Modeling">
       </perspective>
       <perspective
             class="msi.gama.gui.swt.perspectives.SimulationPerspective"
+            icon="icons/perspective.simulation.png"
             id="msi.gama.application.perspectives.SimulationPerspective"
             name="Simulation">
       </perspective>
@@ -326,7 +328,7 @@
             </visibleWhen>
             <command
                   commandId="msi.gama.application.commands.PlaySimulation"
-                  icon="icons/menu_play.png"
+                  icon="icons/menu.run.png"
                   label="Run"
                   style="push">
                <visibleWhen
@@ -338,7 +340,7 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.PauseSimulation"
-                  icon="icons/menu_pause.png"
+                  icon="icons/menu.pause.png"
                   label="Pause"
                   style="push">
                <visibleWhen
@@ -350,7 +352,7 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.StepByStepSimulation"
-                  icon="icons/menu_step.png"
+                  icon="icons/menu.step.png"
                   label="Step by step"
                   style="push">
             </command>
@@ -360,7 +362,7 @@
             </separator>
             <command
                   commandId="msi.gama.application.commands.ReloadSimulation"
-                  icon="icons/menu_reload.png"
+                  icon="icons/menu.reload.png"
                   label="Reload "
                   style="pulldown">
             </command>
@@ -370,19 +372,19 @@
             </separator>
             <command
                   commandId="msi.gama.application.commands.PauseAndEdit"
-                  icon="icons/view_errors.png"
+                  icon="icons/view.errors.png"
                   label="Stop at first error"
                   style="toggle">
             </command>
             <command
                   commandId="msi.gama.application.commands.WarningsAsErrors"
-                  icon="icons/error_delete.png"
+                  icon="icons/menu.warning.png"
                   label="Treat warnings like errors"
                   style="toggle">
             </command>
             <command
                   commandId="msi.gama.application.ShowErrors"
-                  icon="icons/exclamation.png"
+                  icon="icons/menu.show.png"
                   label="Display errors and warnings"
                   style="toggle">
             </command>
@@ -405,14 +407,14 @@
                label="Views">
             <command
                   commandId="msi.gama.application.preferences"
-                  icon="icons/application_form.png"
+                  icon="icons/view.preferences.png"
                   label="Preferences"
                   style="push"
                   tooltip="Open preferences">
             </command>
             <command
                   commandId="msi.gama.application.commands.ShowHideParametersView"
-                  icon="icons/menu_show_parameters.png"
+                  icon="icons/view.parameters.png"
                   style="push">
                <visibleWhen
                      checkEnabled="false">
@@ -423,7 +425,7 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.ShowHideConsoleView"
-                  icon="icons/view_console.png"
+                  icon="icons/view.console.png"
                   style="push">
                <visibleWhen
                      checkEnabled="false">
@@ -434,7 +436,7 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.AddMonitor"
-                  icon="icons/menu_add_monitor.png"
+                  icon="icons/menu.monitor.png"
                   label="Add Monitor"
                   style="push">
                <visibleWhen
@@ -450,7 +452,7 @@
             </separator>
             <command
                   commandId="msi.gama.application.goto.modeling"
-                  icon="icons/application_edit.png"
+                  icon="icons/perspective.modeling.png"
                   label="Modeling Perspective"
                   style="push"
                   tooltip="Open modeling perspective">
@@ -465,7 +467,7 @@
             </command>
             <command
                   commandId="msi.gama.application.goto.simulation"
-                  icon="icons/application_start.png"
+                  icon="icons/perspective.simulation.png"
                   label="Simulation perspective"
                   style="push"
                   tooltip="Open simulation perspective">
@@ -496,14 +498,14 @@
                label="Common controls">
             <command
                   commandId="msi.gama.application.preferences"
-                  icon="icons/application_form.png"
+                  icon="icons/view.preferences.png"
                   label="Preferences"
                   style="push"
                   tooltip="Open preferences">
             </command>
             <command
                   commandId="msi.gama.application.goto.modeling"
-                  icon="icons/application_edit.png"
+                  icon="icons/perspective.modeling.png"
                   label="Modeling perspective"
                   style="push"
                   tooltip="Open modeling perspective">
@@ -518,7 +520,7 @@
             </command>
             <command
                   commandId="msi.gama.application.goto.simulation"
-                  icon="icons/application_start.png"
+                  icon="icons/perspective.simulation.png"
                   label="Simulation perspective"
                   style="push"
                   tooltip="Open simulation perspective">
@@ -537,7 +539,7 @@
             </control>
             <command
                   commandId="msi.gama.application.commands.PlaySimulation"
-                  icon="icons/menu_play.png"
+                  icon="icons/menu.run.png"
                   label="Run"
                   style="push">
                <visibleWhen
@@ -549,7 +551,7 @@
             </command>
                         <command
                   commandId="msi.gama.application.commands.PauseSimulation"
-                  icon="icons/menu_pause.png"
+                  icon="icons/menu.pause.png"
                   label="Pause"
                   style="push">
                <visibleWhen
@@ -571,7 +573,7 @@
             </control>
             <command
                   commandId="msi.gama.application.commands.StepByStepSimulation"
-                  icon="icons/menu_step.png"
+                  icon="icons/menu.step.png"
                   label="Step"
                   style="push">
                <visibleWhen
@@ -583,7 +585,7 @@
             </command>
             <command
                   commandId="msi.gama.application.commands.ReloadSimulation"
-                  icon="icons/menu_reload.png"
+                  icon="icons/menu.reload.png"
                   label="Reload"
                   style="push">
                <visibleWhen
@@ -599,7 +601,7 @@
             </separator>
             <command
                   commandId="msi.gama.application.commands.Cancel"
-                  icon="icons/menu_cancel.png"
+                  icon="icons/toolbar.stop.png"
                   label="Cancel"
                   style="push"
                   tooltip="Interrupt the experiment and dispose of it.">
@@ -1392,7 +1394,7 @@
       <wizard
             category="msi.gama.gui.wizards.GAMA"
             class="msi.gama.gui.wizards.projects.NewProjectWizard"
-            icon="icons/folder_workspace.png"
+            icon="icons/folder.user.png"
             id="msi.gama.gui.wizards.newProjectWizard"
             name="Gama Project"
             project="true">

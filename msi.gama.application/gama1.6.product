@@ -41,7 +41,8 @@ Visit http://code.google.com/p/gama-platform/
       <linux icon="/msi.gama.application/icons/launcher_icons/icon-32x32x32b.xpm"/>
       <macosx icon="/msi.gama.application/icons/launcher_icons/icon.icns"/>
       <solaris/>
-      <win useIco="false">
+      <win useIco="true">
+         <ico path="/msi.gama.application/icons/launcher_icons/icon.ico"/>
          <bmp
             winSmallHigh="/msi.gama.application/icons/launcher_icons/icon-16x16x32b.bmp"
             winSmallLow="/msi.gama.application/icons/launcher_icons/icon-16x16x8b.bmp"
@@ -54,7 +55,6 @@ Visit http://code.google.com/p/gama-platform/
 
    <vm>
       <linux include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</linux>
-      <macos include="false">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6</macos>
    </vm>
 
    <license>
