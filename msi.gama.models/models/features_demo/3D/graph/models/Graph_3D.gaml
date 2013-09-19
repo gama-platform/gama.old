@@ -11,9 +11,9 @@ model graph3D
 
 global {
 	
-	int number_of_agents parameter: 'Number of Agents' min: 1 <- 250 ;
-	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 500 ;  
-	float distance <-100.0;
+	int number_of_agents parameter: 'Number of Agents' min: 1 <- 250 category: 'Initialization';
+	int width_and_height_of_environment parameter: 'Dimensions' min: 10 <- 500 category: 'Initialization';  
+	float distance parameter: 'distance ' min: 1.0 <-100.0 ;
 	int degreeMax <-1;
 	geometry shape <- square(width_and_height_of_environment);
 
