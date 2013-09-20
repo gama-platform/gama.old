@@ -64,18 +64,18 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	protected IPopulation getPopulation(final IScope scope) {
-        final IAgent a = scope.getAgentScope();
-        IPopulation result = null;
-        if ( a != null ) {
-                // AD 19/09/13 Patch to allow experiments to gain access to the simulation populations
-                result = a.getPopulationFor(this);
-                if ( result == null ) {
-                        if ( a instanceof ExperimentAgent ) {
-                                result = ((ExperimentAgent) a).getSimulation().getPopulationFor(this);
-                        }
-                }
-        }
-        return result;
+		final IAgent a = scope.getAgentScope();
+		IPopulation result = null;
+		if ( a != null ) {
+			// AD 19/09/13 Patch to allow experiments to gain access to the simulation populations
+			result = a.getPopulationFor(this);
+			if ( result == null ) {
+				if ( a instanceof ExperimentAgent ) {
+					result = ((ExperimentAgent) a).getSimulation().getPopulationFor(this);
+				}
+			}
+		}
+		return result;
 	}
 
 	@Override
