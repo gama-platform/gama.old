@@ -20,6 +20,7 @@ package msi.gaml.species;
 
 import java.util.*;
 import msi.gama.common.interfaces.IKeyword;
+import msi.gama.kernel.experiment.ExperimentAgent;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.runtime.IScope;
@@ -63,9 +64,18 @@ public abstract class AbstractSpecies extends Symbol implements ISpecies {
 	}
 
 	protected IPopulation getPopulation(final IScope scope) {
-		final IAgent a = scope.getAgentScope();
-		if ( a != null ) { return a.getPopulationFor(this); }
-		return null;
+        final IAgent a = scope.getAgentScope();
+        IPopulation result = null;
+        if ( a != null ) {
+                // AD 19/09/13 Patch to allow experiments to gain access to the simulation populations
+                result = a.getPopulationFor(this);
+                if ( result == null ) {
+                        if ( a instanceof ExperimentAgent ) {
+                                result = ((ExperimentAgent) a).getSimulation().getPopulationFor(this);
+                        }
+                }
+        }
+        return result;
 	}
 
 	@Override
