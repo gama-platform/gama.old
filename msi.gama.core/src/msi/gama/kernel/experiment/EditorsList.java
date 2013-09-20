@@ -30,11 +30,7 @@ import msi.gama.util.GamaList;
 public abstract class EditorsList<T> implements ItemList<T> {
 
 	/* Map to associate a category to each parameter */
-	protected Map<T, Map<String, IParameterEditor>> categories;
-
-	public EditorsList() {
-		categories = new HashMap();
-	}
+	protected final Map<T, Map<String, IParameterEditor>> categories = new LinkedHashMap();
 
 	@Override
 	public List<T> getItems() {
