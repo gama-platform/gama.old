@@ -43,7 +43,7 @@ public class GamaIcons /* implements IGamaIcons */{
 				descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(IGui.PLUGIN_ID, DEFAULT_PATH + path + ".png");
 				if ( descriptor == null ) {
 					GuiUtils.debug("ERROR: Cannot find icon " + path);
-					return getEclipseIconDescriptor(ISharedImages.IMG_OBJS_ERROR_TSK);
+					descriptor = getEclipseIconDescriptor(ISharedImages.IMG_OBJS_ERROR_TSK);
 				}
 			}
 			return descriptor;
