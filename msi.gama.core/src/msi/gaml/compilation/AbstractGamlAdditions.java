@@ -327,21 +327,21 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		add(clazz, getter);
 	}
 
-	public static List<IDescription> getFieldDescriptions(final Class clazz) {
-		List<Class> classes = JavaUtils.collectImplementationClasses(clazz, Collections.EMPTY_SET, ADDITIONS.keySet());
-		Map<String, IDescription> fieldsMap = new LinkedHashMap();
-		for ( Class c : classes ) {
-			List<IDescription> descriptions = getAdditions(c);
-			if ( descriptions == null ) {
-				continue;
-			}
-			for ( IDescription desc : descriptions ) {
-				fieldsMap.put(desc.getName(), desc);
-			}
-		}
-		List<IDescription> descs = new GamaList(fieldsMap.values());
-		return descs;
-	}
+	// public static List<IDescription> getFieldDescriptions(final Class clazz) {
+	// List<Class> classes = JavaUtils.collectImplementationClasses(clazz, Collections.EMPTY_SET, ADDITIONS.keySet());
+	// Map<String, IDescription> fieldsMap = new LinkedHashMap();
+	// for ( Class c : classes ) {
+	// List<IDescription> descriptions = getAdditions(c);
+	// if ( descriptions == null ) {
+	// continue;
+	// }
+	// for ( IDescription desc : descriptions ) {
+	// fieldsMap.put(desc.getName(), desc);
+	// }
+	// }
+	// List<IDescription> descs = new GamaList(fieldsMap.values());
+	// return descs;
+	// }
 
 	protected IDescription desc(final String keyword, final IDescription superDesc, final IChildrenProvider children,
 		final String ... facets) {
@@ -442,23 +442,21 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return skills;
 	}
 
-	public static Collection<String> getAllFields() {
-		Set<String> result = new HashSet();
+	public static Collection<TypeFieldExpression> getAllFields() {
+		Set<TypeFieldExpression> result = new HashSet();
 		for ( List<TypeFieldExpression> list : FIELDS.values() ) {
-			for ( TypeFieldExpression t : list ) {
-				result.add(t.getName());
-			}
+			result.addAll(list);
 		}
 		return result;
 	}
 
-	public static Collection<String> getAllVars() {
-		Set<String> result = new HashSet();
+	public static Collection<IDescription> getAllVars() {
+		Set<IDescription> result = new HashSet();
 		for ( TypeDescription s : Types.getBuiltInSpecies() ) {
-			result.addAll(s.getVariables().keySet());
+			result.addAll(s.getVariables().values());
 			for ( String a : s.getActionNames() ) {
 				StatementDescription action = s.getAction(a);
-				result.addAll(action.getArgNames());
+				result.addAll(action.getArgs());
 			}
 		}
 		for ( Class c : SKILL_CLASSES.values() ) {
@@ -466,9 +464,9 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 			if ( descs != null ) {
 				for ( IDescription desc : descs ) {
 					if ( desc instanceof VariableDescription ) {
-						result.add(desc.getName());
+						result.add(desc);
 					} else if ( desc instanceof StatementDescription ) {
-						result.addAll(((StatementDescription) desc).getArgNames());
+						result.addAll(((StatementDescription) desc).getArgs());
 					}
 				}
 			}
@@ -488,17 +486,17 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 		return SKILL_CLASSES.keySet();
 	}
 
-	public static Collection<String> getAllActions() {
-		Set<String> result = new HashSet();
+	public static Collection<IDescription> getAllActions() {
+		Set<IDescription> result = new HashSet();
 		for ( TypeDescription s : Types.getBuiltInSpecies() ) {
-			result.addAll(s.getActionNames());
+			result.addAll(s.getActions());
 		}
 		for ( Class c : SKILL_CLASSES.values() ) {
 			List<IDescription> descs = ADDITIONS.get(c);
 			if ( descs != null ) {
 				for ( IDescription desc : descs ) {
 					if ( !(desc instanceof VariableDescription) ) {
-						result.add(desc.getName());
+						result.add(desc);
 					}
 				}
 			}

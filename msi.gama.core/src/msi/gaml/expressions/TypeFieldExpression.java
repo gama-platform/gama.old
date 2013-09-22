@@ -19,7 +19,7 @@
 package msi.gaml.expressions;
 
 import msi.gaml.compilation.GamaHelper;
-import msi.gaml.types.Types;
+import msi.gaml.types.*;
 
 public class TypeFieldExpression extends UnaryOperator {
 
@@ -44,13 +44,24 @@ public class TypeFieldExpression extends UnaryOperator {
 	}
 
 	@Override
+	public String toString() {
+		if ( child == null ) { return signature.toString() + "." + name; }
+		return child.toGaml() + "." + name;
+	}
+
+	@Override
 	public String getDocumentation() {
-		return "Type " + getType() + " from object of type " + child.getType();
+		if ( child != null ) { return "Available for objects of type " + child.getType(); }
+		return "Available for objects of type " + signature.get(0);
 	}
 
 	@Override
 	public String getTitle() {
 		return "field " + getName() + " of type " + typeToString();
+	}
+
+	public void setSignature(final IType t) {
+		signature = new Signature(t);
 	}
 
 }

@@ -349,7 +349,12 @@ public class StatementDescription extends SymbolDescription {
 		}
 		String in = "";
 		if ( getMeta().isTopLevel() ) {
-			in = " of " + getEnclosingDescription().getTitle();
+			IDescription d = getEnclosingDescription();
+			if ( d == null ) {
+				in = " defined in " + originName;
+			} else {
+				in = " of " + d.getTitle();
+			}
 		}
 		return kw + " " + getName() + " " + in;
 	}

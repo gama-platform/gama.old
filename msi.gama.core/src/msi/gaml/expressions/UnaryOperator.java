@@ -38,7 +38,7 @@ public class UnaryOperator extends AbstractExpression implements IOperator {
 	private final int[] expectedContentType;
 	protected GamlElementDocumentation doc;
 	private final boolean lazy;
-	private final Signature signature;
+	protected Signature signature;
 
 	@Override
 	public boolean isConst() {

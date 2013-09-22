@@ -92,6 +92,10 @@ public class DescriptionFactory {
 		return KEYWORDS_PROTOS.get(keyword);
 	}
 
+	public final static Map<String, SymbolProto> getProtos() {
+		return KEYWORDS_PROTOS;
+	}
+
 	public static SymbolFactory getFactory(final int kind) {
 		return FACTORIES.get(kind);
 	}
@@ -108,6 +112,7 @@ public class DescriptionFactory {
 			SymbolProto.nonTypeStatements.addAll(names);
 		}
 		for ( final String s : names ) {
+			// GuiUtils.debug("DescriptionFactory.addProto " + s);
 			if ( KEYWORDS_PROTOS.containsKey(s) ) { return; }
 			KEYWORDS_PROTOS.put(s, md);
 		}

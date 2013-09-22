@@ -168,6 +168,10 @@ public class TypeDescription extends SymbolDescription {
 		return actions == null ? Collections.EMPTY_LIST : actions.keySet();
 	}
 
+	public Collection<IDescription> getActions() {
+		return actions == null ? Collections.EMPTY_LIST : actions.values();
+	}
+
 	@Override
 	public boolean hasAction(final String a) {
 		return actions != null && actions.containsKey(a);

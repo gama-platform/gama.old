@@ -6,6 +6,7 @@ import java.util.*;
 import msi.gama.lang.gaml.gaml.*;
 import msi.gama.lang.utils.EGaml;
 import msi.gaml.compilation.AbstractGamlAdditions;
+import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.factories.*;
 import msi.gaml.factories.DescriptionFactory.Documentation;
@@ -143,6 +144,61 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 
 	}
 
+	static void addVar(final EClass eClass, final String t, final IGamlDescription o, final String keyword) {
+		GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eClass);
+		// TODO Add the fields definition here
+		stub.setName(t);
+		resources.get(eClass).getContents().add(stub);
+		Documentation d = DescriptionFactory.getGamlDocumentation(o);
+		Map<String, String> doc = new HashMap();
+		doc.put("doc", d.getDocumentation());
+		doc.put("title", d.getTitle());
+		doc.put("type", keyword);
+		IEObjectDescription e = EObjectDescription.create(t, stub, doc);
+		IEObjectDescription previous = descriptions.get(eClass).put(e.getName(), e);
+
+	}
+
+	static void addAction(final EClass eClass, final String t, final IGamlDescription o) {
+		GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eClass);
+		// TODO Add the fields definition here
+		stub.setName(t);
+		resources.get(eClass).getContents().add(stub);
+		Documentation d = DescriptionFactory.getGamlDocumentation(o);
+		Map<String, String> doc = new HashMap();
+		doc.put("doc", d.getDocumentation());
+		doc.put("title", d.getTitle());
+		doc.put("type", "action");
+		IEObjectDescription e = EObjectDescription.create(t, stub, doc);
+		IEObjectDescription previous = descriptions.get(eClass).put(e.getName(), e);
+
+	}
+
+	static void addUnit(final EClass eClass, final String t, final Double value) {
+		GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eClass);
+		stub.setName(t);
+		resources.get(eClass).getContents().add(stub);
+		Map<String, String> doc = new HashMap();
+		doc.put("title", "Unit " + t + " of value " + value);
+		doc.put("type", "unit");
+		IEObjectDescription e = EObjectDescription.create(t, stub, doc);
+		IEObjectDescription previous = descriptions.get(eClass).put(e.getName(), e);
+
+	}
+
+	static void addType(final EClass eClass, final String t, final IType type) {
+		GamlDefinition stub = (GamlDefinition) EGaml.getFactory().create(eClass);
+		// TODO Add the fields definition here
+		stub.setName(t);
+		resources.get(eClass).getContents().add(stub);
+		Map<String, String> doc = new HashMap();
+		doc.put("title", "Type " + type);
+		doc.put("type", "type");
+		IEObjectDescription e = EObjectDescription.create(t, stub, doc);
+		IEObjectDescription previous = descriptions.get(eClass).put(e.getName(), e);
+
+	}
+
 	/**
 	 * Get the object descriptions for the built-in types.
 	 */
@@ -155,36 +211,30 @@ public class BuiltinGlobalScopeProvider implements IGlobalScopeProvider {
 		if ( descriptions == null ) {
 			initResources();
 			for ( String t : Types.getTypeNames() ) {
-				add(eType, t);
+				addType(eType, t, Types.get(t));
 				add(eVar, t);
 				add(eAction, t);
 			}
-			// for ( TypeDescription s : Types.getBuiltInSpecies() ) {
-			// String t = s.getName();
-			// add(eType, t);
-			// add(eVar, t);
-			// add(eAction, t);
-			// }
 			for ( String t : AbstractGamlAdditions.CONSTANTS ) {
 				add(eType, t);
 				add(eVar, t);
 			}
 			for ( String t : IUnits.UNITS.keySet() ) {
-				add(eUnit, t);
+				addUnit(eUnit, t, IUnits.UNITS.get(t));
 			}
-			for ( String t : AbstractGamlAdditions.getAllFields() ) {
-				add(eVar, t);
+			for ( TypeFieldExpression t : AbstractGamlAdditions.getAllFields() ) {
+				addVar(eVar, t.getName(), t, "field");
 			}
-			for ( String t : AbstractGamlAdditions.getAllVars() ) {
-				add(eVar, t);
+			for ( IDescription t : AbstractGamlAdditions.getAllVars() ) {
+				addVar(eVar, t.getName(), t, "variable");
 			}
 			for ( String t : AbstractGamlAdditions.getAllSkills() ) {
 				add(eSkill, t);
 				add(eVar, t);
 			}
-			for ( String t : AbstractGamlAdditions.getAllActions() ) {
-				add(eAction, t);
-				add(eVar, t);
+			for ( IDescription t : AbstractGamlAdditions.getAllActions() ) {
+				addAction(eAction, t.getName(), t);
+				add(eVar, t.getName());
 			}
 			for ( Map.Entry<String, Map<Signature, IOperator>> t : IExpressionCompiler.OPERATORS.entrySet() ) {
 				add(eAction, t.getKey(), new ArrayList<IOperator>(t.getValue().values()).get(0));

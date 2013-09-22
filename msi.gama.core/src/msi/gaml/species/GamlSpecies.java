@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -25,11 +25,8 @@ import msi.gama.metamodel.shape.ILocation;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
-import msi.gama.precompiler.GamlAnnotations.getter;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.GamlAnnotations.var;
-import msi.gama.precompiler.GamlAnnotations.vars;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
@@ -66,7 +63,7 @@ import msi.gaml.types.IType;
 	@facet(name = IKeyword.FREQUENCY, type = IType.INT, optional = true),
 	@facet(name = IKeyword.SCHEDULES, type = IType.CONTAINER, optional = true),
 	@facet(name = IKeyword.TOPOLOGY, type = IType.TOPOLOGY, optional = true) }, omissible = IKeyword.NAME)
-@vars({ @var(name = IKeyword.NAME, type = IType.STRING) })
+// @vars({ @var(name = IKeyword.NAME, type = IType.STRING) })
 // TODO Build a list of control architectures dynamically at startup and populate the values attribute
 public class GamlSpecies extends AbstractSpecies {
 
@@ -84,11 +81,11 @@ public class GamlSpecies extends AbstractSpecies {
 		return getLiteral(IKeyword.CONTROL);
 	}
 
-	@Override
-	@getter("name")
-	public String getName() {
-		return super.getName();
-	}
+	// @Override
+	// @getter("name")
+	// public String getName() {
+	// return super.getName();
+	// }
 
 	@Override
 	public boolean extendsSpecies(final ISpecies s) {

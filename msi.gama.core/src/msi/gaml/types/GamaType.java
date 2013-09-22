@@ -80,6 +80,10 @@ public abstract class GamaType<Support> implements IType<Support> {
 	@Override
 	public void setFieldGetters(final Map<String, TypeFieldExpression> map) {
 		getters = map;
+		// AD 20/09/13 Added the initialization of the type of the fields
+		for ( TypeFieldExpression t : map.values() ) {
+			t.setSignature(this);
+		}
 	}
 
 	@Override
@@ -145,6 +149,7 @@ public abstract class GamaType<Support> implements IType<Support> {
 		return null;
 	}
 
+	@Override
 	public SpeciesDescription getSpecies() {
 		return null;
 	}
