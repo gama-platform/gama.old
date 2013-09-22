@@ -58,24 +58,25 @@ public class AssertStatement extends AbstractStatement {
 	@Override
 	public Object privateExecuteIn(final IScope scope) throws GamaRuntimeException {
 
-		if ( getFacet(IKeyword.EQUALS) != null ) {
+		if ( equals != null ) {
 			if ( !value.value(scope).equals(equals.value(scope)) ) { throw GamaRuntimeException
 				.error("Assert equals ERROR : " + value.toGaml() + " is not equals to " + equals.value(scope)); }
 			return null;
 		}
 
-		if ( getFacet(IKeyword.ISNOT) != null ) {
+		if ( isnot != null ) {
 			if ( value.value(scope).equals(isnot.value(scope)) ) { throw GamaRuntimeException
 				.error("Assert is_not ERROR: " + value.toGaml() + " is equals to " + isnot.value(scope)); }
 			return null;
 		}
 
-		if ( getFacet(IKeyword.RAISES) != null ) {
+		if ( raises != null ) {
 			// System.out.println(raises.value(scope));
 			try {
 				value.value(scope);
 			} catch (GamaRuntimeException e) {
 				boolean isWarning = e.isWarning() && !scope.getSimulationScope().getExperiment().getWarningsAsErrors();
+				
 				if ( isWarning && IKeyword.ERROR.equals(raises.getName()) ) { throw GamaRuntimeException
 					.error("Assert raises ERROR: " + value.toGaml() + " does not raise an error. It raises a warning."); }
 				if ( isWarning && IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
@@ -83,14 +84,14 @@ public class AssertStatement extends AbstractStatement {
 				if ( !IKeyword.ERROR.equals(raises.getName()) && !IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
 					.error("Assert raises ERROR: " + value.toGaml() + " raises " +
 						(isWarning ? "a warning." : "an error.")); }
-				System.out.println("Toto OK" + raises.getName());
+				// System.out.println("Toto OK" + raises.getName());
 				return null;
 			} catch (Exception e) {
 				if ( IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
 					.error("Assert raises ERROR: " + value.toGaml() + " does not raise a warning. It raises an error."); }
 				if ( !IKeyword.ERROR.equals(raises.getName()) ) { throw GamaRuntimeException
 					.error("Assert raises ERROR: " + value.toGaml() + " raises an error."); }
-				System.out.println("error weel raised");
+				// System.out.println("error weel raised");
 				return null;
 			}
 			if ( IKeyword.ERROR.equals(raises.getName()) || IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
