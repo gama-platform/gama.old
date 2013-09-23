@@ -51,7 +51,7 @@ public abstract class AbstractGamlSyntacticSequencer extends AbstractSyntacticSe
 
 	/**
 	 * Syntax:
-	 *     ('{' '}') | ';'
+	 *     ';' | ('{' '}')
 	 */
 	protected void emit_S_Equations_SemicolonKeyword_3_1_or___LeftCurlyBracketKeyword_3_0_0_RightCurlyBracketKeyword_3_0_2__(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
@@ -59,7 +59,7 @@ public abstract class AbstractGamlSyntacticSequencer extends AbstractSyntacticSe
 	
 	/**
 	 * Syntax:
-	 *     '<-' | 'value:'
+	 *     'value:' | '<-'
 	 */
 	protected void emit_S_Set_LessThanSignHyphenMinusKeyword_2_1_or_ValueKeyword_2_0(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);

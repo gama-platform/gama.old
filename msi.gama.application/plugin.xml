@@ -16,16 +16,6 @@
             name="Console"
             restorable="true">
       </view>
-      
-       <view 
-            allowMultiple="true"
-           category="msi.gama.gui.category.gama"
-            class="msi.gama.networks.ui.GraphstreamView"
-            icon="icons/view.console.png"
-            id="msi.gama.networks.ui.GraphstreamView"
-            name="Graphstream"
-            restorable="true">
-  	   </view>
   		 		
       <view
             allowMultiple="true"
@@ -106,24 +96,7 @@
             name="User Control"
             restorable="true">
       </view>
-      <view
-            allowMultiple="false"
-            category="msi.gama.gui.category.gama"
-            class="msi.gama.gui.views.HeadlessParam"
-            icon="icons/view.monitors.png"
-            id="msi.gama.application.view.HeadlessParam"
-            name="HeadlessParam"
-            restorable="true">
-      </view>
-      <view
-            allowMultiple="false"
-            category="msi.gama.gui.category.gama"
-            class="msi.gama.gui.views.HeadlessChart"
-            icon="icons/view.monitors.png"
-            id="msi.gama.hpc.gui.HeadlessChart"
-            name="HeadlessChart"
-            restorable="true">
-      </view>
+
    </extension>
 
    <extension

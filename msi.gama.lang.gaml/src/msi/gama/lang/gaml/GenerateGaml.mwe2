@@ -45,7 +45,9 @@ Workflow {
             }
 
             // Serializer 2.0
-            fragment = serializer.SerializerFragment {}
+            fragment = serializer.SerializerFragment {
+            	generateXtendStub = false
+            }
             
             // the serialization component (1.0)
             // fragment = parseTreeConstructor.ParseTreeConstructorFragment {}
@@ -80,8 +82,10 @@ Workflow {
 
             // generator API
             fragment = generator.GeneratorFragment {
-                generateMwe = true
-                //generateJavaMain = true
+                generateMwe = false
+                generateJavaMain = true
+                generateStub = true
+                generateXtendMain = false
             }
 
             // formatter API

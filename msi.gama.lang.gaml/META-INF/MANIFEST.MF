@@ -5,42 +5,37 @@ Bundle-Vendor: MSI
 Bundle-Version: 1.4.2
 Bundle-SymbolicName: msi.gama.lang.gaml; singleton:=true
 Require-Bundle: org.eclipse.xtext;bundle-version="2.0.0";visibility:=reexport,
- org.eclipse.xtext.generator;resolution:=optional,
- org.eclipse.emf.mwe2.launch;resolution:=optional,
  org.eclipse.xtext.util,
  org.eclipse.emf.ecore,
  org.eclipse.emf.common,
  org.antlr.runtime,
- org.eclipse.xtext.common.types,
- org.eclipse.emf.codegen.ecore;resolution:=optional,
- org.eclipse.emf.mwe.utils;resolution:=optional,
  org.eclipse.core.runtime;bundle-version="3.7.0",
  org.apache.log4j;bundle-version="1.2.15",
  org.apache.commons.logging,
  msi.gama.core,
- org.eclipse.core.resources
+ org.eclipse.core.resources,
+ org.eclipse.xtext.generator;bundle-version="2.4.1",
+ org.eclipse.emf.mwe2.launch;bundle-version="2.4.0";resolution:=optional
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: msi.gama.lang.gaml,
  msi.gama.lang.gaml.formatting,
  msi.gama.lang.gaml.gaml,
  msi.gama.lang.gaml.gaml.impl,
  msi.gama.lang.gaml.gaml.util,
- msi.gama.lang.gaml.generator,
  msi.gama.lang.gaml.linking,
  msi.gama.lang.gaml.parser.antlr,
  msi.gama.lang.gaml.parser.antlr.internal,
  msi.gama.lang.gaml.parsing,
  msi.gama.lang.gaml.resource,
  msi.gama.lang.gaml.scoping,
- msi.gama.lang.gaml.serializer,
  msi.gama.lang.gaml.services,
  msi.gama.lang.gaml.trials,
  msi.gama.lang.gaml.validation,
- msi.gama.lang.utils
+ msi.gama.lang.utils,
+ msi.gama.lang.gaml.serializer,
+ msi.gama.lang.gaml.generator
 Import-Package: msi.gama.common.interfaces,
  msi.gama.common.util,
  msi.gama.precompiler,
  org.apache.log4j,
- org.eclipse.core.resources,
- org.eclipse.xtext.xbase.lib,
- org.eclipse.xtend2.lib
+ org.eclipse.xtext.xbase.lib
