@@ -1,21 +1,15 @@
 package ummisco.gaml.extensions.maths.ode.utils.classicalEquations.populationDynamics;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement;
-
+import java.util.*;
 import msi.gama.util.GAML;
-import msi.gaml.descriptions.IDescription;
-import msi.gaml.descriptions.StatementDescription;
-import msi.gaml.expressions.IExpression;
-import msi.gaml.expressions.ListExpression;
+import msi.gaml.descriptions.*;
+import msi.gaml.expressions.*;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
+import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement;
 
-
-// SI equation is defined by 
-// diff(x,t) =   x * (alpha - beta * y)  ;
+// SI equation is defined by
+// diff(x,t) = x * (alpha - beta * y) ;
 // diff(y,t) = - y * (delta - gamma * x) ;
 //
 // It is called using
@@ -24,12 +18,13 @@ import msi.gaml.statements.Facets;
 // alpha, prey reproduction rate without predators
 // beta, preys mortality rate due to predators
 // delta, predators mortality rate without preys
-// gamma, predators reproduction rate depending on the number of preys eaten 
+// gamma, predators reproduction rate depending on the number of preys eaten
 
 public class ClassicalLVEquations {
-	private IDescription parentDesc;
 
-	public ClassicalLVEquations(IDescription p) {
+	private final IDescription parentDesc;
+
+	public ClassicalLVEquations(final IDescription p) {
 		parentDesc = p;
 	}
 
@@ -37,35 +32,35 @@ public class ClassicalLVEquations {
 		return parentDesc;
 	}
 
-	public List<SingleEquationStatement> LV(IExpression with_vars, IExpression with_params) {
-		if (with_vars == null || with_params == null) {
-			return null;
-		}
+	public List<SingleEquationStatement> LV(final IExpression with_vars, final IExpression with_params) {
+		if ( with_vars == null || with_params == null ) { return null; }
 		ArrayList<SingleEquationStatement> cmd = new ArrayList<SingleEquationStatement>();
 		IExpression[] v = ((ListExpression) with_vars).getElements();
 		IExpression[] p = ((ListExpression) with_params).getElements();
 
-		StatementDescription stm = new StatementDescription("=",
-				getDescription(), new ChildrenProvider(null), false, false,
-				null, new Facets("keyword", "="));
-		
+		StatementDescription stm =
+			new StatementDescription("=", getDescription(), new ChildrenProvider(null), false, false, null, new Facets(
+				"keyword", "="));
+
 		SingleEquationStatement eq1 = new SingleEquationStatement(stm);
-		eq1.function = GAML.getExpressionFactory().createExpr(
-				"diff(" + v[0].literalValue() + "," + v[2].literalValue() + ")", getDescription());
-		eq1.expression = GAML.getExpressionFactory().createExpr(
-				v[0].literalValue() + " * " + 
-				" ( " + p[0].literalValue() + " - " + 
-						p[1].literalValue() + " * " + v[1].literalValue() + ")", getDescription());
+		eq1.function =
+			GAML.getExpressionFactory().createExpr("diff(" + v[0].literalValue() + "," + v[2].literalValue() + ")",
+				getDescription());
+		eq1.expression =
+			GAML.getExpressionFactory().createExpr(
+				v[0].literalValue() + " * " + " ( " + p[0].literalValue() + " - " + p[1].literalValue() + " * " +
+					v[1].literalValue() + ")", getDescription());
 		eq1.etablishVar();
 		cmd.add(eq1);
 
 		SingleEquationStatement eq2 = new SingleEquationStatement(stm);
-		eq2.function = GAML.getExpressionFactory().createExpr(
-				"diff(" + v[1].literalValue() + "," + v[2].literalValue() + ")", getDescription());
-		eq2.expression = GAML.getExpressionFactory().createExpr(
-				"- " + v[1].literalValue() + " * " + 
-				" ( " + p[2].literalValue() + " - " + 
-						p[3].literalValue() + " * " + v[0].literalValue() + ")", getDescription());
+		eq2.function =
+			GAML.getExpressionFactory().createExpr("diff(" + v[1].literalValue() + "," + v[2].literalValue() + ")",
+				getDescription());
+		eq2.expression =
+			GAML.getExpressionFactory().createExpr(
+				"- " + v[1].literalValue() + " * " + " ( " + p[2].literalValue() + " - " + p[3].literalValue() + " * " +
+					v[0].literalValue() + ")", getDescription());
 		eq2.etablishVar();
 		cmd.add(eq2);
 
