@@ -1,10 +1,10 @@
 /**
- *  loadgraphfromfile
+ *  rewire_graph
  *  Author: Samuel Thiriot
  *  Description: Shows how to rewire a graph during the simulation. 
  */
 
-model loadgraphfromfile
+model rewire_graph
   
 global {
 	
@@ -16,34 +16,16 @@ global {
 	/*
 	 * The variable that will store the graph
 	 */  
-	var mongraphe type:graph;
+	graph<nodeSpecy,edgeSpecy> my_graph <- generate_watts_strogatz(nodeSpecy, edgeSpecy, net_size, net_prewire,net_neighboors);
+			
 	
-	init {
-		
-		 /*
-		  * The actual generation of the network. 
-		  * Note that for technical reasons, parameters are provided as a gama map.  
-		  */
-		set mongraphe <- generate_watts_strogatz( [
-				"edges_specy"::edgeSpecy,
-				"vertices_specy"::nodeSpecy,
-				"size"::net_size,
-				"p"::net_prewire,
-				"k"::net_neighboors
-			] );
-			  
-	 }
-	 
-	
-	reflex {
-			set mongraphe <- rewire_n(mongraphe, net_rewire_count);
+	reflex rewiring{
+			//set my_graph <- rewire_n(my_graph, net_rewire_count);
 			
 	}
 }
 
-environment {
-	
-}
+environment ;
 
 entities {
 
@@ -55,7 +37,7 @@ entities {
 	species nodeSpecy  {
 		rgb color <- rgb('black') ;  
 		aspect base { 
-			draw shape: circle size:3 color: color ;
+			draw circle(3) color: color ;
 		} 
 		 		
 		
@@ -69,32 +51,30 @@ entities {
 		rgb color <- rgb('blue') ; 
 		
 		aspect base {
-			draw color: color ;
+			draw shape color: color ;
 			
 		}
 		
 	}
 }
-
-output {
-	
-	/*
-	 * This first display is the classical GAMA display: 
-	 * agents are represented according to their aspects (shapes)
-	 * and location. This provides a spatialized view of the network.
-	 * 
-	 */
-	display test_display refresh_every: 1 {
-		species nodeSpecy aspect: base ; 
-		species edgeSpecy aspect: base ;
-	}
-	
-	/*
-	 * This display provides another look on the network,
-	 * without spatiality.
-	 */
-	graphdisplay monNom2 graph: mongraphe lowquality:true {
-		 
-	}
-	
+experiment rewire_graph type: gui {
+	output {
+		
+		/*
+		 * This first display is the classical GAMA display: 
+		 * agents are represented according to their aspects (shapes)
+		 * and location. This provides a spatialized view of the network.
+		 * 
+		 */
+		display test_display refresh_every: 1 {
+			species nodeSpecy aspect: base ; 
+			species edgeSpecy aspect: base ;
+		}
+		
+		/*
+		 * This display provides another look on the network,
+		 * without spatiality.
+		 */
+		graphdisplay rewire_graph graph: my_graph lowquality:true ;
+	}	
 }
