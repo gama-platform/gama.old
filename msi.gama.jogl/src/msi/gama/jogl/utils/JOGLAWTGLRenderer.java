@@ -12,7 +12,6 @@ import msi.gama.jogl.JOGLAWTDisplaySurface;
 import msi.gama.jogl.scene.*;
 import msi.gama.jogl.utils.Camera.*;
 import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
-import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.GAMA;
 import com.sun.opengl.util.*;
@@ -53,7 +52,7 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	// Display model a a 3D Cube
 	private final boolean CubeDisplay = false;
 	// Handle Shape file
-	public ShapeFileReader myShapeFileReader;
+	// public ShapeFileReader myShapeFileReader;
 	// use glut tesselation or JTS tesselation
 	// facet "tesselation"
 	private boolean useTessellation = true;

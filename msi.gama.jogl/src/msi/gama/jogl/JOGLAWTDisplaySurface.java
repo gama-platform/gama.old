@@ -24,24 +24,19 @@ import java.awt.geom.Point2D;
 import java.util.*;
 import java.util.List;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.displays.awt.AbstractAWTDisplaySurface;
 import msi.gama.gui.displays.layers.LayerManager;
 import msi.gama.jogl.scene.ModelScene;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.jogl.utils.Camera.Arcball.Vector3D;
-import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.ShapeFileReader;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.outputs.LayeredDisplayOutput;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.precompiler.GamlAnnotations.display;
-import msi.gama.runtime.GAMA;
 import msi.gama.util.GamaList;
 import msi.gaml.compilation.ISymbol;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.swt.widgets.FileDialog;
-import org.geotools.data.simple.SimpleFeatureCollection;
 import collada.Output3D;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -355,51 +350,52 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 	 */
 	@Override
 	public void addShapeFile() {
-		new Thread(new Runnable() {
 
-			@Override
-			public void run() {
-				Display.getDefault().asyncExec(new Runnable() {
-
-					@Override
-					public void run() {
-
-						final Shell shell = new Shell(Display.getDefault());
-						final FileDialog dialog = new FileDialog(shell, SWT.OPEN);
-
-						dialog.setText("Browse for a .shp file");
-
-						dialog.setFilterPath(System.getProperty(GAMA.getModel().getProjectPath()));
-
-						dialog.setFilterExtensions(new String[] { "*.shp" });
-
-						if ( dialog.open() != null ) {
-
-							final String path = dialog.getFilterPath();
-
-							final String[] names = dialog.getFileNames();
-
-							for ( int i = 0; i < names.length; i++ ) {
-								shapeFileName[i] = path + "/" + names[i];
-								System.out.println(shapeFileName[i]);
-							}
-
-						}
-
-						renderer.myShapeFileReader = new ShapeFileReader(shapeFileName[0]);
-						final SimpleFeatureCollection myCollection =
-							renderer.myShapeFileReader
-								.getFeatureCollectionFromShapeFile(renderer.myShapeFileReader.store);
-						final Color color =
-							new Color((int) (Math.random() * 255), (int) (Math.random() * 255),
-								(int) (Math.random() * 255));
-						renderer.getScene().addCollections(myCollection, color);
-						// FIXME: Need to reinitialise th displaylist
-
-					}
-				});
-			}
-		}).start();
+		// new Thread(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		// Display.getDefault().asyncExec(new Runnable() {
+		//
+		// @Override
+		// public void run() {
+		//
+		// final Shell shell = new Shell(Display.getDefault());
+		// final FileDialog dialog = new FileDialog(shell, SWT.OPEN);
+		//
+		// dialog.setText("Browse for a .shp file");
+		//
+		// dialog.setFilterPath(System.getProperty(GAMA.getModel().getProjectPath()));
+		//
+		// dialog.setFilterExtensions(new String[] { "*.shp" });
+		//
+		// if ( dialog.open() != null ) {
+		//
+		// final String path = dialog.getFilterPath();
+		//
+		// final String[] names = dialog.getFileNames();
+		//
+		// for ( int i = 0; i < names.length; i++ ) {
+		// shapeFileName[i] = path + "/" + names[i];
+		// System.out.println(shapeFileName[i]);
+		// }
+		//
+		// }
+		//
+		// renderer.myShapeFileReader = new ShapeFileReader(shapeFileName[0]);
+		// final SimpleFeatureCollection myCollection =
+		// renderer.myShapeFileReader
+		// .getFeatureCollectionFromShapeFile(renderer.myShapeFileReader.store);
+		// final Color color =
+		// new Color((int) (Math.random() * 255), (int) (Math.random() * 255),
+		// (int) (Math.random() * 255));
+		// renderer.getScene().addCollections(myCollection, color);
+		// // FIXME: Need to reinitialise th displaylist
+		//
+		// }
+		// });
+		// }
+		// }).start();
 
 	}
 
@@ -425,7 +421,7 @@ public final class JOGLAWTDisplaySurface extends AbstractAWTDisplaySurface imple
 
 			@Override
 			public void run() {
-				Display.getDefault().asyncExec(new Runnable() {
+				GuiUtils.asyncRun(new Runnable() {
 
 					@Override
 					public void run() {

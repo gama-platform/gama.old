@@ -43,7 +43,7 @@ import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
 
-import org.geotools.swing.data.JFileDataStoreChooser;
+//import org.geotools.swing.data.JFileDataStoreChooser;
 import org.opengis.feature.simple.*;
 
 import com.vividsolutions.jts.geom.Geometry;
