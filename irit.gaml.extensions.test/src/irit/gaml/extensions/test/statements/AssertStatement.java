@@ -76,7 +76,7 @@ public class AssertStatement extends AbstractStatement {
 				value.value(scope);
 			} catch (GamaRuntimeException e) {
 				boolean isWarning = e.isWarning() && !scope.getSimulationScope().getExperiment().getWarningsAsErrors();
-				
+
 				if ( isWarning && IKeyword.ERROR.equals(raises.getName()) ) { throw GamaRuntimeException
 					.error("Assert raises ERROR: " + value.toGaml() + " does not raise an error. It raises a warning."); }
 				if ( isWarning && IKeyword.WARNING_TEST.equals(raises.getName()) ) { throw GamaRuntimeException
