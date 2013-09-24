@@ -17,7 +17,7 @@ import msi.gaml.types.IType;
  */
 public class CastingExpression extends AbstractExpression {
 
-	final IType type;
+	// final IType type;
 
 	public CastingExpression(final IType type) {
 		this.type = type;
