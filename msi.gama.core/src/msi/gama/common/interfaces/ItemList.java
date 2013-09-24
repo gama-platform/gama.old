@@ -29,7 +29,7 @@ import java.util.List;
 public interface ItemList<T> {
 
 	public static final Character ERROR_CODE = '$';
-	public static final Character INFO_CODE = 'Â£';
+	public static final Character INFO_CODE = '£';
 	public static final Character WARNING_CODE = '`';
 	public static final Character SEPARATION_CODE = '%';
 
