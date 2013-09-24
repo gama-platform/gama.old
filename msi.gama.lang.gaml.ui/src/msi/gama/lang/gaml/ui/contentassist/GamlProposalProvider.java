@@ -20,8 +20,6 @@ package msi.gama.lang.gaml.ui.contentassist;
 
 import java.util.*;
 import msi.gama.lang.gaml.ui.labeling.GamlLabelProvider;
-import msi.gama.lang.gaml.validation.GamlJavaValidator;
-import msi.gama.precompiler.GamlProperties;
 import msi.gaml.descriptions.SymbolProto;
 import msi.gaml.factories.DescriptionFactory;
 import org.eclipse.emf.ecore.EObject;
@@ -33,7 +31,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.xtext.naming.IQualifiedNameConverter;
 import org.eclipse.xtext.resource.IEObjectDescription;
-import org.eclipse.xtext.ui.IImageHelper;
 import org.eclipse.xtext.ui.editor.contentassist.*;
 import com.google.common.base.Function;
 import com.google.inject.Inject;
@@ -45,20 +42,22 @@ import com.google.inject.Inject;
  */
 public class GamlProposalProvider extends AbstractGamlProposalProvider {
 
-	private static Set<String> typeList;
-	private static GamlProperties allowedFacets;
-	private static Image rgbImage = ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_rgb.png")
-		.createImage();
-	private static Image facetImage = ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_facet.png")
-		.createImage();
+	// private static Set<String> typeList;
+	// private static GamlProperties allowedFacets;
+	// private static Image rgbImage = ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_rgb.png")
+	// .createImage();
+	// private static Image facetImage = ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_facet.png")
+	// .createImage();
 	private static Image typeImage = ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_type.png")
 		.createImage();
 	private static Image varImage = ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_var.png")
 		.createImage();
 	private static Image actionImage = ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_action.png")
 		.createImage();
-	private static Image skillImage = ImageDescriptor.createFromFile(GamlProposalProvider.class, "/icons/_skills.png")
-		.createImage();
+
+	// private static Image skillImage = ImageDescriptor.createFromFile(GamlProposalProvider.class,
+	// "/icons/_skills.png")
+	// .createImage();
 
 	class GamlProposalCreator extends DefaultProposalCreator {
 
@@ -161,7 +160,7 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 
 	}
 
-	private DefaultProposalCreator creator;
+	// private DefaultProposalCreator creator;
 
 	static class BuiltInProposal {
 
@@ -208,11 +207,11 @@ public class GamlProposalProvider extends AbstractGamlProposalProvider {
 	@Inject
 	GamlLabelProvider provider;
 
-	@Inject
-	private IImageHelper imageHelper;
-
-	@Inject
-	private GamlJavaValidator validator;
+	// @Inject
+	// private IImageHelper imageHelper;
+	//
+	// @Inject
+	// private GamlJavaValidator validator;
 
 	@Override
 	public void createProposals(final ContentAssistContext context, final ICompletionProposalAcceptor acceptor) {

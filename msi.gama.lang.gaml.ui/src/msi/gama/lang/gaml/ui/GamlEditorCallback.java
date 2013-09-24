@@ -38,8 +38,8 @@ public class GamlEditorCallback extends /* NatureAddingEditorCallback */Abstract
 	@Inject
 	IResourceDescriptions index;
 
-	@Inject
-	private DirtyStateEditorSupport editorSupport;
+	// @Inject
+	// private DirtyStateEditorSupport editorSupport;
 
 	@Override
 	public void afterCreatePartControl(final XtextEditor editor) {

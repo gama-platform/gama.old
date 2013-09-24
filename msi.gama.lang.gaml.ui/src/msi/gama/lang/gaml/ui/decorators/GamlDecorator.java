@@ -29,7 +29,7 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 
 	private IResourceChangeListener listener = null;
 
-	private boolean useJDT;
+	// private boolean useJDT;
 
 	public GamlDecorator() {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
