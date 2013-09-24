@@ -20,21 +20,22 @@ public class LayersOverlay extends AbstractOverlay {
 	static Cursor move = new Cursor(SwtGui.getDisplay(), SWT.CURSOR_SIZEALL);
 	Listener l = new Listener() {
 
-		Point origin;
-		boolean moving, sizing;
+		// Point origin;
 
-		private void checkAction(final int x, final int y) {
-			int w = LayersOverlay.super.getPopup().getSize().x;
-			if ( x < w && w - x < 20 ) {
-				moving = false;
-				sizing = true;
-				LayersOverlay.super.getPopup().setCursor(size);
-			} else {
-				moving = true;
-				sizing = false;
-				LayersOverlay.super.getPopup().setCursor(move);
-			}
-		}
+		// boolean moving, sizing;
+
+		// private void checkAction(final int x, final int y) {
+		// int w = LayersOverlay.super.getPopup().getSize().x;
+		// if ( x < w && w - x < 20 ) {
+		// // moving = false;
+		// // sizing = true;
+		// LayersOverlay.super.getPopup().setCursor(size);
+		// } else {
+		// // moving = true;
+		// // sizing = false;
+		// LayersOverlay.super.getPopup().setCursor(move);
+		// }
+		// }
 
 		@Override
 		public void handleEvent(final Event e) {
