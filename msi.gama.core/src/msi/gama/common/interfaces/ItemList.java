@@ -28,10 +28,10 @@ import java.util.List;
  */
 public interface ItemList<T> {
 
-	public static final Character ERROR_CODE = '$';
-	public static final Character INFO_CODE = '£';
-	public static final Character WARNING_CODE = '`';
-	public static final Character SEPARATION_CODE = '%';
+	public static final Character ERROR_CODE = '\u00F7';
+	public static final Character INFO_CODE = '\u00F8';
+	public static final Character WARNING_CODE = '\u00FE';
+	public static final Character SEPARATION_CODE = '\u00FF';
 
 	boolean addItem(T obj);
 
