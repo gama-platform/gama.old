@@ -36,7 +36,7 @@ import org.eclipse.ui.wizards.*;
 @SuppressWarnings("restriction")
 public class ApplicationWorkbenchWindowAdvisor extends IDEWorkbenchWindowAdvisor {
 
-	private static final String PROMPT_ON_EXIT = "PROMPT_ON_EXIT";
+	// private static final String PROMPT_ON_EXIT = "PROMPT_ON_EXIT";
 
 	public ApplicationWorkbenchWindowAdvisor(final ApplicationWorkbenchAdvisor adv,
 		final IWorkbenchWindowConfigurer configurer) {
