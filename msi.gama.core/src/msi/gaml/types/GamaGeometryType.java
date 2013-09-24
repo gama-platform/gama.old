@@ -343,7 +343,7 @@ public class GamaGeometryType extends GamaType<IShape> {
 			} else {
 				Geometry geom = GeometryUtils.factory.createGeometryCollection(geoms);
 				geom.union();
-				if ( geom != null && !geom.isEmpty() ) { return new GamaShape(geom); }
+				if ( !geom.isEmpty() ) { return new GamaShape(geom); }
 			}
 		} catch (AssertionFailedException e) {
 			Geometry gs[] = new Geometry[geoms.length];
