@@ -35,8 +35,8 @@ public class Maths {
 
 	public static void main(final String[] args) {
 		java.lang.System.out.println("Various arithmetic tests");
-		java.lang.System.out.println("3.0 = 3" + (3d == 3));
-		java.lang.System.out.println("3.0 != 3" + (3d != 3));
+		// java.lang.System.out.println("3.0 = 3" + (3d == 3));
+		// java.lang.System.out.println("3.0 != 3" + (3d != 3));
 		java.lang.System.out.println("floor and ceil 2.7 " + floor(2.7) + " and " + ceil(2.7));
 		java.lang.System.out.println("floor and ceil -2.7 " + floor(-2.7) + " and " + ceil(-2.7));
 		java.lang.System.out.println("floor and ceil -2 " + floor(-2) + " and " + ceil(-2));
