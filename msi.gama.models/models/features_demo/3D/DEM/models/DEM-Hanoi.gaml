@@ -6,8 +6,8 @@ model Hanoi_DEM
 
 global{
 	file dem parameter: 'DEM' <- file('../includes/DEM_Hanoi/DEM.png');
-    file map_texture parameter: 'Texture' <- file('../includes/DEM_Hanoi/maps.png');
-    file street_texture parameter: 'Texture' <- file('../includes/DEM_Hanoi/street.png');
+    file map_texture parameter: 'Texture' <- file('../includes/DEM_Hanoi/maps.jpg');
+    file street_texture parameter: 'Texture' <- file('../includes/DEM_Hanoi/street.jpg');
     float z_factor parameter: 'z_factor' min:0.1 <- 0.1;
     
 	//The size of the environment must fit with the size of the DEM file.
