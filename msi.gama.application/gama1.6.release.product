@@ -21,7 +21,7 @@ Visit http://code.google.com/p/gama-platform/
 
    <launcherArgs>
       <programArgs>-nl ${target.nl} -data @noDefault -clean</programArgs>
-      <vmArgs>-Xms256m -Xmx1024m
+      <vmArgs>-Xms256m -Xmx2048m
 -Xmn128m
 -Xss2m
 -XX:PermSize=128m
@@ -141,9 +141,6 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.eclipse.equinox.security.win32.x86_64" fragment="true"/>
       <plugin id="org.eclipse.equinox.util"/>
       <plugin id="org.eclipse.help"/>
-      <plugin id="org.eclipse.jdt.compiler.apt" fragment="true"/>
-      <plugin id="org.eclipse.jdt.compiler.tool" fragment="true"/>
-      <plugin id="org.eclipse.jdt.core"/>
       <plugin id="org.eclipse.jface"/>
       <plugin id="org.eclipse.jface.databinding"/>
       <plugin id="org.eclipse.jface.text"/>
