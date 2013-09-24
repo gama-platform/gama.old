@@ -1332,18 +1332,15 @@ public abstract class SwingControl extends Composite {
 	public boolean setFocus() {
 		checkWidget();
 
-		if ( borderlessChild == this ) {
-			return handleFocusOperation(new RunnableWithResult() {
+		if ( borderlessChild == this ) { return handleFocusOperation(new RunnableWithResult() {
 
-				@Override
-				public void run() {
-					boolean success = isDisposed() ? false : superSetFocus();
-					setResult(new Boolean(success));
-				}
-			});
-		} else {
-			return borderlessChild.setFocus();
-		}
+			@Override
+			public void run() {
+				boolean success = isDisposed() ? false : superSetFocus();
+				setResult(new Boolean(success));
+			}
+		}); }
+		return borderlessChild.setFocus();
 	}
 
 	/**
