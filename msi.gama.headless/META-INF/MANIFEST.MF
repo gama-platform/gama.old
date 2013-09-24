@@ -11,7 +11,8 @@ Require-Bundle: org.eclipse.core.runtime,
  msi.gama.lang.gaml;bundle-version="1.4.2",
  msi.gama.lang.gaml.ui;bundle-version="1.4.2",
  msi.gama.models;bundle-version="1.0.0",
- msi.gama.processor;bundle-version="1.4.0"
+ msi.gama.processor;bundle-version="1.4.0",
+ org.eclipse.emf.ecore
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: 
@@ -37,4 +38,8 @@ Export-Package:
    msi.gama.runtime.exceptions",
  msi.gama.headless.xml;uses:="msi.gama.headless.core"
 Bundle-ClassPath: bin/
+Import-Package: com.google.inject;version="1.3.0",
+ org.eclipse.emf.common.util,
+ org.eclipse.emf.ecore,
+ org.eclipse.xtext.linking
 
