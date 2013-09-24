@@ -18,7 +18,6 @@
  */
 package msi.gaml.operators;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
@@ -32,7 +31,6 @@ import msi.gama.util.*;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.expressions.*;
 import msi.gaml.types.*;
-import org.codehaus.janino.ScriptEvaluator;
 
 /**
  * Written by drogoul Modified on 10 d�c. 2010
@@ -96,9 +94,9 @@ public class System {
 
 	@operator(value = "user_input")
 	@doc(value = "asks the user for some values (not defined as parameters)", comment = "This operator takes a map [string::value] as argument, displays a dialog asking the user for these values, and returns the same map with the modified values (if any). "
-			+ "The dialog is modal and will interrupt the execution of the simulation until the user has either dismissed or accepted it. It can be used, for instance, in an init section to force the user to input new values instead of relying on the initial values of parameters :", examples = {
-			"init {", "	let values <- user_input([\"Number\" :: 100, \"Location\" :: {10, 10}]);",
-			"	create node number : int(values at \"Number\") with: [location:: (point(values at \"Location\"))];", "}" })
+		+ "The dialog is modal and will interrupt the execution of the simulation until the user has either dismissed or accepted it. It can be used, for instance, in an init section to force the user to input new values instead of relying on the initial values of parameters :", examples = {
+		"init {", "	let values <- user_input([\"Number\" :: 100, \"Location\" :: {10, 10}]);",
+		"	create node number : int(values at \"Number\") with: [location:: (point(values at \"Location\"))];", "}" })
 	public static GamaMap<String, Object> userInput(final IScope scope, final String title, final IExpression expr) {
 		GamaMap<String, Object> initialValues = new GamaMap();
 		final GamaMap<String, IType> initialTypes = new GamaMap();
@@ -137,66 +135,69 @@ public class System {
 
 	}
 
-	@operator(value = "eval_java", can_be_const = false)
-	@doc(value = "evaluates the given java code string.", deprecated = "Does not work", see = { "eval_gaml",
-		"evaluate_with" })
-	public static Object opEvalJava(final IScope scope, final String code) {
-		try {
-			final ScriptEvaluator se = new ScriptEvaluator();
-			se.setReturnType(Object.class);
-			se.cook(code);
-			// Evaluate script with actual parameter values.
-			return se.evaluate(new Object[0]);
-
-			// Version sans arguments pour l'instant.
-		} catch (final Exception e) {
-			GuiUtils.informConsole("Error in evaluating Java code : '" + code + "' in " + scope.getAgentScope() +
-				java.lang.System.getProperty("line.separator") + "Reason: " + e.getMessage());
-			return null;
-		}
-	}
+	// @operator(value = "eval_java", can_be_const = false)
+	// @doc(value = "evaluates the given java code string.", deprecated = "Does not work", see = { "eval_gaml",
+	// "evaluate_with" })
+	// public static Object opEvalJava(final IScope scope, final String code) {
+	// try {
+	// final ScriptEvaluator se = new ScriptEvaluator();
+	// se.setReturnType(Object.class);
+	// se.cook(code);
+	// // Evaluate script with actual parameter values.
+	// return se.evaluate(new Object[0]);
+	//
+	// // Version sans arguments pour l'instant.
+	// } catch (final Exception e) {
+	// GuiUtils.informConsole("Error in evaluating Java code : '" + code + "' in " + scope.getAgentScope() +
+	// java.lang.System.getProperty("line.separator") + "Reason: " + e.getMessage());
+	// return null;
+	// }
+	// }
 
 	private static final String[] gamaDefaultImports = new String[] {};
 
 	@operator(value = "evaluate_with", can_be_const = false)
-	@doc(value = "evaluates the left-hand java expressions with the map of parameters (right-hand operand)", see = {
+	@doc(deprecated = "This operator has been deprecated and there are no plans to replace it soon.", value = "evaluates the left-hand java expressions with the map of parameters (right-hand operand)", see = {
 		"eval_gaml", "eval_java" })
 	public static Object opEvalJava(final IScope scope, final String code, final IExpression parameters) {
-		try {
-			GamaMap param;
-			if ( parameters instanceof MapExpression ) {
-				param = ((MapExpression) parameters).getElements();
-			} else {
-				param = new GamaMap();
-			}
-			final String[] parameterNames = new String[param.size() + 1];
-			final Class[] parameterTypes = new Class[param.size() + 1];
-			final Object[] parameterValues = new Object[param.size() + 1];
-			parameterNames[0] = "scope";
-			parameterTypes[0] = IScope.class;
-			parameterValues[0] = scope;
-			int i = 1;
-			for ( final Object e : param.entrySet() ) {
-				final Map.Entry<IExpression, IExpression> entry = (Map.Entry<IExpression, IExpression>) e;
-				parameterNames[i] = entry.getKey().literalValue();
-				parameterTypes[i] = entry.getValue().getType().toClass();
-				parameterValues[i] = entry.getValue().value(scope);
-				i++;
-			}
-			final ScriptEvaluator se = new ScriptEvaluator();
-			se.setReturnType(Object.class);
-			se.setDefaultImports(gamaDefaultImports);
-			se.setParameters(parameterNames, parameterTypes);
-			se.cook(code);
-			// Evaluate script with actual parameter values.
-			return se.evaluate(parameterValues);
+		return code;
+		// try {
+		// GamaMap param;
+		// if ( parameters instanceof MapExpression ) {
+		// param = ((MapExpression) parameters).getElements();
+		// } else {
+		// param = new GamaMap();
+		// }
+		// final String[] parameterNames = new String[param.size() + 1];
+		// final Class[] parameterTypes = new Class[param.size() + 1];
+		// final Object[] parameterValues = new Object[param.size() + 1];
+		// parameterNames[0] = "scope";
+		// parameterTypes[0] = IScope.class;
+		// parameterValues[0] = scope;
+		// int i = 1;
+		// for ( final Object e : param.entrySet() ) {
+		// final Map.Entry<IExpression, IExpression> entry = (Map.Entry<IExpression, IExpression>) e;
+		// parameterNames[i] = entry.getKey().literalValue();
+		// parameterTypes[i] = entry.getValue().getType().toClass();
+		// parameterValues[i] = entry.getValue().value(scope);
+		// i++;
+		// }
+		// final ScriptEvaluator se = new ScriptEvaluator();
+		// se.setReturnType(Object.class);
+		// se.setDefaultImports(gamaDefaultImports);
+		// se.setParameters(parameterNames, parameterTypes);
+		// se.cook(code);
+		// // Evaluate script with actual parameter values.
+		// return se.evaluate(parameterValues);
+		//
+		// } catch (final Exception e) {
+		// final Throwable ee =
+		// e instanceof InvocationTargetException ? ((InvocationTargetException) e).getTargetException() : e;
+		// GuiUtils.informConsole("Error in evaluating Java code : '" + code + "' in " + scope.getAgentScope() +
+		// java.lang.System.getProperty("line.separator") + "Reason: " + ee.getMessage());
+		// return null;
+		// }
 
-		} catch (final Exception e) {
-			final Throwable ee =
-				e instanceof InvocationTargetException ? ((InvocationTargetException) e).getTargetException() : e;
-			GuiUtils.informConsole("Error in evaluating Java code : '" + code + "' in " + scope.getAgentScope() +
-				java.lang.System.getProperty("line.separator") + "Reason: " + ee.getMessage());
-			return null;
-		}
 	}
+
 }
