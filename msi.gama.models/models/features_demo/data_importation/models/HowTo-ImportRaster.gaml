@@ -13,7 +13,7 @@ global {
 	  
 	// Global variables
 	int factorDiscret <- 30 ;
-	file mntImageRaster <- file('../images/mnt/testAG.png') ;
+	file mntImageRaster <- file('../images/mnt/testAG.jpg') ;
 	
 	int nbIzard <- 250 ; 
 	file izardShape <- file('../images/icons/izard.gif');

@@ -20,7 +20,7 @@ global {
 	geometry shape <- envelope(boundsMNT);
 	
 	// Global variables related to the MNT
-	file mntImageRaster <- file('../images/mnt/testAG.png') ;
+	file mntImageRaster <- file('../images/mnt/testAG.jpg') ;
 	int factorDiscret  <- 20;
 	
 	// Global variables  related to the Management units	
