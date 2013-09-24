@@ -5,9 +5,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import javax.media.opengl.*;
 import javax.media.opengl.glu.*;
-import javax.xml.xpath.XPathExpressionException;
 import msi.gama.common.util.ImageUtils;
-import msi.gama.jogl.utils.collada.ColladaReaderXPath;
 import com.sun.opengl.util.texture.*;
 
 public class MyGLToyDrawer {
@@ -35,7 +33,7 @@ public class MyGLToyDrawer {
 
 	// 2D Shape
 
-	public void DrawOpenGLHelloWorldShape(GL gl, float size) {
+	public void DrawOpenGLHelloWorldShape(final GL gl, final float size) {
 
 		gl.glColor4f(0.5f, 0.5f, 0.5f, 1.0f);
 		// ----- Render a triangle -----
@@ -62,7 +60,8 @@ public class MyGLToyDrawer {
 		gl.glEnd();
 	}
 
-	public void DrawColorTriangle(GL gl, float x, float y, float z, float alpha, float size) {
+	public void DrawColorTriangle(final GL gl, final float x, final float y, final float z, final float alpha,
+		final float size) {
 		// ----- Render a triangle -----
 		gl.glTranslatef(x, y, z); // translate left and into the screen
 		gl.glBegin(GL_TRIANGLES); // draw using triangles
@@ -79,7 +78,7 @@ public class MyGLToyDrawer {
 
 	// 3D Shape
 
-	public void Draw3DOpenGLHelloWorldShape(GL gl, float size) {
+	public void Draw3DOpenGLHelloWorldShape(final GL gl, final float size) {
 
 		// ----- Render the Pyramid -----
 
@@ -173,7 +172,7 @@ public class MyGLToyDrawer {
 
 	}
 
-	public void DrawArrayListCube(GL gl, float size) {
+	public void DrawArrayListCube(final GL gl, final float size) {
 		float vertices[] = {
 			// Top-face
 			size, size, -size, -size, size, -size, -size, size, size, size, size, size,
@@ -195,7 +194,7 @@ public class MyGLToyDrawer {
 		gl.glEnd();
 	}
 
-	public static void  Draw3DCube(GL gl, float size) {
+	public static void Draw3DCube(final GL gl, final float size) {
 
 		// Top-face
 		gl.glBegin(GL.GL_LINES);
@@ -299,7 +298,7 @@ public class MyGLToyDrawer {
 		gl.glEnd();
 	}
 
-	public static void DrawSphere(GL gl, GLU glu, double radius) {
+	public static void DrawSphere(final GL gl, final GLU glu, final double radius) {
 		// Draw sphere (possible styles: FILL, LINE, POINT).
 		GLUquadric earth = glu.gluNewQuadric();
 		glu.gluQuadricDrawStyle(earth, GLU.GLU_FILL);
@@ -311,14 +310,14 @@ public class MyGLToyDrawer {
 		glu.gluDeleteQuadric(earth);
 	}
 
-	public void DrawROI(GL gl, double x1, double y1, double x2, double y2, boolean z_fighting, double maxEnvDim) {
+	public void DrawROI(final GL gl, final double x1, final double y1, final double x2, final double y2,
+		final boolean z_fighting, final double maxEnvDim) {
 
-		
-		if(z_fighting){
-			gl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_LINE);
+		if ( z_fighting ) {
+			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
 			gl.glEnable(GL.GL_POLYGON_OFFSET_LINE);
-			//Draw on top of everything
-		    gl.glPolygonOffset(0.0f,(float) -maxEnvDim);
+			// Draw on top of everything
+			gl.glPolygonOffset(0.0f, (float) -maxEnvDim);
 			gl.glBegin(GL.GL_POLYGON);
 
 			gl.glVertex3d(x1, -y1, 0.0f);
@@ -332,12 +331,11 @@ public class MyGLToyDrawer {
 
 			gl.glVertex3d(x1, -y2, 0.0f);
 			gl.glVertex3d(x1, -y1, 0.0f);
-			gl.glEnd();	
-			gl.glPolygonMode( GL.GL_FRONT_AND_BACK, GL.GL_FILL);
-		}
-		else{
+			gl.glEnd();
+			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+		} else {
 			gl.glBegin(GL.GL_LINES);
-			
+
 			gl.glVertex3d(x1, -y1, 0.0f);
 			gl.glVertex3d(x2, -y1, 0.0f);
 
@@ -349,17 +347,14 @@ public class MyGLToyDrawer {
 
 			gl.glVertex3d(x1, -y2, 0.0f);
 			gl.glVertex3d(x1, -y1, 0.0f);
-			gl.glEnd();	
+			gl.glEnd();
 		}
-		
-		
-		
 
 	}
 
 	// textured shape
 
-	public void LoadTextureFromImage(GL gl, String textureFileName) {
+	public void LoadTextureFromImage(final GL gl, final String textureFileName) {
 
 		// Load textures from image
 		try {
@@ -403,7 +398,7 @@ public class MyGLToyDrawer {
 
 	}
 
-	public void DrawTexture(GL gl, float width) {
+	public void DrawTexture(final GL gl, final float width) {
 
 		// WARNING: Be sure to have call LoadTextureFromImage() in the init method og the GLRenderer
 
@@ -431,7 +426,7 @@ public class MyGLToyDrawer {
 
 	}
 
-	public void DrawTexturedSphere(GL gl, GLU glu) {
+	public void DrawTexturedSphere(final GL gl, final GLU glu) {
 
 		// Apply texture.
 		textures[currTextureFilter].enable();
@@ -451,7 +446,7 @@ public class MyGLToyDrawer {
 
 	}
 
-	public void DrawTexturedQuad(GL gl, float width) {
+	public void DrawTexturedQuad(final GL gl, final float width) {
 
 		// WARNING: Be sure to have call LoadTextureFromImage() in the init method og the GLRenderer
 
@@ -529,7 +524,7 @@ public class MyGLToyDrawer {
 
 	}
 
-	public void DrawTexturedQuadWithNormal(GL gl, float width) {
+	public void DrawTexturedQuadWithNormal(final GL gl, final float width) {
 
 		// WARNING: Be sure to have call LoadTextureFromImage() in the init method og the GLRenderer
 
@@ -616,7 +611,7 @@ public class MyGLToyDrawer {
 
 	// Display List Shape ///////
 
-	public void buildDisplayLists(GL gl, float size) {
+	public void buildDisplayLists(final GL gl, final float size) {
 
 		// Build two lists, and returns handle for the first list
 		int base = gl.glGenLists(2);
@@ -704,7 +699,7 @@ public class MyGLToyDrawer {
 
 	}
 
-	public void DrawTexturedDisplayList(GL gl, float size) {
+	public void DrawTexturedDisplayList(final GL gl, final float size) {
 
 		// WARNING: Be sure to call buildDisplayLists() in the init method of the GLRenderer
 
@@ -743,15 +738,15 @@ public class MyGLToyDrawer {
 		gl.glCallList(topDList); // draw the top
 	}
 
-	public void DrawColladaObject(String filename) {
-
-		ColladaReaderXPath myColladaReader = new ColladaReaderXPath(filename);
-		try {
-			ColladaReaderXPath.GetObjectVertex();
-		} catch (XPathExpressionException e) {
-			e.printStackTrace();
-		}
-
-	}
+	// public void DrawColladaObject(String filename) {
+	//
+	// ColladaReaderXPath myColladaReader = new ColladaReaderXPath(filename);
+	// try {
+	// ColladaReaderXPath.GetObjectVertex();
+	// } catch (XPathExpressionException e) {
+	// e.printStackTrace();
+	// }
+	//
+	// }
 
 }
