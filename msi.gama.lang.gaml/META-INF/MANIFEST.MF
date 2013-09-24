@@ -10,8 +10,6 @@ Require-Bundle: org.eclipse.xtext;bundle-version="2.0.0";visibility:=reexport,
  org.eclipse.emf.common,
  org.antlr.runtime,
  org.eclipse.core.runtime;bundle-version="3.7.0",
- org.apache.log4j;bundle-version="1.2.15",
- org.apache.commons.logging,
  msi.gama.core,
  org.eclipse.core.resources,
  org.eclipse.xtext.generator;bundle-version="2.4.0",
@@ -34,8 +32,4 @@ Export-Package: msi.gama.lang.gaml,
  msi.gama.lang.utils,
  msi.gama.lang.gaml.serializer,
  msi.gama.lang.gaml.generator
-Import-Package: msi.gama.common.interfaces,
- msi.gama.common.util,
- msi.gama.precompiler,
- org.apache.log4j,
- org.eclipse.xtext.xbase.lib
+Import-Package: msi.gama.precompiler

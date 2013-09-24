@@ -98,4 +98,18 @@ public class GamlRuntimeModule extends msi.gama.lang.gaml.AbstractGamlRuntimeMod
 		return GamlDiagnostician.class;
 	}
 
+	// @Override
+	// public
+	// com.google.inject.Provider<org.eclipse.xtext.resource.containers.IAllContainersState>
+	// provideIAllContainersState()
+	// {return org.eclipse.xtext.ui.shared.Access.getWorkspaceProjectsState();}
+
+	// @Override
+	// public Class<? extends IResourceSetProvider> bindIResourceSetProvider()
+	// { return SimpleResourceSetProvider.class; }
+
+	// @Override
+	// public Class<? extends IResourceForEditorInputFactory> bindIResourceForEditorInputFactory() {
+	// return ResourceForIEditorInputFactory.class;
+	// }
 }
