@@ -5,7 +5,6 @@ import javax.media.opengl.GL;
 import javax.media.opengl.glu.*;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.TessellCallBack;
 import msi.gama.metamodel.shape.GamaPoint;
-
 import com.sun.opengl.util.GLUT;
 import com.vividsolutions.jts.geom.*;
 
@@ -17,8 +16,8 @@ public class MyGraphics {
 	private final TessellCallBack tessCallback;
 	private final GLUtessellator tobj;
 	// Use to draw Bitmap String
-	private final GLUT glut;
-	public BasicOpenGlDrawer basicDrawer;
+	// private final GLUT glut;
+	// public BasicOpenGlDrawer basicDrawer;
 	// public DisplayListHandler displayListHandler;
 	public VertexArrayHandler vertexArrayHandler;
 
@@ -37,13 +36,13 @@ public class MyGraphics {
 
 		gl = myGLRender.gl;
 		myGlu = myGLRender.glu;
-		basicDrawer = new BasicOpenGlDrawer(myGLRender);
+		// basicDrawer = new BasicOpenGlDrawer(myGLRender);
 		// displayListHandler = new DisplayListHandler(myGl, myGlu, myGLRender);
 		vertexArrayHandler = new VertexArrayHandler(gl, myGlu, myGLRender);
 		tessCallback = new TessellCallBack(gl, myGlu);
 		tobj = myGlu.gluNewTess();
 
-		glut = new GLUT();
+		// glut = new GLUT();
 
 		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_VERTEX, tessCallback);// glVertex3dv);
 		myGlu.gluTessCallback(tobj, GLU.GLU_TESS_BEGIN, tessCallback);// beginCallback);
@@ -52,17 +51,17 @@ public class MyGraphics {
 
 	}
 
-	void DrawTorus(double innerRadius, double outterRadius, int sides, int rings) {
+	void DrawTorus(final double innerRadius, final double outterRadius, final int sides, final int rings) {
 		GLUT glut = new GLUT();
 		glut.glutSolidTorus(innerRadius, outterRadius, sides, rings);
 	}
 
-	public void DrawArcBall(int size, GamaPoint pos) {
+	public void DrawArcBall(final int size, final GamaPoint pos) {
 
 		gl.glTranslated(pos.x, -pos.y, pos.z);
 		// DrawXYZAxis(1.0d);
-		double innerRadius = 0.02d*size;
-		double outterRadius = 1.0d*size;
+		double innerRadius = 0.02d * size;
+		double outterRadius = 1.0d * size;
 		gl.glColor3d(0.0d, 0.0d, 1.0d);
 		DrawTorus(innerRadius, outterRadius, 100, 100);
 
@@ -92,7 +91,7 @@ public class MyGraphics {
 
 	}
 
-	void DrawRectangle(double width, double height, Point point) {
+	void DrawRectangle(final double width, final double height, final Point point) {
 		gl.glBegin(GL_POLYGON); // draw using quads
 		gl.glVertex3d(-width / 2, height / 2, 0.0d);
 		gl.glVertex3d(width / 2, height / 2, 0.0d);
@@ -101,7 +100,7 @@ public class MyGraphics {
 		gl.glEnd();
 	}
 
-	void DrawFan(double radius, double x, double y, int or_x, int or_y, int timestep) {
+	void DrawFan(final double radius, final double x, final double y, final int or_x, final int or_y, final int timestep) {
 		gl.glBegin(GL_TRIANGLE_FAN); // upper right
 		gl.glVertex3d(or_x * x, or_y * y, 0.0d);
 		for ( int i = 0; i <= timestep; i++ ) {
@@ -113,7 +112,8 @@ public class MyGraphics {
 		gl.glEnd();
 	}
 
-	void DrawRoundCorner(double width, double height, double x_radius, double y_radius, int nbPoints) {
+	void DrawRoundCorner(final double width, final double height, final double x_radius, final double y_radius,
+		final int nbPoints) {
 
 		double xc = width / 2 * 0.8;
 		double yc = height / 2 * 0.8;

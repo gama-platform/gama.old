@@ -1,12 +1,11 @@
 package msi.gama.jogl.utils;
 
-import javax.media.opengl.GL;
 import msi.gama.jogl.utils.JTSGeometryOpenGLDrawer.JTSDrawer;
 
 public class BasicOpenGlDrawer {
 
 	// OpenGL member
-	private final GL gl;
+	// private final GL gl;
 
 	// need to have the GLRenderer to enable texture mapping.
 	public JOGLAWTGLRenderer renderer;
@@ -15,7 +14,7 @@ public class BasicOpenGlDrawer {
 
 	public BasicOpenGlDrawer(final JOGLAWTGLRenderer gLRender) {
 
-		gl = gLRender.gl;
+		// gl = gLRender.gl;
 		renderer = gLRender;
 
 		myJTSDrawer = new JTSDrawer(renderer);

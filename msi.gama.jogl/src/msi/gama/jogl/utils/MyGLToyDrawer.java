@@ -298,18 +298,6 @@ public class MyGLToyDrawer {
 		gl.glEnd();
 	}
 
-	public static void DrawSphere(final GL gl, final GLU glu, final double radius) {
-		// Draw sphere (possible styles: FILL, LINE, POINT).
-		GLUquadric earth = glu.gluNewQuadric();
-		glu.gluQuadricDrawStyle(earth, GLU.GLU_FILL);
-		glu.gluQuadricNormals(earth, GLU.GLU_FLAT);
-		glu.gluQuadricOrientation(earth, GLU.GLU_OUTSIDE);
-		final int slices = 16;
-		final int stacks = 16;
-		glu.gluSphere(earth, radius, slices, stacks);
-		glu.gluDeleteQuadric(earth);
-	}
-
 	public void DrawROI(final GL gl, final double x1, final double y1, final double x2, final double y2,
 		final boolean z_fighting, final double maxEnvDim) {
 

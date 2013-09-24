@@ -20,7 +20,7 @@ public class VertexArrayHandler {
 	// need to have the GLRenderer to enable texture mapping.
 	public JOGLAWTGLRenderer myGLRender;
 
-	public BasicOpenGlDrawer basicDrawer;
+	// public BasicOpenGlDrawer basicDrawer;
 
 	float alpha = 1.0f;
 
@@ -179,7 +179,7 @@ public class VertexArrayHandler {
 	public VertexArrayHandler(final GL gl, final GLU glu, final JOGLAWTGLRenderer gLRender) {
 		myGl = gl;
 		myGLRender = gLRender;
-		basicDrawer = new BasicOpenGlDrawer(myGLRender);
+		// basicDrawer = new BasicOpenGlDrawer(myGLRender);
 	}
 
 	/**

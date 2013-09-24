@@ -19,7 +19,6 @@ import java.nio.IntBuffer;
 import javax.imageio.ImageIO;
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.*;
-
 import msi.gama.metamodel.shape.GamaPoint;
 
 public class GLUtil {
@@ -37,7 +36,7 @@ public class GLUtil {
 	 * @param b blue
 	 * @param a-alfa s cooficient of transparency
 	 */
-	public static void createAmbientLight(GL gl, float r, float g, float b, float a) {
+	public static void createAmbientLight(final GL gl, final float r, final float g, final float b, final float a) {
 		gl.glEnable(GL.GL_LIGHTING);
 		float colors[] = { r, g, b, a };
 		gl.glLightModelfv(GL.GL_LIGHT_MODEL_AMBIENT, colors, 0);
@@ -50,7 +49,7 @@ public class GLUtil {
 	 * @param position
 	 * @param n_ofLight
 	 */
-	public static void createDiffuseLight(GL gl, float colors[], float position[], int n_ofLight) {
+	public static void createDiffuseLight(final GL gl, final float colors[], final float position[], final int n_ofLight) {
 		switch (n_ofLight) {
 			case 0: {
 				gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, position, 0);
@@ -113,7 +112,7 @@ public class GLUtil {
 	 * @param position
 	 * @param n_ofLight
 	 */
-	public static void createDiffuseLight(GL gl, int n_ofLight, float pos) {
+	public static void createDiffuseLight(final GL gl, final int n_ofLight, final float pos) {
 		float colors[] = { 1, 1, 1, 1 };
 		float position[] = { pos, pos, pos, 1 };
 
@@ -171,7 +170,8 @@ public class GLUtil {
 		}
 	}// end of create Diffuse Light
 
-	public static void DrawColorTriangle(GL gl, float x, float y, float z, float alpha, float size) {
+	public static void DrawColorTriangle(final GL gl, final float x, final float y, final float z, final float alpha,
+		final float size) {
 		// ----- Render a triangle -----
 		gl.glTranslatef(x, y, z); // translate left and into the screen
 		gl.glBegin(GL_TRIANGLES); // draw using triangles
@@ -193,7 +193,7 @@ public class GLUtil {
 	 * @param alfa - determines black-white-shade color of light R=G=B=alfa
 	 * @param size takse vaules from 0 to 128 and determines size of flash when soft body
 	 */
-	public static void createSoftMaterial(GL gl, boolean isSoft, float alfa, int size) {
+	public static void createSoftMaterial(final GL gl, final boolean isSoft, float alfa, int size) {
 		if ( isSoft ) {
 			float cooficientColor[] = { alfa, alfa, alfa, 1 };
 			gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, cooficientColor, 0);
@@ -219,8 +219,8 @@ public class GLUtil {
 	 * @param alfa a blank cooficient
 	 * @param n_ofLight
 	 */
-	public static void createDirectionLight(GL gl, float disp_color[], float flash_color[], float position[],
-		float direction[], float size, float alfa, int n_ofLight) {
+	public static void createDirectionLight(final GL gl, final float disp_color[], final float flash_color[],
+		final float position[], final float direction[], final float size, final float alfa, final int n_ofLight) {
 		switch (n_ofLight) {
 			case 0: {
 				gl.glLightfv(GL.GL_LIGHT0, GL.GL_POSITION, position, 0);
@@ -324,7 +324,8 @@ public class GLUtil {
 	 * @param direction
 	 * @param n_ofLight
 	 */
-	public static void createDirectionLight(GL gl, float position[], float direction[], int n_ofLight) {
+	public static void createDirectionLight(final GL gl, final float position[], final float direction[],
+		final int n_ofLight) {
 		float disp_color[] = { 1, 1, 1, 1 };
 		float flash_color[] = { 1, 1, 1, 1 };
 		float size = 30;
@@ -434,7 +435,8 @@ public class GLUtil {
 	 * @param fog_hint hint specifies whether fog calculations are done per pixel (GL_NICEST) or per vertex
 	 *            (GL_FASTEST).
 	 */
-	public static void enableFog(GL gl, float color[], float start, float end, int mode, int fog_hint, float density) {
+	public static void enableFog(final GL gl, final float color[], final float start, final float end, final int mode,
+		final int fog_hint, final float density) {
 		gl.glEnable(GL.GL_FOG);
 		gl.glFogfv(GL.GL_FOG_COLOR, color, 0);
 		gl.glFogf(GL.GL_FOG_DENSITY, density);
@@ -444,103 +446,115 @@ public class GLUtil {
 		gl.glHint(GL.GL_FOG_HINT, fog_hint);
 	}
 
-	public static void enableSmooth(GL gl) {
+	public static void enableSmooth(final GL gl) {
 		gl.glShadeModel(GL.GL_SMOOTH);
 	}
 
-	public static void enableFlat(GL gl) {
+	public static void enableFlat(final GL gl) {
 		gl.glShadeModel(GL.GL_FLAT);
 	}
 
-	public static void enableBlend(GL gl) {
+	public static void enableBlend(final GL gl) {
 		gl.glEnable(GL.GL_BLEND);
 		gl.glBlendFunc(GL.GL_SRC_ALPHA, GL.GL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	public static void enableColorMaterial(GL gl) {
+	public static void enableColorMaterial(final GL gl) {
 		gl.glEnable(GL.GL_COLOR_MATERIAL);
 		gl.glColorMaterial(GL.GL_FRONT_AND_BACK, GL.GL_AMBIENT_AND_DIFFUSE);
 	}
 
-	public static void enableDepthTest(GL gl) {
+	public static void enableDepthTest(final GL gl) {
 		// the depth buffer & enable the depth testing
 		gl.glClearDepth(1.0f);
 		gl.glEnable(GL_DEPTH_TEST); // enables depth testing
 		gl.glDepthFunc(GL.GL_LEQUAL); // the type of depth test to do
 	}
 
-	public static void enableLighting(GL gl) {
+	public static void enableLighting(final GL gl) {
 		gl.glEnable(GL.GL_LIGHTING);
 	}
 
-	public static void disableFog(GL gl) {
+	public static void disableFog(final GL gl) {
 		gl.glDisable(GL.GL_FOG);
 	}
 
-	public static void disableLight(GL gl) {
+	public static void disableLight(final GL gl) {
 		gl.glDisable(GL.GL_LIGHTING);
 	}
 
-	public static void disableBlend(GL gl) {
+	public static void disableBlend(final GL gl) {
 		gl.glDisable(GL.GL_BLEND);
 	}
 
-	public static void disableColorMaterial(GL gl) {
+	public static void disableColorMaterial(final GL gl) {
 		gl.glDisable(GL.GL_COLOR_MATERIAL);
 	}
 
-	public static void disableDepthTest(GL gl) {
+	public static void disableDepthTest(final GL gl) {
 		gl.glDisable(GL.GL_DEPTH_TEST);
 	}
 
-	public static void disableSoftMaterial(GL gl) {
+	public static void disableSoftMaterial(final GL gl) {
 		float cooficientColor[] = { 0, 0, 0, 1 };
 		gl.glMaterialfv(GL.GL_FRONT, GL.GL_SPECULAR, cooficientColor, 0);
 		gl.glMateriali(GL.GL_FRONT, GL.GL_SHININESS, 0);
 
 	}
-	
-	
-	
-	
-	public static void setAmbiantLight(GL gl,Color ambientLightValue){
+
+	public static void setAmbiantLight(final GL gl, final Color ambientLightValue) {
 		float[] lightAmbientValue =
 			{ (float) ambientLightValue.getRed() / 255, (float) ambientLightValue.getGreen() / 255,
 				(float) ambientLightValue.getBlue() / 255, 1.0f };
-		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);	
+		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
 	}
-	
-    public static void setDiffuseLight(GL gl,Color ambientLightValue, GamaPoint pos ){
-    	// Diffuse light 0
-    			float[] light1DiffuseValue = { (float) ambientLightValue.getRed() / 255, (float) ambientLightValue.getGreen() / 255,
-    					(float) ambientLightValue.getBlue() / 255, 1.0f };;
-    			// Diffuse light location xyz (directed light)
-    			float light1Position[] = { (float)pos.getX(), (float)pos.getY(), (float)pos.getZ() };
-    			gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, light1DiffuseValue, 0);
-    			gl.glLightfv(GL.GL_LIGHT1, GL_POSITION, light1Position, 0);
-    }
-    
-    
-    public static void DrawDiffuseLights(GL gl, GLU glu,double radius){
-    	DrawLight0(gl,glu,radius);
-    	DrawLight1(gl,glu,radius);
-    }
-    
-    public static void DrawLight0(GL gl, GLU glu,double radius ){    	
-    	gl.glTranslatef(light0Position[0] , light0Position[1] , light0Position[2] );
-    	gl.glColor3f(1.0f, 1.0f, 0.0f);
-    	MyGLToyDrawer.DrawSphere(gl, glu, radius);
-    	gl.glTranslatef(-light0Position[0] , -light0Position[1] , -light0Position[2] );
-    }
-    public static void DrawLight1(GL gl, GLU glu,double radius ){
-    	gl.glTranslatef(light1Position[0] , light1Position[1] , light1Position[2] );
-    	gl.glColor3f(1.0f, 1.0f, 0.0f);
-    	MyGLToyDrawer.DrawSphere(gl, glu, radius);
-    	gl.glTranslatef(-light1Position[0] , -light1Position[1] , -light1Position[2] );
-    }
-	public static void InitializeLighting(GL gl, GLU glu, float widthEnv, float heightEnv, Color ambientLightValue, Color diffuseLightValue) {
 
-		//ambient
+	public static void setDiffuseLight(final GL gl, final Color ambientLightValue, final GamaPoint pos) {
+		// Diffuse light 0
+		float[] light1DiffuseValue =
+			{ (float) ambientLightValue.getRed() / 255, (float) ambientLightValue.getGreen() / 255,
+				(float) ambientLightValue.getBlue() / 255, 1.0f };;
+		// Diffuse light location xyz (directed light)
+		float light1Position[] = { (float) pos.getX(), (float) pos.getY(), (float) pos.getZ() };
+		gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, light1DiffuseValue, 0);
+		gl.glLightfv(GL.GL_LIGHT1, GL_POSITION, light1Position, 0);
+	}
+
+	public static void DrawDiffuseLights(final GL gl, final GLU glu, final double radius) {
+		DrawLight0(gl, glu, radius);
+		DrawLight1(gl, glu, radius);
+	}
+
+	public static void DrawLight0(final GL gl, final GLU glu, final double radius) {
+		gl.glTranslatef(light0Position[0], light0Position[1], light0Position[2]);
+		gl.glColor3f(1.0f, 1.0f, 0.0f);
+		DrawSphere(gl, glu, radius);
+		gl.glTranslatef(-light0Position[0], -light0Position[1], -light0Position[2]);
+	}
+
+	public static void DrawLight1(final GL gl, final GLU glu, final double radius) {
+		gl.glTranslatef(light1Position[0], light1Position[1], light1Position[2]);
+		gl.glColor3f(1.0f, 1.0f, 0.0f);
+		DrawSphere(gl, glu, radius);
+		gl.glTranslatef(-light1Position[0], -light1Position[1], -light1Position[2]);
+	}
+
+	public static void DrawSphere(final GL gl, final GLU glu, final double radius) {
+		// Draw sphere (possible styles: FILL, LINE, POINT).
+		GLUquadric earth = glu.gluNewQuadric();
+		glu.gluQuadricDrawStyle(earth, GLU.GLU_FILL);
+		glu.gluQuadricNormals(earth, GLU.GLU_FLAT);
+		glu.gluQuadricOrientation(earth, GLU.GLU_OUTSIDE);
+		final int slices = 16;
+		final int stacks = 16;
+		glu.gluSphere(earth, radius, slices, stacks);
+		glu.gluDeleteQuadric(earth);
+	}
+
+	public static void InitializeLighting(final GL gl, final GLU glu, final float widthEnv, final float heightEnv,
+		final Color ambientLightValue, final Color diffuseLightValue) {
+
+		// ambient
 		float[] lightAmbientValue =
 			{ (float) ambientLightValue.getRed() / 255, (float) ambientLightValue.getGreen() / 255,
 				(float) ambientLightValue.getBlue() / 255, 1.0f };
@@ -551,18 +565,18 @@ public class GLUtil {
 			{ (float) diffuseLightValue.getRed() / 255, (float) diffuseLightValue.getGreen() / 255,
 				(float) diffuseLightValue.getBlue() / 255, 1.0f };
 		float diffuseMean = 0.5f;
-		
+
 		float[] light0DiffuseValue = { diffuseMean, diffuseMean, diffuseMean, 1.0f };
-		light0Position[0] = widthEnv*2;
-		light0Position[1] = -heightEnv/2;
-		light0Position[2]= 2 * widthEnv;
-		light0Position[3]= 0.0f;
+		light0Position[0] = widthEnv * 2;
+		light0Position[1] = -heightEnv / 2;
+		light0Position[2] = 2 * widthEnv;
+		light0Position[3] = 0.0f;
 		gl.glLightfv(GL.GL_LIGHT0, GL.GL_DIFFUSE, lightDiffuseValue, 0);
 		gl.glLightfv(GL.GL_LIGHT0, GL_POSITION, light0Position, 0);
 
 		float[] light1DiffuseValue = { diffuseMean, diffuseMean, diffuseMean, 1.0f };
 		light1Position[0] = -widthEnv;
-		light1Position[1] = -heightEnv/2;
+		light1Position[1] = -heightEnv / 2;
 		light1Position[2] = 2 * widthEnv;
 		light1Position[3] = 1.0f;
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuseValue, 0);
@@ -589,21 +603,21 @@ public class GLUtil {
 		gl.glMaterialf(GL.GL_FRONT, GL.GL_SHININESS, 0.5f);
 	}
 
-	public static void SetAmbiantLightFromValue(GL gl, GLU glu, Color c) {
+	public static void SetAmbiantLightFromValue(final GL gl, final GLU glu, final Color c) {
 		float[] lightAmbientValue =
 			{ (float) c.getRed() / 255, (float) c.getGreen() / 255, (float) c.getBlue() / 255, 1.0f };
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
 	}
 
-	public static void UpdateAmbiantLight(GL gl, GLU glu, Color ambiantLightValue) {
+	public static void UpdateAmbiantLight(final GL gl, final GLU glu, final Color ambiantLightValue) {
 
 		float[] lightAmbientValue =
 			{ (float) ambiantLightValue.getRed() / 255, (float) ambiantLightValue.getGreen() / 255,
 				(float) ambiantLightValue.getBlue() / 255, 1.0f };
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_AMBIENT, lightAmbientValue, 0);
 	}
-	
-	public static void UpdateDiffuseLight(GL gl, GLU glu, Color diffuseLightValue) {
+
+	public static void UpdateDiffuseLight(final GL gl, final GLU glu, final Color diffuseLightValue) {
 
 		float[] lightDiffuseValue =
 			{ (float) diffuseLightValue.getRed() / 255, (float) diffuseLightValue.getGreen() / 255,
@@ -612,7 +626,7 @@ public class GLUtil {
 		gl.glLightfv(GL.GL_LIGHT1, GL.GL_DIFFUSE, lightDiffuseValue, 0);
 	}
 
-	public static void DrawLight(GL gl, GLU glu) {
+	public static void DrawLight(final GL gl, final GLU glu) {
 		gl.glTranslated(light1Position[0], -light1Position[1], light1Position[2]);
 		gl.glColor4f(1.0f, 1.0f, 0.0f, 1.0f);
 		GLUquadric quad = glu.gluNewQuadric();
@@ -626,7 +640,7 @@ public class GLUtil {
 		gl.glTranslated(-light1Position[0], light1Position[1], -light1Position[2]);
 	}
 
-	public static void InitializeLighting2(GL gl) {
+	public static void InitializeLighting2(final GL gl) {
 		// Prepare light parameters.
 		float SHINE_ALL_DIRECTIONS = 1;
 		float[] lightPos = { 0, 0, -10, SHINE_ALL_DIRECTIONS };
@@ -649,7 +663,7 @@ public class GLUtil {
 		gl.glMaterialf(GL.GL_FRONT, GL.GL_SHININESS, 0.5f);
 	}
 
-	public static void setPointSize(GL gl, float size, boolean smooth) {
+	public static void setPointSize(final GL gl, final float size, final boolean smooth) {
 		gl.glPointSize(size);
 		if ( smooth ) {
 			gl.glEnable(GL.GL_POINT_SMOOTH);
@@ -658,7 +672,7 @@ public class GLUtil {
 		}
 	}
 
-	public static void setLineWidth(GL gl, float size, boolean smooth) {
+	public static void setLineWidth(final GL gl, final float size, final boolean smooth) {
 		gl.glLineWidth(size);
 		if ( smooth ) {
 			gl.glEnable(GL.GL_LINE_SMOOTH);
@@ -673,7 +687,7 @@ public class GLUtil {
 	 * @param gl
 	 * @param type - 1 or 2.
 	 */
-	public static void setShadeMode(GL gl, int type) {
+	public static void setShadeMode(final GL gl, final int type) {
 		switch (type) {
 			case 1:
 				gl.glShadeModel(GL.GL_SMOOTH);
@@ -687,11 +701,7 @@ public class GLUtil {
 
 	}
 
-
-
-
-
-	public static void drawCircle(GL gl, double size, int n_vertexs) {
+	public static void drawCircle(final GL gl, final double size, int n_vertexs) {
 		if ( n_vertexs < 3 ) {
 			n_vertexs = 3;
 		}
@@ -707,7 +717,7 @@ public class GLUtil {
 		gl.glPopMatrix();
 	}
 
-	public static void drawEmptyCircle(GL gl, double size, int n_vertexs) {
+	public static void drawEmptyCircle(final GL gl, final double size, int n_vertexs) {
 		if ( n_vertexs < 3 ) {
 			n_vertexs = 3;
 		}
@@ -734,11 +744,11 @@ public class GLUtil {
 	// /////////////////////////////////////////////////////////////////////////////////////////////
 	// /////////////////////////////////////////////////////////////////////////////////////////////
 
-	public static void TenableTex2D(GL gl) {
+	public static void TenableTex2D(final GL gl) {
 		gl.glEnable(GL.GL_TEXTURE_2D);
 	}
 
-	public static void TdisableTex2D(GL gl) {
+	public static void TdisableTex2D(final GL gl) {
 		gl.glDisable(GL.GL_TEXTURE_2D);
 	}
 
@@ -750,8 +760,8 @@ public class GLUtil {
 	 * @param texW - texture width
 	 * @param texH - texture height
 	 */
-	public static void TcreateTexture2Dmipmap(GL gl, int texIDs[], int texture[][], int texW, int texH,
-		boolean gluMipMaps) {
+	public static void TcreateTexture2Dmipmap(final GL gl, final int texIDs[], final int texture[][], final int texW,
+		final int texH, final boolean gluMipMaps) {
 		gl.glGenTextures(texIDs.length, texIDs, 0);
 		for ( int i = 0; i < texIDs.length; i++ ) {
 			gl.glBindTexture(GL.GL_TEXTURE_2D, texIDs[i]);
@@ -779,7 +789,7 @@ public class GLUtil {
 	 * @param gluMipMaps - if yes generate texture by gluBuild2DMipMaps method
 	 * @return - texture ID
 	 */
-	public static int TcreatTexture2DFromImage(GL gl, URL url, boolean gluMipMaps) {
+	public static int TcreatTexture2DFromImage(final GL gl, final URL url, final boolean gluMipMaps) {
 		BufferedImage image = null;
 		int texID[] = new int[1];
 		try {
@@ -800,7 +810,7 @@ public class GLUtil {
 			}
 		}
 
-		GLUtil.TcreateTexture2Dmipmap(gl, texID, pixels, texW, texH, gluMipMaps);
+		TcreateTexture2Dmipmap(gl, texID, pixels, texW, texH, gluMipMaps);
 
 		return texID[0];
 	}
