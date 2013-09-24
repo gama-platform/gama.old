@@ -137,7 +137,7 @@ public class ExperimentSpecies extends GamlSpecies implements IExperimentSpecies
 					if ( !already ) {
 						parameters.put(name, p);
 					}
-					boolean registerParameter = !already;
+					// boolean registerParameter = !already;
 				}
 
 			}
