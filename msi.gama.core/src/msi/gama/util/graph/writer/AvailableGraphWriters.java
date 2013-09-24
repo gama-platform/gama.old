@@ -20,19 +20,19 @@ public class AvailableGraphWriters {
 				put("dgs", GraphStreamWriterDGS.class);
 				put("gml", GraphStreamWriterGML.class);
 				put("tikz", GraphStreamWriterTikz.class);
-				put("gexf", GephiWriterGEXF.class);
-				put("pajek", GephiWriterPajek.class);
+				// put("gexf", GephiWriterGEXF.class);
+				// put("pajek", GephiWriterPajek.class);
 				// put("dl_list", GephiWriterDLList.class);
 				// put("ucinet_list", GephiWriterDLList.class);
 				// put("dl_matrix", GephiWriterDLMatrix.class);
 				// put("ucinet_matrix", GephiWriterDLMatrix.class);
-				put("csv", GephiWriterCSV.class);
+				// put("csv", GephiWriterCSV.class);
 
 				put("graphml", GraphStreamWriterGML.class);
 				// put("tlp", GephiWriterTLP.class);
 				// put("tulip", GephiWriterTLP.class);
-				put("gdf", GephiWriterGDF.class);
-				put("guess", GephiWriterGDF.class);
+				// put("gdf", GephiWriterGDF.class);
+				// put("guess", GephiWriterGDF.class);
 
 				// not ok: put("vna", GephiWriterVNA.class);
 
@@ -49,18 +49,18 @@ public class AvailableGraphWriters {
 				// put("prefuse.graphml", PrefuseWriterGraphML.class);
 
 				// gephi
-				put("gephi.gexf", GephiWriterGEXF.class);
-				put("gephi.pajek", GephiWriterPajek.class);
+				// put("gephi.gexf", GephiWriterGEXF.class);
+				// put("gephi.pajek", GephiWriterPajek.class);
 				// put("gephi.dl_list", GephiWriterDLList.class);
 				// put("gephi.ucinet_list", GephiWriterDLList.class);
 				// put("gephi.dl_matrix", GephiWriterDLMatrix.class);
 				// put("gephi.ucinet_matrix", GephiWriterDLMatrix.class);
-				put("gephi.graphml", GephiWriterGraphML.class);
-				put("gephi.tlp", GephiWriterGraphML.class);
-				put("gephi.tulip", GephiWriterGraphML.class);
-				put("gephi.gdf", GephiWriterGDF.class);
-				put("gephi.guess", GephiWriterGDF.class);
-				put("gephi.csv", GephiWriterCSV.class);
+				// put("gephi.graphml", GephiWriterGraphML.class);
+				// put("gephi.tlp", GephiWriterGraphML.class);
+				// put("gephi.tulip", GephiWriterGraphML.class);
+				// put("gephi.gdf", GephiWriterGDF.class);
+				// put("gephi.guess", GephiWriterGDF.class);
+				// put("gephi.csv", GephiWriterCSV.class);
 
 				// not ok: put("gephi.vna", GephiWriterVNA.class);
 

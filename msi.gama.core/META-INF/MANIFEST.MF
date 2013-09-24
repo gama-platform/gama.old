@@ -314,11 +314,6 @@ Export-Package: msi.gama.common,
    msi.gaml.factories,
    msi.gaml.compilation,
    msi.gaml.types",
- msi.gaml.extensions.cluster_builder;
-  uses:="msi.gama.kernel.simulation,
-   msi.gama.metamodel.population,
-   msi.gama.runtime,
-   msi.gama.metamodel.agent",
  msi.gaml.extensions.multi_criteria;
   uses:="msi.gama.kernel.simulation,
    msi.gama.metamodel.population,
