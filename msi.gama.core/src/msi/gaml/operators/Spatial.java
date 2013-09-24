@@ -1475,7 +1475,7 @@ public abstract class Spatial {
 			In filter = In.list(scope, agents);
 			Set<IAgent> clusteredCells = new HashSet<IAgent>();
 			for ( final IAgent ag : agents ) {
-				if ( !clusteredCells.contains(ag)) {
+				if ( !clusteredCells.contains(ag) ) {
 					groups.add(simpleClusteringByDistanceRec(scope, filter, distance, clusteredCells, ag));
 				}
 			}
@@ -1490,7 +1490,7 @@ public abstract class Spatial {
 			clusteredAgs.add(currentAg);
 			group.add(currentAg);
 			for ( IAgent ag : ags ) {
-				if ( !clusteredAgs.contains(ag)) {
+				if ( !clusteredAgs.contains(ag) ) {
 					group.addAll(simpleClusteringByDistanceRec(scope, filter, distance, clusteredAgs, ag));
 				}
 			}
@@ -1633,9 +1633,9 @@ public abstract class Spatial {
 				((IGraphics.OpenGL) graphics).drawDEM(demFileName, textureFileName, scope.getSimulationScope()
 					.getEnvelope(), 1.0);
 			}
-			ILocation location;
-			final IAgent a = scope.getAgentScope();
-			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			// ILocation location;
+			// final IAgent a = scope.getAgentScope();
+			// location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			return null;// new GamaShape(scope.getSimulationScope().getInnerGeometry());
 		}
 
@@ -1648,9 +1648,9 @@ public abstract class Spatial {
 				((IGraphics.OpenGL) graphics).drawDEM(demFileName, textureFileName, scope.getSimulationScope()
 					.getEnvelope(), z_factor);
 			}
-			ILocation location;
-			final IAgent a = scope.getAgentScope();
-			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			// ILocation location;
+			// final IAgent a = scope.getAgentScope();
+			// location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			return null;// new GamaShape(scope.getSimulationScope().getInnerGeometry());
 		}
 	}
