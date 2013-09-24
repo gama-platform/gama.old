@@ -160,7 +160,7 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	public Rectangle2D drawGrid(final IScope scope, final BufferedImage img, final double[] gridValueMatrix,
 		final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
 		final ILocation locationInModelUnits, final ILocation sizeInModelUnits, final Color gridColor,
-		final Integer angle, final Double z, final boolean isDynamic, final int cellSize, final String name) {
+		final Integer angle, final Double z, final boolean isDynamic, final double cellSize, final String name) {
 
 		MyTexture texture = null;
 		if ( !renderer.getScene().getTextures().containsKey(img) ) {
@@ -208,12 +208,14 @@ public class JOGLAWTDisplayGraphics extends AbstractDisplayGraphics implements I
 	public void drawGridLine(final BufferedImage image, final Color lineColor, final String popName) {
 		double stepX, stepY;
 
+		double wRatio= (double) this.getEnvironmentWidth()/(double)image.getWidth();
+		double hRatio = (double)this.getEnvironmentHeight()/(double)image.getHeight();
 		for ( int i = 0; i < image.getWidth(); i++ ) {
 			for ( int j = 0; j < image.getHeight(); j++ ) {
 				stepX = (i + 0.5) / image.getWidth() * image.getWidth();
-				stepY = (j + 0.5) / image.getHeight() * image.getHeight();
+				stepY = (j + 0.5) / image.getHeight()* image.getHeight();
 				final Geometry g =
-					GamaGeometryType.buildRectangle(1, 1, new GamaPoint(stepX, stepY)).getInnerGeometry();
+					GamaGeometryType.buildRectangle(wRatio, hRatio, new GamaPoint(stepX*wRatio, stepY*hRatio)).getInnerGeometry();
 				renderer.getScene().addGeometry(g, null, currentZLayer, currentLayerId, lineColor, false, lineColor,
 					false, 0, 0, currentOffset, currentScale, false, "gridLine", currentLayerIsStatic,
 					getCurrentAlpha(), popName);

@@ -45,7 +45,7 @@ public class GridLayer extends ImageLayer {
 	private boolean isTriangulated;
 	private boolean isShowText;
 	private boolean drawAsDEM;
-	private int cellSize;
+	private double cellSize;
 
 	public GridLayer(final ILayerStatement layer) {
 		super(layer);
@@ -82,14 +82,14 @@ public class GridLayer extends ImageLayer {
 		final GridLayerStatement g = (GridLayerStatement) definition;
 		final IGrid m = g.getEnvironment();
 		final ILocation p = m.getDimensions();
-		cellSize = (int) m.getAgents().get(0).getGeometry().getEnvelope().getWidth();
+		cellSize = (double) m.getAgents().get(0).getGeometry().getEnvelope().getWidth();
 
 		if ( image == null ) {
 			image = ImageUtils.createCompatibleImage(p.getX(), p.getY());
 		}
 		image.setRGB(0, 0, (int) p.getX(), (int) p.getY(), m.getDisplayData(), 0, (int) p.getX());
 
-		// As their is 2 ways to give the dem we need to check which one is active
+		// As there is 2 ways to give the dem we need to check which one is active
 		// FIXME : what happen if the 2 are defined in the model?
 		if ( g.getGridValueMatrix() != null ) {
 			gridValueMatrix = g.getGridValueMatrix().getMatrix();

@@ -115,7 +115,7 @@ public class ModelScene {
 	public void addDEM(final double[] dem, final BufferedImage demTexture, final BufferedImage demImg,
 		final IAgent agent, final boolean isTextured, final boolean isTriangulated, final boolean isShowText,
 		final boolean fromImage, final Envelope env, final Double z_factor, final Double alpha, final GamaPoint offset,
-		final GamaPoint scale, final int cellSize, final MyTexture texture, final String name, final int currentLayerId) {
+		final GamaPoint scale, final double cellSize, final MyTexture texture, final String name, final int currentLayerId) {
 		dems.add(new DEMObject(dem, demTexture, demImg, agent, env, isTextured, isTriangulated, isShowText, fromImage,
 			z_factor, null, offset, scale, alpha, cellSize, texture, name, currentLayerId));
 		if ( texture != null ) {

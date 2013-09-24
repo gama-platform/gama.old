@@ -18,7 +18,7 @@ public class DEMObject extends AbstractObject {
 	public boolean isShowText;
 	public boolean fromImage;
 	public Envelope envelope;
-	public int cellSize;
+	public double cellSize;
 	public Double z_factor;
 	public MyTexture texture;
 	public String name;
@@ -27,7 +27,7 @@ public class DEMObject extends AbstractObject {
 	public DEMObject(final double[] dem, final BufferedImage demTexture, final BufferedImage demImg,
 		final IAgent agent, final Envelope env, final boolean isTextured, final boolean isTriangulated,
 		final boolean isShowText, final boolean fromImage, final Double z_factor, final Color c, final GamaPoint o,
-		final GamaPoint s, final Double a, final int cellSize, final MyTexture texture, final String name,
+		final GamaPoint s, final Double a, final double cellSize, final MyTexture texture, final String name,
 		final int layerId) {
 		super(c, o, s, a);
 		this.dem = dem;
