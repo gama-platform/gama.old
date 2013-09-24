@@ -37,6 +37,7 @@ import org.eclipse.xtext.ui.editor.*;
 import org.eclipse.xtext.ui.editor.actions.IActionContributor;
 import org.eclipse.xtext.ui.editor.contentassist.XtextContentAssistProcessor;
 import org.eclipse.xtext.ui.editor.hover.IEObjectHoverProvider;
+import org.eclipse.xtext.ui.editor.model.*;
 import org.eclipse.xtext.ui.editor.preferences.IPreferenceStoreInitializer;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.*;
 import org.eclipse.xtext.ui.resource.*;
@@ -159,6 +160,11 @@ public class GamlUiModule extends msi.gama.lang.gaml.ui.AbstractGamlUiModule {
 		binder.bind(IPreferenceStoreInitializer.class)
 			.annotatedWith(Names.named("GamlMarkOccurrenceActionContributor")) //$NON-NLS-1$
 			.to(GamlMarkOccurrenceActionContributor.class);
+	}
+
+	@Override
+	public Class<? extends IResourceForEditorInputFactory> bindIResourceForEditorInputFactory() {
+		return ResourceForIEditorInputFactory.class;
 	}
 
 }

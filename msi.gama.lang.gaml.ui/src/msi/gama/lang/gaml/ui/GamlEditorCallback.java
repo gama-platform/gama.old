@@ -4,9 +4,7 @@
  */
 package msi.gama.lang.gaml.ui;
 
-import java.util.*;
 import msi.gama.lang.gaml.trials.GamlDescriptionUtils;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.xtext.resource.*;
 import org.eclipse.xtext.ui.editor.*;
 import org.eclipse.xtext.ui.editor.validation.*;
@@ -70,17 +68,17 @@ public class GamlEditorCallback extends /* NatureAddingEditorCallback */Abstract
 		// super.afterCreatePartControl(editor);
 	}
 
-	private Set<URI> findDependentResources(final XtextResource resource) {
-		URI uri = resource.getURI();
-		Set<URI> result = new LinkedHashSet();
-		for ( IResourceDescription rd : index.getAllResourceDescriptions() ) {
-			Set<URI> uris = descriptionUtils.collectOutgoingReferences(rd);
-			if ( uris.contains(uri) ) {
-				result.add(rd.getURI());
-			}
-		}
-		return result;
-	}
+	// private Set<URI> findDependentResources(final XtextResource resource) {
+	// URI uri = resource.getURI();
+	// Set<URI> result = new LinkedHashSet();
+	// for ( IResourceDescription rd : index.getAllResourceDescriptions() ) {
+	// Set<URI> uris = descriptionUtils.collectOutgoingReferences(rd);
+	// if ( uris.contains(uri) ) {
+	// result.add(rd.getURI());
+	// }
+	// }
+	// return result;
+	// }
 
 	// @Override
 	// public void afterSave(XtextEditor editor) {
