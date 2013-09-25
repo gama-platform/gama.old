@@ -2,7 +2,8 @@ Manifest-Version: 1.0
 Bundle-ActivationPolicy: lazy
 Bundle-Name: GamaApplication
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: org.eclipse.ui.console;bundle-version="3.5.0",
+Require-Bundle: org.apache.log4j;bundle-version="1.2.15";visibility:=reexport,
+ org.eclipse.ui.console;bundle-version="3.5.0",
  msi.gama.ext,
  msi.gama.core;bundle-version="1.0.0",
  org.eclipse.ui.navigator,
@@ -14,7 +15,7 @@ Require-Bundle: org.eclipse.ui.console;bundle-version="3.5.0",
  org.eclipse.ui.ide.application,
  org.eclipse.ui.ide;bundle-version="3.7.0",
  org.apache.commons.lang;bundle-version="2.6.0",
- org.apache.log4j;bundle-version="1.2.15"
+ org.apache.commons.logging;bundle-version="1.1.1"
 Bundle-Vendor: MSI
 Bundle-Version: 1.6
 Bundle-ManifestVersion: 2
