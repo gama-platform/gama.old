@@ -15,7 +15,7 @@ import org.eclipse.xtext.resource.IDefaultResourceDescriptionStrategy;
 import org.eclipse.xtext.resource.impl.DefaultResourceDescription;
 import org.eclipse.xtext.util.IResourceScopeCache;
 import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
+import com.google.common.collect.*;
 import com.google.inject.Inject;
 
 /**
@@ -52,6 +52,7 @@ public class GamlResourceDescription extends DefaultResourceDescription {
 
 	public LinkedHashSet<URI> listImports(final GamlResource resource, final ResourceSet resourceSet) {
 		final LinkedHashSet<URI> imports = new LinkedHashSet();
+		if ( resource.getContents().isEmpty() ) { return Sets.newLinkedHashSet(); }
 		final Model model = (Model) resource.getContents().get(0);
 		for ( final Import imp : model.getImports() ) {
 			final String importUri = imp.getImportURI();
