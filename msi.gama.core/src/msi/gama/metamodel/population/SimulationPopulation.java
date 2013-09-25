@@ -67,6 +67,9 @@ public class SimulationPopulation extends GamaPopulation {
 	public void setTopology(final IScope scope, final IShape gisShape, final IShape shape) {
 		IExpression expr = species.getFacet(IKeyword.TORUS);
 		final boolean torus = expr == null ? false : Cast.as(expr.value(scope), Boolean.class);
+		if ( topology != null ) {
+			topology.dispose();
+		}
 		topology = new RootTopology(scope, gisShape, shape, torus);
 	}
 
