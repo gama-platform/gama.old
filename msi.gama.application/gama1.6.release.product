@@ -208,7 +208,7 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.hamcrest.core"/>
       <plugin id="org.junit"/>
       <plugin id="org.polarion.eclipse.team.svn.connector"/>
-      <plugin id="org.polarion.eclipse.team.svn.connector.svnkit16"/>
+      <plugin id="org.polarion.eclipse.team.svn.connector.svnkit17"/>
       <plugin id="simtools.gaml.extensions.physics"/>
       <plugin id="simtools.gaml.extensions.traffic"/>
       <plugin id="ummisco.gaml.extensions.maths"/>
