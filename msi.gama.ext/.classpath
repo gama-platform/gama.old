@@ -58,5 +58,6 @@
 	<classpathentry exported="true" kind="lib" path="commons-logging-1.1.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="opencsv-2.3.jar" sourcepath="sources/opencsv-1.3.zip"/>
 	<classpathentry exported="true" kind="lib" path="jai_core-1.1.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="jai_codec-1.1.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
