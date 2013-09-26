@@ -58,8 +58,6 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 
 	public abstract boolean hasVar(final String n);
 
-	public abstract IAgent getAgent(final ILocation value);
-
 	/**
 	 * Create agents as members of this population.
 	 * 
@@ -140,5 +138,12 @@ public interface IPopulation extends Comparable<IPopulation>, IList<IAgent>, ISt
 	public void removeListener(IPopulation.Listener listener);
 
 	public abstract void updateVariables(IScope scope, IAgent a);
+
+	/**
+	 * @param scope
+	 * @param coord
+	 * @return
+	 */
+	IAgent getAgent(IScope scope, ILocation coord);
 
 }

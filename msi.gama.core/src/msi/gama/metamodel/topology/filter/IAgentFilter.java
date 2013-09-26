@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -18,10 +18,10 @@
  */
 package msi.gama.metamodel.topology.filter;
 
-import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
+import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
 
 public interface IAgentFilter {
@@ -30,18 +30,18 @@ public interface IAgentFilter {
 
 		IAgentFilter filter;
 
-		public Not(IAgentFilter other) {
+		public Not(final IAgentFilter other) {
 			filter = other;
 		}
 
 		@Override
-		public boolean accept(IShape source, IShape a) {
-			return !filter.accept(source, a);
+		public boolean accept(final IScope scope, final IShape source, final IShape a) {
+			return !filter.accept(scope, source, a);
 		}
 
 		@Override
-		public boolean accept(ILocation source, IShape a) {
-			return !filter.accept(source, a);
+		public boolean accept(final IScope scope, final ILocation source, final IShape a) {
+			return !filter.accept(scope, source, a);
 		}
 
 		@Override
@@ -50,14 +50,17 @@ public interface IAgentFilter {
 		}
 
 		@Override
-		public boolean filterSpecies(ISpecies species) {
+		public boolean filterSpecies(final ISpecies species) {
 			return !filter.filterSpecies(species);
 		}
 
 		@Override
-		public Collection<? extends IShape> getShapes(IScope scope) {
-			List<IAgent> agents = scope.getSimulationScope().getAgents();
-			agents.removeAll(filter.getShapes(scope));
+		public IContainer<?, ? extends IShape> getShapes(final IScope scope) {
+			IList<IAgent> agents = scope.getSimulationScope().getAgents();
+			for ( IShape s : filter.getShapes(scope) ) {
+				agents.remove(s);
+			}
+			// agents.removeAll((Collection<?>) filter.getShapes(scope).iterable(scope));
 			return agents;
 		}
 
@@ -73,13 +76,13 @@ public interface IAgentFilter {
 		}
 
 		@Override
-		public boolean accept(final IShape source, final IShape agent) {
-			return a.accept(source, agent) && b.accept(source, agent);
+		public boolean accept(final IScope scope, final IShape source, final IShape agent) {
+			return a.accept(scope, source, agent) && b.accept(scope, source, agent);
 		}
 
 		@Override
-		public boolean accept(final ILocation source, final IShape agent) {
-			return a.accept(source, agent) && b.accept(source, agent);
+		public boolean accept(final IScope scope, final ILocation source, final IShape agent) {
+			return a.accept(scope, source, agent) && b.accept(scope, source, agent);
 		}
 
 		@Override
@@ -91,10 +94,14 @@ public interface IAgentFilter {
 		 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getShapes()
 		 */
 		@Override
-		public Collection<? extends IShape> getShapes(IScope scope) {
-			Collection<IShape> result = new HashSet();
-			result.addAll(a.getShapes(scope));
-			result.retainAll(b.getShapes(scope));
+		public IContainer<?, ? extends IShape> getShapes(final IScope scope) {
+			IList<IShape> result = new GamaList();
+			for ( IShape s : a.getShapes(scope) ) {
+				result.add(s);
+			}
+			for ( IShape s : b.getShapes(scope) ) {
+				result.add(s);
+			}
 			return result;
 		}
 
@@ -107,14 +114,26 @@ public interface IAgentFilter {
 		}
 	}
 
-	public boolean accept(IShape source, IShape a);
-
-	public boolean accept(ILocation source, IShape a);
-
 	public ISpecies speciesFiltered();
 
 	public boolean filterSpecies(ISpecies species);
 
-	public Collection<? extends IShape> getShapes(IScope scope);
+	public IContainer<?, ? extends IShape> getShapes(IScope scope);
+
+	/**
+	 * @param scope
+	 * @param source
+	 * @param a
+	 * @return
+	 */
+	boolean accept(IScope scope, IShape source, IShape a);
+
+	/**
+	 * @param scope
+	 * @param source
+	 * @param a
+	 * @return
+	 */
+	boolean accept(IScope scope, ILocation source, IShape a);
 
 }

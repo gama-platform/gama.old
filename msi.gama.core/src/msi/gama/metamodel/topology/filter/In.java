@@ -18,7 +18,6 @@
  */
 package msi.gama.metamodel.topology.filter;
 
-import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.population.IPopulation;
 import msi.gama.metamodel.shape.*;
@@ -27,17 +26,16 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
-import com.google.common.collect.ImmutableList;
 
 public abstract class In implements IAgentFilter {
 
 	public static In list(final IScope scope, final IContainer<?, ? extends IShape> targets)
 		throws GamaRuntimeException {
-		return new InList(new HashSet(targets.listValue(scope)));
+		return new InList(targets);
 	}
 
 	public static In list(final IScope scope, final IList<? extends IShape> targets) {
-		return new InList(new HashSet(targets));
+		return new InList(targets);
 	}
 
 	public static In edgesOf(final ISpatialGraph graph) {
@@ -53,27 +51,27 @@ public abstract class In implements IAgentFilter {
 	}
 
 	@Override
-	public abstract boolean accept(IShape source, IShape a);
+	public abstract boolean accept(IScope scope, IShape source, IShape a);
 
 	@Override
-	public abstract boolean accept(ILocation source, IShape a);
+	public abstract boolean accept(IScope scope, ILocation source, IShape a);
 
 	private static class InList extends In {
 
-		final Set<IShape> agents;
+		final IContainer<?, ? extends IShape> agents;
 
-		InList(final Set list) {
+		InList(final IContainer<?, ? extends IShape> list) {
 			agents = list;
 		}
 
 		@Override
-		public boolean accept(final IShape source, final IShape a) {
-			return a.getGeometry() != source.getGeometry() && agents.contains(a);
+		public boolean accept(final IScope scope, final IShape source, final IShape a) {
+			return a.getGeometry() != source.getGeometry() && agents.contains(scope, a);
 		}
 
 		@Override
-		public boolean accept(final ILocation source, final IShape a) {
-			return agents.contains(a);
+		public boolean accept(final IScope scope, final ILocation source, final IShape a) {
+			return agents.contains(scope, a);
 		}
 
 		@Override
@@ -85,7 +83,7 @@ public abstract class In implements IAgentFilter {
 		 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getShapes()
 		 */
 		@Override
-		public Collection<? extends IShape> getShapes(final IScope scope) {
+		public IContainer<?, ? extends IShape> getShapes(final IScope scope) {
 			return agents;
 		}
 
@@ -107,13 +105,13 @@ public abstract class In implements IAgentFilter {
 		}
 
 		@Override
-		public boolean accept(final IShape source, final IShape a) {
+		public boolean accept(final IScope scope, final IShape source, final IShape a) {
 			return a.getGeometry() != source.getGeometry() && byEdges ? graph.containsEdge(a) : graph.containsVertex(a);
 
 		}
 
 		@Override
-		public boolean accept(final ILocation source, final IShape a) {
+		public boolean accept(final IScope scope, final ILocation source, final IShape a) {
 			return byEdges ? graph.containsEdge(a) : graph.containsVertex(a);
 		}
 
@@ -126,8 +124,8 @@ public abstract class In implements IAgentFilter {
 		 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getShapes()
 		 */
 		@Override
-		public Collection<? extends IShape> getShapes(final IScope scope) {
-			return byEdges ? graph.edgeSet() : graph.getVertices();
+		public IContainer<?, ? extends IShape> getShapes(final IScope scope) {
+			return byEdges ? graph.getEdges() : graph.getVertices();
 		}
 
 		@Override
@@ -145,7 +143,7 @@ public abstract class In implements IAgentFilter {
 		}
 
 		@Override
-		public boolean accept(final IShape source, final IShape a) {
+		public boolean accept(final IScope scope, final IShape source, final IShape a) {
 			final IAgent agent = a.getAgent();
 			if ( agent == null ) { return false; }
 			if ( agent.getPopulation() != pop ) { return false; }
@@ -166,7 +164,7 @@ public abstract class In implements IAgentFilter {
 		 *      msi.gama.metamodel.shape.IShape)
 		 */
 		@Override
-		public boolean accept(final ILocation source, final IShape a) {
+		public boolean accept(final IScope scope, final ILocation source, final IShape a) {
 			return a.getAgent() != null && a.getAgent().getPopulation() == pop;
 		}
 
@@ -174,10 +172,8 @@ public abstract class In implements IAgentFilter {
 		 * @see msi.gama.metamodel.topology.filter.IAgentFilter#getShapes()
 		 */
 		@Override
-		public Collection<? extends IShape> getShapes(final IScope scope) {
-			Iterable iterable = pop.iterable(scope);
-			if ( iterable instanceof Collection ) { return (Collection<? extends IShape>) iterable; }
-			return ImmutableList.copyOf(iterable);
+		public IContainer<?, ? extends IShape> getShapes(final IScope scope) {
+			return pop;
 		}
 
 		@Override

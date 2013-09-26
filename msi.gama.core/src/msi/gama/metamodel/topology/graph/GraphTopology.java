@@ -77,13 +77,13 @@ public class GraphTopology extends AbstractTopology {
 
 		if ( !sourceNode ) {
 			edgeS =
-				source instanceof ILocation ? getAgentClosestTo((ILocation) source, filter) : getAgentClosestTo(source,
-					filter);
+				source instanceof ILocation ? getAgentClosestTo(scope, (ILocation) source, filter) : getAgentClosestTo(
+					scope, source, filter);
 		}
 		if ( !targetNode ) {
 			edgeT =
-				target instanceof ILocation ? getAgentClosestTo((ILocation) target, filter) : getAgentClosestTo(target,
-					filter);
+				target instanceof ILocation ? getAgentClosestTo(scope, (ILocation) target, filter) : getAgentClosestTo(
+					scope, target, filter);
 		}
 
 		if ( edgeS == null && !sourceNode || edgeT == null && !targetNode ) { return null; }
@@ -221,10 +221,10 @@ public class GraphTopology extends AbstractTopology {
 			} else {
 				final IAgentFilter filter = In.edgesOf(getPlaces());
 				if ( !sourceNode ) {
-					edgeS = getAgentClosestTo(source, filter);
+					edgeS = getAgentClosestTo(scope, source, filter);
 				}
 				if ( !targetNode ) {
-					edgeT = getAgentClosestTo(target, filter);
+					edgeT = getAgentClosestTo(scope, target, filter);
 				}
 			}
 		}
@@ -332,8 +332,9 @@ public class GraphTopology extends AbstractTopology {
 	 *      boolean)
 	 */
 	@Override
-	public Iterator<IAgent> getAgentsIn(final IShape source, final IAgentFilter f, final boolean covered) {
-		return Iterators.filter(super.getAgentsIn(source, f, covered), new Predicate<IAgent>() {
+	public Iterator<IAgent> getAgentsIn(final IScope scope, final IShape source, final IAgentFilter f,
+		final boolean covered) {
+		return Iterators.filter(super.getAgentsIn(scope, source, f, covered), new Predicate<IAgent>() {
 
 			@Override
 			public boolean apply(final IAgent ag) {

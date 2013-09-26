@@ -54,7 +54,7 @@ public class GamaAgentType extends GamaType<IAgent> {
 		if ( obj instanceof IAgent ) { return ((IAgent) obj).isInstanceOf(species, false) ? (IAgent) obj : null; }
 		if ( obj instanceof Integer ) { return scope.getAgentScope().getPopulationFor(species).getAgent((Integer) obj); }
 		if ( obj instanceof ILocation ) {
-			final IAgent result = scope.getAgentScope().getPopulationFor(species).getAgent((ILocation) obj);
+			final IAgent result = scope.getAgentScope().getPopulationFor(species).getAgent(scope, (ILocation) obj);
 			return result;
 		}
 		return null;

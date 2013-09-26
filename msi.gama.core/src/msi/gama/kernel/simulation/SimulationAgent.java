@@ -160,13 +160,25 @@ public class SimulationAgent extends GamlAgent {
 
 	@Override
 	public synchronized void setGeometry(final IShape geom) {
+		if ( geometry != null ) {
+			GAMA.reportError(
+				GamaRuntimeException
+					.warning(
+						"Changing the shape of the world after its creation is a bad idea that can have unexpected consequences",
+						scope), false);
+		}
 		final Envelope env = geom.getEnvelope();
 		final GamaPoint p = new GamaPoint(-env.getMinX(), -env.getMinY());
 		geometry = Transformations.translated_by(getScope(), geom, p);
 		getPopulation().setTopology(getScope(), geom, geometry);
-		for ( final IAgent ag : getAgents() ) {
-			ag.setGeometry(Transformations.translated_by(getScope(), ag.getGeometry(), p));
-		}
+		// AD 25/09/13 : is this step necessary ? Why should the agents be translated ? The problem is that GIS agents
+		// already compensate for this when being loaded, while regular agents dont.
+		// If a grid is created in a 100x100 environment and then the shape of the environment gets changed to GIS
+		// coordinates, all the grid agents are translated ...
+		// // It would be better to use hostChangedShape() on the populations.
+		// for ( final IAgent ag : getAgents() ) {
+		// ag.setGeometry(Transformations.translated_by(getScope(), ag.getGeometry(), p));
+		// }
 
 	}
 

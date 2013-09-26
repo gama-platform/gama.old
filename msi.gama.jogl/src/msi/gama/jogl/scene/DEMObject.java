@@ -5,6 +5,8 @@ import java.awt.image.BufferedImage;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import com.vividsolutions.jts.geom.Envelope;
 
 public class DEMObject extends AbstractObject {
@@ -74,11 +76,17 @@ public class DEMObject extends AbstractObject {
 					renderer.currentPickedObject = this;
 					// The picked image is the grid
 					if ( this.name != null ) {
-						Point pickedPoint =
+						final Point pickedPoint =
 							renderer.getIntWorldPointFromWindowPoint(new Point(renderer.camera
 								.getLastMousePressedPosition().x, renderer.camera.getLastMousePressedPosition().y));
-						IAgent ag =
-							agent.getPopulationFor(this.name).getAgent(new GamaPoint(pickedPoint.x, -pickedPoint.y));
+						IAgent ag = GAMA.run(new InScope<IAgent>() {
+
+							@Override
+							public IAgent run(final IScope scope) {
+								return agent.getPopulationFor(name).getAgent(scope,
+									new GamaPoint(pickedPoint.x, -pickedPoint.y));
+							}
+						});
 						if ( ag != null ) {
 							renderer.displaySurface.selectAgents(ag, layerId - 1);
 						}

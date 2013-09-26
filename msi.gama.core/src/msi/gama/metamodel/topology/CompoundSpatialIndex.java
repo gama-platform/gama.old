@@ -6,6 +6,7 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
 import msi.gama.metamodel.topology.grid.IGrid;
+import msi.gama.runtime.IScope;
 import msi.gama.util.*;
 import msi.gaml.species.ISpecies;
 import com.google.common.base.Function;
@@ -83,27 +84,28 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	}
 
 	@Override
-	public Iterator<IShape> allAtDistance(final IShape source, final double dist, final IAgentFilter f) {
+	public Iterator<IShape> allAtDistance(final IScope scope, final IShape source, final double dist,
+		final IAgentFilter f) {
 
 		return Iterators.concat(Iterators.transform(findSpatialIndexes(f),
 			new Function<ISpatialIndex, Iterator<IShape>>() {
 
 				@Override
 				public Iterator<IShape> apply(final ISpatialIndex input) {
-					return input.allAtDistance(source, dist, f);
+					return input.allAtDistance(scope, source, dist, f);
 				}
 			}));
 	}
 
 	@Override
-	public IShape firstAtDistance(final IShape source, final double dist, final IAgentFilter f) {
+	public IShape firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
 		// TODO -- Verify : dist not taken into account here. Normal ?
 		final Iterator<ISpatialIndex> sis = findSpatialIndexes(f);
 		final List<ISpatialIndex> list = ImmutableList.copyOf(sis);
 		final IList<IShape> shapes = new GamaList();
 		for ( int i = 0; i < steps.length; i++ ) {
 			for ( final ISpatialIndex si : list ) {
-				final IShape first = si.firstAtDistance(source, steps[i], f);
+				final IShape first = si.firstAtDistance(scope, source, steps[i], f);
 				if ( first != null ) {
 					shapes.add(first);
 				}
@@ -116,14 +118,14 @@ public class CompoundSpatialIndex extends Object implements ISpatialIndex.Compou
 	}
 
 	@Override
-	public Iterator<IShape> allInEnvelope(final IShape source, final Envelope envelope, final IAgentFilter f,
-		final boolean contained) {
+	public Iterator<IShape> allInEnvelope(final IScope scope, final IShape source, final Envelope envelope,
+		final IAgentFilter f, final boolean contained) {
 		return Iterators.concat(Iterators.transform(findSpatialIndexes(f),
 			new Function<ISpatialIndex, Iterator<IShape>>() {
 
 				@Override
 				public Iterator<IShape> apply(final ISpatialIndex input) {
-					return input.allInEnvelope(source, envelope, f, contained);
+					return input.allInEnvelope(scope, source, envelope, f, contained);
 				}
 			}));
 

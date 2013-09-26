@@ -83,7 +83,7 @@ public class AmorphousTopology implements ITopology {
 	 * @see msi.gama.environment.ITopology#initialize(msi.gama.interfaces.IPopulation)
 	 */
 	@Override
-	public void initialize(final IPopulation pop) throws GamaRuntimeException {}
+	public void initialize(final IScope scope, final IPopulation pop) throws GamaRuntimeException {}
 
 	/**
 	 * @see msi.gama.environment.ITopology#updateAgent(msi.gama.interfaces.IAgent, boolean, msi.gama.util.GamaPoint,
@@ -114,7 +114,7 @@ public class AmorphousTopology implements ITopology {
 	 *      msi.gama.environment.IAgentFilter)
 	 */
 	@Override
-	public IAgent getAgentClosestTo(final IShape source, final IAgentFilter filter) {
+	public IAgent getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter) {
 		return null;
 	}
 
@@ -133,7 +133,8 @@ public class AmorphousTopology implements ITopology {
 	 *      boolean)
 	 */
 	@Override
-	public Iterator<IAgent> getAgentsIn(final IShape source, final IAgentFilter f, final boolean covered) {
+	public Iterator<IAgent> getAgentsIn(final IScope scope, final IShape source, final IAgentFilter f,
+		final boolean covered) {
 		return Iterators.emptyIterator();
 	}
 
@@ -269,7 +270,7 @@ public class AmorphousTopology implements ITopology {
 	 *      msi.gama.metamodel.topology.filter.IAgentFilter)
 	 */
 	@Override
-	public IAgent getAgentClosestTo(final ILocation source, final IAgentFilter filter) {
+	public IAgent getAgentClosestTo(final IScope scope, final ILocation source, final IAgentFilter filter) {
 		return null;
 	}
 

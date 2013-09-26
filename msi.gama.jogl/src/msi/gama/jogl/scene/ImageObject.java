@@ -5,6 +5,8 @@ import java.awt.image.BufferedImage;
 import msi.gama.jogl.utils.JOGLAWTGLRenderer;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.GamaPoint;
+import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 
 public class ImageObject extends AbstractObject {
 
@@ -71,10 +73,16 @@ public class ImageObject extends AbstractObject {
 					renderer.currentPickedObject = this;
 					// The picked image is the grid
 					if ( this.name != null ) {
-						Point pickedPoint =
+						final Point pickedPoint =
 							renderer.getIntWorldPointFromWindowPoint(renderer.camera.getLastMousePressedPosition());
-						IAgent ag =
-							agent.getPopulationFor(this.name).getAgent(new GamaPoint(pickedPoint.x, -pickedPoint.y));
+						IAgent ag = GAMA.run(new InScope<IAgent>() {
+
+							@Override
+							public IAgent run(final IScope scope) {
+								return agent.getPopulationFor(name).getAgent(scope,
+									new GamaPoint(pickedPoint.x, -pickedPoint.y));
+							}
+						});
 						renderer.displaySurface.selectAgents(ag, layerId - 1);
 					} else {
 						renderer.displaySurface.selectAgents(agent, layerId - 1);

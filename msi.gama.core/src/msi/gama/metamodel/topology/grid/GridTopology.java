@@ -45,10 +45,10 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	@Override
-	public void initialize(final IPopulation pop) throws GamaRuntimeException {
+	public void initialize(final IScope scope, final IPopulation pop) throws GamaRuntimeException {
 		getPlaces().setCellSpecies(pop);
 		((ISpatialIndex.Compound) getSpatialIndex()).add(getPlaces(), pop.getSpecies());
-		super.initialize(pop);
+		super.initialize(scope, pop);
 		// if ( getPlaces().getGridValue() != null && !getPlaces().getGridValue().isEmpty() ) {
 		// for ( final IAgent ag : pop ) {
 		// ag.setAttribute("grid_value", getPlaces().getGridValue(ag));
@@ -91,23 +91,23 @@ public class GridTopology extends AbstractTopology {
 	}
 
 	@Override
-	public IAgent getAgentClosestTo(final IShape source, final IAgentFilter filter) {
+	public IAgent getAgentClosestTo(final IScope scope, final IShape source, final IAgentFilter filter) {
 		// We first grab the cell at the location closest to the centroid of the source
 		final IAgent place = getPlaces().getAgentAt(source.getLocation());
 		// If the filter accepts it, we return it
-		if ( filter.accept(source, place) ) { return place; }
+		if ( filter.accept(scope, source, place) ) { return place; }
 		// Otherwise we get the "normal" closest agent (in the spatial index)
-		return super.getAgentClosestTo(source, filter);
+		return super.getAgentClosestTo(scope, source, filter);
 	}
 
 	@Override
-	public IAgent getAgentClosestTo(final ILocation source, final IAgentFilter filter) {
+	public IAgent getAgentClosestTo(final IScope scope, final ILocation source, final IAgentFilter filter) {
 		// We first grab the cell at the location closest to the centroid of the source
 		final IAgent place = getPlaces().getAgentAt(source);
 		// If the filter accepts it, we return it
-		if ( filter.accept(source, place) ) { return place; }
+		if ( filter.accept(scope, source, place) ) { return place; }
 		// Otherwise we get the "normal" closest agent (in the spatial index)
-		return super.getAgentClosestTo(source, filter);
+		return super.getAgentClosestTo(scope, source, filter);
 	}
 
 	/**
@@ -212,7 +212,8 @@ public class GridTopology extends AbstractTopology {
 		if ( filter.filterSpecies(getPlaces().getCellSpecies()) ) { return placesConcerned; }
 		// Otherwise, we return all the agents that intersect the geometry formed by the shapes of the cells (incl. the
 		// cells themselves) and that are accepted by the filter
-		return getAgentsIn(GamaGeometryType.geometriesToGeometry(scope, new GamaList(placesConcerned)), filter, false);
+		return getAgentsIn(scope, GamaGeometryType.geometriesToGeometry(scope, new GamaList(placesConcerned)), filter,
+			false);
 
 	}
 

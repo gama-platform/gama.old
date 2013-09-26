@@ -24,7 +24,6 @@ import msi.gama.kernel.model.IModel;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.ITopology;
-import msi.gama.metamodel.topology.graph.ISpatialGraph;
 import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.*;
@@ -182,7 +181,7 @@ public class Cast {
 		// if ( val instanceof String ) { return species.getAgent((String) val); }
 		if ( val instanceof Integer ) { return scope.getAgentScope().getPopulationFor(species).getAgent((Integer) val); }
 		if ( val instanceof ILocation ) { return scope.getAgentScope().getPopulationFor(species)
-			.getAgent((GamaPoint) val); }
+			.getAgent(scope, (GamaPoint) val); }
 		return null;
 	}
 

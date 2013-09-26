@@ -67,6 +67,16 @@ public class GamaRuntimeException extends RuntimeException {
 		return ex;
 	}
 
+	public static GamaRuntimeException warning(final String s, final IScope scope) {
+		GamaRuntimeException ex = warning(s);
+		if ( scope == null ) { return ex; }
+		IStatement statement = scope.getStatement();
+		if ( statement != null ) {
+			ex.addContext(statement);
+		}
+		return ex;
+	}
+
 	public static GamaRuntimeException warning(final String s) {
 		return new GamaRuntimeException(s, true);
 	}

@@ -13,7 +13,8 @@ import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.*;
 import msi.gama.metamodel.topology.AbstractTopology;
 import msi.gama.metamodel.topology.filter.Different;
-import msi.gama.runtime.GAMA;
+import msi.gama.runtime.*;
+import msi.gama.runtime.GAMA.InScope;
 import com.sun.opengl.util.BufferUtil;
 import com.vividsolutions.jts.geom.Envelope;
 
@@ -160,12 +161,19 @@ public abstract class AbstractCamera implements ICamera {
 	public void mouseReleased(final MouseEvent arg0) {
 		if ( canSelectOnRelease(arg0) && isViewIn2DPlan() && isEnableROIDrawing() ) {
 			if ( arg0.isAltDown() ) {
-				Iterator<IShape> shapes =
-					GAMA.getSimulation()
-						.getTopology()
-						.getSpatialIndex()
-						.allInEnvelope(new GamaPoint(getRoiCenter().x, -getRoiCenter().y),
-							new Envelope(region[0], region[2], -region[1], -region[3]), new Different(), true);
+
+				Iterator<IShape> shapes = GAMA.run(new InScope<Iterator<IShape>>() {
+
+					@Override
+					public Iterator<IShape> run(final IScope scope) {
+						return scope
+							.getTopology()
+							.getSpatialIndex()
+							.allInEnvelope(scope, new GamaPoint(getRoiCenter().x, -getRoiCenter().y),
+								new Envelope(region[0], region[2], -region[1], -region[3]), new Different(), true);
+					}
+				});
+
 				final Iterator<IAgent> agents = AbstractTopology.toAgents(shapes);
 				getRenderer().displaySurface.selectSeveralAgents(agents, 0);
 			}

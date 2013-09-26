@@ -1348,8 +1348,8 @@ public abstract class Spatial {
 		public static IList<IAgent> inside(final IScope scope, final IContainer<?, IShape> targets,
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
 			final ITopology t = scope.getTopology();
-			return new GamaList(t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry), In.list(scope, targets),
-				true));
+			return new GamaList(t.getAgentsIn(scope, Cast.asGeometry(scope, toBeCastedIntoGeometry),
+				In.list(scope, targets), true));
 		}
 
 		@operator(value = { "inside" }, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
@@ -1359,7 +1359,8 @@ public abstract class Spatial {
 			final IPopulation pop = scope.getAgentScope().getPopulationFor(targets);
 			if ( pop == null ) { return GamaList.EMPTY_LIST; }
 			final ITopology t = scope.getTopology(); // VERIFY
-			return new GamaList(t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry), In.population(pop), true));
+			return new GamaList(t.getAgentsIn(scope, Cast.asGeometry(scope, toBeCastedIntoGeometry),
+				In.population(pop), true));
 		}
 
 		@operator(value = { "overlapping" }, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
@@ -1369,8 +1370,8 @@ public abstract class Spatial {
 		public static IList<IAgent> overlapping(final IScope scope, final IContainer<?, IShape> targets,
 			final Object toBeCastedIntoGeometry) throws GamaRuntimeException {
 			final ITopology t = scope.getTopology();
-			return new GamaList(t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry), In.list(scope, targets),
-				false));
+			return new GamaList(t.getAgentsIn(scope, Cast.asGeometry(scope, toBeCastedIntoGeometry),
+				In.list(scope, targets), false));
 		}
 
 		@operator(value = { "overlapping" }, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
@@ -1380,8 +1381,8 @@ public abstract class Spatial {
 			final IPopulation pop = scope.getAgentScope().getPopulationFor(targets);
 			if ( pop == null ) { return new GamaList(); }
 			final ITopology t = scope.getTopology();
-			return new GamaList(
-				t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry), In.population(pop), false));
+			return new GamaList(t.getAgentsIn(scope, Cast.asGeometry(scope, toBeCastedIntoGeometry),
+				In.population(pop), false));
 		}
 
 		@operator(value = { "closest_to" }, type = ITypeProvider.FIRST_CONTENT_TYPE)
@@ -1391,8 +1392,8 @@ public abstract class Spatial {
 		public static Object closest_to(final IScope scope, final IContainer<?, IShape> targets, final IShape source)
 			throws GamaRuntimeException {
 			if ( source instanceof ILocation ) {
-				return scope.getTopology().getAgentClosestTo((ILocation) source, In.list(scope, targets));
-			} else if ( source instanceof IShape ) { return scope.getTopology().getAgentClosestTo(source,
+				return scope.getTopology().getAgentClosestTo(scope, (ILocation) source, In.list(scope, targets));
+			} else if ( source instanceof IShape ) { return scope.getTopology().getAgentClosestTo(scope, source,
 				In.list(scope, targets)); }
 			throw GamaRuntimeException.error(StringUtils.toGaml(source) + " is not a geometrical object");
 		}
@@ -1409,8 +1410,8 @@ public abstract class Spatial {
 			final ITopology t = scope.getTopology(); // VERIFY (was pop.getTopology())
 			// ITopology t = scope.getAgentScope().getTopology();
 			if ( source instanceof ILocation ) {
-				return t.getAgentClosestTo((ILocation) source, In.population(pop));
-			} else if ( source instanceof IShape ) { return t.getAgentClosestTo(source, In.population(pop)); }
+				return t.getAgentClosestTo(scope, (ILocation) source, In.population(pop));
+			} else if ( source instanceof IShape ) { return t.getAgentClosestTo(scope, source, In.population(pop)); }
 			throw GamaRuntimeException.error(StringUtils.toGaml(source) + " is not a geometrical object");
 		}
 
@@ -1420,9 +1421,9 @@ public abstract class Spatial {
 			"overlapping" })
 		public static IAgent agent_closest_to(final IScope scope, final Object source) throws GamaRuntimeException {
 			if ( source instanceof ILocation ) {
-				return scope.getTopology().getAgentClosestTo((ILocation) source, Different.with());
-			} else if ( source instanceof IShape ) { return scope.getTopology().getAgentClosestTo((IShape) source,
-				Different.with()); }
+				return scope.getTopology().getAgentClosestTo(scope, (ILocation) source, Different.with());
+			} else if ( source instanceof IShape ) { return scope.getTopology().getAgentClosestTo(scope,
+				(IShape) source, Different.with()); }
 			throw GamaRuntimeException.error(StringUtils.toGaml(source) + " is not a geometrical object");
 		}
 
@@ -1432,7 +1433,8 @@ public abstract class Spatial {
 		public static IList<IAgent> agents_inside(final IScope scope, final Object toBeCastedIntoGeometry)
 			throws GamaRuntimeException {
 			final ITopology t = scope.getTopology();
-			return new GamaList(t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry), Different.with(), true));
+			return new GamaList(t.getAgentsIn(scope, Cast.asGeometry(scope, toBeCastedIntoGeometry), Different.with(),
+				true));
 		}
 
 		@operator(value = "agents_overlapping", content_type = IType.AGENT)
@@ -1442,7 +1444,8 @@ public abstract class Spatial {
 		public static IList<IAgent> agents_overlapping(final IScope scope, final Object toBeCastedIntoGeometry)
 			throws GamaRuntimeException {
 			final ITopology t = scope.getTopology();
-			return new GamaList(t.getAgentsIn(Cast.asGeometry(scope, toBeCastedIntoGeometry), Different.with(), false));
+			return new GamaList(t.getAgentsIn(scope, Cast.asGeometry(scope, toBeCastedIntoGeometry), Different.with(),
+				false));
 		}
 
 		@operator(value = "agents_at_distance", content_type = ITypeProvider.FIRST_CONTENT_TYPE)

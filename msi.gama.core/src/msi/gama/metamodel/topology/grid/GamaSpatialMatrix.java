@@ -545,7 +545,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		// We compute all the cells covered by the shape (we know that it is not a cell of the matrix) -- no filter used
 		// here, as we must take all the cells into account
 		final Iterator<? extends IAgent> coveredPlaces =
-			(Iterator<? extends IAgent>) allInEnvelope(shape, shape.getEnvelope(), null, true);
+			(Iterator<? extends IAgent>) allInEnvelope(scope, shape, shape.getEnvelope(), null, true);
 		final Set<IAgent> placesToRemove = Sets.newHashSet(coveredPlaces);
 
 		// We now compute all the cells that are at "distance" away from these covered cells
@@ -574,7 +574,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			// TODO Make it a static class ?
 			@Override
 			public boolean apply(final IAgent input) {
-				return (filter == null || filter.accept(shape, input)) && !placesToRemove.contains(input);
+				return (filter == null || filter.accept(scope, shape, input)) && !placesToRemove.contains(input);
 			}
 		});
 
@@ -590,7 +590,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			// TODO Make it a static class ?
 			@Override
 			public boolean apply(final IAgent input) {
-				return filter == null || filter.accept(shape, input);
+				return filter == null || filter.accept(scope, shape, input);
 			}
 		});
 	}
@@ -746,12 +746,13 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	//
 	@Override
-	public Iterator<IShape> allAtDistance(final IShape source, final double dist, final IAgentFilter f) {
+	public Iterator<IShape> allAtDistance(final IScope scope, final IShape source, final double dist,
+		final IAgentFilter f) {
 		// GuiUtils.debug("GamaSpatialMatrix.allAtDistance");
 		final double exp = dist * Maths.SQRT2;
 		ENVELOPE.init(source.getEnvelope());
 		ENVELOPE.expandBy(exp);
-		return Iterators.filter(allInEnvelope(source, ENVELOPE, f, false), new Predicate<IShape>() {
+		return Iterators.filter(allInEnvelope(scope, source, ENVELOPE, f, false), new Predicate<IShape>() {
 
 			// TODO Make it a static class
 			@Override
@@ -762,7 +763,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	}
 
 	@Override
-	public IShape firstAtDistance(final IShape source, final double dist, final IAgentFilter f) {
+	public IShape firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
 		// GuiUtils.debug("GamaSpatialMatrix.firstAtDistance");
 		final double exp = dist * Maths.SQRT2;
 		ENVELOPE.init(source.getEnvelope());
@@ -776,7 +777,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 				return source.euclidianDistanceTo(input);
 			}
 		});
-		Iterator<IShape> shapes = allInEnvelope(source, ENVELOPE, f, false);
+		Iterator<IShape> shapes = allInEnvelope(scope, source, ENVELOPE, f, false);
 		if ( Iterators.size(shapes) == 0 ) { return null; }
 		return ordering.min(shapes);
 	}
@@ -802,8 +803,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	}
 
 	@Override
-	public Iterator<IShape> allInEnvelope(final IShape source, final Envelope env, final IAgentFilter f,
-		final boolean covered) {
+	public Iterator<IShape> allInEnvelope(final IScope scope, final IShape source, final Envelope env,
+		final IAgentFilter f, final boolean covered) {
 		// GuiUtils.debug("GamaSpatialMatrix.allInEnvelope");
 		// if ( !f.filterSpecies(cellSpecies) ) { return Iterators.emptyIterator(); }
 
@@ -813,7 +814,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			public boolean apply(final IShape input) {
 				if ( input.getAgent() == null ) { return false; }
 				final Envelope e = input.getEnvelope();
-				return (f == null || f.accept(source, input)) &&
+				return (f == null || f.accept(scope, source, input)) &&
 					(covered && env.covers(e) || !covered && env.intersects(e));
 			}
 		}).iterator();
@@ -947,12 +948,12 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 		@Override
 		public void initializeFor(final IScope scope) throws GamaRuntimeException {
-			topology.initialize(this);
+			topology.initialize(scope, this);
 			// GuiUtils.debug("GamaSpatialMatrix.GridPopulation.initializeFor : size " + size());
 		}
 
 		@Override
-		public IAgent getAgent(final ILocation coord) {
+		public IAgent getAgent(final IScope scope, final ILocation coord) {
 			return GamaSpatialMatrix.this.getAgentAt(coord);
 		}
 

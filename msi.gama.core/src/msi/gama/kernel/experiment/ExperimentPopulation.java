@@ -35,7 +35,7 @@ public class ExperimentPopulation extends GamaPopulation {
 	}
 
 	@Override
-	public IAgent getAgent(final ILocation value) {
+	public IAgent getAgent(final IScope scope, final ILocation value) {
 		return get(null, 0);
 	}
 

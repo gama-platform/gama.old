@@ -65,7 +65,7 @@ public class Containers {
 	@operator(value = { IKeyword.AT, "@" }, type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(deprecated = "The use of at on a species is deprecated, please use it one a population instead (list(species_name) instead of species_name)")
 	public static IAgent at(final IScope scope, final ISpecies s, final GamaPoint val) throws GamaRuntimeException {
-		return scope.getAgentScope().getPopulationFor(s).getAgent(val);
+		return scope.getAgentScope().getPopulationFor(s).getAgent(scope, val);
 	}
 
 	@operator(value = { "grid_at" }, type = ITypeProvider.FIRST_CONTENT_TYPE)

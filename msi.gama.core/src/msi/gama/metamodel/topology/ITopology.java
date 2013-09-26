@@ -60,7 +60,7 @@ public interface ITopology extends IValue {
 
 	// public void setTorus(boolean asBool);
 
-	public abstract void initialize(IPopulation pop) throws GamaRuntimeException;
+	public abstract void initialize(IScope scope, IPopulation pop) throws GamaRuntimeException;
 
 	// public abstract void updateAgent(final IAgent agent, final boolean previousShapeIsPoint,
 	// final ILocation previousLoc, final Envelope previousEnv);
@@ -71,9 +71,9 @@ public interface ITopology extends IValue {
 
 	public abstract Geometry returnToroidalGeom(final Geometry geom);
 
-	public abstract IAgent getAgentClosestTo(final IShape source, IAgentFilter filter);
+	public abstract IAgent getAgentClosestTo(IScope scope, final IShape source, IAgentFilter filter);
 
-	public abstract IAgent getAgentClosestTo(final ILocation source, IAgentFilter filter);
+	public abstract IAgent getAgentClosestTo(IScope scope, final ILocation source, IAgentFilter filter);
 
 	public abstract Iterator<IAgent> getNeighboursOf(IScope scope, final IShape source, final Double distance,
 		IAgentFilter filter) throws GamaRuntimeException;
@@ -82,7 +82,8 @@ public interface ITopology extends IValue {
 	// filter)
 	// throws GamaRuntimeException;
 
-	public abstract Iterator<IAgent> getAgentsIn(final IShape source, final IAgentFilter f, boolean covered);
+	public abstract Iterator<IAgent> getAgentsIn(IScope scope, final IShape source, final IAgentFilter f,
+		boolean covered);
 
 	public abstract boolean isTorus();
 

@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -25,6 +25,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.filter.IAgentFilter;
+import msi.gama.runtime.IScope;
 import msi.gama.util.GamaList;
 import msi.gaml.operators.Maths;
 import com.google.common.base.Predicate;
@@ -79,21 +80,23 @@ public class GamaQuadTree implements ISpatialIndex {
 		totalAgents--;
 	}
 
-	protected Iterable<IShape> findIntersects(final IShape source, final Envelope r, final IAgentFilter filter) {
+	protected Iterable<IShape> findIntersects(final IScope scope, final IShape source, final Envelope r,
+		final IAgentFilter filter) {
 		final HashSet<IShape> internal_results = new HashSet();
-		root.findIntersects(source, r, filter, internal_results);
+		root.findIntersects(scope, source, r, filter, internal_results);
 		return internal_results;
 	}
 
 	@Override
-	public Iterator<IShape> allAtDistance(final IShape source, final double dist, final IAgentFilter f) {
+	public Iterator<IShape> allAtDistance(final IScope scope, final IShape source, final double dist,
+		final IAgentFilter f) {
 
 		// TODO filter result by topology's bounds
 
 		final double exp = dist * Maths.SQRT2;
 		ENVELOPE.init(source.getEnvelope());
 		ENVELOPE.expandBy(exp);
-		return Iterables.filter(findIntersects(source, ENVELOPE, f), new Predicate<IShape>() {
+		return Iterables.filter(findIntersects(scope, source, ENVELOPE, f), new Predicate<IShape>() {
 
 			@Override
 			public boolean apply(final IShape input) {
@@ -103,11 +106,11 @@ public class GamaQuadTree implements ISpatialIndex {
 	}
 
 	@Override
-	public IShape firstAtDistance(final IShape source, final double dist, final IAgentFilter f) {
+	public IShape firstAtDistance(final IScope scope, final IShape source, final double dist, final IAgentFilter f) {
 		final double exp = dist * Maths.SQRT2;
 		ENVELOPE.init(source.getEnvelope());
 		ENVELOPE.expandBy(exp);
-		final Iterable<IShape> in_square = findIntersects(source, ENVELOPE, f);
+		final Iterable<IShape> in_square = findIntersects(scope, source, ENVELOPE, f);
 		double min_distance = dist;
 		IShape min_agent = null;
 		for ( final IShape a : in_square ) {
@@ -121,9 +124,9 @@ public class GamaQuadTree implements ISpatialIndex {
 	}
 
 	@Override
-	public Iterator<IShape> allInEnvelope(final IShape source, final Envelope envelope, final IAgentFilter f,
-		final boolean contained) {
-		return findIntersects(source, envelope, f).iterator();
+	public Iterator<IShape> allInEnvelope(final IScope scope, final IShape source, final Envelope envelope,
+		final IAgentFilter f, final boolean contained) {
+		return findIntersects(scope, source, envelope, f).iterator();
 	}
 
 	private class QuadNode {
@@ -354,29 +357,29 @@ public class GamaQuadTree implements ISpatialIndex {
 			return s;
 		}
 
-		public void findIntersects(final IShape source, final Envelope r, final IAgentFilter f,
+		public void findIntersects(final IScope scope, final IShape source, final Envelope r, final IAgentFilter f,
 			final HashSet<IShape> result) {
 			if ( bounds.intersects(r) ) {
 				synchronized (objects) {
 					for ( int i = 0, n = size; i < n; i++ ) {
 						final IShape entry = objects.get(i);
-						if ( (f == null || f.accept(source, entry)) && entry.getEnvelope().intersects(r) ) {
+						if ( (f == null || f.accept(scope, source, entry)) && entry.getEnvelope().intersects(r) ) {
 							result.add(entry);
 						}
 					}
 				}
 				if ( !isLeaf ) {
 					if ( !nw.isEmpty() ) {
-						nw.findIntersects(source, r, f, result);
+						nw.findIntersects(scope, source, r, f, result);
 					}
 					if ( !ne.isEmpty() ) {
-						ne.findIntersects(source, r, f, result);
+						ne.findIntersects(scope, source, r, f, result);
 					}
 					if ( !sw.isEmpty() ) {
-						sw.findIntersects(source, r, f, result);
+						sw.findIntersects(scope, source, r, f, result);
 					}
 					if ( !se.isEmpty() ) {
-						se.findIntersects(source, r, f, result);
+						se.findIntersects(scope, source, r, f, result);
 					}
 				}
 			}

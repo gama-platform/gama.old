@@ -340,7 +340,7 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 		dispose();
 		computeTopology(scope);
 		if ( topology != null ) {
-			topology.initialize(this);
+			topology.initialize(scope, this);
 		}
 	}
 
@@ -380,8 +380,8 @@ public class GamaPopulation extends GamaList<IAgent> implements IPopulation {
 	}
 
 	@Override
-	public IAgent getAgent(final ILocation coord) {
-		return topology.getAgentClosestTo(coord, In.population(this));
+	public IAgent getAgent(final IScope scope, final ILocation coord) {
+		return topology.getAgentClosestTo(scope, coord, In.population(this));
 	}
 
 	/**
