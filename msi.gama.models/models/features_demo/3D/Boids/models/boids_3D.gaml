@@ -47,6 +47,8 @@ global torus: torus_environment{
 		create  boids_goal number: 1 {
 			location <- goal;
 		}
+		
+		create aggregatedboids;
 	}
 	
 		
@@ -194,6 +196,14 @@ entities {
 		}
 	}
 	
+	
+	species aggregatedboids{
+		aspect base{   
+			point loc <- (mean (boids collect (each.location)) ) as point;
+			draw sphere(10) color: rgb('red') at:loc;
+		}
+	}
+	
 	species boids skills: [moving] {
 		float speed max: maximal_speed <- maximal_speed;
 		float range <- minimal_distance * 2;
@@ -302,8 +312,28 @@ experiment start type: gui {
 			image name:'background' file:'../images/ocean.jpg';
 			species boids aspect: dynamicColor transparency:0.5 position:{0,0,0.1};
 			species boids aspect: image transparency:0.5 position:{0,0,0.11};
-			species boids_goal transparency:0.2 position:{0,0,0.1+time/100};
+			species boids_goal transparency:0.2 position:{0,0,0.1};
 			species obstacle position:{0,0,0.1}; 		
+		}
+	}
+}
+
+experiment trajectory_analysis type: gui {
+	output {
+		
+		display RealBoids  type:opengl ambient_light:255 z_fighting:false{
+			image name:'background' file:'../images/ocean.jpg';
+			species boids aspect: dynamicColor transparency:0.5 position:{0,0,0.1};
+			species boids aspect: image transparency:0.5 position:{0,0,0.11};
+			species boids_goal transparency:0.2 position:{0,0,0.1};
+			species obstacle position:{0,0,0.1}; 		
+		}
+		
+		
+		display RealBoidsAggregatedBoids  type:opengl aggregated:true{
+			image name:'background' file:'../images/ocean.jpg';
+			species aggregatedboids  aspect: base position:{0,0,0.1+time/200};
+			species boids_goal aspect:sphere position:{0,0,0.1+time/200};		
 		}
 	}
 }
@@ -314,18 +344,19 @@ experiment aggregated type: gui {
 			image name:'background' file:'../images/ocean.jpg';
 			species boids aspect: dynamicColor transparency:0.5 position:{0,0,0.1};
 			species boids aspect: image transparency:0.5 position:{0,0,0.11};
-			species boids_goal transparency:0.2 position:{0,0,0.1+time/100};
+			species boids_goal transparency:0.2 position:{0,0,0.1};
 			species obstacle position:{0,0,0.1}; 		
 		}
 		
-		display RealBoidsAggregatedTrajectory  type:opengl aggregated:true autosave:true{
+		
+		display RealBoidsAggregatedTrajectory  type:opengl aggregated:true{
 			image name:'background' file:'../images/ocean.jpg';
 			species boids aspect: dynamicColor transparency:0.5 position:{0,0,0.1};
 			species boids_goal aspect:sphere transparency:0.2 position:{0,0,0.1};
 			species obstacle position:{0,0,0.1}; 		
 		}
 		
-		display RealBoidsSpaceTimeCube  type:opengl ambient_light:255 z_fighting:false aggregated:true autosave:true{
+		display RealBoidsSpaceTimeCube  type:opengl ambient_light:255 z_fighting:false aggregated:true{
 			image name:'background' file:'../images/ocean.jpg';
 			species boids aspect: dynamicColor transparency:0.5 position:{0,0,0.1+time/100};
 			species boids_goal aspect:sphere transparency:0.2 position:{0,0,0.1+time/100};
