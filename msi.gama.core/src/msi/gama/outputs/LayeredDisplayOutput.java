@@ -57,6 +57,7 @@ import com.vividsolutions.jts.geom.Envelope;
 	@facet(name = IKeyword.TESSELATION, type = IType.BOOL, optional = true, doc = @doc("")),
 	@facet(name = IKeyword.STENCIL, type = IType.BOOL, optional = true, doc = @doc("")),
 	@facet(name = IKeyword.ZFIGHTING, type = IType.BOOL, optional = true, doc = @doc("Allows to alleviate a problem where agents at the same z would overlap each other in random ways")),
+	@facet(name = IKeyword.AGGREGATED, type = IType.BOOL, optional = true, doc = @doc("Allows to aggregate agent at each timestep")),
 	@facet(name = IKeyword.SCALE, type = { IType.BOOL, IType.FLOAT }, optional = true, doc = @doc("Allows to display a scale bar in the overlay. Accepts true/false or an unit name")),
 	@facet(name = IKeyword.SHOWFPS, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the drawing of the number of frames per second")),
 	@facet(name = IKeyword.DRAWENV, type = IType.BOOL, optional = true, doc = @doc("Allows to enable/disable the drawing of the world shape and the ordinate axes. Default can be configured in Preferences")),
@@ -133,6 +134,7 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 	private boolean output3D = false;
 	private boolean tesselation = true;
 	private boolean stencil = false;
+	private boolean aggregated = false;
 	private boolean z_fighting = GamaPreferences.CORE_Z_FIGHTING.getValue();
 	private boolean displayScale = GamaPreferences.CORE_SCALE.getValue();
 	private boolean showfps = GamaPreferences.CORE_SHOW_FPS.getValue();
@@ -221,6 +223,12 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 		if ( fps != null ) {
 			setShowFPS(Cast.asBool(getScope(), fps.value(getScope())));
 		}
+		
+		final IExpression agg = getFacet(IKeyword.AGGREGATED);
+		if ( agg != null ) {
+			setAggregated(Cast.asBool(getScope(), agg.value(getScope())));
+		}
+
 
 		final IExpression denv = getFacet(IKeyword.DRAWENV);
 		if ( denv != null ) {
@@ -523,6 +531,14 @@ public class LayeredDisplayOutput extends AbstractDisplayOutput {
 
 	private void setShowFPS(final boolean fps) {
 		this.showfps = fps;
+	}
+	
+	public boolean getAggregated() {
+		return aggregated;
+	}
+
+	private void setAggregated(final boolean agg) {
+		this.aggregated = agg;
 	}
 
 	public boolean getDrawEnv() {

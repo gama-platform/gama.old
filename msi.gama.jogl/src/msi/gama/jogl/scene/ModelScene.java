@@ -58,20 +58,29 @@ public class ModelScene {
 	 */
 	public void wipe(final JOGLAWTGLRenderer renderer) {
 		envGeometryInitialized = false;
-		geometries.clear(renderer);
-		collections.clear(renderer);
-		images.clear(renderer);
-		dems.clear(renderer);
-		strings.clear(renderer);
-		for ( final Iterator<BufferedImage> it = textures.keySet().iterator(); it.hasNext(); ) {
-			final BufferedImage im = it.next();
-			// FIXME: if an image is not declared as dynamic, it will be kept in memory (even if it is not used)
-			if ( textures.get(im).isDynamic ) {
-				// FIXME The textures are never disposed. Is it ok ?
-				// renderer.getContext().makeCurrent();
-				// textures.get(im).texture.dispose();
-				it.remove();
+		if(!renderer.getAggregated()){
+			geometries.clear(renderer);
+			collections.clear(renderer);
+			images.clear(renderer);
+			dems.clear(renderer);
+			strings.clear(renderer);
+			for ( final Iterator<BufferedImage> it = textures.keySet().iterator(); it.hasNext(); ) {
+				final BufferedImage im = it.next();
+				// FIXME: if an image is not declared as dynamic, it will be kept in memory (even if it is not used)
+				if ( textures.get(im).isDynamic ) {
+					// FIXME The textures are never disposed. Is it ok ?
+					// renderer.getContext().makeCurrent();
+					// textures.get(im).texture.dispose();
+					it.remove();
+				}
 			}
+		}
+		else{
+			geometries.openGLListIndex =null;
+			collections.openGLListIndex =null;
+			images.openGLListIndex =null;
+			dems.openGLListIndex =null;
+			strings.openGLListIndex =null;
 		}
 
 	}

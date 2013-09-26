@@ -64,6 +64,8 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 	private boolean drawEnv = false;
 	// facet "show_fps"
 	private boolean showFPS = false;
+	// facet "aggregated"
+	private boolean aggregated = false;
 	// facet "z_fighting"
 	private boolean z_fighting = false;
 
@@ -488,6 +490,14 @@ public class JOGLAWTGLRenderer implements GLEventListener {
 
 	public boolean getShowFPS() {
 		return showFPS;
+	}
+	
+	public void setAggregated(final boolean agg) {
+		this.aggregated = agg;
+	}
+
+	public boolean getAggregated() {
+		return aggregated;
 	}
 
 	public void setDrawEnv(final boolean denv) {
