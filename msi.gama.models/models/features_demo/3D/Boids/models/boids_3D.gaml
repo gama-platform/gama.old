@@ -1,7 +1,7 @@
 model boids 
 
 global torus: torus_environment{ 
-	int number_of_agents parameter: 'Number of agents' <- 100 min: 1 max: 1000000;
+	int number_of_agents parameter: 'Number of agents' <- 10 min: 1 max: 1000000;
 	int number_of_obstacles parameter: 'Number of obstacles' <- 4 min: 0;
 	int boids_size parameter: 'Boids size' <- 20 min: 1;
 	float maximal_speed parameter: 'Maximal speed' <- 15.0 min: 0.1 max: 15.0;
@@ -103,8 +103,12 @@ entities {
 		}
 		
 		aspect default {
-			draw circle(10) color: rgb ('red') size: 10;
-			draw circle(10) color: rgb ('orange') size: 40 empty: true;
+			draw circle(10) color: rgb ('red');
+			draw circle(40) color: rgb ('orange') size: 40 empty: true;
+		}
+		
+		aspect sphere{
+			draw sphere(10) color: rgb('white');
 		}
 	} 
 	
@@ -298,7 +302,33 @@ experiment start type: gui {
 			image name:'background' file:'../images/ocean.jpg';
 			species boids aspect: dynamicColor transparency:0.5 position:{0,0,0.1};
 			species boids aspect: image transparency:0.5 position:{0,0,0.11};
-			species boids_goal transparency:0.2 position:{0,0,0.1};
+			species boids_goal transparency:0.2 position:{0,0,0.1+time/100};
+			species obstacle position:{0,0,0.1}; 		
+		}
+	}
+}
+
+experiment aggregated type: gui {
+	output {
+		display RealBoids  type:opengl ambient_light:255 z_fighting:false{
+			image name:'background' file:'../images/ocean.jpg';
+			species boids aspect: dynamicColor transparency:0.5 position:{0,0,0.1};
+			species boids aspect: image transparency:0.5 position:{0,0,0.11};
+			species boids_goal transparency:0.2 position:{0,0,0.1+time/100};
+			species obstacle position:{0,0,0.1}; 		
+		}
+		
+		display RealBoidsAggregatedTrajectory  type:opengl aggregated:true autosave:true{
+			image name:'background' file:'../images/ocean.jpg';
+			species boids aspect: dynamicColor transparency:0.5 position:{0,0,0.1};
+			species boids_goal aspect:sphere transparency:0.2 position:{0,0,0.1};
+			species obstacle position:{0,0,0.1}; 		
+		}
+		
+		display RealBoidsSpaceTimeCube  type:opengl ambient_light:255 z_fighting:false aggregated:true autosave:true{
+			image name:'background' file:'../images/ocean.jpg';
+			species boids aspect: dynamicColor transparency:0.5 position:{0,0,0.1+time/100};
+			species boids_goal aspect:sphere transparency:0.2 position:{0,0,0.1+time/100};
 			species obstacle position:{0,0,0.1}; 		
 		}
 	}
@@ -313,8 +343,7 @@ experiment MultipleView type: gui {
 			species boids aspect: image  transparency:0.5 position:{0,0,0.25};
 			species boids_goal transparency:0.2 position:{0,0,0.25};
 			species obstacle ;
-			species boids  aspect: dynamicColor transparency:0.2 position:{0,0,0.24};
-			species boids_goal  transparency:0.2; 		
+			species boids  aspect: dynamicColor transparency:0.2 position:{0,0,0.24};		
 		}
 		
 		display ThirdPersonn  type:opengl camera_pos:{int(first(boids).location.x),-int(first(boids).location.y),250} 
