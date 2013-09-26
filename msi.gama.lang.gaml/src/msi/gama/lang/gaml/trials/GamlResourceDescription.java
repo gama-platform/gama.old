@@ -56,6 +56,9 @@ public class GamlResourceDescription extends DefaultResourceDescription {
 		final Model model = (Model) resource.getContents().get(0);
 		for ( final Import imp : model.getImports() ) {
 			final String importUri = imp.getImportURI();
+			if ( importUri == null ) {
+				continue;
+			}
 			final URI iu = URI.createURI(importUri).resolve(resource.getURI());
 			try {
 				imports.add(iu);
