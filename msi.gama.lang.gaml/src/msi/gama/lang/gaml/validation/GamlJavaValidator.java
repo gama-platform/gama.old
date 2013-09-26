@@ -128,8 +128,11 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 			}
 		}
 		for ( final GamlResource r : totalResources ) {
+			ISyntacticElement s = r.getSyntacticContents();
 			// GuiUtils.debug("Building " + r + " as part of the validation of " + resource);
-			models.put(r.getURI(), r.getSyntacticContents());
+			if ( s != null ) {
+				models.put(r.getURI(), s);
+			}
 		}
 		return models;
 	}
