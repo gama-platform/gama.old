@@ -2,7 +2,6 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="con" path="org.eclipse.pde.core.requiredPlugins"/>
-	<classpathentry exported="true" kind="lib" path="guava-14.0.1.jar" sourcepath="sources/guava-14.0.1-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="jgrapht-jdk1.6.jar" sourcepath="sources/jgrapht.zip"/>
 	<classpathentry exported="true" kind="lib" path="xerces_2.9.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="gt-api-2.7.3.jar" sourcepath="sources/geotools-2.7.3.zip"/>
