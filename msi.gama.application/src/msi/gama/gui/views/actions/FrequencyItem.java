@@ -68,4 +68,10 @@ public class FrequencyItem extends GamaViewItem implements IToolTipProvider, IPo
 		output.setRefreshRate(getRefresh(position));
 	}
 
+	@Override
+	public void resetToInitialState() {
+		((SpeedContributionItem) item).setInit(getInit());
+		super.resetToInitialState();
+	}
+
 }

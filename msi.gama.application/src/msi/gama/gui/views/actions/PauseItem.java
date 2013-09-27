@@ -49,7 +49,6 @@ public class PauseItem extends GamaViewItem {
 				void resume(final IOutput out) {
 					out.resume();
 					setToolTipText("Pause " + out.getName());
-					// setImageDescriptor(PauseItem.this.getImageDescriptor("icons/blender_pause.png"));
 					if ( view instanceof LayeredDisplayView ) {
 						((LayeredDisplayView) view).pauseChanged();
 					}
@@ -58,7 +57,6 @@ public class PauseItem extends GamaViewItem {
 				void pause(final IOutput out) {
 					out.pause();
 					setToolTipText("Resume " + out.getName());
-					// setImageDescriptor(PauseItem.this.getImageDescriptor("icons/blender_play.png"));
 					if ( view instanceof LayeredDisplayView ) {
 						((LayeredDisplayView) view).pauseChanged();
 					}
@@ -66,6 +64,12 @@ public class PauseItem extends GamaViewItem {
 			};
 
 		return new ActionContributionItem(action);
+	}
+
+	@Override
+	public void resetToInitialState() {
+		((ActionContributionItem) item).getAction().setChecked(false);
+		super.resetToInitialState();
 	}
 
 }

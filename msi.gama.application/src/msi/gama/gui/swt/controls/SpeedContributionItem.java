@@ -35,6 +35,7 @@ public class SpeedContributionItem extends WorkbenchWindowControlContribution {
 	private final Color popupColor;
 	private final IPositionChangeListener listener;
 	private final IToolTipProvider tip;
+	private CoolSlider slider;
 
 	public SpeedContributionItem(final String toolTip, final double init, final IPositionChangeListener listener,
 		final IToolTipProvider tip, final Image thumb, final Image over, final Color popupColor) {
@@ -63,18 +64,22 @@ public class SpeedContributionItem extends WorkbenchWindowControlContribution {
 		composite.setLayout(layout);
 		GridData data = new GridData(SWT.FILL, SWT.CENTER, true, true);
 		data.widthHint = size;
-		final CoolSlider l =
+		slider =
 			new CoolSlider(composite, SWT.HORIZONTAL | CoolSlider.SMOOTH_STYLE, IGamaIcons.TOOLBAR_SLIDER.image(),
 				IGamaIcons.TOOLBAR_SLIDER.image(), thumb_image, thumb_image, thumb_image_hover,
 				IGamaIcons.TOOLBAR_SLIDER.image(), IGamaIcons.TOOLBAR_SLIDER.image());
-		l.setTooltipInterperter(tip);
-		l.setLayoutData(data);
-		l.setSize(size, 16);
-		l.updateSlider(init);
-		l.addPositionChangeListener(listener);
-		l.setToolTipText(tooltipText);
-		l.setPopupBackground(popupColor);
+		slider.setTooltipInterperter(tip);
+		slider.setLayoutData(data);
+		slider.setSize(size, 16);
+		slider.updateSlider(init);
+		slider.addPositionChangeListener(listener);
+		slider.setToolTipText(tooltipText);
+		slider.setPopupBackground(popupColor);
 		return composite;
+	}
+
+	public void setInit(final double i) {
+		slider.updateSlider(i);
 	}
 
 }

@@ -69,6 +69,17 @@ public class GamaToolbarFactory implements IGamaViewActions {
 		return null;
 	}
 
+	public static void resetToolbar(final GamaViewPart view) {
+		IToolBarManager manager = ((IViewSite) view.getSite()).getActionBars().getToolBarManager();
+		manager.removeAll();
+		buildToolbar(view, view.getToolbarActionsId());
+		// for ( IContributionItem item : manager.getItems() ) {
+		// if ( item instanceof GamaViewItem ) {
+		// ((GamaViewItem) item).resetToInitialState();
+		// }
+		// }
+	}
+
 	public static void buildToolbar(final GamaViewPart view, final Integer ... codes) {
 		IToolBarManager manager = ((IViewSite) view.getSite()).getActionBars().getToolBarManager();
 		for ( Integer i : codes ) {

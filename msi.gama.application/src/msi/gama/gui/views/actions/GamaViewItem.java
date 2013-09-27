@@ -19,7 +19,7 @@ import org.eclipse.ui.IViewSite;
 public abstract class GamaViewItem implements IContributionItem {
 
 	GamaViewPart view;
-	private final IContributionItem item;
+	protected final IContributionItem item;
 	boolean disposed = false;
 
 	GamaViewItem(final GamaViewPart view) {
@@ -171,6 +171,10 @@ public abstract class GamaViewItem implements IContributionItem {
 	@Override
 	public void update() {
 		item.update();
+	}
+
+	public void resetToInitialState() {
+		update();
 	}
 
 	/**
