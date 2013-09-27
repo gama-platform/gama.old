@@ -16,7 +16,6 @@ import msi.gaml.operators.Cast;
 import com.google.common.base.*;
 import com.google.common.cache.*;
 import com.google.common.collect.*;
-import com.google.common.collect.AbstractIterator;
 
 /**
  * Class GAML.
@@ -75,7 +74,7 @@ public class GAML {
 			this.filter = filter;
 		}
 
-		static LoadingCache<Function, Ordering> orderingCache = CacheBuilder.newBuilder().concurrencyLevel(1)
+		static Cache<Function, Ordering> orderingCache = CacheBuilder.newBuilder().concurrencyLevel(1)
 			.initialCapacity(10).maximumSize(10).build(new CacheLoader<Function, Ordering>() {
 
 				@Override
@@ -84,7 +83,7 @@ public class GAML {
 				}
 			});
 
-		static LoadingCache<IExpression, GamlFunction> functionCache = CacheBuilder.newBuilder().concurrencyLevel(1)
+		static Cache<IExpression, GamlFunction> functionCache = CacheBuilder.newBuilder().concurrencyLevel(1)
 			.initialCapacity(10).maximumSize(10).build(new CacheLoader<IExpression, GamlFunction>() {
 
 				@Override
@@ -93,7 +92,7 @@ public class GAML {
 				}
 			});
 
-		static LoadingCache<IExpression, GamlPredicate> predicateCache = CacheBuilder.newBuilder().concurrencyLevel(1)
+		static Cache<IExpression, GamlPredicate> predicateCache = CacheBuilder.newBuilder().concurrencyLevel(1)
 			.initialCapacity(10).maximumSize(10).build(new CacheLoader<IExpression, GamlPredicate>() {
 
 				@Override
