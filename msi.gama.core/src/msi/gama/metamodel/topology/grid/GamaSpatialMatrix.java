@@ -778,8 +778,16 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			}
 		});
 		Iterator<IShape> shapes = allInEnvelope(scope, source, ENVELOPE, f, false);
-		if ( Iterators.size(shapes) == 0 ) { return null; }
-		return ordering.min(shapes);
+
+		if ( !shapes.hasNext() ) { return null; }
+
+		// let this throw NoSuchElementException as necessary
+		IShape minSoFar = shapes.next();
+		while (shapes.hasNext()) {
+			IShape next = shapes.next();
+			minSoFar = ordering.compare(minSoFar, next) <= 0 ? minSoFar : next;
+		}
+		return minSoFar;
 	}
 
 	private Iterable<IShape> inEnvelope(final Envelope env) {
@@ -1211,7 +1219,7 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		}
 
 		private Iterator<IAgent> computeNeighboursFrom(final int placeIndex, final int begin, final int end) {
-			Iterable<Integer> iterable = FluentIterable.from(ImmutableSet.<Integer> of());
+			Iterable<Integer> iterable = ImmutableSet.<Integer> of();
 
 			for ( int i = begin; i <= end; i++ ) {
 				iterable =
