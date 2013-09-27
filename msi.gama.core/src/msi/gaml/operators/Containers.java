@@ -346,10 +346,10 @@ public class Containers {
 		"where" })
 	public static GamaMap group_by(final IScope scope, final IContainer original, final IExpression filter) {
 		// AD: 16/9/13 Bugfix where the lists created could not be used in further computations
-		ImmutableMap<Object, List> m =
-			FluentIterable.from(nullCheck(original).iterable(scope)).index(function(scope, filter)).asMap();
+		ImmutableListMultimap m = Multimaps.index(nullCheck(original).iterable(scope), function(scope, filter));
+		// FluentIterable.from(nullCheck(original).iterable(scope)).index(function(scope, filter)).asMap();
 		GamaMap result = new GamaMap();
-		for ( Map.Entry<Object, List> entry : m.entrySet() ) {
+		for ( Map.Entry<Object, List> entry : (Collection<Map.Entry<Object, List>>) m.asMap().entrySet() ) {
 			result.put(entry.getKey(), new GamaList(entry.getValue()));
 		}
 		return result;
@@ -443,7 +443,7 @@ public class Containers {
 		"3 among list(node)    			--:  	[node1,node11,node4]" })
 	public static IList among(final IScope scope, final Integer number, final IContainer c) throws GamaRuntimeException {
 		final List l = new GamaList(nullCheck(c).listValue(scope));
-		return new GamaList(FluentIterable.from(GAMA.getRandom().shuffle(l)).limit(number < 0 ? 0 : number));
+		return new GamaList(Iterables.limit(GAMA.getRandom().shuffle(l), number < 0 ? 0 : number));
 		// TODO: reorder with .toSortedList(Ordering.explicit(l)));
 	}
 
@@ -536,8 +536,8 @@ public class Containers {
 		"[a1,a2,a3] accumulate (each neighbours_at 10)  		--: 	a flat list of all the neighbours of these three agents",
 		"[1,2,4] accumulate ([2,4])  		--: 	[2,4,2,4,2,4]" }, see = { "collect" })
 	public static IList accumulate(final IScope scope, final IContainer original, final IExpression filter) {
-		return new GamaList(FluentIterable.from(nullCheck(original).iterable(scope)).transformAndConcat(
-			iterableFunction(scope, filter)));
+		return new GamaList(Iterables.concat(Iterables.transform(nullCheck(original).iterable(scope),
+			iterableFunction(scope, filter))));
 	}
 
 	@operator(value = { "interleave", "collate" }, content_type = ITypeProvider.FIRST_ELEMENT_CONTENT_TYPE)
