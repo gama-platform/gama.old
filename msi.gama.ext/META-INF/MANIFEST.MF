@@ -3,8 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: msi.gama.ext
 Bundle-SymbolicName: msi.gama.ext;singleton:=true
 Bundle-Version: 1.0.0
-Bundle-ClassPath: guava-14.0.1.jar,
- jgrapht-jdk1.6.jar,
+Bundle-ClassPath: jgrapht-jdk1.6.jar,
  xerces_2.9.0.jar,
  gt-api-2.7.3.jar,
  gt-data-2.7.3.jar,
@@ -64,16 +63,6 @@ Bundle-ClassPath: guava-14.0.1.jar,
  jai_codec-1.1.3.jar
 Bundle-Vendor: MSI
 Export-Package: au.com.bytecode.opencsv,
- com.google.common.annotations;version="14.0.1",
- com.google.common.base;version="14.0.1",
- com.google.common.cache;version="14.0.1",
- com.google.common.collect;version="14.0.1",
- com.google.common.hash;version="14.0.1",
- com.google.common.io;version="14.0.1",
- com.google.common.math;version="14.0.1",
- com.google.common.primitives;version="14.0.1",
- com.google.common.reflect;version="14.0.1",
- com.google.common.util.concurrent;version="14.0.1",
  com.googlecode.sqlsheet,
  com.keypoint,
  com.mysql.jdbc,
