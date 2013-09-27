@@ -88,9 +88,24 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		newShell.setText("GAMA Models Workspace");
 	}
 
+	public static Preferences getNode() {
+		try {
+			if ( Preferences.userRoot().nodeExists("gama") ) { return Preferences.userRoot().node("gama"); }
+		} catch (BackingStoreException e1) {
+			e1.printStackTrace();
+		}
+		Preferences p = Preferences.userRoot().node("gama");
+		try {
+			p.flush();
+		} catch (BackingStoreException e) {
+			e.printStackTrace();
+		}
+		return p;
+	}
+
 	/** Returns whether the user selected "remember workspace" in the preferences */
 	public static boolean isRememberWorkspace() {
-		return Preferences.userRoot().node("gama").getBoolean(keyRememberWorkspace, false);
+		return getNode().getBoolean(keyRememberWorkspace, false);
 	}
 
 	/**
@@ -99,7 +114,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	 * @return null if none
 	 */
 	public static String getLastSetWorkspaceDirectory() {
-		return Preferences.userRoot().node("gama").get(keyWorkspaceRootDir, null);
+		return getNode().get(keyWorkspaceRootDir, null);
 	}
 
 	@Override
@@ -126,7 +141,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			/* Combo in the middle */
 			workspacePathCombo = new Combo(inner, SWT.BORDER);
 			workspacePathCombo.setLayoutData(new GridData());
-			String wsRoot = Preferences.userRoot().node("gama").get(keyWorkspaceRootDir, "");
+			String wsRoot = getNode().get(keyWorkspaceRootDir, "");
 			if ( wsRoot == null || wsRoot.length() == 0 ) {
 				wsRoot = getWorkspacePathSuggestion();
 			}
@@ -136,10 +151,9 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 			rememberWorkspaceButton = new Button(inner, SWT.CHECK);
 			rememberWorkspaceButton.setText("Remember workspace");
 			rememberWorkspaceButton.setLayoutData(new GridData());
-			rememberWorkspaceButton.setSelection(Preferences.userRoot().node("gama")
-				.getBoolean(keyRememberWorkspace, false));
+			rememberWorkspaceButton.setSelection(getNode().getBoolean(keyRememberWorkspace, false));
 
-			String lastUsed = Preferences.userRoot().node("gama").get(keyLastUsedWorkspaces, "");
+			String lastUsed = getNode().get(keyLastUsedWorkspaces, "");
 			lastUsedWorkspaces = new ArrayList<String>();
 			if ( lastUsed != null ) {
 				String[] all = lastUsed.split(splitChar);
@@ -411,10 +425,10 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		}
 
 		/* Save them onto our preferences */
-		Preferences.userRoot().node("gama").putBoolean(keyRememberWorkspace, rememberWorkspaceButton.getSelection());
-		Preferences.userRoot().node("gama").put(keyLastUsedWorkspaces, buf.toString());
+		getNode().putBoolean(keyRememberWorkspace, rememberWorkspaceButton.getSelection());
+		getNode().put(keyLastUsedWorkspaces, buf.toString());
 		try {
-			Preferences.userRoot().node("gama").flush();
+			getNode().flush();
 		} catch (BackingStoreException e) {
 			e.printStackTrace();
 		}
@@ -432,9 +446,9 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 
 		/* And on our preferences as well */
 		// GuiUtils.debug("Writing " + str + " in the preferences");
-		Preferences.userRoot().node("gama").put(keyWorkspaceRootDir, str);
+		getNode().put(keyWorkspaceRootDir, str);
 		try {
-			Preferences.userRoot().node("gama").flush();
+			getNode().flush();
 		} catch (BackingStoreException e) {
 			e.printStackTrace();
 		}
