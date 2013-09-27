@@ -38,7 +38,6 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.compilation.GamaClassLoader;
 import msi.gaml.types.IType;
-import org.apache.log4j.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
@@ -83,7 +82,7 @@ public class SwtGui implements IGui {
 	public static final String PERSPECTIVE_HPC_ID = "msi.gama.hpc.HPCPerspectiveFactory";
 	private static Font unitFont;
 	public static final GridData labelData = new GridData(SWT.END, SWT.CENTER, false, false);
-	private static Logger log;
+	// private static Logger log;
 	private static Status status = new Status();
 	private Tell tell = new Tell();
 	private Error error = new Error();
@@ -259,21 +258,22 @@ public class SwtGui implements IGui {
 		}
 	}
 
-	static {
-		log = Logger.getLogger("gama");
-		// change the level to disable log display
-		log.setLevel(Level.DEBUG);
-		// ALL > TRACE > DEBUG > INFO > WARN > ERROR > FATAL > OFF
-	}
+	// static {
+	// log = Logger.getLogger("gama");
+	// change the level to disable log display
+	// log.setLevel(Level.DEBUG);
+	// ALL > TRACE > DEBUG > INFO > WARN > ERROR > FATAL > OFF
+	// }
 
 	@Override
 	public void debug(final String msg) {
-		log.debug(msg);
+		System.out.println("[GAMA " + Thread.currentThread().getName() + "] " + msg);
+		// log.debug(msg);
 	}
 
 	@Override
 	public void warn(final String msg) {
-		log.warn(msg);
+		System.err.println("[GAMA " + Thread.currentThread().getName() + "] " + msg);
 	}
 
 	@Override

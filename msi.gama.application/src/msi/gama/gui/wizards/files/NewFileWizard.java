@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -20,6 +20,7 @@ package msi.gama.gui.wizards.files;
 
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import msi.gama.gui.navigator.commands.RefreshHandler;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -72,13 +73,13 @@ public class NewFileWizard extends Wizard implements INewWizard {
 			@Override
 			public void run(final IProgressMonitor monitor) throws InvocationTargetException {
 				try {
-					doFinish(containerName, typeOfModel, fileName, author, title, desc,
-						htmlTemplate, monitor);
+					doFinish(containerName, typeOfModel, fileName, author, title, desc, htmlTemplate, monitor);
 				} catch (CoreException e) {
 					e.printStackTrace();
 					throw new InvocationTargetException(e);
 				} finally {
 					monitor.done();
+					RefreshHandler.run();
 				}
 			}
 		};
@@ -100,9 +101,9 @@ public class NewFileWizard extends Wizard implements INewWizard {
 	 * The worker method. It will find the container, create the file if missing or just
 	 * replace its contents, and open the editor on the newly created file.
 	 */
-	private void doFinish(final String containerName, final String typeOfModel,
-		final String fileName, final String author, final String title, final String desc,
-		final boolean htmlTemplate, final IProgressMonitor monitor) throws CoreException {
+	private void doFinish(final String containerName, final String typeOfModel, final String fileName,
+		final String author, final String title, final String desc, final boolean htmlTemplate,
+		final IProgressMonitor monitor) throws CoreException {
 
 		monitor.beginTask("Creating " + fileName, 2);
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -133,22 +134,18 @@ public class NewFileWizard extends Wizard implements INewWizard {
 		final IFile file = container.getFile(new Path("models/" + fileName));
 
 		fileHeader =
-			"/**\n *  " + title + "\n" + " *  Author: " + author + "\n" + " *  Description: " +
-				desc + "\n" + " */\n\n";
+			"/**\n *  " + title + "\n" + " *  Author: " + author + "\n" + " *  Description: " + desc + "\n" + " */\n\n";
 
 		InputStream streamModel = null;
 
 		try {
 			if ( typeOfModel == "empty" ) {
 				/* Initialize a skeleton file contents */
-				streamModel =
-					getClass().getResourceAsStream("/templates/empty-file-template.resource");
+				streamModel = getClass().getResourceAsStream("/templates/empty-file-template.resource");
 			} else if ( typeOfModel == "skeleton" ) {
-				streamModel =
-					getClass().getResourceAsStream("/templates/skeleton-file-template.resource");
+				streamModel = getClass().getResourceAsStream("/templates/skeleton-file-template.resource");
 			} else if ( typeOfModel == "example" ) {
-				streamModel =
-					getClass().getResourceAsStream("/templates/example-file-template.resource");
+				streamModel = getClass().getResourceAsStream("/templates/example-file-template.resource");
 			}
 			streamModel = addFileHeader(streamModel, title, desc);
 
@@ -173,8 +170,7 @@ public class NewFileWizard extends Wizard implements INewWizard {
 
 			@Override
 			public void run() {
-				IWorkbenchPage page =
-					PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
+				IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 				try {
 					IDE.openEditor(page, file, true);
 				} catch (PartInitException e) {
@@ -186,8 +182,8 @@ public class NewFileWizard extends Wizard implements INewWizard {
 	}
 
 	/** Method for adding to the stream the header of the file just created */
-	private InputStream addFileHeader(final InputStream streamModel, final String title,
-		final String desc) throws CoreException {
+	private InputStream addFileHeader(final InputStream streamModel, final String title, final String desc)
+		throws CoreException {
 		String line = "";
 		StringWriter writer = new StringWriter();
 		try {
@@ -204,9 +200,7 @@ public class NewFileWizard extends Wizard implements INewWizard {
 			}
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
-			IStatus status =
-				new Status(IStatus.ERROR, "ExampleWizard", IStatus.OK, ioe.getLocalizedMessage(),
-					null);
+			IStatus status = new Status(IStatus.ERROR, "ExampleWizard", IStatus.OK, ioe.getLocalizedMessage(), null);
 			throw new CoreException(status);
 		}
 		/* Final output in the String */
@@ -229,15 +223,13 @@ public class NewFileWizard extends Wizard implements INewWizard {
 	// }
 
 	/** Initialize the file contents to contents of the given resource. */
-	private InputStream openContentStreamHtmlFile(final String title, final String desc,
-		final String author) throws CoreException {
+	private InputStream openContentStreamHtmlFile(final String title, final String desc, final String author)
+		throws CoreException {
 		final String newline = "\n";
 		String line;
 		StringBuffer sb = new StringBuffer();
 		try {
-			InputStream input =
-				this.getClass()
-					.getResourceAsStream("/templates/description-html-template.resource");
+			InputStream input = this.getClass().getResourceAsStream("/templates/description-html-template.resource");
 			BufferedReader reader = new BufferedReader(new InputStreamReader(input));
 			try {
 				while ((line = reader.readLine()) != null) {
@@ -254,9 +246,7 @@ public class NewFileWizard extends Wizard implements INewWizard {
 
 		} catch (IOException ioe) {
 			ioe.printStackTrace();
-			IStatus status =
-				new Status(IStatus.ERROR, "ExampleWizard", IStatus.OK, ioe.getLocalizedMessage(),
-					null);
+			IStatus status = new Status(IStatus.ERROR, "ExampleWizard", IStatus.OK, ioe.getLocalizedMessage(), null);
 			throw new CoreException(status);
 		}
 

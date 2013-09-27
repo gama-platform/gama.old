@@ -90,7 +90,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 	 * @see msi.gama.gui.views.GamaViewPart#getToolbarActionsId()
 	 */
 	@Override
-	protected Integer[] getToolbarActionsId() {
+	public Integer[] getToolbarActionsId() {
 		// TODO Need to be defined and usable (not the case now)
 		return new Integer[] { PAUSE /* , CLEAR */};
 	}

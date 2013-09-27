@@ -113,7 +113,7 @@ public class ExperimentParametersView extends AttributesEditorsView<String> {
 	 *      wPart#getToolbarActionsId()
 	 */
 	@Override
-	protected Integer[] getToolbarActionsId() {
+	public Integer[] getToolbarActionsId() {
 		return new Integer[] { /* SAVE, */REVERT };
 	}
 

@@ -41,7 +41,7 @@ public class UserControlView extends GamaViewPart {
 	}
 
 	@Override
-	protected Integer[] getToolbarActionsId() {
+	public Integer[] getToolbarActionsId() {
 		return new Integer[0];
 	}
 

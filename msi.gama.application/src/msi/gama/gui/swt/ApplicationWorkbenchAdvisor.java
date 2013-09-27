@@ -31,9 +31,13 @@ import org.eclipse.ui.*;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.application.*;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.internal.ide.application.IDEWorkbenchAdvisor;
+import org.eclipse.ui.internal.ide.application.*;
 
 public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
+
+	public ApplicationWorkbenchAdvisor(final DelayedEventsProcessor processor) {
+		super(processor);
+	}
 
 	@Override
 	public WorkbenchWindowAdvisor createWorkbenchWindowAdvisor(final IWorkbenchWindowConfigurer configurer) {

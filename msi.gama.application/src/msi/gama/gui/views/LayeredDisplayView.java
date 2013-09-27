@@ -60,7 +60,7 @@ public class LayeredDisplayView extends ExpandableItemsView<ILayer> implements I
 	}
 
 	@Override
-	protected Integer[] getToolbarActionsId() {
+	public Integer[] getToolbarActionsId() {
 		IDescription description = output.getDescription();
 		if ( description.getFacets().equals(IKeyword.TYPE, "opengl") ||
 			description.getFacets().equals(IKeyword.TYPE, "3D") ) { return new Integer[] { PAUSE, REFRESH, SYNC, SNAP,

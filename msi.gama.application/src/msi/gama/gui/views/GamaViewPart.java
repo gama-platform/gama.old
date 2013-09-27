@@ -60,7 +60,7 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 	/**
 	 * @return
 	 */
-	protected abstract Integer[] getToolbarActionsId();
+	public abstract Integer[] getToolbarActionsId();
 
 	@Override
 	public final void createPartControl(final Composite parent) {
@@ -94,7 +94,14 @@ public abstract class GamaViewPart extends ViewPart implements IGamaView, IGamaV
 
 	@Override
 	public void setOutput(final IDisplayOutput out) {
+		if ( output != null ) {
+			resetButtonStates();
+		}
 		output = out;
+	}
+
+	private void resetButtonStates() {
+		GamaToolbarFactory.resetToolbar(this);
 	}
 
 	@Override

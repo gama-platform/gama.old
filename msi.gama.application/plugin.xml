@@ -219,17 +219,6 @@
                standalone="false"
                visible="false">
          </view>
-         <view
-               closeable="true"
-               id="org.eclipse.help.ui.HelpView"
-               minimized="false"
-               moveable="true"
-               ratio="0.65f"
-               relationship="bottom"
-               relative="msi.gama.gui.view.GamaNavigator"
-               showTitle="true"
-               visible="false">
-         </view>
       </perspectiveExtension>
       <perspectiveExtension
             targetID="*">

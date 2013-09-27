@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -20,6 +20,7 @@ package msi.gama.gui.wizards.projects;
 
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import msi.gama.gui.navigator.commands.RefreshHandler;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -99,8 +100,8 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 	 * @throws CoreException
 	 * @throws OperationCanceledException
 	 */
-	void createProject(final IProjectDescription description, final IProject proj,
-		final IProgressMonitor monitor) throws CoreException, OperationCanceledException {
+	void createProject(final IProjectDescription description, final IProject proj, final IProgressMonitor monitor)
+		throws CoreException, OperationCanceledException {
 		try {
 
 			monitor.beginTask("", 2000);
@@ -150,12 +151,11 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 			imFolder.create(true, true, monitor);
 
 		} catch (CoreException ioe) {
-			IStatus status =
-				new Status(IStatus.ERROR, "ProjectWizard", IStatus.OK, ioe.getLocalizedMessage(),
-					null);
+			IStatus status = new Status(IStatus.ERROR, "ProjectWizard", IStatus.OK, ioe.getLocalizedMessage(), null);
 			throw new CoreException(status);
 		} finally {
 			monitor.done();
+			RefreshHandler.run();
 		}
 	}
 
@@ -172,8 +172,8 @@ public class NewProjectWizard extends Wizard implements INewWizard, IExecutableE
 
 	/** Sets the initialization data for the wizard. */
 	@Override
-	public void setInitializationData(final IConfigurationElement config,
-		final String propertyName, final Object data) throws CoreException {
+	public void setInitializationData(final IConfigurationElement config, final String propertyName, final Object data)
+		throws CoreException {
 		// snipped...
 	}
 }

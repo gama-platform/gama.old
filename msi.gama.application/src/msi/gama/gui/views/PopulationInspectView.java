@@ -551,7 +551,7 @@ public class PopulationInspectView extends GamaViewPart {
 	}
 
 	@Override
-	protected Integer[] getToolbarActionsId() {
+	public Integer[] getToolbarActionsId() {
 		// TODO Need to be usable (not the case now)
 		return new Integer[] { PAUSE, REFRESH, SAVE };
 	}

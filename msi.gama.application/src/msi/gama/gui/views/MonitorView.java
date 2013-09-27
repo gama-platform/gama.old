@@ -61,7 +61,7 @@ public class MonitorView extends ExpandableItemsView<MonitorOutput> {
 	 * @see msi.gama.gui.views.GamaViewPart#getToolbarActionsId()
 	 */
 	@Override
-	protected Integer[] getToolbarActionsId() {
+	public Integer[] getToolbarActionsId() {
 		return new Integer[] { PAUSE, REFRESH, SEP, NEW_MONITOR };
 	}
 

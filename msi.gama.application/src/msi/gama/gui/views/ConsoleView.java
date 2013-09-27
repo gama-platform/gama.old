@@ -36,7 +36,7 @@ public class ConsoleView extends GamaViewPart {
 	 * @see msi.gama.gui.views.GamaViewPart#getToolbarActionsId()
 	 */
 	@Override
-	protected Integer[] getToolbarActionsId() {
+	public Integer[] getToolbarActionsId() {
 		// TODO Need to be usable (not the case now)
 		return new Integer[] { PAUSE, REFRESH, CLEAR };
 	}
