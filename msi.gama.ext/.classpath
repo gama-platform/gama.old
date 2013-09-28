@@ -36,7 +36,6 @@
 	<classpathentry exported="true" kind="lib" path="postgresql-9.2-1002.jdbc4.jar"/>
 	<classpathentry exported="true" kind="lib" path="gs-algo-1.1.2.jar" sourcepath="sources/gs-algo-1.1.2-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="gs-core-1.1.2.jar" sourcepath="sources/gs-core-1.1.2-sources.jar"/>
-	<classpathentry exported="true" kind="lib" path="gs-ui-1.1.2.jar"/>
 	<classpathentry exported="true" kind="lib" path="gt-arcgrid-2.7.3.jar" sourcepath="sources/geotools-2.7.3.zip"/>
 	<classpathentry exported="true" kind="lib" path="gt-process-2.7.3.jar"/>
 	<classpathentry exported="true" kind="lib" path="gt-coverage-2.7.3.jar" sourcepath="sources/geotools-2.7.3.zip"/>
