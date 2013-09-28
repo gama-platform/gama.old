@@ -9,6 +9,7 @@
 	<classpathentry kind="lib" path="libs/commons-logging-api-1.1.1.jar"/>
 	<classpathentry kind="lib" path="libs/fop.jar"/>
 	<classpathentry kind="lib" path="libs/jericho-html-3.2.jar"/>
+	<classpathentry kind="lib" path="libs/svnkit.jar"/>
 	<classpathentry kind="lib" path="libs/log4j-1.2.16.jar"/>
 	<classpathentry kind="lib" path="libs/serializer-2.7.0.jar"/>
 	<classpathentry kind="lib" path="libs/servlet-2.2.jar"/>

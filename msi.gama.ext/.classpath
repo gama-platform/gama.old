@@ -24,7 +24,6 @@
 	<classpathentry exported="true" kind="lib" path="jfreechart-1.0.13-experimental.jar"/>
 	<classpathentry exported="true" kind="lib" path="jfreechart-1.0.13-swt.jar" sourcepath="sources/jfreechart.zip"/>
 	<classpathentry exported="true" kind="lib" path="jfreechart-1.0.13.jar" sourcepath="sources/jfreechart.zip"/>
-	<classpathentry exported="true" kind="lib" path="svnkit.jar"/>
 	<classpathentry exported="true" kind="lib" path="joda-time-2.0.jar" sourcepath="sources/joda-time-2.0-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="jdom-2.0.1.jar"/>
 	<classpathentry exported="true" kind="lib" path="RCaller-2.0.7.jar"/>
