@@ -65,14 +65,17 @@ public class GamaSpatialGraph extends GamaGraph<IShape, IShape> implements ISpat
 
 	public GamaSpatialGraph(final IContainer edgesOrVertices, final boolean byEdge, final boolean directed,
 		final VertexRelationship rel, final ISpecies edgesSpecies, final IScope scope) {
+		this(scope);
+		init(edgesOrVertices, byEdge, directed, rel, edgesSpecies);
+	}
+
+	public GamaSpatialGraph(final IScope scope) {
 		super(scope);
 		verticesBuilt = new GamaMap<Integer, IShape>();
-		init(edgesOrVertices, byEdge, directed, rel, edgesSpecies);
-
 	}
 
 	@Override
-	public GamaSpatialGraph copy(IScope scope) {
+	public GamaSpatialGraph copy(final IScope scope) {
 		GamaSpatialGraph g =
 			new GamaSpatialGraph(GamaList.EMPTY_LIST, true, directed, vertexRelation, edgeSpecies, scope);
 		Graphs.addAllEdges(g, this, this.edgeSet());

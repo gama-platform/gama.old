@@ -18,11 +18,7 @@
  */
 package msi.gaml.operators;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
-
+import java.util.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.shape.IShape;
 import msi.gama.metamodel.topology.graph.*;
@@ -59,8 +55,7 @@ public class Graphs {
 
 		@Override
 		public boolean related(final IScope scope, final IShape p1, final IShape p2) {
-			return Spatial.Properties.intersects(
-				Spatial.Transformations.enlarged_by(p1.getGeometry(), tolerance),
+			return Spatial.Properties.intersects(Spatial.Transformations.enlarged_by(p1.getGeometry(), tolerance),
 				Spatial.Transformations.enlarged_by(p2.getGeometry(), tolerance));
 		}
 
@@ -146,7 +141,8 @@ public class Graphs {
 		"let graphFromMap type: graph <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);",
 		"graphFromMap contains_vertex {1,5}  --: true" }, see = { "contains_edge" })
 	public static Boolean containsVertex(final GamaGraph graph, final Object vertex) {
-		if ( graph == null ) { throw GamaRuntimeException.error("In the contains_vertex operator, the graph should not be null!"); }
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the contains_vertex operator, the graph should not be null!"); }
 		return graph.containsVertex(vertex);
 	}
 
@@ -155,7 +151,8 @@ public class Graphs {
 		"let graphFromMap type: graph <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);",
 		"graphFromMap contains_edge link({1,5}::{12,45})  --: true" }, see = { "contains_vertex" })
 	public static Boolean containsEdge(final IGraph graph, final Object edge) {
-		if ( graph == null ) { throw GamaRuntimeException.error("In the contains_edge operator, the graph should not be null!"); }
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the contains_edge operator, the graph should not be null!"); }
 		return graph.containsEdge(edge);
 	}
 
@@ -164,7 +161,8 @@ public class Graphs {
 		"let graphEpidemio type: graph <- generate_barabasi_albert( [\"edges_specy\"::edge,\"vertices_specy\"::node,\"size\"::3,\"m\"::5] );",
 		"graphEpidemio contains_edge (node(0)::node(3));   --:   true" })
 	public static Boolean containsEdge(final IGraph graph, final GamaPair edge) {
-		if ( graph == null ) { throw GamaRuntimeException.error("In the contains_edge operator, the graph should not be null!"); }
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the contains_edge operator, the graph should not be null!"); }
 		return graph.containsEdge(edge.first(), edge.last());
 	}
 
@@ -175,7 +173,8 @@ public class Graphs {
 		"let graphFromMap type: graph <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);",
 		"graphFromMap source_of(link({1,5}::{12,45}))  	--: {1.0;5.0}" }, see = { "target_of" })
 	public static Object sourceOf(final IGraph graph, final Object edge) {
-		if ( graph == null ) { throw GamaRuntimeException.error("In the source_of operator, the graph should not be null!"); }
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the source_of operator, the graph should not be null!"); }
 		if ( graph.containsEdge(edge) ) { return graph.getEdgeSource(edge); }
 		return null;
 	}
@@ -187,7 +186,8 @@ public class Graphs {
 		"let graphFromMap type: graph <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);",
 		"graphFromMap source_of(link({1,5}::{12,45}))  	--: {1.0;5.0}" }, see = "source_of")
 	public static Object targetOf(final IGraph graph, final Object edge) {
-		if ( graph == null ) { throw GamaRuntimeException.error("In the target_of operator, the graph should not be null!"); }
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the target_of operator, the graph should not be null!"); }
 		if ( graph.containsEdge(edge) ) { return graph.getEdgeTarget(edge); }
 		return null;
 	}
@@ -200,7 +200,8 @@ public class Graphs {
 		"let graphFromMap type: graph <-  as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}]);",
 		"graphFromMap source_of(link({1,5}::{12,45}))  --: 41.48493702538308" })
 	public static Double weightOf(final IGraph graph, final Object edge) {
-		if ( graph == null ) { throw GamaRuntimeException.error("In the weight_of operator, the graph should not be null!"); }
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the weight_of operator, the graph should not be null!"); }
 		if ( graph.containsEdge(edge) ) {
 			return graph.getEdgeWeight(edge);
 		} else if ( graph.containsVertex(edge) ) { return graph.getVertexWeight(edge); }
@@ -210,7 +211,8 @@ public class Graphs {
 	@operator(value = "in_edges_of", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "returns the list of the in-edges of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = { "graphFromMap in_edges_of node({12,45})  --:  [LineString]" }, see = "out_edges_of")
 	public static IList inEdgesOf(final IGraph graph, final Object vertex) {
-		if ( graph == null ) { throw GamaRuntimeException.error("In the in_edges_of operator, the graph should not be null!"); }
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the in_edges_of operator, the graph should not be null!"); }
 		if ( graph.containsVertex(vertex) ) { return new GamaList(graph.incomingEdgesOf(vertex)); }
 		return new GamaList();
 	}
@@ -219,7 +221,8 @@ public class Graphs {
 	@doc(value = "returns the in degree of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = { "graphEpidemio in_degree_of (node(3))   --:  2" }, see = {
 		"out_degree_of", "degree_of" })
 	public static int inDregreeOf(final IGraph graph, final Object vertex) {
-		if ( graph == null ) { throw GamaRuntimeException.error("In the in_degree_of operator, the graph should not be null!"); }
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the in_degree_of operator, the graph should not be null!"); }
 		if ( graph.containsVertex(vertex) ) { return graph.inDegreeOf(vertex); }
 		return 0;
 	}
@@ -227,7 +230,8 @@ public class Graphs {
 	@operator(value = "out_edges_of", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "returns the list of the out-edges of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = { "graphEpidemio out_edges_of (node(3))" }, see = "in_edges_of")
 	public static IList outEdgesOf(final IGraph graph, final Object vertex) {
-		if ( graph == null ) { throw GamaRuntimeException.error("In the out_edges_of operator, the graph should not be null!"); }
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the out_edges_of operator, the graph should not be null!"); }
 		if ( graph.containsVertex(vertex) ) { return new GamaList(graph.outgoingEdgesOf(vertex)); }
 		return new GamaList();
 	}
@@ -236,7 +240,8 @@ public class Graphs {
 	@doc(value = "returns the out degree of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = { "graphEpidemio out_degree_of (node(3))" }, see = {
 		"in_degree_of", "degree_of" })
 	public static int outDregreeOf(final IGraph graph, final Object vertex) {
-		if ( graph == null ) { throw GamaRuntimeException.error("In the in_degree_of operator, the graph should not be null!"); }
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the in_degree_of operator, the graph should not be null!"); }
 		if ( graph.containsVertex(vertex) ) { return graph.outDegreeOf(vertex); }
 		return 0;
 	}
@@ -245,7 +250,8 @@ public class Graphs {
 	@doc(value = "returns the degree (in+out) of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = { "graphEpidemio degree_of (node(3))" }, see = {
 		"in_degree_of", "out_degree_of" })
 	public static int degreeOf(final IGraph graph, final Object vertex) {
-		if ( graph == null ) { throw GamaRuntimeException.error("In the in_degree_of operator, the graph should not be null!"); }
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the in_degree_of operator, the graph should not be null!"); }
 		if ( graph.containsVertex(vertex) ) { return graph.degreeOf(vertex); }
 		return 0;
 	}
@@ -253,34 +259,30 @@ public class Graphs {
 	@operator(value = "neighbours_of", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "returns the list of neighbours of the given vertex (right-hand operand) in the given graph (left-hand operand)", examples = {
 		"graphEpidemio neighbours_of (node(3)) 		--:	[node0,node2]",
-		"graphFromMap neighbours_of node({12,45}) 	--: [{1.0;5.0},{34.0;56.0}]" }, see = {
-		"predecessors_of", "successors_of" })
+		"graphFromMap neighbours_of node({12,45}) 	--: [{1.0;5.0},{34.0;56.0}]" }, see = { "predecessors_of",
+		"successors_of" })
 	public static IList neighboursOf(final IGraph graph, final Object vertex) {
-		if ( graph == null ) { throw GamaRuntimeException.error("In the neighbours_of operator, the graph should not be null!"); }
-		if ( graph.containsVertex(vertex) ) { return new GamaList(
-			org.jgrapht.Graphs.neighborListOf(graph, vertex)); }
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the neighbours_of operator, the graph should not be null!"); }
+		if ( graph.containsVertex(vertex) ) { return new GamaList(org.jgrapht.Graphs.neighborListOf(graph, vertex)); }
 		return new GamaList();
 	}
 
 	@operator(value = "predecessors_of", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "returns the list of predecessors (i.e. sources of in edges) of the given vertex (right-hand operand) in the given graph (left-hand operand)", examples = {
 		"graphEpidemio predecessors_of (node(3)) 		--: [node0,node2]",
-		"graphFromMap predecessors_of node({12,45}) 	--:	[{1.0;5.0}]" }, see = { "neighbours_of",
-		"successors_of" })
+		"graphFromMap predecessors_of node({12,45}) 	--:	[{1.0;5.0}]" }, see = { "neighbours_of", "successors_of" })
 	public static IList predecessorsOf(final IGraph graph, final Object vertex) {
-		if ( graph.containsVertex(vertex) ) { return new GamaList(
-			org.jgrapht.Graphs.predecessorListOf(graph, vertex)); }
+		if ( graph.containsVertex(vertex) ) { return new GamaList(org.jgrapht.Graphs.predecessorListOf(graph, vertex)); }
 		return new GamaList();
 	}
 
 	@operator(value = "successors_of", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "returns the list of successors (i.e. targets of out edges) of the given vertex (right-hand operand) in the given graph (left-hand operand)", examples = {
-		"graphEpidemio successors_of (node(3)) 		--: []",
-		"graphFromMap successors_of node({12,45}) 	--: [{34.0;56.0}]" }, see = { "predecessors_of",
-		"neighbours_of" })
+		"graphEpidemio successors_of (node(3)) 		--: []", "graphFromMap successors_of node({12,45}) 	--: [{34.0;56.0}]" }, see = {
+		"predecessors_of", "neighbours_of" })
 	public static IList successorsOf(final IGraph graph, final Object vertex) {
-		if ( graph.containsVertex(vertex) ) { return new GamaList(
-			org.jgrapht.Graphs.successorListOf(graph, vertex)); }
+		if ( graph.containsVertex(vertex) ) { return new GamaList(org.jgrapht.Graphs.successorListOf(graph, vertex)); }
 		return new GamaList();
 	}
 
@@ -306,8 +308,8 @@ public class Graphs {
 	@doc(special_cases = "if the operand is a map, the graph will be built by creating edges from pairs of the map", examples = "as_edge_graph([{1,5}::{12,45},{12,45}::{34,56}])  --:  build a graph with these three vertices and two edges")
 	public static IGraph spatialFromEdges(final IScope scope, final GamaMap edges) {
 		// Edges are represented by pairs of vertex::vertex
-		
-		return GamaGraphType.from(scope, edges);
+
+		return GamaGraphType.from(scope, edges, true);
 	}
 
 	// @operator(value = "graph_from_vertices")
@@ -318,44 +320,42 @@ public class Graphs {
 	@operator(value = "as_intersection_graph", content_type = IType.GEOMETRY, index_type = IType.GEOMETRY)
 	@doc(value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices with an intersection (with a given tolerance).", comment = "as_intersection_graph is more efficient for a list of geometries (but less accurate) than as_distance_graph.", examples = "list(ant) as_intersection_graph 0.5;", see = {
 		"as_distance_graph", "as_edge_graph" })
-	public static IGraph spatialFromVertices(final IScope scope, final IContainer vertices,
-		final Double tolerance) {
-		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelation(tolerance),
-			null, scope);
+	public static IGraph spatialFromVertices(final IScope scope, final IContainer vertices, final Double tolerance) {
+		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelation(tolerance), null, scope);
 	}
- 
+
 	public static IGraph spatialLineIntersection(final IScope scope, final IContainer vertices) {
-		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelationLine(), null,
-			scope);
+		return new GamaSpatialGraph(vertices, false, false, new IntersectionRelationLine(), null, scope);
 	}
 
 	@operator(value = "as_distance_graph", content_type = IType.GEOMETRY, index_type = IType.GEOMETRY)
 	@doc(value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices close enough (less than a distance, right-hand operand).", comment = "as_distance_graph is more efficient for a list of points than as_intersection_graph.", examples = "list(ant) as_distance_graph 3.0;", see = {
 		"as_intersection_graph", "as_edge_graph" })
-	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices,
-		final Double distance) {
-		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), null,
-			scope);
+	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final Double distance) {
+		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), null, scope);
 	}
 
 	@operator(value = "as_distance_graph", content_type = IType.GEOMETRY, index_type = IType.GEOMETRY)
 	@doc(value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices close enough (less than a distance, right-hand operand).", comment = "as_distance_graph is more efficient for a list of points than as_intersection_graph.", examples = "list(ant) as_distance_graph 3.0;", see = {
 		"as_intersection_graph", "as_edge_graph" })
-	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices,
-		final Double distance, final ISpecies edgeSpecies) {
-		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance),
-			edgeSpecies, scope);
+	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final Double distance,
+		final ISpecies edgeSpecies) {
+		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), edgeSpecies, scope);
 	}
 
 	@operator(value = "as_distance_graph")
 	@doc(value = "creates a graph from a list of vertices (left-hand operand). An edge is created between each pair of vertices close enough (less than a distance, right-hand operand).", comment = "as_distance_graph is more efficient for a list of points than as_intersection_graph.", examples = "list(ant) as_distance_graph 3.0;", see = {
 		"as_intersection_graph", "as_edge_graph" })
-	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices,
-		final GamaMap params) {
+	public static IGraph spatialDistanceGraph(final IScope scope, final IContainer vertices, final GamaMap params) {
 		Double distance = (Double) params.get("distance");
 		ISpecies edgeSpecies = (ISpecies) params.get("species");
-		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance),
-			edgeSpecies, scope);
+		return new GamaSpatialGraph(vertices, false, false, new DistanceRelation(distance), edgeSpecies, scope);
+	}
+
+	@operator(value = "spatial_graph")
+	@doc(value = "allows to create a spatial graph from a container of vertices, without trying to wire them. The container can be empty. Emits an error if the contents of the container are not geometries, points or agents", see = { "graph" })
+	public static IGraph spatial_graph(final IScope scope, final IContainer vertices) {
+		return new GamaSpatialGraph(vertices, false, false, null, null, scope);
 	}
 
 	// @operator(value = "spatialize")
@@ -419,13 +419,11 @@ public class Graphs {
 	@doc(value = "changes the shortest path computation method of the griven graph", comment = "the right-hand operand can be \"Djikstra\", \"Bellmann\", \"Astar\" to use the associated algorithm. "
 		+ "Note that these methods are dynamic: the path is computed when needed. In contrarily, if the operand is another string, "
 		+ "a static method will be used, i.e. all the shortest are previously computed.", examples = "set graphEpidemio <- graphEpidemio with_optimizer_type \"static\";", see = "set_verbose")
-	public static IGraph setOptimizeType(final IScope scope, final IGraph graph,
-		final String optimizerType) {
+	public static IGraph setOptimizeType(final IScope scope, final IGraph graph, final String optimizerType) {
 		graph.setOptimizerType(optimizerType);
 		return graph;
 	}
 
-	
 	@operator(value = "add_node")
 	@doc(value = "adds a node in a graph.", comment = ".", examples = "node(0) add_node graph;    --: 	returns the graph with node(0)")
 	public static IGraph addNode(final IShape node, final IGraph g) {
@@ -433,7 +431,7 @@ public class Graphs {
 		g.incVersion();
 		return g;
 	}
-	
+
 	@operator(value = "remove_node_from")
 	@doc(value = "removes a node from a graph.", comment = "all the edges containing this node are also removed.", examples = "node(0) remove_node_from graphEpidemio;    --: 	returns the graph without node(0)")
 	public static IGraph removeNodeFrom(final IShape node, final IGraph g) {
@@ -466,158 +464,120 @@ public class Graphs {
 		g.incVersion();
 		return g;
 	}
-	
+
 	@operator(value = "path_between", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	@doc(value = "A path between a list of two objects in a graph", examples = { "my_graph path_between (ag1:: ag2) --: A path between ag1 and ag2" })
-	public static IPath path_between(final IScope scope, final GamaGraph graph,
-		final GamaPair sourTarg) throws GamaRuntimeException {
-		return Cast.asTopology(scope, graph).pathBetween(scope, (IShape)sourTarg.key, (IShape)sourTarg.value);
-		
-		//return graph.computeShortestPathBetween(sourTarg.key, sourTarg.value);
-		
+	public static IPath path_between(final IScope scope, final GamaGraph graph, final GamaPair sourTarg)
+		throws GamaRuntimeException {
+		return Cast.asTopology(scope, graph).pathBetween(scope, (IShape) sourTarg.key, (IShape) sourTarg.value);
+
+		// return graph.computeShortestPathBetween(sourTarg.key, sourTarg.value);
+
 	}
-	
 
 	/**
 	 * the comment for all the operators
 	 */
-	static private final String comment =  "Available formats: " +
-			"\"pajek\": Pajek (Slovene word for Spider) is a program, for Windows, for analysis and visualization of large networks. See: http://pajek.imfm.si/doku.php?id=pajek for more details."+
-			//"\"dgs_old\", \"dgs\": DGS is a file format allowing to store graphs and dynamic graphs in a textual human readable way, yet with a small size allowing to store large graphs. Graph dynamics is defined using events like adding, deleting or changing a node or edge. With DGS, graphs will therefore be seen as stream of such events. [From GraphStream related page: http://graphstream-project.org/]"+
-			"\"lgl\": LGL is a compendium of applications for making the visualization of large networks and trees tractable. See: http://lgl.sourceforge.net/ for more details."+
-			"\"dot\": DOT is a plain text graph description language. It is a simple way of describing graphs that both humans and computer programs can use. See: http://en.wikipedia.org/wiki/DOT_language for more details."+
-			"\"edge\": This format is a simple text file with numeric vertex ids defining the edges."+
-			"\"gexf\": GEXF (Graph Exchange XML Format) is a language for describing complex networks structures, their associated data and dynamics. Started in 2007 at Gephi project by different actors, deeply involved in graph exchange issues, the gexf specifications are mature enough to claim being both extensible and open, and suitable for real specific applications. See: http://gexf.net/format/ for more details."+
-			"\"graphml\": GraphML is a comprehensive and easy-to-use file format for graphs based on XML. See: http://graphml.graphdrawing.org/ for more details."+
-			"\"tlp\" or \"tulip\": TLP is the Tulip software graph format. See: http://tulip.labri.fr/TulipDrupal/?q=tlp-file-format for more details. "+
-			"\"ncol\": This format is used by the Large Graph Layout progra. It is simply a symbolic weighted edge list. It is a simple text file with one edge per line. An edge is defined by two symbolic vertex names separated by whitespace. (The symbolic vertex names themselves cannot contain whitespace.) They might followed by an optional number, this will be the weight of the edge. See: http://bioinformatics.icmb.utexas.edu/lgl for more details."+
-			"The map operand should includes following elements:";
-	
-	
-	// version depuis un filename avec edge et specy
-	
+	static private final String comment =
+		"Available formats: "
+			+ "\"pajek\": Pajek (Slovene word for Spider) is a program, for Windows, for analysis and visualization of large networks. See: http://pajek.imfm.si/doku.php?id=pajek for more details."
+			+
+			// "\"dgs_old\", \"dgs\": DGS is a file format allowing to store graphs and dynamic graphs in a textual human readable way, yet with a small size allowing to store large graphs. Graph dynamics is defined using events like adding, deleting or changing a node or edge. With DGS, graphs will therefore be seen as stream of such events. [From GraphStream related page: http://graphstream-project.org/]"+
+			"\"lgl\": LGL is a compendium of applications for making the visualization of large networks and trees tractable. See: http://lgl.sourceforge.net/ for more details."
+			+ "\"dot\": DOT is a plain text graph description language. It is a simple way of describing graphs that both humans and computer programs can use. See: http://en.wikipedia.org/wiki/DOT_language for more details."
+			+ "\"edge\": This format is a simple text file with numeric vertex ids defining the edges."
+			+ "\"gexf\": GEXF (Graph Exchange XML Format) is a language for describing complex networks structures, their associated data and dynamics. Started in 2007 at Gephi project by different actors, deeply involved in graph exchange issues, the gexf specifications are mature enough to claim being both extensible and open, and suitable for real specific applications. See: http://gexf.net/format/ for more details."
+			+ "\"graphml\": GraphML is a comprehensive and easy-to-use file format for graphs based on XML. See: http://graphml.graphdrawing.org/ for more details."
+			+ "\"tlp\" or \"tulip\": TLP is the Tulip software graph format. See: http://tulip.labri.fr/TulipDrupal/?q=tlp-file-format for more details. "
+			+ "\"ncol\": This format is used by the Large Graph Layout progra. It is simply a symbolic weighted edge list. It is a simple text file with one edge per line. An edge is defined by two symbolic vertex names separated by whitespace. (The symbolic vertex names themselves cannot contain whitespace.) They might followed by an optional number, this will be the weight of the edge. See: http://bioinformatics.icmb.utexas.edu/lgl for more details."
+			+ "The map operand should includes following elements:";
+
+	// version depuis un filename avec edge et specy et indication si spatial ou pas
+
 	@operator(value = "load_graph_from_file")
-	@doc(
-		value = "returns a graph loaded from a given file encoded into a given format.",
-		comment = comment,
-		special_cases = {
-			"\"format\": the format of the file",
-			"\"filename\": the filename of the file containing the network",
-			"\"edges_specy\": the species of edges",
-			"\"vertices_specy\": the species of vertices"},	
-		examples = {
-				"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
-				"			\"pajek\",",
-				"			\"./example_of_Pajek_file\",",  
-				"			myVertexSpecy,",
-				"			myEdgeSpecy );"},			
-		see = "TODO")
-	public static IGraph primLoadGraphFromFile(final IScope scope,
-			final String format, final String filename, final ISpecies vertex_specy, final ISpecies edge_specy) throws GamaRuntimeException {		
-		
-		return GraphLoader.loadGraph(scope, filename, vertex_specy, edge_specy, null, null, format);
-		
+	@doc(value = "returns a graph loaded from a given file encoded into a given format. The last boolean parameter indicates whether the resulting graph will be considered as spatial or not by GAMA", comment = comment, special_cases = {
+		"\"format\": the format of the file", "\"filename\": the filename of the file containing the network",
+		"\"edges_specy\": the species of edges", "\"vertices_specy\": the species of vertices" }, examples = {
+		"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(", "			\"pajek\",",
+		"			\"./example_of_Pajek_file\",", "			myVertexSpecy,", "			myEdgeSpecy , true);" }, see = "TODO")
+	public static IGraph primLoadGraphFromFile(final IScope scope, final String format, final String filename,
+		final ISpecies vertex_specy, final ISpecies edge_specy, final Boolean spatial) throws GamaRuntimeException {
+
+		return GraphLoader.loadGraph(scope, filename, vertex_specy, edge_specy, null, null, format, spatial);
+
 	}
-	
+
 	@operator(value = "load_graph_from_file")
-	@doc(
-		special_cases = {
-			"\"filename\": the filename of the file containing the network",
-			"\"edges_specy\": the species of edges",
-			"\"vertices_specy\": the species of vertices"},	
-		examples = {
-				"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
-				"			\"pajek\",",
-				"			\"./example_of_Pajek_file\",",  
-				"			myVertexSpecy,",
-				"			myEdgeSpecy );"},			
-		see = "TODO")
-	public static IGraph primLoadGraphFromFile(final IScope scope,
-			final String filename, final ISpecies vertex_specy, final ISpecies edge_specy) throws GamaRuntimeException {		
-		
-		return GraphLoader.loadGraph(scope, filename, vertex_specy, edge_specy, null, null, null);
-		
+	@doc(value = "returns a graph loaded from a given file encoded into a given format. This graph will not be spatial.", comment = comment, special_cases = {
+		"\"format\": the format of the file", "\"filename\": the filename of the file containing the network",
+		"\"edges_specy\": the species of edges", "\"vertices_specy\": the species of vertices" }, examples = {
+		"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(", "			\"pajek\",",
+		"			\"./example_of_Pajek_file\",", "			myVertexSpecy,", "			myEdgeSpecy );" }, see = "TODO")
+	public static IGraph primLoadGraphFromFile(final IScope scope, final String format, final String filename,
+		final ISpecies vertex_specy, final ISpecies edge_specy) throws GamaRuntimeException {
+
+		return primLoadGraphFromFile(scope, format, filename, vertex_specy, edge_specy, false);
+
 	}
-	
+
+	@operator(value = "load_graph_from_file")
+	@doc(special_cases = { "\"filename\": the filename of the file containing the network",
+		"\"edges_specy\": the species of edges", "\"vertices_specy\": the species of vertices" }, examples = {
+		"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(", "			\"pajek\",",
+		"			\"./example_of_Pajek_file\",", "			myVertexSpecy,", "			myEdgeSpecy );" }, see = "TODO")
+	public static IGraph primLoadGraphFromFile(final IScope scope, final String filename, final ISpecies vertex_specy,
+		final ISpecies edge_specy) throws GamaRuntimeException {
+
+		return primLoadGraphFromFile(scope, null, filename, vertex_specy, edge_specy);
+
+	}
+
 	// version depuis un file avec edge et specy
-	
+
 	@operator(value = "load_graph_from_file")
-	@doc(
-		special_cases = {
-			"\"format\": the format of the file",
-			"\"file\": the file containing the network",
-			"\"edges_specy\": the species of edges",
-				"\"vertices_specy\": the species of vertices"},	
-		examples = {
-				"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
-				"			\"pajek\",",
-				"			\"example_of_Pajek_file\",",  
-				"			myVertexSpecy,",
-				"			myEdgeSpecy );"},			
-		see = "TODO")
-	public static IGraph primLoadGraphFromFile(final IScope scope,
-			final String format, final GamaFile<?,?> gamaFile, final ISpecies vertex_specy, final ISpecies edge_specy) throws GamaRuntimeException {		
-		
-		// TODO !
-		throw GamaRuntimeException.error("not implemented: loading from gama file");
-		
+	@doc(special_cases = { "\"format\": the format of the file", "\"file\": the file containing the network",
+		"\"edges_specy\": the species of edges", "\"vertices_specy\": the species of vertices" }, examples = {
+		"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(", "			\"pajek\",",
+		"			\"example_of_Pajek_file\",", "			myVertexSpecy,", "			myEdgeSpecy );" }, see = "TODO")
+	public static IGraph primLoadGraphFromFile(final IScope scope, final String format, final GamaFile<?, ?> gamaFile,
+		final ISpecies vertex_specy, final ISpecies edge_specy) throws GamaRuntimeException {
+		return primLoadGraphFromFile(scope, gamaFile.getPath(), vertex_specy, edge_specy);
+
 	}
-	
 
 	// version depuis un filename sans edge et sans specy
-	
+
 	@operator(value = "load_graph_from_file")
-	@doc(
-		special_cases = {
-			"\"format\": the format of the file",
-			"\"filename\": the filename of the file containing the network"
-			},	
-		examples = {
-				"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
-				"			\"pajek\",",
-				"			\"example_of_Pajek_file\");"},			
-		see = "TODO")
-	public static IGraph primLoadGraphFromFile(final IScope scope,
-			final String format, final String filename) throws GamaRuntimeException {		
-		
-		return primLoadGraphFromFile(scope, null, filename);
+	@doc(special_cases = { "\"format\": the format of the file",
+		"\"filename\": the filename of the file containing the network" }, examples = {
+		"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(", "			\"pajek\",",
+		"			\"example_of_Pajek_file\");" }, see = "TODO")
+	public static IGraph primLoadGraphFromFile(final IScope scope, final String format, final String filename)
+		throws GamaRuntimeException {
+		// AD 29/09/13: Changed the previous code that was triggering an overflow.
+		return primLoadGraphFromFile(scope, format, filename, null, null);
 	}
-	
+
 	// version depuis un file avec edge et specy
-	
+
 	@operator(value = "load_graph_from_file")
-	@doc(
-		special_cases = {
-			"\"format\": the format of the file",
-			"\"file\": the file containing the network",
-			},	
-		examples = {
-				"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
-				"			\"pajek\",",
-				"			\"example_of_Pajek_file\");"},			
-		see = "TODO")
-	public static IGraph primLoadGraphFromFile(final IScope scope,
-			final String format, final GamaFile<?,?> gamaFile) throws GamaRuntimeException {		
-		
-		throw GamaRuntimeException.error("not implemented: loading from gama file");
+	@doc(special_cases = { "\"format\": the format of the file", "\"file\": the file containing the network", }, examples = {
+		"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(", "			\"pajek\",",
+		"			\"example_of_Pajek_file\");" }, see = "TODO")
+	public static IGraph primLoadGraphFromFile(final IScope scope, final String format, final GamaFile<?, ?> gamaFile)
+		throws GamaRuntimeException {
+		// AD 29/09/13 : Simply called the previous method with the path of the file. Not efficient, but should work.
+		return primLoadGraphFromFile(scope, format, gamaFile.getPath());
+		// throw GamaRuntimeException.error("not implemented: loading from gama file");
 
 	}
-	
 
 	@operator(value = "load_graph_from_file")
-	@doc(
-		special_cases = {
-			"\"file\": the file containing the network"
-			},	
-		examples = {
-				"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(",
-				"			\"pajek\",",
-				"			\"example_of_Pajek_file\");"},			
-		see = "TODO")
-	public static IGraph primLoadGraphFromFile(final IScope scope,
-			final String filename) throws GamaRuntimeException {		
-		
-		return GraphLoader.loadGraph(scope, filename, null, null, null, null, null);
+	@doc(special_cases = { "\"file\": the file containing the network" }, examples = {
+		"graph<myVertexSpecy,myEdgeSpecy> myGraph <- load_graph_from_file(", "			\"pajek\",",
+		"			\"example_of_Pajek_file\");" }, see = "TODO")
+	public static IGraph primLoadGraphFromFile(final IScope scope, final String filename) throws GamaRuntimeException {
+		return primLoadGraphFromFile(scope, null, filename);
 	}
 
 	/*
@@ -626,65 +586,41 @@ public class Graphs {
 	 * return g;
 	 * }
 	 */
-	
-	@operator(value = "layout")
-	@doc(
-		value = "layouts a GAMA graph.",
-		comment = "TODO",
-		special_cases = {
-				"TODO."},
-		examples = {
-			"TODO;"},
-		see = {"TODO"})	
-	// TODO desc
 
-	public static IGraph layoutOneshot(final IScope scope, final GamaGraph graph, final String layoutEngine, final int timeout, final GamaMap<String, Object> options) {
-		
-		// translate Gama options to 
-		Map<String,Object> jOptions = null;
-		if (options.isEmpty()) {
+	@operator(value = "layout")
+	@doc(value = "layouts a GAMA graph.", comment = "TODO", special_cases = { "TODO." }, examples = { "TODO;" }, see = { "TODO" })
+	// TODO desc
+	public static IGraph layoutOneshot(final IScope scope, final GamaGraph graph, final String layoutEngine,
+		final int timeout, final GamaMap<String, Object> options) {
+
+		// translate Gama options to
+		Map<String, Object> jOptions = null;
+		if ( options.isEmpty() ) {
 			jOptions = Collections.EMPTY_MAP;
 		} else {
 			jOptions = new HashMap<String, Object>(options.size());
-			for (String key : options.keySet()) {
-				jOptions.put(
-						key, 
-						options.get(scope, key)
-						);
+			for ( String key : options.keySet() ) {
+				jOptions.put(key, options.get(scope, key));
 			}
 		}
 		AvailableGraphLayouts
-					// retrieve layout for he layout that was selected by the user (may raise an exception)
-					.getStaticLayout(layoutEngine.trim().toLowerCase())
-					// apply this layout with the options
-					.doLayoutOneShot(scope, graph, timeout, jOptions);
-		
+		// retrieve layout for he layout that was selected by the user (may raise an exception)
+			.getStaticLayout(layoutEngine.trim().toLowerCase())
+			// apply this layout with the options
+			.doLayoutOneShot(scope, graph, timeout, jOptions);
+
 		return graph;
 	}
-	
+
 	@operator(value = "layout")
-	@doc(
-		value = "layouts a GAMA graph.",
-		comment = "TODO",
-		special_cases = {
-				"TODO."},
-		examples = {
-			"TODO;"},
-		see = {"TODO"})	
-	public static IGraph layoutOneshot(final IScope scope, final GamaGraph graph, final String layoutEngine, final int timeout) {
+	@doc(value = "layouts a GAMA graph.", comment = "TODO", special_cases = { "TODO." }, examples = { "TODO;" }, see = { "TODO" })
+	public static IGraph layoutOneshot(final IScope scope, final GamaGraph graph, final String layoutEngine,
+		final int timeout) {
 		return layoutOneshot(scope, graph, layoutEngine, timeout, new GamaMap<String, Object>());
 	}
 
-	
 	@operator(value = "layout")
-	@doc(
-		value = "layouts a GAMA graph.",
-		comment = "TODO",
-		special_cases = {
-				"TODO."},
-		examples = {
-			"TODO;"},
-		see = {"TODO"})	
+	@doc(value = "layouts a GAMA graph.", comment = "TODO", special_cases = { "TODO." }, examples = { "TODO;" }, see = { "TODO" })
 	public static IGraph layoutOneshot(final IScope scope, final GamaGraph graph, final String layoutEngine) {
 		return layoutOneshot(scope, graph, layoutEngine, -1);
 	}
@@ -717,6 +653,5 @@ public class Graphs {
 
 	// TODO Ajouter des g�n�rateurs sp�cifiques a partir de GraphGenerator (pb: quelles classes pour
 	// les vertices/edges ??
-	
-	
+
 }

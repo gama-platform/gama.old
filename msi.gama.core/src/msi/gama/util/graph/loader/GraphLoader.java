@@ -18,7 +18,8 @@ public class GraphLoader {
 
 	protected static GamaGraph loadAGraph(final IScope scope, final ISpecies nodeSpecies, final ISpecies edgeSpecies,
 		final Map<String, String> nodeGraphAttribute2AgentAttribute,
-		final Map<String, String> edgeGraphAttribute2AgentAttribute, final IGraphParser parser, final String filename) {
+		final Map<String, String> edgeGraphAttribute2AgentAttribute, final IGraphParser parser, final String filename,
+		final boolean spatial) {
 
 		// locate the file
 		File f = null;
@@ -37,7 +38,7 @@ public class GraphLoader {
 		// this listener will receive events
 		GamaGraphParserListener list =
 			new GamaGraphParserListener(scope, nodeSpecies, edgeSpecies, nodeGraphAttribute2AgentAttribute,
-				edgeGraphAttribute2AgentAttribute);
+				edgeGraphAttribute2AgentAttribute, spatial);
 
 		// make the parser parse, so it raises events
 		try {
@@ -52,11 +53,11 @@ public class GraphLoader {
 
 	public static GamaGraph loadGraph(final IScope scope, final String filename, final ISpecies nodeSpecies,
 		final ISpecies edgeSpecies, final Map<String, String> nodeGraphAttribute2AgentAttribute,
-		final Map<String, String> edgeGraphAttribute2AgentAttribute, final String format) {
+		final Map<String, String> edgeGraphAttribute2AgentAttribute, final String format, final boolean spatial) {
 
 		// if format is provided, attempt to load using only this format
 		if ( format != null ) { return loadAGraph(scope, nodeSpecies, edgeSpecies, nodeGraphAttribute2AgentAttribute,
-			edgeGraphAttribute2AgentAttribute, AvailableGraphParsers.getLoader(format), filename); }
+			edgeGraphAttribute2AgentAttribute, AvailableGraphParsers.getLoader(format), filename, spatial); }
 
 		// else,
 
@@ -76,7 +77,8 @@ public class GraphLoader {
 				try {
 					GamaGraph res =
 						loadAGraph(scope, nodeSpecies, edgeSpecies, nodeGraphAttribute2AgentAttribute,
-							edgeGraphAttribute2AgentAttribute, AvailableGraphParsers.getLoader(extension), filename);
+							edgeGraphAttribute2AgentAttribute, AvailableGraphParsers.getLoader(extension), filename,
+							spatial);
 					GAMA.reportError(GamaRuntimeException
 						.warning("Automatically detected the type of this graph from file extension ('" + extension +
 							"'). Hope this was the relevant type ?"), false);
@@ -94,7 +96,8 @@ public class GraphLoader {
 			try {
 				GamaGraph res =
 					loadAGraph(scope, nodeSpecies, edgeSpecies, nodeGraphAttribute2AgentAttribute,
-						edgeGraphAttribute2AgentAttribute, AvailableGraphParsers.getLoader(loaderName), filename);
+						edgeGraphAttribute2AgentAttribute, AvailableGraphParsers.getLoader(loaderName), filename,
+						spatial);
 				GAMA.reportError(
 					GamaRuntimeException.warning("Automatically detected the type of this graph :'" + loaderName +
 						"'; loaded " + res.vertexSet().size() + " vertices and " + res.edgeSet().size() +
