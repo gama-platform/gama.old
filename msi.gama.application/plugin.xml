@@ -156,11 +156,11 @@
          </property>
          <property
                name="startupMessageRect"
-               value="71,170,250,16">
+               value="140,143,424,16">
          </property>
          <property
                name="startupProgressRect"
-               value="71,338,558,10">
+               value="42,414,620,10">
          </property>
       </product>
    </extension>

@@ -36,8 +36,8 @@ Visit http://code.google.com/p/gama-platform/
 
    <splash
       location="msi.gama.application"
-      startupProgressRect="71,338,558,10"
-      startupMessageRect="71,170,250,16"
+      startupProgressRect="42,414,620,10"
+      startupMessageRect="140,143,424,16"
       startupForegroundColor="5376A1" />
    <launcher name="Gama">
       <linux icon="/msi.gama.application/icons/launcher_icons/icon.xpm"/>
