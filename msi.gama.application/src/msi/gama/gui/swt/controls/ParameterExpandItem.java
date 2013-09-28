@@ -19,10 +19,19 @@
 package msi.gama.gui.swt.controls;
 
 import msi.gama.common.interfaces.ItemList;
-import msi.gama.gui.swt.*;
+import msi.gama.gui.swt.IGamaIcons;
+import msi.gama.gui.swt.SwtGui;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.SWTException;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.ExpandBar;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * Instances of this class represent a selectable user interface object that represents a expandable
@@ -188,13 +197,13 @@ public class ParameterExpandItem extends Item {
 				int l = other.indexOf(ItemList.WARNING_CODE);
 				if ( j != -1 ) {
 					other = other.substring(j + 1);
-					gc.setForeground(SwtGui.COLOR_ERROR);
+					gc.setForeground(SwtGui.getErrorColor());
 				} else if ( k != -1 ) {
 					other = other.substring(k + 1);
-					gc.setForeground(SwtGui.COLOR_OK);
+					gc.setForeground(SwtGui.getOkColor());
 				} else if ( l != -1 ) {
 					other = other.substring(l + 1);
-					gc.setForeground(SwtGui.COLOR_WARNING);
+					gc.setForeground(SwtGui.getWarningColor());
 				} else {
 					gc.setForeground(Display.getDefault().getSystemColor(SWT.COLOR_BLACK));
 				}

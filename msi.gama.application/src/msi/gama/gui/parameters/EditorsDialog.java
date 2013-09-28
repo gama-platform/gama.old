@@ -4,14 +4,19 @@
  */
 package msi.gama.gui.parameters;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import msi.gama.gui.swt.SwtGui;
 import msi.gaml.types.IType;
-import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * The class EditorsDialog.
@@ -47,7 +52,7 @@ public class EditorsDialog extends Dialog {
 		GridLayout layout = (GridLayout) composite.getLayout();
 		layout.numColumns = 2;
 		Label text = new Label(composite, SWT.None);
-		text.setBackground(SwtGui.COLOR_OK);
+		text.setBackground(SwtGui.getOkColor());
 		text.setForeground(SwtGui.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		text.setText(title);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1);

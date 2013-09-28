@@ -21,14 +21,22 @@ package msi.gama.gui.swt.controls;
 import msi.gama.common.interfaces.IGui;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.kernel.simulation.*;
+import msi.gama.kernel.simulation.SimulationAgent;
+import msi.gama.kernel.simulation.SimulationClock;
 import msi.gama.runtime.GAMA;
 import msi.gaml.operators.Strings;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 import org.jfree.util.StringUtils;
 
@@ -62,7 +70,7 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 		data.widthHint = 300;
 		label = new Label(compo, SWT.LEFT);
 		label.setLayoutData(data);
-		label.setBackground(SwtGui.COLOR_NEUTRAL);
+		label.setBackground(SwtGui.getNeutralColor());
 		label.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
 		label.setText("No simulation running");
 		label.addMouseListener(new MouseAdapter() {
@@ -118,8 +126,8 @@ public class StatusControlContribution extends WorkbenchWindowControlContributio
 	 */
 	@Override
 	public Color getPopupBackground() {
-		return status == IGui.ERROR ? SwtGui.COLOR_ERROR : status == IGui.WAIT ? SwtGui.COLOR_WARNING
-			: status == IGui.NEUTRAL ? SwtGui.COLOR_NEUTRAL : SwtGui.COLOR_OK;
+		return status == IGui.ERROR ? SwtGui.getErrorColor() : status == IGui.WAIT ? SwtGui.getWarningColor()
+			: status == IGui.NEUTRAL ? SwtGui.getNeutralColor() : SwtGui.getOkColor();
 	}
 
 	@Override

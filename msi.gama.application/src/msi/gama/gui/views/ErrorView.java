@@ -18,10 +18,12 @@
  */
 package msi.gama.gui.views;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.EditorListener;
+import msi.gama.common.interfaces.ItemList;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.gui.parameters.EditorFactory;
 import msi.gama.gui.swt.SwtGui;
@@ -29,9 +31,15 @@ import msi.gama.runtime.exceptions.GamaRuntimeException;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 
 public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 
@@ -178,7 +186,7 @@ public class ErrorView extends ExpandableItemsView<GamaRuntimeException> {
 		t.setLayoutData(firstColData);
 		final java.util.List<String> strings = exception.getContextAsList();
 		t.setLinesVisible(true);
-		t.setForeground(exception.isWarning() ? SwtGui.COLOR_WARNING : SwtGui.COLOR_ERROR);
+		t.setForeground(exception.isWarning() ? SwtGui.getWarningColor() : SwtGui.getErrorColor());
 		final TableColumn c = new TableColumn(t, SWT.NONE);
 		c.setResizable(true);
 		final TableColumn column2 = new TableColumn(t, SWT.NONE);

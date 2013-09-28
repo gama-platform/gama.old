@@ -18,35 +18,73 @@
  */
 package msi.gama.gui.swt;
 
-import java.io.*;
-import java.util.*;
-import java.util.concurrent.*;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.interfaces.*;
+import msi.gama.common.interfaces.IDisplayCreator;
+import msi.gama.common.interfaces.IDisplaySurface;
+import msi.gama.common.interfaces.IEditorFactory;
+import msi.gama.common.interfaces.IGamaView;
+import msi.gama.common.interfaces.IGui;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.parameters.*;
+import msi.gama.gui.parameters.EditorFactory;
+import msi.gama.gui.parameters.EditorsDialog;
+import msi.gama.gui.parameters.UserControlDialog;
 import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
 import msi.gama.gui.swt.swing.OutputSynchronizer;
-import msi.gama.gui.views.*;
+import msi.gama.gui.views.AgentInspectView;
+import msi.gama.gui.views.ConsoleView;
+import msi.gama.gui.views.ErrorView;
+import msi.gama.gui.views.ExperimentParametersView;
+import msi.gama.gui.views.LayeredDisplayView;
+import msi.gama.gui.views.MonitorView;
+import msi.gama.gui.views.UserControlView;
 import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.outputs.*;
-import msi.gama.runtime.*;
+import msi.gama.outputs.IDisplayOutput;
+import msi.gama.outputs.IOutputManager;
+import msi.gama.outputs.InspectDisplayOutput;
+import msi.gama.outputs.LayeredDisplayOutput;
+import msi.gama.runtime.GAMA;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.compilation.GamaClassLoader;
 import msi.gaml.types.IType;
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
 
 /**
  * Written by drogoul Modified on 6 mai 2011
@@ -69,10 +107,17 @@ public class SwtGui implements IGui {
 
 	protected SwtGui() {}
 
-	public static final Color COLOR_ERROR = new Color(Display.getDefault(), 0xF4, 0x00, 0x15);
-	public static final Color COLOR_OK = new Color(Display.getDefault(), 0x55, 0x8E, 0x1B);
-	public static final Color COLOR_WARNING = new Color(Display.getDefault(), 0xFD, 0xA6, 0x00);
-	public static final Color COLOR_NEUTRAL = Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+	static void initColors() {
+		COLOR_ERROR = new Color(Display.getDefault(), 0xF4, 0x00, 0x15);
+		COLOR_OK = new Color(Display.getDefault(), 0x55, 0x8E, 0x1B);
+		COLOR_WARNING = new Color(Display.getDefault(), 0xFD, 0xA6, 0x00);
+		COLOR_NEUTRAL = Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND);
+	}
+
+	private static Color COLOR_ERROR;
+	private static Color COLOR_OK;
+	private static Color COLOR_WARNING;
+	private static Color COLOR_NEUTRAL;
 	private static Font expandFont;
 	private static Font bigFont;
 	private static Font smallFont;
@@ -949,6 +994,34 @@ public class SwtGui implements IGui {
 			initFonts();
 		}
 		return unitFont;
+	}
+
+	public static Color getOkColor() {
+		if ( COLOR_OK == null ) {
+			initColors();
+		}
+		return COLOR_OK;
+	}
+
+	public static Color getErrorColor() {
+		if ( COLOR_ERROR == null ) {
+			initColors();
+		}
+		return COLOR_ERROR;
+	}
+
+	public static Color getWarningColor() {
+		if ( COLOR_WARNING == null ) {
+			initColors();
+		}
+		return COLOR_WARNING;
+	}
+
+	public static Color getNeutralColor() {
+		if ( COLOR_NEUTRAL == null ) {
+			initColors();
+		}
+		return COLOR_NEUTRAL;
 	}
 
 	@Override

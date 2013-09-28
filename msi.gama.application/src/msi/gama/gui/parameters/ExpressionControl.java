@@ -20,17 +20,28 @@ package msi.gama.gui.parameters;
 
 import msi.gama.common.util.StringUtils;
 import msi.gama.gui.swt.SwtGui;
-import msi.gama.gui.swt.controls.*;
-import msi.gama.runtime.*;
+import msi.gama.gui.swt.controls.IPopupProvider;
+import msi.gama.gui.swt.controls.Popup;
+import msi.gama.runtime.GAMA;
 import msi.gama.runtime.GAMA.InScope;
+import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GAML;
 import msi.gaml.types.IType;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.*;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 public class ExpressionControl implements IPopupProvider, SelectionListener, ModifyListener, FocusListener {
 
@@ -119,7 +130,7 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 			computeValue();
 		}
 		if ( currentException != null ) {
-			background = SwtGui.COLOR_ERROR;
+			background = SwtGui.getErrorColor();
 			return currentException.getMessage();
 		}
 		String string = "Result: " + StringUtils.toGaml(currentValue);
@@ -131,9 +142,9 @@ public class ExpressionControl implements IPopupProvider, SelectionListener, Mod
 				return expectedType.canBeTypeOf(scope, currentValue);
 			}
 		}) ) {
-			background = SwtGui.COLOR_OK;
+			background = SwtGui.getOkColor();
 		} else {
-			background = SwtGui.COLOR_WARNING;
+			background = SwtGui.getWarningColor();
 			string += "\nWarning: should be of type " + expectedType.toString();
 		}
 		return string;
