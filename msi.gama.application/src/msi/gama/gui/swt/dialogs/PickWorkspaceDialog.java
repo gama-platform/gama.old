@@ -20,10 +20,13 @@ package msi.gama.gui.swt.dialogs;
 
 // import java.awt.GridLayout;
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 import java.util.List;
 import java.util.prefs.*;
+import java.util.prefs.Preferences;
 import msi.gama.gui.swt.IGamaIcons;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
@@ -41,7 +44,9 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	 * The name of the file that tells us that the workspace directory belongs to our application
 	 */
 	private static final String WS_IDENTIFIER = ".gama_application_workspace";
-
+	private static final String VERSION_IDENTIFIER = ".gama_version_" +
+		Platform.getProduct().getDefiningBundle().getVersion().toString();
+	private static final String MODEL_IDENTIFIER = ".models_version_" + getCurrentGamaStampString();
 	private static final String keyWorkspaceRootDir = "wsRootDir";
 	private static final String keyRememberWorkspace = "wsRemember";
 	private static final String keyLastUsedWorkspaces = "wsLastUsedWorkspaces";
@@ -80,6 +85,20 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 	public PickWorkspaceDialog() {
 		super(Display.getDefault().getActiveShell());
 		setTitleImage(IGamaIcons.GAMA_ICON.image());
+	}
+
+	protected static String getCurrentGamaStampString() {
+		String gamaStamp = null;
+		try {
+			URL urlRep = FileLocator.toFileURL(new URL("platform:/plugin/msi.gama.models/models/"));
+			File modelsRep = new File(urlRep.getPath());
+			long time = modelsRep.lastModified();
+			gamaStamp = ".built_in_models_" + time;
+			System.out.println("Version of the models in GAMA = " + gamaStamp);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return gamaStamp;
 	}
 
 	@Override
@@ -243,8 +262,7 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 						return;
 					}
 
-					// check for workspace file (empty indicator that it's a
-					// workspace)
+					// check for workspace file (empty indicator that it's a workspace)
 					File wsFile = new File(txt + File.separator + WS_IDENTIFIER);
 					if ( !wsFile.exists() ) {
 						MessageDialog.openError(Display.getDefault().getActiveShell(), "Error",
@@ -481,6 +499,8 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 						f.mkdirs();
 						File wsDot = new File(workspaceLocation + File.separator + WS_IDENTIFIER);
 						wsDot.createNewFile();
+						File dotFile = new File(workspaceLocation + File.separator + MODEL_IDENTIFIER);
+						dotFile.createNewFile();
 					} catch (Exception err) {
 						// GuiUtils
 						// .debug("Error creating directories, please check folder permissions");
@@ -488,7 +508,11 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 					}
 				}
 
-				if ( !f.exists() ) { return "The selected directory does not exist"; }
+				if ( !f.exists() ) {
+					return "The selected directory does not exist";
+				} else {
+					return null;
+				}
 			}
 		}
 
@@ -538,7 +562,25 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 		} else {
 			if ( !wsTest.exists() ) { return "The selected directory is not a workspace directory"; }
 		}
+		File dotFile = new File(workspaceLocation + File.separator + MODEL_IDENTIFIER);
+		if ( !dotFile.exists() ) {
+			if ( fromDialog ) {
+				boolean create =
+					MessageDialog.openConfirm(Display.getDefault().getActiveShell(),
+						"Outdated version of the models library",
+						"The workspace contains an old version of the models library. Do you want to proceed anyway ?");
+				if ( create ) {
+					try {
+						dotFile.createNewFile();
+					} catch (IOException e) {
+						return "Error updating the models library";
+					}
+					return null;
+				}
+			}
 
+			return "models";
+		}
 		return null;
 	}
 
@@ -557,10 +599,12 @@ public class PickWorkspaceDialog extends TitleAreaDialog {
 				return false;
 			}
 
-			File dotFile = new File(wsRoot + File.separator + PickWorkspaceDialog.WS_IDENTIFIER);
-			if ( !dotFile.exists() && !dotFile.createNewFile() ) {
-				// GuiUtils.debug("File " + dotFile.getAbsolutePath() + " does not exist");
-				return false;
+			File dotFile = new File(wsRoot + File.separator + WS_IDENTIFIER);
+			if ( !dotFile.exists() ) {
+				boolean created = dotFile.createNewFile();
+				if ( !created ) { return false; }
+				dotFile = new File(wsRoot + File.separator + MODEL_IDENTIFIER);
+				dotFile.createNewFile();
 			}
 
 			return true;

@@ -225,5 +225,8 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="ummisco.gaml.extensions.maths"/>
    </plugins>
 
+   <configurations>
+      <property name="version" value="1.6" />
+   </configurations>
 
 </product>

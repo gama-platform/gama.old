@@ -290,6 +290,7 @@ Visit http://code.google.com/p/gama-platform/
       <plugin id="org.objectweb.asm"/>
       <plugin id="org.polarion.eclipse.team.svn.connector"/>
       <plugin id="org.polarion.eclipse.team.svn.connector.svnkit16"/>
+      <plugin id="org.polarion.eclipse.team.svn.connector.svnkit17"/>
       <plugin id="org.sat4j.core"/>
       <plugin id="org.sat4j.pb"/>
       <plugin id="simtools.gaml.extensions.physics"/>

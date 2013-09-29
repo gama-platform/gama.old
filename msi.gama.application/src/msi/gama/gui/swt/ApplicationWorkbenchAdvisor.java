@@ -35,8 +35,12 @@ import org.eclipse.ui.internal.ide.application.*;
 
 public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
+	private static QualifiedName BUILTIN_PROPERTY = new QualifiedName("gama.builtin", "models");
+	private static String BUILTIN_VERSION = Platform.getProduct().getDefiningBundle().getVersion().toString();
+
 	public ApplicationWorkbenchAdvisor(final DelayedEventsProcessor processor) {
 		super(processor);
+		System.out.println("Welcome to GAMA version " + BUILTIN_VERSION);
 	}
 
 	@Override
@@ -52,7 +56,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
 		/* Linking the stock models with the workspace if they are not already */
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		if ( workspace.getRoot().getProjects().length == 0 ) {
+		if ( checkCopyOfBuiltInModels() ) {
 			linkSampleModelsToWorkspace(workspace);
 		}
 
@@ -72,6 +76,96 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		}
 		/* Early build of the contributions made by plugins to GAMA */
 		GamaBundleLoader.preBuildContributions();
+	}
+
+	protected boolean checkCopyOfBuiltInModels() {
+		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		IProject[] projects = workspace.getRoot().getProjects();
+		// If no projects are registered at all, we are facing a fresh new workspace
+		if ( projects.length == 0 ) { return true; }
+		return false;
+		// Following is not ready for prime time !
+		// // If there are projects, we must be careful to distinguish user projects from built-in projects
+		// List<IProject> builtInProjects = new ArrayList();
+		// for ( IProject p : projects ) {
+		// try {
+		// // Assumption here : a non-accessible / linked project means a built-in model that is not accessible
+		// // anymore. Maybe false sometimes... But how to check ?
+		// System.out.println("Project  = " + p.getName());
+		// System.out.println(" ==== > Accessible : " + p.isAccessible());
+		// System.out.println(" ==== > Open : " + p.isOpen());
+		// System.out.println(" ==== > Linked : " + p.isLinked());
+		// if ( !p.isAccessible() && p.isLinked() ) {
+		// builtInProjects.add(p);
+		// } else if ( p.isOpen() && p.getPersistentProperty(BUILTIN_PROPERTY) != null ) {
+		// builtInProjects.add(p);
+		// }
+		// } catch (CoreException e) {
+		// e.printStackTrace();
+		// }
+		// }
+		// if ( builtInProjects.isEmpty() ) {
+		// // only user projects there
+		// return true;
+		// }
+		// String workspaceStamp = null;
+		// try {
+		// workspaceStamp = workspace.getRoot().getPersistentProperty(BUILTIN_PROPERTY);
+		// System.out.println("Version of the models in workspace = " + workspaceStamp);
+		// } catch (CoreException e) {
+		// e.printStackTrace();
+		// }
+		// String gamaStamp = getCurrentGamaStampString();
+		// // We dont know when the builtin models have been created -- there is probably a problem, but we do not try
+		// to
+		// // solve it
+		// if ( gamaStamp == null ) {
+		// System.err.println("Problem when trying to gather the date of creation of built-in models");
+		// return false;
+		// }
+		// if ( gamaStamp.equals(workspaceStamp) ) {
+		// // It's ok. The models in the workspace and in GAMA have the same time stamp
+		// return false;
+		// }
+		// // We now have to (1) ask the user if he/she wants to update the models
+		// boolean create =
+		// MessageDialog
+		// .openConfirm(
+		// Display.getDefault().getActiveShell(),
+		// "Update the models library",
+		// "A new version of the built-in library of models is available. Would you like to update the ones present in the workspace?");
+		// // (2) erase the built-in projects from the workspace
+		// if ( !create ) { return false; }
+		// for ( IProject p : builtInProjects ) {
+		// try {
+		// p.delete(true, null);
+		// } catch (CoreException e) {
+		// e.printStackTrace();
+		// }
+		// }
+		// return true;
+	}
+
+	private String getCurrentGamaStampString() {
+		String gamaStamp = null;
+		try {
+			URL urlRep = FileLocator.toFileURL(new URL("platform:/plugin/msi.gama.models/models/"));
+			File modelsRep = new File(urlRep.getPath());
+			long time = modelsRep.lastModified();
+			gamaStamp = ".built_in_models_" + time;
+			System.out.println("Version of the models in GAMA = " + gamaStamp);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return gamaStamp;
+	}
+
+	protected void stampWorkspaceFromModels(final IWorkspace workspace) {
+		try {
+			workspace.getRoot().setPersistentProperty(BUILTIN_PROPERTY, getCurrentGamaStampString());
+		} catch (CoreException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -132,6 +226,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 			for ( int i = 0; i < children.length; i++ ) {
 				if ( children[i].toString().equals(".project") ) {
 					dotFile = new File(children[i].getPath());
+					break;
 				}
 			}
 			IProjectDescription tempDescription = null;
@@ -193,6 +288,8 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 			newIds[0] = "org.eclipse.xtext.ui.shared.xtextNature";
 			desc.setNatureIds(newIds);
 			proj.setDescription(desc, IResource.FORCE, null);
+			// Addition of a special persistent property to indicate that the project is built-in
+			proj.setPersistentProperty(BUILTIN_PROPERTY, BUILTIN_VERSION);
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}

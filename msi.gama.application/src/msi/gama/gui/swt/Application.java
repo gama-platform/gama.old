@@ -83,8 +83,17 @@ public class Application implements IApplication {
 					PickWorkspaceDialog.checkWorkspaceDirectory(Display.getDefault().getActiveShell(), lastUsedWs,
 						false, false);
 				if ( ret != null ) {
-					GuiUtils.debug(ret);
-					remember = false;
+					if ( ret.equals("models") ) {
+						remember =
+							!MessageDialog
+								.openConfirm(Display.getDefault().getActiveShell(),
+									"Outdated version of the models library",
+									"The workspace contains an old version of the models library. Do you want to create a new workspace ?");
+
+					} else {
+						GuiUtils.debug(ret);
+						remember = false;
+					}
 				}
 			}
 		}
