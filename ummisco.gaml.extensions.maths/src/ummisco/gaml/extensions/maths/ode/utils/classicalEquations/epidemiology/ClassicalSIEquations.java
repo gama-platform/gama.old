@@ -3,8 +3,6 @@ package ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology;
 import java.util.ArrayList;
 import java.util.List;
 
-import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement;
-
 import msi.gama.util.GAML;
 import msi.gaml.descriptions.IDescription;
 import msi.gaml.descriptions.StatementDescription;
@@ -12,6 +10,7 @@ import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.ListExpression;
 import msi.gaml.factories.ChildrenProvider;
 import msi.gaml.statements.Facets;
+import ummisco.gaml.extensions.maths.ode.statements.SingleEquationStatement;
 
 
 // SI equation is defined by 
@@ -22,7 +21,7 @@ import msi.gaml.statements.Facets;
 // equation eqSI type: SI vars: [S,I,t] params: [N,beta] {}
 
 public class ClassicalSIEquations {
-	private IDescription parentDesc;
+	private final IDescription parentDesc;
 
 	public ClassicalSIEquations(IDescription p) {
 		parentDesc = p;
@@ -45,22 +44,26 @@ public class ClassicalSIEquations {
 				null, new Facets("keyword", "="));
 
 		SingleEquationStatement eq1 = new SingleEquationStatement(stm);
-		eq1.function = GAML.getExpressionFactory().createExpr(
-				"diff(" + v[0].literalValue() + "," + v[2].literalValue() + ")", getDescription());
-		eq1.expression = GAML.getExpressionFactory().createExpr(
+		eq1.setFunction(GAML.getExpressionFactory()
+				.createExpr(
+						"diff(" + v[0].literalValue() + ","
+								+ v[2].literalValue() + ")", getDescription()));
+		eq1.setExpression(GAML.getExpressionFactory().createExpr(
 				"(- " + p[1].literalValue() + " * " + v[0].literalValue()
 						+ " * " + v[1].literalValue() + " / "
-						+ p[0].literalValue() + ")", getDescription());
+						+ p[0].literalValue() + ")", getDescription()));
 		eq1.etablishVar();
 		cmd.add(eq1);
 
 		SingleEquationStatement eq2 = new SingleEquationStatement(stm);
-		eq2.function = GAML.getExpressionFactory().createExpr(
-				"diff(" + v[1].literalValue() + "," + v[2].literalValue() + ")", getDescription());
-		eq2.expression = GAML.getExpressionFactory().createExpr(
+		eq2.setFunction(GAML.getExpressionFactory()
+				.createExpr(
+						"diff(" + v[1].literalValue() + ","
+								+ v[2].literalValue() + ")", getDescription()));
+		eq2.setExpression(GAML.getExpressionFactory().createExpr(
 				"( " + p[1].literalValue() + " * " + v[0].literalValue()
 						+ " * " + v[1].literalValue() + " / "
-						+ p[0].literalValue() + ")", getDescription());
+						+ p[0].literalValue() + ")", getDescription()));
 		eq2.etablishVar();
 		cmd.add(eq2);
 

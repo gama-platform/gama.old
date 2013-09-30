@@ -1,6 +1,7 @@
 package ummisco.gaml.extensions.maths.ode.statements;
 
 import java.util.List;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.precompiler.GamlAnnotations.combination;
 import msi.gama.precompiler.GamlAnnotations.doc;
@@ -8,12 +9,15 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gaml.descriptions.*;
-import msi.gaml.expressions.*;
+import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.StatementDescription;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.ListExpression;
+import msi.gaml.expressions.VariableExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.ISpecies;
 import msi.gaml.statements.AbstractStatementSequence;
@@ -95,7 +99,7 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 		String name = "" + getFacet(IKeyword.EQUATION).value(scope);
 		ISpecies context = scope.getAgentScope().getSpecies();
 		SystemOfEquationsStatement s =
-			(SystemOfEquationsStatement) context.getStatement(SystemOfEquationsStatement.class, name);
+			context.getStatement(SystemOfEquationsStatement.class, name);
 
 		if ( s == null ) { return null; }
 		s.currentScope = scope;
@@ -154,8 +158,9 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 		return null;
 	}
 
-	public void decreaseDiscretTime(GamaList iT, GamaList iV, double d) {
-		int size = iT.size();
+	public void decreaseDiscretTime(GamaList integratedTimes,
+			GamaList integratedValues, double d) {
+		int size = integratedTimes.size();
 		if ( size == 0 ) { return; }
 		if ( d == 0 ) {
 			d = size;
@@ -165,9 +170,9 @@ public class SolveStatement extends AbstractStatementSequence { // implements
 		int i = size - 2;
 		while (i > 1) {
 			if ( i % tmp != 0 ) {
-				iT.remove(i);
-				for ( int j = 0; j < iV.size(); j++ ) {
-					((GamaList) iV.get(j)).remove(i);
+				integratedTimes.remove(i);
+				for (int j = 0; j < integratedValues.size(); j++) {
+					((GamaList) integratedValues.get(j)).remove(i);
 				}
 			}
 			i--;

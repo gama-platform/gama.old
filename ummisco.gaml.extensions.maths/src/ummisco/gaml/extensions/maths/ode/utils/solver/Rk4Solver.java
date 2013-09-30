@@ -4,12 +4,14 @@ import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
-import msi.gaml.expressions.IVarExpression;
+import msi.gaml.expressions.IExpression;
 import msi.gaml.operators.Cast;
 
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.nonstiff.ClassicalRungeKuttaIntegrator;
-import org.apache.commons.math3.ode.sampling.*;
+import org.apache.commons.math3.ode.sampling.StepHandler;
+import org.apache.commons.math3.ode.sampling.StepInterpolator;
+
 import ummisco.gaml.extensions.maths.ode.statements.SystemOfEquationsStatement;
 
 public class Rk4Solver extends Solver {
@@ -86,7 +88,7 @@ public class Rk4Solver extends Solver {
 			final double[] y = new double[eq.variables.size()];
 
 			for (int i = 0, n = eq.variables.size(); i < n; i++) {
-				final IVarExpression v = eq.variables.get(i);
+				final IExpression v = eq.variables.get(i);
 				boolean pushed = false;
 				if (eq.equaAgents.size() > 0) {
 					pushed = scope.push(eq.equaAgents.get(i));

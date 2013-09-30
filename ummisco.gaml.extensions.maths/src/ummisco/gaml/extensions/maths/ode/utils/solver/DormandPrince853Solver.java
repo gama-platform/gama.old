@@ -3,10 +3,13 @@ package ummisco.gaml.extensions.maths.ode.utils.solver;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.runtime.IScope;
 import msi.gama.util.GamaList;
-import msi.gaml.expressions.IVarExpression;
+import msi.gaml.expressions.IExpression;
+
 import org.apache.commons.math3.ode.FirstOrderIntegrator;
 import org.apache.commons.math3.ode.nonstiff.DormandPrince853Integrator;
-import org.apache.commons.math3.ode.sampling.*;
+import org.apache.commons.math3.ode.sampling.StepHandler;
+import org.apache.commons.math3.ode.sampling.StepInterpolator;
+
 import ummisco.gaml.extensions.maths.ode.statements.SystemOfEquationsStatement;
 
 public class DormandPrince853Solver extends Solver {
@@ -88,7 +91,7 @@ public class DormandPrince853Solver extends Solver {
 			final double[] y = new double[eq.variables.size()];
 			// System.out.println(eq.variables + " " + eq.currentScope);
 			for ( int i = 0, n = eq.variables.size(); i < n; i++ ) {
-				final IVarExpression v = eq.variables.get(i);
+				final IExpression v = eq.variables.get(i);
 				boolean pushed = false;
 				if ( eq.equaAgents.size() > 0 ) {
 					pushed = scope.push(eq.equaAgents.get(i));

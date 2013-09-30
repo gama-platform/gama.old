@@ -1,6 +1,9 @@
 package ummisco.gaml.extensions.maths.ode.statements;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 import msi.gama.common.interfaces.IKeyword;
 import msi.gama.common.util.GuiUtils;
 import msi.gama.metamodel.agent.IAgent;
@@ -10,18 +13,24 @@ import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gama.util.*;
+import msi.gama.util.GamaList;
+import msi.gama.util.IList;
 import msi.gaml.compilation.ISymbol;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.*;
+import msi.gaml.expressions.AbstractNAryOperator;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.IVarExpression;
+import msi.gaml.expressions.MapExpression;
 import msi.gaml.operators.Cast;
 import msi.gaml.species.GamlSpecies;
 import msi.gaml.statements.AbstractStatementSequence;
 import msi.gaml.types.IType;
-import org.apache.commons.math3.exception.*;
+
+import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.exception.MaxCountExceededException;
 import org.apache.commons.math3.ode.FirstOrderDifferentialEquations;
 
 import ummisco.gaml.extensions.maths.ode.utils.classicalEquations.epidemiology.ClassicalSEIREquations;
@@ -59,7 +68,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 		implements FirstOrderDifferentialEquations {
 
 	public final IList<SingleEquationStatement> equations = new GamaList<SingleEquationStatement>();
-	public final IList<IVarExpression> variables = new GamaList<IVarExpression>();
+	public final IList<IExpression> variables = new GamaList<IExpression>();
 	// public final GamaMap variables=new GamaMap();
 	public final GamaList<IAgent> equations_ext = new GamaList<IAgent>();
 	public final GamaList<IAgent> equaAgents = new GamaList<IAgent>();
@@ -114,9 +123,14 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 		for (final Object s : cmd) {
 			if (s instanceof SingleEquationStatement) {
 				equations.add((SingleEquationStatement) s);
-				variables.add(((SingleEquationStatement) s).var);
-				// variables.add(new GamaPair<Object, IVarExpression >("",
-				// ((SingleEquationStatement) s).var));
+				for (int i = 0; i < ((SingleEquationStatement) s).getVars()
+						.size(); i++) {
+					if (!variables.contains(((SingleEquationStatement) s)
+							.getVar(i))) {
+						variables.add(((SingleEquationStatement) s).getVar(i));
+					}
+				}
+
 			} 
 		}
 
@@ -176,7 +190,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 
 	private void addEquationsExtern(final IAgent remoteAgent,
 			final String eqName) {
-		final SystemOfEquationsStatement ses = (SystemOfEquationsStatement) remoteAgent
+		final SystemOfEquationsStatement ses = remoteAgent
 				.getSpecies().getStatement(SystemOfEquationsStatement.class,
 						eqName);
 		if (ses != null) {
@@ -196,7 +210,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 
 	private void removeEquationsExtern(final IAgent remoteAgent,
 			final String eqName) {
-		final SystemOfEquationsStatement ses = (SystemOfEquationsStatement) remoteAgent
+		final SystemOfEquationsStatement ses = remoteAgent
 				.getSpecies().getStatement(SystemOfEquationsStatement.class,
 						eqName);
 		if (ses != null) {
@@ -258,18 +272,28 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 	public void assignValue(final double time, final double[] y) {
 		// TODO Should be rewritten in a more correct way (by calling
 		// scope.setAgentVarValue(...)
-		for (int i = 0, n = getDimension(); i < n; i++) {
+		for (int i = 0, n = equations.size(); i < n; i++) {
 			final SingleEquationStatement s = equations.get(i);
-			final IVarExpression v = variables.get(i);
+			if (s.getOrder() == 0) {
+				continue;
+			}
 			final Object o = equaAgents.get(i);
 			final IAgent remoteAgent = (IAgent) o;
 			boolean pushed = false;
 			if (!remoteAgent.dead()) {
 				pushed = currentScope.push(remoteAgent);
 				try {
+					if (s.getVar_t() instanceof IVarExpression) {
+						((IVarExpression) s.getVar_t()).setVal(currentScope,
+								time, false);
+					}
+					if (variables.get(i) instanceof IVarExpression) {
+						((IVarExpression)variables.get(i)).setVal(currentScope, y[i], false);
+					} else if (variables.get(i) instanceof MapExpression) {
+						System.out.println(((MapExpression) variables.get(i))
+								.valuesArray());
 
-					s.var_t.setVal(currentScope, time, false);
-					v.setVal(currentScope, y[i], false);
+					}
 				} catch (final Exception ex1) {
 					GuiUtils.debug(ex1.getMessage());
 				} finally {
@@ -280,6 +304,32 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 			}
 			
 		}
+
+		for (int i = 0, n = equations.size(); i < n; i++) {
+			final SingleEquationStatement s = equations.get(i);
+			if (s.getOrder() == 0) {
+				for (int j = 0; j < ((AbstractNAryOperator) s.getFunction())
+						.numArg(); j++) {
+					IExpression tmp = ((AbstractNAryOperator) s.getFunction())
+							.arg(j);
+					Object v = s.getExpression().value(currentScope);
+					if (tmp instanceof IVarExpression) {
+						((IVarExpression) tmp).setVal(currentScope, v, false);
+					} else if (tmp instanceof MapExpression) {
+						for (IExpression ee : ((MapExpression) tmp)
+								.getElements().values()) {
+							((IVarExpression) ee)
+									.setVal(currentScope, v, false);
+						}
+					}
+
+
+				}
+				// System.out.println(s.getExpression().value(currentScope));
+			}
+
+		}
+
 	}
 
 	@Override
@@ -332,7 +382,13 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 	 */
 	@Override
 	public int getDimension() {
-		return equations.size();
+		int count = 0;
+		for (int i = 0; i < equations.size(); i++) {
+			if (equations.get(i).getOrder() > 0) {
+				count++;
+			}
+		}
+		return count;
 	}
 
 	@Override

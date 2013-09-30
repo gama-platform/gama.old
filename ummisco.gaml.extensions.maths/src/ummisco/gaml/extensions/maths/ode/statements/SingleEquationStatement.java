@@ -6,11 +6,15 @@ import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.precompiler.GamlAnnotations.symbol;
-import msi.gama.precompiler.*;
+import msi.gama.precompiler.ISymbolKind;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.GamaList;
+import msi.gama.util.IList;
 import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.*;
+import msi.gaml.expressions.AbstractNAryOperator;
+import msi.gaml.expressions.IExpression;
+import msi.gaml.expressions.IVarExpression;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
 
@@ -33,24 +37,67 @@ import msi.gaml.types.IType;
  */
 public class SingleEquationStatement extends AbstractStatement {
 
-	public IExpression function, expression;
-	IVarExpression var;
-	public IVarExpression var_t;
-	IVarExpression _time;
+	private IExpression function, expression;
+	private final IList<IExpression> var = new GamaList<IExpression>();
+	private IExpression var_t;
+
 	int order;
+
+	public IExpression getFunction() {
+		return function;
+	}
+
+	public void setFunction(IExpression function) {
+		this.function = function;
+	}
+
+	public IExpression getExpression() {
+		return expression;
+	}
+
+	public void setExpression(IExpression expression) {
+		this.expression = expression;
+	}
+
+	public IList<IExpression> getVars() {
+		return var;
+	}
+
+	public IExpression getVar(final int index) {
+		return var.get(index);
+	}
+
+	public void setVar(final int index, IVarExpression v) {
+		this.var.set(index, v);
+	}
+
+	public IExpression getVar_t() {
+		return var_t;
+	}
+
+	public void setVar_t(IVarExpression vt) {
+		this.var_t = vt;
+	}
 
 	public SingleEquationStatement(final IDescription desc) {
 		super(desc);
 		function = getFacet(IKeyword.EQUATION_LEFT);
-		if (function != null) {
+		if (function != null && getOrder() > 0) {
 			etablishVar();
 		}
 		expression = getFacet(IKeyword.EQUATION_RIGHT);
 	}
 
-	public void etablishVar(){
-		var = (IVarExpression) ((AbstractNAryOperator) function).arg(0);
-		var_t = (IVarExpression) ((AbstractNAryOperator) function).arg(1);
+	public void etablishVar() {
+		for (int i = 0; i < ((AbstractNAryOperator) function).numArg(); i++) {
+			IExpression tmp = ((AbstractNAryOperator) function).arg(i);
+			if (tmp.getName().equals("t")) {
+				var_t = tmp;
+			} else {
+				var.add(i, tmp);
+			}
+		}
+		// var_t = ((AbstractNAryOperator) function).arg(1);
 	}
 	/**
 	 * This method is normally called by the system of equations to which this

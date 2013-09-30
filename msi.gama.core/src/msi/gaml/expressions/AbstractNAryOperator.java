@@ -59,6 +59,10 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 		return true;
 	}
 
+	public int numArg() {
+		return exprs.length;
+	}
+
 	@Override
 	public IExpression arg(final int i) {
 		if ( exprs == null ) { return null; }
