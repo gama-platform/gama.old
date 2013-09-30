@@ -154,7 +154,7 @@ public class System {
 	// }
 	// }
 
-	private static final String[] gamaDefaultImports = new String[] {};
+	// private static final String[] gamaDefaultImports = new String[] {};
 
 	@operator(value = "evaluate_with", can_be_const = false)
 	@doc(deprecated = "This operator has been deprecated and there are no plans to replace it soon.", value = "evaluates the left-hand java expressions with the map of parameters (right-hand operand)", see = {
