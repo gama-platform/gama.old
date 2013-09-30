@@ -56,7 +56,8 @@ public class SymbolFactory {
 	 * possibly null -- list of children. In this method, the children of the source element are not
 	 * considered, so if "children" is null or empty, the description is created without children.
 	 */
-	final IDescription create(final ISyntacticElement source, final IDescription superDesc, final IChildrenProvider cp) {
+	public final IDescription create(final ISyntacticElement source, final IDescription superDesc,
+		final IChildrenProvider cp) {
 		final SymbolProto md = getProto(superDesc, source);
 		if ( md == null ) { return null; }
 		return md.getFactory().createDescriptionInternal(source, superDesc, cp, md);
@@ -187,6 +188,8 @@ public class SymbolFactory {
 				compileFacet(f.getKey(), desc, md);
 			}
 		}
+		// AD: Added to ensure that validators that transform symbols can be taken into account
+		md.validate(desc);
 		ISymbol cs = md.getConstructor().create(desc);
 		if ( cs == null ) { return null; }
 		if ( md.hasArgs() ) {

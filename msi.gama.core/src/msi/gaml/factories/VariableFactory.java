@@ -22,10 +22,9 @@ import static msi.gama.common.interfaces.IKeyword.*;
 import static msi.gaml.factories.DescriptionValidator.*;
 import static msi.gaml.factories.VariableValidator.*;
 import java.util.*;
-import msi.gama.common.interfaces.*;
 import msi.gama.precompiler.GamlAnnotations.factory;
 import msi.gama.precompiler.*;
-import msi.gaml.compilation.*;
+import msi.gaml.compilation.ISyntacticElement;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.statements.*;
@@ -49,9 +48,11 @@ public class VariableFactory extends SymbolFactory {
 	protected IDescription buildDescription(final ISyntacticElement source, final Facets facets,
 		final IChildrenProvider cp, final IDescription superDesc, final SymbolProto md) {
 		final String keyword = source.getKeyword();
-		if ( keyword.equals(SIGNAL) ) {
-			buildSignalDescription(source, facets, keyword, superDesc);
-		} else if ( keyword.equals(PARAMETER) ) {
+		// if ( keyword.equals(SIGNAL) ) {
+		// buildSignalDescription(source, facets, keyword, superDesc);
+		// } else
+
+		if ( keyword.equals(PARAMETER) ) {
 			// We copy the relevant facets from the targeted var of the parameter
 			final String varName = facets.getLabel(VAR);
 			final VariableDescription targetedVar = superDesc.getModelDescription().getVariable(varName);
@@ -71,31 +72,32 @@ public class VariableFactory extends SymbolFactory {
 		return new VariableDescription(keyword, superDesc, cp, source.getElement(), facets);
 	}
 
-	private void buildSignalDescription(final ISyntacticElement source, final Facets facets, final String keyword,
-		final IDescription superDesc) {
-		final String name = facets.getLabel(NAME);
-		final String env = facets.getLabel(ENVIRONMENT);
-		if ( env == null ) {
-			superDesc.error("No environment defined for signal " + name, IGamlIssue.NO_ENVIRONMENT);
-			return;
-		}
-		String decay = facets.getLabel(DECAY);
-		if ( decay == null ) {
-			decay = "0.1";
-		}
-		final String value = name + " < 0.1 ? 0.0 :" + name + " * ( 1 - " + decay + ")";
-		final VariableDescription vd =
-			(VariableDescription) create(SyntacticFactory.create(IKeyword.FLOAT, new Facets(NAME, name, TYPE,
-				IKeyword.FLOAT, UPDATE, value, MIN, "0.0"), false), superDesc, null);
-		final SpeciesDescription environment = superDesc.getSpeciesDescription(env);
-		if ( environment == null || !environment.isGrid() ) {
-			superDesc.error("Environment " + env + " of signal " + name + " cannot be determined.",
-				IGamlIssue.UNKNOWN_ENVIRONMENT, ENVIRONMENT, env);
-		}
-		if ( environment != null ) {
-			environment.addChild(vd);
-		}
-	}
+	//
+	// private void buildSignalDescription(final ISyntacticElement source, final Facets facets, final String keyword,
+	// final IDescription superDesc) {
+	// final String name = facets.getLabel(NAME);
+	// final String env = facets.getLabel(ENVIRONMENT);
+	// if ( env == null ) {
+	// superDesc.error("No environment defined for signal " + name, IGamlIssue.NO_ENVIRONMENT);
+	// return;
+	// }
+	// String decay = facets.getLabel(DECAY);
+	// if ( decay == null ) {
+	// decay = "0.1";
+	// }
+	// final String value = name + " < 0.1 ? 0.0 :" + name + " * ( 1 - " + decay + ")";
+	// final VariableDescription vd =
+	// (VariableDescription) create(SyntacticFactory.create(IKeyword.FLOAT, new Facets(NAME, name, TYPE,
+	// IKeyword.FLOAT, UPDATE, value, MIN, "0.0"), false), superDesc, null);
+	// final SpeciesDescription environment = superDesc.getSpeciesDescription(env);
+	// if ( environment == null || !environment.isGrid() ) {
+	// superDesc.error("Environment " + env + " of signal " + name + " cannot be determined.",
+	// IGamlIssue.UNKNOWN_ENVIRONMENT, ENVIRONMENT, env);
+	// }
+	// if ( environment != null ) {
+	// environment.addChild(vd);
+	// }
+	// }
 
 	@Override
 	protected void compileFacet(final String tag, final IDescription sd, final SymbolProto md) {

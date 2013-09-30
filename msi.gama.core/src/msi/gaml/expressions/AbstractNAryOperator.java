@@ -60,7 +60,7 @@ public abstract class AbstractNAryOperator extends AbstractExpression implements
 	}
 
 	public int numArg() {
-		return exprs.length;
+		return exprs == null ? 0 : exprs.length;
 	}
 
 	@Override

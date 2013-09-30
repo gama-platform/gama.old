@@ -705,8 +705,8 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 	@Override
 	public void diffuseVariable(final IScope scope, final String name, final double value, final short type,
-		final double prop, final double variation, final ILocation location, final double range) {
-		getDiffuser(scope).diffuseVariable(name, value, type, prop, variation, location, range);
+		final double prop, final double variation, final ILocation location, final double range, final Object candidates) {
+		getDiffuser(scope).diffuseVariable(scope, name, value, type, prop, variation, location, range, candidates);
 	}
 
 	@Override
@@ -1417,17 +1417,22 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			final double variation;
 			final double range;
 			final short type;
+			final IContainer<?, IAgent> candidates;
 
-			private GridDiffusion(final short type, final double proportion, final double variation, final double range) {
+			private GridDiffusion(final short type, final double proportion, final double variation,
+				final double range, final IContainer<?, IAgent> cand) {
 				this.type = type;
 				this.proportion = proportion;
 				this.variation = variation;
 				this.range = range;
 				places = new IAgent[0];
 				values = new double[0];
+				candidates = cand;
 			}
 
-			void add(final IAgent p, final double value) {
+			// TODO Take candidates into account here as well (by making an intersection ? or better a union)
+			void add(final IScope scope, final IAgent p, final double value) {
+				if ( candidates != null && !candidates.contains(scope, p) ) { return; }
 				for ( int i = 0; i < places.length; i++ ) {
 					if ( places[i] == p ) {
 						final double v = values[i];
@@ -1453,12 +1458,13 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 		// public static final short GRADIENT = 1;
 		// public static final short DIFFUSION = 0;
 
-		protected void addDiffusion(final short type, final String var, final IAgent agent, final double value,
-			final double proportion, final double variation, final double range) {
+		protected void addDiffusion(final IScope scope, final short type, final String var, final IAgent agent,
+			final double value, final double proportion, final double variation, final double range,
+			final IContainer<?, IAgent> candidates) {
 			if ( !diffusions.containsKey(var) ) {
-				diffusions.put(var, new GridDiffusion(type, proportion, variation, range));
+				diffusions.put(var, new GridDiffusion(type, proportion, variation, range, candidates));
 			}
-			diffusions.get(var).add(agent, value);
+			diffusions.get(var).add(scope, agent, value);
 		}
 
 		public void diffuse(final IScope scope) throws GamaRuntimeException {
@@ -1481,11 +1487,15 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			return GamaSpatialMatrix.this.getPlaceIndexAt(x, y);
 		}
 
-		public void diffuseVariable(final String name, final double value, final short type, final double proportion,
-			final double variation, final ILocation location, final double range) {
+		public void diffuseVariable(final IScope scope, final String name, final double value, final short type,
+			final double proportion, final double variation, final ILocation location, final double range,
+			final Object candidates) {
 			final int p = getPlaceIndexAt(location);
 			if ( p == -1 ) { return; }
-			addDiffusion(type, name, matrix[p].getAgent(), value, proportion, variation, range);
+			IContainer<?, IAgent> cand =
+				candidates instanceof IPopulation ? null : candidates instanceof IContainer ? (IContainer) candidates
+					: null;
+			addDiffusion(scope, type, name, matrix[p].getAgent(), value, proportion, variation, range, cand);
 		}
 
 		private void spreadDiffusion(final IScope scope, final String v, final GridDiffusion gridDiffusion)
@@ -1506,6 +1516,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 			final double propInit = 1 - proportion;
 			for ( int i = 0, halt = gridDiffusion.places.length; i < halt; i++ ) {
 				p = gridDiffusion.places[i].getAgent();
+				// if ( gridDiffusion.candidates != null && !gridDiffusion.candidates.contains(scope, p) ) {
+				// continue;
+				// }
 				final int placeIndex = p.getIndex();
 				r0 = gridDiffusion.values[i];
 				final Double previous = (Double) scope.getAgentVarValue(p, v);
@@ -1535,6 +1548,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					final int end = neighbourhood.neighboursIndexOf(placeIndex, n + 1);
 					for ( int k = begin; k < end; k++ ) {
 						final IAgent z = matrix[neighbours[k]].getAgent();
+						if ( gridDiffusion.candidates != null && !gridDiffusion.candidates.contains(scope, z) ) {
+							continue;
+						}
 						// v.addDirectFloat(z, rn);
 						final Double value = (Double) scope.getAgentVarValue(z, v);
 						// If we cant get access to the value of the variable, it means probably that the agent is dead.
@@ -1594,6 +1610,9 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 					cont = false;
 					for ( int k = begin; k < end; k++ ) {
 						final IAgent z = matrix[neighbours[k]].getAgent();
+						if ( gridDiffusion.candidates != null && !gridDiffusion.candidates.contains(scope, z) ) {
+							continue;
+						}
 						final Double value = (Double) scope.getAgentVarValue(z, v);
 						// If we cant get access to the value of the variable, it means probably that the agent is dead.
 						// Better to stop spreading !

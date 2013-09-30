@@ -35,7 +35,7 @@ public interface IGrid extends IMatrix<IShape>, ISpatialIndex {
 	public abstract void setCellSpecies(final IPopulation pop);
 
 	public abstract void diffuseVariable(final IScope scope, final String name, final double value, final short type,
-		final double prop, final double variation, final ILocation location, final double range);
+		final double prop, final double variation, final ILocation location, final double range, Object candidates);
 
 	public abstract IAgent getAgentAt(final ILocation c);
 

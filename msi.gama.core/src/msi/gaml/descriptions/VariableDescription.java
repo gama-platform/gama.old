@@ -42,7 +42,8 @@ public class VariableDescription extends SymbolDescription {
 	private int definitionOrder = -1;
 	private IVarExpression varExpr = null;
 	private IType type = null, contentType = null, keyType = null;
-	private final boolean _isGlobal,/* _isFunction, */_isNotModifiable, _isParameter, _isUpdatable;
+	private final boolean _isGlobal,/* _isFunction, */_isNotModifiable, _isParameter;
+	private boolean _isUpdatable;
 	private GamaHelper get, init, set;
 
 	public VariableDescription(final String keyword, final IDescription superDesc, final IChildrenProvider cp,
@@ -156,6 +157,10 @@ public class VariableDescription extends SymbolDescription {
 
 	public boolean isUpdatable() {
 		return _isUpdatable;
+	}
+
+	public void setUpdatable(final boolean b) {
+		_isUpdatable = b;
 	}
 
 	// public boolean isFunction() {

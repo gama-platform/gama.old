@@ -197,6 +197,14 @@ public class ModelFactory extends SymbolFactory {
 		final String modelName = source.getName().replace(' ', '_') + "_model";
 		globalFacets.putAsLabel(NAME, modelName);
 
+		// We first sort the species so that grids are always the last ones (see SignalVariable)
+		for ( final ISyntacticElement speciesNode : new ArrayList<ISyntacticElement>(speciesNodes.values()) ) {
+			if ( speciesNode.getKeyword().equals(GRID) ) {
+				speciesNodes.remove(speciesNode.getName());
+				speciesNodes.put(speciesNode.getName(), speciesNode);
+			}
+		}
+
 		final ModelDescription model =
 			new ModelDescription(modelName, null, projectPath, modelPath, lastGlobalNode.getElement(), null,
 				ModelDescription.ROOT, globalFacets, collector);

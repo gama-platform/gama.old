@@ -329,6 +329,14 @@ public class TypeDescription extends SymbolDescription {
 		if ( sortedVariableNames.remove(ExperimentAgent.MODEL_PATH) ) {
 			sortedVariableNames.add(0, ExperimentAgent.MODEL_PATH);
 		}
+		if ( var.isUpdatable() ) {
+			if ( updatableVariableNames == null ) {
+				updatableVariableNames = new GamaList();
+			}
+			if ( !updatableVariableNames.contains(var.getName()) ) {
+				updatableVariableNames.add(var.getName());
+			}
+		}
 	}
 
 	@Override

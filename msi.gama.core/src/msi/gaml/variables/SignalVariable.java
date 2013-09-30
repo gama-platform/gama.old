@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -18,7 +18,8 @@
  */
 package msi.gaml.variables;
 
-import msi.gama.common.interfaces.IKeyword;
+import static msi.gama.common.interfaces.IKeyword.*;
+import msi.gama.common.interfaces.*;
 import msi.gama.metamodel.agent.IAgent;
 import msi.gama.metamodel.topology.grid.IGrid;
 import msi.gama.precompiler.GamlAnnotations.facet;
@@ -28,9 +29,13 @@ import msi.gama.precompiler.GamlAnnotations.symbol;
 import msi.gama.precompiler.*;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
-import msi.gaml.descriptions.IDescription;
-import msi.gaml.expressions.IExpression;
+import msi.gama.util.GAML;
+import msi.gaml.compilation.*;
+import msi.gaml.descriptions.*;
+import msi.gaml.expressions.*;
+import msi.gaml.factories.DescriptionFactory;
 import msi.gaml.operators.Cast;
+import msi.gaml.statements.Facets;
 import msi.gaml.types.*;
 
 /**
@@ -90,7 +95,8 @@ import msi.gaml.types.*;
 	@facet(name = IKeyword.VALUE, type = IType.FLOAT, optional = false),
 	@facet(name = IKeyword.UPDATE, type = IType.NONE, optional = true),
 	@facet(name = IKeyword.FUNCTION, type = IType.NONE, optional = true),
-	@facet(name = IKeyword.ENVIRONMENT, type = IType.SPECIES, optional = false),
+	@facet(name = IKeyword.ENVIRONMENT, type = IType.SPECIES, optional = true),
+	@facet(name = IKeyword.ON, type = { IType.SPECIES, IType.CONTAINER }, optional = true),
 	@facet(name = IKeyword.DECAY, type = IType.FLOAT, optional = false),
 	@facet(name = IKeyword.PROPAGATION, type = IType.LABEL, values = { IKeyword.DIFFUSION, IKeyword.GRADIENT }, optional = true),
 	@facet(name = IKeyword.PROPORTION, type = IType.FLOAT, optional = true),
@@ -101,11 +107,75 @@ import msi.gaml.types.*;
 @inside(kinds = { ISymbolKind.SPECIES })
 public class SignalVariable extends NumberVariable {
 
+	public static final Class VALIDATOR = SignalValidator.class;
+
+	public static class SignalValidator implements IDescriptionValidator {
+
+		/**
+		 * Method validate()
+		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
+		 */
+		@Override
+		public void validate(final IDescription d) {
+			IExpressionDescription env = d.getFacets().get(IKeyword.ENVIRONMENT);
+			IExpressionDescription on = d.getFacets().get(IKeyword.ON);
+			if ( env == null ) {
+				env = on;
+			} else if ( on != null ) {
+				IType tenv = env.getExpression().getContentType();
+				IType ton = env.getExpression().getContentType();
+				if ( !tenv.isAssignableFrom(ton) ) {
+					d.warning("'environment:' and 'on:' should be of the same type", IGamlIssue.UNMATCHED_TYPES);
+				}
+				env = on;
+			}
+
+			if ( env == null ) {
+				d.error("No suitable grid environment defined for signal " + d.getName());
+				return;
+			}
+
+			SpeciesDescription s = env.getExpression().getContentType().getSpecies();
+
+			if ( !s.isGrid() ) {
+				d.error(s.getName() + " is not a grid. Signals can only be diffused on grids");
+			}
+
+			IExpression decay = d.getFacets().getExpr(DECAY);
+			if ( decay == null ) {
+				decay = GAML.getExpressionFactory().createConst(0.1, Types.get(IType.FLOAT));
+				d.getFacets().put(DECAY, decay);
+			}
+
+			final VariableDescription vd =
+				(VariableDescription) DescriptionFactory.getFactory(SIGNAL).create(
+					SyntacticFactory.create(IKeyword.FLOAT, new Facets(NAME, d.getName(), TYPE, IKeyword.FLOAT, MIN,
+						"0.0"), false), s, null);
+			s.addChild(vd);
+			IExpressionFactory f = GAML.getExpressionFactory();
+			IExpression v = s.getVarExpr(d.getName());
+			IExpression value =
+				f.createOperator(
+					"?",
+					s,
+					f.createOperator("<", s, v, f.createConst(0.1, Types.get(IType.FLOAT))),
+					f.createOperator(
+						":",
+						s,
+						f.createConst(0.0, Types.get(IType.FLOAT)),
+						f.createOperator("*", s, v,
+							f.createOperator("-", s, f.createConst(1.0, Types.get(IType.FLOAT)), decay))));
+			vd.getFacets().put(VALUE, value);
+			vd.setUpdatable(true);
+			s.resortVarName(vd);
+		}
+	}
+
 	private final Short signalType;
 	private final Double prop, range, variation;
-	private final String envName;
+	private String envName;
 	// private IGrid environment; // Lazily built
-	private final IExpression typeExpr, propExpr, rangeExpr, variationExpr;
+	private final IExpression typeExpr, propExpr, rangeExpr, variationExpr, onExpr;
 
 	public SignalVariable(final IDescription sd) throws GamaRuntimeException {
 		super(sd);
@@ -114,7 +184,12 @@ public class SignalVariable extends NumberVariable {
 		propExpr = getFacet(IKeyword.PROPORTION);
 		variationExpr = getFacet(IKeyword.VARIATION);
 		rangeExpr = getFacet(IKeyword.RANGE);
+		onExpr = getFacet(IKeyword.ON);
 		envName = getLiteral(IKeyword.ENVIRONMENT);
+		if ( envName == null ) {
+			SpeciesDescription s = onExpr.getContentType().getSpecies();
+			envName = s.getName();
+		}
 		signalType = typeExpr == null ? IGrid.DIFFUSION : null;
 		prop = propExpr == null ? 1.0 : null;
 		variation = variationExpr == null ? signalType == null ? null : 0d : null;
@@ -126,7 +201,7 @@ public class SignalVariable extends NumberVariable {
 		super._setVal(agent, scope, v);
 
 		final double result = Cast.asFloat(scope, v);
-		if ( result > 0.0 ) {
+		if ( result > 0.0 && !agent.dead() ) {
 			final short signalType =
 				this.signalType == null ? IKeyword.GRADIENT.equals(scope.evaluate(typeExpr, agent)) ? IGrid.GRADIENT
 					: IGrid.DIFFUSION : this.signalType;
@@ -138,7 +213,7 @@ public class SignalVariable extends NumberVariable {
 			final double range =
 				this.range == null ? Math.max(0.0, Cast.asFloat(scope, scope.evaluate(rangeExpr, agent))) : this.range;
 			getEnvironment(scope).diffuseVariable(scope, getName(), result, signalType, prop, variation,
-				agent.getLocation(), range);
+				agent.getLocation(), range, scope.evaluate(onExpr, agent));
 		}
 	}
 
