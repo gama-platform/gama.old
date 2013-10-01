@@ -216,6 +216,15 @@ public class Graphs {
 		if ( graph.containsVertex(vertex) ) { return new GamaList(graph.incomingEdgesOf(vertex)); }
 		return new GamaList();
 	}
+	
+	@operator(value = "edge_between", content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@doc(value = "returns the edge linking two nodes", examples = { "graphFromMap edge_between node1::node2  --:  edge1" }, see = {"out_edges_of", "in_edges_of"})
+	public static Object EdgeBetween(final IGraph graph, final GamaPair verticePair) {
+		if ( graph == null ) { throw GamaRuntimeException
+			.error("In the edge_between operator, the graph should not be null!"); }
+		if ( graph.containsVertex(verticePair.key) && graph.containsVertex(verticePair.value) ) { return graph.getEdge(verticePair.key, verticePair.value); }
+		return null;
+	}
 
 	@operator(value = "in_degree_of")
 	@doc(value = "returns the in degree of a vertex (right-hand operand) in the graph given as left-hand operand.", examples = { "graphEpidemio in_degree_of (node(3))   --:  2" }, see = {
