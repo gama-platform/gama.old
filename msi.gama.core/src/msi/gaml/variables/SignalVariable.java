@@ -123,7 +123,7 @@ public class SignalVariable extends NumberVariable {
 				env = on;
 			} else if ( on != null ) {
 				IType tenv = env.getExpression().getContentType();
-				IType ton = env.getExpression().getContentType();
+				IType ton = on.getExpression().getContentType();
 				if ( !tenv.isAssignableFrom(ton) ) {
 					d.warning("'environment:' and 'on:' should be of the same type", IGamlIssue.UNMATCHED_TYPES);
 				}
