@@ -213,7 +213,7 @@ public class SignalVariable extends NumberVariable {
 			final double range =
 				this.range == null ? Math.max(0.0, Cast.asFloat(scope, scope.evaluate(rangeExpr, agent))) : this.range;
 			getEnvironment(scope).diffuseVariable(scope, getName(), result, signalType, prop, variation,
-				agent.getLocation(), range, scope.evaluate(onExpr, agent));
+				agent.getLocation(), range, onExpr == null ? null : scope.evaluate(onExpr, agent));
 		}
 	}
 
