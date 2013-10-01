@@ -71,6 +71,7 @@ public class FileUtils {
 			e1.printStackTrace();
 		}
 		String baseDirectory = new File(referenceFile).getParent();
+		//GuiUtils.debug("FileUtils.constructAbsoluteFilePath baseDirectory = " + baseDirectory);
 		final GamaRuntimeException ex;
 		File file = null;
 		if ( isAbsolutePath(filePath) ) {
@@ -83,7 +84,9 @@ public class FileUtils {
 					return file.getAbsolutePath();
 				}
 			}
-			ex = GamaRuntimeException.error("File denoted by " + filePath + " not found! Tried the following paths : ");
+			ex =
+				GamaRuntimeException.error("File denoted by " + file.getAbsolutePath() +
+					" not found! Tried the following paths : ");
 			ex.addContext(file.getAbsolutePath());
 			file = new File(baseDirectory + File.separator + removeRoot(filePath));
 			if ( file.exists() ) {
@@ -112,7 +115,9 @@ public class FileUtils {
 					return file.getAbsolutePath();
 				}
 			}
-			ex = GamaRuntimeException.error("File denoted by " + filePath + " not found! Tried the following paths : ");
+			ex =
+				GamaRuntimeException.error("File denoted by " + file.getAbsolutePath() +
+					" not found! Tried the following paths : ");
 			ex.addContext(file.getAbsolutePath());
 		}
 
