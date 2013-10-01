@@ -114,7 +114,9 @@ public class ImageUtils {
 	public BufferedImage getImageFromFile(final String fileName) throws IOException {
 		final BufferedImage image = get(fileName);
 		if ( image != null ) { return image; }
-		final File f = new File(GAMA.getModel().getRelativeFilePath(fileName, true));
+		String s = GAMA.getModel().getRelativeFilePath(fileName, true);
+		//GuiUtils.debug("ImageUtils.getImageFromFile " + s);
+		final File f = new File(s);
 		return getImageFromFile(f);
 	}
 
