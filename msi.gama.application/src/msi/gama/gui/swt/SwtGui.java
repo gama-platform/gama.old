@@ -275,7 +275,7 @@ public class SwtGui implements IGui {
 
 	@Override
 	public void debug(final String msg) {
-		System.out.println("[GAMA " + Thread.currentThread().getName() + "] " + msg);
+		// System.out.println("[GAMA " + Thread.currentThread().getName() + "] " + msg);
 		WorkbenchPlugin.log(msg);
 		// log.debug(msg);
 	}
