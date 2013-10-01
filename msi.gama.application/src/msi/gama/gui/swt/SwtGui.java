@@ -18,73 +18,36 @@
  */
 package msi.gama.gui.swt;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.*;
 import msi.gama.common.GamaPreferences;
-import msi.gama.common.interfaces.IDisplayCreator;
-import msi.gama.common.interfaces.IDisplaySurface;
-import msi.gama.common.interfaces.IEditorFactory;
-import msi.gama.common.interfaces.IGamaView;
-import msi.gama.common.interfaces.IGui;
+import msi.gama.common.interfaces.*;
 import msi.gama.common.util.GuiUtils;
-import msi.gama.gui.parameters.EditorFactory;
-import msi.gama.gui.parameters.EditorsDialog;
-import msi.gama.gui.parameters.UserControlDialog;
+import msi.gama.gui.parameters.*;
 import msi.gama.gui.swt.controls.StatusControlContribution;
 import msi.gama.gui.swt.dialogs.ExceptionDetailsDialog;
 import msi.gama.gui.swt.swing.OutputSynchronizer;
-import msi.gama.gui.views.AgentInspectView;
-import msi.gama.gui.views.ConsoleView;
-import msi.gama.gui.views.ErrorView;
-import msi.gama.gui.views.ExperimentParametersView;
-import msi.gama.gui.views.LayeredDisplayView;
-import msi.gama.gui.views.MonitorView;
-import msi.gama.gui.views.UserControlView;
+import msi.gama.gui.views.*;
 import msi.gama.kernel.experiment.IExperimentSpecies;
 import msi.gama.kernel.simulation.SimulationAgent;
 import msi.gama.metamodel.agent.IAgent;
-import msi.gama.outputs.IDisplayOutput;
-import msi.gama.outputs.IOutputManager;
-import msi.gama.outputs.InspectDisplayOutput;
-import msi.gama.outputs.LayeredDisplayOutput;
-import msi.gama.runtime.GAMA;
-import msi.gama.runtime.IScope;
+import msi.gama.outputs.*;
+import msi.gama.runtime.*;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gaml.architecture.user.UserPanelStatement;
 import msi.gaml.compilation.GamaClassLoader;
 import msi.gaml.types.IType;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.*;
+import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IPartListener;
-import org.eclipse.ui.IPartService;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveRegistry;
-import org.eclipse.ui.IViewPart;
-import org.eclipse.ui.IViewReference;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
+import org.eclipse.swt.widgets.*;
+import org.eclipse.ui.*;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Written by drogoul Modified on 6 mai 2011
@@ -313,6 +276,7 @@ public class SwtGui implements IGui {
 	@Override
 	public void debug(final String msg) {
 		System.out.println("[GAMA " + Thread.currentThread().getName() + "] " + msg);
+		WorkbenchPlugin.log(msg);
 		// log.debug(msg);
 	}
 
