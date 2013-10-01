@@ -100,15 +100,15 @@ public class GridTopology extends AbstractTopology {
 		return super.getAgentClosestTo(scope, source, filter);
 	}
 
-	@Override
-	public IAgent getAgentClosestTo(final IScope scope, final ILocation source, final IAgentFilter filter) {
-		// We first grab the cell at the location closest to the centroid of the source
-		final IAgent place = getPlaces().getAgentAt(source);
-		// If the filter accepts it, we return it
-		if ( filter.accept(scope, source, place) ) { return place; }
-		// Otherwise we get the "normal" closest agent (in the spatial index)
-		return super.getAgentClosestTo(scope, source, filter);
-	}
+	// @Override
+	// public IAgent getAgentClosestTo(final IScope scope, final ILocation source, final IAgentFilter filter) {
+	// // We first grab the cell at the location closest to the centroid of the source
+	// final IAgent place = getPlaces().getAgentAt(source);
+	// // If the filter accepts it, we return it
+	// if ( filter.accept(scope, source, place) ) { return place; }
+	// // Otherwise we get the "normal" closest agent (in the spatial index)
+	// return super.getAgentClosestTo(scope, source, filter);
+	// }
 
 	/**
 	 * @see msi.gama.interfaces.IValue#stringValue()

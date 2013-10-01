@@ -148,9 +148,9 @@ public abstract class In implements IAgentFilter {
 			if ( agent == null ) { return false; }
 			if ( agent.getPopulation() != pop ) { return false; }
 			final IAgent as = source.getAgent();
-			if ( as != null && as.getPopulation() != pop ) {
-				if ( agent == as ) { return false; }
-			}
+			// if ( as != null && as.getPopulation() != pop ) {
+			if ( agent == as ) { return false; }
+			// }
 			return true;
 		}
 

@@ -269,10 +269,10 @@ public class AmorphousTopology implements ITopology {
 	 * @see msi.gama.metamodel.topology.ITopology#getAgentClosestTo(msi.gama.metamodel.shape.ILocation,
 	 *      msi.gama.metamodel.topology.filter.IAgentFilter)
 	 */
-	@Override
-	public IAgent getAgentClosestTo(final IScope scope, final ILocation source, final IAgentFilter filter) {
-		return null;
-	}
+	// @Override
+	// public IAgent getAgentClosestTo(final IScope scope, final ILocation source, final IAgentFilter filter) {
+	// return null;
+	// }
 
 	/**
 	 * @see msi.gama.metamodel.topology.ITopology#getNeighboursOf(msi.gama.metamodel.shape.ILocation, java.lang.Double,

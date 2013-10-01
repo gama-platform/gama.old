@@ -392,6 +392,33 @@ public abstract class AbstractTopology implements ITopology {
 		return result;
 	}
 
+	// @Override
+	// public IAgent getAgentClosestTo(final IScope scope, final ILocation source, final IAgentFilter filter) {
+	// IAgent result = null;
+	// if ( !isTorus() ) {
+	// final IShape min_neighbour = getSpatialIndex().firstAtDistance(scope, source, 0, filter);
+	// if ( min_neighbour != null ) {
+	// result = min_neighbour.getAgent();
+	// }
+	// } else {
+	// final Map<Geometry, IAgent> agents = getTororoidalAgents(scope, filter);
+	// double distMin = Double.MAX_VALUE;
+	// final Geometry g0 = returnToroidalGeom(source);
+	// for ( final Geometry g1 : agents.keySet() ) {
+	// final IAgent ag = agents.get(g1);
+	// if ( source.getAgent() != null && ag == source.getAgent() ) {
+	// continue;
+	// }
+	// final double dist = g0.distance(g1);
+	// if ( dist < distMin ) {
+	// distMin = dist;
+	// result = ag;
+	// }
+	// }
+	// }
+	// return result;
+	// }
+
 	public Map<Geometry, IAgent> getTororoidalAgents(final IScope scope, final IAgentFilter filter) {
 		IContainer<?, ? extends IShape> shps;
 		if ( filter != null ) {
@@ -403,39 +430,9 @@ public abstract class AbstractTopology implements ITopology {
 	}
 
 	@Override
-	public IAgent getAgentClosestTo(final IScope scope, final ILocation source, final IAgentFilter filter) {
-		IAgent result = null;
-		if ( !isTorus() ) {
-			// for ( int i = 0; i < steps.length; i++ ) {
-			final IShape min_neighbour = getSpatialIndex().firstAtDistance(scope, source, 0, filter);
-			if ( min_neighbour != null ) {
-				result = min_neighbour.getAgent();
-				// break;
-				// }
-			}
-		} else {
-			final Map<Geometry, IAgent> agents = getTororoidalAgents(scope, filter);
-			double distMin = Double.MAX_VALUE;
-			final Geometry g0 = returnToroidalGeom(source);
-			for ( final Geometry g1 : agents.keySet() ) {
-				final IAgent ag = agents.get(g1);
-				if ( source.getAgent() != null && ag == source.getAgent() ) {
-					continue;
-				}
-				final double dist = g0.distance(g1);
-				if ( dist < distMin ) {
-					distMin = dist;
-					result = ag;
-				}
-			}
-		}
-		return result;
-	}
-
-	@Override
 	public Iterator<IAgent> getNeighboursOf(final IScope scope, final IShape source, final Double distance,
 		final IAgentFilter filter) throws GamaRuntimeException {
-		if ( source.isPoint() ) { return getNeighboursOf(scope, source.getLocation(), distance, filter); }
+		// if ( source.isPoint() ) { return getNeighboursOf(scope, source.getLocation(), distance, filter); }
 		// GuiUtils.debug("AbstractTopology.getNeighboursOf");
 		if ( !isTorus() ) {
 			final Iterator<IShape> shapes = getSpatialIndex().allAtDistance(scope, source, distance, filter);
@@ -458,31 +455,32 @@ public abstract class AbstractTopology implements ITopology {
 
 	}
 
-	protected Iterator<IAgent> getNeighboursOf(final IScope scope, final ILocation source, final Double distance,
-		final IAgentFilter filter) throws GamaRuntimeException {
-		// GuiUtils.debug("AbstractTopology.getNeighboursOf");
-		if ( !isTorus() ) {
-			final Iterator<IShape> shapes = getSpatialIndex().allAtDistance(scope, source, distance, filter);
-			return toAgents(shapes);
-
-		}
-		IList<IAgent> agents;
-		final Geometry g0 = returnToroidalGeom(source);
-		agents = new GamaList<IAgent>();
-		final Map<Geometry, IAgent> agentsMap = getTororoidalAgents(scope, filter);
-		for ( final Geometry g1 : agentsMap.keySet() ) {
-			final IAgent ag = agentsMap.get(g1);
-			if ( source.getAgent() != null && ag == source.getAgent() ) {
-				continue;
-			}
-			final double dist = g0.distance(g1);
-			if ( dist <= distance ) {
-				agents.add(ag);
-			}
-		}
-		return agents.iterator();
-
-	}
+	//
+	// protected Iterator<IAgent> getNeighboursOf(final IScope scope, final ILocation source, final Double distance,
+	// final IAgentFilter filter) throws GamaRuntimeException {
+	// // GuiUtils.debug("AbstractTopology.getNeighboursOf");
+	// if ( !isTorus() ) {
+	// final Iterator<IShape> shapes = getSpatialIndex().allAtDistance(scope, source, distance, filter);
+	// return toAgents(shapes);
+	//
+	// }
+	// IList<IAgent> agents;
+	// final Geometry g0 = returnToroidalGeom(source);
+	// agents = new GamaList<IAgent>();
+	// final Map<Geometry, IAgent> agentsMap = getTororoidalAgents(scope, filter);
+	// for ( final Geometry g1 : agentsMap.keySet() ) {
+	// final IAgent ag = agentsMap.get(g1);
+	// if ( source.getAgent() != null && ag == source.getAgent() ) {
+	// continue;
+	// }
+	// final double dist = g0.distance(g1);
+	// if ( dist <= distance ) {
+	// agents.add(ag);
+	// }
+	// }
+	// return agents.iterator();
+	//
+	// }
 
 	@Override
 	public double getWidth() {
