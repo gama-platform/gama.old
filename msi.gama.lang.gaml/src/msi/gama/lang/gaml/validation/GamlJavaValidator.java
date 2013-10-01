@@ -165,70 +165,28 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 		GAML.getExpressionFactory().getParser().reset();
 		IPath path;
 		boolean isFile = false;
-
-		// System.out.println("URI :  " + resource.getURI());
-
 		if ( resource.getURI().isPlatform() ) {
 			path = new Path(resource.getURI().toPlatformString(false));
-			// System.out.println("Was platform : " + path);
 		} else if ( resource.getURI().isFile() ) {
 			isFile = true;
 			path = new Path(resource.getURI().toFileString());
-			// System.out.println("Was file : " + path);
 		} else {
 			path = new Path(resource.getURI().path());
-			// System.out.println("Was nothing : " + path);
 		}
+		path = new Path(URLDecoder.decode(path.toOSString()));
 
 		String modelPath, projectPath;
 
 		if ( isFile ) {
-
-			// path = path.removeLastSegments(1);
-
-			// System.out.println("The path to the model : " + path);
-
 			modelPath = path.toOSString();
-
-			// System.out.println("The OS string of the path to the model : " + modelPath);
-			projectPath = modelPath;
-
+			projectPath = modelPath; // removeLastSegment(1) ?
 		} else {
 			final IFile file = ResourcesPlugin.getWorkspace().getRoot().getFile(path);
-			// NullPointerException when accessing a file / project with a space in it !
-			// FIX: see http://trac.rtsys.informatik.uni-kiel.de/trac/kieler/ticket/1065
-			// This is a workaround, not very elegant, but it works.
 			IPath fullPath = file.getLocation();
-
-			// System.out.println("The 1st location of the IFile : " + fullPath);
-
-			if ( fullPath == null && file instanceof org.eclipse.core.internal.resources.Resource ) {
-				final org.eclipse.core.internal.resources.Resource r =
-					(org.eclipse.core.internal.resources.Resource) file;
-				fullPath = r.getLocalManager().locationFor(r);
-			}
-
-			// System.out.println("The 2nd location of the IFile : " + fullPath);
-
 			modelPath = fullPath == null ? "" : fullPath.toOSString();
-
-			// System.out.println("The model path : " + modelPath);
-
 			fullPath = file.getProject().getLocation();
-			if ( fullPath == null && file.getProject() instanceof org.eclipse.core.internal.resources.Resource ) {
-				final org.eclipse.core.internal.resources.Resource r =
-					(org.eclipse.core.internal.resources.Resource) file.getProject();
-				fullPath = r.getLocalManager().locationFor(r);
-			}
-
 			projectPath = fullPath == null ? "" : fullPath.toOSString();
-
-			// System.out.println("The project path : " + projectPath);
 		}
-
-		projectPath = URLDecoder.decode(projectPath);
-		modelPath = URLDecoder.decode(modelPath);
-
 		return getModelFactory().assemble(projectPath, modelPath, new ArrayList(models.values()));
 	}
 
