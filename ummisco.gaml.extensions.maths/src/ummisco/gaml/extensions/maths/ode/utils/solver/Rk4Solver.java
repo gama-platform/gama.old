@@ -85,10 +85,10 @@ public class Rk4Solver extends Solver {
 
 			integrated_val.clear();
 
-			final double[] y = new double[eq.variables.size()];
+			final double[] y = new double[eq.variables_diff.size()];
 
-			for (int i = 0, n = eq.variables.size(); i < n; i++) {
-				final IExpression v = eq.variables.get(i);
+			for (int i = 0, n = eq.variables_diff.size(); i < n; i++) {
+				final IExpression v = eq.variables_diff.get(i);
 				boolean pushed = false;
 				if (eq.equaAgents.size() > 0) {
 					pushed = scope.push(eq.equaAgents.get(i));
@@ -109,17 +109,16 @@ public class Rk4Solver extends Solver {
 				}
 
 			}
-
+			if (y.length > 0)
 			try {
-
 				integrator.integrate(eq, (time_initial)
 						* (step / cycle_length / step), y, time_final
 						* (step / cycle_length / step), y);
-				eq.assignValue(time_final * (step / cycle_length / step), y);
 
 			} catch (final Exception ex) {
-				System.out.println(ex);
+					ex.printStackTrace();
 			}
+			eq.assignValue(time_final * (step / cycle_length / step), y);
 
 		}
 

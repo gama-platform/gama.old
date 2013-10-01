@@ -68,7 +68,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 		implements FirstOrderDifferentialEquations {
 
 	public final IList<SingleEquationStatement> equations = new GamaList<SingleEquationStatement>();
-	public final IList<IExpression> variables = new GamaList<IExpression>();
+	public final IList<IExpression> variables_diff = new GamaList<IExpression>();
+	public final IList<IExpression> variables_nondiff = new GamaList<IExpression>();
 	// public final GamaMap variables=new GamaMap();
 	public final GamaList<IAgent> equations_ext = new GamaList<IAgent>();
 	public final GamaList<IAgent> equaAgents = new GamaList<IAgent>();
@@ -120,18 +121,25 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 		
 		
 		final List<ISymbol> others = new ArrayList<ISymbol>();
-		for (final Object s : cmd) {
+		for (final ISymbol s : cmd) {
 			if (s instanceof SingleEquationStatement) {
 				equations.add((SingleEquationStatement) s);
 				for (int i = 0; i < ((SingleEquationStatement) s).getVars()
 						.size(); i++) {
-					if (!variables.contains(((SingleEquationStatement) s)
-							.getVar(i))) {
-						variables.add(((SingleEquationStatement) s).getVar(i));
+					IExpression v = ((SingleEquationStatement) s).getVar(i);
+
+					if (((SingleEquationStatement) s).getOrder() > 0) {
+						if (!variables_diff.contains(v))
+							variables_diff.add(v);
+					} else {
+						if (!variables_nondiff.contains(v))
+							variables_nondiff.add(v);
 					}
 				}
 
-			} 
+			} else {
+				others.add(s);
+			}
 		}
 
 		super.setChildren(others);
@@ -144,9 +152,9 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 		// We execute whatever is declared in addition to the equations (could
 		// be initializations,
 		// etc.)
-		
-		for (int i = 0; i < variables.size(); i++) {
-			equaAgents.add(i, scope.getAgentScope());
+		equaAgents.clear();
+		for (int i = 0; i < equations.size(); i++) {
+			equaAgents.add(scope.getAgentScope());
 		}
 		if (simultan != null) {
 			equations_ext.clear();
@@ -185,6 +193,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 			}
 		}
 
+
 		return super.privateExecuteIn(scope);
 	}
 
@@ -194,15 +203,15 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 				.getSpecies().getStatement(SystemOfEquationsStatement.class,
 						eqName);
 		if (ses != null) {
-			final int n = equaAgents.size();
+			// final int n = equaAgents.size();
 
 			for (int i = 0; i < ses.equations.size(); i++) {
-				equaAgents.add(n + i, remoteAgent);
+				equaAgents.add(remoteAgent);
 			}
 
 			equations.addAll(ses.equations);
 
-			variables.addAll(ses.variables);
+			variables_diff.addAll(ses.variables_diff);
 
 		}
 
@@ -217,7 +226,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 
 			equations.removeAll(ses.equations);
 
-			variables.removeAll(ses.variables);
+			variables_diff.removeAll(ses.variables_diff);
 		}
 
 	}
@@ -226,8 +235,7 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 		if (equations_ext.size() > 0) {
 
 			for (int i = 0, n = equations_ext.size(); i < n; i++) {
-				final Object o = equations_ext.get(i);
-				final IAgent remoteAgent = (IAgent) o;
+				final IAgent remoteAgent = equations_ext.get(i);
 				if (!remoteAgent.dead()) {
 					addEquationsExtern(remoteAgent, eqName);
 				}
@@ -277,8 +285,8 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 			if (s.getOrder() == 0) {
 				continue;
 			}
-			final Object o = equaAgents.get(i);
-			final IAgent remoteAgent = (IAgent) o;
+
+			final IAgent remoteAgent = equaAgents.get(i);
 			boolean pushed = false;
 			if (!remoteAgent.dead()) {
 				pushed = currentScope.push(remoteAgent);
@@ -287,10 +295,12 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 						((IVarExpression) s.getVar_t()).setVal(currentScope,
 								time, false);
 					}
-					if (variables.get(i) instanceof IVarExpression) {
-						((IVarExpression)variables.get(i)).setVal(currentScope, y[i], false);
-					} else if (variables.get(i) instanceof MapExpression) {
-						System.out.println(((MapExpression) variables.get(i))
+					if (variables_diff.get(i) instanceof IVarExpression) {
+						((IVarExpression) variables_diff.get(i)).setVal(
+								currentScope, y[i], false);
+					} else if (variables_diff.get(i) instanceof MapExpression) {
+						System.out.println(((MapExpression) variables_diff
+								.get(i))
 								.valuesArray());
 
 					}
@@ -323,7 +333,6 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 						}
 					}
 
-
 				}
 				// System.out.println(s.getExpression().value(currentScope));
 			}
@@ -353,17 +362,17 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence
 		// TODO Should be rewritten in a more correct way : scope.execute(s,
 		// agent)...
 		for (int i = 0, n = getDimension(); i < n; i++) {
-			final SingleEquationStatement s = equations.get(i);
 
 			boolean pushed = false;
 			if (equaAgents.size() > 0) {
 				pushed = currentScope.push(equaAgents.get(i));
 			}
 			try {
-				ydot[i] = Cast.asFloat(currentScope, s.executeOn(currentScope));
+				ydot[i] = Cast.asFloat(currentScope, equations.get(i)
+						.executeOn(currentScope));
 			} catch (final Exception ex1) {
+				ex1.printStackTrace();
 			} finally {
-
 				if (equaAgents.size() > 0) {
 					if (pushed) {
 						currentScope.pop(equaAgents.get(i));

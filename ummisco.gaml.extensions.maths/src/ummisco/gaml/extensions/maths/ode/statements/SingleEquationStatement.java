@@ -11,12 +11,15 @@ import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.GamaList;
 import msi.gama.util.IList;
+import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.IDescription;
+import msi.gaml.descriptions.IExpressionDescription;
 import msi.gaml.expressions.AbstractNAryOperator;
 import msi.gaml.expressions.IExpression;
 import msi.gaml.expressions.IVarExpression;
 import msi.gaml.statements.AbstractStatement;
 import msi.gaml.types.IType;
+import msi.gaml.types.Types;
 
 @facets(value = {
 		@facet(name = IKeyword.EQUATION_LEFT, type = IType.NONE, optional = false),
@@ -36,6 +39,35 @@ import msi.gaml.types.IType;
  *
  */
 public class SingleEquationStatement extends AbstractStatement {
+	public static final Class VALIDATOR = SingleEquationValidator.class;
+
+	public static class SingleEquationValidator implements
+			IDescriptionValidator {
+
+		/**
+		 * Method validate()
+		 * 
+		 * @see msi.gaml.compilation.IDescriptionValidator#validate(msi.gaml.descriptions.IDescription)
+		 */
+		@Override
+		public void validate(final IDescription d) {
+			IExpressionDescription func = d.getFacets().get(
+					IKeyword.EQUATION_LEFT);
+			if (!(func.getExpression() instanceof AbstractNAryOperator)) {
+				d.error("Left-side of equation must be a NAryOperator",
+						d.getName());
+				return;
+			}
+
+			if (!func.getExpression().getType().equals(Types.get(IType.FLOAT))) {
+				d.warning("Parameters of equation must be a float type",
+						d.getName());
+				return;
+			}
+
+
+		}
+	}
 
 	private IExpression function, expression;
 	private final IList<IExpression> var = new GamaList<IExpression>();
