@@ -19,6 +19,7 @@
 package msi.gama.lang.gaml.validation;
 
 import static msi.gaml.factories.DescriptionFactory.getModelFactory;
+import java.net.URLDecoder;
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
 import msi.gama.common.util.GuiUtils;
@@ -224,6 +225,9 @@ public class GamlJavaValidator extends AbstractGamlJavaValidator {
 
 			// System.out.println("The project path : " + projectPath);
 		}
+
+		projectPath = URLDecoder.decode(projectPath);
+		modelPath = URLDecoder.decode(modelPath);
 
 		return getModelFactory().assemble(projectPath, modelPath, new ArrayList(models.values()));
 	}
