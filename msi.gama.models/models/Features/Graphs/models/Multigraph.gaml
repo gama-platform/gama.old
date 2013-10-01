@@ -16,26 +16,17 @@ global {
 	init {
 		create road from: shape_file_in;
 		road_graph <- as_edge_graph(road);
-		create people number: 100 {
+		create people number: 50 {
 			add vertex: self to: friendship_graph;
 		}
-		loop times: 100 {
+		loop times: 50 {
 			people p1 <- one_of(people);
 			people p2 <- one_of(list(people) - p1);
-			if flip(0.5) {
-				create friendship_link  {
-					add edge: (p1::p2)::self to: friendship_graph;
-					shape <- new_shape();
-				}
-				
-			
+			create friendship_link  {
+				add edge: (p1::p2)::self to: friendship_graph;
+				shape <- link(p1::p2);
 			}
-			else {add edge: p1::p2 to: friendship_graph;}
 		}
-		ask people {
-			 do updateSize;
-		}
-		
 	}
 }
 
@@ -43,11 +34,12 @@ entities {
 	species people skills: [moving]{
 		point location <- any_location_in(one_of(road));
 		people target<- one_of(people);
-		float size ;
+		float size <- 3.0;
 		action updateSize {
-			path friendship_path <- friendship_graph path_between(self:: target); 
+			path friendship_path <- friendship_graph path_between(self::target);
+			
 			if (friendship_path != nil) {
-				size <-max([2,length( friendship_path.edges)]) as float;
+				size <-max([2,length( friendship_path.segments)]) as float;
 			}
 		}
 		reflex movement {
@@ -64,10 +56,6 @@ entities {
 	}
 	
 	species friendship_link {
-		geometry shape update: new_shape();
-		action new_shape {
-			return line([people(friendship_graph source_of(self)).location, people(friendship_graph target_of(self)).location]);
-		}
 		aspect base {
 			draw shape color: rgb("blue");
 		}
