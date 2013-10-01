@@ -281,6 +281,11 @@ public class SwtGui implements IGui {
 	}
 
 	@Override
+	public void debug(final Exception e) {
+		WorkbenchPlugin.log(e);
+	}
+
+	@Override
 	public void warn(final String msg) {
 		System.err.println("[GAMA " + Thread.currentThread().getName() + "] " + msg);
 	}

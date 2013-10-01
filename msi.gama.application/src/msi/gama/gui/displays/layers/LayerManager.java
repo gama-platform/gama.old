@@ -20,6 +20,7 @@ package msi.gama.gui.displays.layers;
 
 import java.util.*;
 import msi.gama.common.interfaces.*;
+import msi.gama.common.util.GuiUtils;
 import msi.gama.outputs.layers.ILayerStatement;
 import msi.gama.runtime.*;
 import msi.gama.util.*;
@@ -148,7 +149,7 @@ public class LayerManager implements ILayerManager {
 			// // pd.drawDisplay(scope, g);
 			// }
 		} catch (final Exception e) {
-			System.err.println("Exception while drawing layers: " + e.getMessage());
+			GuiUtils.debug(e);
 		}
 		// catch (final Exception e) {
 		// // e.addContext("in drawing layer " + dis.getMenuName());

@@ -133,4 +133,6 @@ public interface IGui {
 
 	void waitForViewsToBeInitialized();
 
+	void debug(Exception e);
+
 }

@@ -304,4 +304,13 @@ public class HeadlessListener implements IGui {
 	 */
 	@Override
 	public void waitForViewsToBeInitialized() {}
+
+	/**
+	 * Method debug()
+	 * @see msi.gama.common.interfaces.IGui#debug(java.lang.Exception)
+	 */
+	@Override
+	public void debug(final Exception e) {
+		e.printStackTrace();
+	}
 }

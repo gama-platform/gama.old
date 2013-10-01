@@ -400,4 +400,15 @@ public class GuiUtils {
 		gui.waitForViewsToBeInitialized();
 	}
 
+	/**
+	 * @param e
+	 */
+	public static void debug(final Exception e) {
+		if ( gui == null ) {
+			e.printStackTrace();
+		} else {
+			gui.debug(e);
+		}
+	}
+
 }
