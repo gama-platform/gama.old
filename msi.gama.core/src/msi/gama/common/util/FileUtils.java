@@ -5,6 +5,7 @@
 package msi.gama.common.util;
 
 import java.io.*;
+import java.net.URLDecoder;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 
 /**
@@ -23,7 +24,7 @@ public class FileUtils {
 	 * 
 	 * @return true, if is absolute path
 	 */
-	static boolean isAbsolutePath(final String filePath) {
+	private static boolean isAbsolutePath(final String filePath) {
 		final File[] roots = File.listRoots();
 		for ( int i = 0; i < roots.length; i++ ) {
 			if ( filePath.startsWith(roots[i].getAbsolutePath()) ) { return true; }
@@ -38,7 +39,7 @@ public class FileUtils {
 	 * 
 	 * @return the string
 	 */
-	public static String removeRoot(final String absoluteFilePath) {
+	private static String removeRoot(final String absoluteFilePath) {
 		// OutputManager.debug("absoluteFilePath before = " + absoluteFilePath);
 
 		final File[] roots = File.listRoots();
@@ -59,8 +60,16 @@ public class FileUtils {
 	 * 
 	 * @throws GamlException the gaml exception
 	 */
-	static public String constructAbsoluteFilePath(final String filePath, final String referenceFile,
-		final boolean mustExist) throws GamaRuntimeException {
+	static public String constructAbsoluteFilePath(final String fp, final String rf, final boolean mustExist)
+		throws GamaRuntimeException {
+		String filePath = null;
+		String referenceFile = null;
+		try {
+			referenceFile = URLDecoder.decode(rf, "UTF-8");
+			filePath = URLDecoder.decode(fp, "UTF-8");
+		} catch (UnsupportedEncodingException e1) {
+			e1.printStackTrace();
+		}
 		String baseDirectory = new File(referenceFile).getParent();
 		final GamaRuntimeException ex;
 		File file = null;
@@ -91,13 +100,13 @@ public class FileUtils {
 			if ( file.exists() || !mustExist ) {
 				try {
 					// We have to try if the test is necessary.
-					
-					if(GuiUtils.isInHeadLessMode())
-					  return file.getAbsolutePath() ; 
-					else
-					  return file.getCanonicalPath();
-					
-					
+
+					if ( GuiUtils.isInHeadLessMode() ) {
+						return file.getAbsolutePath();
+					} else {
+						return file.getCanonicalPath();
+					}
+
 				} catch (final IOException e) {
 					e.printStackTrace();
 					return file.getAbsolutePath();
