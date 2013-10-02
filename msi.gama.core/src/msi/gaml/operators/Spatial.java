@@ -91,7 +91,7 @@ public abstract class Spatial {
 		}
 
 		@operator("sphere")
-		@doc(value = "A sphere geometry which radius is equal to the operand.", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.", examples = { "sphere(10) --: returns a geometry as a circle of radius 10 but displays ." }, see = {
+		@doc(value = "A sphere geometry which radius is equal to the operand.", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "the centre of the sphere is by default the location of the current agent in which has been called this operator.", examples = { "sphere(10) --: returns a geometry as a circle of radius 10 but displays a sphere." }, see = {
 			"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle" })
 		public static IShape sphere(final IScope scope, final Double radius) {
 			ILocation location;
@@ -99,6 +99,28 @@ public abstract class Spatial {
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if ( radius <= 0 ) { return new GamaShape(location); }
 			return GamaGeometryType.buildSphere(radius, location);
+		}
+		
+		@operator("cone3D")
+		@doc(value = "A cone geometry which radius is equal to the operand.", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "the centre of the cone is by default the location of the current agent in which has been called this operator.", examples = { "cone(10,10) --: returns a geometry as a circle of radius 10 but displays a cone." }, see = {
+			"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle" })
+		public static IShape cone3D(final IScope scope, final Double radius, final Double height) {
+			ILocation location;
+			final IAgent a = scope.getAgentScope();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			if ( radius <= 0 ) { return new GamaShape(location); }
+			return GamaGeometryType.buildCone3D(radius, height, location);
+		}
+		
+		@operator("teapot")
+		@doc(value = "A teapot geometry which radius is equal to the operand.", special_cases = { "returns a point if the operand is lower or equal to 0." }, comment = "the centre of the teapot is by default the location of the current agent in which has been called this operator.", examples = { "teapot(10) --: returns a geometry as a circle of radius 10 but displays a teapot." }, see = {
+			"around", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square", "triangle" })
+		public static IShape teapot(final IScope scope, final Double size) {
+			ILocation location;
+			final IAgent a = scope.getAgentScope();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			if ( size <= 0 ) { return new GamaShape(location); }
+			return GamaGeometryType.buildTeapot(size, location);
 		}
 
 		@operator("cone")
@@ -190,6 +212,17 @@ public abstract class Spatial {
 			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
 			if ( side_size <= 0 ) { return new GamaShape(location); }
 			return GamaGeometryType.buildTriangle(side_size, location);
+		}
+		
+		@operator("pyramid")
+		@doc(value = "A square geometry which side size is given by the operand.", special_cases = { "returns nil if the operand is nil." }, comment = "the centre of the pyramid is by default the location of the current agent in which has been called this operator.", examples = { "pyramid(5) --: returns a geometry as a sqaure with side_size = 5." }, see = {
+			"around", "circle", "cone", "line", "link", "norm", "point", "polygon", "polyline", "rectangle", "square" })
+		public static IShape pyramid(final IScope scope, final Double side_size) {
+			ILocation location;
+			final IAgent a = scope.getAgentScope();
+			location = a != null ? a.getLocation() : new GamaPoint(0, 0);
+			if ( side_size <= 0 ) { return new GamaShape(location); }
+			return GamaGeometryType.buildPyramid(side_size, location);
 		}
 
 		@operator("hexagon")

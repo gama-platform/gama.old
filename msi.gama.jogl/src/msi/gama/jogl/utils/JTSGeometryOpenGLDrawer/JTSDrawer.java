@@ -9,6 +9,8 @@ import msi.gama.common.util.GeometryUtils;
 import msi.gama.jogl.utils.*;
 import msi.gama.metamodel.shape.*;
 import msi.gama.util.*;
+
+import com.sun.opengl.util.GLUT;
 import com.sun.opengl.util.texture.Texture;
 import com.vividsolutions.jts.geom.*;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
@@ -18,6 +20,7 @@ public class JTSDrawer {
 	// OpenGL member
 	private final GL gl;
 	private final GLU myGlu;
+	private final GLUT myGlut;
 	public TessellCallBack tessCallback;
 	private final GLUtessellator tobj;
 
@@ -53,6 +56,7 @@ public class JTSDrawer {
 
 		gl = gLRender.gl;
 		myGlu = gLRender.glu;
+		myGlut = new GLUT();
 		myGLRender = gLRender;
 		tessCallback = new TessellCallBack(gl, myGlu);
 		tobj = myGlu.gluNewTess();
@@ -311,7 +315,7 @@ public class JTSDrawer {
 
 	public void DrawPolygonContour(final Polygon p, final Color border, final double z_fighting_value) {
 
-		// FIXME: when rendering witjh this method the triangulation does nto work anymore
+		// FIXME: when rendering with this method the triangulation does not work anymore
 		if ( myGLRender.getZFighting() ) {
 			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
 			// }
@@ -690,6 +694,107 @@ public class JTSDrawer {
 		myGlu.gluDeleteQuadric(quad);
 		gl.glTranslated(-p.getCentroid().getX(), -yFlag * p.getCentroid().getY(), -z);
 
+	}
+	
+	public void DrawCone(final Polygon p, final double radius, final Color c, final double alpha) {
+		// Add z value (Note: getCentroid does not return a z value)
+		double z = 0.0;
+		if ( Double.isNaN(p.getCoordinate().z) == false ) {
+			z = p.getExteriorRing().getPointN(0).getCoordinate().z;
+		}
+
+		gl.glTranslated(p.getCentroid().getX(), yFlag * p.getCentroid().getY(), z);
+		if ( !colorpicking ) {
+			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
+		}
+		myGlut.glutSolidCone(radius, radius, 10, 10);
+		gl.glTranslated(-p.getCentroid().getX(), -yFlag * p.getCentroid().getY(), -z);
+	}
+	
+	public void DrawTeapot(final Polygon p, final double radius, final Color c, final double alpha) {
+		// Add z value (Note: getCentroid does not return a z value)
+		double z = 0.0;
+		if ( Double.isNaN(p.getCoordinate().z) == false ) {
+			z = p.getExteriorRing().getPointN(0).getCoordinate().z;
+		}
+
+		gl.glTranslated(p.getCentroid().getX(), yFlag * p.getCentroid().getY(), z);
+		if ( !colorpicking ) {
+			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
+		}
+		gl.glRotated(90, 1.0, 0.0, 0.0);
+		myGlut.glutSolidTeapot(radius);
+		gl.glRotated(-90, 1.0, 0.0, 0.0);
+		gl.glTranslated(-p.getCentroid().getX(), -yFlag * p.getCentroid().getY(), -z);
+	}
+	
+	public void DrawPyramid(final Polygon p, final double radius, final Color c, final Color border, final double alpha){
+		double z = 0.0;
+		if ( Double.isNaN(p.getCoordinate().z) == false ) {
+			z = p.getExteriorRing().getPointN(0).getCoordinate().z;
+		}
+
+		gl.glTranslated(0, 0, z);
+		if ( !colorpicking ) {
+			gl.glColor4d((double) c.getRed() / 255, (double) c.getGreen() / 255, (double) c.getBlue() / 255, alpha);
+		}
+		PyramidSkeleton(p,radius);
+		//border
+		if ( !colorpicking ) {
+			gl.glColor4d((double) border.getRed() / 255, (double) border.getGreen() / 255, (double) border.getBlue() / 255, alpha);
+		}
+		gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_LINE);
+		gl.glEnable(GL.GL_POLYGON_OFFSET_LINE);
+		gl.glPolygonOffset(0.0f, -(float) (1.1));
+		PyramidSkeleton(p,radius);
+		gl.glDisable(GL.GL_POLYGON_OFFSET_LINE);
+		if ( !myGLRender.triangulation ) {
+			gl.glPolygonMode(GL.GL_FRONT_AND_BACK, GL.GL_FILL);
+		}
+		gl.glTranslated(0, 0, -z);
+
+	}
+	
+	public void PyramidSkeleton(final Polygon p, final double size){
+		gl.glBegin(GL_QUADS);
+			gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag *
+					p.getExteriorRing().getPointN(0).getY(), 0.0d);
+			gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag *
+					p.getExteriorRing().getPointN(1).getY(), 0.0d);
+			gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag *
+					p.getExteriorRing().getPointN(2).getY(), 0.0d);
+			gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag *
+					p.getExteriorRing().getPointN(3).getY(), 0.0d);
+		gl.glEnd();
+		gl.glBegin(GL_TRIANGLES);
+			gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag *
+					p.getExteriorRing().getPointN(0).getY(), 0.0d);
+			gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag *
+					p.getExteriorRing().getPointN(1).getY(), 0.0d);
+			gl.glVertex3d(p.getExteriorRing().getPointN(0).getX() + size/2, yFlag *
+					(p.getExteriorRing().getPointN(0).getY()-size/2), size);
+			
+			gl.glVertex3d(p.getExteriorRing().getPointN(1).getX(), yFlag *
+					p.getExteriorRing().getPointN(1).getY(), 0.0d);
+			gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag *
+					p.getExteriorRing().getPointN(2).getY(), 0.0d);
+			gl.glVertex3d(p.getExteriorRing().getPointN(1).getX() - size/2, yFlag *
+					(p.getExteriorRing().getPointN(1).getY()-size/2), size);
+			
+			gl.glVertex3d(p.getExteriorRing().getPointN(2).getX(), yFlag *
+					p.getExteriorRing().getPointN(2).getY(), 0.0d);
+			gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag *
+					p.getExteriorRing().getPointN(3).getY(), 0.0d);
+			gl.glVertex3d(p.getExteriorRing().getPointN(2).getX() - size/2, yFlag *
+					(p.getExteriorRing().getPointN(2).getY()+size/2), size);
+			
+			gl.glVertex3d(p.getExteriorRing().getPointN(3).getX(), yFlag *
+					p.getExteriorRing().getPointN(3).getY(), 0.0d);
+			gl.glVertex3d(p.getExteriorRing().getPointN(0).getX(), yFlag *
+					p.getExteriorRing().getPointN(0).getY(), 0.0d);
+			gl.glVertex3d(p.getExteriorRing().getPointN(3).getX() + size/2, yFlag *
+					(p.getExteriorRing().getPointN(3).getY()+size/2), size);
+		gl.glEnd();
 	}
 
 	public void DrawShape(final IShape shape, final boolean showTriangulation) {

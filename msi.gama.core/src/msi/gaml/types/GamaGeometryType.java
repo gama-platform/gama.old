@@ -314,6 +314,27 @@ public class GamaGeometryType extends GamaType<IShape> {
 		g.setAttribute(IShape.TYPE_ATTRIBUTE, "sphere");
 		return g;
 	}
+	
+	public static IShape buildCone3D(final double radius, final double depth, final ILocation location) {
+		final GamaShape g = new GamaShape(buildCircle(radius, location));
+		g.setAttribute(IShape.DEPTH_ATTRIBUTE, depth);
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, "cone");
+		return g;
+	}
+	
+	public static IShape buildTeapot(final double size, final ILocation location) {
+		final GamaShape g = new GamaShape(buildCircle(size, location));
+		g.setAttribute(IShape.DEPTH_ATTRIBUTE, size);
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, "teapot");
+		return g;
+	}
+	
+	public static IShape buildPyramid(final double side_size, final ILocation location) {
+		final GamaShape g = new GamaShape(buildRectangle(side_size, side_size, location));
+		g.setAttribute(IShape.DEPTH_ATTRIBUTE, side_size);
+		g.setAttribute(IShape.TYPE_ATTRIBUTE, "pyramid");
+		return g;
+	}
 
 	public static GamaShape geometriesToGeometry(final IScope scope, final IContainer<?, ? extends IShape> ags)
 		throws GamaRuntimeException {

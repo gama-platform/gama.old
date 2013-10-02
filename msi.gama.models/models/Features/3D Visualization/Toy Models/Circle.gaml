@@ -44,15 +44,40 @@ entities {
 				do move speed: dist / repulsion_strength heading: heading;
 			}
 		}
-		
+		aspect pyramid {
+			draw pyramid(size) color:color;
+		}
+		aspect cone {
+			draw cone3D(size,size) color:color border:color;
+		}
 		aspect cylinder {
 			draw cylinder(size,z) color:color border:color;
 		}
 		aspect sphere{
 			draw sphere(size) color:color;
 		}
+		aspect teapot{
+			draw teapot(size) color:color;
+		}
 	}
 }
+
+experiment pyramid type: gui {
+	output {
+		display Pryramid refresh_every: 1  type:opengl ambient_light:0.2{
+			species cells aspect:pyramid;
+		}
+	}
+}
+
+experiment cone type: gui {
+	output {
+		display Cone refresh_every: 1  type:opengl ambient_light:0.2{
+			species cells aspect:cone;
+		}
+	}
+}
+
 experiment cylinder type: gui {
 	output {
 		display Cylinder refresh_every: 1  type:opengl ambient_light:100{
@@ -65,6 +90,14 @@ experiment sphere type: gui {
 	output {
 		display Sphere3 refresh_every: 1  type:opengl ambient_light:100 {
 			species cells aspect: sphere;
+		}
+	}
+}
+
+experiment teapot type: gui {
+	output {
+		display teapot refresh_every: 1  type:opengl ambient_light:100 {
+			species cells aspect: teapot;
 		}
 	}
 }

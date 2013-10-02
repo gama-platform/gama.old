@@ -90,21 +90,24 @@ public abstract class ObjectDrawer<T extends AbstractObject> {
 						geometry.fill, geometry.border, geometry.angle, geometry.height, geometry.rounded,
 						geometry.getZ_fighting_id());
 				} else if ( geometry.geometry.getGeometryType() == "Polygon" ) {
-					// The JTS geometry of a sphere is a circle (a polygon)
-					/*
-					 * GuiUtils.debug(" exterior ring x: " +
-					 * ((Polygon)geometry.geometry).getExteriorRing().getCoordinateN(0).x);
-					 * GuiUtils.debug(" exterior ring y: " +
-					 * ((Polygon)geometry.geometry).getExteriorRing().getCoordinateN(0).y);
-					 * GuiUtils.debug(" exterior ring z: " +
-					 * ((Polygon)geometry.geometry).getExteriorRing().getCoordinateN(0).z);
-					 * GuiUtils.debug(" agent: " + geometry.agent.getLocation());
-					 * GuiUtils.debug(" centroid: " + geometry.geometry.getCentroid().getCoordinate().z);
-					 */
-					if ( geometry.type != null && geometry.type.equals("sphere") ) {
+	
+					//3D sepcial geomtry (sphere, cone
+					if ( geometry.type != null && geometry.type.equals("sphere") ) {	
 						jtsDrawer.DrawSphere((Polygon) geometry.geometry, geometry.height, geometry.getColor(),
-							geometry.alpha);
-					} else {
+								geometry.alpha);
+					}else if ( geometry.type != null && geometry.type.equals("cone") ) {
+						jtsDrawer.DrawCone((Polygon) geometry.geometry, geometry.height, geometry.getColor(),
+								geometry.alpha);
+					}
+					else if ( geometry.type != null && geometry.type.equals("teapot") ) {
+						jtsDrawer.DrawTeapot((Polygon) geometry.geometry, geometry.height, geometry.getColor(),
+								geometry.alpha);
+					}
+					else if ( geometry.type != null && geometry.type.equals("pyramid") ) {
+						jtsDrawer.DrawPyramid((Polygon) geometry.geometry, geometry.height, geometry.getColor(),geometry.border,
+								geometry.alpha);
+					}
+					else {
 						if ( geometry.height > 0 ) {
 							jtsDrawer.DrawPolyhedre((Polygon) geometry.geometry, geometry.getColor(), geometry.alpha,
 								geometry.fill, geometry.height, geometry.angle, true, geometry.border,
