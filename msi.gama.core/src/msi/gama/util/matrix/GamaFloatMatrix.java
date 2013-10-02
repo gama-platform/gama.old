@@ -19,6 +19,10 @@
 package msi.gama.util.matrix;
 
 import java.util.*;
+
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.RealMatrix;
+
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.IScope;
@@ -29,7 +33,7 @@ import com.google.common.primitives.Doubles;
 import com.vividsolutions.jts.index.quadtree.IntervalSize;
 
 public class GamaFloatMatrix extends GamaMatrix<Double> {
-
+	
 	static public GamaFloatMatrix from(final IScope scope, final IMatrix m) {
 		if ( m instanceof GamaFloatMatrix ) { return (GamaFloatMatrix) m; }
 		if ( m instanceof GamaObjectMatrix ) { return new GamaFloatMatrix(scope, m.getCols(scope), m.getRows(scope),
@@ -49,6 +53,12 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 
 	private double[] matrix;
 
+	public GamaFloatMatrix(final RealMatrix rm) {
+		super(rm.getColumnDimension(), rm.getRowDimension());
+		matrix = new double[rm.getColumnDimension() * rm.getRowDimension()];
+		updateMatrix(rm);
+	}
+	
 	public GamaFloatMatrix(final double[] mat) {
 		super(1, mat.length);
 		setMatrix(mat);
@@ -204,10 +214,11 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 
 	@Override
 	public IMatrix _reverse(final IScope scope) throws GamaRuntimeException {
-		final IMatrix result = new GamaFloatMatrix(numRows, numCols);
+		final GamaFloatMatrix result = new GamaFloatMatrix(numRows, numCols);
 		for ( int i = 0; i < numCols; i++ ) {
 			for ( int j = 0; j < numRows; j++ ) {
-				result.set(scope, j, i, get(scope, i, j));
+				double val =  get(scope, i, j);
+				result.set(scope, j, i,val);
 			}
 		}
 		return result;
@@ -236,6 +247,7 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 		// TODO Exception if o == null
 		// TODO Verify the type
 		Arrays.fill(getMatrix(), ((Double) o).doubleValue());
+		
 	}
 
 	@Override
@@ -253,7 +265,8 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	@Override
 	public void set(final IScope scope, final int col, final int row, final Object obj) throws GamaRuntimeException {
 		if ( !(col >= numCols || col < 0 || row >= numRows || row < 0) ) {
-			getMatrix()[row * numCols + col] = Cast.asFloat(scope, obj);
+			double val = Cast.asFloat(scope, obj);
+			getMatrix()[row * numCols + col] = val;
 		}
 		// put(col, row, Cast.asFloat(GAMA.getDefaultScope(), obj).doubleValue());
 	}
@@ -348,6 +361,161 @@ public class GamaFloatMatrix extends GamaMatrix<Double> {
 	void setMatrix(final double[] matrix) {
 		this.matrix = matrix;
 	}
+	
+	RealMatrix getRealMatrix() {
+		RealMatrix realMatrix = new Array2DRowRealMatrix(this.numRows, this.numCols);
+		for (int i = 0; i< this.numRows; i ++) {
+			for (int j = 0; j< this.numCols; j ++) {
+				realMatrix.setEntry(i, j, this.get(null, j, i));
+			}
+		}
+		return realMatrix;
+	}
+	void updateMatrix(RealMatrix realMatrix) {
+		for (int i = 0; i< this.numRows; i ++) {
+			for (int j = 0; j< this.numCols; j ++) {
+				getMatrix()[i * numCols + j] = realMatrix.getEntry(i, j);
+			}
+		}
+	}
+	
+	
+	@Override
+	public IMatrix plus(IMatrix other) throws GamaRuntimeException {
+		GamaFloatMatrix matb = from(null,other);
+		if (matb != null && this.numCols == matb.numCols && this.numRows == matb.numRows) {
+			GamaFloatMatrix nm = new GamaFloatMatrix(this.numCols, this.numRows);
+			for (int i = 0; i < matrix.length; i++) {
+				nm.matrix[i] = matrix[i] + matb.matrix[i]; 
+			}
+			return nm;
+		}
+		return null;
+	}
+
+	@Override
+	public IMatrix times(IMatrix other) throws GamaRuntimeException {
+		GamaFloatMatrix matb = from(null,other);
+		if (matb != null && this.numCols == matb.numCols && this.numRows == matb.numRows) {
+			GamaFloatMatrix nm = new GamaFloatMatrix(this.numCols, this.numRows);
+			for (int i = 0; i < matrix.length; i++) {
+				nm.matrix[i] = matrix[i] * matb.matrix[i]; 
+			}
+			return nm;
+		}
+		return null;
+	}
+
+	@Override
+	public IMatrix minus(IMatrix other) throws GamaRuntimeException {
+		GamaFloatMatrix matb = from(null,other);
+		if (matb != null && this.numCols == matb.numCols && this.numRows == matb.numRows) {
+			GamaFloatMatrix nm = new GamaFloatMatrix(this.numCols, this.numRows);
+			for (int i = 0; i < matrix.length; i++) {
+				nm.matrix[i] = matrix[i] - matb.matrix[i]; 
+			}
+			return nm;
+		}
+		return null;
+	}
+
+	@Override
+	public IMatrix times(Double val) throws GamaRuntimeException {
+		GamaFloatMatrix nm = new GamaFloatMatrix(this.numCols, this.numRows);
+		for (int i = 0; i < matrix.length; i++) {
+			nm.matrix[i] = matrix[i] * val; 
+		}
+		return nm;
+	}
+
+	@Override
+	public IMatrix times(Integer val) throws GamaRuntimeException {
+		GamaFloatMatrix nm = new GamaFloatMatrix(this.numCols, this.numRows);
+		for (int i = 0; i < matrix.length; i++) {
+			nm.matrix[i] = matrix[i] * val; 
+		}
+		return nm;
+	}
+
+	@Override
+	public IMatrix divides(Double val) throws GamaRuntimeException {
+		GamaFloatMatrix nm = new GamaFloatMatrix(this.numCols, this.numRows);
+		for (int i = 0; i < matrix.length; i++) {
+			nm.matrix[i] = matrix[i] / val; 
+		}
+		return nm;
+	}
+
+	@Override
+	public IMatrix divides(Integer val) throws GamaRuntimeException {
+		GamaFloatMatrix nm = new GamaFloatMatrix(this.numCols, this.numRows);
+		for (int i = 0; i < matrix.length; i++) {
+			nm.matrix[i] = matrix[i] / val; 
+		}
+		return nm;
+	}
+
+	@Override
+	public IMatrix divides(IMatrix other) throws GamaRuntimeException {
+		GamaFloatMatrix matb = from(null,other);
+		if (matb != null && this.numCols == matb.numCols && this.numRows == matb.numRows) {
+			GamaFloatMatrix nm = new GamaFloatMatrix(this.numCols, this.numRows);
+			for (int i = 0; i < matrix.length; i++) {
+				nm.matrix[i] = matrix[i] / matb.matrix[i]; 
+			}
+			return nm;
+		}
+		return null;
+	}
+
+	@Override
+	public IMatrix matrixMultiplication(IMatrix other)
+			throws GamaRuntimeException {
+		GamaFloatMatrix matb = from(null,other);
+		if (matb != null) {
+			return new GamaFloatMatrix(getRealMatrix().multiply(matb.getRealMatrix()));
+		}
+		return null;
+	}
+
+	@Override
+	public IMatrix plus(Double val) throws GamaRuntimeException {
+		GamaFloatMatrix nm = new GamaFloatMatrix(this.numCols, this.numRows);
+		for (int i = 0; i < matrix.length; i++) {
+			nm.matrix[i] = matrix[i] + val; 
+		}
+		return nm;
+	}
+
+	@Override
+	public IMatrix plus(Integer val) throws GamaRuntimeException {
+		GamaFloatMatrix nm = new GamaFloatMatrix(this.numCols, this.numRows);
+		for (int i = 0; i < matrix.length; i++) {
+			nm.matrix[i] = matrix[i] + val; 
+		}
+		return nm;
+	}
+
+	@Override
+	public IMatrix minus(Double val) throws GamaRuntimeException {
+		GamaFloatMatrix nm = new GamaFloatMatrix(this.numCols, this.numRows);
+		for (int i = 0; i < matrix.length; i++) {
+			nm.matrix[i] = matrix[i] - val; 
+		}
+		return nm;
+	}
+
+	@Override
+	public IMatrix minus(Integer val) throws GamaRuntimeException {
+		GamaFloatMatrix nm = new GamaFloatMatrix(this.numCols, this.numRows);
+		for (int i = 0; i < matrix.length; i++) {
+			nm.matrix[i] = matrix[i] - val; 
+		}
+		return nm;
+	}
+
+	
+
 
 	//
 	// @Override

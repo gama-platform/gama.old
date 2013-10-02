@@ -25,6 +25,8 @@ import msi.gama.precompiler.GamlAnnotations.doc;
 import msi.gama.precompiler.GamlAnnotations.operator;
 import msi.gama.runtime.IScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
+import msi.gama.util.matrix.IMatrix;
+
 import org.apache.commons.math3.util.FastMath;
 import com.vividsolutions.jts.geom.Coordinate;
 
@@ -414,6 +416,7 @@ public class Maths {
 		if ( b.equals(0.0) ) { throw GamaRuntimeException.error("Division by zero"); }
 		return a.doubleValue() / b.doubleValue();
 	}
+	
 
 	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
 	@doc(value = "Returns the product of the two operands", special_cases = "if both operands are int, returns the product as an int", examples = "", see = "/")
@@ -438,7 +441,19 @@ public class Maths {
 	public static Double opTimes(final Integer a, final Double b) {
 		return Double.valueOf(a * b);
 	}
+	
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
+	@doc(value = "Returns the product of the two operands", examples = "", see = "/")
+	public static IMatrix opTimes(final Integer a, final IMatrix b) {
+		return b.times(a);
+	}
 
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
+	@doc(value = "Returns the product of the two operands", examples = "", see = "/")
+	public static IMatrix opTimes(final Double a, final IMatrix b) {
+		return b.times(a);
+	}
+	
 	@operator(value = IKeyword.PLUS, can_be_const = true)
 	@doc(value = "the sum, union or concatenation of the two operands.", special_cases = "if both operands are numbers (float or int), performs a normal arithmetic sum and returns a float if one of them is a float.", examples = "1 + 1 	--:	 2", see = "-")
 	public static Integer opPlus(final Integer a, final Integer b) {
@@ -461,6 +476,18 @@ public class Maths {
 	@doc(value = "the sum, union or concatenation of the two operands.", examples = "2 + 2.5 --: 4.5")
 	public static Double opPlus(final Integer a, final Double b) {
 		return a + b;
+	}
+	
+	@operator(value = IKeyword.PLUS, can_be_const = true)
+	@doc(value = "Returns the sum of the two operands", examples = "", see = "/")
+	public static IMatrix opPlus(final Integer a, final IMatrix b) {
+		return b.plus(a);
+	}
+
+	@operator(value = IKeyword.PLUS, can_be_const = true)
+	@doc(value = "Returns the sum of the two operands", examples = "", see = "/")
+	public static IMatrix opPlus(final Double a, final IMatrix b) {
+		return b.plus(a);
 	}
 
 	@operator(value = IKeyword.MINUS, can_be_const = true)
@@ -485,6 +512,18 @@ public class Maths {
 	@doc(value = "the difference of the two operands", examples = "3 - 1.2 --: 1.8")
 	public static Double opMinus(final Integer a, final Double b) {
 		return a - b;
+	}
+
+	@operator(value = IKeyword.MINUS, can_be_const = true)
+	@doc(value = "Returns the difference of the two operands", examples = "", see = "/")
+	public static IMatrix opMinus(final Integer a, final IMatrix b) {
+		return b.times(-1).plus(a);
+	}
+
+	@operator(value = IKeyword.MINUS, can_be_const = true)
+	@doc(value = "Returns the difference of the two operands", examples = "", see = "/")
+	public static IMatrix opMinus(final Double a, final IMatrix b) {
+		return b.times(-1).plus(a);
 	}
 
 	// @operator(value = "with_precision", can_be_const = true)

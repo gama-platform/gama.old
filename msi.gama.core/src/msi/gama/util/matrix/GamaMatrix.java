@@ -568,5 +568,56 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	protected abstract Object _last(IScope scope);
 
 	protected abstract Object _first(IScope scope);
+	
+	@Override
+	public IMatrix divides(IMatrix other) throws GamaRuntimeException {
+		return this;
+	}
+
+	@Override
+	public IMatrix matrixMultiplication(IMatrix other)
+			throws GamaRuntimeException {
+		return this;
+	}
+
+	@Override
+	public IMatrix times(Double val) throws GamaRuntimeException {
+		return this;
+	}
+
+	@Override
+	public IMatrix times(Integer val) throws GamaRuntimeException {
+		return this;
+	}
+
+	@Override
+	public IMatrix divides(Double val) throws GamaRuntimeException {
+		return this;
+	}
+
+	@Override
+	public IMatrix divides(Integer val) throws GamaRuntimeException {
+		return this;
+	}
+
+	@Override
+	public IMatrix plus(Double val) throws GamaRuntimeException {
+		return this;
+	}
+
+	@Override
+	public IMatrix plus(Integer val) throws GamaRuntimeException {
+		return this;
+	}
+
+	@Override
+	public IMatrix minus(Double val) throws GamaRuntimeException {
+		return this;
+	}
+
+	@Override
+	public IMatrix minus(Integer val) throws GamaRuntimeException {
+		return this;
+	}
 
 }

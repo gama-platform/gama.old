@@ -85,17 +85,45 @@ public interface IMatrix<T> extends IContainer<ILocation, T> {
 	public abstract IList<T> getColumn(IScope scope, Integer num_line);
 
 	@operator(value = IKeyword.PLUS, can_be_const = true)
-	@doc(deprecated = "The sum of matrices is not yet implemented")
 	public abstract IMatrix plus(IMatrix other) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.TIMES, can_be_const = true)
-	@doc(deprecated = "The product of matrices is not yet implemented")
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
 	public abstract IMatrix times(IMatrix other) throws GamaRuntimeException;
+	
+	@operator(value = IKeyword.DIVIDE, can_be_const = true)
+	public abstract IMatrix divides(IMatrix other) throws GamaRuntimeException;
+	
+	@operator(value = "mmultiply", can_be_const = true)
+	@doc(value = "matrix multiplication")
+	public abstract IMatrix matrixMultiplication(IMatrix other) throws GamaRuntimeException;
 
 	@operator(value = IKeyword.MINUS, can_be_const = true)
-	@doc(deprecated = "The difference of matrices is not yet implemented")
 	public abstract IMatrix minus(IMatrix other) throws GamaRuntimeException;
+	
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
+	public abstract IMatrix times(Double val) throws GamaRuntimeException;
 
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
+	public abstract IMatrix times(Integer val) throws GamaRuntimeException;
+
+	@operator(value = IKeyword.DIVIDE, can_be_const = true)
+	public abstract IMatrix divides(Double val) throws GamaRuntimeException;
+
+	@operator(value = IKeyword.DIVIDE, can_be_const = true)
+	public abstract IMatrix divides(Integer val) throws GamaRuntimeException;
+	
+	@operator(value = IKeyword.PLUS, can_be_const = true)
+	public abstract IMatrix plus(Double val) throws GamaRuntimeException;
+
+	@operator(value = IKeyword.PLUS, can_be_const = true)
+	public abstract IMatrix plus(Integer val) throws GamaRuntimeException;
+	
+	@operator(value = IKeyword.MINUS, can_be_const = true)
+	public abstract IMatrix minus(Double val) throws GamaRuntimeException;
+
+	@operator(value = IKeyword.MINUS, can_be_const = true)
+	public abstract IMatrix minus(Integer val) throws GamaRuntimeException;
+	
 	public abstract T get(IScope scope, final int col, final int row);
 
 	public abstract void set(IScope scope, final int col, final int row, final Object obj) throws GamaRuntimeException;
