@@ -512,14 +512,35 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 
 		@Override
 		public IExpression caseAccess(final Access object) {
+			IExpression container = compile(object.getLeft());
+			IType contType = container.getType();
+			boolean isMatrix = contType.id() == IType.MATRIX;
+			IType keyType = container.getKeyType();
 			List<? extends Expression> list = EGaml.getExprsOf(object.getArgs());
 			List<IExpression> result = new ArrayList();
-			for ( int i = 0, n = list.size(); i < n; i++ ) {
+			int size = list.size();
+			for ( int i = 0; i < size; i++ ) {
 				Expression eExpr = list.get(i);
 				IExpression e = compile(eExpr);
-				result.add(e);
+				if ( e != null ) {
+					IType elementType = e.getType();
+					if ( keyType != Types.NO_TYPE && !keyType.isAssignableFrom(e.getType()) ) {
+						if ( !(isMatrix && elementType.id() == IType.INT && size > 1) ) {
+							context.warning(
+								"a " + contType.toString() + " cannot be accessed using a " + elementType.toString() +
+									" index", IGamlIssue.WRONG_TYPE, eExpr);
+						}
+					}
+					result.add(e);
+				}
 			}
-			IExpression container = compile(object.getLeft());
+			if ( size > 2 ) {
+				int expected = isMatrix ? 2 : 1;
+				String end = expected == 1 ? " only 1 index" : " 1 or 2 indices";
+				context.warning("a " + contType.toString() + " should be accessed using" + end,
+					IGamlIssue.DIFFERENT_ARGUMENTS, object);
+			}
+
 			IExpression indices = factory.createList(result);
 			return factory.createOperator("internal_at", context, container, indices);
 		}
