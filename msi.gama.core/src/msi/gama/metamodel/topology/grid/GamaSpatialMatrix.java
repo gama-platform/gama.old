@@ -991,8 +991,15 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 
 		@Override
 		public IAgent getFromIndicesList(final IScope scope, final IList indices) throws GamaRuntimeException {
-			if ( indices == null || indices.isEmpty() ) { return null; }
-			return get(scope, Cast.asInt(scope, indices.get(0)));
+			if ( indices == null ) { return null; }
+			int n = indices.length(scope);
+			if ( n == 0 ) { return null; }
+			int x = Cast.asInt(scope, indices.get(scope, 0));
+			if ( n == 1 ) { return getAgent(Cast.asInt(scope, x)); }
+			int y = Cast.asInt(scope, indices.get(scope, 1));
+			IShape s = GamaSpatialMatrix.this.get(scope, x, y);
+			if ( s == null ) { return null; }
+			return s.getAgent();
 		}
 
 		@Override
@@ -1820,6 +1827,5 @@ public class GamaSpatialMatrix extends GamaMatrix<IShape> implements IGrid {
 	public boolean usesNeighboursCache() {
 		return useNeighboursCache;
 	}
-
 
 }
