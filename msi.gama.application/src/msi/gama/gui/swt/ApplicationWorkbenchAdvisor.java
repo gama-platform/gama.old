@@ -60,7 +60,8 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 			dm.setEnabled("org.eclipse.jdt.ui.interface.decorator", false);
 			dm.setEnabled("org.eclipse.jdt.ui.buildpath.decorator", false);
 			dm.setEnabled("org.eclipse.jdt.ui.override.decorator", false);
-			dm.setEnabled("org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator", true);
+			dm.setEnabled("org.eclipse.team.svn.ui.decorator.SVNLightweightDecorator", false);
+			dm.setEnabled("msi.gama.application.decorator", true);
 			dm.setEnabled("org.eclipse.ui.LinkedResourceDecorator", false);
 			dm.setEnabled("org.eclipse.ui.VirtualResourceDecorator", false);
 			dm.setEnabled("org.eclipse.xtext.builder.nature.overlay", false);
@@ -275,6 +276,8 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		return description;
 	}
 
+	public final static String builtInNature = "msi.gama.builtin.model";
+
 	static private void setValuesProjectDescription(final IProject proj) {
 		/* Modify the project description */
 		IProjectDescription desc = null;
@@ -282,10 +285,12 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 			desc = proj.getDescription();
 			/* Automatically associate GamaNature and Xtext nature to the project */
 			// String[] ids = desc.getNatureIds();
-			String[] newIds = new String[2];
+			String[] newIds = new String[3];
 			// System.arraycopy(ids, 0, newIds, 0, ids.length);
 			newIds[1] = "msi.gama.application.gamaNature";
 			newIds[0] = "org.eclipse.xtext.ui.shared.xtextNature";
+			// Addition of a special nature to the project.
+			newIds[2] = "msi.gama.builtin.model";
 			desc.setNatureIds(newIds);
 			proj.setDescription(desc, IResource.FORCE, null);
 			// Addition of a special persistent property to indicate that the project is built-in

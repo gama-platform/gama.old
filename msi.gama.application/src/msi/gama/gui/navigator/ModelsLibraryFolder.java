@@ -8,7 +8,7 @@
  * - Alexis Drogoul, UMI 209 UMMISCO, IRD/UPMC (Kernel, Metamodel, GAML), 2007-2012
  * - Vo Duc An, UMI 209 UMMISCO, IRD/UPMC (SWT, multi-level architecture), 2008-2012
  * - Patrick Taillandier, UMR 6228 IDEES, CNRS/Univ. Rouen (Batch, GeoTools & JTS), 2009-2012
- * - Beno”t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
+ * - Benoï¿½t Gaudou, UMR 5505 IRIT, CNRS/Univ. Toulouse 1 (Documentation, Tests), 2010-2012
  * - Phan Huy Cuong, DREAM team, Univ. Can Tho (XText-based GAML), 2012
  * - Pierrick Koch, UMI 209 UMMISCO, IRD/UPMC (XText-based GAML), 2010-2011
  * - Romain Lavaud, UMI 209 UMMISCO, IRD/UPMC (RCP environment), 2010
@@ -19,7 +19,10 @@
 package msi.gama.gui.navigator;
 
 import java.util.*;
+import msi.gama.common.util.GuiUtils;
+import msi.gama.gui.swt.ApplicationWorkbenchAdvisor;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
 
 /** @author Romain Lavaud */
 public class ModelsLibraryFolder extends VirtualFolder {
@@ -30,17 +33,22 @@ public class ModelsLibraryFolder extends VirtualFolder {
 
 	@Override
 	public Object[] getChildren() {
-		List<IProject> totalList =
-			Arrays.asList(ResourcesPlugin.getWorkspace().getRoot().getProjects());
+		List<IProject> totalList = Arrays.asList(ResourcesPlugin.getWorkspace().getRoot().getProjects());
 		List<IProject> resultList = new ArrayList();
-		// We only add the projects whose path contains the built-in models path
-		// String modelsPath = getBuiltInModelsPath();
-		// System.out.println("Location to library : " + getBuiltInModelsPath());
 		for ( IProject project : totalList ) {
-			String projectPath = project.getLocation().toString();
-			// System.out.println("Location to project : " + projectPath);
-			if ( projectPath.contains("msi.gama.models") ) {
-				resultList.add(project);
+			try {
+				if ( project.isAccessible() && project.isOpen() ) {
+					IProjectDescription desc = project.getDescription();
+					for ( String s : desc.getNatureIds() ) {
+						if ( s.equals(ApplicationWorkbenchAdvisor.builtInNature) ) {
+							resultList.add(project);
+							break;
+						}
+					}
+				}
+
+			} catch (CoreException e) {
+				GuiUtils.debug(e);
 			}
 		}
 		return resultList.toArray();

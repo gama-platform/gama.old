@@ -18,8 +18,7 @@
  */
 package msi.gama.gui.navigator;
 
-import org.eclipse.ui.actions.ActionGroup;
-import org.eclipse.ui.navigator.*;
+import org.eclipse.ui.navigator.CommonNavigator;
 
 public class GamaNavigator extends CommonNavigator {
 
@@ -28,26 +27,6 @@ public class GamaNavigator extends CommonNavigator {
 	@Override
 	protected Object getInitialInput() {
 		return new NavigatorRoot();
-	}
-
-	@Override
-	protected CommonNavigatorManager createCommonManager() {
-		return super.createCommonManager();
-	}
-
-	@Override
-	protected ActionGroup createCommonActionGroup() {
-		return super.createCommonActionGroup();
-	}
-
-	@Override
-	public CommonViewer getCommonViewer() {
-		return super.getCommonViewer();
-	}
-
-	@Override
-	public NavigatorActionService getNavigatorActionService() {
-		return super.getNavigatorActionService();
 	}
 
 }

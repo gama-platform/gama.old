@@ -1553,4 +1553,29 @@
             </action>
          </actionSet>
       </extension>
+      <extension
+            point="org.eclipse.ui.decorators">
+         <decorator
+               class="msi.gama.gui.navigator.GamaDecorator"
+               id="msi.gama.application.decorator"
+               label="GAMA Decorator"
+               lightweight="true"
+               state="true">
+            <enablement>
+               <objectClass
+                     name="org.eclipse.core.resources.IResource">
+               </objectClass>
+            </enablement>
+         </decorator>
+      </extension>
+      <extension
+            id="msi.gama.builtin.model"
+            name="Built-In Model"
+            point="org.eclipse.core.resources.natures">
+         <runtime>
+            <run
+                  class="msi.gama.gui.navigator.BuiltInProjectNature">
+            </run>
+         </runtime>
+      </extension>
 </plugin>
