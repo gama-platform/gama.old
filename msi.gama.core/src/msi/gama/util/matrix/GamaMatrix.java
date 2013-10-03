@@ -71,16 +71,16 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 		return result;
 	}
 
-	public static IMatrix opPlus(final IMatrix a, final IMatrix b) throws GamaRuntimeException {
+	public static IMatrix opPlus(final IScope scope, final IMatrix a, final IMatrix b) throws GamaRuntimeException {
 		throw GamaRuntimeException.error("ATTENTION : Matrix additions not implemented. Returns nil for the moment");
 	}
 
-	public static IMatrix opMinus(final IMatrix a, final IMatrix b) throws GamaRuntimeException {
+	public static IMatrix opMinus(final IScope scope, final IMatrix a, final IMatrix b) throws GamaRuntimeException {
 		throw GamaRuntimeException
 			.error("ATTENTION : Matrix substractions not implemented. Returns nil for the moment");
 	}
 
-	public static IMatrix opTimes(final IMatrix a, final IMatrix b) throws GamaRuntimeException {
+	public static IMatrix opTimes(final IScope scope, final IMatrix a, final IMatrix b) throws GamaRuntimeException {
 		throw GamaRuntimeException
 			.error("ATTENTION : Matrix multiplications not implemented. Returns nil for the moment");
 	}
@@ -500,8 +500,8 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IMatrix#plus(msi.gama.interfaces.IMatrix)
 	 */
 	@Override
-	public IMatrix plus(final IMatrix other) throws GamaRuntimeException {
-		return opPlus(this, other);
+	public IMatrix plus(final IScope scope, final IMatrix other) throws GamaRuntimeException {
+		return opPlus(scope, this, other);
 	}
 
 	/*
@@ -510,8 +510,8 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IMatrix#times(msi.gama.interfaces.IMatrix)
 	 */
 	@Override
-	public IMatrix times(final IMatrix other) throws GamaRuntimeException {
-		return opTimes(this, other);
+	public IMatrix times(final IScope scope, final IMatrix other) throws GamaRuntimeException {
+		return opTimes(scope, this, other);
 	}
 
 	/*
@@ -520,8 +520,8 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	 * @see msi.gama.interfaces.IMatrix#minus(msi.gama.interfaces.IMatrix)
 	 */
 	@Override
-	public IMatrix minus(final IMatrix other) throws GamaRuntimeException {
-		return opMinus(this, other);
+	public IMatrix minus(final IScope scope, final IMatrix other) throws GamaRuntimeException {
+		return opMinus(scope, this, other);
 	}
 
 	@Override
@@ -568,55 +568,54 @@ public abstract class GamaMatrix<T> implements IMatrix<T> {
 	protected abstract Object _last(IScope scope);
 
 	protected abstract Object _first(IScope scope);
-	
+
 	@Override
-	public IMatrix divides(IMatrix other) throws GamaRuntimeException {
+	public IMatrix divides(final IScope scope, final IMatrix other) throws GamaRuntimeException {
 		return this;
 	}
 
 	@Override
-	public IMatrix matrixMultiplication(IMatrix other)
-			throws GamaRuntimeException {
+	public IMatrix matrixMultiplication(final IScope scope, final IMatrix other) throws GamaRuntimeException {
 		return this;
 	}
 
 	@Override
-	public IMatrix times(Double val) throws GamaRuntimeException {
+	public IMatrix times(final Double val) throws GamaRuntimeException {
 		return this;
 	}
 
 	@Override
-	public IMatrix times(Integer val) throws GamaRuntimeException {
+	public IMatrix times(final Integer val) throws GamaRuntimeException {
 		return this;
 	}
 
 	@Override
-	public IMatrix divides(Double val) throws GamaRuntimeException {
+	public IMatrix divides(final Double val) throws GamaRuntimeException {
 		return this;
 	}
 
 	@Override
-	public IMatrix divides(Integer val) throws GamaRuntimeException {
+	public IMatrix divides(final Integer val) throws GamaRuntimeException {
 		return this;
 	}
 
 	@Override
-	public IMatrix plus(Double val) throws GamaRuntimeException {
+	public IMatrix plus(final Double val) throws GamaRuntimeException {
 		return this;
 	}
 
 	@Override
-	public IMatrix plus(Integer val) throws GamaRuntimeException {
+	public IMatrix plus(final Integer val) throws GamaRuntimeException {
 		return this;
 	}
 
 	@Override
-	public IMatrix minus(Double val) throws GamaRuntimeException {
+	public IMatrix minus(final Double val) throws GamaRuntimeException {
 		return this;
 	}
 
 	@Override
-	public IMatrix minus(Integer val) throws GamaRuntimeException {
+	public IMatrix minus(final Integer val) throws GamaRuntimeException {
 		return this;
 	}
 

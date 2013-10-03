@@ -19,10 +19,6 @@
 package msi.gama.util.matrix;
 
 import java.util.*;
-
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.RealMatrix;
-
 import msi.gama.common.util.RandomUtils;
 import msi.gama.metamodel.shape.*;
 import msi.gama.runtime.*;
@@ -30,6 +26,8 @@ import msi.gama.runtime.GAMA.InScope;
 import msi.gama.runtime.exceptions.GamaRuntimeException;
 import msi.gama.util.*;
 import msi.gaml.operators.Cast;
+import org.apache.commons.math3.exception.DimensionMismatchException;
+import org.apache.commons.math3.linear.*;
 import com.google.common.primitives.Ints;
 
 public class GamaIntMatrix extends GamaMatrix<Integer> {
@@ -116,7 +114,7 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 			matrix[i] = Cast.asInt(scope, mat[i]);
 		}
 	}
-	
+
 	public GamaIntMatrix(final RealMatrix rm) {
 		super(rm.getColumnDimension(), rm.getRowDimension());
 		matrix = new int[rm.getColumnDimension() * rm.getRowDimension()];
@@ -370,152 +368,153 @@ public class GamaIntMatrix extends GamaMatrix<Integer> {
 
 	RealMatrix getRealMatrix() {
 		RealMatrix realMatrix = new Array2DRowRealMatrix(this.numRows, this.numCols);
-		for (int i = 0; i< this.numRows; i ++) {
-			for (int j = 0; j< this.numCols; j ++) {
+		for ( int i = 0; i < this.numRows; i++ ) {
+			for ( int j = 0; j < this.numCols; j++ ) {
 				realMatrix.setEntry(i, j, Cast.asFloat(null, this.get(null, j, i)));
 			}
 		}
 		return realMatrix;
 	}
-	void updateMatrix(RealMatrix realMatrix) {
-		for (int i = 0; i< this.numRows; i ++) {
-			for (int j = 0; j< this.numCols; j ++) {
-				getMatrix()[i * numCols + j] =Cast.asInt(null, realMatrix.getEntry(i, j));
+
+	void updateMatrix(final RealMatrix realMatrix) {
+		for ( int i = 0; i < this.numRows; i++ ) {
+			for ( int j = 0; j < this.numCols; j++ ) {
+				getMatrix()[i * numCols + j] = Cast.asInt(null, realMatrix.getEntry(i, j));
 			}
 		}
 	}
-	
-	
+
 	@Override
-	public IMatrix plus(IMatrix other) throws GamaRuntimeException {
-		GamaIntMatrix matb = from(null,other);
-		if (matb != null && this.numCols == matb.numCols && this.numRows == matb.numRows) {
+	public IMatrix plus(final IScope scope, final IMatrix other) throws GamaRuntimeException {
+		GamaIntMatrix matb = from(null, other);
+		if ( matb != null && this.numCols == matb.numCols && this.numRows == matb.numRows ) {
 			GamaIntMatrix nm = new GamaIntMatrix(this.numCols, this.numRows);
-			for (int i = 0; i < matrix.length; i++) {
-				nm.matrix[i] = matrix[i] + matb.matrix[i]; 
+			for ( int i = 0; i < matrix.length; i++ ) {
+				nm.matrix[i] = matrix[i] + matb.matrix[i];
 			}
 			return nm;
 		}
-		return null;
+		throw GamaRuntimeException.error(" The dimensions of the matrices do not correspond", scope);
 	}
 
 	@Override
-	public IMatrix times(IMatrix other) throws GamaRuntimeException {
-		GamaIntMatrix matb = from(null,other);
-		if (matb != null && this.numCols == matb.numCols && this.numRows == matb.numRows) {
+	public IMatrix times(final IScope scope, final IMatrix other) throws GamaRuntimeException {
+		GamaIntMatrix matb = from(scope, other);
+		if ( matb != null && this.numCols == matb.numCols && this.numRows == matb.numRows ) {
 			GamaIntMatrix nm = new GamaIntMatrix(this.numCols, this.numRows);
-			for (int i = 0; i < matrix.length; i++) {
-				nm.matrix[i] = matrix[i] * matb.matrix[i]; 
+			for ( int i = 0; i < matrix.length; i++ ) {
+				nm.matrix[i] = matrix[i] * matb.matrix[i];
 			}
 			return nm;
 		}
-		return null;
+		throw GamaRuntimeException.error(" The dimensions of the matrices do not correspond", scope);
 	}
 
 	@Override
-	public IMatrix minus(IMatrix other) throws GamaRuntimeException {
-		GamaIntMatrix matb = from(null,other);
-		if (matb != null && this.numCols == matb.numCols && this.numRows == matb.numRows) {
+	public IMatrix minus(final IScope scope, final IMatrix other) throws GamaRuntimeException {
+		GamaIntMatrix matb = from(scope, other);
+		if ( matb != null && this.numCols == matb.numCols && this.numRows == matb.numRows ) {
 			GamaIntMatrix nm = new GamaIntMatrix(this.numCols, this.numRows);
-			for (int i = 0; i < matrix.length; i++) {
-				nm.matrix[i] = matrix[i] - matb.matrix[i]; 
+			for ( int i = 0; i < matrix.length; i++ ) {
+				nm.matrix[i] = matrix[i] - matb.matrix[i];
 			}
 			return nm;
 		}
-		return null;
+		throw GamaRuntimeException.error(" The dimensions of the matrices do not correspond", scope);
 	}
 
 	@Override
-	public IMatrix times(Double val) throws GamaRuntimeException {
+	public IMatrix times(final Double val) throws GamaRuntimeException {
 		GamaIntMatrix nm = new GamaIntMatrix(this.numCols, this.numRows);
-		for (int i = 0; i < matrix.length; i++) {
-			nm.matrix[i] = matrix[i] * Cast.asInt(null, val); 
+		for ( int i = 0; i < matrix.length; i++ ) {
+			nm.matrix[i] = matrix[i] * Cast.asInt(null, val);
 		}
 		return nm;
 	}
 
 	@Override
-	public IMatrix times(Integer val) throws GamaRuntimeException {
+	public IMatrix times(final Integer val) throws GamaRuntimeException {
 		GamaIntMatrix nm = new GamaIntMatrix(this.numCols, this.numRows);
-		for (int i = 0; i < matrix.length; i++) {
-			nm.matrix[i] = matrix[i] * val; 
+		for ( int i = 0; i < matrix.length; i++ ) {
+			nm.matrix[i] = matrix[i] * val;
 		}
 		return nm;
 	}
 
 	@Override
-	public IMatrix divides(Double val) throws GamaRuntimeException {
+	public IMatrix divides(final Double val) throws GamaRuntimeException {
 		GamaIntMatrix nm = new GamaIntMatrix(this.numCols, this.numRows);
-		for (int i = 0; i < matrix.length; i++) {
-			nm.matrix[i] = matrix[i] / Cast.asInt(null, val); 
+		for ( int i = 0; i < matrix.length; i++ ) {
+			nm.matrix[i] = matrix[i] / Cast.asInt(null, val);
 		}
 		return nm;
 	}
 
 	@Override
-	public IMatrix divides(Integer val) throws GamaRuntimeException {
+	public IMatrix divides(final Integer val) throws GamaRuntimeException {
 		GamaIntMatrix nm = new GamaIntMatrix(this.numCols, this.numRows);
-		for (int i = 0; i < matrix.length; i++) {
-			nm.matrix[i] = matrix[i] / val; 
+		for ( int i = 0; i < matrix.length; i++ ) {
+			nm.matrix[i] = matrix[i] / val;
 		}
 		return nm;
 	}
 
 	@Override
-	public IMatrix divides(IMatrix other) throws GamaRuntimeException {
-		GamaIntMatrix matb = from(null,other);
-		if (matb != null && this.numCols == matb.numCols && this.numRows == matb.numRows) {
+	public IMatrix divides(final IScope scope, final IMatrix other) throws GamaRuntimeException {
+		GamaIntMatrix matb = from(null, other);
+		if ( matb != null && this.numCols == matb.numCols && this.numRows == matb.numRows ) {
 			GamaIntMatrix nm = new GamaIntMatrix(this.numCols, this.numRows);
-			for (int i = 0; i < matrix.length; i++) {
-				nm.matrix[i] = matrix[i] / matb.matrix[i]; 
+			for ( int i = 0; i < matrix.length; i++ ) {
+				nm.matrix[i] = matrix[i] / matb.matrix[i];
 			}
 			return nm;
 		}
-		return null;
+		throw GamaRuntimeException.error(" The dimensions of the matrices do not correspond", scope);
 	}
 
 	@Override
-	public IMatrix matrixMultiplication(IMatrix other)
-			throws GamaRuntimeException {
-		GamaIntMatrix matb = from(null,other);
-		if (matb != null) {
-			return new GamaIntMatrix(getRealMatrix().multiply(matb.getRealMatrix()));
+	public IMatrix matrixMultiplication(final IScope scope, final IMatrix other) throws GamaRuntimeException {
+		GamaIntMatrix matb = from(null, other);
+		try {
+			if ( matb != null ) { return new GamaIntMatrix(getRealMatrix().multiply(matb.getRealMatrix())); }
+		} catch (DimensionMismatchException e) {
+			throw GamaRuntimeException.error(" The dimensions of the matrices do not correspond", scope);
 		}
 		return null;
 	}
 
 	@Override
-	public IMatrix plus(Double val) throws GamaRuntimeException {
+	public IMatrix plus(final Double val) throws GamaRuntimeException {
 		GamaIntMatrix nm = new GamaIntMatrix(this.numCols, this.numRows);
-		for (int i = 0; i < matrix.length; i++) {
-			nm.matrix[i] = matrix[i] + Cast.asInt(null, val); 
+		for ( int i = 0; i < matrix.length; i++ ) {
+			nm.matrix[i] = matrix[i] + Cast.asInt(null, val);
 		}
 		return nm;
 	}
 
 	@Override
-	public IMatrix plus(Integer val) throws GamaRuntimeException {
+	public IMatrix plus(final Integer val) throws GamaRuntimeException {
 		GamaIntMatrix nm = new GamaIntMatrix(this.numCols, this.numRows);
-		for (int i = 0; i < matrix.length; i++) {
-			nm.matrix[i] = matrix[i] + val; 
+		for ( int i = 0; i < matrix.length; i++ ) {
+			nm.matrix[i] = matrix[i] + val;
 		}
 		return nm;
 	}
 
 	@Override
-	public IMatrix minus(Double val) throws GamaRuntimeException {
+	public IMatrix minus(final Double val) throws GamaRuntimeException {
 		GamaIntMatrix nm = new GamaIntMatrix(this.numCols, this.numRows);
-		for (int i = 0; i < matrix.length; i++) {
-			nm.matrix[i] = matrix[i] - Cast.asInt(null, val); 
+		for ( int i = 0; i < matrix.length; i++ ) {
+			nm.matrix[i] = matrix[i] - Cast.asInt(null, val);
 		}
 		return nm;
 	}
 
 	@Override
-	public IMatrix minus(Integer val) throws GamaRuntimeException {
+	public IMatrix minus(final Integer val) throws GamaRuntimeException {
 		GamaIntMatrix nm = new GamaIntMatrix(this.numCols, this.numRows);
-		for (int i = 0; i < matrix.length; i++) {
-			nm.matrix[i] = matrix[i] - val; 
+		for ( int i = 0; i < matrix.length; i++ ) {
+			nm.matrix[i] = matrix[i] - val;
 		}
 		return nm;
 	}
