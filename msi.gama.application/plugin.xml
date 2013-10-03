@@ -618,7 +618,7 @@
                      </adapt>
                   </iterate>
                   <count
-                        value="1">
+                        value="+">
                   </count>
                </and>
             </visibleWhen>
@@ -639,9 +639,28 @@
                visible="true">
          </separator>
          <command
+               commandId="msi.gama.application.commands.UpdateBuiltInModelsCommand"
+               icon="platform:/plugin/msi.gama.application/icons/navigator/update.png"
+               label="Update Built-in Models"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+               <with
+                     variable="selection">
+                  <iterate
+                        ifEmpty="true"
+                        operator="and">
+                     <instanceof
+                           value="msi.gama.gui.navigator.ModelsLibraryFolder">
+                     </instanceof>
+                  </iterate>
+               </with>
+            </visibleWhen>
+         </command>
+         <command
                commandId="msi.gama.application.commands.ImportProjectFromSVN"
                icon="platform:/plugin/msi.gama.application/icons/navigator/update.png"
-               label="Update Library"
+               label="Update Shared Models"
                style="push">
             <visibleWhen
                   checkEnabled="true">
@@ -657,6 +676,10 @@
                </with>
             </visibleWhen>
          </command>
+         <separator
+               name="msi.gama.gui.gamaNavigator.separator3"
+               visible="true">
+         </separator>
          <command
                commandId="org.eclipse.ui.edit.text.openLocalFile"
                icon="platform:/plugin/msi.gama.application/icons/navigator/open_file.png"
@@ -1272,11 +1295,6 @@
             name="Ask an access to Gama Svn">
       </command>
       <command
-            defaultHandler="msi.gama.gui.navigator.commands.UpdateSVNModelsLibraryHandler"
-            id="msi.gama.application.commands.UpdateSVNModelsLibrary"
-            name="Update SVN Models Library">
-      </command>
-      <command
             defaultHandler="msi.gama.gui.navigator.commands.ImportProjectsFromSVNHandler"
             id="msi.gama.application.commands.ImportProjectFromSVN"
             name="Update Library">
@@ -1327,6 +1345,11 @@
       <command
             id="msi.gama.application.goto.simulation"
             name="Switch to simulation perspective">
+      </command>
+      <command
+            defaultHandler="msi.gama.gui.navigator.commands.UpdateBuiltInModelsHandler"
+            id="msi.gama.application.commands.UpdateBuiltInModelsCommand"
+            name="Update Built-In Models">
       </command>
    </extension>
  <extension
