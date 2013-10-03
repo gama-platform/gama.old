@@ -35,7 +35,7 @@ import org.eclipse.ui.internal.ide.application.*;
 
 public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
-	private static QualifiedName BUILTIN_PROPERTY = new QualifiedName("gama.builtin", "models");
+	public static QualifiedName BUILTIN_PROPERTY = new QualifiedName("gama.builtin", "models");
 	private static String BUILTIN_VERSION = Platform.getProduct().getDefiningBundle().getVersion().toString();
 
 	public ApplicationWorkbenchAdvisor(final DelayedEventsProcessor processor) {
@@ -53,13 +53,6 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		super.initialize(configurer);
 		IDE.registerAdapters();
 		configurer.setSaveAndRestore(true);
-
-		/* Linking the stock models with the workspace if they are not already */
-		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		if ( checkCopyOfBuiltInModels() ) {
-			linkSampleModelsToWorkspace(workspace);
-		}
-
 		try {
 			IDecoratorManager dm = configurer.getWorkbench().getDecoratorManager();
 			dm.setEnabled("org.eclipse.pde.ui.binaryProjectDecorator", false);
@@ -76,6 +69,11 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		}
 		/* Early build of the contributions made by plugins to GAMA */
 		GamaBundleLoader.preBuildContributions();
+		/* Linking the stock models with the workspace if they are not already */
+		if ( checkCopyOfBuiltInModels() ) {
+			linkSampleModelsToWorkspace();
+		}
+
 	}
 
 	protected boolean checkCopyOfBuiltInModels() {
@@ -146,7 +144,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		// return true;
 	}
 
-	private String getCurrentGamaStampString() {
+	private static String getCurrentGamaStampString() {
 		String gamaStamp = null;
 		try {
 			URL urlRep = FileLocator.toFileURL(new URL("platform:/plugin/msi.gama.models/models/"));
@@ -160,7 +158,8 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		return gamaStamp;
 	}
 
-	protected void stampWorkspaceFromModels(final IWorkspace workspace) {
+	protected static void stampWorkspaceFromModels() {
+		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		try {
 			workspace.getRoot().setPersistentProperty(BUILTIN_PROPERTY, getCurrentGamaStampString());
 		} catch (CoreException e) {
@@ -208,7 +207,8 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 
 	}
 
-	private void linkSampleModelsToWorkspace(final IWorkspace workspace) {
+	public static void linkSampleModelsToWorkspace() {
+		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		URL urlRep = null;
 		try {
 			urlRep = FileLocator.toFileURL(new URL("platform:/plugin/msi.gama.models/models/"));
@@ -267,7 +267,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		}
 	}
 
-	private IProjectDescription setProjectDescription(final FileBean project) {
+	static private IProjectDescription setProjectDescription(final FileBean project) {
 		final IProjectDescription description =
 			ResourcesPlugin.getWorkspace().newProjectDescription(project.toString());
 		final IPath location = new Path(project.getPath());
@@ -275,7 +275,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		return description;
 	}
 
-	private void setValuesProjectDescription(final IProject proj) {
+	static private void setValuesProjectDescription(final IProject proj) {
 		/* Modify the project description */
 		IProjectDescription desc = null;
 		try {
