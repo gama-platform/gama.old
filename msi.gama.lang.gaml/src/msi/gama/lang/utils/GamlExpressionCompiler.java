@@ -236,9 +236,12 @@ public class GamlExpressionCompiler implements IExpressionCompiler<Expression> {
 		IType type = owner.getType();
 		TypeDescription species = type.getSpecies();
 		if ( species == null ) {
-			// It can only be a variable as 'actions' are not defined on simple objects
+			// It can only be a variable as 'actions' are not defined on simple objects, except for matrices, where it
+			// can also represent the dot product
 			String var = EGaml.getKeyOf(fieldExpr);
 			TypeFieldExpression expr = (TypeFieldExpression) type.getGetter(var);
+			if ( type.id() == IType.MATRIX && expr == null ) { return binary(".", owner, fieldExpr); }
+
 			if ( expr == null ) {
 				species = type.getSpecies();
 				context.error("Field " + var + " unknown for type " + type, IGamlIssue.UNKNOWN_FIELD, leftExpr, var,
