@@ -1,18 +1,18 @@
 package msi.gama.headless.xml;
 
-import java.io.IOException;
-import msi.gama.headless.common.*;
+import java.io.*;
 import msi.gama.headless.core.Simulation;
 
 public class XMLWriter implements Writer {
 
-	private Fichier file;
+	private BufferedWriter file;
 
 	public XMLWriter(final String f) {
 		try {
-			this.file = new Fichier(f, Fichier.OUT);
-		} catch (FichierException e) {
-			// TODO Auto-generated catch block
+			this.file = new BufferedWriter(new FileWriter(f));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
@@ -21,9 +21,9 @@ public class XMLWriter implements Writer {
 	public void close() {
 		String res = "</Simulation>";
 		try {
-			this.file.ecrire(res);
+			this.file.write(res);
+			this.file.flush();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -31,17 +31,15 @@ public class XMLWriter implements Writer {
 
 	@Override
 	public void writeResultStep(final int step, final String[] names, final Object[] values) {
-		String res = "\t<Step id='" + step + "' >\n";
+		StringBuffer sb = new StringBuffer("\t<Step id='").append(step).append("' >\n");
 		for ( int i = 0; i < values.length; i++ ) {
-			res =
-				res + "\t\t<Variable name='" + names[i] + "' value='" + values[i].toString() +
-					"'/>\n";
+			sb.append("\t\t<Variable name='").append(names[i]).append("' value='").append(values[i]).append("'/>\n");
 		}
-		res = res + "\t</Step>\n";
+		sb.append("\t</Step>\n");
 		try {
-			this.file.ecrire(res);
+			this.file.write(sb.toString());
+			this.file.flush();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -51,9 +49,9 @@ public class XMLWriter implements Writer {
 		String res = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 		res += "<Simulation id=\"" + s.getExperimentID() + "\" >\n";
 		try {
-			this.file.ecrire(res);
+			this.file.write(res);
+			this.file.flush();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 

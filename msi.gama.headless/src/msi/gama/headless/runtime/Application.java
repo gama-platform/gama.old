@@ -11,67 +11,34 @@ public class Application implements IApplication {
 
 	public static boolean headLessSimulation = false;
 
-	private static boolean isHeadlessSimulation() {
-		return headLessSimulation;
-	}
-
-	private static void showLaunchingError() {
-		System.out.println("Launching error... try again");
-	}
-
-	private static void checkParameters(final String[] args) {
-		if ( args == null ) {
-			showError(HeadLessErrors.LAUNCHING_ERROR, null);
-			System.exit(-1);
-		} else if ( args.length < 2 ) {
-			showError(HeadLessErrors.PARAMETER_ERROR, null);
-			System.exit(-1);
-		}
+	private static boolean checkParameters(final String[] args) {
+		if ( args == null ) { return showError(HeadLessErrors.LAUNCHING_ERROR, null); }
+		if ( args.length < 2 ) { return showError(HeadLessErrors.PARAMETER_ERROR, null); }
 		Globals.OUTPUT_PATH = args[1];
 		Globals.IMAGES_PATH = args[1] + "/snapshot";
+		File output = new File(Globals.OUTPUT_PATH);
+		File images = new File(Globals.IMAGES_PATH);
+		File input = new File(args[0]);
+		if ( output.exists() ) { return showError(HeadLessErrors.EXIST_DIRECTORY_ERROR, Globals.OUTPUT_PATH); }
+		if ( !input.exists() ) { return showError(HeadLessErrors.NOT_EXIST_FILE_ERROR, args[0]); }
+		if ( !output.mkdir() ) { return showError(HeadLessErrors.PERMISSION_ERROR, Globals.OUTPUT_PATH); }
+		if ( !images.mkdir() ) { return showError(HeadLessErrors.PERMISSION_ERROR, Globals.IMAGES_PATH); }
+		return true;
 
-		boolean success = new File(Globals.OUTPUT_PATH).exists();
-		if ( success ) {
-			showError(HeadLessErrors.EXIST_DIRECTORY_ERROR, Globals.OUTPUT_PATH);
-			System.exit(-1);
-		}
-
-		success = new File(args[0]).exists();
-		if ( !success ) {
-			showError(HeadLessErrors.NOT_EXIST_FILE_ERROR, args[0]);
-			System.exit(-1);
-		}
-
-		success = new File(Globals.OUTPUT_PATH).mkdir();
-		if ( !success ) {
-			showError(HeadLessErrors.PERMISSION_ERROR, Globals.OUTPUT_PATH);
-			System.exit(-1);
-		}
-		success = new File(Globals.IMAGES_PATH).mkdir();
-		if ( !success ) {
-			showError(HeadLessErrors.PERMISSION_ERROR, Globals.IMAGES_PATH);
-			System.exit(-1);
-		}
-
-		// System.out.println(HeadLessErrors.getError(errorCode, path)
 	}
 
-	private static void showError(final int errorCode, final String path) {
+	private static boolean showError(final int errorCode, final String path) {
 		System.out.println(HeadLessErrors.getError(errorCode, path));
-		System.exit(-1);
+		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.equinox.app.IApplication#start(org.eclipse.equinox.app.IApplicationContext)
-	 */
 	@Override
 	public Object start(final IApplicationContext context) throws Exception {
 		Map<String, String[]> mm = context.getArguments();
 		String[] args = mm.get("application.args");
-		checkParameters(args);
-
+		if ( !checkParameters(args) ) {
+			System.exit(-1);
+		}
 		Reader in = new Reader(args[0]);
 		XMLWriter ou = new XMLWriter(Globals.OUTPUT_PATH + "/" + Globals.OUTPUT_FILENAME);
 		in.parseXmlFile();
@@ -81,14 +48,7 @@ public class Application implements IApplication {
 			try {
 				si.setBufferedWriter(ou);
 				si.loadAndBuild();
-			} catch (InstantiationException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			si.play();
@@ -96,15 +56,7 @@ public class Application implements IApplication {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.equinox.app.IApplication#stop()
-	 */
 	@Override
-	public void stop() {
-		// TODO Auto-generated method stub
-
-	}
+	public void stop() {}
 
 }
