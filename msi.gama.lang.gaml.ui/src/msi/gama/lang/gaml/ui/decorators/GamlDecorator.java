@@ -100,6 +100,23 @@ public class GamlDecorator implements ILightweightLabelDecorator {
 		}
 
 		decoration.addOverlay(overlay, IDecoration.BOTTOM_LEFT);
+
+		// TODO Reimplement this for the next release. A way would be to get the experiment names directly from the
+		// resource
+		// if ( resource.getType() == IResource.FILE && resource.getFileExtension().equals("gaml") ) {
+		// XtextResourceSet rs = new XtextResourceSet();
+		// URI uri = URI.createPlatformResourceURI(resource.getFullPath().toString(), true);
+		// GamlResource xr = (GamlResource) rs.getResource(uri, true);
+		// if ( xr.getErrors().isEmpty() ) {
+		// ISyntacticElement el = xr.getSyntacticContents();
+		// for ( ISyntacticElement ch : el.getChildren() ) {
+		// if ( ch.isExperiment() ) {
+		// decoration.addOverlay(IGamaIcons.SMALL_RUN.descriptor(), IDecoration.TOP_RIGHT);
+		// }
+		// }
+		// }
+		//
+		// }
 	}
 
 	/*
