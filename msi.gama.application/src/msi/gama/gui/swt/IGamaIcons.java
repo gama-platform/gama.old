@@ -156,6 +156,7 @@ public interface IGamaIcons {
 	public static final GamaIcon SMALL_CLOSE = GamaIcons.create("small.close");
 	public static final GamaIcon SMALL_CHAIN = GamaIcons.create("small.chain");
 	public static final GamaIcon SMALL_PIN = GamaIcons.create("small.pin");
+	public static final GamaIcon SMALL_RUN = GamaIcons.create("small.run");
 
 	// Overlays
 
