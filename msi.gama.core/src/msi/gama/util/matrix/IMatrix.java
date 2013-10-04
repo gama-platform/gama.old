@@ -84,44 +84,44 @@ public interface IMatrix<T> extends IContainer<ILocation, T> {
 		"row_at", "rows_list" })
 	public abstract IList<T> getColumn(IScope scope, Integer num_line);
 
-	@operator(value = IKeyword.PLUS, can_be_const = true)
+	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	public abstract IMatrix plus(IScope scope, IMatrix other) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	public abstract IMatrix times(IScope scope, IMatrix other) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.DIVIDE, can_be_const = true)
+	@operator(value = IKeyword.DIVIDE, can_be_const = true, content_type = IType.FLOAT)
 	public abstract IMatrix divides(IScope scope, IMatrix other) throws GamaRuntimeException;
 
-	@operator(value = "mmultiply", can_be_const = true)
-	@doc(value = "matrix multiplication")
+	@operator(value = ".", can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
+	@doc(value = "Matrix dot product.")
 	public abstract IMatrix matrixMultiplication(IScope scope, IMatrix other) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.MINUS, can_be_const = true)
+	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	public abstract IMatrix minus(IScope scope, IMatrix other) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true, content_type = IType.FLOAT)
 	public abstract IMatrix times(Double val) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.MULTIPLY, can_be_const = true)
+	@operator(value = IKeyword.MULTIPLY, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	public abstract IMatrix times(Integer val) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.DIVIDE, can_be_const = true)
+	@operator(value = IKeyword.DIVIDE, can_be_const = true, content_type = IType.FLOAT)
 	public abstract IMatrix divides(Double val) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.DIVIDE, can_be_const = true)
+	@operator(value = IKeyword.DIVIDE, can_be_const = true, content_type = IType.FLOAT)
 	public abstract IMatrix divides(Integer val) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.PLUS, can_be_const = true)
+	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = IType.FLOAT)
 	public abstract IMatrix plus(Double val) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.PLUS, can_be_const = true)
+	@operator(value = IKeyword.PLUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	public abstract IMatrix plus(Integer val) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.MINUS, can_be_const = true)
+	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = IType.FLOAT)
 	public abstract IMatrix minus(Double val) throws GamaRuntimeException;
 
-	@operator(value = IKeyword.MINUS, can_be_const = true)
+	@operator(value = IKeyword.MINUS, can_be_const = true, content_type = ITypeProvider.FIRST_CONTENT_TYPE)
 	public abstract IMatrix minus(Integer val) throws GamaRuntimeException;
 
 	public abstract T get(IScope scope, final int col, final int row);

@@ -278,7 +278,7 @@ public abstract class AbstractGamlAdditions implements IGamlAdditions {
 						new UnaryOperator(rt, helper, c, t, content, index, expectedContentTypes,
 							IExpression.class.equals(classes[0]), signature);
 				} else if ( classes.length == 2 ) { // binary
-					if ( kw.equals(OF) || kw.equals(_DOT) ) {
+					if ( (kw.equals(OF) || kw.equals(_DOT)) && signature.get(0).isSpeciesType() ) {
 						exp =
 							new BinaryVarOperator(rt, helper, c, t, content, index,
 								IExpression.class.equals(classes[1]), expectedContentTypes, signature);
