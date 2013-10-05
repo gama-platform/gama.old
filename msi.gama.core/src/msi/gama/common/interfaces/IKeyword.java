@@ -130,6 +130,10 @@ public interface IKeyword {
 	public static final String TIME_INITIAL = "t0";
 	public static final String TIME_FINAL = "tf";
 	public static final String CYCLE_LENGTH = "cycle_length";
+	public static final String DIFF = "diff";
+	public static final String DIF2 = "diff2";
+	public static final String ZERO = "internal_zero_order_equation";
+
 	/*
 	 * 
 	 */
@@ -211,7 +215,7 @@ public interface IKeyword {
 	public static final String MATCH = "match";
 	public static final String MATCH_BETWEEN = "match_between";
 	public static final String MATCH_ONE = "match_one";
-	public static final String MASK = "mask";	
+	public static final String MASK = "mask";
 	public static final String MAX = "max";
 	public static final String MAXIMIZE = "maximize";
 	public static final String MEMBERS = "members";
