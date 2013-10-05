@@ -139,6 +139,7 @@ public class FrontEndController implements Runnable {
 			IModel m = experiment.getModel();
 			GuiUtils.neutralStatus("No simulation running");
 			closeExperiment(/* GamaRuntimeException.warning("Interrupted by user") */);
+
 			if ( m != null ) {
 				m.dispose();
 			}
@@ -159,11 +160,13 @@ public class FrontEndController implements Runnable {
 	public void closeExperiment() {
 		if ( experiment != null ) {
 			try {
+				scheduler.pause();
 				updateSimulationState(NOTREADY);
 				GuiUtils.closeDialogs();
 				experiment.dispose();
 				experiment = null;
 			} finally {
+				scheduler.wipe();
 				updateSimulationState(NONE);
 			}
 		}

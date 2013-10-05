@@ -51,7 +51,7 @@ public class FrontEndScheduler implements Runnable {
 	private IScope[] scopes = null;
 
 	public void step() {
-		if ( !GuiUtils.isInHeadLessMode()&& paused ) {
+		if ( !GuiUtils.isInHeadLessMode() && paused ) {
 			try {
 				lock.acquire();
 			} catch (final InterruptedException e) {
@@ -74,10 +74,10 @@ public class FrontEndScheduler implements Runnable {
 			} catch (final Exception e) {
 				e.printStackTrace();
 				if ( scope.interrupted() ) {
-					
+
 					GuiUtils.debug("Exception in experiment interruption: " + e.getMessage());
 				} else {
-					//GAMA.reportError(e, true);
+					// GAMA.reportError(e, true);
 				}
 			}
 		}
@@ -157,10 +157,18 @@ public class FrontEndScheduler implements Runnable {
 
 	}
 
+	public synchronized void wipe() {
+		synchronized (toStop) {
+			toStop.clear();
+		}
+		synchronized (toStep) {
+			toStep.clear();
+		}
+	}
+
 	public void dispose() {
 		alive = false;
-		toStop.clear();
-		toStep.clear();
+		wipe();
 	}
 
 	public void unschedule(final IStepable scheduler) {
