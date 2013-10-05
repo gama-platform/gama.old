@@ -288,20 +288,13 @@ public class SystemOfEquationsStatement extends AbstractStatementSequence implem
 
 		for ( int i = 0, n = equations.size(); i < n; i++ ) {
 			final SingleEquationStatement s = equations.get(i);
-			if ( s.getOrder() == 0 ) {
-				for ( int j = 0; j < ((AbstractNAryOperator) s.getFunction()).numArg(); j++ ) {
-					IExpression tmp = ((AbstractNAryOperator) s.getFunction()).arg(j);
+			if (s.getOrder() == 0) {
+				IExpression tmp = ((UnaryOperator) s.getFunction()).arg(0);
 					Object v = s.getExpression().value(currentScope);
-					if ( tmp instanceof IVarExpression ) {
-						((IVarExpression) tmp).setVal(currentScope, v, false);
-					} else if ( tmp instanceof MapExpression ) {
-						for ( IExpression ee : ((MapExpression) tmp).getElements().values() ) {
-							((IVarExpression) ee).setVal(currentScope, v, false);
-						}
-					}
-
+				if (tmp instanceof AgentVariableExpression) {
+					((AgentVariableExpression) tmp).setVal(currentScope, v,
+							false);
 				}
-				// System.out.println(s.getExpression().value(currentScope));
 			}
 
 		}

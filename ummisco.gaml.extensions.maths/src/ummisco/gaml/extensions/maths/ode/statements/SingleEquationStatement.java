@@ -3,7 +3,6 @@ package ummisco.gaml.extensions.maths.ode.statements;
 import static msi.gama.common.interfaces.IKeyword.*;
 import java.util.*;
 import msi.gama.common.interfaces.IGamlIssue;
-import msi.gama.common.util.GuiUtils;
 import msi.gama.precompiler.GamlAnnotations.facet;
 import msi.gama.precompiler.GamlAnnotations.facets;
 import msi.gama.precompiler.GamlAnnotations.inside;
@@ -17,7 +16,7 @@ import msi.gaml.compilation.IDescriptionValidator;
 import msi.gaml.descriptions.*;
 import msi.gaml.expressions.*;
 import msi.gaml.statements.AbstractStatement;
-import msi.gaml.types.IType;
+import msi.gaml.types.*;
 
 @facets(value = { @facet(name = EQUATION_LEFT, type = IType.NONE, optional = false),
 	@facet(name = EQUATION_RIGHT, type = IType.FLOAT, optional = false) }, omissible = EQUATION_RIGHT)
@@ -55,18 +54,36 @@ public class SingleEquationStatement extends AbstractStatement {
 		 */
 		@Override
 		public void validate(final IDescription d) {
-			GuiUtils.debug("SingleEquationStatement.SingleEquationValidator.validate " +
-				d.getFacets().get(EQUATION_LEFT));
+
 			IExpressionDescription fDesc = d.getFacets().get(EQUATION_LEFT);
 			IExpression func = fDesc.getExpression();
+			IExpressionDescription eDesc = d.getFacets().get(EQUATION_RIGHT);
+			IExpression expr = eDesc.getExpression();
 			String n = func.getName();
 			boolean isFunction = func instanceof IOperator && orderNames.containsKey(n);
 			if ( !isFunction ) {
 				d.error(
 					"The left-hand member of an equation should be a variable or a call to the diff() or diff2() operators",
 					IGamlIssue.UNKNOWN_BINARY, fDesc.getTarget());
+				return;
+			}
+			
+			if(n.equals("internal_zero_order_equation")) {
+				if (!(((UnaryOperator) func).arg(0).getType() instanceof GamaFloatType)
+						&& !(((UnaryOperator) func).arg(0).getType() instanceof GamaIntegerType)) {
+					d.error("The parameter of left-hand member of an equation is expected as float type or int type",
+							IGamlIssue.UNKNOWN_BINARY, fDesc.getTarget());
+					return;
+				}
 			}
 
+
+			if (!(expr.getType() instanceof GamaFloatType)
+					&& !(expr.getType() instanceof GamaIntegerType)) {
+				d.error("The right-hand member of an equation is expected as float or int",
+						IGamlIssue.UNKNOWN_BINARY, fDesc.getTarget());
+				return;
+			}
 		}
 	}
 
