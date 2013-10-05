@@ -220,7 +220,7 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 		File modelsRep = new File(urlRep.getPath());
 		FileBean gFile = new FileBean(modelsRep);
 		FileBean[] projects = gFile.getChildren();
-		for ( FileBean project : projects ) {
+		for ( final FileBean project : projects ) {
 			File dotFile = null;
 			/* parcours des fils pour trouver le dot file et creer le lien vers le projet */
 			FileBean[] children = project.getChildrenWithHiddenFiles();
@@ -244,16 +244,25 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 				}
 			}
 			final IProjectDescription description = tempDescription;
-			final IProject proj = workspace.getRoot().getProject(project.toString());
+
 			WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
 
 				@Override
 				protected void execute(final IProgressMonitor monitor) throws CoreException, InvocationTargetException,
 					InterruptedException {
+					IProject proj = workspace.getRoot().getProject(project.toString());
 					if ( !proj.exists() ) {
 						proj.create(description, monitor);
+					} else {
+						// project exists but is not accessible
+						if ( !proj.isAccessible() ) {
+							proj.delete(true, null);
+							proj = workspace.getRoot().getProject(project.toString());
+							proj.create(description, monitor);
+						}
 					}
 					proj.open(IResource.BACKGROUND_REFRESH, monitor);
+					setValuesProjectDescription(proj);
 				}
 			};
 			try {
@@ -264,7 +273,6 @@ public class ApplicationWorkbenchAdvisor extends IDEWorkbenchAdvisor {
 				e.printStackTrace();
 			}
 
-			setValuesProjectDescription(proj);
 		}
 	}
 
